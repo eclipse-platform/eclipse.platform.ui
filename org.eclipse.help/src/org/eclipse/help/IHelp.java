@@ -35,8 +35,86 @@ public interface IHelp {
 	 * <p>
 	 * This method is called by the platform to launch the help system UI
 	 * </p> 
+	 * @since 2.0
 	 */
 	public void displayHelp();
+	
+	/**
+	 * Displays context-sensitive help for the given context.
+	 * <p>
+	 * (x,y) coordinates specify the location where the context sensitive 
+	 * help UI will be presented. These coordinates are screen-relative 
+	 * (ie: (0,0) is the top left-most screen corner).
+	 * The platform is responsible for calling this method and supplying the 
+	 * appropriate location.
+	 * </p>
+	 * 
+	 * 
+	 * @param contexts the context to display
+	 * @param x horizontal position
+	 * @param y verifical position
+	 * @since 2.0
+	 */
+	public void displayContext(IContext context, int x, int y);
+	
+	/**
+	 * Displays context-sensitive help for context with the given context id.
+	 * <p>
+	 * (x,y) coordinates specify the location where the context sensitive
+	 * help UI will be presented. These coordinates are screen-relative 
+	 * (ie: (0,0) is the top left-most screen corner).
+	 * The platform is responsible for calling this method and supplying the 
+	 * appropriate location.
+	 * </p> 
+	 * 
+	 * @param contextId the help context identifier 
+	 * @param x horizontal position
+	 * @param y verifical position
+	 * @see #findContext
+	 * @since 2.0
+	 */
+	public void displayContext(String contextId, int x, int y);
+	
+	/**
+	 * Displays help content for the help resource with the given URL.
+	 * <p>
+	 * This method is called by the platform to launch the help system UI, displaying
+	 * the documentation identified by the <code>href</code> parameter.
+	 * </p> 
+	 * <p>
+	 * Valid hrefs for TOC's or topics must have the following format
+	 * <em>/pluginID/path/to/document</em>
+	 * <br>where
+	 * <dl>
+	 * <dt> <em>pluginID</em> is the unique identifier of the plugin containing the help topic, 
+	 * </dt>
+	 * <dt> <em>path/to/document</em> is the help topic path, relative to the plugin directory
+	 * </dt>
+	 * </dl>
+	 * </p> 
+	 * <p>
+	 * The help system makes no guarantee that all the help resources can be displayed or how they are displayed.
+	 * </p>
+	 *
+	 * @param toc the URL of the help resource.
+	 * @since 2.0
+	 */
+	public void displayHelpResource(String href);
+	
+	/**
+	 * Displays help content for the help resource.
+	 * <p>
+	 * This method is called by the platform to launch the help system UI, displaying
+	 * the documentation identified by the <code>helpResource</code> parameter.
+	 * <p>
+	 * The help system makes no guarantee that all the help resources can be displayed or how they are displayed.
+	 * </p>
+	 * @see IHelp#displayHelpResource(String)
+	 * @param toc the URL of the help resource.
+	 * @since 2.0
+	 */
+	public void displayHelpResource(IHelpResource helpResource);
+	
 	
 	/**
 	 * Displays help content for the toc with the given URL.
@@ -53,6 +131,7 @@ public interface IHelp {
 	 * @param toc the URL of the toc as specified in
 	 * the <code>"org.eclipse.help.toc"</code> extenstion
 	 * point
+	 * @deprecated use displayHelpResource(toc) instead
 	 */
 	public void displayHelp(String toc);
 	
@@ -75,6 +154,7 @@ public interface IHelp {
 	 * @param toc the URL of the toc
 	 * @param selectedTopic the help topic url.
 	 * @see #displayHelp(java.lang.String)
+	 * @deprecated use displayHelpResource(selectedTopic).
 	 */
 	public void displayHelp(String toc, String selectedTopic);
 
@@ -93,7 +173,7 @@ public interface IHelp {
 	 * @param x horizontal position
 	 * @param y verifical position
 	 * @see #findContext
-	 * @since 2.0
+	 * @deprecated use displayContext(contextId, x, y)
 	 */
 	public void displayHelp(String contextId, int x, int y);
 	
@@ -111,7 +191,7 @@ public interface IHelp {
 	 * @param contexts the context to display
 	 * @param x horizontal position
 	 * @param y verifical position
-	 * @since 2.0
+	 * @deprecated use displayContext(context, x, y)
 	 */
 	public void displayHelp(IContext context, int x, int y);
 	

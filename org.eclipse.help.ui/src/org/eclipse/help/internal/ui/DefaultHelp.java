@@ -42,7 +42,70 @@ public class DefaultHelp implements IHelp
 	 * Displays help.
 	 */
 	public void displayHelp() {
-		displayHelp(null);
+		// Do not start help view if documentaton is not available, display error
+		if (getTocs().length == 0) {
+			// There is no documentation
+			ErrorUtil.displayErrorDialog(WorkbenchResources.getString("WW001"));
+			//Documentation is not installed.
+			return;
+		}
+		
+		displayHelpURL(null);
+	}
+	
+	/**
+	 * Displays context-sensitive help for specified context
+	 * @param contexts the context to display
+	 * @param x int positioning information
+	 * @param y int positioning information
+	 */
+	public void displayContext(IContext context, int x, int y) {
+		if (f1Dialog != null)
+			f1Dialog.close();
+		if (context == null)
+			return;
+		f1Dialog = new ContextHelpDialog(context, x, y);
+		f1Dialog.open();
+		// if any errors or parsing errors have occurred, display them in a pop-up
+		ErrorUtil.displayStatus();
+	}
+	
+	/**
+	 * Displays context-sensitive help for specified context
+	 * @param contextIds context identifier
+	 * @param x int positioning information
+	 * @param y int positioning information
+	 */
+	public void displayContext(String contextId, int x, int y) {
+		IContext context = HelpSystem.getContextManager().getContext(contextId);
+		displayContext(context, x, y);
+	}
+	
+	/**
+	 * Displays a help resource
+	 */
+	public void displayHelpResource(IHelpResource helpResource)
+	{
+		if (helpResource instanceof IToc)
+			displayHelpURL("toc="+helpResource.getHref());
+		else if (helpResource instanceof ITopic)
+			displayHelpURL("topic="+URLEncoder.encode(getTopicURL(helpResource.getHref())));
+		else
+			displayHelpURL(helpResource.getHref());	
+	}
+	
+	/**
+	 * Displays a help resource specified as a url
+	 */
+	public void displayHelpResource(String href)
+	{
+		// check if this is a toc
+		IToc toc = HelpSystem.getTocManager().getToc(href);
+		if (toc != null)
+			displayHelpResource(toc);
+		else // assume this is a topic
+			displayHelpURL("topic="+URLEncoder.encode(href));
+		
 	}
 	
 	/**
@@ -62,47 +125,34 @@ public class DefaultHelp implements IHelp
 			//Documentation is not installed.
 			return;
 		}
-		if (!AppServer.isRunning())
-			return; // may want to display an error message
 
-		String query = "";
+		String query = null;
 		if (toc != null) {
-			query = "?toc=" + toc;
+			query = "toc=" + toc;
 			if (topic != null)
 				query = query + "&topic=" + URLEncoder.encode(getTopicURL(topic));
 		} else {
 			if (topic != null)
-				query = "?topic=" + URLEncoder.encode(getTopicURL(topic));
+				query = "topic=" + URLEncoder.encode(getTopicURL(topic));
 		}
-		String url = getBaseURL() + "/help" + query;
-		WorkbenchHelpPlugin.getDefault().getHelpBrowser().displayURL(url);
+		
+		displayHelpURL(query);
 	}	
 	/**
 	 * Displays context-sensitive help for specified context
-	 * @param contextIds context identifier
-	 * @param x int positioning information
-	 * @param y int positioning information
+	 * @deprecated
 	 */
-	public void displayHelp(String contextId, int x, int y) {
-		IContext context = HelpSystem.getContextManager().getContext(contextId);
-		displayHelp(context, x, y);
+	public void displayHelp(String contextId, int x, int y) 
+	{
+		displayContext(contextId, x, y);
 	}
 		
 	/**
 	 * Displays context-sensitive help for specified context
-	 * @param contexts the context to display
-	 * @param x int positioning information
-	 * @param y int positioning information
+	 * @deprecated
 	 */
 	public void displayHelp(IContext context, int x, int y) {
-		if (f1Dialog != null)
-			f1Dialog.close();
-		if (context == null)
-			return;
-		f1Dialog = new ContextHelpDialog(context, x, y);
-		f1Dialog.open();
-		// if any errors or parsing errors have occurred, display them in a pop-up
-		ErrorUtil.displayStatus();
+		displayContext(context,  x, y);
 	}
 	/**
 	 * Display help for the a given topic and related topics.
@@ -112,15 +162,14 @@ public class DefaultHelp implements IHelp
 	public void displayHelp(IContext context, IHelpResource topic) {
 		if (context == null || topic == null || topic.getHref() == null)
 			return;
-		String contextID = getContextID(context);
-		if (!AppServer.isRunning())
-			return; // may want to display an error message
-		String url = getBaseURL()
-				+ "/help?tab=links&contextId="
-				+ URLEncoder.encode(contextID)
+
+		String url =  "tab=links"
+				+ "&contextId="
+				+ URLEncoder.encode(getContextID(context))
 				+ "&topic="
 				+ URLEncoder.encode(getTopicURL(topic.getHref()));
-		WorkbenchHelpPlugin.getDefault().getHelpBrowser().displayURL(url);
+				
+		displayHelpURL(url);
 	}
 	/**
 	 * Display help to search view for given query
@@ -131,15 +180,42 @@ public class DefaultHelp implements IHelp
 	public void displaySearch(String searchQuery, String topic) {
 		if (searchQuery == null || topic == null)
 			return;
-		if (!AppServer.isRunning())
-			return; // may want to display an error message
-		String url = getBaseURL()
-				+ "/help?tab=search&"
+
+		String url = "tab=search&"
 				+ searchQuery
 				+ "&topic="
 				+ URLEncoder.encode(getTopicURL(topic));
-		WorkbenchHelpPlugin.getDefault().getHelpBrowser().displayURL(url);
-	}	/**
+		
+		displayHelpURL(url);
+	}	
+	
+	/**
+	 * Displays the specified url.
+	 * The url can contain query parameters to identify how help displays the document
+	 */
+	void displayHelpURL(String helpURL)
+	{
+		if (!AppServer.isRunning())
+			return; // may want to display an error message
+			
+		if (helpURL == null || helpURL.length() == 0)
+		{
+			WorkbenchHelpPlugin.getDefault().getHelpBrowser().displayURL(getBaseURL());
+		}
+		else if (helpURL.startsWith("tab=") ||
+		             helpURL.startsWith("toc=") ||
+		             helpURL.startsWith("topic=") ||
+		             helpURL.startsWith("contextId=") )
+		{
+			WorkbenchHelpPlugin.getDefault().getHelpBrowser().displayURL(getBaseURL() +"?" + helpURL);
+		}
+		else
+		{
+			WorkbenchHelpPlugin.getDefault().getHelpBrowser().displayURL( helpURL);
+		}
+	}
+	
+	/**
 	 * Computes context information for a given context ID.
 	 * @param contextID java.lang.String ID of the context
 	 * @return IContext
@@ -169,7 +245,7 @@ public class DefaultHelp implements IHelp
 	
 	private String getBaseURL()
 	{
-		return "http://" + AppServer.getHost() + ":" + AppServer.getPort();
+		return "http://" + AppServer.getHost() + ":" + AppServer.getPort() + "/help";
 	}
 	
 	private String getTopicURL(String topic) {
