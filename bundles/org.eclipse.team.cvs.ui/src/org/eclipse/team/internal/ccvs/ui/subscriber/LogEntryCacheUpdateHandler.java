@@ -399,7 +399,7 @@ public class LogEntryCacheUpdateHandler extends BackgroundEventHandler {
     /* (non-Javadoc)
      * @see org.eclipse.team.internal.core.BackgroundEventHandler#queueEvent(org.eclipse.team.internal.core.BackgroundEventHandler.Event, boolean)
      */
-    protected synchronized void queueEvent(Event event, boolean front) {
+    protected void queueEvent(Event event, boolean front) {
         // Override to snure that queues by this handler are serialized
         synchronized(queueLock) {
             Job job = getEventHandlerJob();
