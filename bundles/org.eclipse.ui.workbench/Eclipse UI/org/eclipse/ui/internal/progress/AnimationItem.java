@@ -25,7 +25,6 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.internal.progress.ProgressMessages;
 
 public class AnimationItem {
 
@@ -475,28 +474,30 @@ public class AnimationItem {
 	 */
 	private IJobChangeListener getJobListener() {
 		return new JobChangeAdapter() {
-
+			
 			int jobCount = 0;
+			
 			/* (non-Javadoc)
-			 * @see org.eclipse.core.runtime.jobs.IJobListener#aboutToRun(org.eclipse.core.runtime.jobs.Job)
+			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#aboutToRun(org.eclipse.core.runtime.jobs.IJobChangeEvent)
 			 */
-			public void aboutToRun(Job job) {
-				incrementJobCount(job);
+			public void aboutToRun(IJobChangeEvent event) {
+				incrementJobCount(event.getJob());
+			}
+			
+			/* (non-Javadoc)
+			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
+			 */
+			public void done(IJobChangeEvent event) {
+				decrementJobCount(event.getJob());
 			}
 
 			/* (non-Javadoc)
-			 * @see org.eclipse.core.runtime.jobs.IJobListener#finished(org.eclipse.core.runtime.jobs.Job, int)
+			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#sleeping(org.eclipse.core.runtime.jobs.IJobChangeEvent)
 			 */
-			public void done(Job job, IStatus result) {
-				decrementJobCount(job);
+			public void sleeping(IJobChangeEvent event) {
+				decrementJobCount(event.getJob());
 			}
-			/* (non-Javadoc)
-			 * @see org.eclipse.core.runtime.jobs.IJobListener#paused(org.eclipse.core.runtime.jobs.Job)
-			 */
-			public void paused(Job job) {
-				decrementJobCount(job);
-
-			}
+			
 
 			private void incrementJobCount(Job job) {
 				//Don't count the animate job itself
