@@ -53,7 +53,8 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private static final String prevPerspectiveActionDefId = "org.eclipse.ui.window.previousPerspective"; //$NON-NLS-1$
 	private static final String activateEditorActionDefId = "org.eclipse.ui.window.activateEditor"; //$NON-NLS-1$
 	private static final String workbenchEditorsActionDefId = "org.eclipse.ui.window.switchToEditor";	 //$NON-NLS-1$
-	private static final String buildActionDefId = "org.eclipse.ui.project.buildProject";	 //$NON-NLS-1$
+	private static final String buildAllActionDefId = "org.eclipse.ui.project.buildAll";	 //$NON-NLS-1$
+	private static final String rebuildAllActionDefId = "org.eclipse.ui.project.rebuildAll";	 //$NON-NLS-1$
 	private static final String backwardHistoryActionDefId = "org.eclipse.ui.navigate.backwardHistory";	 //$NON-NLS-1$
 	private static final String forwardHistoryActionDefId = "org.eclipse.ui.navigate.forwardHistory";	 //$NON-NLS-1$
 
@@ -78,7 +79,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private ImportResourcesAction importResourcesAction;
 	private ExportResourcesAction exportResourcesAction;
 	private GlobalBuildAction rebuildAllAction; // Full build
-	private GlobalBuildAction buildAction; // Incremental build
+	private GlobalBuildAction buildAllAction; // Incremental build
 	private SaveAction saveAction;
 	private SaveAllAction saveAllAction;
 	private AboutAction aboutAction;
@@ -160,7 +161,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 			if (manager != null) {
 				try {
 					manager.insertBefore(IWorkbenchActionConstants.REBUILD_PROJECT, buildProjectAction);
-					manager.insertBefore(IWorkbenchActionConstants.REBUILD_ALL, buildAction);
+					manager.insertBefore(IWorkbenchActionConstants.REBUILD_ALL, buildAllAction);
 				} catch (IllegalArgumentException e) {
 					// action not found!
 				}
@@ -170,7 +171,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 			IMenuManager manager = menubar.findMenuUsingPath(IWorkbenchActionConstants.M_WORKBENCH);
 			if (manager != null) {
 				try {
-					manager.insertBefore(IWorkbenchActionConstants.REBUILD_ALL, buildAction);
+					manager.insertBefore(IWorkbenchActionConstants.REBUILD_ALL, buildAllAction);
 				} catch (IllegalArgumentException e) {
 					// action not found!
 				}
@@ -179,7 +180,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		IContributionManager cBarMgr =  window.getCoolBarManager();
 		CoolBarContributionItem groupItem = (CoolBarContributionItem)cBarMgr.find(workbenchToolGroupId);
 		IContributionManager tBarMgr = groupItem.getToolBarManager();
-		tBarMgr.appendToGroup(IWorkbenchActionConstants.BUILD_EXT, buildAction);
+		tBarMgr.appendToGroup(IWorkbenchActionConstants.BUILD_EXT, buildAllAction);
 		tBarMgr.update(true);
 	}
 	
@@ -439,7 +440,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 			menu.add(buildProjectAction);
 		menu.add(rebuildProjectAction);
 		if (!autoBuild) {
-			menu.add(buildAction);
+			menu.add(buildAllAction);
 		}
 		menu.add(rebuildAllAction);
 		menu.add(new GroupMarker(IWorkbenchActionConstants.BUILD_EXT));
@@ -514,7 +515,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		menu.add(new GroupMarker(IWorkbenchActionConstants.WB_START));
 		// Only add the manual incremental build if auto build off
 		if (!ResourcesPlugin.getWorkspace().isAutoBuilding())
-			menu.add(buildAction);
+			menu.add(buildAllAction);
 		menu.add(rebuildAllAction);
 		menu.add(new GroupMarker(IWorkbenchActionConstants.WB_END));
 		menu.add(new Separator());
@@ -634,7 +635,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		toolsManager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		// Only add the manual incremental build if auto build off
 		if (!ResourcesPlugin.getWorkspace().isAutoBuilding()) {
-			toolsManager.appendToGroup(IWorkbenchActionConstants.BUILD_EXT, buildAction);
+			toolsManager.appendToGroup(IWorkbenchActionConstants.BUILD_EXT, buildAllAction);
 		}
 		if(WorkInProgressPreferencePage.useNavigationHistory())
 			addHistoryActions();
@@ -706,12 +707,13 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		//	rebuildAllAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_BUILD_EXEC));
 		//	rebuildAllAction.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_BUILD_EXEC_HOVER));
 		//	rebuildAllAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_BUILD_EXEC_DISABLED));
+		rebuildAllAction.setActionDefinitionId(rebuildAllActionDefId);
 
-		buildAction = new GlobalBuildAction(window, IncrementalProjectBuilder.INCREMENTAL_BUILD);
-		buildAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_BUILD_EXEC));
-		buildAction.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_BUILD_EXEC_HOVER));
-		buildAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_BUILD_EXEC_DISABLED));
-		buildAction.setActionDefinitionId(buildActionDefId);
+		buildAllAction = new GlobalBuildAction(window, IncrementalProjectBuilder.INCREMENTAL_BUILD);
+		buildAllAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_BUILD_EXEC));
+		buildAllAction.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_BUILD_EXEC_HOVER));
+		buildAllAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_BUILD_EXEC_DISABLED));
+		buildAllAction.setActionDefinitionId(buildAllActionDefId);
 		
 		saveAction = new SaveAction(window);
 		saveAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_SAVE_EDIT));
@@ -962,12 +964,13 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 			resetPerspectiveAction.setText(WorkbenchMessages.getString("Workbench.resetPerspective")); //$NON-NLS-1$
 			closePerspAction.setText(WorkbenchMessages.getString("Workbench.closePerspective")); //$NON-NLS-1$
 			closeAllPerspsAction.setText(WorkbenchMessages.getString("Workbench.closeAllPerspectives")); //$NON-NLS-1$
-			buildAction.setText(WorkbenchMessages.getString("Workbench.buildAll")); //$NON-NLS-1$
-			buildAction.setToolTipText(WorkbenchMessages.getString("Workbench.buildAllToolTip")); //$NON-NLS-1$
-			buildAction.setAccelerator(SWT.CTRL | 'B');
-			keyBindingService.registerGlobalAction(buildAction);
+			buildAllAction.setText(WorkbenchMessages.getString("Workbench.buildAll")); //$NON-NLS-1$
+			buildAllAction.setToolTipText(WorkbenchMessages.getString("Workbench.buildAllToolTip")); //$NON-NLS-1$
+			buildAllAction.setAccelerator(SWT.CTRL | 'B');
+			keyBindingService.registerGlobalAction(buildAllAction);
 			rebuildAllAction.setText(WorkbenchMessages.getString("Workbench.rebuildAll")); //$NON-NLS-1$
 			rebuildAllAction.setToolTipText(WorkbenchMessages.getString("Workbench.rebuildAllToolTip")); //$NON-NLS-1$
+			keyBindingService.registerGlobalAction(rebuildAllAction);
 		}
 		// end menu reorg
 	}
