@@ -315,7 +315,6 @@ private boolean shouldCache(boolean asLocal) {
 	return true;
 }
 static void shutdown() {
-
 	if (indexName!=null && cacheLocation!=null) {
 		// weed out "not found" entries
 		Enumeration keys = cacheIndex.keys();
@@ -326,15 +325,16 @@ static void shutdown() {
 			value = cacheIndex.get(key);
 			if (value==NOT_FOUND) cacheIndex.remove(key);
 		}
-		
-		// try to save cache index
-		FileOutputStream fos = null;
+		//if the cache index is empty we don't need to save it
+		if (cacheIndex.size() == 0)
+			return;
 		try {
+			// try to save cache index
+			FileOutputStream fos = null;
 			fos = new FileOutputStream(cacheLocation+indexName);
 			try {
 				cacheIndex.store(fos,null);
-			}
-			finally {
+			} finally {
 				fos.close();
 			}
 		}
