@@ -71,7 +71,8 @@ public class DefaultSiteParser extends DefaultHandler {
 	private static final String MIRROR = "mirror"; //$NON-NLS-1$
 
 	private static final String DEFAULT_INFO_URL = "index.html"; //$NON-NLS-1$
-
+	private static final String FEATURES = "features/";
+    
 	// Current State Information
 	Stack stateStack = new Stack();
 
@@ -493,22 +494,32 @@ public class DefaultSiteParser extends DefaultHandler {
 	 */
 	private void processFeature(Attributes attributes) {
 		SiteFeatureReferenceModel feature = factory.createFeatureReferenceModel();
-		String urlInfo = attributes.getValue("url"); //$NON-NLS-1$
-		if (urlInfo == null || urlInfo.trim().equals("")) //$NON-NLS-1$
-			internalError(Policy.bind("DefaultSiteParser.Missing", "url", getState(currentState)));	//$NON-NLS-1$  //$NON-NLS-2$
-
+		
+        // feature location on the site
+        String urlInfo = attributes.getValue("url"); //$NON-NLS-1$
+        // identifier and version
+        String id = attributes.getValue("id"); //$NON-NLS-1$
+        String ver = attributes.getValue("version"); //$NON-NLS-1$
+        
+        boolean noURL = (urlInfo == null || urlInfo.trim().equals("")); //$NON-NLS-1$
+        boolean noId = (id == null || id.trim().equals("")); //$NON-NLS-1$
+        boolean noVersion = (ver == null || ver.trim().equals("")); //$NON-NLS-1$
+        
+        // We need to have id and version, or the url, or both.
+ 		if (noURL) {
+            if (noId || noVersion)
+                internalError(Policy.bind("DefaultSiteParser.Missing", "url", getState(currentState)));	//$NON-NLS-1$  //$NON-NLS-2$
+            else // default url
+                urlInfo = FEATURES + id + '_' + ver; //$NON-NLS-1$ 
+        }
+        
 		feature.setURLString(urlInfo);
 
 		String type = attributes.getValue("type"); //$NON-NLS-1$
 		feature.setType(type);
 
-		// identifier and version
-		String id = attributes.getValue("id"); //$NON-NLS-1$
-		String ver = attributes.getValue("version"); //$NON-NLS-1$
-
 		// if one is null, and not the other
-		if ((id == null || id.trim().equals("")) //$NON-NLS-1$
-		^ (ver == null || ver.trim().equals(""))) { //$NON-NLS-1$
+		if (noId ^ noVersion) {
 			String[] values = new String[] { id, ver, getState(currentState)};
 			UpdateCore.warn(Policy.bind("DefaultFeatureParser.IdOrVersionInvalid", values));//$NON-NLS-1$
 		} else {

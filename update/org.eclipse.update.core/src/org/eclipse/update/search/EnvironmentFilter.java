@@ -29,7 +29,7 @@ import org.eclipse.update.internal.core.*;
  * @since 3.0
  */
 public class EnvironmentFilter extends BaseFilter {
-	public boolean accept(IFeature match) {
+	public boolean accept(IFeatureReference match) {
 		return UpdateManagerUtils.isValidEnvironment(match);
 	}
 }

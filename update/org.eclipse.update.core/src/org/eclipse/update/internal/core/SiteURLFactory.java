@@ -16,6 +16,10 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
 
+/**
+ * An update site factory.
+ *
+ */
 public class SiteURLFactory extends BaseSiteFactory implements ISiteFactoryExtension {
 	
 	/*
@@ -85,5 +89,11 @@ public class SiteURLFactory extends BaseSiteFactory implements ISiteFactoryExten
 	public boolean canParseSiteType(String type) {
 		return (super.canParseSiteType(type) || SiteURLContentProvider.SITE_TYPE.equalsIgnoreCase(type));
 	}
+    /* (non-Javadoc)
+     * @see org.eclipse.update.core.BaseSiteFactory#createFeatureReferenceModel()
+     */
+    public SiteFeatureReferenceModel createFeatureReferenceModel() {
+        return new UpdateSiteFeatureReference();
+    }
 
 }

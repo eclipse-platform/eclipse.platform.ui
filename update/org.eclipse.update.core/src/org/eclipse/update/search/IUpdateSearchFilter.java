@@ -28,6 +28,7 @@ public interface IUpdateSearchFilter {
 	 * Tests a feature according to this filter's criteria.
 	 * @param match the feature to test
 	 * @return <samp>true</samp> if the feature has been accepted, <samp>false</samp> otherwise.
+     * @deprecated In 3.1 only the accept (IFeatureReference) will be used
 	 */
 	boolean accept(IFeature match);
 

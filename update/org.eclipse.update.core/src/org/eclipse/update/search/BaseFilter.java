@@ -26,6 +26,9 @@ import org.eclipse.update.core.*;
  * @since 3.0
  */
 public class BaseFilter implements IUpdateSearchFilter {
+    /**
+     * @deprecated In 3.1 only the accept (IFeatureReference) will be used
+     */
 	public boolean accept(IFeature match) {
 		return true;
 	}

@@ -69,6 +69,9 @@ public class UpdateSearchRequest {
 			filters.remove(filter);
 		}
 	
+        /**
+         * @deprecated In 3.1 only the accept (IFeatureReference) will be used
+         */
 		public boolean accept(IFeature match) {
 			if (filters == null)
 				return true;
