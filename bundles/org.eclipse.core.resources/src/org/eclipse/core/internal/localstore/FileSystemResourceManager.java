@@ -181,13 +181,13 @@ public IFile fileForLocation(IPath location) {
 	return path == null ? null : (IFile)resourceFor(path, true);
 }
 /**
- * The project description file is the only metadata file stored
- * outside the metadata area.  It is stored as a file directly 
- * under the project location.
+ * The project description file is the only metadata file stored outside the
+ * metadata area.  It is stored as a file directly under the project location.
+ * Returns null if the project location could not be resolved.
  */
 public IPath getDescriptionLocationFor(IProject target) {
-	//can't use IResource#getLocation() because it returns null if it doesn't exist
-	return ((Project)target).getLocalManager().locationFor(target).append(IProjectDescription.DESCRIPTION_FILE_NAME);
+	IPath projectLocation = locationFor(target);
+	return projectLocation == null ? null : projectLocation.append(IProjectDescription.DESCRIPTION_FILE_NAME);
 }
 public int getEncoding(File target) throws CoreException {
 	// thread safety: (the location can be null if the project for this file does not exist)
@@ -221,7 +221,8 @@ protected Workspace getWorkspace() {
 	return workspace;
 }
 public boolean hasSavedProject(IProject project) {
-	return getDescriptionLocationFor(project).toFile().exists();
+	IPath location = getDescriptionLocationFor(project);
+	return location == null ? false : location.toFile().exists();
 }
 /**
  * The target must exist in the workspace.  This method must only ever
@@ -230,6 +231,10 @@ public boolean hasSavedProject(IProject project) {
  */
 public void internalWrite(IProject target, IProjectDescription description, int updateFlags) throws CoreException {
 	IPath location = locationFor(target);
+	if (location == null) {
+		String message = Policy.bind("localstore.locationUndefined", target.getFullPath().toString()); //$NON-NLS-1$
+		throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, target.getFullPath(), message, null);
+	}
 	getStore().writeFolder(location.toFile());
 	//write the project location to the meta-data area
 	getWorkspace().getMetaArea().writeLocation(target);
@@ -696,6 +701,9 @@ public void write(IFolder target, boolean force, IProgressMonitor monitor) throw
  */
 public void writeSilently(IProject target) throws CoreException {
 	IPath location = locationFor(target);
+	//if the project location cannot be resolved, we don't know if a description file exists or not
+	if (location == null)
+		return;
 	getStore().writeFolder(location.toFile());
 	//can't do anything if there's no description
 	IProjectDescription desc = ((Project)target).internalGetDescription();

@@ -19,6 +19,31 @@ public class Folder extends Container implements IFolder {
 protected Folder(IPath path, Workspace container) {
 	super(path, container);
 }
+protected void assertCreateRequirements(IPath location, int updateFlags) throws CoreException {
+	checkDoesNotExist();
+	Container parent = (Container) getParent();
+	ResourceInfo info = parent.getResourceInfo(false, false);
+	parent.checkAccessible(getFlags(info));
+	if (location == null) {
+		String message = Policy.bind("localstore.locationUndefined", getFullPath().toString()); //$NON-NLS-1$
+		throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, getFullPath(), message, null);
+	}
+	
+	java.io.File localFile = location.toFile();
+	final boolean force = (updateFlags & IResource.FORCE) != 0;
+	if (!force && localFile.exists()) {
+	   //return an appropriate error message for case variant collisions
+	   if (!CoreFileSystemLibrary.isCaseSensitive()) {
+		   String name = getLocalManager().getLocalName(localFile);
+		   if (name != null && !localFile.getName().equals(name)) {
+			   String msg =  Policy.bind("resources.existsLocalDifferentCase", location.removeLastSegments(1).append(name).toOSString()); //$NON-NLS-1$
+			   throw new ResourceException(IResourceStatus.CASE_VARIANT_EXISTS, getFullPath(), msg, null);
+		   }
+	   }
+	   String msg = Policy.bind("resources.fileExists", localFile.getAbsolutePath()); //$NON-NLS-1$
+	   throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, getFullPath(), msg, null);
+	}
+}
 /**
  * Changes this folder to be a file in the resource tree and returns
  * the newly created file.  All related
@@ -49,43 +74,20 @@ public void create(int updateFlags, boolean local, IProgressMonitor monitor) thr
 		checkValidPath(path, FOLDER);
 		try {
 			workspace.prepareOperation();
-			checkDoesNotExist();
-			Container parent = (Container) getParent();
-			ResourceInfo info = parent.getResourceInfo(false, false);
-			parent.checkAccessible(getFlags(info));
-
-			workspace.beginOperation(true);
 			IPath location = getLocalManager().locationFor(this);
+			assertCreateRequirements(location, updateFlags);
+			workspace.beginOperation(true);
 			java.io.File localFile = location.toFile();
-			if (force) {
-				if (!CoreFileSystemLibrary.isCaseSensitive()) {
-					if (localFile.exists()) {
-						String name = getLocalManager().getLocalName(localFile);
-						if (name == null || localFile.getName().equals(name)) {
-							delete(true, null);
-						} else {
-							// The file system is not case sensitive and there is already a file
-							// under this location.
-							String msg = Policy.bind("resources.existsLocalDifferentCase", location.removeLastSegments(1).append(name).toOSString()); //$NON-NLS-1$
-							throw new ResourceException(IResourceStatus.CASE_VARIANT_EXISTS, getFullPath(), msg, null);
-						}
-					}
-				}
-			} else {
-				if (localFile.exists()) {
-					//return an appropriate error message for case variant collisions
-					if (!CoreFileSystemLibrary.isCaseSensitive()) {
-						String name = getLocalManager().getLocalName(localFile);
-						if (name != null && !localFile.getName().equals(name)) {
-							String msg =  Policy.bind("resources.existsLocalDifferentCase", location.removeLastSegments(1).append(name).toOSString()); //$NON-NLS-1$
-							throw new ResourceException(IResourceStatus.CASE_VARIANT_EXISTS, getFullPath(), msg, null);
-						}
-					}
-					String msg = Policy.bind("resources.fileExists", localFile.getAbsolutePath()); //$NON-NLS-1$
-					throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, getFullPath(), msg, null);
+			if (force && !CoreFileSystemLibrary.isCaseSensitive() && localFile.exists()) {
+				String name = getLocalManager().getLocalName(localFile);
+				if (name == null || localFile.getName().equals(name)) {
+					delete(true, null);
+				} else {
+					// The file system is not case sensitive and a case variant exists at this location
+					String msg = Policy.bind("resources.existsLocalDifferentCase", location.removeLastSegments(1).append(name).toOSString()); //$NON-NLS-1$
+					throw new ResourceException(IResourceStatus.CASE_VARIANT_EXISTS, getFullPath(), msg, null);
 				}
 			}
-
 			internalCreate(force, local, Policy.subMonitorFor(monitor, Policy.opWork));
 		} catch (OperationCanceledException e) {
 			workspace.getWorkManager().operationCanceled();
@@ -97,7 +99,6 @@ public void create(int updateFlags, boolean local, IProgressMonitor monitor) thr
 		monitor.done();
 	}
 }
-
 /**
  * @see IFolder
  */
