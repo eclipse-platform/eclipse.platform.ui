@@ -44,7 +44,8 @@ To run an Ant build file, click on Run > External Tools > External Tools.... Sel
 configuration type and click New. Identify the build file in the Location field and then click Run.</item>
 
 <item><b>Learn more </b>
-To learn more you can browse the <topic id="/org.eclipse.platform.doc.user/toc.xml">Workbench User Guide</topic>.</item>
+To learn more you can browse the <topic id="/org.eclipse.platform.doc.user/toc.xml">Workbench User Guide</topic>. Browse the <topic href="/org.eclipse.platform.doc.user/reference/ref-anticons.htm">External Tools and Ant Icons</topic>
+section to recognize the various External Tools and Ant elements. </item>
 
 
 </welcomePage>
