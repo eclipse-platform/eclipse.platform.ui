@@ -1,6 +1,6 @@
 package org.eclipse.help.internal.search;
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 import java.util.*;
@@ -98,15 +98,15 @@ public class SearchQuery {
 	 * Search on index using this query
 	 */
 	public SearchResult search(SearchIndex index) {
-		//gtrIndex.open();
 		Logger.logInfo(Resources.getString("Searching_for", getKey()));
-		String[] results =
-			index.search(getKey(), getFieldNames(), isFieldSearch(), getMaxHits());
-		// Create the xml document of search results
+		// Create the xml document for search results
 		SearchResult xmlResults = new SearchResult(getKey());
-		if (results != null)
-			for (int i = 0; i < results.length; i++)
-				xmlResults.addDocument(results[i]);
+		index.search(
+			getKey(),
+			getFieldNames(),
+			isFieldSearch(),
+			getMaxHits(),
+			xmlResults);
 		return xmlResults;
 	}
 }

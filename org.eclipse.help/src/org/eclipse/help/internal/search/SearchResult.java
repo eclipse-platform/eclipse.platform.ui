@@ -1,10 +1,11 @@
 package org.eclipse.help.internal.search;
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 import java.io.*;
 import java.util.List;
+import org.apache.lucene.search.Hits;
 import org.apache.xerces.dom.DocumentImpl;
 import org.apache.xml.serialize.*;
 import org.eclipse.help.*;
@@ -29,26 +30,38 @@ public class SearchResult {
 		factory.appendChild(factory.createElement(IToc.TOC));
 	}
 	/**
-	 * Adds a new result document to the result
-	 * @param href the document location (url)
+	 * Adds hits to the result
+	 * @param Hits hits
 	 */
-	public void addDocument(String href) {
-		// NOTE: some of the data may not be needed. Clean this later.
-		Element e = factory.createElement(ITopic.TOPIC);
-		factory.getDocumentElement().appendChild(e);
-		// the document name is the actual plugin url
-		e.setAttribute(ITopic.HREF, href + "?resultof=" + urlEncodedQuery);
-		// Find the topic coresponding to this document so we can show the label
-		ITopic topic = null;
-		IToc[] tocs = HelpSystem.getTocManager().getTocs();
-		for (int i = 0; topic == null && i < tocs.length; i++) {
-			topic = tocs[i].getTopic(href);
-		}
-		if (topic == null) {
-			// should never happen
-			e.setAttribute(ITopic.LABEL, href);
-		} else {
-			e.setAttribute(ITopic.LABEL, topic.getLabel());
+	public void addHits(Hits hits) {
+		for (int h = 0; h < hits.length(); h++) {
+			org.apache.lucene.document.Document doc;
+			try {
+				doc = hits.doc(h);
+			} catch (IOException ioe) {
+				return;
+			}
+			Element e = factory.createElement(ITopic.TOPIC);
+			factory.getDocumentElement().appendChild(e);
+			// Set the document href
+			String href = doc.get("name");
+			e.setAttribute(ITopic.HREF, href + "?resultof=" + urlEncodedQuery);
+			// Set the document label
+			String label = doc.get("title");
+			if ("".equals(label)) {
+				// Title does not exist, use label from the TOC
+				ITopic topic = null;
+				IToc[] tocs = HelpSystem.getTocManager().getTocs();
+				for (int i = 0; topic == null && i < tocs.length; i++) {
+					topic = tocs[i].getTopic(href);
+				}
+				if (topic != null) {
+					label = topic.getLabel();
+				}
+			}
+			if (label == null || "".equals(label))
+				label = href;
+			e.setAttribute(ITopic.LABEL, label);
 		}
 	}
 	/**

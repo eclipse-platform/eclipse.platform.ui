@@ -55,17 +55,19 @@ public class SearchIndex {
 			doc.add(Field.Keyword("name", name));
 			HTMLParser parser = new HTMLParser(stream);
 			doc.add(Field.Text("contents", parser.getReader()));
-			//			doc.add(Field.UnIndexed("summary", parser.getSummary()));
-			//			doc.add(Field.Text("title", parser.getTitle()));
+			String title = "";
+			try {
+				title = parser.getTitle();
+			} catch (InterruptedException ie) {
+			}
+			doc.add(Field.Text("title", title));
+			// doc.add(Field.UnIndexed("summary", parser.getSummary()));
 			iw.addDocument(doc);
 			indexedDocs.put(name, "0");
 			return true;
 		} catch (IOException e) {
-			System.out.println(e);
+			Logger.logError(Resources.getString("ES16", indexDir.getAbsolutePath()), e);
 			return false;
-			//		} catch (InterruptedException e) {
-			//			System.out.println(e);
-			//			return false;
 		}
 	}
 	/**
@@ -129,9 +131,9 @@ public class SearchIndex {
 		}
 		return true;
 	} /**
-			 * Finish additions.
-			 * To be called after adding documents.
-			 */
+					 * Finish additions.
+					 * To be called after adding documents.
+					 */
 	public boolean endAddBatch() {
 		try {
 			if (iw == null)
@@ -186,14 +188,16 @@ public class SearchIndex {
 	 *  if empty, then entire document will be searched
 	 * @param fieldSearch - boolean indicating if field only search
 	 *  should be performed
+	 * @param searchResult SearchResult that will contain all the hits
 	 * @return - an array of document ids. 
 	 * Later, we can extend this to return more data (rank, # of occs, etc.)
 	 */
-	public String[] search(
+	public void search(
 		String queryString,
 		Collection fieldNames,
 		boolean fieldSearch,
-		int maxhits) {
+		int maxhits,
+		SearchResult searchResult) {
 		ArrayList list = new ArrayList();
 		String[] results;
 		try {
@@ -204,16 +208,10 @@ public class SearchIndex {
 			Query query =
 				QueryParser.parse(processedQuery.toString(), "contents", analyzer);
 			Hits hits = searcher.search(query);
-			for (int i = 0; i < hits.length(); i++) {
-				list.add((String) hits.doc(i).get("name"));
-			}
+			searchResult.addHits(hits);
 			searcher.close();
-			results = new String[list.size()];
-			list.toArray(results);
-			return results;
 		} catch (Exception e) {
 			System.out.println(e);
-			return null;
 		}
 	}
 	public String getLocale() {
