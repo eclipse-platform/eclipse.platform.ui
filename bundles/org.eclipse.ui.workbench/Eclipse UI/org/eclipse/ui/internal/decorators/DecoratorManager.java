@@ -104,7 +104,7 @@ public class DecoratorManager
 				.getEnablement()
 				.isEnabledForExpression(
 					element,
-					ActionExpression.ATT_OBJECT_CLASS))
+					ActionExpression.EXP_TYPE_OBJECT_CLASS))
 				decorators.add(enabledDefinitions[i]);
 		}
 

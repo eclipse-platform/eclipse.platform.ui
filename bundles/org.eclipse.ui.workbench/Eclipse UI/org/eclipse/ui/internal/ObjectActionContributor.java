@@ -141,9 +141,8 @@ public class ObjectActionContributor extends PluginActionBuilder implements IObj
 		configRead = true;
 	}
 	
-	/**
-	 * Implements abstract method to handle the provided XML element
-	 * in the registry.
+	/* (non-Javadoc)
+	 * Method declared on PluginActionBuilder.
 	 */
 	protected boolean readElement(IConfigurationElement element) {
 		String tag = element.getName();

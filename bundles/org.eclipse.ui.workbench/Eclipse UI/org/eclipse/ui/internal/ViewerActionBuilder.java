@@ -12,7 +12,11 @@ Contributors:
 ************************************************************************/
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
 
@@ -49,6 +53,28 @@ public class ViewerActionBuilder extends PluginActionBuilder {
 		return desc;
 	}
 	
+	/* (non-Javadoc)
+	 * Method declared on PluginActionBuilder.
+	 */
+	protected BasicContribution createContribution() {
+		return new ViewerContribution(provider);
+	}
+
+	/* (non-Javadoc)
+	 * Method declared on PluginActionBuilder.
+	 */
+	protected boolean readElement(IConfigurationElement element) {
+		String tag = element.getName();
+		
+		// Found visibility sub-element
+		if (tag.equals(PluginActionBuilder.TAG_VISIBILITY)) {
+			((ViewerContribution)currentContribution).setVisibilityTest(element);
+			return true;
+		} 
+		
+		return super.readElement(element);
+	}
+	
 	/**
 	 * Reads the contributions for a viewer menu.
 	 * This method is typically used in conjunction with <code>contribute</code> to read
@@ -64,5 +90,43 @@ public class ViewerActionBuilder extends PluginActionBuilder {
 		this.part = part;
 		readContributions(id, TAG_CONTRIBUTION_TYPE, IWorkbenchConstants.PL_POPUP_MENU);
 		return (cache != null);
+	}
+
+
+	/**
+	 * Helper class to collect the menus and actions defined within a
+	 * contribution element.
+	 */
+	private static class ViewerContribution extends BasicContribution {
+		private ISelectionProvider selProvider;
+		private ActionExpression visibilityTest;
+
+		public ViewerContribution(ISelectionProvider selProvider) {
+			super();
+			this.selProvider = selProvider;
+		}
+		
+		public void setVisibilityTest(IConfigurationElement element) {
+			visibilityTest = new ActionExpression(element);
+		}
+		
+		/* (non-Javadoc)
+		 * Method declared on BasicContribution.
+		 */
+		public void contribute(IMenuManager menu, boolean menuAppendIfMissing, IToolBarManager toolbar, boolean toolAppendIfMissing) {
+			boolean visible = true;
+			
+			if (visibilityTest != null) {
+				ISelection selection = selProvider.getSelection();
+				if (selection instanceof IStructuredSelection) {
+					visible = visibilityTest.isEnabledFor((IStructuredSelection) selection);
+				} else {
+					visible = visibilityTest.isEnabledFor(selection);
+				}
+			}
+			
+			if (visible)
+				super.contribute(menu, menuAppendIfMissing, toolbar, toolAppendIfMissing);
+		}
 	}
 }
