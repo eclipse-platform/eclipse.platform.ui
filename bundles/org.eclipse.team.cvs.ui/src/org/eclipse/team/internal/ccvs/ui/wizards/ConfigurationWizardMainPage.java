@@ -10,7 +10,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -394,6 +396,17 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 			setErrorMessage(null);
 			setPageComplete(false);
 			return;
+		} else {
+			IPath path = new Path(repositoryPathCombo.getText());
+			String[] segments = path.segments();
+			for (int i = 0; i < segments.length; i++) {
+				String string = segments[i];
+				if (string.charAt(0) == ' ' || string.charAt(string.length() -1) == ' ') {
+					setErrorMessage(Policy.bind("ConfigurationWizardMainPage.invalidPathWithSpaces"));
+					setPageComplete(false);
+					return;
+				}
+			}
 		}
 		setErrorMessage(null);
 		setPageComplete(true);
