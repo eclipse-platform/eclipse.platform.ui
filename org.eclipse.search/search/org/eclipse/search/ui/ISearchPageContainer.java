@@ -89,8 +89,8 @@ public interface ISearchPageContainer {
 	/**
 	 * Sets the selected scope of this search page container.
 	 * The scope is WORKSPACE_SCOPE, SELECTED_PROJECTS_SCOPE, SELECTION_SCOPE or WORKING_SET_SCOPE.
+	 * @param scope the newly selected scope
 	 * 
-	 * @return the selected scope
  	 * @since 2.0
 	 */	
 	public void setSelectedScope(int scope);

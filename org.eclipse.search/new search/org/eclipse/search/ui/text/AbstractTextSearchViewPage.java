@@ -173,6 +173,9 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	private transient boolean  fIsUIUpdateScheduled= false;
 	private static final String KEY_LAYOUT = "org.eclipse.search.resultpage.layout"; //$NON-NLS-1$
 	
+	/**
+	 * An empty array.
+	 */
 	protected static final Match[] EMPTY_MATCH_ARRAY= new Match[0];
 	
 	private StructuredViewer fViewer;
@@ -552,6 +555,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 * <code>FLAG_LAYOUT_FLAT</code> or <code>FLAG_LAYOUT_TREE</code> and
 	 * it must be one of the values passed during construction of this search 
 	 * result page.
+	 * @param layout the new layout
 	 * 
 	 * @see AbstractTextSearchViewPage#isLayoutSupported(int)
 	 */
@@ -1057,7 +1061,8 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	}
 
 	/**
-	 * {@inheritDoc}Subclasses may exend this method.
+	 * {@inheritDoc}
+	 * Subclasses may extend this method.
 	 */
 	public void restoreState(IMemento memento) {
 		if (countBits(fSupportedLayouts) > 1) {

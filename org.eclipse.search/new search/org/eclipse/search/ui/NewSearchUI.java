@@ -25,7 +25,7 @@ public class NewSearchUI {
 	/**
 	 * Activates a search result view in the current workbench window page. If a
 	 * search view is already open in the current workbench window page, it is
-	 * acivated. Otherwise a new search view is opened and activated.
+	 * activated. Otherwise a new search view is opened and activated.
 	 * 
 	 * @return the activate search result view or <code>null</code> if the
 	 *         search result view couldn't be activated
@@ -76,6 +76,7 @@ public class NewSearchUI {
 	 *            the runnable context to run the query in
 	 * @param query
 	 *            the query to execute
+	 * @return a status indicating whether the query ran correctly
 	 */
 	public static IStatus runQueryInForeground(IRunnableContext context, ISearchQuery query) {
 		return InternalSearchUI.getInstance().runSearchInForeground(context, query);
@@ -103,7 +104,7 @@ public class NewSearchUI {
 		InternalSearchUI.getInstance().removeQueryListener(l);
 	}
 	/**
-	 * Returns all search queries know to the search ui (i.e. registered via
+	 * Returns all search queries know to the search UI (i.e. registered via
 	 * <code>runQuery()</code> or <code>runQueryInForeground())</code>.
 	 * 
 	 * @return all search results
@@ -156,6 +157,7 @@ public class NewSearchUI {
 	 * Opens the search dialog.
 	 * If <code>pageId</code> is specified and a corresponding page
 	 * is found then it is brought to top.
+	 * @param window 	the parent window
 	 *
 	 * @param pageId	the page to select or <code>null</code>
 	 * 					if the best fitting page should be selected

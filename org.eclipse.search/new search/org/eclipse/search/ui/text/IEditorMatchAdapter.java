@@ -42,6 +42,7 @@ public interface IEditorMatchAdapter {
 	 * editor.
 	 * For example, if the editor shows a particular file, all matches in that file should
 	 * be returned.
+	 * @param result the result to search for matches
 	 * 
 	 * @param editor The editor.
 	 * @return All matches that are contained in the element that is shown in
