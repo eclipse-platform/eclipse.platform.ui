@@ -185,11 +185,11 @@ public class UpdateCore extends Plugin {
 			warn("Unable to retrieve location for update manager log file");
 			return null;
 		}
-		URL configLocation = Platform.resolve(configurationLocation);
+//		URL configLocation = Platform.resolve(configurationLocation);
 		File updateStateLocation = null;
 
-		if ("file".equalsIgnoreCase(configLocation.getProtocol())) {
-			File path = new File(configLocation.getFile());
+		if ("file".equalsIgnoreCase(configurationLocation.getProtocol())) {
+			File path = new File(configurationLocation.getFile());
 			updateStateLocation = new File(path.getParentFile(), LOG_FILE);
 		}
 		return updateStateLocation;
