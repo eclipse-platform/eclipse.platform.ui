@@ -7,18 +7,29 @@ package org.eclipse.debug.internal.ui;
 
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.*;
+import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.help.ViewContextComputer;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * This view shows variables and their values for a particular stack frame
  */
-public class VariablesView extends AbstractDebugView implements ISelectionListener {
+public class VariablesView extends AbstractDebugView implements ISelectionListener, IDoubleClickListener {
 	
 	protected final static String PREFIX= "variables_view.";
 
@@ -31,7 +42,7 @@ public class VariablesView extends AbstractDebugView implements ISelectionListen
 	/**
 	 * Remove myself as a selection listener to the <code>LaunchesView</code> in this perspective.
 	 *
-	 * @see IWorkbenchPart
+	 * @see IWorkbenchPart#dispose()
 	 */
 	public void dispose() {
 		DebugUIPlugin.getDefault().removeSelectionListener(this);
@@ -41,7 +52,7 @@ public class VariablesView extends AbstractDebugView implements ISelectionListen
 	/** 
 	 * The <code>VariablesView</code> listens for selection changes in the <code>LaunchesView</code>
 	 *
-	 * @see ISelectionListener
+	 * @see ISelectionListener#selectionChanged(IWorkbenchPart, ISelection)
 	 */
 	public void selectionChanged(IWorkbenchPart part, ISelection sel) {
 		if (part instanceof LaunchesView) {
@@ -68,7 +79,7 @@ public class VariablesView extends AbstractDebugView implements ISelectionListen
 			}
 		}
 
-		Object current= fViewer.getInput();
+		Object current= getViewer().getInput();
 		if (current == null && frame == null) {
 			return;
 		}
@@ -77,19 +88,22 @@ public class VariablesView extends AbstractDebugView implements ISelectionListen
 			return;
 		}
 
-		((VariablesContentProvider)fViewer.getContentProvider()).clearCache();
-		fViewer.setInput(frame);
+		((VariablesContentProvider)getViewer().getContentProvider()).clearCache();
+		getViewer().setInput(frame);
 	}
+	
 	/**
-	 * @see IWorkbenchPart
+	 * @see IWorkbenchPart#createPartControl(Composite)
 	 */
 	public void createPartControl(Composite parent) {
 		DebugUIPlugin.getDefault().addSelectionListener(this);
 		TreeViewer vv = new TreeViewer(parent, SWT.MULTI);
-		fViewer= vv;
-		fViewer.setContentProvider(new VariablesContentProvider());
-		fViewer.setLabelProvider(new DelegatingModelPresentation());
-		fViewer.setUseHashlookup(true);
+		setViewer(vv);
+		getViewer().setContentProvider(new VariablesContentProvider());
+		getViewer().setLabelProvider(new DelegatingModelPresentation());
+		getViewer().setUseHashlookup(true);
+		getViewer().addDoubleClickListener(this);
+		
 		// add a context menu
 		createContextMenu(vv.getTree());
 
@@ -98,8 +112,7 @@ public class VariablesView extends AbstractDebugView implements ISelectionListen
 	
 		setInitialContent();
 		setTitleToolTip(getTitleToolTipText(PREFIX));
-		WorkbenchHelp.setHelp(
-			parent,
+		WorkbenchHelp.setHelp(parent,
 			new ViewContextComputer(this, IDebugHelpContextIds.VARIABLE_VIEW ));
 	}
 
@@ -129,45 +142,99 @@ public class VariablesView extends AbstractDebugView implements ISelectionListen
 	 * Initializes the actions of this view.
 	 */
 	protected void initializeActions() {
-		fShowTypesAction= new ShowTypesAction(fViewer);
-		fShowTypesAction.setChecked(false);
+		setShowTypesAction(new ShowTypesAction(getViewer()));
+		getShowTypesAction().setChecked(false);
 		
-		fShowQualifiedAction= new ShowQualifiedAction(fViewer);
-		fShowQualifiedAction.setChecked(false);
+		setShowQualifiedAction(new ShowQualifiedAction(getViewer()));
+		getShowQualifiedAction().setChecked(false);
 		
-		fAddToInspectorAction= new AddToInspectorAction(fViewer);
+		setAddToInspectorAction(new AddToInspectorAction(getViewer()));
 		
-		fChangeVariableAction= new ChangeVariableValueAction(fViewer);
-		fChangeVariableAction.setEnabled(false);
+		setChangeVariableAction(new ChangeVariableValueAction(getViewer()));
+		getChangeVariableAction().setEnabled(false);
 		
-		fCopyToClipboardAction= new ControlAction(fViewer, new CopyVariablesToClipboardActionDelegate());
+		setCopyToClipboardAction(new ControlAction(getViewer(), new CopyVariablesToClipboardActionDelegate()));
 	} 
 
 	/**
-	 * Configures the toolBar
+	 * Configures the toolBar.
+	 * 
+	 * @param tbm The toolbar that will be configured
 	 */
 	protected void configureToolBar(IToolBarManager tbm) {
 		tbm.add(new Separator(this.getClass().getName()));
-		tbm.add(fShowTypesAction);
-		tbm.add(fShowQualifiedAction);
+		tbm.add(getShowTypesAction());
+		tbm.add(getShowQualifiedAction());
 	}
 
-  /**
-	* Adds items to the context menu including any extension defined actions.
+   /**
+	* Adds items to the context menu including any extension defined
+	* actions.
+	* 
+	* @param menu The menu to add the item to.
 	*/
 	protected void fillContextMenu(IMenuManager menu) {
 
 		menu.add(new Separator(IDebugUIConstants.EMPTY_VARIABLE_GROUP));
 		menu.add(new Separator(IDebugUIConstants.VARIABLE_GROUP));
-		menu.add(fAddToInspectorAction);
-		menu.add(fChangeVariableAction);
-		menu.add(fCopyToClipboardAction);
+		menu.add(getAddToInspectorAction());
+		menu.add(getChangeVariableAction());
+		menu.add(getCopyToClipboardAction());
 		menu.add(new Separator(IDebugUIConstants.EMPTY_RENDER_GROUP));
 		menu.add(new Separator(IDebugUIConstants.RENDER_GROUP));
-		menu.add(fShowTypesAction);
-		menu.add(fShowQualifiedAction);
+		menu.add(getShowTypesAction());
+		menu.add(getShowQualifiedAction());
 		
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+	}
+	
+	/**
+	 * @see IDoubleClickListener#doubleClick(DoubleClickEvent)
+	 */
+	public void doubleClick(DoubleClickEvent event) {
+		if (getChangeVariableAction().isEnabled()) {
+			getChangeVariableAction().run();
+		}
+	}
+	
+	protected AddToInspectorAction getAddToInspectorAction() {
+		return fAddToInspectorAction;
+	}
+
+	protected void setAddToInspectorAction(AddToInspectorAction addToInspectorAction) {
+		fAddToInspectorAction = addToInspectorAction;
+	}
+
+	protected ChangeVariableValueAction getChangeVariableAction() {
+		return fChangeVariableAction;
+	}
+
+	protected void setChangeVariableAction(ChangeVariableValueAction changeVariableAction) {
+		fChangeVariableAction = changeVariableAction;
+	}
+
+	protected ControlAction getCopyToClipboardAction() {
+		return fCopyToClipboardAction;
+	}
+
+	protected void setCopyToClipboardAction(ControlAction copyToClipboardAction) {
+		fCopyToClipboardAction = copyToClipboardAction;
+	}
+
+	protected ShowQualifiedAction getShowQualifiedAction() {
+		return fShowQualifiedAction;
+	}
+
+	protected void setShowQualifiedAction(ShowQualifiedAction showQualifiedAction) {
+		fShowQualifiedAction = showQualifiedAction;
+	}
+
+	protected ShowTypesAction getShowTypesAction() {
+		return fShowTypesAction;
+	}
+
+	protected void setShowTypesAction(ShowTypesAction showTypesAction) {
+		fShowTypesAction = showTypesAction;
 	}
 }
 
