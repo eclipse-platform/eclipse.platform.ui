@@ -446,6 +446,13 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 			return false;
 		}
 		fPrompting= true;
+		// Activate the shell if necessary so the prompt is visible
+		if (shell.getMinimized()) {
+			shell.setMinimized(false);
+		}
+		if (DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_ACTIVATE_WORKBENCH)) {
+			shell.forceActive();
+		}
 		MessageDialogWithToggle dialog = MessageDialogWithToggle.openYesNoQuestion(shell, LaunchConfigurationsMessages.getString("PerspectiveManager.12"), MessageFormat.format(message, new String[] { perspectiveName }), null, false, DebugUIPlugin.getDefault().getPreferenceStore(), preferenceKey); //$NON-NLS-1$
 		boolean answer = (dialog.getReturnCode() == IDialogConstants.YES_ID);
 		synchronized (this) {
