@@ -6,9 +6,8 @@ All rights reserved.   This program and the accompanying materials
 are made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
- 
-Contributors:
 **********************************************************************/
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jface.action.IAction;
@@ -25,7 +24,6 @@ import org.eclipse.ui.actions.ActionDelegate;
 public class AntRunActionDelegate extends ActionDelegate implements IObjectActionDelegate {
 	private IFile selectedFile;
 	private IWorkbenchPart part;
-	protected boolean runWith= false;
 
 	/* (non-Javadoc)
 	 * Method declared on IActionDelegate.
@@ -33,7 +31,7 @@ public class AntRunActionDelegate extends ActionDelegate implements IObjectActio
 	public void run(IAction action) {
 		if (part != null && selectedFile != null) {
 			AntLaunchShortcut shortcut = new AntLaunchShortcut();
-			shortcut.setShowDialog(runWith);
+			shortcut.setShowDialog(true);
 			shortcut.launch(new StructuredSelection(selectedFile), ILaunchManager.RUN_MODE);
 		}
 	}
