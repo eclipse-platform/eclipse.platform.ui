@@ -13,6 +13,7 @@ package org.eclipse.update.internal.configurator;
 import java.io.*;
 import java.lang.reflect.*;
 import java.net.*;
+import java.nio.channels.*;
 import java.util.*;
 
 import javax.xml.parsers.*;
@@ -52,17 +53,15 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 	private boolean featuresChangeStampIsValid;
 	private long pluginsChangeStamp;
 	private boolean pluginsChangeStampIsValid;
-	private File cfgLockFile;
-	private RandomAccessFile cfgLockFileRAF;
+	private FileLock lock;
 
 	private static final String ECLIPSE = "eclipse"; //$NON-NLS-1$
 	private static final String CONFIG_HISTORY = "history"; //$NON-NLS-1$
 	private static final String PLATFORM_XML = "platform.xml"; //$NON-NLS-1$
 	private static final String CONFIG_NAME = ConfigurationActivator.NAME_SPACE + "/" + PLATFORM_XML;
 	private static final String CONFIG_INI = "config.ini"; //NON-NLS-1$
-//	private static final String CONFIG_FILE_LOCK_SUFFIX = ".lock"; //$NON-NLS-1$
+	private static final String CONFIG_FILE_LOCK_SUFFIX = ".lock"; //$NON-NLS-1$
 	private static final String CONFIG_FILE_TEMP_SUFFIX = ".tmp"; //$NON-NLS-1$
-//	private static final String CHANGES_MARKER = ".newupdates"; //$NON-NLS-1$
 	private static final String LINKS = "links"; //$NON-NLS-1$
 	private static final String[] BOOTSTRAP_PLUGINS = {}; //$NON-NLS-1$
 
@@ -655,14 +654,11 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 					// will recover on next startup
 				}
 			}
-			config.clearConfigurationLock();
 		}
 	}
 
 
 	private synchronized void initializeCurrent(Location platformConfigLocation) throws IOException {
-		// FIXME: commented out for now. Remove if not needed.
-		//boolean concurrentUse = false;
 
 		// Configuration URL was is specified by the OSGi layer. 
 		// Default behavior is to look
@@ -675,8 +671,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		URL configFileURL = new URL(platformConfigLocation.getURL(), CONFIG_NAME);
 		try {	
 			// check concurrent use lock
-			// FIXME: might not need this method call.
-			getConfigurationLock(configFileURL);
+			getConfigurationLock(platformConfigLocation.getURL());
 
 			// try loading the configuration
 			try {
@@ -690,16 +685,13 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 						throw new IOException(); // no platform.xml found, need to create default site
 					
 					URL sharedConfigFileURL = new URL(parentLocation.getURL(), CONFIG_NAME);
-
 					config = loadConfig(sharedConfigFileURL);
 					
 					// pre-initialized config loaded OK ... copy any remaining update metadata
 					// Only copy if the default config location is not the install location
 					if (!sharedConfigFileURL.equals(configFileURL)) {
-							// need to link config info instead of using a copy
-							linkInitializedState(config, parentLocation, platformConfigLocation);
-//							copyInitializedState(sharedConfigDirURL, configPath);
-						
+						// need to link config info instead of using a copy
+						linkInitializedState(config, parentLocation, platformConfigLocation);
 						Utils.debug("Configuration initialized from    " + sharedConfigFileURL.toString()); //$NON-NLS-1$
 					}
 					return;
@@ -714,6 +706,8 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 				config.setURL(configFileURL);
 			verifyPath(configLocation);
 			Utils.debug("Creating configuration " + configFileURL.toString()); //$NON-NLS-1$
+			// releaes concurrent use lock
+			clearConfigurationLock();
 		}
 	}
 
@@ -757,50 +751,34 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		ISiteEntry defaultSite = createSiteEntry(siteURL, defaultPolicy);
 		return defaultSite;
 	}
+	
+	/**
+	 * Gets the configuration lock
+	 * @param url configuration directory
+	 */
+	private void getConfigurationLock(URL url) {
+		if (!url.getProtocol().equals("file")) //$NON-NLS-1$
+			return;
 
-	private boolean getConfigurationLock(URL url) {
-
-//		if (!url.getProtocol().equals("file")) //$NON-NLS-1$
-//			return false;
-//
-//		verifyPath(url);
-//		String cfgName = url.getFile().replace('/', File.separatorChar);
-//		String lockName = cfgName + CONFIG_FILE_LOCK_SUFFIX;
-//		cfgLockFile = new File(lockName);
-//
-//		//if the lock file already exists, try to delete,
-//		//assume failure means another eclipse has it open
-//		if (cfgLockFile.exists())
-//			cfgLockFile.delete();
-//		if (cfgLockFile.exists()) {
-//			throw new RuntimeException(Policy.bind("cfig.inUse", cfgName, lockName)); //$NON-NLS-1$
-//		}
-//
-//		// OK so far ... open the lock file so other instances will fail
-//		try {
-//			cfgLockFileRAF = new RandomAccessFile(cfgLockFile, "rw"); //$NON-NLS-1$
-//			cfgLockFileRAF.writeByte(0);
-//		} catch (IOException e) {
-//			throw new RuntimeException(Policy.bind("cfig.failCreateLock", cfgName)); //$NON-NLS-1$
-//		}
-
-		return false;
-	}
-
-	private void clearConfigurationLock() {
+		File lockFile = new File(url.getFile(), CONFIG_FILE_LOCK_SUFFIX);
+		verifyPath(url);
 		try {
-			if (cfgLockFileRAF != null) {
-				cfgLockFileRAF.close();
-				cfgLockFileRAF = null;
+			RandomAccessFile raf = new RandomAccessFile(lockFile, "rw");
+			lock = raf.getChannel().lock();
+		} catch (IOException ioe) {
+			lock = null;
+		}	
+	}
+	
+	private void clearConfigurationLock() {
+		if (lock != null) {
+			try {
+				lock.channel().close();
+			} catch (IOException ioe) {
 			}
-		} catch (IOException e) {
-			// ignore ...
-		}
-		if (cfgLockFile != null) {
-			cfgLockFile.delete();
-			cfgLockFile = null;
 		}
 	}
+	
 
 	private long computeChangeStamp() {
 		featuresChangeStamp = computeFeaturesChangeStamp();
