@@ -42,7 +42,7 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 			inStream = contentReference.getInputStream();
 			UpdateManagerUtils.copyToLocal(inStream, pluginPath, null);
 		} catch (IOException e) {
-			throw Utilities.newCoreException(Policy.bind("GlobalConsumer.ErrorCreatingFile") + pluginPath, e); //$NON-NLS-1$
+			throw Utilities.newCoreException(Policy.bind("GlobalConsumer.ErrorCreatingFile", pluginPath), e); //$NON-NLS-1$
 		} finally {
 			try {
 				// close stream

@@ -70,7 +70,7 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 			inStream = contentReference.getInputStream();
 			UpdateManagerUtils.copyToLocal(inStream, featurePath, null);
 		} catch (IOException e) {
-			throw Utilities.newCoreException(Policy.bind("GlobalConsumer.ErrorCreatingFile") + featurePath, e); //$NON-NLS-1$
+			throw Utilities.newCoreException(Policy.bind("GlobalConsumer.ErrorCreatingFile", featurePath), e); //$NON-NLS-1$
 		} finally {
 			try {
 				// close stream
