@@ -16,9 +16,9 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -33,9 +33,9 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.IPreferenceConstants;
-import org.eclipse.ui.internal.dialogs.WorkingSetSelectionDialog;
 
 /**
  * This dialog allows the user to search for Ant build files whose names match a
@@ -73,11 +73,19 @@ public class SearchForBuildFilesDialog extends InputDialog {
 	 * parsed
 	 */
 	private Button includeErrorResultButton;
-	private static IPreferenceStore store= ExternalToolsPlugin.getDefault().getPreferenceStore();
+	private static IDialogSettings settings= ExternalToolsPlugin.getDefault().getDialogSettings();
+	{
+		if (settings.get(IPreferenceConstants.ANTVIEW_LAST_SEARCH_STRING) == null) {
+			settings.put(IPreferenceConstants.ANTVIEW_LAST_SEARCH_STRING, "");
+		}
+		if (settings.get(IPreferenceConstants.ANTVIEW_LAST_WORKINGSET_SEARCH_SCOPE) == null) {
+			settings.put(IPreferenceConstants.ANTVIEW_LAST_WORKINGSET_SEARCH_SCOPE, "");
+		} 
+	}
 
 	public SearchForBuildFilesDialog() {
 		super(Display.getCurrent().getActiveShell(), "Search for Build Files", "Input a build file name (* = any string, ? = any character):",
-				store.getString(IPreferenceConstants.ANTVIEW_LAST_SEARCH_STRING), new IInputValidator() {
+				settings.get(IPreferenceConstants.ANTVIEW_LAST_SEARCH_STRING), new IInputValidator() {
 			public String isValid(String newText) {
 				String trimmedText = newText.trim();
 				if (trimmedText.length() == 0) {
@@ -95,11 +103,11 @@ public class SearchForBuildFilesDialog extends InputDialog {
 		super.createButtonsForButtonBar(parent);
 		getOkButton().setText("Search");
 
-		String workingSetName= store.getString(IPreferenceConstants.ANTVIEW_LAST_WORKINGSET_SEARCH_SCOPE);
+		String workingSetName= settings.get(IPreferenceConstants.ANTVIEW_LAST_WORKINGSET_SEARCH_SCOPE);
 		if (workingSetName.length() > 0) {
 			setWorkingSet(PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSet(workingSetName));
 		}
-		if (!store.getBoolean(IPreferenceConstants.ANTVIEW_USE_WORKINGSET_SEARCH_SCOPE)) {
+		if (!settings.getBoolean(IPreferenceConstants.ANTVIEW_USE_WORKINGSET_SEARCH_SCOPE)) {
 			selectRadioButton(workspaceScopeButton);
 			handleRadioButtonPressed();
 		}
@@ -216,7 +224,7 @@ public class SearchForBuildFilesDialog extends InputDialog {
 		includeErrorResultButton= new Button(composite, SWT.CHECK);
 		includeErrorResultButton.setFont(font);
 		includeErrorResultButton.setText("Include build files that contain errors");
-		includeErrorResultButton.setSelection(store.getBoolean(IPreferenceConstants.ANTVIEW_INCLUDE_ERROR_SEARCH_RESULTS));
+		includeErrorResultButton.setSelection(settings.getBoolean(IPreferenceConstants.ANTVIEW_INCLUDE_ERROR_SEARCH_RESULTS));
 	}
 	
 	/**
@@ -248,7 +256,7 @@ public class SearchForBuildFilesDialog extends InputDialog {
 	 * chosen working set or <code>null</code> if none.
 	 */
 	private void handleChooseButtonPressed() {
-		WorkingSetSelectionDialog dialog= new WorkingSetSelectionDialog(getShell(), false);
+		IWorkingSetSelectionDialog dialog= PlatformUI.getWorkbench().getWorkingSetManager().createWorkingSetSelectionDialog(getShell(), false);
 		if (dialog.open() == Dialog.CANCEL) {
 			return;
 		}
@@ -313,7 +321,7 @@ public class SearchForBuildFilesDialog extends InputDialog {
 	 * parsed.
 	 */
 	public boolean getIncludeErrorResults() {
-		return store.getBoolean(IPreferenceConstants.ANTVIEW_INCLUDE_ERROR_SEARCH_RESULTS);
+		return settings.getBoolean(IPreferenceConstants.ANTVIEW_INCLUDE_ERROR_SEARCH_RESULTS);
 	}
 
 	/**
@@ -322,10 +330,10 @@ public class SearchForBuildFilesDialog extends InputDialog {
 	 */
 	protected void okPressed() {
 		String input = getInput();
-		store.setValue(IPreferenceConstants.ANTVIEW_LAST_SEARCH_STRING, input);
-		store.setValue(IPreferenceConstants.ANTVIEW_INCLUDE_ERROR_SEARCH_RESULTS, includeErrorResultButton.getSelection());
-		store.setValue(IPreferenceConstants.ANTVIEW_LAST_WORKINGSET_SEARCH_SCOPE, getWorkingSetName());
-		store.setValue(IPreferenceConstants.ANTVIEW_USE_WORKINGSET_SEARCH_SCOPE, workingSetScopeButton.getSelection());
+		settings.put(IPreferenceConstants.ANTVIEW_LAST_SEARCH_STRING, input);
+		settings.put(IPreferenceConstants.ANTVIEW_INCLUDE_ERROR_SEARCH_RESULTS, includeErrorResultButton.getSelection());
+		settings.put(IPreferenceConstants.ANTVIEW_LAST_WORKINGSET_SEARCH_SCOPE, getWorkingSetName());
+		settings.put(IPreferenceConstants.ANTVIEW_USE_WORKINGSET_SEARCH_SCOPE, workingSetScopeButton.getSelection());
 		results = new ArrayList(); // Clear previous results
 		StringMatcher matcher= new StringMatcher(input, true, false);
 		if (searchScopes == null || searchScopes.isEmpty()) {
