@@ -64,6 +64,8 @@ public class PServerSSH2ServerConnection implements IServerConnection {
 
   public void open(IProgressMonitor monitor) throws IOException, 
 						    CVSAuthenticationException {
+    monitor.subTask("PServerSSH2ServerConnection.open");
+    monitor.worked(1);
     String cvs_root=location.getRootDirectory();
     int cvs_port=location.getPort();
     if(cvs_port==0) cvs_port=2401;
@@ -103,7 +105,7 @@ public class PServerSSH2ServerConnection implements IServerConnection {
     int retry=1;
     while(true){
       try{
-	session=JSchSession.getSession(ssh_user, "", ssh_host, ssh_port);
+	session=JSchSession.getSession(ssh_user, "", ssh_host, ssh_port, monitor);
 	String[] list=session.getPortForwardingL();
 	String name=":"+rhost+":"+rport;
 	boolean done=false;

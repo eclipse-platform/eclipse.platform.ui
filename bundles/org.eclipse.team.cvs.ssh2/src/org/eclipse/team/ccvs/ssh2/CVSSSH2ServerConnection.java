@@ -54,6 +54,8 @@ public class CVSSSH2ServerConnection implements IServerConnection {
 
   public void open(IProgressMonitor monitor) throws IOException, 
 						    CVSAuthenticationException {
+    monitor.subTask("CVSSSH2ServerConnection.open");
+    monitor.worked(1);
     try{
       String hostname=location.getHost();
       String username=location.getUsername();
@@ -66,7 +68,7 @@ public class CVSSSH2ServerConnection implements IServerConnection {
       InputStream channel_in;
 
       while(true){
-	session=JSchSession.getSession(username, password, hostname, port);
+	session=JSchSession.getSession(username, password, hostname, port, monitor);
 	channel=session.openChannel("exec");
 	((ChannelExec)channel).setCommand(COMMAND);
 

@@ -13,7 +13,14 @@ package org.eclipse.team.cvs.ssh2;
 
 import java.util.Enumeration;
 import java.io.File;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.IOException;
+import java.net.Socket;
+import java.net.UnknownHostException;
 
+import org.eclipse.team.internal.ccvs.core.util.Util;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.widgets.Display;
@@ -39,7 +46,8 @@ class JSchSession{
   private static String current_ssh_home=null;
 
   static Session getSession(String username, String password, 
-			    String hostname, int port) throws JSchException{
+			    String hostname, int port,
+			    final IProgressMonitor monitor) throws JSchException{
     if(port==0) port=SSH_DEFAULT_PORT;
     if(jsch==null){
       jsch=new JSch();
@@ -115,6 +123,26 @@ class JSchSession{
 
 	UserInfo ui=new MyUserInfo(username);
 	session.setUserInfo(ui);
+
+	session.setSocketFactory(new SocketFactory(){
+	    InputStream in=null;
+	    OutputStream out=null;
+	    public Socket createSocket(String host, int port) throws IOException,
+								     UnknownHostException{
+	      Socket socket=null;
+	      socket=Util.createSocket(host, port, monitor);
+	      return socket;
+	    }
+	    public InputStream getInputStream(Socket socket) throws IOException{
+	      if(in==null) in=socket.getInputStream();
+	      return in;
+	    }
+	    public OutputStream getOutputStream(Socket socket) throws IOException{
+	      if(out==null) out=socket.getOutputStream();
+	      return out;
+	    }
+	  });
+
 	session.connect();
 	pool.put(key, session);
       }
