@@ -220,10 +220,8 @@ public class HistoryBucket extends Bucket {
 
 	}
 
-	/** Version number for the current implementation file's format.
-	 * <p>
-	 * Version 2: same as version 1, but states for an entry are already sorted
-	 * </p>
+	/** 
+	 * Version number for the current implementation file's format.
 	 * <p>
 	 * Version 1:
 	 * <pre>
@@ -237,7 +235,7 @@ public class HistoryBucket extends Bucket {
 	 * </pre>
 	 * </p>
 	 */
-	public final static byte VERSION = 2;
+	public final static byte VERSION = 1;
 
 	public HistoryBucket(File root) {
 		super(root);
@@ -290,7 +288,7 @@ public class HistoryBucket extends Bucket {
 		byte[][] uuids = new byte[length][HistoryEntry.DATA_LENGTH];
 		for (int j = 0; j < uuids.length; j++)
 			source.read(uuids[j]);
-		// TODO drop this line when compatibility with version one is no longer needed
+		// TODO drop this line when compatibility for early adopters no longer needed
 		HistoryEntry.sort(uuids);
 		return uuids;
 	}
