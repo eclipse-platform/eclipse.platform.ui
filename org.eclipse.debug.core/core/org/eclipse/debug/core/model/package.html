@@ -8,50 +8,90 @@
 
 <body bgcolor="#FFFFFF">
 
-<h3>The Debug Model</h3>
+<p>Defines interfaces for a debug model to support an extensible set of debug architectures.</p>
 
-<p><strong>Note:</strong> this package is part of an interim API that is still under
-development and expected to change significantly before reaching stability. It is being
-made available at this early stage to soloicit feedback from pioneering adopters on the
-understanding that any code that uses this API will almost certainly be broken
-(repeatedly) as the API evolves.</p>
+<h2>Package Specification</h2>
 
-<p>A language independent &quot;debug model&quot; is represented by the set of interfaces
-defined in <b>org.eclipse.debug.core.model</b>. A client implements a debug
-model by providing an implementation of these interfaces in a plug-in. (There is no
-explicit extension point that represents a debug model). Each debug architecture will have
-its own way of initiating a debug session. Generally, each debug model will provide one or
-more launchers capable of initiating a debug session. A &quot;launcher&quot; is an
-extension point defined by the debug plug-in. A launcher is responsible for starting a
-debug session, and registering the result with the debug plug-in. Launching is a client
-responsibility.</p>
+<p>This package defines classes and interfaces known as the &quot;debug model&quot; which support
+an extensible set of debug architectures and languages. The debug model is a set of interfaces
+representing common artifacts in debuggable programs. The debug plug-in itself does not provide
+any implementations of a debug model. It is intended that third parties providing an integrated
+set of development tools for a specific language will also implement a debug model for that language,
+using an underlying debug architecture of their choice. For example, Java Tooling provides an
+implementation of a debug model based on the standard Java Debug Interface (JDI).</p>
 
-<p>The common elements defined by the debug plug-in are: 
+<h4>The Debug Model</h4>
+
+<p>A client implements a debug model by
+providing an implementation of the interfaces defined in this package. (There is no explicit
+extension point that represents a debug model). Each debug model provides one or more
+launch configuration types capable of initiating a debug session.</p>
+
+<p>The common elements defined by the debug model are: 
 
 <ul>
-  <li>Debug Target - a debug target represents a debuggable program - for example, a virtual
+  <li>Debug Target - A debug target represents a debuggable program - for example, a virtual
     machine or a process.</li>
-  <li>Thread - a debug target may contain one or more threads</li>
-  <li>Stack Frame - a thread that is suspended may contain one or more stack frames</li>
-  <li>Variable - a stack frame may contain variables</li>
-  <li>Value - each variable has a value, and a value may contain more variables (to represent
-    complex data structures and objects)</li>
-  <li>Process - a program running in normal (non-debug) mode</li>
+  <li>Thread - A debug target may contain one or more threads.</li>
+  <li>Stack Frame - A suspended thread may contain one or more stack frames.</li>
+  <li>Variable - A stack frame may contain variables.</li>
+  <li>Value - Each variable has an associated value, and a value may contain more variables (to
+  	represent complex data structures and objects).</li>
+  <li>Register Group - A stack frame may (optionally) be associated with one or more register
+    groups.</li>
+  <li>Register - A register group contains one or more registers.</li>
+  <li>Memory Blocks - A debug target may (optionally) support the retrieval of
+    arbitrary contiguos segments of memory.</li>
+  <li>Breakpoint - Breakpoints suspend the execution of a program.</li>
+  <li>Expression -  An expression is a snippet of code that can be evaluated to
+  	produce a value.</li>
 </ul>
 
-<h4>Rendering &amp; Presentation</h4>
+<p>A debug model implementation is responsible for firing debug events. A debug event
+corresponds to an event in a program being debugged - for example the creation or
+termination of a thread.</p>
 
-<p>Debug model elements and breakpoints are displayed in the workbench. To support
-configurable and extensible presentation, the debug UI plug-in defines the <b>
-debugModelPresentations</b> extension point. Extensions of this kind
-register for a specific debug model. It is intended that an implementation of a debug
-model will also provide an implementation of a debug model presentation. The presentation
-provides: 
+<h4>Breakpoints</h4>
 
-<ul>
-  <li>an image for a debug element or breakpoint</li>
-  <li>a label for a debug element or breakpoint</li>
-  <li>an editor input that should be used to display a debug element or breakpoint</li>
-</ul>
+<p>Breakpoints are used to suspend the execution of a program being debugged. There are
+many kinds of breakpoints - line breakpoints, conditional line breakpoints, hit count
+breakpoints, exception breakpoints, etc. The kinds of breakpoints supported by each debug
+architecture (for example, JDI), and the information required to create those breakpoints
+is dictated by each debug architecture. Eclipse Debug Tools supports an extensible
+set of breakpoint via the breakpoints extension point.</p>
+
+<p>Eclipse Debug Tools provides a breakpoint manager that maintains the collection of all
+registered breakpoints. Clients add and remove breakpoints via this manager. Breakpoints are
+implemented by instances of IBreakpoint. Each breakpoint object has an associated marker,
+which provides persistence and presentation in editors. Eclipse Debug Tools defines a generic
+breakpoint and line breakpoint, as well as their corresponding marker definitions. Breakpoint
+creation is a client responsibility - that is, defining the attributes of a breakpoint and
+the resource to associate a breakpoin marker with.</p>
+
+<p>Breakpoint creation is a client responsibility, as the location in which a breakpoint may
+be placed, and the attributes that a debug target requires to install a breakpoint is
+specific to each debug architecture.</p>
+
+<h5>Persistence</h5>
+
+<p>Breakpoints are persisted via their underlying marker. Breakpoint markers defined
+with the <b>persisted</b> attribute as <b>false</b> will not be persisted. Breakpoints
+are restored at workspace startup time by the breakpoint manager - that is, breakpoint objects
+are created for all persisted markers which are a subtype of the root breakpoint marker
+and are added to the breakpoint manager. To allow for selective persistence
+of breakpoints (of the same kind), the IBreakpoint interface and root breakpoint
+implementation define a &quot;persisted&quot; attribute. If this value is set to false,
+the breakpoint will not be persisted across workspace invocations.</p>
+
+<h5>Change Notification</h5>
+
+<p>As breakpoint markers are modified (created, removed, and changed), resource deltas
+are created by the platform. The breakpoint manager translates pertinent resource deltas
+into breakpoint change notifications (breakpoint added/removed/changed messages). Interested
+listeners may register with the breakpoint manager. The breakpoint manager only fires change
+notifications for registered breakpoints. This simplifies breakpoint processing for clients,
+as resource delta traversal and analysis is not required. Debug targets that support breakpoints
+should register for breakpoint change notifications.</p>
+
 </body>
 </html>
