@@ -63,6 +63,7 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 		fWidthEditor = new IntegerFieldEditor(IDebugPreferenceConstants.CONSOLE_WIDTH, DebugPreferencesMessages.getString("ConsolePreferencePage.Console_width"), getFieldEditorParent()); //$NON-NLS-1$
 		addField(fWidthEditor);
 		fWidthEditor.setValidRange(80, Integer.MAX_VALUE - 1);
+		fWidthEditor.setErrorMessage(DebugPreferencesMessages.getString("ConsolePreferencePage.console_width")); //$NON-NLS-1$
 		
 		fWrapEditor.getChangeControl(getFieldEditorParent()).addSelectionListener(
 			new SelectionAdapter() {
