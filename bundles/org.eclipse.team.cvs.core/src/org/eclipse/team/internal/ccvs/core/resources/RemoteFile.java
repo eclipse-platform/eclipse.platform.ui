@@ -65,9 +65,9 @@ public class RemoteFile extends RemoteResource implements IRemoteFile {
 		// Perform a "cvs status..." with a custom message hanlder
 		RemoteManagedFolder folder = new RemoteManagedFolder(".", getConnection(), parent.getFullPath(), getName());
 		List localOptions = getLocalOptionsForTag();
-		List entries = new ArrayList();
+		final List entries = new ArrayList();
 		Client.execute(
-			Client.STATUS,
+			Client.LOG,
 			Client.EMPTY_ARGS_LIST, 
 			(String[])localOptions.toArray(new String[localOptions.size()]),
 			new String[]{getName()}, 

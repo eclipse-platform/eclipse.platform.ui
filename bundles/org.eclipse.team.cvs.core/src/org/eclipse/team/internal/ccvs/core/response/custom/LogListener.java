@@ -16,7 +16,7 @@ public class LogListener implements ILogListener {
 	/**
 	 * Constructor for LogListener.
 	 */
-	public LogListener(RemoteFile file, List entires) {
+	public LogListener(RemoteFile file, List entries) {
 		this.entries = entries;
 		this.file = file;
 	}
