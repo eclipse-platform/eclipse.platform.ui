@@ -260,9 +260,9 @@ public class Util {
                         boolean remote) {
                     StringBuffer cmd = new StringBuffer(browser);
                     if (remote) {
-                        cmd.append(" -remote \"openURL(");
+                        cmd.append(" -remote openURL(");
                         cmd.append(href);
-                        cmd.append(")\"");
+                        cmd.append(")");
                     } else {
                         cmd.append(" ");
                         cmd.append(href);
