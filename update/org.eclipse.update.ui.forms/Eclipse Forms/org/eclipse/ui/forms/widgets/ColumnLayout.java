@@ -148,14 +148,15 @@ public class ColumnLayout extends Layout implements ILayoutExtension {
 			Control child = children[i];
 			Point csize = sizes[i];
 			ccolCount++;
+			int childWidth = Math.max(cwidth, realWidth);
 			if (y + csize.y + bottomMargin > carea.height || ccolCount>childrenPerColumn) {
 				// wrap
-				x += horizontalSpacing + realWidth;
+				x += horizontalSpacing + childWidth;
 				y = topMargin;
 				ncol++;
 				ccolCount=1;
 			}
-			int childWidth = realWidth;
+
 			if (ncol == ncolumns - 1) {
 				childWidth = carea.width - x - rightMargin;
 			}

@@ -333,7 +333,7 @@ public class FormUtil {
 		}
 		return SWT.DEFAULT;
 	}
-
+	
 	static int computeMinimumWidth(Control c, boolean changed) {
 		if (c instanceof Composite) {
 			Layout layout = ((Composite)c).getLayout();

@@ -61,10 +61,18 @@ public class ExpandableComposite extends Composite {
 	 * be taken into acount.
 	 */
 	public static final int COMPACT = 1 << 6;
+	/**
+	 * If this style is used, the control will be created
+	 * in the expanded state. This state can later be changed
+	 * programmatically or by the user if TWISTIE or TREE_NODE
+	 * style is used.
+	 */
+	public static final int EXPANDED = 1 << 7;
+	
 	private int GAP = 4;
 	private int VSPACE = 3;
 	private int SEPARATOR_HEIGHT = 2;
-	private int expansionStyle = TWISTIE | FOCUS_TITLE;
+	private int expansionStyle = TWISTIE | FOCUS_TITLE | EXPANDED;
 	private boolean expanded;
 	private Control client;
 	private Vector listeners;
@@ -174,9 +182,16 @@ public class ExpandableComposite extends Composite {
 				if ((expansionStyle & CLIENT_INDENT) != 0)
 					cwHint = innerwHint;
 				Point dsize = null;
-				if (getDescriptionControl()!=null)
-					dsize = getDescriptionControl().computeSize(cwHint, SWT.DEFAULT, changed);
 				Point csize = client.computeSize(FormUtil.getWidthHint(cwHint, client), SWT.DEFAULT, changed);
+				if (getDescriptionControl()!=null) {
+					int dwHint = cwHint;
+					if (dwHint==SWT.DEFAULT) {
+						dwHint = csize.x;
+						if ((expansionStyle & CLIENT_INDENT)!=0)
+							dwHint -= twidth;
+					}
+					dsize = getDescriptionControl().computeSize(dwHint, SWT.DEFAULT, changed);
+				}
 				if (dsize!=null) {
 					if ((expansionStyle & CLIENT_INDENT)!=0)
 						dsize.x -= twidth;
@@ -276,7 +291,10 @@ public class ExpandableComposite extends Composite {
 			toggle = new TreeNode(this, SWT.NULL);
 		else if ((expansionStyle & NONE) != 0)
 			expanded = true;
+		if ((expansionStyle & EXPANDED) != 0)
+			expanded = true;
 		if (toggle != null) {
+			toggle.setExpanded(expanded);			
 			toggle.addHyperlinkListener(new HyperlinkAdapter() {
 				public void linkActivated(HyperlinkEvent e) {
 					toggleState();

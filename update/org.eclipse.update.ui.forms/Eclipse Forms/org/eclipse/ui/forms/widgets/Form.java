@@ -46,6 +46,29 @@ public class Form extends ScrolledComposite {
 	private Image backgroundImage;
 	private String text;
 	private Composite body;
+	
+	private class BodyComposite extends Composite {
+		public BodyComposite(Composite parent, int style) {
+			super(parent, style);
+		}
+		public Point computeSize(int wHint, int hHint, boolean changed) {
+			Layout layout = getLayout();
+			if (layout instanceof TableWrapLayout)
+				return ((TableWrapLayout)layout).computeSize(this, wHint, hHint, changed);
+			if (layout instanceof ColumnLayout)
+				return ((ColumnLayout)layout).computeSize(this, wHint, hHint, changed);
+			return super.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed);
+		}
+	}
+	
+	private class ContentComposite extends Composite {
+		public ContentComposite(Composite parent, int style) {
+			super(parent, style);
+		}
+		public Point computeSize(int wHint, int hHint, boolean changed) {
+			return ((FormLayout)getLayout()).computeSize(this, wHint, hHint, changed);
+		}
+	}
 
 	private class FormLayout extends Layout implements ILayoutExtension {
 
@@ -63,7 +86,7 @@ public class Form extends ScrolledComposite {
 				SWT.DEFAULT,
 				flushCache).x;
 		}
-		protected Point computeSize(
+		public Point computeSize(
 			Composite composite,
 			int wHint,
 			int hHint,
@@ -131,7 +154,7 @@ public class Form extends ScrolledComposite {
 				reflow(true);
 			}
 		});
-		final Composite content = new Composite(this, SWT.NULL);
+		final Composite content = new ContentComposite(this, SWT.NULL);
 		content.addListener(SWT.Paint, new Listener() {
 			public void handleEvent(Event e) {
 				onPaint(content, e.gc);
@@ -140,7 +163,7 @@ public class Form extends ScrolledComposite {
 		super.setContent(content);
 		content.setLayout(new FormLayout());
 
-		body = new Composite(content, SWT.NULL);
+		body = new BodyComposite(content, SWT.NULL);
 		body.setMenu(parent.getMenu());
 		initializeScrollBars();
 	}
