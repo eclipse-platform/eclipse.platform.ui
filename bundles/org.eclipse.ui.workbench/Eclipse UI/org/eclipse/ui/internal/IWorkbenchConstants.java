@@ -171,5 +171,5 @@ public interface IWorkbenchConstants {
 	public static final String TAG_LOCKED = "locked";//$NON-NLS-1$
 	
 	//Progress indicator
-	public static final String SHOW_PROGRESS_INDICATOR = "showProgressIndicator";	
+	public static final String SHOW_PROGRESS_INDICATOR = "showProgressIndicator";	 //$NON-NLS-1$
 }
