@@ -233,6 +233,20 @@ import org.eclipse.ui.internal.util.Util;
     }
 
     /**
+     * Returns whether the given view id contains a wildcard. Wildcards cannot
+     * be used in regular view ids, only placeholders.
+     * 
+     * @param viewId the view id
+     * @return <code>true</code> if the given view id contains a wildcard,
+     *         <code>false</code> otherwise
+     * 
+     * @since 3.0.1
+     */
+    static boolean hasWildcard(String viewId) {
+        return viewId.indexOf(PartPlaceholder.WILD_CARD) >= 0;
+    }
+    
+    /**
 	 * Constructs a new view factory.
 	 */
 	public ViewFactory(WorkbenchPage page, IViewRegistry reg) {

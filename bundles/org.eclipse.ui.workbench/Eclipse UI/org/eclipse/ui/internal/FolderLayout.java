@@ -13,9 +13,7 @@ package org.eclipse.ui.internal;
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
-
 import org.eclipse.ui.internal.registry.IViewDescriptor;
-import org.eclipse.ui.internal.registry.IViewRegistry;
 
 /**
  * This layout is used to define the initial set of views and placeholders
@@ -49,20 +47,9 @@ public class FolderLayout implements IFolderLayout {
 	 * @see org.eclipse.ui.IPlaceholderFolderLayout#addPlaceholder(java.lang.String)
 	 */
 	public void addPlaceholder(String viewId) {
-		if (pageLayout.checkPartInLayout(viewId))
-			return;
-
-		// Get the view's label.
-		// @issue: why do we need to ask the registry for the view??
-		if (viewId.indexOf(PartPlaceholder.WILD_CARD) == -1) { //$NON-NLS-1$
-			IViewRegistry reg = WorkbenchPlugin.getDefault().getViewRegistry();
-			IViewDescriptor desc = reg.find(viewId);
-			if (desc == null) {
-				// cannot safely open the dialog so log the problem
-				WorkbenchPlugin.log("Unable to find view label: " + viewId); //$NON-NLS-1$
-				return;
-			}
-		}
+        if (!pageLayout.checkValidPlaceholderId(viewId)) {
+            return;
+        }
 
 		// Create the placeholder.
 		PartPlaceholder newPart = new PartPlaceholder(viewId);

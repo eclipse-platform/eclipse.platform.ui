@@ -76,6 +76,21 @@
             class="org.eclipse.ui.tests.api.SessionPerspective"
             id="org.eclipse.ui.tests.api.SessionPerspective">
       </perspective>
+      <perspective
+            class="org.eclipse.ui.tests.api.PerspectiveWithMultiViewPlaceholdersAtTopLevel"
+            name="UI Test Perspective with Multi View Placeholders At Top Level"
+            id="org.eclipse.ui.tests.PerspectiveWithMultiViewPlaceholdersAtTopLevel">
+      </perspective>      
+      <perspective
+            class="org.eclipse.ui.tests.api.PerspectiveWithMultiViewPlaceholdersInPlaceholderFolder"
+            name="UI Test Perspective with Multi View Placeholders In Placeholder Folder"
+            id="org.eclipse.ui.tests.PerspectiveWithMultiViewPlaceholdersInPlaceholderFolder">
+      </perspective>      
+      <perspective
+            class="org.eclipse.ui.tests.api.PerspectiveWithMultiViewPlaceholdersInFolder"
+            name="UI Test Perspective with Multi View Placeholders In Folder"
+            id="org.eclipse.ui.tests.PerspectiveWithMultiViewPlaceholdersInFolder">
+      </perspective>      
    </extension>
    <extension
          point="org.eclipse.ui.views">
