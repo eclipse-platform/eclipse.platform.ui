@@ -4,6 +4,8 @@ package org.eclipse.debug.ui;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
  
 /**
  * Constant definitions for debug UI plug-in.
@@ -97,7 +99,7 @@ public interface IDebugUIConstants {
 	/**
 	 * Debug UI plug-in identifier (value <code>"org.eclipse.debug.ui"</code>).
 	 */
-	public static final String PLUGIN_ID = "org.eclipse.debug.ui"; //$NON-NLS-1$
+	public static final String PLUGIN_ID = DebugUIPlugin.getUniqueIdentifier();
 	
 	/**
 	 * Debug perspective identifier (value <code>"org.eclipse.debug.ui.DebugPerspective"</code>).
