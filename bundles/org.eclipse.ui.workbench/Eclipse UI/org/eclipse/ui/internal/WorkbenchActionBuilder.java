@@ -1018,9 +1018,9 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 				}
 						
 				if (newAutoBuildSetting)
-					addManualIncrementalBuildAction();
-				else
 					removeManualIncrementalBuildAction();
+				else
+					addManualIncrementalBuildAction();
 					
 				// If auto build is turned on, then do a global incremental
 				// build on all the projects.
