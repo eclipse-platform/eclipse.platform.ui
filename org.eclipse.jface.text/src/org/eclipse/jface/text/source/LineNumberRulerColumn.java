@@ -227,7 +227,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 		 * Called on drag selection.
 		 * 
 		 * @param event the mouse event caught by the mouse move listener
-		 * @return <code>true</code> if scrolling happend, <code>false</code> otherwise
+		 * @return <code>true</code> if scrolling happened, <code>false</code> otherwise
 		 */
 		private boolean autoScroll(MouseEvent event) {
 			Rectangle area= fCanvas.getClientArea();
