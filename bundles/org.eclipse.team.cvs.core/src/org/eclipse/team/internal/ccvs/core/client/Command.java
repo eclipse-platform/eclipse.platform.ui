@@ -46,6 +46,7 @@ public abstract class Command {
 	public final static Remove REMOVE = new Remove();
 	public final static Status STATUS = new Status();
 	public final static Tag TAG = new Tag();
+	public final static RTag RTAG = new RTag();
 	public final static Update UPDATE = new Update();
 	final static ValidRequests VALID_REQUESTS = new ValidRequests();
 	
