@@ -1,8 +1,8 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
 <html>
 
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
 <title>Eclipse Debug Tools</title>
 </head>
 
@@ -17,7 +17,7 @@ understanding that any code that uses this API will almost certainly be broken
 (repeatedly) as the API evolves.</p>
 
 <p>A language independent &quot;debug model&quot; is represented by the set of interfaces
-defined in <font face="Courier">org.eclipse.debug.core.model</font>. A client implements a debug
+defined in <b>org.eclipse.debug.core.model</b>. A client implements a debug
 model by providing an implementation of these interfaces in a plug-in. (There is no
 explicit extension point that represents a debug model). Each debug architecture will have
 its own way of initiating a debug session. Generally, each debug model will provide one or
@@ -42,8 +42,8 @@ responsibility.</p>
 <h4>Rendering &amp; Presentation</h4>
 
 <p>Debug model elements and breakpoints are displayed in the workbench. To support
-configurable and extensible presentation, the debug UI plug-in defines the <font
-face="Courier">debugModelPresentations</font> extension point. Extensions of this kind
+configurable and extensible presentation, the debug UI plug-in defines the <b>
+debugModelPresentations</b> extension point. Extensions of this kind
 register for a specific debug model. It is intended that an implementation of a debug
 model will also provide an implementation of a debug model presentation. The presentation
 provides: 

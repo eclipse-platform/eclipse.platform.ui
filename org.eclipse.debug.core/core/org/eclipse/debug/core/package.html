@@ -1,8 +1,8 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
 <html>
 
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
 <title>Eclipse Debug Tools</title>
 </head>
 
@@ -31,8 +31,8 @@ of a debug model based on the standard Java Debug Interface (JDI).</p>
 
 <h4>The Debug Model</h4>
 
-<p>The &quot;debug model&quot; is represented by the set of interfaces defined in <font
-face="Courier">org.eclipse.debug.core.model</font>. A client implements a debug model by
+<p>The &quot;debug model&quot; is represented by the set of interfaces defined in <b>
+org.eclipse.debug.core.model</b>. A client implements a debug model by
 providing an implementation of these interfaces in a plug-in. (There is no explicit
 extension point that represents a debug model). Each debug architecture will have its own
 way of initiating a debug session. Generally, each debug model will provide one or more
@@ -56,7 +56,7 @@ responsibility.</p>
 <h5>Rendering &amp; Presentation</h5>
 
 <p>Debug model elements and breakpoints are displayed in the workbench. To support
-configurable and extensible presentation, the<font face="Courier"> debugModelPresentations</font>
+configurable and extensible presentation, the<b> debugModelPresentations</b>
 extension point is used. Extensions may be registered for a specific debug model. It is
 intended that an implementation of a debug model will also provide an implementation of a
 debug model presentation. The presentation provides: 
@@ -84,25 +84,24 @@ common line breakpoint marker, as well as the attributes for these markers. Brea
 creation is a client responsibility - that is, choosing which resource to associate a
 breakpoint with.</p>
 
-<p>The breakpoint definitions in plug-in <font face="Courier New">org.eclipse.debug.core</font>
+<p>The breakpoint definitions in plug-in <b>org.eclipse.debug.core</b>
 are as follows: </p>
-<font SIZE="2">
 
-<p><font face="Courier">&lt;extension id=&quot;breakpoint&quot;
+<p>&lt;extension id=&quot;breakpoint&quot;
 point=&quot;org.eclipse.core.resources.markers&quot;&gt;<br>
 &nbsp;&nbsp;&nbsp; &lt;super type=&quot;org.eclipse.core.resources.marker&quot;/&gt;<br>
 &nbsp;&nbsp;&nbsp; &lt;persisted value=&quot;true&quot;/&gt;</font></font><br>
 <font face="Courier" SIZE="2">&nbsp;&nbsp;&nbsp; &lt;attribute
 name=&quot;modelIdentifier&quot;/&gt;<br>
 &nbsp;&nbsp;&nbsp; &lt;attribute name=&quot;enabled&quot;/&gt;<br>
-&lt;/extension&gt;</font></p>
+&lt;/extension&gt;</p>
 
-<p><font face="Courier" SIZE="2">&lt;extension id=&quot;lineBreakpoint&quot;
+<p>&lt;extension id=&quot;lineBreakpoint&quot;
 point=&quot;org.eclipse.core.resources.markers&quot;&gt;<br>
 &nbsp;&nbsp;&nbsp; &lt;super type=&quot;org.eclipse.debug.core.breakpoint&quot;/&gt;<br>
 &nbsp;&nbsp;&nbsp; &lt;super type=&quot;org.eclipse.core.resources.textmarker&quot;/&gt;<br>
 &nbsp;&nbsp;&nbsp; &lt;persisted value=&quot;true&quot;/&gt;<br>
-&lt;/extension&gt;</font></p>
+&lt;/extension&gt;</p>
 
 <h5>Breakpoint Creation</h5>
 
@@ -126,7 +125,7 @@ responsibility.</p>
 <h5>Persistence</h5>
 
 <p>Breakpoints are persisted via the standard marker mechanism. Breakpoints defined with
-the <font face="Courier New">persisted</font> attribute as <font face="Courier New">false</font>
+the <b>persisted</b> attribute as <b>false</b>
 will not be persisted. Breakpoints are restored at workspace startup time by the
 breakpoint manager - that is, all persisted markers which are a subtype of the root
 breakpoint marker are added to the breakpoint manager. To allow for selective persistence
@@ -150,7 +149,7 @@ with the breakpoint manager).</p>
 <h5>Deletion</h5>
 
 <p>Removing a breakpoint from the breakpoint manager signals the end of the breakpoint
-lifecycle. A breakpoint may be removed with the method <font face="Courier">org.eclipse.debug.core.IBreakpointManager.removeBreakpoint(IMarker)</font>,
+lifecycle. A breakpoint may be removed with the method <b>org.eclipse.debug.core.IBreakpointManager.removeBreakpoint(IMarker)</b>,
 or by deleting the underlying marker (in the later case, the breakpoint manager notices a
 breakpoint has been deleted, and automatically removes it).</p>
 
@@ -165,12 +164,12 @@ model dependent.</p>
 
 <h5>Target Notification</h5>
 
-<p>Debug targets are notified of breakpoints via the <font face="Courier New">IBreakpointListener</font>
+<p>Debug targets are notified of breakpoints via the <b>IBreakpointListener</b>
 mechanism. The breakpoint manager only notifies debug targets of breakpoints
 added/changed/removed, after a target has been created. Since breakpoints are often in
 existence before a debug target is launched, a debug target is responsible for querying
-the breakpoint manager for breakpoints in existence when it is created - see <font
-face="Courier">org.eclipse.debug.core.IBreakpointManager.getBreakpoints(String)</font>,
+the breakpoint manager for breakpoints in existence when it is created - see <b>
+org.eclipse.debug.core.IBreakpointManager.getBreakpoints(String)</b>,
 which provides a list of active breakpoints for a specific debug model.</p>
 </body>
 </html>

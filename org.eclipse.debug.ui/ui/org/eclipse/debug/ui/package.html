@@ -1,8 +1,8 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
 <html>
 
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
 <title>Eclipse Debug Tools</title>
 </head>
 
@@ -22,8 +22,8 @@ understanding that any code that uses this API will almost certainly be broken
 <p>Eclipse Debug Tools UI (debug UI plug-in) provides a set of classes and interfaces to
 support a debugger user interface. A generic debug perspective is provided with a common
 set of views. Clients are allowed to contribute actions to the debug views via the
-standard workbench <font face="Courier New">viewAction</font> extension point, and can
-contribute to popup menus in the debug views via the standard <font face="Courier New">popupMenu</font>
+standard workbench <b>viewAction</b> extension point, and can
+contribute to popup menus in the debug views via the standard <b>popupMenu</b>
 extension point.</p>
 
 <h4>The Debug View</h4>
@@ -57,7 +57,7 @@ workspace. It supports enabling/disabling and breakpoint removal.</p>
 
 <h4>Debug Model Presentation</h4>
 
-<p>The debug UI plug-in defines an extension (<font face="Courier New">org.eclipse.debug.ui.debugModelPresentations</font>)
+<p>The debug UI plug-in defines an extension (<b>org.eclipse.debug.ui.debugModelPresentations</b>)
 point to allow implementations of debug models to provide custom rendering and
 presentation of its debug elements. Extensions are be registered for a specific debug
 model. It is intended that an implementation of a debug model will also provide an
@@ -71,10 +71,9 @@ implementation of a debug model presentation. The presentation provides:
 
 <h4>Launch Wizard</h4>
 
-<p>The debug UI plug-in defines an interface that launch wizards must implement - <font
-face="Courier New">org.eclipse.debug.ui.ILaunchWizard</font>. Launch wizards are defined
-in <font face="Courier New">launcher</font> extensions (defined by <font
-face="Courier New">org.eclipse.debug.core</font>), and are instantiated by the debug UI
+<p>The debug UI plug-in defines an interface that launch wizards must implement - <b>
+org.eclipse.debug.ui.ILaunchWizard</b>. Launch wizards are defined
+in <b>launcher</b> extensions (defined by <b>org.eclipse.debug.core</b>), and are instantiated by the debug UI
 plug-in.</p>
 
 <h4>Debug Perspective</h4>
