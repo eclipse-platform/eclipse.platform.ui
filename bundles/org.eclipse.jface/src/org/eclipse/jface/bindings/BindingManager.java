@@ -916,9 +916,9 @@ public final class BindingManager implements IContextManagerListener,
 	 *         it is never <code>null</code>.
 	 */
 	public final Map getPartialMatches(final TriggerSequence trigger) {
-		Map partialMatches = (Map) getPrefixTable().get(trigger);
+		final Map partialMatches = (Map) getPrefixTable().get(trigger);
 		if (partialMatches == null) {
-			partialMatches = Collections.EMPTY_MAP;
+			return Collections.EMPTY_MAP;
 		}
 
 		return partialMatches;
