@@ -12,6 +12,7 @@ package org.eclipse.team.core.variants;
 
 import java.io.IOException;
 import java.io.InputStream;
+
 import org.eclipse.core.resources.IEncodedStorage;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.IStorage;
@@ -19,11 +20,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.content.IContentDescription;
-import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.core.Assert;
 import org.eclipse.team.internal.core.Policy;
@@ -84,25 +82,18 @@ public abstract class CachedResourceVariant extends PlatformObject implements IR
 			return CachedResourceVariant.this.getAdapter(adapter);
 		}
 		public String getCharset() throws CoreException {
-			IContentDescription description = getContentDescription();
-			return (description == null || description.getProperty(IContentDescription.CHARSET) == null) ? null : (String) description.getProperty(IContentDescription.CHARSET);
-		}
-		public IContentDescription getContentDescription() throws CoreException {
-			// tries to obtain a description for this file contents
-			IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
-			InputStream contents = null;
+			InputStream contents = getContents();
 			try {
-				contents = getContents();
-				return contentTypeManager.getDescriptionFor(contents, getName(), IContentDescription.ALL);
+				String charSet = TeamPlugin.getCharset(getName(), contents);
+				return charSet;
 			} catch (IOException e) {
 				throw new TeamException(new Status(IStatus.ERROR, TeamPlugin.ID, IResourceStatus.FAILED_DESCRIBING_CONTENTS, Policy.bind("CachedResourceVariant.1", getFullPath().toString()), e)); //$NON-NLS-1$
 			} finally {
-				if (contents != null)
-					try {
-						contents.close();
-					} catch (IOException e) {
-						// Ignore exceptions on close
-					}
+				try {
+					contents.close();
+				} catch (IOException e1) {
+					// Ignore
+				}
 			}
 		}
 	}

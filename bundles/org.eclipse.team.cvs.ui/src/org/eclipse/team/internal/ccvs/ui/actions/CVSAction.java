@@ -11,28 +11,45 @@
 package org.eclipse.team.internal.ccvs.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSStatus;
+import org.eclipse.team.internal.ccvs.core.CVSTag;
+import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
+import org.eclipse.team.internal.ccvs.core.ICVSResource;
+import org.eclipse.team.internal.ccvs.core.ILogEntry;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
-import org.eclipse.team.internal.ccvs.ui.*;
+import org.eclipse.team.internal.ccvs.ui.AvoidableMessageDialog;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.actions.TeamAction;
 import org.eclipse.team.internal.ui.dialogs.IPromptCondition;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IEditorActionDelegate;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 
 /**
@@ -218,7 +235,6 @@ abstract public class CVSAction extends TeamAction implements IEditorActionDeleg
 	 * @param progressKind  one of PROGRESS_BUSYCURSOR or PROGRESS_DIALOG
 	 */
 	final protected void run(final IRunnableWithProgress runnable, boolean cancelable, int progressKind) throws InvocationTargetException, InterruptedException {
-		final Exception[] exceptions = new Exception[] {null};
 		
 		// Ensure that no repository view refresh happens until after the action
 		final IRunnableWithProgress innerRunnable = new IRunnableWithProgress() {
@@ -228,39 +244,13 @@ abstract public class CVSAction extends TeamAction implements IEditorActionDeleg
 		};
 		
 		switch (progressKind) {
-			case PROGRESS_WORKBENCH_WINDOW :
-				try {
-					PlatformUI.getWorkbench().getActiveWorkbenchWindow().run(true, true, runnable);
-				} catch (InterruptedException e1) {
-					exceptions[0] = null;
-					e1.printStackTrace();
-				} catch (InvocationTargetException e) {
-					exceptions[0] = e;
-				}
-				break;
 			case PROGRESS_BUSYCURSOR :
-				BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
-					public void run() {
-						try {
-							innerRunnable.run(new NullProgressMonitor());
-						} catch (InvocationTargetException e) {
-							exceptions[0] = e;
-						} catch (InterruptedException e) {
-							exceptions[0] = e;
-						}
-					}
-				});
+				PlatformUI.getWorkbench().getProgressService().run(cancelable, cancelable, innerRunnable);
 				break;
 			case PROGRESS_DIALOG :
 			default :
 				new ProgressMonitorDialog(getShell()).run(cancelable, true, innerRunnable);	
 				break;
-		}
-		if (exceptions[0] != null) {
-			if (exceptions[0] instanceof InvocationTargetException)
-				throw (InvocationTargetException)exceptions[0];
-			else
-				throw (InterruptedException)exceptions[0];
 		}
 	}
 	

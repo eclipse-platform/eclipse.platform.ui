@@ -10,11 +10,18 @@
  *******************************************************************************/
 package org.eclipse.team.internal.core;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.content.IContentDescription;
+import org.eclipse.core.runtime.content.IContentTypeManager;
+import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.Team;
 import org.eclipse.team.core.TeamException;
 
@@ -108,6 +115,40 @@ final public class TeamPlugin extends Plugin {
 	public static TeamException wrapException(CoreException e) {
 		IStatus status = e.getStatus();
 		return new TeamException(new Status(status.getSeverity(), ID, status.getCode(), status.getMessage(), e));
+	}
+	
+	public static String getCharset(String name, InputStream stream) throws IOException {
+		IContentDescription description = getContentDescription(name, stream);
+		if (description != null) {
+			byte[] bom = (byte[]) description.getProperty(IContentDescription.BYTE_ORDER_MARK);
+			if (bom != null) {
+				if (bom == IContentDescription.BOM_UTF_8)
+					return "UTF-8"; //$NON-NLS-1$
+				else if (bom == IContentDescription.BOM_UTF_16BE || bom == IContentDescription.BOM_UTF_16LE)
+					// UTF-16 will properly recognize the BOM
+					return "UTF-16"; //$NON-NLS-1$
+				else {
+					// unknown BOM... ignore it				
+				}
+			}
+			return (String) description.getProperty(IContentDescription.CHARSET);
+		}
+		return null;
+	}
+	public static IContentDescription getContentDescription(String name, InputStream stream) throws IOException  {
+		// tries to obtain a description for this file contents
+		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
+		InputStream contents = null;
+		try {
+			return contentTypeManager.getDescriptionFor(contents, name, IContentDescription.ALL);
+		} finally {
+			if (contents != null)
+				try {
+					contents.close();
+				} catch (IOException e) {
+					// Ignore exceptions on close
+				}
+		}
 	}
 
 }

@@ -89,12 +89,12 @@ public class OpenLogEntryAction extends CVSAction {
 						}
 						try {
 							try {
-								page.openEditor(new RemoteFileEditorInput(file), id);
+								page.openEditor(new RemoteFileEditorInput(file, monitor), id);
 							} catch (PartInitException e) {
 								if (id.equals("org.eclipse.ui.DefaultTextEditor")) { //$NON-NLS-1$
 									throw e;
 								} else {
-									page.openEditor(new RemoteFileEditorInput(file), "org.eclipse.ui.DefaultTextEditor"); //$NON-NLS-1$
+									page.openEditor(new RemoteFileEditorInput(file, monitor), "org.eclipse.ui.DefaultTextEditor"); //$NON-NLS-1$
 								}
 							}
 						} catch (PartInitException e) {

@@ -16,8 +16,11 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ViewerSorter;
-import org.eclipse.team.core.synchronize.*;
+import org.eclipse.team.core.synchronize.ISyncInfoTreeChangeEvent;
+import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.core.synchronize.SyncInfoTree;
 import org.eclipse.team.internal.ui.ITeamUIImages;
+import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.ui.TeamImages;
 import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
@@ -42,17 +45,17 @@ import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 public class HierarchicalModelProvider extends SynchronizeModelProvider {
 	
 	public static class HierarchicalModelProviderDescriptor implements ISynchronizeModelProviderDescriptor {
-		public static final String ID = TeamUIPlugin.ID + ".modelprovider_hierarchical";
+		public static final String ID = TeamUIPlugin.ID + ".modelprovider_hierarchical"; //$NON-NLS-1$
 		public String getId() {
 			return ID;
 		}		
 		public String getName() {
-			return "Tree";
+			return Policy.bind("HierarchicalModelProvider.0"); //$NON-NLS-1$
 		}		
 		public ImageDescriptor getImageDescriptor() {
 			return TeamImages.getImageDescriptor(ITeamUIImages.IMG_HIERARCHICAL);
 		}
-	};
+	}
 	private static final HierarchicalModelProviderDescriptor hierarchicalDescriptor = new HierarchicalModelProviderDescriptor();
 	
 	/**

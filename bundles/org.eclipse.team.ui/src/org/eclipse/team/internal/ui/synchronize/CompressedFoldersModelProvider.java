@@ -10,15 +10,25 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 import org.eclipse.compare.structuremergeviewer.IDiffContainer;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ViewerSorter;
-import org.eclipse.team.core.synchronize.*;
+import org.eclipse.team.core.synchronize.ISyncInfoTreeChangeEvent;
+import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.core.synchronize.SyncInfoTree;
 import org.eclipse.team.internal.ui.ITeamUIImages;
+import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
@@ -72,17 +82,17 @@ public class CompressedFoldersModelProvider extends HierarchicalModelProvider {
 	}
 	
 	public static class CompressedFolderModelProviderDescriptor implements ISynchronizeModelProviderDescriptor {
-		public static final String ID = TeamUIPlugin.ID + ".modelprovider_compressedfolders";
+		public static final String ID = TeamUIPlugin.ID + ".modelprovider_compressedfolders"; //$NON-NLS-1$
 		public String getId() {
 			return ID;
 		}		
 		public String getName() {
-			return "Compressed Folders";
+			return Policy.bind("CompressedFoldersModelProvider.0"); //$NON-NLS-1$
 		}		
 		public ImageDescriptor getImageDescriptor() {
 			return TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_COMPRESSED_FOLDER);
 		}
-	};
+	}
 	private static final CompressedFolderModelProviderDescriptor compressedDescriptor = new CompressedFolderModelProviderDescriptor();
 	
 	public CompressedFoldersModelProvider(ISynchronizePageConfiguration configuration, SyncInfoTree set) {

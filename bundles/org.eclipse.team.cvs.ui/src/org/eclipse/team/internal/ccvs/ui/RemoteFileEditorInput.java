@@ -14,9 +14,12 @@ package org.eclipse.team.internal.ccvs.ui;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.ui.IPersistableElement;
@@ -33,9 +36,26 @@ public class RemoteFileEditorInput implements IWorkbenchAdapter, IStorageEditorI
 	/**
 	 * Creates FileEditionEditorInput on the given file.
 	 */
-	public RemoteFileEditorInput(ICVSRemoteFile file) {
+	public RemoteFileEditorInput(ICVSRemoteFile file, IProgressMonitor monitor) {
 		this.file = file;
+		try {
+			initializeStorage(file, monitor);
+		} catch (TeamException e) {
+			// Log and continue
+			CVSUIPlugin.log(e);
+		}
 	}
+	
+	/**
+	 * Initialize the strogae of this instance from the given file.
+	 * @param file the file being displayed
+	 * @param monitor a progress monitor
+	 */
+	protected void initializeStorage(ICVSRemoteFile file, IProgressMonitor monitor) throws TeamException {
+		// Cache the contents of the file for use in the editor
+		storage = ((IResourceVariant)file).getStorage(monitor);
+	}
+	
 	/**
 	 * Returns whether the editor input exists.  
 	 * <p>
@@ -173,7 +193,7 @@ public class RemoteFileEditorInput implements IWorkbenchAdapter, IStorageEditorI
 	 */
 	public IStorage getStorage() throws CoreException {
 		if (storage == null) {
-			storage = new RemoteFileStorage(file);
+			initializeStorage(file, new NullProgressMonitor());
 		}
 		return storage;
 	}

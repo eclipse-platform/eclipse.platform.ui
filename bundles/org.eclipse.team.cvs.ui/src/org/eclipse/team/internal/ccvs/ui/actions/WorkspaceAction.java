@@ -133,7 +133,7 @@ public abstract class WorkspaceAction extends CVSAction {
 							CVSProviderPlugin.log(e);
 						}
 					}
-				}, true, PROGRESS_WORKBENCH_WINDOW);
+				}, true, PROGRESS_BUSYCURSOR);
 			} catch (InvocationTargetException e) {
 				// Ignore this since we logged the one we care about above
 			} catch (InterruptedException e) {

@@ -12,8 +12,9 @@ package org.eclipse.team.internal.ccvs.ui;
 
 import java.io.InputStream;
 
-import org.eclipse.core.resources.IStorage;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
 import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.model.IWorkbenchAdapter;
@@ -25,24 +26,17 @@ public class RemoteAnnotationEditorInput extends RemoteFileEditorInput implement
 
 	InputStream contents;
 	
-	/**
-	 * @param contents
-	 */
 	public RemoteAnnotationEditorInput(ICVSRemoteFile file, InputStream contents) {
-		super(file);
+		super(file, new NullProgressMonitor());
 		this.contents = contents;
 	}
 	
-	/**
-	 * Returns the underlying IStorage object.
-	 *
-	 * @return an IStorage object.
-	 * @exception CoreException if this method fails
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.RemoteFileEditorInput#initializeStorage(org.eclipse.team.internal.ccvs.core.ICVSRemoteFile, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public IStorage getStorage() throws CoreException {
-		if (storage == null) {
+	protected void initializeStorage(ICVSRemoteFile file, IProgressMonitor monitor) throws TeamException {
+		if (contents != null) {
 			storage = new RemoteAnnotationStorage(file, contents);
 		}
-		return storage;
 	}
 }
