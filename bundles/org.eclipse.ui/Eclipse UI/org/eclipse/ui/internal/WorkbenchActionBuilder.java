@@ -299,11 +299,6 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		}
 		menu.add(new GroupMarker(IWorkbenchActionConstants.NEW_EXT));
 		menu.add(new Separator());
-		{
-			MenuManager openRecentMenu = new DynamicMenuManager(WorkbenchMessages.getString("Workbench.openRecent")); //$NON-NLS-1$
-			menu.add(openRecentMenu);
-			openRecentMenu.add( new ReopenEditorMenu(window, ((Workbench) window.getWorkbench()).getEditorHistory(), false));
-		}
 		
 		menu.add(closeAction);
 		menu.add(closeAllAction);
@@ -326,16 +321,15 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		menu.add(importResourcesAction);
 		menu.add(exportResourcesAction);
 		menu.add(new GroupMarker(IWorkbenchActionConstants.IMPORT_EXT));
-		// put additions relative to the MRU group at its old location,
-		// next to the additions group
-		menu.add(new GroupMarker(IWorkbenchActionConstants.MRU));  
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		
 		if (usingMenuReorg) {
 			menu.add(new Separator());
 			menu.add(propertiesAction);
 		}
-		
+
+		menu.add(new ReopenEditorMenu(window, ((Workbench) window.getWorkbench()).getEditorHistory(), true));
+		menu.add(new GroupMarker(IWorkbenchActionConstants.MRU));  		
 		menu.add(new Separator());
 		menu.add(new QuitAction(window.getWorkbench()));
 		menu.add(new GroupMarker(IWorkbenchActionConstants.FILE_END));
