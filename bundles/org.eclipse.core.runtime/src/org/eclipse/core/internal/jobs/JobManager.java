@@ -97,8 +97,8 @@ public class JobManager implements IJobManager {
 	private JobManager() {
 		instance = this;
 		synchronized (lock) {
-			waiting = new JobQueue();
-			sleeping = new JobQueue();
+			waiting = new JobQueue(false);
+			sleeping = new JobQueue(true);
 			running = new HashSet(10);
 			pool = new WorkerPool(this);
 		}
