@@ -69,7 +69,7 @@ public class MessageConsoleStream {
 	 */
 	public void setColor(Color color) {
 		fColor = color;
-		fConsole.refreshPages();
+		fConsole.firePropertyChange(MessageConsole.PROP_STREAM_COLOR);
 	}
 	
 	/**

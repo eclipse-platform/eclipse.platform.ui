@@ -188,30 +188,6 @@ public class MessageConsolePartitioner implements IDocumentPartitioner, IDocumen
 		IDocument doc = new Document();
 		connect(doc);
 	}
-					
-	/**
-	 * Returns the longest line delimiter at the given position in the given text,
-	 * or <code>null</code> if none.
-	 * 
-	 * @param text the text in which to look for a line delimiter
-	 * @param pos the position at which to look for a line delimiter
-	 * @param lineDelimiters the line delimiters to look for
-	 */
-	protected String getLineDelimiter(String text, int pos, String[] lineDelimiters) {
-		String ld = null;
-		for (int i = 0; i < lineDelimiters.length; i++) {					
-			if (text.regionMatches(pos, lineDelimiters[i], 0, lineDelimiters[i].length())) {
-				if (ld == null) {
-					ld = lineDelimiters[i];
-				} else {
-					if (ld.length() < lineDelimiters[i].length()) {
-						ld = lineDelimiters[i];
-					}
-				}
-			}
-		}	
-		return ld;	
-	}
 	
 	/**
 	 * Adds the new text to the document.
@@ -236,9 +212,13 @@ public class MessageConsolePartitioner implements IDocumentPartitioner, IDocumen
 	}
 	
 	/**
-	 * @see org.eclipse.debug.internal.ui.views.console.IConsole#getDocument()
+	 * Returns the document this partitioner is connected to, or <code>null</code>
+	 * if none.
+	 * 
+	 * @return the document this partitioner is connected to, or <code>null</code>
+	 *   if none
 	 */
-	public IDocument getDocument() {
+	protected IDocument getDocument() {
 		return fDocument;
 	}
 

@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.IPage;
+import org.eclipse.ui.part.IPageBookViewPage;
 import org.eclipse.ui.part.MessagePage;
 import org.eclipse.ui.part.PageBook;
 
@@ -79,7 +80,7 @@ public class ConsoleView extends AbstractDebugView implements IConsoleView, ICon
 	 * @see org.eclipse.ui.IPropertyListener#propertyChanged(java.lang.Object, int)
 	 */
 	public void propertyChanged(Object source, int propId) {
-		if (propId == IWorkbenchPart.PROP_TITLE) {
+		if (source instanceof IConsole && propId == IConsole.PROP_NAME) {
 			if (source.equals(getConsole())) {
 				updateTitle();
 			}
@@ -140,12 +141,12 @@ public class ConsoleView extends AbstractDebugView implements IConsoleView, ICon
 	 * @see org.eclipse.ui.part.PageBookView#doDestroyPage(org.eclipse.ui.IWorkbenchPart, org.eclipse.ui.part.PageBookView.PageRec)
 	 */
 	protected void doDestroyPage(IWorkbenchPart part, PageRec pageRecord) {
-		IConsolePage page = (IConsolePage) pageRecord.page;
-		page.removePropertyListener(this);
+		IPage page = pageRecord.page;
 		page.dispose();
 		pageRecord.dispose();
 		
 		IConsole console = (IConsole)fPartToConsole.get(part);
+		console.removePropertyListener(this);
 				
 		// empty cross-reference cache
 		fPartToConsole.remove(part);
@@ -161,10 +162,10 @@ public class ConsoleView extends AbstractDebugView implements IConsoleView, ICon
 	protected PageRec doCreatePage(IWorkbenchPart dummyPart) {
 		ConsoleWorkbenchPart part = (ConsoleWorkbenchPart)dummyPart;
 		IConsole console = part.getConsole();
-		IConsolePage page = console.createPage(this);
+		IPageBookViewPage page = console.createPage(this);
 		initPage(page);
 		page.createControl(getPageBook());
-		page.addPropertyListener(this);
+		console.addPropertyListener(this);
 		PageRec rec = new PageRec(dummyPart, page);
 		return rec;
 	}

@@ -32,7 +32,6 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.ITextOperationTarget;
-import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
@@ -47,9 +46,9 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.part.IPageBookViewPage;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.texteditor.FindReplaceAction;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
@@ -60,7 +59,7 @@ import org.eclipse.ui.texteditor.IUpdate;
  * 
  * @since 3.0
  */
-public class MessageConsolePage implements IConsolePage, IAdaptable {
+public class MessageConsolePage implements IPageBookViewPage, IAdaptable, IPropertyListener {
 
 	//page site
 	private IPageSite fSite = null;
@@ -74,9 +73,6 @@ public class MessageConsolePage implements IConsolePage, IAdaptable {
 	// the console this page displays
 	private MessageConsole fConsole;
 	
-	// property listeners
-	private ListenerList fListeners;
-	
 	// text selection listener
 	private ISelectionChangedListener fTextListener =  new ISelectionChangedListener() {
 		public void selectionChanged(SelectionChangedEvent event) {
@@ -86,32 +82,17 @@ public class MessageConsolePage implements IConsolePage, IAdaptable {
 	// actions
 	private ClearOutputAction fClearOutputAction;
 	private Map fGlobalActions= new HashMap(10);
-	protected List fSelectionActions = new ArrayList(3);
+	private List fSelectionActions = new ArrayList(3);
 	
 	// menus
 	private Menu fMenu;
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.console.IConsolePage#addPropertyListener(org.eclipse.ui.IPropertyListener)
-	 */
-	public void addPropertyListener(IPropertyListener listener) {
-		fListeners.add(listener);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.console.IConsolePage#removePropertyListener(org.eclipse.ui.IPropertyListener)
-	 */
-	public void removePropertyListener(IPropertyListener listener) {
-		fListeners.remove(listener);
-	}
-
 	/**
 	 * Constructs a new process page 
 	 */
 	public MessageConsolePage(IConsoleView view, MessageConsole console) {
 		fView = view;
 		fConsole = console;
-		fListeners = new ListenerList();
 	}
 
 	/* (non-Javadoc)
@@ -154,14 +135,25 @@ public class MessageConsolePage implements IConsolePage, IAdaptable {
 		configureToolBar(getSite().getActionBars().getToolBarManager());
 		
 		fViewer.getSelectionProvider().addSelectionChangedListener(fTextListener);
-		getConsole().addPage(this);
+		setFont(getConsole().getFont());
+		getConsole().addPropertyListener(this);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPropertyListener#propertyChanged(java.lang.Object, int)
+	 */
+	public void propertyChanged(Object source, int propId) {
+		if (source.equals(getConsole()) && propId == MessageConsole.PROP_FONT) {
+			setFont(getConsole().getFont());	
+		}
+	}
+
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.IPage#dispose()
 	 */
 	public void dispose() {
-		getConsole().removePage(this);
+		getConsole().removePropertyListener(this);
 		fViewer.getSelectionProvider().removeSelectionChangedListener(fTextListener);
 		
 		if (fMenu != null && !fMenu.isDisposed()) {
@@ -328,18 +320,6 @@ public class MessageConsolePage implements IConsolePage, IAdaptable {
 		}
 		return null;
 	}	
-	
-	/**
-	 * Notification that the title of this page has changed.
-	 */
-	protected void fireTitleChanged() {
-		Object[] listeners = fListeners.getListeners();
-		for (int i = 0; i < listeners.length; i++) {
-			IPropertyListener listener = (IPropertyListener)listeners[i];
-			listener.propertyChanged(getConsole(), IWorkbenchPart.PROP_TITLE);
-		}
-		
-	}
 
 	/**
 	 * Sets the font for this page.

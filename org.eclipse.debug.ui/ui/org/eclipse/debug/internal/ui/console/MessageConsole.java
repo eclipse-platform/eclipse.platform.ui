@@ -10,13 +10,11 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.console;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.ui.part.IPageBookViewPage;
 
 /**
  * A console that displays messages.
@@ -25,88 +23,44 @@ import org.eclipse.swt.graphics.Font;
  * </p>
  * @since 3.0
  */
-public class MessageConsole implements IConsole {
+public class MessageConsole extends AbstractConsole {
+	
+	/** 
+	 * The font used by this console
+	 */
+	private Font fFont = null;
+	
+	/**
+	 * Property constant indicating the font of this console has changed. 
+	 */
+	public static final int PROP_FONT = 100;
+	
+	/**
+	 * Property constant indicating the color of a stream has changed. 
+	 */
+	public static final int PROP_STREAM_COLOR = 101;	
+	
 	
 	// document partitioner
 	private MessageConsolePartitioner fPartitioner = null;
-	
-	// console name
-	private String fName = ""; //$NON-NLS-1$
-	
-	// console image
-	private ImageDescriptor fImageDescriptor = null;
-	
-	// list of registered pages
-	private List fPages = new ArrayList();
-	
+		
 	/** 
 	 * Constructs a new message console.
+	 * 
+	 * @param name console name
+	 * @param imageDescriptor console image descriptor or <code>null</code>
+	 *   if none
 	 */
-	public MessageConsole() {
+	public MessageConsole(String name, ImageDescriptor imageDescriptor) {
+		super(name, imageDescriptor);
 		fPartitioner = new MessageConsolePartitioner();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.console.IConsole#getName()
-	 */
-	public String getName() {
-		return fName;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.console.IConsole#getImageDescriptor()
-	 */
-	public ImageDescriptor getImageDescriptor() {
-		return fImageDescriptor;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.console.IConsole#createPage(org.eclipse.debug.internal.ui.console.IConsoleView)
 	 */
-	public IConsolePage createPage(IConsoleView view) {
+	public IPageBookViewPage createPage(IConsoleView view) {
 		return new MessageConsolePage(view, this);
-	}
-	
-	/**
-	 * Sets the name of this console.
-	 * 
-	 * @param name name of this console - cannot be <code>null</code>
-	 */
-	public void setName(String name) {
-		fName = name;
-		titleChanged();
-	}
-	
-	/**
-	 * Notifies pages that the title has changed for this console
-	 */
-	private void titleChanged() {
-		Iterator pages = fPages.iterator();
-		while (pages.hasNext()) {
-			MessageConsolePage page = (MessageConsolePage) pages.next();
-			page.fireTitleChanged();
-		}
-	}
-	
-	/**
-	 * Notifies pages to refresh
-	 */
-	protected void refreshPages() {
-		Iterator pages = fPages.iterator();
-		while (pages.hasNext()) {
-			MessageConsolePage page = (MessageConsolePage) pages.next();
-			page.refresh();
-		}
-	}	
-
-	/**
-	 * Sets the image for this console.
-	 * 
-	 * @param imageDescriptor image for this console, or <code>null</code> if none
-	 */
-	public void setImageDescriptor(ImageDescriptor imageDescriptor) {
-		fImageDescriptor = imageDescriptor;
-		titleChanged();
 	}
 	
 	/**
@@ -115,10 +69,20 @@ public class MessageConsole implements IConsole {
 	 * @param font font
 	 */
 	public void setFont(Font font) {
-		Iterator pages = fPages.iterator();
-		while (pages.hasNext()) {
-			MessageConsolePage page = (MessageConsolePage) pages.next();
-			page.setFont(font);
+		fFont = font;
+		firePropertyChange(PROP_FONT);
+	}
+	
+	/**
+	 * Returns the font for this console
+	 * 
+	 * @return font for this console
+	 */
+	public Font getFont() {
+		if (fFont == null) {
+			return JFaceResources.getTextFont();
+		} else {
+			return fFont;
 		}
 	}
 	
@@ -150,22 +114,5 @@ public class MessageConsole implements IConsole {
 		return fPartitioner.getDocument();
 	}
 	
-	/**
-	 * Register the given page, as open on this console.
-	 * 
-	 * @param page a page opened on this console
-	 */
-	protected void addPage(MessageConsolePage page) {
-		fPages.add(page);
-	}
-	
-	/**
-	 * Notification the given pages has been closed.
-	 * 
-	 * @param page a page that closed for this console
-	 */
-	protected void removePage(MessageConsolePage page) {
-		fPages.remove(page);
-	}
 }
  

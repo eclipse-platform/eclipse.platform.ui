@@ -11,6 +11,8 @@
 package org.eclipse.debug.internal.ui.console;
 
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.part.IPageBookViewPage;
 
 /**
  * A logical console. A console is commonly used to display messages. For example,
@@ -22,6 +24,16 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * @since 3.0
  */
 public interface IConsole {
+	
+	/**
+	 * Property constant indicating the name of a console has changed.
+	 */
+	public static final int PROP_NAME = 1;
+	
+	/**
+	 * Property constant constant indicating the image of a console has changed.
+	 */
+	public static final int PROP_IMAGE = 2;
 	
 	/**
 	 * Returns the name of this console.
@@ -44,8 +56,33 @@ public interface IConsole {
 	 * for this console in the console given view.
 	 * 
 	 * @param view the view in which the page is to be created
-	 * @return a page book representation of this console
+	 * @return a page book view page representation of this console
 	 */
-	public IConsolePage createPage(IConsoleView view);
+	public IPageBookViewPage createPage(IConsoleView view);
+	
+	/**
+	 * Adds a listener for changes to properties of this console.
+	 * Has no effect if an identical listener is already registered.
+	 * <p>
+	 * The supported property ids are as follows:
+	 * <ul>
+	 *   <li><code>PROP_NAME</code> - indicates the name
+	 *      of a console has changed</li>
+	 * 	 <li><code>PROP_IMAGE</code> - indicates the image
+	 *      of a console has changed</li>
+	 * </ul>
+	 * </p>
+	 *
+	 * @param listener a property listener
+	 */
+	public void addPropertyListener(IPropertyListener listener);
+	
+	/**
+	 * Removes the given property listener from this console page.
+	 * Has no effect if an identical listener is not alread registered.
+	 * 
+	 * @param listener a property listener
+	 */
+	public void removePropertyListener(IPropertyListener listener);	
 
 }

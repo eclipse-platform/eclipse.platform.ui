@@ -29,7 +29,6 @@ import org.eclipse.debug.internal.ui.actions.FollowHyperlinkAction;
 import org.eclipse.debug.internal.ui.actions.KeyBindingFollowHyperlinkAction;
 import org.eclipse.debug.internal.ui.actions.TextViewerAction;
 import org.eclipse.debug.internal.ui.actions.TextViewerGotoLineAction;
-import org.eclipse.debug.internal.ui.console.IConsolePage;
 import org.eclipse.debug.internal.ui.console.IConsoleView;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.debug.ui.DebugUITools;
@@ -42,7 +41,6 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.ITextOperationTarget;
-import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -55,13 +53,13 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.part.IPageBookViewPage;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.IShowInTargetList;
@@ -75,7 +73,7 @@ import org.eclipse.ui.texteditor.IUpdate;
  * 
  * @since 3.0
  */
-public class ProcessConsolePage implements IConsolePage, ISelectionListener, IAdaptable, IShowInSource, IShowInTargetList, IDebugEventSetListener {
+public class ProcessConsolePage implements IPageBookViewPage, ISelectionListener, IAdaptable, IShowInSource, IShowInTargetList, IDebugEventSetListener {
 
 	//page site
 	private IPageSite fSite = null;
@@ -91,8 +89,6 @@ public class ProcessConsolePage implements IConsolePage, ISelectionListener, IAd
 	
 	// scroll lock
 	private boolean fIsLocked = false;
-	
-	private ListenerList fListeners;
 	
 	// text selection listener
 	private ISelectionChangedListener fTextListener =  new ISelectionChangedListener() {
@@ -112,20 +108,6 @@ public class ProcessConsolePage implements IConsolePage, ISelectionListener, IAd
 	
 	// menus
 	private Menu fMenu;
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.console.IConsolePage#addPropertyListener(org.eclipse.ui.IPropertyListener)
-	 */
-	public void addPropertyListener(IPropertyListener listener) {
-		fListeners.add(listener);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.console.IConsolePage#removePropertyListener(org.eclipse.ui.IPropertyListener)
-	 */
-	public void removePropertyListener(IPropertyListener listener) {
-		fListeners.remove(listener);
-	}
 
 	/**
 	 * Constructs a new process page 
@@ -133,7 +115,6 @@ public class ProcessConsolePage implements IConsolePage, ISelectionListener, IAd
 	public ProcessConsolePage(IConsoleView view, ProcessConsole console) {
 		fView = view;
 		fConsole = console;
-		fListeners = new ListenerList();
 	}
 
 	/* (non-Javadoc)
@@ -466,7 +447,6 @@ public class ProcessConsolePage implements IConsolePage, ISelectionListener, IAd
 					public void run() {
 						if (isAvailable()) {
 							fTerminate.update();
-							fireTitleChanged();
 						}				
 					}
 				};
@@ -475,18 +455,6 @@ public class ProcessConsolePage implements IConsolePage, ISelectionListener, IAd
 				}
 			}
 		}
-	}
-
-	/**
-	 * Notification that the title of this page has changed.
-	 */
-	protected void fireTitleChanged() {
-		Object[] listeners = fListeners.getListeners();
-		for (int i = 0; i < listeners.length; i++) {
-			IPropertyListener listener = (IPropertyListener)listeners[i];
-			listener.propertyChanged(getConsole(), IWorkbenchPart.PROP_TITLE);
-		}
-		
 	}
 
 	/**
