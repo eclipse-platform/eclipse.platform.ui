@@ -78,6 +78,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, IStora
 	 * even if the resource does exists remotely (e.g. created by another party).
 	 */
 	public static RemoteFile getBase(RemoteFolder parent, ICVSFile managed) throws CVSException {
+		Assert.isNotNull(parent, "A parent folder must be provided for file " + managed.getName()); //$NON-NLS-1$
 		byte[] syncBytes = managed.getSyncBytes();
 		if ((syncBytes == null) || ResourceSyncInfo.isAddition(syncBytes)) {
 			// Either the file is unmanaged or has just been added (i.e. doesn't necessarily have a remote)

@@ -141,7 +141,6 @@ public class Util {
 			String truncatedPath = toTruncatedPath(stringPath, split);
 			// Special handling when the root is a project.
 			// Append project name to the beginning of the path
-			IProject project = null;
 			IResource iResource = root.getIResource();
 			if (iResource != null && iResource.getType() == IResource.PROJECT) {
 				truncatedPath = iResource.getName() + Session.SERVER_SEPARATOR + truncatedPath;
@@ -515,5 +514,30 @@ public class Util {
 		}
 		
 		return tag;						
+	}
+
+	/**
+	 * Return the fullest path that we can obtain for the given resource
+	 * @param resource
+	 * @return
+	 */
+	public static String getFullestPath(ICVSResource resource) {
+		try {
+			IResource local = resource.getIResource();
+			if (local != null) {
+				return local.getFullPath().toString();
+			}
+		} catch (CVSException e) {
+			// Ignore and try the next method;
+		}
+		try {
+			String remotePath = resource.getRepositoryRelativePath();
+			if (remotePath != null) {
+				return remotePath;
+			}
+		} catch (CVSException e) {
+			// Ignore and try the next method;
+		}
+		return resource.getName();
 	}
 }

@@ -54,6 +54,7 @@ import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.core.util.Util;
 
 /**
  * This class provides static methods for checking out projects from a repository
@@ -223,20 +224,6 @@ public class CVSWorkspaceRoot {
 			throw eHolder[0];
 		}
 	}
-
-	private static void manageFolder(ICVSFolder folder, String root) throws CVSException {
-		// Ensure that the parent is a CVS folder
-		ICVSFolder parent = folder.getParent();
-		if (!parent.isCVSFolder()) {
-			parent.setFolderSyncInfo(new FolderSyncInfo(FolderSyncInfo.VIRTUAL_DIRECTORY, root, CVSTag.DEFAULT, true));
-			IResource resource = parent.getIResource();
-			if (resource.getType() != IResource.PROJECT) {
-				manageFolder(parent, root);
-			}
-		}
-		// reset the folder sync info so it will be managed by it's parent
-		folder.setFolderSyncInfo(folder.getFolderSyncInfo());
-	}
 					
 	/**
 	 * Create a remote module in the CVS repository and link the project directory to this remote module.
@@ -325,7 +312,7 @@ public class CVSWorkspaceRoot {
 		}
 		
 		// Ensure that the provided location is managed
-		ICVSRepositoryLocation location = CVSProviderPlugin.getPlugin().getRepository(info.getRoot());
+		CVSProviderPlugin.getPlugin().getRepository(info.getRoot());
 		
 		// Register the project with Team
 		RepositoryProvider.map(project, CVSProviderPlugin.getTypeId());
@@ -372,7 +359,7 @@ public class CVSWorkspaceRoot {
 	/*
 	 * Delete the target projects before checking out
 	 */
-	private static void scrubProjects(IProject[] projects, IProgressMonitor monitor) throws CVSException {
+	/* internal use only */ static void scrubProjects(IProject[] projects, IProgressMonitor monitor) throws CVSException {
 		if (projects == null) {
 			monitor.done();
 			return;
@@ -431,7 +418,7 @@ public class CVSWorkspaceRoot {
 	/*
 	 * Bring the provied projects into the workspace
 	 */
-	private static void refreshProjects(IProject[] projects, IProgressMonitor monitor) throws CoreException, TeamException {
+	/* internal use only */ static void refreshProjects(IProject[] projects, IProgressMonitor monitor) throws CoreException, TeamException {
 		monitor.beginTask(Policy.bind("CVSProvider.Creating_projects_2"), projects.length * 100); //$NON-NLS-1$
 		try {
 			for (int i = 0; i < projects.length; i++) {
@@ -477,29 +464,22 @@ public class CVSWorkspaceRoot {
 				return new RemoteFolder(null, CVSProviderPlugin.getPlugin().getRepository(syncInfo.getRoot()), syncInfo.getRepository(), syncInfo.getTag());
 			}
 		} else {
-			if (resource.isManaged())
-				return RemoteFile.getBase((RemoteFolder)getRemoteResourceFor(resource.getParent()), (ICVSFile)resource);
+			if (resource.isManaged()) {
+				RemoteFolder parent = (RemoteFolder)getRemoteResourceFor(resource.getParent());
+				if (parent == null) {
+					// This could be caused by another thread changing the state in the
+					// instant between when we did the managed check and we obtained the 
+					// parent handle. If this is the case, isManaged should return false
+					// now. If it doesn't, then we should log an error.
+					if (resource.isManaged()) {
+						CVSProviderPlugin.log(new CVSException(Policy.bind("CVSWorkspaceRoot.11", Util.getFullestPath(resource)))); //$NON-NLS-1$
+					}
+				} else {
+					return RemoteFile.getBase(parent, (ICVSFile)resource);
+				}
+			}
 		}
 		return null;
-	}
-	
-	public static ICVSRemoteResource getBaseFor(ICVSResource resource) throws CVSException {
-			if (resource.isFolder()) {
-				ICVSFolder folder = (ICVSFolder)resource;
-				FolderSyncInfo syncInfo = folder.getFolderSyncInfo();
-				if (syncInfo != null) {
-					return new RemoteFolder(null, CVSProviderPlugin.getPlugin().getRepository(syncInfo.getRoot()), syncInfo.getRepository(), syncInfo.getTag());
-				}
-			} else {
-				if (resource.isManaged())
-					return RemoteFile.getBase((RemoteFolder)getRemoteResourceFor(resource.getParent()), (ICVSFile)resource);
-			}
-			return null;
-		}
-		
-	public static ICVSRemoteResource getBaseFor(IResource resource) throws CVSException {
-		ICVSResource managed = getCVSResourceFor(resource);
-		return getBaseFor(managed);
 	}
 		
 	/*
