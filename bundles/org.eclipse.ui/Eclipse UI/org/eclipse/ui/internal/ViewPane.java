@@ -489,9 +489,6 @@ protected void addMoveItems(Menu moveMenu) {
 public boolean hasViewMenu(){
 	if (isvMenuMgr == null)
 		return false;
-	// If this is a fast view, it may have been minimized. Do nothing in this case.
-	if(isFastView() && (page.getActiveFastView() != getPart()))
-		return false;
 		
 	//If there is no pull down button there is no associated menu
 	if(pullDownButton == null || pullDownButton.isDisposed())
@@ -506,6 +503,10 @@ public boolean hasViewMenu(){
 public void showViewMenu() {
 	
 	if(!hasViewMenu())
+		return;
+		
+	// If this is a fast view, it may have been minimized. Do nothing in this case.
+	if(isFastView() && (page.getActiveFastView() != getPart()))
 		return;
 				
 	Menu aMenu = isvMenuMgr.createContextMenu(getControl());
