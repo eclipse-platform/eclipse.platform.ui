@@ -199,7 +199,7 @@ public class VariablesViewContentProvider implements ITreeContentProvider {
 				ILogicalStructureType type = null;
 				boolean exist = false;
 				for (int i = 0; i < types.length; i++) {
-					String key = VariablesView.LOGICAL_STRUCTURE_TYPE_PREFIX + types[i].getId();
+					String key = VariablesView.LOGICAL_STRUCTURE_TYPE_PREFIX + types[i].getId() + types[i].getDescription(value);
 					int setting = store.getInt(key);
 					// 0 = never used, 1 = on, -1 = off
 					if (setting != 0) {
@@ -209,13 +209,13 @@ public class VariablesViewContentProvider implements ITreeContentProvider {
 							break;
 						}
 					} else {
-						store.setValue(types[i].getId(), -1);
+						store.setValue(key, -1);
 					}
 				}
 				if (type == null && !exist) {
 					type = types[0];
 					// choose first by default
-					store.setValue(VariablesView.LOGICAL_STRUCTURE_TYPE_PREFIX + type.getId(), 1);
+					store.setValue(VariablesView.LOGICAL_STRUCTURE_TYPE_PREFIX + type.getId() + type.getDescription(value), 1);
 				}
 				if (type != null) {
 					try {

@@ -113,7 +113,7 @@ public class AvailableLogicalStructuresAction extends Action implements IMenuCre
 				}
 				label.append(action.getText());
 				action.setText(label.toString());
-				String key = VariablesView.LOGICAL_STRUCTURE_TYPE_PREFIX + types[i].getId();
+				String key = VariablesView.LOGICAL_STRUCTURE_TYPE_PREFIX + types[i].getId() + types[i].getDescription(getValue());
 				if (i == 0) {
 					firstAction = action;
 					firstKey = key;

@@ -27,6 +27,7 @@ public class SelectLogicalStructureAction extends Action {
 	private VariablesView fView;
 	private ILogicalStructureType[] fTypes;
 	private int fIndex;
+	private String fDescription = null;
 
 	/**
 	 * 
@@ -37,6 +38,7 @@ public class SelectLogicalStructureAction extends Action {
 	 */
 	public SelectLogicalStructureAction(VariablesView view, ILogicalStructureType[] group, IValue value, int index) {
 		super(group[index].getDescription(value), IAction.AS_CHECK_BOX);
+		fDescription = getText();
 		setView(view);
 		fTypes = group;
 		fIndex = index;
@@ -58,9 +60,9 @@ public class SelectLogicalStructureAction extends Action {
 				IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
 				for (int i = 0; i < fTypes.length; i++) {
 					if (i == fIndex && isChecked()) {
-						store.setValue(VariablesView.LOGICAL_STRUCTURE_TYPE_PREFIX + fTypes[i].getId(), 1);
+						store.setValue(VariablesView.LOGICAL_STRUCTURE_TYPE_PREFIX + fTypes[i].getId() + fDescription, 1);
 					} else {
-						store.setValue(VariablesView.LOGICAL_STRUCTURE_TYPE_PREFIX + fTypes[i].getId(), -1);
+						store.setValue(VariablesView.LOGICAL_STRUCTURE_TYPE_PREFIX + fTypes[i].getId() + fDescription, -1);
 					}
 				}
 				getView().getViewer().refresh();					
