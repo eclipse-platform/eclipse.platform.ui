@@ -9,9 +9,21 @@ import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import org.eclipse.core.runtime.Platform;
+
 public class Policy {
 	protected static ResourceBundle bundle = null;
 
+	//debug constants
+	public static boolean DEBUG_SSH_PROTOCOL = false;
+
+	static {
+		//init debug options
+		if (SSHPlugin.getPlugin().isDebugging()) {
+			DEBUG_SSH_PROTOCOL = "true".equalsIgnoreCase(Platform.getDebugOption(SSHPlugin.ID + "/ssh_protocol"));//$NON-NLS-1$ //$NON-NLS-2$
+		}
+	}
+	
 	/**
 	 * Creates a NLS catalog for the given locale.
 	 */

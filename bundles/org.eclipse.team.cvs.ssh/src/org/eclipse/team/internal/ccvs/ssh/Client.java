@@ -391,6 +391,11 @@ public void connect(IProgressMonitor monitor) throws IOException, CVSAuthenticat
 			buf.append((char) c);
 		}
 		serverId = buf.toString();
+		
+		if (Policy.DEBUG_SSH_PROTOCOL) {
+			System.out.println("SSH > server ID: " + serverId);
+			System.out.println("SSH > client ID: " + clientId);
+		}
 
 		// send our id.
 		socketOut.write(clientId.getBytes());
