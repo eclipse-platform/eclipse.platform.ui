@@ -85,7 +85,6 @@ public class LaunchViewContentProvider implements ITreeContentProvider {
 			try {
 				return ((IDebugTarget)element).hasThreads();
 			} catch (DebugException e) {
-				DebugUIPlugin.log(e);
 				return false;
 			}
 		} 
@@ -93,7 +92,6 @@ public class LaunchViewContentProvider implements ITreeContentProvider {
 			try {
 				return ((IThread)element).hasStackFrames();
 			} catch (DebugException e) {
-				DebugUIPlugin.log(e);
 				return false;
 			}
 		}
