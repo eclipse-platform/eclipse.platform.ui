@@ -99,7 +99,6 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 		super.configureShell(shell);
 		shell.setText(SearchMessages.getString("SearchDialog.title")); //$NON-NLS-1$
 		shell.setImage(SearchPluginImages.get(SearchPluginImages.IMG_TOOL_SEARCH));
-		// added for 1GEUK2L: ITPJUI:WIN2000 - No help context for search pages
 		WorkbenchHelp.setHelp(shell, new Object[] { ISearchHelpContextIds.SEARCH_DIALOG });		
 	}
 

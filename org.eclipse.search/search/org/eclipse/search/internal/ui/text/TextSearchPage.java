@@ -258,7 +258,6 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		setControl(result);
 		
-		// added for 1GEUK2L: ITPJUI:WIN2000 - No help context for search pages
 		WorkbenchHelp.setHelp(result, new Object[] { ISearchHelpContextIds.TEXT_SEARCH_PAGE });		
 	}
 
