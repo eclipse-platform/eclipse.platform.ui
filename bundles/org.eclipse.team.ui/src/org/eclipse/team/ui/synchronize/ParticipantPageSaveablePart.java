@@ -349,6 +349,13 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 			));
 	}
 	
+    /**
+     * Set whether the file contents panes should be shown. If they are not,
+     * only the resource tree will be shown.
+     * 
+     * @param showContentPanes whether to show contents pane
+     * @since 3.1
+     */
 	public void setShowContentPanes(boolean showContentPanes) {
 		this.showContentPanes = showContentPanes;
 	}

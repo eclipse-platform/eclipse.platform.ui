@@ -368,6 +368,7 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	 * in the backgroud.
      * @param resources
      * @return the long task name
+     * @since 3.1
      */
     protected String getLongTaskName(IResource[] resources) {
         int resourceCount = 0;
