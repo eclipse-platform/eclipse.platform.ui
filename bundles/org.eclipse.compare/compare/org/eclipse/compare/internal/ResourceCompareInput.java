@@ -206,7 +206,7 @@ class ResourceCompareInput extends CompareEditorInput {
 	 * Returns true if both resources are either structured or unstructured.
 	 */
 	private boolean comparable(IResource c1, IResource c2) {
-		return hasStructure(c1) && hasStructure(c2);
+		return hasStructure(c1) == hasStructure(c2);
 	}
 	
 	/**
