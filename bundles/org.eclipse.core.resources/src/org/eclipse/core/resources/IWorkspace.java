@@ -1293,8 +1293,10 @@ public interface IWorkspace extends IAdaptable {
 	 * to be used to parent any dialogs with the user, or <code>null</code> if
 	 * there is no UI context (declared as an <code>Object</code> to avoid any
 	 * direct references on the SWT component)
-	 * @return a status object that is OK if things are fine, otherwise a status
-	 * describing reasons why modifying the given files is not reasonable
+	 * @return a status object that is <code>OK</code> if things are fine, 
+	 * otherwise a status describing reasons why modifying the given files is not 
+	 * reasonable. A status with a severity of <code>CANCEL</code> is returned
+	 * if the validation was canceled, indicating the edit should not proceed.
 	 * @see IResourceRuleFactory#validateEditRule(IResource[])
 	 * @since 2.0
 	 */
