@@ -4,7 +4,6 @@ package org.eclipse.ui;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.jface.resource.ImageDescriptor;
 
