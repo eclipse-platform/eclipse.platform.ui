@@ -321,9 +321,6 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 
 	private void initializePatternControl() {
 		ISelection selection= getSelection();
-		if (selection == null || selection.isEmpty())
-			return;
-		
 		String text= "";	 //$NON-NLS-1$
 		String extension= null; //$NON-NLS-1$
 		if (selection instanceof ITextSelection) {
