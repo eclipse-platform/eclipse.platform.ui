@@ -63,8 +63,7 @@ public class FolderSyncInfo {
 		try {
 			rootDir = getRootDirectory();
 		} catch (CVSException e) {
-			// Log this error for now. Using the root will show the error to the user.
-			CVSProviderPlugin.log(e);
+			// Ignore the for now. Using the root will show the error to the user.
 			return;
 		}
 		if (repository.startsWith(rootDir)) {
@@ -115,8 +114,6 @@ public class FolderSyncInfo {
 	 * @return String
 	 */
 	private String getRootDirectory() throws CVSException {
-		String result;
-		
 		try {
 			String root = getRoot();
 			int index = root.indexOf('@');
@@ -132,12 +129,16 @@ public class FolderSyncInfo {
 				// If the username was there, we find the first ':' past the '@'
 				index = root.indexOf(':', index + 1);
 			}
-			result = getRoot().substring(index + 1); 
+			index++;
+			// strip off a leading port if there is one
+			char c = root.charAt(index);
+			while (Character.isDigit(c)) {
+				c = root.charAt(++index);
+			}
+			return root.substring(index);
 		} catch (IndexOutOfBoundsException e) {
 			throw new CVSException(Policy.bind("FolderSyncInfo_Maleformed_root_4")); //$NON-NLS-1$
 		}
-		
-		return result;
 	}
 	
 	/**

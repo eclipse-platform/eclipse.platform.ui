@@ -192,9 +192,9 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 			(userFixed?(user +
 				(passwordFixed?(COLON + password):"")//$NON-NLS-1$ 
 					+ HOST_SEPARATOR):"") +//$NON-NLS-1$ 
-			host + 
-			((port == USE_DEFAULT_PORT)?"":(PORT_SEPARATOR + new Integer(port).toString())) +//$NON-NLS-1$ 
-			COLON + root;
+			host + COLON +
+			((port == USE_DEFAULT_PORT)?"":(new Integer(port).toString())) + //$NON-NLS-1$ 
+			root;
 	}
 	
 	/*
@@ -680,9 +680,24 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 			// Separate the port and host if there is a port
 			start = host.indexOf(PORT_SEPARATOR);
 			if (start != -1) {
+				// Initially, we used a # between the host and port
 				partId = "CVSRepositoryLocation.parsingPort";//$NON-NLS-1$ 
 				port = Integer.parseInt(host.substring(start+1));
 				host = host.substring(0, start);
+			} else {
+				// In the correct CVS format, the port follows the COLON
+				partId = "CVSRepositoryLocation.parsingPort";//$NON-NLS-1$ 
+				int index = end;
+				char c = location.charAt(++index);
+				String portString = new String();
+				while (Character.isDigit(c)) {
+					portString += c;
+					c = location.charAt(++index);
+				}
+				if (portString.length() > 0) {
+					end = index - 1;
+					port = Integer.parseInt(portString);
+				}
 			}
 			
 			// Get the repository path (translating backslashes to slashes)
