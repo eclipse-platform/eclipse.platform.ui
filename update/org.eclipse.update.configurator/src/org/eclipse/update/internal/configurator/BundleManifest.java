@@ -83,7 +83,7 @@ public class BundleManifest implements IConfigurationConstants {
 	/**
 	 * Obtains PluginEntry from a manifest.
 	 * 
-	 * @return PluginEntry of null if valid manifest does not exists
+	 * @return PluginEntry or null if valid manifest does not exist
 	 * @throws IOException
 	 *             if exception during parsing
 	 */
