@@ -450,16 +450,16 @@ public class LaunchVariableUtil {
 		try {
 			String nativeCommand= null;
 			if (BootLoader.getOS().equals(BootLoader.OS_WIN32)) {
-				String osName= System.getProperty("os.name");
-				if (osName != null && (osName.startsWith("Windows 9") || osName.startsWith("Windows ME"))) {
+				String osName= System.getProperty("os.name"); //$NON-NLS-1$
+				if (osName != null && (osName.startsWith("Windows 9") || osName.startsWith("Windows ME"))) { //$NON-NLS-1$ //$NON-NLS-2$
 					// Win 95, 98, and ME
-					nativeCommand= "command.com /C set";
+					nativeCommand= "command.com /C set"; //$NON-NLS-1$
 				} else {
 					// Win NT, 2K, XP
-					nativeCommand= "cmd.exe /C set";
+					nativeCommand= "cmd.exe /C set"; //$NON-NLS-1$
 				}
 			} else if (!BootLoader.getOS().equals(BootLoader.OS_UNKNOWN)){
-				nativeCommand= "printenv";				
+				nativeCommand= "printenv";		 //$NON-NLS-1$
 			}
 			if (nativeCommand == null) {
 				return env;
