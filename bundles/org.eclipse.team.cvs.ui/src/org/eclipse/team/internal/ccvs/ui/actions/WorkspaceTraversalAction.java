@@ -44,7 +44,7 @@ public abstract class WorkspaceTraversalAction extends WorkspaceAction {
     protected IResource[] getSelectedResourcesWithOverlap() {
         try {
             // Get all the traversals since enablement may be based on entire selection
-            ResourceTraversal[] traversals = getSelectedTraversals(null, null);
+            ResourceTraversal[] traversals = getSelectedTraversals(ResourceMappingContext.LOCAL_CONTEXT, null);
             if (traversals.length == 0 && selection != null) {
                 return Utils.getResources(selection.toArray());
             }

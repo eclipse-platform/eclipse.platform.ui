@@ -13,7 +13,7 @@ package org.eclipse.team.tests.ccvs.core.mappings;
 import java.util.*;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.core.resources.mapping.ResourceMappingContext;
+import org.eclipse.core.resources.mapping.RemoteResourceMappingContext;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -25,7 +25,7 @@ import org.eclipse.team.core.variants.IResourceVariant;
  * adds resources that exist in the given sync info set but do not exist
  * locally.
  */
-public class SyncInfoSetTraveralContext extends ResourceMappingContext {
+public class SyncInfoSetTraveralContext extends RemoteResourceMappingContext {
     
     SyncInfoTree set;
     

@@ -13,6 +13,7 @@ package org.eclipse.team.internal.ccvs.ui.actions;
 import java.util.*;
 
 import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.CoreException;
@@ -100,7 +101,7 @@ public abstract class UncommittedChangesDialog extends MappingSelectionDialog {
 
     private static boolean matchesFilter(ResourceMapping mapping, final Subscriber subscriber, final FastSyncInfoFilter resourceFilter) {
         try {
-            mapping.accept(null, new IResourceVisitor() {
+            mapping.accept(ResourceMappingContext.LOCAL_CONTEXT, new IResourceVisitor() {
                 public boolean visit(IResource resource) throws CoreException {
                     SyncInfo info = subscriber.getSyncInfo(resource);
                     if (info != null && resourceFilter.select(info)) {

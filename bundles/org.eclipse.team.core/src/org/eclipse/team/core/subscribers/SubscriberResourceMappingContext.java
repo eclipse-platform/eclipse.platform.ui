@@ -10,21 +10,11 @@
  *******************************************************************************/
 package org.eclipse.team.core.subscribers;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceStatus;
-import org.eclipse.core.resources.IStorage;
-import org.eclipse.core.resources.mapping.ResourceMappingContext;
-import org.eclipse.core.resources.mapping.ResourceTraversal;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.mapping.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoFilter;
@@ -40,7 +30,7 @@ import org.eclipse.team.internal.core.TeamPlugin;
  * update and replace).
  * @since 3.1
  */
-public class SubscriberResourceMappingContext extends ResourceMappingContext {
+public class SubscriberResourceMappingContext extends RemoteResourceMappingContext {
     
     Subscriber subscriber;
     private final SyncInfoFilter contentDiffFilter;

@@ -115,7 +115,7 @@ public class ResourceMapperTests extends EclipseTest {
     private void assertAdded(ResourceMapping mapping, final SyncInfoTree set) throws CoreException {
         // Assert that all resources covered by the mapping are now under version control (i.e. are in-sync)
         // Remove the resources contained in the mapping from the set of unadded resources.
-        visit(mapping, null, new IResourceVisitor() {
+        visit(mapping, ResourceMappingContext.LOCAL_CONTEXT, new IResourceVisitor() {
             public boolean visit(IResource resource) throws CoreException {
                 ICVSResource cvsResource = getCVSResource(resource);
                 assertTrue("Resource was not added but should have been: " + resource.getFullPath(), 
@@ -170,7 +170,7 @@ public class ResourceMapperTests extends EclipseTest {
     private void assertTagged(ResourceMapping mapping, final CVSTag tag) throws CoreException {
         final Map tagged = getTaggedRemoteFilesByPath(mapping, tag);
         // Visit all the resources in the traversal and ensure that they are tagged
-        visit(mapping, null, new IResourceVisitor() {
+        visit(mapping, ResourceMappingContext.LOCAL_CONTEXT, new IResourceVisitor() {
             public boolean visit(IResource resource) throws CoreException {
                 if (resource.getType() == IResource.FILE) {
                     ICVSRemoteFile file = popRemote(resource, tagged);
@@ -402,8 +402,10 @@ public class ResourceMapperTests extends EclipseTest {
        if (!visitor.visit(resource) || depth == IResource.DEPTH_ZERO || resource.getType() == IResource.FILE) return;
        Set members = new HashSet();
        members.addAll(Arrays.asList(((IContainer)resource).members(false)));
-       if (context != null)
-           members.addAll(Arrays.asList(context.fetchMembers((IContainer)resource, DEFAULT_MONITOR)));
+       if (context instanceof RemoteResourceMappingContext) {
+           RemoteResourceMappingContext remoteContext = (RemoteResourceMappingContext) context;  
+           members.addAll(Arrays.asList(remoteContext.fetchMembers((IContainer)resource, DEFAULT_MONITOR)));
+       }
        for (Iterator iter = members.iterator(); iter.hasNext();) {
            IResource member = (IResource) iter.next();
            visit(member, visitor, context, depth == IResource.DEPTH_ONE ? IResource.DEPTH_ZERO : IResource.DEPTH_INFINITE);

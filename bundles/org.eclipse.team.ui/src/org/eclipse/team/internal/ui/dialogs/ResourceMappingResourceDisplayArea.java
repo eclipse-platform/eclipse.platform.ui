@@ -14,8 +14,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.Dialog;
@@ -38,7 +36,7 @@ import org.eclipse.ui.views.navigator.ResourceSorter;
 public class ResourceMappingResourceDisplayArea extends DialogArea {
 
     private ResourceMapping mapping;
-    private ResourceMappingContext context;
+    private ResourceMappingContext context = ResourceMappingContext.LOCAL_CONTEXT;
     private TreeViewer viewer;
     private Label label;
     private IResourceMappingResourceFilter filter;
@@ -194,9 +192,11 @@ public class ResourceMappingResourceDisplayArea extends DialogArea {
         }
 
         private IResource[] members(IContainer container) throws CoreException {
-            if (context == null)
-                return container.members();
-            return ResourceMappingResourceDisplayArea.members(container, context);
+            if (context instanceof RemoteResourceMappingContext) {
+                RemoteResourceMappingContext remoteContext = (RemoteResourceMappingContext) context;  
+                return ResourceMappingResourceDisplayArea.members(container, remoteContext);
+            }
+            return container.members();
         }
         
         /* (non-Javadoc)
@@ -386,7 +386,7 @@ public class ResourceMappingResourceDisplayArea extends DialogArea {
         return new ResourceTraversal[0];
     }
     
-    /* private */ static IResource[] members(final IContainer container, final ResourceMappingContext context) {
+    /* private */ static IResource[] members(final IContainer container, final RemoteResourceMappingContext context) {
         final List members = new ArrayList();
         try {
             PlatformUI.getWorkbench().getProgressService().busyCursorWhile(new IRunnableWithProgress() {

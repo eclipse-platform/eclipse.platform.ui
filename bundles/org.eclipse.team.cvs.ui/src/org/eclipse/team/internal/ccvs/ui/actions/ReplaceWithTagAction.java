@@ -13,6 +13,7 @@ package org.eclipse.team.internal.ccvs.ui.actions;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.mapping.ResourceMapping;
+import org.eclipse.core.resources.mapping.ResourceMappingContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
@@ -96,7 +97,7 @@ public class ReplaceWithTagAction extends WorkspaceTraversalAction {
 				// For non-projects determine if the tag being loaded is the same as the resource's parent
 				// If it's not, warn the user that they will have strange sync behavior
 				try {
-					if(!CVSAction.checkForMixingTags(getShell(), getRootTraversalResources(resourceMappings[0], null, null), tag[0])) {
+					if(!CVSAction.checkForMixingTags(getShell(), getRootTraversalResources(resourceMappings[0], ResourceMappingContext.LOCAL_CONTEXT, null), tag[0])) {
 						tag[0] = null;
 						return;
 					}

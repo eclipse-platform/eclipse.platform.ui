@@ -300,7 +300,7 @@ public abstract class RepositoryProviderOperation extends CVSOperation {
      * @return the resource mapping context for this operaton
      */
 	protected ResourceMappingContext getResourceMappingContext() {
-        return null;
+        return ResourceMappingContext.LOCAL_CONTEXT;
     }
 
     /**
@@ -424,7 +424,7 @@ public abstract class RepositoryProviderOperation extends CVSOperation {
         List traversals = new ArrayList();
         for (int i = 0; i < mappers.length; i++) {
             ResourceMapping mapper = mappers[i];
-            traversals.addAll(Arrays.asList(mapper.getTraversals(null, null)));
+            traversals.addAll(Arrays.asList(mapper.getTraversals(ResourceMappingContext.LOCAL_CONTEXT, null)));
         }
         return (ResourceTraversal[]) traversals.toArray(new ResourceTraversal[traversals.size()]);
     }
