@@ -464,7 +464,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 			} catch (CoreException e) {
 			}
 		}
-		ElementListSelectionDialog dialog= new ElementListSelectionDialog(getShell(), labelProvider);
+		ElementListSelectionDialog dialog= new ElementListSelectionDialog(getShell(), new BuilderLabelProvider());
 		dialog.setTitle(ExternalToolsUIMessages.getString("BuilderPropertyPage.4")); //$NON-NLS-1$
 		dialog.setMessage(ExternalToolsUIMessages.getString("BuilderPropertyPage.5")); //$NON-NLS-1$
 		dialog.setElements(configurations.toArray());
