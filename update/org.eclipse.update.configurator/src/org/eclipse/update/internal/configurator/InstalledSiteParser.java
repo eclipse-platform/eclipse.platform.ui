@@ -38,7 +38,7 @@ public class InstalledSiteParser {
 			String path = url.getFile();
 			File siteLocation = new File(path);
 			if (!siteLocation.isDirectory() || !siteLocation.exists())
-				throw Utils.newCoreException(Policy.bind("InstalledSiteParser.DirectoryDoesNotExist", siteLocation.getAbsolutePath()), null);
+				throw Utils.newCoreException(Messages.getString("InstalledSiteParser.DirectoryDoesNotExist", siteLocation.getAbsolutePath()), null);
 			
 			site = parseSite(siteLocation);
 
@@ -100,7 +100,7 @@ public class InstalledSiteParser {
 					site.addFeatureEntry(featureEntry);
 				}
 			} catch (MalformedURLException e) {
-				throw Utils.newCoreException(Policy.bind("InstalledSiteParser.UnableToCreateURLForFile", featuresDir.getAbsolutePath()), e);
+				throw Utils.newCoreException(Messages.getString("InstalledSiteParser.UnableToCreateURLForFile", featuresDir.getAbsolutePath()), e);
 				//$NON-NLS-1$
 			}
 		}
@@ -142,11 +142,11 @@ public class InstalledSiteParser {
 			} // path is a directory
 		} catch (IOException e) {
 			String pluginFileString = (pluginFile == null) ? null : pluginFile.getAbsolutePath();
-			throw Utils.newCoreException(Policy.bind("InstalledSiteParser.ErrorAccessing", pluginFileString), e);
+			throw Utils.newCoreException(Messages.getString("InstalledSiteParser.ErrorAccessing", pluginFileString), e);
 			//$NON-NLS-1$
 		} catch (SAXException e) {
 			String pluginFileString = (pluginFile == null) ? null : pluginFile.getAbsolutePath();
-			throw Utils.newCoreException(Policy.bind("InstalledSiteParser.ErrorParsingFile", pluginFileString), e);
+			throw Utils.newCoreException(Messages.getString("InstalledSiteParser.ErrorParsingFile", pluginFileString), e);
 			//$NON-NLS-1$
 		}
 

@@ -85,7 +85,7 @@ public class Utils {
 						result.addElement(new URL(entry));
 					} catch (MalformedURLException e) {
 						//intentionally ignore bad URLs
-						System.err.println(Policy.bind("ignore.plugin", entry)); //$NON-NLS-1$
+						System.err.println(Messages.getString("ignore.plugin", entry)); //$NON-NLS-1$
 					}
 			}
 		}

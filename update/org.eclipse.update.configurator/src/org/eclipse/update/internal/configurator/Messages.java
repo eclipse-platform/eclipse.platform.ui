@@ -13,36 +13,36 @@ package org.eclipse.update.internal.configurator;
 import java.text.MessageFormat;
 import java.util.*;
 
-public class Policy {
+public class Messages {
 	private static String bundleName = "org.eclipse.update.configurator.messages"; //$NON-NLS-1$
 	private static ResourceBundle bundle = ResourceBundle.getBundle(bundleName, Locale.getDefault());
 
 	/**
 	 * Lookup the message with the given ID in this catalog 
 	 */
-	public static String bind(String id) {
-		return bind(id, (String[]) null);
+	public static String getString(String id) {
+		return getString(id, (String[]) null);
 	}
 	/**
 	 * Lookup the message with the given ID in this catalog and bind its
 	 * substitution locations with the given string.
 	 */
-	public static String bind(String id, String binding) {
-		return bind(id, new String[] { binding });
+	public static String getString(String id, String binding) {
+		return getString(id, new String[] { binding });
 	}
 	/**
 	 * Lookup the message with the given ID in this catalog and bind its
 	 * substitution locations with the given strings.
 	 */
-	public static String bind(String id, String binding1, String binding2) {
-		return bind(id, new String[] { binding1, binding2 });
+	public static String getString(String id, String binding1, String binding2) {
+		return getString(id, new String[] { binding1, binding2 });
 	}
 
 	/**
 	 * Lookup the message with the given ID in this catalog and bind its
 	 * substitution locations with the given string values.
 	 */
-	public static String bind(String id, String[] bindings) {
+	public static String getString(String id, String[] bindings) {
 		if (id == null)
 			return "No message available"; //$NON-NLS-1$
 		String message = null;

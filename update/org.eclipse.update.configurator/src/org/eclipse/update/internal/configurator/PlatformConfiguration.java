@@ -503,7 +503,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	 */
 	public synchronized void save(URL url) throws IOException {
 		if (url == null)
-			throw new IOException(Policy.bind("cfig.unableToSave.noURL")); //$NON-NLS-1$
+			throw new IOException(Messages.getString("cfig.unableToSave.noURL")); //$NON-NLS-1$
 
 		PrintWriter w = null;
 		OutputStream os = null;
@@ -541,7 +541,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			try {
 				tmpProps.load(is);
 				if (!EOF.equals(tmpProps.getProperty(EOF))) {
-					throw new IOException(Policy.bind("cfig.unableToSave", cfigTmp.getAbsolutePath())); //$NON-NLS-1$
+					throw new IOException(Messages.getString("cfig.unableToSave", cfigTmp.getAbsolutePath())); //$NON-NLS-1$
 				}
 			} finally {
 				is.close();
@@ -567,7 +567,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 				// with "tmp" (latest), then "bak" (the previous). We can also end up
 				// here if we failed to rename the current config to "bak". In that
 				// case we will restart with the previous state.
-				throw new IOException(Policy.bind("cfig.unableToSave", cfigTmp.getAbsolutePath())); //$NON-NLS-1$
+				throw new IOException(Messages.getString("cfig.unableToSave", cfigTmp.getAbsolutePath())); //$NON-NLS-1$
 			}
 		}
 	}
@@ -1005,7 +1005,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	private void load(URL url) throws IOException {
 
 		if (url == null)
-			throw new IOException(Policy.bind("cfig.unableToLoad.noURL")); //$NON-NLS-1$
+			throw new IOException(Messages.getString("cfig.unableToLoad.noURL")); //$NON-NLS-1$
 
 		// try to load saved configuration file (watch for failed prior save())
 		Properties props = null;
@@ -1031,7 +1031,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			// the state is invalid, delete any files under the directory
 			// bug 33493
 			resetUpdateManagerState(url);
-			throw new IOException(Policy.bind("cfig.badVersion", v)); //$NON-NLS-1$
+			throw new IOException(Messages.getString("cfig.badVersion", v)); //$NON-NLS-1$
 		}
 
 		// load simple properties
@@ -1114,7 +1114,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			props.load(is);
 			// check to see if we have complete config file
 			if (!EOF.equals(props.getProperty(EOF))) {
-				throw new IOException(Policy.bind("cfig.unableToLoad.incomplete", url.toString())); //$NON-NLS-1$
+				throw new IOException(Messages.getString("cfig.unableToLoad.incomplete", url.toString())); //$NON-NLS-1$
 			}
 		} finally {
 			if (is != null) {
