@@ -86,7 +86,7 @@
          point="org.eclipse.help.base.browser">
       <browser
             name="%mozilla_adapter"
-            id="org.eclipse.help.base.mozillaLinux">
+            id="org.eclipse.help.base.mozilla">
          <factoryclass
                class="org.eclipse.help.internal.browser.MozillaFactory">
             <parameter
@@ -99,13 +99,13 @@
             </parameter>
             <parameter
                   name="os"
-                  value="Linux">
+                  value="Linux, AIX, HP, SunOS">
             </parameter>
          </factoryclass>
       </browser>
       <browser
             name="%netscape_adapter"
-            id="org.eclipse.help.base.netscapeLinux">
+            id="org.eclipse.help.base.netscape">
          <factoryclass
                class="org.eclipse.help.internal.browser.MozillaFactory">
             <parameter
@@ -118,83 +118,7 @@
             </parameter>
             <parameter
                   name="os"
-                  value="Linux">
-            </parameter>
-         </factoryclass>
-      </browser>
-      <browser
-            name="%netscape_adapter"
-            id="org.eclipse.help.base.netscapeAIX">
-         <factoryclass
-               class="org.eclipse.help.internal.browser.MozillaFactory">
-            <parameter
-                  name="executable"
-                  value="netscape">
-            </parameter>
-            <parameter
-                  name="executableName"
-                  value="%netscape">
-            </parameter>
-            <parameter
-                  name="os"
-                  value="AIX">
-            </parameter>
-         </factoryclass>
-      </browser>
-      <browser
-            name="%mozilla_adapter"
-            id="org.eclipse.help.base.mozillaHPUX">
-         <factoryclass
-               class="org.eclipse.help.internal.browser.MozillaFactory">
-            <parameter
-                  name="executable"
-                  value="mozilla">
-            </parameter>
-            <parameter
-                  name="executableName"
-                  value="%mozilla">
-            </parameter>
-            <parameter
-                  name="os"
-                  value="HP">
-            </parameter>
-         </factoryclass>
-      </browser>
-      <browser
-            name="%netscape_adapter"
-            id="org.eclipse.help.base.netscapeHPUX">
-         <factoryclass
-               class="org.eclipse.help.internal.browser.MozillaFactory">
-            <parameter
-                  name="executable"
-                  value="netscape">
-            </parameter>
-            <parameter
-                  name="executableName"
-                  value="%netscape">
-            </parameter>
-            <parameter
-                  name="os"
-                  value="HP">
-            </parameter>
-         </factoryclass>
-      </browser>
-      <browser
-            name="%netscape_adapter"
-            id="org.eclipse.help.base.netscapeSolaris">
-         <factoryclass
-               class="org.eclipse.help.internal.browser.MozillaFactory">
-            <parameter
-                  name="executable"
-                  value="netscape">
-            </parameter>
-            <parameter
-                  name="executableName"
-                  value="%netscape">
-            </parameter>
-            <parameter
-                  name="os"
-                  value="SunOS">
+                  value="Linux, AIX, HP, SunOS">
             </parameter>
          </factoryclass>
       </browser>

@@ -18,7 +18,7 @@ import org.eclipse.help.internal.base.*;
 public class MozillaFactory implements IBrowserFactory, IExecutableExtension {
 	private String executable;
 	private String executableName;
-	private String os;
+	private String osList;
 	private MozillaBrowserAdapter browserInstance = null;
 	/**
 	 * Constructor.
@@ -30,10 +30,7 @@ public class MozillaFactory implements IBrowserFactory, IExecutableExtension {
 	 * @see IBrowserFactory#isAvailable()
 	 */
 	public boolean isAvailable() {
-		if (!System
-			.getProperty("os.name")
-			.toLowerCase()
-			.startsWith(os.toLowerCase())) {
+		if (!isSupportedOS(System.getProperty("os.name"))) {
 			return false;
 		}
 		try {
@@ -108,7 +105,7 @@ public class MozillaFactory implements IBrowserFactory, IExecutableExtension {
 			Hashtable params = (Hashtable) data;
 			executable = (String) params.get("executable");
 			executableName = (String) params.get("executableName");
-			os = (String) params.get("os");
+			osList = (String) params.get("os");
 		} catch (Exception e) {
 			throw new CoreException(
 				new Status(
@@ -118,5 +115,18 @@ public class MozillaFactory implements IBrowserFactory, IExecutableExtension {
 					HelpBaseResources.getString("MozillaFactory.dataMissing"),
 					e));
 		}
+	}
+	private boolean isSupportedOS(String os) {
+		if (osList == null || osList.length() <= 0) {
+			// parameter missing
+			return false;
+		}
+		String[] OSes = osList.split(",\\s*");
+		for (int i = 0; i < OSes.length; i++) {
+			if (os.toLowerCase().startsWith(OSes[i].toLowerCase())) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

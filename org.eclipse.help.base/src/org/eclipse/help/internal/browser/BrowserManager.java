@@ -57,32 +57,24 @@ public class BrowserManager {
 		}
 		
 		// 3. set default browser to help implementation of system specific browser
+		String os = System.getProperty("os.name").toLowerCase();
 		if (defaultBrowserDesc == null) {
-			if (System.getProperty("os.name").startsWith("Win")) {
+			if (os.startsWith("win")) {
 				setDefaultBrowserID("org.eclipse.help.ui.systembrowser");
-			} else if (System.getProperty("os.name").startsWith("Linux")) {
-				setDefaultBrowserID("org.eclipse.help.base.mozillaLinux");
+			} else if (os.startsWith("linux") || os.startsWith("aix")
+					|| os.startsWith("hp") || os.startsWith("sunos")) {
+				setDefaultBrowserID("org.eclipse.help.base.mozilla");
 				if (defaultBrowserDesc == null) {
-					setDefaultBrowserID("org.eclipse.help.base.netscapeLinux");
+					setDefaultBrowserID("org.eclipse.help.base.netscape");
 				}
-			} else if (System.getProperty("os.name").startsWith("SunOS")) {
-				setDefaultBrowserID("org.eclipse.help.base.netscapeSolaris");
-			} else if (System.getProperty("os.name").startsWith("AIX")) {
-				setDefaultBrowserID("org.eclipse.help.base.netscapeAIX");
-			} else if (
-				System.getProperty("os.name").toLowerCase().startsWith("hp")) {
-				setDefaultBrowserID("org.eclipse.help.base.mozillaHPUX");
-				if (defaultBrowserDesc == null) {
-					setDefaultBrowserID("org.eclipse.help.base.netscapeHPUX");
-				}
-			} else if (System.getProperty("os.name").equals("Mac OS X")) {
+			} else if (os.equals("Mac OS X")) {
 				setDefaultBrowserID("org.eclipse.help.base.defaultBrowserMacOSX");
 			} else {
 				setDefaultBrowserID("org.eclipse.help.base.mozillaLinux");
 			}
 		}
 
-		// 4. set browser to one of contributed
+		// 4. set browser to one of externally contributed
 		if (defaultBrowserDesc == null) {
 			for (int i = 0; i < browsersDescriptors.length; i++) {
 				if ("org.eclipse.help.base.custombrowser"
