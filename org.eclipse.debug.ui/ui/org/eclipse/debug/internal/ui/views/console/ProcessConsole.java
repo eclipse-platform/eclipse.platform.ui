@@ -337,18 +337,21 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
         Color color = fColorProvider.getColor(streamIdentifier);
         stream.setColor(color);
        
-        try {
-            stream.write(streamMonitor.getContents());
-            if (streamMonitor instanceof IFlushableStreamMonitor) {
-                IFlushableStreamMonitor monitor = (IFlushableStreamMonitor) streamMonitor;
-                monitor.flushContents();
-                monitor.setBuffered(false);
+        synchronized (streamMonitor) {
+            try {
+                stream.write(streamMonitor.getContents());
+                if (streamMonitor instanceof IFlushableStreamMonitor) {
+                    IFlushableStreamMonitor monitor = (IFlushableStreamMonitor) streamMonitor;
+                    monitor.flushContents();
+                    monitor.setBuffered(false);
+                }
+            } catch (IOException e) {
+                DebugUIPlugin.log(e);
             }
-        } catch (IOException e) {
-            DebugUIPlugin.log(e);
+            StreamListener listener = new StreamListener(streamIdentifier, streamMonitor, stream);
+            streamListeners.add(listener);            
         }
-        StreamListener listener = new StreamListener(streamIdentifier, streamMonitor, stream);
-        streamListeners.add(listener);
+
     }
 
 

@@ -77,10 +77,8 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStreamMonitor#addListener(org.eclipse.debug.core.IStreamListener)
 	 */
-	public void addListener(IStreamListener listener) {
-		synchronized (fListeners) {
-			fListeners.add(listener);
-		}
+	public synchronized void addListener(IStreamListener listener) {
+		fListeners.add(listener);
 	}
 
 	/**
@@ -111,7 +109,7 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStreamMonitor#getContents()
 	 */
-	public String getContents() {
+	public synchronized String getContents() {
 		return fContents.toString();
 	}
 
@@ -134,7 +132,7 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 				read= fStream.read(bytes);
 				if (read > 0) {
 					String text= new String(bytes, 0, read);
-					synchronized (fListeners) {
+					synchronized (this) {
 						if (isBuffered()) {
 							fContents.append(text);
 						}
@@ -167,10 +165,8 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStreamMonitor#removeListener(org.eclipse.debug.core.IStreamListener)
 	 */
-	public void removeListener(IStreamListener listener) {
-		synchronized (fListeners) {
-			fListeners.remove(listener);
-		}
+	public synchronized void removeListener(IStreamListener listener) {
+		fListeners.remove(listener);
 	}
 
 	/**
@@ -190,21 +186,21 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 	/**
 	 * @see org.eclipse.debug.core.model.IFlushableStreamMonitor#setBuffered(boolean)
 	 */
-	public void setBuffered(boolean buffer) {
+	public synchronized void setBuffered(boolean buffer) {
 		fBuffered = buffer;
 	}
 
 	/**
 	 * @see org.eclipse.debug.core.model.IFlushableStreamMonitor#flushContents()
 	 */
-	public void flushContents() {
+	public synchronized void flushContents() {
 		fContents.setLength(0);
 	}
 	
 	/**
 	 * @see IFlushableStreamMonitor#isBuffered()
 	 */
-	public boolean isBuffered() {
+	public synchronized boolean isBuffered() {
 		return fBuffered;
 	}
 
