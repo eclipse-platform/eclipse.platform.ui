@@ -424,7 +424,7 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 				    // Make local all content in the "about" directory.
 				    // This is needed to handle jar'ed plug-ins.
 				    // See Bug 88240 [About] About dialog needs to extract subdirs.
-					URL about = new URL(aboutUrl, "about"); //$NON-NLS-1$
+					URL about = new URL(aboutUrl, "about_files"); //$NON-NLS-1$
 					if (about != null)
 						Platform.asLocalURL(about);
 				} catch (IOException e) {
