@@ -251,7 +251,7 @@ public class RegistryCacheWriter {
 	}
 
 	private DataOutputStream openCacheFile() throws IOException {
-		return new DataOutputStream(new SafeFileOutputStream(cacheFile));
+		return new DataOutputStream(new SafeFileOutputStream(cacheFile));	//TODO Do we need to use the safeFile? Failing would not really matter anyway. If this is removed then we can consider deleting the SafeFileOutputStream class
 	}
 
 }
