@@ -15,13 +15,13 @@
 package org.eclipse.ant.internal.ui.editor.model;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.xml.utils.URI;
-import org.apache.xml.utils.URI.MalformedURIException;
 import org.eclipse.ant.internal.ui.editor.AntEditorException;
 import org.eclipse.ant.internal.ui.editor.outline.AntModel;
 import org.eclipse.ant.internal.ui.editor.outline.IProblem;
@@ -183,14 +183,14 @@ public class AntElementNode {
 	 * within.
 	 */
 	public void setFilePath(String path) {
-		URI uri= null;
+		URL url= null;
 		try {		
-			uri= new URI(path);
-		} catch (MalformedURIException e) {		
+			url= new URL(path);
+		} catch (MalformedURLException e) {		
 			filePath= path;
 			return;
 		}
-		filePath = new Path(new File(uri.getPath()).getAbsolutePath()).toString();
+		filePath = new Path(new File(url.getPath()).getAbsolutePath()).toString();
 	}
 	
 	/**
