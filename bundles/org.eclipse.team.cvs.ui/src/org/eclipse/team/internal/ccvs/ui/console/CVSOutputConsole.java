@@ -110,7 +110,6 @@ public class CVSOutputConsole extends MessageConsole implements IConsoleListener
 		consoleManager = ConsolePlugin.getDefault().getConsoleManager();
 		CVSProviderPlugin.getPlugin().setConsoleListener(CVSOutputConsole.this);
 		CVSUIPlugin.getPlugin().getPreferenceStore().addPropertyChangeListener(CVSOutputConsole.this);
-		setAutoScroll(true);
 	}
 	
 	/* (non-Javadoc)
