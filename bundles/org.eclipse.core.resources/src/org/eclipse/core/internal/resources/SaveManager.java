@@ -12,7 +12,6 @@ package org.eclipse.core.internal.resources;
 
 import java.io.*;
 import java.util.*;
-
 import org.eclipse.core.internal.events.*;
 import org.eclipse.core.internal.localstore.*;
 import org.eclipse.core.internal.utils.*;
@@ -1353,7 +1352,7 @@ public IStatus save(int kind, Project project, IProgressMonitor monitor) throws 
  * 
  * FIXME: This method is ugly. Fix it up and look at merging with #visitAndSnap
  */
-public void visitAndSave(IResource root) throws CoreException {
+public void visitAndSave(final IResource root) throws CoreException {
 	// Ensure we have either a project or the workspace root
 	Assert.isLegal(root.getType() == IResource.ROOT || root.getType() == IResource.PROJECT);
 	// only write out info for accessible resources
@@ -1399,37 +1398,41 @@ public void visitAndSave(IResource root) throws CoreException {
 	final long[] saveTimes = new long[2];
 
 	// Create the visitor 
-	IResourceVisitor visitor = new IResourceVisitor() {
-		public boolean visit(IResource resource) throws CoreException {
-			try {
-				// phantom resources don't have markers so skip them
-				if (!resource.isPhantom()) {
+	IElementContentVisitor visitor = new IElementContentVisitor() {
+		public boolean visitElement(ElementTree tree, IPathRequestor requestor, Object elementContents) {
+			ResourceInfo info = (ResourceInfo) elementContents;
+			if (info != null) {
+				try {
+					// save the markers
 					long start = System.currentTimeMillis();
-					markerManager.save(resource, markersOutput, writtenTypes);
+					markerManager.save(info, requestor, markersOutput, writtenTypes);
 					long markerSaveTime = System.currentTimeMillis() - start;
 					saveTimes[0] += markerSaveTime;
 					persistMarkers += markerSaveTime;
+					// save the sync info - if we have the workspace root then the output stream will be null
+					if (syncInfoOutput != null) {
+						start = System.currentTimeMillis();
+						synchronizer.saveSyncInfo(info, requestor, syncInfoOutput, writtenPartners);
+						long syncInfoSaveTime = System.currentTimeMillis() - start;
+						saveTimes[1] += syncInfoSaveTime;
+						persistSyncInfo += syncInfoSaveTime;
+					}
+				} catch (IOException e) {
+					throw new WrappedRuntimeException(e);
 				}
-				// if we have the workspace root then the output stream will be null
-				if (syncInfoOutput != null) {
-					long start = System.currentTimeMillis();
-					synchronizer.saveSyncInfo(resource, syncInfoOutput, writtenPartners);
-					long syncInfoSaveTime = System.currentTimeMillis() - start;
-					saveTimes[1] += syncInfoSaveTime;
-					persistSyncInfo += syncInfoSaveTime;
-				}
-			} catch (IOException e) {
-				String msg = Policy.bind("resources.writeMeta", resource.getFullPath().toString()); //$NON-NLS-1$
-				throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, resource.getFullPath(), msg, e);
 			}
-			return true;
+			// don't continue if the current resource is the workspace root, only continue for projects
+			return root.getType() != IResource.ROOT;
 		}
 	};
-
+	
 	// Call the visitor
 	try {
-		int depth = root.getType() == IResource.ROOT ? IResource.DEPTH_ZERO : IResource.DEPTH_INFINITE;
-		root.accept(visitor, depth, true);
+		try {
+			workspace.createTreeIterator(root.getFullPath()).iterate(visitor);
+		} catch (WrappedRuntimeException e) {
+			throw (IOException) e.getTargetException();
+		}
 		if (Policy.DEBUG_SAVE_MARKERS)
 			System.out.println("Save Markers for " + root.getFullPath() + ": " + saveTimes[0] + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		if (Policy.DEBUG_SAVE_SYNCINFO)
@@ -1440,9 +1443,6 @@ public void visitAndSave(IResource root) throws CoreException {
 		if (syncInfoOutput != null)
 			removeGarbage(syncInfoOutput, syncInfoLocation, syncInfoTempLocation);
 	} catch (IOException e) {
-		message = Policy.bind("resources.writeMeta", root.getFullPath().toString()); //$NON-NLS-1$
-		throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, root.getFullPath(), message, e);
-	} catch (CoreException e) {
 		message = Policy.bind("resources.writeMeta", root.getFullPath().toString()); //$NON-NLS-1$
 		throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, root.getFullPath(), message, e);
 	} finally {
@@ -1471,7 +1471,7 @@ public void visitAndSave(IResource root) throws CoreException {
  * 
  * FIXME: This method is ugly. Fix it up and look at merging with #visitAndSnap
  */
-public void visitAndSnap(IResource root) throws CoreException {
+public void visitAndSnap(final IResource root) throws CoreException {
 	// Ensure we have either a project or the workspace root
 	Assert.isLegal(root.getType() == IResource.ROOT || root.getType() == IResource.PROJECT);
 	// only write out info for accessible resources
@@ -1519,38 +1519,41 @@ public void visitAndSnap(IResource root) throws CoreException {
 	// for each resource otherwise.
 	final long[] snapTimes = new long[2];
 	
-	// Create the visitor 
-	IResourceVisitor visitor = new IResourceVisitor() {
-		public boolean visit(IResource resource) throws CoreException {
-			try {
-				// phantom resources don't have markers so skip them
-				if (!resource.isPhantom()) {
+	IElementContentVisitor visitor = new IElementContentVisitor() {
+		public boolean visitElement(ElementTree tree, IPathRequestor requestor, Object elementContents) {
+			ResourceInfo info = (ResourceInfo) elementContents;
+			if (info != null) {
+				try {
+					// save the markers
 					long start = System.currentTimeMillis();
-					markerManager.snap(resource, markersOutput);
+					markerManager.snap(info, requestor, markersOutput);
 					long markerSnapTime = System.currentTimeMillis() - start;
 					snapTimes[0] += markerSnapTime;
 					persistMarkers += markerSnapTime;
+					// save the sync info - if we have the workspace root then the output stream will be null
+					if (syncInfoOutput != null) {
+						start = System.currentTimeMillis();
+						synchronizer.snapSyncInfo(info, requestor, syncInfoOutput);
+						long syncInfoSnapTime = System.currentTimeMillis() - start;
+						snapTimes[1] += syncInfoSnapTime;
+						persistSyncInfo += syncInfoSnapTime;
+					}
+				} catch (IOException e) {
+					throw new WrappedRuntimeException(e);
 				}
-				// if we have the workspace root then the output stream will be null
-				if (syncInfoOutput != null) {
-					long start = System.currentTimeMillis();
-					synchronizer.snapSyncInfo(resource, syncInfoOutput);
-					long syncInfoSnapTime = System.currentTimeMillis() - start;
-					snapTimes[1] += syncInfoSnapTime;
-					persistSyncInfo += syncInfoSnapTime;
-				}
-			} catch (IOException e) {
-				String msg = Policy.bind("resources.writeMeta", resource.getFullPath().toString()); //$NON-NLS-1$
-				throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, resource.getFullPath(), msg, e);
 			}
-			return true;
+			// don't continue if the current resource is the workspace root, only continue for projects
+			return root.getType() != IResource.ROOT;
 		}
 	};
-
-	// Call the visitor
+	
 	try {
-		int depth = root.getType() == IResource.ROOT ? IResource.DEPTH_ZERO : IResource.DEPTH_INFINITE;
-		root.accept(visitor, depth, true);
+		// Call the visitor
+		try {
+			workspace.createTreeIterator(root.getFullPath()).iterate(visitor);
+		} catch (WrappedRuntimeException e) {
+			throw (IOException) e.getTargetException();
+		}
 		if (Policy.DEBUG_SAVE_MARKERS)
 			System.out.println("Snap Markers for " + root.getFullPath() + ": " + snapTimes[0] + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		if (Policy.DEBUG_SAVE_SYNCINFO)
@@ -1560,9 +1563,6 @@ public void visitAndSnap(IResource root) throws CoreException {
 		if (safeSyncInfoStream != null && syncInfoFileSize != syncInfoOutput.size())
 			safeSyncInfoStream.succeed();
 	} catch (IOException e) {
-		message = Policy.bind("resources.writeMeta", root.getFullPath().toString()); //$NON-NLS-1$
-		throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, root.getFullPath(), message, e);
-	} catch (CoreException e) {
 		message = Policy.bind("resources.writeMeta", root.getFullPath().toString()); //$NON-NLS-1$
 		throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, root.getFullPath(), message, e);
 	} finally {

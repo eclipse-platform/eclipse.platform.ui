@@ -11,7 +11,6 @@ package org.eclipse.core.internal.resources;
 
 import java.io.*;
 import java.util.*;
-
 import org.eclipse.core.internal.localstore.SafeChunkyInputStream;
 import org.eclipse.core.internal.localstore.SafeFileInputStream;
 import org.eclipse.core.internal.utils.Policy;
@@ -498,11 +497,11 @@ protected void restoreFromSnap(IResource resource) {
 		ResourcesPlugin.getPlugin().getLog().log(new ResourceStatus(IResourceStatus.FAILED_READ_METADATA, sourceLocation, msg, e));
 	}
 }
-public void save(IResource resource, DataOutputStream output, List list) throws IOException {
-	writer.save(resource, output, list);
+public void save(ResourceInfo info, IPathRequestor requestor, DataOutputStream output, List list) throws IOException {
+	writer.save(info, requestor, output, list);
 }
-public void snap(IResource resource, DataOutputStream output) throws IOException {
-	writer.snap(resource, output);
+public void snap(ResourceInfo info, IPathRequestor requestor, DataOutputStream output) throws IOException {
+	writer.snap(info, requestor, output);
 }
 /**
  * @see IManager

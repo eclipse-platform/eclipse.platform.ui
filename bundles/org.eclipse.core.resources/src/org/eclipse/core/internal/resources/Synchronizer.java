@@ -1,22 +1,24 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
  * IBM - Initial API and implementation
  ******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.internal.localstore.*;
-import org.eclipse.core.internal.utils.*;
-//
 import java.io.*;
 import java.util.*;
+import org.eclipse.core.internal.localstore.SafeChunkyInputStream;
+import org.eclipse.core.internal.localstore.SafeFileInputStream;
+import org.eclipse.core.internal.utils.Assert;
+import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.internal.watson.IPathRequestor;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 //
 public class Synchronizer implements ISynchronizer {
 	protected Workspace workspace;
@@ -193,8 +195,8 @@ public void remove(QualifiedName partner) {
 public void savePartners(DataOutputStream output) throws IOException {
 	writer.savePartners(output);
 }
-public void saveSyncInfo(IResource resource, DataOutputStream output, List writtenPartners) throws IOException {
-	writer.saveSyncInfo(resource, output, writtenPartners);
+public void saveSyncInfo(ResourceInfo info, IPathRequestor requestor, DataOutputStream output, List writtenPartners) throws IOException {
+	writer.saveSyncInfo(info, requestor, output, writtenPartners);
 }
 protected void setRegistry(Set registry) {
 	this.registry = registry;
@@ -240,7 +242,7 @@ public void setSyncInfo(QualifiedName partner, IResource resource, byte[] info) 
 		workspace.endOperation(false, null);
 	}
 }
-public void snapSyncInfo(IResource resource, DataOutputStream output) throws IOException {
-	writer.snapSyncInfo(resource, output);
+public void snapSyncInfo(ResourceInfo info, IPathRequestor requestor, DataOutputStream output) throws IOException {
+	writer.snapSyncInfo(info, requestor, output);
 }
 }

@@ -13,11 +13,10 @@ package org.eclipse.core.tests.resources;
 import java.io.*;
 import java.io.File;
 import java.util.*;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
 import org.eclipse.core.internal.resources.*;
+import org.eclipse.core.internal.watson.IPathRequestor;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
@@ -526,9 +525,20 @@ public void testSave() {
 	final DataOutputStream output = o1;
 	final List list = new ArrayList(5);
 	visitor = new IResourceVisitor() {
-		public boolean visit(IResource resource) throws CoreException {
+		public boolean visit(final IResource resource) throws CoreException {
 			try {
-				synchronizer.saveSyncInfo(resource, output, list);
+				ResourceInfo info = ((Resource) resource).getResourceInfo(false, false);
+				if (info == null)
+					return true;
+				IPathRequestor requestor = new IPathRequestor() {
+					public IPath requestPath() {
+						return resource.getFullPath();
+					}
+					public String requestName() {
+						return resource.getName();
+					}
+				};
+				synchronizer.saveSyncInfo(info, requestor, output, list);
 			} catch (IOException e) {
 				fail("1.1", e);
 			}

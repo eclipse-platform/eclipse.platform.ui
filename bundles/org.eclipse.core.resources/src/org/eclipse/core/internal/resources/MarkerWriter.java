@@ -1,19 +1,19 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
  * IBM - Initial API and implementation
  ******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import org.eclipse.core.resources.*;
-import java.util.*;
-import java.io.IOException;
 import java.io.DataOutputStream;
+import java.io.IOException;
+import java.util.*;
+import org.eclipse.core.internal.watson.IPathRequestor;
 //
 public class MarkerWriter {
 	
@@ -79,9 +79,9 @@ private Object[] filterMarkers(IMarkerSetElement[] markers) {
  * CREATION_TIME -> long
  * 	
  */
-public void save(IResource resource, DataOutputStream output, List writtenTypes) throws IOException {
-	ResourceInfo info = ((Resource) resource).getResourceInfo(false, false);
-	if (info == null)
+public void save(ResourceInfo info, IPathRequestor requestor, DataOutputStream output, List writtenTypes) throws IOException {
+	// phantom resources don't have markers
+	if (info.isSet(ICoreConstants.M_PHANTOM))
 		return;
 	MarkerSet markers = info.getMarkers();
 	if (markers == null)
@@ -97,7 +97,7 @@ public void save(IResource resource, DataOutputStream output, List writtenTypes)
 	if (output.size() == 0)
 		output.writeInt(MARKERS_SAVE_VERSION);
 	boolean[] isPersistent = (boolean[]) result[1];
-	output.writeUTF(resource.getFullPath().toString());
+	output.writeUTF(requestor.requestPath().toString());
 	output.writeInt(count);
 	for (int i = 0; i < elements.length; i++)
 		if (isPersistent[i])
@@ -126,9 +126,9 @@ public void save(IResource resource, DataOutputStream output, List writtenTypes)
  * NULL_VALUE -> byte
  * CREATION_TIME -> long
  */
-public void snap(IResource resource, DataOutputStream output) throws IOException {
-	ResourceInfo info = ((Resource) resource).getResourceInfo(false, false);
-	if (info == null)
+public void snap(ResourceInfo info, IPathRequestor requestor, DataOutputStream output) throws IOException {
+	// phantom resources don't have markers
+	if (info.isSet(ICoreConstants.M_PHANTOM))
 		return;
 	if (!info.isSet(ICoreConstants.M_MARKERS_SNAP_DIRTY))
 		return;
@@ -142,7 +142,7 @@ public void snap(IResource resource, DataOutputStream output) throws IOException
 	// write the version id for the snapshot.
 	output.writeInt(MARKERS_SNAP_VERSION);
 	boolean[] isPersistent = (boolean[]) result[1];
-	output.writeUTF(resource.getFullPath().toString());
+	output.writeUTF(requestor.requestPath().toString());
 	// always write out the count...even if its zero. this will help
 	// use pick up marker deletions from our snapshot.
 	output.writeInt(count);

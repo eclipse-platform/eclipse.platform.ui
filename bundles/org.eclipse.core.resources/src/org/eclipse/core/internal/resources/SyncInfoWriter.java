@@ -1,20 +1,20 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
  * IBM - Initial API and implementation
  ******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.*;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.*;
+import org.eclipse.core.internal.watson.IPathRequestor;
+import org.eclipse.core.runtime.QualifiedName;
 public class SyncInfoWriter {
 	protected Synchronizer synchronizer;
 	protected Workspace workspace;
@@ -53,11 +53,7 @@ public void savePartners(DataOutputStream output) throws IOException {
  * QNAME -> byte String
  * BYTES -> byte[]
  */ 
-public void saveSyncInfo(IResource target, DataOutputStream output, List writtenPartners) throws IOException {
-	Resource resource = (Resource) target;
-	ResourceInfo info = workspace.getResourceInfo(resource.getFullPath(), true, false);
-	if (info == null)
-		return;
+public void saveSyncInfo(ResourceInfo info, IPathRequestor requestor, DataOutputStream output, List writtenPartners) throws IOException {
 	Map table = info.getSyncInfo(false);
 	if (table == null)
 		return;
@@ -65,7 +61,7 @@ public void saveSyncInfo(IResource target, DataOutputStream output, List written
 	// write the version id for the file.
 	if (output.size() == 0)
 		output.writeInt(SYNCINFO_SAVE_VERSION);
-	output.writeUTF(resource.getFullPath().toString());
+	output.writeUTF(requestor.requestPath().toString());
 	output.writeInt(table.size());
 	for (Iterator i = table.entrySet().iterator(); i.hasNext();) {
 		Map.Entry entry = (Map.Entry) i.next();
@@ -98,11 +94,7 @@ public void saveSyncInfo(IResource target, DataOutputStream output, List written
  * QNAME -> String String
  * BYTES -> byte[]
  */
-public void snapSyncInfo(IResource target, DataOutputStream output) throws IOException {
-	Resource resource = (Resource) target;
-	ResourceInfo info = workspace.getResourceInfo(resource.getFullPath(), true, false);
-	if (info == null)
-		return;
+public void snapSyncInfo(ResourceInfo info, IPathRequestor requestor, DataOutputStream output) throws IOException {
 	if (!info.isSet(ICoreConstants.M_SYNCINFO_SNAP_DIRTY))
 		return;
 	Map table = info.getSyncInfo(false);
@@ -110,7 +102,7 @@ public void snapSyncInfo(IResource target, DataOutputStream output) throws IOExc
 		return;
 	// write the version id for the snapshot.
 	output.writeInt(SYNCINFO_SNAP_VERSION);
-	output.writeUTF(resource.getFullPath().toString());
+	output.writeUTF(requestor.requestPath().toString());
 	output.writeInt(table.size());
 	for (Iterator i = table.entrySet().iterator(); i.hasNext();) {
 		Map.Entry entry = (Map.Entry) i.next();
