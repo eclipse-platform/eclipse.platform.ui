@@ -20,7 +20,7 @@ int FLOPPY_3 = 0;
 int FLOPPY_5 = 1;
 
 // set to 1 for DEBUG
-int DEBUG = 0;
+int DEBUG = 1;
 
 // set to 0 to run on Windows 95 *Unsupported*
 int NOWIN95 = 1;
@@ -221,6 +221,9 @@ JNIEXPORT jlong JNICALL Java_org_eclipse_update_configuration_LocalSystemInfo_na
 	id = jnienv -> GetMethodID(cls, "getAbsolutePath", "()Ljava/lang/String;");
 	obj = jnienv -> CallObjectMethod(file, id);
 	lpDirectoryName = jnienv -> GetStringUTFChars((jstring) obj, 0);
+	if (DEBUG)
+		printf("Directory: [%s]\n",lpDirectoryName);		
+	
 
 	if (int win = (int)getWindowsVersion()<0 && NOWIN95){
 		// windows 95 or other
@@ -266,6 +269,8 @@ JNIEXPORT jstring JNICALL Java_org_eclipse_update_configuration_LocalSystemInfo_
 	id = jnienv -> GetMethodID(cls, "getAbsolutePath", "()Ljava/lang/String;");
 	obj = jnienv -> CallObjectMethod(file, id);
 	lpDirectoryName = jnienv -> GetStringUTFChars((jstring) obj, 0);
+	if (DEBUG)
+		printf("Directory: [%s]\n",lpDirectoryName);		
 
 	//
 	jstring result = NULL;
@@ -332,6 +337,8 @@ JNIEXPORT jint JNICALL Java_org_eclipse_update_configuration_LocalSystemInfo_nat
 	id = jnienv -> GetMethodID(cls, "getAbsolutePath", "()Ljava/lang/String;");
 	obj = jnienv -> CallObjectMethod(file, id);
 	lpDirectoryName = jnienv -> GetStringUTFChars((jstring) obj, 0);
+	if (DEBUG)
+		printf("Directory: [%s]\n",lpDirectoryName);		
 
 	int result = org_eclipse_update_configuration_LocalSystemInfo_VOLUME_UNKNOWN;
 	if (int win = (int)getWindowsVersion()<0 && NOWIN95){
