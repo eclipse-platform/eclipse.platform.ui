@@ -86,7 +86,7 @@ public class AnnotationManager implements ISearchResultListener, IPartListener {
 		fMatchesToAnnotations= new HashMap();
 	}
 
-	public void setSearchResult(AbstractTextSearchResult result) {
+	public synchronized void setSearchResult(AbstractTextSearchResult result) {
 		if (result == fResult)
 			return;
 		removeAnnotations();
@@ -158,12 +158,13 @@ public class AnnotationManager implements ISearchResultListener, IPartListener {
 	}
 
 	private void removeAnnotations() {
-		if (fEditor == null)
+		ITextEditor editor= fEditor;
+		if (editor == null)
 			return;
 		Set matches= new HashSet(); 
 		matches.addAll(fMatchesToAnnotations.keySet());
 		for (Iterator annotations= matches.iterator(); annotations.hasNext();) {
-			removeAnnotation(fEditor, (Match) annotations.next());
+			removeAnnotation(editor, (Match) annotations.next());
 		}
 	}
 	/* (non-Javadoc)
