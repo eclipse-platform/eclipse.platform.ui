@@ -194,6 +194,9 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 		// prevent close button and scroll buttons from taking focus
 		tabFolder.setTabList(new Control[0]);
 
+		// set the tab style to non-simple
+		tabFolder.setSimpleTab(false);
+		
 		// redirect drop request to the workbook
 		tabFolder.setData(this);
 

@@ -360,7 +360,9 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 		// do not support icons in unselected tabs.
 		tabFolder.setUnselectedImageVisible(false);
 		
-		
+		// set the tab style to non-simple
+		tabFolder.setSimpleTab(false);
+			
 		//tabFolder.setBorderVisible(true);
 		// set basic colors
 		ColorSchemeService.setTabColors(tabFolder);
