@@ -501,7 +501,7 @@ public class AnimationItem {
 
 			private void incrementJobCount(Job job) {
 				//Don't count the animate job itself
-				if (job instanceof AnimateJob)
+				if (job.isSystem())
 					return;
 
 				if (jobCount == 0)
@@ -511,7 +511,7 @@ public class AnimationItem {
 
 			private void decrementJobCount(Job job) {
 				//Don't count the animate job itself
-				if (job instanceof AnimateJob)
+				if (job.isSystem())
 					return;
 				if (jobCount == 1)
 					setAnimated(false);

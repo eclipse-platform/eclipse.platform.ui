@@ -34,7 +34,7 @@ public class ProgressContentProvider implements ITreeContentProvider {
 			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#scheduled(org.eclipse.core.runtime.jobs.IJobChangeEvent)
 			 */
 			public void scheduled(IJobChangeEvent event) {
-				if (shouldDisplayJob(event.getJob())) {
+				if (!isNonDisplayableJob(event.getJob())) {
 					jobs.put(event.getJob(), new JobInfo(event.getJob()));
 					refreshViewer(null);
 				}
@@ -44,7 +44,7 @@ public class ProgressContentProvider implements ITreeContentProvider {
 			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#aboutToRun(org.eclipse.core.runtime.jobs.IJobChangeEvent)
 			 */
 			public void aboutToRun(IJobChangeEvent event) {
-				if (shouldDisplayJob(event.getJob())) {
+				if (!isNonDisplayableJob(event.getJob())) {
 					JobInfo info = getJobInfo(event.getJob());
 					info.setRunning();
 					refreshViewer(null);
@@ -55,7 +55,7 @@ public class ProgressContentProvider implements ITreeContentProvider {
 			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
 			 */
 			public void done(IJobChangeEvent event) {
-				if (shouldDisplayJob(event.getJob())) {
+				if (!isNonDisplayableJob(event.getJob())) {
 					if (event.getResult().getCode() == IStatus.ERROR) {
 						JobInfo info = getJobInfo(event.getJob());
 						info.setError(event.getResult());
@@ -66,14 +66,7 @@ public class ProgressContentProvider implements ITreeContentProvider {
 				}
 
 			}
-	
-			/**
-			 * Return whether or not this is a job we show
-			 * in the view.
-			 */
-			private boolean shouldDisplayJob(Job job) {
-				return !(job instanceof AnimateJob);
-			}
+
 		};
 		Platform.getJobManager().addJobChangeListener(listener);
 		viewer = mainViewer;
@@ -157,7 +150,7 @@ public class ProgressContentProvider implements ITreeContentProvider {
 	 * @return
 	 */
 	private boolean isNonDisplayableJob(Job job) {
-		return job == null || job instanceof AnimateJob;
+		return job == null || job.isSystem();
 	}
 	/**
 	 * Reset the name of the task to task name.
@@ -186,10 +179,7 @@ public class ProgressContentProvider implements ITreeContentProvider {
 	 * @param name
 	 */
 	public void subTask(Job job, String name) {
-		if (job == null)
-			return;
-
-		if (job instanceof AnimateJob)
+		if (isNonDisplayableJob(job))
 			return;
 		if (name.length() == 0)
 			return;
@@ -205,11 +195,9 @@ public class ProgressContentProvider implements ITreeContentProvider {
 	 * @see org.eclipse.core.runtime.jobs.IProgressListener#worked(org.eclipse.core.runtime.jobs.Job, int)
 	 */
 	public void worked(Job job, double work) {
-		if (job == null)
+		if (isNonDisplayableJob(job))
 			return;
 
-		if (job instanceof AnimateJob)
-			return;
 		JobInfo info = getJobInfo(job);
 		if (info.taskInfo != null) {
 			info.addWork(work);
@@ -235,5 +223,18 @@ public class ProgressContentProvider implements ITreeContentProvider {
 				viewer.refresh(info);
 			}
 		});
+	}
+
+	/**
+	 * Clear the job out of the list of those being displayed.
+	 * Only do this for jobs that are an error.
+	 * @param job
+	 */
+	void clearJob(Job job) {
+		JobInfo info = (JobInfo) jobs.get(job);
+		if (info != null && info.status.getCode() == IStatus.ERROR) {
+			jobs.remove(job);
+			viewer.refresh(null);
+		}
 	}
 }

@@ -14,7 +14,7 @@ import org.eclipse.ui.part.ViewPart;
 
 public class ProgressView extends ViewPart implements IViewPart {
 
-	TreeViewer viewer;
+	ProgressTreeViewer viewer;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
@@ -25,8 +25,8 @@ public class ProgressView extends ViewPart implements IViewPart {
 				parent,
 				SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setUseHashlookup(true);
-		initContentProvider(viewer);
-		initLabelProvider(viewer);
+		initContentProvider();
+		initLabelProvider();
 		initContextMenu();
 		getSite().setSelectionProvider(viewer);
 	}
@@ -40,11 +40,8 @@ public class ProgressView extends ViewPart implements IViewPart {
 	}
 	/**
 	 * Sets the content provider for the viewer.
-	 * 
-	 * @param viewer the viewer
-	 * @since 2.0
 	 */
-	protected void initContentProvider(TreeViewer viewer) {
+	protected void initContentProvider() {
 		IContentProvider provider = new ProgressContentProvider(viewer);
 		viewer.setContentProvider(provider);
 		viewer.setInput(provider);
@@ -52,10 +49,8 @@ public class ProgressView extends ViewPart implements IViewPart {
 
 	/**
 	 * Sets the label provider for the viewer.
-	 * 
-	 * @param viewer the viewer
 	 */
-	protected void initLabelProvider(TreeViewer viewer) {
+	protected void initLabelProvider() {
 		viewer.setLabelProvider(new ProgressLabelProvider());
 
 	}
@@ -107,11 +102,11 @@ public class ProgressView extends ViewPart implements IViewPart {
 					JobTreeElement element = (JobTreeElement) items.next();
 					if (element.isJobInfo()) {
 						JobInfo info = (JobInfo) element;
-						if (info.status.getCode() == IStatus.ERROR) {
-							viewer.remove(info);
-							viewer.refresh(null);
-						}
-
+						if (info.status.getCode() == IStatus.ERROR)
+							(
+								(ProgressContentProvider) viewer
+									.getContentProvider())
+									.clearJob(info.job);
 					}
 				}
 			}
@@ -154,7 +149,7 @@ public class ProgressView extends ViewPart implements IViewPart {
 	 * @return boolean
 	 */
 	private boolean hasSelection() {
-	
+
 		//If the provider has not been set yet move on.
 		ISelectionProvider provider = getSite().getSelectionProvider();
 		ISelection currentSelection = provider.getSelection();

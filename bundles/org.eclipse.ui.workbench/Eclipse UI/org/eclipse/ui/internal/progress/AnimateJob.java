@@ -24,6 +24,7 @@ abstract class AnimateJob extends Job {
 	 */
 	public AnimateJob(String name) {
 		super(name);
+		setSystem(true);
 	}
 
 	/**
@@ -31,7 +32,7 @@ abstract class AnimateJob extends Job {
 	 *
 	 */
 	public AnimateJob() {
-		super(ProgressMessages.getString("AnimateJob.JobName")); //$NON-NLS-1$
+		this(ProgressMessages.getString("AnimateJob.JobName")); //$NON-NLS-1$
 	}
 
 }

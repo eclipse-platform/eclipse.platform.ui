@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.progress;
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
@@ -35,14 +36,12 @@ class ProgressTreeViewer extends TreeViewer {
 	private void updateColors(TreeItem treeItem, JobInfo info) {
 
 		if (info.status.getCode() == JobInfo.PENDING_STATUS) {
-			treeItem.setForeground(
-				treeItem.getDisplay().getSystemColor(SWT.COLOR_BLUE));
+			treeItem.setForeground(JFaceColors.getActiveHyperlinkText(treeItem.getDisplay()));
 			return;
 		}
 
 		if (info.status.getCode() == IStatus.ERROR) {
-			treeItem.setForeground(
-				treeItem.getDisplay().getSystemColor(SWT.COLOR_RED));
+			treeItem.setForeground(JFaceColors.getErrorText(treeItem.getDisplay()));
 			return;
 		}
 		treeItem.setForeground(
