@@ -13,21 +13,10 @@ package org.eclipse.team.core.variants;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.eclipse.core.resources.IEncodedStorage;
-import org.eclipse.core.resources.IResourceStatus;
-import org.eclipse.core.resources.IStorage;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.PlatformObject;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.core.Assert;
-import org.eclipse.team.internal.core.Policy;
-import org.eclipse.team.internal.core.ResourceVariantCache;
-import org.eclipse.team.internal.core.ResourceVariantCacheEntry;
-import org.eclipse.team.internal.core.TeamPlugin;
+import org.eclipse.team.internal.core.*;
 
 /**
  * A resource variant is a partial implementation of a remote resource
@@ -75,7 +64,7 @@ public abstract class CachedResourceVariant extends PlatformObject implements IR
 			return getCachedContents();
 		}
 		public IPath getFullPath() {
-			return getFullPath();
+			return getDisplayPath();
 		}
 		public String getName() {
 			return CachedResourceVariant.this.getName();
@@ -204,6 +193,9 @@ public abstract class CachedResourceVariant extends PlatformObject implements IR
 	 * the remote resource is stored and also uniquely identifies
 	 * each resource variant. It is used to uniquely identify this
 	 * resource variant when it is stored in the resource variant cache.
+	 * This path is also returned as the full path of the <code>IStorage</code>
+	 * returned from this variant so the path could be converted to an
+	 * <code>IPath</code> and displayed to the user.
 	 * @return the full path of the remote resource variant
 	 */
 	protected abstract String getCachePath();
@@ -270,6 +262,21 @@ public abstract class CachedResourceVariant extends PlatformObject implements IR
 	 */
 	protected void cacheHandle() {
 		getCache().add(getCachePath(), this);
+	}
+	
+	/**
+	 * Return the full path of this resource that should be displayed to the
+	 * user. This path is used by the instabce of <code>IStorage</code> that 
+	 * is returned by this instance. By default, the path return by <code>getCachePath()</code>
+	 * is used to create a <code>Path</code> object which is returned by this method.
+	 * Subclasses may override.
+	 * @return the full path of this resource that should be displayed to the
+	 * user
+	 * 
+	 * @since 3.1
+	 */
+	public IPath getDisplayPath() {
+		return new Path(getCachePath());
 	}
 	
 }

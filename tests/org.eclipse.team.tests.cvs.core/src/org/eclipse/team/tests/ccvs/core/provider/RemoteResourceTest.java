@@ -16,9 +16,11 @@ import java.lang.reflect.InvocationTargetException;
 import junit.framework.Test;
 
 import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.variants.CachedResourceVariant;
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.*;
@@ -68,7 +70,6 @@ public class RemoteResourceTest extends EclipseTest {
 		// Make some changes to the copy and commit
 		IResource[] newResources = buildResources(copy, new String[] { "added.txt", "folder2/", "folder2/added.txt" }, false);
 		setContentsAndEnsureModified(copy.getFile("changed.txt"));
-		CVSTeamProvider provider = getProvider(copy);
 		addResources(newResources);
 		deleteResources(new IResource[] {copy.getFile("deleted.txt")});
 		commitResources(new IResource[] {copy}, IResource.DEPTH_INFINITE);
@@ -152,7 +153,7 @@ public class RemoteResourceTest extends EclipseTest {
 		IProject project = createProject("testGetRemoteResource", new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder2/", "folder2/a.txt", "folder2/folder3/", "folder2/folder3/b.txt", "folder2/folder3/c.txt"});
 		ICVSRemoteResource file = CVSWorkspaceRoot.getRemoteResourceFor(project.getFile("folder1/a.txt"));
 		assertTrue("File should exist remotely", file.exists(DEFAULT_MONITOR));
-		assertEquals(Path.EMPTY, (ICVSResource)file, (ICVSResource)CVSWorkspaceRoot.getRemoteResourceFor(project.getFile("folder1/a.txt")), false, false);
+		assertEquals(Path.EMPTY, file, CVSWorkspaceRoot.getRemoteResourceFor(project.getFile("folder1/a.txt")), false, false);
 		ICVSRemoteResource folder = CVSWorkspaceRoot.getRemoteResourceFor(project.getFolder("folder2/folder3/"));
 		getMembers((ICVSRemoteFolder)folder, true);
 		assertTrue("Folder should exist remotely", folder.exists(DEFAULT_MONITOR));
@@ -183,7 +184,7 @@ public class RemoteResourceTest extends EclipseTest {
 		project = checkoutCopy(project, v1Tag);
 		
 		// Compare the two
-		assertEquals(Path.EMPTY, tree, (ICVSResource)CVSWorkspaceRoot.getCVSResourceFor(project), false, false);
+		assertEquals(Path.EMPTY, tree, CVSWorkspaceRoot.getCVSResourceFor(project), false, false);
 	}
 	
 	/*
@@ -277,7 +278,7 @@ public class RemoteResourceTest extends EclipseTest {
 		assertEquals(project, copy, false, false);
 	 }
 	 
-	 public void testExists() throws TeamException, CoreException, IOException, InterruptedException {
+	 public void testExists() throws TeamException, CoreException {
 	 	IProject project = createProject("testExists", new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder2/", "folder2/a.txt", "folder2/folder3/", "folder2/folder3/b.txt", "folder2/folder3/c.txt"});
 	 	ICVSRemoteResource resource1 = CVSWorkspaceRoot.getRemoteResourceFor(project.getFile("file1.txt"));
 	 	assertTrue(resource1.exists(DEFAULT_MONITOR));
@@ -343,10 +344,6 @@ public class RemoteResourceTest extends EclipseTest {
 		assertEquals("Contents do not match", contents, fetchedContents);
 	}
 
-	/**
-	 * @param stream
-	 * @return
-	 */
 	private String asString(InputStream stream) throws IOException {
 		StringBuffer buffer = new StringBuffer();
 		int b = stream.read();
@@ -355,6 +352,24 @@ public class RemoteResourceTest extends EclipseTest {
 			b = stream.read();
 		}
 		return buffer.toString();
+	}
+	
+	public void testResourceVariant() throws TeamException, CoreException {
+		IProject project = createProject(new String[] { "file1.txt"});
+		IFile file = project.getFile("file1.txt");
+		ICVSRemoteResource resource = CVSWorkspaceRoot.getRemoteResourceFor(file);
+		IResourceVariant variant = (IResourceVariant)resource;
+		IStorage storage = variant.getStorage(DEFAULT_MONITOR);
+		assertEquals(storage.getFullPath(), ((CachedResourceVariant)resource).getDisplayPath());
+	}
+	
+	public String getCachePath(ICVSRemoteResource resource) throws CVSException {
+		ICVSRepositoryLocation location = resource.getRepository();
+		IPath path = new Path(location.getHost());
+		path = path.append(location.getRootDirectory());
+		path = path.append(resource.getParent().getRepositoryRelativePath());
+		path = path.append(resource.getName() + ' ' + ((IResourceVariant)resource).getContentIdentifier());
+		return path.toString();
 	}
 }
 
