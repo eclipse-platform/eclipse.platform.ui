@@ -1,5 +1,5 @@
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 package org.eclipse.search.internal.ui;
@@ -18,6 +18,7 @@ import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.viewers.ViewerSorter;
 
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.model.WorkbenchViewerSorter;
 
 /**
  * Drop down action that holds the currently registered sort actions.
@@ -68,6 +69,9 @@ class SortDropDownAction extends Action implements IMenuCreator {
 		if (sorterDesc != null) {
 			setChecked(sorterDesc);
 			fViewer.setSorter(sorterDesc.createObject());
+		} else {
+			// Use default sort workbench viewer sorter
+			fViewer.setSorter(new WorkbenchViewerSorter());
 		}
 	}
 
