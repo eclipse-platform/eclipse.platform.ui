@@ -338,7 +338,19 @@ public class EditorActionBars extends SubActionBars2 {
             IContributionItem[] items = coolItemToolBarMgr.getItems();
             for (int i = 0; i < items.length; i++) {
                 IContributionItem item = items[i];
-                item.setVisible(visible);
+                if (visible) {
+                    if (item instanceof PlaceholderContributionItem) {
+                        coolBarManager.remove(item);
+                        coolBarManager.add(new ToolBarContributionItem(getToolBarManager(), item.getId()));
+                        item.dispose();
+                    } else {
+                        item.setVisible(visible);
+                    }
+                } else {
+                    coolBarManager.remove(item);
+                    coolBarManager.add(new PlaceholderContributionItem(item.getId()));
+                    item.dispose();
+                }
                 coolItemToolBarMgr.markDirty();
                 if (!coolBarManager.isDirty()) {
                     coolBarManager.markDirty();
