@@ -21,7 +21,14 @@ import org.eclipse.update.internal.search.*;
  * If some categories should be skipped, their names must be
  * passed as array of strings to the method.
  *
- *@see UpdateSearchRequest
+ * <p>
+ * <b>Note:</b> This class/interface is part of an interim API that is still under development and expected to
+ * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+ * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+ * (repeatedly) as the API evolves.
+ * </p>
+ * @see UpdateSearchRequest
+ * @since 3.0
  */
 
 public class UpdateSearchScope {
