@@ -260,10 +260,14 @@ public abstract class IntroPart implements IIntroPart, IExecutableExtension {
 
         // Icon.
         String strIcon = cfig.getAttribute("icon");//$NON-NLS-1$
-        if (strIcon == null) return;
+        if (strIcon == null) 
+        	return;
 
         imageDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(
                 configElement.getDeclaringExtension().getNamespace(), strIcon);
+        
+        if (imageDescriptor == null)
+    		return;
 
         /*
          * remember the image in a separatly from titleImage, since it must be
