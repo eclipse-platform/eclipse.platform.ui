@@ -11,8 +11,7 @@ import org.apache.lucene.search.*;
 /**
  * Build query acceptable by the search engine.
  */
-public class QueryBuilder
-{
+public class QueryBuilder {
 	/**
 	 * User typed expression
 	 */
@@ -30,8 +29,7 @@ public class QueryBuilder
 	 * ProcessedQuery constructor.
 	 * @param userQuery user search query string
 	 */
-	public QueryBuilder(String searchWord, Analyzer analyzer)
-	{
+	public QueryBuilder(String searchWord, Analyzer analyzer) {
 		this.searchWord = searchWord;
 		this.analyzer = analyzer;
 		// split search query into tokens
@@ -42,40 +40,29 @@ public class QueryBuilder
 	 * Splits user query into tokens
 	 * @return java.util.Vector
 	 */
-	private List tokenizeUserQuery()
-	{
+	private List tokenizeUserQuery() {
 		List tokenList = new ArrayList();
 		//Divide along quotation marks
 		StringTokenizer qTokenizer = new StringTokenizer(searchWord.trim(), "\"", true);
 		boolean withinQuotation = false;
 		String quotedString = "";
-		while (qTokenizer.hasMoreTokens())
-		{
+		while (qTokenizer.hasMoreTokens()) {
 			String curToken = qTokenizer.nextToken();
-			if (curToken.equals("\""))
-			{
-				if (withinQuotation)
-				{
+			if (curToken.equals("\"")) {
+				if (withinQuotation) {
 					tokenList.add(QueryWordsToken.phrase(quotedString));
-				}
-				else
-				{
+				} else {
 					quotedString = "";
 				}
 				withinQuotation = !withinQuotation;
 				continue;
-			}
-			else if (withinQuotation)
-			{
+			} else if (withinQuotation) {
 				quotedString = curToken;
 				continue;
-			}
-			else
-			{
+			} else {
 				//divide unquoted strings along white space
 				StringTokenizer parser = new StringTokenizer(curToken.trim());
-				while (parser.hasMoreTokens())
-				{
+				while (parser.hasMoreTokens()) {
 					String token = parser.nextToken();
 					if (token.equalsIgnoreCase(QueryWordsToken.AND().value))
 						tokenList.add(QueryWordsToken.AND());
@@ -90,14 +77,11 @@ public class QueryBuilder
 		}
 		return tokenList;
 	}
-	private List analyzeTokens(List tokens)
-	{
+	private List analyzeTokens(List tokens) {
 		List newTokens = new ArrayList();
-		for (int i = 0; i < tokens.size(); i++)
-		{
+		for (int i = 0; i < tokens.size(); i++) {
 			QueryWordsToken token = (QueryWordsToken) tokens.get(i);
-			if (token.type == QueryWordsToken.WORD)
-			{
+			if (token.type == QueryWordsToken.WORD) {
 				if (token.value.indexOf('?') >= 0 || token.value.indexOf('*') >= 0) {
 					newTokens.add(QueryWordsToken.word(token.value));
 				} else {
@@ -107,18 +91,15 @@ public class QueryBuilder
 						newTokens.add(QueryWordsToken.word(word));
 					}
 				}
-			}
-			else if (// forget ANDs
+			} else if (// forget ANDs
 			/*token.type == SearchQueryToken.AND
 				||*/
 				token.type == QueryWordsToken.OR || token.type == QueryWordsToken.NOT)
 				newTokens.add(token);
-			else if (token.type == QueryWordsToken.PHRASE)
-			{
+			else if (token.type == QueryWordsToken.PHRASE) {
 				QueryWordsPhrase phrase = QueryWordsToken.phrase();
 				List wordList = analyzeText(analyzer, token.value);
-				for (Iterator it = wordList.iterator(); it.hasNext();)
-				{
+				for (Iterator it = wordList.iterator(); it.hasNext();) {
 					String word = (String) it.next();
 					phrase.addWord(word);
 				}
@@ -132,22 +113,17 @@ public class QueryBuilder
 	/**
 	 * @return List of String
 	 */
-	private List analyzeText(Analyzer analyzer, String text)
-	{
+	private List analyzeText(Analyzer analyzer, String text) {
 		List words = new ArrayList(1);
 		Reader reader = new StringReader(text);
 		TokenStream tStream = analyzer.tokenStream("contents", reader);
 		Token tok;
-		try
-		{
-			while (null != (tok = tStream.next()))
-			{
+		try {
+			while (null != (tok = tStream.next())) {
 				words.add(tok.termText());
 			}
 			reader.close();
-		}
-		catch (IOException ioe)
-		{
+		} catch (IOException ioe) {
 		}
 		return words;
 	}
@@ -158,8 +134,7 @@ public class QueryBuilder
 	private Query createLuceneQuery(
 		List searchTokens,
 		String[] fieldNames,
-		float[] boosts)
-	{
+		float[] boosts) {
 		// Get queries for parts separated by OR
 		List requiredQueries = getRequiredQueries(searchTokens, fieldNames, boosts);
 		if (requiredQueries.size() == 0)
@@ -177,19 +152,14 @@ public class QueryBuilder
 	private List getRequiredQueries(
 		List tokens,
 		String[] fieldNames,
-		float[] boosts)
-	{
+		float[] boosts) {
 		List oredQueries = new ArrayList();
 		ArrayList requiredQueryTokens = new ArrayList();
-		for (int i = 0; i < tokens.size(); i++)
-		{
+		for (int i = 0; i < tokens.size(); i++) {
 			QueryWordsToken token = (QueryWordsToken) tokens.get(i);
-			if (token.type != QueryWordsToken.OR)
-			{
+			if (token.type != QueryWordsToken.OR) {
 				requiredQueryTokens.add(token);
-			}
-			else
-			{
+			} else {
 				Query reqQuery = getRequiredQuery(requiredQueryTokens, fieldNames, boosts);
 				if (reqQuery != null)
 					oredQueries.add(reqQuery);
@@ -201,11 +171,9 @@ public class QueryBuilder
 			oredQueries.add(reqQuery);
 		return oredQueries;
 	}
-	private Query orQueries(Collection queries)
-	{
+	private Query orQueries(Collection queries) {
 		BooleanQuery bq = new BooleanQuery();
-		for (Iterator it = queries.iterator(); it.hasNext();)
-		{
+		for (Iterator it = queries.iterator(); it.hasNext();) {
 			Query q = (Query) it.next();
 			bq.add(q, false, false);
 		}
@@ -218,57 +186,43 @@ public class QueryBuilder
 	private Query getRequiredQuery(
 		List requiredTokens,
 		String[] fieldNames,
-		float[] boosts)
-	{
+		float[] boosts) {
 		BooleanQuery retQuery = new BooleanQuery();
 		boolean requiredTermExist = false;
 		// Parse tokens left to right
 		QueryWordsToken operator = null;
-		for (int i = 0; i < requiredTokens.size(); i++)
-		{
+		for (int i = 0; i < requiredTokens.size(); i++) {
 			QueryWordsToken token = (QueryWordsToken) requiredTokens.get(i);
-			if (token.type == QueryWordsToken.AND || token.type == QueryWordsToken.NOT)
-			{
+			if (token.type == QueryWordsToken.AND || token.type == QueryWordsToken.NOT) {
 				operator = token;
 				continue;
 			}
-			
 			// Creates queries for all fields
 			Query qs[] = new Query[fieldNames.length];
-			for (int f = 0; f < fieldNames.length; f++)
-			{
-				qs[f] = token.createLuceneQuery( fieldNames[f], boosts[f] );
+			for (int f = 0; f < fieldNames.length; f++) {
+				qs[f] = token.createLuceneQuery(fieldNames[f], boosts[f]);
 			}
-			
 			// creates the boolean query of all fields
 			Query q = qs[0];
-			if (fieldNames.length > 1)
-			{
+			if (fieldNames.length > 1) {
 				BooleanQuery allFieldsQuery = new BooleanQuery();
 				for (int f = 0; f < fieldNames.length; f++)
 					allFieldsQuery.add(qs[f], false, false);
 				q = allFieldsQuery;
 			}
-			if (operator != null && operator.type == QueryWordsToken.NOT)
-			{
+			if (operator != null && operator.type == QueryWordsToken.NOT) {
 				retQuery.add(q, false, true); // add as prohibited
-			}
-			else
-			{
+			} else {
 				retQuery.add(q, true, false); // add as required
 				requiredTermExist = true;
 			}
 		}
-		if (!requiredTermExist)
-		{
+		if (!requiredTermExist) {
 			return null; // cannot search for prohited only 
 		}
 		return retQuery;
 	}
-
-			
-	private Query getLuceneQuery(String[] fieldNames, float[] boosts)
-	{
+	private Query getLuceneQuery(String[] fieldNames, float[] boosts) {
 		Query luceneQuery = createLuceneQuery(analyzedTokens, fieldNames, boosts);
 		return luceneQuery;
 	}
@@ -279,28 +233,22 @@ public class QueryBuilder
 	 *  should be performed; if set to false, default field "contents"
 	 *  and all other fields will be searched
 	 */
-	public Query getLuceneQuery(Collection fieldNames, boolean fieldSearchOnly)
-	{
+	public Query getLuceneQuery(Collection fieldNames, boolean fieldSearchOnly) {
 		String[] fields;
 		float[] boosts;
-		if (fieldSearchOnly)
-		{
+		if (fieldSearchOnly) {
 			fields = new String[fieldNames.size()];
 			boosts = new float[fieldNames.size()];
 			Iterator fieldNamesIt = fieldNames.iterator();
-			for (int i = 0; i < fieldNames.size(); i++)
-			{
+			for (int i = 0; i < fieldNames.size(); i++) {
 				fields[i] = (String) fieldNamesIt.next();
 				boosts[i] = 5.0f;
 			}
-		}
-		else
-		{
+		} else {
 			fields = new String[fieldNames.size() + 1];
 			boosts = new float[fieldNames.size() + 1];
 			Iterator fieldNamesIt = fieldNames.iterator();
-			for (int i = 0; i < fieldNames.size(); i++)
-			{
+			for (int i = 0; i < fieldNames.size(); i++) {
 				fields[i] = (String) fieldNamesIt.next();
 				boosts[i] = 5.0f;
 			}
@@ -320,8 +268,7 @@ public class QueryBuilder
 	private Query improveRankingForUnqotedPhrase(
 		Query query,
 		String[] fields,
-		float[] boosts)
-	{
+		float[] boosts) {
 		if (query == null)
 			return query;
 		// check if all tokens are words
@@ -332,11 +279,9 @@ public class QueryBuilder
 		BooleanQuery booleanQuery = new BooleanQuery();
 		booleanQuery.add(query, false, false);
 		PhraseQuery[] phraseQueries = new PhraseQuery[fields.length];
-		for (int f = 0; f < fields.length; f++)
-		{
+		for (int f = 0; f < fields.length; f++) {
 			phraseQueries[f] = new PhraseQuery();
-			for (int i = 0; i < analyzedTokens.size(); i++)
-			{
+			for (int i = 0; i < analyzedTokens.size(); i++) {
 				Term t = new Term(fields[f], ((QueryWordsToken) analyzedTokens.get(i)).value);
 				phraseQueries[f].add(t);
 			}
