@@ -18,7 +18,9 @@ package org.eclipse.core.runtime.jobs;
  * not be added to both the job manager, and to individual jobs (such a listener may
  * receive duplicate notifications).
  * </p>
- * 
+ * <p>
+ * Clients may implement this interface.
+ * </p>
  * @see JobChangeAdapter
  * @see IJobManager#addJobChangeListener(IJobChangeListener)
  * @see IJobManager#removeJobChangeListener(IJobChangeListener)

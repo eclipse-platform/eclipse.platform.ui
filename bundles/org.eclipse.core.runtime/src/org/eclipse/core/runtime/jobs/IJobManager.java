@@ -29,6 +29,9 @@ import org.eclipse.core.runtime.OperationCanceledException;
  * <li>Provide feedback to a client that is waiting for a given job or family of jobs
  * to complete.</li>
  * </ul>
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
  * 
  * @see Job
  * @see ILock
