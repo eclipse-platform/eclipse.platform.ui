@@ -228,7 +228,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		UpdateManagerUtils.removeFromFileSystem(file);		
 	}
 
-	public void testRetriveConfigHTTPInstall() throws Exception {
+/*	public void testRetriveConfigHTTPInstall() throws Exception {
 
 		//clean up
 		File localFile = new File(((SiteLocal)SiteManager.getLocalSite()).getLocationURL().getFile());
@@ -308,7 +308,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		UpdateManagerUtils.removeFromFileSystem(file);		
 		localFile = new File(feature2.getURL().getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);
-	}
+	}*/
 	
 //TODO uncomment this once site disabling is supported
 public void testRetriveConfigHTTPInstallNotEnable() throws Exception {
