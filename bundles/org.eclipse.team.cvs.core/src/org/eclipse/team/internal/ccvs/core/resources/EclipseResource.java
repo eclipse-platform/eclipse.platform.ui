@@ -109,8 +109,9 @@ abstract class EclipseResource implements ICVSResource {
 	 * @see ICVSResource#isIgnored()
 	 */
 	public boolean isIgnored() {
+		
 		// a managed resource is never ignored
-		if(isManaged()) {
+		if( isManaged() || resource.getType() == IResource.ROOT) {
 			return false;
 		}
 		
