@@ -106,7 +106,7 @@ public class DeferredTreeContentManager {
 	 * @param element
 	 * @return IDeferredWorkbenchAdapter or <code>null</code>
 	 */
-	private IDeferredWorkbenchAdapter getAdapter(Object element) {
+	protected IDeferredWorkbenchAdapter getAdapter(Object element) {
 		if (element instanceof IDeferredWorkbenchAdapter)
 			return (IDeferredWorkbenchAdapter) element;
 		if (!(element instanceof IAdaptable))
@@ -130,24 +130,9 @@ public class DeferredTreeContentManager {
 	 *            The adapter that will be used to indicate that results are
 	 *            pending.
 	 */
-	private void startFetchingDeferredChildren(final Object parent,
+	protected void startFetchingDeferredChildren(final Object parent,
 			final IDeferredWorkbenchAdapter adapter, final PendingUpdateAdapter placeholder) {
-		final IElementCollector collector = new IElementCollector() {
-			public void add(Object element, IProgressMonitor monitor) {
-				add(new Object[]{element}, monitor);
-			}
-			public void add(Object[] elements, IProgressMonitor monitor) {
-				addChildren(parent, elements, monitor);
-			}
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.progress.IElementCollector#done()
-			 */
-			public void done() {
-				runClearPlaceholderJob(placeholder);
-			}
-		};
+		final IElementCollector collector = createElementCollector(parent, placeholder);
 		// Cancel any jobs currently fetching children for the same parent
 		// instance.
 		Platform.getJobManager().cancel(parent);
@@ -233,7 +218,7 @@ public class DeferredTreeContentManager {
 	 * @param children
 	 * @param monitor
 	 */
-	void addChildren(final Object parent, final Object[] children, IProgressMonitor monitor) {
+	protected void addChildren(final Object parent, final Object[] children, IProgressMonitor monitor) {
 		WorkbenchJob updateJob = new WorkbenchJob(ProgressMessages
 				.getString("DeferredTreeContentManager.AddingChildren")) {//$NON-NLS-1$
 			/*
@@ -270,7 +255,7 @@ public class DeferredTreeContentManager {
 	 * 
 	 * @param placeholder
 	 */
-	void runClearPlaceholderJob(final PendingUpdateAdapter placeholder) {
+	protected void runClearPlaceholderJob(final PendingUpdateAdapter placeholder) {
 		if (placeholder.isRemoved())
 			return;
 		//Clear the placeholder if it is still there
@@ -303,5 +288,40 @@ public class DeferredTreeContentManager {
 	 */
 	public void cancel(Object parent) {
 		Platform.getJobManager().cancel(parent);
+	}
+	/**
+	 * Create the element collector for the receiver.
+	 *@param parent.
+	 *            The parent object being filled in,
+	 * @param placeholder
+	 *            The adapter that will be used to indicate that results are
+	 *            pending.
+	 */
+	protected IElementCollector createElementCollector(final Object parent,
+			final PendingUpdateAdapter placeholder) {
+		return new IElementCollector() {
+			/*
+			 *  (non-Javadoc)
+			 * @see org.eclipse.jface.progress.IElementCollector#add(java.lang.Object, org.eclipse.core.runtime.IProgressMonitor)
+			 */
+			public void add(Object element, IProgressMonitor monitor) {
+				add(new Object[]{element}, monitor);
+			}
+			/*
+			 *  (non-Javadoc)
+			 * @see org.eclipse.jface.progress.IElementCollector#add(java.lang.Object[], org.eclipse.core.runtime.IProgressMonitor)
+			 */
+			public void add(Object[] elements, IProgressMonitor monitor) {
+				addChildren(parent, elements, monitor);
+			}
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.progress.IElementCollector#done()
+			 */
+			public void done() {
+				runClearPlaceholderJob(placeholder);
+			}
+		};
 	}
 }
