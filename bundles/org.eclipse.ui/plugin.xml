@@ -83,6 +83,16 @@
             id="org.eclipse.ui.file.print">
       </actionDefinition>
       <actionDefinition
+            id="org.eclipse.ui.file.revert">
+      </actionDefinition>
+      <actionDefinition
+            id="org.eclipse.ui.file.refresh">
+      </actionDefinition>
+      <actionDefinition
+            id="org.eclipse.ui.file.properties">
+      </actionDefinition>
+
+      <actionDefinition
             id="org.eclipse.ui.edit.undo">
       </actionDefinition>
       <actionDefinition
@@ -101,6 +111,12 @@
             id="org.eclipse.ui.edit.delete">
       </actionDefinition>
       <actionDefinition
+            id="org.eclipse.ui.edit.move">
+      </actionDefinition>
+      <actionDefinition
+            id="org.eclipse.ui.edit.rename">
+      </actionDefinition>
+      <actionDefinition
             id="org.eclipse.ui.edit.selectAll">
       </actionDefinition>
       <actionDefinition
@@ -109,6 +125,30 @@
       <actionDefinition
             id="org.eclipse.ui.edit.addBookmark">
       </actionDefinition>
+
+      <actionDefinition
+            id="org.eclipse.ui.navigate.goInto">
+      </actionDefinition>     
+      <actionDefinition
+            id="org.eclipse.ui.navigate.back">
+      </actionDefinition>      
+      <actionDefinition
+            id="org.eclipse.ui.navigate.forward">
+      </actionDefinition>      
+      <actionDefinition
+            id="org.eclipse.ui.navigate.up">
+      </actionDefinition>     
+      
+      <actionDefinition
+            id="org.eclipse.ui.project.openProject">
+      </actionDefinition>     
+      <actionDefinition
+            id="org.eclipse.ui.project.closeProject">
+      </actionDefinition>     
+      <actionDefinition
+            id="org.eclipse.ui.project.rebuildProject">
+      </actionDefinition>     
+
       <actionDefinition
             id="org.eclipse.ui.window.switchToEditor">
       </actionDefinition>
@@ -315,6 +355,20 @@
                key="Alt+F9"
                id="org.eclipse.ui.file.print">
          </accelerator>
+         
+         <accelerator
+               key=""
+               id="org.eclipse.ui.file.revert">
+         </accelerator>         
+         <accelerator
+               key="F5"
+               id="org.eclipse.ui.file.refresh">
+         </accelerator>    
+         <accelerator
+               key="Alt+ENTER"
+               id="org.eclipse.ui.file.properties">
+         </accelerator>    
+
          <accelerator
                key="F9"
                id="org.eclipse.ui.edit.undo">
@@ -340,6 +394,14 @@
                id="org.eclipse.ui.edit.delete">
          </accelerator>
          <accelerator
+               key=""
+               id="org.eclipse.ui.edit.move">
+         </accelerator>
+         <accelerator
+               key=""
+               id="org.eclipse.ui.edit.rename">
+         </accelerator>                     
+         <accelerator
                key="Ctrl+X H"
                id="org.eclipse.ui.edit.selectAll">
          </accelerator>
@@ -347,6 +409,36 @@
                key="Ctrl+X F"
                id="org.eclipse.ui.edit.findReplace">
          </accelerator>
+         
+         <accelerator
+               key=""
+               id="org.eclipse.ui.navigate.goInto">
+         </accelerator>
+         <accelerator
+               key=""
+               id="org.eclipse.ui.navigate.back">
+         </accelerator>         
+         <accelerator
+               key=""
+               id="org.eclipse.ui.navigate.forward">
+         </accelerator>
+         <accelerator
+               key=""
+               id="org.eclipse.ui.navigate.up">
+         </accelerator>
+         <accelerator
+               key=""
+               id="org.eclipse.ui.project.openProject">
+         </accelerator>         
+         <accelerator
+               key=""
+               id="org.eclipse.ui.project.closeProject">
+         </accelerator>
+         <accelerator
+               key=""
+               id="org.eclipse.ui.project.rebuildProject">
+         </accelerator>         
+
          <accelerator
                key="Ctrl+X Ctrl+B"
                id="org.eclipse.ui.window.switchToEditor">
@@ -562,6 +654,20 @@
                key="Ctrl+P"
                id="org.eclipse.ui.file.print">
          </accelerator>
+         
+         <accelerator
+               key=""
+               id="org.eclipse.ui.file.revert">
+         </accelerator>         
+         <accelerator
+               key="F5"
+               id="org.eclipse.ui.file.refresh">
+         </accelerator>    
+         <accelerator
+               key="Alt+ENTER"
+               id="org.eclipse.ui.file.properties">
+         </accelerator>  
+                  
          <accelerator
                key="Ctrl+Z"
                id="org.eclipse.ui.edit.undo">
@@ -587,6 +693,14 @@
                id="org.eclipse.ui.edit.delete">
          </accelerator>
          <accelerator
+               key=""
+               id="org.eclipse.ui.edit.move">
+         </accelerator>
+         <accelerator
+               key=""
+               id="org.eclipse.ui.edit.rename">
+         </accelerator>         
+         <accelerator
                key="Ctrl+A"
                id="org.eclipse.ui.edit.selectAll">
          </accelerator>
@@ -594,6 +708,34 @@
                key="Ctrl+F"
                id="org.eclipse.ui.edit.findReplace">
          </accelerator>
+         <accelerator
+               key=""
+               id="org.eclipse.ui.navigate.goInto">
+         </accelerator>
+         <accelerator
+               key=""
+               id="org.eclipse.ui.navigate.back">
+         </accelerator>         
+         <accelerator
+               key=""
+               id="org.eclipse.ui.navigate.forward">
+         </accelerator>
+         <accelerator
+               key=""
+               id="org.eclipse.ui.navigate.up">
+         </accelerator>
+         <accelerator
+               key=""
+               id="org.eclipse.ui.project.openProject">
+         </accelerator>         
+         <accelerator
+               key=""
+               id="org.eclipse.ui.project.closeProject">
+         </accelerator>
+         <accelerator
+               key=""
+               id="org.eclipse.ui.project.rebuildProject">
+         </accelerator>          
          <accelerator
                key="Ctrl+W"
                id="org.eclipse.ui.window.switchToEditor">
