@@ -72,5 +72,7 @@ public class SelectWorkingSetAction extends Action {
 				actionGroup.setWorkingSet(null);
 			}
 		}
+		else
+			actionGroup.setWorkingSet(workingSet);
 	}
 }
