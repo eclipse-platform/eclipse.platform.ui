@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
+import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -73,6 +74,7 @@ public final class Team {
 
 	// The ignore list that is read at startup from the persisted file
 	private static Map globalIgnore, pluginIgnore;
+	private static StringMatcher[] ignoreMatchers;
 
 	private static class FileTypeInfo implements IFileTypeInfo {
 		private String extension;
@@ -135,35 +137,25 @@ public final class Team {
 	 * @param file  the file
 	 * @return whether the file should be ignored
 	 */
-	public static boolean isIgnoredHint(IFile file) {
-		if (file.isDerived()) return true;
-		IIgnoreInfo[] ignorePatterns = getAllIgnores();
-		StringMatcher matcher;
-		for (int i = 0; i < ignorePatterns.length; i++) {
-			IIgnoreInfo info = ignorePatterns[i];
-			if (info.getEnabled()) {
-				matcher = new StringMatcher(info.getPattern(), true, false);
-				if (matcher.match(file.getName())) return true;
-			}
+	public static boolean isIgnoredHint(IResource resource) {
+		if (resource.isDerived()) return true;
+		return matchesEnabledIgnore(resource);
+	}
+
+	private static boolean matchesEnabledIgnore(IResource resource) {
+		StringMatcher[] matchers = getStringMatchers();
+		for (int i = 0; i < matchers.length; i++) {
+			if (matchers[i].match(resource.getName())) return true;
 		}
 		return false;
 	}
-
+	
 	/**
 	 * Returns whether the given file should be ignored.
 	 * @deprecated use isIgnoredHint instead
 	 */
 	public static boolean isIgnored(IFile file) {
-		IIgnoreInfo[] ignorePatterns = getAllIgnores();
-		StringMatcher matcher;
-		for (int i = 0; i < ignorePatterns.length; i++) {
-			IIgnoreInfo info = ignorePatterns[i];
-			if (info.getEnabled()) {
-				matcher = new StringMatcher(info.getPattern(), true, false);
-				if (matcher.match(file.getName())) return true;
-			}
-		}
-		return false;
+		return matchesEnabledIgnore(file);
 	}
 
 	/**
@@ -189,6 +181,7 @@ public final class Team {
 	public synchronized static IIgnoreInfo[] getAllIgnores() {
 		if (globalIgnore == null) {
 			globalIgnore = new HashMap();
+			ignoreMatchers = null;
 			try {
 				readIgnoreState();
 			} catch (TeamException e) {
@@ -216,6 +209,21 @@ public final class Team {
 		return result;
 	}
 
+	private synchronized static StringMatcher[] getStringMatchers() {
+		if (ignoreMatchers==null) {
+			IIgnoreInfo[] ignorePatterns = getAllIgnores();
+			Vector matchers = new Vector(ignorePatterns.length);
+			for (int i = 0; i < ignorePatterns.length; i++) {
+				if (ignorePatterns[i].getEnabled()) {
+					matchers.add(new StringMatcher(ignorePatterns[i].getPattern(), true, false));
+				}
+			}
+			ignoreMatchers = new StringMatcher[matchers.size()];
+			matchers.copyInto(ignoreMatchers);
+		}
+		return ignoreMatchers;
+	}
+	
 	private synchronized static Hashtable getFileTypeTable() {
 		if (fileTypes == null) loadTextState();
 		return fileTypes;
@@ -264,6 +272,7 @@ public final class Team {
 	 */
 	public static void setAllIgnores(String[] patterns, boolean[] enabled) {
 		globalIgnore = new Hashtable(11);
+		ignoreMatchers = null;
 		for (int i = 0; i < patterns.length; i++) {
 			globalIgnore.put(patterns[i], new Boolean(enabled[i]));
 		}
