@@ -130,6 +130,7 @@ public void doubleClick(DoubleClickEvent event) {
 		tree.setExpandedState(element, !tree.getExpandedState(element));
 	}
 	else if (viewDescs.length > 0) {
+		saveWidgetValues();
 		setReturnCode(OK);
 		close();
 	}
