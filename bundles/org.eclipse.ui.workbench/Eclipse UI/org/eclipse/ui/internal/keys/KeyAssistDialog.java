@@ -53,8 +53,6 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
-import org.eclipse.ui.internal.commands.KeysPreferencePage;
-import org.eclipse.ui.internal.components.framework.ComponentException;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceDialog;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.IBindingService;
@@ -172,16 +170,10 @@ final class KeyAssistDialog extends Dialog {
 
 		this.activityManager = workbench.getActivitySupport()
 				.getActivityManager();
-		try {
-			this.bindingService = (IBindingService) workbench
-					.getService(IBindingService.class);
-			this.commandService = (ICommandService) workbench
-					.getService(ICommandService.class);
-		} catch (final ComponentException e) {
-			throw new RuntimeException(
-					"Could not get either the binding or the command service from the workbench", //$NON-NLS-1$
-					e);
-		}
+		this.bindingService = (IBindingService) workbench
+				.getAdapter(IBindingService.class);
+		this.commandService = (ICommandService) workbench
+				.getAdapter(ICommandService.class);
 		this.keyBindingState = associatedState;
 		this.workbenchKeyboard = associatedKeyboard;
 	}
