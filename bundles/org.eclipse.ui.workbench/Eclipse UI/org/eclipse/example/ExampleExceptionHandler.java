@@ -11,7 +11,6 @@
 //this should be in some other package
 package org.eclipse.example;
 
-import org.eclipse.core.boot.IPlatformRunnable;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.window.Window;
@@ -42,6 +41,8 @@ class ExampleExceptionHandler implements Window.IExceptionHandler {
 	//Workaround. MessageDialog should accept null as parent;
 	private Shell defaultParent = new Shell();
 	private boolean closing = false;
+	
+	// @issue example should not access workbench internals
 	private Workbench workbench;
 
 	//Pre-load all Strings trying to run as light as possible in case of fatal errors.
@@ -118,7 +119,8 @@ class ExampleExceptionHandler implements Window.IExceptionHandler {
 				&& dialog.getShell() != null
 				&& !dialog.getShell().isDisposed())
 				dialog.close();
-			workbench.close(IPlatformRunnable.EXIT_OK, true);
+			// @issue example should not access workbench internals
+			workbench.close(PlatformUI.RETURN_OK, true);
 		} catch (RuntimeException th) {
 			/* It may not be possible to show the inform the user about this exception we may not 
 			 * have more memory or OS handles etc. */

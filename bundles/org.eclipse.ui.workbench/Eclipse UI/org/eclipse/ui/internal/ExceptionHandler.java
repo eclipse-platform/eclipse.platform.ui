@@ -105,7 +105,7 @@ private void closeWorkbench() {
 		closing = true;
 		if(dialog != null && dialog.getShell() != null && !dialog.getShell().isDisposed())
 			dialog.close();
-		workbench.close(IPlatformRunnable.EXIT_OK,true);
+		workbench.close(PlatformUI.RETURN_OK,true);
 	} catch (RuntimeException th) {
 		/* It may not be possible to show the inform the user about this exception we may not 
 		 * have more memory or OS handles etc. */
