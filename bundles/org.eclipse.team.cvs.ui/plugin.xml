@@ -64,12 +64,6 @@
 				menubarPath="team.main/group2"
 				class="org.eclipse.team.internal.ccvs.ui.actions.TagAction"/>
 			<action 
-				id="org.eclipse.team.ccvs.ui.add"
-				label="%AddAction.label"
-				tooltip="%AddAction.tooltip"
-				menubarPath="team.main/group2"
-				class="org.eclipse.team.internal.ccvs.ui.actions.AddAction"/>
-			<action 
 				id="org.eclipse.team.ccvs.ui.compareWithRemote"
 				label="%CompareWithRemoteAction.label"
 				tooltip="%CompareWithRemoteAction.tooltip"
@@ -93,24 +87,12 @@
 				tooltip="%CommitAction.tooltip"
 				menubarPath="team.main/group2"
 				class="org.eclipse.team.internal.ccvs.ui.actions.CommitAction"/>
-			<action 
-				id="org.eclipse.team.ccvs.ui.ignore"
-				label="%IgnoreAction.label"
-				tooltip="%IgnoreAction.tooltip"
-				menubarPath="team.main/group1"
-				class="org.eclipse.team.internal.ccvs.ui.actions.IgnoreAction"/>
 			<action
 				id="org.eclipse.team.ccvs.ui.GenerateDiff"
 				label="%GenerateDiff.label"
 				tooltip="%GenerateDiff.tooltip"
 				menubarPath="team.main/group1"
 				class="org.eclipse.team.internal.ccvs.ui.actions.GenerateDiffFileAction"/>	
-			<action 
-				id="org.eclipse.team.ccvs.ui.showHistory"
-				label="%ShowHistoryAction.label"
-				tooltip="%ShowHistoryAction.tooltip"
-				menubarPath="team.main/group1"
-				class="org.eclipse.team.internal.ccvs.ui.actions.ShowResourceInHistoryAction"/>
 			<action
 				id="org.eclipse.team.ccvs.ui.sync"
 				label="%Synchronize.label"
@@ -122,6 +104,12 @@
 			id="org.eclipse.team.ccvs.ui.IProjectContributions"
 			objectClass="org.eclipse.core.resources.IProject" adaptable="true">
 			<filter name="projectNature" value="org.eclipse.team.cvs.core.cvsnature"/>
+			<action 
+				id="org.eclipse.team.ccvs.ui.unmanage"
+				label="%UnmanageFolder.label"
+				tooltip="%UnmanageFolder.tooltip"
+				menubarPath="team.main/projectGroup"
+				class="org.eclipse.team.internal.ccvs.ui.actions.UnmanageAction"/>
 			<action 
 				id="org.eclipse.team.ccvs.ui.merge"
 				label="%MergeAction.label"
@@ -142,6 +130,23 @@
 				class="org.eclipse.team.internal.ccvs.ui.actions.ReplaceWithTagAction"/>
 		</objectContribution>
 		<objectContribution
+			id="org.eclipse.team.ccvs.ui.IFolderContributions"
+			objectClass="org.eclipse.core.resources.IFolder" adaptable="true">
+			<filter name="projectNature" value="org.eclipse.team.cvs.core.cvsnature"/>
+			<action 
+				id="org.eclipse.team.ccvs.ui.ignore"
+				label="%IgnoreAction.label"
+				tooltip="%IgnoreAction.tooltip"
+				menubarPath="team.main/group1"
+				class="org.eclipse.team.internal.ccvs.ui.actions.IgnoreAction"/>
+			<action 
+				id="org.eclipse.team.ccvs.ui.add"
+				label="%AddAction.label"
+				tooltip="%AddAction.tooltip"
+				menubarPath="team.main/group2"
+				class="org.eclipse.team.internal.ccvs.ui.actions.AddAction"/>
+		</objectContribution>
+		<objectContribution
 			id="org.eclipse.team.ccvs.ui.IContainerContributions"
 			objectClass="org.eclipse.core.resources.IContainer" adaptable="true">
 			<filter name="projectNature" value="org.eclipse.team.cvs.core.cvsnature"/>
@@ -151,17 +156,29 @@
 				tooltip="%CompareWithTagAction.tooltip"
 				menubarPath="compareWithMenu/compareWithGroup"
 				class="org.eclipse.team.internal.ccvs.ui.actions.CompareWithTagAction"/>
-			<action 
-				id="org.eclipse.team.ccvs.ui.unmanage"
-				label="%UnmanageFolder.label"
-				tooltip="%UnmanageFolder.tooltip"
-				menubarPath="team.main/projectGroup"
-				class="org.eclipse.team.internal.ccvs.ui.actions.UnmanageAction"/>
 		</objectContribution>
 		<objectContribution
 			id="org.eclipse.team.ccvs.ui.IFileContributions"
 			objectClass="org.eclipse.core.resources.IFile" adaptable="true">
 			<filter name="projectNature" value="org.eclipse.team.cvs.core.cvsnature"/>
+			<action 
+				id="org.eclipse.team.ccvs.ui.ignore"
+				label="%IgnoreAction.label"
+				tooltip="%IgnoreAction.tooltip"
+				menubarPath="team.main/group1"
+				class="org.eclipse.team.internal.ccvs.ui.actions.IgnoreAction"/>
+			<action 
+				id="org.eclipse.team.ccvs.ui.add"
+				label="%AddAction.label"
+				tooltip="%AddAction.tooltip"
+				menubarPath="team.main/group2"
+				class="org.eclipse.team.internal.ccvs.ui.actions.AddAction"/>
+			<action 
+				id="org.eclipse.team.ccvs.ui.showHistory"
+				label="%ShowHistoryAction.label"
+				tooltip="%ShowHistoryAction.tooltip"
+				menubarPath="team.main/group1"
+				class="org.eclipse.team.internal.ccvs.ui.actions.ShowResourceInHistoryAction"/>
 			<action 
 				id="org.eclipse.team.ccvs.ui.compareWithRevision"
 				label="%CompareWithRevisionAction.label"
