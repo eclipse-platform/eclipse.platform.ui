@@ -179,16 +179,8 @@ public class ProblemView extends MarkerView {
 	
 	protected void initMenu(IMenuManager menu ) {
 		super.initMenu(menu);
-		menu.add(new Separator());
-		menu.add(new ActionShowOnBuild());
 	}
 	
-
-	public void setSelection(IStructuredSelection structuredSelection, boolean reveal) {
-		// TODO: added because nick doesn't like public API inherited from internal classes
-		super.setSelection(structuredSelection, reveal);
-	}	
-
 	/**
 	 * Retrieves statistical information (the total number of markers with each
 	 * severity type) for the markers contained in the marker registry for this

@@ -27,7 +27,6 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -46,20 +45,16 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.window.Window;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
-import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
@@ -160,11 +155,6 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		
 		// register workspace adapters
 		WorkbenchAdapterBuilder.registerAdapters();
-		
-		// register resource change listener for showing the tasks view
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(
-			getShowTasksChangeListener(),
-			IResourceChangeEvent.POST_CHANGE);
 
 		// get the command line arguments
 		String[] cmdLineArgs = Platform.getCommandLineArgs();
@@ -397,47 +387,6 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 			windowConfigurer.setData(ACTION_BUILDER, null);
 			a.dispose();
 		}
-	}
-
-	/**
-	 * Returns the resource change listener for noticing new errors.
-	 * Processes the delta and shows the Tasks view if new errors 
-	 * have appeared.  See PR 2066.
-	 */ 
-	private IResourceChangeListener getShowTasksChangeListener() {
-		return new IResourceChangeListener() {
-			public void resourceChanged(final IResourceChangeEvent event) {	
-				IPreferenceStore store = IDEWorkbenchPlugin.getDefault().getPreferenceStore();
-				if (store.getBoolean(IDEInternalPreferences.SHOW_TASKS_ON_BUILD)) {
-					IMarker error = findProblemToShow(event);
-					if (error != null) {
-						Display.getDefault().asyncExec(new Runnable() {
-							public void run() {
-								try {
-									IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-									if (window != null && !window.getShell().isDisposed()) { 
-										IWorkbenchPage page = window.getActivePage();
-										if (page != null) {
-											IViewPart tasksView= page.findView(IPageLayout.ID_PROBLEM_VIEW);
-											if(tasksView == null) {
-												IWorkbenchPart activePart= page.getActivePart();
-												page.showView(IPageLayout.ID_PROBLEM_VIEW);
-												//restore focus stolen by showing the Tasks view
-												page.activate(activePart);
-											} else {
-												page.bringToTop(tasksView);
-											}
-										}
-									}
-								} catch (PartInitException e) {
-									IDEWorkbenchPlugin.log("Error bringing problem view to front", e.getStatus()); //$NON-NLS-1$
-								}
-							}
-						});
-					}
-				}
-			}
-		};
 	}
 	
 	/**

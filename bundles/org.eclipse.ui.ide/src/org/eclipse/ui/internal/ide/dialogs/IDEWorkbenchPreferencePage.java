@@ -53,8 +53,6 @@ public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage
 
     private Button autoSaveAllButton;
 
-    private Button showTasks;
-
     private IntegerFieldEditor saveInterval;
 
     private Button autoRefreshButton;
@@ -73,7 +71,6 @@ public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage
 
         createAutoBuildPref(composite);
         createSaveAllBeforeBuildPref(composite);
-        createShowTasksOnAutoBuildPref(composite);
         createStickyCyclePref(composite);
         createShowUserDialogPref(composite);
         createAutoRefreshControls(composite);
@@ -85,15 +82,6 @@ public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage
         createOpenModeGroup(composite);       
 
         return composite;
-    }
-
-    protected void createShowTasksOnAutoBuildPref(Composite composite) {
-        showTasks = new Button(composite, SWT.CHECK);
-        showTasks.setText(IDEWorkbenchMessages
-                .getString("WorkbenchPreference.showTasks")); //$NON-NLS-1$
-        showTasks.setFont(composite.getFont());
-        showTasks.setSelection(getIDEPreferenceStore().getBoolean(
-                IDEInternalPreferences.SHOW_TASKS_ON_BUILD));
     }
 
     protected void createSaveAllBeforeBuildPref(Composite composite) {
@@ -185,8 +173,6 @@ public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage
         autoSaveAllButton
                 .setSelection(store
                         .getDefaultBoolean(IDEInternalPreferences.SAVE_ALL_BEFORE_BUILD));
-        showTasks.setSelection(store
-                .getBoolean(IDEInternalPreferences.SHOW_TASKS_ON_BUILD));
         saveInterval.loadDefault();
         
     	boolean autoRefresh =
@@ -221,10 +207,6 @@ public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage
         // store the save all prior to build setting
         store.setValue(IDEInternalPreferences.SAVE_ALL_BEFORE_BUILD,
                 autoSaveAllButton.getSelection());
-
-        // store the preference for bringing task view to front on build
-        store.setValue(IDEInternalPreferences.SHOW_TASKS_ON_BUILD, showTasks
-                .getSelection());
 
         // store the workspace save interval
         // @issue we should drop our preference constant and let clients use

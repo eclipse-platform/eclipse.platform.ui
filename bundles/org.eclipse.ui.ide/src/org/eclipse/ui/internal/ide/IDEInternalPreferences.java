@@ -27,7 +27,7 @@ public interface IDEInternalPreferences {
 	public static final int MAX_SAVE_INTERVAL = 9999;
 	
 	// (boolean) Show Problems view to users when build contains errors
-	public static final String SHOW_TASKS_ON_BUILD = "SHOW_TASKS_ON_BUILD"; //$NON-NLS-1$
+	//public static final String SHOW_TASKS_ON_BUILD = "SHOW_TASKS_ON_BUILD"; //$NON-NLS-1$
 	
 	// (boolean) Prompt for exit confirmation when last window closed.
 	public static final String EXIT_PROMPT_ON_CLOSE_LAST_WINDOW = "EXIT_PROMPT_ON_CLOSE_LAST_WINDOW"; //$NON-NLS-1$

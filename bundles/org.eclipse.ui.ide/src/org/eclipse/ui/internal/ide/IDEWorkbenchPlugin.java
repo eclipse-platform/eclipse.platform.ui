@@ -245,7 +245,6 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
 		store.setDefault(IDEInternalPreferences.INTRO, true);
 		store.setDefault(IDEInternalPreferences.REFRESH_WORKSPACE_ON_STARTUP, false);
 		store.setDefault(IDEInternalPreferences.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW, true);
-		store.setDefault(IDEInternalPreferences.SHOW_TASKS_ON_BUILD, false);
 		store.setDefault(IDEInternalPreferences.PROJECT_SWITCH_PERSP_MODE, IDEInternalPreferences.PSPM_PROMPT);
 		store.setDefault(IDE.Preferences.PROJECT_OPEN_NEW_PERSPECTIVE, IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE);
 	}
