@@ -37,8 +37,8 @@ public final class AntUIPlugin extends AbstractUIPlugin {
 		} catch (MissingResourceException e) {
 			ErrorDialog.openError(
 				plugin.getWorkbench().getActiveWorkbenchWindow().getShell(),
-				"Missing Resource Bundle",
-				"The properties for the Ant UI plugin could not be found",
+				Policy.bind("exception.missingResourceBundle"),
+				Policy.bind("exception.missingResourceBundle.message"),
 				new Status(IStatus.ERROR,PI_ANTUI,0,e.getMessage(),e));
 			return null;
 		}
