@@ -27,7 +27,7 @@ public class DialogSettingsHelper {
 	
 	/**
 	 * Persists the location and dimensions of the shell in the
-	 * Debug UI Plugin dialog settings under the provided dialog settings section name
+	 * Ant UI Plugin dialog settings under the provided dialog settings section name
 	 * 
 	 * @param shell The shell whose geometry is to be stored
 	 * @param dialogSettingsSectionName The name of the dialog settings section
@@ -53,7 +53,7 @@ public class DialogSettingsHelper {
 	
 	/**
 	 * Returns the initial size which is the larger of the <code>initialSize</code> or
-	 * the size persisted in the Debug UI Plugin dialog settings under the provided dialog setttings section name.
+	 * the size persisted in the Ant UI Plugin dialog settings under the provided dialog setttings section name.
 	 * If no size is persisted in the settings, the <code>initialSize</code> is returned. 
 	 * 
 	 * @param initialSize The initialSize to compare against
@@ -73,7 +73,7 @@ public class DialogSettingsHelper {
 	}
 	
 	/**
-	 * Returns the initial location which is persisted in the Debug UI Plugin dialog settings
+	 * Returns the initial location which is persisted in the Ant UI Plugin dialog settings
 	 * under the provided dialog setttings section name.
 	 * If location is not persisted in the settings, the <code>null</code> is returned. 
 	 * 
