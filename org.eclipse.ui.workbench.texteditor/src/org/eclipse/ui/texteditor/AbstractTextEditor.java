@@ -356,13 +356,17 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 												
 							IDocumentProvider d= getDocumentProvider();
 							IDocument changed= null;
-							if (isDirty())
+							String previousContent= null;
+							if (isDirty()) {
 								changed= d.getDocument(getEditorInput());
-								
+								if (changed != null)
+									previousContent= changed.get();
+							}
+							
 							setInput((IEditorInput) movedElement);
 							
 							if (changed != null) {
-								d.getDocument(getEditorInput()).set(changed.get());
+								d.getDocument(getEditorInput()).set(previousContent);
 								validateState(getEditorInput());
 								updateStatusField(ITextEditorActionConstants.STATUS_CATEGORY_ELEMENT_STATE);
 							}					
@@ -2766,14 +2770,14 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			provider.connect(input);
 			
 			initializeTitle(input);
+			
+			if (fSourceViewer != null)
+				initializeSourceViewer(input);
 
 			if (fIsOverwriting)
 				toggleOverwriteMode();
 			setInsertMode((InsertMode) getLegalInsertModes().get(0));
 			updateCaret();
-			
-			if (fSourceViewer != null)
-				initializeSourceViewer(input);
 				
 			updateStatusField(ITextEditorActionConstants.STATUS_CATEGORY_ELEMENT_STATE);
 			
