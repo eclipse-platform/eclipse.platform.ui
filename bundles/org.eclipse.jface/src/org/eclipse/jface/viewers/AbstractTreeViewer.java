@@ -169,9 +169,9 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 		if(equals(element,widget.getData()))
 			return;
 		
-		Item[] items = getChildren(widget);
+		Item[] items = getChildren(widget); 
 		for(int i = 0; i < items.length; i++){
-			if(items[i].equals(element))
+			if(items[i].getData().equals(element))
 				return;
 		}				
 		
