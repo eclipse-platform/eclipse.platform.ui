@@ -200,6 +200,9 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 		fResponse= new HashMap(500);
 		setGotoMarkerAction(gotoAction);
 
+		ILabelProvider oldLabelProvider= (ILabelProvider)fgLabelProviders.get(pageId);
+		if (oldLabelProvider != null)
+			oldLabelProvider.dispose();
 		fgLabelProviders.put(pageId, labelProvider);
 
 		SearchManager.getDefault().addNewSearch(		
