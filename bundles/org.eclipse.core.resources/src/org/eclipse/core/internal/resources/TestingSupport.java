@@ -11,8 +11,9 @@
 package org.eclipse.core.internal.resources;
 
 import java.util.Map;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspace;
+import java.util.Properties;
+
+import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.team.IMoveDeleteHook;
 
 /**
@@ -28,7 +29,12 @@ public class TestingSupport {
 	 */
 	private TestingSupport() {
 	}
-
+	/**
+	 * Returns the save manager's master table.
+	 */
+	public static Properties getMasterTable() {
+		return ((Workspace)ResourcesPlugin.getWorkspace()).getSaveManager().getMasterTable();
+	}
 	/**
 	 * Installs the given move-delete hook implementation in the given 
 	 * workspace. This overrides the normal workspace behavior. Subsequent
