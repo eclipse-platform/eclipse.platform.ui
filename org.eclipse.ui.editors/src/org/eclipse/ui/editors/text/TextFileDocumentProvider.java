@@ -963,7 +963,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 	public boolean isModifiable(Object element) {
 		FileInfo info= (FileInfo) fFileInfoMap.get(element);
 		if (info != null)
-			return info.fTextFileBuffer.isStateValidated() ? !isSystemFileReadOnly(info) : true;
+			return info.fTextFileBuffer.isStateValidated() ? !isReadOnly(element) : true;
 		return ((IDocumentProviderExtension) getParentProvider()).isModifiable(element);
 	}
 
