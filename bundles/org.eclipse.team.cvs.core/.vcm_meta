@@ -2,16 +2,11 @@
 <project-description>
 	<comment></comment>
 	<nature id="org.eclipse.jdt.core.javanature"/>
-	<nature id="org.eclipse.pde.PluginNature"/>
 	<nature id="org.eclipse.team.cvs.core.cvsnature"/>
 	<reference project-name="org.apache.xerces"/>
 	<reference project-name="org.eclipse.core.resources"/>
 	<reference project-name="org.eclipse.core.runtime"/>
 	<reference project-name="org.eclipse.team.core"/>
 	<builder name="org.eclipse.jdt.core.javabuilder">
-	</builder>
-	<builder name="org.eclipse.pde.ManifestBuilder">
-	</builder>
-	<builder name="org.eclipse.pde.SchemaBuilder">
 	</builder>
 </project-description>
