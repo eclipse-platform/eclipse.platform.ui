@@ -121,4 +121,11 @@ public interface IWorkbenchActionDefinitionIds {
 	 * Value: <code>"org.eclipse.ui.edit.findIncremental"</code>
 	 */
 	public static final String FIND_INCREMENTAL= "org.eclipse.ui.edit.findIncremental"; //$NON-NLS-1$
+	/**
+	 * Action definition id of the edit incremental find reverse action.
+	 * Value: <code>"org.eclipse.ui.edit.findIncrementalReverse"</code>
+	 * 
+	 * @since 2.1
+	 */
+	public static final String FIND_INCREMENTAL_REVERSE= "org.eclipse.ui.edit.findIncrementalReverse"; //$NON-NLS-1$
 }

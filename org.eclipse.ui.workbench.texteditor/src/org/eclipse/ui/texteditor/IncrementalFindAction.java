@@ -35,6 +35,8 @@ public class IncrementalFindAction extends ResourceAction implements IUpdate {
 	private IWorkbenchPart fWorkbenchPart;
 	/** The workbench window */
 	private IWorkbenchWindow fWorkbenchWindow;
+	/** The direction to run the incremental find */
+	private boolean fForward;
 	
 	/**
 	 * Creates a new incremental find action for the given text editor. 
@@ -46,11 +48,13 @@ public class IncrementalFindAction extends ResourceAction implements IUpdate {
 	 *   (described in <code>ResourceAction</code> constructor), or 
 	 *   <code>null</code> if none
 	 * @param editor the text editor
+	 * @param forward <code>true</code> if the search direction is forward
 	 * @see ResourceAction#ResourceAction
 	 */
-	public IncrementalFindAction(ResourceBundle bundle, String prefix, IWorkbenchPart workbenchPart) {
+	public IncrementalFindAction(ResourceBundle bundle, String prefix, IWorkbenchPart workbenchPart, boolean forward) {
 		super(bundle, prefix);
 		fWorkbenchPart= workbenchPart;
+		fForward= forward;
 		update();
 	}
 	
@@ -64,13 +68,15 @@ public class IncrementalFindAction extends ResourceAction implements IUpdate {
 	 *   (described in <code>ResourceAction</code> constructor), or 
 	 *   <code>null</code> if none
 	 * @param workbenchWindow the workbench window
+	 * @param forward <code>true</code> if the search direction is forward
 	 * @see ResourceAction#ResourceAction
 	 * 
-	 * @deprecated use FindReplaceAction(ResourceBundle, String, IWorkbenchPart) instead
+	 * @deprecated use FindReplaceAction(ResourceBundle, String, IWorkbenchPart, boolean) instead
 	 */
-	public IncrementalFindAction(ResourceBundle bundle, String prefix, IWorkbenchWindow workbenchWindow) {
+	public IncrementalFindAction(ResourceBundle bundle, String prefix, IWorkbenchWindow workbenchWindow, boolean forward) {
 		super(bundle, prefix);
 		fWorkbenchWindow= workbenchWindow;
+		fForward= forward;
 		update();
 	}
 
@@ -78,7 +84,14 @@ public class IncrementalFindAction extends ResourceAction implements IUpdate {
 	 *	@see IAction#run
 	 */
 	public void run() {
-		if (fTarget != null && fTarget instanceof IFindReplaceTargetExtension)
+
+		if (fTarget == null)
+			return;
+		
+		if (fTarget instanceof IncrementalFindTarget)
+			((IncrementalFindTarget) fTarget).setDirection(fForward);
+
+		if (fTarget instanceof IFindReplaceTargetExtension)
 			((IFindReplaceTargetExtension) fTarget).beginSession();
 	}
 

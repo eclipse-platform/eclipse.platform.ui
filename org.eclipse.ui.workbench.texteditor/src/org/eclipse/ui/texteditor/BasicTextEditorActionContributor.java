@@ -14,11 +14,17 @@ package org.eclipse.ui.texteditor;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.ResourceBundle;import org.eclipse.jface.action.IAction;import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.action.IMenuManager;import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.IStatusLineManager;
 
-import org.eclipse.ui.IActionBars;import org.eclipse.ui.IEditorPart;import org.eclipse.ui.IWorkbenchActionConstants;import org.eclipse.ui.part.EditorActionBarContributor;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IMenuManager;
+
+import org.eclipse.jface.action.IStatusLineManager;
+
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.part.EditorActionBarContributor;
 
 
 
@@ -85,6 +91,11 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 	 * @since 2.0
 	 */
 	private RetargetTextEditorAction fIncrementalFind;	
+	/**
+	 * The reverse incremental find action
+	 * @since 2.1
+	 */
+	private RetargetTextEditorAction fIncrementalFindReverse;	
 	/** The go to line action */
 	private RetargetTextEditorAction fGotoLine;
 	/** 
@@ -105,6 +116,7 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 		fFindNext= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "Editor.FindNext."); //$NON-NLS-1$
 		fFindPrevious= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "Editor.FindPrevious."); //$NON-NLS-1$
 		fIncrementalFind= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "Editor.FindIncremental."); //$NON-NLS-1$
+		fIncrementalFindReverse= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "Editor.FindIncrementalReverse."); //$NON-NLS-1$
 		fGotoLine= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "Editor.GotoLine."); //$NON-NLS-1$
 		
 		fStatusFields= new HashMap(3);
@@ -160,6 +172,7 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 		fFindNext.setAction(getAction(editor, ITextEditorActionConstants.FIND_NEXT));
 		fFindPrevious.setAction(getAction(editor, ITextEditorActionConstants.FIND_PREVIOUS));
 		fIncrementalFind.setAction(getAction(editor, ITextEditorActionConstants.FIND_INCREMENTAL));
+		fIncrementalFindReverse.setAction(getAction(editor, ITextEditorActionConstants.FIND_INCREMENTAL_REVERSE));
 		fGotoLine.setAction(getAction(editor, ITextEditorActionConstants.GOTO_LINE));
 		
 		if (fActiveEditorPart instanceof ITextEditorExtension) {
@@ -189,6 +202,7 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 			editMenu.appendToGroup(IWorkbenchActionConstants.FIND_EXT, fFindNext);
 			editMenu.appendToGroup(IWorkbenchActionConstants.FIND_EXT,fFindPrevious);
 			editMenu.appendToGroup(IWorkbenchActionConstants.FIND_EXT,fIncrementalFind);
+			editMenu.appendToGroup(IWorkbenchActionConstants.FIND_EXT,fIncrementalFindReverse);
 			editMenu.appendToGroup(IWorkbenchActionConstants.FIND_EXT,fGotoLine);
 		}
 	}

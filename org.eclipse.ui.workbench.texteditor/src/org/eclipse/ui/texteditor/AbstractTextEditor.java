@@ -2925,10 +2925,15 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.FIND_PREVIOUS);
 		setAction(ITextEditorActionConstants.FIND_PREVIOUS, action);
 
-		action= new IncrementalFindAction(EditorMessages.getResourceBundle(), "Editor.FindIncremental.", this); //$NON-NLS-1$
+		action= new IncrementalFindAction(EditorMessages.getResourceBundle(), "Editor.FindIncremental.", this, true); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.FIND_INCREMENTAL_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.FIND_INCREMENTAL);
 		setAction(ITextEditorActionConstants.FIND_INCREMENTAL, action);
+		
+		action= new IncrementalFindAction(EditorMessages.getResourceBundle(), "Editor.FindIncrementalReverse.", this, false); //$NON-NLS-1$
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.FIND_INCREMENTAL_REVERSE_ACTION);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.FIND_INCREMENTAL_REVERSE);
+		setAction(ITextEditorActionConstants.FIND_INCREMENTAL_REVERSE, action);
 		
 		action= new AddMarkerAction(EditorMessages.getResourceBundle(), "Editor.AddBookmark.", this, IMarker.BOOKMARK, true); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.BOOKMARK_ACTION);
@@ -2962,6 +2967,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		markAsContentDependentAction(ITextEditorActionConstants.FIND_NEXT, true);
 		markAsContentDependentAction(ITextEditorActionConstants.FIND_PREVIOUS, true);
 		markAsContentDependentAction(ITextEditorActionConstants.FIND_INCREMENTAL, true);
+		markAsContentDependentAction(ITextEditorActionConstants.FIND_INCREMENTAL_REVERSE, true);
 		
 		markAsSelectionDependentAction(ITextEditorActionConstants.CUT, true);
 		markAsSelectionDependentAction(ITextEditorActionConstants.COPY, true);

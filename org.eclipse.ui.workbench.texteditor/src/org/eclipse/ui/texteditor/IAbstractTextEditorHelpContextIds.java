@@ -146,21 +146,27 @@ public interface IAbstractTextEditorHelpContextIds {
 	 * Value: <code>"org.eclipse.ui.FindNext_action_context"</code>
 	 * @since 2.0
 	 */
-	public static final String FIND_NEXT_ACTION = PREFIX + ITextEditorActionConstants.FIND_NEXT + ACTION_POSTFIX;
+	public static final String FIND_NEXT_ACTION= PREFIX + ITextEditorActionConstants.FIND_NEXT + ACTION_POSTFIX;
 
 	/**
 	 * Help context id for the action.
 	 * Value: <code>"org.eclipse.ui.FindPrevious_action_context"</code>
 	 * @since 2.0
 	 */
-	public static final String FIND_PREVIOUS_ACTION = PREFIX + ITextEditorActionConstants.FIND_PREVIOUS + ACTION_POSTFIX;
+	public static final String FIND_PREVIOUS_ACTION= PREFIX + ITextEditorActionConstants.FIND_PREVIOUS + ACTION_POSTFIX;
 
 	/**
 	 * Help context id for the action.
 	 * Value: <code>"org.eclipse.ui.FindIncremental_action_context"</code>
 	 * @since 2.0
 	 */
-	public static final String FIND_INCREMENTAL_ACTION = PREFIX + ITextEditorActionConstants.FIND_INCREMENTAL + ACTION_POSTFIX;
+	public static final String FIND_INCREMENTAL_ACTION= PREFIX + ITextEditorActionConstants.FIND_INCREMENTAL + ACTION_POSTFIX;
+	/**
+	 * Help context id for the action.
+	 * Value: <code>"org.eclipse.ui.FindIncrementalReverse_action_context"</code>
+	 * @since 2.1
+	 */
+	public static final String FIND_INCREMENTAL_REVERSE_ACTION= PREFIX + ITextEditorActionConstants.FIND_INCREMENTAL_REVERSE + ACTION_POSTFIX;
 
 	/**
 	 * Help context id for the action.

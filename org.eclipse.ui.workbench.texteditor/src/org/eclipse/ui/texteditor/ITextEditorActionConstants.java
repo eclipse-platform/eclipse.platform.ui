@@ -156,6 +156,12 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	 * @since 2.0
 	 */
 	static final String FIND_INCREMENTAL= "FindIncremental"; //$NON-NLS-1$
+	/** 
+	 * Name of the action to incremental find reverse. 
+	 * Value: <code>"FindIncrementalReverse"</code>
+	 * @since 2.1
+	 */
+	static final String FIND_INCREMENTAL_REVERSE= "FindIncrementalReverse"; //$NON-NLS-1$
 	
 	/** 
 	 * Name of the action to convert line delimiters to Windows. 
