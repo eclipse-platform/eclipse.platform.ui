@@ -17,39 +17,15 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.IPostSelectionProvider;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.ListViewer;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.text.*;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.team.internal.ccvs.core.CVSAnnotateBlock;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
-import org.eclipse.team.internal.ccvs.core.ICVSResource;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
-import org.eclipse.ui.IEditorDescriptor;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IEditorRegistry;
-import org.eclipse.ui.IReusableEditor;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IWorkbenchConstants;
-import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -285,9 +261,7 @@ public class AnnotateView extends ViewPart implements ISelectionChangedListener 
 	}
 
 	/**
-	 * Try and open the correct registered editor type for the file.  If the registered
-	 * editor is *not* an ITextEditor then open the source in a default text editor.
-	 * @return
+	 * Try and open the correct registered editor type for the file.
 	 * @throws InvocationTargetException
 	 */
 	private IEditorPart openEditor() throws InvocationTargetException {
@@ -305,29 +279,10 @@ public class AnnotateView extends ViewPart implements ISelectionChangedListener 
 		
 		IEditorDescriptor descriptor = registry.getDefaultEditor(file.getName());
 		
-		// Determine if the registered editor is an ITextEditor.
-		
-		String id;
-	
-		if (descriptor == null || !(descriptor instanceof EditorDescriptor) || !(((EditorDescriptor)descriptor).isInternal())) {
-			id = IWorkbenchConstants.DEFAULT_EDITOR_ID; //$NON-NLS-1$
-		} else {
-			try {
-				Object obj = WorkbenchPlugin.createExtension(((EditorDescriptor) descriptor).getConfigurationElement(), "class"); //$NON-NLS-1$
-				if (obj instanceof ITextEditor) {
-					id = descriptor.getId();
-				} else {
-					id = IWorkbenchConstants.DEFAULT_EDITOR_ID;
-				}
-			} catch (CoreException e) {
-				id = IWorkbenchConstants.DEFAULT_EDITOR_ID;
-			}
-		}
-		
 		// Either reuse an existing editor or open a new editor of the correct type.
 		try {
 			try {
-				if (editor != null && editor instanceof IReusableEditor && page.isPartVisible(editor) && editor.getSite().getId().equals(id)) {
+				if (editor != null && editor instanceof IReusableEditor && page.isPartVisible(editor) && editor.getSite().getId().equals(descriptor.getId())) {
 					// We can reuse the editor
 					((IReusableEditor) editor).setInput(new RemoteAnnotationEditorInput(file, contents));
 					part = editor;
@@ -337,15 +292,10 @@ public class AnnotateView extends ViewPart implements ISelectionChangedListener 
 						page.closeEditor(editor, false);
 						editor = null;
 					}
-					part = page.openEditor(new RemoteAnnotationEditorInput(file, contents), id);
+					part = page.openEditor(new RemoteAnnotationEditorInput(file, contents), descriptor.getId());
 				}
 			} catch (PartInitException e) {
-				if (id.equals(IWorkbenchConstants.DEFAULT_EDITOR_ID)) {
-					throw e;
-				} else {
-					// Could not open desired editor, try a default text editor.
-					part = page.openEditor(new RemoteAnnotationEditorInput(file, contents), IWorkbenchConstants.DEFAULT_EDITOR_ID); //$NON-NLS-1$
-				}
+				throw e;
 			}
 		} catch (PartInitException e) {
 			// Total failure.

@@ -12,21 +12,14 @@ package org.eclipse.team.internal.ui.wizards;
 
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IPluginRegistry;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.ui.IConfigurationWizard;
-import org.eclipse.team.ui.ISharedImages;
-import org.eclipse.team.ui.ITeamUIConstants;
+import org.eclipse.team.ui.*;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.internal.model.AdaptableList;
+import org.eclipse.ui.model.AdaptableList;
 
 /**
  * The wizard for associating projects with team providers

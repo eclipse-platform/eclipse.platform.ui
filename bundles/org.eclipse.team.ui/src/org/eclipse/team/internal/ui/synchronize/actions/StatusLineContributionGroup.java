@@ -50,7 +50,7 @@ public class StatusLineContributionGroup extends ActionGroup implements ISyncSet
 		this.outgoing = createStatusLineContribution(OUTGOING_ID, TeamSubscriberParticipant.OUTGOING_MODE, "0", TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_DLG_SYNC_OUTGOING).createImage()); //$NON-NLS-1$
 		this.conflicting = createStatusLineContribution(CONFLICTING_ID, TeamSubscriberParticipant.CONFLICTING_MODE, "0", TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_DLG_SYNC_CONFLICTING).createImage()); //$NON-NLS-1$		
 		this.workingSet = new StatusLineCLabelContribution(WORKINGSET_ID, 25);
-		this.workingSet.setTooltip(Policy.bind("StatisticsPanel.workingSetTooltip"));
+		this.workingSet.setTooltip(Policy.bind("StatisticsPanel.workingSetTooltip")); //$NON-NLS-1$
 		updateWorkingSetText();
 
 		this.workingSet.addListener(SWT.MouseDoubleClick, new Listener() {
@@ -72,11 +72,11 @@ public class StatusLineContributionGroup extends ActionGroup implements ISyncSet
 	private void updateWorkingSetText() {
 		IWorkingSet set = participant.getWorkingSet();
 		if (set == null) {
-			workingSet.setText(Policy.bind("StatisticsPanel.noWorkingSet"));
+			workingSet.setText(Policy.bind("StatisticsPanel.noWorkingSet")); //$NON-NLS-1$
 		} else {
 			String name = set.getName();
 			if (name.length() > WORKING_SET_FIELD_SIZE) {
-				name = name.substring(0, WORKING_SET_FIELD_SIZE - 3) + "...";
+				name = name.substring(0, WORKING_SET_FIELD_SIZE - 3) + "..."; //$NON-NLS-1$
 			}
 			workingSet.setText(name);
 		}
@@ -126,18 +126,18 @@ public class StatusLineContributionGroup extends ActionGroup implements ISyncSet
 						incoming.setText(Policy.bind("StatisticsPanel.changeNumbers", new Integer(workingSetIncoming).toString(), new Integer(workspaceIncoming).toString())); //$NON-NLS-1$
 						outgoing.setText(Policy.bind("StatisticsPanel.changeNumbers", new Integer(workingSetOutgoing).toString(), new Integer(workspaceOutgoing).toString())); //$NON-NLS-1$
 
-						conflicting.setTooltip(Policy.bind("StatisticsPanel.numbersWorkingSetTooltip", Policy.bind("StatisticsPanel.conflicting"), set.getName()));
-						outgoing.setTooltip(Policy.bind("StatisticsPanel.numbersWorkingSetTooltip", Policy.bind("StatisticsPanel.outgoing"), set.getName()));
-						incoming.setTooltip(Policy.bind("StatisticsPanel.numbersWorkingSetTooltip", Policy.bind("StatisticsPanel.incoming"), set.getName()));
+						conflicting.setTooltip(Policy.bind("StatisticsPanel.numbersWorkingSetTooltip", Policy.bind("StatisticsPanel.conflicting"), set.getName())); //$NON-NLS-1$ //$NON-NLS-2$
+						outgoing.setTooltip(Policy.bind("StatisticsPanel.numbersWorkingSetTooltip", Policy.bind("StatisticsPanel.outgoing"), set.getName())); //$NON-NLS-1$ //$NON-NLS-2$
+						incoming.setTooltip(Policy.bind("StatisticsPanel.numbersWorkingSetTooltip", Policy.bind("StatisticsPanel.incoming"), set.getName())); //$NON-NLS-1$ //$NON-NLS-2$
 
 					} else {
 						conflicting.setText(new Integer(workspaceConflicting).toString()); //$NON-NLS-1$
 						incoming.setText(new Integer(workspaceIncoming).toString()); //$NON-NLS-1$
 						outgoing.setText(new Integer(workspaceOutgoing).toString()); //$NON-NLS-1$
 
-						conflicting.setTooltip(Policy.bind("StatisticsPanel.numbersTooltip", Policy.bind("StatisticsPanel.conflicting")));
-						outgoing.setTooltip(Policy.bind("StatisticsPanel.numbersTooltip", Policy.bind("StatisticsPanel.outgoing")));
-						incoming.setTooltip(Policy.bind("StatisticsPanel.numbersTooltip", Policy.bind("StatisticsPanel.incoming")));
+						conflicting.setTooltip(Policy.bind("StatisticsPanel.numbersTooltip", Policy.bind("StatisticsPanel.conflicting"))); //$NON-NLS-1$ //$NON-NLS-2$
+						outgoing.setTooltip(Policy.bind("StatisticsPanel.numbersTooltip", Policy.bind("StatisticsPanel.outgoing"))); //$NON-NLS-1$ //$NON-NLS-2$
+						incoming.setTooltip(Policy.bind("StatisticsPanel.numbersTooltip", Policy.bind("StatisticsPanel.incoming"))); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 				}
 			});

@@ -39,7 +39,7 @@ public class WorkingSetMenuContributionItem extends ContributionItem {
 	 * @param actionGroup the action group this contribution item is created in
 	 */
 	public WorkingSetMenuContributionItem(String id, WorkingSetFilterActionGroup actionGroup) {
-		super(id + TeamUIPlugin.ID + "working_set_contribution");
+		super(id + TeamUIPlugin.ID + "working_set_contribution"); //$NON-NLS-1$
 		Assert.isNotNull(actionGroup);
 		this.actionGroup = actionGroup;
 	}
@@ -69,7 +69,6 @@ public class WorkingSetMenuContributionItem extends ContributionItem {
 						IWorkingSetManager manager = PlatformUI.getWorkbench().getWorkingSetManager();
 						actionGroup.setWorkingSet(workingSet);
 						manager.addRecentWorkingSet(workingSet);
-						System.out.println(((MenuItem)e.widget).getText() + ": selected working set is: " + workingSet.getName());
 					}
 				});
 			}

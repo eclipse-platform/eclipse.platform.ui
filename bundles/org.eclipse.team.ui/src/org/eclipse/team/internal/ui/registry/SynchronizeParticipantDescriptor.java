@@ -10,14 +10,11 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.registry;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.team.ui.synchronize.*;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.ui.synchronize.ISynchronizeParticipantDescriptor;
 import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 public class SynchronizeParticipantDescriptor implements ISynchronizeParticipantDescriptor {
@@ -81,7 +78,7 @@ public class SynchronizeParticipantDescriptor implements ISynchronizeParticipant
 		String iconName = configElement.getAttribute(ATT_ICON);
 		if (iconName == null)
 			return null;
-		imageDescriptor = WorkbenchImages.getImageDescriptorFromExtension(configElement.getDeclaringExtension(), iconName);
+		imageDescriptor = TeamUIPlugin.getImageDescriptorFromExtension(configElement.getDeclaringExtension(), iconName);
 		return imageDescriptor;
 	}
 

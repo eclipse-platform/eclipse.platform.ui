@@ -18,10 +18,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.synchronize.TeamSubscriberParticipantPage;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IKeyBindingService;
-import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.*;
+import org.eclipse.ui.actions.ActionFactory;
 
 /**
  * Action to navigate the changes shown in the Synchronize View. This
@@ -41,10 +39,10 @@ public class NavigateAction extends Action {
 		IKeyBindingService kbs = part.getSite().getKeyBindingService();		
 		if(direction == INavigableControl.NEXT) {
 			Utils.initAction(this, "action.navigateNext."); //$NON-NLS-1$
-			page.getSite().getActionBars().setGlobalActionHandler(IWorkbenchActionConstants.NEXT, this);			
+			page.getSite().getActionBars().setGlobalActionHandler(ActionFactory.NEXT.getId(), this);			
 		} else {
 			Utils.initAction(this, "action.navigatePrevious."); //$NON-NLS-1$
-			page.getSite().getActionBars().setGlobalActionHandler(IWorkbenchActionConstants.PREVIOUS, this);			
+			page.getSite().getActionBars().setGlobalActionHandler(ActionFactory.PREVIOUS.getId(), this);			
 		}
 	}
 	

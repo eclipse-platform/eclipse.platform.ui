@@ -37,7 +37,7 @@ public abstract class TeamSubscriberParticipant extends AbstractSynchronizeParti
 	/**
 	 * Key for settings in memento
 	 */
-	private static final String CTX_SUBSCRIBER_PARTICIPANT_SETTINGS = TeamUIPlugin.ID + ".TEAMSUBSRCIBERSETTINGS";
+	private static final String CTX_SUBSCRIBER_PARTICIPANT_SETTINGS = TeamUIPlugin.ID + ".TEAMSUBSRCIBERSETTINGS"; //$NON-NLS-1$
 	
 	/**
 	 * Property constant indicating the mode of a page has changed. 
