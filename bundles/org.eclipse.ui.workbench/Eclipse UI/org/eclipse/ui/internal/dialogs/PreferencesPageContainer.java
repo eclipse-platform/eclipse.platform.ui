@@ -207,7 +207,7 @@ public class PreferencesPageContainer implements IPreferencePageContainer{
 	 * @param node
 	 */
 	private void createGeneralEntry(IPreferenceNode node) {
-		createEntry(node, "General", 0);
+		createEntry(node, "General", 0);  //$NON-NLS-1$
 		IPreferenceNode[] subnodes = node.getSubNodes();
 		for (int i = 0; i < subnodes.length; i++) {
 			createEntry(subnodes[i], subnodes[i].getLabelText(), 1);
