@@ -837,7 +837,7 @@
       <page
             name="%ConsolePreferencePage.name"
             category="org.eclipse.team.cvs.ui.CVSPreferences"
-            class="org.eclipse.team.internal.ccvs.ui.ConsolePreferencesPage"
+            class="org.eclipse.team.internal.ccvs.ui.console.ConsolePreferencesPage"
             id="org.eclipse.team.cvs.ui.ConsolePreferences">
       </page>
    </extension>
