@@ -297,10 +297,10 @@ public class TextViewer extends Viewer implements
 		 * @see IDocumentListener#documentChanged
 		 */
 		public void documentChanged(DocumentEvent e) {
-			handleVisibleDocumentChanged(e);
 			if (fWidgetCommand.event == e)
 				updateTextListeners(fWidgetCommand);
 			fLastSentSelectionChange= null;
+			handleVisibleDocumentChanged(e);
 		}
 	}
 	
