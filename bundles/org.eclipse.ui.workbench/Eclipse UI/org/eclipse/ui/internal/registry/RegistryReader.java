@@ -4,8 +4,10 @@ package org.eclipse.ui.internal.registry;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.util.Hashtable;
+
 import org.eclipse.core.runtime.*;
-import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.Sorter;
 
 /**
@@ -24,6 +26,7 @@ import org.eclipse.ui.internal.misc.Sorter;
  */
 public abstract class RegistryReader {
 	protected static final String TAG_DESCRIPTION = "description";	//$NON-NLS-1$
+	protected static Hashtable extensionPoints = new Hashtable();
 /**
  * The constructor.
  */
@@ -86,10 +89,10 @@ protected IExtension[] orderExtensions(IExtension[] extensions) {
 	// dependent in the order listed in the XML file.
 	Sorter sorter = new Sorter() {
 		public boolean compare(Object extension1, Object extension2) {
-			String s1 = ((IExtension)extension1).getDeclaringPluginDescriptor().getUniqueIdentifier().toUpperCase();
-			String s2 = ((IExtension)extension2).getDeclaringPluginDescriptor().getUniqueIdentifier().toUpperCase();
+			String s1 = ((IExtension)extension1).getDeclaringPluginDescriptor().getUniqueIdentifier();
+			String s2 = ((IExtension)extension2).getDeclaringPluginDescriptor().getUniqueIdentifier();
 			//Return true if elementTwo is 'greater than' elementOne
-			return s2.compareTo(s1) > 0;
+			return s2.compareToIgnoreCase(s1) > 0;
 		}
 	};
 
@@ -140,12 +143,16 @@ protected void readExtension(IExtension extension) {
  * supplied plugin ID and extension point.
  */
 protected void readRegistry(IPluginRegistry registry, String pluginId, String extensionPoint) {
-	IExtensionPoint point = registry.getExtensionPoint(pluginId, extensionPoint);
-	if (point != null) {
-		IExtension[] extensions = point.getExtensions();
+	String pointId = pluginId + "-" + extensionPoint; //$NON-NLS-1$
+	IExtension[] extensions = (IExtension[])extensionPoints.get(pointId); 
+	if (extensions == null) {
+		IExtensionPoint point = registry.getExtensionPoint(pluginId, extensionPoint);
+		if (point == null) return;
+		extensions = point.getExtensions();
 		extensions = orderExtensions(extensions);
-		for (int i = 0; i < extensions.length; i++)
-			readExtension(extensions[i]);
-	}
+		extensionPoints.put(pointId, extensions);
+	} 
+	for (int i = 0; i < extensions.length; i++)
+		readExtension(extensions[i]);
 }
 }
