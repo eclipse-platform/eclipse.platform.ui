@@ -188,33 +188,36 @@ void logError(IStatus status) {
 	if (InternalPlatform.DEBUG)
 		System.out.println(status.getMessage());
 }
-private void saveRegistry() throws IOException {
+public void saveRegistry() throws IOException {
 	IPath path = InternalPlatform.getMetaArea().getRegistryPath();
-	// IPath tempPath = InternalPlatform.getMetaArea().getBackupFilePathFor(path);
+	IPath tempPath = InternalPlatform.getMetaArea().getBackupFilePathFor(path);
 
 	DataOutputStream output = null;
 	try {
-		output = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(path.toOSString())));
+		output = new DataOutputStream(new BufferedOutputStream(new SafeFileOutputStream(path.toOSString(),tempPath.toOSString())));
 	} catch (IOException ioe) {
 		String message = Policy.bind("meta.unableToCreateCache");
 		IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, message, ioe);
 		logError(status);
 	}
-	long start = System.currentTimeMillis();
-	RegistryCacheWriter cacheWriter = new RegistryCacheWriter();
-	cacheWriter.writePluginRegistry(this, output);
-	if (InternalPlatform.DEBUG)
-		System.out.println("Wrote registry: " + (System.currentTimeMillis() - start) + "ms");
+	try {
+		long start = System.currentTimeMillis();
+		RegistryCacheWriter cacheWriter = new RegistryCacheWriter();
+		cacheWriter.writePluginRegistry(this, output);
+		if (InternalPlatform.DEBUG)
+			System.out.println("Wrote registry: " + (System.currentTimeMillis() - start) + "ms");
+	} finally {
+		output.close();
+	}
+}
+public void flushRegistry() {
+	IPath path = InternalPlatform.getMetaArea().getRegistryPath();
+	IPath tempPath = InternalPlatform.getMetaArea().getBackupFilePathFor(path);
+	path.toFile().delete();
+	tempPath.toFile().delete();
 }
 public void shutdown(IProgressMonitor progress) {
 	shutdownPlugins();
-	try {
-		saveRegistry();
-	} catch (IOException e) {
-		String message = Policy.bind("meta.unableToWriteRegistry");
-		IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, message, e);
-		logError(status);
-	}
 	if (progress != null)
 		progress.worked(1);
 }
