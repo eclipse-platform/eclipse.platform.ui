@@ -198,5 +198,12 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	 * @since 3.0
 	 */
 	public String getSourceLocatorId();
-		
+	
+	/**
+	 * Returns the identifier of the plug-in that contributes this launch configuration type.
+	 * 
+	 * @return the identifier of the plug-in that contributes this launch configuration type
+	 * @since 3.0
+	 */
+	public String getPluginIdentifier();
 }

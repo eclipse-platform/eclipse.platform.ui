@@ -24,9 +24,8 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.activities.IActivityManager;
-import org.eclipse.ui.activities.IWorkbenchActivitySupport;
+import org.eclipse.ui.IPluginContribution;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
 
 /**
  * Content provider for representing launch configuration types & launch configurations in a tree.
@@ -137,11 +136,11 @@ public class LaunchConfigurationTreeContentProvider implements ITreeContentProvi
 	private List filterTypes(ILaunchConfigurationType[] allTypes) {
 		List filteredTypes= new ArrayList();
 		String mode = getMode();
-		IWorkbenchActivitySupport activitySupport = PlatformUI.getWorkbench().getActivitySupport();
-		IActivityManager activityManager = activitySupport.getActivityManager();
+		LaunchConfigurationTypeContribution contribution;
 		for (int i = 0; i < allTypes.length; i++) {
 			ILaunchConfigurationType type = allTypes[i];
-			if (isVisible(type, mode) && (activityManager == null || activityManager.getIdentifier(type.getIdentifier()).isEnabled())) {
+			contribution= new LaunchConfigurationTypeContribution(type);
+			if (isVisible(type, mode) && !WorkbenchActivityHelper.filterItem(contribution)) {
 				filteredTypes.add(type);
 			}
 		}
@@ -207,5 +206,28 @@ public class LaunchConfigurationTreeContentProvider implements ITreeContentProvi
 	 */
 	private Shell getShell() {
 		return fShell;
+	}
+	
+	private static class LaunchConfigurationTypeContribution implements IPluginContribution {
+		protected ILaunchConfigurationType type;
+		
+		public LaunchConfigurationTypeContribution(ILaunchConfigurationType type) {
+			this.type= type;
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.IPluginContribution#getLocalId()
+		 */
+		public String getLocalId() {
+			return type.getIdentifier();
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.IPluginContribution#getPluginId()
+		 */
+		public String getPluginId() {
+			return type.getPluginIdentifier();
+		}
+		
 	}
 }

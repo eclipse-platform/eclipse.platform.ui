@@ -33,12 +33,13 @@ import org.eclipse.debug.ui.ILaunchShortcut;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IPluginContribution;
 
 
 /**
  * Proxy to a launch shortcut extension
  */
-public class LaunchShortcutExtension implements ILaunchShortcut {
+public class LaunchShortcutExtension implements ILaunchShortcut, IPluginContribution {
 	
 	private ImageDescriptor fImageDescriptor = null;
 	private List fPerspectives = null;
@@ -338,6 +339,20 @@ public class LaunchShortcutExtension implements ILaunchShortcut {
 	 */
 	public String toString() {
 		return getId();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPluginContribution#getLocalId()
+	 */
+	public String getLocalId() {
+		return getId();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPluginContribution#getPluginId()
+	 */
+	public String getPluginId() {
+		return fConfig.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier();
 	}
 }
 

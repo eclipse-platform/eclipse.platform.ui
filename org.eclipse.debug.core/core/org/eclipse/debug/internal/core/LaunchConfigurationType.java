@@ -269,5 +269,12 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 	public String getSourceLocatorId() {
 		return getAttribute("sourceLocatorId"); //$NON-NLS-1$
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfigurationType#getPluginId()
+	 */
+	public String getPluginIdentifier() {
+		return fElement.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier();
+	}
 }
 

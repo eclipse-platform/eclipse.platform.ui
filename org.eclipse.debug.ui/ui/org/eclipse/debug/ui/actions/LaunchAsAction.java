@@ -13,7 +13,6 @@ package org.eclipse.debug.ui.actions;
 
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
@@ -35,10 +34,7 @@ import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.activities.IActivityManager;
-import org.eclipse.ui.activities.IIdentifier;
-import org.eclipse.ui.activities.IWorkbenchActivitySupport;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
@@ -155,22 +151,11 @@ public class LaunchAsAction extends Action implements IMenuCreator, IWorkbenchWi
 		 }
 
 		 int menuCount = 1;
-		 IWorkbenchActivitySupport activitySupport = PlatformUI.getWorkbench().getActivitySupport();
-		 IActivityManager activityManager = null;
-		 if (activitySupport != null) {
-		 	activityManager = activitySupport.getActivityManager();
-		 }
 		 
 		 Iterator iter = shortcuts.iterator();
 		 while (iter.hasNext()) {
 			 LaunchShortcutExtension ext = (LaunchShortcutExtension) iter.next();
-			 if (ext.getModes().contains(getMode())) {
-			 	if (activityManager != null) {
-			 		IIdentifier identifier = activityManager.getIdentifier(ext.getId());
-			 		if (!identifier.isEnabled()) {
-			 			continue;
-			 		}
-			 	}
+			 if (ext.getModes().contains(getMode()) && !WorkbenchActivityHelper.filterItem(ext)) {
 				populateMenu(ext, getCreatedMenu(), menuCount);
 				menuCount++;
 			 }
