@@ -83,7 +83,7 @@
 &lt;tt&gt;org.eclipse.help.internal.appserver.IWebappServer&lt;/tt&gt;
 interface. Methods in that interface control starting and stopping of the application server,
 as well as starting and stopping of a web application.
-
+Web applications must have direct access to classes loaded by the customized class loader passed in.
 &lt;p&gt;
 In addition to this, all the web applications running under the provided application server must have access to the Jasper 1 JSP Engine runtime. These libraries are currently shipped with Tomcat 4.0.x drivers (http://jakarta.apache.org).
 &lt;/p&gt;
