@@ -403,11 +403,13 @@ public class CopyFilesAndFoldersOperation {
 			public void execute(IProgressMonitor monitor) {
 				IResource[] copyResources = resources;
 
+				// Fix for bug 31116. Do not provide a task name when
+				// creating the task.
+				monitor.beginTask("", 100); //$NON-NLS-1$
+				monitor.setTaskName(getOperationTitle());
+				monitor.worked(10); // show some initial progress
+
 				// Checks only required if this is an exisiting container path.
-				monitor.beginTask(
-					WorkbenchMessages.getString("CopyFilesAndFoldersOperation.operationTitle"), //$NON-NLS-1$
-					100);
-					monitor.worked(10); // show some initial progress
 				boolean copyWithAutoRename = false;
 				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 				if (root.exists(destinationPath)) {
@@ -695,6 +697,14 @@ public class CopyFilesAndFoldersOperation {
 		return prefix.append(returnValue[0]);
 	}
 	/**
+	 * Returns the task title for this operation's progress dialog.
+	 *
+	 * @return the task title
+	 */
+	protected String getOperationTitle() {
+		return WorkbenchMessages.getString("CopyFilesAndFoldersOperation.operationTitle"); //$NON-NLS-1$
+	}
+	/**
 	 * Returns the message for this operation's problems dialog.
 	 *
 	 * @return the problems message
@@ -803,7 +813,6 @@ public class CopyFilesAndFoldersOperation {
 	 */
 	private boolean performCopy(IResource[] resources, IPath destination, IProgressMonitor monitor) {
 		try {
-			monitor.subTask(WorkbenchMessages.getString("CopyFilesAndFoldersOperation.copying")); //$NON-NLS-1$
 			ContainerGenerator generator = new ContainerGenerator(destination);
 			generator.generateContainer(new SubProgressMonitor(monitor, 10));
 			IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 75);
@@ -838,10 +847,7 @@ public class CopyFilesAndFoldersOperation {
 			generator.generateContainer(new SubProgressMonitor(monitor, 10));
 
 			IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 75);
-			subMonitor.beginTask(
-				WorkbenchMessages.getString(
-					"CopyFilesAndFoldersOperation.copying"), //$NON-NLS-1$
-					resources.length);
+			subMonitor.beginTask(getOperationTitle(), resources.length);
 
 			for (int i = 0; i < resources.length; i++) {
 				IResource source = resources[i];

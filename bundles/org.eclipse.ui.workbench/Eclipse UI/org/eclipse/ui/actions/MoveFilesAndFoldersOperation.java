@@ -106,6 +106,14 @@ public class MoveFilesAndFoldersOperation extends CopyFilesAndFoldersOperation {
 			new Object[] {source.getFullPath().makeRelative()});
 	}
 	/**
+	 * Returns the task title for this operation's progress dialog.
+	 *
+	 * @return the task title
+	 */
+	protected String getOperationTitle() {
+		return WorkbenchMessages.getString("MoveFilesAndFoldersOperation.operationTitle"); //$NON-NLS-1$
+	}
+	/**
 	 * Returns the message for this operation's problems dialog.
 	 *
 	 * @return the problems message
