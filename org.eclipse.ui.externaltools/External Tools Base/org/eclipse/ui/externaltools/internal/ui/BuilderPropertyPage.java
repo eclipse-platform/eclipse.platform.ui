@@ -60,7 +60,9 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
@@ -372,7 +374,13 @@ public final class BuilderPropertyPage extends PropertyPage {
 				handleTableSelectionChanged();
 			}
 		});
-
+		
+		builderTable.addListener(SWT.MouseDoubleClick, new Listener() {
+			public void handleEvent(Event event) {
+				handleEditButtonPressed();
+			}
+		});
+		
 		//button area
 		Composite buttonArea = new Composite(tableAndButtons, SWT.NONE);
 		layout = new GridLayout();
