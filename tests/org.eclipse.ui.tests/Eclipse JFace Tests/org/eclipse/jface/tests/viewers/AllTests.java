@@ -5,6 +5,9 @@ package org.eclipse.jface.tests.viewers;
  * WebSphere Studio Workbench
  * (c) Copyright IBM Corp 1999, 2000
  */
+import org.eclipse.jface.tests.preferences.DeprecatedFontPreferenceTestCase;
+import org.eclipse.jface.tests.preferences.FontPreferenceTestCase;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -21,6 +24,8 @@ public class AllTests {
 		suite.addTest(new TestSuite(ListViewerTest.class));
 		suite.addTest(new TestSuite(CheckboxTableViewerTest.class));
 		suite.addTest(new TestSuite(CheckboxTreeViewerTest.class));
+		suite.addTest(new TestSuite(FontPreferenceTestCase.class));
+		suite.addTest(new TestSuite(DeprecatedFontPreferenceTestCase.class));
 		return suite;
 	}
 }
