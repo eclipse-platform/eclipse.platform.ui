@@ -368,7 +368,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		if (window instanceof ApplicationWindow) {
 			ApplicationWindow appWindow= (ApplicationWindow)window;
 			IMenuManager manager= appWindow.getMenuBarManager();
-			IContributionItem actionSetItem= manager.findUsingPath("org.eclipse.debug.ui.DebugMenu"); //$NON-NLS-1$
+			IContributionItem actionSetItem= manager.findUsingPath("org.eclipse.ui.run"); //$NON-NLS-1$
 			if (actionSetItem instanceof SubContributionItem) {
 				IContributionItem item= ((SubContributionItem)actionSetItem).getInnerItem();
 				if (item instanceof IMenuManager) {

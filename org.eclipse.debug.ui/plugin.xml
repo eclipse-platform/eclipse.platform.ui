@@ -119,8 +119,8 @@
          visible="false"
          id="org.eclipse.debug.ui.debugActionSet">
       <menu
-            label="%DebugMenu.label"
-            id="org.eclipse.debug.ui.DebugMenu">
+            label="%RunMenu.label"
+            id="org.eclipse.ui.run">
          <separator
                name="stepGroup">
          </separator>
@@ -144,7 +144,7 @@
             hoverIcon="icons/full/clcl16/stepreturn_co.gif"
             helpContextId="step_return_action_context"
             class="org.eclipse.debug.internal.ui.actions.StepReturnActionDelegate"
-            menubarPath="org.eclipse.debug.ui.DebugMenu/stepReturnGroup"
+            menubarPath="org.eclipse.ui.run/stepReturnGroup"
             id="org.eclipse.debug.internal.ui.actions.StepReturnActionDelegate">
       </action>
       <action
@@ -154,7 +154,7 @@
             hoverIcon="icons/full/clcl16/stepover_co.gif"
             helpContextId="step_over_action_context"
             class="org.eclipse.debug.internal.ui.actions.StepOverActionDelegate"
-            menubarPath="org.eclipse.debug.ui.DebugMenu/stepOverGroup"
+            menubarPath="org.eclipse.ui.run/stepOverGroup"
             id="org.eclipse.debug.internal.ui.actions.StepOverActionDelegate">
       </action>
       <action
@@ -164,7 +164,7 @@
             hoverIcon="icons/full/clcl16/stepinto_co.gif"
             helpContextId="step_into_action_context"
             class="org.eclipse.debug.internal.ui.actions.StepIntoActionDelegate"
-            menubarPath="org.eclipse.debug.ui.DebugMenu/stepIntoGroup"
+            menubarPath="org.eclipse.ui.run/stepIntoGroup"
             id="org.eclipse.debug.internal.ui.actions.StepIntoActionDelegate">
       </action>
       <action
@@ -174,7 +174,7 @@
             hoverIcon="icons/full/clcl16/terminate_co.gif"
             helpContextId="terminate_action_context"
             class="org.eclipse.debug.internal.ui.actions.TerminateActionDelegate"
-            menubarPath="org.eclipse.debug.ui.DebugMenu/stepGroup"
+            menubarPath="org.eclipse.ui.run/stepGroup"
             id="org.eclipse.debug.internal.ui.actions.TerminateActionDelegate">
       </action>
       <action
@@ -184,7 +184,7 @@
             hoverIcon="icons/full/clcl16/suspend_co.gif"
             helpContextId="suspend_action_context"
             class="org.eclipse.debug.internal.ui.actions.SuspendActionDelegate"
-            menubarPath="org.eclipse.debug.ui.DebugMenu/stepGroup"
+            menubarPath="org.eclipse.ui.run/stepGroup"
             id="org.eclipse.debug.internal.ui.actions.SuspendActionDelegate">
       </action>
       <action
@@ -194,7 +194,7 @@
             hoverIcon="icons/full/clcl16/resume_co.gif"
             helpContextId="resume_action_context"
             class="org.eclipse.debug.internal.ui.actions.ResumeActionDelegate"
-            menubarPath="org.eclipse.debug.ui.DebugMenu/stepGroup"
+            menubarPath="org.eclipse.ui.run/stepGroup"
             id="org.eclipse.debug.internal.ui.actions.ResumeActionDelegate">
       </action>
    </actionSet>
@@ -206,8 +206,8 @@
          visible="false"
          id="org.eclipse.debug.ui.launchActionSet">
       <menu
-            label="%DebugMenu.label"
-            id="org.eclipse.debug.ui.DebugMenu">
+            label="%RunMenu.label"
+            id="org.eclipse.ui.run">
          <separator
                name="relaunchGroup">
          </separator>
@@ -224,19 +224,19 @@
       <action
             label="%OpenRunConfigurations.label"
             class="org.eclipse.debug.internal.ui.actions.OpenRunConfigurations"
-            menubarPath="org.eclipse.debug.ui.DebugMenu/runGroup"
+            menubarPath="org.eclipse.ui.run/runGroup"
             id="org.eclipse.debug.internal.ui.actions.OpenRunConfigurations">
       </action>
       <action
             label="%RunWithConfigurationAction.label"
             class="org.eclipse.debug.internal.ui.actions.RunWithConfigurationAction"
-            menubarPath="org.eclipse.debug.ui.DebugMenu/runGroup"
+            menubarPath="org.eclipse.ui.run/runGroup"
             id="org.eclipse.debug.internal.ui.actions.RunWithConfigurationAction">
       </action>
       <action
             label="%RunHistoryMenuAction.label"
             class="org.eclipse.debug.internal.ui.actions.RunHistoryMenuAction"
-            menubarPath="org.eclipse.debug.ui.DebugMenu/runGroup"
+            menubarPath="org.eclipse.ui.run/runGroup"
             id="org.eclipse.debug.internal.ui.actions.RunHistoryMenuAction">
       </action>
       <action
@@ -245,7 +245,7 @@
             disabledIcon="icons/full/dlcl16/runlast_co.gif"
             hoverIcon="icons/full/clcl16/runlast_co.gif"
             class="org.eclipse.debug.internal.ui.actions.RunLastAction"
-            menubarPath="org.eclipse.debug.ui.DebugMenu/relaunchGroup"
+            menubarPath="org.eclipse.ui.run/relaunchGroup"
             id="org.eclipse.debug.internal.ui.actions.RunLastAction">
       </action>
       <action
@@ -262,19 +262,19 @@
       <action
             label="%OpenDebugConfigurations.label"
             class="org.eclipse.debug.internal.ui.actions.OpenDebugConfigurations"
-    		menubarPath="org.eclipse.debug.ui.DebugMenu/debugGroup"
+    		menubarPath="org.eclipse.ui.run/debugGroup"
             id="org.eclipse.debug.internal.ui.actions.OpenDebugConfigurations">
       </action>
       <action
             label="%DebugWithConfigurationAction.label"
             class="org.eclipse.debug.internal.ui.actions.DebugWithConfigurationAction"
-    		menubarPath="org.eclipse.debug.ui.DebugMenu/debugGroup"
+    		menubarPath="org.eclipse.ui.run/debugGroup"
             id="org.eclipse.debug.internal.ui.actions.DebugWithConfigurationAction">
       </action>
       <action
             label="%DebugHistoryMenuAction.label"
             class="org.eclipse.debug.internal.ui.actions.DebugHistoryMenuAction"
-    		menubarPath="org.eclipse.debug.ui.DebugMenu/debugGroup"
+    		menubarPath="org.eclipse.ui.run/debugGroup"
             id="org.eclipse.debug.internal.ui.actions.DebugHistoryMenuAction">
       </action>
       <action
@@ -283,7 +283,7 @@
             disabledIcon="icons/full/dlcl16/debuglast_co.gif"
             hoverIcon="icons/full/clcl16/debuglast_co.gif"
             class="org.eclipse.debug.internal.ui.actions.DebugLastAction"
-    		menubarPath="org.eclipse.debug.ui.DebugMenu/relaunchGroup"
+    		menubarPath="org.eclipse.ui.run/relaunchGroup"
             id="org.eclipse.debug.internal.ui.actions.DebugLastAction">
       </action>
       <action
