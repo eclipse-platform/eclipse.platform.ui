@@ -143,7 +143,7 @@ public class GlobalRefreshResourceSelectionPage extends WizardPage {
 			
 			// The viewer
 			fViewer = new ContainerCheckedTreeViewer(top, SWT.BORDER);
-			data = new GridData(GridData.FILL_HORIZONTAL);
+			data = new GridData(GridData.FILL_BOTH);
 			//data.widthHint = 200;
 			data.heightHint = 100;
 			fViewer.getControl().setLayoutData(data);
