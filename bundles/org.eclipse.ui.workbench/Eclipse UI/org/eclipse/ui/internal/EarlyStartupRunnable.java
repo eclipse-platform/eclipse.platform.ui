@@ -33,8 +33,8 @@ import org.osgi.framework.Bundle;
  */
 public class EarlyStartupRunnable extends SafeRunnable {
 
-    private static final String EXTENSION_CLASS = "org.eclipse.core.internal.registry.Extension"; //$NON-NLS-1$
-    private static final String PLUGIN_DESC_CLASS = "org.eclipse.core.internal.plugins.PluginDescriptor"; //$NON-NLS-1$
+    private static final String EXTENSION_CLASS = "org.eclipse.core.runtime.IExtension"; //$NON-NLS-1$
+    private static final String PLUGIN_DESC_CLASS = "org.eclipse.core.runtime.IPluginDescriptor"; //$NON-NLS-1$
     private static final String GET_PLUGIN_METHOD = "getPlugin"; //$NON-NLS-1$
     private static final String GET_DESC_METHOD = "getDeclaringPluginDescriptor"; //$NON-NLS-1$
 
