@@ -106,11 +106,14 @@ public class OpenInCompareAction extends Action {
 							remote.getContents(Policy.subMonitorFor(monitor, 100));
 						if (base != null)
 							base.getContents(Policy.subMonitorFor(monitor, 100));
-						monitor.done();
 					} catch (TeamException e) {
 						ok[0] = false;
 						// The sync viewer will show the error to the user so we need only abort the action
 						throw new InvocationTargetException(e);
+					} finally {
+						// return false if the operation was cancelled
+						ok[0] = ! monitor.isCanceled();
+						monitor.done();
 					}
 				}
 			});
