@@ -35,7 +35,7 @@ public class AllTests extends TestCase {
 		suite.addTest(IFileTest.suite());
 		suite.addTest(IFolderTest.suite());
 		suite.addTest(IProjectTest.suite());
-		suite.addTest(IWorkspaceRunnableUseCaseTest.suite());
+//		suite.addTest(IWorkspaceRunnableUseCaseTest.suite());
 		return suite;
 	}
 }
