@@ -288,11 +288,13 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 	}
 
 	private void updateTitle(ISearchResult search) {
+		String title= "";
 		if (search != null) {
 			boolean queryRunning= InternalSearchUI.getInstance().isQueryRunning(search.getQuery());
 			fCancelAction.setEnabled(queryRunning);
+			title= search.getLabel();
 		}
-		setTitle(search.getLabel());
+		setTitle(title);
 	}
 	
 	public void updateTitle() {
