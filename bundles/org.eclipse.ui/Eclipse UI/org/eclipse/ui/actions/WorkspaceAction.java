@@ -93,7 +93,7 @@ void displayError(String message) {
  */
 final void execute(IProgressMonitor monitor) {
 	//1FTIMQN: ITPCORE:WIN - clients required to do too much iteration work
-	List resources = getSelectedResources();
+	List resources = getActionResources();
 	if (shouldPerformResourcePruning()) {
 		resources = pruneResources(resources);
 	}
@@ -326,4 +326,15 @@ protected boolean updateSelection(IStructuredSelection selection) {
 	}
 	return true;
 }
+
+/**
+ * Returns the elements that the action is to be performed on.
+ * By default return the selected resources.
+ *
+ * @return list of resource elements (element type: <code>IResource</code>)
+ */
+protected List getActionResources() {
+	return getSelectedResources();
+}
+	
 }

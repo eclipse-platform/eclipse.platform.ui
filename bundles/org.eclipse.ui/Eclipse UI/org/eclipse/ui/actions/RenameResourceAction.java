@@ -23,6 +23,8 @@ import org.eclipse.swt.custom.TreeEditor;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.text.MessageFormat;
 
@@ -43,6 +45,9 @@ public class RenameResourceAction extends WorkspaceAction {
 	private Text textEditor;
 	private Composite textEditorParent;
 	private TextActionHandler textActionHandler;
+	
+	//The resource being edited if this is being done inline
+	private IResource inlinedResource;
 	
 	/**
 	 * The id of this action.
@@ -258,6 +263,8 @@ protected String queryNewResourceName(final IResource resource) {
  *	@param context IVisualPart
  */
 private void queryNewResourceNameInline(final IResource resource) {
+	
+
 
 	// Create text editor parent.  This draws a nice bounding rect.
 	textEditorParent = createParent();
@@ -373,6 +380,9 @@ protected void runWithNewPath(IPath path, IResource resource) {
  * @param resource - the resource to move.
  */
 private void saveChangesAndDispose(IResource resource) {
+	
+	//Cache the resource to avoid selection loss after disposal
+	inlinedResource = resource;
 
 	String newName = textEditor.getText();
 	//Dispose the text widget regardless
@@ -388,6 +398,7 @@ private void saveChangesAndDispose(IResource resource) {
 			runWithNewPath(newPath, resource);
 		}
 	}
+	inlinedResource = null;
 }
 /**
  * The <code>RenameResourceAction</code> implementation of this
@@ -412,6 +423,22 @@ protected boolean updateSelection(IStructuredSelection selection) {
 }
 public void setTextActionHandler(TextActionHandler actionHandler){
 	textActionHandler = actionHandler;
+}
+
+/**
+ * Returns the elements that the action is to be performed on.
+ * Return the resource cached by the action as we cannot rely
+ * on the selection being correct for inlined text.
+ *
+ * @return list of resource elements (element type: <code>IResource</code>)
+ */
+ protected List getActionResources() {
+ 	if(inlinedResource == null)
+ 		return super.getActionResources();
+ 	
+	List actionResources = new ArrayList();
+	actionResources.add(inlinedResource);
+	return actionResources;
 }
 
 }
