@@ -247,55 +247,45 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 		ParameterizedRunnable work = new ParameterizedRunnable() {
 			public Object run(Object arg) {
 				IPlatformRunnable application = null;
-				String applicationId = null;
-				try {
-					applicationId = System.getProperty(PROP_ECLIPSE_APPLICATION);
-					if (applicationId == null) {
-						//Derive the application from the product information
-						IProduct product = InternalPlatform.getDefault().getProduct();
-						if (product != null) {
-							applicationId = product.getApplication();
-							System.setProperty(PROP_ECLIPSE_APPLICATION, applicationId);
-						}
+				String applicationId = System.getProperty(PROP_ECLIPSE_APPLICATION);
+				if (applicationId == null) {
+					//Derive the application from the product information
+					IProduct product = InternalPlatform.getDefault().getProduct();
+					if (product != null) {
+						applicationId = product.getApplication();
+						System.setProperty(PROP_ECLIPSE_APPLICATION, applicationId);
 					}
-					
-					IExtension applicationExtension = registry.getExtension(IPlatform.PI_RUNTIME, IPlatform.PT_APPLICATIONS, applicationId);
-					if (applicationExtension == null)
-						throw new RuntimeException("Unable to locate application extension: " + applicationId); 
-					
-					IConfigurationElement[] configs = applicationExtension.getConfigurationElements();
-					if (configs.length == 0)
-						throw new RuntimeException("Invalid (empty) application extension: " + applicationId); 
-					IConfigurationElement config = configs[0];
-					application = (IPlatformRunnable) config.createExecutableExtension("run"); //$NON-NLS-1$
-
-					if (application == null)
-						throw new IllegalArgumentException(Policy.bind("application.notFound", applicationId)); //$NON-NLS-1$
-
-				} catch (Exception e) {
-					IStatus status = null;
-					if (e instanceof CoreException)
-						status = ((CoreException)e).getStatus();
-					else
-						status = new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, 13, e.getMessage(), e);
-					InternalPlatform.getDefault().getLog(context.getBundle()).log(status);
-					return null;
 				}
+				if (applicationId	== null)
+					throw new RuntimeException("No application id found");
+				IExtension applicationExtension = registry.getExtension(IPlatform.PI_RUNTIME, IPlatform.PT_APPLICATIONS, applicationId);
+				if (applicationExtension == null)
+					throw new RuntimeException("Unable to locate application extension: " + applicationId);
+				IConfigurationElement[] configs = applicationExtension.getConfigurationElements();
+				if (configs.length == 0)
+					throw new RuntimeException("Invalid (empty) application extension: " + applicationId);
+				IConfigurationElement config = configs[0];
 				try {
-					// if the given arg is null the pass in the left over command line args.
-					if (arg == null)
-						arg = InternalPlatform.getDefault().getApplicationArgs();
+					application = (IPlatformRunnable) config.createExecutableExtension("run"); //$NON-NLS-1$
+				} catch (CoreException ce) {
+					throw new RuntimeException("Error running application", ce); //$NON-NLS-1$
+				}
+				// if the given arg is null the pass in the left over command line args.
+				if (arg == null)
+					arg = InternalPlatform.getDefault().getApplicationArgs();
+				try {
 					Object result = application.run(arg);
 					int exitCode = result instanceof Integer ? ((Integer) result).intValue() : 0;
-					System.setProperty(PROP_ECLIPSE_EXITCODE, Integer.toString(exitCode)); 
+					System.setProperty(PROP_ECLIPSE_EXITCODE, Integer.toString(exitCode));
 					if (InternalPlatform.DEBUG)
-						System.out.println(Policy.bind("application.returned", new String[] { applicationId, result.toString() })); //$NON-NLS-1$
+						System.out.println(Policy.bind("application.returned", new String[]{applicationId, result.toString()})); //$NON-NLS-1$
 					return result;
+				} catch (RuntimeException re) {
+					// catch separately to avoid unnecessary wrapping
+					throw re;					
 				} catch (Exception e) {
-					if (e instanceof RuntimeException)
-						throw (RuntimeException) e;
-					else
-						throw new RuntimeException("Error running application", e); //$NON-NLS-1$
+					// wrap into RuntimeException (TODO: not need after bug 56053 is fixed)
+					throw new RuntimeException("Error running application", e); //$NON-NLS-1$
 				}
 			}
 		};
