@@ -23,19 +23,6 @@ import org.eclipse.ui.help.WorkbenchHelp;
  */
 public class SearchPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
-
-	/*
-	 * FIXE: This is a workaround for bug 22987
-	 */
-	private class FixedBooleanFieldEditor extends BooleanFieldEditor {
-		public FixedBooleanFieldEditor(String name, String label, Composite parent) {
-			super(name, label, DEFAULT, parent);
-		}
-		public void setEnabled(boolean state, Composite parent) {
-			getChangeControl(parent).setEnabled(state);
-		}
-	}
-
 	public static final String IGNORE_POTENTIAL_MATCHES= "org.eclipse.search.potentialMatch.ignore"; //$NON-NLS-1$
 	public static final String EMPHASIZE_POTENTIAL_MATCHES= "org.eclipse.search.potentialMatch.emphasize"; //$NON-NLS-1$
 	public static final String POTENTIAL_MATCH_FG_COLOR= "org.eclipse.search.potentialMatch.fgColor"; //$NON-NLS-1$
@@ -92,13 +79,13 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
         );
 		addField(boolEditor);
 
-		fIgnorePotentialMatchesCheckbox= new FixedBooleanFieldEditor(
+		fIgnorePotentialMatchesCheckbox= new BooleanFieldEditor(
 			IGNORE_POTENTIAL_MATCHES,
 			SearchMessages.getString("SearchPreferencePage.ignorePotentialMatches"), //$NON-NLS-1$
 			getFieldEditorParent());
 		addField(fIgnorePotentialMatchesCheckbox);
 
-		fEmphasizedCheckbox= new FixedBooleanFieldEditor(
+		fEmphasizedCheckbox= new BooleanFieldEditor(
 			EMPHASIZE_POTENTIAL_MATCHES,
 			SearchMessages.getString("SearchPreferencePage.emphasizePotentialMatches"), //$NON-NLS-1$
 			getFieldEditorParent());
