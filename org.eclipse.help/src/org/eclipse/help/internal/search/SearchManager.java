@@ -9,7 +9,7 @@ import java.util.*;
 import org.apache.lucene.analysis.Analyzer;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.*;
-import org.eclipse.help.internal.HelpSystem;
+import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.toc.Toc;
 import org.eclipse.help.internal.util.*;
 /**
@@ -18,8 +18,8 @@ import org.eclipse.help.internal.util.*;
 public class SearchManager {
 	// Search indexes, indexed (no pun!) by locale
 	private HashMap indexes = new HashMap();
-	// Caches analyzers for each locale
-	private HashMap analyzers = new HashMap();
+	// Caches analyzer descriptors for each locale
+	private HashMap analyzerDescriptors = new HashMap();
 	// Progress monitors, indexed by locale
 	private HashMap progressMonitors = new HashMap();
 	/**
@@ -37,47 +37,53 @@ public class SearchManager {
 		return index;
 	}
 	/**
-	 * Obtains Analyzer that indexing and search should
+	 * Obtains AnalyzerDescriptor that indexing and search should
 	 * use for a given locale.
 	 * @param locale 2 or 5 character locale representation
 	 */
-	public Analyzer getAnalyzer(String locale) {
+	public AnalyzerDescriptor getAnalyzer(String locale) {
 		// get an analyzer from cache
-		Analyzer analyzer = (Analyzer) analyzers.get(locale);
-		if (analyzer != null)
-			return analyzer;
+		AnalyzerDescriptor analyzerDesc =
+			(AnalyzerDescriptor) analyzerDescriptors.get(locale);
+		if (analyzerDesc != null)
+			return analyzerDesc;
 		// obtain configured analyzer for this locale
-		analyzer = createAnalyzer(locale);
-		if (analyzer != null) {
+		analyzerDesc = createAnalyzer(locale);
+		if (analyzerDesc != null) {
 			// save analyzer in the cache
-			analyzers.put(locale, analyzer);
-			return analyzer;
+			analyzerDescriptors.put(locale, analyzerDesc);
+			return analyzerDesc;
 		}
 		// obtains configured analyzer for the language only
 		String language = null;
 		if (locale.length() > 2) {
 			language = locale.substring(0, 2);
-			analyzer = createAnalyzer(language);
-			if (analyzer != null) {
+			analyzerDesc = createAnalyzer(language);
+			if (analyzerDesc != null) {
 				// save analyzer in the cache
-				analyzers.put(language, analyzer);
-				analyzers.put(locale, analyzer);
-				return analyzer;
+				analyzerDescriptors.put(language, analyzerDesc);
+				analyzerDescriptors.put(locale, analyzerDesc);
+				return analyzerDesc;
 			}
 		}
 		// create default analyzer
-		analyzer = new DefaultAnalyzer(locale);
-		analyzers.put(locale, analyzer);
-		return analyzer;
+		String defaultAnalyzerID =
+			HelpPlugin.getDefault().getDescriptor().getUniqueIdentifier()
+				+ "#"
+				+ HelpPlugin.getDefault().getDescriptor().getVersionIdentifier().toString();
+		analyzerDesc =
+			new AnalyzerDescriptor(new DefaultAnalyzer(locale), defaultAnalyzerID);
+		analyzerDescriptors.put(locale, analyzerDesc);
+		return analyzerDesc;
 	}
 	/**
-	 * Creates analyzer for a locale, 
+	 * Creates analyzer descriptor for a locale, 
 	 * if it is configured in the org.eclipse.help.luceneAnalyzer
 	 * extension point.
-	 * @return Analyzer or null if no analyzer is configured
+	 * @return AnalyzerDescriptro or null if no analyzer is configured
 	 * for given locale.
 	 */
-	public Analyzer createAnalyzer(String locale) {
+	public AnalyzerDescriptor createAnalyzer(String locale) {
 		Collection contributions = new ArrayList();
 		// find extension point
 		IConfigurationElement configElements[] =
@@ -94,7 +100,20 @@ public class SearchManager {
 				Object analyzer = configElements[i].createExecutableExtension("class");
 				if (!(analyzer instanceof Analyzer))
 					continue;
-				return (Analyzer) analyzer;
+				String pluginId =
+					configElements[i]
+						.getDeclaringExtension()
+						.getDeclaringPluginDescriptor()
+						.getUniqueIdentifier();
+				String pluginVersion =
+					configElements[i]
+						.getDeclaringExtension()
+						.getDeclaringPluginDescriptor()
+						.getVersionIdentifier()
+						.toString();
+				AnalyzerDescriptor analyzerDesc =
+					new AnalyzerDescriptor((Analyzer) analyzer, pluginId + "#" + pluginVersion);
+				return analyzerDesc;
 			} catch (CoreException ce) {
 				Logger.logError(
 					Resources.getString("ES23", configElements[i].getAttribute("class"), locale),
@@ -228,8 +247,6 @@ public class SearchManager {
 	 */
 	public synchronized void updateIndex(IProgressMonitor pm, String locale)
 		throws OperationCanceledException, Exception {
-		// NOTE: If any infosetId was deleted, or upgraded
-		// we recreate the whole index.
 		if (!isIndexingNeeded(locale))
 			return;
 		// monitor indexing
