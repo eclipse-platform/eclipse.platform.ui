@@ -15,6 +15,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -101,8 +102,12 @@ public abstract class AbstractListenerActionDelegate extends AbstractDebugAction
 		if (getWindow() != null) {
 			return getWindow().getActivePage();
 		} else {
-			return DebugUIPlugin.getActiveWorkbenchWindow().getActivePage();
+			IWorkbenchWindow window=  DebugUIPlugin.getActiveWorkbenchWindow();
+			if (window != null) {
+				return window.getActivePage();
+			}
 		}
+		return null;
 	}
 	
 	/**

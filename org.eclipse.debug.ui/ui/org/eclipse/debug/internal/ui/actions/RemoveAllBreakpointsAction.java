@@ -18,6 +18,7 @@ import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchWindow;
 
 /**
  * Removes all breakpoints from the source (markers) and remove all
@@ -46,7 +47,10 @@ public class RemoveAllBreakpointsAction extends AbstractRemoveAllActionDelegate 
 			ms.merge(e.getStatus());
 		}
 		if (!ms.isOK()) {
-			DebugUIPlugin.errorDialog(DebugUIPlugin.getActiveWorkbenchWindow().getShell(), ActionMessages.getString("RemoveAllBreakpointsAction.Removing_all_breakpoints_4"),ActionMessages.getString("RemoveAllBreakpointsAction.Exceptions_occurred_removing_breakpoints._5"), ms); //$NON-NLS-1$ //$NON-NLS-2$
+			IWorkbenchWindow window= DebugUIPlugin.getActiveWorkbenchWindow();
+			if (window != null) {
+				DebugUIPlugin.errorDialog(window.getShell(), ActionMessages.getString("RemoveAllBreakpointsAction.Removing_all_breakpoints_4"),ActionMessages.getString("RemoveAllBreakpointsAction.Exceptions_occurred_removing_breakpoints._5"), ms); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 		}
 	}
 	

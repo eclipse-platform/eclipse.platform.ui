@@ -42,6 +42,9 @@ public class OpenBreakpointMarkerAction extends SelectionProviderAction {
 	 */
 	public void run() {
 		IWorkbenchWindow dwindow= DebugUIPlugin.getActiveWorkbenchWindow();
+		if (dwindow == null) {
+			return;
+		}
 		IWorkbenchPage page= dwindow.getActivePage();
 		if (page == null) {
 			return;

@@ -45,13 +45,15 @@ public class LaunchShortcutAction extends Action {
 		IWorkbenchWindow wb = DebugUIPlugin.getActiveWorkbenchWindow();
 		if (wb != null) {
 			IWorkbenchPage page = wb.getActivePage();
-			ISelection selection = page.getSelection();
-			if (selection instanceof IStructuredSelection) {
-				fShortcut.launch(selection, fMode);
-			} else {
-				IEditorPart editor = page.getActiveEditor();
-				if (editor != null) {
-					fShortcut.launch(editor, fMode);
+			if (page != null) {
+				ISelection selection = page.getSelection();
+				if (selection instanceof IStructuredSelection) {
+					fShortcut.launch(selection, fMode);
+				} else {
+					IEditorPart editor = page.getActiveEditor();
+					if (editor != null) {
+						fShortcut.launch(editor, fMode);
+					}
 				}
 			}
 		}

@@ -248,7 +248,9 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 				IWorkbenchWindow window= getWindow();
 				if (window != null && window.getShell() != null && !window.getShell().isDisposed()) {
 					IWorkbenchPage page= window.getActivePage();
-					selection= page.getSelection(IDebugUIConstants.ID_DEBUG_VIEW);
+					if (page != null) {
+						selection= page.getSelection(IDebugUIConstants.ID_DEBUG_VIEW);
+					}
 				}
 			}
 			update(action, selection);

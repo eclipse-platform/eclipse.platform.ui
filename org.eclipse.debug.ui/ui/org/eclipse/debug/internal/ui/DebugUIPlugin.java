@@ -153,7 +153,10 @@ public class DebugUIPlugin extends AbstractUIPlugin {
 	}
 	
 	public static Shell getShell() {
-		return getActiveWorkbenchWindow().getShell();
+		if (getActiveWorkbenchWindow() != null) {
+			return getActiveWorkbenchWindow().getShell();
+		}
+		return null;
 	}
 	/**
 	 * Returns the default label provider for the debug UI.
@@ -376,6 +379,9 @@ public class DebugUIPlugin extends AbstractUIPlugin {
 	 * @return whether all saving was completed
 	 */
 	protected static boolean saveAllPages(boolean confirm) {
+		if (getActiveWorkbenchWindow() == null) {
+			return false;
+		}
 		IWorkbench wb = getActiveWorkbenchWindow().getWorkbench();
 		IWorkbenchWindow[] windows = wb.getWorkbenchWindows();
 		for (int i = 0; i < windows.length; i++) {
