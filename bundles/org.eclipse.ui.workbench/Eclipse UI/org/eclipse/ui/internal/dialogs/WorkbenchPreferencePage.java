@@ -10,10 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -26,6 +22,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.util.OpenStrategy;
+
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -35,7 +37,7 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
- * Generic workbench main preference page
+ * Generic workbench main preference page.
  */
 public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	private Button stickyCycleButton;
@@ -47,41 +49,50 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 	private boolean selectOnHover;
 	private boolean openAfterDelay;
 
-	/**
-	 *	Create this page's visual contents
-	 *
-	 *	@return org.eclipse.swt.widgets.Control
-	 *	@param parent org.eclipse.swt.widgets.Composite
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferencePage
 	 */
 	protected Control createContents(Composite parent) {
 		
-		Font font = parent.getFont();
-
+		// @issue if the product subclasses this page, then it should provide the help content
 		WorkbenchHelp.setHelp(parent, IHelpContextIds.WORKBENCH_PREFERENCE_PAGE);
 
-		Composite composite = new Composite(parent, SWT.NULL);
+		Composite composite = createComposite(parent);
+		
+		createStickyCyclePref(composite);
+		
+		createSpace(composite);
+		createOpenModeGroup(composite);
+
+		return composite;
+	}
+	
+	/**
+	 * Creates the composite which will contain all the preference controls
+	 * for this page.
+	 * 
+	 * @param parent the parent composite
+	 * @return the composite for this page
+	 */
+	protected Composite createComposite(Composite parent) {
+		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = 0;
 		layout.marginHeight = 0;
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
-		composite.setFont(font);
+		composite.setFont(parent.getFont());
+		return composite;
+	}
 
+	protected void createStickyCyclePref(Composite composite) {
 		stickyCycleButton = new Button(composite, SWT.CHECK);
 		stickyCycleButton.setText(WorkbenchMessages.getString("WorkbenchPreference.stickyCycleButton")); //$NON-NLS-1$
 		stickyCycleButton.setFont(composite.getFont());
-
-		createSpace(composite);
-		createSingleClickGroup(composite);
-
-		// set initial values
-		IPreferenceStore store = getPreferenceStore();
-		stickyCycleButton.setSelection(store.getBoolean(IPreferenceConstants.STICKY_CYCLE));
-
-		return composite;
+		stickyCycleButton.setSelection(getPreferenceStore().getBoolean(IPreferenceConstants.STICKY_CYCLE));
 	}
-	
-	private void createSingleClickGroup(Composite composite) {
+
+	protected void createOpenModeGroup(Composite composite) {
 		
 		Font font = composite.getFont();
 		

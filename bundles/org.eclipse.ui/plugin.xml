@@ -1114,21 +1114,10 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            name="%PreferencePages.Workbench"
-            class="org.eclipse.ui.internal.dialogs.WorkbenchPreferencePage"
-            id="org.eclipse.ui.preferencePages.Workbench">
-      </page>
-      <page
             name="%PreferencePages.FileEditors"
             category="org.eclipse.ui.preferencePages.Workbench"
             class="org.eclipse.ui.internal.dialogs.FileEditorsPreferencePage"
             id="org.eclipse.ui.preferencePages.FileEditors">
-      </page>
-      <page
-            name="%PreferencePages.Perspectives"
-            category="org.eclipse.ui.preferencePages.Workbench"
-            class="org.eclipse.ui.internal.dialogs.PerspectivesPreferencePage"
-            id="org.eclipse.ui.preferencePages.Perspectives">
       </page>
       <page
             name="%PreferencePages.Views"
@@ -1153,12 +1142,6 @@
             category="org.eclipse.ui.preferencePages.Workbench"
             class="org.eclipse.ui.internal.dialogs.StartupPreferencePage"
             id="org.eclipse.ui.preferencePages.Startup">
-      </page>
-      <page
-            name="%PreferencePages.Editors"
-            category="org.eclipse.ui.preferencePages.Workbench"
-            class="org.eclipse.ui.internal.dialogs.EditorsPreferencePage"
-            id="org.eclipse.ui.preferencePages.Editors">
       </page>
       <page
             name="%PreferencePages.Keys"

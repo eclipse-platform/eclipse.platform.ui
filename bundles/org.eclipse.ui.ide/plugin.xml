@@ -269,25 +269,36 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            name="%PreferencePages.IDEWorkbench"
-            class="org.eclipse.ui.internal.ide.dialogs.IDEWorkbenchPreferencePage"
-            id="org.eclipse.ui.preferencePages.IDEWorkbench">
+            id="org.eclipse.ui.preferencePages.Workbench"
+            name="%PreferencePages.Workbench"
+            class="org.eclipse.ui.internal.ide.dialogs.IDEWorkbenchPreferencePage">
+      </page>
+      <page
+            name="%PreferencePages.Editors"
+            category="org.eclipse.ui.preferencePages.Workbench"
+            class="org.eclipse.ui.internal.ide.dialogs.IDEEditorsPreferencePage"
+            id="org.eclipse.ui.preferencePages.Editors">
+      </page>
+      <page
+            name="%PreferencePages.Perspectives"
+            category="org.eclipse.ui.preferencePages.Workbench"
+            class="org.eclipse.ui.internal.ide.dialogs.IDEPerspectivesPreferencePage"
+            id="org.eclipse.ui.preferencePages.Perspectives">
       </page>
       <page
             name="%PreferencePages.LinkedResources"
-            category="org.eclipse.ui.preferencePages.IDEWorkbench"
+            category="org.eclipse.ui.preferencePages.Workbench"
             class="org.eclipse.ui.internal.ide.dialogs.LinkedResourcesPreferencePage"
             id="org.eclipse.ui.preferencePages.LinkedResources">
       </page>
       <page
             name="%PreferencePages.FileStates"
-            category="org.eclipse.ui.preferencePages.IDEWorkbench"
+            category="org.eclipse.ui.preferencePages.Workbench"
             class="org.eclipse.ui.internal.ide.dialogs.FileStatesPage"
             id="org.eclipse.ui.preferencePages.FileStates">
       </page>
       <page
             name="%PreferencePages.BuildOrder"
-            category="org.eclipse.ui.preferencePages.IDEWorkbench"
             class="org.eclipse.ui.internal.ide.dialogs.BuildOrderPreferencePage"
             id="org.eclipse.ui.preferencePages.BuildOrder">
       </page>

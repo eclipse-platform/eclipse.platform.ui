@@ -64,8 +64,37 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 					updateValidState();
 			}
 		};
-			
+
 	protected Control createContents(Composite parent) {
+		Composite composite = createComposite(parent);
+
+		createEditorHistoryGroup(composite);
+		
+		createSpace(composite);
+		createCloseEditorsOnExitPref(composite);
+		createEditorReuseGroup(composite);
+		
+		updateValidState();
+		
+		// @issue the IDE subclasses this, but should provide its own help
+		WorkbenchHelp.setHelp(parent, IHelpContextIds.WORKBENCH_EDITOR_PREFERENCE_PAGE);
+
+		return composite;
+	}
+	
+	protected void createSpace(Composite parent) {
+		WorkbenchPreferencePage.createSpace(parent);
+	}
+	
+	protected void createCloseEditorsOnExitPref(Composite composite) {
+		closeEditorsOnExit = new Button(composite, SWT.CHECK);
+		closeEditorsOnExit.setText(WorkbenchMessages.getString("WorkbenchPreference.closeEditorsButton")); //$NON-NLS-1$
+		closeEditorsOnExit.setFont(composite.getFont());
+		closeEditorsOnExit.setSelection(getPreferenceStore().getBoolean(IWorkbenchPreferences.SHOULD_CLOSE_EDITORS_ON_EXIT));
+		setButtonLayoutData(closeEditorsOnExit);
+	}
+
+	protected Composite createComposite(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = 0;
@@ -73,28 +102,9 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
 		composite.setFont(parent.getFont());
-
-		createEditorHistoryGroup(composite);
-		
-		WorkbenchPreferencePage.createSpace(composite);
-		
-		IPreferenceStore store = getPreferenceStore();
-
-		closeEditorsOnExit = new Button(composite, SWT.CHECK);
-		closeEditorsOnExit.setText(WorkbenchMessages.getString("WorkbenchPreference.closeEditorsButton")); //$NON-NLS-1$
-		closeEditorsOnExit.setFont(composite.getFont());
-		closeEditorsOnExit.setSelection(store.getBoolean(IWorkbenchPreferences.SHOULD_CLOSE_EDITORS_ON_EXIT));
-		setButtonLayoutData(closeEditorsOnExit);
-		
-		createEditorReuseGroup(composite);
-		
-		updateValidState();
-		
-		WorkbenchHelp.setHelp(parent, IHelpContextIds.WORKBENCH_EDITOR_PREFERENCE_PAGE);
-
 		return composite;
 	}
-	
+
 	public void init(IWorkbench workbench) {
 	}
 	
@@ -136,7 +146,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		return WorkbenchPlugin.getDefault().getPreferenceStore();
 	}
 		
-	private void updateValidState() {
+	protected void updateValidState() {
 		if (!recentFilesEditor.isValid()) {
 			setErrorMessage(recentFilesEditor.getErrorMessage());
 			setValid(false);
@@ -154,7 +164,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 	/**
 	 * Create a composite that contains entry fields specifying editor reuse preferences.
 	 */
-	private void createEditorReuseGroup(Composite composite) {
+	protected void createEditorReuseGroup(Composite composite) {
 		
 		Font font = composite.getFont();
 		
@@ -231,7 +241,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 	/**
 	 * Create a composite that contains entry fields specifying editor history preferences.
 	 */
-	private void createEditorHistoryGroup(Composite composite) {
+	protected void createEditorHistoryGroup(Composite composite) {
 		Composite groupComposite = new Composite(composite, SWT.LEFT);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;

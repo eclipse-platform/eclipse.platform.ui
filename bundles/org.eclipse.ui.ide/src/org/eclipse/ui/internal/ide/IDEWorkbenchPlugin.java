@@ -22,12 +22,12 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.AboutInfo;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.ide.registry.CapabilityRegistry;
 import org.eclipse.ui.internal.ide.registry.MarkerImageProviderRegistry;
 import org.eclipse.ui.internal.ide.registry.ProjectImageRegistry;
@@ -180,7 +180,7 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
 	 *
 	 */
 	public static void log(String message) {
-		getDefault().getLog().log(StatusUtil.newStatus(Status.ERROR, message, null));
+		getDefault().getLog().log(StatusUtil.newStatus(IStatus.ERROR, message, null));
 		System.err.println(message);
 		//1FTTJKV: ITPCORE:ALL - log(status) does not allow plugin information to be recorded
 	}
@@ -240,13 +240,16 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
 	 * because the default values are not stored in the preference store.
 	 */
 	protected void initializeDefaultPreferences(IPreferenceStore store) {
-		store.setDefault(IDEInternalPreferences.SAVE_ALL_BEFORE_BUILD, false);
-		store.setDefault(IDEInternalPreferences.SAVE_INTERVAL, 5); //5 minutes
-		store.setDefault(IDEInternalPreferences.REFRESH_WORKSPACE_ON_STARTUP, false);
-		store.setDefault(IDEInternalPreferences.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW, true);
-		store.setDefault(IDEInternalPreferences.SHOW_TASKS_ON_BUILD, true);
-		store.setDefault(IDEInternalPreferences.PROJECT_SWITCH_PERSP_MODE, IDEInternalPreferences.PSPM_PROMPT);
-		store.setDefault(IDE.Preferences.PROJECT_OPEN_NEW_PERSPECTIVE, IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE);
+		// @issue want to set prefs on the workbench plugin for backwards compatibility,
+		// but could avoid the internal ref to WorkbenchPlugin
+		IPreferenceStore genericStore = WorkbenchPlugin.getDefault().getPreferenceStore();
+		genericStore.setDefault(IDEInternalPreferences.SAVE_ALL_BEFORE_BUILD, false);
+		genericStore.setDefault(IDEInternalPreferences.SAVE_INTERVAL, 5); //5 minutes
+		genericStore.setDefault(IDEInternalPreferences.REFRESH_WORKSPACE_ON_STARTUP, false);
+		genericStore.setDefault(IDEInternalPreferences.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW, true);
+		genericStore.setDefault(IDEInternalPreferences.SHOW_TASKS_ON_BUILD, true);
+		genericStore.setDefault(IDEInternalPreferences.PROJECT_SWITCH_PERSP_MODE, IDEInternalPreferences.PSPM_PROMPT);
+		genericStore.setDefault(IDE.Preferences.PROJECT_OPEN_NEW_PERSPECTIVE, IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE);
 	}
 
 	/**

@@ -10,40 +10,28 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.dialogs;
 
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Collections;
-
 import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Preferences;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.preference.FieldEditor;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.IntegerFieldEditor;
-import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.preference.RadioGroupFieldEditor;
-import org.eclipse.jface.preference.StringFieldEditor;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
+
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
+
+import org.eclipse.jface.preference.FieldEditor;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.IntegerFieldEditor;
+import org.eclipse.jface.preference.StringFieldEditor;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.dialogs.WorkbenchPreferencePage;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
@@ -52,16 +40,10 @@ import org.eclipse.ui.internal.ide.IHelpContextIds;
 /**
  * The IDE workbench main preference page.
  * 
- * @issue rather than having a separate preference page for IDE settings,
- *   these should be added to the generic workbench preference page (via 
- *   subclassing) 
+ * @issue want IDE settings to appear in main Workbench preference page (via subclassing),
+ *   however the superclass, WorkbenchPreferencePage, is internal
  */
-public class IDEWorkbenchPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
-	private final String PROJECT_SWITCH_PERSP_MODE_TITLE = IDEWorkbenchMessages.getString("ProjectSwitchPerspectiveMode.optionsTitle"); //$NON-NLS-1$
-	private final String PSPM_ALWAYS_TEXT = IDEWorkbenchMessages.getString("ProjectSwitchPerspectiveMode.always"); //$NON-NLS-1$
-	private final String PSPM_NEVER_TEXT = IDEWorkbenchMessages.getString("ProjectSwitchPerspectiveMode.never"); //$NON-NLS-1$
-	private final String PSPM_PROMPT_TEXT = IDEWorkbenchMessages.getString("ProjectSwitchPerspectiveMode.prompt"); //$NON-NLS-1$
-
+public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage implements IWorkbenchPreferencePage {
 	private Button autoBuildButton;
 	private Button autoSaveAllButton;
 	private Button refreshButton;
@@ -69,72 +51,72 @@ public class IDEWorkbenchPreferencePage extends PreferencePage implements IWorkb
 	private Button exitPromptButton;
 	private IntegerFieldEditor saveInterval;
 
-	// State for encoding group
-	private String defaultEnc;
-	private Button defaultEncodingButton;
-	private Button otherEncodingButton;
-	private Combo encodingCombo;
-
-	private RadioGroupFieldEditor projectSwitchField;
-
-	/**
-	 *	Create this page's visual contents
-	 *
-	 *	@return org.eclipse.swt.widgets.Control
-	 *	@param parent org.eclipse.swt.widgets.Composite
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferencePage
 	 */
 	protected Control createContents(Composite parent) {
-		
-		Font font = parent.getFont();
 
 		WorkbenchHelp.setHelp(parent, IHelpContextIds.WORKBENCH_PREFERENCE_PAGE);
 
-		Composite composite = new Composite(parent, SWT.NULL);
-		GridLayout layout = new GridLayout();
-		layout.marginWidth = 0;
-		layout.marginHeight = 0;
-		composite.setLayout(layout);
-		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
-		composite.setFont(font);
+		Composite composite = createComposite(parent);
 
-		autoBuildButton = new Button(composite, SWT.CHECK);
-		autoBuildButton.setText(IDEWorkbenchMessages.getString("WorkbenchPreference.autobuild")); //$NON-NLS-1$
-		autoBuildButton.setFont(font);
-
-		autoSaveAllButton = new Button(composite, SWT.CHECK);
-		autoSaveAllButton.setText(IDEWorkbenchMessages.getString("WorkbenchPreference.savePriorToBuilding")); //$NON-NLS-1$
-		autoSaveAllButton.setFont(font);
-
-		refreshButton = new Button(composite, SWT.CHECK);
-		refreshButton.setText(IDEWorkbenchMessages.getString("WorkbenchPreference.refreshButton")); //$NON-NLS-1$
-		refreshButton.setFont(font);
+		createAutoBuildPref(composite);
+		createSaveAllBeforeBuildPref(composite);
+		createRefreshWorkspaceOnStartupPref(composite);
+		createExitPromptPref(composite);
+		createShowTasksOnAutoBuildPref(composite);
+		createStickyCyclePref(composite);
 		
-		exitPromptButton = new Button(composite, SWT.CHECK);
-		exitPromptButton.setText(IDEWorkbenchMessages.getString("WorkbenchPreference.exitPromptButton")); //$NON-NLS-1$
-		exitPromptButton.setFont(font);
-		
-		showTasks = new Button(composite, SWT.CHECK);
-		showTasks.setText(IDEWorkbenchMessages.getString("WorkbenchPreference.showTasks")); //$NON-NLS-1$
-		showTasks.setFont(font);
-
 		createSpace(composite);
 		createSaveIntervalGroup(composite);
 		
 		createSpace(composite);
-		createEncodingGroup(composite);
-
-		createSpace(composite);
-		createProjectPerspectiveGroup(composite);
-
-		// set initial values
-		IPreferenceStore store = getPreferenceStore();
-		autoBuildButton.setSelection(ResourcesPlugin.getWorkspace().isAutoBuilding());
-		autoSaveAllButton.setSelection(store.getBoolean(IDEInternalPreferences.SAVE_ALL_BEFORE_BUILD));
-		refreshButton.setSelection(store.getBoolean(IDEInternalPreferences.REFRESH_WORKSPACE_ON_STARTUP));
-		exitPromptButton.setSelection(store.getBoolean(IDEInternalPreferences.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW));
-		showTasks.setSelection(store.getBoolean(IDEInternalPreferences.SHOW_TASKS_ON_BUILD));
+		createOpenModeGroup(composite);
+		
+//		createEncodingGroup(composite);
+//
+//		createSpace(composite);
+//		createProjectPerspectiveGroup(composite);
 		
 		return composite;
+	}
+
+	protected void createShowTasksOnAutoBuildPref(Composite composite) {
+		showTasks = new Button(composite, SWT.CHECK);
+		showTasks.setText(IDEWorkbenchMessages.getString("WorkbenchPreference.showTasks")); //$NON-NLS-1$
+		showTasks.setFont(composite.getFont());
+		showTasks.setSelection(getPreferenceStore().getBoolean(IDEInternalPreferences.SHOW_TASKS_ON_BUILD));
+	}
+
+	protected void createExitPromptPref(Composite composite) {
+		exitPromptButton = new Button(composite, SWT.CHECK);
+		exitPromptButton.setText(IDEWorkbenchMessages.getString("WorkbenchPreference.exitPromptButton")); //$NON-NLS-1$
+		exitPromptButton.setFont(composite.getFont());
+		// @issue temporarily disabled
+		exitPromptButton.setEnabled(false);
+//		exitPromptButton.setSelection(getPreferenceStore().getBoolean(IDEInternalPreferences.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW));
+		
+	}
+
+	protected void createRefreshWorkspaceOnStartupPref(Composite composite) {
+		refreshButton = new Button(composite, SWT.CHECK);
+		refreshButton.setText(IDEWorkbenchMessages.getString("WorkbenchPreference.refreshButton")); //$NON-NLS-1$
+		refreshButton.setFont(composite.getFont());
+		refreshButton.setSelection(getPreferenceStore().getBoolean(IDEInternalPreferences.REFRESH_WORKSPACE_ON_STARTUP));
+	}
+
+	protected void createSaveAllBeforeBuildPref(Composite composite) {
+		autoSaveAllButton = new Button(composite, SWT.CHECK);
+		autoSaveAllButton.setText(IDEWorkbenchMessages.getString("WorkbenchPreference.savePriorToBuilding")); //$NON-NLS-1$
+		autoSaveAllButton.setFont(composite.getFont());
+		autoSaveAllButton.setSelection(getPreferenceStore().getBoolean(IDEInternalPreferences.SAVE_ALL_BEFORE_BUILD));
+	}
+
+	private void createAutoBuildPref(Composite composite) {
+		autoBuildButton = new Button(composite, SWT.CHECK);
+		autoBuildButton.setText(IDEWorkbenchMessages.getString("WorkbenchPreference.autobuild")); //$NON-NLS-1$
+		autoBuildButton.setFont(composite.getFont());
+		autoBuildButton.setSelection(ResourcesPlugin.getWorkspace().isAutoBuilding());
 	}
 
 	/**
@@ -174,215 +156,13 @@ public class IDEWorkbenchPreferencePage extends PreferencePage implements IWorkb
 		
 	}	
 
-	private void createEncodingGroup(Composite parent) {
-		
-		Font font = parent.getFont();
-		Group group = new Group(parent, SWT.NONE);
-		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-		group.setLayoutData(data);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		group.setLayout(layout);
-		group.setText(IDEWorkbenchMessages.getString("WorkbenchPreference.encoding")); //$NON-NLS-1$
-		group.setFont(font);
-		
-		SelectionAdapter buttonListener = new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				updateEncodingState(defaultEncodingButton.getSelection());
-				updateValidState();
-			}
-		};
-		
-		defaultEncodingButton = new Button(group, SWT.RADIO);
-		defaultEnc = System.getProperty("file.encoding", "UTF-8");  //$NON-NLS-1$  //$NON-NLS-2$
-		defaultEncodingButton.setText(IDEWorkbenchMessages.format("WorkbenchPreference.defaultEncoding", new String[] { defaultEnc })); //$NON-NLS-1$
-		data = new GridData();
-		data.horizontalSpan = 2;
-		defaultEncodingButton.setLayoutData(data);
-		defaultEncodingButton.addSelectionListener(buttonListener);
-		defaultEncodingButton.setFont(font);
-		
-		otherEncodingButton = new Button(group, SWT.RADIO);
-		otherEncodingButton.setText(IDEWorkbenchMessages.getString("WorkbenchPreference.otherEncoding")); //$NON-NLS-1$
-		otherEncodingButton.addSelectionListener(buttonListener);
-		otherEncodingButton.setFont(font);
-		
-		encodingCombo = new Combo(group, SWT.NONE);
-		data = new GridData();
-		data.widthHint = convertWidthInCharsToPixels(15);
-		encodingCombo.setFont(font);
-		encodingCombo.setLayoutData(data);
-		encodingCombo.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				updateValidState();
-			}
-		});
-
-		ArrayList encodings = new ArrayList();
-		int n = 0;
-		try {
-			n = Integer.parseInt(IDEWorkbenchMessages.getString("WorkbenchPreference.numDefaultEncodings")); //$NON-NLS-1$
-		}
-		catch (NumberFormatException e) {
-			// Ignore;
-		}
-		for (int i = 0; i < n; ++i) {
-			String enc = IDEWorkbenchMessages.getString("WorkbenchPreference.defaultEncoding" + (i+1), null); //$NON-NLS-1$
-			if (enc != null) {
-				encodings.add(enc);
-			}
-		}
-		
-		if (!encodings.contains(defaultEnc)) {
-			encodings.add(defaultEnc);
-		}
-
-		String enc = ResourcesPlugin.getPlugin().getPluginPreferences().getString(ResourcesPlugin.PREF_ENCODING);
-		boolean isDefault = enc == null || enc.length() == 0;
-
-		if (!isDefault && !encodings.contains(enc)) {
-			encodings.add(enc);
-		}
-		Collections.sort(encodings);
-		for (int i = 0; i < encodings.size(); ++i) {
-			encodingCombo.add((String) encodings.get(i));
-		}
-
-		encodingCombo.setText(isDefault ? defaultEnc : enc);
-		
-		updateEncodingState(isDefault);
-	}
-
-	private void updateValidState() {
-		if (!isEncodingValid()) {
-			setErrorMessage(IDEWorkbenchMessages.getString("WorkbenchPreference.unsupportedEncoding")); //$NON-NLS-1$
-			setValid(false);
-		} else {
-			setErrorMessage(null);
-			setValid(true);
-		}
-	}
-	
-	private boolean isEncodingValid() {
-		return defaultEncodingButton.getSelection() ||
-			isValidEncoding(encodingCombo.getText());
-	}
-	
-	private boolean isValidEncoding(String enc) {
-		try {
-			new String(new byte[0], enc);
-			return true;
-		} catch (UnsupportedEncodingException e) {
-			return false;
-		}
-	}
-
-	private void updateEncodingState(boolean useDefault) {
-		defaultEncodingButton.setSelection(useDefault);
-		otherEncodingButton.setSelection(!useDefault);
-		encodingCombo.setEnabled(!useDefault);
-		updateValidState();
-	}		
-	
-	/**
-	 * Create a composite that contains buttons for selecting the 
-	 * preference opening new project selections. 
-	 */
-	private void createProjectPerspectiveGroup(Composite composite) {
-		
-		Composite projectComposite = new Composite(composite, SWT.NONE);
-		projectComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		projectComposite.setFont(composite.getFont()); 
-		
-		String[][] namesAndValues = {
-			{PSPM_ALWAYS_TEXT, IDEInternalPreferences.PSPM_ALWAYS},
-			{PSPM_NEVER_TEXT, IDEInternalPreferences.PSPM_NEVER},
-			{PSPM_PROMPT_TEXT, IDEInternalPreferences.PSPM_PROMPT}
-		};
-		projectSwitchField =	new RadioGroupFieldEditor(
-			IDEInternalPreferences.PROJECT_SWITCH_PERSP_MODE,
-			PROJECT_SWITCH_PERSP_MODE_TITLE,
-			namesAndValues.length,
-			namesAndValues,
-			projectComposite,
-			true);
-		projectSwitchField.setPreferenceStore(getPreferenceStore());
-		projectSwitchField.setPreferencePage(this);
-		projectSwitchField.load();
-	}
-
-	/**
-	 * Utility method that creates a radio button instance
-	 * and sets the default layout data.
-	 *
-	 * @param parent  the parent for the new button
-	 * @param label  the label for the new button
-	 * @return the newly-created button
-	 */
-	protected static Button createRadioButton(Composite parent, String label) {
-		Button button = new Button(parent, SWT.RADIO | SWT.LEFT);
-		button.setText(label);
-		button.setFont(parent.getFont());
-		return button;
-	}
-
-	/**
-	 * Utility method that creates a combo box
-	 *
-	 * @param parent  the parent for the new label
-	 * @return the new widget
-	 */
-	protected static Combo createCombo(Composite parent) {
-		Combo combo = new Combo(parent, SWT.READ_ONLY);
-		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
-		combo.setLayoutData(data);
-		combo.setFont(parent.getFont());
-		return combo;
-	}
-
-	/**
-	 * Utility method that creates a label instance
-	 * and sets the default layout data.
-	 *
-	 * @param parent  the parent for the new label
-	 * @param text  the text for the new label
-	 * @return the new label
-	 */
-	protected static Label createLabel(Composite parent, String text) {
-		Label label = new Label(parent, SWT.LEFT);
-		label.setText(text);
-		label.setFont(parent.getFont());
-		GridData data = new GridData();
-		data.horizontalSpan = 1;
-		data.horizontalAlignment = GridData.FILL;
-		label.setLayoutData(data);
-		return label;
-	}
-
-	/**
-	 * Creates a tab of one horizontal spans.
-	 *
-	 * @param parent  the parent in which the tab should be created
-	 */
-	protected static void createSpace(Composite parent) {
-		Label vfiller = new Label(parent, SWT.LEFT);
-		GridData gridData = new GridData();
-		gridData = new GridData();
-		gridData.horizontalAlignment = GridData.BEGINNING;
-		gridData.grabExcessHorizontalSpace = false;
-		gridData.verticalAlignment = GridData.CENTER;
-		gridData.grabExcessVerticalSpace = false;
-		vfiller.setLayoutData(gridData);
-	}
-
-	/**
-	 * Returns preference store that belongs to the our plugin.
-	 *
-	 * @return the preference store for this plugin
+	/* (non-Javadoc)
+	 * @see PreferencePage
 	 */
 	protected IPreferenceStore doGetPreferenceStore() {
-		return IDEWorkbenchPlugin.getDefault().getPreferenceStore();
+		// use the generic workbench's preference store for backwards compatibility
+		// @issue is this really appropriate?
+		return super.doGetPreferenceStore();
 	}
 
 	/**
@@ -396,7 +176,6 @@ public class IDEWorkbenchPreferencePage extends PreferencePage implements IWorkb
 	 * The default button has been pressed. 
 	 */
 	protected void performDefaults() {
-		updateEncodingState(true);
 
 		// core holds onto this preference.
 		boolean autoBuild = ResourcesPlugin.getPlugin().getPluginPreferences().getDefaultBoolean(ResourcesPlugin.PREF_AUTO_BUILDING);
@@ -405,11 +184,12 @@ public class IDEWorkbenchPreferencePage extends PreferencePage implements IWorkb
 		IPreferenceStore store = getPreferenceStore();
 		autoSaveAllButton.setSelection(store.getDefaultBoolean(IDEInternalPreferences.SAVE_ALL_BEFORE_BUILD));
 		refreshButton.setSelection(store.getDefaultBoolean(IDEInternalPreferences.REFRESH_WORKSPACE_ON_STARTUP));
-		exitPromptButton.setSelection(store.getDefaultBoolean(IDEInternalPreferences.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW));
+		// @issue temporarily disabled
+//		exitPromptButton.setSelection(store.getDefaultBoolean(IDEInternalPreferences.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW));
 		showTasks.setSelection(store.getBoolean(IDEInternalPreferences.SHOW_TASKS_ON_BUILD));
 		saveInterval.loadDefault();
 
-		projectSwitchField.loadDefault();
+//		projectSwitchField.loadDefault();
 		
 		super.performDefaults();
 	}
@@ -429,17 +209,6 @@ public class IDEWorkbenchPreferencePage extends PreferencePage implements IWorkb
 			}
 		}
 
-		// set the workspace text file encoding
-		Preferences resourcePrefs = ResourcesPlugin.getPlugin().getPluginPreferences();
-		if (defaultEncodingButton.getSelection()) {
-			resourcePrefs.setToDefault(ResourcesPlugin.PREF_ENCODING);
-		}
-		else {
-			String enc = encodingCombo.getText();
-			resourcePrefs.setValue(ResourcesPlugin.PREF_ENCODING, enc);
-		}
-		ResourcesPlugin.getPlugin().savePluginPreferences();
-
 		IPreferenceStore store = getPreferenceStore();
 
 		// store the save all prior to build setting
@@ -449,7 +218,8 @@ public class IDEWorkbenchPreferencePage extends PreferencePage implements IWorkb
 		store.setValue(IDEInternalPreferences.REFRESH_WORKSPACE_ON_STARTUP, refreshButton.getSelection());
 
 		// store the exit prompt on last window close setting
-		store.setValue(IDEInternalPreferences.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW, exitPromptButton.getSelection());
+		// @issue temporarily disabled
+//		store.setValue(IDEInternalPreferences.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW, exitPromptButton.getSelection());
 
 		// store the preference for bringing task view to front on build
 		store.setValue(IDEInternalPreferences.SHOW_TASKS_ON_BUILD, showTasks.getSelection());
@@ -469,9 +239,8 @@ public class IDEWorkbenchPreferencePage extends PreferencePage implements IWorkb
 		}
 
 		// store the open new project perspective settings
-		projectSwitchField.store();
+//		projectSwitchField.store();
 
-		IDEWorkbenchPlugin.getDefault().savePluginPreferences();
-		return true;
+		return super.performOk();
 	}
 }

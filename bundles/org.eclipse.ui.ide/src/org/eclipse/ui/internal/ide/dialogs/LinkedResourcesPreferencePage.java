@@ -91,7 +91,7 @@ public class LinkedResourcesPreferencePage extends PreferencePage implements IWo
 			}
 		});
 
-		IDEWorkbenchPreferencePage.createSpace(pageComponent);
+		createSpace(pageComponent);
 		
 		topLabel = new Label(pageComponent, SWT.NONE);
 		topLabel.setText(IDEWorkbenchMessages.getString("LinkedResourcesPreference.explanation")); //$NON-NLS-1$
@@ -109,6 +109,23 @@ public class LinkedResourcesPreferencePage extends PreferencePage implements IWo
 		updateWidgetState(enableLinking);
 		return pageComponent;
 	}
+	
+	/**
+	 * Creates a tab of one horizontal spans.
+	 *
+	 * @param parent  the parent in which the tab should be created
+	 */
+	protected static void createSpace(Composite parent) {
+		Label vfiller = new Label(parent, SWT.LEFT);
+		GridData gridData = new GridData();
+		gridData = new GridData();
+		gridData.horizontalAlignment = GridData.BEGINNING;
+		gridData.grabExcessHorizontalSpace = false;
+		gridData.verticalAlignment = GridData.CENTER;
+		gridData.grabExcessVerticalSpace = false;
+		vfiller.setLayoutData(gridData);
+	}
+	
 	/**
 	 * Disposes the path variables group.
 	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
