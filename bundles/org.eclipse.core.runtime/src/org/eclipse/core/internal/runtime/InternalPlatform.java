@@ -301,6 +301,7 @@ public final class InternalPlatform implements IPlatform {
 		AuthorizationHandler.setKeyringFile(keyringFile);
 		AuthorizationHandler.setPassword(password);
 	}
+
 	/**
 	 * Returns the object which defines the location and organization
 	 * of the platform's meta area.
@@ -442,7 +443,7 @@ public final class InternalPlatform implements IPlatform {
 	}
 
 	private String[] processCommandLine(String[] args) {
-		final String TRUE = "true";  //$NON-NLS-1$
+		final String TRUE = "true"; //$NON-NLS-1$
 
 		// disables lazy registry cache loading 
 		System.setProperty(PROP_NO_LAZY_CACHE_LOADING, TRUE);
@@ -451,7 +452,7 @@ public final class InternalPlatform implements IPlatform {
 		allArgs = args;
 		if (args.length == 0)
 			return args;
-		
+
 		int[] configArgs = new int[args.length];
 		//need to initialize the first element to something that could not be an index.
 		configArgs[0] = -1;
@@ -848,7 +849,7 @@ public final class InternalPlatform implements IPlatform {
 		Bundle[] bundles = packageAdmin.getBundles(symbolicName, version, null);
 		if (bundles == null)
 			return null;
-		
+
 		//Remove all the bundes that are installed or uninstalled
 		Bundle[] selectedBundles = new Bundle[bundles.length];
 		int added = 0;
@@ -859,13 +860,13 @@ public final class InternalPlatform implements IPlatform {
 		}
 		if (added == 0)
 			return null;
-		
+
 		//return an array of the correct size
 		Bundle[] results = new Bundle[added];
 		System.arraycopy(selectedBundles, 0, results, 0, added);
 		return results;
 	}
-	
+
 	public boolean isFragment(Bundle bundle) {
 		return (packageAdmin.getBundleType(bundle) & PackageAdmin.BUNDLE_TYPE_FRAGMENT) > 0;
 	}
@@ -883,7 +884,7 @@ public final class InternalPlatform implements IPlatform {
 		// it is pretty much impossible for the install location to be null.  If it is, the
 		// system is in a bad way so throw and exception and get the heck outta here.
 		if (location == null)
-			throw new IllegalStateException("The installation location is null");
+			throw new IllegalStateException("The installation location must not be null"); //$NON-NLS-1$
 		return location.getURL();
 	}
 
@@ -991,7 +992,7 @@ public final class InternalPlatform implements IPlatform {
 		final String FILTER_PREFIX = "(&(objectClass=org.eclipse.osgi.service.datalocation.Location)(type="; //$NON-NLS-1$
 		Filter filter = null;
 		try {
-			filter = context.createFilter( FILTER_PREFIX + PROP_CONFIG_AREA + "))"); //$NON-NLS-1$
+			filter = context.createFilter(FILTER_PREFIX + PROP_CONFIG_AREA + "))"); //$NON-NLS-1$
 		} catch (InvalidSyntaxException e) {
 			// ignore this.  It should never happen as we have tested the above format.
 		}
@@ -1151,7 +1152,6 @@ public final class InternalPlatform implements IPlatform {
 			return product;
 		}
 		IConfigurationElement[] elements = getRegistry().getConfigurationElementsFor(PI_RUNTIME, IPlatform.PT_PRODUCT);
-		MultiStatus overallStatus = null;
 		for (int i = 0; i < elements.length; i++) {
 			IConfigurationElement element = elements[i];
 			if (element.getName().equalsIgnoreCase("provider")) { //$NON-NLS-1$
@@ -1166,18 +1166,12 @@ public final class InternalPlatform implements IPlatform {
 						}
 					}
 				} catch (CoreException e) {
-					if (overallStatus == null)
-						overallStatus = new MultiStatus(PI_RUNTIME, 0, Policy.bind("provider.invalid"), null); //TODO Put a correct code
-					IStatus status = new Status(IStatus.ERROR, PI_RUNTIME, 0, Policy.bind("provide.invalid", "value"), e);
-//					getFrameworkLog().log(new FrameworkLogEntry())
 					// Skip any bogus providers
 					// TODO check if we should log If we do log, ensure we only do it once.  Otherwise 
 					// the log will fill up with redundant entries.
 				}
 			}
 		}
-//		if (status != null)
-			//TODO log
 		return null;
 	}
 
