@@ -13,11 +13,9 @@ package org.eclipse.update.internal.configurator;
 
 import java.io.*;
 import java.net.*;
-import java.util.*;
 
 import javax.xml.parsers.*;
 
-import org.eclipse.core.runtime.*;
 import org.xml.sax.*;
 import org.xml.sax.helpers.*;
 
