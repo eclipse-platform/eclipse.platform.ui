@@ -21,11 +21,7 @@ import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.examples.filesystem.subscriber.FileSystemSubscriber;
 import org.eclipse.team.ui.TeamUI;
-import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
-import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
-import org.eclipse.team.ui.synchronize.ISynchronizeParticipantDescriptor;
-import org.eclipse.team.ui.synchronize.ISynchronizeScope;
-import org.eclipse.team.ui.synchronize.SubscriberParticipant;
+import org.eclipse.team.ui.synchronize.*;
 
 
 /**
@@ -37,18 +33,27 @@ import org.eclipse.team.ui.synchronize.SubscriberParticipant;
  */
 public class FileSystemSynchronizeParticipant extends SubscriberParticipant {
 	
-	private static final String ID = "org.eclipse.team.examples.filesystem.participant"; //$NON-NLS-1$
+	/**
+	 * The particpant ID as defined in the plugin manifest
+	 */
+	public static final String ID = "org.eclipse.team.examples.filesystem.participant"; //$NON-NLS-1$
+	
+	/**
+	 * Contxt menu action group for synchronize view actions
+	 */
+	public static final String CONTEXT_MENU_CONTRIBUTION_GROUP_1 = "context_group_1"; //$NON-NLS-1$
 	
 	/**
 	 * A custom label decorator that will show the remote mapped path for each
 	 * file.
 	 */
 	private class FileSystemParticipantLabelDecorator extends LabelProvider implements ILabelDecorator {
-
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ILabelDecorator#decorateImage(org.eclipse.swt.graphics.Image, java.lang.Object)
+		 */
 		public Image decorateImage(Image image, Object element) {
 			return null;
 		}
-
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ILabelDecorator#decorateText(java.lang.String, java.lang.Object)
 		 */
@@ -56,7 +61,7 @@ public class FileSystemSynchronizeParticipant extends SubscriberParticipant {
 			try {
 				if (element instanceof ISynchronizeModelElement) {
 					IResource resource = ((ISynchronizeModelElement) element).getResource();
-					if (resource != null) {
+					if (resource != null && resource.getType() == IResource.FILE) {
 						SyncInfo info = FileSystemSubscriber.getInstance().getSyncInfo(resource);
 						IResourceVariant variant = info.getRemote();
 						if (variant != null) {
@@ -68,6 +73,28 @@ public class FileSystemSynchronizeParticipant extends SubscriberParticipant {
 			}
 			return null;
 		}
+	}
+	
+	/**
+	 * Action group that contributes the get an put menus to the context menu 
+	 * in the synchronize view
+	 */
+	private class FileSystemParticipantActionGroup extends SynchronizePageActionGroup {
+		/* (non-Javadoc)
+		 * @see org.eclipse.team.ui.synchronize.SynchronizePageActionGroup#initialize(org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration)
+		 */
+		public void initialize(ISynchronizePageConfiguration configuration) {
+			super.initialize(configuration);
+			appendToGroup(
+					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+					CONTEXT_MENU_CONTRIBUTION_GROUP_1,
+					new GetSynchronizeAction("Get", configuration));
+			appendToGroup(
+					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+					CONTEXT_MENU_CONTRIBUTION_GROUP_1,
+					new PutSynchronizeAction("Put", configuration));
+		}
+
 	}
 	
 	public FileSystemSynchronizeParticipant(ISynchronizeScope scope) {
@@ -101,5 +128,12 @@ public class FileSystemSynchronizeParticipant extends SubscriberParticipant {
 		// Add support for showing mode buttons
 		configuration.setSupportedModes(ISynchronizePageConfiguration.ALL_MODES);
 		configuration.setMode(ISynchronizePageConfiguration.BOTH_MODE);
+		
+		// Create the action group that contributes the get and put actions
+		configuration.addActionContribution(new FileSystemParticipantActionGroup());
+		// Add the get and put group to the context menu
+		configuration.addMenuGroup(
+				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+				CONTEXT_MENU_CONTRIBUTION_GROUP_1);
 	}
 }

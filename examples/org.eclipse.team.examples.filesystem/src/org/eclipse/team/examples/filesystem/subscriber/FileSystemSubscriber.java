@@ -19,6 +19,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.core.variants.ThreeWayRemoteTree;
 import org.eclipse.team.core.variants.ThreeWaySubscriber;
@@ -110,6 +111,16 @@ public class FileSystemSubscriber extends ThreeWaySubscriber {
 	public void handleRootChanged(IResource resource, boolean added) {
 		// Override to allow FileSystemProvider to signal the addition and removal of roots
 		super.handleRootChanged(resource, added);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.variants.ResourceVariantTreeSubscriber#getSyncInfo(org.eclipse.core.resources.IResource, org.eclipse.team.core.variants.IResourceVariant, org.eclipse.team.core.variants.IResourceVariant)
+	 */
+	protected SyncInfo getSyncInfo(IResource local, IResourceVariant base, IResourceVariant remote) throws TeamException {
+		// Override to use a custom sync info
+		FileSystemSyncInfo info = new FileSystemSyncInfo(local, base, remote, this.getResourceComparator());
+		info.init();
+		return info;
 	}
 
 }

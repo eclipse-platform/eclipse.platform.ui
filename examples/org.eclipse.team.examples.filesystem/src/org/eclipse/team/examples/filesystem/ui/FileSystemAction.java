@@ -10,14 +10,10 @@
  *******************************************************************************/
 package org.eclipse.team.examples.filesystem.ui;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.team.core.RepositoryProvider;
-import org.eclipse.team.core.TeamException;
 import org.eclipse.team.examples.filesystem.FileSystemPlugin;
 import org.eclipse.team.internal.ui.actions.TeamAction;
 
@@ -47,7 +43,7 @@ public abstract class FileSystemAction extends TeamAction {
 	/**
 	 * Split the resources into sets associated with their project/provider
 	 */
-	protected Map getRepositoryProviderMapping() throws TeamException {
+	protected Map getRepositoryProviderMapping() {
 		HashMap result = new HashMap();
 		IResource[] resources = getSelectedResources();
 		for (int i = 0; i < resources.length; i++) {

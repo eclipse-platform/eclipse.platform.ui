@@ -172,6 +172,7 @@ public class FileSystemProvider extends RepositoryProvider {
 	 * @return the resource variant handle
 	 */
 	public IResourceVariant getResourceVariant(IResource resource, byte[] bytes) {
+		if (bytes == null) return null;
 		File file = getFile(resource);
 		if (file == null) return null;
 		return new FileSystemResourceVariant(file, bytes);

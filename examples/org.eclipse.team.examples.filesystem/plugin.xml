@@ -96,6 +96,13 @@
                value="org.eclipse.team.core.repository=org.eclipse.team.examples.filesystem.FileSystemProvider">
          </filter>
          <action
+               label="%Synchronize.name"
+               tooltip="%Synchronize.tooltip"
+               class="org.eclipse.team.examples.filesystem.ui.SynchronizeAction"
+               menubarPath="team.main/group1"
+               id="org.eclipse.team.examples.filesystem.synchronize">
+         </action>
+         <action
                label="%Get.name"
                tooltip="%Get.tooltip"
                class="org.eclipse.team.examples.filesystem.ui.GetAction"
