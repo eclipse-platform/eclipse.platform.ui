@@ -338,7 +338,7 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
                 break;
             case PROPOSAL_MODE_TASK_PROPOSAL:
             	String parentName= getParentName(document, lineNumber, columnNumber);
-            	if (parentName.length() == 0) { //outside of any parent element
+            	if (parentName == null || parentName.length() == 0) { //outside of any parent element
             		 proposals= NO_PROPOSALS;
             		 currentProposalMode= PROPOSAL_MODE_NONE;
             	} else {
@@ -1243,7 +1243,7 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
     		return null;
     	}
     	int offset= getOffset(document, aLineNumber, aColumnNumber);
-    	if(offset == -1) {
+    	if (offset == -1) {
     		return null;
     	}
     	AntElementNode node= project.getNode(offset);
