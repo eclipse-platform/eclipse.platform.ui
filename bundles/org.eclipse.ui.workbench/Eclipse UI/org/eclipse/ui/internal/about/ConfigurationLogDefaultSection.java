@@ -141,9 +141,9 @@ public class ConfigurationLogDefaultSection implements ISystemSummarySection {
         for (int i = 0; i < bundleInfos.length; ++i) {
             AboutBundleData info = bundleInfos[i];
             String[] args = new String[] { info.getId(), info.getVersion(),
-                    info.getName() };
+                    info.getName(), info.getStateName() };
             writer.println(WorkbenchMessages.format(
-                    "SystemSummary.descriptorIdVersion", args)); //$NON-NLS-1$
+                    "SystemSummary.descriptorIdVersionState", args)); //$NON-NLS-1$
         }
     }
 

@@ -8,12 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-/*
- * Created on Mar 16, 2004
- *
- * To change the template for this generated file go to
- * Window - Preferences - Java - Code Generation - Code and Comments
- */
 package org.eclipse.ui.internal.util;
 
 import java.net.URL;
@@ -24,7 +18,10 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.osgi.framework.Bundle;
 
-// TODO: needs a better name
+/**
+ * A set of static methods that provide an nicer interface to common platform
+ * operations related to bundle management.
+ */
 public class BundleUtility {
     public static boolean isActivated(Bundle bundle) {
         if (bundle == null)
