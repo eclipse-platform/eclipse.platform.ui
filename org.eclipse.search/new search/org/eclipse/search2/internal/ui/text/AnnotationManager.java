@@ -94,6 +94,8 @@ public class AnnotationManager implements ISearchResultListener, IPartListener {
 	}
 
 	public synchronized void searchResultChanged(SearchResultEvent e) {
+		if (fResult == null)
+			return;
 		if (e instanceof MatchEvent) {
 			MatchEvent me= (MatchEvent) e;
 			Match[] matches = me.getMatches();
