@@ -12,9 +12,9 @@ import org.eclipse.debug.core.model.IBreakpoint;
 /**
  * The breakpoint manager manages the collection of breakpoints
  * in the workspace. A breakpoint suspends the execution of a
- * program being debugged. The kinds of breakpoint supported by each
+ * program being debugged. The kinds of breakpoints supported by each
  * debug architecture and the information required to create those
- * breakpoints is dictated by each debug architecture.
+ * breakpoints is defined by each debug architecture.
  * Breakpoint creation is a client responsibility.
  * <p>
  * Clients interested in breakpoint change notification may
@@ -23,12 +23,6 @@ import org.eclipse.debug.core.model.IBreakpoint;
  * </p>
  * <p>
  * This interface is not intended to be implemented by clients.
- * </p>
- * <p>
- * <b>Note:</b> This class/interface is part of an interim API that is still under development and expected to 
- * change significantly before reaching stability. It is being made available at this early stage to solicit feedback 
- * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
- * (repeatedly) as the API evolves.
  * </p>
  * @see IBreakpointListener
  */
@@ -46,6 +40,7 @@ public interface IBreakpointManager {
 	 * <li>A <code>CoreException</code> occurred while verifying the <code>MODEL_IDENTIFIER</code>
 	 *	attribute.</li>
 	 * </ul>
+	 * @since 2.0
 	 */
 	public void addBreakpoint(IBreakpoint breakpoint) throws CoreException;
 	
@@ -56,14 +51,16 @@ public interface IBreakpointManager {
 	 * @param marker the marker
 	 * @return the breakpoint associated with the marker
 	 * 	or <code>null</code> if none exists
+	 * @since 2.0
 	 */
 	public IBreakpoint getBreakpoint(IMarker marker);	
 	
 	/**
-	 * Returns a collection of all existing breakpoints.
-	 * Returns an empty array if no breakpoints exist.
+	 * Returns a collection of all registered breakpoints.
+	 * Returns an empty array if no breakpoints are registered.
 	 *
 	 * @return an array of breakpoints
+	 * @since 2.0
 	 */
 	public IBreakpoint[] getBreakpoints();
 	
@@ -82,6 +79,7 @@ public interface IBreakpointManager {
 	 *
 	 * @param modelIdentifier identifier of a debug model plug-in
 	 * @return an array of breakpoints
+	 * @since 2.0
 	 */
 	public IBreakpoint[] getBreakpoints(String modelIdentifier);
 		
@@ -90,6 +88,7 @@ public interface IBreakpointManager {
 	 * registered with this breakpoint manager.
 	 *
 	 * @return whether the breakpoint is registered
+	 * @since 2.0
 	 */
 	public boolean isRegistered(IBreakpoint breakpoint);
 	
@@ -104,6 +103,7 @@ public interface IBreakpointManager {
 	 * via the marker delta mechanism.
 	 * 
 	 * @param breakpoint the breakpoint that has changed.
+	 * @since 2.0
 	 */
 	public void fireBreakpointChanged(IBreakpoint breakpoint);
 
@@ -119,6 +119,7 @@ public interface IBreakpointManager {
 	 *  breakpoint
 	 * @exception CoreException if an exception occurs while deleting the
 	 * 	underlying marker.
+	 * @since 2.0
 	 */
 	public void removeBreakpoint(IBreakpoint breakpoint, boolean delete) throws CoreException;
 

@@ -22,12 +22,6 @@ import org.eclipse.core.runtime.Status;
  * <p>
  * Clients may instantiate this class. Clients are not intended to subclass this class.
  * </p>
- * <p>
- * <b>Note:</b> This class/interface is part of an interim API that is still under development and expected to 
- * change significantly before reaching stability. It is being made available at this early stage to solicit feedback 
- * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
- * (repeatedly) as the API evolves.
- * </p>
  * @see IStatus
  */
 public class DebugException extends CoreException {	
@@ -45,8 +39,9 @@ public class DebugException extends CoreException {
 	public static final int NOT_SUPPORTED = 5011;
 
 	/**
-	 * Indicates that a request made of a debug element or manager has failed
-	 * on the client side (that is, before the request was sent to the debug target).
+	 * Indicates that a request made of manager has failed, or a request made of a
+	 * debug element has failed on the client side (that is, before the request was
+	 * sent to the debug target).
 	 */
 	public static final int REQUEST_FAILED = 5012;
 

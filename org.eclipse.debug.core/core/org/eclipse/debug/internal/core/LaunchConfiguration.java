@@ -394,9 +394,9 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	}
 
 	/**
-	 * @see ILaunchConfiguration#contentsEqual(Object)
+	 * @see ILaunchConfiguration#contentsEqual(ILaunchConfiguration)
 	 */
-	public boolean contentsEqual(Object object) {
+	public boolean contentsEqual(ILaunchConfiguration object) {
 		try {
 			if (object instanceof LaunchConfiguration) {
 				LaunchConfiguration otherConfig = (LaunchConfiguration) object;

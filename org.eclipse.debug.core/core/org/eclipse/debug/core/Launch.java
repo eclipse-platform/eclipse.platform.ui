@@ -33,12 +33,6 @@ import org.eclipse.debug.internal.core.LaunchManager;
  * implements a launch object representing a Java launch might store a classpath
  * with the launch.
  * </p>
- * <p>
- * <b>Note:</b> This class/interface is part of an interim API that is still under development and expected to 
- * change significantly before reaching stability. It is being made available at this early stage to solicit feedback 
- * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
- * (repeatedly) as the API evolves.
- * </p>
  * @see ILaunch
  * @see ILaunchManager
  */
@@ -106,6 +100,7 @@ public class Launch extends PlatformObject implements ILaunch {
 	 *    or <code>null</code> if none
 	 * @param target the debug target created by this launch, or <code>null</code>
 	 *	if none 
+	 * @deprecated to be removed
 	 */
 	public Launch(ILauncher launcher, String mode, Object launchedElement, ISourceLocator locator, IProcess[] processes, IDebugTarget target) {
 		setLauncher(launcher);			
@@ -388,6 +383,18 @@ public class Launch extends PlatformObject implements ILaunch {
 	}
 	
 	/**
+	 * @see ILaunch#removeDebugTarget(IDebugTarget)
+	 */
+	public final void removeDebugTarget(IDebugTarget target) {
+		if (target != null) {
+			if (!getDebugTargets0().contains(target)) {
+				getDebugTargets0().remove(target);
+				fireChanged();
+			}
+		}
+	}	
+	
+	/**
 	 * @see ILaunch#addProcess(IProcess)
 	 */
 	public final void addProcess(IProcess process) {
@@ -398,6 +405,18 @@ public class Launch extends PlatformObject implements ILaunch {
 			}
 		}
 	}
+	
+	/**
+	 * @see ILaunch#removeProcess(IProcess)
+	 */
+	public final void removeProcess(IProcess process) {
+		if (process != null) {
+			if (!getProcesses0().contains(process)) {
+				getProcesses0().remove(process);
+				fireChanged();
+			}
+		}
+	}	
 	
 	/**
 	 * Adds the given processes to this lanuch.

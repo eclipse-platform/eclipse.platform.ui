@@ -16,12 +16,6 @@ import org.eclipse.debug.core.model.IBreakpoint;
  * <p>
  * Clients may implement this interface.
  * </p>
- * <p>
- * <b>Note:</b> This class/interface is part of an interim API that is still under development and expected to 
- * change significantly before reaching stability. It is being made available at this early stage to solicit feedback 
- * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
- * (repeatedly) as the API evolves.
- * </p>
  * @see IBreakpointManager
  */
 
@@ -32,6 +26,7 @@ public interface IBreakpointListener {
 	 * to the breakpoint manager.
 	 *
 	 * @param breakpoint the added breakpoint
+	 * @since 2.0
 	 */
 	public void breakpointAdded(IBreakpoint breakpoint);
 	/**
@@ -46,6 +41,7 @@ public interface IBreakpointListener {
 	 *	being deleted
 	 *
 	 * @see org.eclipse.core.resources.IMarkerDelta
+	 * @since 2.0
 	 */
 	public void breakpointRemoved(IBreakpoint breakpoint, IMarkerDelta delta);
 	
@@ -60,6 +56,7 @@ public interface IBreakpointListener {
 	 *  a marker delta
 	 *
 	 * @see org.eclipse.core.resources.IMarkerDelta
+	 * @since 2.0
 	 */
 	public void breakpointChanged(IBreakpoint breakpoint, IMarkerDelta delta);
 

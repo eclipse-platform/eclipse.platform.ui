@@ -463,12 +463,8 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	/**
 	 * @see ILaunchManager#setDefaultLaunchConfigurationType(IResource, String)
 	 */
-	public void setDefaultLaunchConfigurationType(IResource resource, String configTypeID) {		
-		try {
-			resource.setPersistentProperty(fgQualNameDefaultConfigType, configTypeID);
-		} catch (CoreException ce) {
-			DebugPlugin.log(ce);
-		}
+	public void setDefaultLaunchConfigurationType(IResource resource, String configTypeID) throws CoreException {		
+		resource.setPersistentProperty(fgQualNameDefaultConfigType, configTypeID);
 	}
 	
 	/**

@@ -7,7 +7,7 @@ package org.eclipse.debug.core;
 
 /**
  * A debug event listener registers with the debug plug-in
- * to receive event notification from programs being debugged.
+ * to receive event notification from programs being run or debugged.
  * <p>
  * Clients may implement this interface.
  * </p>

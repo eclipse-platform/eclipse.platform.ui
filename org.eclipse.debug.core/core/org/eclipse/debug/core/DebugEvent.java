@@ -121,47 +121,35 @@ import org.eclipse.debug.internal.core.DebugCoreMessages;
  * </li>
  * <li><code>IValue</code> - no events are specified for values.
  * </li>
- * <li><code>IProcess</code>
- *	<ul>
- *	<li><code>CREATE</code> - a system process has been created.</li>
- *	<li><code>TERMINATE</code> - a system process has terminated.</li>
- *	</ul>
- * </li>
  * </ul>
  * <p>
  * Clients may instantiate this class. Clients are not intended to subclass this class.
- * </p>
- * <p>
- * <b>Note:</b> This class/interface is part of an interim API that is still under development and expected to 
- * change significantly before reaching stability. It is being made available at this early stage to solicit feedback 
- * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
- * (repeatedly) as the API evolves.
  * </p>
  */
 public final class DebugEvent extends EventObject {
 	
 	/**
-	 * Resume event.
+	 * Resume event kind.
 	 */
 	public static final int RESUME= 0x0001;
 
 	/**
-	 * Suspend event.
+	 * Suspend event kind.
 	 */
 	public static final int SUSPEND= 0x0002;
 
 	/**
-	 * Create event.
+	 * Create event kind.
 	 */
 	public static final int CREATE= 0x0004;
 
 	/**
-	 * Terminate event.
+	 * Terminate event kind.
 	 */
 	public static final int TERMINATE= 0x0008;
 	
 	/**
-	 * Change event.
+	 * Change event kind.
 	 */
 	public static final int CHANGE= 0x0010;
 
@@ -216,7 +204,7 @@ public final class DebugEvent extends EventObject {
 	 * Evaluation detail. Indicates that a thread was resumed or
 	 * suspended to perform an expression evaluation that has no
 	 * update side effects. Clients may use this detail event
-	 * for efficiency when it is known that an evaluation had 
+	 * for efficiency when it is known that an evaluation has 
 	 * no side effects.
 	 * 
 	 * @since 2.0

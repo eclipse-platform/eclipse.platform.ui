@@ -16,20 +16,15 @@ import org.eclipse.core.runtime.IAdaptable;
  * should create instances of this interface by using the implementation
  * provided by the class <code>Launch</code>.
  * </p>
- * <p>
- * <b>Note:</b> This class/interface is part of an interim API that is still under development and expected to 
- * change significantly before reaching stability. It is being made available at this early stage to solicit feedback 
- * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
- * (repeatedly) as the API evolves.
- * </p>
  * @see Launch
  */
 public interface ILaunch extends ITerminate, IAdaptable {
 	/**
-	 * Returns the children of this launch - at least one of a debug target
-	 * and/or one or more processes.
+	 * Returns the children of this launch - a collection
+	 * of one or more debug targets and processes, possibly empty.
 	 *
-	 * @return an array (element type:<code>IDebugTarget</code> or <code>IProcess</code>)
+	 * @return an array (element type:<code>IDebugTarget</code> or <code>IProcess</code>),
+	 * 	or an empty array
 	 */
 	public Object[] getChildren();
 	/**
@@ -45,6 +40,7 @@ public interface ILaunch extends ITerminate, IAdaptable {
 	 * Returns the object that was launched. Cannot return <code>null</code>.
 	 * 
 	 * @return the launched object
+	 * @deprecated to be removed
 	 */
 	public Object getElement();
 	/**
@@ -79,7 +75,8 @@ public interface ILaunch extends ITerminate, IAdaptable {
 	/**
 	 * Adds the given debug target to this launch. Has no effect
 	 * if the given debug target is already associated with this
-	 * launch.
+	 * launch. Registered listeners are notified that this launch
+	 * has changed.
 	 *
 	 * @param target debug target to add to this launch
 	 * @since 2.0
@@ -87,14 +84,37 @@ public interface ILaunch extends ITerminate, IAdaptable {
 	public void addDebugTarget(IDebugTarget target);	
 	
 	/**
+	 * Removes the given debug target from this launch. Has no effect
+	 * if the given debug target is not already associated with this
+	 * launch. Registered listeners are notified that this launch
+	 * has changed.
+	 *
+	 * @param target debug target to remove from this launch
+	 * @since 2.0
+	 */
+	public void removeDebugTarget(IDebugTarget target);	
+	
+	/**
 	 * Adds the given process to this launch. Has no effect
 	 * if the given process is already associated with this
-	 * launch.
+	 * launch. Registered listeners are notified that this launch
+	 * has changed.
 	 *
 	 * @param process the process to add to this launch
 	 * @since 2.0
 	 */
 	public void addProcess(IProcess process);		
+	
+	/**
+	 * Removes the given process from this launch. Has no effect
+	 * if the given process is not already associated with this
+	 * launch. Registered listeners are notified that this launch
+	 * has changed.
+	 *
+	 * @param process the process to remove from this launch
+	 * @since 2.0
+	 */
+	public void removeProcess(IProcess process);			
 		
 	/**
 	 * Returns the source locator to use for locating source elements for

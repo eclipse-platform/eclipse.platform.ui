@@ -10,12 +10,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 
 /**
- * Note: This interface is yet experimental.
- * <p>
  * Describes and creates instances of a specific type of
  * launch configuration. Launch configuration types are
  * defined by extensions.
- * </p>
  * <p>
  * A launch configuration type extension is defined in <code>plugin.xml</code>.
  * Following is an example definition of a launch configuration
@@ -48,12 +45,6 @@ import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
  * This interface is not intended to be implemented by clients. Clients
  * that define a launch configuration delegate extension implement the
  * <code>ILaunchConfigurationDelegate</code> interface.
- * </p>
- * <p>
- * <b>NOTE:</b> This class/interface is part of an interim API that is still under development and expected to 
- * change significantly before reaching stability. It is being made available at this early stage to solicit feedback 
- * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
- * (repeatedly) as the API evolves.
  * </p>
  * @see ILaunchConfiguration
  * @since 2.0

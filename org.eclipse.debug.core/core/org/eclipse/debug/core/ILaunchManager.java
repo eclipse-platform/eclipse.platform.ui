@@ -19,17 +19,7 @@ import org.eclipse.core.runtime.IAdaptable;
  * a collection of active processes and debug targets. Clients interested
  * in launch notification may register with the launch manager.
  * <p>
- * For convenience, a default launcher may be associated with a project.
- * The preference is stored as a persistent property with the project.
- * </p>
- * <p>
  * Clients are not intended to implement this interface.
- * </p>
- * <p>
- * <b>Note:</b> This class/interface is part of an interim API that is still under development and expected to 
- * change significantly before reaching stability. It is being made available at this early stage to solicit feedback 
- * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
- * (repeatedly) as the API evolves.
  * </p>
  * @see ILaunch
  * @see ILaunchListener
@@ -65,6 +55,7 @@ public interface ILaunchManager {
 	 * registered.
 	 *
 	 * @param launch the launch to remove
+	 * @since 2.0
 	 */
 	public void removeLaunch(ILaunch launch);	
 	/**
@@ -73,6 +64,7 @@ public interface ILaunchManager {
 	 *
 	 * @param process the process for which to find a launch
 	 * @return the launch containing the process, or <code>null</code> if none
+	 * @deprecated debug elements should have a hard link to their launch
 	 */
 	public ILaunch findLaunch(IProcess process);
 	/**
@@ -81,6 +73,7 @@ public interface ILaunchManager {
 	 *
 	 * @param target the debug target for which to find a launch
 	 * @return the launch containing the debug target, or <code>null</code> if none	 
+	 * @deprecated debug elements should have a hard link to their launch
 	 */
 	public ILaunch findLaunch(IDebugTarget target);
 	/**
@@ -101,6 +94,7 @@ public interface ILaunchManager {
 	 *   been set for the project
 	 * @exception CoreException if an error occurs accessing the
 	 *   persistent property
+	 * @deprecated to be removed
 	 */
 	public ILauncher getDefaultLauncher(IProject project) throws CoreException;
 	
@@ -109,6 +103,7 @@ public interface ILaunchManager {
 	 * specified mode - run or debug.
 	 *
 	 * @return an array of launchers
+	 * @deprecated to be removed
 	 */
 	public ILauncher[] getLaunchers(String mode);
 	
@@ -116,6 +111,7 @@ public interface ILaunchManager {
 	 * Returns the collection of registered launchers.
 	 *
 	 * @return an array of launchers
+	 * @deprecated to be removed
 	 */
 	public ILauncher[] getLaunchers();
 	/**
@@ -146,6 +142,7 @@ public interface ILaunchManager {
 	 * effect if an identical launch is already registered.
 	 * 
 	 * @param launch the launch to add
+	 * @since 2.0
 	 */
 	public void addLaunch(ILaunch launch);	
 	/**
@@ -161,6 +158,7 @@ public interface ILaunchManager {
 	 * @param project the project for which to set the preference
 	 * @param launcher the default launcher preference
 	 * @exception CoreException if an error occurs setting the persistent property
+	 * @deprecated to be removed
 	 */
 	public void setDefaultLauncher(IProject project, ILauncher launcher) throws CoreException;
 	
@@ -254,13 +252,14 @@ public interface ILaunchManager {
 	
 	/**
 	 * Returns the default launch configuration type for the specified resource, 
-	 * or <code>null</code> if there is none.  If boolean parameter is <code>true</code>, 
-	 * only the specified resource will be considered when looking for a default launch
-	 * configuration type, otherwise the resource's containment hierarchy will be checked
-	 * for a default launch configuration type, then the resource's file extension will be checked.
+	 * or <code>null</code> if there is none.  If <code>considerResourceOnly</code>
+	 * is <code>true</code>,  only the specified resource will be considered when looking
+	 * for a default launch configuration type, otherwise the resource's containment
+	 * hierarchy will be checked for a default launch configuration type, then the
+	 * resource's file extension will be checked.
 	 * 
 	 * @param considerResourceOnly flag that indicates whether to consider only the specified
-	 *  resource or 
+	 *  resource or its containers and file extension as well
 	 * @param resource the resource whose default launch configuration type will be returned
 	 * @since 2.0
 	 */
@@ -303,9 +302,10 @@ public interface ILaunchManager {
 	 * @param resource the workbench resource whose default launch configuration type is being set
 	 * @param configTypeID ID String of the launch configuration type that is being set as the default for 
 	 *  the specified resource
+	 * @exception CoreException if unable to set the default launch configuration type
 	 * @since 2.0
 	 */
-	public void setDefaultLaunchConfigurationType(IResource resource, String configTypeID);
+	public void setDefaultLaunchConfigurationType(IResource resource, String configTypeID) throws CoreException;
 
 	/**
 	 * Set the specified launch configuration type as the default for resources with the specified

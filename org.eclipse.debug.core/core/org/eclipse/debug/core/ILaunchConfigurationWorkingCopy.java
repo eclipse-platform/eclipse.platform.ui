@@ -13,22 +13,13 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 
 /**
- * Note: This interface is yet experimental.
- * <p>
  * An editable copy of a launch configuration. Attributes of a
  * launch configuration are modified by modifying the attributes
  * of a working copy, and then saving the working copy.
- * </p>
  * <p>
  * This interface is not intended to be implemented by clients. Clients
  * that define a launch configuration delegate extension implement the
  * <code>ILaunchConfigurationDelegate</code> interface.
- * </p>
- * <p>
- * <b>NOTE:</b> This class/interface is part of an interim API that is still under development and expected to 
- * change significantly before reaching stability. It is being made available at this early stage to solicit feedback 
- * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
- * (repeatedly) as the API evolves.
  * </p>
  * @see ILaunchConfiguration
  * @see ILaunchConfigurationType

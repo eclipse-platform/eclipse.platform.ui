@@ -34,15 +34,10 @@ import org.eclipse.debug.internal.core.RuntimeProcess;
  * <li>access to the expression manager</li>
  * <li>access to the registered launcher extensions</li>
  * <li>debug event notification</li>
+ * <li>status handlers</li>
  * </ul>
  * <p>
  * Clients may not instantiate or subclass this class.
- * </p>
- * <p>
- * <b>Note:</b> This class/interface is part of an interim API that is still under development and expected to 
- * change significantly before reaching stability. It is being made available at this early stage to solicit feedback 
- * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
- * (repeatedly) as the API evolves.
  * </p>
  */
 public class DebugPlugin extends Plugin {
@@ -54,32 +49,42 @@ public class DebugPlugin extends Plugin {
 	public static final String PLUGIN_ID = "org.eclipse.debug.core"; //$NON-NLS-1$
 	
 	/**
-	 * Launcher extension point identifier
-	 * (value <code>"launchers"</code>).
+	 * Simple identifier constant (value <code>"launchers"</code>) for the
+	 * launchers extension point.
+	 * 
+	 * @deprecated replaced with launch configurations
 	 */
 	public static final String EXTENSION_POINT_LAUNCHER= "launchers"; //$NON-NLS-1$
 	
 	/**
-	 * Launch configuration types extension point identifier
-	 * (value <code>"launchConfigurationTypes"</code>).
+	 * Simple identifier constant (value <code>"launchConfigurationTypes"</code>)
+	 * for the launch configuration types extension point.
+	 * 
+	 * @since 2.0
 	 */
 	public static final String EXTENSION_POINT_LAUNCH_CONFIGURATION_TYPES= "launchConfigurationTypes"; //$NON-NLS-1$	
 	
 	/**
-	 * Breakpoint extension point identifier
-	 * (value <code>"breakpoints"</code>).
+	 * Simple identifier constant (value <code>"breakpoints"</code>) for the
+	 * breakpoints extension point.
+	 * 
+	 * @since 2.0
 	 */
 	public static final String EXTENSION_POINT_BREAKPOINTS= "breakpoints";	 //$NON-NLS-1$
 	
 	/**
-	 * Status handler extension point identifier
-	 * (value <code>"statusHandlers"</code>).
+	 * Simple identifier constant (value <code>"statusHandlers"</code>) for the
+	 * status handlers extension point.
+	 * 
+	 * @since 2.0
 	 */
 	public static final String EXTENSION_POINT_STATUS_HANDLERS= "statusHandlers";	 //$NON-NLS-1$	
 
 	/**
-	 * Source locator extension point identifier
-	 * (value <code>"sourceLocators"</code>).
+	 * Simple identifier constant (value <code>"sourceLocators"</code>) for the
+	 * source locators extension point.
+	 * 
+	 * @since 2.0
 	 */
 	public static final String EXTENSION_POINT_SOURCE_LOCATORS= "sourceLocators";	 //$NON-NLS-1$	
 		
@@ -186,6 +191,7 @@ public class DebugPlugin extends Plugin {
 	 * registered.
 	 *
 	 * @param listener the listener to add
+	 * @since 2.0
 	 */
 	public void addDebugEventListener(IDebugEventSetListener listener) {
 		fEventListeners.add(listener);
@@ -198,6 +204,7 @@ public class DebugPlugin extends Plugin {
 	 *
 	 * @param event the debug event to fire
 	 * @see IDebugEventFilter
+	 * @deprecated use <code>fireDebugEventSet(DebugEvent[])</code>
 	 */
 	public void fireDebugEvent(DebugEvent event) {
 		fireDebugEventSet(new DebugEvent[] {event});
@@ -211,6 +218,7 @@ public class DebugPlugin extends Plugin {
 	 * @param events array of debug events to fire
 	 * @see IDebugEventFilter
 	 * @see IDebugEventSetListener
+	 * @since 2.0
 	 */
 	public void fireDebugEventSet(DebugEvent[] events) {
 		if (isShuttingDown() || events == null)
@@ -296,6 +304,7 @@ public class DebugPlugin extends Plugin {
 	 *
 	 * @return the status handler registered for the given
 	 *  status, or <code>null</code> if none
+	 * @since 2.0
 	 */
 	public IStatusHandler getStatusHandler(IStatus status) {
 		StatusHandlerKey key = new StatusHandlerKey(status.getPlugin(), status.getCode());
@@ -355,6 +364,7 @@ public class DebugPlugin extends Plugin {
 	 * registered.
 	 *
 	 * @param listener the listener to remove
+	 * @since 2.0
 	 */
 	public void removeDebugEventListener(IDebugEventSetListener listener) {
 		fEventListeners.remove(listener);
@@ -466,7 +476,7 @@ public class DebugPlugin extends Plugin {
 	}
 	
 	/**
-	 * Removed the given debug event filter from the registered
+	 * Removes the given debug event filter from the registered
 	 * event filters. Has no effect if an identical filter
 	 * is not already registerd.
 	 * 
@@ -485,7 +495,8 @@ public class DebugPlugin extends Plugin {
 	/**
 	 * Logs the given message if in debug mode.
 	 * 
-	 * @param String message to log
+	 * @param message the message to log
+	 * @since 2.0
 	 */
 	public static void logDebugMessage(String message) {
 		if (getDefault().isDebugging()) {
@@ -499,6 +510,7 @@ public class DebugPlugin extends Plugin {
 	 * Logs the specified status with this plug-in's log.
 	 * 
 	 * @param status status to log
+	 * @since 2.0
 	 */
 	public static void log(IStatus status) {
 		getDefault().getLog().log(status);
@@ -508,6 +520,7 @@ public class DebugPlugin extends Plugin {
 	 * Logs the specified throwable with this plug-in's log.
 	 * 
 	 * @param t throwable to log 
+	 * @since 2.0
 	 */
 	public static void log(Throwable t) {
 		IStatus status= new Status(IStatus.ERROR, getDefault().getDescriptor().getUniqueIdentifier(), INTERNAL_ERROR, "Error logged from Debug Core: ", t); //$NON-NLS-1$

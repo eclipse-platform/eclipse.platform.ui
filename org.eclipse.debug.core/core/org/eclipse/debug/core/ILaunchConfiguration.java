@@ -16,15 +16,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.model.IPersistableSourceLocator;
 
 /**
- * Note: This interface is yet experimental.
- * <p>
  * A launch configuration describes how to launch an application.
  * Each launch configuration is an instance of a type of launch
  * configuration as described by a launch configuration type 
  * extension. Each launch configuration has a launch configuration
  * delegate which performs the actual launching of a
  * configuration.
- * </p>
  * <p>
  * A launch configuration may be shared in a repository via
  * standard VCM mechanisms, or may be stored locally, essentially
@@ -45,12 +42,6 @@ import org.eclipse.debug.core.model.IPersistableSourceLocator;
  * that define a launch configuration delegate extension implement the
  * <code>ILaunchConfigurationDelegate</code> interface.
  * </p>
- * <p>
- * <b>NOTE:</b> This class/interface is part of an interim API that is still under development and expected to 
- * change significantly before reaching stability. It is being made available at this early stage to solicit feedback 
- * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
- * (repeatedly) as the API evolves.
- * </p>
  * @see ILaunchConfigurationType
  * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate
  * @see ILaunchConfigurationWorkingCopy
@@ -59,7 +50,8 @@ import org.eclipse.debug.core.model.IPersistableSourceLocator;
 public interface ILaunchConfiguration extends IAdaptable {
 	
 	/**
-	 * The file extension for launch configuration files.
+	 * The file extension for launch configuration files
+	 * (value <code>"launch"</code>).
 	 */
 	public static final String LAUNCH_CONFIGURATION_FILE_EXTENSION = "launch"; //$NON-NLS-1$
 	
@@ -96,7 +88,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * source locator is used.
 	 * The resulting launch object is registered with the launch manager.
 	 * Returns <code>null</code> if the launch is not completed.
-	 * This causes the underlying launch configuration delegate
+	 * Invoking this method causes the underlying launch configuration delegate
 	 * to be instantiated (if not already).
 	 * 
 	 * @param mode the mode in which to launch, one of the mode constants
@@ -122,8 +114,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 *  specified mode
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
-	 * <li>An exception occurs while initializing the contents of the
-	 * working copy from this configurations underlying storage.</li>
+	 * <li>Unable to retrieve this launch configuration's type.</li>
 	 * </ul>
 	 */
 	public boolean supportsMode(String mode) throws CoreException;
@@ -251,8 +242,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * @return the type of this launch configuration
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
-	 * <li>An exception occurs while initializing the contents of the
-	 * working copy from this configurations underlying storage.</li>
+	 * <li>Unable to retrieve or instantiate this launch configuration's type.</li>
 	 * </ul>
 	 * @see ILaunchConfigurationType
 	 */
@@ -291,8 +281,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * as its original launch configuration (the working copy
 	 * will return <code>null</code> for <code>getOriginal()</code>).
 	 * When the working copy is saved it will not effect this
-	 * launch configuration. Note: clients should rename the
-	 * copy to avoid overwriting this launch configuration.
+	 * launch configuration.
 	 * 
 	 * @param name the name of the copy
 	 * @return a copy of this launch configuration
@@ -341,14 +330,12 @@ public interface ILaunchConfiguration extends IAdaptable {
 	public String getMemento() throws CoreException;
 	
 	/**
-	 * Because an <code>ILaunchConfiguration</code> is a handle, the equals() method
-	 * should return whether the handles are equal.  This method returns whether the
-	 * contents of the launch configurations are equal.  Thus, this method is akin
-	 * to a 'deep' equals.
+	 * Returns whether the contents of this launch configuration are 
+	 * equal to the contents of the given launch configuration.
 	 * 
 	 * @return whether the contents of this launch configuration are equal to the contents
 	 * of specified launch configuration.
 	 */
-	public boolean contentsEqual(Object object);
+	public boolean contentsEqual(ILaunchConfiguration configuration);
 
 }
