@@ -121,7 +121,7 @@ public class LocalFileTest extends JUnitTestCase {
 		in = new BufferedInputStream(pIn,sendTxt.length());
 		
 		pOut.write(sendTxt.getBytes());
-		file1.receiveFrom(in,new NullProgressMonitor(),sendTxt.length(),false,false);
+		file1.receiveFrom(in,sendTxt.length(),false,false, new NullProgressMonitor());
 		in.close();
 		pOut.close();
 		
@@ -130,7 +130,7 @@ public class LocalFileTest extends JUnitTestCase {
 		pOut = new PipedOutputStream(pIn);
 		
 		in = new BufferedInputStream(pIn,sendTxt.length());
-		file1.sendTo(pOut,new NullProgressMonitor(),false);
+		file1.sendTo(pOut,false, new NullProgressMonitor());
 		in.read(result);
 		in.close();
 		pOut.close();
