@@ -26,10 +26,14 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+// @issue illegal reference to org.eclipse.ui.internal.WorkbenchPage
 import org.eclipse.ui.internal.WorkbenchPage;
+//@issue illegal reference to org.eclipse.ui.internal.dialogs.WizardCollectionElement 
 import org.eclipse.ui.internal.dialogs.WizardCollectionElement;
+//@issue illegal reference to org.eclipse.ui.internal.dialogs.WorkbenchWizardElement
 import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
 import org.eclipse.ui.internal.ide.NewWizardShortcutAction;
+//@issue illegal reference to org.eclipse.ui.internal.registry.NewWizardsRegistryReader
 import org.eclipse.ui.internal.registry.NewWizardsRegistryReader;
 
 /**

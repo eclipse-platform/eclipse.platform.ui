@@ -19,6 +19,7 @@ import org.eclipse.jface.wizard.WizardDialog;
 
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
+// @issue illegal reference to org.eclipse.ui.internal.dialogs.NewWizard
 import org.eclipse.ui.internal.dialogs.NewWizard;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
