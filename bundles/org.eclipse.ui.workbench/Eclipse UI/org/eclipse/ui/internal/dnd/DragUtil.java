@@ -94,7 +94,8 @@ public class DragUtil {
 	}
 	
     public static boolean performDrag(final Object draggedItem, Rectangle sourceBounds) {
-		IDropTarget target = dragToTarget(draggedItem, sourceBounds);
+		IDropTarget target = dragToTarget(draggedItem, sourceBounds,
+				Display.getDefault().getCursorLocation(), false);
 		
 		if (target == null) {
 			return false;
@@ -107,55 +108,85 @@ public class DragUtil {
 	
 	/**
 	 * Drags the given item, given an initial bounding rectangle in display coordinates.
+	 * Due to a quirk in the Tracker class, changing the tracking rectangle when using the
+	 * keyboard will also cause the mouse cursor to move. Since "snapping" causes the tracking
+	 * rectangle to change based on the position of the mouse cursor, it is impossible to do
+	 * drag-and-drop with the keyboard when snapping is enabled.    
 	 * 
-	 * @param draggedItem
-	 * @param sourceBounds
+	 * @param draggedItem object being dragged
+	 * @param sourceBounds initial bounding rectangle for the dragged item
+	 * @param initialLocation initial position of the mouse cursor
+	 * @param allowSnapping true iff the rectangle should snap to the drop location. This must
+	 * be false if the user might be doing drag-and-drop using the keyboard. 
+	 *  
 	 * @return
 	 */
-    /* package */ static IDropTarget dragToTarget(final Object draggedItem, final Rectangle sourceBounds) {
+    /* package */ static IDropTarget dragToTarget(final Object draggedItem, final Rectangle sourceBounds, 
+    		final Point initialLocation, final boolean allowSnapping) {
 		final Display display = Display.getDefault();
 		// Create a tracker.  This is just an XOR rect on the screen.
 		// As it moves we notify the drag listeners.
 		final Tracker tracker = new Tracker(display, SWT.NULL);
-		final Point initialLocation = display.getCursorLocation();
-		
+				
 		tracker.setStippled(true);
 		
 		tracker.addListener(SWT.Move, new Listener() {
-			public void handleEvent(Event event) {
-				Point location = display.getCursorLocation();
-				Control targetControl = display.getCursorControl();
-				
-				IDropTarget target = getDropTarget(targetControl, draggedItem, location, tracker.getRectangles()[0]); 
-				
-				Rectangle snapTarget = null;
-				
-				if (target != null) {
-					
-					snapTarget = target.getSnapRectangle();  
-										
-					tracker.setCursor(target.getCursor());
-				} else {
-					tracker.setCursor(DragCursors.getCursor(DragCursors.INVALID));
-				}	
-				
-				if (snapTarget == null) {
-					snapTarget = new Rectangle(location.x + sourceBounds.x - initialLocation.x,
-						location.y + sourceBounds.y - initialLocation.y,
-						sourceBounds.width, 
-						sourceBounds.height);
-				}
-									
-				tracker.setRectangles(new Rectangle[] {snapTarget});
+			public void handleEvent(final Event event) {
+				display.syncExec(new Runnable() {
+					public void run() {
+						Point location = new Point(event.x, event.y);
+														
+						Control targetControl = display.getCursorControl();
+						
+						IDropTarget target = getDropTarget(targetControl, draggedItem, location, 
+								tracker.getRectangles()[0]); 
+						
+						Rectangle snapTarget = null;
+						
+						if (target != null) {
+							snapTarget = target.getSnapRectangle();  
+							
+							tracker.setCursor(target.getCursor());
+						} else {
+							tracker.setCursor(DragCursors.getCursor(DragCursors.INVALID));
+						}	
+						
+						if (allowSnapping) {
+							
+							if (snapTarget == null) {
+								snapTarget = new Rectangle(sourceBounds.x + location.x - initialLocation.x,
+									sourceBounds.y + location.y - initialLocation.y,
+									sourceBounds.width, 
+									sourceBounds.height); 					
+							}
+							
+							tracker.setRectangles(new Rectangle[] {snapTarget});
+						}
+					}
+				});
 			}
 		});
 		
 		if (sourceBounds != null) {
 			tracker.setRectangles(new Rectangle[] { new Rectangle(sourceBounds.x, sourceBounds.y, sourceBounds.width, sourceBounds.height) });
 		}
-
+		
+		// HACK:
+		// Some control needs to capture the mouse during the drag or other 
+		// controls will interfere with the cursor
+		Control startControl = display.getCursorControl();
+		if (startControl != null) {
+			startControl.setCapture(true);
+		}
+		
 		// Run tracker until mouse up occurs or escape key pressed.
 		boolean trackingOk = tracker.open();
+
+		// HACK:
+		// Release the mouse now
+		if (startControl != null) {
+			startControl.setCapture(false);
+		}
 		
 		Point finalLocation = display.getCursorLocation();
 		
