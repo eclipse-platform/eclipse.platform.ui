@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.Image;
@@ -60,6 +62,7 @@ public class ConfigurationView
 	private Action unlinkAction;
 	private Action removePreservedAction;
 	private Action propertiesAction;
+	private Action showStatusAction;
 	private IUpdateModelChangedListener modelListener;
 	private DrillDownAdapter drillDownAdapter;
 	private static final String KEY_RESTORE = "ConfigurationView.Popup.restore";
@@ -68,10 +71,16 @@ public class ConfigurationView
 	private static final String KEY_UNLINK = "ConfigurationView.Popup.unlink";
 	private static final String KEY_REMOVE_PRESERVED =
 		"ConfigurationView.Popup.removePreserved";
+	private static final String KEY_SHOW_STATUS =
+		"ConfigurationView.Popup.showStatus";
 	private static final String KEY_HISTORY_FOLDER =
 		"ConfigurationView.historyFolder";
 	private static final String KEY_SAVED_FOLDER =
 		"ConfigurationView.savedFolder";
+	private static final String KEY_STATUS_TITLE =
+		"ConfigurationView.statusTitle";
+	private static final String KEY_STATUS_DEFAULT =
+		"ConfigurationView.statusDefault";
 
 	abstract class ViewFolder extends UIModelObject {
 		private String label;
@@ -298,13 +307,13 @@ public class ConfigurationView
 			}
 			return false;
 		} /**
-																											 * @see ITreeContentProvider#getParent(Object)
-																											 */
+																																	 * @see ITreeContentProvider#getParent(Object)
+																																	 */
 		public Object getParent(Object child) {
 			return null;
 		} /**
-																											 * @see ITreeContentProvider#hasChildren(Object)
-																											 */
+																																	 * @see ITreeContentProvider#hasChildren(Object)
+																																	 */
 		public boolean hasChildren(Object parent) {
 			if (parent instanceof ConfiguredFeatureAdapter) {
 				return ((ConfiguredFeatureAdapter) parent)
@@ -312,8 +321,8 @@ public class ConfigurationView
 			}
 			return true;
 		} /**
-																											 * @see IStructuredContentProvider#getElements(Object)
-																											 */
+																																	 * @see IStructuredContentProvider#getElements(Object)
+																																	 */
 		public Object[] getElements(Object input) {
 			return getChildren(input);
 		}
@@ -393,7 +402,8 @@ public class ConfigurationView
 			}
 			ILocalSite localSite = getLocalSite();
 			try {
-				IStatus status = localSite.getFeatureStatus(adapter.getFeature());
+				IStatus status =
+					localSite.getFeatureStatus(adapter.getFeature());
 				int code = status.getCode();
 				if (configured) {
 					switch (code) {
@@ -656,6 +666,22 @@ public class ConfigurationView
 					RevertSection.performRevert(target);
 			}
 		};
+
+		showStatusAction = new Action() {
+			public void run() {
+				Object obj = getSelectedObject();
+				try {
+					if (obj instanceof IFeatureAdapter) {
+						IFeature feature = ((IFeatureAdapter) obj).getFeature();
+						showFeatureStatus(feature);
+					}
+				} catch (CoreException e) {
+					UpdateUIPlugin.logException(e);
+				}
+			}
+		};
+		showStatusAction.setText(
+			UpdateUIPlugin.getResourceString(KEY_SHOW_STATUS));
 		revertAction.setText(UpdateUIPlugin.getResourceString(KEY_RESTORE));
 		preserveAction = new Action() {
 			public void run() {
@@ -709,6 +735,38 @@ public class ConfigurationView
 				viewer);
 	}
 
+	private void showFeatureStatus(IFeature feature) throws CoreException {
+		IStatus status = getLocalSite().getFeatureStatus(feature);
+		String title = UpdateUIPlugin.getResourceString(KEY_STATUS_TITLE);
+		switch (status.getSeverity()) {
+			case IStatus.ERROR :
+				ErrorDialog.openError(
+					viewer.getControl().getShell(),
+					title,
+					null,
+					status);
+				break;
+			case IStatus.WARNING :
+				MessageDialog.openWarning(
+					viewer.getControl().getShell(),
+					title,
+					status.getMessage());
+				break;
+			case IStatus.INFO :
+			default :
+				String message = status.getMessage();
+				if (message == null || message.length() == 0)
+					message =
+						UpdateUIPlugin.getFormattedMessage(
+							KEY_STATUS_DEFAULT,
+							feature.getLabel());
+				MessageDialog.openInformation(
+					viewer.getControl().getShell(),
+					title,
+					message);
+		}
+	}
+
 	protected void fillActionBars(IActionBars bars) {
 		IToolBarManager tbm = bars.getToolBarManager();
 		drillDownAdapter.addNavigationActions(tbm);
@@ -745,6 +803,8 @@ public class ConfigurationView
 		manager.add(new Separator());
 		drillDownAdapter.addNavigationActions(manager);
 		manager.add(new Separator());
+		if (obj instanceof IFeatureAdapter)
+			manager.add(showStatusAction);
 		super.fillContextMenu(manager);
 		if (obj instanceof PreservedConfiguration
 			|| obj instanceof IInstallConfiguration)
@@ -802,28 +862,28 @@ public class ConfigurationView
 			UpdateUIPlugin.logException(e);
 		}
 	} /**
-													 * @see IInstallConfigurationChangedListener#installSiteAdded(ISite)
-													 */
+																 * @see IInstallConfigurationChangedListener#installSiteAdded(ISite)
+																 */
 	public void installSiteAdded(IConfiguredSite csite) {
 		asyncRefresh();
 	} /**
-													 * @see IInstallConfigurationChangedListener#installSiteRemoved(ISite)
-													 */
+																 * @see IInstallConfigurationChangedListener#installSiteRemoved(ISite)
+																 */
 	public void installSiteRemoved(IConfiguredSite site) {
 		asyncRefresh();
 	} /**
-													 * @see IConfiguredSiteChangedListener#featureInstalled(IFeature)
-													 */
+																 * @see IConfiguredSiteChangedListener#featureInstalled(IFeature)
+																 */
 	public void featureInstalled(IFeature feature) {
 		asyncRefresh();
 	} /**
-													 * @see IConfiguredSiteChangedListener#featureUninstalled(IFeature)
-													 */
+																 * @see IConfiguredSiteChangedListener#featureUninstalled(IFeature)
+																 */
 	public void featureRemoved(IFeature feature) {
 		asyncRefresh();
 	} /**
-													 * @see IConfiguredSiteChangedListener#featureUConfigured(IFeature)
-													 */
+																 * @see IConfiguredSiteChangedListener#featureUConfigured(IFeature)
+																 */
 	public void featureConfigured(IFeature feature) {
 	};
 	/**

@@ -18,7 +18,8 @@ public class InstallDeltaWizard
 	private static final String KEY_WTITLE = "InstallDeltaWizard.wtitle";
 	private static final String KEY_PROCESSING =
 		"InstallDeltaWizard.processing";
-	private static final String KEY_RESTART_MESSAGE = "InstallDeltaWizard.restart.message";
+	private static final String KEY_RESTART_MESSAGE =
+		"InstallDeltaWizard.restart.message";
 	private ISessionDelta[] deltas;
 	private InstallDeltaWizardPage page;
 	private int processed = 0;
@@ -42,11 +43,12 @@ public class InstallDeltaWizard
 	 */
 	public boolean performFinish() {
 		final ISessionDelta[] selectedDeltas = page.getSelectedDeltas();
+		final ISessionDelta[] removedDeltas = page.getRemovedDeltas();
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor)
 				throws InvocationTargetException {
 				try {
-					doFinish(selectedDeltas, monitor);
+					doFinish(selectedDeltas, removedDeltas, monitor);
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);
 				} finally {
@@ -67,18 +69,28 @@ public class InstallDeltaWizard
 
 	private void doFinish(
 		ISessionDelta[] selectedDeltas,
+		ISessionDelta[] removedDeltas,
 		IProgressMonitor monitor)
 		throws CoreException {
 		monitor.beginTask(
 			UpdateUIPlugin.getResourceString(KEY_PROCESSING),
-			selectedDeltas.length);
+			selectedDeltas.length + removedDeltas.length);
 		processed = 0;
+		for (int i = 0; i < removedDeltas.length; i++) {
+			ISessionDelta delta = removedDeltas[i];
+			delta.delete();
+			processed++;
+			monitor.worked(1);
+			if (monitor.isCanceled())
+				return;
+		}
 		for (int i = 0; i < selectedDeltas.length; i++) {
 			ISessionDelta delta = selectedDeltas[i];
 			delta.process(monitor);
 			monitor.worked(1);
 			processed++;
-			if (monitor.isCanceled()) return;
+			if (monitor.isCanceled())
+				return;
 		}
 	}
 
@@ -102,7 +114,8 @@ public class InstallDeltaWizard
 				dialog.create();
 				dialog.getShell().setSize(500, 500);
 				dialog.open();
-				if (processed>0) UpdateUIPlugin.informRestartNeeded();
+				if (processed > 0)
+					UpdateUIPlugin.informRestartNeeded();
 			}
 		});
 	}

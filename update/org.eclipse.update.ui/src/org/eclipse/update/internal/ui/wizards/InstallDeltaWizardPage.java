@@ -3,6 +3,9 @@ package org.eclipse.update.internal.ui.wizards;
 import java.util.*;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
@@ -14,8 +17,10 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.update.configuration.ISessionDelta;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.ui.*;
+import org.eclipse.update.internal.ui.forms.ActivityConstraints;
 import org.eclipse.update.internal.ui.model.MissingFeature;
 import org.eclipse.update.internal.ui.parts.DefaultContentProvider;
+import org.eclipse.update.internal.ui.parts.OverlayIcon;
 import org.eclipse.update.internal.ui.parts.SWTUtil;
 
 /**
@@ -30,12 +35,16 @@ public class InstallDeltaWizardPage extends WizardPage {
 	private static final String KEY_DESC = "InstallDeltaWizard.desc";
 	private static final String KEY_LABEL = "InstallDeltaWizard.label";
 	private static final String KEY_DELETE = "InstallDeltaWizard.delete";
+	private static final String KEY_ERRORS = "InstallDeltaWizard.errors";
 	private CheckboxTreeViewer deltaViewer;
 	private Button deleteButton;
+	private Button errorsButton;
 	private Image deltaImage;
+	private Image errorDeltaImage;
 	private Image featureImage;
 	private Hashtable features;
 	private ArrayList removed = new ArrayList();
+	private Hashtable statusTable;
 
 	class DeltaFeature {
 		IFeature feature;
@@ -85,8 +94,12 @@ public class InstallDeltaWizardPage extends WizardPage {
 			return super.getText(obj);
 		}
 		public Image getImage(Object obj) {
-			if (obj instanceof ISessionDelta)
-				return deltaImage;
+			if (obj instanceof ISessionDelta) {
+				if (statusTable.get(obj) != null)
+					return errorDeltaImage;
+				else
+					return deltaImage;
+			}
 			if (obj instanceof DeltaFeature)
 				return featureImage;
 			return super.getImage(obj);
@@ -103,10 +116,21 @@ public class InstallDeltaWizardPage extends WizardPage {
 		setTitle(UpdateUIPlugin.getResourceString(KEY_TITLE));
 		setDescription(UpdateUIPlugin.getResourceString(KEY_DESC));
 		deltaImage = UpdateUIPluginImages.DESC_UPDATES_OBJ.createImage();
+		ImageDescriptor desc =
+			new OverlayIcon(
+				UpdateUIPluginImages.DESC_UPDATES_OBJ,
+				new ImageDescriptor[][] { {
+			}, {
+			}, {
+				UpdateUIPluginImages.DESC_ERROR_CO }
+		});
+		errorDeltaImage = desc.createImage();
 		featureImage = UpdateUIPluginImages.DESC_FEATURE_OBJ.createImage();
+		initializeStatusTable();
 	}
 
 	public void dispose() {
+		errorDeltaImage.dispose();
 		deltaImage.dispose();
 		featureImage.dispose();
 		super.dispose();
@@ -161,7 +185,7 @@ public class InstallDeltaWizardPage extends WizardPage {
 		deltaViewer
 			.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent e) {
-				updateDeleteButton((IStructuredSelection) e.getSelection());
+				updateButtons((IStructuredSelection) e.getSelection());
 			}
 		});
 		deltaViewer.addFilter(new ViewerFilter() {
@@ -174,11 +198,18 @@ public class InstallDeltaWizardPage extends WizardPage {
 		});
 		gd = new GridData(GridData.FILL_BOTH);
 		deltaViewer.getControl().setLayoutData(gd);
+		
+		Composite buttonContainer = new Composite(container, SWT.NULL);
+		layout = new GridLayout();
+		layout.marginWidth = layout.marginHeight = 0;
+		gd = new GridData(GridData.FILL_VERTICAL);
+		buttonContainer.setLayoutData(gd);
+		buttonContainer.setLayout(layout);
 
-		deleteButton = new Button(container, SWT.PUSH);
+		deleteButton = new Button(buttonContainer, SWT.PUSH);
 		deleteButton.setEnabled(false);
 		deleteButton.setText(UpdateUIPlugin.getResourceString(KEY_DELETE));
-		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
+		gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
 		deleteButton.setLayoutData(gd);
 		deleteButton.addSelectionListener(new SelectionAdapter() {
 			public void selectionChanged(SelectionEvent e) {
@@ -187,6 +218,18 @@ public class InstallDeltaWizardPage extends WizardPage {
 		});
 		SWTUtil.setButtonDimensionHint(deleteButton);
 
+		errorsButton = new Button(buttonContainer , SWT.PUSH);
+		errorsButton.setEnabled(false);
+		errorsButton.setText(UpdateUIPlugin.getResourceString(KEY_ERRORS));
+		gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
+		errorsButton.setLayoutData(gd);
+		errorsButton.addSelectionListener(new SelectionAdapter() {
+			public void selectionChanged(SelectionEvent e) {
+				handleShowErrors();
+			}
+		});
+		SWTUtil.setButtonDimensionHint(errorsButton);
+
 		initializeFeatures();
 		deltaViewer.setInput(this);
 		setFeaturesGray();
@@ -194,16 +237,18 @@ public class InstallDeltaWizardPage extends WizardPage {
 		setControl(container);
 	}
 
-	private void updateDeleteButton(IStructuredSelection selection) {
-		boolean enable = true;
+	private void updateButtons(IStructuredSelection selection) {
+		boolean enableDelete = true;
 		for (Iterator iter = selection.iterator(); iter.hasNext();) {
 			Object obj = iter.next();
 			if (!(obj instanceof ISessionDelta)) {
-				enable = false;
-				break;
+				enableDelete = false;
 			}
 		}
-		deleteButton.setEnabled(enable);
+		
+		boolean enableShowErrors = enableDelete && selection.size()==1;
+		deleteButton.setEnabled(enableDelete);
+		errorsButton.setEnabled(enableShowErrors);
 	}
 
 	private void handleDelete() {
@@ -220,6 +265,18 @@ public class InstallDeltaWizardPage extends WizardPage {
 		deltaViewer.refresh();
 	}
 
+	private void handleShowErrors() {
+		IStructuredSelection sel =
+			(IStructuredSelection) deltaViewer.getSelection();
+		ISessionDelta delta = (ISessionDelta) sel.getFirstElement();
+		IStatus status = (IStatus) statusTable.get(delta);
+
+		if (status != null) {
+			ErrorDialog.openError(getShell(), null, null, status);
+			return;
+		}
+	}
+
 	private void setFeaturesGray() {
 		if (features == null)
 			return;
@@ -230,15 +287,38 @@ public class InstallDeltaWizardPage extends WizardPage {
 				grayed.add(dfeatures[i]);
 			}
 		}
+		for (int i = 0; i < deltas.length; i++) {
+			ISessionDelta delta = deltas[i];
+			IStatus status = (IStatus) statusTable.get(delta);
+			if (status != null)
+				grayed.add(deltas[i]);
+		}
 		deltaViewer.setGrayedElements(grayed.toArray());
+	}
+
+	private void initializeStatusTable() {
+		statusTable = new Hashtable();
+		for (int i = 0; i < deltas.length; i++) {
+			ISessionDelta delta = deltas[i];
+			IStatus status = ActivityConstraints.validateSessionDelta(delta);
+			if (status != null)
+				statusTable.put(delta, status);
+		}
 	}
 
 	private void handleCheckStateChanged(Object obj, boolean checked) {
 		if (obj instanceof DeltaFeature) {
 			// do not allow it
 			deltaViewer.setChecked(obj, !checked);
-		}
-		if (obj instanceof ISessionDelta) {
+		} else if (obj instanceof ISessionDelta) {
+			ISessionDelta delta = (ISessionDelta) obj;
+			IStatus status = (IStatus) statusTable.get(delta);
+			if (status != null) {
+				// delta with errors - do not allow it
+				deltaViewer.setChecked(obj, !checked);
+				return;
+			}
+
 			Object[] dfeatures = (Object[]) features.get(obj);
 			for (int i = 0; i < dfeatures.length; i++) {
 				deltaViewer.setChecked(dfeatures[i], checked);

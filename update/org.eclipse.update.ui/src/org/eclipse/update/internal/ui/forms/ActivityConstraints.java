@@ -37,17 +37,34 @@ public class ActivityConstraints {
 				break;
 		}
 		if (children.size() > 0) {
-			IStatus[] carray =
-				(IStatus[]) children.toArray(new IStatus[children.size()]);
-			String message = UpdateUIPlugin.getResourceString(KEY_ROOT_MESSAGE);
-			return new MultiStatus(
-				UpdateUIPlugin.getPluginId(),
-				IStatus.ERROR,
-				carray,
-				message,
-				null);
+			return createMultiStatus(children);
 		}
 		return null;
+	}
+
+	public static IStatus validateSessionDelta(ISessionDelta delta) {
+		ArrayList children = new ArrayList();
+		switch (delta.getType()) {
+			case ISessionDelta.ENABLE :
+				validateDeltaConfigure(delta, children);
+				break;
+		}
+		if (children.size() > 0) {
+			return createMultiStatus(children);
+		}
+		return null;
+	}
+
+	private static IStatus createMultiStatus(ArrayList children) {
+		IStatus[] carray =
+			(IStatus[]) children.toArray(new IStatus[children.size()]);
+		String message = UpdateUIPlugin.getResourceString(KEY_ROOT_MESSAGE);
+		return new MultiStatus(
+			UpdateUIPlugin.getPluginId(),
+			IStatus.ERROR,
+			carray,
+			message,
+			null);
 	}
 
 	private static void validateUnconfigure(
@@ -66,7 +83,8 @@ public class ActivityConstraints {
 			}
 			// test if unconfiguring will invalidate prereqs
 			ArrayList otherFeatures = computeOtherFeatures(feature);
-			ArrayList plugins = computeUniquePlugins(otherFeatures);
+			ArrayList plugins = new ArrayList();
+			computeUniquePlugins(otherFeatures, plugins);
 			// Going plug-ins are those that are only listed in the feature
 			// that will be unconfigured. Other plug-ins are referenced by
 			// other configured features and should not be of our concern.
@@ -90,10 +108,41 @@ public class ActivityConstraints {
 		// Check the prereqs
 		try {
 			ArrayList otherFeatures = computeOtherFeatures(feature);
-			ArrayList plugins = computeUniquePlugins(otherFeatures);
-			ArrayList goingPlugins = new ArrayList();
-			computeGoingPlugins(feature, plugins, goingPlugins);
+			ArrayList plugins = new ArrayList();
+			computeUniquePlugins(otherFeatures, plugins);
+			//ArrayList goingPlugins = new ArrayList();
+			//computeGoingPlugins(feature, plugins, goingPlugins);
 			validatePrereqs(feature, plugins, false, children);
+		} catch (CoreException e) {
+			children.add(e.getStatus());
+		}
+	}
+
+	private static void validateDeltaConfigure(
+		ISessionDelta delta,
+		ArrayList children) {
+		try {
+			IFeatureReference[] refs = delta.getFeatureReferences();
+			// Initialize features
+			IFeature[] features = new IFeature[refs.length];
+			for (int i = 0; i < refs.length; i++) {
+				IFeature feature = refs[i].getFeature();
+				features[i] = feature;
+			}
+			// compute other features in the install configuration
+			ArrayList otherFeatures = computeOtherFeatures(features);
+			// make a full plug-in list by adding up plug-ins
+			// in the current install configuration (minus new
+			// features) and plug-ins from the delta. The 
+			// list of plug-ins is unique (no duplication).
+			ArrayList plugins = new ArrayList();
+			computeUniquePlugins(features, plugins);
+			computeUniquePlugins(otherFeatures, plugins);
+			// Validate prereqs of all the plug-ins in the delta
+			for (int i = 0; i < features.length; i++) {
+				IFeature feature = features[i];
+				validatePrereqs(feature, plugins, false, children);
+			}
 		} catch (CoreException e) {
 			children.add(e.getStatus());
 		}
@@ -114,7 +163,8 @@ public class ActivityConstraints {
 		}
 		try {
 			ArrayList otherFeatures = computeOtherFeatures(oldFeature);
-			ArrayList plugins = computeUniquePlugins(otherFeatures);
+			ArrayList plugins = new ArrayList();
+			computeUniquePlugins(otherFeatures, plugins);
 			ArrayList goingPlugins = new ArrayList();
 			computeGoingPlugins(oldFeature, plugins, goingPlugins);
 			// now see if the new version of a feature will
@@ -129,6 +179,11 @@ public class ActivityConstraints {
 
 	private static ArrayList computeOtherFeatures(IFeature thisFeature)
 		throws CoreException {
+		return computeOtherFeatures(new IFeature[] { thisFeature });
+	}
+
+	private static ArrayList computeOtherFeatures(IFeature[] theseFeatures)
+		throws CoreException {
 		ArrayList features = new ArrayList();
 		ILocalSite localSite = SiteManager.getLocalSite();
 		IInstallConfiguration config = localSite.getCurrentConfiguration();
@@ -140,7 +195,15 @@ public class ActivityConstraints {
 			for (int j = 0; j < crefs.length; j++) {
 				IFeatureReference cref = crefs[j];
 				IFeature cfeature = cref.getFeature();
-				if (thisFeature.equals(cfeature))
+				boolean skip = false;
+				for (int k = 0; k < theseFeatures.length; k++) {
+					IFeature thisFeature = theseFeatures[k];
+					if (thisFeature.equals(cfeature)) {
+						skip = true;
+						break;
+					}
+				}
+				if (skip)
 					continue;
 				features.add(cfeature);
 			}
@@ -300,14 +363,24 @@ public class ActivityConstraints {
 		return false;
 	}
 
-	private static ArrayList computeUniquePlugins(ArrayList otherFeatures)
+	private static void computeUniquePlugins(
+		ArrayList otherFeatures,
+		ArrayList plugins)
 		throws CoreException {
-		ArrayList plugins = new ArrayList();
 		for (int i = 0; i < otherFeatures.size(); i++) {
 			IFeature otherFeature = (IFeature) otherFeatures.get(i);
 			addUniquePlugins(otherFeature, plugins);
 		}
-		return plugins;
+	}
+
+	private static void computeUniquePlugins(
+		IFeature[] features,
+		ArrayList plugins)
+		throws CoreException {
+		for (int i = 0; i < features.length; i++) {
+			IFeature feature = features[i];
+			addUniquePlugins(feature, plugins);
+		}
 	}
 
 	private static IStatus createStatus(IFeature feature, String message) {
