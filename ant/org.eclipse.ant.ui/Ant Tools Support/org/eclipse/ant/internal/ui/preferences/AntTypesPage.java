@@ -19,9 +19,7 @@ import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.core.Type;
 import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -33,11 +31,7 @@ import org.eclipse.swt.widgets.TabItem;
  * to be used when running Ant build files.
  */
 public class AntTypesPage extends AntPage {
-	private static final int ADD_TYPE_BUTTON = IDialogConstants.CLIENT_ID + 1;
-	private static final int EDIT_TYPE_BUTTON = IDialogConstants.CLIENT_ID + 2;
-	private static final int REMOVE_BUTTON = IDialogConstants.CLIENT_ID + 3;
-
-	private final AntObjectLabelProvider labelProvider = new AntObjectLabelProvider();
+    
 	/**
 	 * Creates an instance.
 	 */
@@ -49,15 +43,15 @@ public class AntTypesPage extends AntPage {
 	 * @see org.eclipse.ant.internal.ui.preferences.AntPage#addButtonsToButtonGroup(org.eclipse.swt.widgets.Composite)
 	 */
 	protected void addButtonsToButtonGroup(Composite parent) {
-		createPushButton(parent, AntPreferencesMessages.getString("AntTypesPage.2"), ADD_TYPE_BUTTON); //$NON-NLS-1$
-		editButton = createPushButton(parent, AntPreferencesMessages.getString("AntTypesPage.3"), EDIT_TYPE_BUTTON); //$NON-NLS-1$
+		createPushButton(parent, AntPreferencesMessages.getString("AntTypesPage.2"), ADD_BUTTON); //$NON-NLS-1$
+		editButton = createPushButton(parent, AntPreferencesMessages.getString("AntTypesPage.3"), EDIT_BUTTON); //$NON-NLS-1$
 		removeButton = createPushButton(parent, AntPreferencesMessages.getString("AntTypesPage.1"), REMOVE_BUTTON); //$NON-NLS-1$
 	}
 	
 	/**
 	 * Allows the user to enter a custom type.
 	 */
-	private void addType() {
+	protected void add() {
 		String title = AntPreferencesMessages.getString("AntTypesPage.addTypeDialogTitle"); //$NON-NLS-1$
 		AddCustomDialog dialog = getCustomDialog(title, IAntUIHelpContextIds.ADD_TYPE_DIALOG);
 		if (dialog.open() == Window.CANCEL) {
@@ -71,30 +65,13 @@ public class AntTypesPage extends AntPage {
 		addContent(type);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ant.internal.ui.preferences.AntPage#buttonPressed(int)
-	 */
-	protected void buttonPressed(int buttonId) {
-		switch (buttonId) {
-			case ADD_TYPE_BUTTON :
-				addType();
-				break;
-			case EDIT_TYPE_BUTTON :
-				edit(getSelection());
-				break;
-			case REMOVE_BUTTON :
-				remove();
-				break;
-		}
-	}
-	
 	/**
 	 * Creates the tab item that contains this sub-page.
 	 */
 	protected TabItem createTabItem(TabFolder folder) {
 		TabItem item = new TabItem(folder, SWT.NONE);
 		item.setText(AntPreferencesMessages.getString("AntTypesPage.typesPageTitle")); //$NON-NLS-1$
-		item.setImage(labelProvider.getTypeImage());
+		item.setImage(AntObjectLabelProvider.getTypeImage());
 		item.setData(this);
 		Composite top = new Composite(folder, SWT.NONE);
 		top.setFont(folder.getFont());			
@@ -138,13 +115,6 @@ public class AntTypesPage extends AntPage {
 		dialog.setAlreadyExistsErrorMsg(AntPreferencesMessages.getString("AntTypesPage.8")); //$NON-NLS-1$
 		dialog.setNoNameErrorMsg(AntPreferencesMessages.getString("AntTypesPage.9")); //$NON-NLS-1$
 		return dialog;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ant.internal.ui.preferences.AntPage#getLabelProvider()
-	 */
-	protected ITableLabelProvider getLabelProvider() {
-		return labelProvider;
 	}
 
 	/* (non-Javadoc)

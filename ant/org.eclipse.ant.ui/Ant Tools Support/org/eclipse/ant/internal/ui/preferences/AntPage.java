@@ -17,12 +17,14 @@ import java.util.List;
 
 import org.eclipse.ant.internal.core.AntObject;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.viewers.ColumnLayoutData;
+import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
@@ -37,6 +39,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
@@ -44,6 +47,11 @@ import org.eclipse.ui.help.WorkbenchHelp;
  * Ant preference page.
  */
 public abstract class AntPage {
+    
+    protected static final int ADD_BUTTON = IDialogConstants.CLIENT_ID + 1;
+    protected static final int EDIT_BUTTON = IDialogConstants.CLIENT_ID + 2;
+    protected static final int REMOVE_BUTTON = IDialogConstants.CLIENT_ID + 3;
+    
 	protected SelectionAdapter selectionAdapter = new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
 			buttonPressed(((Integer) e.widget.getData()).intValue());
@@ -55,6 +63,16 @@ public abstract class AntPage {
 	
 	protected Button editButton;
 	protected Button removeButton;
+    
+	private final String[] fTableColumnHeaders= {
+	        AntPreferencesMessages.getString("AntPage.0"), AntPreferencesMessages.getString("AntPage.1"), AntPreferencesMessages.getString("AntPage.2"), AntPreferencesMessages.getString("AntPage.3") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+	};
+	private final ColumnLayoutData[] fTableColumnLayouts= {
+	        new ColumnWeightData(40),
+	        new ColumnWeightData(20),
+	        new ColumnWeightData(20),
+	        new ColumnWeightData(20)
+	};  
 
 	/**
 	 * Creates an instance of this page.
@@ -83,10 +101,22 @@ public abstract class AntPage {
 		}
 	}
 	
-	/**
-	 * Handles a button pressed event.
-	 */
-	protected abstract void buttonPressed(int buttonId);
+	/* (non-Javadoc)
+     * @see org.eclipse.ant.internal.ui.preferences.AntPage#buttonPressed(int)
+     */
+    private void buttonPressed(int buttonId) {
+        switch (buttonId) {
+            case ADD_BUTTON :
+                add();
+                break;
+            case EDIT_BUTTON :
+                edit(getSelection());
+                break;
+            case REMOVE_BUTTON :
+                remove();
+                break;
+        }
+    }
 
 	/**
 	 * Creates and returns a button with appropriate size and layout.
@@ -132,11 +162,24 @@ public abstract class AntPage {
 		data.horizontalSpan= 1;
 		table.setLayoutData(data);
 		table.setFont(parent.getFont());
+        
+		TableLayout tableLayout = new TableLayout();
+		table.setLayout(tableLayout);
+		table.setHeaderVisible(true);
+		table.setLinesVisible(true);
+		
+        // tableViewer.setColumnProperties(fTableColumnProperties);
+		for (int i = 0; i < fTableColumnHeaders.length; i++) {
+		    tableLayout.addColumnData(fTableColumnLayouts[i]);
+		    TableColumn column = new TableColumn(table, SWT.NONE, i);
+		    column.setResizable(fTableColumnLayouts[i].resizable);
+		    column.setText(fTableColumnHeaders[i]);
+		}
 		
 		contentProvider = getContentProvider();
 		tableViewer = new TableViewer(table);
 		tableViewer.setContentProvider(contentProvider);
-		tableViewer.setLabelProvider(getLabelProvider());
+		tableViewer.setLabelProvider(new AntObjectLabelProvider());
 		tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				tableSelectionChanged((IStructuredSelection) event.getSelection());
@@ -204,12 +247,6 @@ public abstract class AntPage {
 		}
 		return contents;
 	}
-
-	/**
-	 * Returns the label provider the sub-page wants to use
-	 * to display its content with.
-	 */
-	protected abstract ITableLabelProvider getLabelProvider();
 	
 	/**
 	 * Returns the selection in the viewer, or <code>null</code> if none.
@@ -324,6 +361,12 @@ public abstract class AntPage {
 	 * @param selection The selection containing the object to edit
 	 */
 	protected abstract void edit(IStructuredSelection selection);
+    
+    /**
+     * Allows the user to add a custom Ant object.
+     *
+     */
+    protected abstract void add();
 	
 	/**
 	 * Returns this page's help context id, which is hooked

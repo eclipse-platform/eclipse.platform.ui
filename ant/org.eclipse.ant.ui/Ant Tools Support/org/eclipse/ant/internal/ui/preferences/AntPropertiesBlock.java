@@ -16,8 +16,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.ant.core.AntCorePlugin;
-import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.core.Property;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.AntUtil;
@@ -30,11 +28,14 @@ import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.ColumnLayoutData;
+import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
@@ -50,6 +51,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
 
 public class AntPropertiesBlock {
 	
@@ -71,6 +73,16 @@ public class AntPropertiesBlock {
 	private IDialogSettings dialogSettings;
 	
 	private boolean tablesEnabled= true;
+    
+	private final String[] fTableColumnHeaders= {
+	        AntPreferencesMessages.getString("AntPropertiesBlock.0"), AntPreferencesMessages.getString("AntPropertiesBlock.5"), AntPreferencesMessages.getString("AntPropertiesBlock.6") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	};
+	
+	private final ColumnLayoutData[] fTableColumnLayouts= {
+	        new ColumnWeightData(30),
+	        new ColumnWeightData(40),
+            new ColumnWeightData(30)
+	};
 	
 	/**
 	 * Button listener that delegates for widget selection events.
@@ -169,7 +181,7 @@ public class AntPropertiesBlock {
 		label.setFont(font);
 		label.setText(propertyLabel);
 
-		propertyTableViewer= createTableViewer(top);
+		propertyTableViewer= createTableViewer(top, true);
 		propertyTableViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
 				if (!event.getSelection().isEmpty() && editButton.isEnabled()) {
@@ -189,7 +201,7 @@ public class AntPropertiesBlock {
 		label.setFont(font);
 		label.setText(propertyFileLabel);
 
-		fileTableViewer= createTableViewer(top);
+		fileTableViewer= createTableViewer(top, false);
 		fileTableViewer.getTable().addKeyListener(keyListener);	
 		createButtonGroup(top);
 	}
@@ -212,7 +224,7 @@ public class AntPropertiesBlock {
 	/**
 	 * Creates and returns a configured table viewer in the given parent
 	 */
-	private TableViewer createTableViewer(Composite parent) {
+	private TableViewer createTableViewer(Composite parent, boolean setColumns) {
 		Table table = new Table(parent, SWT.MULTI | SWT.FULL_SELECTION | SWT.BORDER);
 		GridData data= new GridData(GridData.FILL_BOTH);
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
@@ -223,7 +235,21 @@ public class AntPropertiesBlock {
 		tableViewer.setContentProvider(new AntContentProvider());
 		tableViewer.setLabelProvider(labelProvider);
 		tableViewer.addSelectionChangedListener(tableListener);
-		
+        
+        if (setColumns) {
+            TableLayout tableLayout = new TableLayout();
+            table.setLayout(tableLayout);
+            table.setHeaderVisible(true);
+            table.setLinesVisible(true);
+            
+            for (int i = 0; i < fTableColumnHeaders.length; i++) {
+                tableLayout.addColumnData(fTableColumnLayouts[i]);
+                TableColumn column = new TableColumn(table, SWT.NONE, i);
+                column.setResizable(fTableColumnLayouts[i].resizable);
+                column.setText(fTableColumnHeaders[i]);
+            }
+        }
+            
 		return tableViewer;
 	}
 	
@@ -438,15 +464,10 @@ public class AntPropertiesBlock {
 		editButton.setEnabled(enable);
 		removeButton.setEnabled(enable);
 		removeFileButton.setEnabled(enable);
-		
+        
 		if (enable) {
 			propertyTableViewer.setSelection(propertyTableViewer.getSelection());
 			fileTableViewer.setSelection(fileTableViewer.getSelection());
-		} else {
-			AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
-			List properties= prefs.getProperties();
-			propertyTableViewer.setInput(properties);
-			fileTableViewer.setInput(prefs.getCustomPropertyFiles(false));
 		}
 	}
 	
