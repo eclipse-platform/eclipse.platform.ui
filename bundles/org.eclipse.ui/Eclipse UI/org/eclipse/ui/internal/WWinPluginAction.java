@@ -58,14 +58,20 @@ public class WWinPluginAction extends PluginAction
 			retargetAction.addPropertyChangeListener(new IPropertyChangeListener() {
 				public void propertyChange(PropertyChangeEvent event) {
 					if (event.getProperty().equals(Action.ENABLED)) {
-						Boolean bool = (Boolean) event.getNewValue();
-						setEnabled(bool.booleanValue());
+						Object val = event.getNewValue();
+						if (val instanceof Boolean) {
+							setEnabled(((Boolean) val).booleanValue());
+						}
 					} else if (event.getProperty().equals(Action.TEXT)) {
-						String str = (String)event.getNewValue();
-						setText(str);
+						Object val = event.getNewValue();
+						if (val instanceof String) {
+							setText((String) val);
+						}
 					} else if (event.getProperty().equals(Action.TOOL_TIP_TEXT)) {
-						String str = (String)event.getNewValue();
-						setToolTipText(str);
+						Object val = event.getNewValue();
+						if (val instanceof String) {
+							setToolTipText((String) val);
+						}
 					}
 				}
 			});
