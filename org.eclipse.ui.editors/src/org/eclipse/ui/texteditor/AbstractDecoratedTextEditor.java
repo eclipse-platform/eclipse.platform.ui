@@ -1243,33 +1243,36 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		super.rulerContextMenuAboutToShow(menu);
 		
 		/* quick diff */
-		IAction quickdiffAction= getAction(ITextEditorActionConstants.QUICKDIFF_TOGGLE);
-		quickdiffAction.setChecked(isChangeInformationShowing());
-		menu.appendToGroup(ITextEditorActionConstants.GROUP_RULERS, quickdiffAction);
-		
-		if (isChangeInformationShowing()) {
-			QuickDiffRestoreAction revertSelection= (QuickDiffRestoreAction) getAction(ITextEditorActionConstants.QUICKDIFF_REVERTSELECTION);
-			QuickDiffRestoreAction revertBlock= (QuickDiffRestoreAction) getAction(ITextEditorActionConstants.QUICKDIFF_REVERTBLOCK);
-			QuickDiffRestoreAction revertLine= (QuickDiffRestoreAction) getAction(ITextEditorActionConstants.QUICKDIFF_REVERTLINE);
-			QuickDiffRestoreAction revertDeletion= (QuickDiffRestoreAction) getAction(ITextEditorActionConstants.QUICKDIFF_REVERTDELETION);
+		if (isEditorInputModifiable()) {
+			IAction quickdiffAction= getAction(ITextEditorActionConstants.QUICKDIFF_TOGGLE);
+			quickdiffAction.setChecked(isChangeInformationShowing());
+			menu.appendToGroup(ITextEditorActionConstants.GROUP_RULERS, quickdiffAction);
 			
-			// only add block action if selection action is not enabled
-			if (revertSelection.isEnabled(true))
-				menu.appendToGroup(ITextEditorActionConstants.GROUP_RESTORE, revertSelection);
-			else if (revertBlock.isEnabled(true))
-				menu.appendToGroup(ITextEditorActionConstants.GROUP_RESTORE, revertBlock);
-			if (revertLine.isEnabled(true))
-				menu.appendToGroup(ITextEditorActionConstants.GROUP_RESTORE, revertLine);
-			if (revertDeletion.isEnabled(true))
-				menu.appendToGroup(ITextEditorActionConstants.GROUP_RESTORE, revertDeletion);
+			if (isChangeInformationShowing()) {
+				QuickDiffRestoreAction revertSelection= (QuickDiffRestoreAction) getAction(ITextEditorActionConstants.QUICKDIFF_REVERTSELECTION);
+				QuickDiffRestoreAction revertBlock= (QuickDiffRestoreAction) getAction(ITextEditorActionConstants.QUICKDIFF_REVERTBLOCK);
+				QuickDiffRestoreAction revertLine= (QuickDiffRestoreAction) getAction(ITextEditorActionConstants.QUICKDIFF_REVERTLINE);
+				QuickDiffRestoreAction revertDeletion= (QuickDiffRestoreAction) getAction(ITextEditorActionConstants.QUICKDIFF_REVERTDELETION);
+				
+				// only add block action if selection action is not enabled
+				if (revertSelection.isEnabled(true))
+					menu.appendToGroup(ITextEditorActionConstants.GROUP_RESTORE, revertSelection);
+				else if (revertBlock.isEnabled(true))
+					menu.appendToGroup(ITextEditorActionConstants.GROUP_RESTORE, revertBlock);
+				if (revertLine.isEnabled(true))
+					menu.appendToGroup(ITextEditorActionConstants.GROUP_RESTORE, revertLine);
+				if (revertDeletion.isEnabled(true))
+					menu.appendToGroup(ITextEditorActionConstants.GROUP_RESTORE, revertDeletion);
+			}
 		}
+		
 
 		IAction lineNumberAction= getAction(ITextEditorActionConstants.LINENUMBERS_TOGGLE);
 		lineNumberAction.setChecked(fLineNumberRulerColumn != null);
 		menu.appendToGroup(ITextEditorActionConstants.GROUP_RULERS, lineNumberAction);
 		
 		IAction preferencesAction= getAction(ITextEditorActionConstants.RULER_PREFERENCES);
-		menu.appendToGroup(ITextEditorActionConstants.GROUP_RULERS, new GroupMarker(ITextEditorActionConstants.GROUP_SETTINGS));
+		menu.appendToGroup(ITextEditorActionConstants.GROUP_RULERS, new Separator(ITextEditorActionConstants.GROUP_SETTINGS));
 		menu.appendToGroup(ITextEditorActionConstants.GROUP_SETTINGS, preferencesAction);
 	}
 
@@ -1322,7 +1325,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		super.editorContextMenuAboutToShow(menu);
 
 		IAction preferencesAction= getAction(ITextEditorActionConstants.CONTEXT_PREFERENCES);
-		menu.appendToGroup(IWorkbenchActionConstants.MB_ADDITIONS, new GroupMarker(ITextEditorActionConstants.GROUP_SETTINGS));
+		menu.appendToGroup(IWorkbenchActionConstants.MB_ADDITIONS, new Separator(ITextEditorActionConstants.GROUP_SETTINGS));
 		menu.appendToGroup(ITextEditorActionConstants.GROUP_SETTINGS, preferencesAction);
 	}
 
