@@ -11,12 +11,11 @@ body {
 /* The real content of the samples page: */
 
 a { 
-	display : block; 
-	height : 60px; 
+	float : left; 
+	height : 80px; 
 	width : 425px;
 	text-align : left; 
 	margin-left : 10px;
-	position : absolute;
 }
 
 /* cancel out the indent for the navigation links from above */
@@ -52,7 +51,7 @@ a:hover img {
 a:hover { border-right : 5px; }
 
 #swt {
-	width : 850px;
+	width : 870px;
 	height : 150px;
 	position : relative;
 	left : 50%;
@@ -63,11 +62,9 @@ div#swt a p {
 	display : block;
 	text-align : left;
 }
-a#standalone { top : 40px; }
-a#views { top : 40px; left : 425px; }
 
 div#workbench {
-	width : 850px;
+	width : 870px;
 	height : 150px;
 	position : relative;
 	left : 50%;
@@ -75,14 +72,3 @@ div#workbench {
 	top : -75px;
 }
 
-a#multi-page-editor { top : 40px; }
-a#property-sheet { top : 40px; left : 425px; }
-a#readmetool { top : 110px; }
-
-#eclipse-wordmark {
-	position : absolute;
-	bottom : 10px;
-	left : 20px;	
-	height : 23px;
-	width : 71px;
-}

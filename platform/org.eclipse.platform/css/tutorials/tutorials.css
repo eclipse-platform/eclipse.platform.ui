@@ -11,17 +11,20 @@ body {
  * Set up the content of the tutorials page into two
  * columns that are centered in the page
  */
+p #group-description {
+	padding-bottom : 10px;
+}
+
 a { 
-	display : block; 
-	height : 60px;
+	height : 80px;
 	width : 425px;
 	text-align : left; 
-	text-indent : 10px;
-	position : absolute;
+	margin-left : 10px;
+	float : left;
 }
 
 /* cancel out the indent for the navigation links from above */
-#navigation-links a { text-indent : 0; }
+#navigation-links a { margin-left : 0; }
 
 a .link-label {
 	position : relative;
