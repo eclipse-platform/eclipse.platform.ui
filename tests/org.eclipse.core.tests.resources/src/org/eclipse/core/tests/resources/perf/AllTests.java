@@ -19,7 +19,6 @@ import junit.framework.TestSuite;
 public class AllTests extends TestSuite {
 	public static Test suite() {
 		TestSuite suite = new TestSuite(AllTests.class.getName());
-		suite.addTest(BenchHistoryStoreTest.suite());
 		suite.addTest(BenchWorkspace.suite());
 		suite.addTest(BenchMiscWorkspace.suite());
 		suite.addTest(MarkerPerformanceTest.suite());
