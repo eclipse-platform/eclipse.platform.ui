@@ -82,7 +82,6 @@ public class PasteBreakpointsAction extends SelectionListenerAction {
      */
     public void run() {
         breakpointsView.performPaste(getTarget(), LocalSelectionTransfer.getInstance().getSelection());
-        updateSelection(getStructuredSelection());
     }
 
     /**

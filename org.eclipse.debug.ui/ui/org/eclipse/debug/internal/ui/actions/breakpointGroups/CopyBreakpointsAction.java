@@ -40,7 +40,7 @@ public class CopyBreakpointsAction extends SelectionListenerAction {
     /**
      * Associated view.
      */
-    private BreakpointsView breakpointsView;
+    protected BreakpointsView breakpointsView;
 
     /**
      * Creates a new action.

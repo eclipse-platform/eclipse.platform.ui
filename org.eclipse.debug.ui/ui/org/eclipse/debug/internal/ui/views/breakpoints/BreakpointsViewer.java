@@ -18,6 +18,7 @@ import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
@@ -34,6 +35,15 @@ public class BreakpointsViewer extends CheckboxTreeViewer {
      */
     public BreakpointsViewer(Tree tree) {
         super(tree);
+    }
+    
+    /**
+     * Returns the selected items.
+     * 
+     * @return seleted items
+     */
+    public Item[] getSelectedItems() {
+        return getSelection(getControl());
     }
     
     /**

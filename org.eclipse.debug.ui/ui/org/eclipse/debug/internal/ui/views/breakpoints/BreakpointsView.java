@@ -35,6 +35,7 @@ import org.eclipse.debug.internal.ui.actions.OpenBreakpointMarkerAction;
 import org.eclipse.debug.internal.ui.actions.ShowSupportedBreakpointsAction;
 import org.eclipse.debug.internal.ui.actions.SkipAllBreakpointsAction;
 import org.eclipse.debug.internal.ui.actions.breakpointGroups.CopyBreakpointsAction;
+import org.eclipse.debug.internal.ui.actions.breakpointGroups.CutBreakpointsAction;
 import org.eclipse.debug.internal.ui.actions.breakpointGroups.PasteBreakpointsAction;
 import org.eclipse.debug.internal.ui.actions.breakpointGroups.ShowEmptyGroupsAction;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
@@ -408,7 +409,9 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
         PasteBreakpointsAction paste = new PasteBreakpointsAction(this, fClipboard);
         configure(paste, IWorkbenchActionDefinitionIds.PASTE, ActionFactory.PASTE.getId(),ISharedImages.IMG_TOOL_PASTE);
         SelectionListenerAction copy = new CopyBreakpointsAction(this, fClipboard, paste);
-        configure(copy, IWorkbenchActionDefinitionIds.COPY, ActionFactory.COPY.getId(), ISharedImages.IMG_TOOL_COPY);        
+        configure(copy, IWorkbenchActionDefinitionIds.COPY, ActionFactory.COPY.getId(), ISharedImages.IMG_TOOL_COPY);
+        SelectionListenerAction cut = new CutBreakpointsAction(this, fClipboard, paste);
+        configure(cut, IWorkbenchActionDefinitionIds.CUT, ActionFactory.CUT.getId(), ISharedImages.IMG_TOOL_CUT);
 	}
 
 	/**
@@ -441,6 +444,7 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 		menu.add(getAction("GotoMarker")); //$NON-NLS-1$
 		menu.add(new Separator(IDebugUIConstants.EMPTY_BREAKPOINT_GROUP));
 		menu.add(new Separator(IDebugUIConstants.BREAKPOINT_GROUP));
+        menu.add(getAction(IWorkbenchActionDefinitionIds.CUT));
         menu.add(getAction(IWorkbenchActionDefinitionIds.COPY));
         menu.add(getAction(IWorkbenchActionDefinitionIds.PASTE));
 		menu.add(new Separator(IDebugUIConstants.EMPTY_RENDER_GROUP));
