@@ -8,18 +8,17 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-import javax.servlet.ServletContext;
+import javax.servlet.*;
 import javax.servlet.http.*;
 
 import org.eclipse.core.boot.*;
-import org.eclipse.help.internal.HelpSystem;
+import org.eclipse.help.internal.*;
 
 /**
  * Performs transfer of data from eclipse to a jsp/servlet
  */
 public class EclipseConnector {
 	private ServletContext context;
-	private static IFilter[] noFilters = new IFilter[0];
 	private static final String errorPageBegin =
 		"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n"
 			+ "<html><head>\n"
@@ -27,6 +26,8 @@ public class EclipseConnector {
 			+ "</head>\n"
 			+ "<body><p>\n";
 	private static final String errorPageEnd = "</p></body></html>";
+	private static final IFilter filters[] =
+		new IFilter[] { new FramesetFilter(), new HighlightFilter()};
 
 	/**
 	 * Constructor.
@@ -84,23 +85,14 @@ public class EclipseConnector {
 					return;
 				}
 			}
-			OutputStream os = resp.getOutputStream();
 
-			IFilter[] filters = getFilters(req);
-			if (filters.length == 0)
-				transferContent(is, os);
-			else {
-				ByteArrayOutputStream tempOut = new ByteArrayOutputStream(4096);
-				transferContent(is, tempOut);
-				byte[] tempBuffer = tempOut.toByteArray();
-				for (int i = 0; i < filters.length; i++) {
-					tempBuffer = filters[i].filter(tempBuffer);
-				}
-				ByteArrayInputStream tempIn =
-					new ByteArrayInputStream(tempBuffer);
-				transferContent(tempIn, os);
+			OutputStream out = resp.getOutputStream();
+			for (int i = 0; i < filters.length; i++) {
+				out = filters[i].filter(req, out);
 			}
-			os.flush();
+
+			transferContent(is, out);
+			out.flush();
 			is.close();
 
 		} catch (Exception e) {
@@ -201,22 +193,4 @@ public class EclipseConnector {
 		return url;
 	}
 
-	/**
-	 * Returns the filters for this url, if any
-	 * @return array of IFilter
-	 */
-	private IFilter[] getFilters(HttpServletRequest req) {
-		String uri = req.getRequestURI();
-		//String agent = req.getHeader("User-Agent").toLowerCase(Locale.US);
-		//boolean ie = (agent.indexOf("msie") != -1);
-		if (uri != null && (uri.endsWith("html") || uri.endsWith("htm"))) {
-			if (req.getParameter("resultof") != null)
-				return new IFilter[] {
-					new FramesetFilter(req),
-					new HighlightFilter(req)};
-			else
-				return new IFilter[] { new FramesetFilter(req)};
-		} else
-			return noFilters;
-	}
 }

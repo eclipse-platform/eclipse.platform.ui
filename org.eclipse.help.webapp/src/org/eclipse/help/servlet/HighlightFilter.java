@@ -5,53 +5,43 @@
 
 package org.eclipse.help.servlet;
 
+import java.io.*;
 import java.util.*;
 
 import javax.servlet.http.*;
 
 public class HighlightFilter implements IFilter {
-	private String searchWord;
-	private HttpServletRequest request;
-	// content size limit, above which the script
-	// that has a time limit will be inserted
-	private static final int TIMED_SCRIPT_TRESHOLD = 50000;
 	private static final String scriptPart1 =
 		"\n<script language=\"JavaScript\">\n<!--\nvar keywords = new Array (";
 	private static final String scriptPart3 =
 		");\n-->\n</script>\n<script language=\"JavaScript\" src=\"";
 	private static final String scriptPart5 =
 		"advanced/highlight.js\"></script>\n";
-	private static final String scriptPart5Timed =
-		"advanced/highlightTimed.js\"></script>\n";
-
-	/**
-	 * Constructor.
-	 */
-	public HighlightFilter(HttpServletRequest request) {
-		this.request = request;
-		this.searchWord = request.getParameter("resultof");
-	}
 
 	/*
-	 * @see IFilter#filter(byte[])
+	 * @see IFilter#filter(HttpServletRequest, OutputStream)
 	 */
-	public byte[] filter(byte[] input) {
-		if (searchWord == null) {
-			return input;
+	public OutputStream filter(HttpServletRequest req, OutputStream out) {
+		String uri = req.getRequestURI();
+		if (uri == null || !uri.endsWith("html") && !uri.endsWith("htm")) {
+			return out;
 		}
-		if (!(UrlUtil.isIE(request) || UrlUtil.isMozilla(request))) {
-			return input;
+		if (!(UrlUtil.isIE(req) || UrlUtil.isMozilla(req))) {
+			return out;
 		}
 
-		Collection keywords = getWords();
+		Collection keywords = getWords(req);
+		if (keywords.size() == 0) {
+			return out;
+		}
 		keywords = removeWildCards(keywords);
 		keywords = encodeKeyWords(keywords);
-		byte[] script = createJScript(keywords, input.length);
+		byte[] script = createJScript(req, keywords);
 		if (script == null) {
-			return input;
+			return out;
 		}
 
-		return HeadFilterHelper.filter(input, script);
+		return new FilterHTMLHeadOutputStream(out, script);
 	}
 
 	/**
@@ -60,7 +50,7 @@ public class HighlightFilter implements IFilter {
 	 * @param contentSize size of document
 	 * @return byte[]
 	 */
-	private byte[] createJScript(Collection keywords, int contentSize) {
+	private byte[] createJScript(HttpServletRequest req, Collection keywords) {
 		StringBuffer buf = new StringBuffer(scriptPart1);
 		// append comma separated list of keywords
 		Iterator it = keywords.iterator();
@@ -75,7 +65,7 @@ public class HighlightFilter implements IFilter {
 		//
 		buf.append(scriptPart3);
 		// append "../" to get to the webapp
-		String path = request.getPathInfo();
+		String path = req.getPathInfo();
 		if (path != null) {
 			for (int i;
 				0 <= (i = path.indexOf('/'));
@@ -84,11 +74,7 @@ public class HighlightFilter implements IFilter {
 			}
 		}
 		//
-		if (contentSize < TIMED_SCRIPT_TRESHOLD) {
-			buf.append(scriptPart5);
-		} else {
-			buf.append(scriptPart5Timed);
-		}
+		buf.append(scriptPart5);
 		return buf.toString().getBytes();
 	}
 	/**
@@ -96,9 +82,14 @@ public class HighlightFilter implements IFilter {
 	 * keywords dobule quoted and separated by space
 	 * @return Collection of String
 	 */
-	private Collection getWords() {
+	private Collection getWords(HttpServletRequest req) {
 		// Collect words to hash set to eliminate duplcates
 		Collection tokens = new HashSet();
+
+		String searchWord = req.getParameter("resultof");
+		if (searchWord == null) {
+			return tokens;
+		}
 		//Divide along quotation marks
 		StringTokenizer qTokenizer =
 			new StringTokenizer(searchWord.trim(), "\"", true);

@@ -5,7 +5,9 @@
 
 package org.eclipse.help.servlet;
 
-import javax.servlet.http.HttpServletRequest;
+import java.io.*;
+
+import javax.servlet.http.*;
 
 /**
  * This class inserts a script for showing the page inside the appropriate frameset
@@ -15,26 +17,31 @@ public class FramesetFilter implements IFilter {
 	private static final String scriptPart1 =
 		"<script>if( self == top ){ window.location.replace( \"";
 	private static final String scriptPart3 = "\");}</script>";
-	private StringBuffer location;
 
-	public FramesetFilter(HttpServletRequest req) {
-		location = new StringBuffer();
-		String path = req.getPathInfo();
-		if (path != null) {
-			for (int i;
-				0 <= (i = path.indexOf('/'));
-				path = path.substring(i + 1)) {
-				location.append("../");
-			}
-			location.append("?topic=");
-			location.append(req.getPathInfo().substring("/help:".length()));
-		}
-	}
 	/*
-	 * @see IFilter#filter(byte[])
+	 * @see IFilter#filter(HttpServletRequest, OutputStream)
 	 */
-	public byte[] filter(byte[] input) {
-		String script = scriptPart1 + location + scriptPart3;
-		return HeadFilterHelper.filter(input, script.getBytes());
+	public OutputStream filter(HttpServletRequest req, OutputStream out) {
+		String uri = req.getRequestURI();
+		if (uri == null || !uri.endsWith("html") && !uri.endsWith("htm")) {
+			return out;
+		}
+
+		String path = req.getPathInfo();
+		if (path == null) {
+			return out;
+		}
+		StringBuffer script = new StringBuffer(scriptPart1);
+		for (int i;
+			0 <= (i = path.indexOf('/'));
+			path = path.substring(i + 1)) {
+			script.append("../");
+		}
+		script.append("?topic=");
+		script.append(req.getPathInfo().substring("/help:".length()));
+		script.append(scriptPart3);
+		return new FilterHTMLHeadOutputStream(
+			out,
+			script.toString().getBytes());
 	}
 }

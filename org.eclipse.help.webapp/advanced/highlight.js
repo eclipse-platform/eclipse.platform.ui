@@ -4,6 +4,8 @@
  */
 
 var highlighted=false;
+var startTime;
+var MAX_DURATION=3000;
 onload=highlight;
 document.onreadystatechange=highlight;
 function highlight(){
@@ -12,9 +14,18 @@ function highlight(){
 	}
 	highlighted=true;
 	if (!document.body) return;
-	for(i=0; i<keywords.length; i++){
-		word=keywords[i].toLowerCase();
-		highlightWordInNode(word, document.body);
+	if(document.body.innerHTML.length < 50000){
+		for(i=0; i<keywords.length; i++){
+			word=keywords[i].toLowerCase();
+			highlightWordInNode(word, document.body);
+		}
+	}else{
+		startTime=new Date().getTime();
+		for(i=0; i<keywords.length; i++){
+			word=keywords[i].toLowerCase();
+			highlightWordInNodeTimed(word, document.body);
+			if(new Date().getTime()>startTime+MAX_DURATION) return;
+		}
 	}
 }
 function highlightWordInNode(aWord, aNode){
@@ -22,6 +33,19 @@ function highlightWordInNode(aWord, aNode){
     	var children = aNode.childNodes;
     	for(var i=0; i < children.length; i++) {
     		highlightWordInNode(aWord, children[i]);
+    	}
+    }
+    else if(aNode.nodeType==3){
+    	highlightWordInText(aWord, aNode);
+	}
+
+}
+function highlightWordInNodeTimed(aWord, aNode){
+    if (aNode.nodeType == 1){
+    	var children = aNode.childNodes;
+    	for(var i=0; i < children.length; i++) {
+    		highlightWordInNodeTimed(aWord, children[i]);
+			if(new Date().getTime()>startTime+MAX_DURATION) return;
     	}
     }
     else if(aNode.nodeType==3){
