@@ -102,7 +102,7 @@ public class TableViewer extends StructuredViewer {
 						//If we are building lazily then request lookup now
 						if(contentProvider instanceof ILazyContentProvider){
 							((ILazyContentProvider) contentProvider).
-								updateElements(index, index);
+								updateElements(index, 1);
 							return;
 						}	
 					}
@@ -731,7 +731,7 @@ public class TableViewer extends StructuredViewer {
 		
 		//Invalidate for lazy
 		if(contentProvider instanceof ILazyContentProvider)
-			((ILazyContentProvider)contentProvider).invalidateElements(0, getTable().getItemCount() - 1);
+			((ILazyContentProvider)contentProvider).invalidateElements(0, getTable().getItemCount());
 		
 		else{ //Don't cache if the root is null but cache if it is not lazy.
 			if(root != null)

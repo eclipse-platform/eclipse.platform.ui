@@ -31,23 +31,25 @@ public class TestLazyModelContentProvider extends TestModelContentProvider imple
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ILazyContentProvider#invalidateElements(int, int)
 	 */
-	public void invalidateElements(int start, int finish) {
-		updateElements(start, finish);
+	public void invalidateElements(int start, int length) {
+		updateElements(start,length);
 
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ILazyContentProvider#updateElements(int, int)
 	 */
-	public void updateElements(int start, int finish) {
+	public void updateElements(int start, int length) {
+
 		if(input == null)
 			return; //Nothing to update yet
-		int size = finish-start + 1;
-		TestElement[] children = new TestElement[size];
-        for (int i = 0; i < size; ++i)
+		
+		TestElement[] children = new TestElement[length];
+        for (int i = 0; i < length; i++)
             children[i] = input.getChildAt(i + start);
         ((TableViewer) test.fViewer).replace(children, start);
 
+	
 	}
 
 	/* (non-Javadoc)
