@@ -28,7 +28,6 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.WorkbenchException;
-import org.omg.CORBA.PERSIST_STORE;
 
 /**
  * The perspective manager manages the 'perspective' settings
