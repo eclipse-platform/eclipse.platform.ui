@@ -379,7 +379,7 @@ public final class InternalPlatform implements IPlatform {
 		this.context = context;
 		initializeLocationTrackers();
 		endOfInitializationHandler = getSplashHandler();
-		processCommandLine(infoService.getCommandLineArgs());
+		processCommandLine(infoService.getNonFrameworkArgs());
 		debugTracker = new ServiceTracker(context, DebugOptions.class.getName(), null);
 		debugTracker.open();
 		options = (DebugOptions) debugTracker.getService(); 
