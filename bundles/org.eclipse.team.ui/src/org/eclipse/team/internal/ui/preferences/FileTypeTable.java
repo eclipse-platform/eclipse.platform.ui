@@ -14,12 +14,24 @@ package org.eclipse.team.internal.ui.preferences;
 import java.util.Collection;
 import java.util.List;
 
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.CellEditor;
+import org.eclipse.jface.viewers.ComboBoxCellEditor;
+import org.eclipse.jface.viewers.ICellModifier;
+import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.team.core.Team;
+import org.eclipse.team.internal.ui.PixelConverter;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.SWTUtils;
 
@@ -34,12 +46,6 @@ public class FileTypeTable implements ICellModifier, IStructuredContentProvider,
     private final static int COMBO_INDEX_DONT_SAVE= 1;
     private static final String [] SAVE_TEXT= { Policy.bind("FileTypeTable.2"), Policy.bind("FileTypeTable.3") }; //$NON-NLS-1$ //$NON-NLS-2$
 
-    public interface PixelConverter	{
-        
-        int convertWidthInCharsToPixels(int chars);
-        
-    }
-    
     public abstract static class Item {
         public final String name;
         public boolean save;
@@ -68,11 +74,11 @@ public class FileTypeTable implements ICellModifier, IStructuredContentProvider,
     private final List fItems;
     private final boolean fShowSaveColumn;
     
-	public FileTypeTable(Composite composite, PixelConverter converter, List items, boolean showSaveColumn) {
+	public FileTypeTable(Composite composite, List items, boolean showSaveColumn) {
 	    
 	    fShowSaveColumn= showSaveColumn;
-	    
 	    fItems= items;
+        
 
 		/**
 		 * Create a table.
@@ -100,6 +106,8 @@ public class FileTypeTable implements ICellModifier, IStructuredContentProvider,
 		    
 		});
 
+        final PixelConverter converter= SWTUtils.createDialogPixelConverter(composite);
+        
 		/**
 		 * The 'Extension' column
 		 */

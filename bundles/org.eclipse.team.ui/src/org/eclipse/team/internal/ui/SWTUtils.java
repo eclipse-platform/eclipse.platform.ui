@@ -21,6 +21,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 
 /**
  * 
@@ -47,7 +48,7 @@ public class SWTUtils {
     }
     
     public static GridData createHFillGridData(int span) {
-        final GridData gd= createGridData(0, SWT.DEFAULT, true, false);
+        final GridData gd= createGridData(0, SWT.DEFAULT, SWT.FILL, SWT.CENTER, true, false);
         gd.horizontalSpan= span;
         return gd;
     }
@@ -121,13 +122,42 @@ public class SWTUtils {
         return button;
     }
     
+    public static Button createRadioButton(Composite parent, String message) {
+        return createRadioButton(parent, message, 1);
+    }
+
+    public static Button createRadioButton(Composite parent, String message, int span) {
+        final Button button= new Button(parent, SWT.RADIO);
+        button.setText(message);
+        button.setLayoutData(createHFillGridData(span));
+        return button;
+    }
+
+    
+    public static Text createText(Composite parent) {
+        return createText(parent, 1);
+    }
+
+    public static Text createText(Composite parent, int span) {
+        final Text text= new Text(parent, SWT.SINGLE | SWT.BORDER);
+        text.setLayoutData(createHFillGridData(span));
+        return text;
+    }
+    
+
+    public static Control createPlaceholder(Composite parent, PixelConverter converter, int heightInChars, int span) {
+        Assert.isTrue(heightInChars > 0);
+        final Control placeHolder= new Composite(parent, SWT.NONE);
+        final GridData gd= new GridData(SWT.BEGINNING, SWT.TOP, false, false);
+        gd.heightHint= converter.convertHeightInCharsToPixels(heightInChars);
+        gd.horizontalSpan= span;
+        placeHolder.setLayoutData(gd);
+        return placeHolder;
+    }
+
+    
     public static Control createPlaceholder(Composite parent, PixelConverter converter, int heightInChars) {
-    	Assert.isTrue(heightInChars > 0);
-    	final Control placeHolder= new Composite(parent, SWT.NONE);
-    	final GridData gd= new GridData(SWT.BEGINNING, SWT.TOP, false, false);
-    	gd.heightHint= converter.convertHeightInCharsToPixels(heightInChars);
-    	placeHolder.setLayoutData(gd);
-    	return placeHolder;
+        return createPlaceholder(parent, converter, heightInChars, 1);
     }
     
     public static PixelConverter createDialogPixelConverter(Control control) {
@@ -143,5 +173,15 @@ public class SWTUtils {
 				minimum= length;
 		}
 		return minimum;
+	}
+	
+	public static void equalizeButtons(PixelConverter converter, Button [] buttons) {
+		final int size= calculateButtonSize(converter, buttons);
+		for (int i = 0; i < buttons.length; i++) {
+			final Button button= buttons[i];
+			if (button.getLayoutData() instanceof GridData) {
+				((GridData)button.getLayoutData()).widthHint= size;
+			}
+		}
 	}
 }

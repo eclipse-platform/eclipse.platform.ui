@@ -12,25 +12,43 @@
 package org.eclipse.team.internal.ccvs.ui.wizards;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.wizard.*;
+import org.eclipse.jface.wizard.IWizardPage;
+import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.IFileContentManager;
 import org.eclipse.team.core.Team;
-import org.eclipse.team.core.synchronize.*;
-import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
+import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.core.synchronize.SyncInfoSet;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.core.CVSWorkspaceSubscriber;
+import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
-import org.eclipse.team.internal.ccvs.ui.*;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.ccvs.ui.operations.*;
+import org.eclipse.team.internal.ccvs.ui.operations.AddOperation;
+import org.eclipse.team.internal.ccvs.ui.operations.CVSOperation;
+import org.eclipse.team.internal.ccvs.ui.operations.CommitOperation;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 
@@ -41,39 +59,6 @@ import org.eclipse.ui.PlatformUI;
 public class CommitWizard extends Wizard {
     
     private static final String COMMIT_WIZARD_SECTION = "CommitWizard"; //$NON-NLS-1$
-    
-    /**
-     * Persists the size of the wizard dialog.
-     */
-    private static class SettingsSaver {
-        
-        private static final String BOUNDS_HEIGHT_KEY = "width"; //$NON-NLS-1$
-        private static final String BOUNDS_WIDTH_KEY = "height"; //$NON-NLS-1$
-        
-        private final IWizard fWizard;
-        
-        private SettingsSaver(IWizard wizard) {
-            fWizard= wizard;
-        }
-        
-        public void saveSize(int width, int height) {
-            final IDialogSettings settings= fWizard.getDialogSettings();
-            settings.addNewSection(COMMIT_WIZARD_SECTION);
-            settings.put(BOUNDS_WIDTH_KEY, width);
-            settings.put(BOUNDS_HEIGHT_KEY, height);
-        }
-        
-        public Point getSize() {
-            final Point size= new Point(300, 400);
-            final IDialogSettings settings= fWizard.getDialogSettings();
-            try {
-                size.x= settings.getInt(BOUNDS_WIDTH_KEY);
-                size.y= settings.getInt(BOUNDS_HEIGHT_KEY);
-            } catch (NumberFormatException e) {
-            }
-            return size;
-        }
-    }
     
     /**
      * An operation to add and commit resources to a CVS repository.
@@ -138,7 +123,7 @@ public class CommitWizard extends Wizard {
     private CommitWizardCommitPage fCommitPage;
     
     private IResource[] fResources;
-    private SettingsSaver fSettingsSaver;
+    WizardSizeSaver fSizeSaver;
     
 
     public CommitWizard(IResource [] resources) throws CVSException {
@@ -154,14 +139,9 @@ public class CommitWizard extends Wizard {
         setWindowTitle(Policy.bind("CommitWizard.2")); //$NON-NLS-1$
         setDefaultPageImageDescriptor(CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_NEW_LOCATION));
         
-        final IDialogSettings cvsSettings = CVSUIPlugin.getPlugin().getDialogSettings();
-        IDialogSettings section = cvsSettings.getSection(COMMIT_WIZARD_SECTION);
-        if (section == null) {
-            section = cvsSettings.addNewSection(COMMIT_WIZARD_SECTION);
-        }
-        setDialogSettings(section);
+        setDialogSettings(CVSUIPlugin.getPlugin().getDialogSettings());
 
-        fSettingsSaver= new SettingsSaver(this);
+        fSizeSaver= new WizardSizeSaver(this, COMMIT_WIZARD_SECTION);
 
         fResources= resources;
         fOutOfSyncInfos= syncInfos;
@@ -280,9 +260,7 @@ public class CommitWizard extends Wizard {
         } catch (InterruptedException e) {
             return false;
         }
-
-        final Rectangle bounds= getContainer().getCurrentPage().getControl().getParent().getClientArea();
-        fSettingsSaver.saveSize(bounds.width, bounds.height);
+        fSizeSaver.saveSize();
         
         return true;
     }
@@ -390,7 +368,7 @@ public class CommitWizard extends Wizard {
     }
     
     public Point loadSize() {
-        return fSettingsSaver.getSize();
+        return fSizeSaver.getSize();
     }
 }    
 

@@ -13,7 +13,6 @@ package org.eclipse.team.internal.ccvs.ui.actions;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.wizards.UpdateWizard;
 
@@ -29,9 +28,7 @@ public class UpdateAction extends WorkspaceAction {
 	 * @see IActionDelegate#run(IAction)
 	 */
 	public void execute(IAction action) throws InterruptedException, InvocationTargetException {
-		UpdateWizard wizard = new UpdateWizard(getTargetPart(), getSelectedResources());
-		WizardDialog dialog = new WizardDialog(getShell(), wizard);
-		dialog.open();
+		UpdateWizard.run(getTargetPart(), getSelectedResources());
 	}
 
 	/**

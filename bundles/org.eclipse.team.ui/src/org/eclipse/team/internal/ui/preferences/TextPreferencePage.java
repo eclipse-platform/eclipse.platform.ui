@@ -11,20 +11,34 @@
 package org.eclipse.team.internal.ui.preferences;
 
  
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.team.core.IStringMapping;
 import org.eclipse.team.core.Team;
-import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.internal.ui.IHelpContextIds;
+import org.eclipse.team.internal.ui.PixelConverter;
+import org.eclipse.team.internal.ui.Policy;
+import org.eclipse.team.internal.ui.SWTUtils;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
@@ -34,7 +48,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
  * is to be treated as a text file or not. The page allows the user to add or
  * remove entries from this table, and change their values from Text to Binary.
  */
-public class TextPreferencePage extends PreferencePage implements IWorkbenchPreferencePage, FileTypeTable.PixelConverter {
+public class TextPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
     
 	// The input for the table viewer
 	private final List fItems;
@@ -92,7 +106,7 @@ public class TextPreferencePage extends PreferencePage implements IWorkbenchPref
 		final Composite composite= new Composite(parent, SWT.NONE);
 		composite.setLayout(SWTUtils.createGridLayout(2, converter, SWTUtils.MARGINS_NONE));
 		
-		fTable= new FileTypeTable(composite, this, fItems, false);
+		fTable= new FileTypeTable(composite, fItems, false);
 
 		fTable.getViewer().getControl().addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
@@ -221,7 +235,7 @@ public class TextPreferencePage extends PreferencePage implements IWorkbenchPref
 	void addExtension() {
 		final InputDialog dialog = new InputDialog(getShell(), Policy.bind("TextPreferencePage.enterExtensionShort"), Policy.bind("TextPreferencePage.enterExtensionLong"), null, null); //$NON-NLS-1$ //$NON-NLS-2$
 		dialog.open();
-		if (dialog.getReturnCode() != InputDialog.OK) return;
+		if (dialog.getReturnCode() != Window.OK) return;
 		
 		final String extension = dialog.getValue().trim().replaceAll("\\*\\.", "");  //$NON-NLS-1$ //$NON-NLS-2$
 		if (extension.equals(""))  //$NON-NLS-1$
@@ -247,7 +261,7 @@ public class TextPreferencePage extends PreferencePage implements IWorkbenchPref
 	void addName() {
 		final InputDialog dialog = new InputDialog(getShell(), "New File Type", "Enter a file name:", null, null); //$NON-NLS-1$ //$NON-NLS-2$
 		dialog.open();
-		if (dialog.getReturnCode() != InputDialog.OK) return;
+		if (dialog.getReturnCode() != Window.OK) return;
 		
 		final String name = dialog.getValue();
 		if (name.length() == 0 || name.indexOf(" ") >= 0)  //$NON-NLS-1$
@@ -304,11 +318,4 @@ public class TextPreferencePage extends PreferencePage implements IWorkbenchPref
 		fRemoveButton.setEnabled(!empty);
 		fChangeButton.setEnabled(!empty);
 	}
-	
-	/* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.DialogPage#convertWidthInCharsToPixels(int)
-     */
-    public int convertWidthInCharsToPixels(int chars) {
-        return super.convertWidthInCharsToPixels(chars);
-    }
 }

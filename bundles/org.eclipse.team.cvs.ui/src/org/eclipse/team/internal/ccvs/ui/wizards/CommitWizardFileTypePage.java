@@ -11,9 +11,14 @@
 
 package org.eclipse.team.internal.ccvs.ui.wizards;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
@@ -33,7 +38,7 @@ import org.eclipse.team.internal.ui.preferences.FileTypeTable;
 /**                
  * 
  */
-public class CommitWizardFileTypePage extends WizardPage implements FileTypeTable.PixelConverter {
+public class CommitWizardFileTypePage extends WizardPage {
 
     private final Collection fExtensions;
     private final Collection fNames;
@@ -62,6 +67,7 @@ public class CommitWizardFileTypePage extends WizardPage implements FileTypeTabl
         
         final Composite composite= new Composite(parent, SWT.NONE);
         composite.setLayout(new GridLayout(1, false));
+        Dialog.applyDialogFont(composite);
         
 	    final Label label= new Label(composite, SWT.WRAP);
 	    label.setText(Policy.bind("CommitWizardFileTypePage.3")); //$NON-NLS-1$
@@ -71,7 +77,7 @@ public class CommitWizardFileTypePage extends WizardPage implements FileTypeTabl
         items.addAll(fNames);
         items.addAll(fExtensions);
         
-        new FileTypeTable(composite, this, items, true);
+        new FileTypeTable(composite, items, true);
 
         setControl(composite);
     }
@@ -92,13 +98,6 @@ public class CommitWizardFileTypePage extends WizardPage implements FileTypeTabl
 	    }
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.team.internal.ui.preferences.FileTypeTable.PixelConverter#convertWidthInCharsToPixels(int)
-     */
-    public int convertWidthInCharsToPixels(int chars) {
-        return super.convertWidthInCharsToPixels(chars);
-    }
-    
     public KSubstOption getOption(IFile file) throws CVSException {
         final String extension= file.getFileExtension();
         if (extension != null) {

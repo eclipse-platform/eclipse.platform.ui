@@ -12,35 +12,55 @@ package org.eclipse.team.internal.ccvs.ui.wizards;
 
  
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSTag;
+import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
-import org.eclipse.team.internal.ccvs.ui.*;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
+import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.UpdateOperation;
-import org.eclipse.team.internal.ccvs.ui.tags.*;
-import org.eclipse.team.internal.ccvs.ui.tags.TagSourceWorkbenchAdapter;
+import org.eclipse.team.internal.ccvs.ui.tags.TagSelectionWizardPage;
 import org.eclipse.team.internal.ccvs.ui.tags.TagSource;
+import org.eclipse.team.internal.ccvs.ui.tags.TagSourceWorkbenchAdapter;
 import org.eclipse.ui.IWorkbenchPart;
 
 public class UpdateWizard extends Wizard {
+	
+	private static final String UPDATE_WIZARD_SECTION = "UpdateWizard"; //$NON-NLS-1$
 
 	private IResource[] resources;
 	private final IWorkbenchPart part;
+	private final WizardSizeSaver fSizeSaver;
 	private TagSelectionWizardPage tagSelectionPage;
 	
-	public UpdateWizard(IWorkbenchPart part, IResource[] resources) {
+	protected UpdateWizard(IWorkbenchPart part, IResource[] resources) {
 		this.part = part;
 		this.resources = resources;
+		fSizeSaver= new WizardSizeSaver(this, UPDATE_WIZARD_SECTION);
+		setDialogSettings(CVSUIPlugin.getPlugin().getDialogSettings());
 		setWindowTitle(Policy.bind("UpdateWizard.title")); //$NON-NLS-1$
 	}
 	
+    public static void run(IWorkbenchPart part, IResource [] resources) {
+        UpdateWizard wizard = new UpdateWizard(part, resources);
+		final WizardDialog dialog= new WizardDialog(part.getSite().getShell(), wizard);
+		dialog.setMinimumPageSize(wizard.loadSize());
+		dialog.open();
+    }
+    
 	public void addPages() {
 		ImageDescriptor substImage = CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_CHECKOUT);
         tagSelectionPage = new TagSelectionWizardPage("tagPage", Policy.bind("UpdateWizard.0"), substImage, Policy.bind("UpdateWizard.1"), TagSource.create(resources), TagSourceWorkbenchAdapter.INCLUDE_ALL_TAGS); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -85,6 +105,12 @@ public class UpdateWizard extends Wizard {
 		} catch (InterruptedException e) {
 			return false;
 		}
+
+		fSizeSaver.saveSize();
 		return true;
 	}
+	
+    public Point loadSize() {
+        return fSizeSaver.getSize();
+    }
 }
