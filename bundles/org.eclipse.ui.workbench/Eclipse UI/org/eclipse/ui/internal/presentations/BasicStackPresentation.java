@@ -104,18 +104,24 @@ public class BasicStackPresentation extends StackPresentation {
 	
 	private MouseListener mouseListener = new MouseAdapter() {
 		public void mouseDown(MouseEvent e) {
-			mousedownState = getSite().getState();
-			
-			// PR#1GDEZ25 - If selection will change in mouse up ignore mouse down.
-			// Else, set focus.
-			CTabItem newItem = tabFolder.getItem(new Point(e.x, e.y));
-			if (newItem != null) {
-				CTabItem oldItem = tabFolder.getSelection();
-				if (newItem != oldItem)
-					return;
-			}
-			if (current != null) {
-				current.setFocus();
+			if (e.widget instanceof Control) {
+				Control ctrl = (Control)e.widget;
+				
+				Point globalPos = ctrl.toDisplay(new Point(e.x, e.y));
+				
+				mousedownState = getSite().getState();
+				
+				// PR#1GDEZ25 - If selection will change in mouse up ignore mouse down.
+				// Else, set focus.
+				CTabItem newItem = tabFolder.getItem(tabFolder.toControl(globalPos));
+				if (newItem != null) {
+					CTabItem oldItem = tabFolder.getSelection();
+					if (newItem != oldItem)
+						return;
+				}
+				if (current != null) {
+					current.setFocus();
+				}
 			}
 		}
 		
@@ -279,6 +285,8 @@ public class BasicStackPresentation extends StackPresentation {
 				}
 			}
 		});
+
+		titleLabel.addMouseListener(mouseListener);
 		
 		// Compute the tab height
 		int toolbarHeight = viewToolBar.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
