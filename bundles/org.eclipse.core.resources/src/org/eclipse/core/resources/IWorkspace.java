@@ -586,7 +586,16 @@ public ISynchronizer getSynchronizer();
  * @return <code>true</code> if auto-building is on, <code>false</code> otherwise
  */
 public boolean isAutoBuilding();
-
+/**
+ * Returns whether the workspace tree is currently locked. If locked, any
+ * attempts at performing an operation which modifies the workspace tree
+ * will fail.
+ * 
+ * @return boolean <code>true</code> if the workspace tree is locked, 
+ *     <code>false</code> otherwise
+ * @since 2.1
+ */
+public boolean isTreeLocked();
 /**
  * Reads the project description file (".project") from the given location
  * in the local file system. This object is useful for discovering the 
