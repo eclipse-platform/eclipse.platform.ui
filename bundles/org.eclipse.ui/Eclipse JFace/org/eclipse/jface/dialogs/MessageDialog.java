@@ -182,10 +182,32 @@ protected Control createContents(Composite parent) {
  */
 protected Control createButtonBar(Composite parent) {
 	
-	Control bar = super.createButtonBar(parent);
-	GridData data = (GridData) bar.getLayoutData();
+	Composite composite = new Composite(parent, SWT.NONE);
+
+	// create a layout with spacing and margins appropriate for the font size.
+	GridLayout layout = new GridLayout();
+	layout.numColumns = 0; // this is incremented by createButton
+	layout.makeColumnsEqualWidth = true;
+	layout.marginWidth = 0;
+	layout.marginHeight = 0;
+	layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
+	layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
+
+	composite.setLayout(layout);
+
+	GridData data = new GridData(
+		GridData.HORIZONTAL_ALIGN_END |
+		GridData.VERTICAL_ALIGN_CENTER);
 	data.horizontalSpan = 2;
-	return bar;
+	composite.setLayoutData(data);
+
+	composite.setFont(parent.getFont());
+	
+	// Add the buttons to the button bar.
+	createButtonsForButtonBar(composite);
+
+	return composite;
+
 }
 
 /* (non-Javadoc)
