@@ -217,6 +217,7 @@ public abstract class FileBuffer implements IFileBuffer {
 		fFile= file;
 		fFileSynchronizer= new FileSynchronizer();
 		refreshFile(monitor);
+		fModificationStamp= fFile.getModificationStamp();
 		
 		initializeFileBufferContent(monitor);
 		addFileBufferContentListeners();
@@ -336,5 +337,12 @@ public abstract class FileBuffer implements IFileBuffer {
 	protected void handleCoreException(CoreException exception) {
 		ILog log= Platform.getPlugin(FileBuffersPlugin.PLUGIN_ID).getLog();
 		log.log(exception.getStatus());
+	}
+	
+	/*
+	 * @see IFileBuffer#hasUnderlyingFileChanged()
+	 */
+	public boolean hasUnderlyingFileChanged() {
+		return fModificationStamp != fFile.getModificationStamp();
 	}
 }

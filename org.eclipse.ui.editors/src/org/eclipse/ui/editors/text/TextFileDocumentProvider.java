@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPath;
@@ -560,7 +559,7 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 	public boolean isSynchronized(Object element) {
 		FileInfo info= (FileInfo) fFileInfoMap.get(element);
 		if (info != null)
-			return info.fTextFileBuffer.getUnderlyingFile().isSynchronized(IResource.DEPTH_ZERO);
+			return !info.fTextFileBuffer.isDirty() || !info.fTextFileBuffer.hasUnderlyingFileChanged();
 		return ((IDocumentProviderExtension3) getParentProvider()).isSynchronized(element);
 	}
 

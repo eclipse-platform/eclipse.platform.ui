@@ -34,6 +34,13 @@ public interface IFileBuffer {
 	 * @return the underlying file of this file buffer
 	 */
 	IFile getUnderlyingFile();
+
+	/**
+	 * Returns whether the underlying file of this file buffer has changed.
+	 * 
+	 * @return <code>true</code> if the underlying file of this file buffer has changed
+	 */
+	boolean hasUnderlyingFileChanged();
 	
 	/**
 	 * Reverts the contents of this file buffer to the content of its underlying file. After 
