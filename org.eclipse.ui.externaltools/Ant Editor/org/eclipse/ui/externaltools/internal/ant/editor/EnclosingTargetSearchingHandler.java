@@ -52,7 +52,7 @@ public class EnclosingTargetSearchingHandler extends PlantySaxDefaultHandler {
         throws SAXException {
 
 		if (ExternalToolsPlugin.getDefault().isDebugging()) {
-        	ExternalToolsPlugin.getDefault().log("PlantySaxDefaultHandler.endElement(" +aUri+ ", " +aLocalName+ ", "+aQualifiedName+ ")", null);
+        	ExternalToolsPlugin.getDefault().log("PlantySaxDefaultHandler.endElement(" +aUri+ ", " +aLocalName+ ", "+aQualifiedName+ ")", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		}
 
         if(parsingFinished) {
@@ -64,7 +64,7 @@ public class EnclosingTargetSearchingHandler extends PlantySaxDefaultHandler {
         
         String tempTagName = aLocalName.length() > 0 ? aLocalName : aQualifiedName;
 
-		if(tempTagName.equals("target")) {
+		if(tempTagName.equals("target")) { //$NON-NLS-1$
 			if(!stillOpenElements.isEmpty()) {        
 		        Element tempLastStillOpenElement = (Element)stillOpenElements.peek(); 
 		        if(tempLastStillOpenElement != null && tempLastStillOpenElement.getTagName().equals(tempTagName)) {
@@ -101,7 +101,7 @@ public class EnclosingTargetSearchingHandler extends PlantySaxDefaultHandler {
          */
         
         if (ExternalToolsPlugin.getDefault().isDebugging()) {
-			ExternalToolsPlugin.getDefault().log("PlantySaxDefaultHandler.startElement(" +aUri+ ", " +aLocalName+ ", "+aQualifiedName+ ", "+anAttributes+ ")", null);
+			ExternalToolsPlugin.getDefault().log("PlantySaxDefaultHandler.startElement(" +aUri+ ", " +aLocalName+ ", "+aQualifiedName+ ", "+anAttributes+ ")", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
         }
         if(parsingFinished) {
             return;
@@ -116,11 +116,11 @@ public class EnclosingTargetSearchingHandler extends PlantySaxDefaultHandler {
             throw new PlantyException("Error when parsing document: Neither a local name nor qualified of an element specified");
         }
 		
-		if(tempTagName.equals("target")) {
+		if(tempTagName.equals("target")) { //$NON-NLS-1$
 	        Element tempElement = document.createElement(tempTagName);
-	        String tempTargetName = anAttributes.getValue("name");
+	        String tempTargetName = anAttributes.getValue("name"); //$NON-NLS-1$
 	        if(tempTargetName != null && tempTargetName.length() > 0) {
-		        tempElement.setAttribute("name", tempTargetName);
+		        tempElement.setAttribute("name", tempTargetName); //$NON-NLS-1$
 	        }
 	        stillOpenElements.push(tempElement);
 		}
@@ -175,10 +175,10 @@ public class EnclosingTargetSearchingHandler extends PlantySaxDefaultHandler {
     protected void determineEnclosingTargetTaskElement() {
         while(parentElement == null && !stillOpenElements.empty()) {
             Element tempElement = (Element)stillOpenElements.pop();
-            if(tempElement.getTagName().equals("target")) {
+            if(tempElement.getTagName().equals("target")) { //$NON-NLS-1$
                 parentElement = tempElement;
                 if (ExternalToolsPlugin.getDefault().isDebugging()) {
-					ExternalToolsPlugin.getDefault().log("EnclosingTargetSearchingHandler.checkForParentElement(): Enclosing target element found: " +parentElement, null);
+					ExternalToolsPlugin.getDefault().log("EnclosingTargetSearchingHandler.checkForParentElement(): Enclosing target element found: " +parentElement, null); //$NON-NLS-1$
                 }
             }
         }

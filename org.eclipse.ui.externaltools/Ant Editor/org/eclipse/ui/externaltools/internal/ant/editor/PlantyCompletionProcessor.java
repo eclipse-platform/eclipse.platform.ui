@@ -182,7 +182,7 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
     protected final static int PROPOSAL_MODE_ATTRIBUTE_VALUE_PROPOSAL = 4;
     protected final static int PROPOSAL_MODE_PROPERTY_PROPOSAL = 5;
 
-    protected final static String REQUIRED = "#REQUIRED";
+    protected final static String REQUIRED = "#REQUIRED"; //$NON-NLS-1$
     
 	private List computedCompletionStrings = new Vector();
     
@@ -200,7 +200,7 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
      */
     protected int columnNumber = -1;
     
-    public static final String ANT_1_5_DTD_FILENAME = "/ant1.5b.dtd";
+    public static final String ANT_1_5_DTD_FILENAME = "/ant1.5b.dtd"; //$NON-NLS-1$
 
     /**
      * The dtd.
@@ -256,9 +256,9 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
      */
     protected ISchema parseDtd() throws ParseError, IOException {
         InputStream tempStream = getClass().getResourceAsStream(ANT_1_5_DTD_FILENAME);
-        InputStreamReader tempReader = new InputStreamReader(tempStream, "UTF-8");
+        InputStreamReader tempReader = new InputStreamReader(tempStream, "UTF-8"); //$NON-NLS-1$
         Parser parser = new Parser();
-        return parser.parseDTD(tempReader, "project");
+        return parser.parseDTD(tempReader, "project"); //$NON-NLS-1$
     }
     
     
@@ -417,20 +417,20 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
         		String tempAttrName = (String) tempKeys.next();
         		if (tempAttrName.startsWith(aPrefix)) {
         			IAttribute tempDTDAttribute = (IAttribute) tempElement.getAttributes().get(tempAttrName);
-					String tempReplacementString = tempAttrName+"=\"\"";
+					String tempReplacementString = tempAttrName+"=\"\""; //$NON-NLS-1$
 					String tempDisplayString = tempAttrName;
 					String[] tempItems = tempDTDAttribute.getEnum();
 					if (tempItems != null) {					        			
                         if(tempItems.length > 1) {
-                            tempDisplayString += " - (";
+                            tempDisplayString += " - ("; //$NON-NLS-1$
                         }
                         for (int i = 0; i < tempItems.length; i++) {
                             tempDisplayString += tempItems[i];
                             if(i+1 < tempItems.length) {
-                                tempDisplayString += " | ";
+                                tempDisplayString += " | "; //$NON-NLS-1$
                             }
                             else {
-                                tempDisplayString += ")";
+                                tempDisplayString += ")"; //$NON-NLS-1$
                             }
                         }
                     }
@@ -439,11 +439,11 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
                     String tempRequired = descriptionProvider.getRequiredAttributeForTaskAttribute(aTaskName, tempAttrName);
                     if(tempRequired != null && tempRequired.length() > 0) {
                         tempProposalInfo = "Required: " + tempRequired;
-                        tempProposalInfo += "<BR><BR>";
+                        tempProposalInfo += "<BR><BR>"; //$NON-NLS-1$
                     }
                     String tempDescription = descriptionProvider.getDescriptionForTaskAttribute(aTaskName, tempAttrName);
                     if(tempDescription != null) {
-                        tempProposalInfo = (tempProposalInfo == null ? "" : tempProposalInfo);
+                        tempProposalInfo = (tempProposalInfo == null ? "" : tempProposalInfo); //$NON-NLS-1$
                         tempProposalInfo += tempDescription;
                     }
                     
@@ -520,11 +520,11 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
                 String tempStringToPrefix = aDocumentText.substring(0, aCursorPosition - aPrefix.length());
                 // Property proposal
                 String tempLastTwoCharacters = tempStringToPrefix.substring(tempStringToPrefix.length()-2, tempStringToPrefix.length());
-                if(tempLastTwoCharacters.equals("${")) {
+                if(tempLastTwoCharacters.equals("${")) { //$NON-NLS-1$
                     tempReplacementLength += 2;
                     tempReplacementOffset = aCursorPosition - aPrefix.length() - 2;
                 }
-                else if(tempLastTwoCharacters.endsWith("$")) {
+                else if(tempLastTwoCharacters.endsWith("$")) { //$NON-NLS-1$
                     tempReplacementLength += 1;
                     tempReplacementOffset = aCursorPosition - aPrefix.length() - 1;                }
                 else {
@@ -534,7 +534,7 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
                     tempReplacementLength += 1;
                 }
                  
-                String tempReplacementString = "${"+tempPropertyName+"}";
+                String tempReplacementString = "${"+tempPropertyName+"}"; //$NON-NLS-1$ //$NON-NLS-2$
                 ICompletionProposal tempProposal = 
                     new CompletionProposal(
                         tempReplacementString, 
@@ -707,7 +707,7 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
         if(aUnclosedTaskElement != null) {
             if(aUnclosedTaskElement.getTagName().startsWith(aPrefix)) {
                 String tempReplaceString = aUnclosedTaskElement.getTagName();
-                tempProposals.add(new CompletionProposal(tempReplaceString+">", cursorPosition - aPrefix.length(), aPrefix.length(), tempReplaceString.length()+1, null, tempReplaceString, null, null));
+                tempProposals.add(new CompletionProposal(tempReplaceString+">", cursorPosition - aPrefix.length(), aPrefix.length(), tempReplaceString.length()+1, null, tempReplaceString, null, null)); //$NON-NLS-1$
             }
         }
         return (ICompletionProposal[])tempProposals.toArray(new ICompletionProposal[tempProposals.size()]);
@@ -717,12 +717,12 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
      * Returns the replacement string for the specified task name.
      */
     private String getTaskProposalReplacementString(String aTaskName) {
-        String tempReplacementString = "<" + aTaskName;
+        String tempReplacementString = "<" + aTaskName; //$NON-NLS-1$
         if(isEmpty(aTaskName)) {
-            tempReplacementString += " />";
+            tempReplacementString += " />"; //$NON-NLS-1$
         }
         else {
-            tempReplacementString += " ></" +aTaskName+ ">";
+            tempReplacementString += " ></" +aTaskName+ ">"; //$NON-NLS-1$ //$NON-NLS-2$
         }
         return tempReplacementString;               
     }
@@ -810,7 +810,7 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
         if (startOfWordToken != anOffset) {
             return aDocumentText.substring(startOfWordToken, anOffset);
         } else {
-            return "";
+            return ""; //$NON-NLS-1$
         }
     }
  
@@ -875,7 +875,7 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
                 }
                 return PROPOSAL_MODE_TASK_PROPOSAL;
             }
-            if(tempLessThanIndex < tempGreaterThanIndex && "".equals(aPrefix)) {
+            if(tempLessThanIndex < tempGreaterThanIndex && "".equals(aPrefix)) { //$NON-NLS-1$
                 
                 // no other regular character may be between '>' and cursor position
                 int tempActIndex = aCursorPosition;
@@ -896,7 +896,7 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
         // Property proposal
         if(tempStringToPrefix.length() >= 2) {
 	        String tempLastTwoCharacters = tempStringToPrefix.substring(tempStringToPrefix.length()-2, tempStringToPrefix.length());
-	        if(tempLastTwoCharacters.equals("${") ||
+	        if(tempLastTwoCharacters.equals("${") || //$NON-NLS-1$
 	            tempStringToPrefix.charAt(tempStringToPrefix.length()-1) == '$') {
 	                return PROPOSAL_MODE_PROPERTY_PROPOSAL;
 	        }
@@ -1074,7 +1074,7 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
          * that is passed.
          */
         File tempFile = getEditedFile();
-        tempProject.setUserProperty("ant.file", tempFile.getAbsolutePath());
+        tempProject.setUserProperty("ant.file", tempFile.getAbsolutePath()); //$NON-NLS-1$
 
         try {
             ProjectHelper.configureProject(tempProject, tempFile, aWholeDocumentString);  // File will be parsed here
@@ -1089,7 +1089,7 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
         Element tempElement = findEnclosingTargetElement(aWholeDocumentString, lineNumber, columnNumber);
         String tempTargetName = null;
         if(tempElement == null 
-        		|| (tempTargetName = tempElement.getAttribute("name")) == null
+        		|| (tempTargetName = tempElement.getAttribute("name")) == null //$NON-NLS-1$
         		|| tempTargetName.length() == 0) {
         	return tempTable;
         }
