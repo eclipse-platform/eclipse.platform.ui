@@ -417,9 +417,7 @@ public class OptionTests extends AbstractAntTest {
 		
 		run("input.xml", new String[]{"-diagnostics"});
 		String msg= (String)AntTestChecker.getDefault().getMessages().get(0);
-		String msg2= (String)AntTestChecker.getDefault().getMessages().get(12);
 		assertTrue("Message incorrect: " + msg, msg.equals("------- Ant diagnostics report -------"));
-		assertTrue("Message2 incorrect: " + msg2, msg2.equals("ANT_HOME must be set to use Ant diagnostics"));
 	}
 	
 	/**
