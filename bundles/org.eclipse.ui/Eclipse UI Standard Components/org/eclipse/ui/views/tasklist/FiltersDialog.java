@@ -11,27 +11,30 @@ Contributors:
   Cagatay Kavukcuoglu <cagatayk@acm.org> - Filter for markers in same project
 **********************************************************************/
 
-import org.eclipse.ui.help.*;
+import java.text.Collator;
+import java.util.*;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import java.text.Collator;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
+import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /* package */ class FiltersDialog extends Dialog {
 	/**
 	 * ID for the Reset button
 	 */
 	static final int RESET_ID = IDialogConstants.CLIENT_ID;
+	static final int SELECT_ID = IDialogConstants.CLIENT_ID + 1;
 
 	private static class EnumValue {
 		private int value;
@@ -163,6 +166,120 @@ import java.util.HashMap;
 			text.setText(initialText);
 		}
 	}
+	/**
+	 * Creates and manages a group of widgets for selecting a working 
+	 * set task filter.
+	 */
+	private class WorkingSetGroup {
+		private Button button;
+		private Label label;
+		private Button selectButton;
+
+		/**
+		 * Creates the working set filter selection widgets.
+		 * 
+		 * @param parent the parent composite of the working set widgets
+		 */
+		WorkingSetGroup(Composite parent) {
+			// radio button has to be part of main radio button group
+			button = createRadioButton(parent, TaskListMessages.getString("TaskList.workingSet")); //$NON-NLS-1$	
+			
+			Composite group = new Composite(parent, SWT.NONE);
+			GridLayout layout = new GridLayout();
+			layout.numColumns = 2;
+			Button radio = new Button(parent, SWT.RADIO);
+			layout.marginWidth = radio.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
+			layout.marginHeight = 0;
+			layout.horizontalSpacing = 10;
+			radio.dispose();
+			group.setLayout(layout);
+			selectButton = createButton(group, SELECT_ID, TaskListMessages.getString("TaskList.workingSetSelect"), false); //$NON-NLS-1$
+			label = new Label(group, SWT.NULL);
+			GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
+			gridData.widthHint = 200;
+			label.setLayoutData(gridData);
+		}
+		/**
+		 * Returns wether or not a working set filter should be used
+		 * 
+		 * @return 
+		 * 	true=a working set filter should be used
+		 * 	false=a working set filter should not be used
+		 */
+		boolean getSelection() {
+			return button.getSelection();
+		}
+		/**
+		 * Returns the selected working set filter or null if none 
+		 * is selected.
+		 * 
+		 * @return the selected working set filter or null if none 
+		 * 	is selected.
+		 */
+		IWorkingSet getWorkingSet() {
+			return (IWorkingSet) label.getData();
+		}
+		/**
+		 * Sets the working set filter selection.
+		 * 
+		 * @param selected true=a working set filter should be used
+		 * 	false=no working set filter should be used
+		 */
+		void setSelection(boolean selected) {
+			button.setSelection(selected);
+			if (selected) {
+				anyResourceButton.setSelection(false);
+				anyResourceInSameProjectButton.setSelection(false);
+				selectedResourceButton.setSelection(false);
+				selectedResourceAndChildrenButton.setSelection(false);
+			}
+			updateEnabledState();
+		}
+		/**
+		 * Opens the working set selection dialog.
+		 */
+		void selectPressed() {
+			IWorkingSetSelectionDialog dialog = WorkbenchPlugin.getDefault().getWorkingSetManager().createWorkingSetSelectionDialog(getShell(), false);
+			IWorkingSet workingSet = getWorkingSet();
+			
+			if (workingSet != null) {
+				dialog.setSelection(new IWorkingSet[]{workingSet});
+			}
+			if (dialog.open() == Window.OK) {
+				IWorkingSet[] result = dialog.getSelection();
+				if (result != null && result.length > 0) {
+					setWorkingSet(result[0]);
+				}
+				else {
+					setWorkingSet(null);
+				}				
+				if (getSelection() == false) {
+					setSelection(true);
+				}
+			}
+		}
+		/**
+		 * Sets the specified working set.
+		 * 
+		 * @param workingSet the working set 
+		 */
+		void setWorkingSet(IWorkingSet workingSet) {
+			label.setData(workingSet);
+			if (workingSet != null) {
+				label.setText(workingSet.getName());
+			}
+			else {
+				label.setText(TaskListMessages.getString("TaskList.noWorkingSet")); //$NON-NLS-1$
+			}
+		}
+		/**
+		 * Updates the enabled state of the label showing the 
+		 * working set name.
+		 */
+		void updateEnabledState() {
+			label.setEnabled(button.getSelection());
+		}
+	}
 
 	private TasksFilter filter;
 
@@ -175,6 +292,7 @@ import java.util.HashMap;
 	private Button anyResourceInSameProjectButton; // added by cagatayk@acm.org
 	private Button selectedResourceButton;
 	private Button selectedResourceAndChildrenButton;
+	private WorkingSetGroup workingSetGroup;
 	private LabelComboTextGroup descriptionGroup;
 	private CheckboxEnumGroup severityGroup;
 	private CheckboxEnumGroup priorityGroup;
@@ -204,6 +322,10 @@ public FiltersDialog(Shell parentShell) {
 protected void buttonPressed(int buttonId) {
 	if (RESET_ID == buttonId) {
 		resetPressed();
+	}
+	else
+	if (SELECT_ID == buttonId) {
+		workingSetGroup.selectPressed();
 	}
 	else {
 		super.buttonPressed(buttonId);
@@ -323,6 +445,7 @@ void createResourceArea(Composite parent) {
 	anyResourceInSameProjectButton = createRadioButton(group, TaskListMessages.getString("TaskList.anyResourceInSameProject")); //$NON-NLS-1$ // added by cagatayk@acm.org
 	selectedResourceButton = createRadioButton(group, TaskListMessages.getString("TaskList.selectedResource")); //$NON-NLS-1$
 	selectedResourceAndChildrenButton = createRadioButton(group, TaskListMessages.getString("TaskList.selectedAndChildren")); //$NON-NLS-1$
+	workingSetGroup = new WorkingSetGroup(group);
 }
 /**
  * Creates the area showing which marker types should be included.
@@ -570,6 +693,7 @@ void setSelectedTypes(String[] typeIds) {
 void updateEnabledState() {
 	boolean isProblemSelected = selectionIncludesSubtypeOf(IMarker.PROBLEM);
 	boolean isTaskSelected = selectionIncludesSubtypeOf(IMarker.TASK);
+	workingSetGroup.updateEnabledState();
 	severityGroup.setEnabled(isProblemSelected);
 	priorityGroup.setEnabled(isTaskSelected);
 	completionGroup.setEnabled(isTaskSelected);
@@ -589,9 +713,12 @@ void updateFilterFromUI(TasksFilter filter) {
 		filter.onResource = TasksFilter.ON_SELECTED_RESOURCE_AND_CHILDREN;
 	else if (anyResourceInSameProjectButton.getSelection()) // added by cagatayk@acm.org
 		filter.onResource = TasksFilter.ON_ANY_RESOURCE_OF_SAME_PROJECT;
+	else if (workingSetGroup.getSelection())
+		filter.onResource = TasksFilter.ON_WORKING_SET;
 	else
 		filter.onResource = TasksFilter.ON_ANY_RESOURCE;
 
+	filter.workingSet = workingSetGroup.getWorkingSet();
 	filter.descriptionFilterKind = descriptionGroup.combo.getSelectionIndex();
 	filter.descriptionFilter = descriptionGroup.text.getText();
 	filter.filterOnDescription = !filter.descriptionFilter.equals("");//$NON-NLS-1$
@@ -619,7 +746,9 @@ void updateUIFromFilter(TasksFilter filter) {
 	anyResourceInSameProjectButton.setSelection(on == TasksFilter.ON_ANY_RESOURCE_OF_SAME_PROJECT); // added by cagatayk@acm.org
 	selectedResourceButton.setSelection(on == TasksFilter.ON_SELECTED_RESOURCE_ONLY);
 	selectedResourceAndChildrenButton.setSelection(on == TasksFilter.ON_SELECTED_RESOURCE_AND_CHILDREN);
-
+	workingSetGroup.setSelection(on == TasksFilter.ON_WORKING_SET);
+	workingSetGroup.setWorkingSet(filter.workingSet);
+			
 	descriptionGroup.combo.select(filter.descriptionFilterKind);
 	descriptionGroup.text.setText(filter.descriptionFilter);
 	

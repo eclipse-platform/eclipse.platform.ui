@@ -1007,6 +1007,7 @@ boolean showChildrenHierarchy() {
 		case TasksFilter.ON_ANY_RESOURCE:
 		case TasksFilter.ON_SELECTED_RESOURCE_AND_CHILDREN:
 		case TasksFilter.ON_ANY_RESOURCE_OF_SAME_PROJECT: // added by cagatayk@acm.org
+		case TasksFilter.ON_WORKING_SET:
 		default:
 			return true;
 		case TasksFilter.ON_SELECTED_RESOURCE_ONLY:
@@ -1020,6 +1021,7 @@ boolean showSelections() {
 		case TasksFilter.ON_ANY_RESOURCE_OF_SAME_PROJECT: // added by cagatayk@acm.org
 			return true;
 		case TasksFilter.ON_ANY_RESOURCE:
+		case TasksFilter.ON_WORKING_SET:
 		default:
 			return false;
 	}

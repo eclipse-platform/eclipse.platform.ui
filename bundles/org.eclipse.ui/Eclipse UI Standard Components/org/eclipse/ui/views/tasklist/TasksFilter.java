@@ -14,13 +14,13 @@ Contributors:
 import java.util.Arrays;
 import java.util.HashSet;
 
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IMarkerDelta;
-
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
-
-import org.eclipse.ui.IMemento;
+import org.eclipse.ui.*;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /* package */ class TasksFilter extends ViewerFilter implements Cloneable {
 
@@ -31,6 +31,7 @@ import org.eclipse.ui.IMemento;
 	static final int ON_SELECTED_RESOURCE_ONLY = 1;
 	static final int ON_SELECTED_RESOURCE_AND_CHILDREN = 2;
 	static final int ON_ANY_RESOURCE_OF_SAME_PROJECT = 3; // added by cagatayk@acm.org
+	static final int ON_WORKING_SET = 4;
 
 	// Description filter kind constants
 	static final int FILTER_CONTAINS = 0;
@@ -38,6 +39,7 @@ import org.eclipse.ui.IMemento;
 	
 	String[] types;
 	int onResource;
+	IWorkingSet workingSet;
 	boolean filterOnDescription;
 	int descriptionFilterKind;
 	String descriptionFilter;
@@ -51,6 +53,7 @@ import org.eclipse.ui.IMemento;
 	private static final String TAG_ID = "id"; //$NON-NLS-1$
 	private static final String TAG_TYPE = "type";  //$NON-NLS-1$
 	private static final String TAG_ON_RESOURCE = "onResource"; //$NON-NLS-1$
+	private static final String TAG_WORKING_SET = "workingSet"; //$NON-NLS-1$	
 	private static final String TAG_FILTER_ON_DESCRIPTION = "filterOnDescription"; //$NON-NLS-1$
 	private static final String TAG_DESCRIPTION_FILTER_KIND = "descriptionFilterKind"; //$NON-NLS-1$
 	private static final String TAG_DESCRIPTION_FILTER = "descriptionFilter"; //$NON-NLS-1$
@@ -87,6 +90,44 @@ boolean containsSubstring(String string, String substring) {
 	}
 	return false;
 }
+/**
+ * Returns whether the element is a parent or a child
+ * of a working set element.
+ * 
+ * @param element the resource to check
+ * @return 
+ * 	true=the element is a parent or a child of a working 
+ * 	set element.
+ * 	false=the element is neither a parent nor a child of a 
+ * 	working set element.
+ */
+private boolean isEnclosed(IResource element) {
+	IPath elementPath = element.getFullPath();
+	IAdaptable[] workingSets = workingSet.getElements();
+	
+	if (elementPath.isEmpty() || elementPath.isRoot()) {
+		return false;
+	}
+	for (int i = 0; i < workingSets.length; i++) {
+		IAdaptable adaptable = workingSets[i];
+		IResource resource;
+		
+		if (adaptable instanceof IResource) {
+			resource = (IResource) adaptable;
+		}
+		else {
+			resource = (IResource) adaptable.getAdapter(IResource.class);
+		}
+		if (resource != null) {
+			IPath resourcePath = resource.getFullPath();
+			if (resourcePath.isPrefixOf(elementPath))
+				return true;
+			if (elementPath.isPrefixOf(resourcePath))
+				return true;
+		}
+	}
+	return false;
+}
 public void reset() {
 	types = ROOT_TYPES;
 	onResource = ON_ANY_RESOURCE;
@@ -110,6 +151,7 @@ public void restoreState(IMemento memento) {
 	}
 	Integer ival = memento.getInteger(TAG_ON_RESOURCE);
 	onResource = ival == null ? ON_ANY_RESOURCE : ival.intValue();
+	restoreWorkingSet(memento.getString(TAG_WORKING_SET));
 	ival = memento.getInteger(TAG_FILTER_ON_DESCRIPTION);
 	filterOnDescription = ival != null && ival.intValue() == 1;
 	ival = memento.getInteger(TAG_DESCRIPTION_FILTER_KIND);
@@ -131,6 +173,21 @@ public void restoreState(IMemento memento) {
 	completionFilter = ival == null ? 0 : ival.intValue();
 }
 /**
+ * Restores the saved working set, if any.
+ * 
+ * @param the saved working set name or null
+ */
+private void restoreWorkingSet(String workingSetName) {
+	if (workingSetName != null) {
+		IWorkingSetManager workingSetManager = WorkbenchPlugin.getDefault().getWorkingSetManager();
+		IWorkingSet workingSet = workingSetManager.getWorkingSet(workingSetName);
+		
+		if (workingSet != null) {
+			this.workingSet = workingSet;
+		}
+	}
+}
+/**
  * Saves the object state within a memento.
  *
  * @param memento a memento to receive the object state
@@ -140,6 +197,9 @@ public void saveState(IMemento memento) {
 		memento.createChild(TAG_TYPE).putString(TAG_ID,types[i]);
 	}
 	memento.putInteger(TAG_ON_RESOURCE,onResource);
+	if (workingSet != null) {
+		memento.putString(TAG_WORKING_SET,workingSet.getName());
+	}
 	memento.putInteger(TAG_FILTER_ON_DESCRIPTION,filterOnDescription?1:0);
 	memento.putInteger(TAG_DESCRIPTION_FILTER_KIND,descriptionFilterKind);
 	memento.putString(TAG_DESCRIPTION_FILTER,descriptionFilter);
@@ -157,12 +217,12 @@ public boolean select(Viewer viewer, Object parentElement, Object element) {
 
 public boolean select(IMarker marker) {
 	// resource settings are handled by the content provider
-	return selectByType(marker) && selectByAttributes(marker);
+	return selectByType(marker) && selectByAttributes(marker) && selectByWorkingSet(marker);
 }
 
 public boolean select(IMarkerDelta markerDelta) {
 	// resource settings are handled by the content provider
-	return selectByType(markerDelta) && selectByAttributes(markerDelta);
+	return selectByType(markerDelta) && selectByAttributes(markerDelta) && selectByWorkingSet(markerDelta);
 }
 	
 private boolean selectByType(IMarker marker) {
@@ -181,6 +241,43 @@ private boolean selectByType(IMarkerDelta markerDelta) {
 	return false;
 }
 
+/**
+ * Returns whether the specified marker should be filter out or not.
+ * 
+ * @param marker the marker to test
+ * @return 
+ * 	true=the marker should not be filtered out
+ * 	false=the marker should be filtered out
+ */
+private boolean selectByWorkingSet(IMarker marker) {
+	if (workingSet == null || onResource != ON_WORKING_SET) {
+		return true;
+	}			
+	IResource resource = (IResource) marker.getResource();
+	if (resource != null) {
+		return isEnclosed(resource);
+	}
+	return false;
+}
+/**
+ * Returns whether the specified marker delta should be filter out 
+ * or not.
+ * 
+ * @param markerDelta the marker delta to test
+ * @return 
+ * 	true=the marker delta should not be filtered out
+ * 	false=the marker delta should be filtered out
+ */
+private boolean selectByWorkingSet(IMarkerDelta markerDelta) {
+	if (workingSet == null || onResource != ON_WORKING_SET) {
+		return true;
+	}			
+	IResource resource = (IResource) markerDelta.getResource();
+	if (resource != null) {
+		return isEnclosed(resource);
+	}
+	return false;
+}
 /* 
  * WARNING: selectByAttributes(IMarker) and selectByAttributes(IMarkerDelta) must correspond.
  */
