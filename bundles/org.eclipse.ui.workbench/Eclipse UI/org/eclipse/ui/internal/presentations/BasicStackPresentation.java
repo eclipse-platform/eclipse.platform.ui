@@ -72,10 +72,6 @@ public class BasicStackPresentation extends StackPresentation {
 	private Color backgroundGradientEnd;
 	private Color background;
 	
-	// Controls which will be inserted into the title bar if there is room, or above the client pane
-	// if not
-	private List topControls = new ArrayList();
-	
 	/**
 	 * State of the presentation at the last mousedown event. This is used to prevent
 	 * a mouseup over the minimize or maximize buttons from undoing a state change 
