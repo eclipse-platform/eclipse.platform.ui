@@ -147,6 +147,9 @@ public class VariablesViewContentProvider implements ITreeContentProvider {
 	
 	/**
 	 * Returns the partition size to use for the given indexed value.
+	 * The partition size is computed by determining the number of levels
+	 * that an indexed collection must be nested in order to partition
+	 * the collection sub-collections of the preferred partition size.
 	 * 
 	 * @param value indexed value
 	 * @return size of paritions the value should be subdivided into
