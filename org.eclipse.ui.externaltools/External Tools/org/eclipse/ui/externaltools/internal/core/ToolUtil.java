@@ -27,6 +27,14 @@ public final class ToolUtil {
 	/*package*/ static final String VAR_TAG_START = "${"; //$NON-NLS-1$
 	/*package*/ static final String VAR_TAG_END = "}"; //$NON-NLS-1$
 	/*package*/ static final String VAR_TAG_SEP = ":"; //$NON-NLS-1$
+
+	/**
+	 * Build types (what type of build is occuring when a tool is run)
+	 */
+	public static final String BUILD_TYPE_INCREMENTAL = "incremental"; //$NON-NLS-1$
+	public static final String BUILD_TYPE_FULL = "full"; //$NON-NLS-1$
+	public static final String BUILD_TYPE_AUTO = "auto"; //$NON-NLS-1$
+	public static final String BUILD_TYPE_NONE = "none"; //$NON-NLS-1$
 	
 	private static final ToolUtil instance = new ToolUtil();
 	

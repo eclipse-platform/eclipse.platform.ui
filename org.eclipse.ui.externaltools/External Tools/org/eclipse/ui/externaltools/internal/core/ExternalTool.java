@@ -61,6 +61,7 @@ public class ExternalTool {
 	public static final String VAR_EDITOR_SEL_TEXT = "editor_sel_text"; //$NON-NLS-1$
 
 	public static final String VAR_ANT_TARGET = "ant_target"; //$NON-NLS-1$
+	public static final String VAR_BUILD_TYPE = "build_type"; //$NON-NLS-1$
 
 	// Known refresh scopes
 	public static final String REFRESH_SCOPE_NONE = "none"; //$NON-NLS-1$;

@@ -44,6 +44,7 @@ public final class ExternalToolsBuilder extends IncrementalProjectBuilder {
 		ExternalTool tool = ExternalTool.fromArgumentMap(args);
 		if (tool != null) {
 			DefaultRunnerContext context = new DefaultRunnerContext(tool, getProject(), PlatformUI.getWorkbench().getWorkingSetManager());
+			context.setBuildType(kind);
 			try {
 				context.run(monitor);
 			} catch (InterruptedException e) {

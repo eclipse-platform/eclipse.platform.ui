@@ -45,7 +45,7 @@ public class EditDialog extends TitleAreaDialog {
 	private static final int MARGIN_SPACE = 5;
 	
 	// dialog sizing constants
-	private static final int SIZING_SELECTION_PANE_HEIGHT = 250;
+	private static final int SIZING_SELECTION_PANE_HEIGHT = 300;
 	private static final int SIZING_SELECTION_PANE_WIDTH = 300;	
 	
 	private static final boolean INITIAL_SHOW_LOG = true;
@@ -661,6 +661,7 @@ public class EditDialog extends TitleAreaDialog {
 			list.add(ToolMessages.getString("EditDialog.varProjectXNameLabel")); //$NON-NLS-1$
 			list.add(ToolMessages.getString("EditDialog.varContainerXNameLabel")); //$NON-NLS-1$
 			list.add(ToolMessages.getString("EditDialog.varResourceXNameLabel")); //$NON-NLS-1$	
+			list.add(ToolMessages.getString("EditDialog.varBuildTypeNameLabel")); //$NON-NLS-1$	
 
 			location = ToolUtil.getLocationFromText(locationField.getText().trim());
 			if (location != null && location.endsWith(".xml")) { //$NON-NLS-1$
@@ -755,6 +756,10 @@ public class EditDialog extends TitleAreaDialog {
 					break;
 					
 				case 19 :
+					result = ToolUtil.buildVariableTag(ExternalTool.VAR_BUILD_TYPE, null);
+					break;
+					
+				case 20 :
 					AntTargetList targetList = null;
 					try {
 						targetList = AntUtil.getTargetList(new Path(location));

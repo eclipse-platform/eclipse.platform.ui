@@ -30,6 +30,7 @@ public final class DefaultRunnerContext implements IRunnerContext {
 	private String expandedLocation;
 	private String expandedArguments;
 	private String expandedDirectory;
+	private String buildType = ToolUtil.BUILD_TYPE_NONE;
 	
 	/**
 	 * Create a new context
@@ -152,6 +153,10 @@ public final class DefaultRunnerContext implements IRunnerContext {
 	 * Expands the variable
 	 */
 	private void expandVariable(ToolUtil.VariableDefinition varDef, StringBuffer buf, boolean addQuotes) {
+		if (tool.VAR_BUILD_TYPE.equals(varDef.name)) {
+			appendVariable(buildType, buf, addQuotes);	
+		}
+
 		if (tool.VAR_ANT_TARGET.equals(varDef.name)) {
 			if (varDef.argument != null && varDef.argument.length() > 0)
 				antTargets.add(varDef.argument);
@@ -468,5 +473,22 @@ public final class DefaultRunnerContext implements IRunnerContext {
 		}
 		
 		return null;
+	}
+	
+	/**
+	 * Set the build type for this runner context. The build type is the type 
+	 * of build (one of ToolUtil.BUILD_TYPE_INCREMENTAL, ToolUtil.BUILD_TYPE_AUTO,
+	 * or ToolUtil.BUILD_TYPE_FULL) if the tool being run is running as a project
+	 * builder, or ToolUtil.BUILD_TYPE_NONE otherwise.
+	 */
+	/*package*/ void setBuildType(int kind) {
+		if (kind == IncrementalProjectBuilder.INCREMENTAL_BUILD)
+			buildType = ToolUtil.BUILD_TYPE_INCREMENTAL;
+		else if (kind == IncrementalProjectBuilder.FULL_BUILD)
+			buildType = ToolUtil.BUILD_TYPE_FULL;
+		else if (kind == IncrementalProjectBuilder.AUTO_BUILD)
+			buildType = ToolUtil.BUILD_TYPE_AUTO;
+		else 
+			buildType = ToolUtil.BUILD_TYPE_NONE;
 	}
 }
