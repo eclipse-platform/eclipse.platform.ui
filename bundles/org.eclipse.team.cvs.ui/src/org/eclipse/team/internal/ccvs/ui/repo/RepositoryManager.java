@@ -909,7 +909,10 @@ public class RepositoryManager {
 						CVSProviderPlugin.getPlugin().disposeRepository(oldLocation);
 						
 						newLocation.updateCache();
-						root.setRepositoryLocation(newLocation);
+						// Get the new location from the CVS plugin to ensure we use the
+						// instance that will be returned by future calls to getRepository()
+						root.setRepositoryLocation(
+							CVSProviderPlugin.getPlugin().getRepository(newLocation.getLocation()));
 						add(root);
 					} catch (CVSException e) {
 						throw new InvocationTargetException(e);
