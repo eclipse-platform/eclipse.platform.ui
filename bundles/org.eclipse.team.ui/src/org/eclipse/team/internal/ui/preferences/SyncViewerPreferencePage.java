@@ -13,7 +13,9 @@ package org.eclipse.team.internal.ui.preferences;
 import java.text.Collator;
 import java.text.DateFormat;
 import java.util.*;
+
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.*;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
@@ -73,9 +75,9 @@ public class SyncViewerPreferencePage extends FieldEditorPreferencePage implemen
 
 		synchronizePerspectiveSwitch= new RadioGroupFieldEditor(SYNCHRONIZING_COMPLETE_PERSPECTIVE, Policy.bind("SyncViewerPreferencePage.13"), 3,  //$NON-NLS-1$
 				new String[][] {
-								{Policy.bind("SyncViewerPreferencePage.14"), SYNCHRONIZING_COMPLETE_PERSPECTIVE_ALWAYS}, //$NON-NLS-1$
-								{Policy.bind("SyncViewerPreferencePage.42"), SYNCHRONIZING_COMPLETE_PERSPECTIVE_NEVER}, //$NON-NLS-1$
-								{Policy.bind("SyncViewerPreferencePage.16"), SYNCHRONIZING_COMPLETE_PERSPECTIVE_PROMPT} //$NON-NLS-1$
+								{Policy.bind("SyncViewerPreferencePage.14"), MessageDialogWithToggle.ALWAYS}, //$NON-NLS-1$
+								{Policy.bind("SyncViewerPreferencePage.42"), MessageDialogWithToggle.NEVER}, //$NON-NLS-1$
+								{Policy.bind("SyncViewerPreferencePage.16"), MessageDialogWithToggle.PROMPT} //$NON-NLS-1$
 							},
 							getFieldEditorParent(), true);
 		addField(synchronizePerspectiveSwitch);

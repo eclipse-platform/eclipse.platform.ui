@@ -17,6 +17,7 @@ import java.net.URL;
 import java.util.*;
 import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -131,7 +132,7 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 		store.setDefault(IPreferenceIds.SYNCVIEW_DEFAULT_PERSPECTIVE, TeamSynchronizingPerspective.ID);
 		store.setDefault(IPreferenceIds.SYNCHRONIZING_DEFAULT_PARTICIPANT, GlobalRefreshAction.NO_DEFAULT_PARTICPANT);
 		store.setDefault(IPreferenceIds.SYNCHRONIZING_DEFAULT_PARTICIPANT_SEC_ID, GlobalRefreshAction.NO_DEFAULT_PARTICPANT);	
-		store.setDefault(IPreferenceIds.SYNCHRONIZING_COMPLETE_PERSPECTIVE, IPreferenceIds.SYNCHRONIZING_COMPLETE_PERSPECTIVE_PROMPT);
+		store.setDefault(IPreferenceIds.SYNCHRONIZING_COMPLETE_PERSPECTIVE, MessageDialogWithToggle.PROMPT);
 		store.setDefault(IPreferenceIds.SYNCVIEW_REMOVE_FROM_VIEW_NO_PROMPT, false);	
 	}
 	
@@ -278,13 +279,6 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 		createImageDescriptor(plugin, ISharedImages.IMG_ERROR_OVR, baseURL);
 		createImageDescriptor(plugin, ISharedImages.IMG_WARNING_OVR, baseURL);
 		createImageDescriptor(plugin, ISharedImages.IMG_HOURGLASS_OVR, baseURL);
-			
-		createImageDescriptor(plugin, ISharedImages.IMG_SYNC_VIEW, baseURL);
-		createImageDescriptor(plugin, ISharedImages.IMG_COMPARE_VIEW, baseURL);
-		
-		// Collapse all
-		createImageDescriptor(plugin, ISharedImages.IMG_COLLAPSE_ALL, baseURL);
-		createImageDescriptor(plugin, ISharedImages.IMG_COLLAPSE_ALL_ENABLED, baseURL);
 		
 		// Target Management Icons
 		createImageDescriptor(plugin, ISharedImages.IMG_SITE_ELEMENT, baseURL);
@@ -297,6 +291,8 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 		createImageDescriptor(plugin, ISharedImages.IMG_CHANGE_FILTER, baseURL);
 		createImageDescriptor(plugin, ISharedImages.IMG_IGNORE_WHITESPACE, baseURL);
 		createImageDescriptor(plugin, ISharedImages.IMG_CONTENTS, baseURL);
+		createImageDescriptor(plugin, ISharedImages.IMG_COLLAPSE_ALL, baseURL);
+		createImageDescriptor(plugin, ISharedImages.IMG_COLLAPSE_ALL_ENABLED, baseURL);
 
 		createImageDescriptor(plugin, ISharedImages.IMG_DLG_SYNC_INCOMING_DISABLED, baseURL);
 		createImageDescriptor(plugin, ISharedImages.IMG_DLG_SYNC_OUTGOING_DISABLED, baseURL);
@@ -324,15 +320,14 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 		createImageDescriptor(plugin, ISharedImages.IMG_SYNC_MODE_RELEASE_ENABLED, baseURL);
 		createImageDescriptor(plugin, ISharedImages.IMG_SYNC_MODE_FREE_ENABLED, baseURL);
 
-		createImageDescriptor(plugin, ISharedImages.IMG_WIZBAN_SHARE, baseURL);
-		
 		// Wizard banners
 		createImageDescriptor(plugin, ISharedImages.IMG_PROJECTSET_IMPORT_BANNER, baseURL);
 		createImageDescriptor(plugin, ISharedImages.IMG_PROJECTSET_EXPORT_BANNER, baseURL);	
+		createImageDescriptor(plugin, ISharedImages.IMG_WIZBAN_SHARE, baseURL);
 		
 		// Live Sync View icons
 		createImageDescriptor(plugin, ISharedImages.IMG_COMPRESSED_FOLDER, baseURL);
-		createImageDescriptor(plugin, ISharedImages.IMG_WARNING, baseURL);
+		createImageDescriptor(plugin, ISharedImages.IMG_SYNC_VIEW, baseURL);
 		createImageDescriptor(plugin, ISharedImages.IMG_HIERARCHICAL, baseURL);		
 	}
 

@@ -31,9 +31,6 @@ public interface IPreferenceIds {
 	public static final String SYNCVIEW_DEFAULT_PERSPECTIVE = PREFIX + "syncview_default_perspective"; //$NON-NLS-1$
 	public static final String SYNCVIEW_DEFAULT_PERSPECTIVE_NONE = PREFIX + "sync_view_perspective_none"; //$NON-NLS-1$
 	public static final String SYNCHRONIZING_COMPLETE_PERSPECTIVE = PREFIX + "sychronizing_default_perspective_to_show"; //$NON-NLS-1$
-	public static final String SYNCHRONIZING_COMPLETE_PERSPECTIVE_PROMPT = PREFIX + "sychronizing_default_perspective_to_show_prompt"; //$NON-NLS-1$
-	public static final String SYNCHRONIZING_COMPLETE_PERSPECTIVE_ALWAYS = PREFIX + "sychronizing_default_perspective_to_show_always"; //$NON-NLS-1$
-	public static final String SYNCHRONIZING_COMPLETE_PERSPECTIVE_NEVER = PREFIX + "sychronizing_default_perspective_to_show_never"; //$NON-NLS-1$
 	
 	/*
 	 * Preference to save the last participant selected via the global synchronize action.

@@ -15,7 +15,8 @@ import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.TeamException;
@@ -464,16 +465,17 @@ public class SynchronizeManager implements ISynchronizeManager {
 	 */
 	private boolean promptForPerspectiveSwitch() {
 		// Decide if a prompt is even required
-		String option = TeamUIPlugin.getPlugin().getPreferenceStore().getString(IPreferenceIds.SYNCHRONIZING_COMPLETE_PERSPECTIVE);	
-		if(option.equals(IPreferenceIds.SYNCHRONIZING_COMPLETE_PERSPECTIVE_ALWAYS)) {
+		IPreferenceStore store = TeamUIPlugin.getPlugin().getPreferenceStore();
+		String option = store.getString(IPreferenceIds.SYNCHRONIZING_COMPLETE_PERSPECTIVE);	
+		if(option.equals(MessageDialogWithToggle.ALWAYS)) {
 			return true;
-		} else if(option.equals(IPreferenceIds.SYNCHRONIZING_COMPLETE_PERSPECTIVE_NEVER)) {
+		} else if(option.equals(MessageDialogWithToggle.NEVER)) {
 			return false;
 		}
 		
 		// Otherwise determine if a prompt is required
 		IPerspectiveRegistry registry= PlatformUI.getWorkbench().getPerspectiveRegistry();
-		String defaultSyncPerspectiveId = TeamUIPlugin.getPlugin().getPreferenceStore().getString(IPreferenceIds.SYNCVIEW_DEFAULT_PERSPECTIVE);
+		String defaultSyncPerspectiveId = store.getString(IPreferenceIds.SYNCVIEW_DEFAULT_PERSPECTIVE);
 		IPerspectiveDescriptor perspectiveDescriptor = registry.findPerspectiveWithId(defaultSyncPerspectiveId);
 		IWorkbenchPage page = TeamUIPlugin.getActivePage();
 		if(page != null) {
@@ -487,29 +489,22 @@ public class SynchronizeManager implements ISynchronizeManager {
 		if(perspectiveDescriptor != null) {
 			String perspectiveName = perspectiveDescriptor.getLabel();
 			
-			MessageDialog m = new MessageDialog(Display.getDefault().getActiveShell(),
+			MessageDialogWithToggle m = MessageDialogWithToggle.openYesNoQuestion(Display.getDefault().getActiveShell(),
 						Policy.bind("SynchronizeManager.27"),  //$NON-NLS-1$
-						null,	// accept the default window icon
 						Policy.bind("SynchronizeManager.30", perspectiveDescriptor.getLabel()), //$NON-NLS-1$
-						MessageDialog.QUESTION, 
-						new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, Policy.bind("SynchronizeManager.29"), Policy.bind("SynchronizeManager.28")}, //$NON-NLS-1$ //$NON-NLS-2$
-						0); 	// yes is the default
+						Policy.bind("SynchronizeManager.31"),  //$NON-NLS-1$
+						false /* toggle state */,
+						store,
+						IPreferenceIds.SYNCHRONIZING_COMPLETE_PERSPECTIVE);
 		
-			int result = m.open();
+			int result = m.getReturnCode();
 			switch (result) {
-				// yes
-				case 0 :
+				// yes, ok
+				case IDialogConstants.YES_ID:
+				case IDialogConstants.OK_ID :
 					return true;
 				// no
-				case 1 :
-					return false;
-				// always
-				case 2 :
-					TeamUIPlugin.getPlugin().getPreferenceStore().setValue(IPreferenceIds.SYNCHRONIZING_COMPLETE_PERSPECTIVE, IPreferenceIds.SYNCHRONIZING_COMPLETE_PERSPECTIVE_ALWAYS);
-					return true;
-				// never
-				case 3 :
-					TeamUIPlugin.getPlugin().getPreferenceStore().setValue(IPreferenceIds.SYNCHRONIZING_COMPLETE_PERSPECTIVE, IPreferenceIds.SYNCHRONIZING_COMPLETE_PERSPECTIVE_NEVER);
+				case IDialogConstants.NO_ID :
 					return false;
 			}
 		}
