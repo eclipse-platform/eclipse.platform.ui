@@ -24,7 +24,7 @@
 			String name = pref.getAttribute("name");
 			if (name.equals("linksView"))
 			{
-				linksView = Boolean.getBoolean(pref.getAttribute("value"));
+				linksView = "true".equals(pref.getAttribute("value"));
 				break;
 			}
 		}
