@@ -62,7 +62,8 @@ public class WorkbenchWindow extends ApplicationWindow
 	private boolean closing = false;
 	private boolean shellActivated = false;
 	private String workspaceLocation;
-	private Menu shortcutBarMenu;
+	private Menu fastViewBarMenu;
+	private Menu perspectiveBarMenu;
 	// temporary, work in progress for CoolBars
 	private CoolBarManager coolBarManager;
 	
@@ -1150,11 +1151,53 @@ private void showShortcutBarPopup(MouseEvent e) {
 
 	// Get the action for the tool item.
 	Object data = toolItem.getData();
+	
+	// If the tool item is an icon for a fast view
+	if (data instanceof ShowFastViewContribution) {
+		// The fast view bar menu is created lazily here.
+		if (fastViewBarMenu == null) {
+			Menu menu = new Menu(toolBar);
+			MenuItem menuItem = new MenuItem(menu, SWT.NONE);
+			menuItem.setText(WorkbenchMessages.getString("WorkbenchWindow.close")); //$NON-NLS-1$
+			menuItem.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					ToolItem toolItem = (ToolItem) fastViewBarMenu.getData();
+					if (toolItem != null && !toolItem.isDisposed()) {
+						IViewPart view = (IViewPart)toolItem.getData(ShowFastViewContribution.FAST_VIEW);
+						getActiveWorkbenchPage().hideView(view);
+					}
+				}
+			});
+			menuItem = new MenuItem(menu, SWT.NONE);
+			menuItem.setText(WorkbenchMessages.getString("WorkbenchWindow.restore")); //$NON-NLS-1$
+			menuItem.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					ToolItem toolItem = (ToolItem) fastViewBarMenu.getData();
+					if (toolItem != null && !toolItem.isDisposed()) {
+						IViewPart view = (IViewPart)toolItem.getData(ShowFastViewContribution.FAST_VIEW);
+						getActiveWorkbenchPage().removeFastView(view);
+					}
+				}
+			});
+			fastViewBarMenu = menu;
+		}
+		fastViewBarMenu.setData(toolItem);
+	
+		// Show popup menu.
+		if (fastViewBarMenu != null) {
+			pt = toolBar.toDisplay(pt);
+			fastViewBarMenu.setLocation(pt.x, pt.y);
+			fastViewBarMenu.setVisible(true);
+		}			
+	}
+	
 	if (!(data instanceof ActionContributionItem))
 		return;
 	IAction action = ((ActionContributionItem) data).getAction();
+	
+	// The tool item is an icon for a perspective.
 	if (action instanceof SetPagePerspectiveAction) {
-		// The shortcut bar menu is created lazily here.
+		// The perspective bar menu is created lazily here.
 		// Its data is set (each time) to the tool item, which refers to the SetPagePerspectiveAction
 		// which in turn refers to the page and perspective.
 		// It is important not to refer to the action, the page or the perspective directly
@@ -1162,13 +1205,13 @@ private void showShortcutBarPopup(MouseEvent e) {
 		// By hanging onto the tool item instead, these references are cleared when the
 		// corresponding page or perspective is closed.
 		// See bug 11282 for more details on why it is done this way.
-		if (shortcutBarMenu == null) {
+		if (perspectiveBarMenu == null) {
 			Menu menu = new Menu(toolBar);
 			MenuItem menuItem = new MenuItem(menu, SWT.NONE);
 			menuItem.setText(WorkbenchMessages.getString("WorkbenchWindow.close")); //$NON-NLS-1$
 			menuItem.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
-					ToolItem toolItem = (ToolItem) shortcutBarMenu.getData();
+					ToolItem toolItem = (ToolItem) perspectiveBarMenu.getData();
 					if (toolItem != null && !toolItem.isDisposed()) {
 						ActionContributionItem item = (ActionContributionItem) toolItem.getData();
 						SetPagePerspectiveAction action = (SetPagePerspectiveAction) item.getAction();
@@ -1180,7 +1223,7 @@ private void showShortcutBarPopup(MouseEvent e) {
 			menuItem.setText(WorkbenchMessages.getString("WorkbenchWindow.closeAll")); //$NON-NLS-1$
 			menuItem.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
-					ToolItem toolItem = (ToolItem) shortcutBarMenu.getData();
+					ToolItem toolItem = (ToolItem) perspectiveBarMenu.getData();
 					if (toolItem != null && !toolItem.isDisposed()) {
 						ActionContributionItem item = (ActionContributionItem) toolItem.getData();
 						SetPagePerspectiveAction action = (SetPagePerspectiveAction) item.getAction();
@@ -1188,17 +1231,16 @@ private void showShortcutBarPopup(MouseEvent e) {
 					}
 				}
 			});
-			shortcutBarMenu = menu;
+			perspectiveBarMenu = menu;
 		}
-		shortcutBarMenu.setData(toolItem);
-	}
+		perspectiveBarMenu.setData(toolItem);
 	
-	
-	// Show popup menu.
-	if (shortcutBarMenu != null) {
-		pt = toolBar.toDisplay(pt);
-		shortcutBarMenu.setLocation(pt.x, pt.y);
-		shortcutBarMenu.setVisible(true);
+		// Show popup menu.
+		if (perspectiveBarMenu != null) {
+			pt = toolBar.toDisplay(pt);
+			perspectiveBarMenu.setLocation(pt.x, pt.y);
+			perspectiveBarMenu.setVisible(true);
+		}
 	}
 }
 /**
