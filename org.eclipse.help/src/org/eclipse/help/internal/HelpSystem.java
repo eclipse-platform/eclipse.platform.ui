@@ -83,7 +83,11 @@ public final class HelpSystem {
 	 */
 	public static TocManager getTocManager() {
 		if (getInstance().tocManager == null) {
-			getInstance().tocManager = new TocManager();
+			synchronized (TocManager.class){
+				if (getInstance().tocManager == null) {
+					getInstance().tocManager = new TocManager();
+				}
+			}
 		}
 		return getInstance().tocManager;
 	}
