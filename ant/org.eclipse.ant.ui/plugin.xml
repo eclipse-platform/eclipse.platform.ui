@@ -34,5 +34,19 @@
 		</action>
 	</objectContribution>			
   </extension>
-
+  
+  <extension point="org.eclipse.ui.views">
+	<category 
+		id="org.eclipse.ant.ui"
+		name="&amp;Ant">
+	</category>
+	<view
+		id="org.eclipse.ant.ui.antconsole"
+		name="Ant Console"
+		icon="icons/basic/view16/sections.gif"
+		category="org.eclipse.ant.ui"
+		class="org.eclipse.ant.internal.ui.AntConsole">
+	</view>
+  </extension>
+  
 </plugin>
