@@ -120,7 +120,7 @@ public class DecoratorManager
 			DecoratorDefinition[] adaptedDecorators = getDecoratorsFor(adapted);
 			for (int i = 0; i < adaptedDecorators.length; i++) {
 				if(adaptedDecorators[i].isAdaptable()){
-					String newResult = adaptedDecorators[i].decorateText(result, element);
+					String newResult = adaptedDecorators[i].decorateText(result, adapted);
 					if (newResult != null)
 						result = newResult;
 				}
@@ -154,7 +154,7 @@ public class DecoratorManager
 			DecoratorDefinition[] adaptedDecorators = getDecoratorsFor(adapted);
 			for (int i = 0; i < adaptedDecorators.length; i++) {
 				if(adaptedDecorators[i].isAdaptable()){
-					Image newResult = adaptedDecorators[i].decorateImage(result, element);
+					Image newResult = adaptedDecorators[i].decorateImage(result, adapted);
 					if (newResult != null)
 						result = newResult;
 				}
