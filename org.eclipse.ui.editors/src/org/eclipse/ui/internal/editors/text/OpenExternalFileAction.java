@@ -11,6 +11,7 @@ Contributors:
 package org.eclipse.ui.internal.editors.text;
 
 import java.io.File;
+import java.text.MessageFormat;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspace;
@@ -23,6 +24,7 @@ import org.eclipse.swt.widgets.FileDialog;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.window.Window;
@@ -94,7 +96,7 @@ public class OpenExternalFileAction extends Action implements IWorkbenchWindowAc
 		FileDialog dialog= new FileDialog(fWindow.getShell(), SWT.OPEN);
 		dialog.setText(TextEditorMessages.getString("OpenExternalFileAction.dialog.text")); //$NON-NLS-1$
 		String path= dialog.open();
-		if (path != null)
+		if (path != null && path.length() > 0)
 			return new File(path);
 		return null;
 	}
@@ -113,6 +115,10 @@ public class OpenExternalFileAction extends Action implements IWorkbenchWindowAc
 			} catch (PartInitException e) {
 				e.printStackTrace();
 			}
+		} else if (file != null) {
+			String msgFmt = TextEditorMessages.getString("OpenExternalFileAction.FileNotFound"); //$NON-NLS-1$
+			String msg = MessageFormat.format(msgFmt, new String[] {file.getName()});
+			MessageDialog.openWarning(fWindow.getShell(), TextEditorMessages.getString("OpenExternalFileAction.dialog.text"), msg); //$NON-NLS-1$
 		}
 	}
 
@@ -146,8 +152,8 @@ public class OpenExternalFileAction extends Action implements IWorkbenchWindowAc
 	private IFile selectWorkspaceFile(IFile[] files) {
 		ElementListSelectionDialog dialog= new ElementListSelectionDialog(fWindow.getShell(), new FileLabelProvider());
 		dialog.setElements(files);
-		dialog.setTitle("Select Workspace File");
-		dialog.setMessage("The selected file is referenced by multiple linked resources in the workspace.\nPlease select the workspace resource you want to use to open the file.");
+		dialog.setTitle(TextEditorMessages.getString("OpenExternalFileAction.SelectWorkspaceFile")); //$NON-NLS-1$
+		dialog.setMessage(TextEditorMessages.getString("OpenExternalFileAction.FileLinkedtoMultiple")); //$NON-NLS-1$
 		if (dialog.open() == Window.OK)
 			return (IFile) dialog.getFirstResult();
 		return null;
