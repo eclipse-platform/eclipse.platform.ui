@@ -107,7 +107,7 @@ public class PlantyEditor extends TextEditor {
 
     public void initializeEditor() {
         // That is where the assistant and its processor is defined
-	setSourceViewerConfiguration(new PlantySourceViewerConfiguration(this));
+		setSourceViewerConfiguration(new PlantySourceViewerConfiguration(this));
     }
    
 	/* (non-Javadoc)
@@ -119,7 +119,7 @@ public class PlantyEditor extends TextEditor {
         return super.getAdapter(key);
     }
 
-	protected PlantyContentOutlinePage getOutlinePage() {
+	private PlantyContentOutlinePage getOutlinePage() {
 		if (page == null) {
 			page= new PlantyContentOutlinePage(XMLCore.getDefault(), this);
 			page.addPostSelectionChangedListener(selectionChangedListener);
@@ -128,7 +128,7 @@ public class PlantyEditor extends TextEditor {
 		return page;
 	}
 
-    protected void doSelectionChanged(SelectionChangedEvent aSelectionChangedEvent) {
+    private void doSelectionChanged(SelectionChangedEvent aSelectionChangedEvent) {
         IStructuredSelection selection= (IStructuredSelection)aSelectionChangedEvent.getSelection();
 
         if (!isActivePart() && ExternalToolsPlugin.getActivePage() != null) {
@@ -145,11 +145,10 @@ public class PlantyEditor extends TextEditor {
         }
     }
 
-	
     /**
      * Returns wether the editor is active.
      */
-    protected boolean isActivePart() {
+    private boolean isActivePart() {
         IWorkbenchWindow window= getSite().getWorkbenchWindow();
         IPartService service= window.getPartService();
         IWorkbenchPart part= service.getActivePart();
@@ -157,16 +156,9 @@ public class PlantyEditor extends TextEditor {
     }
     
     protected void setSelection(XmlElement reference, boolean moveCursor) {
-//        ISelection selection= getSelectionProvider().getSelection();
-//        if (selection instanceof TextSelection) {
-//            TextSelection textSelection= (TextSelection) selection;
-//            if (textSelection.getOffset() != 0 || textSelection.getLength() != 0)
-//                markInNavigationHistory();
-//        }
-        
         if (reference != null) {
-        	if (reference.isExternal() && !reference.isRootExternal()) {
-        		while (!reference.isRootExternal()) {
+        	if (reference.isExternal()) {
+        		while (!reference.isRootExternal() || (reference.getParentNode() != null && reference.getParentNode().isExternal())) {
 					//no possible selection for this external element
 					//find the root external entity actually in the document
         			reference= reference.getParentNode();
@@ -176,11 +168,13 @@ public class PlantyEditor extends TextEditor {
             StyledText  textWidget= null;
             
             ISourceViewer sourceViewer= getSourceViewer();
-            if (sourceViewer != null)
+            if (sourceViewer != null) {
                 textWidget= sourceViewer.getTextWidget();
+            }
             
-            if (textWidget == null)
+            if (textWidget == null) {
                 return;
+            }
                 
             try {
                 
@@ -193,7 +187,7 @@ public class PlantyEditor extends TextEditor {
                     
                 textWidget.setRedraw(false);
                 
-                if(length >0) {
+                if(length > 0) {
 	                setHighlightRange(offset, length, moveCursor);
                 }
                 
@@ -201,11 +195,15 @@ public class PlantyEditor extends TextEditor {
                     return;
                 }
 
-		XmlAttribute attrType= reference.getAttributeNamed(IAntEditorConstants.ATTR_TYPE);
-		if (!reference.isErrorNode() || (attrType != null && IAntEditorConstants.TYPE_PROJECT.equalsIgnoreCase(attrType.getValue()))) { //NOTE: type is checked because isErrorNode() is true for an error node *and* the root node, which - in this case - should be handled as an normal node  
+				XmlAttribute attrType= reference.getAttributeNamed(IAntEditorConstants.ATTR_TYPE);
+				if (!reference.isErrorNode() ||
+					 (attrType != null &&
+					  IAntEditorConstants.TYPE_PROJECT.equalsIgnoreCase(attrType.getValue()))) {
+					//NOTE: type is checked because isErrorNode() is true for an error node *and*
+					// the root node, which - in this case - should be handled as an normal node  
 	                offset= reference.getOffset()+1;
 	                length= reference.getName().length();
-		}
+				}
                                             
                 if (offset > -1 && length > 0) {
                     sourceViewer.revealRange(offset, length);
@@ -213,18 +211,17 @@ public class PlantyEditor extends TextEditor {
                     sourceViewer.setSelectedRange(offset, length); 
                 }
             } catch (IllegalArgumentException x) {
+            	ExternalToolsPlugin.getDefault().log(x);
             } finally {
-                if (textWidget != null)
+                if (textWidget != null) {
                     textWidget.setRedraw(true);
+                }
             }
             
         } else if (moveCursor) {
             resetHighlightRange();
         }
-        
-//        markInNavigationHistory();
     }
-
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#affectsTextPresentation(org.eclipse.jface.util.PropertyChangeEvent)

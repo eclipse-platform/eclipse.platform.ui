@@ -191,10 +191,11 @@ public class AntModel {
 			ExternalToolsPlugin.getDefault().log(e);
 			return null;
 		} catch (IOException e) {
+			XmlElement tempElement= tempHandler.getLastOpenElement();
 			tempHandler.fixEndLocations();
 			XmlElement tempRootElement = tempHandler.getRootElement();
-			if (tempRootElement != null) {
-				return generateExceptionOutline(e, tempRootElement);
+			if (tempRootElement != null && tempElement != null) {
+				return generateExceptionOutline(e, tempRootElement, tempElement);
 			} else {
 				ExternalToolsPlugin.getDefault().log(e);
 				return null;		
@@ -207,12 +208,14 @@ public class AntModel {
 		return tempRootElement;
 	}
 
-	private XmlElement generateExceptionOutline(Exception e, XmlElement rootElement) {
+	private XmlElement generateExceptionOutline(Exception e, XmlElement rootElement, XmlElement element) {
 		rootElement.setIsErrorNode(true);		
 	
 		XmlElement errorNode= new XmlElement(e.getMessage());
+		errorNode.setFilePath(element.getFilePath());
+		errorNode.setExternal(element.isExternal());
 		errorNode.setIsErrorNode(true);
-		rootElement.addChildNode(errorNode);
+		element.addChildNode(errorNode);
 		return rootElement;
 	}
 	

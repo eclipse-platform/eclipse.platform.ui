@@ -225,7 +225,7 @@ public class PlantyContentOutlinePage extends ContentOutlinePage implements ISho
 		public String getText(Object aNode) {
 			XmlElement element= (XmlElement) aNode;
 			StringBuffer displayName= new StringBuffer(element.getDisplayName());
-			if (element.isExternal() && !element.isRootExternal()) {
+			if (element.isExternal() && (!element.isRootExternal() || (element.getParentNode() != null && element.getParentNode().isExternal()))) {
 				displayName.append(AntOutlineMessages.getString("PlantyContentOutlinePage._[external]_1")); //$NON-NLS-1$
 			}
 			return displayName.toString();
@@ -345,8 +345,9 @@ public class PlantyContentOutlinePage extends ContentOutlinePage implements ISho
 		boolean wasAntModel= (oldInput instanceof AntModel);
 		
 		if (isAntModel && !wasAntModel) {
-			if (fListener == null)
+			if (fListener == null) {
 				fListener= createAntModelChangeListener();
+			}
 			fCore.addDocumentModelListener(fListener);
 		} else if (!isAntModel && wasAntModel && fListener != null) {
 			fCore.removeDocumentModelListener(fListener);

@@ -95,7 +95,7 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
     /**
      * Whether the current element is the root of the external entity tree
      */
-    private boolean isRootExternal;
+    private boolean isTopLevelRootExternal;
 
     /**
      * Creates an instance.
@@ -412,6 +412,7 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
     public void warning(SAXParseException anException) throws SAXException {
 		if (errorHandler != null) {
 			XmlElement element= new XmlElement(""); //$NON-NLS-1$
+			element.setFilePath(anException.getSystemId());
 			element.setExternal(isExternal());
 			computeErrorLocation(element, anException);
 			errorHandler.warning(anException, element);
@@ -443,6 +444,8 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
 	private XmlElement generateErrorElementHierarchy(SAXParseException exception) {
 		if (rootElement == null) {
 			rootElement= new XmlElement(exception.getSystemId() != null ? exception.getSystemId() : ""); //$NON-NLS-1$
+			rootElement.setFilePath(exception.getSystemId());
+			stillOpenElements.push(rootElement);
 		}
 		rootElement.setIsErrorNode(true);
 		
@@ -458,10 +461,16 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
 		}
 
 		XmlElement errorNode= new XmlElement(message.toString());
+		errorNode.setFilePath(exception.getSystemId());
 		errorNode.setExternal(isExternal());
 		errorNode.setIsErrorNode(true);
-		computeErrorLocation(errorNode, exception);		
-		rootElement.addChildNode(errorNode);
+		computeErrorLocation(errorNode, exception);
+		XmlElement lastOpen= getLastOpenElement();
+		if (lastOpen != null) {
+			lastOpen.addChildNode(errorNode);	
+		} else {
+			rootElement.addChildNode(errorNode);
+		}
 		
 		return errorNode;
 	}
@@ -525,7 +534,15 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
 	 * @see org.xml.sax.ext.LexicalHandler#endEntity(java.lang.String)
 	 */
 	public void endEntity(String name) throws SAXException {
+		XmlElement element= getLastOpenElement();
+		boolean isNestedRootExternal= element == null || element.getParentNode() == null || element.getParentNode().isExternal();
+		if (!isNestedRootExternal) {
+			isTopLevelRootExternal= true;
+		}
 		endElement(null, name, ""); //$NON-NLS-1$
+		if (!isNestedRootExternal) {
+			isTopLevelRootExternal= false;
+		}
 	}
 
 	/* (non-Javadoc)
@@ -544,14 +561,19 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
 	 * @see org.xml.sax.ext.LexicalHandler#startEntity(java.lang.String)
 	 */
 	public void startEntity(String name) throws SAXException {
-		isRootExternal= true;
+		boolean isNestedRootExternal= isExternal();
+		if (!isNestedRootExternal) {
+			isTopLevelRootExternal= true;
+		}
 		startElement(null, name, "", null); //$NON-NLS-1$
 		XmlElement external= (XmlElement)stillOpenElements.peek();
 		external.setExternal(true);
 		external.setRootExternal(true);
 		external.getAttributes().removeAll(external.getAttributes());
 		external.addAttribute(new XmlAttribute(IAntEditorConstants.ATTR_TYPE, IAntEditorConstants.TYPE_EXTERNAL));
-		isRootExternal= false;
+		if (!isNestedRootExternal) {
+			isTopLevelRootExternal= false;
+		}
 	}
 
 	private void computeStartLocation(XmlElement element) {
@@ -565,7 +587,7 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
 			int locatorLine= locator.getLineNumber();
 			int locatorColumn= locator.getColumnNumber();
 			String prefix= "<"; //$NON-NLS-1$
-			if (isRootExternal) {
+			if (isTopLevelRootExternal) {
 				prefix= "&";  //$NON-NLS-1$
 			}	
 			if (locatorColumn <= 0) {
@@ -588,7 +610,7 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
 	}
 
 	private void computeEndLocation(XmlElement element) {
-		if (element.isExternal() && !element.isRootExternal()) {
+		if (element.isExternal() && !isTopLevelRootExternal) {
 			return;
 		}
 		
@@ -604,7 +626,7 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
 					offset= lineOffset;
 				}
 				String endDelimiter= ">"; //$NON-NLS-1$
-				if (element.isRootExternal()) {
+				if (isTopLevelRootExternal) {
 					endDelimiter= ";"; //$NON-NLS-1$
 				}
 				offset= document.search(lineOffset, endDelimiter, true, true, false); //$NON-NLS-1$
@@ -668,14 +690,28 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
 	}
 	
 	public void fixEndLocations(SAXParseException e) {
-		if (stillOpenElements.empty()) {
+		XmlElement lastOpenElement= getLastOpenElement();
+		if (lastOpenElement == null) {
 			return;
+		}
+		
+		boolean recoverFromExternal= lastOpenElement.isExternal();
+		
+		while (lastOpenElement.isExternal() && (!lastOpenElement.isRootExternal() || (lastOpenElement.getParentNode() != null && lastOpenElement.getParentNode().isExternal()))) {
+			stillOpenElements.pop();
+			lastOpenElement= getLastOpenElement();
 		}
 		
 		try {
 			int offset, line, column;
 			
-			if (e == null) { //unlikely
+			if (recoverFromExternal) {
+				XmlElement element= (XmlElement) stillOpenElements.peek();
+				int length= element.getName().length() + 2;
+				offset= element.getOffset() + length;
+				line= element.getStartingRow();
+				column= element.getStartingColumn() + length;
+			} else if (e == null) {
 				XmlElement element= (XmlElement) stillOpenElements.peek();			
 				offset= element.getOffset();
 				line= element.getStartingRow();
@@ -700,6 +736,13 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
 		} catch (BadLocationException ble) {
 			ExternalToolsPlugin.getDefault().log(ble);
 		}
+	}
+
+	public XmlElement getLastOpenElement() {
+		if (!stillOpenElements.empty()) {
+			return (XmlElement) stillOpenElements.peek();
+		}
+		return null;
 	}
 
 	private boolean isExternal() {
