@@ -253,13 +253,13 @@ public void _loadManifests(URL url, IUMFactory factory, boolean filtered) {
 		if (filtered) {		// load specific products according to LaunchInfo
 			LaunchInfo.VersionedIdentifier[] ivps = LaunchInfo.getCurrent().getConfigurations();
 			for (int j = 0; j < ivps.length; j++) {
-				_loadProductManifest(productPath.toString(), ivps[j].toString(), factory);
+				_loadProductManifest(productPath.toString(), ivps[j].toString(), factory, filtered);
 			}
 		} else {			// get all products
 			String[] members = UMEclipseTree.getPathMembers(productPath);
 			for (int j = 0; j < members.length; j++) {
 				if (members[j].equals(IManifestAttributes.INSTALL_INDEX)) continue;
-				_loadProductManifest(productPath.toString(), members[j] , factory);		
+				_loadProductManifest(productPath.toString(), members[j] , factory, false);		
 			}
 		}
 		
@@ -302,14 +302,14 @@ public void _loadManifests(URL url, IUMFactory factory, boolean filtered) {
  * which is of the form ...../install/configurations/prod_dirname
  */
 
-public ProductDescriptorModel _loadProductManifest(String prodDir, String dirName, IUMFactory factory) {
+public ProductDescriptorModel _loadProductManifest(String prodDir, String dirName, IUMFactory factory, boolean filtered) {
 
 	ProductDescriptorModel pd = null;
 	try {	
 		pd = (ProductDescriptorModel) factory.createProductDescriptor();
 		pd._setDirName(dirName);
 		pd._setInstallURL(prodDir + dirName);
-		pd._loadManifest(new URL(pd._getInstallManifestURL()), this, factory);
+		pd._loadManifest(new URL(pd._getInstallManifestURL()), this, factory, filtered);
 	} catch (java.net.MalformedURLException e) {
 	}
 	return pd;

@@ -107,11 +107,11 @@ public void addProductDescriptorToLocal(IProductDescriptor prod) {
 
 	ProductDescriptorModel existing1 = fCurrentRegistry._lookupProductDescriptor(prod.getUniqueIdentifier(), prod.getVersionStr());
 	if (existing1 == null) 
-		existing1 = fCurrentRegistry._loadProductManifest(UMEclipseTree.getProductURL().toString(),prod.getDirName(),fFactory);
+		existing1 = fCurrentRegistry._loadProductManifest(UMEclipseTree.getProductURL().toString(),prod.getDirName(),fFactory, true);
 	
 	ProductDescriptorModel existing2 = fLocalRegistry._lookupProductDescriptor(prod.getUniqueIdentifier(), prod.getVersionStr());		
 	if (existing2 == null)
-		existing2 = fLocalRegistry._loadProductManifest(UMEclipseTree.getProductURL().toString(),prod.getDirName(),fFactory);
+		existing2 = fLocalRegistry._loadProductManifest(UMEclipseTree.getProductURL().toString(),prod.getDirName(),fFactory, false);
 
 
 	// Sync up any installed components that also belong to this prod

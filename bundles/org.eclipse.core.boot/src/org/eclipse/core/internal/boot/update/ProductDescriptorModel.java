@@ -4,7 +4,7 @@ package org.eclipse.core.internal.boot.update;
  * All Rights Reserved.
  */
 
-
+import org.eclipse.core.internal.boot.LaunchInfo;
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -145,7 +145,7 @@ public String _getVersion() {
 /**
  *
  */
-public void _loadManifest(URL url, UMRegistryModel parent, IUMFactory factory) {
+public void _loadManifest(URL url, UMRegistryModel parent, IUMFactory factory, boolean filtered) {
 
 	// Parse configuration xml file
 	//-----------------------------
@@ -246,7 +246,12 @@ public void _loadManifest(URL url, UMRegistryModel parent, IUMFactory factory) {
 	XmlLiteElement[] elementComponents = elementConfiguration.getChildElements(COMPONENT);
 
 	ComponentEntryDescriptorModel componentEntryDescriptor = null;
-
+	ArrayList activeComponents = new ArrayList();
+	if (filtered == true) {
+		LaunchInfo.VersionedIdentifier[] ivps = LaunchInfo.getCurrent().getComponents();
+		activeComponents.addAll(Arrays.asList(ivps));
+	}
+			
 	for (int i = 0; i < elementComponents.length; ++i) {
 
 		componentEntryDescriptor = factory.createComponentEntryDescriptor();
@@ -269,7 +274,12 @@ public void _loadManifest(URL url, UMRegistryModel parent, IUMFactory factory) {
 			componentEntryDescriptor._setVersion(attribute.getValue());
 		}
 			
-
+		if (filtered == true) {
+			LaunchInfo.VersionedIdentifier vid = new LaunchInfo.VersionedIdentifier(componentEntryDescriptor._getId(), componentEntryDescriptor._getVersion());
+			if (!activeComponents.contains(vid))	// don't load an inactive compEntry
+				continue;
+		}
+		
 		attribute = elementComponents[i].getAttribute(ALLOW_UPGRADE);
 		if (attribute != null)
 			componentEntryDescriptor._setUpgradeable(attribute.getValue());
