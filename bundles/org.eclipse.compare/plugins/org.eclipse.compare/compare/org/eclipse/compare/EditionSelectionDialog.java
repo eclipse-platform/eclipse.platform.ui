@@ -32,6 +32,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
@@ -42,6 +43,7 @@ import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.compare.internal.*;
 import org.eclipse.compare.structuremergeviewer.*;
+import org.eclipse.compare.internal.ICompareContextIds;
 
 
 /**
@@ -667,6 +669,14 @@ public class EditionSelectionDialog extends ResizableDialog {
 		return null;
 	}
 	
+	/*
+	 * @see org.eclipse.jface.window.Window#configureShell(Shell)
+	 */
+	protected void configureShell(Shell newShell) {
+		super.configureShell(newShell);
+		WorkbenchHelp.setHelp(newShell, ICompareContextIds.EDITION_DIALOG);
+	}
+
  	/* (non Javadoc)
  	 * Creates SWT control tree.
  	 */
