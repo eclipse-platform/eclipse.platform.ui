@@ -53,7 +53,6 @@
 	// topic
 	// searchWord
 	// contextId
-	// lang
 	
 	String query = "";
 	if (request.getQueryString() != null && request.getQueryString().length() > 0)
