@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -186,10 +188,23 @@ public class DefaultMarkerAnnotationAccess implements IAnnotationAccess, IAnnota
 		if (preference != null)
 			return preference.getPresentationLayer();
 		
-		// only for backward compatibility
 		if (annotation instanceof IAnnotationPresentation) {
 			IAnnotationPresentation presentation= (IAnnotationPresentation) annotation;
 			return presentation.getLayer();
+		}
+		
+		// backward compatibility, ignore exceptions, just return default layer
+		try {
+			
+			Method method= annotation.getClass().getMethod("getLayer", null); //$NON-NLS-1$
+			Integer result= (Integer) method.invoke(annotation, null);
+			return result.intValue();
+		
+		} catch (SecurityException x) {
+		} catch (IllegalArgumentException x) {
+		} catch (NoSuchMethodException x) {
+		} catch (IllegalAccessException x) {
+		} catch (InvocationTargetException x) {
 		}
 		
 		return IAnnotationAccessExtension.DEFAULT_LAYER;
@@ -200,22 +215,35 @@ public class DefaultMarkerAnnotationAccess implements IAnnotationAccess, IAnnota
 	 * @since 3.0
 	 */
 	public void paint(Annotation annotation, GC gc, Canvas canvas, Rectangle bounds) {
+		
 		if (annotation instanceof IAnnotationPresentation) {
-			
 			IAnnotationPresentation presentation= (IAnnotationPresentation) annotation;
 			presentation.paint(gc, canvas, bounds);
+			return;
+		}
 		
-		} else {
-			
-			AnnotationPreference preference= getAnnotationPreference(annotation);
-			if (preference == null)
-				return;
-			
+		AnnotationPreference preference= getAnnotationPreference(annotation);
+		if (preference != null) {
 			Object type= getType(annotation);
 			String annotationType= (type == null ? null : type.toString());
 			Image image= getImage(annotation, preference, annotationType);
-			if (image != null)
+			if (image != null) {
 				ImageUtilities.drawImage(image, gc, canvas, bounds, SWT.CENTER, SWT.TOP);
+				return;
+			}
+		}
+		
+		// backward compatibility, ignore exceptions, just don't paint
+		try {
+			
+			Method method= annotation.getClass().getMethod("paint", new Class[] { GC.class, Canvas.class, Rectangle.class }); //$NON-NLS-1$
+			method.invoke(annotation, new Object[] {gc, canvas, bounds });
+		
+		} catch (SecurityException x) {
+		} catch (IllegalArgumentException x) {
+		} catch (NoSuchMethodException x) {
+		} catch (IllegalAccessException x) {
+		} catch (InvocationTargetException x) {
 		}
 	}
 	
