@@ -1,15 +1,20 @@
 package org.eclipse.ui.tests.navigator;
 
-import org.eclipse.jface.action.IAction;
-import org.eclipse.ui.internal.DecoratorDefinition;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.LabelProviderChangedEvent;
+import org.eclipse.ui.internal.*;
 
 /**
  * @version 	1.0
  */
-public class DecoratorTestCase extends AbstractNavigatorTest {
+public class DecoratorTestCase
+	extends AbstractNavigatorTest
+	implements ILabelProviderListener {
 
 	private DecoratorDefinition definition;
+	private boolean updated = false;
+
 	/**
 	 * Constructor for DecoratorTestCase.
 	 * @param testName
@@ -25,6 +30,8 @@ public class DecoratorTestCase extends AbstractNavigatorTest {
 		createTestFile();
 		showNav();
 
+		WorkbenchPlugin.getDefault().getDecoratorManager().addListener(this);
+
 		DecoratorDefinition[] definitions =
 			WorkbenchPlugin.getDefault().getDecoratorManager().getDecoratorDefinitions();
 		for (int i = 0; i < definitions.length; i++) {
@@ -34,12 +41,33 @@ public class DecoratorTestCase extends AbstractNavigatorTest {
 		}
 	}
 
+	private DecoratorManager getDecoratorManager() {
+		return WorkbenchPlugin.getDefault().getDecoratorManager();
+	}
+
+	/**
+	 * Remove the listener.
+	 */
+
+	public void tearDown() throws Exception {
+		super.tearDown();
+		getDecoratorManager().removeListener(this);
+	}
+
+	/**
+	 * Make a label changed event for resource.
+	 */
+	private LabelProviderChangedEvent getLabelChangedEvent(IResource resource) {
+		return new LabelProviderChangedEvent(getDecoratorManager(), resource);
+	}
+
 	/**
 	 * Test enabling the contributor
 	 */
 	public void testEnableDecorator() {
 		definition.setEnabled(true);
-		WorkbenchPlugin.getDefault().getDecoratorManager().reset();
+		getDecoratorManager().reset();
+		
 	}
 
 	/**
@@ -47,16 +75,28 @@ public class DecoratorTestCase extends AbstractNavigatorTest {
 	 */
 	public void testDisableDecorator() {
 		definition.setEnabled(false);
-		WorkbenchPlugin.getDefault().getDecoratorManager().reset();
+		getDecoratorManager().reset();
 	}
 
 	/**
 	 * Refresh the test decorator.
 	 */
-	public void testRefreshContributor(IAction action) {
+	public void testRefreshContributor() {
 
+		updated = false;
+		definition.setEnabled(true);
+		getDecoratorManager().reset();
 		TestDecoratorContributor.contributor.refreshListeners(testFile);
+		assertTrue("Got an update", updated);
+		updated = false;
 
+	}
+
+	/*
+	 * @see ILabelProviderListener#labelProviderChanged(LabelProviderChangedEvent)
+	 */
+	public void labelProviderChanged(LabelProviderChangedEvent event) {
+		updated = true;
 	}
 
 }
