@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.ui.console" id="consolePatternMatchListeners" name="Console Pattern Match Listeners"/>
       </appInfo>
       <documentation>
-         This extension point provides notification when console input or output matches a specified regular expression.
+         Provides regular expression matching for text consoles. Pattern match listeners can be contributed to specific consoles by using an enablement expression. Listeners are notified as matches are found.
       </documentation>
    </annotation>
 
@@ -49,7 +49,7 @@
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  specifies a unique identifier for this Console Pattern Match Listener
+                  specifies a unique identifier for this console pattern match listener
                </documentation>
             </annotation>
          </attribute>
@@ -63,7 +63,7 @@
          <attribute name="regex" type="string" use="required">
             <annotation>
                <documentation>
-                  specifies the regular expression that should be matched
+                  specifies the regular expression to be matched
                </documentation>
             </annotation>
          </attribute>
@@ -77,7 +77,7 @@
          <attribute name="qualifier" type="string">
             <annotation>
                <documentation>
-                  a simple regular expression used to identify a line that may contain this pattern match listener&apos;s complete regular expression &lt;code&gt;regex&lt;/code&gt;. When a line is found containing this expression, a search is performed from the beginning of the line for this pattern matcher&apos;s complete &lt;code&gt;regex&lt;/code&gt;. Use of this attribute is optional but can greatly improve performance as lines not containing this expression can be disqualified from the search.
+                  a simple regular expression used to identify a line that may contain this pattern match listener&apos;s complete regular expression &lt;code&gt;regex&lt;/code&gt;. When a line is found containing this expression, a search is performed from the beginning of the line for this pattern matcher&apos;s complete &lt;code&gt;regex&lt;/code&gt;. Use of this attribute is optional but can greatly improve performance as lines not containing this expression are disqualified from the search.
                </documentation>
             </annotation>
          </attribute>
@@ -107,12 +107,12 @@
             id=&quot;com.example.ExampleConsolePatternMatcher&quot;
             regex=&quot;.*foo.*&quot;&gt;
          &lt;enablement&gt;
-            &lt;instanceof value=&quot;com.example.ExampleConsole&quot;/&gt;
+            &lt;test property=&quot;org.eclipse.ui.console.consoleTypeTest&quot; value=&quot;exampleConsole&quot;/&gt;
          &lt;/enablement&gt;
       &lt;/consolePatternMatchListener&gt;
    &lt;/extension&gt;
 &lt;/pre&gt;
-In the above example, the contributed console pattern matcher will be used for console of type &quot;ExampleConsole.&quot;
+In the above example, the contributed console pattern matcher will be used for consoles with a type of &quot;exampleConsole.&quot;
       </documentation>
    </annotation>
 
@@ -122,6 +122,15 @@ In the above example, the contributed console pattern matcher will be used for c
       </appInfo>
       <documentation>
          Value of the attribute &lt;b&gt;class&lt;/b&gt; must be a fully qualified name of a Java class that implements the interface &lt;b&gt;org.eclipse.ui.console.IPatternMatchListenerDelegate&lt;/b&gt;.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         The console plug-in provides a console type property tester for enablement expressions that tests the value of &lt;code&gt;IConsole.getType()&lt;/code&gt;. The property tester&apos;s identifier is &lt;code&gt;org.eclipse.ui.console.consoleTypeTest&lt;/code&gt;.
       </documentation>
    </annotation>
 

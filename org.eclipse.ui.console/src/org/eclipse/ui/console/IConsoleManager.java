@@ -85,6 +85,10 @@ public interface IConsoleManager {
 	 * to be used in a new console. No methods on the participants have been
 	 * called. Clients are responsible for connecting to and disconnecting from
 	 * the pattern match listeners.
+     * <p>
+     * Console pattern match listeners are contributed via the
+     * <code>org.eclipse.ui.console.consolePatternMatchListeners</code> extension point.
+     * </p>
 	 * 
 	 * @param console the console for which pattern match listeners are requested
 	 * @return a collection of new pattern match listeners
