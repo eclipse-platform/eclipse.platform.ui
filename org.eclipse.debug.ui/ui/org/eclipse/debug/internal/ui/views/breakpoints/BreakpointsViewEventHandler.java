@@ -67,7 +67,7 @@ public class BreakpointsViewEventHandler implements IBreakpointsListener, IActiv
 					if (fView.isAvailable()) {
 						CheckboxTreeViewer viewer = fView.getCheckboxViewer();
                         viewer.getControl().setRedraw(false);
-                        ((OrganizedBreakpointsContentProvider)viewer.getContentProvider()).reorganize();
+                        ((BreakpointsContentProvider)viewer.getContentProvider()).reorganize();
                         fView.initializeCheckedState();
 						// This code is left in as a test case for platform bug 77075
 						//for (int i = 0; i < breakpoints.length; i++) { 
@@ -92,7 +92,7 @@ public class BreakpointsViewEventHandler implements IBreakpointsListener, IActiv
 					if (fView.isAvailable()) {
 						CheckboxTreeViewer viewer= (CheckboxTreeViewer)fView.getViewer();
                         viewer.getControl().setRedraw(false);
-                        ((OrganizedBreakpointsContentProvider)viewer.getContentProvider()).reorganize();
+                        ((BreakpointsContentProvider)viewer.getContentProvider()).reorganize();
                         fView.initializeCheckedState();
                         viewer.getControl().setRedraw(true);
 						fView.updateObjects();
@@ -112,12 +112,12 @@ public class BreakpointsViewEventHandler implements IBreakpointsListener, IActiv
 					if (fView.isAvailable()) {
 						CheckboxTreeViewer viewer = (CheckboxTreeViewer)fView.getViewer();
                         viewer.getControl().setRedraw(false);
-                        OrganizedBreakpointsContentProvider provider = (OrganizedBreakpointsContentProvider) viewer.getContentProvider();
+                        BreakpointsContentProvider provider = (BreakpointsContentProvider) viewer.getContentProvider();
                         Set updates = new HashSet();
 						for (int i = 0; i < breakpoints.length; i++) {
 							IBreakpoint breakpoint = breakpoints[i];
                             viewer.update(breakpoint, null);
-                            OrganizedBreakpointContainer[] containers = provider.getContainers(breakpoint);
+                            BreakpointContainer[] containers = provider.getContainers(breakpoint);
                             if (containers != null) {
                                 for (int j = 0; j < containers.length; j++ ) {
                                     updates.add(containers[j]);

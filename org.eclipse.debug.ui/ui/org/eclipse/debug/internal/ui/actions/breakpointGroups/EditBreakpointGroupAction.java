@@ -12,7 +12,7 @@ package org.eclipse.debug.internal.ui.actions.breakpointGroups;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.views.breakpoints.OrganizedBreakpointContainer;
+import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointContainer;
 import org.eclipse.debug.internal.ui.views.breakpoints.WorkingSetCategory;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
@@ -49,8 +49,8 @@ public class EditBreakpointGroupAction extends AbstractBreakpointsViewAction {
         fSet = null;
         if (selection.size() == 1) {
             Object element = selection.getFirstElement();
-			if (element instanceof OrganizedBreakpointContainer) {
-                OrganizedBreakpointContainer container = (OrganizedBreakpointContainer)element;
+			if (element instanceof BreakpointContainer) {
+                BreakpointContainer container = (BreakpointContainer)element;
                 IAdaptable category = container.getCategory();
                 if (category instanceof WorkingSetCategory) {
                     IWorkingSet set = ((WorkingSetCategory)category).getWorkingSet();

@@ -1217,7 +1217,7 @@
             id="org.eclipse.debug.ui.breakpointview.breakpointGroupActions">
          <visibility>
             <objectClass
-               name="org.eclipse.debug.internal.ui.views.breakpoints.OrganizedBreakpointContainer">
+               name="org.eclipse.debug.internal.ui.views.breakpoints.BreakpointContainer">
             </objectClass>
          </visibility>
          <action
@@ -2368,7 +2368,7 @@ M4 = Platform-specific fourth key
 	<extension point="org.eclipse.core.runtime.adapters">
          <factory 
             class="org.eclipse.debug.internal.ui.DebugUIAdapterFactory"
-            adaptableType="org.eclipse.debug.internal.ui.views.breakpoints.OrganizedBreakpointContainer">
+            adaptableType="org.eclipse.debug.internal.ui.views.breakpoints.BreakpointContainer">
             <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
          </factory>
          <factory 

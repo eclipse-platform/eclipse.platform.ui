@@ -36,9 +36,9 @@ import org.eclipse.jface.util.PropertyChangeEvent;
  * </p>
  * @since 3.1
  */
-public class BreakpointContainerFactoryManager {
+public class BreakpointOrganizerManager {
 	
-	private static BreakpointContainerFactoryManager fgManager;
+	private static BreakpointOrganizerManager fgManager;
 	
 	// map for lookup by id
     private Map fOrganizers = new HashMap();
@@ -49,9 +49,9 @@ public class BreakpointContainerFactoryManager {
 	 * Returns the singleton instance of the breakpoint container
 	 * factory manager.
 	 */
-	public static BreakpointContainerFactoryManager getDefault() {
+	public static BreakpointOrganizerManager getDefault() {
 		if (fgManager == null) {
-			fgManager= new BreakpointContainerFactoryManager();
+			fgManager= new BreakpointOrganizerManager();
 		}
 		return fgManager;
 	}
@@ -59,7 +59,7 @@ public class BreakpointContainerFactoryManager {
 	/**
 	 * Creates and initializes a new breakpoint container factory.
 	 */
-	private BreakpointContainerFactoryManager() {
+	private BreakpointOrganizerManager() {
         loadOrganizers();
         // force the working set organizer to initialize its listeners
         IBreakpointOrganizer organizer = getOrganizer("org.eclipse.debug.ui.breakpointWorkingSetOrganizer"); //$NON-NLS-1$

@@ -16,7 +16,7 @@ import java.util.List;
 
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
-import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointContainerFactoryManager;
+import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointOrganizerManager;
 import org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointOrganizer;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.ActionContributionItem;
@@ -126,7 +126,7 @@ public class GroupBreakpointsByAction extends AbstractBreakpointsViewAction impl
     
     public List getActions(int accel) {
         List actions= new ArrayList();
-        IBreakpointOrganizer[] organizers = BreakpointContainerFactoryManager.getDefault().getOrganizers();
+        IBreakpointOrganizer[] organizers = BreakpointOrganizerManager.getDefault().getOrganizers();
         for (int i = 0; i < organizers.length; i++) {
         	IBreakpointOrganizer organizer = organizers[i];
             IAction action = new GroupBreakpointsAction(organizer, fView);

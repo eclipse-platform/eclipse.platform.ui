@@ -32,8 +32,8 @@ public class BreakpointContainerWorkbenchAdapter implements IWorkbenchAdapter {
      * @see org.eclipse.ui.model.IWorkbenchAdapter#getImageDescriptor(java.lang.Object)
      */
     public ImageDescriptor getImageDescriptor(Object object) {
-        if (object instanceof OrganizedBreakpointContainer) {
-            OrganizedBreakpointContainer container = (OrganizedBreakpointContainer) object;
+        if (object instanceof BreakpointContainer) {
+            BreakpointContainer container = (BreakpointContainer) object;
             IAdaptable category = container.getCategory();
             IWorkbenchAdapter adapter = (IWorkbenchAdapter) category.getAdapter(IWorkbenchAdapter.class);
             if (adapter != null) {
@@ -53,8 +53,8 @@ public class BreakpointContainerWorkbenchAdapter implements IWorkbenchAdapter {
      * @see org.eclipse.ui.model.IWorkbenchAdapter#getLabel(java.lang.Object)
      */
     public String getLabel(Object object) {
-        if (object instanceof OrganizedBreakpointContainer) {
-            OrganizedBreakpointContainer container = (OrganizedBreakpointContainer) object;
+        if (object instanceof BreakpointContainer) {
+            BreakpointContainer container = (BreakpointContainer) object;
             IAdaptable category = container.getCategory();
             IWorkbenchAdapter adapter = (IWorkbenchAdapter) category.getAdapter(IWorkbenchAdapter.class);
             if (adapter != null) {

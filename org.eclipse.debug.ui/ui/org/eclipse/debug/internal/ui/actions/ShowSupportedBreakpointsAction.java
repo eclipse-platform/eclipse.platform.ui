@@ -24,7 +24,7 @@ import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView;
-import org.eclipse.debug.internal.ui.views.breakpoints.OrganizedBreakpointContainer;
+import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointContainer;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -66,9 +66,9 @@ public class ShowSupportedBreakpointsAction extends ToggleFilterAction implement
 		 * @see ViewerFilter#select(Viewer, Object, Object)
 		 */
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
-			if (element instanceof OrganizedBreakpointContainer) {
+			if (element instanceof BreakpointContainer) {
 				// Breakpoint containers are visible if any of their children are visible.
-				IBreakpoint[] breakpoints = ((OrganizedBreakpointContainer) element).getBreakpoints();
+				IBreakpoint[] breakpoints = ((BreakpointContainer) element).getBreakpoints();
 				for (int i = 0; i < breakpoints.length; i++) {
 					if (select(viewer, element, breakpoints[i])) {
 						return true;

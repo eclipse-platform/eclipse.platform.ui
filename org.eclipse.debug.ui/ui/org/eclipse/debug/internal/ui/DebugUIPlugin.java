@@ -51,7 +51,7 @@ import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.PerspectiveManager;
 import org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceManager;
-import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointContainerFactoryManager;
+import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointOrganizerManager;
 import org.eclipse.debug.internal.ui.views.console.ProcessConsoleManager;
 import org.eclipse.debug.internal.ui.views.launch.DebugElementAdapterFactory;
 import org.eclipse.debug.internal.ui.views.launch.DebugElementHelper;
@@ -310,7 +310,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	public void stop(BundleContext context) throws Exception {
 		try {
             
-            BreakpointContainerFactoryManager.getDefault().shutdown();
+            BreakpointOrganizerManager.getDefault().shutdown();
             
 			if (fPerspectiveManager != null) {
 				fPerspectiveManager.shutdown();
@@ -358,7 +358,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
         
         // start the breakpoint organizer manager
-        BreakpointContainerFactoryManager.getDefault();
+        BreakpointOrganizerManager.getDefault();
 		
 		IAdapterManager manager= Platform.getAdapterManager();
 		DebugElementAdapterFactory propertiesFactory = new DebugElementAdapterFactory();

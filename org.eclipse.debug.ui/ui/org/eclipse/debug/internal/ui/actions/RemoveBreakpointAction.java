@@ -24,7 +24,7 @@ import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView;
-import org.eclipse.debug.internal.ui.views.breakpoints.OrganizedBreakpointContainer;
+import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointContainer;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
@@ -55,7 +55,7 @@ public class RemoveBreakpointAction extends AbstractRemoveActionDelegate {
 						Object next= itr.next();
 						if (next instanceof IBreakpoint) {
 							breakpointsToDelete.add(next);
-						} else if (next instanceof OrganizedBreakpointContainer) {
+						} else if (next instanceof BreakpointContainer) {
 						    if (!deleteContainers) {
 						        // Prompt the user to delete containers only once.
 						        deleteContainers = MessageDialog.openConfirm(getView().getSite().getShell(), ActionMessages.getString("RemoveBreakpointAction.0"), ActionMessages.getString("RemoveBreakpointAction.1")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -65,7 +65,7 @@ public class RemoveBreakpointAction extends AbstractRemoveActionDelegate {
 						        }
 						    }
 						    // To get here, deletion has to have been confirmed.
-						    IBreakpoint[] breakpoints = ((OrganizedBreakpointContainer) next).getBreakpoints();
+						    IBreakpoint[] breakpoints = ((BreakpointContainer) next).getBreakpoints();
 						    for (int i = 0; i < breakpoints.length; i++) {
                                 breakpointsToDelete.add(breakpoints[i]);
                             }

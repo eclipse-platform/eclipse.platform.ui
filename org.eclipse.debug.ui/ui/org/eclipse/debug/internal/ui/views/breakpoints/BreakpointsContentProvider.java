@@ -26,7 +26,7 @@ import org.eclipse.jface.viewers.Viewer;
 /**
  * Content provider for the breakpoints view
  */
-public class OrganizedBreakpointsContentProvider implements ITreeContentProvider, IPropertyChangeListener {
+public class BreakpointsContentProvider implements ITreeContentProvider, IPropertyChangeListener {
     
     private IBreakpointOrganizer[] fOrganizers = null;
     private TreeViewer fViewer;
@@ -39,7 +39,7 @@ public class OrganizedBreakpointsContentProvider implements ITreeContentProvider
      * 
      * @param view
      */
-    public OrganizedBreakpointsContentProvider(BreakpointsView view) {
+    public BreakpointsContentProvider(BreakpointsView view) {
         fView = view;
     }
     
@@ -49,8 +49,8 @@ public class OrganizedBreakpointsContentProvider implements ITreeContentProvider
     public Object[] getChildren(Object parentElement) {
         if (parentElement.equals(DebugPlugin.getDefault().getBreakpointManager())) {
         	return fElements;
-        } else if (parentElement instanceof OrganizedBreakpointContainer) {
-        	return ((OrganizedBreakpointContainer)parentElement).getChildren();
+        } else if (parentElement instanceof BreakpointContainer) {
+        	return ((BreakpointContainer)parentElement).getChildren();
         }
         return new Object[0];
     }
@@ -156,14 +156,14 @@ public class OrganizedBreakpointsContentProvider implements ITreeContentProvider
                 }
                 for (int j = 0; j < categories.length; j++) {
                     IAdaptable category = categories[j];
-                    OrganizedBreakpointContainer container = (OrganizedBreakpointContainer) categoriesToContainers.get(category);
+                    BreakpointContainer container = (BreakpointContainer) categoriesToContainers.get(category);
                     if (container == null) {
                         IBreakpointOrganizer[] nesting = null;
                         if (fOrganizers.length > 1) {
                             nesting = new IBreakpointOrganizer[fOrganizers.length - 1];
                             System.arraycopy(fOrganizers, 1, nesting, 0, nesting.length);
                         }
-                        container = new OrganizedBreakpointContainer(category, organizer, nesting);
+                        container = new BreakpointContainer(category, organizer, nesting);
                         categoriesToContainers.put(category, container);
                     }
                     container.addBreakpoint(breakpoint);
@@ -193,16 +193,16 @@ public class OrganizedBreakpointsContentProvider implements ITreeContentProvider
      * @param breakpoint
      * @return the existing containers the given breakpoint is contained in, or <code>null</code>
      */
-    protected OrganizedBreakpointContainer[] getContainers(IBreakpoint breakpoint) {
+    protected BreakpointContainer[] getContainers(IBreakpoint breakpoint) {
         if (isShowingGroups()) {
             IAdaptable[] categories = fOrganizers[0].getCategories(breakpoint);
             if (categories == null || categories.length == 0) {
                 categories = OtherBreakpointOrganizer.getCategories();
             }
-            OrganizedBreakpointContainer[] containers = new OrganizedBreakpointContainer[categories.length];
+            BreakpointContainer[] containers = new BreakpointContainer[categories.length];
             int index = 0;
             for (int i = 0; i < fElements.length; i++) {
-                OrganizedBreakpointContainer container = (OrganizedBreakpointContainer)fElements[i];
+                BreakpointContainer container = (BreakpointContainer)fElements[i];
                 for (int j = 0; j < categories.length; j++) {
                     IAdaptable category = categories[j];
                     if (container.getCategory().equals(category)) {

@@ -81,7 +81,7 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 	// Persistance constants
 	private static String KEY_IS_TRACKING_SELECTION= "isTrackingSelection"; //$NON-NLS-1$
 	private static String KEY_VALUE="value"; //$NON-NLS-1$
-	private OrganizedBreakpointsContentProvider fContentProvider;
+	private BreakpointsContentProvider fContentProvider;
 	/**
 	 * This memento allows the Breakpoints view to save and restore state
 	 * when it is closed and opened within a session. A different
@@ -103,7 +103,7 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 	 * @see AbstractDebugView#createViewer(Composite)
 	 */
 	protected Viewer createViewer(Composite parent) {
-		fContentProvider= new OrganizedBreakpointsContentProvider(this);
+		fContentProvider= new BreakpointsContentProvider(this);
 		CheckboxTreeViewer viewer = new BreakpointsViewer(new Tree(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.CHECK));
         setViewer(viewer);
 		viewer.setContentProvider(fContentProvider);
@@ -154,7 +154,7 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 				String value = node.getString(KEY_VALUE);
                 if (value != null) {
                     String[] ids = value.split(","); //$NON-NLS-1$
-    				BreakpointContainerFactoryManager manager = BreakpointContainerFactoryManager.getDefault();
+    				BreakpointOrganizerManager manager = BreakpointOrganizerManager.getDefault();
     				List organziers= new ArrayList();
                     for (int i = 0; i < ids.length; i++) {
                         IBreakpointOrganizer organizer = manager.getOrganizer(ids[i]);
@@ -217,8 +217,8 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
             } catch (CoreException e) {
                 DebugUIPlugin.log(e);
             }
-        } else if (element instanceof OrganizedBreakpointContainer) {
-            IBreakpoint[] breakpoints = ((OrganizedBreakpointContainer) element).getBreakpoints();
+        } else if (element instanceof BreakpointContainer) {
+            IBreakpoint[] breakpoints = ((BreakpointContainer) element).getBreakpoints();
             int enabledChildren= 0;
             for (int i = 0; i < breakpoints.length; i++) {
                 IBreakpoint breakpoint = breakpoints[i];
@@ -275,8 +275,8 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 	 */
 	private void handleCheckStateChanged(CheckStateChangedEvent event) {
 		Object source= event.getElement();
-		if (source instanceof OrganizedBreakpointContainer) {
-			handleContainerChecked(event, (OrganizedBreakpointContainer) source);
+		if (source instanceof BreakpointContainer) {
+			handleContainerChecked(event, (BreakpointContainer) source);
 		} else if (source instanceof IBreakpoint) {
 			handleBreakpointChecked(event, (IBreakpoint) source);
 		}
@@ -304,7 +304,7 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 	 * A group has been checked or unchecked. Enable/disable all of the
 	 * breakpoints in that group to match.
 	 */
-	private void handleContainerChecked(CheckStateChangedEvent event, OrganizedBreakpointContainer container) {
+	private void handleContainerChecked(CheckStateChangedEvent event, BreakpointContainer container) {
 		final IBreakpoint[] breakpoints = container.getBreakpoints();
 		final boolean enable= event.getChecked();
 		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
@@ -516,7 +516,7 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 		  IStructuredSelection selection= (IStructuredSelection) event.getSelection();
           if (selection.size() == 1) {
               Object element = selection.getFirstElement();
-              if (element instanceof OrganizedBreakpointContainer) {
+              if (element instanceof BreakpointContainer) {
                   getCheckboxViewer().setExpandedState(element, !getCheckboxViewer().getExpandedState(element));
                   return;
               }

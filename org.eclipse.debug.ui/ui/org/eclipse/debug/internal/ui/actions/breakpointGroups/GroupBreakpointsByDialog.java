@@ -16,7 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.debug.internal.ui.SWTUtil;
-import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointContainerFactoryManager;
+import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointOrganizerManager;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView;
 import org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointOrganizer;
 import org.eclipse.jface.dialogs.Dialog;
@@ -134,7 +134,7 @@ public class GroupBreakpointsByDialog extends Dialog {
 	 * appropriate viewers ("available" or "selected").
 	 */
 	private void initializeContent() {
-		IBreakpointOrganizer[] organizers= BreakpointContainerFactoryManager.getDefault().getOrganizers();
+		IBreakpointOrganizer[] organizers= BreakpointOrganizerManager.getDefault().getOrganizers();
 		for (int i = 0; i < organizers.length; i++) {
 			fAvailableOrganizersProvider.addAvailable(organizers[i]);
 		}

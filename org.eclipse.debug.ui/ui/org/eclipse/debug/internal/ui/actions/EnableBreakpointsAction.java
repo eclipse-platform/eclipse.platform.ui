@@ -25,7 +25,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointsListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.views.breakpoints.OrganizedBreakpointContainer;
+import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointContainer;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -92,8 +92,8 @@ public class EnableBreakpointsAction implements IViewActionDelegate, IPartListen
 						IBreakpoint[] breakpoints= null;
 						if (element instanceof IBreakpoint) {
 							breakpoints= new IBreakpoint[] { (IBreakpoint) element };
-						} else if (element instanceof OrganizedBreakpointContainer) {
-							breakpoints= ((OrganizedBreakpointContainer) element).getBreakpoints();
+						} else if (element instanceof BreakpointContainer) {
+							breakpoints= ((BreakpointContainer) element).getBreakpoints();
 						}
 						if (breakpoints != null) {
 							setEnabled(breakpoints);
@@ -146,8 +146,8 @@ public class EnableBreakpointsAction implements IViewActionDelegate, IPartListen
 		boolean allDisabled= true;
 		while (itr.hasNext()) {
 			Object selected= itr.next();
-			if (selected instanceof OrganizedBreakpointContainer) {
-				IBreakpoint[] breakpoints = ((OrganizedBreakpointContainer) selected).getBreakpoints();
+			if (selected instanceof BreakpointContainer) {
+				IBreakpoint[] breakpoints = ((BreakpointContainer) selected).getBreakpoints();
 				for (int i = 0; i < breakpoints.length; i++) {
 					try {
 						if (breakpoints[i].isEnabled()) {

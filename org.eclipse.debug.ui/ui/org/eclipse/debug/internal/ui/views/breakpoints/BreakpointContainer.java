@@ -23,7 +23,7 @@ import org.eclipse.debug.core.model.IBreakpoint;
 /**
  * A container of breakpoints, based on a category.
  */
-public class OrganizedBreakpointContainer extends PlatformObject    {
+public class BreakpointContainer extends PlatformObject    {
 
     private IAdaptable fCategory;
     private IBreakpointOrganizer fOrganizer;
@@ -39,7 +39,7 @@ public class OrganizedBreakpointContainer extends PlatformObject    {
      * @param organizer breakpoint organizer
      * @param nesting nested organizers or <code>null</code> if none
      */
-    public OrganizedBreakpointContainer(IAdaptable category, IBreakpointOrganizer organizer, IBreakpointOrganizer[] nesting) {
+    public BreakpointContainer(IAdaptable category, IBreakpointOrganizer organizer, IBreakpointOrganizer[] nesting) {
         fCategory = category;
         fOrganizer = organizer;
         fBreakpoints = new ArrayList();
@@ -63,14 +63,14 @@ public class OrganizedBreakpointContainer extends PlatformObject    {
             }
             for (int i = 0; i < categories.length; i++) {
                 IAdaptable category = categories[i];
-                OrganizedBreakpointContainer container = (OrganizedBreakpointContainer) fCategoriesToContainers.get(category);
+                BreakpointContainer container = (BreakpointContainer) fCategoriesToContainers.get(category);
                 if (container == null) {
                     IBreakpointOrganizer[] nesting = null;
                     if (fNesting.length > 1) {
                         nesting = new IBreakpointOrganizer[fNesting.length - 1];
                         System.arraycopy(fNesting, 1, nesting, 0, nesting.length);
                     }
-                    container = new OrganizedBreakpointContainer(category, organizer, nesting);
+                    container = new BreakpointContainer(category, organizer, nesting);
                     fCategoriesToContainers.put(category, container);
                 }
                 container.addBreakpoint(breakpoint);
@@ -113,9 +113,9 @@ public class OrganizedBreakpointContainer extends PlatformObject    {
      * 
      * @return the containers nested in this container, possibly empty
      */
-    public OrganizedBreakpointContainer[] getContainers() {
+    public BreakpointContainer[] getContainers() {
         Collection collection = fCategoriesToContainers.values();
-        return (OrganizedBreakpointContainer[]) collection.toArray(new OrganizedBreakpointContainer[collection.size()]);
+        return (BreakpointContainer[]) collection.toArray(new BreakpointContainer[collection.size()]);
     }
     
     /**
@@ -131,8 +131,8 @@ public class OrganizedBreakpointContainer extends PlatformObject    {
      * @see java.lang.Object#equals(java.lang.Object)
      */
     public boolean equals(Object obj) {
-        if (obj instanceof OrganizedBreakpointContainer) {
-            OrganizedBreakpointContainer container = (OrganizedBreakpointContainer) obj;
+        if (obj instanceof BreakpointContainer) {
+            BreakpointContainer container = (BreakpointContainer) obj;
             return getCategory().equals(container.getCategory());
         }
         return super.equals(obj);

@@ -19,7 +19,7 @@ import org.eclipse.debug.internal.ui.launchConfigurations.PersistableLaunchConfi
 import org.eclipse.debug.internal.ui.launchConfigurations.PersistableLaunchConfigurationTypeFactory;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointContainerWorkbenchAdapter;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointPersistableElementAdapter;
-import org.eclipse.debug.internal.ui.views.breakpoints.OrganizedBreakpointContainer;
+import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointContainer;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
@@ -47,7 +47,7 @@ public class DebugUIAdapterFactory implements IAdapterFactory {
         	if (obj instanceof IWorkbenchAdapter) {
         		return obj;
         	}
-            if (obj instanceof OrganizedBreakpointContainer) {
+            if (obj instanceof BreakpointContainer) {
                 return new BreakpointContainerWorkbenchAdapter();
             }
         }
