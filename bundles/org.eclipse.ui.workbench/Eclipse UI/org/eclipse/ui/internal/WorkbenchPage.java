@@ -534,6 +534,7 @@ public void bringToTop(IWorkbenchPart part) {
 			if (broughtToTop) {
 				lastActiveEditor = null;
 			}
+			window.updateTitle();
 		} else if (part instanceof IViewPart) {
 			IViewReference ref = (IViewReference)getReference(part);
 			broughtToTop = persp.bringToTop(ref);
@@ -2477,7 +2478,7 @@ private void setActivePart(IWorkbenchPart newPart) {
 		// Update actions now so old actions have heard part deactivated and 
 		// new actions can hear part activated.
 		actionSwitcher.updateActivePart(newPart);	
-	
+		window.updateTitle();
 		if (newPart != null)
 			firePartActivated(newPart);
 	} finally {

@@ -1770,16 +1770,23 @@ public void updateBarVisibility() {
 public void updateTitle() {
 	if(updateDisabled)
 		return;
-		
+	/* 
+	 * [pageInput -] [currentPerspective -] [editorInput -] [workspaceLocation -] productName
+	 */	
 	String title = workbench.getConfigurationInfo().getAboutInfo().getProductName();
 	if (title == null) {
 		title = ""; //$NON-NLS-1$
 	}
 	if (workspaceLocation != null)
-		title = WorkbenchMessages.format("WorkbenchWindow.shellTitle", new Object[] {title, workspaceLocation}); //$NON-NLS-1$
-	
+		title = WorkbenchMessages.format("WorkbenchWindow.shellTitle", new Object[] {workspaceLocation,title}); //$NON-NLS-1$
+		
 	WorkbenchPage currentPage = getActiveWorkbenchPage();
 	if (currentPage != null) {
+		IEditorPart editor = currentPage.getActiveEditor();
+		if(editor != null) {
+			String editorTitle = editor.getTitle();
+			title = WorkbenchMessages.format("WorkbenchWindow.shellTitle", new Object[] {editorTitle, title}); //$NON-NLS-1$
+		}
 		IPerspectiveDescriptor persp = currentPage.getPerspective();
 		String label = ""; //$NON-NLS-1$
 		if (persp != null)
