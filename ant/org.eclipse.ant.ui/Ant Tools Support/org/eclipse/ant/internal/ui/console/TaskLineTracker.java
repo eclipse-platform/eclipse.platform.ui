@@ -54,6 +54,6 @@ public class TaskLineTracker implements IConsoleLineTracker {
 	/**
 	 * @see org.eclipse.debug.ui.console.IConsoleLineTracker#streamClosed()
 	 */
-	public void streamClosed() {
+	public void consoleClosed() {
 	}
 }
