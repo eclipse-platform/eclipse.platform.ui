@@ -183,6 +183,9 @@ public class BreakpointsViewEventHandler implements IBreakpointsListener, IActiv
 										// pick up structural changes.
 										fView.getViewer().refresh();
 										fView.initializeCheckedState();
+										if (!DebugPlugin.getDefault().getBreakpointManager().isEnabled()) {
+										    fView.updateViewerBackground();
+										}
 										return;
 									}
 								}
