@@ -423,8 +423,7 @@ protected void setTeamPrivateMember(final String message, IResource root, final 
 		}
 	};
 	try {
-		ropublic void testMove() {
-}ot.accept(visitor, depth, IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
+		root.accept(visitor, depth, IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
 	} catch(CoreException e) {
 		fail(message + "resource.accept", e);
 	}
