@@ -98,17 +98,21 @@ public WizardNewFolderMainPage(String pageName, IStructuredSelection selection) 
  * @param parent the parent composite
  */
 protected void createAdvancedControls(Composite parent) {
-	advancedButton = new Button(parent, SWT.PUSH);
-	advancedButton.setFont(parent.getFont());
-	advancedButton.setText(WorkbenchMessages.getString("WizardNewFolderMainPage.advancedButtonCollapsed")); //$NON-NLS-1$
-	GridData data = setButtonLayoutData(advancedButton);
-	data.horizontalAlignment = GridData.BEGINNING;
-	advancedButton.setLayoutData(data);
-	advancedButton.addSelectionListener(new SelectionAdapter() {
-		public void widgetSelected(SelectionEvent e) {
-			handleAdvancedButtonSelect();
-		}
-	});
+	Preferences preferences = ResourcesPlugin.getPlugin().getPluginPreferences();
+	
+	if (preferences.getBoolean(ResourcesPlugin.PREF_DISABLE_LINKING) == false) {
+		advancedButton = new Button(parent, SWT.PUSH);
+		advancedButton.setFont(parent.getFont());
+		advancedButton.setText(WorkbenchMessages.getString("WizardNewFolderMainPage.advancedButtonCollapsed")); //$NON-NLS-1$
+		GridData data = setButtonLayoutData(advancedButton);
+		data.horizontalAlignment = GridData.BEGINNING;
+		advancedButton.setLayoutData(data);
+		advancedButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				handleAdvancedButtonSelect();
+			}
+		});
+	}
 	linkedResourceGroup = new CreateLinkedResourceGroup(
 		IResource.FOLDER,
 		new Listener() {
