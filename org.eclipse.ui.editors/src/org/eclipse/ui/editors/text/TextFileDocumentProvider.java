@@ -57,6 +57,7 @@ import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel;
 import org.eclipse.ui.texteditor.IDocumentProvider;
@@ -66,8 +67,6 @@ import org.eclipse.ui.texteditor.IDocumentProviderExtension3;
 import org.eclipse.ui.texteditor.IElementStateListener;
 import org.eclipse.ui.texteditor.IElementStateListenerExtension;
 import org.eclipse.ui.texteditor.ResourceMarkerAnnotationModel;
-
-import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 
 /**
  * @since 3.0
@@ -802,10 +801,12 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 				 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider.DocumentProviderOperation#getSchedulingRule()
 				 */
 				public ISchedulingRule getSchedulingRule() {
-					if (info.fElement instanceof IFileEditorInput)
-						return ((IFileEditorInput)info.fElement).getFile().getParent();
-					else
-						return null;
+					// XXX: waiting for clients (e.g. Team providers) to support scheduling rules (see bug 46753)
+					return ResourcesPlugin.getWorkspace().getRoot();
+//					if (info.fElement instanceof IFileEditorInput)
+//						return ((IFileEditorInput)info.fElement).getFile().getParent();
+//					else
+//						return null;
 				}
 			};
 			executeOperation(operation, getProgressMonitor());
