@@ -155,6 +155,9 @@ public class TextFileChange extends TextChange {
 		RefactoringStatus result= fValidationState.isValid();
 		if (needsSaving()) {
 			result.merge(Changes.validateModifiesFiles(new IFile[] {fFile}));
+		} else {
+			// we are reading the file. So it should be at least in sync
+			result.merge(Changes.checkInSync(new IFile[] {fFile}));
 		}
 		pm.worked(1);
 		return result;

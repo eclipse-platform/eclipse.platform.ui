@@ -38,6 +38,14 @@ public class Changes {
 		return result;
 	}
 	
+	public static RefactoringStatus checkInSync(IFile[] filesToModify) {
+		RefactoringStatus result= new RefactoringStatus();
+		IStatus status= Resources.checkInSync(filesToModify);
+		if (!status.isOK())
+			result.merge(RefactoringStatus.create(status));
+		return result;
+	}
+	
 	public static CoreException asCoreException(BadLocationException e) {
 		String message= e.getMessage();
 		if (message == null)
