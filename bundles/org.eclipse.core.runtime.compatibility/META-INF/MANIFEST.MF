@@ -13,7 +13,7 @@ Provide-Package:
  org.eclipse.core.runtime.model,
  org.eclipse.core.boot
 Require-Bundle: 
- org.eclipse.core.runtime,
+ org.eclipse.core.runtime; provide-packages=true,
  org.eclipse.osgi.util; provide-packages=true,
  org.eclipse.osgi.services; provide-packages=true,
  org.eclipse.osgi; provide-packages=true,
