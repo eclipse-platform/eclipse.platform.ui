@@ -13,12 +13,26 @@ package org.eclipse.ui.internal;
  *      - Fix for bug 10025 - Resizing views should not use height ratios
 **********************************************************************/
 
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.*;
-import java.util.*;
-import org.eclipse.ui.*;
+import java.util.ArrayList;
+
+import org.eclipse.jface.util.Geometry;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
+import org.eclipse.swt.graphics.Cursor;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.ui.IPageLayout;
+import org.eclipse.ui.internal.dnd.AbstractDropTarget;
+import org.eclipse.ui.internal.dnd.CompatibilityDragTarget;
+import org.eclipse.ui.internal.dnd.DragUtil;
+import org.eclipse.ui.internal.dnd.IDragOverListener;
+import org.eclipse.ui.internal.dnd.IDropTarget;
 
 /**
  * Abstract container that groups various layout
@@ -27,7 +41,7 @@ import org.eclipse.ui.*;
  * layout part based on the location of sashes within
  * the container.
  */
-public abstract class PartSashContainer extends LayoutPart implements ILayoutContainer {
+public abstract class PartSashContainer extends LayoutPart implements ILayoutContainer, IDragOverListener {
  
 	protected Composite parent;
 	protected ControlListener resizeListener;
@@ -233,6 +247,8 @@ public void createControl(Composite parentWidget) {
 	parent = createParent(parentWidget);
 	parent.addControlListener(resizeListener);
 	
+	DragUtil.addDragTarget(parent, this);
+		
 	ArrayList children = (ArrayList)this.children.clone();
 	for (int i = 0, length = children.size(); i < length; i++) {
 		LayoutPart child = (LayoutPart)children.get(i);
@@ -544,4 +560,187 @@ public void zoomOut() {
 	root.setBounds(oldBounds);
 	unzoomRoot = null;
 }
+
+/* (non-Javadoc)
+ * @see org.eclipse.ui.internal.dnd.IDragOverListener#drag(org.eclipse.swt.widgets.Control, java.lang.Object, org.eclipse.swt.graphics.Point, org.eclipse.swt.graphics.Rectangle)
+ */
+public IDropTarget drag(Control currentControl, Object draggedObject,
+		Point position, Rectangle dragRectangle) {
+	
+	if (!(draggedObject instanceof LayoutPart)) {
+		return null;
+	}
+	
+	final LayoutPart sourcePart = (LayoutPart)draggedObject;
+	
+	if (!isStackType(sourcePart) && !isPaneType(sourcePart)) {
+		return null;
+	}
+	
+	if (sourcePart.getWorkbenchWindow() != getWorkbenchWindow()) {
+		return null;
+	}
+	
+	final LayoutPart targetPart = root.findPart(parent.toControl(position));
+	
+	if (targetPart != null) {
+		final Control targetControl = targetPart.getControl();
+		
+		int side = CompatibilityDragTarget.getRelativePosition(targetControl, position);
+		
+		final Rectangle targetBounds = DragUtil.getDisplayBounds(targetControl);
+		
+		// Disallow stacking if this isn't a container
+		if (side == SWT.DEFAULT || (side == SWT.CENTER && !isStackType(targetPart))) {
+			side = Geometry.getClosestSide(targetBounds, position);
+		}
+		
+		final int finalSide = side;
+		
+		return new AbstractDropTarget() {
+			public void drop() {
+				if (sourcePart == targetPart) {
+					return;
+				}
+				
+				ILayoutContainer sourceContainer = sourcePart.getContainer();
+				if ((sourceContainer == targetPart) && sourceContainer.getChildren().length == 1) {
+					return;
+				}
+				
+				if (finalSide == SWT.CENTER && sourcePart.getContainer() == targetPart) {
+					return;
+				}
+				 
+				dropObject(sourcePart, targetPart, finalSide);
+			}
+
+			public Cursor getCursor() {
+				return DragCursors.getCursor(DragCursors.positionToDragCursor(finalSide));
+			}
+
+			public Rectangle getSnapRectangle() {
+				if (finalSide == SWT.CENTER) {
+					return targetBounds;
+				}
+				
+				int distance = Geometry.getDimension(targetBounds, !Geometry.isHorizontal(finalSide));
+				
+				return Geometry.getExtrudedEdge(targetBounds, (int) (distance
+						* getDockingRatio(sourcePart, targetPart)), finalSide);
+			}
+		};
+	}
+	
+	return null;
+}
+
+/**
+ * Returns true iff this PartSashContainer allows its parts to be stacked onto the given
+ * container.
+ * 
+ * @param container
+ * @return
+ */
+public abstract boolean isStackType(LayoutPart toTest);
+
+public abstract boolean isPaneType(LayoutPart toTest);
+
+/* (non-Javadoc)
+ * @see org.eclipse.ui.internal.PartSashContainer#dropObject(org.eclipse.ui.internal.LayoutPart, org.eclipse.ui.internal.LayoutPart, int)
+ */
+protected void dropObject(LayoutPart sourcePart, LayoutPart targetPart, int side) {
+	
+	if (side == SWT.CENTER) {
+		stack(sourcePart, targetPart);
+	} else {
+
+		if (isStackType(sourcePart)) {
+			// Remove the part from old container.
+			derefPart(sourcePart);
+			addEnhanced(sourcePart, side, getDockingRatio(sourcePart, targetPart), targetPart);
+		} else {
+			
+			derefPart(sourcePart);
+			LayoutPart newPart = createStack(sourcePart);
+			
+			addEnhanced(newPart, side, getDockingRatio(sourcePart, targetPart), targetPart);
+		}
+		
+		sourcePart.setFocus();
+	}
+}
+
+/**
+ * @param sourcePart
+ * @return
+ */
+protected abstract LayoutPart createStack(LayoutPart sourcePart);
+
+public void stack(LayoutPart newPart, LayoutPart relPos) {
+	
+	ILayoutContainer container = (ILayoutContainer)relPos;
+	
+	getControl().setRedraw(false);
+	if (isStackType(newPart)) {
+		ILayoutContainer sourceContainer = (ILayoutContainer)newPart;
+		LayoutPart visiblePart = getVisiblePart(sourceContainer);
+		LayoutPart[] children = sourceContainer.getChildren();
+		for (int i = 0; i < children.length; i++)
+			stackPane(children[i], container);
+		if (visiblePart != null) {
+			setVisiblePart(container, visiblePart);
+			visiblePart.setFocus();
+		}
+	}
+	else if (isPaneType(newPart)) {
+		stackPane(newPart, container);
+		setVisiblePart(container, newPart);
+		newPart.setFocus();
+	}
+	
+	getControl().setRedraw(true);
+}
+
+/**
+ * @param container
+ * @param visiblePart
+ */
+protected abstract void setVisiblePart(ILayoutContainer container, LayoutPart visiblePart);
+
+/**
+ * @param container
+ * @return
+ */
+protected abstract LayoutPart getVisiblePart(ILayoutContainer container);
+
+private void stackPane(LayoutPart newPart, ILayoutContainer refPart) {
+	// Remove the part from old container.
+	derefPart(newPart);
+	// Reparent part and add it to the workbook
+	newPart.reparent(getParent());
+	refPart.add(newPart);
+}
+
+/**
+ * @param sourcePart
+ */
+protected void derefPart(LayoutPart sourcePart) {
+	ILayoutContainer container = sourcePart.getContainer();
+	if (container != null) {
+		container.remove(sourcePart);
+	}
+	
+	if (container instanceof LayoutPart) {
+		if (isStackType((LayoutPart)container)) {
+			if (container.getChildren().length == 0) {
+				remove((LayoutPart)container);
+			}
+		}
+	}
+}
+protected float getDockingRatio(LayoutPart dragged, LayoutPart target) {
+	return 0.5f;
+}
+
 }
