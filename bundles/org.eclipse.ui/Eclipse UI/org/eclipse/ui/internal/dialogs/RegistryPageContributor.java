@@ -125,12 +125,25 @@ public boolean isApplicableTo(Object object) {
 	if (filterProperties == null)
 		return true;
 	IActionFilter filter = null;
-	if (object instanceof IActionFilter)
-		filter = (IActionFilter)object;
-	else if (object instanceof IAdaptable)
+
+	// If this is a resource contributor and the object is not a resource but
+	// is an adaptable then get the object's resource via the adaptable mechanism.
+	Object testObject = object;
+	if (isResourceContributor 
+		&& !(object instanceof IResource)
+		&& (object instanceof IAdaptable)) { 
+			Object result = ((IAdaptable)object).getAdapter(IResource.class);
+			if (result != null) 
+				testObject = result;
+	}
+	
+	if (testObject instanceof IActionFilter)
+		filter = (IActionFilter)testObject;
+	else if (testObject instanceof IAdaptable)
 		filter = (IActionFilter)((IAdaptable)object).getAdapter(IActionFilter.class);
+
 	if (filter != null)
-		return testCustom(object, filter);
+		return testCustom(testObject, filter);
 	else
 		return true;
 }
