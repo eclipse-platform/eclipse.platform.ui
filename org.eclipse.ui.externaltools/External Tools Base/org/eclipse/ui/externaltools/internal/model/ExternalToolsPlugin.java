@@ -90,7 +90,7 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin {
 	 */
 	public PathLocationVariableRegistry getDirectoryLocationVariableRegistry() {
 		if (dirLocVarRegistry == null)
-			dirLocVarRegistry = new PathLocationVariableRegistry(IExternalToolConstants.PL_DIRECTORY_VARIABLES);
+			dirLocVarRegistry = new PathLocationVariableRegistry(IExternalToolConstants.EXTENSION_POINT_DIRECTORY_VARIABLES);
 		return dirLocVarRegistry;
 	}
 
@@ -99,7 +99,7 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin {
 	 */
 	public PathLocationVariableRegistry getFileLocationVariableRegistry() {
 		if (fileLocVarRegistry == null)
-			fileLocVarRegistry = new PathLocationVariableRegistry(IExternalToolConstants.PL_FILE_VARIABLES);
+			fileLocVarRegistry = new PathLocationVariableRegistry(IExternalToolConstants.EXTENSION_POINT_FILE_VARIABLES);
 		return fileLocVarRegistry;
 	}
 

@@ -22,7 +22,9 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
@@ -31,6 +33,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
@@ -72,9 +75,13 @@ public final class BuilderPropertyPage extends PropertyPage {
 	private static final String IMG_INVALID_BUILD_TOOL = "icons/full/obj16/invalid_build_tool.gif"; //$NON-NLS-1$
 
 	private static final String LAUNCH_CONFIG_HANDLE = "LaunchConfigHandle"; //$NON-NLS-1$
+	
+	private static final String TAG_CONFIGURATION_MAP= "configurationMap"; //$NON-NLS-1$
+	private static final String TAG_SOURCE_TYPE= "sourceType"; //$NON-NLS-1$
+	private static final String TAG_BUILDER_TYPE= "builderType"; //$NON-NLS-1$
 
 	private Table builderTable;
-	private Button upButton, downButton, newButton, editButton, removeButton;
+	private Button upButton, downButton, newButton, copyButton, editButton, removeButton;
 	private ArrayList imagesToDispose = new ArrayList();
 	private Image builderImage, invalidBuildToolImage;
 	private IDebugModelPresentation debugModelPresentation;
@@ -104,7 +111,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 				//ExternalTool tool = ExternalToolRegistry.toolFromBuildCommandArgs(commands[i].getArguments(), NEW_NAME);
 				ILaunchConfiguration config = ExternalToolsUtil.configFromBuildCommandArgs(commands[i].getArguments());
 				if (config != null) {
-					addConfig(config, -1, false);
+					addConfig(config, false);
 				} else {
 					addCommand(commands[i], -1, false);
 				}
@@ -134,17 +141,16 @@ public final class BuilderPropertyPage extends PropertyPage {
 			builderTable.setSelection(position);
 	}
 
-	private void addConfig(ILaunchConfiguration config, int position, boolean select) {
-		TableItem newItem;
-		if (position < 0) {
-			newItem = new TableItem(builderTable, SWT.NONE);
-		} else {
-			newItem = new TableItem(builderTable, SWT.NONE, position);
-		}
+	/**
+	 * Adds the given launch configuration to the table and selects it if
+	 * <code>select</code> is <code>true</code>.
+	 */
+	private void addConfig(ILaunchConfiguration config, boolean select) {
+		TableItem newItem = new TableItem(builderTable, SWT.NONE);
 		newItem.setData(config);
 		updateConfigItem(newItem, config);
 		if (select) {
-			builderTable.setSelection(position);
+			builderTable.setSelection(builderTable.getItemCount());
 		}
 	}
 
@@ -302,6 +308,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 		buttonArea.setFont(font);
 		buttonArea.setLayoutData(new GridData(GridData.FILL_VERTICAL));
 		newButton = createButton(buttonArea, ToolMessages.getString("BuilderPropertyPage.newButton")); //$NON-NLS-1$
+		copyButton = createButton(buttonArea, "Copy...");
 		editButton = createButton(buttonArea, ToolMessages.getString("BuilderPropertyPage.editButton")); //$NON-NLS-1$
 		removeButton = createButton(buttonArea, ToolMessages.getString("BuilderPropertyPage.removeButton")); //$NON-NLS-1$
 		new Label(buttonArea, SWT.LEFT);
@@ -309,6 +316,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 		downButton = createButton(buttonArea, ToolMessages.getString("BuilderPropertyPage.downButton")); //$NON-NLS-1$
 
 		newButton.setEnabled(true);
+		copyButton.setEnabled(true);
 
 		//populate widget contents	
 		addBuildersToTable();
@@ -350,6 +358,8 @@ public final class BuilderPropertyPage extends PropertyPage {
 	private void handleButtonPressed(Button button) {
 		if (button == newButton) {
 			handleNewButtonPressed();
+		} else if (button == copyButton) {
+			handleCopyButtonPressed();
 		} else if (button == editButton) {
 			handleEditButtonPressed();
 		} else if (button == removeButton) {
@@ -361,6 +371,90 @@ public final class BuilderPropertyPage extends PropertyPage {
 		}
 		handleTableSelectionChanged();
 		builderTable.setFocus();
+	}
+
+	/**
+	 * The user has pressed the copy button. Prompt them to select a
+	 * configuration to copy.
+	 */	
+	private void handleCopyButtonPressed() {
+		ILaunchManager manager= DebugPlugin.getDefault().getLaunchManager();
+		ILaunchConfigurationType types[]= manager.getLaunchConfigurationTypes();
+		List toolTypes= new ArrayList();
+		String category= LaunchConfigurationManager.getDefault().getLaunchGroup(IExternalToolConstants.ID_EXTERNAL_TOOLS_BUILDER_LAUNCH_GROUP).getCategory();
+		for (int i = 0; i < types.length; i++) {
+			ILaunchConfigurationType type = types[i];
+			if (category.equals(type.getCategory())) {
+				toolTypes.add(type);
+			}
+		}
+		List configurations= new ArrayList();
+		Iterator iter= toolTypes.iterator();
+		while (iter.hasNext()) {
+			try {
+				ILaunchConfiguration[] configs= manager.getLaunchConfigurations((ILaunchConfigurationType) iter.next());
+				for (int i = 0; i < configs.length; i++) {
+					configurations.add(configs[i]);	
+				}
+			} catch (CoreException e) {
+			}
+		}
+		ElementListSelectionDialog dialog= new ElementListSelectionDialog(getShell(), debugModelPresentation);
+		dialog.setTitle("Copy configuration");
+		dialog.setMessage("Choose a configuration to copy");
+		dialog.setElements(configurations.toArray());
+		if (dialog.open() == Dialog.CANCEL) {
+			return;
+		}
+		Object results[]= dialog.getResult();
+		ILaunchConfiguration config= (ILaunchConfiguration) results[0];
+		Map attributes= null;
+		try {
+			attributes= config.getAttributes();
+		} catch (CoreException e) {
+			handleException(e);
+			return;
+		}
+		String newName= config.getName() + " [Builder]";
+		newName= manager.generateUniqueLaunchConfigurationNameFrom(newName);
+		ILaunchConfiguration newConfig= null;
+		try {
+			ILaunchConfigurationType newType= getConfigurationDuplicationType(config);
+			ILaunchConfigurationWorkingCopy newWorkingCopy= newType.newInstance(getBuilderFolder(), newName);
+			newWorkingCopy.setAttributes(attributes);
+			newConfig= newWorkingCopy.doSave();
+		} catch (CoreException e) {
+			handleException(e);
+			return;
+		}
+		userHasMadeChanges= true;
+		addConfig(newConfig, true);
+	}
+	
+	/**
+	 * Returns the type of launch configuration that should be created when
+	 * duplicating the given configuration as a project builder. Queries to see
+	 * if an extension has been specified to explicitly declare the mapping.
+	 */
+	private ILaunchConfigurationType getConfigurationDuplicationType(ILaunchConfiguration config) throws CoreException {
+		IExtensionPoint ep= ExternalToolsPlugin.getDefault().getDescriptor().getExtensionPoint(IExternalToolConstants.EXTENSION_POINT_CONFIGURATION_DUPLICATION_MAPS); 
+		IConfigurationElement[] elements = ep.getConfigurationElements();
+		String sourceType= config.getType().getIdentifier();
+		String builderType= null;
+		for (int i= 0; i < elements.length; i++) {
+			IConfigurationElement element= elements[i];
+			if (element.getName().equals(TAG_CONFIGURATION_MAP) && sourceType.equals(element.getAttribute(TAG_SOURCE_TYPE))) {
+				builderType= element.getAttribute(TAG_BUILDER_TYPE);
+				break;
+			}
+		}
+		if (builderType != null) {
+			ILaunchConfigurationType type= DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationType(builderType);
+			if (type != null) {
+				return type;
+			}
+		}
+		return config.getType();
 	}
 
 	/**
@@ -406,7 +500,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 				config.delete();
 			} else {
 				userHasMadeChanges= true;
-				addConfig(config, builderTable.getItemCount(), true);
+				addConfig(config, true);
 			}
 		} catch (CoreException e) {
 		}

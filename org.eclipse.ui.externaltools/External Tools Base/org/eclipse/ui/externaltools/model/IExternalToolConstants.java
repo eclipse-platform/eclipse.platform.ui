@@ -16,35 +16,40 @@ Contributors:
  * </p>
  */
 public interface IExternalToolConstants {
-	// ------- Extensions -------
 	/**
 	 * Plugin identifier for external tools (value <code>org.eclipse.ui.externaltools</code>).
 	 */
 	public static final String PLUGIN_ID = "org.eclipse.ui.externaltools"; //$NON-NLS-1$;
 
+	// ------- Extensions Points -------
+	/**
+	 * Extension point to declare the launch configuration type that should be
+	 * created when duplicating an existing configuration as a project builder.
+	 */
+	public static final String EXTENSION_POINT_CONFIGURATION_DUPLICATION_MAPS = "configurationDuplicationMaps"; // $NON-NLS-1$
 	/**
 	 * Extension point to declare argument variables
 	 * (value <code>argumentVariables</code>).
 	 */
-	public static final String PL_ARGUMENT_VARIABLES = "argumentVariables"; //$NON-NLS-1$
+	public static final String EXTENSION_POINT_ARGUMENT_VARIABLES = "argumentVariables"; //$NON-NLS-1$
 
 	/**
 	 * Extension point to declare file variables
 	 * (value <code>fileVariables</code>).
 	 */
-	public static final String PL_FILE_VARIABLES = "fileVariables"; //$NON-NLS-1$
+	public static final String EXTENSION_POINT_FILE_VARIABLES = "fileVariables"; //$NON-NLS-1$
 
 	/**
 	 * Extension point to declare directory variables
 	 * (value <code>directoryVariables</code>).
 	 */
-	public static final String PL_DIRECTORY_VARIABLES = "directoryVariables"; //$NON-NLS-1$
+	public static final String EXTENSION_POINT_DIRECTORY_VARIABLES = "directoryVariables"; //$NON-NLS-1$
 
 	/**
 	 * Extension point to declare refresh scope variables
 	 * (value <code>refreshVariables</code>).
 	 */
-	public static final String PL_REFRESH_VARIABLES = "refreshVariables"; //$NON-NLS-1$
+	public static final String EXTENSION_POINT_REFRESH_VARIABLES = "refreshVariables"; //$NON-NLS-1$
 
 	// ------- Views -------
 

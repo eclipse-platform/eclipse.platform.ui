@@ -23,12 +23,13 @@
 
 
 <!-- extension point definitions -->
+	<extension-point id="configurationDuplicationMaps" name="%ExtPoint.configurationDuplicationMaps"/>
 	<extension-point id="argumentVariables" name="%ExtPoint.argumentVariables"/>
 	<extension-point id="directoryVariables" name="%ExtPoint.directoryVariables"/>
 	<extension-point id="fileVariables" name="%ExtPoint.fileVariables"/>
 	<extension-point id="refreshVariables" name="%ExtPoint.refreshVariables"/>
 
-<!-- Extensions -->	
+<!-- Extensions -->
 	<extension point="org.eclipse.ui.actionSets">
 		<actionSet
 			id="org.eclipse.ui.externaltools.ExternalToolsSet"
@@ -192,6 +193,17 @@
     		modes = "run"
     		category = "org.eclipse.ui.externaltools.builder">
     	</launchConfigurationType>
+    </extension>
+    
+    <extension point = "org.eclipse.ui.externaltools.configurationDuplicationMaps">
+    	<configurationMap
+    		sourceType="org.eclipse.ant.AntLaunchConfigurationType"
+    		builderType="org.eclipse.ant.AntBuilderLaunchConfigurationType">
+    	</configurationMap>
+    	<configurationMap
+    		sourceType="org.eclipse.ui.externaltools.ProgramLaunchConfigurationType"
+    		builderType="org.eclipse.ui.externaltools.ProgramBuilderLaunchConfigurationType">
+    	</configurationMap>
     </extension>
     
     <extension point = "org.eclipse.debug.ui.launchConfigurationTabGroups">

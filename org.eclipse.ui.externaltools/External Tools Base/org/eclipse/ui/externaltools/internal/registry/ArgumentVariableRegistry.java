@@ -21,7 +21,7 @@ public class ArgumentVariableRegistry extends ExternalToolVariableRegistry {
 	 * Creates the registry and loads the variables.
 	 */
 	public ArgumentVariableRegistry() {
-		super(IExternalToolConstants.PL_ARGUMENT_VARIABLES);
+		super(IExternalToolConstants.EXTENSION_POINT_ARGUMENT_VARIABLES);
 	}
 
 	/**
