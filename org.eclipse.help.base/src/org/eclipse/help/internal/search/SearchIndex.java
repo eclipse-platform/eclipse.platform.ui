@@ -549,6 +549,7 @@ public class SearchIndex {
 				lock.channel().close();
 			} catch (IOException ioe) {
 			}
+			lock = null;
 		}
 	}
 }
