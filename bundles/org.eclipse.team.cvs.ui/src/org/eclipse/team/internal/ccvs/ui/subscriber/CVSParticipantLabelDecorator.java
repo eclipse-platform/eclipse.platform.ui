@@ -73,7 +73,7 @@ class CVSParticipantLabelDecorator extends LabelProvider implements IPropertyCha
 	protected String getRevisionNumber(ISynchronizeModelElement element) {
 		if(element instanceof SyncInfoModelElement) {
 			SyncInfo info = ((SyncInfoModelElement)element).getSyncInfo();
-			if(info != null && info instanceof CVSSyncInfo) {
+			if(info != null && info.getLocal().getType() == IResource.FILE && info instanceof CVSSyncInfo) {
 				CVSSyncInfo cvsInfo = (CVSSyncInfo)info;
 				ICVSRemoteResource remote = (ICVSRemoteResource) cvsInfo.getRemote();
 				ICVSRemoteResource local;
