@@ -512,6 +512,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		fLaunchConfiguration= configuration;
 		setErrorMessage(null);
 		setMessage(null);
+		setDirty(true);
 		boolean hideInternal= false;
 		try {
 			hideInternal = fLaunchConfiguration.getAttribute(IAntLaunchConfigurationConstants.ATTR_HIDE_INTERNAL_TARGETS, false);
