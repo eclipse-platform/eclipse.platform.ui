@@ -14,13 +14,14 @@ import org.eclipse.core.internal.preferences.EclipsePreferences;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
 /**
  * @since 3.0
  */
-public class TestScope extends EclipsePreferences {
+public class TestScope extends EclipsePreferences implements IScopeContext {
 
 	public static final String SCOPE = "test"; //$NON-NLS-1$
 

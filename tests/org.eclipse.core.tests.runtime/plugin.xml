@@ -234,6 +234,16 @@
       <run class="org.eclipse.core.tests.runtime.jobs.DeadlockDetectionTest"/>
     </test>
 
+    <test id="preferences.PreferencesServiceTest">
+      <run class="org.eclipse.core.tests.internal.preferences.PreferencesServiceTest"/>
+    </test>
+    <test id="preferences.EclipsePreferencesTest">
+      <run class="org.eclipse.core.tests.internal.preferences.EclipsePreferencesTest"/>
+    </test>
+    <test id="preferences.PreferenceForwarderTest">
+      <run class="org.eclipse.core.tests.runtime.PreferenceForwarderTest"/>
+    </test>
+
  </extension>
 
 </plugin>

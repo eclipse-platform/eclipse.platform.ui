@@ -24,7 +24,7 @@ public class LookupOrder {
 
 	LookupOrder(String qualifier, String key, String[] order) {
 		super();
-		if (qualifier == null || key == null || order == null)
+		if (qualifier == null || order == null)
 			throw new IllegalArgumentException();
 		for (int i = 0; i < order.length; i++)
 			if (order[i] == null)

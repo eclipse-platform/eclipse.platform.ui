@@ -30,8 +30,11 @@ public interface IPreferencesService {
 	 * Lookup the given key in the specified preference nodes in the given order.
 	 * Return the set value from the first node the key is found in. If the key is not
 	 * defined in any of the given nodes, then return the specified default value.
+	 * <p>
 	 * Immediately returns the default value if the node list is <code>null</code>.
-	 * 
+	 * If any of the individual entries in the node list are <code>null</code> then
+	 * skip over them and move on to the next node in the list.
+	 * </p>
 	 * @param key the preference key
 	 * @param defaultValue the default value
 	 * @param nodes the list of nodes to search
@@ -346,22 +349,34 @@ public interface IPreferencesService {
 	/**
 	 * Return an array with the default lookup order for the preference keyed by the given
 	 * qualifier and simple name. Return <code>null</code> if no default has been set.
-	 * 
+	 * <p>
+	 * The lookup order returned is based on an exact match to the specified qualifier
+	 * and simple name. For instance, if the given key is non-<code>null</code> and
+	 * no default lookup order is found, the default lookup order for the qualifier (and a
+	 * <code>null</code> key) is <em>NOT</em> returned. Clients should call
+	 * <code>#getLookupOrder</code> if they desire this behavior.
+	 * </p>
 	 * @param qualifier the namespace qualifier for the preference
-	 * @param key the preference name
+	 * @param key the preference name or <code>null</code>
 	 * @return the scope order or <code>null</code>
 	 * @see #setDefaultLookupOrder(String, String, String[])
+	 * @see #getLookupOrder(String, String)
 	 */
 	public String[] getDefaultLookupOrder(String qualifier, String key);
 
 	/**
 	 * Return an array with the lookup order for the preference keyed by the given
-	 * qualifier and simple name. Return the default-default order as defined by the
-	 * platform if no order has been set.
-	 * 
+	 * qualifier and simple name. 
+	 * <p>
+	 * First do an exact match lookup with the given qualifier and simple name. If a match
+	 * is found then return it. Otherwise if the key is non-<code>null</code> then
+	 * do a lookup based on only the qualifier and return the set value. 
+	 * Return the default-default order as defined by the platform if no order has been set.
+	 * </p>
 	 * @param qualifier the namespace qualifier for the preference
-	 * @param key the preference name
+	 * @param key the preference name or <code>null</code>
 	 * @return the scope order 
+	 * @throws IllegalArgumentException if the qualifier is <code>null</code>
 	 * @see #getDefaultLookupOrder(String, String)
 	 * @see #setDefaultLookupOrder(String, String, String[])
 	 */
@@ -369,12 +384,23 @@ public interface IPreferencesService {
 
 	/**
 	 * Set the default scope lookup order for the preference keyed by the given
-	 * qualifier and simple name. If the order is <code>null</code> then the default
+	 * qualifier and simple name. If the given order is <code>null</code> then the set
 	 * ordering (if it exists) is removed.
-	 * 
+	 * <p>
+	 * If the given simple name is <code>null</code> then set the given lookup
+	 * order to be used for all keys with the given qualifier.
+	 * </p><p>
+	 * Note that the default lookup order is not persisted across platform invocations. 
+	 * </p>
 	 * @param qualifier the namespace qualifier for the preference
-	 * @param key the preference name
+	 * @param key the preference name or <code>null</code>
 	 * @param order the lookup order or <code>null</code>
+	 * @throws IllegalArgumentException
+	 * <ul>
+	 * <li>if the qualifier is <code>null</code></li>
+	 * <li>if an entry in the order array is <code>null</code> (the array itself is 
+	 * allowed to be <code>null</code></li>
+	 * </ul>
 	 * @see #getDefaultLookupOrder(String, String)
 	 */
 	public void setDefaultLookupOrder(String qualifier, String key, String[] order);

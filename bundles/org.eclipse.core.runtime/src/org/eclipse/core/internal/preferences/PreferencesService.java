@@ -243,6 +243,10 @@ public class PreferencesService implements IPreferencesService {
 	 */
 	public String[] getLookupOrder(String qualifier, String key) {
 		String[] order = getDefaultLookupOrder(qualifier, key);
+		// if there wasn't an exact match based on both qualifier and simple name
+		// then do a lookup based only on the qualifier
+		if (order == null && key != null)
+			order = getDefaultLookupOrder(qualifier, null);
 		if (order == null)
 			order = DEFAULT_DEFAULT_LOOKUP_ORDER;
 		return order;
