@@ -134,9 +134,6 @@ public class ExpressionManager implements IExpressionManager, IDebugEventSetList
 					case DebugEvent.CHANGE:
 						fireExpressionChanged((IExpression)event.getSource());
 						break;
-					case DebugEvent.TERMINATE:
-						removeExpression((IExpression)event.getSource());
-						break;
 					default:
 						break;
 				}

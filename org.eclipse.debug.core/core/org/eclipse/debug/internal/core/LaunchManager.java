@@ -74,7 +74,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * Collection of defined launch configuration type
 	 * extensions.
 	 */
-	private List fLaunchConfigurationTypes = new ArrayList(5);
+	private List fLaunchConfigurationTypes = null;
 	
 	/**
 	 * Launch configuration cache. Keys are <code>LaunchConfiguration</code>,
@@ -132,7 +132,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * are identifiers, and values are associated
 	 * configuration elements.
 	 */
-	private Map fSourceLocators = new HashMap(10);
+	private Map fSourceLocators = null;
 	
 	/**
 	 * Path to the local directory where local launch configurations
@@ -206,7 +206,9 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * Clears all launch configurations (if any have been accessed)
 	 */
 	private void clearAllLaunchConfigurations() {
-		fLaunchConfigurationTypes.clear();
+		if (fLaunchConfigurationTypes != null) {
+			fLaunchConfigurationTypes.clear();
+		}
 		if (fLaunchConfigurationIndex != null) {
 			fLaunchConfigurationIndex.clear();
 		}
@@ -348,17 +350,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 *  the extensions
 	 */
 	public void startup() throws CoreException {
-		IPluginDescriptor descriptor= DebugPlugin.getDefault().getDescriptor();
-		IExtensionPoint extensionPoint= descriptor.getExtensionPoint(DebugPlugin.EXTENSION_POINT_LAUNCH_CONFIGURATION_TYPES);
-		IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
-		for (int i= 0; i < infos.length; i++) {
-			IConfigurationElement configurationElement = infos[i];
-			LaunchConfigurationType configType = new LaunchConfigurationType(configurationElement); 			
-			fLaunchConfigurationTypes.add(configType);
-		}		
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
-		
-		initializeSourceLocators();
 	}
 							
 	/**
@@ -513,14 +505,15 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * @see ILaunchManager#getLaunchConfigurationTypes()
 	 */
 	public ILaunchConfigurationType[] getLaunchConfigurationTypes() {
-		return (ILaunchConfigurationType[])fLaunchConfigurationTypes.toArray(new ILaunchConfigurationType[fLaunchConfigurationTypes.size()]);
+		List types= getLaunchConfigurationTypeList();
+		return (ILaunchConfigurationType[])types.toArray(new ILaunchConfigurationType[types.size()]);
 	}
 	
 	/**
 	 * @see ILaunchManager#getLaunchConfigurationType(String)
 	 */
 	public ILaunchConfigurationType getLaunchConfigurationType(String id) {
-		Iterator iter = fLaunchConfigurationTypes.iterator();
+		Iterator iter = getLaunchConfigurationTypeList().iterator();
 		while (iter.hasNext()) {
 			ILaunchConfigurationType type = (ILaunchConfigurationType)iter.next();
 			if (type.getIdentifier().equals(id)) {
@@ -528,7 +521,26 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 			}
 		}
 		return null;
-	}	
+	}
+	
+	private List getLaunchConfigurationTypeList() {
+		if (fLaunchConfigurationTypes == null) {
+			initializeLaunchConfigurationTypes();
+		}
+		return fLaunchConfigurationTypes;
+	}
+	
+	private void initializeLaunchConfigurationTypes() {
+		IPluginDescriptor descriptor= DebugPlugin.getDefault().getDescriptor();
+		IExtensionPoint extensionPoint= descriptor.getExtensionPoint(DebugPlugin.EXTENSION_POINT_LAUNCH_CONFIGURATION_TYPES);
+		IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
+		fLaunchConfigurationTypes= new ArrayList(infos.length);
+		for (int i= 0; i < infos.length; i++) {
+			IConfigurationElement configurationElement = infos[i];
+			LaunchConfigurationType configType = new LaunchConfigurationType(configurationElement); 			
+			fLaunchConfigurationTypes.add(configType);
+		}		
+	}
 	
 	/**
 	 * Notifies the launch manager that a launch configuration
@@ -945,6 +957,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		IPluginDescriptor descriptor= DebugPlugin.getDefault().getDescriptor();
 		IExtensionPoint extensionPoint= descriptor.getExtensionPoint(DebugPlugin.EXTENSION_POINT_SOURCE_LOCATORS);
 		IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
+		fSourceLocators= new HashMap(infos.length);
 		for (int i= 0; i < infos.length; i++) {
 			IConfigurationElement configurationElement = infos[i];
 			String id = configurationElement.getAttribute("id"); //$NON-NLS-1$			
@@ -963,6 +976,9 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * @see ILaunchManager#newSourceLocator(String)
 	 */
 	public IPersistableSourceLocator newSourceLocator(String identifier) throws CoreException {
+		if (fSourceLocators == null) {
+			initializeSourceLocators();
+		}
 		IConfigurationElement config = (IConfigurationElement)fSourceLocators.get(identifier);
 		if (config == null) {
 			throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugException.INTERNAL_ERROR,

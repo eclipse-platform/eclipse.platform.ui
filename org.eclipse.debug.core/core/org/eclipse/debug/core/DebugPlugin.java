@@ -255,6 +255,14 @@ public class DebugPlugin extends Plugin {
 	 */
 	public IStatusHandler getStatusHandler(IStatus status) {
 		StatusHandlerKey key = new StatusHandlerKey(status.getPlugin(), status.getCode());
+		if (fStatusHandlers == null) {
+			try {
+				initializeStatusHandlers();
+			} catch (CoreException exception) {
+				log(exception);
+				return null;
+			}
+		}
 		IConfigurationElement config = (IConfigurationElement)fStatusHandlers.get(key);
 		if (config != null) {
 			try {
@@ -324,11 +332,11 @@ public class DebugPlugin extends Plugin {
 	 */
 	public void startup() throws CoreException {
 		fLaunchManager= new LaunchManager();
-		fBreakpointManager= new BreakpointManager();
-		fExpressionManager = new ExpressionManager();
-		fBreakpointManager.startup();
 		fLaunchManager.startup();
-		initializeStatusHandlers();
+		fBreakpointManager= new BreakpointManager();
+		fBreakpointManager.startup();
+		fExpressionManager = new ExpressionManager();
+		fExpressionManager.startup();
 	}
 	
 	/**
@@ -454,10 +462,10 @@ public class DebugPlugin extends Plugin {
 	 *  the extensions
 	 */
 	private void initializeStatusHandlers() throws CoreException {
-		fStatusHandlers = new HashMap(10);
 		IPluginDescriptor descriptor= DebugPlugin.getDefault().getDescriptor();
 		IExtensionPoint extensionPoint= descriptor.getExtensionPoint(EXTENSION_POINT_STATUS_HANDLERS);
 		IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
+		fStatusHandlers = new HashMap(infos.length);
 		for (int i= 0; i < infos.length; i++) {
 			IConfigurationElement configurationElement = infos[i];
 			String id = configurationElement.getAttribute("plugin"); //$NON-NLS-1$
