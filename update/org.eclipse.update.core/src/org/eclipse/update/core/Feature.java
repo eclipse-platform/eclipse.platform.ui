@@ -16,7 +16,6 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.core.*;
-import org.eclipse.update.internal.operations.*;
 
 /**
  * Convenience implementation of a feature.
@@ -246,7 +245,7 @@ public class Feature extends FeatureModel implements IFeature {
 	public IFeatureReference install(
 		IFeature targetFeature,
 		IFeatureReference[] optionalfeatures,
-		final IVerificationListener verificationListener,
+		IVerificationListener verificationListener,
 		IProgressMonitor progress)
 		throws InstallAbortedException, CoreException {
 
@@ -255,7 +254,7 @@ public class Feature extends FeatureModel implements IFeature {
 		ErrorRecoveryLog recoveryLog = ErrorRecoveryLog.getLog();
 
 		// make sure we have an InstallMonitor		
-		final InstallMonitor monitor;
+		InstallMonitor monitor;
 		if (progress == null)
 			monitor = new InstallMonitor(new NullProgressMonitor());
 		else if (progress instanceof InstallMonitor)
@@ -276,8 +275,8 @@ public class Feature extends FeatureModel implements IFeature {
 
 		// Get source feature provider and verifier.
 		// Initialize target variables.
-		final IFeatureContentProvider provider = getFeatureContentProvider();
-		final IVerifier verifier = provider.getVerifier();
+		IFeatureContentProvider provider = getFeatureContentProvider();
+		IVerifier verifier = provider.getVerifier();
 		IFeatureReference result = null;
 		IFeatureReference alreadyInstalledFeature = null;
 		IFeatureContentConsumer consumer = null;
@@ -340,50 +339,16 @@ public class Feature extends FeatureModel implements IFeature {
 				verificationListener,
 				true);
 			monitorWork(monitor, 1);
-
-			final MultiDownloadMonitor distributedMonitor =
-				new MultiDownloadMonitor(monitor, targetFeature);
-
-			final ThreadGroup tgroup =
-				new ThreadGroup("Feature " + getURL() + " download");
+			
 			// Download and verify plugin archives
 			for (int i = 0; i < pluginsToInstall.length; i++) {
-				final IPluginEntry pluginToInstall = pluginsToInstall[i];
-				Runnable r = new Runnable() {
-					public void run() {
-						try {
-							final ContentReference[] plugin_references =
-								provider.getPluginEntryArchiveReferences(
-									pluginToInstall,
-									distributedMonitor);
-							verifyReferences(
-								verifier,
-								plugin_references,
-								distributedMonitor,
-								verificationListener,
-								false);
-							monitorWork(monitor, 1);
-						} catch (InstallAbortedException e) {
-							abortedException = e;
-							MultiDownloadManager.stopThreads(tgroup);
-						} catch (CoreException e) {
-							UpdateUtils.logException(e);
-						} finally {
-							MultiDownloadManager.releaseThread(
-								Thread.currentThread());
-						}
-					}
-				};
-				Thread downloadThread =
-					MultiDownloadManager.getThread(
-						r,
-						"download " + pluginToInstall.toString(),
-						tgroup);
-				downloadThread.start();
+				references = provider.getPluginEntryArchiveReferences(
+						pluginsToInstall[i], monitor);
+				verifyReferences(verifier, references, monitor,
+								verificationListener, false);
+				monitorWork(monitor, 1);
 			}
-
-			MultiDownloadManager.waitForThreads(tgroup);
-
+			
 			handler.pluginsDownloaded(pluginsToInstall);
 
 			// Download non-plugin archives. Verification handled by optional install handler

@@ -181,17 +181,12 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 			localFile = Utilities.createLocalFile(getWorkingDirectory(), null);
 			boolean success = false;
 			if (monitor != null) {
-				if (monitor instanceof MultiDownloadMonitor) {
-					monitor.setTotalCount(ref.getInputSize());
-					monitor.showCopyDetails(true);
-				} else {
-					monitor.saveState();
-					monitor.setTaskName(Policy.bind("FeatureContentProvider.Downloading"));
-					//$NON-NLS-1$
-					monitor.subTask(ref.getIdentifier() + " "); //$NON-NLS-1$
-					monitor.setTotalCount(ref.getInputSize());
-					monitor.showCopyDetails(true);
-				}
+				monitor.saveState();
+				monitor.setTaskName(Policy.bind("FeatureContentProvider.Downloading"));
+				//$NON-NLS-1$
+				monitor.subTask(ref.getIdentifier() + " "); //$NON-NLS-1$
+				monitor.setTotalCount(ref.getInputSize());
+				monitor.showCopyDetails(true);
 			}
 
 			try {
@@ -237,7 +232,7 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 					// set the timestamp on the temp file to match the remote timestamp
 					localFile.setLastModified(ref.getLastModified());
 				}	
-				if (monitor != null && !(monitor instanceof MultiDownloadMonitor))
+				if (monitor != null)
 					monitor.restoreState();
 			}
 			locks.remove(key);
