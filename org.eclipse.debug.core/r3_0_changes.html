@@ -100,9 +100,18 @@
   called, as the launch dialog is be closed before the resulting launch object 
   exists.</p>
 <h3>Generic Console</h3>
-<p>With the work for the generic console support <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=37263"> (Bug 37263)</a>, the view id for the Eclipse (formerly debug) console has changed. 
-    This results in problems at startup such as "Could not restore workbench layout" with details that "Could not create view: org.eclipse.debug.ui.ConsoleView" for the particular perspective that contained reference to the old view id. 
-    The equivalent view id is now: "org.eclipse.ui.console.ConsoleView".<br>
-    The generic console is available via the Window>Show View>Basic>Console and is used by the Eclipse debug and Ant integration. </p>
+<p>With the work for the generic console support <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=37263"> 
+  (Bug 37263)</a>, the view id for the Eclipse (formerly debug) console has changed. 
+  This results in problems at startup such as "Could not restore workbench layout" 
+  with details that "Could not create view: org.eclipse.debug.ui.ConsoleView" 
+  for the particular perspective that contained reference to the old view id. 
+  The equivalent view id is now: "org.eclipse.ui.console.ConsoleView".<br>
+  The generic console is available via the Window>Show View>Basic>Console and 
+  is used by the Eclipse debug and Ant integration. </p>
+<h3>Console Line Tracker Extension</h3>
+<p>A console line tracker (IConsoleLineTracker) can be notified when its associated 
+  console is closed (i.e. all of its streams are closed), by implementing the 
+  new interface IConsoleLineTrackerExtension. The notification indicates that 
+  no more output will be appended to the console.</p>
 </body>
 </html>
