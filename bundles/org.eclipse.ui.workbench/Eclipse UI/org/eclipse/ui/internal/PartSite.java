@@ -93,6 +93,9 @@ public class PartSite implements IWorkbenchPartSite {
 			menuExtenders = null;
 		}
 		
+		if (keyBindingService != null)
+		    keyBindingService.dispose();
+		
 		if(progressService != null)
 			progressService.dispose();
 		
