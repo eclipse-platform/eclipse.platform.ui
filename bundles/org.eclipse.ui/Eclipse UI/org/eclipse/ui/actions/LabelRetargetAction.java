@@ -21,6 +21,7 @@ import org.eclipse.ui.actions.*;
 public class LabelRetargetAction extends RetargetAction {
 	private String defaultText;
 	private String defaultToolTipText;
+	private String acceleratorText;
 /**
  * Constructs a LabelRetargetAction.
  */
@@ -28,6 +29,7 @@ public LabelRetargetAction(String actionID, String text) {
 	super(actionID, text);
 	this.defaultText = text;
 	this.defaultToolTipText = text;
+	acceleratorText = extractAcceleratorText(text);
 }
 /**
  * The action handler has changed.  Update self.
@@ -36,7 +38,7 @@ protected void propogateChange(PropertyChangeEvent event) {
 	super.propogateChange(event);
 	if (event.getProperty().equals(Action.TEXT)) {
 		String str = (String)event.getNewValue();
-		super.setText(str);
+		super.setText(appendAccelerator(str));
 	} 
 	else if (event.getProperty().equals(Action.TOOL_TIP_TEXT)) {
 		String str = (String)event.getNewValue();
@@ -55,7 +57,7 @@ protected void setActionHandler(IAction handler) {
 		super.setText(defaultText);
 		super.setToolTipText(defaultToolTipText);
 	} else {
-		super.setText(handler.getText());
+		super.setText(appendAccelerator(handler.getText()));
 		super.setToolTipText(handler.getToolTipText());
 	}
 }
@@ -64,6 +66,7 @@ protected void setActionHandler(IAction handler) {
  */
 public void setText(String text) {
 	super.setText(text);
+	acceleratorText = extractAcceleratorText(text);
 	defaultText = text;
 }
 /**
@@ -74,4 +77,33 @@ public void setToolTipText(String text) {
 	super.setToolTipText(text);
 	defaultToolTipText = text;
 }
+/**
+ * Ensures the accelerator is correct in the text (handlers are not
+ * allowed to change the accelerator).
+ */
+private String appendAccelerator(String newText) {
+	// Remove any accelerator
+	String str = removeAcceleratorText(newText);
+	// Append our accelerator
+	if (acceleratorText != null)
+		str = str + acceleratorText;
+	return str;
+}
+/**
+ * Extracts the accelerator text from the given text.
+ * Returns <code>null</code> if there is no accelerator text,
+ * and the empty string if there is no text after the accelerator delimeter (tab or '@').
+ *
+ * @param text the text for the action
+ * @return the accelerator text including '@' or '\t', or <code>null</code>
+ */
+private String extractAcceleratorText(String text) {
+	int index = text.lastIndexOf('\t');
+	if (index == -1)
+		index = text.lastIndexOf('@');
+	if (index >= 0)
+		return text.substring(index);
+	return null;
+}
+
 }
