@@ -1,4 +1,4 @@
-package org.eclipse.search.internal.ui;import org.eclipse.search.ui.SearchUI;// add for 1GEUK2L: ITPJUI:WIN2000 - No help context for search pages
+/* * (c) Copyright IBM Corp. 2000, 2001. * All Rights Reserved. */package org.eclipse.search.internal.ui;import org.eclipse.search.ui.SearchUI;// add for 1GEUK2L: ITPJUI:WIN2000 - No help context for search pages
 public interface ISearchHelpContextIds {
 	
 	public static final String PREFIX= SearchUI.PLUGIN_ID + ".";
