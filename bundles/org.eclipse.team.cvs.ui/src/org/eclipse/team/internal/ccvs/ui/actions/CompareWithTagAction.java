@@ -32,14 +32,13 @@ public class CompareWithTagAction extends WorkspaceAction {
 		// Run the comparison
 		CVSCompareSubscriber s = new CVSCompareSubscriber(resources, tag);
 		CompareParticipant participant = new CompareParticipant(s);
-		participant.refresh(resources, 
-				participant.getRefreshListeners().createModalDialogListener(
+		participant.refreshInDialog(
 						getShell(),
-						CVSCompareSubscriber.ID_MODAL, 
-						participant, 
-						participant.getSubscriberSyncInfoCollector().getSyncInfoTree()), 
-				Policy.bind("Participant.comparing"),  //$NON-NLS-1$
-				null);
+						resources,
+						Policy.bind("Participant.comparing"),
+						CVSCompareSubscriber.ID_MODAL,  
+						participant.getSubscriberSyncInfoCollector().getSyncInfoTree(), 
+						null);
 	}
 	
 	protected CVSTag promptForTag(IResource[] resources) {

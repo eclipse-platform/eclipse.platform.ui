@@ -11,6 +11,9 @@
 package org.eclipse.team.ui.synchronize.subscribers;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -24,7 +27,10 @@ import org.eclipse.team.internal.ui.synchronize.*;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.part.IPageBookViewPage;
+import org.eclipse.ui.progress.UIJob;
 
 /**
  * A synchronize participant that displays synchronization information for local
@@ -89,20 +95,10 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	private final static int[] OUTGOING_MODE_FILTER = new int[] {SyncInfo.CONFLICTING, SyncInfo.OUTGOING};
 	private final static int[] BOTH_MODE_FILTER = new int[] {SyncInfo.CONFLICTING, SyncInfo.INCOMING, SyncInfo.OUTGOING};
 	private final static int[] CONFLICTING_MODE_FILTER = new int[] {SyncInfo.CONFLICTING};
-
-	private IRefreshSubscriberListenerFactory refreshListenerFactory;
 	
 	public SubscriberParticipant() {
 		super();
 		refreshSchedule = new SubscriberRefreshSchedule(this);
-		refreshListenerFactory = new IRefreshSubscriberListenerFactory() {
-			public IRefreshSubscriberListener createModalDialogListener(Shell shell, String targetId, SubscriberParticipant participant, SyncInfoTree syncInfoSet) {
-				return new RefreshUserNotificationPolicyInModalDialog(shell, targetId, participant, syncInfoSet);
-			}
-			public IRefreshSubscriberListener createSynchronizeViewListener(SubscriberParticipant participant) {
-				return new RefreshUserNotificationPolicy(participant);
-			}
-		};
 	}
 	
 	/* (non-Javadoc)
@@ -170,25 +166,60 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 		return collector.getSubscriber().roots();
 	}
 	
-	/**
-	 * Will refresh a participant in the background.
-	 * 
-	 * @param resources the resources to be refreshed.
-	 */
-	public void refresh(IResource[] resources, final IRefreshSubscriberListener listener, String taskName, IWorkbenchSite site) {
-		RefreshSubscriberJob job = new RefreshSubscriberJob(taskName, resources, collector.getSubscriber());
+	private void internalRefresh(IResource[] resources, final IRefreshSubscriberListener listener, String taskName, IWorkbenchSite site) {
+		final Runnable[] gotoAction = new Runnable[] {null};
+		final RefreshSubscriberJob job = new RefreshSubscriberJob(taskName, resources, collector.getSubscriber());
 		job.setSubscriberCollector(collector);
+		job.setProperty(new QualifiedName("org.eclipse.ui.workbench.progress", "icon"), getImageDescriptor());
+		job.setProperty(new QualifiedName("org.eclipse.ui.workbench.progress", "goto"), new Action() {
+			public void run() {
+				if(gotoAction[0] != null) {
+					gotoAction[0].run();
+				}
+			}
+			public boolean isEnabled() {
+				return gotoAction[0] != null;
+			}
+		});
+		// Listener delagate
 		IRefreshSubscriberListener autoListener = new IRefreshSubscriberListener() {
 			public void refreshStarted(IRefreshEvent event) {
 				if(listener != null) {
 					listener.refreshStarted(event);
 				}
 			}
-			public void refreshDone(IRefreshEvent event) {
+			public Runnable refreshDone(IRefreshEvent event) {
 				if(listener != null) {
-					listener.refreshDone(event);
+					// Update the progress properties. Only keep the synchronize if the operation is non-modal.
+					Boolean modelProperty = (Boolean)job.getProperty(ProgressManager.PROPERTY_IN_DIALOG);
+					boolean isModal = true;
+					if(modelProperty != null) {
+						isModal = modelProperty.booleanValue();
+						job.setProperty(new QualifiedName("org.eclipse.ui.workbench.progress", "keep"), Boolean.valueOf(! isModal));
+					}
+					Runnable runnable = listener.refreshDone(event);
+					// If the job is being run modally then simply prompt the user immediatly
+					boolean newProgressSupport = WorkbenchPlugin.getDefault().getPreferenceStore().getBoolean("USE_NEW_PROGRESS");
+					if(isModal || ! newProgressSupport) {
+						if(runnable != null) {
+							final Runnable[] r = new Runnable[] {runnable};
+							Job update = new UIJob("") {
+								public IStatus runInUIThread(IProgressMonitor monitor) {
+									r[0].run();
+									return Status.OK_STATUS;
+								}
+							};
+							update.setSystem(true);
+							update.schedule();
+						}
+					// If the job is being run in the background, don't interrupt the user and simply update the goto action
+					// to perform the results.
+					} else {
+						gotoAction[0] = runnable;
+					}
 					RefreshSubscriberJob.removeRefreshListener(this);
 				}
+				return null;
 			}
 		};
 		
@@ -198,8 +229,25 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 		Utils.schedule(job, site);
 	}
 	
-	public IRefreshSubscriberListenerFactory getRefreshListeners() {
-		return getRefreshListenerFactory();
+	/**
+	 * Refresh this participants synchronization state and displays the result in a model dialog. 
+	 * @param resources
+	 * @param taskName
+	 * @param site
+	 */
+	public final void refreshInDialog(Shell shell, IResource[] resources, String taskName, String targetId, SyncInfoTree syncInfoSet, IWorkbenchSite site) {
+		IRefreshSubscriberListener listener =  new RefreshUserNotificationPolicyInModalDialog(shell, targetId, this, syncInfoSet);
+		internalRefresh(resources, listener, taskName, site);
+	}
+	
+	/**
+	 * Will refresh a participant in the background.
+	 * 
+	 * @param resources the resources to be refreshed.
+	 */
+	public final void refresh(IResource[] resources, String taskName, IWorkbenchSite site) {
+		IRefreshSubscriberListener listener = new RefreshUserNotificationPolicy(this);
+		internalRefresh(resources, listener, taskName, site);
 	}
 	
 	/* (non-Javadoc)
@@ -209,10 +257,6 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 		refreshSchedule.dispose();				
 		TeamUI.removePropertyChangeListener(this);
 		collector.dispose();
-		
-		if(DEBUG) {
-			System.out.println("** DISPOSING: " + getName()); //$NON-NLS-1$
-		}
 	}
 	
 	/**
@@ -239,14 +283,6 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 		if(schedule.isEnabled()) {
 			getRefreshSchedule().startJob();
 		}
-		
-		if(DEBUG) {
-			System.out.println("** CREATING: " + getName()); //$NON-NLS-1$
-		}
-	}
-	
-	protected IRefreshSubscriberListenerFactory getRefreshListenerFactory() {
-		return refreshListenerFactory;
 	}
 	
 	/**

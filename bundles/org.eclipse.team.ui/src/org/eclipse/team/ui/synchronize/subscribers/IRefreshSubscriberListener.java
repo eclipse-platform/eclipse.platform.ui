@@ -39,5 +39,5 @@ public interface IRefreshSubscriberListener {
 	 * 
 	 * @param event the event describing the result of the refresh.
 	 */
-	public void refreshDone(IRefreshEvent event);
+	public Runnable refreshDone(IRefreshEvent event);
 }

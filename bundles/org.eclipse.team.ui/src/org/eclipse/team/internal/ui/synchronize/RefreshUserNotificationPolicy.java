@@ -1,7 +1,6 @@
 package org.eclipse.team.internal.ui.synchronize;
 
 import java.util.*;
-
 import org.eclipse.compare.CompareUI;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
@@ -9,9 +8,11 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.ui.TeamUI;
-import org.eclipse.team.ui.synchronize.*;
+import org.eclipse.team.ui.synchronize.ISynchronizeView;
+import org.eclipse.team.ui.synchronize.SyncInfoCompareInput;
 import org.eclipse.team.ui.synchronize.subscribers.*;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.progress.UIJob;
 
 /**
@@ -46,19 +47,24 @@ public class RefreshUserNotificationPolicy implements IRefreshSubscriberListener
 	 * (non-Javadoc)
 	 * @see org.eclipse.team.internal.ui.jobs.IRefreshSubscriberListener#refreshDone(org.eclipse.team.internal.ui.jobs.IRefreshEvent)
 	 */
-	public void refreshDone(final IRefreshEvent event) {
+	public Runnable refreshDone(final IRefreshEvent event) {
 		// Ensure that this event was generated for this participant
-		if (event.getSubscriber() != participant.getSubscriberSyncInfoCollector().getSubscriber()) return;
+		if (event.getSubscriber() != participant.getSubscriberSyncInfoCollector().getSubscriber()) return null;
 		// If the event is for a cancelled operation, there's nothing to do
-		if(! event.getStatus().isOK()) return;
+		int severity = event.getStatus().getSeverity();
+		if(severity == Status.CANCEL || severity == Status.ERROR) return null;
 		// Decide on what action to take after the refresh is completed
-		TeamUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
+		return new Runnable() {
 			public void run() {
-					boolean prompt = true;
-					if(event.getRefreshType() == IRefreshEvent.USER_REFRESH) {
-						prompt = TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(IPreferenceIds.SYNCHRONIZING_COMPLETE_SHOW_DIALOG);
+				boolean prompt = true;
+					if(WorkbenchPlugin.getDefault().getPreferenceStore().getBoolean("USE_NEW_PROGRESS")) {
+						prompt = event.getStatus().getCode() == IRefreshEvent.STATUS_NO_CHANGES;
 					} else {
-						prompt = TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(IPreferenceIds.SYNCHRONIZING_SCHEDULED_COMPLETE_SHOW_DIALOG);
+						if(event.getRefreshType() == IRefreshEvent.USER_REFRESH) {
+							prompt = TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(IPreferenceIds.SYNCHRONIZING_COMPLETE_SHOW_DIALOG);
+						} else {
+							prompt = TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(IPreferenceIds.SYNCHRONIZING_SCHEDULED_COMPLETE_SHOW_DIALOG);
+						}
 					}
 				
 					SyncInfo[] infos = event.getChanges();
@@ -79,16 +85,13 @@ public class RefreshUserNotificationPolicy implements IRefreshSubscriberListener
 							prompt = false;
 						}
 					}
-						
-					// Ensure synchronized resources are selected in the view
-					participant.selectResources(event.getResources());
 					
 					// Prompt user if preferences are set for this type of refresh.
 					if (prompt) {
 						notifyIfNeededModal(event);
 					}
 				}	
-		});
+		};
 	}
 	
 	private void notifyIfNeededModal(final IRefreshEvent event) {

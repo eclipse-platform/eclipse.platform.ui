@@ -11,11 +11,9 @@
 package org.eclipse.team.ui.synchronize.subscribers;
 
 import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
@@ -151,24 +149,9 @@ public class RefreshCompleteDialog extends DetailsDialog {
 	 * @see org.eclipse.team.internal.ui.dialogs.DetailsDialog#createMainDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
 	protected void createMainDialogArea(Composite parent) {
-		StringBuffer text = new StringBuffer();
-		SyncInfo[] changes = event.getChanges();
-		IResource[] resources = event.getResources();
-		SyncInfoSet set = getSubscriberSyncInfoSet();
-		if (! set.isEmpty()) {
-			String outgoing = Long.toString(set.countFor(SyncInfo.OUTGOING, SyncInfo.DIRECTION_MASK));
-			String incoming = Long.toString(set.countFor(SyncInfo.INCOMING, SyncInfo.DIRECTION_MASK));
-			String conflicting = Long.toString(set.countFor(SyncInfo.CONFLICTING, SyncInfo.DIRECTION_MASK));
-			if(event.getChanges().length > 0) {
-				String numNewChanges = Integer.toString(event.getChanges().length);
-				text.append(Policy.bind("RefreshCompleteDialog.5a", new Object[] {numNewChanges, participant.getName(), outgoing, incoming, conflicting})); //$NON-NLS-1$
-			} else {
-				text.append(Policy.bind("RefreshCompleteDialog.5", new Object[] {participant.getName(), outgoing, incoming, conflicting})); //$NON-NLS-1$
-			}
-			createLabel(parent, text.toString(), 2);
-		} else {
-			text.append(Policy.bind("RefreshCompleteDialog.6")); //$NON-NLS-1$
-			createLabel(parent, text.toString(), 2);
+		IStatus status = event.getStatus();
+		if(status.getSeverity() == IStatus.INFO) {
+			createLabel(parent, status.getMessage(), 2);
 		}
 			
 		dontShowAgainButton = new Button(parent, SWT.CHECK);
@@ -193,7 +176,7 @@ public class RefreshCompleteDialog extends DetailsDialog {
 	 * @see org.eclipse.team.internal.ui.dialogs.DetailsDialog#includeDetailsButton()
 	 */
 	protected boolean includeDetailsButton() {
-		return event.getChanges().length > 0;
+		return false;
 	}
 
 	/* (non-Javadoc)

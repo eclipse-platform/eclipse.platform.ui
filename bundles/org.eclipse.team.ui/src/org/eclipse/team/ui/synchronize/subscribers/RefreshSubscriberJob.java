@@ -12,7 +12,6 @@ package org.eclipse.team.ui.synchronize.subscribers;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.*;
@@ -20,7 +19,13 @@ import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.subscribers.SubscriberSyncInfoCollector;
-import org.eclipse.team.internal.core.*;
+import org.eclipse.team.core.synchronize.*;
+import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.core.synchronize.SyncInfoSet;
+import org.eclipse.team.internal.core.Assert;
+import org.eclipse.team.internal.core.TeamPlugin;
+import org.eclipse.team.internal.ui.Policy;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.synchronize.RefreshChangeListener;
 import org.eclipse.team.internal.ui.synchronize.RefreshEvent;
 import org.eclipse.team.ui.synchronize.ISynchronizeManager;
@@ -136,6 +141,7 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 			group.beginTask(getName(), 100); //$NON-NLS-1$
 			setProgressGroup(group, 80);
 			collector.setProgressGroup(group, 20);
+			setProperty(new QualifiedName("org.eclipse.ui.workbench.progress", "keep"), Boolean.TRUE);
 		}
 		setUser(getCollector() != null);
 		return shouldRun; 
@@ -201,12 +207,57 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 			// Post-Notify
 			event.setChanges(changeListener.getChanges());
 			event.setStopTime(System.currentTimeMillis());
-			event.setStatus(status.isOK() ? Status.OK_STATUS : (IStatus) status);
+			event.setStatus(status.isOK() ? calculateStatus(event) : (IStatus) status);
 			notifyListeners(DONE, event);
 			changeListener.clear();
 			
 			return event.getStatus();
 		}
+	}
+	
+	private IStatus calculateStatus(IRefreshEvent event) {
+		StringBuffer text = new StringBuffer();
+		int code = IStatus.OK;
+		SyncInfo[] changes = event.getChanges();
+		IResource[] resources = event.getResources();
+		if (collector != null) {
+			SyncInfoSet set = collector.getSubscriberSyncInfoSet();
+			if (refreshedResourcesContainChanges(event)) {
+				code = IRefreshEvent.STATUS_CHANGES;
+				String outgoing = Long.toString(set.countFor(SyncInfo.OUTGOING, SyncInfo.DIRECTION_MASK));
+				String incoming = Long.toString(set.countFor(SyncInfo.INCOMING, SyncInfo.DIRECTION_MASK));
+				String conflicting = Long.toString(set.countFor(SyncInfo.CONFLICTING, SyncInfo.DIRECTION_MASK));
+				if (changes.length > 0) {
+				// New changes found
+					String numNewChanges = Integer.toString(event.getChanges().length);
+					text.append(Policy.bind("RefreshCompleteDialog.5a", new Object[]{numNewChanges, subscriber.getName(), outgoing, incoming, conflicting})); //$NON-NLS-1$
+				} else {
+				// Refreshed resources contain changes
+					text.append(Policy.bind("RefreshCompleteDialog.5", new Object[]{subscriber.getName(), outgoing, incoming, conflicting})); //$NON-NLS-1$
+				}
+			} else {
+				// No changes found
+				code = IRefreshEvent.STATUS_NO_CHANGES;
+				text.append(Policy.bind("RefreshCompleteDialog.6")); //$NON-NLS-1$
+			}
+			return new Status(IStatus.INFO, TeamUIPlugin.ID, code, text.toString(), null);
+		}
+		return Status.OK_STATUS;
+	}
+	
+	private boolean refreshedResourcesContainChanges(IRefreshEvent event) {
+		if (collector != null) {
+			SyncInfoTree set = collector.getSubscriberSyncInfoSet();
+			IResource[] resources = event.getResources();
+			for (int i = 0; i < resources.length; i++) {
+				IResource resource = resources[i];
+				SyncInfo[] infos = set.getSyncInfos(resource, IResource.DEPTH_INFINITE);
+				if(infos != null && infos.length > 0) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 	
 	protected IResource[] getResources() {

@@ -54,7 +54,7 @@ public class SynchronizeViewerAdvisor extends TreeViewerAdvisor {
 				if(viewer != null && ! viewer.getControl().isDisposed()) {
 					IStructuredSelection selection = (IStructuredSelection)viewer.getSelection();
 					IResource[] resources = Utils.getResources(selection.toArray());
-					participant.refresh(resources, participant.getRefreshListeners().createSynchronizeViewListener(participant), Policy.bind("Participant.synchronizing"), view.getSite()); //$NON-NLS-1$
+					participant.refresh(resources, Policy.bind("Participant.synchronizing"), view.getSite()); //$NON-NLS-1$
 				}
 			}
 		};

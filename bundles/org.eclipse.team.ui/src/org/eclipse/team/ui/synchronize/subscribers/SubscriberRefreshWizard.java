@@ -61,9 +61,8 @@ public class SubscriberRefreshWizard extends Wizard {
 		IResource[] resources = selectionPage.getCheckedResources();
 		schedulePage.performFinish();
 		if(resources != null && resources.length > 0) {
-			IRefreshSubscriberListener listener = participant.getRefreshListeners().createSynchronizeViewListener(participant);		
 			// We don't know in which site to show progress because a participant could actually be shown in multiple sites.
-			participant.refresh(resources, listener, Policy.bind("Participant.synchronizing"), null); //$NON-NLS-1$
+			participant.refresh(resources, Policy.bind("Participant.synchronizing"), null); //$NON-NLS-1$
 		}
 		return true;
 	}

@@ -10,24 +10,13 @@
  *******************************************************************************/
 package org.eclipse.team.core.subscribers;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.core.synchronize.SyncInfoFilter;
-import org.eclipse.team.core.synchronize.SyncInfoSet;
-import org.eclipse.team.core.synchronize.SyncInfoTree;
+import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.internal.core.Assert;
 import org.eclipse.team.internal.core.Policy;
-import org.eclipse.team.internal.core.subscribers.SubscriberEventHandler;
-import org.eclipse.team.internal.core.subscribers.SyncSetInputFromSubscriber;
-import org.eclipse.team.internal.core.subscribers.SyncSetInputFromSyncSet;
-import org.eclipse.team.internal.core.subscribers.WorkingSetSyncSetInput;
+import org.eclipse.team.internal.core.subscribers.*;
 
 /**
  * This collector maintains a {@link SyncInfoSet} for a particular team subscriber keeping
@@ -389,8 +378,7 @@ public final class SubscriberSyncInfoCollector implements IResourceChangeListene
 	 * in which case all out-of-sync resources from the subscriber are collected.
 	 * @return the subscriber sync info set
 	 */
-	public SyncInfoSet getSubscriberSyncInfoSet() {
-		return subscriberInput.getSyncSet();
+	public SyncInfoTree getSubscriberSyncInfoSet() {
+		return (SyncInfoTree)subscriberInput.getSyncSet();
 	}
-
 }

@@ -46,7 +46,7 @@
             name="%CVSMergeParticipant"
             type="dynamic"
             multipleInstances="true"
-            icon="icons/full/clcl16/newstream_wiz.gif"
+            icon="icons/full/elcl16/newstream_wiz.gif"
             class="org.eclipse.team.internal.ccvs.ui.subscriber.MergeSynchronizeParticipant"
             id="org.eclipse.team.cvs.ui.cvsmerge-participant">
       </participant>

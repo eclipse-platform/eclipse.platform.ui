@@ -15,6 +15,7 @@ import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.CompareUI;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -43,17 +44,18 @@ public class RefreshUserNotificationPolicyInModalDialog implements IRefreshSubsc
 	public void refreshStarted(IRefreshEvent event) {
 	}
 
-	public void refreshDone(final IRefreshEvent event) {
-		// Operation cancelled, there is no reason to prompt the user
-		TeamUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
+	public Runnable refreshDone(final IRefreshEvent event) {
+		//	Ensure that this event was generated for this participant
+		if (event.getSubscriber() != participant.getSubscriberSyncInfoCollector().getSubscriber())
+			return null;
+		//	 If the event is for a cancelled operation, there's nothing to do
+		int severity = event.getStatus().getSeverity();
+		if(severity == Status.CANCEL || severity == Status.ERROR) 
+			return null;
+		
+		return new Runnable() {
 			public void run() {
 				try {
-					//	Ensure that this event was generated for this participant
-					if (event.getSubscriber() != participant.getSubscriberSyncInfoCollector().getSubscriber())
-						return;
-					// If the refresh was cancelled or returned an error there is nothing to report here.
-					if (!event.getStatus().isOK())
-						return;
 					// If there are no changes
 					if (!areChanges()) {
 						MessageDialog.openInformation(Display.getCurrent().getActiveShell(), Policy.bind("OpenComparedDialog.noChangeTitle"), Policy.bind("OpenComparedDialog.noChangesMessage")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -70,7 +72,7 @@ public class RefreshUserNotificationPolicyInModalDialog implements IRefreshSubsc
 					}
 				}
 			}
-		});
+		};
 	}
 
 	private boolean areChanges() {

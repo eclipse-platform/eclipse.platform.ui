@@ -10,13 +10,11 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.subscriber;
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.StructuredViewer;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoFilter;
@@ -117,14 +115,5 @@ public class CompareParticipant extends SubscriberParticipant {
 	 */
 	protected StructuredViewerAdvisor createSynchronizeViewerAdvisor(ISynchronizeView view) {
 		return new CompareParticipantAdvisor(view, this);
-	}
-	
-	/**
-	 * Refresh this participant and show the results in a model dialog.
-	 * @param resources
-	 * @deprecated This is used by the releng tools plugin
-	 */
-	public void refresh(IResource[] resources) {
-		refresh(resources, getRefreshListenerFactory().createModalDialogListener((Shell)null /* shell */, getId(), this, getSubscriberSyncInfoCollector().getSyncInfoTree()), getName(), null);
 	}
 }
