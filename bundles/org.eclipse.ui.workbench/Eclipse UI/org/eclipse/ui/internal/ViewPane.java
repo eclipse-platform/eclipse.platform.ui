@@ -678,19 +678,21 @@ public void updateActionBars() {
  */
 public void updateTitles() {
 	IViewReference ref = getViewReference();
-	String text = ref.getTitle();
-	if (text == null)
-		text = "";//$NON-NLS-1$
-	Image image = ref.getTitleImage();
-	// only update and relayout if text or image has changed
-	if (!text.equals(titleLabel.getText()) || image != titleLabel.getImage()) {
-		titleLabel.setText(text);
-		titleLabel.setImage(image);
-		((Composite) getControl()).layout();
+	if (titleLabel != null && !titleLabel.isDisposed()) {
+		String text = ref.getTitle();
+		if (text == null)
+			text = "";//$NON-NLS-1$
+		Image image = ref.getTitleImage();
+		// only update and relayout if text or image has changed
+		if (!text.equals(titleLabel.getText()) || image != titleLabel.getImage()) {
+			titleLabel.setText(text);
+			titleLabel.setImage(image);
+			((Composite) getControl()).layout();
+		}
+		titleLabel.setToolTipText(ref.getTitleToolTip());
+		// XXX: Workaround for 1GCGA89: SWT:ALL - CLabel tool tip does not always update properly
+		titleLabel.update();
 	}
-	titleLabel.setToolTipText(ref.getTitleToolTip());
-	// XXX: Workaround for 1GCGA89: SWT:ALL - CLabel tool tip does not always update properly
-	titleLabel.update();
 
 	// notify the page that this view's title has changed
 	// in case it needs to update its fast view button
