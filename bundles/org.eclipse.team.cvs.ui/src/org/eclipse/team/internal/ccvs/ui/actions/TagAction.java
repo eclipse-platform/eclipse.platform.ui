@@ -79,6 +79,9 @@ public abstract class TagAction extends WorkspaceAction {
 	protected ITagOperation configureOperation() {
 		IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
 		ITagOperation operation = createTagOperation();
+		if (operation.getCVSResources().length == 0) {
+		    return null;
+		}
 		TagAsVersionDialog dialog = new TagAsVersionDialog(getShell(),
 											Policy.bind("TagAction.tagResources"), //$NON-NLS-1$
 											operation);
