@@ -83,7 +83,7 @@ public final class HelpSystem {
 	 */
 	public static TocManager getTocManager() {
 		if (getInstance().tocManager == null) {
-			synchronized (TocManager.class){
+			synchronized (HelpSystem.class) {
 				if (getInstance().tocManager == null) {
 					getInstance().tocManager = new TocManager();
 				}
@@ -97,7 +97,11 @@ public final class HelpSystem {
 	 */
 	public static SearchManager getSearchManager() {
 		if (getInstance().searchManager == null) {
-			getInstance().searchManager = new SearchManager();
+			synchronized (HelpSystem.class) {
+				if (getInstance().searchManager == null) {
+					getInstance().searchManager = new SearchManager();
+				}
+			}
 		}
 		return getInstance().searchManager;
 	}
@@ -109,7 +113,7 @@ public final class HelpSystem {
 		return getWorkingSetManager(BootLoader.getNL());
 	}
 
-	public static WorkingSetManager getWorkingSetManager(String locale) {
+	public static synchronized WorkingSetManager getWorkingSetManager(String locale) {
 		if (getInstance().workingSetManagers == null) {
 			getInstance().workingSetManagers = new HashMap();
 		}
