@@ -152,9 +152,30 @@ protected void processDelta(IResourceDelta delta) {
 	for (int i = 0; i < affectedChildren.length; i++) {
 		processDelta(affectedChildren[i]);
 	}
-
-	// Process removals before additions, to avoid multiple equal elements in the viewer.
-
+    
+    try {
+		// Disable redraw until the operation is finished so we don't get a flash of both the new and old item (in the case of rename)
+       viewer.getControl().setRedraw(false);
+    
+        // Process additions before removals as to not cause selection preservation prior to new objects being added    
+        // Handle added children. Issue one update for all insertions.
+        affectedChildren = delta.getAffectedChildren(IResourceDelta.ADDED);
+        if (affectedChildren.length > 0) {
+            Object[] affected = new Object[affectedChildren.length];
+            for (int i = 0; i < affectedChildren.length; i++)
+                affected[i] = affectedChildren[i].getResource();
+            if (viewer instanceof AbstractTreeViewer) {
+                ((AbstractTreeViewer) viewer).add(resource, affected);
+            }
+            else {
+                ((StructuredViewer) viewer).refresh(resource);
+            }
+        }        
+    }
+    finally {
+        viewer.getControl().setRedraw(true);
+    }
+    
 	// Handle removed children. Issue one update for all removals.
 	affectedChildren = delta.getAffectedChildren(IResourceDelta.REMOVED);
 	if (affectedChildren.length > 0) {
@@ -164,20 +185,6 @@ protected void processDelta(IResourceDelta delta) {
 		if (viewer instanceof AbstractTreeViewer) {
 			((AbstractTreeViewer) viewer).remove(affected);
 		} else {
-			((StructuredViewer) viewer).refresh(resource);
-		}
-	}
-
-	// Handle added children. Issue one update for all insertions.
-	affectedChildren = delta.getAffectedChildren(IResourceDelta.ADDED);
-	if (affectedChildren.length > 0) {
-		Object[] affected = new Object[affectedChildren.length];
-		for (int i = 0; i < affectedChildren.length; i++)
-			affected[i] = affectedChildren[i].getResource();
-		if (viewer instanceof AbstractTreeViewer) {
-			((AbstractTreeViewer) viewer).add(resource, affected);
-		}
-		else {
 			((StructuredViewer) viewer).refresh(resource);
 		}
 	}
