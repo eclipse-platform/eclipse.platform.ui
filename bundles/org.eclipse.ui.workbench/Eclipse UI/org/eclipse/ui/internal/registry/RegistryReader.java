@@ -35,15 +35,6 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 public abstract class RegistryReader {
 	protected static final String TAG_DESCRIPTION = "description";	//$NON-NLS-1$
 	protected static Hashtable extensionPoints = new Hashtable();
-
-	private static final Comparator comparer = new Comparator() {
-		public int compare(Object arg0, Object arg1) {
-			String s1 = ((IExtension)arg0).getDeclaringPluginDescriptor().getUniqueIdentifier();
-			String s2 = ((IExtension)arg1).getDeclaringPluginDescriptor().getUniqueIdentifier();
-			return s1.compareToIgnoreCase(s2);
-		}
-	}; 
-
 /**
  * The constructor.
  */
@@ -106,6 +97,13 @@ protected IExtension[] orderExtensions(IExtension[] extensions) {
 	// dependent in the order listed in the XML file.
 	IExtension[] sortedExtension = new IExtension[extensions.length];
 	System.arraycopy(extensions, 0, sortedExtension, 0, extensions.length);
+	Comparator comparer = new Comparator() {
+		public int compare(Object arg0, Object arg1) {
+			String s1 = ((IExtension)arg0).getDeclaringPluginDescriptor().getUniqueIdentifier();
+			String s2 = ((IExtension)arg1).getDeclaringPluginDescriptor().getUniqueIdentifier();
+			return s1.compareToIgnoreCase(s2);
+		}
+	}; 
 	Collections.sort(Arrays.asList(sortedExtension), comparer);
 	return sortedExtension;
 }
@@ -150,7 +148,7 @@ protected void readExtension(IExtension extension) {
  *	Start the registry reading process using the
  * supplied plugin ID and extension point.
  */
-protected void readRegistry(IPluginRegistry registry, String pluginId, String extensionPoint) {
+public void readRegistry(IPluginRegistry registry, String pluginId, String extensionPoint) {
 	String pointId = pluginId + "-" + extensionPoint; //$NON-NLS-1$
 	IExtension[] extensions = (IExtension[])extensionPoints.get(pointId); 
 	if (extensions == null) {

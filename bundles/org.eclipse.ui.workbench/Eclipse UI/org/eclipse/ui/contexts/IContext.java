@@ -13,10 +13,10 @@ package org.eclipse.ui.contexts;
 
 /**
  * <p>
- * TODO javadoc
+ * JAVADOC
  * </p>
  * <p>
- * This interface is not intended to be implemented or extended by clients.
+ * This interface is not intended to be extended or implemented by clients.
  * </p>
  * <p>
  * <em>EXPERIMENTAL</em>
@@ -24,77 +24,66 @@ package org.eclipse.ui.contexts;
  * 
  * @since 3.0
  */
-public interface IContext {
+public interface IContext extends Comparable {
 
 	/**
 	 * Registers an IContextListener instance with this context.
 	 *
 	 * @param contextListener the IContextListener instance to register.
+	 * @throws NullPointerException
 	 */	
 	void addContextListener(IContextListener contextListener);
-		
+
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @return
-	 * @throws Exception
 	 */	
 	String getDescription()
 		throws NotDefinedException;
-		
+	
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @return
 	 */	
 	String getId();
 	
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @return
-	 * @throws Exception
 	 */	
 	String getName()
-		throws NotDefinedException;	
+		throws NotDefinedException;
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @return
-	 * @throws Exception
 	 */	
 	String getParentId()
 		throws NotDefinedException;
-	
-	/**
-	 * TODO javadoc
-	 * 
-	 * @return
-	 * @throws Exception
-	 */	
-	String getPluginId()
-		throws NotDefinedException;
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	boolean isActive()
-		throws NotDefinedException;
+	boolean isActive();
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @return
 	 */	
 	boolean isDefined();
-
+	
 	/**
 	 * Unregisters an IContextListener instance with this context.
 	 *
 	 * @param contextListener the IContextListener instance to unregister.
+	 * @throws NullPointerException
 	 */
 	void removeContextListener(IContextListener contextListener);
 }

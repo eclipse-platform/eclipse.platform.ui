@@ -367,17 +367,6 @@ public class DecoratorManager
 	}
 
 	/**
-	 * Reset the cached values in the receiver and 
-	 * force an update on all listeners.
-	 */
-	public void reset() {
-		cachedFullDecorators = new HashMap();
-		lightweightManager.reset();
-		fireListeners(new LabelProviderChangedEvent(this));
-		writeDecoratorsPreference();
-	}
-
-	/**
 	 * Get the DecoratorDefinitions defined on the receiver.
 	 */
 	public DecoratorDefinition[] getAllDecoratorDefinitions() {

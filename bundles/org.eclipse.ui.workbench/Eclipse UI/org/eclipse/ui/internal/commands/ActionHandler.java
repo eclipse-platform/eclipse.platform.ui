@@ -11,25 +11,23 @@
 
 package org.eclipse.ui.internal.commands;
 
-import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.ui.commands.IHandler;
-import org.eclipse.ui.commands.IPropertyListener;
+import org.eclipse.ui.internal.commands.api.XIPropertyListener;
 
-public class ActionHandler implements IHandler {
+public class ActionHandler implements org.eclipse.ui.commands.IAction {
 
-	private IAction action;
+	private org.eclipse.jface.action.IAction action;
 
-	public ActionHandler(IAction action) {
+	public ActionHandler(org.eclipse.jface.action.IAction action) {
 		super();
 		this.action = action;
 	}
 
-	public IAction getAction() {
+	public org.eclipse.jface.action.IAction getAction() {
 		return action;
 	}
 
-	public void addPropertyListener(IPropertyListener propertyListener) {
+	public void addPropertyListener(XIPropertyListener propertyListener) {
 	}
 
 	public void execute() {	
@@ -37,6 +35,12 @@ public class ActionHandler implements IHandler {
 	}
 
 	public void execute(Event event) {
+		/* A more sophisticated approach might be to test for the action style
+		 * before attempting to update, but this doesn't seem to give any
+		 * benefit.  See ActionContributionItem.handleWidgetSelection.
+		 */
+		action.setChecked(!action.isChecked());
+		
 		action.runWithEvent(event);
 	}
 
@@ -53,6 +57,6 @@ public class ActionHandler implements IHandler {
 		return action.isEnabled();
 	}
 	
-	public void removePropertyListener(IPropertyListener propertyListener) {	
+	public void removePropertyListener(XIPropertyListener propertyListener) {	
 	}
 }

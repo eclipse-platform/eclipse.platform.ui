@@ -13,13 +13,11 @@ package org.eclipse.ui.internal.decorators;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.IJobChangeEvent;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.runtime.jobs.JobChangeAdapter;
+import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.progress.UIJob;
 
 /**
  * The DecorationScheduler is the class that handles the
@@ -28,21 +26,21 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 public class DecorationScheduler {
 
 	// When decorations are computed they are added to this cache via decorated() method
-	private Map resultCache = new HashMap();
+	Map resultCache = new HashMap();
 
 	// Objects that need an icon and text computed for display to the user
-	private List awaitingDecoration = new ArrayList();
+	List awaitingDecoration = new ArrayList();
 
 	// Objects that are awaiting a label update.
-	private Set pendingUpdate = new HashSet();
+	Set pendingUpdate = new HashSet();
 
-	private Object resultLock = new Object();
+	Object resultLock = new Object();
 
-	private Map awaitingDecorationValues = new HashMap();
+	Map awaitingDecorationValues = new HashMap();
 
-	private DecoratorManager decoratorManager;
+	DecoratorManager decoratorManager;
 
-	private boolean shutdown = false;
+	boolean shutdown = false;
 
 	Job decorationJob;
 	UIJob updateJob;
@@ -109,8 +107,7 @@ public class DecorationScheduler {
 			awaitingDecoration.add(element);
 			if (shutdown)
 				return;
-			if (decorationJob.getState() == Job.NONE)
-				decorationJob.schedule();
+			decorationJob.schedule();
 		}
 
 	}
@@ -150,10 +147,10 @@ public class DecorationScheduler {
 	 * @param resources
 	 * @param decorationResults
 	 */
-	public void decorated() {
+	synchronized void decorated() {
 
 		//Don't bother if we are shutdown now
-		if (shutdown || pendingUpdate.isEmpty())
+		if (shutdown)
 			return;
 
 		//Lazy initialize the job
@@ -161,8 +158,8 @@ public class DecorationScheduler {
 			updateJob = getUpdateJob();
 			updateJob.setPriority(Job.DECORATE);
 		}
-		if (updateJob.getState() == Job.NONE)
-			updateJob.schedule();
+	
+		updateJob.schedule();
 	}
 
 	/**
@@ -198,9 +195,16 @@ public class DecorationScheduler {
 				monitor.beginTask(WorkbenchMessages.getString("DecorationScheduler.CalculatingTask"), 100); //$NON-NLS-1$
 				//will block if there are no resources to be decorated
 				DecorationReference reference;
-				monitor.worked(20);
+				monitor.worked(5);
+				int workCount = 5;
 				while ((reference = nextElement()) != null) {
 
+					//Count up to 90 to give the appearance of updating
+					if(workCount < 90){
+						monitor.worked(1);
+						workCount++;
+					}
+					
 					DecorationBuilder cacheResult = new DecorationBuilder();
 
 					monitor.subTask(WorkbenchMessages.format("DecorationScheduler.DecoratingSubtask", new Object[] {reference.getElement().toString()})); //$NON-NLS-1$
@@ -231,7 +235,8 @@ public class DecorationScheduler {
 									.getLightweightManager()
 									.getDecorations(
 									adapted,
-									cacheResult);
+									cacheResult,
+									true);
 								if (cacheResult.hasValue()) {
 									adaptedResult = cacheResult.createResult();
 								}
@@ -251,7 +256,8 @@ public class DecorationScheduler {
 							.getLightweightManager()
 							.getDecorations(
 							element,
-							cacheResult);
+							cacheResult,
+							false);
 
 						//If we should update regardless then put a result anyways
 						if (cacheResult.hasValue()
@@ -286,7 +292,7 @@ public class DecorationScheduler {
 						decorated();
 					}
 				}
-				monitor.worked(80);
+				monitor.worked(100 - workCount);
 				return Status.OK_STATUS;
 			}
 		};
@@ -314,21 +320,27 @@ public class DecorationScheduler {
 		UIJob job = new UIJob(WorkbenchMessages.getString("DecorationScheduler.UpdateJobName")) {//$NON-NLS-1$
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				//Check again in case someone has already cleared it out.
-				if (pendingUpdate.isEmpty())
-					return Status.OK_STATUS;
 				synchronized (resultLock) {
+					if (pendingUpdate.isEmpty())
+						return Status.OK_STATUS;
+				
 					//Get the elements awaiting update and then
 					//clear the list
 					Object[] elements =
 						pendingUpdate.toArray(new Object[pendingUpdate.size()]);
 					monitor.beginTask(WorkbenchMessages.getString("DecorationScheduler.UpdatingTask"), elements.length + 20); //$NON-NLS-1$
 					pendingUpdate.clear();
-					monitor.worked(20);
+					monitor.worked(15);
 					decoratorManager.fireListeners(
 						new LabelProviderChangedEvent(
 							decoratorManager,
 							elements));
 					monitor.worked(elements.length);
+					//Other decoration requests may have occured due to
+					//updates. Only clear the results if there are none pending.
+					if (awaitingDecoration.isEmpty())
+						resultCache.clear();
+					monitor.worked(5);
 					monitor.done();
 				}
 				return Status.OK_STATUS;
@@ -340,10 +352,9 @@ public class DecorationScheduler {
 			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
 			 */
 			public void done(IJobChangeEvent event) {
-				//Other decoration requests may have occured due to
-				//updates. Only clear the results if there are none pending.
-				if (awaitingDecoration.isEmpty())
-					resultCache.clear();
+				//Reschedule if another update came in while we were working
+				if(!pendingUpdate.isEmpty())
+					decorated();
 			}
 		});
 		return job;

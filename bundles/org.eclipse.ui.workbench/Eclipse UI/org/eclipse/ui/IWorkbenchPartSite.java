@@ -114,7 +114,5 @@ public void registerContextMenu(MenuManager menuManager,
  */
 public IKeyBindingService getKeyBindingService();
 
-//public IActionService getActionService();
-
-//public IContextService getContextService();
+//IContextActivationService getContextActivationService();
 }

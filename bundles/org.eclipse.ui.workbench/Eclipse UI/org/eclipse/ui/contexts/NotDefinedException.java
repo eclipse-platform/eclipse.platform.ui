@@ -13,7 +13,7 @@ package org.eclipse.ui.contexts;
 
 /**
  * <p>
- * TODO javadoc
+ * JAVADOC
  * </p>
  * <p>
  * This class is not intended to be extended by clients.
@@ -27,14 +27,13 @@ package org.eclipse.ui.contexts;
 public class NotDefinedException extends Exception {
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 */	
 	public NotDefinedException() {
-		super();
 	}
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 *
 	 * @param s
 	 */	

@@ -13,73 +13,76 @@ package org.eclipse.ui.internal.progress;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.jobs.*;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.progress.UIJob;
-import org.eclipse.ui.internal.progress.ProgressMessages;
 
 /**
  * The ProgressContentProvider is the content provider used for
  * classes that listen to the progress changes.
  */
-public class ProgressContentProvider implements ITreeContentProvider {
+public class ProgressContentProvider
+	implements ITreeContentProvider, IJobProgressManagerListener {
 
-	private Map jobs = Collections.synchronizedMap(new HashMap());
-	IJobChangeListener listener;
-	private TreeViewer viewer;
-	private Collection updates = Collections.synchronizedSet(new HashSet());
-	private boolean updateAll = false;
-	private Job updateJob;
-	
+	/**
+	 * The UpdatesInfo is a private class for keeping track of the
+	 * updates required.
+	 */
+	private class UpdatesInfo {
+
+		Collection additions = new HashSet();
+		Collection deletions = new HashSet();
+		Collection refreshes = new HashSet();
+		boolean updateAll = false;
+
+		private UpdatesInfo() {
+		}
+
+		/**
+		 * Add an add update
+		 * @param addition
+		 */
+		void add(JobInfo addition) {
+			additions.add(addition);
+		}
+
+		/**
+		 * Add a remove update
+		 * @param addition
+		 */
+		void remove(JobInfo removal) {
+			deletions.add(removal);
+		}
+		/**
+		 * Add a refresh update
+		 * @param addition
+		 */
+		void refresh(JobInfo refresh) {
+			refreshes.add(refresh);
+		}
+		/**
+		 * Reset the caches after completion of an update.
+		 */
+		void reset() {
+			additions.clear();
+			deletions.clear();
+			refreshes.clear();
+		}
+	}
+
+	ProgressTreeViewer viewer;
+	Job updateJob;
+	UpdatesInfo currentInfo = new UpdatesInfo();
+	Object updateLock = new Object();
 	boolean debug = false;
+	private Collection filteredJobs =
+		Collections.synchronizedList(new ArrayList());
 
-	public ProgressContentProvider(TreeViewer mainViewer) {
-		listener = new JobChangeAdapter() {
-
-			/* (non-Javadoc)
-			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#scheduled(org.eclipse.core.runtime.jobs.IJobChangeEvent)
-			 */
-			public void scheduled(IJobChangeEvent event) {
-				if (!isNonDisplayableJob(event.getJob())) {
-					jobs.put(event.getJob(), new JobInfo(event.getJob()));
-					refreshViewer(null);
-				}
-			}
-
-			/* (non-Javadoc)
-			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#aboutToRun(org.eclipse.core.runtime.jobs.IJobChangeEvent)
-			 */
-			public void aboutToRun(IJobChangeEvent event) {
-				if (!isNonDisplayableJob(event.getJob())) {
-					JobInfo info = getJobInfo(event.getJob());
-					info.setRunning();
-					refreshViewer(null);
-				}
-			}
-						
-
-			/* (non-Javadoc)
-			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
-			 */
-			public void done(IJobChangeEvent event) {
-				if (!isNonDisplayableJob(event.getJob())) {
-					if (event.getResult().getCode() == IStatus.ERROR) {
-						JobInfo info = getJobInfo(event.getJob());
-						info.setError(event.getResult());
-					} else {
-						jobs.remove(event.getJob());
-					}
-					refreshViewer(null);
-				}
-
-			}
-
-		};
-		Platform.getJobManager().addJobChangeListener(listener);
+	public ProgressContentProvider(ProgressTreeViewer mainViewer) {
 		viewer = mainViewer;
-		JobProgressManager.getInstance().addProvider(this);
+		JobProgressManager.getInstance().addListener(this);
+		createUpdateJob();
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
@@ -92,189 +95,208 @@ public class ProgressContentProvider implements ITreeContentProvider {
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 	 */
 	public Object getParent(Object element) {
-		return ((JobTreeElement) element).getParent();
+		if (element == this)
+			return null;
+		else
+			return ((JobTreeElement) element).getParent();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 	 */
 	public boolean hasChildren(Object element) {
-		return ((JobTreeElement) element).hasChildren();
+		if (element == this)
+			return JobProgressManager.getInstance().hasJobInfos();
+		else
+			return ((JobTreeElement) element).hasChildren();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 	 */
 	public Object[] getElements(Object inputElement) {
-		return jobs.values().toArray();
+
+		JobInfo[] infos = JobProgressManager.getInstance().getJobInfos();
+		ArrayList result = new ArrayList();
+		for (int i = 0; i < infos.length; i++) {
+			if (isNonDisplayableJob(infos[i].getJob()))
+				addToFiltered(infos[i].getJob());
+			else
+				result.add(infos[i]);
+		}
+		JobInfo[] resultArray = new JobInfo[result.size()];
+		result.toArray(resultArray);
+		return resultArray;
+
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
 	public void dispose() {
-		Platform.getJobManager().removeJobChangeListener(listener);
-		JobProgressManager.getInstance().removeProvider(this);
-
+		JobProgressManager.getInstance().removeListener(this);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
-	public void inputChanged(Viewer updateViewer, Object oldInput, Object newInput) {
+	public void inputChanged(
+		Viewer updateViewer,
+		Object oldInput,
+		Object newInput) {
 	}
-
-	/**
-	 * A task has begun on job so create a new JobInfo for it.
-	 * @param job
-	 * @param taskName
-	 * @param totalWork
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#refresh(org.eclipse.ui.internal.progress.JobInfo)
 	 */
-	public void beginTask(Job job, String taskName, int totalWork) {
-		if (isNonDisplayableJob(job))
+	public void refresh(JobInfo info) {
+
+		if (isNonDisplayableJob(info.getJob()))
 			return;
-		JobInfo info = getJobInfo(job);
-		info.beginTask(taskName, totalWork);
-		refreshViewer(info);
-	}
 
-	/**
-	 * Get the JobInfo for the job. If it does not exist
-	 * create it.
-	 * @param job
-	 * @return
-	 */
-	private JobInfo getJobInfo(Job job) {
-		JobInfo info = (JobInfo) jobs.get(job);
-		if (info == null) {
-			info = new JobInfo(job);
-			jobs.put(job, info);
+		synchronized (updateLock) {
+			//If we never displayed this job then add it instead.
+			if (isFiltered(info.getJob())) {
+				add(info);
+				removeFromFiltered(info.getJob());
+			} else
+				currentInfo.refresh(info);
 		}
-		return info;
-	}
-	/**
-	 * Return whether or not this job is displayable.
-	 * @param job
-	 * @return
-	 */
-	private boolean isNonDisplayableJob(Job job) {
-		if(job == null)
-			return true;
-		return !debug && job.isSystem();
-	}
-	/**
-	 * Reset the name of the task to task name.
-	 * @param job
-	 * @param taskName
-	 * @param totalWork
-	 */
-	public void setTaskName(Job job, String taskName, int totalWork) {
-		if (isNonDisplayableJob(job))
-			return;
-
-		JobInfo info = getJobInfo(job);
-		if (info.hasTaskInfo()) 
-			info.setTaskName(taskName);
-		else{
-			beginTask(job, taskName, totalWork);
-			return;
-		}
-
-		info.clearChildren();
-		refreshViewer(info);
-	}
-
-	/**
-	 * Create a new subtask on jg
-	 * @param job
-	 * @param name
-	 */
-	public void subTask(Job job, String name) {
-		if (isNonDisplayableJob(job))
-			return;
-		if (name.length() == 0)
-			return;
-		JobInfo info = getJobInfo(job);
-
-		info.clearChildren();
-		info.addSubTask(name);
-		refreshViewer(info);
+		//Add in a 100ms delay so as to keep priority low
+		updateJob.schedule(100);
 
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.jobs.IProgressListener#worked(org.eclipse.core.runtime.jobs.Job, int)
+	 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#refreshAll()
 	 */
-	public void worked(Job job, double work) {
-		if (isNonDisplayableJob(job))
-			return;
+	public void refreshAll() {
 
-		JobInfo info = getJobInfo(job);
-		if (info.hasTaskInfo()) {
-			info.addWork(work);
-			refreshViewer(info);
+		filteredJobs.clear();
+		synchronized (updateLock) {
+			currentInfo.updateAll = true;
 		}
-	}
 
-	/**
-	 * Refresh the viewer as a result of a change in info.
-	 * @param info
-	 */
-	void refreshViewer(final JobInfo info) {
-		
-		if(updateJob == null)
-			createUpdateJob();
-
-		if(info == null)
-			updateAll = true;
-		else
-			updates.add(info);
-			
 		//Add in a 100ms delay so as to keep priority low
-		updateJob.schedule(100);			
+		updateJob.schedule(100);
+
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#add(org.eclipse.ui.internal.progress.JobInfo)
+	 */
+	public void add(JobInfo info) {
+
+		if (isNonDisplayableJob(info.getJob()))
+			addToFiltered(info.getJob());
+		else {
+			synchronized (updateLock) {
+				currentInfo.add(info);
+			}
+			updateJob.schedule(100);
+		}
+
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#remove(org.eclipse.ui.internal.progress.JobInfo)
+	 */
+	public void remove(JobInfo info) {
+
+		removeFromFiltered(info.getJob());
+		if (isNonDisplayableJob(info.getJob()))
+			return;
+		synchronized (updateLock) {
+			currentInfo.remove(info);
+		}
+		updateJob.schedule(100);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#showsDebug()
+	 */
+	public boolean showsDebug() {
+		return true;
 	}
 
 	/**
-	 * Clear the job out of the list of those being displayed.
-	 * Only do this for jobs that are an error.
+	 * Return whether or not this job is currently displayable.
 	 * @param job
+	 * @param debug If the listener is in debug mode.
+	 * @return
 	 */
-	void clearJob(Job job) {
-		JobInfo info = (JobInfo) jobs.get(job);
-		if (info != null && info.getStatus().getCode() == IStatus.ERROR) {
-			jobs.remove(job);
-			viewer.refresh(null);
-		}
+	boolean isNonDisplayableJob(Job job) {
+
+		//	Never display the update job
+		if (job == updateJob)
+			return true;
+
+		if (debug) //Always display in debug mode
+			return false;
+		else
+			return job.isSystem() || job.getState() == Job.SLEEPING;
 	}
-	
-	private void createUpdateJob(){
-		updateJob = new UIJob(ProgressMessages.getString("ProgressContentProvider.UpdateProgressJob")){ //$NON-NLS-1$
-			/* (non-Javadoc)
-			 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-			 */
+
+	/**
+	 * Create the update job that handles the updatesInfo.
+	 */
+	private void createUpdateJob() {
+			updateJob = new UIJob(ProgressMessages.getString("ProgressContentProvider.UpdateProgressJob")) {//$NON-NLS-1$
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+	 */
 			public IStatus runInUIThread(IProgressMonitor monitor) {
-				
-				if(viewer.getControl().isDisposed())
+
+				if (viewer.getControl().isDisposed())
 					return Status.CANCEL_STATUS;
-				if(updateAll){
-					viewer.refresh(null,true);
-					updateAll = false;
-					updates.clear();
-				}
-				else{
-					Object[] updateItems = updates.toArray();
-					updates.clear();
-					for(int i = 0; i < updateItems.length; i++){
-						viewer.refresh(updateItems[i],true);
+				//Lock update additions while working
+				synchronized (updateLock) {
+					if (currentInfo.updateAll)
+						viewer.refresh(true);
+					else {
+						Object[] updateItems = currentInfo.refreshes.toArray();
+						for (int i = 0; i < updateItems.length; i++) {
+							viewer.refresh(updateItems[i], true);
+						}
+						viewer.add(
+							viewer.getInput(),
+							currentInfo.additions.toArray());
+
+						viewer.remove(currentInfo.deletions.toArray());
 					}
+					currentInfo.reset();
 				}
 				return Status.OK_STATUS;
-					
+
 			}
-			
+
 		};
 		updateJob.setSystem(true);
 		updateJob.setPriority(Job.DECORATE);
-		
+
+	}
+
+	/**
+	 * Add job to the list of filtered jobs.
+	 * @param job
+	 */
+	void addToFiltered(Job job) {
+		filteredJobs.add(job);
+	}
+
+	/**
+	 * Remove job from the list of fitlered jobs.
+	 * @param job
+	 */
+	void removeFromFiltered(Job job) {
+		filteredJobs.remove(job);
+	}
+
+	/**
+	 * Return whether or not the job is currently filtered.
+	 * @param job
+	 * @return
+	 */
+	boolean isFiltered(Job job) {
+		return filteredJobs.contains(job);
 	}
 }

@@ -73,6 +73,9 @@ public abstract class UIJob extends Job {
 			public void run() {
 				IStatus result = null;
 				try {
+					//As we are in the UI Thread we can
+					//always know what to tell the job.
+					setThread(Thread.currentThread());
 					result = runInUIThread(monitor);
 				} finally {
 					if (result == null)
@@ -113,7 +116,7 @@ public abstract class UIJob extends Job {
 			return display;
 		IWorkbenchWindow windows[] =
 			PlatformUI.getWorkbench().getWorkbenchWindows();
-		if (windows.length == 0)
+		if (windows.length ==  0 || windows[0].getShell().isDisposed())
 			return Display.getDefault();
 		else
 			return windows[0].getShell().getDisplay();

@@ -13,60 +13,18 @@ package org.eclipse.ui.internal.contexts;
 
 import org.eclipse.ui.contexts.IContextManager;
 import org.eclipse.ui.contexts.IContextManagerEvent;
-import org.eclipse.ui.internal.commands.util.Util;
 
-/**
- * <p>
- * TODO javadoc
- * </p>
- * <p>
- * This class is not intended to be extended by clients.
- * </p>
- * <p>
- * <em>EXPERIMENTAL</em>
- * </p>
- * 
- * @since 3.0
- */
-public class ContextManagerEvent 
-	implements IContextManagerEvent {
+final class ContextManagerEvent implements IContextManagerEvent {
 
 	private IContextManager contextManager;
 
-	/**
-	 * TODO javadoc
-	 * 
-	 * @param contextManager
-	 * @throws IllegalArgumentException
-	 */	
-	public ContextManagerEvent(IContextManager contextManager)
-		throws IllegalArgumentException {		
-		super();
-		
+	ContextManagerEvent(IContextManager contextManager) {
 		if (contextManager == null)
-			throw new IllegalArgumentException();
+			throw new NullPointerException();
 		
 		this.contextManager = contextManager;
 	}
 
-	/**
-	 * TODO javadoc
-	 * 
-	 * @param object
-	 */		
-	public boolean equals(Object object) {
-		if (!(object instanceof ContextManagerEvent))
-			return false;
-
-		ContextManagerEvent contextManagerEvent = (ContextManagerEvent) object;	
-		return Util.equals(contextManager, contextManagerEvent.contextManager);
-	}
-	
-	/**
-	 * TODO javadoc
-	 * 
-	 * @return
-	 */		
 	public IContextManager getContextManager() {
 		return contextManager;
 	}

@@ -15,11 +15,13 @@ import java.util.ArrayList;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.internal.registry.Category;
+import org.eclipse.ui.internal.registry.IViewDescriptor;
 import org.eclipse.ui.internal.registry.IViewRegistry;
+import org.eclipse.ui.internal.roles.RoleManager;
 
 public class ViewContentProvider implements ITreeContentProvider {
 /**
- * PerspContentProvider constructor comment.
+	 * Create a new instance of the ViewContentProvider.
  */
 public ViewContentProvider() {
 	super();
@@ -30,19 +32,34 @@ public void dispose() {
  * Returns the child elements of the given parent element.
  */
 public Object[] getChildren(Object element) {
-	if (element instanceof IViewRegistry) {
-		IViewRegistry reg = (IViewRegistry)element;
-		return reg.getCategories();
-	} else if (element instanceof Category) {
-		ArrayList list = ((Category)element).getElements();
-		if (list != null) {
-			return list.toArray();
+		if (element instanceof IViewRegistry) {
+			IViewRegistry reg = (IViewRegistry) element;
+			Category[] categories = reg.getCategories();
+			ArrayList filtered = new ArrayList();
+			for (int i = 0; i < categories.length; i++) {
+				if (RoleManager.getInstance().isEnabledId(categories[i].getId()))
+					filtered.add(categories[i]);
+			}
+			return filtered.toArray();
+		} else if (element instanceof Category) {
+			ArrayList list = ((Category) element).getElements();
+			if (list != null) {
+				ArrayList filtered = new ArrayList();
+				Iterator elements = list.iterator();
+				while (elements.hasNext()) {
+					IViewDescriptor next = (IViewDescriptor) elements.next();
+					if (RoleManager.getInstance().isEnabledId(next.getId()))
+						filtered.add(next);
+				}
+				return filtered.toArray();
+			}
+
 		} else {
 			return new Object[0];
 		}
+
+		return new Object[0];
 	}
-	return new Object[0];
-}
 /**
  * Return the children of an element.
  */

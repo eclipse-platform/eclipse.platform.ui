@@ -13,10 +13,10 @@ package org.eclipse.ui.contexts;
 
 /**
  * <p>
- * TODO javadoc
+ * JAVADOC
  * </p>
  * <p>
- * This interface is not intended to be implemented or extended by clients.
+ * This interface is not intended to be extended or implemented by clients.
  * </p>
  * <p>
  * <em>EXPERIMENTAL</em>
@@ -27,7 +27,7 @@ package org.eclipse.ui.contexts;
 public interface IContextEvent {
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @return
 	 */	

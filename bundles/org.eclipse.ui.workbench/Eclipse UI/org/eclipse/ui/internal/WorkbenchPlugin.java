@@ -352,6 +352,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		// @issue some of these may be IDE-specific
 		store.setDefault(IPreferenceConstants.EDITORLIST_PULLDOWN_ACTIVE, false);
 		store.setDefault(IPreferenceConstants.EDITORLIST_DISPLAY_FULL_NAME, false);
+		store.setDefault(IPreferenceConstants.STICKY_CYCLE, false);
 		store.setDefault(IPreferenceConstants.REUSE_EDITORS_BOOLEAN, false);
 		store.setDefault(IPreferenceConstants.REUSE_DIRTY_EDITORS, true);
 		store.setDefault(IPreferenceConstants.REUSE_EDITORS, 8);
@@ -372,9 +373,6 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		store.setDefault(IPreferenceConstants.SHOW_STATUS_LINE, true);
 		store.setDefault(IPreferenceConstants.SHOW_TOOL_BAR, true);
 		
-		// Set the default configuration for the key binding service
-		store.setDefault(IWorkbenchConstants.ACCELERATOR_CONFIGURATION_ID, IWorkbenchConstants.DEFAULT_ACCELERATOR_CONFIGURATION_ID);
-
 		// @issue get rid of PreferenceConverter - just hard code the RGB string		
 		//Set the default error colour to red
 		PreferenceConverter.setDefault(store,JFacePreferences.ERROR_COLOR, new RGB(255, 0, 0));

@@ -20,6 +20,9 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  * that are displayed visually. This adapter is used with an associated deferred content provider.
  * 
  * @see DeferredTreeContentManager
+ * @since 3.0
+ * 
+ * <b>NOTE:</b> This API is experimental and subject to change.
  */
 public interface IDeferredWorkbenchAdapter extends IWorkbenchAdapter {
 		
@@ -56,7 +59,8 @@ public interface IDeferredWorkbenchAdapter extends IWorkbenchAdapter {
 	/**
 	 * Returns the rule used to schedule the deferred fetching of children for this adapter.
 	 * 
+	 * @param object the object whose children are being fetched
 	 * @return ISchedulingRule the scheduling rule 
 	 */
-	public ISchedulingRule getRule();
+	public ISchedulingRule getRule(Object object);
 }

@@ -315,4 +315,5 @@ public IDecoratorManager getDecoratorManager();
  */
 public boolean saveAllEditors(boolean confirm);
 
+//IContextActivationService getContextActivationService();
 }

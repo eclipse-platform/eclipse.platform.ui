@@ -63,6 +63,21 @@ public abstract class MultiEditor extends EditorPart {
 		return content;
 	}
 			
+	/**
+	 * The <code>MultiEditor</code> implementation of this 
+	 * method extends the <code>EditorPart</code> implementation,
+	 * and disposes any inner editors.  Subclasses may extend.
+	 * 
+	 * @since 3.0
+	 */
+	public void dispose() {
+		super.dispose();
+		IEditorPart[] editors = getInnerEditors();
+		for (int i = 0; i < editors.length; i++) {
+			editors[i].dispose();
+		}
+	}
+	
 	/*
 	 * @see IEditorPart#doSaveAs()
 	 */
@@ -110,18 +125,21 @@ public abstract class MultiEditor extends EditorPart {
 		innerEditors[activeEditorIndex].setFocus();
 		updateGradient(innerEditors[activeEditorIndex]);
 	}
+	
 	/**
 	 * Returns the active inner editor.
 	 */
 	public final IEditorPart getActiveEditor() {
 		return innerEditors[activeEditorIndex];
 	}
+	
 	/**
 	 * Returns an array with all inner editors.
 	 */
 	public final IEditorPart[] getInnerEditors() {
 		return innerEditors;
 	}
+	
 	/**
 	 * Set the inner editors.
 	 * 
@@ -131,10 +149,14 @@ public abstract class MultiEditor extends EditorPart {
 		innerEditors = children;
 		activeEditorIndex = 0;
 	}
+	
 	/**
-	 * Set the active editor.
+	 * Activates the given nested editor.
+	 * 
+	 * @param part the nested editor
+	 * @since 3.0
 	 */
-	private void activateEditor(IEditorPart part) {
+	protected void activateEditor(IEditorPart part) {
 		IEditorPart oldEditor = getActiveEditor();
 		activeEditorIndex = getIndex(part);
 		IEditorPart e = getActiveEditor();
@@ -142,18 +164,23 @@ public abstract class MultiEditor extends EditorPart {
 		((WorkbenchPage) innerSite.getPage()).requestActivation(e);
 		updateGradient(oldEditor);
 	}
-	/*
-	 * Return the index of the specified editor
+	
+	/**
+	 * Returns the index of the given nested editor.
+	 * 
+	 * @return the index of the nested editor
+	 * @since 3.0
 	 */
-	private int getIndex(IEditorPart editor) {
+	protected int getIndex(IEditorPart editor) {
 		for (int i = 0; i < innerEditors.length; i++) {
 			if (innerEditors[i] == editor)
 				return i;
 		}
 		return -1;
 	}
+	
 	/**
-	 * Update the gradient in the title bar.
+	 * Updates the gradient in the title bar.
 	 */
 	public void updateGradient(IEditorPart editor) {
 		boolean activeEditor = editor == getSite().getPage().getActiveEditor();

@@ -11,16 +11,13 @@
 
 package org.eclipse.ui.internal.commands;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.util.ImageSupport;
 
 final class ImageFactory {
 
@@ -30,23 +27,14 @@ final class ImageFactory {
 	static {
 		put("blank", "icons/full/commands/blank.gif"); //$NON-NLS-1$//$NON-NLS-2$
 		put("change", "icons/full/commands/change.gif"); //$NON-NLS-1$//$NON-NLS-2$
+		put("clear", "icons/full/commands/clear.gif"); //$NON-NLS-1$//$NON-NLS-2$
 		put("exclamation", "icons/full/commands/exclamation.gif"); //$NON-NLS-1$//$NON-NLS-2$
 		put("minus", "icons/full/commands/minus.gif"); //$NON-NLS-1$//$NON-NLS-2$
 		put("plus", "icons/full/commands/plus.gif"); //$NON-NLS-1$//$NON-NLS-2$
 	}
 
-	private static ImageDescriptor create(String path) {
-		try {
-			URL url = Platform.getPlugin(PlatformUI.PLUGIN_ID).getDescriptor().getInstallURL();
-			url = new URL(url, path);
-			return ImageDescriptor.createFromURL(url);
-		} catch (MalformedURLException eMalformedURL) {
-			return null;
-		}
-	}
-
 	private static void put(String key, String value) {
-		map.put(key, create(value));	
+		map.put(key, ImageSupport.getImageDescriptor(value));	
 	}
 
 	static Image getImage(String key) {

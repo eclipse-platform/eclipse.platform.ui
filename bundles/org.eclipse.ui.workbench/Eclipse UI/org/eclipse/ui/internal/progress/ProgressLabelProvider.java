@@ -18,14 +18,15 @@ import org.eclipse.swt.graphics.Image;
  * that need anILabelprovider to show JobInfos.
  */
 public class ProgressLabelProvider extends LabelProvider {
-	
+
 	Image image;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 	 */
 	public Image getImage(Object element) {
-		return null;
+		return JobProgressManager.getInstance().getDisplayImage(
+			(JobTreeElement) element);
 	}
 
 	/* (non-Javadoc)
@@ -34,6 +35,5 @@ public class ProgressLabelProvider extends LabelProvider {
 	public String getText(Object element) {
 		return ((JobTreeElement) element).getDisplayString();
 	}
-
 
 }

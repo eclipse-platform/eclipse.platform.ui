@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
@@ -35,20 +35,22 @@ class ProgressTreeViewer extends TreeViewer {
 
 	private void updateColors(TreeItem treeItem, JobInfo info) {
 
-		if (info.getStatus().getCode() == JobInfo.PENDING_STATUS) {
-			treeItem.setForeground(JFaceColors.getActiveHyperlinkText(treeItem.getDisplay()));
+		if (info.getErrorStatus() != null) {
+			treeItem.setForeground(
+				JFaceColors.getErrorText(treeItem.getDisplay()));
 			return;
 		}
 
-		if (info.getStatus().getCode() == IStatus.ERROR) {
-			treeItem.setForeground(JFaceColors.getErrorText(treeItem.getDisplay()));
+		if (info.getJob().getState() != Job.RUNNING) {
+			treeItem.setForeground(
+				JFaceColors.getActiveHyperlinkText(treeItem.getDisplay()));
 			return;
 		}
+
 		treeItem.setForeground(
 			treeItem.getDisplay().getSystemColor(SWT.COLOR_LIST_FOREGROUND));
 
 	}
-
 
 	/**
 	 * Create a new instance of the receiver with the supplied parent

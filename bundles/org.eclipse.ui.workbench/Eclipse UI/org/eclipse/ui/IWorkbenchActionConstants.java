@@ -106,6 +106,18 @@ package org.eclipse.ui;
  *   <li>Add group (<code>GROUP_ADD</code>)</li>
  *   <li>File group (<code>GROUP_FILE</code>)</li>
  * </ul>
+ * <p>
+ * To hook a global action handler, a view should use the following code:
+ * <code>
+ *   IAction copyHandler = ...;
+ *   view.getSite().getActionBars().setGlobalActionHandler(
+ *       IWorkbenchActionConstants.COPY, 
+ *       copyHandler);
+ * </code>
+ * For editors, this should be done in the <code>IEditorActionBarContributor</code>.
+ * </p>
+ *  
+ * @see org.eclipse.ui.IActionBars#setGlobalActionHandler
  */
 public interface IWorkbenchActionConstants {
 

@@ -11,10 +11,9 @@
 package org.eclipse.ui.internal;
 
 import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import java.util.SortedSet;
 
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
@@ -24,6 +23,8 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
@@ -37,10 +38,13 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.commands.ICommand;
+import org.eclipse.ui.commands.IKeyBinding;
+import org.eclipse.ui.commands.NotDefinedException;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.commands.Manager;
-import org.eclipse.ui.internal.commands.util.Sequence;
-import org.eclipse.ui.internal.commands.util.Stroke;
+import org.eclipse.ui.internal.commands.CommandManager;
+import org.eclipse.ui.internal.keys.KeySupport;
+import org.eclipse.ui.keys.KeySequence;
 
 /**
  * Implements a action to enable the user switch between parts
@@ -235,11 +239,15 @@ public class CyclePartAction extends PageEventAction {
 			public void helpRequested(HelpEvent event) {
 			}
 		});
-		
+
+        // TODO Bold cast to Workbench
+        final Workbench workbench = (Workbench) page.getWorkbenchWindow().getWorkbench();
 		try {
 			dialog.open();
 			addMouseListener(table, dialog);
+            workbench.disableKeyFilter();
 			addKeyListener(table, dialog);
+			addTraverseListener(table);
 			
 			while (!dialog.isDisposed())
 				if (!display.readAndDispatch())
@@ -247,6 +255,7 @@ public class CyclePartAction extends PageEventAction {
 		} finally {
 			if(!dialog.isDisposed())
 				cancel(dialog);
+            workbench.enableKeyFilter();
 		}
 	}
 	
@@ -293,6 +302,7 @@ public class CyclePartAction extends PageEventAction {
 				int stateMask = e.stateMask;
 				char character = e.character;
 				int accelerator = stateMask | (keyCode != 0 ? keyCode : convertCharacter(character));
+				KeySequence keySequence = KeySequence.getInstance(KeySupport.convertAcceleratorToKeyStroke(accelerator));
 
 				//System.out.println("\nPRESSED");
 				//printKeyEvent(e);
@@ -300,43 +310,46 @@ public class CyclePartAction extends PageEventAction {
 				
 				boolean acceleratorForward = false;
 				boolean acceleratorBackward = false;
+				CommandManager commandManager = CommandManager.getInstance();
 
 				if (commandForward != null) {
-					Map commandMap = Manager.getInstance().getKeyMachine().getCommandMap();		
-					SortedSet sequenceSet = (SortedSet) commandMap.get(commandForward);
-		
-					if (sequenceSet != null) {
-						Iterator iterator = sequenceSet.iterator();
-						
-						while (iterator.hasNext()) {
-							Sequence sequence = (Sequence) iterator.next();
-							List strokes = sequence.getStrokes();
-							int size = strokes.size();
-
-							if (size > 0 && accelerator == ((Stroke) strokes.get(size - 1)).getValue()) {
-								acceleratorForward = true;
-								break;
+					ICommand command = commandManager.getCommand(commandForward);
+					
+					if (command.isDefined()) {
+						try {
+							SortedSet keyBindings = command.getKeyBindings();
+							Iterator iterator = keyBindings.iterator();
+							
+							while (iterator.hasNext()) {
+								IKeyBinding keyBinding = (IKeyBinding) iterator.next();
+								
+								if (keyBinding.getKeySequence().equals(keySequence)) {
+									acceleratorForward = true;
+									break;
+								}
 							}
+						} catch (NotDefinedException eNotDefined) {							
 						}
 					}
 				}
 
 				if (commandBackward != null) {
-					Map commandMap = Manager.getInstance().getKeyMachine().getCommandMap();		
-					SortedSet sequenceSet = (SortedSet) commandMap.get(commandBackward);
-		
-					if (sequenceSet != null) {
-						Iterator iterator = sequenceSet.iterator();
-						
-						while (iterator.hasNext()) {
-							Sequence sequence = (Sequence) iterator.next();
-							List strokes = sequence.getStrokes();
-							int size = strokes.size();
-
-							if (size > 0 && accelerator == ((Stroke) strokes.get(size - 1)).getValue()) {
-								acceleratorBackward = true;
-								break;
+					ICommand command = commandManager.getCommand(commandBackward);
+					
+					if (command.isDefined()) {
+						try {
+							SortedSet keyBindings = command.getKeyBindings();
+							Iterator iterator = keyBindings.iterator();
+								
+							while (iterator.hasNext()) {
+								IKeyBinding keyBinding = (IKeyBinding) iterator.next();
+									
+								if (keyBinding.getKeySequence().equals(keySequence)) {
+									acceleratorBackward = true;
+									break;
+								}
 							}
+						} catch (NotDefinedException eNotDefined) {							
 						}
 					}
 				}
@@ -372,12 +385,29 @@ public class CyclePartAction extends PageEventAction {
 				//printKeyEvent(e);
 				//System.out.println("accelerat:\t" + accelerator + "\t (" + KeySupport.formatStroke(Stroke.create(accelerator), true) + ")");
 				
-				if ((firstKey || quickReleaseMode) && keyCode == stateMask)
+				final IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+				final boolean stickyCycle = store.getBoolean(IPreferenceConstants.STICKY_CYCLE);
+				if ((!stickyCycle && (firstKey || quickReleaseMode)) && keyCode == stateMask)
 					ok(dialog, table);
 			}
 		});
 	}
-
+	/**
+	 * Adds a listener to the given table that blocks all traversal operations.
+	 * @param table The table to which the traversal suppression should be 
+	 * added; must not be <code>null</code>.
+	 */
+	private final void addTraverseListener(final Table table) {
+		table.addTraverseListener(new TraverseListener() {
+			/**
+			 * Blocks all key traversal events.
+			 * @param event The trigger event; must not be <code>null</code>.
+			 */
+			public final void keyTraversed(final TraverseEvent event) {
+				event.doit = false;
+			}
+		});
+	}
 	private static char convertCharacter(char c) {
 		return c >= 0 && c <= 31 ? (char) (c + '@') : Character.toUpperCase(c);
 	}

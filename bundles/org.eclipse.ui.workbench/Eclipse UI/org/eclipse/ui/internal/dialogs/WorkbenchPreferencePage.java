@@ -38,6 +38,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * Generic workbench main preference page
  */
 public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
+	private Button stickyCycleButton;
 	private Button doubleClickButton;
 	private Button singleClickButton;
 	private Button selectOnHoverButton;
@@ -66,7 +67,16 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
 		composite.setFont(font);
 
+		stickyCycleButton = new Button(composite, SWT.CHECK);
+		stickyCycleButton.setText(WorkbenchMessages.getString("WorkbenchPreference.stickyCycleButton")); //$NON-NLS-1$
+		stickyCycleButton.setFont(composite.getFont());
+
+		createSpace(composite);
 		createSingleClickGroup(composite);
+
+		// set initial values
+		IPreferenceStore store = getPreferenceStore();
+		stickyCycleButton.setSelection(store.getBoolean(IPreferenceConstants.STICKY_CYCLE));
 
 		return composite;
 	}
@@ -233,6 +243,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 	 */
 	protected void performDefaults() {
 		IPreferenceStore store = getPreferenceStore();
+		stickyCycleButton.setSelection(store.getBoolean(IPreferenceConstants.STICKY_CYCLE));
 		openOnSingleClick = store.getDefaultBoolean(IPreferenceConstants.OPEN_ON_SINGLE_CLICK);
 		selectOnHover = store.getDefaultBoolean(IPreferenceConstants.SELECT_ON_HOVER);
 		openAfterDelay = store.getDefaultBoolean(IPreferenceConstants.OPEN_AFTER_DELAY);
@@ -242,6 +253,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		openAfterDelayButton.setSelection(openAfterDelay);
 		selectOnHoverButton.setEnabled(openOnSingleClick);
 		openAfterDelayButton.setEnabled(openOnSingleClick);		
+		stickyCycleButton.setSelection( store.getDefaultBoolean(IPreferenceConstants.STICKY_CYCLE));	
 		
 		super.performDefaults();
 	}
@@ -252,9 +264,13 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 	public boolean performOk() {
 		IPreferenceStore store = getPreferenceStore();
 
+		// store the keep cycle part dialogs sticky preference
+		store.setValue(IPreferenceConstants.STICKY_CYCLE, stickyCycleButton.getSelection());
+
 		store.setValue(IPreferenceConstants.OPEN_ON_SINGLE_CLICK, openOnSingleClick);
 		store.setValue(IPreferenceConstants.SELECT_ON_HOVER, selectOnHover);
 		store.setValue(IPreferenceConstants.OPEN_AFTER_DELAY, openAfterDelay);
+
 		int singleClickMethod = openOnSingleClick ? OpenStrategy.SINGLE_CLICK : OpenStrategy.DOUBLE_CLICK;
 		if (openOnSingleClick) {
 			if (selectOnHover) {

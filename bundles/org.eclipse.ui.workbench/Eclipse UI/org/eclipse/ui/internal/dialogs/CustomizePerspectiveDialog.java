@@ -52,7 +52,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 // @issue need to break this not to show menu specific page
 public class CustomizePerspectiveDialog extends Dialog {
 	private Perspective perspective;
-	private WorkbenchWindow window;
+	WorkbenchWindow window;
 	private TabFolder tabFolder;
 	private CheckboxTableViewer actionSetsViewer;
 	private IndentedTableViewer actionSetMenuViewer;	
@@ -79,10 +79,11 @@ public class CustomizePerspectiveDialog extends Dialog {
 	private ActionSetDescriptor selectedActionSet = null;
 	private ShortcutMenu selectedMenuCategory = null;
 		
-	private ImageDescriptor menuImageDescriptor = null;
-	private ImageDescriptor toolbarImageDescriptor = null;
+	ImageDescriptor menuImageDescriptor = null;
+	ImageDescriptor submenuImageDescriptor = null;
+	ImageDescriptor toolbarImageDescriptor = null;
 	
-	private ShortcutMenu rootMenu; 
+	ShortcutMenu rootMenu; 
 	private ArrayList actionSets = new ArrayList();
 	private Hashtable actionSetStructures = new Hashtable();
 
@@ -90,19 +91,19 @@ public class CustomizePerspectiveDialog extends Dialog {
 		/**
 		 * Tree representation for action set menu and toolbar items.  
 		 */
-		private ArrayList children = new ArrayList();
-		private ActionSetDisplayItem parent = null;
+		ArrayList children = new ArrayList();
+		ActionSetDisplayItem parent = null;
 		private String id = null;
 		private String text = ""; //$NON-NLS-1$
-		private String description = "";  //$NON-NLS-1$
-		private ImageDescriptor imageDescriptor;
-		private int type = MENUITEM;
+		String description = "";  //$NON-NLS-1$
+		ImageDescriptor imageDescriptor;
+		int type = MENUITEM;
 		private final static int MENUITEM = 0;
 		private final static int TOOLITEM = 1;
 		
 		private ActionSetDisplayItem() {
 		}
-		private ActionSetDisplayItem(String id) {
+		ActionSetDisplayItem(String id) {
 			this(null, id, "", MENUITEM); //$NON-NLS-1$
 		}
 		private ActionSetDisplayItem(ActionSetDisplayItem parent, String id, String text, int type) {
@@ -115,10 +116,10 @@ public class CustomizePerspectiveDialog extends Dialog {
 			this.text = removeShortcut(text);
 			this.text = DialogUtil.removeAccel(this.text);
 		}
-		private ActionSetDisplayItem find(String id) {
+		private ActionSetDisplayItem find(String itemId) {
 			for (int i=0; i<children.size(); i++) {
 				ActionSetDisplayItem child = (ActionSetDisplayItem)children.get(i);
-				if (id.equals(child.id)) return child;
+				if (itemId.equals(child.id)) return child;
 			}
 			return null;
 		}
@@ -189,11 +190,11 @@ public class CustomizePerspectiveDialog extends Dialog {
 				}
 			}
 		}
-		private int getDepth() {
+		int getDepth() {
 			if (parent == null) return 0;
 			else return parent.getDepth() + 1;
 		}
-		private String getDisplayText() {
+		String getDisplayText() {
 			if (type == MENUITEM) {
 				if (children.size() > 0) {
 					if (parent.id.equals("Root")) { //$NON-NLS-1$
@@ -206,7 +207,7 @@ public class CustomizePerspectiveDialog extends Dialog {
 				else return text;
 			}
 		}
-		private ArrayList getElements() {
+		ArrayList getElements() {
 			ArrayList elements = new ArrayList();
 			for (int i=0; i<children.size(); i++) {
 				ActionSetDisplayItem child = (ActionSetDisplayItem)children.get(i);
@@ -214,6 +215,10 @@ public class CustomizePerspectiveDialog extends Dialog {
 				elements.addAll(child.getElements());
 			}
 			return elements;
+		}
+		protected boolean isTopLevelMenu() {
+			if (parent == null) return false;
+			return parent.parent == null;
 		}
 	}
 	public class CustomizeActionBars extends WWinActionBars {
@@ -257,7 +262,7 @@ public class CustomizePerspectiveDialog extends Dialog {
 	}
 	class ShortcutMenuItemContentProvider implements IStructuredContentProvider {
 	
-		private ShortcutMenuItemContentProvider() {
+		ShortcutMenuItemContentProvider() {
 		}
 		public Object[] getElements(Object input) {
 			if (input instanceof ShortcutMenu) {
@@ -275,7 +280,7 @@ public class CustomizePerspectiveDialog extends Dialog {
 		private final static int COLUMN_ID = 0;
 		private final static int COLUMN_DESCRIPTION = 1;
 	
-		private ShortcutMenuItemLabelProvider() {
+		ShortcutMenuItemLabelProvider() {
 		}
 		public final void dispose() {
 			for (Iterator i = imageTable.values().iterator(); i.hasNext();) {
@@ -345,14 +350,14 @@ public class CustomizePerspectiveDialog extends Dialog {
 		private final static String ID_VIEW = "org.eclipse.ui.views"; //$NON-NLS-1$
 		private final static String ID_WIZARD = "org.eclipse.ui.wizards"; //$NON-NLS-1$
 		private final static String ID_PERSP = "org.eclipse.ui.perspectives"; //$NON-NLS-1$
-		private String id;
-		private String label;
+		String id;
+		String label;
 		private ArrayList items = new ArrayList();
 		private ArrayList checkedItems = new ArrayList();
-		private ArrayList children = new ArrayList();
-		private ShortcutMenu parent = null;
+		ArrayList children = new ArrayList();
+		ShortcutMenu parent = null;
 
-		private ShortcutMenu(ShortcutMenu parent, String id, String label) {
+		ShortcutMenu(ShortcutMenu parent, String id, String label) {
 			super();
 			this.id = id;
 			this.parent = parent;
@@ -360,19 +365,19 @@ public class CustomizePerspectiveDialog extends Dialog {
 			this.label = DialogUtil.removeAccel(this.label);
 			if (parent != null) parent.children.add(this);
 		}
-		private void addItem(Object item) {
+		void addItem(Object item) {
 			items.add(item);
 		}
-		private void addCheckedItem(Object item) {
+		void addCheckedItem(Object item) {
 			checkedItems.add(item);
 		}
 		public String toString() {
 			return label;
 		}
-		private ArrayList getCheckedItems() {
+		ArrayList getCheckedItems() {
 			return checkedItems;
 		}
-		private ArrayList getCheckedItemIds() {
+		ArrayList getCheckedItemIds() {
 			ArrayList ids = new ArrayList();
 			if (getMenuId() == ID_PERSP) {
 				for (int i=0; i < checkedItems.size(); i++) {
@@ -396,17 +401,17 @@ public class CustomizePerspectiveDialog extends Dialog {
 			}
 			return ids;
 		}
-		private ArrayList getChildren() {
+		ArrayList getChildren() {
 			return children;
 		}
-		private ArrayList getItems() {
+		ArrayList getItems() {
 			return items;
 		}
 		private String getMenuId() {
 			if (parent == rootMenu) return id;
 			else return parent.getMenuId();
 		}
-		private ArrayList getSubtreeItems() {
+		ArrayList getSubtreeItems() {
 			ArrayList subtreeItems = new ArrayList();
 			subtreeItems.add(this);
 			for (int i=0; i<children.size(); i++) { 
@@ -415,7 +420,7 @@ public class CustomizePerspectiveDialog extends Dialog {
 			}
 			return subtreeItems;
 		}
-		private Object getItem(String menuItemId) {
+		Object getItem(String menuItemId) {
 			for (int i=0; i<items.size(); i++) {
 				Object item = items.get(i);
 				String itemId = null;
@@ -430,7 +435,7 @@ public class CustomizePerspectiveDialog extends Dialog {
 			}
 			return null;
 		}
-		private boolean isFullyChecked() {
+		boolean isFullyChecked() {
 			if (getItems().size() != getCheckedItems().size()) return false;
 			for (int i=0; i<children.size(); i++) {
 				ShortcutMenu child = (ShortcutMenu)children.get(i);
@@ -438,7 +443,7 @@ public class CustomizePerspectiveDialog extends Dialog {
 			}
 			return true;
 		}
-		private boolean isFullyUnchecked() {
+		boolean isFullyUnchecked() {
 			if (getCheckedItems().size() != 0) return false;
 			for (int i=0; i<children.size(); i++) {
 				ShortcutMenu child = (ShortcutMenu)children.get(i);
@@ -446,10 +451,10 @@ public class CustomizePerspectiveDialog extends Dialog {
 			}
 			return true;
 		}
-		private void removeCheckedItem(Object item) {
+		void removeCheckedItem(Object item) {
 			checkedItems.remove(item);
 		}
-		private void checked(boolean checked) {
+		void checked(boolean checked) {
 			checkedItems = new ArrayList();
 			if (checked) {
 				checkedItems.addAll(items);
@@ -512,7 +517,10 @@ public class CustomizePerspectiveDialog extends Dialog {
 			ImageDescriptor descriptor = item.imageDescriptor;
 			if (descriptor == null) {
 				if (item.type == ActionSetDisplayItem.MENUITEM) {
-					if (item.children.size() > 0) descriptor = menuImageDescriptor;
+					if (item.children.size() > 0) {
+						if (item.isTopLevelMenu()) descriptor = menuImageDescriptor;
+						else descriptor = submenuImageDescriptor;
+					}
 					else return null;
 				} else if (item.type == ActionSetDisplayItem.TOOLITEM) {
 					if (item.children.size() > 0) descriptor = toolbarImageDescriptor;
@@ -536,6 +544,9 @@ public class CustomizePerspectiveDialog extends Dialog {
 			if (element instanceof ActionSetDisplayItem) {
 				ActionSetDisplayItem item = (ActionSetDisplayItem)element;
 				String text = item.getDisplayText();
+				if ((item.type == ActionSetDisplayItem.MENUITEM) 
+				&& (item.children.size() > 0)) 
+					text = text + "  >"; //$NON-NLS-1$ 
 				return text;
 			}
 			return ""; //$NON-NLS-1$
@@ -633,10 +644,10 @@ private void buildMenusAndToolbarsFor (ActionSetDescriptor actionSetDesc) {
 }
 private void checkInitialActionSetSelections() {
 	// Check off the action sets that are active for the perspective.
-	IActionSetDescriptor [] actionSets = perspective.getActionSets();
+	IActionSetDescriptor [] actionSetDescriptors = perspective.getActionSets();
 	if (actionSets != null) {
-		for (int i = 0; i < actionSets.length; i++)
-			actionSetsViewer.setChecked(actionSets[i],true);
+		for (int i = 0; i < actionSetDescriptors.length; i++)
+			actionSetsViewer.setChecked(actionSetDescriptors[i],true);
 	}
 }
 private void checkInitialMenuCategorySelections(ShortcutMenu menu) {
@@ -664,7 +675,7 @@ protected void configureShell(Shell shell) {
 	shell.setText(WorkbenchMessages.getString("ActionSetSelection.customize")); //$NON-NLS-1$
 	WorkbenchHelp.setHelp(shell, IHelpContextIds.ACTION_SET_SELECTION_DIALOG);
 }
-private boolean containsActionSet(MenuManager mgr, String actionSetId) {
+boolean containsActionSet(MenuManager mgr, String actionSetId) {
 	// Return whether or not the given menuManager contains items for the
 	// given actionSetId.
 	IContributionItem[] menuItems = mgr.getItems();
@@ -696,7 +707,6 @@ private Composite createActionSetsPage(Composite parent) {
 	// Select... label
 	Label label = new Label(actionSetsComposite, SWT.WRAP);
 	label.setText(WorkbenchMessages.format("ActionSetSelection.selectActionSetsLabel", new Object[] {perspective.getDesc().getLabel()})); //$NON-NLS-1$
-	label.setFont(font);
 	data = new GridData(GridData.FILL_BOTH);
 	data.widthHint = TABLES_WIDTH;
 	label.setLayoutData(data);
@@ -719,11 +729,9 @@ private Composite createActionSetsPage(Composite parent) {
 	actionSetGroup.setLayout(layout);
 	data = new GridData(GridData.FILL_BOTH);
 	actionSetGroup.setLayoutData(data);
-	actionSetGroup.setFont(font);
 
 	label = new Label(actionSetGroup,SWT.NONE);
 	label.setText(WorkbenchMessages.getString("ActionSetSelection.availableActionSets")); //$NON-NLS-1$
-	label.setFont(font);
 
 	actionSetsViewer = CheckboxTableViewer.newCheckList(actionSetGroup, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 	data = new GridData(GridData.FILL_BOTH);
@@ -910,7 +918,7 @@ private Composite createMenusPage(Composite parent) {
 	sashComposite.setWeights(new int[]{30, 70});
 	return menusComposite;
 }
-private void handleActionSetMenuViewerKeyPressed(KeyEvent event) {
+void handleActionSetMenuViewerKeyPressed(KeyEvent event) {
 	// popup the description for the selected action set menu item
 	if (event.keyCode == SWT.F2 && event.stateMask == 0) {
 		IStructuredSelection sel = (IStructuredSelection)actionSetMenuViewer.getSelection();
@@ -924,7 +932,7 @@ private void handleActionSetMenuViewerKeyPressed(KeyEvent event) {
 		}
 	}
 }
-private void handleActionSetSelected(SelectionChangedEvent event) {
+void handleActionSetSelected(SelectionChangedEvent event) {
 	IStructuredSelection sel = (IStructuredSelection)event.getSelection();
 	ActionSetDescriptor element = (ActionSetDescriptor)sel.getFirstElement();
 	if (element == selectedActionSet) return;
@@ -948,7 +956,7 @@ private void handleActionSetSelected(SelectionChangedEvent event) {
 			// our fake action bars.
 			buildMenusAndToolbarsFor(element);
 			menubarStructure.fillMenusFor(actionSetId, customizeWorkbenchActionBars.menuManager);
-			toolbarStructure.fillToolsFor(actionSetId, (CoolBarManager)customizeWorkbenchActionBars.coolBarManager);
+			toolbarStructure.fillToolsFor(actionSetId, customizeWorkbenchActionBars.coolBarManager);
 		}
 		structures.add(menubarStructure);
 		structures.add(toolbarStructure);			
@@ -982,7 +990,7 @@ private void handleActionSetSelected(SelectionChangedEvent event) {
 	}
 	selectedActionSet = element;
 }
-private void handleActionSetToolbarViewerKeyPressed(KeyEvent event) {
+void handleActionSetToolbarViewerKeyPressed(KeyEvent event) {
 	// popup the description for the selected action set toolbar item
 	if (event.keyCode == SWT.F2 && event.stateMask == 0) {
 		IStructuredSelection sel = (IStructuredSelection)actionSetToolbarViewer.getSelection();
@@ -996,7 +1004,7 @@ private void handleActionSetToolbarViewerKeyPressed(KeyEvent event) {
 		}
 	}
 }
-private void handleActionSetViewerKeyPressed(KeyEvent event) {
+void handleActionSetViewerKeyPressed(KeyEvent event) {
 	// popup the description for the selected action set
 	if (event.keyCode == SWT.F2 && event.stateMask == 0) {
 		IStructuredSelection sel = (IStructuredSelection)actionSetsViewer.getSelection();
@@ -1010,7 +1018,7 @@ private void handleActionSetViewerKeyPressed(KeyEvent event) {
 		}
 	}
 }
-private void handleMenuCategoryChecked(CheckStateChangedEvent event) {
+void handleMenuCategoryChecked(CheckStateChangedEvent event) {
 	ShortcutMenu checkedCategory = (ShortcutMenu)event.getElement();
 	boolean checked = event.getChecked();
 	checkedCategory.checked(checked);
@@ -1028,7 +1036,7 @@ private void handleMenuCategoryChecked(CheckStateChangedEvent event) {
 	menuCategoriesViewer.setGrayed(checkedCategory, false);
 	updateMenuCategoryCheckedState(checkedCategory.parent);
 }
-private void handleMenuCategorySelected(SelectionChangedEvent event) {
+void handleMenuCategorySelected(SelectionChangedEvent event) {
 	IStructuredSelection sel = (IStructuredSelection)event.getSelection();
 	ShortcutMenu element = (ShortcutMenu)sel.getFirstElement();
 	if (element == selectedMenuCategory) return;
@@ -1039,7 +1047,7 @@ private void handleMenuCategorySelected(SelectionChangedEvent event) {
 		menuItemsViewer.setCheckedElements(element.getCheckedItems().toArray());
 	}
 }
-private void handleMenuItemChecked(CheckStateChangedEvent event) {
+void handleMenuItemChecked(CheckStateChangedEvent event) {
 	ShortcutMenu selectedMenu = (ShortcutMenu)menuItemsViewer.getInput();
 	boolean itemChecked = event.getChecked();
 	Object item = event.getElement();
@@ -1050,7 +1058,7 @@ private void handleMenuItemChecked(CheckStateChangedEvent event) {
 	}
 	updateMenuCategoryCheckedState(selectedMenu);
 }
-private void handleMenuModified(ModifyEvent event) {
+void handleMenuModified(ModifyEvent event) {
 	String text = menusCombo.getText();
 	String[] items = menusCombo.getItems();
 	int itemIndex = -1;
@@ -1064,12 +1072,12 @@ private void handleMenuModified(ModifyEvent event) {
 	ShortcutMenu element = (ShortcutMenu)rootMenu.children.get(itemIndex);
 	handleMenuSelected(element);
 }
-private void handleMenuSelected(SelectionEvent event) {
+void handleMenuSelected(SelectionEvent event) {
 	int i = menusCombo.getSelectionIndex();
 	ShortcutMenu element = (ShortcutMenu)rootMenu.children.get(i);
 	handleMenuSelected(element);
 }
-private void handleMenuSelected(ShortcutMenu element) {
+void handleMenuSelected(ShortcutMenu element) {
 	if (element != menuCategoriesViewer.getInput()) {
 		menuCategoriesViewer.setInput(element);
 		menuCategoriesViewer.expandAll();
@@ -1088,7 +1096,7 @@ private void handleMenuSelected(ShortcutMenu element) {
 		checkInitialMenuCategorySelections(rootMenu);			
 	}
 }
-private void handleTabSelected(SelectionEvent event) {
+void handleTabSelected(SelectionEvent event) {
 	TabItem item = (TabItem)event.item;
 	Control control = item.getControl();
 	if (control != null) control.setFocus();	
@@ -1108,6 +1116,16 @@ private void initializeActionSetInput() {
 		URL installURL = plugin.getDescriptor().getInstallURL();
 		URL url = new URL(installURL, iconPath);
 		menuImageDescriptor = ImageDescriptor.createFromURL(url);
+	}
+	catch (MalformedURLException e) {
+		// Should not happen
+	}
+	iconPath = "icons/full/obj16/submenu.gif";//$NON-NLS-1$
+	try {
+		AbstractUIPlugin plugin = (AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
+		URL installURL = plugin.getDescriptor().getInstallURL();
+		URL url = new URL(installURL, iconPath);
+		submenuImageDescriptor = ImageDescriptor.createFromURL(url);
 	}
 	catch (MalformedURLException e) {
 		// Should not happen
@@ -1190,14 +1208,14 @@ protected void okPressed() {
 			perspective.setNewWizardActionIds(menu.getCheckedItemIds());
 		}
 	}
-	ArrayList actionSets = new ArrayList();
+	ArrayList actionSetList = new ArrayList();
 	Object[] selected = actionSetsViewer.getCheckedElements();
 	for (int i = 0; i < selected.length; i ++) {
 		Object obj = selected[i];
-		actionSets.add(obj);
+		actionSetList.add(obj);
 	}
-	IActionSetDescriptor [] actionSetArray = new IActionSetDescriptor[actionSets.size()];
-	actionSetArray = (IActionSetDescriptor [])actionSets.toArray(actionSetArray);
+	IActionSetDescriptor [] actionSetArray = new IActionSetDescriptor[actionSetList.size()];
+	actionSetArray = (IActionSetDescriptor [])actionSetList.toArray(actionSetArray);
 	perspective.setActionSets(actionSetArray);
 	
 	super.okPressed();
@@ -1223,13 +1241,15 @@ private void popUp(String description) {
 		public void focusLost(FocusEvent e)  {
 			descShell.dispose();
 		}
-		public void focusGained(FocusEvent e) {}
+		public void focusGained(FocusEvent e) {
+		}
 	});
 	insetComposite.addKeyListener(new KeyListener() {
 		public void keyPressed(KeyEvent e)  {
 			descShell.dispose();
 		}
-		public void keyReleased(KeyEvent e) {}
+		public void keyReleased(KeyEvent e) {
+		}
 	});
 		
 	StyledText descText = new StyledText(insetComposite, SWT.MULTI | SWT.READ_ONLY | SWT.WRAP);
@@ -1254,9 +1274,9 @@ private void popUp(String description) {
 	}
 	descShell.setLocation(location);
 	descShell.setVisible(true);
-	descShell.setFocus();
+	descShell.setActive();
 }
-private String removeShortcut(String label) {
+String removeShortcut(String label) {
 	if (label == null) return label;
 	int end = label.lastIndexOf('@');
 	if (end >= 0) label = label.substring(0, end);
@@ -1303,4 +1323,13 @@ private void updateMenuCategoryCheckedState(ShortcutMenu menu) {
 	}
 	updateMenuCategoryCheckedState(menu.parent);
 }
+
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#applyDialogFont()
+	 */
+	protected boolean applyDialogFont() {
+		return false;
+	}
+
 }

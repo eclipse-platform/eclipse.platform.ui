@@ -230,13 +230,18 @@ public class DecoratorsPreferencePage
 	public boolean performOk() {
 		if (super.performOk()) {
 			DecoratorManager manager = getDecoratorManager();
+			//Clear the caches first to avoid unneccessary updates
+			manager.clearCaches();
 			DecoratorDefinition[] definitions = manager.getAllDecoratorDefinitions();
 			for (int i = 0; i < definitions.length; i++) {
 				boolean checked = checkboxViewer.getChecked(definitions[i]);
 				definitions[i].setEnabled(checked);
 				
 			}
-			manager.reset();
+			//Have the manager clear again as there may have been
+			//extra updates fired by the enablement changes.
+			manager.clearCaches();
+			manager.updateForEnablementChange();
 			return true;
 		}
 		return false;

@@ -81,27 +81,27 @@ public class FilteredList extends Composite {
 	}
 
 	private Table fList;
-	private ILabelProvider fLabelProvider;
+	ILabelProvider fLabelProvider;
 	private boolean fMatchEmptyString = true;
 	private boolean fIgnoreCase;
 	private boolean fAllowDuplicates;
 	private String fFilter = ""; //$NON-NLS-1$
 	private TwoArrayQuickSorter fSorter;
 
-	private Object[] fElements = new Object[0];
-	private Label[] fLabels;
-	private Vector fImages = new Vector();
+	Object[] fElements = new Object[0];
+	Label[] fLabels;
+	Vector fImages = new Vector();
 
-	private int[] fFoldedIndices;
-	private int fFoldedCount;
+	int[] fFoldedIndices;
+	int fFoldedCount;
 
-	private int[] fFilteredIndices;
-	private int fFilteredCount;
+	int[] fFilteredIndices;
+	int fFilteredCount;
 
 	private FilterMatcher fFilterMatcher = new DefaultFilterMatcher();
-	private Comparator fComparator;
+	Comparator fComparator;
 
-	private UpdateThread fUpdateThread;
+	UpdateThread fUpdateThread;
 
 	private static class Label {
 		public final String string;
@@ -485,8 +485,8 @@ public class FilteredList extends Composite {
 
 	private class TableUpdater implements IncrementalRunnable {
 		private final Display fDisplay;
-		private final Table fTable;
-		private final int fCount;
+		final Table fTable;
+		final int fCount;
 		private int fIndex;
 
 		public TableUpdater(Table table, int count) {
@@ -599,7 +599,7 @@ public class FilteredList extends Composite {
 		/** The incremental runnable */
 		private final IncrementalRunnable fRunnable;
 		/** A flag indicating a thread stop request */
-		private boolean fStop;
+		boolean fStop;
 		/** The indices to select*/
 		int[] indices;
 
