@@ -576,6 +576,18 @@
 	        command="org.eclipse.ui.edit.text.toggleShowSelectedElementOnly"
 	        keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
 	  </keyBinding>
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.goto.windowStart"
+            contextId="org.eclipse.ui.textEditorScope"
+            string="M1+PageUp"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.goto.windowEnd"
+            contextId="org.eclipse.ui.textEditorScope"
+            string="M1+PageDown"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
 	  <keyBinding
 	        string="Ctrl+Arrow_Right"
 	        scope="org.eclipse.ui.textEditorScope"
