@@ -51,7 +51,6 @@ public void initialize(Object modelObject) {
 	setHeadingImage(UpdateUIPluginImages.get(UpdateUIPluginImages.IMG_FORM_BANNER));
 	setHeadingUnderlineImage(UpdateUIPluginImages.get(UpdateUIPluginImages.IMG_FORM_UNDERLINE));
 	super.initialize(modelObject);
-	//((Composite)getControl()).layout(true);
 }
 
 protected int getNumColumns() {
@@ -79,7 +78,7 @@ protected void createContents(Composite parent) {
 
 	action = new HyperlinkAction() {
 		public void linkActivated(IHyperlinkSegment link) {
-			LocalSiteView view = (LocalSiteView)showView(UpdatePerspective.ID_LOCAL_SITE);
+			UpdatesView view = (UpdatesView)showView(UpdatePerspective.ID_CONFIGURATION);
 			if (view!=null) {
 				view.selectUpdateObject();
 			}
@@ -102,7 +101,7 @@ protected void createContents(Composite parent) {
 	
 	action = new HyperlinkAction() {
 		public void linkActivated(IHyperlinkSegment link) {
-			showView(UpdatePerspective.ID_SITES);
+			showView(UpdatePerspective.ID_UPDATES);
 		}
 	};
 	topicImage = factory.createLabel(parent, null);
@@ -121,7 +120,7 @@ protected void createContents(Composite parent) {
 	
 	action = new HyperlinkAction() {
 		public void linkActivated(IHyperlinkSegment link) {
-			showView(UpdatePerspective.ID_LOCAL_SITE);
+			showView(UpdatePerspective.ID_CONFIGURATION);
 		}
 	};
 	topicImage = factory.createLabel(parent, null);
@@ -141,7 +140,7 @@ protected void createContents(Composite parent) {
 
 	action = new HyperlinkAction() {
 		public void linkActivated(IHyperlinkSegment link) {
-			showView(UpdatePerspective.ID_HISTORY);
+			showView(UpdatePerspective.ID_CONFIGURATION);
 		}
 	};
 	topicImage = factory.createLabel(parent, null);

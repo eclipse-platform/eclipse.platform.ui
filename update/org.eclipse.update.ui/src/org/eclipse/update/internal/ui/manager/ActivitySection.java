@@ -3,15 +3,15 @@ package org.eclipse.update.internal.ui.manager;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.update.internal.ui.parts.*;
-import org.eclipse.update.core.*;
-import org.eclipse.update.configuration.*;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.update.ui.forms.internal.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.update.configuration.*;
 import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.parts.*;
+import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 
 
 public class ActivitySection extends UpdateSection {
@@ -91,7 +91,7 @@ public class ActivitySection extends UpdateSection {
 		for (int i=0; i<activities.length; i++) {
 			IActivity activity = activities[i];
 			factory.createLabel(container, activity.getDate().toString());
-			factory.createLabel(container, activity.getLabel());
+			createLimitedLabel(container, activity.getLabel(), 300, factory);
 			factory.createLabel(container, getActionLabel(activity));
 			factory.createLabel(container, getStatusLabel(activity));
 		}
@@ -104,6 +104,16 @@ public class ActivitySection extends UpdateSection {
 		factory.createLabel(container, null);
 		container.layout(true);
 		container.getParent().layout(true);
+	}
+	
+	private void createLimitedLabel(Composite container, String text, int limit, FormWidgetFactory factory) {
+		CLabel clabel = new CLabel(container, SWT.NULL);
+		clabel.setBackground(factory.getBackgroundColor());
+		clabel.setForeground(factory.getForegroundColor());
+		clabel.setText(text);
+		GridData gd = new GridData();
+		gd.widthHint = limit;
+		clabel.setLayoutData(gd);
 	}
 	
 	private Label createHeader(Composite parent, FormWidgetFactory factory, String text) {

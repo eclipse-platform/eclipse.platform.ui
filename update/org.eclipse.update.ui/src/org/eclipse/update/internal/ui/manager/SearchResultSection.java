@@ -46,23 +46,24 @@ public class SearchResultSection {
 	private Image featureImage;
 	private UpdateFormPage page;
 	private String searchString;
+	private SearchObject search;
 
 	public SearchResultSection(UpdateFormPage page) {
 		this.page = page;
 		featureImage = UpdateUIPluginImages.DESC_FEATURE_OBJ.createImage();
 	}
-	
+
 	public void setSearchString(String text) {
 		this.searchString = text;
 		updateTitle();
 	}
-	
+
 	private void updateTitle() {
 		String text = UpdateUIPlugin.getResourceString(KEY_TITLE);
-		if (searchString!=null)
-			text += ": "+searchString;
+		if (searchString != null)
+			text += ": " + searchString;
 		header.setText(text);
-	}	
+	}
 
 	public Composite createControl(Composite parent, FormWidgetFactory factory) {
 		HTMLTableLayout layout = new HTMLTableLayout();
@@ -114,7 +115,7 @@ public class SearchResultSection {
 		reset();
 		searchFinished();
 	}
-	
+
 	public void reset() {
 		counter = 0;
 		Control[] children = container.getChildren();
@@ -129,26 +130,35 @@ public class SearchResultSection {
 		descLabel.setText(UpdateUIPlugin.getResourceString(KEY_STARTDESC));
 		container.layout(true);
 	}
-	
+
 	public void searchFinished() {
 		initialize();
 		container.layout(true);
 	}
 
+	public void setSearchObject(SearchObject search) {
+		if (this.search != search) {
+			this.search = search;
+			reset();
+			if (search != null)
+				initialize();
+			container.layout(true);
+		}
+	}
+
 	private void initialize() {
 		// add children
-		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
-		AvailableUpdates updates = model.getUpdates();
-		Object[] sites = updates.getChildren(null);
-		for (int i = 0; i < sites.length; i++) {
-			UpdateSearchSite site = (UpdateSearchSite) sites[i];
-			Object[] features = site.getChildren(null);
-			for (int j = 0; j < features.length; j++) {
-				IFeatureAdapter adapter = (IFeatureAdapter) features[j];
-				try {
-					addFeature(adapter.getFeature());
-				}
-				catch (CoreException e) {
+		if (search != null) {
+			Object[] sites = search.getChildren(null);
+			for (int i = 0; i < sites.length; i++) {
+				UpdateSearchSite site = (UpdateSearchSite) sites[i];
+				Object[] features = site.getChildren(null);
+				for (int j = 0; j < features.length; j++) {
+					IFeatureAdapter adapter = (IFeatureAdapter) features[j];
+					try {
+						addFeature(adapter.getFeature());
+					} catch (CoreException e) {
+					}
 				}
 			}
 		}
@@ -191,8 +201,8 @@ public class SearchResultSection {
 			engine.load(markup, true, false);
 			HyperlinkAction siteAction = new HyperlinkAction() {
 				public void linkActivated(IHyperlinkSegment link) {
-					openSite(feature.getSite());
-				}
+						//openSite(feature.getSite());
+	}
 			};
 			siteAction.setDescription(feature.getSite().getURL().toString());
 			siteAction.setStatusLineManager(getStatusLineManager());
@@ -254,34 +264,34 @@ public class SearchResultSection {
 		view.showPageWithInput(DetailsView.DETAILS_PAGE, sfeature);
 	}
 
-	private void openSite(ISite site) {
-		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
-		SiteBookmark[] siteBookmarks = model.getBookmarkLeafs();
-		URL siteURL = site.getURL();
-		String siteURLName = siteURL.toString();
-		SiteBookmark targetBookmark = null;
-		for (int i = 0; i < siteBookmarks.length; i++) {
-			SiteBookmark bookmark = siteBookmarks[i];
-			URL bookmarkURL = bookmark.getURL();
-			String bookmarkURLName = bookmarkURL.toString();
-			if (siteURLName.startsWith(bookmarkURLName)) {
-				// we have it - just select it in the sites
-				targetBookmark = bookmark;
-				break;
-			}
-		}
-		if (targetBookmark == null) {
-			targetBookmark = new SiteBookmark(siteURL.toString(), siteURL);
-			model.addBookmark(targetBookmark);
-		}
-		try {
-			SiteView view =
-				(SiteView) UpdateUIPlugin.getActivePage().showView(UpdatePerspective.ID_SITES);
-			view.selectSiteBookmark(targetBookmark);
-		} catch (Exception e) {
-			UpdateUIPlugin.logException(e);
-		}
-	}
+	//	private void openSite(ISite site) {
+	//		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+	//		SiteBookmark[] siteBookmarks = model.getBookmarkLeafs();
+	//		URL siteURL = site.getURL();
+	//		String siteURLName = siteURL.toString();
+	//		SiteBookmark targetBookmark = null;
+	//		for (int i = 0; i < siteBookmarks.length; i++) {
+	//			SiteBookmark bookmark = siteBookmarks[i];
+	//			URL bookmarkURL = bookmark.getURL();
+	//			String bookmarkURLName = bookmarkURL.toString();
+	//			if (siteURLName.startsWith(bookmarkURLName)) {
+	//				// we have it - just select it in the sites
+	//				targetBookmark = bookmark;
+	//				break;
+	//			}
+	//		}
+	//		if (targetBookmark == null) {
+	//			targetBookmark = new SiteBookmark(siteURL.toString(), siteURL);
+	//			model.addBookmark(targetBookmark);
+	//		}
+	//		try {
+	//			UpdatesView view =
+	//				(UpdatesView) UpdateUIPlugin.getActivePage().showView(UpdatePerspective.ID_SITES);
+	//			view.selectSiteBookmark(targetBookmark);
+	//		} catch (Exception e) {
+	//			UpdateUIPlugin.logException(e);
+	//		}
+	//	}
 
 	private IStatusLineManager getStatusLineManager() {
 		IActionBars bars = page.getView().getViewSite().getActionBars();

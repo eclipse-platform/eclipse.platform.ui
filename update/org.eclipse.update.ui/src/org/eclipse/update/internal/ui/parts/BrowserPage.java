@@ -22,10 +22,10 @@ import org.eclipse.jface.action.*;
 
 public class BrowserPage implements IUpdateFormPage {
 // NL
-private static final String KEY_ADDRESS = "BrowserPage.address";
-private static final String KEY_STOP = "BrowserPage.stop";
-private static final String KEY_GO = "BrowserPage.go";
-private static final String KEY_REFRESH = "BrowserPage.refresh";
+private static final String KEY_ADDRESS = "WebBrowserView.address";
+private static final String KEY_STOP = "WebBrowserView.stop";
+private static final String KEY_GO = "WebBrowserView.go";
+private static final String KEY_REFRESH = "WebBrowserView.refresh";
 
 	private int ADDRESS_SIZE = 10;
 	private WebBrowser browser;

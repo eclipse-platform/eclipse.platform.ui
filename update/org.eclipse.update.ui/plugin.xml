@@ -44,25 +44,18 @@
             id="org.eclipse.update.ui">
       </category>
       <view
-            name="Update Sites"
+            name="Updates"
             icon="icons/full/view16/sites.gif"
             category="org.eclipse.update.ui"
-            class="org.eclipse.update.internal.ui.views.SiteView"
-            id="org.eclipse.update.ui.SiteView">
+            class="org.eclipse.update.internal.ui.views.UpdatesView"
+            id="org.eclipse.update.ui.UpdatesView">
       </view>
       <view
-            name="My Configuration"
+            name="Configuration"
             icon="icons/full/view16/myEclipse.gif"
             category="org.eclipse.update.ui"
-            class="org.eclipse.update.internal.ui.views.LocalSiteView"
-            id="org.eclipse.update.ui.LocalSiteView">
-      </view>
-      <view
-            name="Install History"
-            icon="icons/full/view16/history.gif"
-            category="org.eclipse.update.ui"
-            class="org.eclipse.update.internal.ui.views.HistoryView"
-            id="org.eclipse.update.ui.HistoryView">
+            class="org.eclipse.update.internal.ui.views.ConfigurationView"
+            id="org.eclipse.update.ui.ConfigurationView">
       </view>
       <view
             name="Preview"
@@ -70,6 +63,13 @@
             category="org.eclipse.update.ui"
             class="org.eclipse.update.internal.ui.views.DetailsView"
             id="org.eclipse.update.ui.DetailsView">
+      </view>
+      <view
+            name="Web Browser"
+            icon="icons/full/view16/preview.gif"
+            category="org.eclipse.update.ui"
+            class="org.eclipse.update.internal.ui.views.WebBrowserView"
+            id="org.eclipse.update.ui.WebBrowser">
       </view>
    </extension>
    <extension
@@ -105,7 +105,7 @@
          point="org.eclipse.update.ui.searchCategory">
       <search
             name="%searchCategories.updates"
-            icon="icons/full/obj16/updates_obj.gif"
+            icon="icons/full/obj16/usearch_obj.gif"
             class="org.eclipse.update.internal.ui.search.UpdatesSearchCategory"
             id="org.eclipse.update.ui.updates">
          <description>
@@ -116,20 +116,28 @@
             name="%searchCategories.expression"
             icon="icons/full/obj16/tsearch_obj.gif"
             class="org.eclipse.update.internal.ui.search.ExpressionSearchCategory"
-            id="org.eclipse.update.ui.search2">
+            id="org.eclipse.update.ui.expression">
          <description>
             %searchCategories.expression.desc
          </description>
       </search>
       <search
             name="%searchCategories.plugin"
-            icon="icons/full/obj16/tsearch_obj.gif"
+            icon="icons/full/obj16/psearch_obj.gif"
             class="org.eclipse.update.internal.ui.search.PluginsSearchCategory"
             id="org.eclipse.update.ui.plugins">
          <description>
             %searchCategories.plugin.desc
          </description>
       </search>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            name="%mainPreference.name"
+            class="org.eclipse.update.internal.ui.preferences.MainPreferencePage"
+            id="org.eclipse.update.internal.ui.preferences.MainPreferencePage">
+      </page>
    </extension>
 
 </plugin>

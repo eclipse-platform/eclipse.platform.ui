@@ -3,25 +3,24 @@ package org.eclipse.update.internal.ui.views;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.part.*;
+import java.io.*;
+import java.util.Vector;
+
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.program.Program;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.*;
+import org.eclipse.ui.texteditor.IUpdate;
+import org.eclipse.update.configuration.*;
+import org.eclipse.update.internal.ui.*;
+import org.eclipse.update.internal.ui.manager.*;
+import org.eclipse.update.internal.ui.model.*;
+import org.eclipse.update.internal.ui.pages.*;
 import org.eclipse.update.internal.ui.parts.*;
 import org.eclipse.update.internal.ui.search.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.ui.*;
-import org.eclipse.update.configuration.*;
-import org.eclipse.update.core.*;
-import org.eclipse.update.internal.ui.pages.*;
-import org.eclipse.update.internal.ui.manager.DetailsHistory;
-import org.eclipse.update.internal.ui.manager.DetailsHistoryItem;
-import org.eclipse.update.internal.ui.model.*;
-import org.eclipse.jface.action.*;
-import org.eclipse.update.internal.ui.*;
-import org.eclipse.swt.program.Program;
-import org.eclipse.ui.texteditor.IUpdate;
-import java.util.*;
-import java.io.*;
+import org.eclipse.update.internal.ui.preferences.MainPreferencePage;
 
 /**
  * Insert the type's description here.
@@ -30,10 +29,12 @@ import java.io.*;
 public class DetailsView extends MultiPageView {
 	
 // NL keys
+private static final String KEY_HOME= "DetailsView.home.label";
+private static final String KEY_BACKWARD = "DetailsView.backward.label";
+private static final String KEY_FORWARD= "DetailsView.forward.label";
 private static final String KEY_T_HOME= "DetailsView.home.tooltip";
 private static final String KEY_T_BACKWARD = "DetailsView.backward.tooltip";
-private static final String KEY_T_FORWARD= "DetailsView.forward.tooltip";
-	
+private static final String KEY_T_FORWARD= "DetailsView.forward.tooltip";	
 	
 public static final String HOME_PAGE = "Home";
 public static final String SITE_PAGE = "Site";
@@ -44,7 +45,6 @@ public static final String CONFIG_PAGE = "Config";
 public static final String INSTALL_CONFIGURATION_PAGE = "InstallConfiguration";
 public static final String INSTALL_SITE_PAGE = "InstallSite";
 public static final String CDROM_PAGE = "MyComputer";
-public static final String UPDATES_PAGE = "Updates";
 public static final String SEARCH_PAGE = "Search";
 public static final String DISCOVERY_PAGE = "Discovery";
 public static final String UNKNOWN_PAGE = "Unknown";
@@ -84,36 +84,25 @@ public void createPages() {
 	addPage(INSTALL_CONFIGURATION_PAGE, new InstallConfigurationPage(this, "Snapshot"));
 	addPage(INSTALL_SITE_PAGE, new InstallableSitePage(this, "Install Location"));
 	addPage(CDROM_PAGE, new MyComputerPage(this, "MyComputer"));
-	addPage(UPDATES_PAGE, new UpdatesPage(this, "Available Updates"));
 	addPage(SEARCH_PAGE, new SearchPage(this, "Search"));
 	addPage(DISCOVERY_PAGE, new DiscoveryFolderPage(this, "Discovery Sites"));
 	addPage(UNKNOWN_PAGE, new UnknownObjectPage(this, "Unknown Object"));
-	if (SWT.getPlatform().equals("win32")) {
-		addWebBrowser();
-	}
 }
 
-private void addWebBrowser() {
-	final BrowserPage browser = new BrowserPage(this);
-	browser.setBrowserListener(new IBrowserListener () {
-		public void downloadComplete(String url) {
-			//System.out.println("Complete: inHistory="+inHistory+", url="+url);
-			if (inHistory) {
-				if (!url.equals(browser.getBrowser().getLocationName()))
-				   	inHistory = false;
-			}
-			else
-		   		history.add(BROWSER_PAGE, url);
-		   	backAction.update();
-		   	forwardAction.update();
-		}
-	});
-   	addPage(BROWSER_PAGE, browser);
-}
-	
 public void showURL(String url) {
+	boolean useEmbedded = false;
 	if (SWT.getPlatform().equals("win32")) {
-		showPage(BROWSER_PAGE, url);
+		useEmbedded = MainPreferencePage.getUseEmbeddedBrowser();
+	}
+	if (useEmbedded) {
+		IWorkbenchPage page = UpdateUIPlugin.getActivePage();
+		try {
+			IViewPart part = page.showView(UpdatePerspective.ID_BROWSER);
+			((WebBrowserView)part).openTo(url);
+		}
+		catch (PartInitException e) {
+			UpdateUIPlugin.logException(e);
+		}
 	}
 	else {
 		Program.launch(url);
@@ -161,6 +150,11 @@ public void showPageWithInput(String pageId, Object input) {
 	history.add(pageId, input);
    	backAction.update();
    	forwardAction.update();
+   	IWorkbenchPage page = UpdateUIPlugin.getActivePage();
+    IViewPart view = page.findView(UpdatePerspective.ID_DETAILS);
+    if (view!=null) {
+    	page.bringToTop(view);
+    }
 }
 	
 public void selectionChanged(IWorkbenchPart part, ISelection sel) {
@@ -203,10 +197,6 @@ public void selectionChanged(IWorkbenchPart part, ISelection sel) {
 				showPageWithInput(DISCOVERY_PAGE, el);
 				return;
 			}
-			if (el instanceof AvailableUpdates) {
-				showPageWithInput(UPDATES_PAGE, el);
-				return;
-			}
 			if (el instanceof SearchObject) {
 				showPageWithInput(SEARCH_PAGE, el);
 				return;
@@ -227,6 +217,7 @@ private void makeActions() {
 			performHome();
 		}
 	};
+	homeAction.setText(UpdateUIPlugin.getResourceString(KEY_HOME));
 	homeAction.setToolTipText(UpdateUIPlugin.getResourceString(KEY_T_HOME));
 	homeAction.setImageDescriptor(UpdateUIPluginImages.DESC_HOME_NAV);
 	homeAction.setHoverImageDescriptor(UpdateUIPluginImages.DESC_HOME_NAV_H);
@@ -240,6 +231,7 @@ private void makeActions() {
 			setEnabled(canPerformBackward());
 		}
 	};
+	backAction.setText(UpdateUIPlugin.getResourceString(KEY_BACKWARD));
 	backAction.setToolTipText(UpdateUIPlugin.getResourceString(KEY_T_BACKWARD));
 	backAction.setImageDescriptor(UpdateUIPluginImages.DESC_BACKWARD_NAV);
 	backAction.setHoverImageDescriptor(UpdateUIPluginImages.DESC_BACKWARD_NAV_H);
@@ -254,6 +246,7 @@ private void makeActions() {
 			setEnabled(canPerformForward());
 		}
 	};
+	forwardAction.setText(UpdateUIPlugin.getResourceString(KEY_FORWARD));
 	forwardAction.setToolTipText(UpdateUIPlugin.getResourceString(KEY_T_FORWARD));
 	forwardAction.setImageDescriptor(UpdateUIPluginImages.DESC_FORWARD_NAV);
 	forwardAction.setHoverImageDescriptor(UpdateUIPluginImages.DESC_FORWARD_NAV_H);
@@ -267,6 +260,12 @@ private void fillActionBars() {
 	mng.add(homeAction);
 	mng.add(backAction);
 	mng.add(forwardAction);
+}
+
+public void contextMenuAboutToShow(IMenuManager menu) {
+	menu.add(backAction);
+	menu.add(forwardAction);
+	menu.add(homeAction);
 }
 
 private void performHome() {

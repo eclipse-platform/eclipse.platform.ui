@@ -134,6 +134,7 @@ public class SiteForm extends UpdateWebForm {
 		updateLinkVisibility(adapter);
 		url.getParent().layout();
 		((Composite) getControl()).layout();
+		updateSize();
 		getControl().redraw();
 		currentAdapter = adapter;
 	}
@@ -146,8 +147,10 @@ public class SiteForm extends UpdateWebForm {
 	}
 
 	private void updateLinkVisibility(ISiteAdapter adapter) {
+		/*
 		ISite site = adapter.getSite();
 		URL infoURL = getRawURL(site);
 		link.setVisible(infoURL!=null);
+		*/
 	}
 }

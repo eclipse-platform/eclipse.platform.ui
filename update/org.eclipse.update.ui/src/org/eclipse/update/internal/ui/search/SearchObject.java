@@ -21,6 +21,7 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 
 public class SearchObject extends NamedModelObject {
 	public static final String P_REFRESH = "p_refresh";
+	public static final String P_CATEGORY = "p_category";
 
 	private static final String KEY_NAME = "Search.name";
 	private static final String KEY_BEGIN = "Search.begin";
@@ -37,8 +38,8 @@ public class SearchObject extends NamedModelObject {
 	private boolean debug = false;
 	private ISite[] myComputerSites = null;
 	private String categoryId;
+	private boolean categoryFixed;
 	private Hashtable settings = new Hashtable();
-	private Image image;
 
 	class SearchAdapter extends MonitorAdapter {
 		public void done() {
@@ -47,21 +48,21 @@ public class SearchObject extends NamedModelObject {
 	}
 	
 	public SearchObject() {
-		backgroundProgress = new BackgroundProgressMonitor();
-		backgroundProgress.addProgressMonitor(new SearchAdapter());
+		this("", null, false);
 	}
-
 	public SearchObject(String name, SearchCategoryDescriptor descriptor) {
+		this(name, descriptor, false);
+	}
+	public SearchObject(String name, SearchCategoryDescriptor descriptor, boolean categoryFixed) {
 		super(name);
 		this.categoryId = descriptor.getId();
-		this.image = descriptor.getImage();
+		this.categoryFixed = categoryFixed;
 		backgroundProgress = new BackgroundProgressMonitor();
 		backgroundProgress.addProgressMonitor(new SearchAdapter());
 	}
 	
-	public void dispose() {
-		if (image!=null)
-			image.dispose();
+	public boolean isCategoryFixed() {
+		return categoryFixed;
 	}
 
 	public String getCategoryId() {
@@ -73,6 +74,7 @@ public class SearchObject extends NamedModelObject {
 			settings.clear();
 		}
 		this.categoryId = id;
+		notifyObjectChanged(P_CATEGORY);
 	}
 
 	public Hashtable getSettings() {
@@ -102,11 +104,7 @@ public class SearchObject extends NamedModelObject {
 		return result.toArray();
 	}
 	
-	public Image getImage() {
-		return image;
-	}
-
-	public boolean hasResults() {
+	public boolean hasChildren() {
 		return result.size() > 0;
 	}
 

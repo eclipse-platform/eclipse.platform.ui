@@ -58,7 +58,7 @@ public class SearchForm extends UpdateWebForm {
 	private Button searchButton;
 	private PageBook pagebook;
 	private SearchMonitor monitor;
-	private UpdateSearchProgressMonitor statusMonitor;
+	//private UpdateSearchProgressMonitor statusMonitor;
 	private SearchResultSection searchResultSection;
 	private IDialogSettings settings;
 	private SearchObject searchObject;
@@ -100,10 +100,10 @@ public class SearchForm extends UpdateWebForm {
 			infoLabel.setText(text);
 			reflow(true);
 			searchObject.detachProgressMonitor(this);
-			if (statusMonitor != null) {
-				searchObject.detachProgressMonitor(statusMonitor);
-				statusMonitor = null;
-			}
+//			if (statusMonitor != null) {
+//				searchObject.detachProgressMonitor(statusMonitor);
+//				statusMonitor = null;
+//			}
 			enableOptions(true);
 		}
 	}
@@ -128,8 +128,8 @@ public class SearchForm extends UpdateWebForm {
 
 	private void detachFrom(SearchObject obj) {
 		obj.detachProgressMonitor(monitor);
-		if (statusMonitor != null)
-			obj.detachProgressMonitor(statusMonitor);
+//		if (statusMonitor != null)
+//			obj.detachProgressMonitor(statusMonitor);
 	}
 
 	public void initialize(Object modelObject) {
@@ -199,11 +199,11 @@ public class SearchForm extends UpdateWebForm {
 				myComputerCheck = factory.createButton(expansion, null, SWT.CHECK);
 				myComputerCheck.setText(
 					UpdateUIPlugin.getResourceString(KEY_MY_COMPUTER_CHECK));
-				myComputerCheck.setSelection(AvailableUpdates.getSearchMyComputer());
+				myComputerCheck.setSelection(searchObject.getSearchMyComputer());
 				myComputerCheck.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
 						myComputerSettings.setEnabled(myComputerCheck.getSelection());
-						AvailableUpdates.setSearchMyComputer(myComputerCheck.getSelection());
+						searchObject.setSearchMyComputer(myComputerCheck.getSelection());
 					}
 				});
 
@@ -318,6 +318,7 @@ public class SearchForm extends UpdateWebForm {
 				int index = categoryCombo.getSelectionIndex();
 				ISearchCategory category = (ISearchCategory) categories.get(index);
 				switchTo(category);
+				searchObject.setCategoryId(category.getId());
 			}
 		});
 		categoryCombo.select(0);
@@ -341,6 +342,7 @@ public class SearchForm extends UpdateWebForm {
 				switchTo(category);
 				category.load(obj.getSettings());
 				searchResultSection.setSearchString(category.getCurrentSearch());
+				categoryCombo.setEnabled(!obj.isCategoryFixed());
 				break;
 			}
 		}
@@ -387,9 +389,10 @@ public class SearchForm extends UpdateWebForm {
 	private boolean startSearch() {
 		try {
 			searchObject.attachProgressMonitor(monitor);
-			attachStatusLineMonitor();
+			//attachStatusLineMonitor();
 			enableOptions(false);
 			searchObject.startSearch(getControl().getDisplay(), getQueries());
+			//searchResultSection.setSearchObject(searchObject);
 			searchResultSection.searchStarted();
 		} catch (InvocationTargetException e) {
 			UpdateUIPlugin.logException(e);
@@ -410,21 +413,21 @@ public class SearchForm extends UpdateWebForm {
 
 	private void catchUp() {
 		searchObject.attachProgressMonitor(monitor);
-		attachStatusLineMonitor();
+		//attachStatusLineMonitor();
 		enableOptions(false);
 		updateButtonText();
 	}
 
-	private void attachStatusLineMonitor() {
-		if (statusMonitor != null)
-			return;
-		IViewSite vsite = getPage().getView().getViewSite();
-		IStatusLineManager manager = vsite.getActionBars().getStatusLineManager();
-		manager = getRootManager(manager);
-
-		statusMonitor = new UpdateSearchProgressMonitor(manager);
-		searchObject.attachProgressMonitor(statusMonitor);
-	}
+//	private void attachStatusLineMonitor() {
+//		if (statusMonitor != null)
+//			return;
+//		IViewSite vsite = getPage().getView().getViewSite();
+//		IStatusLineManager manager = vsite.getActionBars().getStatusLineManager();
+//		manager = getRootManager(manager);
+//
+//		statusMonitor = new UpdateSearchProgressMonitor(manager);
+//		searchObject.attachProgressMonitor(statusMonitor);
+//	}
 
 	private IStatusLineManager getRootManager(IStatusLineManager manager) {
 		IContributionManager parent = manager;
@@ -475,6 +478,7 @@ public class SearchForm extends UpdateWebForm {
 				searchObject = obj;
 				updateHeadingText(searchObject);
 				selectCategory(obj);
+				searchResultSection.setSearchObject(searchObject);
 				if (searchObject.isSearchInProgress()) {
 					// sync up with the search
 					catchUp();

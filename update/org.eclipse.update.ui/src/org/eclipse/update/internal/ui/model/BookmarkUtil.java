@@ -7,11 +7,14 @@ import java.io.*;
 import org.w3c.dom.*;
 import java.net.*;
 import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.search.*;
+import org.eclipse.update.internal.ui.search.SearchObject;
 
 public class BookmarkUtil {
 	public static void parse(String fileName, Vector bookmarks) {
 		File file = new File(fileName);
-		if (!file.exists()) return;
+		if (!file.exists())
+			return;
 		DOMParser parser = new DOMParser();
 		try {
 			parser.parse(fileName);
@@ -43,23 +46,27 @@ public class BookmarkUtil {
 		NodeList children,
 		BookmarkFolder folder,
 		Vector bookmarks) {
+		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
+			NamedModelObject object = null;
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
 				if (child.getNodeName().equals("site")) {
-					SiteBookmark site = createSite(child);
-					if (folder != null) {
-						folder.addChild(site);
-					} else {
-						bookmarks.add(site);
-					}
+					object = createSite(child);
+
 				} else if (child.getNodeName().equals("folder")) {
-					BookmarkFolder cfolder = createFolder(child);
-					if (folder != null)
-						folder.addChild(cfolder);
-					else
-						bookmarks.add(cfolder);
+					object = createFolder(child);
+				} else if (child.getNodeName().equals("search")) {
+					object = createSearch(child);
 				}
+			}
+			if (object != null) {
+				if (folder != null) {
+					folder.addChild(object);
+				} else {
+					bookmarks.add(object);
+				}
+				object.setModel(model);
 			}
 		}
 	}
@@ -84,6 +91,29 @@ public class BookmarkUtil {
 			processChildren(children, folder, null);
 		}
 		return folder;
+	}
+	private static SearchObject createSearch(Node child) {
+		String name = getAttribute(child, "name");
+		String categoryId = getAttribute(child, "category");
+		String fixed = getAttribute(child, "fixed");
+		boolean fixedCategory = fixed.equals("true");
+		SearchCategoryDescriptor desc =
+			SearchCategoryRegistryReader.getDefault().getDescriptor(categoryId);
+		SearchObject search = new SearchObject(name, desc, fixedCategory);
+		if (child.hasChildNodes()) {
+			NodeList children = child.getChildNodes();
+			Hashtable settings = search.getSettings();
+			for (int i = 0; i < children.getLength(); i++) {
+				Node param = children.item(i);
+				if (param.getNodeType() == Node.ELEMENT_NODE
+					&& param.getNodeName().equals("param")) {
+					String key = getAttribute(param, "name");
+					String value = getAttribute(param, "value");
+					settings.put(key, value);
+				}
+			}
+		}
+		return search;
 	}
 	public static void store(String fileName, Vector bookmarks) {
 		try {
@@ -121,7 +151,31 @@ public class BookmarkUtil {
 				writeObject(indent2, children[i], writer);
 			}
 			writer.println(indent + "</folder>");
+		} else if (obj instanceof SearchObject) {
+			SearchObject search = (SearchObject) obj;
+			String name = search.getName();
+			String categoryId = search.getCategoryId();
+			String fixed = search.isCategoryFixed() ? "true" : "false";
+			writer.println(
+				indent
+					+ "<search name=\""
+					+ name
+					+ "\" category=\""
+					+ categoryId
+					+ "\" fixed=\""
+					+ fixed
+					+ "\">");
+			Hashtable settings = search.getSettings();
+			String indent2 = indent + "   ";
+			for (Enumeration enum = settings.keys(); enum.hasMoreElements();) {
+				String key = (String) enum.nextElement();
+				String value = (String) settings.get(key);
+				writer.println(
+					indent2 + "<param name=\"" + key + "\" value=\"" + value + "\"/>");
+			}
+			writer.println(indent + "</search>");
 		}
+
 	}
 
 	private static String getAttribute(Node node, String name) {

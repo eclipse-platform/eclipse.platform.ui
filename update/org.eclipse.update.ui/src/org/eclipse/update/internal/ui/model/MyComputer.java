@@ -102,7 +102,7 @@ public class MyComputer extends ModelObject implements IWorkbenchAdapter {
 	}
 	
 	public void collectSites(Vector sites, MyComputerSearchSettings settings, IProgressMonitor monitor) {
-		File [] drives = File.listRoots();
+		File [] drives = MyComputer.getRoots();
 		for (int i=0; i<drives.length; i++) {
 			File drive = drives[i];
 			if (monitor.isCanceled()) return;

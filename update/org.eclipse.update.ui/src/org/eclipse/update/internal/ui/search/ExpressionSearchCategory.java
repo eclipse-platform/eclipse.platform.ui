@@ -1,12 +1,13 @@
 package org.eclipse.update.internal.ui.search;
 
-import org.eclipse.update.core.IFeature;
-import org.eclipse.swt.widgets.*;
+import java.util.Map;
+
 import org.eclipse.swt.SWT;
-import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.update.core.IFeature;
 import org.eclipse.update.internal.ui.model.ISiteAdapter;
-import java.util.*;
+import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 
 public class ExpressionSearchCategory extends SearchCategory {
 	private Text expressionText;
@@ -75,7 +76,7 @@ public class ExpressionSearchCategory extends SearchCategory {
 		searchName = nameCheck.getSelection();
 		searchProvider = providerCheck.getSelection();
 		searchDesc = descriptionCheck.getSelection();
-		expression = expressionText.getText();
+		expression = expressionText.getText().trim();
 	}
 	private void initializeWidgets() {
 		caseCheck.setSelection(caseSensitive);
@@ -89,7 +90,24 @@ public class ExpressionSearchCategory extends SearchCategory {
 		return "Expression: "+expressionText.getText();
 	}
 	private boolean internalMatches(IFeature feature) {
+		if (searchName) {
+			if (matches(feature.getLabel())) return true;
+		}
+		if (searchProvider) {
+			if (matches(feature.getProvider())) return true;
+		}
+		if (searchDesc) {
+			String annotation = null;
+			if (feature.getDescription()!=null)
+				annotation = feature.getDescription().getAnnotation();
+			if (annotation!=null) {
+				if (matches(annotation)) return true;
+			}
+		}
 		return false;
+	}
+	private boolean matches(String text) {
+		return text.indexOf(expression)!= -1;
 	}
 	public void load(Map map) {
 		caseSensitive = getBoolean("case", map);

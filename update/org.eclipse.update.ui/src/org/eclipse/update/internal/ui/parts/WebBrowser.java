@@ -250,7 +250,7 @@ public class WebBrowser implements OleListener {
 
 	}
 	
-	BrowserControlSite getControlSite() {
+	public BrowserControlSite getControlSite() {
 		return controlSite;
 	}
 	/**

@@ -12,7 +12,6 @@ public interface IUpdateFormPage extends IFormPage {
 	IAction getAction(String id);
 	void openTo(Object object);
 	void performGlobalAction(String id);
-	void init(Object model);
 	void update();
 	void dispose();
 	void setFocus();

@@ -11,9 +11,9 @@ import org.eclipse.jface.action.*;
 
 public abstract class UpdateFormPage implements IUpdateFormPage {
 	private IForm form;
-	private Control control;
 	private MultiPageView view;
 	private String title;
+	private Control control;
 
 public UpdateFormPage(MultiPageView view, String title) {
 	this.view = view;
@@ -93,12 +93,7 @@ public void setFocus() {
 public String toString() {
 	return title;
 }
-
-public void init(Object model) {
-	form.initialize(model);
-}
-
-public void update() {
+public void update() {
 	form.update();
 }
 

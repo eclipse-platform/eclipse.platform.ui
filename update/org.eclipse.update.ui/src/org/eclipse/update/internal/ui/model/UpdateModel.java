@@ -17,7 +17,6 @@ public class UpdateModel {
 	private Vector listeners = new Vector();
 	private IDialogSettings settings;
 	private static final String BOOKMARK_FILE = "bookmarks.xml";
-	private AvailableUpdates availableUpdates;
 	
 	public UpdateModel() {
 		settings = UpdateUIPlugin.getDefault().getDialogSettings();
@@ -144,13 +143,5 @@ public class UpdateModel {
 			IUpdateModelChangedListener listener = (IUpdateModelChangedListener)iter.next();
 			listener.objectChanged(object, property);
 		}
-	}
-	
-	public AvailableUpdates getUpdates() {
-		if (availableUpdates==null) {
-		   availableUpdates = new AvailableUpdates();
-		   availableUpdates.setModel(this);
-		}
-		return availableUpdates;
 	}
 }

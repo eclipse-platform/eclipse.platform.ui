@@ -3,22 +3,16 @@ package org.eclipse.update.internal.ui.manager;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.update.internal.ui.parts.*;
-import org.eclipse.update.internal.ui.*;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.update.ui.forms.internal.*;
-import org.eclipse.swt.layout.*;
 import org.eclipse.ui.*;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.update.core.*;
-import org.eclipse.update.internal.ui.model.*;
-import org.eclipse.swt.custom.BusyIndicator;
-import java.net.URL;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.update.ui.forms.internal.engine.*;
-// FIXME: we cannot talk to the internal classes
 import org.eclipse.ui.internal.*;
+import org.eclipse.update.internal.ui.*;
+import org.eclipse.update.internal.ui.model.SiteBookmark;
+import org.eclipse.update.internal.ui.parts.*;
+import org.eclipse.update.internal.ui.views.DetailsView;
+import org.eclipse.update.ui.forms.internal.*;
+import org.eclipse.update.ui.forms.internal.engine.*;
 
 public class LocalSiteForm extends UpdateWebForm {
 private static final String KEY_TITLE = "LocalSitePage.title";
@@ -47,7 +41,6 @@ public void initialize(Object modelObject) {
 	setHeadingImage(UpdateUIPluginImages.get(UpdateUIPluginImages.IMG_FORM_BANNER));
 	setHeadingUnderlineImage(UpdateUIPluginImages.get(UpdateUIPluginImages.IMG_FORM_UNDERLINE));
 	super.initialize(modelObject);
-	//((Composite)getControl()).layout(true);
 }
 
 protected void createContents(Composite parent) {
@@ -65,7 +58,11 @@ protected void createContents(Composite parent) {
 		ilabel.setImage(image);
 	}
 	
-	HTTPAction action = new HTTPAction();
+	HTTPAction action = new HTTPAction() {
+		public void linkActivated(IHyperlinkSegment link) {
+			((DetailsView)getPage().getView()).showURL(link.getText());
+		}
+	};
 	IActionBars bars = getPage().getView().getViewSite().getActionBars();
 	action.setStatusLineManager(bars.getStatusLineManager());
 	// text on the right
@@ -77,7 +74,7 @@ protected void createContents(Composite parent) {
 	engine.marginWidth = 1;
 	TableData data = new TableData();
 	data.align = TableData.FILL;
-		engine.load(productText(), false, true);
+	engine.load(productText(), false, true);
 	engine.setLayoutData(data);
 	
 	Composite sep = factory.createCompositeSeparator(parent);

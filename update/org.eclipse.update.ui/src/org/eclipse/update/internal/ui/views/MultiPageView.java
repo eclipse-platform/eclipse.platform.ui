@@ -120,10 +120,6 @@ public IUpdateFormPage showPage(final IUpdateFormPage page) {
 public void init(IViewSite site) throws PartInitException {
 	setSite(site);
 	site.getPage().addSelectionListener(this);
-	for (Iterator iter = pages.iterator(); iter.hasNext();) {
-		IUpdateFormPage page = (IUpdateFormPage) iter.next();
-		page.init(null);
-	}
 }
 	
 public void dispose() {
