@@ -2,15 +2,8 @@ package org.eclipse.ant.internal.ui;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.tools.ant.BuildEvent;
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.BuildListener;
-import org.apache.tools.ant.Location;
-import org.apache.tools.ant.Target;
-import org.apache.tools.ant.Task;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResource;
+import org.apache.tools.ant.*;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -76,14 +69,18 @@ public class UIBuildListener implements BuildListener {
 			// the build exception has a location that
 			// refers to a build file
 			if (bex.getLocation() != Location.UNKNOWN_LOCATION) {
-				createMarker(fBuildFile, bex);					System.out.println(bex.getLocation());
+				createMarker(fBuildFile, bex);					
+				System.out.println(bex.getLocation());
 			}
 		}
 	}
-	public void messageLogged(BuildEvent be) {
+	public void messageLogged(BuildEvent event) {
 		checkCanceled();
-		System.out.println("Message"+be.getMessage());
+        if (event.getPriority() <= Project.MSG_INFO) 
+			System.out.println("> "+event.getMessage());
 	}
+
+
 	private void removeMarkers() {
 		try {
 			fBuildFile.deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_ZERO);

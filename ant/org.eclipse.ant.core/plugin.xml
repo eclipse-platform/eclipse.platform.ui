@@ -32,13 +32,13 @@
   <extension-point name="Ant Type Definitions" id="antTypes"/>
 
   <extension point="org.eclipse.ant.core.antTypes">
-    <anttype name="commapatternset" class="org.eclipse.ant.core.CommaPatternSet"/>
+    <antType name="commapatternset" class="org.eclipse.ant.core.CommaPatternSet"/>
   </extension>
 
   <extension point="org.eclipse.ant.core.antTasks">
-    <anttask name="incremental" class="org.eclipse.ant.core.IncrementalBuild"/>
-    <anttask name="javac" class="org.eclipse.ant.core.EclipseJavac"/>
-    <anttask name="refreshLocal" class="org.eclipse.ant.core.RefreshLocal"/>
+    <antTask name="incremental" class="org.eclipse.ant.core.IncrementalBuild"/>
+    <antTask name="javac" class="org.eclipse.ant.core.EclipseJavac"/>
+    <antTask name="refreshLocal" class="org.eclipse.ant.core.RefreshLocal"/>
   </extension>
 
 </plugin>
