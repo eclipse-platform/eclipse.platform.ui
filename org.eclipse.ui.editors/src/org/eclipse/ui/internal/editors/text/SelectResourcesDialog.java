@@ -179,7 +179,7 @@ public class SelectResourcesDialog extends Dialog {
 		buttonComposite.setLayout(layout);
 		buttonComposite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
 
-		Button selectButton= createButton(buttonComposite, IDialogConstants.SELECT_ALL_ID, "Select All", false);
+		Button selectButton= createButton(buttonComposite, IDialogConstants.SELECT_ALL_ID, TextEditorMessages.getString("SelectResourcesDialog.selectAll"), false); //$NON-NLS-1$
 
 		SelectionListener listener= new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -191,7 +191,7 @@ public class SelectResourcesDialog extends Dialog {
 		selectButton.setFont(font);
 		setButtonLayoutData(selectButton);
 
-		Button deselectButton= createButton(buttonComposite, IDialogConstants.DESELECT_ALL_ID, "Deselect All", false);
+		Button deselectButton= createButton(buttonComposite, IDialogConstants.DESELECT_ALL_ID, TextEditorMessages.getString("SelectResourcesDialog.deselectAll"), false); //$NON-NLS-1$
 
 		listener= new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -204,7 +204,7 @@ public class SelectResourcesDialog extends Dialog {
 		setButtonLayoutData(deselectButton);
 		
 		// types edit button
-		Button selectTypesButton= createButton(buttonComposite, IDialogConstants.SELECT_TYPES_ID, "Filter Selection...", false);
+		Button selectTypesButton= createButton(buttonComposite, IDialogConstants.SELECT_TYPES_ID, TextEditorMessages.getString("SelectResourcesDialog.filterSelection"), false); //$NON-NLS-1$
 
 		listener= new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -343,14 +343,13 @@ public class SelectResourcesDialog extends Dialog {
 		StringBuffer buffer= new StringBuffer();
 		switch (checkedFiles) {
 			case 0:
-				buffer.append("No file selected.");
+				buffer.append(TextEditorMessages.getString("SelectResourcesDialog.noFilesSelected")); //$NON-NLS-1$
 				break;
 			case 1:
-				buffer.append("1 file selected.");
+				buffer.append(TextEditorMessages.getString("SelectResourcesDialog.oneFileSelected")); //$NON-NLS-1$
 				break;
 			default:
-				buffer.append(checkedFiles);
-				buffer.append(" files selected.");
+				buffer.append(TextEditorMessages.getFormattedString("SelectResourcesDialog.nFilesSelected", new Integer(checkedFiles))); //$NON-NLS-1$
 		}
 		fCountIndication.setText(buffer.toString());
 		
