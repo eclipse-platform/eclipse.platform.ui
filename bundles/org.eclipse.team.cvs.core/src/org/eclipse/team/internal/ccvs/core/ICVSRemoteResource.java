@@ -7,6 +7,7 @@ package org.eclipse.team.ccvs.core;
  
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.team.core.sync.IRemoteResource;
 
 /**
  * The interface represents a resource that exists in a CVS repository.
@@ -15,7 +16,7 @@ import org.eclipse.core.runtime.IAdaptable;
  * 
  * Clients are not expected to implement this interface.
  */
-public interface ICVSRemoteResource extends IAdaptable {
+public interface ICVSRemoteResource extends IAdaptable, IRemoteResource {
 	
 	public static int FILE = IResource.FILE;
 	public static int FOLDER = IResource.FOLDER;

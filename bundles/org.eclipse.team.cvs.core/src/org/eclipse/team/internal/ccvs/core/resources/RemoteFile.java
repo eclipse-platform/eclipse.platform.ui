@@ -54,21 +54,25 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, IManag
 	/**
 	 * @see ICVSRemoteFile#getContents()
 	 */
-	public InputStream getContents(final IProgressMonitor monitor) throws TeamException {
+	public InputStream getContents(final IProgressMonitor monitor) {
 			
 		// Perform a "cvs update..."
-		List localOptions = getLocalOptionsForTag();
-		Client.execute(
-			Client.UPDATE,
-			Client.EMPTY_ARGS_LIST, 
-			(String[])localOptions.toArray(new String[localOptions.size()]),
-			new String[]{getName()}, 
-			parent,
-			monitor,
-			getPrintStream(),
-			(CVSRepositoryLocation)getRepository(),
-			null);
-		return getCachedContents();
+		try {
+			List localOptions = getLocalOptionsForTag();
+			Client.execute(
+				Client.UPDATE,
+				Client.EMPTY_ARGS_LIST, 
+				(String[])localOptions.toArray(new String[localOptions.size()]),
+				new String[]{getName()}, 
+				parent,
+				monitor,
+				getPrintStream(),
+				(CVSRepositoryLocation)getRepository(),
+				null);
+			return getCachedContents();
+		} catch(CVSException e) {
+			return null;
+		}
 	}
 
 	/**

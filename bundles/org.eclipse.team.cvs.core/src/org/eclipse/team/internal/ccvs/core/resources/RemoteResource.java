@@ -5,14 +5,18 @@ package org.eclipse.team.internal.ccvs.core.resources;
  * All Rights Reserved.
  */
  
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Client;
 import org.eclipse.team.internal.ccvs.core.Policy;
@@ -26,7 +30,7 @@ import org.eclipse.team.internal.ccvs.core.resources.api.IManagedVisitor;
  * resources that reside in a CVS repository but have not necessarily been loaded
  * locally.
  */
-public abstract class RemoteResource extends PlatformObject implements ICVSRemoteResource, IManagedResource {
+public abstract class RemoteResource extends PlatformObject implements ICVSRemoteResource, IManagedResource, IRemoteResource {
 
 	protected String name;
 	protected String tag;
@@ -159,5 +163,33 @@ public abstract class RemoteResource extends PlatformObject implements ICVSRemot
 	public void clearManaged() throws CVSException {
 	}
 
+	/*
+	 * @see IManagedResource#getRelativePath(IManagedFolder)
+	 */
+	public String getRelativePath(IManagedFolder ancestor) throws CVSException {
+		return null;
+	}
+
+	/*
+	 * @see IRemoteResource#members(IProgressMonitor)
+	 */
+	public IRemoteResource[] members(IProgressMonitor progress) throws TeamException {
+		return new IRemoteResource[0];
+	}
+	
+
+	/*
+	 * @see IRemoteResource#getContents(IProgressMonitor)
+	 */
+	public InputStream getContents(IProgressMonitor progress) {
+		return null;
+	}
+
+	/*
+	 * @see IRemoteResource#isContainer()
+	 */
+	public boolean isContainer() {
+		return false;
+	}
 }
 
