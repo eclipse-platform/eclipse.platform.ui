@@ -33,7 +33,9 @@ CDATA #OPTIONAL&nbsp; //#REQUIRED if lightweight = false</tt>
 CDATA #OPTIONAL // required if there is no class</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; quadrant&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 (&quot;TOP_LEFT&quot; | &quot;TOP_RIGHT&quot; | &quot;BOTTOM_LEFT&quot; |
-&quot;BOTTOM_RIGHT&quot;) #OPTIONAL</tt>
+&quot;BOTTOM_RIGHT&quot;) #OPTIONAL //deprecated. Use location</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; location (&quot;TOP_LEFT&quot; | &quot;TOP_RIGHT&quot; | &quot;BOTTOM_LEFT&quot; |
+&quot;BOTTOM_RIGHT&quot; | &quot;UNDERLAY&quot;) #OPTIONAL</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; lightweight&nbsp;&nbsp; (true
 | false) #IMPLIED&nbsp;</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; adaptable&nbsp;&nbsp;&nbsp; (true
@@ -69,6 +71,11 @@ is not specified this is the path to the overlay image to apply</li>
 
 <li>
 <b>quadrant </b>- if the decorator is <b><i>lightweight</i></b> this is the quadrant to apply the decorator to.
+Defaults to BOTTOM_RIGHT. Replaced by location for M4.</li>
+
+<li>
+<b>location </b>- if the decorator is <b><i>lightweight</i></b> this is the
+location to apply the decorator to.
 Defaults to BOTTOM_RIGHT.</li>
 
 <li>
@@ -150,8 +157,7 @@ supplies an icon and a quadrant to apply that icon.</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;</tt>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 <tt>icon=&quot;icons/full/declarative.gif&quot;</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-quadrant=&quot;TOP_LEFT&quot;</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; location=&quot;TOP_LEFT&quot;</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;</tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 <tt>&lt;enablement&gt;</tt><br><tt>&nbsp;&nbsp;&nbsp;</tt>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
