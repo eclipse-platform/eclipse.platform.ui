@@ -26,7 +26,6 @@
      
 <extension point="org.eclipse.team.core.fileTypes">
   <fileTypes extension="txt" type="text"/>
-  <fileTypes extension="java" type="text"/>
   <fileTypes extension="properties" type="text"/>
   <fileTypes extension="xml" type="text"/>
   <fileTypes extension="html" type="text"/>
