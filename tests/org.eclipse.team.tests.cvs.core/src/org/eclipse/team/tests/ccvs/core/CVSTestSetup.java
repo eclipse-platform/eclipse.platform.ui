@@ -22,6 +22,7 @@ public class CVSTestSetup extends TestSetup {
 	public static final String REPOSITORY_LOCATION;
 	public static final boolean INITIALIZE_REPO;
 	public static final boolean DEBUG;
+	public static final boolean LOCAL_REPO;
 	public static final String RSH;
 	
 	public static CVSRepositoryLocation repository;
@@ -33,6 +34,7 @@ public class CVSTestSetup extends TestSetup {
 		INITIALIZE_REPO = Boolean.valueOf(System.getProperty("eclipse.cvs.initrepo", "false")).booleanValue();
 		DEBUG = Boolean.valueOf(System.getProperty("eclipse.cvs.debug", "false")).booleanValue();
 		RSH = System.getProperty("eclipse.cvs.rsh", "rsh");
+		LOCAL_REPO = Boolean.valueOf(System.getProperty("eclipse.cvs.localRepo", "false")).booleanValue();
 	}
 
 	public static void loadProperties() {
@@ -64,19 +66,27 @@ public class CVSTestSetup extends TestSetup {
 		super(test);
 	}
 
+	public static void executeRemoteCommand(ICVSRepositoryLocation repository, String command) throws IOException, InterruptedException{
+		String repositoryHost = repository.getHost();
+		String userName = repository.getUsername();
+		String localCommand;
+		if (LOCAL_REPO) {
+			localCommand= new String(command);
+		} else {
+			localCommand = new String(RSH + " " + repositoryHost + " -l " + userName + " " + command);
+		}
+		Process p = Runtime.getRuntime().exec(localCommand);
+	p.waitFor();
+	}
+	
 	/*
 	 * Use rsh to delete any contents of the repository and initialize it again
 	 */
 	private static void initializeRepository(CVSRepositoryLocation repository) {
-		String repositoryHost = repository.getHost();
-		String userName = repository.getUsername();
 		String repoRoot = repository.getRootDirectory();
-		String cmd1 = new String(RSH + " " + repositoryHost + " -l " + userName + " rm -rf " + repoRoot);
-		String cmd2 = new String(RSH + " " + repositoryHost + " -l " + userName + " cvs -d " + repoRoot + " init");
 		try {
-			Process p = Runtime.getRuntime().exec(cmd1);
-			p.waitFor();
-			p = Runtime.getRuntime().exec(cmd2);
+			executeRemoteCommand(repository, "rm -rf " + repoRoot);
+			executeRemoteCommand(repository, "cvs -d " + repoRoot + " init");
 		} catch (IOException e) {
 			System.out.println("Unable to initialize remote repository: " + repository.getLocation());
 		} catch (InterruptedException e) {
