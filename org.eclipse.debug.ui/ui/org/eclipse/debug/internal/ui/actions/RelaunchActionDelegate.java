@@ -24,30 +24,23 @@ public class RelaunchActionDelegate extends AbstractDebugActionDelegate {
 	 * @see AbstractDebugActionDelegate#doAction(Object)
 	 */
 	protected void doAction(Object object) {
-		if (object instanceof IDebugElement) {
-			relaunch((IDebugElement)object);
-		} else if (object instanceof ILaunch) {
-			relaunch((ILaunch)object);
-		} else if (object instanceof IProcess) {
-			relaunch((IProcess)object);
-		}
+		ILaunch launch= getLaunch(object);
+        if (launch != null) {
+            relaunch(launch.getLaunchConfiguration(), launch.getLaunchMode());
+        }
 	}
-			
-	public static void relaunch(IDebugElement element) {
-		relaunch(element.getLaunch());
-	}
-	
-	public static void relaunch(IProcess process) {
-		relaunch(process.getLaunch());
-	}
-	
-	public static void relaunch(ILaunch launch) {
-		relaunch(launch.getLaunchConfiguration(), launch.getLaunchMode());
-	}
-	
-	public static void relaunch(ILaunch launch, String mode) {
-		relaunch(launch.getLaunchConfiguration(), mode);
-	}
+    
+    public static ILaunch getLaunch(Object element) {
+        ILaunch launch= null;
+        if (element instanceof IDebugElement) {
+            launch= ((IDebugElement)element).getLaunch();
+        } else if (element instanceof ILaunch) {
+            launch= ((ILaunch)element);
+        } else if (element instanceof IProcess) {
+            launch= ((IProcess)element).getLaunch();
+        }
+        return launch;
+    }
 	
 	/**
 	 * Re-launches the given configuration in the specified mode.

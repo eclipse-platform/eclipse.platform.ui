@@ -1062,6 +1062,15 @@
             </selection>
          </action>
          <action
+               label="%TerminateAndRelaunchAction.label"
+               class="org.eclipse.debug.internal.ui.actions.TerminateAndRelaunchAction"
+               definitionId="org.eclipse.debug.ui.commands.TerminateAndRelaunch"
+               helpContextId="terminate_and_relaunch_action_context"
+               icon="icons/full/etool16/term_restart.gif"
+               id="org.eclipse.debug.ui.debugview.popupMenu.TerminateAndRelaunch"
+               menubarPath="threadGroup">
+         </action>
+         <action
                label="%TerminateAction.label"
                icon="icons/full/elcl16/terminate_co.gif"
                helpContextId="terminate_action_context"
@@ -1579,6 +1588,12 @@ M4 = Platform-specific fourth key
             commandId="org.eclipse.debug.ui.commands.Terminate"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
+      <command
+            name="%ActionDefinition.terminateAndRelaunch.name"
+            categoryId="org.eclipse.debug.ui.category.run"
+            description="%ActionDefinition.terminateAndRelaunch.description"
+            id="org.eclipse.debug.ui.commands.TerminateAndRelaunch">
+      </command>
       <command
             name="%ActionDefinition.suspend.name"
             categoryId="org.eclipse.debug.ui.category.run"
