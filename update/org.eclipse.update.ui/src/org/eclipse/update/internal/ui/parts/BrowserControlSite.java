@@ -33,9 +33,10 @@ public class BrowserControlSite extends OleControlSite {
 	private boolean redirection;
 	private IStatusLineManager statusLineManager;
 	private int workSoFar=0;
+	private int prevMax=0;
 	
 	public void setStatusLineManager(IStatusLineManager manager) {
-		this.statusLineManager = statusLineManager;
+		this.statusLineManager = manager;
 	}
 	
 	void setBrowser(WebBrowser browser) {
@@ -75,8 +76,7 @@ public class BrowserControlSite extends OleControlSite {
 			public void handleEvent(OleEvent event) {
 				startedDownload = true;
 				webProgress.setSelection(0);
-				if (statusLineManager!=null)
-				   statusLineManager.getProgressMonitor().beginTask("", 100);
+				prevMax = -1;
 			}
 		});
 
@@ -135,7 +135,10 @@ public class BrowserControlSite extends OleControlSite {
 				}
 				if (maxProgress.getInt()!=100)
 				   webProgress.setMaximum(maxProgress.getInt());
-				
+				if (prevMax != maxProgress.getInt()) {
+					statusLineManager.getProgressMonitor().beginTask("", maxProgress.getInt());
+					prevMax = maxProgress.getInt();
+				}
 				webProgress.setSelection(progress.getInt());
 				int newValue = progress.getInt();
 				int worked = newValue - workSoFar;
