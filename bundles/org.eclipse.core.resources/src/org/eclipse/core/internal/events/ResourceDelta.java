@@ -328,7 +328,8 @@ public IResource getResource() {
 		info = oldInfo;
 	else
 		info = newInfo;
-	Assert.isNotNull(info, "Do not have resource info for resource in delta"); //$NON-NLS-1$
+	if (info == null)
+		Assert.isNotNull(null, "Do not have resource info for resource in delta: " + path); //$NON-NLS-1$
 	cachedResource = deltaInfo.getWorkspace().newResource(path, info.getType());
 	return cachedResource;
 }

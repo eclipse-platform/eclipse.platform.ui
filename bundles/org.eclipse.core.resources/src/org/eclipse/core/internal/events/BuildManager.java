@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
@@ -394,6 +394,9 @@ protected IResourceDelta getDelta(IProject project) {
 	}
 	//check if this project has changed
 	if (currentDelta != null && currentDelta.findNodeAt(project.getFullPath()) == null) {
+		//if the project never existed (not in delta and not in current tree), return null
+		if (!project.exists())
+			return null;
 		//just return an empty delta rooted at this project
 		return ResourceDeltaFactory.newEmptyDelta(project);
 	}
