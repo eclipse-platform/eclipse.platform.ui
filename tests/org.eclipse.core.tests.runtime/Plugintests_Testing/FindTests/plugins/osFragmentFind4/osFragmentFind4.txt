@@ -1,1 +1,0 @@
-Test string from osFragmentFind4 fragment root directory.

@@ -1,1 +1,0 @@
-Test string from nlPluginFind5 plugin nl/ja/JP directory.

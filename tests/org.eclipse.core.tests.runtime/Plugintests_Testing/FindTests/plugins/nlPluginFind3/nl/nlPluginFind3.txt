@@ -1,1 +1,0 @@
-Test string from nlPluginFind3 plugin nl directory.

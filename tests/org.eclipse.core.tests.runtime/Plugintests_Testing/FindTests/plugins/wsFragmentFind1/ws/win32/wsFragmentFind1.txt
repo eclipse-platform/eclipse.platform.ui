@@ -1,1 +1,0 @@
-Test string from wsFragmentFind1 fragment ws/win32 directory.

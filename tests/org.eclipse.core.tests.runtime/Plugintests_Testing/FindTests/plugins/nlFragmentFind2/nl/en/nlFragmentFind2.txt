@@ -1,1 +1,0 @@
-Test string from nlFragmentFind2 fragment nl/en directory.

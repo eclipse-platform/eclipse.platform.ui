@@ -1,1 +1,0 @@
-Test string from wsFragmentFind2 fragment ws directory.
