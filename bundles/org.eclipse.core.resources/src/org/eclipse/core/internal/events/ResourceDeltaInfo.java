@@ -45,6 +45,9 @@ public Map getOldNodeIDMap() {
 public Workspace getWorkspace() {
 	return workspace;
 }
+public void setMarkerDeltas(Map value) {
+	allMarkerDeltas = value;
+}
 public void setNodeMaps(Map oldMap, Map newMap) {
 	oldNodeIDMap = oldMap;
 	newNodeIDMap = newMap;

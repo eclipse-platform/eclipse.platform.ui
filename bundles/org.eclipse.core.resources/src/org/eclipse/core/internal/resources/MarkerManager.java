@@ -20,6 +20,7 @@ public class MarkerManager implements IManager {
 	protected MarkerTypeDefinitionCache cache = new MarkerTypeDefinitionCache();
 	protected Hashtable markerDeltas = null;
 	protected MarkerWriter writer = new MarkerWriter(this);
+	private long changeId = 0;
 	
 /**
  * Creates a new marker manager
@@ -149,6 +150,7 @@ protected void changedMarkers(IResource resource, IMarkerDelta[] changes) {
 		markerDeltas.remove(path);
 	else
 		markerDeltas.put(path, result);
+	changeId++;
 	ResourceInfo info = workspace.getResourceInfo(path, false, true);
 	if (info != null)
 		info.incrementMarkerGenerationCount();
@@ -229,6 +231,11 @@ public boolean hasDeltas() {
 public MarkerTypeDefinitionCache getCache() {
 	return cache;
 }
+
+public long getChangeId() {
+	return changeId;
+}
+
 /**
  * Returns the table of marker deltas, keyed by path.
  * Returns null if there are no deltas.

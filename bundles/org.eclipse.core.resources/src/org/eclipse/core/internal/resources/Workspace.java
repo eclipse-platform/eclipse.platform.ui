@@ -20,7 +20,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	protected LocalMetaArea localMetaArea;
 	protected boolean openFlag = false;
 	protected ElementTree tree;
-	protected ElementTree operationTree;
+	protected ElementTree operationTree;		// tree at the start of the current operation
 	protected SaveManager saveManager;
 	protected BuildManager buildManager;
 	protected NotificationManager notificationManager;
@@ -100,11 +100,11 @@ public void beginOperation(boolean createNewTree) throws CoreException {
 		newWorkingTree();
 	}
 }
-private IResourceDelta broadcastChanges(IResourceDelta delta, ElementTree tree, int type, boolean lockTree, boolean updateState, IProgressMonitor monitor) {
-	if (!haveResourcesChanged() && !markerManager.hasDeltas())
+private IResourceDelta broadcastChanges(IResourceDelta delta, ElementTree currentTree, int type, boolean lockTree, boolean updateState, IProgressMonitor monitor) {
+	if (operationTree == null)
 		return null;
 	monitor.subTask(Policy.bind("resources.updating"));
-	return notificationManager.broadcastChanges(delta, tree, type, lockTree, updateState);
+	return notificationManager.broadcastChanges(delta, currentTree, type, lockTree, updateState);
 }
 public void build(int trigger, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
@@ -124,12 +124,14 @@ public void build(int trigger, IProgressMonitor monitor) throws CoreException {
 }
 
 /**
- * Returns true if there have been changes in the tree since the last
- * begin operation.  This should only be used from endOperation.
+ * Returns true if there have been changes in the tree between the two
+ * given layers.  The two must be related and new must be newer than old.
+ * That is, new must an ancestor of old.
  */
-private boolean haveResourcesChanged() {
-	if (operationTree == null)
-		return false;
+public boolean haveResourcesChanged(ElementTree newLayer, ElementTree oldLayer, boolean inclusive) {
+	// if any of the layers are null, assume that things have changed
+	if (newLayer == null || oldLayer == null)
+		return true;
 
 	// The tree structure has the top layer(s) (i.e., tree) parentage pointing down to a complete
 	// layer whose parent is null.  The bottom layers (i.e., operationTree) point up to the 
@@ -138,17 +140,25 @@ private boolean haveResourcesChanged() {
 	// layers whose parent is not null.  That is, skip the complete layer as it will clearly not be
 	// empty.
 	
-	// look down from the current layer (inclusive)
-	ElementTree layer = tree;
-	while (layer != null && layer.getParent() != null) {
-		if (!layer.getDataTree().isEmptyDelta())
-			return true;
-		layer = layer.getParent();
+	// look down from the current layer (always inclusive) if the top layer is mutable
+	ElementTree stopLayer = null;
+	if (newLayer.isImmutable()) 
+		// if the newLayer is immutable, the tree structure all points up so ensure that
+		// when searching up, we stop at newLayer (inclusive)
+		stopLayer = newLayer.getParent();
+	else {
+		ElementTree layer = newLayer;
+		while (layer != null && layer.getParent() != null) {
+			if (!layer.getDataTree().isEmptyDelta())
+				return true;
+			layer = layer.getParent();
+		}
 	}
 
-	// look up from the layer at which we started (inclusive)
-	layer = operationTree;
-	while (layer != null && layer.getParent() != null) {
+	// look up from the layer at which we started to null or newLayer's parent (variably inclusive)
+	// depending on whether newLayer is mutable.
+	ElementTree layer = inclusive ? oldLayer : oldLayer.getParent();
+	while (layer != null && layer.getParent() != stopLayer) {
 		if (!layer.getDataTree().isEmptyDelta())
 			return true;
 		layer = layer.getParent();
@@ -156,6 +166,7 @@ private boolean haveResourcesChanged() {
 	// didn't find anything that changed
 	return false;
 }
+
 /**
  * Notify the relevant infrastructure pieces that the given project is being
  * changed (e.g., setDescription, move, copy...) and various parts of 
@@ -689,7 +700,7 @@ public void endOperation(boolean build, IProgressMonitor monitor) throws CoreExc
 			monitor = Policy.monitorFor(monitor);
 			monitor.subTask(Policy.bind("resources.updating"));
 			broadcastChanges(null, tree, IResourceChangeEvent.PRE_AUTO_BUILD, false, false, Policy.monitorFor(null));
-			if (shouldBuild() && isAutoBuilding()) {
+			if (isAutoBuilding() && shouldBuild()) {
 				try {
 					getBuildManager().build(IncrementalProjectBuilder.AUTO_BUILD, monitor);
 				} catch (OperationCanceledException e) {
@@ -702,7 +713,8 @@ public void endOperation(boolean build, IProgressMonitor monitor) throws CoreExc
 			broadcastChanges(null, tree, IResourceChangeEvent.POST_AUTO_BUILD, false, false, Policy.monitorFor(null));
 			broadcastChanges(null, tree, IResourceChangeEvent.POST_CHANGE, true, true, Policy.monitorFor(null));
 			getMarkerManager().resetMarkerDeltas();
-			// Perform a snapshot if we are sufficiently out of date
+			// Perform a snapshot if we are sufficiently out of date.  Besure to make the tree immutable first
+			tree.immutable();
 			saveManager.snapshotIfNeeded();
 			if (cancel != null)
 				throw cancel;
@@ -1198,17 +1210,26 @@ public void run(IWorkspaceRunnable job, IProgressMonitor monitor) throws CoreExc
  */
 public IStatus save(boolean full, IProgressMonitor monitor) throws CoreException {
 	String message;
-	if (getWorkManager().getPreparedOperationDepth() > 0) {
-		if (full) {
+	// if a full save was requested, and this is a top-level op, try the save.  Otherwise
+	// fail the operation.
+	if (full) {
+		if (getWorkManager().getPreparedOperationDepth() > 0) {
 			message = Policy.bind("resources.saveOp");
 			throw new ResourceException(IResourceStatus.OPERATION_FAILED, null, message, null);
-		} else {
-			saveManager.requestSnapshot();
-			message = Policy.bind("resources.snapRequest");
-			return new ResourceStatus(IResourceStatus.OK, message);
-		}
+		} 
+		return saveManager.save(ISaveContext.FULL_SAVE, null, monitor);
 	}
-	return saveManager.save(full ? ISaveContext.FULL_SAVE : ISaveContext.SNAPSHOT, null, monitor);
+	// A snapshot was requested.  Start an operation (if not altready started) and 
+	// signal that a snapshot should be done at the end.
+	try {
+		prepareOperation();
+		beginOperation(false);
+		saveManager.requestSnapshot();
+		message = Policy.bind("resources.snapRequest");
+		return new ResourceStatus(IResourceStatus.OK, message);
+	} finally {
+		endOperation(false, null);
+	}
 }
 public void setCrashed(boolean value) {
 	crashed = value;
@@ -1235,7 +1256,7 @@ public void setWorkspaceLock(WorkspaceLock lock) {
 }
 
 private boolean shouldBuild() throws CoreException {
-	return getWorkManager().shouldBuild() && haveResourcesChanged();
+	return getWorkManager().shouldBuild() && haveResourcesChanged(tree, operationTree, true);
 }
 protected void shutdown(IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);

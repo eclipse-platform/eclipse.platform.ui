@@ -779,18 +779,12 @@ protected void snapTree(ElementTree tree, IProgressMonitor monitor) throws CoreE
 		try {
 			SafeChunkyOutputStream safeStream = new SafeChunkyOutputStream(localFile);
 			DataOutputStream out = new DataOutputStream(safeStream);
-			boolean wasImmutable = tree.isImmutable();
 			try {
-				// need to make the tree immutable for the writer.  Will make it mutable again in the 
-				// finally if it was mutable to start with.
-				tree.immutable();
 				out.writeInt(ICoreConstants.WORKSPACE_TREE_VERSION_2);
 				writeWorkspaceFields(out, monitor);
 				writer.writeDelta(tree, lastSnap, Path.ROOT, writer.D_INFINITE, out, ResourceComparator.getComparator());
 				safeStream.succeed();
 			} finally {
-				if (!wasImmutable)
-					workspace.newWorkingTree();
 				out.close();
 			}
 		} catch (IOException e) {

@@ -256,6 +256,10 @@ public String toDeepDebugString() {
 public String toString() {
 	return "ResourceDelta(" + path + ")";
 }
+
+public void updateMarkers(Map markers) {
+	deltaInfo.setMarkerDeltas(markers);
+}
 /** 
  * Writes a string representation of this delta's
  * immediate structure on the given string buffer.
