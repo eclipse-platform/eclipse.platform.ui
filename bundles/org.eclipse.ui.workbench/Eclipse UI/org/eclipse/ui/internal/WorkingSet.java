@@ -111,7 +111,7 @@ public class WorkingSet implements IAdaptable, IWorkingSet {
 		WorkingSetDescriptor descriptor= registry.getWorkingSetDescriptor(id);
 		if (descriptor == null)
 			return false;
-		return descriptor.getPageClassName() != null;
+		return descriptor.isEditable();
 	}
     
     /**
