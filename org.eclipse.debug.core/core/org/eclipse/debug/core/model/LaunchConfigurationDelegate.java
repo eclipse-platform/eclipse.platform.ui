@@ -102,8 +102,10 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 	 * Returns the set of projects to use when searching for errors or <code>null</code> 
 	 * if no search is to be done.  
 	 * 
-	 * @param projects the list of projects to sort into build order
-	 * @return a list of projects.
+	 * @param configuration the configuration being launched
+	 * @param mode launch mode
+	 * @return a list of projects or <code>null</code>
+	 * @throws CoreException if an exception occurrs
 	 */
 	protected IProject[] getProjectsForProblemSearch(ILaunchConfiguration configuration, String mode) throws CoreException {
 		return null;

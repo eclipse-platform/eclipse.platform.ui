@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,18 +66,18 @@ public interface IConsoleColorProvider {
 	/**
 	 * Returns the color to draw output associated with the given stream.
 	 * 
-	 * @param streamIdentifer
+	 * @param streamIdentifer the identifier of the stream
 	 * @return Color
 	 */
 	public Color getColor(String streamIdentifer);
 	
 	/**
-	 * Connects this color provider to the given process and console document.
+	 * Connects this color provider to the given process and console.
 	 * This color provider should connect its streams to the given console
 	 * document.
 	 * 
-	 * @param process
-	 * @param partitioner
+	 * @param process the process to connect this color provider to
+	 * @param console the console  to connect this color provider to
 	 */
 	public void connect(IProcess process, IConsole console);
 	
