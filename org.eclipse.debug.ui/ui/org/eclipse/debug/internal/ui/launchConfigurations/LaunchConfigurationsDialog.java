@@ -18,7 +18,6 @@ import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.IStatusHandler;
@@ -46,7 +45,6 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -137,12 +135,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * The 'cancel' button that appears when the in-dialog progress monitor is shown.
 	 */
 	private Button fProgressMonitorCancelButton;
-	
-	/**
-	 * Flag indicating if the progress monitor part's Cancel button has been pressed.
-	 */
-	private boolean fCancelButtonPressed;
-	
+		
 	/**
 	 * When this dialog is opened in <code>LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_SELECTION</code>
 	 * mode, this specifies the selection that is initially shown in the dialog.
@@ -651,11 +644,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		Button cancelButton = createButton(monitorComposite, ID_CANCEL_BUTTON, LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Cancel_3"), true); //$NON-NLS-1$
 		setProgressMonitorCancelButton(cancelButton);
 		getProgressMonitorCancelButton().setFont(font);
-		getProgressMonitorCancelButton().addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent evt) {
-				setCancelButtonPressed(true);
-			}
-		});
 		getProgressMonitorPart().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		getProgressMonitorPart().setFont(font);
 		monitorComposite.setVisible(false);
@@ -1083,44 +1071,16 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * Save and launch.
 	 */
 	protected void handleLaunchPressed() {
-		int result = CANCEL;
 		ILaunchConfiguration config = getTabViewer().getOriginal(); 
-	
 		if (getTabViewer().isDirty()) {
 			getTabViewer().handleApplyPressed();
 			config = getTabViewer().getOriginal();
 		}
-		
 		String mode = getMode();
-		IPreferenceStore store = getPreferenceStore();
-		
 		close();
-		
 		DebugUITools.launch(config, mode);
-		
-		try {
-			store.setValue(IDebugPreferenceConstants.PREF_LAST_LAUNCH_CONFIGURATION_SELECTION, config.getMemento());
-		} catch (CoreException e) {
-			DebugUIPlugin.log(e);
-		}
 	}
 	
-	
-	private void removeErrorLaunches() {
-		ILaunchManager manager= DebugPlugin.getDefault().getLaunchManager();
-		ILaunch[] launches= manager.getLaunches();
-		for (int i = 0; i < launches.length; i++) {
-		  ILaunch iLaunch = launches[i];
-		  if (!iLaunch.hasChildren()) {
-			  manager.removeLaunch(iLaunch);
-			 }
-		}
-	}
-	
-	private IPreferenceStore getPreferenceStore() {
-		return DebugUIPlugin.getDefault().getPreferenceStore();
-	}
-
 	/***************************************************************************************
 	 * 
 	 * ProgressMonitor & IRunnableContext related methods
@@ -1181,7 +1141,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 				
 			// Attach the progress monitor part to the cancel button
 			getProgressMonitorCancelButton().setEnabled(true);
-			setCancelButtonPressed(false);
 			getProgressMonitorPart().attachToCancelComponent(getProgressMonitorCancelButton());
 			getProgressMonitorPart().getParent().setVisible(true);
 			getProgressMonitorCancelButton().setFocus();
@@ -1293,14 +1252,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		}
 	}
 	
-	private void setCancelButtonPressed(boolean pressed) {
-		fCancelButtonPressed = pressed;
-	}
-	
-	private boolean cancelButtonPressed() {
-		return fCancelButtonPressed;
-	}
-
 	/**
 	 * Sets the given cursor for all shells currently active
 	 * for this window's display.

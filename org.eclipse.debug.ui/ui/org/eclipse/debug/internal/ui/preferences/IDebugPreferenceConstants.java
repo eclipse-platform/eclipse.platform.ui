@@ -89,6 +89,8 @@ public interface IDebugPreferenceConstants {
 	/**
 	 * Memento for the last selected launch config in the
 	 * launch config dialog.
+	 * 
+	 * @deprecated no longer supported
 	 */
 	public static final String PREF_LAST_LAUNCH_CONFIGURATION_SELECTION = IDebugUIConstants.PLUGIN_ID + ".lastLaunchConfigSelection"; //$NON-NLS-1$
 		
