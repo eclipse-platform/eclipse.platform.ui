@@ -694,7 +694,7 @@ public final class AntUtil {
      * @param shell the shell
      * @param errorDialogTitle the title of any error dialog
      */
-    public static void openBrowser(final String  urlString, final Shell shell, final String errorDialogTitle) {
+    public static void openBrowser(final String urlString, final Shell shell, final String errorDialogTitle) {
     	shell.getDisplay().syncExec(new Runnable() {
     		public void run() {
     			String platform= SWT.getPlatform();
