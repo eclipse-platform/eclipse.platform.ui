@@ -61,7 +61,6 @@ public class EditorWorkbook extends LayoutPart
 	private ToolItem pullDownButton;
 	private EditorList editorList;
 	private ViewForm listComposite;
-	private ToolItem closeBoxButton;
 
 	
 /**
@@ -127,7 +126,22 @@ public void createControl(Composite parent) {
 				if(event.getProperty().equals(IPreferenceConstants.EDITOR_TAB_WIDTH_SCALAR)){
 					//TODO: Need API from SWT, this is a workaround
 					tabFolder.MIN_TAB_WIDTH = getPreferenceStore().getInt(IPreferenceConstants.EDITOR_TAB_WIDTH_SCALAR);
-					tabFolder.setTopRight(pullDownBar);
+					if (getPreferenceStore().getBoolean(IPreferenceConstants.EDITOR_LIST_PULLDOWN_ACTIVE)) {	
+						tabFolder.setTopRight(pullDownBar);
+						pullDownBar.setVisible(tabFolder.getItemCount() >= 1);
+					} else {
+						pullDownBar.setVisible(false);
+						tabFolder.setTopRight(null);
+					}
+				}
+				if(event.getProperty().equals(IPreferenceConstants.EDITOR_LIST_PULLDOWN_ACTIVE)) {
+					if (getPreferenceStore().getBoolean(IPreferenceConstants.EDITOR_LIST_PULLDOWN_ACTIVE)) {	
+							tabFolder.setTopRight(pullDownBar);
+							pullDownBar.setVisible(tabFolder.getItemCount() >= 1);
+						} else {
+							pullDownBar.setVisible(false);							
+							tabFolder.setTopRight(null);
+						}
 				}
 //				if(event.getProperty().equals(IPreferenceConstants.NUMBER_EDITOR_TABS)){
 //					//TODO: editor tabs
@@ -148,6 +162,15 @@ public void createControl(Composite parent) {
 	
 	// redirect drop request to the workbook
 	tabFolder.setData((IPartDropTarget) this);
+
+	// listener to close the editor
+	tabFolder.addCTabFolderListener(new CTabFolderAdapter() {
+		public void itemClosed(CTabFolderEvent e) {
+			e.doit = false; // otherwise tab is auto disposed on return
+			EditorPane pane = (EditorPane) mapTabToEditor.get(e.item);
+			pane.doHide();
+		}
+	});
 
 	// listener to switch between visible tabItems
 	tabFolder.addSelectionListener(new SelectionAdapter() {
@@ -222,7 +245,7 @@ public void createControl(Composite parent) {
 	Image pullDownButtonImage = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU);
 	pullDownButton.setDisabledImage(pullDownButtonImage);
 	pullDownButton.setImage(pullDownButtonImage);
-	pullDownButton.setToolTipText(WorkbenchMessages.getString("Menu")); //$NON-NLS-1$
+	pullDownButton.setToolTipText(WorkbenchMessages.getString("Editors")); //$NON-NLS-1$
 	
 	pullDownButton.addSelectionListener(new SelectionListener() {
 		public void widgetSelected(SelectionEvent e) {
@@ -232,6 +255,18 @@ public void createControl(Composite parent) {
 		public void widgetDefaultSelected(SelectionEvent e) {
 		}
 	});
+
+	// Present the editorList pull-down if requested
+	if (store.getBoolean(IPreferenceConstants.EDITOR_LIST_PULLDOWN_ACTIVE)) {
+		tabFolder.setTopRight(pullDownBar);
+		pullDownBar.setVisible(true);
+	} else {
+		pullDownBar.setVisible(false);
+		tabFolder.setTopRight(null);
+	}
+	
+	// Set the tab width
+	tabFolder.MIN_TAB_WIDTH =  store.getInt(IPreferenceConstants.EDITOR_TAB_WIDTH_SCALAR);			
 
 	// Create tabs.
 	Iterator enum = editors.iterator();
@@ -246,29 +281,7 @@ public void createControl(Composite parent) {
 		setVisibleEditor(visibleEditor);
 	else
 		if (getItemCount() > 0)
-			setVisibleEditor((EditorPane) editors.get(0));
-	
-	// Create the closebox on the CTabFolder
-	closeBoxButton = new ToolItem(pullDownBar, SWT.PUSH);
-	Image closeBoxImage = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_CLOSE_VIEW);
-	closeBoxButton.setDisabledImage(closeBoxImage);
-	closeBoxButton.setImage(closeBoxImage);
-	closeBoxButton.setToolTipText(WorkbenchMessages.getString("Close")); //$NON-NLS-1$
-	
-	closeBoxButton.addSelectionListener(new SelectionListener() {
-		public void widgetSelected(SelectionEvent e) {
-			if (visibleEditor != null) {
-				visibleEditor.getPage().closeEditor(visibleEditor.getEditorReference(),true);
-			}
-		}
-		public void widgetDefaultSelected(SelectionEvent e) {
-		}
-	});	
-
-	
-	tabFolder.setTopRight(pullDownBar);
-	tabFolder.MIN_TAB_WIDTH =  getPreferenceStore().getInt(
-		IPreferenceConstants.EDITOR_TAB_WIDTH_SCALAR);			
+			setVisibleEditor((EditorPane) editors.get(0));		
 }
 
 private void closeEditorList() {
@@ -403,8 +416,11 @@ private CTabItem createTab(EditorPane editorPane, int index) {
 	mapTabToEditor.put(tab, editorPane);
 	enableTabDrag(editorPane, tab);
 	updateEditorTab((IEditorReference)editorPane.getPartReference());
-	if (tabFolder.getItemCount() == 1)
-		pullDownBar.setVisible(true);
+	if (tabFolder.getItemCount() == 1) {
+		if (tabFolder.getTopRight() != null) {
+			pullDownBar.setVisible(true);
+		}
+	}
 	return tab;
 }
 private void disableTabDrag(LayoutPart part) {

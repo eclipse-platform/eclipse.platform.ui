@@ -39,6 +39,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 	private Button otherEncodingButton;
 	private Combo encodingCombo;
 
+	private Button editorListPullDown;
 	private Composite editorReuseGroup;
 	private Button reuseEditors;
 	private Button closeEditorsOnExit;
@@ -88,11 +89,17 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		createEditorHistoryGroup(composite);
 		
 		WorkbenchPreferencePage.createSpace(composite);
+		
+		IPreferenceStore store = getPreferenceStore();
+		editorListPullDown = new Button(composite, SWT.CHECK);
+		editorListPullDown.setText(WorkbenchMessages.getString("WorkbenchPreference.editorsListButton")); //$NON-NLS-1$
+		editorListPullDown.setFont(composite.getFont());
+		editorListPullDown.setSelection(store.getBoolean(IPreferenceConstants.EDITOR_LIST_PULLDOWN_ACTIVE));
+		setButtonLayoutData(editorListPullDown);
 
 		closeEditorsOnExit = new Button(composite, SWT.CHECK);
 		closeEditorsOnExit.setText(WorkbenchMessages.getString("WorkbenchPreference.closeEditorsButton")); //$NON-NLS-1$
 		closeEditorsOnExit.setFont(composite.getFont());
-		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		closeEditorsOnExit.setSelection(store.getBoolean(IPreferenceConstants.CLOSE_EDITORS_ON_EXIT));
 		setButtonLayoutData(closeEditorsOnExit);
 		
@@ -127,6 +134,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 	protected void performDefaults() {
 		IPreferenceStore store = getPreferenceStore();
 		updateEncodingState(true);
+		editorListPullDown.setSelection(store.getDefaultBoolean(IPreferenceConstants.EDITOR_LIST_PULLDOWN_ACTIVE));
 		closeEditorsOnExit.setSelection(store.getDefaultBoolean(IPreferenceConstants.CLOSE_EDITORS_ON_EXIT));
 		reuseEditors.setSelection(store.getDefaultBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN));
 		dirtyEditorReuseGroup.setEnabled(reuseEditors.getSelection());
@@ -157,6 +165,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		
 		ResourcesPlugin.getPlugin().savePluginPreferences();
 
+		store.setValue(IPreferenceConstants.EDITOR_LIST_PULLDOWN_ACTIVE,editorListPullDown.getSelection());
 		store.setValue(IPreferenceConstants.CLOSE_EDITORS_ON_EXIT,closeEditorsOnExit.getSelection());
 
 		// store the reuse editors setting
@@ -444,6 +453,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 	}
 
 	private void updateEditorTabCompressionState(int scalar) {
+		editorTabCompression = scalar;
 		editorTabCompressionNone.setSelection(scalar==EDITOR_TAB_COMPRESSION_NONE);
 		editorTabCompressionLow.setSelection(scalar==EDITOR_TAB_COMPRESSION_LOW);
 		editorTabCompressionMedium.setSelection(scalar==EDITOR_TAB_COMPRESSION_MEDIUM);
@@ -504,9 +514,8 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		editorTabCompressionHigh.addSelectionListener(selectionListener);
 	
 		/* Set the default state */
-		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-		editorTabCompression = store.getInt(IPreferenceConstants.EDITOR_TAB_WIDTH_SCALAR);
-		updateEditorTabCompressionState(editorTabCompression);
+		IPreferenceStore store = getPreferenceStore();
+		updateEditorTabCompressionState(store.getInt(IPreferenceConstants.EDITOR_TAB_WIDTH_SCALAR));
 	}
 }
 

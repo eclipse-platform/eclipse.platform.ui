@@ -198,6 +198,8 @@ public Control createControl(Composite parent) {
 		public void keyPressed(KeyEvent e) {
 			if(e.character == SWT.ESC)
 				destroyControl();
+			if(e.character == ' ' || e.character == SWT.CR)
+				handleSelectionEvent(true);
 		}
 		public void keyReleased(KeyEvent e) {
 		}
@@ -205,7 +207,7 @@ public Control createControl(Composite parent) {
 
 	editorsTable.addMouseListener(new MouseAdapter() {
 		public void mouseDown(MouseEvent e) {
-			if ((e.stateMask & SWT.CTRL) == SWT.CTRL || (e.stateMask & SWT.SHIFT) == SWT.SHIFT) {
+			if ((e.stateMask & SWT.CTRL) != 0 || (e.stateMask & SWT.SHIFT) != 0) {
 				return;
 			}
 			if (e.button != 3) {

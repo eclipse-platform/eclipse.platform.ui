@@ -99,26 +99,30 @@ public interface IPreferenceConstants {
 	public final static String DEFAULT_EDITORS_CACHE = "defaultEditorsCache"; //$NON-NLS-1$
 
 	//Workspace save interval in minutes
-	public final static String SAVE_INTERVAL = "saveInterval";
+	public final static String SAVE_INTERVAL = "saveInterval"; //$NON-NLS-1$
 	public static final int MAX_SAVE_INTERVAL = 9999;
 	
 	//Tab width = tab height * scalar value
-	public final static String EDITOR_TAB_WIDTH_SCALAR = "EDITOR_TAB_WIDTH_SCALAR";
+	public final static String EDITOR_TAB_WIDTH_SCALAR = "EDITOR_TAB_WIDTH_SCALAR"; //$NON-NLS-1$
 	
 	// Boolean: true= allow tabs to span multiple lines
-	public static final String EDITOR_TABS_SPAN_MULTIPLE_LINES = "EDITOR_TABS_SPAN_MULTIPLE_LINES";
+	public static final String EDITOR_TABS_SPAN_MULTIPLE_LINES = "EDITOR_TABS_SPAN_MULTIPLE_LINES"; //$NON-NLS-1$
 	
 	//Limits number of tabs, usefull when multiple lines of tabs active
-	public final static String NUMBER_EDITOR_TABS = "NUMBER_EDITOR_TABS";
+	public final static String NUMBER_EDITOR_TABS = "NUMBER_EDITOR_TABS"; //$NON-NLS-1$
 	public final static int NUMBER_EDITOR_TABS_MAXIMUM = 999;
-	
-	// EditorList preferences
-	public static final String EDITOR_LIST_SELECTION_SCOPE = "EDITOR_LIST_SELECTION_SCOPE";
+
+	//Boolean: true = show Editors drop down button on CTabFolder 
+	public static final String EDITOR_LIST_PULLDOWN_ACTIVE = "EDITOR_LIST_PULLDOWN_ACTIVE"; //$NON-NLS-1$
+
+	// Selection scope for EditorList
+	public static final String EDITOR_LIST_SELECTION_SCOPE = "EDITOR_LIST_SELECTION_SCOPE"; //$NON-NLS-1$
 	public static final int EDITOR_LIST_SET_WINDOW_SCOPE = 0;
 	public static final int EDITOR_LIST_SET_PAGE_SCOPE = 1;
 	public static final int EDITOR_LIST_SET_TAB_GROUP_SCOPE = 2;
 
-	public static final String EDITOR_LIST_SORT_CRITERIA = "EDITOR_LIST_SORT_CRITERIA";
+	// Sort criteria for EditorList
+	public static final String EDITOR_LIST_SORT_CRITERIA = "EDITOR_LIST_SORT_CRITERIA"; //$NON-NLS-1$
 	public static final int EDITOR_LIST_NAME_SORT = 0;
 	public static final int EDITOR_LIST_MRU_SORT = 1;	
 }
