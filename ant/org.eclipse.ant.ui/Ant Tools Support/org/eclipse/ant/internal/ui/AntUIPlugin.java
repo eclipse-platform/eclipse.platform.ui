@@ -14,6 +14,7 @@ package org.eclipse.ant.internal.ui;
 
 import java.util.Locale;
 
+import org.eclipse.ant.internal.ui.editor.DecayCodeCompletionDataStructuresThread;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -26,7 +27,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
 /**
- * The plug-in runtime class for the Ant Core plug-in.
+ * The plug-in runtime class for the Ant UI plug-in.
  */
 public class AntUIPlugin extends AbstractUIPlugin {
 
@@ -68,6 +69,7 @@ public class AntUIPlugin extends AbstractUIPlugin {
 	public void stop(BundleContext context) throws Exception {
 		try {
 			AntUIImages.disposeImageDescriptorRegistry();
+			DecayCodeCompletionDataStructuresThread.cancel();
 		} finally {
 			super.stop(context);
 		}
