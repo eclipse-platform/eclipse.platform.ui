@@ -165,8 +165,7 @@ public class PageLayout implements IPageLayout {
 			float ratio,
 			String refId) {
 		addView(viewId, relationship, ratio, refId);
-		if (!fixedViews.contains(viewFactory.getView(viewId)))
-			fixedViews.add(viewFactory.getView(viewId));
+		markAsFixed(viewId);
 	}
 
 	/**
@@ -241,6 +240,20 @@ public class PageLayout implements IPageLayout {
 		PartPlaceholder newPart = new PartPlaceholder(viewId);
 		addPart(newPart, viewId, relationship, ratio, refId);
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPageLayout#addFixedPlaceholder(java.lang.String, int, float, java.lang.String)
+	 */
+	public void addFixedPlaceholder(
+			String viewId,
+			int relationship,
+			float ratio,
+			String refId) {
+			if (checkPartInLayout(viewId))
+				return;
+
+			addPlaceholder(viewId, relationship, ratio, refId);
+			markAsFixed(viewId);
+		}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPageLayout#addShowInPart(java.lang.String)
@@ -291,8 +304,9 @@ public class PageLayout implements IPageLayout {
 		}
 		
 		// add view to fixed list if we are a fixed layout
-		if (fixed && !fixedViews.contains(viewFactory.getView(viewId)))
-			fixedViews.add(viewFactory.getView(viewId));
+		if (fixed) {
+		    markAsFixed(viewId);
+		}
 	}
 
 	/**
@@ -417,7 +431,7 @@ public class PageLayout implements IPageLayout {
 	}
 
 	/**
-	 * @return <code>ArrayList</code>
+	 * @return <code>ArrayList</code> of fixed view id.
 	 */
 	/*package*/
 	ArrayList getFixedViews() {
@@ -517,6 +531,16 @@ public class PageLayout implements IPageLayout {
 		return editorVisible;
 	}
 
+	/**
+	 * Marks the specified view as being a fixed view.
+	 * 
+	 * @param viewId the view id
+	 */
+	void markAsFixed(String viewId) {
+	    if (!fixedViews.contains(viewId)) {
+	        fixedViews.add(viewId);
+	    }
+	}
 	/**
 	 * Trim the ratio so that direct manipulation of parts is easy.
 	 * 

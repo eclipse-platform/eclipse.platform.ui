@@ -479,9 +479,11 @@ public boolean isFastView(IViewReference ref) {
 }
 /**
  * Returns true if a view is fixed.
+ * 
+ * @since 3.0
  */
 public boolean isFixedView(IViewReference ref) {
-	return fixedViews.contains(ref);
+	return fixedViews.contains(ref.getId());
 }
 /**
  * Returns true if a layout or perspective is fixed.
@@ -884,7 +886,7 @@ public IStatus restoreState() {
 			//@issue see directly above, also I don't think we need
 			// to actually restore the view bleow, probably shouldn't
 			// throw the error above either
-			fixedViews.add(ref);
+			fixedViews.add(ref.getId());
 //			if(ref.getPane() == null) {
 //				ref.setPane(new ViewPane((IViewReference)ref,page));
 //			}
@@ -1154,9 +1156,8 @@ private IStatus saveState(IMemento memento, PerspectiveDescriptor p,
 		IMemento childMem = memento.createChild(IWorkbenchConstants.TAG_FIXED_VIEWS);
 		enum = fixedViews.iterator();
 		while (enum.hasNext()) {
-			IViewReference ref = (IViewReference)enum.next();
+			String id = (String)enum.next();
 			IMemento viewMemento = childMem.createChild(IWorkbenchConstants.TAG_VIEW);
-			String id = ref.getId();
 			viewMemento.putString(IWorkbenchConstants.TAG_ID, id);
 		}
 	}

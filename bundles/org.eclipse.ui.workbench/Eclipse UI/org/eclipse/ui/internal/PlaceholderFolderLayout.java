@@ -55,6 +55,18 @@ public class PlaceholderFolderLayout implements IPlaceholderFolderLayout{
 	
 		// Add it to the placeholder layout.
 		placeholder.add(newPart);		
+
+		// if page layout is fixed, add to fixed view list
+		if (pageLayout.isFixed()) {
+			pageLayout.markAsFixed(viewId);
+		}
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPlaceholderFolderLayout#addFixedPlaceholder(java.lang.String)
+	 */
+	public void addFixedPlaceholder(String viewId) {
+		addPlaceholder(viewId);
+		pageLayout.markAsFixed(viewId);
 	}
 	/**
 	 * Inform the page layout of the new part created

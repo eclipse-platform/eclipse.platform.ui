@@ -68,6 +68,13 @@ public class FolderLayout implements IFolderLayout {
 		// Add it to the folder layout.
 		folder.add(newPart);
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPlaceholderFolderLayout#addFixedPlaceholder(java.lang.String)
+	 */
+	public void addFixedPlaceholder(String viewId) {
+		addPlaceholder(viewId);
+		pageLayout.markAsFixed(viewId);
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IFolderLayout#addView(java.lang.String)
@@ -99,9 +106,9 @@ public class FolderLayout implements IFolderLayout {
 		}
 		
 		// if page layout is fixed, add to fixed view list
-		if (pageLayout.isFixed() && 
-				!pageLayout.getFixedViews().contains(viewFactory.getView(viewId)))
-			pageLayout.getFixedViews().add(viewFactory.getView(viewId));
+		if (pageLayout.isFixed()) {
+			pageLayout.markAsFixed(viewId);
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -109,8 +116,7 @@ public class FolderLayout implements IFolderLayout {
 	 */
 	public void addFixedView(String viewId) {
 		addView(viewId);
-		if (!pageLayout.getFixedViews().contains(viewFactory.getView(viewId)))
-			pageLayout.getFixedViews().add(viewFactory.getView(viewId));		
+		pageLayout.markAsFixed(viewId);
 	}
 
 	/**
