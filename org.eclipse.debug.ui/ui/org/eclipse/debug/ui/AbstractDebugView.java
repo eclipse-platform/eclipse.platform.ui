@@ -11,6 +11,7 @@ import java.util.Map;
 
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.debug.internal.ui.LazyModelPresentation;
+import org.eclipse.debug.internal.ui.DebugActionGroupsManager;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
@@ -98,6 +99,11 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	 * are <code>IAction</code>.
 	 */
 	private Map fActionMap = null;
+	
+	/**
+	 * The context menu manager for this view
+	 */
+	private IMenuManager fContextMenuManager;
 	
 	/**
 	 * The memento that was used to persist the state of this view.
@@ -241,6 +247,8 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 		setMessagePage(new MessagePage());
 		getMessagePage().createControl(getPageBook());
 		initPage(getMessagePage());
+		
+		DebugActionGroupsManager.getDefault().registerView(this);
 	}	
 	
 	/**
@@ -288,6 +296,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 		}
 		setViewer(null);
 		fActionMap.clear();
+		DebugActionGroupsManager.getDefault().deregisterView(this);
 		super.dispose();
 	}
 	
@@ -370,6 +379,14 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 
 		// register the context menu such that other plugins may contribute to it
 		getSite().registerContextMenu(menuMgr, getViewer());
+		fContextMenuManager= menuMgr;
+	}
+	
+	/**
+	 * @see IDebugViewAdapter#getContextMenuManager()
+	 */
+	public IMenuManager getContextMenuManager() {
+		return fContextMenuManager;
 	}
 	
 	/**

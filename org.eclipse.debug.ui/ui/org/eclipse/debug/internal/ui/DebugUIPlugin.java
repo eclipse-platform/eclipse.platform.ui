@@ -70,7 +70,6 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -99,7 +98,8 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 															   IPropertyChangeListener, 
 															   ILaunchConfigurationListener {															   
 															   	
-										   	
+										   
+
 	/**
 	 * The singleton debug plugin instance
 	 */
@@ -379,6 +379,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 		
 		// shutdown the perspective manager
 		PerspectiveManager.getDefault().shutdown();		
+		DebugActionGroupsManager.getDefault().shutdown();
 		ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
 		launchManager.removeLaunchListener(this);
 		launchManager.removeLaunchConfigurationListener(this);
@@ -423,6 +424,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 		
 		// startup the perspective manager
 		PerspectiveManager.getDefault().startup();
+		DebugActionGroupsManager.getDefault().startup();
 		
 		IAdapterManager manager= Platform.getAdapterManager();
 		manager.registerAdapters(new DebugUIPropertiesAdapterFactory(), IDebugElement.class);
@@ -433,7 +435,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 				public void run() {
 					createImageRegistry();
 				}
-			});			
+			});
 	}
 
 	/**
@@ -1511,7 +1513,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 		if (propertyName.equals(IDebugPreferenceConstants.LAUNCHING_STYLE)) {
 			setEmptyLaunchHistories();
 		}
-	}
-	
+	}	
 }
 

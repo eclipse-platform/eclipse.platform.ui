@@ -559,4 +559,12 @@ public interface IDebugUIConstants {
 	 * @since 2.0
 	 */
 	public static final String ATTR_RUN_FAVORITE = PLUGIN_ID + ".runFavorite"; //$NON-NLS-1$		
+	
+	/**
+	 * Debug action groups extension point identifier
+	 * (value <code>"debugActionGroups"</code>).
+	 * 
+	 * @since 2.0
+	 */
+	public static final String EXTENSION_POINT_DEBUG_ACTION_GROUPS= "debugActionGroups";	 //$NON-NLS-1$
 }

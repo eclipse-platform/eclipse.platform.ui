@@ -6,6 +6,7 @@ package org.eclipse.debug.ui;
  */
 
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IViewPart;
 
@@ -76,4 +77,11 @@ public interface IDebugViewAdapter extends IViewPart {
 	 */
 	public IAction getAction(String actionID);
 	
+	/**
+	 * Returns the context menu manager for this view.
+	 *
+	 * @return the context menu manager for this view, or <code>null</code> if none
+	 * @since 2.0
+	 */
+	public IMenuManager getContextMenuManager();
 }
