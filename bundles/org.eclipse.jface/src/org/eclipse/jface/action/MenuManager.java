@@ -435,8 +435,21 @@ public class MenuManager extends ContributionManager implements IMenuManager {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IContributionItem#isVisible()
 	 */
-	public boolean isVisible() {
-		return visible;
+	public boolean isVisible() {	
+		if (!visible)
+			return false; // short circut calculations in this case
+		
+		// menus arent visible if all of its children are invisible (or only contains visible separators).
+		IContributionItem [] childItems = getItems();
+		boolean visibleChildren = false;
+		for (int j = 0; j < childItems.length; j++) {
+			if (childItems[j].isVisible() && !childItems[j].isSeparator()) {
+				visibleChildren = true;
+				break;
+			}
+		}
+		
+		return visibleChildren;	
 	}
 
 	/**
