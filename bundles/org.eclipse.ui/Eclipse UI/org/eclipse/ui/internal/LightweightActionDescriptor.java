@@ -5,6 +5,7 @@ package org.eclipse.ui.internal;
  * All Rights Reserved.
  */
 import org.eclipse.core.runtime.*;
+import org.eclipse.ui.internal.dialogs.DialogUtil;
 import org.eclipse.ui.internal.model.WorkbenchAdapter;
 import org.eclipse.ui.model.*;
 import org.eclipse.jface.resource.*;
@@ -85,20 +86,9 @@ public String getLabel(Object o) {
 	if (o == this) {
 		String text = getLabel();
 		int end = text.lastIndexOf('@');
-		int pos = text.indexOf('&');
-		if (pos >= 0) {
-			if (end < 0)
-				end = text.length();
-			char[] buffer = new char[end-1];
-			text.getChars(0, pos, buffer, 0);
-			text.getChars(pos + 1, end, buffer, pos);
-			return new String(buffer);
-		} else if (end < 0) {
-			return text;
-		} else {
-			return text.substring(0, end);
-		}
-		
+		if(end >= 0)
+			text = text.substring(0, end);
+		return DialogUtil.removeAccel(text);		
 	}
 	return super.getLabel(o);
 }
