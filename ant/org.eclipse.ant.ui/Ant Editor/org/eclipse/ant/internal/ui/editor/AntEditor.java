@@ -295,19 +295,12 @@ public class AntEditor extends TextEditor {
 			AntUIPlugin.getActivePage().bringToTop(this);
         }
         
-        /*
-         * Here the according ISourceReference should be determined and
-         * then passed to setSelection.
-         */
         AntElementNode selectedXmlElement = (AntElementNode)selection.getFirstElement(); 
         if(selectedXmlElement != null) {
 			setSelection(selectedXmlElement, !isActivePart());
         }
     }
 
-    /*
-     * Returns whether the editor is active.
-     */
     private boolean isActivePart() {
         IWorkbenchWindow window= getSite().getWorkbenchWindow();
         IPartService service= window.getPartService();
@@ -324,7 +317,7 @@ public class AntEditor extends TextEditor {
         		return;
         	}
             
-            StyledText  textWidget= null;
+            StyledText textWidget= null;
             ISourceViewer sourceViewer= getSourceViewer();
             if (sourceViewer != null) {
                 textWidget= sourceViewer.getTextWidget();
@@ -338,15 +331,15 @@ public class AntEditor extends TextEditor {
                 
                 int offset= reference.getOffset();
                 int length= reference.getSelectionLength();
-                
+                int highLightLength= reference.getLength();
                 if (offset < 0) {
                     return;
                 }
                     
                 textWidget.setRedraw(false);
                 
-                if(length > 0) {
-	                setHighlightRange(offset, length, moveCursor);
+                if (highLightLength > 0) {
+	                setHighlightRange(offset, highLightLength, moveCursor);
                 }
                 
                 if (!moveCursor) {
