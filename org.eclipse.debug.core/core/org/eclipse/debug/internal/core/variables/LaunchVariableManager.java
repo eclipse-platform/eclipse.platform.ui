@@ -85,11 +85,11 @@ public class LaunchVariableManager implements ILaunchVariableManager {
 		return fgSimpleVariableRegistry.getVariables();
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.debug.core.variables.ILaunchVariableManager#newSimpleVariable(java.lang.String, java.lang.String, java.lang.String)
 	 */
-	public ISimpleLaunchVariable newSimpleVariable(String name, String value, String description) {
-		return new SimpleLaunchVariable(name, value, description, null);
+	public ISimpleLaunchVariable newSimpleVariable(String name, String value, String description, boolean contributed) {
+		return new SimpleLaunchVariable(name, value, description, contributed);
 	}
 	
 	/**

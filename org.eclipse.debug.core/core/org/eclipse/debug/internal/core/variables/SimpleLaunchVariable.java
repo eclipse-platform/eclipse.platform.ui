@@ -28,6 +28,7 @@ public class SimpleLaunchVariable extends LaunchVariable implements ISimpleLaunc
 	
 	private ILaunchVariableInitializer fVariableInitializer= null;
 	private String fValue= null;
+	private boolean fIsContributed= false;
 	
 	/**
 	 * Creates a new launch configuration variable with the given initializer or <code>null</code>
@@ -41,6 +42,26 @@ public class SimpleLaunchVariable extends LaunchVariable implements ISimpleLaunc
 	 */
 	public SimpleLaunchVariable(String name, String initialValue, String description, IConfigurationElement element) {
 		super(name, description, element);
+		if (element != null) {
+			fIsContributed= true;
+		}
+		fValue= initialValue;
+	}
+	
+	/**
+	 * Creates a new launch configuration variable with the given initializer or <code>null</code>
+	 * if none is available.
+	 * 
+	 * @param initialValue the variable's initial value or <code>null</code> if no initial value
+	 * should be set.
+	 * @param description the variable's description or <code>null</code> if no
+	 * description is specified.
+	 * @param contributed whether or not this variable should be flagged as having been contributed
+	 * via extension
+	 */
+	public SimpleLaunchVariable(String name, String initialValue, String description, boolean contributed) {
+		super(name, description, null);
+		fIsContributed= contributed;
 		fValue= initialValue;
 	}
 	
@@ -111,6 +132,13 @@ public class SimpleLaunchVariable extends LaunchVariable implements ISimpleLaunc
 	private void fireSimpleVariableChanged() {
 		LaunchVariableManager manager = (LaunchVariableManager)DebugPlugin.getDefault().getLaunchVariableManager();
 		manager.simpleLaunchVariableChanged(this);
+	}
+
+	/**
+	 * @see org.eclipse.debug.core.variables.ISimpleLaunchVariable#isContributed()
+	 */
+	public boolean isContributed() {
+		return fIsContributed;
 	}
 
 }

@@ -53,18 +53,28 @@ public interface ISimpleLaunchVariable extends ILaunchVariable {
 	 * to this variable, it will attempt to use the variable's initializer if
 	 * one is defined. If no value is assigned and no initializer can set
 	 * the variable's value, returns <code>null</code>.
+	 * 
 	 * @return the variable's value or <code>null</code> if none can be
 	 * determined
 	 */
 	public String getValue();
 	/**
 	 * Sets the text value of this variable.
+	 * 
 	 * @param value the value to assign to this variable
 	 */
 	public void setValue(String value);
 	/**
 	 * Sets the description of this variable.
+	 * 
 	 * @param description the description to assign to this variable
 	 */
 	public void setDescription(String description);
+	/**
+	 * Returns whether or not this variable was contributed
+	 * by a plug-in via extension.
+	 * 
+	 * @return whether or not this variable was contributed via extension
+	 */
+	public boolean isContributed();
 }

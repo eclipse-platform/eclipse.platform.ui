@@ -148,7 +148,11 @@ public interface ILaunchVariableManager {
 	 * @param name variable name, cannot be <code>null</code>
 	 * @param value variable value, may be <code>null</code>
 	 * @param description variable description, may be <code>null</code>
+	 * @param contributed whether the new variable should be flagged as
+	 * 		having been contributed via extension. Clients should only pass
+	 * 		<code>true</code> when creating a copy of a variable that
+	 * 		returns <code>true</code> to isContributed().
 	 * @return launch variable
 	 */
-	public ISimpleLaunchVariable newSimpleVariable(String name, String value, String description);
+	public ISimpleLaunchVariable newSimpleVariable(String name, String value, String description, boolean contributed);
 }

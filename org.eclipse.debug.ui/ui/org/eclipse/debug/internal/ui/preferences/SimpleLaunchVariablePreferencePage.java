@@ -25,6 +25,7 @@ import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -42,6 +43,7 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -49,6 +51,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -87,9 +90,9 @@ public class SimpleLaunchVariablePreferencePage extends PreferencePage implement
 		DebugPreferencesMessages.getString("SimpleVariablePreferencePage.5") //$NON-NLS-1$
 	};
 	protected ColumnLayoutData[] variableTableColumnLayouts= {
-		new ColumnWeightData(25),
-		new ColumnWeightData(25),
-		new ColumnWeightData(50)
+		new ColumnWeightData(33),
+		new ColumnWeightData(33),
+		new ColumnWeightData(34)
 	};
 	
 	public SimpleLaunchVariablePreferencePage() {
@@ -237,7 +240,7 @@ public class SimpleLaunchVariablePreferencePage extends PreferencePage implement
 		if (name != null && name.length() > 0) {
 			String value= dialog.getValue(VALUE_LABEL);
 			String description= dialog.getValue(DESCRIPTION_LABEL);
-			ISimpleLaunchVariable variable= DebugPlugin.getDefault().getLaunchVariableManager().newSimpleVariable(name, value, description);
+			ISimpleLaunchVariable variable= DebugPlugin.getDefault().getLaunchVariableManager().newSimpleVariable(name, value, description, false);
 			addVariable(variable);
 		}
 	}
@@ -291,7 +294,7 @@ public class SimpleLaunchVariablePreferencePage extends PreferencePage implement
 			value= dialog.getValue(VALUE_LABEL);
 			description= dialog.getValue(DESCRIPTION_LABEL);
 			if (!name.equals(originalName)) {
-				if (addVariable(DebugPlugin.getDefault().getLaunchVariableManager().newSimpleVariable(name, value, description))) {
+				if (addVariable(DebugPlugin.getDefault().getLaunchVariableManager().newSimpleVariable(name, value, description, false))) {
 					variableContentProvider.removeVariable(variable);
 					variableTable.refresh();
 				}
@@ -312,7 +315,22 @@ public class SimpleLaunchVariablePreferencePage extends PreferencePage implement
 	 */
 	private void handleRemoveButtonPressed() {
 		IStructuredSelection selection= (IStructuredSelection) variableTable.getSelection();
-		ISimpleLaunchVariable[] variables= (ISimpleLaunchVariable[]) selection.toList().toArray(new ISimpleLaunchVariable[0]);
+		List variablesToRemove= selection.toList();
+		StringBuffer contributedVariablesToRemove= new StringBuffer();
+		Iterator iter= variablesToRemove.iterator();
+		while (iter.hasNext()) {
+			ISimpleLaunchVariable variable = (ISimpleLaunchVariable) iter.next();
+			if (variable.isContributed()) {
+				contributedVariablesToRemove.append('\t').append(variable.getName()).append('\n');
+			}
+		}
+		if (contributedVariablesToRemove.length() > 0) {
+			boolean remove= MessageDialog.openQuestion(getShell(), DebugPreferencesMessages.getString("SimpleLaunchVariablePreferencePage.21"), MessageFormat.format(DebugPreferencesMessages.getString("SimpleLaunchVariablePreferencePage.22"), new String[] {contributedVariablesToRemove.toString()})); //$NON-NLS-1$ //$NON-NLS-2$
+			if (!remove) {
+				return;
+			}
+		}
+		ISimpleLaunchVariable[] variables= (ISimpleLaunchVariable[]) variablesToRemove.toArray(new ISimpleLaunchVariable[0]);
 		variableContentProvider.removeVariables(variables); 
 		variableTable.refresh();
 	}
@@ -424,7 +442,7 @@ public class SimpleLaunchVariablePreferencePage extends PreferencePage implement
 			ISimpleLaunchVariable[] simpleVariables= variableManager.getSimpleVariables();
 			for (int i = 0; i < simpleVariables.length; i++) {
 				ISimpleLaunchVariable variable= simpleVariables[i];
-				editedVariables.add(variableManager.newSimpleVariable(variable.getName(), variable.getValue(), variable.getDescription()));
+				editedVariables.add(variableManager.newSimpleVariable(variable.getName(), variable.getValue(), variable.getDescription(), variable.isContributed()));
 			}
 		}
 		/**
@@ -439,27 +457,44 @@ public class SimpleLaunchVariablePreferencePage extends PreferencePage implement
 		}
 	}
 	
-	private class SimpleVariableLabelProvider extends LabelProvider implements ITableLabelProvider {
+	private class SimpleVariableLabelProvider extends LabelProvider implements ITableLabelProvider, IColorProvider {
 		public Image getColumnImage(Object element, int columnIndex) {
 			return null;
 		}
 		public String getColumnText(Object element, int columnIndex) {
 			if (element instanceof ISimpleLaunchVariable) {
+				ISimpleLaunchVariable variable= (ISimpleLaunchVariable) element;
 				switch (columnIndex) {
 					case 0 :
-						return ((ISimpleLaunchVariable) element).getName();		
+						StringBuffer buffer= new StringBuffer(variable.getName());
+						if (variable.isContributed()) {
+							buffer.append(DebugPreferencesMessages.getString("SimpleLaunchVariablePreferencePage.23")); //$NON-NLS-1$
+						}
+						return buffer.toString();
 					case 1:
-						String value= ((ISimpleLaunchVariable) element).getValue(); 
+						String value= variable.getValue(); 
 						if (value == null) {
 							value= ""; //$NON-NLS-1$
 						}
 						return value;
 					case 2:
-						String description= ((ISimpleLaunchVariable) element).getDescription();
+						String description= variable.getDescription();
 						if (description == null) {
 							description= ""; //$NON-NLS-1$
 						}
 						return description;
+				}
+			}
+			return null;
+		}
+		public Color getForeground(Object element) {
+			return null;
+		}
+		public Color getBackground(Object element) {
+			if (element instanceof ISimpleLaunchVariable) {
+				if (((ISimpleLaunchVariable) element).isContributed()) {
+					Display display= Display.getCurrent();
+					return display.getSystemColor(SWT.COLOR_INFO_BACKGROUND);		
 				}
 			}
 			return null;

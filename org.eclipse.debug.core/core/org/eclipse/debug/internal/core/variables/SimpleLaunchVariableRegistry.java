@@ -13,8 +13,10 @@ package org.eclipse.debug.internal.core.variables;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -54,8 +56,13 @@ public class SimpleLaunchVariableRegistry {
 	private static final String NAME_TAG= "name"; //$NON-NLS-1$
 	private static final String VALUE_TAG= "value"; //$NON-NLS-1$
 	private static final String DESCRIPTION_TAG="description"; //$NON-NLS-1$
+	private static final String CONTRIBUTED_TAG="contributed"; //$NON-NLS-1$
+	// XML values
+	private static final String TRUE_VALUE= "true"; //$NON-NLS-1$
+	private static final String FALSE_VALUE= "false"; //$NON-NLS-1$
 
-	private Map fVariables= new HashMap(); 
+	private Map fVariables= new HashMap();
+	private List fContributedVariables= new ArrayList(); 
 	
 	public SimpleLaunchVariableRegistry() {
 		loadExtensions();
@@ -111,6 +118,15 @@ public class SimpleLaunchVariableRegistry {
 	}
 	
 	/**
+	 * Returns all the variables in this registry contributed via extension
+	 * 
+	 * @return the contributed variables in this registry
+	 */
+	public ISimpleLaunchVariable[] getContributedVariables() {
+		return (ISimpleLaunchVariable[]) fContributedVariables.toArray(new ISimpleLaunchVariable[fContributedVariables.size()]);
+	}
+	
+	/**
 	 * Loads the variables contributed via extension.
 	 */
 	public void loadExtensions() {
@@ -131,6 +147,7 @@ public class SimpleLaunchVariableRegistry {
 			String description= element.getAttribute(ATTR_DESCRIPTION);
 			ISimpleLaunchVariable variable= new SimpleLaunchVariable(name, initialValue, description, element);
 			fVariables.put(variable.getName(), variable);
+			fContributedVariables.add(variable);
 		}
 	}
 	
@@ -166,18 +183,10 @@ public class SimpleLaunchVariableRegistry {
 				}
 				String name= element.getAttribute(NAME_TAG);
 				if (name.length() > 0) {
-					ISimpleLaunchVariable variable= getVariable(name);
-					if (variable == null) {
-						variable= new SimpleLaunchVariable(name);
-					}
 					String value= element.getAttribute(VALUE_TAG);
-					if (value.length() > 0) {
-						variable.setValue(value);
-					}
 					String description= element.getAttribute(DESCRIPTION_TAG);
-					if (description.length() > 0) {
-						variable.setDescription(description);
-					}
+					boolean contributed= TRUE_VALUE.equals(element.getAttribute(CONTRIBUTED_TAG));
+					ISimpleLaunchVariable variable= new SimpleLaunchVariable(name, value, description, contributed);
 					fVariables.put(name, variable);
 				} else {
 					DebugPlugin.logMessage("Invalid variable entry encountered while loading launch configuration variables. Variable name is null.", null); //$NON-NLS-1$
@@ -218,10 +227,12 @@ public class SimpleLaunchVariableRegistry {
 		document.appendChild(rootElement);
 		while (iter.hasNext()) {
 			Map.Entry entry= (Map.Entry) iter.next();
+			ISimpleLaunchVariable variable= (ISimpleLaunchVariable) entry.getValue();
 			Element element= document.createElement(VARIABLE_TAG);
 			element.setAttribute(NAME_TAG, (String)entry.getKey());
-			element.setAttribute(VALUE_TAG, ((ISimpleLaunchVariable)entry.getValue()).getValue());
-			element.setAttribute(DESCRIPTION_TAG, ((ISimpleLaunchVariable)entry.getValue()).getDescription());
+			element.setAttribute(VALUE_TAG, variable.getValue());
+			element.setAttribute(DESCRIPTION_TAG, variable.getDescription());
+			element.setAttribute(CONTRIBUTED_TAG, variable.isContributed() ? TRUE_VALUE : FALSE_VALUE);
 			rootElement.appendChild(element);
 		}
 		return LaunchManager.serializeDocument(document);
