@@ -1148,12 +1148,16 @@ class FindReplaceDialog extends Dialog {
 			while (index != -1) {
 				index= fTarget.findAndSelect(findReplacePosition, findString, forwardSearch, caseSensitive, wholeWord);
 				if (index != -1) { // substring not contained from current position
-					if (forwardSearch)
-						findReplacePosition= index + replaceString.length();					
-					else
-						findReplacePosition= index - replaceString.length();
 					fTarget.replaceSelection(replaceString);
 					replaceCount++;
+					
+					if (forwardSearch)
+						findReplacePosition= index + replaceString.length();					
+					else {
+						findReplacePosition= index - replaceString.length();
+						if (findReplacePosition == -1)
+							break;
+					}
 				}
 			}
 		} finally {
