@@ -137,13 +137,13 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 			// can only show history if remote exists or local has a base.
 			String currentRevision = null;
 			try {
-				currentRevision = baseFile!=null ? baseFile.getRevision(): null;
+				currentRevision = baseFile != null ? baseFile.getRevision(): null;
 			} catch(TeamException e) {
 				CVSUIPlugin.log(e.getStatus());
 			}
-			if(remoteFile!=null) {
+			if (remoteFile != null) {
 				view.showHistory(remoteFile, currentRevision);
-			} else if(baseFile!=null) {
+			} else if (baseFile != null) {
 				view.showHistory(baseFile, currentRevision);
 			}
 		}
