@@ -25,6 +25,9 @@ import java.util.Map;
  * <em>Note:</em> This is interim API and will likely change shape for the
  * final release of 3.1.
  * </p>
+ * <p>
+ * Clients may implement this interface.
+ * </p>
  * 
  * @since 3.1
  */

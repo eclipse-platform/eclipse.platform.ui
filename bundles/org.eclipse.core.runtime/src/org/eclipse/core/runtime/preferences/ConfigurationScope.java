@@ -29,6 +29,9 @@ import org.eclipse.osgi.service.datalocation.Location;
  * The path for preferences defined in the configuration scope hierarchy
  * is as follows: <code>/configuration/&lt;qualifier&gt;</code>
  * </p>
+ * <p>
+ * This class is not intended to be subclassed. This class may be instantiated.
+ * </p>
  * @see Platform#getConfigurationLocation()
  * @since 3.0
  */
@@ -39,6 +42,13 @@ public final class ConfigurationScope extends AbstractScope {
 	 * scope name for the configuration preference scope.
 	 */
 	public static final String SCOPE = "configuration"; //$NON-NLS-1$
+
+	/**
+	 * Create and return a new configuration scope instance.
+	 */
+	public ConfigurationScope() {
+		super();
+	}
 
 	/*
 	 * @see org.eclipse.core.runtime.preferences.IScopeContext#getName()
