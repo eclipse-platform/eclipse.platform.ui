@@ -57,7 +57,7 @@ public class AntTemplatePreferencePage extends TemplatePreferencePage {
      * @see org.eclipse.ui.texteditor.templates.TemplatePreferencePage#createViewer(org.eclipse.swt.widgets.Composite)
      */
     protected SourceViewer createViewer(Composite parent) {
-    	SourceViewer viewer = new SourceViewer(parent, null, null, false, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+    	SourceViewer viewer = new SourceViewer(parent, null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
           
 		SourceViewerConfiguration configuration = new AntTemplateViewerConfiguration();        
 		IDocument document = new Document();       
