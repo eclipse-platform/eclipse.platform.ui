@@ -95,9 +95,10 @@ public class RepositoryManager {
 	public CVSTag[] getKnownVersionTags(ICVSRemoteResource resource, IProgressMonitor monitor) throws TeamException {
 		// Find tags in .vcm_meta file, optimization for Eclipse users
 		Set result = new HashSet();
-		ICVSRemoteFile vcmMeta = getVCMMeta(resource);
-		if (vcmMeta != null) {
-			CVSTag[] tags = getTags(vcmMeta, new NullProgressMonitor());
+		ICVSRemoteFile[] vcmMeta = getVCMMeta(resource);
+		for (int j = 0; j < vcmMeta.length; j++) {
+			ICVSRemoteFile iCVSRemoteFile = vcmMeta[j];
+			CVSTag[] tags = getTags(iCVSRemoteFile, new NullProgressMonitor());
 			for (int i = 0; i < tags.length; i++) {
 				if (tags[i].getType() == CVSTag.VERSION) {
 					result.add(tags[i]);
@@ -116,15 +117,17 @@ public class RepositoryManager {
 		result.addAll(set);
 		return (CVSTag[])result.toArray(new CVSTag[0]);
 	}
-	private ICVSRemoteFile getVCMMeta(ICVSRemoteResource resource) throws TeamException {
+	private ICVSRemoteFile[] getVCMMeta(ICVSRemoteResource resource) throws TeamException {
 		// There should be a better way of doing this.
+		List files = new ArrayList();
 		IRemoteResource[] resources = resource.members(new NullProgressMonitor());
 		for (int i = 0; i < resources.length; i++) {
-			if (resources[i] instanceof ICVSRemoteFile && resources[i].getName().equals(".vcm_meta")) {
-				return (ICVSRemoteFile)resources[i];
+			if (resources[i] instanceof ICVSRemoteFile && 
+					(resources[i].getName().equals(".vcm_meta") || resources[i].getName().equals(".project"))) {
+				files.add(resources[i]);
 			}
 		}
-		return null;
+		return (ICVSRemoteFile[]) files.toArray(new ICVSRemoteFile[files.size()]);
 	}
 	/**
 	 * Add the given branch tags to the list of known tags for the given
