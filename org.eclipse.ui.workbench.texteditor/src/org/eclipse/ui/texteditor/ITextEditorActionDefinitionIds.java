@@ -314,4 +314,18 @@ public interface ITextEditorActionDefinitionIds extends IWorkbenchActionDefiniti
 	 * @since 2.1
 	 */
 	public static final String GOTO_LAST_EDIT_POSITION= "org.eclipse.ui.workbench.texteditor.GotoLastEditPositionAction"; //$NON-NLS-1$
+	
+	/**
+	 * Action definition ID of the edit -> content assist proposal action
+	 * (value <code>"org.eclipse.ui.edit.text.contentAssist.proposals"</code>).
+	 * @since 2.1
+	 */
+	public static final String CONTENT_ASSIST_PROPOSALS= "org.eclipse.ui.edit.text.contentAssist.proposals"; //$NON-NLS-1$
+	
+	/**
+	 * Action definition ID of the edit -> content assist context information action
+	 * (value <code>"org.eclipse.ui.edit.text.contentAssist.contextInformation"</code>).
+	 * @since 2.1
+	 */
+	public static final String CONTENT_ASSIST_CONTEXT_INFORMATION= "org.eclipse.ui.edit.text.contentAssist.contextInformation"; //$NON-NLS-1$
 }
