@@ -142,7 +142,7 @@ public interface IDialogConstants {
 	 */
 	public int SELECT_TYPES_ID = 20;
 	
-	**
+	/**
 	 * Button id for a "No to All" button (value 4).
 	 */
 	public int NO_TO_ALL_ID = 21;
