@@ -170,8 +170,8 @@
 	<test id = "org.eclipse.core.tests.resources.session.Test1GALH44">
 		<run class="org.eclipse.core.tests.resources.session.Test1GALH44"/>
 	</test>
-	<test id = "org.eclipse.core.tests.resources.session.Test1GALH44">
-		<run class="org.eclipse.core.tests.resources.session.Test1GALH44"/>
+	<test id = "org.eclipse.core.tests.resources.session.TestMissingBuilder">
+		<run class="org.eclipse.core.tests.resources.session.TestMissingBuilder"/>
 	</test>
   
     <test id="usecase.AllTests">
