@@ -237,7 +237,6 @@ public class PerspectiveSwitcher {
 				Menu menu = new Menu(toolBar);
 				final MenuItem dockMenuItem = new MenuItem(menu, SWT.CHECK);
 				dockMenuItem.setText(WorkbenchMessages.getString("PerspectiveBar.dockLeft")); //$NON-NLS-1$
-
 				dockMenuItem.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
 						String preference = dockMenuItem.getSelection() ? IWorkbenchPreferenceConstants.TOP_LEFT
@@ -248,11 +247,23 @@ public class PerspectiveSwitcher {
                                         preference);
 					}
 				});
+				final MenuItem showtextMenuItem = new MenuItem(menu, SWT.CHECK);
+				showtextMenuItem.setText(WorkbenchMessages.getString("PerspectiveBar.showText")); //$NON-NLS-1$
+				showtextMenuItem.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent e) {
+						boolean preference = showtextMenuItem.getSelection();
+                        PrefUtil.getAPIPreferenceStore()
+                                .setValue(IWorkbenchPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR, preference);
+                        LayoutUtil.resize(perspectiveBar.getControl());	
+					}
+				});
+
 				genericMenu = menu;
 			}
 
-			// get the dock menu item and update the state to ensure it matches the preference
+			// set the state of the menu items to match the preferences
 			genericMenu.getItem(0).setSelection(location == TOP_LEFT);
+			genericMenu.getItem(1).setSelection(PrefUtil.getAPIPreferenceStore().getBoolean(IWorkbenchPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR));
 
 			// Show popup menu.
 			if (genericMenu != null) {
