@@ -50,6 +50,7 @@ public class WorkInProgressPreferencePage extends PreferencePage implements IWor
 		GridLayout layout = new GridLayout(3, false);
 		layout.marginHeight = layout.marginWidth = 0;
 		composite.setLayout(layout);
+
 		Label label = new Label(composite, SWT.NONE);
 		label.setText(WorkInProgressMessages.getString("WorkInProgressPreferencePage.0_label")); //$NON-NLS-1$
 		GridData data = new GridData();
@@ -62,6 +63,14 @@ public class WorkInProgressPreferencePage extends PreferencePage implements IWor
 		data = new GridData(GridData.HORIZONTAL_ALIGN_CENTER);
 		data.widthHint = convertWidthInCharsToPixels(10);
 		displayLabel.setLayoutData(data);
+
+		Label description = new Label(composite, SWT.WRAP);
+		description.setText(
+			WorkInProgressMessages.getString("WorkInProgressPreferencePage.SpeedExplanation")); //$NON-NLS-1$
+
+		GridData descriptionData = new GridData();
+		descriptionData.horizontalSpan = 3;
+		description.setLayoutData(descriptionData);
 
 		slider.addSelectionListener(new SelectionListener() {
 
@@ -136,8 +145,10 @@ public class WorkInProgressPreferencePage extends PreferencePage implements IWor
 
 		return super.performOk();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
 	protected void performDefaults() {
