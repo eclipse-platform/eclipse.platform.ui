@@ -11,22 +11,15 @@
 package org.eclipse.debug.internal.ui;
 
  
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.debug.core.model.IStackFrame;
-import org.eclipse.debug.ui.IDebugEditorPresentation;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Canvas;
-import org.eclipse.ui.texteditor.DefaultAnnotation;
+import org.eclipse.jface.text.source.Annotation;
 
 /**
  * An annotation for the vertical ruler in text editors that shows one of two
  * images for the current instruction pointer when debugging (one for the top
  * stack frame, one for all others).
  */
-public class InstructionPointerAnnotation extends DefaultAnnotation {
+public class InstructionPointerAnnotation extends Annotation {
 
 	/**
 	 * The frame for this instruction pointer annotation.  This is necessary only so that
@@ -35,49 +28,16 @@ public class InstructionPointerAnnotation extends DefaultAnnotation {
 	private IStackFrame fStackFrame;
 	
 	/**
-	 * Flag indicating if this annotation represents a top stack frame.  Top stack frames
-	 * have different images from all other stack frames.
-	 */
-	private boolean fTopStackFrame;
-
-	/**
 	 * Construct an instruction pointer annotation for the given stack frame.
 	 * 
 	 * @param stackFrame frame to create an instruction pointer annotation for
 	 * @param isTopFrame whether the given frame is the top stack frame in its thread 
 	 */
 	public InstructionPointerAnnotation(IStackFrame stackFrame, boolean isTopFrame) {
-		super(isTopFrame ? IInternalDebugUIConstants.INSTRUCTION_POINTER_CURRENT : IInternalDebugUIConstants.INSTRUCTION_POINTER_SECONDARY,
-						 IMarker.SEVERITY_INFO, true,
+		super(isTopFrame ? IInternalDebugUIConstants.ANN_INSTR_POINTER_CURRENT: IInternalDebugUIConstants.ANN_INSTR_POINTER_SECONDARY,
+						 false,
 						 isTopFrame ? DebugUIMessages.getString("InstructionPointerAnnotation.0") : DebugUIMessages.getString("InstructionPointerAnnotation.1")); //$NON-NLS-1$ //$NON-NLS-2$
-		fTopStackFrame = isTopFrame;
 		fStackFrame = stackFrame;
-	}
-
-	/**
-	 * @see org.eclipse.jface.text.source.Annotation#paint(org.eclipse.swt.graphics.GC, org.eclipse.swt.widgets.Canvas, org.eclipse.swt.graphics.Rectangle)
-	 */
-	public void paint(GC gc, Canvas canvas, Rectangle bounds) {
-		Image image = getInstructionPointerImage(isTopStackFrame());
-		drawImage(image, gc, canvas, bounds, SWT.CENTER);
-	}
-	
-	/**
-	 * Returns the image associated with this instruction pointer.
-	 * 
-	 * @return image associated with this instruction pointer
-	 */
-	private Image getInstructionPointerImage(boolean topStackFrame) {
-		IDebugEditorPresentation presentation = (IDebugEditorPresentation)DebugUIPlugin.getModelPresentation();
-		Image image = presentation.getInstructionPointerImage(getStackFrame());
-		if (image == null) {
-			if (topStackFrame) {
-				image = DebugPluginImages.getImage(IInternalDebugUIConstants.IMG_OBJS_INSTRUCTION_POINTER_TOP);
-			} else {
-				image = DebugPluginImages.getImage(IInternalDebugUIConstants.IMG_OBJS_INSTRUCTION_POINTER);			
-			}
-		}
-		return image;
 	}
 	
 	/**
@@ -104,17 +64,6 @@ public class InstructionPointerAnnotation extends DefaultAnnotation {
 	 */
 	private IStackFrame getStackFrame() {
 		return fStackFrame;
-	}
-		
-	/**
-	 * Returns whether the stack frame associated with this annotation is the
-	 * top stack frame in its thread.
-	 * 
-	 * @return whether the stack frame associated with this annotation is the
-	 * top stack frame in its thread
-	 */
-	private boolean isTopStackFrame() {
-		return fTopStackFrame;
 	}
 
 }

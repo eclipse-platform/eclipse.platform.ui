@@ -1279,7 +1279,8 @@
       </specification>
       <specification
             colorPreferenceValue="217,255,226"
-            annotationType="org.eclipse.debug.core.currentIP"
+            annotationType="org.eclipse.debug.ui.currentIP"
+            icon="icons/full/obj16/inst_ptr_top.gif"
             verticalRulerPreferenceValue="true"
             colorPreferenceKey="currentIPColor"
             markerType="org.eclipse.debug.ui.instructionPointer.current"
@@ -1296,7 +1297,8 @@
       </specification>
       <specification
             colorPreferenceValue="217,255,226"
-            annotationType="org.eclipse.debug.core.secondaryIP"
+            annotationType="org.eclipse.debug.ui.secondaryIP"
+            icon="icons/full/obj16/inst_ptr.gif"
             verticalRulerPreferenceValue="true"
             colorPreferenceKey="secondaryIPColor"
             markerType="org.eclipse.debug.ui.instructionPointer.secondary"
