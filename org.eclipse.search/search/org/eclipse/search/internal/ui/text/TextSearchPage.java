@@ -536,6 +536,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 	private TextSearchScope getSelectedResourcesScope(boolean isProjectScope) {
 		TextSearchScope scope= new TextSearchScope(SearchMessages.getString("SelectionScope")); //$NON-NLS-1$
 		int elementCount= 0;
+		IProject firstProject= null;
 		if (getSelection() instanceof IStructuredSelection && !getSelection().isEmpty()) {
 			Iterator iter= ((IStructuredSelection)getSelection()).iterator();
 			while (iter.hasNext()) {
@@ -560,6 +561,8 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 						resource= resource.getProject();
 						if (resource == null || isProjectScope && scope.encloses(resource))
 							continue;
+						if (firstProject == null)
+							firstProject= (IProject)resource;
 					}
 					elementCount++;
 					scope.add(resource);
@@ -568,9 +571,9 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 		}
 		if (isProjectScope) {
 			if (elementCount > 1)
-				scope.setDescription(SearchMessages.getString("EnclosingProjectsScope")); //$NON-NLS-1$
-			else 
-				scope.setDescription(SearchMessages.getString("EnclosingProjectScope")); //$NON-NLS-1$
+				scope.setDescription(SearchMessages.getFormattedString("EnclosingProjectsScope", firstProject.getName())); //$NON-NLS-1$
+			else
+				scope.setDescription(SearchMessages.getFormattedString("EnclosingProjectScope", firstProject.getName())); //$NON-NLS-1$
 		} 
 		return scope;
 	}
