@@ -75,7 +75,6 @@ import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
-import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.dialogs.SelectPerspectiveDialog;
 import org.eclipse.ui.internal.ide.dialogs.WelcomeEditorInput;
 import org.eclipse.ui.internal.ide.model.WorkbenchAdapterBuilder;
@@ -1147,12 +1146,12 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
         label.setForeground(display.getSystemColor(SWT.COLOR_WHITE));
         label.setBackground(bgCol);
         label.setFont(JFaceResources.getFontRegistry().getBold(JFaceResources.DEFAULT_FONT));
-        String msg = "No perspectives are open. To open a perspective, press this button:"; //$NON-NLS-1$
+        String msg = IDEWorkbenchMessages.getString("IDEWorkbenchAdvisor.noPerspective"); //$NON-NLS-1$
         label.setText(msg);
         ToolBarManager toolBarManager = new ToolBarManager();
         // TODO: should obtain the open perspective action from ActionFactory
         IAction openPerspectiveAction = new Action() {
-        	{ setToolTipText(WorkbenchMessages.getString("PerspectiveBarNewContributionItem.toolTip")); //$NON-NLS-1$
+        	{ setToolTipText(IDEWorkbenchMessages.getString("IDEWorkbenchAdvisor.openPerspective")); //$NON-NLS-1$
         	  setImageDescriptor(WorkbenchImages.getImageDescriptor(
                     IWorkbenchGraphicConstants.IMG_ETOOL_NEW_PAGE));
         	}
