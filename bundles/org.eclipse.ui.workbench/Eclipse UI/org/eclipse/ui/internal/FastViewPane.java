@@ -12,11 +12,6 @@ package org.eclipse.ui.internal;
 
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.FocusAdapter;
-import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
@@ -27,7 +22,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.Sash;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.presentations.PartTabFolderPresentation;
 import org.eclipse.ui.internal.presentations.StandardSystemContribution;
@@ -48,13 +42,14 @@ import org.eclipse.ui.presentations.StackPresentation;
 class FastViewPane {
 	private int side = SWT.LEFT;
 
-	private Sash fastViewSash;
+	//private Sash fastViewSash;
 	private ViewPane currentPane;
 	private Composite clientComposite;
 	private static final int SASH_SIZE = 5;
 	private static final int MIN_FASTVIEW_SIZE = 10;
 	private int size;
-	private WidgetHider hider;
+	//private WidgetHider hider;
+	private HiddenSash sash;
 	
 	// Counts how many times we've scheduled a redraw... use this to avoid resizing
 	// the widgetry when we're getting resize requests faster than we can process them.
@@ -73,13 +68,11 @@ class FastViewPane {
 					currentPane.getPage().toggleFastView(currentPane.getViewReference());
 					break;
 				case IStackPresentationSite.STATE_MAXIMIZED:
-					hider.setEnabled(false);
-					fastViewSash.setVisible(false);
+					sash.setVisible(false);
 					getPresentation().setBounds(getBounds());
 					break;
 				case IStackPresentationSite.STATE_RESTORED:
-					hider.setEnabled(true);
-					fastViewSash.setVisible(false);
+					sash.setVisible(true);
 					getPresentation().setBounds(getBounds());
 					break;
 				default:
@@ -137,9 +130,7 @@ class FastViewPane {
 	};
 	
 	public void moveSash() {
-		hider.setEnabled(false);
-		fastViewSash.setVisible(true);
-		fastViewSash.setFocus();		
+		sash.moveSash();
 	}
 	
 	private Listener resizeListener = new Listener() {
@@ -152,7 +143,7 @@ class FastViewPane {
 		
 	private SelectionAdapter selectionListener = new SelectionAdapter () {
 		public void widgetSelected(SelectionEvent e) {
-			hider.setEnabled(false);
+
 			
 			if (currentPane != null) {
 				Rectangle bounds = clientComposite.getClientArea();
@@ -171,8 +162,7 @@ class FastViewPane {
 				if (e.detail != SWT.DRAG) {
 					getPresentation().getControl().moveAbove(null);
 					currentPane.moveAbove(null); 
-					fastViewSash.moveAbove(null);
-					hider.setEnabled(true);
+					sash.moveAbove(null);
 				}
 			}
 		}
@@ -195,11 +185,11 @@ class FastViewPane {
 				}
 				if (redrawCounter == 0) {
 					getPresentation().setBounds(getBounds());
+
+					updateFastViewSashBounds();
 				}
 			}
 		});
-		
-		updateFastViewSashBounds();
 	}
 	
 	/**
@@ -292,38 +282,16 @@ class FastViewPane {
 		pane.setFocus();
 		
 		boolean horizontal = Geometry.isHorizontal(side);
-		fastViewSash = new Sash(parent, Geometry.getSwtHorizontalOrVerticalConstant(horizontal));
-		fastViewSash.setVisible(false);
-		final KeyListener listener = new KeyAdapter() {
-			public void keyPressed(KeyEvent e) {
-				if (e.character == SWT.ESC || e.character == '\r') {
-					currentPane.setFocus();
-				}
-			}
-		};
-		fastViewSash.addFocusListener(new FocusAdapter() {
-			public void focusGained(FocusEvent e) {
-				hider.setEnabled(false);
-				fastViewSash.setBackground(fastViewSash.getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION));
-				fastViewSash.addKeyListener(listener);
-			}
-			public void focusLost(FocusEvent e) {
-				fastViewSash.setBackground(null);
-				fastViewSash.removeKeyListener(listener);
-				hider.setEnabled(true);
-			}
-		});
+		sash = new HiddenSash(parent, Geometry.getSwtHorizontalOrVerticalConstant(horizontal));
 
-		fastViewSash.addSelectionListener(selectionListener);
+		sash.addSelectionListener(selectionListener);
 
 		Rectangle clientArea = newClientComposite.getClientArea();
 		
 		getPresentation().getControl().moveAbove(null);
 		currentPane.moveAbove(null); 
-		fastViewSash.moveAbove(null);
+		sash.moveAbove(null);
 
-		hider = new WidgetHider(fastViewSash);
-		
 		setSize((int)(Geometry.getDimension(clientArea, !horizontal) * sizeRatio));
 
 	}
@@ -339,10 +307,10 @@ class FastViewPane {
 		int oppositeSide = Geometry.getOppositeSide(side);
 		Rectangle newBounds = Geometry.getExtrudedEdge(bounds, SASH_SIZE, oppositeSide);
 		
-		Rectangle oldBounds = fastViewSash.getBounds();
+		Rectangle oldBounds = sash.getBounds();
 		
 		if (!newBounds.equals(oldBounds)) {
-			fastViewSash.setBounds(newBounds);
+			sash.setBounds(newBounds);
 		}
 	}
 	
@@ -351,16 +319,7 @@ class FastViewPane {
 	 * of the view itself.
 	 */
 	public void dispose() {
-		if (hider != null) {
-			hider.dispose();
-			hider = null;
-		}
-		
-		// Dispose of the sash too...
-		if (fastViewSash != null) {
-			fastViewSash.dispose();
-			fastViewSash = null;
-		}
+		sash.dispose();
 				
 		StackPresentation presentation = getPresentation();
 		if (presentation != null) {
@@ -401,9 +360,8 @@ class FastViewPane {
 	 * required anymore, and might be removed from the public interface.
 	 */
 	public void hideFastViewSash() {
-		if (fastViewSash != null) {
-			hider.setEnabled(false);
-			fastViewSash.setBounds(new Rectangle(0, 0, 0, 0));
+		if (sash != null) {
+			sash.setVisible(false);
 		}
 	}
 	
@@ -415,8 +373,8 @@ class FastViewPane {
 		if (currentPane == null) {
 			return;
 		}
-		
-		hider.setEnabled(false);
+
+		sash.setVisible(false);
 		
 		clientComposite.removeListener(SWT.Resize, resizeListener);
 		
