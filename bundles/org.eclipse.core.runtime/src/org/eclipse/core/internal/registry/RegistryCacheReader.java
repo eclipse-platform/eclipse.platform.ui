@@ -310,14 +310,12 @@ public class RegistryCacheReader {
 			Throwable exception = InternalPlatform.DEBUG_REGISTRY ? e : null;
 			String message = Policy.bind("meta.unableToReadCache"); //$NON-NLS-1$
 			InternalPlatform.getDefault().log(new Status(IStatus.WARNING, Platform.PI_RUNTIME, 0, message, exception));
-		} catch (Throwable t) {
-			// catch any OutOfMemoryErrors/NullPointerExceptions that may have been caused by corrupted data
-			// log general message
-			String message = Policy.bind("meta.registryCacheReadProblems"); //$NON-NLS-1$						
-			InternalPlatform.getDefault().log(new Status(IStatus.WARNING, Platform.PI_RUNTIME, 0, message, null));
-			// log actual error			
-			Throwable exceptionToLog = InternalPlatform.DEBUG_REGISTRY ? t : null;
-			InternalPlatform.getDefault().log(new Status(IStatus.WARNING, Platform.PI_RUNTIME, 0, t.toString(), exceptionToLog));
+		} catch (OutOfMemoryError oome) {
+			// catch any OutOfMemoryErrors that may have been caused by corrupted data
+			logError(oome);
+		} catch (RuntimeException re) {
+			// catch any ArrayIndexOutOfBounds/NullPointer/NegativeArraySize/... exceptions that may have been caused by corrupted data
+			logError(re);
 		} finally {
 			try {
 				if (in != null)
@@ -329,6 +327,15 @@ public class RegistryCacheReader {
 			}
 		}
 		return new ConfigurationElement[0];
+	}
+
+	private void logError(Throwable t) {
+		// log general message
+		String message = Policy.bind("meta.registryCacheReadProblems"); //$NON-NLS-1$						
+		InternalPlatform.getDefault().log(new Status(IStatus.WARNING, Platform.PI_RUNTIME, 0, message, null));
+		// log actual error			
+		Throwable exceptionToLog = InternalPlatform.DEBUG_REGISTRY ? t : null;
+		InternalPlatform.getDefault().log(new Status(IStatus.WARNING, Platform.PI_RUNTIME, 0, t.toString(), exceptionToLog));
 	}
 
 	public final ExtensionRegistry loadCache() {
