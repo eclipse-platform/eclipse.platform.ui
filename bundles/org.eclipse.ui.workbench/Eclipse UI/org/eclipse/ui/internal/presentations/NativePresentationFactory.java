@@ -31,11 +31,11 @@ public class NativePresentationFactory extends WorkbenchPresentationFactory {
      * @see org.eclipse.ui.presentations.AbstractPresentationFactory
      */
     public StackPresentation createPresentation(Composite parent,
-            IStackPresentationSite site, int role, int flags,
+            IStackPresentationSite site, int role,
             String perspectiveId, String folderId) {
         switch (role) {
         default:
-            return new NativeStackPresentation(parent, site, flags);
+            return new NativeStackPresentation(parent, site);
         }
     }
 

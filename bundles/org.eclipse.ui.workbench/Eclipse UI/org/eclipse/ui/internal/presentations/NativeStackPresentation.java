@@ -127,11 +127,10 @@ public class NativeStackPresentation extends StackPresentation {
 	};
 
 
-	public NativeStackPresentation(Composite parent, IStackPresentationSite stackSite, int flags) {
+	public NativeStackPresentation(Composite parent, IStackPresentationSite stackSite) {
 	    super(stackSite);
 	    
-	    // TODO: flags are currently ignored
-		int tabPos = preferenceStore.getInt(IPreferenceConstants.VIEW_TAB_POSITION);
+	    int tabPos = preferenceStore.getInt(IPreferenceConstants.VIEW_TAB_POSITION);
 		tabFolder = new TabFolder(parent, tabPos);
 		
 		// listener to switch between visible tabItems
