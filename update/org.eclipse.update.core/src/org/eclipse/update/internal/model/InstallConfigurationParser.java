@@ -1,41 +1,22 @@
 package org.eclipse.update.internal.model;
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.Date;
-import java.util.Locale;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import java.net.*;
+import java.util.*;
 
 import org.apache.xerces.parsers.SAXParser;
-import org.eclipse.core.boot.IPlatformConfiguration;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.update.configuration.*;
-import org.eclipse.update.configuration.IInstallConfiguration;
+import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.core.IFeatureReference;
-import org.eclipse.update.core.ISite;
-import org.eclipse.update.core.SiteManager;
-import org.eclipse.update.core.model.*;
 import org.eclipse.update.core.model.FeatureReferenceModel;
 import org.eclipse.update.core.model.SiteModel;
-import org.eclipse.update.internal.core.Assert;
-import org.eclipse.update.internal.core.BaseSiteLocalFactory;
-import org.eclipse.update.internal.core.FeatureReference;
-import org.eclipse.update.internal.core.UpdateManagerPlugin;
-import org.eclipse.update.internal.core.UpdateManagerUtils;
-import org.xml.sax.Attributes;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
+import org.eclipse.update.internal.core.*;
+import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
+import org.eclipse.update.internal.core.Policy;
 
 /**
  * parse the default site.xml
@@ -48,10 +29,10 @@ public class InstallConfigurationParser extends DefaultHandler {
 	private URL siteURL;
 	private InstallConfigurationModel config;
 	private ConfiguredSiteModel configSite;
-	public static final String CONFIGURATION = "configuration";
-	public static final String CONFIGURATION_SITE = "site";
-	public static final String FEATURE = "feature";
-	public static final String ACTIVITY = "activity";
+	public static final String CONFIGURATION = "configuration"; //$NON-NLS-1$
+	public static final String CONFIGURATION_SITE = "site"; //$NON-NLS-1$
+	public static final String FEATURE = "feature"; //$NON-NLS-1$
+	public static final String ACTIVITY = "activity"; //$NON-NLS-1$
 
 	private ResourceBundle bundle;
 
@@ -69,7 +50,7 @@ public class InstallConfigurationParser extends DefaultHandler {
 
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
-			UpdateManagerPlugin.getPlugin().debug("Start parsing Configuration:" + (config).getURL().toExternalForm());
+			UpdateManagerPlugin.getPlugin().debug("Start parsing Configuration:" + (config).getURL().toExternalForm()); //$NON-NLS-1$
 		}
 
 		bundle = getResourceBundle();
@@ -89,7 +70,7 @@ public class InstallConfigurationParser extends DefaultHandler {
 			//ok, there is no bundle, keep it as null
 			//DEBUG:
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
-				UpdateManagerPlugin.getPlugin().debug(e.getLocalizedMessage() + ":" + config.getURL().toExternalForm());
+				UpdateManagerPlugin.getPlugin().debug(e.getLocalizedMessage() + ":" + config.getURL().toExternalForm()); //$NON-NLS-1$
 			}
 		}
 		return bundle;
@@ -102,7 +83,7 @@ public class InstallConfigurationParser extends DefaultHandler {
 
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
-			UpdateManagerPlugin.getPlugin().debug("Start Element: uri:" + uri + " local Name:" + localName + " qName:" + qName);
+			UpdateManagerPlugin.getPlugin().debug("Start Element: uri:" + uri + " local Name:" + localName + " qName:" + qName); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		try {
 
@@ -129,9 +110,9 @@ public class InstallConfigurationParser extends DefaultHandler {
 			}
 
 		} catch (MalformedURLException e) {
-			throw new SAXException("error processing URL. Check the validity of the URLs", e);
+			throw new SAXException(Policy.bind("Parser.UnableToCreateURL",e.getMessage()), e); //$NON-NLS-1$
 		} catch (CoreException e) {
-			throw new SAXException("error retrieving the site. Check validity of teh URL, the site.xml and the connection", e);
+			throw new SAXException(Policy.bind("Parser.InternalError",e.toString()), e); //$NON-NLS-1$
 		}
 
 	}
@@ -142,12 +123,12 @@ public class InstallConfigurationParser extends DefaultHandler {
 	private void processSite(Attributes attributes) throws MalformedURLException, CoreException {
 
 		//site url
-		String urlString = attributes.getValue("url");
+		String urlString = attributes.getValue("url"); //$NON-NLS-1$
 		siteURL = new URL(urlString);
 		ISite site = SiteManager.getSite(siteURL);
 
 		// policy
-		String policyString = attributes.getValue("policy");
+		String policyString = attributes.getValue("policy"); //$NON-NLS-1$
 		int policy = Integer.parseInt(policyString);
 
 		// configuration site
@@ -155,12 +136,12 @@ public class InstallConfigurationParser extends DefaultHandler {
 		configSite =factory.createConfigurationSiteModel((SiteModel)site,policy);
 
 		//platform url
-		String platformURLString = attributes.getValue("platformURL");
+		String platformURLString = attributes.getValue("platformURL"); //$NON-NLS-1$
 		configSite.setPlatformURLString(platformURLString);
 
 		// install
-		String installString = attributes.getValue("install");
-		boolean installable = installString.trim().equalsIgnoreCase("true") ? true : false;
+		String installString = attributes.getValue("install"); //$NON-NLS-1$
+		boolean installable = installString.trim().equalsIgnoreCase("true") ? true : false; //$NON-NLS-1$
 		configSite.isUpdateable(installable);
 
 		// add to install configuration
@@ -168,7 +149,7 @@ public class InstallConfigurationParser extends DefaultHandler {
 
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
-			UpdateManagerPlugin.getPlugin().debug("End process config site url:" + urlString + " policy:" + policyString + " install:" + installString);
+			UpdateManagerPlugin.getPlugin().debug("End process config site url:" + urlString + " policy:" + policyString + " install:" + installString); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 
 	}
@@ -179,12 +160,12 @@ public class InstallConfigurationParser extends DefaultHandler {
 	private void processFeature(Attributes attributes) throws MalformedURLException, CoreException {
 
 		// url
-		String path = attributes.getValue("url");
+		String path = attributes.getValue("url"); //$NON-NLS-1$
 		URL url = UpdateManagerUtils.getURL(siteURL, path, null);
 		
 		// configured ?
-		String configuredString = attributes.getValue("configured");
-		boolean configured = configuredString.trim().equalsIgnoreCase("true")?true:false;
+		String configuredString = attributes.getValue("configured"); //$NON-NLS-1$
+		boolean configured = configuredString.trim().equalsIgnoreCase("true")?true:false; //$NON-NLS-1$
 
 		if (url != null) {
 			FeatureReference ref = new FeatureReference();
@@ -198,18 +179,19 @@ public class InstallConfigurationParser extends DefaultHandler {
 					(configSite.getConfigurationPolicyModel()).addUnconfiguredFeatureReference((FeatureReferenceModel)ref);
 
 			//updateURL
-			String updateURLString = attributes.getValue("updateURL");
+			String updateURLString = attributes.getValue("updateURL"); //$NON-NLS-1$
 			URLEntry entry = new URLEntry();
 			entry.setURLString(updateURLString);
 			entry.resolve(siteURL,null);
 
 			// DEBUG:		
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
-				UpdateManagerPlugin.getPlugin().debug("End Processing DefaultFeature Tag: url:" + url.toExternalForm());
+				UpdateManagerPlugin.getPlugin().debug("End Processing DefaultFeature Tag: url:" + url.toExternalForm()); //$NON-NLS-1$
 			}
 
 		} else {
-			IStatus status = new Status(IStatus.WARNING, UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier(), IStatus.OK, "FeatureReference doesn\'t have a URL", null);
+			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+			IStatus status = new Status(IStatus.WARNING, id, IStatus.OK, Policy.bind("InstallConfigurationParser.FeatureReferenceNoURL"), null); //$NON-NLS-1$
 			UpdateManagerPlugin.getPlugin().getLog().log(status);
 		}
 
@@ -218,10 +200,10 @@ public class InstallConfigurationParser extends DefaultHandler {
 	/** 
 	 * process the Activity info
 	 */
-	private void processActivity(Attributes attributes) throws MalformedURLException {
+	private void processActivity(Attributes attributes)  {
 
 		// action
-		String actionString = attributes.getValue("action");
+		String actionString = attributes.getValue("action"); //$NON-NLS-1$
 		int action = Integer.parseInt(actionString);
 
 		// create
@@ -229,17 +211,17 @@ public class InstallConfigurationParser extends DefaultHandler {
 		activity.setAction(action);
 
 		// label
-		String label = attributes.getValue("label");
+		String label = attributes.getValue("label"); //$NON-NLS-1$
 		if (label != null)
 			activity.setLabel(label);
 
 		// date
-		String dateString = attributes.getValue("date");
+		String dateString = attributes.getValue("date"); //$NON-NLS-1$
 		Date date = new Date(Long.parseLong(dateString));
 		activity.setDate(date);
 
 		// status
-		String statusString = attributes.getValue("status");
+		String statusString = attributes.getValue("status"); //$NON-NLS-1$
 		int status = Integer.parseInt(statusString);
 		activity.setStatus(status);
 		
@@ -247,7 +229,7 @@ public class InstallConfigurationParser extends DefaultHandler {
 
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
-			UpdateManagerPlugin.getPlugin().debug("End Processing Activity: action:" + actionString + " label: " + label + " date:" + dateString + " status" + statusString);
+			UpdateManagerPlugin.getPlugin().debug("End Processing Activity: action:" + actionString + " label: " + label + " date:" + dateString + " status" + statusString); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		}
 
 	}
@@ -258,12 +240,12 @@ public class InstallConfigurationParser extends DefaultHandler {
 	private void processConfig(Attributes attributes) {
 
 		// date
-		long date = Long.parseLong(attributes.getValue("date"));
+		long date = Long.parseLong(attributes.getValue("date")); //$NON-NLS-1$
 		config.setCreationDate(new Date(date));
 
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
-			UpdateManagerPlugin.getPlugin().debug("End Processing Config Tag: date:" + date);
+			UpdateManagerPlugin.getPlugin().debug("End Processing Config Tag: date:" + date); //$NON-NLS-1$
 		}
 
 	}

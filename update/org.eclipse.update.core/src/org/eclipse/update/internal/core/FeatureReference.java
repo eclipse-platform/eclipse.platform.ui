@@ -22,9 +22,7 @@ import org.eclipse.update.core.model.SiteModel;
  * 
  */
 
-public class FeatureReference
-	extends FeatureReferenceModel
-	implements IFeatureReference, IWritable {
+public class FeatureReference extends FeatureReferenceModel implements IFeatureReference, IWritable {
 
 	private IFeature feature;
 
@@ -32,8 +30,6 @@ public class FeatureReference
 	 * category : delegate to teh site
 	 */
 	private List categories;
-	
-		
 
 	/**
 	 * Constructor
@@ -83,7 +79,7 @@ public class FeatureReference
 				// ask the Site for the default type 
 				type = getSite().getDefaultPackagedFeatureType();
 			}
-			
+
 			feature = createFeature(type, getURL(), getSite());
 		}
 
@@ -126,8 +122,7 @@ public class FeatureReference
 		String[] categoryNames = getCategoryNames();
 		for (int i = 0; i < categoryNames.length; i++) {
 			String element = categoryNames[i];
-			w.println(
-				gap + increment + "<category name=\"" + Writer.xmlSafe(element) + "\"/>");
+			w.println(gap + increment + "<category name=\"" + Writer.xmlSafe(element) + "\"/>");
 		}
 		w.println("</feature>");
 	}
@@ -135,11 +130,9 @@ public class FeatureReference
 	/**
 	 * create an instance of a class that implements IFeature
 	 */
-	private IFeature createFeature(String featureType, URL url, ISite site)
-		throws CoreException {
+	private IFeature createFeature(String featureType, URL url, ISite site) throws CoreException {
 		IFeature feature = null;
-		IFeatureFactory factory =
-			FeatureTypeFactory.getInstance().getFactory(featureType);
+		IFeatureFactory factory = FeatureTypeFactory.getInstance().getFactory(featureType);
 		feature = factory.createFeature(url, site);
 		return feature;
 	}
@@ -153,15 +146,8 @@ public class FeatureReference
 			try {
 				resolve(url, null);
 			} catch (MalformedURLException e) {
-				String id =
-					UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-				IStatus status =
-					new Status(
-						IStatus.WARNING,
-						id,
-						IStatus.OK,
-						"Cannot resolve URL:" + url.toExternalForm(),
-						e);
+				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+				IStatus status = new Status(IStatus.WARNING, id, IStatus.OK, "Cannot resolve URL:" + url.toExternalForm(), e);
 				throw new CoreException(status);
 			}
 		}
@@ -181,12 +167,8 @@ public class FeatureReference
 		setSiteModel((SiteModel) site);
 	}
 
-	
-	
-
-
 	private CoreException newCoreException(String s, Throwable e) throws CoreException {
-		return new CoreException(new Status(IStatus.ERROR,"org.eclipse.update.examples.buildzip",0,s,e));
+		return new CoreException(new Status(IStatus.ERROR, "org.eclipse.update.examples.buildzip", 0, s, e));
 	}
 
 }

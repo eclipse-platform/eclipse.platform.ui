@@ -1,24 +1,17 @@
 package org.eclipse.update.internal.model;
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.model.ModelObject;
-import org.eclipse.update.internal.core.URLEncoder;
-import org.eclipse.update.internal.core.UpdateManagerPlugin;
-import org.eclipse.update.internal.model.*;
+import org.eclipse.update.internal.core.*;
 import org.xml.sax.SAXException;
 
 /**
@@ -38,15 +31,15 @@ public class InstallConfigurationModel extends ModelObject {
 			// file doesn't exist, ok, log it and continue 
 			// log no config
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
-				UpdateManagerPlugin.getPlugin().debug(getLocationURLString() + " does not exist, the local site is not in synch with the filesystem and is pointing to a file that doesn't exist.");
+				UpdateManagerPlugin.getPlugin().debug(getLocationURLString() + " does not exist, The local site is not in synch with the file system and is pointing to a file that doesn't exist."); //$NON-NLS-1$
 			}
 		} catch (SAXException exception) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Parsing error during creation of configuration:" + getLocationURLString()+"\r\n"+exception.toString(), exception);
+			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, Policy.bind("InstallConfiguration.ParsingErrorDuringCreation", getLocationURLString(),"\r\n"+exception.toString()), exception); //$NON-NLS-1$ //$NON-NLS-2$
 			throw new CoreException(status);
 		} catch (IOException exception) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Error during file access :", exception);
+			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, Policy.bind("InstallConfiguration.ErrorDuringFileAccess",getLocationURLString()), exception); //$NON-NLS-1$
 			throw new CoreException(status);
 		}
 	}

@@ -29,10 +29,10 @@ public class DefaultPluginParser extends DefaultHandler {
 	private String version = null;
 	private PluginEntry pluginEntry;
 
-	private static final String PLUGIN = "plugin";
-	private static final String FRAGMENT = "fragment";
-	private static final String ID = "id";
-	private static final String VERSION = "version";
+	private static final String PLUGIN = "plugin"; //$NON-NLS-1$
+	private static final String FRAGMENT = "fragment"; //$NON-NLS-1$
+	private static final String ID = "id"; //$NON-NLS-1$
+	private static final String VERSION = "version"; //$NON-NLS-1$
 
 	private class ParseCompleteException extends SAXException {
 		public ParseCompleteException(String arg0) {
@@ -88,8 +88,8 @@ public class DefaultPluginParser extends DefaultHandler {
 	 * process plugin entry info
 	 */
 	private void processPlugin(Attributes attributes) throws ParseCompleteException {
-		id = attributes.getValue("id");
-		version = attributes.getValue("version");
-		throw new ParseCompleteException("");
+		id = attributes.getValue("id"); //$NON-NLS-1$
+		version = attributes.getValue("version"); //$NON-NLS-1$
+		throw new ParseCompleteException(""); //$NON-NLS-1$
 	}
 }

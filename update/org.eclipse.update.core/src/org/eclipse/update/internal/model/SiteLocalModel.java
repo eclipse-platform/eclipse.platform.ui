@@ -24,9 +24,9 @@ import org.xml.sax.SAXException;
 public class SiteLocalModel extends ModelObject {
 
 
-	public static final String SITE_LOCAL_FILE = "LocalSite.xml";
-	public static final String DEFAULT_CONFIG_FILE = "Config.xml";
-	public static final String DEFAULT_PRESERVED_CONFIG_FILE = "PreservedConfig.xml";
+	public static final String SITE_LOCAL_FILE = "LocalSite.xml"; //$NON-NLS-1$
+	public static final String DEFAULT_CONFIG_FILE = "Config.xml"; //$NON-NLS-1$
+	public static final String DEFAULT_PRESERVED_CONFIG_FILE = "PreservedConfig.xml"; //$NON-NLS-1$
 	public static final int DEFAULT_HISTORY = 5;	
 
 
