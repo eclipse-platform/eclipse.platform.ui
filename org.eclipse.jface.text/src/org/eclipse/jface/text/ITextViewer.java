@@ -90,7 +90,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
  * extending the visible region concept with explicit handling and conversation
  * of widget and model coordinates.</li>
  * <li>{@link org.eclipse.jface.text.ITextViewerExtension6}since version 3.1
- * extending the text viewer with the ability to detect hyperlinks.</li>
+ * extending the text viewer with the ability to detect hyperlinks and access the undo manager.</li>
  * </ul>
  * 
  * Clients may implement this interface and its extension interfaces or use the
@@ -101,6 +101,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
  * @see org.eclipse.jface.text.ITextViewerExtension3
  * @see org.eclipse.jface.text.ITextViewerExtension4
  * @see org.eclipse.jface.text.ITextViewerExtension5
+ * @see org.eclipse.jface.text.ITextViewerExtension6
  * @see org.eclipse.jface.text.IDocument
  * @see org.eclipse.jface.text.ITextInputListener
  * @see org.eclipse.jface.text.IViewportListener

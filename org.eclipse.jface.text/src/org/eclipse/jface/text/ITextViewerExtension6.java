@@ -14,7 +14,7 @@ import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 
 /**
  * Extension interface for {@link org.eclipse.jface.text.ITextViewer}. 
- * Introduces the concept of text hyperlinks.
+ * Introduces the concept of text hyperlinks and adds access to the undo manager.
  * <p>
  * NOTE: This API is work in progress and may change before the final API freeze. (FIXME)
  * </p>
@@ -27,9 +27,19 @@ public interface ITextViewerExtension6 {
 	
 	/**
 	 * Sets this viewer's hyperlinkDetectors for the given content type.
+	 * 
 	 * @param hyperlinkDetectors	the new array of hyperlink detectors, <code>null</code>
 	 * 									or an empty array to disable hyperlinking
 	 * @param eventStateMask		the SWT event state mask to activate hyperlink mode
 	 */
 	void setHyperlinkDetectors(IHyperlinkDetector[] hyperlinkDetectors, int eventStateMask);
+
+	/**
+	 * Returns this viewer's undo manager.
+	 * 
+	 * @return the undo manager or <code>null</code> if it has not been plugged-in
+	 * @since 3.1
+	 */
+	IUndoManager getUndoManager();
+
 }

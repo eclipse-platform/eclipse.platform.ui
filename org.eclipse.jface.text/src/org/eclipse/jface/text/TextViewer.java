@@ -1307,7 +1307,6 @@ public class TextViewer extends Viewer implements
 	 * @since 3.1
 	 */
 	private DocumentRewriteSessionListener fDocumentRewriteSessionListener= new DocumentRewriteSessionListener();
-
 	
 	/** Should the auto indent strategies ignore the next edit operation */
 	protected boolean  fIgnoreAutoIndent= false;
@@ -1387,7 +1386,6 @@ public class TextViewer extends Viewer implements
 	 * @since 3.1
 	 */
 	protected int fHyperlinkStateMask;
-	
 	
 	
 	//---- Construction and disposal ------------------
@@ -1808,6 +1806,14 @@ public class TextViewer extends Viewer implements
 	 */
 	public void setUndoManager(IUndoManager undoManager) {
 		fUndoManager= undoManager;
+	}
+	
+	/*
+	 * @see ITextViewerExtension6#getUndoManager()
+	 * @since 3.1
+	 */
+	public IUndoManager getUndoManager() {
+		return fUndoManager;
 	}
 
 	/*
@@ -3548,6 +3554,8 @@ public class TextViewer extends Viewer implements
 	 * @since 2.1
 	 */
 	protected void ignoreAutoEditStrategies(boolean ignore) {
+		if (fIgnoreAutoIndent == ignore)
+			return;
 		
 		fIgnoreAutoIndent= ignore;
 		
