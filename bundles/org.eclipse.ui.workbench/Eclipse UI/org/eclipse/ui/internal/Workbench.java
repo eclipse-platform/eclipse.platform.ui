@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -118,6 +119,10 @@ import org.eclipse.ui.themes.IThemeManager;
  * </p>
  */
 public final class Workbench implements IWorkbench {
+    private static final String LEFT_TO_RIGHT = "ltr"; //$NON-NLS-1$
+	private static final String RIGHT_TO_LEFT = "rtl";//$NON-NLS-1$
+	private static final String ORIENTATION_COMMAND_LINE = "-orientation";//$NON-NLS-1$
+	private static final String ORIENTATION_PROPERTY = "eclipse.orientation";//$NON-NLS-1$
     private static final String VERSION_STRING[] = { "0.046", "2.0" }; //$NON-NLS-1$ //$NON-NLS-2$
 
     private static final String DEFAULT_WORKBENCH_STATE_FILENAME = "workbench.xml"; //$NON-NLS-1$
@@ -843,6 +848,8 @@ public final class Workbench implements IWorkbench {
             if (commandLineArgs[i].equalsIgnoreCase("-allowDeadlock")) //$NON-NLS-1$
                 avoidDeadlock = false;
         }
+        
+        Window.setDefaultOrientation(getDefaultOrientation(commandLineArgs));
 
         if (avoidDeadlock) {
             UILockListener uiLockListener = new UILockListener(display);
@@ -871,6 +878,82 @@ public final class Workbench implements IWorkbench {
 
         return true;
     }
+
+    /**
+     * Get the default orientation from the command line
+     * arguments. If there are no arguments imply the 
+     * orientation.
+	 * @param commandLineArgs
+	 * @return int
+	 * @see SWT#NONE
+	 * @see SWT#RIGHT_TO_LEFT
+	 * @see SWT#LEFT_TO_RIGHT
+	 */
+	private int getDefaultOrientation(String[] commandLineArgs) {
+		
+		int orientation = getCommandLineOrientation(commandLineArgs);
+		
+		orientation = getSystemPropertyOrientation(commandLineArgs);
+		
+		if(orientation != SWT.NONE)
+			return orientation;
+
+		Locale locale = Locale.getDefault();
+		String lang = locale.getLanguage();
+
+		if ("iw".equals(lang) || "ar".equals(lang) || "fa".equals(lang) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			|| "ur".equals(lang)) //$NON-NLS-1$
+			return SWT.RIGHT_TO_LEFT;
+			
+		return SWT.NONE; //Use the default value if there is nothing specified
+	}
+
+	/**
+	 * Check to see if the orientation was set in the
+	 * system properties. If there is no orientation 
+	 * specified return SWT#NONE.
+	 * @param commandLineArgs
+	 * @return int
+	 * @see SWT#NONE
+	 * @see SWT#RIGHT_TO_LEFT
+	 * @see SWT#LEFT_TO_RIGHT
+	 */
+	private int getSystemPropertyOrientation(String[] commandLineArgs) {
+		String orientation = System.getProperty(ORIENTATION_PROPERTY);
+		if(RIGHT_TO_LEFT.equals(orientation))
+			return SWT.RIGHT_TO_LEFT;
+		if(LEFT_TO_RIGHT.equals(orientation))
+			return SWT.LEFT_TO_RIGHT;
+		return SWT.NONE;
+	}
+
+	/**
+	 * Find the orientation in the commandLineArgs. If there
+	 * is no orientation specified return SWT#NONE.
+	 * @param commandLineArgs
+	 * @return int
+	 * @see SWT#NONE
+	 * @see SWT#RIGHT_TO_LEFT
+	 * @see SWT#LEFT_TO_RIGHT
+	 */
+	private int getCommandLineOrientation(String[] commandLineArgs) {
+		//Do not process the last one as it will never have a parameter
+		for (int i = 0; i < commandLineArgs.length - 1; i++) {
+			if(commandLineArgs[i].equalsIgnoreCase(ORIENTATION_COMMAND_LINE)){
+				String orientation = commandLineArgs[i+1];
+				if(orientation.equals(RIGHT_TO_LEFT)){
+					System.setProperty(ORIENTATION_PROPERTY,RIGHT_TO_LEFT);
+					return SWT.RIGHT_TO_LEFT;
+				}
+				if(orientation.equals(LEFT_TO_RIGHT)){
+					System.setProperty(ORIENTATION_PROPERTY,LEFT_TO_RIGHT);
+					return SWT.LEFT_TO_RIGHT;
+				}
+			}
+		}
+		
+		return SWT.NONE;
+	}
 
     /**
      * Establishes the relationship between JFace actions and the command manager.
