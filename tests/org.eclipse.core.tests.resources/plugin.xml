@@ -152,6 +152,9 @@
 	<test id = "org.eclipse.core.tests.resources.session.TestBug6995">
 		<run class="org.eclipse.core.tests.resources.session.TestBug6995"/>
 	</test>
+	<test id = "org.eclipse.core.tests.resources.session.TestInterestingProjectPersistence">
+		<run class="org.eclipse.core.tests.resources.session.TestInterestingProjectPersistence"/>
+	</test>
   
     <test id="usecase.AllTests">
       <run class="org.eclipse.core.tests.resources.usecase.AllTests"/>

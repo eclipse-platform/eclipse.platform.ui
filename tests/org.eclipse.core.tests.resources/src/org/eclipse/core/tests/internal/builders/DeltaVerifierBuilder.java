@@ -18,7 +18,6 @@ import org.eclipse.core.tests.resources.ResourceDeltaVerifier;
  */
 public class DeltaVerifierBuilder extends TestBuilder {
 	public static final String BUILDER_NAME = "org.eclipse.core.tests.resources.deltaverifierbuilder";
-
 	/**
 	 * The singleton builder instance
 	 */
@@ -45,20 +44,32 @@ public class DeltaVerifierBuilder extends TestBuilder {
 	/** The projects to check deltas for (may be null) */
 	protected IProject[] checkDeltas;
 	/** The deltas that were actually received */
-	protected final ArrayList receivedDeltas = new ArrayList();
+	protected ArrayList receivedDeltas = new ArrayList();
 	/** The empty deltas that were received */
-	protected final ArrayList emptyDeltas = new ArrayList();
+	protected ArrayList emptyDeltas = new ArrayList();
 	
 /**
  * Captures the builder instantiated through reflection
  */
 public DeltaVerifierBuilder() {
-	fgSingleton = this;
+	if (fgSingleton != null) {
+		//copy interesting data from old singleton
+		this.triggerForLastBuild = fgSingleton.triggerForLastBuild;
+		this.deltaWasEmpty = fgSingleton.deltaWasEmpty;
+		this.requestedDeltas = fgSingleton.requestedDeltas;
+		this.checkDeltas = fgSingleton.checkDeltas;
+		this.receivedDeltas = fgSingleton.receivedDeltas;
+		this.emptyDeltas = fgSingleton.emptyDeltas;
+	}
+	fgSingleton = this;	
 }
 /**
  * Returns the singleton instance
  */
 public static DeltaVerifierBuilder getInstance() {
+	if (fgSingleton == null) {
+		new DeltaVerifierBuilder();
+	}
 	return fgSingleton;
 }
 /**
@@ -75,8 +86,6 @@ public static DeltaVerifierBuilder getInstance() {
 public void addExpectedChange(IResource resource, IResource topLevelParent, int status, int changeFlags){
 	verifier.addExpectedChange(resource, topLevelParent, status, changeFlags, null);
 }
-
-
 /**
  * Signals to the comparer that the given resource is expected to
  * change in the specified way.  The change flags should be set to
@@ -203,8 +212,6 @@ public void reset() {
 	if (verifier != null)
 		verifier.reset();
 }
-
-
 public boolean wasAutoBuild() {
 	return triggerForLastBuild == IncrementalProjectBuilder.AUTO_BUILD;
 }
@@ -221,6 +228,4 @@ public boolean wasFullBuild() {
 public boolean wasIncrementalBuild() {
 	return triggerForLastBuild == IncrementalProjectBuilder.INCREMENTAL_BUILD;
 }
-
-
 }
