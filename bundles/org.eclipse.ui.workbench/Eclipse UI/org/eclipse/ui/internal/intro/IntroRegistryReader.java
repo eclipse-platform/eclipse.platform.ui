@@ -13,14 +13,11 @@ package org.eclipse.ui.internal.intro;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.IPluginRegistry;
-
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.intro.IIntroDescriptor;
-
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.RegistryReader;
+import org.eclipse.ui.intro.IIntroDescriptor;
 
 /**
  * <em>EXPERIMENTAL</em>
