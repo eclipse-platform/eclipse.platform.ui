@@ -39,24 +39,37 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 
 		try {
 			site = new SiteLocal();
+			
+			// obtain read/write location
 			IPlatformConfiguration platformConfig = BootLoader.getCurrentPlatformConfiguration();
 			URL location = Platform.resolve(platformConfig.getConfigurationLocation());
 	 		configXML = UpdateManagerUtils.getURL(location, SITE_LOCAL_FILE, null);
+	 		
+	 		// set it into the ILocalSite
 			site.setLocationURLString(configXML.toExternalForm());
 			site.resolve(configXML, null);
 				 		
-			//if the file exists, parse it			
+			//attempt to parse the SITE_LOCAL_FILE file	
 			URL resolvedURL = URLEncoder.encode(configXML);
 			new SiteLocalParser(resolvedURL.openStream(), site);
+
+			// compare the stamp of teh platform with the one saved
+			//if (platformConfig.getChangeStamp()!=site.getChangedStamp()){
+				// reconcile
+				//FIXME
+			//}
+			
 		} catch (FileNotFoundException exception) {
 			// file doesn't exist, ok, log it and continue 
-			// log no config
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
 				UpdateManagerPlugin.getPlugin().debug(site.getLocationURLString() + " does not exist, there is no previous state or install history we can recover, we shall use default.");
 			}
+
 			createDefaultConfiguration(site);
+
 			// FIXME: always save ?
 			site.save();
+
 		} catch (SAXException exception) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Error during parsing of the install config XML:" + site.getLocationURLString(), exception);
@@ -78,12 +91,16 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 
 		try {
 			IPlatformConfiguration.ISiteEntry[] siteEntries = BootLoader.getCurrentPlatformConfiguration().getConfiguredSites();
+
+			// create first InstallConfiguration
+			IInstallConfiguration newDefaultConfiguration = localSite.cloneCurrentConfiguration(null, null);
+			localSite.addConfiguration(newDefaultConfiguration);			
+
+			// add each site to the configuration
 			for (int siteIndex = 0; siteIndex < siteEntries.length; siteIndex++) {
 
 				URL resolvedURL = Platform.resolve(siteEntries[siteIndex].getURL());
 				ISite site = SiteManager.getSite(resolvedURL);
-				IInstallConfiguration newDefaultConfiguration = localSite.cloneCurrentConfiguration(null, null);
-				localSite.addConfiguration(newDefaultConfiguration);
 
 				//site policy
 				IPlatformConfiguration.ISitePolicy sitePolicy = siteEntries[siteIndex].getSitePolicy();
@@ -91,7 +108,8 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 				
 				//the site may not be read-write
 				configSite.setInstallSite(siteEntries[siteIndex].isUpdateable());
-				localSite.getCurrentConfiguration().addConfigurationSite(configSite);
+				InstallConfiguration currentConfig = (InstallConfiguration)localSite.getCurrentConfiguration();
+				currentConfig.addConfigurationSiteModel(configSite);
 
 			}
 

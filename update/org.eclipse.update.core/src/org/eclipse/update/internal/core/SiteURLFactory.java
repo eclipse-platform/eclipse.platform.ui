@@ -19,6 +19,22 @@ public class SiteURLFactory extends BaseSiteFactory {
 
 	/*
 	 * @see ISiteFactory#createSite(URL, boolean)
+	 * 
+	 * the URL can be of the following form
+	 * 1 protocol://...../
+	 * 2 protocol://.....
+	 * 3 protocol://..../site.xml
+	 * 
+	 * 1 If the file of the file of teh url ends with '/', attempt to open the stream.
+	 * if it fails, add site.xml and attempt to open the stream
+	 * 
+	 * 2 attempt to open the stream
+	 * 	fail
+	 * 		add '/site.xml' and attempt to open the stream
+	 * 	sucess
+	 * 		attempt to parse, if it fails, add '/site.xml' and attempt to open teh stream
+	 * 
+	 * 3 open the stream	 
 	 */
 	public ISite createSite(URL url, boolean forceCreation) throws CoreException, InvalidSiteTypeException {
 

@@ -21,9 +21,6 @@ import org.eclipse.update.core.model.InvalidSiteTypeException;
 
 public class InternalSiteManager {
 
-	private static ISite TEMP_SITE;
-	public static final String TEMP_NAME = "update_tmp";
-
 	private static Map sitesTypes;
 	public static ILocalSite localSite;
 
@@ -65,9 +62,7 @@ public class InternalSiteManager {
 			type = (String) getSitesTypes().get(protocol);
 		}
 
-		// if error
-		Exception caughtException = null;
-
+		// attempt creation of site based on the type found
 		try {
 			if (type != null) {
 				site = attemptCreateSite(type, siteURL, forceCreation);
@@ -78,15 +73,17 @@ public class InternalSiteManager {
 				}
 
 				// protocol not found, attempt to use default site
-				// we will atemopt to read teh site.xml 
-				// if the site.xml hasn't a specific type in it, then cancel...
+				// we will attempt to read the site.xml 
+				// if the site.xml hasn't a specific type in it, then we fail...
 				// otherwise use the type in site.xml to create the *real* site
 				type = (String) getSitesTypes().get("http");
 				site = attemptCreateSite(type, siteURL, forceCreation);
 
 				// same type as we forced ? do not continue
-				if (site!=null && site.getType().equals(type)) {
-					throw newCoreException("The site.xml does not contain any type and the protocol of the URL is not recognized. protocol:" + protocol, null);
+				if (site!=null){
+					if (site.getType()==null || site.getType().trim().equals("") || site.getType().equals(type)) {
+						throw newCoreException("The site.xml does not contain any type and the protocol of the URL is not a default protocol:" + protocol+"\r\n the site provider should provide a site factory and set a type in the site.", null);
+					}
 				}
 			}
 
@@ -96,26 +93,6 @@ public class InternalSiteManager {
 		}
 
 		return site;
-	}
-	
-		
-	/**
-	 * return the local site where the feature will be temporary transfered
-	 */
-	public static ISite getTempSite() throws CoreException {
-		if (TEMP_SITE == null) {
-			String tempDir = System.getProperty("java.io.tmpdir");
-			if (!tempDir.endsWith(File.separator))
-				tempDir += File.separator;
-			String fileAsURL = (tempDir+TEMP_NAME+"/site.xml").replace(File.separatorChar,'/');
-			try {				
-				URL tempURL = new URL("file",null,fileAsURL);
-				TEMP_SITE = InternalSiteManager.getSite(tempURL,true);
-			} catch (MalformedURLException e) {
-				throw newCoreException("Cannot create Temporary Site:"+fileAsURL, e);
-			}
-		}
-		return TEMP_SITE;
 	}
 		
 	/**
@@ -129,8 +106,8 @@ public class InternalSiteManager {
 	
 	/**
 	 * Attempt to create a site
-	 * if the site guessed is not teh type found,
-	 * attempt to create a type with the type found
+	 * if the site guessed is not the type found,
+	 * attempt to create a type with the type found in the site.xml
 	 */
 	private static ISite attemptCreateSite(String guessedTypeSite, URL siteURL, boolean forceCreation) throws CoreException {
 		ISite site = null;
@@ -145,10 +122,10 @@ public class InternalSiteManager {
 				UpdateManagerPlugin.getPlugin().debug("The Site :" + siteURL.toExternalForm() + " is a different type than the guessed type based on the protocol. new Type:" + e.getNewType());
 			}
 
-			// the type in the site.xml is not the one expected				
+			// the type in the site.xml is not the one expected	
+			// attempt to use this type instead			
 			try {
 				InvalidSiteTypeException exception = (InvalidSiteTypeException) e;
-				// site not found and forceCreation=false
 				if (exception.getNewType()==null) throw e;
 				site = createSite(exception.getNewType(), siteURL, forceCreation);
 			} catch (InvalidSiteTypeException e1) {
@@ -180,6 +157,7 @@ public class InternalSiteManager {
 		Site site = null;
 		if (siteLocation != null) {
 			try {
+				siteLocation.mkdirs();
 				URL siteURL = siteLocation.toURL();
 				site = (Site) getSite(siteURL,true);
 				site.save();

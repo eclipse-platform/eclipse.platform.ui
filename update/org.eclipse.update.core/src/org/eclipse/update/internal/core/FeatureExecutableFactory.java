@@ -75,8 +75,8 @@ public class FeatureExecutableFactory extends BaseFeatureFactory {
 			
 		feature.setFeatureContentProvider(contentProvider);
 		feature.setContentConsumer(contentConsumer);
-			
-		feature.markReadOnly();
+		
+		// do not mark read only yet...	
 
 		return feature;	
 	}

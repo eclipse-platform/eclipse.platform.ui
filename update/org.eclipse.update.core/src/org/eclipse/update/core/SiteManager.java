@@ -62,21 +62,7 @@ public class SiteManager {
 		return InternalSiteManager.getSite(siteURL,true);
 	}
 	
-	/**
-	 * Returns a local temporary site where 
-	 * some feature may be temporary transfered before
-	 * being installed.
-	 * 
-	 * @return the temporary site
-	 * @since 2.0 
-	 */
-
-	public static ISite getTempSite() throws CoreException {
-		return InternalSiteManager.getTempSite();
-	}
 	
-
-		
 	/**
 	 * Creates a new site on the file system
 	 * This is the only Site we can create.

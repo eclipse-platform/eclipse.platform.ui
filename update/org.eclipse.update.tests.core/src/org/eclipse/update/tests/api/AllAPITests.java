@@ -35,10 +35,6 @@ public class AllAPITests extends UpdateManagerTestCase {
 		suite.addTest(new TestSuite(TestPluginContainerAPI.class));
 		suite.addTest(new TestSuite(TestSiteManagerAPI.class));		
 
-		// clean up
-		String path = SiteManager.getTempSite().getURL().getFile();
-		UpdateManagerUtils.removeFromFileSystem(new File(path));
-
 		return suite;
 	}
 }

@@ -113,6 +113,7 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 		// create new executable feature and install source content into it
 		IFeature localFeature = createExecutableFeature(sourceFeature);
 		IFeatureReference localFeatureReference = sourceFeature.install(localFeature, monitor);
+		if (localFeature instanceof FeatureModel) ((FeatureModel)localFeature).markReadOnly();
 		this.addFeatureReference(localFeatureReference);
 		
 

@@ -83,12 +83,4 @@ public class UpdateManagerPlugin extends Plugin {
 		System.out.println(toString()+"^"+Integer.toHexString(Thread.currentThread().hashCode())+" "+s);
 	}
 
-	// clean TEMP drive
-	public void shutdown() throws CoreException {
-			String path = SiteManager.getTempSite().getURL().getFile();
-			UpdateManagerUtils.removeFromFileSystem(new File(path));
-	}
-
-
-	
 }

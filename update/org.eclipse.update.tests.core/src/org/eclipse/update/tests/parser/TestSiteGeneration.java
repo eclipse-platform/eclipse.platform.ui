@@ -4,17 +4,22 @@ package org.eclipse.update.tests.parser;
  * All Rights Reserved.
  */
 import java.io.*;
-
+import java.net.MalformedURLException;
 import java.net.URL;
+
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.update.core.ISite;
 import org.eclipse.update.core.SiteManager;
-import org.eclipse.update.internal.core.IWritable;
-import org.eclipse.update.internal.core.UpdateManagerUtils;
+import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.core.Writer;
 import org.eclipse.update.tests.UpdateManagerTestCase;
-import sun.awt.UpdateClient;
 
 public class TestSiteGeneration extends UpdateManagerTestCase {
+	
+	private static ISite TEMP_SITE;
+	public static final String TEMP_NAME = "update_tmp/";
 	/**
 	 * Constructor for Test1
 	 */
@@ -33,7 +38,7 @@ public class TestSiteGeneration extends UpdateManagerTestCase {
 		ISite remoteSite = SiteManager.getSite(SOURCE_FILE_SITE);
 		
 		// generate
-		ISite tempSite = SiteManager.getTempSite();
+		ISite tempSite = getTempSite();
 		new File(tempSite.getURL().getFile()).mkdirs();
 		File file = new File(tempSite.getURL().getFile()+"site.xml");
 		PrintWriter fileWriter = new PrintWriter(new FileOutputStream(file));
@@ -62,5 +67,20 @@ public class TestSiteGeneration extends UpdateManagerTestCase {
 	}
 	
 	
-}
+		/**
+	 * return the local site where the feature will be temporary transfered
+	 */
+	public static ISite getTempSite() throws CoreException {
+		if (TEMP_SITE == null) {
+			String tempDir = System.getProperty("java.io.tmpdir");
+			if (!tempDir.endsWith(File.separator))
+				tempDir += File.separator;
+			String fileAsURL = (tempDir+TEMP_NAME+"site.xml").replace(File.separatorChar,'/');
+				File file = new File(fileAsURL);
+				TEMP_SITE = InternalSiteManager.createSite(file);
+		}
+		return TEMP_SITE;
+	}
+	
+	}
 
