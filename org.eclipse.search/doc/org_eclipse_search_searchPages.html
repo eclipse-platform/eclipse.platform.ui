@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en"><html><head>
-   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"><title>Search Infrastructure Extension Points</title></head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"><title>Eclipse Search Infrastructure Extension Point: Search Pages</title></head>
 
 <body link="#0000ff" vlink="#800080">
 
@@ -24,7 +24,8 @@ page for it.
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; tabPosition&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; extensions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; showScopeSection&nbsp;CDATA #IMPLIED</tt><br>
-<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; enabled &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;CDATA #IMPLIED</tt><br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; enabled &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;CDATA #IMPLIED</tt>
+<br><tt>&nbsp;&nbsp; &gt;</tt>
 </p><ul><li><b>id</b> - a unique name that will be used to identify this search page</li>
 
 <li>
@@ -42,7 +43,7 @@ search page's tab will only contain a label.</li>
 
 <li>
 <b>sizeHint</b> - a hint for the initial size of the page. This is a string
-containing the width and height separated by comma (e.g. "50, 60"). In the case
+containing the width and height separated by comma (e.g. &quot;50, 60&quot;). In the case
 this hint is omitted the page will be no larger than the other pages.</li>
 
 <li>
@@ -60,34 +61,34 @@ then the pages are are ordered alphabetically according to their labels</li>
 search page can operate. Each extension must also include a weight (0 meaning
 lowest weight) which enables the search infrastructure to find the best fitting
 page. The weight is separated from the extension by a colon.
-If a search page can search all possible resources then <tt>"*"</tt> can be used.</li>
+If a search page can search all possible resources then <tt>&quot;*&quot;</tt> can be used.</li>
 
 <li>
-<b>showScopeSection</b> - if this attribute is missing or set to <tt>"false"</tt> then the
+<b>showScopeSection</b> - if this attribute is missing or set to <tt>&quot;false&quot;</tt> then the
 scope section is not shown in the Search dialog. To see the scope section this
-attribute has to be set to <tt>"true"</tt>. Plug-ins which add their own Search page and
-want to see the scope section have to add this to their plugin.xml.</li><li><b>enabled</b> - if this attribute is missing or set to <tt>"false"</tt>
+attribute has to be set to <tt>&quot;true&quot;</tt>. Plug-ins which add their own Search page and
+want to see the scope section have to add this to their plugin.xml.</li><li><b>enabled</b> - if this attribute is missing or set to <tt>&quot;false&quot;</tt>
  then the page is not initially shown in the Search dialog. The page can
-be activated by the user via the "Customize..." button on the Search dialog.</li>
+be activated by the user via the &quot;Customize...&quot; button on the Search dialog.</li>
 
 
 </ul>
 <b><i>Examples:</i></b>
 <p>The following is an example of a search page extension definition:
-</p><p><tt>&nbsp;&nbsp; &lt;extension point="org.eclipse.search.searchPages"&gt;</tt>
+</p><p><tt>&nbsp;&nbsp; &lt;extension point=&quot;org.eclipse.search.searchPages&quot;&gt;</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;page</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id="org.eclipse.search.ui.text.TextSearchPage"</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; label="Text Search"</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; icon="icons/full/obj16/tsearch_pref.gif"</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; sizeHint="250,160"</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; tabPosition="1"</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; extensions="*:1"</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; showScopeSection="true"</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class="org.eclipse.search.ui.text.TextSearchPage"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id=&quot;org.eclipse.search.ui.text.TextSearchPage&quot;</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; label=&quot;Text Search&quot;</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; icon=&quot;icons/full/obj16/tsearch_pref.gif&quot;</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; sizeHint=&quot;250,160&quot;</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; tabPosition=&quot;1&quot;</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; extensions=&quot;*:1&quot;</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; showScopeSection=&quot;true&quot;</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class=&quot;org.eclipse.search.ui.text.TextSearchPage&quot;</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/page&gt;</tt>
 <br><tt>&nbsp;&nbsp; &lt;/extension&gt;</tt>
 
 </p><p><b><i>Supplied Implementation: </i></b>The search infrastructure provides
  a search page for full-text search.
-</p><p><a href="hglegal.htm"><img src="ngibmcpy.gif" alt="Copyright IBM Corp. 2000, 2001.  All Rights Reserved." border="0" height="12" width="195"></a>
+</p><p><a href="hglegal.htm"><img src="ngibmcpy.gif" alt="Copyright IBM Corp. 2000, 2002.  All Rights Reserved." border="0" height="12" width="195"></a>
 </p></body></html>

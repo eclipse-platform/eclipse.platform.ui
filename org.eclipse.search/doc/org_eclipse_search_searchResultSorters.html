@@ -3,7 +3,7 @@
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
    <meta name="GENERATOR" content="Mozilla/4.75 [en] (WinNT; U) [Netscape]">
-   <title>Search Infrastructure Extension Points</title>
+   <title>Eclipse Search Infrastructure Extension Point: Result Sorters</title>
 </head>
 <body link="#0000FF" vlink="#800080">
 
@@ -15,14 +15,15 @@ Result Sorters</h1></center>
 contribute search result sorters to the search result view's <i>Sort</i>
 context menu.
 <p><b><i>Configuration Markup:</i></b>
-<p><tt>&nbsp;&nbsp; &lt;!ELEMENT page EMPTY&gt;</tt>
-<br><tt>&nbsp;&nbsp; &lt;!ATTLIST page</tt>
+<p><tt>&nbsp;&nbsp; &lt;!ELEMENT sorter EMPTY&gt;</tt>
+<br><tt>&nbsp;&nbsp; &lt;!ATTLIST sorter</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; pageId&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; label&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; tooltip&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; icon&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp; &gt;</tt>
 <ul>
 <li>
 <b>id</b> - a unique name that will be used to identify this search
@@ -30,7 +31,7 @@ result sorter.</li>
 
 <li>
 <b>pageId</b> - the ID of a registered search page for which the sorter
-will be activated. "*" activates the sorter for all pages.</li>
+will be activated. &quot;*&quot; activates the sorter for all pages.</li>
 
 <li>
 <b>label</b> - a translatable label that will be used as the menu item's
@@ -50,19 +51,19 @@ contain a label.</li>
 </ul>
 <b><i>Examples:</i></b>
 <p><tt>The following is an example of a search page extension definition:</tt>
-<p><tt>&nbsp;&nbsp; &lt;extension point="org.eclipse.search.searchResultSorters"&gt;</tt>
+<p><tt>&nbsp;&nbsp; &lt;extension point=&quot;org.eclipse.search.searchResultSorters&quot;&gt;</tt>
 <br><tt>&nbsp;&nbsp;&nbsp; &lt;sorter</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id="org.eclipse.search.internal.ui.FileNameSorter"</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; pageId="*"</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; label="%FileNameSorter.label"</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; tooltip="%FileNameSorter.tooltip"</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; icon="icons/full/ecl16/search_sort.gif"</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class="org.eclipse.search.internal.ui.FileNameSorter"&gt;</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id=&quot;org.eclipse.search.internal.ui.FileNameSorter&quot;</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; pageId=&quot;*&quot;</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; label=&quot;%FileNameSorter.label&quot;</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; tooltip=&quot;%FileNameSorter.tooltip&quot;</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; icon=&quot;icons/full/ecl16/search_sort.gif&quot;</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class=&quot;org.eclipse.search.internal.ui.FileNameSorter&quot;&gt;</tt>
 <br><tt>&nbsp;&nbsp;&nbsp; &lt;/sorter&gt;</tt>
 <br><tt>&nbsp;&nbsp; &lt;/extension&gt;</tt>
 
 <p><b><i>Supplied Implementation: </i></b>The search infrastructure
 provides a sorter that sorts the matches by the resource name.
-<p><a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2001.  All Rights Reserved." BORDER=0 height=12 width=195></a>
+<p><a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2002.  All Rights Reserved." BORDER=0 height=12 width=195></a>
 </body>
 </html>
