@@ -133,7 +133,7 @@ public class ProjectCreator {
 	/**
 	 * Adds a source container to a IJavaProject.
 	 */		
-	private IPackageFragmentRoot addSourceContainer(IJavaProject jproject, String srcName, String srcPath, String outputName, String outputPath, IProgressMonitor monitor) throws CoreException {
+	private void addSourceContainer(IJavaProject jproject, String srcName, String srcPath, String outputName, String outputPath, IProgressMonitor monitor) throws CoreException {
 		IProject project= jproject.getProject();
 		IContainer container= null;
 		if (srcName == null || srcName.length() == 0) {
@@ -159,7 +159,6 @@ public class ProjectCreator {
 		IClasspathEntry cpe= JavaCore.newSourceEntry(root.getPath(), new IPath[0], output);
 		
 		addToClasspath(jproject, cpe, monitor);		
-		return root;
 	}	
 	
 	private void addToClasspath(IJavaProject jproject, IClasspathEntry cpe, IProgressMonitor monitor) throws JavaModelException {
