@@ -786,6 +786,24 @@ public void testMultiSetDescription() {
 		fail("1.0", errorPointer[0]);
 }
 /**
+ * Test API method IWorkspace.setDescription.
+ */
+public void testSave() {
+	//ensure save returns a warning if a project's .project file is deleted.
+	IProject project = getWorkspace().getRoot().getProject("Broken");
+	ensureExistsInWorkspace(project, true);
+	IFile descriptionFile = project.getFile(IProjectDescription.DESCRIPTION_FILE_NAME);
+	try {
+		descriptionFile.delete(IResource.NONE, null);
+		IStatus result = getWorkspace().save(true, getMonitor());
+		assertTrue("1.0", result.getSeverity() == IStatus.WARNING);
+	} catch (CoreException e) {
+		fail("1.99", e);
+	}
+	
+}
+
+/**
  * Performs black box testing of the following method:
  *     String[] sortNatureSet(String[])
  */
