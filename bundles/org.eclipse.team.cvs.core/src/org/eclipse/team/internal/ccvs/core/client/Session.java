@@ -954,7 +954,7 @@ public class Session {
 				in = new LFtoCRLFInputStream(in);
 			} else {
 				// be nice and warn about text files that contain CRLF
-				in = new CRLFDetectInputStream(in, file.getName());
+				in = new CRLFDetectInputStream(in, file.getIResource().getFullPath().toString());
 			}
 		}
 		// write the file locally

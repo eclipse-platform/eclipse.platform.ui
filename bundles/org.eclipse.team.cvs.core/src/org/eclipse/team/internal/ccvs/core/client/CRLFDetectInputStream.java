@@ -16,6 +16,7 @@ import java.io.InputStream;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.core.Policy;
 
 /**
  * Stream which detects CRLF in text file contents recieved from the server
@@ -65,7 +66,7 @@ public class CRLFDetectInputStream extends FilterInputStream {
 	 */
 	private void testForCRLF(byte next) {
 		if (previousCR && next == '\n') {
-			CVSProviderPlugin.log(IStatus.WARNING, "Server file " + filename + " contains invalid line endings for a text file (CR/LF instead of just LF) or is a binary file that is not properly marked as such.", null);
+			CVSProviderPlugin.log(IStatus.WARNING, Policy.bind("CRLFDetectInputStream.0", filename), null); //$NON-NLS-1$
 		}
 		previousCR = (next == '\r');
 	}
