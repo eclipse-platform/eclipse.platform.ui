@@ -36,9 +36,6 @@ final public class TeamPlugin extends Plugin {
 	// The id of the providers extension point
 	public static final String PROVIDER_EXTENSION = "providers";
 	
-	// The id of the validate edit/save extension point
-	public static final String VALIDATOR_EXTENSION = "validators";
-	
 	// The id of the file types extension point
 	public static final String FILE_TYPES_EXTENSION = "fileTypes";
 	
