@@ -86,7 +86,7 @@ public class AddDeleteMoveListener implements IResourceDeltaVisitor, IResourceCh
 				// This state means there is a resource before and after but changes were made by deleting and moving.
 				// For files, we shouldn'd do anything.
 				// For folders, we should purge the CVS info
-				if (resource.getType() == IResource.FOLDER) {
+				if (resource.getType() == IResource.FOLDER && resource.exists()) {
 					// When folders are moved, purge the CVS folders
 					if (movedFrom)
 						return ! handleOrphanedSubtree((IContainer)resource);
