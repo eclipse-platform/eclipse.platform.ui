@@ -229,18 +229,13 @@ public class AntEditorContentOutlineTests extends TestCase {
 	}
 	
 	/**
-	 * Tests whether the outline can handle an emtpy build file.
+	 * Tests whether the outline can handle an empty build file.
 	 */
 	public void testWithEmptyBuildFile() {
 		AntModel model= getAntModel("empty.xml");
 		XmlElement[] roots = model.getRootElements();
 		assertNotNull(roots);
-		XmlElement root= roots[0];
-		assertNotNull(root);
-		assertTrue(root.isErrorNode());
-		XmlElement errorNode= (XmlElement)root.getChildNodes().get(0);
-		assertTrue(errorNode.isErrorNode());
-		assertTrue(errorNode.getDisplayName().equals("Premature end of file."));
+		assertTrue(roots.length == 0);
 	}		
 
 	
