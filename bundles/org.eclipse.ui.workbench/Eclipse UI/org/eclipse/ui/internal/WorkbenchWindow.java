@@ -2354,12 +2354,6 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		return false;
 	}
 	
-	/**
-	 * Close the floating window just for this instance.
-	 */
-	public void closeFloatingWindow(){
-		progressRegion.getAnimationItem().closeFloatingWindow();
-	}
 	
     /**
      * Delegate to the presentation factory.
