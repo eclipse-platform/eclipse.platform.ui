@@ -213,7 +213,7 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 		final String password = passwordText.getText();
 		final boolean[] result = new boolean[] { false };
 		try {
-			new ProgressMonitorDialog(getShell()).run(true, false, new IRunnableWithProgress() {
+			new ProgressMonitorDialog(getShell()).run(false, false, new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					try {
 						// Check if the password was the only thing to change.
