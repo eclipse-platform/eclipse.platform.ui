@@ -108,6 +108,8 @@ public interface IWorkbenchConstants {
 	public static final String TAG_ACTIVE_PAGE_ID = "activePageID"; //$NON-NLS-1$
 	public static final String TAG_EXPANDED = "expanded"; //$NON-NLS-1$
 	public static final String TAG_PAGE = "page"; //$NON-NLS-1$
+	public static final String TAG_INTRO = "intro"; //$NON-NLS-1$
+	public static final String TAG_STANDBY = "standby"; //$NON-NLS-1$
 	public static final String TAG_LABEL = "label"; //$NON-NLS-1$
 	public static final String TAG_CONTENT = "content"; //$NON-NLS-1$
 	public static final String TAG_CLASS = "class"; //$NON-NLS-1$

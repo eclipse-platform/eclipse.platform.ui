@@ -42,7 +42,6 @@ import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.ide.IIDEActionConstants;
 import org.eclipse.ui.internal.AboutInfo;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.ide.actions.BuildSetMenu;
 import org.eclipse.ui.internal.util.StatusLineContributionItem;
 
@@ -1225,7 +1224,7 @@ public final class WorkbenchActionBuilder {
         	registerGlobalAction(categoryAction);
 		}		
 		
-		if (WorkbenchPlugin.getDefault().getIntroRegistry().getIntroCount() > 0) {
+		if (getWindow().getWorkbench().hasIntro()) {
 			introAction = ActionFactory.INTRO.create(window);
 			registerGlobalAction(introAction);
 		}

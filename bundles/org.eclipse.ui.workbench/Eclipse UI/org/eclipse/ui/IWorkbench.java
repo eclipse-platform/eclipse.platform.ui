@@ -474,4 +474,14 @@ public interface IWorkbench {
 	 * @since 3.0
 	 */
 	public IThemeManager getThemeManager();
+
+	/**
+	 * Return whether there is an intro associated with this workspace.  This 
+	 * does not answer whether the intro part exists, only if the workbench is 
+	 * aware of an intro implementation.
+	 *  
+	 * @return whether the workbench is aware of an intro implementation
+	 * @since 3.0
+	 */
+    public boolean hasIntro();
 }

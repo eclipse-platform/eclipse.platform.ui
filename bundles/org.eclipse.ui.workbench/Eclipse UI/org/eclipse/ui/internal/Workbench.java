@@ -1297,8 +1297,9 @@ public final class Workbench implements IWorkbench {
 			// getPerspectiveRegistry().findPerspectiveWithId(initialPerspectiveId);
 			//				result.merge(newWindow.restoreState(childMem, desc));
 			//			}
-			result.merge(newWindow.restoreState(childMem, null));
+			// add the window so that any work done in newWindow.restoreState that relies on Workbench methods has windows to work with			
 			windowManager.add(newWindow);
+			result.merge(newWindow.restoreState(childMem, null));			
 			try {
 				getAdvisor().postWindowRestore(newWindow.getWindowConfigurer());
 			} catch (WorkbenchException e) {
@@ -2093,9 +2094,7 @@ public final class Workbench implements IWorkbench {
 				WorkbenchPlugin.log(IntroMessages.getString("Intro.could_not_show_part"), new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, IStatus.ERROR, IntroMessages.getString("Intro.could_not_show_part"), e));	//$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
-		boolean standbyNow = isIntroStandby(introPart);
-		if (standbyNow != standby)
-		    setIntroStandby(introPart, standby);
+		setIntroStandby(introPart, standby);
 		return introPart;
 	}
 
@@ -2145,6 +2144,8 @@ public final class Workbench implements IWorkbench {
 		
 		PartPane pane = ((PartSite)getViewIntroAdapterPart().getSite()).getPane();
 		if (standby == !pane.isZoomed()) {
+		    // the zoom state is already correct - just update the part's state.
+		    getViewIntroAdapterPart().setStandby(standby);
 			return;
 		}
 		
@@ -2212,11 +2213,10 @@ public final class Workbench implements IWorkbench {
 		return introDescriptor;
 	}
 	
-	/** 
-	 * @return whether an intro extension exists for this workbench.
-	 * @since 3.0
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbench#hasIntro()
 	 */
-	/*package*/ boolean hasIntroDescriptor() {
+	public boolean hasIntro() {
 		return introDescriptor != null;
 	}
 	

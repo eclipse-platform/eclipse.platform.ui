@@ -46,23 +46,32 @@ public final class ViewIntroAdapterPart extends ViewPart {
 			public void propertyChange(PropertyChangeEvent event) {
 				if (event.getProperty().equals(PartPane.PROP_ZOOMED)) {
 					boolean standby = !((Boolean)event.getNewValue()).booleanValue();
-					introPart.standbyStateChanged(standby);					
-					WorkbenchWindow window = ((WorkbenchWindow)((PartSite)getSite()).getPane().getWorkbenchWindow());
-					if (standby) {
-						window.setCoolBarVisible(true);
-						window.setPerspectiveBarVisible(true);
-					}
-					else {
-						window.setCoolBarVisible(false);
-						window.setPerspectiveBarVisible(false);						
-					}
-					window.getShell().layout();
+					setStandby(standby);
 				}
 			}
 		});
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * Forces the standby state of the intro part.
+	 * 
+     * @param standby update the standby state
+     */
+    public void setStandby(boolean standby) {
+		introPart.standbyStateChanged(standby);					
+		WorkbenchWindow window = ((WorkbenchWindow)((PartSite)getSite()).getPane().getWorkbenchWindow());
+		if (standby) {
+			window.setCoolBarVisible(true);
+			window.setPerspectiveBarVisible(true);
+		}
+		else {
+			window.setCoolBarVisible(false);
+			window.setPerspectiveBarVisible(false);						
+		}
+		window.getShell().layout();
+    }
+
+    /* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createPartControl(Composite parent) {

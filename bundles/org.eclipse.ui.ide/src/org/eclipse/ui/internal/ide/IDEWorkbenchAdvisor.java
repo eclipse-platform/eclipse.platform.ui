@@ -947,14 +947,19 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	 * @return Returns <code>true</code> if there is a known intro part in the system, 
      * <code>false</code> otherwise
 	 */
-	private boolean openIntro(IWorkbenchWindow window) {
-		if (IDEWorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(IDEInternalPreferences.INTRO)) { 
-			if (getWorkbenchConfigurer().getWorkbench().showIntro(window, false) != null) {
-				IDEWorkbenchPlugin.getDefault().getPreferenceStore().setValue(IDEInternalPreferences.INTRO, false);
-				return true;
-			}	
+	private boolean openIntro(IWorkbenchWindow window) {	    
+	    boolean hasIntro = getWorkbenchConfigurer().getWorkbench().hasIntro();
+	    
+		if (hasIntro && IDEWorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(IDEInternalPreferences.INTRO)) {
+		    getWorkbenchConfigurer()
+		    	.getWorkbench()
+		    	.showIntro(
+		    	        window, 
+		    	        false);
+		    IDEWorkbenchPlugin.getDefault().getPreferenceStore().setValue(IDEInternalPreferences.INTRO, false);
 		}
-		return false;
+					
+        return hasIntro;
 	}	
 	
 	public void fillActionBars(IWorkbenchWindow window, IActionBarConfigurer actionConfigurer, int flags) {

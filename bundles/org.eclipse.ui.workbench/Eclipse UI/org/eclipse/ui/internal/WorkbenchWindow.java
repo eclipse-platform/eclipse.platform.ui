@@ -85,6 +85,7 @@ import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.dnd.DragUtil;
+import org.eclipse.ui.internal.intro.IIntroConstants;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.misc.UIStats;
@@ -1365,7 +1366,11 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 			newActivePage = (IWorkbenchPage) pageList.getNextActive();
 
 		setActivePage(newActivePage);
-
+		
+		IMemento introMem = memento.getChild(IWorkbenchConstants.TAG_INTRO);
+		if (introMem != null) {
+		    getWorkbench().showIntro(this, Boolean.valueOf(introMem.getString(IWorkbenchConstants.TAG_STANDBY)).booleanValue());
+		}
 		return result;
 	}
 	
@@ -1654,6 +1659,11 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		memento.putInteger(IWorkbenchConstants.TAG_WIDTH, normalBounds.width);
 		memento.putInteger(IWorkbenchConstants.TAG_HEIGHT, normalBounds.height);
 
+		if (getActivePage().findView(IIntroConstants.INTRO_VIEW_ID) != null) {
+			IMemento introMem = memento.createChild(IWorkbenchConstants.TAG_INTRO);
+			introMem.putString(IWorkbenchConstants.TAG_STANDBY, Boolean.valueOf(getWorkbench().isIntroStandby(getWorkbench().getIntro())).toString());
+		}				
+		
 		/// Save the order of the cool bar contribution items
 		if (getCoolBarManager() != null) {
 			getCoolBarManager().refresh();
