@@ -25,7 +25,6 @@ import org.eclipse.ui.help.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.internal.ui.*;
-import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.parts.*;
 import org.eclipse.update.internal.ui.views.*;
 
@@ -48,7 +47,7 @@ public class UnifiedReviewPage extends BannerPage2 {
 	private static final String KEY_FILTER_CHECK =
 		"MultiInstallWizard.MultiReviewPage.filterCheck";
 
-	private PendingOperation[] jobs;
+	private PendingOperationAdapter[] jobs;
 	private Label counterLabel;
 	private CheckboxTableViewer tableViewer;
 	private IStatus validationStatus;
@@ -73,7 +72,7 @@ public class UnifiedReviewPage extends BannerPage2 {
 		extends LabelProvider
 		implements ITableLabelProvider {
 		public String getColumnText(Object obj, int column) {
-			PendingOperation job = (PendingOperation) obj;
+			PendingOperationAdapter job = (PendingOperationAdapter) obj;
 			IFeature feature = job.getFeature();
 
 			switch (column) {
@@ -91,7 +90,7 @@ public class UnifiedReviewPage extends BannerPage2 {
 		}
 		public Image getColumnImage(Object obj, int column) {
 			if (column == 0) {
-				PendingOperation job = (PendingOperation) obj;
+				PendingOperationAdapter job = (PendingOperationAdapter) obj;
 				IFeature feature = job.getFeature();
 				boolean patch = feature.isPatch();
 				UpdateLabelProvider provider =
@@ -107,15 +106,15 @@ public class UnifiedReviewPage extends BannerPage2 {
 
 	class ContainmentFilter extends ViewerFilter {
 		public boolean select(Viewer v, Object parent, Object child) {
-			return !isContained((PendingOperation) child);
+			return !isContained((PendingOperationAdapter) child);
 		}
-		private boolean isContained(PendingOperation job) {
-			if (job.getJobType() != PendingOperation.INSTALL)
+		private boolean isContained(PendingOperationAdapter job) {
+			if (job.getJob().getJobType() != PendingOperation.INSTALL)
 				return false;
 			VersionedIdentifier vid = job.getFeature().getVersionedIdentifier();
 			Object[] selected = tableViewer.getCheckedElements();
 			for (int i = 0; i < selected.length; i++) {
-				PendingOperation candidate = (PendingOperation) selected[i];
+				PendingOperationAdapter candidate = (PendingOperationAdapter) selected[i];
 				if (candidate.equals(job))
 					continue;
 				IFeature feature = candidate.getFeature();
@@ -169,7 +168,9 @@ public class UnifiedReviewPage extends BannerPage2 {
 	}
 
 	private void setJobs(PendingOperation[] jobs) {
-		this.jobs = jobs;
+		this.jobs = new PendingOperationAdapter[jobs.length];
+		for (int i=0; i<jobs.length; i++)
+			this.jobs[i] = new PendingOperationAdapter(jobs[i]);
 		if (tableViewer != null) {
 			tableViewer.refresh();
 			tableViewer.getTable().layout(true);
@@ -357,22 +358,9 @@ public class UnifiedReviewPage extends BannerPage2 {
 		return table;
 	}
 
-	private String getJobName(PendingOperation job) {
-		switch (job.getJobType()) {
-			case PendingOperation.INSTALL :
-				return "Install";
-			case PendingOperation.CONFIGURE :
-				return "Enable";
-			case PendingOperation.UNCONFIGURE :
-				return "Disable";
-			case PendingOperation.UNINSTALL :
-				return "Uninstall";
-		}
-		return "?";
-	}
 
 	private void jobSelected(IStructuredSelection selection) {
-		PendingOperation job = (PendingOperation) selection.getFirstElement();
+		PendingOperationAdapter job = (PendingOperationAdapter) selection.getFirstElement();
 		IFeature feature = job != null ? job.getFeature() : null;
 		IURLEntry descEntry = feature != null ? feature.getDescription() : null;
 		String desc = null;
@@ -413,8 +401,8 @@ public class UnifiedReviewPage extends BannerPage2 {
 	private void handleProperties() {
 		IStructuredSelection selection =
 			(IStructuredSelection) tableViewer.getSelection();
-		final PendingOperation selectedJob =
-			(PendingOperation) selection.getFirstElement();
+		final PendingOperationAdapter selectedJob =
+			(PendingOperationAdapter) selection.getFirstElement();
 		if (selectedJob == null)
 			return;
 
@@ -428,13 +416,13 @@ public class UnifiedReviewPage extends BannerPage2 {
 		BusyIndicator
 			.showWhile(tableViewer.getControl().getDisplay(), new Runnable() {
 			public void run() {
-				propertiesAction.selectionChanged(new StructuredSelection(createAdapter(selectedJob)));
+				propertiesAction.selectionChanged(new StructuredSelection(selectedJob));
 				propertiesAction.run();
 			}
 		});
 	}
 
-	private String getMoreInfoURL(PendingOperation job) { 
+	private String getMoreInfoURL(PendingOperationAdapter job) { 
 		IFeature feature = job.getFeature();
 		IURLEntry desc = feature.getDescription();
 		if (desc==null) return null;
@@ -446,8 +434,8 @@ public class UnifiedReviewPage extends BannerPage2 {
 	private void handleMoreInfo() {
 		IStructuredSelection selection =
 			(IStructuredSelection) tableViewer.getSelection();
-		final PendingOperation selectedJob =
-			(PendingOperation) selection.getFirstElement();
+		final PendingOperationAdapter selectedJob =
+			(PendingOperationAdapter) selection.getFirstElement();
 		if (selectedJob == null)
 			return;
 			
@@ -461,16 +449,15 @@ public class UnifiedReviewPage extends BannerPage2 {
 			}
 		});
 	}
-	
-	private IFeatureAdapter createAdapter(PendingOperation job) {
-		IFeature feature = job.getFeature();
-		return new SimpleFeatureAdapter(feature);
-	}
 
 	public PendingOperation[] getSelectedJobs() {
 		Object[] selected = tableViewer.getCheckedElements();
 		PendingOperation[] jobs = new PendingOperation[selected.length];
-		System.arraycopy(selected, 0, jobs, 0, selected.length);
+		for (int i=0; i<jobs.length; i++)
+			jobs[i] = ((PendingOperationAdapter)selected[i]).getJob();
+		// TODO we should in the future have the pending operation adapter implement some pending operation interface and
+		// use the arraycopy for better performance
+		//System.arraycopy(selected, 0, jobs, 0, selected.length);
 		return jobs;
 	}
 

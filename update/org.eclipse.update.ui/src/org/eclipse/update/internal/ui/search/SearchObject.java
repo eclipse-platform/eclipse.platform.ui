@@ -249,7 +249,7 @@ public class SearchObject extends NamedModelObject {
 		asyncFireObjectChanged(display, this, P_REFRESH);
 
 		ArrayList candidates = new ArrayList();
-
+ 
 		monitor.beginTask(
 			UpdateUI.getString(KEY_BEGIN),
 			IProgressMonitor.UNKNOWN);
