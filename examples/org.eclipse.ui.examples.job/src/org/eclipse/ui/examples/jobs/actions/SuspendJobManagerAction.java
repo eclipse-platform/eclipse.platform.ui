@@ -1,5 +1,7 @@
 package org.eclipse.ui.examples.jobs.actions;
 
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
@@ -16,10 +18,15 @@ public class SuspendJobManagerAction implements IWorkbenchWindowActionDelegate {
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
-		if (action.isChecked())
-			Platform.getJobManager().suspend();
-		else
-			Platform.getJobManager().resume();
+		try {
+			if (action.isChecked())
+				Platform.getJobManager().suspend(ResourcesPlugin.getWorkspace().getRoot(), null);
+			else
+				Platform.getJobManager().resume(ResourcesPlugin.getWorkspace().getRoot());
+		} catch (OperationCanceledException e) {
+			//thrown if the user cancels the attempt to suspend
+			e.printStackTrace();
+		}
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
