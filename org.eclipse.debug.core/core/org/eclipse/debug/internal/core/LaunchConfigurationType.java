@@ -7,6 +7,7 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
  
+import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -14,7 +15,10 @@ import java.util.StringTokenizer;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
@@ -160,7 +164,12 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 	 */
 	public ILaunchConfigurationDelegate getDelegate() throws CoreException {
 		if (fDelegate == null) {
-			fDelegate = (ILaunchConfigurationDelegate)getConfigurationElement().createExecutableExtension("delegate"); //$NON-NLS-1$
+			Object delegate = getConfigurationElement().createExecutableExtension("delegate"); //$NON-NLS-1$
+			if (delegate instanceof ILaunchConfigurationDelegate) {
+				fDelegate = (ILaunchConfigurationDelegate)delegate;
+			} else {
+				throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, MessageFormat.format(DebugCoreMessages.getString("LaunchConfigurationType.Launch_delegate_for_{0}_does_not_implement_required_interface_ILaunchConfigurationDelegate._1"), new String[]{getName()}), null)); //$NON-NLS-1$
+			}
 		}
 		return fDelegate;
 	}
