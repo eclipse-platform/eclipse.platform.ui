@@ -91,6 +91,7 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
@@ -659,6 +660,7 @@ public class HistoryView extends ViewPart {
 			return;
 		}
 		IEditorInput input = editor.getEditorInput();
+		// Handle compare editors opened from the Synchronize View
 		if (input instanceof SyncInfoCompareInput) {
 			SyncInfoCompareInput syncInput = (SyncInfoCompareInput) input;
 			SyncInfo info = syncInput.getSyncInfo();
@@ -671,11 +673,17 @@ public class HistoryView extends ViewPart {
 					showHistory(base);
 				}
 			}
+		// Handle editors opened on remote files
 		} else if(input instanceof RemoteFileEditorInput) {
 			ICVSRemoteFile remote = ((RemoteFileEditorInput)input).getCVSRemoteFile();
 			if(remote != null) {
 				showHistory(remote);
 			}
+		// Handle regular file editors
+		} else if (input instanceof IFileEditorInput) {
+			IFileEditorInput fileInput = (IFileEditorInput) input;
+			IFile file = fileInput.getFile();
+			showHistory(file);			
 		}
 	}
 	
