@@ -50,8 +50,8 @@ class PropertySheetViewer extends Viewer {
 	private IPropertySheetEntryListener entryListener;
 	private ICellEditorListener editorListener;
 
-	// Flag to indicate if categories should be shown
-	private boolean isShowingCategories = false;
+	// Flag to indicate if categories (if any) should be shown
+	private boolean isShowingCategories = true;
 	// Flag to indicate expert properties should be shown
 	private boolean isShowingExpertProperties = false;
 
@@ -431,10 +431,14 @@ class PropertySheetViewer extends Viewer {
 	 *  (element type <code>IPropertySheetEntry</code>) 
 	 */
 	private List getChildren(IPropertySheetEntry entry) {
-		// if the entry is the root and we are showing categories,
-		// return the categories
-		if (entry == rootEntry && isShowingCategories)
-			return Arrays.asList(categories);
+		// if the entry is the root and we are showing categories, and we have more than the
+		// defualt category, return the categories
+		if (entry == rootEntry && isShowingCategories) {
+			if (categories.length > 1 || 
+				(categories.length == 1 && 
+					!categories[0].getCategoryName().equals(MISCELLANEOUS_CATEGORY_NAME)))
+						return Arrays.asList(categories);
+		}
 
 		// return the filtered child entries
 		return getFilteredEntries(entry.getChildEntries());

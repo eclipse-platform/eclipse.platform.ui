@@ -279,7 +279,7 @@ public class PropertySheetPage extends Page implements IPropertySheetPage {
 		categoriesAction.setToolTipText(PropertiesMessages.getString("Page.categoriesToolTip")); //$NON-NLS-1$
 		categoriesAction.setImageDescriptor(getImageDescriptor("elcl16/tree_mode.gif")); //$NON-NLS-1$
 		categoriesAction.setHoverImageDescriptor(getImageDescriptor("clcl16/tree_mode.gif")); //$NON-NLS-1$
-		categoriesAction.setChecked(false);
+		categoriesAction.setChecked(true);
 	}
 	/* (non-Javadoc)
 	 * Method declared on IPage (and Page).
