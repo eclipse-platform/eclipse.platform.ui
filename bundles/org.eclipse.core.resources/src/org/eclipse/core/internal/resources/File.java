@@ -17,6 +17,8 @@ import org.eclipse.core.internal.utils.Assert;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.content.IContentDescription;
+import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 public class File extends Resource implements IFile {
@@ -200,9 +202,34 @@ protected void ensureClosed(InputStream stream) {
 /**
  * @see IEncodedStorage#getCharset
  */
-public String getCharset() throws CoreException {		 		  
+
+public String getCharset() throws CoreException {
+	// if there is a file-specific user setting, use it
 	String charset = workspace.getCharsetManager().getCharsetFor(getFullPath());
-	return charset == null ? getParent().getDefaultCharset() : charset;
+	if (charset != null)
+		return charset;
+	// tries to obtain a description for the file contents
+	IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
+	InputStream contents = new BufferedInputStream(getContents());
+	boolean failed = false;
+	try {
+		IContentDescription description = contentTypeManager.getDescriptionFor(contents, contentTypeManager.findContentTypesForFileName(getName()), IContentDescription.CHARSET);
+		return (description == null || description.getCharset() == null) ? getParent().getDefaultCharset() : description.getCharset();
+	} catch (IOException e) {
+		failed = true;		
+		String message = Policy.bind("resources.errorCharset", getFullPath().toString()); //$NON-NLS-1$		
+		throw new ResourceException(IResourceStatus.FAILED_RETRIEVING_CHARSET, getFullPath(), message, e);
+	} finally {
+		if (contents != null)
+			try {
+				contents.close();
+			} catch (IOException e) {
+				if (!failed) {
+					String message = Policy.bind("resources.errorCharset", getFullPath().toString()); //$NON-NLS-1$		
+					throw new ResourceException(IResourceStatus.FAILED_RETRIEVING_CHARSET, getFullPath(), message, e);
+				}
+			}				
+	}
 }
 /**
  * @see IFile#getContents

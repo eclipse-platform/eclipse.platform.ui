@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -255,6 +255,12 @@ public interface IResourceStatus extends IStatus {
 	 * @since 2.1
 	 */
 	public static final int WORKSPACE_LOCKED = 380;
+	
+	/** Status code constant (value 381) indicating that a problem occurred while
+	 * retrieving the charset for a resource.
+	 * Severity: error. Category: workspace. 
+	 */
+	public static final int FAILED_RETRIEVING_CHARSET = 381;
 
 	// Internal constants [500-598]
 	// Information Only [500-532]

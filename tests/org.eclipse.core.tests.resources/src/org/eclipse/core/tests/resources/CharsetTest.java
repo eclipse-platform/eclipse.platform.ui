@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources;
 
+import java.io.ByteArrayInputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.Map;
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -210,6 +212,9 @@ public class CharsetTest extends EclipseWorkspaceTest {
 			ensureDoesNotExistInWorkspace(project);
 		}
 	}
+	/**
+	 * Ensure external changes to the encoding file are properly acknowledged. 
+	 */
 	public void testExternalChanges() throws CoreException {
 		IWorkspace workspace = getWorkspace();
 		IProject project = workspace.getRoot().getProject("MyProject");
@@ -255,6 +260,30 @@ public class CharsetTest extends EclipseWorkspaceTest {
 			ensureDoesNotExistInWorkspace(project1);
 			if (project2 != null)
 				ensureDoesNotExistInWorkspace(project2);
+		}
+	}
+	/**
+	 * Tests Content Manager-based charset setting.  
+	 */
+	public void testContentBasedCharset() throws CoreException, UnsupportedEncodingException {
+		IWorkspace workspace = getWorkspace();
+		IProject project = workspace.getRoot().getProject("MyProject");
+		try {
+			ensureExistsInWorkspace(project, true);
+			project.setDefaultCharset("FOO");
+			IFile file = project.getFile("file.xml");
+			assertEquals("0.9", "FOO", project.getDefaultCharset());
+			// content-based encoding is BAR			
+			ensureExistsInWorkspace(file, new ByteArrayInputStream("<?xml version=\"1.0\" encoding=\"BAR\"?><root/>".getBytes("UTF-8")));
+			assertEquals("1.0", "BAR", file.getCharset());
+			// content-based encoding is FRED			
+			file.setContents(new ByteArrayInputStream("<?xml version=\"1.0\" encoding=\"FRED\"?><root/>".getBytes("UTF-8")), false, false, null);
+			assertEquals("2.0", "FRED", file.getCharset());
+			// content-based encoding is UTF-8 (default for XML)
+			file.setContents(new ByteArrayInputStream("<?xml version=\"1.0\"?><root/>".getBytes("UTF-8")), false, false, null);
+			assertEquals("3.0", "UTF-8", file.getCharset());
+		} finally {
+			ensureDoesNotExistInWorkspace(project);
 		}
 	}
 	/**
