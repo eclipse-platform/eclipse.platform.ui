@@ -40,7 +40,7 @@ public class SyncAction extends CVSAction {
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
 			if (!resource.isAccessible()) return false;
-			if(resource.getType()==IResource.PROJECT) continue;
+			if (resource.getType() == IResource.PROJECT) continue;
 			// If the resource is not managed and its parent is not managed, disable.
 			ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
 			if (!cvsResource.isManaged()) {
