@@ -139,6 +139,7 @@ public class WorkbenchWindow extends ApplicationWindow
 	private boolean showStatusLine = true;
 	private boolean showToolBar = true;
 	private Rectangle normalBounds;
+	private boolean asMaximizedState = false;
 	
 	// constants for shortcut bar group ids 
 	static final String GRP_PAGES = "pages";//$NON-NLS-1$
@@ -1513,7 +1514,7 @@ public IStatus saveState(IMemento memento) {
 		WorkbenchMessages.getString("WorkbenchWindow.problemsSavingWindow"),null); //$NON-NLS-1$
 	
 	// Save the window's state and bounds.
-	if (getShell().getMaximized()) {
+	if (getShell().getMaximized() || asMaximizedState) {
 		memento.putString(IWorkbenchConstants.TAG_MAXIMIZED, "true");//$NON-NLS-1$
 	}
 	if(getShell().getMinimized()) {
@@ -1829,7 +1830,11 @@ private void trackShellResize(Shell newShell) {
 			if (shell == null) return;
 			if (shell.isDisposed()) return;
 			if (shell.getMinimized()) return;
-			if (shell.getMaximized()) return;
+			if (shell.getMaximized()) {
+				asMaximizedState = true;
+				return;
+			}
+			asMaximizedState = false;
 			normalBounds = shell.getBounds();
 		}
 	});
