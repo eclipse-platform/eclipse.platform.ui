@@ -1,5 +1,5 @@
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 package org.eclipse.search.internal.core.text;
@@ -59,12 +59,17 @@ public class TextSearchVisitor extends TypedResourceVisitor {
 	private IProgressMonitor fProgressMonitor;
 	private StringMatcher fMatcher;
 	private String fErrorMessage;
+	private Integer[] fMessageFormatArgs;
+
+	private int fNumberOfScannedFiles;
+	private int fNumberOfFilesToScan;
+	private long fLastUpdateTime;
 	
 	protected int fPushbackChar;
 	protected boolean fPushback;
 	
 	
-	public TextSearchVisitor(String pattern, String options, ISearchScope scope, ITextSearchResultCollector collector, MultiStatus status) {
+	public TextSearchVisitor(String pattern, String options, ISearchScope scope, ITextSearchResultCollector collector, MultiStatus status, int fileCount) {
 		super(status);
 		fPattern= pattern;
 		fScope= scope;
@@ -77,6 +82,9 @@ public class TextSearchVisitor extends TypedResourceVisitor {
 
 		fProgressMonitor= collector.getProgressMonitor();
 		fMatcher= new StringMatcher(pattern, options.indexOf('i') != -1, false);
+		fNumberOfScannedFiles= 0;
+		fNumberOfFilesToScan= fileCount;
+		fMessageFormatArgs= new Integer[] { new Integer(0), new Integer(fileCount) };
 	}
 	
 	public void process(Collection projects) {
@@ -130,6 +138,7 @@ public class TextSearchVisitor extends TypedResourceVisitor {
 
 		if (fPattern.length() == 0) {
 			fCollector.accept(file, "", -1, 0, -1); //$NON-NLS-1$
+			updateProgressMonitor();
 			return true;
 		}
 
@@ -179,11 +188,23 @@ public class TextSearchVisitor extends TypedResourceVisitor {
 			throw new CoreException(new Status(IStatus.ERROR, SearchUI.PLUGIN_ID, Platform.PLUGIN_ERROR, message, e));
 		}
 		finally {
-			fProgressMonitor.worked(1);
-			if (fProgressMonitor.isCanceled())
-				throw new OperationCanceledException(SearchMessages.getString("TextSearchVisitor.canceled")); //$NON-NLS-1$
+			updateProgressMonitor();
 		}		
 		return true;
+	}
+
+	private void updateProgressMonitor() {
+		fNumberOfScannedFiles++;
+		if (fNumberOfScannedFiles < fNumberOfFilesToScan) {
+			if (System.currentTimeMillis() - fLastUpdateTime > 1000) {
+				fMessageFormatArgs[0]= new Integer(fNumberOfScannedFiles+1);
+				fProgressMonitor.setTaskName(SearchMessages.getFormattedString("TextSearchVisitor.scanning", fMessageFormatArgs)); //$NON-NLS-1$
+				fLastUpdateTime= System.currentTimeMillis();
+			}
+		}
+		fProgressMonitor.worked(1);
+		if (fProgressMonitor.isCanceled())
+			throw new OperationCanceledException(SearchMessages.getString("TextSearchVisitor.canceled")); //$NON-NLS-1$
 	}
 
 	private ITextEditor findDirtyEditorFor(IFile file) {

@@ -46,9 +46,13 @@ public class TextSearchEngine {
 		if (!openProjects.isEmpty()) {
 			int amountOfWork= (new AmountOfWorkCalculator(status)).process(openProjects, scope);		
 			try {
-				monitor.beginTask(SearchMessages.getString("TextSearchEngine.scanning"), amountOfWork); //$NON-NLS-1$
+				monitor.beginTask("", amountOfWork); //$NON-NLS-1$
+				if (amountOfWork > 0) {
+					Integer[] args= new Integer[] {new Integer(1), new Integer(amountOfWork)};
+					monitor.setTaskName(SearchMessages.getFormattedString("TextSearchEngine.scanning", args)); //$NON-NLS-1$
+				}				
 				collector.aboutToStart();
-				TextSearchVisitor visitor= new TextSearchVisitor(pattern, options, scope, collector, status);
+				TextSearchVisitor visitor= new TextSearchVisitor(pattern, options, scope, collector, status, amountOfWork);
 				visitor.process(openProjects);	
 			} catch (CoreException ex) {
 				status.add(ex.getStatus());
