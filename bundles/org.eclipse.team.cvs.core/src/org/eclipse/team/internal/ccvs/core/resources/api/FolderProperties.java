@@ -19,10 +19,11 @@ public class FolderProperties extends CVSProperties {
 	public static final String REPOSITORY = "Repository";
 	public static final String ROOT = "Root";
 	public static final String STATIC = "Entries.Static";	
+	public static final String TAG = "Tag";	
 	public static final String seperator = "/";
 
 	public FolderProperties() {
-		super(new String[]{REPOSITORY,ROOT,STATIC});
+		super(new String[]{REPOSITORY,ROOT,STATIC,TAG});
 	}	
 	
 	/**
@@ -107,6 +108,22 @@ public class FolderProperties extends CVSProperties {
 		} else {
 			putProperty(STATIC,null);
 		}
+	}
+
+	/**
+	 * Gets the tag e.g. "TmyVersion"
+	 * @return Returns a String
+	 */
+	public String getTag() {
+		return getProperty(TAG);
+	}
+	/**
+	 * Sets the tag
+	 * @param repolsitory e.g. "TmyVersion"
+	 */
+	public void setTag(String tag) {
+		
+		putProperty(TAG,tag);
 	}
 
 }

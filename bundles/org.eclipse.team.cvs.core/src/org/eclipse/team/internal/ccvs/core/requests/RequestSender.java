@@ -38,6 +38,9 @@ public class RequestSender {
 	public static final String QUESTIONABLE = "Questionable";
 	public static final String KOPT = "Kopt";
 	public static final String STATIC_DIRECTORY = "Static-directory";
+	public static final String STICKY = "Sticky";
+	public static final String MODIFIED = "Modified";
+	public static final String IS_MODIFIED = "Is-modified";
 	
 	/** Requests that do expect any response from the server */
 	public static final String CHECKOUT = "co";
@@ -45,8 +48,6 @@ public class RequestSender {
 	public static final String VALID_REQUESTS = "valid-requests";
 	public static final String EXPAND_MODULES = "expand-modules";
 	public static final String CI = "ci";
-	public static final String MODIFIED = "Modified";
-	public static final String IS_MODIFIED = "Is-modified";
 	public static final String STATUS = "status";
 	public static final String UPDATE = "update";
 	public static final String HISTORY = "history";
@@ -57,7 +58,6 @@ public class RequestSender {
 	public static final String TAG = "tag";
 	public static final String DIFF = "diff";
 	public static final String ADMIN = "admin";
-	public static final String STICKY = "Sticky";
 	
 	/** Helper Constants that are not going to be send to server */
 	public static final String SERVER_SEPERATOR = "/";

@@ -30,9 +30,15 @@ public class CVSProperties {
 	
 	/**
 	 * Get the property with the name key.
-	 * @return null if key is not in supportedKeys
+	 * 
+	 * @throws IllegalArgumentException if key is not in 
+	 * 			supportedKeys
 	 */
 	public String getProperty(String key) {
+
+		Assert.isLegal(properties.containsKey(key),
+					   Policy.bind("CVSProperties.IllegalKey"));
+					   
 		return (String) properties.get(key);
 	}
 

@@ -65,8 +65,9 @@ public class ResponseDispatcher {
 		registerStandardHandler(new MessageOutputHandler("E"));
 		registerStandardHandler(new StaticHandler(true));
 		registerStandardHandler(new StaticHandler(false));
-		// FIXME: would we need a StickiHandler ?
-		
+		registerStandardHandler(new StickyHandler(true));
+		registerStandardHandler(new StickyHandler(false));
+
 		if (customHandlers != null) {
 			for (int i=0;i<customHandlers.length;i++) {
 				registerResponseHandler(customHandlers[i]);

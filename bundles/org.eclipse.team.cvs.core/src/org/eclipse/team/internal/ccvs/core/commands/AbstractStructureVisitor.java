@@ -38,7 +38,11 @@ abstract class AbstractStructureVisitor implements IManagedVisitor {
 	}
 	
 	/**
-	 * Send the folder relative to the root to the server
+	 * Send the folder relative to the root to the server. Send all 
+	 * appropiate modifier like Sticki, Questionable, Static-directory.
+	 * <br>
+	 * If this folder was send last, it is not resend again (there is 
+	 * no advantage of doing so).
 	 */
 	void sendFolder(IManagedFolder mFolder, 
 					boolean constructFolder,
@@ -47,6 +51,7 @@ abstract class AbstractStructureVisitor implements IManagedVisitor {
 
 		String local;
 		String remote;
+		String tag;
 		
 		// Do not send the same folder twice
 		if (mFolder.equals(lastFolderSend)) {
@@ -80,9 +85,17 @@ abstract class AbstractStructureVisitor implements IManagedVisitor {
 			requestSender.sendDirectory(local, remote);
 		} 
 		
-		if (mFolder.getFolderInfo() != null && 
-			mFolder.getFolderInfo().getStaticFolder()) {
-			requestSender.sendStaticDirectory();
+		if (mFolder.getFolderInfo() != null) { 
+			
+			if (mFolder.getFolderInfo().getStaticFolder()) {
+				requestSender.sendStaticDirectory();
+			}
+			
+			tag = mFolder.getFolderInfo().getTag();
+			
+			if (tag != null) {
+				requestSender.sendSticky(tag);
+			} 
 		}
 	
 		// Remember, that we send this folder

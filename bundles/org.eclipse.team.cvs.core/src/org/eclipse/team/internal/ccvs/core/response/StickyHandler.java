@@ -21,30 +21,30 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
  * Out of this responses the folder-structure is generated and the
  * information wether the folder a static is set.
  */
-class StaticHandler extends ResponseHandler {
+class StickyHandler extends ResponseHandler {
 	
-	public static final String SET_STATIC_RESPONSE = "Set-static-directory";
-	public static final String CLEAR_STATIC_RESPONSE = "Clear-static-directory";
-	private final boolean setStatic;
+	public static final String SET_STICKY = "Set-sticky";
+	public static final String CLEAR_STICKY = "Clear-sticky";
+	private final boolean setSticky;
 		
 	/**
 	 * Constructor
 	 * 
-	 * @param setStatic => SetStaticHandler
-	           !setStatic => ClearStaticHandler
+	 * @param setSticky => SetStickyHandler
+	           !setSticky => ClearStickyHandler
 	 */
-	public StaticHandler(boolean setStatic) {
-		this.setStatic = setStatic;
+	public StickyHandler(boolean setSticky) {
+		this.setSticky = setSticky;
 	}
 
 	/**
 	 * @see IResponseHandler#getName()
 	 */
 	public String getName() {
-		if (setStatic) {
-			return SET_STATIC_RESPONSE;
+		if (setSticky) {
+			return SET_STICKY;
 		} else {
-			return CLEAR_STATIC_RESPONSE;
+			return CLEAR_STICKY;
 		}
 	}
 
@@ -59,15 +59,22 @@ class StaticHandler extends ResponseHandler {
 		
 		String localDirectory;
 		String remoteDirectory;
-		
-		IManagedFolder mFolder;
-		FolderProperties folderInfo;
+		String tag;
 		
 		// Read the info associated with the Updated response
 		localDirectory = connection.readLine();
 		remoteDirectory = connection.readLine();
 		
-		// Cut the last slash form the 
+		if (setSticky) {
+			tag = connection.readLine();
+			if ("".equals(tag)) {
+				tag = null;
+			}
+		} else {
+			tag = null;
+		}
+		
+		// Cut the last slash from the remote directory
 		Assert.isTrue(remoteDirectory.endsWith(SERVER_DELIM));
 		remoteDirectory = remoteDirectory.substring(0,remoteDirectory.length() - 
 														SERVER_DELIM.length());
@@ -76,11 +83,10 @@ class StaticHandler extends ResponseHandler {
 					 mRoot,
 					 localDirectory,
 					 remoteDirectory,
-					 null,
-					 setStatic,
+					 tag,
 					 false,
-					 true);
+					 true,
+					 false);
 	}
-
 }
 

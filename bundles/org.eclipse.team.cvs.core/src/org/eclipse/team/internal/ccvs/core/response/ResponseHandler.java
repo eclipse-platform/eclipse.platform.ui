@@ -10,7 +10,9 @@ import java.io.PrintStream;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.connection.Connection;
+import org.eclipse.team.internal.ccvs.core.resources.api.FolderProperties;
 import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFolder;
+import org.eclipse.team.internal.ccvs.core.util.Util;
 
 /**
  * ResponseHandler is an abstract class implementing the IResponseHandler.
@@ -50,6 +52,49 @@ public abstract class ResponseHandler implements IResponseHandler {
 							IManagedFolder mRoot) 
 							throws CVSException {
 		throw new UnsupportedOperationException();
+	}
+	
+	/**
+	 * Set the properties of the local folder, creating the folder if it does
+	 * not exist. If the folder does exist, the remote parameter is not used.
+	 * Also, the tag parameter is only set if setTag is true. Similarly,
+	 * the parameter staticFolder is only set if setStatic is true.
+	 * Otherwise these parameters are ignored.
+	 */
+	protected static void createFolder(Connection connection,
+										IManagedFolder mRoot,
+										String local,
+										String remote,
+										String tag,
+										boolean staticFolder,
+										boolean setTag,
+										boolean setStatic) 
+										throws CVSException {
+		
+		FolderProperties folderProperties;
+		IManagedFolder mFolder;
+		
+		mFolder = mRoot.getFolder(local);
+		
+		if (mFolder.exists() && mFolder.isCVSFolder()) {
+			folderProperties = mFolder.getFolderInfo();	
+		} else {
+			mFolder.mkdir();
+			folderProperties = new FolderProperties();
+			folderProperties.setRoot(connection.getCVSRoot().getLocation());
+			folderProperties.setRepository(Util.getRelativePath(connection.getRootDirectory(),
+									  							remote));
+		}
+		
+		if (setTag) {
+			folderProperties.setTag(tag);
+		}
+		
+		if (setStatic) {
+			folderProperties.setStaticFolder(staticFolder);
+		}
+		
+		mFolder.setFolderInfo(folderProperties);
 	}
 }
 

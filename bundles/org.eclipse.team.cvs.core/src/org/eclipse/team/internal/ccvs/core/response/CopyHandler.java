@@ -59,7 +59,12 @@ class CopyHandler extends ResponseHandler {
 		
 		// Move the file to newFile (we know we do not need the
 		// original any more anyway)
+		// If this file exists then overwrite it
 		mNewFile = mParent.getFile(newFilename);
+		if (mNewFile.exists()) {
+			mNewFile.delete();
+		}
+		
 		mFile.moveTo(mNewFile);
 	}
 
