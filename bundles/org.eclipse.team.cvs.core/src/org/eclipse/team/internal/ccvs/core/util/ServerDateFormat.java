@@ -9,6 +9,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * Does convertion beetween this timeformats:<br>
@@ -22,7 +23,8 @@ public class ServerDateFormat extends SimpleDateFormat {
 	public static final String FORMAT = "dd MMM yyyy HH:mm:ss";
 	
 	public ServerDateFormat() {
-		super(FORMAT);
+		super(FORMAT, Locale.US);
+		setTimeZone(TimeZone.getTimeZone("GMT"));		
 	}
 
 	/**

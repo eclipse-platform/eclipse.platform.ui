@@ -5,7 +5,6 @@ package org.eclipse.team.internal.ccvs.core.resources;
  * All Rights Reserved.
  */
 
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -13,15 +12,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.ParseException;
-import java.util.Calendar;
+import java.util.Date;
 
-import java.util.TimeZone;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
-import org.eclipse.team.internal.ccvs.core.util.FileDateFormat;
-import org.eclipse.team.internal.ccvs.core.util.FileUtil;
+import org.eclipse.team.internal.ccvs.core.util.EntryFileDateFormat;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 
 /**
@@ -129,31 +126,24 @@ public class LocalFile extends LocalResource implements ICVSFile {
 		}	
 	}	
 
-	public String getTimeStamp() throws CVSFileNotFoundException {
-						
-		FileDateFormat df = new FileDateFormat();
-		
-		return df.formatMill(ioResource.lastModified());
+	public String getTimeStamp() throws CVSFileNotFoundException {						
+		EntryFileDateFormat timestamp = new EntryFileDateFormat();		
+		return timestamp.format(ioResource.lastModified());
 	}
  
 	public void setTimeStamp(String date) throws CVSException {
-		
-		long millSec;
-		Calendar calendar;
-		FileDateFormat df = new FileDateFormat();
-		
+		long millSec;		
 		if (date==null) {
 			// get the current time
-			calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
-			millSec = calendar.getTime().getTime();
+			millSec = new Date().getTime();
 		} else {
 			try {
-				millSec = df.parseMill(date);
+				EntryFileDateFormat timestamp = new EntryFileDateFormat();
+				millSec = timestamp.toMilliseconds(date);
 			} catch (ParseException e) {
 				throw new CVSException(0,0,"Format of the Date for a TimeStamp not parseable",e);
 			}
-		}
-		
+		}		
 		ioResource.setLastModified(millSec);
 	}
 

@@ -12,7 +12,7 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.connection.Connection;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.util.FileDateFormat;
+import org.eclipse.team.internal.ccvs.core.util.EntryFileDateFormat;
 import org.eclipse.team.internal.ccvs.core.util.ServerDateFormat;
 
 /**
@@ -68,14 +68,14 @@ class ModTimeHandler extends ResponseHandler {
 		
 		long dateInMsec;
 		ServerDateFormat serverFormater = new ServerDateFormat();
-		FileDateFormat fileFormater = new FileDateFormat();
+		EntryFileDateFormat entryTimestampFormater = new EntryFileDateFormat();
 		
 		try {
 			if (toFile) {
 				dateInMsec = serverFormater.parseMill(stamp);
-				return fileFormater.formatMill(dateInMsec);
+				return entryTimestampFormater.format(dateInMsec);
 			} else {
-				dateInMsec = fileFormater.parseMill(stamp);
+				dateInMsec = entryTimestampFormater.toMilliseconds(stamp);
 				return serverFormater.formatMill(dateInMsec);
 			}
 		} catch (ParseException e) {
