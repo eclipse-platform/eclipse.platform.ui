@@ -102,7 +102,7 @@ public class AntRunner implements IPlatformRunnable {
 	private Vector listeners= new Vector(5);
 
 	/** Names of classes to add as listeners to project */
-	private BuildListener clientListener;
+	private AntRunnerListener clientListener;
 
 	/**
 	 * The Ant logger class. There may be only one logger. It will have the
@@ -125,6 +125,7 @@ public class AntRunner implements IPlatformRunnable {
 	 * Indicates we should only parse and display the project help information
 	 */
 	private boolean projectHelp= false;
+	
 	protected void addBuildListeners(Project project) {
 
 		// Add the default listener
@@ -232,17 +233,20 @@ public class AntRunner implements IPlatformRunnable {
 
 		return (filename == null) ? null : new File(filename);
 	}
-public static void main(String[] args) throws Exception {
-	new AntRunner().run(args);
-}
-/**
- * Run this launcher with the arguments specified in the given string.
- * This is a short cut method for people running the launcher from
- * a scrapbook (i.e., swip-and-doit facility).
- */
-public static void main(String argString) throws Exception {
-	main(tokenizeArgs(argString));
-}
+	public static void main(String[] args) throws Exception {
+		new AntRunner().run(args);
+	}
+	/**
+	 * Run this launcher with the arguments specified in the given string.
+	 * This is a short cut method for people running the launcher from
+	 * a scrapbook (i.e., swip-and-doit facility).
+	 */
+	public static void main(String argString) throws Exception {
+		main(tokenizeArgs(argString));
+	}
+	public int getOutputMessageLevel() {
+		return msgOutputLevel;
+	}
 	/**
 	 * Prints the message of the Throwable if it's not null.
 	 */
@@ -453,16 +457,9 @@ public static void main(String argString) throws Exception {
 					searchForThis= DEFAULT_BUILD_FILENAME;
 			} else if (arg.startsWith("-")) {
 				// we don't have any more args to recognize!
-				//out.print(Policy.bind("exception.unknownArgument",arg));
-				
-				throw new BuildException(Policy.bind("error.unknownArgument",arg));
-				
-//				BuildEvent event = new BuildEvent(new Project());
-//				event.setMessage(Policy.bind("exception.unknownArgument",arg)+" - FROM EVENT -", Project.MSG_ERR);
-//				clientListener.messageLogged(event);
-				
-//				printUsage();
-//				return;
+				System.out.println(Policy.bind("exception.unknownArgument",arg));
+				printUsage();
+				return;
 			} else 
 				targets.addElement(arg); // if it's no other arg, it may be the target
 
@@ -523,7 +520,7 @@ public static void main(String argString) throws Exception {
 	 *
 	 * @param args Command line args.
 	 */
-	public Object run(Object argArray, BuildListener listener) throws Exception {
+	public Object run(Object argArray, AntRunnerListener listener) throws Exception {
 		clientListener = listener;
 		return run(argArray);
 	}
@@ -534,12 +531,10 @@ public static void main(String argString) throws Exception {
 		if (!readyToRun)
 			return;
 
-		// track when we started
-
 		if (msgOutputLevel >= Project.MSG_INFO)
-			System.out.println(Policy.bind("label.buildFile",buildFile.toString()));
+			clientListener.messageLogged(Policy.bind("label.buildFile",buildFile.toString()),Project.MSG_INFO);
 
-		EclipseProject project= new EclipseProject();
+		EclipseProject project = new EclipseProject();
 
 		Throwable error= null;
 
@@ -597,7 +592,6 @@ public static void main(String argString) throws Exception {
 			project.fireBuildFinished(error);
 		}
 	}
-	
 	/**
 	 * Run this launcher with the arguments specified in the given string.
 	 * This is a short cut method for people running the launcher from
@@ -609,15 +603,4 @@ public static void main(String argString) throws Exception {
 			list.addElement((String) tokens.nextElement());
 		return (String[]) list.toArray(new String[list.size()]);
 	}
-	
-	
-	/**
-	 * Gets the level of output that the user required.
-	 * 
-	 * @return int the chosen level
-	 */
-	public int getOutputMessageLevel() {
-		return msgOutputLevel;
-	}
-
 }
