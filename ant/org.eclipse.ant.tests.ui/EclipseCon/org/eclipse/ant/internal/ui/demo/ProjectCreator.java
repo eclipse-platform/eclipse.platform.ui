@@ -51,6 +51,9 @@ public class ProjectCreator {
 	
 	private void setClasspath(Javac javacTask, IJavaProject javaProject) throws JavaModelException {
 		org.apache.tools.ant.types.Path classpath= javacTask.getClasspath();
+		if (classpath == null) {
+			return;
+		}
 		String[] classpaths= classpath.list();
 		for (int i = 0; i < classpaths.length; i++) {
 			String cp = classpaths[i];

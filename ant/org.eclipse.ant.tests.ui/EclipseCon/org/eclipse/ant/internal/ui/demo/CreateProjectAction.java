@@ -72,7 +72,7 @@ public class CreateProjectAction implements IWorkbenchWindowActionDelegate {
 			MessageDialog.openInformation(
 				fWindow.getShell(),
 				"Ant Demo",
-				"Currently only support creating a project from a single javac declaration");
+				"Currently only supports creating a project from a single javac declaration");
 			return;
 		}
 		
