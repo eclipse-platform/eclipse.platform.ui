@@ -220,7 +220,16 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
      */
     protected int indexForElement(Widget parent, Object element) {
         ViewerSorter sorter = getSorter();
-        int count = getItemCount((Control) parent);
+		
+		int count;
+		if(parent instanceof Control)
+			count = getItemCount((Control) parent);
+		else{
+			if(parent instanceof Item)
+				count = getItemCount((Item) parent);
+			else
+				count = getChildren(parent).length;
+		}
 
         if (sorter == null)
             return count;
