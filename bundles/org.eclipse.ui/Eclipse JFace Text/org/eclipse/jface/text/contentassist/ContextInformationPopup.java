@@ -10,7 +10,9 @@ Contributors:
 **********************************************************************/
 
 package org.eclipse.jface.text.contentassist;
-import java.util.Iterator;
+
+
+import java.util.Iterator;
 
 import java.util.Stack;
 import org.eclipse.swt.SWT;
@@ -32,7 +34,8 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.TextPresentation;
-import org.eclipse.jface.text.contentassist.ContentAssistant.LayoutManager;
+import org.eclipse.jface.text.contentassist.ContentAssistant.LayoutManager;
+
 
 
 /**
@@ -201,10 +204,9 @@ class ContextInformationPopup implements IContentAssistListener {
 		createContextInfoPopup();
 		
 		fContextInfoText.setText(frame.fInformation.getInformationDisplayString());
-		if (fTextPresentation != null) {
+		if (fTextPresentation != null)
 			TextPresentation.applyTextPresentation(fTextPresentation, fContextInfoText);
-			resize();
-		}
+		resize();
 		
 		if (initial) {
 			if (fContentAssistant.addContentAssistListener(this, ContentAssistant.CONTEXT_INFO_POPUP)) {	
