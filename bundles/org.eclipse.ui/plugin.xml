@@ -171,7 +171,7 @@
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.navigate.forwardHistory">
-      </actionDefinition>            
+      </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.navigate.previous">
       </actionDefinition>
@@ -530,7 +530,7 @@
          <accelerator
                key="Alt+ARROW_RIGHT"
                id="org.eclipse.ui.navigate.forwardHistory">
-         </accelerator>      
+         </accelerator>
          <accelerator
                key=""
                id="org.eclipse.ui.project.openProject">
@@ -914,7 +914,7 @@
          <accelerator
                key="Alt+ARROW_RIGHT"
                id="org.eclipse.ui.navigate.forwardHistory">
-         </accelerator>         
+         </accelerator>
          <accelerator
                key=""
                id="org.eclipse.ui.project.openProject">
@@ -1166,6 +1166,175 @@
          <accelerator
                key=""
                id="org.eclipse.ui.edit.text.encoding.custom">
+         </accelerator>
+      </acceleratorSet>
+      <acceleratorSet
+            scopeId="org.eclipse.ui.globalScope"
+            configurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+         <accelerator
+               platform="carbon"
+               key="Command+W"
+               id="org.eclipse.ui.file.close">
+         </accelerator>
+         <accelerator
+               platform="carbon"
+               key="Command+Shift+W"
+               id="org.eclipse.ui.file.closeAll">
+         </accelerator>
+         <accelerator
+               platform="carbon"
+               key="Command+S"
+               id="org.eclipse.ui.file.save">
+         </accelerator>
+         <accelerator
+               platform="carbon"
+               key="Command+Shift+S"
+               id="org.eclipse.ui.file.saveAll">
+         </accelerator>
+         <accelerator
+               platform="carbon"
+               key="Command+P"
+               id="org.eclipse.ui.file.print">
+         </accelerator>
+         <accelerator
+               platform="carbon"
+               key="Command+Z"
+               id="org.eclipse.ui.edit.undo">
+         </accelerator>
+         <accelerator
+               platform="carbon"
+               key="Command+Y"
+               id="org.eclipse.ui.edit.redo">
+         </accelerator>
+         <accelerator
+               platform="carbon"
+               key="Command+X"
+               id="org.eclipse.ui.edit.cut">
+         </accelerator>
+         <accelerator
+               platform="carbon"
+               key="Command+C"
+               id="org.eclipse.ui.edit.copy">
+         </accelerator>
+         <accelerator
+               platform="carbon"
+               key="Command+V"
+               id="org.eclipse.ui.edit.paste">
+         </accelerator>
+         <accelerator
+               platform="carbon"
+               key="Command+E"
+               id="org.eclipse.ui.edit.text.delete.line">
+         </accelerator>
+         <accelerator
+               platform="carbon"
+               key="Command+Shift+E"
+               id="org.eclipse.ui.edit.text.delete.line.to.end">
+         </accelerator>
+         <accelerator
+               platform="carbon"
+               key="Command+A"
+               id="org.eclipse.ui.edit.selectAll">
+         </accelerator>
+         <accelerator
+               platform="carbon"
+               key="Command+F"
+               id="org.eclipse.ui.edit.findReplace">
+         </accelerator>
+         <accelerator
+               platform="carbon"
+               key="Command+."
+               id="org.eclipse.ui.navigate.next">
+         </accelerator>
+         <accelerator
+               platform="carbon"
+               key="Command+,"
+               id="org.eclipse.ui.navigate.previous">
+         </accelerator>
+         <accelerator
+               platform="carbon"
+               key="Command+B"
+               id="org.eclipse.ui.project.buildProject">
+         </accelerator>
+         <accelerator
+               platform="carbon"
+               key="Command+Shift+W"
+               id="org.eclipse.ui.window.switchToEditor">
+         </accelerator>
+         <accelerator
+               platform="carbon"
+               key="Command+F10"
+               id="org.eclipse.ui.window.showViewMenu">
+         </accelerator>
+         <accelerator
+               platform="carbon"
+               key="Command+F6"
+               id="org.eclipse.ui.window.nextEditor">
+         </accelerator>
+         <accelerator
+               platform="carbon"
+               key="Command+Shift+F6"
+               id="org.eclipse.ui.window.previousEditor">
+         </accelerator>
+         <accelerator
+               platform="carbon"
+               key="Command+F7"
+               id="org.eclipse.ui.window.nextView">
+         </accelerator>
+         <accelerator
+               platform="carbon"
+               key="Command+Shift+F7"
+               id="org.eclipse.ui.window.previousView">
+         </accelerator>
+         <accelerator
+               platform="carbon"
+               key="Command+F8"
+               id="org.eclipse.ui.window.nextPerspective">
+         </accelerator>
+         <accelerator
+               platform="carbon"
+               key="Command+Shift+F8"
+               id="org.eclipse.ui.window.previousPerspective">
+         </accelerator>
+         <accelerator
+               platform="carbon"
+               key="Command+G"
+               id="org.eclipse.ui.edit.findNext">
+         </accelerator>
+         <accelerator
+               platform="carbon"
+               key="Command+Shift+K"
+               id="org.eclipse.ui.edit.findPrevious">
+         </accelerator>
+         <accelerator
+               platform="carbon"
+               key="Command+J"
+               id="org.eclipse.ui.edit.findIncremental">
+         </accelerator>
+         <accelerator
+               platform="carbon"
+               key="Command+Shift+J"
+               id="org.eclipse.ui.edit.findIncrementalReverse">
+         </accelerator>
+         <accelerator
+               platform="carbon"
+               key="Command+L"
+               id="org.eclipse.ui.edit.text.goto.line">
+         </accelerator>
+         <accelerator
+               platform="carbon"
+               key="Command+ARROW_UP"
+               id="org.eclipse.ui.edit.text.scroll.lineUp">
+         </accelerator>
+         <accelerator
+               platform="carbon"
+               key="Command+ARROW_DOWN"
+               id="org.eclipse.ui.edit.text.scroll.lineDown">
+         </accelerator>
+         <accelerator
+               platform="carbon"
+               key="Ctrl+W"
+               id="org.eclipse.ui.edit.text.showRulerContextMenu">
          </accelerator>
       </acceleratorSet>
    </extension>
@@ -1451,9 +1620,9 @@
       <editor
             name="%Editors.WelcomeEditor"
             icon="icons/full/obj16/welcome_editor.gif"
+            contributorClass="org.eclipse.ui.internal.dialogs.WelcomeEditorActionContributor"
             class="org.eclipse.ui.internal.dialogs.WelcomeEditor"
-            id="org.eclipse.ui.internal.dialogs.WelcomeEditor"
-            contributorClass="org.eclipse.ui.internal.dialogs.WelcomeEditorActionContributor">
+            id="org.eclipse.ui.internal.dialogs.WelcomeEditor">
       </editor>
    </extension>
    <extension
