@@ -18,6 +18,7 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -87,6 +88,26 @@ public class EclipseTest extends EclipseWorkspaceTest {
 		if (checkin)
 			getProvider(container).checkin(newResources, IResource.DEPTH_ZERO, DEFAULT_MONITOR);
 		return newResources;
+	}
+	
+	/**
+	 * Perform a CVS edit of the given resources
+	 */
+	public IResource[] editResources(IContainer container, String[] hierarchy) throws CoreException, TeamException {
+		IResource[] resources = getResources(container, hierarchy);
+		getProvider(container).edit(resources, true /* recurse */, true /* notifyServer */, ICVSFile.NO_NOTIFICATION, DEFAULT_MONITOR);
+		assertReadOnly(resources, false /* isReadOnly */, true /* recurse */);
+		return resources;
+	}
+	
+	/**
+	 * Perform a CVS unedit of the given resources
+	 */
+	public IResource[] uneditResources(IContainer container, String[] hierarchy) throws CoreException, TeamException {
+		IResource[] resources = getResources(container, hierarchy);
+		getProvider(container).unedit(resources, true /* recurse */, true/* notifyServer */, DEFAULT_MONITOR);
+		assertReadOnly(resources, true /* isReadOnly */, true /* recurse */);
+		return resources;
 	}
 	
 	public void appendText(IResource resource, String text, boolean prepend) throws CoreException, IOException, CVSException {
@@ -439,6 +460,21 @@ public class EclipseTest extends EclipseWorkspaceTest {
 		CVSTeamProvider provider = (CVSTeamProvider)RepositoryProvider.getProvider(project);
 		assertNotNull(provider);
 	}
+
+	protected void assertReadOnly(IResource[] resources, final boolean isReadOnly, final boolean recurse) throws CoreException {
+		for (int i = 0; i < resources.length; i++) {
+			IResource resource = resources[i];
+			resource.accept(new IResourceVisitor() {
+				public boolean visit(IResource resource) throws CoreException {
+					if (resource.getType() == IResource.FILE) {
+						assertEquals(isReadOnly, resource.isReadOnly());
+					}
+					return recurse;
+				}
+			});
+		}
+	}
+	
 	protected InputStream getContents(ICVSFile file) throws CVSException, IOException {
 		if (file instanceof ICVSRemoteFile)
 			return ((RemoteFile)file).getContents(DEFAULT_MONITOR);
@@ -578,7 +614,7 @@ public class EclipseTest extends EclipseWorkspaceTest {
 	
 	public void waitMsec(int msec) {	
 		try {
-			Thread.currentThread().sleep(msec);
+			Thread.sleep(msec);
 		} catch(InterruptedException e) {
 			fail("wait-problem");
 		}

@@ -32,6 +32,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSResourceVisitor;
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.syncinfo.BaserevInfo;
+import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.NotifyInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 
@@ -314,8 +315,11 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 		NotifyInfo notifyInfo = new NotifyInfo(getName(), NotifyInfo.EDIT, new Date(), internalFormat);
 		setNotifyInfo(notifyInfo);
 		
-		EclipseSynchronizer.getInstance().copyFileToBaseDirectory(getIFile(), monitor);
-		setBaserevInfo(new BaserevInfo(getName(), info.getRevision()));
+		// Only record the base if the file is not modified
+		if (!isModified()) {
+			EclipseSynchronizer.getInstance().copyFileToBaseDirectory(getIFile(), monitor);
+			setBaserevInfo(new BaserevInfo(getName(), info.getRevision()));
+		}
 		
 		// allow editing
 		setReadOnly(false);
@@ -336,7 +340,19 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 		}
 		setNotifyInfo(info);
 		
-		EclipseSynchronizer.getInstance().restoreFileFromBaseDirectory(getIFile(), monitor);
+		if (isModified()) {
+			ResourceSyncInfo syncInfo = getSyncInfo();
+			BaserevInfo baserevInfo = getBaserevInfo();
+			EclipseSynchronizer.getInstance().restoreFileFromBaseDirectory(getIFile(), monitor);
+			// reset any changes that may have been merged from the server
+			if (!syncInfo.getRevision().equals(baserevInfo.getRevision())) {
+				MutableResourceSyncInfo newInfo = syncInfo.cloneMutable();
+				newInfo.setRevision(baserevInfo.getRevision());
+				newInfo.setTimeStamp(getTimeStamp());
+				newInfo.setDeleted(false);
+				setSyncInfo(newInfo);
+			}
+		}
 		setBaserevInfo(null);
 		
 		// prevent editing

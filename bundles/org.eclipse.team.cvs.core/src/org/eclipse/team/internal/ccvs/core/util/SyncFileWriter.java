@@ -542,6 +542,9 @@ public class SyncFileWriter {
 			if (!source.exists()) {
 				throw new CVSException(Policy.bind("SyncFileWriter.baseNotAvailable", file.getFullPath().toString())); //$NON-NLS-1$
 			}
+			if (file.exists()) {
+				file.delete(true, Policy.subMonitorFor(monitor, 10));
+			}
 			// Copy the file so the timestamp is maintained
 			source.move(file.getFullPath(), false /* force */, Policy.subMonitorFor(monitor, 100));
 		} catch (CoreException e) {

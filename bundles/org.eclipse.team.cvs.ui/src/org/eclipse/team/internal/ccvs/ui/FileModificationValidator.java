@@ -120,7 +120,7 @@ public class FileModificationValidator implements ICVSFileModificationValidator 
 		} else if (target instanceof CoreException) {
 			return ((CoreException) target).getStatus();
 		}
-		return new Status(IStatus.ERROR, CVSUIPlugin.ID, 0, Policy.bind("internal"), target);
+		return new Status(IStatus.ERROR, CVSUIPlugin.ID, 0, Policy.bind("internal"), target); //$NON-NLS-1$
 	}
 		
 	private IStatus edit(final IFile[] files, Shell shell) {
@@ -153,8 +153,8 @@ public class FileModificationValidator implements ICVSFileModificationValidator 
 		final IStatus[] result = new IStatus[] { OK };
 		CVSUIPlugin.openDialog(shell, new CVSUIPlugin.IOpenableInShell() {
 			public void open(Shell shell) {
-				if (!MessageDialog.openQuestion(shell, "CVS Edit Files?", "There are read-only files being modified. Should a 'cvs edit' be performed?")) {
-					result[0] = new Status(IStatus.ERROR, CVSUIPlugin.ID, 0, "User vetoed file modfication", null);
+				if (!MessageDialog.openQuestion(shell, Policy.bind("FileModificationValidator.promptTitle"), Policy.bind("FileModificationValidator.promptMessage"))) { //$NON-NLS-1$ //$NON-NLS-2$
+					result[0] = new Status(IStatus.ERROR, CVSUIPlugin.ID, 0, Policy.bind("FileModificationValidator.vetoMessage"), null); //$NON-NLS-1$
 				}
 			//todo: need a custom DetailsDialog
 			}
