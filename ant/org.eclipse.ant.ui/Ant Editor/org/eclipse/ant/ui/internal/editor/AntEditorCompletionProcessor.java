@@ -427,6 +427,8 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
      * No completions will be returned if <code>aParentTaskElement</code> is 
      * not known.
      * 
+     * @param aWholeDocumentString the entire document up to the cursor position 
+     * 
      * @param aParentTaskName name of the parent(surrounding) task or 
      * <code>null</code> if completion should be done for the root element.
      * 
