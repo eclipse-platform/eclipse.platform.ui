@@ -519,6 +519,7 @@ public class UpdateManager {
 		return false;
 	}
 
+
 	
 	/**
 	 * Gets the authenticator.

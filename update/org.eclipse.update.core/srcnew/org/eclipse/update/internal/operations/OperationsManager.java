@@ -55,11 +55,11 @@ public class OperationsManager implements IAdaptable, IOperationFactory {
 		IInstallConfiguration config,
 		IConfiguredSite targetSite,
 		IFeature feature,
-		FeatureHierarchyElement2[] optionalElements,
 		IFeatureReference[] optionalFeatures,
+		IFeature[] unconfiguredOptionalFeatures,
 		IVerificationListener verifier,
 		IOperationListener listener) {
-		return new InstallOperation(config, targetSite, feature, optionalElements, optionalFeatures, verifier, listener);
+		return new InstallOperation(config, targetSite, feature, optionalFeatures, unconfiguredOptionalFeatures, verifier, listener);
 	}
 
 	/* (non-Javadoc)

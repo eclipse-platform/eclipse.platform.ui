@@ -12,15 +12,15 @@ package org.eclipse.update.internal.operations;
 
 import java.util.*;
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
-
 
 public class JobRoot {
 	private IInstallConfiguration config;
 	private PendingOperation job;
 	private FeatureHierarchyElement2[] elements;
-	
+
 	public JobRoot(IInstallConfiguration config, PendingOperation job) {
 		this.config = config;
 		this.job = job;
@@ -34,6 +34,47 @@ public class JobRoot {
 		if (elements == null)
 			computeElements();
 		return elements;
+	}
+
+	public IFeature[] getUnconfiguredOptionalFeatures(
+		IInstallConfiguration config,
+		IConfiguredSite targetSite) {
+
+		ArrayList unconfiguredOptionalFeatures = new ArrayList();
+		getUnconfiguredOptionalFeatures(unconfiguredOptionalFeatures, config, targetSite, getElements(), UpdateManager.isPatch(job.getFeature()));
+		IFeature[] unconfiguredOptionalFeaturesArray =
+			new IFeature[unconfiguredOptionalFeatures.size()];
+		unconfiguredOptionalFeatures.toArray(unconfiguredOptionalFeaturesArray);
+		return unconfiguredOptionalFeaturesArray;
+	}
+
+	private void getUnconfiguredOptionalFeatures(
+		ArrayList unconfiguredOptionalFeatures,
+		IInstallConfiguration config,
+		IConfiguredSite targetSite,
+		FeatureHierarchyElement2[] optionalElements,
+		boolean isPatch) {
+		for (int i = 0; i < optionalElements.length; i++) {
+			FeatureHierarchyElement2[] children =
+				optionalElements[i].getChildren(true, isPatch, config);
+			getUnconfiguredOptionalFeatures(
+				unconfiguredOptionalFeatures,
+				config,
+				targetSite,
+				children,
+				isPatch);
+			if (!optionalElements[i].isEnabled(config)) {
+				IFeature newFeature = optionalElements[i].getFeature();
+				try {
+					IFeature localFeature =
+						UpdateManager.getLocalFeature(targetSite, newFeature);
+					if (localFeature != null)
+						unconfiguredOptionalFeatures.add(localFeature);
+				} catch (CoreException e) {
+					// Ignore this - we will leave with it
+				}
+			}
+		}
 	}
 
 	private void computeElements() {

@@ -74,34 +74,41 @@ public class UnifiedInstallWizard
 		IRunnableWithProgress operation = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor)
 				throws InvocationTargetException {
-				// setup jobs with the correct environment
-				IInstallOperation[] operations =
-				new IInstallOperation[selectedJobs.length];
+					// setup jobs with the correct environment
+				IInstallOperation[] operations = new IInstallOperation[selectedJobs.length];
 				for (int i = 0; i < selectedJobs.length; i++) {
 					PendingOperation job = selectedJobs[i];
-					FeatureHierarchyElement2[] optionalElements = null;
+					IFeature[] unconfiguredOptionalFeatures = null;
 					IFeatureReference[] optionalFeatures = null;
 					if (optionalFeaturesPage != null) {
-						optionalElements =
-							optionalFeaturesPage.getOptionalElements(job);
 						optionalFeatures =
 							optionalFeaturesPage.getCheckedOptionalFeatures(
 								job);
+						unconfiguredOptionalFeatures =
+							optionalFeaturesPage
+								.getUnconfiguredOptionalFeatures(
+								job,
+								targetPage.getTargetSite(job));
 					}
-					IInstallOperation op = (IInstallOperation)UpdateManager
-						.getOperationsManager()
-						.createInstallOperation(
+					IInstallOperation op =
+						(IInstallOperation) UpdateManager
+							.getOperationsManager()
+							.createInstallOperation(
 							config,
-								targetPage.getTargetSite(job),
-								job.getFeature(),
-								optionalElements,
-								optionalFeatures,
-								new JarVerificationService(
-									UnifiedInstallWizard.this.getShell()),
-									UnifiedInstallWizard.this);
+							targetPage.getTargetSite(job),
+							job.getFeature(),
+							optionalFeatures,
+							unconfiguredOptionalFeatures,
+							new JarVerificationService(
+								UnifiedInstallWizard.this.getShell()),
+							UnifiedInstallWizard.this);
 					operations[i] = op;
 				}
-				IOperation installOperation = UpdateManager.getOperationsManager().createBatchInstallOperation(operations);
+				IOperation installOperation =
+					UpdateManager
+						.getOperationsManager()
+						.createBatchInstallOperation(
+						operations);
 				try {
 					installOperation.execute(monitor);
 				} catch (CoreException e) {
@@ -121,7 +128,7 @@ public class UnifiedInstallWizard
 			return false;
 		} catch (InterruptedException e) {
 			return false;
-		} 
+		}
 		return true;
 	}
 

@@ -13,7 +13,6 @@ package org.eclipse.update.operations;
 
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.internal.operations.*;
 
 /**
  * IOperation
@@ -21,7 +20,7 @@ import org.eclipse.update.internal.operations.*;
 public interface IOperationFactory {
 	public IOperation createConfigOperation(IInstallConfiguration config, IConfiguredSite targetSite, IFeature feature, IOperationListener listener);
 	public IOperation createUnconfigOperation(IInstallConfiguration config, IConfiguredSite targetSite, IFeature feature, IOperationListener listener);
-	public IOperation createInstallOperation(IInstallConfiguration config, IConfiguredSite targetSite, IFeature feature, FeatureHierarchyElement2[] optionalElements,IFeatureReference[] optionalFeatures, IVerificationListener verifier, IOperationListener listener);
+	public IOperation createInstallOperation(IInstallConfiguration config, IConfiguredSite targetSite, IFeature feature, IFeatureReference[] optionalFeatures, IFeature[] unconfiguredOptionalFeatures,IVerificationListener verifier, IOperationListener listener);
 	public IOperation createUninstallOperation(IInstallConfiguration config, IConfiguredSite targetSite, IFeature feature, IOperationListener listener);
 	public IOperation createBatchInstallOperation(IInstallOperation[] operations);
 }

@@ -292,6 +292,15 @@ public class UnifiedOptionalFeaturesPage extends UnifiedBannerPage implements IU
 		return null;
 	}
 	
+	public IFeature[] getUnconfiguredOptionalFeatures(PendingOperation job, IConfiguredSite targetSite) {
+		for (int i = 0; i < jobRoots.length; i++) {
+			if (job.equals(jobRoots[i].getJob())) {
+				return jobRoots[i].getUnconfiguredOptionalFeatures(config, targetSite);
+			}
+		}
+		return null;
+	}
+	
 	public IFeatureReference[] getCheckedOptionalFeatures(PendingOperation currentJob) {
 		HashSet set = new HashSet();
 		JobRoot jobRoot = null;
