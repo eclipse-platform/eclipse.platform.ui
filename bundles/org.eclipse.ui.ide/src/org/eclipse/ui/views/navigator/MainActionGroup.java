@@ -90,7 +90,7 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
 			return;
 		}
 		
-		IStructuredSelection selection = (IStructuredSelection) context.getSelection();
+		final IStructuredSelection selection = (IStructuredSelection) context.getSelection();
 		if (ResourceSelectionUtil.allResourcesAreOfType(selection, IResource.PROJECT) == false) {
 			return;
 		}			
@@ -104,11 +104,14 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
 			IResourceDelta projDelta = projDeltas[i];
 			if ((projDelta.getFlags() & IResourceDelta.OPEN) != 0) {
 				if (sel.contains(projDelta.getResource())) {
-					addTaskAction.selectionChanged(selection);
-					gotoGroup.updateActionBars();
-					refactorGroup.updateActionBars();
-					workspaceGroup.updateActionBars();
-					return;
+					getNavigator().getSite().getShell().getDisplay().syncExec(new Runnable() {
+						public void run() {
+							addTaskAction.selectionChanged(selection);
+							gotoGroup.updateActionBars();
+							refactorGroup.updateActionBars();
+							workspaceGroup.updateActionBars();
+						}
+					});
 				}
 			}
 		}
