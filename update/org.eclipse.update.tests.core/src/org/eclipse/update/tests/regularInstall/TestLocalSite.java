@@ -85,29 +85,49 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		
 		// we are not checking if this is read only
 		IInstallConfiguration newConfig = site.createNewCurrentConfiguration(null,"new Label");
+		//IInstallConfiguration newConfig = site.getCurrentConfiguration();
 		IConfigurationSite configSite = newConfig.getConfigurationSites()[0];
 		configSite.setConfigurationPolicy(SiteManager.createConfigurationPolicy(IPlatformConfiguration.ISitePolicy.USER_INCLUDE));
 		configSite.install(feature,null);
-		// why d I add, i didn;t create a new Site Config ?
-		//newConfig.addConfigurationSite(configSite);
-		site.save();
-		
-		// check
-		// there are 2 configuration
-		String time = ""+site.getCurrentConfiguration().getCreationDate().getTime();
-		File file = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),"DefaultConfig"+time+".xml").getFile());
-		assertTrue("new configuration does not exist", file.exists());
-		
+				
 		// teh current one points to a real fature
 		// does not throw error.
 		IConfigurationSite configSite2 = site.getCurrentConfiguration().getConfigurationSites()[0];
 		IFeatureReference ref = configSite2.getConfigurationPolicy().getConfiguredFeatures()[0];
 		IFeature feature2 = ref.getFeature();
 		String configuredFeature = feature2.getLabel();
+
+		assertEquals(feature2.getIdentifier().toString(),"org.eclipse.update.core.tests.feature3_1.0.0");
+		assertTrue("Wrong id  version of feature",feature2.getIdentifier().toString().equalsIgnoreCase("org.eclipse.update.core.tests.feature3_1.0.0"));
+		
+		// test only 2 install config in local site
+		assertTrue("wrong number of history in Local site",site.getConfigurationHistory().length==2);
+		
+		// test only 1 site in current config
+		assertTrue("Wrong number of config sites in current config",site.getCurrentConfiguration().getConfigurationSites().length==1);
+		
+		//test only one feature for the site
+		assertTrue("wrong number of configured features for config site",site.getCurrentConfiguration().getConfiguredFeatures().length==1);
+		
+		// test only 2 activities
+		assertTrue("Wrong number of activities for install config",site.getCurrentConfiguration().getActivities().length==2);
+
+		site.save();		
+
+		// check
+		// there are 2 configuration
+		String time = ""+site.getCurrentConfiguration().getCreationDate().getTime();
+		File file = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),"DefaultConfig"+time+".xml").getFile());
+		assertTrue("new configuration does not exist", file.exists());
 		
 		// cleanup
-		// do not clean up for next test...
-		//UpdateManagerUtils.removeFromFileSystem(localFile);		
+		localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),SiteLocal.SITE_LOCAL_FILE).getFile());
+		UpdateManagerUtils.removeFromFileSystem(localFile);		
+		localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),SiteLocal.DEFAULT_CONFIG_FILE).getFile());
+		UpdateManagerUtils.removeFromFileSystem(localFile);				
+		UpdateManagerUtils.removeFromFileSystem(file);		
+		localFile = new File(feature2.getURL().getFile());
+		UpdateManagerUtils.removeFromFileSystem(localFile);
 
 	}
 	

@@ -92,7 +92,9 @@ public class InstallConfiguration implements IInstallConfiguration, IWritable {
 		IFeatureReference[] result = new IFeatureReference[0];
 
 		// initialize if needed
-		if (featuresConfigured == null) {
+		//if (featuresConfigured == null) {
+		//FIXME: always initialize ? because we don;t know if feature have been
+		// added to a config site ????
 			featuresConfigured = new ArrayList();
 
 			if (configurationSites != null) {
@@ -103,7 +105,7 @@ public class InstallConfiguration implements IInstallConfiguration, IWritable {
 					// unconfigured features are getSIte.getFeatures - configuredFeatures ?
 				}
 			}
-		}
+		//}
 
 		if (featuresConfigured != null && !featuresConfigured.isEmpty()) {
 			// move List in Array
@@ -136,7 +138,7 @@ public class InstallConfiguration implements IInstallConfiguration, IWritable {
 			
 		//Start UOW ?
 		ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_SITE_INSTALL);
-		activity.setLabel("Installed configuration site: "+site.getSite().getURL().toExternalForm());
+		activity.setLabel(site.getSite().getURL().toExternalForm());
 		activity.setDate(new Date());
 			
 		if (configurationSites == null) {

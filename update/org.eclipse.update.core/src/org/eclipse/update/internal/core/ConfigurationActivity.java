@@ -12,7 +12,7 @@ import org.eclipse.update.core.IActivity;
 public class ConfigurationActivity implements IActivity, IWritable {
 	
 	private String label;
-	private String action;
+	private int action;
 	private Date date;
 	private int status;
 	
@@ -20,7 +20,7 @@ public class ConfigurationActivity implements IActivity, IWritable {
 	/**
 	 * Constructor for ConfigurationActivity.
 	 */
-	public ConfigurationActivity(String action) {
+	public ConfigurationActivity(int action) {
 		super();
 		this.action = action;
 		this.status = STATUS_NOK; 
@@ -29,7 +29,7 @@ public class ConfigurationActivity implements IActivity, IWritable {
 	/*
 	 * @see IActivity#getAction()
 	 */
-	public String getAction() {
+	public int getAction() {
 		return action;
 	}
 

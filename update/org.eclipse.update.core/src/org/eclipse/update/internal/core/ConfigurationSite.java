@@ -114,7 +114,7 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 		
 			//Start UOW ?
 		ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_FEATURE_INSTALL);
-		activity.setLabel("Installed feature: "+feature.getIdentifier().toString() +" in site "+site.getURL().toExternalForm());
+		activity.setLabel(feature.getIdentifier().toString());
 		activity.setDate(new Date());
 			
 		IFeatureReference installedFeature = getSite().install(feature,monitor);

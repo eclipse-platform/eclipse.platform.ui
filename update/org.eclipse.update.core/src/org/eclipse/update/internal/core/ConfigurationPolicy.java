@@ -114,7 +114,7 @@ public class ConfigurationPolicy implements IConfigurationPolicy {
 		if (policy==IPlatformConfiguration.ISitePolicy.USER_INCLUDE){
 		//Start UOW ?
 		ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_CONFIGURE);
-		activity.setLabel("configured feature: "+feature.getURL().toExternalForm());
+		activity.setLabel(feature.getURL().toExternalForm());
 		activity.setDate(new Date());
 		addFeatureReference(feature);
 		
@@ -131,7 +131,7 @@ public class ConfigurationPolicy implements IConfigurationPolicy {
 		if (policy==IPlatformConfiguration.ISitePolicy.USER_EXCLUDE){		
 		//Start UOW ?
 		ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_UNCONFIGURE);
-		activity.setLabel("configured feature: "+feature.getURL().toExternalForm());
+		activity.setLabel(feature.getURL().toExternalForm());
 		activity.setDate(new Date());
 		addFeatureReference(feature);
 		

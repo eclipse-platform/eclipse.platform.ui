@@ -176,7 +176,8 @@ public class InstallConfigurationParser extends DefaultHandler {
 	private void processActivity(Attributes attributes) throws MalformedURLException {
 
 		// action
-		String action = attributes.getValue("action");
+		String actionString = attributes.getValue("action");
+		int action = Integer.parseInt(actionString);
 
 		// create
 		ConfigurationActivity activity = new ConfigurationActivity(action);
@@ -200,7 +201,7 @@ public class InstallConfigurationParser extends DefaultHandler {
 
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
-			UpdateManagerPlugin.getPlugin().debug("End Processing Activity: activity:" + activity + " label: " + label + " date:" + dateString + " status" + statusString);
+			UpdateManagerPlugin.getPlugin().debug("End Processing Activity: action:" + actionString + " label: " + label + " date:" + dateString + " status" + statusString);
 		}
 
 	}
