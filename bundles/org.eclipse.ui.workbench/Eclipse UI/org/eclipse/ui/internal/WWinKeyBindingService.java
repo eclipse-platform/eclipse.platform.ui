@@ -350,7 +350,7 @@ public class WWinKeyBindingService {
 			if (parent == null || parent.getItemCount() < 1)
 				return;
 			
-			MenuItem parentItem = parent.getItem(0);
+			MenuItem parentItem = parent.getItem(parent.getItemCount() - 1);
 			parent = parentItem.getMenu();
 			accMenu = new AcceleratorMenu(parent);
 		}
