@@ -1,35 +1,27 @@
-package org.eclipse.help.internal.protocols.search;
+package org.eclipse.help.internal.protocols;
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-
+import java.io.*;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.help.internal.HelpSystem;
-import org.eclipse.help.internal.search.IndexProgressMonitor;
-import org.eclipse.help.internal.search.SearchManager;
+import org.eclipse.help.internal.search.*;
 import org.eclipse.help.internal.server.HelpURL;
-import org.eclipse.help.internal.util.Logger;
-import org.eclipse.help.internal.util.Resources;
+import org.eclipse.help.internal.util.*;
 /**
  * URL to the search server.
  */
-public class SearchURL extends HelpURL
-{
+public class SearchURL extends HelpURL {
 	/**
 	 * SearchURL constructor comment.
 	 * @param url java.lang.String
 	 */
-	public SearchURL(String url)
-	{
+	public SearchURL(String url) {
 		super(url, "");
 		int index = url.indexOf("?");
-		if (index > -1)
-		{
-			if (url.length() > index + 1)
-			{
+		if (index > -1) {
+			if (url.length() > index + 1) {
 				String query = url.substring(index + 1);
 				this.query = new StringBuffer(query);
 				parseQuery(query);
@@ -38,8 +30,7 @@ public class SearchURL extends HelpURL
 		}
 	}
 	/** Returns the path prefix that identifies the URL. */
-	public static String getPrefix()
-	{
+	public static String getPrefix() {
 		return "search";
 	}
 	/**
@@ -47,92 +38,67 @@ public class SearchURL extends HelpURL
 	 * 
 	 * @return java.io.InputStream
 	 */
-	public InputStream openStream()
-	{
+	public InputStream openStream() {
 		Logger.logInfo("I004");
 		// The url string should contain the search parameters.
-		try
-		{
+		try {
 			int indexed = getIndexedPercent();
 			if (indexed == -1)
 				return new ByteArrayInputStream(
 					"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<toc label=\"Search\"/>"
 						.getBytes());
-			else if (indexed == 100)
-			{
+			else if (indexed == 100) {
 				String results =
 					HelpSystem.getSearchManager().getSearchResults(query.toString());
 				//System.out.println("search results=" + results);
 				InputStream is = new ByteArrayInputStream(results.getBytes("UTF8"));
-				if (is != null)
-				{
+				if (is != null) {
 					contentSize = is.available();
-				}
-				else
-				{
+				} else {
 					Logger.logError(Resources.getString("index_is_busy"), null);
 				}
 				return is;
-			}
-			else
-			{
+			} else {
 				return new ByteArrayInputStream(
-					("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<progress indexed=\""+indexed+"\"/>")
+					("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<progress indexed=\""
+						+ indexed
+						+ "\"/>")
 						.getBytes());
 			}
-		}
-		catch(Exception e)
-		{
+		} catch (Exception e) {
 			return new ByteArrayInputStream(
-					"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<toc label=\"Search\"/>"
-						.getBytes());
+				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<toc label=\"Search\"/>"
+					.getBytes());
 		}
 	}
-
-	private synchronized int getIndexedPercent()
-	{
+	private synchronized int getIndexedPercent() {
 		final SearchManager sm = HelpSystem.getSearchManager();
 		final String locale = this.getLocale().toString();
-
 		int percentage = 100;
-		
-		if (sm.isIndexingNeeded(locale))
-		{
-			Thread indexer = new Thread(new Runnable()
-			{
-				public void run()
-				{
-					try
-					{
+		if (sm.isIndexingNeeded(locale)) {
+			Thread indexer = new Thread(new Runnable() {
+				public void run() {
+					try {
 						sm.updateIndex(null, locale);
-					}
-					catch (Exception e)
-					{
+					} catch (Exception e) {
 						e.printStackTrace();
 						Logger.logError(Resources.getString("search_index_update_error"), null);
 					}
 				}
 			});
 			indexer.start();
-
 			IProgressMonitor pm = sm.getProgressMonitor(locale);
-			while(pm == null)
-			{
+			while (pm == null) {
 				// wait until the progress monitor is created
-				try
-				{
+				try {
 					Thread.currentThread().sleep(50);
 					pm = sm.getProgressMonitor(locale);
-				}
-				catch(InterruptedException ex)
-				{
+				} catch (InterruptedException ex) {
 				}
 			}
-			
 			if (pm instanceof IndexProgressMonitor)
 				percentage = ((IndexProgressMonitor) pm).getPercentage();
 		}
-
 		return percentage;
 	}
 }

@@ -2,7 +2,7 @@
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-package org.eclipse.help.internal.protocols.help;
+package org.eclipse.help.internal.protocols;
 import java.io.*;
 import java.net.*;
 import java.util.*;

@@ -2,14 +2,14 @@
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-package org.eclipse.help.internal.protocols.search;
+package org.eclipse.help.internal.protocols;
 import java.io.IOException;
 import java.net.*;
-public class Handler extends URLStreamHandler {
+public class SearchURLHandler extends URLStreamHandler {
 	/**
 	 * Constructor for SearchURLHandler
 	 */
-	public Handler() {
+	public SearchURLHandler() {
 		super();
 	}
 	/**

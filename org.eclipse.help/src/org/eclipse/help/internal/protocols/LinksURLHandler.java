@@ -2,20 +2,20 @@
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
-package org.eclipse.help.internal.protocols.livehelp;
+package org.eclipse.help.internal.protocols;
 import java.io.IOException;
 import java.net.*;
-public class Handler extends URLStreamHandler {
+public class LinksURLHandler extends URLStreamHandler {
 	/**
-	 * Constructor for LiveHelpURLHandler
+	 * Constructor for LinksURLHandler
 	 */
-	public Handler() {
+	public LinksURLHandler() {
 		super();
 	}
 	/**
 	 * @see URLStreamHandler#openConnection(URL)
 	 */
 	protected URLConnection openConnection(URL url) throws IOException {
-		return new LiveHelpURLConnection(url);
+		return new LinksURLConnection(url);
 	}
 }

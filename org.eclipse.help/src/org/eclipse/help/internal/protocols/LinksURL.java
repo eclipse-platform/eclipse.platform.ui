@@ -2,15 +2,10 @@
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
-package org.eclipse.help.internal.protocols.links;
+package org.eclipse.help.internal.protocols;
 import java.io.*;
-
-import org.eclipse.help.IHelpResource;
-import org.eclipse.help.internal.HelpSystem;
 import org.eclipse.help.internal.context.LinksResult;
 import org.eclipse.help.internal.server.HelpURL;
-import org.eclipse.help.internal.util.*;
-import org.w3c.dom.Document;
 /**
  * URL to the links server.
  */
@@ -42,10 +37,9 @@ public class LinksURL extends HelpURL {
 	 */
 	public InputStream openStream() {
 		try {
-			String contextId=(String)arguments.get("contextId");
-			LinksResult result=
-				new LinksResult(contextId);
-				InputStream is = new ByteArrayInputStream(result.toString().getBytes("UTF8"));
+			String contextId = (String) arguments.get("contextId");
+			LinksResult result = new LinksResult(contextId);
+			InputStream is = new ByteArrayInputStream(result.toString().getBytes("UTF8"));
 			if (is != null) {
 				contentSize = is.available();
 			}

@@ -78,24 +78,24 @@
    <extension-point id="app-server" name="%app_server" />
    
 	<extension point="org.eclipse.core.runtime.urlHandlers"> 
-		<handler protocol="help" class="org.eclipse.help.internal.protocols.help.Handler"/> 
+		<handler protocol="help" class="org.eclipse.help.internal.protocols.HelpURLHandler"/> 
 	</extension> 
    
+	<extension point="org.eclipse.core.runtime.urlHandlers"> 
+		<handler protocol="search" class="org.eclipse.help.internal.protocols.SearchURLHandler"/> 
+	</extension> 
+
+	<extension point="org.eclipse.core.runtime.urlHandlers"> 
+		<handler protocol="links" class="org.eclipse.help.internal.protocols.LinksURLHandler"/> 
+	</extension> 
+
+	<extension point="org.eclipse.core.runtime.urlHandlers"> 
+		<handler protocol="livehelp" class="org.eclipse.help.internal.protocols.LiveHelpURLHandler"/> 
+	</extension> 
+	
    <!-- ================================================================ -->
    <!-- Declares an extension point for pre-built indexes                -->
    <!-- ================================================================ -->
    <extension-point id="prebuiltIndex" name="%prebuilt_index" /> 
       
-	<extension point="org.eclipse.core.runtime.urlHandlers"> 
-		<handler protocol="search" class="org.eclipse.help.internal.protocols.search.Handler"/> 
-	</extension> 
-
-	<extension point="org.eclipse.core.runtime.urlHandlers"> 
-		<handler protocol="links" class="org.eclipse.help.internal.protocols.links.Handler"/> 
-	</extension> 
-
-	<extension point="org.eclipse.core.runtime.urlHandlers"> 
-		<handler protocol="livehelp" class="org.eclipse.help.internal.protocols.livehelp.Handler"/> 
-	</extension> 
-	
 </plugin>

@@ -2,7 +2,7 @@
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
-package org.eclipse.help.internal.protocols.links;
+package org.eclipse.help.internal.protocols;
 import java.io.*;
 import java.net.*;
 import org.eclipse.help.internal.util.Logger;
