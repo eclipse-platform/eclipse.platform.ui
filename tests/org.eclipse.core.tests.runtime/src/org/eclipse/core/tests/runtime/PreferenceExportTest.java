@@ -56,7 +56,7 @@ public class PreferenceExportTest extends RuntimeTest {
 		final String key2 = "SomeOtherTestKey";
 		final String default1 = "SomeTestValue";
 		final int default2 = 5;
-		IPath exportPath = new Path(System.getProperty("user.dir")).append(Long.toString(System.currentTimeMillis()));
+		IPath exportPath = new Path(System.getProperty("java.io.tmpdir")).append(Long.toString(System.currentTimeMillis()));
 		exportPath.toFile().delete();
 		//add a property change listener that asserts key identity
 		Plugin testPlugin = Platform.getPlugin(PI_RUNTIME_TESTS);
@@ -108,7 +108,7 @@ public class PreferenceExportTest extends RuntimeTest {
 	public void testKeyIdentityAfterExport() {
 		final String key = "SomeTestKey";
 		String initialValue = "SomeTestValue";
-		IPath exportPath = new Path(System.getProperty("user.dir")).append(Long.toString(System.currentTimeMillis()));
+		IPath exportPath = new Path(System.getProperty("java.io.tmpdir")).append(Long.toString(System.currentTimeMillis()));
 		exportPath.toFile().delete();
 		//add a property change listener that asserts key identity
 		Plugin testPlugin = Platform.getPlugin(PI_RUNTIME_TESTS);
