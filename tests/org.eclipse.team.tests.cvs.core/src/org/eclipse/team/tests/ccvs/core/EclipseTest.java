@@ -971,5 +971,30 @@ public class EclipseTest extends EclipseWorkspaceTest {
         }
     }
 
+    /* (non-Javadoc)
+     * @see junit.framework.TestCase#runTest()
+     */
+    protected void runTest() throws Throwable {
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        Policy.recorder = new PrintStream(os);
+        try {
+            try {
+                // Override the runTest method in order to print the entire trace of a
+                // test that failed due to a CoreException including nested exceptions
+                super.runTest();
+            } catch (CoreException e) {
+                e.printStackTrace();
+                write(e.getStatus(), 0);
+                throw e;
+            }
+        } catch (Throwable e) {
+            // Transfer the recorded debug info to stdout
+            Policy.recorder.close();
+            System.out.println(new String(os.toByteArray()));
+        } finally {
+            Policy.recorder.close();
+            Policy.recorder = null;
+        }
+    }
 }
 

@@ -11,19 +11,18 @@
 package org.eclipse.team.internal.ccvs.core;
 
 
+import java.io.PrintStream;
 import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.team.internal.core.InfiniteSubProgressMonitor;
 
 public class Policy {
 	protected static ResourceBundle bundle = null;
+	
+	public static PrintStream recorder;
 	
 	//debug constants
 	public static boolean DEBUG_METAFILE_CHANGES = false;
@@ -129,4 +128,25 @@ public class Policy {
 			return monitor;
 		return new InfiniteSubProgressMonitor(monitor, ticks);
 	}
+	
+	public static boolean isDebugProtocol() {
+	    return DEBUG_CVS_PROTOCOL || recorder != null;
+	}
+	
+	public static void printProtocolLine(String line) {
+	    printProtocol(line, true);
+	}
+
+    public static void printProtocol(String string, boolean newLine) {
+        System.out.print(string);
+        if (newLine) {
+            System.out.println();
+        }
+        if (recorder != null) {
+            recorder.print(string);
+            if (newLine) {
+                recorder.println();
+            }
+        }
+    }
 }

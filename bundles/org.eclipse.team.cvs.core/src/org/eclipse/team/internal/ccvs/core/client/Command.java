@@ -316,7 +316,7 @@ public abstract class Command extends Request {
 				LocalOption[] lOptions = filterLocalOptions(session, gOptions, localOptions);
 				
 				// print the invocation string to the console
-				if (session.isOutputToConsole() || Policy.DEBUG_CVS_PROTOCOL) {
+				if (session.isOutputToConsole() || Policy.isDebugProtocol()) {
 					IPath commandRootPath;
 					IResource resource = session.getLocalRoot().getIResource();
 					if (resource == null) {
@@ -329,7 +329,7 @@ public abstract class Command extends Request {
 						IConsoleListener consoleListener = CVSProviderPlugin.getPlugin().getConsoleListener();
 						if (consoleListener != null) consoleListener.commandInvoked(line);
 					}
-					if (Policy.DEBUG_CVS_PROTOCOL) System.out.println("CMD> " + line); //$NON-NLS-1$
+					if (Policy.isDebugProtocol()) Policy.printProtocolLine("CMD> " + line); //$NON-NLS-1$
 				}
 				
 				// run the command
@@ -371,9 +371,9 @@ public abstract class Command extends Request {
 			IConsoleListener consoleListener = CVSProviderPlugin.getPlugin().getConsoleListener();
 			if (consoleListener != null) consoleListener.commandCompleted(status, exception);
 		}
-		if (Policy.DEBUG_CVS_PROTOCOL) {
-			if (status != null) System.out.println("RESULT> " + status.toString()); //$NON-NLS-1$
-			else System.out.println("RESULT> " + exception.toString()); //$NON-NLS-1$
+		if (Policy.isDebugProtocol()) {
+			if (status != null) Policy.printProtocolLine("RESULT> " + status.toString()); //$NON-NLS-1$
+			else Policy.printProtocolLine("RESULT> " + exception.toString()); //$NON-NLS-1$
 		}
 	}
 

@@ -146,7 +146,7 @@ public class Connection {
 			}
 
 			String result = new String(readLineBuffer, 0, index, getEncoding(fCVSRoot));
-			if (Policy.DEBUG_CVS_PROTOCOL) System.out.println(result);
+			if (Policy.isDebugProtocol()) Policy.printProtocolLine(result);
 			return result;
 		} catch (IOException e) {
 			throw new CVSCommunicationException(e);
@@ -164,8 +164,8 @@ public class Connection {
 		}
 
 		String result = new String(buffer, 0, index, getEncoding(location));
-		if (Policy.DEBUG_CVS_PROTOCOL)
-			System.out.println(result);
+		if (Policy.isDebugProtocol())
+		    Policy.printProtocolLine(result);
 		return result;
 	}
 
@@ -213,8 +213,8 @@ public class Connection {
 		if (!isEstablished())
 			throw new CVSCommunicationException(Policy.bind("Connection.writeUnestablishedConnection"));//$NON-NLS-1$
 			
-		if (Policy.DEBUG_CVS_PROTOCOL)
-			System.out.print(new String(b, off, len) + (newline ? "\n" : ""));//$NON-NLS-1$ //$NON-NLS-2$ 
+		if (Policy.isDebugProtocol())
+		    Policy.printProtocol(new String(b, off, len), newline);
 	
 		try {
 			OutputStream out= getOutputStream();
