@@ -181,7 +181,7 @@ public class RevertSection extends UpdateSection {
 					monitor.done();
 					result[0] = success;
 					if (success && restart)
-						UpdateUI.informRestartNeeded();
+						UpdateUI.requestRestart();
 				}
 			}
 		};

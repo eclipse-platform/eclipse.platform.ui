@@ -1067,7 +1067,7 @@ public class UpdatesView
 				!= null) {
 				InstallWizard.makeConfigurationCurrent(config, null);
 				InstallWizard.saveLocalSite();
-				UpdateUI.informRestartNeeded();
+				UpdateUI.requestRestart();
 			}
 		} catch (CoreException e) {
 			UpdateUI.logException(e);

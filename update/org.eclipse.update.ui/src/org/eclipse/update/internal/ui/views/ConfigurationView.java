@@ -954,7 +954,7 @@ public class ConfigurationView
 		config.removeConfiguredSite(site);
 		try {
 			getLocalSite().save();
-			UpdateUI.informRestartNeeded();
+			UpdateUI.requestRestart();
 		} catch (CoreException e) {
 			UpdateUI.logException(e);
 		}

@@ -1279,7 +1279,7 @@ public class DetailsForm extends PropertyWebForm {
 				dialog.open();
 				inProgress = false;
 				if (wizard.isSuccessfulInstall())
-					UpdateUI.informRestartNeeded();
+					UpdateUI.requestRestart();
 			}
 		});
 		return false;
@@ -1300,7 +1300,7 @@ public class DetailsForm extends PropertyWebForm {
 			if (success) {
 				localSite.removeFromPreservedConfigurations(config);
 				localSite.save();
-				UpdateUI.informRestartNeeded();
+				UpdateUI.requestRestart();
 			}
 		} catch (CoreException e) {
 			UpdateUI.logException(e);

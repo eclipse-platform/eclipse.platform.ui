@@ -60,6 +60,6 @@ public class InstallOptionalFeatureAction extends Action {
 		dialog.getShell().setSize(600, 500);
 		dialog.open();
 		if (wizard.isSuccessfulInstall())
-			UpdateUI.informRestartNeeded();
+			UpdateUI.requestRestart();
 	}
 }

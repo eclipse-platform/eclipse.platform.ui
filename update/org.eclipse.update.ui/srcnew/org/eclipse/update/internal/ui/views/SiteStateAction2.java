@@ -52,7 +52,7 @@ public class SiteStateAction2 extends Action {
 			boolean restartNeeded = toggleSiteOperation.execute(null, null);
 					
 			if (restartNeeded)
-				UpdateUI.informRestartNeeded();
+				UpdateUI.requestRestart();
 
 		} catch (CoreException e) {
 			ErrorDialog.openError(

@@ -202,6 +202,6 @@ public class InstallServlet extends HttpServlet {
 		dialog.getShell().setSize(600, 500);
 		dialog.open();
 		if (wizard.isSuccessfulInstall())
-			UpdateUI.informRestartNeeded();
+			UpdateUI.requestRestart();
 	}
 }

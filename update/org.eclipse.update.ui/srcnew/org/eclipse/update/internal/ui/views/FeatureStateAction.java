@@ -45,7 +45,7 @@ public class FeatureStateAction extends Action {
 
 			boolean restartNeeded = toggleOperation.execute(null, null);
 			if (restartNeeded)
-				UpdateUI.informRestartNeeded();
+				UpdateUI.requestRestart();
 
 		} catch (CoreException e) {
 			ErrorDialog.openError(

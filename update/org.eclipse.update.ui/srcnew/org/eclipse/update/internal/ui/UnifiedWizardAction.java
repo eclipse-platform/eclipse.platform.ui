@@ -59,7 +59,7 @@ public class UnifiedWizardAction implements IWorkbenchWindowActionDelegate {
 		dialog.getShell().setSize(600, 500);
 		dialog.open();
 		if (wizard.isSuccessfulInstall())
-			UpdateUI.informRestartNeeded();
+			UpdateUI.requestRestart();
 	}
 
 	/**

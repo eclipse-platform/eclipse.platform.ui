@@ -400,7 +400,7 @@ public class UpdateUI extends AbstractUIPlugin {
 			log(e.getStatus(), true); //$NON-NLS-1$
 		}
 	}
-	public static void informRestartNeeded() {
+	public static void requestRestart() {
 		String title = UpdateUI.getString("RestartTitle");
 		String message = UpdateUI.getString("RestartMessage");
 		boolean restart = MessageDialog.openQuestion(getActiveWorkbenchShell(), title, message);
