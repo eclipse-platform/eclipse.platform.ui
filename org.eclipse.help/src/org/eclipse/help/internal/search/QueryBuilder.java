@@ -229,31 +229,15 @@ public class QueryBuilder
 				operator = token;
 				continue;
 			}
+			
+			// Creates queries for all fields
 			Query qs[] = new Query[fieldNames.length];
-			if (token.type == QueryWordsToken.PHRASE)
+			for (int f = 0; f < fieldNames.length; f++)
 			{
-				QueryWordsPhrase phraseToken = (QueryWordsPhrase) token;
-				for (int f = 0; f < fieldNames.length; f++)
-					qs[f] = new PhraseQuery();
-				for (Iterator it = phraseToken.getWords().iterator(); it.hasNext();)
-				{
-					String word = (String) it.next();
-					for (int f = 0; f < fieldNames.length; f++)
-					{
-						Term t = new Term(fieldNames[f], word);
-						((PhraseQuery) qs[f]).add(t);
-						((PhraseQuery) qs[f]).setBoost(boosts[f]);
-					}
-				}
+				qs[f] = createQuery(token, fieldNames[f], boosts[f] );
 			}
-			else /* if(token.type==SearchQueryToken.WORD) */ {
-				for (int f = 0; f < fieldNames.length; f++)
-				{
-					Term t = new Term((String) fieldNames[f], token.value);
-					qs[f] = new TermQuery(t);
-					((TermQuery) qs[f]).setBoost(boosts[f]);
-				}
-			}
+			
+			// creates the boolean query of all fields
 			Query q = qs[0];
 			if (fieldNames.length > 1)
 			{
@@ -278,6 +262,37 @@ public class QueryBuilder
 		}
 		return retQuery;
 	}
+	
+	private Query createQuery(QueryWordsToken token, String field, float boost)
+	{
+			if (token.type == QueryWordsToken.PHRASE)
+				return createPhraseQuery((QueryWordsPhrase) token, field, boost);
+			else
+				return createTermQuery(token ,field, boost);
+	}
+			
+	private Query createPhraseQuery(QueryWordsPhrase phraseToken, String field, float boost)
+	{
+		PhraseQuery q = new PhraseQuery();
+		for (Iterator it = phraseToken.getWords().iterator(); it.hasNext();)
+		{
+			String word = (String) it.next();
+			Term t = new Term(field, word);
+			q.add(t);
+			q.setBoost(boost);
+		}
+		return q;
+	}
+		
+	private Query createTermQuery(QueryWordsToken token, String field, float boost)
+	{
+		Term t = new Term(field, token.value);
+		TermQuery q = new TermQuery(t);
+		q.setBoost(boost);
+		return q;
+	}
+
+			
 	private Query getLuceneQuery(String[] fieldNames, float[] boosts)
 	{
 		Query luceneQuery = createLuceneQuery(analyzedTokens, fieldNames, boosts);
