@@ -265,7 +265,7 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
  			refresh();
 		}
 		boolean isLinkEnabled() {
-			return !dialogContext && linkEnabled && gotoAction != null;
+			return !dialogContext && linkEnabled;
 		}
 		public void handleEvent(Event e) {
 			super.handleEvent(e);
@@ -359,7 +359,7 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 			}
 		}
 		private void updateToolTip() {
-			if (isLinkEnabled()) {
+			if (isLinkEnabled() && gotoAction != null && gotoAction.isEnabled()) {
 				String tooltip= gotoAction.getToolTipText();
 				if (tooltip != null)
 					setToolTipText(tooltip);
