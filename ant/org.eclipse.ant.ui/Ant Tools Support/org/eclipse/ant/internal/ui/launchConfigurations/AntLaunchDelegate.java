@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,8 @@ import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.core.AntRunner;
 import org.eclipse.ant.core.Property;
+import org.eclipse.ant.core.Task;
+import org.eclipse.ant.core.Type;
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.ant.internal.ui.model.AntUtil;
 import org.eclipse.ant.internal.ui.model.IAntUIConstants;
@@ -350,6 +352,10 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 			commandLine.append(" -logger "); //$NON-NLS-1$
 			commandLine.append(ANT_LOGGER_CLASS);
 		}
+		
+		if (separateVM) {
+			appendTaskAndTypes(prefs, commandLine);
+		}
 		commandLine.append(" -buildfile \""); //$NON-NLS-1$
 		commandLine.append(location.toOSString());
 		commandLine.append('\"');
@@ -364,7 +370,29 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 		return commandLine;
 	}
 	
-	private void appendProperty(StringBuffer commandLine, String name, String value){
+	private void appendTaskAndTypes(AntCorePreferences prefs, StringBuffer commandLine) {
+		List tasks= prefs.getRemoteTasks();
+		Iterator itr= tasks.iterator();
+		while (itr.hasNext()) {
+			Task task = (Task) itr.next();
+			commandLine.append(" -eclipseTask "); //$NON-NLS-1$
+			commandLine.append(task.getTaskName());
+			commandLine.append(',');
+			commandLine.append(task.getClassName());
+		}
+		
+		List types= prefs.getRemoteTypes();
+		itr= types.iterator();
+		while (itr.hasNext()) {
+			Type type = (Type) itr.next();
+			commandLine.append(" -eclipseType "); //$NON-NLS-1$
+			commandLine.append(type.getTypeName());
+			commandLine.append(',');
+			commandLine.append(type.getClassName());
+		}
+	}
+
+	private void appendProperty(StringBuffer commandLine, String name, String value) {
 		commandLine.append(" \"-D"); //$NON-NLS-1$
 		commandLine.append(name);
 		commandLine.append('='); 

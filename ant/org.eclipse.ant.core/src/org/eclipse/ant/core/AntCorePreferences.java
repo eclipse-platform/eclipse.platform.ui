@@ -28,6 +28,7 @@ import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.eclipse.ant.internal.core.AntClasspathEntry;
+import org.eclipse.ant.internal.core.AntObject;
 import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.core.InternalCoreAntMessages;
 import org.eclipse.core.boot.BootLoader;
@@ -79,8 +80,6 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	
 	private boolean runningHeadless= false;
 	
-	
-
 	protected AntCorePreferences(List defaultTasks, List defaultExtraClasspath, List defaultTypes, boolean headless) {
 		this(defaultTasks, defaultExtraClasspath, defaultTypes, Collections.EMPTY_LIST, headless);
 	}
@@ -397,51 +396,14 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		List result = new ArrayList(tasks.size());
 		for (Iterator iterator = tasks.iterator(); iterator.hasNext();) {
 			IConfigurationElement element = (IConfigurationElement) iterator.next();
-			if (runningHeadless) {
-				String headless = element.getAttribute(AntCorePlugin.HEADLESS);
-				if (headless != null) {
-					boolean headlessTask= Boolean.valueOf(headless).booleanValue();
-					if (!headlessTask) {
-						continue;
-					}
-				}
+			if (!relevantRunningHeadless(element)) {
+				continue;
 			}
 			Task task = new Task();
 			task.setTaskName(element.getAttribute(AntCorePlugin.NAME));
 			task.setClassName(element.getAttribute(AntCorePlugin.CLASS));
-			String library = element.getAttribute(AntCorePlugin.LIBRARY);
-			if (library == null) {
-				IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, MessageFormat.format(InternalCoreAntMessages.getString("AntCorePreferences.Library_not_specified_for__{0}_4"), new String[]{task.getTaskName()}), null); //$NON-NLS-1$
-				AntCorePlugin.getPlugin().getLog().log(status);
-				continue;
-			}
 			
-			IPluginDescriptor descriptor = element.getDeclaringExtension().getDeclaringPluginDescriptor();
-			task.setPluginLabel(descriptor.getLabel());
-			try {
-				URL url = Platform.asLocalURL(new URL(descriptor.getInstallURL(), library));
-				if (new File(url.getPath()).exists()) {
-					addURLToExtraClasspathEntries(url, element);
-					result.add(task);
-					addPluginClassLoader(descriptor.getPluginClassLoader());
-					task.setLibraryEntry(new AntClasspathEntry(url));
-				} else {
-					//task specifies a library that does not exist
-					IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, MessageFormat.format(InternalCoreAntMessages.getString("AntCorePreferences.No_library_for_task"), new String[]{url.toExternalForm(), descriptor.getLabel()}), null); //$NON-NLS-1$
-					AntCorePlugin.getPlugin().getLog().log(status);
-					continue;
-				}
-			} catch (MalformedURLException e) {
-				// if the URL does not have a valid format, just log and ignore the exception
-				IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_MALFORMED_URL, InternalCoreAntMessages.getString("AntCorePreferences.Malformed_URL._1"), e); //$NON-NLS-1$
-				AntCorePlugin.getPlugin().getLog().log(status);
-				continue;
-			} catch (Exception e) {
-				//likely extra classpath entry library that does not exist
-				IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, MessageFormat.format(InternalCoreAntMessages.getString("AntCorePreferences.7"), new String[]{descriptor.getLabel()}), null); //$NON-NLS-1$
-				AntCorePlugin.getPlugin().getLog().log(status);
-				continue;
-			}
+			configureAntObject(result, element, task, task.getTaskName(), InternalCoreAntMessages.getString("AntCorePreferences.No_library_for_task")); //$NON-NLS-1$
 		}
 		return result;
 	}
@@ -469,52 +431,58 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		List result = new ArrayList(types.size());
 		for (Iterator iterator = types.iterator(); iterator.hasNext();) {
 			IConfigurationElement element = (IConfigurationElement) iterator.next();
-			if (runningHeadless) {
-				String headless = element.getAttribute(AntCorePlugin.HEADLESS);
-				if (headless != null) {
-					boolean headlessTask= Boolean.valueOf(headless).booleanValue();
-					if (!headlessTask) {
-						continue;
-					}
-				}
+			if (!relevantRunningHeadless(element)) {
+				continue;
 			}
 			Type type = new Type();
-			IPluginDescriptor descriptor = element.getDeclaringExtension().getDeclaringPluginDescriptor();
-			type.setPluginLabel(descriptor.getLabel());
 			type.setTypeName(element.getAttribute(AntCorePlugin.NAME));
 			type.setClassName(element.getAttribute(AntCorePlugin.CLASS));
-			String library = element.getAttribute(AntCorePlugin.LIBRARY);
-			if (library == null) {
-				IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, MessageFormat.format(InternalCoreAntMessages.getString("AntCorePreferences.Library_not_specified_for__{0}_4"), new String[]{type.getTypeName()}), null); //$NON-NLS-1$
-				AntCorePlugin.getPlugin().getLog().log(status);
-				continue;
-			}
-			try {
-				URL url = Platform.asLocalURL(new URL(descriptor.getInstallURL(), library));
-				if (new File(url.getPath()).exists()) {
-					addURLToExtraClasspathEntries(url, element);
-					result.add(type);
-					addPluginClassLoader(descriptor.getPluginClassLoader());
-					type.setLibraryEntry(new AntClasspathEntry(url));
-				} else {
-					//type specifies a library that does not exist
-					IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, MessageFormat.format(InternalCoreAntMessages.getString("AntCorePreferences.No_library_for_type"), new String[]{url.toExternalForm(), descriptor.getLabel()}), null); //$NON-NLS-1$
-					AntCorePlugin.getPlugin().getLog().log(status);
-					continue;
-				}
-			} catch (MalformedURLException e) {
-				// if the URL does not have a valid format, just log and ignore the exception
-				IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_MALFORMED_URL, InternalCoreAntMessages.getString("AntCorePreferences.Malformed_URL._1"), e); //$NON-NLS-1$
-				AntCorePlugin.getPlugin().getLog().log(status);
-				continue;
-			} catch (Exception e) {
-				//likely extra classpath entry library that does not exist
-				IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, MessageFormat.format(InternalCoreAntMessages.getString("AntCorePreferences.8"), new String[]{descriptor.getLabel()}), null); //$NON-NLS-1$
-				AntCorePlugin.getPlugin().getLog().log(status);
-				continue;
-			}
+			
+			configureAntObject(result, element, type, type.getTypeName(), InternalCoreAntMessages.getString("AntCorePreferences.No_library_for_type")); //$NON-NLS-1$
 		}
 		return result;
+	}
+
+	private void configureAntObject(List result, IConfigurationElement element, AntObject antObject, String objectName, String errorMessage) {
+		String runtime = element.getAttribute(AntCorePlugin.ECLIPSE_RUNTIME);
+		if (runtime != null) {
+			antObject.setEclipseRuntimeRequired(Boolean.valueOf(runtime).booleanValue());
+		}
+		
+		String library = element.getAttribute(AntCorePlugin.LIBRARY);
+		if (library == null) {
+			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, MessageFormat.format(InternalCoreAntMessages.getString("AntCorePreferences.Library_not_specified_for__{0}_4"), new String[]{objectName}), null); //$NON-NLS-1$
+			AntCorePlugin.getPlugin().getLog().log(status);
+			return;
+		}
+		
+		IPluginDescriptor descriptor = element.getDeclaringExtension().getDeclaringPluginDescriptor();
+		try {
+			antObject.setPluginLabel(descriptor.getLabel());
+			URL url = Platform.asLocalURL(new URL(descriptor.getInstallURL(), library));
+			if (new File(url.getPath()).exists()) {
+				addURLToExtraClasspathEntries(url, element);
+				result.add(antObject);
+				addPluginClassLoader(descriptor.getPluginClassLoader());
+				antObject.setLibraryEntry(new AntClasspathEntry(url));
+				return;
+			} else {
+				//type specifies a library that does not exist
+				IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, MessageFormat.format(errorMessage, new String[]{url.toExternalForm(), descriptor.getLabel()}), null); //$NON-NLS-1$
+				AntCorePlugin.getPlugin().getLog().log(status);
+				return;
+			}
+		} catch (MalformedURLException e) {
+			// if the URL does not have a valid format, just log and ignore the exception
+			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_MALFORMED_URL, InternalCoreAntMessages.getString("AntCorePreferences.Malformed_URL._1"), e); //$NON-NLS-1$
+			AntCorePlugin.getPlugin().getLog().log(status);
+			return;
+		} catch (Exception e) {
+			//likely extra classpath entry library that does not exist
+			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, MessageFormat.format(InternalCoreAntMessages.getString("AntCorePreferences.8"), new String[]{descriptor.getLabel()}), null); //$NON-NLS-1$
+			AntCorePlugin.getPlugin().getLog().log(status);
+			return;
+		}
 	}
 
 	/*
@@ -523,14 +491,8 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	protected void computeDefaultExtraClasspathEntries(List entries) {
 		for (Iterator iterator = entries.iterator(); iterator.hasNext();) {
 			IConfigurationElement element = (IConfigurationElement) iterator.next();
-			if (runningHeadless) {
-				String headless = element.getAttribute(AntCorePlugin.HEADLESS);
-				if (headless != null) {
-					boolean headlessEntry= Boolean.valueOf(headless).booleanValue();
-					if (!headlessEntry) {
-						continue;
-					}
-				}
+			if (!relevantRunningHeadless(element)) {
+				continue;
 			}
 			String library = element.getAttribute(AntCorePlugin.LIBRARY);
 			IPluginDescriptor descriptor = element.getDeclaringExtension().getDeclaringPluginDescriptor();
@@ -560,6 +522,19 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		}
 	}
 	
+	private boolean relevantRunningHeadless(IConfigurationElement element) {
+		if (runningHeadless) {
+			String headless = element.getAttribute(AntCorePlugin.HEADLESS);
+			if (headless != null) {
+				boolean headlessProperty= Boolean.valueOf(headless).booleanValue();
+				if (!headlessProperty) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	
 	/*
 	 * Scan the Ant property extensions for properties to set.
 	 * 
@@ -569,14 +544,8 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		defaultProperties = new ArrayList(properties.size());
 		for (Iterator iterator = properties.iterator(); iterator.hasNext();) {
 			IConfigurationElement element = (IConfigurationElement) iterator.next();
-			if (runningHeadless) {
-				String headless = element.getAttribute(AntCorePlugin.HEADLESS);
-				if (headless != null) {
-					boolean headlessProperty= Boolean.valueOf(headless).booleanValue();
-					if (!headlessProperty) {
-						continue;
-					}
-				}
+			if (!relevantRunningHeadless(element)) {
+				continue;
 			}
 			String name = element.getAttribute(AntCorePlugin.NAME);
 			if (name == null) {
@@ -946,6 +915,29 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		}
 		return result;
 	}
+	
+	/**
+	 * Returns the default and custom tasks that are relavent when there is no
+	 * Eclipse runtime context (an Ant build in a separate VM).
+	 * 
+	 * @return the list of default and custom tasks.
+	 */
+	public List getRemoteTasks() {
+		List result = new ArrayList(10);
+		if (defaultTasks != null && !defaultTasks.isEmpty()) {
+			Iterator iter= defaultTasks.iterator();
+			while (iter.hasNext()) {
+				Task task = (Task) iter.next();
+				if (!task.isEclipseRuntimeRequired()) {
+					result.add(task);
+				}
+			}
+		}
+		if (customTasks != null && customTasks.length != 0) {
+			result.addAll(Arrays.asList(customTasks));
+		}
+		return result;
+	}
 
 	/**
 	 * Returns the user defined custom tasks
@@ -1126,6 +1118,29 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		List result = new ArrayList(10);
 		if (defaultTypes != null && !defaultTypes.isEmpty()) {
 			result.addAll(defaultTypes);
+		}
+		if (customTypes != null && customTypes.length != 0) {
+			result.addAll(Arrays.asList(customTypes));
+		}
+		return result;
+	}
+	
+	/**
+	 * Returns the default and custom types that are relavent when there is no
+	 * Eclipse runtime context (an Ant build in a separate VM).
+	 * 
+	 * @return the list of default and custom types.
+	 */
+	public List getRemoteTypes() {
+		List result = new ArrayList(10);
+		if (defaultTypes != null && !defaultTypes.isEmpty()) {
+			Iterator iter= defaultTypes.iterator();
+			while (iter.hasNext()) {
+				Type type = (Type) iter.next();
+				if (!type.isEclipseRuntimeRequired()) {
+					result.add(type);
+				}
+			}
 		}
 		if (customTypes != null && customTypes.length != 0) {
 			result.addAll(Arrays.asList(customTypes));

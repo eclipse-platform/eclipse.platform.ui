@@ -1,10 +1,10 @@
 <project name="Extension Point Type" default="Extension Point Type" basedir=".">
 
-	<coolType id="compile.classpath">
+	<coolUIType id="compile.classpath">
       <fileset dir="lib">
         <include name="**/*.jar"/>
       </fileset>
-    </coolType>
+    </coolUIType>
     
 	<target name="Extension Point Type" description= "Ensure that an extension point defined type is present">
 		<echo message="Ensure that an extension point defined type is present"/>

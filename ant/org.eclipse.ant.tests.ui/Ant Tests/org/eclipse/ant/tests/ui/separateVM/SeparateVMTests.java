@@ -67,6 +67,24 @@ public class SeparateVMTests extends AbstractAntUIBuildTest {
       	assertTrue("Incorrect last message. Should start with [echo] hey. Message: " + ConsoleLineTracker.getMessage(4), ConsoleLineTracker.getMessage(4).trim().startsWith("[echo] hey"));
     }
     
+    /**
+     * Tests launching Ant in a separate vm and having an extra classpath entry designated to be available.
+     */
+    public void testExtensionPointTask() throws CoreException {
+      	launch("extensionPointTaskSepVM");
+      	assertTrue("Incorrect number of messages logged for build. Should be 6. Was " + ConsoleLineTracker.getNumberOfMessages(), ConsoleLineTracker.getNumberOfMessages() == 6);
+      	assertTrue("Incorrect message. Should start with [null] Testing Ant in Eclipse with a custom task2. Message: " + ConsoleLineTracker.getMessage(2), ConsoleLineTracker.getMessage(2).trim().startsWith("[null] Testing Ant in Eclipse with a custom task2"));
+    }
+    
+    /**
+     * Tests launching Ant in a separate vm and having an extra classpath entry designated to be available.
+     */
+    public void testExtensionPointType() throws CoreException {
+      	launch("extensionPointTypeSepVM");
+      	assertTrue("Incorrect number of messages logged for build. Should be 6. Was " + ConsoleLineTracker.getNumberOfMessages(), ConsoleLineTracker.getNumberOfMessages() == 6);
+      	assertTrue("Incorrect message. Should start with [echo] Ensure that an extension point defined type. Message: " + ConsoleLineTracker.getMessage(2), ConsoleLineTracker.getMessage(2).trim().startsWith("[echo] Ensure that an extension point defined type"));
+    }
+    
 	/**
 	 * Tests launching Ant in a separate vm and that the
 	 * correct links are in the console doc

@@ -58,6 +58,8 @@ public class ProjectCreationDecorator extends AbstractAntUITest {
 			createLaunchConfiguration("bad");
 			createLaunchConfigurationForSeparateVM("echoingSepVM");
 			createLaunchConfigurationForSeparateVM("extensionPointSepVM");
+			createLaunchConfigurationForSeparateVM("extensionPointTaskSepVM");
+			createLaunchConfigurationForSeparateVM("extensionPointTypeSepVM");
 		} finally {
 			//do not show the Ant build failed error dialog
 			AntUIPlugin.getDefault().getPreferenceStore().setValue(IAntUIPreferenceConstants.ANT_ERROR_DIALOG, false);

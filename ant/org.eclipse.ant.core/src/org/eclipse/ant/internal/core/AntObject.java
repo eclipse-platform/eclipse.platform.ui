@@ -22,6 +22,7 @@ public abstract class AntObject {
 	protected IAntClasspathEntry fLibraryEntry;
 	protected String fName;
 	private String fPluginLabel;
+	private boolean eclipseRuntime= true;
 	
 	/**
 	 * Gets the className.
@@ -126,5 +127,20 @@ public abstract class AntObject {
 	 */
 	public String getPluginLabel() {
 		return fPluginLabel;
+	}
+	
+	/**
+	 * Returns whether this Ant object requires the Eclipse runtime to be 
+	 * relevant. Defaults value is <code>true</code>
+	 * 
+	 * @return whether this Ant obhject requires the Eclipse runtime
+     * @since 3.0
+	 */
+	public boolean isEclipseRuntimeRequired() {
+		return eclipseRuntime;
+	}
+	
+	public void setEclipseRuntimeRequired(boolean eclipseRuntime) {
+		this.eclipseRuntime= eclipseRuntime;
 	}
 }
