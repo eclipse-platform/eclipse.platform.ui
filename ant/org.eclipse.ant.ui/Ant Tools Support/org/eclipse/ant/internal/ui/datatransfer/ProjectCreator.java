@@ -11,8 +11,11 @@
 package org.eclipse.ant.internal.ui.datatransfer;
 
 import java.io.File;
+import java.text.MessageFormat;
 
+import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.taskdefs.Javac;
+import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -22,7 +25,9 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
@@ -33,33 +38,42 @@ import org.eclipse.jdt.launching.JavaRuntime;
 public class ProjectCreator {
 		
 	public IJavaProject createJavaProjectFromJavacNode(String projectName, Javac javacTask) throws CoreException {
-		
-		IJavaProject javaProject = createJavaProject(projectName);
-		
-		File destDir= javacTask.getDestdir();
-		String destDirName= destDir.getName();
-		org.apache.tools.ant.types.Path sourceDirs= javacTask.getSrcdir();
-		createSourceDirectories(destDir, destDirName, sourceDirs, javaProject);
-		
-		// add rt.jar
-		addVariableEntry(javaProject, new Path(JavaRuntime.JRELIB_VARIABLE), new Path(JavaRuntime.JRESRC_VARIABLE), new Path(JavaRuntime.JRESRCROOT_VARIABLE));
-		
-		setClasspath(javacTask, javaProject);
-		
-		javaProject.getProject().refreshLocal(IResource.DEPTH_INFINITE, null);
-		return javaProject;
+		try {
+			IJavaProject javaProject = createJavaProject(projectName);
+			
+			File destDir= javacTask.getDestdir();
+			String destDirName= destDir.getName();
+			org.apache.tools.ant.types.Path sourceDirs= javacTask.getSrcdir();
+			createSourceDirectories(destDir, destDirName, sourceDirs, javaProject);
+			
+			// add rt.jar
+			addVariableEntry(javaProject, new Path(JavaRuntime.JRELIB_VARIABLE), new Path(JavaRuntime.JRESRC_VARIABLE), new Path(JavaRuntime.JRESRCROOT_VARIABLE));
+			
+			setClasspath(javacTask, javaProject);
+			
+			javaProject.getProject().refreshLocal(IResource.DEPTH_INFINITE, null);
+			return javaProject;
+		} catch (BuildException be) {
+			IStatus status= new Status(IStatus.ERROR, AntUIPlugin.PI_ANTUI, IStatus.OK, be.getLocalizedMessage(), be);
+			throw new CoreException(status);
+		}
 	}
 	
-	private void setClasspath(Javac javacTask, IJavaProject javaProject) throws JavaModelException {
-		org.apache.tools.ant.types.Path classpath= javacTask.getClasspath();
-		if (classpath == null) {
-			return;
-		}
-		String[] classpaths= classpath.list();
-		for (int i = 0; i < classpaths.length; i++) {
-			String cp = classpaths[i];
-			File classpathEntry= new File(cp);
-			addLibrary(javaProject, new Path(classpathEntry.getAbsolutePath()));
+	private void setClasspath(Javac javacTask, IJavaProject javaProject) throws CoreException {
+		try {
+			org.apache.tools.ant.types.Path classpath= javacTask.getClasspath();
+			if (classpath == null) {
+				return;
+			}
+			String[] classpaths= classpath.list();
+			for (int i = 0; i < classpaths.length; i++) {
+				String cp = classpaths[i];
+				File classpathEntry= new File(cp);
+				addLibrary(javaProject, new Path(classpathEntry.getAbsolutePath()));
+			}
+		} catch (BuildException be) {
+			IStatus status= new Status(IStatus.ERROR, AntUIPlugin.PI_ANTUI, IStatus.OK, MessageFormat.format(DataTransferMessages.getString("ProjectCreator.0"), new String[]{be.getLocalizedMessage()}), null); //$NON-NLS-1$
+			throw new CoreException(status);
 		}
 	}
 
