@@ -15,6 +15,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import org.eclipse.core.runtime.*;
+import org.osgi.framework.BundleException;
 
 /**
  * A log writer that writes log entries.  
@@ -217,6 +218,13 @@ public class PlatformLogWriter implements ILogListener {
 		if (isCoreException) {
 			CoreException e = (CoreException) throwable;
 			write(e.getStatus(), 0);
+		}
+		if (throwable instanceof BundleException) {
+			Throwable nested = ((BundleException)throwable).getNestedException();
+			if (nested != null) {
+				writeln("Nested exception:");
+				write(nested);
+			}
 		}
 	}
 
