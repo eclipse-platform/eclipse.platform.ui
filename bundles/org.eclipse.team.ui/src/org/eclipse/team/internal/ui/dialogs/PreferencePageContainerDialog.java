@@ -16,7 +16,6 @@ import java.util.List;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPersistentPreferenceStore;
 import org.eclipse.jface.preference.IPreferencePageContainer;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -46,8 +45,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.Utils;
 
 public class PreferencePageContainerDialog extends Dialog implements IPreferencePageContainer {
 
@@ -411,9 +410,7 @@ public class PreferencePageContainerDialog extends Dialog implements IPreference
 				try {
 					((IPersistentPreferenceStore) store).save();
 				} catch (IOException e) {
-					MessageDialog.openError(
-						getShell(), Policy.bind("saving"),
-						Policy.bind("saving", page.getTitle(), e.getMessage())); 
+					Utils.handle(e); 
 				}
 			}
 		}

@@ -212,14 +212,6 @@
             class="org.eclipse.team.internal.ui.sync.views.SynchronizeView"
             id="org.eclipse.team.sync.views.SynchronizeView">
       </view>
-<!--      <view
-            name="Jobs"
-            fastViewWidthRatio="0.25"
-            category="org.eclipse.team.ui"
-            class="org.eclipse.team.internal.ui.jobs.JobsView"
-            id="org.eclipse.team.sync.views.JobsView">
-      </view>
- -->
    </extension>
 <!-- **************** Synchronizing Perspective ******************* -->
    <extension

@@ -89,7 +89,7 @@ public class SyncInfoCompareInput extends CompareEditorInput {
 	 * @see org.eclipse.compare.CompareEditorInput#getTitle()
 	 */
 	public String getTitle() {		
-		return Policy.bind("SyncInfoCompareInput.title", sync.getSubscriber().getName(),  node.getName());
+		return Policy.bind("SyncInfoCompareInput.title", sync.getSubscriber().getName(),  node.getName()); //$NON-NLS-1$
 	}
 	
 	protected void updateLabels() {
@@ -97,26 +97,26 @@ public class SyncInfoCompareInput extends CompareEditorInput {
 		IRemoteResource remote = sync.getRemote();
 		IRemoteResource base = sync.getRemote();
 		
-		config.setLeftLabel(Policy.bind("SyncInfoCompareInput.localLabel"));
+		config.setLeftLabel(Policy.bind("SyncInfoCompareInput.localLabel")); //$NON-NLS-1$
 		
 		if(remote != null) {
 			try {
-				config.setRightLabel(Policy.bind("SyncInfoCompareInput.remoteLabelExists", remote.getContentIdentifier(), remote.getCreatorDisplayName(), flattenText(remote.getComment())));
+				config.setRightLabel(Policy.bind("SyncInfoCompareInput.remoteLabelExists", remote.getContentIdentifier(), remote.getCreatorDisplayName(), flattenText(remote.getComment()))); //$NON-NLS-1$
 			} catch (TeamException e) {
-				config.setRightLabel(Policy.bind("SyncInfoCompareInput.remoteLabel"));
+				config.setRightLabel(Policy.bind("SyncInfoCompareInput.remoteLabel")); //$NON-NLS-1$
 			}
 		} else {
-			config.setRightLabel(Policy.bind("SyncInfoCompareInput.remoteLabel"));
+			config.setRightLabel(Policy.bind("SyncInfoCompareInput.remoteLabel")); //$NON-NLS-1$
 		}
 		
 		if(base != null) {
 			try {
-				config.setAncestorLabel(Policy.bind("SyncInfoCompareInput.baseLabelExists", base.getContentIdentifier(), base.getCreatorDisplayName(), flattenText(base.getComment())));
+				config.setAncestorLabel(Policy.bind("SyncInfoCompareInput.baseLabelExists", base.getContentIdentifier(), base.getCreatorDisplayName(), flattenText(base.getComment()))); //$NON-NLS-1$
 			} catch (TeamException e) {
-				config.setAncestorLabel(Policy.bind("SyncInfoCompareInput.baseLabel"));
+				config.setAncestorLabel(Policy.bind("SyncInfoCompareInput.baseLabel")); //$NON-NLS-1$
 			}
 		} else {
-			config.setAncestorLabel(Policy.bind("SyncInfoCompareInput.baseLabel"));
+			config.setAncestorLabel(Policy.bind("SyncInfoCompareInput.baseLabel")); //$NON-NLS-1$
 		}
 	}
 	
@@ -153,7 +153,7 @@ public class SyncInfoCompareInput extends CompareEditorInput {
 	 * @see org.eclipse.ui.IEditorInput#getToolTipText()
 	 */
 	public String getToolTipText() {
-	return Policy.bind("SyncInfoCompareInput.tooltip", sync.getSubscriber().getName(),  node.getName());
+	return Policy.bind("SyncInfoCompareInput.tooltip", sync.getSubscriber().getName(),  node.getName()); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

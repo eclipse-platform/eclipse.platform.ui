@@ -80,7 +80,7 @@ public class SyncViewerSubscriberActions extends SyncViewerActionGroup {
 	 * @return
 	 */
 	private String getSubscriberClassName(IConfigurationElement element) {
-		return (String)element.getAttribute("subscriberClass");
+		return (String)element.getAttribute("subscriberClass"); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)

@@ -123,8 +123,8 @@ public class SyncViewerPreferencePage extends FieldEditorPreferencePage implemen
 	
 	public SyncViewerPreferencePage() {
 		super(GRID);
-		setTitle("Synchronize view preferences");
-		setDescription("Team Synchronize View settings:");
+		setTitle(Policy.bind("SyncViewerPreferencePage.6")); //$NON-NLS-1$
+		setDescription(Policy.bind("SyncViewerPreferencePage.7")); //$NON-NLS-1$
 		setPreferenceStore(TeamUIPlugin.getPlugin().getPreferenceStore());
 	}
 
@@ -142,28 +142,28 @@ public class SyncViewerPreferencePage extends FieldEditorPreferencePage implemen
 	public void createFieldEditors() {
 		
 		GridData data;
-		Group displayGroup = createGroup(getFieldEditorParent(), "Display"); 		
+		Group displayGroup = createGroup(getFieldEditorParent(), Policy.bind("SyncViewerPreferencePage.8")); 		 //$NON-NLS-1$
 
-		compressFolders = new BooleanFieldEditor(SYNCVIEW_COMPRESS_FOLDERS, "Compress in-sync folder paths when using the tree view", SWT.NONE, displayGroup);
+		compressFolders = new BooleanFieldEditor(SYNCVIEW_COMPRESS_FOLDERS, Policy.bind("SyncViewerPreferencePage.9"), SWT.NONE, displayGroup); //$NON-NLS-1$
 		addField(compressFolders);
 		
-		useBothMode = new BooleanFieldEditor(SYNCVIEW_USEBOTHMODE, "Use incoming/outgoing mode when synchronizing", SWT.NONE, displayGroup);
+		useBothMode = new BooleanFieldEditor(SYNCVIEW_USEBOTHMODE, Policy.bind("SyncViewerPreferencePage.10"), SWT.NONE, displayGroup); //$NON-NLS-1$
 		addField(useBothMode);
 
-		refreshGroup = createGroup(getFieldEditorParent(), "Refreshing with Remote");
+		refreshGroup = createGroup(getFieldEditorParent(), Policy.bind("SyncViewerPreferencePage.11")); //$NON-NLS-1$
 		
-		bkgRefresh = new BooleanFieldEditor(SYNCVIEW_BACKGROUND_SYNC, "Refresh with the remote resources in the background", SWT.NONE, refreshGroup);
+		bkgRefresh = new BooleanFieldEditor(SYNCVIEW_BACKGROUND_SYNC, Policy.bind("SyncViewerPreferencePage.12"), SWT.NONE, refreshGroup); //$NON-NLS-1$
 		addField(bkgRefresh);
 		
-		bkgScheduledRefresh = new BooleanFieldEditor(SYNCVIEW_SCHEDULED_SYNC, "Enable a background task to refresh with remote resources", SWT.NONE, refreshGroup);
+		bkgScheduledRefresh = new BooleanFieldEditor(SYNCVIEW_SCHEDULED_SYNC, Policy.bind("SyncViewerPreferencePage.13"), SWT.NONE, refreshGroup); //$NON-NLS-1$
 		addField(bkgScheduledRefresh);
 		
-		scheduledDelay = new IntegerFieldEditor2(SYNCVIEW_DELAY, "How often should the background refresh run? (in minutes)", refreshGroup, 2);
+		scheduledDelay = new IntegerFieldEditor2(SYNCVIEW_DELAY, Policy.bind("SyncViewerPreferencePage.14"), refreshGroup, 2); //$NON-NLS-1$
 		addField(scheduledDelay);
 				
 		updateLastRunTime(createLabel(refreshGroup, null, 0));
 									
-		Group perspectiveGroup = createGroup(getFieldEditorParent(), "Perspective Switching");
+		Group perspectiveGroup = createGroup(getFieldEditorParent(), Policy.bind("SyncViewerPreferencePage.15")); //$NON-NLS-1$
 		
 		createLabel(perspectiveGroup, Policy.bind("SynchronizationViewPreference.defaultPerspectiveDescription"), 1); //$NON-NLS-1$
 		

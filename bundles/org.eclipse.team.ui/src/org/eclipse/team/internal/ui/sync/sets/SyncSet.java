@@ -239,7 +239,7 @@ public class SyncSet {
 			if(info != null) {
 				infos.add(info);
 			} else {
-				TeamUIPlugin.log(IStatus.INFO, "missing sync info: " + child.getFullPath(), null);
+				TeamUIPlugin.log(IStatus.INFO, "missing sync info: " + child.getFullPath(), null); //$NON-NLS-1$
 			}
 		}
 		return (SyncInfo[]) infos.toArray(new SyncInfo[infos.size()]);
