@@ -100,14 +100,14 @@ public void removeRef() {
  * Activate / Deactivate the contributions.
  * 
  * Workaround for flashing when editor contributes
- * many tool items. In this case, the force visibility
- * flag determines if the tool items should be actually
+ * many menu/tool contributions. In this case, the force visibility
+ * flag determines if the contributions should be actually
  * made visible/hidden or just change the enablement state.
  */
 private void setActive(boolean set, boolean forceVisibility) {
 	active = set;
 	if (menuMgr != null)
-		menuMgr.setVisible(set);
+		((EditorMenuManager)menuMgr).setVisible(set, forceVisibility);
 	
 	if (statusLineMgr != null)
 		statusLineMgr.setVisible(set);

@@ -7,7 +7,10 @@ package org.eclipse.ui.internal;
 import org.eclipse.jface.action.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.actions.RetargetAction;
+
 import java.util.*;
+import java.util.List;
 
 /**
  * An <code>EditorToolBarManager</code> is used to sort the contributions
@@ -16,7 +19,7 @@ import java.util.*;
 public class EditorToolBarManager extends SubToolBarManager 
 {
 	private IToolBarManager parentMgr;
-	private ArrayList grayedOutItems;
+	private boolean enabledAllowed = true;
 /**
  * Constructs a new manager.
  *
@@ -34,6 +37,7 @@ public EditorToolBarManager(IToolBarManager mgr) {
 public IContributionItem[] getItems() {
 	return parentMgr.getItems();
 }
+
 /**
  * Return the toolbar into which this manager will
  * contribute to.
@@ -84,59 +88,43 @@ public void prependToGroup(String groupName, IContributionItem item) {
  * <code>true</code>, or grayed out if force visibility is <code>false</code>
  * <p>
  * This is a workaround for the layout flashing when editors contribute
- * large amounts of items into the toolbar.</p>
+ * large amounts of items.</p>
  *
  * @param visible the new visibility
  * @param forceVisibility whether to change the visibility or just the
- * 		enablement state.
+ * 		enablement state. This parameter is ignored if visible is 
+ * 		<code>true</code>.
  */
 public void setVisible(boolean visible, boolean forceVisibility) {
 	if (visible) {
-		// Make the editor tool bar items active for the user
-		if (forceVisibility)
+		// Make the items visible 
+		if (!enabledAllowed) 
+			setEnabledAllowed(true);
+		if (!isVisible())
 			setVisible(true);
-		// Enable the ones disabled when the manager was deactivated
-		setEnabled(visible);
 	}
 	else {
-		// Make the editor tool bar items inactive for the user
 		if (forceVisibility)
+			// Remove the editor tool bar items
 			setVisible(false);
-		// Disabled the tool items that are already enabled.
-		setEnabled(visible);
+		else
+			// Disabled the tool bar items.
+			setEnabledAllowed(false);
 	}
 }
 
 /**
- * Enable / disable all of the items contributed by the editor.
- * <p>
- * Note: This relies upon unspecified behavior for IContributionItem.update.
- * We assume that the update method will always update the underlying
- * SWT item.  In the spec for update it says: "Updates any SWT controls 
- * cached by this contribution item with any changes which have been made to 
- * this contribution item since the last update."  All existing implementations
- * always update the item.
- * </p><p>
- * See also 1GJNB52: ITPUI:ALL - ToolItems in EditorToolBarManager can get out of synch with the state of the IAction
- * </p>
+ * Sets the enablement ability of all the items contributed by the editor.
  */
-private void setEnabled(boolean enable) {
-	ToolBar toolbar = getToolBar();
-	ToolItem[] toolItems = toolbar.getItems();
-	for (int i = 0; i < toolItems.length; i++) {
-		ToolItem item = toolItems[i];
-		Object data = item.getData();
-		if (data instanceof SubContributionItem) {
-			// This is an item contributed by a sub tool manager
-			if (!(data instanceof ActionSetContributionItem)) {
-				// But not from the action set sub tool manager
-				if (enable) {
-					SubContributionItem contr = (SubContributionItem)data;
-					contr.update();
-				} else {
-					item.setEnabled(false);
-				}
-			}
+private void setEnabledAllowed(boolean enabledAllowed) {
+	this.enabledAllowed = enabledAllowed;
+	IContributionItem[] items = super.getItems();
+	for (int i = 0; i < items.length; i++) {
+		IContributionItem item = items[i];
+		if (!(item instanceof ActionContributionItem &&
+			((ActionContributionItem)item).getAction() instanceof RetargetAction)) {
+			// skip retarget actions, they stay enabled if they have a handler	
+			item.setEnabledAllowed(enabledAllowed);
 		}
 	}
 }

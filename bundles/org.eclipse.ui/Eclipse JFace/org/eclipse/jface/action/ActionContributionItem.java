@@ -423,6 +423,39 @@ public boolean isDynamic() {
 	//actions in menus are always dynamic
 	return widget instanceof MenuItem;
 }
+
+/**
+ * The <code>ActionContributionItem</code> implementation of this method declared
+ * by <code>IContributionItem</code> ensures that the current widget enablement state
+ * is correct.
+ */
+public void setEnabledAllowed(boolean enabledAllowed) {
+	if (isEnabledAllowed() == enabledAllowed)
+		return; // no change
+
+	super.setEnabledAllowed(enabledAllowed);
+
+	if (!enabledAllowed && !action.isEnabled())
+		return; // already disabled
+
+	if (widget != null) {
+		boolean b = action.isEnabled() && enabledAllowed; 
+		// if the widget state is different than the (allowed) action state, update it
+
+		if (widget instanceof ToolItem) {
+			ToolItem ti = (ToolItem) widget;
+			if (ti.isEnabled() != b)
+				ti.setEnabled(b);		
+		}
+		
+		if (widget instanceof MenuItem) {
+			MenuItem mi = (MenuItem) widget;
+			if (mi.isEnabled() != b)
+				mi.setEnabled(b);	
+		}
+	}		
+}
+
 /**
  * The action item implementation of this <code>IContributionItem</code>
  * method calls <code>update(null)</code>.
@@ -459,8 +492,10 @@ public void update(String propertyName) {
 			if (tooltipTextChanged)
 				ti.setToolTipText(action.getToolTipText());
 				
-			if (enableStateChanged && ti.getEnabled() != b)
-				ti.setEnabled(b);
+			if (enableStateChanged && ti.getEnabled() != b) {
+				if (!b || isEnabledAllowed())
+					ti.setEnabled(b);
+			}
 				
 			if (checkChanged) {
 				boolean bv = action.isChecked();
@@ -493,9 +528,11 @@ public void update(String propertyName) {
 			if (imageChanged) {
 				updateImages(false);
 			}
-			if (enableStateChanged && mi.getEnabled() != b)
-				mi.setEnabled(b);
-
+			if (enableStateChanged && mi.getEnabled() != b) {
+				if (!b || isEnabledAllowed())
+					mi.setEnabled(b);
+			}
+	
 			if (checkChanged) {	
 				boolean bv = action.isChecked();
 				if (mi.getSelection() != bv)
@@ -600,4 +637,5 @@ private boolean updateImages(boolean forceImage) {
 	}
 	return false;
 }
+
 }

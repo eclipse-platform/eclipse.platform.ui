@@ -86,6 +86,18 @@ public boolean isSeparator() {
 /* (non-Javadoc)
  * Method declared on IContributionItem.
  */
+public boolean isEnabledAllowed() {
+	return innerItem.isEnabledAllowed();
+}
+/* (non-Javadoc)
+ * Method declared on IContributionItem.
+ */
+public void setEnabledAllowed(boolean enableAllowed) {
+	innerItem.setEnabledAllowed(enableAllowed);
+}
+/* (non-Javadoc)
+ * Method declared on IContributionItem.
+ */
 public boolean isVisible() {
 	return visible && innerItem.isVisible();
 }

@@ -54,6 +54,13 @@ public class MenuManager extends ContributionManager implements IMenuManager {
 	 * called just before the menu is displayed.
 	 */
 	private boolean removeAllWhenShown = false;
+	
+	/**
+	 * Indicates that the managed items are allowed to enable;
+	 * <code>true</code> by default.
+	 */
+	private boolean enabledAllowed = true;
+	
 
 	/**
 	 * Indicates this item is visible in its manager; <code>true</code> 
@@ -328,6 +335,12 @@ public boolean isSubstituteFor(IContributionItem item) {
 /* (non-Javadoc)
  * Method declared on IContributionItem.
  */
+public boolean isEnabledAllowed() {
+	return enabledAllowed;
+}
+/* (non-Javadoc)
+ * Method declared on IContributionItem.
+ */
 public boolean isVisible() {
 	return visible;
 }
@@ -352,6 +365,16 @@ public void removeMenuListener(IMenuListener listener) {
  */
 public void setRemoveAllWhenShown(boolean removeAll) {
 	this.removeAllWhenShown = removeAll;
+}
+/* (non-Javadoc)
+ * Method declared on IContributionItem.
+ */
+public void setEnabledAllowed(boolean enabledAllowed) {
+	this.enabledAllowed = enabledAllowed;
+	IContributionItem[] items = getItems();
+	for (int i = 0; i < items.length; i++) {
+		items[i].setEnabledAllowed(enabledAllowed);
+	}
 }
 /* (non-Javadoc)
  * Method declared on IContributionItem.

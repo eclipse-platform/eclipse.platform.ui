@@ -100,8 +100,8 @@ public void deactivate() {
 /**
  * Deactivate the contributions.
  * <p>
- * Workaround for toolbar layout flashing when editors contribute
- * large amounts of items. In this case we want to force the items
+ * Workaround for menubar/toolbar layout flashing when editors have 
+ * many contributions. In this case we want to force the contributions
  * to be visible/hidden only when required, otherwise just change
  * the enablement state.</p>
  */

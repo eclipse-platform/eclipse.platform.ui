@@ -90,6 +90,24 @@ public boolean isGroupMarker();
  */
 public boolean isSeparator();
 /**
+ * Returns whether this contribution item is allowed to be enabled 
+ * within its manager.
+ * 
+ * @return <code>true</code> if this item is enabled, and
+ *  <code>false</code> otherwise
+ * @since 2.0
+ */
+public boolean isEnabledAllowed();
+/**
+ * Sets whether this contribution item is allowed to be enabled within
+ * its manager.
+ *
+ * @param enabledAllowed <code>true</code> if this item can be enabled, and
+ *  <code>false</code> otherwise
+ * @since 2.0
+ */
+public void setEnabledAllowed(boolean enabledAllowed);
+/**
  * Returns whether this contribution item is visibile within its manager.
  *
  * @return <code>true</code> if this item is visible, and

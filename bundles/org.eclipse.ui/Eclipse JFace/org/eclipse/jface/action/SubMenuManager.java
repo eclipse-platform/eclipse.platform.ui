@@ -30,6 +30,12 @@ public class SubMenuManager extends SubContributionManager implements IMenuManag
 	 * the visibility of the submenus is also modified.
 	 */
 	private Map mapMenuToWrapper;
+	
+	/**
+	 * Indicates that the items of this manager are allowed to enable;
+	 * <code>true</code> by default.
+	 */
+	private boolean enabledAllowed = true;
 
 /**
  * Constructs a new manager.
@@ -168,6 +174,23 @@ public boolean isGroupMarker() {
  */
 public boolean isSeparator() {
 	return parentMgr.isSeparator();
+}
+/* (non-Javadoc)
+ * Method declared on IContributionItem.
+ */
+public boolean isEnabledAllowed() {
+	return enabledAllowed;
+}
+/* (non-Javadoc)
+ * Method declared on IContributionItem.
+ */
+public void setEnabledAllowed(boolean enableAllowed) {
+	this.enabledAllowed = enableAllowed;
+	IContributionItem[] items = getItems();
+	for (int i = 0; i < items.length; i++) {
+		items[i].setEnabledAllowed(enabledAllowed);
+	}
+	
 }
 /**
  * Remove all contribution items.
