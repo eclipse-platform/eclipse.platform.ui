@@ -1,14 +1,14 @@
 package org.eclipse.team.ccvs.core;
 
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
  
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+
 /**
  * This interface provides access to the specific portions of
  * the repository location string for use by connection methods
