@@ -25,13 +25,13 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.internal.dnd.DragUtil;
-import org.eclipse.ui.internal.presentations.PartTabFolderPresentation;
 import org.eclipse.ui.internal.presentations.SystemMenuClose;
 import org.eclipse.ui.internal.presentations.SystemMenuMaximize;
 import org.eclipse.ui.internal.presentations.SystemMenuMinimize;
 import org.eclipse.ui.internal.presentations.SystemMenuMoveView;
 import org.eclipse.ui.internal.presentations.SystemMenuRestore;
 import org.eclipse.ui.internal.presentations.SystemMenuSizeFastView;
+import org.eclipse.ui.presentations.AbstractPresentationFactory;
 import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.presentations.IStackPresentationSite;
 import org.eclipse.ui.presentations.StackPresentation;
@@ -287,15 +287,16 @@ public class FastViewPane {
 			pane.createControl(clientComposite);
 			ctrl = pane.getControl();			
 		}
-		
-		// TODO this should go through the factory
-//		AbstractPresentationFactory factory = ((WorkbenchWindow) page.getWorkbenchWindow())
-//        .getWindowConfigurer().getPresentationFactory();
-//		site.setPresentation(factory.createPresentation(newClientComposite,
-//        site, AbstractPresentationFactory.ROLE_FAST_VIEW,
-//        flags, page.getPerspective().getId(), getID()));
 
-		StackPresentation presentation = new PartTabFolderPresentation(newClientComposite, site, SWT.MIN | SWT.MAX);
+		// Temporarily use the same appearance as docked views .. eventually, fastviews will
+		// be independently pluggable.
+		AbstractPresentationFactory factory = ((WorkbenchWindow) pane.getWorkbenchWindow())
+        	.getWindowConfigurer().getPresentationFactory();
+		StackPresentation presentation = factory.createPresentation(newClientComposite,
+				site, AbstractPresentationFactory.ROLE_DOCKED_VIEW,
+				SWT.MIN | SWT.MAX, pane.getPage().getPerspective().getId(), pane.getID());
+
+		//StackPresentation presentation = new PartTabFolderPresentation(newClientComposite, site, SWT.MIN | SWT.MAX);
 		
 		site.setPresentation(presentation);
 		site.setPresentationState(IStackPresentationSite.STATE_RESTORED);
