@@ -418,7 +418,6 @@ public class FastViewPane {
         ctrl.setEnabled(true); // Add focus support.
         Composite parent = ctrl.getParent();
 
-        pane.setVisible(true);
         pane.setFocus();
 
         boolean horizontal = Geometry.isHorizontal(side);
