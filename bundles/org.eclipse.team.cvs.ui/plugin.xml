@@ -50,7 +50,7 @@
       <participant
             name="%CVSCompareParticipant"
             icon="icons/full/cview16/compare_view.gif"
-            class="org.eclipse.team.internal.ccvs.ui.subscriber.CompareSynchronizeParticipant"
+            class="org.eclipse.team.internal.ccvs.ui.subscriber.CompareParticipant"
             type="dynamic"
             id="org.eclipse.team.cvs.ui.compare-participant">
       </participant>
