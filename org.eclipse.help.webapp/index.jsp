@@ -17,6 +17,8 @@
 	String srcNavFrame = "nav.html";
 	if(request.getParameter("tab")!=null)
 		srcNavFrame=srcNavFrame+"?tab="+request.getParameter("tab");
+	else
+		srcNavFrame=srcNavFrame+"?tab=toc";
 	if(request.getParameter("toc")!=null)
 		srcNavFrame=srcNavFrame+"&toc="+request.getParameter("toc");
 	if(request.getParameter("topic")!=null)
