@@ -90,11 +90,20 @@ public class CommitCommentArea extends DialogArea {
 			}
 		});
 		
-		label = new Label(composite, SWT.NULL);
+		Composite chooseCommentComposite = createComposite(composite, 2);
+		
+		Composite previousCommentComposite = createComposite(chooseCommentComposite, 1);
+		data = new GridData();
+		data.verticalAlignment = GridData.FILL;
+		data.horizontalAlignment = GridData.FILL;
+		data.grabExcessHorizontalSpace = true;
+		previousCommentComposite.setLayoutData(data);
+		
+		label = new Label(previousCommentComposite, SWT.NULL);
 		label.setLayoutData(new GridData());
 		label.setText(Policy.bind("ReleaseCommentDialog.choosePrevious")); //$NON-NLS-1$
 		
-		previousCommentsCombo = new Combo(composite, SWT.READ_ONLY);
+		previousCommentsCombo = new Combo(previousCommentComposite, SWT.READ_ONLY);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		previousCommentsCombo.setLayoutData(data);
@@ -106,7 +115,7 @@ public class CommitCommentArea extends DialogArea {
 			}
 		});
 		
-		Button clear = createButton(composite, Policy.bind("ReleaseCommentDialog.clearTextArea"), GridData.VERTICAL_ALIGN_BEGINNING); //$NON-NLS-1$
+		Button clear = createButton(chooseCommentComposite, Policy.bind("ReleaseCommentDialog.clearTextArea"), GridData.VERTICAL_ALIGN_CENTER| GridData.HORIZONTAL_ALIGN_END); //$NON-NLS-1$
 		clear.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				CommitCommentArea.this.clearCommitText();
@@ -121,7 +130,7 @@ public class CommitCommentArea extends DialogArea {
 	 * Method initializeValues.
 	 */
 	private void initializeValues() {
-		for (int i = comments.length - 1; i >= 0; --i) {
+		for (int i = 0; i < comments.length; i++) {
 			previousCommentsCombo.add(comments[i]);
 		}
 		if (comments.length > 0)
