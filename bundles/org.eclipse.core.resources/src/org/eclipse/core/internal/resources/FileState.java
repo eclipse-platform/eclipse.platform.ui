@@ -10,11 +10,15 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import java.io.InputStream;
+import java.io.*;
 import org.eclipse.core.internal.localstore.HistoryStore;
+import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.internal.utils.UniversalUniqueIdentifier;
 import org.eclipse.core.resources.IFileState;
+import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.content.IContentDescription;
+import org.eclipse.core.runtime.content.IContentTypeManager;
 
 public class FileState extends PlatformObject implements IFileState {
 	protected long lastModified;
@@ -40,7 +44,28 @@ public class FileState extends PlatformObject implements IFileState {
 	 * @see org.eclipse.core.resources.IEncodedStorage#getCharset()
 	 */
 	public String getCharset() throws CoreException {
-		return null;
+		// tries to obtain a description for the file contents
+		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
+		InputStream contents = new BufferedInputStream(getContents());
+		boolean failed = false;
+		try {
+			IContentDescription description = contentTypeManager.getDescriptionFor(contents, getName(), IContentDescription.CHARSET);
+			return (description == null) ? null : description.getCharset();
+		} catch (IOException e) {
+			failed = true;
+			String message = Policy.bind("history.errorCharset", getFullPath().toString()); //$NON-NLS-1$		
+			throw new ResourceException(IResourceStatus.FAILED_RETRIEVING_CHARSET, getFullPath(), message, e);
+		} finally {
+			if (contents != null)
+				try {
+					contents.close();
+				} catch (IOException e) {
+					if (!failed) {
+						String message = Policy.bind("history.errorCharset", getFullPath().toString()); //$NON-NLS-1$		
+						throw new ResourceException(IResourceStatus.FAILED_RETRIEVING_CHARSET, getFullPath(), message, e);
+					}
+				}
+		}
 	}
 
 	/* (non-Javadoc)
