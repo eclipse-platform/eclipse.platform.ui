@@ -25,8 +25,6 @@ public class UMWizardPageLocations extends WizardPage implements ModifyListener,
 	protected Table    _tableAdditionalLocations  = null;
 	protected Button   _buttonAdd                 = null;
 	protected Button   _buttonRemove              = null;
-	protected Button   _buttonAdditionalLocations = null;
-	protected Button   _buttonPredefinedLocations = null;
 	protected Text     _textAdditionalLocation    = null;
 	protected Text     _textAdditionalDescription = null;
 /**
@@ -51,6 +49,7 @@ public UMWizardPageLocations(UMWizard wizard, String strName, boolean bUpdateMod
  * createContents method comment.
  */
 public void createControl(Composite compositeParent) {
+
 	// Content
 	//--------
 	Composite compositeContent = new Composite(compositeParent, SWT.NULL);
@@ -81,16 +80,10 @@ public void createControl(Composite compositeParent) {
 	gridData.grabExcessVerticalSpace = true;
 	compositeTop.setLayoutData(gridData);
 
-	// Checkbox: Predefined Locations
+	// Label: Pre-specified Locations
 	//-------------------------------
-	_buttonPredefinedLocations = new Button(compositeTop, SWT.CHECK);
-	_buttonPredefinedLocations.setText(UpdateManagerStrings.getString("S_Predefined_Locations"));
-	gridData = new GridData();
-	gridData.verticalAlignment = GridData.FILL;
-	gridData.widthHint = 500;
-	_buttonPredefinedLocations.setLayoutData(gridData);
-	_buttonPredefinedLocations.setSelection(true);
-	_buttonPredefinedLocations.addSelectionListener(this);
+	Label label = new Label( compositeTop, SWT.NULL );
+	label.setText(UpdateManagerStrings.getString("S_Predefined_Locations"));
 
 	// Table: Pre-specified Locations
 	//------------------------------
@@ -114,6 +107,7 @@ public void createControl(Composite compositeParent) {
 	gridData.horizontalAlignment = GridData.FILL;
 	gridData.verticalAlignment = GridData.FILL;
 	gridData.heightHint = 100;
+	gridData.widthHint = 500;
 	_tablePredefinedLocations.setLayoutData(gridData);
 	_tablePredefinedLocations.addSelectionListener(this);
 
@@ -139,18 +133,11 @@ public void createControl(Composite compositeParent) {
 	gridData.grabExcessHorizontalSpace = true;
 	gridData.horizontalSpan = 1;
 	labelSeparator.setLayoutData(gridData);
-
-	// Checkbox: Additional Locations
-	//-------------------------------
-	_buttonAdditionalLocations = new Button(compositeBottom, SWT.CHECK);
-	_buttonAdditionalLocations.setText(UpdateManagerStrings.getString("S_Additional_Locations"));
-	gridData = new GridData();
-	gridData.verticalAlignment = GridData.FILL;
-	gridData.grabExcessHorizontalSpace = true;
-	gridData.horizontalSpan = 1;
-	_buttonAdditionalLocations.setLayoutData(gridData);
-	_buttonAdditionalLocations.setSelection(true);
-	_buttonAdditionalLocations.addSelectionListener(this);
+	
+	// Label: Additional Locations
+	//----------------------------
+	label = new Label( compositeBottom, SWT.NULL );
+	label.setText(UpdateManagerStrings.getString("S_Additional_Locations"));
 
 	// Table: Additional Locations
 	//----------------------------
@@ -198,7 +185,7 @@ public void createControl(Composite compositeParent) {
 
 	// Label: Uniform Resource Locator
 	//--------------------------------
-	Label label = new Label(compositeBottomContent, SWT.NULL);
+	label = new Label(compositeBottomContent, SWT.NULL);
 	label.setText(UpdateManagerStrings.getString("S_Uniform_Resource_Locator") + ":");
 	gridData = new GridData();
 	gridData.horizontalAlignment = GridData.FILL;
@@ -257,21 +244,14 @@ public URLNamePair[] getSelectedAdditionalLocations() {
 	
 	URLNamePair[] urlNamePairs = null;
 	
-	if (_buttonAdditionalLocations.getSelection() == true) {
-	    
-		TableItem[] tableItemsSelected = _tableAdditionalLocations.getSelection();
+	TableItem[] tableItemsSelected = _tableAdditionalLocations.getSelection();
 
-		urlNamePairs = new URLNamePair[tableItemsSelected.length];
+	urlNamePairs = new URLNamePair[tableItemsSelected.length];
 
-		for (int i = 0; i < tableItemsSelected.length; ++i) {
-			urlNamePairs[i] = new URLNamePair();
-			urlNamePairs[i]._setURL(tableItemsSelected[i].getText(0));
-			urlNamePairs[i]._setName(tableItemsSelected[i].getText(1));
-		}
-	}
-	
-	else {
-		urlNamePairs = new URLNamePair[0];
+	for (int i = 0; i < tableItemsSelected.length; ++i) {
+		urlNamePairs[i] = new URLNamePair();
+		urlNamePairs[i]._setURL(tableItemsSelected[i].getText(0));
+		urlNamePairs[i]._setName(tableItemsSelected[i].getText(1));
 	}
 
 	return urlNamePairs;
@@ -282,21 +262,14 @@ public URLNamePair[] getSelectedPredefinedLocations() {
 	
 	URLNamePair[] urlNamePairs = null;
 
-	if (_buttonPredefinedLocations.getSelection() == true) {
-	    
-		TableItem[] tableItemsSelected = _tablePredefinedLocations.getSelection();
+	TableItem[] tableItemsSelected = _tablePredefinedLocations.getSelection();
 
-		urlNamePairs = new URLNamePair[tableItemsSelected.length];
+	urlNamePairs = new URLNamePair[tableItemsSelected.length];
 
-		for (int i = 0; i < tableItemsSelected.length; ++i) {
-			urlNamePairs[i] = new URLNamePair();
-			urlNamePairs[i]._setURL(tableItemsSelected[i].getText(0));
-			urlNamePairs[i]._setName(tableItemsSelected[i].getText(1));
-		}
-	}
-
-	else {
-		urlNamePairs = new URLNamePair[0];
+	for (int i = 0; i < tableItemsSelected.length; ++i) {
+		urlNamePairs[i] = new URLNamePair();
+		urlNamePairs[i]._setURL(tableItemsSelected[i].getText(0));
+		urlNamePairs[i]._setName(tableItemsSelected[i].getText(1));
 	}
 
 	return urlNamePairs;
@@ -551,42 +524,12 @@ public void widgetSelected(SelectionEvent e) {
 		}
 	}
 
-	// Checkbox: Additional locations
-	//-------------------------------
-	else if (e.widget == _buttonAdditionalLocations) {
-		boolean bEnable = _buttonAdditionalLocations.getSelection();
-		_tableAdditionalLocations.setEnabled(bEnable);
-		_textAdditionalDescription.setEnabled(bEnable);
-		_textAdditionalLocation.setEnabled(bEnable);
-
-		// Remove button
-		//--------------
-		if (bEnable == true && _tableAdditionalLocations.getSelectionCount() > 0)
-			_buttonRemove.setEnabled(true);
-		else
-			_buttonRemove.setEnabled(false);
-
-		// Add button
-		//-----------
-		modifyText(null);
-	}
-
-	// Checkbox: Predefined locations
-	//-------------------------------
-	else if (e.widget == _buttonPredefinedLocations) {
-		boolean bEnable = _buttonPredefinedLocations.getSelection();
-		_tablePredefinedLocations.setEnabled(bEnable);
-	}
-
 	// Page complete
 	//--------------
 	int iNumberOfSelected = 0;
 
-	if (_buttonPredefinedLocations.getSelection() == true)
-		iNumberOfSelected += _tablePredefinedLocations.getSelectionCount();
-
-	if (_buttonAdditionalLocations.getSelection() == true)
-		iNumberOfSelected += _tableAdditionalLocations.getSelectionCount();
+	iNumberOfSelected += _tablePredefinedLocations.getSelectionCount();
+	iNumberOfSelected += _tableAdditionalLocations.getSelectionCount();
 
 	setPageComplete(iNumberOfSelected > 0);
 
