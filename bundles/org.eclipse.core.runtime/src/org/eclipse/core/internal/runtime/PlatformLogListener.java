@@ -44,8 +44,16 @@ private void logging(IStatus status, int nesting) {
 	log.print(status.getCode());
 	log.print(" ");
 	log.println(status.getMessage());
-	if (status.getException() != null)
-		status.getException().printStackTrace(log);
+	Throwable throwable = status.getException();
+	if (throwable != null) {
+		throwable.printStackTrace(log);
+		if (throwable instanceof CoreException) {
+			CoreException ex = (CoreException) throwable;
+			IStatus s = ex.getStatus();
+			if (s != null)
+				logging(s, nesting + 1);
+		}
+	}
 	if (status.isMultiStatus()) {
 		indent(nesting + 1);
 		log.print(nesting + 1);
