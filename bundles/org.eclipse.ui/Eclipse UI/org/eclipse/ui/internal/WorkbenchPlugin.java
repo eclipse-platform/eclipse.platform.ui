@@ -402,7 +402,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		//Set the defaulterror colour to red
 		PreferenceConverter.setDefault(store,JFacePreferences.ERROR_COLOR, new RGB(255, 0, 0));
 		//Set the default hyperlink line colour to blue
-		PreferenceConverter.setDefault(store,JFacePreferences.HYPERLINK_COLOR, new RGB(0, 0, 255));
+		PreferenceConverter.setDefault(store,JFacePreferences.HYPERLINK_COLOR, new RGB(0, 0, 153));
 		
 		// Temporary option to enable wizard for project capability
 		store.setDefault("ENABLE_CONFIGURABLE_PROJECT_WIZARD", false); //$NON-NLS-1$
