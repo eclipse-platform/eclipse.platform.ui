@@ -92,7 +92,7 @@ public class Policy {
 	 * Progress monitor helpers
 	 */
 	public static void checkCanceled(IProgressMonitor monitor) {
-		if (monitor.isCanceled())
+		if (monitor != null && monitor.isCanceled())
 			throw new OperationCanceledException();
 	}
 	public static IProgressMonitor monitorFor(IProgressMonitor monitor) {
