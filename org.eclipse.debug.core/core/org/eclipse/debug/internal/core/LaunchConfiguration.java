@@ -216,7 +216,9 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	
 	private String getLastLocationSegment() {
 		String name = getLocation().lastSegment();
-		name = name.substring(0, name.length() - (LAUNCH_CONFIGURATION_FILE_EXTENSION.length() + 1));
+		if (name.length() > LAUNCH_CONFIGURATION_FILE_EXTENSION.length()) {
+			name = name.substring(0, name.length() - (LAUNCH_CONFIGURATION_FILE_EXTENSION.length() + 1));
+		}
 		return name;
 	}
 
