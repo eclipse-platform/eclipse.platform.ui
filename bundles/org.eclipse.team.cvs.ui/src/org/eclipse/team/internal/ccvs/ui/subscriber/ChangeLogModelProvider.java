@@ -138,7 +138,7 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 			a.setChecked(true);
 			sortByResource.add(a);
 			sortByResource.add(new ToggleSortOrderAction(Policy.bind("ChangeLogModelProvider.7"), ChangeLogModelSorter.NAME, ToggleSortOrderAction.RESOURCE_NAME)); //$NON-NLS-1$
-			sortByResource.add(new ToggleSortOrderAction(Policy.bind("ChangeLogModelProvider.8"), ChangeLogModelSorter.PARENT_NAME, ToggleSortOrderAction.RESOURCE_NAME)); //$NON-NLS-1$
+			sortByResource.add(new ToggleSortOrderAction(Policy.bind("ChangeLogModelProvider.9"), ChangeLogModelSorter.PARENT_NAME, ToggleSortOrderAction.RESOURCE_NAME)); //$NON-NLS-1$
 		}
 	}
 	
