@@ -14,6 +14,8 @@ import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.externaltools.internal.dialog.ExternalToolVariableForm;
@@ -66,6 +68,12 @@ class VariableSelectionDialog extends SelectionDialog {
 					return IMessageProvider.ERROR;
 				}
 				return 0;
+			}
+		});
+		
+		form.getVariableList().addListener(SWT.MouseDoubleClick, new Listener() {
+			public void handleEvent(Event event) {
+				okPressed();
 			}
 		});
 		return composite;

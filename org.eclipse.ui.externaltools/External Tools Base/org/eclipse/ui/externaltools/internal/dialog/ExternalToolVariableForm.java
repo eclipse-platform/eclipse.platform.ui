@@ -135,8 +135,7 @@ public class ExternalToolVariableForm {
 	}
 	
 	/**
-	 * Returns the formatted variable or <code>null</code> if
-	 * none selected.
+	 * Returns the variable list of this form.
 	 */
 	public List getVariableList() {
 		return variableList;
