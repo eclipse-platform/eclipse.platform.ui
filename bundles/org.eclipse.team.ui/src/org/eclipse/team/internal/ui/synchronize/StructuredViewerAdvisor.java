@@ -374,7 +374,7 @@ public abstract class StructuredViewerAdvisor implements IAdaptable {
 	 * 
 	 * @param viewer the viewer to set the input.
 	 */
-	public final void setInput(ISynchronizeModelProvider modelProvider) {
+	public final void setInput(final ISynchronizeModelProvider modelProvider) {
 		final ISynchronizeModelElement modelRoot = modelProvider.getModelRoot();
 		getActionGroup().modelChanged(modelRoot);
 		modelRoot.addCompareInputChangeListener(new ICompareInputChangeListener() {
@@ -383,9 +383,23 @@ public abstract class StructuredViewerAdvisor implements IAdaptable {
 			}
 		});
 		if (viewer != null) {
-			modelProvider.setViewer(viewer);
 			viewer.setSorter(modelProvider.getViewerSorter());
 			viewer.setInput(modelRoot);
+			modelProvider.addPropertyChangeListener(new IPropertyChangeListener() {
+                public void propertyChange(PropertyChangeEvent event) {
+                    if (event.getProperty() == ISynchronizeModelProvider.P_VIEWER_SORTER) {
+                        if (viewer != null && !viewer.getControl().isDisposed()) {
+                            viewer.getControl().getDisplay().syncExec(new Runnable() {
+                                public void run() {
+        	                        if (viewer != null && !viewer.getControl().isDisposed()) {
+        	                            viewer.setSorter(modelProvider.getViewerSorter());
+        	                        }
+                                }
+                            });
+                        }
+                    }
+                }
+            });
 		}
 	}
 	

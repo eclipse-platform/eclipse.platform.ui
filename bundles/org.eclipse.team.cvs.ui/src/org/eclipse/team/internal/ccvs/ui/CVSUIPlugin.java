@@ -38,6 +38,7 @@ import org.eclipse.team.internal.ccvs.ui.console.CVSOutputConsole;
 import org.eclipse.team.internal.ccvs.ui.model.CVSAdapterFactory;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryRoot;
+import org.eclipse.team.internal.ccvs.ui.subscriber.CommitSetManager;
 import org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticipant;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
@@ -664,6 +665,8 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		Platform.getAdapterManager().registerAdapters(factory, RepositoryRoot.class);
 		
 		console = new CVSOutputConsole();
+
+		CommitSetManager.getInstance();
 		
 		IPreferenceStore store = getPreferenceStore();
 		if (store.getBoolean(ICVSUIConstants.PREF_FIRST_STARTUP)) {
@@ -703,6 +706,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 			}
 			
 			console.shutdown();
+			CommitSetManager.getInstance().shutdown();
 		} finally {
 			super.stop(context);
 		}

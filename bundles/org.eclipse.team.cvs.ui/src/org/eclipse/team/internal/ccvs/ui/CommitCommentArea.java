@@ -37,6 +37,8 @@ public class CommitCommentArea extends DialogArea {
 	private String comment = ""; //$NON-NLS-1$
 	
 	public static final String OK_REQUESTED = "OkRequested";//$NON-NLS-1$
+	public static final String COMMENT_MODIFIED = "CommentModified";//$NON-NLS-1$
+    private String proposedComment;
 	
 	/**
 	 * Constructor for CommitCommentArea.
@@ -77,7 +79,9 @@ public class CommitCommentArea extends DialogArea {
 		});
 		text.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
+			    String oldComment = comment;
 				comment = text.getText();
+				CommitCommentArea.this.signalCommentModified(oldComment, comment);
 			}
 		});
 		
@@ -105,7 +109,7 @@ public class CommitCommentArea extends DialogArea {
 		});
 	}
 
-	/**
+    /**
 	 * Method initializeValues.
 	 */
 	private void initializeValues() {
@@ -120,12 +124,13 @@ public class CommitCommentArea extends DialogArea {
 		previousCommentsCombo.setText(""); //$NON-NLS-1$
 		
 		// determine the initial comment text
-		String initialComment;
-		try {
-			initialComment = getCommitTemplate();
-		} catch (CVSException e) {
-			CVSUIPlugin.log(e);
-			initialComment = null;
+		String initialComment = proposedComment;
+		if (initialComment == null) {
+			try {
+				initialComment = getCommitTemplate();
+			} catch (CVSException e) {
+				CVSUIPlugin.log(e);
+			}
 		}
 		if (initialComment != null && initialComment.length() != 0) {
 			text.setText(initialComment);
@@ -138,6 +143,10 @@ public class CommitCommentArea extends DialogArea {
 	private void signalCtrlEnter() {
 		firePropertyChangeChange(OK_REQUESTED, null, null);
 	}
+	
+    protected void signalCommentModified(String oldValue, String comment) {
+        firePropertyChangeChange(COMMENT_MODIFIED, oldValue, comment);
+    }
 
 	private String getCommitTemplate() throws CVSException {
 		CVSTeamProvider provider = getProvider();
@@ -205,4 +214,22 @@ public class CommitCommentArea extends DialogArea {
 			text.setFocus();
 		}
 	}
+
+    public void setProposedComment(String proposedComment) {
+        this.proposedComment = proposedComment;
+    }
+
+    public boolean hasCommitTemplate() {
+        try {
+            return getCommitTemplate() != null;
+        } catch (CVSException e) {
+            CVSUIPlugin.log(e);
+            return false;
+        }
+    }
+
+    public void setEnabled(boolean b) {
+        text.setEnabled(b);
+        previousCommentsCombo.setEnabled(b);
+    }
 }

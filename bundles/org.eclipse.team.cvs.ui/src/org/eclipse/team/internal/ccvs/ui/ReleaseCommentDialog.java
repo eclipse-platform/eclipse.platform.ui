@@ -32,8 +32,6 @@ public class ReleaseCommentDialog extends DetailsDialog {
 	CommitCommentArea commitCommentArea;
 	//	dialogs settings that are persistent between workbench sessions
 	private IDialogSettings settings;
-	private IResource[] resourcesToCommit;
-	private int depth;
 	private static final String HEIGHT_KEY = "width-key"; //$NON-NLS-1$
 	private static final String WIDTH_KEY = "height-key"; //$NON-NLS-1$
 	
@@ -41,17 +39,17 @@ public class ReleaseCommentDialog extends DetailsDialog {
 	 * ReleaseCommentDialog constructor.
 	 * 
 	 * @param parentShell  the parent of this dialog
+	 * @param proposedComment
 	 */
-	public ReleaseCommentDialog(Shell parentShell, IResource[] resourcesToCommit, int depth) {
+	public ReleaseCommentDialog(Shell parentShell, IResource[] resourcesToCommit, String proposedComment, int depth) {
 		super(parentShell, Policy.bind("ReleaseCommentDialog.title")); //$NON-NLS-1$
-		this.resourcesToCommit = resourcesToCommit;
-		this.depth = depth;
 		int shellStyle = getShellStyle();
 		setShellStyle(shellStyle | SWT.RESIZE | SWT.MAX);
 		commitCommentArea = new CommitCommentArea(this, null);
 		// Get a project from which the commit template can be obtained
 		if (resourcesToCommit.length > 0) 
 		commitCommentArea.setProject(resourcesToCommit[0].getProject());
+		commitCommentArea.setProposedComment(proposedComment);
 		
 		IDialogSettings workbenchSettings = CVSUIPlugin.getPlugin().getDialogSettings();
 		this.settings = workbenchSettings.getSection("ReleaseCommentDialog");//$NON-NLS-1$

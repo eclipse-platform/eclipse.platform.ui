@@ -23,7 +23,6 @@ import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.actions.ShowAnnotationAction;
 import org.eclipse.team.internal.ccvs.ui.actions.ShowResourceInHistoryAction;
 import org.eclipse.team.internal.ui.Utils;
-import org.eclipse.team.internal.ui.synchronize.SynchronizePageConfiguration;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.IMemento;
@@ -264,8 +263,8 @@ public class MergeSynchronizeParticipant extends CVSParticipant {
 		configuration.setMode(ISynchronizePageConfiguration.INCOMING_MODE);
 		configuration.addActionContribution(new MergeParticipantActionContribution());
 		
-		// non-api use of SynchronizePageConfiguration
-		configuration.setProperty(SynchronizePageConfiguration.P_MODEL_MANAGER, new ChangeLogModelManager(configuration));
+		// The manager adds itself to the configuration in it's constructor
+		new ChangeLogModelManager(configuration);
 	}
 	
 	/* (non-Javadoc)

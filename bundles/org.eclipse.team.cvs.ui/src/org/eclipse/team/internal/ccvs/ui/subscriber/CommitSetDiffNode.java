@@ -10,11 +10,8 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.subscriber;
 
-import java.text.DateFormat;
-
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.team.internal.ccvs.core.ILogEntry;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
@@ -22,43 +19,45 @@ import org.eclipse.team.internal.ui.synchronize.SynchronizeModelElement;
 import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
 
 /**
- * A model element corresponding to a "commit set". It displays a CVS
- * log entry using a currently fixed format. A commit doesn't have an
- * associated resource.
- * 
- * @since 3.0
+ * This diff node represents an outgoing commit set when it appears in the 
+ * synchronize view.
  */
-public class ChangeLogDiffNode extends SynchronizeModelElement {
+public class CommitSetDiffNode extends SynchronizeModelElement {
 
-	private ILogEntry logEntry;
+    private final CommitSet set;
 
-	public ChangeLogDiffNode(ISynchronizeModelElement parent, ILogEntry logEntry) {
-		super(parent);
-		this.logEntry = logEntry;
-	}
+    public CommitSetDiffNode(ISynchronizeModelElement parent, CommitSet set) {
+        super(parent);
+        this.set = set;
+    }
 
-	public ILogEntry getComment() {
-		return logEntry;
-	}
-	
-	public boolean equals(Object obj) {
-		return (obj == this);
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.team.ui.synchronize.ISynchronizeModelElement#getResource()
+     */
+    public IResource getResource() {
+        return null;
+    }
 
+    public CommitSet getSet() {
+        return set;
+    }
+    
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getImageDescriptor(java.lang.Object)
 	 */
 	public ImageDescriptor getImageDescriptor(Object object) {
-		return CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_CHANGELOG);
+		return CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_CHANGELOG); // TODO: Custom image needed
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.compare.structuremergeviewer.DiffNode#getName()
 	 */
 	public String getName() {
-		String date = DateFormat.getDateTimeInstance().format(logEntry.getDate());
-		String comment = HistoryView.flattenText(logEntry.getComment());
-		return "["+logEntry.getAuthor()+ "] (" + date +") " + comment; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+	    String name = set.getTitle();
+	    if (CommitSetManager.getInstance().isDefault(set)) {
+	        name = Policy.bind("CommitSetDiffNode.0", name); //$NON-NLS-1$
+	    }
+		return name;
 	}
 	
 	/* (non-Javadoc)
@@ -66,12 +65,5 @@ public class ChangeLogDiffNode extends SynchronizeModelElement {
 	 */
 	public String toString() {
 		return getName();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.synchronize.viewers.SynchronizeModelElement#getResource()
-	 */
-	public IResource getResource() {
-		return null;
 	}
 }

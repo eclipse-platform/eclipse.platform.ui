@@ -108,6 +108,12 @@ public interface ISynchronizePageConfiguration {
 	 * actions appear
 	 */
 	public static final String NAVIGATE_GROUP = "navigate"; //$NON-NLS-1$
+	
+	/**
+	 * The id of the sort group that determines where sort
+	 * actions or submenus appear
+	 */
+	public final static String SORT_GROUP = "sort"; //$NON-NLS-1$
 
 	/**
 	 * The id of the mode group that determines where the mode selection
@@ -144,7 +150,7 @@ public interface ISynchronizePageConfiguration {
 	 * Clients can remove, add and change the ordering for groups in
 	 * the context menu.
 	 */
-	public static final String[] DEFAULT_CONTEXT_MENU = new String[] { FILE_GROUP,  EDIT_GROUP, SYNCHRONIZE_GROUP, NAVIGATE_GROUP};
+	public static final String[] DEFAULT_CONTEXT_MENU = new String[] { FILE_GROUP,  EDIT_GROUP, SYNCHRONIZE_GROUP, NAVIGATE_GROUP, SORT_GROUP};
 
 	/**
 	 * These are the default groups used for the toolbar of a page.

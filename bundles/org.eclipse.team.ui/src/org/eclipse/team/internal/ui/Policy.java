@@ -16,8 +16,7 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.team.internal.core.InfiniteSubProgressMonitor;
-import org.eclipse.team.internal.core.NullSubProgressMonitor;
+import org.eclipse.team.internal.core.*;
 
 /**
  * Policy implements NLS convenience methods for the plugin and
@@ -26,6 +25,16 @@ import org.eclipse.team.internal.core.NullSubProgressMonitor;
 public class Policy {
 	// The resource bundle to get strings from
 	protected static ResourceBundle bundle = null;
+	
+	//debug constants
+	public static boolean DEBUG_SYNC_MODELS = false;
+
+	static {
+		//init debug options
+		if (TeamUIPlugin.getPlugin().isDebugging()) {
+			DEBUG_SYNC_MODELS = "true".equalsIgnoreCase(Platform.getDebugOption(TeamUIPlugin.ID + "/syncmodels"));//$NON-NLS-1$ //$NON-NLS-2$
+		}
+	}
 	
 	/**
 	 * Creates a NLS catalog for the given locale.

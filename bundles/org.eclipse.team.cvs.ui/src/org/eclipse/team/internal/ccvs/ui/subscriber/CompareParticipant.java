@@ -22,13 +22,10 @@ import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.internal.ccvs.core.CVSCompareSubscriber;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
-import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
-import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.actions.ShowAnnotationAction;
 import org.eclipse.team.internal.ccvs.ui.actions.ShowResourceInHistoryAction;
 import org.eclipse.team.internal.ui.Utils;
-import org.eclipse.team.internal.ui.synchronize.SynchronizePageConfiguration;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.*;
 
@@ -155,8 +152,8 @@ public class CompareParticipant extends CVSParticipant implements IPropertyChang
 				NON_MODAL_CONTEXT_MENU_CONTRIBUTION_GROUP);
 		configuration.addActionContribution(new CompareParticipantActionContribution());
 		if(localTag != null) {
-			// non-api use of SynchronizePageConfiguration
-			configuration.setProperty(SynchronizePageConfiguration.P_MODEL_MANAGER, new ChangeLogModelManager(configuration, localTag, getTag()));
+			// The manager adds itself to the configuration in it's constructor
+			new ChangeLogModelManager(configuration, localTag, getTag());
 		}
 	}
 	

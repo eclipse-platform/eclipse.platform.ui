@@ -533,10 +533,11 @@ public class RepositoryManager {
 	
 	/**
 	 * Return the entered comment or null if canceled.
+	 * @param proposedComment
 	 */
-	public String promptForComment(final Shell shell, IResource[] resourcesToCommit) {
+	public String promptForComment(final Shell shell, IResource[] resourcesToCommit, String proposedComment) {
 		final int[] result = new int[1];
-		final ReleaseCommentDialog dialog = new ReleaseCommentDialog(shell, resourcesToCommit, IResource.DEPTH_INFINITE); 
+		final ReleaseCommentDialog dialog = new ReleaseCommentDialog(shell, resourcesToCommit, proposedComment, IResource.DEPTH_INFINITE); 
 		shell.getDisplay().syncExec(new Runnable() {
 			public void run() {
 				result[0] = dialog.open();

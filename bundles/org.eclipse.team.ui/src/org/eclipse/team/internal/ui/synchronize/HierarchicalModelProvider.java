@@ -14,14 +14,9 @@ import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ViewerSorter;
-import org.eclipse.team.core.synchronize.ISyncInfoTreeChangeEvent;
-import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.core.synchronize.SyncInfoTree;
-import org.eclipse.team.internal.ui.ITeamUIImages;
-import org.eclipse.team.internal.ui.Policy;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.core.synchronize.*;
+import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.ui.TeamImages;
 import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
@@ -64,10 +59,16 @@ public class HierarchicalModelProvider extends SynchronizeModelProvider {
 	 * 
 	 * @param set the sync set used as the basis for the model created by this input.
 	 */
-	public HierarchicalModelProvider(ISynchronizePageConfiguration configuration, SyncInfoTree set) {
+	public HierarchicalModelProvider(ISynchronizePageConfiguration configuration, SyncInfoSet set) {
 		super(configuration, set);
 	}
 
+    public HierarchicalModelProvider(
+            AbstractSynchronizeModelProvider parentProvider,
+            ISynchronizeModelElement modelRoot,
+            ISynchronizePageConfiguration configuration, SyncInfoSet set) {
+        super(parentProvider, modelRoot, configuration, set);
+    }
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ui.synchronize.ISynchronizeModelProvider#getDescriptor()
@@ -136,44 +137,29 @@ public class HierarchicalModelProvider extends SynchronizeModelProvider {
 		return result;
 	}
 
-	/**
-	 * Handle the change for the existing diff node. The diff node
-	 * should be changed to have the given sync info
-	 * @param diffNode the diff node to be changed
-	 * @param info the new sync info for the diff node
-	 */
-	protected void handleChange(ISynchronizeModelElement diffNode, SyncInfo info) {
-		IResource local = info.getLocal();
-
-		if(diffNode instanceof SyncInfoModelElement) {
-			((SyncInfoModelElement)diffNode).update(info);
-			propogateConflictState(diffNode, false);
-			queueForLabelUpdate(diffNode);
-		} else {
-			removeFromViewer(local);
-			addResources(new IResource[] {local});
-		}
-	}
-
 	protected void addResources(IResource[] added) {
 		for (int i = 0; i < added.length; i++) {
 			IResource resource = added[i];
-			ISynchronizeModelElement node = getModelObject(resource);
-			if (node != null) {
-				// Somehow the node exists. Remove it and read it to ensure
-				// what is shown matches the contents of the sync set
-				removeFromViewer(resource);
-			}
-			// Build the sub-tree rooted at this node
-			ISynchronizeModelElement parent = getModelObject(resource.getParent());
-			if (parent != null) {
-				node = createModelObject(parent, resource);
-				buildModelObjects(node);
-			}
+            addResource(resource);
 		}
 	}
 
-	/* (non-Javadoc)
+    private void addResource(IResource resource) {
+        ISynchronizeModelElement node = getModelObject(resource);
+        if (node != null) {
+        	// Somehow the node exists. Remove it and read it to ensure
+        	// what is shown matches the contents of the sync set
+        	removeFromViewer(resource);
+        }
+        // Build the sub-tree rooted at this node
+        ISynchronizeModelElement parent = getModelObject(resource.getParent());
+        if (parent != null) {
+        	node = createModelObject(parent, resource);
+        	buildModelObjects(node);
+        }
+    }
+
+    /* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.viewers.SynchronizeModelProvider#buildModelObjects(org.eclipse.team.ui.synchronize.viewers.SynchronizeModelElement)
 	 */
 	protected IDiffElement[] buildModelObjects(ISynchronizeModelElement node) {
@@ -188,43 +174,11 @@ public class HierarchicalModelProvider extends SynchronizeModelProvider {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.synchronize.viewers.SynchronizeModelProvider#doAdd(org.eclipse.team.ui.synchronize.viewers.SynchronizeModelElement, org.eclipse.team.ui.synchronize.viewers.SynchronizeModelElement)
-	 */
-	protected void doAdd(ISynchronizeModelElement parent, ISynchronizeModelElement element) {
-		AbstractTreeViewer viewer = (AbstractTreeViewer)getViewer();
-		viewer.add(parent, element);		
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.synchronize.viewers.SynchronizeModelProvider#doRemove(org.eclipse.team.ui.synchronize.viewers.SynchronizeModelElement)
-	 */
-	protected void doRemove(ISynchronizeModelElement element) {
-		AbstractTreeViewer viewer = (AbstractTreeViewer)getViewer();
-		viewer.remove(element);		
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.viewers.SynchronizeModelProvider#handleResourceAdditions(org.eclipse.team.core.synchronize.ISyncInfoTreeChangeEvent)
 	 */
 	protected void handleResourceAdditions(ISyncInfoTreeChangeEvent event) {
 		IResource[] added = event.getAddedSubtreeRoots();
 		addResources(added);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.synchronize.viewers.SynchronizeModelProvider#handleResourceChanges(org.eclipse.team.core.synchronize.ISyncInfoTreeChangeEvent)
-	 */
-	protected void handleResourceChanges(ISyncInfoTreeChangeEvent event) {
-		// Refresh the viewer for each changed resource
-		SyncInfo[] infos = event.getChangedResources();
-		for (int i = 0; i < infos.length; i++) {
-			SyncInfo info = infos[i];
-			IResource local = info.getLocal();
-			ISynchronizeModelElement diffNode = getModelObject(local);
-			if (diffNode != null) {
-				handleChange(diffNode, info);
-			}
-		}	
 	}
 
 	/* (non-Javadoc)
@@ -250,4 +204,11 @@ public class HierarchicalModelProvider extends SynchronizeModelProvider {
 			}
 		}
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.team.internal.ui.synchronize.SynchronizeModelProvider#createModelObject(org.eclipse.team.ui.synchronize.ISynchronizeModelElement, org.eclipse.team.core.synchronize.SyncInfo)
+     */
+    protected ISynchronizeModelElement createModelObject(ISynchronizeModelElement parent, SyncInfo info) {
+        return createModelObject(parent, info.getLocal());
+    }
 }

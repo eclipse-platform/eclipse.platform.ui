@@ -31,6 +31,7 @@ public interface IHelpContextIds {
 	public static final String HISTORY_FILTER_DIALOG = PREFIX + "history_filter_dialog_context"; //$NON-NLS-1$
 	public static final String DATE_TAG_DIALOG = PREFIX + "date_tag_dialog_context"; //$NON-NLS-1$
 	public static final String KEYBOARD_INTERACTIVE_DIALOG = PREFIX + "keyboard_interactive_dialog_context"; //$NON-NLS-1$
+	public static final String COMMIT_SET_DIALOG = PREFIX + "commit_set_dialog_context"; //$NON-NLS-1$
 	
 	// Different uses of the TagSelectionDialog
 	public static final String REPLACE_TAG_SELECTION_DIALOG = PREFIX + "replace_tag_selection_dialog_context"; //$NON-NLS-1$

@@ -31,7 +31,7 @@ public class ComparePreferencePage extends CVSFieldEditorPreferencePage {
      * @see org.eclipse.team.internal.ccvs.ui.CVSFieldEditorPreferencePage#getPageDescription()
      */
     protected String getPageDescription() {
-        return "Options for CVS comparisons:";
+        return Policy.bind("ComparePreferencePage.0"); //$NON-NLS-1$
     }
 
     /* (non-Javadoc)
@@ -56,7 +56,7 @@ public class ComparePreferencePage extends CVSFieldEditorPreferencePage {
 				getFieldEditorParent()));
 		addField(new BooleanFieldEditor(
 		        ICVSUIConstants.PREF_SHOW_AUTHOR_IN_EDITOR, 
-		        "Show the file author in compare editors",
+		        Policy.bind("ComparePreferencePage.1"), //$NON-NLS-1$
 				BooleanFieldEditor.DEFAULT, 
 				getFieldEditorParent()));
     }

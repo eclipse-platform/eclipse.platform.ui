@@ -18,7 +18,6 @@ import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.actions.*;
 import org.eclipse.team.internal.ui.synchronize.ScopableSubscriberParticipant;
-import org.eclipse.team.internal.ui.synchronize.SynchronizePageConfiguration;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.IMemento;
@@ -149,8 +148,8 @@ public class WorkspaceSynchronizeParticipant extends ScopableSubscriberParticipa
 		configuration.setSupportedModes(ISynchronizePageConfiguration.ALL_MODES);
 		configuration.setMode(ISynchronizePageConfiguration.BOTH_MODE);
 		
-		// non-api use of SynchronizePageConfiguration
-		configuration.setProperty(SynchronizePageConfiguration.P_MODEL_MANAGER, new ChangeLogModelManager(configuration));
+		// The manager adds itself to the configuration in it's constructor
+		new ChangeLogModelManager(configuration);
 		
 		// Add context menu groups here to give the client displaying the
 		// page a chance to remove the context menu

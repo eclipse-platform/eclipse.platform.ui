@@ -11,6 +11,7 @@
 package org.eclipse.team.internal.ui.synchronize;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
@@ -24,18 +25,15 @@ import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
  * times without warning.
  */
 public interface ISynchronizeModelProvider {
-	/**
-	 * Property constant for the expansion state for the elements displayed by the page. The
-	 * expansion state is a List of resource paths.
-	 */
-	public static final String P_VIEWER_EXPANSION_STATE = TeamUIPlugin.ID  + ".P_VIEWER_EXPANSION_STATE"; //$NON-NLS-1$
 	
-	/**
-	 * Property constant for the selection state for the elements displayed by the page. The
-	 * selection state is a List of resource paths.
-	 */
-	public static final String P_VIEWER_SELECTION_STATE = TeamUIPlugin.ID  + ".P_VIEWER_SELECTION_STATE"; //$NON-NLS-1$
-	
+    /**
+     * Property constant used to indicate that the veiwer sorter has changed.
+     * Property change notifications for the viewer sorter change do not include
+     * the old and new viewer sorter. Instead, clients should re-obtain the sorter
+     * from the provider.
+     */
+    public static final String P_VIEWER_SORTER = TeamUIPlugin.ID  + ".P_VIEWER_SORTER"; //$NON-NLS-1$
+    
 	/**
 	 * Returns the sync set this model provider is showing.
 	 * @return the sync set this model provider is showing.
@@ -56,28 +54,10 @@ public interface ISynchronizeModelProvider {
 	public abstract StructuredViewer getViewer();
 
 	/**
-	 * Installed the viewer to be used to display the model.
-	 * @param viewer the viewer in which to diplay the model.
-	 */
-	public abstract void setViewer(StructuredViewer viewer);
-
-	/**
 	 * Builds the viewer model based on the contents of the sync set.
 	 * @return the root element of the generated model.
 	 */
 	public abstract ISynchronizeModelElement prepareInput(IProgressMonitor monitor);
-
-	/**
-	 * The provider can try and return a mapping for the provided object. Providers often use mappings
-	 * to store the source of a logical element they have created. For example, when displaying resource
-	 * based logical elements, a provider will cache the resource -> element mapping for quick retrieval
-	 * of the element when resource based changes are made.
-	 * 
-	 * @param object the object to query for a mapping
-	 * @return an object created by this provider that would be shown in a viewer, or <code>null</code>
-	 * if the provided object is not mapped by this provider.
-	 */
-	public abstract Object getMapping(Object object);
 
 	/**
 	 * Dispose of the builder
@@ -102,4 +82,16 @@ public interface ISynchronizeModelProvider {
 	 * is safe to access the viewer.
 	 */
 	public abstract void saveState();
+	
+	/**
+	 * Register a property change listener with this provider.
+	 * @param listener the property change listener
+	 */
+	public abstract void addPropertyChangeListener(IPropertyChangeListener listener);
+	
+	/**
+	 * Remove a property change listener from this provider.
+	 * @param listener the property change listener
+	 */
+	public abstract void removePropertyChangeListener(IPropertyChangeListener listener);
 }

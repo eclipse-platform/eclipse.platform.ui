@@ -10,26 +10,15 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.eclipse.compare.structuremergeviewer.IDiffContainer;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ViewerSorter;
-import org.eclipse.team.core.synchronize.ISyncInfoTreeChangeEvent;
-import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.core.synchronize.SyncInfoTree;
-import org.eclipse.team.internal.ui.ITeamUIImages;
-import org.eclipse.team.internal.ui.Policy;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.core.synchronize.*;
+import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
@@ -95,10 +84,17 @@ public class CompressedFoldersModelProvider extends HierarchicalModelProvider {
 	}
 	private static final CompressedFolderModelProviderDescriptor compressedDescriptor = new CompressedFolderModelProviderDescriptor();
 	
-	public CompressedFoldersModelProvider(ISynchronizePageConfiguration configuration, SyncInfoTree set) {
+	public CompressedFoldersModelProvider(ISynchronizePageConfiguration configuration, SyncInfoSet set) {
 		super(configuration, set);
 	}
 	
+    public CompressedFoldersModelProvider(
+            AbstractSynchronizeModelProvider parentProvider,
+            ISynchronizeModelElement modelRoot,
+            ISynchronizePageConfiguration configuration, SyncInfoSet set) {
+        super(parentProvider, modelRoot, configuration, set);
+    }
+    
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ui.synchronize.HierarchicalModelProvider#getDescriptor()
 	 */

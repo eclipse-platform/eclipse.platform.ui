@@ -26,6 +26,7 @@ import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.TeamException;
@@ -627,4 +628,46 @@ public class Utils {
 		ISynchronizeManager manager = TeamUI.getSynchronizeManager();
 		return manager.getParticipantDescriptor(participant.getId()).getName();
 	}
+
+    /**
+     * The viewer will only be updated if the viewer is not null, the control is not disposed, and
+     * this code is being run from the UI thread.
+     * @param viewer the viewer to be updated
+     * @return whether it is safe to update the viewer
+     */
+    public static boolean canUpdateViewer(StructuredViewer viewer) {
+		if(viewer == null || viewer.getControl().isDisposed()) return false;
+		Display display = viewer.getControl().getDisplay();
+		if (display == null) return false;
+		if (display.getThread() != Thread.currentThread ()) return false;
+		return true;
+    }
+    
+    public static void asyncExec(final Runnable r, StructuredViewer v) {
+		if(v == null) return;
+		final Control ctrl = v.getControl();
+		if (ctrl != null && !ctrl.isDisposed()) {
+			ctrl.getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					if (!ctrl.isDisposed()) {
+						BusyIndicator.showWhile(ctrl.getDisplay(), r);
+					}
+				}
+			});
+		}
+	}
+
+    public static void syncExec(final Runnable r, StructuredViewer v) {
+		if(v == null) return;
+		final Control ctrl = v.getControl();
+		if (ctrl != null && !ctrl.isDisposed()) {
+			ctrl.getDisplay().syncExec(new Runnable() {
+				public void run() {
+					if (!ctrl.isDisposed()) {
+						BusyIndicator.showWhile(ctrl.getDisplay(), r);
+					}
+				}
+			});
+		}
+    }
 }

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.subscriber;
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
@@ -24,29 +23,26 @@ import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
 public class ChangeLogModelSorter extends ViewerSorter {
 	
 	private int commentCriteria;
-	private int resourceCriteria;
+	private ChangeLogModelProvider provider;
 	
 	// Comment sorting options
 	public final static int DATE = 1;
 	public final static int COMMENT = 2;
 	public final static int USER = 3;
 	
-	// Resource sorting options
-	public final static int NAME = 1;
-	public final static int PATH = 2;
-	public final static int PARENT_NAME = 3;
-	
-	public ChangeLogModelSorter(int commentCriteria, int resourceCriteria) {
-		super();
+	public ChangeLogModelSorter(ChangeLogModelProvider provider, int commentCriteria) {
+		this.provider = provider;
 		this.commentCriteria = commentCriteria;
-		this.resourceCriteria = resourceCriteria;
 	}
 	
 	protected int classComparison(Object element) {
-		if (element instanceof ChangeLogDiffNode) {
+		if (element instanceof CommitSetDiffNode) {
 			return 0;
 		}
-		return 1;
+		if (element instanceof ChangeLogDiffNode) {
+			return 1;
+		}
+		return 2;
 	}
 	
 	protected int compareClass(Object element1, Object element2) {
@@ -64,6 +60,12 @@ public class ChangeLogModelSorter extends ViewerSorter {
 		//have to deal with non-resources in navigator
 		//if one or both objects are not resources, returned a comparison 
 		//based on class.
+		if (o1 instanceof  CommitSetDiffNode && o2 instanceof CommitSetDiffNode) {
+		    CommitSet s1 = ((CommitSetDiffNode) o1).getSet();
+		    CommitSet s2 = ((CommitSetDiffNode) o2).getSet();
+			return compareNames(s1.getTitle(), s2.getTitle());
+		}
+		
 		if (o1 instanceof  ChangeLogDiffNode && o2 instanceof ChangeLogDiffNode) {
 			ILogEntry r1 = ((ChangeLogDiffNode) o1).getComment();
 			ILogEntry r2 = ((ChangeLogDiffNode) o2).getComment();
@@ -77,17 +79,24 @@ public class ChangeLogModelSorter extends ViewerSorter {
 			else
 				return 0;
 		}
+		
+		if (o1 instanceof CommitSetDiffNode)
+			return 1;
+		else if (o2 instanceof CommitSetDiffNode)
+			return -1;
+		
+		if (o1 instanceof ChangeLogDiffNode)
+			return 1;
+		else if (o2 instanceof ChangeLogDiffNode)
+			return -1;
 
-		if (o1 instanceof ChangeLogModelProvider.FullPathSyncInfoElement && o2 instanceof ChangeLogModelProvider.FullPathSyncInfoElement) {
-			IResource r1 = ((ISynchronizeModelElement)o1).getResource();
-			IResource r2 = ((ISynchronizeModelElement)o2).getResource();
-			if(resourceCriteria == NAME) 
-				return compareNames(r1.getName(), r2.getName());
-			else if(resourceCriteria == PATH)
-				return compareNames(r1.getFullPath().toString(), r2.getFullPath().toString());
-			else if(resourceCriteria == PARENT_NAME)
-				return compareNames(r1.getParent().getName(), r2.getParent().getName());
-			else return 0;
+		if (o1 instanceof ISynchronizeModelElement && o2 instanceof ISynchronizeModelElement) {
+			ViewerSorter embeddedSorter = provider.getEmbeddedSorter();
+			if (embeddedSorter != null) {
+			    return embeddedSorter.compare(viewer, o1, o2);
+			} else {
+			    compareNames(((ISynchronizeModelElement)o1).getName(), ((ISynchronizeModelElement)o2).getName());
+			}
 		} else if (o1 instanceof ISynchronizeModelElement)
 			return 1;
 		else if (o2 instanceof ISynchronizeModelElement)
@@ -98,9 +107,5 @@ public class ChangeLogModelSorter extends ViewerSorter {
 
 	public int getCommentCriteria() {
 		return commentCriteria;
-	}
-
-	public int getResourceCriteria() {
-		return resourceCriteria;
 	}
 }

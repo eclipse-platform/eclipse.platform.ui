@@ -262,10 +262,32 @@ public class WorkspaceCommitOperation extends CVSSubscriberOperation {
 	 * @return the comment, or null to cancel
 	 */
 	protected String promptForComment(RepositoryManager manager, IResource[] resourcesToCommit) {
-		return manager.promptForComment(getShell(), resourcesToCommit);
+	    String proposedComment = getProposedComment(resourcesToCommit);
+		return manager.promptForComment(getShell(), resourcesToCommit, proposedComment);
 	}
 
-	protected IResource[] promptForResourcesToBeAdded(RepositoryManager manager, IResource[] unadded) {
+    private String getProposedComment(IResource[] resourcesToCommit) {
+        CommitSet[] sets = CommitSetManager.getInstance().getSets();
+        for (int i = 0; i < sets.length; i++) {
+            CommitSet set = sets[i];
+            if (containsAll(set, resourcesToCommit)) {
+                return set.getComment();
+            }
+        }
+        return null;
+    }
+
+    private boolean containsAll(CommitSet set, IResource[] resourcesToCommit) {
+        for (int j = 0; j < resourcesToCommit.length; j++) {
+            IResource resource = resourcesToCommit[j];
+            if (!set.contains(resource)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    protected IResource[] promptForResourcesToBeAdded(RepositoryManager manager, IResource[] unadded) {
 		return manager.promptForResourcesToBeAdded(getShell(), unadded);
 	}
 	

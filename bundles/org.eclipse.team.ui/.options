@@ -1,0 +1,7 @@
+# Debugging options for the org.eclipse.team.ui plugin.
+
+# Turn on debugging for the plugin.
+org.eclipse.team.ui/debug=false
+
+# Shows stream debugging information
+org.eclipse.team.ui/syncmodels=false

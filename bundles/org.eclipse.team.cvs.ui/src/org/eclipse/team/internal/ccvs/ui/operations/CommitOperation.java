@@ -164,7 +164,7 @@ public class CommitOperation extends SingleCommandOperation {
 	
 	protected String promptForComment(IResource[] resourcesToCommit) {
 		RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
-		return manager.promptForComment(getShell(), resourcesToCommit);
+		return manager.promptForComment(getShell(), resourcesToCommit, null);
 	}
 	
 	/*
