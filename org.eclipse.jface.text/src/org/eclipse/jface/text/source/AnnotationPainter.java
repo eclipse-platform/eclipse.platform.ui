@@ -281,7 +281,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 								fHighlightedDecorationsMap.remove(annotation);
 						} else {
 							decoration= getDecoration(annotation, decoration, isDrawingSquiggles, isHighlighting);
-							if (decoration != null)
+							if (decoration != null && isHighlighting)
 								fHighlightedDecorationsMap.put(annotation, decoration);
 						}
 							
@@ -299,7 +299,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 						}
 					
 						Decoration oldDecoration= (Decoration)fDecorationsMap.get(annotation);
-						if (decoration != null)
+						if (decoration != null && isDrawingSquiggles)
 							fDecorationsMap.put(annotation, decoration);
 						else if (oldDecoration != null)
 							fDecorationsMap.remove(annotation);
