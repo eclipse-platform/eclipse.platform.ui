@@ -136,7 +136,7 @@ public class LaunchViewLabelDecorator extends LabelProvider implements ILabelDec
 	}
 		
 	/**
-	 * When a thread suspends after an evaluation, recompute labels
+	 * When a thread suspends after an evaluation or step, recompute labels
 	 * for its stack frames. This ensures that any stack frames whose
 	 * label computation was interrupted when the thread was resumed
 	 * will be cleaned up eventually.
@@ -144,7 +144,10 @@ public class LaunchViewLabelDecorator extends LabelProvider implements ILabelDec
 	 */
 	public void handleSuspendEvent(DebugEvent event) {
 		Object source= event.getSource();
-		if (!(source instanceof IThread) || !event.isEvaluation()) {
+		if (!(source instanceof IThread)) {
+			return;
+		}
+		if (!event.isEvaluation() && (event.getDetail() & DebugEvent.STEP_END) == 0) {
 			return;
 		}
 		IThread thread= (IThread) source;
