@@ -60,8 +60,10 @@ public interface IProject extends IContainer, IAdaptable {
  *
  * @param kind the kind of build being requested. Valid values are:
  *		<ul>
- *		<li> <code>IncrementalProjectBuilder.FULL_BUILD</code> - indicates a full build.</li>
- *		<li> <code>IncrementalProjectBuilder.INCREMENTAL_BUILD</code> - indicates an incremental build.</li>
+ * <li><code>FULL_BUILD</code>- indicates a full build.</li>
+ * <li><code>INCREMENTAL_BUILD</code>- indicates a incremental build.
+ * <li><code>CLEAN_BUILD</code>- indicates a clean request.  Clean does
+ * not actually build anything, but rather discards all problems and build states.
  *		</ul>
  * @param builderName the name of the builder
  * @param args a table of builder-specific arguments keyed by argument name
@@ -78,6 +80,7 @@ public interface IProject extends IContainer, IAdaptable {
  * @see IncrementalProjectBuilder#build
  * @see IncrementalProjectBuilder#FULL_BUILD
  * @see IncrementalProjectBuilder#INCREMENTAL_BUILD
+ * @see IncrementalProjectBuilder#CLEAN_BUILD
  * @see IResourceRuleFactory#buildRule
  */
 public void build(int kind, String builderName, Map args, IProgressMonitor monitor) throws CoreException;

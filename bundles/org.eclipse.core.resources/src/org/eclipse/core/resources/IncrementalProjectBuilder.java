@@ -27,9 +27,7 @@ import java.util.Map;
  * On creation, the <code>setInitializationData</code> method is called with
  * any parameter data specified in the declaring plug-in's manifest.
  */
-public abstract class IncrementalProjectBuilder extends InternalBuilder
-		implements
-			IExecutableExtension {
+public abstract class IncrementalProjectBuilder extends InternalBuilder implements IExecutableExtension {
 	/*
 	 * ====================================================================
 	 * Constants related to build requests
@@ -119,8 +117,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder
 	 * @exception CoreException if this build fails.
 	 * @see IProject#build
 	 */
-	protected abstract IProject[] build(int kind, Map args,
-			IProgressMonitor monitor) throws CoreException;
+	protected abstract IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException;
 	/**
 	 * Clean is an opportunity for a builder to discard any additional state
 	 * that has been computed as a result of previous builds. The platform will
@@ -272,8 +269,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder
 	 * named "trace":
 	 * 
 	 * <pre>
-	 * public void setInitializationData(IConfigurationElement cfig,
-	 * 		String propertyName, Object data) throws CoreException {
+	 * public void setInitializationData(IConfigurationElement cfig, String propertyName, Object data) throws CoreException {
 	 * 	super.setInitializationData(cfig, propertyName, data);
 	 * 	if (data instanceof Hashtable) {
 	 * 		Hashtable args = (Hashtable) data;
@@ -285,8 +281,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder
 	 * 
 	 * </p>
 	 */
-	public void setInitializationData(IConfigurationElement config,
-			String propertyName, Object data) throws CoreException {
+	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
 	}
 	/**
 	 * Informs this builder that it is being started by the build management

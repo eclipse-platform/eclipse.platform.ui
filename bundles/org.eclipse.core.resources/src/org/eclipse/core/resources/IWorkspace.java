@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.resources;
 import java.util.Map;
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 /**
@@ -18,8 +19,8 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
  * of this workspace.
  * <p>
  * A workspace corresponds closely to discreet areas in the local file system.
- * Each project in a workspace maps onto a specific area of the file system.
- * The folders and files within a project map directly onto the corresponding
+ * Each project in a workspace maps onto a specific area of the file system. The
+ * folders and files within a project map directly onto the corresponding
  * directories and files in the file system. One subdirectory, the workspace
  * metadata area, contains internal information about the workspace and its
  * resources. This metadata area should be accessed only by the Platform or via
@@ -32,9 +33,9 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
  * support for managing application/tool state (e.g., saving and restoring).
  * </p>
  * <p>
- * The workspace as a whole is thread safe and allows one writer concurrent
- * with multiple readers. It also supports mechanisms for saving and
- * snapshooting the current resource state.
+ * The workspace as a whole is thread safe and allows one writer concurrent with
+ * multiple readers. It also supports mechanisms for saving and snapshooting the
+ * current resource state.
  * </p>
  * <p>
  * The workspace is provided by the Resources plug-in and is automatically
@@ -63,14 +64,13 @@ public interface IWorkspace extends IAdaptable {
 	 */
 	public static final int AVOID_UPDATE = 1;
 	/**
-	 * Adds the given listener for resource change events to this workspace.
-	 * Has no effect if an identical listener is already registered.
+	 * Adds the given listener for resource change events to this workspace. Has
+	 * no effect if an identical listener is already registered.
 	 * <p>
 	 * This method is equivalent to:
 	 * 
 	 * <pre>
-	 * addResourceChangeListener(listener, IResourceChangeEvent.PRE_CLOSE
-	 * 		| IResourceChangeEvent.PRE_DELETE | IResourceChangeEvent.POST_CHANGE);
+	 * addResourceChangeListener(listener, IResourceChangeEvent.PRE_CLOSE | IResourceChangeEvent.PRE_DELETE | IResourceChangeEvent.POST_CHANGE);
 	 * </pre>
 	 * 
 	 * </p>
@@ -98,12 +98,12 @@ public interface IWorkspace extends IAdaptable {
 	 * removed.
 	 * </p>
 	 * <p>
-	 * Listeners can listen for several types of event as defined in <code>IResourceChangeEvent</code>.
-	 * Clients are free to register for any number of event types however if
-	 * they register for more than one, it is their responsibility to ensure
-	 * they correctly handle the case where the same resource change shows up
-	 * in multiple notifications. Clients are guaranteed to receive only the
-	 * events for which they are registered.
+	 * Listeners can listen for several types of event as defined in
+	 * <code>IResourceChangeEvent</code>. Clients are free to register for
+	 * any number of event types however if they register for more than one, it
+	 * is their responsibility to ensure they correctly handle the case where
+	 * the same resource change shows up in multiple notifications. Clients are
+	 * guaranteed to receive only the events for which they are registered.
 	 * </p>
 	 * 
 	 * @param listener the listener
@@ -113,15 +113,14 @@ public interface IWorkspace extends IAdaptable {
 	 * @see IResourceChangeEvent
 	 * @see #removeResourceChangeListener
 	 */
-	public void addResourceChangeListener(IResourceChangeListener listener,
-			int eventMask);
+	public void addResourceChangeListener(IResourceChangeListener listener, int eventMask);
 	/**
 	 * Registers the given plug-in's workspace save participant, and returns an
 	 * object describing the workspace state at the time of the last save in
 	 * which the plug-in participated.
 	 * <p>
-	 * Once registered, the workspace save participant will actively
-	 * participate in the saving of this workspace.
+	 * Once registered, the workspace save participant will actively participate
+	 * in the saving of this workspace.
 	 * </p>
 	 * 
 	 * @param plugin the plug-in
@@ -136,8 +135,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @see ISaveParticipant
 	 * @see #removeSaveParticipant
 	 */
-	public ISavedState addSaveParticipant(Plugin plugin,
-			ISaveParticipant participant) throws CoreException;
+	public ISavedState addSaveParticipant(Plugin plugin, ISaveParticipant participant) throws CoreException;
 	/**
 	 * Builds all projects in this workspace. Projects are built in the order
 	 * specified in this workspace's description. Projects not mentioned in the
@@ -158,18 +156,21 @@ public interface IWorkspace extends IAdaptable {
 	 * <ul>
 	 * <li><code>FULL_BUILD</code>- indicates a full build.</li>
 	 * <li><code>INCREMENTAL_BUILD</code>- indicates a incremental build.
-	 * </li>
+	 * <li><code>CLEAN_BUILD</code>- indicates a clean request. Clean does
+	 * not actually build anything, but rather discards all problems and build
+	 * states.
 	 * </ul>
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 * reporting and cancellation are not desired
-	 * @exception CoreException if some of the builds fail. The status
-	 * contained in the exception is a multi-status with entries for the
-	 * project builds that failed.
+	 * @exception CoreException if some of the builds fail. The status contained
+	 * in the exception is a multi-status with entries for the project builds
+	 * that failed.
 	 * 
 	 * @see IProject#build
 	 * @see #computeProjectOrder
 	 * @see IncrementalProjectBuilder#FULL_BUILD
 	 * @see IncrementalProjectBuilder#INCREMENTAL_BUILD
+	 * @see IncrementalProjectBuilder#CLEAN_BUILD
 	 * @see IResourceRuleFactory#buildRule
 	 */
 	public void build(int kind, IProgressMonitor monitor) throws CoreException;
@@ -179,12 +180,13 @@ public interface IWorkspace extends IAdaptable {
 	 * the build argument is true) and send an interim notification of resource
 	 * change events.
 	 * <p>
-	 * When invoked in the dynamic scope of a call to the <code>IWorkspace.run</code>
-	 * method, this method reports a single resource change event describing
-	 * the net effect of all changes done to resources since the last round of
-	 * notifications. When the outermost <code>run</code> method eventually
-	 * completes, it will do another auto-build (if enabled) and report the
-	 * resource changes made after this call.
+	 * When invoked in the dynamic scope of a call to the
+	 * <code>IWorkspace.run</code> method, this method reports a single
+	 * resource change event describing the net effect of all changes done to
+	 * resources since the last round of notifications. When the outermost
+	 * <code>run</code> method eventually completes, it will do another
+	 * auto-build (if enabled) and report the resource changes made after this
+	 * call.
 	 * </p>
 	 * <p>
 	 * This method has no effect if invoked outside the dynamic scope of a call
@@ -227,7 +229,8 @@ public interface IWorkspace extends IAdaptable {
 	 */
 	public IProject[][] computePrerequisiteOrder(IProject[] projects);
 	/**
-	 * Data structure for holding the multi-part outcome of <code>IWorkspace.computeProjectOrder</code>.
+	 * Data structure for holding the multi-part outcome of
+	 * <code>IWorkspace.computeProjectOrder</code>.
 	 * <p>
 	 * This class is not intended to be instantiated by clients.
 	 * </p>
@@ -246,8 +249,7 @@ public interface IWorkspace extends IAdaptable {
 		 * @param hasCycles initial value of <code>hasCycles</code> field
 		 * @param knots initial value of <code>knots</code> field
 		 */
-		public ProjectOrder(IProject[] projects, boolean hasCycles,
-				IProject[][] knots) {
+		public ProjectOrder(IProject[] projects, boolean hasCycles, IProject[][] knots) {
 			this.projects = projects;
 			this.hasCycles = hasCycles;
 			this.knots = knots;
@@ -261,20 +263,20 @@ public interface IWorkspace extends IAdaptable {
 		 */
 		public IProject[] projects;
 		/**
-		 * Indicates whether any of the accessible projects in <code>projects</code>
-		 * are involved in non-trivial cycles. <code>true</code> if the
-		 * project reference graph contains at least one cycle involving two or
-		 * more of the projects in <code>projects</code>, and <code>false</code>
-		 * if none of the projects in <code>projects</code> are involved in
-		 * cycles.
+		 * Indicates whether any of the accessible projects in
+		 * <code>projects</code> are involved in non-trivial cycles.
+		 * <code>true</code> if the project reference graph contains at least
+		 * one cycle involving two or more of the projects in
+		 * <code>projects</code>, and <code>false</code> if none of the
+		 * projects in <code>projects</code> are involved in cycles.
 		 */
 		public boolean hasCycles;
 		/**
-		 * A list of knots in the project reference graph. This list is empty
-		 * if the project reference graph does not contain cycles. If the
-		 * project reference graph contains cycles, each element is a knot of
-		 * two or more accessible projects from <code>projects</code> that
-		 * are involved in a cycle of mutually dependent references.
+		 * A list of knots in the project reference graph. This list is empty if
+		 * the project reference graph does not contain cycles. If the project
+		 * reference graph contains cycles, each element is a knot of two or
+		 * more accessible projects from <code>projects</code> that are
+		 * involved in a cycle of mutually dependent references.
 		 */
 		public IProject[][] knots;
 	}
@@ -289,8 +291,8 @@ public interface IWorkspace extends IAdaptable {
 	 * total ordering of all open projects in the workspace.
 	 * <p>
 	 * When there are choices, the choice is made in a reasonably stable way.
-	 * For example, given an arbitrary choice between two projects, the one
-	 * with the lower collating project name is usually selected.
+	 * For example, given an arbitrary choice between two projects, the one with
+	 * the lower collating project name is usually selected.
 	 * </p>
 	 * <p>
 	 * When the project reference graph contains cyclic references, it is
@@ -314,22 +316,21 @@ public interface IWorkspace extends IAdaptable {
 	 */
 	public ProjectOrder computeProjectOrder(IProject[] projects);
 	/**
-	 * Copies the given sibling resources so that they are located as members
-	 * of the resource at the given path; the names of the copies are the same
-	 * as the corresponding originals.
+	 * Copies the given sibling resources so that they are located as members of
+	 * the resource at the given path; the names of the copies are the same as
+	 * the corresponding originals.
 	 * <p>
 	 * This is a convenience method, fully equivalent to:
 	 * 
 	 * <pre>
-	 * copy(resources, destination, (force ? IResource.FORCE : IResource.NONE),
-	 * 		monitor);
+	 * copy(resources, destination, (force ? IResource.FORCE : IResource.NONE), monitor);
 	 * </pre>
 	 * 
 	 * </p>
 	 * <p>
 	 * This method changes resources; these changes will be reported in a
-	 * subsequent resource change event that will include an indication that
-	 * the resources have been added to the new parent.
+	 * subsequent resource change event that will include an indication that the
+	 * resources have been added to the new parent.
 	 * </p>
 	 * <p>
 	 * This method is long-running; progress and cancellation are provided by
@@ -343,22 +344,22 @@ public interface IWorkspace extends IAdaptable {
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 * reporting and cancellation are not desired
 	 * @return a status object with code <code>OK</code> if there were no
-	 * problems; otherwise a description (possibly a multi-status) consisting
-	 * of low-severity warnings or informational messages
+	 * problems; otherwise a description (possibly a multi-status) consisting of
+	 * low-severity warnings or informational messages
 	 * @exception CoreException if the method fails to copy some resources. The
 	 * status contained in the exception may be a multi-status indicating where
 	 * the individual failures occurred.
 	 * @see #copy(IResource[],IPath,int,IProgressMonitor)
 	 */
-	public IStatus copy(IResource[] resources, IPath destination,
-			boolean force, IProgressMonitor monitor) throws CoreException;
+	public IStatus copy(IResource[] resources, IPath destination, boolean force, IProgressMonitor monitor) throws CoreException;
 	/**
-	 * Copies the given sibling resources so that they are located as members
-	 * of the resource at the given path; the names of the copies are the same
-	 * as the corresponding originals.
+	 * Copies the given sibling resources so that they are located as members of
+	 * the resource at the given path; the names of the copies are the same as
+	 * the corresponding originals.
 	 * <p>
-	 * This method can be expressed as a series of calls to <code>IResource.copy(IPath,int,IProgressMonitor)</code>,
-	 * with "best effort" semantics:
+	 * This method can be expressed as a series of calls to
+	 * <code>IResource.copy(IPath,int,IProgressMonitor)</code>, with "best
+	 * effort" semantics:
 	 * <ul>
 	 * <li>Resources are copied in the order specified, using the given update
 	 * flags.</li>
@@ -385,8 +386,8 @@ public interface IWorkspace extends IAdaptable {
 	 * </p>
 	 * <p>
 	 * This method changes resources; these changes will be reported in a
-	 * subsequent resource change event that will include an indication that
-	 * the resources have been added to the new parent.
+	 * subsequent resource change event that will include an indication that the
+	 * resources have been added to the new parent.
 	 * </p>
 	 * <p>
 	 * This method is long-running; progress and cancellation are provided by
@@ -399,16 +400,15 @@ public interface IWorkspace extends IAdaptable {
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 * reporting and cancellation are not desired
 	 * @return a status object with code <code>OK</code> if there were no
-	 * problems; otherwise a description (possibly a multi-status) consisting
-	 * of low-severity warnings or informational messages
+	 * problems; otherwise a description (possibly a multi-status) consisting of
+	 * low-severity warnings or informational messages
 	 * @exception CoreException if the method fails to copy some resources. The
 	 * status contained in the exception may be a multi-status indicating where
 	 * the individual failures occurred. Reasons include:
 	 * <ul>
 	 * <li>One of the resources does not exist.</li>
 	 * <li>The resources are not siblings.</li>
-	 * <li>One of the resources, or one of its descendents, is not local.
-	 * </li>
+	 * <li>One of the resources, or one of its descendents, is not local.</li>
 	 * <li>The resource corresponding to the destination path does not exist.
 	 * </li>
 	 * <li>The resource corresponding to the parent destination path is a
@@ -418,9 +418,8 @@ public interface IWorkspace extends IAdaptable {
 	 * <li>One of the resources is a project.</li>
 	 * <li>The path of one of the resources is a prefix of the destination
 	 * path.</li>
-	 * <li>One of the resources, or one of its descendents, is out of sync
-	 * with the local file system and <code>FORCE</code> is not specified.
-	 * </li>
+	 * <li>One of the resources, or one of its descendents, is out of sync with
+	 * the local file system and <code>FORCE</code> is not specified.</li>
 	 * <li>Resource changes are disallowed during certain types of resource
 	 * change event notification. See <code>IResourceChangeEvent</code> for
 	 * more details.</li>
@@ -429,16 +428,14 @@ public interface IWorkspace extends IAdaptable {
 	 * @see IResourceRuleFactory#copyRule
 	 * @since 2.0
 	 */
-	public IStatus copy(IResource[] resources, IPath destination,
-			int updateFlags, IProgressMonitor monitor) throws CoreException;
+	public IStatus copy(IResource[] resources, IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException;
 	/**
 	 * Deletes the given resources.
 	 * <p>
 	 * This is a convenience method, fully equivalent to:
 	 * 
 	 * <pre>
-	 * delete(resources, IResource.KEEP_HISTORY
-	 * 		| (force ? IResource.FORCE : IResource.NONE), monitor);
+	 * delete(resources, IResource.KEEP_HISTORY | (force ? IResource.FORCE : IResource.NONE), monitor);
 	 * </pre>
 	 * 
 	 * </p>
@@ -459,23 +456,23 @@ public interface IWorkspace extends IAdaptable {
 	 * @return status with code <code>OK</code> if there were no problems;
 	 * otherwise a description (possibly a multi-status) consisting of
 	 * low-severity warnings or informational messages
-	 * @exception CoreException if the method fails to delete some resource.
-	 * The status contained in the exception is a multi-status indicating where
-	 * the individual failures occurred.
+	 * @exception CoreException if the method fails to delete some resource. The
+	 * status contained in the exception is a multi-status indicating where the
+	 * individual failures occurred.
 	 * @see #delete(IResource[],int,IProgressMonitor)
 	 */
-	public IStatus delete(IResource[] resources, boolean force,
-			IProgressMonitor monitor) throws CoreException;
+	public IStatus delete(IResource[] resources, boolean force, IProgressMonitor monitor) throws CoreException;
 	/**
 	 * Deletes the given resources.
 	 * <p>
-	 * This method can be expressed as a series of calls to <code>IResource.delete(int,IProgressMonitor)</code>.
+	 * This method can be expressed as a series of calls to
+	 * <code>IResource.delete(int,IProgressMonitor)</code>.
 	 * </p>
 	 * <p>
 	 * The semantics of multiple deletion are:
 	 * <ul>
-	 * <li>Resources are deleted in the order presented, using the given
-	 * update flags.</li>
+	 * <li>Resources are deleted in the order presented, using the given update
+	 * flags.</li>
 	 * <li>Resources that do not exist are ignored.</li>
 	 * <li>An individual deletion fails if the resource still exists
 	 * afterwards.</li>
@@ -502,15 +499,14 @@ public interface IWorkspace extends IAdaptable {
 	 * @return status with code <code>OK</code> if there were no problems;
 	 * otherwise a description (possibly a multi-status) consisting of
 	 * low-severity warnings or informational messages
-	 * @exception CoreException if the method fails to delete some resource.
-	 * The status contained in the exception is a multi-status indicating where
-	 * the individual failures occurred.
+	 * @exception CoreException if the method fails to delete some resource. The
+	 * status contained in the exception is a multi-status indicating where the
+	 * individual failures occurred.
 	 * @see IResource#delete(int,IProgressMonitor)
 	 * @see IResourceRuleFactory#deleteRule
 	 * @since 2.0
 	 */
-	public IStatus delete(IResource[] resources, int updateFlags,
-			IProgressMonitor monitor) throws CoreException;
+	public IStatus delete(IResource[] resources, int updateFlags, IProgressMonitor monitor) throws CoreException;
 	/**
 	 * Removes the given markers from the resources with which they are
 	 * associated. Markers that do not exist are ignored.
@@ -531,17 +527,16 @@ public interface IWorkspace extends IAdaptable {
 	public void deleteMarkers(IMarker[] markers) throws CoreException;
 	/**
 	 * Forgets any resource tree being saved for the plug-in with the given
-	 * name. If the plug-in id is <code>null</code>, all trees are
-	 * forgotten.
+	 * name. If the plug-in id is <code>null</code>, all trees are forgotten.
 	 * <p>
-	 * Clients should not call this method unless they have a reason to do so.
-	 * A plug-in which uses <code>ISaveContext.needDelta</code> in the
-	 * process of a save indicates that it would like to be fed the resource
-	 * delta the next time it is reactivated. If a plug-in never gets
-	 * reactivated (or if it fails to successfully register to participate in
-	 * workspace saves), the workspace nevertheless retains the necessary
-	 * information to generate the resource delta if asked. This method allows
-	 * such a long term leak to be plugged.
+	 * Clients should not call this method unless they have a reason to do so. A
+	 * plug-in which uses <code>ISaveContext.needDelta</code> in the process
+	 * of a save indicates that it would like to be fed the resource delta the
+	 * next time it is reactivated. If a plug-in never gets reactivated (or if
+	 * it fails to successfully register to participate in workspace saves), the
+	 * workspace nevertheless retains the necessary information to generate the
+	 * resource delta if asked. This method allows such a long term leak to be
+	 * plugged.
 	 * </p>
 	 * 
 	 * @param pluginId the unique identifier of the plug-in
@@ -560,7 +555,8 @@ public interface IWorkspace extends IAdaptable {
 	 * Returns the nature descriptor with the given unique identifier, or
 	 * <code>null</code> if there is no such nature.
 	 * 
-	 * @param natureId the nature extension identifer (e.g. <code>"com.example.coolNature"</code>).
+	 * @param natureId the nature extension identifer (e.g.
+	 * <code>"com.example.coolNature"</code>).
 	 * @return the nature descriptor, or <code>null</code>
 	 * @since 2.0
 	 */
@@ -573,16 +569,16 @@ public interface IWorkspace extends IAdaptable {
 	 * referenced by that project but do not exist in the workspace. Returns an
 	 * empty Map if there are no projects in the workspace.
 	 * 
-	 * @return a map (key type: <code>IProject</code>, value type: <code>IProject[]</code>)
-	 * from project to dangling project references
+	 * @return a map (key type: <code>IProject</code>, value type:
+	 * <code>IProject[]</code>) from project to dangling project references
 	 */
 	public Map getDanglingReferences();
 	/**
 	 * Returns the workspace description. This object is responsible for
 	 * defining workspace preferences. The returned value is a modifiable copy
 	 * but changes are not automatically applied to the workspace. In order to
-	 * changes take effect, <code>IWorkspace.setDescription</code> needs to
-	 * be called.
+	 * changes take effect, <code>IWorkspace.setDescription</code> needs to be
+	 * called.
 	 * 
 	 * @return the workspace description
 	 * @see #setDescription
@@ -645,8 +641,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @see IProject#getDescription
 	 * @since 2.0
 	 */
-	public IProjectDescription loadProjectDescription(
-			IPath projectDescriptionFile) throws CoreException;
+	public IProjectDescription loadProjectDescription(IPath projectDescriptionFile) throws CoreException;
 	/**
 	 * Moves the given sibling resources so that they are located as members of
 	 * the resource at the given path; the names of the new members are the
@@ -655,15 +650,14 @@ public interface IWorkspace extends IAdaptable {
 	 * This is a convenience method, fully equivalent to:
 	 * 
 	 * <pre>
-	 * move(resources, destination, IResource.KEEP_HISTORY
-	 * 		| (force ? IResource.FORCE : IResource.NONE), monitor);
+	 * move(resources, destination, IResource.KEEP_HISTORY | (force ? IResource.FORCE : IResource.NONE), monitor);
 	 * </pre>
 	 * 
 	 * </p>
 	 * <p>
 	 * This method changes resources; these changes will be reported in a
-	 * subsequent resource change event that will include an indication that
-	 * the resources have been removed from their parent and that corresponding
+	 * subsequent resource change event that will include an indication that the
+	 * resources have been removed from their parent and that corresponding
 	 * resources have been added to the new parent. Additional information
 	 * provided with resource delta shows that these additions and removals are
 	 * pairwise related.
@@ -687,36 +681,35 @@ public interface IWorkspace extends IAdaptable {
 	 * the individual failures occurred.
 	 * @see #move(IResource[],IPath,int,IProgressMonitor)
 	 */
-	public IStatus move(IResource[] resources, IPath destination,
-			boolean force, IProgressMonitor monitor) throws CoreException;
+	public IStatus move(IResource[] resources, IPath destination, boolean force, IProgressMonitor monitor) throws CoreException;
 	/**
 	 * Moves the given sibling resources so that they are located as members of
 	 * the resource at the given path; the names of the new members are the
 	 * same.
 	 * <p>
-	 * This method can be expressed as a series of calls to <code>IResource.move</code>,
-	 * with "best effort" semantics:
+	 * This method can be expressed as a series of calls to
+	 * <code>IResource.move</code>, with "best effort" semantics:
 	 * <ul>
 	 * <li>Resources are moved in the order specified.</li>
 	 * <li>Duplicate resources are only moved once.</li>
-	 * <li>The <code>force</code> flag has the same meaning as it does on
-	 * the corresponding single-resource method.</li>
+	 * <li>The <code>force</code> flag has the same meaning as it does on the
+	 * corresponding single-resource method.</li>
 	 * <li>The method fails if the resources are not all siblings.</li>
-	 * <li>The method fails the path of any of the resources is a prefix of
-	 * the destination path.</li>
+	 * <li>The method fails the path of any of the resources is a prefix of the
+	 * destination path.</li>
 	 * <li>The failure of an individual move does not necessarily prevent the
 	 * method from attempting to move other resources.</li>
 	 * <li>This method also fails if one or more of the individual resource
 	 * moves fails; that is, if at least one of the resources in the list still
 	 * exists at the end of this method.</li>
-	 * <li>History is kept for moved files. When projects are moved, no
-	 * history is kept</li>
+	 * <li>History is kept for moved files. When projects are moved, no history
+	 * is kept</li>
 	 * </ul>
 	 * </p>
 	 * <p>
-	 * After successful completion, the resources and descendents will no
-	 * longer exist; but corresponding new resources will now exist as members
-	 * of the resource at the given path.
+	 * After successful completion, the resources and descendents will no longer
+	 * exist; but corresponding new resources will now exist as members of the
+	 * resource at the given path.
 	 * </p>
 	 * <p>
 	 * The supplied path may be absolute or relative. Absolute paths fully
@@ -726,8 +719,8 @@ public interface IWorkspace extends IAdaptable {
 	 * </p>
 	 * <p>
 	 * This method changes resources; these changes will be reported in a
-	 * subsequent resource change event that will include an indication that
-	 * the resources have been removed from their parent and that corresponding
+	 * subsequent resource change event that will include an indication that the
+	 * resources have been removed from their parent and that corresponding
 	 * resources have been added to the new parent. Additional information
 	 * provided with resource delta shows that these additions and removals are
 	 * pairwise related.
@@ -751,8 +744,7 @@ public interface IWorkspace extends IAdaptable {
 	 * <ul>
 	 * <li>One of the resources does not exist.</li>
 	 * <li>The resources are not siblings.</li>
-	 * <li>One of the resources, or one of its descendents, is not local.
-	 * </li>
+	 * <li>One of the resources, or one of its descendents, is not local.</li>
 	 * <li>The resource corresponding to the destination path does not exist.
 	 * </li>
 	 * <li>The resource corresponding to the parent destination path is a
@@ -761,8 +753,8 @@ public interface IWorkspace extends IAdaptable {
 	 * <li>A resource of a different type exists at the target path.</li>
 	 * <li>The path of one of the resources is a prefix of the destination
 	 * path.</li>
-	 * <li>One of the resources, or one of its descendents, is out of sync
-	 * with the local file system and <code>FORCE</code> is <code>false</code>.
+	 * <li>One of the resources, or one of its descendents, is out of sync with
+	 * the local file system and <code>FORCE</code> is <code>false</code>.
 	 * </li>
 	 * <li>Resource changes are disallowed during certain types of resource
 	 * change event notification. See <code>IResourceChangeEvent</code> for
@@ -772,8 +764,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @see IResourceRuleFactory#moveRule
 	 * @since 2.0
 	 */
-	public IStatus move(IResource[] resources, IPath destination,
-			int updateFlags, IProgressMonitor monitor) throws CoreException;
+	public IStatus move(IResource[] resources, IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException;
 	/**
 	 * Creates and returns a new project description for a project with the
 	 * given name. This object is useful when creating, moving or copying
@@ -843,22 +834,20 @@ public interface IWorkspace extends IAdaptable {
 	 * </p>
 	 * <p>
 	 * The supplied scheduling rule is used to determine whether this operation
-	 * can be run simultaneously with workspace changes in other threads. If
-	 * the scheduling rule conflicts with another workspace change that is
-	 * currently running, the calling thread will be blocked until that change
-	 * completes. If the action attempts to make changes to the workspace that
-	 * were not specified in the scheduling rule, it will fail. If no
-	 * scheduling rule is supplied, then any attempt to change resources will
-	 * fail.
+	 * can be run simultaneously with workspace changes in other threads. If the
+	 * scheduling rule conflicts with another workspace change that is currently
+	 * running, the calling thread will be blocked until that change completes.
+	 * If the action attempts to make changes to the workspace that were not
+	 * specified in the scheduling rule, it will fail. If no scheduling rule is
+	 * supplied, then any attempt to change resources will fail.
 	 * </p>
 	 * <p>
 	 * The AVOID_UPDATE flag controls whether periodic resource change
-	 * notifications should occur during the scope of this call. If this flag
-	 * is specified, and no other threads modify the workspace concurrently,
-	 * then all resource change notifications will be deferred until the end of
-	 * this call. If this flag is not specified, the platform may decide to
-	 * broadcast periodic resource change notifications during the scope of
-	 * this call.
+	 * notifications should occur during the scope of this call. If this flag is
+	 * specified, and no other threads modify the workspace concurrently, then
+	 * all resource change notifications will be deferred until the end of this
+	 * call. If this flag is not specified, the platform may decide to broadcast
+	 * periodic resource change notifications during the scope of this call.
 	 * </p>
 	 * <p>
 	 * Flags other than <code>AVOID_UPDATE</code> are ignored.
@@ -868,8 +857,8 @@ public interface IWorkspace extends IAdaptable {
 	 * @param rule the scheduling rule to use when running this operation, or
 	 * <code>null</code> if there are no scheduling restrictions for this
 	 * operation.
-	 * @param flags bit-wise or of flag constants (only AVOID_UPDATE is
-	 * relevant here)
+	 * @param flags bit-wise or of flag constants (only AVOID_UPDATE is relevant
+	 * here)
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 * reporting and cancellation are not desired
 	 * @exception CoreException if the operation failed.
@@ -878,8 +867,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @see IResourceRuleFactory
 	 * @since 3.0
 	 */
-	public void run(IWorkspaceRunnable action, ISchedulingRule rule, int flags,
-			IProgressMonitor monitor) throws CoreException;
+	public void run(IWorkspaceRunnable action, ISchedulingRule rule, int flags, IProgressMonitor monitor) throws CoreException;
 	/**
 	 * Runs the given action as an atomic workspace operation.
 	 * <p>
@@ -896,8 +884,7 @@ public interface IWorkspace extends IAdaptable {
 	 * reporting and cancelation are not desired
 	 * @exception CoreException if the operation failed.
 	 */
-	public void run(IWorkspaceRunnable action, IProgressMonitor monitor)
-			throws CoreException;
+	public void run(IWorkspaceRunnable action, IProgressMonitor monitor) throws CoreException;
 	/**
 	 * Saves this workspace's valuable state on disk. Consults with all
 	 * registered plug-ins so that they can coordinate the saving of their
@@ -916,10 +903,10 @@ public interface IWorkspace extends IAdaptable {
 	 * used within the dynamic scope of an <code>IWorkspace.run</code>
 	 * invocation. Snapshots can be called anytime and are interpreted by the
 	 * workspace as a hint that a snapshot is required. The workspace will
-	 * perform the snapshot when possible. Even as a hint, snapshots should
-	 * only be called when necessary as they impact system performance.
-	 * Although saving does not change the workspace per se, its execution is
-	 * serialized like methods that write the workspace.
+	 * perform the snapshot when possible. Even as a hint, snapshots should only
+	 * be called when necessary as they impact system performance. Although
+	 * saving does not change the workspace per se, its execution is serialized
+	 * like methods that write the workspace.
 	 * </p>
 	 * <p>
 	 * The workspace is comprised of several different kinds of data with
@@ -939,24 +926,25 @@ public interface IWorkspace extends IAdaptable {
 	 * <li>shape of the workspace resource tree -<code>save</code></li>
 	 * <li>list of active plug-ins - never</li>
 	 * </ul>
-	 * Resource-based plug-in also have data with varying degrees of
-	 * importance. Each plug-in gets to decide the policy for protecting its
-	 * data, either immediately, never, or at <code>save</code> time. For the
-	 * latter, the plug-in coordinates its actions with the workspace (see
+	 * Resource-based plug-in also have data with varying degrees of importance.
+	 * Each plug-in gets to decide the policy for protecting its data, either
+	 * immediately, never, or at <code>save</code> time. For the latter, the
+	 * plug-in coordinates its actions with the workspace (see
 	 * <code>ISaveParticipant</code> for details).
 	 * </p>
 	 * <p>
 	 * If the platform is shutdown (or crashes) after saving the workspace, any
-	 * information written to disk by the last successful workspace <code>save</code>
-	 * will be restored the next time the workspace is reopened for the next
-	 * session. Naturally, information that is written to disk immediately will
-	 * be as of the last time it was changed.
+	 * information written to disk by the last successful workspace
+	 * <code>save</code> will be restored the next time the workspace is
+	 * reopened for the next session. Naturally, information that is written to
+	 * disk immediately will be as of the last time it was changed.
 	 * </p>
 	 * <p>
 	 * The workspace provides a general mechanism for keeping concerned parties
-	 * apprised of any and all changes to resources in the workspace (<code>IResourceChangeListener</code>).
-	 * It is even possible for a plug-in to find out about changes to resources
-	 * that happen between workspace sessions (see <code>IWorkspace.addSaveParticipant</code>).
+	 * apprised of any and all changes to resources in the workspace (
+	 * <code>IResourceChangeListener</code>). It is even possible for a
+	 * plug-in to find out about changes to resources that happen between
+	 * workspace sessions (see <code>IWorkspace.addSaveParticipant</code>).
 	 * </p>
 	 * <p>
 	 * At certain points during this method, the entire workspace resource tree
@@ -972,11 +960,12 @@ public interface IWorkspace extends IAdaptable {
 	 * </li>
 	 * <li>A different <code>ISaveContext</code> object is created for each
 	 * registered workspace save participant plug-in, reflecting the kind of
-	 * save (<code>ISaveContext.getKind</code>), the previous save number
-	 * in which this plug-in actively participated, and the new save number (=
+	 * save (<code>ISaveContext.getKind</code>), the previous save number in
+	 * which this plug-in actively participated, and the new save number (=
 	 * previous save number plus 1).</li>
-	 * <li>Each registered workspace save participant is sent <code>prepareToSave(context)</code>,
-	 * passing in its own context object.
+	 * <li>Each registered workspace save participant is sent
+	 * <code>prepareToSave(context)</code>, passing in its own context
+	 * object.
 	 * <ul>
 	 * <li>Plug-in suspends all activities until further notice.</li>
 	 * </ul>
@@ -988,16 +977,16 @@ public interface IWorkspace extends IAdaptable {
 	 * <ul>
 	 * <li>Plug-in decides whether it wants to actively participate in this
 	 * save. The plug-in only needs to actively participate if some of its
-	 * important state has changed since the last time it actively
-	 * participated. If it does decide to actively participate, it writes its
-	 * important state to a brand new file in its plug-in state area under a
-	 * generated file name based on <code>context.getStateNumber()</code> and
-	 * calls <code>context.needStateNumber()</code> to indicate that it has
-	 * actively participated. If upon reactivation the plug-in will want a
-	 * resource delta covering all changes between now and then, the plug-in
-	 * should invoke <code>context.needDelta()</code> to request this now;
-	 * otherwise, a resource delta for the intervening period will not be
-	 * available on reactivation.</li>
+	 * important state has changed since the last time it actively participated.
+	 * If it does decide to actively participate, it writes its important state
+	 * to a brand new file in its plug-in state area under a generated file name
+	 * based on <code>context.getStateNumber()</code> and calls
+	 * <code>context.needStateNumber()</code> to indicate that it has actively
+	 * participated. If upon reactivation the plug-in will want a resource delta
+	 * covering all changes between now and then, the plug-in should invoke
+	 * <code>context.needDelta()</code> to request this now; otherwise, a
+	 * resource delta for the intervening period will not be available on
+	 * reactivation.</li>
 	 * </ul>
 	 * If <code>saving</code> fails (throws an exception), the problem is
 	 * logged and the participant is marked as unstable.</li>
@@ -1009,12 +998,12 @@ public interface IWorkspace extends IAdaptable {
 	 * is a complete tree; in practice, it is compressed into a special delta
 	 * tree representation). A copy of the plug-in save table is made. Entries
 	 * are created or modified for each registered plug-in to record the
-	 * appropriate save number (either the previous save number, or the
-	 * previous save number plus 1, depending on whether the participant was
-	 * active and asked for a new number).</li>
-	 * <li>The workspace tree, the modified copy of the plug-in save table,
-	 * all markers, etc. and all saveable resource tree snapshots are written
-	 * to disk as <b>one atomic operation </b>.</li>
+	 * appropriate save number (either the previous save number, or the previous
+	 * save number plus 1, depending on whether the participant was active and
+	 * asked for a new number).</li>
+	 * <li>The workspace tree, the modified copy of the plug-in save table, all
+	 * markers, etc. and all saveable resource tree snapshots are written to
+	 * disk as <b>one atomic operation </b>.</li>
 	 * <li>The long-term lock on the workspace is released.</li>
 	 * <li>If the atomic save succeeded:
 	 * <ul>
@@ -1024,8 +1013,8 @@ public interface IWorkspace extends IAdaptable {
 	 * save participant is sent <code>doneSaving(context)</code>, passing in
 	 * its own context object.
 	 * <ul>
-	 * <li>Plug-in may perform clean up by deleting obsolete state files in
-	 * its plug-in state area.</li>
+	 * <li>Plug-in may perform clean up by deleting obsolete state files in its
+	 * plug-in state area.</li>
 	 * <li>Plug-in resumes its normal activities.</li>
 	 * </ul>
 	 * If <code>doneSaving</code> fails (throws an exception), the problem is
@@ -1064,20 +1053,21 @@ public interface IWorkspace extends IAdaptable {
 	 * resource tree, plug-in save table, and saved resource tree snapshots
 	 * (everything that was written to disk in the atomic operation above).
 	 * Later, when a plug-in gets reactivated and registers to participate in
-	 * workspace saves, it is handed back the info from its entry in the
-	 * plug-in save table, if it has one. It gets back the number of the last
-	 * save in which it actively participated and, possibly, a resource delta.
+	 * workspace saves, it is handed back the info from its entry in the plug-in
+	 * save table, if it has one. It gets back the number of the last save in
+	 * which it actively participated and, possibly, a resource delta.
 	 * </p>
 	 * <p>
-	 * The only source of long term garbage would come from a plug-in that
-	 * never gets reactivated, or one that gets reactivated but fails to
-	 * register for workspace saves. (There is no such problem with a plug-in
-	 * that gets uninstalled; its easy enough to scrub its state areas and
-	 * delete its entry in the plug-in save table.)
+	 * The only source of long term garbage would come from a plug-in that never
+	 * gets reactivated, or one that gets reactivated but fails to register for
+	 * workspace saves. (There is no such problem with a plug-in that gets
+	 * uninstalled; its easy enough to scrub its state areas and delete its
+	 * entry in the plug-in save table.)
 	 * </p>
 	 * 
-	 * @param full <code>true</code> if this is a full save, and <code>false</code>
-	 * if this is only a snapshot for protecting against crashes
+	 * @param full <code>true</code> if this is a full save, and
+	 * <code>false</code> if this is only a snapshot for protecting against
+	 * crashes
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 * reporting and cancellation are not desired
 	 * @return a status that may contain warnings, such as the failure of an
@@ -1089,8 +1079,7 @@ public interface IWorkspace extends IAdaptable {
 	 * </ul>
 	 * @see #addSaveParticipant
 	 */
-	public IStatus save(boolean full, IProgressMonitor monitor)
-			throws CoreException;
+	public IStatus save(boolean full, IProgressMonitor monitor) throws CoreException;
 	/**
 	 * Sets the workspace description.
 	 * 
@@ -1101,14 +1090,13 @@ public interface IWorkspace extends IAdaptable {
 	 * <li>There was a problem writing the description to disk.</li>
 	 * </ul>
 	 */
-	public void setDescription(IWorkspaceDescription description)
-			throws CoreException;
+	public void setDescription(IWorkspaceDescription description) throws CoreException;
 	/**
 	 * Sets the lock to use for controlling write access to this workspace. The
 	 * lock must only be set once.
 	 * <p>
-	 * This method is for internal use by the platform-related plug-ins.
-	 * Clients should not call this method.
+	 * This method is for internal use by the platform-related plug-ins. Clients
+	 * should not call this method.
 	 * </p>
 	 * 
 	 * @param lock the lock to install on this workspace.
@@ -1136,14 +1124,14 @@ public interface IWorkspace extends IAdaptable {
 	 */
 	public String[] sortNatureSet(String[] natureIds);
 	/**
-	 * Advises that the caller intends to modify the contents of the given
-	 * files in the near future and asks whether modifying all these files
-	 * would be reasonable. The files must all exist. This method is used to
-	 * give the VCM component an opportunity to check out (or otherwise
-	 * prepare) the files if required. (It is provided in this component rather
-	 * than in the UI so that "core" (i.e., head-less) clients can use it.
-	 * Similarly, it is located outside the VCM component for the convenience
-	 * of clients that must also operate in configurations without VCM.)
+	 * Advises that the caller intends to modify the contents of the given files
+	 * in the near future and asks whether modifying all these files would be
+	 * reasonable. The files must all exist. This method is used to give the VCM
+	 * component an opportunity to check out (or otherwise prepare) the files if
+	 * required. (It is provided in this component rather than in the UI so that
+	 * "core" (i.e., head-less) clients can use it. Similarly, it is located
+	 * outside the VCM component for the convenience of clients that must also
+	 * operate in configurations without VCM.)
 	 * </p>
 	 * <p>
 	 * A client (such as an editor) should perform a <code>validateEdit</code>
@@ -1152,13 +1140,14 @@ public interface IWorkspace extends IAdaptable {
 	 * necessarily certain) that it will modify the file's contents at some
 	 * point. A case in point is an editor that has a buffer opened on a file.
 	 * When the user starts to dirty the buffer, the editor should check to see
-	 * whether the file is read-only. If it is, it should call <code>validateEdit</code>,
-	 * and can reasonably expect this call, when successful, to cause the file
-	 * to become read-write. An editor should also be sensitive to a file
-	 * becoming read-only again even after a successful <code>validateEdit</code>
-	 * (e.g., due to the user checking in the file in a different view); the
-	 * editor should again call <code>validateEdit</code> if the file is
-	 * read-only before attempting to save the contents of the file.
+	 * whether the file is read-only. If it is, it should call
+	 * <code>validateEdit</code>, and can reasonably expect this call, when
+	 * successful, to cause the file to become read-write. An editor should also
+	 * be sensitive to a file becoming read-only again even after a successful
+	 * <code>validateEdit</code> (e.g., due to the user checking in the file
+	 * in a different view); the editor should again call
+	 * <code>validateEdit</code> if the file is read-only before attempting to
+	 * save the contents of the file.
 	 * </p>
 	 * <p>
 	 * By passing a UI context, the caller indicates that the VCM component may
@@ -1166,46 +1155,46 @@ public interface IWorkspace extends IAdaptable {
 	 * provided, the VCM component will make its decision without additional
 	 * interaction with the user. If OK is returned, the caller can safely
 	 * assume that all of the given files haven been prepared for modification
-	 * and that there is good reason to believe that <code>IFile.setContents</code>
-	 * (or <code>appendContents</code>) would be successful on any of them.
-	 * If the result is not OK, modifying the given files might not succeed for
-	 * the reason(s) indicated.
+	 * and that there is good reason to believe that
+	 * <code>IFile.setContents</code> (or <code>appendContents</code>)
+	 * would be successful on any of them. If the result is not OK, modifying
+	 * the given files might not succeed for the reason(s) indicated.
 	 * </p>
 	 * <p>
 	 * If a shell is passed in as the context, the VCM component may bring up a
 	 * dialogs to query the user or report difficulties; the shell should be
 	 * used to parent any such dialogs; the caller may safely assume that the
-	 * reasons for failure will have been made clear to the user. If <code>null</code>
-	 * is passed, the user should not be contacted; any failures should be
-	 * reported via the result; the caller may chose to present these to the
-	 * user however they see fit. The ideal implementation of this method is
-	 * transactional; no files would be affected unless the go-ahead could be
-	 * given. (In practice, there may be no feasible way to ensure such changes
-	 * get done atomically.)
+	 * reasons for failure will have been made clear to the user. If
+	 * <code>null</code> is passed, the user should not be contacted; any
+	 * failures should be reported via the result; the caller may chose to
+	 * present these to the user however they see fit. The ideal implementation
+	 * of this method is transactional; no files would be affected unless the
+	 * go-ahead could be given. (In practice, there may be no feasible way to
+	 * ensure such changes get done atomically.)
 	 * </p>
 	 * <p>
 	 * The method calls <code>IFileModificationValidator.validateEdit</code>
 	 * for the file modification validator (if provided by the VCM plug-in).
 	 * When there is no file modification validator, this method returns a
-	 * status with an <code>IResourceStatus.READ_ONLY_LOCAL</code> code if
-	 * one of the files is read-only, and a status with an <code>IStatus.OK</code>
+	 * status with an <code>IResourceStatus.READ_ONLY_LOCAL</code> code if one
+	 * of the files is read-only, and a status with an <code>IStatus.OK</code>
 	 * code otherwise.
 	 * </p>
 	 * <p>
 	 * This method may be called from any thread. If the UI context is used, it
-	 * is the responsibility of the implementor of <code>IFileModificationValidator.validateEdit</code>
-	 * to interact with the UI context in an appropriate thread.
+	 * is the responsibility of the implementor of
+	 * <code>IFileModificationValidator.validateEdit</code> to interact with
+	 * the UI context in an appropriate thread.
 	 * </p>
 	 * 
 	 * @param files the files that are to be modified; these files must all
 	 * exist in the workspace
 	 * @param context the <code>org.eclipse.swt.widgets.Shell</code> that is
-	 * to be used to parent any dialogs with the user, or <code>null</code>
-	 * if there is no UI context (declared as an <code>Object</code> to avoid
-	 * any direct references on the SWT component)
-	 * @return a status object that is OK if things are fine, otherwise a
-	 * status describing reasons why modifying the given files is not
-	 * reasonable
+	 * to be used to parent any dialogs with the user, or <code>null</code> if
+	 * there is no UI context (declared as an <code>Object</code> to avoid any
+	 * direct references on the SWT component)
+	 * @return a status object that is OK if things are fine, otherwise a status
+	 * describing reasons why modifying the given files is not reasonable
 	 * @see IResourceRuleFactory#validateEditRule
 	 * @since 2.0
 	 */
@@ -1229,38 +1218,39 @@ public interface IWorkspace extends IAdaptable {
 	 * <li>must have a project as its immediate parent</li>
 	 * <li>project natures and the team hook may disallow linked resources on
 	 * projects they are associated with</li>
-	 * <li>the global workspace preference to disable linking, <code>ResourcesPlugin.PREF_DISABLE_LINKING</code>
-	 * must not be set to &quot;true&quot;</li>.
+	 * <li>the global workspace preference to disable linking,
+	 * <code>ResourcesPlugin.PREF_DISABLE_LINKING</code> must not be set to
+	 * &quot;true&quot;</li>.
 	 * </ul>
 	 * </p>
 	 * <p>
 	 * This method will return a status with severity <code>IStatus.ERROR</code>
 	 * if the location does not obey the above rules. Also, this method will
 	 * return a status with severity <code>IStatus.WARNING</code> if the
-	 * location overlaps the location of any existing resource in the
-	 * workspace.
+	 * location overlaps the location of any existing resource in the workspace.
 	 * </p>
 	 * <p>
-	 * Note: this method does not consider whether files or directories exist
-	 * in the filesystem at the specified path.
+	 * Note: this method does not consider whether files or directories exist in
+	 * the filesystem at the specified path.
 	 * 
 	 * @param resource the resource to validate the location for
 	 * @param location the location of the linked resource contents on disk
 	 * @return a status object with code <code>IStatus.OK</code> if the given
 	 * location is valid as the linked resource location, otherwise a status
-	 * object with severity <code>IStatus.WARNING</code> or <code>IStatus.ERROR</code>
-	 * indicating what is wrong with the location
+	 * object with severity <code>IStatus.WARNING</code> or
+	 * <code>IStatus.ERROR</code> indicating what is wrong with the location
 	 * @see IStatus#OK
 	 * @see ResourcesPlugin#PREF_DISABLE_LINKING
 	 * @since 2.1
 	 */
 	public IStatus validateLinkLocation(IResource resource, IPath location);
 	/**
-	 * Validates the given string as the name of a resource valid for one of
-	 * the given types.
+	 * Validates the given string as the name of a resource valid for one of the
+	 * given types.
 	 * <p>
-	 * In addition to the basic restrictions on paths in general (see <code>IPath.isValidSegment</code>),
-	 * a resource name must also obey the following rules:
+	 * In addition to the basic restrictions on paths in general (see
+	 * <code>IPath.isValidSegment</code>), a resource name must also obey the
+	 * following rules:
 	 * <ul>
 	 * <li>it must not be empty
 	 * <li>it must not be a single period character (".")
@@ -1271,17 +1261,16 @@ public interface IWorkspace extends IAdaptable {
 	 * </ul>
 	 * </p>
 	 * <p>
-	 * This validation check is done automatically as a resource is created
-	 * (but not when the resource handle is constructed); this means that any
-	 * resource that exists can be safely assumed to have a valid name and
-	 * path. Note that the name of the workspace root resource is inherently
-	 * invalid.
+	 * This validation check is done automatically as a resource is created (but
+	 * not when the resource handle is constructed); this means that any
+	 * resource that exists can be safely assumed to have a valid name and path.
+	 * Note that the name of the workspace root resource is inherently invalid.
 	 * </p>
 	 * 
 	 * @param segment the name segment to be checked
-	 * @param typeMask bitwise-or of the resource type constants (<code>FILE</code>,
-	 * <code>FOLDER</code>,<code>PROJECT</code> or <code>ROOT</code>)
-	 * indicating expected resource type(s)
+	 * @param typeMask bitwise-or of the resource type constants (
+	 * <code>FILE</code>,<code>FOLDER</code>,<code>PROJECT</code> or
+	 * <code>ROOT</code>) indicating expected resource type(s)
 	 * @return a status object with code <code>IStatus.OK</code> if the given
 	 * string is valid as a resource name, otherwise a status object indicating
 	 * what is wrong with the string
@@ -1317,20 +1306,20 @@ public interface IWorkspace extends IAdaptable {
 	 */
 	public IStatus validateNatureSet(String[] natureIds);
 	/**
-	 * Validates the given string as a path for a resource of the given
-	 * type(s).
+	 * Validates the given string as a path for a resource of the given type(s).
 	 * <p>
-	 * In addition to the restrictions for paths in general (see <code>IPath.isValidPath</code>),
-	 * a resource path should also obey the following rules:
+	 * In addition to the restrictions for paths in general (see
+	 * <code>IPath.isValidPath</code>), a resource path should also obey the
+	 * following rules:
 	 * <ul>
 	 * <li>a resource path should be an absolute path with no device id
-	 * <li>its segments should be valid names according to <code>validateName</code>
+	 * <li>its segments should be valid names according to
+	 * <code>validateName</code>
 	 * <li>a path for the workspace root must be the canonical root path
 	 * <li>a path for a project should have exactly 1 segment
 	 * <li>a path for a file or folder should have more than 1 segment
 	 * <li>the first segment should be a valid project name
-	 * <li>the second through penultimate segments should be valid folder
-	 * names
+	 * <li>the second through penultimate segments should be valid folder names
 	 * <li>the last segment should be a valid name of the given type
 	 * </ul>
 	 * </p>
@@ -1339,16 +1328,15 @@ public interface IWorkspace extends IAdaptable {
 	 * path exists.
 	 * </p>
 	 * <p>
-	 * This validation check is done automatically as a resource is created
-	 * (but not when the resource handle is constructed); this means that any
-	 * resource that exists can be safely assumed to have a valid name and
-	 * path.
+	 * This validation check is done automatically as a resource is created (but
+	 * not when the resource handle is constructed); this means that any
+	 * resource that exists can be safely assumed to have a valid name and path.
 	 * </p>
 	 * 
 	 * @param path the path string to be checked
-	 * @param typeMask bitwise-or of the resource type constants (<code>FILE</code>,
-	 * <code>FOLDER</code>,<code>PROJECT</code>, or <code>ROOT</code>)
-	 * indicating expected resource type(s)
+	 * @param typeMask bitwise-or of the resource type constants (
+	 * <code>FILE</code>,<code>FOLDER</code>,<code>PROJECT</code>, or
+	 * <code>ROOT</code>) indicating expected resource type(s)
 	 * @return a status object with code <code>IStatus.OK</code> if the given
 	 * path is valid as a resource path, otherwise a status object indicating
 	 * what is wrong with the string
@@ -1374,8 +1362,8 @@ public interface IWorkspace extends IAdaptable {
 	 * </ul>
 	 * </p>
 	 * <p>
-	 * Note: this method does not consider whether files or directories exist
-	 * in the filesystem at the specified path.
+	 * Note: this method does not consider whether files or directories exist in
+	 * the filesystem at the specified path.
 	 * 
 	 * @param project the project to validate the location for
 	 * @param location the location of the project contents on disk
@@ -1399,6 +1387,5 @@ public interface IWorkspace extends IAdaptable {
 	 * @deprecated Use run(IWorkspaceRunnable, ISchedulingRule, int,
 	 * IProgressMonitor). This method will be removed before the 3.0 release.
 	 */
-	public void run(IWorkspaceRunnable action, ISchedulingRule rule,
-			IProgressMonitor monitor) throws CoreException;
+	public void run(IWorkspaceRunnable action, ISchedulingRule rule, IProgressMonitor monitor) throws CoreException;
 }

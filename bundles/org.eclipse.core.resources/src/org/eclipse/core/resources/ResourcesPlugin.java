@@ -88,8 +88,11 @@ public final class ResourcesPlugin extends Plugin {
 	 */
 	public static final Object FAMILY_AUTO_BUILD = new Object();
 	/**
-	 * Constant identifying the job family identifier for a background build job.
+	 * Constant identifying the job family identifier for a background build job. All clients
+	 * that schedule background jobs for performing builds should include this job
+	 * family in their implementation of <code>belongsTo</code>.
 	 * @see org.eclipse.core.runtime.jobs.IJobManager#join(Object, IProgressMonitor)
+	 * @see org.eclipse.core.runtime.jobs.Job.#belongsTo(Object)
 	 * @since 3.0
 	 */
 	public static final Object FAMILY_MANUAL_BUILD = new Object();
