@@ -737,5 +737,15 @@ public class EclipseTest extends EclipseWorkspaceTest {
 			throw new OperationCanceledException();
 		}
 	}
+	/* (non-Javadoc)
+	 * @see junit.framework.TestCase#tearDown()
+	 */
+	protected void tearDown() throws Exception {
+		super.tearDown();
+		if (CVSTestSetup.logListener != null) {
+			CVSTestSetup.logListener.checkErrors();
+		}
+	}
+
 }
 

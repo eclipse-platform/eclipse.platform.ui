@@ -36,28 +36,31 @@ public class ResourceSyncInfoTest extends EclipseTest {
 	}
 		
 	public void testEntryLineParsing() {
-		String entryLine;
 		
 		// testing malformed entry lines first
 		try {
 			new ResourceSyncInfo("//////", null, null);			
 			fail();
 		} catch(CVSException e) {
+			// Error expected
 		}
 		try {
 			new ResourceSyncInfo("//1.1///", null, null);			
 			fail();
 		} catch(CVSException e) {
+			// Error expected
 		}
 		try {
 			new ResourceSyncInfo("/file.txt////", null, null);			
 			fail();
 		} catch(CVSException e) {
+			// Error expected
 		}
 		try {
 			new ResourceSyncInfo("/file.txt//////////", null, null);			
 			fail();
 		} catch(CVSException e) {
+			// Error expected
 		}
 	}
 	
@@ -93,13 +96,11 @@ public class ResourceSyncInfoTest extends EclipseTest {
 		info = new ResourceSyncInfo("folder");
 		assertTrue(info.isDirectory());
 		
-		Date timestamp = new Date(123000);
 		info = new ResourceSyncInfo("/file.java/-2.34/Mon Feb 25 21:44:02 2002/-k/Tv1", null, null);
 		assertTrue(info.isDeleted());
 		assertTrue(info.getRevision().equals("2.34"));
 		
 		info = new ResourceSyncInfo("/file.java/0/Mon Feb 25 21:44:02 2002/-k/Tv1", null, null);
-		String entry = info.getEntryLine();
 		assertTrue(info.isAdded());
 	}
 	
@@ -143,5 +144,40 @@ public class ResourceSyncInfoTest extends EclipseTest {
 		assertTrue(date1.equals(date2));
 		assertTrue(date1.equals(date3));
 		assertTrue(date2.equals(date3));
+	}
+	
+	public void testRevisionComparison() {
+		assertTrue(ResourceSyncInfo.isLaterRevision("1.9", "1.8"));
+		assertTrue( ! ResourceSyncInfo.isLaterRevision("1.8", "1.8"));
+		assertTrue( ! ResourceSyncInfo.isLaterRevision("1.8", "1.9"));
+		
+		assertTrue(ResourceSyncInfo.isLaterRevision("1.8.1.2", "1.8"));
+		assertTrue( ! ResourceSyncInfo.isLaterRevision("1.8", "1.8.1.2"));
+		assertTrue( ! ResourceSyncInfo.isLaterRevision("1.8.1.2", "1.7"));
+		
+		assertTrue( ! ResourceSyncInfo.isLaterRevision("0", "1.1"));
+		assertTrue(ResourceSyncInfo.isLaterRevision("1.1", "0"));
+	}
+	
+	public void testRevisionOnBranchComparison() throws CVSException {
+		ResourceSyncInfo syncInfo1 = new ResourceSyncInfo("/name/1.5/dummy timestamp//", null, null);
+		ResourceSyncInfo syncInfo2 = new ResourceSyncInfo("/name/1.4/dummy timestamp//", null, null);
+		
+		ResourceSyncInfo syncInfo3 = new ResourceSyncInfo("/name/1.4.1.2/dummy timestamp//Nb1", null, null);
+		ResourceSyncInfo syncInfo4 = new ResourceSyncInfo("/name/1.4/dummy timestamp//Nb1", null, null);
+		
+		ResourceSyncInfo syncInfo5 = new ResourceSyncInfo("/name/1.4.1.2/dummy timestamp//Tv1", null, null);
+		
+		assertTrue(ResourceSyncInfo.isLaterRevisionOnSameBranch(syncInfo1.getBytes(), syncInfo2.getBytes()));
+		assertTrue( ! ResourceSyncInfo.isLaterRevisionOnSameBranch(syncInfo2.getBytes(), syncInfo1.getBytes()));
+		assertTrue( ! ResourceSyncInfo.isLaterRevisionOnSameBranch(syncInfo1.getBytes(), syncInfo1.getBytes()));
+		
+		assertTrue(ResourceSyncInfo.isLaterRevisionOnSameBranch(syncInfo3.getBytes(), syncInfo4.getBytes()));
+		assertTrue( ! ResourceSyncInfo.isLaterRevisionOnSameBranch(syncInfo4.getBytes(), syncInfo3.getBytes()));
+		assertTrue( ! ResourceSyncInfo.isLaterRevisionOnSameBranch(syncInfo4.getBytes(), syncInfo4.getBytes()));
+		
+		assertTrue( ! ResourceSyncInfo.isLaterRevisionOnSameBranch(syncInfo5.getBytes(), syncInfo4.getBytes()));
+		assertTrue( ! ResourceSyncInfo.isLaterRevisionOnSameBranch(syncInfo4.getBytes(), syncInfo5.getBytes()));
+		assertTrue( ! ResourceSyncInfo.isLaterRevisionOnSameBranch(syncInfo5.getBytes(), syncInfo5.getBytes()));
 	}
 }

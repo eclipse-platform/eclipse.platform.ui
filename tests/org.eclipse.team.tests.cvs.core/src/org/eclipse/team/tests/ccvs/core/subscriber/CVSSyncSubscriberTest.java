@@ -215,7 +215,7 @@ public abstract class CVSSyncSubscriberTest extends EclipseTest {
 		return result;
 	}
 
-	protected void assertProjectRemoved(TeamSubscriber subscriber, IProject project) throws TeamException, InterruptedException {
+	protected void assertProjectRemoved(TeamSubscriber subscriber, IProject project) throws TeamException {
 		getSyncInfoSource().assertProjectRemoved(subscriber, project);
 	}
 }

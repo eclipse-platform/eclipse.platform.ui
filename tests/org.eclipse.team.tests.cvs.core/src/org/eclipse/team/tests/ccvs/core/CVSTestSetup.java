@@ -9,20 +9,14 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.team.tests.ccvs.core;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
+import java.io.*;
 
 import junit.extensions.TestSetup;
 import junit.framework.Test;
+
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 
 public class CVSTestSetup extends TestSetup {
@@ -38,6 +32,7 @@ public class CVSTestSetup extends TestSetup {
 	public static final String WRITE_REPOSITORY_LOCATION;
 	
 	public static CVSRepositoryLocation repository;
+	public static CVSTestLogListener logListener;
 	
 	// Static initializer for constants
 	static {
@@ -171,6 +166,11 @@ public class CVSTestSetup extends TestSetup {
 			repository = setupRepository(REPOSITORY_LOCATION);
 		}
 		CVSProviderPlugin.getPlugin().setCompressionLevel(COMPRESSION_LEVEL);
+		// Add a log listener so we can ensure that nothing is logged during a test
+		if (logListener == null) {
+			logListener = new CVSTestLogListener();
+			Platform.addLogListener(logListener);
+		}
 	}
 
 	protected CVSRepositoryLocation setupRepository(String location) throws CVSException {

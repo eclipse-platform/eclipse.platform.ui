@@ -1204,4 +1204,18 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 		overrideAndUpdate(project, new String[] {"newFolder", "newFolder/newFile"}, true);
 		assertDoesNotExistInFileSystem(newFolder);
 	}
+	
+	public void testProjectClose() throws TeamException, CoreException {
+		IProject project = createProject(new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder1/b.txt"});
+		
+		setContentsAndEnsureModified(project.getFile("file1.txt"));
+		assertSyncEquals("testProjectClose sync check", project,
+				new String[] { "file1.txt"},
+				true, new int[] { 
+							  SyncInfo.OUTGOING | SyncInfo.CHANGE,
+					});
+		
+		project.close(null);
+		assertProjectRemoved(getWorkspaceSubscriber(), project);
+	}
 }

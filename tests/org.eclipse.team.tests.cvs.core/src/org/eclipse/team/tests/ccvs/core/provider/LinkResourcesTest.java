@@ -23,7 +23,10 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
+import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
 
@@ -58,6 +61,10 @@ public class LinkResourcesTest extends EclipseTest {
 		buildResources(project, new String[] { "changed.txt", "deleted.txt", "folder1/", "folder1/a.txt" }, true);
 		IFolder folder = project.getFolder("link");
 		folder.createLink(new Path("C:/temp"), IResource.ALLOW_MISSING_LOCAL, null);
+		
+		// Add CVS info to the project so the map doesn't log an error
+		ICVSFolder cvsFolder = CVSWorkspaceRoot.getCVSFolderFor(project);
+		cvsFolder.setFolderSyncInfo(new FolderSyncInfo("repo/root", ":pserver:name@host:/root", null, false));
 		RepositoryProvider.map(project, CVSProviderPlugin.getTypeId());
 	}
 	
