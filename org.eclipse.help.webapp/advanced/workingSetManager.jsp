@@ -97,6 +97,8 @@ function selectWorkingSet() {
 		var i = search.indexOf("workingSet=");
 		if (i >= 0)
 			search = search.substring(0, i);
+		else
+			search += "&";
 	} else {
 		search = "?";
 	}
