@@ -67,6 +67,20 @@ if (data.isMozilla()) {
 }
 %>
  
+.button a { 
+	display:block; 
+	width:20px;
+	height:20px;
+	border:1px solid ButtonFace;
+}
+
+.button a:hover { 
+	border-top:1px solid ButtonHighlight; 
+	border-left:1px solid ButtonHighlight; 
+	border-right:1px solid ButtonShadow; 
+	border-bottom:1px solid ButtonShadow;
+}
+
 </style>
 
 <script language="JavaScript">
@@ -175,7 +189,7 @@ if (data.getScript() != null) {
 							   <img src="<%=buttons[i].getImage()%>" 
 							        alt='<%=buttons[i].getTooltip()%>' 
 							        border="0"
-							        style="float:left;"
+							        style="float: left;"
 							        name="<%=buttons[i].getName()%>">
 							</a>
 						</td>
