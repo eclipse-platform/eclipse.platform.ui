@@ -316,6 +316,11 @@ public interface IDebugUIConstants {
 	 */
 	public static final String DEBUG_ACTION_SET= PLUGIN_ID + ".debugActionSet"; //$NON-NLS-1$
 	
+	/**
+	 * Launch action set identifier (value <code>"org.eclipse.debug.ui.LaunchActionSet"</code>).
+	 */
+	public static final String LAUNCH_ACTION_SET= PLUGIN_ID + ".launchActionSet"; //$NON-NLS-1$
+	
 	// menus 
 	
 	/** 

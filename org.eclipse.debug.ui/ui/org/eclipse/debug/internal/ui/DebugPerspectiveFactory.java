@@ -37,6 +37,7 @@ public class DebugPerspectiveFactory implements IPerspectiveFactory {
 		outlineFolder.addView(IPageLayout.ID_PROP_SHEET);
 		outlineFolder.addView(IPageLayout.ID_OUTLINE);
 		
+		layout.addActionSet(IDebugUIConstants.LAUNCH_ACTION_SET);
 		layout.addActionSet(IDebugUIConstants.DEBUG_ACTION_SET);
 		
 		setContentsOfShowViewMenu(layout);

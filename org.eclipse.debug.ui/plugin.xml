@@ -117,75 +117,10 @@
             label="%DebugMenu.label"
             id="org.eclipse.debug.ui.DebugMenu">
          <separator
-               name="launchGroup">
-         </separator>
-         <separator
-               name="menuGroup">
-         </separator>
-         <separator
                name="stepGroup">
          </separator>
       </menu>
-      <action
-            label="%RelaunchLastAction.label"
-            icon="icons/full/clcl16/relaunch_co.gif"
-            helpContextId="relaunch_last_action_context"
-            tooltip="%RelaunchLastAction.tooltip"
-            class="org.eclipse.debug.internal.ui.RelaunchLastAction"
-            menubarPath="org.eclipse.debug.ui.DebugMenu/launchGroup"
-            id="org.eclipse.debug.internal.ui.RelaunchLastAction">
-      </action>
-      <action
-            label="%RunAction.label"
-            pulldown="true"
-            icon="icons/full/ctool16/run_exc.gif"
-            helpContextId="run_action_context"
-            tooltip="%RunAction.tooltip"
-            class="org.eclipse.debug.internal.ui.RunDropDownAction"
-            menubarPath="org.eclipse.debug.ui.DebugMenu/launchGroup"
-            toolbarPath="debug"
-            id="org.eclipse.debug.internal.ui.RunDropDownAction">
-      </action>
-      <action
-            label="%DebugAction.label"
-            pulldown="true"
-            icon="icons/full/ctool16/debug_exc.gif"
-            helpContextId="debug_action_context"
-            tooltip="%DebugAction.tooltip"
-            class="org.eclipse.debug.internal.ui.DebugDropDownAction"
-    		menubarPath="org.eclipse.debug.ui.DebugMenu/launchGroup"
-            toolbarPath="debug"
-            id="org.eclipse.debug.internal.ui.DebugDropDownAction">
-      </action>
-       <action
-            label="%RunHistoryMenuAction.label"
-            icon="icons/full/ctool16/run_exc.gif"
-            class="org.eclipse.debug.internal.ui.RunHistoryMenuAction"
-            menubarPath="org.eclipse.debug.ui.DebugMenu/menuGroup"
-            id="org.eclipse.debug.internal.ui.RunHistoryMenuAction">
-      </action>
-      <action
-            label="%DebugHistoryMenuAction.label"
-            icon="icons/full/ctool16/debug_exc.gif"
-            class="org.eclipse.debug.internal.ui.DebugHistoryMenuAction"
-    		menubarPath="org.eclipse.debug.ui.DebugMenu/menuGroup"
-            id="org.eclipse.debug.internal.ui.DebugHistoryMenuAction">
-      </action>
-       <action
-            label="%RunWithAction.label"
-            icon="icons/full/ctool16/run_exc.gif"
-            class="org.eclipse.debug.internal.ui.RunWithAction"
-            menubarPath="org.eclipse.debug.ui.DebugMenu/menuGroup"
-            id="org.eclipse.debug.internal.ui.RunWithAction">
-      </action>
-      <action
-            label="%DebugWithAction.label"
-            icon="icons/full/ctool16/debug_exc.gif"
-            class="org.eclipse.debug.internal.ui.DebugWithAction"
-    		menubarPath="org.eclipse.debug.ui.DebugMenu/menuGroup"
-            id="org.eclipse.debug.internal.ui.DebugWithAction">
-      </action>
-      <action
+        <action
             label="%StepReturnAction.label"
             icon="icons/full/clcl16/stepreturn_co.gif"
             helpContextId="step_return_action_context"
@@ -265,6 +200,84 @@
       </action>
    </actionSet>
 </extension>
+<extension
+      point="org.eclipse.ui.actionSets">
+   <actionSet
+         label="%LaunchActionSet.label"
+         visible="false"
+         id="org.eclipse.debug.ui.launchActionSet">
+      <menu
+            label="%DebugMenu.label"
+            id="org.eclipse.debug.ui.DebugMenu">
+         <separator
+               name="launchGroup">
+         </separator>
+         <separator
+               name="menuGroup">
+         </separator>
+      </menu>
+      <action
+            label="%RelaunchLastAction.label"
+            icon="icons/full/clcl16/relaunch_co.gif"
+            helpContextId="relaunch_last_action_context"
+            tooltip="%RelaunchLastAction.tooltip"
+            class="org.eclipse.debug.internal.ui.RelaunchLastAction"
+            menubarPath="org.eclipse.debug.ui.DebugMenu/launchGroup"
+            id="org.eclipse.debug.internal.ui.RelaunchLastAction">
+      </action>
+      <action
+            label="%RunAction.label"
+            pulldown="true"
+            icon="icons/full/ctool16/run_exc.gif"
+            helpContextId="run_action_context"
+            tooltip="%RunAction.tooltip"
+            class="org.eclipse.debug.internal.ui.RunDropDownAction"
+            menubarPath="org.eclipse.debug.ui.DebugMenu/launchGroup"
+            toolbarPath="debug"
+            id="org.eclipse.debug.internal.ui.RunDropDownAction">
+      </action>
+      <action
+            label="%DebugAction.label"
+            pulldown="true"
+            icon="icons/full/ctool16/debug_exc.gif"
+            helpContextId="debug_action_context"
+            tooltip="%DebugAction.tooltip"
+            class="org.eclipse.debug.internal.ui.DebugDropDownAction"
+    		menubarPath="org.eclipse.debug.ui.DebugMenu/launchGroup"
+            toolbarPath="debug"
+            id="org.eclipse.debug.internal.ui.DebugDropDownAction">
+      </action>
+       <action
+            label="%RunHistoryMenuAction.label"
+            icon="icons/full/ctool16/run_exc.gif"
+            class="org.eclipse.debug.internal.ui.RunHistoryMenuAction"
+            menubarPath="org.eclipse.debug.ui.DebugMenu/menuGroup"
+            id="org.eclipse.debug.internal.ui.RunHistoryMenuAction">
+      </action>
+      <action
+            label="%DebugHistoryMenuAction.label"
+            icon="icons/full/ctool16/debug_exc.gif"
+            class="org.eclipse.debug.internal.ui.DebugHistoryMenuAction"
+    		menubarPath="org.eclipse.debug.ui.DebugMenu/menuGroup"
+            id="org.eclipse.debug.internal.ui.DebugHistoryMenuAction">
+      </action>
+       <action
+            label="%RunWithAction.label"
+            icon="icons/full/ctool16/run_exc.gif"
+            class="org.eclipse.debug.internal.ui.RunWithAction"
+            menubarPath="org.eclipse.debug.ui.DebugMenu/menuGroup"
+            id="org.eclipse.debug.internal.ui.RunWithAction">
+      </action>
+      <action
+            label="%DebugWithAction.label"
+            icon="icons/full/ctool16/debug_exc.gif"
+            class="org.eclipse.debug.internal.ui.DebugWithAction"
+    		menubarPath="org.eclipse.debug.ui.DebugMenu/menuGroup"
+            id="org.eclipse.debug.internal.ui.DebugWithAction">
+      </action>
+      </actionSet>
+</extension>
+
 
 <!-- Contributions to Debug View Toolbar -->
 
