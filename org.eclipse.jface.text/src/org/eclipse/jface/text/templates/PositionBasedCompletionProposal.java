@@ -157,7 +157,7 @@ final class PositionBasedCompletionProposal implements ICompletionProposal, ICom
 	public boolean validate(IDocument document, int offset, DocumentEvent event) {
 		try {
 			String content= document.get(fReplacementPosition.getOffset(), fReplacementPosition.getLength());
-			if (content.startsWith(fReplacementString))
+			if (fReplacementString.startsWith(content))
 				return true;
 		} catch (BadLocationException e) {
 			// ignore concurrently modified document
