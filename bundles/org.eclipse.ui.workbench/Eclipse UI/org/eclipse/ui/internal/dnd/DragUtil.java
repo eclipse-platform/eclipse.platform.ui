@@ -263,14 +263,21 @@ public class DragUtil {
                 draggedItem, initialLocation,
                 sourceBounds);
         }
+
+        Rectangle startRect = sourceBounds;
         
         if (target != null) {
-            tracker.setRectangles(new Rectangle[] {target.getSnapRectangle()});
+            Rectangle rect = target.getSnapRectangle();
+            
+            if (rect != null) {
+                startRect = rect;
+            }
 
             tracker.setCursor(target.getCursor());
-
-        } else if (sourceBounds != null) {
-            tracker.setRectangles(new Rectangle[] { Geometry.copy(sourceBounds) });
+        } 
+        
+        if (startRect != null) {
+            tracker.setRectangles(new Rectangle[] { Geometry.copy(startRect)});
         }
 
         // HACK:
