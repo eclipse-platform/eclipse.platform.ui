@@ -18,7 +18,9 @@ import java.util.List;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.commands.ICategory;
 import org.eclipse.ui.commands.ICommand;
+import org.eclipse.ui.commands.IContextBinding;
 import org.eclipse.ui.commands.IGestureConfiguration;
+import org.eclipse.ui.commands.IImageBinding;
 import org.eclipse.ui.commands.IKeyConfiguration;
 import org.eclipse.ui.internal.util.Util;
 
@@ -29,12 +31,20 @@ final class Persistence {
 	final static String TAG_CATEGORY = "category"; //$NON-NLS-1$	
 	final static String TAG_CATEGORY_ID = "categoryId"; //$NON-NLS-1$
 	final static String TAG_COMMAND = "command"; //$NON-NLS-1$	
+	final static String TAG_COMMAND_ID = "commandId"; //$NON-NLS-1$	
+	final static String TAG_CONTEXT_BINDING = "contextBinding"; //$NON-NLS-1$	
+	final static String TAG_CONTEXT_ID = "contextId"; //$NON-NLS-1$	
 	final static String TAG_DESCRIPTION = "description"; //$NON-NLS-1$
 	final static String TAG_GESTURE_CONFIGURATION = "gestureConfiguration"; //$NON-NLS-1$	
+	final static String TAG_IMAGE_BINDING = "imageBinding"; //$NON-NLS-1$	
+	final static String TAG_IMAGE_STYLE = "imageStyle"; //$NON-NLS-1$	
+	final static String TAG_IMAGE_URI = "imageUri"; //$NON-NLS-1$
 	final static String TAG_KEY_CONFIGURATION = "keyConfiguration"; //$NON-NLS-1$	
 	final static String TAG_ID = "id"; //$NON-NLS-1$
+	final static String TAG_LOCALE = "locale"; //$NON-NLS-1$
 	final static String TAG_NAME = "name"; //$NON-NLS-1$	
 	final static String TAG_PARENT_ID = "parentId"; //$NON-NLS-1$
+	final static String TAG_PLATFORM = "platform"; //$NON-NLS-1$	
 	final static String TAG_PLUGIN_ID = "pluginId"; //$NON-NLS-1$
 
 	static List readCategories(IMemento memento, String name, String pluginIdOverride) {
@@ -110,6 +120,41 @@ final class Persistence {
 		return list;				
 	}
 
+	static IContextBinding readContextBinding(IMemento memento, String pluginIdOverride) {
+		if (memento == null)
+			throw new NullPointerException();			
+
+		String commandId = memento.getString(TAG_COMMAND_ID);
+
+		if (commandId == null)
+			commandId = Util.ZERO_LENGTH_STRING;
+
+		String contextId = memento.getString(TAG_CONTEXT_ID);
+
+		if (contextId == null)
+			contextId = Util.ZERO_LENGTH_STRING;
+
+		String pluginId = pluginIdOverride != null ? pluginIdOverride : memento.getString(TAG_PLUGIN_ID);
+		return new ContextBinding(commandId, contextId, pluginId);
+	}
+
+	static List readContextBindings(IMemento memento, String name, String pluginIdOverride) {
+		if (memento == null || name == null)
+			throw new NullPointerException();			
+	
+		IMemento[] mementos = memento.getChildren(name);
+	
+		if (mementos == null)
+			throw new NullPointerException();
+	
+		List list = new ArrayList(mementos.length);
+	
+		for (int i = 0; i < mementos.length; i++)
+			list.add(readContextBinding(mementos[i], pluginIdOverride));
+	
+		return list;				
+	}
+
 	static IGestureConfiguration readGestureConfiguration(IMemento memento, String pluginIdOverride) {
 		if (memento == null)
 			throw new NullPointerException();			
@@ -142,6 +187,56 @@ final class Persistence {
 	
 		for (int i = 0; i < mementos.length; i++)
 			list.add(readGestureConfiguration(mementos[i], pluginIdOverride));
+	
+		return list;				
+	}
+
+	static IImageBinding readImageBinding(IMemento memento, String pluginIdOverride) {
+		if (memento == null)
+			throw new NullPointerException();			
+
+		String commandId = memento.getString(TAG_COMMAND_ID);
+
+		if (commandId == null)
+			commandId = Util.ZERO_LENGTH_STRING;
+
+		String imageStyle = memento.getString(TAG_IMAGE_STYLE);
+
+		if (imageStyle == null)
+			imageStyle = Util.ZERO_LENGTH_STRING;
+
+		String imageUri = memento.getString(TAG_IMAGE_URI);
+
+		if (imageUri == null)
+			imageUri = Util.ZERO_LENGTH_STRING;
+
+		String locale = memento.getString(TAG_LOCALE);
+
+		if (locale == null)
+			locale = Util.ZERO_LENGTH_STRING;
+
+		String platform = memento.getString(TAG_PLATFORM);
+
+		if (platform == null)
+			platform = Util.ZERO_LENGTH_STRING;
+
+		String pluginId = pluginIdOverride != null ? pluginIdOverride : memento.getString(TAG_PLUGIN_ID);
+		return new ImageBinding(commandId, imageStyle, imageUri, locale, platform, pluginId);
+	}
+
+	static List readImageBindings(IMemento memento, String name, String pluginIdOverride) {
+		if (memento == null || name == null)
+			throw new NullPointerException();			
+	
+		IMemento[] mementos = memento.getChildren(name);
+	
+		if (mementos == null)
+			throw new NullPointerException();
+	
+		List list = new ArrayList(mementos.length);
+	
+		for (int i = 0; i < mementos.length; i++)
+			list.add(readImageBinding(mementos[i], pluginIdOverride));
 	
 		return list;				
 	}
@@ -189,14 +284,8 @@ final class Persistence {
 		categories = new ArrayList(categories);
 		Iterator iterator = categories.iterator();
 
-		while (iterator.hasNext()) {
-			Object object = iterator.next();
-			
-			if (object == null)
-				throw new NullPointerException();
-			else if (!(iterator.next() instanceof ICategory))
-				throw new IllegalArgumentException();
-		}		
+		while (iterator.hasNext())
+			Util.assertInstance(iterator.next(), ICategory.class);
 
 		iterator = categories.iterator();
 
@@ -232,19 +321,38 @@ final class Persistence {
 		commands = new ArrayList(commands);
 		Iterator iterator = commands.iterator();
 
-		while (iterator.hasNext()) {
-			Object object = iterator.next();
-			
-			if (object == null)
-				throw new NullPointerException();
-			else if (!(iterator.next() instanceof ICommand))
-				throw new IllegalArgumentException();
-		}		
+		while (iterator.hasNext())
+			Util.assertInstance(iterator.next(), ICommand.class);
 
 		iterator = commands.iterator();
 
 		while (iterator.hasNext()) 
 			writeCommand(memento.createChild(name), (ICommand) iterator.next());
+	}
+	
+	static void writeContextBinding(IMemento memento, IContextBinding contextBinding) {
+		if (memento == null || contextBinding == null)
+			throw new NullPointerException();
+
+		memento.putString(TAG_COMMAND_ID, contextBinding.getCommandId());
+		memento.putString(TAG_CONTEXT_ID, contextBinding.getContextId());
+		memento.putString(TAG_PLUGIN_ID, contextBinding.getPluginId());
+	}
+
+	static void writeContextBindings(IMemento memento, String name, List contextBindings) {
+		if (memento == null || name == null || contextBindings == null)
+			throw new NullPointerException();
+		
+		contextBindings = new ArrayList(contextBindings);
+		Iterator iterator = contextBindings.iterator();
+
+		while (iterator.hasNext())
+			Util.assertInstance(iterator.next(), IContextBinding.class);
+
+		iterator = contextBindings.iterator();
+
+		while (iterator.hasNext()) 
+			writeContextBinding(memento.createChild(name), (IContextBinding) iterator.next());
 	}
 	
 	static void writeGestureConfiguration(IMemento memento, IGestureConfiguration gestureConfiguration) {
@@ -264,21 +372,43 @@ final class Persistence {
 		gestureConfigurations = new ArrayList(gestureConfigurations);
 		Iterator iterator = gestureConfigurations.iterator();
 
-		while (iterator.hasNext()) {
-			Object object = iterator.next();
-			
-			if (object == null)
-				throw new NullPointerException();
-			else if (!(iterator.next() instanceof IGestureConfiguration))
-				throw new IllegalArgumentException();
-		}		
+		while (iterator.hasNext())
+			Util.assertInstance(iterator.next(), IGestureConfiguration.class);
 
 		iterator = gestureConfigurations.iterator();
 
 		while (iterator.hasNext()) 
 			writeGestureConfiguration(memento.createChild(name), (IGestureConfiguration) iterator.next());
 	}
-	
+
+	static void writeImageBinding(IMemento memento, IImageBinding imageBinding) {
+		if (memento == null || imageBinding == null)
+			throw new NullPointerException();
+
+		memento.putString(TAG_COMMAND_ID, imageBinding.getCommandId());
+		memento.putString(TAG_IMAGE_STYLE, imageBinding.getImageStyle());
+		memento.putString(TAG_IMAGE_URI, imageBinding.getImageUri());
+		memento.putString(TAG_LOCALE, imageBinding.getLocale());
+		memento.putString(TAG_PLATFORM, imageBinding.getPlatform());
+		memento.putString(TAG_PLUGIN_ID, imageBinding.getPluginId());
+	}
+
+	static void writeImageBindings(IMemento memento, String name, List imageBindings) {
+		if (memento == null || name == null || imageBindings == null)
+			throw new NullPointerException();
+		
+		imageBindings = new ArrayList(imageBindings);
+		Iterator iterator = imageBindings.iterator();
+
+		while (iterator.hasNext())
+			Util.assertInstance(iterator.next(), IImageBinding.class);
+
+		iterator = imageBindings.iterator();
+
+		while (iterator.hasNext()) 
+			writeImageBinding(memento.createChild(name), (IImageBinding) iterator.next());
+	}
+
 	static void writeKeyConfiguration(IMemento memento, IKeyConfiguration keyConfiguration) {
 		if (memento == null || keyConfiguration == null)
 			throw new NullPointerException();
@@ -296,14 +426,8 @@ final class Persistence {
 		keyConfigurations = new ArrayList(keyConfigurations);
 		Iterator iterator = keyConfigurations.iterator();
 
-		while (iterator.hasNext()) {
-			Object object = iterator.next();
-			
-			if (object == null)
-				throw new NullPointerException();
-			else if (!(iterator.next() instanceof IKeyConfiguration))
-				throw new IllegalArgumentException();
-		}		
+		while (iterator.hasNext())
+			Util.assertInstance(iterator.next(), IKeyConfiguration.class);
 
 		iterator = keyConfigurations.iterator();
 

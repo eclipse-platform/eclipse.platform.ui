@@ -9,30 +9,25 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands.old;
+package org.eclipse.ui.internal.commands;
 
+import org.eclipse.ui.commands.IContextBinding;
 import org.eclipse.ui.internal.util.Util;
 
-final class ContextBindingElement implements Comparable {
+final class ContextBinding implements Comparable, IContextBinding {
 
 	private final static int HASH_FACTOR = 89;
-	private final static int HASH_INITIAL = ContextBindingElement.class.getName().hashCode();
-
-	static ContextBindingElement create(String commandId, String contextId, String pluginId)
-		throws IllegalArgumentException {
-		return new ContextBindingElement(commandId, contextId, pluginId);
-	}
+	private final static int HASH_INITIAL = ContextBinding.class.getName().hashCode();
 
 	private String commandId;
 	private String contextId;
 	private String pluginId;
-	
-	private ContextBindingElement(String commandId, String contextId, String pluginId)
-		throws IllegalArgumentException {
+
+	ContextBinding(String commandId, String contextId, String pluginId) {
 		super();
 		
 		if (commandId == null || contextId == null)
-			throw new IllegalArgumentException();
+			throw new NullPointerException();
 		
 		this.commandId = commandId;
 		this.contextId = contextId;
@@ -40,36 +35,36 @@ final class ContextBindingElement implements Comparable {
 	}
 	
 	public int compareTo(Object object) {
-		ContextBindingElement contextBindingElement = (ContextBindingElement) object;
-		int compareTo = commandId.compareTo(contextBindingElement.commandId);
+		ContextBinding contextBinding = (ContextBinding) object;
+		int compareTo = commandId.compareTo(contextBinding.commandId);
 		
-		if (compareTo == 0) {	
-			compareTo = contextId.compareTo(contextBindingElement.contextId);			
+		if (compareTo == 0) {		
+			compareTo = contextId.compareTo(contextBinding.contextId);			
 		
 			if (compareTo == 0)
-				compareTo = Util.compare(pluginId, contextBindingElement.pluginId);								
+				compareTo = Util.compare(pluginId, contextBinding.pluginId);								
 		}
 		
 		return compareTo;	
 	}
 	
 	public boolean equals(Object object) {
-		if (!(object instanceof ContextBindingElement))
+		if (!(object instanceof ContextBinding))
 			return false;
 
-		ContextBindingElement contextBindingElement = (ContextBindingElement) object;	
-		return commandId.equals(contextBindingElement.commandId) && contextId.equals(contextBindingElement.contextId) && Util.equals(pluginId, contextBindingElement.pluginId);
+		ContextBinding contextBinding = (ContextBinding) object;	
+		return commandId.equals(contextBinding.commandId) && contextId.equals(contextBinding.contextId) && Util.equals(pluginId, contextBinding.pluginId);
 	}
 
-	String getCommandId() {
-		return commandId;	
+	public String getCommandId() {
+		return commandId;
 	}
-	
-	String getContextId() {
-		return contextId;	
+
+	public String getContextId() {
+		return contextId;
 	}
-	
-	String getPluginId() {
+
+	public String getPluginId() {
 		return pluginId;
 	}
 
