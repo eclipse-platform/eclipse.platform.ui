@@ -64,7 +64,6 @@ public class ReviewPage
 	private int LABEL_ORDER = 1;
 	private int VERSION_ORDER = 1;
 	private int PROVIDER_ORDER = 1;
-    
     private ContainerCheckedTreeViewer treeViewer;
     
     class TreeContentProvider extends DefaultContentProvider implements
@@ -613,21 +612,6 @@ public class ReviewPage
         treeViewer.setLabelProvider(new TreeLabelProvider());
         treeViewer.setInput(UpdateUI.getDefault().getUpdateModel());
 
-//        treeViewer.addCheckStateListener(new ICheckStateListener() {
-//            public void checkStateChanged(CheckStateChangedEvent e) {
-//                Object element = e.getElement();
-//                if (element instanceof SiteBookmark)
-//                    handleSiteChecked((SiteBookmark) element, e.getChecked());
-//                else if (element instanceof SiteCategory) 
-//                    handleCategoryChecked(
-//                        (SiteCategory) element,
-//                        e.getChecked());
-//                else if (element instanceof IInstallFeatureOperation)
-//                    handleFeatureChecked((IInstallFeatureOperation)element, e.getChecked());
-//                
-//            }
-//        });
-
         treeViewer
             .addSelectionChangedListener(new ISelectionChangedListener() {
             public void selectionChanged(SelectionChangedEvent e) {
@@ -638,6 +622,13 @@ public class ReviewPage
         treeViewer.addCheckStateListener(new ICheckStateListener() {
             public void checkStateChanged(CheckStateChangedEvent event) {
                 validateSelection();
+                Object site = getSite(event.getElement());
+                ArrayList descendants = new ArrayList();
+                collectDescendants(site, descendants);
+                Object[] nodes = new Object[descendants.size()];
+                for (int i=0; i<nodes.length; i++)
+                    nodes[i] = descendants.get(i);
+                treeViewer.update(nodes, null);
             }
         });
 
@@ -665,35 +656,6 @@ public class ReviewPage
       sform.setWeights(new int[] {10, 2});
     }
     
-    void updateParentState(Object child, boolean baseChildState) {
-        if (child == null)
-            return;
-
-        Object parent = ((ITreeContentProvider)treeViewer.getContentProvider()).getParent(child);
-        if (parent == null)
-            return;
-
-        boolean allSameState = true;
-        Object[] children = null;
-        children = ((ITreeContentProvider)treeViewer.getContentProvider()).getChildren(parent);
-
-        for (int i = children.length - 1; i >= 0; i--) {
-            if (treeViewer.getChecked(children[i]) != baseChildState
-                    || treeViewer.getGrayed(children[i])) {
-                allSameState = false;
-                break;
-            }
-        }
-
-        treeViewer.setGrayed(parent, !allSameState);
-        treeViewer.setChecked(parent, !allSameState || baseChildState);
-
-        updateParentState(parent, baseChildState);
-    }
-    
-    boolean isExpandable(Object element) {
-        return ((ITreeContentProvider)treeViewer.getContentProvider()).hasChildren(element);
-    }
     
 //    private void handleSiteChecked(SiteBookmark bookmark, boolean checked) {
 //
@@ -1173,5 +1135,23 @@ public class ReviewPage
             if (((IInstallFeatureOperation)jobs.get(i)).getFeature() == feature)
                 return (IInstallFeatureOperation)jobs.get(i);
         return null;
+    }
+    
+    private Object getSite(Object object) {
+        ITreeContentProvider provider = (ITreeContentProvider)treeViewer.getContentProvider();
+        while (object != null && !(object instanceof SiteBookmark)) {
+            object = provider.getParent(object);
+        }
+        return object;
+    }
+    
+    private void collectDescendants(Object root, ArrayList list) {
+        ITreeContentProvider provider = (ITreeContentProvider)treeViewer.getContentProvider();
+        Object[] children = provider.getChildren(root);
+        if (children != null && children.length > 0)
+            for (int i=0; i<children.length; i++) {
+                list.add(children[i]);
+                collectDescendants(children[i], list);
+            }
     }
 }
