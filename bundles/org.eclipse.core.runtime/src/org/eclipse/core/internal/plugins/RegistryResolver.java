@@ -422,56 +422,66 @@ private void addAll(Collection c) {
 	for (Iterator list = c.iterator(); list.hasNext();)
 		add((PluginDescriptorModel) list.next());
 }
-private void addExtension(ExtensionModel extension, PluginDescriptorModel plugin) {
-	extension.setParentPluginDescriptor (plugin);
+private void addExtensions(ExtensionModel[] extensions, PluginDescriptorModel plugin) {
+	int extLength = extensions.length;
+	for (int i = 0; i < extLength; i++) {
+		extensions[i].setParentPluginDescriptor (plugin);
+	}
 	ExtensionModel[] list = plugin.getDeclaredExtensions();
+	int listLength = (list == null ? 0 : list.length);
 	ExtensionModel[] result = null;
 	if (list == null)
-		result = new ExtensionModel[1];
+		result = new ExtensionModel[extLength];
 	else {
-		result = new ExtensionModel[list.length + 1];
+		result = new ExtensionModel[list.length + extLength];
 		System.arraycopy(list, 0, result, 0, list.length);
 	}
-	result[result.length - 1] = extension;
+	System.arraycopy(extensions, 0, result, listLength, extLength); 
 	plugin.setDeclaredExtensions(result);
-	extension.setParent(plugin);
 }
-private void addExtensionPoint(ExtensionPointModel extensionPoint, PluginDescriptorModel plugin) {
-	extensionPoint.setParentPluginDescriptor (plugin);
+private void addExtensionPoints(ExtensionPointModel[] extensionPoints, PluginDescriptorModel plugin) {
+	int extPtLength = extensionPoints.length;
+	for (int i = 0; i < extPtLength; i++) {
+		extensionPoints[i].setParentPluginDescriptor (plugin);
+	}
 	ExtensionPointModel[] list = plugin.getDeclaredExtensionPoints();
+	int listLength = (list == null ? 0 : list.length);
 	ExtensionPointModel[] result = null;
 	if (list == null)
-		result = new ExtensionPointModel[1];
+		result = new ExtensionPointModel[extPtLength];
 	else {
-		result = new ExtensionPointModel[list.length + 1];
+		result = new ExtensionPointModel[list.length + extPtLength];
 		System.arraycopy(list, 0, result, 0, list.length);
 	}
-	result[result.length - 1] = extensionPoint;
+	System.arraycopy(extensionPoints, 0, result, listLength, extPtLength); 
 	plugin.setDeclaredExtensionPoints(result);
-	extensionPoint.setParent(plugin);
 }
-private void addLibrary(LibraryModel library, PluginDescriptorModel plugin) {
+private void addLibraries(LibraryModel[] libraries, PluginDescriptorModel plugin) {
+	int libLength = libraries.length;
 	LibraryModel[] list = plugin.getRuntime();
 	LibraryModel[] result = null;
+	int listLength = (list == null ? 0 : list.length);
 	if (list == null)
-		result = new LibraryModel[1];
+		result = new LibraryModel[libLength];
 	else {
-		result = new LibraryModel[list.length + 1];
+		result = new LibraryModel[list.length + libLength];
 		System.arraycopy(list, 0, result, 0, list.length);
 	}
-	result[result.length - 1] = library;
+	System.arraycopy(libraries, 0, result, listLength, libLength); 
 	plugin.setRuntime(result);
 }
-private void addPrerequisites(PluginPrerequisiteModel prerequisite, PluginDescriptorModel plugin) {
+private void addPrerequisites(PluginPrerequisiteModel[] prerequisites, PluginDescriptorModel plugin) {
+	int reqLength = prerequisites.length;
 	PluginPrerequisiteModel[] list = plugin.getRequires();
 	PluginPrerequisiteModel[] result = null;
+	int listLength = (list == null ? 0 : list.length);
 	if (list == null)
-		result = new PluginPrerequisiteModel[1];
+		result = new PluginPrerequisiteModel[reqLength];
 	else {
-		result = new PluginPrerequisiteModel[list.length + 1];
+		result = new PluginPrerequisiteModel[list.length + reqLength];
 		System.arraycopy(list, 0, result, 0, list.length);
 	}
-	result[result.length - 1] = prerequisite;
+	System.arraycopy(prerequisites, 0, result, listLength, reqLength); 
 	plugin.setRequires(result);
 }
 private void debug(String s) {
@@ -510,12 +520,16 @@ private PluginVersionIdentifier getVersionIdentifier(PluginPrerequisiteModel pre
 	return version == null ? null : new PluginVersionIdentifier(version);
 }
 private void linkFragments() {
-	ArrayList retained = new ArrayList(5);
+	/* For each fragment, find out which plugin descriptor it belongs
+	 * to and add it to the list of fragments in this plugin.
+	 */
 	PluginFragmentModel[] fragments = reg.getFragments();
 	HashSet seen = new HashSet(5);
 	for (int i = 0; i < fragments.length; i++) {
 		PluginFragmentModel fragment = fragments[i];
 		if (!requiredFragment(fragment)) {
+			// There is a required field missing on this fragment, so 
+			// ignore it.
 			String id, name;
 			if ((id = fragment.getId()) != null)
 				error (Policy.bind("parse.fragmentMissingAttr", id));
@@ -529,11 +543,16 @@ private void linkFragments() {
 			continue;
 		seen.add(fragment.getId());
 		PluginDescriptorModel plugin = reg.getPlugin(fragment.getPluginId(), fragment.getPluginVersion());
-		if (plugin == null)
-			// XXX log something here?
+		if (plugin == null) {
+			// We couldn't find this fragment's plugin
+			error (Policy.bind("parse.missingFragmentPd", fragment.getPluginId(), fragment.getId()));
 			continue;
+		}
+		// Soft prereq's ???
 		// PluginFragmentModel[] list = reg.getFragments(fragment.getId());
 		// resolvePluginFragments(list, plugin);
+		
+		// Add this fragment to the list of fragments for this plugin descriptor
 		PluginFragmentModel[] list = plugin.getFragments();
 		PluginFragmentModel[] newList;
 		if (list == null) {
@@ -560,10 +579,13 @@ private void removeConstraintFor(PluginPrerequisiteModel prereq) {
 }
 private void resolve() {
 
+	// Add all the fragments to their associated plugin
 	linkFragments();
 	PluginDescriptorModel[] pluginList = reg.getPlugins();
 	for (int i = 0; i < pluginList.length; i++) {
 		if (pluginList[i].getFragments() != null) {
+			// Take all the information in each fragment and
+			// embed it in the plugin descriptor
 			resolvePluginFragments(pluginList[i]);
 		}
 	}
@@ -620,6 +642,8 @@ public IStatus resolve(PluginRegistryModel registry) {
 		return status;
 	reg = registry;
 	idmap = new HashMap();
+	// Need to pick up the fragments before calling
+	// addAll.  Currently we do this in resolve().
 	addAll(Arrays.asList(reg.getPlugins()));
 	resolve();
 	registry.markResolved();
@@ -664,7 +688,6 @@ private void resolveExtension(ExtensionModel ext) {
 	extPt.setDeclaredExtensions(newValues);
 }
 private void resolveFragments() {
-	ArrayList retained = new ArrayList(5);
 	PluginFragmentModel[] fragments = reg.getFragments();
 	HashSet seen = new HashSet(5);
 	for (int i = 0; i < fragments.length; i++) {
@@ -787,31 +810,40 @@ private void resolvePluginDescriptor(PluginDescriptorModel pd) {
 private void resolvePluginFragment(PluginFragmentModel fragment, PluginDescriptorModel plugin) {
 	ExtensionModel[] extensions = fragment.getDeclaredExtensions();
 	if (extensions != null)
-		for (int i = 0; i < extensions.length; i++)
-			addExtension(extensions[i], plugin);
+		// Add all the fragment extensions to the plugin
+		addExtensions(extensions, plugin);
 
 	ExtensionPointModel[] points = fragment.getDeclaredExtensionPoints();
 	if (points != null)
-		for (int i = 0; i < points.length; i++)
-			addExtensionPoint(points[i], plugin);
+		// Add all the fragment extension points to the plugin
+		addExtensionPoints(points, plugin);
 
 	LibraryModel[] libraries = fragment.getRuntime();
 	if (libraries != null)
-		for (int i = 0; i < libraries.length; i++)
-			addLibrary(libraries[i], plugin);
+		// Add all the fragment library entries to the plugin
+		addLibraries(libraries, plugin);
 			
 	PluginPrerequisiteModel[] prerequisites = fragment.getRequires();
 	if (prerequisites != null)
-		for (int i = 0; i < prerequisites.length; i++)
-			addPrerequisites(prerequisites[i], plugin);
+		// Add all the fragment prerequisites to the plugin
+		addPrerequisites(prerequisites, plugin);
 }
 private void resolvePluginFragments(PluginDescriptorModel plugin) {
+	/* For each fragment contained in the fragment list of this plugin, 
+	 * apply all the fragment bits to the plugin (e.g. all of the fragment's
+	 * extensions are added to the list of extensions in the plugin).  Be
+	 * sure to use only the latest version of any given fragment (in case
+	 * there are multiple versions of a given fragment id).  So note that,
+	 * if there are multiple versions of a given fragment id, all but the
+	 * latest version will be discarded.
+	 */
 	PluginFragmentModel[] fragmentList = plugin.getFragments();
 	while (fragmentList != null) {
 		ArrayList fragmentsWithId = new ArrayList();
 		ArrayList fragmentsToProcessLater = new ArrayList();
 		String currentFragmentId = fragmentList[0].getId();
 		for (int i = 0; i < fragmentList.length; i++) {
+			// Find all the fragments with a given id.
 			if (currentFragmentId.equals(fragmentList[i].getId())) {
 				fragmentsWithId.add(fragmentList[i]);
 			} else {
@@ -831,6 +863,7 @@ private void resolvePluginFragments(PluginDescriptorModel plugin) {
 			fragmentList = (PluginFragmentModel[]) fragmentsToProcessLater.toArray(new PluginFragmentModel[fragmentsToProcessLater.size()]);
 			
 		if (fragments != null) {
+			// Now find the latest version of the fragment with the chosen id
 			PluginFragmentModel latestFragment = null;
 			PluginVersionIdentifier latestVersion = null;
 			PluginVersionIdentifier targetVersion = new PluginVersionIdentifier(plugin.getVersion());
@@ -845,6 +878,8 @@ private void resolvePluginFragments(PluginDescriptorModel plugin) {
 					}
 			}
 			if (latestFragment != null) {
+				// For the latest version of this fragment id only, apply
+				// all the fragment bits to the plugin.  
 				resolvePluginFragment(latestFragment, plugin);
 			}
 		}

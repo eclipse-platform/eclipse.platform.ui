@@ -54,19 +54,14 @@ public class PluginParser extends DefaultHandler implements IModel {
 	// Keep a group of vectors as a temporary scratch space.  These
 	// vectors will be used to populate arrays in the plugin descriptor
 	// once processing of the XML file is complete.
-	private final int RUNTIME_INDEX = 0;
-	private final int REQUIRES_INDEX = 1;
-	private final int EXTENSION_POINT_INDEX = 2;
-	private final int EXTENSION_INDEX = 3;
-	private final int EXPORT_INDEX = 4;
-	private final int CONFIGURATION_ELEMENT_INDEX = 5;
-	private final int LAST_INDEX = 5;
-	Vector scratchVectors[] = new Vector[LAST_INDEX + 1];
+	private final int EXTENSION_POINT_INDEX = 0;
+	private final int EXTENSION_INDEX = 1;
+	private final int LAST_INDEX = 1;
+	private Vector scratchVectors[] = new Vector[LAST_INDEX + 1];
 	
 public PluginParser(Factory factory) {
 	super();
 	this.factory = factory;
-//	parser = new SAXParser();
 	parser.setContentHandler(this);
 	parser.setDTDHandler(this);
 	parser.setEntityResolver(this);
@@ -111,7 +106,8 @@ public void endElement(String uri, String elementName, String qName) {
 			stateStack.pop();
 			break;
 		case INITIAL_STATE :
-			// shouldn't get here - do some error handling
+			// shouldn't get here
+			internalError (Policy.bind("parse.internalStack", elementName));
 			break;
 		case PLUGIN_STATE :
 		case FRAGMENT_STATE :
@@ -139,24 +135,22 @@ public void endElement(String uri, String elementName, String qName) {
 				stateStack.pop();
 				// take the vector of library entries and put them into the plugin
 				// descriptor
-				Vector libVector = scratchVectors[RUNTIME_INDEX];
+				Vector libVector = (Vector)objectStack.pop();
 				if (libVector.size() > 0) {
 					PluginModel model = (PluginModel) objectStack.peek();
 					model.setRuntime((LibraryModel[]) libVector.toArray(new LibraryModel[libVector.size()]));
-					scratchVectors[RUNTIME_INDEX].removeAllElements();
-				}
+					}
 			}
 			break;
 		case PLUGIN_REQUIRES_STATE :
 			if (elementName.equals(PLUGIN_REQUIRES)) {
 				stateStack.pop();
-				// take the vector of import elements and put them into the plugin
+				// take the vector of prerequisites and put them into the plugin
 				// descriptor
-				Vector importVector = scratchVectors[REQUIRES_INDEX];
+				Vector importVector = (Vector)objectStack.pop();
 				if (importVector.size() > 0) {
 					PluginModel parentDescriptor = (PluginModel) objectStack.peek();
 					parentDescriptor.setRequires((PluginPrerequisiteModel[]) importVector.toArray(new PluginPrerequisiteModel[importVector.size()]));
-					scratchVectors[REQUIRES_INDEX].removeAllElements();
 				}
 			}
 			break;
@@ -179,14 +173,13 @@ public void endElement(String uri, String elementName, String qName) {
 			if (elementName.equals(LIBRARY)) {
 				LibraryModel curLibrary = (LibraryModel) objectStack.pop();
 				// Clean up the exports for this library entry
-				Vector exportsVector = scratchVectors[EXPORT_INDEX];
+				Vector exportsVector = (Vector) objectStack.pop();
 				if (exportsVector.size() > 0) {
 					curLibrary.setExports((String[]) exportsVector.toArray(new String[exportsVector.size()]));
-					scratchVectors[EXPORT_INDEX].removeAllElements();
 				}
 
 				// Add this library element to the vector "runtime" on the stack
-				Vector libraryVector = scratchVectors[RUNTIME_INDEX];
+				Vector libraryVector = (Vector) objectStack.peek();
 				libraryVector.addElement(curLibrary);
 				stateStack.pop();
 			}
@@ -243,7 +236,6 @@ public void error(SAXParseException ex) {
 	logStatus(ex);
 }
 public void fatalError(SAXParseException ex) throws SAXException {
-
 	logStatus(ex);
 	throw ex;
 }
@@ -269,6 +261,7 @@ public void handleComponentState(String elementName, Attributes attributes) {
 	// If we get to this point, the element name is one we don't currently accept.
 	// Set the state to indicate that this element will be ignored
 	stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
+	internalError(Policy.bind("parse.unknownElement", COMPONENT, elementName));
 }
 
 public void handleConfigurationState(String elementName, Attributes attributes) {
@@ -292,19 +285,22 @@ public void handleConfigurationState(String elementName, Attributes attributes) 
 	// If we get to this point, the element name is one we don't currently accept.
 	// Set the state to indicate that this element will be ignored
 	stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
+	internalError(Policy.bind("parse.unknownElement", CONFIGURATION, elementName));
 }
 
 
 public void handleDescriptionState(String elementName, Attributes attributes) {
 
-	// We ignore all elements under extension points (if there are any)
+	// We ignore all elements (if there are any)
 	stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
+	internalError(Policy.bind("parse.unknownElement", CONFIGURATION_DESCRIPTION, elementName));
 }
 
 public void handleExtensionPointState(String elementName, Attributes attributes) {
 
 	// We ignore all elements under extension points (if there are any)
 	stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
+	internalError(Policy.bind("parse.unknownElement", EXTENSION_POINT, elementName));
 }
 public void handleExtensionState(String elementName, Attributes attributes) {
 
@@ -328,32 +324,6 @@ public void handleExtensionState(String elementName, Attributes attributes) {
 	// configuration property for each attribute
 	parseConfigurationElementAttributes(attributes);
 }
-public void handleFragmentState(String elementName, Attributes attributes) {
-
-	if (elementName.equals(RUNTIME)) {
-		stateStack.push(new Integer(PLUGIN_RUNTIME_STATE));
-		return;
-	}
-	if (elementName.equals(PLUGIN_REQUIRES)) {
-		stateStack.push(new Integer(PLUGIN_REQUIRES_STATE));
-		parseRequiresAttributes(attributes);
-		return;
-	}
-	if (elementName.equals(EXTENSION_POINT)) {
-		stateStack.push(new Integer(PLUGIN_EXTENSION_POINT_STATE));
-		parseExtensionPointAttributes(attributes);
-		return;
-	}
-	if (elementName.equals(EXTENSION)) {
-		stateStack.push(new Integer(PLUGIN_EXTENSION_STATE));
-		parseExtensionAttributes(attributes);
-		return;
-	}
-
-	// If we get to this point, the element name is one we don't currently accept.
-	// Set the state to indicate that this element will be ignored
-	stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
-}
 public void handleInitialState(String elementName, Attributes attributes) {
 	if (elementName.equals(PLUGIN)) {
 		stateStack.push(new Integer(PLUGIN_STATE));
@@ -370,18 +340,22 @@ public void handleInitialState(String elementName, Attributes attributes) {
 				if (elementName.equals(CONFIGURATION)) {
 					stateStack.push(new Integer(CONFIGURATION_STATE));
 					parseConfigurationAttributes(attributes);
-				} else
+				} else {
 					stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
+					internalError(Policy.bind("parse.unknownTopElement", elementName));
+				}
 }
 public void handleLibraryExportState(String elementName, Attributes attributes) {
 
 	// All elements ignored.
 	stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
+	internalError(Policy.bind("parse.unknownElement", LIBRARY_EXPORT, elementName));
 }
 public void handleLibraryState(String elementName, Attributes attributes) {
 	// The only valid element at this stage is a export
 	if (!elementName.equals(LIBRARY_EXPORT)) {
 		stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
+		internalError(Policy.bind("parse.unknownElement", LIBRARY, elementName));
 		return;
 	}
 
@@ -401,23 +375,42 @@ public void handleLibraryState(String elementName, Attributes attributes) {
 		String attrName = attributes.getLocalName(i);
 		String attrValue = attributes.getValue(i).trim();
 
-		// common (manifest and cached registry)
 		if (attrName.equals(LIBRARY_EXPORT_MASK))
 			maskValue = attrValue;
+		else 
+			internalError(Policy.bind("parse.unknownAttribute", LIBRARY, attrName));
 	}
 
 	// set up mask tables
-	if (!scratchVectors[EXPORT_INDEX].contains(maskValue))
-		scratchVectors[EXPORT_INDEX].addElement(maskValue);
+	// pop off the library - already in currentLib
+	objectStack.pop();
+	Vector exportMask = (Vector)objectStack.peek();
+	// push library back on
+	objectStack.push(currentLib);
+	if ((maskValue != null) && (!exportMask.contains(maskValue)))
+		exportMask.addElement(maskValue);
 }
 public void handlePluginState(String elementName, Attributes attributes) {
 
 	if (elementName.equals(RUNTIME)) {
+		// We should only have one Runtime element in a plugin or fragment
+		Object whatIsIt = objectStack.peek();
+		if ( ( (whatIsIt instanceof PluginDescriptorModel) && (((PluginDescriptorModel)objectStack.peek()).getRuntime() != null) ) ||
+		     ( (whatIsIt instanceof PluginFragmentModel) && (((PluginFragmentModel)objectStack.peek()).getRuntime() != null) ) ) {
+			// This is at least the 2nd Runtime element we have
+			// hit.  Ignore it and give an error.
+			stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
+			return;
+		}
 		stateStack.push(new Integer(PLUGIN_RUNTIME_STATE));
+		// Push a new vector to hold all the library entries
+		objectStack.push(new Vector());
 		return;
 	}
 	if (elementName.equals(PLUGIN_REQUIRES)) {
 		stateStack.push(new Integer(PLUGIN_REQUIRES_STATE));
+		// Push a new vector to hold all the prerequisites
+		objectStack.push(new Vector());
 		parseRequiresAttributes(attributes);
 		return;
 	}
@@ -435,11 +428,13 @@ public void handlePluginState(String elementName, Attributes attributes) {
 	// If we get to this point, the element name is one we don't currently accept.
 	// Set the state to indicate that this element will be ignored
 	stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
+	internalError(Policy.bind("parse.unknownElement", PLUGIN + " / " + FRAGMENT, elementName));
 }
 public void handleRequiresImportState(String elementName, Attributes attributes) {
 
 	// All elements ignored.
 	stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
+	internalError(Policy.bind("parse.unknownElement", PLUGIN_REQUIRES_IMPORT, elementName));
 }
 public void handleRequiresState(String elementName, Attributes attributes) {
 
@@ -450,6 +445,7 @@ public void handleRequiresState(String elementName, Attributes attributes) {
 	// If we get to this point, the element name is one we don't currently accept.
 	// Set the state to indicate that this element will be ignored
 	stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
+	internalError(Policy.bind("parse.unknownElement", PLUGIN_REQUIRES, elementName));
 }
 public void handleRuntimeState(String elementName, Attributes attributes) {
 
@@ -463,6 +459,7 @@ public void handleRuntimeState(String elementName, Attributes attributes) {
 	// If we get to this point, the element name is one we don't currently accept.
 	// Set the state to indicate that this element will be ignored
 	stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
+	internalError(Policy.bind("parse.unknownElement", RUNTIME, elementName));
 }
 
 private Object addObject(Object newElement, Object[] container) {
@@ -506,7 +503,7 @@ public void handleURLState(String elementName, Attributes attributes) {
 			model.setDiscoveries((URLModel [])addURLElement(url, model.getDiscoveries()));
 			return; 
 		}
-	// We ignore all elements under extension points (if there are any)
+	// We ignore all elements (if there are any)
 	stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
 }
 public void ignoreableWhitespace(char[] ch, int start, int length) {
@@ -546,7 +543,6 @@ public void parseComponentAttributes(Attributes attributes) {
 		String attrName = attributes.getLocalName(i);
 		String attrValue = attributes.getValue(i).trim();
 
-		// common (manifest and cached registry)
 		if (attrName.equals(COMPONENT_ID))
 			current.setId(attrValue);
 		else
@@ -558,6 +554,8 @@ public void parseComponentAttributes(Attributes attributes) {
 				else
 					if (attrName.equals(COMPONENT_PROVIDER))
 						current.setProviderName(attrValue);
+					else
+						internalError(Policy.bind("parse.unknownAttribute", COMPONENT, attrName));
 	}
 }
 
@@ -571,7 +569,6 @@ public void parseComponentFragmentAttributes(Attributes attributes) {
 		String attrName = attributes.getLocalName(i);
 		String attrValue = attributes.getValue(i).trim();
 
-		// common (manifest and cached registry)
 		if (attrName.equals(COMPONENT_FRAGMENT_ID))
 			current.setId(attrValue);
 		else
@@ -580,6 +577,8 @@ public void parseComponentFragmentAttributes(Attributes attributes) {
 			else
 				if (attrName.equals(COMPONENT_FRAGMENT_VERSION))
 					current.setVersion(attrValue);
+				else
+					internalError(Policy.bind("parse.unknownAttribute", COMPONENT_FRAGMENT, attrName));
 	}
 	
 	ComponentModel componentModel = (ComponentModel)objectStack.peek();
@@ -598,7 +597,6 @@ public void parseComponentPluginAttributes(Attributes attributes) {
 		String attrName = attributes.getLocalName(i);
 		String attrValue = attributes.getValue(i).trim();
 
-		// common (manifest and cached registry)
 		if (attrName.equals(COMPONENT_PLUGIN_ID))
 			current.setId(attrValue);
 		else
@@ -607,6 +605,8 @@ public void parseComponentPluginAttributes(Attributes attributes) {
 			else
 				if (attrName.equals(COMPONENT_PLUGIN_VERSION))
 					current.setVersion(attrValue);
+				else
+					internalError(Policy.bind("parse.unknownAttribute", COMPONENT_PLUGIN, attrName));
 	}
 	
 	ComponentModel componentModel = (ComponentModel)objectStack.peek();
@@ -626,7 +626,6 @@ public void parseConfigurationAttributes(Attributes attributes) {
 		String attrName = attributes.getLocalName(i);
 		String attrValue = attributes.getValue(i).trim();
 
-		// common (manifest and cached registry)
 		if (attrName.equals(CONFIGURATION_ID))
 			current.setId(attrValue);
 		else
@@ -641,6 +640,8 @@ public void parseConfigurationAttributes(Attributes attributes) {
 					else
 						if (attrName.equals(CONFIGURATION_APPLICATION))
 							current.setApplication(attrValue);
+					else
+						internalError(Policy.bind("parse.unknownAttribute", CONFIGURATION, attrName));
 	}
 }
 
@@ -679,7 +680,6 @@ public void parseExtensionAttributes(Attributes attributes) {
 		String attrName = attributes.getLocalName(i);
 		String attrValue = attributes.getValue(i).trim();
 
-		// common (manifest and cached registry)
 		if (attrName.equals(EXTENSION_NAME))
 			currentExtension.setName(attrValue);
 		else
@@ -696,6 +696,8 @@ public void parseExtensionAttributes(Attributes attributes) {
 						targetName = attrValue;
 					currentExtension.setExtensionPoint(targetName);
 				}
+				else
+					internalError(Policy.bind("parse.unknownAttribute", EXTENSION, attrName));
 	}
 }
 public void parseExtensionPointAttributes(Attributes attributes) {
@@ -708,7 +710,6 @@ public void parseExtensionPointAttributes(Attributes attributes) {
 		String attrName = attributes.getLocalName(i);
 		String attrValue = attributes.getValue(i).trim();
 
-		// common (manifest and cached registry)
 		if (attrName.equals(EXTENSION_POINT_NAME))
 			currentExtPoint.setName(attrValue);
 		else
@@ -717,6 +718,8 @@ public void parseExtensionPointAttributes(Attributes attributes) {
 			else
 				if (attrName.equals(EXTENSION_POINT_SCHEMA))
 					currentExtPoint.setSchema(attrValue);
+				else
+					internalError(Policy.bind("parse.unknownAttribute", EXTENSION_POINT, attrName));
 	}
 	// currentExtPoint contains a pointer to the parent plugin descriptor.
 	PluginModel root = (PluginModel) objectStack.peek();
@@ -736,7 +739,6 @@ public void parseFragmentAttributes(Attributes attributes) {
 		String attrName = attributes.getLocalName(i);
 		String attrValue = attributes.getValue(i).trim();
 
-		// common (manifest and cached registry)
 		if (attrName.equals(FRAGMENT_ID))
 			current.setId(attrValue);
 		else
@@ -754,12 +756,22 @@ public void parseFragmentAttributes(Attributes attributes) {
 						else
 							if (attrName.equals(FRAGMENT_PLUGIN_VERSION))
 								current.setPluginVersion(attrValue);
+							else
+								internalError(Policy.bind("parse.unknownAttribute", FRAGMENT, attrName));
 	}
 }
 
 public void parseLibraryAttributes(Attributes attributes) {
+	// Push a vector to hold the export mask 
+	objectStack.push (new Vector());
 	LibraryModel current = factory.createLibrary();
 	objectStack.push(current);
+	
+	// Now the objectStack should contain the following:
+	//	plugin descriptor or fragment (bottom of the stack)
+	//	vector to hold all the library entries
+	//  vector to hold the export mask for this library entry
+	//  this library entry (top of the stack)
 
 	// process attributes
 	int len = (attributes != null) ? attributes.getLength() : 0;
@@ -767,12 +779,13 @@ public void parseLibraryAttributes(Attributes attributes) {
 		String attrName = attributes.getLocalName(i);
 		String attrValue = attributes.getValue(i).trim();
 
-		// common (manifest and cached registry)
 		if (attrName.equals(LIBRARY_NAME))
 			current.setName(attrValue);
 		else
 			if (attrName.equals(LIBRARY_TYPE))
 				current.setType(attrValue.toLowerCase());
+			else
+				internalError(Policy.bind("parse.unknownAttribute", LIBRARY, attrName));
 	}
 }
 public void parsePluginAttributes(Attributes attributes) {
@@ -786,7 +799,6 @@ public void parsePluginAttributes(Attributes attributes) {
 		String attrName = attributes.getLocalName(i);
 		String attrValue = attributes.getValue(i).trim();
 
-		// common (manifest and cached registry)
 		if (attrName.equals(PLUGIN_ID))
 			current.setId(attrValue);
 		else
@@ -801,6 +813,8 @@ public void parsePluginAttributes(Attributes attributes) {
 					else
 						if (attrName.equals(PLUGIN_CLASS))
 							current.setPluginClass(attrValue);
+						else
+							internalError(Policy.bind("parse.unknownAttribute", PLUGIN, attrName));
 	}
 }
 
@@ -828,7 +842,8 @@ public void parsePluginRequiresImport(Attributes attributes) {
 						else
 							if (PLUGIN_REQUIRES_MATCH_COMPATIBLE.equals(attrValue))
 								current.setMatch(false);
-						// XXX: else error handling
+							else
+								internalError(Policy.bind("parse.validMatch", attrValue));
 					} else
 						if (attrName.equals(PLUGIN_REQUIRES_EXPORT)) {
 							if (TRUE.equals(attrValue))
@@ -836,11 +851,14 @@ public void parsePluginRequiresImport(Attributes attributes) {
 							else
 								if (FALSE.equals(attrValue))
 									current.setExport(false);
-							// XXX: else error handling
-						}
+								else
+									internalError(Policy.bind("parse.validExport", attrValue));
+						} else
+							internalError(Policy.bind("parse.unknownAttribute", PLUGIN_REQUIRES_IMPORT, attrName));
+
 	}
-	// Populate the scratch vector of imports with this new element
-	scratchVectors[REQUIRES_INDEX].addElement(current);
+	// Populate the vector of prerequisites with this new element
+	((Vector)objectStack.peek()).addElement(current);
 }
 public void parseRequiresAttributes(Attributes attributes) {
 }
@@ -927,10 +945,13 @@ public void startElement(String uri, String elementName, String qName, Attribute
 			break;
 		default :
 			stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
-
+			internalError (Policy.bind("parse.unknownTopElement", elementName));
 	}
 }
 public void warning(SAXParseException ex) {
 	logStatus(ex);
+}
+private void internalError(String message) {
+	factory.error(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, message, null));
 }
 }

@@ -5,13 +5,13 @@ package org.eclipse.core.internal.plugins;
  * All Rights Reserved.
  */
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.model.*;
 import org.eclipse.core.internal.plugins.*;
+import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.internal.boot.LaunchInfo;
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.EOFException;
+import java.io.*;
 import java.util.ArrayList;
 
 public class RegistryCacheReader {
@@ -22,6 +22,8 @@ public class RegistryCacheReader {
 	// index value will be used in the cache to allow cross-references in the 
 	// cached registry.
 	ArrayList objectTable = null;
+
+	public MultiStatus cacheReadProblems = null;
 
 	public static final byte REGISTRY_CACHE_VERSION = 2;
 
@@ -87,6 +89,7 @@ public class RegistryCacheReader {
 	public static final byte TYPE_LABEL = 54;
 	public static final byte VALUE_LABEL = 43;
 	public static final byte VERSION_LABEL = 44;
+	
 public RegistryCacheReader(Factory factory) {
 	super();
 	cacheFactory = factory;
@@ -217,6 +220,7 @@ public boolean interpretHeaderInformation(DataInputStream in) {
 			(windowsStamp.equals(BootLoader.getWS())) &&
 			(localeStamp.equals(BootLoader.getNL())) );
 	} catch (IOException ioe) {
+		cacheReadProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.regCacheIOException", "HeaderInformation"), ioe));
 		return false;
 	}
 }
@@ -284,6 +288,7 @@ public ConfigurationElementModel readConfigurationElement(DataInputStream in) {
 			}
 		}
 	} catch (IOException ioe) {
+		cacheReadProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.regCacheIOException", decipherLabel(CONFIGURATION_ELEMENT_LABEL)), ioe));
 		return null;
 	}
 	return configurationElement;
@@ -321,6 +326,7 @@ public ConfigurationPropertyModel readConfigurationProperty(DataInputStream in) 
 			}
 		}
 	} catch (IOException ioe) {
+		cacheReadProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.regCacheIOException", decipherLabel(CONFIGURATION_PROPERTY_LABEL)), ioe));
 		return null;
 	}
 	return configurationProperty;
@@ -398,6 +404,7 @@ public ExtensionModel readExtension(DataInputStream in) {
 			}
 		}
 	} catch (IOException ioe) {
+		cacheReadProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.regCacheIOException", decipherLabel(PLUGIN_EXTENSION_LABEL)), ioe));
 		return null;
 	}
 	return extension;
@@ -464,6 +471,7 @@ public ExtensionPointModel readExtensionPoint(DataInputStream in) {
 			}
 		}
 	} catch (IOException ioe) {
+		cacheReadProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.regCacheIOException", decipherLabel(PLUGIN_EXTENSION_POINT_LABEL)), ioe));
 		return null;
 	}
 	return extPoint;
@@ -513,6 +521,7 @@ public LibraryModel readLibrary(DataInputStream in) {
 			}
 		}
 	} catch (IOException ioe) {
+		cacheReadProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.regCacheIOException", decipherLabel(PLUGIN_LIBRARY_LABEL)), ioe));
 		return null;
 	}
 	return library;
@@ -685,6 +694,7 @@ public PluginDescriptorModel readPluginDescriptor(DataInputStream in) {
 			}
 		}
 	} catch (IOException ioe) {
+		cacheReadProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.regCacheIOException", decipherLabel(PLUGIN_LABEL)), ioe));
 		return null;
 	}
 	return plugin;
@@ -824,6 +834,7 @@ public PluginFragmentModel readPluginFragment(DataInputStream in) {
 			}
 		}
 	} catch (IOException ioe) {
+		cacheReadProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.regCacheIOException", decipherLabel(FRAGMENT_LABEL)), ioe));
 		return null;
 	}
 	return fragment;
@@ -876,11 +887,16 @@ public PluginPrerequisiteModel readPluginPrerequisite(DataInputStream in) {
 			}
 		}
 	} catch (IOException ioe) {
+		cacheReadProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.regCacheIOException", decipherLabel(PLUGIN_REQUIRES_LABEL)), ioe));
 		return null;
 	}
 	return requires;
 }
 public PluginRegistryModel readPluginRegistry(DataInputStream in) {
+	if (cacheReadProblems == null) {
+		cacheReadProblems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind("meta.registryCacheReadProblems"), null);
+	}
+
 	if (!interpretHeaderInformation(in)) {
 		return null;
 	}
@@ -934,6 +950,7 @@ public PluginRegistryModel readPluginRegistry(DataInputStream in) {
 			}
 		}
 	} catch (IOException ioe) {
+		cacheReadProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.regCacheIOException", decipherLabel(REGISTRY_LABEL)), ioe));
 		return null;
 	}
 	if (setReadOnlyFlag) {
