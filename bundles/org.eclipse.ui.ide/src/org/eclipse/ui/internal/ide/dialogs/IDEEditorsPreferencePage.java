@@ -30,6 +30,7 @@ import org.eclipse.ui.ide.dialogs.ResourceEncodingFieldEditor;
 import org.eclipse.ui.internal.dialogs.EditorsPreferencePage;
 import org.eclipse.ui.internal.dialogs.PreferenceLinkArea;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 
 /**
  * Extends the Editors preference page with IDE-specific settings.
@@ -48,7 +49,8 @@ public class IDEEditorsPreferencePage extends EditorsPreferencePage {
 		Composite composite = createComposite(parent);
         
 		PreferenceLinkArea area = new PreferenceLinkArea(composite, SWT.BORDER,
-				"org.eclipse.ui.preferencePages.FileEditors", IDEWorkbenchMessages.getString("IDEEditorsPreferencePage.WorkbenchPreference.relatedLink"));//$NON-NLS-1$ //$NON-NLS-2$
+				"org.eclipse.ui.preferencePages.FileEditors", IDEWorkbenchMessages.getString("IDEEditorsPreferencePage.WorkbenchPreference.relatedLink"),//$NON-NLS-1$ //$NON-NLS-2$
+				(IWorkbenchPreferenceContainer) getContainer(),null);
 
 		GridData data = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
 		data.heightHint = 25;

@@ -25,7 +25,6 @@ import org.eclipse.jface.preference.IPreferencePage;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -645,22 +644,6 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 	protected void selectSavedItem() {
 		getTreeViewer().setInput(getPreferenceManager());
 		super.selectSavedItem();
-	}
-
-	/**
-	 * Selects the current page based on the given preference page identifier.
-	 * If no node can be found, then nothing will change.
-	 * 
-	 * @param preferencePageId
-	 *            The preference page identifier to select; should not be
-	 *            <code>null</code>.
-	 */
-	public final void setCurrentPageId(final String preferencePageId) {
-		final IPreferenceNode node = findNodeMatching(preferencePageId);
-		if (node != null) {
-			getTreeViewer().setSelection(new StructuredSelection(node));
-			showPage(node);
-		}
 	}
 
 	/**

@@ -27,6 +27,7 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
@@ -38,6 +39,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.preferences.WorkbenchPreferenceExtensionNode;
+import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 
 /**
  * Baseclass for preference dialogs that will show two tabs of preferences -
@@ -45,7 +47,7 @@ import org.eclipse.ui.internal.preferences.WorkbenchPreferenceExtensionNode;
  * 
  * @since 3.0
  */
-public abstract class FilteredPreferenceDialog extends PreferenceDialog {
+public abstract class FilteredPreferenceDialog extends PreferenceDialog implements IWorkbenchPreferenceContainer{
 
 	protected FilteredTree filteredTree;
 
@@ -239,6 +241,34 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 	 */
 	public IPreferencePage getCurrentPage() {
 		return super.getCurrentPage();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.preferences.IWorkbenchPreferenceContainer#openPage(java.lang.String, java.lang.Object)
+	 */
+	public boolean openPage(String pageId, Object data) {
+		setPageData(data);
+		setCurrentPageId(pageId);
+		IPreferencePage page = getCurrentPage();
+		if (page instanceof PreferencePage)
+			((PreferencePage) page).applyData(data);
+		return true;
+	}
+
+	/**
+	 * Selects the current page based on the given preference page identifier.
+	 * If no node can be found, then nothing will change.
+	 * 
+	 * @param preferencePageId
+	 *            The preference page identifier to select; should not be
+	 *            <code>null</code>.
+	 */
+	public final void setCurrentPageId(final String preferencePageId) {
+		final IPreferenceNode node = findNodeMatching(preferencePageId);
+		if (node != null) {
+			getTreeViewer().setSelection(new StructuredSelection(node));
+			showPage(node);
+		}
 	}
 	
 	
