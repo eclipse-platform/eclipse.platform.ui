@@ -1365,7 +1365,7 @@ public IStatus save(boolean full, IProgressMonitor monitor) throws CoreException
 		} 
 		return saveManager.save(ISaveContext.FULL_SAVE, null, monitor);
 	}
-	// A snapshot was requested.  Start an operation (if not altready started) and 
+	// A snapshot was requested.  Start an operation (if not already started) and 
 	// signal that a snapshot should be done at the end.
 	try {
 		prepareOperation();
