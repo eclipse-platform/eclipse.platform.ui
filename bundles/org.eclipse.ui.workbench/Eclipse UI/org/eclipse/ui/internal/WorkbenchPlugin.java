@@ -453,7 +453,8 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		store.setDefault("ENABLE_COOL_BARS", true); //$NON-NLS-1$
 		// Temporary option to enable new menu organization
 		store.setDefault("ENABLE_NEW_MENUS", true); //$NON-NLS-1$	
-			
+		//Temporary option to turn off the dialog font
+		store.setDefault("DISABLE_DIALOG_FONT", false); //$NON-NLS-1$		
 
 		FontRegistry registry = JFaceResources.getFontRegistry();
 		initializeFont(JFaceResources.DIALOG_FONT, registry, store);
