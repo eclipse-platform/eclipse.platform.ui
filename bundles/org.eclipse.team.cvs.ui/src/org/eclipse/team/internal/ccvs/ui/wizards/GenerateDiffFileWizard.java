@@ -88,6 +88,10 @@ public class GenerateDiffFileWizard extends Wizard {
 		public final int FILESYSTEM = 2;
 		public final int WORKSPACE = 3;
 		
+		// sizing constants
+		private static final int SIZING_SELECTION_PANE_HEIGHT = 125;
+		private static final int SIZING_SELECTION_PANE_WIDTH = 200;
+		
 		PatchFileSelectionPage(String pageName, IStructuredSelection selection) {
 			super(pageName);
 			this.currentSelection = selection;
@@ -249,9 +253,12 @@ public class GenerateDiffFileWizard extends Wizard {
 			treeViewer = new TreeViewer(parent, SWT.BORDER);
 			ContainerContentProvider cp = new ContainerContentProvider();
 			cp.showClosedProjects(false);
-			GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
-			data.verticalSpan = 5;
-			data.heightHint = 200;
+			GridData data = new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL |
+								  		  GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL);
+			
+			data.widthHint = SIZING_SELECTION_PANE_WIDTH;
+			data.heightHint = SIZING_SELECTION_PANE_HEIGHT;
+					
 			treeViewer.getTree().setLayoutData(data);
 			treeViewer.setContentProvider(cp);
 			treeViewer.setLabelProvider(new WorkbenchLabelProvider());
