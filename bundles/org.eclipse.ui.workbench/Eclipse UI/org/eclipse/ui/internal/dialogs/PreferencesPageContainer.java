@@ -339,19 +339,4 @@ public class PreferencesPageContainer implements IPreferencePageContainer {
 		scrolled.setMinWidth(Math.max(size.x, contentSize.x));
 	}
 
-	/**
-	 * A cateory has been selected. Shows its children.
-	 * 
-	 * @param category
-	 */
-	void show(WorkbenchPreferenceGroup category) {
-		IPreferenceNode[] subnodes = category.getPreferenceNodes();
-		for (int i = 0; i < subnodes.length; i++) {
-			createEntry(subnodes[i], subnodes[i].getLabelText(), 1);
-
-		}
-		control.layout(true);
-
-	}
-
 }

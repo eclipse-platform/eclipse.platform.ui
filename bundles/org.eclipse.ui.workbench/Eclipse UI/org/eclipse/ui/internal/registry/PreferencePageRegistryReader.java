@@ -13,8 +13,6 @@ package org.eclipse.ui.internal.registry;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -25,7 +23,6 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.Workbench;
-import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceGroup;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceNode;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
@@ -42,24 +39,14 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 	private static final String ATT_ID = "id"; //$NON-NLS-1$
 
 	private static final String TAG_PAGE = "page"; //$NON-NLS-1$
-	
-	private static final String TAG_REFERENCE = "pageReference"; //$NON-NLS-1$
 
-	private static final String ATT_LARGE_ICON = "largeIcon"; //$NON-NLS-1$
-	
 	private static final String ATT_ICON = "icon"; //$NON-NLS-1$
 
-	private static final String ATT_GROUP_DEFAULT = "default"; //$NON-NLS-1$
-
 	private final static String TRUE_STRING = "true";//$NON-NLS-1$
-
-	private static final String TAG_GROUP = "group"; //$NON-NLS-1$
 	
 	private static final String TAG_KEYWORD_REFERENCE = "keywordReference"; //$NON-NLS-1$
 
 	private List nodes;
-
-	private List groups;
 
 	private IWorkbench workbench;
 	
@@ -172,12 +159,10 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 	 */
 	public void loadFromRegistry(IExtensionRegistry registry) {
 		nodes = new ArrayList();
-		groups = new ArrayList();
 
 		readRegistry(registry, PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_PREFERENCES);
 
 		processNodes();
-		processGroups();
 
 	}
 
@@ -185,9 +170,7 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 	 * Read preference page element.
 	 */
 	protected boolean readElement(IConfigurationElement element) {
-		if (element.getName().equals(TAG_GROUP) == true)
-			return readGroupElement(element);
-		if (element.getName().equals(TAG_PAGE) == false)
+			if (element.getName().equals(TAG_PAGE) == false)
 			return false;
 		WorkbenchPreferenceNode node = createNode(workbench, element);
 		if (node != null)
@@ -195,39 +178,13 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 		readElementChildren(element);
 		return true;
 	}
-	
+
 	/**
-	 * Read an element that is a group.
+	 * Create a workbench preference node.
+	 * @param workbench
 	 * @param element
-	 * @return boolean
+	 * @return WorkbenchPreferenceNode
 	 */
-	private boolean readGroupElement(IConfigurationElement element) {
-
-		String name = element.getAttribute(ATT_NAME);
-		String id = element.getAttribute(ATT_ID);
-		String largeIcon = element.getAttribute(ATT_LARGE_ICON);
-		String icon = element.getAttribute(ATT_ICON);
-		boolean defaultValue = TRUE_STRING.equals(element.getAttribute(ATT_GROUP_DEFAULT));
-
-		Collection pageIds = readPages(element);
-
-		ImageDescriptor largeDescriptor = null;
-		ImageDescriptor descriptor = null;
-
-		if (icon != null) {
-			String contributingPluginId = element.getDeclaringExtension().getNamespace();
-			descriptor = AbstractUIPlugin.imageDescriptorFromPlugin(contributingPluginId, icon);
-		}
-		
-		if (largeIcon != null) {
-			String contributingPluginId = element.getDeclaringExtension().getNamespace();
-			largeDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(contributingPluginId, largeIcon);
-		}
-
-		groups.add(new WorkbenchPreferenceGroup(id, name, pageIds, descriptor, largeDescriptor,defaultValue));
-		return true;
-	}
-
 	public static WorkbenchPreferenceNode createNode(IWorkbench workbench,
 			IConfigurationElement element) {
 		String name = element.getAttribute(ATT_NAME);
@@ -259,24 +216,6 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 				element, keywordReferences, workbench);
 		return node;
 	}
-
-	/**
-	 * Read the pages for the receiver from element.
-	 * @param element
-	 * @return Collection the ids of the children
-	 */
-	private Collection readPages(IConfigurationElement element) {
-		IConfigurationElement[] pages = element.getChildren(TAG_REFERENCE);
-		HashSet list = new HashSet();
-		for (int i = 0; i < pages.length; i++) {
-			IConfigurationElement page = pages[i];
-			String id = page.getAttribute(ATT_ID);
-			if (id != null)
-				list.add(id);
-		}
-
-		return list;
-	}
 	
 	/**
 	 * Read the pages for the receiver from element.
@@ -297,41 +236,6 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 	}
 
 	/**
-	 * Post process all of the groups.
-	 * 
-	 */
-	private void processGroups() {
-
-		Hashtable nodeToGroupMapping = new Hashtable();
-		WorkbenchPreferenceGroup defaultGroup = null;
-
-		Iterator groupIterator = groups.iterator();
-
-		while (groupIterator.hasNext()) {
-			WorkbenchPreferenceGroup nextGroup = (WorkbenchPreferenceGroup) groupIterator.next();
-			Iterator pages = nextGroup.getPageIds().iterator();
-			while (pages.hasNext()) {
-				nodeToGroupMapping.put(pages.next(), nextGroup);
-			}
-			if (nextGroup.isDefault())
-				defaultGroup = nextGroup;
-		}
-
-		Iterator nodeIterator = nodes.iterator();
-
-		while (nodeIterator.hasNext()) {
-			WorkbenchPreferenceNode node = (WorkbenchPreferenceNode) nodeIterator.next();
-			if (nodeToGroupMapping.containsKey(node.getId())) {
-				((WorkbenchPreferenceGroup) nodeToGroupMapping.get(node.getId())).addNode(node);
-			} else if (topLevelNodes.contains(node) && defaultGroup != null) {
-				defaultGroup.addNode(node);
-			}
-
-		}
-
-	}
-
-	/**
 	 * Return the top level IPreferenceNodes.
 	 * @return  Collection of IPreferenceNode.
 	 */
@@ -346,12 +250,5 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 		return ((Workbench) workbench).getMainPreferencePageId();
 	}
 
-	/**
-	 * Get all of the groups found by the receiver.
-	 * @return Returns the groups.
-	 */
-	public Collection getGroups() {
-		return this.groups;
-	}
 	
 }

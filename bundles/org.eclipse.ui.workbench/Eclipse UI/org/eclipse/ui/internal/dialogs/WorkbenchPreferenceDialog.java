@@ -17,8 +17,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Preferences;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -26,20 +24,13 @@ import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.IPreferencePage;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -49,7 +40,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Sash;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
@@ -58,7 +48,6 @@ import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.Assert;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * Prefence dialog for the workbench including the ability to load/save
@@ -72,15 +61,6 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 	 * The dialog settings key for the last used import/export path.
 	 */
 	final static String FILE_PATH_SETTING = "PreferenceImportExportFileSelectionPage.filePath"; //$NON-NLS-1$
-
-	private static boolean groupedMode = false;
-
-	/**
-	 * The ICON_MODE is a constant that determines if
-	 * the dialog is showing no icons (SWT.NONE), 
-	 * small icons (SWT.MIN) or large icons (SWT.MAX).
-	 */
-	static int ICON_MODE = SWT.MIN;
 
 	/**
 	 * There can only ever be one instance of the workbench's preference dialog.
@@ -99,47 +79,11 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 	 */
 	private final static int LOAD_ID = IDialogConstants.CLIENT_ID + 1;
 
-	private static String MODE_ICON = "org.eclipse.ui.internal.dialogs.MODE_ICON";//$NON-NLS-1$
-
 	/**
 	 * The Save button id.
 	 */
 	private final static int SAVE_ID = IDialogConstants.CLIENT_ID + 2;
 
-	/**
-	 * The TEXT_SHOWING booean is a constant that determines if
-	 * the dialog is showing text or not in the toolbar.
-	 */
-	static boolean TEXT_SHOWING = true;
-
-	private static String TOOLBAR_ICON = "org.eclipse.ui.internal.dialogs.TOOLBAR_ICON";//$NON-NLS-1$
-
-	static {
-		ImageDescriptor descriptor = AbstractUIPlugin.imageDescriptorFromPlugin(
-				PlatformUI.PLUGIN_ID, "icons/full/obj16/layout_co.gif"); //$NON-NLS-1$
-		if (descriptor != null) {
-			JFaceResources.getImageRegistry().put(MODE_ICON, descriptor);
-		}
-
-		descriptor = AbstractUIPlugin.imageDescriptorFromPlugin(PlatformUI.PLUGIN_ID,
-				"icons/full/obj16/toolbar.gif"); //$NON-NLS-1$
-		if (descriptor != null) {
-			JFaceResources.getImageRegistry().put(TOOLBAR_ICON, descriptor);
-		}
-
-		groupedMode = ((WorkbenchPreferenceManager) WorkbenchPlugin.getDefault()
-				.getPreferenceManager()).getGroups().length > 0;
-	}
-
-	/**
-	 * Return whether or not groups can be shown
-	 * 
-	 * @return boolean
-	 */
-	public static boolean canShowGroups() {
-		return getGroups().length > 0;
-	}
-	
 	/**
 	 * Creates a workbench preference dialog to a particular preference page. It
 	 * is the responsibility of the caller to then call <code>open()</code>.
@@ -259,27 +203,6 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 	}
 
 	/**
-	 * Return the groups in the receiver.
-	 * 
-	 * @return WorkbenchPreferenceGroup[]
-	 */
-	protected static WorkbenchPreferenceGroup[] getGroups() {
-		return ((WorkbenchPreferenceManager) WorkbenchPlugin.getDefault().getPreferenceManager())
-				.getGroups();
-	}
-
-	/**
-	 * Return whether groups are being shown
-	 * 
-	 * @return boolean
-	 */
-	public static boolean showingGroups() {
-		return groupedMode;
-	}
-
-	WorkbenchPreferenceGroup currentGroup;
-
-	/**
 	 * The preference page history.
 	 * 
 	 * @since 3.1
@@ -390,10 +313,7 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 		toolBarComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL
 				| GridData.GRAB_HORIZONTAL));
 
-		if (groupedMode)
-			createToolBar(toolBarComposite);
-
-		createDialogContents(composite);
+			createDialogContents(composite);
 
 		applyDialogFont(composite);
 
@@ -446,66 +366,6 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
 		gd.horizontalSpan = columns;
 		separator.setLayoutData(gd);
-	}
-
-	/**
-	 * Create the button that switches modes.
-	 * 
-	 * @param historyManager
-	 */
-	private void createModeSwitch(ToolBarManager historyManager) {
-
-		if (!canShowGroups())
-			return;
-
-		IAction modeSwitchAction = new Action("Modes", IAction.AS_PUSH_BUTTON) {//$NON-NLS-1$
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.action.Action#run()
-			 */
-			public void run() {
-				groupedMode = !groupedMode;
-
-				if (groupedMode) {
-					if (currentGroup == null)
-						currentGroup = getGroups()[0];
-					createToolBar(toolBarComposite);
-					selectAndRevealInToolBar(currentGroup);
-				} else {
-					toolBar.dispose();
-					getTreeViewer().setInput(getPreferenceManager());
-				}
-				//when switching layouts reset the filter text to reveal all items in the tree
-				filteredTree.resetText();
-				filteredTree.getViewer().getControl().setFocus();
-				getShell().setSize(getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT));
-				getShell().layout(true);
-
-			}
-		};
-
-		modeSwitchAction.setToolTipText(WorkbenchMessages
-				.getString("WorkbenchPreferenceDialog.Switch")); //$NON-NLS-1$
-		modeSwitchAction.setImageDescriptor(JFaceResources.getImageRegistry().getDescriptor(
-				MODE_ICON));
-
-		historyManager.add(modeSwitchAction);
-
-		IAction toolBarSettings = new Action(EMPTY_STRING, IAction.AS_PUSH_BUTTON) {
-			/* (non-Javadoc)
-			 * @see org.eclipse.jface.action.Action#run()
-			 */
-			public void run() {
-				new PreferencesLookDialog(WorkbenchPreferenceDialog.this).open();
-			}
-		};
-		toolBarSettings.setToolTipText(WorkbenchMessages
-				.getString("WorkbenchPreferenceDialog.toolBatSettingsTip")); //$NON-NLS-1$
-		toolBarSettings.setImageDescriptor(JFaceResources.getImageRegistry().getDescriptor(
-				TOOLBAR_ICON));
-		historyManager.add(toolBarSettings);
-
 	}
 
 	/*
@@ -573,42 +433,6 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 		return sash;
 	}
 
-	/**
-	 * Create the toolbar for the groups.
-	 * 
-	 * @param composite
-	 */
-	private void createToolBar(Composite composite) {
-
-		toolBar = new ToolBar(composite, SWT.CENTER | SWT.FLAT);
-		toolBar.setBackground(composite.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
-
-		WorkbenchPreferenceGroup[] groups = getGroups();
-
-		for (int i = 0; i < groups.length; i++) {
-			final WorkbenchPreferenceGroup group = groups[i];
-			ToolItem newItem = new ToolItem(toolBar, SWT.RADIO);
-			newItem.setData(group);
-			setTextAndImage(group, newItem);
-			newItem.addSelectionListener(new SelectionAdapter() {
-				/*
-				 * (non-Javadoc)
-				 * 
-				 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-				 */
-				public void widgetSelected(SelectionEvent e) {
-					groupSelected(group);
-				}
-			});
-
-		}
-
-		GridData data = new GridData(GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL);
-		data.horizontalAlignment = GridData.HORIZONTAL_ALIGN_BEGINNING;
-		data.horizontalIndent = IDialogConstants.HORIZONTAL_MARGIN;
-		data.verticalIndent = IDialogConstants.VERTICAL_MARGIN;
-		toolBar.setLayoutData(data);
-	}
 
 	/**
 	 * Differs from super implementation in that if the node is found but should
@@ -636,8 +460,7 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 		ToolBarManager historyManager = new ToolBarManager(historyBar);
 
 		history.createHistoryControls(historyBar, historyManager);
-		createModeSwitch(historyManager);
-
+		
 		historyManager.update(false);
 
 		return historyBar;
@@ -714,44 +537,6 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 	}
 
 	/**
-	 * A group has been selected. Update the tree viewer.
-	 * 
-	 * @param group
-	 *            tool item.
-	 */
-	private void groupSelected(final WorkbenchPreferenceGroup group) {
-
-		lastGroupId = group.getId();
-		currentGroup = group;
-
-		getTreeViewer().setInput(group);
-		StructuredSelection structured = StructuredSelection.EMPTY;
-
-		Object selection = group.getLastSelection();
-		if (selection == null && group.getPreferenceNodes().length > 0) {
-			structured = new StructuredSelection(group.getPreferenceNodes()[0]);
-		}
-
-		getTreeViewer().setSelection(structured, true);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.dialogs.FilteredPreferenceDialog#handleTreeSelectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
-	 */
-	protected void handleTreeSelectionChanged(SelectionChangedEvent event) {
-		if (!showingGroups())
-			return;
-		if (event.getSelection() instanceof IStructuredSelection) {
-			IStructuredSelection selection = (IStructuredSelection) event.getSelection();
-			if (selection.isEmpty())
-				return;
-			Object item = selection.getFirstElement();
-			currentGroup.setLastSelection(item);
-		}
-
-	}
-
-	/**
 	 * Import a preference file.
 	 * 
 	 * @param path
@@ -819,28 +604,6 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 		close();
 	}
 
-	/**
-	 * Select the group and reveal it in the toolbar.
-	 * 
-	 * @param group
-	 */
-	private void selectAndRevealInToolBar(WorkbenchPreferenceGroup group) {
-		selectGroupInToolBar(group);
-		groupSelected(group);
-	}
-
-	/**
-	 * @param group
-	 */
-	private void selectGroupInToolBar(final WorkbenchPreferenceGroup group) {
-		ToolItem[] items = toolBar.getItems();
-		for (int i = 0; i < items.length; i++) {
-			if (group.equals(items[i].getData())) {
-				items[i].setSelection(true);
-				break;
-			}
-		}
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -848,31 +611,8 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 	 * @see org.eclipse.jface.preference.PreferenceDialog#selectSavedItem()
 	 */
 	protected void selectSavedItem() {
-		if (showingGroups()) {
-			WorkbenchPreferenceGroup[] groups = getGroups();
-
-			if (lastGroupId != null) {
-				for (int i = 0; i < groups.length; i++) {
-					if (lastGroupId.equals(groups[i].getId())) {
-						selectAndRevealInToolBar(groups[i]);
-						return;
-					}
-				}
-			}
-			selectAndRevealInToolBar(groups[0]);
-		} else {
-			getTreeViewer().setInput(getPreferenceManager());
-			super.selectSavedItem();
-
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.dialogs.FilteredPreferenceDialog#setContentAndLabelProviders(org.eclipse.jface.viewers.TreeViewer)
-	 */
-	protected void setContentAndLabelProviders(TreeViewer treeViewer) {
-		treeViewer.setContentProvider(new GroupedPreferenceContentProvider(showingGroups()));
-		treeViewer.setLabelProvider(new GroupedPreferenceLabelProvider());
+		getTreeViewer().setInput(getPreferenceManager());
+		super.selectSavedItem();
 	}
 
 	/**
@@ -901,23 +641,6 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 
 	}
 
-	/**
-	 * Set te text and images for the group in the item.
-	 * @param group
-	 * @param item
-	 */
-	private void setTextAndImage(final WorkbenchPreferenceGroup group, ToolItem item) {
-		String text = TEXT_SHOWING ? group.getName() : EMPTY_STRING;
-		item.setText(text);
-
-		Image image = null;
-		if (ICON_MODE == SWT.MIN)
-			image = group.getImage();
-		else if (ICON_MODE == SWT.MAX)
-			image = group.getLargeImage();
-
-		item.setImage(image);
-	}
 
 	/*
 	 * @see org.eclipse.jface.preference.PreferenceDialog#showPage(org.eclipse.jface.preference.IPreferenceNode)
@@ -930,19 +653,6 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 					null));
 		}
 		return success;
-	}
-
-	/**
-	 * The toolbar settings have changed. Update them.
-	 */
-	public void updateForToolbarChange() {
-		toolBar.dispose();
-		createToolBar(toolBarComposite);
-		selectAndRevealInToolBar(currentGroup);
-
-		getShell().setSize(getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT));
-		getShell().layout(true);
-
 	}
 
 	/*

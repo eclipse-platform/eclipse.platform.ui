@@ -147,14 +147,7 @@ public class PropertyDialog extends FilteredPreferenceDialog {
         lastPropertyId = pageId;
     }
     
-    /* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.dialogs.FilteredPreferenceDialog#getGroups()
-	 */
-	protected WorkbenchPreferenceGroup[] getGroups() {
-		//There is no grouping in properties
-		return new WorkbenchPreferenceGroup[0]; 
-	}
-	
+  
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferenceDialog#getCurrentPage()
 	 */
