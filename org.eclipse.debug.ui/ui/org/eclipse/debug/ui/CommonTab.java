@@ -251,8 +251,6 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		gd.horizontalSpan = 2;
 		favLabel.setLayoutData(gd);
 		
-		createVerticalSpacer(favComp, 2);
-		
 		fFavoritesTable = CheckboxTableViewer.newCheckList(favComp, SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
 		Control table = fFavoritesTable.getControl();
 		gd = new GridData(GridData.FILL_HORIZONTAL);
