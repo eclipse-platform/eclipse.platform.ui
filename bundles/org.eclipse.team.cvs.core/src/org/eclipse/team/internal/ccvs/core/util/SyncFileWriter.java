@@ -34,6 +34,7 @@ import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.resources.CVSEntryLineTag;
+import org.eclipse.team.internal.ccvs.core.syncinfo.BaserevInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.NotifyInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
@@ -315,7 +316,64 @@ public class SyncFileWriter {
 			writeLines(cvsSubDir.getFile(NOTIFY), entries);
 		}
 	}
-		
+
+	/**
+	 * Reads the CVS/Baserev file from the specified folder and returns
+	 * BaserevInfo instances for the data stored therein. If the folder does not
+	 * have a CVS subdirectory then <code>null</code> is returned.
+	 */
+	public static BaserevInfo[] readAllBaserevInfo(IContainer parent) throws CVSException {
+		IFolder cvsSubDir = getCVSSubdirectory(parent);
+		if (! cvsSubDir.exists()) return null;
+
+		// process Notify file contents
+		String[] entries = readLines(cvsSubDir.getFile(BASEREV));
+		if (entries == null) return null;
+		Map infos = new TreeMap();
+		for (int i = 0; i < entries.length; i++) {
+			String line = entries[i];
+			if(!"".equals(line)) { //$NON-NLS-1$
+				BaserevInfo info = new BaserevInfo(line);
+				infos.put(info.getName(), info);
+			}
+		}
+
+		return (BaserevInfo[])infos.values().toArray(new BaserevInfo[infos.size()]);
+	}
+
+	/**
+	 * Writes the CVS/Baserev file to the specified folder using the data
+	 * contained in the specified BaserevInfo instances. A CVS subdirectory must
+	 * already exist (an exception is thrown if it doesn't).
+	 */
+	public static void writeAllBaserevInfo(IContainer parent, BaserevInfo[] infos) throws CVSException {
+		// get the CVS directory
+		IFolder cvsSubDir = getCVSSubdirectory(parent);
+		// write lines will throw an exception if the CVS directory does not exist
+
+		if (infos.length == 0) {
+			// if there are no notify entries, delete the notify file
+			try {
+				IFile file = cvsSubDir.getFile(BASEREV);
+				if(file.exists()) {
+					file.delete(IResource.NONE, null);
+				}
+			} catch (CoreException e) {
+				throw CVSException.wrapException(e);
+			}
+		} else {
+			// format file contents
+			String[] entries = new String[infos.length];
+			for (int i = 0; i < infos.length; i++) {
+				BaserevInfo info = infos[i];
+				entries[i] = info.getEntryLine();
+			}
+
+			// write Notify entries
+			writeLines(cvsSubDir.getFile(BASEREV), entries);
+		}
+	}
+				
 	/**
 	 * Returns the CVS subdirectory for this folder.
 	 */
@@ -445,24 +503,73 @@ public class SyncFileWriter {
 	 * @param file
 	 * @param info
 	 */
-	public static void writeFileToBaseDirectory(IFile file, ResourceSyncInfo info) throws CVSException {
+	public static void writeFileToBaseDirectory(IFile file, IProgressMonitor monitor) throws CVSException {
+		monitor = Policy.monitorFor(monitor);
+		monitor.beginTask(null, 100);
 		try {
 			IContainer cvsFolder = getCVSSubdirectory(file.getParent());
 			IFolder baseFolder = cvsFolder.getFolder(new Path(BASE_DIRNAME));
 			if (!baseFolder.exists()) {
-				baseFolder.create(false /* force */, true /* local */, null);
+				baseFolder.create(false /* force */, true /* local */, Policy.subMonitorFor(monitor, 10));
 			}
 			IFile target = baseFolder.getFile(new Path(file.getName()));
 			if (target.exists()) {
 				// XXX Should ensure that we haven't already copied it
 				// XXX write the revision to the CVS/Baserev file
-				target.setContents(file.getContents(), false /* force */, false /* history */, null);
-			} else {
-				// should use copy to ensure timestamp is the same
-				target.create(file.getContents(), false /* force */, null);
+				target.delete(true, Policy.subMonitorFor(monitor, 10));
+			}
+			// Copy the file so the timestamp is maintained
+			file.copy(target.getFullPath(), true /* force */, Policy.subMonitorFor(monitor, 80));
+		} catch (CoreException e) {
+			throw CVSException.wrapException(e);
+		} finally {
+			monitor.done();
+		}
+	}
+	/**
+	 * Method restoreFileFromBaseDirectory.
+	 * @param file
+	 * @param info
+	 * @param monitor
+	 */
+	public static void restoreFileFromBaseDirectory(IFile file, IProgressMonitor monitor) throws CVSException {
+		monitor = Policy.monitorFor(monitor);
+		monitor.beginTask(null, 100);
+		try {
+			IContainer cvsFolder = getCVSSubdirectory(file.getParent());
+			IFolder baseFolder = cvsFolder.getFolder(new Path(BASE_DIRNAME));
+			IFile source = baseFolder.getFile(new Path(file.getName()));
+			if (!source.exists()) {
+				throw new CVSException(Policy.bind("SyncFileWriter.baseNotAvailable", file.getFullPath().toString())); //$NON-NLS-1$
+			}
+			// Copy the file so the timestamp is maintained
+			source.move(file.getFullPath(), false /* force */, Policy.subMonitorFor(monitor, 100));
+		} catch (CoreException e) {
+			throw CVSException.wrapException(e);
+		} finally {
+			monitor.done();
+		}
+	}
+	
+	/**
+	 * Method deleteFileFromBaseDirectory.
+	 * @param file
+	 * @param monitor
+	 */
+	public static void deleteFileFromBaseDirectory(IFile file, IProgressMonitor monitor) throws CVSException {
+		monitor = Policy.monitorFor(monitor);
+		monitor.beginTask(null, 100);
+		try {
+			IContainer cvsFolder = getCVSSubdirectory(file.getParent());
+			IFolder baseFolder = cvsFolder.getFolder(new Path(BASE_DIRNAME));
+			IFile source = baseFolder.getFile(new Path(file.getName()));
+			if (source.exists()) {
+				source.delete(false, false, Policy.subMonitorFor(monitor, 100));
 			}
 		} catch (CoreException e) {
 			throw CVSException.wrapException(e);
+		} finally {
+			monitor.done();
 		}
 	}
 

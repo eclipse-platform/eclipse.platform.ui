@@ -285,13 +285,13 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 		final CVSException[] error = new CVSException[1];
 		// Remove the registered Move/Delete hook, assuming that the cvs runnable will keep sync info up-to-date
 		final MoveDeleteHook hook = CVSTeamProvider.getRegisteredMoveDeleteHook();
-		boolean oldSetting = hook.isRecordOutgoingDeletions();
+		boolean oldSetting = hook.isWithinCVSOperation();
 		try {
 			ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
 				public void run(IProgressMonitor monitor) throws CoreException {
 					try {
-						hook.setRecordOutgoingDeletions(false);
-						internalRun(job, monitor);
+						hook.setWithinCVSOperation(true);
+						EclipseSynchronizer.getInstance().run(job, monitor);
 					} catch(CVSException e) {
 						error[0] = e; 
 					}
@@ -300,7 +300,7 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 		} catch(CoreException e) {
 			throw CVSException.wrapException(e);
 		} finally {
-			hook.setRecordOutgoingDeletions(oldSetting);
+			hook.setWithinCVSOperation(oldSetting);
 		}
 		if(error[0]!=null) {
 			throw error[0];
@@ -316,21 +316,9 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 	 */
 	public void run(final ICVSRunnable job, int flags, IProgressMonitor monitor) throws CVSException {
 		if (flags == READ_ONLY)
-			internalRun(job, monitor);
+			EclipseSynchronizer.getInstance().run(job, monitor);
 		else
 			run(job, monitor);
-	}
-
-	private void internalRun(ICVSRunnable job, IProgressMonitor monitor) throws CVSException {
-		monitor = Policy.monitorFor(monitor);
-		monitor.beginTask(null, 100);
-		try {
-			EclipseSynchronizer.getInstance().beginOperation(Policy.subMonitorFor(monitor, 5));
-			job.run(Policy.subMonitorFor(monitor, 60));
-		} finally {
-			EclipseSynchronizer.getInstance().endOperation(Policy.subMonitorFor(monitor, 35));
-			monitor.done();
-		}
 	}
 		
 	/**

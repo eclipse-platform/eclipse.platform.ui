@@ -36,7 +36,7 @@ public class LogListener implements ICommandOutputListener {
 	private String fileState;   //
 	private StringBuffer comment; // comment
 
-	private static final String NOTHING_KNOWN_ABOUT = "nothing known about ";
+	private static final String NOTHING_KNOWN_ABOUT = "nothing known about "; //$NON-NLS-1$
 	
 	public LogListener(RemoteFile file, List entries) {
 		this.file = file;

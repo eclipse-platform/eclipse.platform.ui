@@ -29,7 +29,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -39,6 +38,7 @@ import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.Team;
@@ -56,6 +56,9 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileChangeListener;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 
 public class CVSProviderPlugin extends Plugin {
+	
+	// preference names
+	public static final String READ_ONLY = "cvs.read.only"; //$NON-NLS-1$
 
 	// external command to run for ext connection method
 	public static final String DEFAULT_CVS_RSH = "ssh"; //$NON-NLS-1$
@@ -78,6 +81,7 @@ public class CVSProviderPlugin extends Plugin {
 	public static final String ID = "org.eclipse.team.cvs.core"; //$NON-NLS-1$
 	public static final String PT_AUTHENTICATOR = "authenticator"; //$NON-NLS-1$
 	public static final String PT_CONNECTIONMETHODS = "connectionmethods"; //$NON-NLS-1$
+	public static final String PT_FILE_MODIFICATION_VALIDATOR = "filemodificationvalidator"; //$NON-NLS-1$
 	
 	// Directory to cache file contents
 	private static final String CACHE_DIRECTORY = ".cache"; //$NON-NLS-1$
@@ -97,7 +101,6 @@ public class CVSProviderPlugin extends Plugin {
 	private String cvsRshParameters = DEFAULT_CVS_RSH_PARAMETERS;
 	private String cvsServer = DEFAULT_CVS_SERVER;
 	private IConsoleListener consoleListener;
-	private boolean watchEditEnabled = true;
 	private boolean determineVersionEnabled = true;
 	
 	private static CVSProviderPlugin instance;
@@ -281,6 +284,7 @@ public class CVSProviderPlugin extends Plugin {
 		
 		// save the state which includes the known repositories
 		saveState();
+		savePluginPreferences();
 		
 		// remove listeners
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -291,49 +295,12 @@ public class CVSProviderPlugin extends Plugin {
 		deleteCacheDirectory();
 	}
 		
-	/*
-	 * Add a resource change listener to the workspace in order to respond to 
-	 * resource deletions and moves and to ensure or project desription file is up to date.
+	/**
+	 * @see org.eclipse.core.runtime.Plugin#initializeDefaultPluginPreferences()
 	 */
-	private void initializeChangeListener() {
-		
-		// Build a change listener for changes to thr project meta-information
-		IResourceChangeListener projectChangeListener = new IResourceChangeListener() {
-			public void resourceChanged(IResourceChangeEvent event) {
-				try {
-					IResourceDelta root = event.getDelta();
-					IResourceDelta[] projectDeltas = root.getAffectedChildren(IResourceDelta.CHANGED);
-					for (int i = 0; i < projectDeltas.length; i++) {
-						IResourceDelta delta = projectDeltas[i];
-						IResource resource = delta.getResource();
-						if (resource.getType() == IResource.PROJECT) {
-							IProject project = (IProject)resource;
-							// Get the team provider for the project and
-							RepositoryProvider provider = RepositoryProvider.getProvider(project, getTypeId());
-							if(provider==null) continue;
-							/* Check if the project description changed. */
-							if ((delta.getFlags() & IResourceDelta.DESCRIPTION) != 0) {
-								/* The project description changed. Write the file. */
-								ProjectDescriptionManager.writeProjectDescriptionIfNecessary((CVSTeamProvider)provider, project, Policy.monitorFor(null));
-							}
-	
-							/* Check if the .vcm_meta file for the project is in the delta. */
-							IResourceDelta[] children = delta.getAffectedChildren(IResourceDelta.REMOVED);
-							for (int j = 0; j < children.length; j++) {
-								IResourceDelta childDelta = children[j];
-								IResource childResource = childDelta.getResource();
-								if (ProjectDescriptionManager.isProjectDescription(childResource)) {
-									ProjectDescriptionManager.writeProjectDescriptionIfNecessary((CVSTeamProvider)provider, project, Policy.monitorFor(null));
-								}
-							}
-						}
-					}
-				} catch (CVSException ex) {
-					Util.logError(Policy.bind("CVSProviderPlugin.cannotUpdateDescription"), ex);  //$NON-NLS-1$
-				}
-			}
-		};
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(projectChangeListener, IResourceChangeEvent.POST_AUTO_BUILD);
+	protected void initializeDefaultPluginPreferences(){
+		Preferences store = getPluginPreferences();
+		store.setDefault(READ_ONLY, false);
 	}
 	
 	/**
@@ -422,14 +389,6 @@ public class CVSProviderPlugin extends Plugin {
 	
 	public void setPromptOnFolderDelete(boolean prompt) {
 		promptOnFolderDelete = prompt;
-	}
-	
-	public boolean isWatchEditEnabled() {
-		return watchEditEnabled;
-	}
-	
-	public void setWatchEditEnabled(boolean enabled) {
-		watchEditEnabled = enabled;
 	}
 	
 	private static List listeners = new ArrayList();

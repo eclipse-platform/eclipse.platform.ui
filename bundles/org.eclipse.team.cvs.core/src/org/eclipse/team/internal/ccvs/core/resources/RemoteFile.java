@@ -552,14 +552,14 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	/**
 	 * @see org.eclipse.team.internal.ccvs.core.ICVSFile#checkout(int)
 	 */
-	public void edit(int notifications) throws CVSException {
+	public void edit(int notifications, IProgressMonitor monitor) throws CVSException {
 		// do nothing
 	}
 
 	/**
 	 * @see org.eclipse.team.internal.ccvs.core.ICVSFile#uncheckout()
 	 */
-	public void unedit() throws CVSException {
+	public void unedit(IProgressMonitor monitor) throws CVSException {
 		// do nothing
 	}
 
@@ -594,6 +594,12 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 		RemoteFile remoteFile = (RemoteFile)forTag(remoteFolder, tag);
 		remoteFolder.setChildren(new ICVSRemoteResource[] { remoteFile });
 		return remoteFile;
+	}
+	/**
+	 * @see org.eclipse.team.internal.ccvs.core.ICVSFile#committed(org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo)
+	 */
+	public void committed(ResourceSyncInfo info) throws CVSException {
+		// do nothing
 	}
 
 }

@@ -48,6 +48,8 @@ import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.ICVSResourceVisitor;
 import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
 import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.ccvs.core.client.Command.GlobalOption;
+import org.eclipse.team.internal.ccvs.core.client.Command.QuietOption;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.connection.Connection;
 import org.eclipse.team.internal.ccvs.core.syncinfo.NotifyInfo;
@@ -1093,5 +1095,31 @@ public class Session {
 	 */
 	public void setTextTransferOverride(Collection textTransferOverrideSet) {
 		this.textTransferOverrideSet = textTransferOverrideSet;
+	}
+	
+	/**
+	 * Filter the provided global options using parameters set on this session
+	 * or globally. The session may add global options that correspond to user
+	 * preferences or remove those that contradict requirements for this
+	 * particular session.
+	 *
+	 * @param globalOptions the global options, read-only
+	 * @return the filtered global options
+	 */
+	protected GlobalOption[] filterGlobalOptions(GlobalOption[] globalOptions) {
+		if (! Command.DO_NOT_CHANGE.isElementOf(globalOptions)) {
+			// Get the user preference for verbosity
+			QuietOption quietOption = CVSProviderPlugin.getPlugin().getQuietness();
+			if (quietOption != null) {
+				globalOptions = quietOption.addToEnd(globalOptions);
+			}
+			// Get the user preference for read-only
+			if (CVSProviderPlugin.getPlugin().getPluginPreferences().getBoolean(CVSProviderPlugin.READ_ONLY)) {
+				if (!Command.MAKE_READ_ONLY.isElementOf(globalOptions)) {
+					globalOptions = Command.MAKE_READ_ONLY.addToEnd(globalOptions);
+				}
+			}
+		}
+		return globalOptions;
 	}
 }

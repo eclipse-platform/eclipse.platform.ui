@@ -21,6 +21,7 @@
 	<!-- *************** Extension Points **************** -->
 	<extension-point name="Authenticator" id="authenticator"/>
 	<extension-point name="ConnectionMethods" id="connectionmethods"/>
+	<extension-point name="FileModificationValidator" id="filemodificationvalidator"/>
 
 	<!-- *************** Connection Methods **************** -->
 	<extension id="pserver" point="org.eclipse.team.cvs.core.connectionmethods">

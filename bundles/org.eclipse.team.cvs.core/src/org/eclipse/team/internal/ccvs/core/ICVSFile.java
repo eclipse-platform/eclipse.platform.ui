@@ -16,6 +16,7 @@ import java.util.Date;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.syncinfo.NotifyInfo;
+import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 
 /**
  * The CVS analog of a file. CVS files have access to synchronization information
@@ -124,7 +125,7 @@ public interface ICVSFile extends ICVSResource {
 	 * @param notifications the set of operations for which the local user would like notification
 	 * while the local file is being edited.
 	 */
-	public void edit(int notifications) throws CVSException;
+	public void edit(int notifications, IProgressMonitor monitor) throws CVSException;
 
 	/**
 	 * Undo a checkout of the file (analogous to "cvs unedit").
@@ -132,8 +133,15 @@ public interface ICVSFile extends ICVSResource {
 	 * a notification message that will be sent to the server on the next connection
 	 * If <code>isCheckedOut()</code> returns <code>false</code> then nothing is done.
 	 */
-	public void unedit() throws CVSException;
-	
+	public void unedit(IProgressMonitor monitor) throws CVSException;
+
+	/**
+	 * Update the file's sync info to the given value and reset the read-only
+	 * status of the file if a previous revision of the file was stored in the
+	 * CVS/BASE directory.
+	 */
+	public void committed(ResourceSyncInfo info) throws CVSException;
+		
 	/**
 	 * Answer any pending notification information associated with the receiver.
 	 * 

@@ -31,7 +31,9 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
+import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
 import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.ccvs.core.syncinfo.BaserevInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.NotifyInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ReentrantLock;
@@ -883,7 +885,7 @@ public class EclipseSynchronizer {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Method deleteNotifyInfo.
 	 * @param resource
@@ -904,13 +906,107 @@ public class EclipseSynchronizer {
 		}
 		SyncFileWriter.writeAllNotifyInfo(resource.getParent(), newInfos);
 	}
+	
+	/**
+	 * Add the entry to the CVS/Baserev file. We are not initially concerned
+	 * with efficiency since edit/unedit are typically issued on a small set of
+	 * files.
+	 *
+	 * XXX If there was a previous notify entry for the resource, it is replaced. This is
+	 * probably not the proper behavior (see EclipseFile).
+	 *
+	 * @param resource
+	 * @param info
+	 */
+	public void setBaserevInfo(IResource resource, BaserevInfo info) throws CVSException {
+		BaserevInfo[] infos = SyncFileWriter.readAllBaserevInfo(resource.getParent());
+		if (infos == null) {
+			infos = new BaserevInfo[] { info };
+		} else {
+			Map infoMap = new HashMap();
+			for (int i = 0; i < infos.length; i++) {
+				infoMap.put(infos[i].getName(), infos[i]);
+			}
+			infoMap.put(info.getName(), info);
+			BaserevInfo[] newInfos = new BaserevInfo[infoMap.size()];
+			int i = 0;
+			for (Iterator iter = infoMap.values().iterator(); iter.hasNext();) {
+				newInfos[i++] = (BaserevInfo) iter.next();
+			}
+			infos = newInfos;
+		}
+		SyncFileWriter.writeAllBaserevInfo(resource.getParent(), infos);
+	}
 
-	public void copyFileToBaseDirectory(IFile file) throws CVSException {
+	/**
+	 * Method getBaserevInfo.
+	 * @param resource
+	 * @return BaserevInfo
+	 */
+	public BaserevInfo getBaserevInfo(IResource resource) throws CVSException {
+		BaserevInfo[] infos = SyncFileWriter.readAllBaserevInfo(resource.getParent());
+		if (infos == null) return null;
+		for (int i = 0; i < infos.length; i++) {
+			BaserevInfo info = infos[i];
+			if (info.getName().equals(resource.getName())) {
+				return info;
+			}
+		}
+		return null;
+	}
+			
+	/**
+	 * Method deleteNotifyInfo.
+	 * @param resource
+	 */
+	public void deleteBaserevInfo(IResource resource) throws CVSException {
+		BaserevInfo[] infos = SyncFileWriter.readAllBaserevInfo(resource.getParent());
+		if (infos == null) return;
+		Map infoMap = new HashMap();
+		for (int i = 0; i < infos.length; i++) {
+			infoMap.put(infos[i].getName(), infos[i]);
+		}
+		infoMap.remove(resource.getName());
+		BaserevInfo[] newInfos = new BaserevInfo[infoMap.size()];
+		int i = 0;
+		for (Iterator iter = infoMap.values().iterator(); iter.hasNext();) {
+			newInfos[i++] = (BaserevInfo) iter.next();
+		}
+		SyncFileWriter.writeAllBaserevInfo(resource.getParent(), newInfos);
+	}
+
+	public void copyFileToBaseDirectory(final IFile file, IProgressMonitor monitor) throws CVSException {
+		run(new ICVSRunnable() {
+			public void run(IProgressMonitor monitor) throws CVSException {
+				ResourceSyncInfo info = getResourceSync(file);
+				// The file must exist remotely and locally
+				if (info == null || info.isAdded() || info.isDeleted())
+					return;
+				SyncFileWriter.writeFileToBaseDirectory(file, monitor);
+				changedResources.add(file);
+			}
+		}, monitor);
+	}
+	
+	public void restoreFileFromBaseDirectory(final IFile file, IProgressMonitor monitor) throws CVSException {
+		run(new ICVSRunnable() {
+			public void run(IProgressMonitor monitor) throws CVSException {
+				ResourceSyncInfo info = getResourceSync(file);
+				// The file must exist remotely
+				if (info == null || info.isAdded())
+					return;
+				SyncFileWriter.restoreFileFromBaseDirectory(file, monitor);
+				changedResources.add(file);
+			}
+		}, monitor);
+	}
+	
+	public void deleteFileFromBaseDirectory(final IFile file, IProgressMonitor monitor) throws CVSException {
 		ResourceSyncInfo info = getResourceSync(file);
-		// The file must exist remotely and must exist
-		if (info == null || info.isAdded() || info.isDeleted())
+		// The file must exist remotely
+		if (info == null || info.isAdded())
 			return;
-		SyncFileWriter.writeFileToBaseDirectory(file, info);
+		SyncFileWriter.deleteFileFromBaseDirectory(file, monitor);
 	}
 	
 	/**
@@ -996,5 +1092,17 @@ public class EclipseSynchronizer {
 			}
 		}
 		return (IContainer[]) folders.toArray(new IContainer[folders.size()]);
+	}
+	
+	public void run(ICVSRunnable job, IProgressMonitor monitor) throws CVSException {
+		monitor = Policy.monitorFor(monitor);
+		monitor.beginTask(null, 100);
+		try {
+			beginOperation(Policy.subMonitorFor(monitor, 5));
+			job.run(Policy.subMonitorFor(monitor, 60));
+		} finally {
+			endOperation(Policy.subMonitorFor(monitor, 35));
+			monitor.done();
+		}
 	}
 }

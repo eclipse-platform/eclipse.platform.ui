@@ -31,6 +31,15 @@
          </run>
       </authenticator>
    </extension>
+<!-- *************** CVS File Modification Validator **************** -->
+   <extension
+         point="org.eclipse.team.cvs.core.filemodificationvalidator">
+      <validator>
+         <run
+               class="org.eclipse.team.internal.ccvs.ui.FileModificationValidator">
+         </run>
+      </validator>
+   </extension>
 <!-- ******************* Wizards ****************** -->
    <extension
          point="org.eclipse.team.ui.configurationWizards">
@@ -572,7 +581,6 @@
             id="org.eclipse.team.cvs.ui.ExtMethodPreferencePage">
       </page>
    </extension>
-   <!--
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
@@ -582,7 +590,7 @@
             id="org.eclipse.team.cvs.ui.WatchEditPreferencePage">
       </page>
    </extension>
-   -->
+   
 <!-- **************** Decorator ******************* -->
    <extension
          point="org.eclipse.ui.decorators">

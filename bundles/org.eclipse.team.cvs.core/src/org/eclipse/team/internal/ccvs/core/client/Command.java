@@ -509,6 +509,19 @@ public abstract class Command extends Request {
 		public void send(Session session) throws CVSException {
 			session.sendGlobalOption(option);
 		}
+		/**
+		 * Add the given global option to the end of the provided list
+		 *
+		 * @param newOption
+		 * @param options
+		 * @return GlobalOption[]
+		 */
+		protected GlobalOption[] addToEnd(GlobalOption[] options) {
+			GlobalOption[] globalOptions = new GlobalOption[options.length + 1];
+			System.arraycopy(options, 0, globalOptions, 0, options.length);
+			globalOptions[globalOptions.length - 1] = this;
+			return globalOptions;
+		}
 	}
 	/**
 	 * Option subtype for global quietness options.
@@ -665,6 +678,8 @@ public abstract class Command extends Request {
 	
 	/**
 	 * Allows commands to filter the set of global options to be sent.
+	 * This method invokes the method of the same name on the session
+	 * itself in order to get any session wide or globally set options.
 	 * Subclasses that override this method should call the superclass.
 	 * 
 	 * @param session the session
@@ -672,16 +687,7 @@ public abstract class Command extends Request {
 	 * @return the filtered global options
 	 */
 	protected GlobalOption[] filterGlobalOptions(Session session, GlobalOption[] globalOptions) {
-		if (! DO_NOT_CHANGE.isElementOf(globalOptions)) {
-			QuietOption quietOption = CVSProviderPlugin.getPlugin().getQuietness();
-			if (quietOption != null) {
-				GlobalOption[] oldOptions = globalOptions;
-				globalOptions = new GlobalOption[oldOptions.length + 1];
-				System.arraycopy(oldOptions, 0, globalOptions, 1, oldOptions.length);
-				globalOptions[0] = quietOption;
-			}
-		}
-		return globalOptions;
+		return session.filterGlobalOptions(globalOptions);
 	}
 	
 	/**

@@ -57,7 +57,7 @@ class CheckedInHandler extends ResponseHandler {
 			newInfo = new ResourceSyncInfo(entryLine, fileInfo.getPermissions(), mFile.getTimeStamp());
 		}
 
-		mFile.setSyncInfo(newInfo);
+		mFile.committed(newInfo);
 	}
 }
 

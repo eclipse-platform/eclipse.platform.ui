@@ -121,7 +121,8 @@ public class ResourceDeltaTest extends EclipseTest {
 		folder = project.getFolder(new Path("sub/moved"));
 		ICVSFolder cvsFolder = CVSWorkspaceRoot.getCVSFolderFor(folder);
 		assertNotManaged(cvsFolder);
-		assertAdditionMarkerFor(folder, true);
+		assertAdditionMarkerFor(target, true);
+		assertAdditionMarkerFor(folder, false);
 	}
 	
 	public void testDeletionHandling() throws TeamException, CoreException {
@@ -150,7 +151,6 @@ public class ResourceDeltaTest extends EclipseTest {
 		assertTrue("File " + file.getName() + " should not be marked as deleted", ! info.isDeleted());
 		assertTrue("File " + file.getName() + " should not be marked as addition", ! info.isAdded());
 		assertDeletionMarkerFor(project.getFile("deleted.txt"), false);
-		assertAdditionMarkerFor(project.getFile("added.txt"), false);
 	}
 	
 	public void testFolderAdditionHandling() throws TeamException, CoreException {

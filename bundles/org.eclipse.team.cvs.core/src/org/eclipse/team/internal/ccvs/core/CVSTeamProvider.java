@@ -36,10 +36,13 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.team.IMoveDeleteHook;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.team.core.RepositoryProvider;
@@ -100,6 +103,7 @@ import org.eclipse.team.internal.core.streams.LFtoCRLFInputStream;
  * have them appear in Eclipse. This may be changed in the future.
  */
 public class CVSTeamProvider extends RepositoryProvider {
+
 	private static final boolean IS_CRLF_PLATFORM = Arrays.equals(
 		System.getProperty("line.separator").getBytes(), new byte[] { '\r', '\n' }); //$NON-NLS-1$
 	
@@ -110,11 +114,31 @@ public class CVSTeamProvider extends RepositoryProvider {
 	private String comment = "";  //$NON-NLS-1$
 	
 	private static MoveDeleteHook moveDeleteHook= new MoveDeleteHook();
+	private static IFileModificationValidator fileModificationValidator;
 	
 	// property used to indicate whether new directories should be discovered for the project
 	private final static QualifiedName FETCH_ABSENT_DIRECTORIES_PROP_KEY = 
 		new QualifiedName("org.eclipse.team.cvs.core", "fetch_absent_directories");  //$NON-NLS-1$  //$NON-NLS-2$
-			
+
+	private static IFileModificationValidator getPluggedInValidator() {
+		IExtension[] extensions = Platform.getPluginRegistry().getExtensionPoint(CVSProviderPlugin.ID, CVSProviderPlugin.PT_FILE_MODIFICATION_VALIDATOR).getExtensions();
+		if (extensions.length == 0)
+			return null;
+		IExtension extension = extensions[0];
+		IConfigurationElement[] configs = extension.getConfigurationElements();
+		if (configs.length == 0) {
+			CVSProviderPlugin.log(new Status(IStatus.ERROR, CVSProviderPlugin.ID, 0, Policy.bind("CVSAdapter.noConfigurationElement", new Object[] {extension.getUniqueIdentifier()}), null));//$NON-NLS-1$
+			return null;
+		}
+		try {
+			IConfigurationElement config = configs[0];
+			return (IFileModificationValidator) config.createExecutableExtension("run");//$NON-NLS-1$
+		} catch (CoreException ex) {
+			CVSProviderPlugin.log(new Status(IStatus.ERROR, CVSProviderPlugin.ID, 0, Policy.bind("CVSAdapter.unableToInstantiate", new Object[] {extension.getUniqueIdentifier()}), ex));//$NON-NLS-1$
+			return null;
+		}
+	}
+				
 	/**
 	 * No-arg Constructor for IProjectNature conformance
 	 */
@@ -1098,54 +1122,15 @@ public class CVSTeamProvider extends RepositoryProvider {
 	 * @see org.eclipse.team.core.RepositoryProvider#getFileModificationValidator()
 	 */
 	public IFileModificationValidator getFileModificationValidator() {
-		if (isWatchEditEnabled()) {
-			return new IFileModificationValidator() {
-				public IStatus validateEdit(IFile[] files, Object context) {
-					try {
-						// only do this for files that are read-only
-						List readOnlys = new ArrayList();
-						for (int i = 0; i < files.length; i++) {
-							IFile iFile = files[i];
-							if (iFile.isReadOnly()) 
-								readOnlys.add(iFile);
-						}
-						if (readOnlys.isEmpty()) return OK;
-						
-						// XXX We should try to create a PM using the provided context
-						edit((IFile[]) readOnlys.toArray(new IFile[readOnlys.size()]), 
-							false /* recurse */, true /* notify server */, 
-							ICVSFile.NO_NOTIFICATION, null);
-					} catch (TeamException e) {
-						return e.getStatus();
-					}
-					return OK;
-				}
-				public IStatus validateSave(IFile file) {
-					// Ignore files that are not read-only
-					if (!file.isReadOnly()) return OK;
-					try {
-						edit(new IResource[] {file},
-							false /* recurse */, true /* notify server */, 
-							ICVSFile.NO_NOTIFICATION, null);
-					} catch (TeamException e) {
-						return e.getStatus();
-					}
-					return OK;
-				}
-			};
-		} else {
-			return super.getFileModificationValidator();
+		if (CVSTeamProvider.fileModificationValidator == null) {
+			CVSTeamProvider.fileModificationValidator = CVSTeamProvider.getPluggedInValidator();
+			if (CVSTeamProvider.fileModificationValidator == null) {
+				CVSTeamProvider.fileModificationValidator =super.getFileModificationValidator();
+			}
 		}
+		return CVSTeamProvider.fileModificationValidator;
 	}
-
-	/**
-	 * Answer true if watch/edit support is enabled for this provider.
-	 * @return boolean
-	 */
-	public boolean isWatchEditEnabled() {
-		return CVSProviderPlugin.getPlugin().isWatchEditEnabled();
-	}
-
+	
 	/**
 	 * Checkout (cvs edit) the provided resources so they can be modified locally and committed.
 	 * This will make any read-only resources in the list writable and will notify the server
@@ -1176,7 +1161,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 		notifyEditUnedit(resources, recurse, notifyServer, new ICVSResourceVisitor() {
 			public void visitFile(ICVSFile file) throws CVSException {
 				if (file.isReadOnly())
-					file.edit(notification);
+					file.edit(notification, Policy.monitorFor(null));
 			}
 			public void visitFolder(ICVSFolder folder) throws CVSException {
 				// nothing needs to be done here as the recurse will handle the traversal
@@ -1210,7 +1195,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 		notifyEditUnedit(resources, recurse, notifyServer, new ICVSResourceVisitor() {
 			public void visitFile(ICVSFile file) throws CVSException {
 				if (!file.isReadOnly())
-					file.unedit();
+					file.unedit(Policy.monitorFor(null));
 			}
 			public void visitFolder(ICVSFolder folder) throws CVSException {
 				// nothing needs to be done here as the recurse will handle the traversal
@@ -1276,4 +1261,5 @@ public class CVSTeamProvider extends RepositoryProvider {
 			throw new CVSException(new CVSStatus(IStatus.ERROR, Policy.bind("CVSTeamProvider.errorSettingFetchProperty", project.getName()), e)); //$NON-NLS-1$
 		}
 	}
+
 }

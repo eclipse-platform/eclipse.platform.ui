@@ -369,6 +369,43 @@ public class CVSUIPlugin extends AbstractUIPlugin implements IPropertyChangeList
 		// Log if the user requested it
 		if (log) CVSUIPlugin.log(status);
 		
+		// Create a runnable that will display the error status
+		final String displayTitle = title;
+		final String displayMessage = message;
+		final IStatus displayStatus = status;
+		final IOpenableInShell openable = new IOpenableInShell() {
+			public void open(Shell shell) {
+				if (displayStatus.getSeverity() == IStatus.INFO && !displayStatus.isMultiStatus()) {
+					MessageDialog.openInformation(shell, Policy.bind("information"), displayStatus.getMessage()); //$NON-NLS-1$
+				} else {
+					ErrorDialog.openError(shell, displayTitle, displayMessage, displayStatus);
+				}
+			}
+		};
+		openDialog(providedShell, openable, flags);
+		
+		// return the status we display
+		return status;
+	}
+	
+	/**
+	 * Interface that allows a shell to be passed to an open method. The
+	 * provided shell can be used without sync-execing, etc.
+	 */
+	public interface IOpenableInShell {
+		public void open(Shell shell);
+	}
+	
+	/**
+	 * Open the dialog code provided in the IOpenableInShell, ensuring that 
+	 * the provided whll is valid. This method will provide a shell to the
+	 * IOpenableInShell if one is not provided to the method.
+	 * 
+	 * @param providedShell
+	 * @param openable
+	 * @param flags
+	 */
+	public static void openDialog(Shell providedShell, final IOpenableInShell openable, int flags) {
 		// If no shell was provided, try to get one from the active window
 		if (providedShell == null) {
 			IWorkbenchWindow window = CVSUIPlugin.getPlugin().getWorkbench().getActiveWorkbenchWindow();
@@ -378,13 +415,10 @@ public class CVSUIPlugin extends AbstractUIPlugin implements IPropertyChangeList
 				flags = flags | PERFORM_SYNC_EXEC;
 			}
 		}
-		
+
 		// Create a runnable that will display the error status
 		final Shell shell = providedShell;
-		final String displayTitle = title;
-		final String displayMessage = message;
-		final IStatus displayStatus = status;
-		Runnable runnable = new Runnable() {
+		Runnable outerRunnable = new Runnable() {
 			public void run() {
 				Shell displayShell;
 				if (shell == null) {
@@ -393,17 +427,13 @@ public class CVSUIPlugin extends AbstractUIPlugin implements IPropertyChangeList
 				} else {
 					displayShell = shell;
 				}
-				if (displayStatus.getSeverity() == IStatus.INFO && !displayStatus.isMultiStatus()) {
-					MessageDialog.openInformation(displayShell, Policy.bind("information"), displayStatus.getMessage()); //$NON-NLS-1$
-				} else {
-					ErrorDialog.openError(displayShell, displayTitle, displayMessage, displayStatus);
-				}
+				openable.open(displayShell);
 				if (shell == null) {
 					displayShell.dispose();
 				}
 			}
 		};
-		
+
 		// Execute the above runnable as determined by the parameters
 		if (shell == null || (flags & PERFORM_SYNC_EXEC) > 0) {
 			Display display;
@@ -415,13 +445,10 @@ public class CVSUIPlugin extends AbstractUIPlugin implements IPropertyChangeList
 			} else {
 				display = shell.getDisplay();
 			}
-			display.syncExec(runnable);
+			display.syncExec(outerRunnable);
 		} else {
-			runnable.run();
+			outerRunnable.run();
 		}
-		
-		// return the status we display
-		return status;
 	}
 	
 	/**
