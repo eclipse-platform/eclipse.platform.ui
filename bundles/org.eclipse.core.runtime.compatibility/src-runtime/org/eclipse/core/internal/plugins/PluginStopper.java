@@ -101,7 +101,7 @@ public class PluginStopper implements IShutdownHook {
 					orderedBundles[i].stop();
 				}
 			} catch (Exception be) {
-				be.printStackTrace();
+				be.printStackTrace();//TODO Need to log the error
 			}
 		}
 	}
