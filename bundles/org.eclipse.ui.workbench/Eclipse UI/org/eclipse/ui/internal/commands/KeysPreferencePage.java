@@ -34,6 +34,7 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
@@ -159,7 +160,6 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 	private Combo comboCommand;	
 	private Combo comboContext;
 	private Combo comboKeyConfiguration;	
-	private Combo comboKeySequence;
 	private Map commandDefinitionsById;
 	private Map commandIdsByUniqueName;
 	private Map commandUniqueNamesById;
@@ -168,6 +168,8 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 	private Map contextIdsByUniqueName;
 	private Map contextUniqueNamesById;
 	private ContextManager contextManager;
+	private Font fontLabelContextExtends;
+	private Font fontLabelKeyConfigurationExtends;	
 	private Map keyConfigurationDefinitionsById;
 	private Map keyConfigurationIdsByUniqueName;
 	private Map keyConfigurationUniqueNamesById;
@@ -185,12 +187,13 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 	private Table tableCommandsForKeySequence;
 	private Table tableKeySequencesForCommand;
 	private Text textDescription; 
+	private Text textKeySequence;
 	private SortedMap tree;
 	private IWorkbench workbench;	
 
 	private List commandRecords = new ArrayList();	
 	private List keySequenceRecords = new ArrayList();
-
+		
 	public void init(IWorkbench workbench) {
 		this.workbench = workbench;
 		commandManager = CommandManager.getInstance();
@@ -488,7 +491,6 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 
 	protected Control createContents(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NULL);
-		composite.setFont(parent.getFont());
 		GridLayout gridLayout = new GridLayout();
 		gridLayout.marginHeight = 0;
 		gridLayout.marginWidth = 0;
@@ -496,13 +498,9 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		composite.setLayout(gridLayout);
 		GridData gridData = new GridData(GridData.FILL_BOTH);
 		composite.setLayoutData(gridData);
-
 		labelKeyConfiguration = new Label(composite, SWT.LEFT);
-		labelKeyConfiguration.setFont(composite.getFont());
 		labelKeyConfiguration.setText(Util.translateString(resourceBundle, "labelKeyConfiguration")); //$NON-NLS-1$
-
 		comboKeyConfiguration = new Combo(composite, SWT.READ_ONLY);
-		comboKeyConfiguration.setFont(composite.getFont());
 		gridData = new GridData();
 		gridData.widthHint = 200;
 		comboKeyConfiguration.setLayoutData(gridData);
@@ -514,31 +512,23 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		});
 
 		labelKeyConfigurationExtends = new Label(composite, SWT.LEFT);
-		labelKeyConfigurationExtends.setFont(composite.getFont());
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
 		labelKeyConfigurationExtends.setLayoutData(gridData);
-
 		Label labelSeparator = new Label(composite, SWT.HORIZONTAL | SWT.SEPARATOR);
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
 		gridData.horizontalSpan = 3;
 		labelSeparator.setLayoutData(gridData);	
-
 		labelCommandGroup = new Label(composite, SWT.LEFT);
-		labelCommandGroup.setFont(composite.getFont());
 		gridData = new GridData(GridData.FILL_BOTH);
 		gridData.horizontalSpan = 3;
 		labelCommandGroup.setLayoutData(gridData);
 		labelCommandGroup.setText(Util.translateString(resourceBundle, "labelCommandGroup")); //$NON-NLS-1$
-
 		labelCategory = new Label(composite, SWT.LEFT);
-		labelCategory.setFont(composite.getFont());
 		gridData = new GridData();
 		gridData.horizontalIndent = 50;
 		labelCategory.setLayoutData(gridData);
 		labelCategory.setText(Util.translateString(resourceBundle, "labelCategory")); //$NON-NLS-1$
-
 		comboCategory = new Combo(composite, SWT.READ_ONLY);
-		comboCategory.setFont(composite.getFont());
 		gridData = new GridData();
 		gridData.horizontalSpan = 2;
 		gridData.widthHint = 200;
@@ -551,14 +541,11 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		});
 
 		labelCommand = new Label(composite, SWT.LEFT);
-		labelCommand.setFont(composite.getFont());
 		gridData = new GridData();
 		gridData.horizontalIndent = 50;
 		labelCommand.setLayoutData(gridData);
 		labelCommand.setText(Util.translateString(resourceBundle, "labelCommand")); //$NON-NLS-1$
-
 		comboCommand = new Combo(composite, SWT.READ_ONLY);
-		comboCommand.setFont(composite.getFont());
 		gridData = new GridData();
 		gridData.horizontalSpan = 2;
 		gridData.widthHint = 300;
@@ -571,50 +558,40 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		});
 
 		labelDescription = new Label(composite, SWT.LEFT);
-		labelDescription.setFont(composite.getFont());
 		gridData = new GridData();
 		gridData.horizontalIndent = 50;
 		labelDescription.setLayoutData(gridData);
 		labelDescription.setText(Util.translateString(resourceBundle, "labelDescription")); //$NON-NLS-1$
-
 		textDescription = new Text(composite, SWT.BORDER | SWT.LEFT | SWT.READ_ONLY);
-		textDescription.setFont(composite.getFont());
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
 		gridData.horizontalSpan = 2;
 		textDescription.setLayoutData(gridData);
-
 		labelKeySequencesForCommand = new Label(composite, SWT.LEFT);
-		labelKeySequencesForCommand.setFont(composite.getFont());
 		gridData = new GridData();
 		gridData.horizontalIndent = 50;
 		gridData.horizontalSpan = 3;
 		labelKeySequencesForCommand.setLayoutData(gridData);
 		labelKeySequencesForCommand.setText(Util.translateString(resourceBundle, "labelKeySequencesForCommand")); //$NON-NLS-1$
-
 		tableKeySequencesForCommand = new Table(composite, SWT.BORDER | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
-		tableKeySequencesForCommand.setFont(composite.getFont());
 		tableKeySequencesForCommand.setHeaderVisible(true);
 		gridData = new GridData(GridData.FILL_BOTH);
-		gridData.heightHint = 60;
+		gridData.heightHint = 50;
 		gridData.horizontalIndent = 50;
 		gridData.horizontalSpan = 3;
 		gridData.widthHint = 520;
 		tableKeySequencesForCommand.setLayoutData(gridData);
-
 		int width = 0;
 		TableColumn tableColumn = new TableColumn(tableKeySequencesForCommand, SWT.NULL, 0);
 		tableColumn.setResizable(false);
 		tableColumn.setText(Util.ZERO_LENGTH_STRING);
 		tableColumn.setWidth(20);
 		width += tableColumn.getWidth();
-
 		tableColumn = new TableColumn(tableKeySequencesForCommand, SWT.NULL, 1);
 		tableColumn.setResizable(true);
 		tableColumn.setText(Util.translateString(resourceBundle, "tableColumnContext")); //$NON-NLS-1$
 		tableColumn.pack();
-		tableColumn.setWidth("carbon".equals(SWT.getPlatform()) ? 100 : tableColumn.getWidth() + 40); // TODO remove carbon reference
+		tableColumn.setWidth(100); // TODO tableColumn.getWidth() + constant
 		width += tableColumn.getWidth();
-
 		tableColumn = new TableColumn(tableKeySequencesForCommand, SWT.NULL, 2);
 		tableColumn.setResizable(true);
 		tableColumn.setText(Util.translateString(resourceBundle, "tableColumnKeySequence")); //$NON-NLS-1$
@@ -634,11 +611,8 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		});
 
 		labelContext = new Label(composite, SWT.LEFT);
-		labelContext.setFont(composite.getFont());
 		labelContext.setText(Util.translateString(resourceBundle, "labelContext")); //$NON-NLS-1$
-
 		comboContext = new Combo(composite, SWT.READ_ONLY);
-		comboContext.setFont(composite.getFont());
 		gridData = new GridData();
 		gridData.widthHint = 200;
 		comboContext.setLayoutData(gridData);
@@ -650,65 +624,48 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		});
 
 		labelContextExtends = new Label(composite, SWT.LEFT);
-		labelContextExtends.setFont(composite.getFont());
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
 		labelContextExtends.setLayoutData(gridData);
-
 		labelKeySequence = new Label(composite, SWT.LEFT);
-		labelKeySequence.setFont(composite.getFont());
 		labelKeySequence.setText(Util.translateString(resourceBundle, "labelKeySequence")); //$NON-NLS-1$
-
-		comboKeySequence = new Combo(composite, SWT.NULL);
-		comboKeySequence.setFont(composite.getFont());
+		textKeySequence = new Text(composite, SWT.BORDER | SWT.LEFT);
 		gridData = new GridData();
 		gridData.horizontalSpan = 2;
 		gridData.widthHint = 300;
-		comboKeySequence.setLayoutData(gridData);
+		textKeySequence.setLayoutData(gridData);
 
-		comboKeySequence.addModifyListener(new ModifyListener() {			
+		textKeySequence.addModifyListener(new ModifyListener() {			
 			public void modifyText(ModifyEvent modifyEvent) {
-				modifiedComboKeySequence();
-			}	
-		});
-
-		comboKeySequence.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent selectionEvent) {
-				selectedComboKeySequence();
+				modifiedTextKeySequence();
 			}	
 		});
 
 		labelCommandsForKeySequence = new Label(composite, SWT.LEFT);
-		labelCommandsForKeySequence.setFont(composite.getFont());
 		gridData = new GridData();
 		gridData.horizontalIndent = 50;
 		gridData.horizontalSpan = 3;
 		labelCommandsForKeySequence.setLayoutData(gridData);
 		labelCommandsForKeySequence.setText(Util.translateString(resourceBundle, "labelCommandsForKeySequence")); //$NON-NLS-1$
-
 		tableCommandsForKeySequence = new Table(composite, SWT.BORDER | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
-		tableCommandsForKeySequence.setFont(composite.getFont());
 		tableCommandsForKeySequence.setHeaderVisible(true);
 		gridData = new GridData(GridData.FILL_BOTH);
-		gridData.heightHint = 60;
+		gridData.heightHint = 50;
 		gridData.horizontalIndent = 50;
 		gridData.horizontalSpan = 3;
 		gridData.widthHint = 520;
 		tableCommandsForKeySequence.setLayoutData(gridData);
-
 		width = 0;
 		tableColumn = new TableColumn(tableCommandsForKeySequence, SWT.NULL, 0);
 		tableColumn.setResizable(false);
 		tableColumn.setText(Util.ZERO_LENGTH_STRING);
 		tableColumn.setWidth(20);
 		width += tableColumn.getWidth();
-
 		tableColumn = new TableColumn(tableCommandsForKeySequence, SWT.NULL, 1);
 		tableColumn.setResizable(true);
 		tableColumn.setText(Util.translateString(resourceBundle, "tableColumnContext")); //$NON-NLS-1$
-		tableColumn.pack();
-		tableColumn.setWidth("carbon".equals(SWT.getPlatform()) ? 100 : tableColumn.getWidth() + 40); // TODO remove carbon reference
+		tableColumn.pack();		
+		tableColumn.setWidth(100); // TODO tableColumn.getWidth() + constant
 		width += tableColumn.getWidth();
-
 		tableColumn = new TableColumn(tableCommandsForKeySequence, SWT.NULL, 2);
 		tableColumn.setResizable(true);
 		tableColumn.setText(Util.translateString(resourceBundle, "tableColumnCommand")); //$NON-NLS-1$
@@ -728,7 +685,6 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		});
 
 		Composite compositeButton = new Composite(composite, SWT.NULL);
-		compositeButton.setFont(composite.getFont());
 		gridLayout = new GridLayout();
 		gridLayout.marginHeight = 20;
 		gridLayout.marginWidth = 0;		
@@ -737,9 +693,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		gridData = new GridData();
 		gridData.horizontalSpan = 3;
 		compositeButton.setLayoutData(gridData);
-				
 		buttonAdd = new Button(compositeButton, SWT.CENTER | SWT.PUSH);
-		buttonAdd.setFont(compositeButton.getFont());
 		gridData = new GridData();
 		gridData.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
 		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
@@ -754,7 +708,6 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		});
 
 		buttonRemove = new Button(compositeButton, SWT.CENTER | SWT.PUSH);
-		buttonRemove.setFont(compositeButton.getFont());
 		gridData = new GridData();
 		gridData.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
 		widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
@@ -769,7 +722,6 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		});
 
 		buttonRestore = new Button(compositeButton, SWT.CENTER | SWT.PUSH);
-		buttonRestore.setFont(compositeButton.getFont());
 		gridData = new GridData();
 		gridData.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
 		widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
@@ -784,6 +736,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		});
 				
 		// TODO WorkbenchHelp.setHelp(parent, IHelpContextIds.WORKBENCH_KEY_PREFERENCE_PAGE);
+		applyDialogFont(composite);
 		return composite;	
 	}
 
@@ -837,13 +790,13 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 
 	private KeySequence getKeySequence() {
 		try {
-			return KeySequence.getInstance(comboKeySequence.getText());
+			return KeySequence.getInstance(textKeySequence.getText());
 		} catch (ParseException eParse) {
 			return KeySequence.getInstance();		
 		}
 	}
 
-	private void modifiedComboKeySequence() {
+	private void modifiedTextKeySequence() {
 	}
 
 	private void selectedButtonAdd() {
@@ -888,9 +841,6 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 
 	private void selectedComboKeyConfiguration() {		
 	}	
-
-	private void selectedComboKeySequence() {
-	}
 
 	private void selectedTableCommandsForKeySequence() {
 	}
@@ -965,7 +915,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 	}
 
 	private void setKeySequence(KeySequence keySequence) {
-		comboKeySequence.setText(keySequence.toString());
+		textKeySequence.setText(keySequence.toString());
 	}
 
 	/*
