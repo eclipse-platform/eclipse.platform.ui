@@ -21,8 +21,7 @@
    </requires>
 
    <extension point="org.eclipse.ui.startup">
-		<class class="org.eclipse.ui.carbon.CarbonUIEnhancer"/>
-		<startup class="org.eclipse.ui.carbon.CarbonUIEnhancer"/>
+      <startup class="org.eclipse.ui.carbon.CarbonUIEnhancer"/>
    </extension>
    
 </fragment>
