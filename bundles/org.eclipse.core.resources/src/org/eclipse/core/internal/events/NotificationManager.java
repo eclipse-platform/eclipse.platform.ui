@@ -81,7 +81,7 @@ protected ResourceChangeListenerList.ListenerEntry[] getListeners() {
 	return result;
 }
 private void notify(ResourceChangeListenerList.ListenerEntry[] resourceListeners, final IResourceChangeEvent event, boolean lockTree) {
-	String message = Policy.bind("notification.2", null);
+	String message = Policy.bind("notification.2");
 	int type = event.getType();
 	for (int i = 0; i < resourceListeners.length; i++) {
 		if ((type & resourceListeners[i].eventMask) != 0) {

@@ -375,7 +375,7 @@ public void delete(boolean deleteContent, boolean force, IProgressMonitor monito
 			ResourceInfo info = getResourceInfo(false, false);
 			if (!exists(getFlags(info), true))
 				return;
-			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_DELETE_LOCAL, Policy.bind("deleteProblem", null), null);
+			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_DELETE_LOCAL, Policy.bind("deleteProblem"), null);
 			/* Signal that this resource is about to be deleted. 
 			   Do this before the begin to prevent lifecycle participants to change the tree. */
 			workspace.deleting(this);
@@ -585,7 +585,7 @@ protected void internalCopy(IProjectDescription destDesc, boolean force, IProgre
 			workspace.getBuildManager().fixBuildersFor(destProject);
 
 			// refresh local
-			monitor.subTask(Policy.bind("syncTree", null));
+			monitor.subTask(Policy.bind("syncTree"));
 			getLocalManager().refresh(destProject, DEPTH_INFINITE, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
 		} catch (OperationCanceledException e) {
 			workspace.getWorkManager().operationCanceled();
@@ -631,7 +631,7 @@ protected void internalCopyToFolder(IPath destPath, boolean force, IProgressMoni
 			for (int i = 0; i < children.length; i++)
 				children[i].copy(destFolder.getFullPath().append(children[i].getName()), force, Policy.subMonitorFor(monitor, Policy.opWork * 50 / 100 / children.length));
 
-			monitor.subTask(Policy.bind("syncTree", null));
+			monitor.subTask(Policy.bind("syncTree"));
 			workspace.flushBuildOrder();
 			// refresh local
 			getLocalManager().refresh(destFolder, DEPTH_INFINITE, Policy.subMonitorFor(monitor, Policy.opWork * 20 / 100));
@@ -725,7 +725,7 @@ protected void internalMove(IProjectDescription destDesc, boolean force, IProgre
 			getMarkerManager().moved(this, destProject, IResource.DEPTH_ZERO);
 			monitor.worked(Policy.opWork * 10 / 100);
 
-			monitor.subTask(Policy.bind("syncTree", null));
+			monitor.subTask(Policy.bind("syncTree"));
 			workspace.flushBuildOrder();
 			// refresh local
 			getLocalManager().refresh(destProject, DEPTH_INFINITE, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
@@ -813,7 +813,7 @@ protected void internalMoveToFolder(IPath destPath, boolean force, IProgressMoni
 			getMarkerManager().moved(this, destFolder, IResource.DEPTH_ZERO);
 			monitor.worked(Policy.opWork * 10 / 100);
 
-			monitor.subTask(Policy.bind("syncTree", null));
+			monitor.subTask(Policy.bind("syncTree"));
 			workspace.flushBuildOrder();
 			// refresh local
 			getLocalManager().refresh(destFolder, DEPTH_INFINITE, Policy.subMonitorFor(monitor, Policy.opWork * 20 / 100));

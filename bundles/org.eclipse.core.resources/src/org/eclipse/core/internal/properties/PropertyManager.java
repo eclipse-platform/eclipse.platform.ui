@@ -46,9 +46,9 @@ public void copy(IResource source, IResource destination, int depth) throws Core
 	PropertyStore sourceStore = getPropertyStore(source);
 	PropertyStore destinationStore = getPropertyStore(destination);
 	if (sourceStore == null)
-		throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, source.getFullPath(), Policy.bind("storeNotAvaiable", null), null);
+		throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, source.getFullPath(), Policy.bind("storeNotAvaiable"), null);
 	if (destinationStore == null)
-		throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, destination.getFullPath(), Policy.bind("storeNotAvaiable", null), null);
+		throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, destination.getFullPath(), Policy.bind("storeNotAvaiable"), null);
 	sourceStore.commit();
 	destinationStore.commit();
 }
@@ -56,9 +56,9 @@ protected void copyProperties(IResource source, IResource destination, int depth
 	PropertyStore sourceStore = getPropertyStore(source);
 	PropertyStore destStore = getPropertyStore(destination);
 	if (sourceStore == null)
-		throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, source.getFullPath(), Policy.bind("storeNotAvaiable", null), null);
+		throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, source.getFullPath(), Policy.bind("storeNotAvaiable"), null);
 	if (destStore == null)
-		throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, destination.getFullPath(), Policy.bind("storeNotAvaiable", null), null);
+		throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, destination.getFullPath(), Policy.bind("storeNotAvaiable"), null);
 	ResourceName sourceName = getPropertyKey(source);
 	ResourceName destName = getPropertyKey(destination);
 	QueryResults results = sourceStore.getAll(sourceName, depth);
@@ -81,7 +81,7 @@ public void deleteProperties(IResource target) throws CoreException {
 		case IResource.FOLDER :
 			PropertyStore store = getPropertyStore(target);
 			if (store == null)
-				throw new ResourceException(IResourceStatus.FAILED_DELETE_LOCAL, target.getFullPath(), Policy.bind("storeNotAvaiable", null), null);
+				throw new ResourceException(IResourceStatus.FAILED_DELETE_LOCAL, target.getFullPath(), Policy.bind("storeNotAvaiable"), null);
 			store.removeAll(getPropertyKey(target), IResource.DEPTH_INFINITE);
 			store.commit();
 			break;
@@ -103,7 +103,7 @@ public void deleting(IProject project) {
 public String getProperty(IResource target, QualifiedName name) throws CoreException {
 	PropertyStore store = getPropertyStore(target);
 	if (store == null)
-		throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, target.getFullPath(), Policy.bind("storeNotAvaiable", null), null);
+		throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, target.getFullPath(), Policy.bind("storeNotAvaiable"), null);
 	StoredProperty result = store.get(getPropertyKey(target), name);
 	return result == null ? null : result.getStringValue();
 }
@@ -150,7 +150,7 @@ protected PropertyStore openPropertyStore(IResource target) {
 public void setProperty(IResource target, QualifiedName key, String value) throws CoreException {
 	PropertyStore store = getPropertyStore(target);
 	if (store == null)
-		throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, target.getFullPath(), Policy.bind("storeNotAvaiable", null), null);
+		throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, target.getFullPath(), Policy.bind("storeNotAvaiable"), null);
 	if (value == null) {
 		store.remove(getPropertyKey(target), key);
 	} else {

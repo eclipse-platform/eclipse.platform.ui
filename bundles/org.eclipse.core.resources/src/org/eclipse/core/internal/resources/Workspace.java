@@ -88,7 +88,7 @@ public void beginOperation(boolean createNewTree) throws CoreException {
 	if (getWorkManager().getNestedOperationDepth() != getWorkManager().getPreparedOperationDepth())
 		Assert.isTrue(false, "Operation was not prepared.");
 	if (treeLocked && createNewTree) {
-		String message = Policy.bind("cannotModify", null);
+		String message = Policy.bind("cannotModify");
 		throw new ResourceException(IResourceStatus.ERROR, null, message, null);
 	}
 	if (getWorkManager().getPreparedOperationDepth() > 1)
@@ -203,12 +203,12 @@ public static boolean clear(java.io.File root) {
 public void close(IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		String msg = Policy.bind("closing.1", null);
+		String msg = Policy.bind("closing.1");
 		int rootCount = tree.getChildCount(Path.ROOT);
 		monitor.beginTask(msg, rootCount + 2);
 		monitor.subTask(msg);
 		//this operation will never end because the world is going away
-		MultiStatus result = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, Policy.bind("workspaceClose", null), null);
+		MultiStatus result = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, Policy.bind("workspaceClose"), null);
 		try {
 			prepareOperation();
 			if (isOpen()) {
@@ -320,11 +320,11 @@ public IStatus copy(IResource[] resources, IPath destination, boolean force, IPr
 		monitor.beginTask(Policy.bind("copying", new String[] { "" }), totalWork);
 		Assert.isLegal(resources != null);
 		if (resources.length == 0)
-			return new ResourceStatus(IResourceStatus.OK, Policy.bind("ok", null));
+			return new ResourceStatus(IResourceStatus.OK, Policy.bind("ok"));
 		// to avoid concurrent changes to this array
 		resources = (IResource[]) resources.clone();
 		IPath parentPath = null;
-		MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, Policy.bind("copyProblem", null), null);
+		MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, Policy.bind("copyProblem"), null);
 		try {
 			prepareOperation();
 			beginOperation(true);
@@ -370,7 +370,7 @@ public IStatus copy(IResource[] resources, IPath destination, boolean force, IPr
 		}
 		if (status.matches(IStatus.ERROR))
 			throw new ResourceException(status);
-		return status.isOK() ? new ResourceStatus(IResourceStatus.OK, Policy.bind("ok", null)) : (IStatus) status;
+		return status.isOK() ? new ResourceStatus(IResourceStatus.OK, Policy.bind("ok")) : (IStatus) status;
 	} finally {
 		monitor.done();
 	}
@@ -485,7 +485,7 @@ public IStatus delete(IResource[] resources, boolean force, IProgressMonitor mon
 		int opWork = Math.max(resources.length, 1);
 		int totalWork = Policy.totalWork * opWork / Policy.opWork;
 		monitor.beginTask(Policy.bind("deleting", new String[] { "" }), totalWork);
-		MultiStatus result = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, Policy.bind("deleteProblem", null), null);
+		MultiStatus result = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, Policy.bind("deleteProblem"), null);
 		if (resources.length == 0)
 			return result;
 		resources = (IResource[]) resources.clone(); // to avoid concurrent changes to this array
@@ -599,7 +599,7 @@ public void endOperation(boolean build, IProgressMonitor monitor) throws CoreExc
 		// Since the tree is locked, nothing could have been done so there is nothing to do.
 		Assert.isTrue(!(treeLocked && getWorkManager().shouldBuild()), "The tree should not be locked.");
 		// check for a programming error on using beginOperation/endOperation
-		Assert.isTrue(getWorkManager().getPreparedOperationDepth() > 0, Policy.bind("nestedOperation", null));
+		Assert.isTrue(getWorkManager().getPreparedOperationDepth() > 0, Policy.bind("nestedOperation"));
 
 		// At this time we need to rebalance the nested operations. It is necessary because
 		// build() and snapshot() should not fail if they are called.
@@ -846,10 +846,10 @@ public IStatus move(IResource[] resources, IPath destination, boolean force, IPr
 		monitor.beginTask(Policy.bind("moving", new String[] { "" }), totalWork);
 		Assert.isLegal(resources != null);
 		if (resources.length == 0)
-			return new ResourceStatus(IResourceStatus.OK, Policy.bind("ok", null));
+			return new ResourceStatus(IResourceStatus.OK, Policy.bind("ok"));
 		resources = (IResource[]) resources.clone(); // to avoid concurrent changes to this array
 		IPath parentPath = null;
-		MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, Policy.bind("moveProblem", null), null);
+		MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, Policy.bind("moveProblem"), null);
 		try {
 			prepareOperation();
 			beginOperation(true);
@@ -901,7 +901,7 @@ public IStatus move(IResource[] resources, IPath destination, boolean force, IPr
 		}
 		if (status.matches(IStatus.ERROR))
 			throw new ResourceException(status);
-		return status.isOK() ? (IStatus) new ResourceStatus(IResourceStatus.OK, Policy.bind("ok", null)) : (IStatus) status;
+		return status.isOK() ? (IStatus) new ResourceStatus(IResourceStatus.OK, Policy.bind("ok")) : (IStatus) status;
 	} finally {
 		monitor.done();
 	}
@@ -950,10 +950,10 @@ public IProjectDescription newProjectDescription(String projectName) {
 public Resource newResource(IPath path, int type) {
 	switch (type) {
 		case IResource.FOLDER :
-			Assert.isLegal(path.segmentCount() >= ICoreConstants.MINIMUM_FOLDER_SEGMENT_LENGTH , Policy.bind("resourcePath", null));
+			Assert.isLegal(path.segmentCount() >= ICoreConstants.MINIMUM_FOLDER_SEGMENT_LENGTH , Policy.bind("resourcePath"));
 			return new Folder(path.makeAbsolute(), this);
 		case IResource.FILE :
-			Assert.isLegal(path.segmentCount() >= ICoreConstants.MINIMUM_FILE_SEGMENT_LENGTH, Policy.bind("resourcePath", null));
+			Assert.isLegal(path.segmentCount() >= ICoreConstants.MINIMUM_FILE_SEGMENT_LENGTH, Policy.bind("resourcePath"));
 			return new File(path.makeAbsolute(), this);
 		case IResource.PROJECT :
 			return (Resource) getRoot().getProject(path.lastSegment());
@@ -1013,10 +1013,10 @@ public long nextNodeId() {
 public IStatus open(IProgressMonitor monitor) throws CoreException {
 	// This method is not inside an operation because it is the one responsible for
 	// creating the WorkManager object (who takes care of operations).
-	Assert.isTrue(!isOpen(), Policy.bind("workspaceOpen", null));
+	Assert.isTrue(!isOpen(), Policy.bind("workspaceOpen"));
 	description = getMetaArea().readWorkspace();
 	if (description == null)
-		throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, Platform.getLocation(), Policy.bind("readWorkspaceMeta", null), null);
+		throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, Platform.getLocation(), Policy.bind("readWorkspaceMeta"), null);
 
 	// create root location
 	localMetaArea.getLocationFor(getRoot()).toFile().mkdirs();
@@ -1238,7 +1238,7 @@ public IStatus validateName(String segment, int type) {
 
 	/* segment must not begin or end with a whitespace */
 	if (Character.isWhitespace(segment.charAt(0)) || Character.isWhitespace(segment.charAt(segment.length() - 1)))
-		return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, Policy.bind("invalidWhitespace", null));
+		return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, Policy.bind("invalidWhitespace"));
 
 	/* segment must not end with a dot */
 	if (segment.endsWith("."))
@@ -1249,7 +1249,7 @@ public IStatus validateName(String segment, int type) {
 		if (segment.indexOf(invalidResourceNameChars[i]) != -1)
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, Policy.bind("invalidChar", new String[] { String.valueOf(invalidResourceNameChars[i])}));
 
-	return new ResourceStatus(IResourceStatus.OK, Policy.bind("ok", null));
+	return new ResourceStatus(IResourceStatus.OK, Policy.bind("ok"));
 }
 /**
  * @see IWorkspace#validatePath
@@ -1267,11 +1267,11 @@ public IStatus validatePath(String path, int type) {
 	/* path must not be the root path */
 	IPath testPath = new Path(path);
 	if (testPath.isRoot())
-		return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, Policy.bind("invalidRoot", null));
+		return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, Policy.bind("invalidRoot"));
 
 	/* path must be absolute */
 	if (!testPath.isAbsolute())
-		return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, Policy.bind("mustBeAbsolute", null));
+		return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, Policy.bind("mustBeAbsolute"));
 
 	/* validate segments */
 	int numberOfSegments = testPath.segmentCount();
@@ -1282,7 +1282,7 @@ public IStatus validatePath(String path, int type) {
 				return status;
 		} else
 			if (type == IResource.PROJECT)
-				return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, Policy.bind("projectPath", null));
+				return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, Policy.bind("projectPath"));
 	}
 	if ((type & (IResource.FILE | IResource.FOLDER)) != 0)
 		if (numberOfSegments >= ICoreConstants.MINIMUM_FILE_SEGMENT_LENGTH) {
@@ -1298,9 +1298,9 @@ public IStatus validatePath(String path, int type) {
 				if (!status.isOK())
 					return status;
 			}
-			return new ResourceStatus(IResourceStatus.OK, Policy.bind("ok", null));
+			return new ResourceStatus(IResourceStatus.OK, Policy.bind("ok"));
 		} else
-			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, Policy.bind("resourcePath", null));
+			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, Policy.bind("resourcePath"));
 	return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, Policy.bind("invalidPath", new String[] { path }));
 }
 /**

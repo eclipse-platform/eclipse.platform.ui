@@ -30,7 +30,7 @@ public DeleteVisitor(List skipList, boolean force, boolean convertToPhantom, boo
 	this.convertToPhantom = convertToPhantom;
 	this.keepHistory = keepHistory;
 	this.monitor = monitor;
-	status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_DELETE_LOCAL, Policy.bind("deleteProblem", null), null);
+	status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_DELETE_LOCAL, Policy.bind("deleteProblem"), null);
 }
 protected void deleteAndKeepHistory(UnifiedTreeNode node) {
 	IPath location = node.getLocalLocation();

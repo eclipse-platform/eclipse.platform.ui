@@ -1044,7 +1044,7 @@ protected void resetSnapshots(IResource resource) throws CoreException {
 public IStatus save(int kind, Project project, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		String taskName = Policy.bind("saving.1", null);
+		String taskName = Policy.bind("saving.1");
 		monitor.beginTask(taskName, 6);
 		MultiStatus warnings = new MultiStatus(ResourcesPlugin.PI_RESOURCES, Status.WARNING, "Save operation warnings", null);
 		try {

@@ -104,7 +104,7 @@ public void move(File source, File destination, boolean force, IProgressMonitor 
 		monitor.beginTask(Policy.bind("moving", new String[] {source.getAbsolutePath()}), 2);
 		if (destination.exists()) {
 			if (!force)
-				throw new ResourceException(IResourceStatus.EXISTS_LOCAL, new Path(destination.getAbsolutePath()), Policy.bind("resourceExists", null), null);
+				throw new ResourceException(IResourceStatus.EXISTS_LOCAL, new Path(destination.getAbsolutePath()), Policy.bind("resourceExists"), null);
 			else
 				try {
 					delete(destination);
@@ -166,12 +166,12 @@ public InputStream read(File target) throws CoreException {
 	} catch (FileNotFoundException e) {
 		String message;
 		if (!target.exists())
-			message = Policy.bind("fileNotFound", null);
+			message = Policy.bind("fileNotFound");
 		else
 			if (target.isDirectory())
-				message = Policy.bind("resourceFolder", null);
+				message = Policy.bind("resourceFolder");
 			else
-				message = Policy.bind("couldNotRead", null);
+				message = Policy.bind("couldNotRead");
 		throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, new Path(target.getAbsolutePath()), message, e);
 	}
 }
@@ -218,7 +218,7 @@ public void write(File target, InputStream content, boolean append, IProgressMon
 		if (CoreFileSystemLibrary.isReadOnly(target.getAbsolutePath()))
 			message = "Could not write to read-only file: " + target.getAbsolutePath();
 		else
-			message = Policy.bind("couldNotWrite", null);
+			message = Policy.bind("couldNotWrite");
 		throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, new Path(target.getAbsolutePath()), message, e);
 	}
 }
@@ -226,6 +226,6 @@ public void writeFolder(File target) throws CoreException {
 	if (!target.exists())
 		target.mkdirs();
 	if (!target.isDirectory())
-		throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, new Path(target.getAbsolutePath()), Policy.bind("couldNotCreateFolder", null), null);
+		throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, new Path(target.getAbsolutePath()), Policy.bind("couldNotCreateFolder"), null);
 }
 }

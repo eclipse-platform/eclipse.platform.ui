@@ -47,7 +47,7 @@ public void copy(IResource target, IResource destination, boolean force, IProgre
 		monitor.beginTask(title, totalWork);
 		// use locationFor() instead of getLocation() to avoid null 
 		if (locationFor(destination).toFile().exists())
-			throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, destination.getFullPath(), Policy.bind("resourceExists", null), null);
+			throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, destination.getFullPath(), Policy.bind("resourceExists"), null);
 		CopyVisitor visitor = new CopyVisitor(target, destination, force, monitor);
 		UnifiedTree tree = new UnifiedTree(target);
 		tree.accept(visitor, IResource.DEPTH_INFINITE);
@@ -66,7 +66,7 @@ public void delete(IResource target, boolean force, boolean convertToPhantom, bo
 		totalWork *= 2;
 		String title = Policy.bind("deleting", new String[] { resource.getFullPath().toString()});
 		monitor.beginTask(title, totalWork);
-		MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_DELETE_LOCAL, Policy.bind("deleteProblem", null), null);
+		MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_DELETE_LOCAL, Policy.bind("deleteProblem"), null);
 		List skipList = null;
 		UnifiedTree tree = null;
 		if (target.getType() == IResource.PROJECT)
@@ -76,7 +76,7 @@ public void delete(IResource target, boolean force, boolean convertToPhantom, bo
 		if (!force) {
 			IProgressMonitor sub = Policy.subMonitorFor(monitor, totalWork / 2);
 			sub.beginTask("", 10000);
-			RefreshLocalWithStatusVisitor refreshVisitor = new RefreshLocalWithStatusVisitor(Policy.bind("deleteProblem", null), Policy.bind("resourcesDifferent", null), sub);
+			RefreshLocalWithStatusVisitor refreshVisitor = new RefreshLocalWithStatusVisitor(Policy.bind("deleteProblem"), Policy.bind("resourcesDifferent"), sub);
 			tree.accept(refreshVisitor, IResource.DEPTH_INFINITE);
 			status.merge(refreshVisitor.getStatus());
 			skipList = refreshVisitor.getAffectedResources();
@@ -173,13 +173,13 @@ public InputStream read(IFile target, boolean force, IProgressMonitor monitor) t
 		 ((Project) target.getProject()).checkExists(NULL_FLAG, true);
 	java.io.File localFile = location.toFile();
 	if (!localFile.exists())
-		throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, target.getFullPath(), Policy.bind("fileNotFound", null), null);
+		throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, target.getFullPath(), Policy.bind("fileNotFound"), null);
 	if (!force) {
 		ResourceInfo info = ((Resource) target).getResourceInfo(true, false);
 		int flags = ((Resource) target).getFlags(info);
 		((Resource) target).checkExists(flags, true);
 		if (CoreFileSystemLibrary.getLastModified(localFile.getAbsolutePath()) != info.getLocalSyncInfo())
-			throw new ResourceException(IResourceStatus.OUT_OF_SYNC_LOCAL, target.getFullPath(), Policy.bind("fileChanged", null), null);
+			throw new ResourceException(IResourceStatus.OUT_OF_SYNC_LOCAL, target.getFullPath(), Policy.bind("fileChanged"), null);
 	}
 	return getStore().read(localFile);
 }
@@ -338,12 +338,12 @@ public void write(IFile target, InputStream content, boolean force, boolean keep
 				ResourceInfo info = ((Resource) target).getResourceInfo(true, false);
 				if (lastModified != info.getLocalSyncInfo()) {
 					refresh(target, IResource.DEPTH_ZERO, monitor);
-					throw new ResourceException(IResourceStatus.OUT_OF_SYNC_LOCAL, target.getFullPath(), Policy.bind("fileChanged", null), null);
+					throw new ResourceException(IResourceStatus.OUT_OF_SYNC_LOCAL, target.getFullPath(), Policy.bind("fileChanged"), null);
 				}
 			} else
 				if (localFile.exists()) {
 					refresh(target, IResource.DEPTH_ZERO, monitor);
-					throw new ResourceException(IResourceStatus.EXISTS_LOCAL, target.getFullPath(), Policy.bind("resourceExists", null), null);
+					throw new ResourceException(IResourceStatus.EXISTS_LOCAL, target.getFullPath(), Policy.bind("resourceExists"), null);
 				}
 		}
 		// add entry to History Store.
@@ -369,10 +369,10 @@ public void write(IFolder target, boolean force, IProgressMonitor monitor) throw
 	java.io.File file = locationFor(target).toFile();
 	if (!force)
 		if (file.isDirectory())
-			throw new ResourceException(IResourceStatus.EXISTS_LOCAL, target.getFullPath(), Policy.bind("resourceExists", null), null);
+			throw new ResourceException(IResourceStatus.EXISTS_LOCAL, target.getFullPath(), Policy.bind("resourceExists"), null);
 		else
 			if (file.exists())
-				throw new ResourceException(IResourceStatus.OUT_OF_SYNC_LOCAL, target.getFullPath(), Policy.bind("fileExists", null), null);
+				throw new ResourceException(IResourceStatus.OUT_OF_SYNC_LOCAL, target.getFullPath(), Policy.bind("fileExists"), null);
 	getStore().writeFolder(file);
 	long lastModified = CoreFileSystemLibrary.getLastModified(file.getAbsolutePath());
 	ResourceInfo info = ((Resource) target).getResourceInfo(false, true);

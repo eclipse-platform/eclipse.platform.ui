@@ -39,7 +39,7 @@ public CopyVisitor(IResource rootSource, IResource destination, boolean force, I
 	this.force = force;
 	this.monitor = monitor;
 	this.segmentsToDrop = rootSource.getFullPath().segmentCount();
-	status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, Policy.bind("copyProblem", null), null);
+	status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, Policy.bind("copyProblem"), null);
 }
 protected void copy(UnifiedTreeNode node) {
 	Resource source = (Resource) node.getResource();
@@ -131,7 +131,7 @@ public boolean visit(UnifiedTreeNode node) throws CoreException {
 		}
 		if (!force && !wasSynchronized) {
 			IPath path = node.getResource().getFullPath();
-			String message = Policy.bind("resourcesDifferent", null);
+			String message = Policy.bind("resourcesDifferent");
 			status.add(new ResourceStatus(IResourceStatus.OUT_OF_SYNC_LOCAL, path, message, null));
 			return true;
 		}

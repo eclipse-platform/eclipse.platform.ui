@@ -90,7 +90,7 @@ private void initializeBytes() throws CoreException {
 			writeBytes(buffer, path);
 			// If prefix matching, cannot allow other fields to be specified
 			if (qualifier != null || localName != null) {
-				throw new ResourceException(Platform.INTERNAL_ERROR, null, Policy.bind("invalidPropName", null), null);
+				throw new ResourceException(Platform.INTERNAL_ERROR, null, Policy.bind("invalidPropName"), null);
 			}
 		} else {
 			// Zero depth requires full path matching including null
@@ -105,12 +105,12 @@ private void initializeBytes() throws CoreException {
 		} else
 			if (localName != null) {
 				// Specifying a local name without a qualifier is illegal
-				throw new ResourceException(Platform.INTERNAL_ERROR, null, Policy.bind("invalidPropName", null), null);
+				throw new ResourceException(Platform.INTERNAL_ERROR, null, Policy.bind("invalidPropName"), null);
 			}
 		value = buffer.toByteArray();
 	} catch (IOException e) {
 		// should never happen
-		throw new ResourceException(Platform.INTERNAL_ERROR, null, Policy.bind("storeProblem", null), e);
+		throw new ResourceException(Platform.INTERNAL_ERROR, null, Policy.bind("storeProblem"), e);
 	}
 }
 /**
@@ -127,7 +127,7 @@ protected void initializeObjects() throws CoreException {
 		localName = readNullTerminated(stream);
 	} catch (IOException e) {
 		// should never happen
-		throw new ResourceException(Platform.INTERNAL_ERROR, null, Policy.bind("storeProblem", null), e);
+		throw new ResourceException(Platform.INTERNAL_ERROR, null, Policy.bind("storeProblem"), e);
 	}
 }
 public boolean isFullyDefined() {

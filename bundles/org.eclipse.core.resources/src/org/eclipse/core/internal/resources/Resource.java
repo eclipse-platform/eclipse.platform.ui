@@ -87,12 +87,12 @@ public void checkAccessible(int flags) throws CoreException {
  * @see IResource#copy
  */
 public IStatus checkCopyRequirements(IPath destination, int destinationType) throws CoreException {
-	MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INVALID_VALUE, Policy.bind("copyNotMet", null), null);
+	MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INVALID_VALUE, Policy.bind("copyNotMet"), null);
 	if (destination == null)
-		return new ResourceStatus(IResourceStatus.INVALID_VALUE, getFullPath(), Policy.bind("destNotNull", null));
+		return new ResourceStatus(IResourceStatus.INVALID_VALUE, getFullPath(), Policy.bind("destNotNull"));
 	destination = makePathAbsolute(destination);
 	if (getFullPath().isPrefixOf(destination))
-		status.add(new ResourceStatus(IResourceStatus.INVALID_VALUE, getFullPath(), Policy.bind("destNotSub", null)));
+		status.add(new ResourceStatus(IResourceStatus.INVALID_VALUE, getFullPath(), Policy.bind("destNotSub")));
 	checkValidPath(destination, destinationType);
 
 	ResourceInfo info = getResourceInfo(false, false);
@@ -121,7 +121,7 @@ public IStatus checkCopyRequirements(IPath destination, int destinationType) thr
 		}
 	}
 
-	return status.isOK() ? (IStatus) new ResourceStatus(IResourceStatus.OK, Policy.bind("copyMet", null)) : (IStatus) status;
+	return status.isOK() ? (IStatus) new ResourceStatus(IResourceStatus.OK, Policy.bind("copyMet")) : (IStatus) status;
 }
 /**
  * Checks that this resource does not exist.  
@@ -178,12 +178,12 @@ public void checkLocal(int flags, int depth) throws CoreException {
  * @see IResource#move
  */
 protected IStatus checkMoveRequirements(IPath destination, int destinationType) throws CoreException {
-	MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INVALID_VALUE, Policy.bind("moveNotMet", null), null);
+	MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INVALID_VALUE, Policy.bind("moveNotMet"), null);
 	if (destination == null)
-		return new ResourceStatus(IResourceStatus.INVALID_VALUE, getFullPath(), Policy.bind("destNotNull", null));
+		return new ResourceStatus(IResourceStatus.INVALID_VALUE, getFullPath(), Policy.bind("destNotNull"));
 	destination = makePathAbsolute(destination);
 	if (getFullPath().isPrefixOf(destination))
-		status.add(new ResourceStatus(IResourceStatus.INVALID_VALUE, getFullPath(), Policy.bind("destNotSub", null)));
+		status.add(new ResourceStatus(IResourceStatus.INVALID_VALUE, getFullPath(), Policy.bind("destNotSub")));
 	checkValidPath(destination, destinationType);
 
 	ResourceInfo info = getResourceInfo(false, false);
@@ -211,7 +211,7 @@ protected IStatus checkMoveRequirements(IPath destination, int destinationType) 
 			parent.checkExists(getFlags(info), true);
 		}
 	}
-	return status.isOK() ? (IStatus) new ResourceStatus(IResourceStatus.OK, Policy.bind("moveMet", null)) : (IStatus) status;
+	return status.isOK() ? (IStatus) new ResourceStatus(IResourceStatus.OK, Policy.bind("moveMet")) : (IStatus) status;
 }
 /**
  * Checks that the supplied path is valid according to Workspace.validatePath().
@@ -811,7 +811,7 @@ protected void moveInFileSystem(IPath destination, boolean force, boolean keepHi
 	monitor = Policy.monitorFor(monitor);
 	try {
 		monitor.beginTask(Policy.bind("moving", new String[] { getFullPath().toString()}), 100);
-		RefreshLocalWithStatusVisitor visitor = new RefreshLocalWithStatusVisitor(Policy.bind("moveProblem", null), Policy.bind("resourcesDifferent", null), monitor);
+		RefreshLocalWithStatusVisitor visitor = new RefreshLocalWithStatusVisitor(Policy.bind("moveProblem"), Policy.bind("resourcesDifferent"), monitor);
 		UnifiedTree tree = new UnifiedTree(this);
 		tree.accept(visitor, DEPTH_INFINITE);
 		/* if force is false and resources were not in sync, throw an exception */

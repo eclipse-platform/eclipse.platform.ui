@@ -106,7 +106,7 @@ public IProject getProject() {
  */
 public IProject getProject(String name) {
 	Path path = new Path(name);
-	Assert.isLegal(path.segmentCount() == ICoreConstants.PROJECT_SEGMENT_LENGTH, Policy.bind("projectPath", null));
+	Assert.isLegal(path.segmentCount() == ICoreConstants.PROJECT_SEGMENT_LENGTH, Policy.bind("projectPath"));
 	return new Project(Path.ROOT.append(name), workspace);
 }
 /**
