@@ -43,12 +43,12 @@ public class AutomaticUpdatesPreferencePage
 		container.setLayout(layout);
 
 		enabledCheck = new Button(container, SWT.CHECK);
-		enabledCheck.setText("Automatically &find new updates and notify me");
+		enabledCheck.setText(UpdateScheduler.getString("AutomaticUpdatesPreferencePage.findUpdates")); //$NON-NLS-1$
 
 		createSpacer(container, 1);
 
 		Group group = new Group(container, SWT.NONE);
-		group.setText("Update &Schedule");
+		group.setText(UpdateScheduler.getString("AutomaticUpdatesPreferencePage.UpdateSchedule")); //$NON-NLS-1$
 		layout = new GridLayout();
 		layout.numColumns = 3;
 		group.setLayout(layout);
@@ -57,7 +57,7 @@ public class AutomaticUpdatesPreferencePage
 
 		onStartupRadio = new Button(group, SWT.RADIO);
 		onStartupRadio.setText(
-			"Look for updates each time platform is started");
+			UpdateScheduler.getString("AutomaticUpdatesPreferencePage.findOnStart")); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalSpan = 3;
 		onStartupRadio.setLayoutData(gd);
@@ -68,7 +68,7 @@ public class AutomaticUpdatesPreferencePage
 		});
 
 		onScheduleRadio = new Button(group, SWT.RADIO);
-		onScheduleRadio.setText("Look for updates on the following schedule:");
+		onScheduleRadio.setText(UpdateScheduler.getString("AutomaticUpdatesPreferencePage.findOnSchedule")); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalSpan = 3;
 		onScheduleRadio.setLayoutData(gd);
@@ -86,7 +86,7 @@ public class AutomaticUpdatesPreferencePage
 		dayCombo.setLayoutData(gd);
 		
 		Label label = new Label(group, SWT.NULL);
-		label.setText("at");
+		label.setText(UpdateScheduler.getString("AutomaticUpdatesPreferencePage.at")); //$NON-NLS-1$
 		
 		hourCombo = new Combo(group, SWT.READ_ONLY);
 		hourCombo.setItems(SchedulerStartup.HOURS);
@@ -97,7 +97,7 @@ public class AutomaticUpdatesPreferencePage
 		createSpacer(container, 1);
 		
 		group = new Group(container, SWT.NONE);
-		group.setText("&Download Options");
+		group.setText(UpdateScheduler.getString("AutomaticUpdatesPreferencePage.downloadOptions")); //$NON-NLS-1$
 		layout = new GridLayout();
 		layout.numColumns = 3;
 		group.setLayout(layout);
@@ -106,7 +106,7 @@ public class AutomaticUpdatesPreferencePage
 
 		searchOnlyRadio = new Button(group, SWT.RADIO);
 		searchOnlyRadio.setText(
-			"Search for updates and notify me when they are available");
+			UpdateScheduler.getString("AutomaticUpdatesPreferencePage.searchAndNotify")); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalSpan = 3;
 		searchOnlyRadio.setLayoutData(gd);
@@ -117,7 +117,7 @@ public class AutomaticUpdatesPreferencePage
 		});
 
 		searchAndDownloadRadio = new Button(group, SWT.RADIO);
-		searchAndDownloadRadio.setText("Download new updates automatically and notify me when ready to install them");
+		searchAndDownloadRadio.setText(UpdateScheduler.getString("AutomaticUpdatesPreferencePage.downloadAndNotify")); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalSpan = 3;
 		searchAndDownloadRadio.setLayoutData(gd);
