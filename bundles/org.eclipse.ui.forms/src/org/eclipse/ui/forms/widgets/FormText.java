@@ -1195,7 +1195,8 @@ public final class FormText extends Canvas {
 					model.traverseFocusSelectableObjects(true);
 				enterLink(getSelectedLink(), SWT.NULL);
 				paintFocusTransfer(null, getSelectedLink());
-				// ensureVisible(model.getSelectedLink());
+				if (getSelectedLink()!=null)
+					ensureVisible(getSelectedLink());
 			}
 		} else {
 			paintFocusTransfer(getSelectedLink(), null);

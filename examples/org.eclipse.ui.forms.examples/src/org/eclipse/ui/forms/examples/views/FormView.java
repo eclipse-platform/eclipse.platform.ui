@@ -117,7 +117,7 @@ public class FormView extends ViewPart {
 		buf.append("<li style=\"text\" bindent=\"20\" indent=\"40\" value=\"4.\">A list item with text.</li>");
 		buf.append("<p>     leading blanks;      more white \n\n new lines   <br/>  \n   more <b>   bb   </b>  white  . </p>");
 		buf.append("</form>");
-		FormText rtext = toolkit.createFormText(form.getBody(), true);
+		FormText rtext = toolkit.createFormText(form.getBody(), false);
 		rtext.setWhitespaceNormalized(true);
 		td = new TableWrapData(TableWrapData.FILL);
 		td.colspan = 2;

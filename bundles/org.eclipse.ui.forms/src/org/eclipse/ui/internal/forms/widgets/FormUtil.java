@@ -23,13 +23,15 @@ import org.eclipse.ui.forms.widgets.*;
 
 public class FormUtil {
 	public static final String PLUGIN_ID = "org.eclipse.ui.forms";
+
 	static final int H_SCROLL_INCREMENT = 5;
 
 	static final int V_SCROLL_INCREMENT = 64;
-	
+
 	public static final String DEBUG = PLUGIN_ID + "/debug";
+
 	public static final String DEBUG_TEXT = DEBUG + "/text";
-	
+
 	public static Text createText(Composite parent, String label,
 			FormToolkit factory) {
 		return createText(parent, label, factory, 1);
@@ -199,24 +201,35 @@ public class FormUtil {
 
 		int x = scompOrigin.x;
 		int y = scompOrigin.y;
-		// System.out.println("Ensure: area="+area+", origin="+scompOrigin+",
-		// cloc="+controlOrigin+", csize="+controlSize+", x="+x+", y="+y);
 
-		// horizontal right
-		if (controlOrigin.x + controlSize.x > scompOrigin.x + area.width) {
+		// horizontal right, but only if the control is smaller
+		// than the client area
+		if (controlSize.x < area.width
+				&& (controlOrigin.x + controlSize.x > scompOrigin.x
+						+ area.width)) {
 			x = controlOrigin.x + controlSize.x - area.width;
 		}
-		// horizontal left
-		else if (controlOrigin.x < x) {
-			x = controlOrigin.x;
+		// horizontal left - make sure the left edge of
+		// the control is showing
+		if (controlOrigin.x < x) {
+			if (controlSize.x< area.width)
+				x = controlOrigin.x+controlSize.x-area.width;
+			else
+				x = controlOrigin.x;
 		}
 		// vertical bottom
-		if (controlOrigin.y + controlSize.y > scompOrigin.y + area.height) {
+		if (controlSize.y < area.height
+				&& (controlOrigin.y + controlSize.y > scompOrigin.y
+						+ area.height)) {
 			y = controlOrigin.y + controlSize.y - area.height;
 		}
-		// vertical top
-		else if (controlOrigin.y < y) {
-			y = controlOrigin.y;
+		// vertical top - make sure the top of
+		// the control is showing
+		if (controlOrigin.y < y) {
+			if (controlSize.y< area.height)
+				y = controlOrigin.y+controlSize.y-area.height;
+			else
+				y = controlOrigin.y;
 		}
 
 		if (scompOrigin.x != x || scompOrigin.y != y) {
@@ -400,22 +413,22 @@ public class FormUtil {
 
 	public static Image createAlphaMashImage(Device device, Image srcImage) {
 		Rectangle bounds = srcImage.getBounds();
-		int alpha=0;
-		int calpha=0;
+		int alpha = 0;
+		int calpha = 0;
 		ImageData data = srcImage.getImageData();
 		// Create a new image with alpha values alternating
 		// between fully transparent (0) and fully opaque (255).
 		// This image will show the background through the
 		// transparent pixels.
-		for (int i=0; i<bounds.height; i++) {
+		for (int i = 0; i < bounds.height; i++) {
 			// scan line
 			alpha = calpha;
-			for (int j=0; j<bounds.width; j++) {
+			for (int j = 0; j < bounds.width; j++) {
 				// column
 				data.setAlpha(j, i, alpha);
-				alpha = alpha==255?0:255;
+				alpha = alpha == 255 ? 0 : 255;
 			}
-			calpha = calpha==255?0:255;
+			calpha = calpha == 255 ? 0 : 255;
 		}
 		return new Image(device, data);
 	}
@@ -427,12 +440,13 @@ public class FormUtil {
 		}
 		return new Font(display, fontDatas);
 	}
+
 	public static void recursiveSetMenu(Control control, Menu menu) {
 		control.setMenu(menu);
 		if (control instanceof Composite) {
-			Composite parent = (Composite)control;
-			Control [] children = parent.getChildren();
-			for (int i=0; i<children.length; i++) {
+			Composite parent = (Composite) control;
+			Control[] children = parent.getChildren();
+			for (int i = 0; i < children.length; i++) {
 				recursiveSetMenu(children[i], menu);
 			}
 		}

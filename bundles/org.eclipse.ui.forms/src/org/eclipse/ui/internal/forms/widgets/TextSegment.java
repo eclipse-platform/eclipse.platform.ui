@@ -151,6 +151,19 @@ public class TextSegment extends ParagraphSegment {
 			AreaRectangle ar = (AreaRectangle) areaRectangles.get(i);
 			if (ar.contains(x, y))
 				return true;
+			if (i<areaRectangles.size()-1) {
+				// test the gap
+				Rectangle top = ar.rect;
+				Rectangle bot = ((AreaRectangle)areaRectangles.get(i+1)).rect;
+				if (y >= top.y+top.height && y < bot.y) {
+					// in the gap
+					int left = Math.max(top.x, bot.x);
+					int right = Math.min(top.x+top.width, bot.x+bot.width);
+					if (x>=left && x<=right) {
+						return true;
+					}
+				}
+			}
 		}
 		return false;
 	}
@@ -160,6 +173,20 @@ public class TextSegment extends ParagraphSegment {
 			AreaRectangle ar = (AreaRectangle) areaRectangles.get(i);
 			if (ar.intersects(rect))
 				return true;
+			if (i<areaRectangles.size()-1) {
+				// test the gap
+				Rectangle top = ar.rect;
+				Rectangle bot = ((AreaRectangle)areaRectangles.get(i+1)).rect;
+				if (top.y+top.height < bot.y) {
+					int y = top.y+top.height;
+					int height = bot.y-y;
+					int left = Math.max(top.x, bot.x);
+					int right = Math.min(top.x+top.width, bot.x+bot.width);
+					Rectangle gap = new Rectangle(left, y, right-left, height);
+					if (gap.intersects(rect))
+						return true;
+				}
+			}
 		}
 		return false;
 	}
