@@ -418,4 +418,18 @@ public void setWindowTitle(String newTitle) {
 	if (container != null)
 		container.updateWindowTitle();
 }
+
+/*
+ * @see org.eclipse.jface.wizard.ITableOfContentsWizard#getInitialNodes()
+ */
+public ITableOfContentsNode[] getInitialNodes() {
+	IWizardPage[] pages = getPages();
+	ITableOfContentsNode[] nodes = new ITableOfContentsNode[pages.length];
+	for(int i = 0; i < pages.length; i ++){
+		nodes[i] = new WizardTableOfContentsNode(pages[i]);
+	}
+	return nodes;
+}
+
+
 }

@@ -1,7 +1,5 @@
 package org.eclipse.jface.wizard;
 
-import java.util.ArrayList;
-
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialogHeader;
@@ -14,14 +12,8 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.swt.widgets.*;
 
 /**
  * The WizardTableOfContents is a class that displays a series
@@ -30,10 +22,10 @@ import org.eclipse.ui.IWorkbenchPage;
 public class WizardTableOfContentsHeader extends TitleAreaDialogHeader {
 
 	private Composite tableComposite;
-	private WizardTableOfContentsNode[] nodes =
-		new WizardTableOfContentsNode[0];
+	private ITableOfContentsNode[] nodes =
+		new ITableOfContentsNode[0];
 	private IWizard initialWizard;
-	private WizardTableOfContentsNode currentNode;
+	private ITableOfContentsNode currentNode;
 
 	public WizardTableOfContentsHeader(WizardDialog wizardDialog) {
 		super(wizardDialog);
@@ -49,7 +41,9 @@ public class WizardTableOfContentsHeader extends TitleAreaDialogHeader {
 
 		tableComposite = new Composite(parent, SWT.NULL);
 		tableComposite.setLayout(new RowLayout(SWT.HORIZONTAL));
-
+		tableComposite.setForeground(getTitleForeground(parent.getDisplay()));
+		tableComposite.setBackground(getTitleBackground(parent.getDisplay()));
+		
 		//Create the nodes if the wizard has not been set.
 		if (initialWizard != null){
 			addNodesForWizard(initialWizard);
@@ -65,20 +59,34 @@ public class WizardTableOfContentsHeader extends TitleAreaDialogHeader {
 	 * the wizard is updated for a dialog using the WizardTableOfContentsHeader.
 	 */
 	private void addNodesForWizard(IWizard wizard) {
-		IWizardPage[] pages = wizard.getPages();
-		int oldSize = nodes.length;
-		WizardTableOfContentsNode[] newNodes = new 
-			WizardTableOfContentsNode[oldSize + pages.length];
-		System.arraycopy(nodes,0,newNodes,0,oldSize);
 		
-		for (int i = 0; i < pages.length; i++) {
-			WizardTableOfContentsNode node =
-				new WizardTableOfContentsNode(pages[i]);
-			node.createWidgets(tableComposite);
-			newNodes[oldSize + i] = node;
+		ITableOfContentsNode[] newNodes;
+		
+		if(wizard instanceof ITableOfContentsWizard){
+			newNodes = ((ITableOfContentsWizard) wizard).getInitialNodes();
 		}
+		else{
+		IWizardPage[] pages = wizard.getPages();
+		newNodes = new WizardTableOfContentsNode[1];
+		newNodes[0] =
+				new WizardTableOfContentsNode(pages[0]);
+		}
+				
+				
+		int oldSize = nodes.length;
+		ITableOfContentsNode[] mergeNodes = new 
+			ITableOfContentsNode[oldSize + newNodes.length];
+		System.arraycopy(nodes,0,mergeNodes,0,oldSize);
+		Display display = wizard.getContainer().getShell().getDisplay();
+		Color foreground = getTitleForeground(display);
+		Color background = getTitleBackground(display);		
 		
-		nodes = newNodes;
+		for (int i = 0; i < newNodes.length; i++) {
+			newNodes[i].createWidgets(tableComposite,foreground,background);
+			mergeNodes[i + oldSize] = newNodes[i];
+		}
+		nodes = mergeNodes;		
+		
 	}
 
 	/**
@@ -104,9 +112,8 @@ public class WizardTableOfContentsHeader extends TitleAreaDialogHeader {
 
 		// Determine the background color of the title bar
 		Display display = parent.getDisplay();
-
-		Color background = JFaceColors.getBannerBackground(display);
-		Color foreground = JFaceColors.getBannerForeground(display);
+	Color background = getTitleBackground(display);
+		Color foreground = getTitleForeground(display);
 
 		int verticalSpacing =
 			Dialog.convertVerticalDLUsToPixels(
@@ -247,7 +254,7 @@ public class WizardTableOfContentsHeader extends TitleAreaDialogHeader {
 				int currentIndex = indexOfPage(currentNode.getPage());
 
 				if (nodes.length > currentIndex) {
-					WizardTableOfContentsNode nextNode = nodes[currentIndex];
+					ITableOfContentsNode nextNode = nodes[currentIndex];
 
 					//Replace the next pages if required
 					if (nextNode.getPage().getWizard().equals(newWizard))
@@ -256,8 +263,8 @@ public class WizardTableOfContentsHeader extends TitleAreaDialogHeader {
 						for (int i = currentIndex + 1; i < nodes.length; i++) {
 							nodes[i].dispose();
 						}
-						WizardTableOfContentsNode[] newNodes =
-							new WizardTableOfContentsNode[currentIndex + 1];
+						ITableOfContentsNode[] newNodes =
+							new ITableOfContentsNode[currentIndex + 1];
 						for (int i = 0; i <= currentIndex; i++) {
 							newNodes[i] = nodes[i];
 						}
@@ -275,7 +282,7 @@ public class WizardTableOfContentsHeader extends TitleAreaDialogHeader {
 	 * Select the node corresponding to the page.
 	 * @param IWorkbenchPage
 	 */
-	public void selectPage(IWizardPage page) {
+	public void updateFor(IWizardPage page) {
 		
 		//We may not have created anything yet
 		int index = indexOfPage(page);
@@ -283,7 +290,7 @@ public class WizardTableOfContentsHeader extends TitleAreaDialogHeader {
 			return;
 			
 		currentNode = nodes[index];
-		WizardTableOfContentsNode checkNode = currentNode;
+		ITableOfContentsNode checkNode = currentNode;
 		for (int i = index + 1; i < nodes.length; i++) {
 			nodes[i].setEnabled(checkNode.getPage().canFlipToNextPage());
 			checkNode = nodes[i];

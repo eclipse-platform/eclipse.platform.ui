@@ -6,6 +6,8 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -14,7 +16,7 @@ import org.eclipse.swt.widgets.Label;
  * The WizardTableOfContentsNode is the class that represents 
  * each node in the table of contents.
  */
-public class WizardTableOfContentsNode {
+public class WizardTableOfContentsNode implements ITableOfContentsNode{
 
 	/**
 	 * Image registry key for decision image (value <code>"toc_decision_image"</code>).
@@ -56,21 +58,26 @@ public class WizardTableOfContentsNode {
 		this.page = newPage;
 	}
 
-	/**
-	 * Create the two labels used to select this node as direct children
-	 * of the composite.
-	 * @param Composite composite.
+	/*
+	 * @see ITableOfContentsNode.createWidgets(Composite)
 	 */
-	public void createWidgets(Composite parentComposite) {
+	public void createWidgets(Composite parentComposite, Color foreground, Color background) {
 
-		innerComposite = new Composite(parentComposite, SWT.NULL);
+		innerComposite = new Composite(parentComposite, SWT.BORDER);
 		innerComposite.setLayout(new GridLayout());
+		innerComposite.setForeground(foreground);
+		innerComposite.setBackground(background);
 
 		imageLabel = new Label(innerComposite, SWT.NULL);
-		imageLabel.setImage(JFaceResources.getImage(TOC_IMG_NEXT));
+		imageLabel.setImage(getImage());
+		imageLabel.setForeground(foreground);
+		imageLabel.setBackground(background);
 		titleLabel = new Label(innerComposite, SWT.NULL);
 		titleLabel.setText(this.page.getTitle());
 		titleLabel.setFont(JFaceResources.getFont(JFaceResources.BANNER_FONT));
+		titleLabel.setForeground(foreground);
+		titleLabel.setBackground(background);
+		
 		MouseListener clickListener = new MouseListener() {
 			public void mouseDoubleClick(MouseEvent e) {
 			}
@@ -85,9 +92,8 @@ public class WizardTableOfContentsNode {
 
 	}
 
-	/**
-	 * Returns the page.
-	 * @return IWizardPage
+	/*
+	 * @see ITableOfContentsNode.getPage()
 	 */
 	public IWizardPage getPage() {
 		return page;
@@ -101,19 +107,31 @@ public class WizardTableOfContentsNode {
 		this.page = page;
 	}
 
-	/**
-	 * Dispose the widgets for the receiver.
+	/*
+	 * @see ITableOfContentsNode.dispose()
 	 */
 	public void dispose(){
 		innerComposite.dispose();
 	}
 	
-	/**
-	 * 	Enable or disable the widgets.
-	 * @param boolean
+	/*
+	 * @see ITableOfContentsNode.setEnabled(boolean)
 	 */
 	public void setEnabled(boolean enabled){
 		innerComposite.setEnabled(enabled);
+		imageLabel.setEnabled(enabled);
+		titleLabel.setEnabled(enabled);
+		
+	}
+	
+	/**
+	 * Get the image for the receiver.
+	 */
+	private Image getImage(){
+		if(getPage() instanceof IDecisionPage)
+			return JFaceResources.getImage(TOC_IMG_DECISION);
+		else
+			return JFaceResources.getImage(TOC_IMG_NEXT);
 	}
 
 }

@@ -33,6 +33,8 @@ public abstract class TitleAreaDialogHeader {
 	protected Label messageLabel;
 	protected Color normalMsgAreaBackground;
 	protected Color errorMsgAreaBackground;
+	protected Color titleAreaColor;
+	protected RGB titleAreaRGB;	
 	protected Image errorMsgImage;
 	protected boolean showingError = false;
 	protected String message = ""; //$NON-NLS-1$
@@ -128,6 +130,8 @@ public abstract class TitleAreaDialogHeader {
 
 		if (errorMsgAreaBackground != null)
 			errorMsgAreaBackground.dispose();
+		if (titleAreaColor != null)
+			titleAreaColor.dispose();
 
 	}
 
@@ -300,14 +304,6 @@ public abstract class TitleAreaDialogHeader {
 	public void setTitleImage(Image newTitleImage) {
 	}
 
-	/**
-	 * Sets the title bar color for this dialog.
-	 * By default do nothing.
-	 *
-	 * @param color the title bar color
-	 */
-	public void setTitleAreaColor(RGB color) {
-	}
 
 	/**
 	* Sets the title to be shown in the title area of this dialog.
@@ -316,6 +312,46 @@ public abstract class TitleAreaDialogHeader {
 	* @param newTitle the title show 
 	*/
 	public void setTitle(String newTitle) {
+	}
+
+	/**
+	 * Sets the title bar color for this dialog.
+	 *
+	 * @param color the title bar color
+	 */
+	public void setTitleAreaColor(RGB color) {
+		titleAreaRGB = color;
+	}
+
+	/**
+	 * Get the title background Color.
+	 * @param Display
+	 * @return Color or <code>null</code> if there if no Color should
+	 * be specified.
+	 */
+	public Color getTitleBackground(Display display){
+		
+		if (titleAreaRGB != null) {
+			if(titleAreaColor == null)
+				titleAreaColor = new Color(display, titleAreaRGB);
+			return titleAreaColor;
+		} else {
+			return JFaceColors.getBannerBackground(display);
+		}
+	}
+	
+	/**
+	 * Get the title foreground Color.
+	 * @param Display
+	 * @return Color or <code>null</code> if there if no Color should
+	 * be specified.
+	 */
+	public Color getTitleForeground(Display display){
+		if (titleAreaRGB != null) {
+			return null;
+		} else {
+			return JFaceColors.getBannerForeground(display);
+		}
 	}
 
 }

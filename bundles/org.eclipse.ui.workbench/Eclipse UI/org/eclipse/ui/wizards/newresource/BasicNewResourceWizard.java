@@ -10,6 +10,7 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.part.ISetSelectionTarget;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.wizard.ITableOfContentsWizard;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.widgets.Display;
 import java.net.*;
@@ -22,7 +23,7 @@ import java.util.*;
  * This class is not intended to be subclassed outside this package.
  * </p>
  */
-public abstract class BasicNewResourceWizard extends Wizard implements INewWizard {
+public abstract class BasicNewResourceWizard extends Wizard implements INewWizard, ITableOfContentsWizard{
 
 	/**
 	 * The workbench.

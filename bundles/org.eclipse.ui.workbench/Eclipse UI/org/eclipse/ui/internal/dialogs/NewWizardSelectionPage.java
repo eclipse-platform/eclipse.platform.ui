@@ -24,7 +24,7 @@ import java.util.*;
  *	projects to be retrieved from an available server.  This page
  *	contains two visual tabs that allow the user to perform these tasks.
  */
-class NewWizardSelectionPage extends WorkbenchWizardSelectionPage {
+class NewWizardSelectionPage extends WorkbenchWizardSelectionPage implements IDecisionPage {
 	private WizardCollectionElement	wizardCategories;
 	
 	// widgets

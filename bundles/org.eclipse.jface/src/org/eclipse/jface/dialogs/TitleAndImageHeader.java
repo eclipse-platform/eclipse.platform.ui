@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import sun.security.action.GetBooleanAction;
 
 /**
  * The TitleAndImageHeader is the header for wizards that shows
@@ -31,9 +32,6 @@ public class TitleAndImageHeader extends TitleAreaDialogHeader {
 
 	private Label titleLabel;
 	private Label titleImage;
-
-	private Color titleAreaColor;
-	private RGB titleAreaRGB;
 
 	private boolean titleImageLargest = true;
 
@@ -62,16 +60,8 @@ public class TitleAndImageHeader extends TitleAreaDialogHeader {
 
 		// Determine the background color of the title bar
 		Display display = parent.getDisplay();
-		Color background;
-		Color foreground;
-		if (titleAreaRGB != null) {
-			titleAreaColor = new Color(display, titleAreaRGB);
-			background = titleAreaColor;
-			foreground = null;
-		} else {
-			background = JFaceColors.getBannerBackground(display);
-			foreground = JFaceColors.getBannerForeground(display);
-		}
+		Color background = getTitleBackground(display);
+		Color foreground = getTitleForeground(display);
 
 		int verticalSpacing =
 			Dialog.convertVerticalDLUsToPixels(
@@ -144,16 +134,6 @@ public class TitleAndImageHeader extends TitleAreaDialogHeader {
 			}
 
 		};
-	}
-
-	/**
-	 * 
-	 * @see org.eclipse.jface.dialogs.TitleAreaDialogHeader#freeResources()
-	 */
-	protected void freeResources() {
-		super.freeResources();
-		if (titleAreaColor != null)
-			titleAreaColor.dispose();
 	}
 
 	/**
@@ -265,15 +245,6 @@ public class TitleAndImageHeader extends TitleAreaDialogHeader {
 	public void setTitleImage(Image newTitleImage) {
 		titleImage.setImage(newTitleImage);
 		titleImage.setVisible(newTitleImage != null);
-	}
-
-	/**
-	 * Sets the title bar color for this dialog.
-	 *
-	 * @param color the title bar color
-	 */
-	public void setTitleAreaColor(RGB color) {
-		titleAreaRGB = color;
 	}
 
 	/**

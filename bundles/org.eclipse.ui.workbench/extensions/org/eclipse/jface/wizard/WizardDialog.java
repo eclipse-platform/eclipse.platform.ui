@@ -895,7 +895,7 @@ public void showPage(IWizardPage page) {
 	currentPage = page;
 	currentPage.setVisible(true);
 	oldPage.setVisible(false);
-	tableOfContents.selectPage(page);
+	tableOfContents.updateFor(page);
 
 	// update the dialog controls
 	update();
@@ -983,6 +983,7 @@ public void updateButtons() {
 		nextButton.setEnabled(canFlipToNextPage);	
 	}	
 	finishButton.setEnabled(canFinish);
+	tableOfContents.updateFor(currentPage);
 
 	// finish is default unless it is diabled and next is enabled
 	if (canFlipToNextPage && !canFinish)
