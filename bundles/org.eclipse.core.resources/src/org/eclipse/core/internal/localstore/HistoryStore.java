@@ -7,6 +7,7 @@ package org.eclipse.core.internal.localstore;
  */
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.internal.properties.IndexedStoreWrapper;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.internal.indexing.*;
@@ -17,16 +18,13 @@ public class HistoryStore {
 	protected Workspace workspace;
 	protected IPath location;
 	protected BlobStore blobStore;
-	private IndexedStore store;
+	private IndexedStoreWrapper store;
+	private final static String INDEX_FILE = ".index";
 
-	/** constants */
-	protected final static String INDEX_FILE = ".index";
-	protected final static String INDEX_NAME = "index";
-	protected final static IFileState[] EMPTY_FILE_STATES = new IFileState[0];
 public HistoryStore(Workspace workspace, IPath location, int limit) {
 	this.workspace = workspace;
 	blobStore = new BlobStore(location, limit);
-	this.location = location.append(INDEX_FILE);
+	store = new IndexedStoreWrapper(location.append(INDEX_FILE));
 }
 /**
  * Searches indexed store for key, and invokes visitor's defined behaviour on key matches.
@@ -36,14 +34,8 @@ public HistoryStore(Workspace workspace, IPath location, int limit) {
  *		on partial or full key matches.
  */
 protected void accept(byte[] key, IHistoryStoreVisitor visitor, boolean visitOnPartialMatch) {
-	IndexedStore store = getIndexedStore();
-	if (store == null)
-		return;
-	Index index = getIndex(store);
-	if (index == null)
-		return;
 	try {
-		IndexCursor cursor = index.open();
+		IndexCursor cursor = store.getCursor();
 		cursor.find(key);
 		// Check for a prefix match.
 		while (cursor.keyMatches(key)) {
@@ -61,7 +53,7 @@ protected void accept(byte[] key, IHistoryStoreVisitor visitor, boolean visitOnP
 			cursor.next();
 		}
 		cursor.close();
-	} catch (IndexedStoreException e) {
+	} catch (Exception e) {
 		String message = "Problems accessing history store";
 		ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_READ_LOCAL, null, message, e);
 		ResourcesPlugin.getPlugin().getLog().log(status);
@@ -78,13 +70,6 @@ protected void accept(IPath path, IHistoryStoreVisitor visitor, boolean visitOnP
  * @params lastModified Timestamp for rseource being logged.
  */
 protected void addState(IPath path, UniversalUniqueIdentifier uuid, long lastModified) {
-	IndexedStore store = getIndexedStore();
-	if (store == null)
-		return;
-	Index index = getIndex(store);
-	if (index == null)
-		return;
-
 	// Determine how many states already exist for this path and timestamp.
 	class CountVisitor implements IHistoryStoreVisitor {
 		byte count = 0;
@@ -104,8 +89,9 @@ protected void addState(IPath path, UniversalUniqueIdentifier uuid, long lastMod
 	HistoryStoreEntry entryToInsert = new HistoryStoreEntry(path, uuid, lastModified, visitor.getCount());
 	try {
 		ObjectID valueID = store.createObject(entryToInsert.valueToBytes());
-		index.insert(entryToInsert.getKey(), valueID);
-	} catch (IndexedStoreException e) {
+		store.getIndex().insert(entryToInsert.getKey(), valueID);
+	} catch (Exception e) {
+		resetIndexedStore();
 		String message = "Could not add history";
 		ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, null, message, e);
 		ResourcesPlugin.getPlugin().getLog().log(status);
@@ -123,13 +109,10 @@ protected void addState(IPath path, UniversalUniqueIdentifier uuid, long lastMod
 public void addState(IPath key, IPath localLocation, long lastModified, boolean moveContents) {
 	if (!isValid(localLocation))
 		return;
-	IndexedStore store = getIndexedStore();
-	if (store == null)
-		return;
 	try {
 		UniversalUniqueIdentifier uuid = blobStore.addBlob(localLocation.toFile(), moveContents);
 		addState(key, uuid, lastModified);
-		commit(store);
+		store.commit();
 	} catch (CoreException e) {
 		ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
 	}
@@ -138,12 +121,6 @@ public void addState(IPath key, IPath localLocation, long lastModified, boolean 
  * Clean this store applying the current policies.
  */
 public void clean() {
-	IndexedStore store = getIndexedStore();
-	if (store == null)
-		return;
-	Index index = getIndex(store);
-	if (index == null)
-		return;
 	IWorkspaceDescription description = workspace.internalGetDescription();
 	long minimumTimestamp = System.currentTimeMillis() - description.getFileStateLongevity();
 	int max = description.getMaxFileStates();
@@ -151,7 +128,7 @@ public void clean() {
 	List result = new ArrayList(max);
 	Set blobs = new HashSet();
 	try {
-		IndexCursor cursor = index.open();
+		IndexCursor cursor = store.getCursor();
 		cursor.findFirstEntry();
 		while (cursor.isSet()) {
 			HistoryStoreEntry entry = HistoryStoreEntry.create(store, cursor);
@@ -173,27 +150,9 @@ public void clean() {
 		cursor.close();
 		store.commit();
 		removeGarbage(blobs);
-	} catch (IndexedStoreException e) {
+	} catch (Exception e) {
 		String message = "Problems cleaning up history store";
 		ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, null, message, e);
-		ResourcesPlugin.getPlugin().getLog().log(status);
-	}
-}
-protected synchronized void close(IndexedStore store) {
-	try {
-		store.close();
-	} catch (IndexedStoreException e) {
-		String message = "Could not close history store";
-		ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, null, message, e);
-		ResourcesPlugin.getPlugin().getLog().log(status);
-	}
-}
-protected void commit(IndexedStore store) {
-	try {
-		store.commit();
-	} catch (IndexedStoreException e) {
-		String message = "History store transactions did not commit properly";
-		ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, null, message, e);
 		ResourcesPlugin.getPlugin().getLog().log(status);
 	}
 }
@@ -243,21 +202,6 @@ public static byte[] convertLongToBytes(long value) {
 
 	return bytes;
 }
-protected synchronized IndexedStore create(IndexedStore store) {
-	store = open(store);
-	createIndex(store);
-	return store;
-}
-protected synchronized Index createIndex(IndexedStore store) {
-	try {
-		return store.createIndex(INDEX_NAME);
-	} catch (IndexedStoreException e) {
-		String message = "Could not create index for history store";
-		ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, null, message, e);
-		ResourcesPlugin.getPlugin().getLog().log(status);
-		return null;
-	}
-}
 /**
  * Verifies existence of specified resource in the history store.
  *
@@ -282,31 +226,6 @@ public InputStream getContents(IFileState target) throws CoreException {
 	}
 	return blobStore.getBlob(((FileState) target).getUUID());
 }
-protected Index getIndex(IndexedStore store) {
-	try {
-		return store.getIndex(INDEX_NAME);
-	} catch (IndexedStoreException e) {
-		String message = "Problems accessing history store index";
-		ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, null, message, e);
-		ResourcesPlugin.getPlugin().getLog().log(status);
-		return createIndex(store);
-	}
-}
-protected IndexedStore getIndexedStore() {
-	if (store == null) {
-		String name = location.toOSString();
-		store = IndexedStore.find(name);
-		if (store != null) {
-			rollback(store);
-		} else {
-			if (IndexedStore.exists(name))
-				store = open(new IndexedStore());
-			else
-				store = create(new IndexedStore());
-		}
-	}
-	return store;
-}
 /**
  * Returns an array of all states available for the specified resource path or
  * an empty array if none.
@@ -325,7 +244,7 @@ public IFileState[] getStates(final IPath key) {
 	};
 	accept(key, visitor, false);
 	if (result.isEmpty())
-		return EMPTY_FILE_STATES;
+		return ICoreConstants.EMPTY_FILE_STATES;
 	// put in the order of newer first
 	IFileState[] states = new IFileState[result.size()];
 	for (int i = 0; i < states.length; i++)
@@ -340,29 +259,6 @@ public boolean isValid(IPath location) {
 	WorkspaceDescription description = workspace.internalGetDescription();
 	return location.toFile().length() <= description.getMaxFileStateSize();
 }
-protected synchronized IndexedStore open(IndexedStore store) {
-	try {
-		store.open(location.toOSString());
-	} catch (IndexedStoreException e) {
-		String message = "Could not open history store";
-		ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, null, message, e);
-		ResourcesPlugin.getPlugin().getLog().log(status);
-		store = recreate(store);
-	}
-	return store;
-}
-protected synchronized IndexedStore recreate(IndexedStore store) {
-	close(store);
-	String name = location.toOSString();
-	// Rename the problematic store for future analysis.
-	location.toFile().renameTo(location.append(".001").toFile());
-	location.toFile().delete();
-	if (location.toFile().exists())
-		return null; // we would not be able to recreate the store
-	blobStore.deleteAll();
-	store = create(new IndexedStore());
-	return store;
-}
 protected void remove(HistoryStoreEntry entry) throws IndexedStoreException {
 	blobStore.deleteBlob(entry.getUUID());
 	entry.remove();
@@ -375,14 +271,8 @@ public void removeAll() {
 	removeAll(workspace.getRoot());
 }
 public void removeAll(IResource resource) {
-	IndexedStore store = getIndexedStore();
-	if (store == null)
-		return;
-	Index index = getIndex(store);
-	if (index == null)
-		return;
 	try {
-		IndexCursor cursor = index.open();
+		IndexCursor cursor = store.getCursor();
 		byte[] key = resource.getFullPath().toString().getBytes();
 		cursor.find(key);
 		while (cursor.keyMatches(key)) {
@@ -390,8 +280,8 @@ public void removeAll(IResource resource) {
 			remove(entry);
 		}
 		cursor.close();
-		commit(store);
-	} catch (IndexedStoreException e) {
+		store.commit();
+	} catch (Exception e) {
 		String message = "Problems cleaning up history store";
 		ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, null, message, e);
 		ResourcesPlugin.getPlugin().getLog().log(status);
@@ -401,15 +291,9 @@ public void removeAll(IResource resource) {
  * Checks if there are any blobs on disk that have no reference in the index store.
  */
 public void removeGarbage() {
-	IndexedStore store = getIndexedStore();
-	if (store == null)
-		return;
-	Index index = getIndex(store);
-	if (index == null)
-		return;
 	Set blobsToPreserv = new HashSet();
 	try {
-		IndexCursor cursor = index.open();
+		IndexCursor cursor = store.getCursor();
 		cursor.findFirstEntry();
 		while (cursor.isSet()) {
 			HistoryStoreEntry entry = HistoryStoreEntry.create(store, cursor);
@@ -417,7 +301,7 @@ public void removeGarbage() {
 			cursor.next();
 		}
 		cursor.close();
-	} catch (IndexedStoreException e) {
+	} catch (Exception e) {
 		String message = "Problems cleaning up history store";
 		ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, null, message, e);
 		ResourcesPlugin.getPlugin().getLog().log(status);
@@ -443,20 +327,21 @@ protected void removeOldestEntries(List entries, int maxEntries) throws IndexedS
 	for (int i = 0; i < limit; i++)
 		remove((HistoryStoreEntry) entries.get(i));
 }
-protected void rollback(IndexedStore store) {
-	try {
-		store.rollback();
-	} catch (IndexedStoreException e) {
-		String message = "History store transactions did not rollback properly";
-		ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, null, message, e);
-		ResourcesPlugin.getPlugin().getLog().log(status);
-	}
-}
 public void shutdown(IProgressMonitor monitor) {
 	if (store == null)
 		return;
-	close(store);
+	store.close();
 }
 public void startup(IProgressMonitor monitor) {
+}
+protected void resetIndexedStore() {
+	store.reset();
+	IPath location = workspace.getMetaArea().getHistoryStoreLocation();
+	java.io.File target = location.toFile();
+	workspace.clear(target);
+	target.mkdirs();
+	String message = "History store got corrupted. Local history is lost. A new store is being created.";
+	ResourceStatus status = new ResourceStatus(IResourceStatus.INTERNAL_ERROR, null, message, null);
+	ResourcesPlugin.getPlugin().getLog().log(status);
 }
 }

@@ -6,8 +6,7 @@ package org.eclipse.core.internal.resources;
  * (c) Copyright IBM Corp 2000
  */
 import org.eclipse.core.runtime.QualifiedName;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.*;
 
 public interface ICoreConstants {
 	
@@ -55,4 +54,5 @@ public interface ICoreConstants {
 	
 	// helper constants for empty structures
 	public static final IProject[] EMPTY_PROJECT_ARRAY = new IProject[0];
+	public static final IFileState[] EMPTY_FILE_STATES = new IFileState[0];
 }

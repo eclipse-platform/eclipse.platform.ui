@@ -7,8 +7,8 @@ package org.eclipse.core.internal.localstore;
  */
 
 import org.eclipse.core.resources.IResourceStatus;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.internal.properties.IndexedStoreWrapper;
 import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.internal.utils.UniversalUniqueIdentifier;
@@ -68,7 +68,7 @@ protected boolean compare(byte[] one, byte[] another) {
  * @param store Indexed history store from which data is to be read.
  * @param cursor Position from which data is to be read.
  */
-public static HistoryStoreEntry create(IndexedStore store, IndexCursor cursor) throws IndexedStoreException {
+public static HistoryStoreEntry create(IndexedStoreWrapper store, IndexCursor cursor) throws CoreException, IndexedStoreException {
 	byte[] key = cursor.getKey();
 	ObjectID valueID = cursor.getValueAsObjectID();
 	byte[] value = store.getObject(valueID);
