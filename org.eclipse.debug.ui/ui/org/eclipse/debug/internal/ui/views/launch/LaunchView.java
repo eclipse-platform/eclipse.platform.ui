@@ -987,16 +987,4 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		}
 		return fVisitor;
 	}
-
-
-	/**
-	 * Sets the resource delta visitor for this view
-	 * .
-	 * @param visitor resource delta visitor
-	 */
-	private void setVisitor(IResourceDeltaVisitor visitor) {
-		fVisitor = visitor;
-	}
-
-
 }
