@@ -558,10 +558,10 @@ public class AntCorePreferences {
 	 */
 	public List getTypes() {
 		List result = new ArrayList(10);
-		if (defaultTypes != null) {
+		if (defaultTypes != null && !defaultTypes.isEmpty()) {
 			result.addAll(defaultTypes);
 		}
-		if (customTypes != null) {
+		if (customTypes != null && customTypes.length != 0) {
 			result.addAll(Arrays.asList(customTypes));
 		}
 		return result;
