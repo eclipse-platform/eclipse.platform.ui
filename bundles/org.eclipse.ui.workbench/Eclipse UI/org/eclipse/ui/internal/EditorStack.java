@@ -13,14 +13,19 @@
 
 package org.eclipse.ui.internal;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.presentations.PresentationFactoryUtil;
 import org.eclipse.ui.internal.presentations.SystemMenuPinEditor;
 import org.eclipse.ui.internal.presentations.SystemMenuSize;
 import org.eclipse.ui.internal.presentations.UpdatingActionContributionItem;
+import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.presentations.IStackPresentationSite;
 import org.eclipse.ui.presentations.StackPresentation;
@@ -233,4 +238,57 @@ public class EditorStack extends PartStack {
 			Assert.isTrue(!isActiveWorkbook());
 		}
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.PartStack#restoreState(org.eclipse.ui.IMemento)
+	 */
+	public IStatus restoreState(IMemento memento) { 
+	    Integer expanded = memento.getInteger(IWorkbenchConstants.TAG_EXPANDED);
+        setState((expanded == null || expanded.intValue() != IStackPresentationSite.STATE_MINIMIZED) ? IStackPresentationSite.STATE_RESTORED
+                : IStackPresentationSite.STATE_MINIMIZED);
+	
+        Integer appearance = memento.getInteger(IWorkbenchConstants.TAG_APPEARANCE);
+        if (appearance != null) {
+        	this.appearance = appearance.intValue();
+        }
+	        
+        // Determine if the presentation has saved any info here
+        savedPresentationState = null;
+        IMemento[] presentationMementos = memento.getChildren(IWorkbenchConstants.TAG_PRESENTATION);
+        
+        for (int idx = 0; idx < presentationMementos.length; idx++) {
+        	IMemento child = presentationMementos[idx];
+        	
+        	String id = child.getString(IWorkbenchConstants.TAG_ID);
+        	
+        	if (Util.equals(id, getFactory().getId())) {
+        		savedPresentationState = child;
+        		break;
+        	}
+        }
+        
+        return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
+	}
+		
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.PartStack#saveState(org.eclipse.ui.IMemento)
+	 */
+	public IStatus saveState(IMemento memento) {
+        memento
+                .putInteger(
+                        IWorkbenchConstants.TAG_EXPANDED,
+                        (getPresentationSite().getState() == IStackPresentationSite.STATE_MINIMIZED) ? IStackPresentationSite.STATE_MINIMIZED
+                                : IStackPresentationSite.STATE_RESTORED);
+
+        memento.putInteger(IWorkbenchConstants.TAG_APPEARANCE, appearance);
+        
+        savePresentationState();
+        
+        if (savedPresentationState != null) {
+       		IMemento presentationState = memento.createChild(IWorkbenchConstants.TAG_PRESENTATION);
+       		presentationState.putMemento(savedPresentationState);
+        }
+       
+       return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
+ 	}
 }

@@ -877,6 +877,11 @@ public class EditorManager {
 			restoreEditorState(editorMems[x], visibleEditors, activeEditor, errorWorkbooks, result);
 		}
 
+		// restore the presentation
+		if (areaMem != null) {
+			result.add(editorPresentation.restorePresentationState(areaMem));
+		}
+
 		Platform.run(new SafeRunnable() {
 			public void run() {
 				// Update each workbook with its visible editor.

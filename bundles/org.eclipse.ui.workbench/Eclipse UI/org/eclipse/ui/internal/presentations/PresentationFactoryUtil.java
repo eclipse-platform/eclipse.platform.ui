@@ -46,11 +46,12 @@ public class PresentationFactoryUtil {
 			default:
 				presentation = factory.createViewPresentation(parent, site);
 		}
-		
-		if (memento != null && serializer != null) {
-			presentation.restoreState(serializer, memento);
+
+		//don't initialize editors at creation time - it will not contain any parts
+		if (role != ROLE_EDITOR && memento != null && serializer != null) {
+		    presentation.restoreState(serializer, memento);
 		}
-		
+
 		return presentation;
 	}
 	

@@ -21,15 +21,18 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IPreferenceConstants;
+import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.IWorkbenchThemeConstants;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.presentations.IPresentablePart;
+import org.eclipse.ui.presentations.IPresentationSerializer;
 import org.eclipse.ui.presentations.IStackPresentationSite;
 import org.eclipse.ui.presentations.StackPresentation;
 import org.eclipse.ui.themes.ITheme;
@@ -96,6 +99,46 @@ public class DefaultEditorPresentation extends DefaultPartPresentation {
         }
     };
 
+	/**
+	 * For editors we'll have to replace the contents instead of simply adding 
+	 * them to the presentation.
+	 * 
+	 * @see org.eclipse.ui.presentations.StackPresentation#restoreState(org.eclipse.ui.presentations.IPresentationSerializer, org.eclipse.ui.IMemento)
+	 */
+	public void restoreState(IPresentationSerializer serializer,
+			IMemento savedState) {
+		IMemento[] parts = savedState.getChildren(IWorkbenchConstants.TAG_PART);
+
+		IPresentablePart currentPart = getCurrentPart();
+
+		// the insertion index for the current part
+		int insert = 0;
+		for (int idx = 0; idx < parts.length; idx++) {
+			String id = parts[idx].getString(IWorkbenchConstants.TAG_ID);
+
+		    // if the part is not around, then it doesn't get added  
+			IPresentablePart part = id == null ? null : serializer.getPart(id);
+			if (part == null)
+			    continue;
+
+			int partIndex = indexOf(part);
+
+			// otherwise if the part is in the right place then do nothing
+			if (partIndex == insert) {
+			    ++insert;
+			    continue;
+			}
+			
+			// otherwise remove the part and add it in the right place
+		    removePart(part);
+	        addPart(part, partIndex < insert ? insert - 1 : insert++);
+
+	        // reselect the part if it was previously the current
+		    if (part == currentPart)
+		        selectPart(part);
+		}
+	}
+	
     public DefaultEditorPresentation(Composite parent, IStackPresentationSite newSite) {
         super(new PaneFolder(parent, SWT.BORDER), newSite);
         final PaneFolder tabFolder = getTabFolder();

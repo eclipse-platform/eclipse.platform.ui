@@ -54,7 +54,7 @@ import org.eclipse.ui.presentations.StackPresentation;
 public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 
     private List children = new ArrayList(3);
-    private int appearance = PresentationFactoryUtil.ROLE_VIEW;
+    protected int appearance = PresentationFactoryUtil.ROLE_VIEW;
 
     // inactiveCurrent is only used when restoring the persisted state of
     // perspective on startup.
@@ -62,7 +62,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
     
     private boolean ignoreSelectionChanges = false;
     
-    private IMemento savedPresentationState = null;
+    protected IMemento savedPresentationState = null;
 
     private DefaultStackPresentationSite presentationSite = new DefaultStackPresentationSite() {
 
@@ -344,7 +344,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
     	return getPresentation() == null;
     }
 
-    private AbstractPresentationFactory getFactory() {
+    protected AbstractPresentationFactory getFactory() {
         AbstractPresentationFactory factory = ((WorkbenchWindow) getPage()
                 .getWorkbenchWindow()).getWindowConfigurer()
                 .getPresentationFactory();
@@ -481,7 +481,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
      * Saves the current state of the presentation to savedPresentationState, if the
      * presentation exists.
      */
-    private void savePresentationState() {
+    protected void savePresentationState() {
     	if (isDisposed()) {
     		return;
     	}
@@ -626,7 +626,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
      * 
      * @return
      */
-    private List getPresentableParts() {
+    public List getPresentableParts() {
         List result = new ArrayList(children.size());
 
         Iterator iter = children.iterator();
@@ -948,7 +948,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         }
     }
 
-    private void setState(int newState) {    	
+    protected void setState(int newState) {    	
         if (!supportsState(newState) || newState == presentationSite.getState()) { return; }
 
         int oldState = presentationSite.getState();
@@ -1150,5 +1150,12 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 	            }
 	    	}
 		}
+	}
+
+	/**
+	 * @return Returns the savedPresentationState.
+	 */
+	public IMemento getSavedPresentationState() {
+		return savedPresentationState;
 	}
 }

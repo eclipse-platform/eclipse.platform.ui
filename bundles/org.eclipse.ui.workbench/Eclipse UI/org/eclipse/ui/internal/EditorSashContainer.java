@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
@@ -25,6 +26,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.presentations.PresentationSerializer;
 import org.eclipse.ui.presentations.StackPresentation;
 
 /**
@@ -202,7 +204,11 @@ public void removeEditor(EditorPane pane) {
  * @see IPersistablePart
  */
 public IStatus restoreState(IMemento memento) {
-	// Remove the default editor workbook that is
+    MultiStatus result = new MultiStatus(
+    		PlatformUI.PLUGIN_ID,IStatus.OK,
+    		WorkbenchMessages.getString("RootLayoutContainer.problemsRestoringPerspective"),null); //$NON-NLS-1$
+
+    // Remove the default editor workbook that is
 	// initialy created with the editor area.
 	if (children != null) {
 		EditorStack defaultWorkbook = null;
@@ -248,7 +254,9 @@ public IStatus restoreState(IMemento memento) {
 		workbook.setID(partID);
 		// 1FUN70C: ITPUI:WIN - Shouldn't set Container when not active
 		workbook.setContainer(this);
-		
+
+		result.add(workbook.restoreState(childMem.getChild(IWorkbenchConstants.TAG_FOLDER)));
+
 		// Add the part to the layout
 		if (relativeID == null) {
 			add(workbook);
@@ -266,13 +274,17 @@ public IStatus restoreState(IMemento memento) {
 		}
 		mapIDtoPart.put(partID, workbook);
 	}
-	return new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null); //$NON-NLS-1$
+	return result;
 }
 /**
  * @see IPersistablePart
  */
 public IStatus saveState(IMemento memento) {
 	RelationshipInfo[] relationships = computeRelation();
+	MultiStatus result = new MultiStatus(
+			PlatformUI.PLUGIN_ID,IStatus.OK,
+			WorkbenchMessages.getString("RootLayoutContainer.problemsSavingPerspective"),null); //$NON-NLS-1$
+
 	for (int i = 0; i < relationships.length; i ++) {
 		// Save the relationship info ..
 		//		private LayoutPart part;
@@ -282,6 +294,13 @@ public IStatus saveState(IMemento memento) {
 		RelationshipInfo info = relationships[i];
 		IMemento childMem = memento.createChild(IWorkbenchConstants.TAG_INFO);
 		childMem.putString(IWorkbenchConstants.TAG_PART, info.part.getID());
+
+		EditorStack stack = (EditorStack) info.part;
+		if (stack != null) {
+			IMemento folderMem = childMem.createChild(IWorkbenchConstants.TAG_FOLDER);
+			result.add(stack.saveState(folderMem));
+		}
+
 		if (info.relative != null) {
 			childMem.putString(IWorkbenchConstants.TAG_RELATIVE, info.relative.getID());
 			childMem.putInteger(IWorkbenchConstants.TAG_RELATIONSHIP, info.relationship);
@@ -292,7 +311,7 @@ public IStatus saveState(IMemento memento) {
 			childMem.putFloat(IWorkbenchConstants.TAG_RATIO, info.getRatio());
 		}
 	}
-	return new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null); //$NON-NLS-1$
+	return result;
 }
 /**
  * Set the editor workbook which is active.
@@ -426,4 +445,21 @@ public void updateTabList() {
 		return refPart.getVisibleEditor();
 	}
 
+	/**
+	 * Restore the presentation state.  Loop over the workbooks, create the appropriate serializer and pass to the presentation.
+	 *
+	 * @param areaMem the memento containing presentation 
+	 * @return the restoration status
+	 */
+	public IStatus restorePresentationState(IMemento areaMem) {
+		for (Iterator i = getEditorWorkbooks().iterator(); i.hasNext();) {
+			EditorStack workbook = (EditorStack) i.next();
+			IMemento memento = workbook.getSavedPresentationState();
+			if (memento == null)
+				continue;
+			PresentationSerializer serializer = new PresentationSerializer(workbook.getPresentableParts());
+			workbook.getPresentation().restoreState(serializer, memento);			
+		}
+		return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
+	}
 }

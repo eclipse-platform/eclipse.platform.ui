@@ -280,6 +280,16 @@ public class EditorAreaHelper {
 		// Restore the editor area workbooks layout/relationship
 		return editorArea.restoreState(memento);
 	}
+
+	/**
+	 * Restore the presentation
+	 * @param areaMem
+	 * @return
+	 */
+	public IStatus restorePresentationState(IMemento areaMem) {
+		return editorArea.restorePresentationState(areaMem);
+	}	
+
 	/**
 	 * @see IPersistablePart
 	 */

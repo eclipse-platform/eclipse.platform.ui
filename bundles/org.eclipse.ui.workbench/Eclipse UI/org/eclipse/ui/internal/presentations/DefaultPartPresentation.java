@@ -539,7 +539,7 @@ public class DefaultPartPresentation extends StackPresentation {
 	 * @return the index of the tab for the given part, or the number of tabs
 	 * if there is no such tab
 	 */
-	private final int indexOf(IPresentablePart part) {
+	protected final int indexOf(IPresentablePart part) {
     	Assert.isTrue(!isDisposed());
     	
 		if (part == null) {
