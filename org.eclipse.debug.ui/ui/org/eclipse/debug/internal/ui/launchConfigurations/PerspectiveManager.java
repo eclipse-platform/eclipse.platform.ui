@@ -308,6 +308,16 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 					if (window == null) {
 						return;
 					}
+					if (shouldSwitchPerspectiveForSuspend(window, targetId)) {
+						switchToPerspective(window, targetId);
+						// Showing the perspective can open a new window
+						// (based on user prefs). So check again in case a
+						// new window has been opened.
+						window = getWindowForPerspective(targetId);
+						if (window == null) {
+							return;
+						}
+					}
 					// re-open the window if minimized 
 					Shell shell= window.getShell();
 					if (shell != null) {
@@ -317,13 +327,6 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 						if (DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_ACTIVATE_WORKBENCH)) {
 							shell.forceActive();
 						}
-					}
-					if (shouldSwitchPerspectiveForSuspend(window, targetId)) {
-						switchToPerspective(window, targetId);
-						// Showing the perspective can open a new window
-						// (based on user prefs). So check again in case a
-						// new window has been opened.
-						window = getWindowForPerspective(targetId);
 					}
 				}
 				if (window != null && DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_ACTIVATE_DEBUG_VIEW)) {
@@ -428,8 +431,7 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 			return false;
 		}
 		String perspectiveName= getPerspectiveLabel(perspectiveId);
-		Shell shell= Display.getDefault().getActiveShell();
-		if (perspectiveName == null || shell == null) {
+		if (perspectiveName == null) {
 			return false;
 		}
 		String switchPerspective= DebugUIPlugin.getDefault().getPreferenceStore().getString(preferenceKey);
@@ -438,8 +440,12 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 		} else if (MessageDialogWithToggle.NEVER.equals(switchPerspective)) {
 			return false;
 		}
+		
+		Shell shell= window.getShell();
+		if (shell == null) {
+			return false;
+		}
 		fPrompting= true;
-
 		MessageDialogWithToggle dialog = MessageDialogWithToggle.openYesNoQuestion(shell, LaunchConfigurationsMessages.getString("PerspectiveManager.12"), MessageFormat.format(message, new String[] { perspectiveName }), null, false, DebugUIPlugin.getDefault().getPreferenceStore(), preferenceKey); //$NON-NLS-1$
 		boolean answer = (dialog.getReturnCode() == IDialogConstants.YES_ID);
 		synchronized (this) {
