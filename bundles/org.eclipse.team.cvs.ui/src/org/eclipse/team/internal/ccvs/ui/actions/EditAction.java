@@ -18,11 +18,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.core.Team;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
-import org.eclipse.team.internal.ccvs.core.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.ICVSResource;
-import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.ui.PlatformUI;
 
 public class EditAction extends WorkspaceAction {
 
@@ -32,34 +30,23 @@ public class EditAction extends WorkspaceAction {
 	protected void execute(IAction action) throws InvocationTargetException, InterruptedException {
 		// Get the editors
 		final EditorsAction editors = new EditorsAction();
-		run(new IRunnableWithProgress() {
-			/* (non-Javadoc)
-			 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
-			 */
-			public void run(IProgressMonitor monitor)
-					throws InvocationTargetException, InterruptedException {
-				executeProviderAction(editors,monitor);
-			}
-		}, true /* cancelable */, PROGRESS_DIALOG);
-		
-		// If there are editors show them
-		// and prompt the user to
-		// execute the edit command
-		if (!editors.promptToEdit(shell)) {
-			return;
-		}
-
-		
-		run(new WorkspaceModifyOperation(null) {
-			public void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+		PlatformUI.getWorkbench().getProgressService().busyCursorWhile(new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+				executeProviderAction(editors, Policy.subMonitorFor(monitor, 25));
+				
+				// If there are editors show them and prompt the user to execute the edit command
+				if (!editors.promptToEdit(shell)) {
+					return;
+				}
+				
 				executeProviderAction(new IProviderAction() {
 					public IStatus execute(CVSTeamProvider provider, IResource[] resources, IProgressMonitor monitor) throws CVSException {
 						provider.edit(resources, false /* recurse */, true /* notify server */, ICVSFile.NO_NOTIFICATION, monitor);
 						return Team.OK_STATUS;
 					}
-				}, monitor);
+				}, Policy.subMonitorFor(monitor, 75));
 			}
-		}, true /* cancelable */, PROGRESS_DIALOG);
+		});
 	}
 
 	/**

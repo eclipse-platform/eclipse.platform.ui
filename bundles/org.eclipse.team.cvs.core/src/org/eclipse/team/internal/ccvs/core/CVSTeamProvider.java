@@ -943,7 +943,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 		// Build the local options
 		LocalOption[] commandOptions = new LocalOption[] {
 		};
-
+		progress.worked(10);
 		// Build the arguments list
 		String[] arguments = getValidArguments(resources, commandOptions);
 
