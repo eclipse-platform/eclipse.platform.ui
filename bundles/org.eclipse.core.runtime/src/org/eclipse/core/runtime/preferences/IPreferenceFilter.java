@@ -22,10 +22,6 @@ import java.util.Map;
  * trimmed and only the applicable preferences will be exported.
  * </p>
  * <p>
- * <em>Note:</em> This is interim API and will likely change shape for the
- * final release of 3.1.
- * </p>
- * <p>
  * Clients may implement this interface.
  * </p>
  * 

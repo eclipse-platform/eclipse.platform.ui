@@ -564,10 +564,6 @@ public interface IPreferencesService {
 	 * <p>
 	 * It is the responsibility of the client to close the given output stream.
 	 * </p>
-	 * <p>
-	 * <em>Note:</em> This is interim API and will likely change shape before the 
-	 * final 3.1 release.
-	 * </p>
 	 * 
 	 * @param node the tree to export
 	 * @param filters the list of filters to export
