@@ -2591,13 +2591,7 @@
             name="%Views.Category.Basic"
             id="org.eclipse.ui">
       </category>
-      <view
-            name="%Views.Progress"
-            icon="icons/full/progress/pview.gif"
-            category="org.eclipse.ui"
-            class="org.eclipse.ui.internal.progress.ProgressView"
-            id="org.eclipse.ui.views.ProgressView">
-      </view>
+     
    </extension>
    <extension
          point="org.eclipse.ui.elementFactories">

@@ -354,6 +354,13 @@
    <extension
          point="org.eclipse.ui.views">
       <view
+            name="%Views.Progress"
+            icon="icons/full/progress/pview.gif"
+            category="org.eclipse.ui"
+            class="org.eclipse.ui.internal.progress.ProgressView"
+            id="org.eclipse.ui.views.ProgressView">
+      </view>
+      <view
             name="%Views.ResourceNavigator"
             icon="icons/full/cview16/filenav_nav.gif"
             category="org.eclipse.ui"
