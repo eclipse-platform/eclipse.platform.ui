@@ -910,6 +910,7 @@ public final class Workbench implements IWorkbench {
 		 */
 		commandService.readRegistry();
 		handlerService.readRegistry();
+		contextService.readRegistry();
 		bindingService.readRegistryAndPreferences(commandService);
 		
 		/*

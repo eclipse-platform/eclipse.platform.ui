@@ -63,4 +63,8 @@ public final class ContextService implements IContextService {
 	public final Collection getDefinedContextIds() {
 		return contextManager.getDefinedContextIds();
 	}
+
+	public final void readRegistry() {
+		ContextPersistence.read(contextManager);
+	}
 }

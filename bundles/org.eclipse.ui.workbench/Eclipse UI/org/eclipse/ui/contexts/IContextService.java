@@ -48,4 +48,15 @@ public interface IContextService {
 	 */
 	public Collection getDefinedContextIds();
 
+	/**
+	 * <p>
+	 * Reads the context information from the registry and the preferences. This
+	 * will overwrite any of the existing information in the context service.
+	 * This method is intended to be called during start-up. When this method
+	 * completes, this context service will reflect the current state of the
+	 * registry and preference store.
+	 * </p>
+	 */
+	public void readRegistry();
+
 }
