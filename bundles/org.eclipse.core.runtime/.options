@@ -1,0 +1,17 @@
+org.eclipse.core.runtime/debug=true
+org.eclipse.core.runtime/registry/debug=true
+org.eclipse.core.runtime/registry/debug/resolve=true
+org.eclipse.core.runtime/loader/debug=true
+org.eclipse.core.runtime/loader/debug/create=true
+org.eclipse.core.runtime/loader/debug/activateplugin=true
+org.eclipse.core.runtime/loader/debug/actions=true
+org.eclipse.core.runtime/loader/debug/success=true
+org.eclipse.core.runtime/loader/debug/failure=true
+org.eclipse.core.runtime/loader/debug/filter/loader=*
+org.eclipse.core.runtime/loader/debug/filter/class=*
+org.eclipse.core.runtime/loader/debug/filter/resource=*
+org.eclipse.core.runtime/loader/debug/filter/native=*
+org.eclipse.core.runtime/eclipseurl/debug=true
+org.eclipse.core.runtime/eclipseurl/debug/connect=false
+org.eclipse.core.runtime/eclipseurl/debug/cachelookup=true
+org.eclipse.core.runtime/eclipseurl/debug/cachecopy=true
