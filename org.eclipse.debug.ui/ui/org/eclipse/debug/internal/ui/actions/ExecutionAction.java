@@ -28,7 +28,6 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.LaunchWizard;
 import org.eclipse.debug.internal.ui.LaunchWizardDialog;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationDialog;
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -47,8 +46,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 /**
  * This is the debug action which appears in the desktop menu and toolbar.
  */
-public abstract class ExecutionAction extends Action implements IActionDelegateWithEvent {
-	
+public abstract class ExecutionAction implements IActionDelegateWithEvent {
 	
 	/**
 	 * @see IActionDelegateWithEvent#runWithEvent(IAction, Event)
@@ -60,12 +58,6 @@ public abstract class ExecutionAction extends Action implements IActionDelegateW
 		} else {
 			runOldStyleLaunch();
 		}
-	}
-	
-	/**
-	 * @see IAction#run()
-	 */
-	public void run() {
 	}
 	
 	private void runLaunchConfiguration() {
@@ -338,6 +330,7 @@ public abstract class ExecutionAction extends Action implements IActionDelegateW
 	}
 	
 	/**
+	 * @see runWithEvent(IAction, Event)
 	 * @see IActionDelegate#run(IAction)
 	 */
 	public void run(IAction action) {
