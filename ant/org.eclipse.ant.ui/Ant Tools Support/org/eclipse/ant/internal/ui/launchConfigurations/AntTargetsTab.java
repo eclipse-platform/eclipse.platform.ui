@@ -659,7 +659,8 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 				return false;
 			} else {
 				//targets not up to date and no error message...we have not parsed recently
-				getTargets();
+				setExecuteInput(getTargets());
+				
 				if (getErrorMessage() != null) {
 					//error in parsing;
 					return false;
