@@ -14,6 +14,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
@@ -187,6 +188,54 @@ public class ExternalToolsImages {
 			
 		return new URL(ICON_BASE_URL, iconPath);
 	}
+	
+	/**
+	 * Sets the three image descriptors for enabled, disabled, and hovered to an action. The actions
+	 * are retrieved from the *lcl16 folders.
+	 */
+	public static void setLocalImageDescriptors(IAction action, String iconName) {
+		setImageDescriptors(action, "lcl16", iconName); //$NON-NLS-1$
+	}
+	
+	private static void setImageDescriptors(IAction action, String type, String relPath) {
+		
+		try {
+			ImageDescriptor id= ImageDescriptor.createFromURL(makeIconFileURL("d" + type, relPath)); //$NON-NLS-1$
+			if (id != null)
+				action.setDisabledImageDescriptor(id);
+		} catch (MalformedURLException e) {
+			ExternalToolsPlugin.getDefault().log(e);
+		}
+
+		try {
+			ImageDescriptor id= ImageDescriptor.createFromURL(makeIconFileURL("c" + type, relPath)); //$NON-NLS-1$
+			if (id != null)
+				action.setHoverImageDescriptor(id);
+		} catch (MalformedURLException e) {
+			ExternalToolsPlugin.getDefault().log(e);
+		}
+
+		action.setImageDescriptor(create("e" + type, relPath)); //$NON-NLS-1$
+	}
+	
+	private static URL makeIconFileURL(String prefix, String name) throws MalformedURLException {
+		if (ICON_BASE_URL == null) {
+			throw new MalformedURLException();
+		}
+		
+		StringBuffer buffer= new StringBuffer(prefix);
+		buffer.append('/');
+		buffer.append(name);
+		return new URL(ICON_BASE_URL, buffer.toString());
+	}
+	private static ImageDescriptor create(String prefix, String name) {
+		try {
+			return ImageDescriptor.createFromURL(makeIconFileURL(prefix, name));
+		} catch (MalformedURLException e) {
+			ExternalToolsPlugin.getDefault().log(e);
+			return ImageDescriptor.getMissingImageDescriptor();
+		}
+	}	
 }
 
 
