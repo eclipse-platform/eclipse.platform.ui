@@ -273,12 +273,12 @@ public class JobManager implements IJobManager {
 
 	/**
 	 * Returns a new progress monitor for this job, belonging to the given
-	 * progress group.  Never returns null.
+	 * progress group.  Returns null if it is not a valid time to set the job's group.
 	 */
 	protected IProgressMonitor createMonitor(InternalJob job, IProgressMonitor group, int ticks) {
 		synchronized (lock) {
-			//note we still want to allow setting the monitor during ABOUT_TO_RUN
-			if (job.internalGetState() == Job.RUNNING)
+			//group must be set before the job is scheduled
+			if (job.internalGetState() != Job.NONE)
 				return null;
 			IProgressMonitor monitor = null;
 			if (progressProvider != null)
