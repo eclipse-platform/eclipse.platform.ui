@@ -2,12 +2,12 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.core.resources">
 <annotation>
-   <appInfo>
-      <meta.schema plugin="org.eclipse.core.resources" id="builders" name="Incremental Project Builders"/>
-   </appInfo>
-   <documentation>
-      The workspace supports the notion of an incremental 
-project builder (or "builder" for short").  The job 
+      <appInfo>
+         <meta.schema plugin="org.eclipse.core.resources" id="builders" name="Incremental Project Builders"/>
+      </appInfo>
+      <documentation>
+         The workspace supports the notion of an incremental 
+project builder (or &quot;builder&quot; for short&quot;).  The job 
 of a builder is to process a set of resource changes 
 (supplied as a resource delta).  For example, a Java 
 builder would recompile changed Java files and produce 
@@ -19,15 +19,15 @@ changed.  As such, builders should be fast and scale
 with respect to the amount of change rather than the 
 number of resources in the project.  This typically 
 implies that builders are able to incrementally update 
-their "built state". 
+their &quot;built state&quot;. 
 &lt;p&gt;
 The builders extension-point allows builder writers 
 to register their builder implementation under a 
 symbolic name that is then used from within the 
 workspace to find and run builders. The symbolic 
-name is the id of the builder extension. When defining a builder extension, users are encouraged to include a human-readable value for the "name" attribute which identifies their builder and potentially may be presented to users.
-   </documentation>
-</annotation>
+name is the id of the builder extension. When defining a builder extension, users are encouraged to include a human-readable value for the &quot;name&quot; attribute which identifies their builder and potentially may be presented to users.
+      </documentation>
+   </annotation>
 
    <element name="extension">
       <complexType>
@@ -37,21 +37,21 @@ name is the id of the builder extension. When defining a builder extension, user
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  a fully qualified identifier of the target extension point
                </documentation>
             </annotation>
          </attribute>
          <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  
+                  an optional identifier of the extension instance
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  
+                  an optional name of the extension instance
                </documentation>
             </annotation>
          </attribute>
@@ -66,10 +66,10 @@ name is the id of the builder extension. When defining a builder extension, user
          <attribute name="hasNature" type="boolean">
             <annotation>
                <documentation>
-                  "&lt;tt&gt;true&lt;/tt&gt;" or "&lt;tt&gt;false&lt;/tt&gt;" indicating whether the builder is owned by
-a project nature.  If "&lt;tt&gt;true&lt;/tt&gt;" and no corresponding nature is
-found, this builder will not run but will remain in the project's
-build spec.  If the attribute is not specified, it is assumed to be "&lt;tt&gt;false&lt;/tt&gt;".
+                  &quot;&lt;tt&gt;true&lt;/tt&gt;&quot; or &quot;&lt;tt&gt;false&lt;/tt&gt;&quot; indicating whether the builder is owned by
+a project nature.  If &quot;&lt;tt&gt;true&lt;/tt&gt;&quot; and no corresponding nature is
+found, this builder will not run but will remain in the project&apos;s
+build spec.  If the attribute is not specified, it is assumed to be &quot;&lt;tt&gt;false&lt;/tt&gt;&quot;.
                </documentation>
             </annotation>
          </attribute>
@@ -131,18 +131,18 @@ specified builder class
 
 &lt;p&gt;
 &lt;pre&gt;
-   &lt;extension id="coolbuilder" name="Cool Builder" point="org.eclipse.core.resources.builders"&gt; 
-      &lt;builder hasNature="false"&gt; 
-         &lt;run class="com.xyz.builders.Cool"&gt; 
-            &lt;parameter name="optimize" value="true"/&gt; 
-            &lt;parameter name="comment" value="Produced by the Cool Builder"/&gt; 
+   &lt;extension id=&quot;coolbuilder&quot; name=&quot;Cool Builder&quot; point=&quot;org.eclipse.core.resources.builders&quot;&gt; 
+      &lt;builder hasNature=&quot;false&quot;&gt; 
+         &lt;run class=&quot;com.xyz.builders.Cool&quot;&gt; 
+            &lt;parameter name=&quot;optimize&quot; value=&quot;true&quot;/&gt; 
+            &lt;parameter name=&quot;comment&quot; value=&quot;Produced by the Cool Builder&quot;/&gt; 
          &lt;/run&gt; 
       &lt;/builder&gt; 
    &lt;/extension&gt; 
 &lt;/pre&gt;
 &lt;/p&gt;
 
-If this extension was defined in a plug-in with id "com.xyz.coolplugin", the fully qualified name of this builder would be "com.xyz.coolplugin.coolbuilder".
+If this extension was defined in a plug-in with id &quot;com.xyz.coolplugin&quot;, the fully qualified name of this builder would be &quot;com.xyz.coolplugin.coolbuilder&quot;.
       </documentation>
    </annotation>
 
@@ -175,7 +175,7 @@ builders as required.
       <documentation>
          &lt;p&gt;
 Copyright (c) 2002 IBM Corporation and others.
-All rights reserved. This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which accompanies this distribution, and is available at &lt;a href="http://www.eclipse.org/legal/cpl-v10.html"&gt;http://www.eclipse.org/legal/cpl-v10.html&lt;/a&gt;
+All rights reserved. This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which accompanies this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/cpl-v10.html&quot;&gt;http://www.eclipse.org/legal/cpl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>
 
