@@ -49,16 +49,6 @@ public class CopyFilesAndFoldersOperation {
 	private Shell parentShell;
 
 	/**
-	 * The destination of the resources to be copied.
-	 */
-	private IResource destination;
-
-	/**
-	 * A list of all resources against which copy errors are reported.
-	 */
-	private ArrayList errorResources = new ArrayList();
-
-	/**
 	 * Whether or not the copy has been canceled by the user.
 	 */
 	private boolean canceled = false;
@@ -195,13 +185,14 @@ public class CopyFilesAndFoldersOperation {
 	 * all resources.
 	 * 
 	 * @param shell the shell to create the overwrite prompt dialog in 
+	 * @param source the source resource
 	 * @param destination the resource to be overwritten
 	 * @return one of IDialogConstants.YES_ID, IDialogConstants.YES_TO_ALL_ID,
 	 * 	IDialogConstants.NO_ID, IDialogConstants.CANCEL_ID indicating whether
 	 * 	the current resource or all resources can be overwritten, or if the 
 	 * 	operation should be canceled.
 	 */
-	private int checkOverwrite(final Shell shell, final IResource destination) {
+	private int checkOverwrite(final Shell shell, final IResource source, final IResource destination) {
 		final int[] result = new int[1];
 
 		// Dialogs need to be created and opened in the UI thread
@@ -213,11 +204,37 @@ public class CopyFilesAndFoldersOperation {
 					IDialogConstants.YES_TO_ALL_ID,
 					IDialogConstants.NO_ID,
 					IDialogConstants.CANCEL_ID};
- 
+				String labels[] = new String[] {
+					IDialogConstants.YES_LABEL,
+					IDialogConstants.YES_TO_ALL_LABEL,
+					IDialogConstants.NO_LABEL,
+					IDialogConstants.CANCEL_LABEL};
+
 				if (destination.getType() == IResource.FOLDER) {
-					message = WorkbenchMessages.format(
-						"CopyFilesAndFoldersOperation.overwriteMergeQuestion", //$NON-NLS-1$
-						new Object[] { destination.getFullPath().makeRelative()});
+					if (homogenousResources(source, destination)) {
+						message = WorkbenchMessages.format(
+							"CopyFilesAndFoldersOperation.overwriteMergeQuestion", //$NON-NLS-1$
+							new Object[] { destination.getFullPath().makeRelative()});
+					} else {
+						if (destination.isLinked()) {
+							message = WorkbenchMessages.format(
+								"CopyFilesAndFoldersOperation.overwriteNoMergeLinkQuestion", //$NON-NLS-1$
+								new Object[] { destination.getFullPath().makeRelative()});
+						}
+						else {
+							message = WorkbenchMessages.format(
+								"CopyFilesAndFoldersOperation.overwriteNoMergeNoLinkQuestion", //$NON-NLS-1$
+								new Object[] { destination.getFullPath().makeRelative()});
+						}
+						resultId = new int[] {
+							IDialogConstants.YES_ID,
+							IDialogConstants.NO_ID,
+							IDialogConstants.CANCEL_ID};
+						labels = new String[] {
+							IDialogConstants.YES_LABEL,
+							IDialogConstants.NO_LABEL,
+							IDialogConstants.CANCEL_LABEL};
+					}					
 				} else {
 					message = WorkbenchMessages.format(
 						"CopyFilesAndFoldersOperation.overwriteQuestion", //$NON-NLS-1$
@@ -229,11 +246,7 @@ public class CopyFilesAndFoldersOperation {
 					null,
 					message,
 					MessageDialog.QUESTION,
-					new String[] {
-						IDialogConstants.YES_LABEL,
-						IDialogConstants.YES_TO_ALL_LABEL,
-						IDialogConstants.NO_LABEL,
-						IDialogConstants.CANCEL_LABEL },
+					labels,
 					0);
 				dialog.open();
 				result[0] = resultId[dialog.getReturnCode()];
@@ -305,17 +318,30 @@ public class CopyFilesAndFoldersOperation {
 			IPath destinationPath = destination.append(source.getName());
 			IWorkspace workspace = source.getWorkspace();
 			IWorkspaceRoot workspaceRoot = workspace.getRoot();
-			if (source.getType() == IResource.FOLDER && workspaceRoot.exists(destinationPath)) {
+			IResource existing = workspaceRoot.findMember(destinationPath);			
+			if (source.getType() == IResource.FOLDER && existing != null) {
 				// the resource is a folder and it exists in the destination, copy the
-				// children of the folder
-				IResource[] children = ((IContainer) source).members();
-				copy(children, destinationPath, subMonitor);
+				// children of the folder.
+				if (homogenousResources(source, existing)) {
+					IResource[] children = ((IContainer) source).members();
+					copy(children, destinationPath, subMonitor);
+				}
+				else {
+					// delete the destination folder, copying a linked folder
+					// over an unlinked one or vice versa. Fixes bug 28772. 
+					delete(existing, new SubProgressMonitor(subMonitor, 0));
+					source.copy(destinationPath, IResource.SHALLOW, new SubProgressMonitor(subMonitor, 0));					
+				}
 			} else {
-				// if we're merging folders, we could be overwriting an existing file
-				IResource existing = workspaceRoot.findMember(destinationPath);
-				
-				if (existing != null) {					
-					copyExisting(source, existing, subMonitor);
+				if (existing != null) {
+					if (homogenousResources(source, existing))			
+						copyExisting(source, existing, subMonitor);
+					else  {
+						// Copying a linked resource over unlinked or vice versa.
+						// Can't use setContents here. Fixes bug 28772.
+						delete(existing, new SubProgressMonitor(subMonitor, 0));
+						source.copy(destinationPath, IResource.SHALLOW, new SubProgressMonitor(subMonitor, 0));
+					}						
 				} else {
 					source.copy(destinationPath, IResource.SHALLOW, new SubProgressMonitor(subMonitor, 0));
 				}
@@ -685,24 +711,6 @@ public class CopyFilesAndFoldersOperation {
 		return WorkbenchMessages.getString("CopyFilesAndFoldersOperation.copyFailedTitle"); //$NON-NLS-1$
 	}
 	/**
-	 * Returns the rejected files based on the given multi status.
-	 *  
-	 * @param multiStatus multi status to use to determine file rejection
-	 * @param files source files
-	 * @return list of rejected files as absolute paths. Object type IPath.
-	 */
-	private ArrayList getRejectedFiles(IStatus multiStatus, IFile[] files) {
-		ArrayList rejectedFiles = new ArrayList();
-
-		IStatus[] status = multiStatus.getChildren();
-		for (int i = 0; i < status.length; i++) {
-			if (status[i].isOK() == false) {
-				rejectedFiles.add(files[i].getFullPath());
-			}
-		}
-		return rejectedFiles;
-	}
-	/**
 	 * Returns whether the source file in a destination collision
 	 * will be validateEdited together with the collision itself.
 	 * Returns false. Should return true if the source file is to be
@@ -714,6 +722,22 @@ public class CopyFilesAndFoldersOperation {
 	 */
 	protected boolean getValidateConflictSource() {
 		return false;
+	}
+	/**
+	 * Returns whether the given resources are either both linked
+	 * or both unlinked.
+	 * 
+	 * @param source source resource
+	 * @param destination destination resource
+	 * @return boolean <code>true</code> if both resources are either 
+	 * 	linked or unlinked. <code>false</code> otherwise. 
+	 */
+	protected boolean homogenousResources(IResource source, IResource destination) {
+		boolean isSourceLinked = source.isLinked();
+		boolean isDestinationLinked = destination.isLinked();
+
+		return (isSourceLinked && isDestinationLinked || 
+				isSourceLinked == false && isDestinationLinked == false);									
 	}
 	/**
 	 * Returns whether the given resource is accessible.
@@ -1036,7 +1060,6 @@ public class CopyFilesAndFoldersOperation {
 	 */
 	private boolean validateEdit(IContainer destination, IResource[] sourceResources) {
 		ArrayList copyFiles = new ArrayList();
-		ArrayList rejectedFiles = new ArrayList();
 		
 		collectExistingReadonlyFiles(destination.getFullPath(), sourceResources, copyFiles);
 		if (copyFiles.size() > 0) {
@@ -1186,22 +1209,23 @@ public class CopyFilesAndFoldersOperation {
 		}
 		// Check for overwrite conflicts
 		for (int i = 0; i < sourceResources.length; i++) {
-			final IResource sourceResource = sourceResources[i];
-			final IPath destinationPath = destination.getFullPath().append(sourceResource.getName());
-
+			final IResource source = sourceResources[i];
+			final IPath destinationPath = destination.getFullPath().append(source.getName());
+	
 			IResource newResource = workspaceRoot.findMember(destinationPath);
 			if (newResource != null) {
-				if (overwrite != IDialogConstants.YES_TO_ALL_ID) {
-					overwrite = checkOverwrite(parentShell, newResource);
+				if (overwrite != IDialogConstants.YES_TO_ALL_ID || 
+					(newResource.getType() == IResource.FOLDER && homogenousResources(source, destination) == false)) {
+					overwrite = checkOverwrite(parentShell, source, newResource);
 				}
 				if (overwrite == IDialogConstants.YES_ID || overwrite == IDialogConstants.YES_TO_ALL_ID) {
-					copyItems.add(sourceResource);
+					copyItems.add(source);
 				} else if (overwrite == IDialogConstants.CANCEL_ID) {
 					canceled = true;
 					return null;
 				}
 			} else {
-				copyItems.add(sourceResource);
+				copyItems.add(source);
 			}
 		}
 		return (IResource[]) copyItems.toArray(new IResource[copyItems.size()]);

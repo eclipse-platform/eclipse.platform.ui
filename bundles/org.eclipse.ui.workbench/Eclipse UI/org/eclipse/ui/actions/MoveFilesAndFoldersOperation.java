@@ -57,22 +57,33 @@ public class MoveFilesAndFoldersOperation extends CopyFilesAndFoldersOperation {
 			IPath destinationPath = destination.append(source.getName());
 			IWorkspace workspace = source.getWorkspace();
 			IWorkspaceRoot workspaceRoot = workspace.getRoot();
-			boolean isFolder = source.getType() == IResource.FOLDER;
-			boolean exists = workspaceRoot.exists(destinationPath);
-			if (isFolder && exists) {
-				// the resource is a folder and it exists in the destination, copy the
-				// children of the folder
-				IResource[] children = ((IContainer) source).members();
-				copy(children, destinationPath, subMonitor);
-				// need to explicitly delete the folder since we're not moving it
-				delete(source, subMonitor);
-			} else {
-				// if we're merging folders, we could be overwriting an existing file
-				IResource existing = workspaceRoot.findMember(destinationPath);
-				
-				if (existing != null)
-					moveExisting(source, existing, subMonitor);
+			IResource existing = workspaceRoot.findMember(destinationPath);
+			if (source.getType() == IResource.FOLDER && existing != null) {
+				// the resource is a folder and it exists in the destination, move the
+				// children of the folder.
+				if (homogenousResources(source, existing)) {									
+					IResource[] children = ((IContainer) source).members();
+					copy(children, destinationPath, subMonitor);
+					delete(source, subMonitor);					
+				}
 				else {
+					// delete the destination folder, moving a linked folder
+					// over an unlinked one or vice versa. Fixes bug 28772. 
+					delete(existing, new SubProgressMonitor(subMonitor, 0));
+					source.move(destinationPath, IResource.SHALLOW | IResource.KEEP_HISTORY, new SubProgressMonitor(subMonitor, 0));					
+				}
+			} else {
+				// if we're merging folders, we could be overwriting an existing file				
+				if (existing != null) {
+					if (homogenousResources(source, existing))			
+						moveExisting(source, existing, subMonitor);
+					else  {
+						// Moving a linked resource over unlinked or vice versa.
+						// Can't use setContents here. Fixes bug 28772.
+						delete(existing, new SubProgressMonitor(subMonitor, 0));
+						source.move(destinationPath, IResource.SHALLOW | IResource.KEEP_HISTORY, new SubProgressMonitor(subMonitor, 0));
+					}
+				} else {
 					source.move(destinationPath, IResource.SHALLOW | IResource.KEEP_HISTORY, new SubProgressMonitor(subMonitor, 0));
 				}
 				subMonitor.worked(1);
