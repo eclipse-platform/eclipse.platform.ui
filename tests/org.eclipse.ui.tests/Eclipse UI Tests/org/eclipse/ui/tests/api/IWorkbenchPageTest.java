@@ -31,6 +31,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ClosePerspectiveAction;
+import org.eclipse.ui.internal.SaveableHelper;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
@@ -633,6 +634,50 @@ public class IWorkbenchPageTest extends UITestCase {
 
     }
 
+	public void testHideSaveableView() throws Throwable {
+		SaveableMockViewPart view = (SaveableMockViewPart) fActivePage.showView(SaveableMockViewPart.ID);
+		fActivePage.hideView(view);
+		CallHistory callTrace = view.getCallHistory();
+		assertTrue(callTrace.contains("isDirty"));		
+		assertTrue(callTrace.contains("dispose"));
+		assertEquals(fActivePage.findView(SaveableMockViewPart.ID), null);
+
+		try {
+			SaveableHelper.testSetAutomatedResponse(0);  // Yes
+			view = (SaveableMockViewPart) fActivePage.showView(SaveableMockViewPart.ID);
+			view.setDirty(true);
+			fActivePage.hideView(view);
+			callTrace = view.getCallHistory();
+			assertTrue(callTrace.contains("isDirty"));		
+			assertTrue(callTrace.contains("doSave"));		
+			assertTrue(callTrace.contains("dispose"));
+			assertEquals(fActivePage.findView(SaveableMockViewPart.ID), null);
+
+			SaveableHelper.testSetAutomatedResponse(1);  // No
+			view = (SaveableMockViewPart) fActivePage.showView(SaveableMockViewPart.ID);
+			view.setDirty(true);
+			fActivePage.hideView(view);
+			callTrace = view.getCallHistory();
+			assertTrue(callTrace.contains("isDirty"));		
+			assertFalse(callTrace.contains("doSave"));		
+			assertTrue(callTrace.contains("dispose"));
+			assertEquals(fActivePage.findView(SaveableMockViewPart.ID), null);
+
+			SaveableHelper.testSetAutomatedResponse(2);  // Cancel
+			view = (SaveableMockViewPart) fActivePage.showView(SaveableMockViewPart.ID);
+			view.setDirty(true);
+			fActivePage.hideView(view);
+			callTrace = view.getCallHistory();
+			assertTrue(callTrace.contains("isDirty"));		
+			assertFalse(callTrace.contains("doSave"));		
+			assertFalse(callTrace.contains("dispose"));
+			assertEquals(fActivePage.findView(SaveableMockViewPart.ID), view);
+		}
+		finally {
+			SaveableHelper.testSetAutomatedResponse(-1);  // restore default (prompt)
+		}
+	}
+	
     public void testClose() throws Throwable {
         IWorkbenchPage page = openTestPage(fWin);
 

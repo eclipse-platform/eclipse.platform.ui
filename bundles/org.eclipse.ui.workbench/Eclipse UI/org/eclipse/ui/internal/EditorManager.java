@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -36,7 +35,6 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -45,7 +43,6 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.SafeRunnable;
-import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
@@ -1146,45 +1143,6 @@ public class EditorManager {
     }
 
     /**
-     * Runs a progress monitor operation.
-     * Returns true if success, false if cancelled.
-     */
-    private static boolean runProgressMonitorOperation(String opName,
-            final IRunnableWithProgress progressOp, IWorkbenchWindow window) {
-        IRunnableContext ctx;
-        if (window instanceof ApplicationWindow) {
-            ctx = window;
-        } else {
-            ctx = new ProgressMonitorJobsDialog(window.getShell());
-        }
-        final boolean[] wasCanceled = new boolean[1];
-        IRunnableWithProgress runnable = new IRunnableWithProgress() {
-            public void run(IProgressMonitor monitor)
-                    throws InvocationTargetException, InterruptedException {
-                progressOp.run(monitor);
-                wasCanceled[0] = monitor.isCanceled();
-            }
-        };
-
-        try {
-            ctx.run(false, true, runnable);
-        } catch (InvocationTargetException e) {
-            String title = WorkbenchMessages.format(
-                    "EditorManager.operationFailed", new Object[] { opName }); //$NON-NLS-1$
-            Throwable targetExc = e.getTargetException();
-            WorkbenchPlugin.log(title, new Status(IStatus.WARNING,
-                    PlatformUI.PLUGIN_ID, 0, title, targetExc));
-            MessageDialog.openError(window.getShell(), WorkbenchMessages
-                    .getString("Error"), //$NON-NLS-1$
-                    title + ':' + targetExc.getMessage());
-        } catch (InterruptedException e) {
-            // Ignore.  The user pressed cancel.
-            wasCanceled[0] = true;
-        }
-        return !wasCanceled[0];
-    }
-
-    /**
      * Save all of the editors in the workbench.  
      * Return true if successful.  Return false if the
      * user has cancelled the command.
@@ -1278,7 +1236,7 @@ public class EditorManager {
         };
 
         // Do the save.
-        return runProgressMonitorOperation(WorkbenchMessages
+        return SaveableHelper.runProgressMonitorOperation(WorkbenchMessages
                 .getString("Save_All"), progressOp, window); //$NON-NLS-1$
     }
 
@@ -1287,48 +1245,7 @@ public class EditorManager {
      */
     public boolean savePart(final ISaveablePart saveable, IWorkbenchPart part,
             boolean confirm) {
-        // Short circuit.
-        if (!saveable.isDirty())
-            return true;
-
-        // If confirmation is required ..
-        if (confirm) {
-            String message = WorkbenchMessages
-                    .format(
-                            "EditorManager.saveChangesQuestion", new Object[] { part.getTitle() }); //$NON-NLS-1$
-            // Show a dialog.
-            String[] buttons = new String[] { IDialogConstants.YES_LABEL,
-                    IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL };
-            MessageDialog d = new MessageDialog(window.getShell(),
-                    WorkbenchMessages.getString("Save_Resource"), //$NON-NLS-1$
-                    null, message, MessageDialog.QUESTION, buttons, 0);
-            int choice = d.open();
-
-            // Branch on the user choice.
-            // The choice id is based on the order of button labels above.
-            switch (choice) {
-            case 0: //yes
-                break;
-            case 1: //no
-                return true;
-            default:
-            case 2: //cancel
-                return false;
-            }
-        }
-
-        // Create save block.
-        IRunnableWithProgress progressOp = new IRunnableWithProgress() {
-            public void run(IProgressMonitor monitor) {
-                IProgressMonitor monitorWrap = new EventLoopProgressMonitor(
-                        monitor);
-                saveable.doSave(monitorWrap);
-            }
-        };
-
-        // Do the save.
-        return runProgressMonitorOperation(
-                WorkbenchMessages.getString("Save"), progressOp, window); //$NON-NLS-1$
+		return SaveableHelper.savePart(saveable, part, window, confirm);
     }
 
     /**
