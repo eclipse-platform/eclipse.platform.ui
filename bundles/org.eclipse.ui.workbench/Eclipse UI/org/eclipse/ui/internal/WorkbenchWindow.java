@@ -628,6 +628,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	    topBarParent = new Composite(shell, SWT.NONE);
 	    CellLayout gd = new CellLayout(1)
 			.setMargins(0,0)
+			.setSpacing(5,0)
 			.setDefaultColumn(Row.growing())
 			.setDefaultRow(Row.fixed());
 	    topBarParent.setLayout(gd);
