@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -20,17 +20,10 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Display;
-
-import org.eclipse.jface.text.IRewriteTarget;
-import org.eclipse.jface.wizard.IWizardContainer;
-
-import org.eclipse.ui.IEditorPart;
-
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CreateChangeOperation;
 import org.eclipse.ltk.core.refactoring.PerformChangeOperation;
+import org.eclipse.jface.wizard.IWizardContainer;
 
 public class UIPerformChangeOperation extends PerformChangeOperation {
 
@@ -56,11 +49,8 @@ public class UIPerformChangeOperation extends PerformChangeOperation {
 			final Thread callerThread= Thread.currentThread();
 			Runnable r= new Runnable() {
 				public void run() {
-					IRewriteTarget[] targets= null;
 					try {
 						final Button cancel= getCancelButton();
-						targets= getRewriteTargets();
-						beginCompoundChange(targets);
 						boolean enabled= true;
 						if (cancel != null && !cancel.isDisposed()) {
 							enabled= cancel.isEnabled();
@@ -76,12 +66,7 @@ public class UIPerformChangeOperation extends PerformChangeOperation {
 					} catch (CoreException e) {
 						exception[0]= e;
 					} finally {
-						try {
-							if (targets != null)
-								endCompoundChange(targets);
-						} finally {
-							Platform.getJobManager().transferRule(rule, callerThread);
-						}
+						Platform.getJobManager().transferRule(rule, callerThread);
 					}
 				}
 			};
@@ -90,42 +75,10 @@ public class UIPerformChangeOperation extends PerformChangeOperation {
 			if (exception[0] != null)
 				throw new CoreException(exception[0].getStatus());
 		} else {
-			IRewriteTarget[] targets= null;
-			try {
-				targets= getRewriteTargets();
-				beginCompoundChange(targets);
-				super.executeChange(pm);
-			} finally {
-				if (targets != null)
-					endCompoundChange(targets);
-			}
+			super.executeChange(pm);
 		}
 	}
 
-	private static void beginCompoundChange(IRewriteTarget[] targets) {
-		for (int i= 0; i < targets.length; i++) {
-			targets[i].beginCompoundChange();
-		}
-	}
-	
-	private static void endCompoundChange(IRewriteTarget[] targets) {
-		for (int i= 0; i < targets.length; i++) {
-			targets[i].endCompoundChange();
-		}
-	}
-	
-	private static IRewriteTarget[] getRewriteTargets() {
-		IEditorPart[] editors= RefactoringUIPlugin.getInstanciatedEditors();
-		List result= new ArrayList(editors.length);
-		for (int i= 0; i < editors.length; i++) {
-			IRewriteTarget target= (IRewriteTarget)editors[i].getAdapter(IRewriteTarget.class);
-			if (target != null) {
-				result.add(target);
-			}
-		}
-		return (IRewriteTarget[]) result.toArray(new IRewriteTarget[result.size()]);
-	}
-	
 	private Button getCancelButton() {
 		if (fWizardContainer instanceof RefactoringWizardDialog2) {
 			return ((RefactoringWizardDialog2)fWizardContainer).getCancelButton();

@@ -30,7 +30,10 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.DocumentRewriteSession;
+import org.eclipse.jface.text.DocumentRewriteSessionType;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentExtension4;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
 
@@ -344,8 +347,14 @@ public abstract class TextChange extends Change {
 	public Change perform(IProgressMonitor pm) throws CoreException {
 		pm.beginTask("", 3); //$NON-NLS-1$
 		IDocument document= null;
+		DocumentRewriteSession session= null;
+		
 		try {
 			document= acquireDocument(new SubProgressMonitor(pm, 1));
+			if (document instanceof IDocumentExtension4) {
+				session= ((IDocumentExtension4)document).startRewriteSession(
+					DocumentRewriteSessionType.UNRESTRICTED);
+			}
 			TextEditProcessor processor= createTextEditProcessor(document, TextEdit.CREATE_UNDO, false);
 			UndoEdit undo= processor.performEdits();
 			commit(document, new SubProgressMonitor(pm, 1));
@@ -353,8 +362,15 @@ public abstract class TextChange extends Change {
 		} catch (BadLocationException e) {
 			throw Changes.asCoreException(e);
 		} finally {
-			if (document != null)
-				releaseDocument(document, new SubProgressMonitor(pm, 1));
+			if (document != null) {
+				try {
+					if (session != null) {
+						((IDocumentExtension4)document).stopRewriteSession(session);
+					}
+				} finally {
+					releaseDocument(document, new SubProgressMonitor(pm, 1));
+				}
+			}
 			pm.done();
 		}
 	}
