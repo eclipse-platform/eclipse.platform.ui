@@ -44,6 +44,7 @@ import org.eclipse.ant.internal.ui.editor.model.AntTargetNode;
 import org.eclipse.ant.internal.ui.editor.model.AntTaskNode;
 import org.eclipse.ant.internal.ui.editor.model.IAntModelConstants;
 import org.eclipse.ant.internal.ui.editor.text.PartiallySynchronizedDocument;
+import org.eclipse.ant.internal.ui.editor.text.XMLReconcilingStrategy;
 import org.eclipse.ant.internal.ui.editor.utils.ProjectHelper;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -1133,8 +1134,9 @@ public class AntModel {
 		}
 		synchronized (this) {
 			//wait for the reconcile from the edit
+			//or if that fails, timeout
 			try {
-				wait();
+				wait(XMLReconcilingStrategy.DELAY * 2);
 			} catch (InterruptedException e) {
 			}
 		}

@@ -194,7 +194,7 @@ public class AntEditorSourceViewerConfiguration extends SourceViewerConfiguratio
      */
     public IReconciler getReconciler(ISourceViewer sourceViewer) {
 	    NotifyingReconciler reconciler= new NotifyingReconciler(new XMLReconcilingStrategy(fEditor), true);
-	    reconciler.setDelay(500);
+	    reconciler.setDelay(XMLReconcilingStrategy.DELAY);
 	    return reconciler;
     }
 
