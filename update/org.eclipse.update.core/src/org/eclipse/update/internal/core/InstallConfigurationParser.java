@@ -9,9 +9,8 @@ import java.net.*;
 import java.util.*;
 
 import org.apache.xerces.parsers.SAXParser;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.update.core.IFeatureReference;
-import org.eclipse.update.core.ILocalSite;
+import org.eclipse.core.runtime.*;
+import org.eclipse.update.core.*;
 import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -23,31 +22,29 @@ public class InstallConfigurationParser extends DefaultHandler {
 
 	private SAXParser parser;
 	private InputStream siteStream;
-	private SiteLocal site;
-	private String text;
+	private InstallConfiguration config;
+	private ConfigurationSite configSite;
 	public static final String CONFIGURATION = "configuration";
 	public static final String CONFIGURATION_SITE = "site";
-	public static final String FEATURE = "feature";	
+	public static final String FEATURE = "feature";
 
 	private ResourceBundle bundle;
-
-	private IFeatureReference feature;
 
 	/**
 	 * Constructor for DefaultSiteParser
 	 */
-	public InstallConfigurationParser(InputStream siteStream, ILocalSite site) throws IOException, SAXException, CoreException {
+	public InstallConfigurationParser(InputStream siteStream, IInstallConfiguration config) throws IOException, SAXException, CoreException {
 		super();
 		parser = new SAXParser();
 		parser.setContentHandler(this);
 
 		this.siteStream = siteStream;
-		Assert.isTrue(site instanceof SiteLocal);
-		this.site = (SiteLocal) site;
+		Assert.isTrue(config instanceof InstallConfiguration);
+		this.config = (InstallConfiguration) config;
 
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
-			UpdateManagerPlugin.getPlugin().debug("Start parsing localsite:" + ((SiteLocal)site).getLocation().toExternalForm());
+			UpdateManagerPlugin.getPlugin().debug("Start parsing Configuration:" + (config).getURL().toExternalForm());
 		}
 
 		bundle = getResourceBundle();
@@ -58,21 +55,20 @@ public class InstallConfigurationParser extends DefaultHandler {
 	/**
 	 * return the appropriate resource bundle for this sitelocal
 	 */
-	private ResourceBundle getResourceBundle()  throws IOException, CoreException {
+	private ResourceBundle getResourceBundle() throws IOException, CoreException {
 		ResourceBundle bundle = null;
 		try {
-			ClassLoader l = new URLClassLoader(new URL[] {site.getLocation()}, null);
+			ClassLoader l = new URLClassLoader(new URL[] { config.getURL()}, null);
 			bundle = ResourceBundle.getBundle(SiteLocal.INSTALL_CONFIGURATION_FILE, Locale.getDefault(), l);
 		} catch (MissingResourceException e) {
 			//ok, there is no bundle, keep it as null
 			//DEBUG:
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
-				UpdateManagerPlugin.getPlugin().debug(e.getLocalizedMessage() + ":" + site.getLocation().toExternalForm());
-			} 
+				UpdateManagerPlugin.getPlugin().debug(e.getLocalizedMessage() + ":" + config.getURL().toExternalForm());
+			}
 		}
 		return bundle;
 	}
-
 
 	/**
 	 * @see DefaultHandler#startElement(String, String, String, Attributes)
@@ -96,45 +92,90 @@ public class InstallConfigurationParser extends DefaultHandler {
 				processSite(attributes);
 				return;
 			}
+			
+			if (tag.equalsIgnoreCase(FEATURE)) {
+				processFeature(attributes);
+				return;
+			}
 		} catch (MalformedURLException e) {
 			throw new SAXException("error processing URL. Check the validity of the URLs", e);
+		}  catch (CoreException e) {
+			throw new SAXException("error retrieving the site. Check validity of teh URL, the site.xml and the connection", e);
 		}
+		
 
 	}
 
 	/** 
 	 * process the Site info
 	 */
-	private void processSite(Attributes attributes) throws MalformedURLException {
-		//
-		String info = attributes.getValue("label");
-		info = UpdateManagerUtils.getResourceString(info, bundle);
-		site.setLabel(info);
-
+	private void processSite(Attributes attributes) throws MalformedURLException, CoreException {
+		
+		//site url
+		String urlString = attributes.getValue("url");
+		URL siteURL = new URL(urlString);
+		ISite site = SiteManager.getSite(siteURL);
+		
+		// policy
+		String policyString = attributes.getValue("policy");
+		int policy = Integer.parseInt(policyString);
+		ConfigurationPolicy configPolicy = new ConfigurationPolicy(policy); 
+		
+		// confguration site
+		configSite = new ConfigurationSite(site,configPolicy);
+		
+		// install
+		String installString = attributes.getValue("install");
+		boolean installable = installString.trim().equalsIgnoreCase("true" )?true:false;
+		configSite.setInstallSite(installable);
+		
+		// add to install configuration
+		config.addConfigurationSite(configSite);
+		
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
-			UpdateManagerPlugin.getPlugin().debug("End process Site label:" + info);
+			UpdateManagerPlugin.getPlugin().debug("End process config site url:" + urlString+" policy:"+policyString+" install:"+installString);
 		}
 
 	}
 
 	/** 
-	 * process the Config info
+	 * process the Feature info
 	 */
-	private void processConfig(Attributes attributes) throws MalformedURLException {
-		
+	private void processFeature(Attributes attributes) throws MalformedURLException {
+
 		// url
-		URL url = UpdateManagerUtils.getURL(site.getLocation(), attributes.getValue("url"), null);
-		String label = attributes.getValue("label");
-		label = UpdateManagerUtils.getResourceString(label, bundle);
-		InstallConfiguration config = new InstallConfiguration(url,label);
-		// add the config
-		site.addConfiguration(config);
+		URL url = UpdateManagerUtils.getURL(configSite.getSite().getURL(), attributes.getValue("url"), null);
+
+		if (url != null) {
+			IFeatureReference ref = ((Site)configSite.getSite()).getFeatureReferences(url);
+			if (ref!=null) ((ConfigurationPolicy)configSite.getConfigurationPolicy()).addFeatureReference(ref);
 
 			// DEBUG:		
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
-				UpdateManagerPlugin.getPlugin().debug("End Processing Config Tag: url:" + url.toExternalForm() );
+				UpdateManagerPlugin.getPlugin().debug("End Processing Feature Tag: url:" + url.toExternalForm());
 			}
+
+		} else {
+			IStatus status = new Status(IStatus.WARNING, UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier(), IStatus.OK, "FeatureReference doesn\'t have a URL", null);
+			UpdateManagerPlugin.getPlugin().getLog().log(status);
+		}
+
+	}
+	
+	/** 
+	 * process the Config info
+	 */
+	private void processConfig(Attributes attributes) {
+
+		// date
+		long date = Long.parseLong(attributes.getValue("date"));
+		config.setCreationDate(new Date(date));
+
+		// DEBUG:		
+		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
+			UpdateManagerPlugin.getPlugin().debug("End Processing Config Tag: date:" + date);
+		}
 
 	}
 

@@ -17,7 +17,7 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 
 	//Should have an ISite.getFeatureReference(versionnedIdentifier) b/c we save teh versionned id
 	// in teh xml file
-	private List features;
+	private List featuresReferences;
 
 	private ISite site;
 	private IConfigurationPolicy policy;
@@ -113,17 +113,18 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 		w.println("");
 
 		// site configurations
-		if (features != null) {
-			Iterator iter = features.iterator();
+		if (featuresReferences != null) {
+			Iterator iter = featuresReferences.iterator();
 			while (iter.hasNext()) {
-				VersionedIdentifier element = (VersionedIdentifier) iter.next();
-				w.print(gap + increment + "<" + InstallConfigurationParser.FEATURE + " ");
-				w.print("id=\"" + Writer.xmlSafe(element.getIdentifier()) + "\" ");
-				w.print("ver=\"" + Writer.xmlSafe(element.getVersion().toString()) + "\" ");
+				IFeatureReference element = (IFeatureReference) iter.next();
+				w.print(gap+increment+"<"+InstallConfigurationParser.FEATURE+" ");
+				// feature URL
+				String URLInfoString = null;
+				if(element.getURL()!=null) {
+					URLInfoString = UpdateManagerUtils.getURLAsString(getSite().getURL(),element.getURL());
+					w.print("url=\""+Writer.xmlSafe(URLInfoString)+"\"");
+				}
 				w.println("/>");
-				w.println("");
-
-				((IWritable) element).write(indent + IWritable.INDENT, w);
 			}
 		}
 
