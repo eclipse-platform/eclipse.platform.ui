@@ -55,6 +55,8 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 	
 	private Hashtable imageDescriptors = new Hashtable(20);
 	
+	private TeamCapabilityHelper capabilityHelper;
+	
 	/**
 	 * Creates a new TeamUIPlugin.
 	 * 
@@ -172,6 +174,7 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 		IAdapterFactory factory = new TeamAdapterFactory();
 		Platform.getAdapterManager().registerAdapters(factory, DiffNode.class);
 		((SynchronizeManager)TeamUI.getSynchronizeManager()).init();
+		capabilityHelper = TeamCapabilityHelper.getInstance();
 	}
 	
 	/* (non-Javadoc)
@@ -179,6 +182,7 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 	 */
 	public void shutdown() throws CoreException {
 		super.shutdown();
+		capabilityHelper.shutdown();
 		((SynchronizeManager)TeamUI.getSynchronizeManager()).dispose();
 	}
 
