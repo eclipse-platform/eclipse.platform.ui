@@ -79,7 +79,7 @@ public class RemoteTreeViewer extends TreeViewer {
                 Iterator iterator = parents.iterator();
                 while (iterator.hasNext() && !monitor.isCanceled()) {
                     Object parent = iterator.next();
-                    TreeItem item = (TreeItem) findItem(parent);
+                    Widget item = findItem(parent);
                     if (item != null) {
                         expandToLevel(parent, 1);
                     } else {
@@ -88,7 +88,7 @@ public class RemoteTreeViewer extends TreeViewer {
                     }
                 }
                 if (allParentsExpanded) {
-                    TreeItem item = (TreeItem) findItem(element); 
+                    Widget item = findItem(element); 
                     if (item != null) {
                         if (isExpandable(element)) {
     	                    expandToLevel(element, 1);
@@ -145,7 +145,7 @@ public class RemoteTreeViewer extends TreeViewer {
                 Iterator iterator = parents.iterator();
                 while (iterator.hasNext() && !monitor.isCanceled()) {
                     Object parent = iterator.next();
-                    TreeItem item = (TreeItem) findItem(parent);
+                    Widget item = findItem(parent);
                     if (item != null) {
                         expandToLevel(parent, 1);
                     } else {
