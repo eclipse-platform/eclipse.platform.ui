@@ -201,17 +201,6 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		key= fAnnotationColorListModel[i][3];
 		fShowInOverviewRulerCheckBox.setSelection(fOverlayStore.getBoolean(key));				
 	}
-	
-	// sets enabled flag for a control and all its sub-tree
-	private static void setEnabled(Control control, boolean enable) {
-		control.setEnabled(enable);
-		if (control instanceof Composite) {
-			Composite composite= (Composite) control;
-			Control[] children= composite.getChildren();
-			for (int i= 0; i < children.length; i++)
-				setEnabled(children[i], enable);
-		}
-	}
 
 	private Control createAppearancePage(Composite parent) {
 
