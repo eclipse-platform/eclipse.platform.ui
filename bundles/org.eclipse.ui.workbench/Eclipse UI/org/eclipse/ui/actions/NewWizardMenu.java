@@ -22,6 +22,7 @@ import java.util.List;
 public class NewWizardMenu extends ContributionItem {
 	private Action showDlgAction = new NewWizardAction();
 	private Action newProjectAction;
+	private Action newExampleAction;
 	private Map actions = new HashMap(21);
 	private NewWizardsRegistryReader reader = new NewWizardsRegistryReader();
 	private boolean enabled = true;
@@ -52,7 +53,6 @@ public class NewWizardMenu extends ContributionItem {
  */
 public NewWizardMenu(IMenuManager innerMgr, IWorkbenchWindow window, boolean register) {
 	this(window);
-	newProjectAction = new NewProjectAction(window);
 	fillMenu(innerMgr); // Must be done after constructor to ensure field initialization.
 }
 
@@ -60,6 +60,7 @@ public NewWizardMenu(IWorkbenchWindow window) {
 	super();
 	this.window = window;
 	newProjectAction = new NewProjectAction(window);
+	newExampleAction = new NewExampleAction(window);
 }
 /* (non-Javadoc)
  * Fills the menu with New Wizards.
@@ -87,6 +88,9 @@ private void fillMenu(IContributionManager innerMgr) {
 			}
 		}
 
+		//		Add examples ..
+		innerMgr.add(new Separator());
+		innerMgr.add(newExampleAction);
 		// Add other ..
 		innerMgr.add(new Separator());
 		innerMgr.add(showDlgAction);
