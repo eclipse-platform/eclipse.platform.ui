@@ -336,7 +336,7 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 			return;
 		}
 
-		AntProjectNode node= getProjectNode();
+		AntProjectNode node= fAntModel.getProjectNode();
 		String projectName= getProjectName(node);
 		
 		projectNameField.setText(projectName);
@@ -363,7 +363,7 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 	 */
 	protected IJavaProject createProject() {
 
-		AntProjectNode projectNode= getProjectNode();
+		AntProjectNode projectNode= fAntModel.getProjectNode();
 		
 		final List javacNodes= new ArrayList();
 		getJavacNodes(javacNodes, projectNode);
@@ -474,15 +474,6 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 		}
 		String initialContent= getStreamContentAsString(in);
 		return new Document(initialContent);
-	}
-	
-	private AntProjectNode getProjectNode() {
-		AntElementNode[] nodes= fAntModel.getRootElements();
-		if (nodes.length == 0) {
-			return null;
-		}
-		AntProjectNode projectNode= (AntProjectNode)nodes[0];
-		return projectNode;
 	}
 	
 	private String getStreamContentAsString(InputStream inputStream) {

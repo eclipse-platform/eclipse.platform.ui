@@ -134,35 +134,24 @@ public class XMLTextHover implements ITextHover, ITextHoverExtension {
 		return null;
 	}
 	
-	/**
-	 * @param set
-	 */
 	private String formatFileSetMessage(AbstractFileSet set) {
 		FileScanner fileScanner= new FileScanner();
 		AntModel antModel= fEditor.getAntModel();
-		Project project= ((AntProjectNode)antModel.getRootElements()[0]).getProject();
+		Project project= antModel.getProjectNode().getProject();
 		set.setupDirectoryScanner(fileScanner, project);
 		String[] excludedPatterns= fileScanner.getExcludesPatterns();
 		String[] includesPatterns= fileScanner.getIncludePatterns();
 		return formatSetMessage(includesPatterns, excludedPatterns);
 	}
 
-	/**
-	 * @param set
-	 */
 	private String formatPatternSetMessage(PatternSet set) {
 		AntModel antModel= fEditor.getAntModel();
-		Project project= ((AntProjectNode)antModel.getRootElements()[0]).getProject();
+		Project project= antModel.getProjectNode().getProject();
 		String[] includes= set.getIncludePatterns(project);
 		String[] excludes= set.getExcludePatterns(project);
 		return formatSetMessage(includes, excludes);
 	}
 
-	/**
-	 * @param includes
-	 * @param excludes
-	 * @return
-	 */
 	private String formatSetMessage(String[] includes, String[] excludes) {
 		StringBuffer buffer= new StringBuffer();
 		HTMLPrinter.addPageProlog(buffer);
