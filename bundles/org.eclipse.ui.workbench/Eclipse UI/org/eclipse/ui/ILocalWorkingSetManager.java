@@ -13,6 +13,9 @@ package org.eclipse.ui;
 /**
  * A local working set manager can be used to manage a set of
  * working sets.
+  * <p>
+ * This interface is not intended to be implemented or extended by clients.
+ * </p>
  * <p>
  * API under construction and subject to change at any time.
  * </p>
