@@ -3,7 +3,7 @@
 <fragment
    id="org.eclipse.ui.workbench.compatibility"
    name="%CompatibilityFragment.fragmentName"
-   version="3.0.0"
+   version="3.1.0"
    provider-name="%providerName"
    plugin-id="org.eclipse.ui.workbench"
    plugin-version="3.0.0">

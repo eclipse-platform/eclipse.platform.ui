@@ -3,7 +3,7 @@
 <plugin
    id="org.eclipse.ui.ide"
    name="%Plugin.name"
-   version="3.0.0"
+   version="3.1.0"
    provider-name="%Plugin.providerName"
    class="org.eclipse.ui.internal.ide.IDEWorkbenchPlugin">
 
