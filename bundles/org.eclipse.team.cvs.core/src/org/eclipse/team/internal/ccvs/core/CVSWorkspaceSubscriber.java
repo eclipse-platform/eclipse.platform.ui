@@ -160,9 +160,9 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 			IResource resource = resources[i];
 			final IProgressMonitor infinite = Policy.infiniteSubMonitorFor(monitor, 100);
 			try {
-				// We need to do a scheduling rule on the project because
-				// the EclipseSynchronizer currently obtains rules which causes
-				// many workers to be created (see bug 41979).
+				// We need to do a scheduling rule on the project to
+				// avoid overly desctructive operations from occuring 
+				// while we gather sync info
 				Platform.getJobManager().beginRule(resource);
 				infinite.beginTask(null, 512);
 				resource.accept(new IResourceVisitor() {
@@ -184,7 +184,7 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 			} catch (CoreException e) {
 				throw CVSException.wrapException(e);
 			} finally {
-				Platform.getJobManager().endRule();
+				Platform.getJobManager().endRule(resource);
 				infinite.done();
 			}
 		}

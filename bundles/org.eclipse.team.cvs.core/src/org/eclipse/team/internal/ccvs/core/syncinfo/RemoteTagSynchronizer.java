@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.internal.ccvs.core.CVSException;
@@ -227,10 +228,11 @@ public class RemoteTagSynchronizer extends CVSRemoteSynchronizer {
 			for (int i = 0; i < resources.length; i++) {
 				IResource resource = resources[i];
 				
+				ISchedulingRule rule = resource.getProject();
 				try {
 					// Get a scheduling rule on the project since CVS may obtain a lock higher then
 					// the resource itself.
-					JobManager.getInstance().beginRule(resource.getProject());
+					JobManager.getInstance().beginRule(rule);
 					
 					monitor.setTaskName(Policy.bind("RemoteTagSynchronizer.0", resource.getFullPath().makeRelative().toString())); //$NON-NLS-1$
 					
@@ -246,7 +248,7 @@ public class RemoteTagSynchronizer extends CVSRemoteSynchronizer {
 						sub.done();	 
 					}
 				} finally {
-					JobManager.getInstance().endRule();
+					JobManager.getInstance().endRule(rule);
 				}
 			}
 		} finally {

@@ -119,13 +119,14 @@ public class CheckoutIntoOperation extends CheckoutOperation {
 	 */
 	protected void checkout(ICVSRemoteFolder[] folders, IProgressMonitor monitor) throws CVSException {
 		monitor.beginTask(null, 100);
+		ISchedulingRule rule = getSchedulingRule();
 		try {
 			//	Obtain a scheduling rule on the projects were about to overwrite
-			Platform.getJobManager().beginRule(getSchedulingRule());
+			Platform.getJobManager().beginRule(rule);
 			super.checkout(folders, Policy.subMonitorFor(monitor, 90));
 			refreshRoot(getLocalRoot(getLocalFolder()), Policy.subMonitorFor(monitor, 10));
 		} finally {
-			Platform.getJobManager().endRule();
+			Platform.getJobManager().endRule(rule);
 			monitor.done();
 		}
 	}

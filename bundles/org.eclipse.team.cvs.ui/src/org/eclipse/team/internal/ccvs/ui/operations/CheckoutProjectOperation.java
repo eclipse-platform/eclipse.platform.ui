@@ -148,13 +148,14 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 				return OK;
 			}
 		
+			ISchedulingRule rule = getSchedulingRule(targetProjects);
 			try {
 				//	Obtain a scheduling rule on the projects were about to overwrite
-				Platform.getJobManager().beginRule(getSchedulingRule(targetProjects));
+				Platform.getJobManager().beginRule(rule);
 				IStatus result = performCheckout(session, resource, targetProjects, project != null, Policy.subMonitorFor(pm, 90));
 				return result;
 			} finally {
-				Platform.getJobManager().endRule();
+				Platform.getJobManager().endRule(rule);
 			}
 		} catch (CVSException e) {
 			// An exception occurred either during the module-expansion or checkout
