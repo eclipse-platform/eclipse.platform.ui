@@ -13,6 +13,7 @@ package org.eclipse.core.internal.registry;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.*;
@@ -127,7 +128,7 @@ public class EclipseBundleListener implements SynchronousBundleListener {
 		try {
 			String message = Policy.bind("parse.problems", bundle.getLocation()); //$NON-NLS-1$
 			MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, ExtensionsParser.PARSE_PROBLEM, message, null); //$NON-NLS-1$
-			Namespace bundleModel = new ExtensionsParser(problems).parseManifest(new InputSource(is), manifestType, manifestName);
+			Namespace bundleModel = new ExtensionsParser(problems).parseManifest(new InputSource(is), manifestType, manifestName, ResourceTranslator.getResourceBundle(bundle));
 			bundleModel.setUniqueIdentifier(bundle.getSymbolicName());
 			bundleModel.setBundle(bundle);
 			if (isFragment) {

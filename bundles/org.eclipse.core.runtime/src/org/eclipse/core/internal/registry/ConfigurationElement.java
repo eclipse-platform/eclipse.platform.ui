@@ -248,15 +248,7 @@ public class ConfigurationElement extends NestedRegistryModelObject implements I
 				found = list[i];
 				break;
 			}
-		String s;
-		if (found == null || (s = found.getValue()) == null)
-			return null;
-		//replace the key with its localized value
-		Namespace bundleModel = (Namespace) ((Extension) getDeclaringExtension()).getParent();
-		String localized = bundleModel.getResourceString(s);
-		if (localized != s)
-			found.setLocalizedValue(localized);
-		return localized;
+		return found == null ? null : found.getValue();
 	}
 
 	public String getAttributeAsIs(String name) {

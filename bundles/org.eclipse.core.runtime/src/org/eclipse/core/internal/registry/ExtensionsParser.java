@@ -15,8 +15,7 @@ import java.io.IOException;
 import java.util.*;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
-import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.internal.runtime.Policy;
+import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.runtime.*;
 import org.osgi.framework.ServiceReference;
 import org.xml.sax.*;
@@ -45,6 +44,8 @@ public class ExtensionsParser extends DefaultHandler {
 	// A status for holding results.
 	private MultiStatus status;
 
+	private ResourceBundle resources;
+	
 	/** 
 	 * Status code constant (value 1) indicating a problem in a bundle extensions
 	 * manifest (<code>extensions.xml</code>) file.
@@ -281,7 +282,6 @@ public class ExtensionsParser extends DefaultHandler {
 	}
 
 	private void handleBundleState(String elementName, Attributes attributes) {
-
 		if (elementName.equals(EXTENSION_POINT)) {
 			stateStack.push(new Integer(BUNDLE_EXTENSION_POINT_STATE));
 			parseExtensionPointAttributes(attributes);
@@ -330,8 +330,9 @@ public class ExtensionsParser extends DefaultHandler {
 			InternalPlatform.getDefault().getBundleContext().ungetService(parserReference);
 	}
 
-	public Namespace parseManifest(InputSource in, String manifestType, String manifestName) throws SAXException, IOException {
+	public Namespace parseManifest(InputSource in, String manifestType, String manifestName, ResourceBundle bundle) throws SAXException, IOException {
 		long start = 0;
+		this.resources = bundle;
 		if (InternalPlatform.DEBUG)
 			start = System.currentTimeMillis();
 
@@ -384,7 +385,7 @@ public class ExtensionsParser extends DefaultHandler {
 
 			ConfigurationProperty currentConfigurationProperty = new ConfigurationProperty();
 			currentConfigurationProperty.setName(attrName);
-			currentConfigurationProperty.setValue(attrValue);
+			currentConfigurationProperty.setValue(translate(attrValue));
 			propVector.addElement(currentConfigurationProperty);
 		}
 		parentConfigurationElement.setProperties((ConfigurationProperty[]) propVector.toArray(new ConfigurationProperty[propVector.size()]));
@@ -403,7 +404,7 @@ public class ExtensionsParser extends DefaultHandler {
 			String attrValue = attributes.getValue(i).trim();
 
 			if (attrName.equals(EXTENSION_NAME))
-				currentExtension.setName(attrValue);
+				currentExtension.setName(translate(attrValue));
 			else if (attrName.equals(EXTENSION_ID))
 				currentExtension.setSimpleIdentifier(attrValue);
 			else if (attrName.equals(EXTENSION_TARGET)) {
@@ -459,7 +460,7 @@ public class ExtensionsParser extends DefaultHandler {
 			String attrValue = attributes.getValue(i).trim();
 
 			if (attrName.equals(EXTENSION_POINT_NAME))
-				currentExtPoint.setName(attrValue);
+				currentExtPoint.setName(translate(attrValue));
 			else if (attrName.equals(EXTENSION_POINT_ID))
 				currentExtPoint.setSimpleIdentifier(attrValue);
 			else if (attrName.equals(EXTENSION_POINT_SCHEMA))
@@ -565,5 +566,9 @@ public class ExtensionsParser extends DefaultHandler {
 	 */
 	public MultiStatus getStatus() {
 		return status;
+	}
+	
+	private String translate(String key) {
+		return ResourceTranslator.getResourceString(null, key, resources);
 	}
 }
