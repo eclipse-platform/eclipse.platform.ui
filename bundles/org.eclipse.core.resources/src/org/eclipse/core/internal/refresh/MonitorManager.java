@@ -110,9 +110,13 @@ class MonitorManager implements IResourceChangeListener, IResourceDeltaVisitor, 
 		}
 		return false;
 	}
-	private void monitor(IResource resource) {
+	/**
+	 * Installs a monitor on the given resource. Returns true if the polling
+	 * monitor was installed, and false if a refresh provider was installed.
+	 */
+	private boolean monitor(IResource resource) {
 		if (isMonitoring(resource))
-			return;
+			return false;
 		boolean pollingMonitorNeeded = true;
 		RefreshProvider[] providers = getRefreshProviders();
 		for (int i = 0; i < providers.length; i++) {
@@ -126,6 +130,7 @@ class MonitorManager implements IResourceChangeListener, IResourceDeltaVisitor, 
 			pollMonitor.monitor(resource);
 			registerMonitor(pollMonitor, resource);
 		}
+		return pollingMonitorNeeded;
 	}
 	private IRefreshMonitor safeInstallMonitor(RefreshProvider provider, IResource resource) {
 		Throwable t = null;
@@ -248,12 +253,17 @@ class MonitorManager implements IResourceChangeListener, IResourceDeltaVisitor, 
 	 * Start the monitoring of resources by all monitors.
 	 */
 	public void start() {
+		boolean refreshNeeded = false;
 		for (Iterator i = getResourcesToMonitor().iterator(); i.hasNext();)
-			monitor((IResource) i.next());
+			refreshNeeded |= !monitor((IResource) i.next());
 		workspace.addResourceChangeListener(this);
 		workspace.getPathVariableManager().addChangeListener(this);
 		if (RefreshManager.DEBUG)
 			System.out.println(RefreshManager.DEBUG_PREFIX + " starting monitor manager."); //$NON-NLS-1$
+		//If not exclusively using polling, create a polling monitor and run it once, to catch 
+		//changes that occurred while the native monitor was turned off.
+		if (refreshNeeded)
+			new PollingMonitor(refreshManager).runOnce();
 	}
 	/**
 	 * Stop the monitoring of resources by all monitors.

@@ -11,7 +11,9 @@ package org.eclipse.core.internal.refresh;
 import java.util.ArrayList;
 
 import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.refresh.IRefreshMonitor;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
@@ -114,6 +116,23 @@ public class PollingMonitor extends Job implements IRefreshMonitor {
 		return Status.OK_STATUS;
 	}
 	/**
+	 * Instructs the polling job to do one complete iteration of all workspace roots, and
+	 * then discard itself. This is used when
+	 * the refresh manager is first turned on if there is a native monitor installed (which
+	 * don't handle changes that occurred while the monitor was turned off).
+	 */
+	void runOnce() {
+		synchronized (this) {
+			//add all roots to the refresh list, but not to the real set of roots
+			//this will cause the job to never run again once it has exhaused
+			//the set of roots to refresh
+			IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+			for (int i = 0; i < projects.length; i++)
+				toRefresh.add(projects[i]);
+		}
+		schedule(MIN_FREQUENCY);
+	}
+	/**
 	 * @param hotRoot2
 	 */
 	private void poll(IResource resource) {
@@ -130,7 +149,8 @@ public class PollingMonitor extends Job implements IRefreshMonitor {
 	 * @see Job#shouldRun
 	 */
 	public boolean shouldRun() {
-		return !resourceRoots.isEmpty();
+		//only run if there is something to refresh
+		return !resourceRoots.isEmpty() || !toRefresh.isEmpty();
 	}
 	/**
 	 * Copies the resources to be polled into the list of resources
