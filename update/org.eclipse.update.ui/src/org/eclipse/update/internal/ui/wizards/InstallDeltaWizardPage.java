@@ -89,7 +89,7 @@ public class InstallDeltaWizardPage extends WizardPage {
 	class DeltaLabelProvider extends LabelProvider {
 		public String getText(Object obj) {
 			if (obj instanceof ISessionDelta) {
-				return ((ISessionDelta) obj).getDate().toString();
+				return Utilities.format(((ISessionDelta) obj).getDate());
 			}
 			return super.getText(obj);
 		}
