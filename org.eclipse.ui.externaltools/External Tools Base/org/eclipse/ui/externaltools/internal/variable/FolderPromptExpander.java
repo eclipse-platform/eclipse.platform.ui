@@ -12,7 +12,7 @@
 package org.eclipse.ui.externaltools.internal.variable;
 
 import org.eclipse.swt.widgets.DirectoryDialog;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 
 /**
  * Prompts the user to choose a folder and expands the selection
@@ -28,7 +28,7 @@ public class FolderPromptExpander extends PromptExpanderBase {
 	 * @see PromptExpanderBase#prompt()
 	 */
 	public void prompt() {
-		DirectoryDialog dialog = new DirectoryDialog(Display.getDefault().getActiveShell());
+		DirectoryDialog dialog = new DirectoryDialog(ExternalToolsPlugin.getStandardDisplay().getActiveShell());
 		dialog.setText(dialogMessage);
 		dialog.setFilterPath(lastValue == null ? defaultValue : lastValue);
 		dialogResultString = dialog.open();

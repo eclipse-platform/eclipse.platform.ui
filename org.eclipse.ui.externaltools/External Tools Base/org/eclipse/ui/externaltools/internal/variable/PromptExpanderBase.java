@@ -14,7 +14,7 @@ package org.eclipse.ui.externaltools.internal.variable;
 import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 
 /**
  * Base implementation for variable expanders that prompt the user
@@ -53,7 +53,7 @@ abstract class PromptExpanderBase extends DefaultVariableExpander {
 		String varText = null;
 		setupDialog(varValue);
 
-		Display.getDefault().syncExec(new Runnable() {
+		ExternalToolsPlugin.getStandardDisplay().syncExec(new Runnable() {
 			public void run() {
 				prompt();
 			}
@@ -79,7 +79,7 @@ abstract class PromptExpanderBase extends DefaultVariableExpander {
 	 * @param varValue the value of the variable from which the prompt
 	 * hint and default value will be extracted
 	 */
-	protected void setupDialog(String varValue) {
+	private void setupDialog(String varValue) {
 		promptHint = null;
 		defaultValue = null;
 		dialogResultString = null;

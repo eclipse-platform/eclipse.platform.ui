@@ -11,8 +11,8 @@
  *******************************************************************************/
 package org.eclipse.ui.externaltools.internal.variable;
 
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 
 /**
  * Prompts the user to choose a file and expands the selection
@@ -27,7 +27,7 @@ public class FilePromptExpander extends PromptExpanderBase {
 	 * @see PromptExpanderBase#prompt()
 	 */
 	public void prompt() {
-		FileDialog dialog = new FileDialog(Display.getDefault().getActiveShell());
+		FileDialog dialog = new FileDialog(ExternalToolsPlugin.getStandardDisplay().getActiveShell());
 		dialog.setText(dialogMessage);
 		dialog.setFileName(lastValue == null ? defaultValue : lastValue);
 		dialogResultString = dialog.open();
