@@ -300,67 +300,6 @@ public class IResourceChangeListenerTest extends ResourceTest {
 		}
 	}
 
-	/*
-	 * Create a resource change listener and register it for POST_CHANGE events.
-	 * Ensure that you are NOT able to modify the workspace tree.
-	 */
-	public void testBug45996() {
-		// create the resource change listener
-		IResourceChangeListener listener = new IResourceChangeListener() {
-			public void resourceChanged(final IResourceChangeEvent event) {
-				boolean failed = false;
-				try {
-					IWorkspaceRunnable body = new IWorkspaceRunnable() {
-						public void run(IProgressMonitor monitor) throws CoreException {
-							// modify the tree.
-							IResourceDeltaVisitor visitor = new IResourceDeltaVisitor() {
-								public boolean visit(IResourceDelta delta) throws CoreException {
-									IResource resource = delta.getResource();
-									try {
-										resource.touch(getMonitor());
-									} catch (RuntimeException e) {
-										throw e;
-									}
-									resource.createMarker(IMarker.PROBLEM);
-									return true;
-								}
-							};
-							event.getDelta().accept(visitor);
-						}
-					};
-					getWorkspace().run(body, getMonitor());
-				} catch (CoreException e) {
-					//should fail
-					failed = true;
-				}
-				assertTrue("1.0", failed);
-			}
-		};
-		// register the listener with the workspace.
-		getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.POST_CHANGE);
-		try {
-			IWorkspaceRunnable body = new IWorkspaceRunnable() {
-				// cause a delta by touching all resources
-				final IResourceVisitor visitor = new IResourceVisitor() {
-					public boolean visit(IResource resource) throws CoreException {
-						resource.touch(getMonitor());
-						return true;
-					}
-				};
-
-				public void run(IProgressMonitor monitor) throws CoreException {
-					getWorkspace().getRoot().accept(visitor);
-				}
-			};
-			getWorkspace().run(body, getMonitor());
-		} catch (CoreException e) {
-			fail("2.0", e);
-		} finally {
-			// cleanup: ensure that the listener is removed
-			getWorkspace().removeResourceChangeListener(listener);
-		}
-	}
-
 	public void testAddAndRemoveFile() {
 		try {
 			verifier.reset();
@@ -452,6 +391,67 @@ public class IResourceChangeListenerTest extends ResourceTest {
 			assertDelta();
 		} catch (CoreException e) {
 			handleCoreException(e);
+		}
+	}
+
+	/*
+	 * Create a resource change listener and register it for POST_CHANGE events.
+	 * Ensure that you are NOT able to modify the workspace tree.
+	 */
+	public void testBug45996() {
+		// create the resource change listener
+		IResourceChangeListener listener = new IResourceChangeListener() {
+			public void resourceChanged(final IResourceChangeEvent event) {
+				boolean failed = false;
+				try {
+					IWorkspaceRunnable body = new IWorkspaceRunnable() {
+						public void run(IProgressMonitor monitor) throws CoreException {
+							// modify the tree.
+							IResourceDeltaVisitor visitor = new IResourceDeltaVisitor() {
+								public boolean visit(IResourceDelta delta) throws CoreException {
+									IResource resource = delta.getResource();
+									try {
+										resource.touch(getMonitor());
+									} catch (RuntimeException e) {
+										throw e;
+									}
+									resource.createMarker(IMarker.PROBLEM);
+									return true;
+								}
+							};
+							event.getDelta().accept(visitor);
+						}
+					};
+					getWorkspace().run(body, getMonitor());
+				} catch (CoreException e) {
+					//should fail
+					failed = true;
+				}
+				assertTrue("1.0", failed);
+			}
+		};
+		// register the listener with the workspace.
+		getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.POST_CHANGE);
+		try {
+			IWorkspaceRunnable body = new IWorkspaceRunnable() {
+				// cause a delta by touching all resources
+				final IResourceVisitor visitor = new IResourceVisitor() {
+					public boolean visit(IResource resource) throws CoreException {
+						resource.touch(getMonitor());
+						return true;
+					}
+				};
+
+				public void run(IProgressMonitor monitor) throws CoreException {
+					getWorkspace().getRoot().accept(visitor);
+				}
+			};
+			getWorkspace().run(body, getMonitor());
+		} catch (CoreException e) {
+			fail("2.0", e);
+		} finally {
+			// cleanup: ensure that the listener is removed
+			getWorkspace().removeResourceChangeListener(listener);
 		}
 	}
 
@@ -836,6 +836,29 @@ public class IResourceChangeListenerTest extends ResourceTest {
 		}
 	}
 
+	public void testMoveFileAddMarker() {
+		try {
+			verifier.addExpectedChange(folder2, IResourceDelta.ADDED, 0);
+			verifier.addExpectedChange(file1, IResourceDelta.REMOVED, IResourceDelta.MOVED_TO, null, file3.getFullPath());
+			verifier.addExpectedChange(file3, IResourceDelta.ADDED, IResourceDelta.MOVED_FROM | IResourceDelta.MARKERS, file1.getFullPath(), null);
+			getWorkspace().run(new IWorkspaceRunnable() {
+				public void run(IProgressMonitor m) throws CoreException {
+					m.beginTask("Creating and moving", 100);
+					try {
+						folder2.create(true, true, new SubProgressMonitor(m, 50));
+						file1.move(file3.getFullPath(), true, new SubProgressMonitor(m, 50));
+						file3.createMarker(IMarker.TASK);
+					} finally {
+						m.done();
+					}
+				}
+			}, getMonitor());
+			assertDelta();
+		} catch (CoreException e) {
+			handleCoreException(e);
+		}
+	}
+
 	/**
 	 * Regression test for bug 42514
 	 */
@@ -855,29 +878,6 @@ public class IResourceChangeListenerTest extends ResourceTest {
 					try {
 						folder3.delete(IResource.FORCE, new SubProgressMonitor(m, 50));
 						file2.move(file1.getFullPath(), true, new SubProgressMonitor(m, 50));
-					} finally {
-						m.done();
-					}
-				}
-			}, getMonitor());
-			assertDelta();
-		} catch (CoreException e) {
-			handleCoreException(e);
-		}
-	}
-
-	public void testMoveFileAddMarker() {
-		try {
-			verifier.addExpectedChange(folder2, IResourceDelta.ADDED, 0);
-			verifier.addExpectedChange(file1, IResourceDelta.REMOVED, IResourceDelta.MOVED_TO, null, file3.getFullPath());
-			verifier.addExpectedChange(file3, IResourceDelta.ADDED, IResourceDelta.MOVED_FROM | IResourceDelta.MARKERS, file1.getFullPath(), null);
-			getWorkspace().run(new IWorkspaceRunnable() {
-				public void run(IProgressMonitor m) throws CoreException {
-					m.beginTask("Creating and moving", 100);
-					try {
-						folder2.create(true, true, new SubProgressMonitor(m, 50));
-						file1.move(file3.getFullPath(), true, new SubProgressMonitor(m, 50));
-						file3.createMarker(IMarker.TASK);
 					} finally {
 						m.done();
 					}
@@ -1059,6 +1059,7 @@ public class IResourceChangeListenerTest extends ResourceTest {
 			getWorkspace().removeResourceChangeListener(listener2);
 		}
 	}
+
 	public void testProjectDescriptionComment() {
 		try {
 			/* change file1's contents */
@@ -1072,19 +1073,7 @@ public class IResourceChangeListenerTest extends ResourceTest {
 			handleCoreException(e);
 		}
 	}
-	public void testProjectDescriptionStaticRefs() {
-		try {
-			/* change file1's contents */
-			verifier.addExpectedChange(project1, IResourceDelta.CHANGED, IResourceDelta.DESCRIPTION);
-			verifier.addExpectedChange(project1MetaData, IResourceDelta.CHANGED, IResourceDelta.CONTENT);
-			IProjectDescription description = project1.getDescription();
-			description.setReferencedProjects(new IProject[] {project2});
-			project1.setDescription(description, IResource.NONE, getMonitor());
-			assertDelta();
-		} catch (CoreException e) {
-			handleCoreException(e);
-		}
-	}
+
 	public void testProjectDescriptionDynamicRefs() {
 		try {
 			/* change file1's contents */
@@ -1097,6 +1086,7 @@ public class IResourceChangeListenerTest extends ResourceTest {
 			handleCoreException(e);
 		}
 	}
+
 	public void testProjectDescriptionNatures() {
 		try {
 			/* change file1's contents */
@@ -1104,6 +1094,20 @@ public class IResourceChangeListenerTest extends ResourceTest {
 			verifier.addExpectedChange(project1MetaData, IResourceDelta.CHANGED, IResourceDelta.CONTENT);
 			IProjectDescription description = project1.getDescription();
 			description.setNatureIds(new String[] {NATURE_SIMPLE});
+			project1.setDescription(description, IResource.NONE, getMonitor());
+			assertDelta();
+		} catch (CoreException e) {
+			handleCoreException(e);
+		}
+	}
+
+	public void testProjectDescriptionStaticRefs() {
+		try {
+			/* change file1's contents */
+			verifier.addExpectedChange(project1, IResourceDelta.CHANGED, IResourceDelta.DESCRIPTION);
+			verifier.addExpectedChange(project1MetaData, IResourceDelta.CHANGED, IResourceDelta.CONTENT);
+			IProjectDescription description = project1.getDescription();
+			description.setReferencedProjects(new IProject[] {project2});
 			project1.setDescription(description, IResource.NONE, getMonitor());
 			assertDelta();
 		} catch (CoreException e) {
