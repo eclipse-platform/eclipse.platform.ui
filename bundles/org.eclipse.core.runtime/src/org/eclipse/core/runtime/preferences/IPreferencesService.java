@@ -17,14 +17,14 @@ import org.eclipse.core.runtime.IStatus;
 import org.osgi.service.prefs.Preferences;
 
 /**
- * The preference manager provides facilities for dealing with the default scope
+ * The preference service provides facilities for dealing with the default scope
  * precedence lookup order, querying the preference store for values using this order,
  * accessing the root of the preference store node hierarchy, and importing/exporting
  * preferences.
  * 
  * @since 3.0
  */
-public interface IPreferenceManager {
+public interface IPreferencesService {
 
 	/**
 	 * String constant (value of <code>"instance"</code>) used for the 

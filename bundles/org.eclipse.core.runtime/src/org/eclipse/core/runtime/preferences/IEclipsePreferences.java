@@ -180,7 +180,7 @@ public interface IEclipsePreferences extends Preferences {
 	 * not be <code>null</code>.
 	 * <p>
 	 * Functionally equivalent to <code>return node(path.toString());</code>. 
-	 * See the spec of Preferences.node(String) for more details. 
+	 * See the spec of <code>Preferences.node(String)<code> for more details. 
 	 * </p>
 	 * @param path the path of the node
 	 * @return the node
@@ -194,14 +194,11 @@ public interface IEclipsePreferences extends Preferences {
 	 * must not be <code>null</code>.
 	 * <p>
 	 * Functionally equivalent to <code>return nodeExists(path.toString());</code>. 
-	 * See the spec of Preferences.node(String) for more details. 
+	 * See the spec of <code>Preferences.node(String)</code> for more details. 
 	 * </p>
 	 * @param path the path to the node
 	 * @return <code>true</code> if the node exists and <code>false</code> otherwise
-	 * @throws BackingStoreException if this method fails. Reasons include:
-	 * <ul>
-	 * <li>
-	 * </ul>
+	 * @throws BackingStoreException if this method fails
 	 * @see org.osgi.service.prefs.Preferences#nodeExists(String)
 	 */
 	public boolean nodeExists(IPath path) throws BackingStoreException;

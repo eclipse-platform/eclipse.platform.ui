@@ -16,10 +16,10 @@ import org.osgi.service.prefs.Preferences;
 /**
  * Clients implement this interface to provide context to a 
  * particular scope. Implementors of this interface are passed to 
- * the <code>IPreferenceManager</code> for use in preference 
+ * the <code>IPreferencesService</code> for use in preference 
  * searching.
  * 
- * @see IPreferenceManager
+ * @see IPreferencesService
  * @since 3.0
  */
 public interface IScopeContext {
@@ -41,7 +41,7 @@ public interface IScopeContext {
 	 * </p>
 	 * @param qualifier a qualifier for the preference name
 	 * @return the node containing the plug-in preferences or <code>null</code>
-	 * @see IPreferenceManager
+	 * @see IPreferencesService
 	 */
 	public Preferences getNode(String qualifier);
 
