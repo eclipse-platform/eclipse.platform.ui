@@ -6,6 +6,9 @@
  * 
  * Contributors: 
  * IBM - Initial API and implementation
+ * hzhou@actuate.com - Fix for  Bug 71695 - 
+ * [WorkingSets]Removed Working Set is still shown under the menu item 
+ * when it is the recently used working set
  **********************************************************************/
 package org.eclipse.ui.internal.ide.actions;
 
@@ -43,6 +46,11 @@ public class BuildSetMenu extends ContributionItem {
 
     private IWorkbenchWindow window;
 
+    /**
+     * Create a new instance of the receiver.
+     * @param window
+     * @param actionBars
+     */
     public BuildSetMenu(IWorkbenchWindow window, IActionBarConfigurer actionBars) {
         this.window = window;
         this.actionBars = actionBars;
@@ -52,7 +60,9 @@ public class BuildSetMenu extends ContributionItem {
 
     /**
      * Adds a mnemonic accelerator to actions in the MRU list of
-     * recently built working sets
+     * recently built working sets.
+     * @param action the action to add
+     * @param index the index to add it at
      */
     private void addMnemonic(BuildSetAction action, int index) {
         StringBuffer label = new StringBuffer();
@@ -80,6 +90,7 @@ public class BuildSetMenu extends ContributionItem {
 
     /**
      * Fills the menu with Show View actions.
+     * @param menu The menu being filled.
      */
     private void fillMenu(Menu menu) {
         boolean isAutoBuilding = ResourcesPlugin.getWorkspace()
@@ -93,12 +104,24 @@ public class BuildSetMenu extends ContributionItem {
         //add build action for the last working set that was built
         int accel = 1;
         if (last != null) {
-            last.setChecked(true);
-            last.setEnabled(!isAutoBuilding);
-            last.setActionDefinitionId("org.eclipse.ui.project.buildLast"); //$NON-NLS-1$
-            addMnemonic(last, accel++);
-            new ActionContributionItem(last).fill(menu, -1);
-            lastSet = last.getWorkingSet();
+			// add it only if it has not been removed
+			boolean found = false;
+			for (int i = 0; i < sets.length; i++) {
+				if (sets[i].equals(last.getWorkingSet())){
+					found = true;
+					break;
+				}
+			}
+			if (found) {
+	            last.setChecked(true);
+	            last.setEnabled(!isAutoBuilding);
+	            last.setActionDefinitionId("org.eclipse.ui.project.buildLast"); //$NON-NLS-1$
+	            addMnemonic(last, accel++);
+	            new ActionContributionItem(last).fill(menu, -1);
+	            lastSet = last.getWorkingSet();
+			}
+			else //Clear the last built if it is not there
+				BuildSetAction.lastBuilt = null;
         }
         //add build actions for the most recently used working sets
         for (int i = 0; i < sets.length; i++) {
