@@ -178,7 +178,7 @@ public abstract class ProcessorBasedRefactoring extends Refactoring {
 		List changes= new ArrayList();
 		Map participantMap= new HashMap();
 		for (int i= 0; i < fParticipants.length; i++) {
-			RefactoringParticipant participant= fParticipants[i];
+			final RefactoringParticipant participant= fParticipants[i];
 			try {
 				Change change= participant.createChange(new SubProgressMonitor(pm, 1));
 				if (change != null) {
@@ -186,9 +186,11 @@ public abstract class ProcessorBasedRefactoring extends Refactoring {
 					participantMap.put(change, participant);
 				}
 			} catch (CoreException e) {
-				ParticipantDescriptor descriptor= participant.getDescriptor();
-				descriptor.disable();
-				RefactoringCorePlugin.logRemovedParticipant(descriptor, e);
+				disableParticipant(participant, e);
+				throw e;
+			} catch (RuntimeException e) {
+				disableParticipant(participant, e);
+				throw e;
 			}
 			if (pm.isCanceled())
 				throw new OperationCanceledException();
@@ -245,5 +247,11 @@ public abstract class ProcessorBasedRefactoring extends Refactoring {
 		result.add(checker);
 		return result;
 		
+	}
+
+	private void disableParticipant(final RefactoringParticipant participant, Throwable e) {
+		ParticipantDescriptor descriptor= participant.getDescriptor();
+		descriptor.disable();
+		RefactoringCorePlugin.logRemovedParticipant(descriptor, e);
 	}
 }
