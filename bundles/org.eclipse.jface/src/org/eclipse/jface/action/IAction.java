@@ -435,4 +435,6 @@ public void setToolTipText(String text);
  * @deprecated
  */
 public void setAccelerator(int keycode);
+
+public boolean isThreadSafe();
 }

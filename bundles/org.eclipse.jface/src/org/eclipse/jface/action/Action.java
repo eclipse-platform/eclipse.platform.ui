@@ -1005,4 +1005,12 @@ public abstract class Action implements IAction {
 	public void setAccelerator(int keycode) {
 		this.accelerator = keycode;
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.IAction#isThreadSafe()
+	 */
+	public boolean isThreadSafe() {
+		// XXX Auto-generated method stub
+		return false;
+	}
+
 }
