@@ -40,12 +40,4 @@
       </antObject>
    </extension>
 
-   <!-- Types -->
-   <extension point="org.eclipse.ant.core.antTypes">
-      <antType
-         name="eclipse.commapatternset"
-         class="org.eclipse.ant.internal.core.ant.CommaPatternSet"
-         library="lib/antsupportlib.jar">
-      </antType>
-   </extension>
 </plugin>
