@@ -691,12 +691,4 @@
    </persistent>
 </extension>
 
-<extension point = "org.eclipse.debug.ui.launchConfigurationTabs">
-	<launchConfigurationTab
-		id="org.eclipse.debug.ui.launchConfigurationTab.common"
-		class="org.eclipse.debug.ui.CommonTab"
-		name="%commonTabName">
-	</launchConfigurationTab>
-</extension>
-
 </plugin>
