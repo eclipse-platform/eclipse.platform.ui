@@ -51,6 +51,10 @@ public class CopyProjectOperation {
 	 */
 	private Shell parentShell;
 
+    private String newName;
+
+    private boolean cancelled;
+
 	/** 
 	 * Create a new operation initialized with a shell. 
 	 * 
@@ -64,29 +68,39 @@ public class CopyProjectOperation {
 	 * Paste a copy of the project on the clipboard to the workspace.
 	 */
 	public void copyProject(IProject project) {
+
+	    newName = null;
+	    cancelled = false;
 		errorStatus = null;
 	
 		//Get the project name and location in a two element list
 		ProjectLocationSelectionDialog dialog =
 			new ProjectLocationSelectionDialog(parentShell, project);
 		dialog.setTitle(IDEWorkbenchMessages.getString("CopyProjectOperation.copyProject")); //$NON-NLS-1$
-		if (dialog.open() != Dialog.OK) 
+		if (dialog.open() != Dialog.OK) {
+		    cancelled = true;
 			return;
-			
+		}
+		
 		Object[] destinationPaths = dialog.getResult();
-		if (destinationPaths == null)
+		if (destinationPaths == null) { 
+		    cancelled = true;
 			return;
+		}
 			
-		String newName = (String) destinationPaths[0];
+		newName = (String) destinationPaths[0];
 		IPath newLocation = new Path((String) destinationPaths[1]);
 
 		boolean completed = performProjectCopy(project, newName, newLocation);
 	
-		if (!completed) // ie.- canceled
+		if (!completed) {// ie.- canceled
+		    cancelled = true;
 			return; // not appropriate to show errors
+		}
 	
 		// If errors occurred, open an Error dialog
 		if (errorStatus != null) {
+		    cancelled = true;
 			ErrorDialog.openError(
 				parentShell, 
 				IDEWorkbenchMessages.getString("CopyProjectOperation.copyFailedTitle"), //$NON-NLS-1$
@@ -94,6 +108,28 @@ public class CopyProjectOperation {
 				errorStatus);
 			errorStatus = null; 
 		}
+	}
+	
+	/**
+	 * Returns whether the operation was cancelled or failed due to error.
+	 * 
+	 * @return <code>true</code> if the operation ws cancelled or failed due to an error,
+	 *   <code>false</code> if the operation was successful
+	 * @since 3.0.1
+	 */
+	public boolean isCancelled() {
+	    return cancelled;
+	}
+	
+	/**
+	 * Returns the new name of the project.  Valid only if the operation was successful
+	 * (<code>isCancelled</code> returns false).
+	 * 
+	 * @return the new name of the project, or <code>null</code> if the new name is unknown
+	 * @since 3.0.1
+	 */
+	public String getNewName() {
+	    return newName;
 	}
 	
 	/**
