@@ -106,16 +106,19 @@ private MarkerInfo[] basicFindMatching(MarkerSet markers, String type, boolean i
 }
 /**
  * Removes markers of the specified type from the given resource.
+ * Returns the resource info object for the given path, if any
+ * (this return value is an optimization to allow the caller to
+ * determine if recursion is necessary).
  */
-private void basicRemoveMarkers(IPath path, String type, boolean includeSubtypes) {
+private ResourceInfo basicRemoveMarkers(IPath path, String type, boolean includeSubtypes) {
 	//don't get a modifiable info until we know we need to modify it.
 	ResourceInfo info = workspace.getResourceInfo(path, false, false);
 	//phantoms don't have markers
 	if (info == null)
-		return;
+		return null;
 	MarkerSet markers = info.getMarkers();
 	if (markers == null)
-		return;
+		return info;
 	IMarkerSetElement[] matching;
 	if (type == null) {
 		// if the type is null, all markers are to be removed.
@@ -127,7 +130,7 @@ private void basicRemoveMarkers(IPath path, String type, boolean includeSubtypes
 		matching = basicFindMatching(markers, type, includeSubtypes);
 		// if none match, there is nothing to remove
 		if (matching.length == 0)
-			return;
+			return info;
 		//now we need to crack open the tree
 		info = workspace.getResourceInfo(path, false, true);
 		
@@ -144,6 +147,7 @@ private void basicRemoveMarkers(IPath path, String type, boolean includeSubtypes
 		changes[i] = new MarkerDelta(IResourceDelta.REMOVED, resource, (MarkerInfo) matching[i]);
 	if (changes != null)
 		changedMarkers(resource, changes);
+	return info;
 }
 /**
  * Adds the markers on the given target which match the specified type to the list.
@@ -305,7 +309,7 @@ private void recursiveFindMarkers(IPath path, ArrayList list, String type, boole
 	}
 	
 	//recurse
-	if (depth == IResource.DEPTH_ZERO)
+	if (depth == IResource.DEPTH_ZERO || info.getType() == IResource.FILE)
 		return;
 	if (depth == IResource.DEPTH_ONE)
 		depth = IResource.DEPTH_ZERO;
@@ -318,9 +322,9 @@ private void recursiveFindMarkers(IPath path, ArrayList list, String type, boole
  * Adds the markers for a subtree of resources to the list.
  */
 private void recursiveRemoveMarkers(IPath path, String type, boolean includeSubtypes, int depth) {
-	basicRemoveMarkers(path, type, includeSubtypes);
+	ResourceInfo info = basicRemoveMarkers(path, type, includeSubtypes);
 	//recurse
-	if (depth == IResource.DEPTH_ZERO)
+	if (depth == IResource.DEPTH_ZERO || info == null || info.getType() == IResource.FILE)
 		return;
 	if (depth == IResource.DEPTH_ONE)
 		depth = IResource.DEPTH_ZERO;
