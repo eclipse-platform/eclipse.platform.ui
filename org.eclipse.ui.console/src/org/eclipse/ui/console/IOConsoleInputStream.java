@@ -88,27 +88,25 @@ public class IOConsoleInputStream extends InputStream {
      *  (non-Javadoc)
      * @see java.io.InputStream#read(byte[], int, int)
      */
-    public int read(byte[] b, int off, int len) throws IOException {
-        synchronized(input) {
-            waitForData();
-	        if (available() == -1) {
-	            return -1;
-	        }
-        
-            int toCopy = Math.min(len, size);
-            if(input.length-outPointer > toCopy) {
-                System.arraycopy(input, outPointer, b, off, toCopy);
-                outPointer += toCopy;
-                size -= toCopy;
-            } else {
-                int bytesToEnd = input.length-outPointer;
-                System.arraycopy(input, outPointer, b, off, bytesToEnd);
-                System.arraycopy(input, 0, b, off+bytesToEnd, toCopy-bytesToEnd);
-                outPointer = toCopy-bytesToEnd;
-                size -=toCopy;
-            }
-            return toCopy;
+    public synchronized int read(byte[] b, int off, int len) throws IOException {
+        waitForData();
+        if (available() == -1) {
+            return -1;
         }
+    
+        int toCopy = Math.min(len, size);
+        if(input.length-outPointer > toCopy) {
+            System.arraycopy(input, outPointer, b, off, toCopy);
+            outPointer += toCopy;
+            size -= toCopy;
+        } else {
+            int bytesToEnd = input.length-outPointer;
+            System.arraycopy(input, outPointer, b, off, bytesToEnd);
+            System.arraycopy(input, 0, b, off+bytesToEnd, toCopy-bytesToEnd);
+            outPointer = toCopy-bytesToEnd;
+            size -=toCopy;
+        }
+        return toCopy;
     }
     
     /*
@@ -123,29 +121,29 @@ public class IOConsoleInputStream extends InputStream {
      *  (non-Javadoc)
      * @see java.io.InputStream#read()
      */
-    public int read() throws IOException {
-        synchronized(input) {
-            waitForData();
-	        if (available() == -1) { 
-	            return -1;
-	        }
-            
-            byte b = input[outPointer];
-            outPointer++;
-            if (outPointer == input.length) {
-                outPointer = 0;
-            }
-            return b;
+    public synchronized int read() throws IOException {
+        waitForData();
+        if (available() == -1) { 
+            return -1;
         }
+        
+        byte b = input[outPointer];
+        outPointer++;
+        if (outPointer == input.length) {
+            outPointer = 0;
+        }
+        return b;
     }
     
     /**
      * blocks until data is available to be read.
+     * Ensure that the monitor for this object is obtained before
+     * calling this method.
      */
     private void waitForData() {
         while (size == 0 && !disconnected && !closed) {
             try {
-                input.wait();
+                wait();
             } catch (InterruptedException e) {
             }
         }
@@ -155,34 +153,32 @@ public class IOConsoleInputStream extends InputStream {
      * appends data to this input stream's buffer
      * @param text The data to append to the buffer.
      */
-    public void appendData(String text) {
+    public synchronized void appendData(String text) {
         byte[] newData = text.getBytes();
-        synchronized(input) {
-            while(input.length-size < newData.length) {
-                growArray();
-            }
-            
-            if (size == 0) { //inPointer == outPointer
-                System.arraycopy(newData, 0, input, 0, newData.length);
-                inPointer = newData.length;
-                size = newData.length;
-                outPointer = 0;
-            } else if (inPointer < outPointer || input.length - inPointer > newData.length) {
-                System.arraycopy(newData, 0, input, inPointer, newData.length);
-                inPointer += newData.length;
-                size += newData.length;
-            } else {
-                System.arraycopy(newData, 0, input, inPointer, input.length-inPointer);
-                System.arraycopy(newData, input.length-inPointer, input, 0, newData.length-(input.length-inPointer));
-                inPointer = newData.length-(input.length-inPointer);
-                size += newData.length;
-            }
-            
-            if (inPointer == input.length) {
-                inPointer = 0;
-            }
-            input.notifyAll();
+        while(input.length-size < newData.length) {
+            growArray();
         }
+        
+        if (size == 0) { //inPointer == outPointer
+            System.arraycopy(newData, 0, input, 0, newData.length);
+            inPointer = newData.length;
+            size = newData.length;
+            outPointer = 0;
+        } else if (inPointer < outPointer || input.length - inPointer > newData.length) {
+            System.arraycopy(newData, 0, input, inPointer, newData.length);
+            inPointer += newData.length;
+            size += newData.length;
+        } else {
+            System.arraycopy(newData, 0, input, inPointer, input.length-inPointer);
+            System.arraycopy(newData, input.length-inPointer, input, 0, newData.length-(input.length-inPointer));
+            inPointer = newData.length-(input.length-inPointer);
+            size += newData.length;
+        }
+        
+        if (inPointer == input.length) {
+            inPointer = 0;
+        }
+        notifyAll();
     }
     
     /**
@@ -266,9 +262,10 @@ public class IOConsoleInputStream extends InputStream {
         if(closed) {
             throw new IOException("Input Stream Closed"); //$NON-NLS-1$
         }
-        closed = true;
-        synchronized(input) {
-            input.notifyAll();
+        
+        synchronized(this) {
+        	closed = true;
+            notifyAll();
         }
         console = null;
     }
@@ -278,8 +275,8 @@ public class IOConsoleInputStream extends InputStream {
      */
     public void disconnect() {
         disconnected = true;
-        synchronized(input) {
-            input.notifyAll();
+        synchronized(this) {
+            notifyAll();
         }
         console = null;
     }
