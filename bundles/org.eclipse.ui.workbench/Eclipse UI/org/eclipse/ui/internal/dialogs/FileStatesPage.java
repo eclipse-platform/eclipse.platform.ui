@@ -168,7 +168,11 @@ protected Control createContents(Composite parent) {
 	spacerData.horizontalSpan = 2;
 	spacer.setLayoutData(spacerData);
 	
-	createNoteLabel(composite);
+	Composite noteComposite = 
+		createNoteComposite(parent.getFont(),composite,NOTE_LABEL,NOTE_MESSAGE);
+	GridData noteData = new GridData();
+	noteData.horizontalSpan = 2;
+	noteComposite.setLayoutData(noteData);
 	
 	return composite;
 }
@@ -345,51 +349,6 @@ private long validateMaxFileStateSize(){
 	}
 
 	return maxFileStateSize;
-}
-
-/** 
- * Create a label with a note that informs the user
- * that a restart is required for these changes to 
- * take effect.
- */
-private void createNoteLabel(Composite parent){
-	
-	Composite messageComposite = new Composite(parent, SWT.NONE);
-	GridLayout messageLayout = new GridLayout();
-	messageLayout.numColumns = 2;
-	messageLayout.marginWidth = 0;
-	
-	messageComposite.setLayout(messageLayout);
-	GridData data = 
-		new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-	data.horizontalSpan = 2;
-	messageComposite.setLayoutData(data);
-	messageComposite.setFont(parent.getFont());
-
-
-	final Label noteLabel = new Label(messageComposite,SWT.BOLD);
-	noteLabel.setText(NOTE_LABEL);
-	noteLabel.setFont(JFaceResources.getBannerFont());
-	noteLabel.setLayoutData(
-		new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
-		
-	final IPropertyChangeListener fontListener = new IPropertyChangeListener() {
-		public void propertyChange(PropertyChangeEvent event) {
-			if(JFaceResources.BANNER_FONT.equals(event.getProperty())) {
-				noteLabel.setFont(JFaceResources.getFont(JFaceResources.BANNER_FONT));
-			}
-		}
-	};
-	JFaceResources.getFontRegistry().addListener(fontListener);
-	noteLabel.addDisposeListener(new DisposeListener() {
-		public void widgetDisposed(DisposeEvent event) {
-			JFaceResources.getFontRegistry().removeListener(fontListener);
-		}
-	});
-	
-	Label messageLabel = new Label(messageComposite,SWT.WRAP);
-	messageLabel.setText(NOTE_MESSAGE);
-	messageLabel.setFont(parent.getFont());
 }
 
 }

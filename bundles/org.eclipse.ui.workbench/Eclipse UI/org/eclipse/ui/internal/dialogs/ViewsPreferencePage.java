@@ -5,13 +5,11 @@ package org.eclipse.ui.internal.dialogs;
  * All Rights Reserved.
  */
 import org.eclipse.jface.preference.*;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -50,6 +48,9 @@ public class ViewsPreferencePage
 	/*
 	 * No longer supported - remove when confirmed!
 	 * private static final String OVM_FLOAT = WorkbenchMessages.getString("OpenViewMode.float"); //$NON-NLS-1$
+	 */
+	/**
+	 * The label used for the note text.
 	 */
 	private static final String NOTE_LABEL = WorkbenchMessages.getString("Preference.note"); //$NON-NLS-1$
 	private static final String APPLY_MESSAGE = WorkbenchMessages.getString("ViewsPreference.applyMessage"); //$NON-NLS-1$
@@ -108,39 +109,7 @@ protected Control createContents(Composite parent) {
 	createEditorTabButtonGroup(composite);
 	createViewTabButtonGroup(composite);
 
-	Composite messageComposite = new Composite(composite, SWT.NONE);
-	GridLayout messageLayout = new GridLayout();
-	messageLayout.numColumns = 2;
-	messageLayout.marginWidth = 0;
-	messageLayout.marginHeight = 0;
-	messageComposite.setLayout(messageLayout);
-	messageComposite.setLayoutData(
-		new GridData(GridData.HORIZONTAL_ALIGN_FILL));
-	messageComposite.setFont(font);
-
-	final Label noteLabel = new Label(messageComposite,SWT.BOLD);
-	noteLabel.setText(NOTE_LABEL);
-	noteLabel.setFont(JFaceResources.getBannerFont());
-	noteLabel.setLayoutData(
-		new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
-		
-	final IPropertyChangeListener fontListener = new IPropertyChangeListener() {
-		public void propertyChange(PropertyChangeEvent event) {
-			if(JFaceResources.BANNER_FONT.equals(event.getProperty())) {
-				noteLabel.setFont(JFaceResources.getFont(JFaceResources.BANNER_FONT));
-			}
-		}
-	};
-	JFaceResources.getFontRegistry().addListener(fontListener);
-	noteLabel.addDisposeListener(new DisposeListener() {
-		public void widgetDisposed(DisposeEvent event) {
-			JFaceResources.getFontRegistry().removeListener(fontListener);
-		}
-	});
-	
-	Label messageLabel = new Label(messageComposite,SWT.NONE);
-	messageLabel.setText(APPLY_MESSAGE);
-	messageLabel.setFont(font);
+	createNoteComposite(font, composite, NOTE_LABEL,APPLY_MESSAGE);
 
 	new Label(composite, SWT.NONE);
 	
@@ -184,6 +153,7 @@ protected Control createContents(Composite parent) {
 	
 	return composite;
 }
+
 /**
  * Create a composite that contains buttons for selecting tab position for the edit selection. 
  * @param composite Composite
