@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.api;
 
+import java.util.ArrayList;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -31,14 +33,17 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ClosePerspectiveAction;
+import org.eclipse.ui.internal.SaveableHelper;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
+import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.TestPlugin;
 import org.eclipse.ui.tests.util.CallHistory;
 import org.eclipse.ui.tests.util.EmptyPerspective;
 import org.eclipse.ui.tests.util.FileUtil;
+import org.eclipse.ui.tests.util.PerspectiveState;
 import org.eclipse.ui.tests.util.PerspectiveWithFastView;
 import org.eclipse.ui.tests.util.PlatformUtil;
 import org.eclipse.ui.tests.util.UITestCase;
@@ -645,6 +650,75 @@ public class IWorkbenchPageTest extends UITestCase {
 		assertTrue(callTrace.contains("dispose"));
 		
 		
+	}
+
+	public void testHideSaveableView() throws Throwable {
+		boolean fix72114 = PrefUtil.getInternalPreferenceStore().getBoolean("fix72114");
+
+		SaveableMockViewPart view = (SaveableMockViewPart) fActivePage.showView(SaveableMockViewPart.ID);
+		fActivePage.hideView(view);
+		CallHistory callTrace = view.getCallHistory();
+		if (fix72114) {
+			assertTrue(callTrace.contains("isDirty"));
+		}
+		assertTrue(callTrace.contains("dispose"));
+		assertEquals(fActivePage.findView(SaveableMockViewPart.ID), null);
+
+		try {
+			SaveableHelper.testSetAutomatedResponse(0);  // Yes
+			view = (SaveableMockViewPart) fActivePage.showView(SaveableMockViewPart.ID);
+			view.setDirty(true);
+			fActivePage.hideView(view);
+			callTrace = view.getCallHistory();
+			if (fix72114) {
+				assertTrue(callTrace.contains("isDirty"));		
+				assertTrue(callTrace.contains("doSave"));
+			}
+			else {
+				// OK if somebody checks isDirty, but doSave should not be called
+				assertFalse(callTrace.contains("doSave"));
+			}
+			assertTrue(callTrace.contains("dispose"));
+			assertEquals(fActivePage.findView(SaveableMockViewPart.ID), null);
+
+			SaveableHelper.testSetAutomatedResponse(1);  // No
+			view = (SaveableMockViewPart) fActivePage.showView(SaveableMockViewPart.ID);
+			view.setDirty(true);
+			fActivePage.hideView(view);
+			callTrace = view.getCallHistory();
+			if (fix72114) {
+				assertTrue(callTrace.contains("isDirty"));		
+				assertFalse(callTrace.contains("doSave"));		
+			}
+			else {
+				// OK if somebody checks isDirty, but doSave should not be called
+				assertFalse(callTrace.contains("doSave"));
+			}
+			assertTrue(callTrace.contains("dispose"));
+			assertEquals(fActivePage.findView(SaveableMockViewPart.ID), null);
+
+			SaveableHelper.testSetAutomatedResponse(2);  // Cancel
+			view = (SaveableMockViewPart) fActivePage.showView(SaveableMockViewPart.ID);
+			view.setDirty(true);
+			fActivePage.hideView(view);
+			callTrace = view.getCallHistory();
+			if (fix72114) {
+				assertTrue(callTrace.contains("isDirty"));		
+				assertFalse(callTrace.contains("doSave"));		
+				assertFalse(callTrace.contains("dispose"));
+				assertEquals(fActivePage.findView(SaveableMockViewPart.ID), view);
+			}
+			else {
+				// OK if somebody checks isDirty, but doSave should not be called,
+				// and view should be disposed
+				assertFalse(callTrace.contains("doSave"));		
+				assertTrue(callTrace.contains("dispose"));
+				assertEquals(fActivePage.findView(SaveableMockViewPart.ID), null);
+			}
+		}
+		finally {
+			SaveableHelper.testSetAutomatedResponse(-1);  // restore default (prompt)
+		}
 	}
 
 	public void testClose() throws Throwable {
@@ -1340,4 +1414,77 @@ public class IWorkbenchPageTest extends UITestCase {
 		closePespective.run();
 
 	}
+    /**
+     * Test opening a perspective with placeholders for multi instance views.
+     * The placeholders are added at top level (not in any folder).
+     * 
+     * @since 3.1
+     */
+    public void testOpenPerspectiveWithMultiViewPlaceholdersAtTopLevel() {
+        WorkbenchPage page = (WorkbenchPage) fActivePage;
+
+        try {
+            fWin.getWorkbench().showPerspective(
+                    PerspectiveWithMultiViewPlaceholdersAtTopLevel.PERSP_ID, fWin);
+        } catch (WorkbenchException e) {
+            fail("Unexpected WorkbenchException: " + e);
+        }
+
+        PerspectiveState state = new PerspectiveState(page);
+        ArrayList partIds = state.getPartIds(null);
+        assertTrue(partIds.contains("*"));
+        assertTrue(partIds.contains(MockViewPart.IDMULT));
+        assertTrue(partIds.contains(MockViewPart.IDMULT + ":secondaryId"));
+        assertTrue(partIds.contains(MockViewPart.IDMULT + ":*"));
+    }
+
+   /**
+     * Test opening a perspective with placeholders for multi instance views.
+     * The placeholders are added in a placeholder folder.
+     * This is a regression test for bug 72383 [Perspectives] Placeholder folder error with multiple instance views
+     * 
+     * @since 3.1
+     */
+    public void testOpenPerspectiveWithMultiViewPlaceholdersInPlaceholderFolder() {
+        WorkbenchPage page = (WorkbenchPage) fActivePage;
+
+        try {
+            fWin.getWorkbench().showPerspective(
+                    PerspectiveWithMultiViewPlaceholdersInPlaceholderFolder.PERSP_ID, fWin);
+        } catch (WorkbenchException e) {
+            fail("Unexpected WorkbenchException: " + e);
+        }
+
+        PerspectiveState state = new PerspectiveState(page);
+        ArrayList partIds = state.getPartIds("placeholderFolder");
+        assertTrue(partIds.contains("*"));
+        assertTrue(partIds.contains(MockViewPart.IDMULT));
+        assertTrue(partIds.contains(MockViewPart.IDMULT + ":secondaryId"));
+        assertTrue(partIds.contains(MockViewPart.IDMULT + ":*"));
+    }
+    
+    /**
+     * Test opening a perspective with placeholders for multi instance views.
+     * The placeholders are added at top level (not in any folder).
+     * 
+     * @since 3.1
+     */
+    public void testOpenPerspectiveWithMultiViewPlaceholdersInFolder() {
+        WorkbenchPage page = (WorkbenchPage) fActivePage;
+
+        try {
+            fWin.getWorkbench().showPerspective(
+                    PerspectiveWithMultiViewPlaceholdersInFolder.PERSP_ID, fWin);
+        } catch (WorkbenchException e) {
+            fail("Unexpected WorkbenchException: " + e);
+        }
+
+        PerspectiveState state = new PerspectiveState(page);
+        ArrayList partIds = state.getPartIds("folder");
+        assertTrue(partIds.contains("*"));
+        assertTrue(partIds.contains(MockViewPart.IDMULT));
+        assertTrue(partIds.contains(MockViewPart.IDMULT + ":secondaryId"));
+        assertTrue(partIds.contains(MockViewPart.IDMULT + ":*"));
+    }
+
 }
