@@ -41,10 +41,8 @@ public class CaseSensitivityTest extends LocalStoreTest {
 		try {
 			project1.create(null);
 			project1.open(null);
-			assertTrue("1.0", true);
 		} catch (CoreException e) {
-			assertTrue("1.0", false); // should not happen
-			return; // no point in proceding
+			fail("1.0", e);
 		}
 
 		// create a second project; should fail because has same name with different casing
@@ -52,9 +50,9 @@ public class CaseSensitivityTest extends LocalStoreTest {
 		try {
 			project2.create(null);
 			project2.open(null);
-			assertTrue("1.1", isCaseSensitive);
+			assertTrue("2.0", isCaseSensitive);
 		} catch (CoreException e) {
-			assertTrue("1.1", !isCaseSensitive);
+			assertTrue("2.1." + e.getMessage(), !isCaseSensitive);
 		}
 	}
 
@@ -66,28 +64,26 @@ public class CaseSensitivityTest extends LocalStoreTest {
 		IFolder folder1 = aProject.getFolder(folderName);
 		try {
 			folder1.create(true, true, null);
-			assertTrue("1.0", true);
 		} catch (CoreException e) {
-			assertTrue("1.0", false); // should not happen
-			return; // no point in proceding
+			fail("1.0", e);
 		}
 
 		// create a second folder; should fail because has same name with different casing
 		IFolder folder2 = aProject.getFolder(folderName.toUpperCase());
 		try {
 			folder2.create(true, true, null);
-			assertTrue("1.1", isCaseSensitive);
+			assertTrue("2.0", isCaseSensitive);
 		} catch (CoreException e) {
-			assertTrue("1.1", !isCaseSensitive);
+			assertTrue("2.1." + e.getMessage(), !isCaseSensitive);
 		}
 
 		// create a file; should fail because has same name with different casing
 		IFile file = aProject.getFile(folderName.toUpperCase());
 		try {
 			file.create(getRandomContents(), true, null);
-			assertTrue("1.2", false);
+			fail("3.0");
 		} catch (CoreException e) {
-			assertTrue("1.2", true);
+			// expected
 		}
 	}
 
@@ -99,28 +95,26 @@ public class CaseSensitivityTest extends LocalStoreTest {
 		IFile file1 = aProject.getFile(fileName);
 		try {
 			file1.create(getRandomContents(), true, null);
-			assertTrue("1.0", true);
 		} catch (CoreException e) {
-			assertTrue("1.0", false); // should not happen
-			return; // no point in proceding
+			fail("1.0", e);
 		}
 
 		// create a second file; should fail because has same name with different casing
 		IFile file2 = aProject.getFile(fileName.toUpperCase());
 		try {
 			file2.create(getRandomContents(), true, null);
-			assertTrue("1.1", isCaseSensitive);
+			assertTrue("2.0", isCaseSensitive);
 		} catch (CoreException e) {
-			assertTrue("1.1", !isCaseSensitive);
+			assertTrue("2.1." + e.getMessage(), !isCaseSensitive);
 		}
 
 		// create a folder; should fail because has same name with different casing
 		IFolder folder = aProject.getFolder(fileName.toUpperCase());
 		try {
 			folder.create(true, true, null);
-			assertTrue("1.2", false);
+			fail("3.0");
 		} catch (CoreException e) {
-			assertTrue("1.2", true);
+			// expected
 		}
 	}
 
@@ -133,28 +127,24 @@ public class CaseSensitivityTest extends LocalStoreTest {
 		try {
 			project1.create(null);
 			project1.open(null);
-			assertTrue("1.0", true);
 		} catch (CoreException e) {
-			assertTrue("1.0", false); // should not happen
-			return; // no point in proceding
+			fail("1.0", e);
 		}
 
 		IProject project2 = getWorkspace().getRoot().getProject(project2name);
 		try {
 			project2.create(null);
 			project2.open(null);
-			assertTrue("1.1", true);
 		} catch (CoreException e) {
-			assertTrue("1.1", false); // should not happen
-			return; // no point in proceding
+			fail("2.0", e);
 		}
 
 		// try to rename project 1 to the uppercase name of project 2, should fail
 		try {
 			project1.move(Path.ROOT.append(project2.getName().toUpperCase()), true, null);
-			assertTrue("1.2", isCaseSensitive);
+			assertTrue("3.0", isCaseSensitive);
 		} catch (CoreException e) {
-			assertTrue("1.2", !isCaseSensitive);
+			assertTrue("3.99." + e.getMessage(), !isCaseSensitive);
 		}
 	}
 
@@ -167,19 +157,15 @@ public class CaseSensitivityTest extends LocalStoreTest {
 		IFolder folder1 = aProject.getFolder(folder1name);
 		try {
 			folder1.create(true, true, null);
-			assertTrue("1.0", true);
 		} catch (CoreException e) {
-			assertTrue("1.1", false); // should not happen
-			return; // no point in proceding
+			fail("1.1", e);
 		}
 
 		IFolder folder2 = aProject.getFolder(folder2name);
 		try {
 			folder2.create(true, true, null);
-			assertTrue("2.1", true);
 		} catch (CoreException e) {
-			assertTrue("2.2", false); // should not happen
-			return; // no point in proceding
+			fail("2.2", e);
 		}
 
 		// try to rename folder 1 to the uppercase name of folder 2, should fail
@@ -188,7 +174,7 @@ public class CaseSensitivityTest extends LocalStoreTest {
 			folder1.move(folder3.getFullPath(), true, null);
 			assertTrue("3.1", isCaseSensitive);
 		} catch (CoreException e) {
-			assertTrue("3.2", !isCaseSensitive);
+			assertTrue("3.2." + e.getMessage(), !isCaseSensitive);
 		}
 	}
 
@@ -201,19 +187,15 @@ public class CaseSensitivityTest extends LocalStoreTest {
 		IFile file1 = aProject.getFile(file1name);
 		try {
 			file1.create(getRandomContents(), true, null);
-			assertTrue("1.0", true);
 		} catch (CoreException e) {
-			assertTrue("1.1", false); // should not happen
-			return; // no point in proceding
+			fail("1.1", e);
 		}
 
 		IFile file2 = aProject.getFile(file2name);
 		try {
 			file2.create(getRandomContents(), true, null);
-			assertTrue("2.1", true);
 		} catch (CoreException e) {
-			assertTrue("2.2", false); // should not happen
-			return; // no point in proceding
+			fail("2.2", e);
 		}
 
 		// try to rename folder 1 to the uppercase name of folder 2, should fail
@@ -222,7 +204,7 @@ public class CaseSensitivityTest extends LocalStoreTest {
 			file1.move(file3.getFullPath(), true, null);
 			assertTrue("3.1", isCaseSensitive);
 		} catch (CoreException e) {
-			assertTrue("3.2", !isCaseSensitive);
+			assertTrue("3.2." + e.getMessage(), !isCaseSensitive);
 		}
 	}
 
@@ -235,37 +217,33 @@ public class CaseSensitivityTest extends LocalStoreTest {
 		IFolder folder1 = sourceProject.getFolder(folderName);
 		try {
 			folder1.create(true, true, null);
-			assertTrue("1.0", true);
 		} catch (CoreException e) {
-			assertTrue("1.0", false); // should not happen
-			return; // no point in proceding
+			fail("1.0", e);
 		}
 
 		IFolder folder2 = destinationProject.getFolder(folderName.toUpperCase());
 		try {
 			folder2.create(true, true, null);
-			assertTrue("1.1", true);
 		} catch (CoreException e) {
-			assertTrue("1.1", false); // should not happen
-			return; // no point in proceding
+			fail("1.1", e);
 		}
 
 		// try to copy the folder from source project to destination project.
 		// should fail due to conflict
 		try {
 			folder1.copy(destinationProject.getFullPath().append(folder1.getName()), true, null);
-			assertTrue("1.2", isCaseSensitive);
+			assertTrue("1.2.1", isCaseSensitive);
 		} catch (CoreException e) {
-			assertTrue("1.2", !isCaseSensitive);
+			assertTrue("1.2.2." + e.getMessage(), !isCaseSensitive);
 		}
 
 		// try to move the folder from source project to destination project.
 		// should fail due to conflict
 		try {
 			folder1.move(destinationProject.getFullPath().append(folder1.getName()), true, null);
-			assertTrue("1.3", false);
+			fail("1.3");
 		} catch (CoreException e) {
-			assertTrue("1.3", true);
+			// expected
 		}
 	}
 
@@ -278,37 +256,33 @@ public class CaseSensitivityTest extends LocalStoreTest {
 		IFile file1 = sourceProject.getFile(fileName);
 		try {
 			file1.create(getRandomContents(), true, null);
-			assertTrue("1.0", true);
 		} catch (CoreException e) {
-			assertTrue("1.0", false); // should not happen
-			return; // no point in proceding
+			fail("1.0", e);
 		}
 
 		IFile file2 = destinationProject.getFile(fileName.toUpperCase());
 		try {
 			file2.create(getRandomContents(), true, null);
-			assertTrue("1.1", true);
 		} catch (CoreException e) {
-			assertTrue("1.1", false); // should not happen
-			return; // no point in proceding
+			fail("1.1", e);
 		}
 
 		// try to copy the file from source project to destination project.
 		// should fail due to conflict
 		try {
 			file1.copy(destinationProject.getFullPath().append(file1.getName()), true, null);
-			assertTrue("1.2", isCaseSensitive);
+			assertTrue("1.2.1", isCaseSensitive);
 		} catch (CoreException e) {
-			assertTrue("1.2", !isCaseSensitive);
+			assertTrue("1.2.2." + e.getMessage(), !isCaseSensitive);
 		}
 
 		// try to move the file from source project to destination project.
 		// should fail due to conflict
 		try {
 			file1.move(destinationProject.getFullPath().append(file1.getName()), true, null);
-			assertTrue("1.3", false);
+			fail("1.3");
 		} catch (CoreException e) {
-			assertTrue("1.3", true);
+			// expected
 		}
 	}
 
@@ -321,37 +295,33 @@ public class CaseSensitivityTest extends LocalStoreTest {
 		IFolder folder = sourceProject.getFolder(name);
 		try {
 			folder.create(true, true, null);
-			assertTrue("1.0", true);
 		} catch (CoreException e) {
-			assertTrue("1.0", false); // should not happen
-			return; // no point in proceding
+			fail("1.0", e);
 		}
 
 		IFile file = destinationProject.getFile(name.toUpperCase());
 		try {
 			file.create(getRandomContents(), true, null);
-			assertTrue("1.1", true);
 		} catch (CoreException e) {
-			assertTrue("1.1", false); // should not happen
-			return; // no point in proceding
+			fail("1.1", e);
 		}
 
 		// try to copy the folder from source project to destination project.
 		// should fail due to conflict with existing file with case-different name
 		try {
 			folder.copy(destinationProject.getFullPath().append(folder.getName()), true, null);
-			assertTrue("1.2", isCaseSensitive);
+			assertTrue("1.2.1", isCaseSensitive);
 		} catch (CoreException e) {
-			assertTrue("1.2", !isCaseSensitive);
+			assertTrue("1.2.2." + e.getMessage(), !isCaseSensitive);
 		}
 
 		// try to move the folder from source project to destination project.
 		// should fail due to conflict with existing file with case-different name
 		try {
 			folder.move(destinationProject.getFullPath().append(folder.getName()), true, null);
-			assertTrue("1.3", false);
+			fail("1.3");
 		} catch (CoreException e) {
-			assertTrue("1.3", true);
+			// expected
 		}
 	}
 
@@ -364,28 +334,24 @@ public class CaseSensitivityTest extends LocalStoreTest {
 		IFile file = sourceProject.getFile(name);
 		try {
 			file.create(getRandomContents(), true, null);
-			assertTrue("1.0", true);
 		} catch (CoreException e) {
-			assertTrue("1.0", false); // should not happen
-			return; // no point in proceding
+			fail("1.0", e);
 		}
 
 		IFolder folder = destinationProject.getFolder(name.toUpperCase());
 		try {
 			folder.create(true, true, null);
-			assertTrue("1.1", true);
 		} catch (CoreException e) {
-			assertTrue("1.1", false); // should not happen
-			return; // no point in proceding
+			fail("1.1", e);
 		}
 
 		// try to copy the file from source project to destination project.
 		// should fail due to conflict with existing folder with case-different name
 		try {
 			file.copy(destinationProject.getFullPath().append(file.getName()), true, null);
-			assertTrue("1.2", isCaseSensitive);
+			assertTrue("1.2.1", isCaseSensitive);
 		} catch (CoreException e) {
-			assertTrue("1.2", !isCaseSensitive);
+			assertTrue("1.2.2." + e.getMessage(), !isCaseSensitive);
 		}
 
 		// try to move the file from source project to destination project.
@@ -394,7 +360,7 @@ public class CaseSensitivityTest extends LocalStoreTest {
 			file.move(destinationProject.getFullPath().append(file.getName()), true, null);
 			assertTrue("1.3", false);
 		} catch (CoreException e) {
-			assertTrue("1.3", true);
+			// expected
 		}
 	}
 
@@ -468,9 +434,8 @@ public class CaseSensitivityTest extends LocalStoreTest {
 		IFolder folder = project.getFolder(name.toUpperCase());
 		try {
 			folder.create(true, true, null);
-			assertTrue("1.0", true);
 		} catch (CoreException e) {
-			fail("1.1", e); // should not happen
+			fail("1.1", e);
 		}
 
 		// get a Folder handle with the same name but different casing
@@ -501,9 +466,8 @@ public class CaseSensitivityTest extends LocalStoreTest {
 		IFile file = project.getFile(name.toUpperCase());
 		try {
 			file.create(getRandomContents(), true, null);
-			assertTrue("1.0", true);
 		} catch (CoreException e) {
-			fail("1.1", e); // should not happen
+			fail("1.1", e);
 		}
 
 		// get a File handle with the same name but different casing
@@ -533,9 +497,8 @@ public class CaseSensitivityTest extends LocalStoreTest {
 		IFolder folder = project.getFolder(name.toUpperCase());
 		try {
 			folder.create(true, true, null);
-			assertTrue("1.0", true);
 		} catch (CoreException e) {
-			fail("1.1", e); // should not happen
+			fail("1.1", e);
 		}
 
 		// get a File handle with the same name but different casing
@@ -565,9 +528,8 @@ public class CaseSensitivityTest extends LocalStoreTest {
 		IFile file = project.getFile(name.toUpperCase());
 		try {
 			file.create(getRandomContents(), true, null);
-			assertTrue("1.0", true);
 		} catch (CoreException e) {
-			fail("1.1", e); // should not happen
+			fail("1.1", e);
 		}
 
 		// get a Folder handle with the same name but different casing
@@ -601,28 +563,24 @@ public class CaseSensitivityTest extends LocalStoreTest {
 		try {
 			project.create(null);
 			project.open(null);
-			assertTrue("1.0", true);
 		} catch (CoreException e) {
-			assertTrue("1.1", false); // should not happen
-			return; // no point in proceding
+			fail("1.1", e);
 		}
 
 		// create a Folder, which should be fine
 		IFolder folder = project.getFolder(name);
 		try {
 			folder.create(true, true, null);
-			assertTrue("2.0", true);
 		} catch (CoreException e) {
-			fail("2.1", e); // should not happen
+			fail("2.1", e);
 		}
 
 		// create a File, which should be fine
 		IFile file = folder.getFile(name);
 		try {
 			file.create(getRandomContents(), true, null);
-			assertTrue("3.0", true);
 		} catch (CoreException e) {
-			fail("3.1", e); // should not happen
+			fail("3.1", e);
 		}
 
 		// replace the File's filesystem rep. with a case-different name
