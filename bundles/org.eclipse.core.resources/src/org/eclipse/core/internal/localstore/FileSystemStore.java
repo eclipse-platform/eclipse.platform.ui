@@ -66,6 +66,10 @@ protected void copyFile(File target, File destination, IProgressMonitor monitor)
 	try {
 		int totalWork = 1 + ((int) target.length() / 8192);
 		monitor.beginTask(Policy.bind("localstore.copying", target.getAbsolutePath()), totalWork);
+		if (CoreFileSystemLibrary.isReadOnly(target.getAbsolutePath())) {
+			String message = Policy.bind("localstore.couldNotWriteReadOnly", target.getAbsolutePath());
+			throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, new Path(target.getAbsolutePath()), message, null);
+		}
 		write(destination, read(target), false, monitor);
 		// update the destination timestamp on disk
 		long stat = CoreFileSystemLibrary.getStat(target.getAbsolutePath());
@@ -75,6 +79,23 @@ protected void copyFile(File target, File destination, IProgressMonitor monitor)
 		CoreFileSystemLibrary.copyAttributes(target.getAbsolutePath(), destination.getAbsolutePath(), false);
 	} finally {
 		monitor.done();
+	}
+}
+/**
+ * Returns an output stream on the given file.  The user of the
+ * returned stream is responsible for closing the stream when finished.
+ */
+protected OutputStream createStream(File target, boolean append) throws CoreException {
+	String path = target.getAbsolutePath();
+	try {
+		return new FileOutputStream(path, append);
+	} catch (FileNotFoundException e) {
+		String message;
+		if (target.isDirectory())
+			message = Policy.bind("localstore.notAFile", path);
+		else
+			message = Policy.bind("localstore.couldNotRead", path);
+		throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, new Path(path), message, e);
 	}
 }
 public void delete(File target) throws CoreException {
@@ -95,7 +116,7 @@ public boolean delete(File root, MultiStatus status) {
  * the provided status object.  The filePath is passed as a parameter
  * to optimize java.io.File object creation.
  */
-private boolean delete(File root, String filePath, MultiStatus status) {
+protected boolean delete(File root, String filePath, MultiStatus status) {
 	boolean failedRecursive = false;
 	if (root.isDirectory()) {
 		String[] list = root.list();
@@ -220,9 +241,11 @@ public InputStream read(File target) throws CoreException {
 	}
 }
 /**
- * This method also closes both streams.
+ * Transfers all available bytes from the given input stream to the given output stream. 
+ * Regardless of failure, this method closes both streams.
+ * @param path The path of the object being copied, may be null
  */
-public void transferStreams(InputStream source, OutputStream destination, IProgressMonitor monitor)	throws IOException {
+public void transferStreams(InputStream source, OutputStream destination, String path, IProgressMonitor monitor)	throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
 		/*
@@ -232,10 +255,23 @@ public void transferStreams(InputStream source, OutputStream destination, IProgr
 		 */
 		synchronized (buffer) {
 			while (true) {
-				int bytesRead = source.read(buffer);
+				int bytesRead = -1;
+				try {
+					bytesRead = source.read(buffer);
+				} catch (IOException e) {
+					String msg = Policy.bind("localStore.failedReadDuringWrite", new String[] {path});
+					IPath p = path == null ? null : new Path(path);
+					throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, p, msg, e);
+				}
 				if (bytesRead == -1)
 					break;
-				destination.write(buffer, 0, bytesRead);
+				try {
+					destination.write(buffer, 0, bytesRead);
+				} catch (IOException e) {
+					String msg = Policy.bind("localstore.couldNotWrite", new String[] {path});
+					IPath p = path == null ? null : new Path(path);
+					throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, p, msg, e);
+				}
 				monitor.worked(1);
 			}
 		}
@@ -250,24 +286,29 @@ public void transferStreams(InputStream source, OutputStream destination, IProgr
 		}
 	}
 }
+
 /**
  * Content cannot be null and it is closed even if the operation is not
- * completed successfully.
+ * completed successfully.  It is assumed that the caller has ensured
+ * the destination is not read-only.
  */
 public void write(File target, InputStream content, boolean append, IProgressMonitor monitor) throws CoreException {
 	try {
-		writeFolder(new File(target.getParent()));
-		FileOutputStream output = new FileOutputStream(target.getAbsolutePath(), append);
-		transferStreams(content, output, monitor);
-	} catch (IOException e) {
-		//if we failed to write, try to cleanup the half written file
-		target.delete();
-		String message = null;
-		if (CoreFileSystemLibrary.isReadOnly(target.getAbsolutePath()))
-			message = Policy.bind("localstore.couldNotWriteReadOnly", target.getAbsolutePath());
-		else
-			message = Policy.bind("localstore.couldNotWrite", target.getAbsolutePath());
-		throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, new Path(target.getAbsolutePath()), message, e);
+		try {
+			String path = target.getAbsolutePath();
+			writeFolder(new File(target.getParent()));
+			transferStreams(content, createStream(target, append), path, monitor);
+		} catch (CoreException e) {
+			//if we failed to write, try to cleanup the half written file
+			if (!target.isDirectory())
+				target.delete();
+			throw e;
+		}
+	} finally {
+		try {
+			content.close();
+		} catch (IOException e) {
+		}
 	}
 }
 public void writeFolder(File target) throws CoreException {
