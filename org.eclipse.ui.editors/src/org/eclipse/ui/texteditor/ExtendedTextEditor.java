@@ -181,7 +181,11 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 	}
 	
 	/**
-	 * Initializes this editor.
+	 * Initializes this editor. Subclasses may re-implement. If sub-classes do
+	 * not change the contract, this method should not be extended, i.e. do not
+	 * call <code>super.initializeEditor()</code> in order to avoid the
+	 * temporary creation of objects that are immediately overwritten by
+	 * subclasses.
 	 */
 	protected void initializeEditor() {
 		setPreferenceStore(EditorsPlugin.getDefault().getPreferenceStore());

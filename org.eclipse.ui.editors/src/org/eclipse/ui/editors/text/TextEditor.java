@@ -71,13 +71,22 @@ public class TextEditor extends ExtendedTextEditor {
 	 */
 	public TextEditor() {
 		super();
+		if (getSourceViewerConfiguration() == null) {
+			// configuration not yet set by subclass
+			setSourceViewerConfiguration(new TextSourceViewerConfiguration(getNewPreferenceStore()));
+		}
+
 	}
 	
 	/**
-	 * Initializes this editor.
+	 * @inheritDoc
+	 * 
+	 * This method configures the editor but does not define a
+	 * <code>SourceViewerConfiguration</code>. When only interested in
+	 * providing a custom source viewer configuration, subclasses may extend
+	 * this method.
 	 */
 	protected void initializeEditor() {
-		setSourceViewerConfiguration(new TextSourceViewerConfiguration(getNewPreferenceStore()));
 		setEditorContextMenuId("#TextEditorContext"); //$NON-NLS-1$
 		setRulerContextMenuId("#TextRulerContext"); //$NON-NLS-1$
 		setHelpContextId(ITextEditorHelpContextIds.TEXT_EDITOR);
