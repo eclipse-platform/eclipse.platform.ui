@@ -9,10 +9,10 @@
 		<project>org.eclipse.core.resources</project>
 		<project>org.eclipse.core.runtime</project>
 		<project>org.eclipse.core.tests.harness</project>
-		<project>org.eclipse.swt</project>
 		<project>org.eclipse.team.core</project>
 		<project>org.eclipse.team.cvs.core</project>
 		<project>org.eclipse.team.cvs.ui</project>
+		<project>org.eclipse.team.tests.core</project>
 		<project>org.eclipse.team.ui</project>
 		<project>org.eclipse.ui</project>
 		<project>org.junit</project>

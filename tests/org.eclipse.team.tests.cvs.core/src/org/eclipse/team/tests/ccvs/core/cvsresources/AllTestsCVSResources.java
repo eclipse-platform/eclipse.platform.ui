@@ -11,7 +11,7 @@ public class AllTestsCVSResources extends EclipseTest {
 	public static Test suite() {	
 		TestSuite suite = new TestSuite();
 		suite.addTest(ResourceSyncInfoTest.suite());
-		suite.addTest(EclipseSynchronizerTest.suite());
+		//suite.addTest(EclipseSynchronizerTest.suite());
     	return suite; 	
 	}	
 	

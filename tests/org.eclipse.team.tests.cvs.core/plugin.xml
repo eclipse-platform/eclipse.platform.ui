@@ -1,76 +1,104 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin
-  name="Eclipse CVS Tests Core"
-  id="org.eclipse.team.tests.cvs.core"
-  version="1.0"
-  provider-name="Object Technology International, Inc.">
+   id="org.eclipse.team.tests.cvs.core"
+   name="Eclipse CVS Tests Core"
+   version="1.0"
+   provider-name="Object Technology International, Inc.">
 
-  <requires>
-	<import plugin="org.apache.xerces"/>
-    <import plugin="org.eclipse.core.tests.harness"/>
-    <import plugin="org.eclipse.core.resources"/>
-    <import plugin="org.eclipse.team.core"/>
-    <import plugin="org.eclipse.team.cvs.core"/>
-    <import plugin="org.eclipse.team.ui"/>
-    <import plugin="org.eclipse.team.cvs.ui"/>
-    <import plugin="org.eclipse.compare"/>
-    <import plugin="org.eclipse.ui"/>
-    <import plugin="org.junit"/>
-  </requires>
+   <runtime>
+      <library name="cvstests.jar">
+         <export name="*"/>
+      </library>
+   </runtime>
+   <requires>
+      <import plugin="org.apache.xerces"/>
+      <import plugin="org.eclipse.core.tests.harness"/>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.team.core"/>
+      <import plugin="org.eclipse.team.cvs.core"/>
+      <import plugin="org.eclipse.team.ui"/>
+      <import plugin="org.eclipse.team.cvs.ui"/>
+      <import plugin="org.eclipse.compare"/>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.junit"/>
+      <import plugin="org.eclipse.team.tests.core"/>
+   </requires>
 
-  <runtime>
-    <library name="cvstests.jar">
-      <export name="*"/>
-    </library>
-  </runtime>
 
 <!-- **************** TESTS ******************* -->
+   <extension
+         point="org.eclipse.core.tests.harness.tests">
+      <test
+            id="cvs.all">
+         <run
+               class="org.eclipse.team.tests.ccvs.core.AllTests">
+         </run>
+      </test>
+      <test
+            id="cvs.provider">
+         <run
+               class="org.eclipse.team.tests.ccvs.core.provider.AllTestsProvider">
+         </run>
+      </test>
+      <test
+            id="cvs.compatibility">
+         <run
+               class="org.eclipse.team.tests.ccvs.core.compatible.AllTestsCompatibility">
+         </run>
+      </test>
+      <test
+            id="cvs.resources">
+         <run
+               class="org.eclipse.team.tests.ccvs.core.cvsresources.AllTestsCVSResources">
+         </run>
+      </test>
+      <test
+            id="cvs.sync">
+         <run
+               class="org.eclipse.team.tests.ccvs.core.provider.SyncElementTest">
+         </run>
+      </test>
+      <test
+            id="cvs.remote">
+         <run
+               class="org.eclipse.team.tests.ccvs.core.provider.RemoteResourceTest">
+         </run>
+      </test>
+      <test
+            id="cvsui.benchmark.all">
+         <run
+               class="org.eclipse.team.tests.ccvs.ui.benchmark.AllTests">
+         </run>
+      </test>
+      <test
+            id="cvsui.benchmark.sync">
+         <run
+               class="org.eclipse.team.tests.ccvs.ui.benchmark.SyncTests">
+         </run>
+      </test>
+      <test
+            id="cvsui.benchmark.workflow">
+         <run
+               class="org.eclipse.team.tests.ccvs.ui.benchmark.WorkflowTests">
+         </run>
+      </test>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            name="Empty Perspective"
+            class="org.eclipse.team.tests.ccvs.ui.EmptyPerspective"
+            id="org.eclipse.team.tests.ccvs.ui.EmptyPerspective">
+      </perspective>
+   </extension>
+   <extension
+         id="harness"
+         point="org.eclipse.core.runtime.applications">
+      <application>
+         <run
+               class="org.eclipse.team.tests.ccvs.ui.EclipseUITestHarnessApplication">
+         </run>
+      </application>
+   </extension>
 
-  <extension point="org.eclipse.core.tests.harness.tests">
-    
-    <test id="cvs.all">
-      <run class="org.eclipse.team.tests.ccvs.core.AllTests"/>
-    </test>
-    
-    <test id="cvs.provider">
-      <run class="org.eclipse.team.tests.ccvs.core.provider.AllTestsProvider"/>
-    </test>
-    
-    <test id="cvs.compatibility">
-      <run class="org.eclipse.team.tests.ccvs.core.compatible.AllTestsCompatibility"/>
-    </test>
-    
-    <test id="cvs.resources">
-      <run class="org.eclipse.team.tests.ccvs.core.cvsresources.AllTestsCVSResources"/>
-    </test>
-    
-    <test id="cvs.sync">
-      <run class="org.eclipse.team.tests.ccvs.core.provider.SyncElementTest"/>
-    </test>
-    
-     <test id="cvs.remote">
-      <run class="org.eclipse.team.tests.ccvs.core.provider.RemoteResourceTest"/>
-    </test>
-    
-    <test id="cvsui.benchmark.all">
-      <run class="org.eclipse.team.tests.ccvs.ui.benchmark.AllTests"/>
-    </test>
-    <test id="cvsui.benchmark.sync">
-      <run class="org.eclipse.team.tests.ccvs.ui.benchmark.SyncTests"/>
-    </test>
-    <test id="cvsui.benchmark.workflow">
-      <run class="org.eclipse.team.tests.ccvs.ui.benchmark.WorkflowTests"/>
-    </test>
-  </extension>
- 
-  <extension point="org.eclipse.ui.perspectives">
-    <perspective id="org.eclipse.team.tests.ccvs.ui.EmptyPerspective" name="Empty Perspective" class="org.eclipse.team.tests.ccvs.ui.EmptyPerspective" /> 
-  </extension>
-
-  <extension id="harness" point="org.eclipse.core.runtime.applications">
-    <application> 
-      <run class="org.eclipse.team.tests.ccvs.ui.EclipseUITestHarnessApplication"/>
-    </application>
-  </extension>
- 
 </plugin>
