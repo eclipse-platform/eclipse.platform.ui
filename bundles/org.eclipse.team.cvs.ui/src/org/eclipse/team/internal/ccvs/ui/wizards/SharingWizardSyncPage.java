@@ -17,6 +17,8 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.AbstractTreeViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -151,7 +153,7 @@ public class SharingWizardSyncPage extends CVSWizardPage implements ISyncInfoSet
 		cc.setLeftEditable(false);
 		cc.setRightEditable(false);
 		ParticipantPageSaveablePart part = new ParticipantPageSaveablePart(getShell(), cc, configuration, participant);
-		
+		part.setShowContentPanes(false);
 		return part;
 	}
 	
@@ -225,6 +227,12 @@ public class SharingWizardSyncPage extends CVSWizardPage implements ISyncInfoSet
 		if (syncPage.isVisible()) {
 			initializeSize();
 			getShell().setSize(Math.max(width, 300), Math.max(height, 300));
+			if(input != null) {
+				Viewer viewer = input.getPageConfiguration().getPage().getViewer();
+				if(viewer instanceof AbstractTreeViewer) {
+					((AbstractTreeViewer)viewer).expandToLevel(2);
+				}
+			}
 		}
 	}
 	

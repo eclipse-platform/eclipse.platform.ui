@@ -72,6 +72,10 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 	private Viewer viewer;
 	private Control control;
 	
+	// Configuration options
+	private boolean showContentPanes = true;
+
+	
 	// Keybindings enabled in the dialog, these should be removed
 	// when the dialog is closed.
 	private IActionBars actionBars;
@@ -295,7 +299,7 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 		fEditionPane.setContent(page.getControl());
 		tbm.update(true);
 		if(page instanceof ISynchronizePage) {
-			this.viewer = ((ISynchronizePage)page).getViewer();
+			this.viewer = ((ISynchronizePage)page).getViewer();			
 		}
 		
 		fContentPane = new CompareViewerSwitchingPane(vsplitter, SWT.BORDER | SWT.FLAT) {
@@ -320,6 +324,10 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 		vsplitter.setWeights(new int[]{30, 70});
 		setNavigator(pageConfiguration);
 		control = parent;
+		
+		if(! showContentPanes) {
+			((Splitter)hsplitter).setMaximizedControl(fEditionPane);
+		}
 	}
 	
 	/**
@@ -336,6 +344,10 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 					fContentPane
 				}
 			));
+	}
+	
+	public void setShowContentPanes(boolean showContentPanes) {
+		this.showContentPanes = showContentPanes;
 	}
 	
 	/*
