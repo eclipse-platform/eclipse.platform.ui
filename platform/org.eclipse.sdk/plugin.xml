@@ -81,6 +81,10 @@
             activityId="org.eclipse.team.cvs"
             pattern="org\.eclipse\.team\.cvs\.ui/.*">
       </activityPatternBinding>
+      <activityPatternBinding
+            activityId="org.eclipse.team.cvs"
+            pattern="org\.eclipse\.team\.cvs\.core/.*cvsnature">
+      </activityPatternBinding>
       
       <category
             name="%activity.cat.development"
@@ -128,11 +132,6 @@
       <defaultEnablement
             id="org.eclipse.team">
       </defaultEnablement>      
-      
-      <defaultEnablement
-            id="org.eclipse.team.cvs">
-      </defaultEnablement>
-      
    </extension>
    
    <extension
