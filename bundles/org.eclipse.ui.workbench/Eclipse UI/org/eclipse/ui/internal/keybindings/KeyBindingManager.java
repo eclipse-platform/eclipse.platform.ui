@@ -638,6 +638,28 @@ public final class KeyBindingManager {
 		return actionMapForMode;			
 	}		
 	
+	public String getTextForKeySequence(KeySequence keySequence)
+		throws IllegalArgumentException {
+		if (keySequence == null)
+			throw new IllegalArgumentException();		
+	
+	    StringBuffer stringBuffer = new StringBuffer();
+		Iterator iterator = keySequence.getKeyStrokes().iterator();
+		int i = 0;
+		
+		while (iterator.hasNext()) {					
+			if (i != 0)
+				stringBuffer.append(KEY_STROKE_SEPARATOR);
+
+			KeyStroke keyStroke = (KeyStroke) iterator.next();
+			int accelerator = keyStroke.getAccelerator();
+			stringBuffer.append(Action.convertAccelerator(accelerator));					
+			i++;
+		}
+
+		return stringBuffer.toString();
+	}	
+	
 	public String getTextForAction(String action)
 		throws IllegalArgumentException {
 		if (action == null)
@@ -664,20 +686,7 @@ public final class KeyBindingManager {
 					value = match.getValue();
 				
 				if (value == match.getValue()) {
-					KeySequence keySequence = matchKeySequence.getKeySequence();					
-					Iterator iterator2 = keySequence.getKeyStrokes().iterator();
-					int j = 0;
-					
-					while (iterator2.hasNext()) {					
-						if (j != 0)
-							stringBuffer.append(KEY_STROKE_SEPARATOR);
-	
-						KeyStroke keyStroke = (KeyStroke) iterator2.next();
-						int accelerator = keyStroke.getAccelerator();
-						stringBuffer.append(Action.convertAccelerator(accelerator));					
-						j++;
-					}
-	
+					stringBuffer.append(getTextForKeySequence(matchKeySequence.getKeySequence()));
 					i++;
 				}
 			}
