@@ -430,6 +430,7 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 			control= fCurrentBlock.createControl(fGroup);
 			if (control == null) {
 				String message= TextEditorMessages.getString("SpellingConfigurationBlock.info.no_preferences"); //$NON-NLS-1$
+				EditorsPlugin.log(new Status(IStatus.WARNING, EditorsUI.PLUGIN_ID, IStatus.OK, message, null));
 				control= new ErrorPreferences(message).createControl(fGroup);
 			} else {
 				fProviderControls.put(id, control);
