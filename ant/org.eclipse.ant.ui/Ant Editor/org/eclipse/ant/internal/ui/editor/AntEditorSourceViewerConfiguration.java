@@ -16,6 +16,7 @@
 
 package org.eclipse.ant.internal.ui.editor;
 
+import org.eclipse.ant.internal.ui.AntSourceViewerConfiguration;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.ColorManager;
 import org.eclipse.ant.internal.ui.editor.derived.HTMLTextPresenter;
@@ -23,6 +24,7 @@ import org.eclipse.ant.internal.ui.editor.formatter.XmlDocumentFormattingStrateg
 import org.eclipse.ant.internal.ui.editor.formatter.XmlElementFormattingStrategy;
 import org.eclipse.ant.internal.ui.editor.text.AntDocumentSetupParticipant;
 import org.eclipse.ant.internal.ui.editor.text.AntEditorPartitionScanner;
+import org.eclipse.ant.internal.ui.editor.text.AntInformationProvider;
 import org.eclipse.ant.internal.ui.editor.text.NotifyingReconciler;
 import org.eclipse.ant.internal.ui.editor.text.XMLAnnotationHover;
 import org.eclipse.ant.internal.ui.editor.text.XMLReconcilingStrategy;
@@ -40,6 +42,9 @@ import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.formatter.IContentFormatter;
 import org.eclipse.jface.text.formatter.MultiPassContentFormatter;
+import org.eclipse.jface.text.information.IInformationPresenter;
+import org.eclipse.jface.text.information.IInformationProvider;
+import org.eclipse.jface.text.information.InformationPresenter;
 import org.eclipse.jface.text.reconciler.IReconciler;
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
@@ -52,7 +57,7 @@ import org.eclipse.swt.widgets.Shell;
 /**
  * The source viewer configuration for the Ant Editor.
  */
-public class AntEditorSourceViewerConfiguration extends AbstractAntSourceViewerConfiguration {
+public class AntEditorSourceViewerConfiguration extends AntSourceViewerConfiguration {
     
     private AntEditor fEditor;
 
@@ -223,5 +228,39 @@ public class AntEditorSourceViewerConfiguration extends AbstractAntSourceViewerC
 			autoIndentStrategy= new AntAutoIndentStrategy(fEditor.getAntModel());
 		}
 		return autoIndentStrategy;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getInformationPresenter(org.eclipse.jface.text.source.ISourceViewer)
+	 */
+	public IInformationPresenter getInformationPresenter(ISourceViewer sourceViewer) {
+		InformationPresenter presenter= new InformationPresenter(getInformationPresenterControlCreator());
+		presenter.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
+		IInformationProvider provider= new AntInformationProvider(new XMLTextHover(fEditor));
+		presenter.setInformationProvider(provider, IDocument.DEFAULT_CONTENT_TYPE);
+		presenter.setInformationProvider(provider, AntEditorPartitionScanner.XML_CDATA);
+		presenter.setInformationProvider(provider, AntEditorPartitionScanner.XML_COMMENT);
+		presenter.setInformationProvider(provider, AntEditorPartitionScanner.XML_DTD);
+		presenter.setInformationProvider(provider, AntEditorPartitionScanner.XML_TAG);
+		presenter.setSizeConstraints(60, 10, true, true);
+		return presenter;
+	}
+	
+	/**
+	 * Returns the information presenter control creator. The creator is a factory creating the
+	 * presenter controls for the given source viewer. This implementation always returns a creator
+	 * for <code>DefaultInformationControl</code> instances.
+	 * 
+	 * @return an information control creator
+	 * @since 3.1
+	 */
+	public static IInformationControlCreator getInformationPresenterControlCreator() {
+		return new IInformationControlCreator() {
+			public IInformationControl createInformationControl(Shell parent) {
+				int shellStyle= SWT.RESIZE;
+				int style= SWT.V_SCROLL | SWT.H_SCROLL;
+				return new DefaultInformationControl(parent, shellStyle, style, new HTMLTextPresenter(false));
+			}
+		};
 	}
 }
