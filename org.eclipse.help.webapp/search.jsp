@@ -92,7 +92,7 @@ var isIE = navigator.userAgent.indexOf('MSIE') != -1;
 
 var extraStyle = "";
 if (isIE)
- 	 extraStyle = "<style type='text/css'>#go{padding-left:1px;} </style>";
+ 	 extraStyle = "<style type='text/css'>#searchWord{margin-bottom:-1px;} #go{padding-left:1px;} </style>";
 document.write(extraStyle);
 	
 var selectedBooks;
@@ -134,6 +134,7 @@ function doSearch()
 		parent.doSearch("searchWord="+escape(searchWord)+"&maxHits="+maxHits);
 }
 
+/* not  called for now */
 function fixHeights()
 {
 	if (!isIE) return;
@@ -145,7 +146,7 @@ function fixHeights()
 
 </head>
 
-<body onload="fixHeights()"  onunload="closeAdvanced()">
+<body xonload="fixHeights()"  onunload="closeAdvanced()">
 
 	<form  name="searchForm"   onsubmit="doSearch()">
 		<table id="searchTable" align="left" valign="middle" cellspacing="0" cellpadding="0" border="0">

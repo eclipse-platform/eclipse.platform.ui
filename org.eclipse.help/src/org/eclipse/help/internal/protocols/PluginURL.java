@@ -7,7 +7,7 @@ import java.io.InputStream;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.util.*;
 /**
- * URL for documentation coming from a plugin.
+ * URL for documentation coming from a plugin. This is part of the help:/ protocol (help:/pluginid/path/to/file).
  */
 public class PluginURL extends HelpURL {
 	protected IPluginDescriptor plugin;

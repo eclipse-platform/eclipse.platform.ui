@@ -1,4 +1,4 @@
-<%@ page import="org.eclipse.help.servlet.*" errorPage="err.jsp" contentType="text/html; charset=UTF-8"%>
+<%@ page import="org.eclipse.help.servlet.*,org.w3c.dom.*" errorPage="err.jsp" contentType="text/html; charset=UTF-8"%>
 
 <% 
 	// calls the utility class to initialize the application
@@ -35,6 +35,31 @@
 		srcMainFrame=topic;
 	}
 	
+	// Load the preferences
+	String banner = null;
+	String banner_height = "45";
+	
+	ContentUtil content = new ContentUtil(application, request);
+	Element prefsElement = content.loadPreferences();
+	System.out.println(prefsElement);
+	if (prefsElement != null){
+		NodeList prefs = prefsElement.getElementsByTagName("pref");
+		for (int i=0; i<prefs.getLength(); i++)
+		{
+			Element pref = (Element)prefs.item(i);
+			if (pref.getAttribute("name").equals("banner"))
+				banner = pref.getAttribute("value");
+			else if (pref.getAttribute("name").equals("banner_height"))
+				banner_height = pref.getAttribute("value");
+		}
+	}
+	if (banner != null){
+		if (banner.length() == 0)
+			banner = null;
+		else
+			banner = "content/help:" + banner;
+	}
+	
 %>
 
 
@@ -59,8 +84,12 @@
 	
 </head>
 
-<frameset onload="onloadFrameset()"  rows="45,24,*"  frameborder="0" framespacing="0" border="0" spacing="0">
-	<frame name="BannerFrame" src='banner.html'  marginwidth="0" marginheight="0" scrolling="no" frameborder="0" resize=no>
+<%
+	if (banner != null)
+	{
+%>
+<frameset onload="onloadFrameset()"  rows="<%=banner_height%>,24,*"  frameborder="0" framespacing="0" border="0" spacing="0">
+	<frame name="BannerFrame" src='<%=banner%>'  marginwidth="0" marginheight="0" scrolling="no" frameborder="0" resize=no>
 	<frame name="SearchFrame" src='<%="search.jsp"+query%>'  marginwidth="0" marginheight="0" scrolling="no" frameborder="0" resize=no>
 	<frameset id="helpFrameset" cols="25%,*"  framespacing="0" border="0"  frameborder="0" spacing="0" resize=no scrolling=no>
 		<frameset name="navFrameset" rows="24,*,24" marginwidth="0" marginheight="0" scrolling="no" frameborder="0">
@@ -74,6 +103,26 @@
         </frameset>
      </frameset>
  </frameset>
+<%
+	} else {
+%>
+<frameset onload="onloadFrameset()"  rows="24,*"  frameborder="0" framespacing="0" border="0" spacing="0">
+	<frame name="SearchFrame" src='<%="search.jsp"+query%>'  marginwidth="0" marginheight="0" scrolling="no" frameborder="0" resize=no>
+	<frameset id="helpFrameset" cols="25%,*"  framespacing="0" border="0"  frameborder="0" spacing="0" resize=no scrolling=no>
+		<frameset name="navFrameset" rows="24,*,24" marginwidth="0" marginheight="0" scrolling="no" frameborder="0">
+		        <frame name="NavToolbarFrame" src='<%="navToolbar.jsp"+query%>' marginwidth="0" marginheight="0" scrolling="no" frameborder="0" resize=yes>
+		        <frame name="NavFrame" src='<%="nav.html"+query%>' marginwidth="0" marginheight="0" scrolling="no" frameborder="0" resize=yes>
+		        <frame name="TabsFrame" src='<%="tabs.jsp"+query%>' marginwidth="0" marginheight="0" scrolling="no" frameborder="0" resize=yes>
+		</frameset>
+        <frameset id="contentFrameset" rows="24,*", frameborder=0 framespacing=0 border=0>
+        	<frame name="ToolbarFrame" src='<%="toolbar.jsp"+query%>' marginwidth="0" marginheight="0" scrolling="no" frameborder="0" resize=yes>
+             <frame name="MainFrame" src="<%=srcMainFrame%>" marginwidth="10" marginheight="10" scrolling="auto"  frameborder="0" resize="yes">
+        </frameset>
+     </frameset>
+ </frameset>
+<%
+	}
+%>
 
 </html>
 

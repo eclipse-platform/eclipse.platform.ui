@@ -9,6 +9,8 @@ import org.eclipse.help.internal.context.LinksResult;
  * URL to the links server.
  */
 public class LinksURL extends HelpURL {
+	public final static String LINKS = "links";
+	
 	/**
 	 * LinksURL constructor.
 	 * @param url java.lang.String
@@ -27,7 +29,7 @@ public class LinksURL extends HelpURL {
 	}
 	/** Returns the path prefix that identifies the URL. */
 	public static String getPrefix() {
-		return "links";
+		return LINKS;
 	}
 	/**
 	 * Opens a stream for reading.

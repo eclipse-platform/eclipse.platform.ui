@@ -17,6 +17,8 @@ public final class HelpSystem {
 	protected static final HelpSystem instance = new HelpSystem();
 
 	public final static String LOG_LEVEL_KEY = "log_level";
+	public final static String BANNER_KEY = "banner";
+	public final static String BANNER_HEIGHT_KEY = "banner_height";
 	
 	protected TocManager tocManager;
 	protected ContextManager contextManager;

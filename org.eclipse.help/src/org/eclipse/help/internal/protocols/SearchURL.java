@@ -12,6 +12,7 @@ import org.eclipse.help.internal.util.*;
  * URL to the search server.
  */
 public class SearchURL extends HelpURL {
+	public final static String SEARCH="search";
 	/**
 	 * SearchURL constructor.
 	 * @param url java.lang.String
@@ -30,7 +31,7 @@ public class SearchURL extends HelpURL {
 	}
 	/** Returns the path prefix that identifies the URL. */
 	public static String getPrefix() {
-		return "search";
+		return SEARCH;
 	}
 	/**
 	 * Opens a stream for reading.

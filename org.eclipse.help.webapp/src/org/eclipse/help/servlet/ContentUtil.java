@@ -17,6 +17,7 @@ import org.xml.sax.InputSource;
  */
 public class ContentUtil {
 	private final static String TOC_PROTOCOL = "help:/toc";
+	private final static String PREF_PROTOCOL = "help:/prefs";
 	private final static String SEARCH_PROTOCOL = "search:/";
 	private final static String LINKS_PROTOCOL = "links:/";	
 	private ServletContext context;
@@ -98,6 +99,18 @@ public class ContentUtil {
 		}
 	}	
 
+	/**
+	 * Load help preferences.
+	 */
+	public Element loadPreferences()
+	{
+		try {
+			return loadXML(PREF_PROTOCOL);
+		} catch (Exception e) {
+			return null;
+		}
+	}
+	
 	/**
 	 * Reads and parses an XML stream from specified url
 	 */

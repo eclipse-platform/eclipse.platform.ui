@@ -13,12 +13,16 @@ import org.eclipse.help.internal.util.XMLGenerator;
 
 
 /**
- * URL to files in the plugin's working directory, as well as
- * to temporary files that might be generated on the fly.
- * One instance of this is a "Table of Contents" URL.
- * Example: http://localhost:80/temp/pluginID/toc.xml
+ * URL-like description of help table of contents. This is part of the help protocol (help:/toc)
+ * <ul>
+ * <li>toc/pluginid/tocfile.xml: the toc defined by the specified toc xml</li> 
+ * <li>toc/: all the toc's </li>
+ * <li>toc/topic=/pluginid/topic.html: the toc that contains the specified topic </li>
+ * </ul>
  */
 public class TocURL extends HelpURL {
+	public final static String TOC = "toc";
+	
 	/**
 	 * @url "/pluginid/tocfile.xml"
 	 * or "/"
@@ -31,7 +35,7 @@ public class TocURL extends HelpURL {
 	 * Returns the path prefix that identifies the URL. 
 	 */
 	public static String getPrefix() {
-		return "toc";
+		return TOC;
 	}
 	/**
 	 * Opens a stream for reading.
