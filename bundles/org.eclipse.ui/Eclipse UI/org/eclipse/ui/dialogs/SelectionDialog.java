@@ -23,7 +23,7 @@ import java.util.ArrayList;
  */
 public abstract class SelectionDialog extends Dialog {
 	// the final collection of selected elements, or null if this dialog was canceled
-	private List result;
+	private Object[] result;
 
 	// a collection of the initially-selected elements
 	private List initialSelections;
@@ -113,9 +113,7 @@ public Button getOkButton() {
  *   pressed
  */
 public Object[] getResult() {
-	if (result == null)
-		return null;
-	return result.toArray(new Object[result.size()]);
+	return result;
 }
 /**
  * Sets the initial selection in this selection dialog to the given elements.
@@ -143,8 +141,20 @@ public void setMessage(String message) {
  *   pressed
  */
 protected void setResult(List newResult) {
+	result = new Object[newResult.size()];
+	newResult.toArray(result);
+}
+
+/**
+ * Set the selections made by the user, or <code>null</code> if
+ * the selection was canceled.
+ *
+ * @param Object[] newResult - the new values
+ */
+protected void setResult(Object[] newResult) {
 	result = newResult;
 }
+
 /**
  * Sets the title for this dialog.
  *
