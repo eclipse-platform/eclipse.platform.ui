@@ -47,7 +47,6 @@ protected void readCategory(IConfigurationElement element) {
 protected boolean readElement(IConfigurationElement element) {
 	if (element.getName().equals(TAG_VIEW)) {
 		readView(element);
-		readElementChildren(element);
 		return true;
 	}
 	if (element.getName().equals(TAG_CATEGORY)) {
@@ -63,7 +62,8 @@ protected boolean readElement(IConfigurationElement element) {
  */
 protected void readView(IConfigurationElement element) {
 	try {
-		ViewDescriptor desc = new ViewDescriptor(element);
+		String descText = getDescription(element);
+		ViewDescriptor desc = new ViewDescriptor(element, descText);
 		viewRegistry.add(desc);
 	} catch (CoreException e) {
 		// log an error since its not safe to open a dialog here

@@ -2,11 +2,11 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.ui">
 <annotation>
-   <appInfo>
-      <meta.schema plugin="org.eclipse.ui" id="views" name="Views"/>
-   </appInfo>
-   <documentation>
-      This extension point is used to define additional views 
+      <appInfo>
+         <meta.schema plugin="org.eclipse.ui" id="views" name="Views"/>
+      </appInfo>
+      <documentation>
+         This extension point is used to define additional views 
 for the workbench.  A view is a visual component 
 within a workbench page.  It is typically used to 
 navigate a hierarchy of information (like the workspace), 
@@ -16,8 +16,8 @@ visible from the View menu or close it from the
 view local title bar. 
 &lt;p&gt;
 In order to reduce the visual clutter in the Show View Dialog, views should be grouped using categories.
-   </documentation>
-</annotation>
+      </documentation>
+   </annotation>
 
    <element name="extension">
       <complexType>
@@ -73,7 +73,7 @@ In order to reduce the visual clutter in the Show View Dialog, views should be g
          <attribute name="parentCategory" type="string">
             <annotation>
                <documentation>
-                  an optional path composed of category IDs separated by '/'. This
+                  an optional path composed of category IDs separated by &apos;/&apos;. This
 attribute provides for creating category hierarchy.
                </documentation>
             </annotation>
@@ -88,6 +88,9 @@ attribute provides for creating category hierarchy.
          </appInfo>
       </annotation>
       <complexType>
+         <sequence>
+            <element ref="description" minOccurs="0" maxOccurs="1"/>
+         </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
@@ -106,7 +109,7 @@ attribute provides for creating category hierarchy.
             <annotation>
                <documentation>
                   an optional attribute that is composed of the category IDs separated
-by '/'. Each referenced category must exist prior to being referenced
+by &apos;/&apos;. Each referenced category must exist prior to being referenced
 in this attribute.
                </documentation>
             </annotation>
@@ -147,6 +150,14 @@ If no value is supplied, a default ratio will be used.
       </complexType>
    </element>
 
+   <element name="description" type="string">
+      <annotation>
+         <documentation>
+            an optional subelement whose body should contain text providing short description of the view.
+         </documentation>
+      </annotation>
+   </element>
+
    <annotation>
       <appInfo>
          <meta.section type="examples"/>
@@ -155,17 +166,17 @@ If no value is supplied, a default ratio will be used.
          The following is an example of the extension point: 
 &lt;p&gt;
 &lt;pre&gt;
-   &lt;extension point="org.eclipse.ui.views"&gt; 
+   &lt;extension point=&quot;org.eclipse.ui.views&quot;&gt; 
       &lt;category 
-         id="com.xyz.views.XYZviews" 
-         name="XYZ"&gt; 
+         id=&quot;com.xyz.views.XYZviews&quot; 
+         name=&quot;XYZ&quot;&gt; 
       &lt;/category&gt; 
       &lt;view 
-         id="com.xyz.views.XYZView" 
-         name="XYZ View" 
-         category="com.xyz.views.XYZviews" 
-         class="com.xyz.views.XYZView" 
-         icon="icons/XYZ.gif"&gt; 
+         id=&quot;com.xyz.views.XYZView&quot; 
+         name=&quot;XYZ View&quot; 
+         category=&quot;com.xyz.views.XYZviews&quot; 
+         class=&quot;com.xyz.views.XYZView&quot; 
+         icon=&quot;icons/XYZ.gif&quot;&gt; 
       &lt;/view&gt; 
    &lt;/extension&gt; 
 &lt;/pre&gt;
@@ -191,7 +202,7 @@ practice to subclass &lt;samp&gt;org.eclipse.ui.part.ViewPart&lt;/samp&gt;
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         The workbench provides a number of standard views including Navigator, Properties, Outline and Tasks. From the user point of view, these views are no different from any other view provided by the plug-ins. All the views can be shown from the "Show View" submenu of the "Window" menu. The position of a view is persistent: it is saved when the view is closed and restored when the view is reopened in a single session.  The position is also persisted between workbench sessions.
+         The workbench provides a number of standard views including Navigator, Properties, Outline and Tasks. From the user point of view, these views are no different from any other view provided by the plug-ins. All the views can be shown from the &quot;Show View&quot; submenu of the &quot;Window&quot; menu. The position of a view is persistent: it is saved when the view is closed and restored when the view is reopened in a single session.  The position is also persisted between workbench sessions.
       </documentation>
    </annotation>
 

@@ -30,7 +30,6 @@ public class ViewDescriptor implements IViewDescriptor {
 	private static final String ATT_CATEGORY="category";//$NON-NLS-1$
 	private static final String ATT_CLASS="class";//$NON-NLS-1$
 	private static final String ATT_RATIO="fastViewWidthRatio";//$NON-NLS-1$
-	private static final String ATT_DESC="description";//$NON-NLS-1$
 	private String label;
 	private String accelerator;
 	private String className;
@@ -41,8 +40,9 @@ public class ViewDescriptor implements IViewDescriptor {
 /**
  * Create a new ViewDescriptor for an extension.
  */
-public ViewDescriptor(IConfigurationElement e) throws CoreException {
+public ViewDescriptor(IConfigurationElement e, String desc) throws CoreException {
 	configElement = e;
+	description = desc;
 	loadFromExtension();
 }
 /**
@@ -112,7 +112,6 @@ private void loadFromExtension() throws CoreException {
 	className = configElement.getAttribute(ATT_CLASS);
 	String category = configElement.getAttribute(ATT_CATEGORY);
 	String ratio = configElement.getAttribute(ATT_RATIO);
-	description = configElement.getAttribute(ATT_DESC);
 
 	// Sanity check.
 	if ((label == null) || (className == null)) {
