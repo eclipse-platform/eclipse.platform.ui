@@ -38,7 +38,7 @@ import org.eclipse.jface.window.Window;
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
  */
-public class AddBookmarkAction extends SelectionListenerAction {
+public class AddBookmarkAction extends ResourceSelectionListenerAction {
 
 	/**
 	 * The id of this action.
