@@ -41,10 +41,10 @@ public class AltAssistedWizardDialog extends WizardDialog {
 			helpPart.init(null, getToolBarManager(), getStatusLineManager());
 			parent.addControlListener(new ControlListener() {
 				public void controlMoved(ControlEvent e) {
-					syncHelpBounds();
+					//syncHelpBounds();
 				}
 				public void controlResized(ControlEvent e) {
-					syncHelpBounds();
+					//syncHelpBounds();
 				}
 			});
 		}
@@ -134,7 +134,7 @@ public class AltAssistedWizardDialog extends WizardDialog {
 			Shell helpShell = contextHelpWindow.getShell();
 			helpShell.setText("Help");
 			helpShell.setLocation(pbounds.x+pbounds.width, pbounds.y);
-			helpShell.setSize(200, pbounds.height);
+			helpShell.setSize(300, pbounds.height);
 			helpShell.open();
 			helpShell.addControlListener(new ControlListener() {
 				public void controlMoved(ControlEvent e) {
