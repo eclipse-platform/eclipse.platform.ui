@@ -156,15 +156,18 @@ function doSearch(query)
 	query=query+"&encoding=js";
 		
 	/******** HARD CODED VIEW NAME *********/
-	parent.HelpFrame.NavFrame.showView("search");
-	var searchView = parent.HelpFrame.NavFrame.ViewsFrame.search.ViewFrame;
-	searchView.location.replace("searchView.jsp?"+query);
-	/*
-	if (isIE)
-		viewsFrame.document.search.location.replace("searchView.jsp?"+query);
-	else if (isMozilla)
-		viewsFrame.document.getElementById("search").src = "searchView.jsp?"+query; 
-		*/
+	// do some tests to ensure the results are available
+	if (parent.HelpFrame && 
+		parent.HelpFrame.NavFrame && 
+		parent.HelpFrame.NavFrame.showView &&
+		parent.HelpFrame.NavFrame.ViewsFrame && 
+		parent.HelpFrame.NavFrame.ViewsFrame.search && 
+		parent.HelpFrame.NavFrame.ViewsFrame.search.ViewFrame) 
+	{
+		parent.HelpFrame.NavFrame.showView("search");
+		var searchView = parent.HelpFrame.NavFrame.ViewsFrame.search.ViewFrame;
+		searchView.location.replace("searchView.jsp?"+query);
+	}
 }
 
 function fixHeights()
