@@ -73,7 +73,8 @@ public class TextSearchVisitor implements IResourceProxyVisitor {
 	private int fNumberOfFilesToScan;
 	private long fLastUpdateTime;
 	private boolean fVisitDerived;
-	private final MultiStatus fStatus;	
+	private final MultiStatus fStatus;
+	private boolean fAllowNIOSearch;	
 	
 	public TextSearchVisitor(MatchLocator locator, ISearchScope scope, boolean visitDerived, ITextSearchResultCollector collector, MultiStatus status, int fileCount) {
 		fScope= scope;
@@ -87,6 +88,11 @@ public class TextSearchVisitor implements IResourceProxyVisitor {
 		fNumberOfScannedFiles= 0;
 		fNumberOfFilesToScan= fileCount;
 		fVisitDerived= visitDerived;
+		fAllowNIOSearch= true;
+	}
+	
+	public void setAllowNIOSearch(boolean allowNIOSearch) {
+		fAllowNIOSearch= allowNIOSearch;
 	}
 	
 	public void process(Collection projects) {
@@ -185,7 +191,7 @@ public class TextSearchVisitor implements IResourceProxyVisitor {
 					Charset charset= Charset.forName(file.getCharset());
 					
 					stream= file.getContents();
-					if (stream instanceof FileInputStream) {
+					if (fAllowNIOSearch && stream instanceof FileInputStream) {
 						FileChannel channel= ((FileInputStream) stream).getChannel();
 						try {
 							MappedByteBuffer mappedBuffer= channel.map(FileChannel.MapMode.READ_ONLY, 0, channel.size());

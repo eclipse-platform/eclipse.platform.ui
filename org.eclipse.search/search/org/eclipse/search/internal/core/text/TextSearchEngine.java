@@ -15,6 +15,7 @@ import java.util.Collection;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -26,23 +27,18 @@ import org.eclipse.search.ui.NewSearchUI;
 
 public class TextSearchEngine {
 	
-	/**
-	 * Search for the given pattern.
-	 * @param workspace The workspace
-	 * @param scope scope to search in
-	 * @param visitDerived if set to true, derived matches will be reported
-	 * @param collector the collector for the results
-	 * @param matchLocator match locator
-	 * @return returns the status of the operation
-	 */
+
 	public IStatus search(IWorkspace workspace, ISearchScope scope, boolean visitDerived, ITextSearchResultCollector collector, MatchLocator matchLocator) {
-		Assert.isNotNull(workspace);
+		return search(scope, visitDerived, collector, matchLocator, true);
+	}
+	
+	public IStatus search(ISearchScope scope, boolean visitDerived, ITextSearchResultCollector collector, MatchLocator matchLocator, boolean allowNIOSearch) {
 		Assert.isNotNull(scope);
 		Assert.isNotNull(collector);
 		Assert.isNotNull(matchLocator);
 		IProgressMonitor monitor= collector.getProgressMonitor();
 		
-		IProject[] projects= workspace.getRoot().getProjects();
+		IProject[] projects= ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		Collection openProjects= new ArrayList(10);
 		for (int i= 0; i < projects.length; i++) {
 			IProject project= projects[i];
@@ -61,7 +57,8 @@ public class TextSearchEngine {
 				}				
 				collector.aboutToStart();
 				TextSearchVisitor visitor= new TextSearchVisitor(matchLocator, scope, visitDerived, collector, status, amountOfWork);
-				visitor.process(openProjects);	
+				visitor.setAllowNIOSearch(allowNIOSearch);
+				visitor.process(openProjects);
 			} catch (CoreException ex) {
 				status.add(ex.getStatus());
 			} finally {

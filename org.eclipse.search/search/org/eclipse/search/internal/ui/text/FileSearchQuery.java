@@ -16,7 +16,6 @@ import org.eclipse.search.internal.core.text.MatchLocator;
 import org.eclipse.search.internal.core.text.TextSearchEngine;
 import org.eclipse.search.internal.core.text.TextSearchScope;
 import org.eclipse.search.internal.ui.SearchMessages;
-import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.ISearchResult;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
@@ -84,7 +83,7 @@ public class FileSearchQuery implements ISearchQuery {
 		final AbstractTextSearchResult textResult= (AbstractTextSearchResult) getSearchResult();
 		textResult.removeAll();
 		ITextSearchResultCollector collector= new TextSearchResultCollector(textResult, pm);
-		return new TextSearchEngine().search(SearchPlugin.getWorkspace(), fScope, fVisitDerived, collector, new MatchLocator(fSearchString, isCaseSensitive(), isRegexSearch()));
+		return new TextSearchEngine().search(fScope, fVisitDerived, collector, new MatchLocator(fSearchString, isCaseSensitive(), isRegexSearch()), true);
 	}
 
 	public String getLabel() {
@@ -124,7 +123,7 @@ public class FileSearchQuery implements ISearchQuery {
 	public IStatus searchInFile(final AbstractTextSearchResult result, final IProgressMonitor monitor, IFile file) {
 		ITextSearchResultCollector collector= new TextSearchResultCollector(result, monitor);
 		SearchScope scope= new SearchScope("", new IResource[] { file }); //$NON-NLS-1$
-		return new TextSearchEngine().search(SearchPlugin.getWorkspace(), scope, fVisitDerived, collector, new MatchLocator(fSearchString, isCaseSensitive(), isRegexSearch()));
+		return new TextSearchEngine().search(scope, fVisitDerived, collector, new MatchLocator(fSearchString, isCaseSensitive(), isRegexSearch()), true);
 	}
 	
 	public boolean isRegexSearch() {
