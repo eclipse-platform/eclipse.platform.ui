@@ -1207,7 +1207,16 @@
       <colorDefinition
             label="%Color.activeTabBGStart"
             categoryId="org.eclipse.ui.workbenchMisc"
+            value="COLOR_TITLE_BACKGROUND_GRADIENT"
             id="org.eclipse.ui.workbench.ACTIVE_TAB_BG_START">
+         <description>
+            %Color.activeTabBGStartDesc
+         </description>
+      </colorDefinition>
+      <colorDefinition
+            label="%Color.activeTabBGEnd"            
+            categoryId="org.eclipse.ui.workbenchMisc"
+            id="org.eclipse.ui.workbench.ACTIVE_TAB_BG_END">
          <colorFactory
                plugin="org.eclipse.ui"
                class="org.eclipse.ui.themes.RGBBlendColorFactory">
@@ -1219,16 +1228,7 @@
                   name="color2"
                   value="COLOR_TITLE_BACKGROUND_GRADIENT">
             </parameter>
-         </colorFactory>
-         <description>
-            %Color.activeTabBGStartDesc
-         </description>
-      </colorDefinition>
-      <colorDefinition
-            label="%Color.activeTabBGEnd"
-            value="COLOR_TITLE_BACKGROUND_GRADIENT"
-            categoryId="org.eclipse.ui.workbenchMisc"
-            id="org.eclipse.ui.workbench.ACTIVE_TAB_BG_END">
+         </colorFactory>            
          <description>
             %Color.activeTabBGEndDesc
          </description>
