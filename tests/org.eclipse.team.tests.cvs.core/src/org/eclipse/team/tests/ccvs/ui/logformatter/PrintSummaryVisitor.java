@@ -39,10 +39,6 @@ public class PrintSummaryVisitor implements ILogEntryVisitor {
 	 * Prints the root entry information.
 	 */
 	public void visitRootEntry(RootEntry entry) {
-		os.println("=== TEST LOG SUMMARY ===");
-		os.println("Generated: " + entry.getTimestamp());
-		os.println("SDK Build: " + entry.getSDKBuildId());
-		os.println();
 		entry.acceptChildren(this);
 	}
 	

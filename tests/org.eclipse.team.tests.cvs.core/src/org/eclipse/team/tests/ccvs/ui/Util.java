@@ -453,22 +453,23 @@ import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
 	 * Returns true iff file is a valid IFile (that should not be ignored).
 	 */
 	public static boolean isValidFile(IResource file) throws CoreException {
+		String name = file.getName();
 		return file instanceof IFile
-		//	&& file.isAccessible()
 			&& ! file.isPhantom()
-			&& ! file.getName().equals(".classpath")
-			&& ! file.getName().equals(".vcm_meta"); // XXX fixme when core meta-data support is implemented
+			&& ! name.equals(".classpath")
+			&& ! name.equals(".project")
+			&& ! name.equals(".vcm_meta");
 	}
 
 	/**
 	 * Returns true iff folder is a valid IFolder (that should not be ignored).
 	 */
 	public static boolean isValidFolder(IResource folder) throws CoreException {
+		String name = folder.getName();
 		return folder instanceof IFolder
-		//	&& folder.isAccessible()
 			&& ! folder.isPhantom()
-			&& ! folder.getName().equals("CVS")
-			&& ! folder.getName().equals("bin"); // XXX fixme when core meta-data support is implemented
+			&& ! name.equals("CVS")
+			&& ! name.equals("bin");
 	}
 
 	/**

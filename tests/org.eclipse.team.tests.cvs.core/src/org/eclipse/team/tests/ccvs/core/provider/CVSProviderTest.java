@@ -317,6 +317,7 @@ public class CVSProviderTest extends EclipseTest {
 		map.put(project.getFile("folder1/a.xtxt"), ksubst);
 		map.put(project.getFile("added.xtxt"), ksubst);
 		
+		JUnitTestCase.waitMsec(1500);
 		IStatus status = getProvider(project).setKeywordSubstitution(map, null);
 		assertTrue("Status should be ok, was: " + status.toString(), status.isOK());
 		assertHasKSubstOption(project, "binary.xbin", ksubst);

@@ -10,10 +10,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Stack;
 
-import junit.framework.TestCase;
-import junit.framework.TestResult;
 import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.compare.structuremergeviewer.IDiffContainer;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
@@ -22,11 +19,9 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.wizard.IWizardContainer;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
@@ -42,8 +37,8 @@ import org.eclipse.team.internal.ccvs.ui.actions.ReplaceWithRemoteAction;
 import org.eclipse.team.internal.ccvs.ui.actions.TagAction;
 import org.eclipse.team.internal.ccvs.ui.actions.UpdateAction;
 import org.eclipse.team.internal.ccvs.ui.sync.CVSSyncCompareInput;
-import org.eclipse.team.internal.ccvs.ui.sync.CommitSyncAction;
-import org.eclipse.team.internal.ccvs.ui.sync.UpdateSyncAction;
+import org.eclipse.team.internal.ccvs.ui.sync.ForceCommitSyncAction;
+import org.eclipse.team.internal.ccvs.ui.sync.ForceUpdateSyncAction;
 import org.eclipse.team.internal.ccvs.ui.wizards.SharingWizard;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 import org.eclipse.team.ui.sync.ITeamNode;
@@ -155,6 +150,7 @@ public class CVSUITestCase extends LoggingTestCase {
 	protected void actionCheckoutProjects(String[] projectNames, CVSTag[] tags) throws Exception {		
 		ICVSRemoteFolder[] projects = lookupRemoteProjects(projectNames, tags);
 		runActionDelegate(new AddToWorkspaceAction(), projects, "Repository View Checkout action");
+		timestampGranularityHiatus();
 	}
 
 	/**
@@ -167,6 +163,7 @@ public class CVSUITestCase extends LoggingTestCase {
 			}
 		};
 		runActionDelegate(action, resources, "Replace with Remote action");
+		timestampGranularityHiatus();
 	}
 		
 	/**
@@ -186,6 +183,7 @@ public class CVSUITestCase extends LoggingTestCase {
 				return false;
 			}
 		});
+		timestampGranularityHiatus();
 	}
 
 	/**
@@ -199,7 +197,8 @@ public class CVSUITestCase extends LoggingTestCase {
 			}
 		};
 		runActionDelegate(action, resources, "CVS Commit action");
-	}	
+		timestampGranularityHiatus();
+	}
 	
 	/**
 	 * Tags the specified resources using the action contribution.
@@ -219,7 +218,8 @@ public class CVSUITestCase extends LoggingTestCase {
 	 */
 	protected void actionCVSUpdate(IResource[] resources) {
 		runActionDelegate(new UpdateAction(), resources, "CVS Update action");
-	}	
+		timestampGranularityHiatus();
+	}
 	
 	/**
 	 * Pops up the synchronizer view for the specified resources.
@@ -260,6 +260,7 @@ public class CVSUITestCase extends LoggingTestCase {
 			syncCommitInternal(input, nodes, comment);
 		}
 		endTask();
+		timestampGranularityHiatus();
 	}
 	
 	/**
@@ -279,6 +280,7 @@ public class CVSUITestCase extends LoggingTestCase {
 			syncGetInternal(input, nodes);
 		}
 		endTask();
+		timestampGranularityHiatus();
 	}
 	
 	/**
@@ -339,7 +341,7 @@ public class CVSUITestCase extends LoggingTestCase {
 	 */
 	private void syncCommitInternal(CVSSyncCompareInput input, ITeamNode[] nodes, final String comment) {
 		FakeSelectionProvider selectionProvider = new FakeSelectionProvider(nodes);
-		CommitSyncAction action = new CommitSyncAction(input, selectionProvider, "Commit",
+		ForceCommitSyncAction action = new ForceCommitSyncAction(input, selectionProvider, "Commit",
 			testWindow.getShell()) {
 			protected int promptForConflicts(SyncSet syncSet) {
 				return 0; // yes! sync conflicting changes
@@ -356,7 +358,7 @@ public class CVSUITestCase extends LoggingTestCase {
 	 */
 	private void syncGetInternal(CVSSyncCompareInput input, ITeamNode[] nodes) {
 		FakeSelectionProvider selectionProvider = new FakeSelectionProvider(nodes);
-		UpdateSyncAction action = new UpdateSyncAction(input, selectionProvider, "Get",
+		ForceUpdateSyncAction action = new ForceUpdateSyncAction(input, selectionProvider, "Get",
 			testWindow.getShell()) {
 			protected boolean promptForConflicts() {
 				return true;
@@ -401,5 +403,13 @@ public class CVSUITestCase extends LoggingTestCase {
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * Waits for a small amount of time to compensate for file system time stamp granularity.
+	 */
+	private void timestampGranularityHiatus() {
+		//JUnitTestCase.waitMsec(1500);
+		processEventsUntil(1500);
 	}
 }

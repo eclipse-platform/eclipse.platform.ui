@@ -55,14 +55,6 @@ public class PrintDiffVisitor implements ILogEntryVisitor {
 	 * Prints the root entry information.
 	 */
 	public void visitRootEntry(RootEntry entry) {
-		os.println("=== TEST LOG DIFF ===");
-		os.println("Newer file:");
-		os.println("  Generated: " + entry.getTimestamp());
-		os.println("  SDK Build: " + entry.getSDKBuildId());
-		os.println("Older file:");
-		os.println("  Generated: " + olderRoot.getTimestamp());
-		os.println("  SDK Build: " + olderRoot.getSDKBuildId());
-		os.println();
 		olderParent = olderRoot;
 		entry.acceptChildren(this);
 	}

@@ -125,6 +125,7 @@ public class LoggingTestResult extends TestResult {
 	 */
 	public void endGroup() {
 		Assert.assertNull(currentTask);
+		Assert.assertTrue(! groupStack.empty());
 		endXMLElement();
 		groupStack.pop();
 	}

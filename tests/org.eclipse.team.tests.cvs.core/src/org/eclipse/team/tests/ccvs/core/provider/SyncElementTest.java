@@ -136,6 +136,7 @@ public class SyncElementTest extends EclipseTest {
 		file.setContents(getRandomContents(), false, false, null);
 		addResources(copy, new String[] { "folder2/folder3/add.txt" }, false);
 		deleteResources(copy, new String[] {"folder1/b.txt"}, false);
+		JUnitTestCase.waitMsec(1500); // Wait so that timestamp of modified file differs from original
 		getProvider(copy).checkin(new IResource[] {copy}, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
 
 		// Get the sync tree for the project

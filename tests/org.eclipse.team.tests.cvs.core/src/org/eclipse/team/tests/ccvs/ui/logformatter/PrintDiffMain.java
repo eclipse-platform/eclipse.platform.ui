@@ -6,6 +6,7 @@ package org.eclipse.team.tests.ccvs.ui.logformatter;
  */
 
 import java.io.File;
+import java.io.PrintStream;
 
 public class PrintDiffMain {
 	public static void main(String[] args) {
@@ -36,17 +37,33 @@ public class PrintDiffMain {
 			MergeRunsVisitor mergeVisitor = new MergeRunsVisitor(null);
 			newerRoot.accept(mergeVisitor);
 			newerRoot = mergeVisitor.getMergedRoot();
+
 			// read and merge older log
 			RootEntry olderRoot = LogEntry.readLog(olderFile);
 			olderRoot.accept(mergeVisitor);
 			olderRoot = mergeVisitor.getMergedRoot();
+
+			// print header
+			PrintStream ps = System.out;
+			ps.println("=== TEST LOG DIFF ===");
+			ps.println("Newer File: " + newerFile);
+			ps.println("  Generated: " + newerRoot.getTimestamp());
+			ps.println("  SDK Build: " + newerRoot.getSDKBuildId());
+			ps.println("Older File:" + olderFile);
+			ps.println("  Generated: " + olderRoot.getTimestamp());
+			ps.println("  SDK Build: " + olderRoot.getSDKBuildId());
+			ps.println("Options:");
+			ps.println("  threshold = " + thresh + " ms");
+			ps.println("  ignore negligible = " + ignore);
+			ps.println();
+
 			// compute and print the differences
-			PrintDiffVisitor diffVisitor = new PrintDiffVisitor(System.out, olderRoot, thresh, ignore);
+			PrintDiffVisitor diffVisitor = new PrintDiffVisitor(ps, olderRoot, thresh, ignore);
 			newerRoot.accept(diffVisitor);
 		} catch (Exception e) {
 			System.err.println("An error occurred while parsing logs");
 			e.printStackTrace();
 			return;
 		}
-	}
+	}	
 }
