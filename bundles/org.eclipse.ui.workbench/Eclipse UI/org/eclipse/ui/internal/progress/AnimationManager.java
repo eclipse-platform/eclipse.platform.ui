@@ -17,12 +17,13 @@ import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
 
@@ -38,14 +39,14 @@ class AnimationManager {
 	private static final String ERROR_ICON = "error.gif"; //$NON-NLS-1$
 
 	private static AnimationManager singleton;
-	
+
 	private ImageData[] animatedData;
 	private ImageData[] disabledData;
 	private ImageData[] errorData;
 
-	private Image disabledImage;
-	private Image animatedImage;
-	private Image errorImage;
+	private static String DISABLED_IMAGE_NAME = "ANIMATION_DISABLED_IMAGE"; //$NON-NLS-1$
+	private static String ANIMATED_IMAGE_NAME = "ANIMATION_ANIMATED_IMAGE"; //$NON-NLS-1$
+	private static String ERROR_IMAGE_NAME = "ANIMATION_ERROR_IMAGE"; //$NON-NLS-1$
 
 	Color background;
 
@@ -57,9 +58,9 @@ class AnimationManager {
 	private IJobProgressManagerListener listener;
 
 	List items = Collections.synchronizedList(new ArrayList());
-	
-	static AnimationManager getInstance(){
-		if(singleton == null)
+
+	static AnimationManager getInstance() {
+		if (singleton == null)
 			singleton = new AnimationManager();
 		return singleton;
 	}
@@ -76,15 +77,21 @@ class AnimationManager {
 
 			animatedData = getImageData(runningRoot, runLoader);
 			if (animatedData != null)
-				animatedImage = getImage(animatedData[0]);
+				JFaceResources.getImageRegistry().put(
+					ANIMATED_IMAGE_NAME,
+					getImage(animatedData[0]));
 
 			disabledData = getImageData(backRoot, runLoader);
 			if (disabledData != null)
-				disabledImage = getImage(disabledData[0]);
+				JFaceResources.getImageRegistry().put(
+					DISABLED_IMAGE_NAME,
+					getImage(disabledData[0]));
 
 			errorData = getImageData(errorRoot, errorLoader);
 			if (errorData != null)
-				errorImage = getImage(errorData[0]);
+				JFaceResources.getImageRegistry().put(
+					ERROR_IMAGE_NAME,
+					getImage(errorData[0]));
 
 			getImageData(backRoot, errorLoader);
 
@@ -101,8 +108,10 @@ class AnimationManager {
 	 */
 	void addItem(final AnimationItem item) {
 		items.add(item);
-		if(background == null)
-			background = item.getControl().getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
+		if (background == null)
+			background =
+				item.getControl().getDisplay().getSystemColor(
+					SWT.COLOR_WIDGET_BACKGROUND);
 		item.getControl().addDisposeListener(new DisposeListener() {
 			/* (non-Javadoc)
 			 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
@@ -163,13 +172,15 @@ class AnimationManager {
 	 * @return Image
 	 */
 	Image getImage() {
+
 		if (animated) {
 			if (showingError)
-				return errorImage;
+				return JFaceResources.getImageRegistry().get(ERROR_IMAGE_NAME);
 			else
-				return animatedImage;
+				return JFaceResources.getImageRegistry().get(
+					ANIMATED_IMAGE_NAME);
 		} else
-			return disabledImage;
+			return JFaceResources.getImageRegistry().get(DISABLED_IMAGE_NAME);
 	}
 
 	/**
@@ -196,20 +207,9 @@ class AnimationManager {
 	}
 
 	/**
-	 * Get the SWT control for the receiver.
-	 * @return Control
-	 */
-	//	public Control getControl() {
-	//		return imageCanvas;
-	//	}
-
-	/**
 	 * Dispose the images in the receiver.
 	 */
 	void dispose() {
-		disabledImage.dispose();
-		errorImage.dispose();
-		animatedImage.dispose();
 		JobProgressManager.getInstance().removeListener(listener);
 	}
 
@@ -383,7 +383,10 @@ class AnimationManager {
 	 * @return Rectangle
 	 */
 	public Rectangle getImageBounds() {
-		return disabledImage.getBounds();
+		return JFaceResources
+			.getImageRegistry()
+			.get(DISABLED_IMAGE_NAME)
+			.getBounds();
 	}
 
 	private IJobProgressManagerListener getProgressListener() {
@@ -480,9 +483,9 @@ class AnimationManager {
 						//Clear the image
 
 							UIJob clearJob = new UIJob(ProgressMessages.getString("AnimationItem.RedrawJob")) {//$NON-NLS-1$
-							/* (non-Javadoc)
-							 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-							 */
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+	 */
 							public IStatus runInUIThread(IProgressMonitor monitor) {
 								AnimationItem[] animationItems =
 									getAnimationItems();
