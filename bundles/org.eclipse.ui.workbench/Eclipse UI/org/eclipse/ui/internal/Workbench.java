@@ -570,14 +570,13 @@ public final class Workbench implements IWorkbench {
 	 * (non-Javadoc) Method declared on IWorkbench.
 	 */
 	public IWorkbenchWindow getActiveWorkbenchWindow() {
-		// Display will be null if SWT has not been initialized or
-		// this method was called from wrong thread.
-		// @issue if this is called from the wrong thread, this should fail,
-		// not return null -- general workbench thread safety issue
-		Display display = Display.getCurrent();
-		if (display == null)
-			return null;
-
+	    // Note: this previously returned null if called from a non-UI thread.
+	    // This was not spec'ed behaviour and is misleading.
+	    // For example, see [Bug 57384] [RCP] Main window not active on startup 
+	    // As of 3.0, it will fail early.
+	    // In general, all workbench methods should be accessed in the UI thread
+	    // since they may access SWT.
+	    
 		// Look at the current shell and up its parent
 		// hierarchy for a workbench window.
 		Control shell = display.getActiveShell();
