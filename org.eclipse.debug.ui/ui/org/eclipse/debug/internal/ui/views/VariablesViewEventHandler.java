@@ -17,14 +17,12 @@ import org.eclipse.jface.viewers.Viewer;
 public class VariablesViewEventHandler extends AbstractDebugEventHandler {
 	
 	/**
-	 * Constructs a new event handler on the given view and
-	 * viewer
+	 * Constructs a new event handler on the given view
 	 * 
 	 * @param view variables view
-	 * @param viewer tree viewer
 	 */
-	public VariablesViewEventHandler(AbstractDebugView view, Viewer viewer) {
-		super(view, viewer);
+	public VariablesViewEventHandler(AbstractDebugView view) {
+		super(view);
 	}
 	
 	/**

@@ -140,7 +140,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		// add my viewer as a selection provider, so selective re-launch works
 		getSite().setSelectionProvider(lv);
 		lv.setInput(DebugPlugin.getDefault().getLaunchManager());
-		setEventHandler(new LaunchViewEventHandler(this, lv));
+		setEventHandler(new LaunchViewEventHandler(this));
 		
 		// determine if active
 		setActive(getSite().getPage().findView(getSite().getId()) != null);

@@ -22,14 +22,12 @@ import org.eclipse.jface.viewers.Viewer;
 public class ExpressionViewEventHandler extends VariablesViewEventHandler implements IExpressionListener {
 
 	/**
-	 * Constructs a new event handler on the given view and
-	 * viewer
+	 * Constructs a new event handler on the given view
 	 * 
 	 * @param view variables view
-	 * @param viewer tree viewer
 	 */
-	public ExpressionViewEventHandler(AbstractDebugView view, Viewer viewer) {
-		super(view, viewer);
+	public ExpressionViewEventHandler(AbstractDebugView view) {
+		super(view);
 		DebugPlugin plugin= DebugPlugin.getDefault();
 		plugin.getExpressionManager().addExpressionListener(this);		
 	}

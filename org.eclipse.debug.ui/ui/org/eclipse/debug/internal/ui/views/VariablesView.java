@@ -374,7 +374,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	 * @return an event handler
 	 */
 	protected AbstractDebugEventHandler createEventHandler(Viewer viewer) {
-		return new VariablesViewEventHandler(this, viewer);
+		return new VariablesViewEventHandler(this);
 	}	
 	
 	

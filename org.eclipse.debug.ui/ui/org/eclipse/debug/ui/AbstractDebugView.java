@@ -711,5 +711,16 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 		}
 		getPageBook().showPage(getDefaultPage().getControl());
 	}
+	
+	/**
+	 * Returns whether this view's viewer is
+	 * currently available.
+	 * 
+	 * @return whether this view's viewer is
+	 * currently available
+	 */
+	public boolean isAvailable() {
+		return !(getViewer() == null || getViewer().getControl() == null || getViewer().getControl().isDisposed());
+	}	
 }	
 

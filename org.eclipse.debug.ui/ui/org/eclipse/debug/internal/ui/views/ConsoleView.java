@@ -80,7 +80,7 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 		// listen to launches
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
 		
-		setEventHandler(new ConsoleViewEventHandler(this, cv));
+		setEventHandler(new ConsoleViewEventHandler(this));
 		return cv;
 	}
 	

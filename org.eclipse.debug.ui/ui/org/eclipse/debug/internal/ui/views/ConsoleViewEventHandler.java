@@ -18,14 +18,12 @@ import org.eclipse.jface.viewers.Viewer;
 public class ConsoleViewEventHandler extends AbstractDebugEventHandler {
 
 	/**
-	 * Constructs an event handler for the given
-	 * view and viewer.
+	 * Constructs an event handler for the given view.
 	 * 
 	 * @param view debug view
-	 * @param viewer viewer
 	 */
-	public ConsoleViewEventHandler(AbstractDebugView view, Viewer viewer) {
-		super(view, viewer);
+	public ConsoleViewEventHandler(AbstractDebugView view) {
+		super(view);
 	}
 	
 	/**

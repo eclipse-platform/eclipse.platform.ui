@@ -36,14 +36,12 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 	private HashMap fStackFrameCountByThread = new HashMap(5);
 	
 	/**
-	 * Constructs an event handler for the given launch
-	 * view and viewer.
+	 * Constructs an event handler for the given launch view.
 	 * 
 	 * @param view launch view
-	 * @param viewer launch viewer
 	 */
-	public LaunchViewEventHandler(LaunchView view, LaunchViewer viewer) {
-		super(view, viewer);
+	public LaunchViewEventHandler(LaunchView view) {
+		super(view);
 		DebugPlugin plugin= DebugPlugin.getDefault();
 		plugin.getLaunchManager().addLaunchListener(this);
 	}

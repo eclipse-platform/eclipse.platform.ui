@@ -52,7 +52,7 @@ public class ExpressionView extends VariablesView {
 	 * @return an event handler
 	 */
 	protected AbstractDebugEventHandler createEventHandler(Viewer viewer) {
-		return new ExpressionViewEventHandler(this, viewer);
+		return new ExpressionViewEventHandler(this);
 	}		
 	
 	/**

@@ -24,22 +24,14 @@ public abstract class AbstractDebugEventHandler implements IDebugEventListener {
 	 * This event handler's view
 	 */
 	private AbstractDebugView fView;
-	
-	/**
-	 * This event handler's viewer
-	 */
-	private Viewer fViewer;
 		
 	/**
-	 * Constructs an event handler for the given
-	 * view and viewer.
+	 * Constructs an event handler for the given view.
 	 * 
 	 * @param view debug view
-	 * @param viewer viewer
 	 */
-	public AbstractDebugEventHandler(AbstractDebugView view, Viewer viewer) {
+	public AbstractDebugEventHandler(AbstractDebugView view) {
 		setView(view);
-		setViewer(viewer);
 		DebugPlugin plugin= DebugPlugin.getDefault();
 		plugin.addDebugEventListener(this);
 	}
@@ -171,16 +163,7 @@ public abstract class AbstractDebugEventHandler implements IDebugEventListener {
 	 * @return viewer
 	 */	
 	protected Viewer getViewer() {
-		return fViewer;
-	}
-	
-	/**
-	 * Sets the viewer this event handler is updating.
-	 * 
-	 * @param viewer launch viewer
-	 */
-	private void setViewer(Viewer viewer) {
-		fViewer = viewer;
+		return getView().getViewer();
 	}
 	
 	/**
@@ -205,7 +188,7 @@ public abstract class AbstractDebugEventHandler implements IDebugEventListener {
 	 * currently available
 	 */
 	protected boolean isAvailable() {
-		return !(getViewer() == null || getViewer().getControl() == null || getViewer().getControl().isDisposed());
+		return getView().isAvailable();
 	}
 }
 
