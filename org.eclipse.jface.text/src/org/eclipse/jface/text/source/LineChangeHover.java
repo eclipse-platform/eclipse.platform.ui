@@ -174,9 +174,9 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 			}
 		}
 		text= text.trim();
-		if (text.length() == 0 && added-- > 0)
+		if (text.length() == 0 && added-- > 0 && maxLines-- > 0)
 			text += "+ "; //$NON-NLS-1$
-		while (added-- > 0)
+		while (added-- > 0 && maxLines-- > 0)
 			text += "\n+ "; //$NON-NLS-1$
 		return text;
 	}

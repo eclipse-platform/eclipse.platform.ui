@@ -16,9 +16,11 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
@@ -50,7 +52,7 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 	/**
 	 * Handles all the mouse interaction in this line number ruler column.
 	 */
-	class MouseHandler implements MouseListener {
+	class MouseHandler implements MouseListener, MouseMoveListener {
 	
 		/*
 		 * @see org.eclipse.swt.events.MouseListener#mouseUp(org.eclipse.swt.events.MouseEvent)
@@ -70,6 +72,26 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 		 */
 		public void mouseDoubleClick(MouseEvent event) {
 			fParentRuler.setLocationOfLastMouseButtonActivity(event.x, event.y);
+		}
+
+		/*
+		 * @see org.eclipse.swt.events.MouseMoveListener#mouseMove(org.eclipse.swt.events.MouseEvent)
+		 */
+		public void mouseMove(MouseEvent e) {
+			if (fCachedTextViewer!= null) {
+				int line= toDocumentLineNumber(e.y);
+				ILineDiffInfo info= getDiffInfo(line);
+				Cursor cursor;
+				if (info != null && info.hasChanges())
+					cursor= fHitDetectionCursor;
+				else
+					cursor= null;
+				if (cursor != fLastCursor) {
+					fCanvas.setCursor(cursor);
+					fLastCursor= cursor;
+				}
+			}				
+			
 		}
 	
 	}
@@ -147,6 +169,11 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 	private AnnotationListener fAnnotationListener= new AnnotationListener();
 	/** The width of the change ruler column. */
 	private int fWidth= 5;
+	/** The hand cursor that will show when hovering over a change. */
+	Cursor fHitDetectionCursor;
+	/** The last used cursor. */
+	Cursor fLastCursor;
+
 
 	/**
 	 * Returns the System background color for list widgets.
@@ -173,6 +200,8 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 		fCanvas.setBackground(getBackground(fCanvas.getDisplay()));
 		fCanvas.setForeground(fForeground);
 			
+		fHitDetectionCursor= new Cursor(parentControl.getDisplay(), SWT.CURSOR_HAND);
+
 		fCanvas.addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent event) {
 				if (fCachedTextViewer != null)
@@ -188,7 +217,11 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 			}
 		});
 		
-		fCanvas.addMouseListener(new MouseHandler());
+		MouseHandler mouseHandler= new MouseHandler();
+		
+		fCanvas.addMouseListener(mouseHandler);
+		
+		fCanvas.addMouseMoveListener(mouseHandler);
 		
 		if (fCachedTextViewer != null) {
 			
@@ -212,6 +245,11 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 		if (fCachedTextViewer != null) {
 			fCachedTextViewer.removeViewportListener(fInternalListener);
 			fCachedTextViewer.removeTextListener(fInternalListener);
+		}
+		
+		if (fHitDetectionCursor != null) {
+			fHitDetectionCursor.dispose();
+			fHitDetectionCursor= null;
 		}
 		
 		if (fBuffer != null) {

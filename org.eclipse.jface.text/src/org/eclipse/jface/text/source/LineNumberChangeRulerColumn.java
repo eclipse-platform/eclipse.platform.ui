@@ -40,18 +40,20 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 		}
 	}
 
-	/** Color for changed lines */
+	/** Color for changed lines. */
 	private Color fAddedColor;
-	/** Color for added lines */
+	/** Color for added lines. */
 	private Color fChangedColor;
-	/** Color for the deleted line indicator */
+	/** Color for the deleted line indicator. */
 	private Color fDeletedColor;
 	/** The ruler's annotation model. */
 	IAnnotationModel fAnnotationModel;
-	/** The ruler's hover */
+	/** The ruler's hover. */
 	private IAnnotationHover fHover;
-	/** The internal listener */
+	/** The internal listener. */
 	private AnnotationListener fAnnotationListener= new AnnotationListener();
+	/** <code>true</code> if changes should be displayed using character indications instead of background colors. */ 
+	private boolean fCharacterDisplay;
 
 	/*
 	 * @see org.eclipse.jface.text.source.LineNumberRulerColumn#handleDispose()
@@ -192,6 +194,24 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 		return ret == null ? getBackground() : ret;
 	}
 
+	/**
+	 * Returns the character to display in character display mode for the given <code>ILineDiffInfo</code>
+	 * 
+	 * @param info the <code>ILineDiffInfo</code> being queried
+	 * @return the character indication for <code>info</code>
+	 */
+	private String getDisplayCharacter(ILineDiffInfo info) {
+		if (info == null)
+			return ""; //$NON-NLS-1$
+		switch (info.getType()) {
+			case ILineDiffInfo.CHANGED :
+				return "~"; //$NON-NLS-1$
+			case ILineDiffInfo.ADDED :
+				return "+"; //$NON-NLS-1$
+		}
+		return " ";
+	}
+
 	/*
 	 * @see org.eclipse.jface.text.source.IVerticalRulerInfo#getLineOfLastMouseButtonActivity()
 	 */
@@ -239,7 +259,9 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 			if (fAnnotationModel != null) {
 				fAnnotationModel.addAnnotationModelListener(fAnnotationListener);
 			}
-			redraw();
+			updateNumberOfDigits();
+			computeIndentations();
+			layout(true);
 		}
 	}
 
@@ -273,10 +295,46 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 		fDeletedColor= deletedColor;
 	}
 
+	/**
+	 * Sets the the display mode of the ruler. If character mode is set to <code>true</code>, diff
+	 * information will be displayed textually on the line number ruler.
+	 * 
+	 * @param characterMode <code>true</code> if diff information is to be displayed textually.
+	 */
+	public void setDisplayMode(boolean characterMode) {
+		if (characterMode != fCharacterDisplay) {
+			fCharacterDisplay= characterMode;
+			updateNumberOfDigits();
+			computeIndentations();
+			layout(true);
+		}
+	}
+
 	/*
 	 * @see org.eclipse.jface.text.source.IVerticalRulerInfoExtension#getModel()
 	 */
 	public IAnnotationModel getModel() {
 		return fAnnotationModel;
 	}
+	
+	/*
+	 * @see org.eclipse.jface.text.source.LineNumberRulerColumn#createDisplayString(int)
+	 */
+	protected String createDisplayString(int line) {
+		if (fCharacterDisplay && getModel() != null)
+			return super.createDisplayString(line) + getDisplayCharacter(getDiffInfo(line));
+		else
+			return super.createDisplayString(line);
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.source.LineNumberRulerColumn#computeNumberOfDigits()
+	 */
+	protected int computeNumberOfDigits() {
+		if (fCharacterDisplay && getModel() != null)
+			return super.computeNumberOfDigits() + 1;
+		else
+			return super.computeNumberOfDigits();
+	}
+
 }
