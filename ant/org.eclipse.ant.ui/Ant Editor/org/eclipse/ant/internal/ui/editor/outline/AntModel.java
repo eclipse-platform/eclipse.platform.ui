@@ -12,6 +12,7 @@
 package org.eclipse.ant.internal.ui.editor.outline;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -175,6 +176,8 @@ public class AntModel {
 			beginReporting();
 			project.addReference("ant.projectHelper", projectHelper); //$NON-NLS-1$
     		projectHelper.parse(project, input.get());  // File will be parsed here
+    		
+    		configureProperties();
     	} catch(BuildException e) {
 			try {
 				int line= e.getLocation().getLineNumber();
@@ -187,6 +190,17 @@ public class AntModel {
     	} finally {
     		endReporting();
     	}
+	}
+
+	private void configureProperties() throws BuildException {
+		Collection nodes= fTaskToNode.values();
+		Iterator iter= nodes.iterator();
+		while (iter.hasNext()) {
+			AntTaskNode node = (AntTaskNode) iter.next();
+			if (node instanceof AntPropertyNode) {
+				((AntPropertyNode)node).configure();
+			}
+		}
 	}
 
 	protected File getEditedFile() {
@@ -558,13 +572,28 @@ public class AntModel {
 	public void fatalError(Exception exception) {
 		AntElementNode node= (AntElementNode)fStillOpenElements.pop();
 		generateExceptionOutline(node);
-		if (exception instanceof SAXParseException) {
-			SAXParseException parseException= (SAXParseException)exception;
-			if (node.getOffset() == -1) { 
-				computeEndLocationForErrorNode(node, parseException.getLineNumber() - 1, parseException.getColumnNumber());
-			} else {
-				node= createProblemElement(parseException);
+		try {
+			if (exception instanceof SAXParseException) {
+				SAXParseException parseException= (SAXParseException)exception;
+				if (node.getOffset() == -1) { 
+					computeEndLocationForErrorNode(node, parseException.getLineNumber() - 1, parseException.getColumnNumber());
+				} else {
+					int lineNumber= parseException.getLineNumber();
+					int columnNumber= parseException.getColumnNumber();
+					if (columnNumber == -1) {
+						columnNumber= 1;
+					}
+					AntElementNode childNode= node.getNode(getNonWhitespaceOffset(lineNumber, columnNumber) + 1);
+					if (childNode != null && childNode != node) {
+						node= childNode;
+						node.setIsErrorNode(true);
+					} else {
+						node= createProblemElement(parseException);
+					}
+				}
 			}
+		}catch (BadLocationException be) {
+			return;
 		}
 		
 		notifyProblemRequestor(exception, node, XMLProblem.SEVERTITY_FATAL_ERROR);
