@@ -90,9 +90,10 @@ class SearchResultViewEntry implements ISearchResultViewEntry {
 	}
 	
 	public IMarker getSelectedMarker() {
+		fSelectedMarkerIndex= Math.min(fSelectedMarkerIndex, getMatchCount() - 1);
 		if (fMarkers == null && fMarker == null)
 			return null;
-		if (fMarkers != null && fSelectedMarkerIndex >= 0 && fSelectedMarkerIndex < getMatchCount())
+		if (fMarkers != null && fSelectedMarkerIndex >= 0)
 			return (IMarker)fMarkers.get(fSelectedMarkerIndex);
 		return fMarker;
 	}
@@ -118,12 +119,19 @@ class SearchResultViewEntry implements ISearchResultViewEntry {
 	}
 	
 	void remove(IMarker marker) {
+		if (marker == null)
+			return;
+			
 		if (fMarkers == null) {
 			if (fMarker != null && fMarker.equals(marker))
 				fMarker= null;
 		}
-		else
+		else {
 			fMarkers.remove(marker);
+			if (fMarkers.size() == 1)
+				fMarker= (IMarker)fMarkers.get(0);
+				fMarkers= null;
+		}
 	}
 	
 	void backupMarkers() {

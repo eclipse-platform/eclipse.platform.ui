@@ -26,7 +26,9 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 
@@ -65,7 +67,7 @@ class SearchResultViewer extends TableViewer {
 	private static IAction fgGotoMarkerAction;
 	
 	public SearchResultViewer(SearchResultView outerPart, Composite parent) {
-		super(new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION));
+		super(new Table(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION));
 		
 		fOuterPart= outerPart;
 		Assert.isNotNull(fOuterPart);
@@ -94,14 +96,15 @@ class SearchResultViewer extends TableViewer {
 		addSelectionChangedListener(
 			new ISelectionChangedListener() {
 				public void selectionChanged(SelectionChangedEvent event) {
-					boolean hasSelection= ! getSelection().isEmpty();
+					int selectionCount= getSelectedMarkerCount();
+					boolean hasSingleSelection= selectionCount == 1;
 					boolean hasElements= getItemCount() > 0;
-					fShowNextResultAction.setEnabled(hasSelection || hasElements);
-					fShowPreviousResultAction.setEnabled(hasSelection || hasElements);
-					fGotoMarkerAction.setEnabled(hasSelection);
+					fShowNextResultAction.setEnabled(hasSingleSelection || (hasElements && selectionCount == 0));
+					fShowPreviousResultAction.setEnabled(hasSingleSelection || (hasElements && selectionCount == 0));
+					fGotoMarkerAction.setEnabled(hasSingleSelection);
 					fMarkerToShow= -1;
 					String location= "";
-					if (hasSelection) {
+					if (hasSingleSelection) {
 						ISearchResultViewEntry entry= (ISearchResultViewEntry)getTable().getItem(getTable().getSelectionIndex()).getData();
 						IPath path= entry.getResource().getFullPath();
 						if (path != null)
@@ -154,6 +157,14 @@ class SearchResultViewer extends TableViewer {
 		enableActions();
 	}
 
+	protected int getSelectedMarkerCount() {
+		ISelection s= getSelection();
+		if (s == null || s.isEmpty() || !(s instanceof IStructuredSelection))
+			return 0;
+		IStructuredSelection selection= (IStructuredSelection)s;
+		return selection.size();
+	}
+
 	//--- Contribution management -----------------------------------------------
 	
 	void fillContextMenu(IMenuManager menu) {
@@ -163,6 +174,8 @@ class SearchResultViewer extends TableViewer {
 		menu.add(new Separator());
 		if (! getSelection().isEmpty()) {
 			menu.add(new GotoMarkerAction(this));
+			if (getSelectedMarkerCount() == 1)
+				menu.add(new RemoveMatchAction(this));
 			menu.add(new RemoveResultAction(this));
 			menu.add(new Separator());
 		}

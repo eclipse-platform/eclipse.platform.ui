@@ -6,7 +6,6 @@ package org.eclipse.search.internal.ui;
  * (c) Copyright IBM Corp 1999, 2000
  */
 import java.util.Iterator;
-import java.util.ArrayList;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.ISelection;
@@ -19,13 +18,13 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.search.internal.ui.util.ExceptionHandler;
 import org.eclipse.search.ui.ISearchResultViewEntry;
 
-class RemoveResultAction extends Action {
+class RemoveMatchAction extends Action {
 
 	private ISelectionProvider fSelectionProvider;
 
-	public RemoveResultAction(ISelectionProvider provider) {
-		super(SearchPlugin.getResourceString("SearchResultView.remove.text"), SearchPluginImages.DESC_CLCL_SEARCH_REM);
-		setToolTipText(SearchPlugin.getResourceString("SearchResultView.remove.tooltip"));
+	public RemoveMatchAction(ISelectionProvider provider) {
+		super(SearchPlugin.getResourceString("SearchResultView.removeMatch.text"), SearchPluginImages.DESC_CLCL_SEARCH_REM);
+		setToolTipText(SearchPlugin.getResourceString("SearchResultView.removeMatch.tooltip"));
 		fSelectionProvider= provider;
 	}
 	
@@ -45,16 +44,14 @@ class RemoveResultAction extends Action {
 		
 		IStructuredSelection selection= (IStructuredSelection)s;
 		int size= selection.size();
-		if (size <= 0)
+		if (size != 1)
 			return null;
-		ArrayList markers= new ArrayList(size * 3);
-		int markerCount= 0;
+		IMarker[] result= new IMarker[size];
 		Iterator iter= selection.iterator();
 		for(int i= 0; iter.hasNext(); i++) {
-			SearchResultViewEntry entry= (SearchResultViewEntry)iter.next();
-			markerCount += entry.getMatchCount();
-			markers.addAll(entry.getMarkers());
+			ISearchResultViewEntry entry= (ISearchResultViewEntry)iter.next();
+			result[i]= entry.getSelectedMarker();
 		}
-		return (IMarker[])markers.toArray(new IMarker[markerCount]);
+		return result;
 	}
 }
