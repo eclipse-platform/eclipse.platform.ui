@@ -4,8 +4,7 @@
  */
 package org.eclipse.help.internal.search;
 
-import java.io.*;
-import java.net.URL;
+import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
@@ -24,8 +23,6 @@ class IndexingOperation {
 	private final static int WORK_PREPARE = 50;
 	private final static int WORK_INDEXDOC = 10;
 	private final static int WORK_SAVEINDEX = 200;
-	private final static int BUF_SIZE = 256 * 1024;
-	private static byte[] buf = new byte[BUF_SIZE];
 	/**
 	 * Construct indexing operation.
 	 * @param ix ISearchIndex already opened
@@ -42,30 +39,17 @@ class IndexingOperation {
 	}
 	/**
 	 * Adds document  to the index.
-	 * @param doc PluginURL
+	 * @param doc URL
 	 */
 	private void add(URL doc) {
-		try {
-			InputStream contentStream = doc.openStream();
-			if (contentStream == null) {
-				Logger.logError(Resources.getString("IS001", doc.getPath()), null);
-				return;
-			}
-			// index document 
-			if (!index.addDocument(getName(doc), contentStream))
-				Logger.logInfo(Resources.getString("IS002", doc.getPath()));
-			if (contentStream != null)
-				contentStream.close();
-		} catch (IOException ioe10) {
-		}
+		index.addDocument(getName(doc), doc);
 	}
 	/**
 	 * Removes document from index.
-	 * @param doc PluginURL
+	 * @param doc URL
 	 */
 	private void remove(URL doc) {
-		if (!index.removeDocument(getName(doc)))
-			Logger.logInfo(Resources.getString("IS003", doc.getFile()));
+		index.removeDocument(getName(doc));
 	}
 	private void checkCancelled(IProgressMonitor pm)
 		throws OperationCanceledException {
@@ -84,7 +68,7 @@ class IndexingOperation {
 		// if collection is empty, we may return right away
 		// need to check if we have to do anything to the progress monitor
 		int numDocs = removedDocs.size() + addedDocs.size();
-		if (numDocs <= 0){
+		if (numDocs <= 0) {
 			pm.done();
 			return;
 		}
@@ -121,8 +105,9 @@ class IndexingOperation {
 		// Do not check here if (addedDocs.size() > 0), always perform add batch
 		// to ensure that index is created and saved even if no new documents exist
 		// now add all the new documents
-		if (!index.beginAddBatch())
+		if (!index.beginAddBatch()) {
 			throw new IndexingException();
+		}
 		try {
 			checkCancelled(pm);
 			pm.worked(WORK_PREPARE);

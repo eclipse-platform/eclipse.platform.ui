@@ -5,9 +5,9 @@
 package org.eclipse.help.internal.search;
 
 import java.io.*;
+import java.net.*;
 import java.util.*;
 
-import org.apache.lucene.demo.html.*;
 import org.apache.lucene.document.*;
 import org.apache.lucene.index.*;
 import org.apache.lucene.search.*;
@@ -35,11 +35,7 @@ public class SearchIndex {
 	public static final String PREF_KEY_LOCALE_KEY_PREFIX = "charset_";
 	private File analyzerVersionFile;
 	private File inconsistencyFile;
-	// Character set name in which docs are encoded
-	// set based on map of locales to charsets
-	// null indicates default encoding
-	private String docCharSet;
-
+	private HTMLDocParser parser;
 	/**
 	 * Constructor.
 	 * @param locale the locale this index uses
@@ -49,7 +45,6 @@ public class SearchIndex {
 		super();
 		this.locale = locale;
 		analyzerDescriptor = analyzerDesc;
-		docCharSet = getCharset();
 		String helpStatePath =
 			HelpPlugin.getDefault().getStateLocation().toOSString();
 		String searchStatePath =
@@ -68,56 +63,43 @@ public class SearchIndex {
 					+ File.separator
 					+ INDEXED_DOCS_FILE,
 				HelpPlugin.getDefault());
+		parser = new HTMLDocParser();
 	}
 	/**
 	 * Indexes one document from a stream.
 	 * Index has to be open and close outside of this method
 	 * @param name the document identifier (could be a URL)
-	 * @param text the text of the document
+	 * @param url the URL of the document
 	 * @return true if success
 	 */
-	public boolean addDocument(String name, InputStream stream) {
+	public boolean addDocument(String name, URL url) {
 		try {
 			Document doc = new Document();
 			doc.add(Field.Keyword("name", name));
 
-			Reader reader = null;
-			if (docCharSet != null) {
-				try {
-					reader = new InputStreamReader(stream, docCharSet);
-				} catch (UnsupportedEncodingException uee) {
-					Logger.logError(
-						Resources.getString("ES25", docCharSet),
-						uee);
-					// use default encoding next time too
-					docCharSet = null;
-				}
-			}
-			if (reader == null) {
-				reader = new InputStreamReader(stream);
-			}
-
-			HTMLParser parser = new HTMLParser(reader);
-
-			ParsedDocument parsed = new ParsedDocument(parser.getReader());
-
-			doc.add(Field.Text("contents", parsed.newContentReader()));
-			doc.add(Field.Text("exact_contents", parsed.newContentReader()));
-			String title = "";
 			try {
-				title = parser.getTitle();
-			} catch (InterruptedException ie) {
+				parser.openDocument(url);
+				ParsedDocument parsed =
+					new ParsedDocument(parser.getContentReader());
+
+				doc.add(Field.Text("contents", parsed.newContentReader()));
+				doc.add(
+					Field.Text("exact_contents", parsed.newContentReader()));
+
+				String title = parser.getTitle();
+				doc.add(Field.UnStored("title", title));
+				doc.add(Field.UnStored("exact_title", title));
+				doc.add(Field.UnIndexed("raw_title", title));
+				// doc.add(Field.UnIndexed("summary", parser.getSummary()));
+				iw.addDocument(doc);
+			} finally {
+				parser.closeDocument();
 			}
-			doc.add(Field.UnStored("title", title));
-			doc.add(Field.UnStored("exact_title", title));
-			doc.add(Field.UnIndexed("raw_title", title));
-			// doc.add(Field.UnIndexed("summary", parser.getSummary()));
-			iw.addDocument(doc);
 			indexedDocs.put(name, "0");
 			return true;
 		} catch (IOException e) {
 			Logger.logError(
-				Resources.getString("ES16", indexDir.getAbsolutePath()),
+				Resources.getString("ES16", name, indexDir.getAbsolutePath()),
 				e);
 			return false;
 		}
