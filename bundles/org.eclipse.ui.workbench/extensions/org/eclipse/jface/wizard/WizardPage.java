@@ -178,8 +178,13 @@ public IWizardPage getPreviousPage() {
  * yet be created.
  */
 public Shell getShell() {
+	
+	IWizardContainer container = getContainer();
+	if(container == null)
+		return null;
+		
 	// Ask the wizard since our contents may not have been created.
-	return getContainer().getShell();
+	return container.getShell();
 }
 /* (non-Javadoc)
  * Method declared on IWizardPage.
