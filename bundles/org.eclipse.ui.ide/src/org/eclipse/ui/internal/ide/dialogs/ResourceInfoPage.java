@@ -687,9 +687,9 @@ public boolean performOk() {
 			(previousEncoding != null && newEncoding != null && !previousEncoding.equals(newEncoding))) {		
 			try {
 				if (resource instanceof IFile)
-					((IFile)resource).setCharset(newEncoding);
+					((IFile)resource).setCharset(newEncoding, null);
 				else if (resource instanceof IContainer)
-					((IContainer)resource).setDefaultCharset(newEncoding);
+					((IContainer)resource).setDefaultCharset(newEncoding, null);
 			} catch (CoreException e) {
 				ErrorDialog.openError(
 						getShell(), 

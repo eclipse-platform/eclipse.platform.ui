@@ -15,8 +15,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.Preferences;
-
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -30,7 +30,6 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
-
 import org.eclipse.ui.internal.dialogs.EditorsPreferencePage;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 
@@ -194,16 +193,17 @@ public class IDEEditorsPreferencePage extends EditorsPreferencePage {
 	 */
 	public boolean performOk() {
 		// set the workspace text file encoding
-		Preferences resourcePrefs = ResourcesPlugin.getPlugin().getPluginPreferences();
-		if (defaultEncodingButton.getSelection()) {
-			resourcePrefs.setToDefault(ResourcesPlugin.PREF_ENCODING);
+		String enc = defaultEncodingButton.getSelection() ? null : encodingCombo.getText();
+		try {
+			ResourcesPlugin.getWorkspace().getRoot().setDefaultCharset(enc, null);
+		} catch (CoreException exception) {
+			ErrorDialog.openError(
+					getShell(),
+					IDEWorkbenchMessages.getString("IDEEditorsPreferencePageEncodingError"),  //$NON-NLS-1$
+					exception.getMessage(),
+					exception.getStatus());
+				return false;
 		}
-		else {
-			String enc = encodingCombo.getText();
-			resourcePrefs.setValue(ResourcesPlugin.PREF_ENCODING, enc);
-		}
-		ResourcesPlugin.getPlugin().savePluginPreferences();
-
 		return super.performOk();
 	}
 }
