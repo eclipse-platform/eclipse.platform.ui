@@ -490,16 +490,16 @@
       </command>
       <handlerSubmission
             commandId="org.eclipse.ui.edit.copy"
-            handler="org.eclipse.ui.handlers.WidgetMethodHandler:copy" />
+            handler="org.eclipse.ui.internal.commands.ws.WidgetMethodHandler:copy" />
       <handlerSubmission
             commandId="org.eclipse.ui.edit.cut"
-            handler="org.eclipse.ui.handlers.WidgetMethodHandler:cut" />
+            handler="org.eclipse.ui.internal.commands.ws.WidgetMethodHandler:cut" />
       <handlerSubmission
             commandId="org.eclipse.ui.edit.paste"
-            handler="org.eclipse.ui.handlers.WidgetMethodHandler:paste" />
+            handler="org.eclipse.ui.internal.commands.ws.WidgetMethodHandler:paste" />
       <handlerSubmission
             commandId="org.eclipse.ui.edit.selectAll"
-            handler="org.eclipse.ui.handlers.WidgetMethodHandler:selectAll" />
+            handler="org.eclipse.ui.internal.commands.ws.WidgetMethodHandler:selectAll" />
       <keyBinding
             commandId="org.eclipse.ui.newWizard"
             keySequence="Ctrl+N"
