@@ -2190,7 +2190,7 @@ M4 = Platform-specific fourth key
 	  </propertyTester>      
       <propertyTester
             namespace="org.eclipse.debug.ui"
-            type="org.eclipse.ui.console.IOConsole"
+            type="org.eclipse.ui.console.IConsole"
             class="org.eclipse.debug.internal.ui.views.console.ProcessTypePropertyTester"
             properties="processTypeTest"
             id="org.eclipse.jdt.debug.ui.JavaConsolePropertyTester"/>

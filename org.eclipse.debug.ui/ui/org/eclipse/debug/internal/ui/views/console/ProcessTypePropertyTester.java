@@ -13,7 +13,7 @@ package org.eclipse.debug.internal.ui.views.console;
 import org.eclipse.core.expressions.PropertyTester;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.ui.console.IOConsole;
+import org.eclipse.ui.console.TextConsole;
 
 /**
  * Tests if a process type matches the expected value.
@@ -27,11 +27,13 @@ public class ProcessTypePropertyTester extends PropertyTester {
      */
     public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
         boolean testPassed = false;
-        IOConsole console = (IOConsole) receiver;
-        IProcess process = (IProcess) console.getAttribute(IDebugUIConstants.ATTR_CONSOLE_PROCESS);
-        if (process != null) {
-            String type = process.getAttribute(IProcess.ATTR_PROCESS_TYPE);
-            testPassed = (type != null && type.equals(expectedValue));
+        if (receiver instanceof TextConsole) {
+            TextConsole console = (TextConsole) receiver;
+            IProcess process = (IProcess) console.getAttribute(IDebugUIConstants.ATTR_CONSOLE_PROCESS);
+            if (process != null) {
+                String type = process.getAttribute(IProcess.ATTR_PROCESS_TYPE);
+                testPassed = (type != null && type.equals(expectedValue));
+            }
         }
         return testPassed;
     }
