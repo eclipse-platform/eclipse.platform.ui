@@ -14,6 +14,7 @@ import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.base.*;
+import org.eclipse.help.internal.search.IndexingOperation.*;
 
 /**
  * Manages indexing and search for all infosets
@@ -85,7 +86,7 @@ public class SearchManager {
 		throws QueryTooComplexException {
 		SearchIndex index = getIndex(searchQuery.getLocale());
 		try {
-			updateIndex(pm, index);
+			ensureIndexUpdated(pm, index);
 			if (!index.exists()) {
 				//no indexable documents, hence no index
 				//or index is corrupted
@@ -100,60 +101,75 @@ public class SearchManager {
 		}
 		index.search(searchQuery, collector);
 	}
-	/**
-	 * Returns true when the index in the specified locale
-	 * must be updated.
-	 */
-	private boolean isIndexingNeeded(SearchIndex index) {
-		if (!index.exists()) {
-			return true;
-		}
-		return index.getDocPlugins().detectChange();
-	}
+
 	/**
 	 * Updates index.  Checks if all contributions were indexed.
 	 * If not, it indexes them (Currently reindexes everything).
 	 * @throws OperationCanceledException if indexing was cancelled
 	 * @throws Exception if error occured
 	 */
-	public void updateIndex(IProgressMonitor pm, SearchIndex index)
+	public void ensureIndexUpdated(IProgressMonitor pm, SearchIndex index)
 		throws OperationCanceledException, IndexingOperation.IndexingException {
 		ProgressDistributor progressDistrib = getProgressDistributor(index);
 		progressDistrib.addMonitor(pm);
+		
 		try {
-			synchronized (this) {
-				if (!isIndexingNeeded(index)) {
-					pm.beginTask("", 1);
-					pm.worked(1);
-					pm.done();
-					progressDistrib.removeMonitor(pm);
-					return;
-				}
-				if (HelpBasePlugin.DEBUG_SEARCH) {
-					System.out.println(
-						"SearchManager indexing " + index.getLocale());
-				}
-				// Perform indexing
-				try {
-					PluginVersionInfo versions = index.getDocPlugins();
-					if (versions == null) {
-						pm.beginTask("", 1);
-						pm.worked(1);
-						pm.done();
-						progressDistrib.removeMonitor(pm);
-						return;
-					}
-					IndexingOperation indexer = new IndexingOperation(index);
-					indexer.execute(progressDistrib);
-				} catch (OperationCanceledException oce) {
-					progressDistrib.operationCanceled();
-					HelpBasePlugin.logWarning(
-						HelpBaseResources.getString("Search_cancelled"));
-					throw oce;
+			// Only one index update occurs in VM at a time,
+			// but progress SearchProgressMonitor for other locales
+			// are waiting until we know if indexing is needed
+			// to prevent showing progress on first search after launch
+			// if no indexing is needed
+			if (!index.needsUpdating()) {
+				pm.beginTask("", 1);
+				pm.worked(1);
+				pm.done();
+				return;
+			}else{
+				if(pm instanceof SearchProgressMonitor){
+					((SearchProgressMonitor)pm).started();
 				}
 			}
+			//
+			updateIndex(pm, index, progressDistrib);
 		} finally {
 			progressDistrib.removeMonitor(pm);
+		}
+	}
+	/**
+	 * @param pm
+	 * @param index
+	 * @param progressDistrib
+	 * @throws IndexingException
+	 */
+	private synchronized void updateIndex(IProgressMonitor pm, SearchIndex index, ProgressDistributor progressDistrib) throws IndexingException {
+		if (!index.needsUpdating()) {
+			pm.beginTask("", 1);
+			pm.worked(1);
+			pm.done();
+			progressDistrib.removeMonitor(pm);
+			return;
+		}
+		if (HelpBasePlugin.DEBUG_SEARCH) {
+			System.out.println("SearchManager indexing " + index.getLocale());
+		}
+		// Perform indexing
+		try {
+			PluginVersionInfo versions = index.getDocPlugins();
+			if (versions == null) {
+				pm.beginTask("", 1);
+				pm.worked(1);
+				pm.done();
+				progressDistrib.removeMonitor(pm);
+				return;
+			}
+			IndexingOperation indexer = new IndexingOperation(index);
+			indexer.execute(progressDistrib);
+			return;
+		} catch (OperationCanceledException oce) {
+			progressDistrib.operationCanceled();
+			HelpBasePlugin.logWarning(HelpBaseResources
+					.getString("Search_cancelled"));
+			throw oce;
 		}
 	}
 	/**

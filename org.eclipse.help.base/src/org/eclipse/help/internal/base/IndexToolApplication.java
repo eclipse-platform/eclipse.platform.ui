@@ -78,7 +78,7 @@ public class IndexToolApplication
 			delete(indexPath);
 		}
 		// index
-		BaseHelpSystem.getSearchManager().updateIndex(
+		BaseHelpSystem.getSearchManager().ensureIndexUpdated(
 			new NullProgressMonitor(),
 			BaseHelpSystem.getSearchManager().getIndex(locale.toString()));
 		// zip up

@@ -100,6 +100,14 @@ public class SearchProgressMonitor implements IProgressMonitor {
 	}
 
 	/**
+	 * Sets the isStarted.
+	 * @return Returns a boolean
+	 */
+	public void started() {
+		this.started = true;
+	}
+
+	/**
 	 * Gets the isStarted.
 	 * @return Returns a boolean
 	 */

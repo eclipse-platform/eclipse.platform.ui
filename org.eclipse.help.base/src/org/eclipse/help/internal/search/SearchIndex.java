@@ -124,7 +124,7 @@ public class SearchIndex {
 	 * Starts additions.
 	 * To be called before adding documents.
 	 */
-	public boolean beginAddBatch() {
+	public synchronized boolean beginAddBatch() {
 		try {
 			if (iw != null) {
 				iw.close();
@@ -159,7 +159,7 @@ public class SearchIndex {
 	 * Starts deletions.
 	 * To be called before deleting documents.
 	 */
-	public boolean beginDeleteBatch() {
+	public synchronized boolean beginDeleteBatch() {
 		try {
 			if (ir != null) {
 				ir.close();
@@ -205,7 +205,7 @@ public class SearchIndex {
 	 * Finish additions.
 	 * To be called after adding documents.
 	 */
-	public boolean endAddBatch() {
+	public synchronized boolean endAddBatch() {
 		try {
 			if (iw == null)
 				return false;
@@ -229,7 +229,7 @@ public class SearchIndex {
 	 * Finish deletions.
 	 * To be called after deleting documents.
 	 */
-	public boolean endDeleteBatch() {
+	public synchronized boolean endDeleteBatch() {
 		try {
 			if (ir == null)
 				return false;
@@ -496,4 +496,15 @@ public class SearchIndex {
 			}
 		}
 	}
+	/**
+	 * Returns true when the index
+	 * must be updated.
+	 */
+	public synchronized boolean needsUpdating() {
+		if (!exists()) {
+			return true;
+		}
+		return getDocPlugins().detectChange();
+	}
+
 }
