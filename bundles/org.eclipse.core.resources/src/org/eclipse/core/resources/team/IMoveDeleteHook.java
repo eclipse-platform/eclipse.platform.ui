@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.core.resources.team;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 
 /**
  * Primary interface for hooking the implementation of
@@ -80,6 +81,8 @@ public interface IMoveDeleteHook {
 	 * @return <code>false</code> if this method declined to assume 
 	 *   responsibility for this operation, and <code>true</code> if this method
 	 *   attempted to carry out the operation
+	 * @exception OperationCanceledException if the operation is canceled. 
+	 * Cancelation can occur even if no progress monitor is provided.
 	 * @see IResource#delete(int,IProgressMonitor)
 	 */
 	public boolean deleteFile(IResourceTree tree, IFile file, int updateFlags, IProgressMonitor monitor);
@@ -135,6 +138,8 @@ public interface IMoveDeleteHook {
 	 * @return <code>false</code> if this method declined to assume 
 	 *   responsibility for this operation, and <code>true</code> if this
 	 *   method attempted to carry out the operation
+	 * @exception OperationCanceledException if the operation is canceled. 
+	 * Cancelation can occur even if no progress monitor is provided.
 	 * @see IResource#delete(int,IProgressMonitor)
 	 */
 	public boolean deleteFolder(IResourceTree tree, IFolder folder, int updateFlags, IProgressMonitor monitor);
@@ -190,6 +195,8 @@ public interface IMoveDeleteHook {
 	 * @return <code>false</code> if this method declined to assume 
 	 *   responsibility for this operation, and <code>true</code> if this 
 	 *   method attempted to carry out the operation
+	 * @exception OperationCanceledException if the operation is canceled. 
+	 * Cancelation can occur even if no progress monitor is provided.
 	 * @see IResource#delete(int,IProgressMonitor)
 	 */
 	public boolean deleteProject(IResourceTree tree, IProject project, int updateFlags, IProgressMonitor monitor);
@@ -250,6 +257,8 @@ public interface IMoveDeleteHook {
 	 * @return <code>false</code> if this method declined to assume 
 	 *   responsibility for this operation, and <code>true</code> if this
 	 *   method attempted to carry out the operation
+	 * @exception OperationCanceledException if the operation is canceled. 
+	 * Cancelation can occur even if no progress monitor is provided.
 	 * @see IResource#move(org.eclipse.core.runtime.IPath,int,IProgressMonitor)
 	 */
 	public boolean moveFile(IResourceTree tree, IFile source, IFile destination, int updateFlags, IProgressMonitor monitor);
@@ -311,6 +320,8 @@ public interface IMoveDeleteHook {
 	 * @return <code>false</code> if this method declined to assume 
 	 *   responsibility for this operation, and <code>true</code> if this 
 	 *   method attempted to carry out the operation
+	 * @exception OperationCanceledException if the operation is canceled. 
+	 * Cancelation can occur even if no progress monitor is provided.
 	 * @see IResource#move(org.eclipse.core.runtime.IPath,int,IProgressMonitor)
 	 */
 	public boolean moveFolder(IResourceTree tree, IFolder source, IFolder destination, int updateFlags, IProgressMonitor monitor);
@@ -363,6 +374,8 @@ public interface IMoveDeleteHook {
 	 * @return <code>false</code> if this method declined to assume 
 	 *   responsibility for this operation, and <code>true</code> if this method
 	 *   attempted to carry out the operation
+	 * @exception OperationCanceledException if the operation is canceled. 
+	 * Cancelation can occur even if no progress monitor is provided.
 	 * @see IResource#move(org.eclipse.core.runtime.IPath,int,IProgressMonitor)
 	 * @see IResource#move(IProjectDescription,int,IProgressMonitor)
 	 */
