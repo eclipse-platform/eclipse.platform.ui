@@ -224,7 +224,9 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 		// and the preferences are set to switch
 		for (int i = 0; i < events.length; i++) {
 			DebugEvent event = events[i];
-			if (event.getKind() == DebugEvent.SUSPEND && event.getDetail() == DebugEvent.BREAKPOINT) {
+			if (event.getKind() == DebugEvent.SUSPEND && !event.isEvaluation() &&
+			        event.getDetail() != DebugEvent.STEP_END) {
+			    // Don't switch perspective for evaluations or stepping
 				handleBreakpointHit(event);
 			}
 		}
