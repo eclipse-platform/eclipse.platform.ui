@@ -1,4 +1,4 @@
-package org.eclipse.team.ui.actions;
+package org.eclipse.team.internal.ui.actions;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
@@ -22,9 +22,9 @@ import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 /**
- * Action for checking in the selected resources
+ * Action for undoing a previous checkout operation.
  */
-public class CheckInAction extends TeamAction {
+public class UndoCheckOutAction extends TeamAction {
 	/*
 	 * Method declared on IActionDelegate.
 	 */
@@ -35,14 +35,14 @@ public class CheckInAction extends TeamAction {
 					Hashtable table = getProviderMapping();
 					Set keySet = table.keySet();
 					monitor.beginTask("", keySet.size() * 1000); //$NON-NLS-1$
-					monitor.setTaskName(Policy.bind("CheckInAction.checkingIn")); //$NON-NLS-1$
+					monitor.setTaskName(Policy.bind("UndoCheckOutAction.undoing")); //$NON-NLS-1$
 					Iterator iterator = keySet.iterator();
 					while (iterator.hasNext()) {
 						IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1000);
 						RepositoryProvider provider = (RepositoryProvider)iterator.next();
 						List list = (List)table.get(provider);
 						IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
-						provider.getSimpleAccess().checkin(providerResources, IResource.DEPTH_INFINITE, subMonitor);
+						provider.getSimpleAccess().uncheckout(providerResources, IResource.DEPTH_ZERO, subMonitor);
 					}
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);
@@ -50,12 +50,12 @@ public class CheckInAction extends TeamAction {
 					monitor.done();
 				}
 			}
-		}, Policy.bind("CheckInAction.checkin"), this.PROGRESS_DIALOG); //$NON-NLS-1$
-	}
+		}, Policy.bind("UndoCheckOutAction.undoCheckout"), this.PROGRESS_BUSYCURSOR); //$NON-NLS-1$
+	}	
 	/**
 	 * @see TeamAction#isEnabled()
 	 */
-	protected boolean isEnabled() {
+	protected boolean isEnabled() throws TeamException {
 		IResource[] resources = getSelectedResources();
 		if (resources.length == 0) return false;
 		for (int i = 0; i < resources.length; i++) {
@@ -63,6 +63,7 @@ public class CheckInAction extends TeamAction {
 			RepositoryProvider provider = RepositoryProvider.getProvider(resource.getProject());
 			SimpleAccessOperations ops = provider.getSimpleAccess();
 			if (provider == null || ops == null) return false;
+			if (!ops.hasRemote(resource)) return false;
 			if (!ops.isCheckedOut(resource)) return false;
 		}
 		return true;

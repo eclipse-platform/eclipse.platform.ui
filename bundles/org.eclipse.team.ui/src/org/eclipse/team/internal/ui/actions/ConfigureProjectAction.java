@@ -1,4 +1,4 @@
-package org.eclipse.team.ui.actions;
+package org.eclipse.team.internal.ui.actions;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.

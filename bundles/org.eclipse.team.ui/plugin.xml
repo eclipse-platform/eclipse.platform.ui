@@ -69,7 +69,7 @@
 			tooltip="%ConfigureProject.tooltip"
 			menubarPath="team.main/projectGroup"
 			enablesFor="1"
-			class="org.eclipse.team.ui.actions.ConfigureProjectAction">
+			class="org.eclipse.team.internal.ui.actions.ConfigureProjectAction">
 		</action>
 	</objectContribution>	
 </extension>
