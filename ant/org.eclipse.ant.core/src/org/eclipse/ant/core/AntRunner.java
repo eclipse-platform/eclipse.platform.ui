@@ -471,7 +471,8 @@ public class AntRunner implements IPlatformRunnable {
 		} finally {
 			Thread.currentThread().setContextClassLoader(originalClassLoader);
 		}
-		return null;
+
+		return EXIT_OK;
 	}
 	
 	private ClassLoader getClassLoader() {
