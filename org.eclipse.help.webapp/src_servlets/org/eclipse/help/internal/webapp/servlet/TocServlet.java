@@ -21,7 +21,6 @@ import org.eclipse.help.internal.toc.*;
  * </ul>
  */
 public class TocServlet extends HttpServlet {
-	public final static String TOC = "toc";
 	private String locale;
 
 	/**
