@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import org.eclipse.help.IHelpResource;
 import org.eclipse.help.internal.search.federated.ISearchEngineResult;
 import org.eclipse.help.ui.internal.*;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
@@ -92,6 +93,7 @@ public class EngineResultSection {
 		searchResults.setImage(topicKey, HelpUIResources.getImage(topicKey));
 		searchResults.setImage(nwKey, HelpUIResources.getImage(nwKey));
 		searchResults.setImage(searchKey, HelpUIResources.getImage(searchKey));
+		searchResults.setColor("summary", parent.getDisplay().getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW));
 		searchResults.setImage(ISharedImages.IMG_TOOL_FORWARD, PlatformUI
 				.getWorkbench().getSharedImages().getImage(
 						ISharedImages.IMG_TOOL_FORWARD));
@@ -210,7 +212,9 @@ public class EngineResultSection {
 				String summary = getSummary(hit);
 				if (summary!=null) {
 					buff.append("<br/>");
+					buff.append("<span color=\"summary\">");
 					buff.append(summary);
+					buff.append("</span>");
 					buff.append("...");
 				}
 			}
@@ -309,10 +313,18 @@ public class EngineResultSection {
 			section.setText(HelpUIResources.getString(
 					"EngineResultSection.sectionTitle.hit", desc.getLabel(), ""
 							+ hits.size()));
-		else
+		else if (hits.size()<=HITS_PER_PAGE)
 			section.setText(HelpUIResources.getString(
 					"EngineResultSection.sectionTitle.hits", desc.getLabel(),
 					"" + hits.size()));
+		else {
+			int from = (resultOffset+1);
+			int to = (resultOffset+HITS_PER_PAGE);
+			to = Math.min(to, hits.size());
+			section.setText(HelpUIResources.getString(
+					"EngineResultSection.sectionTitle.hitsRange", desc.getLabel(),
+					""+from, ""+to, "" + hits.size()));
+		}
 	}
 
 	public void dispose() {

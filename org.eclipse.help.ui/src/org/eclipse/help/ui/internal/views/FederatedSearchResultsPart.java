@@ -88,7 +88,9 @@ public class FederatedSearchResultsPart extends AbstractFormPart implements IHel
 		};
 		showCategoriesAction.setImageDescriptor(HelpUIResources.getImageDescriptor(IHelpUIConstants.IMAGE_SHOW_CATEGORIES));
 		showCategoriesAction.setChecked(true);
-		tbm.add(showCategoriesAction);
+		showCategoriesAction.setToolTipText("Show result categories");
+		showCategoriesAction.setId("categories");
+		tbm.insertBefore("back", showCategoriesAction);
 		
 		showDescriptionAction = new Action() {
 			public void run() {
@@ -97,7 +99,8 @@ public class FederatedSearchResultsPart extends AbstractFormPart implements IHel
 		};
 		showDescriptionAction.setImageDescriptor(HelpUIResources.getImageDescriptor(IHelpUIConstants.IMAGE_SHOW_DESC));
 		showDescriptionAction.setChecked(false);
-		tbm.add(showDescriptionAction);
+		showDescriptionAction.setToolTipText("Show result descriptions");
+		tbm.insertAfter("categories", showDescriptionAction);
 	}
 
 	private void updateResultSections() {
@@ -187,10 +190,12 @@ public class FederatedSearchResultsPart extends AbstractFormPart implements IHel
 	}
 	
 	private void markThisState() {
+		/*
 		parent.addPageHistoryEntry(parent.getCurrentPageId(), 
 				new FederatedSearchResultData(phrase,
 						showDescriptionAction.isChecked(),
-						showCategoriesAction.isChecked()));		
+						showCategoriesAction.isChecked()));	
+						*/	
 	}
 	
 	private void asyncUpdateResults() {

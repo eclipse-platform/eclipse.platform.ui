@@ -366,6 +366,7 @@ public class ReusableHelpPart implements IHelpUIConstants {
 		backAction.setEnabled(false);
 		backAction.setText(HelpUIResources.getString("ReusableHelpPart.back.label")); //$NON-NLS-1$
 		backAction.setToolTipText(HelpUIResources.getString("ReusableHelpPart.back.tooltip")); //$NON-NLS-1$
+		backAction.setId("back");
 		
 		nextAction = new Action("next") { //$NON-NLS-1$
 			public void run() {
@@ -377,6 +378,7 @@ public class ReusableHelpPart implements IHelpUIConstants {
 		nextAction.setDisabledImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD_DISABLED));
 		nextAction.setEnabled(false);
 		nextAction.setToolTipText(HelpUIResources.getString("ReusableHelpPart.forward.tooltip")); //$NON-NLS-1$
+		nextAction.setId("next");
 		toolBarManager.add(backAction);
 		toolBarManager.add(nextAction);
 		
@@ -420,7 +422,7 @@ public class ReusableHelpPart implements IHelpUIConstants {
 			mform.setInput(entry.getData());
 		}
 		else if (entry.getType()==HistoryEntry.URL)
-			showURL(entry.getTarget());
+			showURL(entry.getTarget(), true);
 	}
 
 	public void createControl(Composite parent, FormToolkit toolkit) {

@@ -61,8 +61,13 @@ public class FederatedSearchPart extends AbstractFormPart implements IHelpPart,
 		layout.numColumns = 2;
 		container.setLayout(layout);
 		// Search Expression
-		Label expressionLabel = toolkit.createLabel(container, null, SWT.WRAP);
+		Hyperlink expressionLabel = toolkit.createHyperlink(container, null, SWT.WRAP);
 		expressionLabel.setText(HelpUIResources.getString("expression")); //$NON-NLS-1$
+		expressionLabel.addHyperlinkListener(new HyperlinkAdapter() {
+			public void linkActivated(HyperlinkEvent e) {
+				FederatedSearchPart.this.parent.showURL("/org.eclipse.platform.doc.user/tasks/tsearch.htm", true);
+			}
+		});
 		TableWrapData td = new TableWrapData();
 		td.colspan = 2;
 		expressionLabel.setLayoutData(td);
@@ -112,16 +117,16 @@ public class FederatedSearchPart extends AbstractFormPart implements IHelpPart,
 				}
 			}
 		});
-		// Space
-		// toolkit.createLabel(control, null);
 		// Syntax description
+		/*
 		Label label = toolkit.createLabel(container, null, SWT.WRAP);
 		label.setText(HelpUIResources
 				.getString("expression_label").replace('\n', ' ')); //$NON-NLS-1$
 		td = new TableWrapData(TableWrapData.FILL);
 		label.setLayoutData(td);
+		*/
 
-		toolkit.createLabel(container, null);
+		//toolkit.createLabel(container, null);
 
 		// space
 		// label = toolkit.createLabel(container, null);
