@@ -511,6 +511,13 @@ public class CheatSheetView extends ViewPart {
 				hideFields.setChecked(true);
 			}
 			currentItem.setAsCurrentActiveItem();
+			
+			// If the last item is the current one and it is complete then
+			// we should collapse the last item and set the focus on intro 
+			if(viewItemList.size()-1 == itemNum && currentItem.isCompleted()) {
+				currentItem.setCollapsed();
+				getViewItemArray()[0].getMainItemComposite().setFocus();
+			}
 			/* LP-item event */
 //			fireManagerItemEvent(ICheatSheetItemEvent.ITEM_ACTIVATED, currentItem);
 		} else {
@@ -803,7 +810,7 @@ public class CheatSheetView extends ViewPart {
 
 		parent.layout(true);
 
-		if (currentItem != null)
+		if (currentItem != null && !currentItem.isCompleted())
 			currentItem.getMainItemComposite().setFocus();
 	}
 	
