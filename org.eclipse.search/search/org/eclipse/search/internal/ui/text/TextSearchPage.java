@@ -256,7 +256,6 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	}
 
 	private boolean performNewSearch(boolean forground) {
-		org.eclipse.search.ui.NewSearchUI.activateSearchResultView();
 		
 		SearchPatternData patternData= getPatternData();
 		if (patternData.fileNamePatterns == null || fExtensions.getText().length() <= 0) {
@@ -281,6 +280,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 				String desc= SearchMessages.getFormattedString("WorkingSetScope", ScopePart.toString(workingSets)); //$NON-NLS-1$
 				scope= new TextSearchScope(desc, workingSets);
 		}		
+		org.eclipse.search.ui.NewSearchUI.activateSearchResultView();
 		scope.addExtensions(patternData.fileNamePatterns);
 	
 		FileSearchQuery wsJob= new FileSearchQuery(scope, getSearchOptions(), patternData.textPattern);
