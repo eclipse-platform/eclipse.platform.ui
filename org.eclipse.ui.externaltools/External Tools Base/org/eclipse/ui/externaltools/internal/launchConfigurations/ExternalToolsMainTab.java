@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,10 +68,12 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 	protected class WidgetListener extends SelectionAdapter implements ModifyListener {
 		public void modifyText(ModifyEvent e) {
 			if (!fInitializing) {
+				setDirty(true);
 				updateLaunchConfigurationDialog();
 			}
 		}
 		public void widgetSelected(SelectionEvent e) {
+			setDirty(true);
 			Object source= e.getSource();
 			if (source == variableButton) {
 				StringVariableSelectionDialog dialog= new StringVariableSelectionDialog(getShell());
@@ -269,6 +271,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		updateWorkingDirectory(configuration);
 		updateArgument(configuration);
 		fInitializing= false;
+		setDirty(false);
 	}
 	
 	protected void updateWorkingDirectory(ILaunchConfiguration configuration) {
@@ -340,7 +343,14 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 	public boolean isValid(ILaunchConfiguration launchConfig) {
 		setErrorMessage(null);
 		setMessage(null);
-		return validateLocation() && validateWorkDirectory();
+		return canSave();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#canSave()
+	 */
+	public boolean canSave() {
+		return validateLocation() && validateWorkDirectory() && isDirty();
 	}
 	
 	/**
@@ -348,7 +358,8 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 	 */
 	protected boolean validateLocation() {
 		String value = locationField.getText().trim();
-		if (value.length() < 1) {
+		
+		if (value.length() < 1 && isDirty()) {
 			setErrorMessage(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.External_tool_location_cannot_be_empty_18")); //$NON-NLS-1$
 			setMessage(null);
 			return false;
@@ -364,16 +375,18 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		
 		
 		File file = new File(location);
-		if (!file.exists()) { // The file does not exist.
+		if (!file.exists() && isDirty()) { // The file does not exist.
 			setErrorMessage(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.External_tool_location_does_not_exist_19")); //$NON-NLS-1$
 			return false;
 		}
-		if (!file.isFile()) {
+		if (!file.isFile() && isDirty()) {
 			setErrorMessage(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.External_tool_location_specified_is_not_a_file_20")); //$NON-NLS-1$
 			return false;
 		}
 		return true;
 	}
+	
+	
 	
 	/**
 	 * Returns the value of the given string with all variables substituted (if any).
