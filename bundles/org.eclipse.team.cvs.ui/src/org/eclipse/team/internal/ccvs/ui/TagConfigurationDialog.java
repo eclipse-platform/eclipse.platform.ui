@@ -327,6 +327,8 @@ public class TagConfigurationDialog extends Dialog {
 		addSelectedTagsButton.addListener(SWT.Selection, new Listener() {
 				public void handleEvent(Event event) {
 					rememberCheckedTags();
+					updateShownTags();
+					updateEnablements();
 				}
 			});			
 			
@@ -338,6 +340,8 @@ public class TagConfigurationDialog extends Dialog {
 		removeTagButton.addListener(SWT.Selection, new Listener() {
 				public void handleEvent(Event event) {
 					deleteSelected();
+					updateShownTags();
+					updateEnablements();
 				}
 			});
 			
@@ -349,6 +353,8 @@ public class TagConfigurationDialog extends Dialog {
 		removeAllTags.addListener(SWT.Selection, new Listener() {
 				public void handleEvent(Event event) {
 					removeAllKnownTags();
+					updateShownTags();
+					updateEnablements();
 				}
 			});
 		
