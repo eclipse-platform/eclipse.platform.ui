@@ -12,6 +12,9 @@
 
 package org.eclipse.jface.text.rules;
 
+import java.util.Arrays;
+import java.util.Comparator;
+
 import org.eclipse.jface.text.Assert;
 
 
@@ -28,6 +31,17 @@ import org.eclipse.jface.text.Assert;
  */
 public class PatternRule implements IPredicateRule {
 	
+	/**
+	 * Comparator that orders <code>char[]</code> in decreasing array lengths.
+	 * 
+	 * @since 3.1
+	 */
+	private static class DecreasingCharArrayLengthComparator implements Comparator {
+		public int compare(Object o1, Object o2) {
+			return ((char[]) o2).length - ((char[]) o1).length;
+		}
+	}
+
 	/** Internal setting for the uninitialized column constraint */
 	protected static final int UNDEFINED= -1;
 
@@ -50,6 +64,12 @@ public class PatternRule implements IPredicateRule {
 	protected boolean fBreaksOnEOL;
 	/** Indicates whether end of file terminates the pattern */
 	protected boolean fBreaksOnEOF;
+
+	/**
+	 * Line delimiter comparator, orders in decreasing delimiter lengths.
+	 * @since 3.1
+	 */
+	private Comparator fLineDelimiterComparator= new DecreasingCharArrayLengthComparator();
 
 	/**
 	 * Creates a rule for the given starting and ending sequence.
@@ -193,6 +213,7 @@ public class PatternRule implements IPredicateRule {
 	protected boolean endSequenceDetected(ICharacterScanner scanner) {
 		int c;
 		char[][] delimiters= scanner.getLegalLineDelimiters();
+		Arrays.sort(delimiters, fLineDelimiterComparator);
 		while ((c= scanner.read()) != ICharacterScanner.EOF) {
 			if (c == fEscapeCharacter) {
 				// Skip escaped character(s)
