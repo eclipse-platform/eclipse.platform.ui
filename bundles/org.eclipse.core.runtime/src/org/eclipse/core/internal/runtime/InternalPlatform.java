@@ -29,7 +29,8 @@ import org.osgi.util.tracker.ServiceTracker;
 public final class InternalPlatform implements IPlatform {
 	private BundleContext context;
 	private IExtensionRegistry registry;
-
+	private Plugin runtimeInstance; //Keep track of the plugin object for runtime in case the backward compatibility is run.
+	
 	// registry caching mode flags
 	public static boolean cacheRegistry = true;
 	public static boolean lazyRegistryCacheLoading = true;
@@ -1227,5 +1228,12 @@ public final class InternalPlatform implements IPlatform {
 	}
 	public String[] getApplicationArgs() {
 		return getEnvironmentInfoService().getApplicationArgs();
+	}
+	//Those two methods are only used to register runtime once compatibility has been started.
+	public void setRuntimeInstance(Plugin runtime) {
+		runtimeInstance = runtime;
+	}
+	public Plugin getRuntimeInstance() {
+		return runtimeInstance;
 	}
 }

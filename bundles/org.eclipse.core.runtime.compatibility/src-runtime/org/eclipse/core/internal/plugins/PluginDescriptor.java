@@ -459,13 +459,22 @@ public class PluginDescriptor implements IPluginDescriptor {
 			return;
 		boolean errorExit = true;			
 		//	check if already activated or pending		
-		if (pluginActivationEnter()) 
+		if (pluginActivationEnter()) { 
 			try {
 				internalDoPluginActivation();
 				errorExit = false;
 			} finally {
 				pluginActivationExit(errorExit);
-			}	
+			}
+		} else {
+			//Create a fake plugin object for all new bundles that do not use the Plugin class in their activator hierarchy
+			if (active && pluginObject == null) {
+				active = false;
+				pluginObject = new DefaultPlugin(this);
+				active = true;
+			}
+		}
+		
 }
 
 	private String getPluginClass() {
@@ -531,5 +540,9 @@ public class PluginDescriptor implements IPluginDescriptor {
 	
 	public void setPlugin(Plugin object) { 
 		pluginObject = object;
+	}
+	
+	public synchronized void setActive() {
+		this.active = true;
 	}
 }

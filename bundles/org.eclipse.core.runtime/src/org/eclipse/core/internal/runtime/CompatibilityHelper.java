@@ -44,5 +44,19 @@ public class CompatibilityHelper {
 			//Ignore the exceptions, return false
 		}
 		return null;
-	}	
+	}
+	
+	public static void setActive(IPluginDescriptor descriptor) {
+		Bundle compatibility = org.eclipse.core.internal.runtime.InternalPlatform.getDefault().getBundle(IPlatform.PI_RUNTIME_COMPATIBILITY);
+		if (compatibility == null)
+			return;
+
+		Class oldInternalPlatform = null;
+		try {
+			Method setPlugin = descriptor.getClass().getMethod("setActive", null); //$NON-NLS-1$
+			setPlugin.invoke(descriptor, null);
+		} catch (Exception e) {
+			//Ignore the exceptions, return false
+		}
+	}
 }

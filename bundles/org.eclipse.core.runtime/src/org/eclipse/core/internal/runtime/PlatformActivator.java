@@ -26,8 +26,7 @@ import org.osgi.service.url.URLStreamHandlerService;
 /**
  * Activator for the Eclipse runtime.
  */
-public class PlatformActivator implements BundleActivator, ServiceListener {
-
+public class PlatformActivator extends Plugin implements BundleActivator, ServiceListener {
 	private static BundleContext context;
 	private EclipseBundleListener pluginBundleListener;
 	private ExtensionRegistry registry;
@@ -45,6 +44,8 @@ public class PlatformActivator implements BundleActivator, ServiceListener {
 		tryToAcquireInfoService();
 		installPlatformURLSupport();
 		registerApplicationService();
+		InternalPlatform.getDefault().setRuntimeInstance(this);
+		super.start(context);
 	}
 
 	private void installBackwardCompatibleURLSupport() {
@@ -134,6 +135,7 @@ public class PlatformActivator implements BundleActivator, ServiceListener {
 		environmentInfoServiceReleased(environmentServiceReference);
 		// Stop the platform orderly.		
 		InternalPlatform.getDefault().stop(context);
+		InternalPlatform.getDefault().setRuntimeInstance(null);
 	}
 
 	private void stopRegistry(BundleContext context) {

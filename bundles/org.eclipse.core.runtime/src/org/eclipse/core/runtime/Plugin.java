@@ -16,9 +16,7 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.*;
 import org.eclipse.core.internal.runtime.*;
-import org.eclipse.osgi.service.environment.EnvironmentInfo;
 import org.osgi.framework.*;
-import org.osgi.util.tracker.ServiceTracker;
 
 /**
  * The abstract superclass of all plug-in runtime class
@@ -817,9 +815,12 @@ public abstract class Plugin implements BundleActivator {
 	 * @exception BundleException if this plug-in did not start up properly
 	 * @since 3.0
 	 */
-	public void start(BundleContext context) throws BundleException{
+	public void start(BundleContext context) throws Exception{
 		this.context = context;
 		bundle = context.getBundle();
+		descriptor = CompatibilityHelper.getPluginDescriptor(bundle.getGlobalName());
+		CompatibilityHelper.setPlugin(descriptor, this);
+		CompatibilityHelper.setActive(descriptor);
 	}
 
 	/**
@@ -853,7 +854,7 @@ public abstract class Plugin implements BundleActivator {
 	 *   this plug-in
 	 * @since 3.0
 	 */
-	public void stop(BundleContext context) throws BundleException {
+	public void stop(BundleContext context) throws Exception {
 		context = null;
 		bundle = null;
 	}
