@@ -13,9 +13,14 @@ package org.eclipse.core.filebuffers;
 import org.eclipse.jface.text.IDocument;
 
 /**
- * Participates in the setup of a text file buffer document.
+ * Participates in the setup of a text file buffer document. Participants have
+ * to be aware of the existence of other participants. I.e. should always setup
+ * a document in a way that does not interfere with others. E.g., when a
+ * participant wants to install partitioning on the document, it should use the
+ * <code>IDocumentExtension3</code> API and choose a unique partitioning id.
  * 
  * @since 3.0
+ * @see org.eclipse.jface.text.IDocumentExtension3
  */
 public interface IDocumentSetupParticipant {
 	
