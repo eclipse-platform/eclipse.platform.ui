@@ -1,9 +1,15 @@
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+	IBM - Initial implementation
+************************************************************************/
 package org.eclipse.ui.internal;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 import java.io.*;
 import java.net.URL;
 import java.util.*;
@@ -95,7 +101,7 @@ public class AboutInfo extends NewConfigurationInfo {
 			IPluginDescriptor desc = getDescriptor();
 			if(desc == null)
 				return null;
-			url = desc.find(new Path("$nl$").append(featureImageName));
+			url = desc.find(new Path("$nl$").append(featureImageName)); //$NON-NLS-1$
 		}
 		if (url == null)
 			return null;
@@ -317,6 +323,20 @@ public class AboutInfo extends NewConfigurationInfo {
 
 		aboutText = (String) ini.get("aboutText"); //$NON-NLS-1$
 		aboutText = getResourceString(aboutText, bundle, mappingsArray);
+		
+		// Substitute $featureVersion if applicable
+		int i = aboutText.indexOf("$featureVersion"); //$NON-NLS-1$
+		if (i != -1) {
+			String s1 = aboutText.substring(0,i);
+			String s2 = aboutText.substring(i+15, aboutText.length());
+			String s3 = getVersion();
+			if (s3 == null) {
+				s1 = s1.concat(WorkbenchMessages.getString("AboutDialog.notSpecified")); //$NON-NLS-1$
+			} else {
+				s1 = s1.concat(s3);
+			}
+			aboutText = s1.concat(s2);
+		}
 
 		aboutImage = getImage(ini, "aboutImage"); //$NON-NLS-1$
 

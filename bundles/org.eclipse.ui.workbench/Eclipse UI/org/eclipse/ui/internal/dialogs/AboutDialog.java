@@ -1,9 +1,15 @@
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+	IBM - Initial implementation
+************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 import java.util.ArrayList;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -99,9 +105,9 @@ protected void configureShell(Shell newShell) {
 protected void createButtonsForButtonBar(Composite parent) {
 	parent.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	
-	createButton(parent, FEATURES_ID, WorkbenchMessages.getString("AboutDialog.featureInfo"), false);
-	createButton(parent, PLUGINS_ID, WorkbenchMessages.getString("AboutDialog.pluginInfo"), false);
-	createButton(parent, INFO_ID, WorkbenchMessages.getString("AboutDialog.systemInfo"), false);
+	createButton(parent, FEATURES_ID, WorkbenchMessages.getString("AboutDialog.featureInfo"), false); //$NON-NLS-1$
+	createButton(parent, PLUGINS_ID, WorkbenchMessages.getString("AboutDialog.pluginInfo"), false); //$NON-NLS-1$
+	createButton(parent, INFO_ID, WorkbenchMessages.getString("AboutDialog.systemInfo"), false); //$NON-NLS-1$
 
 	Label l = new Label(parent, SWT.NONE);
 	l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
