@@ -32,7 +32,7 @@ public interface IContextComputer {
  */
 public Object[] computeContexts(HelpEvent event);
 /**
- * Returns the local contexts for this context computer
+ * Returns the local contexts for this context computer.
  * <p>
  * Typically this method is called by other instances of
  * <code>IContextComputer</code> in their <code>computeContexts</code>
