@@ -614,7 +614,8 @@ public abstract class Feature implements IFeature {
 			throw new CoreException(status);
 		} finally {
 			// clean up TEMP drive
-			UpdateManagerUtils.removeFromFileSystem(new File(tempSite.getURL().getPath()));
+			String path = UpdateManagerUtils.getPath(tempSite.getURL());
+			UpdateManagerUtils.removeFromFileSystem(new File(path));
 		}
 	}
 
@@ -861,11 +862,11 @@ public abstract class Feature implements IFeature {
 	}
 
 	/**
-	 * @see IFeature#getContentReferences()
+	 * @see IFeature#getArchives()
 	 * Private implementation of the feature. return the list of ID.
 	 * Call the site with the ID to get the URL of the contentReference of the Site
 	 */
-	public abstract String[] getContentReferences();
+	public abstract String[] getArchives();
 
 	/**
 	 * return the list of FILE to be transfered for a Plugin

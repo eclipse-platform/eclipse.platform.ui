@@ -56,7 +56,7 @@ public class InternalSiteManager {
 			try {
 			URL installURL = UpdateManagerPlugin.getPlugin().getDescriptor().getInstallURL();
 			URL resolvedURL = Platform.resolve(installURL);
-			String externalForm = resolvedURL.getPath();
+			String externalForm = UpdateManagerUtils.getPath(resolvedURL);						
 			
 			// teh result is <path>/<plugin path>/<aplugin>/
 			// transform in <apth>/ <plugin Path>/
@@ -66,7 +66,7 @@ public class InternalSiteManager {
 				 index = externalForm.lastIndexOf("/")+1;
 			}
 			URL newURL = null;
-			newURL = new URL(resolvedURL.getProtocol(), resolvedURL.getHost(),resolvedURL.getPath().substring(0,index));
+			newURL = new URL(resolvedURL.getProtocol(), resolvedURL.getHost(),externalForm.substring(0,index));
 			localSite = new SiteLocal(newURL);
 			} catch (Exception e){
 				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();

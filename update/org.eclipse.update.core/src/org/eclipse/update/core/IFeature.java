@@ -28,13 +28,15 @@ public interface IFeature extends IPluginContainer {
 
 	/**
 	 * Returns the Identifier of this Feature.
+	 * The Identifier is not intended to be the key of the Feature.
+	 * the URL is the key of the feature.
 	 * @return the Identifier of this feature.
 	 * @see VersionedIdentifier
 	 */
 	VersionedIdentifier getIdentifier();
 	
 	/**
-	 * Returns the Site of this Feature.
+	 * Returns the Site this Featur belongs to.
 	 * @return the site of this feature
 	 */
 	ISite getSite();
@@ -52,6 +54,8 @@ public interface IFeature extends IPluginContainer {
 	 * within the site.
 	 * 
 	 * The URL is declared in the <code>feature.xml</code> file.	
+	 * The URL can be relative to the <codesite.xml</code> or absolute.
+	 * The Feature knows how to decipher the URL.
 	 * 
 	 * @return the URL identifying feature in the Site.
 	 */
@@ -211,7 +215,7 @@ public interface IFeature extends IPluginContainer {
 	
 	/**
 	 * Returns <code> true </code> if the feature can
-	 * be added to the plugin-path of the workspace.
+	 * be installed.
 	 */
 	// FIXME: javadoc
 	boolean isInstallable();
@@ -223,7 +227,7 @@ public interface IFeature extends IPluginContainer {
 	 * @return 
 	 */
 	// FIXME: javadoc	
-	String[] getContentReferences();
+	String[] getArchives();
 	
 }
 

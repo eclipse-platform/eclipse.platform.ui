@@ -37,7 +37,8 @@ public class SiteFile extends SiteURL {
 	 */
 	public void store(IPluginEntry pluginEntry,String contentKey,InputStream inStream) throws CoreException {
 
-   		String pluginPath =	getURL().getPath() + DEFAULT_PLUGIN_PATH + pluginEntry.getIdentifier().toString();
+		String path = UpdateManagerUtils.getPath(getURL());			
+   		String pluginPath =	path + DEFAULT_PLUGIN_PATH + pluginEntry.getIdentifier().toString();
    		pluginPath += pluginPath.endsWith(File.separator)?contentKey:File.separator+contentKey;
 		try {
 			UpdateManagerUtils.copyToLocal(inStream, pluginPath);
@@ -59,7 +60,8 @@ public class SiteFile extends SiteURL {
 	 */
 	public void storeFeatureInfo(	VersionedIdentifier featureIdentifier, String contentKey,InputStream inStream)  throws CoreException {
 
-		String featurePath = getURL().getPath() + INSTALL_FEATURE_PATH + featureIdentifier.toString();
+		String path = UpdateManagerUtils.getPath(getURL());			
+		String featurePath = path + INSTALL_FEATURE_PATH + featureIdentifier.toString();
    		featurePath += featurePath.endsWith(File.separator)?contentKey:File.separator+contentKey;			
 		try {
 			UpdateManagerUtils.copyToLocal(inStream, featurePath);

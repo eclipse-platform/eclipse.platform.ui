@@ -100,7 +100,7 @@ public class FeaturePackaged extends Feature {
 		try {
 			// check if the site.xml had a coded URL for this plugin or if we
 			// should look in teh default place to find it: <site>+/plugins/+archiveId
-			String filePath = ((Site) getSite()).getURL(getArchiveID(pluginEntry)).getPath();
+			String filePath = UpdateManagerUtils.getPath(((Site) getSite()).getURL(getArchiveID(pluginEntry)));						
 			open(filePath);
 			if (!(new File(filePath)).exists())
 				throw new IOException("The File:" + filePath + "does not exist.");
@@ -118,13 +118,12 @@ public class FeaturePackaged extends Feature {
 	 * @see AbstractFeature#getStorageUnitNames(IPluginEntry)
 	 */
 	public String[] getStorageUnitNames(IPluginEntry pluginEntry) throws CoreException {
-		URL siteURL = getSite().getURL();
-		JarFile jarFile = null;
-		String[] result = null;
+
 		// try to obtain the URL of the JAR file that contains the plugin entry from teh site.xml
 		// if it doesn't exist, use the default one
 		URL jarURL = ((Site) getSite()).getURL(getArchiveID(pluginEntry));
-		result = getJAREntries(jarURL.getPath());
+		String path = UpdateManagerUtils.getPath(jarURL);					
+		String[] result = getJAREntries(path);
 
 		return result;
 	}
@@ -137,7 +136,8 @@ public class FeaturePackaged extends Feature {
 		// as we OWN the temp site
 
 		try {
-			URL resolvedURL = UpdateManagerUtils.resolveAsLocal(getURL(), getURL().getPath());
+			String path = UpdateManagerUtils.getPath(getURL());			
+			URL resolvedURL = UpdateManagerUtils.resolveAsLocal(getURL(),path);
 			this.setURL(resolvedURL);
 
 			// DEBUG:
@@ -161,7 +161,7 @@ public class FeaturePackaged extends Feature {
 	/**
 	 * @see AbstractFeature#getContentReferences()
 	 */
-	public String[] getContentReferences() {
+	public String[] getArchives() {
 		String[] names = new String[getPluginEntryCount()];
 		IPluginEntry[] entries = getPluginEntries();
 		for (int i = 0; i < getPluginEntryCount(); i++) {
@@ -189,7 +189,7 @@ public class FeaturePackaged extends Feature {
 
 			// teh feature must have a URL as 
 			//it has been transfered locally
-			String filePath = getURL().getPath();
+			String filePath = UpdateManagerUtils.getPath(getURL());						
 			if (!(new File(filePath)).exists())
 				throw new IOException("The File:" + filePath + "does not exist.");
 			open(filePath);
@@ -206,25 +206,15 @@ public class FeaturePackaged extends Feature {
 	 * @see AbstractFeature#getStorageUnitNames()
 	 */
 	protected String[] getStorageUnitNames() throws CoreException {
-		URL siteURL = getSite().getURL();
-		JarFile jarFile = null;
-		String[] result = null;
 
-		//FIXME: delete obsolete try/catch block
-		//try {
 		// make sure the feature archive has been transfered locally
 		transferLocally();
 
 		// get the URL of the feature JAR file 
 		// must exist as we tranfered it locally
-		URL jarURL = getURL();
-		result = getJAREntries(jarURL.getPath());
+		String path = UpdateManagerUtils.getPath(getURL());					
+		String[] result = getJAREntries(path);
 
-		/*		} catch (MalformedURLException e) {
-					String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-					IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Error during Install", e);
-					throw new CoreException(status);
-				}*/
 		return result;
 	}
 

@@ -17,7 +17,8 @@ public class UpdateManagerUtils {
 	/**
 	 * return the urlString if it is a absolute URL
 	 * otherwise, return the default URL if the urlString is null
-	 * if teh urlString or the defautl URL are relatives, prepend the rootURL to it
+	 * The defaultURL may point ot a file, create a file URL then
+	 * if teh urlString or the default URL are relatives, prepend the rootURL to it
 	 */
 	public static URL getURL(URL rootURL, String urlString, String defaultURL) throws MalformedURLException {
 		URL url = null;
@@ -40,7 +41,9 @@ public class UpdateManagerUtils {
 		} catch (MalformedURLException e) {
 			// the url is not an absolute URL
 			// try relative
-			url = new URL(rootURL.getProtocol(), rootURL.getHost(), rootURL.getPath() + (rootURL.getPath().endsWith("/") ? "" : "/") + urlString);
+			String path = UpdateManagerUtils.getPath(rootURL);
+//			path = path + (path.endsWith("/")?"":"/");			
+			url = new URL(rootURL.getProtocol(), rootURL.getHost(), path + urlString);
 		}
 		return url;
 	}
@@ -78,7 +81,7 @@ public class UpdateManagerUtils {
 			if (sourceContentReferenceStream != null) {
 
 				Site tempSite = (Site) SiteManager.getTempSite();
-				String newFile = tempSite.getURL().getPath();
+				String newFile = UpdateManagerUtils.getPath(tempSite.getURL());							
 				if (localName == null || localName.trim().equals("")) {
 					newFile = newFile + getLocalRandomIdentifier("");
 				} else {
@@ -191,5 +194,26 @@ public class UpdateManagerUtils {
 			UpdateManagerPlugin.getPlugin().getLog().log(status);
 		}
 	}
+	
+	/**
+	 * Method to return the PATH of the URL.
+	 * The path is the file of a URL before any <code>#</code> or <code>?</code>
+	 * This code removes the fragment or the query of the URL file
+	 * A URL is of teh form: <code>protocol://host/path#ref</code> or <code> protocol://host/path?query</code>
+	 * 
+	 * @return the path of the URL
+	 */
+	public static String getPath(URL url){
+		String result = null;
+		if (url!=null){
+			String file = url.getFile();
+			int index;
+			if ((index = (file.indexOf("#")))!=-1) file = file.substring(0,index);
+			if ((index = (file.indexOf("?")))!=-1) file = file.substring(0,index);
+			result = file;
+		}
+		return result;
+	}
+	
 
 }

@@ -105,7 +105,7 @@ public class FeatureExecutable extends Feature {
 				
  		// get the URL of the Archive file that contains the plugin entry
 		URL fileURL = ((Site) getSite()).getURL(getArchiveID(pluginEntry));
-		result = fileURL.getPath();
+		result = UpdateManagerUtils.getPath(fileURL);		
 
 		// return the list of all subdirectories
 		if (!result.endsWith(File.separator)) result += File.separator;		
@@ -120,18 +120,7 @@ public class FeatureExecutable extends Feature {
 	 * return the path for the Feature
 	 */
 	private String getFeaturePath() throws IOException {
-		URL fileURL = getURL();
-		String result = null;
-
-		result = fileURL.getPath();		
-		// if the feature doesn't have a URL, use the default
-/*		if (fileURL != null) {
-			result = fileURL.getPath();
-		} else {
-			result = getSite().getURL().getPath()+ FileSite.INSTALL_FEATURE_PATH	+ getIdentifier().toString()	;
-		}
-*/
-//FIXME: delete obsolete code
+		String result = UpdateManagerUtils.getPath(getURL());;		
 
 		// return the list of all subdirectories
 		if (!result.endsWith(File.separator)) result += File.separator;		
@@ -143,9 +132,9 @@ public class FeatureExecutable extends Feature {
 	}
 
 	/**
-	 * @see AbstractFeature#getContentReferences()
+	 * @see AbstractFeature#getArchives()
 	 */
-	public String[] getContentReferences() {
+	public String[] getArchives() {
 		String[] names = new String[getPluginEntryCount()];
 		IPluginEntry[] entries = getPluginEntries();
 		for (int i = 0; i < getPluginEntryCount(); i++) {
@@ -168,8 +157,8 @@ public class FeatureExecutable extends Feature {
 	public URL getRootURL() throws MalformedURLException {
 		if (rootURL == null) {
 			rootURL = getURL();
-			if (!rootURL.getPath().endsWith("/")) {
-				rootURL = new URL(getURL().getProtocol(), getURL().getHost(), getURL().getPath() + "/");
+			if (!rootURL.getFile().endsWith("/")) {
+				rootURL = new URL(rootURL.getProtocol(), rootURL.getHost(), rootURL.getFile() + "/");
 			}
 		}
 		return rootURL;
