@@ -408,6 +408,13 @@ public interface IWorkbenchActionConstants {
 	public static final String GROUP_FILE = "group.file"; //$NON-NLS-1$
 
 	/**
+	 * Pop-up menu: name of group for Show In actions (value <code>"group.showIn"</code>).
+	 * 
+	 * @since 2.1
+	 */
+	public static final String GROUP_SHOW_IN = "group.showIn"; //$NON-NLS-1$
+
+	/**
 	 * Toolbar: name of group for editor action bars.
 	 */
 	public static final String GROUP_EDITOR = "group.editor"; //$NON-NLS-1$
