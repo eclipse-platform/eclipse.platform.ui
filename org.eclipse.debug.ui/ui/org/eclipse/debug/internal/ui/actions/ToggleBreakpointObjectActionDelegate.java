@@ -14,7 +14,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.debug.ui.actions.*;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.ui.actions.IToggleBreakpointsTarget;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -59,8 +60,7 @@ public abstract class ToggleBreakpointObjectActionDelegate implements IObjectAct
 			try {
 				performAction(target, part, selection);
 			} catch (CoreException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				DebugPlugin.log(e);
 			}
 		}
 	}
@@ -103,9 +103,8 @@ public abstract class ToggleBreakpointObjectActionDelegate implements IObjectAct
 	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
 	 */
 	public void init(IAction action) {
-		// TODO Auto-generated method stub
-		
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#dispose()
 	 */
