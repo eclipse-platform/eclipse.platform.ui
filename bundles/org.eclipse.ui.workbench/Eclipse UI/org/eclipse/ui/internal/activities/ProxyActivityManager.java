@@ -37,7 +37,8 @@ public final class ProxyActivityManager extends AbstractActivityManager {
 					new ActivityManagerEvent(
 						ProxyActivityManager.this,
 						activityManagerEvent.haveDefinedActivityIdsChanged(),
-						false, activityManagerEvent.haveEnabledActivityIdsChanged(), false);
+						activityManagerEvent.haveDefinedCategoryIdsChanged(), 
+						activityManagerEvent.haveEnabledActivityIdsChanged());
 				fireActivityManagerChanged(proxyActivityManagerEvent);
 			}
 		});
@@ -67,10 +68,6 @@ public final class ProxyActivityManager extends AbstractActivityManager {
 		return activityManager.getIdentifier(identifierId);
 	}
 	
-	public Set getMatchingActivityIds(String string, Set activityIds) {
-		return activityManager.getMatchingActivityIds(string, activityIds);
-	}
-
 	public boolean isMatch(String string, Set activityIds) {
 		return activityManager.isMatch(string, activityIds);
 	}

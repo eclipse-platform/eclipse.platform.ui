@@ -28,7 +28,6 @@ package org.eclipse.ui.activities;
  * @see IActivityListener#activityChanged
  */
 public final class ActivityEvent {
-
 	private IActivity activity;
 	private boolean activityActivityBindingsChanged;
 	private boolean activityPatternBindingsChanged;

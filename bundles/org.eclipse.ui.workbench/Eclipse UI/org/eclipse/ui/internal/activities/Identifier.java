@@ -26,6 +26,9 @@ final class Identifier implements IIdentifier {
 	private final static int HASH_INITIAL =
 		Identifier.class.getName().hashCode();
 	private final static Set strongReferences = new HashSet();
+
+	private Set activityIds;
+	private transient String[] activityIdsAsArray;
 	private boolean enabled;
 	private transient int hashCode;
 	private transient boolean hashCodeComputed;
@@ -55,10 +58,17 @@ final class Identifier implements IIdentifier {
 
 	public int compareTo(Object object) {
 		Identifier castedObject = (Identifier) object;
-		int compareTo = Util.compare(enabled, castedObject.enabled);
+		int compareTo =
+			Util.compare(
+				(Comparable[]) activityIdsAsArray,
+				(Comparable[]) castedObject.activityIdsAsArray);
 
-		if (compareTo == 0)
-			compareTo = Util.compare(id, castedObject.id);
+		if (compareTo == 0) {
+			compareTo = Util.compare(enabled, castedObject.enabled);
+
+			if (compareTo == 0)
+				compareTo = Util.compare(id, castedObject.id);
+		}
 
 		return compareTo;
 	}
@@ -69,6 +79,7 @@ final class Identifier implements IIdentifier {
 
 		Identifier castedObject = (Identifier) object;
 		boolean equals = true;
+		equals &= Util.equals(activityIds, castedObject.activityIds);
 		equals &= Util.equals(enabled, castedObject.enabled);
 		equals &= Util.equals(id, castedObject.id);
 		return equals;
@@ -86,6 +97,10 @@ final class Identifier implements IIdentifier {
 					identifierEvent);
 	}
 
+	public Set getActivityIds() {
+		return activityIds;
+	}
+
 	public String getId() {
 		return id;
 	}
@@ -93,6 +108,7 @@ final class Identifier implements IIdentifier {
 	public int hashCode() {
 		if (!hashCodeComputed) {
 			hashCode = HASH_INITIAL;
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(activityIds);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(enabled);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(id);
 			hashCodeComputed = true;
@@ -116,6 +132,23 @@ final class Identifier implements IIdentifier {
 			strongReferences.remove(this);
 	}
 
+	boolean setActivityIds(Set activityIds) {
+		activityIds = Util.safeCopy(activityIds, String.class);
+
+		if (!Util.equals(activityIds, this.activityIds)) {
+			this.activityIds = activityIds;
+			this.activityIdsAsArray =
+				(String[]) this.activityIds.toArray(
+					new String[this.activityIds.size()]);
+			hashCodeComputed = false;
+			hashCode = 0;
+			string = null;
+			return true;
+		}
+
+		return false;
+	}
+
 	boolean setEnabled(boolean enabled) {
 		if (enabled != this.enabled) {
 			this.enabled = enabled;
@@ -132,6 +165,8 @@ final class Identifier implements IIdentifier {
 		if (string == null) {
 			final StringBuffer stringBuffer = new StringBuffer();
 			stringBuffer.append('[');
+			stringBuffer.append(activityIds);
+			stringBuffer.append(',');
 			stringBuffer.append(enabled);
 			stringBuffer.append(',');
 			stringBuffer.append(id);

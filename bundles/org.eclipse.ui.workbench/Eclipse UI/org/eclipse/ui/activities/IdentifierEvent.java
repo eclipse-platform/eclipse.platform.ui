@@ -28,7 +28,8 @@ package org.eclipse.ui.activities;
  * @see IIdentifierListener#identifierChanged
  */
 public final class IdentifierEvent {
-	private boolean availableChanged;
+	private boolean activityIdsChanged;
+	private boolean enabledChanged;
 	private IIdentifier identifier;
 
 	/**
@@ -37,12 +38,16 @@ public final class IdentifierEvent {
 	 * @param identifier
 	 * @param availableChanged
 	 */
-	public IdentifierEvent(IIdentifier identifier, boolean availableChanged) {
+	public IdentifierEvent(
+		IIdentifier identifier,
+		boolean activityIdsChanged,
+		boolean enabledChanged) {
 		if (identifier == null)
 			throw new NullPointerException();
 
 		this.identifier = identifier;
-		this.availableChanged = availableChanged;
+		this.activityIdsChanged = activityIdsChanged;
+		this.enabledChanged = enabledChanged;
 	}
 
 	/**
@@ -58,7 +63,14 @@ public final class IdentifierEvent {
 	/**
 	 * TODO javadoc
 	 */
-	public boolean hasAvailableChanged() {
-		return availableChanged;
+	public boolean hasActivityIdsChanged() {
+		return activityIdsChanged;
+	}
+
+	/**
+	 * TODO javadoc
+	 */
+	public boolean hasEnabledChanged() {
+		return enabledChanged;
 	}
 }

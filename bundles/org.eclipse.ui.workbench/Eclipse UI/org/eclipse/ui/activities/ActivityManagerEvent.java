@@ -28,12 +28,10 @@ package org.eclipse.ui.activities;
  * @see IActivityManagerListener#activityManagerChanged
  */
 public final class ActivityManagerEvent {
-
 	private IActivityManager activityManager;
 	private boolean definedActivityIdsChanged;
 	private boolean definedCategoryIdsChanged;
 	private boolean enabledActivityIdsChanged;
-	private boolean enabledCategoryIdsChanged;
 
 	/**
 	 * TODO javadoc
@@ -42,14 +40,12 @@ public final class ActivityManagerEvent {
 	 * @param definedActivityIdsChanged
 	 * @param definedCategoryIdsChanged
 	 * @param enabledActivityIdsChanged
-	 * @param enabledCategoryIdsChanged
 	 */
 	public ActivityManagerEvent(
 		IActivityManager activityManager,
 		boolean definedActivityIdsChanged,
 		boolean definedCategoryIdsChanged,
-		boolean enabledActivityIdsChanged,
-		boolean enabledCategoryIdsChanged) {
+		boolean enabledActivityIdsChanged) {
 		if (activityManager == null)
 			throw new NullPointerException();
 
@@ -57,7 +53,6 @@ public final class ActivityManagerEvent {
 		this.definedActivityIdsChanged = definedActivityIdsChanged;
 		this.definedCategoryIdsChanged = definedCategoryIdsChanged;
 		this.enabledActivityIdsChanged = enabledActivityIdsChanged;
-		this.enabledCategoryIdsChanged = enabledCategoryIdsChanged;
 	}
 
 	/**
@@ -90,12 +85,5 @@ public final class ActivityManagerEvent {
 	 */
 	public boolean haveEnabledActivityIdsChanged() {
 		return enabledActivityIdsChanged;
-	}
-
-	/**
-	 * TODO javadoc
-	 */
-	public boolean haveEnabledCategoryIdsChanged() {
-		return enabledCategoryIdsChanged;
 	}
 }

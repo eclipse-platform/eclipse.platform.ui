@@ -29,7 +29,6 @@ package org.eclipse.ui.activities;
  */
 public final class CategoryEvent {
 	private ICategory category;
-
 	private boolean categoryActivityBindingsChanged;
 	private boolean definedChanged;
 	private boolean descriptionChanged;

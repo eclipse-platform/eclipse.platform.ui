@@ -71,7 +71,6 @@ public final class MutableActivityManager
 	private Set definedActivityIds = new HashSet();
 	private Set definedCategoryIds = new HashSet();
 	private Set enabledActivityIds = new HashSet();
-	private Set enabledCategoryIds = new HashSet();
 	private Map identifiersById = new WeakHashMap();
 
 	public MutableActivityManager() {
@@ -137,10 +136,6 @@ public final class MutableActivityManager
 		return Collections.unmodifiableSet(enabledActivityIds);
 	}
 
-	public Set getEnabledCategoryIds() {
-		return Collections.unmodifiableSet(enabledCategoryIds);
-	}
-
 	public IIdentifier getIdentifier(String identifierId) {
 		if (identifierId == null)
 			throw new NullPointerException();
@@ -156,29 +151,7 @@ public final class MutableActivityManager
 		return identifier;
 	}
 
-	public Set getMatchingActivityIds(String string, Set activityIds) {
-		Set matchingActivityIds = new HashSet();
-		activityIds = Util.safeCopy(activityIds, String.class);
-
-		for (Iterator iterator = activityIds.iterator(); iterator.hasNext();) {
-			String activityId = (String) iterator.next();
-			IActivity activity = getActivity(activityId);
-
-			if (activity.isMatch(string))
-				matchingActivityIds.add(activityId);
-		}
-
-		return Collections.unmodifiableSet(matchingActivityIds);
-	}
-
-	public Set getRequiredActivityIds(Set activityIds) {
-		activityIds = Util.safeCopy(activityIds, String.class);
-		Set requiredActivityIds = new HashSet();
-		getRequiredActivityIdsImpl(activityIds, requiredActivityIds);
-		return Collections.unmodifiableSet(requiredActivityIds);
-	}
-
-	private void getRequiredActivityIdsImpl(
+	private void getRequiredActivityIds(
 		Set activityIds,
 		Set requiredActivityIds) {
 		for (Iterator iterator = activityIds.iterator(); iterator.hasNext();) {
@@ -199,14 +172,8 @@ public final class MutableActivityManager
 
 			childActivityIds.removeAll(requiredActivityIds);
 			requiredActivityIds.addAll(childActivityIds);
-			getRequiredActivityIdsImpl(childActivityIds, requiredActivityIds);
+			getRequiredActivityIds(childActivityIds, requiredActivityIds);
 		}
-	}
-
-	private boolean isEnabled(String identifierId) {
-		// TODO improve performance?
-		return isMatch(identifierId, enabledActivityIds)
-			|| !isMatch(identifierId, definedActivityIds);
 	}
 
 	public boolean isMatch(String string, Set activityIds) {
@@ -520,7 +487,6 @@ public final class MutableActivityManager
 					this,
 					definedActivityIdsChanged,
 					definedCategoryIdsChanged,
-					false,
 					false));
 
 		if (activityEventsByActivityId != null)
@@ -535,6 +501,9 @@ public final class MutableActivityManager
 
 	public void setEnabledActivityIds(Set enabledActivityIds) {
 		enabledActivityIds = Util.safeCopy(enabledActivityIds, String.class);
+		Set requiredActivityIds = new HashSet(enabledActivityIds);
+		getRequiredActivityIds(enabledActivityIds, requiredActivityIds);
+		enabledActivityIds = Collections.unmodifiableSet(requiredActivityIds);
 		boolean activityManagerChanged = false;
 		Map activityEventsByActivityId = null;
 
@@ -550,7 +519,7 @@ public final class MutableActivityManager
 
 		if (activityManagerChanged)
 			fireActivityManagerChanged(
-				new ActivityManagerEvent(this, false, false, true, false));
+				new ActivityManagerEvent(this, false, false, true));
 
 		if (activityEventsByActivityId != null)
 			notifyActivities(activityEventsByActivityId);
@@ -691,11 +660,30 @@ public final class MutableActivityManager
 	}
 
 	private IdentifierEvent updateIdentifier(Identifier identifier) {
-		boolean enabledChanged =
-			identifier.setEnabled(isEnabled(identifier.getId()));
+		// TODO review performance characteristics
+		String id = identifier.getId();
+		Set activityIds = new HashSet();
 
-		if (enabledChanged)
-			return new IdentifierEvent(identifier, enabledChanged);
+		for (Iterator iterator = definedActivityIds.iterator();
+			iterator.hasNext();
+			) {
+			String activityId = (String) iterator.next();
+			IActivity activity = getActivity(activityId);
+
+			if (activity.isMatch(id))
+				activityIds.add(activityId);
+		}
+
+		boolean enabled =
+			isMatch(id, enabledActivityIds) || !isMatch(id, definedActivityIds);
+		boolean activityIdsChanged = identifier.setActivityIds(activityIds);
+		boolean enabledChanged = identifier.setEnabled(enabled);
+
+		if (activityIdsChanged || enabledChanged)
+			return new IdentifierEvent(
+				identifier,
+				activityIdsChanged,
+				enabledChanged);
 		else
 			return null;
 	}

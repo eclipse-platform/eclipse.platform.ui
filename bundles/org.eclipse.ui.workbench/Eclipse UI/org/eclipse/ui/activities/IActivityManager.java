@@ -125,11 +125,6 @@ public interface IActivityManager {
 	/**
 	 * TODO javadoc
 	 */
-	Set getMatchingActivityIds(String string, Set activityIds);
-
-	/**
-	 * TODO javadoc
-	 */
 	boolean isMatch(String string, Set activityIds);
 
 	/**
