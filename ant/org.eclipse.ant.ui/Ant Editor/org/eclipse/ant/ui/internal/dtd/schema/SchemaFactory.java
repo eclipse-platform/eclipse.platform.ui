@@ -148,16 +148,15 @@ public class SchemaFactory implements DeclHandler {
 		}
 		
 		fElement = element;
-		if (model.equals("ANY")) //$NON-NLS-1$
+		if (model.equals("ANY")) { //$NON-NLS-1$
 			element.setAny(true);
-		else if (model.equals("EMPTY")) //$NON-NLS-1$
+		} else if (model.equals("EMPTY")) { //$NON-NLS-1$
 			element.setEmpty(true);
-		else if (model.equals("(#PCDATA)")) //$NON-NLS-1$
+		} else if (model.equals("(#PCDATA)")) {//$NON-NLS-1$
 			element.setText(true);
-		else if (model.startsWith("(#PCDATA")) //$NON-NLS-1$
-			element.setMixed(true);
-		else
+		} else {
 			element.setContentModel(parseModel(model));
+		}
 	}
 
 	/**
@@ -180,16 +179,13 @@ public class SchemaFactory implements DeclHandler {
 				MessageFormat.format(AntDTDSchemaMessages.getString("SchemaFactory.Start_with_left_parenthesis"), new String[]{fElement.getName()})); //$NON-NLS-1$
 		}
 
-		IModel emodel;
 		boolean ortext = model.startsWith("(#PCDATA|"); //$NON-NLS-1$
 		if (ortext) {
-			fPos = "(#PCDATA".length() + 1; //$NON-NLS-1$
-			emodel = scanExpr();
-		}
-		else {
+			fPos = 8; //"(#PCDATA".length()			
+		} else {
 			fPos = 0;
-			emodel = scanExpr();
 		}
+		IModel emodel= scanExpr();
 		return emodel;
 	}
 
