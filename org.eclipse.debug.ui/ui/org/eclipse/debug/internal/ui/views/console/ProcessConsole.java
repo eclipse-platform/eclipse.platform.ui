@@ -78,7 +78,29 @@ public class ProcessConsole extends AbstractConsole implements IDebugEventSetLis
 		
 		label = process.getAttribute(IProcess.ATTR_PROCESS_LABEL);
 		if (label == null) {
-			label = config.getName() + " [" + process.getLaunch().getLaunchMode() +"] " + process.getLabel(); //$NON-NLS-1$ //$NON-NLS-2$
+			if (config == null) {
+				label = process.getLabel();
+			} else {
+				// check if PRIVATE config
+				if (DebugUITools.isPrivate(config)) {
+					label = process.getLabel();
+				} else {
+					String type = null;
+					try {
+						type = config.getType().getName();
+					} catch (CoreException e) {
+					}
+					StringBuffer buffer= new StringBuffer();
+					buffer.append(config.getName());
+					if (type != null) {
+						buffer.append(" ["); //$NON-NLS-1$
+						buffer.append(type);
+						buffer.append("] "); //$NON-NLS-1$
+					}
+					buffer.append(process.getLabel());
+					label = buffer.toString();
+				}
+			}
 		}
 		
 		if (process.isTerminated()) {
