@@ -15,6 +15,7 @@ import org.eclipse.core.boot.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.*;
 import org.eclipse.help.internal.*;
+import org.eclipse.help.internal.model.*;
 
 /**
  * Manages the navigation model. It keeps track of all the tables of contents.
@@ -22,7 +23,7 @@ import org.eclipse.help.internal.*;
 public class TocManager {
 
 	/**
-	 * Map of IToc[] by String
+	 * Map of ITocNavNode[] by String
 	 */
 	private Map tocsByLang;
 	private Collection contributingPlugins;
@@ -45,22 +46,22 @@ public class TocManager {
 	/**
 	 * Returns the list of TOC's available in the help system
 	 */
-	public IToc[] getTocs(String locale) {
+	public ITocElement[] getTocs(String locale) {
 
 		if (locale == null)
-			return new IToc[0];
+			return new ITocElement[0];
 
-		IToc[] tocs = (IToc[]) tocsByLang.get(locale);
+		ITocElement[] tocs = (ITocElement[]) tocsByLang.get(locale);
 		if (tocs == null) {
 			synchronized (this) {
 				if (tocs == null) {
 					build(locale);
 				}
 			}
-			tocs = (IToc[]) tocsByLang.get(locale);
+			tocs = (ITocElement[]) tocsByLang.get(locale);
 			// one more sanity test...
 			if (tocs == null)
-				tocs = new IToc[0];
+				tocs = new ITocElement[0];
 		}
 		return tocs;
 	}
@@ -68,10 +69,10 @@ public class TocManager {
 	/**
 	 * Returns the navigation model for specified toc
 	 */
-	public IToc getToc(String href, String locale) {
+	public ITocElement getToc(String href, String locale) {
 		if (href == null || href.equals(""))
 			return null;
-		IToc[] tocs = getTocs(locale);
+		ITocElement[] tocs = getTocs(locale);
 
 		for (int i = 0; i < tocs.length; i++) {
 			if (tocs[i].getHref().equals(href))
@@ -97,13 +98,13 @@ public class TocManager {
 			TocBuilder builder = new TocBuilder();
 			builder.build(contributedTocFiles);
 			Collection builtTocs = builder.getBuiltTocs();
-			tocs = new IToc[builtTocs.size()];
+			tocs = new ITocElement[builtTocs.size()];
 			int i = 0;
 			for (Iterator it = builtTocs.iterator(); it.hasNext();) {
-				tocs[i++] = (IToc) it.next();
+				tocs[i++] = (ITocElement) it.next();
 			}
 			Collection orderedTocs = orderTocs(builtTocs);
-			tocs = new IToc[orderedTocs.size()];
+			tocs = new ITocElement[orderedTocs.size()];
 			orderedTocs.toArray(tocs);
 		} catch (Exception e) {
 			tocs = new IToc[0];
@@ -122,13 +123,13 @@ public class TocManager {
 		// add the tocs from the preferred order...
 		for (Iterator it = orderedHrefs.iterator(); it.hasNext();) {
 			String href = (String) it.next();
-			IToc toc = getToc(unorderedTocs, href);
+			ITocElement toc = getToc(unorderedTocs, href);
 			if (toc != null)
 				orderedTocs.add(toc);
 		}
 		// add the remaining tocs
 		for (Iterator it = unorderedTocs.iterator(); it.hasNext();) {
-			IToc toc = (IToc) it.next();
+			ITocElement toc = (ITocElement) it.next();
 			if (!orderedTocs.contains(toc))
 				orderedTocs.add(toc);
 		}
@@ -163,9 +164,9 @@ public class TocManager {
 	 * Returns the toc from a list of IToc by identifying it with its (unique)
 	 * href.
 	 */
-	private IToc getToc(Collection list, String href) {
+	private ITocElement getToc(Collection list, String href) {
 		for (Iterator it = list.iterator(); it.hasNext();) {
-			IToc toc = (IToc) it.next();
+			ITocElement toc = (ITocElement) it.next();
 			if (toc.getHref().equals(href))
 				return toc;
 		}

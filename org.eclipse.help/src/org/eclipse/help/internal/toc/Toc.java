@@ -13,12 +13,13 @@ import java.util.*;
 
 import org.eclipse.help.*;
 import org.eclipse.help.internal.util.*;
+import org.eclipse.help.internal.model.*;
 import org.xml.sax.*;
 /** 
  * Root of navigation TocFile
  * Can be linked with other Toc objects.
  */
-public class Toc extends TocNode implements IToc {
+public class Toc extends TocNode implements IToc, ITocElement{
 	private String link_to;
 	private String href;
 	private String label;
@@ -146,9 +147,6 @@ public class Toc extends TocNode implements IToc {
 			// create and cache array of children (Topics only)
 			topicArray = new ITopic[topics.size()];
 			topics.toArray(topicArray);
-			// for memory foot print, release list of child
-			// and parent nodes.
-			children = null;
 			// after TOC is build, TocFile no longer needed
 			tocFile = null;
 		}

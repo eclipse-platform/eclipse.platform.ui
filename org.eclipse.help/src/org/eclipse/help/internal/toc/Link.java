@@ -9,11 +9,12 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.internal.toc;
-import org.xml.sax.Attributes;
+import org.eclipse.help.internal.model.*;
+import org.xml.sax.*;
 /**
  *  Include.  Place holder to link to other Toc objects.
  */
-class Link extends TocNode {
+class Link extends TocNode implements ILinkElement{
 	protected Toc parentToc;
 	protected String toc;
 	/**

@@ -9,16 +9,12 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.internal.toc;
-import java.util.List;
+
+import org.eclipse.help.internal.model.*;
 /**
  * ITocNode interface.
  */
-interface ITocNode {
-	/**
-	 * Returns child nodes
-	 * @return List of ITocNode
-	 */
-	List getChildren();
+interface ITocNode extends INavigationElement{
 	
 	/**
 	 * Adds another element as child of this element

@@ -11,11 +11,12 @@
 package org.eclipse.help.internal.toc;
 import java.util.*;
 
-import org.xml.sax.Attributes;
+import org.eclipse.help.internal.model.*;
+import org.xml.sax.*;
 /**
  * Anchor.  Place holder that Toc objects can atatch to.
  */
-class Anchor extends TocNode {
+class Anchor extends TocNode implements IAnchorElement{
 	protected Toc parentToc;
 	protected String id;
 	protected TocFile tocFile;

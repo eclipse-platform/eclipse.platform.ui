@@ -12,13 +12,14 @@ package org.eclipse.help.internal.toc;
 import java.util.*;
 
 import org.eclipse.help.*;
+import org.eclipse.help.internal.model.*;
 import org.xml.sax.*;
 /**
  * Topic.  Visible navigation element.
  * Labeled, contains linik to a document.
  * Can also act as a container for other documents.
  */
-public class Topic extends TocNode implements ITopic {
+public class Topic extends TocNode implements ITopic, ITopicElement{
 	private String href;
 	private String label;
 	private ITopic[] topicArray;
@@ -62,9 +63,6 @@ public class Topic extends TocNode implements ITopic {
 			// create and cache array of children (Topics only)
 			topicArray = new ITopic[topics.size()];
 			topics.toArray(topicArray);
-			// for memory foot print, release list of child
-			// and parent nodes.
-			children = null;
 		}
 		return topicArray;
 	}
