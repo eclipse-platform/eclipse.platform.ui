@@ -231,7 +231,8 @@
             class="org.eclipse.debug.internal.ui.actions.OpenRunConfigurations"
             menubarPath="org.eclipse.ui.run/runGroup"
             helpContextId="open_run_configurations_action_context"
-            id="org.eclipse.debug.internal.ui.actions.OpenRunConfigurations">
+            id="org.eclipse.debug.internal.ui.actions.OpenRunConfigurations"
+            definitionId="org.eclipse.debug.internal.ui.actions.OpenRunConfigurations">
       </action>
       <action
             label="%RunWithConfigurationAction.label"
@@ -257,7 +258,8 @@
             class="org.eclipse.debug.internal.ui.actions.DebugLastAction"
     		menubarPath="org.eclipse.ui.run/relaunchGroup"
     		helpContextId="debug_last_action_context"
-            id="org.eclipse.debug.internal.ui.actions.DebugLastAction">
+            id="org.eclipse.debug.internal.ui.actions.DebugLastAction"
+            definitionId= "org.eclipse.debug.internal.ui.actions.DebugLastAction">
       </action>
       <action
             label="%RunLastAction.label"
@@ -267,7 +269,8 @@
             helpContextId="run_last_action_context"
             class="org.eclipse.debug.internal.ui.actions.RunLastAction"
             menubarPath="org.eclipse.ui.run/relaunchGroup"
-            id="org.eclipse.debug.internal.ui.actions.RunLastAction">
+            id="org.eclipse.debug.internal.ui.actions.RunLastAction"
+            definitionId= "org.eclipse.debug.internal.ui.actions.RunLastAction">   
       </action>
       <action
             label="%RunDropDownAction.label"
@@ -285,7 +288,8 @@
             class="org.eclipse.debug.internal.ui.actions.OpenDebugConfigurations"
     		menubarPath="org.eclipse.ui.run/debugGroup"
     		helpContextId="open_debug_configurations_action_context"
-            id="org.eclipse.debug.internal.ui.actions.OpenDebugConfigurations">
+            id="org.eclipse.debug.internal.ui.actions.OpenDebugConfigurations"
+            definitionId="org.eclipse.debug.internal.ui.actions.OpenDebugConfigurations">
       </action>
       <action
             label="%DebugWithConfigurationAction.label"
