@@ -21,6 +21,7 @@ class SearchDropDownAction extends Action implements IMenuCreator {
 	public static final int RESULTS_IN_DROP_DOWN= 10;
 
 	private SearchResultViewer fViewer;
+	private Menu fMenu;
 	
 	public SearchDropDownAction(SearchResultViewer viewer) {
 		fViewer= viewer;
@@ -31,6 +32,9 @@ class SearchDropDownAction extends Action implements IMenuCreator {
 	}
 
 	public void dispose() {
+		if (fMenu != null)
+			fMenu.dispose();
+		
 		fViewer= null;
 	}
 
@@ -39,7 +43,10 @@ class SearchDropDownAction extends Action implements IMenuCreator {
 	}
 
 	public Menu getMenu(Control parent) {
-		Menu menu= new Menu(parent);
+		if (fMenu != null)
+			fMenu.dispose();
+		
+		fMenu= new Menu(parent);
 		boolean checkedOne= false;
 		Iterator iter= SearchManager.getDefault().getPreviousSearches().iterator();
 		Search selected= SearchManager.getDefault().getCurrentSearch();
@@ -50,16 +57,16 @@ class SearchDropDownAction extends Action implements IMenuCreator {
 			action.setChecked(search.equals(selected));
 			if (search.equals(selected))
 				checkedOne= true;
-			addActionToMenu(menu, action);
+			addActionToMenu(fMenu, action);
 		}
-		new MenuItem(menu, SWT.SEPARATOR);
+		new MenuItem(fMenu, SWT.SEPARATOR);
 		if (iter.hasNext()) {
 			Action others= new ShowSearchesAction();
 			others.setChecked(!checkedOne);
-			addActionToMenu(menu, others);
+			addActionToMenu(fMenu, others);
 		}
-		addActionToMenu(menu, new RemoveAllSearchesAction());
-		return menu;
+		addActionToMenu(fMenu, new RemoveAllSearchesAction());
+		return fMenu;
 	}
 
 	protected void addActionToMenu(Menu parent, Action action) {

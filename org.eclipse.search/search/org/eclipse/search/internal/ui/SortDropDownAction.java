@@ -37,7 +37,6 @@ class SortDropDownAction extends Action implements IMenuCreator {
 	private SearchResultViewer fViewer;
 	private String fPageId;
 	private Menu fMenu;
-	private String fCheckedId;
 	private Map fLastCheckedForType;
 
 	public SortDropDownAction(SearchResultViewer viewer) {
@@ -50,9 +49,8 @@ class SortDropDownAction extends Action implements IMenuCreator {
 	}
 
 	public void dispose() {
-		fViewer= null;
-		fPageId= null;
-		fLastCheckedForType= null;
+		if (fMenu != null)
+			fMenu.dispose();
 	}
 
 	public Menu getMenu(Control parent) {
@@ -76,8 +74,12 @@ class SortDropDownAction extends Action implements IMenuCreator {
 	}
 
 	public Menu getMenu(final Menu parent) {
+		if (fMenu != null)
+			fMenu.dispose();
+		
 		boolean hasEntries= false;
-		Menu menu= new Menu(parent);
+		fMenu= new Menu(parent);
+		
 		Iterator iter= SearchPlugin.getDefault().getSorterDescriptors().iterator();
 		while (iter.hasNext()) {
 			Object value= fLastCheckedForType.get(fPageId);
@@ -108,12 +110,12 @@ class SortDropDownAction extends Action implements IMenuCreator {
 				action.setImageDescriptor(sorterDesc.getImage());
 				action.setToolTipText(sorterDesc.getToolTipText());
 				action.setChecked(checkedId.equals(sorterDesc.getId()));
-				addActionToMenu(menu, action);
+				addActionToMenu(fMenu, action);
 				hasEntries= true;
 			}
 		}
 		setEnabled(hasEntries);
-		return menu;
+		return fMenu;
 	}
 
 	protected void addActionToMenu(Menu parent, Action action) {
