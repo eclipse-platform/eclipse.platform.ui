@@ -61,4 +61,15 @@ public class SyncSetTableContentProvider extends SyncSetContentProvider {
 		}
 	}
 
+	protected Object getModelObject(SyncInfo info) {
+		return getModelObject(info.getLocal());
+	}
+	
+	protected Object[] getModelObjects(SyncInfo[] infos) {
+		Object[] resources = new Object[infos.length];
+		for (int i = 0; i < resources.length; i++) {
+			resources[i] = getModelObject(infos[i]);
+		}
+		return resources;
+	}
 }

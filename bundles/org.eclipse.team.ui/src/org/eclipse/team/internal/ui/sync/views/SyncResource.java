@@ -10,10 +10,6 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.sync.views;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.team.core.subscribers.SyncInfo;
@@ -28,31 +24,25 @@ public class SyncResource implements IAdaptable {
 	private SyncSet syncSet;
 	private IResource resource;
 
-	/**
-	 * @param info
-	 */
 	public SyncResource(SyncSet syncSet, IResource resource) {
 		this.syncSet = syncSet;
 		this.resource = resource;
 	}
 
+	public SyncSet getSyncSet() {
+		return syncSet;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
 	public Object getAdapter(Class adapter) {
 		if (adapter == IResource.class) {
-			return getLocalResource();
+			return getResource();
 		} else if (adapter == SyncInfo.class) {
 			return getSyncInfo();
 		}
 		return null;
-	}
-
-	/**
-	 * @return
-	 */
-	public IResource getLocalResource() {
-		return resource;
 	}
 
 	/**
@@ -67,21 +57,8 @@ public class SyncResource implements IAdaptable {
 	 * a non-null sync-info.
 	 * @return
 	 */
-	public SyncResource[] getOutOfSyncDescendants() {
-		List result = new ArrayList();
-		SyncInfo info = getSyncInfo();
-		if (info != null) {
-			result.add(this);
-		}
-		Object[] members = SyncSet.members(syncSet, getLocalResource());
-		for (int i = 0; i < members.length; i++) {
-			Object object = members[i];
-			if (object instanceof SyncResource) {
-				SyncResource child = (SyncResource) object;
-				result.addAll(Arrays.asList(child.getOutOfSyncDescendants()));
-			}
-		}
-		return (SyncResource[]) result.toArray(new SyncResource[result.size()]);
+	public SyncInfo[] getOutOfSyncDescendants() {
+		return syncSet.getOutOfSyncDescendants(resource);
 	}
 	
 	/* (non-Javadoc)
@@ -90,7 +67,7 @@ public class SyncResource implements IAdaptable {
 	public boolean equals(Object object) {
 		if (object instanceof SyncResource) {
 			SyncResource syncResource = (SyncResource) object;
-			return getLocalResource().equals(syncResource.getLocalResource());
+			return getResource().equals(syncResource.getResource());
 		}
 		return super.equals(object);
 	}
@@ -99,46 +76,9 @@ public class SyncResource implements IAdaptable {
 	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {
-		return getLocalResource().hashCode();
+		return getResource().hashCode();
 	}
 
-	/**
-	 * @return
-	 */
-	public int getChangeType() {
-		return getKind() & SyncInfo.CHANGE_MASK;
-	}
-	
-	/**
-	 * @return
-	 */
-	public int getChangeDirection() {
-		return getKind() & SyncInfo.DIRECTION_MASK;
-	}
-
-	/**
-	 * @return
-	 */
-	public int getKind() {
-		SyncInfo info = getSyncInfo();
-		if (info == null) return 0;
-		return info.getKind();
-	}
-
-	/**
-	 * @return
-	 */
-	public SyncResource getParent() {
-		Object parent = SyncSet.getParent(syncSet, this);
-		if (parent instanceof SyncResource) {
-			return (SyncResource)parent;
-		}
-		return null;
-	}
-
-	/**
-	 * @return
-	 */
 	public IResource getResource() {
 		return resource;
 	}

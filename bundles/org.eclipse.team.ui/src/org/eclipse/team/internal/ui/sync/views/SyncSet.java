@@ -50,103 +50,6 @@ public class SyncSet {
 		resetChanges();
 	}
 	
-	/**
-	 * Return the IResource for the given model object that was returned by 
-	 * SyncSet#members(IResource). Return <code>null</code> if the given
-	 * object does not have a corresponding IResource.
-	 * 
-	 * @param element
-	 * @return
-	 */
-	public static IResource getIResource(Object element) {
-		IResource resource = null;
-		if (element instanceof IResource) {
-			return (IResource)element;
-		} if (element instanceof SyncInfo) {
-			resource = ((SyncInfo) element).getLocal();
-		} else if (element instanceof SyncResource) {
-			resource = ((SyncResource)element).getLocalResource();
-		}
-		return resource;
-	}
-	
-	/**
-	 * Return the sync kind for the given model object that was returned by 
-	 * SyncSet#members(IResource). If syncSet is null, then the 
-	 * sync kind for SyncContainers will always be 0.
-	 * 
-	 * @param element
-	 * @return
-	 */
-	public static int getSyncKind(SyncSet syncSet, Object element) {
-		SyncInfo info = getSyncInfo(syncSet, element);
-		if (info != null) {
-			return info.getKind();
-		}
-		return 0;
-	}
-	
-	public static Object[] members(SyncSet syncSet, IResource resource) {
-		return syncSet.members(resource);
-	}
-	
-	/**
-	 * Return the SyncInfo for the given model object that was returned by 
-	 * SyncSet#members(IResource). If syncSet is null, then the 
-	 * sync info will also be null.
-	 * 
-	 * @param element
-	 * @return
-	 */
-	public static SyncInfo getSyncInfo(SyncSet syncSet, Object element) {
-		if (element instanceof SyncInfo) {
-			return ((SyncInfo) element);
-		}  else if (element instanceof SyncResource) {
-			SyncResource syncResource = (SyncResource)element;
-			return syncResource.getSyncInfo();
-		}
-		return null;
-	}
-	
-	public static SyncInfo getSyncInfo(Object element) {
-		if (element instanceof SyncInfo) {
-			return ((SyncInfo) element);
-		}  else if (element instanceof SyncResource) {
-			SyncResource syncResource = (SyncResource)element;
-			return syncResource.getSyncInfo();
-		}
-		return null;
-	}
-	
-	/**
-	 * Get the model object (SyncSet, SyncInfo or SyncContainer) that is the
-	 * parent of the given model object.
-	 * 
-	 * @param syncSet
-	 * @param object
-	 * @return
-	 */
-	public static Object getParent(SyncSet syncSet, Object object) {
-		IResource resource = getIResource(object);
-		if (resource == null) return null;
-		IContainer parent = resource.getParent();
-		return getModelObject(syncSet, parent);
-	}
-	
-
-	/**
-	 * Return the model object for the given IResource.
-	 * @param resource
-	 */
-	public static Object getModelObject(SyncSet syncSet, IResource resource) {
-		if (resource.getType() == IResource.ROOT) {
-			// TODO: A subscriber may not be rooted at the project!!!
-			return syncSet;
-		} else {
-			return new SyncResource(syncSet, resource);
-		}
-	}
-	
 	protected void resetChanges() {
 		changes = new SyncSetChangedEvent(this);
 		stats.clear();
@@ -281,14 +184,11 @@ public class SyncSet {
 	 * Return the children of the given container who are either out-of-sync or contain
 	 * out-of-sync resources.
 	 * 
-	 * TODO: How does an IWorkbecnhAdapter fit into this picture (i.e. should
-	 * the adapter be converting SyncInfo to SyncResource
-	 * 
 	 * @param container
 	 * @return
 	 */
-	public Object[] members(IResource resource) {
-		if (resource.getType() == IResource.FILE) return new Object[0];
+	public IResource[] members(IResource resource) {
+		if (resource.getType() == IResource.FILE) return new IResource[0];
 		IContainer parent = (IContainer)resource;
 		if (parent.getType() == IResource.ROOT) return getRoots(parent);
 		// TODO: must be optimized so that we don't traverse all the deep children to find
@@ -301,36 +201,61 @@ public class SyncSet {
 				Object next = it.next();
 				IResource element = (IResource)next;
 				IPath childPath = element.getFullPath();
-				Object modelObject = null;
+				IResource modelObject = null;
 				if(childPath.segmentCount() == (path.segmentCount() +  1)) {
-					modelObject = getModelObject(this, element);
+					modelObject = element;
 
 				} else if (childPath.segmentCount() > path.segmentCount()) {
 					IContainer childFolder = parent.getFolder(new Path(childPath.segment(path.segmentCount())));
-					modelObject = getModelObject(this, childFolder);
+					modelObject = childFolder;
 				}
 				if (modelObject != null) {
 					children.add(modelObject);
 				}
 			}
 		}
-		return (Object[]) children.toArray(new Object[children.size()]);
+		return (IResource[]) children.toArray(new IResource[children.size()]);
 	}
-
+	
 	/**
+	 * Return the out-of-sync descendants of the given resource. If the given resource
+	 * is out of sync, it will be included in the result.
+	 * 
+	 * @param container
 	 * @return
 	 */
-	private Object[] getRoots(IContainer root) {
+	public SyncInfo[] getOutOfSyncDescendants(IResource resource) {
+		if (resource.getType() == IResource.FILE) {
+			SyncInfo info = getSyncInfo(resource);
+			if (info == null) {
+				return new SyncInfo[0];
+			} else {
+				return new SyncInfo[] { info };
+			}
+		};
+		IContainer container = (IContainer)resource;
+		IPath path = container.getFullPath();
+		Set children = (Set)parents.get(path);
+		SyncInfo[] infos = new SyncInfo[children.size()];
+		int i = 0;
+		for (Iterator iter = children.iterator(); iter.hasNext();) {
+			IResource child = (IResource) iter.next();
+			infos[i++] = getSyncInfo(child);
+		}
+		return infos;
+	}
+
+	private IResource[] getRoots(IContainer root) {
 		Set possibleChildren = parents.keySet();
 		Set children = new HashSet();
 		for (Iterator it = possibleChildren.iterator(); it.hasNext();) {
 			Object next = it.next();
 			IResource element = ((IWorkspaceRoot)root).findMember((IPath)next);
 			if (element != null) {
-				children.add(getModelObject(this, element.getProject()));
+				children.add(element.getProject());
 			}
 		}
-		return (Object[]) children.toArray(new Object[children.size()]);
+		return (IResource[]) children.toArray(new IResource[children.size()]);
 	}
 
 	protected boolean hasMembers(IContainer container) {

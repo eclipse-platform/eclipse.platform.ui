@@ -59,6 +59,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.ITeamResourceChangeListener;
+import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.core.subscribers.TeamDelta;
 import org.eclipse.team.core.subscribers.TeamProvider;
 import org.eclipse.team.core.subscribers.TeamSubscriber;
@@ -626,7 +627,7 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 				Object object = selected[i];
 				if (object instanceof SyncResource) {
 					SyncResource syncResource = (SyncResource) object;
-					SyncResource[] infos = syncResource.getOutOfSyncDescendants();
+					SyncInfo[] infos = syncResource.getOutOfSyncDescendants();
 					result.addAll(Arrays.asList(infos));
 				}
 			}
@@ -811,5 +812,9 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 			return ((INavigableControl)viewer).gotoDifference(direction);
 		}
 		return false;
+	}
+	
+	public SyncSetContentProvider getContentProvider() {
+		return (SyncSetContentProvider)getViewer().getContentProvider();
 	}
 }

@@ -17,8 +17,8 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.core.subscribers.SyncInfo;
+import org.eclipse.team.internal.ui.actions.TeamAction;
 import org.eclipse.team.internal.ui.sync.compare.SyncInfoCompareInput;
-import org.eclipse.team.internal.ui.sync.views.SyncSet;
 import org.eclipse.team.internal.ui.sync.views.SyncViewer;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
@@ -62,12 +62,16 @@ public class OpenInCompareAction extends Action {
 	private CompareEditorInput getCompareInput() {
 		ISelection selection = viewer.getViewer().getSelection();
 		Object obj = ((IStructuredSelection)selection).getFirstElement();
-		SyncInfo info = SyncSet.getSyncInfo(obj);
+		SyncInfo info = getSyncInfo(obj);
 		if (info != null && info.getLocal() instanceof IFile) {
 			return new SyncInfoCompareInput(info);								
 		}
 		return null;
 	}				
+
+	private SyncInfo getSyncInfo(Object obj) {
+		return (SyncInfo)TeamAction.getAdapter(obj, SyncInfo.class);
+	}
 
 	private IEditorPart reuseCompareEditor(SyncInfoCompareInput input) {
 		IWorkbenchPage page = viewer.getSite().getPage();

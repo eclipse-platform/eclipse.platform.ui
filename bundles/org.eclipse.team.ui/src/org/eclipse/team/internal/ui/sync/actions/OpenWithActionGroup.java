@@ -15,7 +15,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.team.internal.ui.sync.views.SyncSet;
+import org.eclipse.team.internal.ui.actions.TeamAction;
 import org.eclipse.team.internal.ui.sync.views.SyncViewer;
 import org.eclipse.ui.actions.OpenFileAction;
 import org.eclipse.ui.actions.OpenWithMenu;
@@ -54,7 +54,7 @@ public class OpenWithActionGroup extends SyncViewerActionGroup {
 		if (selection.size() != 1)
 			return;
 		Object element = selection.getFirstElement();
-		IResource resource = SyncSet.getIResource(element);
+		IResource resource = getResource(element);
 		if (!(resource instanceof IFile)) {
 			return;
 		}
@@ -80,5 +80,9 @@ public class OpenWithActionGroup extends SyncViewerActionGroup {
 			openFileAction.selectionChanged(selection);
 			openFileAction.run();
 		}
+	}
+	
+	private IResource getResource(Object obj) {
+		return (IResource)TeamAction.getAdapter(obj, IResource.class);
 	}
 }

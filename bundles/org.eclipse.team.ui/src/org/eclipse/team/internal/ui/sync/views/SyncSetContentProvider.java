@@ -10,12 +10,14 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.sync.views;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.team.core.subscribers.SyncInfo;
+import org.eclipse.team.internal.ui.actions.TeamAction;
 
 /**
  * This class provides the contents for a StructuredViewer using a SyncSet as the model
@@ -111,7 +113,7 @@ public abstract class SyncSetContentProvider implements IStructuredContentProvid
 		// Refresh the viewer for each changed resource
 		SyncInfo[] infos = event.getChangedResources();
 		for (int i = 0; i < infos.length; i++) {			
-			((StructuredViewer) viewer).refresh(SyncSet.getModelObject(getSyncSet(), infos[i].getLocal()), true);
+			((StructuredViewer) viewer).refresh(getModelObject(infos[i].getLocal()), true);
 		}
 	}
 
@@ -126,7 +128,7 @@ public abstract class SyncSetContentProvider implements IStructuredContentProvid
 		IResource[] removed = event.getRemovedRoots();
 		for (int i = 0; i < removed.length; i++) {
 			IResource resource = removed[i];
-			((StructuredViewer) viewer).refresh(SyncSet.getModelObject(getSyncSet(), resource));
+			((StructuredViewer) viewer).refresh(getModelObject(resource));
 		}
 	}
 
@@ -141,7 +143,7 @@ public abstract class SyncSetContentProvider implements IStructuredContentProvid
 		IResource[] added = event.getAddedRoots();
 		for (int i = 0; i < added.length; i++) {
 			IResource resource = added[i];
-			((StructuredViewer) viewer).refresh(SyncSet.getModelObject(getSyncSet(), resource.getParent()));
+			((StructuredViewer) viewer).refresh(getModelObject(resource.getParent()));
 		}
 	}
 
@@ -149,20 +151,91 @@ public abstract class SyncSetContentProvider implements IStructuredContentProvid
 		return (StructuredViewer)viewer;
 	}
 	
-	protected Object getModelObject(IResource resource) {
-		return SyncSet.getModelObject(getSyncSet(), resource);
+	/**
+	 * Return the IResource for the given model object that was returned by 
+	 * SyncSet#members(IResource). Return <code>null</code> if the given
+	 * object does not have a corresponding IResource.
+	 * 
+	 * @param element
+	 * @return
+	 */
+	public IResource getResource(Object obj) {
+		return (IResource)TeamAction.getAdapter(obj, IResource.class);
 	}
 	
-	protected Object getModelObject(SyncInfo info) {
-		return getModelObject(info.getLocal());
-	}
-	
-	protected Object[] getModelObjects(SyncInfo[] infos) {
-		Object[] resources = new Object[infos.length];
-		for (int i = 0; i < resources.length; i++) {
-			resources[i] = getModelObject(infos[i]);
+	/**
+	 * Return the sync kind for the given model object that was returned by 
+	 * SyncSet#members(IResource). If syncSet is null, then the 
+	 * sync kind for SyncContainers will always be 0.
+	 * 
+	 * @param element
+	 * @return
+	 */
+	public int getSyncKind(SyncSet syncSet, Object element) {
+		SyncInfo info = getSyncInfo(element);
+		if (info != null) {
+			return info.getKind();
 		}
-		return resources;
+		return 0;
+	}
+	
+	/**
+	 * Return the children of the given container who are either out-of-sync or contain
+	 * out-of-sync resources.
+	 */
+	public Object[] members(IResource resource) {
+		IResource[] resources = getSyncSet().members(resource);
+		Object[] result = new Object[resources.length];
+		for (int i = 0; i < resources.length; i++) {
+			IResource child = resources[i];
+			result[i] = getModelObject(child);
+		}
+		return result;
+	}
+	
+	/**
+	 * Return the SyncInfo for the given model object that was returned by 
+	 * SyncSet#members(IResource). If syncSet is null, then the 
+	 * sync info will also be null.
+	 * 
+	 * @param element
+	 * @return
+	 */
+	public SyncInfo getSyncInfo(Object element) {
+		if (element instanceof SyncInfo) {
+			return ((SyncInfo) element);
+		}  else if (element instanceof SyncResource) {
+			SyncResource syncResource = (SyncResource)element;
+			return syncResource.getSyncInfo();
+		}
+		return null;
+	}
+	
+	/**
+	 * Get the model object (SyncSet, SyncInfo or SyncContainer) that is the
+	 * parent of the given model object.
+	 * 
+	 * @param syncSet
+	 * @param object
+	 * @return
+	 */
+	public Object getParent(Object object) {
+		IResource resource = getResource(object);
+		if (resource == null) return null;
+		IContainer parent = resource.getParent();
+		return getModelObject(parent);
+	}
+
+	/**
+	 * Return the model object for the given IResource.
+	 * @param resource
+	 */
+	public Object getModelObject(IResource resource) {
+		if (resource.getType() == IResource.ROOT) {
+			return getSyncSet();
+		} else {
+			return new SyncResource(getSyncSet(), resource);
+		}
 	}
 	
 	protected Object[] getModelObjects(IResource[] resources) {

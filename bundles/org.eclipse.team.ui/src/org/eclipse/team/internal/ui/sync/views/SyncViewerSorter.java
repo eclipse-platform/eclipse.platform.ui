@@ -12,6 +12,7 @@ package org.eclipse.team.internal.ui.sync.views;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.team.internal.ui.actions.TeamAction;
 
 /**
  * This class sorts the model elements that appear in the SyncViewer
@@ -33,8 +34,8 @@ public class SyncViewerSorter extends ViewerSorter {
 		return super.category(element);
 	}
 
-	protected IResource getResource(Object element) {
-		return SyncSet.getIResource(element);
+	protected IResource getResource(Object obj) {
+		return (IResource)TeamAction.getAdapter(obj, IResource.class);
 	}
 
 }

@@ -41,7 +41,11 @@ public class SyncTreeViewer extends TreeViewer implements INavigableControl {
 			for (int i= 0; i < changed.length; i++) {
 				Object curr = changed[i];
 				if (curr instanceof IResource) {
-					curr = SyncSet.getModelObject(viewer.getInput().getFilteredSyncSet(), (IResource)curr);
+					// TODO: This may be the wrong model object!
+					SyncSetContentProvider provider = viewer.getContentProvider();
+					if (provider != null) {
+						curr = provider.getModelObject((IResource)curr);
+					}
 				}
 				others.add(curr);
 			}
@@ -209,4 +213,5 @@ public class SyncTreeViewer extends TreeViewer implements INavigableControl {
 			}
 		}
 	}
+	
 }

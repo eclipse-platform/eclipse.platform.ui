@@ -32,11 +32,11 @@ public class SyncSetTreeContentProvider extends SyncSetContentProvider implement
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 	 */
 	public Object[] getChildren(Object element) {
-		IResource resource = SyncSet.getIResource(element);
+		IResource resource = getResource(element);
 		if (resource != null) {
-			return SyncSet.members(getSyncSet(), resource);
+			return members(resource);
 		} else if (element instanceof SyncSet) {
-			return SyncSet.members(getSyncSet(), ResourcesPlugin.getWorkspace().getRoot());
+			return members(ResourcesPlugin.getWorkspace().getRoot());
 		}
 		return new Object[0];
 	}
@@ -52,10 +52,10 @@ public class SyncSetTreeContentProvider extends SyncSetContentProvider implement
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 	 */
 	public Object getParent(Object element) {
-		IResource resource = SyncSet.getIResource(element);
+		IResource resource = getResource(element);
 		if (resource == null) return null;
 		IContainer parent = resource.getParent();
-		return SyncSet.getModelObject(getSyncSet(), parent);
+		return getModelObject(parent);
 	}
 	
 	public AbstractTreeViewer getTreeViewer() {
@@ -79,9 +79,9 @@ public class SyncSetTreeContentProvider extends SyncSetContentProvider implement
 				if (resource.getType() == IResource.PROJECT) {
 					parent = getSyncSet();
 				} else {
-					parent = SyncSet.getModelObject(getSyncSet(), resource.getParent());
+					parent = getModelParent(resource);
 				}
-				tree.add(parent, SyncSet.getModelObject(getSyncSet(), resource));
+				tree.add(parent, getModelObject(resource));
 			}
 		} else {
 			super.handleResourceAdditions(event);
@@ -98,11 +98,15 @@ public class SyncSetTreeContentProvider extends SyncSetContentProvider implement
 			if (roots.length == 0) return;
 			Object[] modelRoots = new Object[roots.length];
 			for (int i = 0; i < modelRoots.length; i++) {
-				modelRoots[i] = SyncSet.getModelObject(getSyncSet(), roots[i]);
+				modelRoots[i] = getModelObject(roots[i]);
 			}
 			tree.remove(modelRoots);
 		} else {
 			super.handleResourceRemovals(event);
 		}
+	}
+	
+	protected Object getModelParent(IResource resource) {
+		return getModelObject(resource.getParent());
 	}
 }

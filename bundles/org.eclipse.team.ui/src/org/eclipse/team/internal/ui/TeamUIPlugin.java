@@ -335,6 +335,9 @@ public class TeamUIPlugin extends AbstractUIPlugin implements IPropertyChangeLis
 		// Wizard banners
 		createImageDescriptor(ISharedImages.IMG_PROJECTSET_IMPORT_BANNER, baseURL);
 		createImageDescriptor(ISharedImages.IMG_PROJECTSET_EXPORT_BANNER, baseURL);	
+		
+		// Live Sync View icons
+		createImageDescriptor(ISharedImages.IMG_COMPRESSED_FOLDER, baseURL);	
 	}
 
 	/**

@@ -7,7 +7,11 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.actions.TeamAction;
+import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
@@ -20,11 +24,23 @@ public class SyncViewerLabelProvider extends LabelProvider implements ITableLabe
 	private static final int COL_RESOURCE = 0;
 	private static final int COL_PARENT = 1;
 	
+	private Image compressedFolderImage;
+	
 	// Keep track of the compare and workbench image providers
 	// so they can be properly disposed
 	CompareConfiguration compareConfig = new CompareConfiguration();
 	WorkbenchLabelProvider workbenchLabelProvider = new WorkbenchLabelProvider();
 	
+	/**
+	 * @return
+	 */
+	public Image getCompressedFolderImage() {
+		if (compressedFolderImage == null) {
+			compressedFolderImage = TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_COMPRESSED_FOLDER).createImage();
+		}
+		return compressedFolderImage;
+	}
+
 	/**
 	 * Returns a sync view label provider that is hooked up to the decorator
 	 * mechanism.
@@ -46,13 +62,20 @@ public class SyncViewerLabelProvider extends LabelProvider implements ITableLabe
 	}
 	
 	public String getText(Object element) {
-		IResource resource = SyncSet.getIResource(element);
+		if (element instanceof CompressedFolder) {
+			IResource resource = getResource(element);
+			return resource.getProjectRelativePath().toString();
+		}
+		IResource resource = getResource(element);
 		return workbenchLabelProvider.getText(resource);
 	}
 	
 	public Image getImage(Object element) {
-		IResource resource = SyncSet.getIResource(element);
-		int kind= SyncSet.getSyncKind(null /* sync set */, element);
+		if (element instanceof CompressedFolder) {
+			return compareConfig.getImage(getCompressedFolderImage(), 0);
+		}
+		IResource resource = getResource(element);
+		int kind = getSyncKind(element);
 		switch (kind & IRemoteSyncElement.DIRECTION_MASK) {
 			case IRemoteSyncElement.OUTGOING:
 				kind = (kind &~ IRemoteSyncElement.OUTGOING) | IRemoteSyncElement.INCOMING;
@@ -72,6 +95,8 @@ public class SyncViewerLabelProvider extends LabelProvider implements ITableLabe
 		super.dispose();
 		workbenchLabelProvider.dispose();
 		compareConfig.dispose();
+		if (compressedFolderImage != null)
+			compressedFolderImage.dispose();
 	}
 
 	/* (non-Javadoc)
@@ -81,7 +106,7 @@ public class SyncViewerLabelProvider extends LabelProvider implements ITableLabe
 		if (columnIndex == COL_RESOURCE) {
 			return getImage(element);
 		} else if (columnIndex == COL_PARENT) {
-			IResource resource = SyncSet.getIResource(element);
+			IResource resource = getResource(element);
 			return null;
 		}
 		return null;
@@ -94,9 +119,25 @@ public class SyncViewerLabelProvider extends LabelProvider implements ITableLabe
 		if (columnIndex == COL_RESOURCE) {
 			return getText(element);
 		} else if (columnIndex == COL_PARENT) {
-			IResource resource = SyncSet.getIResource(element);
+			IResource resource = getResource(element);
 			return resource.getParent().getFullPath().toString();
 		}
 		return null;
+	}
+	
+	private IResource getResource(Object obj) {
+		return (IResource)TeamAction.getAdapter(obj, IResource.class);
+	}
+	
+	private SyncInfo getSyncInfo(Object obj) {
+		return (SyncInfo)TeamAction.getAdapter(obj, SyncInfo.class);
+	}
+	
+	private int getSyncKind(Object element) {
+		SyncInfo info = getSyncInfo(element);
+		if (info != null) {
+			return info.getKind();
+		}
+		return 0;
 	}
 }
