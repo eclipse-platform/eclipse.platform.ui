@@ -21,7 +21,12 @@
         <servlet-name>livehelp</servlet-name>
         <servlet-class>org.eclipse.help.internal.webapp.servlet.LiveHelpServlet</servlet-class>
     </servlet>
-        
+  
+    <servlet>
+        <servlet-name>toc</servlet-name>
+        <servlet-class>org.eclipse.help.internal.webapp.servlet.TocServlet</servlet-class>
+    </servlet>
+          
 <!-- placeholder for JSPs web.xml -->
 
     <servlet-mapping>
@@ -38,7 +43,12 @@
         <servlet-name>livehelp</servlet-name>
         <url-pattern>/livehelp/*</url-pattern>
     </servlet-mapping>
-    
+ 
+    <servlet-mapping>
+        <servlet-name>toc</servlet-name>
+        <url-pattern>/toc/*</url-pattern>
+    </servlet-mapping>
+       
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
 		<welcome-file>index.htm</welcome-file>

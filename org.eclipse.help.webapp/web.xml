@@ -21,7 +21,11 @@
         <servlet-name>livehelp</servlet-name>
         <servlet-class>org.eclipse.help.internal.webapp.servlet.LiveHelpServlet</servlet-class>
     </servlet>
-        
+    
+    <servlet>
+        <servlet-name>toc</servlet-name>
+        <servlet-class>org.eclipse.help.internal.webapp.servlet.TocServlet</servlet-class>
+    </servlet>    
 
 <!--
 Automatically created by Tomcat JspC.
@@ -468,6 +472,11 @@ env-entry, and ejb-ref elements should follow this fragment.
     <servlet-mapping>
         <servlet-name>livehelp</servlet-name>
         <url-pattern>/livehelp/*</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>toc</servlet-name>
+        <url-pattern>/toc/*</url-pattern>
     </servlet-mapping>
     
 	<welcome-file-list>
