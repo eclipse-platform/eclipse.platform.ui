@@ -452,6 +452,7 @@ class FindReplaceDialog extends Dialog {
 		// Setup content assistants for find and replace combos
 		fProposalPopupBackgroundColor= new Color(getShell().getDisplay(), new RGB(254, 241, 233));
 		fProposalPopupForegroundColor= new Color(getShell().getDisplay(), new RGB(0, 0, 0));
+		
 		fFindFieldContentAssistant= createContentAssistant(fFindField);
 		fReplaceFieldContentAssistant= createContentAssistant(fReplaceField);
 		
@@ -713,10 +714,13 @@ class FindReplaceDialog extends Dialog {
 		fWholeWordCheckBox.setEnabled(!isRegExSearchAvailableAndChecked());
 		fIsRegExCheckBox.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
-				fIncrementalCheckBox.setEnabled(!fIsRegExCheckBox.getSelection());
-				fWholeWordCheckBox.setEnabled(!fIsRegExCheckBox.getSelection());
+				boolean newState= fIsRegExCheckBox.getSelection();
+				fIncrementalCheckBox.setEnabled(!newState);
+				fWholeWordCheckBox.setEnabled(!newState);
 				updateButtonState();
 				storeSettings();
+				fFindFieldContentAssistant.enableAutoActivation(newState);
+				fReplaceFieldContentAssistant.enableAutoActivation(newState);
 			}
 	
 			public void widgetDefaultSelected(SelectionEvent e) {
@@ -969,12 +973,15 @@ class FindReplaceDialog extends Dialog {
 
 		fFindFieldContentAssistant.uninstall();
 		fReplaceFieldContentAssistant.uninstall();
+		
 		fProposalPopupBackgroundColor.dispose();
 		fProposalPopupForegroundColor.dispose();
 
 		// prevent leaks
 		fActiveShell= null;
-		fTarget= null;		
+		fTarget= null;
+		fFindFieldContentAssistant= null;
+		fReplaceFieldContentAssistant= null;
 	}
 
 	/**
@@ -1567,6 +1574,9 @@ class FindReplaceDialog extends Dialog {
 			initIncrementalBaseLocation();
 			updateButtonState();
 		}
+		
+		fFindFieldContentAssistant.enableAutoActivation(isRegExSearchAvailableAndChecked());
+		fReplaceFieldContentAssistant.enableAutoActivation(isRegExSearchAvailableAndChecked());
 	}
 
 	/** 
@@ -1681,7 +1691,7 @@ class FindReplaceDialog extends Dialog {
 		IContentAssistProcessor processor= new RegExContentAssistProcessor();
 		contentAssistant.setContentAssistProcessor(processor, IDocument.DEFAULT_CONTENT_TYPE);
 		
-		contentAssistant.enableAutoActivation(true);
+		contentAssistant.enableAutoActivation(isRegExSearchAvailableAndChecked());
 		contentAssistant.setProposalSelectorBackground(fProposalPopupBackgroundColor);
 		contentAssistant.setProposalSelectorForeground(fProposalPopupForegroundColor);
 		
@@ -1699,6 +1709,9 @@ class FindReplaceDialog extends Dialog {
 		 * @see org.eclipse.swt.events.KeyListener#keyReleased(org.eclipse.swt.events.KeyEvent)
 		 */
 		public void keyReleased(KeyEvent e) {
+			if (!isRegExSearchAvailableAndChecked())
+				return;
+			
 			// FIXME: should get key binding from manager but this is either not yet API or net yet implemented 
 //				ICommandManager cm= ((Workbench)PlatformUI.getWorkbench()).getCommandManager();
 //				ICommand command= cm.getCommand(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
