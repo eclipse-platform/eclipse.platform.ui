@@ -23,8 +23,8 @@ import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.ccvs.core.syncinfo.CVSSynchronizationCache;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.Util;
-import org.eclipse.team.internal.core.subscribers.caches.ResourceVariantTree;
-import org.eclipse.team.internal.core.subscribers.caches.PersistantResourceVariantTree;
+import org.eclipse.team.internal.core.subscribers.caches.ResourceVariantByteStore;
+import org.eclipse.team.internal.core.subscribers.caches.PersistantResourceVariantByteStore;
 
 /**
  * A CVSMergeSubscriber is responsible for maintaining the remote trees for a merge into
@@ -48,9 +48,9 @@ public class CVSMergeSubscriber extends CVSSyncTreeSubscriber implements IResour
 	
 	private CVSTag start, end;
 	private List roots;
-	private ResourceVariantTree remoteSynchronizer;
-	private PersistantResourceVariantTree mergedSynchronizer;
-	private ResourceVariantTree baseSynchronizer;
+	private CVSSynchronizationCache remoteSynchronizer;
+	private PersistantResourceVariantByteStore mergedSynchronizer;
+	private CVSSynchronizationCache baseSynchronizer;
 	
 	public CVSMergeSubscriber(IResource[] roots, CVSTag start, CVSTag end) {		
 		this(getUniqueId(), roots, start, end);
@@ -77,7 +77,7 @@ public class CVSMergeSubscriber extends CVSSyncTreeSubscriber implements IResour
 		String syncKeyPrefix = id.getLocalName();
 		remoteSynchronizer = new CVSSynchronizationCache(new QualifiedName(SYNC_KEY_QUALIFIER, syncKeyPrefix + end.getName()));
 		baseSynchronizer = new CVSSynchronizationCache(new QualifiedName(SYNC_KEY_QUALIFIER, syncKeyPrefix + start.getName()));
-		mergedSynchronizer = new PersistantResourceVariantTree(new QualifiedName(SYNC_KEY_QUALIFIER, syncKeyPrefix + "0merged")); //$NON-NLS-1$
+		mergedSynchronizer = new PersistantResourceVariantByteStore(new QualifiedName(SYNC_KEY_QUALIFIER, syncKeyPrefix + "0merged")); //$NON-NLS-1$
 		
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
 		CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber().addListener(this);
@@ -100,7 +100,7 @@ public class CVSMergeSubscriber extends CVSSyncTreeSubscriber implements IResour
 	private void internalMerged(IResource resource) throws TeamException {
 		byte[] remoteBytes = remoteSynchronizer.getBytes(resource);
 		if (remoteBytes == null) {
-			mergedSynchronizer.setVariantDoesNotExist(resource);
+			mergedSynchronizer.deleteBytes(resource);
 		} else {
 			mergedSynchronizer.setBytes(resource, remoteBytes);
 		}
@@ -238,14 +238,14 @@ public class CVSMergeSubscriber extends CVSSyncTreeSubscriber implements IResour
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.core.CVSSyncTreeSubscriber#getBaseSynchronizationCache()
 	 */
-	protected ResourceVariantTree getBaseSynchronizationCache() {
+	protected ResourceVariantByteStore getBaseSynchronizationCache() {
 		return baseSynchronizer;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.core.CVSSyncTreeSubscriber#getRemoteSynchronizationCache()
 	 */
-	protected ResourceVariantTree getRemoteSynchronizationCache() {
+	protected ResourceVariantByteStore getRemoteSynchronizationCache() {
 		return remoteSynchronizer;
 	}
 	
@@ -325,6 +325,11 @@ public class CVSMergeSubscriber extends CVSSyncTreeSubscriber implements IResour
 			byte[] parentBytes = baseSynchronizer.getBytes(resource.getParent());
 			if (parentBytes != null) {
 				return RemoteFile.fromBytes(resource, mergedBytes, parentBytes);
+			}
+		} else {
+			// A deletion was merged so return null for the base
+			if (mergedSynchronizer.isVariantKnown(resource)) {
+				return null;
 			}
 		}
 		return super.getBaseResource(resource);

@@ -24,7 +24,6 @@
       <import plugin="org.eclipse.team.core"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.compare"/>
-      <import plugin="org.eclipse.update.ui.forms"/>
       <import plugin="org.eclipse.ui.forms"/>
    </requires>
 
@@ -58,8 +57,8 @@
    <extension
          point="org.eclipse.ui.popupMenus">
       <objectContribution
-            adaptable="true"
             objectClass="org.eclipse.core.resources.IResource"
+            adaptable="true"
             id="org.eclipse.team.ui.ResourceContributions">
          <menu
                label="%TeamGroupMenu.label"
@@ -104,13 +103,13 @@
          </menu>
       </objectContribution>
       <objectContribution
-            adaptable="true"
             objectClass="org.eclipse.core.resources.IProject"
+            adaptable="true"
             id="org.eclipse.team.ui.ProjectContributions">
          <action
                label="%ConfigureProject.label"
-               class="org.eclipse.team.internal.ui.actions.ConfigureProjectAction"
                tooltip="%ConfigureProject.tooltip"
+               class="org.eclipse.team.internal.ui.actions.ConfigureProjectAction"
                menubarPath="team.main/projectGroup"
                enablesFor="1"
                id="org.eclipse.team.ui.ConfigureProject">
@@ -127,8 +126,8 @@
       <view
             name="%SyncView.name"
             icon="icons/full/cview16/synch_synch.gif"
-            category="org.eclipse.team.ui"
             fastViewWidthRatio="0.25"
+            category="org.eclipse.team.ui"
             class="org.eclipse.team.internal.ui.synchronize.SynchronizeView"
             id="org.eclipse.team.sync.views.SynchronizeView">
       </view>

@@ -18,9 +18,9 @@ import org.eclipse.team.internal.ccvs.core.*;
 /**
  * CVS sycnrhonization cache that ignores stale remote bytes
  */
-public class CVSDescendantSynchronizationCache extends DescendantResourceVariantTree {
+public class CVSDescendantSynchronizationCache extends DescendantResourceVariantByteStore {
 
-	public CVSDescendantSynchronizationCache(ResourceVariantTree baseCache, PersistantResourceVariantTree remoteCache) {
+	public CVSDescendantSynchronizationCache(ResourceVariantByteStore baseCache, PersistantResourceVariantByteStore remoteCache) {
 		super(baseCache, remoteCache);
 	}
 
@@ -44,7 +44,7 @@ public class CVSDescendantSynchronizationCache extends DescendantResourceVariant
 		if (resource.getType() == IResource.FILE && getBytes(resource) != null && !parentHasSyncBytes(resource)) {
 			// Log a warning if there is no sync bytes available for the resource's
 			// parent but there is valid sync bytes for the child
-			CVSProviderPlugin.log(new TeamException(Policy.bind("ResourceSynchronizer.missingParentBytesOnSet", ((PersistantResourceVariantTree)getRemoteTree()).getSyncName().toString(), resource.getFullPath().toString()))); //$NON-NLS-1$
+			CVSProviderPlugin.log(new TeamException(Policy.bind("ResourceSynchronizer.missingParentBytesOnSet", ((PersistantResourceVariantByteStore)getRemoteTree()).getSyncName().toString(), resource.getFullPath().toString()))); //$NON-NLS-1$
 		}
 		return changed;
 	}
@@ -59,4 +59,10 @@ public class CVSDescendantSynchronizationCache extends DescendantResourceVariant
 		return (getBytes(resource.getParent()) != null);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantByteStore#isVariantKnown(org.eclipse.core.resources.IResource)
+	 */
+	public boolean isVariantKnown(IResource resource) throws TeamException {
+		return ((PersistantResourceVariantByteStore)getRemoteTree()).isVariantKnown(resource);
+	}
 }

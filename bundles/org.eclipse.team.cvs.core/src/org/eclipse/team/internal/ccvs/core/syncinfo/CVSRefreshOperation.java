@@ -10,10 +10,6 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.syncinfo;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
@@ -21,19 +17,20 @@ import org.eclipse.team.core.synchronize.IResourceVariant;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteResource;
+import org.eclipse.team.internal.core.subscribers.caches.ResourceVariantByteStore;
 import org.eclipse.team.internal.core.subscribers.caches.ResourceVariantTree;
-import org.eclipse.team.internal.core.subscribers.caches.ResourceVariantTreeRefresh;
 
 /**
  * CVS Specific refresh operation
  */
-public class CVSRefreshOperation extends ResourceVariantTreeRefresh {
+public class CVSRefreshOperation extends ResourceVariantTree {
 
-	private ResourceVariantTree cache, baseCache;
+	private ResourceVariantByteStore cache, baseCache;
 	private CVSTag tag;
 	private boolean cacheFileContentsHint;
+	private CVSSyncTreeSubscriber subscriber;
 
-	public CVSRefreshOperation(ResourceVariantTree cache, ResourceVariantTree baseCache, CVSTag tag, boolean cacheFileContentsHint) {
+	public CVSRefreshOperation(ResourceVariantByteStore cache, ResourceVariantByteStore baseCache, CVSTag tag, boolean cacheFileContentsHint) {
 		this.tag = tag;
 		this.cache = cache;
 		this.baseCache = cache;
@@ -43,7 +40,7 @@ public class CVSRefreshOperation extends ResourceVariantTreeRefresh {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.subscribers.RefreshOperation#getSynchronizationCache()
 	 */
-	protected ResourceVariantTree getResourceVariantTree() {
+	protected ResourceVariantByteStore getByteStore() {
 		return cache;
 	}
 
@@ -75,31 +72,6 @@ public class CVSRefreshOperation extends ResourceVariantTreeRefresh {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.subscribers.RefreshOperation#getLocalChildren(org.eclipse.core.resources.IResource)
-	 */
-	protected IResource[] members(IResource local) throws TeamException {
-		IResource[] localChildren = null;			
-		if( local.getType() != IResource.FILE && (local.exists() || local.isPhantom())) {
-			// Include all non-ignored resources including outgoing deletions
-			ICVSFolder cvsFolder = CVSWorkspaceRoot.getCVSFolderFor((IContainer)local);
-			// Look inside existing folders and phantoms that are CVS folders
-			if (local.exists() || cvsFolder.isCVSFolder()) {
-				ICVSResource[] cvsChildren = cvsFolder.members(ICVSFolder.MANAGED_MEMBERS | ICVSFolder.UNMANAGED_MEMBERS);
-				List resourceChildren = new ArrayList();
-				for (int i = 0; i < cvsChildren.length; i++) {
-					ICVSResource cvsResource = cvsChildren[i];
-					resourceChildren.add(cvsResource.getIResource());
-				}
-				localChildren = (IResource[]) resourceChildren.toArray(new IResource[resourceChildren.size()]);
-			}
-		}
-		if (localChildren == null) {
-			localChildren = new IResource[0];
-		}
-		return localChildren;
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.subscribers.RefreshOperation#buildRemoteTree(org.eclipse.core.resources.IResource, int, boolean, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected IResourceVariant fetchVariant(IResource resource, int depth, IProgressMonitor monitor) throws TeamException {
@@ -115,6 +87,20 @@ public class CVSRefreshOperation extends ResourceVariantTreeRefresh {
 			IResourceVariant remote, int depth, IProgressMonitor monitor)
 			throws TeamException {
 		return super.collectChanges(local, remote, depth, monitor);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.core.subscribers.caches.IResourceVariantTree#getRoots()
+	 */
+	public IResource[] getRoots() {
+		return subscriber.roots();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.core.subscribers.caches.IResourceVariantTree#getResourceVariant(org.eclipse.core.resources.IResource)
+	 */
+	public IResourceVariant getResourceVariant(IResource resource) throws TeamException {
+		return subscriber.getRemoteResource(resource, getByteStore());
 	}
 
 }

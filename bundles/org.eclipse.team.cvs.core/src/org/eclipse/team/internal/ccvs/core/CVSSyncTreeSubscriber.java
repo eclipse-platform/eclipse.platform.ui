@@ -213,14 +213,14 @@ public abstract class CVSSyncTreeSubscriber extends SyncTreeSubscriber {
 	/**
 	 * Return the synchronization cache that provides access to the base sychronization bytes.
 	 */
-	protected abstract ResourceVariantTree getBaseSynchronizationCache();
+	protected abstract ResourceVariantByteStore getBaseSynchronizationCache();
 
 	/**
 	 * Return the synchronization cache that provides access to the base sychronization bytes.
 	 */
-	protected abstract ResourceVariantTree getRemoteSynchronizationCache();
+	protected abstract ResourceVariantByteStore getRemoteSynchronizationCache();
 	
-	protected IResourceVariant getRemoteResource(IResource resource, ResourceVariantTree cache) throws TeamException {
+	public IResourceVariant getRemoteResource(IResource resource, ResourceVariantByteStore cache) throws TeamException {
 		byte[] remoteBytes = cache.getBytes(resource);
 		if (remoteBytes == null) {
 			// There is no remote handle for this resource
@@ -260,9 +260,9 @@ public abstract class CVSSyncTreeSubscriber extends SyncTreeSubscriber {
 		}
 	}
 	
-	private String getSyncName(ResourceVariantTree cache) {
-		if (cache instanceof PersistantResourceVariantTree) {
-			return ((PersistantResourceVariantTree)cache).getSyncName().toString();
+	private String getSyncName(ResourceVariantByteStore cache) {
+		if (cache instanceof PersistantResourceVariantByteStore) {
+			return ((PersistantResourceVariantByteStore)cache).getSyncName().toString();
 		}
 		return cache.getClass().getName();
 	}
@@ -316,7 +316,7 @@ public abstract class CVSSyncTreeSubscriber extends SyncTreeSubscriber {
 		}
 	}
 
-	private IResource[] getMembers(ResourceVariantTree cache, IResource resource) throws TeamException, CoreException {
+	private IResource[] getMembers(ResourceVariantByteStore cache, IResource resource) throws TeamException, CoreException {
 		// Filter and return only phantoms associated with the remote synchronizer.
 		IResource[] members;
 		try {

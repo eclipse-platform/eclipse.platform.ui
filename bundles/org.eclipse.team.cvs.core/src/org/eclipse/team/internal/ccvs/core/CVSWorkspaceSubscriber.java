@@ -25,8 +25,8 @@ import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.internal.ccvs.core.syncinfo.*;
 import org.eclipse.team.internal.ccvs.core.util.ResourceStateChangeListeners;
-import org.eclipse.team.internal.core.subscribers.caches.PersistantResourceVariantTree;
-import org.eclipse.team.internal.core.subscribers.caches.ResourceVariantTree;
+import org.eclipse.team.internal.core.subscribers.caches.PersistantResourceVariantByteStore;
+import org.eclipse.team.internal.core.subscribers.caches.ResourceVariantByteStore;
 import org.eclipse.team.internal.ccvs.core.Policy;
 
 /**
@@ -34,8 +34,8 @@ import org.eclipse.team.internal.ccvs.core.Policy;
  */
 public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IResourceStateChangeListener {
 	
-	private ResourceVariantTree remoteSynchronizer;
-	private ResourceVariantTree baseSynchronizer;
+	private CVSDescendantSynchronizationCache remoteSynchronizer;
+	private ResourceVariantByteStore baseSynchronizer;
 	
 	// qualified name for remote sync info
 	private static final String REMOTE_RESOURCE_KEY = "remote-resource-key"; //$NON-NLS-1$
@@ -47,7 +47,7 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 		baseSynchronizer = new CVSBaseSynchronizationCache();
 		remoteSynchronizer = new CVSDescendantSynchronizationCache(
 				baseSynchronizer, 
-				new PersistantResourceVariantTree(new QualifiedName(SYNC_KEY_QUALIFIER, REMOTE_RESOURCE_KEY)));
+				new PersistantResourceVariantByteStore(new QualifiedName(SYNC_KEY_QUALIFIER, REMOTE_RESOURCE_KEY)));
 		
 		ResourceStateChangeListeners.getListener().addResourceStateChangeListener(this); 
 	}
@@ -96,7 +96,7 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 							// managed then this information is stale
 							if (getBaseSynchronizationCache().getBytes(resource) != null) {
 								if (canModifyWorkspace) {
-									remoteSynchronizer.removeBytes(resource, IResource.DEPTH_ZERO);
+									remoteSynchronizer.flushBytes(resource, IResource.DEPTH_ZERO);
 								} else {
 									// The revision  comparison will handle the stale sync bytes
 									// TODO: Unless the remote is known not to exist (see bug 52936)
@@ -107,7 +107,7 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 						byte[] localBytes = baseSynchronizer.getBytes(resource);
 						if (localBytes == null || !isLaterRevision(remoteBytes, localBytes)) {
 							if (canModifyWorkspace) {
-								remoteSynchronizer.removeBytes(resource, IResource.DEPTH_ZERO);
+								remoteSynchronizer.flushBytes(resource, IResource.DEPTH_ZERO);
 							} else {
 								// The getRemoteResource method handles the stale sync bytes
 							}
@@ -116,7 +116,7 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 				} else if (resource.getType() == IResource.FOLDER) {
 					// If the base has sync info for the folder, purge the remote bytes
 					if (getBaseSynchronizationCache().getBytes(resource) != null && canModifyWorkspace) {
-						remoteSynchronizer.removeBytes(resource, IResource.DEPTH_ZERO);
+						remoteSynchronizer.flushBytes(resource, IResource.DEPTH_ZERO);
 					}
 				}
 			} catch (TeamException e) {
@@ -168,7 +168,7 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 	 */
 	public void projectDeconfigured(IProject project) {
 		try {
-			remoteSynchronizer.removeBytes(project, IResource.DEPTH_INFINITE);
+			remoteSynchronizer.flushBytes(project, IResource.DEPTH_INFINITE);
 		} catch (TeamException e) {
 			CVSProviderPlugin.log(e);
 		}
@@ -212,14 +212,14 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.core.CVSSyncTreeSubscriber#getBaseSynchronizationCache()
 	 */
-	protected ResourceVariantTree getBaseSynchronizationCache() {
+	protected ResourceVariantByteStore getBaseSynchronizationCache() {
 		return baseSynchronizer;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.core.CVSSyncTreeSubscriber#getRemoteSynchronizationCache()
 	 */
-	protected ResourceVariantTree getRemoteSynchronizationCache() {
+	protected ResourceVariantByteStore getRemoteSynchronizationCache() {
 		return remoteSynchronizer;
 	}
 	

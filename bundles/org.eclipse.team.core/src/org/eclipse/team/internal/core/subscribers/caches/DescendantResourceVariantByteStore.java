@@ -10,11 +10,14 @@
  *******************************************************************************/
 package org.eclipse.team.internal.core.subscribers.caches;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.team.core.TeamException;
 
 /**
- * A <code>ResourceVariantTree</code> that optimizes the memory footprint
+ * A <code>ResourceVariantByteStore</code> that optimizes the memory footprint
  * of a remote resource variant tree by only storing those bytes that
  * differ from a base resource variant tree. This class should only be used 
  * for cases where the base and remote are on the same line-of-descent. 
@@ -29,24 +32,24 @@ import org.eclipse.team.core.TeamException;
  * from the main trunck to a branch, any cached remote resource variants would be stale.
 
  */
-public abstract class DescendantResourceVariantTree extends ResourceVariantTree {
-	ResourceVariantTree baseCache, remoteCache;
+public abstract class DescendantResourceVariantByteStore extends ResourceVariantByteStore {
+	ResourceVariantByteStore baseCache, remoteCache;
 
-	public DescendantResourceVariantTree(ResourceVariantTree baseCache, ResourceVariantTree remoteCache) {
+	public DescendantResourceVariantByteStore(ResourceVariantByteStore baseCache, ResourceVariantByteStore remoteCache) {
 		this.baseCache = baseCache;
 		this.remoteCache = remoteCache;
 	}
 	
 	/**
 	 * This method will dispose the remote cache but not the base cache.
-	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantTree#dispose()
+	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantByteStore#dispose()
 	 */
 	public void dispose() {
 		remoteCache.dispose();
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantTree#getBytes(org.eclipse.core.resources.IResource)
+	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantByteStore#getBytes(org.eclipse.core.resources.IResource)
 	 */
 	public byte[] getBytes(IResource resource) throws TeamException {
 		byte[] remoteBytes = remoteCache.getBytes(resource);
@@ -76,31 +79,38 @@ public abstract class DescendantResourceVariantTree extends ResourceVariantTree 
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantTree#setBytes(org.eclipse.core.resources.IResource, byte[])
+	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantByteStore#setBytes(org.eclipse.core.resources.IResource, byte[])
 	 */
 	public boolean setBytes(IResource resource, byte[] bytes) throws TeamException {
 		byte[] baseBytes = baseCache.getBytes(resource);
 		if (baseBytes != null && equals(baseBytes, bytes)) {
 			// Remove the existing bytes so the base will be used (thus saving space)
-			return remoteCache.removeBytes(resource, IResource.DEPTH_ZERO);
+			return remoteCache.flushBytes(resource, IResource.DEPTH_ZERO);
 		} else {
 			return remoteCache.setBytes(resource, bytes);
 		}	
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantTree#removeBytes(org.eclipse.core.resources.IResource, int)
+	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantByteStore#removeBytes(org.eclipse.core.resources.IResource, int)
 	 */
-	public boolean removeBytes(IResource resource, int depth) throws TeamException {
-		return remoteCache.removeBytes(resource, depth);
+	public boolean flushBytes(IResource resource, int depth) throws TeamException {
+		return remoteCache.flushBytes(resource, depth);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantTree#isVariantKnown(org.eclipse.core.resources.IResource)
+	/**
+	 * Return <code>true</code> if the variant associated with the given local 
+	 * resource has been cached. This method is useful for those cases when
+	 * there are no bytes for a resource variant and the client wants to
+	 * know if this means that the remote does exist (i.e. this method returns
+	 * <code>true</code>) or the remote has not been fetched (i.e. this method returns
+	 * <code>false</code>).
+	 * @param resource the local resource
+	 * @return <code>true</code> if the variant associated with the given local 
+	 * resource has been cached.
+	 * @throws TeamException
 	 */
-	public boolean isVariantKnown(IResource resource) throws TeamException {
-		return remoteCache.isVariantKnown(resource);
-	}
+	public abstract boolean isVariantKnown(IResource resource) throws TeamException;
 
 	/**
 	 * This method indicates whether the remote bytes are a later revision or version
@@ -115,17 +125,17 @@ public abstract class DescendantResourceVariantTree extends ResourceVariantTree 
 	protected abstract boolean isDescendant(IResource resource, byte[] baseBytes, byte[] remoteBytes) throws TeamException;
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantTree#setVariantDoesNotExist(org.eclipse.core.resources.IResource)
+	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantByteStore#setVariantDoesNotExist(org.eclipse.core.resources.IResource)
 	 */
-	public boolean setVariantDoesNotExist(IResource resource) throws TeamException {
-		return remoteCache.setVariantDoesNotExist(resource);
+	public boolean deleteBytes(IResource resource) throws TeamException {
+		return remoteCache.deleteBytes(resource);
 	}
 
 	/**
 	 * Return the base tree from which the remote is descendant.
 	 * @return Returns the base tree.
 	 */
-	protected ResourceVariantTree getBaseTree() {
+	protected ResourceVariantByteStore getBaseTree() {
 		return baseCache;
 	}
 
@@ -134,15 +144,29 @@ public abstract class DescendantResourceVariantTree extends ResourceVariantTree 
 	 * that differ from those in the base tree.
 	 * @return Returns the remote tree.
 	 */
-	protected ResourceVariantTree getRemoteTree() {
+	protected ResourceVariantByteStore getRemoteTree() {
 		return remoteCache;
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantTree#members(org.eclipse.core.resources.IResource)
+	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantByteStore#members(org.eclipse.core.resources.IResource)
 	 */
 	public IResource[] members(IResource resource) throws TeamException {
-		return getRemoteTree().members(resource);
+		IResource[] remoteMembers = getRemoteTree().members(resource);
+		IResource[] baseMembers = getBaseTree().members(resource);
+		Set members = new HashSet();
+		for (int i = 0; i < remoteMembers.length; i++) {
+			members.add(remoteMembers[i]);
+		}
+		for (int i = 0; i < baseMembers.length; i++) {
+			IResource member = baseMembers[i];
+			// Add the base only inf the remote does not know about it
+			// (i.e. hasn't marked it as deleted
+			if (!isVariantKnown(member)) {
+				members.add(member);
+			}
+		}
+		return (IResource[]) members.toArray(new IResource[members.size()]);
 	}
 
 }

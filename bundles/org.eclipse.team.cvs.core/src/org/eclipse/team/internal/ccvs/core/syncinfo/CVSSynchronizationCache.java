@@ -13,15 +13,15 @@ package org.eclipse.team.internal.ccvs.core.syncinfo;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.core.subscribers.caches.PersistantResourceVariantTree;
+import org.eclipse.team.internal.core.subscribers.caches.PersistantResourceVariantByteStore;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.Policy;
 
 /**
- * Override <code>PersistantResourceVariantTree</code> to log an error
+ * Override <code>PersistantResourceVariantByteStore</code> to log an error
  * if there are no parent bytes for a file.
  */
-public class CVSSynchronizationCache extends PersistantResourceVariantTree {
+public class CVSSynchronizationCache extends PersistantResourceVariantByteStore {
 
 	public CVSSynchronizationCache(QualifiedName name) {
 		super(name);

@@ -13,11 +13,11 @@ package org.eclipse.team.internal.ccvs.core.syncinfo;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.core.subscribers.caches.ResourceVariantTree;
+import org.eclipse.team.internal.core.subscribers.caches.ResourceVariantByteStore;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 
 
-public class CVSBaseSynchronizationCache extends ResourceVariantTree {
+public class CVSBaseSynchronizationCache extends ResourceVariantByteStore {
 	public void dispose() {
 		// Do nothing
 	}
@@ -44,13 +44,13 @@ public class CVSBaseSynchronizationCache extends ResourceVariantTree {
 	public boolean isVariantKnown(IResource resource) throws TeamException {
 		return getBytes(resource) != null;
 	}
-	public boolean removeBytes(IResource resource, int depth) throws TeamException {
+	public boolean flushBytes(IResource resource, int depth) throws TeamException {
 		throw new UnsupportedOperationException();
 	}
 	public boolean setBytes(IResource resource, byte[] bytes) throws TeamException {
 		throw new UnsupportedOperationException();
 	}
-	public boolean setVariantDoesNotExist(IResource resource) throws TeamException {
+	public boolean deleteBytes(IResource resource) throws TeamException {
 		throw new UnsupportedOperationException();
 	}
 	

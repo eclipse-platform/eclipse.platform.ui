@@ -12,6 +12,7 @@
 		<project>org.eclipse.team.core</project>
 		<project>org.eclipse.ui</project>
 		<project>org.eclipse.ui.editors</project>
+		<project>org.eclipse.ui.forms</project>
 		<project>org.eclipse.ui.ide</project>
 		<project>org.eclipse.ui.views</project>
 		<project>org.eclipse.ui.workbench.texteditor</project>

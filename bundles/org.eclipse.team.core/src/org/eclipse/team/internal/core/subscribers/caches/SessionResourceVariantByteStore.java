@@ -18,10 +18,10 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.core.Assert;
 
 /**
- * A <code>ResourceVariantTree</code> that caches the variant bytes in memory 
+ * A <code>ResourceVariantByteStore</code> that caches the variant bytes in memory 
  * and does not persist them over workbench invocations.
  */
-public class SessionResourceVariantTree extends ResourceVariantTree {
+public class SessionResourceVariantByteStore extends ResourceVariantByteStore {
 
 	private static final byte[] NO_REMOTE = new byte[0];
 	
@@ -64,7 +64,7 @@ public class SessionResourceVariantTree extends ResourceVariantTree {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantTree#dispose()
+	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantByteStore#dispose()
 	 */
 	public void dispose() {
 		syncBytesCache.clear();
@@ -72,7 +72,7 @@ public class SessionResourceVariantTree extends ResourceVariantTree {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantTree#getBytes(org.eclipse.core.resources.IResource)
+	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantByteStore#getBytes(org.eclipse.core.resources.IResource)
 	 */
 	public byte[] getBytes(IResource resource) throws TeamException {
 		byte[] syncBytes = internalGetSyncBytes(resource);
@@ -85,7 +85,7 @@ public class SessionResourceVariantTree extends ResourceVariantTree {
 
 	/*
 	 *  (non-Javadoc)
-	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantTree#setBytes(org.eclipse.core.resources.IResource, byte[])
+	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantByteStore#setBytes(org.eclipse.core.resources.IResource, byte[])
 	 */
 	public boolean setBytes(IResource resource, byte[] bytes) throws TeamException {
 		Assert.isNotNull(bytes);
@@ -96,15 +96,15 @@ public class SessionResourceVariantTree extends ResourceVariantTree {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantTree#removeBytes(org.eclipse.core.resources.IResource, int)
+	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantByteStore#removeBytes(org.eclipse.core.resources.IResource, int)
 	 */
-	public boolean removeBytes(IResource resource, int depth) throws TeamException {
+	public boolean flushBytes(IResource resource, int depth) throws TeamException {
 		if (getSyncBytesCache().containsKey(resource)) {
 			if (depth != IResource.DEPTH_ZERO) {
 				IResource[] members = members(resource);
 				for (int i = 0; i < members.length; i++) {
 					IResource child = members[i];
-					removeBytes(child, (depth == IResource.DEPTH_INFINITE) ? IResource.DEPTH_INFINITE: IResource.DEPTH_ZERO);
+					flushBytes(child, (depth == IResource.DEPTH_INFINITE) ? IResource.DEPTH_INFINITE: IResource.DEPTH_ZERO);
 				}
 			}
 			getSyncBytesCache().remove(resource);
@@ -115,7 +115,7 @@ public class SessionResourceVariantTree extends ResourceVariantTree {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantTree#members(org.eclipse.core.resources.IResource)
+	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantByteStore#members(org.eclipse.core.resources.IResource)
 	 */
 	public IResource[] members(IResource resource) {
 		List members = (List)membersCache.get(resource);
@@ -126,17 +126,10 @@ public class SessionResourceVariantTree extends ResourceVariantTree {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantTree#isVariantKnown(org.eclipse.core.resources.IResource)
+	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantByteStore#setVariantDoesNotExist(org.eclipse.core.resources.IResource)
 	 */
-	public boolean isVariantKnown(IResource resource) throws TeamException {
-		return internalGetSyncBytes(resource) != null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantTree#setVariantDoesNotExist(org.eclipse.core.resources.IResource)
-	 */
-	public boolean setVariantDoesNotExist(IResource resource) throws TeamException {
-		return setBytes(resource, NO_REMOTE);
+	public boolean deleteBytes(IResource resource) throws TeamException {
+		return flushBytes(resource, IResource.DEPTH_ZERO);
 	}
 
 	/**

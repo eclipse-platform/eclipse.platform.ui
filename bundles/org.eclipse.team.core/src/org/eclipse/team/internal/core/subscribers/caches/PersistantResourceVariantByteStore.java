@@ -20,11 +20,11 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.core.Assert;
 
 /**
- * A <code>ResourceVariantTree</code> that caches the variant bytes using 
+ * A <code>ResourceVariantByteStore</code> that caches the variant bytes using 
  * the <code>org.eclipse.core.resources.ISynchronizer</code> so that
  * the tree is cached accross workbench invocations.
  */
-public class PersistantResourceVariantTree extends ResourceVariantTree {
+public class PersistantResourceVariantByteStore extends ResourceVariantByteStore {
 
 	private static final byte[] NO_REMOTE = new byte[0];
 	
@@ -37,13 +37,13 @@ public class PersistantResourceVariantTree extends ResourceVariantTree {
 	 * and a unique id within the plugin as the qualifier name.
 	 * @param name the key used in the Core synchronizer
 	 */
-	public PersistantResourceVariantTree(QualifiedName name) {
+	public PersistantResourceVariantByteStore(QualifiedName name) {
 		syncName = name;
 		getSynchronizer().add(syncName);
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantTree#dispose()
+	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantByteStore#dispose()
 	 */
 	public void dispose() {
 		getSynchronizer().remove(getSyncName());
@@ -65,7 +65,7 @@ public class PersistantResourceVariantTree extends ResourceVariantTree {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantTree#getBytes(org.eclipse.core.resources.IResource)
+	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantByteStore#getBytes(org.eclipse.core.resources.IResource)
 	 */
 	public byte[] getBytes(IResource resource) throws TeamException {
 		byte[] syncBytes = internalGetSyncBytes(resource);
@@ -85,7 +85,7 @@ public class PersistantResourceVariantTree extends ResourceVariantTree {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantTree#setBytes(org.eclipse.core.resources.IResource, byte[])
+	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantByteStore#setBytes(org.eclipse.core.resources.IResource, byte[])
 	 */
 	public boolean setBytes(IResource resource, byte[] bytes) throws TeamException {
 		Assert.isNotNull(bytes);
@@ -100,9 +100,9 @@ public class PersistantResourceVariantTree extends ResourceVariantTree {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantTree#removeBytes(org.eclipse.core.resources.IResource, int)
+	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantByteStore#removeBytes(org.eclipse.core.resources.IResource, int)
 	 */
-	public boolean removeBytes(IResource resource, int depth) throws TeamException {
+	public boolean flushBytes(IResource resource, int depth) throws TeamException {
 		if (resource.exists() || resource.isPhantom()) {
 			try {
 				if (depth != IResource.DEPTH_ZERO || internalGetSyncBytes(resource) != null) {
@@ -117,7 +117,7 @@ public class PersistantResourceVariantTree extends ResourceVariantTree {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantTree#isVariantKnown(org.eclipse.core.resources.IResource)
+	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantByteStore#isVariantKnown(org.eclipse.core.resources.IResource)
 	 */
 	public boolean isVariantKnown(IResource resource) throws TeamException {
 		return internalGetSyncBytes(resource) != null;
@@ -130,12 +130,12 @@ public class PersistantResourceVariantTree extends ResourceVariantTree {
 	 * <code>getSyncBytes(resource)</code> will return <code>null</code>.
 	 * @return <code>true</code> if this changes the remote sync bytes
 	 */
-	public boolean setVariantDoesNotExist(IResource resource) throws TeamException {
+	public boolean deleteBytes(IResource resource) throws TeamException {
 		return setBytes(resource, NO_REMOTE);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantTree#members(org.eclipse.core.resources.IResource)
+	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantByteStore#members(org.eclipse.core.resources.IResource)
 	 */
 	public IResource[] members(IResource resource) throws TeamException {
 		if(resource.getType() == IResource.FILE) {
