@@ -44,10 +44,6 @@ public interface IWorkbenchConstants {
 	public static final String PL_ACTION_DEFINITIONS ="actionDefinitions"; //$NON-NLS-1$
 	public static final String PL_CAPABILITIES = "capabilities"; //$NON-NLS-1$
 	public static final String PL_WORKINGSETS = "workingSets"; //$NON-NLS-1$	
-	
-	/**
-	 * @deprecated Extension point no longer applicable with new project capability
-	 */
 	public static final String PL_PROJECT_NATURE_IMAGES ="projectNatureImages"; //$NON-NLS-1$
 		
 	// Key binding service defaults
