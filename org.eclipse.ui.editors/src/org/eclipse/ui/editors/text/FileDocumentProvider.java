@@ -18,17 +18,10 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 
+import org.eclipse.swt.widgets.Display;
+
 import org.eclipse.core.internal.filebuffers.ContainerGenerator;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IResourceDeltaVisitor;
-import org.eclipse.core.resources.IResourceRuleFactory;
-import org.eclipse.core.resources.IResourceStatus;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -41,7 +34,16 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IResourceDeltaVisitor;
+import org.eclipse.core.resources.IResourceRuleFactory;
+import org.eclipse.core.resources.IResourceStatus;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.jface.operation.IRunnableContext;
 
@@ -216,50 +218,65 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		 * @see IResourceDeltaVisitor#visit(org.eclipse.core.resources.IResourceDelta)
 		 */
 		public boolean visit(IResourceDelta delta) throws CoreException {
-						
-			if (delta != null && getFile().equals(delta.getResource())) {
+			if (delta == null)
+				return false;
+			
+			delta= delta.findMember(getFile().getFullPath());
+
+			if (delta == null)
+				return false;
 				
-				Runnable runnable= null;
-				
-				switch (delta.getKind()) {
-					case IResourceDelta.CHANGED:
-						if ((IResourceDelta.CONTENT & delta.getFlags()) != 0) {
-							FileInfo info= (FileInfo) getElementInfo(fFileEditorInput);
-							if (info != null && !info.fCanBeSaved && computeModificationStamp(getFile()) != info.fModificationStamp) {
-								runnable= new SafeChange(fFileEditorInput) {
-									protected void execute(IFileEditorInput input) throws Exception {
-										handleElementContentChanged(input);
-									}
-								};
-							}
-						}
+			Runnable runnable= null;
+			
+			switch (delta.getKind()) {
+				case IResourceDelta.CHANGED:
+					FileInfo info= (FileInfo) getElementInfo(fFileEditorInput);
+					if (info == null || info.fCanBeSaved)
 						break;
-					case IResourceDelta.REMOVED:
-						if ((IResourceDelta.MOVED_TO & delta.getFlags()) != 0) {
-							final IPath path= delta.getMovedToPath();
+					
+					boolean isSynchronized= computeModificationStamp(getFile()) == info.fModificationStamp;
+					if ((IResourceDelta.ENCODING & delta.getFlags()) != 0 && isSynchronized) {
+						runnable= new SafeChange(fFileEditorInput) {
+							protected void execute(IFileEditorInput input) throws Exception {
+								handleElementContentChanged(input);
+							}
+						};
+					}
+					
+					if (runnable != null && (IResourceDelta.CONTENT & delta.getFlags()) != 0 && !isSynchronized) {
+						runnable= new SafeChange(fFileEditorInput) {
+							protected void execute(IFileEditorInput input) throws Exception {
+								handleElementContentChanged(input);
+							}
+						};
+					}
+					break;
+					
+				case IResourceDelta.REMOVED:
+					if ((IResourceDelta.MOVED_TO & delta.getFlags()) != 0) {
+						final IPath path= delta.getMovedToPath();
+						runnable= new SafeChange(fFileEditorInput) {
+							protected void execute(IFileEditorInput input) throws Exception {
+								handleElementMoved(input, path);
+							}
+						};
+					} else {
+						info= (FileInfo) getElementInfo(fFileEditorInput);
+						if (info != null && !info.fCanBeSaved) {
 							runnable= new SafeChange(fFileEditorInput) {
 								protected void execute(IFileEditorInput input) throws Exception {
-									handleElementMoved(input, path);
+									handleElementDeleted(input);
 								}
 							};
-						} else {
-							FileInfo info= (FileInfo) getElementInfo(fFileEditorInput);
-							if (info != null && !info.fCanBeSaved) {
-								runnable= new SafeChange(fFileEditorInput) {
-									protected void execute(IFileEditorInput input) throws Exception {
-										handleElementDeleted(input);
-									}
-								};
-							}
 						}
-						break;
-				}
-				
-				if (runnable != null)
-					update(runnable);
+					}
+					break;
 			}
+				
+			if (runnable != null)
+				update(runnable);
 			
-			return true; // because we are sitting on files anyway
+			return false;
 		}
 		
 		/**
@@ -648,8 +665,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			FileInfo info= new FileInfo(d, m, f);
 			info.fModificationStamp= computeModificationStamp(input.getFile());
 			info.fStatus= s;
-			info.fEncoding= getPersistedEncoding(input);
-			info.fHasBOM= hasBOM(input);
+			cacheEncodingState(element);
 			
 			return info;
 		}
@@ -692,6 +708,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 				handleCoreException(x, "FileDocumentProvider.handleElementContentChanged"); //$NON-NLS-1$
 			}
 			
+			cacheEncodingState(fileEditorInput);
 			setDocumentContent(document, fileEditorInput, info.fEncoding);
 			
 		} catch (CoreException x) {
@@ -803,6 +820,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			IFileEditorInput input= (IFileEditorInput) element;
 			try {
 				refreshFile(input.getFile(), monitor);
+				cacheEncodingState(element);
 			} catch (CoreException x) {
 				handleCoreException(x,TextEditorMessages.getString("FileDocumentProvider.resetDocument")); //$NON-NLS-1$
 			}
@@ -1025,6 +1043,28 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	 * @deprecated as of 3.0 this method is no longer in use and does nothing
 	 */
 	protected void readUTF8BOM(IFile file, String encoding, Object element) throws CoreException {
+	}
+	
+	/**
+	 * Internally caches the file's encoding data.
+	 * 
+	 * @param element the element, or <code>null</code>
+	 * @throws CoreException if the encoding cannot be retrieved
+	 * @since 3.1
+	 */
+	protected void cacheEncodingState(Object element) throws CoreException {
+		if (element instanceof IFileEditorInput) {
+			IFileEditorInput editorInput= (IFileEditorInput)element;
+			IFile file= editorInput.getFile();
+			if (file != null) {
+				ElementInfo info= getElementInfo(element);
+				if (info instanceof StorageInfo)
+					((StorageInfo)info).fEncoding= getPersistedEncoding(element);
+				
+				if (info instanceof FileInfo)
+					((FileInfo)info).fHasBOM= hasBOM(element);
+			}
+		}
 	}
 	
 	/**
