@@ -239,7 +239,9 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
         }
 
 		public void dispose() {
-			fItalicFont.dispose();
+			if (fItalicFont != null) {
+				fItalicFont.dispose();
+			}
 			super.dispose();
 		}
     }
