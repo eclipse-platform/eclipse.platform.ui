@@ -154,6 +154,11 @@ public IPath append(String tail) {
 		newSegments[myLen] = tail;
 		return new Path(device, newSegments, separators & ~HAS_TRAILING);
 	}
+	if (this.isEmpty())
+		return new Path(device, tail).makeRelative();
+	if (this.isRoot())
+		return new Path(device, tail).makeAbsolute();
+
 	//go with easy implementation for now
 	return append(new Path(tail));
 }
@@ -165,9 +170,9 @@ public IPath append(IPath tail) {
 	if (tail == null || tail.isEmpty() || tail.isRoot())
 		return this;
 	if (this.isEmpty())
-		return tail.makeRelative();
+		return tail.setDevice(device).makeRelative();
 	if (this.isRoot())
-		return tail.makeAbsolute();
+		return tail.setDevice(device).makeAbsolute();
 	
 	//concatenate the two segment arrays
 	int myLen = segments.length;
