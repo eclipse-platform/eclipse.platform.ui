@@ -199,7 +199,9 @@ public interface IWorkbenchConstants {
 	public static final String TAG_FAST_VIEW_DATA = "fastViewData"; //$NON-NLS-1$
 	public static final String TAG_FAST_VIEW_ORIENTATION = "orientation"; //$NON-NLS-1$
 	public static final String TAG_THEME = "theme";//$NON-NLS-1$	
+    public static final String TAG_VIEW_LAYOUT_REC = "viewLayoutRec"; //$NON-NLS-1$
 	public static final String TAG_PERSPECTIVE_BAR = "perspectiveBar"; //$NON-NLS-1$
+	
 	//Fonts
 	public static final String SMALL_FONT = "org.eclipse.ui.smallFont"; //$NON-NLS-1$
 	

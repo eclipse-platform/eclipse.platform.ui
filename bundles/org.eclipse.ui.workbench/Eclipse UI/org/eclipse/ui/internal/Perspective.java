@@ -927,8 +927,6 @@ public IStatus restoreState() {
 		} else {
 			pres.replacePlaceholderWithPart(ref.getPane());			
 		}
-		
-		restoreViewLayoutRec(childMem, viewRef);
 	}
 
 	// Load the fast views
@@ -973,11 +971,29 @@ public IStatus restoreState() {
 				ref.setPane(new ViewPane(viewRef,page));
 			}
 			page.addPart(ref);
-
-			restoreViewLayoutRec(childMem, viewRef);
 		}
 	}
-		
+
+	// Load the view layout recs
+	IMemento[] recMementos = memento.getChildren(IWorkbenchConstants.TAG_VIEW_LAYOUT_REC);
+	for (int i = 0; i < recMementos.length; i++) {
+        IMemento recMemento = recMementos[i];
+        String compoundId = recMemento.getString(IWorkbenchConstants.TAG_ID);
+        if (compoundId != null) {
+            ViewLayoutRec rec = getViewLayoutRec(compoundId, true);
+            if (IWorkbenchConstants.FALSE.equals(recMemento.getString(IWorkbenchConstants.TAG_CLOSEABLE))) {
+                rec.isCloseable = false;
+            }
+            if (IWorkbenchConstants.FALSE.equals(recMemento.getString(IWorkbenchConstants.TAG_MOVEABLE))) {
+                rec.isMoveable = false;
+            }
+            if (IWorkbenchConstants.TRUE.equals(recMemento.getString(IWorkbenchConstants.TAG_STANDALONE))) {
+                rec.isStandalone = true;
+                rec.showTitle = !IWorkbenchConstants.FALSE.equals(recMemento.getString(IWorkbenchConstants.TAG_SHOW_TITLE));
+            }
+        }
+    }
+	
 	HashSet knownActionSetIds = new HashSet();
 	// Load the action sets.
 	IMemento [] actions = memento.getChildren(IWorkbenchConstants.TAG_ACTION_SET);
@@ -1110,21 +1126,6 @@ public IStatus restoreState() {
 	fixed = (isFixed != null && isFixed.intValue() == 1);
 	
 	return result;
-}
-
-/**
- * Restores the layout rec for the given view.
- */
-private void restoreViewLayoutRec(IMemento childMem, IViewReference viewRef) {
-    ViewLayoutRec rec = getViewLayoutRec(viewRef, true);
-    if (IWorkbenchConstants.FALSE.equals(childMem.getString(IWorkbenchConstants.TAG_CLOSEABLE)))
-        rec.isCloseable = false;
-    if (IWorkbenchConstants.FALSE.equals(childMem.getString(IWorkbenchConstants.TAG_MOVEABLE)))
-        rec.isMoveable = false;
-    if (IWorkbenchConstants.TRUE.equals(childMem.getString(IWorkbenchConstants.TAG_STANDALONE)))
-        rec.isStandalone = true;
-    if (IWorkbenchConstants.FALSE.equals(childMem.getString(IWorkbenchConstants.TAG_SHOW_TITLE)))
-        rec.showTitle = false;
 }
 
 /**
@@ -1294,9 +1295,8 @@ private IStatus saveState(IMemento memento, PerspectiveDescriptor p,
 		if (ref.getSecondaryId() != null) {
 			viewMemento.putString(IWorkbenchConstants.TAG_SECONDARY_ID, ref.getSecondaryId());
 		}
-		saveViewLayoutRec(ref, viewMemento);
 	}
-
+	
 	if(fastViews.size() > 0) {
 		IMemento childMem = memento.createChild(IWorkbenchConstants.TAG_FAST_VIEWS);
 		enum = fastViews.iterator();
@@ -1307,9 +1307,29 @@ private IStatus saveState(IMemento memento, PerspectiveDescriptor p,
 			viewMemento.putString(IWorkbenchConstants.TAG_ID, id);
 			float ratio = getFastViewWidthRatio(id);
 			viewMemento.putFloat(IWorkbenchConstants.TAG_RATIO, ratio);
-			saveViewLayoutRec(ref, viewMemento);
 		}
 	}
+
+	// Save the view layout recs.
+	for (Iterator i = mapIDtoViewLayoutRec.keySet().iterator(); i.hasNext();) {
+		String compoundId = (String) i.next();
+		ViewLayoutRec rec = (ViewLayoutRec) mapIDtoViewLayoutRec.get(compoundId);
+	    if (rec != null && (!rec.isCloseable || !rec.isMoveable || rec.isStandalone)) {
+	        IMemento layoutMemento = memento.createChild(IWorkbenchConstants.TAG_VIEW_LAYOUT_REC);
+	        layoutMemento.putString(IWorkbenchConstants.TAG_ID, compoundId);
+	        if (!rec.isCloseable) {
+	            layoutMemento.putString(IWorkbenchConstants.TAG_CLOSEABLE, IWorkbenchConstants.FALSE);
+	        }
+	        if (!rec.isMoveable) {
+	            layoutMemento.putString(IWorkbenchConstants.TAG_MOVEABLE, IWorkbenchConstants.FALSE);
+	        }
+	        if (rec.isStandalone) {
+	            layoutMemento.putString(IWorkbenchConstants.TAG_STANDALONE, IWorkbenchConstants.TRUE);
+	            layoutMemento.putString(IWorkbenchConstants.TAG_SHOW_TITLE, Boolean.toString(rec.showTitle));
+	        }
+	    }
+	}
+
 	if(errors > 0) {
 		String message = WorkbenchMessages.getString("Perspective.multipleErrors"); //$NON-NLS-1$
 		if(errors == 1)
@@ -1334,25 +1354,6 @@ private IStatus saveState(IMemento memento, PerspectiveDescriptor p,
 		memento.putInteger(IWorkbenchConstants.TAG_FIXED, 0);
 	
 	return result;
-}
-/**
- * @param ref
- * @param viewMemento
- */
-private void saveViewLayoutRec(IViewReference ref, IMemento viewMemento) {
-    ViewLayoutRec rec = getViewLayoutRec(ref, false);
-    if (rec != null) {
-        if (!rec.isCloseable) {
-            viewMemento.putString(IWorkbenchConstants.TAG_CLOSEABLE, IWorkbenchConstants.FALSE);
-        }
-        if (!rec.isMoveable) {
-            viewMemento.putString(IWorkbenchConstants.TAG_MOVEABLE, IWorkbenchConstants.FALSE);
-        }
-        if (rec.isStandalone) {
-            viewMemento.putString(IWorkbenchConstants.TAG_STANDALONE, IWorkbenchConstants.TRUE);
-   	        viewMemento.putString(IWorkbenchConstants.TAG_SHOW_TITLE, Boolean.toString(rec.showTitle));
-        }
-    }
 }
 /**
  * Sets the visible action sets. 
