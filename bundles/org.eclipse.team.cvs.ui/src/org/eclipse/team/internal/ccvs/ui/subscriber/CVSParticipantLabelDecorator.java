@@ -19,8 +19,8 @@ import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
-import org.eclipse.team.internal.ccvs.ui.CVSLightweightDecorator;
-import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.*;
+import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
@@ -53,6 +53,12 @@ class CVSParticipantLabelDecorator extends LabelProvider implements IPropertyCha
 				}
 				return output.toString();
 			}
+		}
+		if (element instanceof CommitSetDiffNode) {
+		    CommitSet set = ((CommitSetDiffNode)element).getSet();
+		    if (CommitSetManager.getInstance().isDefault(set)) {
+		        return Policy.bind("CommitSetDiffNode.0", text); //$NON-NLS-1$
+		    }
 		}
 		return text;
 	}

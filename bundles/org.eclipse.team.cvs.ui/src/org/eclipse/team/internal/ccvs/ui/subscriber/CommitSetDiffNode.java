@@ -12,7 +12,6 @@ package org.eclipse.team.internal.ccvs.ui.subscriber;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ui.synchronize.SynchronizeModelElement;
@@ -54,9 +53,6 @@ public class CommitSetDiffNode extends SynchronizeModelElement {
 	 */
 	public String getName() {
 	    String name = set.getTitle();
-	    if (CommitSetManager.getInstance().isDefault(set)) {
-	        name = Policy.bind("CommitSetDiffNode.0", name); //$NON-NLS-1$
-	    }
 		return name;
 	}
 	

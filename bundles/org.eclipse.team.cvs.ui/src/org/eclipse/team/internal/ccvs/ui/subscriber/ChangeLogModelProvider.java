@@ -971,7 +971,9 @@ public class ChangeLogModelProvider extends CompositeModelProvider implements IC
      * @see org.eclipse.team.internal.ccvs.ui.subscriber.ICommitSetChangeListener#titleChanged(org.eclipse.team.internal.ccvs.ui.subscriber.CommitSet)
      */
     public void titleChanged(CommitSet set) {
-        refreshNode(getDiffNodeFor(set));
+        // We need to refresh all the files because the title is used
+        // to cache the commit set (i.e. used as the hashCode in various maps)
+        refresh(set.getFiles(), true /* we may not be in the UI thread */);
     }
 
     /* (non-Javadoc)
