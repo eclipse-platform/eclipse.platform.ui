@@ -35,7 +35,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 	private static final String PROP_ECLIPSE_EXITCODE = "eclipse.exitcode"; //$NON-NLS-1$
 	private static final String PROP_ECLIPSE_APPLICATION = "eclipse.application"; //$NON-NLS-1$
 
-	private static BundleContext context;//TODO Could be renamed to runtimeContext would be clearer
+	private static BundleContext context;
 	private EclipseBundleListener pluginBundleListener;
 	private ExtensionRegistry registry;
 	private ServiceReference environmentServiceReference;
@@ -102,7 +102,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 				if (registry == null)
 					System.out.println("Reloading registry from manifest files..."); //$NON-NLS-1$
 				else
-					System.out.println("Using registry cache " + (lazyLoading ? "with" : "without") + " lazy element loading...");    //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$
+					System.out.println("Using registry cache " + (lazyLoading ? "with" : "without") + " lazy element loading..."); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$
 			}
 			// TODO log any problems that occurred in loading the cache.
 			if (!problems.isOK())
@@ -110,7 +110,6 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 		}
 		if (registry == null) {
 			fromCache = false;
-			// TODO should we use the Factory object to create the registry
 			registry = new ExtensionRegistry(new ExtensionLinker());
 		}
 
@@ -217,7 +216,6 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 		environmentServiceReference = null;
 	}
 
-	//TODO Can't this code and the one from *ServiceReleased be somehow merged
 	private void urlServiceReleased(ServiceReference reference) {
 		if (urlServiceReference == null)
 			return;
