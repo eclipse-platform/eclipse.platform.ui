@@ -37,7 +37,7 @@ BODY {
 }
 
 TABLE {
-	font:icon;
+	font:<%=prefs.getToolbarFont()%>;
 	background:<%=prefs.getToolbarBackground()%>;
 }
 
@@ -76,7 +76,7 @@ TD, TR {
 }
 
 .button {
-	font:icon;
+	font:<%=prefs.getToolbarFont()%>;
 	border:1px solid #ffffff;
 	margin:0px;
 	padding:0px;
@@ -322,7 +322,7 @@ function keyDownHandler(folderId, key, target)
 		</td></tr>
     </table>
  
-<div id="booksContainer" >
+<div id="booksContainer" style="background:<%=prefs.getViewBackground()%>;">
 
 <% 
 for (int i=0; i<data.getTocCount(); i++)

@@ -34,7 +34,7 @@ BODY {
 }
 
 TABLE {
-	font: icon;
+	font: <%=prefs.getToolbarFont()%>;
 	background:<%=prefs.getToolbarBackground()%>;
 	margin:0;
 	padding:0;
@@ -48,7 +48,7 @@ FORM {
 }
 
 INPUT {
-	font: icon;
+	font: <%=prefs.getToolbarFont()%>;
 	margin:0px;
 	padding:0px;
 }

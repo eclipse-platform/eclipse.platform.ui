@@ -47,7 +47,7 @@ TD, TR {
 }
 
 .button {
-	font:icon;
+	font:<%=prefs.getToolbarFont()%>;
 	border:1px solid #ffffff;
 	margin:0px;
 	padding:0px;
@@ -178,7 +178,7 @@ function closeWorkingSetDialog()
 <body onload="onloadHandler()" onunload="closeWorkingSetDialog()">
 <form>
 <div style="overflow:auto;height:250px;width:100%;">
-  	<table id="filterTable" cellspacing=0 cellpading=0 border=0 align=center  style="background:<%=prefs.getToolbarBackground()%>;margin-top:5px;width:100%;">
+  	<table id="filterTable" cellspacing=0 cellpading=0 border=0 align=center  style="background:<%=prefs.getToolbarBackground()%>; font:<%=prefs.getToolbarFont()%>;margin-top:5px;width:100%;">
 		<tr><td onclick="selectRadio('alldocs')">
 			<input id="alldocs" type="radio" name="workingSet" onclick="enableButtons()"><%=ServletResources.getString("All", request)%>
 		</td></tr>
@@ -186,7 +186,7 @@ function closeWorkingSetDialog()
 			<input id="selectws" type="radio" name="workingSet"  onclick="enableButtons()"><%=ServletResources.getString("selectWorkingSet", request)%>:		
 		</td></tr>
 		<tr><td>
-			<div id="workingSetContainer" style="overflow:auto; height:150px;">
+			<div id="workingSetContainer" style="overflow:auto; height:150px; background:<%=prefs.getViewBackground()%>;">
 
 <table id='list'  cellspacing='0' style="width:100%;">
 <% 
