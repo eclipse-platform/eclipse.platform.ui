@@ -12,29 +12,34 @@ package org.eclipse.team.internal.ccvs.core.connection;
 
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Policy;
 
 public class CVSAuthenticationException extends CVSException {
 
 	/**
-	 * Creates a new <code>CVSAuthenticationException</code>
-	 * 
-	 * @param detail  a message that describes the exception in detail.
+	 * Code indicating that authentication can be retried after 
+	 * prompting the user for corrected authentication information
 	 */
-	public CVSAuthenticationException(String detail) {
-		super(Policy.bind("CVSAuthenticationException.detail", new Object[] { detail })); //$NON-NLS-1$ 
-	}
+	public static final int RETRY = 1;
+	
+	/**
+	 * Code indicating that authentication should not be reattempted.
+	 */
+	public static final int NO_RETRY = 2;
 	
 	/**
 	 * Creates a new <code>CVSAuthenticationException</code>
 	 * 
-	 * @param cvsroot the cvs server.
 	 * @param detail  a message that describes the exception in detail.
+	 * @param code indicates whether authentication can be retried or not
 	 */
-	public CVSAuthenticationException(String cvsroot, String detail) {
-		this(detail);
+	public CVSAuthenticationException(String detail, int code) {
+		this(new CVSStatus(IStatus.ERROR, code, 
+			Policy.bind("CVSAuthenticationException.detail", new Object[] { detail }))); //$NON-NLS-1$ 
 	}
+	
 	/**
 	 * Creates a new <code>CVSAuthenticationException</code>
 	 * 

@@ -537,7 +537,7 @@ private void login() throws IOException, CVSAuthenticationException {
 		packetType = packet.getType();
 
 		if (packetType == SSH_SMSG_FAILURE) {
-			throw new CVSAuthenticationException(Policy.bind("Client.authenticationFailed"));//$NON-NLS-1$
+			throw new CVSAuthenticationException(Policy.bind("Client.authenticationFailed"), CVSAuthenticationException.RETRY);//$NON-NLS-1$
 		}
 
 		if (packetType != SSH_SMSG_SUCCESS) {
@@ -666,7 +666,7 @@ private void send_SSH_CMSG_SESSION_KEY(byte[] anti_spoofing_cookie, byte[] host_
 	BigInteger host_e = new BigInteger(1, host_key_public_exponent);
 	BigInteger host_n = new BigInteger(1, host_key_public_modulus);
 	if (!new KnownHosts().verifyKey(host, host_key_bits, host_e, host_n)) {
-		throw new CVSAuthenticationException(Policy.bind("Client.hostIdChanged")); //$NON-NLS-1$
+		throw new CVSAuthenticationException(Policy.bind("Client.hostIdChanged"), CVSAuthenticationException.NO_RETRY); //$NON-NLS-1$
 	};
 	byte[] result;
 	if (new BigInteger(1,server_key_public_modulus).compareTo(host_n) == -1) {

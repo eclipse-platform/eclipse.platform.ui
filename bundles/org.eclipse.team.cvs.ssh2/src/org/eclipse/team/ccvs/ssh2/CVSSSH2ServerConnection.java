@@ -77,7 +77,7 @@ public class CVSSSH2ServerConnection implements IServerConnection {
 				} catch (JSchException ee) {
 				  retry--;
 				  if(retry<0){
-				    throw new CVSAuthenticationException(Policy.bind("CVSSSH2ServerConnection.3")); //$NON-NLS-1$
+				    throw new CVSAuthenticationException(Policy.bind("CVSSSH2ServerConnection.3"), CVSAuthenticationException.NO_RETRY); //$NON-NLS-1$
 				  }
 				  if(session.isConnected()){
 				    session.disconnect();
@@ -90,12 +90,11 @@ public class CVSSSH2ServerConnection implements IServerConnection {
 			outputStream = channel_out;
 		} catch (JSchException e) {
 			if (e.toString().indexOf("invalid server's version string") == -1) { //$NON-NLS-1$
-				//e.printStackTrace();
-				throw new CVSAuthenticationException(e.toString());
+				throw new CVSAuthenticationException(e.toString(), CVSAuthenticationException.NO_RETRY);
 			}
 			ssh1 = new SSHServerConnection(location, password);
 			if (ssh1 == null) {
-				throw new CVSAuthenticationException(e.toString());
+				throw new CVSAuthenticationException(e.toString(), CVSAuthenticationException.NO_RETRY);
 			}
 			ssh1.open(monitor);
 		}

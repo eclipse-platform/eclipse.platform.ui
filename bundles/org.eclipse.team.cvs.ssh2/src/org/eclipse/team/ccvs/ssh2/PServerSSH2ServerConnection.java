@@ -108,7 +108,7 @@ public class PServerSSH2ServerConnection implements IServerConnection {
 			} catch (JSchException ee) {
 				  retry--;
 				  if(retry<0){
-				    throw new CVSAuthenticationException(Policy.bind("CVSSSH2ServerConnection.3")); //$NON-NLS-1$
+				    throw new CVSAuthenticationException(Policy.bind("CVSSSH2ServerConnection.3"), CVSAuthenticationException.NO_RETRY); //$NON-NLS-1$
 				  }
 				  if(session.isConnected()){
 				    session.disconnect();
@@ -133,7 +133,7 @@ public class PServerSSH2ServerConnection implements IServerConnection {
 			IConnectionMethod method = cvsrl.getMethod();
 			psc = method.createConnection(cvsrl, password);
 		} catch (Exception e) {
-			throw new CVSAuthenticationException(e.toString());
+			throw new CVSAuthenticationException(e.toString(), CVSAuthenticationException.NO_RETRY);
 		}
 		psc.open(monitor);
 	}

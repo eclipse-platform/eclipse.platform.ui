@@ -19,6 +19,7 @@ import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 
 import com.jcraft.jsch.*;
@@ -114,6 +115,9 @@ class JSchSession {
 				String _password=promptSecret(message);
 				if(_password!=null){
 					password=_password;
+					// Cache the password with the repository location
+					((CVSRepositoryLocation)location).setPassword(password);
+					((CVSRepositoryLocation)location).updateCache();
 				}
 				return _password!=null;
 			}

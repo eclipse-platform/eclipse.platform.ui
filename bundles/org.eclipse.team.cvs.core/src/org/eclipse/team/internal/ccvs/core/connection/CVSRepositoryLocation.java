@@ -335,16 +335,20 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 						password = "";//$NON-NLS-1$ 
 					return createConnection(password, monitor);
 				} catch (CVSAuthenticationException ex) {
-					String message = ex.getMessage();
-					try {
-						IUserAuthenticator authenticator = getAuthenticator();
-						if (authenticator == null) {
-							throw new CVSAuthenticationException(getLocation(), Policy.bind("Client.noAuthenticator"));//$NON-NLS-1$ 
+					if (ex.getStatus().getCode() == CVSAuthenticationException.RETRY) {
+						String message = ex.getMessage();
+						try {
+							IUserAuthenticator authenticator = getAuthenticator();
+							if (authenticator == null) {
+								throw new CVSAuthenticationException(Policy.bind("Client.noAuthenticator"), CVSAuthenticationException.NO_RETRY);//$NON-NLS-1$ 
+							}
+							authenticator.promptForUserInfo(this, this, message);
+							updateCache();
+						} catch (OperationCanceledException e) {
+							throw new CVSAuthenticationException(new CVSStatus(CVSStatus.ERROR, CVSAuthenticationException.NO_RETRY, message));
 						}
-						authenticator.promptForUserInfo(this, this, message);
-						updateCache();
-					} catch (OperationCanceledException e) {
-						throw new CVSAuthenticationException(new CVSStatus(CVSStatus.ERROR, message));
+					} else {
+						throw ex;
 					}
 				}
 			}

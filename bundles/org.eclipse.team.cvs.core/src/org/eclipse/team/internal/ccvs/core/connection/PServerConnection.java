@@ -172,7 +172,7 @@ public class PServerConnection implements IServerConnection {
 		if (line.length() == 0)
 			throw new IOException(Policy.bind("PServerConnection.noResponse"));//$NON-NLS-1$
 		if (LOGIN_FAILED.equals(line))
-			throw new CVSAuthenticationException(cvsroot.getLocation(), Policy.bind("PServerConnection.loginRefused"));//$NON-NLS-1$
+			throw new CVSAuthenticationException(Policy.bind("PServerConnection.loginRefused"), CVSAuthenticationException.RETRY);//$NON-NLS-1$
 		String message = "";//$NON-NLS-1$
 		// Skip any E messages for now
 		while (line.charAt(0) == ERROR_CHAR) {
@@ -185,7 +185,7 @@ public class PServerConnection implements IServerConnection {
 		else
 			message += line;
 		if (message.indexOf(NO_SUCH_USER) != -1)
-			throw new CVSAuthenticationException(cvsroot.getLocation(), Policy.bind("PServerConnection.invalidUser", new Object[] {message}));//$NON-NLS-1$
+			throw new CVSAuthenticationException(Policy.bind("PServerConnection.invalidUser", new Object[] {message}), CVSAuthenticationException.RETRY);//$NON-NLS-1$
 		throw new IOException(Policy.bind("PServerConnection.connectionRefused", new Object[] { message }));//$NON-NLS-1$
 	}
 	/*
@@ -246,7 +246,6 @@ public class PServerConnection implements IServerConnection {
 	}
 	
 	private void throwInValidCharacter() throws CVSAuthenticationException {
-		throw new CVSAuthenticationException(cvsroot.getLocation(), 
-			Policy.bind("PServerConnection.invalidChars"));//$NON-NLS-1$
+		throw new CVSAuthenticationException(Policy.bind("PServerConnection.invalidChars"), CVSAuthenticationException.RETRY);//$NON-NLS-1$
 	}
 }
