@@ -11,13 +11,11 @@
 package org.eclipse.ui.dialogs;
 
 import org.eclipse.core.runtime.IAdaptable;
-
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.jface.preference.IPreferencePage;
 import org.eclipse.jface.preference.PreferenceDialog;
+import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.preference.PreferencePage;
-
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.dialogs.FilteredPreferenceDialog;
 import org.eclipse.ui.internal.dialogs.PropertyDialog;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceDialog;
@@ -56,7 +54,8 @@ public final class PreferencesUtil {
 	 * the dialog.
 	 * 
 	 * @param shell
-	 * 			  The shell to use to parent the dialog if required.
+	 * 			  The shell to use to parent the dialog if required  or <code>null</code> 
+	 * 			  to create a top-level shell. 
 	 * @param preferencePageId
 	 *            The identifier of the preference page to open; may be
 	 *            <code>null</code>. If it is <code>null</code>, then the
@@ -72,6 +71,7 @@ public final class PreferencesUtil {
 	 * 
 	 * @return a preference dialog.
 	 * @since 3.1
+	 * @see PreferenceDialog#PreferenceDialog(Shell, PreferenceManager)
 	 */
 	public static final PreferenceDialog createPreferenceDialogOn(Shell shell,
 			String preferencePageId, String[] displayedIds, Object data) {
