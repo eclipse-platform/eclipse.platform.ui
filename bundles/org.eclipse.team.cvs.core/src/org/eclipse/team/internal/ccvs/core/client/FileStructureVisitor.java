@@ -33,7 +33,7 @@ class FileStructureVisitor extends AbstractStructureVisitor {
 	private boolean sendEmptyFolders;
 
 	public FileStructureVisitor(Session session, boolean sendEmptyFolders, boolean sendModifiedContents, IProgressMonitor monitor) {
-		this(session, true, sendModifiedContents, true, monitor);
+		this(session, sendEmptyFolders, sendModifiedContents, true, monitor);
 	}
 
 	public FileStructureVisitor(Session session, boolean sendEmptyFolders, boolean sendModifiedContents, boolean sendBinary, IProgressMonitor monitor) {

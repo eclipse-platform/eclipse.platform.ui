@@ -25,7 +25,7 @@ public class SyncUpdate extends Update {
 		boolean emptyFolders, IProgressMonitor monitor) throws CVSException {
 			
 		checkResourcesManaged(resources);
-		new FileStructureVisitor(session, false, true, false, monitor).visit(session, resources);
+		new FileStructureVisitor(session, emptyFolders, true, false, monitor).visit(session, resources);
 	}
 
 }
