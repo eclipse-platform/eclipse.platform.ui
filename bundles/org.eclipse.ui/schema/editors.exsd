@@ -2,15 +2,15 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.ui">
 <annotation>
-   <appInfo>
-      <meta.schema plugin="org.eclipse.ui" id="editors" name="Internal and External Editors"/>
-   </appInfo>
-   <documentation>
-      This extension point is used to add new editors to the 
+      <appInfo>
+         <meta.schema plugin="org.eclipse.ui" id="editors" name="Internal and External Editors"/>
+      </appInfo>
+      <documentation>
+         This extension point is used to add new editors to the 
 workbench.  A editor is a visual component within a 
 workbench page. It is typically used to edit or browse 
 a document or input object.  To open an editor, the user 
-will typically invoke "Open" on an &lt;samp&gt;IFile&lt;/samp&gt;.  
+will typically invoke &quot;Open&quot; on an &lt;samp&gt;IFile&lt;/samp&gt;.  
 When this action is performed the workbench registry 
 is consulted to determine an appropriate editor for 
 the file type and then a new instance of the editor 
@@ -37,8 +37,8 @@ editors is more tenuous.  In this case the workbench
 may launch an editor but after has no way of determining
 the state of the external editor or collaborating 
 with it by any means except through the file system.
-   </documentation>
-</annotation>
+      </documentation>
+   </annotation>
 
    <element name="extension">
       <complexType>
@@ -105,15 +105,14 @@ will use the icon provided by the operating system.
          <attribute name="extensions" type="string">
             <annotation>
                <documentation>
-                  an optional field containing the list of file types understood by the editor.  This is a string containing comma separate file extensions.  For instance, an editor which understands hypertext documents may register for "htm, html".
+                  an optional field containing the list of file types understood by the editor.  This is a string containing comma separate file extensions.  For instance, an editor which understands hypertext documents may register for &quot;htm, html&quot;.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="class" type="string">
             <annotation>
                <documentation>
-                  a name of the class that implements &lt;samp&gt;org.eclipse.ui.IEditorPart&lt;/samp&gt;.
-  Attributes &lt;samp&gt;class&lt;/samp&gt; and &lt;samp&gt;command&lt;/samp&gt; are mutually exclusive.  If this attribute is defined then &lt;samp&gt;contributorClass&lt;/samp&gt; should also be defined.
+                  the name of a class that implements &lt;samp&gt;org.eclipse.ui.IEditorPart&lt;/samp&gt;. The attributes &lt;samp&gt;class&lt;/samp&gt;, &lt;samp&gt;command&lt;/samp&gt;, and &lt;samp&gt;launcher&lt;/samp&gt; are mutually exclusive. If this attribute is defined then &lt;samp&gt;contributorClass&lt;/samp&gt; should also be defined.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.ui.part.EditorPart"/>
@@ -123,17 +122,25 @@ will use the icon provided by the operating system.
          <attribute name="command" type="string">
             <annotation>
                <documentation>
-                  a command to run in order to launch an external editor. The executable command must be located on the system path or in the plug-in's directory. Attributes
-&lt;samp&gt;class&lt;/samp&gt; and &lt;samp&gt;command&lt;/samp&gt; are mutually exclusive.
+                  a command to run in order to launch an external editor. The executable command must be located on the system path or in the plug-in&apos;s directory. The attributes &lt;samp&gt;class&lt;/samp&gt;, &lt;samp&gt;command&lt;/samp&gt;, and &lt;samp&gt;launcher&lt;/samp&gt; are mutually exclusive.
                </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="launcher" type="string">
+            <annotation>
+               <documentation>
+                  the name of a class which that implements &lt;samp&gt;org.eclipse.ui.IEditorLauncher&lt;/samp&gt;. 
+A launcher will open an external editor. The attributes &lt;samp&gt;class&lt;/samp&gt;, &lt;samp&gt;command&lt;/samp&gt;, and &lt;samp&gt;launcher&lt;/samp&gt; are mutually exclusive.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.IEditorLauncher"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="contributorClass" type="string">
             <annotation>
                <documentation>
-                  a name of the class that implements 
-&lt;samp&gt;org.eclipse.ui.IEditorActionBarContributor&lt;/samp&gt;. The &lt;samp&gt;contributorClass&lt;/samp&gt; field should only be defined if the class field is defined.
-This class is used to add new actions to the workbench menu and tool bar which reflect the features of the editor type.
+                  the name of a class that implements &lt;samp&gt;org.eclipse.ui.IEditorActionBarContributor&lt;/samp&gt;. This attribute should only be defined if the &lt;samp&gt;class&lt;/samp&gt; attribute is defined. This class is used to add new actions to the workbench menu and tool bar which reflect the features of the editor type.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.ui.part.EditorActionBarContributor"/>
@@ -146,7 +153,7 @@ This class is used to add new actions to the workbench menu and tool bar which r
                   if true, this editor will be used as the default editor for the
 type. This is only relevant in a case where more than one editor
 is registered for the same type. If an editor is not the default
-for the type, it can still be launched using "Open with..."
+for the type, it can still be launched using &quot;Open with...&quot;
 submenu for the selected resource.
                </documentation>
             </annotation>
@@ -158,28 +165,14 @@ submenu for the selected resource.
 understood by the editor.  This is a string 
 containing comma separate file names.  For instance, 
 an editor which understands specific hypertext 
-documents may register for "ejb.htm, ejb.html".
+documents may register for &quot;ejb.htm, ejb.html&quot;.
                </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="launcher" type="string">
-            <annotation>
-               <documentation>
-                  the name of a class which implements 
-&lt;samp&gt;org.eclipse.ui.IEditorLauncher&lt;/samp&gt;. 
-A launcher will open an external editor. 
-Attributes &lt;samp&gt;class&lt;/samp&gt;, &lt;samp&gt;command&lt;/samp&gt; and 
-&lt;samp&gt;launcher&lt;/samp&gt; are mutually exclusive.
-               </documentation>
-               <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.ui.IEditorLauncher"/>
-               </appInfo>
             </annotation>
          </attribute>
          <attribute name="symbolicFontName" type="string">
             <annotation>
                <documentation>
-                  the symbolic name of a font. The symbolic font name must be the id of a defined font (see org.eclipse.ui.fontDefinitions). If this attribute is missing or invalid then the font name is the value of "org.eclipse.jface.textfont" in the editor's preferences store. If there is no preference store or the key is not defined then the JFace text font will be used. The editor implementation decides if it uses this symbolic font name to set the font.
+                  the symbolic name of a font. The symbolic font name must be the id of a defined font (see org.eclipse.ui.fontDefinitions). If this attribute is missing or invalid then the font name is the value of &quot;org.eclipse.jface.textfont&quot; in the editor&apos;s preferences store. If there is no preference store or the key is not defined then the JFace text font will be used. The editor implementation decides if it uses this symbolic font name to set the font.
                </documentation>
             </annotation>
          </attribute>
@@ -195,16 +188,16 @@ Attributes &lt;samp&gt;class&lt;/samp&gt;, &lt;samp&gt;command&lt;/samp&gt; and
 of an internal editor extension definition: 
 &lt;p&gt;
 &lt;pre&gt;
-   &lt;extension point="org.eclipse.ui.editors"&gt; 
+   &lt;extension point=&quot;org.eclipse.ui.editors&quot;&gt; 
       &lt;editor 
-         id="com.xyz.XMLEditor" 
-         name="Fancy XYZ XML editor" 
-         icon="./icons/XMLEditor.gif" 
-         extensions="xml" 
-         class="com.xyz.XMLEditor" 
-         contributorClass="com.xyz.XMLEditorContributor" 
-         symbolicFontName="org.eclipse.jface.textfont"
-         default="false"&gt; 
+         id=&quot;com.xyz.XMLEditor&quot; 
+         name=&quot;Fancy XYZ XML editor&quot; 
+         icon=&quot;./icons/XMLEditor.gif&quot; 
+         extensions=&quot;xml&quot; 
+         class=&quot;com.xyz.XMLEditor&quot; 
+         contributorClass=&quot;com.xyz.XMLEditorContributor&quot; 
+         symbolicFontName=&quot;org.eclipse.jface.textfont&quot;
+         default=&quot;false&quot;&gt; 
       &lt;/editor&gt; 
    &lt;/extension&gt; 
 &lt;/pre&gt;
@@ -282,7 +275,7 @@ editor is closed, menus and actions will be removed.
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         The workbench provides a "Default Text Editor". The end user product may contain other editors as part of the shipping bundle. In that case, editors will be registered as extensions using the syntax described above.
+         The workbench provides a &quot;Default Text Editor&quot;. The end user product may contain other editors as part of the shipping bundle. In that case, editors will be registered as extensions using the syntax described above.
       </documentation>
    </annotation>
 
