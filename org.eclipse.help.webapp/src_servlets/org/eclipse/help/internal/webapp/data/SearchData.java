@@ -256,7 +256,11 @@ public class SearchData extends RequestData {
 				return;
 			} else {
 				// progress
-				this.indexCompletion = pm.getPercentage();
+				indexCompletion = pm.getPercentage();
+				if (indexCompletion >= 100) {
+					// 38573 We do not have results, so index cannot be 100
+					indexCompletion = 100 - 1;
+				}
 				return;
 			}
 		} catch (Exception e) {
