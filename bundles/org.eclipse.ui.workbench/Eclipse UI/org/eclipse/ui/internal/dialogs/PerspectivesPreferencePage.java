@@ -503,7 +503,7 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 	 * @return boolean <code>true</code> if all of the perspectives could be
 	 *         deleted.
 	 */
-	private boolean findOpenInstance() {
+	private boolean findOpenInstance(IPerspectiveDescriptor desc) {
 		IWorkbenchWindow windows[] = workbench.getWorkbenchWindows();
 		
 		//find all active perspectives currently
@@ -511,10 +511,7 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 			IWorkbenchPage pages[] = windows[i].getPages();
 			for (int j = 0; j < pages.length; j++) {
 				WorkbenchPage page = (WorkbenchPage) pages[j];
-				for (int k = 0; k < perspToDelete.size(); k++) {
-					IPerspectiveDescriptor desc = (IPerspectiveDescriptor) perspToDelete
-							.get(k);
-					if (page.findPerspective(desc) != null) {
+				if (page.findPerspective(desc) != null) {
 						MessageDialog
 								.openInformation(
 										getShell(),
@@ -524,7 +521,6 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 												.format(
 														"PerspectivesPreference.cannotdelete.message", new String[] { desc.getLabel() })); //$NON-NLS-1$
 						return true;
-					}
 				}
 			}
 		}
@@ -661,20 +657,13 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 			}
 		} else if (button == deleteButton) {
 			if (!desc.isPredefined() && !perspToDelete.contains(desc)) {
-				perspToDelete.add(desc);
-				perspToRevert.remove(desc);
-				if(!findOpenInstance()){
-					
-					//the perspective has no opened instance, it can be deleted 
+				if(!findOpenInstance(desc)){
+					perspToDelete.add(desc);
+					perspToRevert.remove(desc);
 					perspectives.remove(desc);				
 					updatePerspectivesTable();
 				}
-				else{
-					perspToDelete.remove(desc);
-					perspToRevert.add(desc);
-										
-				}
-				
+					
 			}
 		} else if (button == setDefaultButton) {
 			defaultPerspectiveId = desc.getId();
