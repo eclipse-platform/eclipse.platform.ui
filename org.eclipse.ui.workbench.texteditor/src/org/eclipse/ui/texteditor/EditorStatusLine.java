@@ -35,7 +35,8 @@ class EditorStatusLine implements IEditorStatusLine {
 		 * @see ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 		 */
 		public void selectionChanged(SelectionChangedEvent event) {
-			fStatusLineManager.setErrorMessage(null);
+			fStatusLineManager.setErrorMessage(null, null);
+			fStatusLineManager.setMessage(null, null);
 
 			Assert.isTrue(this == fStatusLineClearer);
 			uninstallStatusLineClearer();
