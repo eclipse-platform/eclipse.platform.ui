@@ -214,21 +214,6 @@ public void createControl(Composite parent) {
 
 	// Enable drop target data
 	enableDrop(this);
-
-	// Create tabs.
-	Iterator enum = editors.iterator();
-	while (enum.hasNext()) {
-		EditorPane pane = (EditorPane) enum.next();
-		createTab(pane);
-		createPage(pane);
-	}
-
-	// Set active tab.
-	if (visibleEditor != null)
-		setVisibleEditor(visibleEditor);
-	else
-		if (getItemCount() > 0)
-			setVisibleEditor((EditorPane) editors.get(0));
 			
 	// Create the pulldown menu on the CTabFolder
 	editorList = new EditorList(getEditorArea().getWorkbenchWindow(), this);
@@ -247,6 +232,21 @@ public void createControl(Composite parent) {
 		public void widgetDefaultSelected(SelectionEvent e) {
 		}
 	});
+
+	// Create tabs.
+	Iterator enum = editors.iterator();
+	while (enum.hasNext()) {
+		EditorPane pane = (EditorPane) enum.next();
+		createTab(pane);
+		createPage(pane);
+	}
+
+	// Set active tab.
+	if (visibleEditor != null)
+		setVisibleEditor(visibleEditor);
+	else
+		if (getItemCount() > 0)
+			setVisibleEditor((EditorPane) editors.get(0));
 	
 	// Create the closebox on the CTabFolder
 	closeBoxButton = new ToolItem(pullDownBar, SWT.PUSH);
