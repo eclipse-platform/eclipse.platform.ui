@@ -146,8 +146,8 @@ public class LinkedModeModel {
 			try {
 				fEdit.apply(document, TextEdit.UPDATE_REGIONS | TextEdit.CREATE_UNDO);
 			} catch (BadLocationException e) {
-				/* perform should really throw a BadLocationException
-				 * see https://bugs.eclipse.org/bugs/show_bug.cgi?id=52950
+				/* XXX: perform should really throw a BadLocationException
+				 *		see https://bugs.eclipse.org/bugs/show_bug.cgi?id=52950
 				 */
 				throw new RuntimeException(e);
 			} finally {
