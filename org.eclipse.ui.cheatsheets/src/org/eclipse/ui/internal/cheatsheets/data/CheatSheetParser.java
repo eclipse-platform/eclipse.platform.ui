@@ -40,6 +40,9 @@ public class CheatSheetParser {
 
 	
 	class CheatSheetParserException extends Exception {
+		public CheatSheetParserException(String message) {
+			super(message);
+		}
 	}
 	
 	private static final String TRUE_STRING = "true"; //$NON-NLS-1$
@@ -56,8 +59,7 @@ public class CheatSheetParser {
 		try {
 			documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 		} catch (Exception e) {
-			//TODO do something better here
-			e.printStackTrace();
+			logMessage(IStatus.ERROR, false, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_CREATING_DOCUMENT_BUILDER), null, e);
 		}
 	}
 
@@ -179,7 +181,10 @@ public class CheatSheetParser {
 		Action action = new Action();
 	
 		String[] params = null;
-	
+
+		boolean classAttr = false;
+		boolean pluginId = false;
+
 		NamedNodeMap attributes = actionNode.getAttributes();
 		if (attributes != null) {
 			for (int x = 0; x < attributes.getLength(); x++) {
@@ -189,8 +194,10 @@ public class CheatSheetParser {
 					continue;
 
 				if (attributeName.equals(IParserTags.PLUGINID)) {
+					pluginId = true;
 					action.setPluginID(attribute.getNodeValue());
 				} else if (attributeName.equals(IParserTags.CLASS)) {
+					classAttr = true;
 					action.setClass(attribute.getNodeValue());
 				} else if (attributeName.equals(IParserTags.CONFIRM)) {
 					action.setConfirm(attribute.getNodeValue().equals(TRUE_STRING));
@@ -205,56 +212,67 @@ public class CheatSheetParser {
 						if(num>-1 && num<9){
 							params[num] = attribute.getNodeValue();
 						} else {
-							// TODO: Error
-							throw new NumberFormatException();
+							String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.ERROR_PARSING_PARAM_INVALIDRANGE, new Object[] {attributeName, paramNum});
+							throw new NumberFormatException(message);
 						}
 					} catch(NumberFormatException e) {
-						// TODO: Error
+						String message = CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_PARSING_PARAM_INVALIDNUMBER);
+						logMessage(IStatus.ERROR, false, message, null, e);
+						throw new CheatSheetParserException(message);
 					}
-					
-					//TODO: handle action params
-					//Set the action parameters if there are any.
-					//l = getParamList(attributes);
-					//System.out.println("Parsing parameters for actions");
-					/*
-					ArrayList params = new ArrayList();
-
-					try {
-						String param = "param"; //$NON-NLS-1$
-						for (int j = 0; param != null; j++) {
-							String actionparam = nnm.getNamedItem(IParserTags.ACTIONPARAM + j).getNodeValue();
-							//				System.out.println("Action parameter found: " + actionparam);
-							param = actionparam;
-							if (param != null)
-								params.add(param);
-						}
-					} catch (Exception e) {
-					}
-
-					return params;
-					*/
 				} else if (attributeName.equals(IParserTags.WHEN)) {
 					action.setWhen(attribute.getNodeValue());
 				} else {
-					//TODO Warning
+					String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.WARNING_PARSING_UNKNOWN_ATTRIBUTE, new Object[] {attributeName, actionNode.getNodeName()});
+					logMessage(IStatus.WARNING, false, message, null, null);
 				}
 			}
 		}
+
+		if(!classAttr) {
+			String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.ERROR_PARSING_NO_CLASS, new Object[] {actionNode.getNodeName()});
+			throw new CheatSheetParserException(message);
+		}
+		if(!pluginId) {
+			String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.ERROR_PARSING_NO_PLUGINID, new Object[] {actionNode.getNodeName()});
+			throw new CheatSheetParserException(message);
+		}
+
 		if(params != null) {
 			action.setParams(params);
 		}
 		item.setAction(action);
 	}
 
-	private void handleCheatSheet(CheatSheet cheatSheet, Node rootnode) throws CheatSheetParserException {
+	private void handleCheatSheet(CheatSheet cheatSheet, Node cheatSheetNode) throws CheatSheetParserException {
 		Assert.isNotNull(cheatSheet);
-		Assert.isNotNull(rootnode);
-		Assert.isTrue(rootnode.getNodeName().equals(IParserTags.CHEATSHEET));
+		Assert.isNotNull(cheatSheetNode);
+		Assert.isTrue(cheatSheetNode.getNodeName().equals(IParserTags.CHEATSHEET));
 
-		NamedNodeMap rootatts = rootnode.getAttributes();
-		String title = rootatts.getNamedItem(IParserTags.TITLE).getNodeValue();
-		
-		cheatSheet.setTitle(title);
+		boolean title = false;
+
+		NamedNodeMap attributes = cheatSheetNode.getAttributes();
+		if (attributes != null) {
+			for (int x = 0; x < attributes.getLength(); x++) {
+				Node attribute = attributes.item(x);
+				String attributeName = attribute.getNodeName();
+				if (attribute == null || attributeName == null)
+					continue;
+
+				if (attributeName.equals(IParserTags.TITLE)) {
+					title = true;
+					cheatSheet.setTitle(attribute.getNodeValue());
+				} else {
+					String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.WARNING_PARSING_UNKNOWN_ATTRIBUTE, new Object[] {attributeName, cheatSheetNode.getNodeName()});
+					logMessage(IStatus.WARNING, false, message, null, null);
+				}
+			}
+		}
+
+		if(!title) {
+			String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.ERROR_PARSING_NO_TITLE, new Object[] {cheatSheetNode.getNodeName()});
+			throw new CheatSheetParserException(message);
+		}
 	}
 
 	private void handleConditionalSubItem(Item item, Node conditionalSubItemNode) throws CheatSheetParserException {
@@ -263,6 +281,8 @@ public class CheatSheetParser {
 		Assert.isTrue(conditionalSubItemNode.getNodeName().equals(IParserTags.CONDITIONALSUBITEM));
 
 		ConditionalSubItem conditionalSubItem = new ConditionalSubItem();
+
+		boolean condition = false;
 
 		// Handle attributes
 		NamedNodeMap attributes = conditionalSubItemNode.getAttributes();
@@ -274,12 +294,21 @@ public class CheatSheetParser {
 					continue;
 
 				if (attributeName.equals(IParserTags.CONDITION)) {
+					condition = true;
 					conditionalSubItem.setCondition(attribute.getNodeValue());
 				} else {
-					//TODO Warning
+					String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.WARNING_PARSING_UNKNOWN_ATTRIBUTE, new Object[] {attributeName, conditionalSubItemNode.getNodeName()});
+					logMessage(IStatus.WARNING, false, message, null, null);
 				}
 			}
 		}
+
+		if(!condition) {
+			String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.ERROR_PARSING_NO_CONDITION, new Object[] {conditionalSubItemNode.getNodeName()});
+			throw new CheatSheetParserException(message);
+		}
+
+		boolean subitem = false;
 
 		// Handle nodes
 		NodeList nodes = conditionalSubItemNode.getChildNodes();
@@ -287,8 +316,19 @@ public class CheatSheetParser {
 			Node node = nodes.item(i);
 
 			if(node.getNodeName().equals(IParserTags.SUBITEM)) {
+				subitem = true;
 				handleSubItem(conditionalSubItem, node);
+			} else {
+				if(node.getNodeType() != Node.TEXT_NODE && node.getNodeType() != Node.COMMENT_NODE ) {
+					String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.WARNING_PARSING_UNKNOWN_ELEMENT, new Object[] {node.getNodeName(), conditionalSubItemNode.getNodeName()});
+					logMessage(IStatus.WARNING, false, message, null, null);
+				}
 			}
+		}
+
+		if(!subitem) {
+			String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.ERROR_PARSING_NO_SUBITEM, new Object[] {conditionalSubItemNode.getNodeName()});
+			throw new CheatSheetParserException(message);
 		}
 
 		item.addSubItem(conditionalSubItem);
@@ -320,6 +360,13 @@ public class CheatSheetParser {
 					} else if(node.getNodeName().equals(IParserTags.BREAK)) {
 						containsMarkup = true;
 						text.append(IParserTags.BREAK_TAG);
+					} else {
+						Node parentNode = startNode;
+						if( startNode.getNodeName().equals(IParserTags.DESCRIPTION) ) {
+							parentNode = startNode.getParentNode();
+						}
+						String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.WARNING_PARSING_DESCRIPTION_UNKNOWN_ELEMENT, new Object[] {parentNode.getNodeName(), node.getNodeName()});
+						logMessage(IStatus.WARNING, false, message, null, null);
 					}
 				}
 			}
@@ -333,7 +380,12 @@ public class CheatSheetParser {
 			// Remove the new line, form feed and tab chars
 			item.setDescription(text.toString().trim());
 		} else {
-			item.setDescription(""); //$NON-NLS-1$
+			Node parentNode = startNode;
+			if( startNode.getNodeName().equals(IParserTags.DESCRIPTION) ) {
+				parentNode = startNode.getParentNode();
+			}
+			String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.ERROR_PARSING_NO_DESCRIPTION, new Object[] {parentNode.getNodeName()});
+			throw new CheatSheetParserException(message);
 		}
 	}
 	
@@ -346,10 +398,12 @@ public class CheatSheetParser {
 		Node introNode = introList.item(0);
 		
 		if(introNode == null) {
-			//TODO: Error when there is no intro
+			// Error: there is no intro
+			throw new CheatSheetParserException(CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_PARSING_NO_INTRO));
 		}
 		if(introList.getLength() > 1) {
-			//TODO: Error or warning when there are more than 1 intro
+			// Error: there are more than 1 intro
+			throw new CheatSheetParserException(CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_PARSING_MORE_THAN_ONE_INTRO));
 		}
 
 		Item introItem = new Item();
@@ -361,7 +415,7 @@ public class CheatSheetParser {
 		cheatSheet.setIntroItem(introItem);
 	}
 
-	private void handleIntroAttributes(Item item, Node introNode) throws CheatSheetParserException {
+	private void handleIntroAttributes(Item item, Node introNode) {
 		Assert.isNotNull(item);
 		Assert.isNotNull(introNode);
 
@@ -378,7 +432,8 @@ public class CheatSheetParser {
 				} else if (attributeName.equals(IParserTags.HREF)) {
 					item.setHref(attribute.getNodeValue());
 				} else {
-					//TODO: Warning about unknown attributes
+					String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.WARNING_PARSING_UNKNOWN_ATTRIBUTE, new Object[] {attributeName, introNode.getNodeName()});
+					logMessage(IStatus.WARNING, false, message, null, null);
 				}
 			}
 		}
@@ -392,6 +447,8 @@ public class CheatSheetParser {
 
 		handleItemAttributes(item, itemNode);
 
+		boolean description = false;
+		
 		NodeList nodes = itemNode.getChildNodes();
 		for (int i = 0; i < nodes.getLength(); i++) {
 			Node node = nodes.item(i);
@@ -399,6 +456,7 @@ public class CheatSheetParser {
 			if(node.getNodeName().equals(IParserTags.ACTION)) {
 				handleAction(item, node);
 			} else if(node.getNodeName().equals(IParserTags.DESCRIPTION)) {
+				description = true;
 				handleDescription(item, node);
 			} else if(node.getNodeName().equals(IParserTags.SUBITEM)) {
 				handleSubItem(item, node);
@@ -408,12 +466,18 @@ public class CheatSheetParser {
 				handleRepeatedSubItem(item, node);
 			} else if(node.getNodeName().equals(IParserTags.PERFORMWHEN)) {
 				handlePerformWhen(item, node);
+			} else {
+				if(node.getNodeType() != Node.TEXT_NODE && node.getNodeType() != Node.COMMENT_NODE ) {
+					String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.WARNING_PARSING_UNKNOWN_ELEMENT, new Object[] {node.getNodeName(), itemNode.getNodeName()});
+					logMessage(IStatus.WARNING, false, message, null, null);
+				}
 			}
 		}
 
-		
-
-//		item.setIsDynamic(dynamic);
+		if(!description) {
+			String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.ERROR_PARSING_NO_DESCRIPTION, new Object[] {itemNode.getNodeName()});
+			throw new CheatSheetParserException(message);
+		}
 
 		return item;
 	}
@@ -423,7 +487,9 @@ public class CheatSheetParser {
 		Assert.isNotNull(itemNode);
 
 		ArrayList itemExtensionElements = new ArrayList();
-		
+
+		boolean title = false;
+
 		NamedNodeMap attributes = itemNode.getAttributes();
 		if (attributes != null) {
 			for (int x = 0; x < attributes.getLength(); x++) {
@@ -433,6 +499,7 @@ public class CheatSheetParser {
 					continue;
 
 				if (attributeName.equals(IParserTags.TITLE)) {
+					title = true;
 					item.setTitle(attribute.getNodeValue());
 				} else if (attributeName.equals(IParserTags.CONTEXTID)) {
 					item.setContextId(attribute.getNodeValue());
@@ -441,12 +508,18 @@ public class CheatSheetParser {
 				} else if (attributeName.equals(IParserTags.SKIP)) {
 					item.setSkip(attribute.getNodeValue().equals(TRUE_STRING));
 				} else {
-					AbstractItemExtensionElement[] ie = handleUnknownItemAttribute(attribute);
+					AbstractItemExtensionElement[] ie = handleUnknownItemAttribute(attribute, itemNode);
 					if (ie != null)
 						itemExtensionElements.add(ie);
 				}
 			}
 		}
+
+		if(!title) {
+			String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.ERROR_PARSING_NO_TITLE, new Object[] {itemNode.getNodeName()});
+			throw new CheatSheetParserException(message);
+		}
+
 		if (itemExtensionElements != null)
 			item.setItemExtensions(itemExtensionElements);
 	}
@@ -454,16 +527,19 @@ public class CheatSheetParser {
 	private void handleItems(CheatSheet cheatSheet, Document document) throws CheatSheetParserException {
 		//Get the items.
 		NodeList itemList = document.getElementsByTagName(IParserTags.ITEM);
+
+		if (itemList == null || itemList.getLength() == 0) {
+			throw new CheatSheetParserException(CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_PARSING_NO_ITEM));
+		}
+		
 		//parse the items.  assemble CheatSheetItem objects.
 		ArrayList items = handleItems(itemList);
 
-		if (items == null) {
-			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_PARSING_ITEMS), null);
-			CheatSheetPlugin.getPlugin().getLog().log(status);
-			org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_OPENING_FILE_TITLE), CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_PARSING_ITEMS), status);
-			return;
+		if (items == null || items.size() == 0) {
+			// This should never occur but just to be safe let's check.
+			throw new CheatSheetParserException(CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_PARSING_NO_ITEM));
 		}
-		
+
 		cheatSheet.addItems(items);
 	}
 
@@ -490,6 +566,8 @@ public class CheatSheetParser {
 
 		PerformWhen performWhen = new PerformWhen();
 
+		 boolean condition = false;
+
 		// Handle attributes
 		NamedNodeMap attributes = performWhenNode.getAttributes();
 		if (attributes != null) {
@@ -500,12 +578,21 @@ public class CheatSheetParser {
 					continue;
 
 				if (attributeName.equals(IParserTags.CONDITION)) {
+					condition = true;
 					performWhen.setCondition(attribute.getNodeValue());
 				} else {
-					//TODO Warning
+					String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.WARNING_PARSING_UNKNOWN_ATTRIBUTE, new Object[] {attributeName, performWhenNode.getNodeName()});
+					logMessage(IStatus.WARNING, false, message, null, null);
 				}
 			}
 		}
+
+		if(!condition) {
+			String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.ERROR_PARSING_NO_CONDITION, new Object[] {performWhenNode.getNodeName()});
+			throw new CheatSheetParserException(message);
+		}
+
+		boolean action = false;
 
 		// Handle nodes
 		NodeList nodes = performWhenNode.getChildNodes();
@@ -513,8 +600,19 @@ public class CheatSheetParser {
 			Node node = nodes.item(i);
 
 			if(node.getNodeName().equals(IParserTags.ACTION)) {
+				action = true;
 				handleAction(performWhen, node);
+			} else {
+				if(node.getNodeType() != Node.TEXT_NODE && node.getNodeType() != Node.COMMENT_NODE ) {
+					String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.WARNING_PARSING_UNKNOWN_ELEMENT, new Object[] {node.getNodeName(), performWhenNode .getNodeName()});
+					logMessage(IStatus.WARNING, false, message, null, null);
+				}
 			}
+		}
+
+		if(!action) {
+			String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.ERROR_PARSING_NO_ACTION, new Object[] {performWhenNode.getNodeName()});
+			throw new CheatSheetParserException(message);
 		}
 
 		item.setPerformWhen(performWhen);
@@ -527,6 +625,8 @@ public class CheatSheetParser {
 
 		RepeatedSubItem repeatedSubItem = new RepeatedSubItem();
 
+		boolean values = false;
+
 		// Handle attributes
 		NamedNodeMap attributes = repeatedSubItemNode.getAttributes();
 		if (attributes != null) {
@@ -537,12 +637,21 @@ public class CheatSheetParser {
 					continue;
 
 				if (attributeName.equals(IParserTags.VALUES)) {
+					values = true;
 					repeatedSubItem.setValues(attribute.getNodeValue());
 				} else {
-					//TODO Warning
+					String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.WARNING_PARSING_UNKNOWN_ATTRIBUTE, new Object[] {attributeName, repeatedSubItemNode.getNodeName()});
+					logMessage(IStatus.WARNING, false, message, null, null);
 				}
 			}
 		}
+
+		if(!values) {
+			String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.ERROR_PARSING_NO_VALUES, new Object[] {repeatedSubItemNode.getNodeName()});
+			throw new CheatSheetParserException(message);
+		}
+
+		boolean subitem = false;
 
 		// Handle nodes
 		NodeList nodes = repeatedSubItemNode.getChildNodes();
@@ -550,8 +659,19 @@ public class CheatSheetParser {
 			Node node = nodes.item(i);
 
 			if(node.getNodeName().equals(IParserTags.SUBITEM)) {
+				subitem = true;
 				handleSubItem(repeatedSubItem, node);
+			} else {
+				if(node.getNodeType() != Node.TEXT_NODE && node.getNodeType() != Node.COMMENT_NODE ) {
+					String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.WARNING_PARSING_UNKNOWN_ELEMENT, new Object[] {node.getNodeName(), repeatedSubItemNode.getNodeName()});
+					logMessage(IStatus.WARNING, false, message, null, null);
+				}
 			}
+		}
+
+		if(!subitem) {
+			String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.ERROR_PARSING_NO_SUBITEM, new Object[] {repeatedSubItemNode.getNodeName()});
+			throw new CheatSheetParserException(message);
 		}
 
 		item.addSubItem(repeatedSubItem);
@@ -574,15 +694,21 @@ public class CheatSheetParser {
 				handleAction(subItem, node);
 			} else if(node.getNodeName().equals(IParserTags.PERFORMWHEN)) {
 				handlePerformWhen(subItem, node);
+			} else {
+				if(node.getNodeType() != Node.TEXT_NODE && node.getNodeType() != Node.COMMENT_NODE ) {
+					String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.WARNING_PARSING_UNKNOWN_ELEMENT, new Object[] {node.getNodeName(), subItemNode.getNodeName()});
+					logMessage(IStatus.WARNING, false, message, null, null);
+				}
 			}
 		}
-//		item.setIsDynamic(dynamic);
 		item.addSubItem(subItem);
 	}
 
 	private void handleSubItemAttributes(SubItem subItem, Node subItemNode) throws CheatSheetParserException {
 		Assert.isNotNull(subItem);
 		Assert.isNotNull(subItemNode);
+
+		boolean label = false;
 
 		NamedNodeMap attributes = subItemNode.getAttributes();
 		if (attributes != null) {
@@ -593,19 +719,26 @@ public class CheatSheetParser {
 					continue;
 
 				if (attributeName.equals(IParserTags.LABEL)) {
+					label = true;
 					subItem.setLabel(attribute.getNodeValue());
 				} else if (attributeName.equals(IParserTags.SKIP)) {
 					subItem.setSkip(attribute.getNodeValue().equals(TRUE_STRING));
 				} else if (attributeName.equals(IParserTags.WHEN)) {
 					subItem.setWhen(attribute.getNodeValue());
 				} else {
-					//TODO: Warning about unknown attributes
+					String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.WARNING_PARSING_UNKNOWN_ATTRIBUTE, new Object[] {attributeName, subItemNode.getNodeName()});
+					logMessage(IStatus.WARNING, false, message, null, null);
 				}
 			}
 		}
+
+		if(!label) {
+			String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.ERROR_PARSING_NO_LABEL, new Object[] {subItemNode.getNodeName()});
+			throw new CheatSheetParserException(message);
+		}
 	}
 
-	private AbstractItemExtensionElement[] handleUnknownItemAttribute(Node item) {
+	private AbstractItemExtensionElement[] handleUnknownItemAttribute(Node item, Node node) {
 		ArrayList al = new ArrayList();
 		if (itemExtensionContainerList == null)
 			return null;
@@ -622,7 +755,27 @@ public class CheatSheetParser {
 			}
 		}
 
+		if(al.size() == 0) {
+			String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.WARNING_PARSING_UNKNOWN_ATTRIBUTE, new Object[] {item.getNodeName(), node.getNodeName()});
+			logMessage(IStatus.WARNING, false, message, null, null);
+		}
 		return (AbstractItemExtensionElement[])al.toArray(new AbstractItemExtensionElement[al.size()]);
+	}
+
+	/**
+	 * @param severity
+	 * @param informUser
+	 * @param message
+	 * @param title
+	 * @param exception
+	 */
+	private void logMessage(int severity, boolean informUser, String message, String title, Throwable exception) {
+		IStatus status = new Status(severity, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, exception);
+		CheatSheetPlugin.getPlugin().getLog().log(status);
+		
+		if(informUser) {
+			org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), title, null, status);
+		}
 	}
 
 	public CheatSheet parse(URL url) {
@@ -637,40 +790,29 @@ public class CheatSheetParser {
 				inputSource = new InputSource(is);
 			}
 		} catch (Exception e) {
-			//Need to log exception here. 
-			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_OPENING_FILE), e);
-			CheatSheetPlugin.getPlugin().getLog().log(status);
-			org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_OPENING_FILE), null, status);
+			String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.ERROR_OPENING_FILE, new Object[] {url.getFile()});
+			logMessage(IStatus.ERROR, true, message, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_TITLE), e);
 			return null;
 		}
 
 		Document document;
 		try {
 			if(documentBuilder == null) {
-				//TODO Do something better here!
-				throw new Exception("Exception");
+				logMessage(IStatus.ERROR, false, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_DOCUMENT_BUILDER_NOT_INIT), null, null);
+				return null;
 			}
 			document = documentBuilder.parse(inputSource);
 		} catch (IOException e) {
-			//Need to log exception here. 
-			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_OPENING_FILE_IN_PARSER), e);
-			CheatSheetPlugin.getPlugin().getLog().log(status);
+			String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.ERROR_OPENING_FILE_IN_PARSER, new Object[] {url.getFile()});
+			logMessage(IStatus.ERROR, false, message, null, e);
 			return null;
 		} catch (SAXParseException spe) {
-			//Need to log exception here. 
-			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_SAX_PARSING), spe);
-			CheatSheetPlugin.getPlugin().getLog().log(status);
+			String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.ERROR_SAX_PARSING_WITH_LOCATION, new Object[] {url.getFile(), new Integer(spe.getLineNumber()), new Integer(spe.getColumnNumber())});
+			logMessage(IStatus.ERROR, false, message, null, spe);
 			return null;
 		} catch (SAXException se) {
-			//Need to log exception here. 
-			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_SAX_PARSING), se);
-			CheatSheetPlugin.getPlugin().getLog().log(status);
-			return null;
-		} catch (Exception se) {
-			//TODO: Needs to update the error message
-			//Need to log exception here. 
-			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_SAX_PARSING), se);
-			CheatSheetPlugin.getPlugin().getLog().log(status);
+			String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.ERROR_SAX_PARSING, new Object[] {url.getFile()});
+			logMessage(IStatus.ERROR, false, message, null, se);
 			return null;
 		} finally {
 			try {
@@ -680,10 +822,9 @@ public class CheatSheetParser {
 		}
 		
 		try {
-			CheatSheet cheatSheet = parseCheatSheet(document);
-			return cheatSheet;
+			return parseCheatSheet(document);
 		} catch(CheatSheetParserException e) {
-			e.printStackTrace();
+			logMessage(IStatus.ERROR, true, e.getMessage(), CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_TITLE), e);
 		}
 		return null;
 	}
@@ -693,9 +834,10 @@ public class CheatSheetParser {
 		if (document != null) {
 			Node rootnode = document.getDocumentElement();
 			
-			// TODO: Is the root node really <cheatsheet>
-			// IParserTags.CHEATSHEET
-			rootnode.getNodeName();
+			// Is the root node really <cheatsheet>?
+			if( !rootnode.getNodeName().equals(IParserTags.CHEATSHEET) ) {
+				throw new CheatSheetParserException(CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_PARSING_CHEATSHEET_ELEMENT));
+			}
 
 			// Create the cheat sheet model object
 			CheatSheet cheatSheet = new CheatSheet();
@@ -708,13 +850,7 @@ public class CheatSheetParser {
 			
 			return cheatSheet;
 		} else {
-			//System.err.println("Null document");
-			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_OPENING_FILE), null);
-			CheatSheetPlugin.getPlugin().getLog().log(status);
-
-			org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_OPENING_FILE_TITLE), CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_OPENING_FILE), status);
+			throw new CheatSheetParserException(CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_PARSING_CHEATSHEET_CONTENTS));
 		}
-		
-		return null;
 	}
 }
