@@ -126,28 +126,46 @@ public class ContributionTemplateStore extends TemplateStore {
 			URL url= Platform.find(plugin, Path.fromOSString(file));
 			if (url != null) {
 				ResourceBundle bundle= null;
-				String translations= element.getAttributeAsIs(TRANSLATIONS);
-				if (translations != null) {
-					URL bundleURL= Platform.find(plugin, Path.fromOSString(translations));
-					if (bundleURL != null)
-						bundle= new PropertyResourceBundle(bundleURL.openStream());
-				}
-				
-				InputStream stream= new BufferedInputStream(url.openStream());
-				TemplateReaderWriter reader= new TemplateReaderWriter();
-				TemplatePersistenceData[] datas= reader.read(stream, bundle);
-				for (int i= 0; i < datas.length; i++) {
-					TemplatePersistenceData data= datas[i];
-					if (data.isCustom()) {
-						if (data.getId() == null)
-							EditorsPlugin.logErrorMessage(ContributionTemplateMessages.getString("ContributionTemplateStore.ignore_prefix") + data.getTemplate().getName() + " " + ContributionTemplateMessages.getString("ContributionTemplateStore.ignore_postfix_no_id")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-						else
-							EditorsPlugin.logErrorMessage(ContributionTemplateMessages.getString("ContributionTemplateStore.ignore_prefix") + data.getTemplate().getName() + " " + ContributionTemplateMessages.getString("ContributionTemplateStore.ignore_postfix_deleted")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-					} else if (!validateTemplate(data.getTemplate())) {
-						if (contextExists(data.getTemplate().getContextTypeId()))
-							EditorsPlugin.logErrorMessage(ContributionTemplateMessages.getString("ContributionTemplateStore.ignore_prefix") + data.getTemplate().getName() + " " + ContributionTemplateMessages.getString("ContributionTemplateStore.ignore_postfix_validation_failed")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-					} else {
-						templates.add(data);
+				InputStream bundleStream= null;
+				InputStream stream= null;
+				try {
+					String translations= element.getAttributeAsIs(TRANSLATIONS);
+					if (translations != null) {
+						URL bundleURL= Platform.find(plugin, Path.fromOSString(translations));
+						if (bundleURL != null) {
+							bundleStream= bundleURL.openStream();
+							bundle= new PropertyResourceBundle(bundleStream);
+						}
+					}
+
+					stream= new BufferedInputStream(url.openStream());
+					TemplateReaderWriter reader= new TemplateReaderWriter();
+					TemplatePersistenceData[] datas= reader.read(stream, bundle);
+					for (int i= 0; i < datas.length; i++) {
+						TemplatePersistenceData data= datas[i];
+						if (data.isCustom()) {
+							if (data.getId() == null)
+								EditorsPlugin.logErrorMessage(ContributionTemplateMessages.getString("ContributionTemplateStore.ignore_prefix") + data.getTemplate().getName() + " " + ContributionTemplateMessages.getString("ContributionTemplateStore.ignore_postfix_no_id")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+							else
+								EditorsPlugin.logErrorMessage(ContributionTemplateMessages.getString("ContributionTemplateStore.ignore_prefix") + data.getTemplate().getName() + " " + ContributionTemplateMessages.getString("ContributionTemplateStore.ignore_postfix_deleted")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						} else if (!validateTemplate(data.getTemplate())) {
+							if (contextExists(data.getTemplate().getContextTypeId()))
+								EditorsPlugin.logErrorMessage(ContributionTemplateMessages.getString("ContributionTemplateStore.ignore_prefix") + data.getTemplate().getName() + " " + ContributionTemplateMessages.getString("ContributionTemplateStore.ignore_postfix_validation_failed")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						} else {
+							templates.add(data);
+						}
+					}
+				} finally {
+					try {
+						if (bundleStream != null)
+							bundleStream.close();
+					} catch (IOException x) {
+					} finally {
+						try {
+							if (stream != null)
+								stream.close();
+						} catch (IOException x) {
+						}
 					}
 				}
 			}
