@@ -88,20 +88,6 @@ function showView(view)
 }
 
 var activityFiltering = <%=(new ActivitiesData(application, request, response)).isActivityFiltering()?"true":"false"%>;
-<%
-	for (int i=0; i<views.length; i++) {
-		if ( "toc".equals(views[i].getName()) ) {
-%>
-var tocViewHref="<%="view.jsp?view="+views[i].getName()+(request.getQueryString()==null?"":("&"+request.getQueryString()))%>"
-<%
-		} else if ( "search".equals(views[i].getName()) ) {
-%>
-var searchViewHref="<%="view.jsp?view="+views[i].getName()+(request.getQueryString()==null?"":("&"+request.getQueryString()))%>"
-<%
-		}
-	}
-%>
-
 var re=/(\?|&)showAll=(on|off)/;
 function toggleShowAll(){
 	if(activityFiltering){
