@@ -39,14 +39,22 @@ public class BuildTests extends AbstractAntUIBuildTest {
   
   /**
 	 * Tests launching Ant and getting the build failed message
-	 * logged to the console.
-	 * Bug 42333.
+	 * logged to the console with associated link.
+	 * Bug 42333 and 44565
 	 */
 	public void testBuildFailedMessage() throws CoreException {
 		launch("bad");
 		assertTrue("Incorrect number of messages logged for build. Should be 7. Was " + ConsoleLineTracker.getNumberOfMessages(), ConsoleLineTracker.getNumberOfMessages() == 7);
 		String message= ConsoleLineTracker.getMessage(4);
 		assertTrue("Incorrect last message. Should start with Build Failed:. Message: " + message, message.startsWith("BUILD FAILED:"));
+		int offset= -1;
+		try {
+			offset= ConsoleLineTracker.getDocument().getLineOffset(4) + 30; //link to buildfile that failed
+		} catch (BadLocationException e) {
+			assertTrue("failed getting offset of line", false);
+		}
+		IConsoleHyperlink link= getHyperlink(offset, ConsoleLineTracker.getDocument());
+		assertNotNull("No hyperlink found at offset " + offset, link);
 	}
   
   /**
