@@ -129,20 +129,19 @@ public boolean hasSavedProject(IProject project) {
  * be called from Project.writeDescription(), because that method ensures
  * that the description isn't then immediately discovered as a new change.
  */
-public void internalWrite(IProject target, int updateFlags) throws CoreException {
+public void internalWrite(IProject target, IProjectDescription description, int updateFlags) throws CoreException {
 	IPath location = locationFor(target);
 	getStore().writeFolder(location.toFile());
-	//can't do anything if there's no description
-	IProjectDescription desc = ((Project)target).internalGetDescription();
-	if (desc == null)
-		return;
 	//write the project location to the meta-data area
 	getWorkspace().getMetaArea().writeLocation(target);
+	//can't do anything if there's no description
+	if (description == null)
+		return;
 
 	//write the model to a byte array
 	ByteArrayOutputStream out = new ByteArrayOutputStream();
 	try {
-		new ModelObjectWriter().write(desc, out);
+		new ModelObjectWriter().write(description, out);
 	} catch (IOException e) {
 		String msg = Policy.bind("resources.writeMeta", target.getFullPath().toString());
 		throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, target.getFullPath(), msg, e);

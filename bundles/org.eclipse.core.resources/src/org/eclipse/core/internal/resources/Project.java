@@ -445,7 +445,7 @@ protected void internalCopy(IProjectDescription destDesc, boolean force, IProgre
 			// write out the new project description to the meta area. This will ovewrite 
 			//the .project file that was copied during the recursive copy in the previous step
 			try {
-				writeDescription(IResource.FORCE);
+				destProject.writeDescription(IResource.FORCE);
 			} catch (CoreException e) {
 				try {
 					destProject.delete(force, null);
@@ -666,8 +666,7 @@ public void setDescription(IProjectDescription description, int updateFlags, IPr
 			}
 			workspace.beginOperation(true);
 			workspace.changing(this);
-			writeDescription(updateFlags);
-			//only set the description if we succeeded in writing it
+			writeDescription(description, updateFlags);
 			MultiStatus status = basicSetDescription((ProjectDescription) description);
 			info = getResourceInfo(false, true);
 			info.incrementContentId();
@@ -746,9 +745,18 @@ protected void updateDescription() throws CoreException {
  * change and read back from disk.
  */
 public void writeDescription(int updateFlags) throws CoreException {
+	writeDescription(internalGetDescription(), updateFlags);
+}
+/**
+ * Writes the project description file to disk.  This is the only method
+ * that should ever be writing the description, because it ensures that
+ * the description isn't then immediately discovered as an incoming
+ * change and read back from disk.
+ */
+public void writeDescription(IProjectDescription description, int updateFlags) throws CoreException {
 	isWritingDescription = true;
 	try {
-		getLocalManager().internalWrite(this, updateFlags);
+		getLocalManager().internalWrite(this, description, updateFlags);
 	} finally {
 		isWritingDescription = false;
 	}
