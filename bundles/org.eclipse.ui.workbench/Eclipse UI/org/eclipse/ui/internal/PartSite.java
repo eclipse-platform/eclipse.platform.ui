@@ -28,8 +28,8 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.SubActionBars;
 import org.eclipse.ui.commands.IActionService;
 import org.eclipse.ui.commands.IContextService;
-import org.eclipse.ui.commands.internal.SimpleActionService;
-import org.eclipse.ui.commands.internal.SimpleContextService;
+import org.eclipse.ui.internal.commands.SimpleActionService;
+import org.eclipse.ui.internal.commands.SimpleContextService;
 
 /**
  * <code>PartSite</code> is the general implementation for an

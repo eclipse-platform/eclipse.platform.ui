@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.commands.IActionService;
 import org.eclipse.ui.commands.IContextService;
-import org.eclipse.ui.commands.internal.*;
+import org.eclipse.ui.internal.commands.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.dialogs.MessageDialogWithToggle;
 import org.eclipse.ui.internal.misc.Assert;
