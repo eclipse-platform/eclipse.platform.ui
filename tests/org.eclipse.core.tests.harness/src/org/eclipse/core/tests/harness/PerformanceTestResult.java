@@ -134,8 +134,6 @@ public synchronized void startTest(Test test) {
 	protected void stopTimers() {
 
 		Enumeration enum = fTimerList.elements();
-		PerformanceTimer timer = null;
-
 		while (enum.hasMoreElements()) {
 			((PerformanceTimer) enum.nextElement()).stopTiming();
 		}	
