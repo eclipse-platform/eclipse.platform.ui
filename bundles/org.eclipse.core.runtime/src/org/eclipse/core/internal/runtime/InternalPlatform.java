@@ -207,7 +207,7 @@ public final class InternalPlatform implements IPlatform {
 
 		// If this is a platform URL get the local URL from the PlatformURLConnection
 		if (result.getProtocol().equals(PlatformURLHandler.PROTOCOL)){
-			result = resolve(url);
+			result = asActualURL(url);
 		}
 
 		// If the result is a bundleentry or bundleresouce URL then 
@@ -223,6 +223,17 @@ public final class InternalPlatform implements IPlatform {
 
 		return result;
 	}
+
+	private URL asActualURL(URL url) throws IOException {
+		if (!url.getProtocol().equals(PlatformURLHandler.PROTOCOL))
+			return url;
+		URLConnection connection = url.openConnection();
+		if (connection instanceof PlatformURLConnection)
+			return ((PlatformURLConnection) connection).getResolvedURL();
+		else
+			return url;
+	}
+
 	private void assertInitialized() {
 		//avoid the Policy.bind if assertion is true
 		if (!initialized)
@@ -813,13 +824,17 @@ public final class InternalPlatform implements IPlatform {
 	 * @see Platform
 	 */
 	public URL resolve(URL url) throws IOException {
-		if (!url.getProtocol().equals(PlatformURLHandler.PROTOCOL))
-			return url;
-		URLConnection connection = url.openConnection();
-		if (connection instanceof PlatformURLConnection)
-			return ((PlatformURLConnection) connection).getResolvedURL();
-		else
-			return url;
+		URL result = asActualURL(url);
+		if (!result.getProtocol().startsWith(PlatformURLHandler.BUNDLE))
+			return result;
+
+		URLConverter urlConverter = getURLConverter();
+		if (urlConverter == null) {
+			throw new IOException("url.noaccess");
+		}
+		result = urlConverter.convertToLocalURL(result);
+
+		return result;
 	}
 	public void run(ISafeRunnable code) {
 		Assert.isNotNull(code);
