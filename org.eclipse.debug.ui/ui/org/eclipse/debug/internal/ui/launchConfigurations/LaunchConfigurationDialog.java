@@ -1185,6 +1185,9 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  			return;
  		}
  		
+ 		// avoid flicker
+ 		getEditArea().setVisible(false);
+ 		
 		// dispose the current tabs
 		disposeExistingTabs();
 
@@ -1213,6 +1216,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  		}
  		setTabs(tabs);	
  		setTabType(configType);
+ 		getEditArea().setVisible(true);
  	}
  	
  	protected void disposeExistingTabs() {
