@@ -50,7 +50,7 @@ public interface IDocumentProvider {
 	/**
 	 * Connects the given element to this document provider. This tells the provider
 	 * that caller of this method is interested to work with the document provided for
-	 * the given domain model element. By counting the invokations of this method and 
+	 * the given domain model element. By counting the invocations of this method and 
 	 * <code>disconnect(Object)</code> this provider can assume to know the
 	 * correct number of clients working with the document provided for that 
 	 * domain model element. <p>
@@ -65,7 +65,7 @@ public interface IDocumentProvider {
 	/**
 	 * Disconnects the given element from this document provider. This tells the provider
 	 * that the caller of this method is no longer interested in working with the document
-	 * provided for the given domain model element. By counting the invokations of 
+	 * provided for the given domain model element. By counting the invocations of 
 	 * <code>connect(Object)</code> and of this method this provider can assume to
 	 * know the correct number of clients working with the document provided for that 
 	 * domain model element. <p>
