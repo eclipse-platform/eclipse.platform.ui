@@ -21,7 +21,7 @@
 
 </head>
 
-<frameset cols="<%=isRTL?"*,250":"250,*"%>">
+<frameset cols="<%=isRTL?"*,300":"300,*"%>">
 <%
 if (isRTL) {
 %>
