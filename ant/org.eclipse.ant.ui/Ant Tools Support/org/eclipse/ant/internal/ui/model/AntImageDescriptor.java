@@ -21,13 +21,8 @@ import org.eclipse.swt.graphics.Point;
  */
 public class AntImageDescriptor extends CompositeImageDescriptor {
 	
-	/**
-	 * Flag to render the default target adornment. Not used anymore,
-	 * but left in case we want to add an adornment.
-	 */
-	public final static int DEFAULT_TARGET=	 			0x0001;
-	/** Flag to render the may be out of synch adornment */
-	public final static int HAS_ERRORS= 					0x0002;
+	/** Flag to render an error adornment */
+	public final static int HAS_ERRORS= 0x0001;
 
 	private ImageDescriptor fBaseImage;
 	private int fFlags;
