@@ -625,6 +625,16 @@
             description="%ActionDefinition.custom.description"
             id="org.eclipse.ui.edit.text.encoding.custom">
       </actionDefinition>
+      <actionDefinition
+			name= "%ActionDefinition.contentAssistProposals.name"
+			description="%ActionDefinition.contentAssistProposals.description"
+			id="org.eclipse.ui.edit.text.contentAssist.proposals">
+      </actionDefinition>
+      <actionDefinition
+			name= "%ActionDefinition.contentAssistContextInformation.name"
+			description="%ActionDefinition.contentAssistContextInformation.description"
+			id="org.eclipse.ui.edit.text.contentAssist.contextInformation">
+	  </actionDefinition>
    </extension>
    <extension
          point="org.eclipse.ui.acceleratorConfigurations">
@@ -828,6 +838,25 @@
          <accelerator
                key="Ctrl+W"
                id="org.eclipse.ui.edit.text.showRulerContextMenu">
+         </accelerator>
+         <accelerator
+               key="Ctrl+Space"
+               id="org.eclipse.ui.edit.text.contentAssist.proposals">
+         </accelerator>
+         <accelerator
+               key="Ctrl+Shift+Space"
+               id="org.eclipse.ui.edit.text.contentAssist.contextInformation">
+         </accelerator>
+		<!-- override accelerators for Chinese -->
+         <accelerator
+               key="Alt+/"
+               id="org.eclipse.ui.edit.text.contentAssist.proposals"
+               locale="zh_CN">
+         </accelerator>
+         <accelerator
+               key="Alt+?"
+               id="org.eclipse.ui.edit.text.contentAssist.contextInformation"
+               locale="zh_CN">
          </accelerator>
          <accelerator
                platform="carbon"
@@ -1198,7 +1227,17 @@
                platform="carbon"
                key="Ctrl+W"
                id="org.eclipse.ui.edit.text.showRulerContextMenu">
-         </accelerator>         
+         </accelerator>
+         <accelerator
+               platform="carbon"
+               key="Command+Space"
+               id="org.eclipse.ui.edit.text.contentAssist.proposals">
+         </accelerator>
+         <accelerator
+               platform="carbon"
+               key="Command+Shift+Space"
+               id="org.eclipse.ui.edit.text.contentAssist.contextInformation">
+         </accelerator>
          <accelerator
                platform="gtk"
                key="Shift+Delete"
@@ -1392,6 +1431,36 @@
          <accelerator
                key="INSERT"
                id="org.eclipse.ui.edit.text.toggleOverwrite">
+         </accelerator>
+         <accelerator
+               key="Alt+/"
+               id="org.eclipse.ui.edit.text.contentAssist.proposals">
+         </accelerator>
+         <accelerator
+               key="Alt+?"
+               id="org.eclipse.ui.edit.text.contentAssist.contextInformation">
+         </accelerator>
+		 <!-- override accelerators for Chinese China -->
+        <accelerator
+               key="Alt+/"
+               id="org.eclipse.ui.edit.text.contentAssist.proposals"
+               locale="zh_CN">
+         </accelerator>
+         <accelerator
+               key="Alt+?"
+               id="org.eclipse.ui.edit.text.contentAssist.contextInformation"
+               locale="zh_CN">
+         </accelerator>
+		<!-- override accelerators for Chinese Taiwan -->
+        <accelerator
+               key="Alt+/"
+               id="org.eclipse.ui.edit.text.contentAssist.proposals"
+               locale="zh_TW">
+         </accelerator>
+         <accelerator
+               key="Alt+?"
+               id="org.eclipse.ui.edit.text.contentAssist.contextInformation"
+               locale="zh_TW">
          </accelerator>
       </acceleratorSet>
    </extension>
