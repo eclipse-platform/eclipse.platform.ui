@@ -61,9 +61,9 @@ public class ReconcileProjectOperation extends ShareProjectOperation {
 	protected void mapProjectToRemoteFolder(ICVSRemoteFolder remote, IProgressMonitor monitor) throws TeamException {
 		// Map the project
 		monitor.beginTask(null, 100);
-		super.mapProjectToRemoteFolder(remote, Policy.subMonitorFor(monitor, 50));
+		super.mapProjectToRemoteFolder(remote, Policy.subMonitorFor(monitor, 10));
 		// Reconcile the sync info
-		reconcileSyncInfo(Policy.subMonitorFor(monitor, 50));
+		reconcileSyncInfo(Policy.subMonitorFor(monitor, 90));
 		monitor.done();
 	}
 	
@@ -72,14 +72,12 @@ public class ReconcileProjectOperation extends ShareProjectOperation {
 	 */
 	protected void reconcileSyncInfo(IProgressMonitor monitor) throws CVSException {
 		try {
-			monitor.beginTask(null, 300);
+			monitor.beginTask(null, 100);
 			// Fetch the entire remote tree
-			ICVSRemoteFolder remote = CheckoutToRemoteFolderOperation.checkoutRemoteFolder(getPart(), folder, Policy.subMonitorFor(monitor, 100));
+			ICVSRemoteFolder remote = CheckoutToRemoteFolderOperation.checkoutRemoteFolder(getPart(), folder, Policy.subMonitorFor(monitor, 80));
 			// Traverse the tree and populate the workspace base or remote
 			// with the sync info depending on file contents
-			populateWorkspace(remote, Policy.subMonitorFor(monitor, 100));
-			// Refresh the workspace subscriber to see conflicting additions
-			subscriber.refresh(new IResource[] { getProject() }, IResource.DEPTH_INFINITE, Policy.subMonitorFor(monitor, 100));
+			populateWorkspace(remote, Policy.subMonitorFor(monitor, 20));
 		} catch (InvocationTargetException e) {
 			throw CVSException.wrapException(e);
 		} catch (TeamException e) {

@@ -60,7 +60,7 @@ public class ShareProjectOperation extends CVSOperation {
 						exception[0] = e;
 					}
 				}
-			}, project, 0, Policy.subMonitorFor(monitor, 10));
+			}, project, 0, Policy.subMonitorFor(monitor, 100));
 			if (exception[0] != null)
 				throw exception[0];
 		} catch (CoreException e) {
@@ -106,12 +106,14 @@ public class ShareProjectOperation extends CVSOperation {
 	 * @throws CVSException
 	 */
 	protected void mapProjectToRemoteFolder(final ICVSRemoteFolder remote, IProgressMonitor monitor) throws TeamException {
+		monitor.beginTask(null, 100);
 		purgeAnyCVSFolders();
 		// Link the project to the newly created module
 		ICVSFolder folder = (ICVSFolder)CVSWorkspaceRoot.getCVSResourceFor(project);
 		folder.setFolderSyncInfo(remote.getFolderSyncInfo());
 		//Register it with Team.  If it already is, no harm done.
 		RepositoryProvider.map(project, CVSProviderPlugin.getTypeId());
+		monitor.done();
 	}
 
 	/*
