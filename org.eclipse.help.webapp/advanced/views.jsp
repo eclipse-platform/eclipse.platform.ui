@@ -106,10 +106,10 @@ function showAll(){
 		window.frames.search.searchToolbarFrame.setButtonState("show_all", true);
 	}catch(ex) {}
 	try{
-		window.frames.toc.tocViewFrame.location=window.frames.toc.frames[1].location.href.replace(re, "")+"&showAll=on";
+		window.frames.toc.tocViewFrame.location.replace(window.frames.toc.frames[1].location.href.replace(re, "")+"&showAll=on");
 	}catch(ex) {}
 	try{
-		window.frames.search.searchViewFrame.location=window.frames.search.frames[1].location.href.replace(re, "")+"&showAll=on";
+		window.frames.search.searchViewFrame.location.replace(window.frames.search.frames[1].location.href.replace(re, "")+"&showAll=on");
 	}catch(ex) {}
 }
 
@@ -122,10 +122,10 @@ function dontShowAll(){
 		window.frames.search.searchToolbarFrame.setButtonState("show_all", false);
 	}catch(ex) {}
 	try{
-		window.frames.toc.tocViewFrame.location=window.frames.toc.tocViewFrame.location.href.replace(re, "")+"&showAll=off";
+		window.frames.toc.tocViewFrame.location.replace(window.frames.toc.tocViewFrame.location.href.replace(re, "")+"&showAll=off");
 	}catch(ex) {}
 	try{
-		window.frames.search.searchViewFrame.location=window.frames.search.searchViewFrame.location.href.replace(re, "")+"&showAll=off";
+		window.frames.search.searchViewFrame.location.replace(window.frames.search.searchViewFrame.location.href.replace(re, "")+"&showAll=off");
 	}catch(ex) {}
 }
 
