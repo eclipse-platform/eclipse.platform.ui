@@ -74,7 +74,6 @@ public class WorkbenchActionBuilder {
 	private static final String rebuildAllActionDefId = "org.eclipse.ui.project.rebuildAll"; //$NON-NLS-1$
 	private static final String backwardHistoryActionDefId = "org.eclipse.ui.navigate.backwardHistory"; //$NON-NLS-1$
 	private static final String forwardHistoryActionDefId = "org.eclipse.ui.navigate.forwardHistory"; //$NON-NLS-1$
-	private static final String showInActionDefId = "org.eclipse.ui.navigate.showIn"; //$NON-NLS-1$
 
 	/**
 	 * The window to which this is contributing.
@@ -126,7 +125,6 @@ public class WorkbenchActionBuilder {
 	private ActivateEditorAction activateEditorAction;
 
 	private WorkbenchEditorsAction workbenchEditorsAction;
-	private WorkbenchShowInAction showInAction;
 
 	// retarget actions.
 	private RetargetAction undoAction;
@@ -403,7 +401,11 @@ public class WorkbenchActionBuilder {
 			menu.add(new Separator(IWorkbenchActionConstants.OPEN_EXT + i));
 		}
 		menu.add(new Separator(IWorkbenchActionConstants.SHOW_EXT));
-		menu.add(showInAction);
+		{
+			MenuManager showInSubMenu = new MenuManager(WorkbenchMessages.getString("Workbench.showIn")); //$NON-NLS-1$
+			showInSubMenu.add(new ShowInMenu(window));
+			menu.add(showInSubMenu);
+		}
 		for (int i = 2; i < 5; ++i) {
 			menu.add(new Separator(IWorkbenchActionConstants.SHOW_EXT + i));
 		}
@@ -837,11 +839,6 @@ public class WorkbenchActionBuilder {
 
 		addBookmarkAction = createGlobalAction(IWorkbenchActionConstants.BOOKMARK, "addBookMark", "edit", "addBookmark", false); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
 		addTaskAction = createGlobalAction(IWorkbenchActionConstants.ADD_TASK, "edit", false); //$NON-NLS-1$
-
-		showInAction = new WorkbenchShowInAction(window);
-		partService.addPartListener(showInAction);
-		showInAction.setActionDefinitionId(showInActionDefId);
-		keyBindingService.registerGlobalAction(showInAction);
 
 		// can't use createGlobalAction convenience since deleteAction is not registered with the key binding service
 		deleteAction = new RetargetAction(IWorkbenchActionConstants.DELETE, WorkbenchMessages.getString("Workbench.delete")); //$NON-NLS-1$

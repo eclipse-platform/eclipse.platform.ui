@@ -254,11 +254,6 @@
             id="org.eclipse.ui.navigate.goToResource">
       </command>
       <command
-            name="%command.showIn.name"
-            description="%command.showIn.description"
-            id="org.eclipse.ui.navigate.showIn">
-      </command>
-      <command
             name="%command.openResource.name"
             description="%command.openResource.description"
             id="org.eclipse.ui.navigate.openResource">
@@ -756,10 +751,6 @@
          <accelerator
                key="Alt+ARROW_RIGHT"
                id="org.eclipse.ui.navigate.forwardHistory">
-         </accelerator>
-         <accelerator
-               key="Alt+Shift+S"
-               id="org.eclipse.ui.navigate.showIn">
          </accelerator>
          <accelerator
                key="Ctrl+B"

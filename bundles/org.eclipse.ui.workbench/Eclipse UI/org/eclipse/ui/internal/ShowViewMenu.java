@@ -64,28 +64,14 @@ public class ShowViewMenu extends ContributionItem {
 	private static Collator collator;	
 
 	/**
-	 * Create a show view menu.
-	 * <p>
-	 * If the menu will appear on a semi-permanent basis, for instance within
-	 * a toolbar or menubar, the value passed for <code>register</code> should be true.
-	 * If set, the menu will listen to perspective activation and update itself
-	 * to suit.  In this case clients are expected to call <code>deregister</code> 
-	 * when the menu is no longer needed.  This will unhook any perspective
-	 * listeners.
-	 * </p>
-	 *
-	 * @param innerMgr the location for the shortcut menu contents
+	 * Creates a Show View menu.
+	 * 
 	 * @param window the window containing the menu
-	 * @param register if <code>true</code> the menu listens to perspective changes in
-	 * 		the window
 	 */
 	public ShowViewMenu(IWorkbenchWindow window) {
 		this.window = window;
 	}
 	
-	/**
-	 * Overridden to always return true and force dynamic menu building.
-	 */
 	public boolean isDirty() {
 		return dirty;
 	}	
@@ -96,8 +82,8 @@ public class ShowViewMenu extends ContributionItem {
 		return true;
 	}
 	
-	/* (non-Javadoc)
-	 * Fills the menu with views.
+	/**
+	 * Fills the menu with Show View actions.
 	 */
 	private void fillMenu(IMenuManager innerMgr) {
 		// Remove all.

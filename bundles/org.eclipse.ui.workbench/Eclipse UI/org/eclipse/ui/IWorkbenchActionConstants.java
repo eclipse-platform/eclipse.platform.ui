@@ -566,6 +566,8 @@ public interface IWorkbenchActionConstants {
 	 * 
 	 * @see org.eclipse.ui.actions.ShowInAction
 	 * @since 2.1
+	 * 
+	 * @deprecated
 	 */
 	public static final String SHOW_IN = "showIn";	//$NON-NLS-1$
 

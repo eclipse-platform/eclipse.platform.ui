@@ -51,6 +51,8 @@ import org.eclipse.ui.part.ShowInContext;
  * @see org.eclipse.ui.dialogs.IShowInTarget
  * 
  * @since 2.1
+ * 
+ * @deprecated this is going away for 2.1 since Show In now uses a submenu rather than an action + prompter
  */
 public class ShowInAction extends Action {
 
