@@ -13,7 +13,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Display;
 
-public abstract class UIJob extends NotifyingJob {
+public abstract class UIJob extends Job {
 	private Display display;
 
 	public UIJob() {
