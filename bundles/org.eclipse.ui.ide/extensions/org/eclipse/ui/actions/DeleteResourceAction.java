@@ -487,11 +487,7 @@ public class DeleteResourceAction extends SelectionListenerAction {
                         break;
                     }
                 }
-                IDEWorkbenchPlugin
-                        .log(
-                                MessageFormat
-                                        .format(
-                                                "Exception in {0}.run: {1}", new Object[] { getClass().getName(), t }), status);//$NON-NLS-1$
+                IDEWorkbenchPlugin.log(getClass(), "run", t); //$NON-NLS-1$
                 if (outOfSyncError) {
                     ErrorDialog
                             .openError(
@@ -511,7 +507,7 @@ public class DeleteResourceAction extends SelectionListenerAction {
                 IDEWorkbenchPlugin
                         .log(MessageFormat
                                 .format(
-                                        "Exception in {0}.run: {1}", new Object[] { getClass().getName(), t }));//$NON-NLS-1$
+                                        "Exception in {0}.run: {1}", new Object[] { getClass().getName(), t }), t);//$NON-NLS-1$
                 MessageDialog
                         .openError(
                                 shell,
