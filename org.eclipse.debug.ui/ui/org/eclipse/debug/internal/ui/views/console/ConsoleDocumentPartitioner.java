@@ -121,6 +121,8 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 		}
 		
 		public void streamClosed(IStreamMonitor monitor) {
+			fLineNotifier.streamClosed();
+			fLineNotifier.processNewLines();
 		}
 		
 		public void connect() {
@@ -752,8 +754,8 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 	 * System out or System error has had text append to it.
 	 * Adds a new entry to the queue.
 	 */
-	protected void streamAppended(String text, String streamIdetifier) {
-		fQueue.add(new StreamEntry(text, streamIdetifier));
+	protected void streamAppended(String text, String streamIdentifier) {
+		fQueue.add(new StreamEntry(text, streamIdentifier));
 	}
 					
 	/**

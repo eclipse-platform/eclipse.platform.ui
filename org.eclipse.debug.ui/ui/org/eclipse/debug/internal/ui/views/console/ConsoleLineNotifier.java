@@ -42,6 +42,11 @@ public class ConsoleLineNotifier {
 	private IConsole fConsole = null;
 	
 	/**
+	 * Whether the console's streams have been closed.
+	 */
+	private boolean fClosed= false;
+	
+	/**
 	 * Connects this notifier to the given console.
 	 *  
 	 * @param console
@@ -75,6 +80,10 @@ public class ConsoleLineNotifier {
 		processNewLines();
 	}
 	
+	public void streamClosed() {
+		fClosed= true;
+	}
+	
 	/**
 	 * Notifies listeners of any new lines appended to the console.
 	 */
@@ -90,7 +99,7 @@ public class ConsoleLineNotifier {
 				DebugUIPlugin.log(e);
 				return;
 			}
-			if (delimiter == null) {
+			if (delimiter == null && !fClosed) {
 				// line not complete yet
 				return;
 			}
