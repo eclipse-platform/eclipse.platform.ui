@@ -998,7 +998,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 			} else {
 				// invalid status handler
 				IStatus s = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugException.INTERNAL_ERROR,
-				MessageFormat.format(DebugCoreMessages.getString("Invalid launch configuration comparator extentsion defined by plug-in {0} - attribute not specified"), new String[] {configurationElement.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier()} ), null);
+				MessageFormat.format(DebugCoreMessages.getString("LaunchManager.Invalid_launch_configuration_comparator_extension_defined_by_plug-in_{0}_-_attribute_not_specified_1"), new String[] {configurationElement.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier()}), null); //$NON-NLS-1$
 				DebugPlugin.getDefault().log(s);
 			}
 		}			
