@@ -524,9 +524,9 @@ public class AnimationItem {
 				public void done(IJobChangeEvent event) {
 					//Clear the image
 						UIJob clearJob = new UIJob(ProgressMessages.getString("AnimationItem.RedrawJob")) {//$NON-NLS-1$
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-		 */
+						/* (non-Javadoc)
+	 					 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+						 */
 						public IStatus runInUIThread(IProgressMonitor monitor) {
 							if (!imageCanvas.isDisposed())
 								imageCanvas.redraw();
