@@ -38,37 +38,7 @@ import org.eclipse.search.ui.SearchUI;
 /**
  * Manage search results
  */
-class SearchManager implements IResourceChangeListener {
-
-	/**
-	 * Check if the resource delta describes a remove all operation.
-	 * This is the case if
-	 * - all marker deltas are removes and there are no search markers in the marker manager
-	 * - there is at least one remove and one non-remove
-	 */
-	private static class RemoveAllChecker implements IResourceDeltaVisitor {
-		public boolean result= false;
-		public int count= 0;
-		public int removeCount= 0;
-		public boolean visit(IResourceDelta delta) throws CoreException {
-			if ( (delta.getFlags() & IResourceDelta.MARKERS) == 0)
-				return true;
-			IMarkerDelta[] markers= delta.getMarkerDeltas();
-			if (markers == null)
-				return true;
-			for (int i= 0; i < markers.length; i++) {
-				IMarkerDelta markerDelta= markers[i];
-				if (!markerDelta.isSubtypeOf(SearchUI.SEARCH_MARKER))
-					continue;
-				count++;
-				int kind= markerDelta.getKind();
-				if ((kind & IResourceDelta.REMOVED) != 0)
-					removeCount++;
-			}
-			result= (removeCount > 0 && count > removeCount);
-			return true;
-		}
-	};
+public class SearchManager implements IResourceChangeListener {
 
 	static final SearchManager fgDefault= new SearchManager();
 	
@@ -85,6 +55,7 @@ class SearchManager implements IResourceChangeListener {
 	public static SearchManager getDefault() {
 		return fgDefault;
 	}
+	
 	/**
 	 * Returns the list with previous searches (ISearch).
 	 */
@@ -320,26 +291,16 @@ class SearchManager implements IResourceChangeListener {
 	 * display thread.
 	 */
 	public final void handleResourceChanged(final IResourceChangeEvent event) {
-		RemoveAllChecker checker= new RemoveAllChecker();
 		IResourceDelta delta= event.getDelta();
 		if (delta == null)
 			return;
-		final boolean removeAll= checkRemoveAll(checker, delta, null);
 
-		if (fIsNewSearch && (checker.count > 0 || checker.removeCount > 0)) {
+		if (fIsNewSearch) {
 			fIsNewSearch= false;
 			handleNewSearchResult();
 			return;
 		}
 		
-		if (removeAll) {
-			if (!fIsNewSearch)
-				handleRemoveAll();
-			else
-				fIsNewSearch= false;
-			return;
-		}
-
 		IResourceDeltaVisitor visitor= new IResourceDeltaVisitor() {
 			public boolean visit(IResourceDelta delta) throws CoreException {
 				if ( (delta.getFlags() & IResourceDelta.MARKERS) == 0)
@@ -354,7 +315,7 @@ class SearchManager implements IResourceChangeListener {
 					if (markerDelta.isSubtypeOf(SearchUI.SEARCH_MARKER)) {
 						if ((kind & IResourceDelta.ADDED) != 0)
 							handleAddMatch(marker);
-						else if (!removeAll && ((kind & IResourceDelta.REMOVED) != 0))
+						else if (((kind & IResourceDelta.REMOVED) != 0))
 							handleRemoveMatch(marker);
 						else if ((kind & IResourceDelta.CHANGED) != 0)
 							handleUpdateMatch(marker);
@@ -501,22 +462,6 @@ class SearchManager implements IResourceChangeListener {
 	 */
 	private Shell getShell() {
 		return SearchPlugin.getActiveWorkbenchShell();
-	}
-	/**
-	 * Check if the resource delta describes a remove all operation.
-	 * This is the case if
-	 * - all marker deltas are removes and there are no search markers in the marker manager
-	 * - there is at least one remove and one non-remove
-	 */
-	private boolean checkRemoveAll(RemoveAllChecker checker, IResourceDelta delta, String id) {
-		try {
-			delta.accept(checker);
-			int markerCount= SearchPlugin.getWorkspace().getRoot().findMarkers(SearchUI.SEARCH_MARKER, true, IResource.DEPTH_INFINITE).length;
-			return (markerCount == 0 && checker.count == checker.removeCount);
-		} catch(CoreException e) {
-			// handle each delta individually
-			return false;
-		}
 	}
 }
 
