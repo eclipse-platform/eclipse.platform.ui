@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- File written by PDE 1.0 -->
+<?eclipse version="3.0"?>
+
 <plugin
    id="org.eclipse.compare.examples.xml"
    name="%pluginName"
@@ -7,7 +8,6 @@
    provider-name="%providerName"
    class="org.eclipse.compare.examples.xml.XMLPlugin">
 
-	<!-- Required plugins -->
 	<requires>
 	   <import plugin="org.eclipse.ui"/>
 	   <import plugin="org.eclipse.core.resources"/>
@@ -15,22 +15,18 @@
 	   <import plugin="org.apache.xerces"/>
 	</requires>
 
-	<!-- Runtime -->
 	<runtime>
 	   <library name="xmlcompareexamples.jar">
 	      <export name="*"/>
 	   </library>
 	</runtime>
 
-	<!-- Extensions -->
 	<extension-point
 		id="idMapping"
 		name="%idMapping"
 		schema="schema/idMapping.exsd"
 	/>
 
-	<!-- Extension points -->
-	
 	<extension
 		point="org.eclipse.compare.examples.xml.idMapping">
 		

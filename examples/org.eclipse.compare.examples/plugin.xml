@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- File written by PDE 1.0 -->
+<?eclipse version="3.0"?>
+
 <plugin
    id="org.eclipse.compare.examples"
    name="%pluginName"
    version="3.0.0"
    provider-name="%providerName">
-
-<!-- Required plugins -->
 
 <requires>
    <import plugin="org.eclipse.ui"/>
@@ -14,17 +13,12 @@
    <import plugin="org.eclipse.compare"/>
 </requires>
 
-<!-- Runtime -->
-
 <runtime>
    <library name="compareexamples.jar">
       <export name="*"/>
    </library>
 </runtime>
 
-<!-- Extension points -->
-
-<!-- Extensions -->
 <extension
 	point="org.eclipse.compare.contentMergeViewers">
 	<viewer
