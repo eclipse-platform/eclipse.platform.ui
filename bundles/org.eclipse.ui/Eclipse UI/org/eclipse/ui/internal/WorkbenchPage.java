@@ -1583,7 +1583,13 @@ private void updateTabList(IWorkbenchPart part) {
 	PartPane pane = site.getPane();
 	if (pane instanceof ViewPane) {
 		ViewPane viewPane = (ViewPane) pane;
-		getClientComposite().setTabList(viewPane.getTabList());
+		Control[] tabList = viewPane.getTabList();
+		if (pane.getWindow() instanceof DetachedWindow) {
+			viewPane.getControl().getShell().setTabList(tabList);
+		}
+		else {
+			getClientComposite().setTabList(tabList);
+		}
 	}
 	else if (pane instanceof EditorPane) {
 		EditorArea ea = ((EditorPane) pane).getWorkbook().getEditorArea();
