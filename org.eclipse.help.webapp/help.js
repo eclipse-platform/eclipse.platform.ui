@@ -19,8 +19,10 @@ function onloadFrameset()
 		NavFrame.document.getElementById("toc").src = "toc.jsp"+ getQuery();
 	else
 		NavFrame.document.getElementById("toc").src = "tocs.jsp"+ getQuery();
+	
 	NavFrame.document.getElementById("search").src = "search_results.jsp" + getQuery();
-	NavFrame.document.getElementById("links").src = "links.jsp" + getQuery();
+	if (NavFrame.document.getElementById("links"))
+		NavFrame.document.getElementById("links").src = "links.jsp" + getQuery();
 		
 	// show the appropriate tab
 	var tab = "toc";

@@ -1,4 +1,4 @@
-<%@ page import="org.eclipse.help.servlet.*,org.w3c.dom.*" errorPage="err.jsp" contentType="text/html; charset=UTF-8"%>
+<%@ page import="java.util.*,org.eclipse.help.servlet.*,org.w3c.dom.*" errorPage="err.jsp" contentType="text/html; charset=UTF-8"%>
 
 <% 
 	// calls the utility class to initialize the application
@@ -41,20 +41,21 @@
 	
 	ContentUtil content = new ContentUtil(application, request);
 	Element prefsElement = content.loadPreferences();
-	System.out.println(prefsElement);
+
 	if (prefsElement != null){
 		NodeList prefs = prefsElement.getElementsByTagName("pref");
 		for (int i=0; i<prefs.getLength(); i++)
 		{
 			Element pref = (Element)prefs.item(i);
-			if (pref.getAttribute("name").equals("banner"))
+			String name = pref.getAttribute("name");
+			if (name.equals("banner"))
 				banner = pref.getAttribute("value");
-			else if (pref.getAttribute("name").equals("banner_height"))
+			else if (name.equals("banner_height"))
 				banner_height = pref.getAttribute("value");
 		}
 	}
 	if (banner != null){
-		if (banner.length() == 0)
+		if (banner.trim().length() == 0)
 			banner = null;
 		else
 			banner = "content/help:" + banner;
@@ -68,19 +69,23 @@
  (c) Copyright IBM Corp. 2000, 2002.
  All Rights Reserved.
 -->
+
 <html>
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<title>Help</title>
+		
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Help</title>
+
+<script language="Javascript">
+	// Global for the nav frame script
+	var titleArray = new Array();
+	titleArray["toc"] = "<%=ContentStr%>";
+	titleArray["search"] = "<%=SearchStr%>";
+	titleArray["links"] = "<%=LinksStr%>";
 	
-	<script language="Javascript">
-		// Global for the nav frame script
-		var titleArray = new Array();
-		titleArray["toc"] = "<%=ContentStr%>";
-		titleArray["search"] = "<%=SearchStr%>";
-		titleArray["links"] = "<%=LinksStr%>";
-		</script>
-	<script language="JavaScript" src="help.js"></script>
+</script>
+
+<script language="JavaScript" src="help.js"></script>
 	
 </head>
 

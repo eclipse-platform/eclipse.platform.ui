@@ -1,4 +1,4 @@
-<%@ page import="org.eclipse.help.servlet.*" errorPage="err.jsp" contentType="text/html; charset=UTF-8"%>
+<%@ page import="org.w3c.dom.*,org.eclipse.help.servlet.*" errorPage="err.jsp" contentType="text/html; charset=UTF-8"%>
 
 <% 
 	// calls the utility class to initialize the application
@@ -9,6 +9,27 @@
 	 String  ContentStr = WebappResources.getString("Content", request);
 	 String  SearchStr = WebappResources.getString("SearchResults", request);
 	 String  LinksStr = WebappResources.getString("Links", request);
+	 
+	 // Load the preferences
+	boolean linksView = true;
+	
+	ContentUtil content = new ContentUtil(application, request);
+	Element prefsElement = content.loadPreferences();
+
+	if (prefsElement != null){
+		NodeList prefs = prefsElement.getElementsByTagName("pref");
+		for (int i=0; i<prefs.getLength(); i++)
+		{
+			Element pref = (Element)prefs.item(i);
+			String name = pref.getAttribute("name");
+			if (name.equals("linksView"))
+			{
+				linksView = Boolean.getBoolean(pref.getAttribute("value"));
+				break;
+			}
+		}
+	}
+	
 %>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
@@ -101,11 +122,18 @@ IMG {
 
   <table cellspacing="0" cellpadding="0" border="0" width="100%" height="100%">
    <tr>
-   <td  title="<%=ContentStr%>" align="center"  class="tab" id="tocTab" onclick="parent.switchTab('toc')"><a  href='javascript:parent.switchTab("toc");' onclick='this.blur()'><img class="tabImage" alt="<%=ContentStr%>" title="<%=ContentStr%>" src="images/contents_view.gif"></a></td>
-   <td width="1px" class="separator"></td>
+	<td  title="<%=ContentStr%>" align="center"  class="tab" id="tocTab" onclick="parent.switchTab('toc')"><a  href='javascript:parent.switchTab("toc");' onclick='this.blur()'><img class="tabImage" alt="<%=ContentStr%>" title="<%=ContentStr%>" src="images/contents_view.gif"></a></td>
+    <td width="1px" class="separator"></td>
+
    <td  title="<%=SearchStr%>" align="center" class="tab" id="searchTab"  onclick="parent.switchTab('search')"><a  href='javascript:parent.switchTab("search")' onclick="this.blur()"><img class="tabImage" alt="<%=SearchStr%>" title="<%=SearchStr%>" src="images/search_results_view.gif"></a></td>
     <td width="1px" class="separator"></td>
+<%
+if (linksView) {
+%>
    <td  title="<%=LinksStr%>" align="center" class="tab" id="linksTab"  onclick="parent.switchTab('links')"><a href='javascript:parent.switchTab("links")' onclick="this.blur()"><img class="tabImage" alt="<%=LinksStr%>" title="<%=LinksStr%>" src="images/links_view.gif"></a></td>
+<%
+}
+%>
    </tr>
    </table>
 
