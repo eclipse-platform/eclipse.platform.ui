@@ -66,7 +66,7 @@ public class HTMLHelpViewer implements ISelectionChangedListener {
 
 		} catch (Exception e) {
 			// worst case scenario. Should never be here!
-			throw new HelpWorkbenchException(e.getLocalizedMessage());
+			throw new HelpWorkbenchException(WorkbenchResources.getString("WE001"));
 
 		}
 	}
