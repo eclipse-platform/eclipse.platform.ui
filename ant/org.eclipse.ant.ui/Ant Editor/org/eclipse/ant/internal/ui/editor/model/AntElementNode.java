@@ -108,6 +108,12 @@ public class AntElementNode {
 	 * The problem associated with this node. May be <code>null</code>.
      */
 	private IProblem fProblem;
+	
+	/**
+	 * Only used when opening an import element to indicate the location in the imported file
+	 */
+	private int fLine;
+	private int fColumn;
 
 	/**
      * Creates an instance with the specified name.
@@ -150,8 +156,32 @@ public class AntElementNode {
         return childNodes;
     }
     
-    
     /**
+     * Returns all the descendents of this target
+     */
+    public List getDescendents() {
+    	if (childNodes == null) {
+    		return null;
+    	}
+    	List descendents= new ArrayList();
+        determineDescendents(descendents, childNodes);
+        
+        return descendents;
+    }
+    
+    
+    private void determineDescendents(List descendents, List childrenNodes) {
+		Iterator itr= childrenNodes.iterator();
+        while (itr.hasNext()) {
+			AntElementNode element = (AntElementNode) itr.next();
+			if (element.hasChildren()) {
+				determineDescendents(descendents, element.getChildNodes());
+			}
+			descendents.add(element);
+		}
+	}
+
+	/**
      * Returns the parent XmlElement.
      * 
      * @return the parent or <code>null</code> if this element has no parent.
@@ -407,6 +437,9 @@ public class AntElementNode {
 				}
 			}
 		}
+		if (length == -1 && !isExternal()) { //this is still an open element
+			return this;
+		}
 		if (offset <= sourceOffset && sourceOffset <= (offset + length - 2)) {
 			return this;
 		}
@@ -475,5 +508,14 @@ public class AntElementNode {
 
 	public void reset() {
 		childNodes= null;
+	}
+
+	public void setExternalInfo(int line, int column) {
+		fLine= line;
+		fColumn= column;
+	}
+	
+	public int[] getExternalInfo() {
+		return new int[] {fLine, fColumn};
 	}
 }

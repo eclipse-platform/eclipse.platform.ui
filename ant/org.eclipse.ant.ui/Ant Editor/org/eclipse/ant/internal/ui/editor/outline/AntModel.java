@@ -151,11 +151,12 @@ public class AntModel {
 			if (fDocument == null) {
 				fProjectNode= null;
 			} else {
-				long start= System.currentTimeMillis();
+				//long start= System.currentTimeMillis();
 				reset(region);
 				parseDocument(fDocument, region);
 				fRemoveLengthOfReplace= 0;
-				System.out.println(System.currentTimeMillis() - start);
+				fDirtyRegion= null;
+				//System.out.println(System.currentTimeMillis() - start);
 			} 
 	
 			fCore.notifyDocumentModelListeners(new DocumentModelChangeEvent(this));
@@ -171,7 +172,7 @@ public class AntModel {
 		if (region == null ) {
 			fStillOpenElements= new Stack();
 			fTaskToNode= new HashMap();
-			fProperties= new ArrayList();
+			fProperties= null;
 			fProjectNode= null;
 			fNodeBeingResolved= null;
 		}
@@ -299,10 +300,9 @@ public class AntModel {
 				}
 				return null;
 			} else { //nodes don't know their lengths due to parsing error --> full parse
-				fProjectNode.reset();
-				return input.get();
+				textToParse = prepareForFullIncremental(input);
+				return textToParse;
 			}
-			
 		}
 		
 		while (node != null && !(node instanceof AntTargetNode)) {
@@ -312,10 +312,14 @@ public class AntModel {
 			if (region.getText() != null && region.getText().trim().length() == 0) {
 				return null; //no need to parse for whitespace additions
 			}
-			textToParse= input.get();
-			fProjectNode.reset();
+			textToParse= prepareForFullIncremental(input);
 		} else {
 			fIncrementalTarget= (AntTargetNode)node;
+			if (fIncrementalTarget.hasChildren()) {
+				Collection nodes= fTaskToNode.values();
+				nodes.removeAll(fIncrementalTarget.getDescendents());
+			}
+			
 			markHierarchy(node, false);
 			
 			StringBuffer temp = createIncrementalContents(project);			
@@ -330,6 +334,14 @@ public class AntModel {
 				textToParse= input.get();
 			}
 		}
+		return textToParse;
+	}
+
+	private String prepareForFullIncremental(IDocument input) {
+		String textToParse=  input.get();
+		fProjectNode.reset();
+		fTaskToNode= new HashMap();
+		fProperties= null;
 		return textToParse;
 	}
 
@@ -653,6 +665,7 @@ public class AntModel {
 
 	private void computeLength(AntElementNode element, int line, int column) {
 		if (element.isExternal()) {
+			element.setExternalInfo(line, column);
 			return;
 		}
 		try {
@@ -995,7 +1008,9 @@ public class AntModel {
 			AntElementNode startingNode= null;	
 			while(fStillOpenElements.peek() != fIncrementalTarget) {
 				startingNode= (AntElementNode)fStillOpenElements.pop();
-				startingNode.setLength(startingNode.getLength() + editAdjustment);
+				if (startingNode.getLength() > -1) {
+					startingNode.setLength(startingNode.getLength() + editAdjustment);
+				}
 			}
 			fStillOpenElements.pop(); //get rid of the incremental target
 			if (startingNode != null && fIncrementalTarget.hasChildren()) {
