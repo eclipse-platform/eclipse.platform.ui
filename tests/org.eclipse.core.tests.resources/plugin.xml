@@ -19,6 +19,71 @@
       <export name="*"/>
     </library>
   </runtime>
+ <extension point="org.eclipse.core.tests.harness.tests">
+	<test id = "org.eclipse.core.tests.resources.session.SampleSessionTest">
+		<run class="org.eclipse.core.tests.resources.session.SampleSessionTest"/>
+	</test>
+	<test id = "org.eclipse.core.tests.resources.session.TestSave">
+		<run class="org.eclipse.core.tests.resources.session.TestSave"/>
+	</test>
+	<test id = "org.eclipse.core.tests.resources.session.Test1G1N9GZ">
+		<run class="org.eclipse.core.tests.resources.session.Test1G1N9GZ"/>
+	</test>
+	<test id = "org.eclipse.core.tests.resources.session.TestCloseNoSave">
+		<run class="org.eclipse.core.tests.resources.session.TestCloseNoSave"/>
+	</test>
+	<test id = "org.eclipse.core.tests.resources.session.TestMultiSnap">
+		<run class="org.eclipse.core.tests.resources.session.TestMultiSnap"/>
+	</test>
+	<test id = "org.eclipse.core.tests.resources.session.TestSaveCreateProject">
+		<run class="org.eclipse.core.tests.resources.session.TestSaveCreateProject"/>
+	</test>
+	<test id = "org.eclipse.core.tests.resources.session.TestSaveSnap">
+		<run class="org.eclipse.core.tests.resources.session.TestSaveSnap"/>
+	</test>
+	<test id = "org.eclipse.core.tests.resources.session.TestSaveWithClosedProject">
+		<run class="org.eclipse.core.tests.resources.session.TestSaveWithClosedProject"/>
+	</test>
+	<test id = "org.eclipse.core.tests.resources.session.TestSnapSaveSnap">
+		<run class="org.eclipse.core.tests.resources.session.TestSnapSaveSnap"/>
+	</test>
+	<test id = "org.eclipse.core.tests.resources.session.TestBug6995">
+		<run class="org.eclipse.core.tests.resources.session.TestBug6995"/>
+	</test>
+	<test id = "org.eclipse.core.tests.resources.session.TestInterestingProjectPersistence">
+		<run class="org.eclipse.core.tests.resources.session.TestInterestingProjectPersistence"/>
+	</test>
+	<test id = "org.eclipse.core.tests.resources.session.TestBuilderDeltaSerialization">
+		<run class="org.eclipse.core.tests.resources.session.TestBuilderDeltaSerialization"/>
+	</test>
+	<test id = "org.eclipse.core.tests.resources.session.Test1GALH44">
+		<run class="org.eclipse.core.tests.resources.session.Test1GALH44"/>
+	</test>
+	<test id = "org.eclipse.core.tests.resources.session.TestMissingBuilder">
+		<run class="org.eclipse.core.tests.resources.session.TestMissingBuilder"/>
+	</test>
+	<test id = "org.eclipse.core.tests.resources.session.TestClosedProjectLocation">
+		<run class="org.eclipse.core.tests.resources.session.TestClosedProjectLocation"/>
+	</test>
+	<test id = "org.eclipse.core.tests.resources.session.FindDeletedMembersTest">
+		<run class="org.eclipse.core.tests.resources.session.FindDeletedMembersTest"/>
+	</test>
+	<test id = "org.eclipse.core.tests.resources.session.TestBug20127">
+		<run class="org.eclipse.core.tests.resources.session.TestBug20127"/>
+	</test>
+	<test id = "org.eclipse.core.tests.resources.session.TestBug12575">
+		<run class="org.eclipse.core.tests.resources.session.TestBug12575"/>
+	</test>
+	<test id = "org.eclipse.core.tests.resources.session.WorkspaceDescriptionTest">
+		<run class="org.eclipse.core.tests.resources.session.WorkspaceDescriptionTest"/>
+	</test>
+	<test id = "org.eclipse.core.tests.resources.session.TestBug30015">
+		<run class="org.eclipse.core.tests.resources.session.TestBug30015"/>
+	</test>
+	<test id = "org.eclipse.core.tests.resources.session.TestMasterTableCleanup">
+		<run class="org.eclipse.core.tests.resources.session.TestMasterTableCleanup"/>
+	</test>
+</extension>
 
   <extension id="transientmarker" point="org.eclipse.core.resources.markers">
     <super type="org.eclipse.core.resources.marker"/>
