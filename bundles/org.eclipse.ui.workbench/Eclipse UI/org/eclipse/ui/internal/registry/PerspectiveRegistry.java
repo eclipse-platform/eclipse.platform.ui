@@ -382,6 +382,11 @@ public class PerspectiveRegistry extends RegistryManager implements
             }
         }
 
+        // bug 69387: don't look for state location if there is no instance
+        // area, i.e., -data @none
+        if (Platform.getInstanceLocation() == null)
+            return;
+
         /* Get the entries from files, if any */
         IPath path = WorkbenchPlugin.getDefault().getStateLocation();
         File folder = path.toFile();

@@ -752,38 +752,46 @@ public abstract class AbstractUIPlugin extends Plugin {
     protected void loadDialogSettings() {
         dialogSettings = new DialogSettings("Workbench"); //$NON-NLS-1$
 
-        // try r/w state area in the local file system
-        String readWritePath = getStateLocation().append(FN_DIALOG_SETTINGS)
-                .toOSString();
-        File settingsFile = new File(readWritePath);
-        if (settingsFile.exists()) {
-            try {
-                dialogSettings.load(readWritePath);
-            } catch (IOException e) {
-                // load failed so ensure we have an empty settings
-                dialogSettings = new DialogSettings("Workbench"); //$NON-NLS-1$
-            }
-        } else {
-            URL dsURL = BundleUtility.find(getBundle(), FN_DIALOG_SETTINGS);
-            if (dsURL == null)
-                return;
+        // bug 69387: The instance area should not be created (in the call to
+        // #getStateLocation) if -data @none was used 
+        if (Platform.getInstanceLocation() != null) {
+	
+	        // try r/w state area in the local file system
+	        String readWritePath = getStateLocation().append(FN_DIALOG_SETTINGS)
+	                .toOSString();
+	        File settingsFile = new File(readWritePath);
+	        if (settingsFile.exists()) {
+	            try {
+	                dialogSettings.load(readWritePath);
+	            } catch (IOException e) {
+	                // load failed so ensure we have an empty settings
+	                dialogSettings = new DialogSettings("Workbench"); //$NON-NLS-1$
+	            }
+	            
+	            return;
+	        }
+        }
 
-            InputStream is = null;
+        // otherwise look for bundle specific dialog settings
+        URL dsURL = BundleUtility.find(getBundle(), FN_DIALOG_SETTINGS);
+        if (dsURL == null)
+            return;
+
+        InputStream is = null;
+        try {
+            is = dsURL.openStream();
+            BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(is, "utf-8")); //$NON-NLS-1$
+            dialogSettings.load(reader);
+        } catch (IOException e) {
+            // load failed so ensure we have an empty settings
+            dialogSettings = new DialogSettings("Workbench"); //$NON-NLS-1$
+        } finally {
             try {
-                is = dsURL.openStream();
-                BufferedReader reader = new BufferedReader(
-                        new InputStreamReader(is, "utf-8")); //$NON-NLS-1$
-                dialogSettings.load(reader);
+                if (is != null)
+                    is.close();
             } catch (IOException e) {
-                // load failed so ensure we have an empty settings
-                dialogSettings = new DialogSettings("Workbench"); //$NON-NLS-1$
-            } finally {
-                try {
-                    if (is != null)
-                        is.close();
-                } catch (IOException e) {
-                    // do nothing
-                }
+                // do nothing
             }
         }
     }
