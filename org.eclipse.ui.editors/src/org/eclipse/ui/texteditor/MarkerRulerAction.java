@@ -58,7 +58,10 @@ import org.eclipse.ui.PlatformUI;
  * </p>
  */
 public class MarkerRulerAction extends ResourceAction implements IUpdate {
-
+	
+	/** The maximum length of an proposed label. */
+	private static final int MAX_LABEL_LENGTH= 80;
+	
 	/** The vertical ruler info of the editor */
 	private IVerticalRulerInfo fRuler;
 	/** The associated editor */
@@ -407,23 +410,48 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 		int line= fRuler.getLineOfLastMouseButtonActivity();
 		int start= -1;
 		int end= -1;
+		int length= 0;
 
 		try {
 			
 			IRegion lineInformation= document.getLineInformation(line);
 			start= lineInformation.getOffset();
-			int length= lineInformation.getLength();
+			length= lineInformation.getLength();
 				
 			end= start + length;
-		
+			
+			
 		} catch (BadLocationException x) {
 		}
 		
 		// marker line numbers are 1-based
+		MarkerUtilities.setMessage(attributes, getLabelProposal(document, start, length));
 		MarkerUtilities.setLineNumber(attributes, line + 1);
 		MarkerUtilities.setCharStart(attributes, start);
 		MarkerUtilities.setCharEnd(attributes, end);
 
 		return attributes;
+	}
+	
+	/**
+	 * Returns the initial label for the marker.
+	 *
+	 * @param document the document from which to extract a label proposal
+	 * @param offset the document offset of the range from which to extract the label proposal
+	 * @param length the length of the range from which to extract the label proposal
+	 * @return the label proposal
+	 * @since 3.0
+	 */
+	protected String getLabelProposal(IDocument document, int offset, int length) {
+		try {
+			String label= document.get(offset, length).trim();
+			if (label.length() <= MAX_LABEL_LENGTH)
+				return label;
+			else
+				return label.substring(0, MAX_LABEL_LENGTH);
+		} catch (BadLocationException x) {
+			// don't proposal label then
+			return null;
+		}
 	}
 }
