@@ -123,7 +123,7 @@ public interface IParserTags {
 	
 	
 	
-	public static final String CHEATSHEETID = "cheatsheetID"; //$NON-NLS-1$
+//	public static final String CHEATSHEETID = "cheatsheetID"; //$NON-NLS-1$
 	public static final String KIND = "kind"; //$NON-NLS-1$
 	public static final String VERSION = "version";//$NON-NLS-1$
 	public static final String ID = "id";//$NON-NLS-1$
@@ -147,6 +147,6 @@ public interface IParserTags {
 	public static final String EXPANDRESTORE = "expandRestore"; //$NON-NLS-1$
 	public static final String BUTTON = "button"; //$NON-NLS-1$
 	public static final String BUTTONSTATE = "buttonstate"; //$NON-NLS-1$
-	public static final String URL = "url"; //$NON-NLS-1$
+//	public static final String URL = "url"; //$NON-NLS-1$
 	
 }
