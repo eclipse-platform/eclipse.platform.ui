@@ -360,6 +360,9 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 	private Rectangle computeArea(IRegion region) {
 				
 		IRegion widgetRegion= modelRange2WidgetRange(region);
+		if (widgetRegion == null)
+			return null;
+		
 		int start= widgetRegion.getOffset();
 		int end= widgetRegion.getOffset() + widgetRegion.getLength();
 		
