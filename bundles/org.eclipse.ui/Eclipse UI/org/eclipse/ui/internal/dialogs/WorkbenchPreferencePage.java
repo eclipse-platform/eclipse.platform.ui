@@ -26,7 +26,6 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 	private Button autoBuildButton;
 	private Button autoSaveAllButton;
 	private Button linkButton;
-	private IntegerFieldEditor reuseEditors;
 	private IntegerFieldEditor recentFilesEditor;
 
 	//Widgets for menu based perspective operation
@@ -335,7 +334,6 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		autoBuildButton.setSelection(ResourcesPlugin.getWorkspace().isAutoBuilding());
 		autoSaveAllButton.setSelection(store.getDefaultBoolean(IPreferenceConstants.SAVE_ALL_BEFORE_BUILD));
 		linkButton.setSelection(store.getDefaultBoolean(IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR));
-		reuseEditors.loadDefault();
 		recentFilesEditor.loadDefault();
 
 		//Perspective preferences
@@ -391,9 +389,6 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 
 		// store the link navigator to editor setting
 		store.setValue(IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR, linkButton.getSelection());
-
-		// store the reuse editors setting
-		reuseEditors.store();
 
 		// store the recent files setting
 		recentFilesEditor.store();
