@@ -311,11 +311,11 @@ public class JobManager implements IJobManager {
 				waiting.enqueue(job);
 			}
 		}
-		//call the pool outside sync block to avoid deadlock
-		pool.jobQueued(job);
-
 		//notify listeners outside sync block
 		jobListeners.scheduled((Job)job);
+
+		//call the pool outside sync block to avoid deadlock
+		pool.jobQueued(job);
 	}
 	/**
 	 * Adds all family members in the list of jobs to the collection
