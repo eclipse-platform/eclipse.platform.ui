@@ -659,6 +659,8 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 	public void launchConfigurationRemoved(ILaunchConfiguration config) {
 		removeLaunchConfigurationFromHistoryList(fRunHistory, config);
 		removeLaunchConfigurationFromHistoryList(fDebugHistory, config);
+		removeLaunchConfigurationFromHistoryList(fDebugFavorites, config);
+		removeLaunchConfigurationFromHistoryList(fRunFavorites, config);
 	}
 	
 	/**
