@@ -144,15 +144,23 @@ public class AntJRETab extends JavaJRETab {
 		try {
 			 boolean isDefaultVMInstall= configuration.getAttribute(IAntUIConstants.ATTR_DEFAULT_VM_INSTALL, false);
 			 if (isDefaultVMInstall) {
-			 	IVMInstall defaultVMInstall= getDefaultVMInstall(configuration);
+			 	boolean needsSaving= false;
 			 	ILaunchConfigurationWorkingCopy copy;
 			 	if (configuration instanceof ILaunchConfigurationWorkingCopy) {
 			 		copy= (ILaunchConfigurationWorkingCopy) configuration;
 			 	} else {
 			 		copy= configuration.getWorkingCopy();
+			 		needsSaving= true;
 			 	}
+			 	
+			 	//null out the vm type to get the default vm install from JavaRuntime
+			 	copy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String)null);
+			 	IVMInstall defaultVMInstall= getDefaultVMInstall(copy);
 			 	//update if required
 				setDefaultVMInstallAttributes(defaultVMInstall, copy);
+				if (needsSaving) {
+					configuration= copy.doSave();
+				}
 			 }
         } catch (CoreException ce) {
         	AntUIPlugin.log(ce);
