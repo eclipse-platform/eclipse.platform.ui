@@ -5,23 +5,16 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.zip.ZipFile;
-
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
-
+import org.eclipse.search.ui.NewSearchUI;
+import org.eclipse.search2.internal.ui.SearchView;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
-
-import org.eclipse.search.ui.NewSearchUI;
-
-import org.eclipse.search.internal.ui.SearchPlugin;
-
-import org.eclipse.search2.internal.ui.InternalSearchUI;
-import org.eclipse.search2.internal.ui.SearchView;
 
 /**
  * Plugin class for search tests.
@@ -67,8 +60,7 @@ public class SearchTestPlugin extends AbstractUIPlugin {
 	}
 	
 	public SearchView getSearchView() {
-		NewSearchUI.activateSearchResultView();
-		return (SearchView) SearchPlugin.getActivePage().findView(InternalSearchUI.SEARCH_VIEW_ID);
+		return (SearchView) NewSearchUI.activateSearchResultView();
 	}
 
 }
