@@ -484,7 +484,7 @@ public void writeDebugString(StringBuffer buffer) {
 	}
 	buffer.append("}"); //$NON-NLS-1$
 	if (isTeamPrivate())
-		buffer.append(" (team private)");
+		buffer.append(" (team private)"); //$NON-NLS-1$
 }
 public void writeMarkerDebugString(StringBuffer buffer) {
 	buffer.append("["); //$NON-NLS-1$
