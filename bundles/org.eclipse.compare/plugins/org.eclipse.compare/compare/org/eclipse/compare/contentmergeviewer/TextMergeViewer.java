@@ -897,17 +897,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		fAncestor.setEditable(false);
 		
 		fSummaryCanvas= new Label(composite, SWT.NONE);
-		/*
-		new Canvas(composite, SWT.NONE);
-		fSummaryCanvas.addPaintListener(
-			new PaintListener() {
-				public void paintControl(PaintEvent e) {
-					// TODO Auto-generated method stub
-
-				}
-			}
-		);
-		*/
 		updateResolveStatus();
 				
 		// 2nd row

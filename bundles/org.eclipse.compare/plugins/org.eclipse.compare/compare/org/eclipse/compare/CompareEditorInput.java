@@ -188,14 +188,14 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 * see IEditorInput.getToolTipText
 	 */
 	public String getToolTipText() {
-		return fTitle;
+		return getTitle();
 	}
 	
 	/* (non Javadoc)
 	 * see IEditorInput.getName
 	 */
 	public String getName() {
-		return fTitle;
+		return getTitle();
 	}
 			
 	/**
@@ -238,6 +238,8 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 * @return the title
 	 */
 	public String getTitle() {
+		if (fTitle == null)
+			return Utilities.getString("CompareEditorInput.defaultTitle"); //$NON-NLS-1$
 		return fTitle;
 	}
 	

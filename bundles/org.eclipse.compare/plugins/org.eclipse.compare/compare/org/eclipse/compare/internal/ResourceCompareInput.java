@@ -34,8 +34,7 @@ class ResourceCompareInput extends CompareEditorInput {
 	private IResource fAncestorResource;
 	private IResource fLeftResource;
 	private IResource fRightResource;
-	private DiffTreeViewer fDiffViewer;
-	
+	private DiffTreeViewer fDiffViewer;	
 	
 	class MyDiffNode extends DiffNode {
 		
@@ -206,10 +205,10 @@ class ResourceCompareInput extends CompareEditorInput {
 			if (fThreeWay) {			
 				String format= Utilities.getString("ResourceCompare.threeWay.title"); //$NON-NLS-1$
 				String ancestorLabel= fAncestorResource.getName();
-				title= MessageFormat.format(format, new String[] {ancestorLabel, leftLabel, rightLabel} );
+				title= MessageFormat.format(format, new String[] {ancestorLabel, leftLabel, rightLabel});	
 			} else {
 				String format= Utilities.getString("ResourceCompare.twoWay.title"); //$NON-NLS-1$
-				title= MessageFormat.format(format, new String[] {leftLabel, rightLabel} );
+				title= MessageFormat.format(format, new String[] {leftLabel, rightLabel});
 			}
 			setTitle(title);
 			
@@ -227,6 +226,23 @@ class ResourceCompareInput extends CompareEditorInput {
 		} finally {
 			pm.done();
 		}
+	}
+	
+	public String getToolTipText() {
+		if (fLeftResource != null && fRightResource != null) {
+			String leftLabel= fLeftResource.getFullPath().makeRelative().toString();
+			String rightLabel= fRightResource.getFullPath().makeRelative().toString();			
+			if (fThreeWay) {			
+				String format= Utilities.getString("ResourceCompare.threeWay.tooltip"); //$NON-NLS-1$
+				String ancestorLabel= fAncestorResource.getFullPath().makeRelative().toString();
+				return MessageFormat.format(format, new String[] {ancestorLabel, leftLabel, rightLabel});
+			} else {
+				String format= Utilities.getString("ResourceCompare.twoWay.tooltip"); //$NON-NLS-1$
+				return MessageFormat.format(format, new String[] {leftLabel, rightLabel});
+			}
+		}
+		// fall back
+		return super.getToolTipText();
 	}
 	
 	private String buildLabel(IResource r) {
