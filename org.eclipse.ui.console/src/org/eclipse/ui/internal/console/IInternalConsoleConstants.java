@@ -23,10 +23,12 @@ public interface IInternalConsoleConstants {
 	public static final String IMG_DLCL_PIN = "IMG_DLCL_PIN"; //$NON-NLS-1$
 	public static final String IMG_DLCL_CLEAR= "IMG_DLCL_CLEAR"; //$NON-NLS-1$
 	public static final String IMG_DLCL_LOCK = "IMG_DLCL_LOCK"; //$NON-NLS-1$
+	public static final String IMG_DLCL_CLOSE = "IMG_DLCL_CLOSE"; //$NON-NLS-1$
 	
 	// enabled local tool images	
 	public static final String IMG_ELCL_PIN = "IMG_ELCL_PIN"; //$NON-NLS-1$
 	public static final String IMG_ELCL_CLEAR= "IMG_ELCL_CLEAR"; //$NON-NLS-1$
 	public static final String IMG_ELCL_LOCK = "IMG_ELCL_LOCK"; //$NON-NLS-1$
+	public static final String IMG_ELCL_CLOSE = "IMG_ELCL_CLOSE"; //$NON-NLS-1$
     public static final String IMG_ELCL_NEW_CON = "IMG_ELCL_NEW_CON"; //$NON-NLS-1$
 }
