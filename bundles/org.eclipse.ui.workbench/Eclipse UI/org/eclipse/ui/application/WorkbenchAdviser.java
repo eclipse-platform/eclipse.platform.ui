@@ -372,6 +372,9 @@ public abstract class WorkbenchAdviser {
 	 * {@link #FILL_STATUS_LINE FILL_STATUS_LINE}</code>,
 	 * and {@link #FILL_PROXY FILL_PROXY}</code>
 	 * @issue should 1st param be IWorkbenchWindowConfigurer to be more consistent with other methods?
+	 * @issue suggest adding ActionBuilder as API, to encapsulate the action building outside 
+	 *   of the adviser, and to handle the common pattern of hanging onto the action builder
+	 *   in order to properly handle FILL_PROXY 
 	 */
 	public void fillActionBars(IWorkbenchWindow window, IActionBarConfigurer configurer, int flags) {
 		  // do nothing by default
