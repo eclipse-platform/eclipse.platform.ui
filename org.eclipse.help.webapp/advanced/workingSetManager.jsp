@@ -69,13 +69,13 @@ _highlightHandler = highlightHandler;
 
 function enableButtons() {
 	if (document.getElementById('selectws').checked){
-		if (active != null) {
-			document.getElementById("edit").disabled = false;
-			document.getElementById("remove").disabled = false;
-		}
+		document.getElementById("edit").disabled = (active == null);
+		document.getElementById("remove").disabled = (active == null);
+		document.getElementById("okButton").disabled = (active == null);	
 	} else {
 		document.getElementById("edit").disabled = true;
 		document.getElementById("remove").disabled = true;
+		document.getElementById("okButton").disabled = false;
 	}
 }
 
