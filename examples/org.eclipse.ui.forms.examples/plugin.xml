@@ -107,18 +107,6 @@
             class="org.eclipse.ui.forms.examples.views.FormView"
             id="org.eclipse.ui.forms.examples.views.FormView">
       </view>
-      <stickyView
-            closeable="true"
-            moveable="true"
-            location="RIGHT"
-            id="org.eclipse.ui.forms.examples.helpView"/>
-      <view
-            allowMultiple="false"
-            icon="icons/help.gif"
-            class="org.eclipse.help.ui.internal.views.HelpView"
-            category="org.eclipse.ui.forms.examples"
-            name="Help"
-            id="org.eclipse.ui.forms.examples.helpView"/>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
@@ -130,7 +118,6 @@
                relationship="right"
                id="org.eclipse.ui.forms.examples.views.FormView">
          </view>
-         <actionSet id="org.eclipse.ui.forms.examples.help"/>
       </perspectiveExtension>
    </extension>
    <extension
@@ -150,38 +137,5 @@
             adaptableType="org.eclipse.jdt.internal.ui.packageview.PackageExplorerPart">
          <adapter type="org.eclipse.help.ui.internal.views.IContextHelpProvider"/>
       </factory>
-   </extension>
-   <extension
-         point="org.eclipse.ui.actionSets">
-      <actionSet
-            label="Help"
-            description="Help view"
-            visible="true"
-            id="org.eclipse.ui.forms.examples.help">
-         <action
-               toolbarPath="org.eclipse.search.searchActionSet/Search"
-               label="Show Help View"
-               definitionId="org.eclipse.ui.help.help"
-               class="org.eclipse.ui.forms.examples.views.ShowHelpAction"
-               tooltip="Show Help"
-               icon="icons/help.gif"
-               style="push"
-               id="org.eclipse.ui.forms.examples.showHelp"/>
-      </actionSet>
-   </extension>
-   <extension
-         point="org.eclipse.ui.commands">   
-      <command
-            name="Help"
-            description="Shows Help View"
-            categoryId="org.eclipse.ui.category.help"
-            id="org.eclipse.ui.help.help">
-      </command>
-      <keyBinding
-            commandId="org.eclipse.ui.help.help"
-            contextId="org.eclipse.ui.contexts.window"
-            keySequence="F1"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
    </extension>
 </plugin>
