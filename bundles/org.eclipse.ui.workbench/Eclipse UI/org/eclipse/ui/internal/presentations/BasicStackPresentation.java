@@ -442,6 +442,45 @@ public class BasicStackPresentation extends StackPresentation {
 		
 		return result;
 	}
+
+	protected void layout(boolean changed) {
+		if (changed) {
+			String currentTitle = getCurrentTitle();
+			
+			if (!currentTitle.equals(Util.ZERO_LENGTH_STRING)) {
+				tabFolder.setTopLeft(titleLabel);
+				titleLabel.setText(currentTitle);
+				titleLabel.setVisible(true);
+			} else {
+				tabFolder.setTopLeft(null);
+				titleLabel.setVisible(false);
+			}
+			
+			Control currentToolbar = getCurrentToolbar(); 
+			tabFolder.setTopCenter(currentToolbar);
+				
+			IPartMenu partMenu = getPartMenu();
+			
+			if (partMenu != null) {
+				tabFolder.setTopRight(viewToolBar);
+				viewToolBar.setVisible(true);
+			} else {
+				tabFolder.setTopRight(null);
+				viewToolBar.setVisible(false);
+			}
+		}
+
+		tabFolder.layout(changed);
+
+		if (current != null) {
+			Rectangle clientArea = tabFolder.getClientArea();
+			Rectangle bounds = tabFolder.getControl().getBounds();
+			clientArea.x += bounds.x;
+			clientArea.y += bounds.y;
+			
+			current.setBounds(clientArea);
+		}		
+	}
 	
 	/**
 	 * Set the size of a page in the folder.
@@ -451,44 +490,7 @@ public class BasicStackPresentation extends StackPresentation {
 	 * presentation... calling control.getLayout() doesn't do the trick.
 	 */
 	public void setControlSize() {
-		// Set up the top-right controls
-		//List topRight = new ArrayList(3);
-		
-		String currentTitle = getCurrentTitle();
-		
-		if (!currentTitle.equals(Util.ZERO_LENGTH_STRING)) {
-			tabFolder.setTopLeft(titleLabel);
-			titleLabel.setText(currentTitle);
-			titleLabel.setVisible(true);
-		} else {
-			tabFolder.setTopLeft(null);
-			titleLabel.setVisible(false);
-		}
-		
-		Control currentToolbar = getCurrentToolbar(); 
-		tabFolder.setTopCenter(currentToolbar);
-			
-		IPartMenu partMenu = getPartMenu();
-		
-		if (partMenu != null) {
-			tabFolder.setTopRight(viewToolBar);
-			viewToolBar.setVisible(true);
-		} else {
-			tabFolder.setTopRight(null);
-			viewToolBar.setVisible(false);
-		}
-
-		tabFolder.layout(true);
-
-		if (current != null) {
-			Rectangle clientArea = tabFolder.getClientArea();
-			Rectangle bounds = tabFolder.getControl().getBounds();
-			clientArea.x += bounds.x;
-			clientArea.y += bounds.y;
-			
-			current.setBounds(clientArea);
-		}
-
+		layout(true);
 	}
 	
 	/**
@@ -643,7 +645,7 @@ public class BasicStackPresentation extends StackPresentation {
 	 */
 	public void setBounds(Rectangle bounds) {
 		tabFolder.getControl().setBounds(bounds);
-		setControlSize();
+		layout(false);
 	}
 	
 	/* (non-Javadoc)
