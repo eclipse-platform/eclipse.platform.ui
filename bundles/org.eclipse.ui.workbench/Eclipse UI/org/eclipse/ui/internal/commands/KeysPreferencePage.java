@@ -362,7 +362,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 			List categoryNames = new ArrayList(categoryIdsByUniqueName.keySet());
 			Collections.sort(categoryNames, Collator.getInstance());						
 			comboCategory.setItems((String[]) categoryNames.toArray(new String[categoryNames.size()]));
-			List commandNames = new ArrayList(commandIdsByUniqueName.keySet());
+			List commandNames = new ArrayList(commandIdsByUniqueName.keySet());			
 			Collections.sort(commandNames, Collator.getInstance());						
 			comboCommand.setItems((String[]) commandNames.toArray(new String[commandNames.size()]));
 			List contextNames = new ArrayList(contextIdsByUniqueName.keySet());
@@ -373,7 +373,10 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 			Collections.sort(keyConfigurationNames, Collator.getInstance());						
 			keyConfigurationNames.add(0, Util.translateString(resourceBundle, "standard")); //$NON-NLS-1$
 			comboKeyConfiguration.setItems((String[]) keyConfigurationNames.toArray(new String[keyConfigurationNames.size()]));
-			// TODO relayout page if any setVisible(false)			
+			// TODO relayout page if any setVisible(false)		
+			boolean showCategory = !categoryIdsByUniqueName.isEmpty();
+			labelCategory.setVisible(showCategory);
+			comboCategory.setVisible(showCategory);									
 			boolean showContext = !contextIdsByUniqueName.isEmpty();
 			labelContext.setVisible(showContext);
 			comboContext.setVisible(showContext);					
@@ -904,6 +907,10 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 
 		labelAssignmentsForCommand.setEnabled(commandId != null);
 		tableAssignmentsForCommand.setEnabled(commandId != null);
+		
+		labelContext.setEnabled(commandId != null);
+		comboContext.setEnabled(commandId != null);
+		labelContextExtends.setEnabled(commandId != null);
 
 		buttonAdd.setEnabled(commandId != null && keySequence != null && !keySequence.getKeyStrokes().isEmpty());
 		buttonRemove.setEnabled(commandId != null && keySequence != null && !keySequence.getKeyStrokes().isEmpty());
