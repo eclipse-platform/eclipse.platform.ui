@@ -579,13 +579,13 @@
       <keyBinding
             commandId="org.eclipse.ui.edit.text.goto.windowStart"
             contextId="org.eclipse.ui.textEditorScope"
-            string="M1+PageUp"
+            keySequence="M1+PAGE_UP"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             commandId="org.eclipse.ui.edit.text.goto.windowEnd"
             contextId="org.eclipse.ui.textEditorScope"
-            string="M1+PageDown"
+	        keySequence="M1+PAGE_DOWN"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
 	  <keyBinding
