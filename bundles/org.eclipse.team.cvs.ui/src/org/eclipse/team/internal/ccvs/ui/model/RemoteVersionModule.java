@@ -9,10 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.ui.model.IWorkbenchAdapter;
@@ -56,7 +56,7 @@ public class RemoteVersionModule extends CVSModelElement implements IAdaptable {
 	 * object has no children. The children of the RemoteModule
 	 * are the versions for that module.
 	 */
-	public Object[] getChildren(Object o) {
+	public Object[] internalGetChildren(Object o, IProgressMonitor monitor) {
 		return (ICVSRemoteFolder[]) projects.toArray(new ICVSRemoteFolder[projects.size()]);
 	}
 	

@@ -38,9 +38,9 @@ public class TagRootElement implements IWorkbenchAdapter, IAdaptable {
 		CVSTag[] childTags = new CVSTag[0];
 		if(cachedTags==null) {
 			if(typeOfTagRoot==CVSTag.BRANCH) {
-				childTags = CVSUIPlugin.getPlugin().getRepositoryManager().getKnownBranchTags(project);
+				childTags = CVSUIPlugin.getPlugin().getRepositoryManager().getKnownTags(project, CVSTag.BRANCH);
 			} else if(typeOfTagRoot==CVSTag.VERSION) {
-				childTags = CVSUIPlugin.getPlugin().getRepositoryManager().getKnownVersionTags(project);
+				childTags = CVSUIPlugin.getPlugin().getRepositoryManager().getKnownTags(project, CVSTag.VERSION);
 			}
 		} else {
 			childTags = getTags();

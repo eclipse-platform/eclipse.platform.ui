@@ -41,7 +41,7 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.BranchPromptDialog;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.ccvs.ui.RepositoryManager;
+import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 /**
@@ -85,10 +85,12 @@ public class BranchAction extends WorkspaceAction {
 			}
 		}
 		
-		// Perform the branch
+		final RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
+		
+		// perform the branch
 		run(new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
+				
 				Hashtable table = getProviderMapping(resources);
 				Set keySet = table.keySet();
 				monitor.beginTask(null, keySet.size() * 1000);
@@ -111,10 +113,10 @@ public class BranchAction extends WorkspaceAction {
 							for (int i = 0; i < providerResources.length; i++) {
 								ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(providerResources[i]);
 								if (rootVersionTag != null) {
-									manager.addVersionTags(cvsResource, new CVSTag[] { rootVersionTag });
+									manager.addTags(cvsResource, new CVSTag[] { rootVersionTag });
 								}
 								if (update) {
-									manager.addBranchTags(cvsResource, new CVSTag[] { branchTag });
+									manager.addTags(cvsResource, new CVSTag[] { branchTag });
 								}
 							}
 						}
@@ -124,7 +126,7 @@ public class BranchAction extends WorkspaceAction {
 					}
 				}
 			}
-		}, true /* cancelable */, this.PROGRESS_DIALOG); //$NON-NLS-1$
+		}, true /* cancelable */, PROGRESS_DIALOG);
 	}
 	
 	/**

@@ -208,7 +208,7 @@ public class CVSProjectPropertiesPage extends PropertyPage {
 		changeButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				// Find out which repo locations are appropriate
-				ICVSRepositoryLocation[] locations = CVSUIPlugin.getPlugin().getRepositoryManager().getKnownRoots();
+				ICVSRepositoryLocation[] locations = CVSUIPlugin.getPlugin().getRepositoryManager().getKnownRepositoryLocations();
 				List compatibleLocations = new ArrayList();
 				for (int i = 0; i < locations.length; i++) {
 					ICVSRepositoryLocation location = locations[i];

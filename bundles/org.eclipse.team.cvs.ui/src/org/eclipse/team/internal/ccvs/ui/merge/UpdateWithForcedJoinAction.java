@@ -12,7 +12,7 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
-import org.eclipse.team.internal.ccvs.ui.RepositoryManager;
+import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
 import org.eclipse.team.internal.ccvs.ui.sync.CVSSyncCompareInput;
 import org.eclipse.team.internal.ui.sync.ITeamNode;
 import org.eclipse.team.internal.ui.sync.SyncSet;

@@ -6,6 +6,7 @@ package org.eclipse.team.internal.ccvs.ui.model;
  */
  
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.ui.model.IWorkbenchAdapter;
@@ -18,8 +19,8 @@ public class AllRootsElement extends CVSModelElement implements IAdaptable {
 	public ImageDescriptor getImageDescriptor(Object object) {
 		return null;
 	}
-	public Object[] getChildren(Object o) {
-		return CVSUIPlugin.getPlugin().getRepositoryManager().getKnownRoots();
+	public Object[] internalGetChildren(Object o, IProgressMonitor monitor) {
+		return CVSUIPlugin.getPlugin().getRepositoryManager().getWorkingRepositoryRoots();
 	}
 	public String getLabel(Object o) {
 		return null;

@@ -38,6 +38,7 @@ import org.eclipse.team.internal.ccvs.ui.CVSDecorator;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.TagAsVersionDialog;
+import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
 import org.eclipse.team.internal.ui.IPromptCondition;
 import org.eclipse.team.internal.ui.PromptingDialog;
 
@@ -77,6 +78,8 @@ public class TagAction extends WorkspaceAction {
 		});
 		if (result[0] == null) return;
 		
+		final RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
+		
 		// Tag the local resources, divided by project/provider
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
@@ -97,9 +100,13 @@ public class TagAction extends WorkspaceAction {
 						throw new InvocationTargetException(e);
 					}
 					// Cache the new tag creation even if the tag may have had warnings.
-					CVSUIPlugin.getPlugin().getRepositoryManager().addVersionTags(
-									CVSWorkspaceRoot.getCVSFolderFor(provider.getProject()), 
-									new CVSTag[] {tag});
+					try {
+						manager.addTags(
+							CVSWorkspaceRoot.getCVSFolderFor(provider.getProject()), 
+							new CVSTag[] {tag});
+					} catch (CVSException e) {
+						addStatus(e.getStatus());
+					}
 
 				}	
 				previousTag = result[0];				

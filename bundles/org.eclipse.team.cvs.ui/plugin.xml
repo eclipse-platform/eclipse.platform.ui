@@ -12,6 +12,7 @@
       </library>
    </runtime>
    <requires>
+      <import plugin="org.apache.xerces"/>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.ui"/>
@@ -77,9 +78,9 @@
          </filter>
       </page>
       <page
-            objectClass="org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation"
+            objectClass="org.eclipse.team.internal.ccvs.ui.repo.RepositoryRoot"
             name="%CVS"
-            class="org.eclipse.team.internal.ccvs.ui.CVSRepositoryPropertiesPage"
+            class="org.eclipse.team.internal.ccvs.ui.repo.CVSRepositoryPropertiesPage"
             id="org.eclipse.team.ccvs.ui.propertyPages.CVSRepositoryPropertiesPage">
       </page>
    </extension>
@@ -419,13 +420,13 @@
       </objectContribution>
 
       <objectContribution
-            objectClass="org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation"
+            objectClass="org.eclipse.team.internal.ccvs.ui.repo.RepositoryRoot"
             id="org.eclipse.team.ccvs.ui.RemoteRootContributions">
          <action
                label="%CopyRepositoryNameAction.label"
                tooltip="%CopyRepositoryNameAction.tooltip"
                menubarPath="miscGroup"
-               class="org.eclipse.team.internal.ccvs.ui.actions.CopyRepositoryNameAction"
+               class="org.eclipse.team.internal.ccvs.ui.repo.CopyRepositoryNameAction"
                helpContextId="org.eclipse.team.cvs.ui.copy_repository_name_action_context"
                id="org.eclipse.team.ccvs.ui.copyNames">
          </action>
@@ -433,18 +434,18 @@
                label="%RemoveRootAction.label"
                tooltip="%RemoveRootAction.tooltip"
                menubarPath="miscGroup"
-               class="org.eclipse.team.internal.ccvs.ui.actions.RemoveRootAction"
+               class="org.eclipse.team.internal.ccvs.ui.repo.RemoveRootAction"
                helpContextId="org.eclipse.team.cvs.ui.remove_root_action_context"
                id="org.eclipse.team.ccvs.ui.removeRoot">
          </action>
          <action
-               label="%DefineBranchAction.label"
+               label="%RefreshTagsAction.label"
                icon="icons/full/clcl16/newstream_wiz.gif"
-               tooltip="%DefineBranchAction.tooltip"
+               tooltip="%RefreshTagsAction.tooltip"
                menubarPath="tagGroup"
-               class="org.eclipse.team.internal.ccvs.ui.actions.DefineBranchAction"
-               helpContextId="org.eclipse.team.cvs.ui.define_branch_action_context"
-               id="org.eclipse.team.ccvs.ui.defineBranch">
+               class="org.eclipse.team.internal.ccvs.ui.repo.RefreshTagsAction"
+               helpContextId="org.eclipse.team.cvs.ui.refresh_tags_action_context"
+               id="org.eclipse.team.ccvs.ui.refreshTags">
          </action>
 	     <action
 				id="org.eclipse.team.ccvs.ui.configureTagsOnBranchCategory"
@@ -458,14 +459,6 @@
       <objectContribution
             objectClass="org.eclipse.team.internal.ccvs.ui.model.BranchCategory"
             id="org.eclipse.team.ccvs.ui.BranchCategoryContributions">
-         <action
-               label="%DefineBranchAction.label"
-               icon="icons/full/clcl16/newstream_wiz.gif"
-               tooltip="%DefineBranchAction.tooltip"
-               class="org.eclipse.team.internal.ccvs.ui.actions.DefineBranchAction"
-               helpContextId="org.eclipse.team.cvs.ui.define_branch_action_context"
-               id="org.eclipse.team.ccvs.ui.defineBranch">
-         </action>
     	 <action
 				id="org.eclipse.team.ccvs.ui.configureTagsOnBranchCategory"
 				label="%ConfigureTags.label"
@@ -473,17 +466,6 @@
 				icon="icons/full/clcl16/newstream_wiz.gif"
 				helpContextId="org.eclipse.team.cvs.ui.tag_configuration_overview"
 				class="org.eclipse.team.internal.ccvs.ui.actions.ConfigureTagsFromRepoView"/>
-      </objectContribution>
-      <objectContribution
-            objectClass="org.eclipse.team.internal.ccvs.ui.model.BranchTag"
-            id="org.eclipse.team.ccvs.ui.BranchTagContributions">
-         <action
-               label="%RemoveBranchTagAction.label"
-               tooltip="%RemoveBranchTagAction.tooltip"
-               class="org.eclipse.team.internal.ccvs.ui.actions.RemoveBranchTagAction"
-               helpContextId="org.eclipse.team.cvs.ui.remove_branch_action_context"
-               id="org.eclipse.team.ccvs.ui.removeBranchTag">
-         </action>
       </objectContribution>
       <objectContribution
             objectClass="org.eclipse.team.internal.ccvs.core.ICVSRemoteResource"
@@ -542,7 +524,7 @@
             icon="icons/full/cview16/repo_rep.gif"
             category="org.eclipse.team.ccvs.ui"
        		fastViewWidthRatio="0.5"
-            class="org.eclipse.team.internal.ccvs.ui.RepositoriesView"
+            class="org.eclipse.team.internal.ccvs.ui.repo.RepositoriesView"
             id="org.eclipse.team.ccvs.ui.RepositoriesView">
       </view>
       <view

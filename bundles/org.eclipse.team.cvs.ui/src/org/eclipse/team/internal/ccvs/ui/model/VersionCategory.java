@@ -5,14 +5,12 @@ package org.eclipse.team.internal.ccvs.ui.model;
  * All Rights Reserved.
  */
  
-import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
@@ -49,33 +47,42 @@ public class VersionCategory extends CVSModelElement implements IAdaptable {
 	 * element's children.  Returns an empty enumeration if this
 	 * object has no children.
 	 */
-	public Object[] getChildren(Object o) {
-		final Object[][] result = new Object[1][];
-		try {
-			CVSUIPlugin.runWithProgress(null, true /*cancelable*/, new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-					try {
-						IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
-						ICVSRemoteResource[] resources = repository.members(CVSTag.DEFAULT,
-							store.getBoolean(ICVSUIConstants.PREF_SHOW_MODULES), monitor);
-						Object[] modules = new Object[resources.length];
-						for (int i = 0; i < resources.length; i++) {
-							modules[i] = new RemoteModule((ICVSRemoteFolder)resources[i], VersionCategory.this);
-						}
-						result[0] = modules;
-					} catch (TeamException e) {
-						throw new InvocationTargetException(e);
-					}
-				}
-			});
-		} catch (InterruptedException e) {
-			return new Object[0];
-		} catch (InvocationTargetException e) {
-			handle(e.getTargetException());
+	public Object[] internalGetChildren(Object o, IProgressMonitor monitor) throws TeamException {
+		if (CVSUIPlugin.getPlugin().getRepositoryManager().isDisplayingProjectVersions(repository)) {
+			return getProjectVersionChildren(o, monitor);
+		} else {
+			return getVersionTagChildren(o, monitor);
 		}
-		return result[0];
 	}
 
+	/*
+	 * Return the children as a list of versions whose children are projects
+	 */
+	private Object[] getVersionTagChildren(Object o, IProgressMonitor monitor) throws CVSException {
+		CVSTag[] tags = CVSUIPlugin.getPlugin().getRepositoryManager().getWorkingTags(repository, CVSTag.VERSION, monitor);
+		CVSTagElement[] versionElements = new CVSTagElement[tags.length];
+		for (int i = 0; i < tags.length; i++) {
+			versionElements[i] = new CVSTagElement(tags[i], repository);
+		}
+		return versionElements;
+	}
+	
+	/*
+	 * Return the children as a list of projects whose children ar project versions
+	 */
+	private Object[] getProjectVersionChildren(Object o, IProgressMonitor monitor) throws TeamException {
+		IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
+		ICVSRemoteResource[] resources = CVSUIPlugin.getPlugin().getRepositoryManager().getFoldersForTag(
+			repository,
+			CVSTag.DEFAULT,
+			monitor);
+		Object[] modules = new Object[resources.length];
+		for (int i = 0; i < resources.length; i++) {
+			modules[i] = new RemoteModule((ICVSRemoteFolder)resources[i], VersionCategory.this);
+		}
+		return modules;
+	}
+	
 	/**
 	 * Returns an image descriptor to be used for displaying an object in the workbench.
 	 * Returns null if there is no appropriate image.
@@ -115,4 +122,11 @@ public class VersionCategory extends CVSModelElement implements IAdaptable {
 	public ICVSRepositoryLocation getRepository(Object o) {
 		return repository;
 	}
+	/**
+	 * @see org.eclipse.team.internal.ccvs.ui.model.CVSModelElement#isNeedsProgress()
+	 */
+	public boolean isNeedsProgress() {
+		return true;
+	}
+
 }

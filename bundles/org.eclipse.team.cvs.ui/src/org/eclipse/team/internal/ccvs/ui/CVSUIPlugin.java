@@ -45,6 +45,8 @@ import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.util.AddDeleteMoveListener;
 import org.eclipse.team.internal.ccvs.ui.model.CVSAdapterFactory;
+import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
+import org.eclipse.team.internal.ccvs.ui.repo.RepositoryRoot;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.ui.IWorkbenchPage;
@@ -494,6 +496,7 @@ public class CVSUIPlugin extends AbstractUIPlugin implements IPropertyChangeList
 		Platform.getAdapterManager().registerAdapters(factory, ICVSRemoteFile.class);
 		Platform.getAdapterManager().registerAdapters(factory, ICVSRemoteFolder.class);
 		Platform.getAdapterManager().registerAdapters(factory, ICVSRepositoryLocation.class);
+		Platform.getAdapterManager().registerAdapters(factory, RepositoryRoot.class);
 		
 		initializeImages();
 		initializePreferences();

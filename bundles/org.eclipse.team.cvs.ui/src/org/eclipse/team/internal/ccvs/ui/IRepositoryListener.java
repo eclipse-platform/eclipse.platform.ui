@@ -5,16 +5,13 @@ package org.eclipse.team.internal.ccvs.ui;
  * All Rights Reserved.
  */
 
-import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
-import org.eclipse.team.internal.ccvs.ui.model.BranchTag;
+import org.eclipse.team.internal.ccvs.ui.repo.CVSWorkingSet;
 
 public interface IRepositoryListener {
 	public void repositoryAdded(ICVSRepositoryLocation root);
 	public void repositoryRemoved(ICVSRepositoryLocation root);
-	public void branchTagsAdded(CVSTag[] tags, ICVSRepositoryLocation root);
-	public void branchTagsRemoved(CVSTag[] tags, ICVSRepositoryLocation root);
-	public void versionTagsAdded(CVSTag[] tags, ICVSRepositoryLocation root);
-	public void versionTagsRemoved(CVSTag[] tags, ICVSRepositoryLocation root);
+	public void repositoriesChanged(ICVSRepositoryLocation[] roots);
+	public void workingSetChanged(CVSWorkingSet set);
 }
 

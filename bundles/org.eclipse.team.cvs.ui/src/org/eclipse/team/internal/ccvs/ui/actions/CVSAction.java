@@ -17,6 +17,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -44,6 +45,7 @@ import org.eclipse.team.internal.ccvs.ui.CVSDecorator;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
 import org.eclipse.team.internal.ui.IPromptCondition;
 import org.eclipse.team.internal.ui.actions.TeamAction;
 import org.eclipse.ui.PlatformUI;
@@ -232,12 +234,20 @@ abstract public class CVSAction extends TeamAction {
 	 */
 	final protected void run(final IRunnableWithProgress runnable, boolean cancelable, int progressKind) throws InvocationTargetException, InterruptedException {
 		final Exception[] exceptions = new Exception[] {null};
+		
+		// Ensure that no repository view refresh happens until after the action
+		final IRunnableWithProgress innerRunnable = new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+				getRepositoryManager().run(runnable, monitor);
+			}
+		};
+		
 		switch (progressKind) {
 			case PROGRESS_BUSYCURSOR :
 				BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
 					public void run() {
 						try {
-							runnable.run(new NullProgressMonitor());
+							innerRunnable.run(new NullProgressMonitor());
 						} catch (InvocationTargetException e) {
 							exceptions[0] = e;
 						} catch (InterruptedException e) {
@@ -248,7 +258,7 @@ abstract public class CVSAction extends TeamAction {
 				break;
 			case PROGRESS_DIALOG :
 			default :
-				new ProgressMonitorDialog(getShell()).run(cancelable, true, runnable);	
+				new ProgressMonitorDialog(getShell()).run(cancelable, true, innerRunnable);	
 				break;
 		}
 		if (exceptions[0] != null) {
@@ -266,6 +276,46 @@ abstract public class CVSAction extends TeamAction {
 	 */
 	protected boolean needsToSaveDirtyEditors() {
 		return false;
+	}
+
+	/**
+	 * Find the object associated with the selected object that is adapted to
+	 * the provided class.
+	 * 
+	 * @param selection
+	 * @param c
+	 * @return Object
+	 */
+	protected Object getAdapter(Object selection, Class c) {
+		if (c.isInstance(selection)) {
+			return selection;
+		}
+		if (selection instanceof IAdaptable) {
+			IAdaptable a = (IAdaptable) selection;
+			Object adapter = a.getAdapter(c);
+			if (c.isInstance(adapter)) {
+				return adapter;
+			}
+		}
+		return null;
+	}
+	
+	protected Object[] getSelectedResources(Class c) {
+		ArrayList result = null;
+		if (!selection.isEmpty()) {
+			result = new ArrayList();
+			Iterator elements = ((IStructuredSelection) selection).iterator();
+			while (elements.hasNext()) {
+				Object adapter = getAdapter(elements.next(), c);
+				if (c.isInstance(adapter)) {
+					result.add(adapter);
+				}
+			}
+		}
+		if (result != null && !result.isEmpty()) {
+			return (Object[])result.toArray(new Object[result.size()]);
+		}
+		return new Object[0];
 	}
 	
 	/**
@@ -449,6 +499,10 @@ abstract public class CVSAction extends TeamAction {
 	 */
 	protected void handle(Exception exception, String title, String message) {
 		CVSUIPlugin.openError(getShell(), title, message, exception, CVSUIPlugin.LOG_NONTEAM_EXCEPTIONS);
+	}
+	
+	protected RepositoryManager getRepositoryManager() {
+		return CVSUIPlugin.getPlugin().getRepositoryManager();
 	}
 
 }

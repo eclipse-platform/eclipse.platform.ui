@@ -10,6 +10,7 @@
  ******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.model;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
@@ -25,7 +26,7 @@ public class CVSRootFolderElement extends CVSResourceElement {
 	/**
 	 * @see IWorkbenchAdapter#getChildren(Object)
 	 */
-	public Object[] getChildren(Object o) {
+	public Object[] internalGetChildren(Object o, IProgressMonitor monitor) {
 		CVSFolderElement[] folders = new CVSFolderElement[roots.length];
 		for (int i = 0; i < roots.length; i++) {
 			folders[i] = new CVSFolderElement(roots[i], false);

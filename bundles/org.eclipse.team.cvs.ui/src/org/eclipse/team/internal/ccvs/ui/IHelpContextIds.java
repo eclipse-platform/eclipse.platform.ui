@@ -64,6 +64,7 @@ public interface IHelpContextIds {
 	public static final String CHECKOUT_INTO_RESOURCE_SELECTION_PAGE = PREFIX + "checkout_into_resource_selection_page_context"; //$NON-NLS-1$
 	public static final String CHECKOUT_INTO_CONFIGURATION_PAGE = PREFIX + "checkout_into_configuration_page_context"; //$NON-NLS-1$
 	public static final String RESTORE_FROM_REPOSITORY_FILE_SELECTION_PAGE = PREFIX + "restore_from_repository_file_selection_page_context"; //$NON-NLS-1$
+	public static final String WORKING_SET_FOLDER_SELECTION_PAGE = PREFIX + "working_set_folder_selection_page_context"; //$NON-NLS-1$
 
 	// Preference Pages
 	public static final String PREF_REPOSITORIES_ARE_BINARY = PREFIX + "repositories_are_binary_pref"; //$NON-NLS-1$

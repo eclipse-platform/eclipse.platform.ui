@@ -6,11 +6,10 @@ package org.eclipse.team.internal.ccvs.ui.model;
  */
  
 import org.eclipse.core.runtime.IAdapterFactory;
-import org.eclipse.team.internal.ccvs.core.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.ui.repo.RepositoryRoot;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.views.properties.IPropertySource;
 
@@ -31,6 +30,8 @@ public class CVSAdapterFactory implements IAdapterFactory {
 			if (adaptableObject instanceof ICVSRemoteFile) {
 				return fileAdapter;
 			} else if (adaptableObject instanceof ICVSRepositoryLocation) {
+				return rootAdapter;
+			}  else if (adaptableObject instanceof RepositoryRoot) {
 				return rootAdapter;
 			} else if (adaptableObject instanceof ICVSRemoteFolder) {
 				return folderAdapter;
@@ -64,6 +65,8 @@ public class CVSAdapterFactory implements IAdapterFactory {
 			cachedPropertyValue = new CVSRemoteFolderPropertySource((ICVSRemoteFolder)adaptableObject);
 		} else if (adaptableObject instanceof ICVSRepositoryLocation) {
 			cachedPropertyValue = new CVSRepositoryLocationPropertySource((ICVSRepositoryLocation)adaptableObject);
+		}  else if (adaptableObject instanceof RepositoryRoot) {
+			cachedPropertyValue = new CVSRepositoryLocationPropertySource(((RepositoryRoot)adaptableObject).getRoot());
 		} else {
 			cachedPropertyValue = null;
 		}

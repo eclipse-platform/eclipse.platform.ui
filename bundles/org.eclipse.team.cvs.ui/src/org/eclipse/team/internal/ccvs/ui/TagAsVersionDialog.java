@@ -201,19 +201,6 @@ public class TagAsVersionDialog extends DetailsDialog {
 	}
 	
 	/**
-	 * Answers if the given tag name already exists
-	 */
-	protected boolean doesTagNameExists(String name) {
-		CVSTag[] tags = CVSUIPlugin.getPlugin().getRepositoryManager().getKnownVersionTags(folder);
-		for (int i = 0; i < tags.length; i++) {
-			if(tags[i].getName().equals(name)) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	/**
 	 * Returns the tag name entered into this dialog
 	 */
 	public String getTagName() {

@@ -62,6 +62,7 @@ import org.eclipse.team.internal.ccvs.ui.model.CVSFileElement;
 import org.eclipse.team.internal.ccvs.ui.model.CVSFolderElement;
 import org.eclipse.team.internal.ccvs.ui.model.CVSRootFolderElement;
 import org.eclipse.team.internal.ccvs.ui.model.RemoteContentProvider;
+import org.eclipse.team.internal.ccvs.ui.repo.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -282,8 +283,8 @@ public class TagConfigurationDialog extends Dialog {
 		data.grabExcessHorizontalSpace = true;
 		cvsDefinedTagsTree.getTree().setLayoutData(data);
 		cvsDefinedTagsRootElement = new ProjectElement(roots[0], ProjectElement.INCLUDE_BRANCHES | ProjectElement.INCLUDE_VERSIONS);
-		cvsDefinedTagsRootElement.getBranches().add(CVSUIPlugin.getPlugin().getRepositoryManager().getKnownBranchTags(root));
-		cvsDefinedTagsRootElement.getVersions().add(CVSUIPlugin.getPlugin().getRepositoryManager().getKnownVersionTags(root));
+		cvsDefinedTagsRootElement.getBranches().add(CVSUIPlugin.getPlugin().getRepositoryManager().getKnownTags(root, CVSTag.BRANCH));
+		cvsDefinedTagsRootElement.getVersions().add(CVSUIPlugin.getPlugin().getRepositoryManager().getKnownTags(root, CVSTag.VERSION));
 		cvsDefinedTagsTree.setInput(cvsDefinedTagsRootElement);
 		cvsDefinedTagsTree.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
@@ -348,7 +349,12 @@ public class TagConfigurationDialog extends Dialog {
 			data.horizontalAlignment = GridData.FILL;
 			data.grabExcessHorizontalSpace = true;
 			autoRefreshFileList.setLayoutData(data);		
-			autoRefreshFileList.setItems(CVSUIPlugin.getPlugin().getRepositoryManager().getAutoRefreshFiles(roots[0]));
+			try {
+				autoRefreshFileList.setItems(CVSUIPlugin.getPlugin().getRepositoryManager().getAutoRefreshFiles(roots[0]));
+			} catch (CVSException e) {
+				autoRefreshFileList.setItems(new String[0]);
+				CVSUIPlugin.log(e);
+			}
 			autoRefreshFileList.addSelectionListener(new SelectionListener() {
 				public void widgetSelected(SelectionEvent e) {
 					updateEnablements();
@@ -575,42 +581,48 @@ public class TagConfigurationDialog extends Dialog {
 	 * @see Dialog#okPressed()
 	 */
 	protected void okPressed() {
-		// save auto refresh file names
-		if(allowSettingAutoRefreshFiles) {
-			RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
-			String[] oldFileNames = manager.getAutoRefreshFiles(root);
-			manager.removeAutoRefreshFiles(root, oldFileNames);
-			String[] newFileNames = autoRefreshFileList.getItems();
-			if(newFileNames.length!=0) {
-				manager.addAutoRefreshFiles(root, autoRefreshFileList.getItems());
-			}		
-		}
-		
-		// save defined tags
-		CVSTag[] branches = cvsDefinedTagsRootElement.getBranches().getTags();
-		CVSTag[] versions = cvsDefinedTagsRootElement.getVersions().getTags();
-		
-		// update all project with the same version tags
-		RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();				
-		manager.notifyRepoView = false;
-		CVSTag[] oldTags = manager.getKnownBranchTags(root);
-		manager.removeBranchTag(root, oldTags);
-		for(int i = 0; i < roots.length; i++) {
-			if(branches.length>0) {
-				manager.addBranchTags(root, branches);
+		try {
+			// save auto refresh file names
+			if(allowSettingAutoRefreshFiles) {
+				RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
+				String[] oldFileNames = manager.getAutoRefreshFiles(root);
+				manager.removeAutoRefreshFiles(root, oldFileNames);
+				String[] newFileNames = autoRefreshFileList.getItems();
+				if(newFileNames.length!=0) {
+					manager.addAutoRefreshFiles(root, autoRefreshFileList.getItems());
+				}		
 			}
-			oldTags = manager.getKnownVersionTags(roots[i]);
-			manager.removeVersionTags(roots[i], oldTags);
-			if(versions.length>0) {
-				manager.addVersionTags(roots[i], versions);
-			}			
+			
+			// save defined tags and update all project with the same version tags
+			final RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();	
+			manager.run(new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+					CVSTag[] branches = cvsDefinedTagsRootElement.getBranches().getTags();
+					CVSTag[] versions = cvsDefinedTagsRootElement.getVersions().getTags();
+					try {
+						for(int i = 0; i < roots.length; i++) {
+							CVSTag[] oldTags = manager.getKnownTags(roots[i]);
+							manager.removeTags(roots[i], oldTags);
+							if(branches.length > 0) {
+								manager.addTags(roots[i], branches);
+							}
+							if(versions.length>0) {
+								manager.addTags(roots[i], versions);
+							}			
+						}
+					} catch (CVSException e) {
+						throw new InvocationTargetException(e);
+					}
+				}
+			}, null);
+			
+			super.okPressed();
+		} catch (CVSException e) {
+			CVSUIPlugin.openError(getShell(), null, null, e);
+		} catch (InvocationTargetException e) {
+			CVSUIPlugin.openError(getShell(), null, null, e);
+		} catch (InterruptedException e) {
 		}
-		// XXX hack to force repo view to refresh only once
-		manager.notifyRepoView = true;
-		manager.addVersionTags(root, new CVSTag[0]);
-		// end hack
-		
-		super.okPressed();
 	}
 	
 	/*
@@ -627,7 +639,7 @@ public class TagConfigurationDialog extends Dialog {
 						CVSUIPlugin.runWithProgress(shell, true /*cancelable*/, new IRunnableWithProgress() {
 							public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 								try {
-									CVSUIPlugin.getPlugin().getRepositoryManager().refreshDefinedTags(folder, true, monitor);
+									CVSUIPlugin.getPlugin().getRepositoryManager().refreshDefinedTags(folder, false /* replace */, true, monitor);
 									runnable.run();
 								} catch (TeamException e) {
 									throw new InvocationTargetException(e);
@@ -692,8 +704,14 @@ public class TagConfigurationDialog extends Dialog {
 	 }
 	 
 	 private static void updateEnablementOnRefreshButton(Button refreshButton, ICVSFolder project) {
-	 	String[] files = CVSUIPlugin.getPlugin().getRepositoryManager().getAutoRefreshFiles(project);
- 		refreshButton.setEnabled(files.length != 0);
+	 	try {
+			String[] files = CVSUIPlugin.getPlugin().getRepositoryManager().getAutoRefreshFiles(project);
+			refreshButton.setEnabled(files.length != 0);
+		} catch (CVSException e) {
+			refreshButton.setEnabled(false);
+			CVSUIPlugin.log(e);
+		}
+ 		
 	 }
 	 
 	/**

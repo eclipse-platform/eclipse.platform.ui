@@ -118,7 +118,7 @@ public class RepositorySelectionPage extends CVSWizardPage {
 	 * Initializes states of the controls.
 	 */
 	private void initializeValues() {
-		ICVSRepositoryLocation[] locations = CVSUIPlugin.getPlugin().getRepositoryManager().getKnownRoots();
+		ICVSRepositoryLocation[] locations = CVSUIPlugin.getPlugin().getRepositoryManager().getKnownRepositoryLocations();
 		AdaptableList input = new AdaptableList(locations);
 		table.setInput(input);
 		if (locations.length == 0) {

@@ -30,7 +30,7 @@ import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.ReleaseCommentDialog;
-import org.eclipse.team.internal.ccvs.ui.RepositoryManager;
+import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 /**

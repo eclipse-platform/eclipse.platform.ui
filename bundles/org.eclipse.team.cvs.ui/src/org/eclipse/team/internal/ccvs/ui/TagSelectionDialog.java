@@ -31,6 +31,7 @@ import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.merge.ProjectElement;
 import org.eclipse.team.internal.ccvs.ui.merge.TagElement;
 import org.eclipse.team.internal.ccvs.ui.merge.ProjectElement.ProjectElementSorter;
+import org.eclipse.team.internal.ccvs.ui.repo.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;

@@ -5,6 +5,7 @@ package org.eclipse.team.internal.ccvs.ui.model;
  * All Rights Reserved.
  */
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
@@ -15,7 +16,7 @@ public class RemoteFileElement extends RemoteResourceElement {
 	/**
 	 * Initial implementation: return null;
 	 */
-	public Object[] getChildren(Object o) {
+	public Object[] internalGetChildren(Object o, IProgressMonitor monitor) {
 		return new Object[0];
 	}
 	/**
