@@ -30,24 +30,6 @@ import org.eclipse.swt.widgets.Canvas;
  */
 public abstract class Annotation {
 	
-	/** The layer of this annotation. */
-	private int fLayer;
-	
-	/**
-	 * Creates a new annotation.
-	 */
-	protected Annotation() {
-	}
-	
-	/**
-	 * Sets the layer of this annotation.
-	 *
-	 * @param layer the layer of this annotation
-	 */
-	protected void setLayer(int layer) {
-		fLayer= layer;
-	}	
-	
 	/**
 	 * Convenience method for drawing an image aligned inside a rectangle.
 	 *
@@ -65,31 +47,31 @@ public abstract class Annotation {
 			
 			int x= 0;
 			switch(halign) {
-				case SWT.LEFT:
-					break;
-				case SWT.CENTER:
-					x= (r.width - bounds.width) / 2;
-					break;
-				case SWT.RIGHT:
-					x= r.width - bounds.width;
-					break;
+			case SWT.LEFT:
+				break;
+			case SWT.CENTER:
+				x= (r.width - bounds.width) / 2;
+				break;
+			case SWT.RIGHT:
+				x= r.width - bounds.width;
+				break;
 			}
 			
 			int y= 0;
 			switch (valign) {
-				case SWT.TOP: {
-					FontMetrics fontMetrics= gc.getFontMetrics();
-					y= (fontMetrics.getHeight() - bounds.height)/2;
-					break;
-				}
-				case SWT.CENTER:
-					y= (r.height - bounds.height) / 2;
-					break;
-				case SWT.BOTTOM: {
-					FontMetrics fontMetrics= gc.getFontMetrics();
-					y= r.height - (fontMetrics.getHeight() + bounds.height)/2;
-					break;
-				}
+			case SWT.TOP: {
+				FontMetrics fontMetrics= gc.getFontMetrics();
+				y= (fontMetrics.getHeight() - bounds.height)/2;
+				break;
+			}
+			case SWT.CENTER:
+				y= (r.height - bounds.height) / 2;
+				break;
+			case SWT.BOTTOM: {
+				FontMetrics fontMetrics= gc.getFontMetrics();
+				y= r.height - (fontMetrics.getHeight() + bounds.height)/2;
+				break;
+			}
 			}
 			
 			gc.drawImage(image, r.x+x, r.y+y);
@@ -107,6 +89,27 @@ public abstract class Annotation {
 	 */
 	protected static void drawImage(Image image, GC gc, Canvas canvas, Rectangle r, int align) {
 		drawImage(image, gc, canvas, r, align, SWT.CENTER);
+	}
+	
+	
+	
+	/** The layer of this annotation. */
+	private int fLayer;
+	
+	/**
+	 * Creates a new annotation.
+	 */
+	protected Annotation() {
+	}
+	
+	/**
+	 * Sets the layer of this annotation.
+	 *
+	 * @param layer the layer of this annotation
+	 * @deprecated since 3.0
+	 */
+	protected void setLayer(int layer) {
+		fLayer= layer;
 	}
 	
 	/**

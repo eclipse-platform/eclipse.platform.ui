@@ -56,6 +56,14 @@ public class AnnotationPreference {
 	private String fTextKey;
 	/** The default visibility inside text */
 	private boolean fTextValue;
+	/** The preference key for the visibility in the overview ruler */
+	private String fOverviewRulerKey;
+	/** The default visibility in the overview ruler */
+	private boolean fOverviewRulerValue;
+	/** The presentation layer */
+	private int fPresentationLayer;
+	/** Indicates whether the annotation type contributed to the overview ruler's header */
+	private boolean fContributesToHeader;
 	/**
 	 * The preference key for highlighting inside text.
 	 * @since 3.0
@@ -66,10 +74,6 @@ public class AnnotationPreference {
 	 * @since 3.0
 	 */
 	private boolean fHighlightValue;
-	/** The preference key for the visibility in the overview ruler */
-	private String fOverviewRulerKey;
-	/** The default visibility in the overview ruler */
-	private boolean fOverviewRulerValue;
 	/**
 	 * The preference key for the visibility in the vertical ruler.
 	 * @since 3.0
@@ -80,10 +84,6 @@ public class AnnotationPreference {
 	 * @since 3.0
 	 */
 	private boolean fVerticalRulerValue;
-	/** The presentation layer */
-	private int fPresentationLayer;
-	/** Indicates whether the annotation type contributed to the overview ruler's header */
-	private boolean fContributesToHeader;
 	/**
 	 * The preference key for the visibility in the next/previous drop down toolbar action.
 	 * @since 3.0
@@ -446,6 +446,7 @@ public class AnnotationPreference {
 	public void setContributesToHeader(boolean contributesToHeader) {
 		fContributesToHeader= contributesToHeader;
 	}
+	
 	/**
 	 * Returns the default value for go to next navigation enablement.
 	 * 

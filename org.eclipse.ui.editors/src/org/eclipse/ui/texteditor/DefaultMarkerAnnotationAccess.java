@@ -86,25 +86,31 @@ public class DefaultMarkerAnnotationAccess implements IAnnotationAccess, IAnnota
 		return null;
 	}
 	
+	/**
+	 * Returns the annotation preference for the given annotation.
+	 * 
+	 * @param annotation the annotation
+	 * @return the annotation preference for the given annotation or <code>null</code>
+	 */
+	private AnnotationPreference getAnnotationPreference(Annotation annotation) {
+		if (annotation instanceof MarkerAnnotation) {
+			MarkerAnnotation markerAnnotation= (MarkerAnnotation) annotation;
+			IMarker marker= markerAnnotation.getMarker();
+			if (marker != null && marker.exists())
+				return getAnnotationPreference(marker);
+		} else if (annotation instanceof IAnnotationExtension) {
+			IAnnotationExtension annotationExtension= (IAnnotationExtension)annotation;
+			return getAnnotationPreference(annotationExtension.getMarkerType(), annotationExtension.getSeverity());
+		}
+		return null;
+	}
+	
 	/*
 	 * @see org.eclipse.jface.text.source.IAnnotationAccess#getType(org.eclipse.jface.text.source.Annotation)
 	 */
 	public Object getType(Annotation annotation) {
-		if (annotation instanceof MarkerAnnotation) {
-			MarkerAnnotation markerAnnotation= (MarkerAnnotation) annotation;
-			IMarker marker= markerAnnotation.getMarker();
-			if (marker != null && marker.exists()) {
-				AnnotationPreference preference= getAnnotationPreference(marker);
-				if (preference != null)
-					return preference.getAnnotationType();
-			}
-		} else if (annotation instanceof IAnnotationExtension) {
-			IAnnotationExtension annotationExtension= (IAnnotationExtension)annotation;
-			AnnotationPreference preference= getAnnotationPreference(annotationExtension.getMarkerType(), annotationExtension.getSeverity());
-			if (preference != null)
-				return preference.getAnnotationType();
-		}
-		return UNKNOWN;
+		AnnotationPreference preference= getAnnotationPreference(annotation);
+		return preference != null ? preference.getAnnotationType() : UNKNOWN;
 	}
 	
 	/*
@@ -118,10 +124,8 @@ public class DefaultMarkerAnnotationAccess implements IAnnotationAccess, IAnnota
 	 * @see org.eclipse.jface.text.source.IAnnotationAccess#isTemporary(org.eclipse.jface.text.source.Annotation)
 	 */
 	public boolean isTemporary(Annotation annotation) {
-
 		if (annotation instanceof IAnnotationExtension)
 			return ((IAnnotationExtension)annotation).isTemporary();
-
 		return false;
 	}
 	
@@ -129,28 +133,16 @@ public class DefaultMarkerAnnotationAccess implements IAnnotationAccess, IAnnota
 	 * @see org.eclipse.jface.text.source.IAnnotationAccessExtension#getLabel(org.eclipse.jface.text.source.Annotation)
 	 */
 	public String getTypeLabel(Annotation annotation) {
-		AnnotationPreference preference= null;
-		if (annotation instanceof MarkerAnnotation) {
-			MarkerAnnotation markerAnnotation= (MarkerAnnotation) annotation;
-			IMarker marker= markerAnnotation.getMarker();
-			if (marker != null && marker.exists()) {
-				preference= getAnnotationPreference(marker);
-			}
-		} else if (annotation instanceof IAnnotationExtension) {
-			IAnnotationExtension annotationExtension= (IAnnotationExtension)annotation;
-			preference= getAnnotationPreference(annotationExtension.getMarkerType(), annotationExtension.getSeverity());
-		}
-		if (preference != null)
-			return preference.getPreferenceLabel();
-		
-		return null;
+		AnnotationPreference preference= getAnnotationPreference(annotation);
+		return preference != null ? preference.getPreferenceLabel() : null;
 	}
 	
 	/*
 	 * @see org.eclipse.jface.text.source.IAnnotationAccessExtension#getLayer(org.eclipse.jface.text.source.Annotation)
 	 */
 	public int getLayer(Annotation annotation) {
-		return annotation.getLayer();
+		AnnotationPreference preference= getAnnotationPreference(annotation);
+		return preference != null ? preference.getPresentationLayer() : IAnnotationAccessExtension.DEFAULT_LAYER;
 	}
 	
 	/*
