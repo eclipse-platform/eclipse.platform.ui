@@ -504,5 +504,26 @@ public class CVSProviderTest extends EclipseTest {
 			} catch(TeamException e) {
 			}
 	}
+	
+	public void testTagExistsFailure() throws TeamException, CoreException, IOException {
+		IProject project = createProject(new String[] { "a.txt", "b.txt" });
+		CVSTag tag = new CVSTag("v1", CVSTag.VERSION);
+		tagProject(project, tag, false);
+		
+		setContentsAndEnsureModified(project.getFile("a.txt"));
+		commitProject(project);
+		
+		try {
+			tagProject(project, tag, false/* don't force */);
+			fail("The tag should have failed since the tag already exists.");
+		} catch (TeamException e) {
+			// This is what we expected
+			assertTrue("This exception should be an error", e.getStatus().getSeverity() == IStatus.ERROR);
+		}
+		
+		tagProject(project, tag, true /* force */);
+		IProject copy = checkoutCopy(project, tag);
+		assertEquals(project, copy);
+	}
 }
 
