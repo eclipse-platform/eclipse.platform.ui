@@ -125,6 +125,8 @@ public class AntLaunchWizardPage extends WizardPage {
 		showLog.setSelection(initialDisplayLog);
 		selectInitialTargets();
 		
+		validatePageComplete();
+
 		listViewer.addCheckStateListener(new TargetCheckListener());
 		listViewer.refresh();
 		argumentsField.setFocus();

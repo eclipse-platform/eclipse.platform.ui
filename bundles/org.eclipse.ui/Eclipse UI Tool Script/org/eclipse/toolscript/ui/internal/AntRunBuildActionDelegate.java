@@ -13,35 +13,23 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.IWorkbenchWindowActionDelegate;
+import org.eclipse.ui.IObjectActionDelegate;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.actions.ActionDelegate;
 
 /**
  * Action delegate to launch Ant on a build file.
  */
-public class AntRunBuildActionDelegate extends ActionDelegate implements IWorkbenchWindowActionDelegate {
+public class AntRunBuildActionDelegate extends ActionDelegate implements IObjectActionDelegate {
 	private IFile selectedFile;
-	private IWorkbenchWindow window;
+	private IWorkbenchPart part;
 
-	/* (non-Javadoc)
-	 * Method declared on IWorkbenchWindowActionDelegate.
-	 */
-	public void dispose() {
-	}
-
-	/* (non-Javadoc)
-	 * Method declared on IWorkbenchWindowActionDelegate.
-	 */
-	public void init(IWorkbenchWindow window) {
-		this.window = window;
-	}
-	
 	/* (non-Javadoc)
 	 * Method declared on IActionDelegate.
 	 */
 	public void run(IAction action) {
-		new AntAction(selectedFile, window).run();
+		if (part != null)
+			new AntAction(selectedFile, part.getSite().getWorkbenchWindow()).run();
 	}
 	
 	/* (non-Javadoc)
@@ -57,5 +45,12 @@ public class AntRunBuildActionDelegate extends ActionDelegate implements IWorkbe
 					selectedFile = (IFile) selectedResource;
 			}
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * Method declared on IObjectActionDelegate.
+	 */
+	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
+		this.part = targetPart;
 	}
 }
