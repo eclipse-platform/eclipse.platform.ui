@@ -1169,8 +1169,7 @@ public void setTeamPrivateMember(boolean isTeamPrivate) throws CoreException {
 	// ignore attempts to set team private member flag on anything except files and folders
 	if (info.getType() == FILE || info.getType() == FOLDER) {
 		if (isTeamPrivate) {
-			// FIXME - 2002-03-12 code temporarily disabled until implementation and tests fixed
-//			info.set(ICoreConstants.M_TEAM_PRIVATE_MEMBER);
+			info.set(ICoreConstants.M_TEAM_PRIVATE_MEMBER);
 		} else {
 			info.clear(ICoreConstants.M_TEAM_PRIVATE_MEMBER);
 		}
