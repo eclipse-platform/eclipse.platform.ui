@@ -11,21 +11,25 @@
 package org.eclipse.core.runtime.preferences;
 
 /**
- * Interface used to aid in default preference value customization.
+ * Abstract class used to aid in default preference value initialization.
  * Clients who extend the <code>org.eclipse.core.runtime.preferences</code> 
- * extension point are able to specify a class within a <code>customization</code>
- * element which implements this interface. 
- * <p>
- * Clients may implement this interface.
- * </p>
+ * extension point are able to specify a class within an <code>initializer</code>
+ * element. 
+ * 
  * @since 3.0
  */
-public interface IPreferenceInitializer {
+public abstract class AbstractPreferenceInitializer {
 
 	/**
-	 * 
+	 * Default constructor for the class.
+	 */
+	public AbstractPreferenceInitializer() {
+		super();
+	}
+
+	/**
 	 * TODO
 	 */
-	public void initializeDefaultPreferences();
+	public abstract void initializeDefaultPreferences();
 
 }

@@ -31,6 +31,14 @@ public class ConfigurationPreferences extends EclipsePreferences {
 	private IEclipsePreferences loadLevel;
 	// cache which nodes have been loaded from disk
 	private static Set loadedNodes = new HashSet();
+	private static boolean initialized = false;
+	private static IPath baseLocation;
+
+	static {
+		URL url = InternalPlatform.getDefault().getConfigurationLocation().getURL();
+		if (url != null)
+			baseLocation = new Path(url.getFile());
+	}
 
 	/**
 	 * Default constructor. Should only be called by #createExecutableExtension.
@@ -41,26 +49,9 @@ public class ConfigurationPreferences extends EclipsePreferences {
 
 	private ConfigurationPreferences(IEclipsePreferences parent, String name) {
 		super(parent, name);
-		initialize();
-	}
 
-	protected IPath getLocation() {
-		return location;
-	}
+		initializeChildren();
 
-	protected boolean isAlreadyLoaded(IEclipsePreferences node) {
-		return loadedNodes.contains(node.name());
-	}
-
-	protected void loaded() {
-		loadedNodes.add(name());
-	}
-
-	/*
-	 * Parse this node's absolute path and initialize some cached values for
-	 * later use.
-	 */
-	private void initialize() {
 		// cache the segment count
 		IPath path = new Path(absolutePath());
 		segmentCount = path.segmentCount();
@@ -75,9 +66,20 @@ public class ConfigurationPreferences extends EclipsePreferences {
 		// cache the location
 		if (qualifier == null)
 			return;
-		URL url = InternalPlatform.getDefault().getConfigurationLocation().getURL();
-		if (url != null)
-			location = computeLocation(new Path(url.getFile()), qualifier);
+		if (baseLocation != null)
+			location = computeLocation(baseLocation, qualifier);
+	}
+
+	protected IPath getLocation() {
+		return location;
+	}
+
+	protected boolean isAlreadyLoaded(IEclipsePreferences node) {
+		return loadedNodes.contains(node.name());
+	}
+
+	protected void loaded() {
+		loadedNodes.add(name());
 	}
 
 	/*
@@ -96,6 +98,22 @@ public class ConfigurationPreferences extends EclipsePreferences {
 			loadLevel = node;
 		}
 		return loadLevel;
+	}
+
+	protected void initializeChildren() {
+		if (initialized || parent == null)
+			return;
+		try {
+			synchronized (this) {
+				if (baseLocation == null)
+					return;
+				String[] names = computeChildren(baseLocation);
+				for (int i = 0; i < names.length; i++)
+					addChild(names[i], null);
+			}
+		} finally {
+			initialized = true;
+		}
 	}
 
 	protected EclipsePreferences internalCreate(IEclipsePreferences nodeParent, String nodeName) {

@@ -41,18 +41,23 @@
    </element>
 
    <element name="scope">
+      <annotation>
+         <documentation>
+            Element describing a client&apos;s definiton of a new preference scope.
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The name of the scope.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The name of the class.
                </documentation>
             </annotation>
          </attribute>
@@ -60,11 +65,16 @@
    </element>
 
    <element name="initializer">
+      <annotation>
+         <documentation>
+            Element which defines the class to use for runtime preference initialization.
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The name of the class.
                </documentation>
             </annotation>
          </attribute>
@@ -90,7 +100,7 @@
    &lt;pre&gt;
       &lt;extension point=&quot;org.eclipse.core.runtime.preferences&quot;&gt;
          &lt;scope name=&quot;foo&quot; class=&quot;com.example.FooPrefs&quot;/&gt;
-         &lt;customizer class=&quot;com.example.FooCustomizer&quot;/&gt;
+         &lt;initializer class=&quot;com.example.MyPreferenceInitializer&quot;/&gt;
       &lt;/extension&gt;
    &lt;/pre&gt;
 &lt;/p&gt;

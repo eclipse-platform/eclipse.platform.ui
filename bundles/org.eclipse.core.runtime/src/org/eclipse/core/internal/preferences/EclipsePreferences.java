@@ -135,6 +135,10 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	public String[] childrenNames() {
 		// illegal state if this node has been removed
 		checkRemoved();
+		return internalChildNames();
+	}
+
+	protected String[] internalChildNames() {
 		Map temp = children;
 		if (temp == null || temp.size() == 0)
 			return EMPTY_STRING_ARRAY;
@@ -160,6 +164,22 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 			properties = null;
 		}
 		makeDirty();
+	}
+
+	protected String[] computeChildren(IPath root) {
+		if (root == null)
+			return EMPTY_STRING_ARRAY;
+		IPath dir = root.append(DEFAULT_PREFERENCES_DIRNAME);
+		File file = dir.toFile();
+		FilenameFilter filter = new FilenameFilter() {
+			public boolean accept(File directory, String child) {
+				if (new File(directory, child).isDirectory())
+					return false;
+				return child.endsWith('.' + PREFS_FILE_EXTENSION);
+			}
+		};
+		String[] result = file.list(filter);
+		return result == null ? EMPTY_STRING_ARRAY : result;
 	}
 
 	protected IPath computeLocation(IPath root, String qualifier) {
@@ -328,16 +348,25 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	protected synchronized IEclipsePreferences getChild(String key) {
 		if (children == null)
 			return null;
-		return (IEclipsePreferences) children.get(key);
+		Object value = children.get(key);
+		if (value == null)
+			return null;
+		if (value instanceof IEclipsePreferences)
+			return (IEclipsePreferences) value;
+		value = create(this, key);
+		addChild(key, (IEclipsePreferences) value);
+		return (IEclipsePreferences) value;
 	}
 
 	/**
 	 * Thread safe way to obtain all children of this node. Never returns null.
 	 */
 	protected synchronized IEclipsePreferences[] getChildren() {
-		if (children == null)
-			return EMPTY_NODE_ARRAY;
-		return (IEclipsePreferences[]) children.values().toArray(EMPTY_NODE_ARRAY);
+		ArrayList result = new ArrayList();
+		String[] names = internalChildNames();
+		for (int i = 0; i < names.length; i++)
+			result.add(getChild(names[i]));
+		return (IEclipsePreferences[]) result.toArray(EMPTY_NODE_ARRAY);
 	}
 
 	/*
@@ -943,7 +972,12 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		}
 		IEclipsePreferences[] childNodes = getChildren();
 		for (int i = 0; i < childNodes.length; i++)
-			childNodes[i].removeNode();
+			try {
+				childNodes[i].removeNode();
+			} catch (IllegalStateException e) {
+				// ignore since we only get this exception if we have already
+				// been removed. no work to do.
+			}
 	}
 
 	/*

@@ -34,6 +34,12 @@ public class InstancePreferences extends EclipsePreferences {
 	private IPath location;
 	// cache which nodes have been loaded from disk
 	private static Set loadedNodes = new HashSet();
+	private static boolean initialized = false;
+	private static IPath baseLocation;
+
+	static {
+		baseLocation = InternalPlatform.getDefault().getMetaArea().getStateLocation(Platform.PI_RUNTIME);
+	}
 
 	/**
 	 * Default constructor. Should only be called by #createExecutableExtension.
@@ -44,7 +50,25 @@ public class InstancePreferences extends EclipsePreferences {
 
 	private InstancePreferences(IEclipsePreferences parent, String name) {
 		super(parent, name);
-		initialize();
+
+		initializeChildren();
+
+		// cache the segment count
+		IPath path = new Path(absolutePath());
+		segmentCount = path.segmentCount();
+		if (segmentCount < 2)
+			return;
+
+		// cache the qualifier
+		String scope = path.segment(0);
+		if (InstanceScope.SCOPE.equals(scope))
+			qualifier = path.segment(1);
+
+		// cache the location
+		if (qualifier == null)
+			return;
+		// get the base location from the platform
+		location = computeLocation(baseLocation, qualifier);
 	}
 
 	protected boolean isAlreadyLoaded(IEclipsePreferences node) {
@@ -158,29 +182,6 @@ public class InstancePreferences extends EclipsePreferences {
 	}
 
 	/*
-	 * Parse this node's absolute path and initialize some cached values for
-	 * later use.
-	 */
-	private void initialize() {
-		// cache the segment count
-		IPath path = new Path(absolutePath());
-		segmentCount = path.segmentCount();
-		if (segmentCount < 2)
-			return;
-
-		// cache the qualifier
-		String scope = path.segment(0);
-		if (InstanceScope.SCOPE.equals(scope))
-			qualifier = path.segment(1);
-
-		// cache the location
-		if (qualifier == null)
-			return;
-		// get the base location from the platform
-		location = computeLocation(InternalPlatform.getDefault().getMetaArea().getStateLocation(Platform.PI_RUNTIME), qualifier);
-	}
-
-	/*
 	 * Return the node at which these preferences are loaded/saved.
 	 */
 	protected IEclipsePreferences getLoadLevel() {
@@ -196,6 +197,24 @@ public class InstancePreferences extends EclipsePreferences {
 			loadLevel = node;
 		}
 		return loadLevel;
+	}
+
+	/*
+	 * Initialize the children for the root of this node. Store the names as
+	 * keys in the children table so we can lazily load them later.
+	 */
+	protected void initializeChildren() {
+		if (initialized || parent == null)
+			return;
+		try {
+			synchronized (this) {
+				String[] names = computeChildren(baseLocation);
+				for (int i = 0; i < names.length; i++)
+					addChild(names[i], null);
+			}
+		} finally {
+			initialized = true;
+		}
 	}
 
 	protected EclipsePreferences internalCreate(IEclipsePreferences nodeParent, String nodeName) {
