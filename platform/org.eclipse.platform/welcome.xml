@@ -5,7 +5,7 @@
 To get started, read the sections below and click on the related links. </intro>
 
 <item><b>Installed Features </b>
-To find out more about the features installed in your workbench, choose <action pluginId="org.eclipse.ui"  class="org.eclipse.ui.internal.OpenWelcomeAction">Help > Welcome...</action>
+To find out more about the features installed in your workbench, choose <action pluginId="org.eclipse.ui"  class="org.eclipse.ui.internal.QuickStartAction">Help > Welcome...</action>
 and select the feature you are interested in.</item>
 
 <item><b>Perspectives, views and editors </b>
