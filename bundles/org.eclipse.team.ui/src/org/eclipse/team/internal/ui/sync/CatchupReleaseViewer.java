@@ -393,7 +393,7 @@ public abstract class CatchupReleaseViewer extends DiffTreeViewer {
 		refresh.setHoverImageDescriptor(TeamImages.getImageDescriptor(UIConstants.IMG_REFRESH));
 		
 		// Open Action
-		open = new OpenAction(Policy.bind("CatchupReleaseViewer.open"), null);
+		open = new OpenAction(Policy.bind("CatchupReleaseViewer.open"), null); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(open, IHelpContextIds.OPEN_ACTION);
 		
 		// Expand action

@@ -105,7 +105,7 @@ public class RefreshRemoteProjectSelectionPage extends CVSWizardPage {
 			new InputElement(), 
 			new RemoteContentProvider(), 
 			new WorkbenchLabelProvider(), 
-			Policy.bind("RefreshRemoteProjectSelectionPage.selectRemoteProjects"));
+			Policy.bind("RefreshRemoteProjectSelectionPage.selectRemoteProjects")); //$NON-NLS-1$
 		listArea.createArea(composite);
 		listArea.addPropertyChangeListener(new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {

@@ -27,6 +27,7 @@ import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.EditorsDialog;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.actions.WorkspaceAction.IProviderAction;
+import org.eclipse.team.internal.ccvs.ui.Policy;
 
 
 /**
@@ -85,7 +86,7 @@ public class EditorsAction implements IProviderAction, IRunnableWithProgress {
 	public void run(IProgressMonitor monitor)
 		throws InvocationTargetException, InterruptedException {
 			if (f_provider == null || f_resources == null) {
-				throw new InvocationTargetException(new RuntimeException(this.getClass().getName() + " not initialized"));
+				throw new InvocationTargetException(new RuntimeException(Policy.bind("EditorsAction.classNotInitialized", this.getClass().getName()))); //$NON-NLS-1$
 			}
 			try {
 				execute(f_provider,f_resources,monitor);

@@ -37,13 +37,13 @@ public class TargetSiteContentHandler extends DefaultHandler implements ContentH
 	 * @see org.xml.sax.ContentHandler#endElement(String, String, String)
 	 */
 	public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
-		if (qName.equals("site")) {
+		if (qName.equals("site")) { //$NON-NLS-1$
 			Properties props=new Properties();
 			byte[] bytes=buffer.toString().getBytes();
 			InputStream iStream=new ByteArrayInputStream(bytes);
 			try {
 				props.load(iStream);
-				props.setProperty("target", target);
+				props.setProperty("target", target); //$NON-NLS-1$
 				propList.add(props);
 			} catch (IOException e) {
 				//TODO: log an error.
@@ -63,9 +63,9 @@ public class TargetSiteContentHandler extends DefaultHandler implements ContentH
 	 * @see org.xml.sax.ContentHandler#startElement(String, String, String, Attributes)
 	 */
 	public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
-		if (qName.equals("site")) {
+		if (qName.equals("site")) { //$NON-NLS-1$
 			buffer = new StringBuffer();
-			target=atts.getValue("target");
+			target=atts.getValue("target"); //$NON-NLS-1$
 		}
 	}
 

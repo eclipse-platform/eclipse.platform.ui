@@ -45,7 +45,7 @@ public class ReleaseCommentDialog extends Dialog {
 	private final static int SELECTION_HEIGHT_HINT = 100;
 	
 	private String[] comments = new String[0];
-	private String comment = "";
+	private String comment = ""; //$NON-NLS-1$
 	
 	private Text text;
 	
@@ -242,7 +242,7 @@ public class ReleaseCommentDialog extends Dialog {
 			if (index != -1)
 				return previousCommentsCombo.getItem(index);
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	/**
@@ -333,9 +333,9 @@ public class ReleaseCommentDialog extends Dialog {
 	
 	private String getCommitTemplate() throws CVSException {
 		CVSTeamProvider provider = getProvider();
-		if (provider == null) return "";
+		if (provider == null) return ""; //$NON-NLS-1$
 		String template = provider.getCommitTemplate();
-		if (template == null) template = "";
+		if (template == null) template = ""; //$NON-NLS-1$
 		return template;
 	}
 

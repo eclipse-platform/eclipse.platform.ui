@@ -88,6 +88,6 @@ public class ModulesCategory extends CVSModelElement implements IAdaptable {
 	}
 
 	public String toString() {
-		return getRepository().toString() + " (modules)";
+		return getRepository().toString() + " (modules)"; //$NON-NLS-1$
 	}
 }

@@ -42,9 +42,9 @@ public class RepositoriesViewContentHandler extends DefaultHandler {
 	public static final String TYPE_ATTRIBUTE = "type"; //$NON-NLS-1$
 	public static final String REPOSITORY_PROGRAM_NAME_ATTRIBUTE = "program-name"; //$NON-NLS-1$
 	
-	public static final String[] TAG_TYPES = {"head", "branch", "version", "date"};
-	public static final String DEFAULT_TAG_TYPE = "version";
-	public static final String DEFINED_MODULE_TYPE = "defined";
+	public static final String[] TAG_TYPES = {"head", "branch", "version", "date"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+	public static final String DEFAULT_TAG_TYPE = "version"; //$NON-NLS-1$
+	public static final String DEFINED_MODULE_TYPE = "defined"; //$NON-NLS-1$
 	
 	private RepositoryManager manager;
 	private StringBuffer buffer = new StringBuffer();
@@ -114,13 +114,13 @@ public class RepositoriesViewContentHandler extends DefaultHandler {
 		} else if (localName.equals(REPOSITORY_TAG)) {
 			String id = atts.getValue(ID_ATTRIBUTE);
 			if (id == null) {
-				throw new SAXException(Policy.bind("RepositoriesViewContentHandler.missingAttribute", REPOSITORY_TAG, ID_ATTRIBUTE));
+				throw new SAXException(Policy.bind("RepositoriesViewContentHandler.missingAttribute", REPOSITORY_TAG, ID_ATTRIBUTE)); //$NON-NLS-1$
 			}
 			ICVSRepositoryLocation root;
 			try {
 				root = CVSProviderPlugin.getPlugin().getRepository(id);
 			} catch (CVSException e) {
-				throw new SAXException(Policy.bind("RepositoriesViewContentHandler.errorCreatingRoot", id), e);
+				throw new SAXException(Policy.bind("RepositoriesViewContentHandler.errorCreatingRoot", id), e); //$NON-NLS-1$
 			}
 			currentRepositoryRoot = new RepositoryRoot(root);
 			String name = atts.getValue(NAME_ATTRIBUTE);
@@ -130,14 +130,14 @@ public class RepositoriesViewContentHandler extends DefaultHandler {
 		} else if (localName.equals(WORKING_SET_TAG)) {
 			String name = atts.getValue(NAME_ATTRIBUTE);
 			if (name == null) {
-				throw new SAXException(Policy.bind("RepositoriesViewContentHandler.missingAttribute", WORKING_SET_TAG, NAME_ATTRIBUTE));
+				throw new SAXException(Policy.bind("RepositoriesViewContentHandler.missingAttribute", WORKING_SET_TAG, NAME_ATTRIBUTE)); //$NON-NLS-1$
 			}
 			// Ignore any elements until the corresponding end tag is reached
 			ignoreElements = true;
 		}  else if (localName.equals(MODULE_TAG)) {
 			String path = atts.getValue(PATH_ATTRIBUTE);
 			if (path == null) {
-				throw new SAXException(Policy.bind("RepositoriesViewContentHandler.missingAttribute", MODULE_TAG, PATH_ATTRIBUTE));
+				throw new SAXException(Policy.bind("RepositoriesViewContentHandler.missingAttribute", MODULE_TAG, PATH_ATTRIBUTE)); //$NON-NLS-1$
 			}
 			String type = atts.getValue(TYPE_ATTRIBUTE);
 			if (type != null && type.equals(DEFINED_MODULE_TYPE)) {
@@ -151,7 +151,7 @@ public class RepositoriesViewContentHandler extends DefaultHandler {
 			}
 			String name = atts.getValue(NAME_ATTRIBUTE);
 			if (name == null) {
-				throw new SAXException(Policy.bind("RepositoriesViewContentHandler.missingAttribute", TAG_TAG, NAME_ATTRIBUTE));
+				throw new SAXException(Policy.bind("RepositoriesViewContentHandler.missingAttribute", TAG_TAG, NAME_ATTRIBUTE)); //$NON-NLS-1$
 			}
 			tags.add(new CVSTag(name, getCVSTagType(type)));
 		} else if (localName.equals(AUTO_REFRESH_FILE_TAG)) {
@@ -160,7 +160,7 @@ public class RepositoriesViewContentHandler extends DefaultHandler {
 				// get the old path attribute format which was relative to the module
 				path = atts.getValue(PATH_ATTRIBUTE);
 				if (path == null) {
-					throw new SAXException(Policy.bind("RepositoriesViewContentHandler.missingAttribute", AUTO_REFRESH_FILE_TAG, FULL_PATH_ATTRIBUTE));
+					throw new SAXException(Policy.bind("RepositoriesViewContentHandler.missingAttribute", AUTO_REFRESH_FILE_TAG, FULL_PATH_ATTRIBUTE)); //$NON-NLS-1$
 				}
 				if (RepositoryRoot.isDefinedModuleName(currentRemotePath)) {
 					path = null;

@@ -503,7 +503,7 @@ public class RepositoryManager {
 	 */
 	private String getCurrentComment() {
 		if (previousComments.length == 0)
-			return "";
+			return ""; //$NON-NLS-1$
 		return (String)previousComments[0];
 	}
 

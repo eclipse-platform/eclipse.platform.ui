@@ -50,7 +50,7 @@ public class ListSelectionArea extends DialogArea {
 	private final static int SIZING_SELECTION_WIDGET_HEIGHT = 250;
 	private final static int SIZING_SELECTION_WIDGET_WIDTH = 300;
 	
-	public static final String LIST_SELECTION = "ListSelection";
+	public static final String LIST_SELECTION = "ListSelection"; //$NON-NLS-1$
 	
 	/**
 	 * Constructor for ListSelectionArea.
@@ -142,7 +142,7 @@ public class ListSelectionArea extends DialogArea {
 		data.grabExcessHorizontalSpace = true;
 		composite.setData(data);
 
-		Button selectButton = createButton(buttonComposite, Policy.bind("ListSelectionArea.selectAll"));
+		Button selectButton = createButton(buttonComposite, Policy.bind("ListSelectionArea.selectAll")); //$NON-NLS-1$
 
 		SelectionListener listener = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -152,7 +152,7 @@ public class ListSelectionArea extends DialogArea {
 		selectButton.addSelectionListener(listener);
 
 
-		Button deselectButton = createButton(buttonComposite, Policy.bind("ListSelectionArea.deselectAll"));
+		Button deselectButton = createButton(buttonComposite, Policy.bind("ListSelectionArea.deselectAll")); //$NON-NLS-1$
 
 		listener = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {

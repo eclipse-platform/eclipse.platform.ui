@@ -80,7 +80,7 @@ public class CVSWorkingSetPage extends CVSWizardPage implements IWorkingSetPage 
 	public CVSWorkingSetPage(String pageName, String title, ImageDescriptor titleImage, String description) {
 		super(pageName, title, titleImage, description);
 		checkedFolders = new HashSet();
-		workingSetName = "";
+		workingSetName = ""; //$NON-NLS-1$
 	}
 	/**
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
@@ -120,7 +120,7 @@ public class CVSWorkingSetPage extends CVSWizardPage implements IWorkingSetPage 
 
 		createLabel(composite, ""); //$NON-NLS-1$
 		Button refresh = new Button(composite, SWT.PUSH);
-		refresh.setText(Policy.bind("CVSWorkingSetFolderSelectionPage.refresh"));
+		refresh.setText(Policy.bind("CVSWorkingSetFolderSelectionPage.refresh")); //$NON-NLS-1$
 		GridData data = new GridData();
 		data.horizontalAlignment = GridData.END;
 		data.horizontalSpan = 1;
@@ -336,9 +336,9 @@ public class CVSWorkingSetPage extends CVSWizardPage implements IWorkingSetPage 
 	private boolean isValidName(String workingSetName) {
 		if (workingSetName.length() == 0)
 			return false;
-		if (workingSetName.startsWith(" "))
+		if (workingSetName.startsWith(" ")) //$NON-NLS-1$
 			return false;
-		if (workingSetName.endsWith(" "))
+		if (workingSetName.endsWith(" ")) //$NON-NLS-1$
 			return false;
 		for (int i = 0; i < workingSetName.length(); i++) {
 			char c = workingSetName.charAt(i);

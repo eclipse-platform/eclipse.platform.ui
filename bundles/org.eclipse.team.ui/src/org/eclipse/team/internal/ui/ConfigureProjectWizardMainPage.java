@@ -55,7 +55,7 @@ public class ConfigureProjectWizardMainPage extends WizardPage {
 	 * @param wizards  the wizards to populate the table with
 	 */
 	public ConfigureProjectWizardMainPage(String pageName, String title, ImageDescriptor titleImage, AdaptableList wizards) {
-		this(pageName,title,titleImage,wizards,Policy.bind("ConfigureProjectWizardMainPage.selectRepository"));
+		this(pageName,title,titleImage,wizards,Policy.bind("ConfigureProjectWizardMainPage.selectRepository")); //$NON-NLS-1$
 	}
 	
 	/**

@@ -75,7 +75,7 @@ public class RepositorySelectionPage extends CVSWizardPage {
 		// set F1 help
 		WorkbenchHelp.setHelp(composite, IHelpContextIds.SHARING_SELECT_REPOSITORY_PAGE);
 		
-		createWrappingLabel(composite, Policy.bind("RepositorySelectionPage.description"), 0 /* indent */, 1 /* columns */);
+		createWrappingLabel(composite, Policy.bind("RepositorySelectionPage.description"), 0 /* indent */, 1 /* columns */); //$NON-NLS-1$
 		
 		useNewRepo = createRadioButton(composite, Policy.bind("RepositorySelectionPage.useNew"), 1); //$NON-NLS-1$
 		

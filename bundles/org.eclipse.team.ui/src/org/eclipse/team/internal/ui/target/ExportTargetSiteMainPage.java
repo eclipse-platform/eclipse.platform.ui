@@ -30,7 +30,7 @@ import org.eclipse.team.internal.ui.TeamWizardPage;
 public class ExportTargetSiteMainPage extends TeamWizardPage {
 	private List selectedSites = new ArrayList();
 	private Text fileText;
-	private String fileName = "";
+	private String fileName = ""; //$NON-NLS-1$
 	private Table table;
 	private Button browseButton;
 

@@ -64,7 +64,7 @@ public class EditorsDialog extends Dialog {
 	 */
 	private void createMessageArea(Composite parent) {
 		Label label = new Label(parent, SWT.NONE);
-		label.setText(Policy.bind("EditorsDialog.question"));
+		label.setText(Policy.bind("EditorsDialog.question")); //$NON-NLS-1$
 		label.setFont(parent.getFont());
 		
 	}

@@ -41,8 +41,8 @@ public class TargetSiteImportWizard extends Wizard implements IImportWizard {
 	 */
 	Site getSite(Properties properties) {
 		try {
-			URL url = new URL(properties.getProperty("location"));
-			return TargetManager.getSite(properties.getProperty("target"), url);
+			URL url = new URL(properties.getProperty("location")); //$NON-NLS-1$
+			return TargetManager.getSite(properties.getProperty("target"), url); //$NON-NLS-1$
 		} catch (MalformedURLException e) {
 			return null;
 		}
@@ -85,7 +85,7 @@ public class TargetSiteImportWizard extends Wizard implements IImportWizard {
 
 						Properties[] propList = handler.getProperties();
 						for (int i = 0; i < propList.length; i++) {
-							String target = propList[i].getProperty("target");
+							String target = propList[i].getProperty("target"); //$NON-NLS-1$
 							ISiteFactory siteFactory = TargetManager.getSiteFactory(target);
 							Assert.isNotNull(siteFactory);
 

@@ -98,7 +98,7 @@ public interface ICVSUIConstants {
 	public final String PREF_PROMPT_ON_EDIT = "pref_prompt_on_edit"; //$NON-NLS-1$
 	
 	// Repositories view preferences
-	public final String PREF_GROUP_VERSIONS_BY_PROJECT = "pref_group_versions_by_project";
+	public final String PREF_GROUP_VERSIONS_BY_PROJECT = "pref_group_versions_by_project"; //$NON-NLS-1$
 	
 	// Wizard banners
 	public final String IMG_WIZBAN_SHARE = "wizban/newconnect_wizban.gif";	 //$NON-NLS-1$

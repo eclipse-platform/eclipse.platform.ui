@@ -76,7 +76,7 @@ public abstract class RemoteViewPart extends ViewPart implements ISelectionListe
 	private class ChangeWorkingSetAction extends Action {
 		String name;
 		public ChangeWorkingSetAction(String name, int index) {
-			super(Policy.bind("RepositoriesView.workingSetMenuItem", new Integer(index).toString(), name));
+			super(Policy.bind("RepositoriesView.workingSetMenuItem", new Integer(index).toString(), name)); //$NON-NLS-1$
 			this.name = name;
 		}
 		public void run() {

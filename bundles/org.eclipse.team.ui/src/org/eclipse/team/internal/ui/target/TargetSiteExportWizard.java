@@ -106,7 +106,7 @@ public class TargetSiteExportWizard extends Wizard implements IExportWizard {
 						monitor.worked(2);
 						target=sites[0].getType();
 						monitor.worked(1);
-						props.store(jout, "<site target=\""+target+"\">"); //$NON-NLS-1$
+						props.store(jout, "<site target=\""+target+"\">"); //$NON-NLS-1$ //$NON-NLS-2$
 						monitor.worked(2);
 						
 						// For each additional site, write the config to disk:
@@ -115,7 +115,7 @@ public class TargetSiteExportWizard extends Wizard implements IExportWizard {
 							monitor.worked(2);
 							target=sites[i].getType();
 							monitor.worked(1);
-							props.store(jout, "</site> <site target=\""+target+"\">"); //$NON-NLS-1$
+							props.store(jout, "</site> <site target=\""+target+"\">"); //$NON-NLS-1$ //$NON-NLS-2$
 							monitor.worked(2);
 						}
 						jout.flush();//This line may not actually be needed but it's not doing any harm either.
