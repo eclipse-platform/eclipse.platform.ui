@@ -144,10 +144,10 @@ public class StringMatcher {
 	public boolean match(String text, int start, int end) {
 		if (null == text)
 			throw new IllegalArgumentException();
-			
+
 		if (start > end)
 			return false;
-		
+
 		if (fIgnoreWildCards)
 			return (end - start == fLength) && fPattern.regionMatches(fIgnoreCase, 0, text, start, fLength);
 		int segCount= fSegments.length;
@@ -156,14 +156,14 @@ public class StringMatcher {
 		if (start == end)
 			return fLength == 0;
 		if (fLength == 0)
-			return start == end;	
-		 
+			return start == end;
+
 		int tlen= text.length();
 		if (start < 0)
 			start= 0;
 		if (end > tlen)
-			end= tlen; 
-					
+			end= tlen;
+
 		int tCurPos= start;
 		int bound= end - fBound;
 		if ( bound < 0)
@@ -173,7 +173,7 @@ public class StringMatcher {
 		int segLength= current.length();
 
 		/* process first segment */
-		if (!fHasLeadingStar){ 
+		if (!fHasLeadingStar){
 			if(!regExpRegionMatches(text, start, current, 0, segLength)) {
 				return false;
 			} else {
@@ -181,8 +181,11 @@ public class StringMatcher {
 				tCurPos= tCurPos + segLength;
 			}
 		}
-
-		/* process middle segments */	
+		if ((fSegments.length == 1) && (!fHasLeadingStar) && (!fHasTrailingStar)) {
+			// only one segment to match, no wildcards specified
+			return tCurPos == end;
+		}
+		/* process middle segments */
 		while (i < segCount) {
 			current= fSegments[i];
 			int currentMatch;
@@ -191,7 +194,7 @@ public class StringMatcher {
 				currentMatch= textPosIn(text, tCurPos, end, current);
 				if (currentMatch < 0)
 					return false;
-			} else { 
+			} else {
 				currentMatch= regExpPosIn(text, tCurPos, end, current);
 				if (currentMatch < 0)
 					return false;
@@ -207,6 +210,7 @@ public class StringMatcher {
 		}
 		return i == segCount ;
 	}
+
 	/**
 	 * This method parses the given pattern into segments seperated by wildcard '*' characters.
 	 * Since wildcards are not being used in this case, the pattern consists of a single segment.
