@@ -305,7 +305,7 @@ public class HistoryStoreTest extends EclipseWorkspaceTest {
 		try {
 			states = file.getHistory(getMonitor());
 			// Make sure we have 5 states for file file.txt
-			assertEquals("3.3", description.getMaxFileStates(), states.length);
+			assertEquals("3.1", description.getMaxFileStates(), states.length);
 		} catch (CoreException e) {
 			fail("3.2", e);
 		}
@@ -331,9 +331,9 @@ public class HistoryStoreTest extends EclipseWorkspaceTest {
 			states = file.getHistory(getMonitor());
 			// The 5 states for file.txt should have exceeded their longevity
 			// and been removed.  Make sure we have 0 states left.
-			assertEquals("3.4", 0, states.length);
+			assertEquals("3.5", 0, states.length);
 		} catch (CoreException e) {
-			fail("3.5", e);
+			fail("3.6", e);
 		}
 
 		/* remove garbage */
@@ -1019,7 +1019,7 @@ public class HistoryStoreTest extends EclipseWorkspaceTest {
 			states = file.getHistory(getMonitor());
 			assertEquals("2.2", 3, states.length);
 		} catch (CoreException e) {
-			fail("2.20", e);
+			fail("2.99", e);
 		}
 
 		try {
@@ -1876,7 +1876,7 @@ public class HistoryStoreTest extends EclipseWorkspaceTest {
 		try {
 			states = file2.getHistory(getMonitor());
 		} catch (CoreException e) {
-			fail("2.4");
+			fail("2.3");
 		}
 		assertEquals("2.4", 3, states.length);
 		try {
@@ -1937,7 +1937,7 @@ public class HistoryStoreTest extends EclipseWorkspaceTest {
 		try {
 			states = file2.getHistory(getMonitor());
 		} catch (CoreException e) {
-			fail("2.4");
+			fail("2.3");
 		}
 		assertEquals("2.4", 3, states.length);
 		try {
@@ -1999,7 +1999,7 @@ public class HistoryStoreTest extends EclipseWorkspaceTest {
 		try {
 			states = file2.getHistory(getMonitor());
 		} catch (CoreException e) {
-			fail("2.4");
+			fail("2.3");
 		}
 		assertEquals("2.4", 3, states.length);
 		try {
@@ -2262,7 +2262,7 @@ public class HistoryStoreTest extends EclipseWorkspaceTest {
 			public void logging(IStatus status, String plugin) {
 				if (plugin.equals(ResourcesPlugin.PI_RESOURCES)) {
 					if (status.getCode() == IResourceStatus.FAILED_WRITE_LOCAL) {
-						assertTrue("1.3", expectedMessage.equals(status.getMessage()));
+						assertTrue("1.4", expectedMessage.equals(status.getMessage()));
 						triggered = true;
 					}
 				}
@@ -2573,8 +2573,8 @@ public class HistoryStoreTest extends EclipseWorkspaceTest {
 
 		assertEquals("1.7", Byte.MAX_VALUE + 1, counters.length());
 		assertFalse("1.8", counters.get(0));
-		assertFalse("1.9", counters.get(1));
-		assertFalse("1.9", counters.get(2));
+		assertFalse("1.9.1", counters.get(1));
+		assertFalse("1.9.2", counters.get(2));
 		assertTrue("1.10", counters.get(Byte.MAX_VALUE));
 
 		// This should cause all the counts to be shifted and the new state
@@ -2710,8 +2710,8 @@ public class HistoryStoreTest extends EclipseWorkspaceTest {
 
 		assertEquals("1.7", Byte.MAX_VALUE - 2, counters.length());
 		assertFalse("1.8", counters.get(Byte.MAX_VALUE - 2));
-		assertFalse("1.9", counters.get(Byte.MAX_VALUE - 1));
-		assertFalse("1.9", counters.get(Byte.MAX_VALUE));
+		assertFalse("1.9.1", counters.get(Byte.MAX_VALUE - 1));
+		assertFalse("1.9.2", counters.get(Byte.MAX_VALUE));
 		assertTrue("1.10", counters.get(Byte.MAX_VALUE - 3));
 
 		// This should cause all the counts to be shifted and the new state
