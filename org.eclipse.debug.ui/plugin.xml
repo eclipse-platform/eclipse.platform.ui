@@ -304,7 +304,7 @@
          </action>
          <action
                label="%RunWithConfigurationAction.label"
-               pulldown="true"
+               style="pulldown"
                helpContextId="run_with_configuration_action_context"
                class="org.eclipse.debug.internal.ui.actions.RunAsAction"
                menubarPath="org.eclipse.ui.run/runGroup"
@@ -312,7 +312,7 @@
          </action>
          <action
                label="%RunHistoryMenuAction.label"
-               pulldown="true"
+               style="pulldown"
                helpContextId="run_history_menu_action_context"
                class="org.eclipse.debug.internal.ui.actions.RunHistoryMenuAction"
                menubarPath="org.eclipse.ui.run/runGroup"
@@ -349,7 +349,7 @@
                icon="icons/full/etool16/run_exc.gif"
                helpContextId="run_action_context"
                label="%RunDropDownAction.label"
-               pulldown="true">
+               style="pulldown">
          </action>
          <action
                definitionId="org.eclipse.debug.ui.commands.OpenDebugConfigurations"
@@ -361,7 +361,7 @@
          </action>
          <action
                label="%DebugWithConfigurationAction.label"
-               pulldown="true"
+               style="pulldown"
                helpContextId="debug_with_configuration_action_context"
                class="org.eclipse.debug.internal.ui.actions.DebugAsAction"
                menubarPath="org.eclipse.ui.run/debugGroup"
@@ -369,7 +369,7 @@
          </action>
          <action
                label="%DebugHistoryMenuAction.label"
-               pulldown="true"
+               style="pulldown"
                helpContextId="debug_history_menu_action_context"
                class="org.eclipse.debug.internal.ui.actions.DebugHistoryMenuAction"
                menubarPath="org.eclipse.ui.run/debugGroup"
@@ -384,7 +384,7 @@
                icon="icons/full/etool16/debug_exc.gif"
                helpContextId="debug_action_context"
                label="%DebugDropDownAction.label"
-               pulldown="true">
+               style="pulldown">
          </action>
       </actionSet>
    </extension>
@@ -476,7 +476,7 @@
                icon="icons/full/etool16/profile_exc.gif"
                helpContextId="profile_action_context"
                label="%ProfileDropDownAction.label"
-               pulldown="true">
+               style="pulldown">
          </action>
          <action
                definitionId="org.eclipse.debug.ui.commands.OpenProfileConfigurations"
@@ -488,7 +488,7 @@
          </action>
          <action
                label="%ProfileWithConfigurationAction.label"
-               pulldown="true"
+               style="pulldown"
                helpContextId="profile_with_configuration_action_context"
                class="org.eclipse.debug.internal.ui.actions.ProfileAsAction"
                menubarPath="org.eclipse.ui.run/profileGroup"
@@ -496,7 +496,7 @@
          </action>
          <action
                label="%ProfileHistoryMenuAction.label"
-               pulldown="true"
+               style="pulldown"
                helpContextId="profile_history_menu_action_context"
                class="org.eclipse.debug.internal.ui.actions.ProfileHistoryMenuAction"
                menubarPath="org.eclipse.ui.run/profileGroup"

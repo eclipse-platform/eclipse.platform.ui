@@ -44,7 +44,7 @@
          </menu>
          <action
                label="%Action.externalTools"
-               pulldown="true"
+               style="pulldown"
                icon="icons/full/obj16/external_tools.gif"
                class="org.eclipse.ui.externaltools.internal.menu.ExternalToolMenuDelegate"
                menubarPath="org.eclipse.ui.run/ExternalToolsGroup"
@@ -53,7 +53,7 @@
          <action
                definitionId="org.eclipse.ui.externaltools.ExternalToolMenuDelegateToolbar"
                label="%Action.externalTools"
-               pulldown="true"
+               style="pulldown"
                icon="icons/full/obj16/external_tools.gif"
                tooltip="%Action.externalToolsTip"
                class="org.eclipse.ui.externaltools.internal.menu.ExternalToolMenuDelegate"
@@ -62,7 +62,7 @@
          </action>
          <action
                definitionId="org.eclipse.ui.externalTools.commands.OpenExternalToolsConfigurations"
-               label="%OpenExternalToolsConfigurations.label"
+               label="%ActionDefinition.openExternalToolsConfigurations.name"
                class="org.eclipse.ui.externaltools.internal.menu.OpenExternalToolsConfigurations"
                id="org.eclipse.ui.externaltools.OpenExternalToolsConfigurations">
          </action>
