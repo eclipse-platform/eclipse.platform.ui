@@ -1,9 +1,15 @@
 package org.eclipse.ui.dialogs;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM - Initial implementation
+************************************************************************/
 import java.util.*;
 
 import org.eclipse.core.resources.*;
@@ -272,9 +278,9 @@ public abstract class WizardExportResourcesPage
 				parent,
 				input,
 				getResourceProvider(IResource.FOLDER | IResource.PROJECT),
-				new WorkbenchLabelProvider(),
+				WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider(),
 				getResourceProvider(IResource.FILE),
-				new WorkbenchLabelProvider(),
+				WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider(),
 				SWT.NONE,
 				DialogUtil.inRegularFontMode(parent));
 

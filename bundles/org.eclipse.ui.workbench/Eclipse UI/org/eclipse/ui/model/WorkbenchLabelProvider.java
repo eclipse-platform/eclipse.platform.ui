@@ -1,15 +1,22 @@
 package org.eclipse.ui.model;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM - Initial implementation
+************************************************************************/
 import java.util.*;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * Provides basic labels for adaptable objects that have the
@@ -24,6 +31,21 @@ public class WorkbenchLabelProvider extends LabelProvider {
 	 * Maps ImageDescriptor->Image.
 	 */
 	private Map imageTable;
+
+	/**
+	 * Get a WorkbenchLabelProvider that is hooked up to the decorator
+	 * mechanism.
+	 * @return ILabelProvider
+	 */
+	public static ILabelProvider getDecoratingWorkbenchLabelProvider() {
+		return new DecoratingLabelProvider(
+			new WorkbenchLabelProvider(),
+			WorkbenchPlugin
+				.getDefault()
+				.getWorkbench()
+				.getDecoratorManager()
+				.getLabelDecorator());
+	}
 	/**
 	 * Creates a new workbench label provider.
 	 */

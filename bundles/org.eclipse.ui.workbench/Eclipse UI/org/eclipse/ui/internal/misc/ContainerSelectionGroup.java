@@ -1,9 +1,15 @@
 package org.eclipse.ui.internal.misc;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM - Initial implementation
+************************************************************************/
 import java.util.ArrayList;
 import java.util.List;
 
@@ -191,7 +197,7 @@ protected void createTreeViewer(int heightHint) {
 	ContainerContentProvider cp = new ContainerContentProvider();
 	cp.showClosedProjects(showClosedProjects);
 	treeViewer.setContentProvider(cp);
-	treeViewer.setLabelProvider(new WorkbenchLabelProvider());
+	treeViewer.setLabelProvider(WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider());
 	treeViewer.setSorter(new ViewerSorter() {});
 	treeViewer.addSelectionChangedListener(
 		new ISelectionChangedListener() {
