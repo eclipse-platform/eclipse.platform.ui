@@ -4,6 +4,8 @@
 	<comment></comment>
 	<projects>
 		<project>org.eclipse.compare</project>
+		<project>org.eclipse.core.runtime.compatibility</project>
+		<project>org.eclipse.jface</project>
 		<project>org.eclipse.jface.text</project>
 		<project>org.junit</project>
 	</projects>

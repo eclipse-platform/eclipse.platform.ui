@@ -1,22 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-
 <plugin
    id="org.eclipse.compare.tests"
    name="%pluginName"
-   provider-name="%providerName"
-   version="3.0.0">
+   version="3.0.0"
+   provider-name="%providerName">
 
-	<requires>
-		<import plugin="org.junit"/>
-		<import plugin="org.eclipse.compare"/>
-	</requires>
+   <runtime>
+      <library name="comparetests.jar">
+         <export name="*"/>
+         <packages prefixes="org.eclipse.compare.tests"/>
+      </library>
+   </runtime>
+   <requires>
+      <import plugin="org.junit"/>
+      <import plugin="org.eclipse.compare"/>
+      <import plugin="org.eclipse.core.runtime.compatibility"/>
+      <import plugin="org.eclipse.jface.text"/>
+      <import plugin="org.eclipse.jface"/>
+   </requires>
 
-	<runtime>
-		<library name="comparetests.jar">
-			<export name="*"/>
-			<packages prefixes="org.eclipse.compare.tests"/>
-		</library>
-	</runtime>
-  
+
 </plugin>
