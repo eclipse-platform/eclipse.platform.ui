@@ -381,7 +381,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * 
 	 * @param monitor the monitor to be used for reporting progress and
 	 * responding to cancelation. The monitor is never <code>null</code>
-	 * @return resulting status of the run
+	 * @return resulting status of the run. The result must not be <code>null</code>
 	 * @see #ASYNC_FINISH
 	 * @see #done(IStatus)
 	 */

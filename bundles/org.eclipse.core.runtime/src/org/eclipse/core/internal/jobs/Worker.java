@@ -73,6 +73,9 @@ public class Worker extends Thread {
 				} finally {
 					//clear interrupted state for this thread
 					Thread.interrupted();
+					//result must not be null
+					if (result == null)
+						result = handleException(currentJob(), new NullPointerException());
 					pool.endJob(currentJob, result);
 					if ((result.getSeverity() & (IStatus.ERROR | IStatus.WARNING)) != 0)
 						log(result);
