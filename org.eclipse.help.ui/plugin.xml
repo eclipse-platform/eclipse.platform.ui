@@ -75,7 +75,7 @@
 	<extension point="org.eclipse.ui.actionSets">
 		<actionSet
 			id="org.eclipse.help.internal.ui.HelpActionInfocenter"
-			label="Help Information Center"
+			label="%helpinfocenter"
 			visible="false">
 
 			<action id="org.eclipse.help.internal.ui.InfocenterAction"
