@@ -16,13 +16,15 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
+
 import org.eclipse.jface.text.source.ISourceViewer;
+
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.editors.text.TextEditor;
-import org.eclipse.ui.texteditor.DefaultRangeIndicator;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.TextOperationAction;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
+
 
 /**
  * Java specific text editor.
@@ -137,11 +139,9 @@ public class JavaEditor extends TextEditor {
 	 * Method declared on AbstractTextEditor
 	 */
 	protected void initializeEditor() {
-
+		super.initializeEditor();
 		JavaEditorEnvironment.connect(this);
-
 		setSourceViewerConfiguration(new JavaSourceViewerConfiguration());
-		setRangeIndicator(new DefaultRangeIndicator());
 		setEditorContextMenuId("#JavaEditorContext"); //$NON-NLS-1$
 		setRulerContextMenuId("#JavaRulerContext"); //$NON-NLS-1$
 	}
