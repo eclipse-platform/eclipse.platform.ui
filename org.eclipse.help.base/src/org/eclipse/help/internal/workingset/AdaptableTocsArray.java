@@ -10,11 +10,10 @@
  *******************************************************************************/
 package org.eclipse.help.internal.workingset;
 
-
 import java.util.*;
 
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.help.IToc;
+import org.eclipse.core.runtime.*;
+import org.eclipse.help.*;
 
 /**
  * Makes help resources adaptable and persistable
@@ -54,15 +53,15 @@ public class AdaptableTocsArray implements IAdaptable {
 		return children;
 
 	}
-	
+
 	public AdaptableToc getAdaptableToc(String href) {
 		if (map == null) {
 			getChildren(); // make sure children are initialized
 			map = new HashMap(children.length);
-			for (int i=0; i<children.length; i++)
+			for (int i = 0; i < children.length; i++)
 				map.put(children[i].getHref(), children[i]);
 		}
-		return (AdaptableToc)map.get(href);
+		return (AdaptableToc) map.get(href);
 	}
 
 	IToc[] asArray() {
@@ -72,9 +71,10 @@ public class AdaptableTocsArray implements IAdaptable {
 	/**
 	 * Tests the receiver and the object for equality
 	 * 
-	 * @param object object to compare the receiver to
-	 * @return true=the object equals the receiver, the name is the same.
-	 * 	false otherwise
+	 * @param object
+	 *            object to compare the receiver to
+	 * @return true=the object equals the receiver, the name is the same. false
+	 *         otherwise
 	 */
 	public boolean equals(Object object) {
 		if (this == object) {
@@ -90,10 +90,10 @@ public class AdaptableTocsArray implements IAdaptable {
 	}
 
 	/**
-	* Returns the hash code.
-	* 
-	* @return the hash code.
-	*/
+	 * Returns the hash code.
+	 * 
+	 * @return the hash code.
+	 */
 	public int hashCode() {
 		if (element == null)
 			return -1;

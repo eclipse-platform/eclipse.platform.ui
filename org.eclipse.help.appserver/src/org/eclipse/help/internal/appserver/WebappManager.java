@@ -10,14 +10,15 @@
  *******************************************************************************/
 package org.eclipse.help.internal.appserver;
 
-import java.io.IOException;
-import java.net.URL;
+import java.io.*;
+import java.net.*;
 
 import org.eclipse.core.runtime.*;
 import org.osgi.framework.*;
 
 /**
  * Singleton class to be called by clients to run a webapp.
+ * 
  * @since 2.1
  */
 public class WebappManager {
@@ -25,24 +26,29 @@ public class WebappManager {
 
 	/**
 	 * Private constructor, so no instances can be created.
+	 * 
 	 * @see java.lang.Object#Object()
 	 */
 	private WebappManager() {
 	}
 
 	/**
-	 * Runs a webapp on the server. The webapp is defined in a plugin and the path is relative
-	 * to the plugin directory.
-	 * <p> It is assumed that webapp names are unique. It is suggested to create
-	 * unique web app names by prefixing them with the plugin id.</p>
+	 * Runs a webapp on the server. The webapp is defined in a plugin and the
+	 * path is relative to the plugin directory.
+	 * <p>
+	 * It is assumed that webapp names are unique. It is suggested to create
+	 * unique web app names by prefixing them with the plugin id.
+	 * </p>
 	 * 
-	 * @param webappName the name of the web app (also knowns as application context)
-	 * @param pluginId plugin that defines the webapp
-	 * @param path webapp relative path to the plugin directory
-	 * @ return  true if the webapp was successfully started, false otherwise
+	 * @param webappName
+	 *            the name of the web app (also knowns as application context)
+	 * @param pluginId
+	 *            plugin that defines the webapp
+	 * @param path
+	 *            webapp relative path to the plugin directory
 	 */
 	public static void start(String webappName, String pluginId, IPath path)
-		throws CoreException {
+			throws CoreException {
 
 		IPath webappPath = getWebappPath(pluginId, path);
 
@@ -50,10 +56,8 @@ public class WebappManager {
 		// class loader exposed by the server is available to the webapps.
 		IWebappServer server = AppserverPlugin.getDefault().getAppServer();
 		applicationsStarted = true;
-		server.start(
-			webappName,
-			webappPath,
-			new PluginClassLoaderWrapper(pluginId));
+		server.start(webappName, webappPath, new PluginClassLoaderWrapper(
+				pluginId));
 	}
 
 	/**
@@ -69,8 +73,8 @@ public class WebappManager {
 
 	/**
 	 * Returns the port number the app server listens on.
-	 * @return integer port number,
-	 *  0 if server not started
+	 * 
+	 * @return integer port number, 0 if server not started
 	 */
 	public static int getPort() {
 		try {
@@ -82,8 +86,9 @@ public class WebappManager {
 
 	/**
 	 * Returns the host name or ip the app server runs on.
-	 * @return String representaion of host name of IP,
-	 *  null if server not started yet
+	 * 
+	 * @return String representaion of host name of IP, null if server not
+	 *         started yet
 	 */
 	public static String getHost() {
 		try {
@@ -95,53 +100,40 @@ public class WebappManager {
 
 	/**
 	 * @param pluginId
-	 * @param path webapp path relative to the plugin directory
+	 * @param path
+	 *            webapp path relative to the plugin directory
 	 * @return String absolute webapp path
 	 */
 	private static IPath getWebappPath(String pluginId, IPath path)
-		throws CoreException {
+			throws CoreException {
 
 		Bundle bundle = Platform.getBundle(pluginId);
 		if (bundle == null) {
-			throw new CoreException(
-				new Status(
-					IStatus.ERROR,
-					AppserverPlugin.PLUGIN_ID,
-					IStatus.OK,
-					AppserverResources.getString(
-						"Appserver.cannotFindPlugin", //$NON-NLS-1$
-						pluginId),
-					null));
+			throw new CoreException(new Status(IStatus.ERROR,
+					AppserverPlugin.PLUGIN_ID, IStatus.OK, AppserverResources
+							.getString("Appserver.cannotFindPlugin", //$NON-NLS-1$
+									pluginId), null));
 		}
 
 		// Note: we just look for one webapp directory.
 		//       If needed, may want to use the locale specific path.
 		URL webappURL = Platform.find(bundle, path);
 		if (webappURL == null) {
-			throw new CoreException(
-				new Status(
-					IStatus.ERROR,
-					AppserverPlugin.PLUGIN_ID,
-					IStatus.OK,
-					AppserverResources.getString(
-						"Appserver.cannotFindPath", //$NON-NLS-1$
-						pluginId, path.toOSString()),
-					null));
+			throw new CoreException(new Status(IStatus.ERROR,
+					AppserverPlugin.PLUGIN_ID, IStatus.OK, AppserverResources
+							.getString("Appserver.cannotFindPath", //$NON-NLS-1$
+									pluginId, path.toOSString()), null));
 		}
 
 		try {
-			String webappLocation = Platform.asLocalURL(Platform.resolve(webappURL)).getFile();
+			String webappLocation = Platform.asLocalURL(
+					Platform.resolve(webappURL)).getFile();
 			return new Path(webappLocation);
 		} catch (IOException ioe) {
-			throw new CoreException(
-				new Status(
-					IStatus.ERROR,
-					AppserverPlugin.PLUGIN_ID,
-					IStatus.OK,
-					AppserverResources.getString(
-						"Appserver.cannotResolvePath", //$NON-NLS-1$
-						pluginId, path.toOSString()),
-					ioe));
+			throw new CoreException(new Status(IStatus.ERROR,
+					AppserverPlugin.PLUGIN_ID, IStatus.OK, AppserverResources
+							.getString("Appserver.cannotResolvePath", //$NON-NLS-1$
+									pluginId, path.toOSString()), ioe));
 		}
 	}
 

@@ -11,7 +11,9 @@
 package org.eclipse.help.internal.context;
 import java.io.*;
 import java.text.*;
+
 import javax.xml.parsers.*;
+
 import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.util.*;
 import org.xml.sax.*;

@@ -1,18 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2000, 2003 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Common Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * Contributors: IBM Corporation - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.help.internal.context;
 import java.io.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.internal.util.ResourceLocator;
+import org.eclipse.help.internal.util.*;
 
 public class ContextsFile {
 	protected String href;
@@ -28,6 +26,7 @@ public class ContextsFile {
 	}
 	/**
 	 * Gets the href
+	 * 
 	 * @return Returns a String
 	 */
 	protected String getHref() {
@@ -37,7 +36,8 @@ public class ContextsFile {
 		InputStream stream = null;
 		try {
 			if (definingPluginID != null)
-				stream = ResourceLocator.openFromPlugin(definingPluginID, href, Platform.getNL());
+				stream = ResourceLocator.openFromPlugin(definingPluginID, href,
+						Platform.getNL());
 			else
 				stream = new FileInputStream(href);
 		} catch (IOException e) {
@@ -45,14 +45,16 @@ public class ContextsFile {
 		return stream;
 	}
 	/**
-	* Gets the definingPluginID.
-	* @return Returns a String
-	*/
+	 * Gets the definingPluginID.
+	 * 
+	 * @return Returns a String
+	 */
 	public String getDefiningPluginID() {
 		return definingPluginID;
 	}
 	/**
 	 * Gets the plugin ID.
+	 * 
 	 * @return Returns a String
 	 */
 	public String getPluginID() {

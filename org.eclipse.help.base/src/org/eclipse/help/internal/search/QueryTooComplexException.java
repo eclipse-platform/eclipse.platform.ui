@@ -11,8 +11,8 @@
 package org.eclipse.help.internal.search;
 
 /**
- * Thrown to save resources, and not perform search
- * if search query seems too complicated.
+ * Thrown to save resources, and not perform search if search query seems too
+ * complicated.
  */
 public class QueryTooComplexException extends RuntimeException {
 }

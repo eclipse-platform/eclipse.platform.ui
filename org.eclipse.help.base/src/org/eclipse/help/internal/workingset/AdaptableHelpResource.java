@@ -10,15 +10,17 @@
  *******************************************************************************/
 package org.eclipse.help.internal.workingset;
 
-
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.*;
-import org.w3c.dom.Element;
+import org.w3c.dom.*;
 
 /**
  * Makes help resources adaptable and persistable
  */
-public abstract class AdaptableHelpResource implements IAdaptable, IHelpResource {
+public abstract class AdaptableHelpResource
+		implements
+			IAdaptable,
+			IHelpResource {
 	protected IHelpResource element;
 	protected IAdaptable parent;
 
@@ -40,7 +42,7 @@ public abstract class AdaptableHelpResource implements IAdaptable, IHelpResource
 	}
 
 	public abstract void saveState(Element element);
-	
+
 	public abstract AdaptableHelpResource[] getChildren();
 
 	public IAdaptable getParent() {
@@ -54,15 +56,16 @@ public abstract class AdaptableHelpResource implements IAdaptable, IHelpResource
 	/**
 	 * Tests the receiver and the object for equality
 	 * 
-	 * @param object object to compare the receiver to
-	 * @return true=the object equals the receiver, the name is the same.
-	 * 	false otherwise
+	 * @param object
+	 *            object to compare the receiver to
+	 * @return true=the object equals the receiver, the name is the same. false
+	 *         otherwise
 	 */
 	public boolean equals(Object object) {
 		if (this == object)
 			return true;
 		else if (object instanceof AdaptableHelpResource)
-			return (element == ((AdaptableHelpResource)object).element);
+			return (element == ((AdaptableHelpResource) object).element);
 		else if (object instanceof IHelpResource)
 			return element == object;
 		else
@@ -70,10 +73,10 @@ public abstract class AdaptableHelpResource implements IAdaptable, IHelpResource
 	}
 
 	/**
-	* Returns the hash code.
-	* 
-	* @return the hash code.
-	*/
+	 * Returns the hash code.
+	 * 
+	 * @return the hash code.
+	 */
 	public int hashCode() {
 		if (element == null)
 			return -1;

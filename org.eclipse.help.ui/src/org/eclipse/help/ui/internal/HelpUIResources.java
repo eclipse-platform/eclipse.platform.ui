@@ -15,9 +15,8 @@ import java.util.*;
 
 import org.eclipse.core.runtime.*;
 /**
- * Uses a resource bundle to load images and strings from
- * a property file.
- * This class needs to properly use the desired locale.
+ * Uses a resource bundle to load images and strings from a property file. This
+ * class needs to properly use the desired locale.
  */
 public class HelpUIResources {
 	private static ResourceBundle resBundle;
@@ -54,8 +53,8 @@ public class HelpUIResources {
 	public static String getString(String name, String replace0) {
 		try {
 			String stringFromPropertiesFile = resBundle.getString(name);
-			stringFromPropertiesFile =
-				MessageFormat.format(stringFromPropertiesFile, new Object[] { replace0 });
+			stringFromPropertiesFile = MessageFormat.format(
+					stringFromPropertiesFile, new Object[]{replace0});
 			return stringFromPropertiesFile;
 		} catch (Exception e) {
 			return name;
@@ -68,10 +67,8 @@ public class HelpUIResources {
 	public static String getString(String name, String replace0, String replace1) {
 		try {
 			String stringFromPropertiesFile = resBundle.getString(name);
-			stringFromPropertiesFile =
-				MessageFormat.format(
-					stringFromPropertiesFile,
-					new Object[] { replace0, replace1 });
+			stringFromPropertiesFile = MessageFormat.format(
+					stringFromPropertiesFile, new Object[]{replace0, replace1});
 			return stringFromPropertiesFile;
 		} catch (Exception e) {
 			return name;
@@ -81,17 +78,13 @@ public class HelpUIResources {
 	/**
 	 * Returns a string from a property file
 	 */
-	public static String getString(
-		String name,
-		String replace0,
-		String replace1,
-		String replace2) {
+	public static String getString(String name, String replace0,
+			String replace1, String replace2) {
 		try {
 			String stringFromPropertiesFile = resBundle.getString(name);
-			stringFromPropertiesFile =
-				MessageFormat.format(
-					stringFromPropertiesFile,
-					new Object[] { replace0, replace1, replace2 });
+			stringFromPropertiesFile = MessageFormat.format(
+					stringFromPropertiesFile, new Object[]{replace0, replace1,
+							replace2});
 			return stringFromPropertiesFile;
 		} catch (Exception e) {
 			return name;
@@ -101,18 +94,13 @@ public class HelpUIResources {
 	/**
 	 * Returns a string from a property file
 	 */
-	public static String getString(
-		String name,
-		String replace0,
-		String replace1,
-		String replace2,
-		String replace3) {
+	public static String getString(String name, String replace0,
+			String replace1, String replace2, String replace3) {
 		try {
 			String stringFromPropertiesFile = resBundle.getString(name);
-			stringFromPropertiesFile =
-				MessageFormat.format(
-					stringFromPropertiesFile,
-					new Object[] { replace0, replace1, replace2, replace3 });
+			stringFromPropertiesFile = MessageFormat.format(
+					stringFromPropertiesFile, new Object[]{replace0, replace1,
+							replace2, replace3});
 			return stringFromPropertiesFile;
 		} catch (Exception e) {
 			return name;
@@ -122,19 +110,13 @@ public class HelpUIResources {
 	/**
 	 * Returns a string from a property file
 	 */
-	public static String getString(
-		String name,
-		String replace0,
-		String replace1,
-		String replace2,
-		String replace3,
-		String replace4) {
+	public static String getString(String name, String replace0,
+			String replace1, String replace2, String replace3, String replace4) {
 		try {
 			String stringFromPropertiesFile = resBundle.getString(name);
-			stringFromPropertiesFile =
-				MessageFormat.format(
-					stringFromPropertiesFile,
-					new Object[] { replace0, replace1, replace2, replace3, replace4 });
+			stringFromPropertiesFile = MessageFormat.format(
+					stringFromPropertiesFile, new Object[]{replace0, replace1,
+							replace2, replace3, replace4});
 			return stringFromPropertiesFile;
 		} catch (Exception e) {
 			return name;
@@ -144,20 +126,14 @@ public class HelpUIResources {
 	/**
 	 * Returns a string from a property file
 	 */
-	public static String getString(
-		String name,
-		String replace0,
-		String replace1,
-		String replace2,
-		String replace3,
-		String replace4,
-		String replace5) {
+	public static String getString(String name, String replace0,
+			String replace1, String replace2, String replace3, String replace4,
+			String replace5) {
 		try {
 			String stringFromPropertiesFile = resBundle.getString(name);
-			stringFromPropertiesFile =
-				MessageFormat.format(
-					stringFromPropertiesFile,
-					new Object[] { replace0, replace1, replace2, replace3, replace4, replace5 });
+			stringFromPropertiesFile = MessageFormat.format(
+					stringFromPropertiesFile, new Object[]{replace0, replace1,
+							replace2, replace3, replace4, replace5});
 			return stringFromPropertiesFile;
 		} catch (Exception e) {
 			return name;

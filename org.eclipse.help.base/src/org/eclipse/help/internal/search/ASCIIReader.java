@@ -13,15 +13,17 @@ package org.eclipse.help.internal.search;
 import java.io.*;
 
 /**
- * High performance reader.  Assumes the input stream is ASCII.
+ * High performance reader. Assumes the input stream is ASCII.
  */
 public class ASCIIReader extends Reader {
 	private InputStream stream;
 	int bufSize;
 	byte[] buf;
 	/**
-	 * @param stream InputStream
-	 * @param bufSize size of internal buffer
+	 * @param stream
+	 *            InputStream
+	 * @param bufSize
+	 *            size of internal buffer
 	 */
 	public ASCIIReader(InputStream stream, int bufSize) {
 		this.stream = stream;
@@ -30,7 +32,7 @@ public class ASCIIReader extends Reader {
 	}
 
 	/**
-	 * @see java.io.Reader#read(char, int, int)
+	 * @see java.io.Reader#read(char[], int, int)
 	 */
 	public int read(char[] cbuf, int off, int len) throws IOException {
 		int n = stream.read(buf, 0, Math.min(bufSize, len));

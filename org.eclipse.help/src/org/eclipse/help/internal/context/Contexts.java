@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.internal.context;
-import org.xml.sax.Attributes;
+import org.xml.sax.*;
 /**
  * Context
  */

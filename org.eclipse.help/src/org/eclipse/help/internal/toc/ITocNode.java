@@ -14,19 +14,20 @@ import org.eclipse.help.internal.model.*;
 /**
  * ITocNode interface.
  */
-interface ITocNode extends INavigationElement{
-	
+interface ITocNode extends INavigationElement {
+
 	/**
-	 * Adds another element as child of this element
-	 * Modifies parents of a child as well
-	 * @param child node to add as child
+	 * Adds another element as child of this element Modifies parents of a child
+	 * as well
+	 * 
+	 * @param child
+	 *            node to add as child
 	 */
 	void addChild(ITocNode child);
-	
+
 	/**
-	 * When a builder builds the navigation, each node
-	 * must "accomodate" the builder by responding to the build() 
-	 * command.
+	 * When a builder builds the navigation, each node must "accomodate" the
+	 * builder by responding to the build() command.
 	 */
 	void build(TocBuilder builder);
 }

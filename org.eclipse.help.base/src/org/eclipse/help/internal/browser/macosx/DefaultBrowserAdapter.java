@@ -1,18 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2000, 2003 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Common Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * Contributors: IBM Corporation - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.help.internal.browser.macosx;
 
-import java.io.IOException;
+import java.io.*;
 
-import org.eclipse.help.browser.IBrowser;
+import org.eclipse.help.browser.*;
 import org.eclipse.help.internal.base.*;
 
 public class DefaultBrowserAdapter implements IBrowser {
@@ -26,61 +24,58 @@ public class DefaultBrowserAdapter implements IBrowser {
 	}
 
 	/**
-	 * @see org.eclipse.help.ui.browser.IBrowser#close()
+	 * @see org.eclipse.help.browser.IBrowser#close()
 	 */
 	public void close() {
 	}
 
 	/**
-	 * @see org.eclipse.help.ui.browser.IBrowser#displayURL(String)
+	 * @see org.eclipse.help.browser.IBrowser#displayURL(String)
 	 */
 	public void displayURL(String url) {
 		/*
 		 * Code from Marc-Antoine Parent
 		 */
 		try {
-			Runtime.getRuntime().exec(
-				new String[] {
-					"/usr/bin/osascript", //$NON-NLS-1$
+			Runtime.getRuntime().exec(new String[]{"/usr/bin/osascript", //$NON-NLS-1$
 					"-e", //$NON-NLS-1$
-					"open location \"" + url + "\"" }); //$NON-NLS-1$ //$NON-NLS-2$
+					"open location \"" + url + "\""}); //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (IOException ioe) {
-			HelpBasePlugin.logError(
-				HelpBaseResources.getString(
-					"DefaultBrowserAdapter.executeFailed"), //$NON-NLS-1$
-				ioe);
+			HelpBasePlugin.logError(HelpBaseResources
+					.getString("DefaultBrowserAdapter.executeFailed"), //$NON-NLS-1$
+					ioe);
 		}
 	}
 
 	/**
-	 * @see org.eclipse.help.ui.browser.IBrowser#isCloseSupported()
+	 * @see org.eclipse.help.browser.IBrowser#isCloseSupported()
 	 */
 	public boolean isCloseSupported() {
 		return false;
 	}
 
 	/**
-	 * @see org.eclipse.help.ui.browser.IBrowser#isSetLocationSupported()
+	 * @see org.eclipse.help.browser.IBrowser#isSetLocationSupported()
 	 */
 	public boolean isSetLocationSupported() {
 		return false;
 	}
 
 	/**
-	 * @see org.eclipse.help.ui.browser.IBrowser#isSetSizeSupported()
+	 * @see org.eclipse.help.browser.IBrowser#isSetSizeSupported()
 	 */
 	public boolean isSetSizeSupported() {
 		return false;
 	}
 
 	/**
-	 * @see org.eclipse.help.ui.browser.IBrowser#setLocation(int, int)
+	 * @see org.eclipse.help.browser.IBrowser#setLocation(int, int)
 	 */
 	public void setLocation(int x, int y) {
 	}
 
 	/**
-	 * @see org.eclipse.help.ui.browser.IBrowser#setSize(int, int)
+	 * @see org.eclipse.help.browser.IBrowser#setSize(int, int)
 	 */
 	public void setSize(int width, int height) {
 	}

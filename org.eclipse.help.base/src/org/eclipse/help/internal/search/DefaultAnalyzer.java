@@ -17,8 +17,8 @@ import org.apache.lucene.analysis.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.base.*;
 /**
- * Lucene Analyzer.
- * LowerCaseTokenizer->WordTokenStream (uses word breaking in java.text)
+ * Lucene Analyzer. LowerCaseTokenizer->WordTokenStream (uses word breaking in
+ * java.text)
  */
 public class DefaultAnalyzer extends Analyzer {
 	/**
@@ -41,8 +41,8 @@ public class DefaultAnalyzer extends Analyzer {
 		}
 		if (locale == null && userLocale.getDisplayVariant().length() > 0) {
 			// Check if the locale without variant is supported by BreakIterator
-			Locale countryLocale =
-				new Locale(userLocale.getLanguage(), userLocale.getCountry());
+			Locale countryLocale = new Locale(userLocale.getLanguage(),
+					userLocale.getCountry());
 			for (int i = 0; i < availableLocales.length; i++) {
 				if (countryLocale.equals(availableLocales[i])) {
 					locale = countryLocale;
@@ -63,19 +63,19 @@ public class DefaultAnalyzer extends Analyzer {
 
 		if (locale == null) {
 			// Locale is not supported, will use en_US
-			HelpBasePlugin.logError(
-				HelpBaseResources.getString("ES24", localeString), //$NON-NLS-1$
-				null);
+			HelpBasePlugin.logError(HelpBaseResources.getString(
+					"ES24", localeString), //$NON-NLS-1$
+					null);
 			locale = new Locale("en", "US"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	/**
-	 * Creates a TokenStream which tokenizes all the text
-	 * in the provided Reader.
+	 * Creates a TokenStream which tokenizes all the text in the provided
+	 * Reader.
 	 */
 	public final TokenStream tokenStream(String fieldName, Reader reader) {
-		return new LowerCaseFilter(
-			new WordTokenStream(fieldName, reader, locale));
+		return new LowerCaseFilter(new WordTokenStream(fieldName, reader,
+				locale));
 	}
 
 	/**
@@ -94,10 +94,8 @@ public class DefaultAnalyzer extends Analyzer {
 		else if (locales.countTokens() == 2)
 			return new Locale(locales.nextToken(), locales.nextToken());
 		else if (locales.countTokens() == 3)
-			return new Locale(
-				locales.nextToken(),
-				locales.nextToken(),
-				locales.nextToken());
+			return new Locale(locales.nextToken(), locales.nextToken(), locales
+					.nextToken());
 		else
 			return Locale.getDefault();
 	}

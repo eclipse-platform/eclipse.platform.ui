@@ -13,14 +13,12 @@ import java.util.*;
 
 import org.eclipse.help.internal.base.*;
 /**
- * This class provides static methods for some of the
- * very used IString operations
+ * This class provides static methods for some of the very used IString
+ * operations
  */
 public class TString {
-	private static final String ALPHABET =
-		"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"; //$NON-NLS-1$
-	private static final String ALPHANUMERIC =
-		"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"; //$NON-NLS-1$
+	private static final String ALPHABET = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"; //$NON-NLS-1$
+	private static final String ALPHANUMERIC = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"; //$NON-NLS-1$
 	private static final String NUMERIC = "0123456789"; //$NON-NLS-1$
 	// change all occurrences of oldPat to newPat
 	public static String change(String in, String oldPat, String newPat) {
@@ -48,12 +46,8 @@ public class TString {
 	// change the occurrences of oldPat to newPat starting at startPosition
 	// for number of numChanges
 	// Note: the 1st char in the string has position of 0
-	public static String change(
-		String in,
-		String oldPat,
-		String newPat,
-		int startPos,
-		int numChanges) {
+	public static String change(String in, String oldPat, String newPat,
+			int startPos, int numChanges) {
 		if (oldPat.length() == 0)
 			return in;
 		if (oldPat.length() == 1 && newPat.length() == 1)
@@ -82,9 +76,9 @@ public class TString {
 		}
 		return newString.toString();
 	}
-	// return true if the "  " appears within srcString
+	// return true if the " " appears within srcString
 	// example:
-	//   srcString = "a  m"
+	//   srcString = "a m"
 	//   return = true
 	public static boolean containsDoubleBlanks(String srcString) {
 		String bb = "  "; //$NON-NLS-1$
@@ -122,7 +116,7 @@ public class TString {
 	// example:
 	//   srcString = "abcdefg"
 	//   validString = "bcfg"
-	//   return = 0 (i.e. char a is not in "bcfg")  - 1st index = 0
+	//   return = 0 (i.e. char a is not in "bcfg") - 1st index = 0
 	public static int indexOfAnyBut(String srcString, String validString) {
 		int result = -1;
 		int srcLen = srcString.length();
@@ -155,7 +149,7 @@ public class TString {
 	// example:
 	//   srcString = "abcdefg"
 	//   validString = "bcfg"
-	//   return = 4 (i.e. char e is not in "bcfg")  - 1st index = 0
+	//   return = 4 (i.e. char e is not in "bcfg") - 1st index = 0
 	public static int lastIndexOfAnyBut(String srcString, String validString) {
 		int result = -1;
 		int srcLen = srcString.length();
@@ -178,7 +172,8 @@ public class TString {
 		if (in.startsWith(token))
 			return in.substring(token.length(), in.length());
 		else
-			throw new Exception(HelpBaseResources.getString("E019", token, word(in, 1))); //$NON-NLS-1$
+			throw new Exception(HelpBaseResources.getString(
+					"E019", token, word(in, 1))); //$NON-NLS-1$
 		//Expected: %1 but got: %2
 	}
 	public static int numWords(String in) {
@@ -211,7 +206,8 @@ public class TString {
 		String result;
 		if (srcString.startsWith(pString)) // leading patString found
 			result = srcString.substring(pString.length(), srcString.length());
-		else // not found
+		else
+			// not found
 			result = srcString;
 		return result;
 	}
@@ -241,12 +237,13 @@ public class TString {
 		String result;
 		if (srcString.endsWith(pString)) // leading patString found
 			result = srcString.substring(0, srcString.lastIndexOf(pString));
-		else // not found
+		else
+			// not found
 			result = srcString;
 		return result;
 	}
 	/**
-	 *  strip the trailing blanks in the src
+	 * strip the trailing blanks in the src
 	 */
 	public static String stripTrailingBlanks(String src) {
 		if (src != null) {
@@ -319,8 +316,8 @@ public class TString {
 		return encodedChars.toString();
 	}
 	/**
-	 * Returns the unicode encoding of word as u1,u2,u3...
-	 * where u_i is the unicode code (decimal) of the i'th char of word.
+	 * Returns the unicode encoding of word as u1,u2,u3... where u_i is the
+	 * unicode code (decimal) of the i'th char of word.
 	 */
 	public static String getUnicodeNumbers(String word) {
 		int len = word.length();

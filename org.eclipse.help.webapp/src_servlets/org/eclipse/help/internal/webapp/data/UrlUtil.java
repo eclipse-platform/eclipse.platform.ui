@@ -1,13 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2000, 2003 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Common Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * Contributors: IBM Corporation - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.help.internal.webapp.data;
 import java.io.*;
 import java.net.*;
@@ -22,12 +20,13 @@ import org.eclipse.help.internal.base.util.*;
 
 public class UrlUtil {
 	// XML escaped characters mapping
-	private static final String invalidXML[] = { "&", ">", "<", "\"" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-	private static final String escapedXML[] =
-		{ "&amp;", "&gt;", "&lt;", "&quot;" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-	
+	private static final String invalidXML[] = {"&", ">", "<", "\""}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+	private static final String escapedXML[] = {
+			"&amp;", "&gt;", "&lt;", "&quot;"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+
 	// for Safari build 125.1 finds version 125
-	static final Pattern safariPatern = Pattern.compile("Safari/(\\d+)(?:\\.|\\s|$)", Pattern.CASE_INSENSITIVE); //$NON-NLS-1$
+	static final Pattern safariPatern = Pattern.compile(
+			"Safari/(\\d+)(?:\\.|\\s|$)", Pattern.CASE_INSENSITIVE); //$NON-NLS-1$
 
 	// Default locale to use for serving requests to help
 	private static String defaultLocale;
@@ -48,7 +47,7 @@ public class UrlUtil {
 			int unicode = wordChars[j];
 			// to enhance readability, do not encode A-Z,a-z
 			if (('A' <= unicode && unicode <= 'Z')
-				|| ('a' <= unicode && unicode <= 'z')) {
+					|| ('a' <= unicode && unicode <= 'z')) {
 				jsEncoded.append(wordChars[j]);
 				continue;
 			}
@@ -102,8 +101,9 @@ public class UrlUtil {
 	}
 
 	/**
-	 * Returns a URL that can be loaded from a browser.
-	 * This method is used for all url's except those from the webapp plugin.
+	 * Returns a URL that can be loaded from a browser. This method is used for
+	 * all url's except those from the webapp plugin.
+	 * 
 	 * @param url
 	 * @return String
 	 */
@@ -127,25 +127,27 @@ public class UrlUtil {
 
 	public static boolean isIE(HttpServletRequest request) {
 		String agent = request.getHeader("User-Agent").toLowerCase(); //$NON-NLS-1$
-		
-		// When accessing with Bobby identified Bobby return 5.5 to allow testing advanced UI as bobby cannot identifiy as IE >=5.5
-		if(agent.startsWith("bobby/")){ //$NON-NLS-1$
+
+		// When accessing with Bobby identified Bobby return 5.5 to allow
+		// testing advanced UI as bobby cannot identifiy as IE >=5.5
+		if (agent.startsWith("bobby/")) { //$NON-NLS-1$
 			return true;
 		}
 		//
-		
+
 		return (agent.indexOf("msie") >= 0); //$NON-NLS-1$
 	}
 
 	public static String getIEVersion(HttpServletRequest request) {
 		String agent = request.getHeader("User-Agent").toLowerCase(); //$NON-NLS-1$
-		
-		// When accessing with Bobby identified Bobby return 5.5 to allow testing advanced UI as bobby cannot identifiy as IE >=5.5
-		if(agent.startsWith("bobby/")){ //$NON-NLS-1$
+
+		// When accessing with Bobby identified Bobby return 5.5 to allow
+		// testing advanced UI as bobby cannot identifiy as IE >=5.5
+		if (agent.startsWith("bobby/")) { //$NON-NLS-1$
 			return "5.5"; //$NON-NLS-1$
 		}
 		//
-		
+
 		int start = agent.indexOf("msie ") + "msie ".length(); //$NON-NLS-1$ //$NON-NLS-2$
 		if (start < "msie ".length() || start >= agent.length()) //$NON-NLS-1$
 			return "0"; //$NON-NLS-1$
@@ -182,12 +184,12 @@ public class UrlUtil {
 		String agent = request.getHeader("User-Agent").toLowerCase(); //$NON-NLS-1$
 		return agent.indexOf("opera") >= 0; //$NON-NLS-1$
 	}
-	
+
 	public static boolean isSafari(HttpServletRequest request) {
 		String agent = request.getHeader("User-Agent").toLowerCase(); //$NON-NLS-1$
 		return agent.indexOf("safari/") >= 0; //$NON-NLS-1$
 	}
-	
+
 	public static String getSafariVersion(HttpServletRequest request) {
 		String agent = request.getHeader("User-Agent").toLowerCase(); //$NON-NLS-1$
 		Matcher m = safariPatern.matcher(agent);
@@ -200,17 +202,17 @@ public class UrlUtil {
 	/**
 	 * 
 	 * @param request
-	 * @param response HttpServletResponse or null (locale will not be persisted in session cookie)
+	 * @param response
+	 *            HttpServletResponse or null (locale will not be persisted in
+	 *            session cookie)
 	 * @return
 	 */
-	public static Locale getLocaleObj(
-		HttpServletRequest request,
-		HttpServletResponse response) {
+	public static Locale getLocaleObj(HttpServletRequest request,
+			HttpServletResponse response) {
 		String localeStr = getLocale(request, response);
 		if (localeStr.length() >= 5) {
-			return new Locale(
-				localeStr.substring(0, 2),
-				localeStr.substring(3, 5));
+			return new Locale(localeStr.substring(0, 2), localeStr.substring(3,
+					5));
 		} else if (localeStr.length() >= 2) {
 			return new Locale(localeStr.substring(0, 2), ""); //$NON-NLS-1$
 		} else {
@@ -220,17 +222,18 @@ public class UrlUtil {
 	/**
 	 * 
 	 * @param request
-	 * @param response HttpServletResponse or null (locale will not be persisted in session cookie)
+	 * @param response
+	 *            HttpServletResponse or null (locale will not be persisted in
+	 *            session cookie)
 	 * @return
 	 */
-	public static String getLocale(
-		HttpServletRequest request,
-		HttpServletResponse response) {
+	public static String getLocale(HttpServletRequest request,
+			HttpServletResponse response) {
 		if (defaultLocale == null) {
 			initializeNL();
 		}
 		if ((BaseHelpSystem.getMode() != BaseHelpSystem.MODE_INFOCENTER)
-			|| request == null) {
+				|| request == null) {
 			return defaultLocale;
 		}
 
@@ -282,15 +285,17 @@ public class UrlUtil {
 	}
 
 	/**
-	 * Obtains locale passed as lang parameter with a request during user session
+	 * Obtains locale passed as lang parameter with a request during user
+	 * session
+	 * 
 	 * @param request
-	 * @param response response or null;
-	 * if null, locale will not be persisted (in session cookie)
+	 * @param response
+	 *            response or null; if null, locale will not be persisted (in
+	 *            session cookie)
 	 * @return ll_CC or ll or null
 	 */
-	private static String getForcedLocale(
-		HttpServletRequest request,
-		HttpServletResponse response) {
+	private static String getForcedLocale(HttpServletRequest request,
+			HttpServletResponse response) {
 		// get locale passed in this request
 		String forcedLocale = request.getParameter("lang"); //$NON-NLS-1$
 		if (forcedLocale != null) {
@@ -313,9 +318,7 @@ public class UrlUtil {
 		// format forced locale
 		if (forcedLocale != null) {
 			if (forcedLocale.length() >= 5) {
-				forcedLocale =
-					forcedLocale.substring(0, 2)
-						+ "_" //$NON-NLS-1$
+				forcedLocale = forcedLocale.substring(0, 2) + "_" //$NON-NLS-1$
 						+ forcedLocale.substring(3, 5);
 			} else if (forcedLocale.length() >= 2) {
 				forcedLocale = forcedLocale.substring(0, 2);
@@ -324,9 +327,9 @@ public class UrlUtil {
 		return forcedLocale;
 	}
 	/**
-	 * If locales for infocenter specified in prefernces
-	 * or as command line parameters, this methods
-	 * stores these locales in locales local variable for later access.
+	 * If locales for infocenter specified in prefernces or as command line
+	 * parameters, this methods stores these locales in locales local variable
+	 * for later access.
 	 */
 	private static synchronized void initializeNL() {
 		if (defaultLocale != null) {
@@ -337,7 +340,7 @@ public class UrlUtil {
 		initializeRTL();
 	}
 	/**
-	 * 
+	 *  
 	 */
 	private static void initializeLocales() {
 		// initialize default locale
@@ -370,10 +373,8 @@ public class UrlUtil {
 		}
 		// if no locales from command line, get them from preferences
 		if (infocenterLocales == null) {
-			StringTokenizer tokenizer =
-				new StringTokenizer(
-					HelpBasePlugin.getDefault().getPluginPreferences().getString(
-						"locales"), //$NON-NLS-1$
+			StringTokenizer tokenizer = new StringTokenizer(HelpBasePlugin
+					.getDefault().getPluginPreferences().getString("locales"), //$NON-NLS-1$
 					" ,\t"); //$NON-NLS-1$
 			while (tokenizer.hasMoreTokens()) {
 				if (infocenterLocales == null) {
@@ -389,9 +390,7 @@ public class UrlUtil {
 			for (Iterator it = infocenterLocales.iterator(); it.hasNext();) {
 				String locale = (String) it.next();
 				if (locale.length() >= 5) {
-					locales.add(
-						locale.substring(0, 2).toLowerCase()
-							+ "_" //$NON-NLS-1$
+					locales.add(locale.substring(0, 2).toLowerCase() + "_" //$NON-NLS-1$
 							+ locale.substring(3, 5).toUpperCase());
 
 				} else if (locale.length() >= 2) {
@@ -416,7 +415,8 @@ public class UrlUtil {
 		if (defaultLocale == null) {
 			initializeNL();
 		}
-		// TODO the RTL variable is set from command line, all clients get the same
+		// TODO the RTL variable is set from command line, all clients get the
+		// same
 		return rtl;
 	}
 }

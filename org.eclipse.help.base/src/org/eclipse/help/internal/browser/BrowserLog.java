@@ -12,9 +12,9 @@ package org.eclipse.help.internal.browser;
 
 import java.io.*;
 import java.text.*;
-import java.util.Date;
+import java.util.*;
 
-import org.eclipse.help.internal.base.HelpBasePlugin;
+import org.eclipse.help.internal.base.*;
 
 /**
  * Log for messages output by external browser processes.
@@ -24,17 +24,14 @@ public class BrowserLog {
 	private String logFileName;
 	private boolean newSession;
 	DateFormat formatter = new SimpleDateFormat("MMM dd, yyyy kk:mm:ss.SS"); //$NON-NLS-1$
-	String LN=System.getProperty("line.separator"); //$NON-NLS-1$
+	String LN = System.getProperty("line.separator"); //$NON-NLS-1$
 	/**
 	 * Constructor
 	 */
 	private BrowserLog() {
 		try {
 			newSession = true;
-			logFileName =
-				HelpBasePlugin
-					.getDefault()
-					.getStateLocation()
+			logFileName = HelpBasePlugin.getDefault().getStateLocation()
 					.append("browser.log") //$NON-NLS-1$
 					.toOSString();
 		} catch (Exception e) {
@@ -62,18 +59,14 @@ public class BrowserLog {
 		}
 		Writer outWriter = null;
 		try {
-			outWriter =
-				new BufferedWriter(
-					new OutputStreamWriter(
-						new FileOutputStream(logFileName, true),
-						"UTF-8")); //$NON-NLS-1$
+			outWriter = new BufferedWriter(new OutputStreamWriter(
+					new FileOutputStream(logFileName, true), "UTF-8")); //$NON-NLS-1$
 			if (newSession) {
 				newSession = false;
-				outWriter.write(
-					LN + formatter.format(new Date()) + " NEW SESSION"+LN); //$NON-NLS-1$
+				outWriter.write(LN + formatter.format(new Date())
+						+ " NEW SESSION" + LN); //$NON-NLS-1$
 			}
-			outWriter.write(
-				formatter.format(new Date()) + " " + message + LN); //$NON-NLS-1$
+			outWriter.write(formatter.format(new Date()) + " " + message + LN); //$NON-NLS-1$
 			outWriter.flush();
 			outWriter.close();
 		} catch (Exception e) {

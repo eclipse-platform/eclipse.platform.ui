@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.help.internal.standalone;
 
-import java.io.File;
+import java.io.*;
 import java.util.*;
 
 /**
@@ -27,7 +27,8 @@ public class Options {
 	private static File workspace;
 	// Eclipse .lock file
 	private static File lockFile;
-	// .hostport file to obtain help server host and port from Eclipse help application
+	// .hostport file to obtain help server host and port from Eclipse help
+	// application
 	private static File hostPortFile;
 	// vm to use
 	private static String vm;
@@ -46,13 +47,15 @@ public class Options {
 	private static int serverTimeout;
 	/**
 	 * Initializes options.
-	 * @param appId eclipse application id
-	 * @param args array of String options and their values
-	 * 	Option <code>-eclipseHome dir</code> specifies Eclipse
-	 *  installation directory.
-	 *  It must be provided, when current directory is not the same
-	 *  as Eclipse installation directory.
-	 *  Additionally, most options accepted by Eclipse execuable are supported.
+	 * 
+	 * @param appId
+	 *            eclipse application id
+	 * @param args
+	 *            array of String options and their values Option
+	 *            <code>-eclipseHome dir</code> specifies Eclipse installation
+	 *            directory. It must be provided, when current directory is not
+	 *            the same as Eclipse installation directory. Additionally, most
+	 *            options accepted by Eclipse execuable are supported.
 	 */
 	public static void init(String appId, String[] args) {
 		// convert array of arguments to a list
@@ -65,13 +68,15 @@ public class Options {
 	}
 	/**
 	 * Initializes options.
-	 * @param appId eclipse application id
-	 * @param options list of options and their values
-	 * 	Option <code>-eclipseHome dir</code> specifies Eclipse
-	 *  installation directory.
-	 *  It must be provided, when current directory is not the same
-	 *  as Eclipse installation directory.
-	 *  Additionally, most options accepted by Eclipse execuable are supported.
+	 * 
+	 * @param appId
+	 *            eclipse application id
+	 * @param options
+	 *            list of options and their values Option
+	 *            <code>-eclipseHome dir</code> specifies Eclipse installation
+	 *            directory. It must be provided, when current directory is not
+	 *            the same as Eclipse installation directory. Additionally, most
+	 *            options accepted by Eclipse execuable are supported.
 	 */
 	public static void init(String appId, List options) {
 		// Initialize eclipseArgs with all passed options
@@ -153,12 +158,9 @@ public class Options {
 					executable += ".exe"; //$NON-NLS-1$
 				}
 			}
-			vm =
-				System.getProperty("java.home") //$NON-NLS-1$
-					+ File.separator
-					+ "bin" //$NON-NLS-1$
-					+ File.separator
-					+ executable;
+			vm = System.getProperty("java.home") //$NON-NLS-1$
+					+ File.separator + "bin" //$NON-NLS-1$
+					+ File.separator + executable;
 		}
 
 		// consume -vmargs option
@@ -224,19 +226,21 @@ public class Options {
 
 	/**
 	 * Returns the serverTimeout.
-	 * @return number of seconds to wait for the server,
-	 * 0 when not set, and default should be used
+	 * 
+	 * @return number of seconds to wait for the server, 0 when not set, and
+	 *         default should be used
 	 */
 	public static int getServerTimeout() {
 		return serverTimeout;
 	}
 
 	/**
-	 * Removes specified option and its list of values
-	 * from a list of options
-	 * @param optionName name of the option e.g. -data
-	 * @return List of String values of the specified option,
-	 *  or null if option is not present
+	 * Removes specified option and its list of values from a list of options
+	 * 
+	 * @param optionName
+	 *            name of the option e.g. -data
+	 * @return List of String values of the specified option, or null if option
+	 *         is not present
 	 */
 	private static List extractOption(List options, String optionName) {
 		List values = null;
@@ -250,7 +254,7 @@ public class Options {
 				// remove option parameters
 				while (i < options.size()) {
 					if (((String) options.get(i)).startsWith("-") //$NON-NLS-1$
-						&& !optionName.equals("-vmargs")) { //$NON-NLS-1$
+							&& !optionName.equals("-vmargs")) { //$NON-NLS-1$
 						// start of next option
 						break;
 					}
@@ -266,12 +270,14 @@ public class Options {
 	}
 
 	/**
-	 * Obtains specified option and its list of values
-	 * from a list of options
-	 * @param optionName name of the option e.g. -data
-	 * @param options List of Eclipse options
-	 * @return List of String values of the specified option,
-	 *  or null if option is not present
+	 * Obtains specified option and its list of values from a list of options
+	 * 
+	 * @param optionName
+	 *            name of the option e.g. -data
+	 * @param options
+	 *            List of Eclipse options
+	 * @return List of String values of the specified option, or null if option
+	 *         is not present
 	 */
 	private static List getOption(List options, String optionName) {
 		List values = null;
@@ -283,7 +289,7 @@ public class Options {
 				// read option parameters
 				for (int j = i + 1; j < options.size(); j++) {
 					if (((String) options.get(j)).startsWith("-") //$NON-NLS-1$
-						&& !optionName.equals("-vmargs")) { //$NON-NLS-1$
+							&& !optionName.equals("-vmargs")) { //$NON-NLS-1$
 						// start of next option
 						i = j;
 						break;
@@ -302,6 +308,7 @@ public class Options {
 	}
 	/**
 	 * Returns the useExe.
+	 * 
 	 * @return boolean
 	 */
 	public static boolean useExe() {

@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.help.internal.search;
 
-import java.io.Reader;
+import java.io.*;
 
 import org.apache.lucene.analysis.*;
 
 /**
- * Smart Analyzer.  Chooses underlying implementation
- * based on the field which text is analyzed.
+ * Smart Analyzer. Chooses underlying implementation based on the field which
+ * text is analyzed.
  */
 public class SmartAnalyzer extends Analyzer {
 	Analyzer pluggedInAnalyzer;
@@ -31,10 +31,9 @@ public class SmartAnalyzer extends Analyzer {
 		this.exactAnalyzer = new DefaultAnalyzer(locale);
 	}
 	/**
-	 * Creates a TokenStream which tokenizes all the text
-	 * in the provided Reader.
-	 * Delegates to DefaultAnalyzer when field used to search for exact match,
-	 * and to plugged-in analyzer for other fields.
+	 * Creates a TokenStream which tokenizes all the text in the provided
+	 * Reader. Delegates to DefaultAnalyzer when field used to search for exact
+	 * match, and to plugged-in analyzer for other fields.
 	 */
 	public final TokenStream tokenStream(String fieldName, Reader reader) {
 		if (fieldName != null && fieldName.startsWith("exact_")) { //$NON-NLS-1$

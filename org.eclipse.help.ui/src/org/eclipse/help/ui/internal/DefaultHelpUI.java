@@ -17,13 +17,14 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.*;
 
 /**
- * This class is an implementation of the Help UI.
- * In is registered into the helpSupport extension point,
- * and is responsible for handling requests to display help.
- * The methods on this class interact with the actual
- * UI component handling the display.
- * <p>Most methods delegate most work to HelpDisplay class; only
- * the UI specific ones implemented in place.</p>
+ * This class is an implementation of the Help UI. In is registered into the
+ * helpSupport extension point, and is responsible for handling requests to
+ * display help. The methods on this class interact with the actual UI component
+ * handling the display.
+ * <p>
+ * Most methods delegate most work to HelpDisplay class; only the UI specific
+ * ones implemented in place.
+ * </p>
  */
 public class DefaultHelpUI extends AbstractHelpUI {
 	private ContextHelpDialog f1Dialog = null;
@@ -42,24 +43,30 @@ public class DefaultHelpUI extends AbstractHelpUI {
 		BaseHelpSystem.getHelpDisplay().displayHelp(useExternalBrowser());
 	}
 	/**
-	 * Displays a help resource specified as a url. 
+	 * Displays a help resource specified as a url.
 	 * <ul>
-	 *  <li>a URL in a format that can be returned by
-	 * 	{@link  org.eclipse.help.IHelpResource#getHref() IHelpResource.getHref()}
-	 * 	<li>a URL query in the format format <em>key=value&amp;key=value ...</em>
-	 *  The valid keys are: "tab", "toc", "topic", "contextId".
-	 *  For example, <em>toc="/myplugin/mytoc.xml"&amp;topic="/myplugin/references/myclass.html"</em>
-	 *  is valid.
+	 * <li>a URL in a format that can be returned by
+	 * {@link  org.eclipse.help.IHelpResource#getHref() IHelpResource.getHref()}
+	 * <li>a URL query in the format format
+	 * <em>key=value&amp;key=value ...</em> The valid keys are: "tab", "toc",
+	 * "topic", "contextId". For example,
+	 * <em>toc="/myplugin/mytoc.xml"&amp;topic="/myplugin/references/myclass.html"</em>
+	 * is valid.
 	 * </ul>
 	 */
 	public void displayHelpResource(String href) {
-		BaseHelpSystem.getHelpDisplay().displayHelpResource(href, useExternalBrowser());
+		BaseHelpSystem.getHelpDisplay().displayHelpResource(href,
+				useExternalBrowser());
 	}
 	/**
 	 * Displays context-sensitive help for specified context
-	 * @param contexts the context to display
-	 * @param x int positioning information
-	 * @param y int positioning information
+	 * 
+	 * @param context
+	 *            the context to display
+	 * @param x
+	 *            int positioning information
+	 * @param y
+	 *            int positioning information
 	 */
 	public void displayContext(IContext context, int x, int y) {
 		if (f1Dialog != null)
@@ -68,13 +75,14 @@ public class DefaultHelpUI extends AbstractHelpUI {
 			return;
 		f1Dialog = new ContextHelpDialog(context, x, y);
 		f1Dialog.open();
-		// if any errors or parsing errors have occurred, display them in a pop-up
+		// if any errors or parsing errors have occurred, display them in a
+		// pop-up
 		ErrorUtil.displayStatus();
 	}
 
 	/**
-	 * Returns <code>true</code> if the context-sensitive help
-	 * window is currently being displayed, <code>false</code> if not.
+	 * Returns <code>true</code> if the context-sensitive help window is
+	 * currently being displayed, <code>false</code> if not.
 	 */
 	public boolean isContextHelpDisplayed() {
 		if (f1Dialog == null) {
@@ -82,12 +90,13 @@ public class DefaultHelpUI extends AbstractHelpUI {
 		}
 		return f1Dialog.isShowing();
 	}
-	private boolean useExternalBrowser(){
+	private boolean useExternalBrowser() {
 		Display display = Display.getCurrent();
-		if(display != null){
+		if (display != null) {
 			Shell activeShell = display.getActiveShell();
-			if(activeShell != null){
-				return 0 < (activeShell.getStyle() & (SWT.APPLICATION_MODAL | SWT.PRIMARY_MODAL | SWT.SYSTEM_MODAL));
+			if (activeShell != null) {
+				return 0 < (activeShell.getStyle() & (SWT.APPLICATION_MODAL
+						| SWT.PRIMARY_MODAL | SWT.SYSTEM_MODAL));
 			}
 		}
 		return false;

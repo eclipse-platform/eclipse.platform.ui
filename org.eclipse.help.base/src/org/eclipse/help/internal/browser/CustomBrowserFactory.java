@@ -18,14 +18,14 @@ import org.eclipse.help.browser.*;
 public class CustomBrowserFactory implements IBrowserFactory {
 
 	/**
-	 * @see org.eclipse.help.ui.browser.IBrowserFactory#isAvailable()
+	 * @see org.eclipse.help.browser.IBrowserFactory#isAvailable()
 	 */
 	public boolean isAvailable() {
 		return true;
 	}
 
 	/**
-	 * @see org.eclipse.help.ui.browser.IBrowserFactory#createBrowser()
+	 * @see org.eclipse.help.browser.IBrowserFactory#createBrowser()
 	 */
 	public IBrowser createBrowser() {
 		return new CustomBrowser();

@@ -11,6 +11,7 @@
 package org.eclipse.help.internal.webapp.data;
 
 import java.util.*;
+
 import javax.servlet.*;
 import javax.servlet.http.*;
 
@@ -21,10 +22,8 @@ public class ToolbarData extends RequestData {
 
 	ToolbarButton[] buttons;
 
-	public ToolbarData(
-		ServletContext context,
-		HttpServletRequest request,
-		HttpServletResponse response) {
+	public ToolbarData(ServletContext context, HttpServletRequest request,
+			HttpServletResponse response) {
 		super(context, request, response);
 		loadButtons();
 	}
@@ -36,34 +35,29 @@ public class ToolbarData extends RequestData {
 		String[] actions = request.getParameterValues("action"); //$NON-NLS-1$
 		String[] states = request.getParameterValues("state"); //$NON-NLS-1$
 
-		if (names == null
-			|| tooltips == null
-			|| images == null
-			|| actions == null
-			|| states == null
-			|| names.length != tooltips.length
-			|| names.length != images.length
-			|| names.length != actions.length
-			|| names.length != states.length) {
+		if (names == null || tooltips == null || images == null
+				|| actions == null || states == null
+				|| names.length != tooltips.length
+				|| names.length != images.length
+				|| names.length != actions.length
+				|| names.length != states.length) {
 			buttons = new ToolbarButton[0];
 			return;
 		}
 
 		List buttonList = new ArrayList();
 		for (int i = 0; i < names.length; i++) {
-			if(states[i].startsWith("hid")){ //$NON-NLS-1$
+			if (states[i].startsWith("hid")) { //$NON-NLS-1$
 				continue;
 			}
 			if ("".equals(names[i])) //$NON-NLS-1$
 				buttonList.add(new ToolbarButton());
 			else
-				buttonList.add(
-					new ToolbarButton(
-						names[i],
-						ServletResources.getString(tooltips[i], request),
-						preferences.getImagesDirectory() + "/" + images[i], //$NON-NLS-1$
-						actions[i],
-						"on".equalsIgnoreCase(states[i]))); //$NON-NLS-1$
+				buttonList.add(new ToolbarButton(names[i], ServletResources
+						.getString(tooltips[i], request), preferences
+						.getImagesDirectory()
+						+ "/" + images[i], //$NON-NLS-1$
+						actions[i], "on".equalsIgnoreCase(states[i]))); //$NON-NLS-1$
 		}
 		// add implicit maximize/restore button on all toolbars
 		if (isIE() || isMozilla()
@@ -73,7 +67,8 @@ public class ToolbarData extends RequestData {
 					preferences.getImagesDirectory() + "/" + "maximize.gif", //$NON-NLS-1$ //$NON-NLS-2$
 					"restore_maximize", false)); //$NON-NLS-1$
 		}
-		buttons = (ToolbarButton[])buttonList.toArray(new ToolbarButton[buttonList.size()]);
+		buttons = (ToolbarButton[]) buttonList
+				.toArray(new ToolbarButton[buttonList.size()]);
 	}
 
 	public ToolbarButton[] getButtons() {
@@ -91,9 +86,8 @@ public class ToolbarData extends RequestData {
 		if (request.getParameter("view") == null) //$NON-NLS-1$
 			return ""; //$NON-NLS-1$
 		else
-			return ServletResources.getString(
-				request.getParameter("view"), //$NON-NLS-1$
-				request);
+			return ServletResources.getString(request.getParameter("view"), //$NON-NLS-1$
+					request);
 	}
 
 	public String getScript() {

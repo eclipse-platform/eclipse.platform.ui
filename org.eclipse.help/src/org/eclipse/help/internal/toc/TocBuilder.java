@@ -1,13 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2000, 2003 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Common Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * Contributors: IBM Corporation - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.help.internal.toc;
 
 import java.util.*;
@@ -19,7 +17,8 @@ public class TocBuilder {
 	protected Collection contributedTocFiles;
 	// list of unprocessed toc files
 	protected Collection unprocessedTocFiles;
-	// list of unprocessed toc (the target of attach_to was not available at the time)
+	// list of unprocessed toc (the target of attach_to was not available at the
+	// time)
 	protected List unprocessedTocs;
 	/**
 	 * Constructor.
@@ -34,9 +33,8 @@ public class TocBuilder {
 		for (Iterator it = contributedTocFiles.iterator(); it.hasNext();) {
 			TocFile tocFile = (TocFile) it.next();
 			Toc toc = tocFile.getToc();
-			if (toc != null
-				&& toc.getTocFile().isPrimary()
-				&& !isIntegrated(toc))
+			if (toc != null && toc.getTocFile().isPrimary()
+					&& !isIntegrated(toc))
 				tocCol.add((toc));
 		}
 		return tocCol;
@@ -53,9 +51,9 @@ public class TocBuilder {
 			tocFile.build(this);
 		}
 		// At the end, unprocessedTocs may contain TOCs that need be build.
-		// All these toc could not be attached because the 
+		// All these toc could not be attached because the
 		// target node was not parsed at that time
-		
+
 		// try processing as many toc (link_to) as possible now
 		int remaining = unprocessedTocs.size();
 		for (int i = 0; i < remaining; i++) {
@@ -119,7 +117,7 @@ public class TocBuilder {
 		for (Iterator it = contributedTocFiles.iterator(); it.hasNext();) {
 			tocFile = (TocFile) it.next();
 			if (tocFile.getPluginID().equals(plugin)
-				&& tocFile.getHref().equals(path))
+					&& tocFile.getHref().equals(path))
 				break;
 			else
 				tocFile = null;
@@ -130,16 +128,15 @@ public class TocBuilder {
 			buildTocFile(tocFile);
 		return tocFile;
 	}
-	/** 
-	 * Checks if navigation element has been integrated
-	 * into another TOC.
+	/**
+	 * Checks if navigation element has been integrated into another TOC.
 	 */
 	private boolean isIntegrated(TocNode element) {
 		// check if there if there is TOC in ancestor hierarchy (depth first)
 		for (Iterator it = element.getParents().iterator(); it.hasNext();) {
 			TocNode parent = (TocNode) it.next();
 			if (parent instanceof Toc
-				&& ((Toc) parent).getTocFile().isPrimary()) {
+					&& ((Toc) parent).getTocFile().isPrimary()) {
 				return true;
 			} else if (isIntegrated(parent)) {
 				return true;

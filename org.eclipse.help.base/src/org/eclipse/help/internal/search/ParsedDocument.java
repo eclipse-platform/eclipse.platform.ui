@@ -13,8 +13,8 @@ package org.eclipse.help.internal.search;
 import java.io.*;
 
 /**
- * Parsed Document.
- * It can be used to obtain multiple readers for the same document.
+ * Parsed Document. It can be used to obtain multiple readers for the same
+ * document.
  */
 public class ParsedDocument {
 	// Limit on how many characters will be indexed
@@ -26,7 +26,9 @@ public class ParsedDocument {
 
 	/**
 	 * Constructor for ParsedDocument.
-	 * @param reader reader obtained from the parser
+	 * 
+	 * @param reader
+	 *            reader obtained from the parser
 	 */
 	public ParsedDocument(Reader reader) {
 		this.reader = reader;

@@ -13,10 +13,11 @@ package org.eclipse.help.internal.model;
 import org.eclipse.help.*;
 
 /**
- * Part of help navigation model corresponding to TOPIC element.
- * It may contain TOPIC, LINK, or ANCHOR elements.
+ * Part of help navigation model corresponding to TOPIC element. It may contain
+ * TOPIC, LINK, or ANCHOR elements.
+ * 
  * @since 3.0
  */
-public interface ITopicElement extends ITopic, INavigationElement{
+public interface ITopicElement extends ITopic, INavigationElement {
 
 }

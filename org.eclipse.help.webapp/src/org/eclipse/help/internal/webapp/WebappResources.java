@@ -16,8 +16,8 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 
 /**
- * Uses a resource bundle to load images and strings from
- * a property file in a documentation plugin
+ * Uses a resource bundle to load images and strings from a property file in a
+ * documentation plugin
  */
 public class WebappResources {
 
@@ -25,9 +25,8 @@ public class WebappResources {
 	private static HashMap resourceBundleTable = new HashMap();
 
 	/**
-	 * Returns a string from a property file.
-	 * It uses 'name' as a the key to retrieve from the webapp.properties file.
-	 * @param request HttpServletRequest or null; default locale will be used if null passed
+	 * Returns a string from a property file. It uses 'name' as a the key to
+	 * retrieve from the webapp.properties file.
 	 */
 	public static String getString(String name, Locale locale) {
 
@@ -48,10 +47,7 @@ public class WebappResources {
 	/**
 	 * Returns a string from a property file
 	 */
-	public static String getString(
-		String name,
-		Locale locale,
-		String replace0) {
+	public static String getString(String name, Locale locale, String replace0) {
 
 		// get bundle
 		ResourceBundle bundle = getBundle(locale);
@@ -62,10 +58,8 @@ public class WebappResources {
 		// get value
 		try {
 			String stringFromPropertiesFile = bundle.getString(name);
-			stringFromPropertiesFile =
-				MessageFormat.format(
-					stringFromPropertiesFile,
-					new Object[] { replace0 });
+			stringFromPropertiesFile = MessageFormat.format(
+					stringFromPropertiesFile, new Object[]{replace0});
 			return stringFromPropertiesFile;
 		} catch (Exception e) {
 			return name;
@@ -73,9 +67,10 @@ public class WebappResources {
 
 	}
 	/**
-	 * Obtains resource bundle for specified locale.
-	 * Loads bundle if necessary
-	 * @param locale Locale or null to use default locale
+	 * Obtains resource bundle for specified locale. Loads bundle if necessary
+	 * 
+	 * @param locale
+	 *            Locale or null to use default locale
 	 * @return ResourceBundle or null if not found
 	 */
 	private static ResourceBundle getBundle(Locale locale) {
@@ -83,14 +78,12 @@ public class WebappResources {
 			locale = getDefaultLocale();
 
 		// check cache
-		ResourceBundle bundle =
-			(ResourceBundle) resourceBundleTable.get(locale);
+		ResourceBundle bundle = (ResourceBundle) resourceBundleTable
+				.get(locale);
 
 		// load bundle
 		if (bundle == null) {
-			bundle =
-				ResourceBundle.getBundle(
-					WebappResources.class.getName(),
+			bundle = ResourceBundle.getBundle(WebappResources.class.getName(),
 					locale);
 			if (bundle != null) {
 				resourceBundleTable.put(locale, bundle);
@@ -111,10 +104,8 @@ public class WebappResources {
 		else if (locales.countTokens() == 2)
 			return new Locale(locales.nextToken(), locales.nextToken());
 		else if (locales.countTokens() == 3)
-			return new Locale(
-				locales.nextToken(),
-				locales.nextToken(),
-				locales.nextToken());
+			return new Locale(locales.nextToken(), locales.nextToken(), locales
+					.nextToken());
 		else
 			return Locale.getDefault();
 	}

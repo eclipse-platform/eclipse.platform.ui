@@ -19,8 +19,8 @@ import org.eclipse.help.internal.appserver.*;
 import org.eclipse.help.internal.context.*;
 
 /**
- * This class provides methods to display help.
- * It is independent of platform UI.
+ * This class provides methods to display help. It is independent of platform
+ * UI.
  */
 public class HelpDisplay {
 
@@ -35,11 +35,12 @@ public class HelpDisplay {
 	 * Displays help.
 	 */
 	public void displayHelp(boolean forceExternal) {
-		// Do not start help view if documentaton is not available, display error
+		// Do not start help view if documentaton is not available, display
+		// error
 		if (HelpSystem.getTocs().length == 0) {
 			// There is no documentation
 			BaseHelpSystem.getDefaultErrorUtil().displayError(
-				HelpBaseResources.getString("WW001")); //$NON-NLS-1$
+					HelpBaseResources.getString("WW001")); //$NON-NLS-1$
 			//Documentation is not installed.
 			return;
 		}
@@ -48,14 +49,15 @@ public class HelpDisplay {
 	}
 
 	/**
-	 * Displays a help resource specified as a url. 
+	 * Displays a help resource specified as a url.
 	 * <ul>
-	 *  <li>a URL in a format that can be returned by
-	 * 	{@link  org.eclipse.help.IHelpResource#getHref() IHelpResource.getHref()}
-	 * 	<li>a URL query in the format format <em>key=value&amp;key=value ...</em>
-	 *  The valid keys are: "tab", "toc", "topic", "contextId".
-	 *  For example, <em>toc="/myplugin/mytoc.xml"&amp;topic="/myplugin/references/myclass.html"</em>
-	 *  is valid.
+	 * <li>a URL in a format that can be returned by
+	 * {@link  org.eclipse.help.IHelpResource#getHref() IHelpResource.getHref()}
+	 * <li>a URL query in the format format
+	 * <em>key=value&amp;key=value ...</em> The valid keys are: "tab", "toc",
+	 * "topic", "contextId". For example,
+	 * <em>toc="/myplugin/mytoc.xml"&amp;topic="/myplugin/references/myclass.html"</em>
+	 * is valid.
 	 * </ul>
 	 */
 	public void displayHelpResource(String href, boolean forceExternal) {
@@ -64,26 +66,25 @@ public class HelpDisplay {
 		if (toc != null)
 			try {
 				displayHelpURL(
-					"toc=" + URLEncoder.encode(toc.getHref(), "UTF-8"), forceExternal); //$NON-NLS-1$ //$NON-NLS-2$
+						"toc=" + URLEncoder.encode(toc.getHref(), "UTF-8"), forceExternal); //$NON-NLS-1$ //$NON-NLS-2$
 			} catch (UnsupportedEncodingException uee) {
-			} else if (
-				href != null
-					&& (href.startsWith("tab=") //$NON-NLS-1$
-						|| href.startsWith("toc=") //$NON-NLS-1$
-						|| href.startsWith("topic=") //$NON-NLS-1$
-						|| href.startsWith(
-							"contextId="))) { // assume it is a query string //$NON-NLS-1$
+			}
+		else if (href != null && (href.startsWith("tab=") //$NON-NLS-1$
+				|| href.startsWith("toc=") //$NON-NLS-1$
+				|| href.startsWith("topic=") //$NON-NLS-1$
+		|| href.startsWith("contextId="))) { //$NON-NLS-1$ // assume it is a query string
 			displayHelpURL(href, forceExternal);
 		} else { // assume this is a topic
 			if (getNoframesURL(href) == null) {
 				try {
-					displayHelpURL("topic=" + URLEncoder.encode(href, "UTF-8"), forceExternal); //$NON-NLS-1$ //$NON-NLS-2$
+					displayHelpURL(
+							"topic=" + URLEncoder.encode(href, "UTF-8"), forceExternal); //$NON-NLS-1$ //$NON-NLS-2$
 				} catch (UnsupportedEncodingException uee) {
 				}
 			} else if (href.startsWith("jar:file:")) { //$NON-NLS-1$
 				// topic from a jar to display without frames
 				displayHelpURL(
-					getBaseURL() + "nftopic/" + getNoframesURL(href), forceExternal); //$NON-NLS-1$
+						getBaseURL() + "nftopic/" + getNoframesURL(href), forceExternal); //$NON-NLS-1$
 			} else {
 				displayHelpURL(getNoframesURL(href), forceExternal);
 			}
@@ -92,17 +93,20 @@ public class HelpDisplay {
 
 	/**
 	 * Display help for the a given topic and related topics.
-	 * @param topic topic to be displayed by the help browse
-	 * @param relatedTopics topics that will populate related topics view
+	 * 
+	 * @param context
+	 *            context for which related topics will be displayed
+	 * @param topic
+	 *            related topic to be selected
 	 */
-	public void displayHelp(IContext context, IHelpResource topic, boolean forceExternal) {
+	public void displayHelp(IContext context, IHelpResource topic,
+			boolean forceExternal) {
 		if (context == null || topic == null || topic.getHref() == null)
 			return;
 		String topicURL = getTopicURL(topic.getHref());
 		if (getNoframesURL(topicURL) == null) {
 			try {
-				String url =
-					"tab=links" //$NON-NLS-1$
+				String url = "tab=links" //$NON-NLS-1$
 						+ "&contextId=" //$NON-NLS-1$
 						+ URLEncoder.encode(getContextID(context), "UTF-8") //$NON-NLS-1$
 						+ "&topic=" //$NON-NLS-1$
@@ -114,26 +118,27 @@ public class HelpDisplay {
 		} else if (topicURL.startsWith("jar:file:")) { //$NON-NLS-1$
 			// topic from a jar to display without frames
 			displayHelpURL(
-				getBaseURL() + "nftopic/" + getNoframesURL(topicURL), forceExternal); //$NON-NLS-1$
+					getBaseURL() + "nftopic/" + getNoframesURL(topicURL), forceExternal); //$NON-NLS-1$
 		} else {
 			displayHelpURL(getNoframesURL(topicURL), forceExternal);
 		}
 	}
 	/**
-	 * Display help to search view for given query
-	 * and selected topic.
-	 * @param query search query in URL format key=value&key=value
-	 * @param topic selected from the search results
+	 * Display help to search view for given query and selected topic.
+	 * 
+	 * @param searchQuery
+	 *            search query in URL format key=value&key=value
+	 * @param topic
+	 *            selected from the search results
 	 */
-	public void displaySearch(String searchQuery, String topic, boolean forceExternal) {
+	public void displaySearch(String searchQuery, String topic,
+			boolean forceExternal) {
 		if (searchQuery == null || topic == null)
 			return;
 		if (getNoframesURL(topic) == null) {
 			try {
-				String url =
-					"tab=search&" //$NON-NLS-1$
-						+ searchQuery
-						+ "&topic=" //$NON-NLS-1$
+				String url = "tab=search&" //$NON-NLS-1$
+						+ searchQuery + "&topic=" //$NON-NLS-1$
 						+ URLEncoder.encode(getTopicURL(topic), "UTF-8"); //$NON-NLS-1$
 				displayHelpURL(url, forceExternal);
 			} catch (UnsupportedEncodingException uee) {
@@ -144,8 +149,8 @@ public class HelpDisplay {
 		}
 	}
 	/**
-	 * Displays the specified url.
-	 * The url can contain query parameters to identify how help displays the document
+	 * Displays the specified url. The url can contain query parameters to
+	 * identify how help displays the document
 	 */
 	private void displayHelpURL(String helpURL, boolean forceExternal) {
 		if (!BaseHelpSystem.ensureWebappRunning()) {
@@ -155,29 +160,29 @@ public class HelpDisplay {
 			// wait for Display to be created
 			DisplayUtils.waitForDisplay();
 		}
-		
+
 		try {
 			if (helpURL == null || helpURL.length() == 0) {
-				BaseHelpSystem.getHelpBrowser(forceExternal).displayURL(getFramesetURL());
-			} else if (
-				helpURL.startsWith("tab=") //$NON-NLS-1$
+				BaseHelpSystem.getHelpBrowser(forceExternal).displayURL(
+						getFramesetURL());
+			} else if (helpURL.startsWith("tab=") //$NON-NLS-1$
 					|| helpURL.startsWith("toc=") //$NON-NLS-1$
 					|| helpURL.startsWith("topic=") //$NON-NLS-1$
 					|| helpURL.startsWith("contextId=")) { //$NON-NLS-1$
 				BaseHelpSystem.getHelpBrowser(forceExternal).displayURL(
-					getFramesetURL() + "?" + helpURL); //$NON-NLS-1$
+						getFramesetURL() + "?" + helpURL); //$NON-NLS-1$
 			} else {
-				BaseHelpSystem.getHelpBrowser(forceExternal).displayURL(helpURL);
+				BaseHelpSystem.getHelpBrowser(forceExternal)
+						.displayURL(helpURL);
 			}
 		} catch (Exception e) {
-			BaseHelpSystem.getDefaultErrorUtil().displayError(
-				HelpBaseResources.getString(
-					"HelpDisplay.exceptionMessage")); //$NON-NLS-1$
-			HelpBasePlugin.logError(
-				HelpBaseResources.getString(
+			BaseHelpSystem.getDefaultErrorUtil()
+					.displayError(
+							HelpBaseResources
+									.getString("HelpDisplay.exceptionMessage")); //$NON-NLS-1$
+			HelpBasePlugin.logError(HelpBaseResources.getString(
 					"HelpDisplay.exception", //$NON-NLS-1$
-					e.getMessage()),
-				e);
+					e.getMessage()), e);
 		}
 	}
 	private String getContextID(IContext context) {
@@ -188,10 +193,8 @@ public class HelpDisplay {
 
 	private String getBaseURL() {
 		return "http://" //$NON-NLS-1$
-			+ WebappManager.getHost()
-			+ ":" //$NON-NLS-1$
-			+ WebappManager.getPort()
-			+ "/help/"; //$NON-NLS-1$
+				+ WebappManager.getHost() + ":" //$NON-NLS-1$
+				+ WebappManager.getPort() + "/help/"; //$NON-NLS-1$
 	}
 
 	private String getFramesetURL() {
@@ -204,18 +207,17 @@ public class HelpDisplay {
 		if (topic.startsWith("../")) //$NON-NLS-1$
 			topic = topic.substring(2);
 		/*
-		if (topic.startsWith("/")) {
-		String base = "http://" + AppServer.getHost() + ":" + AppServer.getPort();
-		base += "/help/content/help:";
-		topic = base + topic;
-		}
-		*/
+		 * if (topic.startsWith("/")) { String base = "http://" +
+		 * AppServer.getHost() + ":" + AppServer.getPort(); base +=
+		 * "/help/content/help:"; topic = base + topic; }
+		 */
 		return topic;
 	}
 
 	/**
-	 * If href contains URL parameter noframes=true
-	 * return href with that paramter removed, otherwise returns null
+	 * If href contains URL parameter noframes=true return href with that
+	 * paramter removed, otherwise returns null
+	 * 
 	 * @param href
 	 * @return String or null
 	 */
@@ -227,14 +229,14 @@ public class HelpDisplay {
 		if (ix >= 0) {
 			//remove noframes=true&
 			return href.substring(0, ix + 1)
-				+ href.substring(ix + "?noframes=true&".length()); //$NON-NLS-1$
+					+ href.substring(ix + "?noframes=true&".length()); //$NON-NLS-1$
 
 		}
 		ix = href.indexOf("noframes=true"); //$NON-NLS-1$
 		if (ix > 0) {
 			//remove &noframes=true
 			return href.substring(0, ix - 1)
-				+ href.substring(ix + "noframes=true".length()); //$NON-NLS-1$
+					+ href.substring(ix + "noframes=true".length()); //$NON-NLS-1$
 		}
 		// can be displayed in frames
 		return null;

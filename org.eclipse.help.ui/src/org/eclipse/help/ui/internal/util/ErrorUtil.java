@@ -34,9 +34,8 @@ public class ErrorUtil implements IErrorUtil {
 		}
 	}
 	/**
-	 * Immidiately displays error dialog with a given string,
-	 * also logs the error using Logger.logError().
-	 * msg error message to display and log.
+	 * Immidiately displays error dialog with a given string, also logs the
+	 * error using Logger.logError(). msg error message to display and log.
 	 */
 	public static void displayErrorDialog(String msg) {
 		String title = HelpUIResources.getString("Help_Error"); //$NON-NLS-1$
@@ -51,10 +50,9 @@ public class ErrorUtil implements IErrorUtil {
 		HelpUIPlugin.logError(msg, null);
 	}
 	/**
-	 * Immidiately displays error dialog with a given string,
-	 * also logs the error using Logger.logError().
-	 * msg error message to display and log.
-	 * ex  the exception to be passed to Logger.logError()
+	 * Immidiately displays error dialog with a given string, also logs the
+	 * error using Logger.logError(). msg error message to display and log. ex
+	 * the exception to be passed to Logger.logError()
 	 */
 	public static void displayErrorDialog(String msg, Throwable ex) {
 		String title = HelpUIResources.getString("Help_Error"); //$NON-NLS-1$
@@ -69,9 +67,8 @@ public class ErrorUtil implements IErrorUtil {
 		HelpUIPlugin.logError(msg, ex);
 	}
 	/**
-	 * Immidiately displays an Information dialog with a given string,
-	 * also logs the info using Logger.logInfo().
-	 * msg error message to display and log.
+	 * Immidiately displays an Information dialog with a given string, also logs
+	 * the info using Logger.logInfo(). msg error message to display and log.
 	 */
 	public static void displayInfoDialog(String msg) {
 		String title = HelpUIResources.getString("Help_Info"); //$NON-NLS-1$
@@ -88,9 +85,8 @@ public class ErrorUtil implements IErrorUtil {
 		}
 	}
 	/**
-	 * Immidiately displays a Question dialog with a given string (question).
-	 * No logging is done.
-	 * returns which button(Yes/No) was pressed by user
+	 * Immidiately displays a Question dialog with a given string (question). No
+	 * logging is done. returns which button(Yes/No) was pressed by user
 	 */
 	public static boolean displayQuestionDialog(String msg) {
 		String title = HelpUIResources.getString("Help_Question"); //$NON-NLS-1$
@@ -104,8 +100,8 @@ public class ErrorUtil implements IErrorUtil {
 		return MessageDialog.openQuestion(shell, title, msg);
 	}
 	/**
-	 * Display all errors in the Help Status object. If no errors occurred,
-	 * or if errors have already been displayed, return.
+	 * Display all errors in the Help Status object. If no errors occurred, or
+	 * if errors have already been displayed, return.
 	 */
 	public static void displayStatus() {
 		// show error dialog box if errors have occurred

@@ -9,10 +9,10 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.internal.context;
-import java.util.List;
+import java.util.*;
 
 import org.eclipse.help.*;
-import org.xml.sax.Attributes;
+import org.xml.sax.*;
 /**
  * Context object, as defined in the map.xml
  */
@@ -34,13 +34,13 @@ public class Context extends ContextsNode implements IStyledContext {
 	 */
 	public String getText() {
 		return text
-				// if there are spaces on any or both side of bold they need to be
+		// if there are spaces on any or both side of bold they need to be
 				// collapsed to one
 				.replaceAll("(\\s+</?@#\\$b>\\s*)|(\\s*</?@#\\$b>\\s+)", " ") //$NON-NLS-1$ //$NON-NLS-2$
 				.replaceAll("</?@#\\$b>", ""); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	/**
-	 * @return styled text with <@#$b> and </@#$b> to mark bold range
+	 * @return styled text with <@#$b>and </@#$b> to mark bold range
 	 */
 	public String getStyledText() {
 		return text;
@@ -69,7 +69,9 @@ public class Context extends ContextsNode implements IStyledContext {
 	}
 	/**
 	 * Sets the pluginID.
-	 * @param pluginID The pluginID to set
+	 * 
+	 * @param pluginID
+	 *            The pluginID to set
 	 */
 	public void setPluginID(String pluginID) {
 		this.pluginID = pluginID;

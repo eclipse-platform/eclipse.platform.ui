@@ -16,8 +16,7 @@ import org.eclipse.help.browser.*;
 import org.eclipse.help.internal.base.*;
 
 /**
- * Browser adapter for browsers supporting
- * -remote openURL command line option
+ * Browser adapter for browsers supporting -remote openURL command line option
  * i.e. Mozilla and Netscape.
  */
 public class MozillaBrowserAdapter implements IBrowser {
@@ -98,25 +97,20 @@ public class MozillaBrowserAdapter implements IBrowser {
 	}
 	private synchronized String createPositioningURL(String url) {
 		IPath pluginPath = HelpBasePlugin.getDefault().getStateLocation();
-		File outFile =
-			pluginPath
-				.append("mozillaPositon") //$NON-NLS-1$
+		File outFile = pluginPath.append("mozillaPositon") //$NON-NLS-1$
 				.append("position.html") //$NON-NLS-1$
 				.toFile();
 		try {
 			outFile.getParentFile().mkdirs();
-			PrintWriter writer =
-				new PrintWriter(
-					new BufferedWriter(
-						new OutputStreamWriter(
-							new FileOutputStream(outFile),
+			PrintWriter writer = new PrintWriter(new BufferedWriter(
+					new OutputStreamWriter(new FileOutputStream(outFile),
 							"UTF8")), //$NON-NLS-1$
 					false);
-			writer.println(
-				"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">"); //$NON-NLS-1$
+			writer
+					.println("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">"); //$NON-NLS-1$
 			writer.println("<html><head>"); //$NON-NLS-1$
-			writer.println(
-				"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">"); //$NON-NLS-1$
+			writer
+					.println("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">"); //$NON-NLS-1$
 			writer.print("<title></title><script language=\"JavaScript\">"); //$NON-NLS-1$
 			if (setSizePending)
 				writer.print("window.resizeTo(" + width + "," + height + ");"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -146,8 +140,7 @@ public class MozillaBrowserAdapter implements IBrowser {
 		private int openBrowser(String browserCmd) {
 			try {
 				Process pr = Runtime.getRuntime().exec(browserCmd);
-				StreamConsumer outputs =
-					new StreamConsumer(pr.getInputStream());
+				StreamConsumer outputs = new StreamConsumer(pr.getInputStream());
 				(outputs).start();
 				StreamConsumer errors = new StreamConsumer(pr.getErrorStream());
 				(errors).start();
@@ -160,43 +153,45 @@ public class MozillaBrowserAdapter implements IBrowser {
 				return ret;
 			} catch (InterruptedException e) {
 			} catch (IOException e) {
-				String msg =
-					HelpBaseResources.getString(
+				String msg = HelpBaseResources.getString(
 						"MozillaBrowserAdapter.executeFailed", //$NON-NLS-1$
 						executableName);
 				HelpBasePlugin.logError(msg, e);
-				BaseHelpSystem.getDefaultErrorUtil().displayError(msg, uiThread);
+				BaseHelpSystem.getDefaultErrorUtil()
+						.displayError(msg, uiThread);
 				// return success, so second command does not execute
 				return 0;
 			}
 			return -1;
 		}
 		/**
-		 * On some OSes 0 is always returned by netscape -remote.
-		 * It is necessary to examine ouput to find out failure
+		 * On some OSes 0 is always returned by netscape -remote. It is
+		 * necessary to examine ouput to find out failure
+		 * 
 		 * @param outputs
 		 * @param errors
-		 * @return
-		 * @throws InterruptedException
+		 * @return @throws
+		 *         InterruptedException
 		 */
-		private boolean errorsInOutput(
-			StreamConsumer outputs,
-			StreamConsumer errors) {
+		private boolean errorsInOutput(StreamConsumer outputs,
+				StreamConsumer errors) {
 			try {
 				outputs.join(1000);
 				if (outputs.getLastLine() != null
-					&& (outputs.getLastLine().indexOf("No running window found") //$NON-NLS-1$
-						>= 0
-						|| outputs.getLastLine().indexOf("not running on display") //$NON-NLS-1$
-							>= 0)) {
+						&& (outputs.getLastLine().indexOf(
+								"No running window found") //$NON-NLS-1$
+						>= 0 || outputs.getLastLine().indexOf(
+								"not running on display") //$NON-NLS-1$
+						>= 0)) {
 					return true;
 				}
 				errors.join(1000);
 				if (errors.getLastLine() != null
-					&& (errors.getLastLine().indexOf("No running window found") //$NON-NLS-1$
-						>= 0
-						|| errors.getLastLine().indexOf("not running on display") //$NON-NLS-1$
-							>= 0)) {
+						&& (errors.getLastLine().indexOf(
+								"No running window found") //$NON-NLS-1$
+						>= 0 || errors.getLastLine().indexOf(
+								"not running on display") //$NON-NLS-1$
+						>= 0)) {
 					return true;
 				}
 			} catch (InterruptedException ie) {
@@ -210,7 +205,7 @@ public class MozillaBrowserAdapter implements IBrowser {
 			if (exitRequested)
 				return;
 			if (openBrowser(executable + " -remote openURL(" + url + ")") //$NON-NLS-1$ //$NON-NLS-2$
-				== 0) {
+			== 0) {
 				return;
 			}
 			if (exitRequested)

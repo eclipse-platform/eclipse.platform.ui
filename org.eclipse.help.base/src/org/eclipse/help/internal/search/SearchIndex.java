@@ -14,6 +14,7 @@ import java.net.*;
 import java.nio.channels.*;
 import java.util.*;
 import java.util.zip.*;
+
 import org.apache.lucene.document.*;
 import org.apache.lucene.index.*;
 import org.apache.lucene.search.*;
@@ -108,9 +109,8 @@ public class SearchIndex {
 				ParsedDocument parsed = new ParsedDocument(parser
 						.getContentReader());
 				doc.add(Field.Text("contents", parsed.newContentReader())); //$NON-NLS-1$
-				doc
-						.add(Field.Text("exact_contents", parsed //$NON-NLS-1$
-								.newContentReader()));
+				doc.add(Field.Text("exact_contents", parsed //$NON-NLS-1$
+						.newContentReader()));
 				String title = parser.getTitle();
 				doc.add(Field.UnStored("title", title)); //$NON-NLS-1$
 				doc.add(Field.UnStored("exact_title", title)); //$NON-NLS-1$
@@ -252,18 +252,6 @@ public class SearchIndex {
 	}
 	/**
 	 * Performs a query search on this index
-	 * 
-	 * @param fieldNames -
-	 *            Collection of field names of type String (e.g. "h1"); the
-	 *            search will be performed on the given fields
-	 * @param fieldSearch -
-	 *            boolean indicating if field only search should be performed;
-	 *            if set to false, default field "contents" and all other fields
-	 *            will be searched
-	 * @param searchResult
-	 *            SearchResult that will contain all the hits
-	 * @return - an array of document ids. Later, we can extend this to return
-	 *         more data (rank, # of occs, etc.)
 	 */
 	public void search(ISearchQuery searchQuery, ISearchHitCollector collector)
 			throws QueryTooComplexException {
@@ -528,13 +516,12 @@ public class SearchIndex {
 		return closed;
 	}
 	public boolean tryLock() {
-		File lockFile = new File(indexDir.getParentFile(), locale
-				+ ".lock"); //$NON-NLS-1$
+		File lockFile = new File(indexDir.getParentFile(), locale + ".lock"); //$NON-NLS-1$
 		lockFile.getParentFile().mkdirs();
 		try {
 			RandomAccessFile raf = new RandomAccessFile(lockFile, "rw"); //$NON-NLS-1$
 			FileLock l = raf.getChannel().tryLock();
-			if(l!=null){
+			if (l != null) {
 				lock = l;
 				return true;
 			}

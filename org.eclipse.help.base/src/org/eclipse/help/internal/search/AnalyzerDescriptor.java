@@ -16,7 +16,7 @@ import org.eclipse.help.internal.base.*;
 import org.osgi.framework.*;
 
 /**
- * Text Analyzer Descriptor.  Encapsulates Lucene Analyzer
+ * Text Analyzer Descriptor. Encapsulates Lucene Analyzer
  */
 public class AnalyzerDescriptor {
 	private Analyzer luceneAnalyzer;
@@ -28,7 +28,8 @@ public class AnalyzerDescriptor {
 	 */
 	public AnalyzerDescriptor(String locale) {
 
-		// try creating the analyzer for the specified locale (usually lang_country)
+		// try creating the analyzer for the specified locale (usually
+		// lang_country)
 		this.luceneAnalyzer = createAnalyzer(locale);
 
 		// 	try creating configured analyzer for the language only
@@ -42,14 +43,10 @@ public class AnalyzerDescriptor {
 
 		// if all fails, create default analyzer
 		if (this.luceneAnalyzer == null) {
-			this.id =
-				HelpBasePlugin.PLUGIN_ID
+			this.id = HelpBasePlugin.PLUGIN_ID
 					+ "#" //$NON-NLS-1$
-					+ HelpBasePlugin
-						.getDefault()
-						.getBundle()
-						.getHeaders()
-						.get(Constants.BUNDLE_VERSION);
+					+ HelpBasePlugin.getDefault().getBundle().getHeaders().get(
+							Constants.BUNDLE_VERSION);
 			this.luceneAnalyzer = new DefaultAnalyzer(locale);
 			this.lang = locale;
 		}
@@ -57,6 +54,7 @@ public class AnalyzerDescriptor {
 	}
 	/**
 	 * Gets the analyzer.
+	 * 
 	 * @return Returns a Analyzer
 	 */
 	public Analyzer getAnalyzer() {
@@ -65,6 +63,7 @@ public class AnalyzerDescriptor {
 
 	/**
 	 * Gets the id.
+	 * 
 	 * @return Returns a String
 	 */
 	public String getId() {
@@ -73,6 +72,7 @@ public class AnalyzerDescriptor {
 
 	/**
 	 * Gets the language for the analyzer
+	 * 
 	 * @return Returns a String
 	 */
 	public String getLang() {
@@ -80,18 +80,17 @@ public class AnalyzerDescriptor {
 	}
 
 	/**
-	 * Creates analyzer for a locale, 
-	 * if it is configured in the org.eclipse.help.luceneAnalyzer
-	 * extension point. The identifier of the analyzer  and locale and lang are also set.
-	 * @return Analyzer or null if no analyzer is configured
-	 * for given locale.
+	 * Creates analyzer for a locale, if it is configured in the
+	 * org.eclipse.help.luceneAnalyzer extension point. The identifier of the
+	 * analyzer and locale and lang are also set.
+	 * 
+	 * @return Analyzer or null if no analyzer is configured for given locale.
 	 */
 	private Analyzer createAnalyzer(String locale) {
 		// find extension point
-		IConfigurationElement configElements[] =
-			Platform.getExtensionRegistry().getConfigurationElementsFor(
-				HelpBasePlugin.PLUGIN_ID,
-				"luceneAnalyzer"); //$NON-NLS-1$
+		IConfigurationElement configElements[] = Platform
+				.getExtensionRegistry().getConfigurationElementsFor(
+						HelpBasePlugin.PLUGIN_ID, "luceneAnalyzer"); //$NON-NLS-1$
 		for (int i = 0; i < configElements.length; i++) {
 			if (!configElements[i].getName().equals("analyzer")) //$NON-NLS-1$
 				continue;
@@ -99,37 +98,34 @@ public class AnalyzerDescriptor {
 			if (analyzerLocale == null || !analyzerLocale.equals(locale))
 				continue;
 			try {
-				Object analyzer =
-					configElements[i].createExecutableExtension("class"); //$NON-NLS-1$
+				Object analyzer = configElements[i]
+						.createExecutableExtension("class"); //$NON-NLS-1$
 				if (!(analyzer instanceof Analyzer))
 					continue;
 				else {
-					String pluginId =
-						configElements[i]
-							.getDeclaringExtension()
+					String pluginId = configElements[i].getDeclaringExtension()
 							.getNamespace();
-					String pluginVersion = (String)
-						Platform.getBundle(pluginId)
-						.getHeaders().get(Constants.BUNDLE_VERSION);
+					String pluginVersion = (String) Platform
+							.getBundle(pluginId).getHeaders().get(
+									Constants.BUNDLE_VERSION);
 					this.luceneAnalyzer = (Analyzer) analyzer;
 					this.id = pluginId + "#" + pluginVersion; //$NON-NLS-1$
 					this.lang = locale;
 					if (HelpBasePlugin.PLUGIN_ID.equals(pluginId)) {
 						// The analyzer is contributed by help plugin.
-						// Continue in case there is another analyzer for the same locale
-						// let another analyzer take precendence over one from help
+						// Continue in case there is another analyzer for the
+						// same locale
+						// let another analyzer take precendence over one from
+						// help
 					} else {
 						// the analyzer does not come from help
 						return this.luceneAnalyzer;
 					}
 				}
 			} catch (CoreException ce) {
-				HelpBasePlugin.logError(
-					HelpBaseResources.getString(
-						"ES23", //$NON-NLS-1$
+				HelpBasePlugin.logError(HelpBaseResources.getString("ES23", //$NON-NLS-1$
 						configElements[i].getAttribute("class"), //$NON-NLS-1$
-						locale),
-					ce);
+						locale), ce);
 			}
 		}
 
@@ -137,10 +133,12 @@ public class AnalyzerDescriptor {
 	}
 	/**
 	 * Checks whether analyzer is compatible with a given analyzer
-	 * @param analyzerId id of analyzer used in the past by the index;
-	 *  id has a form: pluginID#pluginVersion
-	 * @return true when it is known that given analyzer is compatible with
-	 *  this  analyzer
+	 * 
+	 * @param analyzerId
+	 *            id of analyzer used in the past by the index; id has a form:
+	 *            pluginID#pluginVersion
+	 * @return true when it is known that given analyzer is compatible with this
+	 *         analyzer
 	 */
 	public boolean isCompatible(String analyzerId) {
 		if (id.equals(analyzerId)) {

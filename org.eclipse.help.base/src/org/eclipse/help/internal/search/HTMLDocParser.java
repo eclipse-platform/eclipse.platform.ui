@@ -19,10 +19,8 @@ import org.apache.lucene.demo.html.*;
 import org.eclipse.help.internal.base.*;
 
 /**
- * Parser HTML documents.
- * Extracts document encoding from header,
- * and delegates to lucene HTML parser for extraction
- * of title, summary, and content.
+ * Parser HTML documents. Extracts document encoding from header, and delegates
+ * to lucene HTML parser for extraction of title, summary, and content.
  */
 public class HTMLDocParser {
 	// maximum number of characters that will be searched
@@ -42,7 +40,7 @@ public class HTMLDocParser {
 	final int STATE_ELEMENT_AFTER_LT = 1;
 	final int STATE_ELEMENT_AFTER_LT_SLASH = 2;
 	final int STATE_ELEMENT_META = 3;
-	// states for parsing HTTP-EQUIV attribute 
+	// states for parsing HTTP-EQUIV attribute
 	final int STATE_HTTP_START = 0;
 	final int STATE_HTTP_AFTER_NAME = 1;
 	final int STATE_HTTP_AFTER_EQ = 2;
@@ -70,26 +68,24 @@ public class HTMLDocParser {
 		inputStream = url.openStream();
 		if (encoding != null) {
 			try {
-				htmlParser =
-					new HTMLParser(
-						new InputStreamReader(inputStream, encoding));
+				htmlParser = new HTMLParser(new InputStreamReader(inputStream,
+						encoding));
 
 			} catch (UnsupportedEncodingException uee) {
 				if (HelpBasePlugin.DEBUG_SEARCH) {
-					System.out.println(
-						this.getClass().getName()
-							+ " JVM does not support encoding " //$NON-NLS-1$
-							+ encoding
-							+ " specified in document " //$NON-NLS-1$
-							+ url.getPath()
-							+ ". Default encoding will be used during indexing."); //$NON-NLS-1$
+					System.out
+							.println(this.getClass().getName()
+									+ " JVM does not support encoding " //$NON-NLS-1$
+									+ encoding
+									+ " specified in document " //$NON-NLS-1$
+									+ url.getPath()
+									+ ". Default encoding will be used during indexing."); //$NON-NLS-1$
 				}
 				htmlParser = new HTMLParser(new InputStreamReader(inputStream));
 			}
 		} else {
 			if (HelpBasePlugin.DEBUG_SEARCH) {
-				System.out.println(
-					this.getClass().getName()
+				System.out.println(this.getClass().getName()
 						+ " Encoding not found in document " //$NON-NLS-1$
 						+ url.getPath()
 						+ ". Default encoding will be used during indexing."); //$NON-NLS-1$
@@ -135,10 +131,10 @@ public class HTMLDocParser {
 		return htmlParser.getReader();
 	}
 	/**
-	 * Private.
-	 * Parses  HTML to extract document encoding specified in HTTP
+	 * Private. Parses HTML to extract document encoding specified in HTTP
 	 * equivalent META tag in the document header. Example of such META tag is
 	 * <META HTTP-EQUIV="content-type" CONTENT="text/html; charset=UTF-8">
+	 * 
 	 * @return String or null if encoding not found
 	 */
 	public String getCharsetFromHTML(InputStream is) {
@@ -177,21 +173,20 @@ public class HTMLDocParser {
 
 		try {
 			// in the worst case, process tokens until end of file
-			for (int token = tokenizer.nextToken();
-				token != StreamTokenizer.TT_EOF;
-				token = tokenizer.nextToken()) {
+			for (int token = tokenizer.nextToken(); token != StreamTokenizer.TT_EOF; token = tokenizer
+					.nextToken()) {
 				// debug tokens
 				//				if (token == StreamTokenizer.TT_WORD) {
-				//					System.out.println("word     =" + tokenizer.sval);
+				//					System.out.println("word =" + tokenizer.sval);
 				//				} else if (token == StreamTokenizer.TT_NUMBER) {
-				//					System.out.println("number   =" + tokenizer.nval);
+				//					System.out.println("number =" + tokenizer.nval);
 				//				} else if (token == StreamTokenizer.TT_EOL) {
 				//					System.out.println("endofline=");
 				//				} else if ((char) token == '\"') {
-				//					System.out.println("\"     =" + tokenizer.sval);
+				//					System.out.println("\" =" + tokenizer.sval);
 				//
 				//				} else {
-				//					System.out.println("else     =" + (char) token);
+				//					System.out.println("else =" + (char) token);
 				//				}
 
 				// process input based depending on current state
@@ -204,36 +199,39 @@ public class HTMLDocParser {
 					case STATE_ELEMENT_AFTER_LT :
 						if (token == StreamTokenizer.TT_WORD) {
 							// some element opened
-							if (ELEMENT_META
-								.equalsIgnoreCase(tokenizer.sval)) {
+							if (ELEMENT_META.equalsIgnoreCase(tokenizer.sval)) {
 								// META element opened
 								stateElement = STATE_ELEMENT_META;
 								// initialize state of attributes
 								stateHttp = STATE_HTTP_START;
 								stateContent = STATE_CONTENT_START;
 								contentValue = null;
-							} else if (
-								ELEMENT_BODY.equalsIgnoreCase(
-									tokenizer.sval)) {
-								// body element opened, we are too far, stop processing input
+							} else if (ELEMENT_BODY
+									.equalsIgnoreCase(tokenizer.sval)) {
+								// body element opened, we are too far, stop
+								// processing input
 								return null;
 							} else {
-								// some other element opened, start from initial state
+								// some other element opened, start from initial
+								// state
 								stateElement = STATE_ELEMENT_START;
 							}
 						} else if (token == '/') {
 							// can be begging of head closing
 							stateElement = STATE_ELEMENT_AFTER_LT_SLASH;
 						} else {
-							// not an element opened, could be openning of declaration
+							// not an element opened, could be openning of
+							// declaration
 							// or element closing e.t.c.
 							stateElement = STATE_ELEMENT_START;
 						}
 						break;
 					case STATE_ELEMENT_AFTER_LT_SLASH :
 						if (token == StreamTokenizer.TT_WORD
-							&& ELEMENT_HEAD.equalsIgnoreCase(tokenizer.sval)) {
-							// head element closed, we are too far, stop processing input
+								&& ELEMENT_HEAD
+										.equalsIgnoreCase(tokenizer.sval)) {
+							// head element closed, we are too far, stop
+							// processing input
 							return null;
 						} else {
 							stateElement = STATE_ELEMENT_START;
@@ -242,26 +240,26 @@ public class HTMLDocParser {
 					default : // STATE_META_IN :
 						switch (token) {
 							case '>' :
-								// no longer inside META, start from initial state
+								// no longer inside META, start from initial
+								// state
 								stateElement = STATE_ELEMENT_START;
 								break;
 							case StreamTokenizer.TT_WORD :
 								// string inside META tag, can be attribute name
 								if (ATTRIBUTE_HTTP
-									.equalsIgnoreCase(tokenizer.sval)) {
-									// found HTTP-EQUIV attribute name 
+										.equalsIgnoreCase(tokenizer.sval)) {
+									// found HTTP-EQUIV attribute name
 									stateHttp = STATE_HTTP_AFTER_NAME;
-								} else if (
-									ATTRIBUTE_CONTENT.equalsIgnoreCase(
-										tokenizer.sval)) {
+								} else if (ATTRIBUTE_CONTENT
+										.equalsIgnoreCase(tokenizer.sval)) {
 									// found CONTENT attribute name
 									stateContent = STATE_CONTENT_AFTER_NAME;
-								} else if (
-									stateHttp == STATE_HTTP_AFTER_EQ
-										&& ATTRIBUTE_HTTP_VALUE.equalsIgnoreCase(
-											tokenizer.sval)) {
+								} else if (stateHttp == STATE_HTTP_AFTER_EQ
+										&& ATTRIBUTE_HTTP_VALUE
+												.equalsIgnoreCase(tokenizer.sval)) {
 									// value of HTTP-EQUIV attribute (unquoted)
-									// we found <META ... HTTP-EQUIV=content-type
+									// we found <META ...
+									// HTTP-EQUIV=content-type
 									stateHttp = STATE_HTTP_DONE;
 								} else {
 									// some other attribute name or string,
@@ -281,12 +279,12 @@ public class HTMLDocParser {
 								if (stateHttp == STATE_HTTP_AFTER_NAME) {
 									// we have HTTP-EQUIV=
 									stateHttp = STATE_HTTP_AFTER_EQ;
-								} else if (
-									stateContent == STATE_CONTENT_AFTER_NAME) {
+								} else if (stateContent == STATE_CONTENT_AFTER_NAME) {
 									// we have CONTENT=
 									stateContent = STATE_CONTENT_AFTER_EQ;
 								} else {
-									// equal sign after some other attribute name or string,
+									// equal sign after some other attribute
+									// name or string,
 									// reset states of seeked attributes,
 									// unless successfully processed earlier
 									if (stateHttp != STATE_HTTP_DONE) {
@@ -298,21 +296,24 @@ public class HTMLDocParser {
 								}
 								break;
 							case '\"' :
-								// quoted string inside META tag, can be attribute value
+								// quoted string inside META tag, can be
+								// attribute value
 								if (stateHttp == STATE_HTTP_AFTER_EQ) {
 									// value of HTTP-EQUIV attribute
 									if (ATTRIBUTE_HTTP_VALUE
-										.equalsIgnoreCase(tokenizer.sval)) {
-										// we found <META ... HTTP-EQUIV="content-type"
+											.equalsIgnoreCase(tokenizer.sval)) {
+										// we found <META ...
+										// HTTP-EQUIV="content-type"
 										stateHttp = STATE_HTTP_DONE;
 									}
-								} else if (
-									stateContent == STATE_CONTENT_AFTER_EQ) {
+								} else if (stateContent == STATE_CONTENT_AFTER_EQ) {
 									// value of CONTENT attribute
 									stateContent = STATE_CONTENT_DONE;
 									// save the value of the attribute
-									// if attribue HTTP-EQUIV="content-type" is found
-									// in the same META tag, this value might have
+									// if attribue HTTP-EQUIV="content-type" is
+									// found
+									// in the same META tag, this value might
+									// have
 									// Content-type entity header
 									contentValue = tokenizer.sval;
 								} else {
@@ -341,9 +342,8 @@ public class HTMLDocParser {
 						}
 						break;
 				}
-				if (contentValue != null
-					&& stateHttp == STATE_HTTP_DONE
-					&& stateContent == STATE_CONTENT_DONE) {
+				if (contentValue != null && stateHttp == STATE_HTTP_DONE
+						&& stateContent == STATE_CONTENT_DONE) {
 					// <META HTTP-EQUIV="content-type" CONTENT="*******"
 					// parse vale of content attribute to extract encoding
 					return getCharsetFromHTTP(contentValue);
@@ -357,20 +357,20 @@ public class HTMLDocParser {
 		return null;
 	}
 	/**
-	 * Parses HTTP1.1 Content-Type entity-header field
-	 * for example, Content-Type: text/html; charset=ISO-8859-4,
-	 * and extracts charset parameter value of the media sub type.
-	 * @param media-type, for example  Content-Type: text/html; charset=ISO-8859-4
-	 * @return value of charset parameter, for example ISO-8859-4
-	 *  or  null if parameter does not exist
+	 * Parses HTTP1.1 Content-Type entity-header field for example,
+	 * Content-Type: text/html; charset=ISO-8859-4, and extracts charset
+	 * parameter value of the media sub type.
+	 * 
+	 * @return value of charset parameter, for example ISO-8859-4 or null if
+	 *         parameter does not exist
 	 */
 	public String getCharsetFromHTTP(String contentValue) {
 		StringTokenizer t = new StringTokenizer(contentValue, ";"); //$NON-NLS-1$
 		while (t.hasMoreTokens()) {
 			String parameter = t.nextToken().trim();
 			if (parameter.toLowerCase().startsWith("charset=")) { //$NON-NLS-1$
-				String charset =
-					parameter.substring("charset=".length()).trim(); //$NON-NLS-1$
+				String charset = parameter
+						.substring("charset=".length()).trim(); //$NON-NLS-1$
 				if (charset.length() > 0) {
 					return charset;
 				}

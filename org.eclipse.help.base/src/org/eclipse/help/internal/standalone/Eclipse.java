@@ -11,11 +11,11 @@
 package org.eclipse.help.internal.standalone;
 
 import java.io.*;
-import java.util.List;
+import java.util.*;
 
 /**
- * Eclipse launcher.  Spawns eclipse executable
- * or org.eclipse.core.launcher.Main.
+ * Eclipse launcher. Spawns eclipse executable or
+ * org.eclipse.core.launcher.Main.
  */
 public class Eclipse extends Thread {
 	// Eclipse exit codes
@@ -54,8 +54,7 @@ public class Eclipse extends Thread {
 		List vmArgs = Options.getVmArgs();
 		List eclipseArgs = Options.getEclipseArgs();
 		cmdarray = new String[3 + vmArgs.size() + 1 + eclipseArgs.size()];
-		cmdarray[0] =
-			new File(Options.getEclipseHome(), "eclipse").getAbsolutePath(); //$NON-NLS-1$
+		cmdarray[0] = new File(Options.getEclipseHome(), "eclipse").getAbsolutePath(); //$NON-NLS-1$
 		cmdarray[1] = "-vm"; //$NON-NLS-1$
 		cmdarray[2] = Options.getVm();
 		for (int i = 0; i < eclipseArgs.size(); i++) {
@@ -103,11 +102,11 @@ public class Eclipse extends Thread {
 				} catch (InterruptedException e) {
 				}
 				if (Options.isDebug()) {
-					System.out.println(
-						"Eclipse exited with status code " + pr.exitValue()); //$NON-NLS-1$
+					System.out
+							.println("Eclipse exited with status code " + pr.exitValue()); //$NON-NLS-1$
 					if (pr.exitValue() == NEEDS_RESTART) {
-						System.out.println(
-							"Updates are installed,  Eclipse will be restarted."); //$NON-NLS-1$
+						System.out
+								.println("Updates are installed,  Eclipse will be restarted."); //$NON-NLS-1$
 					}
 				}
 			} while (pr.exitValue() == NEEDS_RESTART);
@@ -156,25 +155,18 @@ public class Eclipse extends Thread {
 		if (vmExe.exists() && !vmExe.isDirectory()) {
 			return;
 		}
-		throw new Exception(
-			"File "
-				+ vmExe.getAbsolutePath()
+		throw new Exception("File " + vmExe.getAbsolutePath()
 				+ " does not exists.  Pass a correct -vm option");
 	}
 	private void ensureEclipseExeExists() throws Exception {
-		File eclipseExe =
-			new File(
-				Options.getEclipseHome(),
-				"eclipse" //$NON-NLS-1$
-					+ (System.getProperty("os.name").startsWith("Win") //$NON-NLS-1$ //$NON-NLS-2$
+		File eclipseExe = new File(Options.getEclipseHome(), "eclipse" //$NON-NLS-1$
+				+ (System.getProperty("os.name").startsWith("Win") //$NON-NLS-1$ //$NON-NLS-2$
 						? ".exe" //$NON-NLS-1$
 						: "")); //$NON-NLS-1$
 		if (eclipseExe.exists() && !eclipseExe.isDirectory()) {
 			return;
 		}
-		throw new Exception(
-			"File "
-				+ eclipseExe.getAbsolutePath()
+		throw new Exception("File " + eclipseExe.getAbsolutePath()
 				+ " does not exists.  Pass a correct -eclipsehome option");
 	}
 	private void ensureStartupJarExists() throws Exception {
@@ -182,9 +174,7 @@ public class Eclipse extends Thread {
 		if (startupJar.exists() && !startupJar.isDirectory()) {
 			return;
 		}
-		throw new Exception(
-			"File "
-				+ startupJar.getAbsolutePath()
+		throw new Exception("File " + startupJar.getAbsolutePath()
 				+ " does not exists.  Pass a correct -eclipsehome option");
 	}
 	/**

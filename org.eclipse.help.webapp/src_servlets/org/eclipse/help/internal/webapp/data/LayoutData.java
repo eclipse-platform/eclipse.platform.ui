@@ -1,13 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2000, 2003 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Common Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * Contributors: IBM Corporation - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.help.internal.webapp.data;
 
 import javax.servlet.*;
@@ -20,7 +18,8 @@ public class LayoutData extends RequestData {
 	private String query = ""; //$NON-NLS-1$
 	private View[] views;
 
-	public LayoutData(ServletContext context, HttpServletRequest request, HttpServletResponse response) {
+	public LayoutData(ServletContext context, HttpServletRequest request,
+			HttpServletResponse response) {
 		super(context, request, response);
 
 		// initialize the query string
@@ -38,8 +37,7 @@ public class LayoutData extends RequestData {
 		if (banner == null || banner.trim().length() == 0) {
 			banner = "about:blank"; //$NON-NLS-1$
 		} else if (banner.startsWith("http:/")) { //$NON-NLS-1$
-		} else if (
-			banner.startsWith("file:/") || banner.startsWith("jar:file:/")) { //$NON-NLS-1$ //$NON-NLS-2$
+		} else if (banner.startsWith("file:/") || banner.startsWith("jar:file:/")) { //$NON-NLS-1$ //$NON-NLS-2$
 			banner = "topic/" + banner; //$NON-NLS-1$
 		} else {
 			banner = "topic" + banner; //$NON-NLS-1$
@@ -75,14 +73,10 @@ public class LayoutData extends RequestData {
 		if (views != null)
 			return views;
 
-		View tocview =
-			new View(
-				"toc", //$NON-NLS-1$
+		View tocview = new View("toc", //$NON-NLS-1$
 				"", //$NON-NLS-1$
 				preferences.getImagesDirectory() + "/contents_view.gif"); //$NON-NLS-1$
-		View searchview =
-			new View(
-				"search", //$NON-NLS-1$
+		View searchview = new View("search", //$NON-NLS-1$
 				"", //$NON-NLS-1$
 				preferences.getImagesDirectory() + "/search_results_view.gif"); //$NON-NLS-1$
 
@@ -90,37 +84,32 @@ public class LayoutData extends RequestData {
 		View bookmarksview = null;
 
 		if (preferences.isLinksView())
-			linksview =
-				new View(
-					"links", //$NON-NLS-1$
+			linksview = new View("links", //$NON-NLS-1$
 					"", //$NON-NLS-1$
 					preferences.getImagesDirectory() + "/links_view.gif"); //$NON-NLS-1$
 		if (preferences.isBookmarksView())
-			bookmarksview =
-				new View(
-					"bookmarks", //$NON-NLS-1$
+			bookmarksview = new View("bookmarks", //$NON-NLS-1$
 					"", //$NON-NLS-1$
 					preferences.getImagesDirectory() + "/bookmarks_view.gif"); //$NON-NLS-1$
 
 		if (linksview != null && bookmarksview != null)
-			views =
-				new View[] { tocview, searchview, linksview, bookmarksview };
+			views = new View[]{tocview, searchview, linksview, bookmarksview};
 		else if (linksview != null)
-			views = new View[] { tocview, searchview, linksview };
+			views = new View[]{tocview, searchview, linksview};
 		else if (bookmarksview != null)
-			views = new View[] { tocview, searchview, bookmarksview };
+			views = new View[]{tocview, searchview, bookmarksview};
 		else
-			views = new View[] { tocview, searchview };
+			views = new View[]{tocview, searchview};
 
 		return views;
 	}
 
 	public String getVisibleView() {
 		String requestedView = request.getParameter("tab"); //$NON-NLS-1$
-		View[] allViews=getViews();
-		for(int i=0; i<allViews.length; i++){
-			if(allViews[i].getName().equals(requestedView)){
-				 return requestedView;
+		View[] allViews = getViews();
+		for (int i = 0; i < allViews.length; i++) {
+			if (allViews[i].getName().equals(requestedView)) {
+				return requestedView;
 			}
 		}
 		return "toc"; //$NON-NLS-1$
@@ -136,10 +125,8 @@ public class LayoutData extends RequestData {
 	}
 	public String getWindowTitle() {
 		if (preferences.isWindowTitlePrefix()) {
-			return ServletResources.getString(
-				"browserTitle", //$NON-NLS-1$
-				BaseHelpSystem.getProductName(),
-				request);
+			return ServletResources.getString("browserTitle", //$NON-NLS-1$
+					BaseHelpSystem.getProductName(), request);
 		} else {
 			return BaseHelpSystem.getProductName();
 		}

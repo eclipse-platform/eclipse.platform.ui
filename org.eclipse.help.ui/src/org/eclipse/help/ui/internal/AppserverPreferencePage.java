@@ -23,15 +23,16 @@ import org.eclipse.ui.help.*;
 /**
  * Preference page for Tomcat network interface and port.
  */
-public class AppserverPreferencePage
-	extends PreferencePage
-	implements IWorkbenchPreferencePage {
+public class AppserverPreferencePage extends PreferencePage
+		implements
+			IWorkbenchPreferencePage {
 	protected Text textServerAddr;
 	protected Text textServerPort;
 	/**
 	 * Creates preference page controls on demand.
-	 *
-	 * @param parent the parent for the preference page
+	 * 
+	 * @param parent
+	 *            the parent for the preference page
 	 */
 	protected Control createContents(Composite parent) {
 		Font font = parent.getFont();
@@ -47,8 +48,8 @@ public class AppserverPreferencePage
 		mainComposite.setLayout(layout);
 
 		Label label = new Label(mainComposite, SWT.NONE);
-		label.setText(
-			HelpUIResources.getString("AppserverPreferencePage.description")); //$NON-NLS-1$
+		label.setText(HelpUIResources
+				.getString("AppserverPreferencePage.description")); //$NON-NLS-1$
 		GridData data = new GridData();
 		data.horizontalSpan = 2;
 		label.setLayoutData(data);
@@ -63,9 +64,8 @@ public class AppserverPreferencePage
 
 		label = new Label(mainComposite, SWT.NONE);
 		label.setFont(font);
-		label.setText(
-			HelpUIResources.getString(
-				"AppserverPreferencePage.hostDescription")); //$NON-NLS-1$
+		label.setText(HelpUIResources
+				.getString("AppserverPreferencePage.hostDescription")); //$NON-NLS-1$
 		data = new GridData();
 		data.horizontalSpan = 2;
 		label.setLayoutData(data);
@@ -95,9 +95,8 @@ public class AppserverPreferencePage
 
 		label = new Label(mainComposite, SWT.NONE);
 		label.setFont(font);
-		label.setText(
-			HelpUIResources.getString(
-				"AppserverPreferencePage.portDescription")); //$NON-NLS-1$
+		label.setText(HelpUIResources
+				.getString("AppserverPreferencePage.portDescription")); //$NON-NLS-1$
 		data = new GridData();
 		data.horizontalSpan = 2;
 		label.setLayoutData(data);
@@ -124,8 +123,8 @@ public class AppserverPreferencePage
 		textServerPort.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				try {
-					int num =
-						Integer.valueOf(textServerPort.getText()).intValue();
+					int num = Integer.valueOf(textServerPort.getText())
+							.intValue();
 					if (0 <= num && num <= 0xFFFF) {
 						// port is valid
 						AppserverPreferencePage.this.setValid(true);
@@ -137,9 +136,8 @@ public class AppserverPreferencePage
 				} catch (NumberFormatException nfe) {
 				}
 				AppserverPreferencePage.this.setValid(false);
-				setErrorMessage(
-					HelpUIResources.getString(
-						"AppserverPreferencePage.invalidPort")); //$NON-NLS-1$
+				setErrorMessage(HelpUIResources
+						.getString("AppserverPreferencePage.invalidPort")); //$NON-NLS-1$
 			}
 		});
 
@@ -151,8 +149,9 @@ public class AppserverPreferencePage
 		label.setFont(font);
 
 		label = new Label(mainComposite, SWT.NONE);
-		label.setText(
-			HelpUIResources.getString("AppserverPreferencePage.Note")); //$NON-NLS-1$
+		label
+				.setText(HelpUIResources
+						.getString("AppserverPreferencePage.Note")); //$NON-NLS-1$
 		// Make this bold
 		FontData[] fontData = font.getFontData();
 		for (int i = 0; i < fontData.length; i++) {
@@ -160,8 +159,8 @@ public class AppserverPreferencePage
 		}
 		final Font boldFont = new Font(label.getDisplay(), fontData);
 		label.setFont(boldFont);
-		label.addDisposeListener(new DisposeListener(){
-			public void widgetDisposed(DisposeEvent e){
+		label.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
 				boldFont.dispose();
 			}
 		});
@@ -171,9 +170,8 @@ public class AppserverPreferencePage
 		label.setLayoutData(data);
 
 		label = new Label(mainComposite, SWT.NONE);
-		label.setText(
-			HelpUIResources.getString(
-				"AppserverPreferencePage.requireRestart")); //$NON-NLS-1$
+		label.setText(HelpUIResources
+				.getString("AppserverPreferencePage.requireRestart")); //$NON-NLS-1$
 		data = new GridData();
 		//data.horizontalSpan = 2;
 		label.setLayoutData(data);
@@ -191,11 +189,12 @@ public class AppserverPreferencePage
 	public void init(IWorkbench workbench) {
 	}
 	/**
-	 * Performs special processing when this page's Defaults button has been pressed.
+	 * Performs special processing when this page's Defaults button has been
+	 * pressed.
 	 * <p>
 	 * This is a framework hook method for sublcasses to do special things when
-	 * the Defaults button has been pressed.
-	 * Subclasses may override, but should call <code>super.performDefaults</code>.
+	 * the Defaults button has been pressed. Subclasses may override, but should
+	 * call <code>super.performDefaults</code>.
 	 * </p>
 	 */
 	protected void performDefaults() {

@@ -1,13 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2000, 2003 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Common Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * Contributors: IBM Corporation - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.help.ui.internal;
 import java.util.*;
 
@@ -17,7 +15,11 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 
 public class HyperlinkHandler
-	implements MouseListener, MouseTrackListener, PaintListener, Listener {
+		implements
+			MouseListener,
+			MouseTrackListener,
+			PaintListener,
+			Listener {
 	public static final int UNDERLINE_NEVER = 1;
 	public static final int UNDERLINE_ROLLOVER = 2;
 	public static final int UNDERLINE_ALWAYS = 3;
@@ -108,7 +110,7 @@ public class HyperlinkHandler
 	}
 	public void mouseEnter(MouseEvent e) {
 		Control control = (Control) e.widget;
-		
+
 		if (isHyperlinkCursorUsed())
 			control.setCursor(hyperlinkCursor);
 		if (activeBackground != null)
@@ -123,7 +125,7 @@ public class HyperlinkHandler
 	}
 	public void mouseExit(MouseEvent e) {
 		Control control = (Control) e.widget;
-						
+
 		if (isHyperlinkCursorUsed())
 			control.setCursor(null);
 		if (hyperlinkUnderlineMode == UNDERLINE_ROLLOVER)
@@ -141,8 +143,8 @@ public class HyperlinkHandler
 	public void mouseUp(MouseEvent e) {
 		if (e.button != 1)
 			return;
-		IHyperlinkListener action = getLinkListener((Control)e.widget);
-			
+		IHyperlinkListener action = getLinkListener((Control) e.widget);
+
 		if (action != null) {
 			Control c = (Control) e.widget;
 			c.setCursor(busyCursor);
@@ -152,15 +154,17 @@ public class HyperlinkHandler
 		}
 	}
 	public void paintControl(PaintEvent e) {
-		Control control = (Control)e.widget;
+		Control control = (Control) e.widget;
 		if (hyperlinkUnderlineMode == UNDERLINE_ALWAYS)
 			HyperlinkHandler.underline(control, true);
 	}
 	/**
-	 * @param control org.eclipse.swt.widgets.Control
-	 * @param listener org.eclipse.help.ui.internal.IHyperlinkListener
+	 * @param control
+	 *            org.eclipse.swt.widgets.Control
+	 * @param listener
+	 *            org.eclipse.help.ui.internal.IHyperlinkListener
 	 */
-	public void registerHyperlink(Control control, IHyperlinkListener listener) {			
+	public void registerHyperlink(Control control, IHyperlinkListener listener) {
 		if (background != null)
 			control.setBackground(background);
 		if (foreground != null)
@@ -177,11 +181,12 @@ public class HyperlinkHandler
 	public IHyperlinkListener getLinkListener(Control c) {
 		if (c instanceof Label)
 			c = c.getParent();
-		return (IHyperlinkListener)hyperlinkListeners.get(c);
+		return (IHyperlinkListener) hyperlinkListeners.get(c);
 	}
-	
+
 	private void removeDisposedLinks() {
-		for (Enumeration keys = hyperlinkListeners.keys(); keys.hasMoreElements();) {
+		for (Enumeration keys = hyperlinkListeners.keys(); keys
+				.hasMoreElements();) {
 			Control control = (Control) keys.nextElement();
 			if (control.isDisposed()) {
 				hyperlinkListeners.remove(control);
@@ -194,54 +199,63 @@ public class HyperlinkHandler
 		hyperlinkListeners.clear();
 	}
 	/**
-	 * @param newActiveBackground org.eclipse.swt.graphics.Color
+	 * @param newActiveBackground
+	 *            org.eclipse.swt.graphics.Color
 	 */
 	public void setActiveBackground(Color newActiveBackground) {
 		activeBackground = newActiveBackground;
 	}
 	/**
-	 * @param newActiveForeground org.eclipse.swt.graphics.Color
+	 * @param newActiveForeground
+	 *            org.eclipse.swt.graphics.Color
 	 */
 	public void setActiveForeground(Color newActiveForeground) {
 		activeForeground = newActiveForeground;
 	}
 	/**
-	 * @param newBackground org.eclipse.swt.graphics.Color
+	 * @param newBackground
+	 *            org.eclipse.swt.graphics.Color
 	 */
 	public void setBackground(Color newBackground) {
 		background = newBackground;
 	}
 	/**
-	 * @param newForeground org.eclipse.swt.graphics.Color
+	 * @param newForeground
+	 *            org.eclipse.swt.graphics.Color
 	 */
 	public void setForeground(Color newForeground) {
 		foreground = newForeground;
 	}
 	/**
-	 * @param newHyperlinkCursorUsed boolean
+	 * @param newHyperlinkCursorUsed
+	 *            boolean
 	 */
 	public void setHyperlinkCursorUsed(boolean newHyperlinkCursorUsed) {
 		hyperlinkCursorUsed = newHyperlinkCursorUsed;
 	}
 	/**
-	 * @param newHyperlinkUnderlineMode int
+	 * @param newHyperlinkUnderlineMode
+	 *            int
 	 */
 	public void setHyperlinkUnderlineMode(int newHyperlinkUnderlineMode) {
 		hyperlinkUnderlineMode = newHyperlinkUnderlineMode;
 	}
 	/**
-	 * @param control org.eclipse.swt.widgets.Control
-	 * @param inside boolean
+	 * @param control
+	 *            org.eclipse.swt.widgets.Control
+	 * @param inside
+	 *            boolean
 	 */
 	public static void underline(Control control, boolean inside) {
-	
+
 		if (control instanceof HyperlinkLabel)
-			control = ((HyperlinkLabel)control).getLabel();
-			
+			control = ((HyperlinkLabel) control).getLabel();
+
 		Composite parent = control.getParent();
 		Rectangle bounds = control.getBounds();
 		GC gc = new GC(parent);
-		Color color = inside ? control.getForeground() : control.getBackground();
+		Color color = inside ? control.getForeground() : control
+				.getBackground();
 		gc.setForeground(color);
 		int y = bounds.y + bounds.height;
 		gc.drawLine(bounds.x, y, bounds.x + bounds.width, y);
@@ -250,11 +264,12 @@ public class HyperlinkHandler
 
 	/**
 	 * Sent when an event that the receiver has registered for occurs.
-	 *
-	 * @param event the event which occurred
+	 * 
+	 * @param event
+	 *            the event which occurred
 	 */
 	public void handleEvent(Event event) {
-		IHyperlinkListener listener = getLinkListener((Control)event.widget);
+		IHyperlinkListener listener = getLinkListener((Control) event.widget);
 		listener.linkActivated((Control) event.widget);
 	}
 }

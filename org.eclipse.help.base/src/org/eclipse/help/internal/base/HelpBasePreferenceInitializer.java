@@ -19,7 +19,9 @@ public class HelpBasePreferenceInitializer
 		extends
 			AbstractPreferenceInitializer {
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
 	 */
 	public void initializeDefaultPreferences() {
@@ -29,9 +31,9 @@ public class HelpBasePreferenceInitializer
 		boolean isWindows = os.indexOf("windows") != -1; //$NON-NLS-1$
 
 		if (isWindows)
-			prefs.setDefault(
-				"custom_browser_path", //$NON-NLS-1$
-				"\"C:\\Program Files\\Internet Explorer\\IEXPLORE.EXE\" %1"); //$NON-NLS-1$
+			prefs
+					.setDefault("custom_browser_path", //$NON-NLS-1$
+							"\"C:\\Program Files\\Internet Explorer\\IEXPLORE.EXE\" %1"); //$NON-NLS-1$
 		else
 			prefs.setDefault("custom_browser_path", "mozilla %1"); //$NON-NLS-1$ //$NON-NLS-2$
 	}

@@ -13,15 +13,18 @@ package org.eclipse.help.internal.model;
 import java.util.*;
 
 /**
- * Part of help navigation model corresponding to any of: TOC, TOPIC, ANCHOR, or LINK element.
- * After navigation is built, this may contain TOC, TOPIC, LINK, or ANCHOR elements.
+ * Part of help navigation model corresponding to any of: TOC, TOPIC, ANCHOR, or
+ * LINK element. After navigation is built, this may contain TOC, TOPIC, LINK,
+ * or ANCHOR elements.
+ * 
  * @since 3.0
  */
 public interface INavigationElement {
 	/**
 	 * Returns child elements
+	 * 
 	 * @return List of INavigationElement
 	 */
 	List getChildren();
-	
+
 }

@@ -11,11 +11,11 @@
 package org.eclipse.help.internal.search;
 import java.util.*;
 
-import org.apache.lucene.index.Term;
+import org.apache.lucene.index.*;
 import org.apache.lucene.search.*;
 /**
- * Represents a phrase (not quoted) token in user search query words
- * It consists of several words created by an analyzer
+ * Represents a phrase (not quoted) token in user search query words It consists
+ * of several words created by an analyzer
  */
 public class QueryWordsPhrase extends QueryWordsToken {
 	private List words;
@@ -36,11 +36,9 @@ public class QueryWordsPhrase extends QueryWordsToken {
 	/**
 	 * Creates a lucene query for a field
 	 */
-	public Query createLuceneQuery(String field, float boost)
-	{
+	public Query createLuceneQuery(String field, float boost) {
 		PhraseQuery q = new PhraseQuery();
-		for (Iterator it = getWords().iterator(); it.hasNext();)
-		{
+		for (Iterator it = getWords().iterator(); it.hasNext();) {
 			String word = (String) it.next();
 			Term t = new Term(field, word);
 			q.add(t);

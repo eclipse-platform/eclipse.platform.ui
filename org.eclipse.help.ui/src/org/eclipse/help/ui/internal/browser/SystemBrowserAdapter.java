@@ -32,13 +32,12 @@ public class SystemBrowserAdapter implements IBrowser {
 	 * @see IBrowser#displayURL(String)
 	 */
 	public void displayURL(String url) {
-//		if (Constants.WS_WIN32.equalsIgnoreCase(Platform.getOS())) {
-			if (!Program.launch(url)) {
-				ErrorUtil.displayErrorDialog(
-					HelpUIResources.getString(
-						"SystemBrowser.noProgramForURL", //$NON-NLS-1$
-						url));
-			}
+		//		if (Constants.WS_WIN32.equalsIgnoreCase(Platform.getOS())) {
+		if (!Program.launch(url)) {
+			ErrorUtil.displayErrorDialog(HelpUIResources.getString(
+					"SystemBrowser.noProgramForURL", //$NON-NLS-1$
+					url));
+		}
 		//		} else {
 		//			Program b = Program.findProgram("html");
 		//			if (b == null || !b.execute(url)) {

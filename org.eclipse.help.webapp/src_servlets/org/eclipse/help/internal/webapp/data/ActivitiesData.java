@@ -11,6 +11,7 @@
 package org.eclipse.help.internal.webapp.data;
 import javax.servlet.*;
 import javax.servlet.http.*;
+
 import org.eclipse.help.internal.base.*;
 /**
  * Helper for pages in navigation frames. Used enabling/disabling activity
@@ -26,24 +27,22 @@ public class ActivitiesData extends RequestData {
 	public ActivitiesData(ServletContext context, HttpServletRequest request,
 			HttpServletResponse response) {
 		super(context, request, response);
-			String changeShowAll = request.getParameter("showAll"); //$NON-NLS-1$
-			if (changeShowAll != null) {
-				if ("off".equalsIgnoreCase(changeShowAll)) { //$NON-NLS-1$
-					HelpBasePlugin.getActivitySupport().setFilteringEnabled(
-							true);
-				} else if ("on".equalsIgnoreCase(changeShowAll)) { //$NON-NLS-1$
-					HelpBasePlugin.getActivitySupport().setFilteringEnabled(
-							false);
-				} else {
-					// not supported value
-				}
+		String changeShowAll = request.getParameter("showAll"); //$NON-NLS-1$
+		if (changeShowAll != null) {
+			if ("off".equalsIgnoreCase(changeShowAll)) { //$NON-NLS-1$
+				HelpBasePlugin.getActivitySupport().setFilteringEnabled(true);
+			} else if ("on".equalsIgnoreCase(changeShowAll)) { //$NON-NLS-1$
+				HelpBasePlugin.getActivitySupport().setFilteringEnabled(false);
 			} else {
-				// no change to afilter
+				// not supported value
 			}
-			String confirmShowAll= request.getParameter("showconfirm"); //$NON-NLS-1$
-			if("false".equalsIgnoreCase(confirmShowAll)){ //$NON-NLS-1$
-				preferences.setDontConfirmShowAll(true);
-			}
+		} else {
+			// no change to afilter
+		}
+		String confirmShowAll = request.getParameter("showconfirm"); //$NON-NLS-1$
+		if ("false".equalsIgnoreCase(confirmShowAll)) { //$NON-NLS-1$
+			preferences.setDontConfirmShowAll(true);
+		}
 	}
 	/**
 	 * @return Checks if filtering is enabled.

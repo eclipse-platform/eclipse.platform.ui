@@ -15,35 +15,34 @@ import java.util.*;
 import org.eclipse.help.internal.base.*;
 
 /**
- * This is a standalone help system. It takes care of 
- * launching the eclipse with its help system implementation,
- * and controling it.
- * This class can be used instantiated and used in a Java program,
- * or can be launched from command line to execute single help action.
+ * This is a standalone help system. It takes care of launching the eclipse with
+ * its help system implementation, and controling it. This class can be used
+ * instantiated and used in a Java program, or can be launched from command line
+ * to execute single help action.
  * 
- * Usage as a Java component: 
+ * Usage as a Java component:
  * <ul>
- * <li> create an instantance of this class and then hold onto 
- * this instance for the duration of your application</li>
- * <li> call start() </li>
- * <li> call displayHelp(...) or displayContext(..) any number of times </li>
- * <li> at the end, call shutdown(). </li>
+ * <li>create an instantance of this class and then hold onto this instance for
+ * the duration of your application</li>
+ * <li>call start()</li>
+ * <li>call displayHelp(...) or displayContext(..) any number of times</li>
+ * <li>at the end, call shutdown().</li>
  * </ul>
  */
 public class StandaloneHelp extends EclipseController {
 	// ID of the application to run
-	private static final String HELP_APPLICATION_ID =
-		HelpBasePlugin.PLUGIN_ID + ".helpApplication"; //$NON-NLS-1$
+	private static final String HELP_APPLICATION_ID = HelpBasePlugin.PLUGIN_ID
+			+ ".helpApplication"; //$NON-NLS-1$
 
 	/**
 	 * Constructs help system
-	 * @param args array of String options and their values
-	 * 	Option <code>-eclipseHome dir</code> specifies Eclipse
-	 *  installation directory.
-	 *  It must be provided, when current directory is not the same
-	 *  as Eclipse installation directory.
-	 *  Additionally, most options accepted by Eclipse execuable are supported.
-	 * @param applicationID ID of Eclipse help application
+	 * 
+	 * @param args
+	 *            array of String options and their values Option
+	 *            <code>-eclipseHome dir</code> specifies Eclipse installation
+	 *            directory. It must be provided, when current directory is not
+	 *            the same as Eclipse installation directory. Additionally, most
+	 *            options accepted by Eclipse execuable are supported.
 	 */
 	public StandaloneHelp(String[] args) {
 		super(HELP_APPLICATION_ID, args);
@@ -90,12 +89,11 @@ public class StandaloneHelp extends EclipseController {
 	 * @see org.eclipse.help.standalone.Help#displayHelp(java.lang.String)
 	 */
 	public void displayHelp(String href) throws Exception {
-		sendHelpCommand("displayHelp", new String[] { "href=" + href }); //$NON-NLS-1$ //$NON-NLS-2$
+		sendHelpCommand("displayHelp", new String[]{"href=" + href}); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
-	 * @return true if commands contained a known command
-	 *  and it was executed
+	 * @return true if commands contained a known command and it was executed
 	 */
 	private boolean executeCommand(List helpCommands) throws Exception {
 
@@ -119,19 +117,17 @@ public class StandaloneHelp extends EclipseController {
 			return true;
 		} else if ("displayContext".equalsIgnoreCase(command)) { //$NON-NLS-1$
 			if (helpCommands.size() >= 4) {
-				displayContext(
-					(String) helpCommands.get(1),
-					Integer.parseInt((String) helpCommands.get(2)),
-					Integer.parseInt((String) helpCommands.get(3)));
+				displayContext((String) helpCommands.get(1), Integer
+						.parseInt((String) helpCommands.get(2)), Integer
+						.parseInt((String) helpCommands.get(3)));
 
 				return true;
 			}
 		} else if ("displayContextInfopop".equalsIgnoreCase(command)) { //$NON-NLS-1$
 			if (helpCommands.size() >= 4) {
-				displayContextInfopop(
-					(String) helpCommands.get(1),
-					Integer.parseInt((String) helpCommands.get(2)),
-					Integer.parseInt((String) helpCommands.get(3)));
+				displayContextInfopop((String) helpCommands.get(1), Integer
+						.parseInt((String) helpCommands.get(2)), Integer
+						.parseInt((String) helpCommands.get(3)));
 				return true;
 			}
 		}
@@ -144,18 +140,18 @@ public class StandaloneHelp extends EclipseController {
 	private static void printMainUsage() {
 		System.out.println("Parameters syntax:");
 		System.out.println();
-		System.out.println(
-			"-command start | shutdown | (displayHelp [href]) [-eclipsehome eclipseInstallPath] [-host helpServerHost] [-port helpServerPort] [platform options] [-vmargs [Java VM arguments]]"); //$NON-NLS-1$
+		System.out
+				.println("-command start | shutdown | (displayHelp [href]) [-eclipsehome eclipseInstallPath] [-host helpServerHost] [-port helpServerPort] [platform options] [-vmargs [Java VM arguments]]"); //$NON-NLS-1$
 		System.out.println();
 		System.out.println("where:");
 		System.out.println(" href is the URL of the help resource to display,");
-		System.out.println(
-			" eclipseInstallPath specifies Eclipse installation directory; this directory is a parent to \"plugins\" directory and eclipse executable;  the option must be provided, when current directory from which infocenter is launched, is not the same as Eclipse installation directory,");
-		System.out.println(
-			" helpServerHost specifies host name of the interface that help server will use,");
-		System.out.println(
-			" helpServerPort specifies port number that help server will use,");
-		System.out.println(
-			" platform options are other options that are supported by Eclipse Executable.");
+		System.out
+				.println(" eclipseInstallPath specifies Eclipse installation directory; this directory is a parent to \"plugins\" directory and eclipse executable;  the option must be provided, when current directory from which infocenter is launched, is not the same as Eclipse installation directory,");
+		System.out
+				.println(" helpServerHost specifies host name of the interface that help server will use,");
+		System.out
+				.println(" helpServerPort specifies port number that help server will use,");
+		System.out
+				.println(" platform options are other options that are supported by Eclipse Executable.");
 	}
 }

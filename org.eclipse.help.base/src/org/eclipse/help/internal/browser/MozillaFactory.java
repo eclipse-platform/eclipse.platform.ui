@@ -1,13 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2000, 2003 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Common Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * Contributors: IBM Corporation - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.help.internal.browser;
 import java.io.*;
 import java.util.*;
@@ -54,26 +52,26 @@ public class MozillaFactory implements IBrowserFactory, IExecutableExtension {
 		}
 	}
 	/**
-	 * On some OSes 0 is always returned by "which" command
-	 * it is necessary to examine ouput to find out failure.
+	 * On some OSes 0 is always returned by "which" command it is necessary to
+	 * examine ouput to find out failure.
+	 * 
 	 * @param outputs
 	 * @param errors
-	 * @return
-	 * @throws InterruptedException
+	 * @return @throws
+	 *         InterruptedException
 	 */
-	private boolean errorsInOutput(
-		StreamConsumer outputs,
-		StreamConsumer errors) {
+	private boolean errorsInOutput(StreamConsumer outputs, StreamConsumer errors) {
 		try {
 			outputs.join(1000);
 			if (outputs.getLastLine() != null
-				&& outputs.getLastLine().indexOf("no " + executable + " in") //$NON-NLS-1$ //$NON-NLS-2$
+					&& outputs.getLastLine()
+							.indexOf("no " + executable + " in") //$NON-NLS-1$ //$NON-NLS-2$
 					>= 0) {
 				return true;
 			}
 			errors.join(1000);
 			if (errors.getLastLine() != null
-				&& errors.getLastLine().indexOf("no " + executable + " in") //$NON-NLS-1$ //$NON-NLS-2$
+					&& errors.getLastLine().indexOf("no " + executable + " in") //$NON-NLS-1$ //$NON-NLS-2$
 					>= 0) {
 				return true;
 			}
@@ -88,31 +86,26 @@ public class MozillaFactory implements IBrowserFactory, IExecutableExtension {
 	public IBrowser createBrowser() {
 		// Create single browser for all clients
 		if (browserInstance == null) {
-			browserInstance =
-				new MozillaBrowserAdapter(executable, executableName);
+			browserInstance = new MozillaBrowserAdapter(executable,
+					executableName);
 		}
 		return browserInstance;
 	}
 	/**
-	 * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement, java.lang.String, java.lang.Object)
+	 * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement,
+	 *      java.lang.String, java.lang.Object)
 	 */
-	public void setInitializationData(
-		IConfigurationElement config,
-		String propertyName,
-		Object data)
-		throws CoreException {
+	public void setInitializationData(IConfigurationElement config,
+			String propertyName, Object data) throws CoreException {
 		try {
 			Hashtable params = (Hashtable) data;
 			executable = (String) params.get("executable"); //$NON-NLS-1$
 			executableName = (String) params.get("executableName"); //$NON-NLS-1$
 			osList = (String) params.get("os"); //$NON-NLS-1$
 		} catch (Exception e) {
-			throw new CoreException(
-				new Status(
-					IStatus.ERROR,
-					HelpBasePlugin.PLUGIN_ID,
-					IStatus.OK,
-					HelpBaseResources.getString("MozillaFactory.dataMissing"), //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR,
+					HelpBasePlugin.PLUGIN_ID, IStatus.OK, HelpBaseResources
+							.getString("MozillaFactory.dataMissing"), //$NON-NLS-1$
 					e));
 		}
 	}

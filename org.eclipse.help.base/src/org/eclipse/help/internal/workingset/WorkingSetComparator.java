@@ -10,9 +10,8 @@
  *******************************************************************************/
 package org.eclipse.help.internal.workingset;
 
-
-import java.text.Collator;
-import java.util.Comparator;
+import java.text.*;
+import java.util.*;
 
 /**
  * Compares two working sets by name.
@@ -37,7 +36,7 @@ public class WorkingSetComparator implements Comparator {
 
 		if (name1 == null || name2 == null)
 			return -1;
-			
+
 		return fCollator.compare(name1, name2);
 	}
 }

@@ -19,9 +19,8 @@ import org.eclipse.help.internal.base.*;
 import org.eclipse.help.internal.webapp.data.*;
 /**
  * Servlet to control Eclipse helpApplication from standalone application.
- * Accepts the following paramters:
- *  command=displayHelp | shutdown
- *  href - may be provided if comand==displayHelp
+ * Accepts the following paramters: command=displayHelp | shutdown href - may be
+ * provided if comand==displayHelp
  */
 public class ControlServlet extends HttpServlet {
 
@@ -29,8 +28,8 @@ public class ControlServlet extends HttpServlet {
 	private boolean shuttingDown = false;
 
 	/**
-	 * Called by the servlet container to indicate to a servlet
-	 * that the servlet is being placed into service.
+	 * Called by the servlet container to indicate to a servlet that the servlet
+	 * is being placed into service.
 	 */
 	public void init() throws ServletException {
 		super.init();
@@ -40,30 +39,30 @@ public class ControlServlet extends HttpServlet {
 	}
 
 	/**
-	 * Called by the server (via the <code>service</code> method) to
-	 * allow a servlet to handle a GET request. 
+	 * Called by the server (via the <code>service</code> method) to allow a
+	 * servlet to handle a GET request.
 	 */
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-		throws ServletException, IOException {
+			throws ServletException, IOException {
 		processRequest(req, resp);
 	}
 	/**
-	 * Called by the server (via the <code>service</code> method) to
-	 * allow a servlet to handle a POST request. 
+	 * Called by the server (via the <code>service</code> method) to allow a
+	 * servlet to handle a POST request.
 	 */
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-		throws ServletException, IOException {
+			throws ServletException, IOException {
 		processRequest(req, resp);
 	}
-	private void processRequest(
-		HttpServletRequest req,
-		HttpServletResponse resp)
-		throws ServletException, IOException {
+	private void processRequest(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
 
 		req.setCharacterEncoding("UTF-8"); //$NON-NLS-1$
 
-		resp.setHeader("Cache-Control", "no-cache"); //HTTP 1.1 //$NON-NLS-1$ //$NON-NLS-2$
-		resp.setHeader("Pragma", "no-cache"); //HTTP 1.0 //$NON-NLS-1$ //$NON-NLS-2$
+		// for HTTP 1.1
+		resp.setHeader("Cache-Control", "no-cache"); //$NON-NLS-1$ //$NON-NLS-2$
+		// for HTTP 1.0
+		resp.setHeader("Pragma", "no-cache"); //$NON-NLS-1$ //$NON-NLS-2$
 		resp.setDateHeader("Expires", 0); //$NON-NLS-1$
 		//prevents caching at the proxy server
 
@@ -72,7 +71,7 @@ public class ControlServlet extends HttpServlet {
 			return;
 		}
 		if (!"/helpControl".equals(req.getContextPath()) //$NON-NLS-1$
-			|| !"/control.html".equals(req.getServletPath())) { //$NON-NLS-1$
+				|| !"/control.html".equals(req.getServletPath())) { //$NON-NLS-1$
 			// do not allow arbitrary URLs to execute this servlet
 			resp.sendError(HttpServletResponse.SC_FORBIDDEN, ""); //$NON-NLS-1$
 			return;
@@ -84,7 +83,8 @@ public class ControlServlet extends HttpServlet {
 
 		String command = req.getParameter("command"); //$NON-NLS-1$
 		if (command == null) {
-			resp.getWriter().print("No command."); // this should never happen and is invisible to the user //$NON-NLS-1$
+			// this should never happen and is invisible to the user
+			resp.getWriter().print("No command."); //$NON-NLS-1$
 			return;
 		}
 
@@ -95,7 +95,8 @@ public class ControlServlet extends HttpServlet {
 				displayHelp(req);
 			}
 		} else {
-			resp.getWriter().print("Unrecognized command."); // this should never happen and is invisible to the user //$NON-NLS-1$
+			// this should never happen and is invisible to the user
+			resp.getWriter().print("Unrecognized command."); //$NON-NLS-1$
 		}
 	}
 	/**
@@ -108,8 +109,10 @@ public class ControlServlet extends HttpServlet {
 
 	/**
 	 * Displays help.
-	 * @param req HttpServletRequest that might contain
-	 * href parameter, which is the resource to display
+	 * 
+	 * @param req
+	 *            HttpServletRequest that might contain href parameter, which is
+	 *            the resource to display
 	 */
 	private void displayHelp(HttpServletRequest req) {
 		String href = req.getParameter("href"); //$NON-NLS-1$

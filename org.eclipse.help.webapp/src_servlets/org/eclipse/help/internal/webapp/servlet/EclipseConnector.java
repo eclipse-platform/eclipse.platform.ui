@@ -26,15 +26,14 @@ import org.eclipse.help.internal.webapp.data.*;
  */
 public class EclipseConnector {
 	private ServletContext context;
-	private static final String errorPageBegin =
-		"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n" //$NON-NLS-1$
+	private static final String errorPageBegin = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n" //$NON-NLS-1$
 			+ "<html><head>\n" //$NON-NLS-1$
 			+ "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n" //$NON-NLS-1$
 			+ "</head>\n" //$NON-NLS-1$
 			+ "<body><p>\n"; //$NON-NLS-1$
 	private static final String errorPageEnd = "</p></body></html>"; //$NON-NLS-1$
-	private static final IFilter filters[] =
-		new IFilter[] { new FramesetFilter(), new HighlightFilter()};
+	private static final IFilter filters[] = new IFilter[]{
+			new FramesetFilter(), new HighlightFilter()};
 
 	/**
 	 * Constructor.
@@ -44,7 +43,7 @@ public class EclipseConnector {
 	}
 
 	public void transfer(HttpServletRequest req, HttpServletResponse resp)
-		throws IOException {
+			throws IOException {
 
 		try {
 
@@ -52,13 +51,13 @@ public class EclipseConnector {
 			if (url == null)
 				return;
 			if (url.toLowerCase().startsWith("file:/") //$NON-NLS-1$
-				|| url.toLowerCase().startsWith("jar:file:/")) { //$NON-NLS-1$
+					|| url.toLowerCase().startsWith("jar:file:/")) { //$NON-NLS-1$
 				int i = url.indexOf('?');
 				if (i != -1)
 					url = url.substring(0, i);
 				// ensure the file is only accessed from a local installation
 				if (BaseHelpSystem.getMode() == BaseHelpSystem.MODE_INFOCENTER
-					|| !UrlUtil.isLocalRequest(req)) {
+						|| !UrlUtil.isLocalRequest(req)) {
 					return;
 				}
 			} else {
@@ -88,9 +87,8 @@ public class EclipseConnector {
 				is = con.getInputStream();
 			} catch (IOException ioe) {
 				if (url.toLowerCase().endsWith("htm") //$NON-NLS-1$
-					|| url.toLowerCase().endsWith("html")) { //$NON-NLS-1$
-					String error =
-						errorPageBegin
+						|| url.toLowerCase().endsWith("html")) { //$NON-NLS-1$
+					String error = errorPageBegin
 							+ ServletResources.getString("noTopic", req) //$NON-NLS-1$
 							+ errorPageEnd;
 					is = new ByteArrayInputStream(error.getBytes("UTF8")); //$NON-NLS-1$
@@ -117,11 +115,11 @@ public class EclipseConnector {
 	 * Write the body to the response
 	 */
 	private void transferContent(InputStream inputStream, OutputStream out)
-		throws IOException {
+			throws IOException {
 		try {
 			// Prepare the input stream for reading
-			BufferedInputStream dataStream =
-				new BufferedInputStream(inputStream);
+			BufferedInputStream dataStream = new BufferedInputStream(
+					inputStream);
 
 			// Create a fixed sized buffer for reading.
 			// We could create one with the size of availabe data...
@@ -141,11 +139,9 @@ public class EclipseConnector {
 	/**
 	 * Gets content from the named url (this could be and eclipse defined url)
 	 */
-	private URLConnection openConnection(
-		String url,
-		HttpServletRequest request,
-		HttpServletResponse response)
-		throws Exception {
+	private URLConnection openConnection(String url,
+			HttpServletRequest request, HttpServletResponse response)
+			throws Exception {
 		//System.out.println("help content for: " + url);
 
 		URLConnection con = null;
@@ -161,20 +157,16 @@ public class EclipseConnector {
 		// URL helpURL = new URL(url);
 		URL helpURL;
 		if (url.startsWith("help:")) { //$NON-NLS-1$
-			helpURL =
-				new URL(
-					"help", //$NON-NLS-1$
-					null,
-					-1,
-					url.substring("help:".length()), //$NON-NLS-1$
+			helpURL = new URL("help", //$NON-NLS-1$
+					null, -1, url.substring("help:".length()), //$NON-NLS-1$
 					HelpURLStreamHandler.getDefault());
 		} else {
 			helpURL = new URL(url);
 		}
 		String protocol = helpURL.getProtocol();
 		if (!("help".equals(protocol) //$NON-NLS-1$
-			|| "file".equals(protocol) //$NON-NLS-1$
-			|| "jar".equals(protocol))) { //$NON-NLS-1$
+				|| "file".equals(protocol) //$NON-NLS-1$
+		|| "jar".equals(protocol))) { //$NON-NLS-1$
 			throw new IOException();
 		}
 		con = helpURL.openConnection();
@@ -191,9 +183,8 @@ public class EclipseConnector {
 	private String getURL(HttpServletRequest req) {
 		String query = ""; //$NON-NLS-1$
 		boolean firstParam = true;
-		for (Enumeration params = req.getParameterNames();
-			params.hasMoreElements();
-			) {
+		for (Enumeration params = req.getParameterNames(); params
+				.hasMoreElements();) {
 			String param = (String) params.nextElement();
 			String[] values = req.getParameterValues(param);
 			if (values == null)

@@ -18,8 +18,8 @@ import javax.servlet.http.*;
 import org.eclipse.help.*;
 import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.base.*;
-import org.eclipse.help.internal.toc.*;
 import org.eclipse.help.internal.model.*;
+import org.eclipse.help.internal.toc.*;
 
 /**
  * Helper class for tocView.jsp initialization
@@ -63,10 +63,8 @@ public class TocData extends ActivitiesData {
 	 * @param context
 	 * @param request
 	 */
-	public TocData(
-		ServletContext context,
-		HttpServletRequest request,
-		HttpServletResponse response) {
+	public TocData(ServletContext context, HttpServletRequest request,
+			HttpServletResponse response) {
 		super(context, request, response);
 		if (dynamicLoadDepths < 1) {
 			WebappPreferences pref = new WebappPreferences();
@@ -157,8 +155,8 @@ public class TocData extends ActivitiesData {
 	}
 
 	/**
-	 * Returns a list of all the TOC's as xml elements. Individual TOC's are
-	 * not loaded yet.
+	 * Returns a list of all the TOC's as xml elements. Individual TOC's are not
+	 * loaded yet.
 	 * 
 	 * @return Element[]
 	 */
@@ -173,7 +171,7 @@ public class TocData extends ActivitiesData {
 	 * @return true if TOC should be visible
 	 */
 	public boolean isEnabled(int toc) {
-		if(!isEnabled(tocs[toc])){
+		if (!isEnabled(tocs[toc])) {
 			return false;
 		}
 		// do not generate toc when there are no leaf topics
@@ -181,13 +179,14 @@ public class TocData extends ActivitiesData {
 	}
 	/**
 	 * Check if given TOC is visible (belongs to an enabled activity)
+	 * 
 	 * @param toc
 	 * @return true if TOC should be visible
 	 */
 	private boolean isEnabled(ITocElement toc) {
 		return HelpBasePlugin.getActivitySupport().isEnabled(toc.getHref());
 	}
-	
+
 	private void loadTocs() {
 		tocs = HelpPlugin.getTocManager().getTocs(getLocale());
 		// Find the requested TOC
@@ -205,10 +204,9 @@ public class TocData extends ActivitiesData {
 
 			ITopic topic = findTopic();
 			if (topic != null
-				&& topic instanceof org.eclipse.help.internal.toc.Topic) {
-				topicPath =
-					((org.eclipse.help.internal.toc.Topic) topic).getPathInToc(
-						tocs[selectedToc]);
+					&& topic instanceof org.eclipse.help.internal.toc.Topic) {
+				topicPath = ((org.eclipse.help.internal.toc.Topic) topic)
+						.getPathInToc(tocs[selectedToc]);
 			}
 		}
 	}
@@ -236,12 +234,12 @@ public class TocData extends ActivitiesData {
 		tocs = getTocs();
 		// try to find in enabled tocs first
 		for (int i = 0; i < tocs.length; i++)
-			if(isEnabled(i))
+			if (isEnabled(i))
 				if (tocs[i].getTopic(topic) != null)
 					return i;
 		// try disabled tocs second
 		for (int i = 0; i < tocs.length; i++)
-			if(!isEnabled(i))
+			if (!isEnabled(i))
 				if (tocs[i].getTopic(topic) != null)
 					return i;
 
@@ -285,14 +283,14 @@ public class TocData extends ActivitiesData {
 	 */
 	public void generateToc(int toc, Writer out) throws IOException {
 		ITopicElement[] topics = getEnabledSubtopics(tocs[toc]);
-		if(topics.length <=0){
+		if (topics.length <= 0) {
 			// do not generate toc when there are no leaf topics
 			return;
 		}
 
 		int maxLevels = dynamicLoadDepths;
 		if (tocs[toc] instanceof Toc
-			&& ((Toc) tocs[toc]).size() <= loadBookAtOnceLimit) {
+				&& ((Toc) tocs[toc]).size() <= loadBookAtOnceLimit) {
 			maxLevels = -1;
 		}
 		// Construct ID of subtree root
@@ -317,12 +315,9 @@ public class TocData extends ActivitiesData {
 				idPrefix = Integer.toString(i);
 			}
 
-			generateTopic(
-				topics[i],
-				out,
-				idPrefix,
-				maxLevels,
-				rootPath == null ? 0 : rootPath.length);
+			generateTopic(topics[i], out, idPrefix, maxLevels, rootPath == null
+					? 0
+					: rootPath.length);
 		}
 
 		if (rootPath != null) {
@@ -335,19 +330,14 @@ public class TocData extends ActivitiesData {
 	 * @param topic
 	 * @param out
 	 * @param maxLevels
-	 *            relative number of topic levels to generate (pass
-	 *            <0 for inifinite), 1 generates this topic as last level topic
+	 *            relative number of topic levels to generate (pass <0 for
+	 *            inifinite), 1 generates this topic as last level topic
 	 * @param currentLevel
 	 *            current level of topic, 0 is first Level under TOC
 	 * @throws IOException
 	 */
-	private void generateTopic(
-		ITopicElement topic,
-		Writer out,
-		String id,
-		int maxLevels,
-		int currentLevel)
-		throws IOException {
+	private void generateTopic(ITopicElement topic, Writer out, String id,
+			int maxLevels, int currentLevel) throws IOException {
 		if (maxLevels == 0) {
 			return;
 		}
@@ -364,7 +354,8 @@ public class TocData extends ActivitiesData {
 			out.write("<li>"); //$NON-NLS-1$
 			out.write("<img src='"); //$NON-NLS-1$
 			out.write(imagesDirectory);
-			out.write("/plus.gif' class='collapsed' alt=\""+ServletResources.getString("topicClosed", request)+"\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			out
+					.write("/plus.gif' class='collapsed' alt=\"" + ServletResources.getString("topicClosed", request) + "\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			out.write("<a href='" + UrlUtil.getHelpURL(topic.getHref()) + "'>"); //$NON-NLS-1$ //$NON-NLS-2$
 			out.write("<img src='"); //$NON-NLS-1$
 			out.write(imagesDirectory);
@@ -373,8 +364,7 @@ public class TocData extends ActivitiesData {
 			out.write("</a>"); //$NON-NLS-1$
 
 			// is it ancestor of topic to reveal
-			boolean isAncestor =
-				topicPath != null
+			boolean isAncestor = topicPath != null
 					&& topicPath.length > currentLevel + 1
 					&& topicPath[currentLevel] == topic;
 
@@ -385,26 +375,16 @@ public class TocData extends ActivitiesData {
 				out.write("<ul class='collapsed' id=\"" + id + "\">\n"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 
-			if (1 <= maxLevels
-				&& maxLevels <= dynamicLoadDepths
-				&& isAncestor) {
+			if (1 <= maxLevels && maxLevels <= dynamicLoadDepths && isAncestor) {
 				// ignore max levels, show children
 				for (int i = 0; i < topics.length; i++) {
-					generateTopic(
-						topics[i],
-						out,
-						id + "_" + i, //$NON-NLS-1$
-						dynamicLoadDepths,
-						currentLevel + 1);
+					generateTopic(topics[i], out, id + "_" + i, //$NON-NLS-1$
+							dynamicLoadDepths, currentLevel + 1);
 				}
 			} else {
 				for (int i = 0; i < topics.length; i++) {
-					generateTopic(
-						topics[i],
-						out,
-						id + "_" + i, //$NON-NLS-1$
-						maxLevels - 1,
-						currentLevel + 1);
+					generateTopic(topics[i], out, id + "_" + i, //$NON-NLS-1$
+							maxLevels - 1, currentLevel + 1);
 				}
 			}
 
@@ -441,7 +421,7 @@ public class TocData extends ActivitiesData {
 	}
 
 	private void generateBasicTopic(ITopicElement topic, Writer out)
-		throws IOException {
+			throws IOException {
 
 		out.write("<li>"); //$NON-NLS-1$
 		ITopicElement[] topics = getEnabledSubtopics(topic);
@@ -508,15 +488,17 @@ public class TocData extends ActivitiesData {
 		return topicHelpHref;
 	}
 	/**
-	 * Obtains children topics for a given navigation element.
-	 * Topics from TOCs not matching enabled activities are filtered out.
+	 * Obtains children topics for a given navigation element. Topics from TOCs
+	 * not matching enabled activities are filtered out.
+	 * 
 	 * @param navigationElement
 	 * @return ITopic[]
 	 */
-	private ITopicElement[] getEnabledSubtopics(INavigationElement navigationElement) {
+	private ITopicElement[] getEnabledSubtopics(
+			INavigationElement navigationElement) {
 		List topics = getEnabledSubtopicList(navigationElement);
-		return (ITopicElement[]) topics.toArray(
-			new ITopicElement[topics.size()]);
+		return (ITopicElement[]) topics
+				.toArray(new ITopicElement[topics.size()]);
 	}
 	/**
 	 * Obtains children topics for a given navigation element. Topics from TOCs
@@ -526,13 +508,12 @@ public class TocData extends ActivitiesData {
 	 * @return List of ITopicElement
 	 */
 	private List getEnabledSubtopicList(INavigationElement navigationElement) {
-		if(navigationElement instanceof ITocElement && !isEnabled((ITocElement)navigationElement))
+		if (navigationElement instanceof ITocElement
+				&& !isEnabled((ITocElement) navigationElement))
 			return Collections.EMPTY_LIST;
 		List children = navigationElement.getChildren();
 		List childTopics = new ArrayList(children.size());
-		for (Iterator childrenIt = children.iterator();
-			childrenIt.hasNext();
-			) {
+		for (Iterator childrenIt = children.iterator(); childrenIt.hasNext();) {
 			INavigationElement c = (INavigationElement) childrenIt.next();
 			if ((c instanceof ITopicElement)) {
 				// add topic only if it will not end up being an empty

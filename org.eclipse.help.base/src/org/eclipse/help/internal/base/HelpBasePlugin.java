@@ -29,11 +29,10 @@ public class HelpBasePlugin extends Plugin {
 
 	protected static HelpBasePlugin plugin;
 	private static BundleContext bundleContext;
-	
+
 	private File configurationDirectory;
 
-	private IHelpActivitySupport helpActivitySupport =
-		new IHelpActivitySupport() {
+	private IHelpActivitySupport helpActivitySupport = new IHelpActivitySupport() {
 		public boolean isEnabled(String href) {
 			return true;
 		}
@@ -42,12 +41,12 @@ public class HelpBasePlugin extends Plugin {
 		}
 		public void enableActivities(String href) {
 		}
-		public boolean isFilteringEnabled(){
+		public boolean isFilteringEnabled() {
 			return false;
 		}
-		public void setFilteringEnabled(boolean enabled){
+		public void setFilteringEnabled(boolean enabled) {
 		}
-		public boolean isUserCanToggleFiltering(){
+		public boolean isUserCanToggleFiltering() {
 			return false;
 		}
 	};
@@ -59,8 +58,8 @@ public class HelpBasePlugin extends Plugin {
 	public static synchronized void logError(String message, Throwable ex) {
 		if (message == null)
 			message = ""; //$NON-NLS-1$
-		Status errorStatus =
-			new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK, message, ex);
+		Status errorStatus = new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK,
+				message, ex);
 		HelpBasePlugin.getDefault().getLog().log(errorStatus);
 	}
 	/**
@@ -72,13 +71,8 @@ public class HelpBasePlugin extends Plugin {
 		if (HelpBasePlugin.DEBUG) {
 			if (message == null)
 				message = ""; //$NON-NLS-1$
-			Status warningStatus =
-				new Status(
-					IStatus.WARNING,
-					PLUGIN_ID,
-					IStatus.OK,
-					message,
-					null);
+			Status warningStatus = new Status(IStatus.WARNING, PLUGIN_ID,
+					IStatus.OK, message, null);
 			HelpBasePlugin.getDefault().getLog().log(warningStatus);
 		}
 	}
@@ -89,7 +83,9 @@ public class HelpBasePlugin extends Plugin {
 	public static HelpBasePlugin getDefault() {
 		return plugin;
 	}
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext context) throws Exception {
@@ -99,7 +95,9 @@ public class HelpBasePlugin extends Plugin {
 		bundleContext = null;
 		super.stop(context);
 	}
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
 	public void start(BundleContext context) throws Exception {
@@ -111,30 +109,31 @@ public class HelpBasePlugin extends Plugin {
 		if (DEBUG) {
 			DEBUG_SEARCH = "true".equalsIgnoreCase(Platform.getDebugOption(PLUGIN_ID + "/debug/search")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		
+
 		// determine configuration location for this plug-in
 		Location location = Platform.getConfigurationLocation();
-		if(location != null){
+		if (location != null) {
 			URL configURL = location.getURL();
-			if(configURL != null &configURL.getProtocol().startsWith("file")){ //$NON-NLS-1$
-				configurationDirectory = new File (configURL.getFile(), PLUGIN_ID);
+			if (configURL != null & configURL.getProtocol().startsWith("file")) { //$NON-NLS-1$
+				configurationDirectory = new File(configURL.getFile(),
+						PLUGIN_ID);
 			}
 		}
-		if(configurationDirectory ==null){
-			configurationDirectory = getStateLocation().toFile();			
+		if (configurationDirectory == null) {
+			configurationDirectory = getStateLocation().toFile();
 		}
 		//
 		BaseHelpSystem.startup();
 	}
 
 	/**
-	 * Used to obtain directory where configuration
-	 * (like help index) can be stored
+	 * Used to obtain directory where configuration (like help index) can be
+	 * stored
 	 */
 	public static File getConfigurationDirectory() {
 		return getDefault().configurationDirectory;
 	}
-	
+
 	/**
 	 * Used to obtain help activity support
 	 * 

@@ -1,18 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2000, 2003 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Common Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * Contributors: IBM Corporation - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.help.internal.toc;
 import java.io.*;
 import java.util.*;
 
-import org.eclipse.help.internal.util.ResourceLocator;
+import org.eclipse.help.internal.util.*;
 
 public class TocFile {
 
@@ -30,12 +28,8 @@ public class TocFile {
 	/**
 	 * Toc File Constructor
 	 */
-	protected TocFile(
-		String plugin,
-		String href,
-		boolean primary,
-		String locale,
-		String extraDir) {
+	protected TocFile(String plugin, String href, boolean primary,
+			String locale, String extraDir) {
 		this.plugin = plugin;
 		this.href = href;
 		this.primary = primary;
@@ -45,6 +39,7 @@ public class TocFile {
 
 	/**
 	 * Gets the href
+	 * 
 	 * @return Returns a String
 	 */
 	protected String getHref() {
@@ -53,6 +48,7 @@ public class TocFile {
 
 	/**
 	 * Gets the pluginID
+	 * 
 	 * @return Returns a String
 	 */
 	public final String getPluginID() {
@@ -73,6 +69,7 @@ public class TocFile {
 
 	/**
 	 * Parses file and gets the toc
+	 * 
 	 * @return Returns a Toc
 	 */
 	public Toc getToc() {
@@ -96,7 +93,7 @@ public class TocFile {
 		anchors.put(a.getID(), a);
 	}
 
-	/** 
+	/**
 	 * Returns anchor by id
 	 */
 	public Anchor getAnchor(String id) {
@@ -121,6 +118,7 @@ public class TocFile {
 	}
 	/**
 	 * Checks if this file specifies a TOC.
+	 * 
 	 * @return Returns a boolean
 	 */
 	public boolean isPrimary() {
@@ -129,6 +127,7 @@ public class TocFile {
 
 	/**
 	 * Gets the extraDir.
+	 * 
 	 * @return Returns a String
 	 */
 	public String getExtraDir() {
@@ -136,6 +135,7 @@ public class TocFile {
 	}
 	/**
 	 * Gets the locale.
+	 * 
 	 * @return Returns a String
 	 */
 	public String getLocale() {

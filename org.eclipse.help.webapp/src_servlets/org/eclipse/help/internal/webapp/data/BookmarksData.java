@@ -28,7 +28,8 @@ public class BookmarksData extends RequestData {
 	public final static int REMOVE = 2;
 	public final static int REMOVE_ALL = 3;
 
-	public BookmarksData(ServletContext context, HttpServletRequest request, HttpServletResponse response) {
+	public BookmarksData(ServletContext context, HttpServletRequest request,
+			HttpServletResponse response) {
 		super(context, request, response);
 
 		switch (getOperation()) {
@@ -48,14 +49,14 @@ public class BookmarksData extends RequestData {
 
 	public void addBookmark() {
 		String bookmarkURL = request.getParameter("bookmark"); //$NON-NLS-1$
-		if (bookmarkURL != null
-			&& bookmarkURL.length() > 0
-			&& !bookmarkURL.equals("about:blank")) { //$NON-NLS-1$
+		if (bookmarkURL != null && bookmarkURL.length() > 0
+				&& !bookmarkURL.equals("about:blank")) { //$NON-NLS-1$
 			String title = request.getParameter("title"); //$NON-NLS-1$
-			if(title==null){
+			if (title == null) {
 				return;
 			}
-			Preferences prefs = HelpBasePlugin.getDefault().getPluginPreferences();
+			Preferences prefs = HelpBasePlugin.getDefault()
+					.getPluginPreferences();
 			String bookmarks = prefs.getString(BaseHelpSystem.BOOKMARKS);
 
 			// separate the url and title by vertical bar
@@ -63,8 +64,8 @@ public class BookmarksData extends RequestData {
 			// check for duplicates
 			if (bookmarks.indexOf("," + encode(bookmarkURL) + "|") != -1) //$NON-NLS-1$ //$NON-NLS-2$
 				return;
-			bookmarks =
-				bookmarks + "," + encode(bookmarkURL) + "|" + encode(title); //$NON-NLS-1$ //$NON-NLS-2$
+			bookmarks = bookmarks
+					+ "," + encode(bookmarkURL) + "|" + encode(title); //$NON-NLS-1$ //$NON-NLS-2$
 			prefs.setValue(BaseHelpSystem.BOOKMARKS, bookmarks);
 			HelpBasePlugin.getDefault().savePluginPreferences();
 		}
@@ -72,28 +73,26 @@ public class BookmarksData extends RequestData {
 
 	public void removeBookmark() {
 		String bookmarkURL = request.getParameter("bookmark"); //$NON-NLS-1$
-		if (bookmarkURL != null
-			&& bookmarkURL.length() > 0
-			&& !bookmarkURL.equals("about:blank")) { //$NON-NLS-1$
+		if (bookmarkURL != null && bookmarkURL.length() > 0
+				&& !bookmarkURL.equals("about:blank")) { //$NON-NLS-1$
 			String title = request.getParameter("title"); //$NON-NLS-1$
-			if(title==null){
+			if (title == null) {
 				return;
 			}
-			Preferences prefs = HelpBasePlugin.getDefault().getPluginPreferences();
+			Preferences prefs = HelpBasePlugin.getDefault()
+					.getPluginPreferences();
 			String bookmarks = prefs.getString(BaseHelpSystem.BOOKMARKS);
-			String removeString =
-				"," + encode(bookmarkURL) + "|" + encode(title); //$NON-NLS-1$ //$NON-NLS-2$
+			String removeString = "," + encode(bookmarkURL) + "|" + encode(title); //$NON-NLS-1$ //$NON-NLS-2$
 			int i = bookmarks.indexOf(removeString);
 			if (i == -1)
 				return;
-			bookmarks =
-				bookmarks.substring(0, i)
+			bookmarks = bookmarks.substring(0, i)
 					+ bookmarks.substring(i + removeString.length());
 			prefs.setValue(BaseHelpSystem.BOOKMARKS, bookmarks);
 			HelpBasePlugin.getDefault().savePluginPreferences();
 		}
 	}
-	
+
 	public void removeAllBookmarks() {
 		Preferences prefs = HelpBasePlugin.getDefault().getPluginPreferences();
 		prefs.setValue(BaseHelpSystem.BOOKMARKS, ""); //$NON-NLS-1$
@@ -104,7 +103,8 @@ public class BookmarksData extends RequestData {
 		// sanity test for infocenter, but this could not work anyway...
 		if (BaseHelpSystem.getMode() != BaseHelpSystem.MODE_INFOCENTER) {
 			// this is workbench
-			Preferences prefs = HelpBasePlugin.getDefault().getPluginPreferences();
+			Preferences prefs = HelpBasePlugin.getDefault()
+					.getPluginPreferences();
 			String bookmarks = prefs.getString(BaseHelpSystem.BOOKMARKS);
 			StringTokenizer tokenizer = new StringTokenizer(bookmarks, ","); //$NON-NLS-1$
 			Topic[] topics = new Topic[tokenizer.countTokens()];
@@ -114,9 +114,7 @@ public class BookmarksData extends RequestData {
 				int separator = bookmark.indexOf('|');
 
 				String label = decode(bookmark.substring(separator + 1));
-				String href =
-					separator < 0
-						? "" //$NON-NLS-1$
+				String href = separator < 0 ? "" //$NON-NLS-1$
 						: decode(bookmark.substring(0, separator));
 				topics[i] = new Topic(label, href);
 			}
@@ -137,8 +135,8 @@ public class BookmarksData extends RequestData {
 			return NONE;
 	}
 	/**
-	 * Ensures that string does not contains
-	 * ',' or '|' characters.
+	 * Ensures that string does not contains ',' or '|' characters.
+	 * 
 	 * @param s
 	 * @return String
 	 */

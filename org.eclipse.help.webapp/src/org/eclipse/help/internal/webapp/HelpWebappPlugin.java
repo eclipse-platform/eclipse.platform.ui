@@ -23,34 +23,29 @@ public class HelpWebappPlugin extends Plugin {
 
 	protected static HelpWebappPlugin plugin;
 	private static BundleContext bundleContext;
-	/** 
-	 * Logs an Error message with an exception. Note that the message should already 
-	 * be localized to proper locale.
-	 * ie: WebappResources.getString() should already have been called
+	/**
+	 * Logs an Error message with an exception. Note that the message should
+	 * already be localized to proper locale. ie: WebappResources.getString()
+	 * should already have been called
 	 */
 	public static synchronized void logError(String message, Throwable ex) {
 		if (message == null)
 			message = ""; //$NON-NLS-1$
-		Status errorStatus =
-			new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK, message, ex);
+		Status errorStatus = new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK,
+				message, ex);
 		HelpWebappPlugin.getDefault().getLog().log(errorStatus);
 	}
-	/** 
-	 * Logs a Warning message with an exception. Note that the message should already 
-	 * be localized to proper local.
-	 * ie: WebappResources.getString() should already have been called
+	/**
+	 * Logs a Warning message with an exception. Note that the message should
+	 * already be localized to proper local. ie: WebappResources.getString()
+	 * should already have been called
 	 */
 	public static synchronized void logWarning(String message) {
 		if (HelpPlugin.DEBUG) {
 			if (message == null)
 				message = ""; //$NON-NLS-1$
-			Status warningStatus =
-				new Status(
-					IStatus.WARNING,
-					PLUGIN_ID,
-					IStatus.OK,
-					message,
-					null);
+			Status warningStatus = new Status(IStatus.WARNING, PLUGIN_ID,
+					IStatus.OK, message, null);
 			HelpWebappPlugin.getDefault().getLog().log(warningStatus);
 		}
 	}
@@ -61,7 +56,9 @@ public class HelpWebappPlugin extends Plugin {
 	public static HelpWebappPlugin getDefault() {
 		return plugin;
 	}
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
 	public void start(BundleContext context) throws Exception {
@@ -75,7 +72,9 @@ public class HelpWebappPlugin extends Plugin {
 			DEBUG_WORKINGSETS = "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.help.webapp/debug/workingsets")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext context) throws Exception {

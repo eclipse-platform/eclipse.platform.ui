@@ -9,13 +9,11 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.internal.search;
-import org.eclipse.core.runtime.IProgressMonitor;
-import java.lang.String;
-import org.eclipse.core.runtime.ProgressMonitorWrapper;
+import org.eclipse.core.runtime.*;
 /**
- * Progress Monitor, that accumulates work without
- * communicating it immidiately to the underlying monitor.
- * The work is sent in larger chunks for performance reasons.
+ * Progress Monitor, that accumulates work without communicating it immidiately
+ * to the underlying monitor. The work is sent in larger chunks for performance
+ * reasons.
  */
 class LazyProgressMonitor extends ProgressMonitorWrapper {
 	// maximum number of times worked() should be called
@@ -30,7 +28,7 @@ class LazyProgressMonitor extends ProgressMonitorWrapper {
 		super(monitor);
 		this.monitor = monitor;
 	}
-	/** 
+	/**
 	 * @see IProgressMonitor#beginTask
 	 */
 	public void beginTask(String name, int totalWork) {

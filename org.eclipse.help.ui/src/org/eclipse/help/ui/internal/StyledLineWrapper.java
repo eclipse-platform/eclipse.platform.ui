@@ -1,13 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2000, 2003 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Common Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * Contributors: IBM Corporation - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.help.ui.internal;
 import java.text.*;
 import java.util.*;
@@ -107,10 +105,11 @@ public class StyledLineWrapper implements StyledTextContent {
 		int l1 = getLineAtOffset(start);
 		int l2 = getLineAtOffset(end);
 		if (l1 == l2)
-			return getLine(l1).substring(start - getOffsetAtLine(l1), end - start);
+			return getLine(l1).substring(start - getOffsetAtLine(l1),
+					end - start);
 		else {
-			StringBuffer range =
-				new StringBuffer(getLine(l1).substring(start - getOffsetAtLine(l1)));
+			StringBuffer range = new StringBuffer(getLine(l1).substring(
+					start - getOffsetAtLine(l1)));
 			for (int i = l1 + 1; i < l2; i++)
 				range.append(getLine(i));
 			range.append(getLine(l2).substring(0, end - getOffsetAtLine(l2)));
@@ -147,8 +146,8 @@ public class StyledLineWrapper implements StyledTextContent {
 		return array;
 	}
 	/**
-	 * Create an array of lines with sytles stripped off.
-	 * Each lines is at most MAX_LINE_LENGTH characters.
+	 * Create an array of lines with sytles stripped off. Each lines is at most
+	 * MAX_LINE_LENGTH characters.
 	 */
 	private void processLineBreaks(String text) {
 		// Create the original lines with style stripped
@@ -161,20 +160,22 @@ public class StyledLineWrapper implements StyledTextContent {
 				lines.add(new String(textChars, start, i - start));
 				start = i + 1;
 				// if we reached the end, stop
-				if (start >= textChars.length) 
+				if (start >= textChars.length)
 					break;
-				else { // see if the next character is an LF 
+				else { // see if the next character is an LF
 					ch = textChars[start];
 					if (ch == SWT.LF) {
 						start++;
 						i++;
-						if (start >= textChars.length) break;
+						if (start >= textChars.length)
+							break;
 					}
 				}
 			} else if (ch == SWT.LF) {
 				lines.add(new String(textChars, start, i - start));
 				start = i + 1;
-				if (start >= textChars.length) break;
+				if (start >= textChars.length)
+					break;
 			} else if (i == textChars.length - 1) {
 				lines.add(new String(textChars, start, i - start + 1));
 			}
@@ -209,15 +210,16 @@ public class StyledLineWrapper implements StyledTextContent {
 		lineBreaker.setText(line);
 		int lastGoodIndex = 0;
 		int currentIndex = lineBreaker.first();
-		while (currentIndex < MAX_LINE_LENGTH && currentIndex != BreakIterator.DONE) {
+		while (currentIndex < MAX_LINE_LENGTH
+				&& currentIndex != BreakIterator.DONE) {
 			lastGoodIndex = currentIndex;
 			currentIndex = lineBreaker.next();
 		}
 		return lastGoodIndex;
 	}
 	/**
-	 * Creates all the (bold) style ranges for the text.
-	 * It is assumed that the text has been split across lines.
+	 * Creates all the (bold) style ranges for the text. It is assumed that the
+	 * text has been split across lines.
 	 */
 	private void processStyles(String text) {
 		// create a new array of styles

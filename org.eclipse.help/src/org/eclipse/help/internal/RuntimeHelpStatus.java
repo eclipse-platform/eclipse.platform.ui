@@ -10,14 +10,13 @@
  *******************************************************************************/
 package org.eclipse.help.internal;
 
-
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
 
 /**
- * This class is intended to capture all runtime exception happening during
- * the execution of the Help System.
+ * This class is intended to capture all runtime exception happening during the
+ * execution of the Help System.
  */
 
 public class RuntimeHelpStatus {
@@ -38,10 +37,10 @@ public class RuntimeHelpStatus {
 	public RuntimeHelpStatus() {
 		super();
 	}
-	public synchronized void addParseError(
-		String message,
-		String invalidFileName) {
-		// add the Exception to the files list only once. These exceptions will be used to
+	public synchronized void addParseError(String message,
+			String invalidFileName) {
+		// add the Exception to the files list only once. These exceptions will
+		// be used to
 		// produce the list of files with errors.
 		if (!badFilesList.contains(invalidFileName))
 			badFilesList.add(invalidFileName);
@@ -51,9 +50,8 @@ public class RuntimeHelpStatus {
 
 	}
 	public boolean errorsExist() {
-		if (errorList.isEmpty()
-			&& parserErrorMessagesList.isEmpty()
-			&& badFilesList.isEmpty())
+		if (errorList.isEmpty() && parserErrorMessagesList.isEmpty()
+				&& badFilesList.isEmpty())
 			return false;
 		else
 			return true;

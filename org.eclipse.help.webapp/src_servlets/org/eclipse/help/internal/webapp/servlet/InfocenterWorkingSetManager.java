@@ -22,8 +22,9 @@ import org.eclipse.help.internal.webapp.*;
 import org.eclipse.help.internal.workingset.*;
 
 /**
- * The Infocenter working  set manager stores help working sets. Working sets are persisted
- * in client cookies whenever one is added or removed.
+ * The Infocenter working set manager stores help working sets. Working sets are
+ * persisted in client cookies whenever one is added or removed.
+ * 
  * @since 3.0
  */
 public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
@@ -40,12 +41,11 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 
 	/**
 	 * Constructor
+	 * 
 	 * @param locale
 	 */
-	public InfocenterWorkingSetManager(
-		HttpServletRequest request,
-		HttpServletResponse response,
-		String locale) {
+	public InfocenterWorkingSetManager(HttpServletRequest request,
+			HttpServletResponse response, String locale) {
 		this.request = request;
 		this.response = response;
 		this.locale = locale;
@@ -54,9 +54,8 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 
 	public AdaptableTocsArray getRoot() {
 		if (root == null)
-			root =
-				new AdaptableTocsArray(
-					HelpPlugin.getTocManager().getTocs(locale));
+			root = new AdaptableTocsArray(HelpPlugin.getTocManager().getTocs(
+					locale));
 		return root;
 	}
 
@@ -73,15 +72,14 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 	/**
 	 * Creates a new working set
 	 */
-	public WorkingSet createWorkingSet(
-		String name,
-		AdaptableHelpResource[] elements) {
+	public WorkingSet createWorkingSet(String name,
+			AdaptableHelpResource[] elements) {
 		return new WorkingSet(name, elements);
 	}
 
 	/**
 	 * Returns a working set by name
-	 * 
+	 *  
 	 */
 	public WorkingSet getWorkingSet(String name) {
 		if (name == null || workingSets == null)
@@ -99,11 +97,11 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 	/**
 	 * Implements IWorkingSetManager.
 	 * 
-	 * @see org.eclipse.ui.IWorkingSetManager#getWorkingSets()
+	 * @see org.eclipse.help.internal.workingset.IHelpWorkingSetManager#getWorkingSets()
 	 */
 	public WorkingSet[] getWorkingSets() {
-		return (WorkingSet[]) workingSets.toArray(
-			new WorkingSet[workingSets.size()]);
+		return (WorkingSet[]) workingSets.toArray(new WorkingSet[workingSets
+				.size()]);
 	}
 
 	/**
@@ -127,27 +125,26 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 		if (values.length < 1) {
 			return;
 		}
-		currentWorkingSet = URLCoder.decode(values[0] /*, "UTF8"*/
+		currentWorkingSet = URLCoder.decode(values[0] /* , "UTF8" */
 		);
 		i : for (int i = 1; i < values.length; i++) {
 			String[] nameAndHrefs = values[i].split("&", -1); //$NON-NLS-1$
 
-			String name = URLCoder.decode(nameAndHrefs[0] /*, "UTF8"*/
+			String name = URLCoder.decode(nameAndHrefs[0] /* , "UTF8" */
 			);
 
-			AdaptableHelpResource[] elements =
-				new AdaptableHelpResource[nameAndHrefs.length - 1];
+			AdaptableHelpResource[] elements = new AdaptableHelpResource[nameAndHrefs.length - 1];
 			// for each href (working set resource)
 			for (int e = 0; e < nameAndHrefs.length - 1; e++) {
 				int h = e + 1;
 				elements[e] = getAdaptableToc(URLCoder.decode(nameAndHrefs[h]
-				/*, "UTF8"*/
+				/* , "UTF8" */
 				));
 				if (elements[e] == null) {
-					elements[e] =
-						getAdaptableTopic(URLCoder.decode(nameAndHrefs[h]
-					/*, "UTF8"*/
-					));
+					elements[e] = getAdaptableTopic(URLCoder
+							.decode(nameAndHrefs[h]
+							/* , "UTF8" */
+							));
 				}
 				if (elements[e] == null) {
 					// working set cannot be restored
@@ -159,21 +156,20 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 		}
 	}
 
-	/* *
+	/***************************************************************************
 	 * Persists all working sets. Should only be called by the webapp working
-	 * set dialog.
-	 * Saves the working sets in the persistence store (cookie)
+	 * set dialog. Saves the working sets in the persistence store (cookie)
 	 * format: curentWorkingSetName|name1&href11&href12|name2&href22
 	 */
 	private void saveState() throws IOException {
 		StringBuffer data = new StringBuffer();
-		data.append(URLCoder.encode(currentWorkingSet /*, "UTF8"*/
+		data.append(URLCoder.encode(currentWorkingSet /* , "UTF8" */
 		));
 
 		for (Iterator i = workingSets.iterator(); i.hasNext();) {
 			data.append('|');
 			WorkingSet ws = (WorkingSet) i.next();
-			data.append(URLCoder.encode(ws.getName() /*, "UTF8"*/
+			data.append(URLCoder.encode(ws.getName() /* , "UTF8" */
 			));
 
 			AdaptableHelpResource[] resources = ws.getElements();
@@ -184,7 +180,7 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 				if (parent == getRoot()) {
 					// saving toc
 					data.append(URLCoder.encode(resources[j].getHref()
-					/*, "UTF8"*/
+					/* , "UTF8" */
 					));
 				} else {
 					// saving topic as tochref_topic#_
@@ -193,7 +189,7 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 					for (int t = 0; t < siblings.length; t++) {
 						if (siblings[t] == resources[j]) {
 							data.append(URLCoder.encode(toc.getHref()
-							/*, "UTF8"*/
+							/* , "UTF8" */
 							));
 							data.append('_');
 							data.append(t);
@@ -206,27 +202,26 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 		}
 
 		try {
-			CookieUtil.saveString(
-				COOKIE_NAME,
-				data.toString(),
-				MAX_COOKIES,
-				request,
-				response);
+			CookieUtil.saveString(COOKIE_NAME, data.toString(), MAX_COOKIES,
+					request, response);
 		} catch (IOException ioe) {
 			if (HelpWebappPlugin.DEBUG_WORKINGSETS) {
-				System.out.println(
-					"InfocenterWorkingSetManager.saveState(): Too much data to save: " //$NON-NLS-1$
-						+ data.toString());
+				System.out
+						.println("InfocenterWorkingSetManager.saveState(): Too much data to save: " //$NON-NLS-1$
+								+ data.toString());
 			}
 			throw ioe;
 		}
 	}
 
 	/**
-	 * * @param changedWorkingSet the working set that has changed
-	*/
+	 * *
+	 * 
+	 * @param changedWorkingSet
+	 *            the working set that has changed
+	 */
 	public void workingSetChanged(WorkingSet changedWorkingSet)
-		throws IOException {
+			throws IOException {
 		saveState();
 	}
 
@@ -240,12 +235,13 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 			return null;
 
 		// toc id's are hrefs: /pluginId/path/to/toc.xml
-		// topic id's are based on parent toc id and index of topic: /pluginId/path/to/toc.xml_index_
+		// topic id's are based on parent toc id and index of topic:
+		// /pluginId/path/to/toc.xml_index_
 		int len = id.length();
 		if (id.charAt(len - 1) == '_') {
 			// This is a first level topic
-			String indexStr =
-				id.substring(id.lastIndexOf('_', len - 2) + 1, len - 1);
+			String indexStr = id.substring(id.lastIndexOf('_', len - 2) + 1,
+					len - 1);
 			int index = 0;
 			try {
 				index = Integer.parseInt(indexStr);

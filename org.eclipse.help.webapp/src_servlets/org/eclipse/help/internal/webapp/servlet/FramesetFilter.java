@@ -16,12 +16,11 @@ import java.io.*;
 import javax.servlet.http.*;
 
 /**
- * This class inserts a script for showing the page inside the appropriate frameset
- * when bookmarked.
+ * This class inserts a script for showing the page inside the appropriate
+ * frameset when bookmarked.
  */
 public class FramesetFilter implements IFilter {
-	private static final String scriptPart1 =
-		"<script>if( self == top ){ window.location.replace( \""; //$NON-NLS-1$
+	private static final String scriptPart1 = "<script>if( self == top ){ window.location.replace( \""; //$NON-NLS-1$
 	private static final String scriptPart3 = "\");}</script>"; //$NON-NLS-1$
 
 	/*
@@ -32,13 +31,13 @@ public class FramesetFilter implements IFilter {
 		if (uri == null || !uri.endsWith("html") && !uri.endsWith("htm")) { //$NON-NLS-1$ //$NON-NLS-2$
 			return out;
 		}
-		
-		if("/nftopic".equals(req.getServletPath())){ //$NON-NLS-1$
+
+		if ("/nftopic".equals(req.getServletPath())) { //$NON-NLS-1$
 			return out;
 		}
 
 		String noframes = req.getParameter("noframes"); //$NON-NLS-1$
-		if ("true".equals(noframes)){ //$NON-NLS-1$
+		if ("true".equals(noframes)) { //$NON-NLS-1$
 			return out;
 		}
 
@@ -47,16 +46,12 @@ public class FramesetFilter implements IFilter {
 			return out;
 		}
 		StringBuffer script = new StringBuffer(scriptPart1);
-		for (int i;
-			0 <= (i = path.indexOf('/'));
-			path = path.substring(i + 1)) {
+		for (int i; 0 <= (i = path.indexOf('/')); path = path.substring(i + 1)) {
 			script.append("../"); //$NON-NLS-1$
 		}
 		script.append("?topic="); //$NON-NLS-1$
 		script.append(req.getPathInfo());
 		script.append(scriptPart3);
-		return new FilterHTMLHeadOutputStream(
-			out,
-			script.toString().getBytes());
+		return new FilterHTMLHeadOutputStream(out, script.toString().getBytes());
 	}
 }

@@ -19,7 +19,10 @@ import org.osgi.framework.*;
 /**
  * Help System Core plug-in
  */
-public class HelpPlugin extends Plugin implements IRegistryChangeListener, BundleListener{
+public class HelpPlugin extends Plugin
+		implements
+			IRegistryChangeListener,
+			BundleListener {
 	public final static String PLUGIN_ID = "org.eclipse.help"; //$NON-NLS-1$
 	// debug options
 	public static boolean DEBUG = false;
@@ -43,8 +46,8 @@ public class HelpPlugin extends Plugin implements IRegistryChangeListener, Bundl
 	public static synchronized void logError(String message, Throwable ex) {
 		if (message == null)
 			message = ""; //$NON-NLS-1$
-		Status errorStatus =
-			new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK, message, ex);
+		Status errorStatus = new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK,
+				message, ex);
 		HelpPlugin.getDefault().getLog().log(errorStatus);
 	}
 	/**
@@ -56,13 +59,8 @@ public class HelpPlugin extends Plugin implements IRegistryChangeListener, Bundl
 		if (HelpPlugin.DEBUG) {
 			if (message == null)
 				message = ""; //$NON-NLS-1$
-			Status warningStatus =
-				new Status(
-					IStatus.WARNING,
-					PLUGIN_ID,
-					IStatus.OK,
-					message,
-					null);
+			Status warningStatus = new Status(IStatus.WARNING, PLUGIN_ID,
+					IStatus.OK, message, null);
 			HelpPlugin.getDefault().getLog().log(warningStatus);
 		}
 	}
@@ -73,7 +71,9 @@ public class HelpPlugin extends Plugin implements IRegistryChangeListener, Bundl
 	public static HelpPlugin getDefault() {
 		return plugin;
 	}
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext context) throws Exception {
@@ -83,8 +83,10 @@ public class HelpPlugin extends Plugin implements IRegistryChangeListener, Bundl
 		bundleContext = null;
 		super.stop(context);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
 	public void start(BundleContext context) throws Exception {
@@ -143,7 +145,7 @@ public class HelpPlugin extends Plugin implements IRegistryChangeListener, Bundl
 		}
 	}
 	public void addTocsChangedListener(ITocsChangedListener listener) {
-		if (!tocsChangedListeners.contains(listener)){
+		if (!tocsChangedListeners.contains(listener)) {
 			tocsChangedListeners.add(listener);
 		}
 	}

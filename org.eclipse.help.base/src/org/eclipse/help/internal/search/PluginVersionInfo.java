@@ -16,8 +16,8 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.base.util.*;
 import org.osgi.framework.*;
 /**
- * Table of plugins. Records all plugins, their version, corresponding fragments versions
- * The values are String in format:
+ * Table of plugins. Records all plugins, their version, corresponding fragments
+ * versions The values are String in format:
  * pluginID\npluginVersion\nfragment1ID\nfragment1Version\nfragment2ID\nfragment2Version
  */
 public class PluginVersionInfo extends HelpProperties {
@@ -30,36 +30,41 @@ public class PluginVersionInfo extends HelpProperties {
 	Collection added = new ArrayList();
 	Collection removed = new ArrayList();
 	/**
-	 * Creates table of current contributing plugins and their fragments with versions.
-	 * @param name the name of the file to serialize the data to
-	 * @param docBundleIds Collection of String
-	 * @param basePlugin use this plugin's state location to store the data
-	 * @param ignoreSavedVersion if true, will cause detect change
-	 *  to ignore saved plugin version and behave like there was nothing saved
+	 * Creates table of current contributing plugins and their fragments with
+	 * versions.
+	 * 
+	 * @param name
+	 *            the name of the file to serialize the data to
+	 * @param docBundleIds
+	 *            Collection of String
+	 * @param dir
+	 *            location to store the data
+	 * @param ignoreSavedVersions
+	 *            if true, will cause detect change to ignore saved plugin
+	 *            version and behave like there was nothing saved
 	 */
-	public PluginVersionInfo(
-		String name,
-		Collection docBundleIds,
-		File dir,
-		boolean ignoreSavedVersions) {
+	public PluginVersionInfo(String name, Collection docBundleIds, File dir,
+			boolean ignoreSavedVersions) {
 		super(name, dir);
-		this.dir=dir;
+		this.dir = dir;
 		this.ignoreSavedVersions = ignoreSavedVersions;
 		// create table of current contributions
 		for (Iterator it = docBundleIds.iterator(); it.hasNext();) {
 			String bundleId = (String) it.next();
 			Bundle pluginBundle = Platform.getBundle(bundleId);
-			if(pluginBundle == null){
+			if (pluginBundle == null) {
 				continue;
 			}
 			StringBuffer pluginVersionAndFragments = new StringBuffer();
 			pluginVersionAndFragments.append(bundleId);
 			pluginVersionAndFragments.append(SEPARATOR);
-			pluginVersionAndFragments.append(pluginBundle.getHeaders().get(Constants.BUNDLE_VERSION));
+			pluginVersionAndFragments.append(pluginBundle.getHeaders().get(
+					Constants.BUNDLE_VERSION));
 			Bundle[] fragmentBundles = Platform.getFragments(pluginBundle);
 			if (fragmentBundles != null) {
 				for (int f = 0; f < fragmentBundles.length; f++) {
-					if (fragmentBundles[f].getState() == Bundle.INSTALLED || fragmentBundles[f].getState() == Bundle.UNINSTALLED)
+					if (fragmentBundles[f].getState() == Bundle.INSTALLED
+							|| fragmentBundles[f].getState() == Bundle.UNINSTALLED)
 						continue;
 					pluginVersionAndFragments.append(SEPARATOR);
 					pluginVersionAndFragments.append(fragmentBundles[f]
@@ -69,13 +74,13 @@ public class PluginVersionInfo extends HelpProperties {
 							.getHeaders().get(Constants.BUNDLE_VERSION));
 				}
 			}
-			this.put(bundleId, pluginVersionAndFragments
-					.toString());
+			this.put(bundleId, pluginVersionAndFragments.toString());
 		}
 	}
 	/**
-	 * Detects changes in contributions or their version
-	 * since last time the contribution table was saved.
+	 * Detects changes in contributions or their version since last time the
+	 * contribution table was saved.
+	 * 
 	 * @return true if contributions have changed
 	 */
 	public boolean detectChange() {
@@ -102,9 +107,8 @@ public class PluginVersionInfo extends HelpProperties {
 				}
 			}
 		}
-		for (Enumeration keysEnum = oldContrs.keys();
-			keysEnum.hasMoreElements();
-			) {
+		for (Enumeration keysEnum = oldContrs.keys(); keysEnum
+				.hasMoreElements();) {
 			String oneContr = (String) keysEnum.nextElement();
 			if (!this.containsKey(oneContr)) {
 				// plugin has been removed
@@ -123,8 +127,8 @@ public class PluginVersionInfo extends HelpProperties {
 		return hasChanged;
 	}
 	/**
-	 * @return String - Collection of IDs of contributions that were added
-	 *  or upgraded
+	 * @return String - Collection of IDs of contributions that were added or
+	 *         upgraded
 	 */
 	public Collection getAdded() {
 		if (doComparison)
@@ -132,8 +136,8 @@ public class PluginVersionInfo extends HelpProperties {
 		return added;
 	}
 	/**
-	 * @return String - Collection of IDs of contributions that were removed
-	 *  or upgraded
+	 * @return String - Collection of IDs of contributions that were removed or
+	 *         upgraded
 	 */
 	public Collection getRemoved() {
 		if (doComparison)
@@ -141,8 +145,9 @@ public class PluginVersionInfo extends HelpProperties {
 		return removed;
 	}
 	/**
-	 * Saves contributions to a file.
-	 * After this method is called, calls to detectChange() will return false.
+	 * Saves contributions to a file. After this method is called, calls to
+	 * detectChange() will return false.
+	 * 
 	 * @return true if operation was successful
 	 */
 	public boolean save() {
@@ -157,27 +162,24 @@ public class PluginVersionInfo extends HelpProperties {
 		return false;
 	}
 	/**
-	 * Compares plugins and versions represented as a string for equality
-	 * String have form id1\nverison1\nid2\nversion2
-	 * String are equal of they contain the same set of IDs and their corresponding version equal
+	 * Compares plugins and versions represented as a string for equality String
+	 * have form id1\nverison1\nid2\nversion2 String are equal of they contain
+	 * the same set of IDs and their corresponding version equal
+	 * 
 	 * @return true if plugins and versions match
 	 */
 	private boolean compare(String versions, String oldVersions) {
 		Map versionMap = new HashMap();
-		for (StringTokenizer t =
-			new StringTokenizer(versions, SEPARATOR, false);
-			t.hasMoreTokens();
-			) {
+		for (StringTokenizer t = new StringTokenizer(versions, SEPARATOR, false); t
+				.hasMoreTokens();) {
 			String pluginOrFragment = t.nextToken();
 			if (t.hasMoreTokens()) {
 				versionMap.put(pluginOrFragment, t.nextToken());
 			}
 		}
 		Map oldVersionMap = new HashMap();
-		for (StringTokenizer t =
-			new StringTokenizer(oldVersions, SEPARATOR, false);
-			t.hasMoreTokens();
-			) {
+		for (StringTokenizer t = new StringTokenizer(oldVersions, SEPARATOR,
+				false); t.hasMoreTokens();) {
 			String pluginOrFragment = t.nextToken();
 			if (t.hasMoreTokens()) {
 				oldVersionMap.put(pluginOrFragment, t.nextToken());

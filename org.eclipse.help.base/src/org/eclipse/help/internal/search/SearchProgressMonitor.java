@@ -18,6 +18,7 @@ import org.eclipse.help.internal.base.*;
 
 /**
  * Progress monitor for search
+ * 
  * @since 2.0
  */
 public class SearchProgressMonitor implements IProgressMonitor {
@@ -85,6 +86,7 @@ public class SearchProgressMonitor implements IProgressMonitor {
 	}
 	/**
 	 * Gets the isCancelled.
+	 * 
 	 * @return Returns a boolean
 	 */
 	public boolean isCanceled() {
@@ -93,7 +95,9 @@ public class SearchProgressMonitor implements IProgressMonitor {
 
 	/**
 	 * Sets the isCanceled.
-	 * @param isCancelled The isCanceled to set
+	 * 
+	 * @param canceled
+	 *            The isCanceled to set
 	 */
 	public void setCancelled(boolean canceled) {
 		this.canceled = canceled;
@@ -101,7 +105,6 @@ public class SearchProgressMonitor implements IProgressMonitor {
 
 	/**
 	 * Sets the isStarted.
-	 * @return Returns a boolean
 	 */
 	public void started() {
 		this.started = true;
@@ -109,6 +112,7 @@ public class SearchProgressMonitor implements IProgressMonitor {
 
 	/**
 	 * Gets the isStarted.
+	 * 
 	 * @return Returns a boolean
 	 */
 	public boolean isStarted() {
@@ -117,6 +121,7 @@ public class SearchProgressMonitor implements IProgressMonitor {
 
 	/**
 	 * Gets the isDone.
+	 * 
 	 * @return Returns a boolean
 	 */
 	public boolean isDone() {
@@ -125,7 +130,9 @@ public class SearchProgressMonitor implements IProgressMonitor {
 
 	/**
 	 * Sets the isCanceled.
-	 * @param isCanceled The isCanceled to set
+	 * 
+	 * @param canceled
+	 *            The isCanceled to set
 	 */
 	public void setCanceled(boolean canceled) {
 		this.canceled = canceled;
@@ -134,7 +141,8 @@ public class SearchProgressMonitor implements IProgressMonitor {
 	/**
 	 * Returns a progress monitor for specified query and locale
 	 */
-	public static synchronized SearchProgressMonitor getProgressMonitor(final String locale) {
+	public static synchronized SearchProgressMonitor getProgressMonitor(
+			final String locale) {
 
 		// return an existing progress monitor if there is one
 		if (progressMonitors.get(locale) != null)
@@ -148,9 +156,7 @@ public class SearchProgressMonitor implements IProgressMonitor {
 			public void run() {
 				try {
 					BaseHelpSystem.getSearchManager().search(
-						new DummySearchQuery(locale),
-						dummy_collector,
-						pm);
+							new DummySearchQuery(locale), dummy_collector, pm);
 				} catch (OperationCanceledException oce) {
 					// operation cancelled
 					// throw out the progress monitor
@@ -200,7 +206,8 @@ public class SearchProgressMonitor implements IProgressMonitor {
 			return "dummy"; //$NON-NLS-1$
 		}
 		/**
-		 * @return true if search only in specified fields, not the default field
+		 * @return true if search only in specified fields, not the default
+		 *         field
 		 */
 		public boolean isFieldSearch() {
 			return false;
@@ -212,7 +219,7 @@ public class SearchProgressMonitor implements IProgressMonitor {
 			return l;
 		}
 	}
-	public synchronized static void reinit(String locale){
+	public synchronized static void reinit(String locale) {
 		progressMonitors.remove(locale);
 	}
 

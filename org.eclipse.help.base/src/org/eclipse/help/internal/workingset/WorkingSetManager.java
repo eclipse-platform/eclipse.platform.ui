@@ -21,57 +21,62 @@ import javax.xml.transform.stream.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.base.*;
+import org.eclipse.help.internal.workingset.PropertyChange.*;
 import org.w3c.dom.*;
 import org.xml.sax.*;
 
 /**
- * The working  set manager stores help working sets. Working sets are persisted
+ * The working set manager stores help working sets. Working sets are persisted
  * whenever one is added or removed.
+ * 
  * @since 2.1
  */
-public class WorkingSetManager implements IHelpWorkingSetManager, ITocsChangedListener{
+public class WorkingSetManager
+		implements
+			IHelpWorkingSetManager,
+			ITocsChangedListener {
 
-	// Note: keep the following constants in sych with the values defined in IWorkingSetManager.
-	//       They are needed to synch the ui and the help working sets, as help should run w/o ui plugins.
+	// Note: keep the following constants in sych with the values defined in
+	// IWorkingSetManager.
+	//       They are needed to synch the ui and the help working sets, as help should
+	// run w/o ui plugins.
 
 	/**
-	 * Change event id when a working set is added
-	 * newValue of the PropertyChangeEvent will be the added working set.
-	 * oldValue will be null.
-	 *
+	 * Change event id when a working set is added newValue of the
+	 * PropertyChangeEvent will be the added working set. oldValue will be null.
+	 * 
 	 * @see IPropertyChangeListener
 	 */
 	public static final String CHANGE_WORKING_SET_ADD = "workingSetAdd"; //$NON-NLS-1$
 	/**
-	 * Change event id when a working set is removed
-	 * newValue of the PropertyChangeEvent will be null.
-	 * oldValue will be the removed working set.
-	 *
+	 * Change event id when a working set is removed newValue of the
+	 * PropertyChangeEvent will be null. oldValue will be the removed working
+	 * set.
+	 * 
 	 * @see IPropertyChangeListener
 	 */
 	public static final String CHANGE_WORKING_SET_REMOVE = "workingSetRemove"; //$NON-NLS-1$
 	/**
-	 * Change event id when the working set contents changed
-	 * newValue of the PropertyChangeEvent will be the changed working set.
-	 * oldValue will be null.
-	 *
+	 * Change event id when the working set contents changed newValue of the
+	 * PropertyChangeEvent will be the changed working set. oldValue will be
+	 * null.
+	 * 
 	 * @see IPropertyChangeListener
 	 */
-	public static final String CHANGE_WORKING_SET_CONTENT_CHANGE =
-		"workingSetContentChange"; //$NON-NLS-1$
+	public static final String CHANGE_WORKING_SET_CONTENT_CHANGE = "workingSetContentChange"; //$NON-NLS-1$
 	/**
-	 * Change event id when the working set name changed.
-	 * newValue of the PropertyChangeEvent will be the changed working set.
-	 * oldValue will be null.
-	 *
+	 * Change event id when the working set name changed. newValue of the
+	 * PropertyChangeEvent will be the changed working set. oldValue will be
+	 * null.
+	 * 
 	 * @see IPropertyChangeListener
 	 */
 	public static final String CHANGE_WORKING_SET_NAME_CHANGE = "workingSetNameChange"; //$NON-NLS-1$	
 
 	/**
-	 * Synchronize event id. When other working sets repositories are used,
-	 * one may want to keep things in synch.
-	 *
+	 * Synchronize event id. When other working sets repositories are used, one
+	 * may want to keep things in synch.
+	 * 
 	 * @see IPropertyChangeListener
 	 */
 	public static final String CHANGE_WORKING_SETS_SYNCH = "workingSetsSynch"; //$NON-NLS-1$
@@ -79,16 +84,16 @@ public class WorkingSetManager implements IHelpWorkingSetManager, ITocsChangedLi
 	// Working set persistence
 	private static final String WORKING_SET_STATE_FILENAME = "workingsets.xml"; //$NON-NLS-1$
 	private SortedSet workingSets = new TreeSet(new WorkingSetComparator());
-	private PropertyChange.ListenerList propertyChangeListeners =
-		new PropertyChange.ListenerList();
+	private PropertyChange.ListenerList propertyChangeListeners = new PropertyChange.ListenerList();
 	private AdaptableTocsArray root;
-	
-	private static final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-	private static final TransformerFactory transformerFactory = TransformerFactory.newInstance();
+
+	private static final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory
+			.newInstance();
+	private static final TransformerFactory transformerFactory = TransformerFactory
+			.newInstance();
 
 	/**
 	 * Constructor
-	 * @param locale
 	 */
 	public WorkingSetManager() {
 		restoreState();
@@ -97,9 +102,8 @@ public class WorkingSetManager implements IHelpWorkingSetManager, ITocsChangedLi
 
 	public AdaptableTocsArray getRoot() {
 		if (root == null)
-			root =
-				new AdaptableTocsArray(
-					HelpPlugin.getTocManager().getTocs(Platform.getNL()));
+			root = new AdaptableTocsArray(HelpPlugin.getTocManager().getTocs(
+					Platform.getNL()));
 		return root;
 	}
 
@@ -117,25 +121,25 @@ public class WorkingSetManager implements IHelpWorkingSetManager, ITocsChangedLi
 	/**
 	 */
 	public void addPropertyChangeListener(
-		PropertyChange.IPropertyChangeListener listener) {
+			PropertyChange.IPropertyChangeListener listener) {
 		propertyChangeListeners.add(listener);
 	}
 
 	/**
 	 * Creates a new working set
 	 */
-	public WorkingSet createWorkingSet(
-		String name,
-		AdaptableHelpResource[] elements) {
+	public WorkingSet createWorkingSet(String name,
+			AdaptableHelpResource[] elements) {
 		return new WorkingSet(name, elements);
 	}
 
 	/**
 	 * Tests the receiver and the object for equality
 	 * 
-	 * @param object object to compare the receiver to
-	 * @return true=the object equals the receiver, it has the same 
-	 * 	working sets. false otherwise
+	 * @param object
+	 *            object to compare the receiver to
+	 * @return true=the object equals the receiver, it has the same working
+	 *         sets. false otherwise
 	 */
 	public boolean equals(Object object) {
 		if (this == object) {
@@ -149,43 +153,34 @@ public class WorkingSetManager implements IHelpWorkingSetManager, ITocsChangedLi
 	}
 
 	/**
-	 * Notify property change listeners about a change to the list of 
-	 * working sets.
+	 * Notify property change listeners about a change to the list of working
+	 * sets.
 	 * 
-	 * @param changeId one of 
-	 * 	CHANGE_WORKING_SET_ADD		 	
-	 *  CHANGE_WORKING_SET_REMOVE
-	 *  CHANGE_WORKING_SET_CONTENT_CHANGE
-	 *  CHANGE_WORKING_SET_NAME_CHANGE
-	 * @param oldValue the removed working set or null if a working set 
-	 * 	was added or changed.
-	 * @param newValue the new or changed working set or null if a working 
-	 * 	set was removed.
+	 * @param changeId
+	 *            one of CHANGE_WORKING_SET_ADD CHANGE_WORKING_SET_REMOVE
+	 *            CHANGE_WORKING_SET_CONTENT_CHANGE
+	 *            CHANGE_WORKING_SET_NAME_CHANGE
+	 * @param oldValue
+	 *            the removed working set or null if a working set was added or
+	 *            changed.
+	 * @param newValue
+	 *            the new or changed working set or null if a working set was
+	 *            removed.
 	 */
-	private void firePropertyChange(
-		String changeId,
-		Object oldValue,
-		Object newValue) {
-		final PropertyChange.PropertyChangeEvent event =
-			new PropertyChange.PropertyChangeEvent(
-				this,
-				changeId,
-				oldValue,
-				newValue);
+	private void firePropertyChange(String changeId, Object oldValue,
+			Object newValue) {
+		final PropertyChange.PropertyChangeEvent event = new PropertyChange.PropertyChangeEvent(
+				this, changeId, oldValue, newValue);
 
 		Object[] listeners = propertyChangeListeners.getListeners();
 		for (int i = 0; i < listeners.length; i++) {
-			(
-				(
-					PropertyChange
-						.IPropertyChangeListener) listeners[i])
-						.propertyChange(
-				event);
+			((PropertyChange.IPropertyChangeListener) listeners[i])
+					.propertyChange(event);
 		}
 	}
 	/**
 	 * Returns a working set by name
-	 * 
+	 *  
 	 */
 	public WorkingSet getWorkingSet(String name) {
 		if (name == null || workingSets == null)
@@ -213,8 +208,8 @@ public class WorkingSetManager implements IHelpWorkingSetManager, ITocsChangedLi
 	 * @see org.eclipse.ui.IWorkingSetManager#getWorkingSets()
 	 */
 	public WorkingSet[] getWorkingSets() {
-		return (WorkingSet[]) workingSets.toArray(
-			new WorkingSet[workingSets.size()]);
+		return (WorkingSet[]) workingSets.toArray(new WorkingSet[workingSets
+				.size()]);
 	}
 	/**
 	 * Returns the file used as the persistence store
@@ -237,8 +232,7 @@ public class WorkingSetManager implements IHelpWorkingSetManager, ITocsChangedLi
 	}
 
 	/**
-	 * Reads the persistence store and creates the working sets 
-	 * stored in it.
+	 * Reads the persistence store and creates the working sets stored in it.
 	 */
 	public boolean restoreState() {
 		File stateFile = getWorkingSetStateFile();
@@ -251,9 +245,9 @@ public class WorkingSetManager implements IHelpWorkingSetManager, ITocsChangedLi
 				InputSource inputSource = new InputSource(reader);
 				inputSource.setSystemId(stateFile.toString());
 
-				
-				DocumentBuilder parser = documentBuilderFactory.newDocumentBuilder();
-				Document d=parser.parse(inputSource);
+				DocumentBuilder parser = documentBuilderFactory
+						.newDocumentBuilder();
+				Document d = parser.parse(inputSource);
 
 				Element rootElement = d.getDocumentElement();
 				restoreWorkingSetState(rootElement);
@@ -261,19 +255,24 @@ public class WorkingSetManager implements IHelpWorkingSetManager, ITocsChangedLi
 
 				return true;
 			} catch (ParserConfigurationException pce) {
-				String msg = HelpBaseResources.getString("WorkingSetManager.PCE"); //$NON-NLS-1$
+				String msg = HelpBaseResources
+						.getString("WorkingSetManager.PCE"); //$NON-NLS-1$
 				HelpPlugin.logError(msg, pce);
 				HelpPlugin.logError(HelpBaseResources.getString("E041"), pce); //$NON-NLS-1$
 				return false;
 			} catch (SAXException se) {
-				String msg = HelpBaseResources.getString("E018", stateFile.toString()); //$NON-NLS-1$
+				String msg = HelpBaseResources.getString(
+						"E018", stateFile.toString()); //$NON-NLS-1$
 				HelpBasePlugin.logError(msg, se);
-				HelpBasePlugin.logError(HelpBaseResources.getString("E041"), se); //$NON-NLS-1$
+				HelpBasePlugin
+						.logError(HelpBaseResources.getString("E041"), se); //$NON-NLS-1$
 				return false;
 			} catch (IOException ioe) {
-				String msg = HelpBaseResources.getString("E018", stateFile.toString()); //$NON-NLS-1$
+				String msg = HelpBaseResources.getString(
+						"E018", stateFile.toString()); //$NON-NLS-1$
 				HelpBasePlugin.logError(msg, ioe);
-				HelpBasePlugin.logError(HelpBaseResources.getString("E041"), ioe); //$NON-NLS-1$
+				HelpBasePlugin.logError(
+						HelpBaseResources.getString("E041"), ioe); //$NON-NLS-1$
 				return false;
 			}
 		}
@@ -281,10 +280,11 @@ public class WorkingSetManager implements IHelpWorkingSetManager, ITocsChangedLi
 	}
 
 	/**
-	 * Recreates all working sets from the persistence store
-	 * and adds them to the receiver.
+	 * Recreates all working sets from the persistence store and adds them to
+	 * the receiver.
 	 * 
-	 * @param parent the xml element containing serialized working sets
+	 * @param parent
+	 *            the xml element containing serialized working sets
 	 */
 	private void restoreWorkingSetState(Element parent) {
 		NodeList workingSets = parent.getChildNodes();
@@ -293,8 +293,8 @@ public class WorkingSetManager implements IHelpWorkingSetManager, ITocsChangedLi
 			if (workingSets.item(i).getNodeType() != Node.ELEMENT_NODE)
 				continue;
 
-			WorkingSet workingSet =
-				restoreWorkingSet((Element) workingSets.item(i));
+			WorkingSet workingSet = restoreWorkingSet((Element) workingSets
+					.item(i));
 			if (workingSet != null) {
 				this.workingSets.add(workingSet);
 			}
@@ -304,9 +304,8 @@ public class WorkingSetManager implements IHelpWorkingSetManager, ITocsChangedLi
 	/**
 	 * Recreates a working set from the persistence store.
 	 * 
-	 * @param memento the persistence store
-	 * @return the working set created from the memento or null if
-	 * 	creation failed.
+	 * @return the working set created from the memento or null if creation
+	 *         failed.
 	 */
 	private WorkingSet restoreWorkingSet(Element workingSetNode) {
 
@@ -344,8 +343,8 @@ public class WorkingSetManager implements IHelpWorkingSetManager, ITocsChangedLi
 			}
 		}
 
-		AdaptableHelpResource[] elements =
-			new AdaptableHelpResource[helpResources.size()];
+		AdaptableHelpResource[] elements = new AdaptableHelpResource[helpResources
+				.size()];
 		helpResources.toArray(elements);
 
 		WorkingSet ws = createWorkingSet(name, elements);
@@ -356,7 +355,7 @@ public class WorkingSetManager implements IHelpWorkingSetManager, ITocsChangedLi
 	/**
 	 */
 	public void removePropertyChangeListener(
-		PropertyChange.IPropertyChangeListener listener) {
+			PropertyChange.IPropertyChangeListener listener) {
 		propertyChangeListeners.remove(listener);
 	}
 
@@ -364,9 +363,10 @@ public class WorkingSetManager implements IHelpWorkingSetManager, ITocsChangedLi
 	 * Saves the working sets in the persistence store
 	 */
 	public synchronized boolean saveState() {
-		File stateFile=null;
+		File stateFile = null;
 		try {
-			DocumentBuilder docBuilder = documentBuilderFactory.newDocumentBuilder();
+			DocumentBuilder docBuilder = documentBuilderFactory
+					.newDocumentBuilder();
 			Document doc = docBuilder.newDocument();
 			Element rootElement = doc.createElement("workingSets"); //$NON-NLS-1$
 			doc.appendChild(rootElement);
@@ -376,22 +376,23 @@ public class WorkingSetManager implements IHelpWorkingSetManager, ITocsChangedLi
 			stateFile = getWorkingSetStateFile();
 			stateFile.getParentFile().mkdir();
 			FileOutputStream stream = new FileOutputStream(stateFile);
-			
-			Transformer transformer=transformerFactory.newTransformer();
+
+			Transformer transformer = transformerFactory.newTransformer();
 			transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
 			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8"); //$NON-NLS-1$
 			DOMSource source = new DOMSource(doc);
 			StreamResult result = new StreamResult(stream);
 
-			transformer.transform(source,result);
+			transformer.transform(source, result);
 			stream.close();
 			return true;
-		}catch (ParserConfigurationException pce){
+		} catch (ParserConfigurationException pce) {
 			String msg = HelpBaseResources.getString("WorkingSetManager.PCE"); //$NON-NLS-1$
 			HelpPlugin.logError(msg, pce);
 			return false;
-		}catch (TransformerException e){
-			String message = HelpBaseResources.getString("WorkingSetManager.transformer"); //$NON-NLS-1$
+		} catch (TransformerException e) {
+			String message = HelpBaseResources
+					.getString("WorkingSetManager.transformer"); //$NON-NLS-1$
 			HelpPlugin.logError(message, null);
 			return false;
 		} catch (IOException e) {
@@ -405,7 +406,8 @@ public class WorkingSetManager implements IHelpWorkingSetManager, ITocsChangedLi
 	/**
 	 * Saves all persistable working sets in the persistence store.
 	 * 
-	 * @param parent: the xml node to save to
+	 * @param parent:
+	 *            the xml node to save to
 	 */
 	private void saveWorkingSetState(Element parent) {
 		Iterator iterator = workingSets.iterator();
@@ -419,18 +421,15 @@ public class WorkingSetManager implements IHelpWorkingSetManager, ITocsChangedLi
 	 * Persists all working sets. Should only be called by the webapp working
 	 * set dialog.
 	 * 
-	 * @param changedWorkingSet the working set that has changed
+	 * @param changedWorkingSet
+	 *            the working set that has changed
 	 */
 	public void workingSetChanged(WorkingSet changedWorkingSet) {
 		saveState();
-		firePropertyChange(
-			CHANGE_WORKING_SET_NAME_CHANGE,
-			null,
-			changedWorkingSet);
-		firePropertyChange(
-			CHANGE_WORKING_SET_CONTENT_CHANGE,
-			null,
-			changedWorkingSet);
+		firePropertyChange(CHANGE_WORKING_SET_NAME_CHANGE, null,
+				changedWorkingSet);
+		firePropertyChange(CHANGE_WORKING_SET_CONTENT_CHANGE, null,
+				changedWorkingSet);
 	}
 
 	/**
@@ -451,12 +450,13 @@ public class WorkingSetManager implements IHelpWorkingSetManager, ITocsChangedLi
 			return null;
 
 		// toc id's are hrefs: /pluginId/path/to/toc.xml
-		// topic id's are based on parent toc id and index of topic: /pluginId/path/to/toc.xml_index_
+		// topic id's are based on parent toc id and index of topic:
+		// /pluginId/path/to/toc.xml_index_
 		int len = id.length();
 		if (id.charAt(len - 1) == '_') {
 			// This is a first level topic
-			String indexStr =
-				id.substring(id.lastIndexOf('_', len - 2) + 1, len - 1);
+			String indexStr = id.substring(id.lastIndexOf('_', len - 2) + 1,
+					len - 1);
 			int index = 0;
 			try {
 				index = Integer.parseInt(indexStr);
@@ -478,14 +478,13 @@ public class WorkingSetManager implements IHelpWorkingSetManager, ITocsChangedLi
 	}
 	public String getCurrentWorkingSet() {
 		return HelpBasePlugin.getDefault().getPluginPreferences().getString(
-			BaseHelpSystem.WORKING_SET);
+				BaseHelpSystem.WORKING_SET);
 	}
 
 	public void setCurrentWorkingSet(String workingSet) {
 		HelpBasePlugin.getDefault().getPluginPreferences().setValue(
-				BaseHelpSystem.WORKING_SET,
-				workingSet);
-			HelpBasePlugin.getDefault().savePluginPreferences();
+				BaseHelpSystem.WORKING_SET, workingSet);
+		HelpBasePlugin.getDefault().savePluginPreferences();
 	}
 	public void tocsChanged() {
 		saveState();

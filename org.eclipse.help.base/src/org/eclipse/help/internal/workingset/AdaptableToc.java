@@ -10,9 +10,8 @@
  *******************************************************************************/
 package org.eclipse.help.internal.workingset;
 
-
 import org.eclipse.help.*;
-import org.w3c.dom.Element;
+import org.w3c.dom.*;
 
 /**
  * Makes help resources adaptable and persistable
@@ -20,7 +19,7 @@ import org.w3c.dom.Element;
 public class AdaptableToc extends AdaptableHelpResource {
 
 	protected AdaptableTopic[] children;
-	
+
 	/**
 	 * This constructor will be called when wrapping help resources.
 	 */
@@ -40,7 +39,7 @@ public class AdaptableToc extends AdaptableHelpResource {
 
 	public AdaptableHelpResource[] getChildren() {
 		if (children == null) {
-			ITopic[] topics = ((IToc)element).getTopics();
+			ITopic[] topics = ((IToc) element).getTopics();
 			children = new AdaptableTopic[topics.length];
 			for (int i = 0; i < topics.length; i++) {
 				children[i] = new AdaptableTopic(topics[i]);
@@ -54,14 +53,14 @@ public class AdaptableToc extends AdaptableHelpResource {
 	 * @see org.eclipse.help.IToc#getTopic(java.lang.String)
 	 */
 	public ITopic getTopic(String href) {
-		return ((IToc)element).getTopic(href);
+		return ((IToc) element).getTopic(href);
 	}
 
 	/**
 	 * @see org.eclipse.help.IToc#getTopics()
 	 */
 	public ITopic[] getTopics() {
-		return ((IToc)element).getTopics();
+		return ((IToc) element).getTopics();
 	}
 
 	public void saveState(Element element) {

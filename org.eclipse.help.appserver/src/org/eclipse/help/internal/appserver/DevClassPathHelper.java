@@ -10,10 +10,8 @@
  *******************************************************************************/
 package org.eclipse.help.internal.appserver;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.io.*;
+import java.net.*;
 import java.util.*;
 
 /**
@@ -25,7 +23,8 @@ public class DevClassPathHelper {
 	static protected Properties devProperties = null;
 
 	static {
-		// Check the osgi.dev property to see if dev classpath entries have been defined.
+		// Check the osgi.dev property to see if dev classpath entries have been
+		// defined.
 		String osgiDev = System.getProperty("osgi.dev"); //$NON-NLS-1$
 		if (osgiDev != null) {
 			try {
@@ -33,7 +32,8 @@ public class DevClassPathHelper {
 				URL location = new URL(osgiDev);
 				devProperties = load(location);
 				if (devProperties != null)
-					devDefaultClasspath = getArrayFromList(devProperties.getProperty("*")); //$NON-NLS-1$
+					devDefaultClasspath = getArrayFromList(devProperties
+							.getProperty("*")); //$NON-NLS-1$
 			} catch (MalformedURLException e) {
 				devDefaultClasspath = getArrayFromList(osgiDev);
 			}
@@ -53,10 +53,12 @@ public class DevClassPathHelper {
 	}
 
 	/**
-	 * Returns the result of converting a list of comma-separated tokens into an array
+	 * Returns the result of converting a list of comma-separated tokens into an
+	 * array
 	 * 
 	 * @return the array of string tokens
-	 * @param prop the initial comma-separated string
+	 * @param prop
+	 *            the initial comma-separated string
 	 */
 	public static String[] getArrayFromList(String prop) {
 		if (prop == null || prop.trim().equals("")) //$NON-NLS-1$
@@ -68,7 +70,8 @@ public class DevClassPathHelper {
 			if (!token.equals("")) //$NON-NLS-1$
 				list.addElement(token);
 		}
-		return list.isEmpty() ? new String[0] : (String[]) list.toArray(new String[list.size()]);
+		return list.isEmpty() ? new String[0] : (String[]) list
+				.toArray(new String[list.size()]);
 	}
 
 	public static boolean inDevelopmentMode() {

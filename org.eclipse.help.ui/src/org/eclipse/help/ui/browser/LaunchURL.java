@@ -11,7 +11,7 @@
 package org.eclipse.help.ui.browser;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.browser.IBrowser;
+import org.eclipse.help.browser.*;
 import org.eclipse.help.internal.browser.*;
 import org.eclipse.help.ui.internal.util.*;
 import org.eclipse.jface.action.*;
@@ -23,20 +23,20 @@ import org.eclipse.ui.*;
 /**
  * Action that launches a URL in a browser.
  * <p>
- * This class is intended to be specified as a value
- * of a class attribute of an action element in plugin.xml
- * for extensions of org.eclipse.ui.actionSets extension point.
+ * This class is intended to be specified as a value of a class attribute of an
+ * action element in plugin.xml for extensions of org.eclipse.ui.actionSets
+ * extension point.
  * </p>
  * </p>
- * The action element must have an attribute
- * named url, in addition to markup required by
- * org.eclipse.ui.actionSets extension point specification.
- * The value of the url attribute should specify
- * a URL to be opened in a browser.
+ * The action element must have an attribute named url, in addition to markup
+ * required by org.eclipse.ui.actionSets extension point specification. The
+ * value of the url attribute should specify a URL to be opened in a browser.
  * </p>
  */
 public class LaunchURL
-	implements IWorkbenchWindowActionDelegate, IExecutableExtension {
+		implements
+			IWorkbenchWindowActionDelegate,
+			IExecutableExtension {
 	private String url;
 
 	/**
@@ -52,13 +52,11 @@ public class LaunchURL
 	}
 
 	/**
-	 * @see IExecutableExtension#setInitializationData(IConfigurationElement, String, Object)
+	 * @see IExecutableExtension#setInitializationData(IConfigurationElement,
+	 *      String, Object)
 	 */
-	public void setInitializationData(
-		IConfigurationElement config,
-		String propertyName,
-		Object data)
-		throws CoreException {
+	public void setInitializationData(IConfigurationElement config,
+			String propertyName, Object data) throws CoreException {
 		url = config.getAttribute("url"); //$NON-NLS-1$
 	}
 
@@ -72,7 +70,8 @@ public class LaunchURL
 		if (SWT.getPlatform().equals("win32")) { //$NON-NLS-1$
 			Program.launch(url);
 		} else {
-			IBrowser browser = BrowserManager.getInstance().createBrowser(false);
+			IBrowser browser = BrowserManager.getInstance()
+					.createBrowser(false);
 			try {
 				browser.displayURL(url);
 			} catch (Exception e) {

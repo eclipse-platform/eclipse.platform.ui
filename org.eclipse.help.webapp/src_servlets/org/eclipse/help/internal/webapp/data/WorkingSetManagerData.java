@@ -33,10 +33,8 @@ public class WorkingSetManagerData extends RequestData {
 	// Indicates whether operation specified in the request failed
 	private boolean saved = true;
 
-	public WorkingSetManagerData(
-		ServletContext context,
-		HttpServletRequest request,
-		HttpServletResponse response) {
+	public WorkingSetManagerData(ServletContext context,
+			HttpServletRequest request, HttpServletResponse response) {
 		super(context, request, response);
 		wsmgr = new WebappWorkingSetManager(request, response, getLocale());
 		name = request.getParameter("workingSet"); //$NON-NLS-1$
@@ -73,8 +71,8 @@ public class WorkingSetManagerData extends RequestData {
 					selectedElements.add(res);
 			}
 
-			AdaptableHelpResource[] elements =
-				new AdaptableHelpResource[selectedElements.size()];
+			AdaptableHelpResource[] elements = new AdaptableHelpResource[selectedElements
+					.size()];
 			selectedElements.toArray(elements);
 			WorkingSet ws = wsmgr.createWorkingSet(name, elements);
 			wsmgr.addWorkingSet(ws);
@@ -104,21 +102,21 @@ public class WorkingSetManagerData extends RequestData {
 
 				ArrayList selectedElements = new ArrayList(hrefs.length);
 				for (int i = 0; i < hrefs.length; i++) {
-					AdaptableHelpResource res =
-						getAdaptableHelpResource(hrefs[i]);
+					AdaptableHelpResource res = getAdaptableHelpResource(hrefs[i]);
 					if (res != null)
 						selectedElements.add(res);
 				}
 
-				AdaptableHelpResource[] elements =
-					new AdaptableHelpResource[selectedElements.size()];
+				AdaptableHelpResource[] elements = new AdaptableHelpResource[selectedElements
+						.size()];
 				selectedElements.toArray(elements);
 
 				ws.setElements(elements);
 				ws.setName(name);
 				// should also change the name....
 
-				// We send this notification, so that the manager fires to its listeners
+				// We send this notification, so that the manager fires to its
+				// listeners
 				wsmgr.workingSetChanged(ws);
 			}
 		}
@@ -137,9 +135,8 @@ public class WorkingSetManagerData extends RequestData {
 		if (name == null || name.length() == 0) {
 			// See if anything is set in the preferences
 			name = wsmgr.getCurrentWorkingSet();
-			if (name == null
-				|| name.length() == 0
-				|| wsmgr.getWorkingSet(name) == null)
+			if (name == null || name.length() == 0
+					|| wsmgr.getWorkingSet(name) == null)
 				name = ServletResources.getString("All", request); //$NON-NLS-1$
 		}
 		return name;
@@ -182,7 +179,7 @@ public class WorkingSetManagerData extends RequestData {
 		if (saved) {
 			return null;
 		}
-		return UrlUtil.JavaScriptEncode(
-			ServletResources.getString("cookieSaveFailed", request)); //$NON-NLS-1$
+		return UrlUtil.JavaScriptEncode(ServletResources.getString(
+				"cookieSaveFailed", request)); //$NON-NLS-1$
 	}
 }

@@ -11,6 +11,7 @@
 package org.eclipse.help.internal.search;
 import java.io.*;
 import java.util.*;
+
 import org.apache.lucene.analysis.*;
 import org.apache.lucene.index.*;
 import org.apache.lucene.search.*;
@@ -343,7 +344,7 @@ public class QueryBuilder {
 	 * @param fieldNames -
 	 *            Collection of field names of type String (e.g. "h1"); the
 	 *            search will be performed on the given fields
-	 * @param fieldSearch -
+	 * @param fieldSearchOnly -
 	 *            boolean indicating if field only search should be performed;
 	 *            if set to false, default field "contents" and all other fields
 	 *            will be searched
@@ -359,7 +360,7 @@ public class QueryBuilder {
 	 * @param fieldNames -
 	 *            Collection of field names of type String (e.g. "h1"); the
 	 *            search will be performed on the given fields
-	 * @param fieldSearch -
+	 * @param fieldSearchOnly -
 	 *            boolean indicating if field only search should be performed;
 	 *            if set to false, default field "contents" and all other fields
 	 *            will be searched

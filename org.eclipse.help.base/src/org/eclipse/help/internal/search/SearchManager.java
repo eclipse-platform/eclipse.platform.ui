@@ -20,7 +20,7 @@ import org.eclipse.help.internal.search.IndexingOperation.*;
 /**
  * Manages indexing and search for all infosets
  */
-public class SearchManager implements ITocsChangedListener{
+public class SearchManager implements ITocsChangedListener {
 	/** Search indexes, by locale */
 	private Map indexes = new HashMap();
 	/** Caches analyzer descriptors for each locale */
@@ -39,21 +39,24 @@ public class SearchManager implements ITocsChangedListener{
 		synchronized (indexes) {
 			Object index = indexes.get(locale);
 			if (index == null) {
-				index = new SearchIndexWithIndexingProgress(locale, getAnalyzer(locale), HelpPlugin.getTocManager());
+				index = new SearchIndexWithIndexingProgress(locale,
+						getAnalyzer(locale), HelpPlugin.getTocManager());
 				indexes.put(locale, index);
 			}
 			return (SearchIndexWithIndexingProgress) index;
 		}
 	}
 	/**
-	 * Obtains AnalyzerDescriptor that indexing and search should
-	 * use for a given locale.
-	 * @param locale 2 or 5 character locale representation
+	 * Obtains AnalyzerDescriptor that indexing and search should use for a
+	 * given locale.
+	 * 
+	 * @param locale
+	 *            2 or 5 character locale representation
 	 */
 	private AnalyzerDescriptor getAnalyzer(String locale) {
 		// get an analyzer from cache
-		AnalyzerDescriptor analyzerDesc =
-			(AnalyzerDescriptor) analyzerDescriptors.get(locale);
+		AnalyzerDescriptor analyzerDesc = (AnalyzerDescriptor) analyzerDescriptors
+				.get(locale);
 		if (analyzerDesc != null)
 			return analyzerDesc;
 
@@ -71,13 +74,11 @@ public class SearchManager implements ITocsChangedListener{
 	/**
 	 * Searches index for documents containing an expression.
 	 */
-	public void search(
-		ISearchQuery searchQuery,
-		ISearchHitCollector collector,
-		IProgressMonitor pm)
-		throws QueryTooComplexException {
-		
-		SearchIndexWithIndexingProgress index = getIndex(searchQuery.getLocale());
+	public void search(ISearchQuery searchQuery, ISearchHitCollector collector,
+			IProgressMonitor pm) throws QueryTooComplexException {
+
+		SearchIndexWithIndexingProgress index = getIndex(searchQuery
+				.getLocale());
 		try {
 			ensureIndexUpdated(pm, index);
 			if (!index.exists()) {
@@ -87,8 +88,7 @@ public class SearchManager implements ITocsChangedListener{
 			}
 		} catch (IndexingOperation.IndexingException ie) {
 			if (HelpBasePlugin.DEBUG_SEARCH) {
-				System.out.println(
-					this.getClass().getName()
+				System.out.println(this.getClass().getName()
 						+ " IndexUpdateException occurred."); //$NON-NLS-1$
 			}
 		}
@@ -96,19 +96,24 @@ public class SearchManager implements ITocsChangedListener{
 	}
 
 	/**
-	 * Updates index.  Checks if all contributions were indexed.
-	 * If not, it indexes them.
-	 * @throws OperationCanceledException if indexing was cancelled
-	 * @throws Exception if error occurred
+	 * Updates index. Checks if all contributions were indexed. If not, it
+	 * indexes them.
+	 * 
+	 * @throws OperationCanceledException
+	 *             if indexing was cancelled
 	 */
-	public void ensureIndexUpdated(IProgressMonitor pm, SearchIndexWithIndexingProgress index)
-		throws OperationCanceledException, IndexingOperation.IndexingException {
-		
+	public void ensureIndexUpdated(IProgressMonitor pm,
+			SearchIndexWithIndexingProgress index)
+			throws OperationCanceledException,
+			IndexingOperation.IndexingException {
+
 		ProgressDistributor progressDistrib = index.getProgressDistributor();
 		progressDistrib.addMonitor(pm);
-		boolean useLock = BaseHelpSystem.MODE_INFOCENTER!= BaseHelpSystem.getMode();
-		boolean configurationLocked = false;;
-		if(useLock){
+		boolean useLock = BaseHelpSystem.MODE_INFOCENTER != BaseHelpSystem
+				.getMode();
+		boolean configurationLocked = false;
+		;
+		if (useLock) {
 			configurationLocked = index.tryLock();
 		}
 		try {
@@ -128,16 +133,16 @@ public class SearchManager implements ITocsChangedListener{
 				pm.worked(1);
 				pm.done();
 				return;
-			}else{
-				if(pm instanceof SearchProgressMonitor){
-					((SearchProgressMonitor)pm).started();
+			} else {
+				if (pm instanceof SearchProgressMonitor) {
+					((SearchProgressMonitor) pm).started();
 				}
 			}
 			//
 			updateIndex(pm, index, progressDistrib);
 		} finally {
 			progressDistrib.removeMonitor(pm);
-			if(configurationLocked){
+			if (configurationLocked) {
 				index.releaseLock();
 			}
 		}
@@ -148,7 +153,9 @@ public class SearchManager implements ITocsChangedListener{
 	 * @param progressDistrib
 	 * @throws IndexingException
 	 */
-	private synchronized void updateIndex(IProgressMonitor pm, SearchIndex index, ProgressDistributor progressDistrib) throws IndexingException {
+	private synchronized void updateIndex(IProgressMonitor pm,
+			SearchIndex index, ProgressDistributor progressDistrib)
+			throws IndexingException {
 		if (index.isClosed() || !index.needsUpdating()) {
 			pm.beginTask("", 1); //$NON-NLS-1$
 			pm.worked(1);
@@ -187,15 +194,16 @@ public class SearchManager implements ITocsChangedListener{
 			}
 		}
 	}
-	public synchronized void tocsChanged(){
+	public synchronized void tocsChanged() {
 		Collection activeIndexes = new ArrayList();
-		synchronized (indexes){
-			 activeIndexes.addAll(indexes.values());
+		synchronized (indexes) {
+			activeIndexes.addAll(indexes.values());
 		}
-		for(Iterator it = activeIndexes.iterator(); it.hasNext();){
-			SearchIndexWithIndexingProgress ix = (SearchIndexWithIndexingProgress)it.next();
+		for (Iterator it = activeIndexes.iterator(); it.hasNext();) {
+			SearchIndexWithIndexingProgress ix = (SearchIndexWithIndexingProgress) it
+					.next();
 			ix.close();
-			synchronized(indexes){
+			synchronized (indexes) {
 				indexes.remove(ix.getLocale());
 				ProgressDistributor pm = ix.getProgressDistributor();
 				pm.beginTask("", 1); //$NON-NLS-1$
@@ -204,6 +212,6 @@ public class SearchManager implements ITocsChangedListener{
 				SearchProgressMonitor.reinit(ix.getLocale());
 			}
 		}
-		
+
 	}
 }

@@ -22,9 +22,9 @@ public class XMLGenerator {
 	private PrintWriter out = null;
 	public int pad = 0;
 	// XML escaped characters mapping
-	private static final String invalidXML[] = { "&", ">", "<", "\"", "\'" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-	private static final String escapedXML[] =
-		{ "&amp;", "&gt;", "&lt;", "&quot;", "&apos;" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+	private static final String invalidXML[] = {"&", ">", "<", "\"", "\'"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+	private static final String escapedXML[] = {
+			"&amp;", "&gt;", "&lt;", "&quot;", "&apos;"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 	/**
 	 * Constructor.
 	 */
@@ -41,19 +41,15 @@ public class XMLGenerator {
 		super();
 		this.outFile = outFile;
 		try {
-			out =
-				new PrintWriter(
-					new BufferedWriter(
-						new OutputStreamWriter(
-							new FileOutputStream(outFile),
-							"UTF8")), //$NON-NLS-1$
+			out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(
+					new FileOutputStream(outFile), "UTF8")), //$NON-NLS-1$
 					false /* no aotoFlush */
 			);
 			println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
 		} catch (IOException ioe) {
-			HelpWebappPlugin.logError(
-				HelpBaseResources.getString("E014", outFile.getAbsolutePath()), //$NON-NLS-1$
-				ioe);
+			HelpWebappPlugin.logError(HelpBaseResources.getString(
+					"E014", outFile.getAbsolutePath()), //$NON-NLS-1$
+					ioe);
 		}
 	}
 
@@ -69,9 +65,9 @@ public class XMLGenerator {
 		out.close();
 		if (out.checkError())
 			if (outFile != null)
-				HelpWebappPlugin.logError(
-					HelpBaseResources.getString("E015", outFile.getAbsolutePath()), //$NON-NLS-1$
-					null);
+				HelpWebappPlugin.logError(HelpBaseResources.getString(
+						"E015", outFile.getAbsolutePath()), //$NON-NLS-1$
+						null);
 		out = null;
 	}
 	public void print(Object o) {

@@ -12,12 +12,11 @@ package org.eclipse.help.internal.standalone;
 
 import java.io.*;
 import java.net.*;
-import java.util.Properties;
+import java.util.*;
 
 /**
- * This program is used to start or stop Eclipse
- * Infocenter application.
- * It should be launched from command line.
+ * This program is used to start or stop Eclipse Infocenter application. It
+ * should be launched from command line.
  */
 public class EclipseConnection {
 	// help server host
@@ -47,8 +46,8 @@ public class EclipseConnection {
 
 	public void connect(URL url) throws InterruptedException, Exception {
 		try {
-			HttpURLConnection connection =
-				(HttpURLConnection) url.openConnection();
+			HttpURLConnection connection = (HttpURLConnection) url
+					.openConnection();
 			if (Options.isDebug()) {
 				System.out.println("Connection  to control servlet created."); //$NON-NLS-1$
 			}
@@ -58,8 +57,8 @@ public class EclipseConnection {
 			}
 			int code = connection.getResponseCode();
 			if (Options.isDebug()) {
-				System.out.println(
-					"Response code from control servlet=" + code); //$NON-NLS-1$
+				System.out
+						.println("Response code from control servlet=" + code); //$NON-NLS-1$
 			}
 			connection.disconnect();
 			return;
@@ -71,9 +70,8 @@ public class EclipseConnection {
 	}
 
 	/**
-	 * Obtains host and port from the file.
-	 * Retries several times if file does not exists,
-	 * and help might be starting up.
+	 * Obtains host and port from the file. Retries several times if file does
+	 * not exists, and help might be starting up.
 	 */
 	public void renew() throws Exception {
 		Properties p = new Properties();

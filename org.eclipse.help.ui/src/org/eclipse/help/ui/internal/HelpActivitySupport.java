@@ -29,26 +29,32 @@ public class HelpActivitySupport implements IHelpActivitySupport {
 	private static final String SHOW_DISABLED_ACTIVITIES_OFF = "off"; //$NON-NLS-1$
 	private static final String SHOW_DISABLED_ACTIVITIES_ON = "on"; //$NON-NLS-1$
 	private static final String SHOW_DISABLED_ACTIVITIES_ALWAYS = "always"; //$NON-NLS-1$
-	
+
 	private Preferences pref;
 	private IWorkbenchActivitySupport activitySupport;
 	private boolean userCanToggleFiltering;
 	private boolean filteringEnabled;
-	
+
 	public HelpActivitySupport(IWorkbench workbench) {
 		activitySupport = workbench.getActivitySupport();
 		pref = HelpBasePlugin.getDefault().getPluginPreferences();
-		
-		String showDisabledActivities = pref.getString(PREF_KEY_SHOW_DISABLED_ACTIVITIES);
-		userCanToggleFiltering = SHOW_DISABLED_ACTIVITIES_OFF.equalsIgnoreCase(showDisabledActivities)
-		|| SHOW_DISABLED_ACTIVITIES_ON.equalsIgnoreCase(showDisabledActivities);
-		userCanToggleFiltering = userCanToggleFiltering && isWorkbenchFiltering();
-		
-		filteringEnabled = SHOW_DISABLED_ACTIVITIES_OFF.equalsIgnoreCase(showDisabledActivities)
-		|| SHOW_DISABLED_ACTIVITIES_NEVER.equalsIgnoreCase(showDisabledActivities);
+
+		String showDisabledActivities = pref
+				.getString(PREF_KEY_SHOW_DISABLED_ACTIVITIES);
+		userCanToggleFiltering = SHOW_DISABLED_ACTIVITIES_OFF
+				.equalsIgnoreCase(showDisabledActivities)
+				|| SHOW_DISABLED_ACTIVITIES_ON
+						.equalsIgnoreCase(showDisabledActivities);
+		userCanToggleFiltering = userCanToggleFiltering
+				&& isWorkbenchFiltering();
+
+		filteringEnabled = SHOW_DISABLED_ACTIVITIES_OFF
+				.equalsIgnoreCase(showDisabledActivities)
+				|| SHOW_DISABLED_ACTIVITIES_NEVER
+						.equalsIgnoreCase(showDisabledActivities);
 		filteringEnabled = filteringEnabled && isWorkbenchFiltering();
 	}
-	public boolean isFilteringEnabled(){
+	public boolean isFilteringEnabled() {
 		return filteringEnabled;
 	}
 	public void setFilteringEnabled(boolean enabled) {
@@ -63,7 +69,7 @@ public class HelpActivitySupport implements IHelpActivitySupport {
 			}
 		}
 	}
-	public boolean isUserCanToggleFiltering(){
+	public boolean isUserCanToggleFiltering() {
 		return userCanToggleFiltering;
 	}
 	/*
@@ -72,30 +78,32 @@ public class HelpActivitySupport implements IHelpActivitySupport {
 	 * @see org.eclipse.help.internal.base.IHelpActivitySupport#isEnabled()
 	 */
 	public boolean isEnabled(String href) {
-		if(!isFilteringEnabled()){
+		if (!isFilteringEnabled()) {
 			return true;
 		}
-		if (href.startsWith("/")){ //$NON-NLS-1$
+		if (href.startsWith("/")) { //$NON-NLS-1$
 			href = href.substring(1);
 		}
-        
-        return activitySupport.getActivityManager().getIdentifier(href).isEnabled();
+
+		return activitySupport.getActivityManager().getIdentifier(href)
+				.isEnabled();
 	}
 
 	/**
-	 * Checks whether topic belongs to a TOC that mathes
-	 * enabled activity.  Enabled children TOCs are searched if linked by
-	 * also enabled TOCs.
+	 * Checks whether topic belongs to a TOC that mathes enabled activity.
+	 * Enabled children TOCs are searched if linked by also enabled TOCs.
 	 * Additionally topic may match description topic of a root TOC.
+	 * 
 	 * @return true if topic belongs to an enabled TOC
 	 * @param href
-	 * @param locale locale for which TOCs are checked
+	 * @param locale
+	 *            locale for which TOCs are checked
 	 */
-	public boolean isEnabledTopic(String href, String locale){
+	public boolean isEnabledTopic(String href, String locale) {
 		if (href == null) {
 			return false;
 		}
-		if(!isFilteringEnabled()){
+		if (!isFilteringEnabled()) {
 			return true;
 		}
 		int ix = href.indexOf("?resultof="); //$NON-NLS-1$
@@ -107,7 +115,8 @@ public class HelpActivitySupport implements IHelpActivitySupport {
 		ITocElement[] tocs = HelpPlugin.getTocManager().getTocs(locale);
 		for (int t = 0; t < tocs.length; t++) {
 			String descriptionHref = tocs[t].getTocTopicHref();
-			if (descriptionHref != null && descriptionHref.length()>0
+			if (descriptionHref != null
+					&& descriptionHref.length() > 0
 					&& descriptionHref.equals(href)
 					&& HelpBasePlugin.getActivitySupport().isEnabled(
 							tocs[t].getHref())) {
@@ -137,7 +146,7 @@ public class HelpActivitySupport implements IHelpActivitySupport {
 				return true;
 			}
 			// Check extra dir
-			if (toc.getOwnedExtraTopic(href)!=null){
+			if (toc.getOwnedExtraTopic(href) != null) {
 				return true;
 			}
 			// check children TOCs
@@ -155,19 +164,22 @@ public class HelpActivitySupport implements IHelpActivitySupport {
 	 * @see org.eclipse.help.internal.base.IHelpActivitySupport#enableActivities(java.lang.String)
 	 */
 	public void enableActivities(String href) {
-		if (href.startsWith("/")){ //$NON-NLS-1$
+		if (href.startsWith("/")) { //$NON-NLS-1$
 			href = href.substring(1);
 		}
-     
-        IIdentifier identifier = activitySupport.getActivityManager().getIdentifier(href);
-        Set activitityIds = identifier.getActivityIds();
-        if (activitityIds.isEmpty()) { // if there are no activities that match this identifier, do nothing.
-            return;
-        }
-        
-        Set enabledIds = new HashSet(activitySupport.getActivityManager().getEnabledActivityIds());
-        enabledIds.addAll(activitityIds);
-        activitySupport.setEnabledActivityIds(enabledIds);
+
+		IIdentifier identifier = activitySupport.getActivityManager()
+				.getIdentifier(href);
+		Set activitityIds = identifier.getActivityIds();
+		if (activitityIds.isEmpty()) { // if there are no activities that match
+			// this identifier, do nothing.
+			return;
+		}
+
+		Set enabledIds = new HashSet(activitySupport.getActivityManager()
+				.getEnabledActivityIds());
+		enabledIds.addAll(activitityIds);
+		activitySupport.setEnabledActivityIds(enabledIds);
 	}
 
 	/**
@@ -175,6 +187,7 @@ public class HelpActivitySupport implements IHelpActivitySupport {
 	 *         activity categories).
 	 */
 	private static boolean isWorkbenchFiltering() {
-		return !PlatformUI.getWorkbench().getActivitySupport().getActivityManager().getDefinedActivityIds().isEmpty();
+		return !PlatformUI.getWorkbench().getActivitySupport()
+				.getActivityManager().getDefinedActivityIds().isEmpty();
 	}
 }

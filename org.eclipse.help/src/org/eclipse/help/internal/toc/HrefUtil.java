@@ -1,13 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2000, 2003 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Common Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * Contributors: IBM Corporation - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.help.internal.toc;
 
 public class HrefUtil {
@@ -29,14 +27,15 @@ public class HrefUtil {
 	}
 
 	/**
-	 * Creates /pluginid/href from href
-	 * relative to the current plugin
-	 * @param pluginID id of a plugin to which href is relative
-	 * @param href relative href
-	 *  ex: path[#anchorID]
-	 *  ex: ../pluginID/path[#anchorID]
-	 * @return String representation of href,
-	 * formatted as /pluginID/path[#anchorID]
+	 * Creates /pluginid/href from href relative to the current plugin
+	 * 
+	 * @param pluginID
+	 *            id of a plugin to which href is relative
+	 * @param href
+	 *            relative href ex: path[#anchorID] ex:
+	 *            ../pluginID/path[#anchorID]
+	 * @return String representation of href, formatted as
+	 *         /pluginID/path[#anchorID]
 	 */
 	public final static String normalizeHref(String pluginID, String href) {
 		if (href == null)
@@ -45,8 +44,8 @@ public class HrefUtil {
 			// already normalized
 			return href;
 		if (href.startsWith("http:") //$NON-NLS-1$
-			|| href.startsWith("file:") //$NON-NLS-1$
-			|| href.startsWith("jar:")) //$NON-NLS-1$
+				|| href.startsWith("file:") //$NON-NLS-1$
+				|| href.startsWith("jar:")) //$NON-NLS-1$
 			// external doc
 			return href;
 		if (href.startsWith("../")) { //$NON-NLS-1$
@@ -60,7 +59,9 @@ public class HrefUtil {
 	}
 	/**
 	 * Parses href and obtains plugin id
-	 * @param href String in format /string1[/string2]
+	 * 
+	 * @param href
+	 *            String in format /string1[/string2]
 	 * @return plugin ID, or null
 	 */
 	public static String getPluginIDFromHref(String href) {
@@ -75,7 +76,9 @@ public class HrefUtil {
 
 	/**
 	 * Parses href and obtains resource path relative to the plugin
-	 * @param href String in format /string1[/[string2]][#string3]
+	 * 
+	 * @param href
+	 *            String in format /string1[/[string2]][#string3]
 	 * @return relative resource path, or null
 	 */
 	public static String getResourcePathFromHref(String href) {
@@ -92,7 +95,8 @@ public class HrefUtil {
 			return null;
 		if (secondSlashIx + 1 < href.length()) // href is /pluginID/path
 			return href.substring(secondSlashIx + 1);
-		else // href is /pluginID/
+		else
+			// href is /pluginID/
 			return ""; //$NON-NLS-1$
 	}
 

@@ -21,6 +21,7 @@ import org.osgi.framework.*;
 
 /**
  * Proxy for WorkingSetManager or InfocenterWorkingSetManager.
+ * 
  * @since 3.0
  */
 public class WebappWorkingSetManager implements IHelpWorkingSetManager {
@@ -31,15 +32,14 @@ public class WebappWorkingSetManager implements IHelpWorkingSetManager {
 
 	/**
 	 * Constructor
+	 * 
 	 * @param locale
 	 */
-	public WebappWorkingSetManager(
-		HttpServletRequest request,
-		HttpServletResponse response,
-		String locale) {
+	public WebappWorkingSetManager(HttpServletRequest request,
+			HttpServletResponse response, String locale) {
 		if (BaseHelpSystem.getMode() == BaseHelpSystem.MODE_INFOCENTER) {
-			wSetManager =
-				new InfocenterWorkingSetManager(request, response, locale);
+			wSetManager = new InfocenterWorkingSetManager(request, response,
+					locale);
 		} else {
 			wSetManager = BaseHelpSystem.getWorkingSetManager();
 			// upon startup in workbench mode, make sure working sets are in
@@ -79,15 +79,14 @@ public class WebappWorkingSetManager implements IHelpWorkingSetManager {
 	/**
 	 * Creates a new working set
 	 */
-	public WorkingSet createWorkingSet(
-		String name,
-		AdaptableHelpResource[] elements) {
+	public WorkingSet createWorkingSet(String name,
+			AdaptableHelpResource[] elements) {
 		return wSetManager.createWorkingSet(name, elements);
 	}
 
 	/**
 	 * Returns a working set by name
-	 * 
+	 *  
 	 */
 	public WorkingSet getWorkingSet(String name) {
 		return wSetManager.getWorkingSet(name);
@@ -111,9 +110,11 @@ public class WebappWorkingSetManager implements IHelpWorkingSetManager {
 	 * Persists all working sets. Should only be called by the webapp working
 	 * set dialog.
 	 * 
-	 * @param changedWorkingSet the working set that has changed
+	 * @param changedWorkingSet
+	 *            the working set that has changed
 	 */
-	public void workingSetChanged(WorkingSet changedWorkingSet) throws IOException{
+	public void workingSetChanged(WorkingSet changedWorkingSet)
+			throws IOException {
 		wSetManager.workingSetChanged(changedWorkingSet);
 	}
 

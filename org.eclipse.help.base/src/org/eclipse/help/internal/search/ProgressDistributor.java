@@ -12,11 +12,10 @@ package org.eclipse.help.internal.search;
 
 import java.util.*;
 
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 
 /**
- * Distributes progress information from this monitor
- * to multiple monitors.
+ * Distributes progress information from this monitor to multiple monitors.
  */
 public class ProgressDistributor implements IProgressMonitor {
 	private int totalWork = -1;
@@ -34,8 +33,8 @@ public class ProgressDistributor implements IProgressMonitor {
 	 */
 	public synchronized void beginTask(String name, int totalWork) {
 		this.totalWork = totalWork;
-		this.worked=0;
-		this.done=false;
+		this.worked = 0;
+		this.done = false;
 		for (Iterator it = monitors.iterator(); it.hasNext();) {
 			IProgressMonitor m = (IProgressMonitor) it.next();
 			m.beginTask(name, totalWork);
@@ -65,7 +64,7 @@ public class ProgressDistributor implements IProgressMonitor {
 	public synchronized boolean isCanceled() {
 		for (Iterator it = monitors.iterator(); it.hasNext();) {
 			IProgressMonitor m = (IProgressMonitor) it.next();
-			if(m.isCanceled()){
+			if (m.isCanceled()) {
 				return true;
 			}
 		}
@@ -124,7 +123,7 @@ public class ProgressDistributor implements IProgressMonitor {
 	public synchronized void removeMonitor(IProgressMonitor m) {
 		monitors.remove(m);
 	}
-	public synchronized void operationCanceled(){
+	public synchronized void operationCanceled() {
 		totalWork = -1;
 		worked = 0;
 		done = false;

@@ -33,9 +33,8 @@ public abstract class ContextsNode {
 	public static final String DESC_TXT_BOLD = "b"; //$NON-NLS-1$
 	protected List children = new ArrayList();
 	/**
-	 * When a builder builds the contexts, each node
-	 * must "accomodate" the builder by responding to the build() 
-	 * command.
+	 * When a builder builds the contexts, each node must "accomodate" the
+	 * builder by responding to the build() command.
 	 */
 	public abstract void build(ContextsBuilder builder);
 	/**
@@ -45,7 +44,9 @@ public abstract class ContextsNode {
 	}
 	/**
 	 * Adds a child
-	 * @param child IContextsNode
+	 * 
+	 * @param child
+	 *            IContextsNode
 	 */
 	public void addChild(ContextsNode child) {
 		children.add(children.size(), child);

@@ -41,7 +41,7 @@ public class WebappPreferences {
 
 	public boolean isBookmarksView() {
 		return BaseHelpSystem.getMode() != BaseHelpSystem.MODE_INFOCENTER
-			&& "true".equals(prefs.getString("bookmarksView")); //$NON-NLS-1$ //$NON-NLS-2$
+				&& "true".equals(prefs.getString("bookmarksView")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public boolean isBookmarksAction() {
@@ -50,7 +50,7 @@ public class WebappPreferences {
 
 	public boolean isLinksView() {
 		return BaseHelpSystem.getMode() != BaseHelpSystem.MODE_INFOCENTER
-			&& "true".equals(prefs.getString("linksView")); //$NON-NLS-1$ //$NON-NLS-2$
+				&& "true".equals(prefs.getString("linksView")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public String getImagesDirectory() {

@@ -15,9 +15,8 @@ import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.*;
-//import org.eclipse.help.internal.appserver.*;
 import org.eclipse.help.internal.util.*;
-import org.osgi.framework.Bundle;
+import org.osgi.framework.*;
 /**
  * URLConnection to help documents in plug-ins
  */
@@ -75,8 +74,8 @@ public class HelpURLConnection extends URLConnection {
 	public void connect() throws IOException {
 	}
 	/**
-	 * see URLConnection#getInputStream();
-	 *Note: this method can throw IOException, but should never return null
+	 * see URLConnection#getInputStream(); Note: this method can throw
+	 * IOException, but should never return null
 	 */
 	public InputStream getInputStream() throws IOException {
 		// must override parent implementation, since it does nothing.
@@ -89,7 +88,7 @@ public class HelpURLConnection extends URLConnection {
 			// Do not return documents from app server implementation plug-in
 			throw new IOException("Resource not found."); //$NON-NLS-1$
 		}
-		
+
 		if (getFile() == null || "".equals(getFile())) { //$NON-NLS-1$
 			throw new IOException("Resource not found."); //$NON-NLS-1$
 		}
@@ -97,22 +96,17 @@ public class HelpURLConnection extends URLConnection {
 		// first try using content provider
 		// then find the file inside nl tree in doc.zip,
 		// and then, in the file system
-		InputStream inputStream=ResourceLocator.openFromProducer(
-			plugin,
-			query == null ? getFile() : getFile() + "?" + query, //$NON-NLS-1$
-			getLocale());
+		InputStream inputStream = ResourceLocator.openFromProducer(plugin,
+				query == null ? getFile() : getFile() + "?" + query, //$NON-NLS-1$
+				getLocale());
 
 		if (inputStream == null) {
-			inputStream =
-				ResourceLocator.openFromZip(
-					plugin,
-					"doc.zip", //$NON-NLS-1$
-					getFile(),
-					getLocale());
+			inputStream = ResourceLocator.openFromZip(plugin, "doc.zip", //$NON-NLS-1$
+					getFile(), getLocale());
 		}
 		if (inputStream == null) {
-			inputStream =
-				ResourceLocator.openFromPlugin(plugin, getFile(), getLocale());
+			inputStream = ResourceLocator.openFromPlugin(plugin, getFile(),
+					getLocale());
 		}
 		if (inputStream == null) {
 			throw new IOException("Resource not found."); //$NON-NLS-1$
@@ -158,7 +152,7 @@ public class HelpURLConnection extends URLConnection {
 	}
 
 	public String getContentType() {
-		// Check if the file is hypertext or plain text 
+		// Check if the file is hypertext or plain text
 		String file = pluginAndFile.toLowerCase(Locale.US);
 		if (file.endsWith(".html") || file.endsWith(".htm")) //$NON-NLS-1$ //$NON-NLS-2$
 			return "text/html"; //$NON-NLS-1$
@@ -177,7 +171,7 @@ public class HelpURLConnection extends URLConnection {
 		return "text/plain"; //$NON-NLS-1$
 	}
 	/**
-	 * 
+	 *  
 	 */
 	public Vector getMultiValue(String name) {
 		if (arguments != null) {
@@ -190,7 +184,7 @@ public class HelpURLConnection extends URLConnection {
 		return null;
 	}
 	/**
-	 * 
+	 *  
 	 */
 	public String getValue(String name) {
 		if (arguments == null)
@@ -258,9 +252,10 @@ public class HelpURLConnection extends URLConnection {
 	public String toString() {
 		return pluginAndFile;
 	}
-	
+
 	/**
-	 * Obtains ID of plugin that contributes appserver implementation.	 * 
+	 * Obtains ID of plugin that contributes appserver implementation. *
+	 * 
 	 * @return plug-in ID or null
 	 */
 	private static String getAppserverImplPluginId() {
@@ -270,23 +265,22 @@ public class HelpURLConnection extends URLConnection {
 
 			// get the app server extension from the system plugin registry
 			IExtensionRegistry pluginRegistry = Platform.getExtensionRegistry();
-			IExtensionPoint point =
-				pluginRegistry.getExtensionPoint(
-					"org.eclipse.help.appserver.server"); //$NON-NLS-1$
+			IExtensionPoint point = pluginRegistry
+					.getExtensionPoint("org.eclipse.help.appserver.server"); //$NON-NLS-1$
 			if (point != null) {
 				IExtension[] extensions = point.getExtensions();
 				if (extensions.length != 0) {
 					// We need to pick up the non-default configuration
-					IConfigurationElement[] elements =
-						extensions[0].getConfigurationElements();
+					IConfigurationElement[] elements = extensions[0]
+							.getConfigurationElements();
 					if (elements.length == 0)
 						return null;
 					IConfigurationElement serverElement = null;
 					for (int i = 0; i < elements.length; i++) {
-						String defaultValue =
-							elements[i].getAttribute("default"); //$NON-NLS-1$
+						String defaultValue = elements[i]
+								.getAttribute("default"); //$NON-NLS-1$
 						if (defaultValue == null
-							|| defaultValue.equals("false")) { //$NON-NLS-1$
+								|| defaultValue.equals("false")) { //$NON-NLS-1$
 							serverElement = elements[i];
 							break;
 						}
@@ -296,11 +290,9 @@ public class HelpURLConnection extends URLConnection {
 						serverElement = elements[0];
 					}
 					//
-					
-					appserverImplPluginId =
-						serverElement
-							.getDeclaringExtension()
-							.getNamespace();
+
+					appserverImplPluginId = serverElement
+							.getDeclaringExtension().getNamespace();
 
 				}
 			}

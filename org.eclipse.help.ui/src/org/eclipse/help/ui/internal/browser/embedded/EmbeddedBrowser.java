@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.browser.embedded;
 import java.net.*;
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.base.*;
 import org.eclipse.help.ui.internal.*;
@@ -93,13 +94,14 @@ public class EmbeddedBrowser {
 		//
 		shell.open();
 		//browser.setUrl("about:blank");
-		
+
 		browser.addLocationListener(new LocationListener() {
 			public void changing(LocationEvent e) {
 				// hack to know when help webapp needs modal window
-				modalRequestTime=0;
-				if(e.location!=null && e.location.startsWith("javascript://needModal")){ //$NON-NLS-1$
-					modalRequestTime=System.currentTimeMillis();
+				modalRequestTime = 0;
+				if (e.location != null
+						&& e.location.startsWith("javascript://needModal")) { //$NON-NLS-1$
+					modalRequestTime = System.currentTimeMillis();
 				}
 			}
 			public void changed(LocationEvent e) {
@@ -115,7 +117,7 @@ public class EmbeddedBrowser {
 	 *            Shell or null
 	 */
 	public EmbeddedBrowser(WindowEvent event, Shell parent) {
-		if(parent==null)
+		if (parent == null)
 			shell = new Shell();
 		else
 			shell = new Shell(parent, SWT.PRIMARY_MODAL | SWT.DIALOG_TRIM);
@@ -128,9 +130,10 @@ public class EmbeddedBrowser {
 		browser.addLocationListener(new LocationListener() {
 			public void changing(LocationEvent e) {
 				// hack to know when help webapp needs modal window
-				modalRequestTime=0;
-				if(e.location!=null && e.location.startsWith("javascript://needModal")){ //$NON-NLS-1$
-					modalRequestTime=System.currentTimeMillis();
+				modalRequestTime = 0;
+				if (e.location != null
+						&& e.location.startsWith("javascript://needModal")) { //$NON-NLS-1$
+					modalRequestTime = System.currentTimeMillis();
 				}
 			}
 			public void changed(LocationEvent e) {
@@ -147,9 +150,9 @@ public class EmbeddedBrowser {
 	private void initialize(final Display display, Browser browser) {
 		browser.addOpenWindowListener(new OpenWindowListener() {
 			public void open(WindowEvent event) {
-				if(System.currentTimeMillis()-modalRequestTime <= 1000){
+				if (System.currentTimeMillis() - modalRequestTime <= 1000) {
 					new EmbeddedBrowser(event, shell);
-				}else{
+				} else {
 					new EmbeddedBrowser(event, null);
 				}
 			}

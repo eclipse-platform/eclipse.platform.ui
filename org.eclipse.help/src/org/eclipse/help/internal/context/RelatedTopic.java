@@ -9,8 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.internal.context;
-import org.eclipse.help.IHelpResource;
-import org.xml.sax.Attributes;
+import org.eclipse.help.*;
+import org.xml.sax.*;
 /**
  * Default implementation for a topic contribution
  */

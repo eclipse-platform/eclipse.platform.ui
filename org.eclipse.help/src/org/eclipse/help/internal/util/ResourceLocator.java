@@ -1,13 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2000, 2003 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Common Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * Contributors: IBM Corporation - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.help.internal.util;
 import java.io.*;
 import java.net.*;
@@ -106,7 +104,8 @@ public class ResourceLocator {
 						return (IHelpContentProducer) o;
 					}
 				} catch (CoreException ce) {
-					HelpPlugin.logError(HelpResources.getString("E044", pluginId), ce); //$NON-NLS-1$
+					HelpPlugin.logError(HelpResources.getString(
+							"E044", pluginId), ce); //$NON-NLS-1$
 				}
 			}
 		}
@@ -118,7 +117,8 @@ public class ResourceLocator {
 	 */
 	public static InputStream openFromProducer(Bundle pluginDesc, String file,
 			String locale) {
-		IHelpContentProducer producer = getContentProducer(pluginDesc.getSymbolicName());
+		IHelpContentProducer producer = getContentProducer(pluginDesc
+				.getSymbolicName());
 		if (producer == null) {
 			return null;
 		}

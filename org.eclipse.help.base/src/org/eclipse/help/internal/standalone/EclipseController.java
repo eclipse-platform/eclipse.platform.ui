@@ -15,15 +15,13 @@ import java.net.*;
 import java.nio.channels.*;
 
 /**
- * This program is used to start or stop Eclipse
- * Infocenter application.
- * It should be launched from command line.
+ * This program is used to start or stop Eclipse Infocenter application. It
+ * should be launched from command line.
  */
 public class EclipseController implements EclipseLifeCycleListener {
 
 	// control servlet path
-	private static final String CONTROL_SERVLET_PATH =
-		"/helpControl/control.html"; //$NON-NLS-1$
+	private static final String CONTROL_SERVLET_PATH = "/helpControl/control.html"; //$NON-NLS-1$
 
 	// application to launch
 	protected String applicationId;
@@ -37,13 +35,15 @@ public class EclipseController implements EclipseLifeCycleListener {
 	private boolean eclipseEnded = false;
 	/**
 	 * Constructs help system
-	 * @param applicationID ID of Eclipse help application
-	 * @param args array of String options and their values
-	 * 	Option <code>-eclipseHome dir</code> specifies Eclipse
-	 *  installation directory.
-	 *  It must be provided, when current directory is not the same
-	 *  as Eclipse installation directory.
-	 *  Additionally, most options accepted by Eclipse execuable are supported.
+	 * 
+	 * @param applicationId
+	 *            ID of Eclipse help application
+	 * @param args
+	 *            array of String options and their values Option
+	 *            <code>-eclipseHome dir</code> specifies Eclipse installation
+	 *            directory. It must be provided, when current directory is not
+	 *            the same as Eclipse installation directory. Additionally, most
+	 *            options accepted by Eclipse execuable are supported.
 	 */
 	public EclipseController(String applicationId, String[] args) {
 
@@ -81,15 +81,12 @@ public class EclipseController implements EclipseLifeCycleListener {
 	}
 
 	/**
-	 * Ensures the application is running, and sends command
-	 * to the control servlet.
-	 * If connection fails, retries several times,
-	 * in case webapp is starting up.
+	 * Ensures the application is running, and sends command to the control
+	 * servlet. If connection fails, retries several times, in case webapp is
+	 * starting up.
 	 */
-	protected final synchronized void sendHelpCommand(
-		String command,
-		String[] parameters)
-		throws Exception {
+	protected final synchronized void sendHelpCommand(String command,
+			String[] parameters) throws Exception {
 		try {
 			obtainLock();
 			sendHelpCommandInternal(command, parameters);
@@ -108,16 +105,16 @@ public class EclipseController implements EclipseLifeCycleListener {
 			return;
 		}
 		if (Options.isDebug()) {
-			System.out.println(
-				"Using workspace " + Options.getWorkspace().getAbsolutePath()); //$NON-NLS-1$
+			System.out
+					.println("Using workspace " + Options.getWorkspace().getAbsolutePath()); //$NON-NLS-1$
 		}
 		// delete old connection file
 		Options.getConnectionFile().delete();
 		connection.reset();
 
 		if (Options.isDebug()) {
-			System.out.println(
-				"Ensured old .connection file is deleted.  Launching Eclipse."); //$NON-NLS-1$
+			System.out
+					.println("Ensured old .connection file is deleted.  Launching Eclipse."); //$NON-NLS-1$
 		}
 		eclipseEnded = false;
 		eclipse = new Eclipse(this);
@@ -143,7 +140,7 @@ public class EclipseController implements EclipseLifeCycleListener {
 		Runtime.getRuntime().addShutdownHook(new EclipseCleaner());
 	}
 	private void sendHelpCommandInternal(String command, String[] parameters)
-		throws Exception {
+			throws Exception {
 		if (!"shutdown".equalsIgnoreCase(command)) { //$NON-NLS-1$
 			startEclipse();
 		}
@@ -156,14 +153,14 @@ public class EclipseController implements EclipseLifeCycleListener {
 		try {
 			URL url = createCommandURL(command, parameters);
 			if ("shutdown".equalsIgnoreCase(command) //$NON-NLS-1$
-				&& Options.getConnectionFile().exists()) {
+					&& Options.getConnectionFile().exists()) {
 				connection.connect(url);
 				long timeLimit = System.currentTimeMillis() + 60 * 1000;
 				while (Options.getConnectionFile().exists()) {
 					Thread.sleep(200);
 					if (System.currentTimeMillis() > timeLimit) {
-						System.out.println(
-							"Shutting down is taking too long.  Will not wait.");
+						System.out
+								.println("Shutting down is taking too long.  Will not wait.");
 						break;
 					}
 				}
@@ -178,13 +175,17 @@ public class EclipseController implements EclipseLifeCycleListener {
 	}
 
 	/**
-	 * Builds a URL that communicates the specified command
-	 * to help control servlet.
-	 * @param command standalone help system command e.g. "displayHelp"
-	 * @param parameters array of parameters of the command e.g. {"http://www.eclipse.org"}
+	 * Builds a URL that communicates the specified command to help control
+	 * servlet.
+	 * 
+	 * @param command
+	 *            standalone help system command e.g. "displayHelp"
+	 * @param parameters
+	 *            array of parameters of the command e.g.
+	 *            {"http://www.eclipse.org"}
 	 */
 	private URL createCommandURL(String command, String[] parameters)
-		throws MalformedURLException {
+			throws MalformedURLException {
 		StringBuffer urlStr = new StringBuffer();
 		urlStr.append("http://"); //$NON-NLS-1$
 		urlStr.append(connection.getHost());
@@ -215,8 +216,7 @@ public class EclipseController implements EclipseLifeCycleListener {
 		if (!Options.getLockFile().exists()) {
 			Options.getLockFile().getParentFile().mkdirs();
 		}
-		RandomAccessFile raf =
-			new RandomAccessFile(Options.getLockFile(), "rw"); //$NON-NLS-1$
+		RandomAccessFile raf = new RandomAccessFile(Options.getLockFile(), "rw"); //$NON-NLS-1$
 		lock = raf.getChannel().lock();
 		if (Options.isDebug()) {
 			System.out.println("Lock obtained."); //$NON-NLS-1$
@@ -234,12 +234,13 @@ public class EclipseController implements EclipseLifeCycleListener {
 			}
 		}
 	}
-	/** Tests whether HelpApplication is running
-	 * by testing if .applicationlock is locked
+	/**
+	 * Tests whether HelpApplication is running by testing if .applicationlock
+	 * is locked
 	 */
 	private boolean isApplicationRunning() {
-		File applicationLockFile =
-			new File(Options.getLockFile().getParentFile(), ".applicationlock"); //$NON-NLS-1$
+		File applicationLockFile = new File(Options.getLockFile()
+				.getParentFile(), ".applicationlock"); //$NON-NLS-1$
 		RandomAccessFile randomAccessFile = null;
 		FileLock applicationLock = null;
 		try {
@@ -260,8 +261,8 @@ public class EclipseController implements EclipseLifeCycleListener {
 				}
 			}
 			if (Options.isDebug()) {
-				System.out.println(
-					"isApplicationRunning? " + (applicationLock == null)); //$NON-NLS-1$
+				System.out
+						.println("isApplicationRunning? " + (applicationLock == null)); //$NON-NLS-1$
 			}
 		}
 		return applicationLock == null;

@@ -10,14 +10,14 @@
  *******************************************************************************/
 package org.eclipse.help.internal.webapp.servlet;
 
-import java.io.IOException;
+import java.io.*;
 
-import javax.servlet.ServletException;
+import javax.servlet.*;
 import javax.servlet.http.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.ILiveHelpAction;
-import org.eclipse.help.internal.base.BaseHelpSystem;
+import org.eclipse.help.*;
+import org.eclipse.help.internal.base.*;
 import org.eclipse.help.internal.webapp.data.*;
 import org.osgi.framework.*;
 
@@ -34,11 +34,11 @@ public class LiveHelpServlet extends HttpServlet {
 	}
 
 	/**
-	 * Called by the server (via the <code>service</code> method) to
-	 * allow a servlet to handle a GET request. 
+	 * Called by the server (via the <code>service</code> method) to allow a
+	 * servlet to handle a GET request.
 	 */
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-		throws ServletException, IOException {
+			throws ServletException, IOException {
 		if (BaseHelpSystem.getMode() == BaseHelpSystem.MODE_INFOCENTER) {
 			return;
 		}
@@ -54,10 +54,10 @@ public class LiveHelpServlet extends HttpServlet {
 			return;
 		String arg = req.getParameter("arg"); //$NON-NLS-1$
 		Bundle bundle = Platform.getBundle(pluginID);
-		if(bundle==null){
+		if (bundle == null) {
 			return;
 		}
-		
+
 		try {
 			Class c = bundle.loadClass(className);
 			Object o = c.newInstance();
@@ -75,15 +75,15 @@ public class LiveHelpServlet extends HttpServlet {
 		}
 	}
 	/**
-	 *
-	 * Called by the server (via the <code>service</code> method)
-	 * to allow a servlet to handle a POST request.
-	 *
+	 * 
+	 * Called by the server (via the <code>service</code> method) to allow a
+	 * servlet to handle a POST request.
+	 * 
 	 * Handle the search requests,
-	 *
+	 *  
 	 */
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-		throws ServletException, IOException {
+			throws ServletException, IOException {
 		doGet(req, resp);
 	}
 }

@@ -10,15 +10,17 @@
  *******************************************************************************/
 package org.eclipse.help.internal.search;
 
-import org.apache.lucene.search.Hits;
+import org.apache.lucene.search.*;
 
 /**
- * Search hit coollector.  The search engine adds hits to it.
+ * Search hit coollector. The search engine adds hits to it.
  */
 public interface ISearchHitCollector {
 	/**
 	 * Adds hits to the result
-	 * @param Hits hits
+	 * 
+	 * @param hits
+	 *            Hits
 	 */
 	public void addHits(Hits hits, String wordsSearched);
 }

@@ -156,9 +156,9 @@ public class BrowserManager {
 		if (this.browsersDescriptors != null)
 			return this.browsersDescriptors;
 		Collection bDescriptors = new ArrayList();
-		IConfigurationElement configElements[] = Platform.getExtensionRegistry()
-				.getConfigurationElementsFor(HelpBasePlugin.PLUGIN_ID,
-						"browser"); //$NON-NLS-1$
+		IConfigurationElement configElements[] = Platform
+				.getExtensionRegistry().getConfigurationElementsFor(
+						HelpBasePlugin.PLUGIN_ID, "browser"); //$NON-NLS-1$
 		for (int i = 0; i < configElements.length; i++) {
 			if (!configElements[i].getName().equals("browser")) //$NON-NLS-1$
 				continue;
@@ -243,7 +243,7 @@ public class BrowserManager {
 	 * Sets the currentBrowserID. If browser of given ID does not exists, the
 	 * method does nothing
 	 * 
-	 * @param currentAdapterrID
+	 * @param currentAdapterID
 	 *            The ID of the adapter to to set as current
 	 */
 	public void setCurrentBrowserID(String currentAdapterID) {
@@ -261,8 +261,8 @@ public class BrowserManager {
 	 * Sets the defaultBrowserID. If browser of given ID does not exists, the
 	 * method does nothing
 	 * 
-	 * @param currentAdapterrID
-	 *            The ID of the adapter to to set as current
+	 * @param defaultAdapterID
+	 *            The ID of the adapter to to set as default
 	 */
 	private void setDefaultBrowserID(String defaultAdapterID) {
 		if (!initialized) {
@@ -276,9 +276,8 @@ public class BrowserManager {
 		}
 	}
 	/**
-	 * Creates web browser
-	 * If preferences specify to always use external,
-	 * the parameter will not be honored
+	 * Creates web browser If preferences specify to always use external, the
+	 * parameter will not be honored
 	 */
 	public IBrowser createBrowser(boolean external) {
 		if (!initialized) {
@@ -286,11 +285,13 @@ public class BrowserManager {
 		}
 		//external = external || alwaysUseExternal;
 		//return createBrowserAdapter(forceExternal);
-		if(external){
-			return new CurrentBrowser(createBrowserAdapter(true),getCurrentBrowserID(), true);
-		}else{
-			return new CurrentBrowser(createBrowserAdapter(alwaysUseExternal),getCurrentInternalBrowserID(), false);
-			
+		if (external) {
+			return new CurrentBrowser(createBrowserAdapter(true),
+					getCurrentBrowserID(), true);
+		} else {
+			return new CurrentBrowser(createBrowserAdapter(alwaysUseExternal),
+					getCurrentInternalBrowserID(), false);
+
 		}
 	}
 	/**
@@ -300,8 +301,8 @@ public class BrowserManager {
 		return createBrowser(true);
 	}
 	/**
-	 * Creates web browser
-	 * for external == false, if no internal browsers are present it will create external one
+	 * Creates web browser for external == false, if no internal browsers are
+	 * present it will create external one
 	 */
 	private IBrowser createBrowserAdapter(boolean external) {
 		if (!initialized) {

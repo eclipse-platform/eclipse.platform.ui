@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.help.internal.context;
 import java.util.*;
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.*;
 import org.eclipse.help.internal.*;
@@ -71,7 +72,7 @@ public class ContextManager implements IRegistryChangeListener {
 	 * nodes and adds to pluginContext map.
 	 */
 	private synchronized PluginContexts loadPluginContexts(String plugin) {
-		PluginContexts contexts = (PluginContexts) pluginsContexts.get(plugin);
+		PluginContexts contexts = pluginsContexts.get(plugin);
 		if (contexts == null) {
 			contexts = new PluginContexts();
 			// read the context info from the XML contributions

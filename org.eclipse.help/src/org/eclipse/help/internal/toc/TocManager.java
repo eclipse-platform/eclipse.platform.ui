@@ -85,7 +85,7 @@ public class TocManager {
 	 * Returns the list of contributing Bundle IDs
 	 */
 	public Collection getContributingPlugins() {
-		if(contributingPlugins == null){
+		if (contributingPlugins == null) {
 			getContributedTocFiles(Locale.getDefault().toString());
 		}
 		return contributingPlugins;
@@ -140,9 +140,9 @@ public class TocManager {
 	}
 
 	/**
-	 * Reads product.ini to determine toc ordering. It works in current
-	 * drivers, but will not if location/name of product.ini change. Return the
-	 * list of href's.
+	 * Reads product.ini to determine toc ordering. It works in current drivers,
+	 * but will not if location/name of product.ini change. Return the list of
+	 * href's.
 	 */
 	private ArrayList getPreferredTocOrder() {
 		ArrayList orderedTocs = new ArrayList();
@@ -150,8 +150,8 @@ public class TocManager {
 			Preferences pref = HelpPlugin.getDefault().getPluginPreferences();
 			String preferredTocs = pref.getString(HelpPlugin.BASE_TOCS_KEY);
 			if (preferredTocs != null) {
-				StringTokenizer suggestdOrderedInfosets =
-					new StringTokenizer(preferredTocs, " ;,"); //$NON-NLS-1$
+				StringTokenizer suggestdOrderedInfosets = new StringTokenizer(
+						preferredTocs, " ;,"); //$NON-NLS-1$
 
 				while (suggestdOrderedInfosets.hasMoreElements()) {
 					orderedTocs.add(suggestdOrderedInfosets.nextElement());
@@ -183,40 +183,29 @@ public class TocManager {
 		contributingPlugins = new HashSet();
 		Collection contributedTocFiles = new ArrayList();
 		// find extension point
-		IExtensionPoint xpt =
-			Platform.getExtensionRegistry().getExtensionPoint(
-				HelpPlugin.PLUGIN_ID,
-				TOC_XP_NAME);
+		IExtensionPoint xpt = Platform.getExtensionRegistry()
+				.getExtensionPoint(HelpPlugin.PLUGIN_ID, TOC_XP_NAME);
 		if (xpt == null)
 			return contributedTocFiles;
 		// get all extensions
 		IExtension[] extensions = xpt.getExtensions();
 		for (int i = 0; i < extensions.length; i++) {
-			contributingPlugins.add(
-				extensions[i].getNamespace());
+			contributingPlugins.add(extensions[i].getNamespace());
 			// add to TopicFiles declared in this extension
-			IConfigurationElement[] configElements =
-				extensions[i].getConfigurationElements();
+			IConfigurationElement[] configElements = extensions[i]
+					.getConfigurationElements();
 			for (int j = 0; j < configElements.length; j++)
 				if (configElements[j].getName().equals(TOC_XP_NAME)) {
-					String pluginId =
-						configElements[j]
-							.getDeclaringExtension()
+					String pluginId = configElements[j].getDeclaringExtension()
 							.getNamespace();
 					String href = configElements[j].getAttribute("file"); //$NON-NLS-1$
-					boolean isPrimary =
-						"true".equals( //$NON-NLS-1$
+					boolean isPrimary = "true".equals( //$NON-NLS-1$
 							configElements[j].getAttribute("primary")); //$NON-NLS-1$
-					String extraDir =
-						configElements[j].getAttribute("extradir"); //$NON-NLS-1$
+					String extraDir = configElements[j]
+							.getAttribute("extradir"); //$NON-NLS-1$
 					if (href != null) {
-						contributedTocFiles.add(
-							new TocFile(
-								pluginId,
-								href,
-								isPrimary,
-								locale,
-								extraDir));
+						contributedTocFiles.add(new TocFile(pluginId, href,
+								isPrimary, locale, extraDir));
 					}
 				}
 		}

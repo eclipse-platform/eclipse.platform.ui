@@ -10,13 +10,11 @@
  *******************************************************************************/
 package org.eclipse.help.internal.workingset;
 
-
 import java.util.*;
-import java.util.Map;
 
 import org.eclipse.help.*;
-import org.eclipse.help.internal.util.FastStack;
-import org.w3c.dom.Element;
+import org.eclipse.help.internal.util.*;
+import org.w3c.dom.*;
 
 /**
  * Makes help resources adaptable and persistable
@@ -26,7 +24,7 @@ public class AdaptableTopic extends AdaptableHelpResource {
 	 * Map of all topics with this topic as ancestor
 	 */
 	private Map topicMap;
-	
+
 	/**
 	 * This constructor will be called when wrapping help resources.
 	 */
@@ -52,15 +50,16 @@ public class AdaptableTopic extends AdaptableHelpResource {
 	 * @see org.eclipse.help.ITopic#getSubtopics()
 	 */
 	public ITopic[] getSubtopics() {
-		return ((ITopic)element).getSubtopics();
+		return ((ITopic) element).getSubtopics();
 	}
-	
+
 	/**
-	 * Returns a topic with the specified href.
-	 * <br> It is possible that multiple tocs have
-	 * the same href, in which case there is no guarantee
-	 * which one is returned.
-	 * @param href The topic's href value.
+	 * Returns a topic with the specified href. <br>
+	 * It is possible that multiple tocs have the same href, in which case there
+	 * is no guarantee which one is returned.
+	 * 
+	 * @param href
+	 *            The topic's href value.
 	 */
 	public ITopic getTopic(String href) {
 		if (href == null)
@@ -69,7 +68,7 @@ public class AdaptableTopic extends AdaptableHelpResource {
 		if (topicMap == null) {
 			// traverse TOC and fill in the topicMap
 			topicMap = new HashMap();
-			topicMap.put(getHref(),element);
+			topicMap.put(getHref(), element);
 			FastStack stack = new FastStack();
 			ITopic[] topics = getSubtopics();
 			for (int i = 0; i < topics.length; i++)
@@ -91,11 +90,11 @@ public class AdaptableTopic extends AdaptableHelpResource {
 	}
 
 	public void saveState(Element element) {
-		AdaptableToc toc = (AdaptableToc)getParent();
+		AdaptableToc toc = (AdaptableToc) getParent();
 		toc.saveState(element);
 		AdaptableHelpResource[] topics = toc.getChildren();
-		for (int i=0; i<topics.length; i++)
-			if (topics[i] == this)		
+		for (int i = 0; i < topics.length; i++)
+			if (topics[i] == this)
 				element.setAttribute("topic", String.valueOf(i)); //$NON-NLS-1$
 	}
 }

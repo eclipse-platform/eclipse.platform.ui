@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.help.internal.search;
 
-import org.eclipse.help.IToc;
+import org.eclipse.help.*;
 
 /**
  * Search hit.
@@ -22,7 +22,9 @@ public class SearchHit {
 	private IToc toc;
 	/**
 	 * Constructor
-	 * @param toc TOC containing topic or null
+	 * 
+	 * @param toc
+	 *            TOC containing topic or null
 	 */
 	public SearchHit(String href, String label, float score, IToc toc) {
 		this.href = href;
@@ -32,6 +34,7 @@ public class SearchHit {
 	}
 	/**
 	 * Gets the href.
+	 * 
 	 * @return Returns a String
 	 */
 	public String getHref() {
@@ -40,6 +43,7 @@ public class SearchHit {
 
 	/**
 	 * Gets the label.
+	 * 
 	 * @return Returns a String
 	 */
 	public String getLabel() {
@@ -47,6 +51,7 @@ public class SearchHit {
 	}
 	/**
 	 * Gets the score.
+	 * 
 	 * @return Returns a float
 	 */
 	public float getScore() {
@@ -55,6 +60,7 @@ public class SearchHit {
 
 	/**
 	 * Gets the toc.
+	 * 
 	 * @return Returns IToc or null
 	 */
 	public IToc getToc() {
@@ -64,15 +70,15 @@ public class SearchHit {
 	public void setLabel(String label) {
 		this.label = label;
 	}
-	
+
 	public void setHref(String href) {
 		this.href = href;
 	}
-	
+
 	public void setScore(float score) {
 		this.score = score;
 	}
-	
+
 	public void setToc(IToc toc) {
 		this.toc = toc;
 	}

@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.help.internal.webapp.servlet;
 
-import java.io.IOException;
+import java.io.*;
 
-import javax.servlet.ServletException;
+import javax.servlet.*;
 import javax.servlet.http.*;
 /**
  * Servlet to interface client with remote Eclipse
@@ -31,26 +31,26 @@ public class ContentServlet extends HttpServlet {
 	}
 
 	/**
-	 * Called by the server (via the <code>service</code> method) to
-	 * allow a servlet to handle a GET request. 
+	 * Called by the server (via the <code>service</code> method) to allow a
+	 * servlet to handle a GET request.
 	 */
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-		throws ServletException, IOException {
+			throws ServletException, IOException {
 		req.setCharacterEncoding("UTF-8"); //$NON-NLS-1$
-		if (connector != null){
+		if (connector != null) {
 			connector.transfer(req, resp);
 		}
 	}
 	/**
-	 *
-	 * Called by the server (via the <code>service</code> method)
-	 * to allow a servlet to handle a POST request.
-	 *
+	 * 
+	 * Called by the server (via the <code>service</code> method) to allow a
+	 * servlet to handle a POST request.
+	 * 
 	 * Handle the search requests,
-	 *
+	 *  
 	 */
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-		throws ServletException, IOException {
+			throws ServletException, IOException {
 		if (connector != null)
 			connector.transfer(req, resp);
 	}

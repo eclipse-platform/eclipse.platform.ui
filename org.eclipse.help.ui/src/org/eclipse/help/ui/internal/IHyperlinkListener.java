@@ -10,23 +10,25 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal;
 
-
 import org.eclipse.swt.widgets.*;
 
 /**
- * 
+ *  
  */
 public interface IHyperlinkListener {
 	/**
-	 * @param linkLabel org.eclipse.swt.widgets.Label
+	 * @param linkLabel
+	 *            org.eclipse.swt.widgets.Label
 	 */
 	public void linkActivated(Control linkLabel);
 	/**
-	 * @param linkLabel org.eclipse.swt.widgets.Label
+	 * @param linkLabel
+	 *            org.eclipse.swt.widgets.Label
 	 */
 	public void linkEntered(Control linkLabel);
 	/**
-	 * @param linkLabel org.eclipse.swt.widgets.Label
+	 * @param linkLabel
+	 *            org.eclipse.swt.widgets.Label
 	 */
 	public void linkExited(Control linkLabel);
 }

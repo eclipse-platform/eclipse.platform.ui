@@ -17,15 +17,12 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.appserver.*;
 
 /**
- * Help application.
- * Starts webserver and help web application for use
- * by infocenter and stand-alone help.
- * Application takes a parameter "mode", that can take values:
- *  "infocenter" - when help system should run as infocenter,
- *  "standalone" - when help system should run as standalone.
+ * Help application. Starts webserver and help web application for use by
+ * infocenter and stand-alone help. Application takes a parameter "mode", that
+ * can take values: "infocenter" - when help system should run as infocenter,
+ * "standalone" - when help system should run as standalone.
  */
-public class HelpApplication
-	implements IPlatformRunnable, IExecutableExtension {
+public class HelpApplication implements IPlatformRunnable, IExecutableExtension {
 	private static final String APPLICATION_LOCK_FILE = ".applicationlock"; //$NON-NLS-1$
 	private static final int STATUS_EXITTING = 0;
 	private static final int STATUS_RESTARTING = 2;
@@ -61,8 +58,10 @@ public class HelpApplication
 
 		metadata = new File(Platform.getLocation().toFile(), ".metadata/"); //$NON-NLS-1$
 		if (!BaseHelpSystem.ensureWebappRunning()) {
-			System.out.println(
-				HelpBaseResources.getString("HelpApplication.couldNotStart", Platform.getLogFileLocation().toOSString())); //$NON-NLS-1$
+			System.out
+					.println(HelpBaseResources
+							.getString(
+									"HelpApplication.couldNotStart", Platform.getLogFileLocation().toOSString())); //$NON-NLS-1$
 			return EXIT_OK;
 		}
 
@@ -72,7 +71,7 @@ public class HelpApplication
 		}
 		writeHostAndPort();
 		obtainLock();
-		
+
 		if (BaseHelpSystem.MODE_STANDALONE == BaseHelpSystem.getMode()) {
 			//try running UI loop if possible
 			DisplayUtils.runUI();
@@ -95,10 +94,8 @@ public class HelpApplication
 	/**
 	 * @see IExecutableExtension
 	 */
-	public void setInitializationData(
-		IConfigurationElement configElement,
-		String propertyName,
-		Object data) {
+	public void setInitializationData(IConfigurationElement configElement,
+			String propertyName, Object data) {
 		String value = (String) ((Map) data).get("mode"); //$NON-NLS-1$
 		if ("infocenter".equalsIgnoreCase(value)) { //$NON-NLS-1$
 			BaseHelpSystem.setMode(BaseHelpSystem.MODE_INFOCENTER);
@@ -144,7 +141,7 @@ public class HelpApplication
 			}
 		}
 	}
-	public static boolean isRunning(){
-		return status==STATUS_RUNNING;
+	public static boolean isRunning() {
+		return status == STATUS_RUNNING;
 	}
 }

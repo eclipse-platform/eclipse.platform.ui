@@ -14,8 +14,8 @@ package org.eclipse.help.internal.webapp.servlet;
 import java.io.*;
 
 /**
- * Filter output stream that inserts specified bytes
- * after the HEAD element of HTML in the stream.
+ * Filter output stream that inserts specified bytes after the HEAD element of
+ * HTML in the stream.
  */
 public class FilterHTMLHeadOutputStream extends FilterOutputStream {
 	private static final int STATE_START = 0;
@@ -30,23 +30,28 @@ public class FilterHTMLHeadOutputStream extends FilterOutputStream {
 
 	/**
 	 * Constructor.
-	 * @param out sink output stream
-	 * @param bytesToInsert bytes to insert in head of HTML
+	 * 
+	 * @param out
+	 *            sink output stream
+	 * @param bytesToInsert
+	 *            bytes to insert in head of HTML
 	 */
 	public FilterHTMLHeadOutputStream(OutputStream out, byte[] bytesToInsert) {
 		super(out);
 		toInsert = bytesToInsert;
 	}
 	/**
-	 * Writes the specified <code>byte</code> to this output stream. 
+	 * Writes the specified <code>byte</code> to this output stream.
 	 * <p>
-	 * The underlying stream might have a more bytes written to it,
-	 * following the &lt;head&gt; HTML element.
-	 * <p> Implements the abstract <tt>write</tt> method of
-	 * <tt>OutputStream</tt>.
-	 *
-	 * @param      b   the <code>byte</code>.
-	 * @exception  IOException  if an I/O error occurs.
+	 * The underlying stream might have a more bytes written to it, following
+	 * the &lt;head&gt; HTML element.
+	 * <p>
+	 * Implements the abstract <tt>write</tt> method of <tt>OutputStream</tt>.
+	 * 
+	 * @param b
+	 *            the <code>byte</code>.
+	 * @exception IOException
+	 *                if an I/O error occurs.
 	 */
 	public final void write(int b) throws IOException {
 		out.write(b);

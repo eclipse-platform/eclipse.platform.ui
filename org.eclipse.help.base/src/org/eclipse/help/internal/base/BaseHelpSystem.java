@@ -24,8 +24,8 @@ import org.eclipse.help.internal.workingset.*;
 public final class BaseHelpSystem {
 	protected static final BaseHelpSystem instance = new BaseHelpSystem();
 
-	private final static String WEBAPP_EXTENSION_ID =
-		HelpBasePlugin.PLUGIN_ID + ".webapp"; //$NON-NLS-1$
+	private final static String WEBAPP_EXTENSION_ID = HelpBasePlugin.PLUGIN_ID
+			+ ".webapp"; //$NON-NLS-1$
 	private static final String WEBAPP_DEFAULT_ATTRIBUTE = "default"; //$NON-NLS-1$
 
 	public final static String BOOKMARKS = "bookmarks"; //$NON-NLS-1$
@@ -56,6 +56,7 @@ public final class BaseHelpSystem {
 	}
 	/**
 	 * Used to obtain Search Manager
+	 * 
 	 * @return instance of SearchManager
 	 */
 	public static SearchManager getSearchManager() {
@@ -70,6 +71,7 @@ public final class BaseHelpSystem {
 	}
 	/**
 	 * Used to obtain Working Set Manager
+	 * 
 	 * @return instance of WorkingSetManager
 	 */
 	public static synchronized WorkingSetManager getWorkingSetManager() {
@@ -106,8 +108,9 @@ public final class BaseHelpSystem {
 
 	/**
 	 * Shuts down the BaseHelpSystem.
-	 * @exception CoreException if this method fails to shut down
-	 *   this plug-in 
+	 * 
+	 * @exception CoreException
+	 *                if this method fails to shut down this plug-in
 	 */
 	public static void shutdown() throws CoreException {
 		if (HelpBasePlugin.DEBUG) {
@@ -146,12 +149,9 @@ public final class BaseHelpSystem {
 			HelpBasePlugin.getDefault().getPluginPreferences();
 		} catch (Exception e) {
 			HelpBasePlugin.getDefault().getLog().log(
-				new Status(
-					IStatus.ERROR,
-					HelpBasePlugin.PLUGIN_ID,
-					0,
-					HelpBaseResources.getString("E005"), //$NON-NLS-1$
-					e));
+					new Status(IStatus.ERROR, HelpBasePlugin.PLUGIN_ID, 0,
+							HelpBaseResources.getString("E005"), //$NON-NLS-1$
+							e));
 		}
 		if (HelpBasePlugin.DEBUG) {
 			System.out.println("Base Help System started."); //$NON-NLS-1$
@@ -166,14 +166,12 @@ public final class BaseHelpSystem {
 			if (getMode() != MODE_WORKBENCH) {
 				// start the help control web app
 				try {
-					WebappManager.start(
-						"helpControl", //$NON-NLS-1$
-						webappPlugin,
-						Path.EMPTY);
+					WebappManager.start("helpControl", //$NON-NLS-1$
+							webappPlugin, Path.EMPTY);
 				} catch (CoreException e) {
 					HelpBasePlugin.logError(
-						HelpBaseResources.getString("E042"), //$NON-NLS-1$
-						e);
+							HelpBaseResources.getString("E042"), //$NON-NLS-1$
+							e);
 					return false;
 				}
 			}
@@ -182,7 +180,8 @@ public final class BaseHelpSystem {
 				WebappManager.start("help", webappPlugin, Path.EMPTY); //$NON-NLS-1$
 			} catch (CoreException e) {
 				HelpBasePlugin.logError(HelpBaseResources.getString("E043"), e); //$NON-NLS-1$
-				BaseHelpSystem.getDefaultErrorUtil().displayError(HelpBaseResources.getString("E043")); //$NON-NLS-1$
+				BaseHelpSystem.getDefaultErrorUtil().displayError(
+						HelpBaseResources.getString("E043")); //$NON-NLS-1$
 				return false;
 			}
 			getInstance().webappRunning = true;
@@ -193,6 +192,7 @@ public final class BaseHelpSystem {
 
 	/**
 	 * Returns the mode.
+	 * 
 	 * @return int
 	 */
 	public static int getMode() {
@@ -201,7 +201,9 @@ public final class BaseHelpSystem {
 
 	/**
 	 * Sets the mode.
-	 * @param mode The mode to set
+	 * 
+	 * @param mode
+	 *            The mode to set
 	 */
 	public static void setMode(int mode) {
 		getInstance().mode = mode;
@@ -215,8 +217,9 @@ public final class BaseHelpSystem {
 	}
 
 	/**
-	 * Returns the default error messenger. When no UI is present, all
-	 * errors are sent to System.out.
+	 * Returns the default error messenger. When no UI is present, all errors
+	 * are sent to System.out.
+	 * 
 	 * @return IErrorMessenger
 	 */
 	public static IErrorUtil getDefaultErrorUtil() {
@@ -229,29 +232,27 @@ public final class BaseHelpSystem {
 	private static String getWebappPlugin() {
 
 		// get the webapp extension from the system plugin registry
-		IExtensionPoint point =
-			Platform.getExtensionRegistry().getExtensionPoint(WEBAPP_EXTENSION_ID);
+		IExtensionPoint point = Platform.getExtensionRegistry()
+				.getExtensionPoint(WEBAPP_EXTENSION_ID);
 		if (point != null) {
 			IExtension[] extensions = point.getExtensions();
 			if (extensions.length != 0) {
 				// We need to pick up the non-default configuration
-				IConfigurationElement[] elements =
-					extensions[0].getConfigurationElements();
+				IConfigurationElement[] elements = extensions[0]
+						.getConfigurationElements();
 
 				for (int i = 0; i < elements.length; i++) {
-					String defaultValue =
-						elements[i].getAttribute(WEBAPP_DEFAULT_ATTRIBUTE);
+					String defaultValue = elements[i]
+							.getAttribute(WEBAPP_DEFAULT_ATTRIBUTE);
 					if (defaultValue == null || defaultValue.equals("false")) { //$NON-NLS-1$
-						return elements[i]
-							.getDeclaringExtension()
-							.getNamespace();
+						return elements[i].getDeclaringExtension()
+								.getNamespace();
 					}
 				}
-				// if reached this point, then then pick the first (default) webapp
+				// if reached this point, then then pick the first (default)
+				// webapp
 				if (elements.length > 0)
-					return elements[0]
-						.getDeclaringExtension()
-						.getNamespace();
+					return elements[0].getDeclaringExtension().getNamespace();
 			}
 		}
 

@@ -20,22 +20,23 @@ import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.toc.*;
 import org.eclipse.help.internal.webapp.data.*;
 /**
- * URL-like description of help table of contents. 
+ * URL-like description of help table of contents.
  * <ul>
- * <li>toc/pluginid/tocfile.xml: the toc defined by the specified toc xml</li> 
- * <li>toc/: all the toc's </li>
- * <li>toc/?topic=/pluginid/topic.html: a list of toc that contain the specified topic </li>
+ * <li>toc/pluginid/tocfile.xml: the toc defined by the specified toc xml</li>
+ * <li>toc/: all the toc's</li>
+ * <li>toc/?topic=/pluginid/topic.html: a list of toc that contain the
+ * specified topic</li>
  * </ul>
  */
 public class TocServlet extends HttpServlet {
 	private String locale;
 
 	/**
-	 * Called by the server (via the <code>service</code> method) to
-	 * allow a servlet to handle a GET request. 
+	 * Called by the server (via the <code>service</code> method) to allow a
+	 * servlet to handle a GET request.
 	 */
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-		throws ServletException, IOException {
+			throws ServletException, IOException {
 
 		locale = UrlUtil.getLocale(req, resp);
 		req.setCharacterEncoding("UTF-8"); //$NON-NLS-1$
@@ -48,22 +49,22 @@ public class TocServlet extends HttpServlet {
 				serializeTocs(resp);
 			else
 				serializeTocs(
-					findTocContainingTopic(req.getParameter("topic")), //$NON-NLS-1$
-					resp);
+						findTocContainingTopic(req.getParameter("topic")), //$NON-NLS-1$
+						resp);
 		} else {
 			serializeToc(req.getPathInfo(), resp);
 		}
 	}
 	/**
-	 *
-	 * Called by the server (via the <code>service</code> method)
-	 * to allow a servlet to handle a POST request.
-	 *
+	 * 
+	 * Called by the server (via the <code>service</code> method) to allow a
+	 * servlet to handle a POST request.
+	 * 
 	 * Handle the search requests,
-	 *
+	 *  
 	 */
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-		throws ServletException, IOException {
+			throws ServletException, IOException {
 		doGet(req, resp);
 	}
 
@@ -71,7 +72,7 @@ public class TocServlet extends HttpServlet {
 	 * XML representation of TOC
 	 */
 	private void serializeToc(String tocID, HttpServletResponse resp)
-		throws ServletException, IOException {
+			throws ServletException, IOException {
 		IToc toc = HelpPlugin.getTocManager().getToc(tocID, locale);
 		serializeToc(toc, resp);
 	}
@@ -79,7 +80,7 @@ public class TocServlet extends HttpServlet {
 	 * XML representation of TOC
 	 */
 	private void serializeToc(IToc toc, HttpServletResponse resp)
-		throws ServletException, IOException {
+			throws ServletException, IOException {
 		if (toc == null)
 			throw new ServletException();
 
@@ -92,7 +93,7 @@ public class TocServlet extends HttpServlet {
 	 * XML representation of TOC list
 	 */
 	private void serializeTocs(HttpServletResponse resp)
-		throws ServletException, IOException {
+			throws ServletException, IOException {
 		TocManager tocManager = HelpPlugin.getTocManager();
 		IToc[] tocs = tocManager.getTocs(locale);
 
@@ -108,11 +109,8 @@ public class TocServlet extends HttpServlet {
 		gen.close();
 	}
 
-	/**
-	 * @return InputStream from XML representation of TOC list
-	 */
 	private void serializeTocs(IToc toc, HttpServletResponse resp)
-		throws ServletException, IOException {
+			throws ServletException, IOException {
 		if (toc == null)
 			throw new ServletException();
 
@@ -128,7 +126,9 @@ public class TocServlet extends HttpServlet {
 
 	/**
 	 * Finds a TOC that contains specified topic
-	 * @param topic the topic href
+	 * 
+	 * @param topic
+	 *            the topic href
 	 */
 	private IToc findTocContainingTopic(String topic) {
 		if (topic == null || topic.equals("")) //$NON-NLS-1$
@@ -158,8 +158,8 @@ public class TocServlet extends HttpServlet {
 	 */
 	private static class TocWriter extends XMLGenerator {
 		/**
-		 * @param toc Toc
-		 * @param writer java.io.Writer
+		 * @param writer
+		 *            java.io.Writer
 		 */
 		public TocWriter(Writer writer) {
 			super(writer);
@@ -175,14 +175,10 @@ public class TocServlet extends HttpServlet {
 			if (topic != null)
 				topicDescription = topic.getHref();
 
-			println(
-				"<toc label=\"" //$NON-NLS-1$
-					+ xmlEscape(toc.getLabel())
-					+ "\" href=\"" //$NON-NLS-1$
-					+ reduceURL(toc.getHref())
-					+ "\" topic=\"" //$NON-NLS-1$
-					+ reduceURL(topicDescription)
-					+ "\">"); //$NON-NLS-1$
+			println("<toc label=\"" //$NON-NLS-1$
+					+ xmlEscape(toc.getLabel()) + "\" href=\"" //$NON-NLS-1$
+					+ reduceURL(toc.getHref()) + "\" topic=\"" //$NON-NLS-1$
+					+ reduceURL(topicDescription) + "\">"); //$NON-NLS-1$
 			if (genTopics) {
 				ITopic[] topics = toc.getTopics();
 				for (int i = 0; i < topics.length; i++) {
@@ -193,17 +189,14 @@ public class TocServlet extends HttpServlet {
 		}
 
 		/**
-		* Generates part of navigation for a given Topic
-		* and it children Topic
-		*/
+		 * Generates part of navigation for a given Topic and it children Topic
+		 */
 		protected void generate(ITopic topic) {
 			pad++;
 			printPad();
 			String href = topic.getHref();
-			print(
-				"<topic label=\"" //$NON-NLS-1$
-					+ xmlEscape(topic.getLabel())
-					+ "\"" //$NON-NLS-1$
+			print("<topic label=\"" //$NON-NLS-1$
+					+ xmlEscape(topic.getLabel()) + "\"" //$NON-NLS-1$
 					+ (href != null ? " href=\"" + reduceURL(href) + "\"" : "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			ITopic[] subtopics = topic.getSubtopics();
 			if (subtopics.length > 0) {
@@ -218,11 +211,13 @@ public class TocServlet extends HttpServlet {
 			}
 			pad--;
 		}
-		
+
 		/**
 		 * Simplifies url path by removing "string/.." from the path
+		 * 
 		 * @return reduced url String
-		 * @param url String
+		 * @param url
+		 *            String
 		 */
 		protected static String reduceURL(String url) {
 			if (url == null)

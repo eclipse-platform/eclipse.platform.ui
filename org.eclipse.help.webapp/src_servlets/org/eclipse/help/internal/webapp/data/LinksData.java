@@ -28,11 +28,13 @@ public class LinksData extends RequestData {
 	private IHelpResource[] links;
 
 	/**
-	 * Constructs  data for the links page.
+	 * Constructs data for the links page.
+	 * 
 	 * @param context
 	 * @param request
 	 */
-	public LinksData(ServletContext context, HttpServletRequest request, HttpServletResponse response) {
+	public LinksData(ServletContext context, HttpServletRequest request,
+			HttpServletResponse response) {
 		super(context, request, response);
 		this.topicHref = request.getParameter("topic"); //$NON-NLS-1$
 		if (topicHref != null && topicHref.length() == 0)
@@ -44,6 +46,7 @@ public class LinksData extends RequestData {
 
 	/**
 	 * Returns true when there is a search request
+	 * 
 	 * @return boolean
 	 */
 	public boolean isLinksRequest() {
@@ -52,12 +55,13 @@ public class LinksData extends RequestData {
 
 	/**
 	 * Return the number of links
+	 * 
 	 * @return int
 	 */
 	public int getLinksCount() {
 		return links.length;
 	}
-	
+
 	public String getSelectedTopicId() {
 		return selectedTopicId;
 	}
@@ -79,8 +83,7 @@ public class LinksData extends RequestData {
 	}
 
 	/**
-	 * Finds a topic in a toc
-	 * or within a scope if specified
+	 * Finds a topic in a toc or within a scope if specified
 	 */
 	private IToc findTocForTopic(String href) {
 		IToc[] tocs = HelpPlugin.getTocManager().getTocs(getLocale());

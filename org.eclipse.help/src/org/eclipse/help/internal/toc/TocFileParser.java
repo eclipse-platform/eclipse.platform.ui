@@ -20,8 +20,7 @@ import org.eclipse.help.internal.util.*;
 import org.xml.sax.*;
 import org.xml.sax.helpers.*;
 /**
- * Used to create TocFile's Toc object
- * from contributed toc xml file.
+ * Used to create TocFile's Toc object from contributed toc xml file.
  */
 class TocFileParser extends DefaultHandler {
 	protected TocBuilder builder;
@@ -43,9 +42,8 @@ class TocFileParser extends DefaultHandler {
 		String message = getMessage("E024", ex); //$NON-NLS-1$
 		//Error parsing Table of Contents file, URL: %1 at Line:%2 Column:%3 %4
 		HelpPlugin.logError(message, null);
-		RuntimeHelpStatus.getInstance().addParseError(
-			message,
-			ex.getSystemId());
+		RuntimeHelpStatus.getInstance()
+				.addParseError(message, ex.getSystemId());
 	}
 	/**
 	 * @see ErrorHandler#fatalError(SAXParseException)
@@ -53,21 +51,20 @@ class TocFileParser extends DefaultHandler {
 	public void fatalError(SAXParseException ex) throws SAXException {
 		// create message string from exception
 		String message = getMessage("E025", ex); //$NON-NLS-1$
-		//Failed to parse Table of Contents file, URL: %1 at Line:%2 Column:%3 %4
+		//Failed to parse Table of Contents file, URL: %1 at Line:%2 Column:%3
+		// %4
 		HelpPlugin.logError(message, ex);
-		RuntimeHelpStatus.getInstance().addParseError(
-			message,
-			ex.getSystemId());
+		RuntimeHelpStatus.getInstance()
+				.addParseError(message, ex.getSystemId());
 	}
 	protected String getMessage(String messageID, SAXParseException ex) {
 		String param0 = ex.getSystemId();
 		Integer param1 = new Integer(ex.getLineNumber());
 		Integer param2 = new Integer(ex.getColumnNumber());
 		String param3 = ex.getMessage();
-		String message =
-			MessageFormat.format(
-				HelpResources.getString(messageID),
-				new Object[] { param0, param1, param2, param3 });
+		String message = MessageFormat.format(HelpResources
+				.getString(messageID), new Object[]{param0, param1, param2,
+				param3});
 		return message;
 	}
 	/**
@@ -110,12 +107,8 @@ class TocFileParser extends DefaultHandler {
 	/**
 	 * @see ContentHandler#startElement(String, String, String, Attributes)
 	 */
-	public final void startElement(
-		String namespaceURI,
-		String localName,
-		String qName,
-		Attributes atts)
-		throws SAXException {
+	public final void startElement(String namespaceURI, String localName,
+			String qName, Attributes atts) throws SAXException {
 		TocNode node = null;
 		if (qName.equals("toc")) { //$NON-NLS-1$
 			node = new Toc(tocFile, atts);
@@ -129,7 +122,7 @@ class TocFileParser extends DefaultHandler {
 		} else
 			return; // perhaps throw some exception
 		if (!elementStack.empty())
-			 ((TocNode) elementStack.peek()).addChild(node);
+			((TocNode) elementStack.peek()).addChild(node);
 		elementStack.push(node);
 		// do any builder specific actions in the node
 		node.build(builder);
@@ -137,11 +130,8 @@ class TocFileParser extends DefaultHandler {
 	/**
 	 * @see ContentHandler#endElement(String, String, String)
 	 */
-	public final void endElement(
-		String namespaceURI,
-		String localName,
-		String qName)
-		throws SAXException {
+	public final void endElement(String namespaceURI, String localName,
+			String qName) throws SAXException {
 		elementStack.pop();
 	}
 
@@ -151,8 +141,8 @@ class TocFileParser extends DefaultHandler {
 	 *      org.apache.xerces.parsers.SaxParser.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd",false);
 	 */
 	public InputSource resolveEntity(String publicId, String systemId) {
-		InputSource source =
-			new InputSource(new ByteArrayInputStream(new byte[0]));
+		InputSource source = new InputSource(new ByteArrayInputStream(
+				new byte[0]));
 		source.setPublicId(publicId);
 		source.setSystemId(systemId);
 		return source;
@@ -164,8 +154,8 @@ class TocFileParser extends DefaultHandler {
 	 */
 	static class XMLParserPool {
 		private ArrayList pool = new ArrayList();
-		SAXParser obtainParser()
-			throws ParserConfigurationException, SAXException {
+		SAXParser obtainParser() throws ParserConfigurationException,
+				SAXException {
 			SAXParser p;
 			int free = pool.size();
 			if (free > 0) {

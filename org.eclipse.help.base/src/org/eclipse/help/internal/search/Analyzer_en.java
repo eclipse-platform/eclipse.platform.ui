@@ -9,12 +9,11 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.internal.search;
-import java.io.Reader;
+import java.io.*;
 
 import org.apache.lucene.analysis.*;
 /**
- * Lucene Analyzer for English.
- * LowerCaseTokenizer->StopFilter->PorterStemFilter
+ * Lucene Analyzer for English. LowerCaseTokenizer->StopFilter->PorterStemFilter
  */
 public class Analyzer_en extends Analyzer {
 	Analyzer stopAnalyzer;
@@ -26,20 +25,17 @@ public class Analyzer_en extends Analyzer {
 		stopAnalyzer = new StopAnalyzer(STOP_WORDS);
 	}
 	/**
-	 * Creates a TokenStream which tokenizes all the text
-	 * in the provided Reader.
+	 * Creates a TokenStream which tokenizes all the text in the provided
+	 * Reader.
 	 */
 	public final TokenStream tokenStream(String fieldName, Reader reader) {
 		return new PorterStemFilter(stopAnalyzer.tokenStream(fieldName, reader));
 	}
 	/**
-	* Array of English stop words.
-	* Differs from StandardAnalyzer's default stop words by
-	* not having "for", "if", and "this" that are java keywords.
-	*/
-	private final static String[] STOP_WORDS =
-		{
-			"a", //$NON-NLS-1$
+	 * Array of English stop words. Differs from StandardAnalyzer's default stop
+	 * words by not having "for", "if", and "this" that are java keywords.
+	 */
+	private final static String[] STOP_WORDS = {"a", //$NON-NLS-1$
 			"and", //$NON-NLS-1$
 			"are", //$NON-NLS-1$
 			"as", //$NON-NLS-1$
@@ -69,6 +65,6 @@ public class Analyzer_en extends Analyzer {
 			"to", //$NON-NLS-1$
 			"was", //$NON-NLS-1$
 			"will", //$NON-NLS-1$
-			"with" }; //$NON-NLS-1$
+			"with"}; //$NON-NLS-1$
 
 }

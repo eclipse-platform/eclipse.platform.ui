@@ -16,8 +16,7 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 
 /**
- * Uses a resource bundle to load images and strings from
- * a property file.
+ * Uses a resource bundle to load images and strings from a property file.
  */
 public class HelpResources {
 	private static ResourceBundle resBundle;
@@ -47,10 +46,8 @@ public class HelpResources {
 	public static String getString(String name, String replace0) {
 		try {
 			String stringFromPropertiesFile = resBundle.getString(name);
-			stringFromPropertiesFile =
-			MessageFormat.format(
-					stringFromPropertiesFile,
-					new Object[] { replace0 });
+			stringFromPropertiesFile = MessageFormat.format(
+					stringFromPropertiesFile, new Object[]{replace0});
 			return stringFromPropertiesFile;
 		} catch (Exception e) {
 			return name;
@@ -63,10 +60,8 @@ public class HelpResources {
 	public static String getString(String name, String replace0, String replace1) {
 		try {
 			String stringFromPropertiesFile = resBundle.getString(name);
-			stringFromPropertiesFile =
-			MessageFormat.format(
-					stringFromPropertiesFile,
-					new Object[] { replace0, replace1 });
+			stringFromPropertiesFile = MessageFormat.format(
+					stringFromPropertiesFile, new Object[]{replace0, replace1});
 			return stringFromPropertiesFile;
 		} catch (Exception e) {
 			return name;
@@ -86,10 +81,8 @@ public class HelpResources {
 		else if (locales.countTokens() == 2)
 			return new Locale(locales.nextToken(), locales.nextToken());
 		else if (locales.countTokens() == 3)
-			return new Locale(
-				locales.nextToken(),
-				locales.nextToken(),
-				locales.nextToken());
+			return new Locale(locales.nextToken(), locales.nextToken(), locales
+					.nextToken());
 		else
 			return Locale.getDefault();
 	}

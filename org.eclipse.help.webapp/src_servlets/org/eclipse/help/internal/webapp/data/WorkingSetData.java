@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.help.internal.webapp.data;
 
-
 import javax.servlet.*;
 import javax.servlet.http.*;
 
@@ -31,11 +30,10 @@ public class WorkingSetData extends RequestData {
 	private boolean isEditMode;
 
 	public WorkingSetData(ServletContext context, HttpServletRequest request,
-	HttpServletResponse response) {
+			HttpServletResponse response) {
 		super(context, request, response);
 		wsmgr = new WebappWorkingSetManager(request, response, getLocale());
-		AdaptableTocsArray adaptableTocs =
-			wsmgr.getRoot();
+		AdaptableTocsArray adaptableTocs = wsmgr.getRoot();
 		tocs = (AdaptableToc[]) adaptableTocs.getChildren();
 		isEditMode = "edit".equals(getOperation()); //$NON-NLS-1$
 	}
@@ -61,7 +59,7 @@ public class WorkingSetData extends RequestData {
 
 	/**
 	 * Returns the state of the TOC
-	 * @param href
+	 * 
 	 * @return boolean
 	 */
 	public short getTocState(int toc) {
@@ -101,9 +99,9 @@ public class WorkingSetData extends RequestData {
 	 * Returns the state of the topic. The state is not dependent on the parent
 	 * toc, but only whether it was part of the working set. To get the real
 	 * state, the caller must use the parent state as well. This is not done
-	 * here for performance reasons. 
-	 * In the JSP, by the time one looks at the topic, the parent toc has
-	 * already been processed.
+	 * here for performance reasons. In the JSP, by the time one looks at the
+	 * topic, the parent toc has already been processed.
+	 * 
 	 * @param toc
 	 * @param topic
 	 * @return short

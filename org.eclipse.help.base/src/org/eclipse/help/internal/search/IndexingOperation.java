@@ -21,9 +21,9 @@ import org.eclipse.help.internal.protocols.*;
 import org.eclipse.help.internal.toc.*;
 
 /**
- * Indexing Operation represents a long operation,
- * which performs indexing of the group (Collection) of documents.
- * It is used Internally by SlowIndex and returned by its getIndexUpdateOperation() method.
+ * Indexing Operation represents a long operation, which performs indexing of
+ * the group (Collection) of documents. It is used Internally by SlowIndex and
+ * returned by its getIndexUpdateOperation() method.
  */
 class IndexingOperation {
 	private int numAdded;
@@ -39,42 +39,41 @@ class IndexingOperation {
 	private int workTotal;
 	/**
 	 * Construct indexing operation.
-	 * @param ix ISearchIndex already opened
-	 * @param removedDocs collection of removed documents, including changed ones
-	 * @param addedDocs collection of new documents, including changed ones
+	 * 
+	 * @param ix
+	 *            ISearchIndex already opened
 	 */
 	public IndexingOperation(SearchIndex ix) {
 		this.index = ix;
 	}
 
 	private void checkCancelled(IProgressMonitor pm)
-		throws OperationCanceledException {
+			throws OperationCanceledException {
 		if (pm.isCanceled())
 			throw new OperationCanceledException();
 	}
 	/**
 	 * Executes indexing, given the progress monitor.
-	 * @param monitor progres monitor to be used during this long operation
-	 *  for reporting progress
-	 * @throws OperationCanceledException if indexing was cancelled
-	 * @throws Exception if error occurred
+	 * 
+	 * @param pm
+	 *            progres monitor to be used during this long operation for
+	 *            reporting progress
+	 * @throws OperationCanceledException
+	 *             if indexing was cancelled
 	 */
 	protected void execute(IProgressMonitor pm)
-		throws OperationCanceledException, IndexingException {
+			throws OperationCanceledException, IndexingException {
 		Collection removedDocs = getRemovedDocuments(index);
 		numRemoved = removedDocs.size();
 		Collection addedDocs = getAddedDocuments(index);
 		numAdded = addedDocs.size();
 
-		workTotal =
-			(numRemoved + numAdded) * WORK_PREPARE
-				+ numAdded * WORK_INDEXDOC
-				+ (numRemoved + numAdded) * WORK_SAVEINDEX;
+		workTotal = (numRemoved + numAdded) * WORK_PREPARE + numAdded
+				* WORK_INDEXDOC + (numRemoved + numAdded) * WORK_SAVEINDEX;
 
 		if (numRemoved > 0) {
-			workTotal += (numRemoved + numAdded) * WORK_PREPARE
-				+ numRemoved * WORK_DELETEDOC
-				+ (numRemoved + numAdded) * WORK_SAVEINDEX;
+			workTotal += (numRemoved + numAdded) * WORK_PREPARE + numRemoved
+					* WORK_DELETEDOC + (numRemoved + numAdded) * WORK_SAVEINDEX;
 		}
 		// if collection is empty, we may return right away
 		// need to check if we have to do anything to the progress monitor
@@ -91,9 +90,10 @@ class IndexingOperation {
 	}
 
 	private void addDocuments(IProgressMonitor pm, Collection addedDocs)
-		throws IndexingException {
+			throws IndexingException {
 		// Do not check here if (addedDocs.size() > 0), always perform add batch
-		// to ensure that index is created and saved even if no new documents exist
+		// to ensure that index is created and saved even if no new documents
+		// exist
 
 		// now add all the new documents
 		if (!index.beginAddBatch()) {
@@ -122,7 +122,7 @@ class IndexingOperation {
 	}
 
 	private void removeDocuments(IProgressMonitor pm, Collection removedDocs)
-		throws IndexingException {
+			throws IndexingException {
 
 		pm.subTask(HelpBaseResources.getString("Preparing_for_indexing")); //$NON-NLS-1$
 		checkCancelled(pm);
@@ -142,7 +142,8 @@ class IndexingOperation {
 				}
 			} catch (OperationCanceledException oce) {
 				// Need to perform rollback on the index
-				pm.subTask(HelpBaseResources.getString("Undoing_document_deletions")); //$NON-NLS-1$
+				pm.subTask(HelpBaseResources
+						.getString("Undoing_document_deletions")); //$NON-NLS-1$
 				//			if (!index.abortUpdate())
 				//				throw new Exception();
 				throw oce;
@@ -154,8 +155,8 @@ class IndexingOperation {
 		}
 	}
 	/**
-	 * Returns the document identifier. Currently we use the 
-	 * document file name as identifier.
+	 * Returns the document identifier. Currently we use the document file name
+	 * as identifier.
 	 */
 	private String getName(URL doc) {
 		String name = doc.getFile();
@@ -168,15 +169,15 @@ class IndexingOperation {
 	public class IndexingException extends Exception {
 	}
 	/**
-	 * Returns the documents to be added to index. 
-	 * The collection consists of the associated PluginURL objects.
+	 * Returns the documents to be added to index. The collection consists of
+	 * the associated PluginURL objects.
 	 */
 	private Collection getAddedDocuments(SearchIndex index) {
 		// Get the list of added plugins
 		Collection addedPlugins = index.getDocPlugins().getAdded();
 		if (addedPlugins == null || addedPlugins.isEmpty())
 			return new ArrayList(0);
-		// get the list of all navigation urls. 
+		// get the list of all navigation urls.
 		Set urls = getAllDocuments(index.getLocale());
 		Set addedDocs = new HashSet(urls.size());
 		for (Iterator docs = urls.iterator(); docs.hasNext();) {
@@ -197,20 +198,18 @@ class IndexingOperation {
 	}
 
 	/**
-	 * Returns the documents to be removed from index. 
-	 * The collection consists of the associated PluginURL objects.
+	 * Returns the documents to be removed from index. The collection consists
+	 * of the associated PluginURL objects.
 	 */
 	private Collection getRemovedDocuments(SearchIndex index) {
 		// Get the list of removed plugins
 		Collection removedPlugins = index.getDocPlugins().getRemoved();
 		if (removedPlugins == null || removedPlugins.isEmpty())
 			return new ArrayList(0);
-		// get the list of indexed docs. This is a hashtable  (url, plugin)
+		// get the list of indexed docs. This is a hashtable (url, plugin)
 		HelpProperties indexedDocs = index.getIndexedDocs();
 		Set removedDocs = new HashSet(indexedDocs.size());
-		for (Iterator docs = indexedDocs.keySet().iterator();
-			docs.hasNext();
-			) {
+		for (Iterator docs = indexedDocs.keySet().iterator(); docs.hasNext();) {
 			String doc = (String) docs.next();
 			// Assume the url is /pluginID/path_to_topic.html
 			int i = doc.indexOf('/', 1);
@@ -261,20 +260,20 @@ class IndexingOperation {
 		return hrefs;
 	}
 	/**
-	 * Checks if document is indexable, and creates
-	 * a URL to obtain contents.
-	 * @param url specified in the navigation
+	 * Checks if document is indexable, and creates a URL to obtain contents.
+	 * 
+	 * @param url
+	 *            specified in the navigation
 	 * @return URL to obtain document content or null
 	 */
 	private URL getIndexableURL(String url) {
 		String fileName = url.toLowerCase();
 		if (fileName.endsWith(".htm") //$NON-NLS-1$
-			|| fileName.endsWith(".html") //$NON-NLS-1$
-			|| fileName.endsWith(".txt") //$NON-NLS-1$
-			|| fileName.endsWith(".xml")) { //$NON-NLS-1$
+				|| fileName.endsWith(".html") //$NON-NLS-1$
+				|| fileName.endsWith(".txt") //$NON-NLS-1$
+				|| fileName.endsWith(".xml")) { //$NON-NLS-1$
 			// indexable
-		} else if (
-			fileName.indexOf(".htm#") >= 0 //$NON-NLS-1$
+		} else if (fileName.indexOf(".htm#") >= 0 //$NON-NLS-1$
 				|| fileName.indexOf(".html#") >= 0 //$NON-NLS-1$
 				|| fileName.indexOf(".xml#") >= 0) { //$NON-NLS-1$
 			url = url.substring(0, url.lastIndexOf('#'));
@@ -286,12 +285,9 @@ class IndexingOperation {
 
 		try {
 			//return new URL("help:" + url + "?lang=" + index.getLocale());
-			return new URL(
-				"help", //$NON-NLS-1$
-				null,
-				-1,
-				url + "?lang=" + index.getLocale(), //$NON-NLS-1$
-				HelpURLStreamHandler.getDefault());
+			return new URL("help", //$NON-NLS-1$
+					null, -1, url + "?lang=" + index.getLocale(), //$NON-NLS-1$
+					HelpURLStreamHandler.getDefault());
 
 		} catch (MalformedURLException mue) {
 			return null;

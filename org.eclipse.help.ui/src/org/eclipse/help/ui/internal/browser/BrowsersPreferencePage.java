@@ -186,8 +186,8 @@ public class BrowsersPreferencePage extends PreferencePage
 	 * pressed.
 	 * <p>
 	 * This is a framework hook method for sublcasses to do special things when
-	 * the Defaults button has been pressed. Subclasses may override, but
-	 * should call <code>super.performDefaults</code>.
+	 * the Defaults button has been pressed. Subclasses may override, but should
+	 * call <code>super.performDefaults</code>.
 	 * </p>
 	 */
 	protected void performDefaults() {

@@ -1,13 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2000, 2003 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Common Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * Contributors: IBM Corporation - initial API and implementation
+ ******************************************************************************/
 
 package org.eclipse.help.internal.webapp.servlet;
 
@@ -19,12 +17,9 @@ import javax.servlet.http.*;
 import org.eclipse.help.internal.webapp.data.*;
 
 public class HighlightFilter implements IFilter {
-	private static final String scriptPart1 =
-		"\n<script language=\"JavaScript\">\n<!--\nvar keywords = new Array ("; //$NON-NLS-1$
-	private static final String scriptPart3 =
-		");\n-->\n</script>\n<script language=\"JavaScript\" src=\""; //$NON-NLS-1$
-	private static final String scriptPart5 =
-		"advanced/highlight.js\"></script>\n"; //$NON-NLS-1$
+	private static final String scriptPart1 = "\n<script language=\"JavaScript\">\n<!--\nvar keywords = new Array ("; //$NON-NLS-1$
+	private static final String scriptPart3 = ");\n-->\n</script>\n<script language=\"JavaScript\" src=\""; //$NON-NLS-1$
+	private static final String scriptPart5 = "advanced/highlight.js\"></script>\n"; //$NON-NLS-1$
 
 	/*
 	 * @see IFilter#filter(HttpServletRequest, OutputStream)
@@ -54,8 +49,8 @@ public class HighlightFilter implements IFilter {
 
 	/**
 	 * Creates Java Script that does highlighting
+	 * 
 	 * @param keywords
-	 * @param contentSize size of document
 	 * @return byte[]
 	 */
 	private byte[] createJScript(HttpServletRequest req, Collection keywords) {
@@ -75,9 +70,8 @@ public class HighlightFilter implements IFilter {
 		// append "../" to get to the webapp
 		String path = req.getPathInfo();
 		if (path != null) {
-			for (int i;
-				0 <= (i = path.indexOf('/'));
-				path = path.substring(i + 1)) {
+			for (int i; 0 <= (i = path.indexOf('/')); path = path
+					.substring(i + 1)) {
 				buf.append("../"); //$NON-NLS-1$
 			}
 		}
@@ -86,8 +80,9 @@ public class HighlightFilter implements IFilter {
 		return buf.toString().getBytes();
 	}
 	/**
-	 * Extracts keywords from query that contains
-	 * keywords dobule quoted and separated by space
+	 * Extracts keywords from query that contains keywords dobule quoted and
+	 * separated by space
+	 * 
 	 * @return Collection of String
 	 */
 	private Collection getWords(HttpServletRequest req) {
@@ -99,8 +94,8 @@ public class HighlightFilter implements IFilter {
 			return tokens;
 		}
 		//Divide along quotation marks
-		StringTokenizer qTokenizer =
-			new StringTokenizer(searchWord.trim(), "\"", true); //$NON-NLS-1$
+		StringTokenizer qTokenizer = new StringTokenizer(searchWord.trim(),
+				"\"", true); //$NON-NLS-1$
 		boolean withinQuotation = false;
 		String quotedString = ""; //$NON-NLS-1$
 		while (qTokenizer.hasMoreTokens()) {
@@ -126,6 +121,7 @@ public class HighlightFilter implements IFilter {
 	}
 	/**
 	 * Encodes strings inside collection for embedding in HTML source
+	 * 
 	 * @return Collection of String
 	 */
 	private Collection encodeKeyWords(Collection col) {
@@ -143,7 +139,9 @@ public class HighlightFilter implements IFilter {
 	}
 
 	/**
-	 * Removes wildcard characters from words, by splitting words around wild cards
+	 * Removes wildcard characters from words, by splitting words around wild
+	 * cards
+	 * 
 	 * @return Collection of String
 	 */
 	private Collection removeWildCards(Collection col) {

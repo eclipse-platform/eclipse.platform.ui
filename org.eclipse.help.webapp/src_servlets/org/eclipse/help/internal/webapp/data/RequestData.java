@@ -30,10 +30,12 @@ public class RequestData {
 	protected WebappPreferences preferences;
 	/**
 	 * Constructs the data for a request.
+	 * 
 	 * @param context
 	 * @param request
 	 */
-	public RequestData(ServletContext context, HttpServletRequest request, HttpServletResponse response) {
+	public RequestData(ServletContext context, HttpServletRequest request,
+			HttpServletResponse response) {
 		this.context = context;
 		this.request = request;
 		this.response = response;

@@ -22,7 +22,7 @@ import org.osgi.framework.*;
 public class DisplayUtils {
 	private static final String HELP_UI_PLUGIN_ID = "org.eclipse.help.ui"; //$NON-NLS-1$
 	private static final String LOOP_CLASS_NAME = "org.eclipse.help.ui.internal.HelpUIEventLoop"; //$NON-NLS-1$
-	
+
 	static void runUI() {
 		invoke("run"); //$NON-NLS-1$
 	}

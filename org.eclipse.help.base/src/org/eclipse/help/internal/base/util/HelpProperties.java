@@ -25,16 +25,22 @@ public class HelpProperties extends Properties {
 	protected String name = null;
 	/**
 	 * Creates empty Properties for the specified plugin
-	 * @param name name of the file;
-	 * @param plugin the plugin
+	 * 
+	 * @param name
+	 *            name of the file;
+	 * @param plugin
+	 *            the plugin
 	 */
 	public HelpProperties(String name, Plugin plugin) {
 		this(name, plugin.getStateLocation().toFile());
 	}
 	/**
 	 * Creates empty Properties persisted in the specified directory
-	 * @param name name of the file;
-	 * @param dir directory to persist file in
+	 * 
+	 * @param name
+	 *            name of the file;
+	 * @param dir
+	 *            directory to persist file in
 	 */
 	public HelpProperties(String name, File dir) {
 		super();
@@ -44,6 +50,7 @@ public class HelpProperties extends Properties {
 
 	/**
 	 * Restores contents of the Properties from a file.
+	 * 
 	 * @return true if persistant data was read in
 	 */
 	public boolean restore() {
@@ -51,7 +58,7 @@ public class HelpProperties extends Properties {
 		boolean loaded = false;
 		clear();
 		// Test if we have a contribution file to start with
-		// If this is a clean start, then we will not have a 
+		// If this is a clean start, then we will not have a
 		// contribution file. return false.
 		if (!file.exists())
 			return loaded;
@@ -60,9 +67,9 @@ public class HelpProperties extends Properties {
 			super.load(in);
 			loaded = true;
 		} catch (IOException ioe00) {
-			HelpPlugin.logError(
-				HelpBaseResources.getString("File4", file.getName()), //$NON-NLS-1$
-				null);
+			HelpPlugin.logError(HelpBaseResources.getString(
+					"File4", file.getName()), //$NON-NLS-1$
+					null);
 		} finally {
 			if (in != null)
 				try {
@@ -74,6 +81,7 @@ public class HelpProperties extends Properties {
 	}
 	/**
 	 * Saves contents of the table to a file.
+	 * 
 	 * @return true if operation was successful
 	 */
 	public boolean save() {
@@ -84,12 +92,9 @@ public class HelpProperties extends Properties {
 			super.store(out, "This is a generated file; do not edit."); //$NON-NLS-1$
 			ret = true;
 		} catch (IOException ioe00) {
-			HelpPlugin.logError(
-				HelpBaseResources.getString(
+			HelpPlugin.logError(HelpBaseResources.getString(
 					"Exception_occurred", //$NON-NLS-1$
-					name,
-					file.getAbsolutePath()),
-				ioe00);
+					name, file.getAbsolutePath()), ioe00);
 		} finally {
 			try {
 				if (out != null) {

@@ -20,8 +20,8 @@ import org.eclipse.help.internal.util.*;
 import org.eclipse.help.internal.workingset.*;
 
 /**
- * Search result collector.
- * Performs filtering and collects hits into an array of SearchHit
+ * Search result collector. Performs filtering and collects hits into an array
+ * of SearchHit
  */
 public class SearchResults implements ISearchHitCollector {
 	// Collection of AdaptableHelpResource[]
@@ -31,7 +31,9 @@ public class SearchResults implements ISearchHitCollector {
 	protected SearchHit[] searchHits = new SearchHit[0];
 	/**
 	 * Constructor
-	 * @param workingSets working sets or null if no filtering
+	 * 
+	 * @param workingSets
+	 *            working sets or null if no filtering
 	 */
 	public SearchResults(WorkingSet[] workingSets, int maxHits, String locale) {
 		this.maxHits = maxHits;
@@ -40,7 +42,9 @@ public class SearchResults implements ISearchHitCollector {
 	}
 	/**
 	 * Adds hits to the result
-	 * @param Hits hits
+	 * 
+	 * @param hits
+	 *            Hits
 	 */
 	public void addHits(Hits hits, String highlightTerms) {
 		String urlEncodedWords = URLCoder.encode(highlightTerms);
@@ -65,12 +69,12 @@ public class SearchResults implements ISearchHitCollector {
 				toc = getTocForTopic(href, locale);
 			} else {
 				scope = getScopeForTopic(href);
-				if (scope == null){
+				if (scope == null) {
 					// topic outside of scope
 					continue;
-				}else if (scope instanceof AdaptableToc){
+				} else if (scope instanceof AdaptableToc) {
 					toc = (IToc) scope.getAdapter(IToc.class);
-				}else{ // scope is AdaptableTopic
+				} else { // scope is AdaptableTopic
 					toc = (IToc) scope.getParent().getAdapter(IToc.class);
 				}
 			}
@@ -92,14 +96,14 @@ public class SearchResults implements ISearchHitCollector {
 				ITopic t;
 				if (scope != null) {
 					t = scope.getTopic(href);
-				} else{
+				} else {
 					t = toc.getTopic(href);
 				}
-				if(t!=null){
-					label=t.getLabel();
+				if (t != null) {
+					label = t.getLabel();
 				}
 			}
-			if (label == null || "".equals(label)){ //$NON-NLS-1$
+			if (label == null || "".equals(label)) { //$NON-NLS-1$
 				label = href;
 			}
 
@@ -107,13 +111,12 @@ public class SearchResults implements ISearchHitCollector {
 			href = href + "?resultof=" + urlEncodedWords; //$NON-NLS-1$
 			searchHitList.add(new SearchHit(href, label, score, toc));
 		}
-		searchHits =
-			(SearchHit[]) searchHitList.toArray(
-				new SearchHit[searchHitList.size()]);
+		searchHits = (SearchHit[]) searchHitList
+				.toArray(new SearchHit[searchHitList.size()]);
 
 	}
 	/**
-	 * Finds a topic within a scope 
+	 * Finds a topic within a scope
 	 */
 	private AdaptableHelpResource getScopeForTopic(String href) {
 		for (int i = 0; i < scopes.size(); i++) {
@@ -125,8 +128,7 @@ public class SearchResults implements ISearchHitCollector {
 	}
 
 	/**
-	 * Finds a topic in a toc
-	 * or within a scope if specified
+	 * Finds a topic in a toc or within a scope if specified
 	 */
 	private IToc getTocForTopic(String href, String locale) {
 		IToc[] tocs = HelpPlugin.getTocManager().getTocs(locale);
@@ -140,6 +142,7 @@ public class SearchResults implements ISearchHitCollector {
 
 	/**
 	 * Gets the searchHits.
+	 * 
 	 * @return Returns a SearchHit[]
 	 */
 	public SearchHit[] getSearchHits() {
@@ -149,6 +152,7 @@ public class SearchResults implements ISearchHitCollector {
 	/**
 	 * Returns a collection of adaptable help resources that are roots for
 	 * filtering.
+	 * 
 	 * @return Collection
 	 */
 	private ArrayList getScopes(WorkingSet[] wSets) {
@@ -156,10 +160,10 @@ public class SearchResults implements ISearchHitCollector {
 			return null;
 
 		scopes = new ArrayList(wSets.length);
-		for (int w=0; w<wSets.length;w++) {
-				AdaptableHelpResource[] elements = wSets[w].getElements();
-				for (int i = 0; i < elements.length; i++)
-					scopes.add(elements[i]);
+		for (int w = 0; w < wSets.length; w++) {
+			AdaptableHelpResource[] elements = wSets[w].getElements();
+			for (int i = 0; i < elements.length; i++)
+				scopes.add(elements[i]);
 		}
 		return scopes;
 	}

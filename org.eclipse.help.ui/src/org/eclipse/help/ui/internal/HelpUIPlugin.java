@@ -36,8 +36,8 @@ public class HelpUIPlugin extends AbstractUIPlugin {
 	public static synchronized void logError(String message, Throwable ex) {
 		if (message == null)
 			message = ""; //$NON-NLS-1$
-		Status errorStatus =
-			new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK, message, ex);
+		Status errorStatus = new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK,
+				message, ex);
 		HelpPlugin.getDefault().getLog().log(errorStatus);
 	}
 	/**
@@ -49,13 +49,8 @@ public class HelpUIPlugin extends AbstractUIPlugin {
 		if (HelpPlugin.DEBUG) {
 			if (message == null)
 				message = ""; //$NON-NLS-1$
-			Status warningStatus =
-				new Status(
-					IStatus.WARNING,
-					PLUGIN_ID,
-					IStatus.OK,
-					message,
-					null);
+			Status warningStatus = new Status(IStatus.WARNING, PLUGIN_ID,
+					IStatus.OK, message, null);
 			HelpPlugin.getDefault().getLog().log(warningStatus);
 		}
 	}
@@ -68,7 +63,9 @@ public class HelpUIPlugin extends AbstractUIPlugin {
 	public static HelpUIPlugin getDefault() {
 		return plugin;
 	}
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext context) throws Exception {
@@ -90,16 +87,18 @@ public class HelpUIPlugin extends AbstractUIPlugin {
 		if (DEBUG) {
 			DEBUG_INFOPOP = "true".equalsIgnoreCase(Platform.getDebugOption(PLUGIN_ID + "/debug/infopop")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		
+
 		if (BaseHelpSystem.getMode() == BaseHelpSystem.MODE_WORKBENCH)
 			// UI may get activated during standalone
 			BaseHelpSystem.setDefaultErrorUtil(new ErrorUtil());
 
 		if (PlatformUI.isWorkbenchRunning()) {
-			// This is workbench scenario.  Set activity support of base help to use workbench activity support
+			// This is workbench scenario. Set activity support of base help to
+			// use workbench activity support
 			IWorkbench workbench = PlatformUI.getWorkbench();
 			if (workbench != null) {
-				HelpBasePlugin.setActivitySupport(new HelpActivitySupport(workbench));
+				HelpBasePlugin.setActivitySupport(new HelpActivitySupport(
+						workbench));
 			}
 		}
 	}

@@ -12,13 +12,13 @@ package org.eclipse.help.internal.toc;
 import org.eclipse.help.internal.model.*;
 import org.xml.sax.*;
 /**
- *  Include.  Place holder to link to other Toc objects.
+ * Include. Place holder to link to other Toc objects.
  */
-class Link extends TocNode implements ILinkElement{
+class Link extends TocNode implements ILinkElement {
 	protected Toc parentToc;
 	protected String toc;
 	/**
-	 * Contstructor.  Used when parsing help contributions.
+	 * Contstructor. Used when parsing help contributions.
 	 */
 	protected Link(TocFile tocFile, Attributes attrs) {
 		if (attrs == null)
@@ -40,8 +40,8 @@ class Link extends TocNode implements ILinkElement{
 		return toc;
 	}
 	/**
-	 * Adds another element as child of this element
-	 * Modifies parents of a child as well
+	 * Adds another element as child of this element Modifies parents of a child
+	 * as well
 	 */
 	public void addChild(ITocNode child) {
 		super.addChild(child);

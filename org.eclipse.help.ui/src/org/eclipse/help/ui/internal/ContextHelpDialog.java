@@ -54,14 +54,18 @@ public class ContextHelpDialog {
 
 	/**
 	 * Constructor:
-	 * @param context an array of String or an array of IContext
-	 * @param x the x mouse location in the current display
-	 * @param y the y mouse location in the current display
+	 * 
+	 * @param context
+	 *            an array of String or an array of IContext
+	 * @param x
+	 *            the x mouse location in the current display
+	 * @param y
+	 *            the y mouse location in the current display
 	 */
 	ContextHelpDialog(IContext context, int x, int y) {
 		this.context = context;
 		Display display = Display.getCurrent();
-		if(display == null){
+		if (display == null) {
 			return;
 		}
 		backgroundColour = display.getSystemColor(SWT.COLOR_INFO_BACKGROUND);
@@ -69,30 +73,30 @@ public class ContextHelpDialog {
 		linkColour = display.getSystemColor(SWT.COLOR_BLUE);
 		parentShell = display.getActiveShell();
 
-		if(parentShell != null){
-			boolean isModal = 0 < (parentShell.getStyle() & (SWT.APPLICATION_MODAL | SWT.PRIMARY_MODAL | SWT.SYSTEM_MODAL));
+		if (parentShell != null) {
+			boolean isModal = 0 < (parentShell.getStyle() & (SWT.APPLICATION_MODAL
+					| SWT.PRIMARY_MODAL | SWT.SYSTEM_MODAL));
 			if (HelpUIPlugin.DEBUG_INFOPOP) {
 				System.out
 						.println("ContextHelpDialog.ContextHelpDialog(): ParentShell: " //$NON-NLS-1$
-								+ shell.toString()
-								+ " is " //$NON-NLS-1$
+								+ shell.toString() + " is " //$NON-NLS-1$
 								+ (isModal ? "modal" : "modeless")); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 
 		shell = new Shell(parentShell, SWT.NONE);
 		if (HelpUIPlugin.DEBUG_INFOPOP) {
-			System.out.println(
-				"ContextHelpDialog.ContextHelpDialog(): Shell is:" //$NON-NLS-1$
-					+ shell.toString());
+			System.out
+					.println("ContextHelpDialog.ContextHelpDialog(): Shell is:" //$NON-NLS-1$
+							+ shell.toString());
 		}
 		WorkbenchHelp.setHelp(shell, IHelpUIConstants.F1_SHELL);
 
 		shell.addListener(SWT.Deactivate, new Listener() {
 			public void handleEvent(Event e) {
 				if (HelpUIPlugin.DEBUG_INFOPOP) {
-					System.out.println(
-						"ContextHelpDialog shell deactivate listener: SWT.Deactivate called. "); //$NON-NLS-1$
+					System.out
+							.println("ContextHelpDialog shell deactivate listener: SWT.Deactivate called. "); //$NON-NLS-1$
 				}
 				close();
 			}
@@ -102,8 +106,8 @@ public class ContextHelpDialog {
 			public void keyTraversed(TraverseEvent e) {
 				if (e.detail == SWT.TRAVERSE_ESCAPE) {
 					if (HelpUIPlugin.DEBUG_INFOPOP) {
-						System.out.println(
-							"ContextHelpDialog: shell traverse listener: SWT.TRAVERSE_ESCAPE called. "); //$NON-NLS-1$
+						System.out
+								.println("ContextHelpDialog: shell traverse listener: SWT.TRAVERSE_ESCAPE called. "); //$NON-NLS-1$
 					}
 					e.doit = true;
 				}
@@ -113,26 +117,22 @@ public class ContextHelpDialog {
 		shell.addControlListener(new ControlAdapter() {
 			public void controlMoved(ControlEvent e) {
 				if (HelpUIPlugin.DEBUG_INFOPOP) {
-					System.out.println(
-						"ContextHelpDialog: shell control adapter called."); //$NON-NLS-1$
+					System.out
+							.println("ContextHelpDialog: shell control adapter called."); //$NON-NLS-1$
 				}
 				Rectangle clientArea = shell.getClientArea();
-				shell.redraw(
-					clientArea.x,
-					clientArea.y,
-					clientArea.width,
-					clientArea.height,
-					true);
+				shell.redraw(clientArea.x, clientArea.y, clientArea.width,
+						clientArea.height, true);
 				shell.update();
 			}
 		});
 		if (HelpUIPlugin.DEBUG_INFOPOP) {
-			System.out.println(
-				"ContextHelpDialog.ContextHelpDialog(): Focus owner is: " //$NON-NLS-1$
-					+ Display.getCurrent().getFocusControl().toString());
+			System.out
+					.println("ContextHelpDialog.ContextHelpDialog(): Focus owner is: " //$NON-NLS-1$
+							+ Display.getCurrent().getFocusControl().toString());
 		}
-		linkManager.setHyperlinkUnderlineMode(
-			HyperlinkHandler.UNDERLINE_ALWAYS);
+		linkManager
+				.setHyperlinkUnderlineMode(HyperlinkHandler.UNDERLINE_ALWAYS);
 		createContents(shell);
 		shell.pack();
 		// Correct x and y of the shell if it not contained within the screen
@@ -173,10 +173,10 @@ public class ContextHelpDialog {
 		contents.setLayoutData(new GridData(GridData.FILL_BOTH));
 		// create the dialog area and button bar
 		createInfoArea(contents);
-		Control c=createLinksArea(contents);
-		if(c!=null){
+		Control c = createLinksArea(contents);
+		if (c != null) {
 			// links exist, make them the only focusable controls
-			contents.setTabList(new Control[] {c});
+			contents.setTabList(new Control[]{c});
 		}
 		return contents;
 	}
@@ -195,8 +195,8 @@ public class ContextHelpDialog {
 			public void keyTraversed(TraverseEvent e) {
 				if (e.detail == SWT.TRAVERSE_ESCAPE) {
 					if (HelpUIPlugin.DEBUG_INFOPOP) {
-						System.out.println(
-							"ContextHelpDialog text TraverseListener.handleEvent(): SWT.TRAVERSE_ESCAPE."); //$NON-NLS-1$
+						System.out
+								.println("ContextHelpDialog text TraverseListener.handleEvent(): SWT.TRAVERSE_ESCAPE."); //$NON-NLS-1$
 					}
 					e.doit = true;
 				}
@@ -250,21 +250,16 @@ public class ContextHelpDialog {
 		layout.numColumns = 2;
 		composite.setLayout(layout);
 		composite.setFont(parent.getFont());
-		GridData data =
-			new GridData(
-				GridData.FILL_BOTH
-					| GridData.HORIZONTAL_ALIGN_BEGINNING
-					| GridData.VERTICAL_ALIGN_CENTER);
+		GridData data = new GridData(GridData.FILL_BOTH
+				| GridData.HORIZONTAL_ALIGN_BEGINNING
+				| GridData.VERTICAL_ALIGN_CENTER);
 		composite.setLayoutData(data);
-		// Create separator.    
+		// Create separator.
 		Label label = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
 		label.setBackground(backgroundColour);
 		label.setForeground(foregroundColour);
-		data =
-			new GridData(
-				GridData.HORIZONTAL_ALIGN_BEGINNING
-					| GridData.VERTICAL_ALIGN_BEGINNING
-					| GridData.FILL_HORIZONTAL);
+		data = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING
+				| GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 2;
 		label.setLayoutData(data);
 		// Create related links
@@ -274,38 +269,41 @@ public class ContextHelpDialog {
 		return composite;
 	}
 	/**
-	 * Called when related link has been chosen
-	 * Opens help viewer with list of all related topics
+	 * Called when related link has been chosen Opens help viewer with list of
+	 * all related topics
 	 */
 	protected void launchLinks(IHelpResource selectedTopic) {
 		close();
 		if (HelpUIPlugin.DEBUG_INFOPOP) {
 			System.out.println("ContextHelpDialog.launchLinks(): closed shell"); //$NON-NLS-1$
 		}
-		BaseHelpSystem.getHelpDisplay().displayHelp(context, selectedTopic, isParentModal());
+		BaseHelpSystem.getHelpDisplay().displayHelp(context, selectedTopic,
+				isParentModal());
 	}
 	public synchronized void open() {
 		try {
 			shell.open();
 			if (HelpUIPlugin.DEBUG_INFOPOP) {
-				System.out.println(
-					"ContextHelpDialog.open(): Focus owner after open is: " //$NON-NLS-1$
-						+ Display.getCurrent().getFocusControl().toString());
+				System.out
+						.println("ContextHelpDialog.open(): Focus owner after open is: " //$NON-NLS-1$
+								+ Display.getCurrent().getFocusControl()
+										.toString());
 			}
 		} catch (Throwable e) {
-			HelpUIPlugin.logError(
-				HelpUIResources.getString("ContextHelpDialog.open"), //$NON-NLS-1$
-				e);
+			HelpUIPlugin.logError(HelpUIResources
+					.getString("ContextHelpDialog.open"), //$NON-NLS-1$
+					e);
 		}
 	}
 	private Image getImage() {
 		if (imgRegistry == null) {
 			imgRegistry = HelpUIPlugin.getDefault().getImageRegistry();
-			imgRegistry.put(
-				IHelpUIConstants.IMAGE_KEY_F1TOPIC,
-				ImageDescriptor.createFromURL(
-					HelpUIResources.getImagePath(
-						IHelpUIConstants.IMAGE_FILE_F1TOPIC)));
+			imgRegistry
+					.put(
+							IHelpUIConstants.IMAGE_KEY_F1TOPIC,
+							ImageDescriptor
+									.createFromURL(HelpUIResources
+											.getImagePath(IHelpUIConstants.IMAGE_FILE_F1TOPIC)));
 		}
 		return imgRegistry.get(IHelpUIConstants.IMAGE_KEY_F1TOPIC);
 	}
@@ -325,12 +323,10 @@ public class ContextHelpDialog {
 			}
 		});
 
-		accessible
-			.addAccessibleControlListener(new AccessibleControlAdapter() {
+		accessible.addAccessibleControlListener(new AccessibleControlAdapter() {
 			public void getChildAtPoint(AccessibleControlEvent e) {
 				Point pt = control.toControl(new Point(e.x, e.y));
-				e.childID =
-					(control.getBounds().contains(pt))
+				e.childID = (control.getBounds().contains(pt))
 						? ACC.CHILDID_MULTIPLE
 						: ACC.CHILDID_NONE;
 			}
@@ -373,9 +369,10 @@ public class ContextHelpDialog {
 			return false;
 		}
 	}
-	private boolean isParentModal(){
-		if(parentShell != null){
-			boolean isModal = 0 < (parentShell.getStyle() & (SWT.APPLICATION_MODAL | SWT.PRIMARY_MODAL | SWT.SYSTEM_MODAL));
+	private boolean isParentModal() {
+		if (parentShell != null) {
+			boolean isModal = 0 < (parentShell.getStyle() & (SWT.APPLICATION_MODAL
+					| SWT.PRIMARY_MODAL | SWT.SYSTEM_MODAL));
 			return isModal;
 		}
 		return false;

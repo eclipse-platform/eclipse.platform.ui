@@ -13,37 +13,35 @@ package org.eclipse.help.internal.toc;
 import java.util.*;
 
 /**
- * Navigation Element.
- * Common for all objects definable in toc.xml
+ * Navigation Element. Common for all objects definable in toc.xml
  */
 abstract class TocNode implements ITocNode {
 	protected List children;
 	protected List parents;
-	
-	
+
 	/**
-	 * Adds another element as child of this element
-	 * Modifies parents of a child as well
+	 * Adds another element as child of this element Modifies parents of a child
+	 * as well
 	 */
 	public void addChild(ITocNode child) {
 		if (children == null)
 			children = new ArrayList();
 		children.add(child);
 		if (child instanceof TocNode)
-			((TocNode)child).addParent(this);
+			((TocNode) child).addParent(this);
 	}
 	/**
-	 * Adds parent parents of this element
-	 * called by addChild method
+	 * Adds parent parents of this element called by addChild method
 	 */
 	protected void addParent(ITocNode parent) {
 		if (parents == null)
 			parents = new ArrayList();
 		parents.add(parent);
 	}
-	
+
 	/**
 	 * Obtains children
+	 * 
 	 * @return ITocNode List
 	 */
 	public List getChildren() {
@@ -53,6 +51,7 @@ abstract class TocNode implements ITocNode {
 	}
 	/**
 	 * Obtains parents
+	 * 
 	 * @return ITocNode List
 	 */
 	protected List getParents() {
@@ -60,7 +59,7 @@ abstract class TocNode implements ITocNode {
 			return Collections.EMPTY_LIST;
 		return parents;
 	}
-	
+
 	/**
 	 * @return ITopic list
 	 */

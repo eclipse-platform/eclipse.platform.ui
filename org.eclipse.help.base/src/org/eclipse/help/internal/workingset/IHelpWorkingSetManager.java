@@ -13,8 +13,9 @@ package org.eclipse.help.internal.workingset;
 import java.io.*;
 
 /**
- * The working  set manager stores help working sets. Working sets are persisted
+ * The working set manager stores help working sets. Working sets are persisted
  * whenever one is added or removed.
+ * 
  * @since 3.0
  */
 public interface IHelpWorkingSetManager {
@@ -28,13 +29,12 @@ public interface IHelpWorkingSetManager {
 	/**
 	 * Creates a new working set
 	 */
-	public WorkingSet createWorkingSet(
-		String name,
-		AdaptableHelpResource[] elements);
+	public WorkingSet createWorkingSet(String name,
+			AdaptableHelpResource[] elements);
 
 	/**
 	 * Returns a working set by name
-	 * 
+	 *  
 	 */
 	public WorkingSet getWorkingSet(String name);
 
@@ -54,10 +54,11 @@ public interface IHelpWorkingSetManager {
 	 * Persists all working sets. Should only be called by the webapp working
 	 * set dialog.
 	 * 
-	 * @param changedWorkingSet the working set that has changed
+	 * @param changedWorkingSet
+	 *            the working set that has changed
 	 */
 	public void workingSetChanged(WorkingSet changedWorkingSet)
-		throws IOException;
+			throws IOException;
 
 	public AdaptableToc getAdaptableToc(String href);
 

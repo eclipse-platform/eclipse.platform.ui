@@ -11,10 +11,11 @@
 package org.eclipse.help.internal.model;
 
 /**
- * Part of help navigation model corresponding to ANCHOR element.
- * It may contain TOC elements.
+ * Part of help navigation model corresponding to ANCHOR element. It may contain
+ * TOC elements.
+ * 
  * @since 3.0
  */
-public interface IAnchorElement extends INavigationElement{
+public interface IAnchorElement extends INavigationElement {
 
 }

@@ -27,18 +27,18 @@ public class ContextServlet extends HttpServlet {
 	protected String locale;
 
 	/**
-	 * Called by the server (via the <code>service</code> method) to
-	 * allow a servlet to handle a GET request. 
+	 * Called by the server (via the <code>service</code> method) to allow a
+	 * servlet to handle a GET request.
 	 */
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-		throws ServletException, IOException {
+			throws ServletException, IOException {
 
 		locale = UrlUtil.getLocale(req, resp);
 		req.setCharacterEncoding("UTF-8"); //$NON-NLS-1$
 
 		resp.setContentType("application/xml; charset=UTF-8"); //$NON-NLS-1$
 		resp.setHeader("Cache-Control", "max-age=0"); //$NON-NLS-1$ //$NON-NLS-2$
-	
+
 		String contextId = req.getPathInfo();
 		if (contextId == null || contextId.length() < 2)
 			throw new ServletException();
@@ -46,21 +46,22 @@ public class ContextServlet extends HttpServlet {
 		IContext context = HelpSystem.getContext(contextId);
 		if (context == null)
 			throw new ServletException();
-		
-		ContextWriter resultsWriter = new ContextWriter(resp.getWriter(), locale);
+
+		ContextWriter resultsWriter = new ContextWriter(resp.getWriter(),
+				locale);
 		resultsWriter.generate(contextId, context, resp);
 		resultsWriter.close();
 	}
 	/**
-	 *
-	 * Called by the server (via the <code>service</code> method)
-	 * to allow a servlet to handle a POST request.
-	 *
+	 * 
+	 * Called by the server (via the <code>service</code> method) to allow a
+	 * servlet to handle a POST request.
+	 * 
 	 * Handle the search requests,
-	 *
+	 *  
 	 */
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-		throws ServletException, IOException {
+			throws ServletException, IOException {
 
 		doGet(req, resp);
 	}
@@ -73,51 +74,44 @@ public class ContextServlet extends HttpServlet {
 			super(writer);
 		}
 
-		/** 
+		/**
 		 * XML representation of context info.
 		 */
-		public void generate(String contextId, IContext context, HttpServletResponse resp) {
+		public void generate(String contextId, IContext context,
+				HttpServletResponse resp) {
 
-			println("<context id=\""+ contextId +"\">"); //$NON-NLS-1$ //$NON-NLS-2$
+			println("<context id=\"" + contextId + "\">"); //$NON-NLS-1$ //$NON-NLS-2$
 			pad++;
 			printPad();
 			print("<description>"); //$NON-NLS-1$
 			print(context.getText());
 			println("</description>"); //$NON-NLS-1$
-			
+
 			IHelpResource[] links = context.getRelatedTopics();
 			if (links == null)
 				links = new IHelpResource[0];
 
 			for (int i = 0; i < links.length; i++) {
 				printPad();
-				print(
-					"<topic label=\"" //$NON-NLS-1$
-						+ xmlEscape(links[i].getLabel())
-						+ "\"" //$NON-NLS-1$
+				print("<topic label=\"" //$NON-NLS-1$
+						+ xmlEscape(links[i].getLabel()) + "\"" //$NON-NLS-1$
 						+ " href=\"" //$NON-NLS-1$
-						+ links[i].getHref()
-						+ "\""); //$NON-NLS-1$
+						+ links[i].getHref() + "\""); //$NON-NLS-1$
 				IToc toc = findTocForTopic(links[i].getHref());
 				if (toc != null) {
-					print(
-						" toc=\"" //$NON-NLS-1$
-							+ toc.getHref()
-							+ "\"" //$NON-NLS-1$
+					print(" toc=\"" //$NON-NLS-1$
+							+ toc.getHref() + "\"" //$NON-NLS-1$
 							+ " toclabel=\"" //$NON-NLS-1$
-							+ toc.getLabel()
-							+ "\""); //$NON-NLS-1$
+							+ toc.getLabel() + "\""); //$NON-NLS-1$
 				}
 				print(" />"); //$NON-NLS-1$
 			}
 			pad--;
 			println("</context>"); //$NON-NLS-1$
 		}
-		
 
 		/**
-		 * Finds a topic in a bookshelf
-		 * or within a scope if specified
+		 * Finds a topic in a bookshelf or within a scope if specified
 		 */
 		IToc findTocForTopic(String href) {
 			IToc[] tocs = HelpPlugin.getTocManager().getTocs(locale);

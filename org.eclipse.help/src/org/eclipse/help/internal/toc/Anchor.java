@@ -14,22 +14,22 @@ import java.util.*;
 import org.eclipse.help.internal.model.*;
 import org.xml.sax.*;
 /**
- * Anchor.  Place holder that Toc objects can atatch to.
+ * Anchor. Place holder that Toc objects can atatch to.
  */
-class Anchor extends TocNode implements IAnchorElement{
+class Anchor extends TocNode implements IAnchorElement {
 	protected Toc parentToc;
 	protected String id;
 	protected TocFile tocFile;
 	/**
-	 * Constructor. 
+	 * Constructor.
 	 */
 	protected Anchor(TocFile tocFile, Attributes attrs) {
 		this.tocFile = tocFile;
 		if (attrs == null)
 			return;
 		id = attrs.getValue("id"); //$NON-NLS-1$
-		id =
-			HrefUtil.normalizeHref(tocFile.getPluginID(), tocFile.getHref() + "#" + id); //$NON-NLS-1$
+		id = HrefUtil.normalizeHref(tocFile.getPluginID(), tocFile.getHref()
+				+ "#" + id); //$NON-NLS-1$
 		parentToc = tocFile.getToc();
 	}
 	/**
@@ -51,8 +51,8 @@ class Anchor extends TocNode implements IAnchorElement{
 		return tocFile;
 	}
 	/**
-	 * Adds another element as child of this element
-	 * Modifies parents of a child as well
+	 * Adds another element as child of this element Modifies parents of a child
+	 * as well
 	 */
 	public void addChild(ITocNode child) {
 		super.addChild(child);
@@ -60,13 +60,13 @@ class Anchor extends TocNode implements IAnchorElement{
 			parentToc.getChildrenTocs().add(child);
 		}
 	}
-	
+
 	/**
 	 * @return ITopic list
 	 */
 	public List getChildTopics() {
 		// after build, release TocFile
-		tocFile=null;
+		tocFile = null;
 		return super.getChildTopics();
 	}
 

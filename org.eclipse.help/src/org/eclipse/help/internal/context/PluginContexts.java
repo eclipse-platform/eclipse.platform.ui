@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.help.internal.context;
 import java.util.*;
+
 import org.eclipse.help.*;
 /**
  * Holds mapping of short contextId to IContext

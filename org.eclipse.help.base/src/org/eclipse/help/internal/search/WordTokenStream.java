@@ -17,8 +17,8 @@ import java.util.*;
 import org.apache.lucene.analysis.*;
 
 /**
- * WordTokenStream obtains tokens containing words
- * appropriate for use with Lucene search engine.
+ * WordTokenStream obtains tokens containing words appropriate for use with
+ * Lucene search engine.
  */
 public final class WordTokenStream extends TokenStream {
 	private static final int BUF_LEN = 4096;
@@ -71,17 +71,15 @@ public final class WordTokenStream extends TokenStream {
 
 			int start = boundary.first();
 			tokens.clear();
-			wordsbreak : for (
-				int end = boundary.next();
-					end != BreakIterator.DONE;
-					start = end, end = boundary.next()) {
+			wordsbreak : for (int end = boundary.next(); end != BreakIterator.DONE; start = end, end = boundary
+					.next()) {
 				// determine if it is a word
 				// any letter or digit between boundaries means it is a word
 				for (int i = start; i < end; i++) {
 					if (Character.isLetterOrDigit(str.charAt(i))) {
 						// it is a word
-						tokens.add(
-							new Token(str.substring(start, end), start, end));
+						tokens.add(new Token(str.substring(start, end), start,
+								end));
 						continue wordsbreak;
 					}
 				}

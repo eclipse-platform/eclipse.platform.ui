@@ -48,6 +48,7 @@ public class EmbeddedBrowserFactory implements IBrowserFactory {
 	}
 	/**
 	 * Must run on UI thread
+	 * 
 	 * @return
 	 */
 	private boolean test() {

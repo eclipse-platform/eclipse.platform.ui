@@ -1,15 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2000, 2003 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Common Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * Contributors: IBM Corporation - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.help.internal.context;
 import java.util.*;
+
 import org.eclipse.help.*;
 public class ContextsBuilder {
 	protected PluginContexts contexts;
@@ -65,7 +64,8 @@ public class ContextsBuilder {
 		// Merge Text
 		if (newContext.getStyledText() != null) {
 			if (existingContext.getStyledText() != null) {
-				existingContext.setStyledText(existingContext.getStyledText() + "\n" //$NON-NLS-1$
+				existingContext.setStyledText(existingContext.getStyledText()
+						+ "\n" //$NON-NLS-1$
 						+ newContext.getStyledText());
 			} else {
 				existingContext.setStyledText(newContext.getStyledText());
