@@ -12,7 +12,6 @@ package org.eclipse.ui.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;
@@ -74,9 +73,6 @@ public class AdaptableList extends WorkbenchAdapter
 	 */
 	public AdaptableList(Collection c) {
 		this(c.size());
-		for (Iterator it = c.iterator(); it.hasNext(); ) {
-			add((IAdaptable) it.next());
-		}
 		children.addAll(c);
 	}
 	
