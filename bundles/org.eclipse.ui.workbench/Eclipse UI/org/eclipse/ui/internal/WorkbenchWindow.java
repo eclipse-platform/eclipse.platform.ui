@@ -345,24 +345,9 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	protected void addPerspectiveBar(int style) {
 		if ((getShell() == null) && (perspectiveBar == null)) {
 			perspectiveBar = new PerspectiveBarManager(style);
-			//perspectiveBar.add(new PerspectiveDropDownContributionItem(this));	
-			//perspectiveBar.add(new PerspectiveNewContributionItem(this));	
+			perspectiveBar.add(new PerspectiveBarNewContributionItem(this));	
 		}
 	}
-	
-	/**
-	 * Configures this window to have a new perspective bar.
-	 * Does nothing if it already has one.
-	 * This method must be called before this window's shell is created.
-	 */
-	/*
-	protected void addNewBar(int style) {
-		if ((getShell() == null) && (newBar == null)) {
-			newBar = new PerspectiveBarManager(style);
-			//newBar.add(new PerspectiveContributionItem(this));
-		}
-	}
-	*/	
 	
 	/**
 	 * Close the window.

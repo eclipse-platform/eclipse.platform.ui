@@ -381,8 +381,8 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 			tabFolder.setTopRight(null);
 		}
 
-		// Set the tab width
-		tabFolder.MIN_TAB_WIDTH = preferenceStore.getInt(IPreferenceConstants.EDITOR_TAB_WIDTH);
+		// Set the tab width to an arbitrarily large number to prevent shrinking the tabs
+		tabFolder.MIN_TAB_WIDTH = 1000; //preferenceStore.getInt(IPreferenceConstants.EDITOR_TAB_WIDTH);
 
 		DragUtil.addDragSource(tabFolder, new AbstractDragSource() {
 
@@ -653,7 +653,11 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 		CTabItem2 key = getTab(editorPane);
 		if (key != null) {
 			int index = tabFolder.indexOf(key);
-			tabFolder.setSelection(index);
+			tabFolder.setSelection(index);			
+			Iterator iterator = getEditorList().iterator();
+			
+			while (iterator.hasNext())
+			    updateItem((EditorPane) iterator.next());
 		}
 	}
 
@@ -669,17 +673,32 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 		if (tab == null)
 			return;
 
-		IEditorReference ref = editorPane.getEditorReference();
+		IEditorReference editorReference =
+		    editorPane.getEditorReference();
+		String title = editorReference.getTitle().trim();
+		String text = title;
 		
-		// Update title.
-		String title = ref.getTitle();
-		if (ref.isDirty())
-			title = "*" + title; //$NON-NLS-1$
-		tab.setText(title);
+		if (editorReference.isDirty())
+			text = "*" + text; //$NON-NLS-1$
 		
+		if (editorPane == getVisibleEditor()) {		
+			String titleTooltip = editorReference.getTitleToolTip().trim();
+	
+			if (titleTooltip.endsWith(title))
+				titleTooltip =
+					titleTooltip
+						.substring(0, titleTooltip.lastIndexOf(title))
+						.trim();
+	
+			if (titleTooltip.length() >= 1)
+				text += " - " + titleTooltip; //$NON-NLS-1$
+		}
+		
+		tab.setText(text);
+				
 		boolean useColorIcons = ActionContributionItem.getUseColorIconsInToolbars();
 
-		Image image = ref.getTitleImage();
+		Image image = editorReference.getTitleImage();
 		// Update the tab image
 		if (image == null || image.isDisposed()) {
 			// Normal image.
@@ -706,7 +725,7 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 		}
 
 		// Tool tip.
-		String toolTip = ref.getTitleToolTip();
+		String toolTip = editorReference.getTitleToolTip();
 		tab.setToolTipText(toolTip);
 		tab.getParent().update();
 	}

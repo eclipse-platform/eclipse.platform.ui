@@ -46,6 +46,7 @@ public class ChangeToPerspectiveMenu extends PerspectiveMenu {
 	 * 
 	 * @return an <code>ArrayList<code> of perspective items <code>IPerspectiveDescriptor</code>
 	 */
+	/*
 	protected ArrayList getPerspectiveItems() {
 		ArrayList list = super.getPerspectiveItems();
 		IWorkbenchWindow window = getWindow();
@@ -60,6 +61,7 @@ public class ChangeToPerspectiveMenu extends PerspectiveMenu {
 		}
 		return list;
 	}
+	*/
 	
 	/* (non-Javadoc)
 	 * @see PerspectiveMenu#run(IPerspectiveDescriptor)

@@ -12,7 +12,6 @@ package org.eclipse.ui.internal;
 
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IContributionManager;
-import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -21,13 +20,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IPerspectiveDescriptor;
-import org.eclipse.ui.actions.ContributionItemFactory;
 import org.eclipse.ui.application.IWorkbenchPreferences;
 
 public class PerspectiveBarContributionItem extends ContributionItem {
@@ -36,8 +31,6 @@ public class PerspectiveBarContributionItem extends ContributionItem {
 
     private IPreferenceStore preferenceStore = WorkbenchPlugin.getDefault()
             .getPreferenceStore();
-
-    private MenuManager menuManager = null;
 
     private ToolBar toolBar = null;
 
@@ -66,9 +59,6 @@ public class PerspectiveBarContributionItem extends ContributionItem {
         super(PerspectiveBarContributionItem.class.getName());
         this.perspective = perspective;
         this.workbenchPage = workbenchPage;
-        menuManager = new MenuManager();
-        menuManager.add(ContributionItemFactory.PERSPECTIVES_SHORTLIST
-                .create(workbenchPage.getWorkbenchWindow()));
         preferenceStore.addPropertyChangeListener(propertyChangeListener);
     }
 
@@ -94,29 +84,15 @@ public class PerspectiveBarContributionItem extends ContributionItem {
                                 .createImage());
             }
             toolItem.setToolTipText(WorkbenchMessages.format(
-                    "PerspectiveBarContributionItem.toolTip",
-                    new Object[] { perspective.getLabel()})); //$NON-NLS-1$
+                    "PerspectiveBarContributionItem.toolTip", //$NON-NLS-1$
+                    new Object[] { perspective.getLabel()}));
             toolItem.addSelectionListener(new SelectionAdapter() {
 
                 public void widgetSelected(SelectionEvent event) {
-                    menuManager.update(true);
                     if (workbenchPage.getPerspective() != perspective) {
                         workbenchPage.setPerspective(perspective);
                         update();
                         getParent().update(true);
-                    } else {
-                        update();
-                        Point point = new Point(event.x, event.y);
-                        if (event.widget instanceof ToolItem) {
-                            ToolItem toolItem = (ToolItem) event.widget;
-                            Rectangle rectangle = toolItem.getBounds();
-                            point = new Point(rectangle.x, rectangle.y
-                                    + rectangle.height);
-                        }
-                        Menu menu = menuManager.createContextMenu(toolBar);
-                        point = toolBar.toDisplay(point);
-                        menu.setLocation(point.x, point.y);
-                        menu.setVisible(true);
                     }
                 }
             });
@@ -133,8 +109,7 @@ public class PerspectiveBarContributionItem extends ContributionItem {
                     .getBoolean(IWorkbenchPreferences.SHOW_TEXT_ON_PERSPECTIVE_BAR))
                 toolItem.setText(shortenText(perspective.getLabel(), toolItem));
             else
-                toolItem.setText("");
-            //$NON-NLS-1$
+                toolItem.setText(""); //$NON-NLS-1$            
         }
     }
 
@@ -156,8 +131,8 @@ public class PerspectiveBarContributionItem extends ContributionItem {
                                 .createImage());
             }
             toolItem.setToolTipText(WorkbenchMessages.format(
-                    "PerspectiveBarContributionItem.toolTip",
-                    new Object[] { perspective.getLabel()})); //$NON-NLS-1$
+                    "PerspectiveBarContributionItem.toolTip", //$NON-NLS-1$
+                    new Object[] { perspective.getLabel()}));
         }
         update();
     }
@@ -190,7 +165,7 @@ public class PerspectiveBarContributionItem extends ContributionItem {
     protected String shortenText(String textValue, ToolItem item) {
         if (textValue == null) return null;
         GC gc = new GC(item.getDisplay());
-        int maxWidth = item.getImage().getBounds().width * 4;
+        int maxWidth = item.getImage().getBounds().width * 5;
         if (gc.textExtent(textValue).x < maxWidth) return textValue;
         for (int i = textValue.length(); i > 0; i--) {
             String test = textValue.substring(0, i);

@@ -41,7 +41,7 @@ class EditorsLabelProvider extends LabelProvider {
 						.trim();
 
 			if (titleTooltip.length() >= 1)
-				text += " [" + titleTooltip + "]"; //$NON-NLS-1$ //$NON-NLS-1$
+				text += " - " + titleTooltip; //$NON-NLS-1$
 			
 			return text;
 		}

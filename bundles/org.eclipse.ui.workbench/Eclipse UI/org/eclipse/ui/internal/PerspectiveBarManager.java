@@ -51,14 +51,7 @@ public class PerspectiveBarManager extends ToolBarManager {
 		this.banner = banner;
 	}
 	// TODO end refactor this out? 
-	
-	/*
-	public void addLeft(IContributionItem contributionItem) {
-		Object[] objects = getItems();		
-		insert(objects.length >= 1 ? objects.length - 1 : 0, contributionItem);
-	}
-	*/
-	
+
 	public void updateFont(){
 		getControl().setFont(getFont());
 	}
