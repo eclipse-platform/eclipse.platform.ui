@@ -93,7 +93,7 @@ public abstract class AntObject {
 	}
 
 	/**
-	 * Sets that this ant object has been created by the appropriate extension
+	 * Sets that this Ant object has been created by the appropriate extension
 	 * point.
 	 * @param isDefault Whether this Ant object has been created because of an
 	 * extension point defintion.
@@ -131,7 +131,7 @@ public abstract class AntObject {
 	 * Returns whether this Ant object requires the Eclipse runtime to be 
 	 * relevant. Defaults value is <code>true</code>
 	 * 
-	 * @return whether this Ant obhject requires the Eclipse runtime
+	 * @return whether this Ant object requires the Eclipse runtime
      * @since 3.0
 	 */
 	public boolean isEclipseRuntimeRequired() {
