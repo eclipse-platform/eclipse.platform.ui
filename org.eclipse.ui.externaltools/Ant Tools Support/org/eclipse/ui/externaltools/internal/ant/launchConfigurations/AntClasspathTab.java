@@ -139,13 +139,13 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab {
 			});
 
 		} else {
-			addUserJarButton = createPushButton(parent, AntPreferencesMessages.getString("AntClasspathPage.addJarButtonTitle"), null); //$NON-NLS-1$;
+			addUserJarButton = createPushButton(parent, AntPreferencesMessages.getString("AntClasspathPage.addJarButtonTitle2"), null); //$NON-NLS-1$;
 			addUserJarButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent evt) {
 					addJars(userTableViewer);
 				}
 			});
-			addUserFolderButtton = createPushButton(parent, AntPreferencesMessages.getString("AntClasspathPage.addFolderButtonTitle"), null); //$NON-NLS-1$;
+			addUserFolderButtton = createPushButton(parent, AntPreferencesMessages.getString("AntClasspathPage.addFolderButtonTitle2"), null); //$NON-NLS-1$;
 			addUserFolderButtton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent evt) {
 					addFolder(userTableViewer, AntPreferencesMessages.getString("AntClasspathPage.&Choose_a_folder_to_add_to_the_classpath__1")); //$NON-NLS-1$
@@ -157,13 +157,13 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab {
 					handleMove(-1, userTableViewer);
 				}
 			});
-			downUserButton = createPushButton(parent, AntPreferencesMessages.getString("AntClasspathPage.downButtonTitle"), null); //$NON-NLS-1$;
+			downUserButton = createPushButton(parent, AntPreferencesMessages.getString("AntClasspathPage.downButtonTitle2"), null); //$NON-NLS-1$;
 			downUserButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent evt) {
 					handleMove(1, userTableViewer);
 				}
 			});
-			removeUserButton = createPushButton(parent, AntPreferencesMessages.getString("AntClasspathPage.removeButtonTitle"), null); //$NON-NLS-1$;
+			removeUserButton = createPushButton(parent, AntPreferencesMessages.getString("AntClasspathPage.removeButtonTitle2"), null); //$NON-NLS-1$;
 			removeUserButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent evt) {
 					remove(userTableViewer);

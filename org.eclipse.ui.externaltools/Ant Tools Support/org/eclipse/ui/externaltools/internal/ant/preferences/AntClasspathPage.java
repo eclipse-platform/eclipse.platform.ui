@@ -106,11 +106,11 @@ public class AntClasspathPage extends AntPage {
 			downButton= createButton(parent, "AntClasspathPage.downButtonTitle", DOWN_BUTTON); //$NON-NLS-1$;
 			removeButton= createButton(parent, "AntClasspathPage.removeButtonTitle", REMOVE_BUTTON); //$NON-NLS-1$;
 		} else {
-			createButton(parent, "AntClasspathPage.addJarButtonTitle", ADD_USER_JARS_BUTTON); //$NON-NLS-1$;
-			createButton(parent, "AntClasspathPage.addFolderButtonTitle", ADD_USER_FOLDER_BUTTON); //$NON-NLS-1$;
-			upUserButton= createButton(parent, "AntClasspathPage.upButtonTitle", UP_USER_BUTTON); //$NON-NLS-1$;
-			downUserButton= createButton(parent, "AntClasspathPage.downButtonTitle", DOWN_USER_BUTTON); //$NON-NLS-1$;
-			removeUserButton= createButton(parent, "AntClasspathPage.removeButtonTitle", REMOVE_USER_BUTTON); //$NON-NLS-1$;
+			createButton(parent, "AntClasspathPage.addJarButtonTitle2", ADD_USER_JARS_BUTTON); //$NON-NLS-1$;
+			createButton(parent, "AntClasspathPage.addFolderButtonTitle2", ADD_USER_FOLDER_BUTTON); //$NON-NLS-1$;
+			upUserButton= createButton(parent, "AntClasspathPage.upButtonTitle2", UP_USER_BUTTON); //$NON-NLS-1$;
+			downUserButton= createButton(parent, "AntClasspathPage.downButtonTitle2", DOWN_USER_BUTTON); //$NON-NLS-1$;
+			removeUserButton= createButton(parent, "AntClasspathPage.removeButtonTitle2", REMOVE_USER_BUTTON); //$NON-NLS-1$;
 		}
 	}
 	
