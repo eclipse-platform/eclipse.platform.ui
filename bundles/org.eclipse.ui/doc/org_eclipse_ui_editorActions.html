@@ -2,7 +2,7 @@
 <html>
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-   <meta name="GENERATOR" content="Mozilla/4.5 [en] (WinNT; I) [Netscape]">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (Windows NT 5.0; U) [Netscape]">
    <title>Eclipse Workbench Extension Point: Editor Actions</title>
 </head>
 <body link="#0000FF" vlink="#800080">
@@ -112,16 +112,16 @@ is used as the button label. The label can contain JFace-encoded mnemonic
 and accelerator information (see example).</li>
 
 <li>
-<b>accelerator</b> - the accelerator for the action. This is specified as a
-combination of the keys CTRL, SHIFT and ALT and an accelrator key. These values
-are not internationalized and should not be translated. Specification of the
-accelerator for the entry title should be done in the label - this value will
-not be used to build a menu entry.</li>
+<b>accelerator</b> - the accelerator for the action. This is specified
+as a combination of the keys CTRL, SHIFT and ALT and an accelrator key.
+These values are not internationalized and should not be translated. Specification
+of the accelerator for the entry title should be done in the label - this
+value will not be used to build a menu entry.</li>
 
 <li>
-<b>menubarPath</b> - a slash-delimited path ('/') that is used to specify
-the location of the action in the menu bar. <b>The path may only point
-to menus that belong to the target editor.</b> The last token represents
+<b>menubarPath</b> - a slash-delimited absolute path ('/') that is used
+to specify the location of the action in the menu bar. The path may only
+point to menus that belong to the target editor. The last token represents
 the named separator group into which the action will be added. If the path
 is omitted, the action will not appear in menu bar.</li>
 
@@ -142,15 +142,15 @@ plug-in.</li>
 
 <li>
 <b>disabledIcon</b> - a relative path of an icon that will be used to visually
-represent the action in its context when the action is disabled. If it is omitted
-the normal icon will simply appear greyed out. The path is relative to the 
-location of the plugin.xml file of the contributing plug-in.</li>
+represent the action in its context when the action is disabled. If it
+is omitted the normal icon will simply appear greyed out. The path is relative
+to the location of the plugin.xml file of the contributing plug-in.</li>
 
 <li>
 <b>hoverIcon</b> - a relative path of an icon that will be used to visually
-represent the action in its context when the mouse is over the action. If it 
-is omitted the normal icon will be used. The path is relative to the 
-location of the plugin.xml file of the contributing plug-in.</li>
+represent the action in its context when the mouse is over the action.
+If it is omitted the normal icon will be used. The path is relative to
+the location of the plugin.xml file of the contributing plug-in.</li>
 
 <li>
 <b>tooltip</b> - used if the action is to appear in the tool bar. Otherwise,
@@ -251,7 +251,9 @@ label="&amp;amp;XYZ Menu"></tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 &lt;separator name="group1"/></tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/menu></tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;action id="com.xyz.runXYZ"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;action</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+id="com.xyz.runXYZ"</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 label="&amp;amp;Run XYZ Tool"</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -272,7 +274,45 @@ class="com.xyz.actions.RunXYZ"></tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/editorContribution></tt>
 <br><tt>&nbsp;&nbsp; &lt;/extension></tt>
 <p>In the example above, the specified action will appear as a check box
-item in the menu, and as a toggle button in the toolbar.
+item in the new top-level menu named "XYZ Menu", and as a toggle button
+in the toolbar.
+<p>The following is an example of an editor action extension point:
+<p><tt>&nbsp;&nbsp; &lt;extension point="org.eclipse.ui.editorActions"></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;editorContribution</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id="com.xyz.xyz2Contribution"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; targetID="com.ibm.XMLEditor"></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;menu</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+id="XYZ2"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+label="&amp;amp;XYZ2 Menu"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+path="edit/additions"></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;separator name="group1"/></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/menu></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;action</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+id="com.xyz.runXYZ2"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+label="&amp;amp;Run XYZ2 Tool"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+menubarPath="edit/XYZ2/group1"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+state="true"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+icon="icons/runXYZ2.gif"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+tooltip="Run XYZ2 Tool"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+helpContextId="com.xyz.run_action_context2"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+class="com.xyz.actions.RunXYZ2"></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/action></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/editorContribution></tt>
+<br><tt>&nbsp;&nbsp; &lt;/extension></tt>
+<p>In the example above, the specified action will appear as a check box
+item in the sub-menu named "XYZ2 Menu" in the top level "Edit" menu.
 <p><b><i>API Information: </i></b>The value of the <tt>class</tt> attribute
 must be a fully qualified name of a Java class that implements <tt>org.eclipse.ui.IEditorActionDelegate</tt>.
 This interface is loaded as late as possible to avoid loading the entire
