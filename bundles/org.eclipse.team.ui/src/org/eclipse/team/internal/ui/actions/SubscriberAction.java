@@ -27,8 +27,8 @@ import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.internal.core.TeamPlugin;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
-import org.eclipse.team.ui.synchronize.viewers.SynchronizeModelElement;
 import org.eclipse.team.ui.synchronize.viewers.SyncInfoModelElement;
+import org.eclipse.team.ui.synchronize.viewers.SynchronizeModelElement;
 import org.eclipse.ui.*;
 
 /**
@@ -46,7 +46,7 @@ import org.eclipse.ui.*;
  * @see SyncInfoModelElement
  * @since 3.0
  */
-public abstract class SubscriberAction implements IObjectActionDelegate, IViewActionDelegate {
+public abstract class SubscriberAction implements IObjectActionDelegate, IViewActionDelegate, IEditorActionDelegate {
 	
 	private IStructuredSelection selection;
 	private IWorkbenchPart part;
@@ -303,6 +303,16 @@ public abstract class SubscriberAction implements IObjectActionDelegate, IViewAc
 				TeamPlugin.log(e);
 			}
 		}
+	}
+		
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IEditorActionDelegate#setActiveEditor(org.eclipse.jface.action.IAction, org.eclipse.ui.IEditorPart)
+	 */
+	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
+		// Ignore since these actions aren't meant for editors.
+		// This seems to be required because of a bug in the UI 
+		// plug-in that will disable viewer actions if they aren't
+		// editor actions? Go figure...
 	}
 	
 	protected Shell getShell() {
