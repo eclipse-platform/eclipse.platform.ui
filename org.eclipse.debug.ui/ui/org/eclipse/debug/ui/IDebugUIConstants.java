@@ -704,6 +704,14 @@ public interface IDebugUIConstants {
 	 * 
 	 * @since 2.1
 	 */
-	public static final String EXTENSION_POINT_LAUNCH_GROUPS = "launchGroups";	 //$NON-NLS-1$	
+	public static final String EXTENSION_POINT_LAUNCH_GROUPS = "launchGroups";	 //$NON-NLS-1$
+	
+	/**
+	 * Console line trackers extension point identifier (value
+	 * <code>"consoleLineTrackers"</code>).
+	 *
+	 * @since 2.1
+	 */
+	public static final String EXTENSION_POINT_CONSOLE_LINE_TRACKERS = "consoleLineTrackers";	 //$NON-NLS-1$		
 		
 }

@@ -10,9 +10,9 @@ http://www.eclipse.org/legal/cpl-v10.html
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.debug.ui.console.*;
+import org.eclipse.debug.ui.console.ConsoleColorProvider;
+import org.eclipse.debug.ui.console.IConsoleColorProvider;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.ui.texteditor.AbstractDocumentProvider;
 
@@ -30,8 +30,12 @@ public class ConsoleDocumentProvider extends AbstractDocumentProvider {
 			IProcess process = (IProcess)element;
 			IConsoleColorProvider contentProvider = getContentProvider(process);
 			ConsoleDocument doc= new ConsoleDocument(contentProvider);
-			IDocumentPartitioner partitioner = new ConsoleDocumentPartitioner(process, contentProvider);
+			ConsoleDocumentPartitioner partitioner = new ConsoleDocumentPartitioner(process, contentProvider);
+			ConsoleLineNotifier lineNotifier = getLineNotifier(process);
 			partitioner.connect(doc);
+			if (lineNotifier != null) {
+				partitioner.connectLineNotifier(lineNotifier);
+			}
 			return doc;
 		}
 		return null;
@@ -72,7 +76,7 @@ public class ConsoleDocumentProvider extends AbstractDocumentProvider {
 		String type = process.getAttribute(IProcess.ATTR_PROCESS_TYPE);
 		IConsoleColorProvider contentProvider = null;
 		if (type != null) {
-			contentProvider = ConsoleDocumentManager.getDefault().getContentProvider(type);
+			contentProvider = ConsoleDocumentManager.getDefault().getColorProvider(type);
 		}
 		if (contentProvider == null) {
 			contentProvider = new ConsoleColorProvider();
@@ -81,15 +85,15 @@ public class ConsoleDocumentProvider extends AbstractDocumentProvider {
 	}
 	
 	/**
-	 * Returns the line tracker for this console, or <code>null</code> if none.
+	 * Returns the line notifier for this console, or <code>null</code> if none.
 	 * 
 	 * @param process
-	 * @return line tracker, or <code>null</code>
+	 * @return line notifier, or <code>null</code>
 	 */
-	protected ConsoleDocumentLineTracker getLineTracker(IProcess process) {
+	protected ConsoleLineNotifier getLineNotifier(IProcess process) {
 		String type = process.getAttribute(IProcess.ATTR_PROCESS_TYPE);
 		if (type != null) {
-			// TODO:
+			return ConsoleDocumentManager.getDefault().newLineNotifier(type);
 		}
 		return null;
 	}

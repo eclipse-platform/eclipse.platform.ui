@@ -28,6 +28,7 @@
 <extension-point id="launchConfigurationTypeImages" name="%LaunchConfigurationTypeImageExtensionName"/>
 <extension-point id="debugActionGroups" name="%DebugActionGroupsExtensionName"/>
 <extension-point id="consoleColorProviders" name="%ConsoleColorProvidersExtensionName"/>
+<extension-point id="consoleLineTrackers" name="%ConsoleLineTrackersExtensionName"/>
 <extension-point id="launchGroups" name="%LaunchGroupsExtensionName"/>
 
 <!-- Extensions -->

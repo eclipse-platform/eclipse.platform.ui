@@ -185,6 +185,11 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 	 * Queue of hyperlinks to be added to the console
 	 */
 	private Vector fPendingLinks = new Vector();
+	
+	/**
+	 * The line notifier associated with this partitioner or <code>null</code> if none 
+	 */
+	private ConsoleLineNotifier fLineNotifier = null;
 
 	/**
 	 * @see org.eclipse.jface.text.IDocumentPartitioner#connect(org.eclipse.jface.text.IDocument)
@@ -205,6 +210,9 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 	 */
 	public void disconnect() {
 		kill();
+		if (fLineNotifier != null) {
+			fLineNotifier.disconnect();
+		}
 		fContentProvider.disconnect();
 		fDocument.setDocumentPartitioner(null);
 	}
@@ -286,6 +294,9 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 		if (isAppendInProgress()) {
 			// stream input
 			addPartition(new OutputPartition(fLastStreamIdentifier, event.getOffset(), text.length()));
+			if (fLineNotifier != null) {
+				fLineNotifier.consoleChanged(event);
+			}
 		} else {
 			// console keyboard input
 			int amountDeleted = event.getLength() - text.length();
@@ -713,6 +724,16 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 	 */
 	public IProcess getProcess() {
 		return fProcess;
+	}
+	
+	/**
+	 * Connects the given line notifier to this console document partitioner
+	 * 
+	 * @param lineNotifier
+	 */
+	public void connectLineNotifier(ConsoleLineNotifier lineNotifier) {
+		fLineNotifier = lineNotifier;
+		lineNotifier.connect(this);
 	}
 
 }

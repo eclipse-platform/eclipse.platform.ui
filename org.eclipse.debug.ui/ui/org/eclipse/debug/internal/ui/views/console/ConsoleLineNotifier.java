@@ -9,7 +9,7 @@ http://www.eclipse.org/legal/cpl-v10.html
 
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.console.IConsole;
-import org.eclipse.debug.ui.console.IConsoleListener;
+import org.eclipse.debug.ui.console.IConsoleLineTracker;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
@@ -20,7 +20,7 @@ import org.eclipse.jface.util.ListenerList;
  * Tracks text appended to the console and notifies listeners in terms of whole
  * lines.
  */
-public class ConsoleDocumentLineTracker {
+public class ConsoleLineNotifier {
 	
 	/**
 	 * Number of lines processed in the console
@@ -33,40 +33,67 @@ public class ConsoleDocumentLineTracker {
 	private ListenerList fListeners = new ListenerList(2);
 
 	/**
-	 * Constructor for ConsoleDocumentLineTracker.
+	 * The console this notifier is tracking 
 	 */
-	public ConsoleDocumentLineTracker() {
-		super();
+	private IConsole fConsole = null;
+	
+	/**
+	 * Connects this notifier to the given console.
+	 *  
+	 * @param console
+	 */
+	public void connect(IConsole console) {
+		fConsole = console;
+		Object[] listeners = fListeners.getListeners();
+		for (int i = 0; i < listeners.length; i++) {
+			IConsoleLineTracker listener = (IConsoleLineTracker)listeners[i];
+			listener.init(console);
+		}
 	}
-
+	
+	/**
+	 * Disposes this notifier 
+	 */
+	public void disconnect() {
+		Object[] listeners = fListeners.getListeners();
+		for (int i = 0; i < listeners.length; i++) {
+			IConsoleLineTracker listener = (IConsoleLineTracker)listeners[i];
+			listener.dispose();
+		}
+		fListeners = null;
+		fConsole = null;
+	}
+	
 	/**
 	 * Notification the console has changed based on the given event
 	 */
-	public void consoleChanged(IConsole console, DocumentEvent event) {
+	public void consoleChanged(DocumentEvent event) {
 		IDocument document = event.getDocument();
 		int lines = document.getNumberOfLines();
-		for (int line = fLinesProcessed; line <= lines; line++) {
-			String delimiter;
+		Object[] listeners = fListeners.getListeners();
+		for (int line = fLinesProcessed; line < lines; line++) {
+			String delimiter = null;
 			try {
 				delimiter = document.getLineDelimiter(line);
 			} catch (BadLocationException e) {
 				DebugUIPlugin.log(e);
 				return;
 			}
-			if (delimiter != null) {
-				fLinesProcessed++;
-				IRegion lineRegion = null;
-				try {
-					lineRegion = document.getLineInformation(line);
-				} catch (BadLocationException e) {
-					DebugUIPlugin.log(e);
-					return;
-				}
-				Object[] listeners = fListeners.getListeners();
-				for (int i = 0; i < listeners.length; i++) {
-					IConsoleListener listener = (IConsoleListener)listeners[i];
-					listener.lineAppended(console, lineRegion);
-				}
+			if (delimiter == null) {
+				// line not complete yet
+				return;
+			}
+			fLinesProcessed++;
+			IRegion lineRegion = null;
+			try {
+				lineRegion = document.getLineInformation(line);
+			} catch (BadLocationException e) {
+				DebugUIPlugin.log(e);
+				return;
+			}
+			for (int i = 0; i < listeners.length; i++) {
+				IConsoleLineTracker listener = (IConsoleLineTracker)listeners[i];
+				listener.lineAppended(lineRegion);
 			}
 		}
 		// TODO: what about the last line?
@@ -78,17 +105,8 @@ public class ConsoleDocumentLineTracker {
 	 * 
 	 * @param listener
 	 */
-	public void addConsoleListener(IConsoleListener listener) {
+	public void addConsoleListener(IConsoleLineTracker listener) {
 		fListeners.add(listener);
 	}
 
-	/**
-	 * Removes the given listener from the list of listeners notified when a
-	 * line of text is appended to the console.
-	 *
-	 * @param listener
-	 */
-	public void removeConsoleListener(IConsoleListener listener) {
-		fListeners.remove(listener);
-	}
 }

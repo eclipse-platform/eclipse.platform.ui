@@ -8,7 +8,10 @@ http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
@@ -56,7 +59,12 @@ public class ConsoleDocumentManager implements ILaunchListener {
 	
 	/**
 	 * Console document content provider extensions, keyed by extension id	 */
-	private Map fContentProviders;
+	private Map fColorProviders;
+	
+	/**
+	 * Console line trackers; keyed by process type to list of trackers (1:N) 
+	 */
+	private Map fLineTrackers;
 	
 	/**
 	 * Default document provider.	 */
@@ -307,21 +315,21 @@ public class ConsoleDocumentManager implements ILaunchListener {
 	}
 	
 	/**
-	 * Returns a new console document content provider extension for the given
+	 * Returns a new console document color provider extension for the given
 	 * process type, or <code>null</code> if none.
 	 * 	 * @param type corresponds to <code>IProcess.ATTR_PROCESS_TYPE</code>	 * @return IConsoleColorProvider	 */
-	public IConsoleColorProvider getContentProvider(String type) {
-		if (fContentProviders == null) {
-			fContentProviders = new HashMap();
+	public IConsoleColorProvider getColorProvider(String type) {
+		if (fColorProviders == null) {
+			fColorProviders = new HashMap();
 			IPluginDescriptor descriptor = DebugUIPlugin.getDefault().getDescriptor();
 			IExtensionPoint extensionPoint = descriptor.getExtensionPoint(IDebugUIConstants.EXTENSION_POINT_CONSOLE_COLOR_PROVIDERS);
 			IConfigurationElement[] elements = extensionPoint.getConfigurationElements();
 			for (int i = 0; i < elements.length; i++) {
 				IConfigurationElement extension = elements[i];
-				fContentProviders.put(extension.getAttributeAsIs("processType"), extension);
+				fColorProviders.put(extension.getAttributeAsIs("processType"), extension);
 			}
 		}
-		IConfigurationElement extension = (IConfigurationElement)fContentProviders.get(type);
+		IConfigurationElement extension = (IConfigurationElement)fColorProviders.get(type);
 		if (extension != null) {
 			try {
 				Object contentProvider = extension.createExecutableExtension("class"); //$NON-NLS-1$
@@ -336,4 +344,51 @@ public class ConsoleDocumentManager implements ILaunchListener {
 		}
 		return null;
 	} 
+	
+	/**
+	 * Creates and retuns a new line notifier for the given type of process, or
+	 * <code>null</code> if none. The notifier will be seeded with new console
+	 * line listeners registered for the given process type.
+	 * 
+	 * @param type process type
+	 * @return line notifier or <code>null</code>
+	 */
+	public ConsoleLineNotifier newLineNotifier(String type) {
+		if (fLineTrackers == null) {
+			fLineTrackers = new HashMap();
+			IPluginDescriptor descriptor = DebugUIPlugin.getDefault().getDescriptor();
+			IExtensionPoint extensionPoint = descriptor.getExtensionPoint(IDebugUIConstants.EXTENSION_POINT_CONSOLE_LINE_TRACKERS);
+			IConfigurationElement[] elements = extensionPoint.getConfigurationElements();
+			for (int i = 0; i < elements.length; i++) {
+				IConfigurationElement extension = elements[i];
+				String processType = extension.getAttributeAsIs("processType");
+				List list = (List)fLineTrackers.get(processType);
+				if (list == null) {
+					list = new ArrayList();
+					fLineTrackers.put(processType, list);
+				}
+				list.add(extension);
+			}
+		}
+		List extensions = (List)fLineTrackers.get(type);
+		ConsoleLineNotifier lineNotifier = null;
+		if (extensions != null) {
+			lineNotifier = new ConsoleLineNotifier();
+			Iterator iter = extensions.iterator();
+			while (iter.hasNext()) {
+				IConfigurationElement extension = (IConfigurationElement)iter.next();
+				try {
+					Object tracker = extension.createExecutableExtension("class"); //$NON-NLS-1$
+					if (tracker instanceof IConsoleLineTracker) {
+						lineNotifier.addConsoleListener((IConsoleLineTracker)tracker);
+					} else {
+						DebugUIPlugin.logErrorMessage(MessageFormat.format("Invalid extension {0} - class must be an instance of IConsoleLineTracker",new String[]{extension.getDeclaringExtension().getUniqueIdentifier()}));
+					}
+				} catch (CoreException e) {
+					DebugUIPlugin.log(e);
+				}
+			}
+		}
+		return lineNotifier;		
+	}
 }
