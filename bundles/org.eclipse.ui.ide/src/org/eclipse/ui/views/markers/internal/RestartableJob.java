@@ -48,7 +48,6 @@ public final class RestartableJob {
 	 * @param newRunnable
 	 * @param service IWorkbenchSiteProgressService the service we are
 	 * going to use to show progress or <code>null</code>.
-	 * @return RestartableJob
 	 */
 	public RestartableJob(
 			String name, 

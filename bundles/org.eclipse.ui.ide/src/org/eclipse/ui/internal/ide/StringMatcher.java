@@ -13,7 +13,7 @@ package org.eclipse.ui.internal.ide;
 import java.util.*;
 
 /**
- * A string pattern matcher, suppporting ‘*’ and ‘?’ wildcards.
+ * A string pattern matcher suppporting &#39;*&#39; and &#39;&#63;&#39; wildcards.
  */
 public class StringMatcher {
 	protected String fPattern;
@@ -46,18 +46,18 @@ public class StringMatcher {
 	}
 	/**
 	 * StringMatcher constructor takes in a String object that is a simple 
-	 * pattern which may contain ‘*’ for 0 and many characters and
-	 * ‘?’ for exactly one character.  
+	 * pattern which may contain &#39*&#39 for 0 and many characters and
+	 * &#39;&#63;&#39; for exactly one character.  
 	 *
-	 * Literal '*' and '?' characters must be escaped in the pattern 
-	 * e.g., "\*" means literal "*", etc.
+	 * Literal &#39;*&#39; and &#39;*&#39; characters must be escaped in the pattern 
+	 * e.g. &quot;&#92;*&quot; means literal &quot;*&quot;, etc.
 	 *
 	 * Escaping any other character (including the escape character itself), 
 	 * just results in that character in the pattern.
-	 * e.g., "\a" means "a" and "\\" means "\"
+	 * e.g. &quot;&#92;a&quot; means &quot;a&quot; and &quot;&#92;&#92;&quot; means &quot;&#92;&quot;
 	 *
 	 * If invoking the StringMatcher with string literals in Java, don't forget
-	 * escape characters are represented by "\\".
+	 * escape characters are represented by &quot;&#92;&#92;&quot;.
 	 *
 	 * @param pattern the pattern to match text against
 	 * @param ignoreCase if true, case is ignored
@@ -88,8 +88,8 @@ public class StringMatcher {
 	 * (inclusive) and ending positions (exclusive) of the first occurrence of the 
 	 * pattern in the specified range of the text; return null if not found or subtext
 	 * is empty (start==end). A pair of zeros is returned if pattern is empty string
-	 * Note that for pattern like "*abc*" with leading and trailing stars, position of "abc"
-	 * is returned. For a pattern like"*??*" in text "abcdf", (1,3) is returned
+	 * Note that for pattern like &quot;*abc*&quot; with leading and trailing stars, position of &quot;abc&quot;
+	 * is returned. For a pattern like&quot;*&#63;&#63;*&quot; in text &quot;abcdf&quot;, (1,3) is returned
 	 */
 	public StringMatcher.Position find(String text, int start, int end) {
 		if (text == null)
@@ -226,8 +226,8 @@ public class StringMatcher {
 		fBound= fLength;
 	}
 	/**
-	 * Parses the given pattern into segments seperated by wildcard '*' characters.
-	 * @param p, a String object that is a simple regular expression with ‘*’ and/or ‘?’
+	 * Parses the given pattern into segments seperated by wildcard &#39;*&#39; characters.
+	 * @param p, a String object that is a simple regular expression with ‘*’ and/or &#39;&#63;&#39;
 	 */
 	private void parseWildCards() {
 		if(fPattern.startsWith("*"))//$NON-NLS-1$
@@ -311,11 +311,10 @@ public class StringMatcher {
 		return -1;
 	}
 	/** 
-	 * @param text  a simple regular expression that may only contain '?'(s)
+	 * @param text  a simple regular expression that may only contain '&#63;'(s)
 	 * @param start  the starting index in the text for search, inclusive
 	 * @param end  the stopping point of search, exclusive
-	 * @param p  a simple regular expression that may contains '?'
-	 * @param caseIgnored  whether the pattern is not casesensitive
+	 * @param p  a simple regular expression that may contains '&#63;'
 	 * @return the starting index in the text of the pattern , or -1 if not found 
 	 */
 	protected int regExpPosIn(String text, int start, int end, String p) {
@@ -332,10 +331,10 @@ public class StringMatcher {
 	 * 
 	 * @return boolean
 	 * @param  text  a String to match
-	 * @param start  int that indicates the starting index of match, inclusive
-	 * @param end  int that indicates the ending index of match, exclusive
-	 * @param p  String,  String, a simple regular expression that may contain '?'
-	 * @param ignoreCase  boolean indicating wether code>p</code> is case sensitive
+	 * @param tStart  int that indicates the starting index of match, inclusive
+	 * @param p  String,  String, a simple regular expression that may contain '&#63;'
+	 * @param pStart
+	 * @param plen 	
 	 */
 	protected boolean regExpRegionMatches(String text, int tStart, String p, int pStart, int plen) {
 		while (plen-- > 0) {
@@ -368,7 +367,6 @@ public class StringMatcher {
 	 * @param start  the starting index in the text for search, inclusive
 	 * @param end  the stopping point of search, exclusive
 	 * @param p  a string that has no wildcard
-	 * @param ignoreCase  boolean indicating wether code>p</code> is case sensitive
 	 * @return the starting index in the text of the pattern , or -1 if not found 
 	 */
 	protected int textPosIn(String text, int start, int end, String p) { 

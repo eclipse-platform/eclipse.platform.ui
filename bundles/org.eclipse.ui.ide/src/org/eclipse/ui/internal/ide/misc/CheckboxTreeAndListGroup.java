@@ -44,18 +44,18 @@ public class CheckboxTreeAndListGroup implements ICheckStateListener, ISelection
 	private	CheckboxTreeViewer	treeViewer;
 	private	CheckboxTableViewer	listViewer;
 /**
- *	Create an instance of this class.  Use this constructor if you wish to specify
+ *  Create an instance of this class.  Use this constructor if you wish to specify
  *	the width and/or height of the combined widget (to only hardcode one of the
  *	sizing dimensions, specify the other dimension's value as -1)
- *
- *	@param parent org.eclipse.swt.widgets.Composite
- *	@param style int
- *  @param rootObject java.lang.Object
- *	@param childPropertyName java.lang.String
- *	@param parentPropertyName java.lang.String
- *	@param listPropertyName java.lang.String
- *	@param width int
- *	@param height int
+ * @param parent
+ * @param rootObject
+ * @param treeContentProvider
+ * @param treeLabelProvider
+ * @param listContentProvider
+ * @param listLabelProvider
+ * @param style
+ * @param width
+ * @param height
  */
 public CheckboxTreeAndListGroup(
 	Composite parent,Object rootObject,
@@ -235,7 +235,7 @@ protected void createTreeViewer(Composite parent, int width, int height) {
  * To determine whether a tree item should be white-checked use method
  * #determineShouldBeWhiteChecked(Object).
  *
- * @param element java.lang.Object
+ * @param treeElement java.lang.Object
  * @return boolean
  * @see #determineShouldBeWhiteChecked(java.lang.Object)
  */
@@ -459,7 +459,7 @@ public void removeCheckStateListener(ICheckStateListener listener) {
 /**
  *	Handle the selection of an item in the tree viewer
  *
- *	@param selection ISelection
+ *	@param event SelectionChangedEvent
  */
 public void selectionChanged(SelectionChangedEvent event) {
 	IStructuredSelection selection = (IStructuredSelection) event.getSelection();
@@ -648,7 +648,7 @@ protected void updateHierarchy(Object treeElement) {
 /**
  * Update the selections of the tree elements in items to reflect the new
  * selections provided.
- * @param Map with keys of Object (the tree element) and values of List (the selected
+ * @param items Map with keys of Object (the tree element) and values of List (the selected
  * list elements).
  */
 public void updateSelections(final Map items) {

@@ -40,8 +40,8 @@ public class OpenWorkspaceAction extends Action implements
     private IWorkbenchWindow window;
 
     /**
-     * Set this action's definition and text so that it will be used for
-     * File->Open Workspace... in the argument window.
+     * Set definition for this action and text so that it will be used for
+     * File -&gt; Open Workspace in the argument window.
      * 
      * @param window
      *            the window in which this action should appear
