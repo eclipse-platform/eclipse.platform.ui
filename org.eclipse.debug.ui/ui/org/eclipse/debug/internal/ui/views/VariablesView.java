@@ -76,7 +76,8 @@ import org.eclipse.ui.texteditor.IUpdate;
  */
 public class VariablesView extends AbstractDebugEventHandlerView implements ISelectionChangedListener, 
 																	IPropertyChangeListener,
-																	IValueDetailListener {
+																	IValueDetailListener,
+																	IDebugExceptionHandler {
 
 	
 	/**
@@ -158,6 +159,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	}
 
 	protected void setViewerInput(IStructuredSelection ssel) {
+		
 		IStackFrame frame= null;
 		if (ssel.size() == 1) {
 			Object input= ssel.getFirstElement();
@@ -176,7 +178,8 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		}
 		if (frame != null) {
 			setDebugModel(frame.getModelIdentifier());
-		}		
+		}
+		showViewer();
 		getViewer().setInput(frame);
 		
 	}
@@ -278,7 +281,9 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	 * @return a content provider
 	 */
 	protected IContentProvider createContentProvider() {
-		return new VariablesViewContentProvider();
+		VariablesViewContentProvider cp = new VariablesViewContentProvider();
+		cp.setExceptionHandler(this);
+		return cp;
 	}
 	
 	/**
@@ -703,5 +708,12 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		return getSashForm();
 	}	
 	
+	/**
+	 * @see IDebugExceptionHandler#handleException(DebugException)
+	 */
+	public void handleException(DebugException e) {
+		showMessage(e.getMessage());
+	}
+
 }
 

@@ -32,6 +32,12 @@ public class VariablesViewContentProvider implements ITreeContentProvider {
 	private HashMap fParentCache;
 	
 	/**
+	 * Handler for exceptions as content is retrieved
+	 */
+	private IDebugExceptionHandler fExceptionHandler = null;
+	
+	
+	/**
 	 * Constructs a new provider
 	 */
 	public VariablesViewContentProvider() {
@@ -57,7 +63,11 @@ public class VariablesViewContentProvider implements ITreeContentProvider {
 				return children;
 			}
 		} catch (DebugException e) {
-			DebugUIPlugin.logError(e);
+			if (getExceptionHandler() != null) {
+				getExceptionHandler().handleException(e);
+			} else {
+				DebugUIPlugin.logError(e);
+			}
 		}
 		return new Object[0];
 	}
@@ -96,6 +106,7 @@ public class VariablesViewContentProvider implements ITreeContentProvider {
 	 */
 	public void dispose() {
 		fParentCache= null;
+		setExceptionHandler(null);
 	}
 	
 	protected void clearCache() {
@@ -168,5 +179,23 @@ public class VariablesViewContentProvider implements ITreeContentProvider {
 		}
 		return false;
 	}
+	
+	/**
+	 * Sets an exception handler for this content provider.
+	 * 
+	 * @param handler debug exception handler or <code>null</code>
+	 */
+	protected void setExceptionHandler(IDebugExceptionHandler handler) {
+		fExceptionHandler = handler;
+	}
+	
+	/**
+	 * Returns the exception handler for this content provider.
+	 * 
+	 * @return debug exception handler or <code>null</code>
+	 */
+	protected IDebugExceptionHandler getExceptionHandler() {
+		return fExceptionHandler;
+	}	
 }
 
