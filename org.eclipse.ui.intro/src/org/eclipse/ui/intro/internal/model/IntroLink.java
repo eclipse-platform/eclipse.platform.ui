@@ -12,6 +12,7 @@
 package org.eclipse.ui.intro.internal.model;
 
 import org.eclipse.core.runtime.*;
+import org.w3c.dom.*;
 
 /**
  * An intro Link. This model class is responsible for parsing and creating an
@@ -19,63 +20,63 @@ import org.eclipse.core.runtime.*;
  */
 public class IntroLink extends AbstractTextElement {
 
-	protected static final String TAG_LINK = "link";
+    protected static final String TAG_LINK = "link";
 
-	private static final String ATT_LABEL = "label";
-	private static final String ATT_URL = "url";
+    private static final String ATT_LABEL = "label";
+    private static final String ATT_URL = "url";
 
-	private String label;
-	private String url;
-	private IntroURL introURL;
+    private String label;
+    private String url;
+    private IntroURL introURL;
 
-	/**
-	 * @param element
-	 */
-	IntroLink(IConfigurationElement element) {
-		super(element);
-		url = element.getAttribute(ATT_URL);
-		label = element.getAttribute(ATT_LABEL);
+    /**
+     * @param element
+     */
+    IntroLink(Element element, IPluginDescriptor pd) {
+        super(element, pd);
+        url = getAttribute(element, ATT_URL);
+        label = getAttribute(element, ATT_LABEL);
 
-		url = IntroModelRoot.resolveURL(url, element);
-		if (url != null) {
-			// check the URL.
-			IntroURLParser parser = new IntroURLParser(url);
-			if (parser.hasIntroUrl())
-				introURL = parser.getIntroURL();
-		}
-	}
+        url = IntroModelRoot.resolveURL(url, pd);
+        if (url != null) {
+            // check the URL.
+            IntroURLParser parser = new IntroURLParser(url);
+            if (parser.hasIntroUrl())
+                introURL = parser.getIntroURL();
+        }
+    }
 
-	/**
-	 * @return Returns the label.
-	 */
-	public String getLabel() {
-		return label;
-	}
+    /**
+     * @return Returns the label.
+     */
+    public String getLabel() {
+        return label;
+    }
 
-	/**
-	 * @return Returns the url.
-	 */
-	public String getUrl() {
-		return url;
-	}
+    /**
+     * @return Returns the url.
+     */
+    public String getUrl() {
+        return url;
+    }
 
-	/**
-	 * Retruns an IntroURL instance if link has a valid intro url. Returns null
-	 * otherwise.
-	 * 
-	 * @return Returns the introURL.
-	 */
-	public IntroURL getIntroURL() {
-		return introURL;
-	}
+    /**
+     * Retruns an IntroURL instance if link has a valid intro url. Returns null
+     * otherwise.
+     * 
+     * @return Returns the introURL.
+     */
+    public IntroURL getIntroURL() {
+        return introURL;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.intro.internal.model.IntroElement#getType()
-	 */
-	public int getType() {
-		return AbstractIntroElement.LINK;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.intro.internal.model.IntroElement#getType()
+     */
+    public int getType() {
+        return AbstractIntroElement.LINK;
+    }
 
 }

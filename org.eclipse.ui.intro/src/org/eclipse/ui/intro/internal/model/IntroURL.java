@@ -16,14 +16,13 @@ import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.dialogs.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.*;
 import org.eclipse.ui.intro.*;
 import org.eclipse.ui.intro.internal.*;
-import org.eclipse.ui.intro.internal.extensions.*;
+import org.eclipse.ui.intro.internal.model.loader.*;
 import org.eclipse.ui.intro.internal.parts.*;
 import org.eclipse.ui.intro.internal.presentations.*;
 import org.eclipse.ui.intro.internal.util.*;
@@ -283,13 +282,13 @@ public class IntroURL {
 
     private void showMessage(String message) {
 
-        //TODO some of the actions run UI code yet they are in
+        // REVISIT: some of the actions run UI code yet they are in
         // model package.
         if (message == null)
             message = "";
         else
             message = URLDecoder.decode(message);
-        MessageDialog.openInformation(null, "Introduction", message);
+        DialogUtil.displayInfoMessage(null, message);
     }
 
     /**

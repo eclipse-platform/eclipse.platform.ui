@@ -18,7 +18,7 @@ import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.intro.*;
-import org.eclipse.ui.intro.internal.extensions.*;
+import org.eclipse.ui.intro.internal.model.loader.*;
 import org.eclipse.ui.intro.internal.presentations.*;
 import org.eclipse.ui.intro.internal.util.*;
 
@@ -42,7 +42,7 @@ import org.eclipse.ui.intro.internal.util.*;
  * implmenetation.</li>
  * <ul>
  */
-public class IntroPartPresentation extends AbstractCommonIntroElement {
+public class IntroPartPresentation extends AbstractBaseIntroElement {
 
     protected static final String TAG_PRESENTATION = "presentation";
     private static final String TAG_IMPLEMENTATION = "implementation";
@@ -151,7 +151,7 @@ public class IntroPartPresentation extends AbstractCommonIntroElement {
      * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
      */
     public void createPartControl(Composite parent) {
-        Vector validImplementations = getValidImplementationElements(getConfigurationElement());
+        Vector validImplementations = getValidImplementationElements(getCfgElement());
         IConfigurationElement implementationElement = null;
         //Composite container = new Composite()
         for (int i = 0; i < validImplementations.size(); i++) {
@@ -168,19 +168,19 @@ public class IntroPartPresentation extends AbstractCommonIntroElement {
                 implementation.init(introPart);
                 implementation.createPartControl(parent);
                 Logger.logInfo("Loaded config implementation from: "
-                        + ExtensionPointManager.getLogString(
+                        + ModelUtil.getLogString(
                                 implementationElement, "class"));
                 break;
             } catch (SWTError e) {
-                Logger.logWarning("Failed to create implementation from: "
-                        + ExtensionPointManager.getLogString(
-                                implementationElement, "class"));
+                Logger.logError("Failed to create implementation from: "
+                        + ModelUtil.getLogString(
+                                implementationElement, "class"), e);
                 implementation = null;
                 implementationElement = null;
             } catch (Exception e) {
-                Logger.logWarning("Failed to create implementation from: "
-                        + ExtensionPointManager.getLogString(
-                                implementationElement, "class"));
+                Logger.logError("Failed to create implementation from: "
+                        + ModelUtil.getLogString(
+                                implementationElement, "class"), e);
                 implementation = null;
                 implementationElement = null;
             }
@@ -366,4 +366,6 @@ public class IntroPartPresentation extends AbstractCommonIntroElement {
     public IntroHead getHead() {
         return head;
     }
+
+
 }

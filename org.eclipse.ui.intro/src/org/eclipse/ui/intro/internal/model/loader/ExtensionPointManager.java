@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.intro.internal.extensions;
+package org.eclipse.ui.intro.internal.model.loader;
 
 import org.eclipse.ui.intro.internal.model.*;
 
@@ -67,7 +67,7 @@ public class ExtensionPointManager extends BaseExtensionPointManager {
         if (currentModel == null)
             // we never loaded this model before, or we tried before and we
             // failed. Load it. Get the correct config element based on
-            // config intoId, and log any extra contributions.
+            // config introId, and log any extra contributions.
             loadCurrentModel();
         return currentModel;
     }

@@ -14,6 +14,7 @@ package org.eclipse.ui.intro.internal.model;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.w3c.dom.*;
 
 /**
  * An Intro Part home page. A home page is special because it is the page that
@@ -32,29 +33,26 @@ public class IntroHomePage extends AbstractIntroPage {
     private String standby_alt_style;
     private boolean isDynamic = false;
 
-    /**
-     *  
-     */
-    IntroHomePage(IConfigurationElement element) {
-        super(element);
-        url = element.getAttribute(ATT_URL);
+
+    IntroHomePage(Element element, IPluginDescriptor pd) {
+        super(element, pd);
+        url = getAttribute(element, ATT_URL);
         if (url == null) {
             // if we do not have a URL attribute, then we have dynamic content.
             isDynamic = true;
-            standby_style = element.getAttribute(ATT_STANDBY_STYLE);
-            standby_alt_style = element
-                    .getAttribute(ATT_STANDBY_ALT_STYLE);
+            standby_style = getAttribute(element, ATT_STANDBY_STYLE);
+            standby_alt_style = getAttribute(element, ATT_STANDBY_ALT_STYLE);
 
             // Resolve standby styles. The ALT style need not be resolved.
-            standby_style = IntroModelRoot.getPluginLocation(standby_style,
-                    element);
+            standby_style = IntroModelRoot.getPluginLocation(standby_style, pd);
         } else {
             // check the url/standby-url attributes and update accordingly.
-            url = IntroModelRoot.resolveURL(url, element);
-            standby_url = element.getAttribute(ATT_STANDBY_URL);
-            standby_url = IntroModelRoot.resolveURL(standby_url, element);
+            url = IntroModelRoot.resolveURL(url, pd);
+            standby_url = getAttribute(element, ATT_STANDBY_URL);
+            standby_url = IntroModelRoot.resolveURL(standby_url, pd);
         }
     }
+
 
     /**
      * @return Returns the url.
@@ -140,7 +138,7 @@ public class IntroHomePage extends AbstractIntroPage {
                 vectorDivs.remove(aDiv);
                 i--;
             }
-            
+
         }
 
         // return proper object type.

@@ -12,26 +12,27 @@
 package org.eclipse.ui.intro.internal.model;
 
 import org.eclipse.core.runtime.*;
+import org.w3c.dom.*;
 
 /**
  * An Intro page.
  */
 public class IntroPage extends AbstractIntroPage {
 
-	/**
-	 *  
-	 */
-	IntroPage(IConfigurationElement element) {
-		super(element);
-	}
+    /**
+     *  
+     */
+    IntroPage(Element element, IPluginDescriptor pd) {
+        super(element, pd);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.intro.internal.model.IntroElement#getType()
-	 */
-	public int getType() {
-		return AbstractIntroElement.PAGE;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.intro.internal.model.IntroElement#getType()
+     */
+    public int getType() {
+        return AbstractIntroElement.PAGE;
+    }
 
 }

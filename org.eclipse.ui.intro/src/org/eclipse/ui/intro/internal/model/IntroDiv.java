@@ -12,6 +12,7 @@
 package org.eclipse.ui.intro.internal.model;
 
 import org.eclipse.core.runtime.*;
+import org.w3c.dom.*;
 
 /**
  * An intro div.
@@ -27,9 +28,9 @@ public class IntroDiv extends AbstractIntroContainer {
     /**
      * @param element
      */
-    IntroDiv(IConfigurationElement element) {
-        super(element);
-        label = element.getAttribute(ATT_LABEL);
+    IntroDiv(Element element, IPluginDescriptor pd) {
+        super(element, pd);
+        label = getAttribute(element, ATT_LABEL);
     }
 
     /**

@@ -12,11 +12,12 @@
 package org.eclipse.ui.intro.internal.model;
 
 import org.eclipse.core.runtime.*;
+import org.w3c.dom.*;
 
 /**
  * An intro image element.
  */
-public class IntroImage extends AbstractCommonIntroElement {
+public class IntroImage extends AbstractBaseIntroElement {
 
     protected static final String TAG_IMAGE = "img";
 
@@ -26,13 +27,13 @@ public class IntroImage extends AbstractCommonIntroElement {
     private String src;
     private String alt;
 
-    IntroImage(IConfigurationElement element) {
-        super(element);
-        src = element.getAttribute(ATT_SRC);
-        alt = element.getAttribute(ATT_ALT);
+    IntroImage(Element element, IPluginDescriptor pd) {
+        super(element, pd);
+        src = getAttribute(element, ATT_SRC);
+        alt = getAttribute(element, ATT_ALT);
 
         // Resolve.
-        src = IntroModelRoot.getPluginLocation(src, element);
+        src = IntroModelRoot.getPluginLocation(src, pd);
     }
 
     /**
@@ -56,6 +57,13 @@ public class IntroImage extends AbstractCommonIntroElement {
      */
     public int getType() {
         return AbstractIntroElement.IMAGE;
+    }
+
+    /**
+     * @return Returns the class id.
+     */
+    public String getClassId() {
+        return super.class_id;
     }
 
 }

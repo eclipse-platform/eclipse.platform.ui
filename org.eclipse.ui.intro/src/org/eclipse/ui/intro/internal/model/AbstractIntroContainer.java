@@ -14,23 +14,34 @@ package org.eclipse.ui.intro.internal.model;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.ui.intro.internal.extensions.*;
+import org.eclipse.ui.intro.internal.model.loader.*;
+import org.w3c.dom.*;
 
 /**
  * An intro config component that is a container, ie: it can have children.
  */
-public abstract class AbstractIntroContainer extends AbstractCommonIntroElement {
+public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
 
     // vector is lazily created when children are populated.
     protected Vector children;
     protected boolean loaded = false;
     protected boolean resolved = false;
 
+    private Element element;
+
     /**
      * @param element
      */
     AbstractIntroContainer(IConfigurationElement element) {
         super(element);
+    }
+
+    /**
+     * @param element
+     */
+    AbstractIntroContainer(Element element, IPluginDescriptor pd) {
+        super(element, pd);
+        this.element = element;
     }
 
     /**
@@ -161,14 +172,24 @@ public abstract class AbstractIntroContainer extends AbstractCommonIntroElement 
 
     /**
      * Load all the children of this container. A container can have other
-     * containers, links, htmls, text, image, include. Load then in the order
-     * they appear in the plugin.xml matrkup.
+     * containers, links, htmls, text, image, include. Load them in the order
+     * they appear in the xml content file.
      */
     protected void loadChildren() {
+        // init the children vector.
         children = new Vector();
-        IConfigurationElement[] childElements = getConfigurationElement()
-                .getChildren();
-        addChildren(childElements);
+
+        NodeList nodeList = element.getChildNodes();
+        Vector vector = new Vector();
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            Node node = nodeList.item(i);
+            if (node.getNodeType() == Node.ELEMENT_NODE)
+                vector.add(node);
+        }
+        Element[] filteredElements = new Element[vector.size()];
+        vector.copyInto(filteredElements);
+
+        addChildren(filteredElements, getPluginDesc());
         loaded = true;
     }
 
@@ -177,12 +198,12 @@ public abstract class AbstractIntroContainer extends AbstractCommonIntroElement 
      * 
      * @param childElements
      */
-    protected void addChildren(IConfigurationElement[] childElements) {
+    protected void addChildren(Element[] childElements, IPluginDescriptor pd) {
         // loop through each child, in order as appearing in XML, and load the
         // model classes.
         for (int i = 0; i < childElements.length; i++) {
-            IConfigurationElement childElement = childElements[i];
-            AbstractIntroElement child = getModelChild(childElement);
+            Element childElement = childElements[i];
+            AbstractIntroElement child = getModelChild(childElement, pd);
             if (child != null) {
                 child.setParent(this);
                 children.addElement(child);
@@ -196,22 +217,27 @@ public abstract class AbstractIntroContainer extends AbstractCommonIntroElement 
      * 
      * @param childElements
      */
-    protected AbstractIntroElement getModelChild(
-            IConfigurationElement childElement) {
+    protected AbstractIntroElement getModelChild(Element childElement,
+            IPluginDescriptor pd) {
+
         AbstractIntroElement child = null;
-        if (childElement.getName().equalsIgnoreCase(IntroDiv.TAG_DIV))
-            child = new IntroDiv(childElement);
-        else if (childElement.getName().equalsIgnoreCase(IntroLink.TAG_LINK))
-            child = new IntroLink(childElement);
-        else if (childElement.getName().equalsIgnoreCase(IntroText.TAG_TEXT))
-            child = new IntroText(childElement);
-        else if (childElement.getName().equalsIgnoreCase(IntroImage.TAG_IMAGE))
-            child = new IntroImage(childElement);
-        else if (childElement.getName().equalsIgnoreCase(IntroHTML.TAG_HTML))
-            child = new IntroHTML(childElement);
-        else if (childElement.getName().equalsIgnoreCase(
+        if (childElement.getNodeName().equalsIgnoreCase(IntroDiv.TAG_DIV))
+            child = new IntroDiv(childElement, pd);
+        else if (childElement.getNodeName()
+                .equalsIgnoreCase(IntroLink.TAG_LINK))
+            child = new IntroLink(childElement, pd);
+        else if (childElement.getNodeName()
+                .equalsIgnoreCase(IntroText.TAG_TEXT))
+            child = new IntroText(childElement, pd);
+        else if (childElement.getNodeName().equalsIgnoreCase(
+                IntroImage.TAG_IMAGE))
+            child = new IntroImage(childElement, pd);
+        else if (childElement.getNodeName()
+                .equalsIgnoreCase(IntroHTML.TAG_HTML))
+            child = new IntroHTML(childElement, pd);
+        else if (childElement.getNodeName().equalsIgnoreCase(
                 IntroInclude.TAG_INCLUDE))
-            child = new IntroInclude(childElement);
+            child = new IntroInclude(childElement, pd);
         return child;
     }
 
@@ -317,11 +343,12 @@ public abstract class AbstractIntroContainer extends AbstractCommonIntroElement 
             AbstractIntroElement aChild = (AbstractIntroElement) children
                     .elementAt(i);
             if (!aChild.isOfType(BASE_ELEMENT))
-                // includes do not have ids, and can not be targets for other
-                // includes. Skip, just in case someone adds an id
-                // to it!
+                // includes and heads do not have ids, and so can not be
+                // referenced directly. This means that they can not be targets
+                // for other includes. Skip, just in case someone adds an id to
+                // it!
                 continue;
-            AbstractCommonIntroElement child = (AbstractCommonIntroElement) aChild;
+            AbstractBaseIntroElement child = (AbstractBaseIntroElement) aChild;
             if (child.getId() != null && child.getId().equals(elementId))
                 return child;
         }
@@ -374,8 +401,7 @@ public abstract class AbstractIntroContainer extends AbstractCommonIntroElement 
         // for alt-style cache pd for loading resources.
         style = target.getParentPage().getAltStyle();
         if (style != null) {
-            IPluginDescriptor pd = target.getConfigurationElement()
-                    .getDeclaringExtension().getDeclaringPluginDescriptor();
+            IPluginDescriptor pd = target.getPluginDesc();
             getParentPage().addAltStyle(style, pd);
         }
     }
@@ -394,6 +420,13 @@ public abstract class AbstractIntroContainer extends AbstractCommonIntroElement 
      */
     protected boolean isLoaded() {
         return loaded;
+    }
+
+    /**
+     * @return Returns the class id.
+     */
+    public String getClassId() {
+        return super.class_id;
     }
 
 }

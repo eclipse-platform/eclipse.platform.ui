@@ -16,8 +16,9 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.util.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.intro.internal.extensions.*;
+import org.eclipse.ui.intro.internal.model.loader.*;
 import org.eclipse.ui.intro.internal.util.*;
+import org.w3c.dom.*;
 
 /**
  * The root class for the OOBE model. It loads the configuration into the
@@ -51,8 +52,9 @@ public class IntroModelRoot extends AbstractIntroContainer {
      */
     public static final int CURRENT_PAGE_PROPERTY_ID = 1;
 
-    // True if the model has been loaded.
-    //private boolean loaded = false;
+
+    private static final String ATT_CONTENT = "content";
+
 
     // False if there is no valid contribution to the
     // org.eclipse.ui.into.config extension point. Start off with true, and set
@@ -60,9 +62,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
     private boolean hasValidConfig = true;
 
     private IntroPartPresentation introPartPresentation;
-
     private IntroHomePage homePage;
-
     private String currentPageId;
 
     // the config extensions for this model.
@@ -81,6 +81,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
         // the config element that represents the correct model root.
         super(configElement);
         this.configExtensionElements = configExtensionElements;
+
     }
 
     public void loadModel() {
@@ -91,7 +92,9 @@ public class IntroModelRoot extends AbstractIntroContainer {
      * loads the full model. The children of a model root are the presentation,
      * followed by all pages, and all shared divs. Then if the model has
      * extension, its the unresolved container extensions, followed by all
-     * extension pages and divs.
+     * extension pages and divs. The presentation is loaded from the
+     * IConfiguration element representing the config. All else is loaded from
+     * xml content file.
      *  
      */
     protected void loadChildren() {
@@ -116,12 +119,23 @@ public class IntroModelRoot extends AbstractIntroContainer {
         introPartPresentation.setParent(this);
 
         // now load all children of the config. There should only be pages and
-        // divs here. And order is not important.
-        loadPages();
-        loadSharedDivs();
+        // divs here. And order is not important. These elements are loaded from
+        // the content file DOM.
+        Document document = loadDOM(getCfgElement());
+        if (document == null) {
+            // we failed to parse the content file. Intro Parser would have
+            // logged the fact. Parser would also have checked to see if the
+            // content file has the correct root tag.
+            setModelState(true, false);
+            return;
+        }
+
+        loadPages(document, getPluginDesc());
+        loadSharedDivs(document, getPluginDesc());
 
         setModelState(true, true);
     }
+
 
     /**
      * Resolve each include in this container's children.
@@ -135,33 +149,36 @@ public class IntroModelRoot extends AbstractIntroContainer {
     private IConfigurationElement loadPresentation() {
         // If there is more than one presentation, load first one, and log
         // rest.
-        IConfigurationElement[] presentationElements = getConfigurationElement()
+        IConfigurationElement[] presentationElements = getCfgElement()
                 .getChildren(IntroPartPresentation.TAG_PRESENTATION);
 
-        IConfigurationElement presentationElement = ExtensionPointManager
+        IConfigurationElement presentationElement = ModelUtil
                 .validateSingleContribution(presentationElements,
                         IntroPartPresentation.ATT_HOME_PAGE_ID);
         return presentationElement;
     }
 
+
+
     /**
-     * Loads all pages defined in this config.
+     * Loads all pages defined in this config from the xml content file.
      */
-    private void loadPages() {
+    private void loadPages(Document dom, IPluginDescriptor pd) {
         String homePageId = getPresentation().getHomePageId();
-        IConfigurationElement[] pages = getConfigurationElement().getChildren(
+        Element[] pages = ModelUtil.getElementsByTagName(dom,
                 IntroPage.TAG_PAGE);
         for (int i = 0; i < pages.length; i++) {
-            if (pages[i].getAttribute(IntroPage.ATT_ID).equalsIgnoreCase(
+            Element pageElement = pages[i];
+            if (pageElement.getAttribute(IntroPage.ATT_ID).equalsIgnoreCase(
                     homePageId)) {
                 // Create the model class for the Root Page.
-                homePage = new IntroHomePage(pages[i]);
+                homePage = new IntroHomePage(pageElement, pd);
                 homePage.setParent(this);
                 currentPageId = homePage.getId();
                 children.add(homePage);
             } else {
                 // Create the model class for an intro Page.
-                IntroPage page = new IntroPage(pages[i]);
+                IntroPage page = new IntroPage(pageElement, pd);
                 page.setParent(this);
                 children.add(page);
             }
@@ -169,22 +186,12 @@ public class IntroModelRoot extends AbstractIntroContainer {
     }
 
     /**
-     * Loads all shared divs defined in this config. .
+     * Loads all shared divs defined in this config, from the DOM.
      */
-    private void loadSharedDivs() {
-        loadSharedDivs(getConfigurationElement());
-    }
-
-    /**
-     * Load all divs defined as children of the passed element into this model
-     * as shared divs.
-     * 
-     * @param element
-     */
-    private void loadSharedDivs(IConfigurationElement element) {
-        IConfigurationElement[] divs = element.getChildren(IntroDiv.TAG_DIV);
+    private void loadSharedDivs(Document dom, IPluginDescriptor pd) {
+        Element[] divs = ModelUtil.getElementsByTagName(dom, IntroDiv.TAG_DIV);
         for (int i = 0; i < divs.length; i++) {
-            IntroDiv div = new IntroDiv(divs[i]);
+            IntroDiv div = new IntroDiv(divs[i], pd);
             div.setParent(this);
             children.add(div);
         }
@@ -196,68 +203,91 @@ public class IntroModelRoot extends AbstractIntroContainer {
      */
     private void resolveConfigExtensions() {
         for (int i = 0; i < configExtensionElements.length; i++) {
-            // Find the targer of this container extension, and add all its
-            // children to target.
-            boolean success = loadContainerExtension(configExtensionElements[i]);
-            if (!success) {
-                // add the extension as a child of this model is we failed to
-                // resolve it.
-                children.add(new IntroContainerExtension(
-                        configExtensionElements[i]));
+            // get the pd from the extensions since they are defined in other
+            // plugins.
+            IPluginDescriptor pd = configExtensionElements[i]
+                    .getDeclaringExtension().getDeclaringPluginDescriptor();
+            Document dom = loadDOM(configExtensionElements[i]);
+            if (dom == null)
+                // we failed to parse the content file. Intro Parser would have
+                // logged the fact. Parser would also have checked to see if the
+                // content file has the correct root tag.
+                continue;
+
+            // Find the target of this container extension, and add all its
+            // children to target. Make sure to pass pd to propagate to all
+            // children.
+            Element extensionContentElement = loadExtensionContent(dom, pd);
+            if (extensionContentElement == null)
+                // no extension content defined.
+                continue;
+
+            if (extensionContentElement.hasAttribute("failed")) {
+                // we failed to resolve this configExtension, add the extension
+                // as a child of this model.
+                children.add(new IntroExtensionContent(extensionContentElement,
+                        pd));
                 continue;
             }
-            // load all pages from this config extension only if we resolved
-            // this extension. No point adding pages that will never be
-            // referenced.
-            IConfigurationElement[] pages = configExtensionElements[i]
-                    .getChildren(IntroPage.TAG_PAGE);
+
+            // Now load all pages and shared divs from this config extension
+            // only if we resolved this extension. No point adding pages that
+            // will never be referenced.
+            Element[] pages = ModelUtil.getElementsByTagName(dom,
+                    IntroPage.TAG_PAGE);
             for (int j = 0; j < pages.length; j++) {
                 // Create the model class for an intro Page.
-                IntroPage page = new IntroPage(pages[j]);
+                IntroPage page = new IntroPage(pages[i], pd);
                 page.setParent(this);
                 children.add(page);
             }
 
             // load all shared divs from all configExtensions to this model.
-            loadSharedDivs(configExtensionElements[i]);
+            loadSharedDivs(dom, pd);
         }
     }
 
-    private boolean loadContainerExtension(IConfigurationElement configExtension) {
-        // load this container extensions into model classes, and insert them
-        // at target. A config extension can have only ONE container extension.
-        // This is because if the extension fails, we need to be able to not
-        // include the page and div contributions as part of the model.
-        IConfigurationElement[] containerExtensions = configExtension
-                .getChildren(IntroContainerExtension.CONTAINER_EXTENSION_ELEMENT);
+    /**
+     * load the extension content of this configExtension into model classes,
+     * and insert them at target. A config extension can have only ONE extension
+     * content. This is because if the extension fails, we need to be able to
+     * not include the page and div contributions as part of the model.
+     * 
+     * @param
+     * @return
+     */
+    private Element loadExtensionContent(Document dom, IPluginDescriptor pd) {
+        Element[] extensionContents = ModelUtil.getElementsByTagName(dom,
+                IntroExtensionContent.TAG_CONTAINER_EXTENSION);
         // There should only be one container extension.
-        IConfigurationElement extension = ExtensionPointManager
-                .validateSingleContribution(containerExtensions,
-                        IntroContainerExtension.ATT_PATH);
-        if (extension == null)
-            return false;
+        Element extensionContentElement = ModelUtil.validateSingleContribution(
+                extensionContents, IntroExtensionContent.ATT_PATH);
+        if (extensionContentElement == null)
+            // no extensionContent defined.
+            return null;
+
         // Create the model class.
-        IntroContainerExtension extensionModel = new IntroContainerExtension(
-                extension);
+        IntroExtensionContent extensionContent = new IntroExtensionContent(
+                extensionContentElement, pd);
         // now resolve this extension.
-        String path = extensionModel.getPath();
+        String path = extensionContent.getPath();
         AbstractIntroElement target = findTarget(this, path);
         if (target == null)
             // target could not be found. Signal failure.
-            return false;
+            extensionContentElement.setAttribute("failed", "true");
 
-        if (target.isOfType(AbstractIntroElement.ABSTRACT_CONTAINER)) {
-            // extenions are only for container (ie: divs and pages)
+        else if (target.isOfType(AbstractIntroElement.ABSTRACT_CONTAINER)) {
+            // extensions are only for container (ie: divs and pages)
             AbstractIntroContainer targetContainer = (AbstractIntroContainer) target;
             // make sure you load the children of the target container
             // because we want the children vector to be initialized and
             // loaded with children for ordering.
             if (!targetContainer.isLoaded())
                 targetContainer.loadChildren();
-            targetContainer.addChildren(extension.getChildren());
-            handleExtensionStyleInheritence(extensionModel, targetContainer);
+            targetContainer.addChildren(extensionContent.getChildren(), pd);
+            handleExtensionStyleInheritence(extensionContent, targetContainer);
         }
-        return true;
+        return extensionContentElement;
     }
 
     /**
@@ -271,7 +301,8 @@ public class IntroModelRoot extends AbstractIntroContainer {
      * @param target
      */
     private void handleExtensionStyleInheritence(
-            IntroContainerExtension extension, AbstractIntroElement targetContainer) {
+            IntroExtensionContent extension,
+            AbstractIntroElement targetContainer) {
 
         if (targetContainer.getType() == AbstractIntroElement.DIV
                 && targetContainer.getParent().getType() == AbstractIntroElement.MODEL_ROOT)
@@ -287,8 +318,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
         // for alt-style cache pd for loading resources.
         style = extension.getAltStyle();
         if (style != null) {
-            IPluginDescriptor pd = extension.getConfigurationElement()
-                    .getDeclaringExtension().getDeclaringPluginDescriptor();
+            IPluginDescriptor pd = extension.getPluginDesc();
             targetContainer.getParentPage().addAltStyle(style, pd);
         }
     }
@@ -425,6 +455,23 @@ public class IntroModelRoot extends AbstractIntroContainer {
         return AbstractIntroElement.MODEL_ROOT;
     }
 
+
+    /**
+     * Assumes that the passed config element has a "content" attribute. Reads
+     * it and loads a DOM based on that attribute value.
+     * 
+     * @return
+     */
+    protected Document loadDOM(IConfigurationElement cfgElement) {
+        String content = cfgElement.getAttribute(ATT_CONTENT);
+        // Resolve.
+        content = IntroModelRoot.getPluginLocation(content, cfgElement);
+        Document document = new IntroConfigParser(content).getDocument();
+        return document;
+    }
+
+
+
     /*
      * ======================= Util Methods for Model. =======================
      */
@@ -433,13 +480,29 @@ public class IntroModelRoot extends AbstractIntroContainer {
      * Checks to see if the passed string is a valid URL (has a protocol), if
      * yes, returns it as is. If no, treats it as a resource relative to the
      * declaring plugin. Return the plugin relative location, fully qualified.
-     * Retruns null if the passed trsing itself is null.
+     * Retruns null if the passed string itself is null.
      * 
      * @param resource
      * @param pluginDesc
      * @return returns the URL as is if it had a protocol.
      */
     protected static String resolveURL(String url, IConfigurationElement element) {
+        IPluginDescriptor pluginDesc = element.getDeclaringExtension()
+                .getDeclaringPluginDescriptor();
+        return resolveURL(url, pluginDesc);
+    }
+
+    /**
+     * Checks to see if the passed string is a valid URL (has a protocol), if
+     * yes, returns it as is. If no, treats it as a resource relative to the
+     * declaring plugin. Return the plugin relative location, fully qualified.
+     * Retruns null if the passed string itself is null.
+     * 
+     * @param resource
+     * @param pluginDesc
+     * @return returns the URL as is if it had a protocol.
+     */
+    protected static String resolveURL(String url, IPluginDescriptor pd) {
         // quick exit
         if (url == null)
             return null;
@@ -448,8 +511,10 @@ public class IntroModelRoot extends AbstractIntroContainer {
             return url;
         else
             // make plugin relative url
-            return getPluginLocation(url, element);
+            return getPluginLocation(url, pd);
     }
+
+
 
     /**
      * Returns the fully qualified location of the passed resource string from
@@ -466,7 +531,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
         return getPluginLocation(resource, pluginDesc);
     }
 
-    private static String getPluginLocation(String resource,
+    public static String getPluginLocation(String resource,
             IPluginDescriptor pluginDesc) {
 
         if (resource == null)
@@ -475,7 +540,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
         URL localLocation = null;
         try {
             // we need to perform a 'resolve' on this URL.
-            localLocation = pluginDesc.find(new Path(resource));
+            localLocation = pluginDesc.find(new Path("$nl$").append(resource));
             if (localLocation == null)
                 // localLocation can be null if the passed resource could not
                 // be found relative to the plugin. return resource, as is;
@@ -502,5 +567,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
                 .getDescriptor();
         return getPluginLocation(resource, pluginDesc);
     }
+
+
 
 }

@@ -17,8 +17,8 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.intro.*;
 import org.eclipse.ui.intro.internal.*;
-import org.eclipse.ui.intro.internal.extensions.*;
 import org.eclipse.ui.intro.internal.model.*;
+import org.eclipse.ui.intro.internal.model.loader.*;
 import org.eclipse.ui.intro.internal.parts.*;
 import org.eclipse.ui.intro.internal.util.*;
 import org.eclipse.ui.part.intro.*;
@@ -73,7 +73,7 @@ public class CustomizableIntroPart extends IntroPart {
         if (model == null || !model.hasValidConfig())
             DialogUtil.displayErrorMessage(site.getShell(),
                     "Could not find a valid configuration for Intro Part: "
-                            + ExtensionPointManager.getLogString(
+                            + ModelUtil.getLogString(
                                     getConfigurationElement(), "id")
                             + "\nCheck Log View for details.", null);
 

@@ -12,26 +12,24 @@
 package org.eclipse.ui.intro.internal.model;
 
 import org.eclipse.core.runtime.*;
+import org.w3c.dom.*;
 
 /**
  * An intro element that represents a page title.
  */
-public class IntroPageTitle extends AbstractCommonIntroElement {
+public class IntroPageTitle extends IntroText {
 
     protected static final String TAG_TITLE = "title";
 
-    private String title;
-
-    IntroPageTitle(IConfigurationElement element) {
-        super(element);
-        title = element.getValue();
+    IntroPageTitle(Element element, IPluginDescriptor pd) {
+        super(element, pd);
     }
 
     /**
-     * @return Returns the description.
+     * @return Returns the Title text.
      */
     public String getTitle() {
-        return title;
+        return getText();
     }
 
     /*

@@ -97,7 +97,7 @@ public class IntroModelLabelProvider extends LabelProvider {
             break;
         case AbstractIntroElement.CONTAINER_EXTENSION:
             label = "Unresolved ConfigExtension: "
-                    + ((IntroContainerExtension) introElement).getPath();
+                    + ((IntroExtensionContent) introElement).getPath();
             break;
         default:
             label = super.getText(element);

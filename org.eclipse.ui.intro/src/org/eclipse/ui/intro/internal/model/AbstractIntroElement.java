@@ -12,13 +12,14 @@
 package org.eclipse.ui.intro.internal.model;
 
 import org.eclipse.core.runtime.*;
+import org.w3c.dom.*;
 
 /**
- * An intro config component that has an id attribute. All config components can
- * get to their configuration element.
+ * An intro config component. All config components can get to their defining
+ * plugin descriptor.
  * <p>
  * Note: This is an abstract base class for all classes in the Intro Model. <br>
- * Clients are not expected to implement/subclass this class, or any of its
+ * Clients are not expected to implement or subclass this class, or any of its
  * subclasses.
  * </p>
  */
@@ -110,32 +111,70 @@ public abstract class AbstractIntroElement {
      * Type constant which identifies the AbstractCommonIntroElement element.
      */
     public static final int BASE_ELEMENT = ABSTRACT_CONTAINER | ABSTRACT_TEXT
-            | CONTAINER_EXTENSION | HEAD | PAGE_TITLE | IMAGE | PRESENTATION
-            | TEXT;
+            | CONTAINER_EXTENSION | PAGE_TITLE | IMAGE | PRESENTATION | TEXT;
 
     /**
      * Type constant which identifies any element in the Intro Model.
      */
-    public static final int ELEMENT = BASE_ELEMENT | INCLUDE;
-
+    public static final int ELEMENT = BASE_ELEMENT | HEAD | INCLUDE;
 
 
     private AbstractIntroElement parent;
+    private IConfigurationElement cfgElement;
+    private IPluginDescriptor pluginDescriptor;
 
-    // cached config element representing this component.
-    private IConfigurationElement element;
 
-
+    /**
+     * Constructor used when model elements are being loaded from plugin.xml.
+     */
     AbstractIntroElement(IConfigurationElement element) {
-        this.element = element;
+        cfgElement = element;
+        pluginDescriptor = element.getDeclaringExtension()
+                .getDeclaringPluginDescriptor();
+    }
+
+
+    /**
+     * Constructor used when model elements are being loaded from an xml content
+     * file.
+     * 
+     * @param element
+     * @param pd
+     */
+    AbstractIntroElement(Element element, IPluginDescriptor pd) {
+        pluginDescriptor = pd;
     }
 
     /**
-     * @return Returns the element.
+     * Returns the configuration element from which this intro element was
+     * loaded. In the case of extension, returns the configuration element of
+     * the defining extension.
+     * 
+     * @return
      */
-    public IConfigurationElement getConfigurationElement() {
-        return element;
+    public IConfigurationElement getCfgElement() {
+        return cfgElement;
     }
+
+    protected String getAttribute(Element element, String att) {
+        if (element.hasAttribute(att))
+            return element.getAttribute(att);
+        else
+            return null;
+    }
+
+
+    /**
+     * Returns the plugin descriptor of the plugin from which this intro element
+     * was loaded. In the case of extension, returns the plugin descriptor of
+     * the plugin defining the extension.
+     * 
+     * @return
+     */
+    public IPluginDescriptor getPluginDesc() {
+        return pluginDescriptor;
+    }
+
 
 
     /**
@@ -208,6 +247,7 @@ public abstract class AbstractIntroElement {
             return null;
     }
 
+
     /**
      * Returns whether the element is among the specified element types.An
      * example of an element mask is as follows:
@@ -253,5 +293,7 @@ public abstract class AbstractIntroElement {
         }
         return true;
     }
+
+
 
 }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
+
 <plugin
    id="org.eclipse.ui.intro"
    name="%plugin_name"

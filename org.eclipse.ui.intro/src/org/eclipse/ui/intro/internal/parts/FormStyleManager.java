@@ -35,8 +35,7 @@ public class FormStyleManager {
      * @param modelRoot
      */
     public FormStyleManager(IntroModelRoot modelRoot) {
-        pd = modelRoot.getConfigurationElement().getDeclaringExtension()
-                .getDeclaringPluginDescriptor();
+        pd = modelRoot.getPluginDesc();
         pageProperties = new Properties();
         String sharedStyle = modelRoot.getPresentation().getStyle();
         if (sharedStyle != null)
@@ -45,15 +44,14 @@ public class FormStyleManager {
 
     /**
      * Constructor used when a page styles need to be loaded. The plugin
-     * descriptor is retrieved from the page model class. The default
-     * properties are assumed to be the presentation shared properties.
+     * descriptor is retrieved from the page model class. The default properties
+     * are assumed to be the presentation shared properties.
      * 
      * @param modelRoot
      */
     public FormStyleManager(AbstractIntroPage page, Properties sharedProperties) {
         this.page = page;
-        pd = page.getConfigurationElement().getDeclaringExtension()
-                .getDeclaringPluginDescriptor();
+        pd = page.getPluginDesc();
         pageProperties = new Properties(sharedProperties);
         String altStyle = page.getAltStyle();
         if (altStyle != null)

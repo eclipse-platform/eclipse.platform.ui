@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.intro.internal.extensions;
+package org.eclipse.ui.intro.internal.model.loader;
 
 import java.util.*;
 
@@ -36,7 +36,7 @@ public class BaseExtensionPointManager {
     protected static final String ATT_CONFIG_EXTENSION_CONFIG_ID = "configId";
 
     // the id attribute in any intro element.
-    protected static final String ATT_ID = AbstractCommonIntroElement.ATT_ID;
+    protected static final String ATT_ID = AbstractBaseIntroElement.ATT_ID;
 
     protected Hashtable introModels = new Hashtable();
 
@@ -171,7 +171,7 @@ public class BaseExtensionPointManager {
         IConfigurationElement[] filteredConfigElements = getConfigurationsFromAttribute(
                 configElements, attributeName, attributeValue);
         // now validate that we got only one.
-        IConfigurationElement config = validateSingleContribution(
+        IConfigurationElement config = ModelUtil.validateSingleContribution(
                 filteredConfigElements, attributeName);
         return config;
     }
@@ -213,7 +213,7 @@ public class BaseExtensionPointManager {
                 .getConfigurationElementsFor(CONFIG_EXTENSION);
         for (int i = 0; i < configExtensionElements.length; i++) {
             IConfigurationElement element = configExtensionElements[i];
-            if (!isValidElementName(element,
+            if (!ModelUtil.isValidElementName(element,
                     StandbyPartContent.STANDBY_PART_ELEMENT))
                 continue;
             StandbyPartContent standbyPartContent = new StandbyPartContent(
@@ -235,81 +235,4 @@ public class BaseExtensionPointManager {
 
 
 
-    // ========================================
-    //   Util Methods for Extensions
-    // ========================================
-
-    /**
-     * * Utility method to validate an elements name.
-     * 
-     * @param element
-     * @param validName
-     * @return
-     */
-    public static boolean isValidElementName(IConfigurationElement element,
-            String validName) {
-
-        if (element.getName().equals(validName))
-            return true;
-        else
-            // bad element name.
-            return false;
-    }
-
-    /**
-     * Utility method to verify that there is only a single configElement in the
-     * passed array of elements. If the array is empty, null is returned. If
-     * there is more than one element in the array, the first one is picked, but
-     * this fact is logged. Attribute passed is used for logging.
-     * 
-     * @param configElements
-     * @return the first configElement in the array, or null if the array is
-     *         empty.
-     */
-    public static IConfigurationElement validateSingleContribution(
-            IConfigurationElement[] configElements, String logAttribute) {
-
-        IConfigurationElement configElement = null;
-        if (configElements.length == 0)
-            // No one contributed to extension. return null.
-            return null;
-
-        // we should only have one, so use first one.
-        configElement = configElements[0];
-        Logger.logInfo("Loaded " + configElement.getName() + " from "
-                + getLogString(configElement, logAttribute));
-
-        if (configElements.length != 1) {
-            // we should only have one! Use first one, but warn in the log.
-            configElement = configElements[0];
-            for (int i = 1; i < configElements.length; i++)
-                // log each extra extension.
-                Logger.logWarning(getLogString(configElements[i], logAttribute)
-                        + " ignored due to multiple contributions");
-        }
-        return configElement;
-    }
-
-    /**
-     * Utility method to return a string to display in .log. If someAttribute is
-     * not null, its value is also printed.
-     */
-    public static String getLogString(IConfigurationElement element,
-            String logAttribute) {
-        StringBuffer buffer = new StringBuffer("Plugin:");
-        buffer.append(element.getDeclaringExtension()
-                .getDeclaringPluginDescriptor().getUniqueIdentifier());
-        buffer.append("  Extension:");
-        buffer.append(element.getDeclaringExtension()
-                .getExtensionPointUniqueIdentifier());
-        buffer.append("  element:");
-        buffer.append(element.getName());
-        if (logAttribute != null) {
-            buffer.append("  ");
-            buffer.append(logAttribute);
-            buffer.append(":");
-            buffer.append(element.getAttribute(logAttribute));
-        }
-        return buffer.toString();
-    }
 }

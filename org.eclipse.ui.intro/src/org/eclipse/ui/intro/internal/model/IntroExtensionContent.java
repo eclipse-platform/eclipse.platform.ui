@@ -11,14 +11,17 @@
 
 package org.eclipse.ui.intro.internal.model;
 
+import java.util.*;
+
 import org.eclipse.core.runtime.*;
+import org.w3c.dom.*;
 
 /**
  * An intro container extension.
  */
-public class IntroContainerExtension extends AbstractCommonIntroElement {
+public class IntroExtensionContent extends AbstractBaseIntroElement {
 
-    protected static final String CONTAINER_EXTENSION_ELEMENT = "extensionContent";
+    protected static final String TAG_CONTAINER_EXTENSION = "extensionContent";
 
     protected static final String ATT_PATH = "path";
     private static final String ATT_STYLE = "style";
@@ -28,15 +31,18 @@ public class IntroContainerExtension extends AbstractCommonIntroElement {
     private String style;
     private String altStyle;
 
-    IntroContainerExtension(IConfigurationElement element) {
-        super(element);
-        path = element.getAttribute(ATT_PATH);
-        style = element.getAttribute(ATT_STYLE);
-        altStyle = element.getAttribute(ATT_ALT_STYLE);
+    private Element element;
+
+    IntroExtensionContent(Element element, IPluginDescriptor pd) {
+        super(element, pd);
+        path = getAttribute(element, ATT_PATH);
+        style = getAttribute(element, ATT_STYLE);
+        altStyle = getAttribute(element, ATT_ALT_STYLE);
+        this.element = element;
 
         // Resolve.
-        style = IntroModelRoot.getPluginLocation(style, element);
-        altStyle = IntroModelRoot.getPluginLocation(altStyle, element);
+        style = IntroModelRoot.getPluginLocation(style, pd);
+        altStyle = IntroModelRoot.getPluginLocation(altStyle, pd);
     }
 
     /**
@@ -55,8 +61,18 @@ public class IntroContainerExtension extends AbstractCommonIntroElement {
         return AbstractIntroElement.CONTAINER_EXTENSION;
     }
 
-    protected IConfigurationElement[] getChildren() {
-        return getConfigurationElement().getChildren();
+    protected Element[] getChildren() {
+        Vector children = new Vector();
+        NodeList nodeList = element.getChildNodes();
+        Vector vector = new Vector();
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            Node node = nodeList.item(i);
+            if (node.getNodeType() == Node.ELEMENT_NODE)
+                vector.add(node);
+        }
+        Element[] filteredElements = new Element[vector.size()];
+        vector.copyInto(filteredElements);
+        return filteredElements;
     }
 
     /**

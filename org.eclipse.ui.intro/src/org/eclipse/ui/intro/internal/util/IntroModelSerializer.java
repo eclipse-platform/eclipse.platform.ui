@@ -206,9 +206,7 @@ public class IntroModelSerializer {
     }
 
     private void printHead(StringBuffer text, IntroHead head, String indent) {
-        text.append(indent + "HEAD: id = " + head.getId());
-        indent = indent + "\t\t";
-        text.append(indent + "src = " + head.getSrc());
+        text.append(indent + "HEAD: src = " + head.getSrc());
     }
 
     private void printPageTitle(StringBuffer text, IntroPageTitle title,

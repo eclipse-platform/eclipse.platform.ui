@@ -12,6 +12,7 @@
 package org.eclipse.ui.intro.internal.model;
 
 import org.eclipse.core.runtime.*;
+import org.w3c.dom.*;
 
 /**
  * An intro image element.
@@ -31,11 +32,11 @@ public class IntroInclude extends AbstractIntroElement {
     private String path;
     private boolean mergeStyle = false;
 
-    IntroInclude(IConfigurationElement element) {
-        super(element);
-        configId = element.getAttribute(ATT_CONFIG_ID);
-        path = element.getAttribute(ATT_PATH);
-        String mergeStyleString = element.getAttribute(ATT_MERGE_STYLE);
+    IntroInclude(Element element, IPluginDescriptor pd) {
+        super(element, pd);
+        configId = getAttribute(element, ATT_CONFIG_ID);
+        path = getAttribute(element, ATT_PATH);
+        String mergeStyleString = getAttribute(element, ATT_MERGE_STYLE);
         mergeStyle = (mergeStyleString != null && mergeStyleString
                 .equalsIgnoreCase("true")) ? true : false;
     }

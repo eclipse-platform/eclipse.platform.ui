@@ -12,12 +12,13 @@
 package org.eclipse.ui.intro.internal.model;
 
 import org.eclipse.core.runtime.*;
+import org.w3c.dom.*;
 
 /**
  * An intro Head element. Head elements are only interpreted for HTML case. They
  * are always inlined. Ignored in UI Forms case.
  */
-public class IntroHead extends AbstractCommonIntroElement {
+public class IntroHead extends AbstractIntroElement {
 
     protected static final String TAG_HEAD = "head";
 
@@ -31,6 +32,14 @@ public class IntroHead extends AbstractCommonIntroElement {
 
         // Resolve.
         src = IntroModelRoot.getPluginLocation(src, element);
+    }
+
+    IntroHead(Element element, IPluginDescriptor pd) {
+        super(element, pd);
+        src = getAttribute(element, ATT_SRC);
+
+        // Resolve.
+        src = IntroModelRoot.getPluginLocation(src, pd);
     }
 
     /**

@@ -13,18 +13,19 @@ package org.eclipse.ui.intro.internal.model;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.intro.internal.util.*;
+import org.w3c.dom.*;
 
 /**
  * An intro config component that can have a single Text element as a child. In
  * case there is more than one text child, the text is retrieved from the first
  * text child element.
  */
-public abstract class AbstractTextElement extends AbstractCommonIntroElement {
+public abstract class AbstractTextElement extends AbstractBaseIntroElement {
 
     private IntroText introText;
 
-    AbstractTextElement(IConfigurationElement element) {
-        super(element);
+    AbstractTextElement(Element element, IPluginDescriptor pd) {
+        super(element, pd);
         // description will be null if there is no description element.
         introText = getTextElement(element);
     }
@@ -32,16 +33,17 @@ public abstract class AbstractTextElement extends AbstractCommonIntroElement {
     /**
      * Retruns the intro text element embedded in this element.
      */
-    private IntroText getTextElement(IConfigurationElement element) {
+    private IntroText getTextElement(Element element) {
         try {
             // There should only be one text element.
             // Since elements where obtained by name, no point validating name.
-            IConfigurationElement[] textElements = element
-                    .getChildren(IntroText.TAG_TEXT);
-            if (textElements.length == 0)
+            NodeList textElements = element
+                    .getElementsByTagName(IntroText.TAG_TEXT);
+            if (textElements.getLength() == 0)
                 // no contributions. done.
                 return null;
-            IntroText text = new IntroText(textElements[0]);
+            IntroText text = new IntroText((Element) textElements.item(0),
+                    getPluginDesc());
             text.setParent(this);
             return text;
         } catch (Exception e) {
@@ -54,7 +56,7 @@ public abstract class AbstractTextElement extends AbstractCommonIntroElement {
      * @return Returns the text of the child text of this element.
      */
     public String getText() {
-        // intro text may be null if there is not child Text element.
+        // intro text may be null if there is no child Text element.
         if (introText != null)
             return introText.getText();
         else
@@ -80,4 +82,10 @@ public abstract class AbstractTextElement extends AbstractCommonIntroElement {
         return AbstractIntroElement.ABSTRACT_TEXT;
     }
 
+    /**
+     * @return Returns the class id.
+     */
+    public String getClassId() {
+        return super.class_id;
+    }
 }

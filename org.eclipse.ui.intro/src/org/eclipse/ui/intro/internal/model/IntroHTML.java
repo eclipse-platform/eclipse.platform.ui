@@ -13,6 +13,7 @@ package org.eclipse.ui.intro.internal.model;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.intro.internal.util.*;
+import org.w3c.dom.*;
 
 /**
  * An intro HTML element. Can have text and image as fall back. "type" attribute
@@ -34,10 +35,10 @@ public class IntroHTML extends AbstractTextElement {
     private String html_type;
     private IntroImage introImage;
 
-    IntroHTML(IConfigurationElement element) {
-        super(element);
-        src = element.getAttribute(ATT_SRC);
-        html_type = element.getAttribute(ATT_TYPE);
+    IntroHTML(Element element, IPluginDescriptor pd) {
+        super(element, pd);
+        src = getAttribute(element, ATT_SRC);
+        html_type = getAttribute(element, ATT_TYPE);
         if (html_type != null && !html_type.equalsIgnoreCase("inline")
                 && !html_type.equalsIgnoreCase("embed"))
             // if type is not correct, null it.
@@ -47,22 +48,23 @@ public class IntroHTML extends AbstractTextElement {
         introImage = getIntroImage(element);
 
         // Resolve.
-        src = IntroModelRoot.getPluginLocation(src, element);
+        src = IntroModelRoot.getPluginLocation(src, pd);
     }
 
     /**
-     * Retruns the implementation element of the CustomizableIntroPart.
+     * Retruns the intro image element embedded in this element.
      */
-    private IntroImage getIntroImage(IConfigurationElement element) {
+    private IntroImage getIntroImage(Element element) {
         try {
             // There should only be one text element. Since elements where
             // obtained by name, no point validating name.
-            IConfigurationElement[] imageElements = element
-                    .getChildren(IntroImage.TAG_IMAGE);
-            if (imageElements.length == 0)
+            NodeList imageElements = element
+                    .getElementsByTagName(IntroImage.TAG_IMAGE);
+            if (imageElements.getLength() == 0)
                 // no contributions. done.
                 return null;
-            IntroImage image = new IntroImage(imageElements[0]);
+            IntroImage image = new IntroImage((Element) imageElements.item(0),
+                    getPluginDesc());
             image.setParent(this);
             return image;
         } catch (Exception e) {
@@ -90,7 +92,7 @@ public class IntroHTML extends AbstractTextElement {
     }
 
     /**
-     * Returns the intro image used as a replacement if this HTML elemet fails.
+     * Returns the intro image used as a replacement if this HTML element fails.
      * May return null if there is no image child.
      * 
      * @return Returns the introImage.

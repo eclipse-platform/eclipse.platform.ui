@@ -12,23 +12,26 @@
 package org.eclipse.ui.intro.internal.model;
 
 import org.eclipse.core.runtime.*;
+import org.w3c.dom.*;
 
 /**
  * An intro text element.
  */
-public class IntroText extends AbstractCommonIntroElement {
+public class IntroText extends AbstractBaseIntroElement {
 
     protected static final String TAG_TEXT = "text";
 
     private String text;
 
-    IntroText(IConfigurationElement element) {
-        super(element);
-        text = element.getValue();
+    IntroText(Element element, IPluginDescriptor pd) {
+        super(element, pd);
+        Node textNode = element.getFirstChild();
+        if (textNode.getNodeType() == Node.TEXT_NODE)
+            text = textNode.getNodeValue();
     }
 
     /**
-     * @return Returns the description.
+     * @return Returns the text description.
      */
     public String getText() {
         return text;
@@ -43,4 +46,11 @@ public class IntroText extends AbstractCommonIntroElement {
         return AbstractIntroElement.TEXT;
     }
 
+
+    /**
+     * @return Returns the class id.
+     */
+    public String getClassId() {
+        return super.class_id;
+    }
 }
