@@ -712,6 +712,10 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	 */
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
+		String title = getWindowConfigurer().basicGetTitle();
+		if (title != null) {
+			shell.setText(title);
+		}
 		shell.setLayout(getLayout());
 		separator2 = new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL);
 		createShortcutBar(shell);

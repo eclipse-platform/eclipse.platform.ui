@@ -51,6 +51,12 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 	private WorkbenchWindow window;
 
 	/**
+	 * The window title to set when the window's shell has been created,
+	 * or <code>null</code> if there is none to set.
+	 */
+	private String windowTitle;
+	
+	/**
 	 * Whether the workbench window should show the shortcut bar.
 	 */
 	private boolean showShortcutBar = true;
@@ -153,7 +159,7 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 	}
 	
 	/**
-	 * Creates a new workbench configurer.
+	 * Creates a new workbench window configurer.
 	 * <p>
 	 * This method is declared package-private. Clients obtain instances
 	 * via {@link WorkbenchAdvisor#getWindowConfigurer 
@@ -197,16 +203,26 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 		return Workbench.getInstance().getWorkbenchConfigurer();
 	}
 	
+	/**
+	 * Returns the title as set by <code>setTitle</code>, without consulting the shell.
+	 * 
+	 * @return the window title as set, or <code>null</code> if not set
+	 */
+	/* package */ String basicGetTitle() {
+		return windowTitle;
+	}
+	
 	/* (non-javadoc)
 	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#getTitle
 	 */
 	public String getTitle() {
 		Shell shell =  window.getShell();
 		if (shell != null) {
-			return shell.getText();
+			// update the cached title
+			windowTitle = shell.getText();
+			return windowTitle;
 		} else {
-			// @issue need to be able to configure title before window's controls created
-			return ""; //$NON-NLS-1$
+			return windowTitle;
 		}
 	}
 	
@@ -217,11 +233,10 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 		if (title == null) {
 			throw new IllegalArgumentException();
 		}
+		windowTitle = title;
 		Shell shell =  window.getShell();
 		if (shell != null && !shell.isDisposed()) {
 			shell.setText(title);
-		} else {
-			// @issue need to be able to configure title before window's controls created
 		}
 	}
 	

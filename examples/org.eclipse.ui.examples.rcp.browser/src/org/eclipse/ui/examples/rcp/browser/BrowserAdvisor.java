@@ -48,11 +48,7 @@ public class BrowserAdvisor extends WorkbenchAdvisor {
 	 */
 	public void preWindowOpen(final IWorkbenchWindowConfigurer configurer) {
 		configurer.setShowShortcutBar(false);
-		Display.getDefault().asyncExec(new Runnable() {
-			public void run() {
-				configurer.setTitle("Browser Example");
-			}
-		});
+		configurer.setTitle("Browser Example");
 	}
 	
 	/* (non-Javadoc)
