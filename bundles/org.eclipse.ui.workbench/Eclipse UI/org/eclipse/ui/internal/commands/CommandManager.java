@@ -49,6 +49,7 @@ import org.eclipse.ui.internal.commands.api.IContextBindingDefinition;
 import org.eclipse.ui.internal.commands.api.IImageBindingDefinition;
 import org.eclipse.ui.internal.commands.api.IKeyBindingDefinition;
 import org.eclipse.ui.internal.commands.api.IKeyConfigurationDefinition;
+import org.eclipse.ui.internal.keys.KeySupport;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.CharacterKey;
 import org.eclipse.ui.keys.KeySequence;
@@ -310,23 +311,47 @@ public final class CommandManager implements ICommandManager {
 		return keyBindingMachine.setMode(mode);
 	}
 
-	public String getKeyTextForCommand(String commandId) {
-		String keyText = null;
+	public Integer getAccelerator(String commandId) {
+		Integer accelerator = null;
 		
 		/* TODO
 		ICommand command = getCommand(commandId);
 		
 		if (command.isDefined()) {
-			try {
-				SortedSet keyBindings = command.getKeyBindings();
-	
-				if (!keyBindings.isEmpty()) {
-					IKeyBinding keyBinding = (IKeyBinding) keyBindings.first();
-					KeySequence keySequence = keyBinding.getKeySequence();
-					keyText = keySequence.format();
-				}
-			} catch (NotDefinedException eNotDefined) {				
+			SortedSet keyBindings = command.getKeyBindings();
+			...
+		}
+		*/
+		
+		Map keyBindingsByCommandId = getKeyBindingsByCommandId();				
+		SortedSet keyBindings = (SortedSet) keyBindingsByCommandId.get(commandId);
+		
+		if (keyBindings != null) {
+			IKeyBinding keyBinding = (IKeyBinding) keyBindings.first();
+		
+			if (keyBinding != null) {
+				KeySequence keySequence = keyBinding.getKeySequence();
+				List keyStrokes = keySequence.getKeyStrokes();
+
+				if (keyStrokes.size() == 1) {
+					KeyStroke keyStroke = (KeyStroke) keyStrokes.get(0);
+					accelerator = new Integer(KeySupport.convertKeyStrokeToAccelerator(keyStroke));
+				}				
 			}
+		}
+			
+		return accelerator;
+	}	
+	
+	public String getAcceleratorText(String commandId) {
+		String acceleratorText = null;
+		
+		/* TODO
+		ICommand command = getCommand(commandId);
+		
+		if (command.isDefined()) {
+			SortedSet keyBindings = command.getKeyBindings();
+			...
 		}
 		*/
 
@@ -337,10 +362,10 @@ public final class CommandManager implements ICommandManager {
 			IKeyBinding keyBinding = (IKeyBinding) keyBindings.first();
 		
 			if (keyBinding != null)
-				keyText = keyBinding.getKeySequence().format();
+				acceleratorText = keyBinding.getKeySequence().format();
 		}
 			
-		return keyText != null ? keyText : Util.ZERO_LENGTH_STRING;
+		return acceleratorText;
 	}
 	
 	public void reset() {

@@ -11,7 +11,11 @@
 
 package org.eclipse.jface.action;
 
-public interface IContextResolver {
+public interface ICommandResolver {
+
+	Integer getAccelerator(String commandId);
+	
+	String getAcceleratorText(String commandId);
 
 	boolean inContext(String commandId);
 }

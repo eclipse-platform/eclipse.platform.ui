@@ -57,9 +57,9 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.ActionContributionItem;
-import org.eclipse.jface.action.ContextResolver;
+import org.eclipse.jface.action.CommandResolver;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IContextResolver;
+import org.eclipse.jface.action.ICommandResolver;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -126,6 +126,7 @@ import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.ICommandManagerEvent;
 import org.eclipse.ui.commands.ICommandManagerListener;
+import org.eclipse.ui.commands.NotDefinedException;
 import org.eclipse.ui.contexts.IContextActivationService;
 import org.eclipse.ui.contexts.IContextActivationServiceEvent;
 import org.eclipse.ui.contexts.IContextActivationServiceListener;
@@ -157,7 +158,7 @@ import org.eclipse.update.core.SiteManager;
  * responsability is the management of workbench windows and other ISV windows.
  */
 public class Workbench
-	implements IContextResolver, IWorkbench, IPlatformRunnable, IExecutableExtension {
+	implements ICommandResolver, IWorkbench, IPlatformRunnable, IExecutableExtension {
 
 	private WindowManager windowManager;
 	private WorkbenchWindow activatedWindow;
@@ -403,6 +404,32 @@ public class Workbench
 		display.addFilter(SWT.Traverse, listener);
 	}
 
+	public String getName(String commandId) {
+		String name = null;
+		
+		if (commandId != null) {
+			final ICommand command = commandManager.getCommand(commandId);
+
+			if (command != null)
+				try {
+				    name = command.getName();
+				} catch (NotDefinedException eNotDefined) {
+				}
+		}
+
+		return name;
+	}
+
+	public Integer getAccelerator(String commandId) {
+		// TODO bad cast
+		return ((CommandManager) getCommandManager()).getAccelerator(commandId);		
+	}
+	
+	public String getAcceleratorText(String commandId) {
+		// TODO bad cast
+		return ((CommandManager) getCommandManager()).getAcceleratorText(commandId);		
+	}
+	
 	public final boolean inContext(final String commandId) {
 		if (commandId != null) {
 			final ICommand command = commandManager.getCommand(commandId);
@@ -736,7 +763,7 @@ public class Workbench
 	}
 
 	private void initializeCommandsAndContexts(final Display display) {
-		ContextResolver.getInstance().setContextResolver(this);
+		CommandResolver.getInstance().setCommandResolver(this);
 		commandManager = CommandManager.getInstance();
 		contextManager = ContextManager.getInstance();
 		commandManager.addCommandManagerListener(commandManagerListener);

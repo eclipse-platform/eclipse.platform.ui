@@ -11,15 +11,29 @@
 package org.eclipse.jface.action;
 
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.swt.widgets.Widget;
 
 /**
  * A contribution item which delegates to an action.
@@ -149,10 +163,10 @@ public boolean isVisible() {
 	
 	if (action != null) {
 		String commandId = action.getActionDefinitionId();
-		IContextResolver contextResolver = ContextResolver.getInstance().getContextResolver();
+		ICommandResolver commandResolver = CommandResolver.getInstance().getCommandResolver();
 		
-		if (contextResolver != null) {
-			return contextResolver.inContext(commandId);
+		if (commandResolver != null) {
+			return commandResolver.inContext(commandId);
 		}
 	}
 	
@@ -588,8 +602,7 @@ public final void update() {
  *   properties 
  */
 public void update(String propertyName) {
-	if (widget != null) {
-		
+	if (widget != null) {		
 		// determine what to do			
 		boolean textChanged = propertyName == null || propertyName.equals(Action.TEXT);
 		boolean imageChanged = propertyName == null || propertyName.equals(Action.IMAGE);
@@ -602,20 +615,23 @@ public void update(String propertyName) {
 					
 		if (widget instanceof ToolItem) {
 			ToolItem ti = (ToolItem) widget;
-			if (imageChanged) {
+
+			if (imageChanged)
 				updateImages(true);
-			}
+			
 			if (tooltipTextChanged)
 				ti.setToolTipText(action.getToolTipText());
 				
 			if (enableStateChanged) {
 				boolean shouldBeEnabled = action.isEnabled() && isEnabledAllowed();
+				
 				if (ti.getEnabled() != shouldBeEnabled)
 					ti.setEnabled(shouldBeEnabled);
 			}
 				
 			if (checkChanged) {
 				boolean bv = action.isChecked();
+				
 				if (ti.getSelection() != bv)
 					ti.setSelection(bv);
 			}
@@ -624,88 +640,107 @@ public void update(String propertyName) {
 		
 		if (widget instanceof MenuItem) {
 			MenuItem mi = (MenuItem) widget;
-			boolean isContextMenu = belongsToContextMenu(mi);
-			
-			// We only install an accelerator if the menu item doesn't
-			// belong to a context menu (right mouse button menu).
+
 			if (textChanged) {
-				if(isContextMenu) {
-					String text = action.getText();
-					if (text != null) {
-						text = Action.removeAcceleratorText(text);
-						mi.setText(text);
-					}
-				} else {
-					String text = null;
-					IContributionManagerOverrides overrides = null;
-					if(getParent() != null)
-						overrides = getParent().getOverrides();
-					if(overrides != null)
-						text = getParent().getOverrides().getText(this);
-					if(text == null)
-						text = action.getText();
-					if (text != null) {
-						String label = Action.removeAcceleratorText(text);
-						String accText = null;
-						Integer acc = null;
-						if(overrides != null) {
-						 	accText = overrides.getAcceleratorText(this);
-						 	acc = overrides.getAccelerator(this);
+				Integer accelerator = null;
+				String acceleratorText = null;
+				IAction action = getAction();	
+				String text = null;
+				
+				if (action != null) {				
+					String commandId = action.getActionDefinitionId();
+				
+					if (commandId != null) {
+						ICommandResolver commandResolver = CommandResolver.getInstance().getCommandResolver();
+		
+						if (commandResolver != null) {
+							accelerator = commandResolver.getAccelerator(commandId);
+							acceleratorText = commandResolver.getAcceleratorText(commandId);
 						}
-						if((accText == null) && (label.length() + 1 < text.length()))
-							accText = text.substring(label.length() + 1);
-						if(acc == null)
-							acc = new Integer(action.getAccelerator());
-						if (acc.intValue() >= 0)
-							mi.setAccelerator(acc.intValue());
-						if(accText == null)
-							mi.setText(label);
-						else
-							mi.setText(label + '\t' + accText);
 					}
+				}				
+				
+				IContributionManagerOverrides overrides = null;
+					
+				if (getParent() != null)
+					overrides = getParent().getOverrides();
+					
+				if (overrides != null) {
+					text = getParent().getOverrides().getText(this);
+
+					if (acceleratorText == null)
+						acceleratorText = overrides.getAcceleratorText(this); // TODO remove
+
+					if (accelerator == null)
+						accelerator = overrides.getAccelerator(this); // TODO remove
 				}
+				
+				if (accelerator == null)
+					accelerator = new Integer(action.getAccelerator());
+
+				if (accelerator != null)
+					mi.setAccelerator(accelerator.intValue());		
+
+				if (text == null)
+					text = action.getText();
+
+				if (text == null)
+					text = ""; //$NON-NLS-1$
+				else
+					text = Action.removeAcceleratorText(text);
+					
+				if (acceleratorText == null)
+					mi.setText(text);
+				else
+					mi.setText(text + '\t' + acceleratorText);				
 			}
-			if (imageChanged) {
+			
+			if (imageChanged)
 				updateImages(false);
-			}
+			
 			if (enableStateChanged) {
 				boolean shouldBeEnabled = action.isEnabled() && isEnabledAllowed();
+				
 				if (mi.getEnabled() != shouldBeEnabled) 
 					mi.setEnabled(shouldBeEnabled);
 			}
 	
 			if (checkChanged) {	
 				boolean bv = action.isChecked();
+				
 				if (mi.getSelection() != bv)
 					mi.setSelection(bv);
 			}
+			
 			return;
 		}
 
 		if (widget instanceof Button) {
-			Button button= (Button) widget;
-			if (imageChanged) {
-				if (updateImages(false)) {
-					// don't update text if it has an image
-					textChanged = false;
-				}
-			}
+			Button button = (Button) widget;
+			
+			if (imageChanged && updateImages(false))
+				textChanged = false; // don't update text if it has an image
+			
 			if (textChanged) {
 				String text = action.getText();
+				
 				if (text != null)
 					button.setText(text);
 			}
+			
 			if (tooltipTextChanged)
 				button.setToolTipText(action.getToolTipText());
 				
 			if (enableStateChanged) {
 				boolean shouldBeEnabled = action.isEnabled() && isEnabledAllowed();
+				
 				if (button.getEnabled() != shouldBeEnabled)
 					button.setEnabled(shouldBeEnabled);
 			}
 				
 			if (checkChanged) {
 				boolean bv = action.isChecked();
+				
 				if (button.getSelection() != bv)
 					button.setSelection(bv);
 			}

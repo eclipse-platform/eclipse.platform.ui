@@ -11,28 +11,27 @@
 
 package org.eclipse.jface.action;
 
-public class ContextResolver {
+public class CommandResolver {
 
-	private static ContextResolver instance;
+	private static CommandResolver instance;
 
-	public static ContextResolver getInstance() {
+	public static CommandResolver getInstance() {
 		if (instance == null)
-			instance = new ContextResolver();
+			instance = new CommandResolver();
 			
 		return instance;	
 	}
 
-	private IContextResolver contextResolver;
+	private ICommandResolver commandResolver;
 
-	private ContextResolver() {
-		super();
+	private CommandResolver() {
 	}
 	
-	public IContextResolver getContextResolver() {
-		return contextResolver;
+	public ICommandResolver getCommandResolver() {
+		return commandResolver;
 	}
 	
-	public void setContextResolver(IContextResolver contextResolver) {
-		this.contextResolver = contextResolver;
+	public void setCommandResolver(ICommandResolver commandResolver) {
+		this.commandResolver = commandResolver;
 	}
 }

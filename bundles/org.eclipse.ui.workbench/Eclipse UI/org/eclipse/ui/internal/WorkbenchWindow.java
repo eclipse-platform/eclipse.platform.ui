@@ -892,7 +892,7 @@ public class WorkbenchWindow
 							return keyBinding.getKeySequence().format();
 					}
 				} else {
-					String acceleratorText = commandManager.getKeyTextForCommand(commandId);
+					String acceleratorText = commandManager.getAcceleratorText(commandId);
 
 					if (acceleratorText != null)
 						return acceleratorText;
