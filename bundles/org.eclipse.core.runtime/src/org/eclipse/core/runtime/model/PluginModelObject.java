@@ -5,6 +5,8 @@ package org.eclipse.core.runtime.model;
  * All Rights Reserved.
  */
 
+import org.eclipse.core.internal.runtime.Assert;
+
 /**
  * An object which has the general characteristics of all elements
  * in a plug-in manifest.
@@ -12,8 +14,6 @@ package org.eclipse.core.runtime.model;
  * This class may be subclassed.
  * </p>
  */
-
-import org.eclipse.core.internal.runtime.Assert;
 
 public abstract class PluginModelObject {
 

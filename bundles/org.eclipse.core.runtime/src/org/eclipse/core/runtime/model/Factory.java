@@ -5,6 +5,11 @@ package org.eclipse.core.runtime.model;
  * All Rights Reserved.
  */
 
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.internal.runtime.InternalPlatform;
+import org.eclipse.core.runtime.model.*;
+import org.eclipse.core.internal.plugins.RegistryResolver;
+
 /**
  * An object which can create plug-in related model objects (typically when
  * parsing plug-in manifest files).
@@ -12,10 +17,6 @@ package org.eclipse.core.runtime.model;
  * This class may be instantiated, or further subclassed.
  * </p>
  */
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.runtime.model.*;
-import org.eclipse.core.internal.plugins.RegistryResolver;
 
 public class Factory {
 	private MultiStatus status;
