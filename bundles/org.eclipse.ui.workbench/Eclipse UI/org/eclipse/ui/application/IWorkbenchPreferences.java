@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003 IBM Corporation and others.
+ * Copyright (c) 2003,2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,8 @@ package org.eclipse.ui.application;
  * </p>
  * 
  * @since 3.0
+ * @issue it's confusing to have both IWorkbenchPreferenceConstants and
+ *   IWorkbenchPreferences (not to mention IPreferenceConstants)
  */
 public interface IWorkbenchPreferences {
 	
@@ -30,8 +32,10 @@ public interface IWorkbenchPreferences {
 	 * <p>
 	 * The default value for this preference is: <code>true</code> (has window title)
 	 * </p>
+	 * @deprecated whether a title is shown is controlled by the <code>SWT.TITLE</code> 
+	 * shell style bit; see <code>IWorkbenchWindowConfigurer.setShellStyle(int)</code>
 	 */
-	public static String SHOULD_SHOW_TITLE_BAR = "wb.show.title.bar"; //$NON-NLS-1$
+	public static String SHOULD_SHOW_TITLE_BAR = "SHOULD_SHOW_TITLE_BAR"; //$NON-NLS-1$
 	
 	/**
 	 * Workbench preference id for whether workbench windows should have a menu
@@ -42,18 +46,18 @@ public interface IWorkbenchPreferences {
 	 * The default value for this preference is: <code>true</code> (has menu bar)
 	 * </p>
 	 */
-	public static String SHOULD_SHOW_MENU_BAR = "wb.show.menu.bar"; //$NON-NLS-1$
+	public static String SHOULD_SHOW_MENU_BAR = "SHOULD_SHOW_MENU_BAR"; //$NON-NLS-1$
 
 	/**
-	 * Workbench preference id for whether workbench windows should have a tool
+	 * Workbench preference id for whether workbench windows should have a cool
 	 * bar by default. Boolean-valued: <code>true</code> if workbench windows
-	 * should have a tool bar by default, and <code>false</code> if they
-	 * should not have a tool bar by default.
+	 * should have a cool bar by default, and <code>false</code> if they
+	 * should not have a cool bar by default.
 	 * <p>
-	 * The default value for this preference is: <code>true</code> (has tool bar)
+	 * The default value for this preference is: <code>true</code> (has cool bar)
 	 * </p>
 	 */
-	public static String SHOULD_SHOW_TOOL_BAR = "wb.show.tool.bar"; //$NON-NLS-1$
+	public static String SHOULD_SHOW_COOL_BAR = "SHOULD_SHOW_COOL_BAR"; //$NON-NLS-1$
 
 	/**
 	 * Workbench preference id for whether workbench windows should have a shortcut
@@ -63,8 +67,9 @@ public interface IWorkbenchPreferences {
 	 * <p>
 	 * The default value for this preference is: <code>false</code> (does not have shortcut bar)
 	 * </p>
+	 * @deprecated use SHOULD_SHOW_FAST_VIEW_BARS and/or SHOULD_SHOW_PERSPECTIVE_BAR instead
 	 */
-	public static String SHOULD_SHOW_SHORTCUT_BAR = "wb.show.shortcut.bar"; //$NON-NLS-1$
+	public static String SHOULD_SHOW_SHORTCUT_BAR = "SHOULD_SHOW_SHORTCUT_BAR"; //$NON-NLS-1$
 
 	/**
 	 * Workbench preference id for whether workbench windows should have a status
@@ -75,19 +80,29 @@ public interface IWorkbenchPreferences {
 	 * The default value for this preference is: <code>true</code> (has status line)
 	 * </p>
 	 */
-	public static String SHOULD_SHOW_STATUS_LINE = "wb.show.status.line"; //$NON-NLS-1$
+	public static String SHOULD_SHOW_STATUS_LINE = "SHOULD_SHOW_STATUS_LINE"; //$NON-NLS-1$
 
 	/**
-	 * Workbench preference id for whether the workbench should show multiple 
-	 * editor tabs. 
-	 * 
-	 * Boolean-valued: <code>true</code> if editors should show mulitple editor tabs, and 
-	 * <code>false</code> if editors should show a single editor tab (3.0 style)
+	 * Workbench preference id for whether workbench windows should have fast view
+	 * bars by default. Boolean-valued: <code>true</code> if workbench windows
+	 * should have fast view bars by default, and <code>false</code> if they
+	 * should not have fast view bars by default.
 	 * <p>
-	 * The default value for this preference is: <code>false</code> (show single editor tab)
+	 * The default value for this preference is: <code>false</code> (does not have fast view bars)
 	 * </p>
 	 */
-	public static String SHOW_MULTIPLE_EDITOR_TABS = "wb.show.multiple.editor.tabs"; //$NON-NLS-1$	
+	public static String SHOULD_SHOW_FAST_VIEW_BARS = "SHOULD_SHOW_FAST_VIEW_BARS"; //$NON-NLS-1$
+
+	/**
+	 * Workbench preference id for whether workbench windows should have a perspective
+	 * bar by default. Boolean-valued: <code>true</code> if workbench windows
+	 * should have a perspective bar by default, and <code>false</code> if they
+	 * should not have a perspective bar by default.
+	 * <p>
+	 * The default value for this preference is: <code>false</code> (does not have perspective bar)
+	 * </p>
+	 */
+	public static String SHOULD_SHOW_PERSPECTIVE_BAR = "SHOULD_SHOW_PERSPECTIVE_BAR"; //$NON-NLS-1$
 
 	/**
 	 * Workbench preference id for whether workbench windows should have a progress 
@@ -98,30 +113,7 @@ public interface IWorkbenchPreferences {
 	 * The default value for this preference is: <code>false</code> (does not have progress indicator)
 	 * </p>
 	 */
-	public static String SHOULD_SHOW_PROGRESS_INDICATOR = "wb.show.progress.indicator"; //$NON-NLS-1$
-
-	/**
-	 * Workbench preference id for whether the workbench should show text 
-	 * on the perspective bar. 
-	 * 
-	 * Boolean-valued: <code>true</code>, if editors should show text on the perspective bar,
-	 * <code>false</code> otherwise.
-	 * <p>
-	 * The default value for this preference is: <code>true</code> (show text on the perspective bar)
-	 * </p>
-	 */
-	public static String SHOW_TEXT_ON_PERSPECTIVE_BAR = "wb.show.text.on.perspective.bar"; //$NON-NLS-1$	
-	
-	/**
-	 * Workbench preference id for whether the workbench should attempt to close
-	 * all open editors when the workbench closes. 
-	 * Boolean-valued: <code>true</code> if editors should be closed, and 
-	 * <code>false</code> if editors should simply be discarded
-	 * <p>
-	 * The default value for this preference is: <code>false</code> (discard editors)
-	 * </p>
-	 */
-	public static String SHOULD_CLOSE_EDITORS_ON_EXIT = "wb.code.editors.on.exit"; //$NON-NLS-1$
+	public static String SHOULD_SHOW_PROGRESS_INDICATOR = "SHOULD_SHOW_PROGRESS_INDICATOR"; //$NON-NLS-1$
 
 	/**
 	 * Workbench preference id for whether the workbench should save the state
@@ -134,6 +126,6 @@ public interface IWorkbenchPreferences {
 	 * workbench state)
 	 * </p>
 	 */
-	public static String SHOULD_SAVE_WORKBENCH_STATE = "wb.save.workbench.state"; //$NON-NLS-1$
+	public static String SHOULD_SAVE_WORKBENCH_STATE = "SHOULD_SAVE_WORKBENCH_STATE"; //$NON-NLS-1$
 	
 }

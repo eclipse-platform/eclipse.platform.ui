@@ -414,18 +414,23 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		
 		JFacePreferences.setPreferenceStore(store);
 
-		// new generic workbench preferences
+		// new generic workbench preferences (for RCP APIs in org.eclipse.ui.application)
 		store.setDefault(IWorkbenchPreferences.SHOULD_SAVE_WORKBENCH_STATE, false);
-		store.setDefault(IWorkbenchPreferences.SHOULD_CLOSE_EDITORS_ON_EXIT, false);
 		store.setDefault(IWorkbenchPreferences.SHOULD_SHOW_TITLE_BAR, true);
 		store.setDefault(IWorkbenchPreferences.SHOULD_SHOW_MENU_BAR, true);
-		store.setDefault(IWorkbenchPreferences.SHOULD_SHOW_TOOL_BAR, true);
+		store.setDefault(IWorkbenchPreferences.SHOULD_SHOW_COOL_BAR, true);
 		store.setDefault(IWorkbenchPreferences.SHOULD_SHOW_SHORTCUT_BAR, false);
+		store.setDefault(IWorkbenchPreferences.SHOULD_SHOW_FAST_VIEW_BARS, false);
+		store.setDefault(IWorkbenchPreferences.SHOULD_SHOW_PERSPECTIVE_BAR, false);
 		store.setDefault(IWorkbenchPreferences.SHOULD_SHOW_STATUS_LINE, true);
 		store.setDefault(IWorkbenchPreferences.SHOULD_SHOW_PROGRESS_INDICATOR, false);			
+
+		// workbench preferences that are API (but non-RCP)
+		// @issue these should probably be on org.eclipse.ui's preference store, 
+		//    not org.eclipse.ui.workbench
+		store.setDefault(IPreferenceConstants.CLOSE_EDITORS_ON_EXIT, false);
 		// Allow 'show all' option by default
 		store.setDefault(IWorkbenchPreferenceConstants.SHOULD_ALLOW_SHOW_ALL, true);		
-		
 		
 		// @issue some of these may be IDE-specific
 		store.setDefault(IPreferenceConstants.EDITORLIST_PULLDOWN_ACTIVE, false);
@@ -595,7 +600,9 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		File oldLocation = new File(newLocation,"..//org.eclipse.ui"); //$NON-NLS-1$
 		try {
 			oldLocation = oldLocation.getCanonicalFile();
-		} catch (IOException e) {}		
+		} catch (IOException e) {
+			// ignore
+		}		
 		String markerFileName = ".copiedStateFiles_Marker"; //$NON-NLS-1$
 		File markerFile = new File(oldLocation,markerFileName);
 		if(markerFile.exists())
@@ -635,7 +642,9 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		} finally {
 			try { 
 				new FileOutputStream(markerFile).close(); 
-			} catch (IOException e) {}
+			} catch (IOException e) {
+				// ignore
+			}
 		}
 	}
 	

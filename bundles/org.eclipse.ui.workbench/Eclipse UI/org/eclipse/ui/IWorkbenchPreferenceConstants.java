@@ -140,7 +140,8 @@ public interface IWorkbenchPreferenceConstants {
 	 * all)
 	 * </p>
 	 * @since 3.0
+	 * @issue does this need to be API?
 	 */
-	public static final String SHOULD_ALLOW_SHOW_ALL = "wb.allow.show.all"; //$NON-NLS-1$
-	
+	public static final String SHOULD_ALLOW_SHOW_ALL = "SHOULD_ALLOW_SHOW_ALL"; //$NON-NLS-1$
+
 }

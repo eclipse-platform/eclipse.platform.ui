@@ -163,9 +163,9 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 
 	private final IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener() {
 		public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-			if (IPreferenceConstants.EDITOR_TAB_POSITION.equals(propertyChangeEvent.getProperty()) || (IWorkbenchPreferences.SHOW_MULTIPLE_EDITOR_TABS.equals(propertyChangeEvent.getProperty())) && tabFolder != null) {
+			if (IPreferenceConstants.EDITOR_TAB_POSITION.equals(propertyChangeEvent.getProperty()) || (IPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS.equals(propertyChangeEvent.getProperty())) && tabFolder != null) {
 				int tabLocation = preferenceStore.getInt(IPreferenceConstants.EDITOR_TAB_POSITION); 
-				boolean multi = preferenceStore.getBoolean(IWorkbenchPreferences.SHOW_MULTIPLE_EDITOR_TABS); 						
+				boolean multi = preferenceStore.getBoolean(IPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS); 						
 				int style = SWT.CLOSE | SWT.BORDER | tabLocation | (multi ? SWT.MULTI : SWT.SINGLE);
 				tabFolder.setStyle(style);				
 				Iterator iterator = getEditorList().iterator();
@@ -181,7 +181,7 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 
 		preferenceStore.addPropertyChangeListener(propertyChangeListener);
 		int tabLocation = preferenceStore.getInt(IPreferenceConstants.EDITOR_TAB_POSITION); 
-		boolean multi = preferenceStore.getBoolean(IWorkbenchPreferences.SHOW_MULTIPLE_EDITOR_TABS); 						
+		boolean multi = preferenceStore.getBoolean(IPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS); 						
 	    int style = SWT.CLOSE | SWT.BORDER | tabLocation | (multi ? SWT.MULTI : SWT.SINGLE);
 		
 		tabFolder = new CTabFolder2(parent, style);

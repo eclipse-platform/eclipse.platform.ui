@@ -80,6 +80,7 @@ import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PartInitException;
@@ -410,7 +411,7 @@ public final class Workbench implements IWorkbench {
 		}
 
 		IPreferenceStore store = getPreferenceStore();
-		boolean closeEditors = store.getBoolean(IWorkbenchPreferences.SHOULD_CLOSE_EDITORS_ON_EXIT);
+		boolean closeEditors = store.getBoolean(IPreferenceConstants.CLOSE_EDITORS_ON_EXIT);
 		if (closeEditors) {
 			Platform.run(new SafeRunnable() {
 				public void run() {

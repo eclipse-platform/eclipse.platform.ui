@@ -32,7 +32,6 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.application.IWorkbenchPreferences;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.EditorHistory;
 import org.eclipse.ui.internal.IHelpContextIds;
@@ -92,7 +91,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		showMultipleEditorTabs = new Button(composite, SWT.CHECK);
 		showMultipleEditorTabs.setText(WorkbenchMessages.getString("WorkbenchPreference.showMultipleEditorTabsButton")); //$NON-NLS-1$
 		showMultipleEditorTabs.setFont(composite.getFont());
-		showMultipleEditorTabs.setSelection(getPreferenceStore().getBoolean(IWorkbenchPreferences.SHOW_MULTIPLE_EDITOR_TABS));
+		showMultipleEditorTabs.setSelection(getPreferenceStore().getBoolean(IPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS));
 		setButtonLayoutData(showMultipleEditorTabs);
 	}
 	
@@ -100,7 +99,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		closeEditorsOnExit = new Button(composite, SWT.CHECK);
 		closeEditorsOnExit.setText(WorkbenchMessages.getString("WorkbenchPreference.closeEditorsButton")); //$NON-NLS-1$
 		closeEditorsOnExit.setFont(composite.getFont());
-		closeEditorsOnExit.setSelection(getPreferenceStore().getBoolean(IWorkbenchPreferences.SHOULD_CLOSE_EDITORS_ON_EXIT));
+		closeEditorsOnExit.setSelection(getPreferenceStore().getBoolean(IPreferenceConstants.CLOSE_EDITORS_ON_EXIT));
 		setButtonLayoutData(closeEditorsOnExit);
 	}
 
@@ -116,12 +115,13 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 	}
 
 	public void init(IWorkbench workbench) {
+		// do nothing
 	}
 	
 	protected void performDefaults() {
 		IPreferenceStore store = getPreferenceStore();
-		showMultipleEditorTabs.setSelection(store.getDefaultBoolean(IWorkbenchPreferences.SHOW_MULTIPLE_EDITOR_TABS));
-		closeEditorsOnExit.setSelection(store.getDefaultBoolean(IWorkbenchPreferences.SHOULD_CLOSE_EDITORS_ON_EXIT));
+		showMultipleEditorTabs.setSelection(store.getDefaultBoolean(IPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS));
+		closeEditorsOnExit.setSelection(store.getDefaultBoolean(IPreferenceConstants.CLOSE_EDITORS_ON_EXIT));
 		reuseEditors.setSelection(store.getDefaultBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN));
 		dirtyEditorReuseGroup.setEnabled(reuseEditors.getSelection());
 		openNewEditor.setSelection(!store.getDefaultBoolean(IPreferenceConstants.REUSE_DIRTY_EDITORS));
@@ -136,8 +136,8 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 	
 	public boolean performOk() {
 		IPreferenceStore store = getPreferenceStore();	
-		store.setValue(IWorkbenchPreferences.SHOW_MULTIPLE_EDITOR_TABS, showMultipleEditorTabs.getSelection());
-		store.setValue(IWorkbenchPreferences.SHOULD_CLOSE_EDITORS_ON_EXIT, closeEditorsOnExit.getSelection());
+		store.setValue(IPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS, showMultipleEditorTabs.getSelection());
+		store.setValue(IPreferenceConstants.CLOSE_EDITORS_ON_EXIT, closeEditorsOnExit.getSelection());
 
 		// store the reuse editors setting
 		store.setValue(IPreferenceConstants.REUSE_EDITORS_BOOLEAN,reuseEditors.getSelection());

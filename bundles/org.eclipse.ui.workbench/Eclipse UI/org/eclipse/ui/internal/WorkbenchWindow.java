@@ -630,17 +630,19 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 
 		topBar = new CBanner(parent, SWT.NONE);
 		
-		FormLayout topLayout = new FormLayout();
-		topBar.setLayout(topLayout);
-
 		createCoolBarControl(topBar);
 		createPerspectiveBar(topBar);
 		//createNewBar(topBar);
 
 		perspectiveBar.setBanner(topBar);
 		
-		topBar.setLeft(getCoolBarControl());		
-		topBar.setRight(perspectiveBar.getControl());
+		if (getWindowConfigurer().getShowCoolBar()) {
+			topBar.setLeft(getCoolBarControl());
+		}
+		if (getWindowConfigurer().getShowPerspectiveBar()) {
+			topBar.setRight(perspectiveBar.getControl());
+		}
+		
 		//topBar.setMiddle(newBar.getControl());
 
 		//ColorSchemeService.setCBannerColors(topBar);
@@ -1046,9 +1048,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		if (fastViewMem != null) {
 			fastViewBar.restoreState(fastViewMem);
 		}
-		Integer bigInt;
-
-		bigInt = memento.getInteger(IWorkbenchConstants.TAG_X);
+		Integer bigInt = memento.getInteger(IWorkbenchConstants.TAG_X);
 		shellBounds.x = bigInt == null ? 0 : bigInt.intValue();
 		bigInt = memento.getInteger(IWorkbenchConstants.TAG_Y);
 		shellBounds.y = bigInt == null ? 0 : bigInt.intValue();
@@ -2096,7 +2096,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	private void setLayoutDataForContents() {
 		// @issue this is not ideal; coolbar and perspective shortcuts should be
 		//   separately configurable
-		if (getWindowConfigurer().getShowCoolBar() || getWindowConfigurer().getShowShortcutBar()) {
+		if (getWindowConfigurer().getShowCoolBar() || getWindowConfigurer().getShowPerspectiveBar()) {
 			layout.addTrim(topBar, SWT.TOP, null);
 		}
 		if (getWindowConfigurer().getShowStatusLine()) {
@@ -2112,7 +2112,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		}
 		layout.setCenterControl(getClientComposite());
 		
-		if (getWindowConfigurer().getShowShortcutBar()) {
+		if (getWindowConfigurer().getShowFastViewBars()) {
 			fastViewBar.addDockingListener(new IChangeListener() {
 				public void update(boolean changed) {
 					Control reference = null;

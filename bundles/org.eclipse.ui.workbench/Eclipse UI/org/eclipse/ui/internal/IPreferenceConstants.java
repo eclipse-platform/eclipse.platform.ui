@@ -69,6 +69,11 @@ public interface IPreferenceConstants {
 
 	//Boolean: true = keep cycle part dialog open when keys released
 	public static final String STICKY_CYCLE = "STICKY_CYCLE"; //$NON-NLS-1$
+
+	//Boolean: true = close all editors before saving the workbench state when exiting
+	//Eclipse.  Will improve startup time for editors that have a long open time.
+	public static final String CLOSE_EDITORS_ON_EXIT = "CLOSE_EDITORS_ON_EXIT"; //$NON-NLS-1$
+
 	//List of plugins but that extends "startup" extension point but are
 	// overriden by the user.
 	//String of plugin unique ids separated by ";"
@@ -141,4 +146,30 @@ public interface IPreferenceConstants {
 	
 	//Preferences for the floating toolbar
 	public static final String SHOW_FLOATING_PROGRESS = "SHOW_FLOATING_PROGRESS"; //$NON-NLS-1$
+
+	/**
+	 * Workbench preference id for whether the workbench should show text 
+	 * on the perspective bar. 
+	 * 
+	 * Boolean-valued: <code>true</code>, if editors should show text on the perspective bar,
+	 * <code>false</code> otherwise.
+	 * <p>
+	 * The default value for this preference is: <code>true</code> (show text on the perspective bar)
+	 * </p>
+	 */
+	public static String SHOW_TEXT_ON_PERSPECTIVE_BAR = "SHOW_TEXT_ON_PERSPECTIVE_BAR"; //$NON-NLS-1$	
+
+	/**
+	 * Workbench preference id for whether the workbench should show multiple 
+	 * editor tabs. 
+	 * 
+	 * Boolean-valued: <code>true</code> if editors should show mulitple editor tabs, and 
+	 * <code>false</code> if editors should show a single editor tab (3.0 style)
+	 * <p>
+	 * The default value for this preference is: <code>false</code> (show single editor tab)
+	 * </p>
+	 * 
+	 * @since 3.0
+	 */
+	public static String SHOW_MULTIPLE_EDITOR_TABS = "SHOW_MULTIPLE_EDITOR_TABS"; //$NON-NLS-1$	
 }

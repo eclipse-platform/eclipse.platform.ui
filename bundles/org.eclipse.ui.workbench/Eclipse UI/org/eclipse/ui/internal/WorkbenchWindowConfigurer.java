@@ -71,6 +71,16 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 	private boolean showShortcutBar = true;
 	
 	/**
+	 * Whether the workbench window should show the fast view bars.
+	 */
+	private boolean showFastViewBars = false;
+	
+	/**
+	 * Whether the workbench window should show the perspective bar
+	 */
+	private boolean showPerspectiveBar = false;
+	
+	/**
 	 * Whether the workbench window should show the status line.
 	 */
 	private boolean showStatusLine = true;
@@ -204,9 +214,11 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 		showMenuBar = store.getBoolean(IWorkbenchPreferences.SHOULD_SHOW_MENU_BAR);
 		showProgressIndicator = store.getBoolean(IWorkbenchPreferences.SHOULD_SHOW_PROGRESS_INDICATOR);
 		showShortcutBar = store.getBoolean(IWorkbenchPreferences.SHOULD_SHOW_SHORTCUT_BAR);
+		showFastViewBars = store.getBoolean(IWorkbenchPreferences.SHOULD_SHOW_FAST_VIEW_BARS);
+		showPerspectiveBar = store.getBoolean(IWorkbenchPreferences.SHOULD_SHOW_PERSPECTIVE_BAR);
 		showStatusLine = store.getBoolean(IWorkbenchPreferences.SHOULD_SHOW_STATUS_LINE);
 		showTitleBar = store.getBoolean(IWorkbenchPreferences.SHOULD_SHOW_TITLE_BAR);
-		showToolBar = store.getBoolean(IWorkbenchPreferences.SHOULD_SHOW_TOOL_BAR);
+		showToolBar = store.getBoolean(IWorkbenchPreferences.SHOULD_SHOW_COOL_BAR);
 	}
 	
 	/* (non-javadoc)
@@ -310,10 +322,40 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 	}
 
 	/* (non-javadoc)
-	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#setShowToolBar
+	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
 	 */
 	public void setShowCoolBar(boolean show) {
 		showToolBar = show;
+		// @issue need to be able to reconfigure after window's controls created
+	}
+
+	/* (non-javadoc)
+	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
+	 */
+	public boolean getShowFastViewBars() {
+		return showFastViewBars ;
+	}
+
+	/* (non-javadoc)
+	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
+	 */
+	public void setShowFastViewBars(boolean show) {
+		showFastViewBars = show;
+		// @issue need to be able to reconfigure after window's controls created
+	}
+
+	/* (non-javadoc)
+	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
+	 */
+	public boolean getShowPerspectiveBar() {
+		return showPerspectiveBar;
+	}
+
+	/* (non-javadoc)
+	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
+	 */
+	public void setShowPerspectiveBar(boolean show) {
+		showPerspectiveBar = show;
 		// @issue need to be able to reconfigure after window's controls created
 	}
 
@@ -329,6 +371,8 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 	 */
 	public void setShowShortcutBar(boolean show) {
 		showShortcutBar = show;
+		setShowFastViewBars(false);
+		setShowPerspectiveBar(false);
 		// @issue need to be able to reconfigure after window's controls created
 	}
 

@@ -33,6 +33,10 @@ import org.eclipse.ui.IWorkbenchWindow;
  * @see IWorkbenchConfigurer#getWorkbenchWindowConfigurer
  * @see WorkbenchAdvisor#preWindowOpen
  * @since 3.0
+ * 
+ * @issue having the defaults for setShow* come from the preference store
+ *   seems over-engineered; the prefs will be ignored anyway if the app
+ *   sets these itself
  */
 public interface IWorkbenchWindowConfigurer {
 	/**
@@ -85,6 +89,8 @@ public interface IWorkbenchWindowConfigurer {
 	 * 
 	 * @return <code>true</code> for a title bar, and <code>false</code>
 	 * for no title bar
+	 * @deprecated whether a title is shown is controlled by the
+	 * <code>SWT.TITLE</code> shell style bit; see <code>getShellStyle</code>
 	 */
 	public boolean getShowTitleBar();
 
@@ -93,6 +99,8 @@ public interface IWorkbenchWindowConfigurer {
 	 * 
 	 * @param show <code>true</code> for a title bar, and <code>false</code>
 	 * for no title bar
+	 * @deprecated whether a title is shown is controlled by the
+	 * <code>SWT.TITLE</code> shell style bit; see <code>setShellStyle(int)</code>
 	 */
 	public void setShowTitleBar(boolean show);
 
@@ -120,7 +128,7 @@ public interface IWorkbenchWindowConfigurer {
 	 * Returns whether the underlying workbench window has a cool bar.
 	 * <p>
 	 * The initial value is controlled by the preference
-	 * {@link IWorkbenchPreferences.SHOULD_SHOW_TOOL_BAR SHOULD_SHOW_TOOL_BAR}
+	 * {@link IWorkbenchPreferences.SHOULD_SHOW_COOL_BAR SHOULD_SHOW_COOL_BAR}
 	 * </p>
 	 * 
 	 * @return <code>true</code> for a cool bar, and <code>false</code>
@@ -145,6 +153,8 @@ public interface IWorkbenchWindowConfigurer {
 	 * 
 	 * @return <code>true</code> for a shortcut bar, and <code>false</code>
 	 * for no shortcut bar
+	 * @deprecated use <code>getShowPerspectiveBar</code> and/or
+	 *   <code>getShowFastViewBars</code>
 	 */
 	public boolean getShowShortcutBar();
 
@@ -154,8 +164,8 @@ public interface IWorkbenchWindowConfigurer {
 	 * @param show <code>true</code> for a shortcut bar, and <code>false</code>
 	 * for no shortcut bar
 	 * 
-	 * @issue if the shortcut bar is hidden, the status line loses some space on the left
-	 *   (presumably to the progress indicator)
+	 * @deprecated use <code>setShowPerspectiveBar</code> and/or 
+	 *   <code>setShowFastViewBars</code>
 	 */
 	public void setShowShortcutBar(boolean show);
 
@@ -179,6 +189,48 @@ public interface IWorkbenchWindowConfigurer {
 	 */
 	public void setShowStatusLine(boolean show);
 	
+	/**
+	 * Returns whether the underlying workbench window has a perspective bar (the
+	 * perspective bar provides buttons to quickly switch between perspectives).
+	 * <p>
+	 * The initial value is controlled by the preference
+	 * {@link IWorkbenchPreferences.SHOULD_SHOW_PERSPECTIVE_BAR SHOULD_SHOW_PERSPECTIVE_BAR}
+	 * </p>
+	 * 
+	 * @return <code>true</code> for a perspective bar, and <code>false</code>
+	 * for no perspective bar
+	 */
+	public boolean getShowPerspectiveBar();
+
+	/**
+	 * Sets whether the underlying workbench window has a perspective bar (the 
+	 * perspective bar provides buttons to quickly switch between perspectives).
+	 * 
+	 * @param show <code>true</code> for a perspective bar, and
+	 * <code>false</code> for no perspective bar
+	 */
+	public void setShowPerspectiveBar(boolean show);
+
+	/**
+	 * Returns whether the underlying workbench window has fast view bars.
+	 * <p>
+	 * The initial value is controlled by the preference
+	 * {@link IWorkbenchPreferences.SHOULD_SHOW_FAST_VIEW_BARS SHOULD_SHOW_FAST_VIEW_BARS}
+	 * </p>
+	 * 
+	 * @return <code>true</code> for fast view bars, and 
+	 * <code>false</code> for no fast view bars
+	 */
+	public boolean getShowFastViewBars();
+
+	/**
+	 * Sets whether the underlying workbench window has fast view bars. 
+	 * 
+	 * @param enable <code>true</code> for fast view bars, and 
+	 * <code>false</code> for no fast view bars
+	 */
+	public void setShowFastViewBars(boolean enable);
+
 	/**
 	 * Returns whether the underlying workbench window has a progress indicator.
 	 * <p>

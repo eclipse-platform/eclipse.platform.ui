@@ -41,7 +41,7 @@ public class PerspectiveBarContributionItem extends ContributionItem {
     private IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener() {
 
         public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-            if (IWorkbenchPreferences.SHOW_TEXT_ON_PERSPECTIVE_BAR
+            if (IPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR
                     .equals(propertyChangeEvent.getProperty())) {
                 update();
                 IContributionManager parent = getParent();
@@ -106,7 +106,7 @@ public class PerspectiveBarContributionItem extends ContributionItem {
             toolItem
                     .setSelection(workbenchPage.getPerspective() == perspective);
             if (preferenceStore
-                    .getBoolean(IWorkbenchPreferences.SHOW_TEXT_ON_PERSPECTIVE_BAR))
+                    .getBoolean(IPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR))
                 toolItem.setText(shortenText(perspective.getLabel(), toolItem));
             else
                 toolItem.setText(""); //$NON-NLS-1$            

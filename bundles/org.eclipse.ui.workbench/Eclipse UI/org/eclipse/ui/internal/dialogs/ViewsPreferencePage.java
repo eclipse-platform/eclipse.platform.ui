@@ -400,7 +400,7 @@ public class ViewsPreferencePage
 		showTextOnPerspectiveBar = new Button(composite, SWT.CHECK);
 		showTextOnPerspectiveBar.setText(WorkbenchMessages.getString("WorkbenchPreference.showTextOnPerspectiveBar")); //$NON-NLS-1$
 		showTextOnPerspectiveBar.setFont(composite.getFont());
-		showTextOnPerspectiveBar.setSelection(getPreferenceStore().getBoolean(IWorkbenchPreferences.SHOW_TEXT_ON_PERSPECTIVE_BAR));
+		showTextOnPerspectiveBar.setSelection(getPreferenceStore().getBoolean(IPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR));
 		setButtonLayoutData(showTextOnPerspectiveBar);
 	}
 	
@@ -457,7 +457,7 @@ public class ViewsPreferencePage
 		viewBottomButton.setSelection(viewTopValue == SWT.BOTTOM);
 		viewAlignment = viewTopValue;
 
-		showTextOnPerspectiveBar.setSelection(store.getDefaultBoolean(IWorkbenchPreferences.SHOW_TEXT_ON_PERSPECTIVE_BAR));
+		showTextOnPerspectiveBar.setSelection(store.getDefaultBoolean(IPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR));
 		
 		colorIconsEditor.loadDefault();
 		errorColorEditor.loadDefault();
@@ -492,7 +492,7 @@ public class ViewsPreferencePage
 		// store the view tab value to setting
 		store.setValue(IPreferenceConstants.VIEW_TAB_POSITION, viewAlignment);
 
-		store.setValue(IWorkbenchPreferences.SHOW_TEXT_ON_PERSPECTIVE_BAR, showTextOnPerspectiveBar.getSelection());
+		store.setValue(IPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR, showTextOnPerspectiveBar.getSelection());
 		
 		colorIconsEditor.store();
 		errorColorEditor.store();
