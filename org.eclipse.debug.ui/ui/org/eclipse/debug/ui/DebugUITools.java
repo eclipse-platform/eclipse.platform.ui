@@ -310,7 +310,7 @@ public class DebugUITools {
 			dialog.setInitialSelection(selection);
 			dialog.setShellText(shellTitle);
 			dialog.setTitleText(message);
-			dialog.setTitleImage(image);
+			dialog.setDialogImage(image);
 			dialog.addFilter(filter);
 			return dialog.open();			
 		}

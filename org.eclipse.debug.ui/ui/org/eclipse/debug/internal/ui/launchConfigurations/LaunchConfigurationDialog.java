@@ -3136,7 +3136,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * @param image the image to display
 	 * @since 2.1
 	 */
-	public void setTitleImage(Image image) {
+	public void setDialogImage(Image image) {
 		fDialogImage = image;
 	}
 
