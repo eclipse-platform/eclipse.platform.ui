@@ -1,0 +1,234 @@
+<html&gt;
+
+<head>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title>Cheat Sheet Content File XML Format</title>
+</head>
+
+<body>
+
+<h1>Cheat Sheet Content File XML Format</h1>
+
+<p>This
+document describes the cheat sheet content file structure as a series of
+DTD fragments.</p>
+
+<h2><code>cheatsheet</code> Element</h2>
+<pre>&lt;?xml encoding=&quot;US-ASCII&quot;?&gt;&nbsp;
+&lt;!ELEMENT cheatsheet (intro, item+)&gt;&nbsp;
+&lt;!ATTLIST cheatsheet&nbsp;
+&nbsp; title&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED&nbsp;
+&nbsp; version&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED&nbsp;
+&gt;</pre>
+
+<p>The
+&lt;cheatsheet&gt; element defines the body of the cheat sheet content file.
+&lt;cheatsheet&gt; attributes are as follows:</p>
+<ul type="disc">
+  <li><b>title</b>
+    - the title of the cheat sheet
+  <li><b>version
+    </b>- reserved for future use [TODO (lorne) - need a spec here]</li>
+</ul>
+<pre>&lt;?xml encoding=&quot;US-ASCII&quot;?&gt;&nbsp;
+&lt;!ELEMENT intro ()&gt;&nbsp;
+&lt;!ATTLIST intro&nbsp;
+&nbsp; href &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED&nbsp;
+&gt;</pre>
+
+<h2><code>intro</code> Element</h2>
+
+<p>The &lt;intro&gt; element is used to describe the cheat sheet introduction to be displayed.
+The text between the &lt;intro&gt; and &lt;/intro&gt; tags is the introduction.
+&lt;intro&gt; attributes are as follows:</p>
+<ul>
+  <li><b>href</b>
+    - the cheat sheet's optional concept topic; when the user clicks the introduction's help link, this document is shown in the help
+    browser
+  </li>
+</ul>
+<h2><code>item</code> Element</h2>
+<pre>&lt;?xml encoding=&quot;US-ASCII&quot;?&gt;&nbsp;
+&lt;!ELEMENT item (subitem*)&gt;&nbsp;
+&lt;!ATTLIST item&nbsp;
+&nbsp; title&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED
+&nbsp; perform&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (true | false) &quot;false&quot;
+&nbsp; skip   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (true | false) &quot;false&quot;
+&nbsp; complete&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (true | false) &quot;false&quot;
+&nbsp; class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED
+&nbsp; actionparam0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED
+&nbsp; actionparam1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED
+&nbsp; ...
+&nbsp; actionparam9&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED
+&nbsp; pluginId&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED&nbsp;   [TODO (lorne) - is this need this]
+&nbsp; href &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED
+&nbsp; id   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED&nbsp;  [TODO (lorne) - are item ids needed at all?]
+&gt;</pre>
+
+<p>Each &lt;item&gt; element describes
+one top-level item (or step) in a cheat sheet. The &lt;item&gt; is either
+simple, in which case the text between the &lt;item&gt; and &lt;/item&gt; tags is displayed
+in the UI as the item's description, or is complex, in which case the &lt;subitem&gt;
+elements between the the &lt;item&gt; and &lt;/item&gt; tags break the step down
+into sub-steps. &lt;item&gt; attributes are as follows:</p>
+<ul type="disc">
+  <li><b>title</b>
+    - title of the cheat sheet item
+  <li><b>perform</b>
+    - perform=&quot;true&quot; means that the step has an accompanying
+    computed-provided action; the UI generally shows a button that the user can
+    press to invoke that action</li>
+  <li><b>skip</b>
+    - skip=&quot;true&quot; means that the step can be skipped; the UI generally
+    shows a button that the user can press to indicate that they are skipping
+    this step
+  <li><b>complete</b>
+    - complete=&quot;true&quot; means that the step involves the user doing
+    something on their own; the UI generally shows a button that the user can
+    press to indicate that they have done whatever they were supposed to do
+  <li><b>class</b>
+    - the fully-qualified name of the Java class implementing <code>org.eclipse.ui.cheatsheets.ICheatSheetAction</code>
+    or its superinterface <code>org.eclipse.jface.action.IAction</code></li>
+  <li><b>actionparam<i>N</i></b>
+    - for action classes that implement <code>org.eclipse.ui.cheatsheets.ICheatSheetAction</code>,
+    the string values of these attributes are passed to the action when it is invoked.
+    You can pass up to 10 parameters to a cheat sheet item's action
+    (actionParam0, actionParam1, etc.) [TODO - need to complete spec for variables determined at cheat sheet execution
+    time; e.g., actionParam0=&quot;${var1}&quot;]</li>
+  <li><b>pluginId
+    </b>- the id of the plug-in which contains the Java class of the action
+    class</li>
+  <li><b>href</b>
+    - the cheat sheet items's optional task documentation link; when the user clicks the
+    item's help link, this document is shown in the help browser</li>
+</ul>
+
+<h2><code>subitem</code> Element</h2>
+<pre>&lt;?xml encoding=&quot;US-ASCII&quot;?&gt;&nbsp;
+&lt;!ELEMENT subitem EMPTY&gt;&nbsp;
+&lt;!ATTLIST subitem&nbsp;
+&nbsp; label&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED
+&nbsp; perform&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (true | false) &quot;false&quot;
+&nbsp; skip   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (true | false) &quot;false&quot;
+&nbsp; complete&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (true | false) &quot;false&quot;
+&nbsp; class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED
+&nbsp; pluginId&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED&nbsp;   [TODO (lorne) - is this need this]
+&nbsp; actionparam0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED
+&nbsp; actionparam1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED
+&nbsp; ...
+&nbsp; actionparam9&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED
+&nbsp; id   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED&nbsp;  [TODO (lorne) - are item ids needed at all?]
+&gt;</pre>
+
+<p>Each &lt;subitem&gt; element describes
+a sub-item (or sub-step) in a cheat sheet. A &lt;subitem&gt; carries a simple
+text label, but has neither a lengthy description nor further subitems. There
+should be a least 2 sub-items within the item. Each sub-item has its own action
+buttons.</p>
+<p>Note
+that help and extension items buttons are generally presented only on items, not
+subitems.</p>
+<p>Unlike
+items, which must be followed in strict sequence, the subitems of a given item
+can be performed in any order. 
+All subitems within an item have to be attempted (that is, performed, skipped,
+or completed) before progressing to the next item. (Which means actions that
+must be performed in a required sequence cannot be represented as subitems.)&nbsp;</p>
+<p>&lt;subitem&gt;
+attributes are as follows:</p>
+<ul type="disc">
+  <li><b>label</b>
+    - title of the cheat sheet subitem [TODO (lorne) - rename to
+    &quot;title&quot;? ]
+  <li><b>perform</b>
+    - perform=&quot;true&quot; means that the step has an accompanying
+    computed-provided action; the UI generally shows a button that the user can
+    press to invoke that action</li>
+  <li><b>skip</b>
+    - skip=&quot;true&quot; means that the step can be skipped; the UI generally
+    shows a button that the user can press to indicate that they are skipping
+    this step
+  <li><b>complete</b>
+    - complete=&quot;true&quot; means that the step involves the user doing
+    something on their own; the UI generally shows a button that the user can
+    press to indicate that they have done whatever they were supposed to do
+  <li><b>class</b>
+    - the fully-qualified name of the Java class implementing <code>org.eclipse.ui.cheatsheets.ICheatSheetAction</code>
+    or its superinterface <code>org.eclipse.jface.action.IAction</code></li>
+  <li><b>actionparam<i>N</i></b>
+    - for action classes that implement <code>org.eclipse.ui.cheatsheets.ICheatSheetAction</code>,
+    the string values of these attributes are passed to the action when it is invoked.
+    You can pass up to 10 parameters to a cheat sheet item's action
+    (actionParam0, actionParam1, etc.) [TODO - need to complete spec for variables determined at cheat sheet execution
+    time; e.g., actionParam0=&quot;${var1}&quot;]</li>
+  <li><b>pluginId
+    </b>- the id of the plug-in which contains the Java class of the action
+    class</li>
+</ul>
+
+<h2>Basic Elements and Attributes</h2>
+
+<p>The following snippet shows an example of a cheat sheet XML that is provided in the cheat sheet sample
+plugin. 
+</p>
+
+<pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;&nbsp; 
+&nbsp; 
+&lt;cheatSheet title=&quot;Hello World Demo&quot; version=&quot;1.0&quot;&gt; 
+&nbsp; 
+&lt;intro&nbsp; 
+      href=&quot;/org.eclipse.ui.cheatsheets.doc/tasks/tcheatst.htm&quot;&gt; 
+Welcome to the hello world cheat sheet. 
+This cheat sheet will help you to build the famous &quot;hello world&quot;
+application and try it out. You will create a java project, and
+a Java class that will print &quot;hello world&quot; in the console when run. 
+Let's get started! 
+&lt;/intro&gt; 
+&nbsp; 
+&lt;item 
+      id=&quot;0&quot; 
+      title=&quot;Open the Java Perspective&quot;&nbsp; 
+      href=&quot;/org.eclipse.platform.doc.user/concepts/concepts-4.htm&quot; 
+      actionphrase=&quot;2&quot;&nbsp; 
+      pluginId=&quot;org.eclipse.ui.cheatsheet.sample&quot; 
+      class=&quot;org.eclipse.ui.cheatsheets.sample.pattern.actions.LaunchPatternSelectionDialogAction&quot;&gt;
+To begin, open the Java Perspective in the Eclipse workbench.&nbsp; 
+You may do this by clicking window-&gt;open perspective-&gt;Java in the
+toolbar at the top of the workbench. When you have done this, press
+the &quot;click when done&quot; button below.
+&lt;/item&gt; 
+&nbsp; 
+&lt;/cheatSheet&gt;</pre>
+Figure 1: Example cheat sheet xml
+<h3>Item extensions</h3>
+<p>If you need extend an item’s assistance capabilities to launch additional support tools besides help topics, you can use the item extension mechanism to display additional custom controls to the left of help link  button. To accomplish this, you need to do these two things:Use the extension point to extend the cheat sheet &lt;item&gt; 
+In the cheat sheet content XML file, use the newly defined &lt;item&gt; attribute that supports the item extension.</p>
+<h4>Extension point for item extensions</h4>
+<p>In the cheat sheet content plugin's plugin.xml file, use the extension point, org.eclipse.ui.cheatsheets.cheatSheetItemExtension, as follows: 
+&lt;extension point="org.eclipse.ui.cheatsheets.cheatSheetItemExtension"&gt; 
+        &lt;itemExtension 
+                itemAttribute="extensionlink" 
+                class="org.example.actions.ItemExtensionAction"&gt; 
+        &lt;/itemExtension&gt; 
+&lt;/extension&gt; 
+In the above example extension point, the itemAttribute="" attribute specifies the name of the attribute to use when defining the &lt;item&gt; that will have the item extension included. You can use the same item extension for more than one &lt;item&gt;. 
+The class="" attribute is a class that implements the org.eclipse.ui.cheatsheets.ICheatSheetItemExtensionElement interface. This class is called to handle the following: 
+·        Parsing of the information in the cheat sheet content XML file. 
+·        Creation of the custom control.</p>
+<h3>Defining &lt;item&gt; that uses the item extension</h3>
+<p>In the cheat sheet content XML file, the &lt;item&gt; element that you wish to have the item extension needs to use the item extension attribute. The value of the itemAttribute in the &lt;itemExtension&gt; element is the attribute that you will use in the &lt;item&gt; definition. Here is an example of the &lt;item&gt; element that has the extensionlink attribute as defined in the above extension point example. 
+&lt;item 
+        id="0" 
+        href="/org.eclipse.platform.doc.user/concepts/concepts-4.htm" 
+        title="Open the Java Perspective" 
+        extensionlink=”input data required by extension”        actionphrase="2"        pluginId="org.eclipse.ui.cheatsheet.sample" 
+        class="org.eclipse.ui.cheatsheets.sample.pattern.actions.LaunchPatternSelectionDialogAction"&gt;To begin, open the Java Perspective in the Eclipse workbench. 
+You may do this by clicking window-&gt;open perspective-&gt;Java in the toolbar at the top of the workbench.  When you have done this, press the "click when done" button below.&lt;/item&gt;</p>
+<h2>Additional notes</h2>
+<p>Text formatting and line breaks 
+In the cheat sheet content XML file keep all the text in the same line as the &lt;intro&gt; or &lt;item&gt; tag. At execution time, the cheat sheet will automatically wrap the text to make it show up correctly in the cheat sheet. If you break the text into another line in the cheat sheet content XML file, you will force a line break in the displayed cheat sheet. 
+ </p>
