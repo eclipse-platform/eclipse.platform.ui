@@ -145,7 +145,7 @@ public class ContextHelpWindow extends Window {
 	private void hookListeners() {
 		Shell shell = getShell();
 		shell.addListener(SWT.Move, listener);
-		shell.addListener(SWT.Resize, listener);	
+		shell.addListener(SWT.Resize, listener);
 		shell.getParent().addListener(SWT.Activate, listener);
 		shell.getParent().addControlListener(parentListener);
 	}
