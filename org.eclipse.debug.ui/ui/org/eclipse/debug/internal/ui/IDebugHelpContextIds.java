@@ -47,12 +47,12 @@ public interface IDebugHelpContextIds {
 	public static final String TERMINATE_AND_REMOVE_ACTION = PREFIX + "terminate_and_remove_action_context";
 		
 	// Views
-	public static final String DEBUG_VIEW = "debug_view_context";
-	public static final String PROCESS_VIEW = "process_view_context";
-	public static final String VARIABLE_VIEW = "variable_view_context";
-	public static final String INSPECTOR_VIEW = "inspector_view_context";
-	public static final String BREAKPOINT_VIEW = "breakpoint_view_context";
-	public static final String CONSOLE_VIEW = "console_view_context";
+	public static final String DEBUG_VIEW = PREFIX + "debug_view_context";
+	public static final String PROCESS_VIEW = PREFIX + "process_view_context";
+	public static final String VARIABLE_VIEW = PREFIX + "variable_view_context";
+	public static final String INSPECTOR_VIEW = PREFIX + "inspector_view_context";
+	public static final String BREAKPOINT_VIEW = PREFIX + "breakpoint_view_context";
+	public static final String CONSOLE_VIEW = PREFIX + "console_view_context";
 	
 	// Preference pages
 	public static final String DEBUG_PREFERENCE_PAGE = PREFIX + "debug_preference_page_context";
