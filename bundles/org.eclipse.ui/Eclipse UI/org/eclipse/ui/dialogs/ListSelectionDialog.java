@@ -144,7 +144,7 @@ protected Control createDialogArea(Composite parent) {
 
 	createMessageArea(composite);
 
-	listViewer = new CheckboxTableViewer(composite, SWT.BORDER, false);
+	listViewer = CheckboxTableViewer.newCheckList(composite, SWT.BORDER);
 	GridData data = new GridData(GridData.FILL_BOTH);
 	data.heightHint = SIZING_SELECTION_WIDGET_HEIGHT;
 	data.widthHint = SIZING_SELECTION_WIDGET_WIDTH;

@@ -136,7 +136,7 @@ protected void createContents(Composite parent,int width,int height) {
 	Composite pane = createViewPane(composite, width/2, height/2);
 	
 	// list 1 viewer
-	list1Viewer = new CheckboxTableViewer(pane, SWT.NONE, false);
+	list1Viewer = CheckboxTableViewer.newCheckList(pane, SWT.NONE);
 	list1Viewer.setContentProvider(list1ContentProvider);
 	list1Viewer.setLabelProvider(list1LabelProvider);
 	list1Viewer.addCheckStateListener(this);
