@@ -194,32 +194,9 @@ public class ResourceNode extends BufferedContent
 	}
 	
 	/* (non Javadoc)
-	 * This is just for testing.
+	 * see IEditableContent.replace
 	 */
 	public ITypedElement replace(ITypedElement child, ITypedElement other) {
-		if (other == null) {
-			if (child != null)
-				System.out.println("delete " + child.getName());
-			else
-				System.out.println("ResourceNode.replace: oops");				
-		} else {
-			if (child == null) {
-				System.out.println("create " + other.getName());
-				//child= new ResourceNode(fResource, other.getName());
-			} else {
-				System.out.println("update " + child.getName());
-				// copy contents
-				if (other instanceof IStreamContentAccessor) {
-					try {
-						InputStream is= ((IStreamContentAccessor)other).getContents();
-						byte[] bytes= Utilities.readBytes(is);
-						if (bytes != null)
-							setContent(bytes);
-					} catch (CoreException ex) {
-					}
-				}
-			}
-		}
 		return child;
 	}
 }
