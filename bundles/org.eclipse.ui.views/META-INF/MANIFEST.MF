@@ -7,9 +7,9 @@ Bundle-ClassPath: .
 Bundle-Activator: org.eclipse.ui.internal.views.ViewsPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Export-Package: org.eclipse.ui.internal.views,
- org.eclipse.ui.internal.views.contentoutline,
- org.eclipse.ui.internal.views.properties,
+Export-Package: org.eclipse.ui.internal.views;internal:=true,
+ org.eclipse.ui.internal.views.contentoutline;internal:=true,
+ org.eclipse.ui.internal.views.properties;internal:=true,
  org.eclipse.ui.views.contentoutline,
  org.eclipse.ui.views.properties
 Require-Bundle: org.eclipse.core.runtime,
