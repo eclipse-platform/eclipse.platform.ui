@@ -18,6 +18,6 @@ package org.eclipse.ui.internal;
  * 
  * @since 3.0 
  */
-class CompatibleWorkbenchPage implements ICompatibleWorkbenchPage {
+public class CompatibleWorkbenchPage implements ICompatibleWorkbenchPage {
 	// dummy version that declares no methods
 }

@@ -36,7 +36,7 @@ import org.eclipse.ui.PartInitException;
  * 
  * @since 3.0
  */
-class CompatibleWorkbenchPage implements ICompatibleWorkbenchPage {
+public class CompatibleWorkbenchPage implements ICompatibleWorkbenchPage {
 	/**
 	 * openEditor(IFile) is declared on IWorkbenchPage in 2.1.
 	 * This method was removed in 3.0 because it references resource API.
