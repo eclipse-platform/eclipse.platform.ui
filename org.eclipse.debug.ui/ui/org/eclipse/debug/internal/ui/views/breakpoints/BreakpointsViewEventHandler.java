@@ -74,16 +74,11 @@ public class BreakpointsViewEventHandler implements IBreakpointsListener, IActiv
 						if (!DebugPlugin.getDefault().getBreakpointManager().isEnabled()) {
                         	fView.updateViewerBackground();
                         }
-						viewer.getControl().setRedraw(false);
-						try {
-							// This code is left in as a test case for platform bug 77075
-							//for (int i = 0; i < breakpoints.length; i++) { 
-								//viewer.expandToLevel(breakpoints[i], AbstractTreeViewer.ALL_LEVELS);
-							//}
-							viewer.setSelection(new StructuredSelection(breakpoints));
-						} finally {
-							viewer.getControl().setRedraw(true);
-						}
+						// This code is left in as a test case for platform bug 77075
+						//for (int i = 0; i < breakpoints.length; i++) { 
+							//viewer.expandToLevel(breakpoints[i], AbstractTreeViewer.ALL_LEVELS);
+						//}
+						viewer.setSelection(new StructuredSelection(breakpoints));
 						fView.updateObjects();
 					}
 				}
