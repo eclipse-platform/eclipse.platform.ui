@@ -10,6 +10,7 @@ Contributors:
 **********************************************************************/
 package org.eclipse.ant.internal.ui.editor.templates;
 
+import org.eclipse.ant.internal.ui.editor.AntSourceViewerInformationControl;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IInformationControlCreatorExtension;
