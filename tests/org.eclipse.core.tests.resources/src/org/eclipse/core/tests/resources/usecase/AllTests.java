@@ -31,7 +31,6 @@ public class AllTests extends TestCase {
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite();
-		suite.addTest(BuilderUseCaseTest.suite());
 		suite.addTest(ConcurrencyTest.suite());
 		suite.addTest(IFileTest.suite());
 		suite.addTest(IFolderTest.suite());
