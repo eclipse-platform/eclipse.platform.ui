@@ -278,7 +278,7 @@ public class WorkbenchPreferenceDialog extends PreferenceDialog {
         		.getObjectActivityManager(
         			IWorkbenchConstants.PL_PREFERENCES, false);
         if (prefManager != null) {
-            Collection activePages = prefManager.getActiveObjects();            
+            Collection activePages = prefManager.getEnabledObjects();            
             if (node instanceof WorkbenchPreferenceNode && !activePages.contains(node)) {
                 return;
             }

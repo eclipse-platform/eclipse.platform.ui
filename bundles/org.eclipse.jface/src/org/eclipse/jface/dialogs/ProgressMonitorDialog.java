@@ -120,7 +120,7 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements IRunn
 	/**
 	 * The cursor used in the cancel button;
 	 */
-	private Cursor arrowCursor;
+	protected Cursor arrowCursor;
 
 	/**
 	 * The cursor used in the shell;
@@ -273,22 +273,29 @@ private void asyncSetOperationCancelButtonEnabled(final boolean b) {
  */
 public boolean close() {
 	if (getNestingDepth() <= 0) {
-		if (cancel != null && !cancel.isDisposed()) {
-			cancel.setCursor(null);
-		}
-		Shell shell = getShell();
-		if (shell != null && !shell.isDisposed()) {
-			shell.setCursor(null);
-		}
-		if (arrowCursor != null)
-			arrowCursor.dispose();
-		if (waitCursor != null)
-			waitCursor.dispose();
-		arrowCursor = null;
-		waitCursor = null;
+		clearCursors();
 		return super.close();
 	}
 	return false;
+}
+
+/**
+ * Clear the cursors in the dialog.
+ */
+protected void clearCursors() {
+	if (cancel != null && !cancel.isDisposed()) {
+		cancel.setCursor(null);
+	}
+	Shell shell = getShell();
+	if (shell != null && !shell.isDisposed()) {
+		shell.setCursor(null);
+	}
+	if (arrowCursor != null)
+		arrowCursor.dispose();
+	if (waitCursor != null)
+		waitCursor.dispose();
+	arrowCursor = null;
+	waitCursor = null;
 }
 /* (non-Javadoc)
  * Method declared in Window.
@@ -477,7 +484,7 @@ public void setCancelable(boolean cancelable) {
  * @param b <code>true</code> to enable the cancel button,
  *   and <code>false</code> to disable it
  */
-private void setOperationCancelButtonEnabled(boolean b) {
+protected void setOperationCancelButtonEnabled(boolean b) {
 	operationCancelableState = b;
 	cancel.setEnabled(b);
 }

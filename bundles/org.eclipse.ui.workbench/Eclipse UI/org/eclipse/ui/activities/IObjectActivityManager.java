@@ -72,15 +72,14 @@ public interface IObjectActivityManager {
 
 	/**
 	 * Adds a binding between object-&gt;activity. If the given activity is not
-	 * defined in the RoleManager registry then no action is taken.
+	 * defined in the receivers <code>IActivityManager</code> then no action is taken.
 	 * 
 	 * @param record
 	 *            the contribution record to bind.
 	 * @param activityId
 	 *            the activity ID to bind to.
-	 * @since 3.0
 	 */
-	public abstract void addActivityBinding(
+	public void addActivityBinding(
 		IObjectContributionRecord record,
 		String activityId);
 
@@ -89,16 +88,15 @@ public interface IObjectActivityManager {
 	 * reciever only once.
 	 * 
 	 * @param pluginId
-	 *            The plugin id
+	 *            The plugin id.
 	 * @param localId
-	 *            The local id
+	 *            The local id.
 	 * @param object
-	 *            The object being added
+	 *            The object being added.
 	 * @return the <code>IObjectContributionRecord</code> that was used as a
 	 *         key to store the provided object.
-	 * @since 3.0
 	 */
-	public abstract IObjectContributionRecord addObject(
+	public IObjectContributionRecord addObject(
 		String pluginId,
 		String localId,
 		Object object);
@@ -106,49 +104,42 @@ public interface IObjectActivityManager {
 	/**
 	 * Apply default pattern bindings to all of the objects governed by the
 	 * receiver.
-	 * 
-	 * @since 3.0
 	 */
 	public void applyPatternBindings();
 
 	/**
 	 * Apply default pattern bindings based on the provided
-	 * ObjectContributionRecord that is governed by the receiver.
+	 * <code>IObjectContributionRecord</code> that is governed by the receiver.
 	 * 
 	 * @param record
-	 *            IObjectContributionRecord
-	 * @since 3.0
+	 *            <code>IObjectContributionRecord</code> the record to apply bindings on.
 	 */
 	public void applyPatternBindings(IObjectContributionRecord record);
 
 	/**
-	 * Find the IObjectContributionRecords that maps to the given object, or
-	 * null.
+	 * Find the <code>IObjectContributionRecords</code> that maps to the given object.
 	 * 
 	 * @param objectOfInterest
 	 *            the object to key on.
-	 * @return a Collection of IObjectContributionRecord objects that bind to
+	 * @return a <code>Collection</code> of <code>IObjectContributionRecord</code>s  that bind to
 	 *         the supplied object. Typically this collection will have either
 	 *         0 or 1 element in it.
-	 * @since 3.0
 	 */
 	public Collection findObjectContributionRecords(Object objectOfInterest);
 
 	/**
-	 * Return a set of objects that are currently valid based on the active
-	 * activities, or all objects if role filtering is currently disabled.
+	 * Return a <code>Set</code> of objects that are currently valid based on the enabled
+	 * activities.  This <code>Set</code> is read only.
 	 * 
-	 * @return the collection of active objects.
-	 * @since 3.0
+	 * @return the <code>Collection</code> of active objects.
 	 */
-	public abstract Collection getActiveObjects();
+	public Collection getEnabledObjects();
 
 	/**
-	 * Get the Set of IObjectContributionRecord keys from the object store.
-	 * This Set is read only.
+	 * Get the <code>Set<code> of <code>IObjectContributionRecord</code> keys from the object store.
+	 * This <code>Set</code> is read only.
 	 * 
-	 * @return the set of keys.
-	 * @since 3.0
+	 * @return the <code>Set</code> of keys.
 	 */
 	public Set getObjectIds();
 
@@ -157,8 +148,7 @@ public interface IObjectActivityManager {
 	 * record.
 	 * 
 	 * @param record
-	 *            IObjectContributionRecord the record of the object to remove.
-	 * @since 3.0
+	 *            the <code>IObjectContributionRecord</code> of the object to remove.
 	 */
 	public void removeObject(IObjectContributionRecord record);
 
@@ -167,12 +157,11 @@ public interface IObjectActivityManager {
 	 * based on key-points in the UI (ie: the New wizard).
 	 * 
 	 * @param objectOfInterest
-	 *            the Object to enable or disable.
+	 *            the object to enable or disable.
 	 * @param enablement
 	 *            the enablment state to grant to all matching activities.
-	 * @since 3.0
 	 */
-	public abstract void setEnablementFor(
+	public void setEnablementFor(
 		Object objectOfInterest,
 		boolean enablement);
 }

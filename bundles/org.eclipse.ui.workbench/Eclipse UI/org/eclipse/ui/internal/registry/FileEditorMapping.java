@@ -274,7 +274,7 @@ public class FileEditorMapping extends Object implements IFileEditorMapping, Clo
         if(objectManager == null)
         	return editors;
         ArrayList filtered = new ArrayList(editors);
-        filtered.retainAll(objectManager.getActiveObjects());
+        filtered.retainAll(objectManager.getEnabledObjects());
         return filtered;
 	}
 

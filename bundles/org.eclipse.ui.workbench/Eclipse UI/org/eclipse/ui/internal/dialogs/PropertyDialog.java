@@ -86,7 +86,7 @@ public class PropertyDialog extends PreferenceDialog {
 				IWorkbenchConstants.PL_PROPERTY_PAGES,
 				false);
 		if (propManager != null) {
-			Collection activeContributions = propManager.getActiveObjects();
+			Collection activeContributions = propManager.getEnabledObjects();
 			if (node instanceof PropertyPageNode
 				&& !activeContributions.contains(((PropertyPageNode) node).getContributor())) {
 				return;

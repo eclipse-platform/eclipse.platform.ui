@@ -58,7 +58,7 @@ public class PerspContentProvider implements IStructuredContentProvider {
         if (manager == null) {
             return descriptors;
         }
-        Collection activePerspectives = manager.getActiveObjects();
+        Collection activePerspectives = manager.getEnabledObjects();
             
         Collection filtered = new ArrayList();
         for (int i = 0; i < descriptors.length; i++) {

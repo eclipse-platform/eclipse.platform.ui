@@ -293,7 +293,7 @@ public class ObjectActivityManager implements IObjectActivityManager {
 	 * 
 	 * @see org.eclipse.ui.activities.IObjectActivityManager#getActiveObjects()
 	 */
-	public Collection getActiveObjects() {
+	public Collection getEnabledObjects() {
 		synchronized (activeObjects) {
 			if (!activityManager.getDefinedCategoryIds().isEmpty()) {
 				if (dirty) {
