@@ -118,13 +118,13 @@ public class UpdateManagerUtils {
 					}
 
 					if (relativePath == null) {
-						UpdateManagerPlugin.warn("Cannot calculate relative path");
+						UpdateCORE.warn("Cannot calculate relative path");
 						return url.toString();
 					} else {
 						String relativeRootString = relativePath.getParentFile().getAbsolutePath();
 						String fullString = urlFile.getAbsolutePath();
 						if (!fullString.startsWith(relativeRootString)) {
-							UpdateManagerPlugin.warn("Full path:" + fullString + " does not start with " + relativeRootString);
+							UpdateCORE.warn("Full path:" + fullString + " does not start with " + relativeRootString);
 							return url.toString();
 						} else {
 							String returnString = fullString.substring(relativeRootString.length() + 1);
@@ -152,7 +152,7 @@ public class UpdateManagerUtils {
 	public static String getResourceString(String infoURL, ResourceBundle bundle) {
 		String result = null;
 		if (infoURL != null) {
-			result = UpdateManagerPlugin.getPlugin().getDescriptor().getResourceString(infoURL, bundle);
+			result = UpdateCORE.getPlugin().getDescriptor().getResourceString(infoURL, bundle);
 		}
 		return result;
 	};
@@ -195,7 +195,7 @@ public class UpdateManagerUtils {
 	public static void checkPermissions(ContentReference ref, String filePath) {
 
 		if (ref.getPermission() != 0) {
-			UpdateManagerPlugin.warn("Change permission for " + filePath + " to " + ref.getPermission());
+			UpdateCORE.warn("Change permission for " + filePath + " to " + ref.getPermission());
 			// FIXME: change the code to use JNI
 		}
 
@@ -267,7 +267,7 @@ public class UpdateManagerUtils {
 		if (!file.delete()) {
 			String msg = Policy.bind("UpdateManagerUtils.UnableToRemoveFile", file.getAbsolutePath());
 			//$NON-NLS-1$ //$NON-NLS-2$
-			UpdateManagerPlugin.log(msg, new Exception());
+			UpdateCORE.log(msg, new Exception());
 		}
 	}
 
@@ -288,7 +288,7 @@ public class UpdateManagerUtils {
 		if (!file.delete()) {
 			String msg = Policy.bind("UpdateManagerUtils.UnableToRemoveFile", file.getAbsolutePath());
 			//$NON-NLS-1$ //$NON-NLS-2$
-			UpdateManagerPlugin.log(msg, new Exception());
+			UpdateCORE.log(msg, new Exception());
 		}
 	}
 
@@ -440,14 +440,14 @@ public class UpdateManagerUtils {
 						try {
 							compareFeature = children[j].getFeature();
 						} catch (CoreException e) {
-							UpdateManagerPlugin.warn("", e);
+							UpdateCORE.warn("", e);
 						};
 						if (childFeature.equals(compareFeature)) {
 							if (onlyOptional) {
 								if (UpdateManagerUtils.isOptional(children[j])) {
 									parentList.add(possiblesParent[i]);
 								} else {
-									UpdateManagerPlugin.warn("Feature :" + children[j] + " not optional. Not included in parents list.");
+									UpdateCORE.warn("Feature :" + children[j] + " not optional. Not included in parents list.");
 								}
 							} else {
 								parentList.add(possiblesParent[i]);
@@ -456,7 +456,7 @@ public class UpdateManagerUtils {
 					}
 				}
 			} catch (CoreException e) {
-				UpdateManagerPlugin.warn("", e);
+				UpdateCORE.warn("", e);
 			};
 		}
 
@@ -484,7 +484,7 @@ public class UpdateManagerUtils {
 		try {
 			childFeature = child.getFeature();
 		} catch (CoreException e) {
-			UpdateManagerPlugin.warn(null, e);
+			UpdateCORE.warn(null, e);
 		}
 
 		if (childFeature == null)

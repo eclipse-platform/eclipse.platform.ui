@@ -7,7 +7,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.update.core.model.ModelObject;
 import org.eclipse.update.core.model.SiteModel;
-import org.eclipse.update.internal.core.UpdateManagerPlugin;
+import org.eclipse.update.internal.core.UpdateCORE;
 
 /**
  * 
@@ -146,7 +146,7 @@ public class ConfiguredSiteModel extends ModelObject {
 	 */
 	protected IStatus createStatus(int statusSeverity, int statusCode, String msg, Exception e){
 		String id =
-			UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+			UpdateCORE.getPlugin().getDescriptor().getUniqueIdentifier();
 	
 		StringBuffer completeString = new StringBuffer("");
 		if (msg!=null)

@@ -12,7 +12,7 @@ import org.apache.xerces.parsers.SAXParser;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.SiteFeatureReferenceModel;
 import org.eclipse.update.internal.core.Policy;
-import org.eclipse.update.internal.core.UpdateManagerPlugin;
+import org.eclipse.update.internal.core.UpdateCORE;
 import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -46,7 +46,7 @@ public class DefaultSiteParser extends DefaultHandler {
 	private static final int STATE_CATEGORY_DEF = 5;
 	private static final int STATE_DESCRIPTION_SITE = 6;
 	private static final int STATE_DESCRIPTION_CATEGORY_DEF = 7;
-	private static final String PLUGIN_ID = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+	private static final String PLUGIN_ID = UpdateCORE.getPlugin().getDescriptor().getUniqueIdentifier();
 
 	private static final String SITE = "site"; //$NON-NLS-1$
 	private static final String FEATURE = "feature"; //$NON-NLS-1$
@@ -81,7 +81,7 @@ public class DefaultSiteParser extends DefaultHandler {
 		this.parser.setContentHandler(this);
 		this.parser.setErrorHandler(this); // 18350
 
-		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING)
+		if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_PARSING)
 			debug("Created"); //$NON-NLS-1$
 	}
 
@@ -143,7 +143,7 @@ public class DefaultSiteParser extends DefaultHandler {
 	 */
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 
-		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
+		if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_PARSING) {
 			debug("State: " + currentState); //$NON-NLS-1$
 			debug("Start Element: uri:" + uri + " local Name:" + localName + " qName:" + qName);
 			//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -292,7 +292,7 @@ public class DefaultSiteParser extends DefaultHandler {
 				break;
 		}
 
-		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING)
+		if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_PARSING)
 			debug("End Element:" + uri + ":" + localName + ":" + qName);
 		//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
@@ -455,7 +455,7 @@ public class DefaultSiteParser extends DefaultHandler {
 		site.setType(type);
 		objectStack.push(site);
 
-		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING)
+		if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_PARSING)
 			debug("End process Site tag: siteURL:" + siteURL + " type:" + type);
 		//$NON-NLS-1$ //$NON-NLS-2$
 
@@ -484,7 +484,7 @@ public class DefaultSiteParser extends DefaultHandler {
 		if ((id == null || id.trim().equals("")) //$NON-NLS-1$
 		^ (ver == null || ver.trim().equals(""))) { //$NON-NLS-1$
 			String[] values = new String[] { id, ver, getState(currentState)};
-			UpdateManagerPlugin.warn(Policy.bind("DefaultFeatureParser.IdOrVersionInvalid", values));
+			UpdateCORE.warn(Policy.bind("DefaultFeatureParser.IdOrVersionInvalid", values));
 			//$NON-NLS-1$
 		} else {
 			feature.setFeatureIdentifier(id);
@@ -525,7 +525,7 @@ public class DefaultSiteParser extends DefaultHandler {
 
 		objectStack.push(feature);
 
-		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING)
+		if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_PARSING)
 			debug("End Processing DefaultFeature Tag: url:" + urlInfo + " type:" + type);
 		//$NON-NLS-1$ //$NON-NLS-2$
 
@@ -554,7 +554,7 @@ public class DefaultSiteParser extends DefaultHandler {
 			SiteModel site = (SiteModel) objectStack.peek();
 			site.addArchiveReferenceModel(archive);
 		}
-		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING)
+		if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_PARSING)
 			debug("End processing Archive: path:" + id + " url:" + url);
 		//$NON-NLS-1$ //$NON-NLS-2$
 
@@ -568,7 +568,7 @@ public class DefaultSiteParser extends DefaultHandler {
 		SiteFeatureReferenceModel feature = (SiteFeatureReferenceModel) objectStack.peek();
 		feature.addCategoryName(category);
 
-		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING)
+		if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_PARSING)
 			debug("End processing Category: name:" + category); //$NON-NLS-1$
 	}
 
@@ -586,7 +586,7 @@ public class DefaultSiteParser extends DefaultHandler {
 		site.addCategoryModel(category);
 		objectStack.push(category);
 
-		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING)
+		if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_PARSING)
 			debug("End processing CategoryDef: name:" + name + " label:" + label);
 		//$NON-NLS-1$ //$NON-NLS-2$
 	}
@@ -599,7 +599,7 @@ public class DefaultSiteParser extends DefaultHandler {
 		String infoURL = attributes.getValue("url"); //$NON-NLS-1$
 		inf.setURLString(infoURL);
 
-		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING)
+		if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_PARSING)
 			debug("Processed Info: url:" + infoURL); //$NON-NLS-1$
 
 		objectStack.push(inf);
@@ -609,7 +609,7 @@ public class DefaultSiteParser extends DefaultHandler {
 	 * 
 	 */
 	private void debug(String s) {
-		UpdateManagerPlugin.debug("DefaultSiteParser" + s);
+		UpdateCORE.debug("DefaultSiteParser" + s);
 	}
 
 	/*
@@ -648,8 +648,8 @@ public class DefaultSiteParser extends DefaultHandler {
 		}
 
 		status.add(error);
-		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING)
-			UpdateManagerPlugin.log(error);
+		if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_PARSING)
+			UpdateCORE.log(error);
 	}
 
 	/*

@@ -82,7 +82,7 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 	public void store(ContentReference contentReference, IProgressMonitor monitor) throws CoreException {
 
 		if (closed) {
-			UpdateManagerPlugin.warn("Attempt to store in a closed SiteFileContentConsumer", new Exception());
+			UpdateCORE.warn("Attempt to store in a closed SiteFileContentConsumer", new Exception());
 			return;
 		}
 
@@ -129,7 +129,7 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 	public IFeatureReference close() throws CoreException {
 
 		if (closed)
-			UpdateManagerPlugin.warn("Attempt to close a closed SiteFileContentConsumer", new Exception());
+			UpdateCORE.warn("Attempt to close a closed SiteFileContentConsumer", new Exception());
 
 		// create a new Feature reference to be added to the site
 		SiteFeatureReference ref = new SiteFeatureReference();
@@ -153,7 +153,7 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 				File renamedFile = new File(oldPath);
 				if (renamedFile.exists()) {
 					UpdateManagerUtils.removeFromFileSystem(renamedFile);
-					UpdateManagerPlugin.warn("Removing already existing file:" + oldPath);
+					UpdateCORE.warn("Removing already existing file:" + oldPath);
 				}
 				sucess = fileToRename.renameTo(renamedFile);
 			}
@@ -190,7 +190,7 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 	public void abort() throws CoreException {
 
 		if (closed) {
-			UpdateManagerPlugin.warn("Attempt to abort a closed SiteFileContentConsumer", new Exception());
+			UpdateCORE.warn("Attempt to abort a closed SiteFileContentConsumer", new Exception());
 			return;
 		}
 
@@ -216,7 +216,7 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 
 		if (!sucess) {
 			String msg = Policy.bind("Unable to delete", oldPath);
-			UpdateManagerPlugin.log(msg, null);
+			UpdateCORE.log(msg, null);
 		} else {
 			// remove the feature files;
 			Iterator iter = installedFiles.iterator();
@@ -247,7 +247,7 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 		try {
 			localFeature = localFeatureReference.getFeature();
 		} catch (CoreException e) {
-			UpdateManagerPlugin.warn(null, e);
+			UpdateCORE.warn(null, e);
 			return;
 		}
 	

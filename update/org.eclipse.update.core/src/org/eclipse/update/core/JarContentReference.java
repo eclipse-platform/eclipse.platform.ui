@@ -12,7 +12,7 @@ import java.util.jar.JarFile;
 
 import org.eclipse.update.core.model.InstallAbortedException;
 import org.eclipse.update.internal.core.Policy;
-import org.eclipse.update.internal.core.UpdateManagerPlugin;
+import org.eclipse.update.internal.core.UpdateCORE;
 
 /**
  * Local .jar file content reference
@@ -124,10 +124,10 @@ public class JarContentReference extends ContentReference {
 	protected JarFile asJarFile() throws IOException {
 		if (this.jarFile == null) {
 			File file = asFile();
-			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_INSTALL)
-				UpdateManagerPlugin.debug("asJarFile :" + file);
+			if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_INSTALL)
+				UpdateCORE.debug("asJarFile :" + file);
 			if (file != null && !file.exists()) {
-				UpdateManagerPlugin.warn("JarFile does not exits:" + file);
+				UpdateCORE.warn("JarFile does not exits:" + file);
 				throw new FileNotFoundException(file.getAbsolutePath());
 			}
 			this.jarFile = new JarFile(file);

@@ -115,7 +115,7 @@ public class ErrorRecoveryLog {
 	public void open(String logEntry) throws CoreException {
 		if (open) {
 			nbOfOpen++;			
-			UpdateManagerPlugin.warn("Open nested Error/Recovery log #"+nbOfOpen+":"+logEntry);				
+			UpdateCORE.warn("Open nested Error/Recovery log #"+nbOfOpen+":"+logEntry);				
 			return;
 		}
 		
@@ -127,7 +127,7 @@ public class ErrorRecoveryLog {
 			paths=null;
 			open=true;
 			nbOfOpen=0;
-			UpdateManagerPlugin.warn("Start new Error/Recovery log #"+nbOfOpen+":"+logEntry);							
+			UpdateCORE.warn("Start new Error/Recovery log #"+nbOfOpen+":"+logEntry);							
 		} catch (IOException e) {
 			throw Utilities.newCoreException(
 				Policy.bind("UpdateManagerUtils.UnableToLog", new Object[] { logFile }),
@@ -144,7 +144,7 @@ public class ErrorRecoveryLog {
 		File logFile = null;
 		try {
 			if (!open) {
-				UpdateManagerPlugin.warn("Internal Error: The Error/Recovery log is not open:"+logEntry);				
+				UpdateCORE.warn("Internal Error: The Error/Recovery log is not open:"+logEntry);				
 				return;
 			}
 
@@ -184,12 +184,12 @@ public class ErrorRecoveryLog {
 	public void close(String logEntry) throws CoreException {
 		
 		if (nbOfOpen>0){
-			UpdateManagerPlugin.warn("Close nested Error/Recovery log #"+nbOfOpen+":"+logEntry);			
+			UpdateCORE.warn("Close nested Error/Recovery log #"+nbOfOpen+":"+logEntry);			
 			nbOfOpen--;			
 			return;
 		}			
 		
-		UpdateManagerPlugin.warn("Close Error/Recovery log #"+nbOfOpen+":"+logEntry);
+		UpdateCORE.warn("Close Error/Recovery log #"+nbOfOpen+":"+logEntry);
 		append(logEntry);
 		if (out != null) {
 			try {
@@ -235,7 +235,7 @@ public class ErrorRecoveryLog {
 
 		//check if recovery is on
 		if (!RECOVERY_ON){
-			UpdateManagerPlugin.warn("Recovering is turned off. Abort recovery");
+			UpdateCORE.warn("Recovering is turned off. Abort recovery");
 			return multi;
 		}
 		
@@ -252,7 +252,7 @@ public class ErrorRecoveryLog {
 			prop = new Properties();
 			prop.load(in);
 		} catch (IOException e){
-			UpdateManagerPlugin.warn("Unable to read:"+logFile,e);
+			UpdateCORE.warn("Unable to read:"+logFile,e);
 			multi.add(createStatus(IStatus.ERROR,"Unable to access property file:"+logFile,e));
 			return multi;
 		}
@@ -261,7 +261,7 @@ public class ErrorRecoveryLog {
 		if(eof!=null && eof.equals("eof")){
 			// all is good
 			delete();
-			UpdateManagerPlugin.warn("Found log file. Log file contains end-of-file. No need to process");
+			UpdateCORE.warn("Found log file. Log file contains end-of-file. No need to process");
 			multi.add(createStatus(IStatus.OK,null,null));
 			return multi;
 		}
@@ -291,7 +291,7 @@ public class ErrorRecoveryLog {
 	 */
 	private IStatus createStatus(int statusSeverity, String msg, Exception e){
 		String id =
-			UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+			UpdateCORE.getPlugin().getDescriptor().getUniqueIdentifier();
 	
 		StringBuffer completeString = new StringBuffer("");
 		if (msg!=null)
@@ -317,7 +317,7 @@ public class ErrorRecoveryLog {
 	 	if(values.contains(END_INSTALL_LOG)){
 			// all is good
 			delete();
-			UpdateManagerPlugin.warn("Found log file. Log file contains END_INSTALL_LOG. No need to process rename");
+			UpdateCORE.warn("Found log file. Log file contains END_INSTALL_LOG. No need to process rename");
 			multi.add(createStatus(IStatus.OK,null,null));
 			return multi;
 	 	}
@@ -330,7 +330,7 @@ public class ErrorRecoveryLog {
 	 		while(val!=null && !found){
 	 			if(val.equalsIgnoreCase(ALL_INSTALLED)) found = true;
 	 			IStatus renameStatus = processRename(val);
-	 			UpdateManagerPlugin.log(renameStatus);
+	 			UpdateCORE.log(renameStatus);
 	 			if(renameStatus.getSeverity()!=IStatus.OK){
 	 				multi.add(renameStatus);
 	 			}
@@ -338,13 +338,13 @@ public class ErrorRecoveryLog {
 	 			val = prop.getProperty(LOG_ENTRY_KEY+index);	 			
 	 		}
 	 		if (val==null){
-	 			UpdateManagerPlugin.warn("Unable to find value for :"+LOG_ENTRY_KEY+index);
+	 			UpdateCORE.warn("Unable to find value for :"+LOG_ENTRY_KEY+index);
 	 			multi.add(createStatus(IStatus.ERROR,"Wrong log file. Unable to find entry for:"+LOG_ENTRY_KEY+index,null));
 				return multi;
 	 		}
 	 		// process recovery finished
 	 		delete();
-			UpdateManagerPlugin.warn("Found log file. Successfully recovered by renaming. Feature is installed.");
+			UpdateCORE.warn("Found log file. Successfully recovered by renaming. Feature is installed.");
 			multi.add(createStatus(IStatus.OK,null,null));
 	 	} else {
 	 		// remove all because install did not lay out all the files
@@ -353,7 +353,7 @@ public class ErrorRecoveryLog {
 	 		String val = prop.getProperty(LOG_ENTRY_KEY+index);
 	 		while(val!=null){
 	 			IStatus removeStatus = processRemove(val);
-	 			UpdateManagerPlugin.log(removeStatus);
+	 			UpdateCORE.log(removeStatus);
 	 			if(removeStatus.getSeverity()!=IStatus.OK){
 	 				multi.addAll(removeStatus);
 	 			}
@@ -362,7 +362,7 @@ public class ErrorRecoveryLog {
 	 		}
 	 		// process recovery finished
 	 		delete();
-			UpdateManagerPlugin.warn("Found log file. Successfully recovered by removing. Feature is removed.");
+			UpdateCORE.warn("Found log file. Successfully recovered by removing. Feature is removed.");
 			multi.add(createStatus(IStatus.OK,null,null));
 	 	}
 	 	return multi;
@@ -410,7 +410,7 @@ public class ErrorRecoveryLog {
 		boolean sucess = false;
 		if (newFile.exists()) {
 			UpdateManagerUtils.removeFromFileSystem(newFile);
-			UpdateManagerPlugin.warn("Removing already existing file:"+newFile);
+			UpdateCORE.warn("Removing already existing file:"+newFile);
 		}
 		sucess = oldFile.renameTo(newFile);
 			
@@ -501,7 +501,7 @@ public class ErrorRecoveryLog {
 	 	if(values.contains(END_REMOVE_LOG)){
 			// all is good
 			delete();
-			UpdateManagerPlugin.warn("Found log file. Log file contains END_REMOVE_LOG. No need to process rename");
+			UpdateCORE.warn("Found log file. Log file contains END_REMOVE_LOG. No need to process rename");
 			multi.add(createStatus(IStatus.OK,null,null));
 			return multi;
 	 	}
@@ -518,7 +518,7 @@ public class ErrorRecoveryLog {
 	 		while(val!=null && !found){
 	 			if(val.equalsIgnoreCase(END_ABOUT_REMOVE)) found = true;
 	 			IStatus renameStatus = processRemove(val);
-	 			UpdateManagerPlugin.log(renameStatus);
+	 			UpdateCORE.log(renameStatus);
 	 			if(renameStatus.getSeverity()!=IStatus.OK){
 	 				multi.add(renameStatus);
 	 			}
@@ -526,13 +526,13 @@ public class ErrorRecoveryLog {
 	 			val = prop.getProperty(LOG_ENTRY_KEY+index);	 			
 	 		}
 	 		if (val==null){
-	 			UpdateManagerPlugin.warn("Unable to find value for :"+LOG_ENTRY_KEY+index);
+	 			UpdateCORE.warn("Unable to find value for :"+LOG_ENTRY_KEY+index);
 	 			multi.add(createStatus(IStatus.ERROR,"Wrong log file. Unable to find entry for:"+LOG_ENTRY_KEY+index,null));
 				return multi;
 	 		}
 	 		// process recovery finished
 	 		delete();
-			UpdateManagerPlugin.warn("Found log file. Successfully recovered by deleting. Feature is removed.");
+			UpdateCORE.warn("Found log file. Successfully recovered by deleting. Feature is removed.");
 			multi.add(createStatus(IStatus.OK,null,null));
 	 	}
 	 	return multi;

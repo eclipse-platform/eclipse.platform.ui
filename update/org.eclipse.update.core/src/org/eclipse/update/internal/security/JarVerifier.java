@@ -16,7 +16,7 @@ import java.util.zip.ZipException;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.Policy;
-import org.eclipse.update.internal.core.UpdateManagerPlugin;
+import org.eclipse.update.internal.core.UpdateCORE;
 
 /**
  * The JarVerifier will check the integrity of the JAR.
@@ -61,7 +61,7 @@ public class JarVerifier extends Verifier {
 			while (listOfKeystoreHandles.hasNext()) {
 				try {
 					handle = listOfKeystoreHandles.next();
-					in = UpdateManagerPlugin.getPlugin().get(handle.getLocation()).getInputStream();;
+					in = UpdateCORE.getPlugin().get(handle.getLocation()).getInputStream();;
 					try {
 						keystore = KeyStore.getInstance(handle.getType());
 						keystore.load(in, null); // no password
@@ -112,8 +112,8 @@ public class JarVerifier extends Verifier {
 			JarContentReference jarReference = (JarContentReference) contentRef;
 			try {
 				jarFile = jarReference.asFile();
-				if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_INSTALL)
-					UpdateManagerPlugin.debug("Attempting to read JAR file:"+jarFile);
+				if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_INSTALL)
+					UpdateCORE.debug("Attempting to read JAR file:"+jarFile);
 			
 				// # of entries
 				if (!jarFile.exists()) throw new IOException();
@@ -350,7 +350,7 @@ public class JarVerifier extends Verifier {
 				Exception e = new Exception(Policy.bind("JarVerifier.InvalidFile", file)); //$NON-NLS-1$
 				result.setResultException(e);
 				result.setVerificationCode(IVerificationResult.TYPE_ENTRY_NOT_SIGNED);
-				UpdateManagerPlugin.warn(null,e);
+				UpdateCORE.warn(null,e);
 			}
 		} catch (SecurityException e) {
 			// Jar file is signed

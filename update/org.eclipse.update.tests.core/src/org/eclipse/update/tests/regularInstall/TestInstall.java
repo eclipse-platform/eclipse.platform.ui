@@ -304,7 +304,7 @@ public class TestInstall extends UpdateManagerTestCase {
 	 */
 	public String getDefaultInstallableFeatureType() {
 		String pluginID =
-			UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier() + ".";
+			UpdateCORE.getPlugin().getDescriptor().getUniqueIdentifier() + ".";
 		return pluginID + PACKAGED_FEATURE_TYPE;
 	}
 

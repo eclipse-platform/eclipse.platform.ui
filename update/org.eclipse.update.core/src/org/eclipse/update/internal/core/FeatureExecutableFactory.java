@@ -43,7 +43,7 @@ public class FeatureExecutableFactory extends BaseFeatureFactory {
 				contentProvider.getFeatureManifestReference(null /*IProgressMonitor*/
 			).asURL(); 
 			URL resolvedURL = URLEncoder.encode(nonResolvedURL);
-			featureStream = UpdateManagerPlugin.getPlugin().get(resolvedURL).getInputStream();
+			featureStream = UpdateCORE.getPlugin().get(resolvedURL).getInputStream();
 	
 			feature = (TargetFeature) this.parseFeature(featureStream);
 			feature.setSite(site);

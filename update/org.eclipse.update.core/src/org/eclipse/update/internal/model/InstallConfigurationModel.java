@@ -237,10 +237,10 @@ public class InstallConfigurationModel extends ModelObject {
 		try {
 			try {
 				URL resolvedURL = URLEncoder.encode(getURL());
-				InputStream in = UpdateManagerPlugin.getPlugin().get(resolvedURL).getInputStream();
+				InputStream in = UpdateCORE.getPlugin().get(resolvedURL).getInputStream();
 				new InstallConfigurationParser(in, this);
 			} catch (FileNotFoundException exception) {
-				UpdateManagerPlugin.warn(locationURLString + " does not exist, The local site is not in synch with the file system and is pointing to a file that doesn't exist.", exception); //$NON-NLS-1$
+				UpdateCORE.warn(locationURLString + " does not exist, The local site is not in synch with the file system and is pointing to a file that doesn't exist.", exception); //$NON-NLS-1$
 				throw Utilities.newCoreException(Policy.bind("InstallConfiguration.ErrorDuringFileAccess", locationURLString), exception); //$NON-NLS-1$
 			} catch (SAXException exception) {
 				throw Utilities.newCoreException(Policy.bind("InstallConfiguration.ParsingErrorDuringCreation", locationURLString, "\r\n" + exception.toString()), exception); //$NON-NLS-1$ //$NON-NLS-2$
@@ -249,7 +249,7 @@ public class InstallConfigurationModel extends ModelObject {
 			}
 			
 		} catch (CoreException e) {
-			UpdateManagerPlugin.warn("Error processing configuration history:" + locationURL.toExternalForm(), e);
+			UpdateCORE.warn("Error processing configuration history:" + locationURL.toExternalForm(), e);
 		} finally {
 			initialized = true;
 		}

@@ -206,8 +206,8 @@ public abstract class ModelObject extends PlatformObject {
 	private String getExtendedString(String resolvedUrlString) {
 		IPath path = new Path(resolvedUrlString);
 		path = getExpandedPath(path);
-		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
-			UpdateManagerPlugin.warn("Resolved :" + resolvedUrlString + " as:" + path.toOSString());
+		if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_WARNINGS) {
+			UpdateCORE.warn("Resolved :" + resolvedUrlString + " as:" + path.toOSString());
 		}
 
 		return path.toOSString();
@@ -356,9 +356,9 @@ public abstract class ModelObject extends PlatformObject {
 			bundle = ResourceBundle.getBundle(getPropertyName(), Locale.getDefault(), l);
 			bundles.put(url.toExternalForm(), bundle);
 		} catch (MissingResourceException e) {
-			UpdateManagerPlugin.warn(e.getLocalizedMessage() + ":" + url.toExternalForm()); //$NON-NLS-1$
+			UpdateCORE.warn(e.getLocalizedMessage() + ":" + url.toExternalForm()); //$NON-NLS-1$
 		} catch (MalformedURLException e) {
-			UpdateManagerPlugin.warn(e.getLocalizedMessage()); //$NON-NLS-1$
+			UpdateCORE.warn(e.getLocalizedMessage()); //$NON-NLS-1$
 		}
 		return bundle;
 	}

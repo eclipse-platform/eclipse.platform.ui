@@ -59,9 +59,9 @@ public abstract class BaseSiteFactory extends SiteModelFactory implements ISiteF
 			ClassLoader l = new URLClassLoader(new URL[] { url }, null);
 			bundle = ResourceBundle.getBundle(Site.SITE_FILE, Locale.getDefault(), l);
 		} catch (MissingResourceException e) {
-			UpdateManagerPlugin.warn(e.getLocalizedMessage() + ":" + url.toExternalForm()); //$NON-NLS-1$
+			UpdateCORE.warn(e.getLocalizedMessage() + ":" + url.toExternalForm()); //$NON-NLS-1$
 		} catch (MalformedURLException e) {
-			UpdateManagerPlugin.warn(Policy.bind("BaseSiteFactory.CannotRetriveParentDirectory", url.toExternalForm()));  //$NON-NLS-1$
+			UpdateCORE.warn(Policy.bind("BaseSiteFactory.CannotRetriveParentDirectory", url.toExternalForm()));  //$NON-NLS-1$
 		}
 
 		return bundle;
@@ -133,7 +133,7 @@ public abstract class BaseSiteFactory extends SiteModelFactory implements ISiteF
 	 * @return InputStream
 	 */
 	protected InputStream openStream(URL resolvedURL)  throws IOException {
-		Response response = UpdateManagerPlugin.getPlugin().get(resolvedURL);
+		Response response = UpdateCORE.getPlugin().get(resolvedURL);
 		return response.getInputStream();
 	}
 

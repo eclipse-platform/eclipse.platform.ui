@@ -61,7 +61,7 @@ public class InstallHandlerProxy implements IInstallHandler {
 		InstallMonitor monitor)
 		throws CoreException {
 
-		DEBUG = UpdateManagerPlugin.DEBUG_SHOW_IHANDLER;
+		DEBUG = UpdateCORE.DEBUG_SHOW_IHANDLER;
 		// validate arguments
 		if (feature == null)
 			throw new IllegalArgumentException();
@@ -384,11 +384,11 @@ public class InstallHandlerProxy implements IInstallHandler {
 		if (isUndoAction()) {
 			// for "undo" operations, deactivate handler and log error
 			String id =
-				UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+				UpdateCORE.getPlugin().getDescriptor().getUniqueIdentifier();
 			IStatus status =
 				new Status(IStatus.ERROR, id, 0, "InstallHandler.deactivated", ce);
 			//$NON-NLS-1$
-			UpdateManagerPlugin.getPlugin().getLog().log(status);
+			UpdateCORE.getPlugin().getLog().log(status);
 			handler = null; // disable subsequent handler calls
 			savedStatus = status;
 		} else
@@ -415,11 +415,11 @@ public class InstallHandlerProxy implements IInstallHandler {
 		if (isUndoAction()) {
 			// for "undo" operations, deactivate handler and log error
 			String id =
-				UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+				UpdateCORE.getPlugin().getDescriptor().getUniqueIdentifier();
 			IStatus status =
 				new Status(IStatus.ERROR, id, 0, "InstallHandler.deactivated", ce);
 			//$NON-NLS-1$
-			UpdateManagerPlugin.getPlugin().getLog().log(status);
+			UpdateCORE.getPlugin().getLog().log(status);
 			handler = null; // disable subsequent handler calls
 			savedStatus = status;
 		} else
@@ -471,7 +471,7 @@ public class InstallHandlerProxy implements IInstallHandler {
 			InputStream is = null;
 			try {
 				fos = new FileOutputStream(tempLib);
-				is = UpdateManagerPlugin.getPlugin().get(cp).getInputStream();
+				is = UpdateCORE.getPlugin().get(cp).getInputStream();
 				Utilities.copy(is, fos, null);
 			} finally {
 				if (fos != null)

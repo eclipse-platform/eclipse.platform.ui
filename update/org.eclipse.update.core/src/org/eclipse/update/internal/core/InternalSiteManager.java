@@ -151,8 +151,8 @@ public class InternalSiteManager {
 			// attempt to use this type instead	
 
 			//DEBUG:
-			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_TYPE) {
-				UpdateManagerPlugin.debug("The Site :" + siteURL.toExternalForm() + " is a different type than the guessed type based on the protocol. new Type:" + e.getNewType());
+			if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_TYPE) {
+				UpdateCORE.debug("The Site :" + siteURL.toExternalForm() + " is a different type than the guessed type based on the protocol. new Type:" + e.getNewType());
 				//$NON-NLS-1$ //$NON-NLS-2$
 			}
 
@@ -279,7 +279,7 @@ public class InternalSiteManager {
 		// find extension point
 		IInstallDeltaHandler handler = null;
 
-		String pluginID = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+		String pluginID = UpdateCORE.getPlugin().getDescriptor().getUniqueIdentifier();
 
 		IPluginRegistry pluginRegistry = Platform.getPluginRegistry();
 
@@ -313,7 +313,7 @@ public class InternalSiteManager {
 	 */
 	private static ISessionDelta[] getSessionDeltas() {
 		List sessionDeltas = new ArrayList();
-		IPath path = UpdateManagerPlugin.getPlugin().getStateLocation();
+		IPath path = UpdateCORE.getPlugin().getStateLocation();
 		InstallChangeParser parser;
 
 		File file = path.toFile();
@@ -322,8 +322,8 @@ public class InternalSiteManager {
 			for (int i = 0; i < allFiles.length; i++) {
 				try {
 					// TRACE
-					if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_RECONCILER) {
-						UpdateManagerPlugin.debug("Found delta change:" + allFiles[i]);
+					if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_RECONCILER) {
+						UpdateCORE.debug("Found delta change:" + allFiles[i]);
 					}
 					parser = new InstallChangeParser(allFiles[i]);
 					ISessionDelta change = parser.getInstallChange();
@@ -331,8 +331,8 @@ public class InternalSiteManager {
 						sessionDeltas.add(change);
 					}
 				} catch (Exception e) {
-					if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_RECONCILER) {
-						UpdateManagerPlugin.log("Unable to parse install change:" + allFiles[i], e);
+					if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_RECONCILER) {
+						UpdateCORE.log("Unable to parse install change:" + allFiles[i], e);
 					}
 				}
 			}

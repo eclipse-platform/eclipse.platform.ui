@@ -65,7 +65,7 @@ public class Response {
 				try {
 					return ((HttpURLConnection) connection).getResponseCode();
 				} catch (IOException e) {
-					UpdateManagerPlugin.warn("", e);
+					UpdateCORE.warn("", e);
 				}
 		}
 		return IStatusCodes.HTTP_OK;
@@ -81,7 +81,7 @@ public class Response {
 				try {
 					return ((HttpURLConnection) connection).getResponseMessage();
 				} catch (IOException e) {
-					UpdateManagerPlugin.warn("", e);
+					UpdateCORE.warn("", e);
 				}
 		}
 		return "";

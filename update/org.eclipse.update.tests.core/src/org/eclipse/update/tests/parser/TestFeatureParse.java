@@ -89,6 +89,26 @@ public class TestFeatureParse extends UpdateManagerTestCase {
 			fail("Exception should not be thrown"+e.getMessage());			
 		}
 	}		
+
+	public void testParseValid3() throws Exception {
+
+			try {
+				URL remoteURL =
+					new URL(SOURCE_FILE_SITE + "resolved/feature.xml");
+				DefaultFeatureParser parser =
+					new DefaultFeatureParser();
+				parser.init(new FeatureExecutableFactory());
+				URL resolvedURL = URLEncoder.encode(remoteURL);
+				FeatureModel remoteFeature = parser.parse(resolvedURL.openStream());
+				remoteFeature.resolve(remoteURL, null);
+				
+				String copyrightString = remoteFeature.getCopyrightModel().getURL().getFile();
+				boolean resolved = copyrightString.indexOf(SiteManager.getOS())!=-1;
+				assertTrue("Copyright URL not resolved:"+copyrightString,resolved);
+			} catch (SAXParseException e) {
+				fail("Exception should not be thrown"+e.getMessage());			
+			}
+		}			
 	
 }
 

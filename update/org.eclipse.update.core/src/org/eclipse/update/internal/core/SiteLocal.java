@@ -75,7 +75,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 				// check if we have to reconcile, if the timestamp has changed
 				long bootStamp = currentPlatformConfiguration.getChangeStamp();
 				if (localSite.getStamp() != bootStamp) {
-					UpdateManagerPlugin.warn("Reconcile platform stamp:" + bootStamp + " is different from LocalSite stamp:" + localSite.getStamp()); //$NON-NLS-1$ //$NON-NLS-2$
+					UpdateCORE.warn("Reconcile platform stamp:" + bootStamp + " is different from LocalSite stamp:" + localSite.getStamp()); //$NON-NLS-1$ //$NON-NLS-2$
 					newFeaturesFound = localSite.reconcile(isOptimistic);
 				} else {
 					// no reconciliation, preserve the list of plugins from the platform anyway
@@ -103,21 +103,21 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 		//attempt to parse the LocalSite.xml	
 		URL resolvedURL = URLEncoder.encode(configXML);
 		try {
-			InputStream in = UpdateManagerPlugin.getPlugin().get(resolvedURL).getInputStream();;
+			InputStream in = UpdateCORE.getPlugin().get(resolvedURL).getInputStream();;
 			new SiteLocalParser(in, localSite);
 		} catch (FileNotFoundException exception) {
 			// file SITE_LOCAL_FILE doesn't exist, ok, log it 
 			// and reconcile with platform configuration
-			UpdateManagerPlugin.warn(localSite.getLocationURLString() + " does not exist, there is no previous state or install history we can recover from, we shall use default from platform configuration.", null);
+			UpdateCORE.warn(localSite.getLocationURLString() + " does not exist, there is no previous state or install history we can recover from, we shall use default from platform configuration.", null);
 			//$NON-NLS-1$
 			return false;
 		} catch (SAXException exception) {
-			UpdateManagerPlugin.warn(Policy.bind("SiteLocal.ErrorParsingSavedState", localSite.getLocationURLString()), exception);
+			UpdateCORE.warn(Policy.bind("SiteLocal.ErrorParsingSavedState", localSite.getLocationURLString()), exception);
 			//$NON-NLS-1$
 			recoverSiteLocal(resolvedURL, localSite);
 			return false;
 		} catch (IOException exception) {
-			UpdateManagerPlugin.warn(Policy.bind("SiteLocal.UnableToAccessFile", configXML.toExternalForm()), exception);
+			UpdateCORE.warn(Policy.bind("SiteLocal.UnableToAccessFile", configXML.toExternalForm()), exception);
 			//$NON-NLS-1$
 			recoverSiteLocal(resolvedURL, localSite);
 			return false;
@@ -171,8 +171,8 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 			if (removeConfigurationModel(removedConfig)) {
 
 				// DEBUG:
-				if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_CONFIGURATION) {
-					UpdateManagerPlugin.debug("Removed configuration :" + removedConfig.getLabel());
+				if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_CONFIGURATION) {
+					UpdateCORE.debug("Removed configuration :" + removedConfig.getLabel());
 					//$NON-NLS-1$
 				}
 
@@ -297,7 +297,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 		// end
 		w.println(gap + "</" + SiteLocalParser.SITE + ">"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		UpdateManagerPlugin.warn("Saved change stamp:" + changeStamp); //$NON-NLS-1$
+		UpdateCORE.warn("Saved change stamp:" + changeStamp); //$NON-NLS-1$
 	}
 
 	/**
@@ -656,9 +656,9 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 		if (localXml.exists()) {
 			try {
 				UpdateManagerUtils.removeFromFileSystem(localXml);
-				UpdateManagerPlugin.warn("Removed bad LocalSite.xml file:" + localXml);
+				UpdateCORE.warn("Removed bad LocalSite.xml file:" + localXml);
 			} catch (Exception e) {
-				UpdateManagerPlugin.warn("Unable to remove bad LocalSite.xml file:" + localXml, e);
+				UpdateCORE.warn("Unable to remove bad LocalSite.xml file:" + localXml, e);
 			}
 		}
 

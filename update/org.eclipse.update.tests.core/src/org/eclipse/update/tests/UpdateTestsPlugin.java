@@ -5,7 +5,7 @@ package org.eclipse.update.tests;
  */
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.appserver.WebappManager;
-import org.eclipse.update.internal.core.UpdateManagerPlugin;
+import org.eclipse.update.internal.core.UpdateCORE;
 
 /**
  * manages the startuo and shutown of the 
@@ -73,7 +73,7 @@ public class UpdateTestsPlugin extends Plugin {
 		} catch (CoreException e) {
 			text = "The webServer didn't start ";
 			IStatus status = new Status(IStatus.ERROR, "org.eclipse.update.tests.core", IStatus.OK, "WebServer not started. Update Tests results are invalid", null);
-			UpdateManagerPlugin.warn("",new CoreException(status));
+			UpdateCORE.warn("",new CoreException(status));
 		}finally {
 			System.out.println(text);
 			initialized = true;

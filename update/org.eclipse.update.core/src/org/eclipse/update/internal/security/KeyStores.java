@@ -10,7 +10,7 @@ import java.net.URL;
 import java.security.Security;
 import java.util.*;
 
-import org.eclipse.update.internal.core.UpdateManagerPlugin;
+import org.eclipse.update.internal.core.UpdateCORE;
 /**
  * Class to manage the different KeyStores we should
  * check for certificates of Signed JAR
@@ -130,7 +130,7 @@ public class KeyStores {
 		
 		try {
 			URL url = new URL(location);
-			in = UpdateManagerPlugin.getPlugin().get(url).getInputStream();;
+			in = UpdateCORE.getPlugin().get(url).getInputStream();;
 			Reader reader = new InputStreamReader(in);
 			int result = reader.read(buff);
 			StringBuffer contentBuff = new StringBuffer();
@@ -201,6 +201,6 @@ public class KeyStores {
 	}	
 	
 	private void log(Exception e){
-		UpdateManagerPlugin.warn("Cannot retrieve a KeyStore",e);
+		UpdateCORE.warn("Cannot retrieve a KeyStore",e);
 	}
 }

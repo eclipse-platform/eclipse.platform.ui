@@ -12,7 +12,7 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.model.InstallAbortedException;
 import org.eclipse.update.internal.core.Policy;
-import org.eclipse.update.internal.core.UpdateManagerPlugin;
+import org.eclipse.update.internal.core.UpdateCORE;
 
 /**
  * This class is a collection of utility functions that can be 
@@ -189,7 +189,7 @@ public class Utilities {
 	 * @since 2.0
 	 */
 	public static CoreException newCoreException(String s, int code, Throwable e) {
-		String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+		String id = UpdateCORE.getPlugin().getDescriptor().getUniqueIdentifier();
 
 		// check the case of a multistatus
 		IStatus status;
@@ -244,7 +244,7 @@ public class Utilities {
 	 * @since 2.0
 	 */
 	public static CoreException newCoreException(String s, String s1, String s2, CoreException e1, CoreException e2) {
-		String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+		String id = UpdateCORE.getPlugin().getDescriptor().getUniqueIdentifier();
 		if (s == null)
 			s = "";
 

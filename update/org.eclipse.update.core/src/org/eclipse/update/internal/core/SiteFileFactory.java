@@ -147,7 +147,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 					// check if feature.xml exists
 					File featureXMLFile = new File(currentFeatureDir, Feature.FEATURE_XML);
 					if (!featureXMLFile.exists()) {
-						UpdateManagerPlugin.warn("Unable to find feature.xml in directory:" + currentFeatureDir);
+						UpdateCORE.warn("Unable to find feature.xml in directory:" + currentFeatureDir);
 					} else {
 						// PERF: remove code
 						//SiteFileFactory archiveFactory = new SiteFileFactory();
@@ -193,10 +193,10 @@ public class SiteFileFactory extends BaseSiteFactory {
 					try {
 						result = ref.peek(Feature.FEATURE_XML, null, null);
 					} catch (IOException e) {
-						UpdateManagerPlugin.warn("Exception retrieving feature.xml in file:" + currentFeatureFile, e);
+						UpdateCORE.warn("Exception retrieving feature.xml in file:" + currentFeatureFile, e);
 					};
 					if (result == null) {
-						UpdateManagerPlugin.warn("Unable to find feature.xml in file:" + currentFeatureFile);
+						UpdateCORE.warn("Unable to find feature.xml in file:" + currentFeatureFile);
 					} else {
 						featureURL = currentFeatureFile.toURL();
 						// PERF: remove code
@@ -284,8 +284,8 @@ public class SiteFileFactory extends BaseSiteFactory {
 				((Site) site).addArchiveReferenceModel(archive);
 
 				// TRACE				
-				if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
-					UpdateManagerPlugin.debug("Added archive to site:" + pluginID + " pointing to: " + location);
+				if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_PARSING) {
+					UpdateCORE.debug("Added archive to site:" + pluginID + " pointing to: " + location);
 				}
 			}
 		} catch (MalformedURLException e) {

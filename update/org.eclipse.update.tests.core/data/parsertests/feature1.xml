@@ -7,9 +7,9 @@
    image="splash/splash_full.bmp"
    >
 
-   <description>
-   Eclipse platform feature.
-   </description>
+	<license>
+    	 license
+	</license>
 
    <copyright url="notice.html"/>
    x

@@ -123,7 +123,7 @@ public class ContentReference {
 		else if (url != null) {
 			if (response == null) {
 				URL resolvedURL = URLEncoder.encode(url);
-				response = UpdateManagerPlugin.getPlugin().get(resolvedURL);
+				response = UpdateCORE.getPlugin().get(resolvedURL);
 				UpdateManagerUtils.checkConnectionResult(response,resolvedURL);
 			}
 			return response.getInputStream();
@@ -145,7 +145,7 @@ public class ContentReference {
 				URL resolvedURL = null;
 				try {
 					resolvedURL = URLEncoder.encode(url);
-					response = UpdateManagerPlugin.getPlugin().get(resolvedURL);
+					response = UpdateCORE.getPlugin().get(resolvedURL);
 				} catch (IOException e) {
 					return ContentReference.UNKNOWN_SIZE;
 				}

@@ -3,7 +3,7 @@ package org.eclipse.update.core;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.update.configuration.IConfiguredSite;
 import org.eclipse.update.core.model.IncludedFeatureReferenceModel;
-import org.eclipse.update.internal.core.UpdateManagerPlugin;
+import org.eclipse.update.internal.core.UpdateCORE;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2002.
@@ -78,7 +78,7 @@ public class IncludedFeatureReference extends IncludedFeatureReferenceModel impl
 			case IImport.RULE_GREATER_OR_EQUAL :
 				return id.getVersion().isGreaterOrEqualTo(baseIdentifier.getVersion());
 		}
-		UpdateManagerPlugin.warn("Unknown matching rule:" + getMatch());
+		UpdateCORE.warn("Unknown matching rule:" + getMatch());
 		return false;
 	}
 
@@ -159,8 +159,8 @@ public class IncludedFeatureReference extends IncludedFeatureReferenceModel impl
 			}
 		}
 
-		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS){
-			UpdateManagerPlugin.warn("Found best match feature:"+newRef+" for feature reference "+this.getURLString());
+		if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_WARNINGS){
+			UpdateCORE.warn("Found best match feature:"+newRef+" for feature reference "+this.getURLString());
 		}
 
 		if (newRef != null)

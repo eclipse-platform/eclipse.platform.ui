@@ -10,7 +10,7 @@ import java.util.*;
 
 import org.eclipse.update.core.IIncludedFeatureReference;
 import org.eclipse.update.core.VersionedIdentifier;
-import org.eclipse.update.internal.core.UpdateManagerPlugin;
+import org.eclipse.update.internal.core.UpdateCORE;
 
 /**
  * Feature model object.
@@ -902,7 +902,7 @@ public class FeatureModel extends ModelObject {
 		try {
 			imageURL = resolveURL(base,bundleURL, imageURLString);
 		} catch (MalformedURLException e){
-			UpdateManagerPlugin.warn("",e);
+			UpdateCORE.warn("",e);
 		}
 	}
 

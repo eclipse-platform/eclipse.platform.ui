@@ -6,7 +6,7 @@ package org.eclipse.update.core;
 
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.update.internal.core.Policy;
-import org.eclipse.update.internal.core.UpdateManagerPlugin;
+import org.eclipse.update.internal.core.UpdateCORE;
 
 /**
  * Versioned Identifier. This is a utility class combining an identification
@@ -43,7 +43,7 @@ public class VersionedIdentifier {
 			try {
 				this.version = new PluginVersionIdentifier(versionName);
 			} catch (RuntimeException e){
-				UpdateManagerPlugin.warn("Invalid Version:"+versionName,e);
+				UpdateCORE.warn("Invalid Version:"+versionName,e);
 			}
 		}
 		if (this.version==null)

@@ -58,8 +58,8 @@ public class SessionDelta extends ModelObject implements ISessionDelta {
 		// process all feature references to configure
 		// find the configured site each feature belongs to
 		if (process == ENABLE) {
-			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_CONFIGURATION)
-				UpdateManagerPlugin.warn("ENABLE SESSION DELTA");			
+			if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_CONFIGURATION)
+				UpdateCORE.warn("ENABLE SESSION DELTA");			
 			if (featureReferences != null && featureReferences.size() > 0) {
 				// manage ProgressMonitor
 				if (pm != null) {
@@ -79,7 +79,7 @@ public class SessionDelta extends ModelObject implements ISessionDelta {
 					try {
 						featureToConfigure = ref.getFeature();
 					} catch (CoreException e) {
-						UpdateManagerPlugin.warn(null, e);
+						UpdateCORE.warn(null, e);
 					}
 
 					if (featureToConfigure != null) {
@@ -98,10 +98,10 @@ public class SessionDelta extends ModelObject implements ISessionDelta {
 						} catch (CoreException e) {
 							// if I cannot configure one, 
 							//then continue with others 
-							UpdateManagerPlugin.warn("Unable to configure feature:" + featureToConfigure, e);
+							UpdateCORE.warn("Unable to configure feature:" + featureToConfigure, e);
 						}
 					} else {
-						UpdateManagerPlugin.warn("Unable to configure null feature:" + ref,null);
+						UpdateCORE.warn("Unable to configure null feature:" + ref,null);
 					}
 
 				}
@@ -117,16 +117,16 @@ public class SessionDelta extends ModelObject implements ISessionDelta {
 	 */
 	public void delete() {
 		if (deleted) {
-			UpdateManagerPlugin.warn("Attempt to delete an already deleted session delta:" + file);
+			UpdateCORE.warn("Attempt to delete an already deleted session delta:" + file);
 			return;
 		}
 
 		// remove the file from the file system
 		if (file != null) {
 			UpdateManagerUtils.removeFromFileSystem(file);
-			UpdateManagerPlugin.warn("Removing SessionDelta:" + file);
+			UpdateCORE.warn("Removing SessionDelta:" + file);
 		} else {
-			UpdateManagerPlugin.warn("Unable to remove SessionDelta. File is null");
+			UpdateCORE.warn("Unable to remove SessionDelta. File is null");
 		}
 
 		deleted = true;
@@ -212,7 +212,7 @@ public class SessionDelta extends ModelObject implements ISessionDelta {
 						}
 					}
 				} catch (CoreException e) {
-					UpdateManagerPlugin.warn(null, e);
+					UpdateCORE.warn(null, e);
 				}
 			}
 		}
@@ -229,8 +229,8 @@ public class SessionDelta extends ModelObject implements ISessionDelta {
 	private int compare(IFeature feature1, IFeature feature2) throws CoreException {
 
 		// TRACE
-		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_RECONCILER) {
-			UpdateManagerPlugin.debug("Compare: " + feature1 + " && " + feature2);
+		if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_RECONCILER) {
+			UpdateCORE.debug("Compare: " + feature1 + " && " + feature2);
 		}
 
 		if (feature1 == null)

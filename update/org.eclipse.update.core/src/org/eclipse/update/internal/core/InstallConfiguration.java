@@ -174,9 +174,9 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 
 		for (int i = 0; i < newFeaturesRef.length; i++) {
 			// TRACE
-			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_RECONCILER) {
+			if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_RECONCILER) {
 				String reconciliationType = "enable (optimistic)";
-				UpdateManagerPlugin.debug("New Linked Site:New Feature: " + newFeaturesRef[i].getURL() + " as " + reconciliationType);
+				UpdateCORE.debug("New Linked Site:New Feature: " + newFeaturesRef[i].getURL() + " as " + reconciliationType);
 			}
 			ConfigurationPolicy policy = linkedSite.getConfigurationPolicy();
 			policy.configure(newFeaturesRef[i], true, false);
@@ -341,7 +341,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 				try {
 					feature = configuredFeaturesRef[j].getFeature();
 				} catch (CoreException e) {
-					UpdateManagerPlugin.warn(null, e);
+					UpdateCORE.warn(null, e);
 				}
 				saveFeatureEntry(cSite, feature, runtimeConfiguration);
 			}
@@ -361,7 +361,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		} catch (IOException e) {
 			CoreException exc = Utilities.newCoreException(Policy.bind("InstallConfiguration.UnableToSavePlatformConfiguration", runtimeConfiguration.getConfigurationLocation().toExternalForm()), e);
 			//$NON-NLS-1$
-			UpdateManagerPlugin.warn("",exc);
+			UpdateCORE.warn("",exc);
 		}
 
 	}
@@ -482,17 +482,17 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			try {
 				urlToCheck = new URL(configurationSites[i].getPlatformURLString());
 			} catch (MalformedURLException e) {
-				UpdateManagerPlugin.warn(Policy.bind("InstallConfiguration.UnableToCreateURL", configurationSites[i].getPlatformURLString()), e);
+				UpdateCORE.warn(Policy.bind("InstallConfiguration.UnableToCreateURL", configurationSites[i].getPlatformURLString()), e);
 				//$NON-NLS-1$
 			} catch (ClassCastException e) {
-				UpdateManagerPlugin.warn(Policy.bind("InstallConfiguration.UnableToCast"), e);
+				UpdateCORE.warn(Policy.bind("InstallConfiguration.UnableToCast"), e);
 				//$NON-NLS-1$
 			}
 
 			// if the URL doesn't exits log it
 			IPlatformConfiguration.ISiteEntry siteEntry = runtimeConfiguration.findConfiguredSite(urlToCheck);
 			if (siteEntry == null) {
-				UpdateManagerPlugin.warn(Policy.bind("Unable to find site {0} in platform configuration {1}.", urlToCheck.toExternalForm(), runtimeConfiguration.getConfigurationLocation().toExternalForm()));
+				UpdateCORE.warn(Policy.bind("Unable to find site {0} in platform configuration {1}.", urlToCheck.toExternalForm(), runtimeConfiguration.getConfigurationLocation().toExternalForm()));
 				//$NON-NLS-1$
 			}
 		}
@@ -508,7 +508,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			File file = new File(getURL().getFile());
 			if (!file.exists()) {
 				//log + 24642 [works for all activities]
-				UpdateManagerPlugin.log(this);
+				UpdateCORE.log(this);
 			}
 			if (isTransient)
 				file.deleteOnExit();
@@ -605,7 +605,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 						try {
 							featureToUnconfigure = featuresToUnconfigure[j].getFeature();
 						} catch (CoreException e) {
-							UpdateManagerPlugin.warn(null, e);
+							UpdateCORE.warn(null, e);
 						}
 						if (featureToUnconfigure != null)
 							nowConfigSites[i].unconfigure(featureToUnconfigure);
@@ -684,8 +684,8 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			//
 			if (!rootString.startsWith("platform")) {
 				// DEBUG:
-				if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_CONFIGURATION)
-					UpdateManagerPlugin.debug("getRuntimeConfiguration Plugin Entry Full URL:" + pluginEntryfullURL + " Platform String:" + rootString + " [NON PLATFORM URL].");
+				if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_CONFIGURATION)
+					UpdateCORE.debug("getRuntimeConfiguration Plugin Entry Full URL:" + pluginEntryfullURL + " Platform String:" + rootString + " [NON PLATFORM URL].");
 				return pluginEntryfullURL;
 			}
 
@@ -700,8 +700,8 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			URL result = new URL(new URL(rootString), relativeString);
 
 			// DEBUG:
-			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_CONFIGURATION)
-				UpdateManagerPlugin.debug("getRuntimeConfiguration plugin Entry Full URL:" + pluginEntryfullURL + " Platform String:" + rootString + " Site URL:" + pluginEntryRootURL + " Relative:" + relativeString);
+			if (UpdateCORE.DEBUG && UpdateCORE.DEBUG_SHOW_CONFIGURATION)
+				UpdateCORE.debug("getRuntimeConfiguration plugin Entry Full URL:" + pluginEntryfullURL + " Platform String:" + rootString + " Site URL:" + pluginEntryRootURL + " Relative:" + relativeString);
 
 			// verify we are about to write a valid file URL
 			// check with fullURL as it is not resolved to platform:base/
@@ -709,7 +709,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 				if ("file".equals(pluginEntryfullURL.getProtocol())) {
 					String fileString = pluginEntryfullURL.getFile();
 					if (!new File(fileString).exists()) {
-						UpdateManagerPlugin.warn("The URL:" + result + " doesn't point to a valid platform plugin.The URL will not be written in the platform configuration", new Exception());
+						UpdateCORE.warn("The URL:" + result + " doesn't point to a valid platform plugin.The URL will not be written in the platform configuration", new Exception());
 						return null;
 					}
 				}

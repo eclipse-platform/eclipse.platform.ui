@@ -56,7 +56,7 @@ public final class FeatureTypeFactory {
 		IFeatureFactory result = null;
 
 		String pluginID =
-			UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+			UpdateCORE.getPlugin().getDescriptor().getUniqueIdentifier();
 		IPluginRegistry pluginRegistry = Platform.getPluginRegistry();
 		IConfigurationElement[] elements =
 			pluginRegistry.getConfigurationElementsFor(pluginID, SIMPLE_EXTENSION_ID, type);

@@ -4,7 +4,7 @@
    name="%pluginName"
    version="2.1.0"
    provider-name="%providerName"
-   class="org.eclipse.update.internal.core.UpdateManagerPlugin">
+   class="org.eclipse.update.internal.core.UpdateCORE">
 
    <runtime>
       <library name="updatecore.jar">

@@ -232,7 +232,7 @@ public class JarVerificationResult implements IVerificationResult {
 //				return new String(buf);
 //			}
 //		} catch (Exception e) {
-//			UpdateManagerPlugin.warn("Error parsing X500 Certificate",e);
+//			UpdateCORE.warn("Error parsing X500 Certificate",e);
 //		}
 		return principal.toString();
 	}

@@ -47,9 +47,9 @@ public class InstallChangeParser extends DefaultHandler {
 		this.file = file;
 
 		// DEBUG:		
-		if (UpdateManagerPlugin.DEBUG
-			&& UpdateManagerPlugin.DEBUG_SHOW_RECONCILER) {
-			UpdateManagerPlugin.debug(
+		if (UpdateCORE.DEBUG
+			&& UpdateCORE.DEBUG_SHOW_RECONCILER) {
+			UpdateCORE.debug(
 				"Start parsing Install Change:");
 			//$NON-NLS-1$
 		}
@@ -79,9 +79,9 @@ public class InstallChangeParser extends DefaultHandler {
 		throws SAXException {
 
 		// DEBUG:		
-		if (UpdateManagerPlugin.DEBUG
-			&& UpdateManagerPlugin.DEBUG_SHOW_RECONCILER) {
-			UpdateManagerPlugin.debug(
+		if (UpdateCORE.DEBUG
+			&& UpdateCORE.DEBUG_SHOW_RECONCILER) {
+			UpdateCORE.debug(
 				"Start Element: uri:"
 					+ uri
 					+ " local Name:"
@@ -151,9 +151,9 @@ public class InstallChangeParser extends DefaultHandler {
 			change.addReference(ref);
 
 			// DEBUG:		
-			if (UpdateManagerPlugin.DEBUG
-				&& UpdateManagerPlugin.DEBUG_SHOW_RECONCILER) {
-				UpdateManagerPlugin.debug(
+			if (UpdateCORE.DEBUG
+				&& UpdateCORE.DEBUG_SHOW_RECONCILER) {
+				UpdateCORE.debug(
 					"End Processing Feature Reference: url:"
 						+ featureURL.toExternalForm());
 				//$NON-NLS-1$
@@ -163,7 +163,7 @@ public class InstallChangeParser extends DefaultHandler {
 					Policy.bind(
 						"InstallConfigurationParser.FeatureReferenceNoURL");
 			//$NON-NLS-1$
-			UpdateManagerPlugin.log(msg,new Exception());
+			UpdateCORE.log(msg,new Exception());
 		}
 	}
 
@@ -173,9 +173,9 @@ public class InstallChangeParser extends DefaultHandler {
 	private void processNewFeature(Attributes attributes) {
 
 		// DEBUG:		
-		if (UpdateManagerPlugin.DEBUG
-			&& UpdateManagerPlugin.DEBUG_SHOW_RECONCILER) {
-			UpdateManagerPlugin.debug(
+		if (UpdateCORE.DEBUG
+			&& UpdateCORE.DEBUG_SHOW_RECONCILER) {
+			UpdateCORE.debug(
 				"End Processing New Features:");
 			//$NON-NLS-1$
 		}
@@ -193,9 +193,9 @@ public class InstallChangeParser extends DefaultHandler {
 		change.setCreationDate(new Date(date));
 
 		// DEBUG:		
-		if (UpdateManagerPlugin.DEBUG
-			&& UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
-			UpdateManagerPlugin.debug(
+		if (UpdateCORE.DEBUG
+			&& UpdateCORE.DEBUG_SHOW_PARSING) {
+			UpdateCORE.debug(
 				"End Processing Change: date:" + date);
 			//$NON-NLS-1$
 		}
