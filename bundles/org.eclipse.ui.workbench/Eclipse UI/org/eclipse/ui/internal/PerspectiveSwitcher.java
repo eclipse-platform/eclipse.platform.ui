@@ -153,7 +153,7 @@ public class PerspectiveSwitcher {
 	 * @param page the workbench page containing the perspective
 	 */
 	private void ensureVisible(int index, WorkbenchPage page) {
-		if (index == 1)
+		if (index == 1 || !perspectiveBar.getControl().isVisible())
 			return;
 		
 		ToolItem[] items = perspectiveBar.getControl().getItems();
@@ -171,7 +171,7 @@ public class PerspectiveSwitcher {
 	 */
 	private int getItemInsertionIndex() {
 		if (!perspectiveBar.getControl().isVisible())
-			return perspectiveBar.getControl().getItems().length;
+			return perspectiveBar.getControl().getItemCount();
 		
 		ToolItem[] items = perspectiveBar.getControl().getItems();
 		if (items.length > 1) { 
@@ -349,7 +349,8 @@ public class PerspectiveSwitcher {
 				// check if not visible and ensure visible
 				PerspectiveBarContributionItem contribItem = (PerspectiveBarContributionItem)item;
 				Rectangle barBounds = perspectiveBar.getControl().getBounds();
-				if (!barBounds.intersects(contribItem.getToolItem().getBounds())) {
+				
+				if (perspectiveBar.getControl().isVisible() && !barBounds.intersects(contribItem.getToolItem().getBounds())) {
 					// remove and add as the first non-visible
 					int index = Math.max(1, getItemInsertionIndex());
 					PerspectiveBarContributionItem newItem = new PerspectiveBarContributionItem(contribItem.getPerspective(), contribItem.getPage());
