@@ -14,13 +14,17 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.xerces.parsers.SAXParser;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.team.core.IProjectSetSerializer;
@@ -29,6 +33,8 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.ui.TeamImages;
 import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -48,6 +54,16 @@ public class ProjectSetImportWizard extends Wizard implements IImportWizard {
 		addPage(mainPage);
 	}
 	public boolean performFinish() {
+		
+		// check if the desired working set exists
+		final String workingSetName = mainPage.getWorkingSetName();
+		if (workingSetName != null) {
+			IWorkingSet existingSet = TeamUIPlugin.getPlugin().getWorkbench().getWorkingSetManager().getWorkingSet(workingSetName);
+			if (existingSet != null && 
+				!MessageDialog.openConfirm(getShell(), Policy.bind("ProjectSetImportWizard.workingSetExistsTitle"), Policy.bind("ProjectSetImportWizard.workingSetExistsMessage", workingSetName))) //$NON-NLS-1$ //$NON-NLS-2$
+					return false;
+		}
+		
 		final boolean[] result = new boolean[] {false};
 		try {
 			getContainer().run(true, true, new WorkspaceModifyOperation() {
@@ -65,10 +81,13 @@ public class ProjectSetImportWizard extends Wizard implements IImportWizard {
 						parser.parse(source);
 						
 						Map map = handler.getReferences();
+						List newProjects = new ArrayList();
 						if (map.size() == 0 && handler.isVersionOne) {
 							IProjectSetSerializer serializer = Team.getProjectSetSerializer("versionOneSerializer"); //$NON-NLS-1$
 							if (serializer != null) {
-								serializer.addToWorkspace(new String[0], filename, getShell(), monitor);
+								IProject[] projects = serializer.addToWorkspace(new String[0], filename, getShell(), monitor);
+								if (projects != null)
+									newProjects.addAll(Arrays.asList(projects));
 							}
 						} else {
 							Iterator it = map.keySet().iterator();
@@ -77,10 +96,14 @@ public class ProjectSetImportWizard extends Wizard implements IImportWizard {
 								List references = (List)map.get(id);
 								IProjectSetSerializer serializer = Team.getProjectSetSerializer(id);
 								if (serializer != null) {
-									serializer.addToWorkspace((String[])references.toArray(new String[references.size()]), filename, getShell(), monitor);
+									IProject[] projects = serializer.addToWorkspace((String[])references.toArray(new String[references.size()]), filename, getShell(), monitor);
+									if (projects != null)
+										newProjects.addAll(Arrays.asList(projects));
 								}
 							}
 						}
+						if (workingSetName != null)
+							createWorkingSet(workingSetName, (IProject[]) newProjects.toArray(new IProject[newProjects.size()]));
 						result[0] = true;
 					} catch (IOException e) {
 						throw new InvocationTargetException(e);
@@ -115,6 +138,17 @@ public class ProjectSetImportWizard extends Wizard implements IImportWizard {
 			}
 		}
 		return result[0];
+	}
+	
+	private void createWorkingSet(String workingSetName, IProject[] projects) {
+		IWorkingSetManager manager = TeamUIPlugin.getPlugin().getWorkbench().getWorkingSetManager();
+		IWorkingSet oldSet = manager.getWorkingSet(workingSetName);
+		if (oldSet == null) {
+			IWorkingSet newSet = manager.createWorkingSet(workingSetName, projects);
+			manager.addWorkingSet(newSet);
+		}else {
+			oldSet.setElements(projects);
+		}	
 	}
 	
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
