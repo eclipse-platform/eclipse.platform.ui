@@ -53,7 +53,7 @@ public class InstallWizard
 	private IJobChangeListener jobListener;
 
 	private class UpdateJobChangeListener extends JobChangeAdapter {
-		public void done(IJobChangeEvent event) {
+		public void done(final IJobChangeEvent event) {
 			// the job listener is triggered when the download job is done, and it proceeds
 			// with the actual install
 			if (event.getJob() == InstallWizard.this.job && event.getResult() == Status.OK_STATUS) {
@@ -76,6 +76,15 @@ public class InstallWizard
 						}
 					}
 				});	
+			} else if (event.getJob() == InstallWizard.this.job && event.getResult() != Status.OK_STATUS) {
+				isRunning = false;
+				Platform.getJobManager().removeJobChangeListener(this);
+				Platform.getJobManager().cancel(job);
+				UpdateUI.getStandardDisplay().syncExec(new Runnable() {
+					public void run() {
+						UpdateUI.log(event.getResult(), true);
+					}
+				});
 			}
 		}
 	}
@@ -447,7 +456,9 @@ public class InstallWizard
 							i--;
 							continue;
 						}
-					} 
+					} else {
+						UpdateCore.log(e);
+					}
 					return false;
 				}
 			}
