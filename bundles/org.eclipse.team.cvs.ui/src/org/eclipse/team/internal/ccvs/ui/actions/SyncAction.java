@@ -92,7 +92,7 @@ public class SyncAction implements IObjectActionDelegate {
 				IRemoteSyncElement[] trees = new IRemoteSyncElement[resources.length];
 				for (int i = 0; i < trees.length; i++) {
 					CVSTeamProvider provider = (CVSTeamProvider)TeamPlugin.getManager().getProvider(resources[i].getProject());
-					trees[i] = provider.getRemoteSyncTree(resources[i], CVSTag.DEFAULT, new NullProgressMonitor());
+					trees[i] = provider.getRemoteSyncTree(resources[i], null, new NullProgressMonitor());
 				}
 				view.showSync(new CVSSyncCompareInput(trees));
 			}
