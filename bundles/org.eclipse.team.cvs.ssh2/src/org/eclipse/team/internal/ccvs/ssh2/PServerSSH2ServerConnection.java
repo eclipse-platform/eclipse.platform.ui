@@ -109,7 +109,7 @@ public class PServerSSH2ServerConnection implements IServerConnection {
 			} catch (JSchException ee) {
 				  retry--;
 				  if(retry<0){
-				    throw new CVSAuthenticationException(Policy.bind("CVSSSH2ServerConnection.3"), CVSAuthenticationException.NO_RETRY); //$NON-NLS-1$
+				    throw new CVSAuthenticationException(CVSSSH2Messages.CVSSSH2ServerConnection_3, CVSAuthenticationException.NO_RETRY); //$NON-NLS-1$
 				  }
 				  if(session.isConnected()){
 				    session.disconnect();
