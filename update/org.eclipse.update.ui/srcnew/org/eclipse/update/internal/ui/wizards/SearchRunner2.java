@@ -13,7 +13,6 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.operation.*;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.update.core.ISite;
-import org.eclipse.update.internal.search.*;
 import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.search.*;
 
