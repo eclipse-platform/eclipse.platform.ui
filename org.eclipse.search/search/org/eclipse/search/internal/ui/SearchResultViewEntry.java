@@ -201,7 +201,7 @@ public class SearchResultViewEntry extends PlatformObject implements ISearchResu
 	 */
 	public Object getAdapter(Class adapter) {
 		Object adapted= super.getAdapter(adapter);
-		if (adapted == null) {
+		if (adapted == null && !adapter.equals(IResource.class) && !adapter.equals(IMarker.class)) {
 			return getResource().getAdapter(adapter);
 		}
 		return adapted;

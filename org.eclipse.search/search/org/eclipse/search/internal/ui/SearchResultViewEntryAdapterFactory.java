@@ -25,7 +25,7 @@ import org.eclipse.search.ui.ISearchResultViewEntry;
 public class SearchResultViewEntryAdapterFactory implements IAdapterFactory {
 	
 	private static Class[] PROPERTIES= new Class[] {
-		IResource.class,
+		IResource.class, IMarker.class,
 	};
 	
 
@@ -35,7 +35,7 @@ public class SearchResultViewEntryAdapterFactory implements IAdapterFactory {
 	
 	public Object getAdapter(Object element, Class key) {
 		
-		ISearchResultViewEntry entry= (ISearchResultViewEntry)element;
+		ISearchResultViewEntry entry= (ISearchResultViewEntry) element;
 		
 		if (IMarker.class.equals(key)) {
 			return entry.getSelectedMarker();
@@ -50,9 +50,6 @@ public class SearchResultViewEntryAdapterFactory implements IAdapterFactory {
 			int type= resource.getType();
 			if (type != IResource.PROJECT && type != IResource.ROOT)
 				return resource;
-		} else {
-			IResource resource= entry.getResource();
-			return resource.getAdapter(key);
 		}
 		return null; 
 	}

@@ -266,6 +266,7 @@
 			class="org.eclipse.search.internal.ui.SearchResultViewEntryAdapterFactory" 
 			adaptableType="org.eclipse.search.ui.ISearchResultViewEntry">
 			<adapter type="org.eclipse.core.resources.IResource"/>
+			<adapter type="org.eclipse.core.resources.IMarker"/>
 		</factory>
 	</extension>     	
 
