@@ -286,7 +286,18 @@ public class BreakpointsView extends AbstractDebugView {
 				asyncExec(new Runnable() {
 					public void run() {
 						if (isAvailable()) {
-							((TableViewer)getViewer()).remove(breakpoint);
+							TableViewer viewer= (TableViewer)getViewer();
+							int[] indices= viewer.getTable().getSelectionIndices();
+							viewer.remove(breakpoint);
+							if (viewer.getSelection().isEmpty()) {
+								if (indices.length > 0) {
+									int index= Math.max(indices[0] - 1, 0);
+									viewer.getTable().select(index);
+								}
+								//fire the selection changed as does not occur when
+								//setting selection on the swt widget
+								viewer.setSelection(viewer.getSelection());
+							}
 							updateActions();
 						}
 					}
@@ -298,7 +309,7 @@ public class BreakpointsView extends AbstractDebugView {
 		 * @see IBreakpointListener#breakpointChanged(IBreakpoint, IMarkerDelta)
 		 */
 		public void breakpointChanged(final IBreakpoint breakpoint, IMarkerDelta delta) {
-			if (isAvailable()&& breakpoint.getMarker().exists()) {
+			if (isAvailable() && breakpoint.getMarker().exists()) {
 				asyncExec(new Runnable() {
 					public void run() {
 						if (isAvailable() && breakpoint.getMarker().exists()) {

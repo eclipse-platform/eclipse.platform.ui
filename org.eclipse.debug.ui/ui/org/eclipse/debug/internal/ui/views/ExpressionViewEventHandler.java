@@ -5,16 +5,14 @@ package org.eclipse.debug.internal.ui.views;
  * All Rights Reserved.
  */
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IExpressionListener;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.jface.viewers.IContentProvider;
-import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.StructuredSelection;
  
 /**
  * Updates the expression view
@@ -72,6 +70,10 @@ public class ExpressionViewEventHandler extends VariablesViewEventHandler implem
 						decendants.add(expression);
 						// Remove the parent cache for the expression and its children
 						expressionProvider.removeCache(decendants.toArray());
+						IExpression[] expressions= DebugPlugin.getDefault().getExpressionManager().getExpressions();
+						if (expressions.length > 0) {
+							getTreeViewer().setSelection(new StructuredSelection(expressions[0]), true);
+						}
 					}
 				}
 			}
