@@ -181,6 +181,8 @@ public class ProgressContentProvider
 			 * @see java.lang.Runnable#run()
 			 */
 			public void run() {
+				if(viewer.getControl().isDisposed())
+					return;
 				viewer.refresh(info);
 			}
 		});

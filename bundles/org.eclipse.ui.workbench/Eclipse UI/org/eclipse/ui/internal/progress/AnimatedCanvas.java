@@ -119,6 +119,8 @@ public class AnimatedCanvas {
 			 * @see java.lang.Runnable#run()
 			 */
 			public void run() {
+				if(imageCanvas.isDisposed())
+					return;
 				animated = b;
 				imageCanvas.redraw();
 				if (b)

@@ -10,23 +10,15 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.decorators;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.internal.progress.AnimateJob;
-import org.eclipse.ui.internal.progress.AnimatedCanvas;
 
 /**
  * The DecorationScheduler is the class that handles the
@@ -50,7 +42,7 @@ public class DecorationScheduler {
 	private DecoratorManager decoratorManager;
 
 	private boolean shutdown = false;
-	
+
 	Job decorationJob;
 
 	/**
@@ -60,6 +52,7 @@ public class DecorationScheduler {
 	 */
 	DecorationScheduler(DecoratorManager manager) {
 		decoratorManager = manager;
+		createDecorationJob();
 	}
 
 	/**
@@ -106,20 +99,16 @@ public class DecorationScheduler {
 		Object adaptedElement,
 		boolean forceUpdate) {
 
-		//Lazily create the thread that calculates the decoration for a resource
-		if (decorationJob == null) {
-			queueDecorationJob();
-		}
-
 		if (!awaitingDecorationValues.containsKey(element)) {
+			boolean waiting = awaitingDecoration.isEmpty();
 			DecorationReference reference =
 				new DecorationReference(element, adaptedElement);
 			reference.setForceUpdate(forceUpdate);
 			awaitingDecorationValues.put(element, reference);
 			awaitingDecoration.add(element);
-			//Notify the receiver as the next method is
-			//synchronized on the receiver.
-			notifyAll();
+			if (!shutdown && waiting)
+				JobManager.getInstance().schedule(decorationJob);
+
 		}
 
 	}
@@ -206,45 +195,29 @@ public class DecorationScheduler {
 	 * @return IResource
 	 */
 	synchronized DecorationReference next() {
-		try {
-			if (shutdown)
-				return null;
 
-			while (!shutdown && awaitingDecoration.isEmpty()) {
-				wait();
-			}
-			// We were awakened.
-			if (shutdown) {
-				// The decorator was awakened by the plug-in as it was shutting down.
-				return null;
-			}
-			Object element = awaitingDecoration.remove(0);
-
-			return (DecorationReference) awaitingDecorationValues.remove(
-				element);
-		} catch (InterruptedException e) {
+		if (shutdown || awaitingDecoration.isEmpty()) {
+			return null;
 		}
-		return null;
+		Object element = awaitingDecoration.remove(0);
+
+		return (DecorationReference) awaitingDecorationValues.remove(element);
 	}
 
 	/**
 	 * Create the Thread used for running decoration.
 	 */
-	private void queueDecorationJob() {
-		decorationJob = new AnimateJob() {
+	private void createDecorationJob() {
+		decorationJob = new Job() {
 			/* (non-Javadoc)
 			 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 			 */
 			public IStatus run(IProgressMonitor monitor) {
-				while (true) {
-					// will block if there are no resources to be decorated
-					DecorationReference reference = next();
-					DecorationBuilder cacheResult = new DecorationBuilder();
+					//will block if there are no resources to be decorated
+				DecorationReference reference;
+				while ((reference = next()) != null) {
 
-					// if next() returned null, we are done and should shut down.
-					if (reference == null) {
-						return Status.OK_STATUS;
-					}
+					DecorationBuilder cacheResult = new DecorationBuilder();
 
 					//Don't decorate if there is already a pending result
 					Object element = reference.getElement();
@@ -327,8 +300,8 @@ public class DecorationScheduler {
 					if (awaitingDecoration.isEmpty()) {
 						decorated();
 					}
-
 				}
+				return Status.OK_STATUS;
 			};
 		};
 
