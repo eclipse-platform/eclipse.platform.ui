@@ -8,8 +8,7 @@ import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.update.core.*;
-import org.eclipse.update.internal.core.SiteFile;
-import org.eclipse.update.internal.core.UpdateManagerUtils;
+import org.eclipse.update.internal.core.*;
 import org.eclipse.update.tests.UpdateManagerTestCase;
 
 public class TestSiteManagerAPI extends UpdateManagerTestCase {
@@ -46,22 +45,25 @@ public class TestSiteManagerAPI extends UpdateManagerTestCase {
 		
 		
 		ILocalSite site = SiteManager.getLocalSite();
-		ISite[] instSites = site.getCurrentConfiguration().getInstallSites();
+		IConfigurationSite[] instSites = site.getCurrentConfiguration().getConfigurationSites();
 		assertTrue(instSites.length>0);
-		System.out.println("Local Site:"+instSites[0].getURL().toExternalForm());
+		System.out.println("Local Site:"+instSites[0].getSite().getURL().toExternalForm());
 		
 		ISite remoteSite = SiteManager.getSite(SOURCE_FILE_SITE);
 		IFeature remoteFeature = remoteSite.getFeatureReferences()[0].getFeature();
-		instSites[0].install(remoteFeature,null);
+		instSites[0].getSite().install(remoteFeature,null);
 		
-		IFeatureReference[] features = site.getCurrentConfiguration().getConfiguredFeatures();
+		IFeatureReference[] features = site.getCurrentConfiguration().getConfigurationSites()[0].getSite().getFeatureReferences();
 		assertTrue(features.length>0);
 
 		//cleanup
-		File file = new File(instSites[0].getURL().getFile()+File.separator+SiteFile.INSTALL_FEATURE_PATH+remoteFeature.getIdentifier());
+		File file = new File(instSites[0].getSite().getURL().getFile()+File.separator+SiteFile.INSTALL_FEATURE_PATH+remoteFeature.getIdentifier());
 		UpdateManagerUtils.removeFromFileSystem(file);
-		file = new File(instSites[0].getURL().getFile()+File.separator+SiteFile.DEFAULT_PLUGIN_PATH+"org.eclipse.update.plugin1_1.1.1");
+		file = new File(instSites[0].getSite().getURL().getFile()+File.separator+SiteFile.DEFAULT_PLUGIN_PATH+"org.eclipse.update.plugin1_1.1.1");
 		UpdateManagerUtils.removeFromFileSystem(file);		
+		File localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),SiteLocal.SITE_LOCAL_FILE).getFile());
+		UpdateManagerUtils.removeFromFileSystem(localFile);		
+		
 
 	}
 	

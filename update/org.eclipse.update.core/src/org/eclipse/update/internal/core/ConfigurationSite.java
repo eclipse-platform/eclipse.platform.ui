@@ -4,11 +4,16 @@ package org.eclipse.update.internal.core;
  * All Rights Reserved.
  */
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.internal.boot.update.VersionIdentifier;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.update.core.*;
+import org.eclipse.update.core.IFeature;
 
 /**
  * 
@@ -56,7 +61,12 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 	 * @see IConfigurationSite#getConfiguredFeatures()
 	 */
 	public IFeatureReference[] getConfiguredFeatures() {
-		return null;
+		IFeatureReference[] result = new IFeatureReference[0];
+		// FIXME:
+		if (getConfigurationPolicy().getPolicy()==IPlatformConfiguration.ISitePolicy.USER_INCLUDE){
+			result = getConfigurationPolicy().getFilteredFeatures(null);
+		}
+		return result;
 	}
 
 	/*
@@ -84,6 +94,12 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 	 * @see IConfigurationSite#configure(IFeatureReference)
 	 */
 	public void configure(IFeatureReference feature) {
+		// FIXME:
+		if (getConfigurationPolicy().getPolicy()==IPlatformConfiguration.ISitePolicy.USER_INCLUDE){
+			if (featuresReferences==null) featuresReferences = new ArrayList(0);
+			featuresReferences.add(feature);
+			((ConfigurationPolicy)getConfigurationPolicy()).addFeatureReference(feature);
+		}
 	}
 
 	/*
@@ -131,6 +147,18 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 		// end
 		w.println(gap + "</" + InstallConfigurationParser.CONFIGURATION_SITE + ">");
 
+	}
+
+	/*
+	 * @see IConfigurationSite#install(IFeature, IProgressMonitor)
+	 */
+	public void install(IFeature feature, IProgressMonitor monitor) throws CoreException {
+		if (!installable){
+			//FIXME: throw error
+		}
+		IFeatureReference installedFeature = getSite().install(feature,monitor);
+		configure(installedFeature);
+		
 	}
 
 }

@@ -21,9 +21,9 @@ public class SiteLocal implements ILocalSite, IWritable {
 	private ListenersList listeners = new ListenersList();
 	private String label;
 	private URL location;
-	public static final String INSTALL_CONFIGURATION_FILE = "LocalSite.xml";
-	public static final String DEFAULT_LABEL = "Default configuration";
-	public static final String DEFAULT_LOCATION = "DefaultConfig.xml";
+	public static final String SITE_LOCAL_FILE = "LocalSite.xml";
+	public static final String DEFAULT_CONFIG_LABEL = "Default configuration";
+	public static final String DEFAULT_CONFIG_FILE = "DefaultConfig.xml";
 
 	private List configurations;
 	private IInstallConfiguration currentConfiguration;
@@ -76,17 +76,18 @@ public class SiteLocal implements ILocalSite, IWritable {
 	private void initialize() throws CoreException {
 		// FIXME... call VK API getConfigurationLocation which will return a URL
 		IPlatformConfiguration platformConfig = BootLoader2.getPlatformConfiguration();
-		URL configLocation = platformConfig.getConfigurationLocation();
-		try {
+		location = platformConfig.getConfigurationLocation();
+		/*try {
 			File config = UpdateManagerPlugin.getPlugin().getStateLocation().toFile();
 			location = new URL("file", null, config.getAbsolutePath()+"/");
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
-		}
+		}*/
 
 		//if the file exists, parse it
 		try {
-			URL configXml = new URL(location,INSTALL_CONFIGURATION_FILE);
+			URL configXml = UpdateManagerUtils.getURL(location,SITE_LOCAL_FILE,null);
+			System.out.println("config"+configXml.toExternalForm());
 			SiteLocalParser parser = new SiteLocalParser(configXml.openStream(), this);
 		}  catch (FileNotFoundException exception) {
 			// file doesn't exist, ok, log it and continue 
@@ -113,7 +114,10 @@ public class SiteLocal implements ILocalSite, IWritable {
 		try {
 			URL execURL = BootLoader.getInstallURL();
 			ISite site = SiteManager.getSite(execURL);
-			addConfiguration(createConfiguration(UpdateManagerUtils.getURL(location,DEFAULT_LOCATION,null), DEFAULT_LABEL));
+			//FIXME: location points to a file, not a directory, 
+			// check UpdateManagerUtils.getURL()
+			// use / and File.Separator, ATTN Linux/Unix issues ?
+			addConfiguration(createConfiguration(new URL(location,DEFAULT_CONFIG_FILE), DEFAULT_CONFIG_LABEL));
 			
 		
 			// notify listeners
@@ -209,11 +213,11 @@ public class SiteLocal implements ILocalSite, IWritable {
 		// Save the current configuration as
 		// the other are already saved
 		((InstallConfiguration)currentConfiguration).save();
-		
 		// save the local site
 		if (location.getProtocol().equalsIgnoreCase("file")) {
-			File file = new File(location.getFile()+INSTALL_CONFIGURATION_FILE);
+			File file = null;
 			try {
+				file = new File(UpdateManagerUtils.getURL(location,SITE_LOCAL_FILE,null).getFile());
 				PrintWriter fileWriter = new PrintWriter(new FileOutputStream(file));
 				Writer writer = new Writer();
 				writer.writeSite(this, fileWriter);
@@ -221,6 +225,10 @@ public class SiteLocal implements ILocalSite, IWritable {
 			} catch (FileNotFoundException e) {
 				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Cannot save site into " + file.getAbsolutePath(), e);
+				throw new CoreException(status);
+			} catch (MalformedURLException e) {
+				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Cannot get handle on configuration file " + location.toExternalForm()+" : "+SITE_LOCAL_FILE, e);
 				throw new CoreException(status);
 			}
 		}
@@ -277,11 +285,11 @@ public class SiteLocal implements ILocalSite, IWritable {
 	 */
 	public IInstallConfiguration createConfiguration(URL newFile,String name) throws CoreException {
 		InstallConfiguration result = null;
-		String newFileName = UpdateManagerUtils.getLocalRandomIdentifier(DEFAULT_LOCATION);
+		String newFileName = UpdateManagerUtils.getLocalRandomIdentifier(DEFAULT_CONFIG_FILE);
 		try {
-			if (newFile==null) newFile = new URL("file",null,newFileName);
+			if (newFile==null) newFile = UpdateManagerUtils.getURL(getLocation(),newFileName,null);
 			Date currentDate = new Date();
-			if (name==null) name = DEFAULT_LABEL+currentDate.toString();
+			if (name==null) name = DEFAULT_CONFIG_LABEL+currentDate.toString();
 			result = new InstallConfiguration(getCurrentConfiguration(),newFile,name);
 			result.setCreationDate(currentDate);
 		} catch (MalformedURLException e){

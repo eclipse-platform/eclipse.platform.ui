@@ -20,11 +20,12 @@ public interface ISite extends IPluginContainer {
 	IFeatureReference [] getFeatureReferences() ;
 	
 	/**
-	 * 
+	 * Notify listener of installation of the feature
+	 * returns the newly created feature reference
 	 * @param feature the Feature to install
 	 * @param monitor the Progress Monitor
 	 */
-	void install(IFeature feature, IProgressMonitor monitor) throws CoreException;
+	IFeatureReference install(IFeature feature, IProgressMonitor monitor) throws CoreException;
 	
 	/**
 	 * 

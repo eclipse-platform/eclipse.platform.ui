@@ -1,5 +1,8 @@
 package org.eclipse.update.core;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+
 
 
 /*
@@ -44,6 +47,13 @@ public interface IConfigurationSite {
 	 * Returns true if features can be installed in this Site
 	 */
 	boolean isInstallSite();
+	
+	/**
+	 * 
+	 * @param feature the Feature to install
+	 * @param monitor the Progress Monitor
+	 */
+	void install(IFeature feature, IProgressMonitor monitor) throws CoreException;
 	
 	/**
 	 * sets if the site is an installable site

@@ -92,22 +92,22 @@ public class TestUpdateManagerUtilsAPI extends UpdateManagerTestCase {
 		
 		// 2.3
 		 result1 = UpdateManagerUtils.getURL(url2,str2,default1).toExternalForm();
-		 result2 = "file://c/hello/relative1/path/";
+		 result2 = "file://c:/relative1/path/";
 		assertEquals("2.3",result2,result1);
 		
 		// 2.4
 		 result1 = UpdateManagerUtils.getURL(url2,str3,default1).toExternalForm();
-		 result2 = "file://c/hello/relative2/path";
+		 result2 = "file://c:/relative2/path";
 		assertEquals("2.4",result2,result1);
 		
 		// 2.5
 		 result1 = UpdateManagerUtils.getURL(url2,null,default1).toExternalForm();
-		 result2 = "file://c/hello/default1/default";
+		 result2 = "file://c:/default1/default";
 		assertEquals("2.5",result2,result1);
 		
 		// 2.6
 		 result1 = UpdateManagerUtils.getURL(url2,null,default2).toExternalForm();
-		 result2 = "file://c/hello/default2/";
+		 result2 = "file://c:/default2/";
 		assertEquals("2.6",result2,result1);
 		
 

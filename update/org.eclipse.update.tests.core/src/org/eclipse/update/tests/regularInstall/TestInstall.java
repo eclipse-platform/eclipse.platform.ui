@@ -72,7 +72,7 @@ public class TestInstall extends UpdateManagerTestCase {
 		assertTrue("plugin files not installed locally", pluginFile.exists());
 
 		File featureFile = new File(site, SiteFile.INSTALL_FEATURE_PATH + remoteFeature.getIdentifier().toString());
-		assertTrue("feature info not installed locally", featureFile.exists());
+		assertTrue("feature info not installed locally:"+featureFile, featureFile.exists());
 		//cleanup
 		UpdateManagerUtils.removeFromFileSystem(pluginFile);
 
@@ -120,6 +120,11 @@ public class TestInstall extends UpdateManagerTestCase {
 	}
 
 	public void testInstall() throws Exception {
+		
+		// cleanup local files...
+		File localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),SiteLocal.SITE_LOCAL_FILE).getFile());
+		UpdateManagerUtils.removeFromFileSystem(localFile);		
+		
 
 		URL INSTALL_SITE = null;
 		try {
@@ -143,21 +148,19 @@ public class TestInstall extends UpdateManagerTestCase {
 			}
 		}
 
-		
-
 		assertNotNull("Cannot find help.jar on site", remoteFeature);
 		ILocalSite localSite = SiteManager.getLocalSite();
-		ISite site = localSite.getCurrentConfiguration().getInstallSites()[0];
+		IConfigurationSite site = localSite.getCurrentConfiguration().getConfigurationSites()[0];
 		Listener listener = new Listener();
-		site.addSiteChangedListener(listener);
+		site.getSite().addSiteChangedListener(listener);
 		
-		site.install(remoteFeature, null);
+		site.getSite().install(remoteFeature, null);
 
 
 		IPluginEntry[] entries = remoteFeature.getPluginEntries();
 		assertTrue("no plugins entry", (entries != null && entries.length != 0));
 
-		String sitePath = UpdateManagerUtils.getPath(site.getURL());			
+		String sitePath = UpdateManagerUtils.getPath(site.getSite().getURL());			
 		String pluginName = entries[0].getIdentifier().toString();
 		File pluginFile = new File(sitePath, Site.DEFAULT_PLUGIN_PATH + pluginName);
 		assertTrue("plugin info not installed locally", pluginFile.exists());
@@ -166,10 +169,12 @@ public class TestInstall extends UpdateManagerTestCase {
 		assertTrue("feature info not installed locally", featureFile.exists());
 
 		//cleanup
-		File file = new File(site.getURL().getFile()+File.separator+SiteFile.INSTALL_FEATURE_PATH+remoteFeature.getIdentifier());
+		File file = new File(site.getSite().getURL().getFile()+File.separator+SiteFile.INSTALL_FEATURE_PATH+remoteFeature.getIdentifier());
 		UpdateManagerUtils.removeFromFileSystem(file);
 		UpdateManagerUtils.removeFromFileSystem(pluginFile);
+		UpdateManagerUtils.removeFromFileSystem(localFile);		
 
+		site.getSite().removeSiteChangedListener(listener);
 		assertTrue("Listener hasn't received notification",listener.isNotified());
 	}
 	
@@ -178,23 +183,26 @@ public class TestInstall extends UpdateManagerTestCase {
 		
 		ISite remoteSite = SiteManager.getSite(SOURCE_FILE_SITE);
 		IFeature remoteFeature = getFeature1(remoteSite);
-		ISite localSite = SiteManager.getLocalSite().getCurrentConfiguration().getInstallSites()[0];
-		localSite.install(remoteFeature, null);
+		IConfigurationSite localSite = SiteManager.getLocalSite().getCurrentConfiguration().getConfigurationSites()[0];
+		localSite.getSite().install(remoteFeature, null);
 
-		IFeatureReference[] features = localSite.getFeatureReferences();
+		IFeatureReference[] features = localSite.getSite().getFeatureReferences();
 		if (features.length==0) fail("The local site does not contain feature, should not contain an XML file but features should be found anyway by parsing");
-		if (localSite.getArchives().length==0) fail("The local site does not contain archives, should not contain an XML file but archives should be found anyway by parsing");
+		if (localSite.getSite().getArchives().length==0) fail("The local site does not contain archives, should not contain an XML file but archives should be found anyway by parsing");
 		
 		//cleanup
-		File file = new File(localSite.getURL().getFile()+File.separator+SiteFile.INSTALL_FEATURE_PATH+remoteFeature.getIdentifier());
+		File file = new File(localSite.getSite().getURL().getFile()+File.separator+SiteFile.INSTALL_FEATURE_PATH+remoteFeature.getIdentifier());
 		UpdateManagerUtils.removeFromFileSystem(file);
-		file = new File(localSite.getURL().getFile()+File.separator+SiteFile.DEFAULT_PLUGIN_PATH+"org.eclipse.update.core.tests.feature1.plugin1_3.5.6");
+		file = new File(localSite.getSite().getURL().getFile()+File.separator+SiteFile.DEFAULT_PLUGIN_PATH+"org.eclipse.update.core.tests.feature1.plugin1_3.5.6");
 		UpdateManagerUtils.removeFromFileSystem(file);
-		file = new File(localSite.getURL().getFile()+File.separator+SiteFile.DEFAULT_PLUGIN_PATH+"org.eclipse.update.core.tests.feature1.plugin2_5.0.0");
+		file = new File(localSite.getSite().getURL().getFile()+File.separator+SiteFile.DEFAULT_PLUGIN_PATH+"org.eclipse.update.core.tests.feature1.plugin2_5.0.0");
 		UpdateManagerUtils.removeFromFileSystem(file);
+		File localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),SiteLocal.SITE_LOCAL_FILE).getFile());
+		UpdateManagerUtils.removeFromFileSystem(localFile);		
 		
-		localSite = SiteManager.getSite(new URL("http://www.eclipse.org/"));
-		features = localSite.getFeatureReferences();
+		
+		ISite site = SiteManager.getSite(new URL("http://www.eclipse.org/"));
+		features = site.getFeatureReferences();
 		if (features.length!=0) fail("The site contains feature... it is an HTTP site without an XML file, so it should not contain any features");
 		
 	}

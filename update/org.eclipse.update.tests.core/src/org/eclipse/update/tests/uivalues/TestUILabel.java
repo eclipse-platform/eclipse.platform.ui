@@ -47,6 +47,8 @@ public class TestUILabel extends UpdateManagerTestCase {
 
 			url = feature.getCopyright().getURL();
 			if (url!=null){
+				System.out.println("--------------------------------------------------------->"+url.getFile());
+				System.in.read();
 				assertTrue((new File(url.getFile())).exists());
 			}
 			

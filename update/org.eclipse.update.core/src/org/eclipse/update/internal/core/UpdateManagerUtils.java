@@ -60,8 +60,9 @@ public class UpdateManagerUtils {
 			// the url is not an absolute URL
 			// try relative
 			String path = UpdateManagerUtils.getPath(rootURL);
-			path = path + ((path.endsWith("/")|| path.endsWith(File.separator))?"":"/");			
-			url = new URL(rootURL.getProtocol(), rootURL.getHost(), path + urlString);
+			//path = path + ((path.endsWith("/")|| path.endsWith(File.separator))?"":"/");			
+			//url = new URL(rootURL.getProtocol(), rootURL.getHost(), path + urlString);
+			url = new URL(rootURL,urlString);
 		}
 		return url;
 	}
@@ -185,8 +186,9 @@ public class UpdateManagerUtils {
 		// if there is a separator after the dot
 		// do not consider it as an extension
 		// FIXME: LINUX ???
-		String ext = (dotIndex != -1 && fileIndex < dotIndex) ? "." + remotePath.substring(dotIndex) : "";
-
+		//String ext = (dotIndex != -1 && fileIndex < dotIndex) ? "." + remotePath.substring(dotIndex) : "";
+		String ext = (dotIndex != -1 && fileIndex < dotIndex) ? remotePath.substring(dotIndex) : "";
+		
 		// the name is teh string between the separator and the dot
 		// if there is no separator, it is the string up to the dot		
 		// if there is no dot, go to the end of the string 
@@ -198,7 +200,7 @@ public class UpdateManagerUtils {
 
 		Date date = new Date();
 		String result = name + date.getTime() + ext;
-
+		
 		return result;
 	}
 
@@ -271,7 +273,7 @@ public class UpdateManagerUtils {
 	 * Method to return the PATH of the URL.
 	 * The path is the file of a URL before any <code>#</code> or <code>?</code>
 	 * This code removes the fragment or the query of the URL file
-	 * A URL is of teh form: <code>protocol://host/path#ref</code> or <code> protocol://host/path?query</code>
+	 * A URL is of the form: <code>protocol://host/path#ref</code> or <code> protocol://host/path?query</code>
 	 * 
 	 * @return the path of the URL
 	 */

@@ -26,7 +26,7 @@ public abstract class Site implements ISite, IWritable {
 	/**
 	 * default path, under site, where featuresConfigured will be installed
 	 */
-	public static final String DEFAULT_FEATURE_PATH = "featuresConfigured/";
+	public static final String DEFAULT_FEATURE_PATH = "features/";
 
 	public static final String SITE_FILE = "site";
 	public static final String SITE_XML = SITE_FILE + ".xml";
@@ -131,17 +131,19 @@ public abstract class Site implements ISite, IWritable {
 	/**
 	 * @see ISite#install(IFeature, IProgressMonitor)
 	 */
-	public void install(IFeature sourceFeature, IProgressMonitor monitor) throws CoreException {
+	public IFeatureReference install(IFeature sourceFeature, IProgressMonitor monitor) throws CoreException {
 		// should start Unit Of Work and manage Progress Monitor
 		Feature localFeature = createExecutableFeature(sourceFeature);
 		((Feature) sourceFeature).install(localFeature, monitor);
-		this.addFeatureReference(new FeatureReference(this, localFeature.getURL()));
+		IFeatureReference localReference = new FeatureReference(this, localFeature.getURL());
+		this.addFeatureReference(localReference);
 
 		// notify listeners
 		Object[] siteListeners = listeners.getListeners();
 		for (int i = 0; i < siteListeners.length; i++) {
 			((ISiteChangedListener) siteListeners[i]).featureInstalled(localFeature);
 		}
+		return localReference;
 	}
 
 	/**

@@ -23,7 +23,7 @@ public class SiteFile extends SiteURL {
 	
 	private String path;
 	
-	public static final String INSTALL_FEATURE_PATH = "install/featuresConfigured/";
+	public static final String INSTALL_FEATURE_PATH = "install/features/";
 
 	/**
 	 * Constructor for FileSite

@@ -71,7 +71,7 @@ public class SiteLocalParser extends DefaultHandler {
 		ResourceBundle bundle = null;
 		try {
 			ClassLoader l = new URLClassLoader(new URL[] {site.getLocation()}, null);
-			bundle = ResourceBundle.getBundle(SiteLocal.INSTALL_CONFIGURATION_FILE, Locale.getDefault(), l);
+			bundle = ResourceBundle.getBundle(SiteLocal.SITE_LOCAL_FILE, Locale.getDefault(), l);
 		} catch (MissingResourceException e) {
 			//ok, there is no bundle, keep it as null
 			//DEBUG:
