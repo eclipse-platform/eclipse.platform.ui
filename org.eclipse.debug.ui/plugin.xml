@@ -1181,7 +1181,7 @@
          point="org.eclipse.ui.editors">
       <editor
             name="%NoSourceFoundEditor.name"
-            icon="./icons/full/obj16/stckframe_obj.gif"
+            icon="/icons/full/obj16/stckframe_obj.gif"
             class="org.eclipse.debug.internal.ui.views.launch.SourceNotFoundEditor"
             contributorClass="org.eclipse.ui.part.EditorActionBarContributor"
             id="org.eclipse.debug.ui.NoSourceFoundEditor">
@@ -1659,7 +1659,7 @@
          point="org.eclipse.ui.editors">
       <editor
             name="%sourceNotFoundEditorName"
-            icon="icons/full/cview16/source_view.gif"
+            icon="icons/full/obj16/stckframe_obj.gif"
             class="org.eclipse.debug.internal.ui.sourcelookup.CommonSourceNotFoundEditor"
             id="org.eclipse.debug.ui.sourcelookup.CommonSourceNotFoundEditor">
       </editor>
