@@ -29,6 +29,7 @@ import org.eclipse.search.ui.SearchUI;
 import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
 import org.eclipse.search.ui.text.Match;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionContext;
@@ -42,9 +43,11 @@ import org.eclipse.ui.texteditor.ITextEditor;
  *
  */
 public class FileSearchPage extends AbstractTextSearchViewPage {
+	private static final String KEY_SORTING= "org.eclipse.search.resultpage.sorting"; //$NON-NLS-1$
+
 	private ActionGroup fActionGroup;
 	private FileContentProvider fContentProvider;
-	private SortAction fCurrentSortAction;
+	private int fCurrentSortOrder;
 	private SortAction fSortByNameAction;
 	private SortAction fSortByPathAction;
 	
@@ -54,7 +57,6 @@ public class FileSearchPage extends AbstractTextSearchViewPage {
 	public FileSearchPage() {
 		fSortByNameAction= new SortAction(SearchMessages.getString("FileSearchPage.sort_name.label"), this, FileLabelProvider.SHOW_LABEL_PATH); //$NON-NLS-1$
 		fSortByPathAction= new SortAction(SearchMessages.getString("FileSearchPage.sort_path.label"), this, FileLabelProvider.SHOW_PATH_LABEL); //$NON-NLS-1$
-		fCurrentSortAction= fSortByNameAction;
 	}
 	
 	public StructuredViewer getViewer() {
@@ -65,7 +67,7 @@ public class FileSearchPage extends AbstractTextSearchViewPage {
 		viewer.setUseHashlookup(true);
 		viewer.setLabelProvider(new DecoratingLabelProvider(new FileLabelProvider(this, FileLabelProvider.SHOW_LABEL), PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator()));
 		viewer.setContentProvider(new FileTableContentProvider(viewer));
-		setSortOrder(fCurrentSortAction);
+		setSortOrder(fCurrentSortOrder);
 		fContentProvider= (FileContentProvider) viewer.getContentProvider();
 	}
 
@@ -124,8 +126,8 @@ public class FileSearchPage extends AbstractTextSearchViewPage {
 		sortMenu.add(fSortByNameAction);
 		sortMenu.add(fSortByPathAction);
 		
-		fSortByNameAction.setChecked(fCurrentSortAction == fSortByNameAction);
-		fSortByPathAction.setChecked(fCurrentSortAction == fSortByPathAction);
+		fSortByNameAction.setChecked(fCurrentSortOrder == fSortByNameAction.getSortOrder());
+		fSortByPathAction.setChecked(fCurrentSortOrder == fSortByPathAction.getSortOrder());
 		
 		mgr.appendToGroup(IContextMenuConstants.GROUP_VIEWER_SETUP, sortMenu);
 	}
@@ -150,15 +152,34 @@ public class FileSearchPage extends AbstractTextSearchViewPage {
 			fContentProvider.clear();
 	}
 
-	public void setSortOrder(SortAction action) {
-		fCurrentSortAction= action;
+	public void setSortOrder(int sortOrder) {
+		fCurrentSortOrder= sortOrder;
 		StructuredViewer viewer= getViewer();
 		DecoratingLabelProvider lpWrapper= (DecoratingLabelProvider) viewer.getLabelProvider();
-		((FileLabelProvider)lpWrapper.getLabelProvider()).setOrder(action.getSortOrder());
-		if (action.getSortOrder() == FileLabelProvider.SHOW_LABEL_PATH) {
+		((FileLabelProvider)lpWrapper.getLabelProvider()).setOrder(sortOrder);
+		if (sortOrder == FileLabelProvider.SHOW_LABEL_PATH) {
 			viewer.setSorter(new NameSorter());
 		} else {
 			viewer.setSorter(new PathSorter());
 		}
+		getSettings().put(KEY_SORTING, fCurrentSortOrder);
+	}
+	
+	public void restoreState(IMemento memento) {
+		super.restoreState(memento);
+		try {
+			fCurrentSortOrder= getSettings().getInt(KEY_SORTING);
+		} catch (NumberFormatException e) {
+			fCurrentSortOrder= fSortByNameAction.getSortOrder();
+		}
+		if (memento != null) {
+			Integer value= memento.getInteger(KEY_SORTING);
+			if (value != null)
+				fCurrentSortOrder= value.intValue();
+		}
+	}
+	public void saveState(IMemento memento) {
+		super.saveState(memento);
+		memento.putInteger(KEY_SORTING, fCurrentSortOrder);
 	}
 }

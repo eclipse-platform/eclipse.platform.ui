@@ -24,7 +24,7 @@ public class SortAction extends Action {
 	}
 
 	public void run() {
-		fPage.setSortOrder(this);
+		fPage.setSortOrder(fSortOrder);
 	}
 
 	public int getSortOrder() {
