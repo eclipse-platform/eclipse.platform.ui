@@ -29,6 +29,8 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.eclipse.core.boot.BootLoader;
+import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -77,7 +79,7 @@ import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.window.WindowManager;
 
-import org.eclipse.ui.AboutInfo;
+import org.eclipse.ui.internal.AboutInfo;
 import org.eclipse.ui.IDecoratorManager;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorRegistry;
@@ -185,14 +187,22 @@ public final class Workbench implements IWorkbench {
 	private ListenerList windowListeners = new ListenerList();
 	
 	/**
+	 * Product name, or null if none.
+	 * @since 3.0
+	 */
+	private String productName = null;
+	
+	/**
 	 * Adviser providing application-specific configuration and customization
 	 * of the workbench.
+	 * @since 3.0
 	 */
 	private WorkbenchAdviser adviser;
 
 	/**
 	 * Object for configuring the workbench. Lazily initialized to
 	 * an instance unique to the workbench instance.
+	 * @since 3.0
 	 */
 	private WorkbenchConfigurer workbenchConfigurer;
 
@@ -201,6 +211,7 @@ public final class Workbench implements IWorkbench {
 	 * 
 	 * @param adviser the application-specific adviser that configures and
 	 * specializes this workbench instance
+	 * @since 3.0
 	 */
 	private Workbench(WorkbenchAdviser adviser) {
 		super();
@@ -1485,12 +1496,14 @@ public final class Workbench implements IWorkbench {
 		return WorkbenchPlugin.getDefault().getWorkingSetManager();
 	}
 		
-	/*
+	/**
 	 * Initializes the workbench now that the display is created.
 	 *
+	 * @param windowImage the descriptor of the image to be used in the corner
+	 * of each window, or <code>null</code> if none
 	 * @return true if init succeeded.
 	 */
-	private boolean init(AboutInfo aboutInfo, Display display) {
+	private boolean init(ImageDescriptor windowImage, Display display) {
 		initializeCommandsAndContexts(display);
 		
 		// setup debug mode if required.
@@ -1505,7 +1518,7 @@ public final class Workbench implements IWorkbench {
 		// allow the workbench configurer to initialize
 		getWorkbenchConfigurer().init();
 
-		initializeImages(aboutInfo);
+		initializeImages(windowImage);
 		initializeFonts();
 		initializeColors();
 
@@ -1636,11 +1649,9 @@ public final class Workbench implements IWorkbench {
 	 * 
 	 * @since 3.0
 	 */
-	private void initializeImages(AboutInfo aboutInfo) {
-		// initialize the product image obtained from the product info file
-		ImageDescriptor descriptor = aboutInfo.getWindowImage();
-		if (descriptor != null) {
-			WorkbenchImages.getImageRegistry().put(IWorkbenchGraphicConstants.IMG_OBJS_DEFAULT_PROD, descriptor);
+	private void initializeImages(ImageDescriptor windowImage) {
+		if (windowImage != null) {
+			WorkbenchImages.getImageRegistry().put(IWorkbenchGraphicConstants.IMG_OBJS_DEFAULT_PROD, windowImage);
 			Image image = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_OBJS_DEFAULT_PROD);
 			if (image != null) {
 				Window.setDefaultImage(image);
@@ -1983,12 +1994,14 @@ public final class Workbench implements IWorkbench {
 
 	/**
 	 * Creates the <code>Display</code> to be used by the workbench.
+	 * 
+	 * @param applicationName the application name, or <code>null</code> if none
+	 * @return the display
 	 */
-	private Display createDisplay(AboutInfo aboutInfo) {
+	private Display createDisplay(String applicationName) {
 		// setup the application name used by SWT to lookup resources on some platforms
-		String appName = aboutInfo.getAppName();
-		if (appName != null) {
-			Display.setAppName(appName);
+		if (applicationName != null) {
+			Display.setAppName(applicationName);
 		}
 		
 		// create the display
@@ -2033,17 +2046,25 @@ public final class Workbench implements IWorkbench {
 	private int runUI() {
 		UIStats.start(UIStats.START_WORKBENCH,"Workbench"); //$NON-NLS-1$
 
-		// get the primary feature info loaded
-		AboutInfo aboutInfo = null;
-		try {
-			aboutInfo = getWorkbenchConfigurer().getPrimaryFeatureAboutInfo();
-		} catch (WorkbenchException e) {
-			WorkbenchPlugin.log("Error reading primary feature's about.ini file", e.getStatus()); //$NON-NLS-1$
-			return PlatformUI.RETURN_UNSTARTABLE;
+		String appName = null;
+		ImageDescriptor windowImage = null;
+		{
+			// extract app name and window image from primary feature
+			IPlatformConfiguration conf = BootLoader.getCurrentPlatformConfiguration();
+			String id = conf.getPrimaryFeatureIdentifier();
+			AboutInfo aboutInfo = null;
+			if (id != null) {
+				aboutInfo = AboutInfo.readFeatureInfo(id);
+			}
+			if (aboutInfo != null) {
+				appName = aboutInfo.getAppName();
+				windowImage = aboutInfo.getWindowImage();
+				setProductName(aboutInfo.getProductName()); 
+			}
 		}
 
 		// create and startup the display for the workbench
-		Display display = createDisplay(aboutInfo);
+		Display display = createDisplay(appName);
 				
 		try {
 			// install backstop to catch exceptions thrown out of event loop
@@ -2051,7 +2072,8 @@ public final class Workbench implements IWorkbench {
 			Window.setExceptionHandler(handler);
 			
 			// initialize workbench and restore or open one window
-			boolean initOK = init(aboutInfo, display);
+			
+			boolean initOK = init(windowImage, display);
 			
 			// drop the splash screen now that a workbench window is up
 			Platform.endSplash();
@@ -2461,5 +2483,25 @@ public final class Workbench implements IWorkbench {
 	 */
 	public IProgressManager getProgressManager() {
 		return ProgressManager.getInstance();
+	}
+
+	/**
+	 * Returns the name of the product.
+	 * 
+	 * @return the product name, or <code>null</code> if none
+	 * @since 3.0
+	 */
+	public String getProductName() {
+		return productName;
+	}
+	
+	/**
+	 * Sets the name of the product.
+	 * 
+	 * @param name the product name, or <code>null</code> if none
+	 * @since 3.0
+	 */
+	public void setProductName(String name) {
+		productName = name;
 	}
 }

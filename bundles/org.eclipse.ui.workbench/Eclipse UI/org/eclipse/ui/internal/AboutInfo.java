@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui;
+package org.eclipse.ui.internal;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -21,6 +21,8 @@ import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.util.Assert;
+import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.IniFileReader;
 import org.eclipse.ui.internal.WorkbenchMessages;
 
@@ -31,15 +33,11 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  * <p>
  * This class is not intended to be instantiated or subclassed by clients.
  * </p>
- * 
- * @issue spec should be less specific about where about info comes from
- * @since 3.0
  */
 public final class AboutInfo {
-	// @issue these file name constants should not be declared as API here
-	public final static String INI_FILENAME = "about.ini"; //$NON-NLS-1$
-	public final static String PROPERTIES_FILENAME = "about.properties"; //$NON-NLS-1$
-	public final static String MAPPINGS_FILENAME = "about.mappings"; //$NON-NLS-1$
+	private final static String INI_FILENAME = "about.ini"; //$NON-NLS-1$
+	private final static String PROPERTIES_FILENAME = "about.properties"; //$NON-NLS-1$
+	private final static String MAPPINGS_FILENAME = "about.mappings"; //$NON-NLS-1$
 	
 	private final static int BYTE_ARRAY_SIZE = 2048;
 
@@ -70,11 +68,50 @@ public final class AboutInfo {
 	}
 
 	/**
+	 * Returns the configuration information for the feature with the 
+	 * given id.
+	 * 
+	 * @param featureId 
+	 * @return the configuration information for all features
+	 */
+	public static AboutInfo readFeatureInfo(String featureId) {
+		Assert.isNotNull(featureId);
+		AboutInfo info = new AboutInfo(featureId, null);
+		if (featureId != null) {
+			IniFileReader reader = new IniFileReader(featureId, INI_FILENAME, PROPERTIES_FILENAME, MAPPINGS_FILENAME);
+			IStatus status = reader.load();
+			if (!status.isOK()) {
+				return null;
+			}
+			Hashtable runtimeMappings  = new Hashtable();
+			String featureVersion = info.getVersion();
+			if (featureVersion == null)
+				featureVersion = WorkbenchMessages.getString("AboutInfo.NoVersion"); //$NON-NLS-1$
+			runtimeMappings.put("{featureVersion}", featureVersion); //$NON-NLS-1$
+
+			info.pluginDescriptor = reader.getPluginDescriptor();
+			info.featurePluginLabel = reader.getFeaturePluginLabel();
+			info.providerName = reader.getProviderName();
+			info.appName = reader.getString("appName", true, runtimeMappings); //$NON-NLS-1$
+			info.aboutText = reader.getString("aboutText", true, runtimeMappings); //$NON-NLS-1$
+			info.windowImage = reader.getImage("windowImage"); //$NON-NLS-1$
+			info.aboutImage = reader.getImage("aboutImage"); //$NON-NLS-1$
+			info.featureImage = reader.getImage("featureImage"); //$NON-NLS-1$
+			info.featureImageURL = reader.getURL("featureImage"); //$NON-NLS-1$
+			info.welcomePageURL = reader.getURL("welcomePage"); //$NON-NLS-1$
+			info.welcomePerspective = reader.getString("welcomePerspective", false, runtimeMappings); //$NON-NLS-1$
+			info.tipsAndTricksHref = reader.getString("tipsAndTricksHref", false, runtimeMappings); //$NON-NLS-1$
+		}
+		return info;
+	}
+
+	/**
 	 * Creates and loads the about information for the specified feature.
 	 * 
 	 * @param featureId the feature id to read the about information from, or <code>null</code>
 	 * @param versionId the version id of the feature, or <code>null</code>
 	 * @return the initialized about information for the specified feature
+	 * @deprecated
 	 * @issue consider making this method internal so that regular plug-ins cannot call
 	 */
 	public final static AboutInfo create(String featureId, PluginVersionIdentifier versionId) throws WorkbenchException {

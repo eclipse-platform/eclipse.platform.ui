@@ -12,10 +12,8 @@ package org.eclipse.ui.application;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.window.WindowManager;
-import org.eclipse.ui.AboutInfo;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.WorkbenchException;
 
 /**
  * Interface providing special access for configuring the workbench.
@@ -39,45 +37,6 @@ public interface IWorkbenchConfigurer {
 	 */
 	public IWorkbench getWorkbench();
 
-	/**
-	 * Returns the configuration information found in the
-	 * <code>about.ini</code> file for the primary feature.
-	 * Fails if the <code>about.ini</code> file cannot be opened
-	 * and parsed correctly.
-	 * 
-	 * @return the configuration information for the primary feature
-	 * @exception WorkbenchException if the information cannot be retrieved
-	 * @issue spec should be less specific about where about info comes from
-	 * @issue there does not need to be a special method for the primary feature
-	 */
-	public AboutInfo getPrimaryFeatureAboutInfo() throws WorkbenchException;
-	
-	/**
-	 * Returns the configuration information found in the
-	 * <code>about.ini</code> file for all installed features.
-	 * Fails if the <code>about.ini</code> file cannot be opened
-	 * and parsed correctly.
-	 * 
-	 * @return the configuration information for all features
-	 * @exception WorkbenchException if the information cannot be retrieved
-	 * @issue spec should be less specific about where about info comes from
-	 */
-	public AboutInfo[] getAllFeaturesAboutInfo() throws WorkbenchException;
-	
-	/**
-	 * Returns the configuration information found in the
-	 * <code>about.ini</code> file for all new installed features
-	 * since the last time the workbench was started. Fails if the
-	 * <code>about.ini</code> file cannot be opened and parsed
-	 * correctly.
-	 * 
-	 * @return the configuration information for new installed features
-	 * @exception WorkbenchException if the information cannot be retrieved
-	 * @issue spec should be less specific about where about info comes from
-	 * @issue there does not need to be a special method for the primary feature; there just needs to be a way to find out id of primary feature and obtain about info for that id
-	 */
-	public AboutInfo[] getNewFeaturesAboutInfo() throws WorkbenchException;
-	
 	/**
 	 * Returns whether the workbench state should be saved on close and 
 	 * restored on subsequence open.
