@@ -85,5 +85,7 @@ abstract public class ComparisonCriteria {
 		return false;
 	}
 	
-	public abstract boolean usesFileContents();
+	public boolean usesFileContents() {
+		return false;
+	}
 }
