@@ -13,6 +13,7 @@ package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -27,6 +28,7 @@ import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
@@ -45,6 +47,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
+import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceNode;
 import org.eclipse.ui.internal.registry.ActionSetPartAssociationsReader;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.ActionSetRegistryReader;
@@ -55,6 +58,7 @@ import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.registry.IViewRegistry;
 import org.eclipse.ui.internal.registry.PerspectiveRegistry;
 import org.eclipse.ui.internal.registry.PerspectiveRegistryReader;
+import org.eclipse.ui.internal.registry.PreferencePageRegistryReader;
 import org.eclipse.ui.internal.registry.ViewRegistry;
 import org.eclipse.ui.internal.registry.ViewRegistryReader;
 import org.eclipse.ui.internal.registry.WorkingSetRegistry;
@@ -179,7 +183,43 @@ public class ExtensionEventHandler implements IRegistryChangeListener {
 			loadPopupMenu(ext);
 			return;
 		}
-		
+		if (name.equalsIgnoreCase(IWorkbenchConstants.PL_PREFERENCES)) {
+			loadPreferencePages(ext);
+			return;
+		}
+	}
+
+	private void loadPreferencePages(IExtension ext) {
+		PreferenceManager manager = workbench.getPreferenceManager();
+		List nodes = manager.getElements(PreferenceManager.POST_ORDER);
+		IConfigurationElement [] elements = ext.getConfigurationElements();
+		for (int i = 0; i < elements.length; i++) {
+			WorkbenchPreferenceNode node = PreferencePageRegistryReader.createNode(workbench, elements[i]);
+			if (node == null)
+				continue;
+			String category = node.getCategory();
+			if (category == null) {
+				manager.addToRoot(node);
+			}
+			else {
+				WorkbenchPreferenceNode parent = null;
+				for (Iterator j = nodes.iterator(); j.hasNext();) {
+					WorkbenchPreferenceNode element = (WorkbenchPreferenceNode) j.next();
+					if (category.equals(element.getId())) {
+						parent = element;
+						break;
+					}
+				}
+				if (parent == null) {
+					//Could not find the parent - log
+					WorkbenchPlugin.log("Invalid preference page path: " + category); //$NON-NLS-1$
+					manager.addToRoot(node);
+				}
+				else {
+					parent.add(node);
+				}				
+			}
+		}
 	}
 
 	/**

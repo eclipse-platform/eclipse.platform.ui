@@ -249,6 +249,14 @@ public class PreferencePageRegistryReader extends RegistryReader {
 	protected boolean readElement(IConfigurationElement element) {
 		if (element.getName().equals(TAG_PAGE) == false)
 			return false;
+		WorkbenchPreferenceNode node = createNode(workbench, element);
+		if (node != null)
+			nodes.add(node);
+		readElementChildren(element);
+		return true;
+	}
+	
+	public static WorkbenchPreferenceNode createNode(IWorkbench workbench, IConfigurationElement element) {
 		String name = element.getAttribute(ATT_NAME);
 		String id = element.getAttribute(ATT_ID);
 		String category = element.getAttribute(ATT_CATEGORY);
@@ -264,31 +272,29 @@ public class PreferencePageRegistryReader extends RegistryReader {
 			logMissingAttribute(element, ATT_CLASS);
 		}
 		if (name == null || id == null || className == null) {
-			return true;
+			return null;
 		}
 		ImageDescriptor image = null;
 		if (imageName != null) {
 			String contributingPluginId =
 				element
-					.getDeclaringExtension()
-					.getDeclaringPluginDescriptor()
-					.getUniqueIdentifier();
+				.getDeclaringExtension()
+				.getDeclaringPluginDescriptor()
+				.getUniqueIdentifier();
 			image =
 				AbstractUIPlugin.imageDescriptorFromPlugin(
-					contributingPluginId,
-					imageName);
+						contributingPluginId,
+						imageName);
 		}
 		WorkbenchPreferenceNode node =
 			new WorkbenchPreferenceNode(
-				id,
-				name,
-				category,
-				image,
-				element,
-				workbench);
-		nodes.add(node);
-		readElementChildren(element);
-		return true;
+					id,
+					name,
+					category,
+					image,
+					element,
+					workbench);
+		return node;		
 	}
 	
 	/**

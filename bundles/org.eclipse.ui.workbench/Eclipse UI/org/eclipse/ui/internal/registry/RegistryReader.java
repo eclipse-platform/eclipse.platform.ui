@@ -62,7 +62,7 @@ protected String getDescription(IConfigurationElement config) {
  * Logs the error in the workbench log using the provided
  * text and the information in the configuration element.
  */
-protected void logError(IConfigurationElement element, String text) {
+protected static void logError(IConfigurationElement element, String text) {
 	IExtension extension = element.getDeclaringExtension();
 	IPluginDescriptor descriptor = extension.getDeclaringPluginDescriptor();
 	StringBuffer buf = new StringBuffer();
@@ -73,21 +73,21 @@ protected void logError(IConfigurationElement element, String text) {
 /**
  * Logs a very common registry error when a required attribute is missing.
  */
-protected void logMissingAttribute(IConfigurationElement element, String attributeName) {
+protected static void logMissingAttribute(IConfigurationElement element, String attributeName) {
 	logError(element, "Required attribute '"+attributeName+"' not defined");//$NON-NLS-2$//$NON-NLS-1$
 }
 
 /**
  * Logs a very common registry error when a required child is missing.
  */
-protected void logMissingElement(IConfigurationElement element, String elementName) {
+protected static void logMissingElement(IConfigurationElement element, String elementName) {
 	logError(element, "Required sub element '"+elementName+"' not defined");//$NON-NLS-2$//$NON-NLS-1$
 }
 
 /**
  * Logs a registry error when the configuration element is unknown.
  */
-protected void logUnknownElement(IConfigurationElement element) {
+protected static void logUnknownElement(IConfigurationElement element) {
 	logError(element, "Unknown extension tag found: " + element.getName());//$NON-NLS-1$
 }
 /**
