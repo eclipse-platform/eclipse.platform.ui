@@ -15,11 +15,9 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.ListIterator;
 
-import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
-import org.eclipse.debug.core.IBreakpointsListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
@@ -51,30 +49,6 @@ public class BreakpointsView extends AbstractDebugView {
 	private ICheckStateListener fCheckListener= new ICheckStateListener() {
 		public void checkStateChanged(CheckStateChangedEvent event) {
 			handleCheckStateChanged(event);
-		}
-	};
-	private IBreakpointsListener fBreakpointListener= new IBreakpointsListener() {
-		public void breakpointsAdded(IBreakpoint[] breakpoints) {
-		}
-		public void breakpointsRemoved(IBreakpoint[] breakpoints, IMarkerDelta[] deltas) {
-		}
-		public void breakpointsChanged(final IBreakpoint[] breakpoints, IMarkerDelta[] deltas) {
-			DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
-				public void run() {
-					CheckboxTableViewer viewer= getCheckboxViewer();
-					for (int i = 0; i < breakpoints.length; i++) {
-						IBreakpoint breakpoint= breakpoints[i];
-						try {
-							boolean enabled= breakpoint.isEnabled();
-							if (viewer.getChecked(breakpoint) != enabled) {
-								viewer.setChecked(breakpoint, breakpoint.isEnabled());								
-							}
-						} catch (CoreException e) {
-							DebugUIPlugin.log(e);
-						}
-					}
-				}
-			});
 		}
 	};
 	
@@ -117,27 +91,16 @@ public class BreakpointsView extends AbstractDebugView {
 			breakpoints.add(elements[i]);
 		}
 		ListIterator iterator= breakpoints.listIterator();
-		UnsupportedOperationException iteratorException= null;
 		while (iterator.hasNext()) {
 			try {
 				if (!((IBreakpoint) iterator.next()).isEnabled()) {
-					try {
-						iterator.remove();
-					} catch (UnsupportedOperationException exception) {
-						iteratorException= exception;
-						break;
-					}
+					iterator.remove();
 				}
 			} catch (CoreException e) {
 				DebugUIPlugin.log(e);
 			}
 		}
-		if (iteratorException != null) {
-			DebugUIPlugin.errorDialog(getSite().getShell(), DebugUIViewsMessages.getString("BreakpointsView.12"), DebugUIViewsMessages.getString("BreakpointsView.13"), iteratorException); //$NON-NLS-1$ //$NON-NLS-2$
-			DebugUIPlugin.log(iteratorException);
-		}
 		viewer.setCheckedElements(breakpoints.toArray());
-		manager.addBreakpointListener(fBreakpointListener);
 	}
 	
 	/**
@@ -185,7 +148,6 @@ public class BreakpointsView extends AbstractDebugView {
 	 * @see IWorkbenchPart#dispose()
 	 */
 	public void dispose() {
-		DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(fBreakpointListener);
 		getCheckboxViewer().removeCheckStateListener(fCheckListener);
 		IAction action= getAction("ShowBreakpointsForModel"); //$NON-NLS-1$
 		if (action != null) {
