@@ -3,6 +3,7 @@ package org.eclipse.jface.wizard;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.*;
@@ -11,15 +12,14 @@ import org.eclipse.swt.widgets.*;
  * The WizardTableOfContents is a class that displays a series
  * of widgets depicting the current state of pages within a wizard.
  */
-public class TableOfContentsArea {
+class TableOfContentsArea {
 
 	private Canvas canvas;
 	private ITableOfContentsNode[] nodes = new ITableOfContentsNode[0];
 	private IWizard initialWizard;
 	private ITableOfContentsNode currentNode;
 	
-	static final int NODE_SIZE = 30;
-	private static final int BORDER_SIZE = NODE_SIZE - 16 / 2;
+	static final int NODE_SIZE = 20;
 
 	public TableOfContentsArea() {
 		super();
@@ -41,22 +41,24 @@ public class TableOfContentsArea {
 			newNodes[0] = new TableOfContentsNode(pages[0]);
 		}
 
-		Display display = wizard.getContainer().getShell().getDisplay();
-		addNodes(newNodes, display);
+		addNodes(newNodes);
 
 	}
 	/**
 	 * Add the newNodes to the collection of nodes being displayed.
 	 */
 
-	private void addNodes(ITableOfContentsNode[] newNodes, Display display) {
+	private void addNodes(ITableOfContentsNode[] newNodes) {
 
 		int oldSize = nodes.length;
 		ITableOfContentsNode[] mergeNodes =
 			new ITableOfContentsNode[oldSize + newNodes.length];
 		System.arraycopy(nodes, 0, mergeNodes, 0, oldSize);
+		System.arraycopy(newNodes,0,mergeNodes,oldSize,newNodes.length);
 
 		nodes = mergeNodes;
+		if(canvas != null)	
+			canvas.redraw();
 	}
 
 	/**
@@ -99,7 +101,7 @@ public class TableOfContentsArea {
 	 * Select the node corresponding to the page.
 	 * @param IWorkbenchPage
 	 */
-	public void updateFor(IWizardPage page) {
+	void updateFor(IWizardPage page) {
 
 		//We may not have created anything yet
 		int index = indexOfPage(page);
@@ -109,7 +111,7 @@ public class TableOfContentsArea {
 			ITableOfContentsNode newNode = new TableOfContentsNode(page);
 			newNodes[0] = newNode;
 			currentNode = newNode;
-			addNodes(newNodes, page.getControl().getDisplay());
+			addNodes(newNodes);
 
 		} else {
 			currentNode = nodes[index];
@@ -169,10 +171,14 @@ public class TableOfContentsArea {
 		gc.drawLine(0, size.y / 2, size.x, size.y / 2);
 
 		for (int i = 0; i < nodes.length; i++) {
+			Image image = nodes[i].getImage();
+			Rectangle imageSize = image.getBounds();
+			int xOffset = (NODE_SIZE - imageSize.width) /2;
+			int yOffset = (NODE_SIZE - imageSize.height) /2;
 			gc.drawImage(
-				nodes[i].getImage(),
-				i * 30 + BORDER_SIZE,
-				BORDER_SIZE);
+				image,
+				i * NODE_SIZE + xOffset,
+				yOffset);
 		}
 	}
 }

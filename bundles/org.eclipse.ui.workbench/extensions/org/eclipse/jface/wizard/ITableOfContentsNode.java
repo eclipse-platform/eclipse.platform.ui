@@ -6,7 +6,7 @@ import org.eclipse.swt.graphics.Image;
  * The ITableOfContentsNode is the node that reprsents a page in the
  * wizard.
  */
-public interface ITableOfContentsNode {
+interface ITableOfContentsNode {
 	
 	/**
 	 * Returns the page.

@@ -1,13 +1,20 @@
 package org.eclipse.jface.wizard;
 
+import java.net.*;
+import java.net.URI;
+import java.net.URL;
+
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.*;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * The WizardTableOfContentsNode is the class that represents 
  * each node in the table of contents.
  */
-public class TableOfContentsNode implements ITableOfContentsNode {
+class TableOfContentsNode implements ITableOfContentsNode {
 
 	/**
 	 * Image registry key for decision image (value <code>"toc_decision_image"</code>).
@@ -28,9 +35,25 @@ public class TableOfContentsNode implements ITableOfContentsNode {
 
 	static {
 		ImageRegistry reg = JFaceResources.getImageRegistry();
-		reg.put(TOC_IMG_DISABLED, ImageDescriptor.createFromFile(TableOfContentsNode.class, "images/disabled.gif")); //$NON-NLS-1$
-		reg.put(TOC_IMG_NEXT, ImageDescriptor.createFromFile(TableOfContentsNode.class, "images/next.gif")); //$NON-NLS-1$
-		reg.put(TOC_IMG_DECISION, ImageDescriptor.createFromFile(TableOfContentsNode.class, "images/decision.gif")); //$NON-NLS-1$
+		URL installURL =
+			WorkbenchPlugin.getDefault().getDescriptor().getInstallURL();
+		try {
+			reg.put(TOC_IMG_DISABLED, ImageDescriptor.createFromURL(new URL(installURL, "icons/full/dtoc/pageknown_toc.gif"))); //$NON-NLS-1$
+			reg.put(TOC_IMG_NEXT, ImageDescriptor.createFromURL(new URL(installURL, "icons/full/ftoc/pageknown_toc.gif"))); //$NON-NLS-1$
+			reg.put(TOC_IMG_DECISION, ImageDescriptor.createFromURL(new URL(installURL, "icons/full/ftoc/pagebranch_toc.gif"))); //$NON-NLS-1$
+		} catch (MalformedURLException exception) {
+			IStatus errorStatus =
+				new Status(
+					IStatus.ERROR,
+					WorkbenchPlugin
+						.getDefault()
+						.getDescriptor()
+						.getUniqueIdentifier(),
+					0,
+					JFaceResources.getString("Problem_Occurred"),//$NON-NLS-1$
+					exception);
+			WorkbenchPlugin.getDefault().getLog().log(errorStatus);
+		}
 
 	}
 
@@ -45,7 +68,6 @@ public class TableOfContentsNode implements ITableOfContentsNode {
 		this.page = newPage;
 	}
 
-	
 	/*
 	 * @see ITableOfContentsNode.getPage()
 	 */

@@ -10,8 +10,9 @@ import org.eclipse.swt.widgets.Shell;
  * a table of contents area.
  * 
  */
-public class TableOfContentsWizardDialog extends WizardDialog {
+class TableOfContentsWizardDialog extends WizardDialog {
 
+	private TableOfContentsArea tocArea;
 	/*
 	 * @see WizardDialog()
 	 */
@@ -24,17 +25,38 @@ public class TableOfContentsWizardDialog extends WizardDialog {
 	 */
 	protected Control createTitleArea(Composite parent) {
 		Control bottomWidget = super.createTitleArea(parent);
-		TableOfContentsArea tocArea = new TableOfContentsArea();
+		tocArea = new TableOfContentsArea();
 		tocArea.addWizard(getWizard());
-		
+
 		Control tocControl = tocArea.createControl(parent);
-		
+
 		FormData tocData = new FormData();
 		tocData.top = new FormAttachment(bottomWidget);
-		tocData.left = new FormAttachment(0,0);
-		tocData.right = new FormAttachment(100,0);
+		tocData.left = new FormAttachment(0, 0);
+		tocData.right = new FormAttachment(100, 0);
 		tocData.height = TableOfContentsArea.NODE_SIZE;
 		tocControl.setLayoutData(tocData);
 		return tocControl;
 	}
+	/**
+	 * @see org.eclipse.jface.wizard.WizardDialog#setWizard(org.eclipse.jface.wizard.IWizard)
+	 */
+	protected void setWizard(IWizard newWizard) {
+		super.setWizard(newWizard);
+		//May be called before area is created
+		if (tocArea != null)
+			tocArea.addWizard(newWizard);
+	}
+
+	/**
+	 * @see org.eclipse.jface.wizard.IWizardContainer#showPage(org.eclipse.jface.wizard.IWizardPage)
+	 */
+	public void showPage(IWizardPage page) {
+		super.showPage(page);
+		if (tocArea != null)
+			tocArea.updateFor(page);
+	}
+
+	
+
 }
