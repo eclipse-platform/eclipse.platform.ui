@@ -27,6 +27,8 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.part.WorkbenchPart;
 
+import sun.security.action.GetLongAction;
+
 
 /**
  * Provides support for a title bar where the
@@ -42,13 +44,13 @@ import org.eclipse.ui.part.WorkbenchPart;
 public class ViewPane extends PartPane
 	implements IPropertyListener
 {
-	private CLabel titleLabel;
+	private ViewTitleHandler titleLabel;
 		
 	private boolean fast = false;
 	private boolean showFocus = false;
 	private ToolBar viewToolBar;
 	private ToolBarManager viewToolBarMgr;
-	private ToolBar isvToolBar;
+	ToolBar isvToolBar;
 	private ToolBarManager isvToolBarMgr;
 	private MenuManager isvMenuMgr;
 	private ToolItem pullDownButton;
@@ -280,11 +282,7 @@ public boolean isDragAllowed(Point p) {
  * Return true if <code>x</code> is over the label image.
  */
 private boolean overImage(int x) {
-	if (titleLabel.getImage() == null) {
-		return false;
-	} else {
-		return x < titleLabel.getImage().getBounds().width;
-	}
+	return titleLabel.overImage(x);
 }
 /**
  * Create a title bar for the pane.
@@ -297,29 +295,10 @@ protected void createTitleBar() {
 	if (titleLabel != null)
 		return;
 
-	// Title.   
-	titleLabel = new CLabel(control, SWT.SHADOW_NONE);
-	titleLabel.setAlignment(SWT.LEFT);
-	titleLabel.setBackground(null, null);
-	titleLabel.addMouseListener(new MouseAdapter() {
-		public void mouseDown(MouseEvent e) {
-			if ((e.button == 1) && overImage(e.x))
-				showPaneMenu();
-		}
-		public void mouseDoubleClick(MouseEvent event){
-			doZoom();
-		}
-	});
-	// Listen for popup menu mouse event
-	titleLabel.addListener(SWT.MenuDetect, new Listener() {
-		public void handleEvent(Event event) {
-			if (event.type == SWT.MenuDetect) {
-				showPaneMenu(titleLabel, new Point(event.x, event.y));
-			}
-		}
-	});
+	titleLabel = new ViewTitleHandler(this);
+	CLabel label = titleLabel.createLabel(control);
 	updateTitles();
-	control.setTopLeft(titleLabel);
+
 
 	// Listen to title changes.
 	getPartReference().addPropertyListener(this);
@@ -339,7 +318,14 @@ protected void createTitleBar() {
 	
 	// ISV toolbar.
 	isvToolBar = new ToolBar(control, SWT.FLAT | SWT.WRAP);
-	control.setTopCenter(isvToolBar);
+	
+	if(label == null)
+		control.setTopLeft(isvToolBar);
+	else{
+		control.setTopLeft(label);	
+		control.setTopCenter(isvToolBar);
+	}
+	
 	isvToolBar.addMouseListener(new MouseAdapter(){
 		public void mouseDoubleClick(MouseEvent event) {
 			// 1GD0ISU: ITPUI:ALL - Dbl click on view tool cause zoom
@@ -392,36 +378,12 @@ protected void doDock() {
 	getPage().removeFastView(getViewReference());
 }
 
-/**
- * Draws the applicable gradient on the view's title area
- */
-/* package */ void drawGradient() {
-	if (titleLabel == null || viewToolBar == null || isvToolBar == null)
-		return;
-
-	if (showFocus) {
-		if (getShellActivated()) {
-			titleLabel.setBackground(WorkbenchColors.getActiveViewGradient(), WorkbenchColors.getActiveViewGradientPercents());
-			titleLabel.setForeground(WorkbenchColors.getSystemColor(SWT.COLOR_TITLE_FOREGROUND));
-		}
-		else {
-			titleLabel.setBackground(WorkbenchColors.getDeactivatedViewGradient(), WorkbenchColors.getDeactivatedViewGradientPercents());
-			titleLabel.setForeground(WorkbenchColors.getSystemColor(SWT.COLOR_TITLE_INACTIVE_FOREGROUND));
-		}
-	}
-	else {
-		titleLabel.setBackground(null, null);
-		titleLabel.setForeground(null);
-	}
-
-	titleLabel.update();
-}
 
 /**
  * Returns the drag control.
  */
 public Control getDragHandle() {
-	return titleLabel;
+	return titleLabel.getDragHandle();
 }
 /**
  * @see ViewActionBars
@@ -528,11 +490,13 @@ public void showFocus(boolean inFocus) {
  * Shows the pane menu (system menu) for this pane.
  */
 public void showPaneMenu() {
-	// If this is a fast view, it may have been minimized. Do nothing in this case.
-	if(isFastView() && (page.getActiveFastView() != getViewReference()))
-		return;
-	Rectangle bounds = titleLabel.getBounds();
-	showPaneMenu(titleLabel, titleLabel.toDisplay(new Point(0, bounds.height)));
+	if(titleLabel.hasLabel()){
+		// If this is a fast view, it may have been minimized. Do nothing in this case.
+		if(isFastView() && (page.getActiveFastView() != getViewReference()))
+			return;
+		Rectangle bounds = titleLabel.getLabel().getBounds();
+		showPaneMenu(titleLabel.getLabel(), titleLabel.getLabel().toDisplay(new Point(0, bounds.height)));
+	}
 }
 /**
  * Return true if this view is a fast view.
@@ -673,7 +637,7 @@ public LayoutPart targetPartFor(LayoutPart dragSource) {
 }
 public String toString() {
 	String label = "disposed";//$NON-NLS-1$
-	if((titleLabel != null) && (!titleLabel.isDisposed()))
+	if((titleLabel != null) && (!titleLabel.hasLabel()) && ! titleLabel.getLabel().isDisposed())
 		label = titleLabel.getText();
 	
 	return getClass().getName() + "@" + Integer.toHexString(hashCode()) + //$NON-NLS-1$
@@ -695,41 +659,9 @@ public void updateActionBars() {
  */
 public void updateTitles() {
 	IViewReference ref = getViewReference();
-	if (titleLabel != null && !titleLabel.isDisposed()) {
-		boolean changed = false;
-		
-		// only update if text or image has changed 
-		String text = ref.getTitle();
-		if (text == null)
-			text = "";//$NON-NLS-1$
-		if (!text.equals(titleLabel.getText())) {
-			titleLabel.setText(text);
-			changed = true;
-		}
-		Image image = ref.getTitleImage();
-		if (image != titleLabel.getImage()) {
-			titleLabel.setImage(image);
-			changed = true;
-		}
-		// only relayout if text or image has changed
-		if (changed) {
-			((Composite) getControl()).layout();
-		}
-		
-		String tooltip = ref.getTitleToolTip();
-		if (!(tooltip == null ? titleLabel.getToolTipText() == null : tooltip.equals(titleLabel.getToolTipText()))) {
-			titleLabel.setToolTipText(ref.getTitleToolTip());
-			changed = true;
-		}
-		
-		if (changed) {
-			// XXX: Workaround for 1GCGA89: SWT:ALL - CLabel tool tip does not always update properly
-			titleLabel.update();
-			
-			// notify the page that this view's title has changed
-			// in case it needs to update its fast view button
-			page.updateTitle(ref);
-		}
+	if (titleLabel != null ) {
+		titleLabel.updateLabel(ref);
 	}
 }
+
 }
