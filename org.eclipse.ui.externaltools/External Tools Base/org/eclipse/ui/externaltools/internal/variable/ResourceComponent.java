@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.externaltools.internal.group.IGroupDialogPage;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -149,7 +150,13 @@ public class ResourceComponent extends AbstractVariableComponent {
 	 */
 	private void updateResourceListEnablement() {
 		if (specificResourceButton != null && resourceList != null) {
-			resourceList.getTree().setEnabled(specificResourceButton.getSelection());
+			Tree tree= resourceList.getTree();
+			tree.setEnabled(specificResourceButton.getSelection());
+			if (tree.getItemCount() > 0) {
+				tree.setSelection(new TreeItem[]{tree.getItems()[0]});
+				selectedResource= (IResource)tree.getSelection()[0].getData();
+			}
+			
 			validate();
 		}
 	}
