@@ -324,11 +324,15 @@ public class UpdateCore extends Plugin {
 		String httpProxyHost = System.getProperty(P_HTTP_HOST) != null ? 
 				System.getProperty(P_HTTP_HOST)
 				: getPluginPreferences().getString(HTTP_PROXY_HOST);
-				
+		if ("".equals(httpProxyHost)) //$NON-NLS-1$
+			httpProxyHost = null;
+		
 		String httpProxyPort = System.getProperty(P_HTTP_PORT) != null ?
 				System.getProperty(P_HTTP_PORT)
 				: getPluginPreferences().getString(HTTP_PROXY_PORT);
-				
+		if ("".equals(httpProxyPort)) //$NON-NLS-1$
+			httpProxyPort = null;
+		
 		boolean httpProxyEnable = httpProxyHost != null && httpProxyPort != null ? 
 				true
 				: getPluginPreferences().getBoolean(HTTP_PROXY_ENABLE);
