@@ -12,13 +12,20 @@ package org.eclipse.team.internal.ccvs.ui;
 
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
@@ -29,6 +36,8 @@ import org.eclipse.ui.help.WorkbenchHelp;
 public class CVSFolderPropertiesPage extends PropertyPage {
 
 	IFolder folder;
+	private Label root;
+	private Label repository;
 	
 	/**
 	 * @see PreferencePage#createContents(Composite)
@@ -53,9 +62,9 @@ public class CVSFolderPropertiesPage extends PropertyPage {
 			} else {
 				FolderSyncInfo syncInfo = cvsResource.getFolderSyncInfo();
 				createLabel(composite, Policy.bind("CVSFolderPropertiesPage.root")); //$NON-NLS-1$
-				createLabel(composite, syncInfo.getRoot());
+				root = createLabel(composite, syncInfo.getRoot());
 				createLabel(composite, Policy.bind("CVSFolderPropertiesPage.repository")); //$NON-NLS-1$
-				createLabel(composite, syncInfo.getRepository());
+				repository = createLabel(composite, syncInfo.getRepository());
 			
 				// Tag
 				createLabel(composite, Policy.bind("CVSFilePropertiesPage.tag")); //$NON-NLS-1$
@@ -85,6 +94,26 @@ public class CVSFolderPropertiesPage extends PropertyPage {
 					createLabel(composite, syncInfo.getIsStatic() ? Policy.bind("yes") : Policy.bind("no")); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				
+				createLabel(composite, "", 2); // spacer //$NON-NLS-1$
+				
+				// Allow the folder to be disconnected from CVS control
+				final Button disconnect = new Button(composite, SWT.NONE);
+				disconnect.setText(Policy.bind("CVSFolderPropertiesPage.disconnect")); //$NON-NLS-1$
+				GridData data = new GridData(GridData.HORIZONTAL_ALIGN_END);
+				data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
+				int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+				data.widthHint = Math.max(widthHint, disconnect.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
+				disconnect.setLayoutData(data);
+				disconnect.addListener(SWT.Selection, new Listener() {
+					public void handleEvent (Event event) {
+						// perform a disconnect
+						if (disconnectFolder()) {
+							root.setText(Policy.bind("CVSFilePropertiesPage.none")); //$NON-NLS-1$
+							repository.setText(Policy.bind("CVSFilePropertiesPage.none")); //$NON-NLS-1$
+							disconnect.setEnabled(false);
+						}
+					}
+				});
 			}
 		} catch (TeamException e) {
 			// Display error text
@@ -132,4 +161,18 @@ public class CVSFolderPropertiesPage extends PropertyPage {
 		}
 	}
 
+	private boolean disconnectFolder() {
+		if (MessageDialog.openQuestion(getShell(), Policy.bind("CVSFolderPropertiesPage.disconnectTitle"), Policy.bind("CVSFolderPropertiesPage.disconnectQuestion"))) { //$NON-NLS-1$ //$NON-NLS-2$
+			ICVSFolder cvsFolder = CVSWorkspaceRoot.getCVSFolderFor(folder);
+			try {
+				cvsFolder.unmanage(null);
+			} catch (CVSException e) {
+				ErrorDialog.openError(getShell(), null, null, e.getStatus());
+				return false;
+			}
+			return true;
+		} else {
+			return false;
+		}
+	}			
 }
