@@ -199,9 +199,9 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 			
 		setEnabled(fTarget != null && fTarget.canPerformFind());
 		
-		if (fgFindReplaceDialogStub != null) {
-			FindReplaceDialog dialog= fgFindReplaceDialogStub.getDialog();
-			dialog.updateTarget(fTarget, fIsTargetEditable);
-		}
+//		if (fgFindReplaceDialogStub != null) {
+//			FindReplaceDialog dialog= fgFindReplaceDialogStub.getDialog();
+//			dialog.updateTarget(fTarget, fIsTargetEditable);
+//		}
 	}
 }
