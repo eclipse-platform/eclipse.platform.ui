@@ -3,19 +3,19 @@
 <schema targetNamespace="org.eclipse.debug.ui">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.debug.ui" id="debugModelContextBindings" name="Debug Model Context Bindings"/>
+         <meta.schema plugin="org.eclipse.debug.ui" id="debugModelActivityBindings" name="Debug Model Activity Bindings"/>
       </appInfo>
       <documentation>
-This extension point provides a mechanism for specifying a context that should be associated with the given debug model.
-
-The Debug view uses these bindings to automatically enable contexts. When an element in the Debug view which provides an IDebugModelProvider adapter or a stack frame with the specified debug model identifier is selected, the context with the given identifier will be enabled.
+This extension point provides a mechanism for associating an activity with a debug model.
+         
+The Debug view uses this information as a trigger point for enabling activities. When an element in the Debug view which provides an IDebugModelProvider adapter or a stack frame with the specified debug model identifier is selected, the activity with the given identifier will be enabled.
       </documentation>
    </annotation>
 
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="modelContextBinding" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="modelActivityBinding" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -41,7 +41,7 @@ The Debug view uses these bindings to automatically enable contexts. When an ele
       </complexType>
    </element>
    
-   <element name="modelContextBinding">
+   <element name="modelActivityBinding">
       <complexType>
          <attribute name="debugModelId" type="string" use="required">
             <annotation>
@@ -50,10 +50,10 @@ The Debug view uses these bindings to automatically enable contexts. When an ele
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="contextId" type="string" use="required">
+         <attribute name="activityId" type="string" use="required">
             <annotation>
                <documentation>
-                  specifies the context identifier of the context that should be associated with the given debug model
+                  specifies the identifier of the activity that should be associated with the given debug model
                </documentation>
             </annotation>
          </attribute>
@@ -74,17 +74,17 @@ The Debug view uses these bindings to automatically enable contexts. When an ele
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         The following is an example of a debug model context binding contribution:
+         The following is an example of a debug model activity binding contribution:
 &lt;pre&gt;
 &lt;extension
-      point="org.eclipse.debug.ui.debugModelContextBindings"&gt;
-   &lt;modelContextBinding
-         contextId="com.example.myLanguage.debugging"
+      point="org.eclipse.debug.ui.debugModelActivityBindings"&gt;
+   &lt;modelActivityBinding
+         activityId="com.example.myLanguageDevelopment"
          debugModelId="com.example.myLanguageDebugModel"&gt;
-   &lt;/modelContextBinding&gt;
+   &lt;/modelActivityBinding&gt;
 &lt;/extension&gt;
 &lt;/pre&gt;
-In the above example, when a stack frame with the debug model identifier of &quot;com.example.myLanguageDebugModel&quot; is selected, the context with the identifier &quot;com.example.myLanguage.debugging&quot; will be enabled.
+In the above example, when a stack frame with the debug model identifier of &quot;com.example.myLanguageDebugModel&quot; is selected, the activity with the identifier &quot;com.example.myLanguageDevelopment&quot; will be enabled.
    </documentation>
 </annotation>
 

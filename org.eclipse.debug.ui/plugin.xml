@@ -41,6 +41,7 @@
    <extension-point id="stringVariablePresentations" name="%StringVariablePresentationsName"/>
    <extension-point id="sourceContainerPresentations" name="%SourceContainerPresentationsName" schema="schema/sourceContainerPresentations.exsd"/>
    <extension-point id="debugModelContextBindings" name="%DebugModelContextBindingsName" schema="schema/debugModelContextBindings.exsd"/>
+   <extension-point id="debugModelActivityBindings" name="%DebugModelActivityBindingsName" schema="schema/debugModelActivityBindings.exsd"/>
    <extension-point id="contextViewBindings" name="%ContextViewBindingsName" schema="schema/contextViewBindings.exsd"/>
 
 <!-- Extensions -->
@@ -1292,7 +1293,6 @@
       </command>
       <keyBinding
             string="F5"
-            scope="org.eclipse.debug.ui.debugging"
             command="org.eclipse.debug.ui.commands.StepInto"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
@@ -1304,7 +1304,6 @@
       </command>
       <keyBinding
             string="F6"
-            scope="org.eclipse.debug.ui.debugging"
             command="org.eclipse.debug.ui.commands.StepOver"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
@@ -1316,7 +1315,6 @@
       </command>
       <keyBinding
             string="F7"
-            scope="org.eclipse.debug.ui.debugging"
             command="org.eclipse.debug.ui.commands.StepReturn"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
@@ -1328,7 +1326,6 @@
       </command>
       <keyBinding
             string="F8"
-            scope="org.eclipse.debug.ui.debugging"
             command="org.eclipse.debug.ui.commands.Resume"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
@@ -1352,7 +1349,6 @@
       </command>
       <keyBinding
             string=""
-            scope="org.eclipse.debug.ui.debugging"
             command="org.eclipse.debug.ui.commands.Suspend"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
@@ -1436,7 +1432,6 @@
       </command>
       <keyBinding
             string="Ctrl+R"
-            scope="org.eclipse.debug.ui.debugging"
             command="org.eclipse.debug.ui.commands.RunToLine"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>          

@@ -18,9 +18,13 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
-
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.model.IDebugModelProvider;
+import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPageListener;
@@ -35,18 +39,28 @@ import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.contexts.ContextManagerEvent;
+import org.eclipse.ui.contexts.EnabledSubmission;
 import org.eclipse.ui.contexts.IContext;
 import org.eclipse.ui.contexts.IContextManager;
 import org.eclipse.ui.contexts.IContextManagerListener;
+import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.contexts.NotDefinedException;
 
 /**
  * A context listener which automatically opens/closes/activates views in
  * response to debug context changes.
+ * 
+ * The context listener also updates for selection changes in the LaunchView,
+ * enabling/disabling contexts and enabling activities based on the
+ * org.eclipse.debug.ui.debugModelContextBindings and
+ * org.eclipse.debug.ui.debugModelActivityBindings extension points.
  */
 public class LaunchViewContextListener implements IPartListener2, IPageListener, IPerspectiveListener, IContextManagerListener {
 	
+	public static final String ATTR_ACTIVITY_ID = "activityId"; //$NON-NLS-1$
+	public static final String ID_DEBUG_MODEL_ACTIVITY_BINDINGS = "debugModelActivityBindings"; //$NON-NLS-1$
 	public static final String ID_CONTEXT_VIEW_BINDINGS= "contextViewBindings"; //$NON-NLS-1$
 	public static final String ID_DEBUG_MODEL_CONTEXT_BINDINGS= "debugModelContextBindings"; //$NON-NLS-1$
 	public static final String ATTR_CONTEXT_ID= "contextId"; //$NON-NLS-1$
@@ -65,16 +79,20 @@ public class LaunchViewContextListener implements IPartListener2, IPageListener,
 	 */
 	private LaunchView launchView;
 	/**
-	 * A mapping of debug models IDs (Strings) to a collection
+	 * A mapping of debug models IDs (String) to a collection
 	 * of context IDs (List<String>).
 	 */
 	private Map modelsToContexts= new HashMap();
+	/**
+	 * A mapping of debug model IDs (String) to a collection
+	 * of activity IDs (List<String>).
+	 */
+	private Map modelsToActivities= new HashMap();
 	/**
 	 * A mapping of context IDs (Strings) to a collection
 	 * of context-view bindings (IConfigurationElements).
 	 */
 	private Map contextViews= new HashMap();
-	
 	/**
 	 * Collection of all views that might be opened or closed automatically.
 	 * This collection starts out containing all views associated with a context.
@@ -88,10 +106,22 @@ public class LaunchViewContextListener implements IPartListener2, IPageListener,
 	 * closed.
 	 */
 	private Set openedViewIds= new HashSet();
+	/**
+	 * Map of ILaunch objects to the List of EnabledSubmissions that were
+	 * submitted for them.
+	 * Key: ILaunch
+	 * Value: List <EnabledSubmission>
+	 */
+	private Map fContextSubmissions= new HashMap();
 	
+	/**
+	 * Creates a fully initialized context listener.
+	 * @param view
+	 */
 	public LaunchViewContextListener(LaunchView view) {
 		launchView= view;
 		loadDebugModelContextExtensions();
+		loadDebugModelActivityExtensions();
 		loadContextToViewExtensions(true);
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		workbench.getContextSupport().getContextManager().addContextManagerListener(this);
@@ -127,43 +157,47 @@ public class LaunchViewContextListener implements IPartListener2, IPageListener,
 			managedViewIds.add(viewId);
 		}
 	}
-
+	
 	/**
 	 * Loads the extensions which map debug model identifiers
 	 * to context ids. This information is used to activate the
 	 * appropriate context when a debug element is selected.
 	 */
 	private void loadDebugModelContextExtensions() {
-		IExtensionPoint extensionPoint = DebugUIPlugin.getDefault().getDescriptor().getExtensionPoint(ID_DEBUG_MODEL_CONTEXT_BINDINGS);
+		loadDebugModelExtensions(ID_DEBUG_MODEL_CONTEXT_BINDINGS, ATTR_CONTEXT_ID, modelsToContexts);
+	}
+	
+	/**
+	 * Loads the extensions which map debug model identifiers
+	 * to activity ids. This information is used to activate the
+	 * appropriate activities when a debug element is selected.
+	 */
+	private void loadDebugModelActivityExtensions() {
+		loadDebugModelExtensions(ID_DEBUG_MODEL_ACTIVITY_BINDINGS, ATTR_ACTIVITY_ID, modelsToActivities);
+	}
+
+	/**
+	 * Loads extensions of the given extension point which map
+	 * debug model identifiers to some value keyed to the given attributeId.
+	 * A collection of these values is stored into the given map, keyed
+	 * to the model ids.
+	 */
+	private void loadDebugModelExtensions(String extensionPointId, String attributeId, Map map) {
+		IExtensionPoint extensionPoint = DebugUIPlugin.getDefault().getDescriptor().getExtensionPoint(extensionPointId);
 		IConfigurationElement[] configurationElements = extensionPoint.getConfigurationElements();
 		for (int i = 0; i < configurationElements.length; i++) {
 			IConfigurationElement element = configurationElements[i];
 			String modelIdentifier = element.getAttribute(ATTR_DEBUG_MODEL_ID);
-			String context = element.getAttribute(ATTR_CONTEXT_ID);
-			if (modelIdentifier != null && context != null) {
-				List contexts = (List) modelsToContexts.get(modelIdentifier);
-				if (contexts == null) {
-					contexts = new ArrayList();
-					modelsToContexts.put(modelIdentifier, contexts);
+			String value = element.getAttribute(attributeId);
+			if (modelIdentifier != null && value != null) {
+				List values = (List) map.get(modelIdentifier);
+				if (values == null) {
+					values = new ArrayList();
+					map.put(modelIdentifier, values);
 				}
-				contexts.add(context);
+				values.add(value);
 			}
 		}
-	}
-	
-	/**
-	 * Returns the context ids associated with the given debug
-	 * model identifier as specified via extension or <code>null</code>
-	 * if no contexts have been associated with the given debug model.
-	 * 
-	 * @param debugModelIdentifier the debug model identifier or <code>null</code>.
-	 * @return the context ids associated with the given debug model or <code>null</code>.
-	 */
-	public List getDebugModelContexts(String debugModelIdentifier) {
-		if (debugModelIdentifier == null) {
-			return null;
-		}
-		return (List) modelsToContexts.get(debugModelIdentifier);
 	}
 	
 	/**
@@ -479,6 +513,200 @@ public class LaunchViewContextListener implements IPartListener2, IPageListener,
 	}
 	
 	/**
+	 * Determines the debug context associated with the selected
+	 * stack frame's debug model (if any) and activates that
+	 * context. This triggers this view's context listener
+	 * to automatically open/close/activate views as appropriate.
+	 */
+	public void updateForSelection(Object selection) {
+		ILaunch launch= LaunchView.getLaunch(selection);
+		if (launch == null) {
+			return;
+		}
+		String[] modelIds= getDebugModelIdsForSelection(selection);
+		enableContexts(getContextsForModels(modelIds), launch);
+		enableActivities(getActivitiesForModels(modelIds));
+	}
+	
+	/**
+	 * Returns the debug model identifiers associated with the given selection.
+	 * 
+	 * @param selection the selection
+	 * @return the debug model identifiers associated with the given selection
+	 */
+	protected String[] getDebugModelIdsForSelection(Object selection) {
+		if (selection instanceof IAdaptable) {
+			IDebugModelProvider modelProvider= (IDebugModelProvider) Platform.getAdapterManager().getAdapter(selection, IDebugModelProvider.class);
+			if (modelProvider != null) {
+				String[] modelIds= modelProvider.getModelIdentifiers();
+				if (modelIds != null) {
+					return modelIds;
+				}
+			}
+		}
+		if (selection instanceof IStackFrame) {
+			return new String[] { ((IStackFrame) selection).getModelIdentifier() };
+		}
+		return new String[0];
+	}
+	
+	/**
+	* Returns the activity identifiers associated with the
+	* given model identifiers.
+	* 
+	* @param modelIds the model identifiers
+	* @return the activities associated with the given model identifiers
+	*/
+	protected List getActivitiesForModels(String[] modelIds) {
+		List activityIds= new ArrayList();
+		for (int i = 0; i < modelIds.length; i++) {
+			List ids= (List) modelsToActivities.get(modelIds[i]);
+			if (ids != null) {
+				activityIds.addAll(ids);
+			}
+		}
+		return activityIds;
+	}
+	
+	/**
+	* Returns the context identifiers associated with the
+	* given model identifiers.
+	* 
+	* @param modelIds the model identifiers
+	* @return the contexts associated with the given model identifiers
+	*/
+	protected List getContextsForModels(String[] modelIds) {
+		List contextIds= new ArrayList();
+		for (int i = 0; i < modelIds.length; i++) {
+			List ids= (List) modelsToContexts.get(modelIds[i]);
+			if (ids != null) {
+				contextIds.addAll(ids);
+			}
+		}
+		return contextIds;
+	}
+	
+	/**
+	 * Enables the given activities in the workbench.
+	 * 
+	 * @param activityIds the activities to enable
+	 */
+	protected void enableActivities(List activityIds) {
+		IWorkbenchActivitySupport activitySupport = PlatformUI.getWorkbench().getActivitySupport();
+		Set enabledIds = activitySupport.getActivityManager().getEnabledActivityIds();
+		Set idsToEnable= new HashSet();
+		Iterator iter= activityIds.iterator();
+		while (iter.hasNext()) {
+			idsToEnable.add((String) iter.next());
+		}
+		if (!idsToEnable.isEmpty()) {
+			idsToEnable.addAll(enabledIds);
+			activitySupport.setEnabledActivityIds(idsToEnable);
+		}
+	}
+	
+	/**
+	 * Enable the given contexts for the given launch. Context
+	 * IDs which are not currently enabled in the workbench will be
+	 * submitted to the workbench. Simulate a context enablement
+	 * callback (by calling contextActivated) for contexts that are already enabled so that
+	 * their views can be promoted.
+	 * 
+	 * @param contextIds the contexts to enable
+	 * @param launch the launch for which the contexts are being enabled
+	 */
+	protected void enableContexts(List contextIds, ILaunch launch) {
+		if (contextIds.isEmpty()) {
+			return;
+		}
+		Set enabledContexts = PlatformUI.getWorkbench().getContextSupport().getContextManager().getEnabledContextIds();
+		Set contextsAlreadyEnabled= new HashSet();
+		Iterator iter= contextIds.iterator();
+		while (iter.hasNext()) {
+			String contextId= (String) iter.next();
+			if (enabledContexts.contains(contextId)) {
+				// If a context is already enabled, submitting it won't
+				// generate a callback from the workbench. So we inform
+				// our context listener ourselves.
+				contextsAlreadyEnabled.add(contextId);
+			}
+		}
+		submitContexts(contextIds, launch);
+		contextActivated((String[]) contextsAlreadyEnabled.toArray(new String[0]));
+	}
+
+	/**
+	 * Submits the given context IDs to the workbench context support
+	 * on behalf of the given launch. When the launch terminates,
+	 * the context submissions will be automatically removed.
+	 *  
+	 * @param contextIds the contexts to submit
+	 * @param launch the launch for which the contexts are being submitted
+	 */
+	protected void submitContexts(List contextIds, ILaunch launch) {
+		List submissions = (List) fContextSubmissions.get(launch);
+		if (submissions == null) {
+			submissions= new ArrayList();
+			fContextSubmissions.put(launch, submissions);
+		}
+		List newSubmissions= new ArrayList();
+		Iterator iter= contextIds.iterator();
+		while (iter.hasNext()) {
+			newSubmissions.add(new EnabledSubmission(null, null, null, (String) iter.next()));
+		}
+		IWorkbenchContextSupport contextSupport = PlatformUI.getWorkbench().getContextSupport();
+		if (!newSubmissions.isEmpty()) {
+			contextSupport.addEnabledSubmissions(newSubmissions);
+			// After adding the new submissions, remove any old submissions
+			// that exist for the same context IDs. This prevents us from
+			// building up a ton of redundant submissions.
+			List submissionsToRemove= new ArrayList();
+			ListIterator oldSubmissions= submissions.listIterator();
+			while (oldSubmissions.hasNext()) {
+				EnabledSubmission oldSubmission= (EnabledSubmission) oldSubmissions.next();
+				String contextId = oldSubmission.getContextId();
+				if (contextIds.contains(contextId)) {
+					oldSubmissions.remove();
+					submissionsToRemove.add(oldSubmission);
+				}
+			}
+			contextSupport.removeEnabledSubmissions(submissionsToRemove);
+			submissions.addAll(newSubmissions);
+		}
+	}
+	
+	/**
+	 * Notifies this view that the given launches have terminated. When a launch
+	 * terminates, remove all context submissions associated with it.
+	 * 
+	 * @param launches the terminated launches
+	 */
+	protected void launchesTerminated(ILaunch[] launches) {
+		List allSubmissions= new ArrayList();
+		for (int i = 0; i < launches.length; i++) {
+			List submissions= (List) fContextSubmissions.remove(launches[i]);
+			if (submissions != null) {
+				allSubmissions.addAll(submissions);
+			}
+		}
+		PlatformUI.getWorkbench().getContextSupport().removeEnabledSubmissions(allSubmissions);
+	}
+	
+	/**
+	 * Removes all context submissions made by this view.
+	 */
+	protected void removeAllContextSubmissions() {
+		IWorkbenchContextSupport contextSupport= PlatformUI.getWorkbench().getContextSupport();
+		List submissions= new ArrayList();
+		Iterator iterator = fContextSubmissions.values().iterator();
+		while (iterator.hasNext()) {
+			submissions.addAll((List) iterator.next());
+		}
+		contextSupport.removeEnabledSubmissions(submissions);
+		fContextSubmissions.clear();
+	}
+	
+	/**
 	 * Returns the view identifier associated with the given extension
 	 * element or <code>null</code> if none.
 	 * 
@@ -544,7 +772,7 @@ public class LaunchViewContextListener implements IPartListener2, IPageListener,
 			openedViewIds.clear();
 			viewIdsToNotOpen.clear();
 			loadContextToViewExtensions(false);
-			launchView.removeAllContextSubmissions();
+			removeAllContextSubmissions();
 		} else if (changeId.equals(IWorkbenchPage.CHANGE_RESET_COMPLETE)) {
 			page.addPartListener(this);
 		}

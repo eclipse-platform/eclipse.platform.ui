@@ -11,15 +11,9 @@
 package org.eclipse.debug.internal.ui.views.launch;
 
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
-import java.util.Set;
-
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -33,18 +27,13 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IDebugElement;
-import org.eclipse.debug.core.model.IDebugModelProvider;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.ISourceLocator;
@@ -67,10 +56,12 @@ import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.debug.internal.ui.views.DebugViewDecoratingLabelProvider;
 import org.eclipse.debug.internal.ui.views.DebugViewInterimLabelProvider;
 import org.eclipse.debug.internal.ui.views.DebugViewLabelDecorator;
+import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugEditorPresentation;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.debug.ui.ISourcePresentation;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuManager;
@@ -83,6 +74,7 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -96,7 +88,6 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -107,16 +98,14 @@ import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
 import org.eclipse.ui.IReusableEditor;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.SelectionListenerAction;
-import org.eclipse.ui.contexts.EnabledSubmission;
-import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.IShowInSource;
@@ -128,7 +117,8 @@ import org.eclipse.ui.texteditor.ITextEditor;
 
 public class LaunchView extends AbstractDebugEventHandlerView implements ISelectionChangedListener, IPerspectiveListener, IPageListener, IPropertyChangeListener, IResourceChangeListener, IShowInTarget, IShowInSource, IShowInTargetList {
 	
-
+	public static final String ID_CONTEXT_ACTIVITY_BINDINGS = "contextActivityBindings";
+	private Map fDebugModelActivityBindings= new HashMap();
 	/**
 	 * A marker for the source selection and icon for an
 	 * instruction pointer.  This marker is transient.
@@ -214,14 +204,6 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 * based on debug contexts.
 	 */
 	private LaunchViewContextListener contextListener;
-	
-	/**
-	 * Map of ILaunch objects to the List of EnabledSubmissions that were
-	 * submitted for them.
-	 * Key: ILaunch
-	 * Value: List <EnabledSubmission>
-	 */
-	private Map fContextSubmissions= new HashMap();
 	
 	/**
 	 * Creates a launch view and an instruction pointer marker for the view
@@ -524,14 +506,8 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		clearStatusLine();
 		updateObjects();
 		showEditorForCurrentSelection();
-		showViewsForCurrentSelection();
+		updateContextListener();
 	}
-	
-
-	
-
-	
-
 
 	/**
 	 * Lookup source element for current stack frame again.
@@ -539,6 +515,15 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	public void redoSourceLookup() {
 		setStackFrame(null);
 		selectionChanged(null);
+	}
+	
+	/**
+	 * 
+	 */
+	private void updateContextListener() {
+		if (isActive() && fAutoManage) {
+			contextListener.updateForSelection(((IStructuredSelection) getViewer().getSelection()).getFirstElement());
+		}
 	}
 	
 	/**
@@ -559,128 +544,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 */
 	public void setAutoManageViews(boolean autoManage) {
 		fAutoManage= autoManage;
-		showViewsForCurrentSelection();
-	}
-	
-	/**
-	 * Determines the debug context associated with the selected
-	 * stack frame's debug model (if any) and activates that
-	 * context. This triggers this view's context listener
-	 * to automatically open/close/activate views as appropriate.
-	 */
-	private void showViewsForCurrentSelection() {
-		// ensure this view is visible in the active page
-		if (!isActive() || !fAutoManage) {
-			return;
-		}		
-		Object selection = ((IStructuredSelection) getViewer().getSelection()).getFirstElement();
-		ILaunch launch= getLaunch(selection);
-		if (launch == null) {
-			return;
-		}
-		List contextIds = getContextsForSelection(selection);
-		if (!contextIds.isEmpty()) {
-			enableContexts(contextIds, launch);
-		}
-	}
-			
-	/**
-	 * Returns the contexts (String identifiers) associated with the
-	 * given selection.
-	 * 
-	 * @param selection the selection
-	 * @return the contexts associated with the given selection
-	 */
-	protected List getContextsForSelection(Object selection) {
-		List contextIds= new ArrayList();
-		if (selection instanceof IAdaptable) {
-			IDebugModelProvider context= (IDebugModelProvider) Platform.getAdapterManager().getAdapter(selection, IDebugModelProvider.class);
-			if (context != null) {
-				String[] modelIds= context.getModelIdentifiers();
-				if (modelIds != null) {
-					for (int i = 0; i < modelIds.length; i++) {
-						List ids= contextListener.getDebugModelContexts(modelIds[i]);
-						if (ids != null) {
-							contextIds.addAll(ids);
-						}
-					}
-				}
-			}
-		}
-		if (contextIds.isEmpty() && selection instanceof IStackFrame) {
-			List ids = contextListener.getDebugModelContexts(((IStackFrame) selection).getModelIdentifier());
-			if (ids != null) {
-				contextIds.addAll(ids);
-			}
-		}
-		return contextIds;
-	}
-	
-	/**
-	 * Activate the given contexts for the given launch. Context
-	 * IDs which are not currently enabled in the workbench will be
-	 * submitted to the workbench. The launch view context listener
-	 * will be told about contexts that are already enabled so that
-	 * their views can be promoted.
-	 * 
-	 * @param contextIds the contexts to enable
-	 * @param launch the launch for which the contexts are being enabled
-	 */
-	protected void enableContexts(List contextIds, ILaunch launch) {
-		Set enabledContexts = PlatformUI.getWorkbench().getContextSupport().getContextManager().getEnabledContextIds();
-		Set contextsAlreadyEnabled= new HashSet();
-		Iterator iter= contextIds.iterator();
-		while (iter.hasNext()) {
-			String contextId= (String) iter.next();
-			if (enabledContexts.contains(contextId)) {
-				// If a context is already enabled, submitting it won't
-				// generate a callback from the workbench. So we inform
-				// our context listener ourselves.
-				contextsAlreadyEnabled.add(contextId);
-			}
-		}
-		submitContexts(contextIds, launch);
-		contextListener.contextActivated((String[]) contextsAlreadyEnabled.toArray(new String[0]));
-	}
-
-	/**
-	 * Submits the given context IDs to the workbench context support
-	 * on behalf of the given launch. When the launch terminates,
-	 * the context submissions will be automatically removed.
-	 *  
-	 * @param contextIds the contexts to submit
-	 * @param launch the launch for which the contexts are being submitted
-	 */
-	protected void submitContexts(List contextIds, ILaunch launch) {
-		List submissions = (List) fContextSubmissions.get(launch);
-		if (submissions == null) {
-			submissions= new ArrayList();
-			fContextSubmissions.put(launch, submissions);
-		}
-		List newSubmissions= new ArrayList();
-		Iterator iter= contextIds.iterator();
-		while (iter.hasNext()) {
-			newSubmissions.add(new EnabledSubmission((Shell) null, null, (String) iter.next()));
-		}
-		IWorkbenchContextSupport contextSupport = PlatformUI.getWorkbench().getContextSupport();
-		if (!newSubmissions.isEmpty()) {
-			contextSupport.addEnabledSubmissions(newSubmissions);
-			// After adding the new submissions, remove any old submissions
-			// that exist for the same context IDs. This prevents us from
-			// building up a ton of redundant submissions.
-			List submissionsToRemove= new ArrayList();
-			ListIterator oldSubmissions= submissions.listIterator();
-			while (oldSubmissions.hasNext()) {
-				EnabledSubmission oldSubmission= (EnabledSubmission) oldSubmissions.next();
-				String contextId = oldSubmission.getContextId();
-				if (contextIds.contains(contextId)) {
-					oldSubmissions.remove();
-					submissionsToRemove.add(oldSubmission);
-				}
-			}
-			contextSupport.removeEnabledSubmissions(submissionsToRemove);
-			submissions.addAll(newSubmissions);
-		}
+		updateContextListener();
 	}
 	
 	/**
@@ -690,28 +554,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 * @param launches the terminated launches
 	 */
 	protected void launchesTerminated(ILaunch[] launches) {
-		List allSubmissions= new ArrayList();
-		for (int i = 0; i < launches.length; i++) {
-			List submissions= (List) fContextSubmissions.remove(launches[i]);
-			if (submissions != null) {
-				allSubmissions.addAll(submissions);
-			}
-		}
-		PlatformUI.getWorkbench().getContextSupport().removeEnabledSubmissions(allSubmissions);
-	}
-	
-	/**
-	 * Removes all context submissions made by this view.
-	 */
-	protected void removeAllContextSubmissions() {
-		IWorkbenchContextSupport contextSupport= PlatformUI.getWorkbench().getContextSupport();
-		List submissions= new ArrayList();
-		Iterator iterator = fContextSubmissions.values().iterator();
-		while (iterator.hasNext()) {
-			submissions.addAll((List) iterator.next());
-		}
-		contextSupport.removeEnabledSubmissions(submissions);
-		fContextSubmissions.clear();
+		contextListener.launchesTerminated(launches);
 	}
 
 	/**
@@ -787,16 +630,15 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		}
 	}
 	
-
 	/**
 	 * @see org.eclipse.ui.IPartListener#partOpened(org.eclipse.ui.IWorkbenchPart)
 	 */
 	public void partOpened(IWorkbenchPart part) {
 		if (part == this) {
-			showViewsForCurrentSelection();
+			updateContextListener();
 		}
 	}
-	
+
 	/**
 	 * @see IPageListener#pageClosed(IWorkbenchPage)
 	 */
