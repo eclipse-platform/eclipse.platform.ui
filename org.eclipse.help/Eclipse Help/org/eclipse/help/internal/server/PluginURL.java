@@ -90,12 +90,12 @@ public class PluginURL extends HelpURL {
 					forwardingURL =
 						new URL(
 							HelpSystem.getRemoteHelpServerURL(),
-							HelpSystem.getRemoteHelpServerPath() + "/" + url + "?" + query);
+							HelpSystem.getRemoteHelpServerPath() + "/help/" + url + "?" + query);
 				else
 					forwardingURL =
 						new URL(
 							HelpSystem.getRemoteHelpServerURL(),
-							HelpSystem.getRemoteHelpServerPath() + "/" + url);
+							HelpSystem.getRemoteHelpServerPath() + "/help/" + url);
 				return forwardingURL.openStream();
 			} catch (MalformedURLException mue) {
 				return null;
