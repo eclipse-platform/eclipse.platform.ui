@@ -423,11 +423,11 @@ public class AddCustomDialog extends StatusDialog {
 			return new ZipFile(sourceNameField.getText());
 		} catch (ZipException e) {
 			StatusInfo status= new StatusInfo();
-			status.setError("Specified zip file is not in the correct format");
+			status.setError(AntPreferencesMessages.getString("AddCustomDialog.Bad_Format")); //$NON-NLS-1$
 			updateStatus(status);
 		} catch (IOException e) {
 			StatusInfo status= new StatusInfo();
-			status.setError("Specified zip file could not be read");
+			status.setError(AntPreferencesMessages.getString("AddCustomDialog.Unreadable")); //$NON-NLS-1$
 			updateStatus(status);
 		}
 
@@ -458,21 +458,23 @@ public class AddCustomDialog extends StatusDialog {
 		MinimizedFileSystemElement currentRoot = getFileSystemTree();
 		selectionGroup.setRoot(currentRoot);
 		
-		if (className != null) {
+		if (className.length() != 0) {
 			StringTokenizer tokenizer= new StringTokenizer(className, "."); //$NON-NLS-1$
-			if (selectClass(currentRoot, tokenizer)) {
-				//getButton(IDialogConstants.OK_ID).setEnabled(true);
-			}
+			selectClass(currentRoot, tokenizer);
 		}
 	}
 	
-	private boolean selectClass(MinimizedFileSystemElement currentParent, StringTokenizer tokenizer) {
+	private void selectClass(MinimizedFileSystemElement currentParent, StringTokenizer tokenizer) {
+		if (!tokenizer.hasMoreTokens()) {
+			return;
+		}
 		List folders= currentParent.getFolders(currentProvider);
 		if (folders.size() == 1) {
 			MinimizedFileSystemElement element = (MinimizedFileSystemElement)folders.get(0);
 			if (element.getLabel(null).equals("/")) { //$NON-NLS-1$
 				selectionGroup.selectAndRevealFolder(element);
-				return selectClass(element, tokenizer);
+				selectClass(element, tokenizer);
+				return;
 			}
 		}
 		String currentName= tokenizer.nextToken();
@@ -482,7 +484,8 @@ public class AddCustomDialog extends StatusDialog {
 				MinimizedFileSystemElement folder = (MinimizedFileSystemElement) allFolders.next();
 				if (folder.getLabel(null).equals(currentName)) {
 					selectionGroup.selectAndRevealFolder(folder);
-					return selectClass(folder, tokenizer);
+					selectClass(folder, tokenizer);
+					return;
 				}
 			}	
 		} else {
@@ -492,11 +495,10 @@ public class AddCustomDialog extends StatusDialog {
 				MinimizedFileSystemElement file = (MinimizedFileSystemElement) iter.next();
 				if (file.getLabel(null).equals(currentName + ".class")) { //$NON-NLS-1$
 					selectionGroup.selectAndRevealFile(file);
-					return true;
+					return;
 				}
 			}
 		}
-		return false;
 	}
 
 	/**
@@ -573,8 +575,8 @@ public class AddCustomDialog extends StatusDialog {
 	}
 	
 	protected void setName(String name) {
-			this.name= name;
-		} 
+		this.name= name;
+	} 
 	
 	protected void setLibrary(URL library) {
 		this.library= library;
