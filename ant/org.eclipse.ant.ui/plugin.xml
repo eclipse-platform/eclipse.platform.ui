@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<!-- This file is only used at build time since this plug-in has been deactivated. -->
+
 <plugin
   name = "%pluginName"
   id="org.eclipse.ant.ui"
@@ -19,77 +21,5 @@
       <export name = "*"/>
     </library> 
   </runtime>
-
-  <extension point="org.eclipse.ui.popupMenus">
-	<objectContribution
-		id="org.eclipse.ant.ui.RunAnt"
-		objectClass="org.eclipse.core.resources.IResource"
-		nameFilter="*.xml">
-		<action
-			id="RunAnt"
-			label="%runAnt"
-			tooltip="%runAntTip"
-			menubarPath="additions"
-			enablesFor="1"
-			class="org.eclipse.ant.internal.ui.RunAntActionDelegate">
-		</action>
-	</objectContribution>			
-  </extension>
-  
-  <extension point="org.eclipse.ui.views">
-	<category 
-		id="org.eclipse.ant.ui"
-		name="&amp;Ant">
-	</category>
-	<view
-		id="org.eclipse.ant.ui.antconsole"
-		name="%antConsole"
-		icon="icons/full/cview16/ant_view.gif"
-		category="org.eclipse.ant.ui"
-		class="org.eclipse.ant.internal.ui.AntConsole">
-	</view>
-  </extension>
-  
-  <extension point="org.eclipse.ui.preferencePages">
-  	<page 
-  		id="org.eclipse.ant.ui.AntPreferences" 
-  		name="%antPreferences"
-  		class="org.eclipse.ant.internal.ui.AntPreferencesPage">
-  	</page>
-  	<page 
-  		id="org.eclipse.ant.ui.AntConsolePreferences" 
-  		name="%antConsolePreferences"
-  		class="org.eclipse.ant.internal.ui.AntConsolePreferencePage"
-  		category="org.eclipse.ant.ui.AntPreferences">
-  	</page>
-  	<page 
-  		id="org.eclipse.ant.ui.AntClasspathPreferences" 
-  		name="%antClasspathPreferences"
-  		class="org.eclipse.ant.internal.ui.CustomizeAntPreferencePage"
-  		category="org.eclipse.ant.ui.AntPreferences">
-  	</page>
-  </extension>
-  
-  <extension point="org.eclipse.ui.actionSets">
-	<actionSet label="%antActionSetLabel" 
-		visible="false" 
-		id="org.eclipse.ant.ui.antActionSet">
-	  	<action label="%executeAntLabel" 
-	  		pulldown="true" 
-	  		icon="icons/full/eview16/ant_view.gif" 
-	  		tooltip="%executeAntTooltip" 
-	  		class="org.eclipse.ant.internal.ui.AntLaunchDropDownAction" 
-	  		toolbarPath="ant" 
-	  		id="org.eclipse.ant.ui.antDropDownAction" /> 
-	</actionSet>
-  </extension>
-
-
-   <!-- Extra Classpath -->
-   <extension point="org.eclipse.ant.core.extraClasspathEntries">
-      <extraClasspathEntry
-         library="lib/antuilib.jar">
-      </extraClasspathEntry>
-   </extension>
 
 </plugin>
