@@ -90,7 +90,10 @@ public Object get(Object o) {
 	return null;
 }
 /**
- * It returns null if there are no objects available.
+ * Returns an object that has been removed from the queue, if any.
+ * The intention is to support reuse of objects that have already
+ * been processed and removed from the queue.  Returns null if there
+ * are no available objects.
  */
 public Object getNextAvailableObject() {
 	int index = tail;
@@ -145,6 +148,7 @@ public boolean isEmpty() {
 public Object peek() {
 	return elements[head];
 }
+
 public Object peekTail() {
 	return elements[decrement(tail)];
 }
