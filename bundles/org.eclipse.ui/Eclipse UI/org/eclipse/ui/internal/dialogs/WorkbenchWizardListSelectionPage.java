@@ -68,7 +68,7 @@ public void createControl(Composite parent) {
 
 	// Add a table column.
 	TableLayout tableLayout = new TableLayout();
-	tableLayout.addColumnData(new ColumnPixelData(200, false));
+	tableLayout.addColumnData(new ColumnWeightData(100, 200));
 	TableColumn tc = new TableColumn(table, SWT.NONE, 0);
 	tc.setResizable(false);
 	table.setLayout(tableLayout);
