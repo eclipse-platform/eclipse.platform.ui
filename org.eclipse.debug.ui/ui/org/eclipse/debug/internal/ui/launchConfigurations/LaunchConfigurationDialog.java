@@ -391,9 +391,12 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 				fFirstConfig = createConfigOfType(getInitialConfigType());
 			} else {
 				String memento = getPreferenceStore().getString(IDebugPreferenceConstants.PREF_LAST_LAUNCH_CONFIGURATION_SELECTION);
-				if (memento == null) {
+				if (memento.length() < 1) {
 					// last launch
-					DebugUIPlugin.getDefault().getLastLaunch().getLaunchConfiguration();
+					LaunchConfigurationHistoryElement history = DebugUIPlugin.getDefault().getLastLaunch();
+					if (history != null) {
+						fFirstConfig = history.getLaunchConfiguration();
+					}
 				} else {
 					// last selection
 					try {
@@ -522,7 +525,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	protected ILaunchConfiguration createConfigOfType(ILaunchConfigurationType configType) {		
 		ILaunchConfigurationWorkingCopy workingCopy = null;
 		try {
-			workingCopy = configType.newInstance(null, DEFAULT_NEW_CONFIG_NAME);
+			workingCopy = configType.newInstance(null, generateUniqueNameFrom(DEFAULT_NEW_CONFIG_NAME));
 		} catch (CoreException ce) {
 			DebugUIPlugin.log(ce);
 			return null;
