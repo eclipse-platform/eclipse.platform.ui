@@ -74,7 +74,7 @@ public class SynchronizeProjectsDialog extends Dialog {
 		Font font = parent.getFont();
 		composite.setFont(font);
 		
-		createLabel(composite, Policy.bind("SynchronizeProjectsDialog.description"));
+		createLabel(composite, Policy.bind("SynchronizeProjectsDialog.description")); //$NON-NLS-1$
 		
 		// Create the checkbox to enable/disable working set use
 		outgoingChangesButton = createCheckbox(composite, Policy.bind("SynchronizeProjectsDialog.syncOutgoingChanges")); //$NON-NLS-1$
@@ -106,7 +106,7 @@ public class SynchronizeProjectsDialog extends Dialog {
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		WorkbenchHelp.setHelp(newShell, IHelpContextIds.PROJECT_SELECTION_DIALOG);
-		newShell.setText(Policy.bind("SynchronizeProjectsDialog.title"));
+		newShell.setText(Policy.bind("SynchronizeProjectsDialog.title")); //$NON-NLS-1$
 	}
 	/**
 	 * Returns the selected working set or null if none is selected.

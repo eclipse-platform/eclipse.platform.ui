@@ -337,7 +337,7 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 	public boolean isModified(IProgressMonitor monitor) throws CVSException {
 		try {
 			monitor = Policy.monitorFor(monitor);
-			monitor.beginTask(Policy.bind("EclipseFolder.isModifiedProgress", resource.getFullPath().toString()), 1000);
+			monitor.beginTask(Policy.bind("EclipseFolder.isModifiedProgress", resource.getFullPath().toString()), 1000); //$NON-NLS-1$
 			
 			IContainer container = (IContainer)getIResource();
 			boolean shared = isCVSFolder();

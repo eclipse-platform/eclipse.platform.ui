@@ -106,7 +106,7 @@ public abstract class RepositoryProviderType {
 							try {
 								RepositoryProviderType providerType;
 								//Its ok not to have a typeClass extension.  In this case, a default instance will be created.
-								if(configElements[j].getAttribute("typeClass") == null) {
+								if(configElements[j].getAttribute("typeClass") == null) { //$NON-NLS-1$
 									providerType = new DefaultRepositoryProviderType();
 								} else {
 									providerType = (RepositoryProviderType) configElements[j].createExecutableExtension("typeClass"); //$NON-NLS-1$

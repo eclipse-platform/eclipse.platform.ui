@@ -246,7 +246,7 @@ public class TagConfigurationDialog extends TitleAreaDialog {
 		selectComp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		Button selectAllButton = new Button(selectComp, SWT.PUSH);
 		selectAllButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		selectAllButton.setText(Policy.bind("ReleaseCommentDialog.selectAll"));
+		selectAllButton.setText(Policy.bind("ReleaseCommentDialog.selectAll")); //$NON-NLS-1$
 		selectAllButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				int nItems = table.getItemCount();
@@ -256,7 +256,7 @@ public class TagConfigurationDialog extends TitleAreaDialog {
 		});
 		Button deselectAllButton = new Button(selectComp, SWT.PUSH);
 		deselectAllButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		deselectAllButton.setText(Policy.bind("ReleaseCommentDialog.deselectAll"));
+		deselectAllButton.setText(Policy.bind("ReleaseCommentDialog.deselectAll")); //$NON-NLS-1$
 		deselectAllButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				int nItems = table.getItemCount();

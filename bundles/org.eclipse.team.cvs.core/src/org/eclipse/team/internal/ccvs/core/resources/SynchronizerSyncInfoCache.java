@@ -332,7 +332,7 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
 	 */
 	protected void ensureWorkspaceModifiable(IResource resource) throws CVSException {
 		if (!EclipseSynchronizer.getInstance().isWorkspaceModifiable()) {
-			throw new CVSException(Policy.bind("EclipseSynchronizer.workspaceClosedForResource", resource.getFullPath().toString()));
+			throw new CVSException(Policy.bind("EclipseSynchronizer.workspaceClosedForResource", resource.getFullPath().toString())); //$NON-NLS-1$
 		}
 		
 	}

@@ -84,7 +84,7 @@ public class SyncView extends ViewPart implements ISaveablePart, IPropertyChange
 	
 	private int currentSyncMode = SYNC_NONE;
 	
-	private String viewTitle = "";
+	private String viewTitle = ""; //$NON-NLS-1$
 	
 	/**
 	 * Action for toggling the sync mode.
@@ -542,7 +542,7 @@ public class SyncView extends ViewPart implements ISaveablePart, IPropertyChange
 			viewTitle = title;
 		}
 		if(isDirty()) {
-			setTitle(Policy.bind("SyncView.dirtyIndicatorInTitle", viewTitle));
+			setTitle(Policy.bind("SyncView.dirtyIndicatorInTitle", viewTitle)); //$NON-NLS-1$
 		} else {
 			setTitle(viewTitle);
 		}

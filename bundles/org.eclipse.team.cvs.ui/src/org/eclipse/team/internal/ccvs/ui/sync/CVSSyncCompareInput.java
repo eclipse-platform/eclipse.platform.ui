@@ -418,7 +418,7 @@ public class CVSSyncCompareInput extends SyncCompareInput {
 	private List filterOutgoingChangesSet(List resources, IProgressMonitor monitor) throws CVSException {
 		try {
 			monitor.beginTask(null, 100 * resources.size());
-			monitor.subTask(Policy.bind("CVSSyncCompareInput.filteringOutgoingChanges"));
+			monitor.subTask(Policy.bind("CVSSyncCompareInput.filteringOutgoingChanges")); //$NON-NLS-1$
 			List result = new ArrayList();
 			for (Iterator iter = resources.iterator(); iter.hasNext();) {
 				IResource resource = (IResource) iter.next();

@@ -379,7 +379,7 @@ public class CVSProjectPropertiesPage extends PropertyPage {
 			new ProgressMonitorDialog(getShell()).run(true, false, new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					try {
-						monitor.beginTask(Policy.bind("CVSProjectPropertiesPage.progressTaskName"), 
+						monitor.beginTask(Policy.bind("CVSProjectPropertiesPage.progressTaskName"),  //$NON-NLS-1$
 						((newLocation == null)?0:100) + (changeReadOnly[0]?100:0));
 						if (newLocation != null)
 							provider.setRemoteRoot(newLocation, Policy.subMonitorFor(monitor, 100));
@@ -407,8 +407,8 @@ public class CVSProjectPropertiesPage extends PropertyPage {
 	protected void setReadOnly(final boolean watchEdit, final IProgressMonitor monitor) throws CVSException {
 		monitor.beginTask(null, 512);
 		String taskName = watchEdit?
-			Policy.bind("CVSProjectPropertiesPage.setReadOnly"):
-			Policy.bind("CVSProjectPropertiesPage.clearReadOnly");
+			Policy.bind("CVSProjectPropertiesPage.setReadOnly"): //$NON-NLS-1$
+			Policy.bind("CVSProjectPropertiesPage.clearReadOnly"); //$NON-NLS-1$
 		monitor.subTask(taskName);
 		ICVSFolder root = CVSWorkspaceRoot.getCVSFolderFor(project);
 		root.accept(new ICVSResourceVisitor() {

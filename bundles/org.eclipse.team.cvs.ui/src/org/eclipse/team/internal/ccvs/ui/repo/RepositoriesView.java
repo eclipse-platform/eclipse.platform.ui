@@ -161,7 +161,7 @@ public class RepositoriesView extends RemoteViewPart {
 	 * @return boolean
 	 */
 	private boolean includeAnonConnection() {
-		return System.getProperty("eclipse.cvs.anon") != null;
+		return System.getProperty("eclipse.cvs.anon") != null; //$NON-NLS-1$
 	}
 
 	/**
@@ -263,7 +263,7 @@ public class RepositoriesView extends RemoteViewPart {
 			}
 			return Policy.bind("RepositoriesView.ResourceInRepository", name, res.getRepository().getLocation()); //$NON-NLS-1$
 		}
-		return Policy.bind("RepositoriesView.OneItemSelected");
+		return Policy.bind("RepositoriesView.OneItemSelected"); //$NON-NLS-1$
 	}
 	
 	/**
