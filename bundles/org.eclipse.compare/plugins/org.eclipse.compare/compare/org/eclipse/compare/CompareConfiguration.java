@@ -13,7 +13,6 @@ import org.eclipse.jface.util.*;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 import org.eclipse.compare.internal.*;
-//import org.eclipse.compare.structuremergeviewer.DiffTreeViewer;
 import org.eclipse.compare.structuremergeviewer.Differencer;
 
 /**
@@ -47,16 +46,14 @@ public class CompareConfiguration {
 
 
 	private static final int WIDTH= 22;
-
-	private static boolean fgLeftIsLocal= false;
 	
 	private static ImageDescriptor[] fgImages= new ImageDescriptor[16];
 	private static Object fgDummy= new Object();
 	private static HashMap fgMap= new HashMap(20);
 
 	static {
-		int INCOMING= fgLeftIsLocal ? Differencer.RIGHT : Differencer.LEFT;
-		int OUTGOING= fgLeftIsLocal ? Differencer.LEFT : Differencer.RIGHT;
+		int INCOMING= Differencer.LEFT;
+		int OUTGOING= Differencer.RIGHT;
 		
 		fgImages[Differencer.ADDITION]= CompareUIPlugin.getImageDescriptor("ovr16/add_ov.gif");
 		fgImages[INCOMING + Differencer.ADDITION]= CompareUIPlugin.getImageDescriptor("ovr16/inadd_ov.gif");
@@ -91,6 +88,8 @@ public class CompareConfiguration {
 	 */
 	public CompareConfiguration() {
 		
+		setProperty("LEFT_IS_LOCAL", new Boolean(true));
+
 		IPreferenceStore ps= CompareUIPlugin.getDefault().getPreferenceStore();
 		if (ps != null) {
 			boolean b= ps.getBoolean(ComparePreferencePage.INITIALLY_SHOW_ANCESTOR_PANE);

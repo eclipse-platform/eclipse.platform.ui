@@ -150,7 +150,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	private static final boolean IS_MOTIF= false;
 	
 	// determines whether a change between left and right is considered incoming or outgoing
-	private boolean fLeftIsLocal= true;
+	private boolean fLeftIsLocal;
 	
 	// Colors to use
 	private static final RGB INCOMING= new RGB(100, 100, 200);
@@ -365,6 +365,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	 */
 	public TextMergeViewer(Composite parent, int style, CompareConfiguration configuration) {
 		super(style, ResourceBundle.getBundle(BUNDLE_NAME), configuration);
+		
+		fLeftIsLocal= Utilities.getBoolean(configuration, "LEFT_IS_LOCAL", false);
 		
 		IPreferenceStore ps= CompareUIPlugin.getDefault().getPreferenceStore();
 		if (ps != null) {

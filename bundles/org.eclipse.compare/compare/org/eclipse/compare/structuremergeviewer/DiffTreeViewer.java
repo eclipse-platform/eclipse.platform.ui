@@ -98,7 +98,20 @@ public class DiffTreeViewer extends TreeViewer {
 		public Image getImage(Object element) {
 			if (element instanceof IDiffElement) {
 				IDiffElement input= (IDiffElement) element;
-				return fCompareConfiguration.getImage(input.getImage(), input.getKind());
+				
+				int kind= input.getKind();
+				if (!fIgnoreLeftIsLocal && fLeftIsLocal) {
+					switch (kind & Differencer.DIRECTION_MASK) {
+					case Differencer.LEFT:
+						kind= (kind &~ Differencer.LEFT) | Differencer.RIGHT;
+						break;
+					case Differencer.RIGHT:
+						kind= (kind &~ Differencer.RIGHT) | Differencer.LEFT;
+						break;
+					}
+				}
+				
+				return fCompareConfiguration.getImage(input.getImage(), kind);
 			}
 			return null;
 		}
@@ -117,6 +130,8 @@ public class DiffTreeViewer extends TreeViewer {
 
 	private ResourceBundle fBundle;
 	private CompareConfiguration fCompareConfiguration;
+	boolean fIgnoreLeftIsLocal= true;
+	private boolean fLeftIsLocal;
 	private ViewerFilter fViewerFilter;
 	private IPropertyChangeListener fPropertyChangeListener;
 	private IPropertyChangeListener fPreferenceChangeListener;
@@ -150,6 +165,8 @@ public class DiffTreeViewer extends TreeViewer {
 	
 	private void initialize(CompareConfiguration configuration) {
 		
+		fLeftIsLocal= Utilities.getBoolean(configuration, "LEFT_IS_LOCAL", false);
+
 		Control tree= getControl();
 		
 		tree.setData(CompareUI.COMPARE_VIEWER_TITLE, getTitle());

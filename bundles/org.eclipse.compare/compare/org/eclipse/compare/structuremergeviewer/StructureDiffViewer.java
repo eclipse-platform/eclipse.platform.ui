@@ -76,6 +76,8 @@ public class StructureDiffViewer extends DiffTreeViewer {
 	
 	private void initialize() {
 		
+		fIgnoreLeftIsLocal= false;
+		
 		setAutoExpandLevel(3);
 		
 		fContentChangedListener= new IContentChangeListener() {

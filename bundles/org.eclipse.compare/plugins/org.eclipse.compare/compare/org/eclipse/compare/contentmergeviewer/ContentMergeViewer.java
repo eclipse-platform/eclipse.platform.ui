@@ -638,8 +638,8 @@ public abstract class ContentMergeViewer extends ContentViewer implements IPrope
 			tbm.removeAll();
 			
 			// define groups
-			tbm.add(new Separator("merge"));			
 			tbm.add(new Separator("modes"));
+			tbm.add(new Separator("merge"));			
 			tbm.add(new Separator("navigation"));
 			
 			CompareConfiguration cc= getCompareConfiguration();
