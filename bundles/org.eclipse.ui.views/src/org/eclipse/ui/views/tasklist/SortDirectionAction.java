@@ -28,7 +28,7 @@ package org.eclipse.ui.views.tasklist;
 	public void run() {
 		TaskSorter oldSorter = (TaskSorter) getTaskList().getTableViewer().getSorter();
 		if (oldSorter != null) {
-			oldSorter.setReversed(!direction);
+			oldSorter.setReversed(direction);
 			getTaskList().getTableViewer().refresh();
 			//update the menu to indicate how task are currently sorted
 			getTaskList().updateSortingState();
