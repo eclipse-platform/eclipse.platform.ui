@@ -35,6 +35,11 @@ public interface ICompletionProposal {
 	 * Returns the new selection after the proposal has been applied to 
 	 * the given document in absolute document coordinates. If it returns
 	 * <code>null</code>, no new selection is set.
+	 * 
+	 * A document change can trigger other document changes, which have
+	 * to be taken into account when calculating the new selection. Typically,
+	 * this would be done by installing a document listener or by using a
+	 * document position during apply().
 	 *
 	 * @param document the document into which the proposed completion has been inserted
 	 * @return the new selection in absolute document coordinates
