@@ -444,10 +444,7 @@ M4 = Platform-specific fourth key -->
                <iterate>
                  <or>
                    <instanceof value="org.eclipse.ant.internal.ui.model.AntElementNode"/>
-                   <and>
-                     <test property="org.eclipse.debug.ui.matchesPattern" value="*.xml"/>
-                     <test property="org.eclipse.debug.ui.matchesContentType" value="org.eclipse.ant.core.antBuildFile"/>
-                   </and>
+                   <test property="org.eclipse.debug.ui.matchesContentType" value="org.eclipse.ant.core.antBuildFile"/>
                  </or>
                </iterate>
              </with>
@@ -475,10 +472,7 @@ M4 = Platform-specific fourth key -->
                <iterate>
                  <or>
                    <instanceof value="org.eclipse.ant.internal.ui.model.AntElementNode"/>
-                   <and>
-                     <test property="org.eclipse.debug.ui.matchesPattern" value="*.xml"/>
-                     <test property="org.eclipse.debug.ui.matchesContentType" value="org.eclipse.ant.core.antBuildFile"/>
-                   </and>
+				   <test property="org.eclipse.debug.ui.matchesContentType" value="org.eclipse.ant.core.antBuildFile"/>
                  </or>
                </iterate>
              </with>
