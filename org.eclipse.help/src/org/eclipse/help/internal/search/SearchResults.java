@@ -77,7 +77,8 @@ public class SearchResults implements ISearchHitCollector {
 			}
 			if (label == null || "".equals(label))
 				label = href;
-			searchHitList.add(new SearchHit(href, label, score));
+
+			searchHitList.add(new SearchHit(href, label, score, toc));
 		}
 		searchHits =
 			(SearchHit[]) searchHitList.toArray(new SearchHit[searchHitList.size()]);

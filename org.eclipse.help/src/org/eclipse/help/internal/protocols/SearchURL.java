@@ -11,7 +11,6 @@ import org.apache.lucene.search.Hits;
 import org.apache.xerces.dom.DocumentImpl;
 import org.apache.xml.serialize.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.help.*;
 import org.eclipse.help.internal.HelpSystem;
 import org.eclipse.help.internal.search.*;
@@ -102,7 +101,7 @@ public class SearchURL extends HelpURL {
 								public void addHits(Hits h, String s) {
 								}
 							}, (IProgressMonitor) progressMonitors.get(getLocale()));
-						} catch (OperationCanceledException oce){
+						} catch (OperationCanceledException oce) {
 							// operation cancelled
 							// throw out the progress monitor
 							progressMonitors.remove(getLocale());
@@ -122,7 +121,7 @@ public class SearchURL extends HelpURL {
 						Thread.currentThread().sleep(50);
 					} catch (InterruptedException ie) {
 					}
-					if(progressMonitors.get(getLocale())==null)
+					if (progressMonitors.get(getLocale()) == null)
 						// operation got canceled
 						break;
 				}
@@ -149,10 +148,9 @@ public class SearchURL extends HelpURL {
 			e.setAttribute("score", Float.toString(searchHits[s].getScore()));
 			e.setAttribute(ITopic.LABEL, searchHits[s].getLabel());
 			// Set the document toc
-			IToc toc = results.findTocForTopic(searchHits[s].getHref());
-			if (toc != null) {
-				e.setAttribute(IToc.TOC, toc.getHref());
-				e.setAttribute(IToc.TOC + IToc.LABEL, toc.getLabel());
+			if (searchHits[s].getToc() != null) {
+				e.setAttribute(IToc.TOC, searchHits[s].getToc().getHref());
+				e.setAttribute(IToc.TOC + IToc.LABEL, searchHits[s].getToc().getLabel());
 			}
 		}
 		return dom;
