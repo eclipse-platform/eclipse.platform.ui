@@ -7,7 +7,7 @@
  * Contributors: 
  * IBM - Initial API and implementation
  **********************************************************************/
-package org.eclipse.ui.views.contentoutline;
+package org.eclipse.ui.internal.views;
 
 import org.eclipse.osgi.util.NLS;
 
@@ -16,7 +16,7 @@ import org.eclipse.osgi.util.NLS;
  *
  */
 public class ContentOutlineMessages extends NLS {
-	private static final String BUNDLE_NAME = "org.eclipse.ui.views.contentoutline.messages";//$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.eclipse.ui.internal.views.messages";//$NON-NLS-1$
 
 	// ==============================================================================
 	// Outline View

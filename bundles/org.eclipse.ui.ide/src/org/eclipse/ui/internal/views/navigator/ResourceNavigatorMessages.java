@@ -12,7 +12,7 @@ package org.eclipse.ui.internal.views.navigator;
 import org.eclipse.osgi.util.NLS;
 
 public class ResourceNavigatorMessages extends NLS {
-	private static final String BUNDLE_NAME = "org.eclipse.ui.views.navigator.internal.messages";//$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.eclipse.ui.internal.views.navigator.messages";//$NON-NLS-1$
 
 	public static String ResourceNavigator_oneItemSelected;
 	public static String ResourceNavigator_statusLine;
