@@ -201,7 +201,24 @@ public class BasicStackList extends AbstractTableInformationControl {
     protected TableViewer createTableViewer(Composite parent, int style) {
         Table table = new Table(parent, SWT.SINGLE | (style & ~SWT.MULTI));
         table.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
-        TableViewer tableViewer = new TableViewer(table);
+        TableViewer tableViewer = new TableViewer(table) {
+        	/* (non-Javadoc)
+			 * @see org.eclipse.jface.viewers.TableViewer#internalRefresh(java.lang.Object)
+			 */
+			protected void internalRefresh(Object element) {
+				boolean usingMotif = "motif".equals(SWT.getPlatform());
+				try {
+					// This avoids a "graphic is disposed" error on Motif by not letting
+					// it redraw while we remove entries.  Some items in this table are
+					// being removed and may have icons which may have already been
+					// disposed elsewhere.
+					if (usingMotif) getTable().setRedraw(false);
+					super.internalRefresh(element);
+				} finally {
+					if (usingMotif) getTable().setRedraw(true);
+				}
+			}
+        };
         tableViewer.addFilter(new NamePatternFilter());
         tableViewer.setContentProvider(new BasicStackListContentProvider());
         tableViewer.setSorter(new BasicStackListViewerSorter());
