@@ -60,6 +60,13 @@ public interface ICommandDefinition extends Comparable {
 	 * @return
 	 */	
 	String getDescription();
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	String getHelpId();
 		
 	/**
 	 * JAVADOC

@@ -29,13 +29,6 @@ import org.eclipse.swt.widgets.Event;
 public interface IAction {
 
 	/**
-	 * Registers an IPropertyListener instance with this property.
-	 *
-	 * @param propertyListener the IPropertyListener instance to register.
-	 */	
-	//void addPropertyListener(IPropertyListener propertyListener);
-
-	/**
 	 * JAVADOC
 	 */	
 	void execute();
@@ -45,32 +38,14 @@ public interface IAction {
 	 */	
 	void execute(Event event);
 
-	/**
-	 * JAVADOC
-	 * 
-	 * @param name
-	 * @return
-	 */	
-	//Object getProperty(String name)
-	//	throws Exception;
+	//String getDescription();
+	
+	//String getName();
+	
+	//String getHelpId();
 
 	/**
 	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	//String[] getPropertyNames()
-	//	throws Exception;
-
-	/**
-	 * TODO temporary method
 	 */	
 	boolean isEnabled();
-	
-	/**
-	 * Unregisters an IPropertyListener instance with this property.
-	 *
-	 * @param propertyListener the IPropertyListener instance to unregister.
-	 */
-	//void removePropertyListener(IPropertyListener propertyListener);
 }

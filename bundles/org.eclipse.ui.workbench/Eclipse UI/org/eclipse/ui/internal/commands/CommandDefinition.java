@@ -78,6 +78,7 @@ final class CommandDefinition implements ICommandDefinition {
 	private boolean allowsKeyBindings;
 	private String categoryId;
 	private String description;
+	private String helpId;
 	private String id;
 	private String name;
 	private String pluginId;
@@ -86,7 +87,7 @@ final class CommandDefinition implements ICommandDefinition {
 	private transient boolean hashCodeComputed;
 	private transient String string;
 	
-	CommandDefinition(boolean allowsContextBindings, boolean allowsImageBindings, boolean allowsKeyBindings, String categoryId, String description, String id, String name, String pluginId) {
+	CommandDefinition(boolean allowsContextBindings, boolean allowsImageBindings, boolean allowsKeyBindings, String categoryId, String description, String helpId, String id, String name, String pluginId) {
 		if (id == null || name == null)
 			throw new NullPointerException();
 		
@@ -95,6 +96,7 @@ final class CommandDefinition implements ICommandDefinition {
 		this.allowsKeyBindings = allowsKeyBindings;	
 		this.categoryId = categoryId;
 		this.description = description;
+		this.helpId = helpId;
 		this.id = id;
 		this.name = name;
 		this.pluginId = pluginId;
@@ -115,16 +117,20 @@ final class CommandDefinition implements ICommandDefinition {
 		
 					if (compareTo == 0) {		
 						compareTo = Util.compare(description, commandDefinition.description);	
-		
-						if (compareTo == 0) {
-							compareTo = id.compareTo(commandDefinition.id);	
-				
-							if (compareTo == 0) {
-								compareTo = name.compareTo(commandDefinition.name);	
 
-								if (compareTo == 0)
-									compareTo = Util.compare(pluginId, commandDefinition.pluginId);								
-							}							
+						if (compareTo == 0) {
+							compareTo = helpId.compareTo(commandDefinition.helpId);	
+		
+							if (compareTo == 0) {
+								compareTo = id.compareTo(commandDefinition.id);	
+					
+								if (compareTo == 0) {
+									compareTo = name.compareTo(commandDefinition.name);	
+	
+									if (compareTo == 0)
+										compareTo = Util.compare(pluginId, commandDefinition.pluginId);								
+								}							
+							}
 						}
 					}
 				}			
@@ -145,6 +151,7 @@ final class CommandDefinition implements ICommandDefinition {
 		equals &= allowsKeyBindings == commandDefinition.allowsKeyBindings;
 		equals &= Util.equals(categoryId, commandDefinition.categoryId);
 		equals &= Util.equals(description, commandDefinition.description);
+		equals &= helpId.equals(commandDefinition.helpId);
 		equals &= id.equals(commandDefinition.id);
 		equals &= name.equals(commandDefinition.name);
 		equals &= Util.equals(pluginId, commandDefinition.pluginId);
@@ -170,6 +177,10 @@ final class CommandDefinition implements ICommandDefinition {
 	public String getDescription() {
 		return description;	
 	}
+
+	public String getHelpId() {
+		return helpId;	
+	}
 	
 	public String getId() {
 		return id;	
@@ -191,6 +202,7 @@ final class CommandDefinition implements ICommandDefinition {
 			hashCode = hashCode * HASH_FACTOR + (allowsKeyBindings ? Boolean.TRUE.hashCode() : Boolean.FALSE.hashCode());			
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(categoryId);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(description);
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(helpId);
 			hashCode = hashCode * HASH_FACTOR + id.hashCode();
 			hashCode = hashCode * HASH_FACTOR + name.hashCode();
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(pluginId);
@@ -213,6 +225,8 @@ final class CommandDefinition implements ICommandDefinition {
 			stringBuffer.append(categoryId);
 			stringBuffer.append(',');
 			stringBuffer.append(description);
+			stringBuffer.append(',');
+			stringBuffer.append(helpId);
 			stringBuffer.append(',');
 			stringBuffer.append(id);
 			stringBuffer.append(',');
