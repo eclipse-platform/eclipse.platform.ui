@@ -303,12 +303,10 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
      * @since 3.0
      */
     protected void cancelPressed() {
-        //NOTE: this was previously done from a listener installed on the
-        // cancel
-        //button. On GTK, the listener installed by Dialog.createButton is
-        // called
-        //first and this was throwing an exception because the cancel button
-        //was already disposed
+        // NOTE: this was previously done from a listener installed on the
+        // cancel button. On GTK, the listener installed by
+        // Dialog.createButton is called first and this was throwing an
+        // exception because the cancel button was already disposed
         cancel.setEnabled(false);
         progressMonitor.setCanceled(true);
         super.cancelPressed();
