@@ -167,7 +167,9 @@ public static URL asLocalURL(URL url) throws IOException {
 	return ((PlatformURLConnection) connection).getURLAsLocal();
 }
 private static void assertInitialized() {
-	Assert.isTrue(initialized, Policy.bind("meta.appNotInit")); //$NON-NLS-1$
+	//avoid the Policy.bind if assertion is true
+	if (!initialized)
+		Assert.isTrue(false, Policy.bind("meta.appNotInit")); //$NON-NLS-1$
 }
 /**
  * Closes the open lock file handle, and makes a silent best
