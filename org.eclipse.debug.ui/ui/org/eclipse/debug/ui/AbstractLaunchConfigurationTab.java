@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.Shell;
  * Clients may subclass this class.
  * </p>
  * @see ILaunchConfigurationTab
+ * @since 2.0
  */
 public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigurationTab {
 	
