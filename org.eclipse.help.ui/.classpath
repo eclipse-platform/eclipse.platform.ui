@@ -9,6 +9,6 @@
     <classpathentry kind="lib" path="C:/eclipse/plugins/org.eclipse.ui/workbench.jar"/>
     <classpathentry kind="lib" path="C:/eclipse/plugins/org.apache.xerces/xerces.jar"/>
     <classpathentry kind="lib" path="C:/eclipse/plugins/org.eclipse.core.resources/resources.jar"/>
-    <classpathentry kind="lib" path="C:/eclipse/plugins/org.eclipse.swt/swt0108.jar"/>
+    <classpathentry kind="lib" path="C:/eclipse/plugins/org.eclipse.swt/swt.jar"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>
