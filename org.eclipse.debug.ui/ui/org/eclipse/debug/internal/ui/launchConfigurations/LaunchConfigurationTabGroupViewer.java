@@ -401,6 +401,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			TabFolder folder = getTabFolder();
 			for (int i = 0; i < tabs.length; i++) {
 				ILaunchConfigurationTab tab = tabs[i];
+				tab.isValid(getWorkingCopy());
 				boolean error = tab.getErrorMessage() != null;
 				TabItem item = folder.getItem(i);
 				setTabIcon(item, error, tab);
@@ -795,8 +796,10 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 * launch config dialog.
 	 */
 	protected void refreshStatus() {
-		getLaunchConfigurationDialog().updateButtons();
-		getLaunchConfigurationDialog().updateMessage();
+		if (!isInitializingTabs()) {
+			getLaunchConfigurationDialog().updateButtons();
+			getLaunchConfigurationDialog().updateMessage();
+		}
 	}	
 	
 	/**
@@ -928,7 +931,6 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		if (activeTab == null) {
 			return null;
 		} else {
-			activeTab.isValid(getWorkingCopy());
 			message = activeTab.getErrorMessage();
 		}
 		if (message != null) {
@@ -941,7 +943,6 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			if (tab == activeTab) {
 				continue;
 			}
-			tab.isValid(getWorkingCopy());
 			message = tab.getErrorMessage();
 			if (message != null) {
 				StringBuffer temp= new StringBuffer();
