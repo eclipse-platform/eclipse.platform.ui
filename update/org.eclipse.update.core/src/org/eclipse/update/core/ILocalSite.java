@@ -118,6 +118,14 @@ public interface ILocalSite {
 	void save() throws CoreException;
 	
 	/**
+	 * Reconciles the 'existing' install/update state with the platform state.
+	 * 
+	 * @since 2.0 
+	 */
+
+	void reconcile() throws CoreException;	
+	
+	/**
 	 * returns the maximum number of InstallConfigurationModel in teh history
 	 * @since 2.0 
 	 */

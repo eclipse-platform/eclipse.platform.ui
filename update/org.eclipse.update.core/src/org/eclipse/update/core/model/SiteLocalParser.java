@@ -145,6 +145,12 @@ public class SiteLocalParser extends DefaultHandler {
 		}
 		site.setMaximumHistory(history);
 
+		//stamp
+		String stampString = attributes.getValue("stamp");
+		long stamp = Long.parseLong(stampString);
+		site.setStamp(stamp);
+		
+
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
 			UpdateManagerPlugin.getPlugin().debug("End process Site label:" + info);

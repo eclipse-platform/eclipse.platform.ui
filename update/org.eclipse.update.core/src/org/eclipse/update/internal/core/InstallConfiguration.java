@@ -108,25 +108,10 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		if (site == null)
 			return;
 
-		//Start UOW ?
-		ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_SITE_INSTALL);
-		activity.setLabel("Multiple site install");
-		activity.setDate(new Date());
-
 		for (int index = 0; index < site.length; index++) {
-			ConfigurationSiteModel configSiteModel = (ConfigurationSiteModel) site[index];
-			addConfigurationSiteModel(configSiteModel);
-			configSiteModel.setInstallConfigurationModel(this);
-			// notify listeners
-			Object[] configurationListeners = listeners.getListeners();
-			for (int i = 0; i < configurationListeners.length; i++) {
-				((IInstallConfigurationChangedListener) configurationListeners[i]).installSiteAdded(site[index]);
-			}
+			addConfigurationSite(site[index]);
 		}
 
-		// everything done ok
-		activity.setStatus(IActivity.STATUS_OK);
-		this.addActivityModel((ConfigurationActivityModel) activity);
 	}
 
 	public void removeConfigurationSite(IConfigurationSite site) {
@@ -136,6 +121,14 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			for (int i = 0; i < configurationListeners.length; i++) {
 				((IInstallConfigurationChangedListener) configurationListeners[i]).installSiteRemoved(site);
 			}
+
+			//activity
+			ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_SITE_REMOVE);
+			activity.setLabel(site.getSite().getURL().toExternalForm());
+			activity.setDate(new Date());
+			activity.setStatus(IActivity.STATUS_OK);
+			this.addActivityModel((ConfigurationActivityModel) activity);
+
 		}
 	}
 
@@ -198,18 +191,18 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			IPlatformConfiguration.ISitePolicy sitePolicy = runtimeConfiguration.createSitePolicy(configurationPolicy.getPolicy(), pluginPath);
 			IPlatformConfiguration.ISiteEntry siteEntry = runtimeConfiguration.findConfiguredSite(element.getSite().getURL());
 			if (siteEntry == null) {
-				siteEntry = runtimeConfiguration.createSiteEntry(element.getSite().getURL(),sitePolicy);
+				siteEntry = runtimeConfiguration.createSiteEntry(element.getSite().getURL(), sitePolicy);
 			}
-			
+
 			if (siteEntry != null) {
 				siteEntry.setSitePolicy(sitePolicy);
 			} else {
 				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Platform configuration not found :" + element.getSite().getURL().toExternalForm(), null);
 				throw new CoreException(status);
-			}			
+			}
 		}
-		
+
 		try {
 			runtimeConfiguration.save();
 		} catch (IOException e) {

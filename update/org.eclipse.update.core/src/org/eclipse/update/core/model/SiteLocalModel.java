@@ -26,6 +26,7 @@ public class SiteLocalModel extends ModelObject {
 	public static final String DEFAULT_PRESERVED_CONFIG_FILE = "PreservedConfig.xml";
 
 
+	private long stamp;
 	private String label;
 	private URL location;
 	private String locationURLString;
@@ -194,5 +195,21 @@ public class SiteLocalModel extends ModelObject {
 		resolveReference(getCurrentConfigurationModel(),base,bundle);
 	}
 	
+
+	/**
+	 * Gets the stamp.
+	 * @return Returns a long
+	 */
+	public long getStamp() {
+		return stamp;
+	}
+
+	/**
+	 * Sets the stamp.
+	 * @param stamp The stamp to set
+	 */
+	public void setStamp(long stamp) {
+		this.stamp = stamp;
+	}
 
 }
