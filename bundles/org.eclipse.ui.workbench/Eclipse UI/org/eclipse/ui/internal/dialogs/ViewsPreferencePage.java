@@ -325,10 +325,16 @@ public class ViewsPreferencePage
 	protected void createDockPerspectiveBarPref(Composite composite) {
 		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
 
+	    // only created if the bar is along the top of the workbench window
+		String location = apiStore.getString(IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR);
+	    if (!IWorkbenchPreferenceConstants.TOP_RIGHT.equals(location)
+	     && !IWorkbenchPreferenceConstants.TOP_LEFT.equals(location))
+	        return;
+
 		dockPerspectiveBar = new Button(composite, SWT.CHECK);
 		dockPerspectiveBar.setText(WorkbenchMessages.getString("WorkbenchPreference.dockPerspectiveBar"));  //$NON-NLS-1$
 		dockPerspectiveBar.setFont(composite.getFont());
-		dockPerspectiveBar.setSelection(apiStore.getBoolean(IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR));
+		dockPerspectiveBar.setSelection(IWorkbenchPreferenceConstants.TOP_LEFT.equals(location));
 		setButtonLayoutData(dockPerspectiveBar);
 	}
 
@@ -374,8 +380,15 @@ public class ViewsPreferencePage
 		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
 
 		showTextOnPerspectiveBar.setSelection(apiStore.getDefaultBoolean(IWorkbenchPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR));
-		dockPerspectiveBar.setSelection(apiStore.getDefaultBoolean(IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR));
 		showTraditionalStyleTabs.setSelection(apiStore.getDefaultBoolean(IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS));
+
+		if (dockPerspectiveBar != null) {
+            String location = apiStore
+                    .getDefaultString(IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR);
+            dockPerspectiveBar
+                    .setSelection(IWorkbenchPreferenceConstants.TOP_LEFT
+                            .equals(location));
+        }
 
 		int editorTopValue =
 			store.getDefaultInt(IPreferenceConstants.EDITOR_TAB_POSITION);
@@ -405,9 +418,16 @@ public class ViewsPreferencePage
 		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
 
 		apiStore.setValue(IWorkbenchPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR, showTextOnPerspectiveBar.getSelection());
-		apiStore.setValue(IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR, dockPerspectiveBar.getSelection());
-		apiStore.setValue(IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS, showTraditionalStyleTabs.getSelection());
 		
+		if (dockPerspectiveBar != null)
+	        apiStore.setValue(
+	                IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR,
+	                dockPerspectiveBar.getSelection()
+	                	? IWorkbenchPreferenceConstants.TOP_LEFT
+	                    : IWorkbenchPreferenceConstants.TOP_RIGHT);
+
+		apiStore.setValue(IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS, showTraditionalStyleTabs.getSelection());
+
 		// store the editor tab value to setting
 		store.setValue(
 			IPreferenceConstants.EDITOR_TAB_POSITION,

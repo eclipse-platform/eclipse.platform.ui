@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
@@ -33,7 +34,6 @@ import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.action.ToolBarContributionItem;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
@@ -41,8 +41,6 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.CBanner;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.graphics.Point;
@@ -50,16 +48,12 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.CoolBar;
-import org.eclipse.swt.widgets.CoolItem;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IMemento;
@@ -73,7 +67,6 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
@@ -99,7 +92,6 @@ import org.eclipse.ui.internal.progress.ProgressRegion;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.IActionSet;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
-import org.eclipse.ui.internal.util.PrefUtil;
 
 /**
  * A window within the workbench.
@@ -120,11 +112,8 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	private boolean shellActivated = false;
 
 	private FastViewBar fastViewBar;
+	private PerspectiveSwitcher perspectiveSwitcher;
 
-	private PerspectiveBarManager perspectiveBar;
-	private Menu perspectiveBarMenu;
-	private Menu perspectiveBarGenericMenu;
-	
 	private TrimLayout defaultLayout; 
 	
 	ProgressRegion progressRegion;
@@ -134,8 +123,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	private boolean asMaximizedState = false;
 
 	private CBanner topBar;
-	private CoolBar perspectiveCoolBar;
-	
+
 	// Previous shell size. Used to prevent the CBanner from triggering redundant layouts
 	private Point lastShellSize = new Point(0,0);
 	
@@ -308,9 +296,6 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
      */
     private List handlerSubmissions = new ArrayList();
     
-	private boolean dockPerspectiveBar = PrefUtil.getAPIPreferenceStore().getBoolean(IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR);
-	private CacheWrapper perspectiveCoolBarWrapper;
-	
 	void registerActionSets(IActionSet[] actionSets) {
         // Remove the old handlers, and dispose them.
         final Iterator oldHandlerItr = actionSetHandlersByCommandId.values()
@@ -439,13 +424,8 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	 * add a shortcut for the page.
 	 */
 	void addPerspectiveShortcut(IPerspectiveDescriptor perspective, WorkbenchPage workbenchPage) {
-	    if (perspectiveBar != null) {
-			perspectiveBar.add(new PerspectiveBarContributionItem(perspective, workbenchPage));
-			perspectiveBar.update(false);
-			if (perspectiveBar.getControl() != null) {
-			    LayoutUtil.resize(perspectiveBar.getControl());
-			}
-	    }
+	    if (perspectiveSwitcher != null)
+	        perspectiveSwitcher.addPerspectiveShortcut(perspective, workbenchPage);
 	}
 	
 	/**
@@ -453,9 +433,8 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	 * Does nothing if it already has one.
 	 */
 	protected void addPerspectiveBar(int style) {
-	    Assert.isTrue(perspectiveBar == null);
-		perspectiveBar = new PerspectiveBarManager(style);
-		perspectiveBar.add(new PerspectiveBarNewContributionItem(this));	
+	    Assert.isTrue(perspectiveSwitcher == null);
+	    perspectiveSwitcher = new PerspectiveSwitcher(this, topBar, style);
 	}
 	
 	/**
@@ -748,13 +727,13 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 			topBar.setLeft(coolbarCacheWrapper.getControl());
 		}
 		
-		addPerspectiveBar(perspectiveBarStyle());
-		createPerspectiveBar();	
-		
 		createStatusLine(shell);
 		
 		fastViewBar = new FastViewBar(this);
 		fastViewBar.createControl(shell);
+
+		addPerspectiveBar(perspectiveBarStyle());
+		perspectiveSwitcher.createControl(shell);
 
 		createProgressIndicator(shell);
 
@@ -767,94 +746,10 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		setLayoutDataForContents();
 	}
 	
-	/** 
-	 * Set whether the perspective bar should be docked in the main window toolbar or not
-	 * @param dock  dock the perspective bar in the main window
-	 */
-	public void dockPerspectiveBar(boolean dock) {
-		if (dockPerspectiveBar == dock) {
-			return;
-		}
-		dockPerspectiveBar = dock;
-		createPerspectiveBar();		
+	public void setPerspectiveBarLocation(String location) {
+	    if (perspectiveSwitcher != null)
+	        perspectiveSwitcher.setPerspectiveBarLocation(location);
 	}
-	
-    /**
-	 * Create the perspective toolbar control
- 	 */
- 	private void createPerspectiveBar() {
-		
- 		if (!getWindowConfigurer().getShowPerspectiveBar()) {
- 			return;
- 		}
-	
-		if (perspectiveBar.getControl() == null) {
-			perspectiveCoolBarWrapper = new CacheWrapper(topBar);
-			perspectiveCoolBar = new CoolBar(perspectiveCoolBarWrapper.getControl(), SWT.FLAT);
-			final CoolItem coolItem = new CoolItem(perspectiveCoolBar, SWT.DROP_DOWN);
-			final CacheWrapper toolbarWrapper = new CacheWrapper(perspectiveCoolBar); 
-			perspectiveBar.createControl(toolbarWrapper.getControl());
-			coolItem.setControl(toolbarWrapper.getControl());
-			perspectiveCoolBar.setLocked(true);
-			perspectiveBar.setParent(perspectiveCoolBar);
-			perspectiveBar.update(true);			
-			
-			// adjust the toolbar size to display as many items as possible
-			perspectiveCoolBar.addControlListener(new ControlAdapter() {
-				public void controlResized(ControlEvent e) {
-					
-					// Would it be possible to fit the toolbar in this space if we wrapped it? 
-					Rectangle area = perspectiveCoolBar.getClientArea();
-
-					// Determine the difference in size betwen the coolitem's client area and the coolbar's bounds
-					Point offset = coolItem.computeSize(0,0);
-					
-					Point wrappedSize = toolbarWrapper.getControl().computeSize(area.width - offset.x, SWT.DEFAULT);
-
-					// If everything will fit, set it to the wrapped size
-					if (wrappedSize.y <= area.height - offset.y) { 
-						coolItem.setSize(wrappedSize.x + offset.x, wrappedSize.y + offset.y);
-						return;
-					}
-					
-					// Set the cool item to be 1 pixel larger than the coolbar, in order to force a chevron
-					// to appear
-					coolItem.setSize(wrappedSize.x + offset.x + 1, area.height + offset.y);
- 				}
-
-			});
-			
-			coolItem.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					if (e.detail == SWT.ARROW) {
-						perspectiveBar.handleChevron(e);
-					}
-				}
-			});
-			coolItem.setMinimumSize(0, 0);
-			
-		    // TODO: encapsulate the listener and showPerspectiveBarPopup in PerspectiveBar
-		    Listener listener = new Listener() {
-				public void handleEvent(Event event) {
-					if (event.type == SWT.MenuDetect) {
-						showPerspectiveBarPopup(new Point(event.x, event.y));
-					}
-				}
-			};
-			perspectiveBar.getControl().addListener(SWT.MenuDetect, listener);
-		}
- 		
- 		if (dockPerspectiveBar) {
- 			topBar.setRight(null);
-			topBar.setBottom(perspectiveCoolBarWrapper.getControl());
- 		} else {
-			topBar.setBottom(null);
-			topBar.setRight(perspectiveCoolBarWrapper.getControl());
- 			topBar.setRightWidth(150);
- 		}
- 		
- 		LayoutUtil.resize(perspectiveBar.getControl());		
- 	}
 
 	/**
 	 * Returns the shortcut for a page.
@@ -863,19 +758,8 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	IContributionItem findPerspectiveShortcut(
 		IPerspectiveDescriptor perspective,
 		WorkbenchPage page) {
-	    if (perspectiveBar == null) {
-	        return null;
-	    }
-		IContributionItem[] array = perspectiveBar.getItems();
-		int length = array.length;
-		for (int i = 0; i < length; i++) {
-			IContributionItem item = array[i];
-						
-			if (item instanceof PerspectiveBarContributionItem)
-				if (((PerspectiveBarContributionItem) item).handles(perspective, page))
-					return item;
-		}
-		return null;
+        return perspectiveSwitcher == null ? null : perspectiveSwitcher
+                .findPerspectiveShortcut(perspective, page);
 	}
 	/**
 	 * Fires page activated
@@ -1176,12 +1060,8 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	 */
 	/* package */
 	void removePerspectiveShortcut(IPerspectiveDescriptor perspective, WorkbenchPage page) {
-		IContributionItem item = findPerspectiveShortcut(perspective, page);
-		if (item != null) {
-			perspectiveBar.remove(item);
-			perspectiveBar.update(false);
-			topBar.layout(true);
-		}
+		if (perspectiveSwitcher != null)
+		    perspectiveSwitcher.removePerspectiveShortcut(perspective, page);
 	}
 	private IStatus unableToRestorePage(IMemento pageMem) {
 		String pageName = pageMem.getString(IWorkbenchConstants.TAG_LABEL);
@@ -1878,10 +1758,8 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		IPerspectiveDescriptor perspective,
 		WorkbenchPage page,
 		boolean selected) {
-		IContributionItem item = findPerspectiveShortcut(perspective, page);
-		
-		if (item != null)
-			((PerspectiveBarContributionItem) item).setSelection(selected);
+	    if (perspectiveSwitcher != null)
+	        perspectiveSwitcher.selectPerspectiveShortcut(perspective, page, selected);
 	}
 	/**
 	 * Sets the active page within the window.
@@ -1919,9 +1797,10 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 
 				// Update action bars ( implicitly calls updateActionBars() )
 				updateActionSets();
-				if (perspectiveBar != null) {
-				    perspectiveBar.update(false);
-				}
+
+				if (perspectiveSwitcher != null)
+				    perspectiveSwitcher.update(false);
+
 				getMenuManager().update(IAction.TEXT);
 
 				if (noOpenPerspective != null && in != null) {
@@ -1930,88 +1809,6 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 				}
 			}
 		});
-	}
-
-	/**
-	 * Shows the popup menu for a page item in the shortcut bar.
-	 */
-	private void showPerspectiveBarPopup(Point pt) {
-
-		// Get the tool item under the mouse.
-		final ToolBar toolBar = perspectiveBar.getControl();
-		ToolItem toolItem = toolBar.getItem(toolBar.toControl(pt));
-			
-		if (toolItem == null || !(toolItem.getData() instanceof PerspectiveBarContributionItem)) {
-			if (perspectiveBarGenericMenu == null) {
-				Menu menu = new Menu(toolBar);
-				final MenuItem dockMenuItem = new MenuItem(menu, SWT.CHECK);
-				dockMenuItem.setText(WorkbenchMessages.getString("PerspectiveBar.dockLeft")); //$NON-NLS-1$
-
-				dockMenuItem.addSelectionListener(new SelectionAdapter() {
-					public void widgetSelected(SelectionEvent e) {
-						IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
-						apiStore.setValue(IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR, dockMenuItem.getSelection());
-					}
-				});
-				perspectiveBarGenericMenu = menu;
-			}
-			
-			// get the dock menu item and update the state to ensure it matches the preference
-			perspectiveBarGenericMenu.getItem(0).setSelection(dockPerspectiveBar);
-			
-			// Show popup menu.
-			if (perspectiveBarGenericMenu != null) {
-				perspectiveBarGenericMenu.setLocation(pt.x, pt.y);
-				perspectiveBarGenericMenu.setVisible(true);
-			}
-			return;
-		}
-		
-		// The perspective bar menu is created lazily here.
-		// Its data is set (each time) to the tool item, which refers to the SetPagePerspectiveAction
-		// which in turn refers to the page and perspective.
-		// It is important not to refer to the action, the page or the perspective directly
-		// since otherwise the menu hangs on to them after they are closed.
-		// By hanging onto the tool item instead, these references are cleared when the
-		// corresponding page or perspective is closed.
-		// See bug 11282 for more details on why it is done this way.
-		if (perspectiveBarMenu == null) {
-			Menu menu = new Menu(toolBar);
-			MenuItem menuItem = new MenuItem(menu, SWT.NONE);
-			menuItem.setText(WorkbenchMessages.getString("WorkbenchWindow.close")); //$NON-NLS-1$
-			menuItem.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					ToolItem perspectiveToolItem = (ToolItem) perspectiveBarMenu.getData();
-					if (perspectiveToolItem != null && !perspectiveToolItem.isDisposed()) {
-						PerspectiveBarContributionItem item =
-							(PerspectiveBarContributionItem) perspectiveToolItem.getData();
-						item.getPage().closePerspective(item.getPerspective(), true);
-						toolBar.layout();
-					}
-				}
-			});
-			menuItem = new MenuItem(menu, SWT.NONE);
-			menuItem.setText(WorkbenchMessages.getString("WorkbenchWindow.closeAll")); //$NON-NLS-1$
-			menuItem.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					ToolItem perspectiveToolItem = (ToolItem) perspectiveBarMenu.getData();
-					if (perspectiveToolItem != null && !perspectiveToolItem.isDisposed()) {
-						PerspectiveBarContributionItem item =
-							(PerspectiveBarContributionItem) perspectiveToolItem.getData();
-						item.getPage().closeAllPerspectives();
-						toolBar.layout();
-					}
-				}
-			});
-			perspectiveBarMenu = menu;
-		}
-		perspectiveBarMenu.setData(toolItem);
-
-		// Show popup menu.
-		if (perspectiveBarMenu != null) {
-			perspectiveBarMenu.setLocation(pt.x, pt.y);
-			perspectiveBarMenu.setVisible(true);
-		}
 	}
 
 	/**
@@ -2159,11 +1956,9 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		WorkbenchPage page) {
 		if (updateDisabled)
 			return;
-
-		IContributionItem item = findPerspectiveShortcut(oldDesc, page);
 		
-		if (item != null)
-			((PerspectiveBarContributionItem) item).update(newDesc);
+		if (perspectiveSwitcher != null)
+		    perspectiveSwitcher.updatePerspectiveShortcut(oldDesc, newDesc, page);
 	}
 
 	/**
@@ -2509,7 +2304,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	 * Returns the perspective bar.
 	 */
 	public PerspectiveBarManager getPerspectiveBar() {
-		return perspectiveBar;
+		return perspectiveSwitcher == null ? null : perspectiveSwitcher.getPerspectiveBar();
 	}
 
 //for dynamic UI

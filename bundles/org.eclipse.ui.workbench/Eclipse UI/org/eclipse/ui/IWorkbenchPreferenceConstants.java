@@ -146,7 +146,12 @@ public interface IWorkbenchPreferenceConstants {
 
     /**
      * A named preference indicating where the perspective bar should be docked.
-     * The default value (when this preference is not set) is topRight.
+     * The default value (when this preference is not set) is <code>TOP_RIGHT</code>.
+     * <p>
+     * This preference may be one of the following value:
+     * <li><code>TOP_RIGHT</code></li>
+     * <li><code>TOP_LEFT</code></li>
+     * <li><code>LEFT</code></li>
      *
      * @see #TOP_RIGHT 
      * @see #TOP_LEFT

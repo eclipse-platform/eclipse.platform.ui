@@ -66,8 +66,8 @@ public class PlatformUIPreferenceListener implements IPropertyChangeListener {
 				IWorkbenchWindow window = workbenchWindows[i];
 				if (window instanceof WorkbenchWindow)
 					((WorkbenchWindow) window)
-							.dockPerspectiveBar(apiStore
-									.getBoolean(IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR));
+							.setPerspectiveBarLocation(apiStore
+									.getString(IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR));
 			}
 			return;
 		}
