@@ -23,7 +23,7 @@ import org.eclipse.debug.core.ILaunch;
  * </p>
  * <p>
  * Debug elements are language independent. However, language specific
- * features can be made available via the adpater mechanism provided by
+ * features can be made available via the adapter mechanism provided by
  * <code>IAdaptable</code>, or by extending the debug element interfaces.
  * A debug model is responsible for declaring any special adapters 
  * its debug elements implement.

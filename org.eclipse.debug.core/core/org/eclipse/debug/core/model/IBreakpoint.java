@@ -13,11 +13,11 @@ import org.eclipse.core.runtime.IAdaptable;
  * A breakpoint is defined in two parts:
  * <ol>
  * <li>By an extension of kind <code>"org.eclipse.debug.core.breakpoints"</li>
- * <li>By a marker definition that corresnponds to the above breakpoint extension</li>
+ * <li>By a marker definition that corresponds to the above breakpoint extension</li>
  * </ol>
  * <p>
  * For example, following is a definition of corresponding breakpoint
- * and breakpoint marker defintions. Note that the <ocde>markerType</code>
+ * and breakpoint marker definitions. Note that the <ocde>markerType</code>
  * attribute defined by the breakpoint extension corresponds to the 
  * type of the marker definition.
  * <pre>
@@ -70,12 +70,12 @@ public IMarker getMarker();
  * marker.
  * 
  * @param marker the marker to associate with this breakpoint
- * @exception CoreException if an error occurrs accessing the marker
+ * @exception CoreException if an error occurs accessing the marker
  */
 public void setMarker(IMarker marker) throws CoreException;
 /**
  * Returns the identifier of the debug model this breakpoint is
- * asscoiated with.
+ * associated with.
  * 
  * @return the identifier of the debug model this breakpoint is
  * 	associated with
