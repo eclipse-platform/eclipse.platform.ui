@@ -799,12 +799,6 @@
          <view
                relative="org.eclipse.ui.views.TaskList"
                visible="false"
-               id="org.eclipse.team.ccvs.ui.console"
-               relationship="stack">
-         </view>
-         <view
-               relative="org.eclipse.ui.views.TaskList"
-               visible="false"
                id="org.eclipse.team.ccvs.ui.HistoryView"
                relationship="stack">
          </view>
@@ -837,12 +831,6 @@
          <perspectiveShortcut
                id="org.eclipse.team.cvs.ui.cvsPerspective">
          </perspectiveShortcut>
-         <view
-               relative="org.eclipse.ui.views.TaskList"
-               visible="false"
-               id="org.eclipse.team.ccvs.ui.console"
-               relationship="stack">
-         </view>
          <view
                relative="org.eclipse.ui.views.TaskList"
                visible="false"
