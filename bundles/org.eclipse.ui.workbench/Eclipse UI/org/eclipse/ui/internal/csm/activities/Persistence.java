@@ -39,7 +39,7 @@ final class Persistence {
 		String activityId = memento.getString(TAG_ACTIVITY_ID);
 		String pluginId = pluginIdOverride != null ? pluginIdOverride : memento.getString(TAG_PLUGIN_ID);
 		String pattern = memento.getString(TAG_PATTERN);
-		return new ActivityPatternBindingDefinition(activityId, pluginId, activityId);
+		return new PatternBindingDefinition(activityId, pluginId, activityId);
 	}
 
 	static List readActivityBindingDefinitions(IMemento memento, String name, String pluginIdOverride) {

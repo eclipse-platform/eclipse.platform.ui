@@ -13,10 +13,10 @@ package org.eclipse.ui.internal.csm.activities;
 
 import org.eclipse.ui.internal.util.Util;
 
-public final class ActivityPatternBindingDefinition implements IActivityPatternBindingDefinition {
+public final class PatternBindingDefinition implements IActivityPatternBindingDefinition {
 
 	private final static int HASH_FACTOR = 89;
-	private final static int HASH_INITIAL = ActivityPatternBindingDefinition.class.getName().hashCode();
+	private final static int HASH_INITIAL = PatternBindingDefinition.class.getName().hashCode();
 
 	private String activityId;
 	// TODO pattern is out of order
@@ -27,14 +27,14 @@ public final class ActivityPatternBindingDefinition implements IActivityPatternB
 	private transient boolean hashCodeComputed;
 	private transient String string;
 
-	public ActivityPatternBindingDefinition(String activityId, String pluginId, String pattern) {
+	public PatternBindingDefinition(String activityId, String pluginId, String pattern) {
 		this.activityId = activityId;
 		this.pluginId = pluginId;
 		this.pattern = pattern;
 	}
 	
 	public int compareTo(Object object) {
-		ActivityPatternBindingDefinition activityBindingDefinition = (ActivityPatternBindingDefinition) object;
+		PatternBindingDefinition activityBindingDefinition = (PatternBindingDefinition) object;
 		int compareTo = Util.compare(activityId, activityBindingDefinition.activityId);
 		
 		if (compareTo == 0) {		
@@ -48,10 +48,10 @@ public final class ActivityPatternBindingDefinition implements IActivityPatternB
 	}
 	
 	public boolean equals(Object object) {
-		if (!(object instanceof ActivityPatternBindingDefinition))
+		if (!(object instanceof PatternBindingDefinition))
 			return false;
 
-		ActivityPatternBindingDefinition activityBindingDefinition = (ActivityPatternBindingDefinition) object;	
+		PatternBindingDefinition activityBindingDefinition = (PatternBindingDefinition) object;	
 		boolean equals = true;
 		equals &= Util.equals(activityId, activityBindingDefinition.activityId);
 		equals &= Util.equals(pluginId, activityBindingDefinition.pluginId);

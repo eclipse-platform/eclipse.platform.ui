@@ -24,7 +24,8 @@ final class PatternBinding implements IPatternBinding {
 
 	private transient int hashCode;
 	private transient boolean hashCodeComputed;
-	
+	private transient String string;
+
 	PatternBinding(boolean inclusive, String pattern) {	
 		if (pattern == null)
 			throw new NullPointerException();
@@ -74,6 +75,16 @@ final class PatternBinding implements IPatternBinding {
 	}
 
 	public String toString() {
-		return pattern;		
+		if (string == null) {
+			final StringBuffer stringBuffer = new StringBuffer();
+			stringBuffer.append('[');
+			stringBuffer.append(inclusive);
+			stringBuffer.append(',');
+			stringBuffer.append(pattern);
+			stringBuffer.append(']');
+			string = stringBuffer.toString();
+		}
+	
+		return string;
 	}
 }

@@ -39,6 +39,10 @@ public final class Util {
 			throw new IllegalArgumentException();
 	}
 	
+	public static int compare(boolean left, boolean right) {
+		return left == false ? (right == true ? -1 : 0) : 1;		
+	}
+	
 	public static int compare(Comparable left, Comparable right) {
 		if (left == null && right == null)
 			return 0;	
@@ -188,6 +192,10 @@ public final class Util {
 
 			return true;
 		}
+	}
+
+	public static int hashCode(boolean b) {
+		return b ? Boolean.TRUE.hashCode() : Boolean.FALSE.hashCode();
 	}
 
 	public static int hashCode(Object object) {
