@@ -20,6 +20,8 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
+import org.eclipse.compare.internal.TabFolderLayout;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.File;
@@ -27,7 +29,7 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.KeyPair;
 
-public class CVSSSH2PreferencePage extends FieldEditorPreferencePage
+public class CVSSSH2PreferencePage extends PreferencePage
   implements IWorkbenchPreferencePage {
 
   public static String KEY_PROXY="CVSSSH2PreferencePage.PROXY";
@@ -74,7 +76,6 @@ public class CVSSSH2PreferencePage extends FieldEditorPreferencePage
   private Button keyGenerate;
   private Button keyLoad;
   private Button saveKeyPair;
-  //private FileFieldEditor keyFileName;
   private Label keyCommentLabel;
   private Text keyCommentText;
   private Label keyFingerPrintLabel;
@@ -89,35 +90,375 @@ public class CVSSSH2PreferencePage extends FieldEditorPreferencePage
   private String kpairComment;
 
   public CVSSSH2PreferencePage() {
-    super(GRID);
     IPreferenceStore store=CVSSSH2Plugin.getDefault().getPreferenceStore();
     setPreferenceStore(store);
-    setDescription("General CVSSSH2 Settings:");
+    setDescription("CVSSSH2 Settings:");
   }
 
-  protected void createFieldEditors() {
-  	enableSSH2=new Button(getFieldEditorParent(), SWT.CHECK);
-  	enableSSH2.setText("Enable SSH2 instead of SSH1 (temporary until SSH2 is fully tested)");
-  	GridData gd=new GridData();
-  	gd.horizontalSpan=2;
-  	enableSSH2.setLayoutData(gd);
-  	
-  	createSpacer(getFieldEditorParent(), 3);
-  	
-  	ssh2homeEditor=
+  protected Control createContents(Composite parent) {
+    Composite container = new Composite(parent, SWT.NULL);
+    GridLayout layout = new GridLayout();
+    container.setLayout(layout);
+
+    TabFolder tabFolder = new TabFolder(container, SWT.NONE);
+//    tabFolder.setLayout(new TabFolderLayout());
+    tabFolder.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+    TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
+    tabItem.setText("General");
+    tabItem.setControl(createGeneralPage(tabFolder));
+
+    tabItem = new TabItem(tabFolder, SWT.NONE);
+    tabItem.setText("Proxy");
+    tabItem.setControl(createProxyPage(tabFolder));
+
+    tabItem = new TabItem(tabFolder, SWT.NONE);
+    tabItem.setText("Key Management");
+    tabItem.setControl(createKeyManagementPage(tabFolder));
+
+    IPreferenceStore store=CVSSSH2Plugin.getDefault().getPreferenceStore();
+    initDefaults(store);
+    initControls();
+
+    return container;
+  }
+
+  private Control createGeneralPage(Composite parent) {
+    Composite group=new Composite(parent, SWT.NULL);
+    GridLayout layout=new GridLayout();
+    layout.numColumns=3;
+    group.setLayout(layout);
+    GridData data = new GridData();
+    data.horizontalAlignment = GridData.FILL;
+    group.setLayoutData(data);
+
+    enableSSH2=new Button(group, SWT.CHECK);
+    enableSSH2.setText("Enable SSH2 instead of SSH1 (temporary until SSH2 is fully tested)");
+    GridData gd=new GridData();
+    gd.horizontalSpan=3;
+    enableSSH2.setLayoutData(gd);
+
+    createSpacer(group, 3);
+
+    ssh2homeEditor=
       new DirectoryFieldEditor(KEY_SSH2HOME, 
 			       "SSH2 Home", 
-			       getFieldEditorParent());
+			       group);
 
-    addField(ssh2homeEditor);
+    //addField(ssh2homeEditor);
+    return group;
+  }
 
-    createSpacer(getFieldEditorParent(), 3);
+  private Control createProxyPage(Composite parent) {
+    Composite group=new Composite(parent, SWT.NULL);
+    GridLayout layout=new GridLayout();
+    layout.numColumns=3;
+    group.setLayout(layout);
+    GridData data = new GridData();
+    data.horizontalAlignment = GridData.FILL;
+    group.setLayoutData(data);
 
-    createProxy(getFieldEditorParent(), 3);
+    enableProxy=new Button(group, SWT.CHECK);
+    enableProxy.setText("Enable proxy connection");
+    GridData gd=new GridData();
+    gd.horizontalSpan=3;
+    enableProxy.setLayoutData(gd);
 
-    createSpacer(getFieldEditorParent(), 3);
+    proxyTypeLabel=new Label(group, SWT.NONE);
+    proxyTypeLabel.setText("Proxy type");
+    proxyTypeCombo=new Combo(group, SWT.READ_ONLY);
+    proxyTypeCombo.setFont(group.getFont());
+    gd=new GridData(GridData.FILL_HORIZONTAL);
+    gd.horizontalSpan=2;
+    proxyTypeCombo.setLayoutData(gd);
+    proxyTypeCombo.addModifyListener(new ModifyListener () {
+	public void modifyText(ModifyEvent e){
+	  if(proxyPortText==null) return;
+	  Combo combo=(Combo)(e.getSource());
+	  String foo=combo.getText();
+	  if(foo.equals(HTTP)){ 
+	    proxyPortText.setText(HTTP_DEFAULT_PORT); 
+	  }
+	  else if(foo.equals(SOCKS5)){
+	    proxyPortText.setText(SOCKS5_DEFAULT_PORT);
+	  }
+	} 
+      });
+    proxyTypeCombo.add(HTTP);
+    proxyTypeCombo.add(SOCKS5);
+    proxyTypeCombo.select(0);
 
-    createKeyGeneration(getFieldEditorParent(), 3);
+    proxyHostLabel=new Label(group, SWT.NONE);
+    proxyHostLabel.setText("Proxy host address");
+
+    proxyHostText=new Text(group, SWT.SINGLE | SWT.BORDER);
+    proxyHostText.setFont(group.getFont());
+    gd=new GridData(GridData.FILL_HORIZONTAL);
+    gd.horizontalSpan=2;
+    proxyHostText.setLayoutData(gd);
+
+    proxyPortLabel=new Label(group, SWT.NONE);
+    proxyPortLabel.setText("Proxy host port");
+
+    proxyPortText=new Text(group, SWT.SINGLE | SWT.BORDER);
+    proxyPortText.setFont(group.getFont());
+    gd=new GridData(GridData.FILL_HORIZONTAL);
+    gd.horizontalSpan=2;
+    proxyPortText.setLayoutData(gd);
+
+    createSpacer(group, 3);
+
+    enableAuth=new Button(group, SWT.CHECK);
+    enableAuth.setText("Enable proxy authentication");
+    gd=new GridData();
+    gd.horizontalSpan=3;
+    enableAuth.setLayoutData(gd);
+
+    proxyUserLabel=new Label(group, SWT.NONE);
+    proxyUserLabel.setText("Proxy user name");
+
+    proxyUserText=new Text(group, SWT.SINGLE | SWT.BORDER);
+    proxyUserText.setFont(group.getFont());
+    gd=new GridData(GridData.FILL_HORIZONTAL);
+    gd.horizontalSpan=2;
+    proxyUserText.setLayoutData(gd);
+
+    proxyPassLabel=new Label(group, SWT.NONE);
+    proxyPassLabel.setText("Proxy password");
+
+    proxyPassText=new Text(group, SWT.SINGLE | SWT.BORDER);
+    proxyPassText.setFont(group.getFont());
+    gd=new GridData(GridData.FILL_HORIZONTAL);
+    gd.horizontalSpan=2;
+    proxyPassText.setLayoutData(gd);
+
+    //  performDefaults();
+
+    enableProxy.addSelectionListener(new SelectionListener() {
+	public void widgetSelected(SelectionEvent e) {
+	  updateControls();
+	}
+	public void widgetDefaultSelected(SelectionEvent e) {
+	}
+      });
+
+    enableAuth.addSelectionListener(new SelectionListener() {
+	public void widgetSelected(SelectionEvent e) {
+	  updateControls();
+	}
+	public void widgetDefaultSelected(SelectionEvent e) {
+	}
+      });
+    return group;
+  }
+
+  private Control createKeyManagementPage(Composite parent) {
+    int columnSpan=3;
+    Composite group=new Composite(parent, SWT.NULL);
+    GridLayout layout=new GridLayout();
+    layout.numColumns=3;
+    group.setLayout(layout);
+    GridData data = new GridData();
+    data.horizontalAlignment = GridData.FILL;
+    group.setLayoutData(data);
+
+    keyTypeLabel=new Label(group, SWT.NONE);
+    keyTypeLabel.setText("Key type");
+    keyTypeCombo=new Combo(group, SWT.READ_ONLY);
+    keyTypeCombo.setFont(group.getFont());
+    GridData gd=new GridData(GridData.FILL_HORIZONTAL);
+    gd.horizontalSpan=2;
+    keyTypeCombo.setLayoutData(gd);
+
+    keyGenerate=new Button(group, SWT.NULL);
+    keyGenerate.setText("Generate");
+    gd=new GridData(GridData.HORIZONTAL_ALIGN_END);
+    gd.horizontalSpan=columnSpan;
+    keyGenerate.setLayoutData(gd);
+
+/*
+    keyLoad=new Button(group, SWT.NULL);
+    keyLoad.setText("Load(not implemented)");
+    gd=new GridData(GridData.HORIZONTAL_ALIGN_END);
+    gd.horizontalSpan=columnSpan;
+    keyLoad.setLayoutData(gd);
+*/
+
+    publicKeylabel=new Label(group, SWT.NONE);
+    publicKeylabel.setText("You can paste this public key into the remote authorized_keys file:");
+    gd=new GridData();
+    gd.horizontalSpan=columnSpan;
+    publicKeylabel.setLayoutData(gd);
+
+    publicKeyText=new Text(group,SWT.MULTI|SWT.BORDER|SWT.V_SCROLL|SWT.WRAP);
+    publicKeyText.setText("");
+    publicKeyText.setEditable(false);
+    gd=new GridData();
+    gd.horizontalSpan=columnSpan;
+    gd.horizontalAlignment = GridData.FILL;
+    gd.verticalAlignment = GridData.FILL;
+    gd.grabExcessHorizontalSpace = true;
+    gd.grabExcessVerticalSpace = true;
+    publicKeyText.setLayoutData(gd);
+
+    keyFingerPrintLabel=new Label(group, SWT.NONE);
+    keyFingerPrintLabel.setText("Finger print");
+    keyFingerPrintText=new Text(group, SWT.SINGLE | SWT.BORDER);
+    keyFingerPrintText.setFont(group.getFont());
+    gd=new GridData(GridData.FILL_HORIZONTAL);
+    gd.horizontalSpan=2;
+    keyFingerPrintText.setLayoutData(gd);
+
+    keyCommentLabel=new Label(group, SWT.NONE);
+    keyCommentLabel.setText("Comment");
+    keyCommentText=new Text(group, SWT.SINGLE | SWT.BORDER);
+    keyCommentText.setFont(group.getFont());
+    gd=new GridData(GridData.FILL_HORIZONTAL);
+    gd.horizontalSpan=2;
+    keyCommentText.setLayoutData(gd);
+
+    keyPassphrase1Label=new Label(group, SWT.NONE);
+    keyPassphrase1Label.setText("Passphrase");
+    keyPassphrase1Text=new Text(group, SWT.SINGLE | SWT.BORDER);
+    keyPassphrase1Text.setFont(group.getFont());
+    keyPassphrase1Text.setEchoChar('*');
+    gd=new GridData(GridData.FILL_HORIZONTAL);
+    gd.horizontalSpan=2;
+    keyPassphrase1Text.setLayoutData(gd);
+
+    keyPassphrase2Label=new Label(group, SWT.NONE);
+    keyPassphrase2Label.setText("Confirm passphrase");
+    keyPassphrase2Text=new Text(group, SWT.SINGLE | SWT.BORDER);
+    keyPassphrase2Text.setFont(group.getFont());
+    keyPassphrase2Text.setEchoChar('*');
+    gd=new GridData(GridData.FILL_HORIZONTAL);
+    gd.horizontalSpan=2;
+    keyPassphrase2Text.setLayoutData(gd);
+
+    saveKeyPair=new Button(group, SWT.NULL);
+    saveKeyPair.setText("Save");
+    gd=new GridData(GridData.HORIZONTAL_ALIGN_END);
+    gd.horizontalSpan=columnSpan;
+    saveKeyPair.setLayoutData(gd);
+
+    keyGenerate.addSelectionListener(new SelectionAdapter(){
+	public void widgetSelected(SelectionEvent e){
+	  JSch jsch=JSchSession.getJSch();
+	  boolean ok=true;
+	  String _type=keyTypeCombo.getText();
+
+	  try{
+	    int type=0;
+	    if(_type.equals(DSA)){
+	      type=KeyPair.DSA;
+	    }
+	    else if(_type.equals(RSA)){
+	      type=KeyPair.RSA;
+	    }
+	    else{
+	      return;
+	    }
+
+	    kpair=KeyPair.genKeyPair(jsch, type);
+	    ByteArrayOutputStream out=new ByteArrayOutputStream();
+	    kpairComment=_type+"-1024";
+	    kpair.writePublicKey(out, kpairComment);
+	    out.close();
+	    publicKeyText.setText(out.toString());
+	    keyFingerPrintText.setText(kpair.getFingerPrint());
+	    keyCommentText.setText(kpairComment);
+	    updateControls();
+	  }
+	  catch(IOException ee){
+	    ok=false;
+	  }
+	  catch(JSchException ee){
+	    ok=false;
+	  }
+	  MessageBox mb=new MessageBox(getShell(),SWT.OK|SWT.ICON_INFORMATION);
+	  mb.setMessage(_type+" 1024bits key is successfully generated.");
+	  mb.open();
+	}
+      });
+
+    saveKeyPair.addSelectionListener(new SelectionAdapter(){
+	public void widgetSelected(SelectionEvent e){
+	  if(kpair==null)return;
+
+	  MessageBox mb;
+	  String pass=keyPassphrase1Text.getText();
+	  if(!pass.equals(keyPassphrase2Text.getText())){
+	    mb=new MessageBox(getShell(),SWT.OK|SWT.ICON_ERROR);
+	    mb.setMessage("Given passphrases don't match.");
+	    mb.open();
+	    return;
+	  }
+	  if(pass.length()==0){
+	    mb=new MessageBox(getShell(),SWT.YES|SWT.NO|SWT.ICON_WARNING);
+	    mb.setMessage("Are you sure you want to save this private key without the passpharse protection?");
+	    if(mb.open()==SWT.NO){
+	      return;
+	    }
+	  }
+
+	  kpair.setPassphrase(pass);
+
+	  IPreferenceStore store=CVSSSH2Plugin.getDefault().getPreferenceStore();
+	  String home=ssh2homeEditor.getStringValue(); 
+	  File _home=new File(home);
+
+	  if(!_home.exists()){
+	    mb=new MessageBox(getShell(),SWT.YES|SWT.NO|SWT.ICON_QUESTION);
+	    mb.setMessage(home+" does not exsit.\nAre you sure you want to create it?");
+	    if(mb.open()==SWT.NO){
+	      return;
+	    }
+	    if(!_home.mkdirs()){
+	      return;
+	    }
+	  }
+
+	  FileDialog fd=new FileDialog(getShell(), SWT.SAVE);
+	  fd.setFilterPath(home);
+	  String file=(kpair.getKeyType()==KeyPair.RSA) ? "id_rsa" : "id_dsa";
+	  fd.setFileName(file);
+	  file=fd.open();
+	  if(file==null){ // cancel
+	    return;
+	  }
+
+	  if(new File(file).exists()){
+	    mb=new MessageBox(getShell(),SWT.YES|SWT.NO|SWT.ICON_WARNING);
+	    mb.setMessage(file+" has already existed.\nAre you sure you want to over write it?");
+	    if(mb.open()==SWT.NO){
+	      return;
+	    }
+	  }
+
+	  boolean ok=true;
+	  try{
+	    kpair.writePrivateKey(file);
+	    kpair.writePublicKey(file+".pub", kpairComment);
+	  }
+	  catch(Exception ee){
+	    ok=false;
+	  }
+
+	  if(ok){
+	    mb=new MessageBox(getShell(),SWT.OK|SWT.ICON_INFORMATION);
+	    mb.setMessage("Successfully saved."+"\n"+
+			  "Private key: "+file+"\n"+
+			  "Public key: "+file+".pub");
+	    mb.open();
+	  }
+	}
+      });
+
+    keyTypeCombo.add(DSA);
+    keyTypeCombo.add(RSA);
+    keyTypeCombo.select(0);
+
+    return group;
   }
 
   private void updateControls() {
@@ -137,7 +478,6 @@ public class CVSSSH2PreferencePage extends FieldEditorPreferencePage
     proxyPassText.setEnabled(enable);
 
     enable=(kpair!=null);
-    //keyFileName.setEnabled(enable);
     publicKeylabel.setEnabled(enable);
     publicKeyText.setEnabled(enable);
     keyFingerPrintLabel.setEnabled(enable);
@@ -152,10 +492,11 @@ public class CVSSSH2PreferencePage extends FieldEditorPreferencePage
   }
 
   public void init(IWorkbench workbench) {
+//    super.init(workbench);
+//    initControls();
   }
 
-  protected void initialize() {
-    super.initialize();
+  public void initialize() {
     initControls();
   }
 
@@ -177,6 +518,7 @@ public class CVSSSH2PreferencePage extends FieldEditorPreferencePage
 
   private void initControls(){
     IPreferenceStore store=CVSSSH2Plugin.getDefault().getPreferenceStore();
+    ssh2homeEditor.setStringValue(store.getString(KEY_SSH2HOME));
     enableSSH2.setSelection(store.getBoolean(KEY_USE_SSH2));
     useProxy=store.getString(KEY_PROXY).equals("true");
     enableProxy.setSelection(useProxy);
@@ -247,6 +589,8 @@ public class CVSSSH2PreferencePage extends FieldEditorPreferencePage
     gd=new GridData(GridData.FILL_HORIZONTAL);
     proxyPortText.setLayoutData(gd);
 
+    createSpacer(group, 3);
+
     enableAuth=new Button(group, SWT.CHECK);
     enableAuth.setText("Enable proxy authentication");
     gd=new GridData();
@@ -259,6 +603,7 @@ public class CVSSSH2PreferencePage extends FieldEditorPreferencePage
     proxyUserText=new Text(group, SWT.SINGLE | SWT.BORDER);
     proxyUserText.setFont(group.getFont());
     gd=new GridData(GridData.FILL_HORIZONTAL);
+    gd.horizontalSpan=2;
     proxyUserText.setLayoutData(gd);
 
     proxyPassLabel=new Label(group, SWT.NONE);
@@ -267,6 +612,7 @@ public class CVSSSH2PreferencePage extends FieldEditorPreferencePage
     proxyPassText=new Text(group, SWT.SINGLE | SWT.BORDER);
     proxyPassText.setFont(group.getFont());
     gd=new GridData(GridData.FILL_HORIZONTAL);
+    gd.horizontalSpan=2;
     proxyPassText.setLayoutData(gd);
 
 
@@ -314,11 +660,13 @@ public class CVSSSH2PreferencePage extends FieldEditorPreferencePage
     gd.horizontalSpan=columnSpan;
     keyGenerate.setLayoutData(gd);
 
+    /*
     keyLoad=new Button(group, SWT.NULL);
     keyLoad.setText("Load(not implemented)");
     gd=new GridData(GridData.HORIZONTAL_ALIGN_END);
     gd.horizontalSpan=columnSpan;
     keyLoad.setLayoutData(gd);
+    */
 
     publicKeylabel=new Label(group, SWT.NONE);
     publicKeylabel.setText("You can paste this public key into the remote authorized_keys file:");
@@ -342,6 +690,7 @@ public class CVSSSH2PreferencePage extends FieldEditorPreferencePage
     keyFingerPrintText=new Text(group, SWT.SINGLE | SWT.BORDER);
     keyFingerPrintText.setFont(group.getFont());
     gd=new GridData(GridData.FILL_HORIZONTAL);
+    gd.horizontalSpan=2;
     keyFingerPrintText.setLayoutData(gd);
 
     keyCommentLabel=new Label(group, SWT.NONE);
@@ -349,6 +698,7 @@ public class CVSSSH2PreferencePage extends FieldEditorPreferencePage
     keyCommentText=new Text(group, SWT.SINGLE | SWT.BORDER);
     keyCommentText.setFont(group.getFont());
     gd=new GridData(GridData.FILL_HORIZONTAL);
+    gd.horizontalSpan=2;
     keyCommentText.setLayoutData(gd);
 
     keyPassphrase1Label=new Label(group, SWT.NONE);
@@ -357,6 +707,7 @@ public class CVSSSH2PreferencePage extends FieldEditorPreferencePage
     keyPassphrase1Text.setFont(group.getFont());
     keyPassphrase1Text.setEchoChar('*');
     gd=new GridData(GridData.FILL_HORIZONTAL);
+    gd.horizontalSpan=2;
     keyPassphrase1Text.setLayoutData(gd);
 
     keyPassphrase2Label=new Label(group, SWT.NONE);
@@ -365,15 +716,9 @@ public class CVSSSH2PreferencePage extends FieldEditorPreferencePage
     keyPassphrase2Text.setFont(group.getFont());
     keyPassphrase2Text.setEchoChar('*');
     gd=new GridData(GridData.FILL_HORIZONTAL);
+    gd.horizontalSpan=2;
     keyPassphrase2Text.setLayoutData(gd);
-    /*
-    keyFileName=
-      new FileFieldEditor(KEY_KEYFILE,
-			  "File name:", 
-			  true,
-			  group);
-    addField(keyFileName);
-    */
+
     saveKeyPair=new Button(group, SWT.NULL);
     saveKeyPair.setText("Save");
     gd=new GridData(GridData.HORIZONTAL_ALIGN_END);
@@ -502,6 +847,7 @@ public class CVSSSH2PreferencePage extends FieldEditorPreferencePage
     boolean result=super.performOk();
     if(result){
       IPreferenceStore store=CVSSSH2Plugin.getDefault().getPreferenceStore();
+      store.setValue(KEY_SSH2HOME, ssh2homeEditor.getStringValue());
       store.setValue(KEY_PROXY, enableProxy.getSelection());
       store.setValue(KEY_PROXY_TYPE, proxyTypeCombo.getText());
       store.setValue(KEY_PROXY_HOST, proxyHostText.getText());
@@ -520,6 +866,7 @@ public class CVSSSH2PreferencePage extends FieldEditorPreferencePage
   public void performApply() {
     super.performApply();
     IPreferenceStore store=CVSSSH2Plugin.getDefault().getPreferenceStore();
+    store.setValue(KEY_SSH2HOME, ssh2homeEditor.getStringValue());
     store.setValue(KEY_PROXY, enableProxy.getSelection());
     store.setValue(KEY_PROXY_TYPE, proxyTypeCombo.getText());
     store.setValue(KEY_PROXY_HOST, proxyHostText.getText());
