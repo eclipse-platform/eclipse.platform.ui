@@ -235,7 +235,7 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 	 * XXX This is a quick fix to allow conflicts to be loaded and has not been tested for non-conflict cases
 	 */
 	public void makeIncoming(IProgressMonitor monitor) throws TeamException {
-		
+		if (!getLocal().exists()) return;
 		int syncKind = getSyncKind(GRANULARITY_TIMESTAMP, monitor);
 		boolean conflict = (syncKind & DIRECTION_MASK) == CONFLICTING;
 		boolean incoming = (syncKind & DIRECTION_MASK) == INCOMING;

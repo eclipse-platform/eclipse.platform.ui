@@ -25,14 +25,10 @@ import org.eclipse.team.internal.ui.Policy;
 public class SyncSet {
 	private HashSet set;
 	
-	// One of INCOMING or OUTGOING
-	private int direction;
-	
 	/**
 	 * Creates a new sync set on the nodes in the given selection.
 	 */
-	public SyncSet(IStructuredSelection nodeSelection, int direction) {
-		this.direction = direction;
+	public SyncSet(IStructuredSelection nodeSelection) {
 		this.set = new HashSet(nodeSelection.size() + 1);
 		collectNodes(nodeSelection);
 	}
@@ -54,7 +50,7 @@ public class SyncSet {
 	private void collectParentCreations(ITeamNode node) {
 		IDiffElement parent = node.getParent();
 		if (parent != null && parent instanceof ITeamNode) {
-			if ((parent.getKind() & Differencer.CHANGE_TYPE_MASK) == Differencer.ADDITION) {
+			if (parent.getKind() != IRemoteSyncElement.IN_SYNC) {
 				set.add(parent);
 				collectParentCreations((ITeamNode)parent);
 			}
@@ -173,6 +169,19 @@ public class SyncSet {
 	}
 
 	/**
+	 * Returns true if this sync set has auto-mergeable conflicts.
+	 */
+	public boolean hasAutoMergeableConflicts() {
+		for (Iterator it = set.iterator(); it.hasNext();) {
+			ITeamNode node = (ITeamNode)it.next();
+			if ((node.getKind() & IRemoteSyncElement.AUTOMERGE_CONFLICT) != 0) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * Adds the given node, plus all its children, to the given set.
 	 */
 	private void recursivelyAdd(ITeamNode node) {
@@ -198,22 +207,54 @@ public class SyncSet {
 	public void removeConflictingNodes() {
 		for (Iterator it = set.iterator(); it.hasNext();) {
 			ITeamNode node = (ITeamNode)it.next();
-			if ((node.getKind() & IRemoteSyncElement.CONFLICTING) > 0) {
+			if (node.getChangeDirection() == IRemoteSyncElement.CONFLICTING) {
+				it.remove();
+			}
+		}
+	}
+	/**
+	 * Removes all outgoing nodes from this set.
+	 */
+	public void removeOutgoingNodes() {
+		for (Iterator it = set.iterator(); it.hasNext();) {
+			ITeamNode node = (ITeamNode)it.next();
+			if (node.getChangeDirection() == IRemoteSyncElement.OUTGOING) {
+				it.remove();
+			}
+		}
+	}
+	/**
+	 * Removes all incoming nodes from this set.
+	 */
+	public void removeIncomingNodes() {
+		for (Iterator it = set.iterator(); it.hasNext();) {
+			ITeamNode node = (ITeamNode)it.next();
+			if (node.getChangeDirection() == IRemoteSyncElement.INCOMING) {
+				it.remove();
+			}
+		}
+	}
+	/**
+	 * Removes all conflicting nodes from this set that are not auto-mergeable
+	 */
+	public void removeNonMergeableNodes() {
+		for (Iterator it = set.iterator(); it.hasNext();) {
+			ITeamNode node = (ITeamNode)it.next();
+			if ((node.getKind() & IRemoteSyncElement.MANUAL_CONFLICT) != 0) {
 				it.remove();
 			}
 		}
 	}
 	
 	/**
-	 * Removes all nodes that aren't applicable for the change type.
+	 * Removes all nodes that aren't applicable for the direction.
 	 */
-	public void removeNonApplicableNodes() {
+	public void removeNonApplicableNodes(int direction) {
 		for (Iterator it = set.iterator(); it.hasNext();) {
 			ITeamNode node = (ITeamNode)it.next();
 			int nodeDirection = node.getKind() & IRemoteSyncElement.DIRECTION_MASK;
-			if ((nodeDirection != IRemoteSyncElement.CONFLICTING) && (nodeDirection != direction)) {
-				// Deletions always belong in the set.
-				if ((node.getKind() & IRemoteSyncElement.CHANGE_MASK) != Differencer.DELETION) {
+			if (nodeDirection != IRemoteSyncElement.CONFLICTING) {
+				if (nodeDirection != direction) {
 					it.remove();
 				}
 			}

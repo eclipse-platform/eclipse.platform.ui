@@ -929,6 +929,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		ResponseHandler oldHandler = null;
 		if(handler!=null) {
 			oldHandler = Command.getResponseHandler(handler.getResponseID());
+			Command.registerResponseHandler(handler);
 		}
 		
 		// Build the arguments list

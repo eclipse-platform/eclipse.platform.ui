@@ -53,6 +53,12 @@ public class MergeEditorInput extends CVSSyncCompareInput {
 			monitor.done();
 		}
 	}
+	public CVSTag getStartTag() {
+		return start;
+	}
+	public CVSTag getEndTag() {
+		return end;
+	}
 	public String getTitle() {
 		return Policy.bind("MergeEditorInput.title", start.getName(), end.getName());
 	}

@@ -21,11 +21,13 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.ui.sync.ChangedTeamContainer;
 import org.eclipse.team.ui.sync.ITeamNode;
 import org.eclipse.team.ui.sync.SyncSet;
+import org.eclipse.team.ui.sync.SyncView;
 import org.eclipse.team.ui.sync.UnchangedTeamContainer;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
@@ -49,16 +51,19 @@ abstract class MergeAction extends Action {
 	/**
 	 * Creates a MergeAction which works on selection and doesn't commit changes.
 	 */
-	public MergeAction(CVSSyncCompareInput model, ISelectionProvider sp, int direction, String label, Shell shell) {
+	public MergeAction(CVSSyncCompareInput model, ISelectionProvider sp, String label, Shell shell) {
 		super(label);
 		this.diffModel = model;
 		this.selectionProvider = sp;
-		this.direction = direction;
 		this.shell = shell;
 	}
 	
 	protected Shell getShell() {
 		return shell;
+	}
+	
+	protected CVSSyncCompareInput getDiffModel() {
+		return diffModel;
 	}
 	
 	/**
@@ -90,8 +95,10 @@ abstract class MergeAction extends Action {
 		if (!(s instanceof IStructuredSelection) || s.isEmpty()) {
 			return;
 		}
-		final SyncSet set = new SyncSet((IStructuredSelection)s, direction);
-		set.removeNonApplicableNodes();
+		final SyncSet set = new SyncSet((IStructuredSelection)s);
+		if (direction != 0) {
+			set.removeNonApplicableNodes(direction);
+		}
 		final SyncSet[] result = new SyncSet[1];
 		WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
@@ -145,7 +152,19 @@ abstract class MergeAction extends Action {
 	 * Updates the action with the latest selection, setting enablement
 	 * as necessary.
 	 */
-	public void update() {
+	public void update(int syncMode) {
+		switch (syncMode) {
+			case SyncView.SYNC_INCOMING:
+			case SyncView.SYNC_MERGE:
+				direction = IRemoteSyncElement.INCOMING;
+				break;
+			case SyncView.SYNC_OUTGOING:
+				direction = IRemoteSyncElement.OUTGOING;
+				break;
+			default:
+				direction = 0;
+				break;
+		}
 		IStructuredSelection selection = (IStructuredSelection)selectionProvider.getSelection();
 		setEnabled(isEnabled(selection.toArray()));
 	}

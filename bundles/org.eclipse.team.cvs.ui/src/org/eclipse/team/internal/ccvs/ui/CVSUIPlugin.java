@@ -139,6 +139,8 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		createImageDescriptor(ICVSUIConstants.IMG_WIZBAN_BRANCH, baseURL);
 		createImageDescriptor(ICVSUIConstants.IMG_WIZBAN_MERGE, baseURL);
 		createImageDescriptor(ICVSUIConstants.IMG_WIZBAN_SHARE, baseURL);
+		createImageDescriptor(ICVSUIConstants.IMG_MERGEABLE_CONFLICT, baseURL);
+		createImageDescriptor(ICVSUIConstants.IMG_QUESTIONABLE, baseURL);
 	}
 	/**
 	 * Convenience method for logging statuses to the plugin log

@@ -18,12 +18,9 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Properties;
 import java.util.Set;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -39,14 +36,14 @@ import org.eclipse.team.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.ccvs.core.ILogEntry;
-import org.eclipse.team.core.ITeamManager;
 import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.client.Command;
-import org.eclipse.team.internal.ccvs.core.client.Update;
+import org.eclipse.team.internal.ccvs.core.client.NullCopyHandler;
+import org.eclipse.team.internal.ccvs.core.client.ResponseHandler;
 import org.eclipse.team.internal.ccvs.ui.model.BranchTag;
 
 /**
@@ -419,10 +416,7 @@ public class RepositoryManager {
 			provider.delete(providerResources, subMonitor);
 		}		
 	}
-	/**
-	 * Update the given resources with depth zero.
-	 */
-	public void update(IResource[] resources, IProgressMonitor monitor) throws TeamException {
+	public void update(IResource[] resources, Command.LocalOption[] options, boolean createBackups, IProgressMonitor monitor) throws TeamException {
 		Hashtable table = getProviderMapping(resources);
 		Set keySet = table.keySet();
 		monitor.beginTask("", keySet.size() * 1000);
@@ -431,10 +425,13 @@ public class RepositoryManager {
 		while (iterator.hasNext()) {
 			IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1000);
 			CVSTeamProvider provider = (CVSTeamProvider)iterator.next();
-			provider.setComment(previousComment);
 			List list = (List)table.get(provider);
 			IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
-			provider.update(providerResources, new Command.LocalOption[] {Command.DO_NOT_RECURSE}, null, null, subMonitor);
+			ResponseHandler handler = null;
+			if (!createBackups) {
+				handler = new NullCopyHandler();
+			}
+			provider.update(providerResources, options, null, handler, subMonitor);
 		}		
 	}
 	/**
@@ -496,27 +493,6 @@ public class RepositoryManager {
 		}
 	}
 	
-	/**
-	 * Get the given resources from their associated providers.
-	 *
-	 * @param resources  the resources to commit
-	 * @param monitor  the progress monitor
-	 */
-	public void get(IResource[] resources, IProgressMonitor monitor) throws TeamException {
-		Hashtable table = getProviderMapping(resources);
-		Set keySet = table.keySet();
-		monitor.beginTask("", keySet.size() * 1000);
-		monitor.setTaskName(Policy.bind("RepositoryManager.getting"));
-		Iterator iterator = keySet.iterator();
-		while (iterator.hasNext()) {
-			IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1000);
-			CVSTeamProvider provider = (CVSTeamProvider)iterator.next();
-			List list = (List)table.get(provider);
-			IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
-			provider.update(providerResources, new Command.LocalOption[] {Update.IGNORE_LOCAL_CHANGES}, null, null, subMonitor);
-		}
-	}
-
 	/**
 	 * Helper method. Return a hashtable mapping provider to a list of resources
 	 * shared with that provider.

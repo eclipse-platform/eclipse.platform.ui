@@ -156,7 +156,7 @@ public abstract class SyncCompareInput extends CompareEditorInput {
 		if (diffRoot == null) {
 			return false;
 		}
-		SyncSet set = new SyncSet(new StructuredSelection(diffRoot.getChildren()), 0);
+		SyncSet set = new SyncSet(new StructuredSelection(diffRoot.getChildren()));
 		return set.hasIncomingChanges() || set.hasConflicts();
 	}
 
@@ -250,7 +250,7 @@ public abstract class SyncCompareInput extends CompareEditorInput {
 	}
 	
 	IDiffElement collectResourceChanges(IDiffContainer parent, IRemoteSyncElement tree, IProgressMonitor pm) {
-		int type = tree.getSyncKind(IRemoteSyncElement.GRANULARITY_CONTENTS, new NullProgressMonitor());
+		int type = tree.getSyncKind(IRemoteSyncElement.GRANULARITY_TIMESTAMP, new NullProgressMonitor());
 		MergeResource mergeResource = new MergeResource(tree);
 	
 		if (tree.isContainer()) {
@@ -358,7 +358,7 @@ public abstract class SyncCompareInput extends CompareEditorInput {
 							statusLine.setErrorMessage(null);
 							return;
 						}
-						SyncSet set = new SyncSet(new StructuredSelection(diffRoot.getChildren()), 0);
+						SyncSet set = new SyncSet(new StructuredSelection(diffRoot.getChildren()));
 						if (set.hasConflicts()) {
 							statusLine.setMessage(null);
 							statusLine.setErrorMessage(set.getStatusLineMessage());

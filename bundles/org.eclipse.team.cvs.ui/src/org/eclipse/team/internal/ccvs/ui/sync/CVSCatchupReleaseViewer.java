@@ -1,14 +1,23 @@
 package org.eclipse.team.internal.ccvs.ui.sync;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
  
 import org.eclipse.compare.CompareConfiguration;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.resource.CompositeImageDescriptor;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.ccvs.core.ICVSRemoteFile;
@@ -16,40 +25,119 @@ import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
+import org.eclipse.team.internal.ccvs.core.resources.LocalFile;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.ccvs.ui.merge.GetMergeAction;
+import org.eclipse.team.internal.ccvs.ui.merge.UpdateMergeAction;
 import org.eclipse.team.ui.sync.CatchupReleaseViewer;
+import org.eclipse.team.ui.sync.ITeamNode;
 import org.eclipse.team.ui.sync.MergeResource;
 import org.eclipse.team.ui.sync.SyncView;
 
 public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 	// Actions
-	private GetSyncAction getAction;
-	private CommitMergeAction commitAction;
-	private GetMergeAction getMergeAction;
+	private UpdateSyncAction updateAction;
+	private CommitSyncAction commitAction;
+	private UpdateMergeAction updateMergeAction;
+	
+	class DiffImage extends CompositeImageDescriptor {
+		private static final int HEIGHT= 16;
+		private static final int WIDTH= 22;
+		
+		Image baseImage;
+		ImageDescriptor overlay;
+		
+		public DiffImage(Image baseImage, ImageDescriptor overlay) {
+			this.baseImage = baseImage;
+			this.overlay = overlay;
+		}
+		
+		/*
+		 * @see CompositeImageDescriptor#drawCompositeImage(int, int)
+		 */
+		protected void drawCompositeImage(int width, int height) {
+			drawImage(baseImage.getImageData(), 0, 0);
+			ImageData overlayData = overlay.getImageData();
+			drawImage(overlayData, WIDTH - overlayData.width, (HEIGHT - overlayData.height) / 2);
+		}
+
+		/*
+		 * @see CompositeImageDescriptor#getSize()
+		 */
+		protected Point getSize() {
+			return new Point(WIDTH, HEIGHT);
+		}
+	}
 	
 	public CVSCatchupReleaseViewer(Composite parent, CVSSyncCompareInput model) {
 		super(parent, model);
 		initializeActions(model);
+		initializeLabelProvider();
+	}
+	
+	private void initializeLabelProvider() {
+		final ImageDescriptor conflictDescriptor = CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_MERGEABLE_CONFLICT);
+		final ImageDescriptor questionableDescriptor = CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_QUESTIONABLE);
+		final LabelProvider oldProvider = (LabelProvider)getLabelProvider();
+		setLabelProvider(new LabelProvider() {
+			public Image getImage(Object element) {
+				Image image = oldProvider.getImage(element);
+				if (element instanceof ITeamNode) {
+					ITeamNode node = (ITeamNode)element;
+					int kind = node.getKind();
+					if ((kind & IRemoteSyncElement.AUTOMERGE_CONFLICT) != 0) {
+						DiffImage diffImage = new DiffImage(image, conflictDescriptor);
+						return diffImage.createImage();
+					}
+					if (kind == (IRemoteSyncElement.OUTGOING | IRemoteSyncElement.ADDITION)) {
+						IResource resource = node.getResource();
+						if (resource.getType() == IResource.FILE) {
+							try {
+								if (new LocalFile(((IFile)resource).getLocation().toFile()).getSyncInfo() == null) {
+									DiffImage diffImage = new DiffImage(image, questionableDescriptor);
+									return diffImage.createImage();
+								}
+							} catch (TeamException e) {
+								ErrorDialog.openError(getControl().getShell(), null, null, e.getStatus());
+								// Fall through and return the default image
+							}
+						}
+					}
+				}
+				return image;
+			}
+			public String getText(Object element) {
+				return oldProvider.getText(element);
+			}
+		});
 	}
 	
 	protected void fillContextMenu(IMenuManager manager) {
-		super.fillContextMenu(manager);
+		switch (getSyncMode()) {
+			case SyncView.SYNC_INCOMING:
+				updateAction.update(SyncView.SYNC_INCOMING);
+				manager.add(updateAction);
+				break;
+			case SyncView.SYNC_OUTGOING:
+				commitAction.update(SyncView.SYNC_OUTGOING);
+				manager.add(commitAction);
+				updateAction.update(SyncView.SYNC_OUTGOING);
+				manager.add(updateAction);
+				break;
+			case SyncView.SYNC_BOTH:
+				commitAction.update(SyncView.SYNC_BOTH);
+				manager.add(commitAction);
+				updateAction.update(SyncView.SYNC_BOTH);
+				manager.add(updateAction);
+				break;
+			case SyncView.SYNC_MERGE:
+				updateMergeAction.update(SyncView.SYNC_INCOMING);
+				manager.add(updateMergeAction);
+				break;
+		}
 		manager.add(new Separator());
-		int syncMode = getSyncMode();
-		if (syncMode == SyncView.SYNC_OUTGOING || syncMode == SyncView.SYNC_BOTH) {
-			commitAction.update();
-			manager.add(commitAction);
-		}
-		if (syncMode == SyncView.SYNC_INCOMING || syncMode == SyncView.SYNC_BOTH) {
-			getAction.update();
-			manager.add(getAction);
-		}
-		if (syncMode == SyncView.SYNC_MERGE) {
-			getMergeAction.update();
-			manager.add(getMergeAction);
-		}
+		super.fillContextMenu(manager);
 	}
 	
 	/**
@@ -57,9 +145,9 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 	 */
 	private void initializeActions(final CVSSyncCompareInput diffModel) {
 		Shell shell = getControl().getShell();
-		commitAction = new CommitMergeAction(diffModel, this, IRemoteSyncElement.OUTGOING, Policy.bind("CVSCatchupReleaseViewer.checkIn"), shell);
-		getAction = new GetSyncAction(diffModel, this, IRemoteSyncElement.INCOMING, Policy.bind("CVSCatchupReleaseViewer.get"), shell);
-		getMergeAction = new GetMergeAction(diffModel, this, IRemoteSyncElement.INCOMING, Policy.bind("CVSCatchupReleaseViewer.get"), shell);
+		commitAction = new CommitSyncAction(diffModel, this, Policy.bind("CVSCatchupReleaseViewer.commit"), shell);
+		updateAction = new UpdateSyncAction(diffModel, this, Policy.bind("CVSCatchupReleaseViewer.update"), shell);
+		updateMergeAction = new UpdateMergeAction(diffModel, this, Policy.bind("CVSCatchupReleaseViewer.update"), shell);
 	}
 	
 	/**

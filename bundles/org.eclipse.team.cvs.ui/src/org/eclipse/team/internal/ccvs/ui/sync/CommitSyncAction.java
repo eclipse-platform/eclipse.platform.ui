@@ -14,6 +14,7 @@ import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.compare.structuremergeviewer.IDiffContainer;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -22,6 +23,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.resources.CVSRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
@@ -30,27 +32,22 @@ import org.eclipse.team.ui.sync.ChangedTeamContainer;
 import org.eclipse.team.ui.sync.ITeamNode;
 import org.eclipse.team.ui.sync.SyncSet;
 import org.eclipse.team.ui.sync.TeamFile;
-import org.eclipse.team.ui.sync.UnchangedTeamContainer;
 
-/**
- * GetSyncAction is run on a set of sync nodes when the "Get" menu item is performed
- * in the Synchronize view.
- */
-public class GetSyncAction extends MergeAction {
-	public GetSyncAction(CVSSyncCompareInput model, ISelectionProvider sp, int direction, String label, Shell shell) {
-		super(model, sp, direction, label, shell);
+public class CommitSyncAction extends MergeAction {
+	public CommitSyncAction(CVSSyncCompareInput model, ISelectionProvider sp, String label, Shell shell) {
+		super(model, sp, label, shell);
 	}
 
 	protected SyncSet run(SyncSet syncSet, IProgressMonitor monitor) {
 		// If there is a conflict in the syncSet, we need to prompt the user before proceeding.
-		if (syncSet.hasConflicts() || syncSet.hasOutgoingChanges()) {
+		if (syncSet.hasConflicts() || syncSet.hasIncomingChanges()) {
 			String[] buttons = new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL};
-			String question = Policy.bind("GetSyncAction.questionCatchup");
-			String title = Policy.bind("GetSyncAction.titleCatchup");
+			String question = Policy.bind("CommitSyncAction.questionRelease");
+			String title = Policy.bind("CommitSyncAction.titleRelease");
 			String[] tips = new String[] {
-				Policy.bind("GetSyncAction.catchupAll"),
-				Policy.bind("GetSyncAction.catchupPart"),
-				Policy.bind("GetSyncAction.cancelCatchup")
+				Policy.bind("CommitSyncAction.releaseAll"),
+				Policy.bind("CommitSyncAction.releasePart"),
+				Policy.bind("CommitSyncAction.cancelRelease")
 			};
 			Shell shell = getShell();
 			final ToolTipMessageDialog dialog = new ToolTipMessageDialog(shell, title, null, question, MessageDialog.QUESTION, buttons, tips, 0);
@@ -66,6 +63,7 @@ public class GetSyncAction extends MergeAction {
 				case 1:
 					// No, only synchronize non-conflicting changes.
 					syncSet.removeConflictingNodes();
+					syncSet.removeIncomingNodes();
 					break;
 				case 2:
 				default:
@@ -77,14 +75,21 @@ public class GetSyncAction extends MergeAction {
 		if (changed.length == 0) {
 			return syncSet;
 		}
-		List changedResources = new ArrayList();
-		List addedResources = new ArrayList();
+		IResource[] changedResources = new IResource[changed.length];
+		List additions = new ArrayList();
+		List deletions = new ArrayList();
+		List toMerge = new ArrayList();
+		List incoming = new ArrayList();
+
 		// A list of diff elements in the sync set which are incoming folder additions
 		List parentCreationElements = new ArrayList();
 		// A list of diff elements in the sync set which are folder conflicts
 		List parentConflictElements = new ArrayList();
 		
 		for (int i = 0; i < changed.length; i++) {
+			changedResources[i] = changed[i].getResource();
+			int kind = changed[i].getKind();
+			IResource resource = changed[i].getResource();
 			IDiffContainer parent = changed[i].getParent();
 			if (parent != null) {
 				int parentKind = changed[i].getParent().getKind();
@@ -95,14 +100,40 @@ public class GetSyncAction extends MergeAction {
 					parentConflictElements.add(parent);
 				}
 			}
-			if ((changed[i].getKind() & Differencer.CHANGE_TYPE_MASK) == Differencer.ADDITION) {
-				addedResources.add(changed[i].getResource());
-			} else {
-				changedResources.add(changed[i].getResource());
+			switch (kind & Differencer.DIRECTION_MASK) {
+				case ITeamNode.INCOMING:
+					// Incoming change. Make it outgoing before committing.
+					incoming.add(changed[i]);
+					break;
+				case ITeamNode.OUTGOING:
+					switch (kind & Differencer.CHANGE_TYPE_MASK) {
+						case Differencer.ADDITION:
+							// Outgoing addition. 'add' it before committing.
+							additions.add(resource);
+							break;
+						case Differencer.DELETION:
+							// Outgoing deletion. 'delete' it before committing.
+							deletions.add(resource);
+							break;
+						case Differencer.CHANGE:
+							// Outgoing change. Just commit it.
+							break;
+					}
+					break;
+				case ITeamNode.CONFLICTING:
+					if (changed[i] instanceof TeamFile) {
+						toMerge.add(((TeamFile)changed[i]).getMergeResource().getSyncElement());
+					}
+					break;
 			}
 		}
 		try {
 			RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
+			String comment = manager.promptForComment(getShell());
+			if (comment == null) {
+				// User cancelled. Remove the nodes from the sync set.
+				return null;
+			}
 			if (parentCreationElements.size() > 0) {
 				// If a node has a parent that is an incoming folder creation, we have to 
 				// create that folder locally and set its sync info before we can get the
@@ -123,14 +154,52 @@ public class GetSyncAction extends MergeAction {
 					makeInSync((IDiffElement)it.next());
 				}				
 			}
-			if (addedResources.size() > 0) {
-				manager.update((IResource[])addedResources.toArray(new IResource[0]), monitor);
+
+			// Make any incoming file changes or deletions into outgoing changes before committing.
+			Iterator it = incoming.iterator();
+			while (it.hasNext()) {
+				ITeamNode node = (ITeamNode)it.next();
+				if (node instanceof TeamFile) {
+					CVSRemoteSyncElement element = (CVSRemoteSyncElement)((TeamFile)node).getMergeResource().getSyncElement();
+					element.makeOutgoing(monitor);
+				}
 			}
-			if (changedResources.size() > 0) {
-				manager.get((IResource[])changedResources.toArray(new IResource[0]), monitor);
+			
+			if (additions.size() != 0) {
+				manager.add((IResource[])additions.toArray(new IResource[0]), monitor);
 			}
-		} catch (TeamException e) {
-			ErrorDialog.openError(getShell(), null, null, e.getStatus());
+			if (deletions.size() != 0) {
+				manager.delete((IResource[])deletions.toArray(new IResource[0]), monitor);
+			}
+			if (toMerge.size() != 0) {
+				manager.merged((IRemoteSyncElement[])toMerge.toArray(new IRemoteSyncElement[0]));
+			}
+			manager.commit(changedResources, comment, getShell(), monitor);
+			
+			it = incoming.iterator();
+			while (it.hasNext()) {
+				ITeamNode node = (ITeamNode)it.next();
+				if (node instanceof ChangedTeamContainer) {
+					CVSRemoteSyncElement element = (CVSRemoteSyncElement)((ChangedTeamContainer)node).getMergeResource().getSyncElement();
+					element.makeIncoming(monitor);
+					element.getLocal().delete(true, monitor);
+				}
+			}
+			
+		} catch (final TeamException e) {
+			getShell().getDisplay().syncExec(new Runnable() {
+				public void run() {
+					ErrorDialog.openError(getShell(), null, null, e.getStatus());
+				}
+			});
+			return null;
+		} catch (final CoreException e) {
+			getShell().getDisplay().syncExec(new Runnable() {
+				public void run() {
+					ErrorDialog.openError(getShell(), Policy.bind("simpleInternal"), Policy.bind("internal"), e.getStatus());
+					CVSUIPlugin.log(e.getStatus());
+				}
+			});
 			return null;
 		}
 		return syncSet;
@@ -139,11 +208,12 @@ public class GetSyncAction extends MergeAction {
 	protected void makeInSync(IDiffElement parentElement) throws TeamException {
 		// Recursively make the parent element (and its parents) in sync.
 		// Walk up and find the parents which need to be made in sync too. (For
-		// each parent that doesn't already have sync info.
+		// each parent that doesn't already have sync info).
 		Vector v = new Vector();
 		int parentKind = parentElement.getKind();
 		while (((parentKind & Differencer.CHANGE_TYPE_MASK) == Differencer.ADDITION) &&
-			((parentKind & Differencer.DIRECTION_MASK) == ITeamNode.INCOMING)) {
+			((parentKind & Differencer.DIRECTION_MASK) == ITeamNode.INCOMING) ||
+			 ((parentKind & Differencer.DIRECTION_MASK) == ITeamNode.CONFLICTING)) {
 			v.add(0, parentElement);
 			parentElement = parentElement.getParent();
 			parentKind = parentElement == null ? 0 : parentElement.getKind();
@@ -158,34 +228,8 @@ public class GetSyncAction extends MergeAction {
 			}
 		}
 	}
+
 	protected boolean isEnabled(ITeamNode node) {
-		int kind = node.getKind();
-		if (node instanceof TeamFile) {
-			int direction = kind & Differencer.DIRECTION_MASK;
-			if (direction == ITeamNode.INCOMING || direction == Differencer.CONFLICTING) {
-					return true;
-			}
-			// allow to catchup outgoing deletions
-			return (kind & Differencer.CHANGE_TYPE_MASK) == Differencer.DELETION;
-		}
-		if (node instanceof ChangedTeamContainer) {
-			// first check for changes to this folder
-			int direction = kind & Differencer.DIRECTION_MASK;
-			if (direction == ITeamNode.INCOMING || direction == Differencer.CONFLICTING) {
-				return true;
-			}
-			// Fall through to the UnchangedTeamContainer code
-		}
-		if (node instanceof UnchangedTeamContainer) {
-			IDiffElement[] children = ((UnchangedTeamContainer)node).getChildren();
-			for (int i = 0; i < children.length; i++) {
-				ITeamNode child = (ITeamNode)children[i];
-				if (isEnabled(child)) {
-					return true;
-				}
-			}
-			return false;
-		}
-		return false;
-	}
+		return true;
+	}	
 }
