@@ -13,7 +13,7 @@ public class HighlightFilter implements IFilter {
 	private static final String scriptPart1 =
 		"\n<script language=\"JavaScript\">\n<!--\nvar keywords = new Array (";
 	private static final String scriptPart3 =
-		");\nonload=highlight;\nfunction highlight()\n{\nvar newText = document.body.createTextRange();\nfor (var i = 0; i < keywords.length; i++) {\nwhile (newText.findText(keywords[i]) )\n{\nvar replacement = newText.htmlText\nnewText.pasteHTML(\"<span class=highlight style='background-color:Highlight;color:HighlightText;'>\" + replacement + \"</span>\");\n}\nnewText = document.body.createTextRange();\n}\n}\n// -->\n</script>\n";
+		");\nonload=highlight;\nfunction highlight()\n{\nvar newText = document.body.createTextRange();\nfor (var i = 0; i < keywords.length; i++) {\nwhile (newText.findText(keywords[i]) )\n{\nvar replacement = newText.htmlText\nnewText.pasteHTML(\"<span class=highlight style='background-color:ButtonFace;color:ButtonText;'>\" + replacement + \"</span>\");\n}\nnewText = document.body.createTextRange();\n}\n}\n// -->\n</script>\n";
 
 	/**
 	 * Constructor.
