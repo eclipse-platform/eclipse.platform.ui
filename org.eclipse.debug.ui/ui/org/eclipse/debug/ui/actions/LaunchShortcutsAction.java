@@ -11,6 +11,7 @@
 package org.eclipse.debug.ui.actions;
 
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -24,6 +25,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.debug.internal.ui.actions.LaunchShortcutAction;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchShortcutExtension;
@@ -35,7 +37,6 @@ import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MenuAdapter;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.widgets.Control;
@@ -84,7 +85,8 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 	public LaunchShortcutsAction(String launchGroupIdentifier) {
 		super();
 		fGroup = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(launchGroupIdentifier);
-		setText(DebugPlugin.getDefault().getLaunchManager().getLaunchMode(fGroup.getMode()).getLabel());
+		String label = DebugPlugin.getDefault().getLaunchManager().getLaunchMode(fGroup.getMode()).getLabel();
+		setText(MessageFormat.format(ActionMessages.getString("LaunchShortcutsAction.0"), new String[] { label })); //$NON-NLS-1$
 		setMenuCreator(this);
 		setEnabled(existsConfigTypesForMode());
 	}
@@ -202,12 +204,13 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 				}
 			}
 		}
-		if (accelerator > 1) {
-			new MenuItem(fCreatedMenu, SWT.SEPARATOR);
+		if (accelerator == 1) {
+			// No shortcuts added. Add "none available" action.
+			IAction action= new Action(ActionMessages.getString("LaunchShortcutsAction.1")) {}; //$NON-NLS-1$
+			action.setEnabled(false);
+			ActionContributionItem item= new ActionContributionItem(action);
+			item.fill(fCreatedMenu, -1);
 		}
-		IAction action = new OpenLaunchDialogAction(getLaunchGroup().getIdentifier());
-		ActionContributionItem item= new ActionContributionItem(action);
-		item.fill(fCreatedMenu, -1);
 	}
 	
 	/**
