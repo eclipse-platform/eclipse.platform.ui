@@ -12,10 +12,14 @@
 package org.eclipse.ui.internal.editors.text;
 
 
+import java.text.Collator;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.eclipse.core.runtime.IStatus;
 
@@ -42,15 +46,16 @@ import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.preference.PreferencePage;
 
+import org.eclipse.ui.editors.text.ITextEditorHelpContextIds;
+
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.texteditor.quickdiff.QuickDiff;
-import org.eclipse.ui.texteditor.quickdiff.ReferenceProviderDescriptor;
-import org.eclipse.ui.editors.text.ITextEditorHelpContextIds;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.ExtendedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
+import org.eclipse.ui.texteditor.quickdiff.QuickDiff;
+import org.eclipse.ui.texteditor.quickdiff.ReferenceProviderDescriptor;
 
 
 
@@ -161,7 +166,25 @@ public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbe
 	
 	private String[][] createAnnotationTypeListModel(MarkerAnnotationPreferences preferences) {
 		ArrayList listModelItems= new ArrayList();
-		Iterator e= preferences.getAnnotationPreferences().iterator();
+		SortedSet sortedPreferences= new TreeSet(new Comparator() {
+			/*
+			 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+			 */
+			public int compare(Object o1, Object o2) {
+				if (!(o2 instanceof AnnotationPreference))
+					return -1;
+				if (!(o1 instanceof AnnotationPreference))
+					return 1;
+				
+				AnnotationPreference a1= (AnnotationPreference)o1;
+				AnnotationPreference a2= (AnnotationPreference)o2;
+				
+				return Collator.getInstance().compare(a1.getPreferenceLabel(), a2.getPreferenceLabel());
+				
+			}
+		});
+		sortedPreferences.addAll(preferences.getAnnotationPreferences());
+		Iterator e= sortedPreferences.iterator();
 		while (e.hasNext()) {
 			AnnotationPreference info= (AnnotationPreference) e.next();
 			listModelItems.add(new String[] { info.getPreferenceLabel(), info.getColorPreferenceKey(), info.getTextPreferenceKey(), info.getOverviewRulerPreferenceKey(), info.getHighlightPreferenceKey(), info.getVerticalRulerPreferenceKey()});
