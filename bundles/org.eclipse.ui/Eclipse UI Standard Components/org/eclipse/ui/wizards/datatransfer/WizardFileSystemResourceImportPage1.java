@@ -34,9 +34,9 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.dialogs.ElementFilter;
 import org.eclipse.ui.dialogs.FileSystemElement;
 import org.eclipse.ui.dialogs.WizardResourceImportPage;
+import org.eclipse.ui.internal.dialogs.IElementFilter;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 
@@ -728,7 +728,7 @@ protected void setupSelectionsBasedOnSelectedTypes() {
 	ProgressMonitorDialog dialog = new ProgressMonitorDialog(getContainer().getShell());	
 	final Map selectionMap = new Hashtable();
 	
-	final ElementFilter filter = new ElementFilter() {
+	final IElementFilter filter = new IElementFilter() {
 		
 		public void filterElements(Collection files,IProgressMonitor monitor) throws InterruptedException{
 			if(files == null){

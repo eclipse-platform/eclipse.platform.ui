@@ -22,8 +22,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.internal.*;
-import org.eclipse.ui.internal.dialogs.ResourceTreeAndListGroup;
-import org.eclipse.ui.internal.dialogs.TypeFilteringDialog;
+import org.eclipse.ui.internal.dialogs.*;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.model.WorkbenchViewerSorter;
 
@@ -271,10 +270,10 @@ protected java.util.List getSelectedResources() {
 
 /**
  * Returns this page's list of currently-specified resources to be 
- * imported filtered by the ElementFilter.
+ * imported filtered by the IElementFilter.
  *
  */
-protected void getSelectedResources(ElementFilter filter, IProgressMonitor monitor) throws InterruptedException{
+protected void getSelectedResources(IElementFilter filter, IProgressMonitor monitor) throws InterruptedException{
 	this.selectionGroup.getAllCheckedListItems(filter,monitor);
 }
 

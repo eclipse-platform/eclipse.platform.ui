@@ -15,7 +15,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.Table;
-import org.eclipse.ui.dialogs.ElementFilter;
 
 import java.io.File;
 
@@ -311,14 +310,14 @@ private void expandTreeElement(final Object item) {
  * This does not set any values in the checked state.
  * @param The treeElement being queried
  * @param addAll a boolean to indicate if the checked state store needs to be queried
- * @param result the collection we are adding to.
+ * @param filter IElementFilter - the filter being used on the data
  * @param monitor IProgressMonitor or null that the cancel is polled for 
 */
 private void findAllSelectedListElements(
 	Object treeElement,
 	String parentLabel,
 	boolean addAll,
-	ElementFilter filter,
+	IElementFilter filter,
 	IProgressMonitor monitor) throws InterruptedException{
 		
 	String fullLabel = null;
@@ -380,10 +379,11 @@ private void findAllWhiteCheckedItems(Object treeElement, Collection result) {
  * Returns a flat list of all of the leaf elements which
  * are checked. Filter then based on the supplied ElementFilter.
  * If monitor is cancelled then return null
+ * @param filter - the filter for the data
  * @param monitor IProgressMonitor or null
  * @return all of the leaf elements which are checked
  */
-public void getAllCheckedListItems(ElementFilter filter, IProgressMonitor monitor) throws InterruptedException{
+public void getAllCheckedListItems(IElementFilter filter, IProgressMonitor monitor) throws InterruptedException{
 
 	//Iterate through the children of the root as the root is not in the store
 	Object[] children = treeContentProvider.getChildren(root);
@@ -407,7 +407,7 @@ public List getAllCheckedListItems() {
 	
 	final ArrayList returnValue = new ArrayList();
 	
-	ElementFilter passThroughFilter = new ElementFilter() {
+	IElementFilter passThroughFilter = new IElementFilter() {
 		
 		public void filterElements(Collection elements,IProgressMonitor monitor) throws InterruptedException{
 			returnValue.addAll(elements);
