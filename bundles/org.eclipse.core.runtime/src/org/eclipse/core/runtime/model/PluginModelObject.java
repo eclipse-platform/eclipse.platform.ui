@@ -98,4 +98,12 @@ public void setStartLine(int lineNumber) {
 	if (getStartLine() == -1)
 		flags = (lineNumber + 1) | (flags & M_READ_ONLY);
 }
+/**
+ * Return a string representation of this object. This value is not to be relied
+ * on and can change at any time. To be used for debugging purposes only.
+ * 
+ * @see java.lang.Object#toString() */
+public String toString() {
+	return this.getClass() + "(" + getName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+}
 }
