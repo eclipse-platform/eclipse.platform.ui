@@ -1802,9 +1802,9 @@
             id="org.eclipse.ui.NavigateActionSet">
          <action
                label="%GoToResourceAction.label"
-               class="org.eclipse.ui.views.navigator.GoToResourceAction2"
+               retarget="true"
                menubarPath="navigate/goTo/"
-               id="org.eclipse.ui.GoToResource">
+               id="goToResource">
          </action>
          <action
                definitionId="org.eclipse.ui.navigate.openResource"

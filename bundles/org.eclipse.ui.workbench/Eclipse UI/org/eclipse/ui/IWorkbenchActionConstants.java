@@ -506,6 +506,12 @@ public interface IWorkbenchActionConstants {
 	public static final String GO_TO = "goTo";	//$NON-NLS-1$
 
 	/**
+	 * Navigate menu: name of standard Go To Resource global action
+	 * (value <code>"goToResource"</code>).
+	 */
+	public static final String GO_TO_RESOURCE = "goToResource";	// Global action. //$NON-NLS-1$
+
+	/**
 	 * Navigate menu: name of standard Sync With Editor global action (value
 	 * <code>"syncEditor"</code>).
 	 */

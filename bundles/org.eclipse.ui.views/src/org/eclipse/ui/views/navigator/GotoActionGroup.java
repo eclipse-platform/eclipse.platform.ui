@@ -28,6 +28,7 @@ public class GotoActionGroup extends ResourceNavigatorActionGroup {
 	private ForwardAction forwardAction;
 	private GoIntoAction goIntoAction;
 	private UpAction upAction;
+	private GotoResourceAction goToResourceAction;
 	private IResourceChangeListener resourceChangeListener;
 	
 	public GotoActionGroup(IResourceNavigator navigator) {
@@ -80,6 +81,9 @@ public class GotoActionGroup extends ResourceNavigatorActionGroup {
 		actionBars.setGlobalActionHandler(
 			IWorkbenchActionConstants.UP,
 			upAction);
+		actionBars.setGlobalActionHandler(
+			IWorkbenchActionConstants.GO_TO_RESOURCE,
+			goToResourceAction);
 			
 		IToolBarManager toolBar = actionBars.getToolBarManager();
 		toolBar.add(backAction);
@@ -93,6 +97,7 @@ public class GotoActionGroup extends ResourceNavigatorActionGroup {
 		backAction = new BackAction(frameList);
 		forwardAction = new ForwardAction(frameList);
 		upAction = new UpAction(frameList);
+		goToResourceAction = new GotoResourceAction(navigator, ResourceNavigatorMessages.getString("GoToResource.label"));
 	}	
 
 	public void updateActionBars() {
