@@ -331,12 +331,12 @@ public class WorkingSetManager {
 		Document doc = new DocumentImpl();
 		Element root = doc.createElement("workingSets");
 		doc.appendChild(root);
-;
+
 		saveWorkingSetState(root);
 
 		File stateFile = getWorkingSetStateFile();
-
 		try {
+			stateFile.getParentFile().mkdir();
 			FileOutputStream stream = new FileOutputStream(stateFile);
 
 			OutputFormat format = new OutputFormat();
