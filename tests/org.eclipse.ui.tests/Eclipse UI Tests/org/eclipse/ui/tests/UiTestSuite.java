@@ -33,5 +33,6 @@ public class UiTestSuite extends TestSuite {
 		addTest(new org.eclipse.ui.tests.navigator.NavigatorTestSuite());
 		addTest(new org.eclipse.ui.tests.adaptable.AdaptableTestSuite());			
 		addTest(new org.eclipse.ui.tests.zoom.ZoomTestSuite());			
+		addTest(new org.eclipse.ui.tests.datatransfer.DataTransferTestSuite());
 	}
 }
