@@ -68,17 +68,48 @@ class FileStructureVisitor extends AbstractStructureVisitor {
 		}
 
 		// Send files, then the questionable folders, then the managed folders
-		ICVSResource[] files = mFolder.members(ICVSFolder.FILE_MEMBERS);
-		for (int i = 0; i < files.length; i++) {
-			files[i].accept(this);
+		ICVSResource[] children = mFolder.members(ICVSFolder.ALL_UNIGNORED_MEMBERS);
+		sendFiles(children);
+		sendQuestionableFolders(children);
+		sendManagedFolders(children);
+	}
+
+	/**
+	 * Method sendManagedFolders.
+	 * @param children
+	 */
+	private void sendManagedFolders(ICVSResource[] children) throws CVSException {
+		for (int i = 0; i < children.length; i++) {
+			ICVSResource resource = children[i];
+			if (resource.isFolder() && resource.isManaged()) {
+				resource.accept(this);
+			}
 		}
-		ICVSResource[] folders = mFolder.members(ICVSFolder.FOLDER_MEMBERS | ICVSFolder.UNMANAGED_MEMBERS);
-		for (int i = 0; i < folders.length; i++) {
-			folders[i].accept(this);
+	}
+
+	/**
+	 * Method sendQuestionableFolders.
+	 * @param children
+	 */
+	private void sendQuestionableFolders(ICVSResource[] children) throws CVSException {
+		for (int i = 0; i < children.length; i++) {
+			ICVSResource resource = children[i];
+			if (resource.isFolder() && ! resource.isManaged()) {
+				resource.accept(this);
+			}
 		}
-		folders = mFolder.members(ICVSFolder.FOLDER_MEMBERS | ICVSFolder.MANAGED_MEMBERS);
-		for (int i = 0; i < folders.length; i++) {
-			folders[i].accept(this);
+	}
+
+	/**
+	 * Method sendFiles.
+	 * @param children
+	 */
+	private void sendFiles(ICVSResource[] children) throws CVSException {
+		for (int i = 0; i < children.length; i++) {
+			ICVSResource resource = children[i];
+			if (!resource.isFolder()) {
+				resource.accept(this);
+			}
 		}
 	}
 
