@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.debug.ui;
 
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,6 +26,7 @@ import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsMessages;
 import org.eclipse.debug.internal.ui.preferences.MultipleInputDialog;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -291,7 +293,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		if (dialog.open() != Dialog.OK) {
 			return;
 		}
-		String name= dialog.getValue(NAME_LABEL);
+		String name= dialog.getValue(NAME_LABEL).trim();
 		if (name.length() < 1) {
 			return;
 		}
@@ -302,6 +304,10 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		for (int i = 0; i < items.length; i++) {
 			EnvironmentVariable variable = (EnvironmentVariable) items[i].getData();
 			if (variable.getName().equals(newName)) {
+				boolean overWrite= MessageDialog.openQuestion(getShell(), LaunchConfigurationsMessages.getString("EnvironmentTab.12"), MessageFormat.format(LaunchConfigurationsMessages.getString("EnvironmentTab.13"), new String[] {name})); //$NON-NLS-1$ //$NON-NLS-2$
+				if (!overWrite) {
+					return;
+				}
 				environmentTable.remove(variable);
 				break;
 			}
