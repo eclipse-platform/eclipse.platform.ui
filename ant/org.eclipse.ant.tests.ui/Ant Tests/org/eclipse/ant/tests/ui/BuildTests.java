@@ -32,7 +32,7 @@ public class BuildTests extends AbstractAntUIBuildTest {
    */
   public void testOutput() throws CoreException {
 	  launch("echoing");
-	  assertTrue("Incorrect number of messages logged for build. Should be 8. Was " + ConsoleLineTracker.getNumberOfMessages(), ConsoleLineTracker.getNumberOfMessages() == 8);
+	  assertTrue("Incorrect number of messages logged for build. Should be 7. Was " + ConsoleLineTracker.getNumberOfMessages(), ConsoleLineTracker.getNumberOfMessages() == 7);
 	  String message= ConsoleLineTracker.getMessage(6);
 	  assertTrue("Incorrect last message. Should start with Total time:. Message: " + message, message.startsWith("Total time:"));
   }
@@ -44,7 +44,7 @@ public class BuildTests extends AbstractAntUIBuildTest {
 	 */
 	public void testBuildFailedMessage() throws CoreException {
 		launch("bad");
-		assertTrue("Incorrect number of messages logged for build. Should be 7. Was " + ConsoleLineTracker.getNumberOfMessages(), ConsoleLineTracker.getNumberOfMessages() == 7);
+		assertTrue("Incorrect number of messages logged for build. Should be 6. Was " + ConsoleLineTracker.getNumberOfMessages(), ConsoleLineTracker.getNumberOfMessages() == 6);
 		String message= ConsoleLineTracker.getMessage(4);
 		assertTrue("Incorrect last message. Should start with Build Failed:. Message: " + message, message.startsWith("BUILD FAILED:"));
 	}
