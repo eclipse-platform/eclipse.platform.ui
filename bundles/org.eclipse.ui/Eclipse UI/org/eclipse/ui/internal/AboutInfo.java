@@ -340,7 +340,7 @@ public class AboutInfo extends NewConfigurationInfo {
 		URL url = null;
 		String fileName = (String) ini.get(key);
 		if (fileName != null) {
-			url = getDescriptor().find(new Path("$nl$").append(fileName));
+			url = getDescriptor().find(new Path(fileName));
 		}
 		return url;
 	}
