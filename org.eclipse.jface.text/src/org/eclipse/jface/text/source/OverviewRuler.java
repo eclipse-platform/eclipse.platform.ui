@@ -599,7 +599,7 @@ public class OverviewRuler implements IOverviewRuler {
 						fAnnotationHeight= hh;
 
 						int startLine= textWidget.getLineAtOffset(widgetRegion.getOffset());						
-						yy= Math.min(startLine * (size.y / maxLines), size.y - hh);
+						yy= Math.min((startLine * size.y) / maxLines, size.y - hh);
 
 						if (fill != null) {
 							gc.setBackground(fill);
@@ -683,8 +683,8 @@ public class OverviewRuler implements IOverviewRuler {
 		
 		if (fTextViewer instanceof ITextViewerExtension5) {
 			ITextViewerExtension5 extension= (ITextViewerExtension5) fTextViewer;
-			lines[0]= extension.widgetlLine2ModelLine(lines[0]);
-			lines[1]= extension.widgetlLine2ModelLine(lines[1]);
+			lines[0]= extension.widgetLine2ModelLine(lines[0]);
+			lines[1]= extension.widgetLine2ModelLine(lines[1]);
 		} else {
 			try {
 				IRegion visible= fTextViewer.getVisibleRegion();
