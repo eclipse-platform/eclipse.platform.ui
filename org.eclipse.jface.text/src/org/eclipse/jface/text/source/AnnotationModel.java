@@ -75,7 +75,11 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	 * @see IAnnotationModel#addAnnotation(Annotation, Position)
 	 */
 	public void addAnnotation(Annotation annotation, Position position) {
-		addAnnotation(annotation, position, true);
+		try {
+			addAnnotation(annotation, position, true);
+		} catch (BadLocationException e) {
+			// ignore invalid position
+		}
 	}
 
 	/**
@@ -87,12 +91,13 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	 * @param annotation the annotation to add
 	 * @param position the associate position
 	 * @param fireModelChange indicates whether to notify all model listeners
+	 * @throws BadLocationException if the position is not a valid document position
 	 */
-	protected void addAnnotation(Annotation annotation, Position position, boolean fireModelChanged) {
+	protected void addAnnotation(Annotation annotation, Position position, boolean fireModelChanged) throws BadLocationException {
 		if (!fAnnotations.containsKey(annotation)) {
 			
-			fAnnotations.put(annotation, position);
 			addPosition(fDocument, position);
+			fAnnotations.put(annotation, position);
 
 			if (fireModelChanged)
 				fireModelChanged();
@@ -115,14 +120,11 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	 *
 	 * @param document the document to which to add the position
 	 * @param position the position to add
+	 * @throws BadLocationException if the position is not a valid document position
 	 */
-	protected void addPosition(IDocument document, Position position) {
-		if (document != null) {
-			try {
-				document.addPosition(position);
-			} catch (BadLocationException x) {
-			}
-		}
+	protected void addPosition(IDocument document, Position position) throws BadLocationException {
+		if (document != null)
+			document.addPosition(position);
 	}
 	
 	/*
@@ -135,7 +137,11 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 			fDocument= document;
 			Iterator e= fAnnotations.values().iterator();
 			while (e.hasNext())
-				addPosition(fDocument, (Position) e.next());
+				try {
+					addPosition(fDocument, (Position) e.next());
+				} catch (BadLocationException x) {
+					// ignore invalid position
+				}
 		}
 		
 		++ fOpenConnections;

@@ -16,6 +16,7 @@ package org.eclipse.jface.text.source;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 
@@ -167,7 +168,11 @@ class VisualAnnotationModel extends AnnotationModel implements IAnnotationModelL
 				if (fireModelChanged)
 					fireModelChanged();
 			} else {
-				addAnnotation(annotation, position, fireModelChanged);
+				try {
+					addAnnotation(annotation, position, fireModelChanged);
+				} catch (BadLocationException e) {
+					// ignore invalid position
+				}
 			}
 		}
 	}
