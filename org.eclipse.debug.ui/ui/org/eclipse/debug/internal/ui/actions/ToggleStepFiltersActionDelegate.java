@@ -22,7 +22,6 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IActionDelegate2;
 
 /**
@@ -54,13 +53,6 @@ public class ToggleStepFiltersActionDelegate extends AbstractDebugActionDelegate
 		return DebugUIPlugin.getDefault().getPreferenceStore();
 	}	
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
-	 */
-	public void runWithEvent(IAction action, Event event) {
-		run(action);
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
@@ -98,6 +90,7 @@ public class ToggleStepFiltersActionDelegate extends AbstractDebugActionDelegate
 		init(action);
 		return res;
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.AbstractDebugActionDelegate#update(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */

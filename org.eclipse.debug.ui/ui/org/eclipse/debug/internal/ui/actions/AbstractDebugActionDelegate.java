@@ -28,6 +28,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.INullSelectionListener;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IViewActionDelegate;
@@ -37,7 +39,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
-public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowActionDelegate, IViewActionDelegate, ISelectionListener, INullSelectionListener {
+public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowActionDelegate, IViewActionDelegate, IActionDelegate2, ISelectionListener, INullSelectionListener {
 	
 	/**
 	 * The underlying action for this delegate
@@ -81,6 +83,14 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 		 */
 		public void addBackgroundDelegate(AbstractDebugActionDelegate delegate) {
 			fBackgroundDelegates.add(delegate);
+		}
+		
+		/**
+		 * Removes the given delegate from this manager
+		 * @param delegate
+		 */
+		public void removeBackgroundDelegate(AbstractDebugActionDelegate delegate) {
+			fBackgroundDelegates.remove(delegate);
 		}
 		
 		/**
@@ -139,6 +149,9 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	public void dispose(){
 		if (getWindow() != null) {
 			getWindow().getSelectionService().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
+		}
+		if (isRunInBackground()) {
+			fgBackgroundActionManager.removeBackgroundDelegate(this);
 		}
 	}
 
@@ -433,5 +446,18 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 
 	protected boolean isEnabledFor(Object element) {
 		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
+	 */
+	public void runWithEvent(IAction action, Event event) {
+		run(action);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
+	 */
+	public void init(IAction action) {
 	}
 }
