@@ -50,7 +50,7 @@ public final class AntDebugUtil {
         }
     }
     
-    private static Location getLocation(Target target) {
+    public static Location getLocation(Target target) {
         try {//succeeds with Ant newer than 1.6.2
             return target.getLocation();
         } catch (NoSuchMethodError e) {

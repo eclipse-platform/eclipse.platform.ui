@@ -19,10 +19,12 @@ import java.io.StringReader;
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.Location;
 import org.apache.tools.ant.Project;
+import org.apache.tools.ant.Target;
 import org.eclipse.ant.internal.core.AbstractEclipseBuildLogger;
 import org.eclipse.ant.internal.ui.AntUtil;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.ant.internal.ui.antsupport.AntSupportMessages;
+import org.eclipse.ant.internal.ui.antsupport.logger.util.AntDebugUtil;
 import org.eclipse.ant.internal.ui.launchConfigurations.AntProcess;
 import org.eclipse.ant.internal.ui.launchConfigurations.AntStreamMonitor;
 import org.eclipse.ant.internal.ui.launchConfigurations.AntStreamsProxy;
@@ -130,7 +132,7 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 		if (location != null) {
 			String newLine= (label + line).trim();
 			IRegion region= new Region(offset, label.length() - 3); // only want the name length "[name] "
-			IHyperlink link= getTaskLink(location);
+			IHyperlink link= getLocationLink(location);
 			if (link != null) {
 				TaskLinkManager.addTaskHyperlink(getAntProcess(fProcessId), link, region, newLine);
 			}
@@ -175,9 +177,9 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 	 * 
 	 * @return hyper link, or <code>null</code>
 	 */
-	private IHyperlink getTaskLink(Location location) {
+	private IHyperlink getLocationLink(Location location) {
 		if (location != null) {
-			return AntUtil.getTaskLink(location.toString(), fBuildFileParent);
+			return AntUtil.getLocationLink(location.toString(), fBuildFileParent);
 		}
 		return null;
 	}	
@@ -280,10 +282,21 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 		if (Project.MSG_INFO > getMessageOutputLevel()) {
 			return;
 		}
+		Target target= event.getTarget();
 		StringBuffer msg= new StringBuffer(System.getProperty("line.separator")); //$NON-NLS-1$
-		msg.append(event.getTarget().getName());
+		String targetName= target.getName();
+		msg.append(targetName);
 		msg.append(':');
-		logMessage(msg.toString(), event, Project.MSG_INFO);
+		String message= msg.toString();
+		Location location= AntDebugUtil.getLocation(target);
+		if (location != null && location != Location.UNKNOWN_LOCATION) {
+			IRegion region= new Region(0, targetName.length());
+			IHyperlink link= getLocationLink(location);
+			if (link != null) {
+				TaskLinkManager.addTaskHyperlink(getAntProcess(fProcessId), link, region, message.trim());
+			}
+		}
+		logMessage(message, event, Project.MSG_INFO);
 	}
 	
 	private boolean loggingToLogFile() {

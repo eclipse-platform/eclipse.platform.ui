@@ -21,6 +21,7 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.StringTokenizer;
 import org.apache.tools.ant.Project;
 import org.eclipse.ant.internal.core.AbstractEclipseBuildLogger;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
@@ -162,7 +163,7 @@ public class RemoteAntBuildListener implements ILaunchesListener {
 			int size = IAntUIConstants.LEFT_COLUMN_SIZE - (taskName.length() + 3);
 			int offset = Math.max(size - 2, 1);
 			int length = IAntUIConstants.LEFT_COLUMN_SIZE - size - 3;
-			IHyperlink taskLink = AntUtil.getTaskLink(location, fBuildFileParent);
+			IHyperlink taskLink = AntUtil.getLocationLink(location, fBuildFileParent);
 			if (taskLink != null) {
 				TaskLinkManager.addTaskHyperlink(getProcess(), taskLink, new Region(offset, length), line);
 			}
@@ -170,6 +171,20 @@ public class RemoteAntBuildListener implements ILaunchesListener {
 			StringBuffer fullMessage= new StringBuffer();
 			adornMessage(taskName, line, fullMessage);
 			writeMessage(fullMessage.append(System.getProperty("line.separator")).toString(), priority); //$NON-NLS-1$
+		} else if (message.startsWith(MessageIds.TARGET)) {
+			message= message.substring(MessageIds.TARGET.length());
+			StringTokenizer tokenizer= new StringTokenizer(message, ","); //$NON-NLS-1$
+			String token = tokenizer.nextToken();
+			int priority= Integer.parseInt(token);
+			message= tokenizer.nextToken();
+			if (tokenizer.hasMoreTokens()) {
+				String location= tokenizer.nextToken();
+				IHyperlink link = AntUtil.getLocationLink(location, fBuildFileParent);
+				if (link != null) {
+					TaskLinkManager.addTaskHyperlink(getProcess(), link, new Region(0, message.length()-1), message);
+				}
+			}
+			writeMessage(message + System.getProperty("line.separator"), priority); //$NON-NLS-1$
 		} else if (message.startsWith(MessageIds.PROCESS_ID)) {
 			message= message.substring(MessageIds.PROCESS_ID.length());
 			fProcessId= message;

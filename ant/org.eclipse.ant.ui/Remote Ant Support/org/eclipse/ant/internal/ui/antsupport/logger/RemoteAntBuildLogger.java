@@ -27,9 +27,11 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Location;
 import org.apache.tools.ant.Project;
+import org.apache.tools.ant.Target;
 import org.apache.tools.ant.util.StringUtils;
 import org.eclipse.ant.internal.ui.antsupport.InternalAntRunner;
 import org.eclipse.ant.internal.ui.antsupport.RemoteAntMessages;
+import org.eclipse.ant.internal.ui.antsupport.logger.util.AntDebugUtil;
 
 /**
  * Parts adapted from org.eclipse.jdt.internal.junit.runner.RemoteTestRunner
@@ -207,8 +209,7 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 		}
 
 		if (Project.MSG_INFO <= msgOutputLevel) {
-			String msg= event.getTarget().getName() + ":"; //$NON-NLS-1$
-			printMessage(msg, out, Project.MSG_INFO);
+			marshalTargetMessage(event);
         }
 	}
 
@@ -328,6 +329,22 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 			sendMessage(message.toString());
 			line = r.readLine();
 		}
+	}
+	
+	private void marshalTargetMessage(BuildEvent event) {
+		Target target= event.getTarget();
+		String msg= target.getName() + ':';
+		Location location= AntDebugUtil.getLocation(target);
+		
+		StringBuffer message= new StringBuffer(MessageIds.TARGET);
+		message.append(Project.MSG_INFO);
+		message.append(',');
+		message.append(msg);
+		message.append(',');
+		if (location != null && location !=Location.UNKNOWN_LOCATION) {
+			message.append(location);
+		}
+		sendMessage(message.toString());
 	}
 
 	/* (non-Javadoc)

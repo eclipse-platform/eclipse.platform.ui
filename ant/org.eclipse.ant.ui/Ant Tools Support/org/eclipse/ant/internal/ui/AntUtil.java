@@ -479,7 +479,7 @@ public final class AntUtil {
 		return root.getFile(new Path(fullPath));
 	}
 
-	public static IHyperlink getTaskLink(String path, File buildFileParent) {
+	public static IHyperlink getLocationLink(String path, File buildFileParent) {
 		path = path.trim();
 		if (path.length() == 0) {
 			return null;
