@@ -17,6 +17,7 @@ import org.eclipse.ant.tests.ui.testplugin.ProjectHelper;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.test.performance.Dimension;
 import org.eclipse.test.performance.PerformanceTestCase;
 import org.eclipse.ui.PartInitException;
 
@@ -36,6 +37,7 @@ public class OpenAntEditorTest extends PerformanceTestCase {
 	public void testOpenAntEditor2() throws PartInitException {
 		// warm run
 		IFile file= getIFile("build.xml");
+		tagAsGlobalSummary("Open Ant Editor", Dimension.CPU_TIME);
 		measureOpenInEditor(file);
 	}
 	
