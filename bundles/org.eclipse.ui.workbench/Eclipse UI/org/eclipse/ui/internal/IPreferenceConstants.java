@@ -107,13 +107,6 @@ public interface IPreferenceConstants {
 	
 	//Tab width = tab height * scalar value
 	public final static String EDITOR_TAB_WIDTH_SCALAR = "EDITOR_TAB_WIDTH_SCALAR"; //$NON-NLS-1$
-	
-	// Boolean: true= allow tabs to span multiple lines
-	public static final String EDITOR_TABS_SPAN_MULTIPLE_LINES = "EDITOR_TABS_SPAN_MULTIPLE_LINES"; //$NON-NLS-1$
-	
-	//Limits number of tabs, usefull when multiple lines of tabs active
-	public final static String NUMBER_EDITOR_TABS = "NUMBER_EDITOR_TABS"; //$NON-NLS-1$
-	public final static int NUMBER_EDITOR_TABS_MAXIMUM = 999;
 
 	//Boolean: true = show Editors drop down button on CTabFolder 
 	public static final String EDITOR_LIST_PULLDOWN_ACTIVE = "EDITOR_LIST_PULLDOWN_ACTIVE"; //$NON-NLS-1$

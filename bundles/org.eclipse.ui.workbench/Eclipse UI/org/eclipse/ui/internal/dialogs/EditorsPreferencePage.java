@@ -60,7 +60,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 	private Button otherEncodingButton;
 	private Combo encodingCombo;
 
-	private Button editorListPullDown;
+//	private Button editorListPullDown;
 	private Composite editorReuseGroup;
 	private Button reuseEditors;
 	private Button closeEditorsOnExit;
@@ -70,10 +70,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 	private Group dirtyEditorReuseGroup;		
 	private Button openNewEditor;
 	private Button promptToReuseEditor;
-
-	// TODO: editor tabs 
-//	private IntegerFieldEditor numberEditorTabs;
-	
+/*
 	// editor tab appearance
 	private Group editorTabCompressionGroup;
 	private Button editorTabCompressionNone;
@@ -87,7 +84,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 	private static final int EDITOR_TAB_COMPRESSION_LOW = 9;
 	private static final int EDITOR_TAB_COMPRESSION_MEDIUM = 6;
 	private static final int EDITOR_TAB_COMPRESSION_HIGH = 3;
-	
+*/	
 	private static final int REUSE_INDENT = 10;
 
 	private IntegerFieldEditor recentFilesEditor;
@@ -114,11 +111,11 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		WorkbenchPreferencePage.createSpace(composite);
 		
 		IPreferenceStore store = getPreferenceStore();
-		editorListPullDown = new Button(composite, SWT.CHECK);
-		editorListPullDown.setText(WorkbenchMessages.getString("WorkbenchPreference.editorsListButton")); //$NON-NLS-1$
-		editorListPullDown.setFont(composite.getFont());
-		editorListPullDown.setSelection(store.getBoolean(IPreferenceConstants.EDITOR_LIST_PULLDOWN_ACTIVE));
-		setButtonLayoutData(editorListPullDown);
+//		editorListPullDown = new Button(composite, SWT.CHECK);
+//		editorListPullDown.setText(WorkbenchMessages.getString("WorkbenchPreference.editorsListButton")); //$NON-NLS-1$
+//		editorListPullDown.setFont(composite.getFont());
+//		editorListPullDown.setSelection(store.getBoolean(IPreferenceConstants.EDITOR_LIST_PULLDOWN_ACTIVE));
+//		setButtonLayoutData(editorListPullDown);
 
 		closeEditorsOnExit = new Button(composite, SWT.CHECK);
 		closeEditorsOnExit.setText(WorkbenchMessages.getString("WorkbenchPreference.closeEditorsButton")); //$NON-NLS-1$
@@ -128,18 +125,9 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		
 		createEditorReuseGroup(composite);
 		
-		WorkbenchPreferencePage.createSpace(composite);		
-		createEditorTabCompressionGroup(composite);
+//		WorkbenchPreferencePage.createSpace(composite);		
+//		createEditorTabCompressionGroup(composite);
 		
-		// TODO: editor tabs
-//		editorTabSpanMultipleLines = new Button(composite, SWT.CHECK);
-//		editorTabSpanMultipleLines.setText(WorkbenchMessages.getString("WorkbenchPreference.editorTabSpanMultipleLine")); //$NON-NLS-1$
-//		editorTabSpanMultipleLines.setFont(composite.getFont());
-//		editorTabSpanMultipleLines.setSelection(store.getBoolean(IPreferenceConstants.EDITOR_TABS_SPAN_MULTIPLE_LINES));
-//		editorTabSpanMultipleLines.setEnabled(false);
-//		setButtonLayoutData(editorTabSpanMultipleLines);
-//		
-//		createNumberOfEditorTabGroup(composite);		
 		WorkbenchPreferencePage.createSpace(composite);
 		createEncodingGroup(composite);
 
@@ -157,7 +145,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 	protected void performDefaults() {
 		IPreferenceStore store = getPreferenceStore();
 		updateEncodingState(true);
-		editorListPullDown.setSelection(store.getDefaultBoolean(IPreferenceConstants.EDITOR_LIST_PULLDOWN_ACTIVE));
+//		editorListPullDown.setSelection(store.getDefaultBoolean(IPreferenceConstants.EDITOR_LIST_PULLDOWN_ACTIVE));
 		closeEditorsOnExit.setSelection(store.getDefaultBoolean(IPreferenceConstants.CLOSE_EDITORS_ON_EXIT));
 		reuseEditors.setSelection(store.getDefaultBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN));
 		dirtyEditorReuseGroup.setEnabled(reuseEditors.getSelection());
@@ -169,10 +157,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		reuseEditorsThreshold.getLabelControl(editorReuseThresholdGroup).setEnabled(reuseEditors.getSelection());
 		reuseEditorsThreshold.getTextControl(editorReuseThresholdGroup).setEnabled(reuseEditors.getSelection());
 		recentFilesEditor.loadDefault();
-		//TODO: editor tabs
-//		numberEditorTabs.loadDefault();
-//		editorTabSpanMultipleLines.setSelection(store.getDefaultBoolean(IPreferenceConstants.EDITOR_TABS_SPAN_MULTIPLE_LINES));
-		updateEditorTabCompressionState(store.getDefaultInt(IPreferenceConstants.EDITOR_TAB_WIDTH_SCALAR));
+//		updateEditorTabCompressionState(store.getDefaultInt(IPreferenceConstants.EDITOR_TAB_WIDTH_SCALAR));
 	}
 	
 	public boolean performOk() {
@@ -188,7 +173,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		
 		ResourcesPlugin.getPlugin().savePluginPreferences();
 
-		store.setValue(IPreferenceConstants.EDITOR_LIST_PULLDOWN_ACTIVE,editorListPullDown.getSelection());
+//		store.setValue(IPreferenceConstants.EDITOR_LIST_PULLDOWN_ACTIVE,editorListPullDown.getSelection());
 		store.setValue(IPreferenceConstants.CLOSE_EDITORS_ON_EXIT,closeEditorsOnExit.getSelection());
 
 		// store the reuse editors setting
@@ -199,11 +184,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		// store the recent files setting
 		recentFilesEditor.store();
 
-		// TODO: editor tabs
-		// store the editor tab settings
-//		numberEditorTabs.store();
-//		store.setValue(IPreferenceConstants.EDITOR_TABS_SPAN_MULTIPLE_LINES, editorTabSpanMultipleLines.getSelection());
-		store.setValue(IPreferenceConstants.EDITOR_TAB_WIDTH_SCALAR, editorTabCompression);		
+//		store.setValue(IPreferenceConstants.EDITOR_TAB_WIDTH_SCALAR, editorTabCompression);		
 		
 		return super.performOk();
 	}
@@ -303,10 +284,6 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 			setErrorMessage(reuseEditorsThreshold.getErrorMessage());
 			setValid(false);
 		}
-//		else if (!numberEditorTabs.isValid()) {
-//			setErrorMessage(numberEditorTabs.getErrorMessage());
-//			setValid(false);
-//		}
 		else if (!isEncodingValid()) {
 			setErrorMessage(WorkbenchMessages.getString("WorkbenchPreference.unsupportedEncoding")); //$NON-NLS-1$
 			setValid(false);
@@ -441,36 +418,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		recentFilesEditor.setPropertyChangeListener(validityChangeListener);
 		
 	}
-	
-	/**
-	 * Create a composite that contains entry fields specifying number of editor
-	 * tabs preferences.
-	 */
-/*	private void createNumberOfEditorTabGroup(Composite composite) {
-		Composite groupComposite = new Composite(composite, SWT.LEFT);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		groupComposite.setLayout(layout);
-		GridData gd = new GridData();
-		gd.horizontalAlignment = GridData.FILL;
-		gd.grabExcessHorizontalSpace = true;
-		groupComposite.setLayoutData(gd);
-		groupComposite.setFont(composite.getFont());
-		
-		numberEditorTabs = new IntegerFieldEditor(IPreferenceConstants.NUMBER_EDITOR_TABS, WorkbenchMessages.getString("WorkbenchPreference.numberEditorTabs"), groupComposite); //$NON-NLS-1$
-	
-		int numberEditorTabsMax = IPreferenceConstants.NUMBER_EDITOR_TABS_MAXIMUM;
-		numberEditorTabs.setPreferenceStore(WorkbenchPlugin.getDefault().getPreferenceStore());
-		numberEditorTabs.setPreferencePage(this);
-		numberEditorTabs.setTextLimit(Integer.toString(numberEditorTabsMax).length());
-		numberEditorTabs.setErrorMessage(WorkbenchMessages.format("WorkbenchPreference.numberEditorTabsError", new Object[] { new Integer(numberEditorTabsMax)})); //$NON-NLS-1$
-		numberEditorTabs.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
-		numberEditorTabs.setValidRange(0, numberEditorTabsMax);
-		numberEditorTabs.load();
-		numberEditorTabs.setPropertyChangeListener(validityChangeListener);
-	
-	}
-*/
+/*
 	private void updateEditorTabCompressionState(int scalar) {
 		editorTabCompression = scalar;
 		editorTabCompressionNone.setSelection(scalar==EDITOR_TAB_COMPRESSION_NONE);
@@ -478,9 +426,9 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		editorTabCompressionMedium.setSelection(scalar==EDITOR_TAB_COMPRESSION_MEDIUM);
 		editorTabCompressionHigh.setSelection(scalar==EDITOR_TAB_COMPRESSION_HIGH);
 	}
-		
+	
 	private void createEditorTabCompressionGroup(Composite composite) {
-		/* Create the group */
+		// Create the group
 		Font font = composite.getFont();
 		
 		editorTabCompressionGroup = new Group(composite, SWT.NONE);
@@ -491,7 +439,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		editorTabCompressionGroup.setText(WorkbenchMessages.getString("WorkbenchPreference.editorTabCompression")); //$NON-NLS-1$
 		editorTabCompressionGroup.setFont(font);
 	
-		/* Create the buttons */
+		// Create the buttons
 		editorTabCompressionNone = new Button (editorTabCompressionGroup, SWT.RADIO);
 		editorTabCompressionNone.setText(WorkbenchMessages.getString("WorkbenchPreference.editorTabCompressionNone")); //$NON-NLS-1$
 		editorTabCompressionNone.setFont(font);
@@ -505,7 +453,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		editorTabCompressionHigh.setText(WorkbenchMessages.getString("WorkbenchPreference.editorTabCompressionHigh")); //$NON-NLS-1$
 		editorTabCompressionHigh.setFont(font);
 	
-		/* Add the listeners */
+		// Add the listeners
 		SelectionAdapter selectionListener = new SelectionAdapter () {
 			public void widgetSelected (SelectionEvent event) {
 				if (!((Button) event.widget).getSelection ()) {
@@ -539,9 +487,10 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		editorTabCompressionMedium.addSelectionListener(selectionListener);
 		editorTabCompressionHigh.addSelectionListener(selectionListener);
 	
-		/* Set the default state */
+		// Set the default state
 		IPreferenceStore store = getPreferenceStore();
 		updateEditorTabCompressionState(store.getInt(IPreferenceConstants.EDITOR_TAB_WIDTH_SCALAR));
 	}
+*/
 }
 

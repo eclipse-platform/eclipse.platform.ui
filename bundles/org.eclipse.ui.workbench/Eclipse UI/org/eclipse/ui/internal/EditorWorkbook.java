@@ -143,14 +143,6 @@ public void createControl(Composite parent) {
 							tabFolder.setTopRight(null);
 						}
 				}
-//				if(event.getProperty().equals(IPreferenceConstants.NUMBER_EDITOR_TABS)){
-//					//TODO: editor tabs
-//					int numberOfTabs = WorkbenchPlugin.getDefault().getPreferenceStore().getInt(IPreferenceConstants.NUMBER_EDITOR_TABS);
-//				}
-//				if(event.getProperty().equals(IPreferenceConstants.EDITOR_TABS_SPAN_MULTIPLE_LINES)){
-//					boolean spanMultiple = WorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(IPreferenceConstants.EDITOR_TABS_SPAN_MULTIPLE_LINES);
-//					//TODO: editor tabs
-//				}
 			}
 		};	
 
@@ -208,22 +200,15 @@ public void createControl(Composite parent) {
 
 		public void mouseDown(MouseEvent e) {
 			if (visibleEditor != null) {
+				// switch to the editor
 				CTabItem item = getTab(visibleEditor);
-				// ctrl-click close the editor
-				if ((e.stateMask & SWT.CTRL) != 0) {
-					EditorPane pane = (EditorPane) mapTabToEditor.get(item);
-					pane.doHide();
-					item.dispose();					
-				} else {
-					// switch to the editor
-					visibleEditor.setFocus();
-					Rectangle bounds = item.getBounds();
-					if(bounds.contains(e.x,e.y)) {
-						if (e.button == 3)
-							visibleEditor.showPaneMenu(tabFolder,new Point(e.x, e.y));
-						else if((e.button == 1) && overImage(item,e.x))
-							visibleEditor.showPaneMenu();
-					}
+				visibleEditor.setFocus();
+				Rectangle bounds = item.getBounds();
+				if(bounds.contains(e.x,e.y)) {
+					if (e.button == 3)
+						visibleEditor.showPaneMenu(tabFolder,new Point(e.x, e.y));
+					else if((e.button == 1) && overImage(item,e.x))
+						visibleEditor.showPaneMenu();
 				}
 			}
 		}
