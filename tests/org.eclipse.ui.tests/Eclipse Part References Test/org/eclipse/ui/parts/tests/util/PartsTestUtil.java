@@ -112,10 +112,8 @@ public class PartsTestUtil {
      * @param part
      *            The part.
      */
-    public static void zoom(IWorkbenchPart part, WorkbenchPage page) {
-        if (part == null)
-            throw new NullPointerException();
-        page.toggleZoom(((PartSite) part.getSite()).getPane()
+    public static void zoom(IWorkbenchPart part) {
+        ((WorkbenchPage) part.getSite().getPage()).toggleZoom(((PartSite) part.getSite()).getPane()
                 .getPartReference());
     }
 

@@ -19,8 +19,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
-import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.parts.tests.util.PartsTestUtil;
 import org.eclipse.ui.parts.tests.util.PartsWorkbenchAdvisor;
 
@@ -130,9 +128,7 @@ public class EditorsReferencesTest extends TestCase {
      */
     private void openEditors(final int lastFileToOpen) {
         PartsWorkbenchAdvisor wa = new PartsWorkbenchAdvisor() {
-            public void postWindowOpen(IWorkbenchWindowConfigurer configurer) {
-                super.postWindowOpen(configurer);
-                IWorkbenchPage page = configurer.getWindow().getActivePage();
+            protected void validate(IWorkbenchPage page) {
                 for (int index = 0; index < PartsTestUtil.numOfParts; index++) {
                     if (index != lastFileToOpen)
                         PartsTestUtil.openEditor(PartsTestUtil
@@ -160,9 +156,7 @@ public class EditorsReferencesTest extends TestCase {
     private void checkEditorsParts(final int lastFileOpened) {
 
         PartsWorkbenchAdvisor wa = new PartsWorkbenchAdvisor() {
-            public void postWindowOpen(IWorkbenchWindowConfigurer configurer) {
-                super.postWindowOpen(configurer);
-                IWorkbenchPage page = configurer.getWindow().getActivePage();
+            protected void validate(IWorkbenchPage page) {
                 String activeFileName = PartsTestUtil
                         .getFileName(lastFileOpened);
                 assertEquals(page.getEditorReferences().length,
@@ -195,9 +189,7 @@ public class EditorsReferencesTest extends TestCase {
      */
     public void zoomEditor(final int editorIndex) {
         PartsWorkbenchAdvisor wa = new PartsWorkbenchAdvisor() {
-            public void postWindowOpen(IWorkbenchWindowConfigurer configurer) {
-                super.postWindowOpen(configurer);
-                IWorkbenchPage page = configurer.getWindow().getActivePage();
+            protected void validate(IWorkbenchPage page) {
                 IWorkbenchPartReference activePartReference = page
                         .getActivePartReference();
                 String activePartReferenceTitle = activePartReference
@@ -209,7 +201,7 @@ public class EditorsReferencesTest extends TestCase {
                 IWorkbenchPart activePart = page.getActivePart();
                 assertTrue(activePart instanceof IEditorPart);
 
-                PartsTestUtil.zoom(activePart, (WorkbenchPage) page);
+                PartsTestUtil.zoom(activePart);
                 assertTrue(PartsTestUtil.isZoomed(activePart));
 
                 IEditorReference[] editorReferences = page
@@ -227,7 +219,7 @@ public class EditorsReferencesTest extends TestCase {
                 assertTrue(activePart instanceof IEditorPart);
 
                 if (PartsTestUtil.isZoomed(activePart))
-                    PartsTestUtil.zoom(activePart, (WorkbenchPage) page);
+                    PartsTestUtil.zoom(activePart);
 
             }
         };

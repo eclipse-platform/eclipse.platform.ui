@@ -20,8 +20,6 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
-import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.parts.tests.util.PartsTestUtil;
 import org.eclipse.ui.parts.tests.util.PartsWorkbenchAdvisor;
 
@@ -130,9 +128,7 @@ public class ViewsReferencesTest extends TestCase {
      */
     private void openViews(final int lastViewToOpen) {
         PartsWorkbenchAdvisor wa = new PartsWorkbenchAdvisor() {
-            public void postWindowOpen(IWorkbenchWindowConfigurer configurer) {
-                super.postWindowOpen(configurer);
-                IWorkbenchPage page = configurer.getWindow().getActivePage();
+            protected void validate(IWorkbenchPage page) {
                 try {
                     for (int index = 0; index < PartsTestUtil.numOfParts; index++) {
                         if (index != lastViewToOpen)
@@ -165,10 +161,7 @@ public class ViewsReferencesTest extends TestCase {
     private void checkViewsParts(final int lastViewOpened) {
 
         PartsWorkbenchAdvisor wa = new PartsWorkbenchAdvisor() {
-            public void postWindowOpen(IWorkbenchWindowConfigurer configurer) {
-                super.postWindowOpen(configurer);
-
-                IWorkbenchPage page = configurer.getWindow().getActivePage();
+            protected void validate(IWorkbenchPage page) {
                 String activeViewId = PartsTestUtil.getView(lastViewOpened);
                 assertEquals(page.getViewReferences().length,
                         PartsTestUtil.numOfParts);
@@ -200,10 +193,7 @@ public class ViewsReferencesTest extends TestCase {
      */
     public void zoomView(final int viewIndex) {
         PartsWorkbenchAdvisor wa = new PartsWorkbenchAdvisor() {
-            public void postWindowOpen(IWorkbenchWindowConfigurer configurer) {
-                super.postWindowOpen(configurer);
-
-                IWorkbenchPage page = configurer.getWindow().getActivePage();
+            protected void validate(IWorkbenchPage page) {
                 IWorkbenchPartReference activePartReference = page
                         .getActivePartReference();
                 String activePartReferenceId = activePartReference.getId();
@@ -214,7 +204,7 @@ public class ViewsReferencesTest extends TestCase {
                 IWorkbenchPart activePart = page.getActivePart();
                 assertTrue(activePart instanceof IViewPart);
 
-                PartsTestUtil.zoom(activePart, (WorkbenchPage) page);
+                PartsTestUtil.zoom(activePart);
                 assertTrue(PartsTestUtil.isZoomed(activePart));
 
                 IViewReference[] viewReferences = page.getViewReferences();
@@ -236,7 +226,7 @@ public class ViewsReferencesTest extends TestCase {
                 assertTrue(activePart instanceof IViewPart);
 
                 if (PartsTestUtil.isZoomed(activePart))
-                    PartsTestUtil.zoom(activePart, (WorkbenchPage) page);
+                    PartsTestUtil.zoom(activePart);
 
             }
         };
