@@ -9,42 +9,36 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.internal.appserver;
-
+import java.io.*;
 import java.net.*;
 import java.util.*;
-
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.*;
 import org.osgi.framework.*;
-
 /**
- * Wrapper for a plugin class loader.
- * This class is only needed because the current PluginClassLoader is not
- * clearly exposed as a URLClassLoader and its getURLs() method does not
- * properly return the list of url's (it misses required jars, etc.)
+ * Wrapper for a plugin class loader. This class is only needed because the
+ * current PluginClassLoader is not clearly exposed as a URLClassLoader and its
+ * getURLs() method does not properly return the list of url's (it misses
+ * required jars, etc.)
  */
 public class PluginClassLoaderWrapper extends URLClassLoader {
 	private String plugin;
 	private Bundle bundle;
-
 	public PluginClassLoaderWrapper(String plugin) {
 		super(new URL[0]);
 		this.plugin = plugin;
-		this.bundle=Platform.getBundle(plugin);
+		this.bundle = Platform.getBundle(plugin);
 	}
-
 	public Class loadClass(String className) throws ClassNotFoundException {
 		return bundle.loadClass(className);
 	}
-
 	public URL getResource(String resName) {
 		return bundle.getResource(resName);
 	}
-
 	/**
-	 * This is a workaround for the jsp compiler that needs 
-	 * to know the classpath.
-	 * NOTE: for now, assume that the web app plugin requires the tomcat plugin
+	 * This is a workaround for the jsp compiler that needs to know the
+	 * classpath. NOTE: for now, assume that the web app plugin requires the
+	 * tomcat plugin
 	 */
 	public URL[] getURLs() {
 		Set urls = getPluginClasspath(plugin);
@@ -52,18 +46,40 @@ public class PluginClassLoaderWrapper extends URLClassLoader {
 	}
 	private Set getPluginClasspath(String pluginId) {
 		Set urls = new LinkedHashSet();
-		IPluginDescriptor pd = // TODO remove compatibility requirement
-			Platform.getPluginRegistry().getPluginDescriptor(pluginId);
-		if (pd == null)
-			return urls;
-		ClassLoader loader = pd.getPluginClassLoader();
-
-		if (loader instanceof URLClassLoader) {
-			URL[] pluginURLs = ((URLClassLoader) loader).getURLs();
-			for (int i = 0; i < pluginURLs.length; i++) {
-				urls.add(pluginURLs[i]);
+		try {
+			Bundle b = Platform.getBundle(pluginId);
+			// declared classpath
+			String headers = (String) b.getHeaders().get(
+					Constants.BUNDLE_CLASSPATH);
+			ManifestElement[] paths = ManifestElement.parseHeader(
+					Constants.BUNDLE_CLASSPATH, headers);
+			if (paths != null) {
+				for (int i = 0; i < paths.length; i++) {
+					String path = paths[i].getValue();
+					URL url = Platform.find(b, new Path(path));
+					if (url != null)
+						try {
+							urls.add(Platform.asLocalURL(url));
+						} catch (IOException ioe) {
+						}
+				}
 			}
+			// dev classpath
+			String prop = System.getProperty("osgi.dev");
+			if (prop != null) {
+				String[] devpaths = prop.split(",");
+				for (int i = 0; i < devpaths.length; i++) {
+					URL url = Platform.find(b, new Path(devpaths[i]));
+					if (url != null)
+						try {
+							urls.add(Platform.asLocalURL(url));
+						} catch (IOException ioe) {
+						}
+				}
+			}
+		} catch (BundleException e) {
 		}
+		//
 		String[] prereqs = getPluginPrereqs(pluginId);
 		for (int i = 0; i < prereqs.length; i++) {
 			urls.addAll(getPluginClasspath(prereqs[i]));
@@ -89,5 +105,4 @@ public class PluginClassLoaderWrapper extends URLClassLoader {
 		}
 		return new String[0];
 	}
-
 }
