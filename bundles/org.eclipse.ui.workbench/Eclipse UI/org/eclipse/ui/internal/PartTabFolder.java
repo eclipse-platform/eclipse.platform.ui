@@ -24,6 +24,10 @@ import org.eclipse.ui.presentations.IPresentablePart;
  * is always a PartSashContainer (or null), and its children are always either PartPlaceholders or ViewPanes.
  * This contains the real behavior and state for stacks of views, although the widgets for the tabs are contributed
  * using a StackPresentation.
+ * <p>
+ * When bugfixing this class, please consider if your bugfix might also be relevant for Editors. If so, 
+ * the bugfix should probably go in PartStack instead. 
+ * </p>
  * 
  * TODO: eliminate PartTabFolder and EditorWorkbook. PartStack should be general enough to handle editors 
  * and views without any specialization for editors and views. The differences should be in the 

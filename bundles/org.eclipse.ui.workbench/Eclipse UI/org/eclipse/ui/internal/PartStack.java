@@ -692,19 +692,24 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 
         if (current != null) {
             if (newState == IStackPresentationSite.STATE_MAXIMIZED) {
-                ((PartPane) current).doZoom();
+            	PartPane pane = getVisiblePart(); 
+            	if (pane != null) {
+            		pane.doZoom();
+            	}
             } else {
                 presentationSite.setPresentationState(newState);
 
-                WorkbenchPage page = ((PartPane) current).getPage();
-                if (page.isZoomed()) {
-                    page.zoomOut();
-                }
-
-                updateControlBounds();
-
-                if (oldState == IStackPresentationSite.STATE_MINIMIZED) {
-                    forceLayout();
+                WorkbenchPage page = getPage();
+                if (page != null) {
+	                if (page.isZoomed()) {
+	                    page.zoomOut();
+	                }
+	
+	                updateControlBounds();
+	
+	                if (oldState == IStackPresentationSite.STATE_MINIMIZED) {
+	                    forceLayout();
+	                }
                 }
             }
         }

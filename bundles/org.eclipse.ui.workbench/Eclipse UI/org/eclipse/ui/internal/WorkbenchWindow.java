@@ -823,7 +823,6 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 
 			});
 			
-			
 			coolItem.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					if (e.detail == SWT.ARROW) {
