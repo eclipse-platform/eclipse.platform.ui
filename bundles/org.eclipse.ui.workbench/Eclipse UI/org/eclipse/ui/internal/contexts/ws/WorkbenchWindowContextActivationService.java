@@ -115,8 +115,6 @@ final class WorkbenchWindowContextActivationService
 
 		if (!this.activeContextIds.equals(activeContextIds)) {
 			this.activeContextIds = activeContextIds;
-			System.out.println(
-				getClass().getName() + ": " + this.activeContextIds);
 			fireContextActivationServiceChanged(
 				new ContextActivationServiceEvent(this, true));
 		}
