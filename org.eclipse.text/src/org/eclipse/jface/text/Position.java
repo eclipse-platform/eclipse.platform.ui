@@ -57,6 +57,12 @@ public class Position {
 		this.length= length;
 	}
 	
+	/**
+	 * Creates a new uninitialized position.
+	 */
+	protected Position() {
+	}
+	
 	/*
 	 * @see Object#hashCode
 	 */
