@@ -73,9 +73,9 @@ public class SearchResults implements ISearchHitCollector {
 			// adjust score
 			if (!scoreScaleSet) {
 				if (score > 0) {
+					lastScore = score;
 					scoreScale = 0.99f / score;
 					score = 1;
-					lastScore = score;
 				}
 				scoreScaleSet = true;
 			} else {
