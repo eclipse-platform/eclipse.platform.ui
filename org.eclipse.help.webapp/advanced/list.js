@@ -240,8 +240,8 @@ function showPopupMenu(e) {
 	var menu = document.getElementById("menu");
 	if (!menu) 
 		return;	
-	menu.style.left = x+1;
-	menu.style.top = y+1;
+	menu.style.left = (x+1)+"px";
+	menu.style.top = (y+1)+"px";
 	menu.style.display = "block";
 }
 
