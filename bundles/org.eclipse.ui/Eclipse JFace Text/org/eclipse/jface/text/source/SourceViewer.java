@@ -392,6 +392,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer {
 				IRegion r= (s.y == 0) ? getVisibleRegion() : new Region(s.x, s.y);
 
 				try {
+					setRedraw(false); 
 					document.addPosition(p);
 					fContentFormatter.format(document, r);
 
@@ -400,6 +401,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer {
 				} catch (BadLocationException e) {
 					// should not happen
 				} finally {
+					setRedraw(true);
 					document.removePosition(p);					
 				}
 
