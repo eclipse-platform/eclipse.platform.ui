@@ -16,7 +16,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.update.internal.ui.UpdateUI;
 
 public class UpdateModel implements IAdaptable {
-	private Vector changes = new Vector();
 	private Vector bookmarks = new Vector();
 	private Vector listeners = new Vector();
 	private static final String BOOKMARK_FILE = "bookmarks.xml";
