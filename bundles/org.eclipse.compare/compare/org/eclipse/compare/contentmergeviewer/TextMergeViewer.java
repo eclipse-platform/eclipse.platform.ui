@@ -65,6 +65,7 @@ import org.eclipse.compare.internal.INavigatable;
 import org.eclipse.compare.internal.CompareNavigator;
 import org.eclipse.compare.internal.TimeoutContext;
 import org.eclipse.compare.internal.DocumentManager;
+import org.eclipse.compare.internal.CompareMessages;
 import org.eclipse.compare.rangedifferencer.*;
 import org.eclipse.compare.structuremergeviewer.*;
 
@@ -382,16 +383,16 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			
 			if (fDirection == RangeDifference.LEFT) {
 				if (!leftEmpty && rightEmpty)
-					return "addition";
+					return CompareMessages.getString("TextMergeViewer.changeType.addition"); //$NON-NLS-1$
 				if (leftEmpty && !rightEmpty)
-					return "deletion";
+					return CompareMessages.getString("TextMergeViewer.changeType.deletion"); //$NON-NLS-1$
 			} else {
 				if (leftEmpty && !rightEmpty)
-					return "addition";
+					return CompareMessages.getString("TextMergeViewer.changeType.addition"); //$NON-NLS-1$
 				if (!leftEmpty && rightEmpty)
-					return "deletion";
+					return CompareMessages.getString("TextMergeViewer.changeType.deletion"); //$NON-NLS-1$
 			}
-			return "change";
+			return CompareMessages.getString("TextMergeViewer.changeType.change"); //$NON-NLS-1$
 		}
 		
 		Image getImage() {
@@ -1137,12 +1138,12 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			if (sameDoc('A', newInput, oldInput) &&
 					sameDoc('L', newInput, oldInput) &&
 						sameDoc('R', newInput, oldInput)) {
-				if (DEBUG) System.out.println("----- Same docs !!!!");
+				if (DEBUG) System.out.println("----- Same docs !!!!");	//$NON-NLS-1$
 				return false;
 			}
 		}
 		
-		if (DEBUG) System.out.println("***** New docs !!!!");
+		if (DEBUG) System.out.println("***** New docs !!!!");	//$NON-NLS-1$
 		
 		IDocument aDoc= getDocument2('A', oldInput);
 		DocumentManager.remove(aDoc);
@@ -1402,9 +1403,9 @@ public class TextMergeViewer extends ContentMergeViewer  {
 					try {
 						newDoc.addPosition(IDocumentRange.RANGE_CATEGORY, range);
 					} catch (BadPositionCategoryException ex) {
-						System.out.println("BadPositionCategoryException: " + ex);
+						if (DEBUG) System.out.println("BadPositionCategoryException: " + ex);	//$NON-NLS-1$
 					} catch (BadLocationException ex) {
-						System.out.println("BadLocationException: " + ex);
+						if (DEBUG) System.out.println("BadLocationException: " + ex);	//$NON-NLS-1$
 					}
 					addNewRange(type, input, range);
 				}
@@ -2215,13 +2216,13 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		String diffDescription;
 		
 		if (diff == null) {
-			diffDescription= ", no diff";
+			diffDescription= CompareMessages.getString("TextMergeViewer.diffDescription.noDiff.format");	//$NON-NLS-1$
 		} else {
 			
 			if (diff.fIsToken)		// we don't show special info for token diffs
 				diff= diff.fParent;
 		
-			String format= ", {0} #{1} (Left: {2}, Right: {3})";
+			String format= CompareMessages.getString("TextMergeViewer.diffDescription.diff.format");	//$NON-NLS-1$
 			diffDescription= MessageFormat.format(format, 
 				new String[] {
 					getDiffType(diff),						// 0: diff type
@@ -2232,10 +2233,10 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			);
 		}
 		
-		String format= "Left: {0}, Right: {1}{2}";
+		String format= CompareMessages.getString("TextMergeViewer.statusLine.format");	//$NON-NLS-1$
 		String s= MessageFormat.format(format, 
 			new String[] {
-				getCursorPosition(fLeft),	// 0: left cursor
+				getCursorPosition(fLeft),	// 0: left column
 				getCursorPosition(fRight),	// 1: right column
 				diffDescription				// 2: diff description
 			}
@@ -2243,7 +2244,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	
 		slm.setMessage(s);
 	}
-	
+
 	private void clearStatus() {
 		
 		IActionBars bars= Utilities.findActionBars(fComposite);
@@ -2257,20 +2258,20 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	}
 	
 	private String getDiffType(Diff diff) {
-		String s= "";
+		String s= ""; 	//$NON-NLS-1$
 		switch(diff.fDirection) {
 		case RangeDifference.LEFT:
-			s= "outgoing";
+			s= CompareMessages.getString("TextMergeViewer.direction.outgoing");	//$NON-NLS-1$
 			break;
 		case RangeDifference.RIGHT:
-			s= "incoming";
+			s= CompareMessages.getString("TextMergeViewer.direction.incoming");	//$NON-NLS-1$
 			break;
 		case RangeDifference.CONFLICT:
-			s= "conflicting";
+			s= CompareMessages.getString("TextMergeViewer.direction.conflicting");	//$NON-NLS-1$
 			break;
 		}
-		s+= " " + diff.changeType();
-		return s;
+		String format= CompareMessages.getString("TextMergeViewer.diffType.format");	//$NON-NLS-1$
+		return MessageFormat.format(format, new String[] { s, diff.changeType() } );
 	}
 	
 	private String getDiffNumber(Diff diff) {
@@ -2292,9 +2293,15 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		Point p= v.getLineRange(pos, new Point(0, 0));
 		int startLine= p.x+1;
 		int endLine= p.x+p.y;
+		
+		String format;
 		if (endLine < startLine)
-			return "before line " + startLine;
-		return startLine + " : " + endLine;
+			format= CompareMessages.getString("TextMergeViewer.beforeLine.format");	//$NON-NLS-1$
+		else
+			format= CompareMessages.getString("TextMergeViewer.range.format");	//$NON-NLS-1$
+		return MessageFormat.format(format,
+					new String[] { Integer.toString(startLine),
+									Integer.toString(endLine) } );
 	}
 	
 	/**
@@ -2324,13 +2331,15 @@ public class TextMergeViewer extends ContentMergeViewer  {
 					int tabWidth= styledText.getTabs();
 					int column= caret - lineOffset + (tabWidth -1) * occurrences;
 					
-					return ((line + 1) + " : " + (column + 1));
+					String format= CompareMessages.getString("TextMergeViewer.cursorPosition.format");	//$NON-NLS-1$
+					return MessageFormat.format(format,
+						new String[] { Integer.toString(line + 1), Integer.toString(column + 1) } );
 					
 				} catch (BadLocationException x) {
 				}
 			}
 		}
-		return "??";	
+		return "";	//$NON-NLS-1$
 	}
 
 	protected void updateHeader() {
