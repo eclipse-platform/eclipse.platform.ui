@@ -218,6 +218,9 @@ public final class AntUtil {
 	
 	public static IAntModel getAntModel(String buildFilePath, boolean needsTaskResolution, boolean needsLexicalResolution, boolean needsPositionResolution) {
 	    IAntModel model= getAntModel(getBuildFile(buildFilePath), null);
+	    if (model == null) {
+	        return null;
+	    }
 	    model.setCanGetTaskInfo(needsTaskResolution);
 	    model.setCanGetLexicalInfo(needsLexicalResolution);
 	    model.setCanGetPositionInfo(needsPositionResolution);
@@ -238,6 +241,9 @@ public final class AntUtil {
 	}
 	
 	private static IAntModel getAntModel(final File buildFile, URL[] urls) {
+	    if (buildFile == null || !buildFile.exists()) {
+	        return null;
+	    }
 		IDocument doc= getDocument(buildFile);
 		if (doc == null) {
 			return null;
