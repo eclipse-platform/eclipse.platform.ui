@@ -426,11 +426,14 @@ public class InternalAntRunner {
 				if (!scriptExecuted) {
 					return;
 				}
-				processProperties(argList);
 			}
 			
-			setProperties(getCurrentProject());
 			addBuildListeners(getCurrentProject());
+			if (argList != null) {
+				processProperties(argList);
+			}
+			setProperties(getCurrentProject());
+			
 			addInputHandler(getCurrentProject());
 			System.setOut(new PrintStream(new DemuxOutputStream(getCurrentProject(), false)));
 			System.setErr(new PrintStream(new DemuxOutputStream(getCurrentProject(), true)));
@@ -728,13 +731,13 @@ public class InternalAntRunner {
 		args = getArgument(commands, "-inputhandler"); //$NON-NLS-1$
 		if (args != null) {
 			if (args.length == 0) {
-				throw new BuildException("You must specify a classname when using the -inputhandler argument");
+				throw new BuildException(InternalAntMessages.getString("InternalAntRunner.You_must_specify_a_classname_when_using_the_-inputhandler_argument_1")); //$NON-NLS-1$
 			} 
 			inputHandlerClassname = args[0];
 		}
 		args = getArgument(commands, "-inputhandler"); //$NON-NLS-1$
 		if (args != null) {
-			throw new BuildException("Only one input handler class may be specified.");
+			throw new BuildException(InternalAntMessages.getString("InternalAntRunner.Only_one_input_handler_class_may_be_specified._2")); //$NON-NLS-1$
 		}
 		return true;
 	}
@@ -906,7 +909,7 @@ public class InternalAntRunner {
 		String[] args= getArgument(commands, "-propertyfile"); //$NON-NLS-1$
 		while(args != null) {
 			if (args.length == 0) {
-				String message= InternalAntMessages.getString("You must specify a property filename when using the -propertyfile argument");
+				String message= InternalAntMessages.getString(InternalAntMessages.getString("InternalAntRunner.You_must_specify_a_property_filename_when_using_the_-propertyfile_argument_3")); //$NON-NLS-1$
 				logMessage(currentProject, message, Project.MSG_ERR); 
 				throw new BuildException(message);
 			} 
@@ -1134,8 +1137,8 @@ public class InternalAntRunner {
                 fis = new FileInputStream(file);
                 props.load(fis);
             } catch (IOException e) {
-            	String msg= MessageFormat.format("Could not load property file {0}: {1}", new String[]{filename, e.getMessage()});
-            	throw new BuildException(msg, e);
+            	String msg= MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Could_not_load_property_file_{0}__{1}_4"), new String[]{filename, e.getMessage()}); //$NON-NLS-1$
+            	logMessage(getCurrentProject(), msg, Project.MSG_ERR);
             } finally {
                 if (fis != null) {
                     try {
@@ -1170,10 +1173,10 @@ public class InternalAntRunner {
             try {
                 handler = (InputHandler)(Class.forName(inputHandlerClassname).newInstance());
             } catch (ClassCastException e) {
-                String msg = MessageFormat.format("The specified input handler class {0} does not implement the org.apache.tools.ant.input.InputHandler interface", new String[]{inputHandlerClassname});
+                String msg = MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.The_specified_input_handler_class_{0}_does_not_implement_the_org.apache.tools.ant.input.InputHandler_interface_5"), new String[]{inputHandlerClassname}); //$NON-NLS-1$
                 throw new BuildException(msg, e);
             } catch (Exception e) {
-                String msg = MessageFormat.format("Unable to instantiate specified input handler class {0} : {1}", new String[]{inputHandlerClassname, e.getClass().getName()});
+                String msg = MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Unable_to_instantiate_specified_input_handler_class_{0}___{1}_6"), new String[]{inputHandlerClassname, e.getClass().getName()}); //$NON-NLS-1$
                 throw new BuildException(msg, e);
             }
         }

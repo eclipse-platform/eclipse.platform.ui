@@ -309,18 +309,21 @@ public class OptionTests extends AbstractAntTest {
 		try {
 			run("TestForEcho.xml", new String[]{"-propertyfile"});
 		} catch (CoreException ce) {
+			String msg= (String)AntTestChecker.getDefault().getMessages().get(0);
+			assertTrue("Message incorrect!: " + msg, msg.equals("You must specify a property filename when using the -propertyfile argument"));
 			return;
 		}
 		assertTrue("You must specify a property filename when using the -propertyfile argument", false);
 	}
 	
+	/**	 * A build should succeed when a property file is not found.
+	 * The error is reported and the build continues.	 */
 	public void testPropertyFileFileNotFound() throws CoreException {
-		try {
-			run("TestForEcho.xml", new String[]{"-propertyfile", "qq.txt"});
-		} catch (CoreException ce) {
-			return;
-		}
-		assertTrue("You must specify a property filename when using the -propertyfile argument", false);
+		
+		run("TestForEcho.xml", new String[]{"-propertyfile", "qq.txt"});
+		assertSuccessful();
+		String msg= (String)AntTestChecker.getDefault().getMessages().get(0);
+		assertTrue("Message incorrect!: " + msg, msg.startsWith("Could not load property file qq.txt:"));
 	}
 	
 	public void testPropertyFile() throws CoreException {
