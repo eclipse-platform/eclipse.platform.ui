@@ -25,7 +25,7 @@ public class IWorkbenchPageTest extends UITestCase {
 		fActivePage = fWin.getActivePage();
 	}
 
-	public void tearDown() {
+	public void tearDown() throws Exception {
 		super.tearDown();
 		if (proj != null) {
 			try {

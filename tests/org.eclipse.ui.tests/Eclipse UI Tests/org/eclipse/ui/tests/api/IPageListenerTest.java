@@ -30,7 +30,7 @@ public class IPageListenerTest extends UITestCase
 		fWindow.addPageListener(this);
 	}
 	
-	public void tearDown() {
+	public void tearDown() throws Exception {
 		fWindow.removePageListener(this);
 		super.tearDown();
 	}
