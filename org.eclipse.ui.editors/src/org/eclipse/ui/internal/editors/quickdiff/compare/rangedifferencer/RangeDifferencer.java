@@ -361,7 +361,7 @@ public final class RangeDifferencer {
 		int astart= 0;
 
 		for (int i= 0; i < in.length; i++) {
-			RangeDifference es= (RangeDifference) in[i];
+			RangeDifference es= in[i];
 
 			rd= new RangeDifference(RangeDifference.NOCHANGE, mstart, es.rightStart() - mstart, ystart, es.leftStart() - ystart, astart, es.ancestorStart() - astart);
 			if (rd.maxLength() > 0)

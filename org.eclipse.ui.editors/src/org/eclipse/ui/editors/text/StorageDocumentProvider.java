@@ -74,7 +74,7 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 			super(document, model);
 			fEncoding= null;
 		}
-	};
+	}
 	
 	/**
 	 * Creates a new document provider.

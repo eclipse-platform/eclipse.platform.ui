@@ -44,7 +44,7 @@ public abstract class AbstractLineTracker implements ILineTracker {
 		public int delimiterIndex;
 		public int delimiterLength;
 		public String delimiter;
-	};
+	}
 		
 	
 	/** The line information */

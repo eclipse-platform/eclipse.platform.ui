@@ -29,14 +29,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.util.PropertyChangeEvent;
-
 import org.eclipse.jface.text.source.AnnotationRulerColumn;
 import org.eclipse.jface.text.source.ChangeRulerColumn;
 import org.eclipse.jface.text.source.CompositeRuler;
@@ -55,12 +52,17 @@ import org.eclipse.jface.text.source.LineNumberChangeRulerColumn;
 import org.eclipse.jface.text.source.LineNumberRulerColumn;
 import org.eclipse.jface.text.source.OverviewRuler;
 import org.eclipse.jface.text.source.SourceViewer;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.window.Window;
 
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.SaveAsDialog;
 import org.eclipse.ui.editors.quickdiff.IQuickDiffProviderImplementation;
+import org.eclipse.ui.internal.editors.quickdiff.DocumentLineDiffer;
+import org.eclipse.ui.internal.editors.quickdiff.ReferenceProviderDescriptor;
+import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.AddTaskAction;
 import org.eclipse.ui.texteditor.AnnotationPreference;
@@ -75,10 +77,6 @@ import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 import org.eclipse.ui.texteditor.ResourceAction;
 import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
 import org.eclipse.ui.texteditor.StatusTextEditor;
-
-import org.eclipse.ui.internal.editors.quickdiff.DocumentLineDiffer;
-import org.eclipse.ui.internal.editors.quickdiff.ReferenceProviderDescriptor;
-import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 
 
 
@@ -342,7 +340,7 @@ public class TextEditor extends StatusTextEditor {
 			dialog.setMessage(message, IMessageProvider.WARNING);
 		}
 		
-		if (dialog.open() == Dialog.CANCEL) {
+		if (dialog.open() == Window.CANCEL) {
 			if (progressMonitor != null)
 				progressMonitor.setCanceled(true);
 			return;

@@ -19,9 +19,9 @@ import java.util.ResourceBundle;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.window.Window;
 
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -165,7 +165,7 @@ public class EncodingActionGroup extends ActionGroup {
 			else
 				setChecked(fEncoding.equals(current));
 		}
-	};
+	}
 	
 	/**
 	 * Sets the encoding of an  editor to the value that has interactively been defined.
@@ -216,10 +216,10 @@ public class EncodingActionGroup extends ActionGroup {
 				initialValue= ""; //$NON-NLS-1$
 			
 			InputDialog d= new InputDialog(editor.getSite().getShell(), title, message, initialValue, inputValidator); //$NON-NLS-1$
-			if (d.open() == Dialog.OK)
+			if (d.open() == Window.OK)
 				encodingSupport.setEncoding(d.getValue());
 		}
-	};
+	}
 	
 		
 	/** Suffix added to the default encoding action. */

@@ -67,7 +67,7 @@ public final class ChildDocumentManager implements IDocumentListener, ISlaveDocu
 			boolean append= (offset == this.offset + this.length) && length == 0;
 			return append || super.overlapsWith(offset, length);
 		}
-	};	
+	}	
 	
 	
 	/**
@@ -162,7 +162,7 @@ public final class ChildDocumentManager implements IDocumentListener, ISlaveDocu
 			}
 			return false;
 		}
-	};
+	}
 	
 	/**
 	 * The child document partitioner uses the parent document to answer all questions.
@@ -257,7 +257,7 @@ public final class ChildDocumentManager implements IDocumentListener, ISlaveDocu
 			fChildDocument= (ChildDocument) childDocument;
 			fParentDocument= fChildDocument.getParentDocument();
 		}	
-	};
+	}
 	
 	
 	

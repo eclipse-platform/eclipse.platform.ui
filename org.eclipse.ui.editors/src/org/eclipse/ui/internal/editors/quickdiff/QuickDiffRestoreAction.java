@@ -19,9 +19,9 @@ import org.eclipse.jface.text.IRewriteTarget;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModelExtension;
+import org.eclipse.jface.text.source.IChangeRulerColumn;
 import org.eclipse.jface.text.source.ILineDiffer;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
-import org.eclipse.jface.text.source.LineNumberChangeRulerColumn;
 
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.texteditor.IDocumentProvider;
@@ -117,7 +117,7 @@ public abstract class QuickDiffRestoreAction extends TextEditorAction {
 	protected ILineDiffer getDiffer() {
 		IAnnotationModelExtension extension= getModel();
 		if (extension != null)
-			return (ILineDiffer)extension.getAnnotationModel(LineNumberChangeRulerColumn.QUICK_DIFF_MODEL_ID);
+			return (ILineDiffer)extension.getAnnotationModel(IChangeRulerColumn.QUICK_DIFF_MODEL_ID);
 		else
 			return null;
 	}

@@ -111,7 +111,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 				fireElementStateChangeFailed(fInput);
 			}
 		}
-	};
+	}
 	
 	
 	/**
@@ -135,7 +135,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		 */
 		public FileSynchronizer(IFileEditorInput fileEditorInput) {
 			fFileEditorInput= fileEditorInput;
-		};
+		}
 		
 		/**
 		 * Creates a new file synchronizer which is not yet installed on a resource.
@@ -145,7 +145,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		 */
 		public FileSynchronizer(FileEditorInput fileEditorInput) {
 			fFileEditorInput= fileEditorInput;
-		};
+		}
 		
 		/**
 		 * Returns the file wrapped by the file editor input.
@@ -254,7 +254,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 				runnable.run();
 			}
 		}
-	};
+	}
 	
 	
 	
@@ -279,7 +279,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			super(document, model);
 			fFileSynchronizer= fileSynchronizer;
 		}
-	};
+	}
 	
 	
 	/**

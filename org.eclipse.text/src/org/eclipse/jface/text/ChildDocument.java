@@ -86,7 +86,7 @@ public final class ChildDocument extends AbstractDocument {
 			
 			return (char) 0;
 		}
-	};
+	}
 	
 	
 	

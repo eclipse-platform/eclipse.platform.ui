@@ -1167,7 +1167,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 			fOwner= owner;
 			fReplace= replace;
 		}
-	};
+	}
 	
 	/**
 	 * Flushs all registered post notification changes.

@@ -29,7 +29,7 @@ class OverlayPreferenceStore  implements IPreferenceStore {
 	public static final class TypeDescriptor {
 		private TypeDescriptor() {
 		}
-	};
+	}
 	
 	public static final TypeDescriptor BOOLEAN= new TypeDescriptor();
 	public static final TypeDescriptor DOUBLE= new TypeDescriptor();
@@ -50,7 +50,7 @@ class OverlayPreferenceStore  implements IPreferenceStore {
 			fDescriptor= descriptor;
 			fKey= key;
 		}
-	};
+	}
 
 	/*
 	 * @see IPropertyChangeListener
@@ -65,7 +65,7 @@ class OverlayPreferenceStore  implements IPreferenceStore {
 			if (key != null)
 				propagateProperty(fParent, key, fStore); 
 		}
-	};
+	}
 	
 	
 	/** The parent preference store. */

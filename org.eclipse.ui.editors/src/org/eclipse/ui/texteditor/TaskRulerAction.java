@@ -65,7 +65,7 @@ public class TaskRulerAction extends AbstractRulerActionDelegate {
             dialog.setInitialAttributes(getInitialAttributes());
             dialog.open();
 		}
-	};
+	}
 
 	/*
 	 * @see AbstractRulerActionDelegate#createAction(ITextEditor, IVerticalRulerInfo)
