@@ -14,6 +14,7 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.browser.*;
 import org.eclipse.help.internal.base.*;
+import org.eclipse.osgi.service.environment.*;
 
 /**
  * Creates browser by delegating to appropriate browser adapter
@@ -21,6 +22,16 @@ import org.eclipse.help.internal.base.*;
 public class BrowserManager {
 	public static final String ALWAYS_EXTERNAL_BROWSER_KEY = "always_external_browser";
 	public static final String DEFAULT_BROWSER_ID_KEY = "default_browser";
+	public static final String BROWSER_ID_CUSTOM = HelpBasePlugin.PLUGIN_ID
+			+ ".custombrowser";
+	public static final String BROWSER_ID_MOZILLA = HelpBasePlugin.PLUGIN_ID
+			+ ".mozilla";
+	public static final String BROWSER_ID_NETSCAPE = HelpBasePlugin.PLUGIN_ID
+			+ ".netscape";
+	public static final String BROWSER_ID_MAC_SYSTEM = HelpBasePlugin.PLUGIN_ID
+			+ ".defaultBrowserMacOSX";
+	public static final String BROWSER_ID_EMBEDDED = "org.eclipse.help.ui.embeddedbrowser";
+	public static final String BROWSER_ID_SYSTEM = "org.eclipse.help.ui.systembrowser";
 	private static BrowserManager instance;
 	private boolean initialized = false;
 	private BrowserDescriptor currentBrowserDesc;
@@ -56,31 +67,32 @@ public class BrowserManager {
 
 		// 2. set default browser to embedded
 //		if (defaultBrowserDesc == null) {
-//			setDefaultBrowserID("org.eclipse.help.ui.embeddedbrowser");
+//			setDefaultBrowserID(BROWSER_ID_EMBEDDED);
 //		}
 		
 		// 3. set default browser to help implementation of system specific browser
-		String os = System.getProperty("os.name").toLowerCase();
+		String os = Platform.getOS();
 		if (defaultBrowserDesc == null) {
-			if (os.startsWith("win")) {
-				setDefaultBrowserID("org.eclipse.help.ui.systembrowser");
-			} else if (os.startsWith("linux") || os.startsWith("aix")
-					|| os.startsWith("hp") || os.startsWith("sunos")) {
-				setDefaultBrowserID("org.eclipse.help.base.mozilla");
+			if (Constants.WS_WIN32.equalsIgnoreCase(os)) {
+				setDefaultBrowserID(BROWSER_ID_SYSTEM);
+			} else if (Constants.OS_AIX.equalsIgnoreCase(os)
+					|| (Constants.OS_HPUX.equalsIgnoreCase(os))
+					|| (Constants.OS_LINUX.equalsIgnoreCase(os))
+					|| (Constants.OS_SOLARIS.equalsIgnoreCase(os))
+			) {
+				setDefaultBrowserID(BROWSER_ID_MOZILLA);
 				if (defaultBrowserDesc == null) {
-					setDefaultBrowserID("org.eclipse.help.base.netscape");
+					setDefaultBrowserID(BROWSER_ID_NETSCAPE);
 				}
-			} else if (os.equals("Mac OS X")) {
-				setDefaultBrowserID("org.eclipse.help.base.defaultBrowserMacOSX");
-			} else {
-				setDefaultBrowserID("org.eclipse.help.base.mozillaLinux");
+			} else if (Constants.OS_MACOSX.equalsIgnoreCase(os)) {
+				setDefaultBrowserID(BROWSER_ID_MAC_SYSTEM);
 			}
 		}
 
 		// 4. set browser to one of externally contributed
 		if (defaultBrowserDesc == null) {
 			for (int i = 0; i < browsersDescriptors.length; i++) {
-				if ("org.eclipse.help.base.custombrowser"
+				if (BROWSER_ID_CUSTOM
 					.equals(browsersDescriptors[i].getID())) {
 					defaultBrowserDesc = browsersDescriptors[i];
 				}
@@ -89,7 +101,7 @@ public class BrowserManager {
 		
 		// 5. let user specify program
 		if (defaultBrowserDesc == null) {
-			setDefaultBrowserID("org.eclipse.help.base.custombrowser");
+			setDefaultBrowserID(BROWSER_ID_CUSTOM);
 		}
 
 		// 6. use null browser

@@ -9,7 +9,9 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.ui.internal.browser;
+import org.eclipse.core.runtime.*;
 import org.eclipse.help.browser.*;
+import org.eclipse.osgi.service.environment.*;
 public class SystemBrowserFactory implements IBrowserFactory {
 	/**
 	 * Constructor.
@@ -21,7 +23,7 @@ public class SystemBrowserFactory implements IBrowserFactory {
 	 * @see IBrowserFactory#isAvailable()
 	 */
 	public boolean isAvailable() {
-		return System.getProperty("os.name").startsWith("Win");
+		return Constants.WS_WIN32.equalsIgnoreCase(Platform.getOS());
 	}
 	/*
 	 * @see IBrowserFactory#createBrowser()

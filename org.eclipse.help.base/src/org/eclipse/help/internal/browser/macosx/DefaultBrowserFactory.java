@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.help.internal.browser.macosx;
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.help.browser.*;
+import org.eclipse.osgi.service.environment.*;
 
 
 public class DefaultBrowserFactory implements IBrowserFactory {
@@ -23,7 +25,7 @@ public class DefaultBrowserFactory implements IBrowserFactory {
 	 * @see IBrowserFactory#isAvailable()
 	 */
 	public boolean isAvailable() {
-		return System.getProperty("os.name").equals("Mac OS X");
+		return Constants.OS_MACOSX.equalsIgnoreCase(Platform.getOS());
 		/*
 		 * we assume that every Mac OS X has an "/usr/bin/osascript"
 		 * so we don't test any further

@@ -29,8 +29,6 @@ import org.eclipse.ui.help.*;
 public class BrowsersPreferencePage extends PreferencePage
 		implements
 			IWorkbenchPreferencePage {
-	private static final String CUSTOM_BROWSER_ID = HelpBasePlugin.PLUGIN_ID
-			+ ".custombrowser";
 	private Button alwaysExternal;
 	private Button[] externalBrowsers;
 	private Button customBrowserRadio;
@@ -109,7 +107,7 @@ public class BrowsersPreferencePage extends PreferencePage
 				radio.setSelection(false);
 			radio.setData(descriptors[i]);
 			externalBrowsers[i] = radio;
-			if (CUSTOM_BROWSER_ID.equals(descriptors[i].getID())) {
+			if (BrowserManager.BROWSER_ID_CUSTOM.equals(descriptors[i].getID())) {
 				customBrowserRadio = radio;
 				radio.addSelectionListener(new SelectionListener() {
 					public void widgetSelected(SelectionEvent selEvent) {

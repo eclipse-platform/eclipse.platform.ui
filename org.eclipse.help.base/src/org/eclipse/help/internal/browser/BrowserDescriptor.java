@@ -36,6 +36,6 @@ public class BrowserDescriptor {
 		return factory;
 	}
 	public boolean isExternal(){
-		return !"org.eclipse.help.ui.embeddedbrowser".equals(getID());
+		return !BrowserManager.BROWSER_ID_EMBEDDED.equals(getID());
 	}
 }

@@ -9,8 +9,10 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.ui.internal.browser.embedded;
+import org.eclipse.core.runtime.*;
 import org.eclipse.help.browser.*;
 import org.eclipse.help.ui.internal.*;
+import org.eclipse.osgi.service.environment.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.browser.*;
 import org.eclipse.swt.widgets.*;
@@ -27,8 +29,8 @@ public class EmbeddedBrowserFactory implements IBrowserFactory {
 	 * @see IBrowserFactory#isAvailable()
 	 */
 	public boolean isAvailable() {
-		if (!System.getProperty("os.name").startsWith("Win")
-			&& !System.getProperty("os.name").startsWith("Linux")) {
+		if (!Constants.OS_WIN32.equalsIgnoreCase(Platform.getOS())
+				&& !Constants.OS_LINUX.equalsIgnoreCase(Platform.getOS())) {
 			return false;
 		}
 		if (!tested) {

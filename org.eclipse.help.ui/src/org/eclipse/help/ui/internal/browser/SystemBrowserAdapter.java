@@ -32,22 +32,22 @@ public class SystemBrowserAdapter implements IBrowser {
 	 * @see IBrowser#displayURL(String)
 	 */
 	public void displayURL(String url) {
-		if (System.getProperty("os.name").startsWith("Win")) {
+//		if (Constants.WS_WIN32.equalsIgnoreCase(Platform.getOS())) {
 			if (!Program.launch(url)) {
 				ErrorUtil.displayErrorDialog(
 					HelpUIResources.getString(
 						"SystemBrowser.noProgramForURL",
 						url));
 			}
-		} else {
-			Program b = Program.findProgram("html");
-			if (b == null || !b.execute(url)) {
-				ErrorUtil.displayErrorDialog(
-					HelpUIResources.getString(
-						"SystemBrowser.noProgramForHTML",
-						url));
-			}
-		}
+		//		} else {
+		//			Program b = Program.findProgram("html");
+		//			if (b == null || !b.execute(url)) {
+		//				ErrorUtil.displayErrorDialog(
+		//					HelpUIResources.getString(
+		//						"SystemBrowser.noProgramForHTML",
+		//						url));
+		//			}
+		//		}
 	}
 	/*
 	 * @see IBrowser#isCloseSupported()
