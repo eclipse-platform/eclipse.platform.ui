@@ -38,6 +38,7 @@
     <attribute name="priority"/>
     <attribute name="message"/>
     <attribute name="done"/>
+    <attribute name="userEditable"/>    
   </extension>
   <extension id="bookmark" point="org.eclipse.core.resources.markers" name="%bookmarkName">
     <super type="org.eclipse.core.resources.marker"/>

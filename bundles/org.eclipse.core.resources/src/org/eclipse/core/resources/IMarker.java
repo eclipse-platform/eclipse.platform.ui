@@ -191,6 +191,18 @@ public interface IMarker extends IAdaptable {
 	 * @see #getAttribute
 	 */
 	public static final String LINE_NUMBER = "lineNumber"; //$NON-NLS-1$
+	
+	/** 
+	 * User editable marker attribute.  A boolean value indicating whether a
+	 * user should be able to manually change the marker (e.g. a task). The
+	 * default is <code>true</code>. Note that the value of this attribute
+	 * is to be used by the UI as a suggestion and its value will NOT be
+	 * interpreted by Core in any manner and will not be enforced by Core 
+	 * when setting the values of other attributes.
+	 *
+	 * @see #getAttribute
+	 */
+	public static final String USER_EDITABLE = "userEditable"; //$NON-NLS-1$
 
 	/*====================================================================
 	 * Marker attributes values:
