@@ -212,7 +212,6 @@ public class ConfigurationActivator implements BundleActivator {
 			for (int i = 0; i < plugins.length; i++) {
 				String location = plugins[i].toExternalForm();
 				try {
-					checkOrGenerateManifest(location);
 					location = "reference:" + location.substring(0, location.lastIndexOf('/'));
 					if (!isInstalled(location)) {
 						Bundle target = context.installBundle(location);
