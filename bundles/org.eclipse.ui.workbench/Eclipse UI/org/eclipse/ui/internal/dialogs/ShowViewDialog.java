@@ -341,12 +341,20 @@ public class ShowViewDialog
 	protected void saveWidgetValues() {
 		IDialogSettings settings = getDialogSettings();
 
-		saveExpanded(
-			settings,
-			unfilteredTree,
-			STORE_EXPANDED_CATEGORIES_ID);
+		if (showAllCheck != null && showAllCheck.getSelection()) {
+			saveExpanded(
+					settings,
+					unfilteredTree,
+					STORE_EXPANDED_CATEGORIES_ID);
+		}
+		else {
+			saveExpanded(
+				settings,
+				filteredTree,
+				STORE_EXPANDED_CATEGORIES_ID);
+		}
 		
-		if (unfilteredTree != null) {
+		if (showAllCheck != null) {
 			settings.put(
 				SHOW_ALL_ENABLED,
 				showAllCheck.getSelection());
