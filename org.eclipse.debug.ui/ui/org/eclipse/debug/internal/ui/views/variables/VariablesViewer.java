@@ -77,8 +77,10 @@ public class VariablesViewer extends TreeViewer {
 		getControl().setRedraw(true);
 		
 		if (getSelection().isEmpty() && getNewItem() != null) {
-			//ensure that new items are visible
-			showItem(getNewItem());
+			if (!getNewItem().isDisposed()) {
+				//ensure that new items are visible
+				showItem(getNewItem());
+			}
 			setNewItem(null);
 		}
 	}
