@@ -418,7 +418,7 @@ public class OptionTests extends AbstractAntTest {
 		run("TestForEcho.xml", new String[]{"-propertyfile", "qq.txt"});
 		assertSuccessful();
 		String msg= (String)AntTestChecker.getDefault().getMessages().get(0);
-		assertTrue("Message incorrect!: " + msg, msg.startsWith("Could not load property file qq.txt:"));
+		assertTrue("Message incorrect!: " + msg, msg.startsWith("Could not load property file:"));
 	}
 	
 	public void testPropertyFile() throws CoreException {

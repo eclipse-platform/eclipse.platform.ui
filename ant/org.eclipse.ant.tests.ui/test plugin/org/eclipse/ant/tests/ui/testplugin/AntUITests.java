@@ -17,6 +17,7 @@ package org.eclipse.ant.tests.ui.testplugin;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.ant.tests.ui.AntUtilTests;
 import org.eclipse.ant.tests.ui.BuildTests;
 import org.eclipse.ant.tests.ui.editor.AntEditorContentOutlineTests;
 import org.eclipse.ant.tests.ui.editor.AntEditorTests;
@@ -50,6 +51,7 @@ public class AntUITests extends TestSuite {
         suite.addTest(new TestSuite(XmlDocumentFormatterTest.class));
         suite.addTest(new TestSuite(XmlTagFormatterTest.class));
         suite.addTest(new TestSuite(XmlFormatterTest.class));
+        suite.addTest(new TestSuite(AntUtilTests.class));
         return suite;
     }
 }

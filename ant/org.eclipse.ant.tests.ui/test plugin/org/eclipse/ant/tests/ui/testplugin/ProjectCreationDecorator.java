@@ -55,6 +55,7 @@ public class ProjectCreationDecorator extends AbstractAntUITest {
 			createLaunchConfigurationForBoth("74840");
 			createLaunchConfiguration("build");
 			createLaunchConfiguration("bad");
+			createLaunchConfiguration("importRequiringUserProp");
 			createLaunchConfigurationForSeparateVM("extensionPointSepVM", null);
 			createLaunchConfigurationForSeparateVM("extensionPointTaskSepVM", null);
 			createLaunchConfigurationForSeparateVM("extensionPointTypeSepVM", null);
