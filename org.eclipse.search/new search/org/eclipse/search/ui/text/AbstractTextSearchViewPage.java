@@ -100,7 +100,7 @@ import org.eclipse.ui.progress.UIJob;
  * @since 3.0
  */
 public abstract class AbstractTextSearchViewPage extends Page implements ISearchResultPage {
-	class UpdateUIJob extends UIJob {
+	private class UpdateUIJob extends UIJob {
 		
 		public UpdateUIJob() {
 			super(SearchMessages.getString("AbstractTextSearchViewPage.update_job.name")); //$NON-NLS-1$
@@ -110,7 +110,6 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		public IStatus runInUIThread(IProgressMonitor monitor) {
 			runBatchedUpdates();
 			if (hasMoreUpdates() || isQueryRunning()) {
-				fIsUIUpdateScheduled= false;
 				schedule(500);
 			} else {
 				fIsUIUpdateScheduled= false;
@@ -128,7 +127,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 
 	}
 
-	private boolean fIsUIUpdateScheduled= false;
+	private transient boolean  fIsUIUpdateScheduled= false;
 	private static final String KEY_LAYOUT = "org.eclipse.search.resultpage.layout"; //$NON-NLS-1$
 	private StructuredViewer fViewer;
 	private Composite fViewerContainer;
