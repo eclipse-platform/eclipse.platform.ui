@@ -11,9 +11,22 @@ Contributors:
 
 package org.eclipse.ui.part;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
+
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.swt.dnd.ByteArrayTransfer;
 import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IElementFactory;
+import org.eclipse.ui.IPersistableElement;
+import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
@@ -29,18 +42,44 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * drop data for the target.
  * </p>
  * <p>
- * This class can be used for a <code>Viewer<code> or an SWT component directly.
+ * This class can be used for a <code>Viewer</code> or an SWT component directly.
  * A singleton is provided which may be serially reused (see <code>getInstance</code>).  
- * The <code>setEditorId</code> and <code>setInput</code> should be used during
- * a <code>DragSource</code>.<code>dragSetData</code> implementation to
- * populate the transfer with the appropriate editorId and IEditorInput.
- * This class is not intended to be subclassed.
+ * For an implementor of <code>IEditorInput</code> to be supported by
+ * <code>EditorInputTransfer</code>, it must provide a proper implementation of
+ * <code>IEditorInput</code>.<code>getPersistable</code>.  For further details,
+ * consult the <code>org.eclipse.ui.elementFactories</code> extension point.
+ * </p>
+ * <p> 
+ * The data for a transfer is represented by the <code>EditorInputData</code>
+ * class, and a convenience method <code>createEditorInputData</code> is
+ * provided.  A <code>DragSource</code>.<code>dragSetData</code> implementation
+ * should set the data to an array of <code>EditorInputData</code>.  In this
+ * way, the dragging of multiple editor inputs is supported.
+ * </p>
+ * <p>
+ * Below is an example of how to set set the data for dragging a single editor
+ * input using a <code>EditorInputTransfer</code>.
+ * </p>
+ * <p>
+ * <pre>
+ * public void dragSetData(DragSourceEvent event) {
+ * 		if (EditorInputTransfer.getInstance().isSupportedType(event.dataType)) {
+ * 
+ * 			EditorInputTransfer.EditorInputData data = 
+ * 				EditorInputTransfer.
+ * 				createEditorInputData(EDITOR_ID, getEditorInput());
+ * 			event.data = new EditorInputTransfer.EditorInputData [] {data};
+ * 		}
+ * }
+ * </pre>
  * </p>
  *
  * @see StructuredViewer
  * @see DropTarget
  * @see DragSource
  * @see IEditorInput
+ * @see IPersistableElement
+ * @see IElementFactory
  */
 public class EditorInputTransfer extends ByteArrayTransfer {
 
@@ -56,8 +95,17 @@ public class EditorInputTransfer extends ByteArrayTransfer {
 
 	private static final int TYPEID = registerType(TYPE_NAME);
 
-	private String editorId;
-	private IEditorInput input;
+	public static class EditorInputData {
+
+		public String editorId;
+		public IEditorInput input;
+		
+		private EditorInputData(String editorId, IEditorInput input) {
+			this.editorId = editorId;
+			this.input = input;
+		}
+	}
+
 	/**
 	 * Creates a new transfer object.
 	 */
@@ -85,47 +133,134 @@ public class EditorInputTransfer extends ByteArrayTransfer {
 	protected String[] getTypeNames() {
 		return new String[] { TYPE_NAME };
 	}
-	public void javaToNative(Object object, TransferData transferData) {
-		// No encoding needed since this is a hardcoded string read and written in the same process.
-		// See nativeToJava below
-		byte[] check = TYPE_NAME.getBytes();
-		super.javaToNative(check, transferData);
-	}
-
-	public Object nativeToJava(TransferData transferData) {
-		Object result = super.nativeToJava(transferData);
-		if (isInvalidNativeType(result)) {
-			//something went wrong, log error message
-			WorkbenchPlugin.log(WorkbenchMessages.getString("EditorInputTransfer.errorMessage"));
+	
+	/* (non-Javadoc)
+	 * Method declared on Transfer.
+	 */
+	public void javaToNative(Object data, TransferData transferData) {
+		
+		if (!(data instanceof EditorInputData[])) {
+			return;
 		}
-		return new Object [] {editorId, input};
+
+		EditorInputData[] editorInputs = (EditorInputData[]) data;
+		/**
+		 * The editor input serialization format is:
+		 * (int)	number of editor inputs
+		 * Then, the following for each editor input:
+		 * (String)	editorId
+		 * (String)	factoryId 
+		 * (String)	data used to recreate the IEditorInput
+		 */
+
+		int editorInputCount = editorInputs.length;
+
+		try {
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			DataOutputStream dataOut = new DataOutputStream(out);
+
+			//write the number of resources
+			dataOut.writeInt(editorInputCount);
+
+			//write each resource
+			for (int i = 0; i < editorInputs.length; i++) {
+				writeEditorInput(dataOut, editorInputs[i]);
+			}
+
+			//cleanup
+			dataOut.close();
+			out.close();
+			byte[] bytes = out.toByteArray();
+			super.javaToNative(bytes, transferData);
+		} catch (IOException e) {}
 	}
 
-	private boolean isInvalidNativeType(Object result) {
-		// No encoding needed since this is a hardcoded string read and written in the same process.
-		// See javaToNative above
-		return !(result instanceof byte[])
-			|| !TYPE_NAME.equals(new String((byte[]) result));
+	/* (non-Javadoc)
+	 * Method declared on Transfer.
+	 */
+	public Object nativeToJava(TransferData transferData) {
+
+		byte[] bytes = (byte[]) super.nativeToJava(transferData);
+		if (bytes == null)
+			return null;
+		DataInputStream in = new DataInputStream(new ByteArrayInputStream(bytes));
+		try {
+			int count = in.readInt();
+			EditorInputData[] results = new EditorInputData[count];
+			for (int i = 0; i < count; i++) {
+				results[i] = readEditorInput(in);
+			}
+			return results;
+		} catch (IOException e) {
+			return null;
+		} catch (WorkbenchException e) {
+			return null;
+		}
+
 	}
 	/**
-	 * Set the String editorId for the id of the editor to be opened.  This
-	 * should be called during <code>DragSource</code>.<code>dragSetData</code>
-	 * to set the id of the editor.  Only opening of internal editors is
-	 * supported.
-	 * @param editorId The editorId to set
+	 * Method readEditorInput.
+	 * @param in
+	 * @return EditorInputData
 	 */
-	public void setEditorId(String editorId) {
-		this.editorId = editorId;
+	private EditorInputData readEditorInput(DataInputStream dataIn) throws IOException, WorkbenchException {
+		
+		String editorId = dataIn.readUTF();
+		String factoryId = dataIn.readUTF();
+		String xmlString = dataIn.readUTF();
+		
+		if(xmlString == null || xmlString.length() == 0)
+			return null; 
+
+		StringReader reader = new StringReader(xmlString);
+	
+		// Restore the editor input
+		XMLMemento memento = XMLMemento.createReadRoot(reader);
+		
+		IElementFactory factory = WorkbenchPlugin.getDefault().getElementFactory(factoryId);
+		
+		if (factory != null) {
+			IAdaptable adaptable = factory.createElement(memento);
+			if (adaptable != null && (adaptable instanceof IEditorInput)) {
+				return new EditorInputData(editorId, (IEditorInput) adaptable);
+			}
+		}
+
+		return null;
+	}
+	/**
+	 * Method writeEditorInput.
+	 * @param dataOut
+	 * @param editorInputData
+	 */
+	private void writeEditorInput(DataOutputStream dataOut, EditorInputData editorInputData) throws IOException {
+		//write the id of the editor
+		dataOut.writeUTF(editorInputData.editorId);
+		
+		//write the information needed to recreate the editor input
+		if (editorInputData.input != null) {
+			// Capture the editor information
+			XMLMemento memento = XMLMemento.createWriteRoot("IEditorInput");//$NON-NLS-1$
+
+			IPersistableElement element = editorInputData.input.getPersistable();
+			if (element != null) {
+				//get the IEditorInput to save its state
+				element.saveState(memento);
+				
+				//convert memento to String
+				StringWriter writer = new StringWriter();
+				memento.save(writer);
+				writer.close();
+				
+				//write the factor ID and state information
+				dataOut.writeUTF(element.getFactoryId());
+				dataOut.writeUTF(writer.toString());
+			}
+		}		
 	}
 
-	/**
-	 * Set the IEditorInput for the editor to be opened.  This should be called
-	 * during <code>DragSource</code>.<code>dragSetData</code> to set the input
-	 * for the editor
-	 * @param input The input to set
-	 */
-	public void setInput(IEditorInput input) {
-		this.input = input;
+	public static EditorInputData createEditorInputData(String editorId, IEditorInput input) {
+		return new EditorInputData(editorId, input);
 	}
 
 }
