@@ -410,9 +410,10 @@ public void delete(boolean force, boolean keepHistory, IProgressMonitor monitor)
  * This refinement of the corresponding <code>IEncodingStorage</code> method
  * uses the following algorithm to determine the charset to be returned:
  * <ol>
- * <li>the charset defined by calling #setCharset, if any, or</li>
+ * <li>the charset defined by calling #setCharset, if any, and this file exists, 
+ * or</li>
  * <li>the charset automatically discovered based on this file's contents,
- * if one can be determined , or</li>
+ * if one can be determined, or</li>
  * <li>the default encoding for this file's parent (as defined by 
  * IContainer#getDefaultCharset).</li>
  * </ol>
@@ -590,7 +591,10 @@ public void move(IPath destination, boolean force, boolean keepHistory, IProgres
  * </p> 
  * 
  * @param newCharset a charset name, or <code>null</code>
- * @throws CoreException if this method fails
+ * @throws CoreException if this method fails. Reasons include:
+ * <ul>
+ * <li> This resource does not exist.</li>
+ * </ul>
  * @see #getCharset
  * @since 3.0
  */

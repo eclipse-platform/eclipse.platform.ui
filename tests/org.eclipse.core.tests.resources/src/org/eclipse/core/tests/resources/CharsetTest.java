@@ -287,6 +287,45 @@ public class CharsetTest extends EclipseWorkspaceTest {
 		}
 	}
 	/**
+	 * Two things to test here:
+	 * 	- non-existing resources default to the parent's default charset;
+	 * 	- cannot set the charset for a non-existing resource (exception is thrown). 
+	 */	
+	public void testNonExistingResource() throws CoreException {
+		IWorkspace workspace = getWorkspace();
+		IProject project = workspace.getRoot().getProject("MyProject");
+		try {
+			try {
+				project.setDefaultCharset("FOO");
+				fail("1.0");
+			} catch (CoreException e) {
+				// expected, project does not exist yet 
+				assertEquals("1.1", IResourceStatus.RESOURCE_NOT_FOUND, e.getStatus().getCode());
+			}
+			ensureExistsInWorkspace(project, true);
+			project.setDefaultCharset("FOO");
+			IFile file = project.getFile("file.xml");
+			assertDoesNotExistInWorkspace("2.0", file);			
+			assertEquals("2.2", "FOO", file.getCharset());
+			try {
+				file.setCharset("BAR");
+				fail("2.4");
+			} catch (CoreException e) {
+				// expected, file does not exist yet
+				assertEquals("2.6", IResourceStatus.RESOURCE_NOT_FOUND, e.getStatus().getCode());
+			}
+			ensureExistsInWorkspace(file, true);			
+			file.setCharset("BAR");
+			assertEquals("2.8", "BAR", file.getCharset());
+			file.delete(IResource.NONE, null);
+			assertDoesNotExistInWorkspace("2.10", file);			
+			assertEquals("2.11", "FOO", file.getCharset());
+		} finally {
+			ensureDoesNotExistInWorkspace(project);
+		}		
+	}
+
+	/**
 	 * Asserts that the given resources have the given [default] charset.
 	 */
 	private void assertCharsetIs(String tag, String encoding, IResource[] resources) throws CoreException {

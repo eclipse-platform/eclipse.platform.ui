@@ -203,6 +203,9 @@ public IResource[] members(int memberFlags) throws CoreException {
  * @see IContainer#getDefaultCharset
  */
 public String getDefaultCharset() throws CoreException {
+	// non-existing resources default to parent's charset
+	if (!exists())
+		return getParent().getDefaultCharset();	
 	String charset = workspace.getCharsetManager().getCharsetFor(getFullPath());
 	return charset == null ? getParent().getDefaultCharset() : charset;
 }
@@ -237,11 +240,12 @@ public IFile[] findDeletedMembersWithHistory(int depth, IProgressMonitor monitor
 	}
 	return (IFile[]) deletedFiles.toArray(new IFile[deletedFiles.size()]);
 }
-
 /**
- * @see IContainer#setDefaultCharset
+ * @see IContainer
  */
 public void setDefaultCharset(String charset) throws CoreException {
+	ResourceInfo info = getResourceInfo(false, false);
+	checkAccessible(getFlags(info));	
 	workspace.getCharsetManager().setCharsetFor(getFullPath(), charset);
 }
 }

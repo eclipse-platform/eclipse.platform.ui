@@ -204,6 +204,9 @@ protected void ensureClosed(InputStream stream) {
  */
 
 public String getCharset() throws CoreException {
+	// non-existing resources default to parent's charset
+	if (!exists())
+		return getParent().getDefaultCharset();
 	// if there is a file-specific user setting, use it
 	String charset = workspace.getCharsetManager().getCharsetFor(getFullPath());
 	if (charset != null)
@@ -350,8 +353,13 @@ public void updateProjectDescription() throws CoreException {
 	if (path.segmentCount() == 2 && path.segment(1).equals(IProjectDescription.DESCRIPTION_FILE_NAME))
 		((Project)getProject()).updateDescription();
 }
+/**
+ * @see IFile
+ */
 public void setCharset(String newCharset) throws CoreException {
-		 		  workspace.getCharsetManager().setCharsetFor(getFullPath(), newCharset);		 		  
+	ResourceInfo info = getResourceInfo(false, false);
+	checkAccessible(getFlags(info));
+	workspace.getCharsetManager().setCharsetFor(getFullPath(), newCharset);		 		  
 }
 /**
  * @see IFile

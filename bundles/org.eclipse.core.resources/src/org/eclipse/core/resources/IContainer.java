@@ -174,7 +174,8 @@ public IResource findMember(IPath path, boolean includePhantoms);
  * The charset returned is:
  * <ol>
  * <li>the one explicitly set by calling #setDefaultCharset 
- * (with a non-null argument) on this container, if any, or</li>  
+ * (with a non-null argument) on this container, if any, and this container 
+ * exists, or</li>  
  * <li>the parent's default charset, if this container has a parent (is not the 
  * workspace root), or</li>
  * <li>the charset returned by ResourcesPlugin#getEncoding.</li> 
@@ -372,7 +373,10 @@ public IFile[] findDeletedMembersWithHistory(int depth, IProgressMonitor monitor
  * </p>
  *
  * @param charset a charset string, or <code>null</code>
- * @throws CoreException if this method fails
+ * @throws CoreException if this method fails Reasons include:
+ * <ul>
+ * <li> This resource does not exist.</li>
+ * </ul>
  * @see IContainer#getDefaultCharset
  * @since 3.0
  */
