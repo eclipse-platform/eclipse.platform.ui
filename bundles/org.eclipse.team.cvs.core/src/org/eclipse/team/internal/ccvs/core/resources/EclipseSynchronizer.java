@@ -109,7 +109,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 	}
 	
 	public SyncInfoCache getSyncInfoCacheFor(IResource resource) {
-		if (resource.exists()) {
+		if (resource.exists() && resource.isLocal(IResource.DEPTH_ZERO)) {
 			return sessionPropertyCache;
 		} else {
 			return synchronizerCache;
@@ -282,7 +282,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 				if (isCannotModifySynchronizer(e)) {
 					// We will resort to loading the sync info for the requested resource from disk
 					byte[] bytes =  getSyncBytesFromDisk(resource);
-					if (!resource.exists() && !ResourceSyncInfo.isDeletion(bytes)) {
+					if (!resource.exists() && bytes != null && !ResourceSyncInfo.isDeletion(bytes)) {
 						bytes = ResourceSyncInfo.convertToDeletion(bytes);
 					}
 					return bytes;
