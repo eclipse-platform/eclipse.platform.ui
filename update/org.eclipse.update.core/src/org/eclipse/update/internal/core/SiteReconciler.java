@@ -187,7 +187,7 @@ public class SiteReconciler extends ModelObject implements IWritable {
 		}
 	
 		// verify we do not have 2 features with different version that
-		// are configured
+		// are configured 
 		checkConfiguredFeatures(newDefaultConfiguration);
 	
 		// add Activity reconciliation
@@ -349,16 +349,16 @@ public class SiteReconciler extends ModelObject implements IWritable {
 	}
 
 	/**
-	 * Validate we have only one configured feature across the different sites
+	 * Validate we have only one configured feature per site
 	 * even if we found multiples
 	 * 
 	 * If we find 2 features, the one with a higher version is configured
-	 * If they have teh same version, the first feature is configured
+	 * If they have the same version, the first feature is configured
 	 * 
-	 * This is a double loop comparison
-	 * One look goes from 0 to numberOfConfiguredSites -1
-	 * the other from the previous index to numberOfConfiguredSites
-	 * 
+	 * DO NOT check across sites [17980]
+	 * If Feature1 is installed natively on Site A
+	 * If Feature1 is installed on Site B
+	 * If Feature1 from SiteA is removed... 
 	 */
 	private void checkConfiguredFeatures(IInstallConfiguration newDefaultConfiguration)
 		throws CoreException {
@@ -372,78 +372,13 @@ public class SiteReconciler extends ModelObject implements IWritable {
 			indexConfiguredSites++) {
 			checkConfiguredFeatures(configuredSites[indexConfiguredSites]);
 		}
-
-		// Check configured sites between them
-		if (configuredSites.length > 1) {
-			
-			// TRACE
-			if (UpdateManagerPlugin.DEBUG
-				&& UpdateManagerPlugin.DEBUG_SHOW_RECONCILER) {
-				UpdateManagerPlugin.debug(
-					"Compare Feature between different sites:");
-			}			
-			
-			for (int indexConfiguredSites = 0;
-				indexConfiguredSites < configuredSites.length - 1;
-				indexConfiguredSites++) {
-					
-				IFeatureReference[] configuredFeatures =
-					configuredSites[indexConfiguredSites]
-						.getConfiguredFeatures();
-						
-				for (int indexConfiguredFeatures = 0;
-					indexConfiguredFeatures < configuredFeatures.length;
-					indexConfiguredFeatures++) {
-						
-					IFeatureReference featureToCompare =
-						configuredFeatures[indexConfiguredFeatures];
-
-					// compare with the rest of the configurations
-					for (int i = indexConfiguredSites + 1;
-						i < configuredSites.length;
-						i++) {
-						IFeatureReference[] possibleFeatureReference =
-							configuredSites[i].getConfiguredFeatures();
-						for (int j = 0;
-							j < possibleFeatureReference.length;
-							j++) {
-							int result =
-								compare(
-									featureToCompare,
-									possibleFeatureReference[j]);
-							if (result != 0) {
-								if (result == 1) {
-									FeatureReferenceModel featureRefModel =
-										(FeatureReferenceModel) possibleFeatureReference[j];
-									((ConfiguredSite) configuredSites[i])
-										.getConfigurationPolicy()
-										.addUnconfiguredFeatureReference(featureRefModel);
-								};
-								if (result == 2) {
-									FeatureReferenceModel featureRefModel =
-										(FeatureReferenceModel) featureToCompare;
-									(
-										(ConfiguredSite) configuredSites[indexConfiguredSites])
-										.getConfigurationPolicy()
-										.addUnconfiguredFeatureReference(featureRefModel);
-									// do not break, we can continue, even if the feature is unconfigured
-									// if we find another feature in another site, we may unconfigure it.
-									// but it would have been unconfigured anyway because we confured another version of the same feature
-									// so if teh version we find is lower than our version, by transition, it is lower then the feature that unconfigured us
-								}
-							}
-						}
-					}
-				}
-			}
-		}
 	}
 
 	/**
 	 * Validate we have only one configured feature of a specific id
 	 * per configured site
 	 */
-	private void checkConfiguredFeatures(IConfiguredSite configuredSite)
+	public static void checkConfiguredFeatures(IConfiguredSite configuredSite)
 		throws CoreException {
 
 		ConfiguredSite cSite = (ConfiguredSite) configuredSite;
@@ -494,7 +429,7 @@ public class SiteReconciler extends ModelObject implements IWritable {
 	 * returns 1 if the version of feature 1 is greater than the version of feature 2
 	 * returns 2 if opposite
 	 */
-	private int compare(
+	private static int compare(
 		IFeatureReference featureRef1,
 		IFeatureReference featureRef2)
 		throws CoreException {

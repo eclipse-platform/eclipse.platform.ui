@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.model.PluginDescriptorModel;
 import org.eclipse.core.runtime.model.PluginFragmentModel;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.core.model.FeatureReferenceModel;
 import org.eclipse.update.core.model.SiteModel;
 import org.eclipse.update.internal.model.*;
 
@@ -193,10 +194,41 @@ public class InstallConfiguration
 
 		}
 
+		// configure all features as enable
+		configure(configSite);
+
 		return configSite;
 	}
 
 	
+	/*
+	 *Configure all features as Enable Check we only enable highest version 
+	 */
+	 private void configure(ConfiguredSite linkedSite) throws CoreException {
+		ISite site = linkedSite.getSite();
+		IFeatureReference[] newFeaturesRef =
+			site.getFeatureReferences();
+			
+		for (int i = 0; i < newFeaturesRef.length; i++) {
+			FeatureReferenceModel newFeatureRefModel =
+				(FeatureReferenceModel) newFeaturesRef[i];
+					// TRACE
+			if (UpdateManagerPlugin.DEBUG
+				&& UpdateManagerPlugin.DEBUG_SHOW_RECONCILER) {
+				String reconciliationType = "enable (optimistic)";
+				UpdateManagerPlugin.debug(
+					"New Linked Site:New Feature: "
+						+ newFeatureRefModel.getURLString()
+						+ " as "
+						+ reconciliationType);
+			}
+			
+			ConfigurationPolicy policy = linkedSite.getConfigurationPolicy();
+			policy.addConfiguredFeatureReference(newFeatureRefModel);
+		}	 	
+		
+		SiteReconciler.checkConfiguredFeatures(linkedSite);
+	 }
 
 	/*
 	 * 
