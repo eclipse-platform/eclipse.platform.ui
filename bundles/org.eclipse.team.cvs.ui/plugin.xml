@@ -96,18 +96,25 @@
    </extension>
 
 <!-- ******************* Action Definitions ******************** --> 
-    <extension
-         point="org.eclipse.ui.actionDefinitions">
-      <actionDefinition
+
+	<extension point="org.eclipse.ui.commands">
+      <category
+            name="%CVSActionSet.categoryName"
+            description="%CVSActionSet.category.description"
+            id="org.eclipse.team.cvs.ui.actionSet">
+      </category>
+      <command
+			category="org.eclipse.team.cvs.ui.actionSet"
             name="%CVSActionSet.syncLabel"
             description="%CVSActionSet.syncTooltip"
             id="org.eclipse.team.cvs.ui.sync.all">
-      </actionDefinition>
-      <actionDefinition
+      </command>
+      <command
+			category="org.eclipse.team.cvs.ui.actionSet"
             name="%CVSActionSet.newLabel"
             description="%CVSActionSet.newTooltip"
             id="org.eclipse.team.cvs.ui.new.location">
-      </actionDefinition>
+      </command>
    </extension>
    
 <!-- ******************* Menus ******************** -->
