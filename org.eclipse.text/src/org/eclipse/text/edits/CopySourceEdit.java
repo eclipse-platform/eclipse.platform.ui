@@ -247,9 +247,10 @@ public final class CopySourceEdit extends TextEdit {
 	//---- source computation -------------------------------------------------------
 	
 	/* package */ void traverseSourceComputation(TextEditProcessor processor, IDocument document) {
-		if (processor.considerEdit(this)) {
-			performSourceComputation(processor, document);
-		}
+		// always perform source computation independent of processor.considerEdit
+		// The target might need the source and the source is computed in a 
+		// temporary buffer.
+		performSourceComputation(processor, document);
 	}
 	
 	/* package */ void performSourceComputation(TextEditProcessor processor, IDocument document) {
