@@ -18,32 +18,15 @@ package org.eclipse.core.internal.preferences;
  */
 public class LookupOrder {
 
-	private String qualifier;
-	private String key;
 	private String[] order;
 
-	LookupOrder(String qualifier, String key, String[] order) {
-		super();
-		if (qualifier == null || order == null)
-			throw new IllegalArgumentException();
+	LookupOrder(String[] order) {
 		for (int i = 0; i < order.length; i++)
 			if (order[i] == null)
 				throw new IllegalArgumentException();
-		this.qualifier = qualifier;
-		this.key = key;
 		this.order = order;
 	}
-
-	public String getQualifier() {
-		return qualifier;
-	}
-
-	public String getKey() {
-		return key;
-	}
-
 	public String[] getOrder() {
 		return order;
 	}
-
 }

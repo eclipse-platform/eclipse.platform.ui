@@ -660,7 +660,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 		if (order == null)
 			defaultsRegistry.remove(registryKey);
 		else {
-			LookupOrder obj = new LookupOrder(qualifier, key, order);
+			LookupOrder obj = new LookupOrder(order);
 			defaultsRegistry.put(registryKey, obj);
 		}
 	}

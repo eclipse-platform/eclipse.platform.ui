@@ -757,17 +757,6 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 		getPluginPreferences().flush();
 	}
 
-	/**
-	 *  Sync the values in memory with those which are persisted.
-	 * 
-	 * @throws BackingStoreException
-	 */
-	public void sync() throws BackingStoreException {
-		// don't check the dirty flag first because there could be changes
-		// on disk that we want
-		getPluginPreferences().sync();
-	}
-
 	/*
 	 * Something bad happened so log it. 
 	 */
