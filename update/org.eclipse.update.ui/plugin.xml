@@ -10,7 +10,6 @@
    <runtime>
       <library name="updateui.jar">
          <export name="*"/>
-         <packages prefixes="org.eclipse.update.internal.ui"/>
       </library>
    </runtime>
    <requires>
