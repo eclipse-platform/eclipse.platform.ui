@@ -23,10 +23,14 @@ To see which bugs have been addressed in one of the builds simply open the <a hr
 <!-- Add what's new below and end each line with br tag -->
 <pre>
 - several bugs fixed
-- released new features:
-	- The TextViewer sends out delayed selection changed events for caret position changes
-- added extensions which allow text hovers and information providers to specify their custom
-  information control creator
+- The TextViewer sends out time-out based selection changed events for caret position changes.
+- added extension interfaces which allow text hovers and information providers to specify their custom
+   information control creator
+- text editors support three typing modes: Overwrite, Insert, Smart Insert
+	- typing modes are toggled by INS in the default key binding
+	- each mode is represented with its own caret
+	- modes can be disabled per editor, i.e. when toggling insert modes, disabled modes will not be selected
+- status line contribution items can now be associated with an action that is called when double clicking the status item
 </pre>
 <br>
 <br>
