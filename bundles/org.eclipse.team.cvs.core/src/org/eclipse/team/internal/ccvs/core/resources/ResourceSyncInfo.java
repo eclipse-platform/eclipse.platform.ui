@@ -48,7 +48,6 @@ public class ResourceSyncInfo {
 	public static final String ADDED_REVISION = "0";
 	
 	// fields describing the synchronization of a resource in CVS parlance
-	private int type;
 	private String name;
 	private String revision;
 	private String timeStamp;
