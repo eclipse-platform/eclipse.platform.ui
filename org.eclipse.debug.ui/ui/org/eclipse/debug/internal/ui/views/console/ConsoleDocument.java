@@ -18,10 +18,10 @@ import org.eclipse.jface.text.ITextStore;
 
 public class ConsoleDocument extends AbstractDocument {
 	
-	private IConsoleColorProvider fContentProvider = null;
+	private IConsoleColorProvider fColorProvider;
 	
-	public ConsoleDocument(IConsoleColorProvider contentProvider) {
-		fContentProvider = contentProvider;
+	public ConsoleDocument(IConsoleColorProvider colorProvider) {
+		fColorProvider = colorProvider;
 		setTextStore(newTextStore());	
 		setLineTracker(new DefaultLineTracker());
 		completeInitialization();
@@ -31,7 +31,7 @@ public class ConsoleDocument extends AbstractDocument {
 	 * Returns whether this document is read-only.
 	 */
 	public boolean isReadOnly() {
-		return fContentProvider.isReadOnly();
+		return fColorProvider.isReadOnly();
 	}
 	
 	/**
@@ -40,5 +40,4 @@ public class ConsoleDocument extends AbstractDocument {
 	protected ITextStore newTextStore() {
 		return new ConsoleOutputTextStore(2500);
 	}
-	
 }
