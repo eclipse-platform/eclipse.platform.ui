@@ -19,7 +19,6 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
-import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.model.BaseWorkbenchContentProvider;
 import org.eclipse.ui.progress.DeferredTreeContentManager;
@@ -33,8 +32,8 @@ public class DebugViewContentProvider extends BaseWorkbenchContentProvider {
     
     private DeferredTreeContentManager fManager;
     
-    public DebugViewContentProvider(AbstractTreeViewer tree, IWorkbenchPartSite site) {
-        fManager = new DeferredTreeContentManager(this, tree, site);
+    public DebugViewContentProvider(LaunchViewer tree, IWorkbenchPartSite site) {
+        fManager = new IncrementalDeferredTreeContentManager(this, tree, site);
     }
 
     /* (non-Javadoc)

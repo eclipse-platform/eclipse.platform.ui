@@ -42,7 +42,6 @@ import org.eclipse.ui.progress.UIJob;
  * The launch viewer displays a tree of launches.
  */
 public class LaunchViewer extends TreeViewer {
-    
     private SelectionJob fSelectionJob = null;
     private ExpansionJob fExpansionJob = null;
     
@@ -176,6 +175,20 @@ public class LaunchViewer extends TreeViewer {
         runDeferredUpdates();
     }
     
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#remove(java.lang.Object)
+	 */
+	public synchronized void remove(Object element) {
+		super.remove(element);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#remove(java.lang.Object[])
+	 */
+	public synchronized void remove(Object[] elements) {
+		super.remove(elements);
+	}
+	
     private void runDeferredUpdates() {
         if (fExpansionJob != null) {
             fExpansionJob.schedule();
@@ -312,4 +325,104 @@ public class LaunchViewer extends TreeViewer {
 	        job.cancel();
 	    }	    
 	}
+	
+	/**
+	 * Replaces the given parent's current children with the specified children
+	 * starting at the specified offset in the parent's current children.
+	 * 
+	 * @param parent parent of children to replace
+	 * @param children replacement children
+	 * @param offset the offset at which to start replacing the children
+	 */
+	protected synchronized void replace(Object parent, Object[] children, int offset) {
+	    Widget widget = findItem(parent);
+	    if (widget == null) {
+	        add(parent, children);
+	        return;
+	    }
+	    Item[] currentChildren = getChildren(widget);
+	    if (offset >= currentChildren.length) {
+	        // append
+	        add(parent, children);
+	    } else {
+	        // replace
+	        for (int i = 0; i < children.length; i++) {
+                Object child = children[i];
+                if (offset < currentChildren.length) {
+                    // replace
+                    Item item = currentChildren[offset];
+                    Object data = item.getData();
+                    if (!child.equals(data)) {
+                        associate(child, item);
+                        internalRefresh(item, child, true, true);
+                    } else {
+                    	internalRefresh(item, child, false, true);
+                    }
+                } else {
+                    // add
+                	int numLeft = children.length - i;
+                	if (numLeft > 1) {
+                		Object[] others = new Object[numLeft];
+                		System.arraycopy(children, i, others, 0, numLeft);
+                		add(parent, others);
+                	} else {
+                		add(parent, child);
+                	}
+                	return;
+                }
+                offset++;
+            }
+	    }
+	    runDeferredUpdates();
+	}
+	
+	/**
+	 * Prunes the given parent's children at the given offset. All children
+	 * at and after the given offset are removed from the tree.
+	 * 
+	 * @param parent parent to prune children from
+	 * @param offset offset of first child to prune
+	 */
+	protected synchronized void prune(Object parent, int offset) {
+	    Widget widget = findItem(parent);
+	    if (widget != null) {
+		    Item[] currentChildren = getChildren(widget);
+		    if (offset < currentChildren.length) {
+		        Object[] pruned = new Object[currentChildren.length - offset];
+		        System.arraycopy(currentChildren, offset, pruned, 0, pruned.length);
+		        remove(pruned);
+		    }
+	    }
+	}
+	
+	/**
+	 * Returns the current children of the given parent element.
+	 * 
+	 * @param parent parent
+	 * @return the current children of the given parent element, possibly <code>null</code>
+	 */
+	public Object[] getCurrentChildren(Object parent) {
+	    Widget widget = findItem(parent);
+	    if (widget != null) {
+	        Item[] items = getChildren(widget);
+	        Object[] children = new Object[items.length];
+	        for (int i = 0; i < children.length; i++) {
+				Object data = items[i].getData();
+				if (data == null) {
+					data = new Object();
+				}
+				children[i] = data;
+			}
+	        return children;
+	    }
+	    return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.StructuredViewer#filter(java.lang.Object[])
+	 */
+	public Object[] filter(Object[] elements) {
+	    return super.filter(elements);
+	}
+	
 }
