@@ -18,7 +18,7 @@ import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.swt.program.Program;
 
 /**
- * @see IResourceEditorDescriptor
+ * @see IEditorDescriptor
  */
 public class EditorDescriptor implements IEditorDescriptor, Serializable {
 	private String editorName;
