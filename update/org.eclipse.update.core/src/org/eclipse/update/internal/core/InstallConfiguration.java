@@ -425,24 +425,25 @@ public class InstallConfiguration
 		if (feature == null)
 			return;
 
+		// get the URL of the plugin that corresponds to the feature (pluginid = featureid)	
+		String id = feature.getVersionedIdentifier().getIdentifier();
+		IPluginEntry[] entries = feature.getPluginEntries();
+		URL url = null;
+		IPluginEntry featurePlugin = null;
+		for (int k = 0; k < entries.length; k++) {
+			if (id
+				.equalsIgnoreCase(
+					entries[k].getVersionedIdentifier().getIdentifier())) {
+				url = getRuntimeConfigurationURL(entries[k], cSite);
+				featurePlugin = entries[k];
+			}
+		}
+		String pluginVersion = null;
+		if (featurePlugin != null)
+			pluginVersion = featurePlugin.getVersionedIdentifier().getVersion().toString();
+
 		// write the primary features				
 		if (feature.isPrimary()) {
-
-			String id = feature.getVersionedIdentifier().getIdentifier();
-
-			// get the URL of the plugin that corresponds to the feature (pluginid = featureid)					
-			IPluginEntry[] entries = feature.getPluginEntries();
-			URL url = null;
-			IPluginEntry featurePlugin = null;
-			for (int k = 0; k < entries.length; k++) {
-				if (id
-					.equalsIgnoreCase(
-						entries[k].getVersionedIdentifier().getIdentifier())) {
-					url = getRuntimeConfigurationURL(entries[k], cSite);
-					featurePlugin = entries[k];
-				}
-			}
-
 			// get any fragments for the feature plugin
 			ArrayList list = new ArrayList();
 			if (url != null)
@@ -461,18 +462,21 @@ public class InstallConfiguration
 				runtimeConfiguration.createFeatureEntry(
 					id,
 					version,
+					pluginVersion,
+					true,
 					application,
 					roots);
 			runtimeConfiguration.configureFeatureEntry(featureEntry);
 		} else {
 			// write non-primary feature entries
-			String id = feature.getVersionedIdentifier().getIdentifier();
 			String version =
 				feature.getVersionedIdentifier().getVersion().toString();
 			IPlatformConfiguration.IFeatureEntry featureEntry =
 				runtimeConfiguration.createFeatureEntry(
 					id,
 					version,
+					pluginVersion,
+					false,
 					null,
 					null);
 			runtimeConfiguration.configureFeatureEntry(featureEntry);
@@ -482,9 +486,9 @@ public class InstallConfiguration
 		IPluginEntry[] platformPlugins =
 			getPlatformPlugins(feature, runtimeConfiguration);
 		for (int k = 0; k < platformPlugins.length; k++) {
-			String id =
+			id =
 				platformPlugins[k].getVersionedIdentifier().getIdentifier();
-			URL url = getRuntimeConfigurationURL(platformPlugins[k], cSite);
+			url = getRuntimeConfigurationURL(platformPlugins[k], cSite);
 			if (url!=null){
 				runtimeConfiguration.setBootstrapPluginLocation(id, url);
 			}
