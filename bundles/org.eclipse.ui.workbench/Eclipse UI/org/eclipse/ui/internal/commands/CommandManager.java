@@ -145,6 +145,7 @@ public final class CommandManager implements ICommandManager {
 	private SortedMap categoriesById = new TreeMap();	
 	private SortedMap categoryDefinitionsById = new TreeMap();
 	private SortedMap commandDefinitionsById = new TreeMap();
+	private Map commandIdsByActionIds = new HashMap(); // TODO temporary?
 	private ICommandManagerEvent commandManagerEvent;
 	private List commandManagerListeners;
 	private SortedMap commandsById = new TreeMap();	
@@ -312,8 +313,7 @@ public final class CommandManager implements ICommandManager {
 	}
 
 	public String guessCommandIdFromActionId(String actionId) {
-		// TODO
-		return actionId;	
+		return null; // TODO ? (String) commandIdsByActionIds.get(actionId);	
 	}
 
 	public Integer getAccelerator(String commandId) {
@@ -392,7 +392,28 @@ public final class CommandManager implements ICommandManager {
 		actionsById = Util.safeCopy(actionsById, String.class, IAction.class);	
 	
 		if (!Util.equals(actionsById, this.actionsById)) {	
-			this.actionsById = actionsById;	
+			this.actionsById = actionsById;
+			
+			// TODO begin temporary (?)
+			for (Iterator iterator = this.actionsById.entrySet().iterator(); iterator.hasNext();) {
+				Map.Entry entry = (Map.Entry) iterator.next();
+				String commandId = (String) entry.getKey();
+				IAction action = (IAction) entry.getValue();
+				
+				if (commandId != null && action instanceof ActionHandler) {						
+					ActionHandler actionHandler = (ActionHandler) action;
+					org.eclipse.jface.action.IAction jfaceAction = (org.eclipse.jface.action.IAction) actionHandler.getAction();	
+					
+					if (jfaceAction != null) {
+						String actionId = jfaceAction.getId();
+						
+						if (actionId != null)
+							commandIdsByActionIds.put(actionId, commandId);
+					}
+				}				
+			}
+			// TODO end temporary
+			
 			fireCommandManagerChanged();
 		}
 	}
