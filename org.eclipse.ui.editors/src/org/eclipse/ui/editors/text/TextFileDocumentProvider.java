@@ -677,7 +677,7 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 	public long getModificationStamp(Object element) {
 		FileInfo info= (FileInfo) fFileInfoMap.get(element);
 		if (info != null)
-			return info.fTextFileBuffer.getModifcationStamp();
+			return info.fTextFileBuffer.getModificationStamp();
 		return getParentProvider().getModificationStamp(element);
 	}
 

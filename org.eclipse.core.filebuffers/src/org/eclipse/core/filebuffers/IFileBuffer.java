@@ -126,5 +126,5 @@ public interface IFileBuffer {
 	 * 
 	 * @return the modification stamp of the file underlying this file buffer
 	 */
-	long getModifcationStamp();
+	long getModificationStamp();
 }

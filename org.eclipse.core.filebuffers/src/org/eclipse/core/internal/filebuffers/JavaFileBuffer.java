@@ -196,9 +196,9 @@ public abstract class JavaFileBuffer extends AbstractFileBuffer  {
 	}
 	
 	/*
-	 * @see org.eclipse.core.filebuffers.IFileBuffer#getModifcationStamp()
+	 * @see org.eclipse.core.filebuffers.IFileBuffer#getModificationStamp()
 	 */
-	public long getModifcationStamp() {
+	public long getModificationStamp() {
 		return fFile.lastModified();
 	}
 	
