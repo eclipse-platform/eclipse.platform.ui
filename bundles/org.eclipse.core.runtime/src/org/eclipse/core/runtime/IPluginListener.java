@@ -29,7 +29,7 @@ public interface IPluginListener extends EventListener {
 	 * Note: This method is called asynchronously by the platform; 
 	 * it is not intended to be called directly by clients.
 	 *</p>
-	 * @param event the plugin lifecycle event
+	 * @param events an array containing plug-in lifecycle events
 	 * @see IPluginEvent
 	 */	
 	public void pluginChanged(IPluginEvent[] events);
