@@ -345,7 +345,7 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 								manager.busyCursorWhile(new IRunnableWithProgress() {
 									public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 										try {	
-											node.cacheContents(new NullProgressMonitor());
+											node.cacheContents(monitor);
 											hookContentChangeListener(node);
 										} catch (TeamException e) {
 											Utils.handle(e);
