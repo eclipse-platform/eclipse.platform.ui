@@ -51,6 +51,7 @@ import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.debug.internal.ui.views.DebugViewDecoratingLabelProvider;
 import org.eclipse.debug.internal.ui.views.DebugViewInterimLabelProvider;
 import org.eclipse.debug.internal.ui.views.DebugViewLabelDecorator;
+import org.eclipse.debug.internal.ui.views.RemoteTreeViewer;
 import org.eclipse.debug.ui.IDebugEditorPresentation;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -425,7 +426,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
 	 */
 	public void dispose() {
-	    LaunchViewer viewer = (LaunchViewer) getViewer();
+	    RemoteTreeViewer viewer = (RemoteTreeViewer) getViewer();
 		if (viewer != null) {
 			viewer.removeSelectionChangedListener(this);
 			viewer.cancelJobs();

@@ -7,24 +7,14 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.views.launch;
+package org.eclipse.debug.internal.ui.views;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.ui.IWorkbenchPartSite;
-import org.eclipse.ui.internal.progress.PendingUpdateAdapter;
-import org.eclipse.ui.progress.DeferredTreeContentManager;
-import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
-import org.eclipse.ui.progress.IElementCollector;
-import org.eclipse.ui.progress.WorkbenchJob;
-/**
- * A deferred content manager that merges content into a tree rather then replacing * it children with a "pending" node, and then the real children. This avoids * collapsing the viewer when a refresh is performed. This implementation is * currently tied to the LaunchViewer. *  * @since 3.1
+import org.eclipse.core.runtime.IProgressMonitor;import org.eclipse.core.runtime.IStatus;import org.eclipse.core.runtime.Status;import org.eclipse.jface.viewers.ITreeContentProvider;import org.eclipse.ui.IWorkbenchPartSite;import org.eclipse.ui.internal.progress.PendingUpdateAdapter;import org.eclipse.ui.progress.DeferredTreeContentManager;import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;import org.eclipse.ui.progress.IElementCollector;import org.eclipse.ui.progress.WorkbenchJob;/**
+ * A remote content manager that merges content into a tree rather then replacing * its children with a "pending" node, and then the real children when they are available. * This avoids collapsing the viewer when a refresh is performed. This implementation is * currently tied to the <code>RemoteTreeViewer</code>. *  * @since 3.1
  */
-public class IncrementalDeferredTreeContentManager extends DeferredTreeContentManager {
+public class RemoteTreeContentManager extends DeferredTreeContentManager {
 
-    private LaunchViewer fViewer;
+    private RemoteTreeViewer fViewer;    
     /**
      * Contructs a new content manager.
      * 
@@ -32,7 +22,7 @@ public class IncrementalDeferredTreeContentManager extends DeferredTreeContentMa
      * @param viewer viewer
      * @param site part site
      */
-    public IncrementalDeferredTreeContentManager(ITreeContentProvider provider, LaunchViewer viewer, IWorkbenchPartSite site) {
+    public RemoteTreeContentManager(ITreeContentProvider provider, RemoteTreeViewer viewer, IWorkbenchPartSite site) {
         super(provider, viewer, site);
         fViewer = viewer;
     }
@@ -43,7 +33,7 @@ public class IncrementalDeferredTreeContentManager extends DeferredTreeContentMa
      *            The parent object being filled in,
      * @param placeholder
      *            The adapter that will be used to indicate that results are
-     *            pending.
+     *            pending, possibly <code>null</code>
      * @return IElementCollector
      */
     protected IElementCollector createElementCollector(final Object parent, final PendingUpdateAdapter placeholder) {
@@ -109,10 +99,10 @@ public class IncrementalDeferredTreeContentManager extends DeferredTreeContentMa
     /**
      * Create a UIJob to replace the children of the parent in the tree viewer.
      * 
-     * @param parent
-     * @param children
-     * @param offset
-     * @param monitor
+     * @param parent the parent for which children are to be replaced
+     * @param children the replacement children
+     * @param offset the offset at which to start replacing children
+     * @param monitor progress monitor
      */
     protected void replaceChildren(final Object parent, final Object[] children, final int offset, IProgressMonitor monitor) {
         WorkbenchJob updateJob = new WorkbenchJob(DebugUIViewsMessages.getString("IncrementalDeferredTreeContentManager.0")) { //$NON-NLS-1$
@@ -137,11 +127,10 @@ public class IncrementalDeferredTreeContentManager extends DeferredTreeContentMa
     } 
     
     /**
-     * Create a UIJob to replace the children of the parent in the tree viewer.
+     * Create a UIJob to prune the children of the parent in the tree viewer, starting     * at the given offset.
      * 
-     * @param parent
-     * @param children
-     * @param offset
+     * @param parent the parent for which children should be pruned
+     * @param offset the offset at which children should be pruned. All children at and after     *  this index will be removed from the tree. 
      * @param monitor
      */
     protected void prune(final Object parent, final int offset) {
@@ -164,4 +153,4 @@ public class IncrementalDeferredTreeContentManager extends DeferredTreeContentMa
         };
         updateJob.setSystem(true);
         updateJob.schedule();
-    }         	/* (non-Javadoc)	 * @see org.eclipse.ui.progress.DeferredTreeContentManager#runClearPlaceholderJob(org.eclipse.ui.internal.progress.PendingUpdateAdapter)	 */	protected void runClearPlaceholderJob(PendingUpdateAdapter placeholder) {		if (placeholder != null) {			super.runClearPlaceholderJob(placeholder);		}	}}
+    }         	/* (non-Javadoc)	 * @see org.eclipse.ui.progress.DeferredTreeContentManager#runClearPlaceholderJob(org.eclipse.ui.internal.progress.PendingUpdateAdapter)	 */	protected void runClearPlaceholderJob(PendingUpdateAdapter placeholder) {	    // the placeholder is not used when there were already children in the tree (null)		if (placeholder != null) {			super.runClearPlaceholderJob(placeholder);		}	}}
