@@ -176,6 +176,7 @@ public class Messages extends NLS {
 	public static String resources_exSaveProjectLocation;
 	public static String resources_fileExists;
 	public static String resources_fileToProj;
+	public static String resources_flushingContentDescriptionCache;	
 	public static String resources_folderOverFile;
 	public static String resources_format;
 	public static String resources_getResourceAttributesFailed;

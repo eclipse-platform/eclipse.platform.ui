@@ -190,6 +190,10 @@ public class Cache {
 
 	public void discardAll() {
 		entries.clear();
+	}
+
+	public void dispose() {
+		discardAll();
 		entries = null;
 	}
 }

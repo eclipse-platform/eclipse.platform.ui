@@ -15,6 +15,8 @@ import java.io.UnsupportedEncodingException;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.preferences.EclipsePreferences;
+import org.eclipse.core.internal.resources.ContentDescriptionManager;
+import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.*;
@@ -22,7 +24,7 @@ import org.eclipse.core.runtime.content.*;
 public class CharsetTest extends ResourceTest {
 	private static final String SAMPLE_XML_DEFAULT_ENCODING = "<?xml version=\"1.0\"?><org.eclipse.core.resources.tests.root/>";
 	private static final String SAMPLE_XML_US_ASCII_ENCODING = "<?xml version=\"1.0\" encoding=\"US-ASCII\"?><org.eclipse.core.resources.tests.root/>";
-	private static final String SAMPLE_XML_UTF_8_ENCODING = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><org.eclipse.core.resources.tests.root/>";
+	private static final String SAMPLE_XML_ISO_8859_1_ENCODING = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><org.eclipse.core.resources.tests.root/>";
 	private static final String SAMPLE_SPECIFIC_XML = "<?xml version=\"1.0\"?><org.eclipse.core.tests.resources.anotherXML/>";
 
 	public static Test suite() {
@@ -30,7 +32,7 @@ public class CharsetTest extends ResourceTest {
 		//		suite.addTest(new CharsetTest("testFileCreation"));
 		//		suite.addTest(new CharsetTest("testPrefsFileCreation"));
 		//		return suite;
-		//return new CharsetTest("testDeltaOnPreferenceChanges");
+		//		return new CharsetTest("testBug79151");
 
 		return new TestSuite(CharsetTest.class);
 
@@ -90,6 +92,19 @@ public class CharsetTest extends ResourceTest {
 				// ignore
 			}
 			return hasBeenNotified();
+		}
+	}
+
+	/**
+	 * Blocks the calling thread until the cache flush job completes.
+	 */
+	protected void waitForCacheFlush() {
+		try {
+			Platform.getJobManager().join(ContentDescriptionManager.FAMILY_DESCRIPTION_CACHE_FLUSH, null);
+		} catch (OperationCanceledException e) {
+			//ignore
+		} catch (InterruptedException e) {
+			//ignore
 		}
 	}
 
@@ -224,7 +239,7 @@ public class CharsetTest extends ResourceTest {
 			ensureExistsInWorkspace(file, new ByteArrayInputStream(SAMPLE_XML_US_ASCII_ENCODING.getBytes("UTF-8")));
 			assertEquals("1.0", "US-ASCII", file.getCharset());
 			// content-based encoding is FRED			
-			file.setContents(new ByteArrayInputStream(SAMPLE_XML_UTF_8_ENCODING.getBytes("UTF-8")), false, false, null);
+			file.setContents(new ByteArrayInputStream(SAMPLE_XML_ISO_8859_1_ENCODING.getBytes("ISO-8859-1")), false, false, null);
 			assertEquals("2.0", "ISO-8859-1", file.getCharset());
 			// content-based encoding is UTF-8 (default for XML)
 			file.setContents(new ByteArrayInputStream(SAMPLE_XML_DEFAULT_ENCODING.getBytes("UTF-8")), false, false, null);
@@ -498,6 +513,82 @@ public class CharsetTest extends ResourceTest {
 		} catch (CoreException ce) {
 			// ok, the resource does not exist
 		}
+	}
+
+	public void testBug79151() {
+		IWorkspace workspace = getWorkspace();
+		IProject project = workspace.getRoot().getProject("MyProject");
+		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
+		IContentType xml = contentTypeManager.getContentType("org.eclipse.core.runtime.xml");
+		String newExtension = "xml_bug_79151";
+		IFile file1 = project.getFile("file.xml");
+		IFile file2 = project.getFile("file." + newExtension);
+		ensureExistsInWorkspace(file1, getContents(SAMPLE_XML_ISO_8859_1_ENCODING));
+		ensureExistsInWorkspace(file2, getContents(SAMPLE_XML_US_ASCII_ENCODING));
+		// ensure we start in a known state
+		((Workspace) workspace).getContentDescriptionManager().invalidateCache(true);
+		// wait for cache flush to finish
+		waitForCacheFlush();
+		// cache is new at this point
+		assertEquals("0.9", ContentDescriptionManager.EMPTY_CACHE, ((Workspace) workspace).getContentDescriptionManager().getCacheState());
+
+		IContentDescription description1a = null, description1b = null, description1c = null, description1d = null;
+		IContentDescription description2 = null;
+		try {
+			description1a = file1.getContentDescription();
+			description2 = file2.getContentDescription();
+		} catch (CoreException e) {
+			fail("1.0", e);
+		}
+		assertNotNull("1.1", description1a);
+		assertEquals("1.2", xml, description1a.getContentType());
+		assertNull("1.3", description2);
+		try {
+			description1b = file1.getContentDescription();
+			// ensure it comes from the cache (should be the very same object)
+			assertNotNull(" 2.0", description1b);
+			assertSame("2.1", description1a, description1b);
+		} catch (CoreException e) {
+			fail("2.2", e);
+		}
+		try {
+			// change the content type
+			xml.addFileSpec(newExtension, IContentType.FILE_EXTENSION_SPEC);
+		} catch (CoreException e) {
+			fail("3.0", e);
+		}
+		try {
+			try {
+				description1c = file1.getContentDescription();
+				description2 = file2.getContentDescription();
+			} catch (CoreException e) {
+				fail("4.0", e);
+			}
+			// ensure it does *not* come from the cache (should be a different object)
+			assertNotNull("4.1", description1c);
+			assertNotSame("4.2", description1a, description1c);
+			assertEquals("4.3", xml, description1c.getContentType());
+			assertNotNull("4.4", description2);
+			assertEquals("4.5", xml, description2.getContentType());
+		} finally {
+			try {
+				// dissociate the xml2 extension from the XML content type
+				xml.removeFileSpec(newExtension, IContentType.FILE_EXTENSION_SPEC);
+			} catch (CoreException e) {
+				fail("4.99", e);
+			}
+		}
+		try {
+			description1d = file1.getContentDescription();
+			description2 = file2.getContentDescription();
+		} catch (CoreException e) {
+			fail("5.0", e);
+		}
+		// ensure it does *not* come from the cache (should be a different object)
+		assertNotNull("5.1", description1d);
+		assertNotSame("5.2", description1c, description1d);
+		assertEquals("5.3", xml, description1d.getContentType());
+		assertNull("5.4", description2);
 	}
 
 	/**

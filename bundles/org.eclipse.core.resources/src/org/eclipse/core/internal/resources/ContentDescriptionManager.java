@@ -11,17 +11,51 @@
 package org.eclipse.core.internal.resources;
 
 import java.io.*;
-import org.eclipse.core.internal.utils.Cache;
-import org.eclipse.core.internal.utils.Messages;
-import org.eclipse.core.resources.IResourceStatus;
+import org.eclipse.core.internal.utils.*;
+import org.eclipse.core.internal.watson.*;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.*;
+import org.eclipse.core.runtime.content.IContentTypeManager.ContentTypeChangeEvent;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.Job;
 
 /**
- * A helper class for File#getContentDescription. Keeps a cache of 
- * recently read content descriptions.
+ * Keeps a cache of recently read content descriptions.
+ * 
+ * @since 3.0
+ * @see IFile#getContentDescription()
  */
-public class ContentDescriptionManager implements IManager {
+public class ContentDescriptionManager implements IManager, IRegistryChangeListener, IContentTypeManager.IContentTypeChangeListener {
+
+	/**
+	 * This job causes the content description cache and the related flags 
+	 * in the resource tree to be flushed. 
+	 */
+	private class FlushJob extends WorkspaceJob {
+
+		public FlushJob() {
+			super(Messages.resources_flushingContentDescriptionCache);
+			setSystem(true);
+			setUser(false);
+			setPriority(LONG);
+			setRule(workspace.getRoot());
+		}
+
+		public boolean belongsTo(Object family) {
+			return FAMILY_DESCRIPTION_CACHE_FLUSH.equals(family);
+		}
+
+		public IStatus runInWorkspace(IProgressMonitor monitor) {
+			try {
+				setCacheState(FLUSHING_CACHE);
+				ContentDescriptionManager.this.flushCache(monitor);
+			} catch (CoreException e) {
+				return e.getStatus();
+			}
+			return Status.OK_STATUS;
+		}
+	}
 
 	/** 
 	 * An input stream that only opens the file if bytes are actually requested.
@@ -70,61 +104,199 @@ public class ContentDescriptionManager implements IManager {
 			return actual.skip(n);
 		}
 	}
+
+	private static final QualifiedName CACHE_STATE = new QualifiedName(ResourcesPlugin.PI_RESOURCES, "contentCacheState"); //$NON-NLS-1$
+	private static final QualifiedName CACHE_TIMESTAMP = new QualifiedName(ResourcesPlugin.PI_RESOURCES, "contentCacheTimestamp"); //$NON-NLS-1$\
+	public static final byte EMPTY_CACHE = 1;
+
+	public static final String FAMILY_DESCRIPTION_CACHE_FLUSH = ResourcesPlugin.PI_RESOURCES + ".contentDescriptionCacheFamily"; //$NON-NLS-1$	
+	public static final byte FLUSHING_CACHE = 4;
+	public static final byte INVALID_CACHE = 3;
+
+	private static final String PT_CONTENTTYPES = "contentTypes"; //$NON-NLS-1$
+	public static final byte USED_CACHE = 2;
+
 	private Cache cache;
+
+	private byte cacheState;
+
+	private Job flushJob;
+
+	Workspace workspace;
+
+	/**
+	 * @see IContentTypeManager.IContentTypeChangeListener#contentTypeChanged(ContentTypeChangeEvent)
+	 */
+	public void contentTypeChanged(ContentTypeChangeEvent event) {
+		invalidateCache(true);
+	}
+
+	void flushCache(final IProgressMonitor monitor) throws CoreException {
+		if (monitor.isCanceled())
+			throw new OperationCanceledException();
+		// the workspace root  as our scheduling rule since we need to traverse all resources in the tree  
+		final ISchedulingRule rule = workspace.getRoot();
+		try {
+			workspace.prepareOperation(rule, monitor);
+			workspace.beginOperation(true);
+			// this lock must be acquired from inside the operation otherwise deadlocks may occur
+			synchronized (this) {
+				if (getCacheState() == EMPTY_CACHE) {
+					monitor.worked(Policy.opWork);
+					// nothing to be done, no information cached
+					return;
+				}
+				// flush the MRU cache
+				this.cache.discardAll();
+				// discard content type related flags for all files in the tree 
+				IElementContentVisitor visitor = new IElementContentVisitor() {
+					public boolean visitElement(ElementTree tree, IPathRequestor requestor, Object elementContents) {
+						if (monitor.isCanceled())
+							throw new OperationCanceledException();
+						if (elementContents == null)
+							return false;
+						ResourceInfo info = (ResourceInfo) elementContents;
+						if (info.getType() != IResource.FILE)
+							return true;
+						info = workspace.getResourceInfo(requestor.requestPath(), false, true);
+						if (info == null)
+							return false;
+						info.clear(ICoreConstants.M_CONTENT_CACHE);
+						return true;
+					}
+				};
+				try {
+					new ElementTreeIterator(workspace.getElementTree(), Path.ROOT).iterate(visitor);
+				} catch (WrappedRuntimeException e) {
+					throw (CoreException) e.getTargetException();
+				}
+				// done cleaning
+				setCacheState(EMPTY_CACHE);
+			}
+			monitor.worked(Policy.opWork);
+		} catch (OperationCanceledException e) {
+			workspace.getWorkManager().operationCanceled();
+			throw e;
+		} finally {
+			workspace.endOperation(rule, true, Policy.subMonitorFor(monitor, Policy.endOpWork));
+		}
+	}
 
 	Cache getCache() {
 		return cache;
 	}
 
+	/** Public so tests can examine it. */
+	public synchronized byte getCacheState() {
+		if (cacheState != 0)
+			// we have read/set it before, no nead to read property
+			return cacheState;
+		String persisted;
+		try {
+			persisted = workspace.getRoot().getPersistentProperty(CACHE_STATE);
+			cacheState = persisted != null ? Byte.parseByte(persisted) : INVALID_CACHE;
+		} catch (NumberFormatException e) {
+			cacheState = INVALID_CACHE;
+		} catch (CoreException e) {
+			ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
+			cacheState = INVALID_CACHE;
+		}
+		return cacheState;
+	}
+
+	private long getCacheTimestamp() throws CoreException {
+		try {
+			return Long.parseLong(workspace.getRoot().getPersistentProperty(CACHE_TIMESTAMP));
+		} catch (NumberFormatException e) {
+			return 0;
+		}
+	}
+
 	public IContentDescription getDescriptionFor(File file, ResourceInfo info) throws CoreException {
-		//first look for cached description information to avoid looking in the cache
+		int cacheState = getCacheState();
+		if (cacheState == INVALID_CACHE) {
+			// the cache is not good, flush it
+			flushJob.schedule(1000);
+			// will have to just read the file for now
+			return readDescription(file);
+		}
+		if (cacheState == FLUSHING_CACHE)
+			// the cache is being flushed, but is still not good, just read the file
+			return readDescription(file);
+		// first look for the flags in the resource info to avoid looking in the cache
 		// don't need to copy the info because the modified bits are not in the deltas
 		if (info == null)
 			return null;
 		int flags = info.getFlags();
 		if ((flags & ICoreConstants.M_NO_CONTENT_DESCRIPTION) != 0)
+			// afawr, this file has no known content type
 			return null;
 		if ((flags & ICoreConstants.M_DEFAULT_CONTENT_DESCRIPTION) != 0) {
+			// this file supposedly has a default content description for an "obvious"  content type			
 			IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
+			// try to find the obvious content type matching its name
 			IContentType type = contentTypeManager.findContentTypeFor(file.getName());
 			if (type != null)
+				// we found it, we are done
 				return type.getDefaultDescription();
+			// for some reason, there was no content type for this file name
+			// fix this and keep going			
+			info.clear(ICoreConstants.M_CONTENT_CACHE);
 		}
-		//make sure no cached information is set on the info
-		info.clear(ICoreConstants.M_CONTENT_CACHE);
-		// tries to get a description from the cache	
-		// synchronized to prevent concurrent modification in the cache 
 		synchronized (this) {
+			// tries to get a description from the cache	
 			Cache.Entry entry = cache.getEntry(file.getFullPath());
 			if (entry != null && entry.getTimestamp() == info.getContentId())
 				// there was a description in the cache, and it was up to date
 				return (IContentDescription) entry.getCached();
+			// we are going to add an entry to the cache or update the resource info - remember that
+			setCacheState(USED_CACHE);
 			// either we didn't find a description in the cache, or it was not up-to-date - has to be read again
 			IContentDescription newDescription = readDescription(file);
 			if (newDescription == null) {
-				// no content type exists for this file name/contents
+				// no content type exists for this file name/contents - remember this
 				info.set(ICoreConstants.M_NO_CONTENT_DESCRIPTION);
 				return null;
 			}
-			// if it is a default description for the default type, we don't have to cache 
 			if (newDescription.getContentType().getDefaultDescription().equals(newDescription)) {
+				// we got a default description
 				IContentType defaultForName = Platform.getContentTypeManager().findContentTypeFor(file.getName());
 				if (newDescription.getContentType().equals(defaultForName)) {
-					// the default content description is enough for this file
+					// it is a default description for the obvious content type given its file name, we don't have to cache					
 					info.set(ICoreConstants.M_DEFAULT_CONTENT_DESCRIPTION);
 					return newDescription;
 				}
 			}
 			// we actually got a description filled by a describer (or a default description for a non-obvious type)
 			if (entry == null)
-				// there was none - creates one
+				// there was no entry before - create one
 				entry = cache.addEntry(file.getFullPath(), newDescription, info.getContentId());
 			else {
+				// just update the existing entry
 				entry.setTimestamp(info.getContentId());
 				entry.setCached(newDescription);
 			}
 			return newDescription;
 		}
+	}
+
+	private long getPlatformTimestamp() {
+		return Platform.getPlatformAdmin().getState(false).getTimeStamp();
+	}
+
+	public synchronized void invalidateCache(boolean flush) {
+		if (getCacheState() == EMPTY_CACHE)
+			// cache has not been touched, nothing to do			
+			return;
+		// mark the cache as invalid
+		try {
+			setCacheState(INVALID_CACHE);
+		} catch (CoreException e) {
+			ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
+		}
+		if (!flush)
+			return;
+		flushJob.schedule(1000);
 	}
 
 	/**
@@ -134,22 +306,62 @@ public class ContentDescriptionManager implements IManager {
 		// tries to obtain a description for this file contents
 		InputStream contents = new LazyFileInputStream(file.getLocation());
 		try {
-			IContentTypeManager contentTypeManager = Platform.getContentTypeManager();			
+			IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
 			return contentTypeManager.getDescriptionFor(contents, file.getName(), IContentDescription.ALL);
 		} catch (IOException e) {
-			String message = NLS.bind(Messages.resources_errorContentDescription, file.getFullPath());		
+			String message = NLS.bind(Messages.resources_errorContentDescription, file.getFullPath());
 			throw new ResourceException(IResourceStatus.FAILED_DESCRIBING_CONTENTS, file.getFullPath(), message, e);
 		} finally {
 			file.ensureClosed(contents);
 		}
 	}
 
-	public void shutdown(IProgressMonitor monitor) {
-		cache.discardAll();
-		cache = null;
+	/**
+	 * @see IRegistryChangeListener#registryChanged(IRegistryChangeEvent)
+	 */
+	public void registryChanged(IRegistryChangeEvent event) {
+		// no changes related to the content type registry
+		if (event.getExtensionDeltas(Platform.PI_RUNTIME, PT_CONTENTTYPES).length == 0)
+			return;
+		invalidateCache(true);
 	}
 
-	public void startup(IProgressMonitor monitor) {
+	private synchronized void setCacheState(byte newCacheState) throws CoreException {
+		if (cacheState == newCacheState)
+			return;
+		workspace.getRoot().setPersistentProperty(CACHE_STATE, Byte.toString(newCacheState));
+		cacheState = newCacheState;
+	}
+
+	private void setCacheTimestamp(long timeStamp) throws CoreException {
+		workspace.getRoot().setPersistentProperty(CACHE_TIMESTAMP, Long.toString(timeStamp));
+	}
+
+	public void shutdown(IProgressMonitor monitor) throws CoreException {
+		if (getCacheState() != INVALID_CACHE)
+			// remember the platform timestamp for which we have a valid cache 
+			setCacheTimestamp(getPlatformTimestamp());
+		Platform.getContentTypeManager().removeContentTypeChangeListener(this);
+		Platform.getExtensionRegistry().removeRegistryChangeListener(this);
+		cache.dispose();
+		cache = null;
+		flushJob.cancel();
+		flushJob = null;
+	}
+
+	public void startup(IProgressMonitor monitor) throws CoreException {
+		workspace = (Workspace) ResourcesPlugin.getWorkspace();
 		cache = new Cache(100, 1000, 0.1);
+		getCacheState();
+		if (cacheState == FLUSHING_CACHE)
+			// in case we died before completing the last flushing 
+			setCacheState(INVALID_CACHE);
+		flushJob = new FlushJob();
+		if (getCacheTimestamp() != getPlatformTimestamp())
+			invalidateCache(false);
+		// register a content type change listener
+		Platform.getContentTypeManager().addContentTypeChangeListener(this);
+		// register a registry change listener		
+		Platform.getExtensionRegistry().addRegistryChangeListener(this, Platform.PI_RUNTIME);
 	}
 }
