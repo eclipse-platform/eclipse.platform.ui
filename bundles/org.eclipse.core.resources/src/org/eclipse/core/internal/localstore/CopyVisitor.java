@@ -65,7 +65,7 @@ protected boolean copy(UnifiedTreeNode node) {
 protected boolean copyContents(UnifiedTreeNode node, Resource source, Resource destination) {
 	try {
 		if (!isDeep && source.isLinked()) {
-			destination.createLink(source.getLocation(), updateFlags & IResource.ALLOW_MISSING_LOCAL, null);
+			destination.createLink(source.getRawLocation(), updateFlags & IResource.ALLOW_MISSING_LOCAL, null);
 			return false;
 		}
 		if (destination.getType() == IResource.FOLDER) {
