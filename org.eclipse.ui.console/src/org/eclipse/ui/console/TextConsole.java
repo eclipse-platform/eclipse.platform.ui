@@ -118,7 +118,6 @@ public abstract class TextConsole extends AbstractConsole {
         fDocument.addPositionCategory(ConsoleHyperlinkPosition.HYPER_LINK_CATEGORY);
         fPatternMatcher = new ConsolePatternMatcher(this);
         fDocument.addDocumentListener(fPatternMatcher);
-        setFont(JFaceResources.getFont(JFaceResources.TEXT_FONT));
     }
 
     /* (non-Javadoc)
@@ -190,21 +189,41 @@ public abstract class TextConsole extends AbstractConsole {
     }
     
     /**
-	 * Returns the font used by this console
+	 * Returns the font used by this console. Must be called in the UI thread.
 	 * 
 	 * @return font used by this console
 	 */
     public Font getFont() {
+        if (fFont == null) {
+            fFont = getDefaultFont();
+        }
         return fFont;
     }
     
+    /**
+     * Returns the default text font.
+     * 
+     * @return the default text font
+     */
+    private Font getDefaultFont() {
+        return JFaceResources.getFont(JFaceResources.TEXT_FONT);
+    }
+    
 	/**
-	 * Sets the font used by this console
+	 * Sets the font used by this console. Specify <code>null</code> to use
+	 * the default text font.
 	 * 
-	 * @param font font
+	 * @param font font, or <code>null</code> to indicate the default font
 	 */
     public void setFont(Font newFont) {
-        if (fFont == null || !fFont.equals(newFont)) {
+        // ensure font is initialized
+        getFont();
+        // translate null to default font
+        if (newFont == null) {
+            newFont = getDefaultFont();
+        }
+        // fire property change if requried
+        if (!fFont.equals(newFont)) {
             Font old = fFont;
             fFont = newFont;
             firePropertyChange(this, IConsoleConstants.P_FONT, old, fFont);

@@ -285,7 +285,7 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 		}
 		IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
         store.addPropertyChangeListener(this);
-        setFont(JFaceResources.getFont(IDebugPreferenceConstants.CONSOLE_FONT));
+        //setFont(JFaceResources.getFont(IDebugPreferenceConstants.CONSOLE_FONT));
         JFaceResources.getFontRegistry().addListener(this);
         if (store.getBoolean(IDebugPreferenceConstants.CONSOLE_WRAP)) {
             setConsoleWidth(store.getInt(IDebugPreferenceConstants.CONSOLE_WIDTH));
