@@ -16,6 +16,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
  * 
  */
 public interface IDebugHelpContextIds {
+	
 	public static final String PREFIX = IDebugUIConstants.PLUGIN_ID + "."; //$NON-NLS-1$
 	
 	// Actions
@@ -50,9 +51,7 @@ public interface IDebugHelpContextIds {
 		
 	// Views
 	public static final String DEBUG_VIEW = PREFIX + "debug_view_context"; //$NON-NLS-1$
-	public static final String PROCESS_VIEW = PREFIX + "process_view_context"; //$NON-NLS-1$
 	public static final String VARIABLE_VIEW = PREFIX + "variable_view_context"; //$NON-NLS-1$
-	public static final String INSPECTOR_VIEW = PREFIX + "inspector_view_context"; //$NON-NLS-1$
 	public static final String BREAKPOINT_VIEW = PREFIX + "breakpoint_view_context"; //$NON-NLS-1$
 	public static final String CONSOLE_VIEW = PREFIX + "console_view_context"; //$NON-NLS-1$
 	public static final String EXPRESSION_VIEW = PREFIX + "expression_view_context"; //$NON-NLS-1$
