@@ -69,6 +69,7 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil;
+import org.eclipse.ui.externaltools.internal.launchConfigurations.IgnoreWhiteSpaceComparator;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolBuilder;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
@@ -1118,6 +1119,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 			if (oldCommands.length != newCommands.length) {
 				return true;
 			}
+			IgnoreWhiteSpaceComparator comparator= new IgnoreWhiteSpaceComparator();
 			for (int i = 0; i < oldCommands.length; i++) {
 				ICommand oldCommand = oldCommands[i];
 				ICommand newCommand= newCommands[i];
@@ -1144,7 +1146,13 @@ public final class BuilderPropertyPage extends PropertyPage {
 				Iterator keySet= oldArgs.keySet().iterator();
 				while (keySet.hasNext()) {
 					Object key = keySet.next();
-					if (!oldArgs.get(key).equals(newArgs.get(key))) {
+					Object oldArg= oldArgs.get(key);
+					Object newArg= newArgs.get(key);
+					if (oldArg instanceof String && newArg instanceof String) {
+						if (comparator.compare(oldArg, newArg) != 0) {
+							return true;
+						}
+					} else if (!oldArg.equals(newArg)){
 						return true;
 					}
 				}

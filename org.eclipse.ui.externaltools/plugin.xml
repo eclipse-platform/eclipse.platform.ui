@@ -197,7 +197,7 @@
          point="org.eclipse.debug.core.launchConfigurationComparators">
       <launchConfigurationComparator
             attribute="org.eclipse.ui.externaltools.ATTR_BUILD_SCOPE"
-            class="org.eclipse.ui.externaltools.internal.launchConfigurations.WorkingSetComparator"
+            class="org.eclipse.ui.externaltools.internal.launchConfigurations.IgnoreWhiteSpaceComparator"
             id="org.eclipse.ui.externaltools.workingSetComparator">
       </launchConfigurationComparator>
    </extension>

@@ -12,7 +12,7 @@ package org.eclipse.ui.externaltools.internal.launchConfigurations;
 
 import java.util.Comparator;
 
-public class WorkingSetComparator implements Comparator {
+public class IgnoreWhiteSpaceComparator implements Comparator {
 
 	/* (non-Javadoc)
 	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
