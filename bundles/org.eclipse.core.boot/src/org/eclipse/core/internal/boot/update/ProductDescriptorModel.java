@@ -288,11 +288,11 @@ public void _loadManifest(URL url, UMRegistryModel parent, IUMFactory factory) {
 
 		// see if it is installed physically 		
 		URL path = UMEclipseTree.getComponentURL(parent._getRegistryBase());
-		String comp_dir = componentEntryDescriptor._getId()+"_"+componentEntryDescriptor._getVersion()+"/";
+		String comp_dir = componentEntryDescriptor._getId()+"_"+componentEntryDescriptor._getVersion();
 			
 		// load the corresponding component descriptor and add this 
 		// product to the list of containing products
-		ComponentDescriptorModel comp = parent._loadComponentManifest(UMEclipseTree.getComponentURL().toString(), comp_dir, factory);
+		ComponentDescriptorModel comp = parent._loadComponentManifest(UMEclipseTree.getComponentURL(parent._getRegistryBase()).toString(), comp_dir, factory);
 		if (comp != null) {
 			comp._addToContainingProductsRel(this);
 			componentEntryDescriptor._isInstalled(true);

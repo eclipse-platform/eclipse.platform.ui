@@ -104,8 +104,8 @@ public void _setName(String name) {
 }
 public void _setOptional(String _option) {
 
-	if (_option.equals(FALSE))
-		_optional = false;
+	if (_option.equals(TRUE))
+		_optional = true;
 	
 }
 public void _setProdInstallURL(String path) {
