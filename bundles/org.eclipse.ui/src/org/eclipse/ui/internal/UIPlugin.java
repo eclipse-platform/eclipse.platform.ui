@@ -14,7 +14,6 @@ import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.util.Assert;
-import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -86,22 +85,17 @@ public final class UIPlugin extends AbstractUIPlugin {
 	 * because the default values are not stored in the preference store.
 	 */
 	protected void initializeDefaultPreferences(IPreferenceStore store) {
-		store.setDefault(IWorkbenchPreferenceConstants.OPEN_NEW_PERSPECTIVE, IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE);
-
-		//Deprecated but kept for backwards compatibility
-		store.setDefault(IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE, IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE);
-		store.setDefault(IWorkbenchPreferenceConstants.SHIFT_OPEN_NEW_PERSPECTIVE, IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE);
-		store.setDefault(IWorkbenchPreferenceConstants.ALTERNATE_OPEN_NEW_PERSPECTIVE, IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE);
-		
-		// Although there is no longer any item on the preference pages 
-		// for setting the linking preference, since it is now a per-part setting, 
-		// it remains as a preference to allow product overrides of the 
-		// initial state of linking in the Navigator.
-		// By default, linking is off.
-		store.setDefault(IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR, false);
-
-		store.setDefault(IWorkbenchPreferenceConstants.PRESENTATION_FACTORY_ID, "org.eclipse.ui.presentations.default"); //$NON-NLS-1$
-		
-		store.addPropertyChangeListener(new PlatformUIPreferenceListener());
+	    // This should not be called.
+	    // Prefs are initialized in UIPreferenceInitializer.
+	    throw new UnsupportedOperationException();
 	}
+
+    /**
+     * Initialize the prefs.  Called from UIPreferenceCustomization.
+     * 
+     * @since 3.0
+     */
+    void internalInitPrefs() {
+        initializeDefaultPreferences(getPreferenceStore());
+    }
 }

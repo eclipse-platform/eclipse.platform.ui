@@ -29,4 +29,11 @@
       <import plugin="org.eclipse.jface"/>
       <import plugin="org.eclipse.swt"/>
    </requires>
+
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <customization
+            class="org.eclipse.ui.internal.WorkbenchPreferenceInitializer"/>
+   </extension>
+
 </plugin>

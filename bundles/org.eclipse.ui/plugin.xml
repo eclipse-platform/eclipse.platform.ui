@@ -1226,17 +1226,24 @@
    </extension>
 
    <extension
+         point="org.eclipse.core.runtime.preferences">
+      <customization
+            class="org.eclipse.ui.internal.UIPreferenceInitializer"/>
+   </extension>
+
+   <extension
          point="org.eclipse.ui.presentationFactories">
       <factory
             id="org.eclipse.ui.presentations.default"
             name="Default"
             class="org.eclipse.ui.presentations.WorkbenchPresentationFactory"/>
 
-      <!-- EXPERIMENTAL -->
+      <!-- START EXPERIMENTAL PRESENTATION FACTORY -->
       <factory
             id="org.eclipse.ui.presentations.native"
             name="Native"
             class="org.eclipse.ui.internal.presentations.NativePresentationFactory"/>
+      <!-- END EXPERIMENTAL PRESENTATION FACTORY -->
    </extension>
 
 </plugin>
