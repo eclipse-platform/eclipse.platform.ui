@@ -9,10 +9,16 @@
          The content types extension point allows plug-ins to contribute to the platform content type catalog. There are two forms of contributions: &lt;cite&gt;content types&lt;/cite&gt; and &lt;cite&gt;file associations&lt;/cite&gt;.
 &lt;ul&gt;
 &lt;li&gt;
-a content type represents a file format and its naming conventions. Content types can be defined from scratch, or can inherit from existing ones, specializing them
+a content type represents a file format and its naming conventions. Content types can be defined from scratch, or can inherit from existing ones, specializing them. Also, a content type can be made into an alias for another content type (see the &lt;code&gt;alias-for&lt;/code&gt; attribute). When this feature is used:
+  &lt;ul&gt;&lt;li&gt;if the target is absent, the alias content type is processed 
+  as a normal content type;&lt;/li&gt;
+  &lt;li&gt;if the target is present, all references to the alias type are automatically
+  transformed into references to the target type, and the alias type cannot be 
+  accessed nor is exposed through the API.&lt;/li&gt;&lt;/ul&gt;
 &lt;/li&gt;
 &lt;li&gt;
-a file association extends an existing content type by associating new file names and/or extensions to it&lt;/li&gt;&lt;/ul&gt;
+a file association extends an existing content type by associating new file names and/or extensions to it&lt;/li&gt;
+&lt;/ul&gt;
       </documentation>
    </annotation>
 
@@ -120,6 +126,13 @@ a file association extends an existing content type by associating new file name
             <annotation>
                <documentation>
                   the fully qualified name of a class that implements &lt;samp&gt;org.eclipse.core.runtime.content.IContentDescriber&lt;/samp&gt; or &lt;samp&gt;org.eclipse.core.runtime.content.ITextContentDescriber&lt;/samp&gt;, or an empty string, if this content type should not have a describer even if the parent has one
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="alias-for" type="string">
+            <annotation>
+               <documentation>
+                  the fully qualified identifier of the content type this content type is an alias for
                </documentation>
             </annotation>
          </attribute>

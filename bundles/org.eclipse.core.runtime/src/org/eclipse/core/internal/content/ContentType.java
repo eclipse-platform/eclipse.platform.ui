@@ -52,9 +52,10 @@ public final class ContentType implements IContentType {
 	final static int SPEC_PRE_DEFINED = IGNORE_PRE_DEFINED;
 	final static int SPEC_USER_DEFINED = IGNORE_USER_DEFINED;
 	final static byte STATUS_INVALID = 2;
-	final static byte STATUS_UNKNOWN = 3;
+	final static byte STATUS_UNKNOWN = 0;
 	final static byte STATUS_VALID = 1;
 	private String baseTypeId;
+	private String aliasTargetId;
 	private IConfigurationElement contentTypeElement;
 	private String defaultCharset;
 	private String userCharset;
@@ -66,9 +67,9 @@ public final class ContentType implements IContentType {
 	private String namespace;
 	private byte priority;
 	private String simpleId;
-	private byte validation;
+	private byte validation = STATUS_UNKNOWN;
 
-	public static ContentType createContentType(ContentTypeCatalog catalog, String namespace, String simpleId, String name, byte priority, String[] fileExtensions, String[] fileNames, String baseTypeId, String defaultCharset, IConfigurationElement contentTypeElement) {
+	public static ContentType createContentType(ContentTypeCatalog catalog, String namespace, String simpleId, String name, byte priority, String[] fileExtensions, String[] fileNames, String baseTypeId, String aliasTargetId, String defaultCharset, IConfigurationElement contentTypeElement) {
 		ContentType contentType = new ContentType(catalog.getManager());
 		contentType.defaultDescription = new DefaultDescription(contentType, catalog);
 		contentType.simpleId = simpleId;
@@ -78,13 +79,14 @@ public final class ContentType implements IContentType {
 		if ((fileExtensions != null && fileExtensions.length > 0) || (fileNames != null && fileNames.length > 0)) {
 			contentType.fileSpecs = new ArrayList(fileExtensions.length + fileNames.length);
 			for (int i = 0; i < fileNames.length; i++)
-				contentType.fileSpecs.add(createFileSpec(fileNames[i], FILE_NAME_SPEC | SPEC_PRE_DEFINED));
+				contentType.internalAddFileSpec(catalog, fileNames[i], FILE_NAME_SPEC | SPEC_PRE_DEFINED);
 			for (int i = 0; i < fileExtensions.length; i++)
-				contentType.fileSpecs.add(createFileSpec(fileExtensions[i], FILE_EXTENSION_SPEC | SPEC_PRE_DEFINED));
+				contentType.internalAddFileSpec(catalog, fileExtensions[i], FILE_EXTENSION_SPEC | SPEC_PRE_DEFINED);
 		}
 		contentType.defaultCharset = defaultCharset;
 		contentType.contentTypeElement = contentTypeElement;
 		contentType.baseTypeId = baseTypeId;
+		contentType.aliasTargetId = aliasTargetId;
 		contentType.processPreferences(catalog);
 		return contentType;
 	}
@@ -156,9 +158,11 @@ public final class ContentType implements IContentType {
 		manager.fireContentTypeChangeEvent(this);
 	}
 
-	int describe(IContentDescriber selectedDescriber, InputStream contents, ContentDescription description) throws IOException {
+	int describe(IContentDescriber selectedDescriber, boolean text, Object contents, ContentDescription description) throws IOException {
 		try {
-			return selectedDescriber.describe(contents, description);
+			if (!text)
+				return selectedDescriber.describe((InputStream) contents, description);
+			return ((ITextContentDescriber) selectedDescriber).describe((Reader) contents, description);
 		} catch (RuntimeException re) {
 			// describer seems to be buggy. just disable it (logging the reason)
 			invalidateDescriber(re);
@@ -176,32 +180,10 @@ public final class ContentType implements IContentType {
 				ContentType.log(message, ioe);
 			}
 		} finally {
-			((LazyInputStream) contents).rewind();
-		}
-		return IContentDescriber.INVALID;
-	}
-
-	int describe(ITextContentDescriber selectedDescriber, Reader contents, ContentDescription description) throws IOException {
-		try {
-			return selectedDescriber.describe(contents, description);
-		} catch (RuntimeException re) {
-			// describer seems to be buggy. just disable it (logging the reason)
-			invalidateDescriber(re);
-		} catch (Error e) {
-			// describer got some serious problem. disable it (logging the reason) and throw the error again			
-			invalidateDescriber(e);
-			throw e;
-		} catch (LowLevelIOException llioe) {
-			// throw the actual exception
-			throw llioe.getActualException();
-		} catch (IOException ioe) {
-			// bugs 67841/ 62443  - non-low level IOException should be "ignored"
-			if (ContentTypeManager.DEBUGGING) {
-				String message = NLS.bind(Messages.content_errorReadingContents, getId());
-				ContentType.log(message, ioe);
-			}
-		} finally {
-			((LazyReader) contents).rewind();
+			if (!text)
+				((LazyInputStream) contents).rewind();
+			else
+				((LazyReader) contents).rewind();
 		}
 		return IContentDescriber.INVALID;
 	}
@@ -210,6 +192,10 @@ public final class ContentType implements IContentType {
 		if (!(another instanceof ContentType))
 			return false;
 		return ((ContentType) another).getId().equals(this.getId());
+	}
+
+	public String getAliasTargetId() {
+		return aliasTargetId;
 	}
 
 	public IContentType getBaseType() {
@@ -248,13 +234,13 @@ public final class ContentType implements IContentType {
 
 	/**
 	 * Returns the default content description for this content type. A default 
-	 * content description is returned by <code>IContentType#getDescriptionFor</code>
-	 * and <code>IContentTypeManager#getDescriptionFor</code> whenever 
-	 * content analysis could not find any particular information to be described, so all
-	 * default attributes for the content type in question apply.
+	 * content description is returned by the content type API whenever 
+	 * content analysis could not find any particular information to be described
+	 * about the contents being processed, so all default attributes for the 
+	 * content type in question apply.
 	 * <p>
 	 * Clients doing some sort of caching of content descriptions may choose 
-	 * not to do so for default descriptions, since they are easily available 
+	 * not to do so for default descriptions, since they are easily recoverable
 	 * through this API.
 	 * </p>  
 	 * 
@@ -318,7 +304,7 @@ public final class ContentType implements IContentType {
 			return null;
 		}
 		ContentType baseType = getBaseType(catalog);
-		return baseType == null ? null : baseType.getDescriber(catalog);		
+		return baseType == null ? null : baseType.getDescriber(catalog);
 	}
 
 	/**
@@ -351,6 +337,10 @@ public final class ContentType implements IContentType {
 
 	public String[] getFileSpecs(int typeMask) {
 		return getFileSpecs(manager.getCatalog(), typeMask);
+	}
+
+	public String[] getFileSpecs(ContentTypeCatalog catalog) {
+		return getFileSpecs(catalog, IContentType.FILE_NAME_SPEC | IContentType.FILE_EXTENSION_SPEC);
 	}
 
 	public String[] getFileSpecs(ContentTypeCatalog catalog, int typeMask) {
@@ -411,7 +401,7 @@ public final class ContentType implements IContentType {
 	 * @param typeMask FILE_NAME_SPEC or FILE_EXTENSION_SPEC
 	 * @return true if this file spec has already been added, false otherwise
 	 */
-	private boolean hasFileSpec(String text, int typeMask) {
+	boolean hasFileSpec(String text, int typeMask) {
 		if (fileSpecs == null)
 			return false;
 		for (Iterator i = fileSpecs.iterator(); i.hasNext();) {
@@ -435,7 +425,10 @@ public final class ContentType implements IContentType {
 			return aliasTarget.internalAddFileSpec(catalog, fileSpec, typeMask);
 		if (fileSpecs == null)
 			fileSpecs = new ArrayList(3);
-		fileSpecs.add(createFileSpec(fileSpec, typeMask));
+		FileSpec newFileSpec = createFileSpec(fileSpec, typeMask);
+		fileSpecs.add(newFileSpec);
+		if ((typeMask & ContentType.SPEC_USER_DEFINED) != 0)
+			catalog.associate(this, newFileSpec.getText(), newFileSpec.getType());
 		return true;
 	}
 
@@ -458,7 +451,7 @@ public final class ContentType implements IContentType {
 		if (describer == null)
 			return defaultDescription;
 		ContentDescription description = new ContentDescription(options);
-		describe(describer, buffer, description);
+		describe(describer, false, buffer, description);
 		// if the describer didn't add any details, just return the default
 		// description
 		if (!description.isSet())
@@ -483,7 +476,7 @@ public final class ContentType implements IContentType {
 		ContentDescription description = new ContentDescription(options);
 		if (!(describer instanceof ITextContentDescriber))
 			throw new UnsupportedOperationException();
-		describe((ITextContentDescriber) describer, buffer, description);
+		describe(describer, true, buffer, description);
 		// if the describer didn't add any details, just return the default description
 		if (!description.isSet())
 			return defaultDescription;
@@ -512,8 +505,12 @@ public final class ContentType implements IContentType {
 		return NOT_ASSOCIATED;
 	}
 
-	private boolean hasAnyFileSpec(int typeMask) {
-		if (fileSpecs == null || fileSpecs.isEmpty())
+	boolean hasAnyFileSpec() {
+		return fileSpecs != null && !fileSpecs.isEmpty();
+	}
+
+	boolean hasAnyFileSpec(int typeMask) {
+		if (!hasAnyFileSpec())
 			return false;
 		for (Iterator i = fileSpecs.iterator(); i.hasNext();) {
 			FileSpec spec = (FileSpec) i.next();
@@ -533,6 +530,7 @@ public final class ContentType implements IContentType {
 			FileSpec spec = (FileSpec) i.next();
 			if ((spec.getType() == typeMask) && fileSpec.equals(spec.getText())) {
 				i.remove();
+				catalog.dissociate(this, spec.getText(), spec.getType());
 				return true;
 			}
 		}

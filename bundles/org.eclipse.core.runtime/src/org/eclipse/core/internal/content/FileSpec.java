@@ -52,12 +52,12 @@ class FileSpec {
 	public int hashCode() {
 		return text.hashCode();
 	}
-	
+
 	public static String getMappingKeyFor(String fileSpecText) {
 		return fileSpecText.toLowerCase();
 	}
-	
+
 	public String toString() {
 		return getText();
-	}	
+	}
 }

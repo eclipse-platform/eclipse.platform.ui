@@ -94,12 +94,6 @@ public class ContentTypeManager implements IContentTypeManager, IRegistryChangeL
 		// nothing to do
 	}
 
-	private ContentTypeCatalog buildCatalog() {
-		ContentTypeCatalog newCatalog = new ContentTypeCatalog(this);
-		createBuilder(newCatalog).buildCatalog();
-		return newCatalog;
-	}
-
 	protected ContentTypeBuilder createBuilder(ContentTypeCatalog newCatalog) {
 		return new ContentTypeBuilder(newCatalog);
 	}
@@ -119,6 +113,9 @@ public class ContentTypeManager implements IContentTypeManager, IRegistryChangeL
 		return getCatalog().findContentTypesFor(contents, fileName);
 	}
 
+	/**
+	 * @see IContentTypeManager#findContentTypesFor(String)
+	 */
 	public IContentType[] findContentTypesFor(String fileName) {
 		return getCatalog().findContentTypesFor(fileName);
 	}
@@ -128,9 +125,22 @@ public class ContentTypeManager implements IContentTypeManager, IRegistryChangeL
 	}
 
 	protected synchronized ContentTypeCatalog getCatalog() {
-		if (catalog == null)
-			catalog = buildCatalog();
-		return catalog;
+		if (catalog != null)
+			// already has one			
+			return catalog;
+		// create new catalog 
+		ContentTypeCatalog newCatalog = new ContentTypeCatalog(this);
+		// build catalog by parsing the extension registry
+		ContentTypeBuilder builder = createBuilder(newCatalog);
+		try {
+			builder.buildCatalog();
+			// only remember catalog if building it was successful 
+			catalog = newCatalog;
+		} catch (InvalidRegistryObjectException e) {
+			// the registry has stale objects... just don't remember the returned (incomplete) catalog
+		}
+		newCatalog.organize();
+		return newCatalog;
 	}
 
 	public IContentType getContentType(String contentTypeIdentifier) {
@@ -149,22 +159,19 @@ public class ContentTypeManager implements IContentTypeManager, IRegistryChangeL
 		return new InstanceScope().getNode(CONTENT_TYPE_PREF_NODE);
 	}
 
-	public synchronized void registryChanged(IRegistryChangeEvent event) {
+	public void registryChanged(IRegistryChangeEvent event) {
 		// no changes related to the content type registry
 		if (event.getExtensionDeltas(Platform.PI_RUNTIME, ContentTypeBuilder.PT_CONTENTTYPES).length == 0)
 			return;
-		if (catalog == null)
-			// nothing to discard			
-			return;
 		invalidate();
-		if (ContentTypeManager.DEBUGGING)
-			Policy.debug("Event caused content type registry to be discarded: " + event); //$NON-NLS-1$
 	}
 
 	/**
 	 * Causes a new catalog to be built afresh next time an API call is made.
 	 */
-	void invalidate() {
+	synchronized void invalidate() {
+		if (ContentTypeManager.DEBUGGING && catalog != null)
+			Policy.debug("Registry discarded"); //$NON-NLS-1$		
 		catalog = null;
 	}
 

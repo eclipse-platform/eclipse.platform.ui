@@ -29,7 +29,7 @@
 		<!-- a placeholder for setups where JDT's official type is not available -->			
 		<content-type id="properties" name="%propertiesContentTypeName" 
 			base-type="text"
-			priority="low"				
+			alias-for="org.eclipse.jdt.core.javaProperties"
 			file-extensions="properties"
 			default-charset="ISO-8859-1"/>
 	</extension>		 

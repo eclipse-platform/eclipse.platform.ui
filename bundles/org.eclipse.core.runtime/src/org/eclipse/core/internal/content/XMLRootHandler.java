@@ -41,6 +41,7 @@ public final class XMLRootHandler extends DefaultHandler implements LexicalHandl
 		 * All serializable objects should have a stable serialVersionUID
 		 */
 		private static final long serialVersionUID = 1L;
+
 		/**
 		 * Constructs an instance of <code>StopParsingException</code> with a
 		 * <code>null</code> detail message.
@@ -183,7 +184,7 @@ public final class XMLRootHandler extends DefaultHandler implements LexicalHandl
 		}
 		return true;
 	}
-	
+
 	/*
 	 * Resolve external entity definitions to an empty string.  This is to speed
 	 * up processing of files with external DTDs.  Not resolving the contents 
@@ -192,7 +193,7 @@ public final class XMLRootHandler extends DefaultHandler implements LexicalHandl
 	 */
 	public InputSource resolveEntity(String publicId, String systemId) throws SAXException {
 		return new InputSource(new StringReader("")); //$NON-NLS-1$
-	}	
+	}
 
 	/*
 	 * (non-Javadoc)

@@ -54,8 +54,8 @@ public final class ContentDescription implements IContentDescription {
 			// UTF-16 will properly recognize the BOM
 			return CHARSET_UTF_16; //$NON-NLS-1$
 		return (String) getProperty(CHARSET);
-	}	
-	
+	}
+
 	/**
 	 * @see IContentDescription
 	 */

@@ -33,13 +33,7 @@ public class LocalContentTypeManager extends ContentTypeManager {
 	}
 
 	public IContentType[] findContentTypesFor(InputStream contents, IContentType[] subset) throws IOException {
-		InputStream buffer = readBuffer(contents);
-		if (buffer == null)
-			return subset;
-		ContentTypeCatalog catalog = getCatalog();
-		if (subset == null)
-			subset = catalog.getAllContentTypes();
-		return catalog.internalFindContentTypesFor(buffer, subset);
+		return getCatalog().findContentTypesFor(contents, subset);
 	}
 
 	protected ContentTypeBuilder createBuilder(ContentTypeCatalog newCatalog) {

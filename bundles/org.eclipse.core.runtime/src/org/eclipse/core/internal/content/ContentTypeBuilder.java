@@ -54,7 +54,7 @@ public class ContentTypeBuilder {
 	private void addFileAssociation(IConfigurationElement fileAssociationElement, ContentType target) {
 		String[] fileNames = Util.parseItems(fileAssociationElement.getAttributeAsIs("file-names")); //$NON-NLS-1$
 		for (int i = 0; i < fileNames.length; i++)
-			target.internalAddFileSpec(catalog, fileNames[i], IContentType.FILE_NAME_SPEC);
+			target.internalAddFileSpec(catalog, fileNames[i], IContentType.FILE_NAME_SPEC | ContentType.SPEC_PRE_DEFINED);
 		String[] fileExtensions = Util.parseItems(fileAssociationElement.getAttributeAsIs("file-extensions")); //$NON-NLS-1$
 		for (int i = 0; i < fileExtensions.length; i++)
 			target.internalAddFileSpec(catalog, fileExtensions[i], IContentType.FILE_EXTENSION_SPEC | ContentType.SPEC_PRE_DEFINED);
@@ -73,7 +73,6 @@ public class ContentTypeBuilder {
 			if (allContentTypeCEs[i].getName().equals("file-association")) //$NON-NLS-1$
 				registerFileAssociation(allContentTypeCEs[i]);
 		}
-		validateCatalog();
 	}
 
 	private ContentType createContentType(IConfigurationElement contentTypeCE) {
@@ -85,8 +84,9 @@ public class ContentTypeBuilder {
 		String[] fileNames = Util.parseItems(contentTypeCE.getAttributeAsIs("file-names")); //$NON-NLS-1$
 		String[] fileExtensions = Util.parseItems(contentTypeCE.getAttributeAsIs("file-extensions")); //$NON-NLS-1$
 		String baseTypeId = getUniqueId(namespace, contentTypeCE.getAttributeAsIs("base-type")); //$NON-NLS-1$
+		String aliasTargetTypeId = getUniqueId(namespace, contentTypeCE.getAttributeAsIs("alias-for")); //$NON-NLS-1$		
 		String defaultCharset = contentTypeCE.getAttributeAsIs("default-charset"); //$NON-NLS-1$
-		return ContentType.createContentType(catalog, namespace, simpleId, name, priority, fileExtensions, fileNames, baseTypeId, defaultCharset, contentTypeCE);
+		return ContentType.createContentType(catalog, namespace, simpleId, name, priority, fileExtensions, fileNames, baseTypeId, aliasTargetTypeId, defaultCharset, contentTypeCE);
 	}
 
 	protected IConfigurationElement[] getConfigurationElements() {
@@ -129,9 +129,4 @@ public class ContentTypeBuilder {
 			return;
 		addFileAssociation(fileAssociationElement, target);
 	}
-
-	private void validateCatalog() {
-		catalog.reorganize();
-	}
-
 }

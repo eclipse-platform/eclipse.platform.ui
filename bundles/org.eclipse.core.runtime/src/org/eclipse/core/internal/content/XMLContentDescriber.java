@@ -86,7 +86,7 @@ public class XMLContentDescriber extends TextContentDescriber implements ITextCo
 		if (!line.startsWith(XML_PREFIX))
 			return INDETERMINATE;
 		if (description == null)
-			return VALID;		
+			return VALID;
 		// describe charset if requested
 		if ((description.isRequested(IContentDescription.CHARSET)))
 			description.setProperty(IContentDescription.CHARSET, getCharset(line));

@@ -25,7 +25,7 @@ public final class DefaultDescription implements IContentDescription {
 		this.contentType = contentType;
 		this.catalog = catalog;
 	}
-	
+
 	public boolean equals(Object obj) {
 		if (!(obj instanceof DefaultDescription))
 			return false;
@@ -35,7 +35,7 @@ public final class DefaultDescription implements IContentDescription {
 	public String getCharset() {
 		return contentType.getDefaultCharset(catalog);
 	}
-	
+
 	public IContentType getContentType() {
 		return contentType;
 	}
@@ -45,7 +45,7 @@ public final class DefaultDescription implements IContentDescription {
 			return contentType.getDefaultCharset(catalog);
 		return null;
 	}
-	
+
 	public int hashCode() {
 		return contentType.getId().hashCode();
 	}

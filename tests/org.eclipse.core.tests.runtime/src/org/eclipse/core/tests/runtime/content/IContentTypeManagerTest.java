@@ -12,8 +12,7 @@ package org.eclipse.core.tests.runtime.content;
 
 import java.io.*;
 import java.util.*;
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import junit.framework.*;
 import org.eclipse.core.internal.content.*;
 import org.eclipse.core.internal.resources.CharsetDeltaJob;
 import org.eclipse.core.runtime.*;
@@ -28,6 +27,27 @@ import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
 public class IContentTypeManagerTest extends RuntimeTest {
+
+	class ContentTypeChangeTracer implements IContentTypeManager.IContentTypeChangeListener {
+		private Set changed = new HashSet();
+
+		public void contentTypeChanged(ContentTypeChangeEvent event) {
+			changed.add(event.getContentType());
+		}
+
+		public Collection getChanges() {
+			return changed;
+		}
+
+		public boolean isOnlyChange(IContentType myType) {
+			return changed.size() == 1 && changed.contains(myType);
+		}
+
+		public void reset() {
+			changed.clear();
+		}
+	}
+
 	private final static String MINIMAL_XML = "<?xml version=\"1.0\"?><org.eclipse.core.runtime.tests.root/>";
 	private final static String SAMPLE_BIN1_OFFSET = "12345";
 	private final static byte[] SAMPLE_BIN1_SIGNATURE = {0x10, (byte) 0xAB, (byte) 0xCD, (byte) 0xFF};
@@ -41,14 +61,14 @@ public class IContentTypeManagerTest extends RuntimeTest {
 	private final static String XML_ROOT_ELEMENT_EXTERNAL_ENTITY2 = "<?xml version=\"1.0\"?><!DOCTYPE org.eclipse.core.runtime.tests.root-element PUBLIC \"org.eclipse.core.runtime.tests.root-elementId\" \"org.eclipse.core.runtime.tests.root-element.dtd\" ><org.eclipse.core.runtime.tests.root-element/>";
 	private final static String XML_ROOT_ELEMENT_ISO_8859_1 = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><org.eclipse.core.runtime.tests.root-element/>";
 	private final static String XML_ROOT_ELEMENT_NO_DECL = "<org.eclipse.core.runtime.tests.root-element/>";
+	private final static String XML_US_ASCII_INVALID = "<?xml version='1.0' encoding='us-ascii'?><!-- αινσϊ --><org.eclipse.core.runtime.tests.root/>";
 	private final static String XML_UTF_16 = "<?xml version=\"1.0\" encoding=\"UTF-16\"?><org.eclipse.core.runtime.tests.root/>";
 	private final static String XML_UTF_16BE = "<?xml version=\"1.0\" encoding=\"UTF-16BE\"?><org.eclipse.core.runtime.tests.root/>";
 	private final static String XML_UTF_16LE = "<?xml version=\"1.0\" encoding=\"UTF-16LE\"?><org.eclipse.core.runtime.tests.root/>";
 	private final static String XML_UTF_8 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><org.eclipse.core.runtime.tests.root/>";
-	private final static String XML_US_ASCII_INVALID = "<?xml version='1.0' encoding='us-ascii'?><!-- αινσϊ --><org.eclipse.core.runtime.tests.root/>";
 
 	public static Test suite() {
-		//return new IContentTypeManagerTest("testDynamicChanges");
+		//		return new IContentTypeManagerTest("testFindContentType");
 		return new TestSuite(IContentTypeManagerTest.class);
 	}
 
@@ -108,6 +128,13 @@ public class IContentTypeManagerTest extends RuntimeTest {
 	private boolean isText(IContentTypeManager manager, IContentType candidate) {
 		IContentType text = manager.getContentType(IContentTypeManager.CT_TEXT);
 		return candidate.isKindOf(text);
+	}
+
+	protected void tearDown() throws Exception {
+		super.tearDown();
+		// some tests here will trigger a charset delta job (any causing ContentTypeChangeEvents to be broadcast) 
+		// ensure none is left running after we finish
+		Platform.getJobManager().join(CharsetDeltaJob.FAMILY_CHARSET_DELTA, getMonitor());
 	}
 
 	public void testAssociations() throws CoreException {
@@ -332,43 +359,178 @@ public class IContentTypeManagerTest extends RuntimeTest {
 		assertTrue("2.3", contains(fooBarAssociated, subFooBarType));
 	}
 
-	public void testFileSpecConflicts() throws IOException {
+	/**
+	 * Obtains a reference to a known content type, then installs a bundle that contributes a content type,
+	 * and makes sure a new obtained reference to the same content type is not identical (shows
+	 * that the content type catalog has been discarded and rebuilt). Then uninstalls that bundle
+	 * and checks again the same thing (because the content type catalog should be rebuilt whenever 
+	 * content types are dynamicaly added/removed).
+	 */
+	public void testDynamicChanges() {
+		IContentType text1, text2, text3, text4;
 		IContentTypeManager manager = Platform.getContentTypeManager();
+		String textId = Platform.PI_RUNTIME + '.' + "text";
+		text1 = manager.getContentType(textId);
+		assertNotNull("1.0", text1);
+		text2 = manager.getContentType(textId);
+		assertEquals("2.0", text1, text2);
+		assertTrue("2.1", text1 == text2);
+		//	make arbitrary dynamic changes to the contentTypes extension point
+		TestRegistryChangeListener listener = new TestRegistryChangeListener(Platform.PI_RUNTIME, ContentTypeBuilder.PT_CONTENTTYPES, null, null);
+		listener.register();
+		Bundle installed = null;
+		try {
+			installed = BundleTestingHelper.installBundle(RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "content/bundle01");
+		} catch (BundleException e) {
+			fail("2.8", e);
+		} catch (IOException e) {
+			fail("2.9", e);
+		}
+		assertEquals("3.0", Bundle.INSTALLED, installed.getState());
+		try {
+			BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {installed});
+			IRegistryChangeEvent event = listener.getEvent(10000);
+			// ensure the bundle was properly installed and the content type it contributed is available
+			assertNotNull("3.1", event);
+			assertNotNull("3.2", Platform.getBundle("org.eclipse.bundle01"));
+			IContentType missing = manager.getContentType("org.eclipse.bundle01.missing");
+			assertNotNull("3.3", missing);
+			// ensure the content type instances are different
+			text3 = manager.getContentType(textId);
+			assertEquals("4.0", text1, text3);
+			assertTrue("4.1", text1 != text3);
+		} finally {
+			try {
+				// clean-up: remove installed bundle
+				installed.uninstall();
+			} catch (BundleException e) {
+				fail("5.0", e);
+			}
+			BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {installed});
+		}
+		IRegistryChangeEvent event = listener.getEvent(10000);
+		// ensure the bundle was properly uninstalled and the content type it contributed is not available anymore
+		assertNotNull("5.1", event);
+		assertNull("5.2", Platform.getBundle("org.eclipse.bundle01"));
+		assertNull("5.3", manager.getContentType("org.eclipse.bundle01.missing"));
+		// ensure the content type instances are all different
+		text4 = manager.getContentType(textId);
+		assertEquals("6.0", text1, text4);
+		assertEquals("6.1", text3, text4);
+		assertTrue("6.2", text1 != text4);
+		assertTrue("6.3", text3 != text4);
+	}
 
-		IContentType conflict1a = manager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".conflict1");
-		IContentType conflict1b = manager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".aaa_conflict1");
+	public void testEvents() {
+		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
+		IContentType myType = contentTypeManager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".myContent");
+		assertNotNull("0.9", myType);
+
+		ContentTypeChangeTracer tracer;
+
+		tracer = new ContentTypeChangeTracer();
+		contentTypeManager.addContentTypeChangeListener(tracer);
+
+		// add a file spec and check event
+		try {
+			myType.addFileSpec("another.file.name", IContentType.FILE_NAME_SPEC);
+		} catch (CoreException e) {
+			fail("1.0", e);
+		}
+		assertTrue("1.1", tracer.isOnlyChange(myType));
+
+		// remove a non-existing file spec - should not cause an event to be fired
+		tracer.reset();
+		try {
+			myType.removeFileSpec("another.file.name", IContentType.FILE_EXTENSION_SPEC);
+		} catch (CoreException e) {
+			fail("2.0", e);
+		}
+		assertTrue("2.1", !tracer.isOnlyChange(myType));
+
+		// add a file spec again and check no event is generated
+		tracer.reset();
+		try {
+			myType.addFileSpec("another.file.name", IContentType.FILE_NAME_SPEC);
+		} catch (CoreException e) {
+			fail("3.0", e);
+		}
+		assertTrue("3.1", !tracer.isOnlyChange(myType));
+
+		// remove a file spec and check event
+		tracer.reset();
+		try {
+			myType.removeFileSpec("another.file.name", IContentType.FILE_NAME_SPEC);
+		} catch (CoreException e) {
+			fail("4.0", e);
+		}
+		assertTrue("4.1", tracer.isOnlyChange(myType));
+
+		// change the default charset and check event
+		tracer.reset();
+		try {
+			myType.setDefaultCharset("FOO");
+		} catch (CoreException e) {
+			fail("5.0", e);
+		}
+		assertTrue("5.1", tracer.isOnlyChange(myType));
+
+		// set the default charset to the same - no event should be generated
+		tracer.reset();
+		try {
+			myType.setDefaultCharset("FOO");
+		} catch (CoreException e) {
+			fail("6.0", e);
+		}
+		assertTrue("6.1", !tracer.isOnlyChange(myType));
+
+	}
+
+	public void testFileSpecConflicts() {
+		IContentTypeManager manager = Platform.getContentTypeManager();
+		// when not submitting contents, for related types, most general type prevails
+		IContentType conflict1a = manager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".base_conflict1");
+		IContentType conflict1b = manager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".sub_conflict1");
 		assertNotNull("1.0", conflict1a);
 		assertNotNull("1.1", conflict1b);
 		IContentType preferredConflict1 = manager.findContentTypeFor("test.conflict1");
 		assertNotNull("1.2", preferredConflict1);
 		assertEquals("1.3", conflict1a, preferredConflict1);
 
-		IContentType conflict2a = manager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".conflict2");
-		IContentType conflict2b = manager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".aaa_conflict2");
-		assertNotNull("2.0", conflict2a);
-		// although there is conflict, aliasing is not done for related content types
-		assertNotNull("2.1", conflict2b);
-		IContentType preferredConflict2 = manager.findContentTypeFor("test.conflict2");
-		assertNotNull("2.2", preferredConflict2);
-		assertEquals("2.3", conflict2a, preferredConflict2);
+		IContentType conflict2base = manager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".base_conflict2");
+		IContentType conflict2sub = manager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".sub_conflict2");
+		assertNotNull("2.0", conflict2base);
+		assertNotNull("2.1", conflict2sub);
+		// when submitting contents, for related types, descendant comes first
+		IContentType[] selectedConflict2;
+		try {
+			selectedConflict2 = manager.findContentTypesFor(getRandomContents(), "test.conflict2");
+			assertEquals("2.2", 2, selectedConflict2.length);
+			assertEquals("2.3", selectedConflict2[0], conflict2sub);
+			assertEquals("2.4", selectedConflict2[1], conflict2base);
+		} catch (IOException e) {
+			fail("2.5", e);
+		}
 
-		IContentType conflict3a = manager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".conflict3");
-		IContentType conflict3b = manager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".base_conflict3");
-		IContentType conflict3c = manager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".aaa_conflict3");
-		IContentType conflict3d = manager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".bbb_conflict3");
-		assertNotNull("3.0", conflict3a);
-		assertNotNull("3.1", conflict3b);
-		// this content type is an alias for conflict3a, should not be visible
-		assertNull("3.2", conflict3c);
-		assertFalse(contains(manager.getAllContentTypes(), conflict3c));
-		// this descends from conflict3c. Its base type should be conflict3a instead (due to aliasing) 
-		assertNotNull("3.3", conflict3d);
-		assertEquals("3.4", conflict3a, conflict3d.getBaseType());
+		IContentType conflict3base = manager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".base_conflict3");
+		IContentType conflict3sub = manager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".sub_conflict3");
+		IContentType conflict3unrelated = manager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".unrelated_conflict3");
+		assertNotNull("3.0.1", conflict3base);
+		assertNotNull("3.0.2", conflict3sub);
+		assertNotNull("3.0.3", conflict3unrelated);
 
-		// the chosen one should be conflict3a
-		IContentType preferredConflict3 = manager.findContentTypeFor("test.conflict3");
-		assertNotNull("4.0", preferredConflict3);
-		assertEquals("4.1", conflict3a, preferredConflict3);
+		// Two unrelated types (sub_conflict3 and unrelated conflict3) are in conflict. 
+		// Order will be arbitrary (lexicographically).
+
+		IContentType[] selectedConflict3;
+		try {
+			selectedConflict3 = manager.findContentTypesFor(getRandomContents(), "test.conflict3");
+			assertEquals("4.0", 2, selectedConflict3.length);
+			assertEquals("4.1", selectedConflict3[0], conflict3sub);
+			assertEquals("4.2", selectedConflict3[1], conflict3unrelated);
+		} catch (IOException e) {
+			fail("4.3", e);
+		}
 	}
 
 	public void testFindContentType() throws UnsupportedEncodingException, IOException {
@@ -395,6 +557,59 @@ public class IContentTypeManagerTest extends RuntimeTest {
 		assertEquals("1.0", 0, contentTypeManager.findContentTypesFor("invalid.missing.identifier").length);
 		assertEquals("2.0", 0, contentTypeManager.findContentTypesFor("invalid.missing.name").length);
 		assertNull("3.0", contentTypeManager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + '.' + "invalid-missing-name"));
+	}
+
+	/**
+	 * Bugs 67841 and 62443 
+	 */
+	public void testIOException() {
+		ContentTypeManager manager = ContentTypeManager.getInstance();
+		IContentType xml = manager.getContentType(Platform.PI_RUNTIME + ".xml");
+		IContentType rootElement = manager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".root-element");
+		IContentType[] selected = null;
+		try {
+			selected = manager.findContentTypesFor(getInputStream(XML_US_ASCII_INVALID, "ISO-8859-1"), "test.xml");
+		} catch (IOException ioe) {
+			// a SAXException is usually caught (and silently ignored) in XMLRootElementDescriber in these cases
+			fail("1.0", ioe);
+		}
+		assertTrue("1.1", contains(selected, xml));
+		assertTrue("1.2", !contains(selected, rootElement));
+
+		// induce regular IOExceptions... these should be thrown to clients
+		class FakeIOException extends IOException {
+			/**
+			 * All serializable objects should have a stable serialVersionUID
+			 */
+			private static final long serialVersionUID = 1L;
+
+			public String getMessage() {
+				return "This exception was thrown for testing purposes";
+			}
+		}
+		try {
+			selected = manager.findContentTypesFor(new InputStream() {
+
+				public int available() throws IOException {
+					return Integer.MAX_VALUE;
+				}
+
+				public int read() throws IOException {
+					throw new FakeIOException();
+				}
+
+				public int read(byte[] b, int off, int len) throws IOException {
+					throw new FakeIOException();
+				}
+			}, "test.xml");
+			// an exception will happen when reading the stream... should be thrown to the caller
+			fail("2.0");
+		} catch (FakeIOException fioe) {
+			// sucess
+		} catch (IOException ioe) {
+			// this should never happen, but just in case...
+			fail("2.1");
+		}
 	}
 
 	public void testIsKindOf() {
@@ -482,6 +697,67 @@ public class IContentTypeManagerTest extends RuntimeTest {
 			//remove installed bundle
 			installed.uninstall();
 			BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {installed});
+		}
+	}
+
+	/**
+	 * Bug 68894  
+	 */
+	public void testPreferences() throws CoreException, BackingStoreException {
+		ContentTypeManager manager = ContentTypeManager.getInstance();
+		IContentType text = manager.getContentType(IContentTypeManager.CT_TEXT);
+		Preferences textPrefs = new InstanceScope().getNode(ContentTypeManager.CONTENT_TYPE_PREF_NODE).node(text.getId());
+		assertNotNull("0.1", text);
+
+		// ensure the "default charset" preference is being properly used
+		assertNull("1.0", text.getDefaultCharset());
+		assertNull("1.1", textPrefs.get(ContentType.PREF_DEFAULT_CHARSET, null));
+		text.setDefaultCharset("UTF-8");
+		assertEquals("1.2", "UTF-8", textPrefs.get(ContentType.PREF_DEFAULT_CHARSET, null));
+		text.setDefaultCharset(null);
+		assertNull("1.3", textPrefs.get(ContentType.PREF_DEFAULT_CHARSET, null));
+
+		// ensure the file spec preferences are being properly used
+		// some sanity checking
+		assertFalse("2.01", text.isAssociatedWith("xyz.foo"));
+		assertFalse("2.01", text.isAssociatedWith("xyz.bar"));
+		assertFalse("2.03", text.isAssociatedWith("foo.ext"));
+		assertFalse("2.04", text.isAssociatedWith("bar.ext"));
+		// play with file name associations first...
+		assertNull("2.0a", textPrefs.get(ContentType.PREF_FILE_NAMES, null));
+		assertNull("2.0b", textPrefs.get(ContentType.PREF_FILE_EXTENSIONS, null));
+		text.addFileSpec("foo.ext", IContentType.FILE_NAME_SPEC);
+		assertTrue("2.1", text.isAssociatedWith("foo.ext"));
+		assertEquals("2.2", "foo.ext", textPrefs.get(ContentType.PREF_FILE_NAMES, null));
+		text.addFileSpec("bar.ext", IContentType.FILE_NAME_SPEC);
+		assertTrue("2.3", text.isAssociatedWith("bar.ext"));
+		assertEquals("2.4", "foo.ext,bar.ext", textPrefs.get(ContentType.PREF_FILE_NAMES, null));
+		// ... and then with file extensions
+		text.addFileSpec("foo", IContentType.FILE_EXTENSION_SPEC);
+		assertTrue("2.5", text.isAssociatedWith("xyz.foo"));
+		assertEquals("2.6", "foo", textPrefs.get(ContentType.PREF_FILE_EXTENSIONS, null));
+		text.addFileSpec("bar", IContentType.FILE_EXTENSION_SPEC);
+		assertTrue("2.7", text.isAssociatedWith("xyz.bar"));
+		assertEquals("2.4", "foo,bar", textPrefs.get(ContentType.PREF_FILE_EXTENSIONS, null));
+		// remove all associations made
+		text.removeFileSpec("foo.ext", IContentType.FILE_NAME_SPEC);
+		text.removeFileSpec("bar.ext", IContentType.FILE_NAME_SPEC);
+		text.removeFileSpec("foo", IContentType.FILE_EXTENSION_SPEC);
+		text.removeFileSpec("bar", IContentType.FILE_EXTENSION_SPEC);
+		// ensure all is as before
+		assertFalse("3.1", text.isAssociatedWith("xyz.foo"));
+		assertFalse("3.2", text.isAssociatedWith("xyz.bar"));
+		assertFalse("3.3", text.isAssociatedWith("foo.ext"));
+		assertFalse("3.4", text.isAssociatedWith("bar.ext"));
+
+		// ensure the serialization format is correct
+		try {
+			text.addFileSpec("foo.bar", IContentType.FILE_NAME_SPEC);
+			textPrefs.sync();
+			assertEquals("4.0", "foo.bar", textPrefs.get(ContentType.PREF_FILE_NAMES, null));
+		} finally {
+			// clean-up
+			text.removeFileSpec("foo.bar", IContentType.FILE_NAME_SPEC);
 		}
 	}
 
@@ -597,270 +873,35 @@ public class IContentTypeManagerTest extends RuntimeTest {
 	}
 
 	/**
-	 * Bug 68894  
+	 * See also: bug 72796.
 	 */
-	public void testPreferences() throws CoreException, BackingStoreException {
-		ContentTypeManager manager = ContentTypeManager.getInstance();
-		IContentType text = manager.getContentType(IContentTypeManager.CT_TEXT);
-		Preferences textPrefs = new InstanceScope().getNode(ContentTypeManager.CONTENT_TYPE_PREF_NODE).node(text.getId());
-		assertNotNull("0.1", text);
+	public void testUserDefinedAssociations() {
+		IContentTypeManager manager = Platform.getContentTypeManager();
+		IContentType text = manager.getContentType((Platform.PI_RUNTIME + ".text"));
 
-		// ensure the "default charset" preference is being properly used
-		assertNull("1.0", text.getDefaultCharset());
-		assertNull("1.1", textPrefs.get(ContentType.PREF_DEFAULT_CHARSET, null));
-		text.setDefaultCharset("UTF-8");
-		assertEquals("1.2", "UTF-8", textPrefs.get(ContentType.PREF_DEFAULT_CHARSET, null));
-		text.setDefaultCharset(null);
-		assertNull("1.3", textPrefs.get(ContentType.PREF_DEFAULT_CHARSET, null));
-
-		// ensure the file spec preferences are being properly used
-		// some sanity checking
-		assertFalse("2.01", text.isAssociatedWith("xyz.foo"));
-		assertFalse("2.01", text.isAssociatedWith("xyz.bar"));
-		assertFalse("2.03", text.isAssociatedWith("foo.ext"));
-		assertFalse("2.04", text.isAssociatedWith("bar.ext"));
-		// play with file name associations first...
-		assertNull("2.0a", textPrefs.get(ContentType.PREF_FILE_NAMES, null));
-		assertNull("2.0b", textPrefs.get(ContentType.PREF_FILE_EXTENSIONS, null));
-		text.addFileSpec("foo.ext", IContentType.FILE_NAME_SPEC);
-		assertTrue("2.1", text.isAssociatedWith("foo.ext"));
-		assertEquals("2.2", "foo.ext", textPrefs.get(ContentType.PREF_FILE_NAMES, null));
-		text.addFileSpec("bar.ext", IContentType.FILE_NAME_SPEC);
-		assertTrue("2.3", text.isAssociatedWith("bar.ext"));
-		assertEquals("2.4", "foo.ext,bar.ext", textPrefs.get(ContentType.PREF_FILE_NAMES, null));
-		// ... and then with file extensions
-		text.addFileSpec("foo", IContentType.FILE_EXTENSION_SPEC);
-		assertTrue("2.5", text.isAssociatedWith("xyz.foo"));
-		assertEquals("2.6", "foo", textPrefs.get(ContentType.PREF_FILE_EXTENSIONS, null));
-		text.addFileSpec("bar", IContentType.FILE_EXTENSION_SPEC);
-		assertTrue("2.7", text.isAssociatedWith("xyz.bar"));
-		assertEquals("2.4", "foo,bar", textPrefs.get(ContentType.PREF_FILE_EXTENSIONS, null));
-		// remove all associations made
-		text.removeFileSpec("foo.ext", IContentType.FILE_NAME_SPEC);
-		text.removeFileSpec("bar.ext", IContentType.FILE_NAME_SPEC);
-		text.removeFileSpec("foo", IContentType.FILE_EXTENSION_SPEC);
-		text.removeFileSpec("bar", IContentType.FILE_EXTENSION_SPEC);
-		// ensure all is as before
-		assertFalse("3.1", text.isAssociatedWith("xyz.foo"));
-		assertFalse("3.2", text.isAssociatedWith("xyz.bar"));
-		assertFalse("3.3", text.isAssociatedWith("foo.ext"));
-		assertFalse("3.4", text.isAssociatedWith("bar.ext"));
-
-		// ensure the serialization format is correct
+		assertNull("0.1", manager.findContentTypeFor("test.mytext"));
+		// associate a user-defined file spec
 		try {
-			text.addFileSpec("foo.bar", IContentType.FILE_NAME_SPEC);
-			textPrefs.sync();
-			assertEquals("4.0", "foo.bar", textPrefs.get(ContentType.PREF_FILE_NAMES, null));
-		} finally {
-			// clean-up
-			text.removeFileSpec("foo.bar", IContentType.FILE_NAME_SPEC);
-		}
-	}
-
-	/**
-	 * Bugs 67841 and 62443 
-	 */
-	public void testIOException() {
-		ContentTypeManager manager = ContentTypeManager.getInstance();
-		IContentType xml = manager.getContentType(Platform.PI_RUNTIME + ".xml");
-		IContentType rootElement = manager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".root-element");
-		IContentType[] selected = null;
-		try {
-			selected = manager.findContentTypesFor(getInputStream(XML_US_ASCII_INVALID, "ISO-8859-1"), "test.xml");
-		} catch (IOException ioe) {
-			// a SAXException is usually caught (and silently ignored) in XMLRootElementDescriber in these cases
-			fail("1.0", ioe);
-		}
-		assertTrue("1.1", contains(selected, xml));
-		assertTrue("1.2", !contains(selected, rootElement));
-
-		// induce regular IOExceptions... these should be thrown to clients
-		class FakeIOException extends IOException {
-			/**
-			 * All serializable objects should have a stable serialVersionUID
-			 */
-			private static final long serialVersionUID = 1L;
-
-			public String getMessage() {
-				return "This exception was thrown for testing purposes";
-			}
-		}
-		try {
-			selected = manager.findContentTypesFor(new InputStream() {
-				public int read() throws IOException {
-					throw new FakeIOException();
-				}
-
-				public int read(byte[] b, int off, int len) throws IOException {
-					throw new FakeIOException();
-				}
-
-				public int available() throws IOException {
-					return Integer.MAX_VALUE;
-				}
-			}, "test.xml");
-			// an exception will happen when reading the stream... should be thrown to the caller
-			fail("2.0");
-		} catch (FakeIOException fioe) {
-			// sucess
-		} catch (IOException ioe) {
-			// this should never happen, but just in case...
-			fail("2.1");
-		}
-	}
-
-	class ContentTypeChangeTracer implements IContentTypeManager.IContentTypeChangeListener {
-		private Set changed = new HashSet();
-
-		public void contentTypeChanged(ContentTypeChangeEvent event) {
-			changed.add(event.getContentType());
-		}
-
-		public Collection getChanges() {
-			return changed;
-		}
-
-		public void reset() {
-			changed.clear();
-		}
-
-		public boolean isOnlyChange(IContentType myType) {
-			return changed.size() == 1 && changed.contains(myType);
-		}
-	}
-
-	public void testEvents() {
-		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
-		IContentType myType = contentTypeManager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".myContent");
-		assertNotNull("0.9", myType);
-
-		ContentTypeChangeTracer tracer;
-
-		tracer = new ContentTypeChangeTracer();
-		contentTypeManager.addContentTypeChangeListener(tracer);
-
-		// add a file spec and check event
-		try {
-			myType.addFileSpec("another.file.name", IContentType.FILE_NAME_SPEC);
+			text.addFileSpec("mytext", IContentType.FILE_EXTENSION_SPEC);
 		} catch (CoreException e) {
 			fail("1.0", e);
 		}
-		assertTrue("1.1", tracer.isOnlyChange(myType));
-
-		// remove a non-existing file spec - should not cause an event to be fired
-		tracer.reset();
+		boolean assertionFailed = false;
 		try {
-			myType.removeFileSpec("another.file.name", IContentType.FILE_EXTENSION_SPEC);
-		} catch (CoreException e) {
-			fail("2.0", e);
-		}
-		assertTrue("2.1", !tracer.isOnlyChange(myType));
-
-		// add a file spec again and check no event is generated
-		tracer.reset();
-		try {
-			myType.addFileSpec("another.file.name", IContentType.FILE_NAME_SPEC);
-		} catch (CoreException e) {
-			fail("3.0", e);
-		}
-		assertTrue("3.1", !tracer.isOnlyChange(myType));
-
-		// remove a file spec and check event
-		tracer.reset();
-		try {
-			myType.removeFileSpec("another.file.name", IContentType.FILE_NAME_SPEC);
-		} catch (CoreException e) {
-			fail("4.0", e);
-		}
-		assertTrue("4.1", tracer.isOnlyChange(myType));
-
-		// change the default charset and check event
-		tracer.reset();
-		try {
-			myType.setDefaultCharset("FOO");
-		} catch (CoreException e) {
-			fail("5.0", e);
-		}
-		assertTrue("5.1", tracer.isOnlyChange(myType));
-
-		// set the default charset to the same - no event should be generated
-		tracer.reset();
-		try {
-			myType.setDefaultCharset("FOO");
-		} catch (CoreException e) {
-			fail("6.0", e);
-		}
-		assertTrue("6.1", !tracer.isOnlyChange(myType));
-
-	}
-
-	/**
-	 * Obtains a reference to a known content type, then installs a bundle that contributes a content type,
-	 * and makes sure a new obtained reference to the same content type is not identical (shows
-	 * that the content type catalog has been discarded and rebuilt). Then uninstalls that bundle
-	 * and checks again the same thing (because the content type catalog should be rebuilt whenever 
-	 * content types are dynamicaly added/removed).
-	 */
-	public void testDynamicChanges() {
-		IContentType text1, text2, text3, text4;
-		IContentTypeManager manager = Platform.getContentTypeManager();
-		String textId = Platform.PI_RUNTIME + '.' + "text";
-		text1 = manager.getContentType(textId);
-		assertNotNull("1.0", text1);
-		text2 = manager.getContentType(textId);
-		assertEquals("2.0", text1, text2);
-		assertTrue("2.1", text1 == text2);
-		//	make arbitrary dynamic changes to the contentTypes extension point
-		TestRegistryChangeListener listener = new TestRegistryChangeListener(Platform.PI_RUNTIME, ContentTypeBuilder.PT_CONTENTTYPES, null, null);
-		listener.register();
-		Bundle installed = null;
-		try {
-			installed = BundleTestingHelper.installBundle(RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "content/bundle01");
-		} catch (BundleException e) {
-			fail("2.8", e);
-		} catch (IOException e) {
-			fail("2.9", e);
-		}
-		assertEquals("3.0", Bundle.INSTALLED, installed.getState());
-		try {
-			BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {installed});
-			IRegistryChangeEvent event = listener.getEvent(10000);
-			// ensure the bundle was properly installed and the content type it contributed is available
-			assertNotNull("3.1", event);
-			assertNotNull("3.2", Platform.getBundle("org.eclipse.bundle01"));
-			IContentType missing = manager.getContentType("org.eclipse.bundle01.missing");
-			assertNotNull("3.3", missing);
-			// ensure the content type instances are different
-			text3 = manager.getContentType(textId);
-			assertEquals("4.0", text1, text3);
-			assertTrue("4.1", text1 != text3);
+			IContentType result = manager.findContentTypeFor("test.mytext");
+			assertNotNull("1.1", result);
+			assertEquals("1.2", text, result);
+		} catch (AssertionFailedError afe) {
+			assertionFailed = true;
+			throw afe;
 		} finally {
 			try {
-				// clean-up: remove installed bundle
-				installed.uninstall();
-			} catch (BundleException e) {
-				fail("5.0", e);
+				text.removeFileSpec("mytext", IContentType.FILE_EXTENSION_SPEC);
+			} catch (CoreException e) {
+				if (!assertionFailed)
+					fail(" 2.0", e);
 			}
-			BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {installed});
 		}
-		IRegistryChangeEvent event = listener.getEvent(10000);
-		// ensure the bundle was properly uninstalled and the content type it contributed is not available anymore
-		assertNotNull("5.1", event);
-		assertNull("5.2", Platform.getBundle("org.eclipse.bundle01"));
-		assertNull("5.3", manager.getContentType("org.eclipse.bundle01.missing"));
-		// ensure the content type instances are all different
-		text4 = manager.getContentType(textId);
-		assertEquals("6.0", text1, text4);
-		assertEquals("6.1", text3, text4);
-		assertTrue("6.2", text1 != text4);
-		assertTrue("6.3", text3 != text4);
-	}
-
-	protected void tearDown() throws Exception {
-		super.tearDown();
-		// some tests here will trigger a charset delta job (any causing ContentTypeChangeEvents to be broadcast) 
-		// ensure none is left running after we finish
-		Platform.getJobManager().join(CharsetDeltaJob.FAMILY_CHARSET_DELTA, getMonitor());
 	}
 
 }
