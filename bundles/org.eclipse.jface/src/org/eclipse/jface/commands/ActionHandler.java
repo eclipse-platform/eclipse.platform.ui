@@ -14,7 +14,6 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.HandlerEvent;
-import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.IHandlerListener;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -57,6 +56,11 @@ public final class ActionHandler extends AbstractHandler {
 		this.action = action;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.core.commands.IHandler#addHandlerListener(IHandlerListener)
+	 */
 	public final void addHandlerListener(final IHandlerListener handlerListener) {
 		if (!hasListeners()) {
 			attachListener();
@@ -107,8 +111,10 @@ public final class ActionHandler extends AbstractHandler {
 		}
 	}
 
-	/**
-	 * @see IHandler#execute(ExecutionEvent)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.core.commands.IHandler#execute(ExecutionEvent)
 	 */
 	public final Object execute(final ExecutionEvent event)
 			throws ExecutionException {
@@ -139,10 +145,20 @@ public final class ActionHandler extends AbstractHandler {
 		return action;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.core.commands.AbstractHandler#isEnabled()
+	 */
 	public final boolean isEnabled() {
 		return action.isEnabled();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.core.commands.IHandler#removeHandlerListener(IHandlerListener)
+	 */
 	public final void removeHandlerListener(
 			final IHandlerListener handlerListener) {
 		super.removeHandlerListener(handlerListener);
@@ -152,6 +168,11 @@ public final class ActionHandler extends AbstractHandler {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
 	public final String toString() {
 		final StringBuffer buffer = new StringBuffer();
 

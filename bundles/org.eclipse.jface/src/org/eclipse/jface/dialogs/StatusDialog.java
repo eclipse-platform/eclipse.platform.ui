@@ -28,10 +28,11 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * An abstract base class for dialogs with a status bar and ok/cancel buttons.
- * The status message must be passed over as StatusInfo object and can be an
- * error, warning, info or ok. The OK button is enabled or disabled depending on
+ * An abstract base class for dialogs with a status bar and OK/CANCEL buttons.
+ * The status message is specified in an IStatus which can be of severity
+ * ERROR, WARNING, INFO or OK. The OK button is enabled or disabled depending on
  * the status.
+ * 
  * @since 3.1
  */
 public abstract class StatusDialog extends Dialog {
@@ -116,6 +117,7 @@ public abstract class StatusDialog extends Dialog {
 	/**
 	 * Creates an instance of a status dialog.
 	 * @param parent 
+	 * 			the parent Shell of the dialog
 	 */
 	public StatusDialog(Shell parent) {
 		super(parent);
@@ -135,7 +137,7 @@ public abstract class StatusDialog extends Dialog {
 	}
 
 	/**
-	 * Update the dialog's status line to reflect the given status. It is save
+	 * Update the dialog's status line to reflect the given status. It is safe
 	 * to call this method before the dialog has been opened.
 	 */
 	protected void updateStatus(IStatus status) {

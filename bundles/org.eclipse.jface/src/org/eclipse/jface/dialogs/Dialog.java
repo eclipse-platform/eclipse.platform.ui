@@ -129,7 +129,7 @@ public abstract class Dialog extends Window {
      * compatibility they are still supported, however new code should use SWT
      * for these.
      * 
-     * @see Display.getSystemIcon(int ID)
+     * @see Display#getSystemIcon(int ID)
      */
     static {
         ImageRegistry reg = JFaceResources.getImageRegistry();
@@ -381,6 +381,8 @@ public abstract class Dialog extends Window {
      * Creates a dialog with the given parent. 
      * 
      * @param parentShell object that returns the current parent shell
+     * 
+     * @since 3.1
      */
     protected Dialog(IShellProvider parentShell) {
         super(parentShell);
@@ -956,7 +958,7 @@ public abstract class Dialog extends Window {
      * Get the default font for this type of control.
      * 
      * @param control
-     * @return
+     * @return the default font
      */
     private static Font getDefaultFont(Control control) {
         String fontName = "DEFAULT_FONT_" + control.getClass().getName(); //$NON-NLS-1$

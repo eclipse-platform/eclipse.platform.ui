@@ -99,6 +99,8 @@ public class PreferenceContentProvider implements ITreeContentProvider {
 	/**
 	 * Set the manager for the preferences.
 	 * @param manager The manager to set.
+	 * 
+	 * @since 3.1
 	 */
 	protected void setManager(PreferenceManager manager) {
 		this.manager = manager;

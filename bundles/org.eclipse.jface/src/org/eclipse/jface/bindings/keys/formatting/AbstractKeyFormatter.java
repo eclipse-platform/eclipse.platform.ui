@@ -22,8 +22,8 @@ import org.eclipse.jface.util.Util;
 /**
  * <p>
  * An abstract implementation of a key formatter that provides a lot of common
- * key formatting functionality. It is recommended that those people
- * implementing their own key formatters subclass from here, rather than
+ * key formatting functionality. It is recommended that implementations of
+ * <code>IKeyFormatter</code> subclass from here, rather than
  * implementing <code>IKeyFormatter</code> directly.
  * </p>
  * 
@@ -61,7 +61,7 @@ public abstract class AbstractKeyFormatter implements IKeyFormatter {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.keys.KeyFormatter#format(org.eclipse.ui.keys.KeySequence)
+	 * @see org.eclipse.jface.bindings.keysKeyFormatter#format(org.eclipse.jface.bindings.keys.KeySequence)
 	 */
 	public String format(final int key) {
 		final IKeyLookup lookup = KeyLookupFactory.getDefault();
@@ -72,7 +72,7 @@ public abstract class AbstractKeyFormatter implements IKeyFormatter {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.keys.KeyFormatter#format(org.eclipse.ui.keys.KeySequence)
+	 * @see org.eclipse.jface.bindings.keys.KeyFormatter#format(org.eclipse.jface.bindings.keys.KeySequence)
 	 */
 	public String format(KeySequence keySequence) {
 		StringBuffer stringBuffer = new StringBuffer();
@@ -93,7 +93,7 @@ public abstract class AbstractKeyFormatter implements IKeyFormatter {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.keys.KeyFormatter#formatKeyStroke(org.eclipse.ui.keys.KeyStroke)
+	 * @see org.eclipse.jface.bindings.keys.KeyFormatter#formatKeyStroke(org.eclipse.jface.bindings.keys.KeyStroke)
 	 */
 	public String format(final KeyStroke keyStroke) {
 		final String keyDelimiter = getKeyDelimiter();

@@ -100,9 +100,10 @@ public abstract class TriggerSequence {
 
 		return Util.endsWith(triggers, triggerSequence.triggers, equals);
 	}
-
-	/**
-	 * @see java.lang.Object#equals(java.lang.Object)
+    /*
+     * (non-Javadoc)
+     * 
+ 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	public final boolean equals(final Object object) {
 		if (!(object instanceof TriggerSequence))
@@ -151,8 +152,10 @@ public abstract class TriggerSequence {
 		return triggerCopy;
 	}
 
-	/**
-	 * @see java.lang.Object#hashCode()
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#hashCode()
 	 */
 	public final int hashCode() {
 		if (hashCode == HASH_CODE_NOT_COMPUTED) {

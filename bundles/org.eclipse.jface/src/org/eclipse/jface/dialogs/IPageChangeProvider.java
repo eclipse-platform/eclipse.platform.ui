@@ -38,7 +38,7 @@ public interface IPageChangeProvider {
 
 	/**
 	 * Removes the given page change listener from this page change provider.
-	 * Has no affect if an identical listener is not registered.
+	 * Has no effect if an identical listener is not registered.
 	 * 
 	 * @param listener
 	 *            a page changed listener

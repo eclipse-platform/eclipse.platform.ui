@@ -13,10 +13,9 @@ package org.eclipse.jface.bindings;
 
 /**
  * <p>
- * An instance of <code>ISchemeListener</code> can be used by clients to
- * receive notification of changes to one or more instances of
- * <code>IScheme</code>. It also provides notification of the set of active
- * bindings changing.
+ * An instance of <code>BindingManagerListener</code> can be used by clients to
+ * receive notification of changes to an instance of
+ * <code>BindingManager</code>. 
  * </p>
  * <p>
  * This interface may be implemented by clients.
@@ -30,11 +29,12 @@ package org.eclipse.jface.bindings;
 public interface IBindingManagerListener {
 
 	/**
-	 * Notifies that the set of defined or active scheme or bindings has changed
-	 * in the binding manager.
+	 * Notifies that attributes inside an instance of <code>BindingManager</code> have changed. 
+	 * Specific details are described in the <code>BindingManagerEvent</code>.  Changes in the
+	 * binding manager can cause the set of defined or active schemes or bindings to change.
 	 * 
 	 * @param event
-	 *            the scheme event. Guaranteed not to be <code>null</code>.
+	 *            the binding manager event. Guaranteed not to be <code>null</code>.
 	 */
 	void bindingManagerChanged(BindingManagerEvent event);
 }

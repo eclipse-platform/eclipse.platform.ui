@@ -42,8 +42,8 @@ final class FastProgressReporter {
     /**
      * Constructs a FastProgressReporter that wraps the given progress monitor
      * 
-     * @param taskName
-     * @param monitor
+     * @param monitor the monitor to wrap
+     * @param totalProgress the total progress to be reported
      */
     public FastProgressReporter(IProgressMonitor monitor, int totalProgress) {
         this.monitor = monitor;
@@ -114,6 +114,11 @@ final class FastProgressReporter {
 //
 //    }
     
+    /**
+     * Return whether the progress monitor has been canceled.
+     * 
+     * @return <code>true</code> if the monitor has been cancelled, <code>false</code> otherwise.
+     */
     public boolean isCanceled() {
         if (monitor == null) {
             return canceled;
@@ -127,6 +132,9 @@ final class FastProgressReporter {
         return canceled;
     }
     
+    /**
+     * Cancel the progress monitor.
+     */
     public void cancel() {        
         canceled = true;
         

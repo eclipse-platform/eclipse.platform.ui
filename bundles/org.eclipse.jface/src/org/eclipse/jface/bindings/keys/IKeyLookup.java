@@ -12,35 +12,35 @@ package org.eclipse.jface.bindings.keys;
 
 /**
  * <p>
- * A facilitiy for converting the formal representation (i.e., used in
- * persistence) for key strokes into real key stroke instances.
+ * A facilitiy for converting the formal representation for key strokes
+ * (i.e., used in persistence) into real key stroke instances.
  * </p>
  * 
  * @since 3.1
  */
 public interface IKeyLookup {
 	/**
-	 * The name of the 'Alt' key.
+	 * The formal name of the 'Alt' key.
 	 */
 	public static final String ALT_NAME = "ALT"; //$NON-NLS-1$
 
 	/**
-	 * The name of the 'Arrow Down' key.
+	 * The formal name of the 'Arrow Down' key.
 	 */
 	public static final String ARROW_DOWN_NAME = "ARROW_DOWN"; //$NON-NLS-1$
 
 	/**
-	 * The name of the 'Arrow Left' key.
+	 * The formal name of the 'Arrow Left' key.
 	 */
 	public static final String ARROW_LEFT_NAME = "ARROW_LEFT"; //$NON-NLS-1$
 
 	/**
-	 * The name of the 'Arrow Right' key.
+	 * The formal name of the 'Arrow Right' key.
 	 */
 	public static final String ARROW_RIGHT_NAME = "ARROW_RIGHT"; //$NON-NLS-1$
 
 	/**
-	 * The name of the 'Arrow Up' key.
+	 * The formal name of the 'Arrow Up' key.
 	 */
 	public static final String ARROW_UP_NAME = "ARROW_UP"; //$NON-NLS-1$
 	
@@ -50,37 +50,37 @@ public interface IKeyLookup {
 	public static final String BACKSPACE_NAME = "BACKSPACE"; //$NON-NLS-1$
 
 	/**
-	 * The name for the 'Break' key.
+	 * The formal name for the 'Break' key.
 	 */
 	public static final String BREAK_NAME = "BREAK"; //$NON-NLS-1$
 
 	/**
-	 * The name of the backspace key.
+	 * The formal name of the backspace key.
 	 */
 	public static final String BS_NAME = "BS"; //$NON-NLS-1$
 
 	/**
-	 * The name for the 'Caps Lock' key.
+	 * The formal name for the 'Caps Lock' key.
 	 */
 	public static final String CAPS_LOCK_NAME = "CAPS_LOCK"; //$NON-NLS-1$
 
 	/**
-	 * The name of the 'Command' key.
+	 * The formal name of the 'Command' key.
 	 */
 	public static final String COMMAND_NAME = "COMMAND"; //$NON-NLS-1$
 
 	/**
-	 * The name of the carriage return (U+000D)
+	 * The formal name of the carriage return (U+000D)
 	 */
 	public static final String CR_NAME = "CR"; //$NON-NLS-1$
 
 	/**
-	 * The name of the 'Ctrl' key.
+	 * The formal name of the 'Ctrl' key.
 	 */
 	public static final String CTRL_NAME = "CTRL"; //$NON-NLS-1$
 
 	/**
-	 * The name of the delete (U+007F)
+	 * The formal name of the delete (U+007F) key
 	 */
 	public static final String DEL_NAME = "DEL"; //$NON-NLS-1$
 	
@@ -90,7 +90,7 @@ public interface IKeyLookup {
 	public static final String DELETE_NAME = "DELETE"; //$NON-NLS-1$
 
 	/**
-	 * The name of the 'End' key.
+	 * The formal name of the 'End' key.
 	 */
 	public static final String END_NAME = "END"; //$NON-NLS-1$
 	
@@ -100,7 +100,7 @@ public interface IKeyLookup {
 	public static final String ENTER_NAME = "ENTER"; //$NON-NLS-1$
 
 	/**
-	 * The name of the escape (U+001B) key.
+	 * The formal name of the escape (U+001B) key.
 	 */
 	public static final String ESC_NAME = "ESC"; //$NON-NLS-1$
 	
@@ -110,232 +110,232 @@ public interface IKeyLookup {
 	public static final String ESCAPE_NAME = "ESCAPE"; //$NON-NLS-1$
 
 	/**
-	 * The name of the 'F1' key.
+	 * The formal name of the 'F1' key.
 	 */
 	public static final String F1_NAME = "F1"; //$NON-NLS-1$
 
 	/**
-	 * The name of the 'F10' key.
+	 * The formal name of the 'F10' key.
 	 */
 	public static final String F10_NAME = "F10"; //$NON-NLS-1$
 
 	/**
-	 * The name of the 'F11' key.
+	 * The formal name of the 'F11' key.
 	 */
 	public static final String F11_NAME = "F11"; //$NON-NLS-1$
 
 	/**
-	 * The name of the 'F12' key.
+	 * The formal name of the 'F12' key.
 	 */
 	public static final String F12_NAME = "F12"; //$NON-NLS-1$
 
 	/**
-	 * The name of the 'F13' key.
+	 * The formal name of the 'F13' key.
 	 */
 	public static final String F13_NAME = "F13"; //$NON-NLS-1$
 
 	/**
-	 * The name of the 'F14' key.
+	 * The formal name of the 'F14' key.
 	 */
 	public static final String F14_NAME = "F14"; //$NON-NLS-1$
 
 	/**
-	 * The name of the 'F15' key.
+	 * The formal name of the 'F15' key.
 	 */
 	public static final String F15_NAME = "F15"; //$NON-NLS-1$
 
 	/**
-	 * The name of the 'F2' key.
+	 * The formal name of the 'F2' key.
 	 */
 	public static final String F2_NAME = "F2"; //$NON-NLS-1$
 
 	/**
-	 * The name of the 'F3' key.
+	 * The formal name of the 'F3' key.
 	 */
 	public static final String F3_NAME = "F3"; //$NON-NLS-1$
 
 	/**
-	 * The name of the 'F4' key.
+	 * The formal name of the 'F4' key.
 	 */
 	public static final String F4_NAME = "F4"; //$NON-NLS-1$
 
 	/**
-	 * The name of the 'F5' key.
+	 * The formal name of the 'F5' key.
 	 */
 	public static final String F5_NAME = "F5"; //$NON-NLS-1$
 
 	/**
-	 * The name of the 'F6' key.
+	 * The formal name of the 'F6' key.
 	 */
 	public static final String F6_NAME = "F6"; //$NON-NLS-1$
 
 	/**
-	 * The name of the 'F7' key.
+	 * The formal name of the 'F7' key.
 	 */
 	public static final String F7_NAME = "F7"; //$NON-NLS-1$
 
 	/**
-	 * The name of the 'F8' key.
+	 * The formal name of the 'F8' key.
 	 */
 	public static final String F8_NAME = "F8"; //$NON-NLS-1$
 
 	/**
-	 * The name of the 'F9' key.
+	 * The formal name of the 'F9' key.
 	 */
 	public static final String F9_NAME = "F9"; //$NON-NLS-1$
 
 	/**
-	 * The name of the form feed (U+000C) key.
+	 * The formal name of the form feed (U+000C) key.
 	 */
 	public static final String FF_NAME = "FF"; //$NON-NLS-1$
 
 	/**
-	 * The name of the 'Home' key.
+	 * The formal name of the 'Home' key.
 	 */
 	public static final String HOME_NAME = "HOME"; //$NON-NLS-1$
 
 	/**
-	 * The name of the 'Insert' key.
+	 * The formal name of the 'Insert' key.
 	 */
 	public static final String INSERT_NAME = "INSERT"; //$NON-NLS-1$
 
 	/**
-	 * The name of the line feed (U+000A) key.
+	 * The formal name of the line feed (U+000A) key.
 	 */
 	public static final String LF_NAME = "LF"; //$NON-NLS-1$
 
 	/**
-	 * The name of the 'M1' key.
+	 * The formal name of the 'M1' key.
 	 */
 	public static final String M1_NAME = "M1"; //$NON-NLS-1$	
 
 	/**
-	 * The name of the 'M2' key.
+	 * The formal name of the 'M2' key.
 	 */
 	public static final String M2_NAME = "M2"; //$NON-NLS-1$
 
 	/**
-	 * The name of the 'M3' key.
+	 * The formal name of the 'M3' key.
 	 */
 	public static final String M3_NAME = "M3"; //$NON-NLS-1$
 
 	/**
-	 * The name of the 'M4' key.
+	 * The formal name of the 'M4' key.
 	 */
 	public static final String M4_NAME = "M4"; //$NON-NLS-1$
 
 	/**
-	 * The name of the null (U+0000) key.
+	 * The formal name of the null (U+0000) key.
 	 */
 	public static final String NUL_NAME = "NUL"; //$NON-NLS-1$
 
 	/**
-	 * The name of the 'NumLock' key.
+	 * The formal name of the 'NumLock' key.
 	 */
 	public static final String NUM_LOCK_NAME = "NUM_LOCK"; //$NON-NLS-1$
 
 	/**
-	 * The name of the '0' key on the numpad.
+	 * The formal name of the '0' key on the numpad.
 	 */
 	public static final String NUMPAD_0_NAME = "NUMPAD_0"; //$NON-NLS-1$
 
 	/**
-	 * The name of the '1' key on the numpad.
+	 * The formal name of the '1' key on the numpad.
 	 */
 	public static final String NUMPAD_1_NAME = "NUMPAD_1"; //$NON-NLS-1$
 
 	/**
-	 * The name of the '2' key on the numpad.
+	 * The formal name of the '2' key on the numpad.
 	 */
 	public static final String NUMPAD_2_NAME = "NUMPAD_2"; //$NON-NLS-1$
 
 	/**
-	 * The name of the '3' key on the numpad.
+	 * The formal name of the '3' key on the numpad.
 	 */
 	public static final String NUMPAD_3_NAME = "NUMPAD_3"; //$NON-NLS-1$
 
 	/**
-	 * The name of the '4' key on the numpad.
+	 * The formal name of the '4' key on the numpad.
 	 */
 	public static final String NUMPAD_4_NAME = "NUMPAD_4"; //$NON-NLS-1$
 
 	/**
-	 * The name of the '5' key on the numpad.
+	 * The formal name of the '5' key on the numpad.
 	 */
 	public static final String NUMPAD_5_NAME = "NUMPAD_5"; //$NON-NLS-1$
 
 	/**
-	 * The name of the '6' key on the numpad.
+	 * The formal name of the '6' key on the numpad.
 	 */
 	public static final String NUMPAD_6_NAME = "NUMPAD_6"; //$NON-NLS-1$
 
 	/**
-	 * The name of the '7' key on the numpad.
+	 * The formal name of the '7' key on the numpad.
 	 */
 	public static final String NUMPAD_7_NAME = "NUMPAD_7"; //$NON-NLS-1$
 
 	/**
-	 * The name of the '8' key on the numpad.
+	 * The formal name of the '8' key on the numpad.
 	 */
 	public static final String NUMPAD_8_NAME = "NUMPAD_8"; //$NON-NLS-1$
 
 	/**
-	 * The name of the '9' key on the numpad.
+	 * The formal name of the '9' key on the numpad.
 	 */
 	public static final String NUMPAD_9_NAME = "NUMPAD_9"; //$NON-NLS-1$
 
 	/**
-	 * The name of the 'Add' key on the numpad.
+	 * The formal name of the 'Add' key on the numpad.
 	 */
 	public static final String NUMPAD_ADD_NAME = "NUMPAD_ADD"; //$NON-NLS-1$
 
 	/**
-	 * The name of the 'Decimal' key on the numpad.
+	 * The formal name of the 'Decimal' key on the numpad.
 	 */
 	public static final String NUMPAD_DECIMAL_NAME = "NUMPAD_DECIMAL"; //$NON-NLS-1$
 
 	/**
-	 * The name of the 'Divide' key on the numpad.
+	 * The formal name of the 'Divide' key on the numpad.
 	 */
 	public static final String NUMPAD_DIVIDE_NAME = "NUMPAD_DIVIDE"; //$NON-NLS-1$
 
 	/**
-	 * The name of the 'Enter' key on the numpad.
+	 * The formal name of the 'Enter' key on the numpad.
 	 */
 	public static final String NUMPAD_ENTER_NAME = "NUMPAD_ENTER"; //$NON-NLS-1$
 
 	/**
-	 * The name of the '=' key on the numpad.
+	 * The formal name of the '=' key on the numpad.
 	 */
 	public static final String NUMPAD_EQUAL_NAME = "NUMPAD_EQUAL"; //$NON-NLS-1$
 
 	/**
-	 * The name of the 'Multiply' key on the numpad.
+	 * The formal name of the 'Multiply' key on the numpad.
 	 */
 	public static final String NUMPAD_MULTIPLY_NAME = "NUMPAD_MULTIPLY"; //$NON-NLS-1$
 
 	/**
-	 * The name of the 'Subtract' key on the numpad.
+	 * The formal name of the 'Subtract' key on the numpad.
 	 */
 	public static final String NUMPAD_SUBTRACT_NAME = "NUMPAD_SUBTRACT"; //$NON-NLS-1$
 
 	/**
-	 * The name of the 'Page Down' key.
+	 * The formal name of the 'Page Down' key.
 	 */
 	public static final String PAGE_DOWN_NAME = "PAGE_DOWN"; //$NON-NLS-1$
 
 	/**
-	 * The name of the 'Page Up' key.
+	 * The formal name of the 'Page Up' key.
 	 */
 	public static final String PAGE_UP_NAME = "PAGE_UP"; //$NON-NLS-1$
 
 	/**
-	 * The name for the 'Pause' key.
+	 * The formal name for the 'Pause' key.
 	 */
 	public static final String PAUSE_NAME = "PAUSE"; //$NON-NLS-1$
 
 	/**
-	 * The name for the 'Print Screen' key.
+	 * The formal name for the 'Print Screen' key.
 	 */
 	public static final String PRINT_SCREEN_NAME = "PRINT_SCREEN"; //$NON-NLS-1$
 	
@@ -345,32 +345,32 @@ public interface IKeyLookup {
 	public static final String RETURN_NAME = "RETURN"; //$NON-NLS-1$
 
 	/**
-	 * The name for the 'Scroll Lock' key.
+	 * The formal name for the 'Scroll Lock' key.
 	 */
 	public static final String SCROLL_LOCK_NAME = "SCROLL_LOCK"; //$NON-NLS-1$		
 
 	/**
-	 * The name of the 'Shift' key.
+	 * The formal name of the 'Shift' key.
 	 */
 	public static final String SHIFT_NAME = "SHIFT"; //$NON-NLS-1$
 
 	/**
-	 * The name of the space (U+0020) key.
+	 * The formal name of the space (U+0020) key.
 	 */
 	public static final String SPACE_NAME = "SPACE"; //$NON-NLS-1$
 
 	/**
-	 * The name of the tab (U+0009) key.
+	 * The formal name of the tab (U+0009) key.
 	 */
 	public static final String TAB_NAME = "TAB"; //$NON-NLS-1$
 
 	/**
-	 * The name of the vertical tab (U+000B) key.
+	 * The formal name of the vertical tab (U+000B) key.
 	 */
 	public static final String VT_NAME = "VT"; //$NON-NLS-1$	
 
 	/**
-	 * Looks up a single natural key name, and returns the integer
+	 * Looks up a single natural key by its formal name, and returns the integer
 	 * representation for this natural key
 	 * 
 	 * @param name
@@ -382,7 +382,7 @@ public interface IKeyLookup {
 	public int formalKeyLookup(String name);	
 
 	/**
-	 * Looks up a single natural key name, and returns the integer
+	 * Looks up a single natural key by its formal name, and returns the integer
 	 * representation for this natural key
 	 * 
 	 * @param name
@@ -394,7 +394,7 @@ public interface IKeyLookup {
 	public Integer formalKeyLookupInteger(String name);
 
 	/**
-	 * Looks up a single modifier key name, and returns the integer
+	 * Looks up a single modifier key by its formal name, and returns the integer
 	 * representation for this modifier key
 	 * 
 	 * @param name
@@ -449,7 +449,7 @@ public interface IKeyLookup {
 	 * Returns whether the given key is a modifier key.
 	 * 
 	 * @param key
-	 *            The key to check.
+	 *            The integer value of the key to check.
 	 * @return <code>true</code> if the key is one of the modifier keys;
 	 *         <code>false</code> otherwise.
 	 */

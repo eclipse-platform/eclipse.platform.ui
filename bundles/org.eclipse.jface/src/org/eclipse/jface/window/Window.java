@@ -271,6 +271,8 @@ public abstract class Window implements IShellProvider {
      * the given shellProvider returns.
      * 
      * @param shellProvider object that will return the current parent shell. Not null.
+     * 
+     * @since 3.1
      */
     protected Window(IShellProvider shellProvider) {
         Assert.isNotNull(shellProvider);

@@ -12,6 +12,8 @@ package org.eclipse.jface.viewers;
 
 /**
  * Interface for filters. Can accept or reject items.
+ * 
+ * @since 3.1
  */
 public interface IFilter {
 	/**

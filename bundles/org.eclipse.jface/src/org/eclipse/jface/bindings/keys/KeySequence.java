@@ -79,7 +79,7 @@ public final class KeySequence extends TriggerSequence implements Comparable {
 	}
 
 	/**
-	 * Gets an instance of <code>KeySequence</code> given a key sequence and a
+	 * Creates an instance of <code>KeySequence</code> given a key sequence and a
 	 * key stroke.
 	 * 
 	 * @param keySequence
@@ -106,7 +106,7 @@ public final class KeySequence extends TriggerSequence implements Comparable {
 	}
 
 	/**
-	 * Gets an instance of <code>KeySequence</code> given a single key stroke.
+	 * Creates an instance of <code>KeySequence</code> given a single key stroke.
 	 * 
 	 * @param keyStroke
 	 *            a single key stroke. Must not be <code>null</code>.
@@ -117,7 +117,7 @@ public final class KeySequence extends TriggerSequence implements Comparable {
 	}
 
 	/**
-	 * Gets an instance of <code>KeySequence</code> given an array of key
+	 * Creates an instance of <code>KeySequence</code> given an array of key
 	 * strokes.
 	 * 
 	 * @param keyStrokes
@@ -131,7 +131,7 @@ public final class KeySequence extends TriggerSequence implements Comparable {
 	}
 
 	/**
-	 * Gets an instance of <code>KeySequence</code> given a list of key
+	 * Creates an instance of <code>KeySequence</code> given a list of key
 	 * strokes.
 	 * 
 	 * @param keyStrokes
@@ -146,7 +146,7 @@ public final class KeySequence extends TriggerSequence implements Comparable {
 	}
 
 	/**
-	 * Gets an instance of <code>KeySequence</code> by parsing a given a
+	 * Creates an instance of <code>KeySequence</code> by parsing a given 
 	 * formal string representation.
 	 * 
 	 * @param string
@@ -198,8 +198,10 @@ public final class KeySequence extends TriggerSequence implements Comparable {
 		}
 	}
 
-	/**
-	 * @see java.lang.Object#equals(java.lang.Object)
+    /*
+     * (non-Javadoc)
+     * 
+	 * @see java.lang.Object#compareTo(java.lang.Object)
 	 */
 	public final int compareTo(final Object object) {
 		final KeySequence castedObject = (KeySequence) object;

@@ -576,6 +576,8 @@ public class TreeViewer extends AbstractTreeViewer {
 	 *            the array of items
 	 * @return <code>true</code> if the refer to the same elements,
 	 *         <code>false</code> otherwise
+	 *         
+	 * @since 3.1
 	 */
 	protected boolean isSameSelection(List items, Item[] current) {
 		// If they are not the same size then they are not equivalent

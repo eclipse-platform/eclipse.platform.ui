@@ -147,6 +147,8 @@ public abstract class AbstractListViewer extends StructuredViewer {
      * @param element
      * @return String. Return the emptyString if the labelProvider
      * returns null for the text.
+     * 
+     * @since 3.1
      */
     private String getLabelProviderText(ILabelProvider labelProvider, Object element){
     	String text = labelProvider.getText(element);

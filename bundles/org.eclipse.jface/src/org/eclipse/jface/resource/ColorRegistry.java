@@ -118,6 +118,8 @@ public class ColorRegistry extends ResourceRegistry {
      * 
      * @param rgb the <code>RGB</code> data for the color.
      * @return the new <code>Color</code> object.
+     * 
+     * @since 3.1
      */
     private Color createColor(RGB rgb) {
         return new Color(display, rgb);

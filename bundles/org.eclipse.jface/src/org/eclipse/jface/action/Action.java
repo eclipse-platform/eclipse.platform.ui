@@ -896,9 +896,9 @@ public abstract class Action implements IAction {
     }
     
     /**
-     * Whether this action is handled. In the default case, this is always
-     * <code>true</code>. However, if your action delegates some of its
-     * behaviour to some other object, then this should answer whether such an
+     * Returns whether this action is handled. In the default case, this is always
+     * <code>true</code>. However, if the action delegates some of its
+     * behaviour to some other object, then this method should answer whether such an
      * object is currently available.
      * 
      * @return <code>true</code> if all of the action's behaviour is

@@ -314,6 +314,8 @@ public class TableViewer extends StructuredViewer {
 	 * Create a new TableItem at index if required.
 	 * @param element
 	 * @param index
+	 * 
+	 * @since 3.1
 	 */
 	private void createItem(Object element, int index) {
 		if(virtualManager == null)
@@ -721,6 +723,8 @@ public class TableViewer extends StructuredViewer {
 
 	/**
 	 * Refresh all with virtual elements.
+	 * 
+	 * @since 3.1
 	 */
 	private void internalVirtualRefreshAll() {
 		
@@ -742,6 +746,8 @@ public class TableViewer extends StructuredViewer {
 	 * Refresh all of the elements of the table. update the
 	 * labels if updatLabels is true;
 	 * @param updateLabels
+	 * 
+	 * @since 3.1
 	 */
 	private void internalRefreshAll(boolean updateLabels) {
 		// the parent
@@ -992,6 +998,8 @@ public class TableViewer extends StructuredViewer {
 	/**
 	 * Set the item count of the receiver.
 	 * @param count the new table size.
+	 * 
+	 * @since 3.1
 	 */
 	public void setItemCount(int count){
 		getTable().setItemCount(count);
@@ -1007,12 +1015,20 @@ public class TableViewer extends StructuredViewer {
 	 * @param elements
 	 * @param index
 	 * @see ILazyContentProvider
+	 * 
+	 * @since 3.1
 	 */
 	public void replace(Object element, int index){
 		TableItem item = getTable().getItem(index);
 		refreshItem(item, element);
 	}
 
+	/**
+	 * Clear the table item at the specified index
+	 * @param index the index of the table item to be cleared
+	 * 
+	 * @since 3.1
+	 */
 	public void clear(int index) {
 		TableItem item = getTable().getItem(index);
 		if (item.getData() != null) {

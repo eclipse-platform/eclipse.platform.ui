@@ -24,6 +24,8 @@ import org.eclipse.swt.widgets.Item;
 
 /**
  * Internal tree viewer implementation.
+ * 
+ * @since 3.1
  */
 /* package */abstract class TreeEditorImpl {
 

@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.Control;
 /**
  * The GenericListViewer is a list viewer that is made up of a series of
  * GenericListItems.
+ * >>>>IS THIS STILL EXPERIMENTAL???
  * <strong>NOTE</strong> This class is experimental and may change
  * without warning.
  * @since 3.1
@@ -41,7 +42,7 @@ public abstract class GenericListViewer extends ContentViewer {
 	/**
 	 * Create a new instance of the receiver.
 	 * @param parent The parent of the control.
-	 * @param style The sytle bits to use for the control
+	 * @param style The style bits to use for the control
 	 */
 	public GenericListViewer(Composite parent, int style) {
 		super();

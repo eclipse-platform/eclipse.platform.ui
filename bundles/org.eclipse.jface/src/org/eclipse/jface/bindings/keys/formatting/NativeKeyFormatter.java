@@ -124,7 +124,7 @@ public final class NativeKeyFormatter extends AbstractKeyFormatter {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.keys.AbstractKeyFormatter#getKeyDelimiter()
+	 * @see org.eclipse.jface.bindings.keys.AbstractKeyFormatter#getKeyDelimiter()
 	 */
 	protected String getKeyDelimiter() {
 		// We must do the look up every time, as our locale might change.
@@ -140,7 +140,7 @@ public final class NativeKeyFormatter extends AbstractKeyFormatter {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.keys.AbstractKeyFormatter#getKeyStrokeDelimiter()
+	 * @see org.eclipse.jface.bindings.keys.AbstractKeyFormatter#getKeyStrokeDelimiter()
 	 */
 	protected String getKeyStrokeDelimiter() {
 		// We must do the look up every time, as our locale might change.
@@ -154,6 +154,11 @@ public final class NativeKeyFormatter extends AbstractKeyFormatter {
 				KeySequence.KEY_STROKE_DELIMITER);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.bindings.keys.AbstractKeyFormatter#sortModifierKeys(int)
+	 */
 	protected int[] sortModifierKeys(final int modifierKeys) {
 		final IKeyLookup lookup = KeyLookupFactory.getDefault();
 		final String platform = SWT.getPlatform();

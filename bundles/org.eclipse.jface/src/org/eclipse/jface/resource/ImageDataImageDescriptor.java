@@ -35,15 +35,29 @@ class ImageDataImageDescriptor extends ImageDescriptor {
         this.originalDevice = originalDevice;
     }
     
+    /**
+     * Creates an image descriptor, given an image.
+     * 
+     * @param originalImage
+     */
     ImageDataImageDescriptor(Image originalImage) {
         this(originalImage.getImageData());
         this.originalImage = originalImage;
     }
     
+    /**
+     * Creates an image descriptor, given some image data.
+     * 
+     * @param data describing the image
+     */
+
     ImageDataImageDescriptor(ImageData data) {
         this.data = data;
     }
     
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.resource.DeviceResourceDescriptor#create(org.eclipse.swt.graphics.Device)
+     */
     public Object createResource(Device device) throws DeviceResourceException {
 
         // If this descriptor is an existing font, then we can return the original font
@@ -81,7 +95,10 @@ class ImageDataImageDescriptor extends ImageDescriptor {
         
         return super.createResource(device);
     }
-    
+	
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.resource.DeviceResourceDescriptor#destroy(java.lang.Object)
+     */
     public void destroyResource(Object previouslyCreatedObject) {
         if (previouslyCreatedObject == originalImage) {
             return;

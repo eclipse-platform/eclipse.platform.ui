@@ -98,6 +98,8 @@ public class ViewerLabel {
 	 * Return whether or not the image has been set.
 	 * 
 	 * @return boolean. <code>true</code>  if the image has been set to something new.
+	 * 
+	 * @since 3.1
 	 */
 	public boolean hasNewImage() {
 
@@ -141,6 +143,8 @@ public class ViewerLabel {
 	 * Return whether or not the foreground color has been set.
 	 * 
 	 * @return boolean. <code>true</code> if the value has been set.
+	 * 
+	 * @since 3.1
 	 */
 	public boolean hasNewForeground() {
 		return foreground != null;
@@ -150,6 +154,8 @@ public class ViewerLabel {
 	 * Return whether or not the font has been set.
 	 * 
 	 * @return boolean. <code>true</code> if the value has been set.
+	 * 
+	 * @since 3.1
 	 */
 	public boolean hasNewFont() {
 		return font != null;
@@ -159,6 +165,8 @@ public class ViewerLabel {
 	 * Get the background Color.
 	 * @return Color or <code>null</code> if no new value
 	 * was set.
+	 * 
+	 * @since 3.1
 	 */
 	public Color getBackground() {
 		return background;
@@ -166,6 +174,8 @@ public class ViewerLabel {
 	/**
 	 * Set the background Color.
 	 * @param background Color
+	 * 
+	 * @since 3.1
 	 */
 	public void setBackground(Color background) {
 		this.background = background;
@@ -174,6 +184,8 @@ public class ViewerLabel {
 	 * Get the font.
 	 * @return Font or <code>null</code> if no new value
 	 * was set.
+	 * 
+	 * @since 3.1
 	 */
 	public Font getFont() {
 		return font;
@@ -181,6 +193,8 @@ public class ViewerLabel {
 	/**
 	 * Set the font.
 	 * @param font Font
+	 * 
+	 * @since 3.1
 	 */
 	public void setFont(Font font) {
 		this.font = font;
@@ -189,6 +203,8 @@ public class ViewerLabel {
 	 * Get the foreground Color.
 	 * @return Color or <code>null</code> if no new value
 	 * was set.
+	 * 
+	 * @since 3.1
 	 */
 	public Color getForeground() {
 		return foreground;
@@ -196,6 +212,8 @@ public class ViewerLabel {
 	/**
 	 * Set the foreground Color.
 	 * @param foreground
+	 * 
+	 * @since 3.1
 	 */
 	public void setForeground(Color foreground) {
 		this.foreground = foreground;

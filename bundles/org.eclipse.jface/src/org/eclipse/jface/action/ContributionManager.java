@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -239,6 +239,7 @@ public abstract class ContributionManager implements IContributionManager {
 
     /**
      * Returns the index of the item with the given id.
+     * @param id The id of the item whose index is requested.
      *
      * @return <code>int</code> the index or -1 if the item is not found
      */
@@ -256,7 +257,7 @@ public abstract class ContributionManager implements IContributionManager {
      * Returns the index of the object in the internal structure. This is different from 
      * <code>indexOf(String id)</code> since some contribution items may not have an id.
      *  
-     * @param item the contribution item 
+     * @param item The contribution item 
      * @return the index, or -1 if the item is not found
      * @since 3.0
      */
@@ -266,6 +267,9 @@ public abstract class ContributionManager implements IContributionManager {
 
     /**
      * Insert the item at the given index.
+     * 
+     * @param index The index to be used for insertion
+     * @param item The item to be inserted
      */
     public void insert(int index, IContributionItem item) {
         if (index > contributions.size())

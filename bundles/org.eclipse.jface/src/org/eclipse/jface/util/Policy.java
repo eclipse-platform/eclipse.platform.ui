@@ -47,6 +47,8 @@ public class Policy {
     /**
      * A boolean to determine if we are showing the new look preferences
      * dialog.
+     * 
+     * @since 3.1
      */
     public static boolean SHOW_PREFERENCES_NEWLOOK = DEFAULT;
 

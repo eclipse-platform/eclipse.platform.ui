@@ -20,7 +20,7 @@ import java.util.HashMap;
  * 
  * @since 3.1
  */
-class IntHashMap {
+/* package */ class IntHashMap {
     private HashMap map; 
     
     public IntHashMap(int size, float loadFactor) {

@@ -34,12 +34,28 @@ class RGBColorDescriptor extends ColorDescriptor {
         this.color = color;
     }
     
+	/**
+     * Creates a new RGBColorDescriptor that describes an existing color. 
+     * 
+     * @since 3.1
+     *
+     * @param originalColor a color to describe
+     * @param originalDevice must be the same Device that was passed into
+     * the color's constructor when it was first created.
+     */
     public RGBColorDescriptor(Color originalColor, Device originalDevice) {
         this(originalColor.getRGB());
         this.originalColor = originalColor;
         this.originalDevice = originalDevice;
     }
     
+	/**
+     * Creates a new RGBColorDescriptor that describes an existing color. 
+     * 
+     * @since 3.1
+     *
+     * @param originalColor a color to describe
+     */
     public RGBColorDescriptor(Color originalColor) {
         this(originalColor.getRGB());
         this.originalColor = originalColor;
@@ -66,7 +82,7 @@ class RGBColorDescriptor extends ColorDescriptor {
     }
     
     /* (non-Javadoc)
-     * @see org.eclipse.ui.part.interfaces.ColorDescriptor#createColor()
+     * @see org.eclipse.jface.resources.ColorDescriptor#createColor()
      */
     public Color createColor(Device device) {
         // If this descriptor is wrapping an existing color, then we can return the original color

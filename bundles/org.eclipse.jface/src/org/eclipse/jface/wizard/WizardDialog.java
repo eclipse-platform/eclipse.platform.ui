@@ -1286,6 +1286,8 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
      * @param event a selection changed event
      *
      * @see IPageChangedListener#pageChanged
+     * 
+     * @since 3.1
      */
     protected void firePageChanged(final PageChangedEvent event) {
         Object[] listeners = pageChangedListeners.getListeners();

@@ -196,9 +196,9 @@ import org.eclipse.swt.widgets.Display;
     }
     
     /**
-     * Pushes an index onto the flush stack
+     * Pushes an index onto the clear stack
      * 
-     * @param toFlush row to flush
+     * @param toClear row to clear
      */
     private void pushClear(int toClear) {
         
@@ -279,6 +279,7 @@ import org.eclipse.swt.widgets.Display;
     /**
      * Called in the UI thread by a SetData callback. Refreshes the
      * table if necessary. Returns true iff a refresh is needed.
+     * @param includeIndex the index that should be included in the visible range.
      */
     public void checkVisibleRange(int includeIndex) {
         int start = Math.min(table.getTopIndex() - 1, includeIndex);
@@ -370,7 +371,9 @@ import org.eclipse.swt.widgets.Display;
     }
 
 	/**
-	 * @return
+	 * Return the array of all known objects that have been sent here from the background
+     * thread.
+	 * @return the array of all known objects
 	 */
 	public Object[] getKnownObjects() {
 		return knownObjects;

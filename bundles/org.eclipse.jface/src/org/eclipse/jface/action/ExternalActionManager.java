@@ -127,6 +127,8 @@ public final class ExternalActionManager {
 		 * @param commandManager
 		 *            The command manager which will provide the callback; must
 		 *            not be <code>null</code>.
+		 *            
+		 * @since 3.1          
 		 */
 		public CommandCallback(final BindingManager bindingManager,
 				final CommandManager commandManager) {
@@ -151,6 +153,8 @@ public final class ExternalActionManager {
 		 * @param activeChecker
 		 *            The callback mechanism for checking whether a command is
 		 *            active; must not be <code>null</code>.
+		 *            
+		 * @since 3.1
 		 */
 		public CommandCallback(final BindingManager bindingManager,
 				final CommandManager commandManager,

@@ -635,7 +635,7 @@ public class ActionContributionItem extends ContributionItem {
      * Sets the presentation mode, which is the bitwise-or of the 
      * <code>MODE_*</code> constants.
      * 
-     * @return the presentation mode settings
+     * @param mode the presentation mode settings
      * 
      * @since 3.0
      */

@@ -79,7 +79,7 @@ public final class BindingManagerEvent extends AbstractBitSetEvent {
 	 * Creates a new instance of this class.
 	 * 
 	 * @param manager
-	 *            the instance of manager that changed; must not be
+	 *            the instance of the binding manager that changed; must not be
 	 *            <code>null</code>.
 	 * @param activeBindingsChanged
 	 *            Whether the active bindings have changed.

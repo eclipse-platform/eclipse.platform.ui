@@ -56,8 +56,8 @@ public class PageChangedEvent extends EventObject {
 	/**
 	 * Returns the selected page.
 	 * 
-	 * @return the selected page. In the JFace provided 
-	 * 		dialogs this will be an <code>IDialogPage</code>.
+	 * @return the selected page. In dialogs implemented by JFace, 
+	 * 		this will be an <code>IDialogPage</code>.
 	 */
 	public Object getSelectedPage() {
 		return selectedPage;

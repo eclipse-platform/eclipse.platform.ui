@@ -24,6 +24,8 @@ import org.eclipse.swt.widgets.Item;
 
 /**
  * Internal table viewer implementation.
+ * 
+ * @since 3.1
  */
 /* package */abstract class TableEditorImpl {
 
@@ -189,6 +191,8 @@ import org.eclipse.swt.widgets.Item;
 
     /**
      * Start editing the given element. 
+     * @param element 
+     * @param column 
      */
     public void editElement(Object element, int column) {
         if (cellEditor != null)
@@ -210,16 +214,28 @@ import org.eclipse.swt.widgets.Item;
 
     abstract Rectangle getBounds(Item item, int columnNumber);
 
+    /**
+     * Return the array of CellEditors used in the viewer
+     * @return the cell editors
+     */
     public CellEditor[] getCellEditors() {
         return cellEditors;
     }
 
+    /**
+     * Get the cell modifier
+     * @return the cell modifier
+     */
     public ICellModifier getCellModifier() {
         return cellModifier;
     }
 
     abstract int getColumnCount();
 
+    /**
+     * Return the properties for the column
+     * @return the array of column properties
+     */
     public Object[] getColumnProperties() {
         return columnProperties;
     }
@@ -228,6 +244,7 @@ import org.eclipse.swt.widgets.Item;
 
     /**
      * Handles the mouse down event; activates the cell editor.
+     * @param event the mouse event that should be handled
      */
     public void handleMouseDown(MouseEvent event) {
         if (event.button != 1)
@@ -272,7 +289,9 @@ import org.eclipse.swt.widgets.Item;
     }
 
     /**
-     * Returns <code>true</code> if there is an active cell editor; otherwise
+     * Return whether there is an active cell editor.
+     * 
+     * @return <code>true</code> if there is an active cell editor; otherwise
      * <code>false</code> is returned.
      */
     public boolean isCellEditorActive() {
@@ -296,14 +315,26 @@ import org.eclipse.swt.widgets.Item;
         }
     }
 
+    /**
+     * Set the cell editors
+     * @param editors
+     */
     public void setCellEditors(CellEditor[] editors) {
         this.cellEditors = editors;
     }
 
+    /**
+     * Set the cell modifier
+     * @param modifier
+     */
     public void setCellModifier(ICellModifier modifier) {
         this.cellModifier = modifier;
     }
 
+    /**
+     * Set the column properties
+     * @param columnProperties
+     */
     public void setColumnProperties(String[] columnProperties) {
         this.columnProperties = columnProperties;
     }

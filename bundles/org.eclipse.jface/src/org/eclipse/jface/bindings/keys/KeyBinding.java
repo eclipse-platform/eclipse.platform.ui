@@ -40,7 +40,7 @@ public final class KeyBinding extends Binding {
 	 * @param command
 	 *            The parameterized command to which this binding applies; this
 	 *            value may be <code>null</code> if the binding is meant to
-	 *            "unbind" (no op).
+	 *            "unbind" a previously defined binding.
 	 * @param schemeId
 	 *            The scheme to which this binding belongs; this value must not
 	 *            be <code>null</code>.
@@ -98,7 +98,7 @@ public final class KeyBinding extends Binding {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.bindings.Binding#getTrigger()
+	 * @see org.eclipse.jface.bindings.Binding#getTriggerSequence()
 	 */
 	public TriggerSequence getTriggerSequence() {
 		return getKeySequence();

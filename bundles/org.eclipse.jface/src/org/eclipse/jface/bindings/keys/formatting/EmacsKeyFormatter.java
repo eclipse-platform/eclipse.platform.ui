@@ -60,7 +60,7 @@ public final class EmacsKeyFormatter extends AbstractKeyFormatter {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.keys.AbstractKeyFormatter#getKeyDelimiter()
+	 * @see org.eclipse.jface.bindings.keys.AbstractKeyFormatter#getKeyDelimiter()
 	 */
 	protected String getKeyDelimiter() {
 		return Util.translateString(RESOURCE_BUNDLE, KEY_DELIMITER_KEY,
@@ -70,13 +70,18 @@ public final class EmacsKeyFormatter extends AbstractKeyFormatter {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.keys.AbstractKeyFormatter#getKeyStrokeDelimiter()
+	 * @see org.eclipse.jface.bindings.keys.AbstractKeyFormatter#getKeyStrokeDelimiter()
 	 */
 	protected String getKeyStrokeDelimiter() {
 		return Util.translateString(RESOURCE_BUNDLE, KEY_STROKE_DELIMITER_KEY,
 				KeySequence.KEY_STROKE_DELIMITER);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.bindings.keys.AbstractKeyFormatter#sortModifierKeys(int)
+	 */
 	protected int[] sortModifierKeys(int modifierKeys) {
 		final IKeyLookup lookup = KeyLookupFactory.getDefault();
 		final int[] sortedKeys = new int[4];

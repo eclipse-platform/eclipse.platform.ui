@@ -81,6 +81,8 @@ public class ModalContext {
         
         /**
          * The thread that forked this modal context thread.
+         * 
+         * @since 3.1
          */
         private Thread callingThread;
         

@@ -13,8 +13,8 @@ package org.eclipse.jface.viewers;
 import org.eclipse.swt.graphics.Font;
 
 /**
- * The ITableFontProvider is a type that provides fonts to 
- * individual cells of tables.
+ * The ITableFontProvider is a font provider that provides fonts to 
+ * individual cells within tables.
  * @since 3.1
  */
 public interface ITableFontProvider {

@@ -12,8 +12,9 @@ package org.eclipse.jface.contexts;
 
 /**
  * <p>
- * A list of well-known context identifiers. The context identifiers contain
- * "ui" for historical reasons. These contexts exist as part of JFace.
+ * A list of well-known context identifiers. The context identifiers use the
+ * prefix "org.eclipse.ui" for historical reasons. These contexts exist as part 
+ * of JFace.
  * </p>
  * <p>
  * This interface should not be implemented or extended by clients.

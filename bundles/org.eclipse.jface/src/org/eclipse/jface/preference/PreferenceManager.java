@@ -125,11 +125,13 @@ public class PreferenceManager {
     }
     
     /**
-     * Finds and returns the contribution node directly
-     * below top at the given path.
+     * Finds and returns the preference node directly
+     * below the top at the given path.
      *
      * @param path the path
      * @return the node, or <code>null</code> if none
+     * 
+     * @since 3.1
      */
     protected IPreferenceNode find(String path,IPreferenceNode top){
     	 Assert.isNotNull(path);

@@ -19,6 +19,8 @@ import org.eclipse.swt.graphics.Font;
  * If an IFontDecorator decorates a font in an object that also has
  * an IFontProvider the IFontDecorator will take precendence.
  * @see IFontProvider
+ * 
+ * @since 3.1
  */
 public interface IFontDecorator {
 	

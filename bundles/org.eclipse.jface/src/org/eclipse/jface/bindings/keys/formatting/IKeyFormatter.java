@@ -16,7 +16,7 @@ import org.eclipse.jface.bindings.keys.KeyStroke;
 
 /**
  * <p>
- * Any formatter capable of taking key sequence or a key stroke and converting
+ * Any formatter capable of taking a key sequence or a key stroke and converting
  * it into a string. These formatters are used to produce the strings that the
  * user sees in the keys preference page and the menus, as well as the strings
  * that are used for persistent storage.
@@ -39,7 +39,7 @@ public interface IKeyFormatter {
 
 	/**
 	 * Format the given key sequence into a string. The manner of the conversion
-	 * is dependent on the formatter. It is required that unequal key seqeunces
+	 * is dependent on the formatter. It is required that unequal key sequences
 	 * return unequal strings.
 	 * 
 	 * @param keySequence

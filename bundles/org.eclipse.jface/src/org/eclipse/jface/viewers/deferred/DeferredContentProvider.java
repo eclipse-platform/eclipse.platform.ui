@@ -102,6 +102,10 @@ public class DeferredContentProvider implements ILazyContentProvider {
 		
 	};
 
+	/**
+	 * Create a DeferredContentProvider with the given sort order.
+	 * @param sortOrder a comparator that sorts the content.
+	 */
 	public DeferredContentProvider(Comparator sortOrder) {
 		this.sortOrder = sortOrder;
 	}

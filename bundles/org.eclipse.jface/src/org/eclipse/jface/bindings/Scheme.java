@@ -23,19 +23,19 @@ import org.eclipse.jface.util.Util;
  * <p>
  * An instance of <code>IScheme</code> is a handle representing a binding
  * scheme as defined by the extension point <code>org.eclipse.ui.bindings</code>.
- * The identifier of the handle is identifier of the scheme being represented.
+ * The identifier of the handle is the identifier of the scheme being represented.
  * </p>
  * <p>
  * An instance of <code>IScheme</code> can be obtained from an instance of
  * <code>ICommandManager</code> for any identifier, whether or not a scheme
- * with that identifier defined in the plugin registry.
+ * with that identifier is defined in the plugin registry.
  * </p>
  * <p>
  * The handle-based nature of this API allows it to work well with runtime
  * plugin activation and deactivation. If a scheme is defined, that means that
  * its corresponding plug-in is active. If the plug-in is then deactivated, the
- * configuration will still exist but it will be undefined. An attempt to use an
- * undefined key configuration will result in a <code>NotDefinedException</code>
+ * scheme will still exist but it will be undefined. An attempt to use an
+ * undefined scheme will result in a <code>NotDefinedException</code>
  * being thrown.
  * </p>
  * <p>
@@ -122,8 +122,8 @@ public final class Scheme extends NamedHandleObject implements Comparable {
     /**
      * <p>
      * Defines this scheme by giving it a name, and possibly a description and a
-     * parent identifier as well. The defined property automatically becomes
-     * <code>true</code>.
+     * parent identifier as well. The defined property for the scheme automatically 
+     * becomes <code>true</code>.
      * </p>
      * <p>
      * Notification is sent to all listeners that something has changed.

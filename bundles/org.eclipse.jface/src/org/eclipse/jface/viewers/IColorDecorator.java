@@ -20,6 +20,8 @@ import org.eclipse.swt.graphics.Color;
  * If an IColorDecorator decorates a foreground or background in an object 
  * that also has an IColorProvider the IColorDecorator will take precendence.
  * @see IColorProvider
+ * 
+ * @since 3.1
  */
 public interface IColorDecorator {
 	

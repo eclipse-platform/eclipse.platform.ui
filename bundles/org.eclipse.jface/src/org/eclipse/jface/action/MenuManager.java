@@ -458,6 +458,8 @@ public class MenuManager extends ContributionManager implements IMenuManager {
     /**
      * The <code>MenuManager</code> implementation of this <code>ContributionManager</code> method
      * also propagates the dirty flag up the parent chain.
+     * 
+     * @since 3.1
      */
     public void markDirty() {
         super.markDirty();

@@ -65,7 +65,7 @@ public final class KeyStroke extends Trigger implements Comparable {
 	public static final int NO_KEY = 0;
 
 	/**
-	 * Gets an instance of <code>KeyStroke</code> given a natural key.
+	 * Creates an instance of <code>KeyStroke</code> given a natural key.
 	 * 
 	 * @param naturalKey
 	 *            the natural key. The format of this integer is defined by
@@ -80,7 +80,7 @@ public final class KeyStroke extends Trigger implements Comparable {
 	}
 
 	/**
-	 * Gets an instance of <code>KeyStroke</code> given a set of modifier keys
+	 * Creates an instance of <code>KeyStroke</code> given a set of modifier keys
 	 * and a natural key.
 	 * 
 	 * @param modifierKeys
@@ -100,7 +100,7 @@ public final class KeyStroke extends Trigger implements Comparable {
 	}
 
 	/**
-	 * Gets an instance of <code>KeyStroke</code> by parsing a given a formal
+	 * Creates an instance of <code>KeyStroke</code> by parsing a given a formal
 	 * string representation.
 	 * 
 	 * @param string
@@ -189,7 +189,9 @@ public final class KeyStroke extends Trigger implements Comparable {
 		this.naturalKey = naturalKey;
 	}
 
-	/**
+    /*
+     * (non-Javadoc)
+     * 
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	public final int compareTo(final Object object) {
@@ -203,7 +205,9 @@ public final class KeyStroke extends Trigger implements Comparable {
 		return compareTo;
 	}
 
-	/**
+    /*
+     * (non-Javadoc)
+     * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	public final boolean equals(final Object object) {
@@ -250,7 +254,9 @@ public final class KeyStroke extends Trigger implements Comparable {
 		return naturalKey;
 	}
 
-	/**
+    /*
+     * (non-Javadoc)
+     * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	public final int hashCode() {

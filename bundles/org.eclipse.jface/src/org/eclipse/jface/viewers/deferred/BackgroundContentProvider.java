@@ -437,6 +437,7 @@ import org.eclipse.swt.widgets.Display;
      * Checks if currently visible range has changed, and triggers and update
      * and resort if necessary. Must be called in the UI thread, typically
      * within a SWT.SetData callback.
+     * @param includeIndex the index that should be included in the visible range.
      */
     public void checkVisibleRange(int includeIndex) {
     	updator.checkVisibleRange(includeIndex);

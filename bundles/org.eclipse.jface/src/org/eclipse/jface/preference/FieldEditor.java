@@ -430,8 +430,11 @@ public abstract class FieldEditor {
     /**
      * Return the DialogPage that the receiver is sending
      * updates to.
+     * 
      * @return DialogPage or <code>null</code> if it 
      * has not been set.
+     * 
+     * @since 3.1
      */
     protected DialogPage getPage(){
     	return page;
@@ -587,6 +590,8 @@ public abstract class FieldEditor {
     /**
      * Set the page to be the receiver.
 	 * @param dialogPage
+	 * 
+	 * @since 3.1
 	 */
 	public void setPage(DialogPage dialogPage) {
 		page = dialogPage;

@@ -83,19 +83,25 @@ public interface IDecoration{
 	
 	/**
 	 * Set the foreground color for this decoration.
-	 * @param color
+	 * @param color the color to be set for the foreground
+	 * 
+	 * @since 3.1
 	 */
 	public void setForegroundColor(Color color);
 	
 	/**
 	 * Set the background color for this decoration.
-	 * @param color
+	 * @param color the color to be set for the background
+	 * 
+	 * @since 3.1
 	 */
 	public void setBackgroundColor(Color color);
 	
 	/**
 	 * Set the font for this decoration.
-	 * @param color
+	 * @param font the font to use in this decoration
+	 * 
+	 * @since 3.1
 	 */
-	public void setFont(Font color);
+	public void setFont(Font font);
 }

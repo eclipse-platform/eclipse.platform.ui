@@ -28,8 +28,10 @@ public class SetModel extends AbstractConcurrentModel {
     
     private HashSet data = new HashSet();
     
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.viewers.deferred.IConcurrentContentProvider#getElements(org.eclipse.core.runtime.IProgressMonitor)
+    /**
+     * Return the contents of the model.
+     * @return the array of elements
+     * 
      */
     public Object[] getElements() {
         return data.toArray();
@@ -119,7 +121,7 @@ public class SetModel extends AbstractConcurrentModel {
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.jface.viewers.deferred.IConcurrentContentProvider#requestUpdate(org.eclipse.jface.viewers.deferred.IConcurrentContentProviderListener)
+     * @see org.eclipse.jface.viewers.deferred.IConcurrentModel#requestUpdate(org.eclipse.jface.viewers.deferred.IConcurrentModelListener)
      */
     public void requestUpdate(IConcurrentModelListener listener) {
     	Assert.isNotNull(listener);

@@ -33,17 +33,37 @@ final class ArrayFontDescriptor extends FontDescriptor {
      * @param data FontData describing the font to create
      * 
      * @see org.eclipse.swt.graphics.Font#Font(org.eclipse.swt.graphics.Device, org.eclipse.swt.graphics.FontData)
+     * @since 3.1
      */
     public ArrayFontDescriptor(FontData[] data) {
         this.data = data;
     }
-    
+ 
+    /**
+     * Creates a font descriptor that describes the given font.
+     * 
+     * @param originalFont font to be described
+     * 
+     * @see FontDescriptor#createFrom(org.eclipse.swt.graphics.Font)
+     * @since 3.1
+     */
     public ArrayFontDescriptor(Font originalFont) {
         this(originalFont.getFontData());
         this.originalFont = originalFont;
     }
     
-    public ArrayFontDescriptor(Font originalFont, Device originalDevice) {
+    /**
+     * Creates a font descriptor that describes the given font on the
+     * specified device.
+     * 
+     * @param originalFont font to be described
+     * @param originalDevice must be the same Device that was passed into
+     * the font's constructor when it was first created.
+     * 
+     * @see FontDescriptor#createFrom(org.eclipse.swt.graphics.Font, org.eclipse.swt.graphics.Device)
+     * @since 3.1
+     */
+     public ArrayFontDescriptor(Font originalFont, Device originalDevice) {
         this(originalFont);
         this.originalDevice = originalDevice;
     }

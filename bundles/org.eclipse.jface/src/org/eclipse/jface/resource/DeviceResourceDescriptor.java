@@ -15,8 +15,8 @@ import org.eclipse.swt.graphics.Device;
 /**
  * Instances of this class can allocate and dispose SWT resources. Each
  * instance describes a particular resource (such as a Color, Font, or Image)
- * and can create and destroy that resource on demand. SWTResourceDescriptors
- * are managed by an SWTRegistry.
+ * and can create and destroy that resource on demand. DeviceResourceDescriptors
+ * are managed by a ResourceRegistry.
  * 
  * @see org.eclipse.jface.resource.ResourceManager
  * 
@@ -40,7 +40,7 @@ public abstract class DeviceResourceDescriptor {
      * 
      * @since 3.1 
      *
-     * @param previouslyCreatedObject an object that was returned by a an equal 
+     * @param previouslyCreatedObject an object that was returned by an equal 
      * descriptor in a previous call to createResource(...).
      */
     public abstract void destroyResource(Object previouslyCreatedObject);
