@@ -50,7 +50,7 @@ public class AntAntNode extends AntTaskNode {
         if (fFile != null) {
             String textToSearch= getAntModel().getText(getOffset(), offset - getOffset());
             String attributeString = AntEditorCompletionProcessor.getAttributeStringFromDocumentStringToPrefix(textToSearch);
-            if ("antfile".equals(attributeString)) {  //$NON-NLS-1$
+            if (IAntModelConstants.ATTR_ANT_FILE.equals(attributeString)) {
                 return fFile;
             }
         }
