@@ -522,9 +522,10 @@ public void setUpdateLogURL(String strURL) throws UpdateManagerException {
  */
 public void updateLaunchInfoAndRegistry(UMSessionManagerSession session) {
 
-	// Update the profile only if the session was successful
+	// Update launch info even if this session had a failure
+	// One or more parcels could have succeeded
 	//------------------------------------------------------
-	if (session != null && session.getStatus().equals(UpdateManagerConstants.STATUS_SUCCEEDED) == true) {
+	if (session != null) {
 		
 		LaunchInfo launchInfo = LaunchInfo.getCurrent();
 
