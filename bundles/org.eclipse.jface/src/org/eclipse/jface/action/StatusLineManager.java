@@ -220,111 +220,36 @@ public void update(boolean force) {
 		
 		if (statusLineExist()) {
 			statusLine.setRedraw(false);
-	
-//			if (DEBUG) System.out.println("update:");
-			if (false) {	// non-incremental update
-				Control ws[]= statusLine.getChildren();
-				for (int i= 0; i < ws.length; i++) {
-					Control w= ws[i];
-					Object data= w.getData();
-					if (data instanceof IContributionItem) {
-//						if (DEBUG) System.out.println("  disposing item: " + data);
-						w.dispose();
-					}
-				}
-				
-				int oldChildCount = statusLine.getChildren().length;
-				IContributionItem[] items= getItems();
-				for (int i = 0; i < items.length; ++i) {
-					IContributionItem ci= items[i];
-					if (ci.isVisible()) {						
-						ci.fill(statusLine);
-//						if (DEBUG) System.out.println("  added item: " + ci);
-						// associate controls with contribution item
-						Control[] newChildren = statusLine.getChildren();
-						for (int j = oldChildCount; j < newChildren.length; j++) {
-							newChildren[j].setData(ci);
-						}
-						oldChildCount = newChildren.length;							
-					}
-				}
-				
-			} else {	// incremental update
-				// copy all active items into set
-				IContributionItem[] items= getItems();
-				HashMap ht= new HashMap(items.length*2);
-				for (int i = 0; i < items.length; ++i) {
-					IContributionItem ci= items[i];
-					if (ci.isVisible())
-						ht.put(ci, ci);
-				}
-				// remove obsolete (removed or non active)
-				Control ws[]= statusLine.getChildren();
-				for (int i= 0; i < ws.length; i++) {
-					Object data= ws[i].getData();
-					if (data instanceof IContributionItem) {
-						IContributionItem item= (IContributionItem) data;
-						if (ht.get(item) == null) {	// not found
-						//	if (DEBUG) System.out.println("  disposing item: " + data);
-							ws[i].dispose();
-						}
-					}
-				}
-				// add new
-				IContributionItem src, dest;
-				ws= statusLine.getChildren();
-				
-				// scrIx is used to skip over the standard status line widgets
-				// (label, stop button and progress bar). There is thus a dependency
-				// between this code and the creation and layout of the standard widgets
-				// in the StatusLine constructor and in StatusLineLayout.layout
-				
-				int srcIx= 3;
-				int destIx= 0;
-				int oldChildCount = ws.length;
-				Control previousControl = ws[srcIx - 1];
-				
-				for (int i = 0; i < items.length; ++i) {
-					src= items[i];
-					
-					// if not active skip this one
-					if (!src.isVisible())
-						continue;	// we don't bounce the destIx!
-						
-					// get corresponding item in SWT widget
-					if (srcIx < ws.length)
-						dest= (IContributionItem) ws[srcIx].getData();
-					else
-						dest= null;
-						
-					if (dest != null && src.equals(dest)) {	// no change
-						//if (DEBUG) System.out.println("  no change: ");
-						previousControl = ws[srcIx];
-						srcIx++;
-					} else {
-						// src is a new one: insert it at next position
-						src.fill(statusLine);
-					//	if (DEBUG) System.out.println("  added at " + destIx + ": ");
-						// associate controls with contribution item
-						Control[] newChildren = statusLine.getChildren();
-						for (int j = oldChildCount; j < newChildren.length; j++) {
-							newChildren[j].setData(src);
-							// To keep the Control order the same as the contribution item
-							// otherwise, if a contribution item in the middle becomes visible
-							// the control will appear at the end.
-							newChildren[j].moveBelow(previousControl);
-							previousControl = newChildren[j];
-						}
-						oldChildCount = newChildren.length;
-					}
-					destIx++;
-				}
-				
-				// remove any old status line items not accounted for
-				for (; srcIx < ws.length; srcIx++) {
-					ws[srcIx].dispose();
+
+			// NOTE: the update algorithm is non-incremental.
+			// An incremental algorithm requires that SWT items can be created in the middle of the list
+			// but the ContributionItem.fill(Composite) method used here does not take an index, so this
+			// is not possible.
+			
+			Control ws[]= statusLine.getChildren();
+			for (int i= 0; i < ws.length; i++) {
+				Control w= ws[i];
+				Object data= w.getData();
+				if (data instanceof IContributionItem) {
+					w.dispose();
 				}
 			}
+				
+			int oldChildCount = statusLine.getChildren().length;
+			IContributionItem[] items= getItems();
+			for (int i = 0; i < items.length; ++i) {
+				IContributionItem ci= items[i];
+				if (ci.isVisible()) {						
+					ci.fill(statusLine);
+					// associate controls with contribution item
+					Control[] newChildren = statusLine.getChildren();
+					for (int j = oldChildCount; j < newChildren.length; j++) {
+						newChildren[j].setData(ci);
+					}
+					oldChildCount = newChildren.length;							
+				}
+			}
+				
 			setDirty(false);
 			
 			statusLine.layout();
