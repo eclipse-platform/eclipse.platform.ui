@@ -118,7 +118,6 @@ public void reset() {
 	expectedEvents.clear();
 	actualEvents.clear();
 }
-
 /**
  * Part of <code>IExecutableExtensionAdaptor</code> interface.
  * @see IExecutableExtensionAdaptor
@@ -126,7 +125,6 @@ public void reset() {
  */
 public void setInitializationData(IConfigurationElement config, String name, Object data) {
 	logPluginLifecycleEvent(SET_INITIALIZATION_DATA);
-
 	config = config;
 	name = name;
 	data = data;
@@ -138,7 +136,4 @@ public void setInitializationData(IConfigurationElement config, String name, Obj
 protected void startupOnInitialize() {
 	logPluginLifecycleEvent(STARTUP_ON_INITIALIZE);
 }
-
-
-
 }

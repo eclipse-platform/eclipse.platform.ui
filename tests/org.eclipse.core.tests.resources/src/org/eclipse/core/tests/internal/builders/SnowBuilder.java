@@ -32,6 +32,9 @@ public class SnowBuilder extends TestBuilder {
 public SnowBuilder() {
 	if (singleton != null) {
 		//copy interesting data from old singleton
+//		expectedEvents.addAll(singleton.expectedEvents);
+//		actualEvents.addAll(singleton.actualEvents);
+//		wasDeltaNull = singleton.wasDeltaNull;
 	}
 	singleton = this;	
 }
@@ -41,7 +44,7 @@ public SnowBuilder() {
 public static SnowBuilder getInstance() {
 	if (singleton == null) {
 		new SnowBuilder();
-	}
+	}	
 	return singleton;
 }
 /**

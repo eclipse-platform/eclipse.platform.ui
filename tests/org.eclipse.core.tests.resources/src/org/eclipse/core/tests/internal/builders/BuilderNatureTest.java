@@ -127,11 +127,6 @@ public void testDisabledNature() {
 	//remove the water nature, thus invalidating snow nature
 	SnowBuilder builder= SnowBuilder.getInstance();
 	builder.reset();
-	// FIXME: We could be smarter here.
-	try {
-		Thread.sleep(5000);
-	} catch(InterruptedException e) {
-	}
 	IFile descFile = project.getFile(IProjectDescription.DESCRIPTION_FILE_NAME);
 	try {
 		//setting description file will also trigger build
@@ -209,11 +204,6 @@ public void testMissingNature() {
 	//the deconfigure method won't run, but the builder should still be removed.
 	builder.reset();
 	IFile descFile = project.getFile(IProjectDescription.DESCRIPTION_FILE_NAME);
-	// FIXME: We could be smarter here.
-	try {
-		Thread.sleep(5000);
-	} catch(InterruptedException e) {
-	}
 	try {
 		//setting description file will also trigger build
 		descFile.setContents(projectFileWithoutSnow(), IResource.FORCE, getMonitor());
