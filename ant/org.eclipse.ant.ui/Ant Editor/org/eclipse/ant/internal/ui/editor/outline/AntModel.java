@@ -438,6 +438,9 @@ public class AntModel {
 	 * target dependencies exist. 
 	 */
 	private void checkTargets() {
+		if (fProjectNode == null) {
+			return;
+		}
 		String defaultTargetName= fProjectNode.getProject().getDefaultTarget();
 		if (defaultTargetName == null || fProjectNode.getProject().getTargets().get(defaultTargetName) == null) {
 			//no default target
@@ -1144,5 +1147,12 @@ public class AntModel {
 	public void updateMarkers() {
 		possiblyWaitForReconcile();
 		fMarkerUpdater.updateMarkers();
+	}
+	
+	public AntElementNode getNode(int offset) {
+		if (getProjectNode() != null) {
+			return getProjectNode().getNode(offset);
+		}
+		return null;
 	}
 }
