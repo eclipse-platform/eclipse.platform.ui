@@ -28,8 +28,11 @@ public class BrowserManager {
 	public static final String BROWSER_ID_CUSTOM = HelpBasePlugin.PLUGIN_ID
 			+ ".custombrowser"; //$NON-NLS-1$
 
+	public static final String BROWSER_ID_FIREFOX = HelpBasePlugin.PLUGIN_ID
+	+ ".firefox"; //$NON-NLS-1$
+
 	public static final String BROWSER_ID_MOZILLA = HelpBasePlugin.PLUGIN_ID
-			+ ".mozilla"; //$NON-NLS-1$
+	+ ".mozilla"; //$NON-NLS-1$
 
 	public static final String BROWSER_ID_NETSCAPE = HelpBasePlugin.PLUGIN_ID
 			+ ".netscape"; //$NON-NLS-1$
@@ -92,6 +95,9 @@ public class BrowserManager {
 					|| (Constants.OS_LINUX.equalsIgnoreCase(os))
 					|| (Constants.OS_SOLARIS.equalsIgnoreCase(os))) {
 				setDefaultBrowserID(BROWSER_ID_MOZILLA);
+				if (defaultBrowserDesc == null) {
+					setDefaultBrowserID(BROWSER_ID_FIREFOX);
+				}
 				if (defaultBrowserDesc == null) {
 					setDefaultBrowserID(BROWSER_ID_NETSCAPE);
 				}

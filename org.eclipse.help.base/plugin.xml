@@ -123,6 +123,25 @@
          </factoryclass>
       </browser>
       <browser
+            name="%firefox_adapter"
+            id="org.eclipse.help.base.firefox">
+         <factoryclass
+               class="org.eclipse.help.internal.browser.MozillaFactory">
+            <parameter
+                  name="executable"
+                  value="firefox">
+            </parameter>
+            <parameter
+                  name="executableName"
+                  value="%firefox">
+            </parameter>
+            <parameter
+                  name="os"
+                  value="Linux, AIX, HP, SunOS">
+            </parameter>
+         </factoryclass>
+      </browser>
+      <browser
             factoryclass="org.eclipse.help.internal.browser.macosx.DefaultBrowserFactory"
             name="%defaultBrowser"
             id="org.eclipse.help.base.defaultBrowserMacOSX">
