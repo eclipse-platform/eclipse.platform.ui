@@ -291,9 +291,6 @@ public interface IDebugUIConstants {
 	 * Run action image identifier.
 	 */
 	public static final String IMG_ACT_RUN= "IMG_ACT_RUN"; //$NON-NLS-1$
-
-	/** "Link with View" action image identifier. */
-	public static final String IMG_ACT_SYNCED= "IMG_ACT_SYNCED"; //$NON-NLS-1$
 	
 	/** "Skip Breakpoints" action image identifier */
 	public static final String IMG_SKIP_BREAKPOINTS= "IMG_SKIP_BREAKPOINTS"; //$NON-NLS-1$

@@ -67,7 +67,6 @@ public class DebugPluginImages {
 		// Actions
 		declareRegistryImage(IDebugUIConstants.IMG_ACT_DEBUG, CTOOL + "debug_exc.gif"); //$NON-NLS-1$
 		declareRegistryImage(IDebugUIConstants.IMG_ACT_RUN, CTOOL + "run_exc.gif"); //$NON-NLS-1$
-		declareRegistryImage(IDebugUIConstants.IMG_ACT_SYNCED, ELCL + "synced.gif"); //$NON-NLS-1$
 		declareRegistryImage(IDebugUIConstants.IMG_SKIP_BREAKPOINTS, ELCL + "skip_brkp.gif"); //$NON-NLS-1$
 		
 		//menus

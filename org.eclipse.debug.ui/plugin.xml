@@ -383,7 +383,7 @@
    <extension
          point="org.eclipse.ui.actionSets">
       <actionSet
-            label="%BreakpoingActionSet.label"
+            label="%BreakpointActionSet.label"
             visible="false"
             id="org.eclipse.debug.ui.breakpointActionSet">
          <menu
@@ -685,13 +685,31 @@
             </selection>
          </action>
          <action
-               id="org.eclipse.debug.ui.breakpointsView.toolbar.setDefaultBreakpointGroup"
-               menubarPath="defaultBreakpointGroup"
-               class="org.eclipse.debug.internal.ui.actions.breakpointGroups.SetDefaultBreakpointGroupAction"
-               icon="icons/full/obj16/breakpoint_group.gif"
-               helpContextId="set_default_breakpoint_group_action_context"
-               label="%setDefaultGroup.label"
-               tooltip="%setDefaultGroup.tooltip">
+               id="org.eclipse.debug.ui.breakpointsView.toolbar.linkWithDebugView"
+               toolbarPath="navigationGroup"
+               class="org.eclipse.debug.internal.ui.actions.LinkBreakpointsWithDebugViewAction"
+               icon="icons/full/elcl16/synced.gif"
+               helpContextId="link_breakpoints_with_debug_view_action_context"
+               label="Link with Debug View"
+               tooltip="Link with Debug View">
+         </action>
+         <action
+               id="org.eclipse.debug.ui.breakpointsView.toolbar.collapseAll"
+               toolbarPath="navigationGroup"
+               class="org.eclipse.debug.internal.ui.actions.BreakpointsCollapseAllAction"
+               icon="icons/full/elcl16/collapseall.gif"
+               helpContextId="breakpoints_collapse_all_action_context"
+               label="Collapse All"
+               tooltip="Collapse All">
+         </action>
+         <action
+               id="org.eclipse.debug.ui.breakpointsView.toolbar.expandAll"
+               toolbarPath="navigationGroup"
+               class="org.eclipse.debug.internal.ui.actions.BreakpointsExpandAllAction"
+               icon="icons/full/elcl16/expandall.gif"
+               helpContextId="breakpoints_expand_all_action_context"
+               label="Expand All"
+               tooltip="Expand All">
          </action>
          <action
                id="org.eclipse.debug.ui.breakpointsView.toolbar.clearDefaultBreakpointGroup"

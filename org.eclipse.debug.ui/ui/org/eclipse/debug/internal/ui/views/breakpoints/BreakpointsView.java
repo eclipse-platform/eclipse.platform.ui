@@ -28,7 +28,6 @@ import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
-import org.eclipse.debug.internal.ui.actions.LinkBreakpointsWithDebugViewAction;
 import org.eclipse.debug.internal.ui.actions.OpenBreakpointMarkerAction;
 import org.eclipse.debug.internal.ui.actions.ShowSupportedBreakpointsAction;
 import org.eclipse.debug.internal.ui.actions.SkipAllBreakpointsAction;
@@ -42,7 +41,6 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -450,7 +448,6 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 		setAction("GotoMarker", action); //$NON-NLS-1$
 		setAction(DOUBLE_CLICK_ACTION, action);
 		setAction("ShowBreakpointsForModel", new ShowSupportedBreakpointsAction(getStructuredViewer(),this)); //$NON-NLS-1$
-		setAction("LinkWithDebugView", new LinkBreakpointsWithDebugViewAction(this)); //$NON-NLS-1$
 		setAction("SkipBreakpoints", new SkipAllBreakpointsAction()); //$NON-NLS-1$
 	}
 
@@ -482,7 +479,6 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 		tbm.add(new Separator(IDebugUIConstants.BREAKPOINT_GROUP));
 		tbm.add(getAction("ShowBreakpointsForModel")); //$NON-NLS-1$
 		tbm.add(getAction("GotoMarker")); //$NON-NLS-1$
-		tbm.add(getAction("LinkWithDebugView")); //$NON-NLS-1$
 		tbm.add(getAction("SkipBreakpoints")); //$NON-NLS-1$
 		tbm.add(new Separator(IDebugUIConstants.RENDER_GROUP));
 	}
