@@ -136,4 +136,15 @@ public class XMLProblem extends Region implements IProblem {
 			return NO_PROBLEM;
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object o) {
+		boolean equal= super.equals(o);
+		if (equal) {
+			return ((XMLProblem)o).getUnmodifiedMessage().equals(getUnmodifiedMessage());
+		}
+		return false;
+	}
 }

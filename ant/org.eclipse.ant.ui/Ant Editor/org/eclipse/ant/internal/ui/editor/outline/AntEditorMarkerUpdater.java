@@ -37,6 +37,9 @@ public class AntEditorMarkerUpdater {
 	 * @see org.eclipse.ant.internal.ui.editor.outline.IProblemRequestor#acceptProblem(org.eclipse.ant.internal.ui.editor.outline.IProblem)
 	 */
 	public void acceptProblem(IProblem problem) {
+		if (fCollectedProblems.contains(problem)) {
+			return;
+		}
 		fCollectedProblems.add(problem);
 	}
 	

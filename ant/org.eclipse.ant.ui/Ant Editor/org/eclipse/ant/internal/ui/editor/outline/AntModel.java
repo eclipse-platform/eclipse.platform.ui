@@ -929,17 +929,7 @@ public class AntModel {
 	}
 	
 	public void error(Exception exception) {
-		AntElementNode node= null;
-		if (fStillOpenElements.empty()) {
-			if (exception instanceof SAXParseException) {
-				node= createProblemElement((SAXParseException)exception);
-			}
-		} else {
-			node= (AntElementNode)fStillOpenElements.peek();
-			markHierarchy(node, XMLProblem.SEVERITY_ERROR);
-		}
-	
-		notifyProblemRequestor(exception, node, XMLProblem.SEVERITY_ERROR);
+		handleError(exception, XMLProblem.SEVERITY_ERROR);
 	}
 	
 	public void errorFromElementText(Exception exception, int start, int count) {
@@ -1040,13 +1030,19 @@ public class AntModel {
 		}
 	}
 
-	public void fatalError(Exception exception) {
+	private void handleError(Exception exception, int severity) {
+		AntElementNode node= null;
 		if (fStillOpenElements.isEmpty()) {
-			//TODO do we need to handle this better
+			if (exception instanceof SAXParseException) {
+				node= createProblemElement((SAXParseException)exception);
+			}
+		} else {
+			node= (AntElementNode)fStillOpenElements.peek();
+		}
+		if (node == null) {
 			return;
 		}
-		AntElementNode node= (AntElementNode)fStillOpenElements.peek();
-		markHierarchy(node, XMLProblem.SEVERITY_ERROR);
+		markHierarchy(node, severity);
 		
 		if (exception instanceof SAXParseException) {
 			SAXParseException parseException= (SAXParseException)exception;
@@ -1062,7 +1058,7 @@ public class AntModel {
 					AntElementNode childNode= node.getNode(getNonWhitespaceOffset(lineNumber, columnNumber) + 1);
 					if (childNode != null && childNode != node) {
 						node= childNode;
-						node.setProblemSeverity(XMLProblem.SEVERITY_ERROR);
+						node.setProblemSeverity(severity);
 					} else {
 						node= createProblemElement(parseException);
 					}
@@ -1072,14 +1068,16 @@ public class AntModel {
 			}
 		}
 		
-		notifyProblemRequestor(exception, node, XMLProblem.SEVERITY_FATAL_ERROR);
+		notifyProblemRequestor(exception, node, severity);
 		
-		while (node.getParentNode() != null) {
-			AntElementNode parentNode= node.getParentNode();
-			if (parentNode.getLength() == -1) {
-				parentNode.setLength(node.getOffset() - parentNode.getOffset() + node.getLength());
+		if (node != null) {
+			while (node.getParentNode() != null) {
+				AntElementNode parentNode= node.getParentNode();
+				if (parentNode.getLength() == -1) {
+					parentNode.setLength(node.getOffset() - parentNode.getOffset() + node.getLength());
+				}
+				node= parentNode;
 			}
-			node= parentNode;
 		}
 		
 		if (fIncrementalTarget != null) { //update the targets length for the edit
@@ -1099,6 +1097,10 @@ public class AntModel {
 				updateNodesForIncrementalParse(editAdjustment, children, index);
 			}
 		}
+	}
+	
+	public void fatalError(Exception exception) {
+		handleError(exception, XMLProblem.SEVERITY_FATAL_ERROR);
 	}
 	
 	public AntElementNode getOpenElement() {
