@@ -29,6 +29,12 @@ BODY {
 	border:1px black solid;
 	padding:0px;
 	margin:0px;
+	
+	scrollbar-highlight-color:ThreeDShadow;
+	scrollbar-shadow-color:ThreeDShadow;
+	scrollbar-arrow-color:#000000;
+	scrollbar-darkshadow-color:Window;
+	scrollbar-face-color:ActiveBorder;
 }
 
 TABLE {
@@ -104,26 +110,29 @@ FORM {
  
 function doAdvancedSearch()
 {
-	var form = document.forms["searchForm"];
-	var searchWord = form.searchWord.value;
-	var maxHits = form.maxHits;
-	if (!searchWord || searchWord == "")
-		return;
-
-	var scope = "";
-	var buttons = document.getElementsByTagName("INPUT");
-	for (var i=0; i<buttons.length; i++)
+	try
 	{
-		if (buttons[i].type != "checkbox") continue;
-		if (buttons[i].checked == false) continue;
-		scope += "&scope="+escape(buttons[i].name);
-	}
+		var form = document.forms["searchForm"];
+		var searchWord = form.searchWord.value;
+		var maxHits = form.maxHits;
+		if (!searchWord || searchWord == "")
+			return;
 	
-	window.opener.document.forms["searchForm"].searchWord.value = searchWord;
-	var query = "searchWord="+escape(searchWord)+"&maxHits="+maxHits + scope;
-	window.opener.parent.doSearch(query);
-	window.opener.focus();
-	window.close();
+		var scope = "";
+		var buttons = document.getElementsByTagName("INPUT");
+		for (var i=0; i<buttons.length; i++)
+		{
+			if (buttons[i].type != "checkbox") continue;
+			if (buttons[i].checked == false) continue;
+			scope += "&scope="+escape(buttons[i].name);
+		}
+		
+		window.opener.document.forms["searchForm"].searchWord.value = searchWord;
+		var query = "searchWord="+escape(searchWord)+"&maxHits="+maxHits + scope;
+		window.opener.parent.doSearch(query);
+		window.opener.focus();
+		window.close();
+	} catch(ex) {}
 }
 
 </script>
