@@ -11,33 +11,12 @@
 package org.eclipse.team.internal.ccvs.core.resources;
 
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.StringTokenizer;
+import java.util.*;
 
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
-import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
-import org.eclipse.team.internal.ccvs.core.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.Policy;
-import org.eclipse.team.internal.ccvs.core.client.Checkout;
-import org.eclipse.team.internal.ccvs.core.client.Command;
-import org.eclipse.team.internal.ccvs.core.client.Session;
-import org.eclipse.team.internal.ccvs.core.client.Update;
+import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.client.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 
@@ -53,7 +32,7 @@ public class RemoteModule extends RemoteFolder {
 		monitor.beginTask(Policy.bind("RemoteModule.getRemoteModules"), 100); //$NON-NLS-1$
 		try {		
 			RemoteModule[] modules;
-			Session s = new Session(repository, (ICVSFolder)CVSWorkspaceRoot.getCVSResourceFor(ResourcesPlugin.getWorkspace().getRoot()), false);
+			Session s = new Session(repository, getRemoteRootFolder(repository), false);
 			s.open(Policy.subMonitorFor(monitor, 10), false /* read-only */);
 			try {
 				modules = Command.CHECKOUT.getRemoteModules(s, tag, Policy.subMonitorFor(monitor, 90));
@@ -66,7 +45,11 @@ public class RemoteModule extends RemoteFolder {
 		}
 	}
 	
-	/**
+    private static ICVSFolder getRemoteRootFolder(ICVSRepositoryLocation repository) {
+        return new RemoteFolder(null, repository, "/", null); //$NON-NLS-1$
+    }
+
+    /**
 	 * Create a set of RemoteModules from the provided module definition strings returned from the server
 	 * 
 	 * At the moment, we are very restrictive on the types of modules we support.

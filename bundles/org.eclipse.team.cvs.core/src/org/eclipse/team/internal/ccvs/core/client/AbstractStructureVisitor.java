@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.team.internal.ccvs.core.CVSException;
@@ -191,8 +192,10 @@ abstract class AbstractStructureVisitor implements ICVSResourceVisitor {
 		} else if (sendContents) {
 		    // Perform the send of modified contents in a sheduling rule to ensure that
 		    // the contents are not modified while we are sending them
-		    try {
-		        Platform.getJobManager().beginRule(mFile.getIResource(), monitor);
+		    IResource resource = mFile.getIResource();
+            try {
+                if (resource != null)
+                    Platform.getJobManager().beginRule(resource, monitor);
 		        
 				sendEntryLineToServer(mFile, syncBytes);
 				if (mFile.exists() && mFile.isModified(null)) {
@@ -206,7 +209,8 @@ abstract class AbstractStructureVisitor implements ICVSResourceVisitor {
 					session.sendUnchanged(mFile);
 				}
 		    } finally {
-		        Platform.getJobManager().endRule(mFile.getIResource());
+		        if (resource != null)
+		            Platform.getJobManager().endRule(resource);
 		    }
 		} else {
 		    sendEntryLineToServer(mFile, syncBytes);
