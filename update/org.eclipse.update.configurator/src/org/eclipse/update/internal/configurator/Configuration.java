@@ -155,6 +155,9 @@ public class Configuration implements IConfigurationConstants {
 	}
 	
 	public long lastModified() {
-		return lastModified;
+		if (lastModified != 0)
+			return lastModified;
+		else
+			return date.getTime();
 	}
 }

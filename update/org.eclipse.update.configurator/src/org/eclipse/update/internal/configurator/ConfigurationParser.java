@@ -55,9 +55,9 @@ public class ConfigurationParser extends DefaultHandler implements IConfiguratio
 	public Configuration parse(URL url) throws Exception {
 
 		// DEBUG:		
-		//Utils.debug("Start parsing Configuration:" + (config).getURL().toExternalForm()); //$NON-NLS-1$	
+		Utils.debug("Start parsing Configuration:" + url); //$NON-NLS-1$	
+		long lastModified = 0;
 		try {
-			long lastModified = 0;
 			configURL = url;
 			if ("file".equals(url.getProtocol())) {
 				File inputFile = new File(url.getFile());
@@ -68,13 +68,13 @@ public class ConfigurationParser extends DefaultHandler implements IConfiguratio
 			} else 
 				input = url.openStream();
 			parser.parse(new InputSource(input), this);
-			if (config != null)
-				config.setLastModified(lastModified);
 			return config;
 		} catch (Exception e) {
 			Utils.log(Utils.newStatus("ConfigurationParser.parse() error:", e));
 			throw e;
 		} finally {
+			if (config != null)
+				config.setLastModified(lastModified);
 			try {
 				if (input != null) { 
 					input.close();

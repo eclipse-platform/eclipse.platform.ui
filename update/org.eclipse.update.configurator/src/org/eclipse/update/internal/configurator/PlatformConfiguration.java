@@ -546,8 +546,6 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 					if (!cfigFile.renameTo(preservedFile))
 						Utils.log("Cannot backup current configuration");
 				}
-//				copy(cfigFile, preservedFile);
-//				preservedFile.setLastModified(cfigFile.lastModified());
 			}
 			
 			// If config.ini does not exist, generate it in the configuration area
@@ -575,6 +573,8 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 				}
 				// set file time stamp to match that of the config element
 				cfigTmp.setLastModified(config.getDate().getTime());
+				// set this on config, in case the value was rounded off
+				config.setLastModified(cfigTmp.lastModified());
 				// make the change stamp to be the same as the config file
 				changeStamp = config.getDate().getTime();
 				config.setDirty(false);
