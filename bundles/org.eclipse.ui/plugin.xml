@@ -1065,6 +1065,11 @@
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
+            commandId="org.eclipse.ui.window.openEditorDropDown"
+            keySequence="M1+X B"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
             commandId="org.eclipse.ui.window.switchToEditor"
             keySequence="Ctrl+X Ctrl+B"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
