@@ -137,24 +137,28 @@ protected boolean updateSelection(IStructuredSelection selection) {
 	if (getSelectedNonResources().size() > 0) 
 		return false;
 	List selectedResources = getSelectedResources();
+	IResource targetResource = null;
 	if (selectedResources.size() == 1) {
-		if (selectedResources.get(0) instanceof IProject)
-			return ((IProject)selectedResources.get(0)).isOpen();
-		else 
-			return true;
-	}	
-	if (selectedResources.size() > 1) {
-		IContainer parent = null;
+		targetResource = (IResource)selectedResources.get(0);
+		if (targetResource instanceof IProject && !((IProject)targetResource).isOpen())
+			return false;
+	} else if (selectedResources.size() > 1) {
 		for (int i = 0; i < selectedResources.size(); i++) {
 			IResource resource = (IResource)selectedResources.get(i);
 			if (resource.getType() != IResource.FILE)
 				return false;
-			if (parent == null)
-				parent = resource.getParent();
-			else if (!parent.equals(resource.getParent()))
+			if (targetResource == null)
+				targetResource = resource.getParent();
+			else if (!targetResource.equals(resource.getParent()))
 				return false;
 		}
-		return true;
+	}
+	if (targetResource != null) {
+		// don't try to copy to self
+		for (int i = 0; i < resourceData.length; i++) {
+			if (targetResource.equals(resourceData[i]))
+				return false;
+		}
 	}
 	return true;
 }
