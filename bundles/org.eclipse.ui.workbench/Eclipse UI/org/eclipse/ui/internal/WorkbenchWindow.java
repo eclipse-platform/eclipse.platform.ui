@@ -442,6 +442,8 @@ public class WorkbenchWindow
 	}
 
 	void registerActionSets(IActionSet[] actionSets) {
+		boolean change = false;
+		
 		for (int i = 0; i < actionSets.length; i++) {
 			if (actionSets[i] instanceof PluginActionSet) {
 				PluginActionSet pluginActionSet =
@@ -453,10 +455,13 @@ public class WorkbenchWindow
 					String command = pluginAction.getActionDefinitionId();
 
 					if (command != null)
-						getCommandHandlerService().addCommandHandler(command, new ActionHandler(pluginAction));
+						change |= ((CommandHandlerService) getCommandHandlerService()).addCommandHandlerNoEvent(command, new ActionHandler(pluginAction));
 				}
 			}
 		}
+
+		if (change)
+			((CommandHandlerService) getCommandHandlerService()).fireEvent();
 	}
 
 	void registerGlobalAction(IAction globalAction) {
