@@ -76,7 +76,7 @@ public void add(IAction action) {
  * Method declared on IContributionManager.
  */
 public void add(IContributionItem item) {
-    if (!checkDuplication(item)) {
+    if (allowItem(item)) {
         item.setParent(this);
         contributions.add(item);
         itemAdded(item);
@@ -110,7 +110,7 @@ private void addToGroup(String groupName, IContributionItem item, boolean append
 							break;
 					}
 				}
-				if (!checkDuplication(item)) {
+				if (allowItem(item)) {
 					item.setParent(this);
 				    contributions.add(i,item);
 				    itemAdded(item);
@@ -135,16 +135,16 @@ public void appendToGroup(String groupName, IContributionItem item) {
 }
 /**
  * This method allows subclasses of <code>ContributionManager</code> to prevent
- * duplication in the contributions list.  <code>ContributionManager</code>
+ * certain items in the contributions list.  <code>ContributionManager</code>
  * will either block or allow an addition based on the result of this method
- * call.
+ * call.  This can be used to prevent duplication, for example.
  * @param itemToAdd The contribution item to be added; may be <code>null</code>.
- * @return <code>true</code> if the addition should be disallowed; 
- * <code>false</code> otherwise
+ * @return <code>true</code> if the addition should be allowed; 
+ * <code>false</code> otherwise.  The default implementation allows all items.
  * @since 3.0
  */
-protected boolean checkDuplication(IContributionItem itemToAdd) {
-    return false;
+protected boolean allowItem(IContributionItem itemToAdd) {
+    return true;
 }
 /**
  * Internal debug method for printing statistics about this manager
@@ -255,7 +255,7 @@ protected int indexOf(IContributionItem item) {
 public void insert(int index, IContributionItem item) {
 	if (index > contributions.size())
 		throw new IndexOutOfBoundsException("inserting " + item.getId() + " at " + index); //$NON-NLS-1$ //$NON-NLS-2$
-	if (!checkDuplication(item)) {
+	if (allowItem(item)) {
 	    item.setParent(this);
 	    contributions.add(index, item);
 	    itemAdded(item);
@@ -277,7 +277,7 @@ public void insertAfter(String ID, IContributionItem item) {
 	int ix= contributions.indexOf(ci);
 	if (ix >= 0) {
 		// System.out.println("insert after: " + ix);
-	    if (!checkDuplication(item)) {
+	    if (allowItem(item)) {
 	        item.setParent(this);
 	        contributions.add(ix+1,item);
 	        itemAdded(item);
@@ -300,7 +300,7 @@ public void insertBefore(String ID, IContributionItem item) {
 	int ix = contributions.indexOf(ci);
 	if (ix >= 0) {
 		// System.out.println("insert before: " + ix);
-	    if (!checkDuplication(item)) {
+	    if (allowItem(item)) {
 	        item.setParent(this);
 	        contributions.add(ix,item);
 	        itemAdded(item);
@@ -469,7 +469,7 @@ public void setOverrides(IContributionManagerOverrides newOverrides) {
 protected void internalSetItems(IContributionItem[] items) {
 	contributions.clear();
 	for (int i=0; i < items.length; i++) {
-	    if (!checkDuplication(items[i])) {
+	    if (allowItem(items[i])) {
 	        contributions.add(items[i]);
 	    }
 	}

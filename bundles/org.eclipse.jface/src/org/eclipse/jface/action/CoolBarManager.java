@@ -160,19 +160,19 @@ public class CoolBarManager extends ContributionManager implements
     /* (non-Javadoc)
      * @see org.eclipse.jface.action.ContributionManager#checkDuplication(org.eclipse.jface.action.IContributionItem)
      */
-    protected boolean checkDuplication(IContributionItem itemToAdd) {
+    protected boolean allowItem(IContributionItem itemToAdd) {
         /* We will allow as many null entries as they like, though there should
          * be none.
          */
         if (itemToAdd == null) {
-            return false;
+            return true;
         }
         
         /* Null identifiers can be expected in generic contribution items.
          */
         String firstId = itemToAdd.getId();
         if (firstId == null) {
-            return false;
+            return true;
         }
         
         // Cycle through the current list looking for duplicates.
@@ -193,11 +193,11 @@ public class CoolBarManager extends ContributionManager implements
                     new Exception().printStackTrace(System.out);
                     System.out.println("DONE --------------------------"); //$NON-NLS-1$
                 }
-                return true;
+                return false;
             }
         }
         
-        return false;
+        return true;
     }
 
     /**
