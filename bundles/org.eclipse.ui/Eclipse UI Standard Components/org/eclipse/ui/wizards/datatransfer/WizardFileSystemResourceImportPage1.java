@@ -204,7 +204,7 @@ protected final void createButtonsGroup(Composite parent) {
 public void createControl(Composite parent) {
 	super.createControl(parent);
 	validateSourceGroup();
-	WorkbenchHelp.setHelp(getControl(), IDataTransferHelpContextIds.FILE_SYSTEM_EXPORT_WIZARD_PAGE);
+	WorkbenchHelp.setHelp(getControl(), IDataTransferHelpContextIds.FILE_SYSTEM_IMPORT_WIZARD_PAGE);
 }
 /**
  *	Create the import options specification widgets.
