@@ -48,7 +48,7 @@ public class GooglePage extends RootScopePage {
         searchWeb.setLayoutData(gd);
         searchWeb.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
-                searchType = "web";
+                searchType = Google.WEB;
             }
         });
         
@@ -58,11 +58,11 @@ public class GooglePage extends RootScopePage {
         searchNewsgroups.setLayoutData(gd);
         searchNewsgroups.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
-                searchType = "news";
+                searchType = Google.NEWS;
             }
         });
       
-        if ("news".equals(searchType))
+        if (Google.NEWS.equals(searchType))
             searchNewsgroups.setSelection(true);
         else
             searchWeb.setSelection(true);
@@ -75,9 +75,9 @@ public class GooglePage extends RootScopePage {
      */
     public boolean performOk() {
         if (searchWeb.isEnabled())
-            getPreferenceStore().setValue(getEngineId(), "web");
+            getPreferenceStore().setValue(getEngineId(), Google.WEB);
         else if (searchNewsgroups.isEnabled())
-            getPreferenceStore().setValue(getEngineId(), "news");
+            getPreferenceStore().setValue(getEngineId(), Google.NEWS);
         return super.performOk();
     }
 }

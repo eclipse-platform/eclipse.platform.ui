@@ -14,6 +14,7 @@ import java.io.*;
 import java.net.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.help.*;
 import org.eclipse.help.internal.search.*;
 import org.eclipse.help.internal.search.federated.*;
 
@@ -66,6 +67,13 @@ public class Google implements ISearchEngine {
 
         public float getScore() {
             return 1;
+        }
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.help.internal.search.federated.ISearchEngineResult#getCategory()
+         */
+        public IHelpResource getCategory() {
+            return null;
         }
 }
     
