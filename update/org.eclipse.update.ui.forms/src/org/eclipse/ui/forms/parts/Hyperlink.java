@@ -6,25 +6,23 @@
  */
 package org.eclipse.ui.forms.parts;
 
-import java.util.Vector;
-
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.forms.FormsResources;
+import org.eclipse.swt.accessibility.*;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.widgets.Composite;
 
 /**
- * Hyperlink is a selectable label that acts as a browser hyperlink. It is
- * capable of notifying listeners when it is entered, exited and activated. A
- * group of hyperlinks should be managed using a HyperlinkGroup that is
- * responsible for managing shared cursors, color changes, changes in underline
- * status and focus traversal between hyperlinks.
+ * Hyperlink is a concrete implementation of the
+ * abstract hyperlink that draws text in its client area.
+ * Text can be wrapped and underlined.
  * 
  * @see org.eclipse.ui.forms.HyperlinkGroup
  * @since 3.0
  */
-public class Hyperlink extends TraversableLabel {
-	private Vector listeners;
+public class Hyperlink extends AbstractHyperlink {
+	private String text;
+	private boolean underlined;
 	/**
 	 * Creates a new hyperlink control in the provided parent.
 	 * 
@@ -35,53 +33,55 @@ public class Hyperlink extends TraversableLabel {
 	 */
 	public Hyperlink(Composite parent, int style) {
 		super(parent, style);
-		Listener listener = new Listener() {
-			public void handleEvent(Event e) {
-				switch (e.type) {
-					case SWT.Selection :
-						if (getSelection())
-							handleEnter();
-						else
-							handleExit();
-						break;
-					case SWT.DefaultSelection :
-						handleActivate();
-						break;
-					case SWT.MouseEnter :
-						handleEnter();
-						break;
-					case SWT.MouseExit :
-						handleExit();
-						break;
-					case SWT.MouseUp :
-						handleMouseUp(e);
-						break;
-				}
+		initAccessible();
+	}
+
+	protected void initAccessible() {
+		Accessible accessible = getAccessible();
+		accessible.addAccessibleListener(new AccessibleAdapter() {
+			public void getName(AccessibleEvent e) {
+				e.result = getText();
 			}
-		};
-		addListener(SWT.Selection, listener);
-		addListener(SWT.DefaultSelection, listener);
-		addListener(SWT.MouseEnter, listener);
-		addListener(SWT.MouseExit, listener);
-		addListener(SWT.MouseUp, listener);
-		setCursor(FormsResources.getHandCursor());
-	}
-	/**
-	 * @param listener
-	 */
-	public void addHyperlinkListener(HyperlinkListener listener) {
-		if (listeners == null)
-			listeners = new Vector();
-		if (!listeners.contains(listener))
-			listeners.add(listener);
-	}
-	/**
-	 * @param listener
-	 */
-	public void removeHyperlinkListener(HyperlinkListener listener) {
-		if (listeners == null)
-			return;
-		listeners.remove(listener);
+
+			public void getHelp(AccessibleEvent e) {
+				e.result = getToolTipText();
+			}
+		});
+
+		accessible
+			.addAccessibleControlListener(new AccessibleControlAdapter() {
+			public void getChildAtPoint(AccessibleControlEvent e) {
+				Point pt = toControl(new Point(e.x, e.y));
+				e.childID =
+					(getBounds().contains(pt))
+						? ACC.CHILDID_SELF
+						: ACC.CHILDID_NONE;
+			}
+
+			public void getLocation(AccessibleControlEvent e) {
+				Rectangle location = getBounds();
+				Point pt = toDisplay(new Point(location.x, location.y));
+				e.x = pt.x;
+				e.y = pt.y;
+				e.width = location.width;
+				e.height = location.height;
+			}
+
+			public void getChildCount(AccessibleControlEvent e) {
+				e.detail = 0;
+			}
+
+			public void getRole(AccessibleControlEvent e) {
+				e.detail = ACC.ROLE_LABEL;
+			}
+
+			public void getState(AccessibleControlEvent e) {
+				int state = ACC.STATE_NORMAL;
+				if (Hyperlink.this.getSelection())
+					state = ACC.STATE_SELECTED|ACC.STATE_FOCUSED;
+				e.detail = state;
+			}
+		});
 	}
 
 	/**
@@ -97,58 +97,73 @@ public class Hyperlink extends TraversableLabel {
 		return getData("href");
 	}
 
-	private void handleEnter() {
-		if (listeners == null)
-			return;
-		int size = listeners.size();
-		HyperlinkEvent e = new HyperlinkEvent(this, getHref(), getText());
-		for (int i = 0; i < size; i++) {
-			HyperlinkListener listener = (HyperlinkListener) listeners.get(i);
-			listener.linkEntered(e);
-		}
+	public void setUnderlined(boolean underlined) {
+		this.underlined = underlined;
+		redraw();
 	}
 
-	private void handleExit() {
-		if (listeners == null)
-			return;
-		int size = listeners.size();
-		HyperlinkEvent e = new HyperlinkEvent(this, getHref(), getText());
-		for (int i = 0; i < size; i++) {
-			HyperlinkListener listener = (HyperlinkListener) listeners.get(i);
-			listener.linkExited(e);
-		}
+	public boolean isUnderlined() {
+		return underlined;
 	}
 
-	private void handleActivate() {
-		if (listeners == null)
-			return;
-		int size = listeners.size();
-		setCursor(FormsResources.getBusyCursor());
-		HyperlinkEvent e = new HyperlinkEvent(this, getHref(), getText());
-		for (int i = 0; i < size; i++) {
-			HyperlinkListener listener = (HyperlinkListener) listeners.get(i);
-			listener.linkActivated(e);
-		}
-		if (!isDisposed())
-			setCursor(FormsResources.getHandCursor());
+	public Point computeSize(int wHint, int hHint, boolean changed) {
+		checkWidget();
+		int innerWidth = wHint;
+		if (innerWidth != SWT.DEFAULT)
+			innerWidth -= marginWidth * 2;
+		Point textSize = computeTextSize(innerWidth, hHint);
+		int textWidth = textSize.x + 2 * marginWidth;
+		int textHeight = textSize.y + 2 * marginHeight;
+		return new Point(textWidth, textHeight);
 	}
 
-	private void handleMouseUp(Event e) {
-		if (e.button != 1)
-			return;
+	private Point computeTextSize(int wHint, int hHint) {
+		Point extent;
+		GC gc = new GC(this);
+
+		gc.setFont(getFont());
+		if ((getStyle() & SWT.WRAP) != 0 && wHint != SWT.DEFAULT) {
+			int height = FormUtil.computeWrapHeight(gc, text, wHint);
+			extent = new Point(wHint, height);
+		} else {
+			extent = gc.textExtent(getText());
+		}
+		gc.dispose();
+		return extent;
+	}
+	
+	public String getText() {
+		return text;
+	}
+	public void setText(String text) {
+		if (text != null)
+			this.text = text;
+		else
+			text = "";
+		redraw();
+	}
+	
+	protected void paintHyperlink(PaintEvent e) {
+		GC gc = e.gc;
 		Point size = getSize();
-		// Filter out mouse up events outside
-		// the link. This can happen when mouse is
-		// clicked, dragged outside the link, then
-		// released.
-		if (e.x < 0)
-			return;
-		if (e.y < 0)
-			return;
-		if (e.x >= size.x)
-			return;
-		if (e.y >= size.y)
-			return;
-		handleActivate();
+		gc.setFont(getFont());
+		gc.setForeground(getForeground());
+		if ((getStyle() & SWT.WRAP) != 0) {
+			FormUtil.paintWrapText(
+				gc,
+				size,
+				text,
+				marginWidth,
+				marginHeight,
+				underlined);
+		} else {
+			gc.drawText(getText(), marginWidth, marginHeight, true);
+			if (underlined) {
+				FontMetrics fm = gc.getFontMetrics();
+				int descent = fm.getDescent();
+				int lineY = size.y - marginHeight - descent + 1;
+				gc.drawLine(marginWidth, lineY, size.x - marginWidth, lineY);
+			}
+		}
 	}
 }

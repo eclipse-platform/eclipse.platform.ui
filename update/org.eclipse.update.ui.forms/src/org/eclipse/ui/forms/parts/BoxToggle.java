@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.forms.parts;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Composite;
@@ -23,9 +24,7 @@ import org.eclipse.swt.widgets.Composite;
  * collapsed and down in the expanded state. Triangle color can be changed.
  */
 
-public class Twistie extends ToggleHyperlink {
-	private static final int[] onPoints = { 0, 2, 8, 2, 4, 6 };
-	private static final int[] offPoints = { 2, -1, 2, 8, 6, 4 };
+public class BoxToggle extends ToggleHyperlink {
 
 	/**
 	 * Creates a control in a provided composite.
@@ -36,44 +35,32 @@ public class Twistie extends ToggleHyperlink {
 	 *            the style
 	 */
 
-	public Twistie(Composite parent, int style) {
+	public BoxToggle(Composite parent, int style) {
 		super(parent, style);
-		innerWidth = 9;
-		innerHeight = 9;
+		innerWidth = 8;
+		innerHeight = 8;
 	}
 
-	/*
-	 * @see SelectableControl#paint(GC)
-	 */
 	protected void paintHyperlink(PaintEvent e) {
 		GC gc = e.gc;
-		if (hover && getActiveDecorationColor() != null)
-			gc.setBackground(getActiveDecorationColor());
-		else if (getDecorationColor() != null)
-			gc.setBackground(getDecorationColor());
-		else
-			gc.setBackground(getForeground());
-		int[] data;
-		Point size = getSize();
-		int x = (size.x - 9) / 2;
-		int y = (size.y - 9) / 2;
-		if (isExpanded())
-			data = translate(onPoints, x, y);
-
-		else
-			data = translate(offPoints, x, y);
-		gc.fillPolygon(data);
-		gc.setBackground(getBackground());
+		Rectangle box = getBoxBounds(gc);
+		gc.setForeground(
+			getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
+		gc.drawRectangle(box);
+		gc.setForeground(getForeground());
+		gc.drawLine(box.x + 2, box.y + 4, box.x + 6, box.y + 4);
+		if (!isExpanded()) {
+			gc.drawLine(box.x + 4, box.y + 2, box.x + 4, box.y + 6);
+		}
 	}
+	private Rectangle getBoxBounds(GC gc) {
+		int x = 0;
+		int y = 0;
 
-	private int[] translate(int[] data, int x, int y) {
-		int[] target = new int[data.length];
-		for (int i = 0; i < data.length; i += 2) {
-			target[i] = data[i] + x;
-		}
-		for (int i = 1; i < data.length; i += 2) {
-			target[i] = data[i] + y;
-		}
-		return target;
+		gc.setFont(getFont());
+		int height = gc.getFontMetrics().getHeight();
+		y = height / 2 - 4 + 1;
+		y = Math.max(y, 0);
+		return new Rectangle(x, y, 8, 8);
 	}
 }

@@ -118,8 +118,8 @@ public class FormToolkit {
 	 *  
 	 */
 
-	public FormToolkit() {
-		this(new FormColors());
+	public FormToolkit(Display display) {
+		this(new FormColors(display));
 	}
 
 	/**
@@ -189,24 +189,19 @@ public class FormToolkit {
 		return label;
 	}
 
-	public TraversableLabel createSelectableLabel(
-		Composite parent,
-		String text) {
-		return createSelectableLabel(parent, text, SWT.NONE);
-	}
-
-	public TraversableLabel createSelectableLabel(
+	public Hyperlink createHyperlink(
 		Composite parent,
 		String text,
 		int style) {
-		TraversableLabel label = new TraversableLabel(parent, style);
+		Hyperlink hyperlink = new Hyperlink(parent, style);
 		if (text != null)
-			label.setText(text);
-		label.setBackground(colors.getBackground());
-		label.setForeground(colors.getForeground());
-		label.addFocusListener(visibilityHandler);
-		label.addKeyListener(keyboardHandler);
-		return label;
+			hyperlink.setText(text);
+		//hyperlink.setBackground(colors.getBackground());
+		//hyperlink.setForeground(colors.getForeground());
+		hyperlink.addFocusListener(visibilityHandler);
+		hyperlink.addKeyListener(keyboardHandler);
+		hyperlinkGroup.add(hyperlink);
+		return hyperlink;
 	}
 
 	public RichText createRichText(Composite parent, boolean trackFocus) {
@@ -229,21 +224,19 @@ public class FormToolkit {
 		twistie.setActiveDecorationColor(
 			getHyperlinkGroup().getActiveForeground());
 		twistie.setDecorationColor(colors.getColor(FormColors.SEPARATOR));
-		twistie.setActiveCursor(FormsResources.getHandCursor());
 		twistie.addFocusListener(visibilityHandler);
 		twistie.addKeyListener(keyboardHandler);
 		return twistie;
 	}
 
-	public ExpandableComposite createExpandableComposite(Composite parent) {
-		ExpandableComposite ec = new ExpandableComposite(parent, SWT.NULL);
+	public ExpandableComposite createExpandableComposite(Composite parent, int expansionStyle) {
+		ExpandableComposite ec = new ExpandableComposite(parent, SWT.NULL, expansionStyle);
 		ec.setBackground(colors.getBackground());
 		ec.setForeground(colors.getForeground());
-		ec.textLabel.setBackground(colors.getBackground());
-		hyperlinkGroup.add(ec.textLabel);
+		//hyperlinkGroup.add(ec.textLabel);
 		ec.textLabel.addFocusListener(visibilityHandler);
 		ec.textLabel.addKeyListener(keyboardHandler);
-		ec.textLabel.setFont(
+		ec.setFont(
 			JFaceResources.getFontRegistry().get(JFaceResources.BANNER_FONT));
 		return ec;
 	}
@@ -316,14 +309,14 @@ public class FormToolkit {
 		control.addKeyListener(deleteListener);
 	}
 	private void initialize() {
-		hyperlinkGroup = new HyperlinkGroup();
+		hyperlinkGroup = new HyperlinkGroup(colors.getDisplay());
 		hyperlinkGroup.setBackground(colors.getBackground());
 		visibilityHandler = new VisibilityHandler();
 		keyboardHandler = new KeyboardHandler();
 	}
 
 	public void updateHyperlinkColors() {
-		hyperlinkGroup.initializeDefaultForegrounds();
+		hyperlinkGroup.initializeDefaultForegrounds(colors.getDisplay());
 	}
 
 	public void paintBordersFor(Composite parent) {

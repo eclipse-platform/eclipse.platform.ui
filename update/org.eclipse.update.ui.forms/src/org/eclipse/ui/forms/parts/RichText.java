@@ -23,6 +23,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.HyperlinkSettings;
+import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.internal.parts.*;
 import org.eclipse.update.ui.forms.internal.FormsPlugin;
 

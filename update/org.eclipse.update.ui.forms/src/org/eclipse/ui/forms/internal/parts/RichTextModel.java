@@ -335,9 +335,6 @@ public class RichTextModel {
 	}
 
 	public HyperlinkSettings getHyperlinkSettings() {
-		if (hyperlinkSettings == null) {
-			hyperlinkSettings = new HyperlinkSettings();
-		}
 		return hyperlinkSettings;
 	}
 

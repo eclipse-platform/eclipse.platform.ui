@@ -18,6 +18,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.*;
+import org.eclipse.ui.forms.events.*;
 
 public abstract class SectionPart implements IPropertyChangeListener {
 	/**
@@ -276,15 +277,15 @@ public abstract class SectionPart implements IPropertyChangeListener {
 					SWT.WRAP);
 			if (hasStyle(COLLAPSABLE)) {
 				twistie = toolkit.createTwistie(section);
-				twistie.setSelection(collapsed);
-				twistie.addSelectionListener(new SelectionAdapter() {
-					public void widgetSelected(SelectionEvent e) {
+				twistie.setExpanded(!collapsed);
+				twistie.addHyperlinkListener(new HyperlinkAdapter() {
+					public void linkActivated(HyperlinkEvent e) {
 						doToggle();
 					}
 				});
 				titleLabel.addMouseListener(new MouseAdapter() {
 					public void mouseDown(MouseEvent e) {
-						twistie.setSelection(!twistie.getSelection());
+						twistie.setExpanded(!twistie.isExpanded());
 						twistie.redraw();
 						doToggle();
 					}

@@ -21,28 +21,28 @@ public class ScrollableRichText {
 	private ScrolledComposite scomp;
 	private RichText richText;
 	private String text;
-	private FormToolkit factory;
+	private FormToolkit toolkit;
 	private int style;
 
 	public ScrollableRichText(int style) {
 		this.style = style;
-		factory = new FormToolkit();
 	}
 	
 	public ScrollableRichText(FormColors colors, int style) {
 		this.style = style;
-		factory = new FormToolkit(colors);
+		toolkit = new FormToolkit(colors);
 	}
 	
 	
 
 	public void createControl(Composite parent) {
+		if (toolkit==null) toolkit = new FormToolkit(parent.getDisplay());
 		scomp = new ScrolledComposite(parent, style);
-		scomp.setBackground(factory.getColors().getBackground());
-		richText = factory.createRichText(scomp, false);
+		scomp.setBackground(toolkit.getColors().getBackground());
+		richText = toolkit.createRichText(scomp, false);
 		richText.marginWidth = 2;
 		richText.marginHeight = 2;
-		richText.setHyperlinkSettings(factory.getHyperlinkGroup());
+		richText.setHyperlinkSettings(toolkit.getHyperlinkGroup());
 		scomp.setContent(richText);
 		scomp.addListener(SWT.Resize, new Listener() {
 			public void handleEvent(Event e) {
@@ -51,9 +51,9 @@ public class ScrollableRichText {
 		});
 		richText.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
-				if (factory != null) {
-					factory.dispose();
-					factory = null;
+				if (toolkit != null) {
+					toolkit.dispose();
+					toolkit = null;
 				}
 			}
 		});
@@ -92,6 +92,6 @@ public class ScrollableRichText {
 		richText.setSize(size);
 	}
 	public void dispose() {
-		factory.dispose();
+		toolkit.dispose();
 	}
 }

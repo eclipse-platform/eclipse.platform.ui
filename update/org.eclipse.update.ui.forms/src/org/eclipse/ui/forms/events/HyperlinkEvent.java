@@ -8,9 +8,10 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.forms.parts;
+package org.eclipse.ui.forms.events;
 
 import org.eclipse.swt.events.TypedEvent;
+import org.eclipse.swt.widgets.Widget;
 
 /**
  * Notifies listeners about a hyperlink change.
@@ -26,8 +27,9 @@ public class HyperlinkEvent extends TypedEvent {
  * @param label the name of the hyperlink (the text that is rendered
  * as a link in the source widget).
  */
-	public HyperlinkEvent(Object obj, Object href, String label) {
-		super(obj);
+	public HyperlinkEvent(Widget widget, Object href, String label) {
+		super(widget);
+		this.widget = widget;
 		this.data = href;
 		this.label = label;
 	}

@@ -13,7 +13,6 @@ package org.eclipse.ui.forms;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.PlatformUI;
 
 /**
  * Manages color and underline mode settings for a group of hyperlinks.
@@ -30,12 +29,11 @@ public class HyperlinkSettings {
 	private Color activeBackground;
 	private Color activeForeground;
 
-	public HyperlinkSettings() {
-		initializeDefaultForegrounds();
+	public HyperlinkSettings(Display display) {
+		initializeDefaultForegrounds(display);
 	}
 	
-	public void initializeDefaultForegrounds() {
-		Display display = PlatformUI.getWorkbench().getDisplay();
+	public void initializeDefaultForegrounds(Display display) {
 		foreground = JFaceColors.getHyperlinkText(display);
 		activeForeground = JFaceColors.getActiveHyperlinkText(display);
 	}

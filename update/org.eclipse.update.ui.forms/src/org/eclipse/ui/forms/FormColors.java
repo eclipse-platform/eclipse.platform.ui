@@ -33,14 +33,19 @@ public class FormColors {
 	private Color background;
 	private Color foreground;
 	private boolean shared;
+	private Display display;
 	protected Color border;
 
-	public FormColors() {
+	public FormColors(Display display) {
+		this.display = display;
 		initialize();
+	}
+	
+	public Display getDisplay() {
+		return display;
 	}
 
 	protected void initialize() {
-		Display display = PlatformUI.getWorkbench().getDisplay();
 		background = display.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
 		foreground = display.getSystemColor(SWT.COLOR_LIST_FOREGROUND);
 		initializeColors();
@@ -74,7 +79,6 @@ public class FormColors {
 	 * @return the allocated color object
 	 */
 	public Color createColor(String key, int r, int g, int b) {
-		Display display = PlatformUI.getWorkbench().getDisplay();
 		Color c = new Color(display, r, g, b);
 		colorRegistry.put(key, c);
 		return c;
@@ -86,7 +90,6 @@ public class FormColors {
 	 * background color will be used.
 	 */
 	protected void updateBorderColor() {
-		Display display = PlatformUI.getWorkbench().getDisplay();
 		if (isWhiteBackground())
 			border = getColor(BORDER);
 		else

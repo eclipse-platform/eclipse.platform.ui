@@ -9,36 +9,44 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.forms.parts;
+import java.util.Vector;
+
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.forms.FormsResources;
+import org.eclipse.ui.forms.events.*;
 
 /**
  * This composite is capable of expanding or collapsing a single client that is
  * its direct child. The composite renders a twistie in the upper-left corner,
- * followed by a title that also acts as a hyperlink (can be selected and
- * is traversable). The client is layed out below the title when expanded,
- * or hidden when collapsed.
+ * followed by a title that also acts as a hyperlink (can be selected and is
+ * traversable). The client is layed out below the title when expanded, or
+ * hidden when collapsed.
  * 
  * @since 3.0
  */
 
 public class ExpandableComposite extends Composite {
-/**
- * If this style is used, twistie will be rendered as an expansion control.
- */
+	/**
+	 *  
+	 */
+	public static final int NONE = 0;
+	/**
+	 * If this style is used, twistie will be rendered as an expansion control.
+	 */
 	public static final int TWISTIE = 1;
-/**
- * If this style is used, tree-style rectangle with either + or - signs will
- * be used to render the expansion control.
- */
+	/**
+	 * If this style is used, tree-style rectangle with either + or - signs
+	 * will be used to render the expansion control.
+	 */
 	public static final int TREE = 2;
-	private boolean expandable=true;
+	private int GAP = 5;
+	private int expansionStyle = TWISTIE;
 	private boolean expanded;
 	private Control client;
+	private Vector listeners;
+	protected ToggleHyperlink toggle;
 	protected Hyperlink textLabel;
 
 	private class ExpandableLayout extends Layout {
@@ -47,19 +55,20 @@ public class ExpandableComposite extends Composite {
 			Point size =
 				textLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed);
 			int x = 0;
-			int y = 1;
+			int y = 0;
 
-			if (isExpandable()) {
-				x = 8 + 8;
+			if (toggle != null) {
+				Point tsize =
+					toggle.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed);
+				toggle.setLocation(x, size.y / 2 - tsize.y / 2);
+				toggle.setSize(tsize);
+				x += tsize.x + GAP;
 			}
 			textLabel.setBounds(x, y, size.x, size.y);
 
-			if (isExpandable())
-				y = Math.max(size.y, 8) + 2 + 2;
-			else
-				y = size.y + 2;
 			if (expanded) {
 				int areaWidth = clientArea.width - x;
+				y += size.y;
 				if (client != null) {
 					size = client.computeSize(areaWidth, SWT.DEFAULT, changed);
 					client.setBounds(x, y, size.x, size.y);
@@ -76,18 +85,25 @@ public class ExpandableComposite extends Composite {
 			Point size =
 				textLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed);
 			width = size.x;
-			height = size.y + 2 + 2;
+			height = size.y;
+
 			if (expanded && client != null) {
-				size = client.computeSize(wHint, SWT.DEFAULT, changed);
-				width = Math.max(width, size.x);
-				height += size.y;
+				Point csize = client.computeSize(wHint, SWT.DEFAULT, changed);
+				width = Math.max(width, csize.x);
+				height += csize.y;
 			}
-			if (isExpandable()) {
-				height = Math.max(height, 8);
-				width += 8 + 8;
+			if (toggle != null) {
+				Point tsize =
+					toggle.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed);
+				height = height - size.y + Math.max(size.y, tsize.y);
+				width += tsize.x + GAP;
 			}
 			return new Point(width, height);
 		}
+	}
+
+	public ExpandableComposite(Composite parent, int style) {
+		this(parent, style, TWISTIE);
 	}
 
 	/**
@@ -97,33 +113,54 @@ public class ExpandableComposite extends Composite {
 	 *            the parent
 	 * @param style
 	 *            the control style
+	 * @param expansionStyle
+	 *            the style of the expansion widget (TREE or TWISTIE)
 	 */
-	public ExpandableComposite(Composite parent, int style) {
+	public ExpandableComposite(
+		Composite parent,
+		int style,
+		int expansionStyle) {
 		super(parent, style);
 		setLayout(new ExpandableLayout());
-		addPaintListener(new PaintListener() {
-			public void paintControl(PaintEvent e) {
-				if (isExpandable())
-					repaint(e);
-			}
-		});
-		addMouseListener(new MouseAdapter() {
-			public void mouseUp(MouseEvent e) {
-				Rectangle box = getBoxBounds(null);
-				if (box.contains(e.x, e.y)) {
-					setCursor(FormsResources.getBusyCursor());
-					setExpanded(!isExpanded());
-					setCursor(null);
+		listeners = new Vector();
+		if (expansionStyle == TWISTIE)
+			toggle = new Twistie(this, SWT.NULL);
+		if (toggle != null) {
+			toggle.addHyperlinkListener(new HyperlinkAdapter() {
+				public void linkActivated(HyperlinkEvent e) {
+					toggleState();
+				}
+			});
+		}
+		textLabel = new Hyperlink(this, SWT.WRAP);
+		textLabel.addHyperlinkListener(new HyperlinkAdapter() {
+			public void linkActivated(HyperlinkEvent e) {
+				if (getExpansionStyle() != NONE) {
+					toggle.setExpanded(!toggle.isExpanded());
+					toggleState();
 				}
 			}
 		});
-		textLabel = new Hyperlink(this, SWT.WRAP);
-		textLabel.addHyperlinkListener(new HyperlinkAdapter() {
-			public void linkActivated(Control link) {
-				if (isExpandable())
-					setExpanded(!isExpanded());
-			}
-		});
+	}
+
+	public void setBackground(Color bg) {
+		super.setBackground(bg);
+		textLabel.setBackground(bg);
+		if (toggle != null)
+			toggle.setBackground(bg);
+	}
+
+	public void setForeground(Color fg) {
+		super.setForeground(fg);
+		textLabel.setForeground(fg);
+		if (toggle != null)
+			toggle.setForeground(fg);
+	}
+	public void setFont(Font font) {
+		super.setFont(font);
+		textLabel.setFont(font);
+		if (toggle != null)
+			toggle.setFont(font);
 	}
 	/**
 	 * Sets the client of this expandable composite. The client must not be
@@ -178,24 +215,10 @@ public class ExpandableComposite extends Composite {
 	}
 
 	/**
-	 * By default, the control is expandable. This property can be disabled if
-	 * the client should not be reachable for any reason.
-	 * 
-	 * @param expandable
-	 *            the new expandable property
+	 * @return
 	 */
-	public void setExpandable(boolean expandable) {
-		this.expandable = expandable;
-	}
-
-	/**
-	 * Tests whether the control can be expanded.
-	 * 
-	 * @return <samp>true</samp> if the control can be expanded by user
-	 *         actions, <samp>false</samp> otherwise.
-	 */
-	public boolean isExpandable() {
-		return expandable;
+	public int getExpansionStyle() {
+		return expansionStyle;
 	}
 
 	/**
@@ -213,35 +236,31 @@ public class ExpandableComposite extends Composite {
 		}
 	}
 
-	private void repaint(PaintEvent e) {
-		GC gc = e.gc;
-		Rectangle box = getBoxBounds(gc);
-		gc.setForeground(
-			getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
-		gc.drawRectangle(box);
-		gc.setForeground(
-			getDisplay().getSystemColor(SWT.COLOR_LIST_FOREGROUND));
-		gc.drawLine(box.x + 2, box.y + 4, box.x + 6, box.y + 4);
-		if (!isExpanded()) {
-			gc.drawLine(box.x + 4, box.y + 2, box.x + 4, box.y + 6);
-		}
+	public void addExpansionListener(ExpansionListener listener) {
+		if (!listeners.contains(listener))
+			listeners.add(listener);
+	}
+	public void removeExpansionListener(ExpansionListener listener) {
+		listeners.remove(listener);
+	}
+	private void toggleState() {
+		boolean newState = !isExpanded();
+		fireExpanding(newState, true);
+		setExpanded(!isExpanded());
+		fireExpanding(newState, false);
 	}
 
-	private Rectangle getBoxBounds(GC gc) {
-		int x = 0;
-		int y = 0;
-		boolean noGC = false;
-
-		if (gc == null) {
-			gc = new GC(this);
-			noGC = true;
+	private void fireExpanding(boolean state, boolean before) {
+		int size = listeners.size();
+		if (size == 0)
+			return;
+		ExpansionEvent e = new ExpansionEvent(this, state);
+		for (int i = 0; i < size; i++) {
+			ExpansionListener listener = (ExpansionListener) listeners.get(i);
+			if (before)
+				listener.expansionStateChanging(e);
+			else
+				listener.expansionStateChanged(e);
 		}
-		gc.setFont(textLabel.getFont());
-		int height = gc.getFontMetrics().getHeight();
-		y = height / 2 - 4 + 1;
-		y = Math.max(y, 0);
-		if (noGC)
-			gc.dispose();
-		return new Rectangle(x, y, 8, 8);
 	}
 }

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.forms.parts;
+package org.eclipse.ui.forms.events;
 
 /**
  * This adapter class provides default implementations for the

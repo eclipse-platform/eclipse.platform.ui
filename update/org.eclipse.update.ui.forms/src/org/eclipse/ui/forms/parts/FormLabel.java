@@ -89,7 +89,7 @@ public class FormLabel extends Canvas {
 			}
 
 			public void getRole(AccessibleControlEvent e) {
-				e.detail = ACC.ROLE_LABEL;
+				e.detail = ACC.ROLE_PUSHBUTTON;
 			}
 
 			public void getState(AccessibleControlEvent e) {

@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.parts.*;
 
 /**
@@ -83,7 +84,8 @@ public class HyperlinkGroup extends HyperlinkSettings {
 	 * Creates a hyperlink group.
 	 */
 
-	public HyperlinkGroup() {
+	public HyperlinkGroup(Display display) {
+		super(display);
 		listener = new GroupListener();
 		links = new ArrayList();
 	}
