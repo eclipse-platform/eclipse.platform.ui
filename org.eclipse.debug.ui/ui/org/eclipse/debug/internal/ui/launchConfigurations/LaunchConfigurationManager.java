@@ -155,9 +155,7 @@ public class LaunchConfigurationManager implements ILaunchListener,
 	}
 
 	protected Vector getRunHistoryVector() {
-		if (!fHistoryInitialized) {
-			restoreLaunchHistory();
-		}
+		initializeHistory();
 		return fRunHistory;
 	}
 
@@ -166,9 +164,7 @@ public class LaunchConfigurationManager implements ILaunchListener,
 	}
 
 	protected Vector getDebugHistoryVector() {
-		if (!fHistoryInitialized) {
-			restoreLaunchHistory();
-		}
+		initializeHistory();
 		return fDebugHistory;
 	}
 	
@@ -387,6 +383,7 @@ public class LaunchConfigurationManager implements ILaunchListener,
 	 * @return the last launch, or <code>null</code> if none
 	 */	
 	public LaunchConfigurationHistoryElement getLastLaunch() {
+		initializeHistory();
 		if (!fLastLaunchList.isEmpty()) {
 			return (LaunchConfigurationHistoryElement) fLastLaunchList.get(0);
 		}
@@ -704,11 +701,20 @@ public class LaunchConfigurationManager implements ILaunchListener,
 	}
 	
 	/**
+	 * Restore the launch history if it hasn't already been done.
+	 */
+	protected void initializeHistory() {
+		if (!fHistoryInitialized) {
+			fHistoryInitialized = true;
+			restoreLaunchHistory();
+		}		
+	}
+	
+	/**
 	 * Find the XML history file and parse it.  Place the corresponding history elements
 	 * in the appropriate history lists, and set the most recent launch.
 	 */
 	protected void restoreLaunchHistory() {
-		fHistoryInitialized= true;
 		// Find the history file
 		IPath historyPath = getHistoryFilePath();
 		String osHistoryPath = historyPath.toOSString();
