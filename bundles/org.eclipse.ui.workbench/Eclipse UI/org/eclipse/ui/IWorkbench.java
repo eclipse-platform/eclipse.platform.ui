@@ -482,6 +482,7 @@ public interface IWorkbench {
 	 * <p><em>EXPERIMENTAL</em></p>
 	 * 
 	 * @return the theme manager for this workbench
+	 * @since 3.0
 	 */
 	public IThemeManager getThemeManager();
 }
