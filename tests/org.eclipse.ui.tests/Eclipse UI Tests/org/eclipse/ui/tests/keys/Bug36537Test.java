@@ -20,7 +20,7 @@ import java.util.Map;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.commands.CommandManager;
-import org.eclipse.ui.internal.commands.KeyBindingDefinition;
+import org.eclipse.ui.internal.csm.commands.KeySequenceBindingDefinition;
 import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.tests.util.UITestCase;
 
@@ -45,40 +45,40 @@ public class Bug36537Test extends UITestCase {
 	 * Tests that there are no redundant key bindings defined in the
 	 * application.
 	 */
-	public void testForRedundantKeyBindings() {
+	public void testForRedundantKeySequenceBindings() {
 		IWorkbenchWindow window = openTestWindow();
 		Workbench workbench = (Workbench) window.getWorkbench();
 		CommandManager commandManager = (CommandManager) workbench.getCommandManager();
 
-		List keyBindings = commandManager.getPluginCommandRegistry().getKeyBindingDefinitions();
-		Iterator keyBindingItr = keyBindings.iterator();
-		Map keyBindingsByKeySequence = new HashMap();
+		List keySequenceBindings = commandManager.getExtensionCommandRegistry().getKeySequenceBindingDefinitions();
+		Iterator keySequenceBindingItr = keySequenceBindings.iterator();
+		Map keySequenceBindingsByKeySequence = new HashMap();
 
-		while (keyBindingItr.hasNext()) {
+		while (keySequenceBindingItr.hasNext()) {
 			// Retrieve the key binding.
-			KeyBindingDefinition keyBinding = (KeyBindingDefinition) keyBindingItr.next();
+			KeySequenceBindingDefinition keySequenceBinding = (KeySequenceBindingDefinition) keySequenceBindingItr.next();
 
 			// Find the point the bindings with matching key sequences.
-			KeySequence keySequence = keyBinding.getKeySequence();
-			List matches = (List) keyBindingsByKeySequence.get(keySequence);
+			KeySequence keySequence = keySequenceBinding.getKeySequence();
+			List matches = (List) keySequenceBindingsByKeySequence.get(keySequence);
 			if (matches == null) {
 				matches = new ArrayList();
-				keyBindingsByKeySequence.put(keySequence, matches);
+				keySequenceBindingsByKeySequence.put(keySequence, matches);
 			}
 
 			// Check that we don't have any redundancy or other wackiness.
 			Iterator matchItr = matches.iterator();
 			while (matchItr.hasNext()) {
-				KeyBindingDefinition definition = (KeyBindingDefinition) matchItr.next();
-				String commandA = keyBinding.getCommandId();
+				KeySequenceBindingDefinition definition = (KeySequenceBindingDefinition) matchItr.next();
+				String commandA = keySequenceBinding.getCommandId();
 				String commandB = definition.getCommandId();
-				String contextA = keyBinding.getActivityId();
+				String contextA = keySequenceBinding.getActivityId();
 				String contextB = definition.getActivityId();
-				String keyConfA = keyBinding.getKeyConfigurationId();
+				String keyConfA = keySequenceBinding.getKeyConfigurationId();
 				String keyConfB = definition.getKeyConfigurationId();
-				String localeA = keyBinding.getLocale();
+				String localeA = keySequenceBinding.getLocale();
 				String localeB = definition.getLocale();
-				String platformA = keyBinding.getPlatform();
+				String platformA = keySequenceBinding.getPlatform();
 				String platformB = definition.getPlatform();
 
 				boolean same = true;
@@ -101,11 +101,11 @@ public class Bug36537Test extends UITestCase {
 					nullMatches++;
 				}
 
-				assertFalse("Redundant key bindings: " + keyBinding + ", " + definition, same && (nullMatches < 1)); //$NON-NLS-1$ //$NON-NLS-2$
+				assertFalse("Redundant key bindings: " + keySequenceBinding + ", " + definition, same && (nullMatches < 1)); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 
 			// Add the key binding.
-			matches.add(keyBinding);
+			matches.add(keySequenceBinding);
 		}
 	}
 }
