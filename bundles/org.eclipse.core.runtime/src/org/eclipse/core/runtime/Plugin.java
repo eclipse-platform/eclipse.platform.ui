@@ -339,11 +339,17 @@ public final IPath getStateLocation() {
  */
 public final Preferences getPluginPreferences() {
 	if (preferences != null) {
+		if (InternalPlatform.DEBUG_PREFERENCES) {
+			System.out.println("Plugin preferences already loaded for " + getDescriptor().getUniqueIdentifier());
+		}
 		// N.B. preferences instance field set means already created
 		// and initialized (or in process of being initialized)
 		return preferences;
 	}
 		
+	if (InternalPlatform.DEBUG_PREFERENCES) {
+		System.out.println("Loading preferences for plugin " + getDescriptor().getUniqueIdentifier());
+	}
 	// lazily create preference store
 	// important: set preferences instance field to prevent re-entry
 	preferences = new Preferences();
@@ -356,6 +362,9 @@ public final Preferences getPluginPreferences() {
 	applyInternalPluginDefaultOverrides();
 	// 3. override with defaults from primary feature or command line
 	applyExternalPluginDefaultOverrides();
+	if (InternalPlatform.DEBUG_PREFERENCES) {
+		System.out.println("Completed loading preferences for plugin " + getDescriptor().getUniqueIdentifier());
+	}
 	return preferences;
 }
 
@@ -373,9 +382,15 @@ private void loadPluginPreferences() {
 	File prefFile = InternalPlatform.getPluginStateLocation(this, false).append(PREFERENCES_FILE_NAME).toFile();
 	if (!prefFile.exists()) {
 		// no preference file - that's fine
+		if (InternalPlatform.DEBUG_PREFERENCES) {
+			System.out.println("Plugin preference file " + prefFile + " not found.");
+		}
 		return;
 	}
 	
+	if (InternalPlatform.DEBUG_PREFERENCES) {
+		System.out.println("Loading preferences from " + prefFile);
+	}
 	// load preferences from file
 	SafeFileInputStream in = null;
 	try {
@@ -383,13 +398,34 @@ private void loadPluginPreferences() {
 		preferences.load(in);
 	} catch (IOException e) {
 		// problems loading preference store - quietly ignore
+		if (InternalPlatform.DEBUG_PREFERENCES) {
+			System.out.println("IOException encountered loading preference file " + prefFile);
+			e.printStackTrace();
+		}
 	} finally {
 		if (in != null) {
 			try {
 				in.close();
 			} catch (IOException e) {
 				// ignore problems with close
+				if (InternalPlatform.DEBUG_PREFERENCES) {
+					System.out.println("IOException encountered closing preference file " + prefFile);
+					e.printStackTrace();
+				}
 			}
+		}
+	}
+	if (InternalPlatform.DEBUG_PREFERENCES) {
+		System.out.println("Preferences now set as follows:");
+		String[] prefNames = preferences.propertyNames();
+		for (int i = 0; i < prefNames.length; i++) {
+			String value = preferences.getString(prefNames[i]);
+			System.out.println("\t" + prefNames[i] + " = " + value);
+		}
+		prefNames = preferences.defaultPropertyNames();
+		for (int i = 0; i < prefNames.length; i++) {
+			String value = preferences.getDefaultString(prefNames[i]);
+			System.out.println("\tDefault values: " + prefNames[i] + " = " + value);
 		}
 	}
 }
@@ -496,27 +532,43 @@ private void applyInternalPluginDefaultOverrides() {
 	
 	// use URLs so we can find the file in fragments too
 	URL iniURL;
+	URL baseURL = null;
 	try {
 		// FIXME - ensure that fragments are consulted!
-		URL baseURL = null;
 		try {
 			baseURL = Platform.resolve(getDescriptor().getInstallURL());
 		} catch (IOException ioe) {
 			// fail quietly
+			if (InternalPlatform.DEBUG_PREFERENCES) {
+				System.out.println("IOException trying to resolve URL " +
+					getDescriptor().getInstallURL());
+			}
 			return;
 		}
 		iniURL = new URL(baseURL, PREFERENCES_DEFAULT_OVERRIDE_FILE_NAME);
 	} catch (MalformedURLException e) {
 		// fail silently
+		if (InternalPlatform.DEBUG_PREFERENCES) {
+			System.out.println("MalformedURLException found for " +
+				baseURL + " with " +
+				PREFERENCES_DEFAULT_OVERRIDE_FILE_NAME);
+			e.printStackTrace();
+		}
 		return;
 	}
 
 	File iniFile = new File(getFileFromURL(iniURL));
 	if (!iniFile.exists()) {
 		// no preference file - that's fine
+		if (InternalPlatform.DEBUG_PREFERENCES) {
+			System.out.println("Plugin preference file " + iniFile + " not found.");
+		}
 		return;
 	}
 
+	if (InternalPlatform.DEBUG_PREFERENCES) {
+		System.out.println("Loading preferences from " + iniFile);
+	}
 	Properties overrides = new Properties();
 	SafeFileInputStream in = null;
 	try {
@@ -524,6 +576,11 @@ private void applyInternalPluginDefaultOverrides() {
 		overrides.load(in);
 	} catch (IOException e) {
 		// cannot read ini file - fail silently
+		if (InternalPlatform.DEBUG_PREFERENCES) {
+			System.out.println("IOException encountered loading preference file " +
+				iniFile);
+			e.printStackTrace();
+		}
 		return;
 	} finally {
 		try {
@@ -532,6 +589,11 @@ private void applyInternalPluginDefaultOverrides() {
 			}
 		} catch (IOException e) {
 			// ignore problems closing file
+			if (InternalPlatform.DEBUG_PREFERENCES) {
+				System.out.println("IOException encountered closing preference file " +
+					iniFile);
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -540,6 +602,19 @@ private void applyInternalPluginDefaultOverrides() {
 		String key = (String) entry.getKey();
 		String value = (String) entry.getValue();
 		preferences.setDefault(key, value);
+	}
+	if (InternalPlatform.DEBUG_PREFERENCES) {
+		System.out.println("Preferences now set as follows:");
+		String[] prefNames = preferences.propertyNames();
+		for (int i = 0; i < prefNames.length; i++) {
+			String value = preferences.getString(prefNames[i]);
+			System.out.println("\t" + prefNames[i] + " = " + value);
+		}
+		prefNames = preferences.defaultPropertyNames();
+		for (int i = 0; i < prefNames.length; i++) {
+			String value = preferences.getDefaultString(prefNames[i]);
+			System.out.println("\tDefault values: " + prefNames[i] + " = " + value);
+		}
 	}
 }
 

@@ -77,6 +77,7 @@ public final class InternalPlatform {
 	private static final String OPTION_DEBUG_SHUTDOWN = Platform.PI_RUNTIME + "/timing/shutdown";
 	private static final String OPTION_DEBUG_PLUGINS = Platform.PI_RUNTIME + "/registry/debug";
 	private static final String OPTION_DEBUG_PLUGINS_DUMP = Platform.PI_RUNTIME + "/registry/debug/dump";
+	private static final String OPTION_DEBUG_PREFERENCES = Platform.PI_RUNTIME + "/preferences/debug";
 
 	// command line options
 	private static final String LOG = "-consolelog";
@@ -92,6 +93,7 @@ public final class InternalPlatform {
 	public static boolean DEBUG_STARTUP = false;
 	public static boolean DEBUG_SHUTDOWN = false;
 	public static String DEBUG_PLUGINS_DUMP = "";
+	public static boolean DEBUG_PREFERENCES = false;
 
 /**
  * Private constructor to block instance creation.
@@ -603,6 +605,7 @@ static void loadOptions(Properties bootOptions) {
 		DEBUG_SHUTDOWN = getBooleanOption(OPTION_DEBUG_SHUTDOWN, false);
 		DEBUG_PLUGINS = getBooleanOption(OPTION_DEBUG_PLUGINS, false);
 		DEBUG_PLUGINS_DUMP = getDebugOption(OPTION_DEBUG_PLUGINS_DUMP);
+		DEBUG_PREFERENCES = getBooleanOption(OPTION_DEBUG_PREFERENCES, false);
 	}
 	InternalBootLoader.setupOptions();
 }
@@ -873,21 +876,30 @@ public static void applyPrimaryFeaturePluginDefaultOverrides(
 	IPlatformConfiguration cfg = BootLoader.getCurrentPlatformConfiguration();
 	if (cfg == null) {
 		// bail if we don't seem to have one for whatever reason (!)
+		if (DEBUG_PREFERENCES) {
+			System.out.println("Plugin preferences unable to find a platform configuration");
+		}
 		return;
 	}
 	String primaryFeaturePluginId = cfg.getPrimaryFeatureIdentifier();
 	if (primaryFeaturePluginId  == null) {
 		// bail if we don't seem to have one of these (!)
+		if (DEBUG_PREFERENCES) {
+			System.out.println("Plugin preferences unable to find a primary feature plugin id");
+		}
 		return;
 	}
 	IPluginDescriptor primaryFeatureDescriptor = getPluginRegistry().getPluginDescriptor(primaryFeaturePluginId);
 	if (primaryFeatureDescriptor  == null) {
 		// bail if primary feature is missing (!)
+		if (DEBUG_PREFERENCES) {
+			System.out.println("Plugin preferences unable to find a primary feature");
+		}
 		return;
 	}
+	URL baseURL = null;
 	try {
 		// FIXME - ensure that fragments are consulted!
-		URL baseURL = null;
 		try {
 			baseURL = Platform.resolve(primaryFeatureDescriptor.getInstallURL());
 		} catch (IOException ioe) {
@@ -896,10 +908,18 @@ public static void applyPrimaryFeaturePluginDefaultOverrides(
 		}
 		// locate plug-in customization file within primary feature plug-in (or fragment)
 		URL pluginCustomizationURL = new URL(baseURL, PLUGIN_CUSTOMIZATION_FILE_NAME);
+		if (DEBUG_PREFERENCES) {
+			System.out.println("Loading preferences from " + pluginCustomizationURL);
+		}
 		// apply any defaults for the given plug-in
 		applyPluginDefaultOverrides(pluginCustomizationURL, id, preferences);
 	} catch (MalformedURLException e) {
 		// fail silently
+		if (DEBUG_PREFERENCES) {
+			System.out.println("MalformedURLException creating URL with " +
+				baseURL + " and " + PLUGIN_CUSTOMIZATION_FILE_NAME);
+			e.printStackTrace();
+		}
 		return;
 	}
 }
@@ -924,14 +944,25 @@ public static void applyCommandLinePluginDefaultOverrides(
 	
 	if (pluginCustomizationFile == null) {
 		// no command line overrides to process
+		if (DEBUG_PREFERENCES) {
+			System.out.println("Command line argument -pluginCustomization not used.");
+		}
 		return;
 	}
 
 	try {
 		URL pluginCustomizationURL = new File(pluginCustomizationFile).toURL();
+		if (DEBUG_PREFERENCES) {
+			System.out.println("Loading preferences from " + pluginCustomizationURL);
+		}
 		applyPluginDefaultOverrides(pluginCustomizationURL, id, preferences);
 	} catch (MalformedURLException e) {
 		// fail silently
+		if (DEBUG_PREFERENCES) {
+			System.out.println("MalformedURLException creating URL for plugin customization file "
+				+ pluginCustomizationFile);
+			e.printStackTrace();
+		}
 		return;
 	}
 }
@@ -959,17 +990,32 @@ private static void applyPluginDefaultOverrides(
 		
 	try {
 		File inFile = new File(propertiesURL.getFile());
-		if (!inFile.exists())
+		if (!inFile.exists()) {
 			// We don't have a preferences file to worry about
+			if (DEBUG_PREFERENCES) {
+				System.out.println("Preference file " +
+				propertiesURL + " not found.");
+			}
 			return;
+		}
 			
 		in = new SafeFileInputStream(inFile);
-		if (in == null)
+		if (in == null) {
 			// fail quietly
+			if (DEBUG_PREFERENCES) {
+				System.out.println("Failed to open " +
+					propertiesURL);
+			}
 			return;
+		}
 		overrides.load(in);
 	} catch (IOException e) {
 		// cannot read ini file - fail silently
+		if (DEBUG_PREFERENCES) {
+			System.out.println("IOException reading preference file " +
+			propertiesURL);
+			e.printStackTrace();
+		}
 		return;
 	} finally {
 		try {
@@ -978,6 +1024,11 @@ private static void applyPluginDefaultOverrides(
 			}
 		} catch (IOException e) {
 			// ignore problems closing file
+			if (DEBUG_PREFERENCES) {
+				System.out.println("IOException closing preference file " +
+				propertiesURL);
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -999,6 +1050,19 @@ private static void applyPluginDefaultOverrides(
 			String propertyName = qualifiedKey.substring(s + 1);
 			String value = (String) entry.getValue();
 			preferences.setDefault(propertyName, value);
+		}
+	}
+	if (DEBUG_PREFERENCES) {
+		System.out.println("Preferences now set as follows:");
+		String[] prefNames = preferences.propertyNames();
+		for (int i = 0; i < prefNames.length; i++) {
+			String value = preferences.getString(prefNames[i]);
+			System.out.println("\t" + prefNames[i] + " = " + value);
+		}
+		prefNames = preferences.defaultPropertyNames();
+		for (int i = 0; i < prefNames.length; i++) {
+			String value = preferences.getDefaultString(prefNames[i]);
+			System.out.println("\tDefault values: " + prefNames[i] + " = " + value);
 		}
 	}
 }
