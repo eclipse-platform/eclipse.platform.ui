@@ -577,14 +577,21 @@ protected void copyTree(IResource source, IPath destination, int depth, int upda
 	// preserve local sync info
 	ResourceInfo oldInfo = ((Resource) source).getResourceInfo(true, false);
 	newInfo.setFlags(newInfo.getFlags() | (oldInfo.getFlags() & M_LOCAL_EXISTS));
-	
+
 	// update link locations in project descriptions
-	if (source.isLinked() && ((updateFlags & IResource.SHALLOW) != 0)) {
-		newInfo.set(ICoreConstants.M_LINK);
-		//create new link location
+	if (source.isLinked()) {
+		LinkDescription linkDescription;
+		if ((updateFlags & IResource.SHALLOW) != 0) {
+			//for shallow move the destination is also a linked resource
+			newInfo.set(ICoreConstants.M_LINK);
+			linkDescription = new LinkDescription(destinationResource, source.getLocation());
+		} else {
+			//for deep move the destination is not a linked resource
+			newInfo.clear(ICoreConstants.M_LINK);
+			linkDescription = null;
+		}
 		Project project = (Project)destinationResource.getProject();
-		project.internalGetDescription().setLinkLocation(destinationResource.getName(), 
-			new LinkDescription(destinationResource, source.getLocation()));
+		project.internalGetDescription().setLinkLocation(destinationResource.getName(), linkDescription);
 		project.writeDescription(IResource.NONE);
 	}
 
