@@ -779,7 +779,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 						return;
 					}
 					try {
-						config= migrateBuilderConfiguration((ILaunchConfigurationWorkingCopy) data);
+						config= migrateBuilderConfiguration((ILaunchConfigurationWorkingCopy) config);
 					} catch (CoreException e) {
 						handleException(e);
 						return;
