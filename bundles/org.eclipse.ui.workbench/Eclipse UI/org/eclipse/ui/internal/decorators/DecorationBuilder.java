@@ -126,9 +126,11 @@ class DecorationBuilder implements IDecoration {
 		prefixes.addAll(result.getPrefixes());
 		suffixes.addAll(result.getSuffixes());
 		ImageDescriptor [] resultDescriptors = result.getDescriptors();
-		for(int i = 0; i < descriptors.length; i ++){
-			if(resultDescriptors[i] != null)
-				descriptors[i] = resultDescriptors[i];
+		if(resultDescriptors != null){
+			for(int i = 0; i < descriptors.length; i ++){
+				if(resultDescriptors[i] != null)
+					descriptors[i] = resultDescriptors[i];
+			}
 		}
 		valueSet = true;
 	}

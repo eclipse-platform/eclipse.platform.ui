@@ -97,7 +97,7 @@ class DecorationResult {
 
 	/**
 	 * Get the descriptor array for the receiver.
-	 * @return ImageDescriptor[]
+	 * @return ImageDescriptor[] or <code>null</code>
 	 */
 	ImageDescriptor[] getDescriptors() {
 		return descriptors;
