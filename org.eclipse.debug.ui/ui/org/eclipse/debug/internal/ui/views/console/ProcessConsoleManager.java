@@ -21,7 +21,6 @@ import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -29,7 +28,6 @@ import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.actions.StatusInfo;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.console.ConsoleColorProvider;
@@ -308,9 +306,6 @@ public class ProcessConsoleManager implements ILaunchListener {
 		                DebugUIPlugin.log(e);
 		            }
 		        }
-		    } else {
-		        StatusInfo status = new StatusInfo(IStatus.ERROR, "No Line Tracker for process type <" + type + ">");  //$NON-NLS-1$//$NON-NLS-2$)
-		        DebugUIPlugin.log(status);
 		    }
 		}
 		return (IConsoleLineTracker[]) trackers.toArray(new IConsoleLineTracker[0]);
