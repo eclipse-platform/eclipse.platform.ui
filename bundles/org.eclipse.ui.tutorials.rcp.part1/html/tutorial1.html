@@ -29,7 +29,8 @@ build Java applications that can compete with native applications on any
 platform. This tutorial is designed to get you started building RCP applications
 quickly.</p>
 <p><b>By Ed Burnette, SAS Institute Inc.</b><br>
-<font size="-1">June 14, 2004 - Added note on using CVS to get the example source</font></p>
+<font size="-1">June 14, 2004 - Added note on using CVS to get the example source,
+updates for 3.0RC2</font></p>
 <p><i>Note that Eclipse 3 is undergoing constant change so the steps you need to
 take, the APIs, and the results may vary slightly (or not so slightly) from this
 description.</i></p>
@@ -82,7 +83,7 @@ When you're done you should have something that looks like listing 1.
 The classes refered to here will be defined in the next section.
 </p>
 
-<p><b>Listing 1. Plugin.xml.
+<p><b>Listing 1. plugin.xml
 </b></p>
 <pre>
 &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
@@ -94,7 +95,7 @@ The classes refered to here will be defined in the next section.
     provider-name=&quot;%providerName&quot;&gt;
 
     &lt;runtime&gt;
-        &lt;library name=&quot;rcptutorial1.jar&quot;&gt;
+        &lt;library name=&quot;part1.jar&quot;&gt;
             &lt;export name=&quot;*&quot;/&gt;
         &lt;/library&gt;
     &lt;/runtime&gt;
@@ -124,6 +125,20 @@ The classes refered to here will be defined in the next section.
 &lt;/plugin&gt;
 </pre>
 
+<p>
+<img src="images/note.gif" alt="Note: " width="62" height="13">
+What about MANIFEST.MF?
+Eclipse 3.0 has a new OSGi based run-time system that introduces
+a new manifest file, MANIFEST.MF.
+In this simple example we're using Eclipse's run-time compatibility
+layer and don't need MANIFEST.MF.
+After you are comfortable with writing plug-ins and
+RCP applications, see the Eclipse 3.0 Runtime Adoption Guide
+(in the references section)
+to learn more about the new run-time
+and how to run without the compatibility layer.
+</p>
+
 <h2>Workbench Advisor</h2>
 <p>
 The Workbench Advisor class helps customize the workbench to add and subtract
@@ -134,7 +149,7 @@ is define which perspective is the default one.
 See listing 2 for the code.
 </p>
 
-<p><b>Listing 2. RcpWorkbenchAdvisor class.
+<p><b>Listing 2. RcpWorkbenchAdvisor class
 </b></p>
 <pre>
 package org.eclipse.ui.tutorials.rcp.part1;
@@ -155,7 +170,7 @@ which just has a method called
 <code>run()</code>.
 Listing 3 shows a simple implementation with the minimum you have to do.
 </p>
-<p><b>Listing 3. RcpApplication class.
+<p><b>Listing 3. RcpApplication class
 </b></p>
 <pre>
 package org.eclipse.ui.tutorials.rcp.part1;
@@ -195,7 +210,7 @@ In this example
 we're not going to create any views so it will be a pretty boring perspective.
 </p>
 
-<p><b>Listing 4. RcpPerspective class.
+<p><b>Listing 4. RcpPerspective class
 </b></p>
 <pre>
 package org.eclipse.ui.tutorials.rcp.part1;
@@ -219,25 +234,25 @@ public class RcpPerspective implements IPerspectiveFactory {
 will be needed when exporting the application for
 others to use.</p>
 
-<p><b>Listing 5. Build.properties.
+<p><b>Listing 5. build.properties
 </b></p>
 <pre>
 bin.includes = plugin.xml,\
                *.jar,\
-               rcptutorial1.jar,\
+               part1.jar,\
                plugin.properties
-source.rcptutorial1.jar = src/
+source.part1.jar = src/
 </pre>
 
 <p>
-Finally, the plugin.properties file (listing 6) contains natural language strings at the
+Finally, you need to create a plugin.properties file (listing 6) for any natural language strings at the
 plug-in registry level (i.e., things the run-time has to know about your plug-in
 before even loading it).
 You could hard-code these into your plug-in manifest
 but it's best to get into the i18n habit from the start.
 </p>
 
-<p><b>Listing 6. Plugin.properties
+<p><b>Listing 6. plugin.properties
 </b></p>
 <pre>
 pluginName = RcpTutorial1 Plug-in
@@ -357,11 +372,9 @@ script version would be similar.
    echo on
    setlocal
    cd %~dp0
-   rem Check workspace\.metadata\.log for errors
    start javaw -cp startup.jar org.eclipse.core.launcher.Main
       -application org.eclipse.ui.tutorials.rcp.part1.RcpApplication %*
    endlocal
-
 </pre>
 <p>The start command should be all on one line. As before, the -application
 option refers back to the id specified on the
@@ -373,8 +386,6 @@ Eclipse loader in a separate window:</p>
    echo on
    setlocal
    cd %~dp0
-   rem Check configuration\*\*.log for errors
-   del configuration\*.log
    java -cp startup.jar org.eclipse.core.launcher.Main
       -application org.eclipse.ui.tutorials.rcp.part1.RcpApplication
       -consoleLog %* || pause
@@ -453,6 +464,18 @@ This will tell you what the missing bundle is.
 Note that you can't run OSGi commands if the program has already terminated.
 
 <dt>
+<b>!MESSAGE Missing required bundle org.eclipse.core.runtime.compatibility_null,null.</b>
+<dd>
+This can be caused if you have incompletely adopted your plug-in
+to the 3.0 OSGi manifest files.
+For this simple example you don't need to create a MANIFEST.MF file
+and you do need to include org.eclipse.core.runtime.compatibility
+in your list of required plug-ins.
+See the 3.0 Runtime Adoption Guide for more information about
+running without the compatibility layer.
+
+
+<dt>
 <b>'1.4' target mode requires '-1.4' compliance mode: 1.3</b>
 <dd>
 This is one of the more annoying PDE build errors, especially since you have to go hunt
@@ -500,6 +523,8 @@ Does Plug-ins</a><br>
 to Internationalize your Eclipse Plug-in</a><br>
 <a href="http://www.eclipse.org/articles/Article-Plug-in-architecture/plugin_architecture.html">Notes
 on the Eclipse Plug-in Architecture</a><br>
+<a href="http://dev.eclipse.org/viewcvs/index.cgi/~checkout~/platform-core-home/runtime/adoption.html">
+Eclipse 3.0 Runtime Adoption Guide</a><br>
 </p>
 <p><small>IBM is trademark of International Business Machines Corporation in the
 United States, other countries, or both.</small></p>
