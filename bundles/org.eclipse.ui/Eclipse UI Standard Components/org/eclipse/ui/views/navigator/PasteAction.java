@@ -67,7 +67,7 @@ public PasteAction(Shell shell) {
 public void run() {
 	// try a resource transfer
 	ResourceTransfer resTransfer = ResourceTransfer.getInstance();
-	IResource[] resourceData = (IResource[])clipboard.getContents(ResourceTransfer.getInstance());
+	IResource[] resourceData = (IResource[])clipboard.getContents(resTransfer);
 	
 	if (resourceData != null) {
 		if (resourceData[0].getType() == IResource.PROJECT){
