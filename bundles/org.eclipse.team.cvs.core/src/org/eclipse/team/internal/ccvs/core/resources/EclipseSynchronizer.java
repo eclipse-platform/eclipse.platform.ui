@@ -23,6 +23,7 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.ReentrantLock.CVSThreadInfo;
 import org.eclipse.team.internal.ccvs.core.util.*;
 import org.eclipse.team.internal.core.subscribers.BatchingLock.IFlushOperation;
 import org.eclipse.team.internal.core.subscribers.BatchingLock.ThreadInfo;
+import org.osgi.framework.Bundle;
 
 /**
  * A synchronizer is responsible for managing synchronization information for local
@@ -513,12 +514,22 @@ public class EclipseSynchronizer implements IFlushOperation {
 	 * Begin an access to the internal data structures of the synchronizer
 	 */
 	private void beginOperation() {
-		// Do not try to acquire the lock if the resources tree is locked
-		// The reason for this is that during the resource delta phase (i.e. when the tree is locked)
-		// the workspace lock is held. If we obtain our lock, there is 
-		// a chance of dealock. It is OK if we don't as we are still protected
-		// by scheduling rules and the workspace lock.
-		if (ResourcesPlugin.getWorkspace().isTreeLocked()) return;
+		try {
+            // Do not try to acquire the lock if the resources tree is locked
+            // The reason for this is that during the resource delta phase (i.e. when the tree is locked)
+            // the workspace lock is held. If we obtain our lock, there is 
+            // a chance of dealock. It is OK if we don't as we are still protected
+            // by scheduling rules and the workspace lock.
+            if (ResourcesPlugin.getWorkspace().isTreeLocked()) return;
+        } catch (RuntimeException e) {
+		    // If we are not active, throw a cancel. Otherwise, propogate it.
+		    // (see bug 78303)
+		    if (Platform.getBundle(CVSProviderPlugin.ID).getState() == Bundle.ACTIVE) {
+		        throw e;
+		    } else {
+		        throw new OperationCanceledException();
+		    }
+        }
 		lock.acquire();
 	}
 	
@@ -526,8 +537,18 @@ public class EclipseSynchronizer implements IFlushOperation {
 	 * End an access to the internal data structures of the synchronizer
 	 */
 	private void endOperation() {
-		// See beginOperation() for a description of why the lock is not obtained when the tree is locked
-		if (ResourcesPlugin.getWorkspace().isTreeLocked()) return;
+		try {
+            // See beginOperation() for a description of why the lock is not obtained when the tree is locked
+            if (ResourcesPlugin.getWorkspace().isTreeLocked()) return;
+        } catch (RuntimeException e) {
+		    // If we are not active, throw a cancel. Otherwise, propogate it.
+		    // (see bug 78303)
+		    if (Platform.getBundle(CVSProviderPlugin.ID).getState() == Bundle.ACTIVE) {
+		        throw e;
+		    } else {
+		        throw new OperationCanceledException();
+		    }
+        }
 		lock.release();
 	}
 	

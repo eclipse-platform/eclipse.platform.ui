@@ -13,6 +13,7 @@ package org.eclipse.team.internal.ccvs.ui;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -32,6 +33,7 @@ import org.eclipse.team.internal.core.ExceptionCollector;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.themes.ITheme;
+import org.osgi.framework.Bundle;
 
 public class CVSLightweightDecorator extends LabelProvider implements ILightweightLabelDecorator, IResourceStateChangeListener, IPropertyChangeListener {
 
@@ -166,6 +168,13 @@ public class CVSLightweightDecorator extends LabelProvider implements ILightweig
 			cvsDecoration.apply(decoration);
 		} catch(CVSException e) {
 			handleException(e);
+		} catch (IllegalStateException e) {
+		    // This is thrown by Core if the workspace is in an illegal state
+		    // If we are not active, ignore it. Otherwise, propogate it.
+		    // (see bug 78303)
+		    if (Platform.getBundle(CVSUIPlugin.ID).getState() == Bundle.ACTIVE) {
+		        throw e;
+		    }
 		}
 	}
 
