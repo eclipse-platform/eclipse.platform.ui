@@ -697,6 +697,18 @@ M4 = Platform-specific fourth key -->
                id="org.eclipse.ant.ui.actions.ManageBreakpointRulerActionDelegate">
          </action>
       </viewerContribution>
+      <viewerContribution
+            targetID="org.eclipse.ant.internal.ui.editor.AntEditor"
+            id="org.eclipse.ant.ui.debug.AntEditorPopupActions">
+         <action
+               label="%runToLineAction.label"
+               helpContextId="run_to_line_action_context"
+               definitionId="org.eclipse.debug.ui.commands.RunToLine"
+               class="org.eclipse.debug.ui.actions.RunToLineActionDelegate"
+               menubarPath="additions"
+               id="org.eclipse.ant.ui.debug.RunToLine">
+         </action>
+      </viewerContribution>
        </extension>
        
        

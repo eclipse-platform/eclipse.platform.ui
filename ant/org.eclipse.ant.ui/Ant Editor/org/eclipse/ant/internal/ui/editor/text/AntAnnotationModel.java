@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.ant.internal.ui.AntUIPlugin;
+import org.eclipse.ant.internal.ui.debug.IAntDebugConstants;
 import org.eclipse.ant.internal.ui.editor.outline.AntEditorMarkerUpdater;
 import org.eclipse.ant.internal.ui.model.IProblem;
 import org.eclipse.ant.internal.ui.model.IProblemRequestor;
@@ -118,4 +119,14 @@ public class AntAnnotationModel extends ResourceMarkerAnnotationModel implements
 		if (temporaryProblemsChanged)
 			fireModelChanged(new AnnotationModelEvent(this));
 	}
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel#isAcceptable(org.eclipse.core.resources.IMarker)
+     */
+    protected boolean isAcceptable(IMarker marker) {
+        if (super.isAcceptable(marker)) {
+          return !marker.getAttribute(IAntDebugConstants.ANT_RUN_TO_LINE, false);  
+        }
+        return false;
+    }
 }

@@ -24,4 +24,10 @@ public interface IAntDebugConstants {
 	 * (value <code>org.eclipse.ant.ui.antLineBreakpointMarker</code>).
 	 */
 	public static final String ID_ANT_LINE_BREAKPOINT_MARKER= "org.eclipse.ant.ui.antLineBreakpointMarker"; //$NON-NLS-1$
+    
+    /**
+     * Unique identifier for the Ant run to line breakpoints 
+     * (value <code>org.eclipse.ant.ui.runToLineBreakpoint</code>).
+     */
+    public static final String ANT_RUN_TO_LINE= "org.eclipse.ant.ui.runToLineBreakpoint"; //$NON-NLS-1$
 }

@@ -72,11 +72,16 @@ public class AntDebugModelPresentation extends LabelProvider implements IDebugMo
 					
 					IBreakpoint[] breakpoints= thread.getBreakpoints();
 					if (breakpoints.length > 0) {
-						IBreakpoint breakpoint= breakpoints[0];
+						AntLineBreakpoint breakpoint= (AntLineBreakpoint) breakpoints[0];
 						IMarker marker= breakpoint.getMarker();
 						String fileName= marker.getResource().getFullPath().lastSegment();
 						String lineNumber= Integer.toString(marker.getAttribute(IMarker.LINE_NUMBER, -1));
-						String breakpointString= MessageFormat.format(DebugModelMessages.getString("AntDebugModelPresentation.2"), new String[]{lineNumber, fileName}); //$NON-NLS-1$
+						String breakpointString= null;
+                        if (breakpoint.isRunToLine()) {
+                            breakpointString= MessageFormat.format(DebugModelMessages.getString("AntDebugModelPresentation.5"), new String[] {lineNumber, fileName}); //$NON-NLS-1$
+                        } else {
+                            breakpointString= MessageFormat.format(DebugModelMessages.getString("AntDebugModelPresentation.2"), new String[]{lineNumber, fileName}); //$NON-NLS-1$                            
+                        }
 						text.append(MessageFormat.format(DebugModelMessages.getString("AntDebugModelPresentation.3"), new String[]{breakpointString})); //$NON-NLS-1$
 					} else {
 						text.append(DebugModelMessages.getString("AntDebugModelPresentation.4")); //$NON-NLS-1$
@@ -86,12 +91,8 @@ public class AntDebugModelPresentation extends LabelProvider implements IDebugMo
 				
 				return text.toString();
 			}
-		} else if (element instanceof AntProperty) {
-//		    AntProperty property= (AntProperty) element;
-//		    StringBuffer text= new StringBuffer(property.getName());
-//		    text.append("= ");
-//		    text.append(property.getValue().getValueString());
 		}
+		
 		return null;
 	}
 	

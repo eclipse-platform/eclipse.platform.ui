@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.debug.model;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.ant.internal.ui.debug.IAntDebugConstants;
 import org.eclipse.ant.internal.ui.debug.IAntDebugController;
 import org.eclipse.core.internal.variables.StringVariableManager;
@@ -53,6 +57,8 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
 	private IThread[] fThreads;
 	
 	private IAntDebugController fController;
+    
+    private List fRunToLineBreakpoints;
 
 	/**
 	 * Constructs a new debug target in the given launch for the 
@@ -212,6 +218,14 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
 	 */
 	public void breakpointAdded(IBreakpoint breakpoint) {
 		fController.handleBreakpoint(breakpoint, true);
+        if (breakpoint instanceof AntLineBreakpoint) {
+            if (((AntLineBreakpoint) breakpoint).isRunToLine()) {
+                if (fRunToLineBreakpoints == null) {
+                    fRunToLineBreakpoints= new ArrayList();
+                }
+                fRunToLineBreakpoints.add(breakpoint);
+            }
+        }
 	}
 
     /* (non-Javadoc)
@@ -219,6 +233,11 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
 	 */
 	public void breakpointRemoved(IBreakpoint breakpoint, IMarkerDelta delta) {
 		fController.handleBreakpoint(breakpoint, false);
+        if (fRunToLineBreakpoints != null) {
+            if (fRunToLineBreakpoints.remove(breakpoint) && fRunToLineBreakpoints.isEmpty()) {
+                fRunToLineBreakpoints= null;
+            }
+        }
 	}
 	
 	/* (non-Javadoc)
@@ -346,24 +365,37 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
 		String fileName= datum[1];
 		int lineNumber = Integer.parseInt(datum[2]);
 		IBreakpoint[] breakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(IAntDebugConstants.ID_ANT_DEBUG_MODEL);
+        boolean found= false;
 		for (int i = 0; i < breakpoints.length; i++) {
-			IBreakpoint breakpoint = breakpoints[i];
-			if (supportsBreakpoint(breakpoint)) {
-				if (breakpoint instanceof ILineBreakpoint) {
-					ILineBreakpoint lineBreakpoint = (ILineBreakpoint) breakpoint;
-					try {
-						if (lineBreakpoint.getLineNumber() == lineNumber && 
-								fileName.equals(breakpoint.getMarker().getResource().getLocation().toOSString())) {
-							fThread.setBreakpoints(new IBreakpoint[]{breakpoint});
-							break;
-						}
-					} catch (CoreException e) {
-					}
-				}
-			}
+           ILineBreakpoint lineBreakpoint = (ILineBreakpoint)breakpoints[i];
+           if (setThreadBreakpoint(lineBreakpoint, lineNumber, fileName)) {
+               found= true;
+               break;
+           }
 		}
+        if (!found && fRunToLineBreakpoints != null) {
+            Iterator iter= fRunToLineBreakpoints.iterator();
+            while (iter.hasNext()) {
+                ILineBreakpoint lineBreakpoint = (ILineBreakpoint) iter.next();
+                if (setThreadBreakpoint(lineBreakpoint, lineNumber, fileName)) {
+                    break;
+                }
+            }
+        }
 		suspended(DebugEvent.BREAKPOINT);
 	}	
+    
+    private boolean setThreadBreakpoint(ILineBreakpoint lineBreakpoint, int lineNumber, String fileName) {
+        try {
+            if (lineBreakpoint.getLineNumber() == lineNumber && 
+                    fileName.equals(lineBreakpoint.getMarker().getResource().getLocation().toOSString())) {
+                fThread.setBreakpoints(new IBreakpoint[]{lineBreakpoint});
+                return true;
+            }
+        } catch (CoreException e) {
+        }
+        return false;
+    }
 	
     public void breakpointHit (IBreakpoint breakpoint) {
         fThread.setBreakpoints(new IBreakpoint[]{breakpoint});
