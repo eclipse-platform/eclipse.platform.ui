@@ -105,14 +105,8 @@ public final class WorkbenchKeyboard {
      */
     private static final int MULTI_KEY_ASSIST_SHELL_MAX_WIDTH = 300;
 
-    /**
-     * The properties key for the key strokes that should be processed out of
-     * order.
-     */
-    static final String OUT_OF_ORDER_KEYS = "OutOfOrderKeys"; //$NON-NLS-1$
-
     /** The collection of keys that are to be processed out-of-order. */
-    static KeySequence outOfOrderKeys;
+    private static KeySequence outOfOrderKeys;
 
     /**
      * The translation bundle in which to look up internationalized text.
@@ -121,8 +115,16 @@ public final class WorkbenchKeyboard {
             .getBundle(WorkbenchKeyboard.class.getName());
 
     static {
-        initializeOutOfOrderKeys();
-    }
+		outOfOrderKeys = KeySequence.getInstance();
+
+		try {
+			outOfOrderKeys = KeySequence.getInstance("ESC DEL"); //$NON-NLS-1$
+		} catch (ParseException e) {
+			String message = "Could not parse out-of-order keys definition: 'ESC DEL'.  Continuing with no out-of-order keys."; //$NON-NLS-1$
+			WorkbenchPlugin.log(message, new Status(IStatus.ERROR,
+					WorkbenchPlugin.PI_WORKBENCH, 0, message, e));
+		}
+	}
 
     /**
      * Generates any key strokes that are near matches to the given event. The
@@ -169,26 +171,6 @@ public final class WorkbenchKeyboard {
         }
 
         return keyStrokes;
-    }
-
-    /**
-     * Initializes the <code>outOfOrderKeys</code> member variable using the
-     * keys defined in the properties file.
-     */
-    private static void initializeOutOfOrderKeys() {
-        // Get the key strokes which should be out of order.
-        String keysText = Util.translateString(RESOURCE_BUNDLE,
-                OUT_OF_ORDER_KEYS);
-        outOfOrderKeys = KeySequence.getInstance();
-
-        try {
-            outOfOrderKeys = KeySequence.getInstance(keysText);
-        } catch (ParseException e) {
-            String message = "Could not parse out-of-order keys definition: '" //$NON-NLS-1$
-                    + keysText + "'.  Continuing with no out-of-order keys."; //$NON-NLS-1$
-            WorkbenchPlugin.log(message, new Status(IStatus.ERROR,
-                    WorkbenchPlugin.PI_WORKBENCH, 0, message, e));
-        }
     }
 
     /**
