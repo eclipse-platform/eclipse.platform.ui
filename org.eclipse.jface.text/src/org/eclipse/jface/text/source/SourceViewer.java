@@ -422,7 +422,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 			if (modelRangeOffset == -1 && modelRangeLength == -1)
 				super.setDocument(document);
 			else
-				setDocument(document, modelRangeOffset, modelRangeLength);
+				super.setDocument(document, modelRangeOffset, modelRangeLength);
 		
 		} else {
 			
@@ -439,7 +439,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 			if (modelRangeOffset == -1 && modelRangeLength == -1)
 				super.setDocument(document);
 			else
-				setDocument(document, modelRangeOffset, modelRangeLength);
+				super.setDocument(document, modelRangeOffset, modelRangeLength);
 				
 			if (fVerticalRuler != null)
 				fVerticalRuler.setModel(fVisualAnnotationModel);
