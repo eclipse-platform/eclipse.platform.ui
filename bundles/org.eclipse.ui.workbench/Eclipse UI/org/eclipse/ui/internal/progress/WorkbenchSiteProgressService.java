@@ -222,6 +222,10 @@ public class WorkbenchSiteProgressService
 	 */
 	public void decrementBusy(Job job) {
 		synchronized (busyLock) {
+			
+			if(!busyJobs.contains(job))
+				return;
+			
 			busyJobs.remove(job);
 			if (busyJobs.size() > 0)
 				return;
@@ -238,7 +242,11 @@ public class WorkbenchSiteProgressService
 	 * @see org.eclipse.ui.internal.progress.IJobBusyListener#incrementBusy(org.eclipse.core.runtime.jobs.Job)
 	 */
 	public void incrementBusy(Job job) {
+		
 		synchronized (busyLock) {
+			if(busyJobs.contains(job))
+				return;
+			
 			busyJobs.add(job);
 			//If it is greater than one we already set busy
 			if (busyJobs.size() > 1)

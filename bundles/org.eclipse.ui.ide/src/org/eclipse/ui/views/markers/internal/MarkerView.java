@@ -140,7 +140,6 @@ public abstract class MarkerView extends TableView {
 	};
 	
 	private MarkerList currentMarkers = new MarkerList();
-	private boolean showingBusy = false;
 	private int totalMarkers = 0;
 	private boolean markerCountDirty = true;
 
@@ -754,15 +753,13 @@ public abstract class MarkerView extends TableView {
      */
     public void showBusy(boolean busy) {
         super.showBusy(busy);
-       
+        
         if(busy){
         	preBusyMarkers = totalMarkers;
-        	showingBusy = busy;
         }
         else{//Only bold if there has been a change in count
-        	if(showingBusy && totalMarkers != preBusyMarkers)
+        	if(totalMarkers != preBusyMarkers)
         		getProgressService().warnOfContentChange();
-        	showingBusy = false;
         }
         
     }
