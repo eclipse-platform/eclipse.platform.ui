@@ -8,11 +8,11 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.model;
+package org.eclipse.ui.internal.progress;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.internal.progress.ProgressMessages;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
  * The PendingUpdateAdapter is a convenience object that can be used
@@ -20,6 +20,24 @@ import org.eclipse.ui.internal.progress.ProgressMessages;
  */
 public class PendingUpdateAdapter
 	implements IWorkbenchAdapter, IAdaptable {
+		
+	boolean removed = false;
+
+	/**
+	 * Return whether or not this has been removed from the tree.
+	 * @return boolean
+	 */
+	public boolean isRemoved() {
+		return removed;
+	}
+
+	/**
+	 * Set whether or not this has been removed from the tree.
+	 * @param removed boolean
+	 */
+	public void setRemoved(boolean removed) {
+		this.removed = removed;
+	}
 
 	/**
 	 * Create a new instance of the receiver.
