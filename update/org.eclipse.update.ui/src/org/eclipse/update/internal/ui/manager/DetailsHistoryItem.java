@@ -16,6 +16,16 @@ public class DetailsHistoryItem {
 	public Object getInput() {
 		return input;
 	}
-	DetailsHistoryItem nextItem;
+	public boolean equals(Object itemObj) {
+		if (itemObj instanceof DetailsHistoryItem) {
+			DetailsHistoryItem item = (DetailsHistoryItem)itemObj;
+			if (!pageId.equals(item.getPageId())) return false;
+			if (input==null && item.getInput()==null) return true;
+			if (input.equals(item.getInput())) return true;
+		}
+		return false;
+	}
+	public String toString() {
+		return pageId+", "+input;
+	}
 }
-

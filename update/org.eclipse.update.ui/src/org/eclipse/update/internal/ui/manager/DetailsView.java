@@ -20,6 +20,7 @@ import org.eclipse.ui.texteditor.IUpdate;
  */
 public class DetailsView extends MultiPageView {
 public static final String HOME_PAGE = "Home";
+public static final String SITE_PAGE = "Site";
 public static final String DETAILS_PAGE = "Details";
 public static final String BROWSER_PAGE = "Browser";
 public static final String HOME_URL = "update://index.html";
@@ -38,6 +39,7 @@ abstract class UpdateAction extends Action implements IUpdate {
 	 * The constructor.
 	 */
 	public DetailsView() {
+		history = new DetailsHistory();
 	}
 	
 public void createPages() {
@@ -49,16 +51,19 @@ public void createPages() {
 	DetailsPage detailsPage = 
 		new DetailsPage(this, "Details");
 	addPage(DETAILS_PAGE, detailsPage);
+	SitePage sitePage = 
+		new SitePage(this, "Site");
+	addPage(SITE_PAGE, sitePage);
 	if (SWT.getPlatform().equals("win32")) {
 		addWebBrowser();
 	}
-	history.add(HOME_PAGE, null);
 }
 
 private void addWebBrowser() {
 	EmbeddedBrowser browser = new EmbeddedBrowser(this);
 	browser.setBrowserListener(new IBrowserListener () {
 		public void downloadComplete(String url) {
+			System.out.println("Complete: inHistory="+inHistory+", url="+url);
 			if (inHistory)
 				inHistory = false;
 			else
@@ -81,28 +86,17 @@ public void showURL(String url) {
 
 public void createPartControl(Composite parent) {
 	super.createPartControl(parent);
+	history.add(HOME_PAGE, null);
 	makeActions();
 	fillActionBars();
 }
 
-private void showDetails(Object el) {
-	showPage(DETAILS_PAGE, el);
-	history.add(DETAILS_PAGE, el);
+private void showPageWithInput(String pageId, Object input) {
+	showPage(pageId, input);
+	history.add(pageId, input);
+   	backAction.update();
+   	forwardAction.update();
 }
-
-
-/*
-private void showTransformedPage(Object el) {
-	TransformManager tm = UpdateUIPlugin.getDefault().getTransformManager();
-	String transURL = tm.getTransformedURL(el);
-	if (transURL!=null) {
-	   EmbeddedBrowser browser = 
-  	 		(EmbeddedBrowser)getPage(BROWSER_PAGE);
-  	   browser.setInput(el);
-	   showPage(BROWSER_PAGE, transURL);
-	}
-}
-*/
 	
 public void selectionChanged(IWorkbenchPart part, ISelection sel) {
 	if (part == this) return;
@@ -111,8 +105,11 @@ public void selectionChanged(IWorkbenchPart part, ISelection sel) {
 		if (ssel.size()==1) {
 			Object el = ssel.getFirstElement();
 			if (el instanceof IFeature || el instanceof ChecklistJob) {
-				showDetails(el);
+				showPageWithInput(DETAILS_PAGE, el);
 				return;
+			}
+			if (el instanceof SiteBookmark) {
+				showPageWithInput(SITE_PAGE, el);
 			}
 		}
 	}
@@ -178,16 +175,26 @@ private boolean canPerformBackward() {
 private void performBackward() {
 	DetailsHistoryItem item = history.getPrevious();
 	if (item!=null) {
-		inHistory=true;
+		if (item.getPageId() == BROWSER_PAGE)
+		   inHistory=true;
 	   	showPage(item.getPageId(), item.getInput());
+		if (item.getPageId() != BROWSER_PAGE) {
+		   	backAction.update();
+		   	forwardAction.update();
+		}
 	}
 }
 
 private void performForward() {
 	DetailsHistoryItem item = history.getNext();
 	if (item!=null) {
-		inHistory=true;
+		if (item.getPageId() == BROWSER_PAGE)
+		   inHistory=true;
 		showPage(item.getPageId(), item.getInput());
+		if (item.getPageId() != BROWSER_PAGE) {
+		   	backAction.update();
+		   	forwardAction.update();
+		}
 	}
 }
 

@@ -1,5 +1,5 @@
 package org.eclipse.update.internal.ui.parts;
-
+
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.swt.widgets.*;
@@ -13,13 +13,15 @@ import org.eclipse.update.internal.ui.*;
 import java.util.*;
 import org.eclipse.update.ui.internal.model.*;
 import org.eclipse.update.core.IFeature;
-
-
+import org.eclipse.jface.action.*;
+
+
 public class EmbeddedBrowser implements IUpdateFormPage {
 	private int ADDRESS_SIZE = 10;
 	private WebBrowser browser;
 	private Control control;
 	private Combo addressCombo;
+	private ToolBarManager toolBarManager;
 	private Object input;
 	private MultiPageView view;
 	private IBrowserListener listener;
@@ -42,68 +44,7 @@ public class EmbeddedBrowser implements IUpdateFormPage {
 	public WebBrowser getBrowser() {
 		return browser;
 	}
-	
-	ModelChangedListener modelListener = new ModelChangedListener();
-	
-	class ModelChangedListener implements IUpdateModelChangedListener {
-			/**
-		 * @see IUpdateModelChangedListener#objectAdded(Object, Object)
-		 */
-		public void objectAdded(Object parent, Object child) {
-			if (child instanceof ChecklistJob) {
-				ChecklistJob job = (ChecklistJob)child;
-				if (job.getFeature().equals(getInput()))
-				   browser.refresh();
-			}
-		}
 
-		/**
-		 * @see IUpdateModelChangedListener#objectRemoved(Object, Object)
-		 */
-		public void objectRemoved(Object parent, Object child) {
-			if (child instanceof ChecklistJob) {
-				ChecklistJob job = (ChecklistJob)child;
-				if (job.getFeature().equals(getInput()))
-				   browser.refresh();
-			}
-		}
-
-		/**
-		 * @see IUpdateModelChangedListener#objectChanged(Object, String)
-		 */
-		public void objectChanged(Object object, String property) {
-			if (object.equals(input))
-			   browser.refresh();
-		}
-}	
-	
-	class ScheduleURLAction implements IURLAction {
-		public void run(Hashtable params) {
-			String mode = (String)params.get("mode");
-			if (mode==null) mode = "install";
-			if (mode.equals("cancel")) {
-				UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
-				if (input instanceof IFeature) {
-					model.removeJob((IFeature)input);
-				}
-				else if (input instanceof ChecklistJob) {
-					model.removeJob((ChecklistJob)input);
-				}
-			}
-			else {
-			   int jobMode = ChecklistJob.INSTALL;
-			   if (mode.equals("uninstall"))
-			      jobMode = ChecklistJob.UNINSTALL;
-			   if (input instanceof IFeature) {
-				  IFeature feature = (IFeature)input;
-				  ChecklistJob job = new ChecklistJob(feature, jobMode);
-				  UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
-				  model.addJob(job);
-			   }
-			}
-		}
-	}
-	
 	/**
 	 * @see IUpdateFormPage#contextMenuAboutToShow(IMenuManager)
 	 */
@@ -132,7 +73,7 @@ public class EmbeddedBrowser implements IUpdateFormPage {
 			});
 		}
 	}
-
+
 	/**
 	 * @see IUpdateFormPage#performGlobalAction(String)
 	 */
@@ -143,10 +84,6 @@ public class EmbeddedBrowser implements IUpdateFormPage {
 	 * @see IUpdateFormPage#init(Object)
 	 */
 	public void init(Object model) {
-		ScheduleURLAction scheduleURLAction = new ScheduleURLAction();
-		UpdateModel updateModel = UpdateUIPlugin.getDefault().getUpdateModel();
-		updateModel.addUpdateModelChangedListener(modelListener);
-		UpdateUIPlugin.getDefault().registerURLAction("schedule", scheduleURLAction);
 	}
 
 	/**
@@ -181,7 +118,7 @@ public class EmbeddedBrowser implements IUpdateFormPage {
 		container.setLayout(layout);
 		Composite navContainer = new Composite(container, SWT.NONE);
 		layout = new GridLayout();
-		layout.numColumns = 2;
+		layout.numColumns = 3;
 		layout.marginHeight = 1;
 		navContainer.setLayout(layout);
 		createNavBar(navContainer);
@@ -207,18 +144,10 @@ public class EmbeddedBrowser implements IUpdateFormPage {
 		control = container;
 	}
 	
-	public void addUpdate(IUpdate update) {
-		browser.addUpdate(update);
-	}
-	
-	public void removeUpdate(IUpdate update) {
-		browser.removeUpdate(update);
-	}
-	
 	private void createNavBar(Composite parent) {
 		Label addressLabel = new Label(parent, SWT.NONE);
 		addressLabel.setText("Address");
-
+
 		addressCombo = new Combo(parent, SWT.DROP_DOWN | SWT.BORDER);
 		addressCombo.addSelectionListener(new SelectionListener () {
 			public void widgetSelected(SelectionEvent e) {
@@ -231,6 +160,9 @@ public class EmbeddedBrowser implements IUpdateFormPage {
 		});
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);	
 		addressCombo.setLayoutData(gd);
+		ToolBar toolbar = new ToolBar(parent, SWT.FLAT | SWT.HORIZONTAL);
+		toolBarManager = new ToolBarManager(toolbar);
+		makeActions();
 	}
 	
 	private void navigate(String url) {
@@ -255,20 +187,41 @@ public class EmbeddedBrowser implements IUpdateFormPage {
 		}
 	}
 	
-	public boolean canPerformBackward() {
-		return browser.isBackwardEnabled();
-	}
-	
-	public void performBackward() {
-		browser.back();
-	}
-	
-	public void performForward() {
-		browser.forward();
-	}
-	
-	public boolean canPerformForward() {
-		return browser.isForwardEnabled();
+	private void makeActions() {
+		Action goAction = new Action () {
+			public void run() {
+				navigate(addressCombo.getText());
+			}
+		};
+		goAction.setToolTipText("Go");
+		goAction.setImageDescriptor(UpdateUIPluginImages.DESC_GO_NAV);
+		goAction.setDisabledImageDescriptor(UpdateUIPluginImages.DESC_GO_NAV_D);
+		goAction.setHoverImageDescriptor(UpdateUIPluginImages.DESC_GO_NAV_H);
+		
+		Action stopAction = new Action () {
+			public void run() {
+				browser.stop();
+			}
+		};
+		stopAction.setToolTipText("Stop");
+		stopAction.setImageDescriptor(UpdateUIPluginImages.DESC_STOP_NAV);
+		stopAction.setDisabledImageDescriptor(UpdateUIPluginImages.DESC_STOP_NAV_D);
+		stopAction.setHoverImageDescriptor(UpdateUIPluginImages.DESC_STOP_NAV_H);
+
+		Action refreshAction = new Action () {
+			public void run() {
+				browser.refresh();
+			}
+		};
+		refreshAction.setToolTipText("Refresh");
+		refreshAction.setImageDescriptor(UpdateUIPluginImages.DESC_REFRESH_NAV);
+		refreshAction.setDisabledImageDescriptor(UpdateUIPluginImages.DESC_REFRESH_NAV_D);
+		refreshAction.setHoverImageDescriptor(UpdateUIPluginImages.DESC_REFRESH_NAV_H);
+		toolBarManager.add(goAction);
+		toolBarManager.add(new Separator());
+		toolBarManager.add(stopAction);
+		toolBarManager.add(refreshAction);
+		toolBarManager.update(true);
 	}
 	
 	private String getNormalizedURL(String url) {
@@ -280,9 +233,6 @@ public class EmbeddedBrowser implements IUpdateFormPage {
 	}
 	
 	public void dispose() {
-		UpdateUIPlugin.getDefault().unregisterURLAction("schedule");
-		UpdateModel updateModel = UpdateUIPlugin.getDefault().getUpdateModel();
-		updateModel.removeUpdateModelChangedListener(modelListener);
 		if (browser!=null) browser.dispose();
 	}
 	
@@ -329,4 +279,4 @@ public class EmbeddedBrowser implements IUpdateFormPage {
 	}
 
 }
-
+

@@ -97,10 +97,14 @@ public class UpdateUIPluginImages {
 	public static final ImageDescriptor DESC_STOP_NAV = create(PATH_LCL, "stop_nav.gif");
 	public static final ImageDescriptor DESC_STOP_NAV_H = create(PATH_LCL_HOVER, "stop_nav.gif");
 	public static final ImageDescriptor DESC_STOP_NAV_D = create(PATH_LCL_DISABLED, "stop_nav.gif");
+	public static final ImageDescriptor DESC_GO_NAV = create(PATH_LCL, "go_nav.gif");
+	public static final ImageDescriptor DESC_GO_NAV_H = create(PATH_LCL_HOVER, "go_nav.gif");
+	public static final ImageDescriptor DESC_GO_NAV_D = create(PATH_LCL_DISABLED, "go_nav.gif");
 
 	/**
 	 * WIZ
 	 */
+	public static final ImageDescriptor DESC_INSTALL_WIZ  = create(PATH_WIZBAN, "install_wiz.gif");
 	public static final ImageDescriptor DESC_FORM_BANNER  = create(PATH_WIZBAN, "form_banner.gif");
 	public static final ImageDescriptor DESC_FORM_UNDERLINE  = create(PATH_WIZBAN, "form_underline.gif");
 	public static final ImageDescriptor DESC_PROVIDER = create(PATH_WIZBAN, "provider.gif");

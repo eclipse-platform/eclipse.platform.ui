@@ -85,7 +85,7 @@
          id="org.eclipse.update.ui.ChecklistView">
    </view>
    <view
-         name="Feature Console"
+         name="Preview"
          icon="icons/full/view16/registry.gif"
          category="org.eclipse.update.ui"
          class="org.eclipse.update.internal.ui.manager.DetailsView"

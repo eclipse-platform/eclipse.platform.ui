@@ -445,13 +445,6 @@ public class WebBrowser implements OleListener {
 	public boolean isBackwardEnabled() {
 		return backwardEnabled;
 	}
-	
-	public void addUpdate(IUpdate update) {
-		controlSite.addUpdate(update);
-	}
-	public void removeUpdate(IUpdate update) {
-		controlSite.removeUpdate(update);
-	}
 }
 
 

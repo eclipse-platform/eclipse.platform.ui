@@ -31,7 +31,6 @@ public class BrowserControlSite extends OleControlSite {
 	private String presentationURL;
 	private boolean redirection;
 	private Vector navigateUpdate = new Vector();
-	private UpdateURLParser urlParser;
 	
 	void setBrowser(WebBrowser browser) {
 		this.browser = browser;
@@ -83,7 +82,6 @@ public class BrowserControlSite extends OleControlSite {
 	 */
 	public BrowserControlSite(Composite parent, int style, String progId) {
 		super(parent, style, progId);
-		urlParser = new UpdateURLParser();
 		
 		addEventListener(WebBrowser.DownloadBegin, new OleListener() {
 			public void handleEvent(OleEvent event) {
@@ -108,6 +106,7 @@ public class BrowserControlSite extends OleControlSite {
 			public void handleEvent(OleEvent event) {
 				Variant urlVar = event.arguments[1];
                 String strUrl = urlVar.getString();
+                /*
                 if (urlParser.isUpdateURL(strUrl)) {
                 	final String redirURL = urlParser.parseURL(strUrl);
                     Variant cancel = event.arguments[6];
@@ -124,7 +123,9 @@ public class BrowserControlSite extends OleControlSite {
                     //int ptr = urlVar.getByRef();
                     //OS.MoveMemory(ptr, new 
                     //browser.navigate(redirURL);
+ 
                 }
+                */
 			}
 		});
 
@@ -159,9 +160,5 @@ public class BrowserControlSite extends OleControlSite {
 				}
 			}
 		});
-	}
-	
-	private String createUpdatePage(String url) {
-		return null;
 	}
 }

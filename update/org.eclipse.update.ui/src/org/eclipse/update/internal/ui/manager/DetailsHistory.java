@@ -3,38 +3,56 @@ package org.eclipse.update.internal.ui.manager;
 import java.util.*;
 
 public class DetailsHistory {
-	private final static int MAX_SIZE = 100;
+	private final static int MAX_SIZE = 50;
 	private LinkedList history;
 	private ListIterator iterator;
+	private int current = -1;
 	
 	public DetailsHistory() {
 		history = new LinkedList();
 	}
+	
+	private void resetIterator() {
+		current = history.size() -1;
+	   	//iterator = history.listIterator(history.size()-1);
+	}
+	
 	public void add(DetailsHistoryItem item) {
-		history.addFirst(item);
+		if (!history.isEmpty() &&
+		    history.getLast().equals(item)) return;
+		System.out.println("Item added: "+item);
+		history.addLast(item);
 		if (history.size() > MAX_SIZE)
-		   history.removeLast();
-		iterator = history.listIterator();
+		   history.removeFirst();
+		resetIterator();
 	}
 	public void add(String pageId, Object input) {
 		this.add(new DetailsHistoryItem(pageId, input));
 	}
 	public boolean hasNext() {
-		return iterator.hasPrevious();
+		//if (iterator==null) return false;
+		//return iterator.hasNext();
+		if (current== -1) return false;
+		if (current == history.size()-1) return false;
+		return true;
 	}
 	public boolean hasPrevious() {
-		return iterator.hasNext();
+		//if (iterator==null) return false;
+		//return iterator.hasPrevious();
+		return (current >0);
 	}
 	public DetailsHistoryItem getNext() {
-		if (iterator.hasPrevious()) {
-			DetailsHistoryItem item = (DetailsHistoryItem)iterator.previous();
+		if (hasNext()) {
+			DetailsHistoryItem item = (DetailsHistoryItem)history.get(++current);
+			System.out.println("Next returned: "+item);
 			return item;
 		}
 		return null;
 	}
 	public DetailsHistoryItem getPrevious() {
-		if (iterator.hasNext()) {
-			DetailsHistoryItem item = (DetailsHistoryItem)iterator.next();
+		if (hasPrevious()) {
+			DetailsHistoryItem item = (DetailsHistoryItem)history.get(--current);
+			System.out.println("Prev returned: "+item);
 			return item;
 		}
 		return null;

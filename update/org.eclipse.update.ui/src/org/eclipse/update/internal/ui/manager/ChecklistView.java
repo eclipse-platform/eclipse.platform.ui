@@ -15,6 +15,9 @@ import org.eclipse.update.internal.ui.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.update.core.*;
 import org.eclipse.ui.*;
+import org.eclipse.update.internal.ui.wizards.*;
+import org.eclipse.swt.custom.*;
+import org.eclipse.jface.wizard.*;
 
 /**
  * Insert the type's description here.
@@ -143,8 +146,14 @@ public void createPartControl(Composite parent)  {
 	gd = new GridData();
 	totalSizeLabel.setLayoutData(gd);
 	startButton = factory.createButton(statusContainer, "Start...", SWT.PUSH);
+	startButton.addSelectionListener(new SelectionAdapter() {
+		public void widgetSelected(SelectionEvent e) {
+			performStart();
+		}
+	});
 	gd = new GridData(GridData.HORIZONTAL_ALIGN_END | GridData.VERTICAL_ALIGN_BEGINNING);
 	startButton.setLayoutData(gd);
+	updateStartButton();
 	Control sep = factory.createCompositeSeparator(statusContainer);
 	gd = new GridData(GridData.FILL_HORIZONTAL);
 	gd.horizontalSpan = 2;
@@ -175,6 +184,7 @@ public void objectAdded(Object parent, Object child) {
 		   parent = uninstalls;
 		viewer.add(parent, child);
 		viewer.expandToLevel(child, 1);
+		updateStartButton();
 	}
 }
 
@@ -185,12 +195,30 @@ public void objectRemoved(Object parent, Object child) {
 		if (job.getJobType()==ChecklistJob.UNINSTALL)
 		   parent = uninstalls;
 		viewer.remove(child);
+		updateStartButton();
 	}
 }
 public void objectChanged(Object object, String property) {
 	if (object instanceof ChecklistJob) {
 		viewer.update(object, new String [] {});
 	}
+}
+
+private void updateStartButton() {
+	UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+	startButton.setEnabled(model.getJobs().length>0);
+}
+
+private void performStart() {
+	BusyIndicator.showWhile(startButton.getDisplay(), new Runnable() {
+		public void run() {
+			InstallWizard wizard = new InstallWizard();
+			WizardDialog dialog = new WizardDialog(UpdateUIPlugin.getActiveWorkbenchShell(), wizard);
+			dialog.create();
+			dialog.getShell().setSize(500, 500);
+			dialog.open();
+		}
+	});
 }
 
 }
