@@ -5,30 +5,61 @@ package org.eclipse.team.internal.ccvs.ui.sync;
  * All Rights Reserved.
  */
  
+import org.eclipse.compare.structuremergeviewer.Differencer;
+import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.ui.sync.ChangedTeamContainer;
 import org.eclipse.team.ui.sync.ITeamNode;
 import org.eclipse.team.ui.sync.SyncSet;
+import org.eclipse.team.ui.sync.TeamFile;
+import org.eclipse.team.ui.sync.UnchangedTeamContainer;
 
 public class GetMergeAction extends MergeAction {
 	public GetMergeAction(CVSSyncCompareInput model, ISelectionProvider sp, int direction, String label, Shell shell) {
 		super(model, sp, direction, label, shell);
 	}
-	/*
-	 * @see MergeAction#isMatchingKind(int)
-	 */
-	protected boolean isMatchingKind(int kind) {
-		if ((kind & IRemoteSyncElement.DIRECTION_MASK) != IRemoteSyncElement.OUTGOING) return false;
-		int change = kind & IRemoteSyncElement.CHANGE_MASK;
-		return (change == IRemoteSyncElement.CHANGE || change == IRemoteSyncElement.ADDITION);
-	}
 
 	protected SyncSet run(SyncSet syncSet, IProgressMonitor monitor) {
+		// If there is a conflict in the syncSet, we need to prompt the user before proceeding.
+		if (syncSet.hasConflicts()) {
+			String[] buttons = new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL};
+			String question = Policy.bind("GetMergeAction.questionCatchup");
+			String title = Policy.bind("GetMergeAction.titleCatchup");
+			String[] tips = new String[] {
+				Policy.bind("GetMergeAction.catchupAll"),
+				Policy.bind("GetMergeAction.catchupPart"),
+				Policy.bind("GetMergeAction.cancelCatchup")
+			};
+			Shell shell = getShell();
+			final ToolTipMessageDialog dialog = new ToolTipMessageDialog(shell, title, null, question, MessageDialog.QUESTION, buttons, tips, 0);
+			shell.getDisplay().syncExec(new Runnable() {
+				public void run() {
+					dialog.open();
+				}
+			});
+			switch (dialog.getReturnCode()) {
+				case 0:
+					// Yes, synchronize conflicts as well
+					break;
+				case 1:
+					// No, only synchronize non-conflicting changes.
+					syncSet.removeConflictingNodes();
+					break;
+				case 2:
+				default:
+					// Cancel
+					return null;
+			}	
+		}
 		ITeamNode[] changed = syncSet.getChangedNodes();
 		IResource[] changedResources = new IResource[changed.length];
 		for (int i = 0; i < changed.length; i++) {
@@ -42,5 +73,36 @@ public class GetMergeAction extends MergeAction {
 			return null;
 		}
 		return syncSet;
+	}
+	
+	protected boolean isEnabled(ITeamNode node) {
+		int kind = node.getKind();
+		if (node instanceof TeamFile) {
+			int direction = kind & Differencer.DIRECTION_MASK;
+			if (direction == ITeamNode.INCOMING || direction == Differencer.CONFLICTING) {
+					return true;
+			}
+			// allow to catchup outgoing deletions
+			return (kind & Differencer.CHANGE_TYPE_MASK) == Differencer.DELETION;
+		}
+		if (node instanceof ChangedTeamContainer) {
+			// first check for changes to this folder
+			int direction = kind & Differencer.DIRECTION_MASK;
+			if (direction == ITeamNode.INCOMING || direction == Differencer.CONFLICTING) {
+				return true;
+			}
+			// Fall through to the UnchangedTeamContainer code
+		}
+		if (node instanceof UnchangedTeamContainer) {
+			IDiffElement[] children = ((UnchangedTeamContainer)node).getChildren();
+			for (int i = 0; i < children.length; i++) {
+				ITeamNode child = (ITeamNode)children[i];
+				if (isEnabled(child)) {
+					return true;
+				}
+			}
+			return false;
+		}
+		return false;
 	}
 }
