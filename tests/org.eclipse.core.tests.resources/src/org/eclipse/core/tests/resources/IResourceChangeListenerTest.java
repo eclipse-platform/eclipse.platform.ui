@@ -777,7 +777,6 @@ public void testReplaceFolderWithFolder() {
         folder2.create(false, true, null);
         
 		verifier.addExpectedChange(folder1, IResourceDelta.REMOVED, IResourceDelta.MOVED_TO, null, folder2.getFullPath());
-		// TODO in next line: How to set expected MOVED_TO as well as expected MOVED_FROM??
 		verifier.addExpectedChange(folder2, IResourceDelta.CHANGED, IResourceDelta.MOVED_FROM | IResourceDelta.MOVED_TO, folder1.getFullPath(), folder3.getFullPath());
 		verifier.addExpectedChange(folder3, IResourceDelta.ADDED, IResourceDelta.MOVED_FROM, folder2.getFullPath(), null);
 
