@@ -1,25 +1,32 @@
 package org.eclipse.ui;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/************************************************************************
+Copyright (c) 2001, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+	IBM - Initial implementation
+************************************************************************/
 
 /**
- * Interface for listening to null selection changes.
+ * Interface for listening to <code>null</code> selection changes.
  * <p>
- * This interface should be implemented by <code>ISelectionListener</code>
- * objects which wish to be notified when the selection becomes 
- * <code>null</code>.  It has no methods.  It simply indicates the 
- * desire to receive null selection events through the existing 
- * <code>selectionChanged</code> method.
- * Either the part or the selection may be <code>null</code>.
+ * This interface should be implemented by selection listeners
+ * that want to be notified when the selection becomes <code>null</code>.
+ * It has no methods. It simply indicates the desire to receive
+ * <code>null</code> selection events through the existing 
+ * <code>selectionChanged</code> method. Either the part or the 
+ * selection may be <code>null</code>.
  * </p>
  *
  * @see ISelectionListener#selectionChanged
  * @see IActionDelegate#selectionChanged
+ * @see org.eclipse.ui.ISelectionListener
  * 
  * @since 2.0
  */
-public interface INullSelectionListener {
+public interface INullSelectionListener extends ISelectionListener {
 }
