@@ -874,8 +874,10 @@ public final class Workbench implements IWorkbench {
 		workbenchContextSupport.initialize(); // deferred key binding support
 		workbenchCommandSupport.getCommandManager().addCommandManagerListener(
 				commandManagerListener);
-		workbenchContextSupport.getContextManager().addContextManagerListener(
-				contextManagerListener);
+		
+//      TODO: Possible fix for 84700 (Kim)
+//		workbenchContextSupport.getContextManager().addContextManagerListener(
+//				contextManagerListener);
 		initializeCommandResolver();
         
 

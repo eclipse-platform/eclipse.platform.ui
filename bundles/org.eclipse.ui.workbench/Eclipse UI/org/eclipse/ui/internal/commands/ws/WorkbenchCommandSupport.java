@@ -639,6 +639,10 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
                 if (bestHandlerSubmission != null && !conflict)
                     handlersByCommandId.put(commandId, bestHandlerSubmission
                             .getHandler());
+                else {
+                	// TODO : Possible fix for 84700 (Kim)
+                	handlersByCommandId.put(commandId, null);
+                }
             }
 
             commandManagerWrapper.setHandlersByCommandId(handlersByCommandId);
