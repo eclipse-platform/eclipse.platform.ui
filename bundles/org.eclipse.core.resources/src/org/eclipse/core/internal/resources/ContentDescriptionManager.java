@@ -200,7 +200,6 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 	}
 
 	public IContentDescription getDescriptionFor(File file, ResourceInfo info) throws CoreException {
-		//TODO Why not check the EMPTY_CACHE state?
 		switch (getCacheState()) {
 			case INVALID_CACHE :
 				// the cache is not good, flush it
@@ -215,7 +214,7 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 		if (info == null)
 			return null;
 		if (info.isSet(ICoreConstants.M_NO_CONTENT_DESCRIPTION))
-			// afawr, this file has no known content type
+			// presumably, this file has no known content type
 			return null;
 		if (info.isSet(ICoreConstants.M_DEFAULT_CONTENT_DESCRIPTION)) {
 			// this file supposedly has a default content description for an "obvious" content type			
@@ -229,9 +228,6 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 			// fix this and keep going			
 			info.clear(ICoreConstants.M_CONTENT_CACHE);
 		}
-		//TODO What if the cache has become invalid or a flush has started
-		//since we checked above?  Shouldn't the cache state checking above
-		//be moved into the sync block below?
 		synchronized (this) {
 			// tries to get a description from the cache	
 			Cache.Entry entry = cache.getEntry(file.getFullPath());
