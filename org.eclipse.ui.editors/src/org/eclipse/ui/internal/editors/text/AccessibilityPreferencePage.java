@@ -21,8 +21,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Preferences;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -32,7 +30,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import org.eclipse.jface.dialogs.Dialog;
@@ -141,12 +138,11 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 			if (val instanceof String) {
 				return Integer.parseInt((String) val);
 			}
-			throw new NumberFormatException("Value must be an integer");
+			throw new NumberFormatException(TextEditorMessages.getFormattedString("TextEditorPreferencePage.invalid_input", String.valueOf(val))); //$NON-NLS-1$
 		}
 	}
 	
 	static class IntegerDomain extends Domain {
-		// TODO convert to Spinner as soon as it becomes available
 		private final int fMax;
 		private final int fMin;
 		public IntegerDomain(int min, int max) {
@@ -246,52 +242,12 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 				addValue(from++);
 		}
 
-		public Control createControl(Composite parent, final Preference pref, final Preferences prefs) {
-			Composite composite= new Composite(parent, SWT.NONE);
-			GridLayout layout= new GridLayout(2, false);
-			layout.horizontalSpacing= 5;
-			layout.marginHeight= 0;
-			layout.marginWidth= 0;
-			composite.setLayout(layout);
-			
-			Label labelControl= new Label(composite, SWT.NONE);
-			labelControl.setText(pref.getName());
-			GridData gd= new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
-			labelControl.setLayoutData(gd);
-			
-			final Combo combo= new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY);
-			gd= new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
-			combo.setLayoutData(gd);
-			combo.setToolTipText(pref.getDescription());
-			for (Iterator it= fItems.iterator(); it.hasNext();) {
-				EnumValue value= (EnumValue) it.next();
-				combo.add(value.getLabel());
-			}
-			int val= prefs.getInt(pref.getKey());
-			int selection;
-			if (val >= 0 && val < fItems.size())
-				selection= val;
-			else
-				selection= 0;
-			combo.select(selection);
-			
-			combo.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					int index= combo.getSelectionIndex();
-					EnumValue value= (EnumValue) fItems.get(index);
-					prefs.setValue(pref.getKey(), value.getIntValue());
-				}
-			});
-			
-			return composite;
-		}
-
 		public IStatus validate(Object value) {
 			StatusInfo status= new StatusInfo();
 			try {
 				EnumValue e= parseEnumValue(value);
 				if (!fValueSet.contains(e))
-					status.setError("Value must be in the predefined set");
+					status.setError(TextEditorMessages.getFormattedString("TextEditorPreferencePage.invalid_range", new String[] {getValueByIndex(0).getLabel(), getValueByIndex(fItems.size() - 1).getLabel()})); //$NON-NLS-1$
 			} catch (NumberFormatException e) {
 				status.setError(TextEditorMessages.getFormattedString("TextEditorPreferencePage.invalid_input", String.valueOf(value))); //$NON-NLS-1$
 			}
@@ -308,21 +264,6 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 	}
 	
 	static class BooleanDomain extends Domain {
-		public Control createControl(Composite parent, final Preference pref, final Preferences prefs) {
-			final Button checkbox= new Button(parent, SWT.CHECK);
-			checkbox.setText(pref.getName());
-			checkbox.setToolTipText(pref.getDescription());
-			checkbox.setSelection(prefs.getBoolean(pref.getKey()));
-			
-			checkbox.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					boolean val= checkbox.getSelection();
-					prefs.setValue(pref.getKey(), val);
-				}
-			});
-			return checkbox;
-		}
-
 		public IStatus validate(Object value) {
 			StatusInfo status= new StatusInfo();
 			try {
@@ -345,7 +286,7 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 					return false;
 			}
 			
-			throw new NumberFormatException(value + " is not a boolean");
+			throw new NumberFormatException(TextEditorMessages.getFormattedString("TextEditorPreferencePage.invalid_input", String.valueOf(value))); //$NON-NLS-1$
 		}
 	}
 	
@@ -389,7 +330,7 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 
 	
 	public AccessibilityPreferencePage() {
-		setDescription("Accessibility"); //$NON-NLS-1$
+		setDescription(TextEditorMessages.getString("AccessibilityPreferencePage.accessibility.title")); //$NON-NLS-1$
 		setPreferenceStore(EditorsPlugin.getDefault().getPreferenceStore());
 		
 		fOverlayStore= createOverlayStore();
@@ -540,67 +481,6 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 		return checkBox;
 	}
 	
-	private Control[] addCombo(Composite composite, final Preference preference, final EnumeratedDomain domain, int indentation) {		
-		Label labelControl= new Label(composite, SWT.NONE);
-		labelControl.setText(preference.getName());
-		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		gd.horizontalIndent= indentation;
-		labelControl.setLayoutData(gd);
-
-		final Combo combo= new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY);
-		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		combo.setLayoutData(gd);
-		combo.setToolTipText(preference.getDescription());
-		for (Iterator it= domain.fItems.iterator(); it.hasNext();) {
-			EnumValue value= (EnumValue) it.next();
-			combo.add(value.getLabel());
-		}
-		
-		combo.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				int index= combo.getSelectionIndex();
-				EnumValue value= domain.getValueByIndex(index);
-				IStatus status= domain.validate(value);
-				if (!status.matches(IStatus.ERROR))
-					fOverlayStore.setValue(preference.getKey(), value.getIntValue());
-				updateStatus(status);
-			}
-		});
-		
-		fInitializers.add(fInitializerFactory.create(preference, combo, domain));
-		
-		return new Control[] {labelControl, combo};
-	}
-	
-	private Control[] addTextField(Composite composite, final Preference preference, final Domain domain, int textLimit, int indentation) {
-		Label labelControl= new Label(composite, SWT.NONE);
-		labelControl.setText(preference.getName());
-		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		gd.horizontalIndent= indentation;
-		labelControl.setLayoutData(gd);
-		
-		final Text textControl= new Text(composite, SWT.BORDER | SWT.SINGLE);		
-		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		gd.widthHint= convertWidthInCharsToPixels(textLimit + 1);
-		textControl.setLayoutData(gd);
-		textControl.setTextLimit(textLimit);
-		textControl.setToolTipText(preference.getDescription());
-		
-		textControl.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				String value= textControl.getText();
-				IStatus status= domain.validate(value);
-				if (!status.matches(IStatus.ERROR))
-					fOverlayStore.setValue(preference.getKey(), value);
-				updateStatus(status);
-			}
-		});
-		
-		fInitializers.add(fInitializerFactory.create(preference, textControl));
-		
-		return new Control[] {labelControl, textControl};
-	}
-
 	private void createDependency(final Button master, Preference preference, final Control[] slaves) {
 		indent(slaves[0]);
 		

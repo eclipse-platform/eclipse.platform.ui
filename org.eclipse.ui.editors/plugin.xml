@@ -202,7 +202,7 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            name="All Text Editors"
+            name="%PreferencePages.GeneralTextEditors"
             category="org.eclipse.ui.preferencePages.Editors"
             class="org.eclipse.ui.internal.editors.text.TextEditorDefaultsPreferencePage"
             id="org.eclipse.ui.preferencePages.GeneralTextEditor">
@@ -220,7 +220,7 @@
             id="org.eclipse.ui.editors.preferencePages.QuickDiff">
       </page>
       <page
-            name="Accessibility"
+            name="%PreferencePages.Accessibility"
             category="org.eclipse.ui.preferencePages.GeneralTextEditor"
             class="org.eclipse.ui.internal.editors.text.AccessibilityPreferencePage"
             id="org.eclipse.ui.editors.preferencePages.Accessibility">
