@@ -14,7 +14,9 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -123,9 +125,23 @@ public class RepositoriesView extends ViewPart {
 			}
 		};
 
-		// Properties (popup)
+		// Properties
 		propertiesAction = new PropertyDialogAction(shell, viewer);
-		
+		getViewSite().getActionBars().setGlobalActionHandler(IWorkbenchActionConstants.PROPERTIES, propertiesAction);		
+		IStructuredSelection selection = (IStructuredSelection)viewer.getSelection();
+		if (selection.size() == 1 && selection.getFirstElement() instanceof ICVSRepositoryLocation) {
+			propertiesAction.setEnabled(true);
+		} else {
+			propertiesAction.setEnabled(false);
+		}
+		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				IStructuredSelection ss = (IStructuredSelection)event.getSelection();
+				boolean enabled = ss.size() == 1 && ss.getFirstElement() instanceof ICVSRepositoryLocation;
+				propertiesAction.setEnabled(enabled);
+			}
+		});
+
 		// Create the popup menu
 		MenuManager menuMgr = new MenuManager();
 		Tree tree = viewer.getTree();
