@@ -119,10 +119,12 @@ public class SearchManager implements IResourceChangeListener {
 		Iterator iter= fListeners.iterator();
 		while (iter.hasNext()) {
 			SearchResultViewer viewer= (SearchResultViewer)iter.next();
-			viewer.setContextMenuTarget(null);
-			viewer.setActionGroupFactory(null);
-			viewer.setInput(null);
+			handleAllSearchesRemoved(viewer);
 		}
+	}
+
+	private void handleAllSearchesRemoved(SearchResultViewer viewer) {
+		viewer.handleAllSearchesRemoved();
 	}
 
 	void setCurrentSearch(final Search search) {

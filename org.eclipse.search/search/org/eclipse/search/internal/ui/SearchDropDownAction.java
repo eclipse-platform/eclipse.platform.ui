@@ -28,7 +28,7 @@ class SearchDropDownAction extends Action implements IMenuCreator {
 
 	private Menu fMenu;
 	
-	public SearchDropDownAction(SearchResultViewer viewer) {
+	public SearchDropDownAction() {
 		setText(SearchMessages.getString("SearchResultView.previousSearches.text")); //$NON-NLS-1$
 		setToolTipText(SearchMessages.getString("SearchResultView.previousSearches.tooltip")); //$NON-NLS-1$
 		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_HISTORY);
@@ -36,8 +36,10 @@ class SearchDropDownAction extends Action implements IMenuCreator {
 	}
 
 	public void dispose() {
-		if (fMenu != null)
+		if (fMenu != null)  {
 			fMenu.dispose();
+			fMenu= null;
+		}
 	}
 
 	public Menu getMenu(Menu parent) {
@@ -78,5 +80,13 @@ class SearchDropDownAction extends Action implements IMenuCreator {
 
 	public void run() {
 			new ShowSearchesAction().run(true);
+	}
+
+	/**
+	 * Get's rid of the menu, because the menu hangs on to 
+	 * the searches, etc.
+	 */
+	void clear() {
+		dispose();
 	}
 }

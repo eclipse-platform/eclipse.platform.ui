@@ -133,7 +133,7 @@ public class SearchResultViewer extends TableViewer {
 		fSearchAgainAction.setEnabled(hasSearchOperation);
 		fSortDropDownAction = new SortDropDownAction(this);
 		fSortDropDownAction.setEnabled(getItemCount() > 0);
-		fSearchDropDownAction= new SearchDropDownAction(this);
+		fSearchDropDownAction= new SearchDropDownAction();
 		fSearchDropDownAction.setEnabled(hasSearch);
 		fCopyToClipboardAction= new CopyToClipboardAction(this);
 
@@ -270,7 +270,7 @@ public class SearchResultViewer extends TableViewer {
 		updateTitle();
 		enableActions();
 		if (getItemCount() > 0)
-			selectResult(getTable(), 0);
+			selectResult(0);
 
 		WorkbenchHelp.setHelp(getControl(), SearchPlugin.getDefault().getSearchViewHelpContextId());
 	}
@@ -483,7 +483,7 @@ public class SearchResultViewer extends TableViewer {
 			}
 			fMarkerToShow= 0;
 			entry= (SearchResultViewEntry)getTable().getItem(index).getData();
-			selectResult(table, index);
+			selectResult(index);
 		}
 		entry.setSelectedMarkerIndex(fMarkerToShow);
 		openCurrentSelection();
@@ -520,7 +520,7 @@ public class SearchResultViewer extends TableViewer {
 			}
 			entry= (SearchResultViewEntry)getTable().getItem(index).getData();
 			fMarkerToShow= entry.getMatchCount() - 1;
-			selectResult(table, index);
+			selectResult(index);
 		}
 		entry.setSelectedMarkerIndex(fMarkerToShow);
 		openCurrentSelection();
@@ -533,7 +533,7 @@ public class SearchResultViewer extends TableViewer {
 		return true;			
 	}
 		
-	private void selectResult(Table table, int index) {
+	private void selectResult(int index) {
 		fHandleSelectionChangedEvents= false;
 		Object element= getElementAt(index);
 		if (element != null)
@@ -716,6 +716,13 @@ public class SearchResultViewer extends TableViewer {
 		getTable().setRedraw(false);
 		super.internalRefresh(element, updateLabels);
 		getTable().setRedraw(true);
+	}
+
+	void handleAllSearchesRemoved() {
+		setContextMenuTarget(null);
+		setActionGroupFactory(null);
+		setInput(null);
+		fSearchDropDownAction.clear();
 	}
 
 }
