@@ -471,13 +471,13 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	protected IResourceDelta getDelta(IProject project) {
 		if (currentTree == null) {
 			if (Policy.DEBUG_BUILD_FAILURE)
-				Policy.debug(true, "Build: no tree for delta " + debugBuilder() + " [" + debugProject() + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				Policy.debug("Build: no tree for delta " + debugBuilder() + " [" + debugProject() + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			return null;
 		}
 		//check if this builder has indicated it cares about this project
 		if (!isInterestingProject(project)) {
 			if (Policy.DEBUG_BUILD_FAILURE)
-				Policy.debug(true, "Build: project not interesting for this builder " + debugBuilder() + " [" + debugProject() + "] " + project.getFullPath()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				Policy.debug("Build: project not interesting for this builder " + debugBuilder() + " [" + debugProject() + "] " + project.getFullPath()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			return null;
 		}
 		//check if this project has changed
@@ -496,14 +496,14 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		long startTime = 0L;
 		if (Policy.DEBUG_BUILD_DELTA) {
 			startTime = System.currentTimeMillis();
-			Policy.debug(true, "Computing delta for project: " + project.getName()); //$NON-NLS-1$
+			Policy.debug("Computing delta for project: " + project.getName()); //$NON-NLS-1$
 		}
 		result = ResourceDeltaFactory.computeDelta(workspace, lastBuiltTree, currentTree, project.getFullPath(), -1);
 		deltaCache.cache(project.getFullPath(), lastBuiltTree, currentTree, result);
 		if (Policy.DEBUG_BUILD_FAILURE && result == null)
-			Policy.debug(true, "Build: no delta " + debugBuilder() + " [" + debugProject() + "] " + project.getFullPath()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			Policy.debug("Build: no delta " + debugBuilder() + " [" + debugProject() + "] " + project.getFullPath()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		if (Policy.DEBUG_BUILD_DELTA)
-			Policy.debug(true, "Finished computing delta, time: " + (System.currentTimeMillis() - startTime) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
+			Policy.debug("Finished computing delta, time: " + (System.currentTimeMillis() - startTime) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 		return result;
 	}
 
@@ -579,7 +579,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			EventStats.endBuild();
 		if (!Policy.DEBUG_BUILD_INVOKING || timeStamp == -1)
 			return; //builder wasn't called or we are not debugging
-		Policy.debug(true, "Builder finished: " + toString(builder) + " time: " + (System.currentTimeMillis() - timeStamp) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		Policy.debug("Builder finished: " + toString(builder) + " time: " + (System.currentTimeMillis() - timeStamp) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		timeStamp = -1;
 	}
 
@@ -600,7 +600,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 				default :
 					type = "INCREMENTAL_BUILD"; //$NON-NLS-1$
 			}
-			Policy.debug(true, "Invoking (" + type + ") on builder: " + toString(builder)); //$NON-NLS-1$ //$NON-NLS-2$
+			Policy.debug("Invoking (" + type + ") on builder: " + toString(builder)); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -704,18 +704,18 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		if (currentDelta == null) {
 			if (Policy.DEBUG_NEEDS_BUILD) {
 				String message = "Checking if need to build. Starting delta computation between: " + oldTree.toString() + " and " + newTree.toString(); //$NON-NLS-1$ //$NON-NLS-2$
-				Policy.debug(true, message);
+				Policy.debug(message);
 			}
 			currentDelta = newTree.getDataTree().forwardDeltaWith(oldTree.getDataTree(), ResourceComparator.getComparator(false));
 			if (Policy.DEBUG_NEEDS_BUILD)
-				Policy.debug(true, "End delta computation. (" + (System.currentTimeMillis() - start) + "ms)."); //$NON-NLS-1$ //$NON-NLS-2$
+				Policy.debug("End delta computation. (" + (System.currentTimeMillis() - start) + "ms)."); //$NON-NLS-1$ //$NON-NLS-2$
 			deltaTreeCache.cache(null, oldTree, newTree, currentDelta);
 		}
 
 		//search for the builder's project
 		if (currentDelta.findNodeAt(builder.getProject().getFullPath()) != null) {
 			if (Policy.DEBUG_NEEDS_BUILD)
-				Policy.debug(true, toString(builder) + " needs building because of changes in: " + builder.getProject().getName()); //$NON-NLS-1$
+				Policy.debug(toString(builder) + " needs building because of changes in: " + builder.getProject().getName()); //$NON-NLS-1$
 			return true;
 		}
 
@@ -724,7 +724,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		for (int i = 0; i < projects.length; i++) {
 			if (currentDelta.findNodeAt(projects[i].getFullPath()) != null) {
 				if (Policy.DEBUG_NEEDS_BUILD)
-					Policy.debug(true, toString(builder) + " needs building because of changes in: " + projects[i].getName()); //$NON-NLS-1$
+					Policy.debug(toString(builder) + " needs building because of changes in: " + projects[i].getName()); //$NON-NLS-1$
 				return true;
 			}
 		}

@@ -1335,8 +1335,8 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 							visitAndSave(workspace.getRoot());
 							monitor.worked(1);
 							if (Policy.DEBUG_SAVE) {
-								Policy.debug(false, "Total Save Markers: " + persistMarkers + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
-								Policy.debug(false, "Total Save Sync Info: " + persistSyncInfo + "ms"); //$NON-NLS-1$	 //$NON-NLS-2$
+								Policy.debug("Total Save Markers: " + persistMarkers + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
+								Policy.debug("Total Save Sync Info: " + persistSyncInfo + "ms"); //$NON-NLS-1$	 //$NON-NLS-2$
 							}
 							// reset the snap shot files
 							resetSnapshots(workspace.getRoot());
@@ -1355,8 +1355,8 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 							visitAndSnap(workspace.getRoot());
 							monitor.worked(1);
 							if (Policy.DEBUG_SAVE) {
-								Policy.debug(false, "Total Snap Markers: " + persistMarkers + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
-								Policy.debug(false, "Total Snap Sync Info: " + persistSyncInfo + "ms"); //$NON-NLS-1$	 //$NON-NLS-2$
+								Policy.debug("Total Snap Markers: " + persistMarkers + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
+								Policy.debug("Total Snap Sync Info: " + persistSyncInfo + "ms"); //$NON-NLS-1$	 //$NON-NLS-2$
 							}
 							collapseTrees();
 							clearSavedDelta();
