@@ -68,7 +68,7 @@ public class PageLayout implements IPageLayout {
 	private Map mapIDtoViewLayoutRec = new HashMap(10);
 	private ArrayList newWizardActionIds = new ArrayList(3);
 	private ArrayList perspectiveActionIds = new ArrayList(3);
-	private RootLayoutContainer rootLayoutContainer;
+	private ViewSashContainer rootLayoutContainer;
 	private ArrayList showInPartIds = new ArrayList(3);
 	private ArrayList showViewActionIds = new ArrayList(3);
 	private ViewFactory viewFactory;
@@ -85,7 +85,7 @@ public class PageLayout implements IPageLayout {
 	 * perspective.
 	 */
 	public PageLayout(
-		RootLayoutContainer container,
+		ViewSashContainer container,
 		ViewFactory viewFactory,
 		LayoutPart editorFolder,
 		IPerspectiveDescriptor descriptor) {
@@ -519,7 +519,7 @@ public class PageLayout implements IPageLayout {
 	/**
 	 * @return the top level layout container.
 	 */
-	public RootLayoutContainer getRootLayoutContainer() {
+	public ViewSashContainer getRootLayoutContainer() {
 		return rootLayoutContainer;
 	}
 

@@ -587,7 +587,7 @@ private void loadPredefinedPersp(
 	}
 
 	// Create layout factory.
-	RootLayoutContainer container = new RootLayoutContainer(page);
+	ViewSashContainer container = new ViewSashContainer(page);
 	PageLayout layout = new PageLayout(container, getViewFactory(), editorArea, descriptor);
 	layout.setFixed(descriptor.getFixed());
 
@@ -853,7 +853,7 @@ public IStatus restoreState() {
 	}
 	
 	// Create an empty presentation..
-	RootLayoutContainer mainLayout = new RootLayoutContainer(page);
+	ViewSashContainer mainLayout = new ViewSashContainer(page);
 	PerspectivePresentation pres = new PerspectivePresentation(page, mainLayout);
 
 	// Read the layout.

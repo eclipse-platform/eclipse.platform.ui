@@ -80,7 +80,7 @@ abstract public class LayoutPart {
 //	/**
 //	 * Gets root container for this part.
 //	 */
-//	public RootLayoutContainer getRootContainer() {
+//	public ViewSashContainer getRootContainer() {
 //		if (container != null)
 //			return container.getRootContainer();
 //		return null;

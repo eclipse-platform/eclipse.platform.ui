@@ -51,5 +51,5 @@ public void setZoomed(boolean isZoomed);
 /**
  * Gets root container for this part.
  */
-//public RootLayoutContainer getRootContainer();
+//public ViewSashContainer getRootContainer();
 }

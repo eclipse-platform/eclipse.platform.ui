@@ -48,7 +48,7 @@ import org.eclipse.ui.internal.misc.StringMatcher;
 public class PerspectivePresentation {
 	private WorkbenchPage page;
 	private Composite parentWidget;
-	private RootLayoutContainer mainLayout;
+	private ViewSashContainer mainLayout;
 	private IWorkbenchPartReference zoomPart;
 
 	private ArrayList detachedWindowList = new ArrayList(1);
@@ -117,7 +117,7 @@ public class PerspectivePresentation {
 	 */
 	public PerspectivePresentation(
 		WorkbenchPage workbenchPage,
-		RootLayoutContainer mainLayout) {
+		ViewSashContainer mainLayout) {
 		this.page = workbenchPage;
 		this.mainLayout = mainLayout;
 
@@ -935,7 +935,7 @@ public class PerspectivePresentation {
 	/**
 	 * Returns the layout container.
 	 */
-	public RootLayoutContainer getLayout() {
+	public ViewSashContainer getLayout() {
 		return mainLayout;
 	}
 	///**

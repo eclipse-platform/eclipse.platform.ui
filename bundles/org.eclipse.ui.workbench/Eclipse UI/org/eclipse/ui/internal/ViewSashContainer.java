@@ -22,8 +22,8 @@ import org.eclipse.ui.PlatformUI;
 /**
  * Represents the top level container.
  */
-public class RootLayoutContainer extends PartSashContainer {
-public RootLayoutContainer(WorkbenchPage page) {
+public class ViewSashContainer extends PartSashContainer {
+public ViewSashContainer(WorkbenchPage page) {
 	super("root layout container",page);//$NON-NLS-1$
 }
 /**
@@ -38,7 +38,7 @@ protected void childAdded(LayoutPart child) {
 /**
  * Gets root container for this part.
  */
-public RootLayoutContainer getRootContainer() {
+public ViewSashContainer getRootContainer() {
 	return this;
 }
 /**
