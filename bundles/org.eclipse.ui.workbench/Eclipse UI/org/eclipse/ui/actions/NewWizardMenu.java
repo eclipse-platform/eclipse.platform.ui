@@ -9,6 +9,7 @@ import org.eclipse.jface.action.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.dialogs.WizardCollectionElement;
 import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
 import org.eclipse.ui.internal.registry.NewWizardsRegistryReader;
 import java.util.*;
@@ -92,9 +93,12 @@ public class NewWizardMenu extends ContributionItem {
 				}
 			}
 
-			//		Add examples ..
-			innerMgr.add(new Separator());
-			innerMgr.add(newExampleAction);
+			if (hasExamples()) {
+				//Add examples ..
+				innerMgr.add(new Separator());
+				innerMgr.add(newExampleAction);
+			}
+
 			// Add other ..
 			innerMgr.add(new Separator());
 			innerMgr.add(showDlgAction);
@@ -172,6 +176,27 @@ public class NewWizardMenu extends ContributionItem {
 			items[i].fill(menu, index++);
 		}
 		dirty = false;
+	}
+
+	/**
+	 * Return whether or not any examples are in the current
+	 * install.
+	 * @return boolean
+	 */
+	private boolean hasExamples() {
+		NewWizardsRegistryReader rdr = new NewWizardsRegistryReader(false);
+
+		Object[] children = rdr.getWizards().getChildren();
+
+		for (int i = 0; i < children.length; i++) {
+			WizardCollectionElement currentChild =
+				(WizardCollectionElement) children[i];
+			if (currentChild
+				.getId()
+				.equals(NewWizardsRegistryReader.FULL_EXAMPLES_WIZARD_CATEGORY))
+				return true;
+		}
+		return false;
 	}
 
 }
