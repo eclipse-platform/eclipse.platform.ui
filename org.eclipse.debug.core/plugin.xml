@@ -21,6 +21,7 @@
 
 <!-- Extension points -->
 <extension-point id="launchers" name="Launcher"/>
+<extension-point id="breakpoint_factories" name="BreakpointFactory"/>
 
 <!-- Extensions -->
 <extension

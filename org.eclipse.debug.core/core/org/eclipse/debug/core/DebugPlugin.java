@@ -5,9 +5,9 @@ package org.eclipse.debug.core;
  * All Rights Reserved.
  */
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.core.*;
-import org.eclipse.core.runtime.*;
 
 /**
  * There is one instance of the debug plugin available from
@@ -40,6 +40,11 @@ public class DebugPlugin extends Plugin {
 	 * The collection of launcher extensions.
 	 */
 	private Launcher[] fLaunchers= new Launcher[0];
+
+	/**
+	 * The collection of breakpoint factory extensions.
+	 */
+	private IBreakpointFactory[] fBreakpointFactories= new IBreakpointFactory[0];
 
 	/**
 	 * The singleton breakpoint manager.
@@ -157,6 +162,32 @@ public class DebugPlugin extends Plugin {
 			fLaunchers[i]= new Launcher(infos[i]);
 		}
 	}
+	
+	/**
+	 * Returns a collection of breakpoint factory extensions. Breakpoint factory represent
+	 * and provide access to breakpoint factory extensions.
+	 *
+	 * @return an array of breakpoint factory
+	 * @see org.eclipse.debug.core.IBreakpointFactory
+	 */
+	public IBreakpointFactory[] getBreakpointFactories() {
+		return fBreakpointFactories;
+	}
+	
+	/**
+	 * Loads all breakpoint factory extensions.
+	 *
+	 * @exception CoreException if creation of a breakpoint factory extension fails
+	 */
+	protected void loadBreakpointFactories() throws CoreException {
+		IPluginDescriptor descriptor= getDescriptor();
+		IExtensionPoint extensionPoint= descriptor.getExtensionPoint(IDebugConstants.EXTENSION_POINT_BREAKPOINT_FACTORY);
+		IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
+		fBreakpointFactories= new IBreakpointFactory[infos.length];
+		for (int i= 0; i < infos.length; i++) {
+			fBreakpointFactories[i]= new BreakpointFactory(infos[i]);
+		}
+	}		
 
 	/**
 	 * Removes the given listener from the collection of registered debug
@@ -204,6 +235,7 @@ public class DebugPlugin extends Plugin {
 		fLaunchManager= new LaunchManager();
 		fBreakpointManager= new BreakpointManager();
 		loadLaunchers();
+		loadBreakpointFactories();		
 		fBreakpointManager.startup();
 	}
 	

@@ -5,7 +5,7 @@ package org.eclipse.debug.core.model;
  * All Rights Reserved.
  */
 
-import java.util.List;
+import org.eclipse.debug.core.IBreakpointListener;
 
 /**
  * A debug target is a debuggable execution context. For example, a debug target
@@ -38,7 +38,7 @@ import java.util.List;
  * @see IDisconnect
  * @see org.eclipse.debug.core.ILaunch
  */
-public interface IDebugTarget extends IDebugElement, ITerminate, ISuspendResume, IBreakpointSupport, IDisconnect {
+public interface IDebugTarget extends IDebugElement, ITerminate, ISuspendResume, IBreakpointListener, IDisconnect {
 	/**
 	 * Returns the system process associated with this debug target
 	 * or <code>null</code> if no system process is associated with

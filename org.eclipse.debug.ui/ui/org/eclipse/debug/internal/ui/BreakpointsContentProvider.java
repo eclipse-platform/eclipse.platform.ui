@@ -26,7 +26,7 @@ public class BreakpointsContentProvider extends BasicContentProvider implements 
 	 * Returns all the breakpoint markers in the current open workspace
 	 */
 	public Object[] getElements(Object parent) {
-		return ((IBreakpointManager) parent).getBreakpoints();
+		return ((IBreakpointManager) parent).getMarkers();
 	}
 	
 	/**
@@ -40,12 +40,12 @@ public class BreakpointsContentProvider extends BasicContentProvider implements 
 	/**
 	 * @see IBreakpointListener
 	 */
-	public void breakpointAdded(final IMarker breakpoint) {
+	public void breakpointAdded(final IBreakpoint breakpoint) {
 		if (breakpoint.exists()) {		
 			asyncExec(new Runnable() {
 				public void run() {
 					if (!isDisposed()) {
-						((TableViewer)fViewer).add(breakpoint);
+						((TableViewer)fViewer).add(breakpoint.getMarker());
 					}
 				}
 			});
@@ -55,11 +55,11 @@ public class BreakpointsContentProvider extends BasicContentProvider implements 
 	/**
 	 * @see IBreakpointListener
 	 */
-	public void breakpointRemoved(final IMarker breakpoint, IMarkerDelta delta) {
+	public void breakpointRemoved(final IBreakpoint breakpoint, IMarkerDelta delta) {
 		asyncExec(new Runnable() {
 			public void run() {
 				if (!isDisposed()) {
-					((TableViewer)fViewer).remove(breakpoint);
+					((TableViewer)fViewer).remove(breakpoint.getMarker());
 				}
 			}
 		});
@@ -68,12 +68,12 @@ public class BreakpointsContentProvider extends BasicContentProvider implements 
 	/**
 	 * @see IBreakpointListener
 	 */
-	public void breakpointChanged(final IMarker breakpoint, IMarkerDelta delta) {
+	public void breakpointChanged(final IBreakpoint breakpoint, IMarkerDelta delta) {
 		if (breakpoint.exists()) {
 			asyncExec(new Runnable() {
 				public void run() {
 					if (!isDisposed()) {
-						refresh(breakpoint);
+						refresh(breakpoint.getMarker());
 					}
 				}
 			});

@@ -52,7 +52,8 @@ public class RemoveBreakpointAction extends SelectionProviderAction {
 				IBreakpointManager breakpointManager= DebugPlugin.getDefault().getBreakpointManager();
 				while (itr.hasNext()) {
 					try {
-						breakpointManager.removeBreakpoint((IMarker)itr.next(), true);
+						IBreakpoint breakpoint= breakpointManager.getBreakpoint((IMarker)itr.next());
+						breakpointManager.removeBreakpoint(breakpoint, true);
 					} catch (CoreException ce) {
 						ms.merge(ce.getStatus());
 					}

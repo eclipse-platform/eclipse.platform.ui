@@ -32,12 +32,12 @@ public interface IBreakpointListener {
 	 *
 	 * @param breakpoint the added breakpoint
 	 */
-	public void breakpointAdded(IMarker breakpoint);
+	public void breakpointAdded(IBreakpoint breakpoint);
 	/**
 	 * Notifies this listener that the given breakpoint has been removed.
-	 * If the given marker has been removed because it has been deleted,
+	 * If the given breakpoint has been removed because it has been deleted,
 	 * the associated marker delta is also provided such that any attributes 
-	 * of the marker can still be accessed.
+	 * of the breakpoint can still be accessed.
 	 *
 	 * @param breakpoint the removed breakpoint
 	 * @param delta the associated marker delta, or  <code>null</code> when
@@ -46,7 +46,7 @@ public interface IBreakpointListener {
 	 *
 	 * @see org.eclipse.core.resources.IMarkerDelta
 	 */
-	public void breakpointRemoved(IMarker breakpoint, IMarkerDelta delta);
+	public void breakpointRemoved(IBreakpoint breakpoint, IMarkerDelta delta);
 	
 	/**
 	 * Notifies this listener that an attribute of the given breakpoint has
@@ -57,6 +57,6 @@ public interface IBreakpointListener {
 	 *
 	 * @see org.eclipse.core.resources.IMarkerDelta
 	 */
-	public void breakpointChanged(IMarker breakpoint, IMarkerDelta delta);
+	public void breakpointChanged(IBreakpoint breakpoint, IMarkerDelta delta);
 
 }

@@ -38,13 +38,13 @@ public class RemoveAllBreakpointsAction extends Action implements IBreakpointLis
 	 */
 	public void run() {
 		final IBreakpointManager breakpointManager= DebugPlugin.getDefault().getBreakpointManager();
-		final IMarker[] markers= breakpointManager.getBreakpoints();
+		final IBreakpoint[] breakpoints= breakpointManager.getBreakpoints();
 		final MultiStatus ms= new MultiStatus(DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(), IDebugStatusConstants.REQUEST_FAILED, DebugUIUtils.getResourceString(STATUS), null);
 		IWorkspaceRunnable r = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor pm) {
-				for (int i= 0; i < markers.length; i++) {
+				for (int i= 0; i < breakpoints.length; i++) {
 					try {
-						breakpointManager.removeBreakpoint(markers[i], true);
+						breakpointManager.removeBreakpoint(breakpoints[i], true);
 					} catch (CoreException e) {
 						ms.merge(e.getStatus());
 					}
@@ -63,18 +63,18 @@ public class RemoveAllBreakpointsAction extends Action implements IBreakpointLis
 	/**
 	 * @see IBreakpointListener
 	 */
-	public void breakpointAdded(IMarker breakpoint) {
+	public void breakpointAdded(IBreakpoint breakpoint) {
 		breakpointAltered();
 	}
 	/**
 	 * @see IBreakpointListener
 	 */
-	public void breakpointChanged(IMarker breakpoint, IMarkerDelta delta) {
+	public void breakpointChanged(IBreakpoint breakpoint, IMarkerDelta delta) {
 	}
 	/**
 	 * @see IBreakpointListener
 	 */
-	public void breakpointRemoved(IMarker breakpoint, IMarkerDelta delta) {
+	public void breakpointRemoved(IBreakpoint breakpoint, IMarkerDelta delta) {
 		breakpointAltered();
 	}
 	
