@@ -51,7 +51,6 @@ public class UIEditWorkingSetWizardAuto extends UIWorkingSetWizardsAuto {
 		super.setUp();
 	}
 	public void testEditPage() throws Throwable {
-		setupResources();		
 		IWizardPage page = fWizardDialog.getCurrentPage();
 		assertTrue(page instanceof IWorkingSetPage);
 
@@ -68,7 +67,7 @@ public class UIEditWorkingSetWizardAuto extends UIWorkingSetWizardsAuto {
 		/*
 		 * Test page state with preset page input
 		 */
-		IWorkingSetManager workingSetManager = getWorkbench().getWorkingSetManager();
+		IWorkingSetManager workingSetManager = fWorkbench.getWorkingSetManager();
 		IWorkingSet workingSet = workingSetManager.createWorkingSet(WORKING_SET_NAME_1, new IAdaptable[] {p1, f2});
 		((WorkingSetEditWizard) fWizard).setSelection(workingSet);
 						 
@@ -80,7 +79,8 @@ public class UIEditWorkingSetWizardAuto extends UIWorkingSetWizardsAuto {
 		assertNull(page.getErrorMessage());		
 		widgets = getWidgets(fWizardDialog.getShell(), Tree.class);
 		Tree tree = (Tree) widgets.get(0);
-		assertEquals(2, tree.getItemCount());
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();		
+		assertEquals(workspace.getRoot().getProjects().length, tree.getItemCount());
 		setTextWidgetText(WORKING_SET_NAME_2);
 		assertTrue(fWizard.canFinish());
 		

@@ -85,7 +85,6 @@ public class UINewWorkingSetWizardAuto extends UIWorkingSetWizardsAuto {
 		IWizardPage defaultEditPage = registry.getDefaultWorkingSetPage();
 		assertTrue((page instanceof WorkingSetTypePage) == fWorkingSetDescriptors.length > 1);
 
-		setupResources();		
 		if (page instanceof WorkingSetTypePage) {
 			/*
 			 * Select the default (Resource) working set type

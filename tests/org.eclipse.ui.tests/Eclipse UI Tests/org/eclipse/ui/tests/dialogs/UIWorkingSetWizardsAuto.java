@@ -6,6 +6,7 @@ import java.util.List;
 import junit.framework.TestCase;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.*;
@@ -22,6 +23,7 @@ import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.dialogs.*;
 import org.eclipse.ui.internal.registry.WorkingSetDescriptor;
 import org.eclipse.ui.internal.registry.WorkingSetRegistry;
+import org.eclipse.ui.tests.util.*;
 import org.eclipse.ui.tests.util.DialogCheck;
 import org.eclipse.ui.tests.util.FileUtil;
 import org.eclipse.ui.wizards.newresource.*;
@@ -29,7 +31,7 @@ import org.eclipse.ui.wizards.newresource.*;
 /**
  * Abstract test class for the working set wizard tests.
  */
-public abstract class UIWorkingSetWizardsAuto extends TestCase {
+public abstract class UIWorkingSetWizardsAuto extends UITestCase {
 	protected static final int SIZING_WIZARD_WIDTH    = 470;
 	protected static final int SIZING_WIZARD_HEIGHT   = 550;
 	protected static final int SIZING_WIZARD_WIDTH_2  = 500;
@@ -60,6 +62,14 @@ public abstract class UIWorkingSetWizardsAuto extends TestCase {
 			tree.notifyListeners(SWT.Selection, event);
 		}
 	}
+	private void deleteResources() throws CoreException {
+		if (p1 != null) {
+			FileUtil.deleteProject(p1);
+		}
+		if (p2 != null) {
+			FileUtil.deleteProject(p2);
+		}
+	}
 	private Shell getShell() {
 		return DialogCheck.getShell();
 	}
@@ -78,9 +88,6 @@ public abstract class UIWorkingSetWizardsAuto extends TestCase {
 		}
 		return selectedChildren;
 	}
-	protected IWorkbench getWorkbench() {
-		return WorkbenchPlugin.getDefault().getWorkbench();
-	}
 	/**
 	 * <code>fWizard</code> must be initialized by subclasses prior to calling setUp.
 	 * @see junit.framework.TestCase#setUp()
@@ -96,20 +103,14 @@ public abstract class UIWorkingSetWizardsAuto extends TestCase {
 		
 		WorkingSetRegistry registry = WorkbenchPlugin.getDefault().getWorkingSetRegistry();
 		fWorkingSetDescriptors = registry.getWorkingSetDescriptors();
+		
+		setupResources();
 	}
-	protected void setupResources() throws Throwable {
-		if (p1 == null) {
-			p1 = FileUtil.createProject("TP1");
-			f1 = null;
-		}
-		if (p2 == null) {
-			p2 = FileUtil.createProject("TP2");
-			f2 = null;
-		}
-		if (f1 == null)
-			f1 = FileUtil.createFile("f1.txt", p1);
-		if (f2 == null)
-			f2 = FileUtil.createFile("f2.txt", p2);
+	private void setupResources() throws CoreException {
+		p1 = FileUtil.createProject("TP1");
+		p2 = FileUtil.createProject("TP2");
+		f1 = FileUtil.createFile("f1.txt", p1);
+		f2 = FileUtil.createFile("f2.txt", p2);
 	}
 	protected void setTextWidgetText(String text) {
 		List widgets = getWidgets(fWizardDialog.getShell(), Text.class);
@@ -117,5 +118,13 @@ public abstract class UIWorkingSetWizardsAuto extends TestCase {
 		textWidget.setText(text);
 		textWidget.notifyListeners(SWT.Modify, new Event());
 	}
+	/**
+	 * @see junit.framework.TestCase#tearDown()
+	 */
+	protected void tearDown() throws Exception {
+		deleteResources();
+		super.tearDown();
+	}
+
 }
 
