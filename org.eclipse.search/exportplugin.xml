@@ -1,0 +1,24 @@
+<!-- build script to create a plugin from org.eclipse.jdt.ui -->
+<project name="org.eclipse.search" default="export" basedir=".">
+	<target name="init">
+		<tstamp/>
+		<property name="destdir" value="../../../plugin-export" />
+		<property name="dest"  value="${destdir}/org.eclipse.search" />
+	</target>
+
+	<target name="export" depends="init">
+		<mkdir dir="${destdir}" />
+		<delete dir="${dest}" />
+		<mkdir dir="${dest}" />
+		<jar 
+			jarfile="${dest}/jdt.jar"
+			basedir="bin"
+		/>
+		<copy file="plugin.xml" todir="${dest}"/>
+		<copy file="plugin.properties" todir="${dest}"/>
+		<copy file="plugin.jars" todir="${dest}"/>
+		<copy todir="${dest}/icons">
+			<fileset dir="icons" />
+		</copy>
+	</target>
+</project>
