@@ -21,8 +21,8 @@ import org.eclipse.swt.graphics.Image;
  * The input is identified using an <code>IEditorInput</code>.  Modifications made 
  * in an editor part follow an open-save-close lifecycle model.
  * </p><p>
- * This interface is not intended to be directly implemented or extended by
- * clients.
+ * This interface may be implemented directly.  For convenience, a base
+ * implementation is defined in <code>WorkbenchPart</code>.
  * </p><p>
  * The lifecycle of a workbench part is as follows:
  * <ul>
