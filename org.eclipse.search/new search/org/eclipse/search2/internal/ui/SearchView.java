@@ -37,6 +37,7 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.part.IPage;
 import org.eclipse.ui.part.IPageBookViewPage;
 import org.eclipse.ui.part.IPageSite;
@@ -373,6 +374,9 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 	 */
 	protected void initPage(IPageBookViewPage page) {
 		super.initPage(page);
+		page.getSite().getActionBars().setGlobalActionHandler(ActionFactory.REFRESH.getId(), fSearchAgainAction);
+		page.getSite().getActionBars().updateActionBars();
+
 		ISearchResultPage srPage= (ISearchResultPage) page;
 		IMemento memento= null;
 		if (fPageState != null) {

@@ -161,9 +161,8 @@ public class InternalSearchUI {
 		if (jobRecord.fJob == null) {
 			jobRecord.fJob= new InternalSearchJob(jobRecord);
 			jobRecord.fJob.setPriority(Job.BUILD);	
+			configureJob(jobRecord.fJob);
 		}
-		// TODO temporary to experiment with new jobs view
-		configureJob(jobRecord.fJob);
 		getProgressService().schedule(jobRecord.fJob, 0, true);
 	}
 
