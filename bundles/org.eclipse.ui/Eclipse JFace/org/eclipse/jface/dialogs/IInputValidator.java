@@ -11,11 +11,13 @@ package org.eclipse.jface.dialogs;
  */
 public interface IInputValidator {
 /**
- * Validates the given string.
+ * Validates the given string.  Returns an error message to display
+ * if the new text is invalid.  Returns <code>null</code> if there
+ * is no error.  Note that the empty string is not treated the same
+ * as <code>null</code>; it indicates an error state but with no message
+ * to display.
  * 
- * @return <code>null</code> to indicate that the value is valid; 
- * otherwise, a localized error message that could be presented 
- * to the user
+ * @return an error message or <code>null</code> if no error
  */
 public String isValid(String newText);
 }
