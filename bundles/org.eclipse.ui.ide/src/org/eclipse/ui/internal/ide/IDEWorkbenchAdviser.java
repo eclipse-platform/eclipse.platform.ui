@@ -952,9 +952,6 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 		//declareRegistryImage(IDEInternalWorkbenchImages.IMG_OBJS_MPRIO_TSK, PATH_OBJECT+"mprio_tsk.gif");
 		//declareRegistryImage(IDEInternalWorkbenchImages.IMG_OBJS_LPRIO_TSK, PATH_OBJECT+"lprio_tsk.gif");
 	
-		declareWorkbenchImage(IDE.SharedImages.IMG_OBJS_ERROR_TSK, PATH_OBJECT+"error_tsk.gif", true);
-		declareWorkbenchImage(IDE.SharedImages.IMG_OBJS_WARN_TSK, PATH_OBJECT+"warn_tsk.gif", true);
-		declareWorkbenchImage(IDE.SharedImages.IMG_OBJS_INFO_TSK, PATH_OBJECT+"info_tsk.gif", true);
 		declareWorkbenchImage(IDE.SharedImages.IMG_OBJS_TASK_TSK, PATH_OBJECT+"taskmrk_tsk.gif", true);
 		declareWorkbenchImage(IDE.SharedImages.IMG_OBJS_BKMRK_TSK, PATH_OBJECT+"bkmrk_tsk.gif", true);
 	

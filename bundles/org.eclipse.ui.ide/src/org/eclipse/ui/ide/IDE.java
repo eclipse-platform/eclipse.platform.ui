@@ -261,21 +261,6 @@ public final class IDE {
 		public final static String IMG_OPEN_MARKER = "IMG_OPEN_MARKER"; //$NON-NLS-1$
 	
 		/**
-		 * Identifies the default image used to indicate errors.
-		 */
-		public final static String IMG_OBJS_ERROR_TSK = "IMG_OBJS_ERROR_TSK"; //$NON-NLS-1$
-
-		/**
-		 * Identifies the default image used to indicate warnings.
-		 */
-		public final static String IMG_OBJS_WARN_TSK = "IMG_OBJS_WARN_TSK"; //$NON-NLS-1$
-
-		/**
-		 * Identifies the default image used to indicate information only.
-		 */
-		public final static String IMG_OBJS_INFO_TSK = "IMG_OBJS_INFO_TSK"; //$NON-NLS-1$
-
-		/**
 		 * Identifies the default image used to indicate a task.
 		 */
 		public final static String IMG_OBJS_TASK_TSK = "IMG_OBJS_TASK_TSK"; //$NON-NLS-1$
