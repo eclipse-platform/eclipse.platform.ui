@@ -12,6 +12,9 @@
   <property name="org.eclipse.team.tests.cvs.core" value="org.eclipse.team.tests.cvs.core"/>
   <property name="team-home" value="${eclipse-home}/plugins/${org.eclipse.team.tests.cvs.core}"/>
   <property file="${team-home}/repository.properties"/>
+  
+  <!-- define the number of times each perfomance test shouldbe run to get an average performance -->
+  <property name="performance-loop-count" value="5"/>
 
   <!-- This target holds all initialization code that needs to be done for -->
   <!-- all tests that are to be run. Initialization for individual tests -->
@@ -20,7 +23,7 @@
     <tstamp/>
   </target>
 
-  <!-- This target defines the tests that need to be run. -->
+  <!-- This target defines the tests that need to be run for regression testing. -->
   <target name="suite">
     <property name="location" value="${eclipse-home}/cvs_sniff_folder"/>
     <delete dir="${location}" quiet="true"/>
@@ -43,13 +46,25 @@
 
   </target>
   
-  <!-- This target defines the perfomance tests for CVS. -->
-  <target name="benchmark" depends="init,cleanup" if="performance">
-      <ant target="ui-test" antfile="${library-file}" dir="${eclipse-home}">
-        <property name="data-dir" value="performance"/>
-        <property name="plugin-name" value="org.eclipse.team.tests.cvs.core"/>
-        <property name="classname" value="org.eclipse.team.tests.ccvs.ui.benchmark.ShareAndCheckoutTest"/>
-      </ant>
+  <!-- This target defines the performance tests that need to be run. -->
+  <target name="performance-suite">
+    <property name="cvs-performance-folder" 
+              value="${eclipse-home}/cvs_performance_folder"/>
+    <delete dir="${cvs-performance-folder}" quiet="true"/>
+    <ant target="ui-test" antfile="${library-file}" dir="${eclipse-home}">
+      <property name="vmargs" value="-Declipse.cvs.properties=${team-home}/repository.properties -Declipse.cvs.loopCount=${performance-loop-count}"/>
+      <property name="data-dir" value="${cvs-performance-folder}"/>
+      <property name="plugin-name" value="${plugin-name}"/>
+      <property name="classname" 
+                value="org.eclipse.team.tests.ccvs.ui.benchmark.SyncTests"/>
+    </ant>
+    <ant target="ui-test" antfile="${library-file}" dir="${eclipse-home}">
+      <property name="vmargs" value="-Declipse.cvs.properties=${team-home}/repository.properties -Declipse.cvs.loopCount=${performance-loop-count}"/>
+      <property name="data-dir" value="${cvs-performance-folder}"/>
+      <property name="plugin-name" value="${plugin-name}"/>
+      <property name="classname" 
+                value="org.eclipse.team.tests.ccvs.ui.benchmark.WorkflowTests"/>
+    </ant>
   </target>
   
   <!-- This target holds code to cleanup the testing environment after the tests -->
@@ -59,15 +74,20 @@
 
   <!-- This target runs the test suite. Any actions that need to happen after all -->
   <!-- the tests have been run should go here. -->
-  <target name="run" depends="init,suite,benchmark,cleanup">
+  <target name="run" depends="init,suite,cleanup">
     <ant target="collect" antfile="${library-file}" dir="${eclipse-home}">
       <property name="includes" value="org*.xml"/>
       <property name="output-file" value="org.eclipse.team.tests.cvs.xml"/>
     </ant>
   </target>
 
-  <!-- This target runs the performance test suites. -->
-  <target name="performance">
+  <!-- This target runs the performance test suite. Any actions that need to happen -->
+  <!-- after all the tests have been run should go here. -->
+  <target name="performance" depends="init,performance-suite,cleanup">
+    <ant target="collect" antfile="${library-file}" dir="${eclipse-home}">
+      <property name="includes" value="org*.xml"/>
+      <property name="output-file" value="${plugin-name}.xml"/>
+    </ant>
   </target>
 
 </project>
