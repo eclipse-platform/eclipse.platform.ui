@@ -125,6 +125,10 @@ public abstract class Page {
 
 		if (cheatSheetComposite != null)
 			cheatSheetComposite.dispose();
+		
+		if(toolkit != null) {
+			toolkit.dispose();
+		}
 	}
 	
 	protected void init(Display display) {
