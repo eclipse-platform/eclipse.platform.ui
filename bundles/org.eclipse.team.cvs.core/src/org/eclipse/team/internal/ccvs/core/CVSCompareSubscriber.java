@@ -16,6 +16,8 @@ import java.util.List;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.ISubscriberChangeEvent;
@@ -191,6 +193,9 @@ public class CVSCompareSubscriber extends CVSSyncTreeSubscriber implements ISubs
 		if(this == other) return true;
 		if(! (other instanceof CVSCompareSubscriber)) return false;
 		CVSCompareSubscriber s = (CVSCompareSubscriber)other;
-		return getRemoteTag().equals(s.getRemoteTag()) && rootsEqual(s);		
+		CVSResourceVariantTree tree1 = (CVSResourceVariantTree)getRemoteTree();
+		CVSResourceVariantTree tree2 = (CVSResourceVariantTree)s.getRemoteTree();
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		return tree1.getTag(root).equals(tree2.getTag(root)) && rootsEqual(s);		
 	}
 }

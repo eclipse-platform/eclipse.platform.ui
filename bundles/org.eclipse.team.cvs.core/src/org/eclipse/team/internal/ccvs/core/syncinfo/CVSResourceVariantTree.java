@@ -166,7 +166,7 @@ public class CVSResourceVariantTree extends ResourceVariantTree {
 		return bytes;
 	}
 
-	protected CVSTag getTag(IResource resource) {
+	public CVSTag getTag(IResource resource) {
 		return tag;
 	}
 
