@@ -12,7 +12,6 @@ package org.eclipse.ui.internal.dialogs;
 
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.PreferenceDialog;
-import org.eclipse.jface.preference.PreferenceLabelProvider;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
@@ -116,7 +115,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 	 */
 	private TreeViewer createTreeViewer(Composite parent, boolean filtering) {
 		TreeViewer tree = createTreeViewer(parent);
-		tree.setLabelProvider(new PreferenceLabelProvider());
+		tree.setLabelProvider(new FilteredPreferenceLabelProvider());
 		tree.setContentProvider(new FilteredPreferenceContentProvider(filtering));
 		tree.setInput(getPreferenceManager());
 		return tree;
