@@ -130,7 +130,7 @@ public class TagConfigurationDialog extends Dialog {
 	
 	public TagConfigurationDialog(Shell shell, ICVSFolder[] roots) {
 		super(shell);
-		setShellStyle(SWT.CLOSE|SWT.RESIZE);
+		setShellStyle(SWT.CLOSE|SWT.RESIZE|SWT.APPLICATION_MODAL);
 		this.roots = roots;
 		this.root = roots[0];
 		if(roots.length>1) {
