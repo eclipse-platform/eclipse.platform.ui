@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal;
 import org.eclipse.core.runtime.*;
+import org.eclipse.help.*;
 import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.base.*;
 import org.eclipse.help.ui.internal.util.*;
@@ -92,7 +93,7 @@ public class HelpUIPlugin extends AbstractUIPlugin {
 			// UI may get activated during standalone
 			BaseHelpSystem.setDefaultErrorUtil(new ErrorUtil());
 
-		if (PlatformUI.isWorkbenchRunning()) {
+		if (BaseHelpSystem.getMode() == BaseHelpSystem.MODE_WORKBENCH) {
 			// This is workbench scenario. Set activity support of base help to
 			// use workbench activity support
 			IWorkbench workbench = PlatformUI.getWorkbench();
