@@ -11,7 +11,7 @@ import org.eclipse.swt.graphics.Image;
  * decorators defined in the image.
  */
 
-public class DecoratorManager implements ILabelDecorator{
+public class DecoratorManager implements ILabelDecorator {
 
 	//Hold onto the list of listeners to be told if a change has occured
 	private Collection listeners = new HashSet();
@@ -206,14 +206,14 @@ public class DecoratorManager implements ILabelDecorator{
 				result,
 				seen);
 	}
-	
+
 	/**
 	 * Return the enabled decorator definitions
 	 */
-	private DecoratorDefinition[] enabledDefinitions(){
+	private DecoratorDefinition[] enabledDefinitions() {
 		ArrayList result = new ArrayList();
-		for(int i = 0; i < definitions.length; i++){
-			if(definitions[i].isEnabled())
+		for (int i = 0; i < definitions.length; i++) {
+			if (definitions[i].isEnabled())
 				result.add(definitions[i]);
 		}
 		DecoratorDefinition[] returnArray = new DecoratorDefinition[result.size()];
@@ -226,4 +226,20 @@ public class DecoratorManager implements ILabelDecorator{
 	public void dispose() {
 	}
 
+	/**
+	 * Reset the cachedDecorators and fire listeners as
+	 * the enabled state of some decorators has changed
+	 */
+	public void reset() {
+		cachedDecorators = new HashMap();
+		fireListeners(new LabelProviderChangedEvent(this));
+	}
+	
+	/**
+	 * Get the DecoratorDefinitions defined on the receiver.
+	 */
+	public DecoratorDefinition[] getDecoratorDefinitions(){
+		return definitions;
+	}
+		
 }
