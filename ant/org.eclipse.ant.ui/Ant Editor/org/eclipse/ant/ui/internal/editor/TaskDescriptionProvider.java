@@ -160,7 +160,7 @@ public class TaskDescriptionProvider {
     protected String getDescriptionOfNode(Node aNode) {
         NodeList tempChildNodes = aNode.getChildNodes();
         for (int i=0; i<tempChildNodes.getLength(); i++) {
-            Node tempNode = (Node) tempChildNodes.item(i);
+            Node tempNode = tempChildNodes.item(i);
             if(tempNode instanceof Element && XML_TAG_DESCRIPTION.equals(tempNode.getNodeName())) {
                 Element tempDescriptionElement = (Element)tempNode;
                 Node tempChildNode = tempDescriptionElement.getFirstChild();
@@ -338,7 +338,7 @@ public class TaskDescriptionProvider {
     protected String getDescriptionForNodeNamedWithNameInNodeList( String aNodeName, String anAttributeName,
     																 NodeList anAttributesNodeList) {
     	for (int i=0; i<anAttributesNodeList.getLength(); i++) {
-                Node tempNode = (Node) anAttributesNodeList.item(i);
+                Node tempNode = anAttributesNodeList.item(i);
                 if(tempNode.getNodeType() == Node.ELEMENT_NODE && aNodeName.equals(tempNode.getNodeName())) {
                 	if( anAttributeName.equals(getTaskAttributeName(tempNode)) ) {
                     	return getDescriptionOfNode(tempNode);
@@ -397,7 +397,7 @@ public class TaskDescriptionProvider {
     protected String getRequiredForNodeNamedWithNameInNodeList( String aNodeName, String anAttributeName,
     																 NodeList anAttributesNodeList) {
     	for (int i=0; i<anAttributesNodeList.getLength(); i++) {
-                Node tempNode = (Node) anAttributesNodeList.item(i);
+                Node tempNode = anAttributesNodeList.item(i);
                 if(tempNode.getNodeType() == Node.ELEMENT_NODE && aNodeName.equals(tempNode.getNodeName())) {
                 	if( anAttributeName.equals(getTaskAttributeName(tempNode)) ) {
                     	return getRequiredOfNode(tempNode);

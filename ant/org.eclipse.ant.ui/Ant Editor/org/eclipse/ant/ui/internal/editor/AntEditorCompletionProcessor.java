@@ -595,7 +595,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
     protected Element findChildElementNamedOf(Element anElement, String aChildElementName) {
         NodeList nodeList = anElement.getChildNodes();
         for (int i = 0; i < nodeList.getLength(); i++) {
-            Node childNode = (Node)nodeList.item(i);
+            Node childNode = nodeList.item(i);
             if(childNode.getNodeType() == Node.ELEMENT_NODE) {
                 if(childNode.getNodeName().equals(aChildElementName)) {
                     return (Element)childNode;
@@ -976,7 +976,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 					|| task instanceof Available
 					|| task instanceof UpToDate
 					|| task instanceof Condition) {
-					((Task)task).perform();					
+						task.perform();					
 				}
 			
 			
