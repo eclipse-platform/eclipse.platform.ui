@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.activities;
 
+import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.ResourceBundle;
@@ -25,12 +26,11 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.activities.ws.ActivityContentProvider;
 import org.eclipse.ui.internal.activities.ws.ActivityLabelProvider;
-
 
 /**
  * Dialog that will prompt the user and confirm that they wish to activate a set
@@ -55,7 +55,10 @@ class EnablementDialog extends Dialog {
     private boolean dontAsk;
     
     /**
-     * @param parentShell
+     * Create a new instance of the reciever.
+     * 
+     * @param parentShell the parent shell
+     * @param activityIds the candidate activities
      */
     protected EnablementDialog(Shell parentShell, Collection activityIds) {
         super(parentShell);
@@ -67,31 +70,34 @@ class EnablementDialog extends Dialog {
      */
     protected Control createDialogArea(Composite parent) {            
 		Composite composite = (Composite)super.createDialogArea(parent);
-		Text text = new Text(composite, SWT.READ_ONLY | SWT.WRAP);
+		Label text = new Label(composite, SWT.NONE);
 		text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		text.setFont(parent.getFont());
 		IActivityManager manager = PlatformUI.getWorkbench().getActivitySupport().getActivityManager();
 		
-//		if (activityIds.size() == 1) {
-//			text.setText(RESOURCE_BUNDLE.getString("requiresSingle")); //$NON-NLS-1$
-//		    String activityId = (String) activityIds.iterator().next();
-//            activitiesToEnable.add(activityId);
-//		    Label label = new Label(composite, SWT.READ_ONLY);
-//		    IActivity activity = manager.getActivity(activityId);
-//		    // it must be disabled, otherwise the identifier would be enabled 
-//		    // and this dialog would not have been called.
-//		    try {
-//                label.setText("\t* " + activity.getName()); //$NON-NLS-1$                   
-//            } catch (NotDefinedException e) {
-//                label.setText("\t* " + activityId); //$NON-NLS-1$
-//            }
-//            label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-//
-//			text = new Text(composite, SWT.READ_ONLY);
-//			text.setText(RESOURCE_BUNDLE.getString("proceedSingle")); //$NON-NLS-1$
-//			text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));            
-//		}
-//		else {
+		if (activityIds.size() == 1) {
+		    String activityId = (String) activityIds.iterator().next();
+            activitiesToEnable.add(activityId);
+		    
+		    IActivity activity = manager.getActivity(activityId);
+		    String activityText;
+		    try {
+		        activityText = activity.getName();
+            } catch (NotDefinedException e) {
+                activityText = activity.getId();
+            }
+			text.setText(
+			        MessageFormat.format(
+			                RESOURCE_BUNDLE
+			                	.getString("requiresSingle"), //$NON-NLS-1$
+			                new Object [] {activityText})); 
+
+            text = new Label(composite, SWT.NONE);
+            text.setText(RESOURCE_BUNDLE.getString("proceedSingle")); //$NON-NLS-1$
+            text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+            text.setFont(parent.getFont());
+		}
+		else {
 		    text.setText(RESOURCE_BUNDLE.getString("requiresMulti")); //$NON-NLS-1$
 		    Set activityIdsCopy = new HashSet(activityIds);
 		    CheckboxTableViewer viewer = new CheckboxTableViewer(composite);
@@ -100,6 +106,7 @@ class EnablementDialog extends Dialog {
 		    viewer.setInput(activityIdsCopy);
 		    viewer.setCheckedElements(activityIdsCopy.toArray());
 		    viewer.addCheckStateListener(new ICheckStateListener() {
+                
                 /* (non-Javadoc)
                  * @see org.eclipse.jface.viewers.ICheckStateListener#checkStateChanged(org.eclipse.jface.viewers.CheckStateChangedEvent)
                  */
@@ -116,18 +123,20 @@ class EnablementDialog extends Dialog {
 		    viewer.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		    viewer.getControl().setFont(parent.getFont());
 		    
-			text = new Text(composite, SWT.READ_ONLY);
+			text = new Label(composite, SWT.NONE);
 			text.setText(RESOURCE_BUNDLE.getString("proceedMulti")); //$NON-NLS-1$
 			text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			text.setFont(parent.getFont());
-			
-			dontAskButton = new Button(composite, SWT.CHECK);
-	        dontAskButton.setSelection(false);
-	        dontAskButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			dontAskButton.setText(RESOURCE_BUNDLE.getString("dontAsk")); //$NON-NLS-1$
-			dontAskButton.setFont(parent.getFont());
-//		}		
-				
+		}
+		Label seperator = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
+		seperator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		dontAskButton = new Button(composite, SWT.CHECK);
+        dontAskButton.setSelection(false);
+        dontAskButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		dontAskButton.setText(RESOURCE_BUNDLE.getString("dontAsk")); //$NON-NLS-1$
+		dontAskButton.setFont(parent.getFont());
+
 		return composite;
     }
     
@@ -153,11 +162,12 @@ class EnablementDialog extends Dialog {
     public Collection getActivitiesToEnable() {
         return activitiesToEnable;
     }
+    
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#okPressed()
      */
     protected void okPressed() {
-        dontAsk = dontAskButton != null && dontAskButton.getSelection();
+        dontAsk = dontAskButton.getSelection();
         super.okPressed();
     }
 }

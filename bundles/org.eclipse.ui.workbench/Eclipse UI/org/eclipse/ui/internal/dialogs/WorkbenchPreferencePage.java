@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -22,16 +26,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
-
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.util.OpenStrategy;
-
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.help.WorkbenchHelp;
-
 import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchMessages;
@@ -60,6 +57,8 @@ public class WorkbenchPreferencePage extends PreferencePage implements
     private boolean selectOnHover;
 
     private boolean openAfterDelay;
+
+    private Button activityPromptButton;
     
 
     /*
@@ -126,6 +125,15 @@ public class WorkbenchPreferencePage extends PreferencePage implements
         stickyCycleButton.setSelection(getPreferenceStore().getBoolean(
                 IPreferenceConstants.STICKY_CYCLE));
     }
+    
+    protected void createActivityPromptPref(Composite composite) {
+        activityPromptButton = new Button(composite, SWT.CHECK);
+        activityPromptButton.setText(WorkbenchMessages
+                .getString("WorkbenchPreference.activityPromptButton")); //$NON-NLS-1$
+        activityPromptButton.setFont(composite.getFont());
+        activityPromptButton.setSelection(getPreferenceStore().getBoolean(
+                IPreferenceConstants.SHOULD_PROMPT_FOR_ENABLEMENT));
+    }    
 
     protected void createOpenModeGroup(Composite composite) {
 
@@ -335,6 +343,9 @@ public class WorkbenchPreferencePage extends PreferencePage implements
         store.setValue(IPreferenceConstants.STICKY_CYCLE, stickyCycleButton
                 .getSelection());
 
+        store.setValue(IPreferenceConstants.SHOULD_PROMPT_FOR_ENABLEMENT, activityPromptButton
+                .getSelection());
+        
         store.setValue(IPreferenceConstants.OPEN_ON_SINGLE_CLICK,
                 openOnSingleClick);
         store.setValue(IPreferenceConstants.SELECT_ON_HOVER, selectOnHover);

@@ -72,6 +72,7 @@ public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage
         createAutoBuildPref(composite);
         createSaveAllBeforeBuildPref(composite);
         createStickyCyclePref(composite);
+        createActivityPromptPref(composite);
         createShowUserDialogPref(composite);
         createAutoRefreshControls(composite);
 

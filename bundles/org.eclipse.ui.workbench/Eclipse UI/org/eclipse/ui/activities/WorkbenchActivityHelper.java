@@ -12,13 +12,13 @@ package org.eclipse.ui.activities;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.IPluginContribution;
-import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.IPreferenceConstants;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * A utility class that contains helpful methods for interacting with the
@@ -73,30 +73,17 @@ public final class WorkbenchActivityHelper {
 	    	.getWorkbench()
 	    	.getPreferenceStore()
 	    	.getBoolean(
-	    	    IWorkbenchPreferenceConstants.SHOULD_PROMPT_FOR_ENABLEMENT)) {
+	    	    IPreferenceConstants.SHOULD_PROMPT_FOR_ENABLEMENT)) {
 	        enableIdentifier(identifier);
 	        return true;
 	    }
 	    
-	    Set activityIds = new HashSet(identifier.getActivityIds());
-	    for (Iterator i = activityIds.iterator(); i.hasNext();) {
-            String id = (String) i.next();
-            if (PlatformUI.getWorkbench().getPreferenceStore().getBoolean(removalKey(id))) 
-                i.remove();
-        }
-	    
-	    if (activityIds.isEmpty()) {
-	        activityIds = identifier.getActivityIds();
-	    }
-	    
-	    EnablementDialog dialog = new EnablementDialog(PlatformUI.getWorkbench().getDisplay().getActiveShell(), activityIds);
+	    EnablementDialog dialog = new EnablementDialog(PlatformUI.getWorkbench().getDisplay().getActiveShell(), identifier.getActivityIds());
 	    if (dialog.open() == Window.OK) {
 	        enabledActivities(dialog.getActivitiesToEnable());
 	        if (dialog.getDontAsk()) {
-	            for (Iterator i = activityIds.iterator(); i.hasNext();) {
-	                String id = (String) i.next();
-	                PlatformUI.getWorkbench().getPreferenceStore().setValue(removalKey(id), true);
-	            } 
+	            	PlatformUI.getWorkbench().getPreferenceStore().setValue(IPreferenceConstants.SHOULD_PROMPT_FOR_ENABLEMENT, false);
+	            	WorkbenchPlugin.getDefault().savePluginPreferences();
 	        }
 	        return true;
 	    }
@@ -176,14 +163,6 @@ public final class WorkbenchActivityHelper {
 	public static final boolean isFiltering() {
 		return !PlatformUI.getWorkbench().getActivitySupport().getActivityManager().getDefinedActivityIds().isEmpty();
 	}
-
-	 /**
-     * @param id 
-     * @return 
-     */
-    private static String removalKey(String id) {
-        return "no-prompt-for." + id; //$NON-NLS-1$
-    }	
 	
 	/**
 	 * Not intended to be instantiated.

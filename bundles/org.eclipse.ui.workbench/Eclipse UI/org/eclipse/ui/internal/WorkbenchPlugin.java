@@ -35,7 +35,6 @@ import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.application.IWorkbenchPreferences;
@@ -521,7 +520,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		// @issue these should probably be on org.eclipse.ui's preference store, 
 		//    not org.eclipse.ui.workbench
 		store.setDefault(IPreferenceConstants.CLOSE_EDITORS_ON_EXIT, false);		
-		store.setDefault(IWorkbenchPreferenceConstants.SHOULD_PROMPT_FOR_ENABLEMENT, true);
+		store.setDefault(IPreferenceConstants.SHOULD_PROMPT_FOR_ENABLEMENT, true);
 		
 		// @issue some of these may be IDE-specific
 		store.setDefault(IPreferenceConstants.EDITORLIST_PULLDOWN_ACTIVE, false);
