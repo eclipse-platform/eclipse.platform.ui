@@ -143,6 +143,15 @@ public class CVSSyncCompareInput extends SyncCompareInput {
 //	}
 	
 	protected IRemoteSyncElement[] createSyncElements(IProgressMonitor monitor) throws TeamException {
+		// Ensure that the projects for all resources being synchronized exist
+		// Note: his could happen on a refresh view after a synced project was deleted.
+		for (int i = 0; i < resources.length; i++) {
+			IResource resource = resources[i];
+			if (!resource.getProject().exists()) {
+				throw new CVSException(Policy.bind("CVSSyncCompareInput.projectDeleted", resource.getProject().getName()));
+			}
+		}
+		
 		if (onlyOutgoing) {
 			// Find the outgoing changes in each selected resource
 			final List outgoing = new ArrayList();

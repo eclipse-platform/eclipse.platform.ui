@@ -380,12 +380,14 @@ public abstract class SyncCompareInput extends CompareEditorInput {
 		} catch (InvocationTargetException e) {
 			Throwable throwable = e.getTargetException();
 			IStatus error = null;
-			if (throwable instanceof CoreException) {
+			if (throwable instanceof TeamException) {
+				error = ((TeamException)throwable).getStatus();
+			} else if (throwable instanceof CoreException) {
 				error = ((CoreException)throwable).getStatus();
 			} else {
 				error = new Status(IStatus.ERROR, TeamUIPlugin.ID, 1, Policy.bind("simpleInternal") , throwable); //$NON-NLS-1$
 			}
-			ErrorDialog.openError(shell, problemMessage, error.getMessage(), error);
+			ErrorDialog.openError(shell, problemMessage, null, error);
 			TeamUIPlugin.log(error);
 		}
 	}
