@@ -98,7 +98,7 @@ class AnimationManager {
 			listener = getProgressListener();
 			ProgressManager.getInstance().addListener(listener);
 		} catch (MalformedURLException exception) {
-			ProgressUtil.logException(exception);
+			ProgressManagerUtil.logException(exception);
 		}
 	}
 
@@ -467,7 +467,7 @@ class AnimationManager {
 						animateLoop(monitor);
 						return Status.OK_STATUS;
 					} catch (SWTException exception) {
-						return ProgressUtil.exceptionStatus(exception);
+						return ProgressManagerUtil.exceptionStatus(exception);
 					}
 				}
 			};

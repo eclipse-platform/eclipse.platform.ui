@@ -285,7 +285,7 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 			setUpImage(iconsRoot, BLOCKED_JOB, BLOCKED_JOB_KEY);
 
 		} catch (MalformedURLException e) {
-			ProgressUtil.logException(e);
+			ProgressManagerUtil.logException(e);
 		}
 
 	}
@@ -333,7 +333,7 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 
 							if (window == null)
 								return Status.CANCEL_STATUS;
-							ProgressUtil.openProgressView(window);
+							ProgressManagerUtil.openProgressView(window);
 							return Status.OK_STATUS;
 						}
 					};
@@ -682,10 +682,10 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 			stream.close();
 			return result;
 		} catch (FileNotFoundException exception) {
-			ProgressUtil.logException(exception);
+			ProgressManagerUtil.logException(exception);
 			return null;
 		} catch (IOException exception) {
-			ProgressUtil.logException(exception);
+			ProgressManagerUtil.logException(exception);
 			return null;
 		}
 	}
@@ -817,37 +817,4 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 			throw interrupt[0];
 
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.progress.IProgressService#runInPart(org.eclipse.core.runtime.jobs.Job, org.eclipse.ui.IWorkbenchPart)
-	 */
-	public void runInPart(Job job, IWorkbenchPart part) {
-		
-		final PartSite workbenchSite;
-		
-		if(part.getSite() instanceof PartSite)
-			workbenchSite = (PartSite) part.getSite();
-		else
-			return;
-		
-		final Job finalJob = job;
-		
-		job.addJobChangeListener(new JobChangeAdapter(){
-			/* (non-Javadoc)
-			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
-			 */
-			public void done(IJobChangeEvent event) {
-				workbenchSite.progressEnd(finalJob);
-			}
-			
-			/* (non-Javadoc)
-			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#aboutToRun(org.eclipse.core.runtime.jobs.IJobChangeEvent)
-			 */
-			public void aboutToRun(IJobChangeEvent event) {
-				workbenchSite.progressStart(finalJob);
-			}
-		});
-
-	}
-
 }

@@ -17,7 +17,7 @@ import org.eclipse.ui.*;
  * The ProgressUtil is a class that contains static utility methods used for the progress
  * API.
  */
-class ProgressUtil {
+class ProgressManagerUtil {
 
 	/**
 	 * Return a status for the exception.

@@ -68,7 +68,7 @@ public class AnimationItem {
 			 * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
 			 */
 			public void mouseDoubleClick(MouseEvent arg0) {
-				ProgressUtil.openProgressView(window);
+				ProgressManagerUtil.openProgressView(window);
 			}
 			/* (non-Javadoc)
 			 * @see org.eclipse.swt.events.MouseListener#mouseDown(org.eclipse.swt.events.MouseEvent)
