@@ -17,6 +17,6 @@ public class AntConsole extends ViewPart {	public final static String CONSOLE_I
 	/**
 	 * @see WorkbenchPart#createPartControl(Composite)
 	 */
-	public void createPartControl(Composite parent) {		Composite composite = new Composite(parent, SWT.NULL);		composite.setLayout(new GridLayout());		composite.setLayoutData(new GridData(			GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));		viewer = new TextViewer(composite,SWT.WRAP | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);		GridData data = new GridData(GridData.FILL_BOTH);		viewer.setEditable(false);		viewer.getControl().setLayoutData(data);		viewer.setDocument(new Document());		addContributions();	}
+	public void createPartControl(Composite parent) {		Composite composite = new Composite(parent, SWT.NULL);		composite.setLayout(new GridLayout());		composite.setLayoutData(new GridData(			GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));		viewer = new TextViewer(composite,SWT.WRAP | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);		GridData data = new GridData(GridData.FILL_BOTH);		viewer.setEditable(false);		viewer.getControl().setLayoutData(data);		viewer.setDocument(new Document());		addContributions();		initializeToolbar();	}		protected void initializeToolbar() {		IToolBarManager tbm= getViewSite().getActionBars().getToolBarManager();		tbm.add(clearOutputAction);		getViewSite().getActionBars().updateActionBars();	}
 
 }
