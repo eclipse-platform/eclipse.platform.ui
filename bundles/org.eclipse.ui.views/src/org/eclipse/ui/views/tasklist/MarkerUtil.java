@@ -15,6 +15,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.MessageFormat;
+import java.text.NumberFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,15 +35,21 @@ import org.eclipse.jface.viewers.IBasicPropertyConstants;
  * Utility class for accessing marker attributes.
  */
 /* package */ class MarkerUtil implements IMarkerConstants {
+	
 	private static Map imageDescriptors;
+	
 	private static ImageRegistry imageRegistry = new ImageRegistry();
+	
+	private static MessageFormat line =
+		new MessageFormat(TaskListMessages.getString("TaskList.line")); //$NON-NLS-1$;
+		
+	private static MessageFormat lineAndLocation =
+		new MessageFormat(TaskListMessages.getString("TaskList.lineAndLocation")); //$NON-NLS-1$
 	
 	static {
 		createImageDescriptors();
 	}
 	
-	private static MessageFormat line = new MessageFormat(TaskListMessages.getString("TaskList.line")); //$NON-NLS-1$
-	private static MessageFormat lineAndLocation = new MessageFormat(TaskListMessages.getString("TaskList.lineAndLocation")); //$NON-NLS-1$
 	
 /**
  * Don't allow instantiation.
@@ -264,10 +271,10 @@ public static String getLineAndLocation(int lineNumber, String location) {
 	}
 	else {
 		if (location.equals("")) {//$NON-NLS-1$
-			return line.format(new Object[] { new Integer(lineNumber) });
+			return line.format(new Object[] { Integer.toString(lineNumber) });
 		}
 		else {
-			return lineAndLocation.format(new Object[] { new Integer(lineNumber), location });
+			return lineAndLocation.format(new Object[] { Integer.toString(lineNumber), location });
 		}
 	}
 }

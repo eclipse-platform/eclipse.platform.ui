@@ -412,9 +412,9 @@ void createColumns() {
  * Method declared on IWorkbenchPart.
  */
 public void createPartControl(Composite parent) {
-	long t = System.currentTimeMillis();
+//	long t = System.currentTimeMillis();
 	createPartControl0(parent);
-	t = System.currentTimeMillis() - t;
+//	t = System.currentTimeMillis() - t;
 //	System.out.println("TaskList.createPartControl: " + t + "ms");
 }
 
