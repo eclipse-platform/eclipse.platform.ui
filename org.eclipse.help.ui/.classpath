@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-    <classpathentry kind="src" path="Eclipse Help UI"/>
-    <classpathentry kind="src" path="Eclipse Help UI Motif"/>
-    <classpathentry kind="src" path="Eclipse Help UI Win32"/>
+    <classpathentry kind="src" path="src"/>
     <classpathentry kind="src" path="/org.eclipse.help"/>
     
     <classpathentry kind="var"    path="JRE_LIB" rootpath="JRE_SRCROOT" sourcepath="JRE_SRC"/>
