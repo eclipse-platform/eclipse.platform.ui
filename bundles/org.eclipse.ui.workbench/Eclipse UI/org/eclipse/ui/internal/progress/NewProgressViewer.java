@@ -25,6 +25,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -102,14 +103,6 @@ public class NewProgressViewer extends TreeViewer implements
 
     private ScrolledComposite scroller;
 
-    private Color linkColor;
-
-    private Color linkColor2;
-
-    private Color errorColor;
-
-    private Color errorColor2;
-
     private Color darkColor;
 
     private Color lightColor;
@@ -119,11 +112,7 @@ public class NewProgressViewer extends TreeViewer implements
     private Color selectedColor;
 
     private Color selectedTextColor;
-
-    private Color highlightColor;
-
-    private Font defaultFont = JFaceResources.getDefaultFont();
-
+    
     // to be disposed
     private Cursor handCursor;
 
@@ -467,14 +456,13 @@ public class NewProgressViewer extends TreeViewer implements
                 return selectedTextColor;
 
             if (isLinkEnabled()) {
-                if (mouseOver) {
-                    if (isError)
-                        return errorColor2;
-                    return linkColor2;
-                }
-                if (isError)
-                    return errorColor;
-                return linkColor;
+            	
+            	 if (isError)
+                    return getErrorColor();
+            	 
+                if (mouseOver)                    
+                    return getActiveHyperlinkColor();
+                return getHyperlinkColor();
             }
             return textColor;
         }
@@ -993,7 +981,7 @@ public class NewProgressViewer extends TreeViewer implements
             } else {
                 if (highlightJob != null
                         && (highlightJob == getJob() || highlightItem == this))
-                    fg = highlightColor;
+                    fg = getHighlightColor();
                 else
                     fg = textColor;
                 bg = dark ? darkColor : lightColor;
@@ -1256,8 +1244,8 @@ public class NewProgressViewer extends TreeViewer implements
         clearJobDIcon = ImageSupport.getImageDescriptor(
                 "icons/full/dlcl16/progress_rem.gif").createImage(display); //$NON-NLS-1$
 
-        boldFont = defaultFont;
-        FontData fds[] = defaultFont.getFontData();
+        boldFont = getDefaultFont();
+        FontData fds[] = getDefaultFontData();
         if (fds.length > 0) {
             FontData fd = fds[0];
             int h = fd.getHeight();
@@ -1277,21 +1265,16 @@ public class NewProgressViewer extends TreeViewer implements
         selectedTextColor = display
                 .getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT);
         selectedColor = display.getSystemColor(SWT.COLOR_LIST_SELECTION);
-        linkColor = display.getSystemColor(SWT.COLOR_DARK_BLUE);
-        linkColor2 = display.getSystemColor(SWT.COLOR_BLUE);
-        errorColor = display.getSystemColor(SWT.COLOR_DARK_RED);
-        errorColor2 = display.getSystemColor(SWT.COLOR_RED);
-        highlightColor = display.getSystemColor(SWT.COLOR_DARK_RED);
 
         scroller = new ScrolledComposite(parent, SWT.H_SCROLL | SWT.V_SCROLL
                 | flags);
-        int height = defaultFont.getFontData()[0].getHeight();
+        int height = getDefaultFontData()[0].getHeight();
         scroller.getVerticalBar().setIncrement(height * 2);
         scroller.setExpandHorizontal(true);
         scroller.setExpandVertical(true);
 
         list = new Composite(scroller, SWT.NONE);
-        list.setFont(defaultFont);
+        list.setFont(getDefaultFont());
         list.setBackground(lightColor);
         list.setLayout(new ListLayout());
 
@@ -1314,6 +1297,7 @@ public class NewProgressViewer extends TreeViewer implements
                 handCursor.dispose();
                 normalCursor.dispose();
 
+                Font defaultFont = getDefaultFont();
                 if (boldFont != defaultFont)
                     boldFont.dispose();
                 if (smallerFont != defaultFont)
@@ -1348,6 +1332,54 @@ public class NewProgressViewer extends TreeViewer implements
 
     public Control getControl() {
         return scroller;
+    }
+    
+    /**
+     * Get the default font to use.
+     * @return Font
+     */
+    private Font getDefaultFont(){
+    	return JFaceResources.getDefaultFont();
+    }
+    
+    /**
+     * Get the default font data for the workbench
+     * @return FontData[]
+     */
+    private FontData[] getDefaultFontData(){
+    	return JFaceResources.getDefaultFont().getFontData();
+    }
+    
+    /**
+     * Get the color for active hyperlinks.
+     * @return Color
+     */
+    private Color getActiveHyperlinkColor(){
+    	return JFaceColors.getActiveHyperlinkText(getControl().getDisplay());
+    }
+    
+    /**
+     * Get the color for hyperlinks.
+     * @return Color
+     */
+    private Color getHyperlinkColor(){
+    	return JFaceColors.getHyperlinkText(getControl().getDisplay());
+    }
+    
+    /**
+     * Get the color for errors.
+     * @return Color
+     */
+    private Color getErrorColor(){
+    	return JFaceColors.getErrorText(getControl().getDisplay());
+    }
+    
+    /**
+     * Get the color for highlight.
+     * @return Color
+     */
+    private Color getHighlightColor(){
+    	return JFaceColors.getErrorText(getControl().getDisplay());
     }
 
     /**
