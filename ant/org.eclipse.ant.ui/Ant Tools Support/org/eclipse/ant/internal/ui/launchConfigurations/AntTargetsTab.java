@@ -598,7 +598,13 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		} else {
 			configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_HIDE_INTERNAL_TARGETS, (String)null);
 		}
-		configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_SORT_TARGETS, fSortDirection);
+		//attribute added in 3.0, so null must be used instead of 0 for backwards compatibility
+		if (fSortDirection != SORT_NONE) {
+			configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_SORT_TARGETS, fSortDirection);
+		} else {
+			configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_SORT_TARGETS, (String)null);
+		}
+		
 		if (fOrderedTargets.size() == 1) {
 			TargetInfo item = (TargetInfo)fOrderedTargets.get(0);
 			if (item.isDefault()) {
