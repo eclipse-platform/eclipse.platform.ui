@@ -291,7 +291,7 @@ public class DocumentRangeNode
 		} catch (BadLocationException ex) {
 			s= ""; //$NON-NLS-1$
 		}
-		return new ByteArrayInputStream(s.getBytes());
+		return new ByteArrayInputStream(Utilities.getBytes(s));
 	}
 
 	/* (non Javadoc)
@@ -315,8 +315,9 @@ public class DocumentRangeNode
 			if (other instanceof IStreamContentAccessor) {
 				try {
 					InputStream is= ((IStreamContentAccessor)other).getContents();
-					byte[] bytes= Utilities.readBytes(is);
-					srcContents= new String(bytes);
+					//byte[] bytes= Utilities.readBytes(is);
+					//srcContents= new String(bytes, ResourcesPlugin.getEncoding());
+					srcContents= Utilities.readString(is);
 				} catch(CoreException ex) {
 				}
 			}

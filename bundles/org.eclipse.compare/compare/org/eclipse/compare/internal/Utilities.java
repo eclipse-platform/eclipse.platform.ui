@@ -186,6 +186,14 @@ public class Utilities {
 		return null;
 	}
 	
+	public static byte[] getBytes(String s) {
+		try {
+			return s.getBytes(ResourcesPlugin.getEncoding());
+		} catch (UnsupportedEncodingException e) {
+			return s.getBytes();
+		}
+	}
+
 	public static String getIconPath(Display display) {
 		return "icons/full/";	//$NON-NLS-1$
 	}
