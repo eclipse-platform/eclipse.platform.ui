@@ -13,7 +13,6 @@ package org.eclipse.jface.dialogs;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.ProgressBar;
 
 /**
@@ -115,17 +114,5 @@ public class ProgressIndicator extends Composite {
 		if (determinateProgressBar.getSelection() < value) {
 			determinateProgressBar.setSelection(value);
 		}
-	}
-	
-	/**
-	 * Return the control that is displayed to the user. Note that
-	 * this method should be called after <code>beginTask()</code>
-	 * or <code>beginAnimatedTask()</code> or else the top control
-	 * could be null.
-	 * @return Control or <code>null</code> if no animation has began.
-	 * @since 3.0
-	 */
-	public Control getControl(){
-		return layout.topControl;
 	}
 }
