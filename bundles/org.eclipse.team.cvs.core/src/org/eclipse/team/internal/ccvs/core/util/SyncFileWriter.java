@@ -430,7 +430,7 @@ public class SyncFileWriter {
 	private static String readFirstLine(IFile file) throws CVSException {
 		if (! file.exists()) return null;
 		try {
-			BufferedReader reader = new BufferedReader(new InputStreamReader(file.getContents()));
+			BufferedReader reader = new BufferedReader(new InputStreamReader(file.getContents(true)));
 			try {
 				String line = reader.readLine();
 				if (line == null) return ""; //$NON-NLS-1$
@@ -441,6 +441,11 @@ public class SyncFileWriter {
 		} catch (IOException e) {
 			throw CVSException.wrapException(e);
 		} catch (CoreException e) {
+			// If the IFile doesn't exist or the underlying File doesn't exist,
+			// just return null to indicate the absence of the file
+			if (e.getStatus().getCode() == IResourceStatus.RESOURCE_NOT_FOUND
+					|| e.getStatus().getCode() == IResourceStatus.FAILED_READ_LOCAL)
+				return null;
 			throw CVSException.wrapException(e);
 		}
 	}
