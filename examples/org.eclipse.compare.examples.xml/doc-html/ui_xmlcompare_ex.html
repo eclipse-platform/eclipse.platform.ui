@@ -12,7 +12,7 @@ a difference tree which indicates which XML elements have been added or removed 
 what differences there are with respect to attributes or body text.
 <h2>Installing the plugin</h2>
 <ul>
-<li>Copy the folder <tt>org.eclipse.compare.xml</tt> to the <tt>plugins</tt> subfolder of Eclipse.
+<li>Copy the folder <tt>org.eclipse.compare.examples.xml</tt> to the <tt>plugins</tt> subfolder of Eclipse.
 </ul>
 <h2>Using the plugin</h2>
 The plugin is automatically used when comparing files with the extension .xml.
@@ -28,7 +28,7 @@ contains elements that can uniquely be identified by an attribute or the text of
 it is recommended that an ID Mapping Scheme be created for this type of XML document.
 <br>
 <br>
-See <a href="org_eclipse_xmlcompare_tutorial_and_examples.html">Tutorial and Examples</a> for more information on using the plugin.
+See <a href="tutorial_and_examples.html">Tutorial and Examples</a> for more information on using the plugin.
 <br>
 <h3>ID Mapping Schemes</h3>
 An ID Mapping Scheme specifies for XML elements an attribute or the text of a child element that
@@ -47,7 +47,7 @@ The children of these children will continue to be compared in unordered way, un
 <h3>Defining ID Mapping Schemes and Ordered entries</h3>
 ID Mapping Schemes can be created in three different ways:
 <ol>
-<li>By extending the extension point <a href="org_eclipse_xmlcompare_idMapping.html"><em>idMapping</em></a></li>
+<li>By extending the extension point <a href="idMapping.html"><em>idMapping</em></a></li>
 <li>Using the <a href="PreferencePage.gif">XML Compare Preference page</a>.</li>
 <li>Using the <a href="CreateNewIDMapButton.gif">Create new Id Map Scheme button</a> in the toolbar and the <a href="IDMapContextMenu.gif">context menu</a>
 </ol>
@@ -77,8 +77,9 @@ Only one extension point is available in the XML Compare plugin. It is used to c
 internal ID Mapping Schemes:
 <ul>
 <li>
-<a href="org_eclipse_xmlcompare_idMapping.html">org.eclipse.xmlcompare.idMapping</a></li>
+<a href="idMapping.html">org.eclipse.compare.examples.xml.idMapping</a></li>
 </ul>
-<a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2001.  All Rights Reserved." BORDER=0 height=12 width=195></a>
+
+<p><a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corporation and others 2000, 2003. All Rights Reserved." BORDER=0 height=14 width=324></a></p>
 </body>
 </html>

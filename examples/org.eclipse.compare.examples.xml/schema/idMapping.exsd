@@ -10,7 +10,7 @@
 These schemes can then be used when performing an XML compare to uniquely identify XML elements by the
 value of an attribute or the text in a child element.
 Additionally, &lt;i&gt;ordered&lt;/i&gt; elements can be used to specify that the direct children of an element
-should be compared in ordered fashion instead of the default unordered way.
+should be compared in an ordered fashion instead of the default unordered way.
       </documentation>
    </annotation>
 
@@ -22,21 +22,21 @@ should be compared in ordered fashion instead of the default unordered way.
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  a fully qualified identifier of the target extension point
                </documentation>
             </annotation>
          </attribute>
          <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  
+                  an optional identifier of the extension instance
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  the name of the ID Mapping scheme. Should be unique.
+                  an optional name of the extension instance.
                </documentation>
             </annotation>
          </attribute>
@@ -46,7 +46,8 @@ should be compared in ordered fashion instead of the default unordered way.
    <element name="idMap">
       <complexType>
          <sequence>
-            <element ref="mapping" minOccurs="1" maxOccurs="unbounded"/>
+            <element ref="mapping"/>
+            <element ref="ordered"/>
          </sequence>
          <attribute name="name" type="string" use="required">
             <annotation>
