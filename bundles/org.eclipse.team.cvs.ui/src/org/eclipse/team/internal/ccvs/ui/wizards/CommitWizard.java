@@ -169,7 +169,7 @@ public class CommitWizard extends Wizard {
 
     }
     
-    public boolean hasUnaddedInfos() {
+    public boolean hasOutgoingChanges() {
         return fOutOfSyncInfos.size() > 0;
     }
     
@@ -322,7 +322,7 @@ public class CommitWizard extends Wizard {
     }
     
     private static void run(Shell shell, CommitWizard wizard) {
-        if (!wizard.hasUnaddedInfos()) {
+        if (!wizard.hasOutgoingChanges()) {
             MessageDialog.openInformation(shell, Policy.bind("CommitWizard.6"), Policy.bind("CommitWizard.7")); //$NON-NLS-1$ //$NON-NLS-2$
         } else {
             final WizardDialog dialog= new WizardDialog(shell, wizard);

@@ -152,12 +152,12 @@ public class ChangesSection extends Composite {
 		this.changesViewer = viewer;
 		calculateDescription();
 		configuration.addActionContribution(changedListener);
-		getWorkingSetSyncInfoSet().addSyncSetChangedListener(subscriberListener);
-		getSyncInfoTree().addSyncSetChangedListener(outputSetListener);
+		getParticipantSyncInfoSet().addSyncSetChangedListener(subscriberListener);
+		getVisibleSyncInfoSet().addSyncSetChangedListener(outputSetListener);
 	}
 	
 	private void calculateDescription() {
-		SyncInfoTree syncInfoTree = getSyncInfoTree();
+		SyncInfoTree syncInfoTree = getVisibleSyncInfoSet();
 		if (syncInfoTree.getErrors().length > 0) {
 			if (!showingError) {
 				TeamUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
@@ -224,41 +224,90 @@ public class ChangesSection extends Composite {
 			return composite;
 		}
 		
-		SyncInfoSet workingSet = getWorkingSetSyncInfoSet();
-		SyncInfoSet filteredSet = getSyncInfoTree();
+		SyncInfoSet participantSet = getParticipantSyncInfoSet();
 		
-		int changesInWorkingSet = workingSet.size();
-		int changesInFilter = filteredSet.size();
+		int allChanges = participantSet.size();
+		int visibleChanges = getVisibleSyncInfoSet().size();
 		
-		long outgoingChanges = workingSet.countFor(SyncInfo.OUTGOING, SyncInfo.DIRECTION_MASK);
-		long incomingChanges = workingSet.countFor(SyncInfo.INCOMING, SyncInfo.DIRECTION_MASK);		
-		
-		if(changesInFilter == 0 && changesInWorkingSet != 0) {
-			final int newMode = outgoingChanges != 0 ? ISynchronizePageConfiguration.OUTGOING_MODE : ISynchronizePageConfiguration.INCOMING_MODE;
-			long numChanges = outgoingChanges != 0 ? outgoingChanges : incomingChanges;
-			StringBuffer text = new StringBuffer();
-			text.append(Policy.bind("ChangesSection.filterHides", Utils.modeToString(configuration.getMode()))); //$NON-NLS-1$
-			if(numChanges > 1) {
-				text.append(Policy.bind("ChangesSection.filterHidesPlural", Long.toString(numChanges), Utils.modeToString(newMode))); //$NON-NLS-1$
-			} else {
-				text.append(Policy.bind("ChangesSection.filterHidesSingular", Long.toString(numChanges), Utils.modeToString(newMode))); //$NON-NLS-1$
-			}
-			
-			Label warning = new Label(composite, SWT.NONE);
-			warning.setImage(TeamUIPlugin.getPlugin().getImage(ISharedImages.IMG_WARNING_OVR));
-			
-			Hyperlink link = forms.createHyperlink(composite, Policy.bind("ChangesSection.filterChange", Utils.modeToString(newMode)), SWT.WRAP); //$NON-NLS-1$
-			link.addHyperlinkListener(new HyperlinkAdapter() {
-				public void linkActivated(HyperlinkEvent e) {
-					configuration.setMode(newMode);
+		if(visibleChanges == 0 && allChanges != 0) {
+			final int candidateMode = getCandidateMode(participantSet);
+			int currentMode = page.getConfiguration().getMode();
+			if (candidateMode != currentMode) {
+				long numChanges = getChangesInMode(participantSet, candidateMode);
+				if (numChanges > 0) {
+					StringBuffer text = new StringBuffer();
+					text.append(Policy.bind("ChangesSection.filterHides", Utils.modeToString(configuration.getMode()))); //$NON-NLS-1$
+					if(numChanges > 1) {
+						text.append(Policy.bind("ChangesSection.filterHidesPlural", Long.toString(numChanges), Utils.modeToString(candidateMode))); //$NON-NLS-1$
+					} else {
+						text.append(Policy.bind("ChangesSection.filterHidesSingular", Long.toString(numChanges), Utils.modeToString(candidateMode))); //$NON-NLS-1$
+					}
+					
+					Label warning = new Label(composite, SWT.NONE);
+					warning.setImage(TeamUIPlugin.getPlugin().getImage(ISharedImages.IMG_WARNING_OVR));
+					
+					Hyperlink link = forms.createHyperlink(composite, Policy.bind("ChangesSection.filterChange", Utils.modeToString(candidateMode)), SWT.WRAP); //$NON-NLS-1$
+					link.addHyperlinkListener(new HyperlinkAdapter() {
+						public void linkActivated(HyperlinkEvent e) {
+							configuration.setMode(candidateMode);
+						}
+					});
+					forms.getHyperlinkGroup().add(link);
+					createDescriptionLabel(composite, text.toString());
+					return composite;
 				}
-			});
-			forms.getHyperlinkGroup().add(link);
-			createDescriptionLabel(composite, text.toString());
-		} else {
-			createDescriptionLabel(composite,Policy.bind("ChangesSection.noChanges", participant.getName()));	 //$NON-NLS-1$
-		}		
+			}
+		}
+		// There is no other mode that can be shown so just indicate that there are no changes
+		createDescriptionLabel(composite,Policy.bind("ChangesSection.noChanges", participant.getName()));	 //$NON-NLS-1$	
 		return composite;
+	}
+
+	private long getChangesInMode(SyncInfoSet participantSet, final int candidateMode) {
+		long numChanges;
+		switch (candidateMode) {
+		case ISynchronizePageConfiguration.OUTGOING_MODE:
+			numChanges = participantSet.countFor(SyncInfo.OUTGOING, SyncInfo.DIRECTION_MASK);
+			break;
+		case ISynchronizePageConfiguration.INCOMING_MODE:
+			numChanges = participantSet.countFor(SyncInfo.INCOMING, SyncInfo.DIRECTION_MASK);
+			break;
+		case ISynchronizePageConfiguration.BOTH_MODE:
+			numChanges = participantSet.countFor(SyncInfo.INCOMING, SyncInfo.DIRECTION_MASK) 
+				+ participantSet.countFor(SyncInfo.OUTGOING, SyncInfo.DIRECTION_MASK);
+			break;
+		default:
+			numChanges = 0;
+			break;
+		}
+		return numChanges;
+	}
+	
+	/*
+	 * Return the candidate mode based on the presence of unfiltered changes
+	 * and the modes supported by the page.
+	 */
+	private int getCandidateMode(SyncInfoSet participantSet) {
+		SynchronizePageConfiguration configuration = (SynchronizePageConfiguration)page.getConfiguration();
+		long outgoingChanges = participantSet.countFor(SyncInfo.OUTGOING, SyncInfo.DIRECTION_MASK);
+		if (outgoingChanges > 0) {
+			if (configuration.isModeSupported(ISynchronizePageConfiguration.OUTGOING_MODE)) {
+				return ISynchronizePageConfiguration.OUTGOING_MODE;
+			}
+			if (configuration.isModeSupported(ISynchronizePageConfiguration.BOTH_MODE)) {
+				return ISynchronizePageConfiguration.BOTH_MODE;
+			}
+		}
+		long incomingChanges = participantSet.countFor(SyncInfo.INCOMING, SyncInfo.DIRECTION_MASK);
+		if (incomingChanges > 0) {
+			if (configuration.isModeSupported(ISynchronizePageConfiguration.INCOMING_MODE)) {
+				return ISynchronizePageConfiguration.INCOMING_MODE;
+			}
+			if (configuration.isModeSupported(ISynchronizePageConfiguration.BOTH_MODE)) {
+				return ISynchronizePageConfiguration.BOTH_MODE;
+			}
+		}
+		return configuration.getMode();
 	}
 	
 	private Label createDescriptionLabel(Composite parent, String text) {
@@ -276,8 +325,8 @@ public class ChangesSection extends Composite {
 		super.dispose();
 		forms.dispose();
 		configuration.removeActionContribution(changedListener);
-		getWorkingSetSyncInfoSet().removeSyncSetChangedListener(subscriberListener);
-		getSyncInfoTree().removeSyncSetChangedListener(outputSetListener);
+		getParticipantSyncInfoSet().removeSyncSetChangedListener(subscriberListener);
+		getVisibleSyncInfoSet().removeSyncSetChangedListener(outputSetListener);
 	}
 	
 	private Composite getErrorComposite(Composite parent) {
@@ -316,7 +365,7 @@ public class ChangesSection extends Composite {
 	}
 	
 	/* private */ void showErrors() {
-		ITeamStatus[] status = getSyncInfoTree().getErrors();
+		ITeamStatus[] status = getVisibleSyncInfoSet().getErrors();
 		String title = Policy.bind("ChangesSection.11"); //$NON-NLS-1$
 		if (status.length == 1) {
 			ErrorDialog.openError(getShell(), title, status[0].getMessage(), status[0]);
@@ -330,11 +379,18 @@ public class ChangesSection extends Composite {
 		return getShell().getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
 	}
 	
-	private SyncInfoTree getSyncInfoTree() {
+	/*
+	 * Return the sync info set that contains the visible resources
+	 */
+	private SyncInfoTree getVisibleSyncInfoSet() {
 		return (SyncInfoTree)configuration.getProperty(ISynchronizePageConfiguration.P_SYNC_INFO_SET);
 	}
 	
-	private SyncInfoSet getWorkingSetSyncInfoSet() {
+	/*
+	 * Return the sync info set for the participant that contains all the resources
+	 * including those that may not be visible due to filters (e.g. mode)
+	 */
+	private SyncInfoSet getParticipantSyncInfoSet() {
 		return (SyncInfoSet)configuration.getProperty(SynchronizePageConfiguration.P_WORKING_SET_SYNC_INFO_SET);
 	}
 }

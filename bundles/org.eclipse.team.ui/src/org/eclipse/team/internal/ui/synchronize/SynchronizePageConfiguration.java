@@ -458,7 +458,12 @@ public class SynchronizePageConfiguration extends SynchronizePageActionGroup imp
 	 * @see org.eclipse.team.ui.synchronize.subscribers.ISubscriberPageConfiguration#setMode(int)
 	 */
 	public void setMode(int mode) {
-		setProperty(P_MODE, new Integer(mode));
+		if (isModeSupported(mode))
+			setProperty(P_MODE, new Integer(mode));
+	}
+
+	public boolean isModeSupported(int mode) {
+		return (getSupportedModes() & mode) > 0;
 	}
 
 	public int getSupportedModes() {

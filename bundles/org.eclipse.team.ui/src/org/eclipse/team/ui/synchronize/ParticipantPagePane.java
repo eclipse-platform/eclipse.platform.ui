@@ -47,6 +47,7 @@ public final class ParticipantPagePane {
 	private Viewer viewer;
 	
 	private IActionBars actionBars;
+	private IPageBookViewPage fPage;
 
 	/*
 	 * Page site that allows hosting the participant page in a dialog.
@@ -124,7 +125,10 @@ public final class ParticipantPagePane {
 	public void dispose() {
 		if(titleImage != null) {
 			titleImage.dispose();
-		}		
+		}
+		if (fPage != null) {
+			fPage.dispose();
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -162,19 +166,19 @@ public final class ParticipantPagePane {
 		
 		fEditionPane.setLayoutData(SWTUtils.createHVFillGridData());
 		
-		IPageBookViewPage page = participant.createPage(pageConfiguration);
+		fPage = participant.createPage(pageConfiguration);
 		((SynchronizePageConfiguration)pageConfiguration).setSite(new CompareViewerPaneSite());
 		ToolBarManager tbm = CompareViewerPane.getToolBarManager(fEditionPane);
 		createActionBars(tbm);
 		try {
-			((ISynchronizePage)page).init(pageConfiguration.getSite());
+			((ISynchronizePage)fPage).init(pageConfiguration.getSite());
 		} catch (PartInitException e1) {
 		   TeamUIPlugin.log(IStatus.ERROR, Policy.bind("ParticipantPagePane.0"), e1); //$NON-NLS-1$
 		}
 
-		page.createControl(fEditionPane);
-		page.setActionBars(getActionBars());
-		fEditionPane.setContent(page.getControl());
+		fPage.createControl(fEditionPane);
+		fPage.setActionBars(getActionBars());
+		fEditionPane.setContent(fPage.getControl());
 		tbm.update(true);
 		
 		return top;

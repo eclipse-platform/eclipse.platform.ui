@@ -11,10 +11,14 @@
 
 package org.eclipse.team.internal.ccvs.ui.wizards;
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -58,11 +62,11 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
                     new CVSActionDelegateWrapper(new IgnoreAction(), configuration));
         }
         
-        public void modelChanged(ISynchronizeModelElement root) {
+        public void modelChanged(final ISynchronizeModelElement root) {
             super.modelChanged(root);
             Display.getDefault().asyncExec(new Runnable() {
 				public void run() {
-					expand();
+					updateForModelChange(root);
 				}
 			});
         }
@@ -138,6 +142,35 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
         public ChangeSetCapability getChangeSetCapability() {
             return null; // we don't want that button
         }
+        /* (non-Javadoc)
+		 * @see org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticipant#initializeConfiguration(org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration)
+		 */
+		protected void initializeConfiguration( ISynchronizePageConfiguration configuration) {
+			super.initializeConfiguration(configuration);
+	        configuration.setProperty(ISynchronizePageConfiguration.P_TOOLBAR_MENU, new String[] {ISynchronizePageConfiguration.LAYOUT_GROUP});
+	        configuration.setProperty(ISynchronizePageConfiguration.P_CONTEXT_MENU, ISynchronizePageConfiguration.DEFAULT_CONTEXT_MENU);
+	        configuration.addActionContribution(new ActionContribution());
+	        
+	        // Wrap the container so that we can update the enablements after the runnable
+	        // (i.e. the container resets the state to what it was at the beginning of the
+	        // run even if the state of the page changed. Remove from View changes the state)
+	        configuration.setRunnableContext(new IRunnableContext() {
+				public void run(boolean fork, boolean cancelable,
+						IRunnableWithProgress runnable)
+						throws InvocationTargetException, InterruptedException {
+					getContainer().run(fork, cancelable, runnable);
+					updateEnablements();
+				}
+			});
+	        configuration.setSupportedModes(ISynchronizePageConfiguration.OUTGOING_MODE);
+	        configuration.setMode(ISynchronizePageConfiguration.OUTGOING_MODE);
+		}
+		/* (non-Javadoc)
+		 * @see org.eclipse.team.ui.synchronize.AbstractSynchronizeParticipant#doesSupportSynchronize()
+		 */
+		public boolean doesSupportSynchronize() {
+			return false;
+		}
     }
     
     private final CommitCommentArea fCommentArea;
@@ -148,10 +181,9 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
     private ISynchronizePageConfiguration fConfiguration;
     private SashForm fSashForm;
     protected final CommitWizardFileTypePage fFileTypePage;
+	private ParticipantPagePane fPagePane;
+	private Participant fParticipant;
     
-    /**
-     * 
-     */
     public CommitWizardCommitPage(IResource [] resources, CommitWizardFileTypePage fileTypePage) {
         super(Policy.bind("CommitWizardCommitPage.0")); //$NON-NLS-1$
         setTitle(Policy.bind("CommitWizardCommitPage.0")); //$NON-NLS-1$
@@ -203,7 +235,6 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
             fCommentArea.setProject(fResources[0].getProject());
     }
     
-    
     private void createChangesArea(Composite parent) {
 
         final Composite composite= new Composite(parent, SWT.NONE);
@@ -212,30 +243,30 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
         
         createPlaceholder(composite);
         
-        final WorkspaceSynchronizeParticipant participant = new Participant(new ResourceScope(fResources));
-        fConfiguration= participant.createPageConfiguration();
-        fConfiguration.setProperty(ISynchronizePageConfiguration.P_TOOLBAR_MENU, new String[] {ISynchronizePageConfiguration.LAYOUT_GROUP});
-        fConfiguration.setProperty(ISynchronizePageConfiguration.P_CONTEXT_MENU, ISynchronizePageConfiguration.DEFAULT_CONTEXT_MENU);
-        fConfiguration.addActionContribution(new ActionContribution());
-        
-        fConfiguration.setRunnableContext(getContainer());
-        fConfiguration.setMode(ISynchronizePageConfiguration.OUTGOING_MODE);
-        
-        final ParticipantPagePane part= new ParticipantPagePane(getShell(), true /* modal */, fConfiguration, participant);
-        Control control = part.createPartControl(composite);
+        fParticipant = new Participant(new ResourceScope(fResources));
+        fConfiguration= fParticipant.createPageConfiguration();
+        fPagePane= new ParticipantPagePane(getShell(), true /* modal */, fConfiguration, fParticipant);
+        Control control = fPagePane.createPartControl(composite);
         control.setLayoutData(SWTUtils.createHVFillGridData());
     }
-    /**
-     * @param composite
-     */
+    
+    /* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.DialogPage#dispose()
+	 */
+	public void dispose() {
+		super.dispose();
+		// Disposing of the page pane will dispose of the page and the configuration
+		if (fPagePane != null)
+			fPagePane.dispose();
+		if (fParticipant != null)
+			fParticipant.dispose();
+	}
+	
     private void createPlaceholder(final Composite composite) {
         final Composite placeholder= new Composite(composite, SWT.NONE);
         placeholder.setLayoutData(new GridData(SWT.DEFAULT, convertHorizontalDLUsToPixels(IDialogConstants.VERTICAL_SPACING) /3));
     }
     
-    /**
-     * @return
-     */
     public String getComment() {
         return fCommentArea.getComment(true);
     }
@@ -263,10 +294,32 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
         }
     }
     
-    /**
-     * 
-     */
-    boolean validatePage(boolean setMessage) {
+	/*
+	 * Expand the sync elements and update the page enablement
+	 */
+	protected void updateForModelChange(ISynchronizeModelElement root) {
+		expand();
+		updateEnablements();
+	}
+	
+	private void updateEnablements() {
+		SyncInfoSet set = fConfiguration.getSyncInfoSet();
+		if (set.hasConflicts()) {
+			setErrorMessage(Policy.bind("CommitWizardCommitPage.4")); //$NON-NLS-1$
+			setPageComplete(false);
+			return;
+		}
+		if (set.isEmpty()) {
+			// No need for a message as it should be obvious that there are no resources to commit
+			setErrorMessage(null);
+			setPageComplete(false);
+			return;
+		}
+		setErrorMessage(null);
+		setPageComplete(true);
+	}
+
+	boolean validatePage(boolean setMessage) {
         if (fCommentArea != null && fCommentArea.getComment(false).length() == 0) {
             final IPreferenceStore store= CVSUIPlugin.getPlugin().getPreferenceStore();
             final String value= store.getString(ICVSUIConstants.PREF_ALLOW_EMPTY_COMMIT_COMMENTS);
@@ -282,9 +335,6 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
         return true;
     }
     
-    /**
-     * 
-     */
     public void setFocus() {
         fCommentArea.setFocus();
         validatePage(true);
