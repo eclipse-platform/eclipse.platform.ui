@@ -258,16 +258,20 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		if (config == null)
 			config = new Configuration();
 
-		SiteEntry defaultSite = config.getSiteEntry(PlatformURLHandler.PROTOCOL + PlatformURLHandler.PROTOCOL_SEPARATOR + "/" + "base" + "/");
-		if (defaultSite != null) {
-			defaultSite.addFeatureEntry(entry);
-		} else {
-			// pick up the first site
-			SiteEntry[] sites = config.getSites();
-			if (sites.length > 0) {
-				sites[0].addFeatureEntry(entry);
+		SiteEntry[] sites = config.getSites();
+		for (int i=0; i<sites.length; i++) {
+			// find out what site contains the feature and configure it
+			try {
+				URL url = new URL(sites[i].getURL(), FEATURES + "/" + entry.getFeatureIdentifier()+ "_" + entry.getFeatureVersion() + "/");
+				if (new File(url.getFile()).exists())
+					sites[i].addFeatureEntry(entry);
+				else  {
+					url = new URL(sites[i].getURL(), FEATURES + "/" + entry.getFeatureIdentifier() + "/");
+					if (new File(url.getFile()).exists())
+						sites[i].addFeatureEntry(entry);
+				}
+			} catch (MalformedURLException e) {
 			}
-			// else, do nothing (we need a site)
 		}
 	}
 
