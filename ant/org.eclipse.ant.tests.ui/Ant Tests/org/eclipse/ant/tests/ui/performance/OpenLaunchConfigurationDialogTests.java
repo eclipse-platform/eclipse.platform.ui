@@ -12,7 +12,6 @@
 package org.eclipse.ant.tests.ui.performance;
 
 import org.eclipse.ant.internal.ui.IAntUIConstants;
-import org.eclipse.ant.tests.ui.editor.performance.EditorTestHelper;
 import org.eclipse.ant.tests.ui.testplugin.AbstractAntUITest;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IStatus;
@@ -22,7 +21,6 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.test.performance.Performance;
 import org.eclipse.test.performance.PerformanceMeter;
 import org.eclipse.test.performance.PerformanceTestCase;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
@@ -65,23 +63,13 @@ public class OpenLaunchConfigurationDialogTests extends PerformanceTestCase {
 		dialog.setOpenMode(LaunchConfigurationsDialog.LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_SELECTION);
 		dialog.setInitialSelection(selection);
 		dialog.setInitialStatus(status);
-		fMeter.start();
+		startMeasuring();
 		dialog.open();
-		fMeter.stop();
+		stopMeasuring();
 		dialog.close();
 		
 		commitMeasurements();
 		assertPerformance();
 		
     }
-    
-    protected void setUp() throws Exception {
-		Performance performance= Performance.getDefault();
-		fMeter= performance.createPerformanceMeter(performance.getDefaultScenarioId(this));
-		EditorTestHelper.calmDown(1000, 10000, 100);
-	}
-	
-	protected void tearDown() throws Exception {
-		fMeter.dispose();
-	}
 }
