@@ -188,7 +188,6 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 				try {
 					allTargets = AntUtil.getTargets(expandedLocation);
 				} catch (CoreException ce) {
-					ExternalToolsPlugin.getDefault().log("Problems retrieving Ant Targets", ce);
 					setErrorMessage(ce.getMessage());
 					allTargets= null;
 					return allTargets;
