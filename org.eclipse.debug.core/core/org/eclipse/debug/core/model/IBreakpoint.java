@@ -188,7 +188,7 @@ public interface IBreakpoint extends IAdaptable {
 	 * Returns whether this breakpoint is to be persisted across
 	 * workspace invocations, or when a project is closed and re-opened.
 	 * Since marker definitions only allow all/none of a specific type
-	 * of marker to be persisted (rathern than selective markers of a
+	 * of marker to be persisted (rather than selected markers of a
 	 * specific type), breakpoints define this functionality.
 	 * 
 	 * @return whether this breakpoint is to be persisted
@@ -201,7 +201,7 @@ public interface IBreakpoint extends IAdaptable {
 	 * Sets whether this breakpoint is to be persisted across
 	 * workspace invocations, or when a project is closed and re-opened.
 	 * Since marker definitions only allow all/none of a specific type of
-	 * marker to be persisted (rather than selective markers of a specific
+	 * marker to be persisted (rather than selected markers of a specific
 	 * type), breakpoints define this functionality. Has no effect if this
 	 * breakpoint's marker definition is defined as not persisted.
 	 * 
