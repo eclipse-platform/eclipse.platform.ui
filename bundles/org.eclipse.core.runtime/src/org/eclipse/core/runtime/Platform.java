@@ -621,9 +621,9 @@ public final class Platform {
 	 * @param id the unique identifier of the desired plug-in 
 	 *		(e.g., <code>"com.example.acme"</code>).
 	 * @return the plug-in runtime object, or <code>null</code>
-	 * @deprecated If the compatibility layer is installed, this method works
-	 * as described. If the compatibility layer is not installed, <code>null</code>
-	 * is returned in all cases.
+	 * @deprecated 
+	 * This method only works if the compatibility layer is installed and must not be used otherwise.
+	 * See the comments on {@link IPluginDescriptor#getPlugin()} for details.
 	 */
 	public static Plugin getPlugin(String id) {
 		try {
