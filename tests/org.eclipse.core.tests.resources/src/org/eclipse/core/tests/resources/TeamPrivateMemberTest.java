@@ -635,6 +635,7 @@ public class TeamPrivateMemberTest extends ResourceTest {
 				listener.addExpectedChange(project, IResourceDelta.ADDED, IResourceDelta.OPEN);
 				listener.addExpectedChange(description, IResourceDelta.ADDED, IResource.NONE);
 				getWorkspace().run(body, getMonitor());
+				waitForBuild();
 				assertTrue("1.0." + listener.getMessage(), listener.isDeltaValid());
 				ensureDoesNotExistInWorkspace(resources);
 			} catch (CoreException e) {
