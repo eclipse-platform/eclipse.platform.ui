@@ -6,6 +6,7 @@ package org.eclipse.debug.ui;
  */
 
 import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.ui.IViewPart;
 
 /**
  * An adapter that debug views containing a structured viewer implement.
@@ -33,7 +34,7 @@ import org.eclipse.jface.viewers.StructuredViewer;
  * @see IDebugModelPresentation
  */
 
-public interface IDebugViewAdapter {
+public interface IDebugViewAdapter extends IViewPart {
 	
 	/**
 	 * Returns the structured viewer contained in this debug view.
