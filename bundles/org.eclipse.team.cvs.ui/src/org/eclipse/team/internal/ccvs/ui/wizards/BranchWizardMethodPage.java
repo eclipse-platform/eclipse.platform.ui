@@ -53,7 +53,7 @@ public class BranchWizardMethodPage extends CVSWizardPage {
 		data.horizontalSpan = 2;
 		eclipseWay.setLayoutData(data);
 		
-		Composite eclipseDescriptionComposite = BranchWizard.createDescriptionComposite(composite, 2);
+		Composite eclipseDescriptionComposite = createDescriptionComposite(composite, 2);
 		Label eclipseDescription = new Label(eclipseDescriptionComposite, SWT.WRAP);
 		eclipseDescription.setText(Policy.bind("BranchWizardMethodPage.eclipseDescription")); //$NON-NLS-1$
 		data = new GridData();
@@ -72,7 +72,7 @@ public class BranchWizardMethodPage extends CVSWizardPage {
 		data.horizontalSpan = 2;
 		cvsWay.setLayoutData(data);
 		
-		Composite cvsDescriptionComposite = BranchWizard.createDescriptionComposite(composite, 2);
+		Composite cvsDescriptionComposite = createDescriptionComposite(composite, 2);
 		Label cvsDescription = new Label(cvsDescriptionComposite, SWT.WRAP);
 		cvsDescription.setText(Policy.bind("BranchWizardMethodPage.cvsDescription")); //$NON-NLS-1$
 		data = new GridData();
@@ -89,5 +89,23 @@ public class BranchWizardMethodPage extends CVSWizardPage {
 
 	private void updateEnablement() {
 		setPageComplete(true);
+	}
+	
+	private Composite createDescriptionComposite(Composite parent, int parentColumns) {
+		Composite composite = new Composite(parent, SWT.NULL);
+	
+		// GridLayout
+		GridLayout layout = new GridLayout();
+		layout.marginWidth = 10;
+		layout.marginHeight = 0;
+		composite.setLayout(layout);
+	
+		// GridData
+		GridData data = new GridData();
+		data.verticalAlignment = GridData.FILL;
+		data.horizontalAlignment = GridData.FILL;
+		data.horizontalSpan = parentColumns;
+		composite.setLayoutData(data);
+		return composite;
 	}
 }
