@@ -462,12 +462,12 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant {
             
         try {
             int offset= reference.getOffset();
-            int length= reference.getSelectionLength();
-            int highLightLength= reference.getLength();
             if (offset < 0) {
                 return;
             }
-                
+            int length= reference.getSelectionLength();
+            int highLightLength= reference.getLength();
+               
             textWidget.setRedraw(false);
             
             if (highLightLength > 0) {
@@ -877,8 +877,8 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant {
 		IPreferenceStore generalTextStore= EditorsUI.getPreferenceStore(); 
 		return new ChainedPreferenceStore(new IPreferenceStore[] { antStore, generalTextStore });
 	}
-	
-	public ISourceViewer getViewer() {
-		return getSourceViewer();
-	}
+
+    public ISourceViewer getViewer() {
+        return getSourceViewer();
+    }
 }
