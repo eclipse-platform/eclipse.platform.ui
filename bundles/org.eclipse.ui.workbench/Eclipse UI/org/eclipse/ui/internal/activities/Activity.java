@@ -28,7 +28,6 @@ final class Activity implements IActivity {
 	private final static int HASH_INITIAL = Activity.class.getName().hashCode();
 
 	private boolean active;
-	private IActivityEvent activityEvent;
 	private List activityListeners;
 	private ActivityManager activityManager;
 	private boolean defined;
@@ -62,8 +61,7 @@ final class Activity implements IActivity {
 		if (!activityListeners.contains(activityListener))
 			activityListeners.add(activityListener);
 		
-		if (!activityListeners.isEmpty())
-			activityManager.getActivitiesWithListeners().add(this);
+		activityManager.getActivitiesWithListeners().add(this);
 	}
 
 	public int compareTo(Object object) {

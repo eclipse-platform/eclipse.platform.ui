@@ -32,7 +32,6 @@ final class Role implements IRole {
 	private String description;
 	private String id;
 	private String name;
-	private IRoleEvent roleEvent;
 	private List roleListeners;
 	private RoleManager roleManager;
 
@@ -59,8 +58,7 @@ final class Role implements IRole {
 		if (!roleListeners.contains(roleListener))
 			roleListeners.add(roleListener);
 		
-		if (!roleListeners.isEmpty())
-			roleManager.getRolesWithListeners().add(this);		
+		roleManager.getRolesWithListeners().add(this);		
 	}
 
 	public int compareTo(Object object) {

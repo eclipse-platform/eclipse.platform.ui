@@ -9,11 +9,12 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.activities.service;
+package org.eclipse.ui.activities;
 
 /**
  * <p>
- * JAVADOC
+ * An instance of <code>IActivityServiceEvent</code> describes changes to an 
+ * instance of <code>IActivityService</code>. 
  * </p>
  * <p>
  * This interface is not intended to be extended or implemented by clients.
@@ -23,13 +24,21 @@ package org.eclipse.ui.internal.activities.service;
  * </p>
  * 
  * @since 3.0
+ * @see IActivityService
+ * @see IActivityServiceListener#activityServiceChanged
  */
 public interface IActivityServiceEvent {
 
 	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	IActivityService getActivityActivationService();
+	 * Returns the instance of <code>IActivityService</code> that has changed.
+	 *
+	 * @return the instance of <code>IActivityService</code> that has changed. 
+	 * 		   Guaranteed not to be <code>null</code>.
+	 */
+	IActivityService getActivityService();
+	
+	/**
+	 * TODO javadoc
+	 */		
+	boolean haveActiveActivityIdsChanged();	
 }

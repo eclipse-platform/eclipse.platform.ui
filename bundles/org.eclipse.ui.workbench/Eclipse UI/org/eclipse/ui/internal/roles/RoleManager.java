@@ -36,7 +36,6 @@ public final class RoleManager implements IRoleManager {
 	private Map activityBindingsByRoleId = new HashMap();
 	private Set definedRoleIds = new HashSet();
 	private Map roleDefinitionsById = new HashMap();
-	private IRoleManagerEvent roleManagerEvent;
 	private List roleManagerListeners;	
 	private IRoleRegistry roleRegistry;
 	private Map rolesById = new WeakHashMap();
@@ -102,15 +101,14 @@ public final class RoleManager implements IRoleManager {
 	Set getRolesWithListeners() {
 		return rolesWithListeners;
 	}	
-	
-	private void fireRoleManagerChanged() {
+
+	private void fireRoleManagerChanged(IRoleManagerEvent roleManagerEvent) {
+		if (roleManagerEvent == null)
+			throw new NullPointerException();
+		
 		if (roleManagerListeners != null)
-			for (int i = 0; i < roleManagerListeners.size(); i++) {
-				if (roleManagerEvent == null)
-					roleManagerEvent = new RoleManagerEvent(this, false);
-								
+			for (int i = 0; i < roleManagerListeners.size(); i++)
 				((IRoleManagerListener) roleManagerListeners.get(i)).roleManagerChanged(roleManagerEvent);
-			}				
 	}
 
 	private void notifyRoles(Map roleEventsByRoleId) {	
@@ -181,7 +179,7 @@ public final class RoleManager implements IRoleManager {
 		Map roleEventsByRoleId = updateRoles(rolesById.keySet());	
 		
 		if (roleManagerChanged)
-			fireRoleManagerChanged();
+			fireRoleManagerChanged(new RoleManagerEvent(this, true));
 
 		if (roleEventsByRoleId != null)
 			notifyRoles(roleEventsByRoleId);		

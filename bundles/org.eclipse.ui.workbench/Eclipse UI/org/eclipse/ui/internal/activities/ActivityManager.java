@@ -53,7 +53,6 @@ public final class ActivityManager implements IActivityManager {
 	private Map activitiesById = new WeakHashMap();
 	private Set activitiesWithListeners = new HashSet();
 	private Map activityDefinitionsById = new HashMap();
-	private IActivityManagerEvent activityManagerEvent;
 	private List activityManagerListeners;
 	private IActivityRegistry activityRegistry;	
 	private Set definedActivityIds = new HashSet();
@@ -150,7 +149,7 @@ public final class ActivityManager implements IActivityManager {
 		}
 		
 		if (activityManagerChanged)
-			fireActivityManagerChanged();
+			fireActivityManagerChanged(new ActivityManagerEvent(this, true, false, false));
 
 		if (activityEventsByActivityId != null)
 			notifyActivities(activityEventsByActivityId);	
@@ -168,7 +167,7 @@ public final class ActivityManager implements IActivityManager {
 		}
 		
 		if (activityManagerChanged)
-			fireActivityManagerChanged();
+			fireActivityManagerChanged(new ActivityManagerEvent(this, false, false, true));
 
 		if (activityEventsByActivityId != null)
 			notifyActivities(activityEventsByActivityId);	
@@ -177,17 +176,16 @@ public final class ActivityManager implements IActivityManager {
 	Set getActivitiesWithListeners() {
 		return activitiesWithListeners;
 	}
-	
-	private void fireActivityManagerChanged() {
+
+	private void fireActivityManagerChanged(IActivityManagerEvent activityManagerEvent) {
+		if (activityManagerEvent == null)
+			throw new NullPointerException();
+		
 		if (activityManagerListeners != null)
-			for (int i = 0; i < activityManagerListeners.size(); i++) {
-				if (activityManagerEvent == null)
-					activityManagerEvent = new ActivityManagerEvent(this, false, false, false);
-								
+			for (int i = 0; i < activityManagerListeners.size(); i++)
 				((IActivityManagerListener) activityManagerListeners.get(i)).activityManagerChanged(activityManagerEvent);
-			}				
 	}
-	
+
 	private void notifyActivities(Map activityEventsByActivityId) {	
 		for (Iterator iterator = activityEventsByActivityId.entrySet().iterator(); iterator.hasNext();) {	
 			Map.Entry entry = (Map.Entry) iterator.next();			
@@ -260,7 +258,7 @@ public final class ActivityManager implements IActivityManager {
 		Map activityEventsByActivityId = updateActivities(activitiesById.keySet());	
 		
 		if (activityManagerChanged)
-			fireActivityManagerChanged();
+			fireActivityManagerChanged(new ActivityManagerEvent(this, false, true, false));
 
 		if (activityEventsByActivityId != null)
 			notifyActivities(activityEventsByActivityId);		

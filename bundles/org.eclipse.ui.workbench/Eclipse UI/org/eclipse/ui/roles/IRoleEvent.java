@@ -17,13 +17,6 @@ package org.eclipse.ui.roles;
  * <code>IRole</code>. 
  * </p>
  * <p>
- * An instance of <code>IRoleEvent</code> specifies the instance of 
- * <code>IRole</code> that changed, but otherwise does not specify the nature of 
- * that change. Clients can only assume that one or more attributes of the 
- * particular instance of <code>IRole</code> have changed. In the future, this 
- * interface may be extended to be more specific about the nature of the change.
- * </p>
- * <p>
  * This interface is not intended to be extended or implemented by clients.
  * </p>
  * <p>
