@@ -12,6 +12,7 @@ Contributors:
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
@@ -33,10 +34,14 @@ public class DecoratorsPreferencePage
 	 * @see PreferencePage#createContents(Composite)
 	 */
 	protected Control createContents(Composite parent) {
+		
+		Font font = parent.getFont();
+		
 		WorkbenchHelp.setHelp(parent, IHelpContextIds.DECORATORS_PREFERENCE_PAGE);
 
 		Composite mainComposite = new Composite(parent, SWT.NONE);
 		mainComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		mainComposite.setFont(font);
 
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = 0;
@@ -47,6 +52,7 @@ public class DecoratorsPreferencePage
 		Label topLabel = new Label(mainComposite, SWT.NONE);
 		topLabel.setText(
 			WorkbenchMessages.getString("DecoratorsPreferencePage.explanation")); //$NON-NLS-1$
+		topLabel.setFont(font);
 		
 		createDecoratorsArea(mainComposite);
 		createDescriptionArea(mainComposite);
@@ -59,16 +65,20 @@ public class DecoratorsPreferencePage
 	 * Creates the widgets for the list of decorators.
 	 */
 	private void createDecoratorsArea(Composite mainComposite) {
+		
+		Font mainFont = mainComposite.getFont();
 		Composite decoratorsComposite = new Composite(mainComposite, SWT.NONE);
 		decoratorsComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		GridLayout decoratorsLayout = new GridLayout();
 		decoratorsLayout.marginWidth = 0;
 		decoratorsLayout.marginHeight = 0;
 		decoratorsComposite.setLayout(decoratorsLayout);
+		decoratorsComposite.setFont(mainFont);
 		
 		Label decoratorsLabel = new Label(decoratorsComposite, SWT.NONE);
 		decoratorsLabel.setText(
 			WorkbenchMessages.getString("DecoratorsPreferencePage.decoratorsLabel")); //$NON-NLS-1$
+		decoratorsLabel.setFont(mainFont);
 		
 		// Checkbox table viewer of decorators
 		checkboxViewer =
@@ -82,6 +92,7 @@ public class DecoratorsPreferencePage
 				return ((DecoratorDefinition) element).getName();
 			}
 		});
+		checkboxViewer.getTable().setFont(mainFont);
 		
 		checkboxViewer.setContentProvider(new IStructuredContentProvider() {
 			public void dispose() {
@@ -122,20 +133,26 @@ public class DecoratorsPreferencePage
 	 * Creates the widgets for the description.
 	 */
 	private void createDescriptionArea(Composite mainComposite) {
+		
+		Font mainFont = mainComposite.getFont();
 		Composite textComposite = new Composite(mainComposite, SWT.NONE);
 		textComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		GridLayout textLayout = new GridLayout();
 		textLayout.marginWidth = 0;
 		textLayout.marginHeight = 0;
 		textComposite.setLayout(textLayout);
+		textComposite.setFont(mainFont);
 		
 		Label descriptionLabel = new Label(textComposite, SWT.NONE);
 		descriptionLabel.setText(
 			WorkbenchMessages.getString("DecoratorsPreferencePage.description")); //$NON-NLS-1$
+		descriptionLabel.setFont(mainFont);
 		
 		descriptionText =
 			new Text(textComposite, SWT.MULTI | SWT.WRAP | SWT.READ_ONLY | SWT.BORDER | SWT.H_SCROLL);
-		descriptionText.setLayoutData(new GridData(GridData.FILL_BOTH));	}
+		descriptionText.setLayoutData(new GridData(GridData.FILL_BOTH));
+		descriptionText.setFont(mainFont);
+	}
 
 	/**
 	 * Populates the list of decorators.
