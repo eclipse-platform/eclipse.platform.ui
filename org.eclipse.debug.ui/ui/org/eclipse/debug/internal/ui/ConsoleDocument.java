@@ -72,9 +72,9 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventList
 	}
 
 	public void close() {
+		fClosed= true;
 		stopReading();
 		DebugPlugin.getDefault().removeDebugEventListener(this);
-		fClosed= true;
 		fStyleRanges= Collections.EMPTY_LIST;
 		set(""); //$NON-NLS-1$
 	}
