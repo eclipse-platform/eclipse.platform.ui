@@ -36,7 +36,8 @@ public class JobQueue {
 	public JobQueue(boolean allowConflictOvertaking) {
 		//compareTo on dummy is never called
 		dummy = new InternalJob("Queue-Head") {//$NON-NLS-1$
-			public IStatus run(IProgressMonitor m) {return Status.OK_STATUS;
+			public IStatus run(IProgressMonitor m) {
+				return Status.OK_STATUS;
 			}
 		}; 
 		dummy.setNext(dummy);
