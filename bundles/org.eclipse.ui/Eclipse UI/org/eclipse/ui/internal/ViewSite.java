@@ -4,12 +4,10 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.registry.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.*;
-import org.eclipse.jface.action.*;
-import org.eclipse.ui.internal.ViewPane;
+import org.eclipse.jface.viewers.ILabelDecorator;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.internal.registry.IViewDescriptor;
 
 /**
  * A view container manages the services for a view.
@@ -33,7 +31,7 @@ public IViewPart getViewPart() {
 /*
  * @see IViewSite#getDecoratorManager()
  */
-public DecoratorManager getDecoratorManager() {
+public ILabelDecorator getDecoratorManager() {
 	return WorkbenchPlugin.getDefault().getDecoratorManager();
 }
 

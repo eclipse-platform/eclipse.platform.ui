@@ -1,6 +1,6 @@
 package org.eclipse.ui;
 
-import org.eclipse.ui.internal.DecoratorManager;
+import org.eclipse.jface.viewers.ILabelDecorator;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
@@ -25,11 +25,11 @@ public IActionBars getActionBars();
 
 /**
  * Get the decorator manager the receiver is using.
- * @return DecoratorManager
+ * @return ILabelDecorator
  * <p>
  * NOTE: This is experimental API, which may be changed or removed at any point in time.
  * This API should not be called, overridden or otherwise used in production code.
  * </p>
  */
-public DecoratorManager getDecoratorManager();
+public ILabelDecorator getDecoratorManager();
 }
