@@ -117,6 +117,7 @@ public class Main {
 	private String showSplash = null; 
 	private String endSplash = null; 
 	private boolean cmdInitialize = false;
+	private boolean cmdFirstUse = false;
 	private Process showProcess = null;
 	private boolean splashDown = false; 
 	private final Runnable endSplashHandler = new Runnable() {
@@ -142,6 +143,7 @@ public class Main {
 	private static final String FEATURE = "-feature"; //$NON-NLS-1$
 	private static final String SHOWSPLASH = "-showsplash"; //$NON-NLS-1$
 	private static final String ENDSPLASH = "-endsplash"; //$NON-NLS-1$
+	private static final String FIRST_USE = "-firstuse"; //$NON-NLS-1$
 	private static final String SPLASH_IMAGE = "splash.bmp"; //$NON-NLS-1$
 	private static final String PI_BOOT = "org.eclipse.core.boot"; //$NON-NLS-1$
 	private static final String BOOTLOADER = "org.eclipse.core.boot.BootLoader"; //$NON-NLS-1$
@@ -150,6 +152,8 @@ public class Main {
 	
 	// constants: configuration file location
 	private static final String CONFIG_FILE = "platform.cfg"; //$NON-NLS-1$
+	private static final String CONFIG_FILE_TEMP_SUFFIX = ".tmp"; //$NON-NLS-1$
+	private static final String CONFIG_FILE_BAK_SUFFIX = ".bak"; //$NON-NLS-1$
 	private static final String ARG_USER_DIR = "user.dir"; //$NON-NLS-1$
 	
 	// constants: configuration file elements
@@ -694,10 +698,16 @@ private String[] processConfiguration(String[] passThruArgs) throws MalformedURL
 				URL bootDir = new URL(urlString);
 				URL bootURL = new URL(bootDir, BOOTJAR);
 				if (bootDir.getProtocol().equals("file")) { //$NON-NLS-1$
-					File dir = new File(bootDir.getFile());
-					if (dir.exists())
-						// verify boot dir ... otherwise will do default search for boot
+					File jar = new File(bootURL.getFile());
+					if (jar.exists())
+						// verify boot dir exists
 						bootLocation = bootURL.toExternalForm();
+					else
+						// Somebody turned the tables on us. The info in
+						// platform.cfg is stale, or the workspace is being used
+						// with a new install. Do default search for boot and force
+						// "first use" processing (optimistic reconciliation)
+						cmdFirstUse = true;
 				} else
 					bootLocation = bootURL.toExternalForm();
 			} catch(MalformedURLException e) {
@@ -731,6 +741,10 @@ private String[] processConfiguration(String[] passThruArgs) throws MalformedURL
 		args.add(feature);
 	}
 	
+	if (cmdFirstUse) {
+		args.add(FIRST_USE);
+	}
+	
 	// pass root location downstream
 	args.add(INSTALL);
 	args.add(rootLocation);
@@ -742,22 +756,25 @@ private String[] processConfiguration(String[] passThruArgs) throws MalformedURL
  * Returns url of the location this class was loaded from
  */
 private URL getRootURL() throws MalformedURLException {
+	if (rootLocation != null)
+		return new URL(rootLocation);
+		
 	URL	url = getClass().getProtectionDomain().getCodeSource().getLocation();
 	String path = decode(url.getFile());
 	path = new File(path).getAbsolutePath().replace(File.separatorChar,'/');
 	if (path.endsWith(".jar")) //$NON-NLS-1$
 		path = path.substring(0, path.lastIndexOf("/")+1); //$NON-NLS-1$
 	url = new URL(url.getProtocol(), url.getHost(), url.getPort(), path);
+	rootLocation = url.toExternalForm();
 	return url;
 }
 
 /*
- * Load the configuration file. If not specified, default to the current
- * working directory
+ * Load the configuration file. If not specified, default to the workspace
  */
 private void loadConfiguration(URL url) {
 	if (url == null) {
-		
+		// configuration URL was not specified ..... search
 		String base = baseLocation;
 		if (base == null) {
 			// determine default workspace
@@ -768,32 +785,41 @@ private void loadConfiguration(URL url) {
 		} else {
 			base = base.replace('/',File.separatorChar);
 		}
-		
-		// look for configuration in workspace
 		if (!base.endsWith(File.separator))
 			base += File.separator;
 		
-		try {	
-			File cfg = new File(base + ".metadata" + File.separator + ".config" + File.separator + CONFIG_FILE); //$NON-NLS-1$ //$NON-NLS-2$
-			if (!cfg.exists()) {
-				// look for configuration in install root (default)
-				String install = getRootURL().getFile().replace('/',File.separatorChar);
-				if (!install.endsWith(File.separator))
-					install += File.separator;
-				cfg = new File(install + ".config" + File.separator + CONFIG_FILE); //$NON-NLS-1$
-				if (!cfg.exists())
-					cfg = null;
-			}
-			if (cfg != null)
-				url = new URL("file", null, 0, cfg.getAbsolutePath()); //$NON-NLS-1$
-		} catch(MalformedURLException e) {
+		File cfg = null;	
+		try {
+			// first look for configuration in base location (workspace or as specified)
+			cfg = new File(base + ".metadata" + File.separator + ".config" + File.separator + CONFIG_FILE); //$NON-NLS-1$ //$NON-NLS-2$
+			url = new URL("file", null, 0, cfg.getAbsolutePath()); //$NON-NLS-1$
+			props = loadProperties(url);
+			if (debug)
+				System.out.println("Startup: using configuration " + url.toString()); //$NON-NLS-1$
+			return; // we're done looking
+		} catch(IOException e) {
 			// continue ...
 		}
-	} 
-	
-	if (url != null) {
+		
 		try {
-			props = load(url);
+			// look for configuration in install root (set up by -initialize)
+			String install = getRootURL().getFile().replace('/',File.separatorChar);
+			if (!install.endsWith(File.separator))
+				install += File.separator;
+			cfg = new File(install + ".config" + File.separator + CONFIG_FILE); //$NON-NLS-1$
+			url = new URL("file", null, 0, cfg.getAbsolutePath()); //$NON-NLS-1$
+			props = loadProperties(url);
+			if (debug)
+				System.out.println("Startup: using configuration " + url.toString()); //$NON-NLS-1$
+		} catch(IOException e) {
+			// continue ...
+			if (debug)
+				System.out.println("Startup: unable to load configuration\n" + e); //$NON-NLS-1$
+		}
+	} else {
+		try {
+			// configuration url was specified ... use it
+			props = loadProperties(url);
 			if (debug)
 				System.out.println("Startup: using configuration " + url.toString()); //$NON-NLS-1$
 		} catch(IOException e) {
@@ -803,11 +829,39 @@ private void loadConfiguration(URL url) {
 		}
 	}
 }
+
+private Properties loadProperties(URL url) throws IOException {
+		
+	// try to load saved configuration file (watch for failed prior save())
+	Properties props = null;
+	IOException originalException = null;
+	try {
+		props = load(url, null); // try to load config file
+	} catch(IOException e1) {
+		originalException = e1;
+		try {
+			props = load(url, CONFIG_FILE_TEMP_SUFFIX); // check for failures on save
+		} catch(IOException e2) {
+			try {
+				props = load(url, CONFIG_FILE_BAK_SUFFIX); // check for failures on save
+			} catch(IOException e3) {
+				throw originalException; // we tried, but no config here ...
+			}
+		}
+	}
+	
+	return props;
+}
  
 /*
  * Load the configuration  
  */ 
-private Properties load(URL url) throws IOException {
+private Properties load(URL url, String suffix) throws IOException {
+	// figure out what we will be loading
+	if (suffix != null && !suffix.equals("")) //$NON-NLS-1$
+		url = new URL(url.getProtocol(),url.getHost(),url.getPort(),url.getFile()+suffix);
+			
+	// try to load saved configuration file
 	Properties props = new Properties();
 	InputStream is = null;
 	try {
