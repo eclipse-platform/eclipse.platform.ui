@@ -112,6 +112,11 @@ public class ConfigurationDialog extends TitleAreaDialog {
 		listViewer.setContentProvider(new ToolContentProvider());
 		listViewer.setLabelProvider(new ToolLabelProvider());
 		listViewer.setInput(tools);
+		listViewer.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				openEditToolDialog();
+			}
+		});
 
 		// Build the button list
 		Composite buttonComp = new Composite(midComp, SWT.NONE);
@@ -166,7 +171,7 @@ public class ConfigurationDialog extends TitleAreaDialog {
 		
 		return button;
 	}
-
+	
 	/**
 	 * Adds the listeners required to handle the button
 	 * actions
@@ -187,11 +192,7 @@ public class ConfigurationDialog extends TitleAreaDialog {
 
 		editButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				EditDialog dialog;
-				dialog = new EditDialog(getShell(), currentSelection);
-				dialog.open();
-				listViewer.update(currentSelection, null);
-				updateDetails();
+				openEditToolDialog();
 			}
 		});
 
@@ -258,6 +259,20 @@ public class ConfigurationDialog extends TitleAreaDialog {
 		int itemCount = listViewer.getList().getItemCount();
 		upButton.setEnabled(currentSelection != null && selIndex > 0);
 		downButton.setEnabled(currentSelection != null && selIndex < itemCount - 1);
+	}
+
+	/**
+	 * Opens the edit external tool dialog on
+	 * the currently selected external tool.
+	 */
+	private void openEditToolDialog() {
+		if (currentSelection == null)
+			return;
+		EditDialog dialog;
+		dialog = new EditDialog(getShell(), currentSelection);
+		dialog.open();
+		listViewer.update(currentSelection, null);
+		updateDetails();
 	}
 	
 	/**
