@@ -191,6 +191,7 @@ public abstract class WizardPreferencesPage extends WizardDataTransferPage {
      */
     protected void setPreferenceTransfers() {
         PreferenceTransferElement[] transfers = getTransfers();
+        transfersTable.removeAll();
         for (int i = 0; i < transfers.length; i++) {
             PreferenceTransferElement element = transfers[i];
             createItem(element, transfersTable);
@@ -477,43 +478,7 @@ public abstract class WizardPreferencesPage extends WizardDataTransferPage {
         }
         return true;
     }
-
-    // /**
-    // * Set up and execute the passed Operation. Answer a boolean indicating
-    // success.
-    // *
-    // * @return boolean
-    // */
-    // protected boolean executeExportOperation(FileSystemExportOperation op) {
-    // op
-    // .setCreateContainerDirectories(createDirectoriesForSelectedContainersCheckbox
-    // .getSelection());
-    // op.setCreateLeadupStructure(createDirectoryStructureCheckbox
-    // .getSelection());
-    // op.setOverwriteFiles(overwriteExistingFilesCheckbox.getSelection());
-    //
-    // try {
-    // getContainer().run(true, true, op);
-    // } catch (InterruptedException e) {
-    // return false;
-    // } catch (InvocationTargetException e) {
-    // displayErrorDialog(e.getTargetException().getMessage());
-    // return false;
-    // }
-    //
-    // IStatus status = op.getStatus();
-    // if (!status.isOK()) {
-    // ErrorDialog.openError(getContainer().getShell(),
-    // PreferencesMessages
-    // .getString("PreferencesExport.exportProblems"), //$NON-NLS-1$
-    // null, // no special message
-    // status);
-    // return false;
-    // }
-    //
-    // return true;
-    // }
-
+    
     /*
      * (non-Javadoc)
      * 

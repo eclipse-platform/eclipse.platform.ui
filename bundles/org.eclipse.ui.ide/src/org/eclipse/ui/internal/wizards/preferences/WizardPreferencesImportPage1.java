@@ -115,7 +115,7 @@ public class WizardPreferencesImportPage1 extends WizardPreferencesPage {
 
     private boolean validFromFile() {
         File fromFile = new File(getDestinationValue());
-        return fromFile.exists();
+        return fromFile.exists() && !fromFile.isDirectory();
     }
 
     /**
