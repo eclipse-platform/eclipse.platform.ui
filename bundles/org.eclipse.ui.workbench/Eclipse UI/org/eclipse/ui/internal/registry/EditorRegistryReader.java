@@ -26,8 +26,14 @@ import org.eclipse.ui.internal.IWorkbenchConstants;
  */
 public class EditorRegistryReader extends RegistryReader {
 
+    /**
+     * Comment for <code>TAG_EDITOR</code>
+     */
     public static final String TAG_EDITOR = "editor";//$NON-NLS-1$
 
+    /**
+     * Comment for <code>P_TRUE</code>
+     */
     public static final String P_TRUE = "true";//$NON-NLS-1$
 
     private EditorRegistry editorRegistry;
@@ -35,14 +41,13 @@ public class EditorRegistryReader extends RegistryReader {
     /**
      * Get the editors that are defined in the registry
      * and add them to the ResourceEditorRegistry
-     * The readAll flag indicates if we should read non modified plugins
      *
      * Warning:
      * The registry must be passed in because this method is called during the
      * process of setting up the registry and at this time it has not been
      * safely setup with the plugin.
      */
-    protected void addEditors(boolean readAll, EditorRegistry registry) {
+    protected void addEditors(EditorRegistry registry) {
         IExtensionRegistry extensionRegistry = Platform.getExtensionRegistry();
         this.editorRegistry = registry;
         readRegistry(extensionRegistry, PlatformUI.PLUGIN_ID,
@@ -112,7 +117,11 @@ public class EditorRegistryReader extends RegistryReader {
         return true;
     }
 
-    //for dynamic UI
+
+    /**
+     * @param editorRegistry
+     * @param element
+     */
     public void readElement(EditorRegistry editorRegistry,
             IConfigurationElement element) {
         this.editorRegistry = editorRegistry;

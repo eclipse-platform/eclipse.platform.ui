@@ -37,7 +37,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
-import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPerspectiveDescriptor;
@@ -52,8 +51,6 @@ import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceNode;
 import org.eclipse.ui.internal.registry.ActionSetPartAssociationsReader;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
-import org.eclipse.ui.internal.registry.EditorRegistry;
-import org.eclipse.ui.internal.registry.EditorRegistryReader;
 import org.eclipse.ui.internal.registry.IActionSet;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.registry.PerspectiveRegistry;
@@ -183,10 +180,6 @@ class ExtensionEventHandler implements IRegistryChangeListener {
 
     private void appear(IExtensionPoint extPt, IExtension ext) {
         String name = extPt.getSimpleIdentifier();
-        if (name.equalsIgnoreCase(IWorkbenchConstants.PL_EDITOR)) {
-            loadEditor(ext);
-            return;
-        }
         if (name
                 .equalsIgnoreCase(IWorkbenchConstants.PL_PERSPECTIVE_EXTENSIONS)) {
             loadPerspectiveExtensions(ext);
@@ -468,30 +461,6 @@ class ExtensionEventHandler implements IRegistryChangeListener {
 
         for (int i = 0; i < viewsRemoved.length; i++)
             ((ShowViewMenu) items[0]).removeAction((String) viewsRemoved[i]);
-    }
-
-    private void loadEditor(IExtension ext) {
-        MultiStatus result = new MultiStatus(
-                PlatformUI.PLUGIN_ID,
-                IStatus.OK,
-                WorkbenchMessages.getString("Workbench.problemsRestoring"), null); //$NON-NLS-1$
-        IEditorRegistry eReg = WorkbenchPlugin.getDefault().getEditorRegistry();
-        EditorRegistryReader eReader = new EditorRegistryReader();
-        IConfigurationElement[] elements = ext.getConfigurationElements();
-        for (int i = 0; i < elements.length; i++) {
-            String id = elements[i].getAttribute(IWorkbenchConstants.TAG_ID);
-            if (id != null && eReg.findEditor(id) != null)
-                continue;
-            eReader.readElement((EditorRegistry) eReg, elements[i]);
-            //restoreEditorState(elements[i], result);
-        }
-        if (result.getSeverity() == IStatus.ERROR) {
-            ErrorDialog.openError(null, WorkbenchMessages
-                    .getString("Workspace.problemsTitle"), //$NON-NLS-1$
-                    WorkbenchMessages
-                            .getString("Workbench.problemsRestoringMsg"), //$NON-NLS-1$
-                    result);
-        }
     }
 
     private void restoreEditorState(IConfigurationElement element,
