@@ -282,7 +282,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
     /**
      * Answer the element factory for an id, or <code>null</code. if not found.
      * @param targetID
-     * @return
+     * @return IElementFactory
      */
     public IElementFactory getElementFactory(String targetID) {
 
@@ -470,9 +470,9 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
                     .getPreferenceContributions(Platform.getExtensionRegistry());
 
             //Add the contributions to the manager
-            Iterator enum = pageContributions.iterator();
-            while (enum.hasNext()) {
-                preferenceManager.addToRoot((IPreferenceNode) enum.next());
+            Iterator iterator = pageContributions.iterator();
+            while (iterator.hasNext()) {
+                preferenceManager.addToRoot((IPreferenceNode) iterator.next());
             }
         }
         return preferenceManager;
@@ -637,7 +637,6 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
     public DecoratorManager getDecoratorManager() {
         if (this.decoratorManager == null) {
             this.decoratorManager = new DecoratorManager();
-            this.decoratorManager.restoreListeners();
         }
         return decoratorManager;
     }

@@ -93,7 +93,15 @@ public class DecoratorManager implements IDelayedLabelDecorator,
      * settings from the installed plug-ins.
      */
     public DecoratorManager() {
-        DecoratorRegistryReader reader = new DecoratorRegistryReader();
+        
+        scheduler = new DecorationScheduler(this);
+    }
+
+    /**
+	 * Initalize the decorator definitions.
+	 */
+	private void initializeDecoratorDefinitions() {
+		DecoratorRegistryReader reader = new DecoratorRegistryReader();
         Collection values = reader
                 .readRegistry(Platform.getExtensionRegistry());
 
@@ -118,11 +126,11 @@ public class DecoratorManager implements IDelayedLabelDecorator,
 
         lightweightManager = new LightweightDecoratorManager(
                 lightweightDefinitions);
+        
+        applyDecoratorsPreference();
+	}
 
-        scheduler = new DecorationScheduler(this);
-    }
-
-    /**
+	/**
      * For dynamic UI
      * 
      * @param definition the definition to add
@@ -131,7 +139,7 @@ public class DecoratorManager implements IDelayedLabelDecorator,
     public void addDecorator(DecoratorDefinition definition) {
         if (definition.isFull()) {
             if (getFullDecoratorDefinition(definition.getId()) == null) {
-                FullDecoratorDefinition[] oldDefs = fullDefinitions;
+                FullDecoratorDefinition[] oldDefs = getFullDefinitions();
                 fullDefinitions = new FullDecoratorDefinition[fullDefinitions.length + 1];
                 System
                         .arraycopy(oldDefs, 0, fullDefinitions, 0,
@@ -173,15 +181,6 @@ public class DecoratorManager implements IDelayedLabelDecorator,
 
     }
 
-    /**
-     * Restore the stored values from the preference
-     * store and register the receiver as a listener
-     * for all of the enabled decorators.
-     */
-
-    public void restoreListeners() {
-        applyDecoratorsPreference();
-    }
 
     /**
      * Add the listener to the list of listeners.
@@ -426,7 +425,7 @@ public class DecoratorManager implements IDelayedLabelDecorator,
             return fullCheck;
 
         boolean lightweightCheck = isLabelProperty(element, property,
-                lightweightManager.getDecoratorsFor(element));
+                getLightweightManager().getDecoratorsFor(element));
 
         if (lightweightCheck)
             return true;
@@ -465,9 +464,10 @@ public class DecoratorManager implements IDelayedLabelDecorator,
      */
     private FullDecoratorDefinition[] enabledFullDefinitions() {
         ArrayList result = new ArrayList();
-        for (int i = 0; i < fullDefinitions.length; i++) {
-            if (fullDefinitions[i].isEnabled())
-                result.add(fullDefinitions[i]);
+        FullDecoratorDefinition[] full = getFullDefinitions();
+        for (int i = 0; i < full.length; i++) {
+            if (full[i].isEnabled())
+                result.add(full[i]);
         }
         FullDecoratorDefinition[] returnArray = new FullDecoratorDefinition[result
                 .size()];
@@ -489,7 +489,7 @@ public class DecoratorManager implements IDelayedLabelDecorator,
      */
     public void clearCaches() {
         cachedFullDecorators.clear();
-        lightweightManager.reset();
+        getLightweightManager().reset();
     }
 
     /**
@@ -508,7 +508,7 @@ public class DecoratorManager implements IDelayedLabelDecorator,
      * @return DecoratorDefinition[]
      */
     public DecoratorDefinition[] getAllDecoratorDefinitions() {
-        LightweightDecoratorDefinition[] lightweightDefinitions = lightweightManager
+        LightweightDecoratorDefinition[] lightweightDefinitions = getLightweightManager()
                 .getDefinitions();
         DecoratorDefinition[] returnValue = new DecoratorDefinition[fullDefinitions.length
                 + lightweightDefinitions.length];
@@ -545,8 +545,8 @@ public class DecoratorManager implements IDelayedLabelDecorator,
      */
     private void writeDecoratorsPreference() {
         StringBuffer enabledIds = new StringBuffer();
-        writeDecoratorsPreference(enabledIds, fullDefinitions);
-        writeDecoratorsPreference(enabledIds, lightweightManager
+        writeDecoratorsPreference(enabledIds, getFullDefinitions());
+        writeDecoratorsPreference(enabledIds, getLightweightManager()
                 .getDefinitions());
 
         WorkbenchPlugin.getDefault().getPreferenceStore().setValue(
@@ -572,7 +572,7 @@ public class DecoratorManager implements IDelayedLabelDecorator,
      * preference store and set the state of the
      * current definitions accordingly.
      */
-    private void applyDecoratorsPreference() {
+    public void applyDecoratorsPreference() {
 
         String preferenceValue = WorkbenchPlugin.getDefault()
                 .getPreferenceStore().getString(
@@ -594,17 +594,18 @@ public class DecoratorManager implements IDelayedLabelDecorator,
                 disabledIds.add(id);
         }
 
-        for (int i = 0; i < fullDefinitions.length; i++) {
-            String id = fullDefinitions[i].getId();
+        FullDecoratorDefinition[] full = getFullDefinitions();
+        for (int i = 0; i < full.length; i++) {
+            String id = full[i].getId();
             if (enabledIds.contains(id))
-                fullDefinitions[i].setEnabled(true);
+            	full[i].setEnabled(true);
             else {
                 if (disabledIds.contains(id))
-                    fullDefinitions[i].setEnabled(false);
+                	full[i].setEnabled(false);
             }
         }
 
-        LightweightDecoratorDefinition[] lightweightDefinitions = lightweightManager
+        LightweightDecoratorDefinition[] lightweightDefinitions = getLightweightManager()
                 .getDefinitions();
         for (int i = 0; i < lightweightDefinitions.length; i++) {
             String id = lightweightDefinitions[i].getId();
@@ -626,11 +627,13 @@ public class DecoratorManager implements IDelayedLabelDecorator,
     public void shutdown() {
         //Disable all of the enabled decorators 
         //so as to force a dispose of thier decorators
-        for (int i = 0; i < fullDefinitions.length; i++) {
-            if (fullDefinitions[i].isEnabled())
-                fullDefinitions[i].setEnabled(false);
+    	FullDecoratorDefinition[] full = getFullDefinitions();
+        for (int i = 0; i < full.length; i++) {
+            if (full[i].isEnabled())
+                full[i].setEnabled(false);
         }
-        lightweightManager.shutdown();
+        if(lightweightManager != null)//Do not create if not required
+        	getLightweightManager().shutdown();
         scheduler.shutdown();
     }
 
@@ -692,7 +695,7 @@ public class DecoratorManager implements IDelayedLabelDecorator,
      */
     public ILightweightLabelDecorator getLightweightLabelDecorator(
             String decoratorId) {
-        LightweightDecoratorDefinition definition = lightweightManager
+        LightweightDecoratorDefinition definition = getLightweightManager()
                 .getDecoratorDefinition(decoratorId);
         //Do not return for a disabled decorator
         if (definition != null && definition.isEnabled()) {
@@ -709,7 +712,7 @@ public class DecoratorManager implements IDelayedLabelDecorator,
     private DecoratorDefinition getDecoratorDefinition(String decoratorId) {
         DecoratorDefinition returnValue = getFullDecoratorDefinition(decoratorId);
         if (returnValue == null)
-            return lightweightManager.getDecoratorDefinition(decoratorId);
+            return getLightweightManager().getDecoratorDefinition(decoratorId);
         return returnValue;
     }
 
@@ -720,9 +723,10 @@ public class DecoratorManager implements IDelayedLabelDecorator,
      */
     private FullDecoratorDefinition getFullDecoratorDefinition(
             String decoratorId) {
-        for (int i = 0; i < fullDefinitions.length; i++) {
-            if (fullDefinitions[i].getId().equals(decoratorId))
-                return fullDefinitions[i];
+    	FullDecoratorDefinition[] full = getFullDefinitions();
+        for (int i = 0; i < full.length; i++) {
+            if (full[i].getId().equals(decoratorId))
+                return full[i];
         }
         return null;
     }
@@ -763,6 +767,8 @@ public class DecoratorManager implements IDelayedLabelDecorator,
      * @return LightweightDecoratorManager
      */
     LightweightDecoratorManager getLightweightManager() {
+    	if(lightweightManager == null)
+    		initializeDecoratorDefinitions();
         return lightweightManager;
     }
 
@@ -804,7 +810,7 @@ public class DecoratorManager implements IDelayedLabelDecorator,
         //For the sake of effeciency we do not test for enablement at this
         //point and just abandon deferment if there are any to run right
         //away
-        return fullDefinitions.length > 0;
+        return getFullDefinitions().length > 0;
 
     }
     
@@ -826,5 +832,15 @@ public class DecoratorManager implements IDelayedLabelDecorator,
 	 */
 	public Color decorateForeground(Object element) {
 		return scheduler.getForegroundColor(element, getResourceAdapter(element));
+	}
+	/**
+	 * Get all of the defined fullDefinitions. Initalize if
+	 * required
+	 * @return FullDecoratorDefinition[]
+	 */
+	private FullDecoratorDefinition[] getFullDefinitions() {
+		if(fullDefinitions == null)
+			initializeDecoratorDefinitions();
+		return fullDefinitions;
 	}
 }
