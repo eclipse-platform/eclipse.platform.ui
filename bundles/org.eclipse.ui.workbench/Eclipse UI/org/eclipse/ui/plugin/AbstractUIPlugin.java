@@ -495,6 +495,8 @@ public abstract class AbstractUIPlugin extends Plugin {
             dialogSettings.save(readWritePath);
         } catch (IOException e) {
             // spec'ed to ignore problems
+        } catch (IllegalStateException e) {
+            // spec'ed to ignore problems
         }
     }
 
