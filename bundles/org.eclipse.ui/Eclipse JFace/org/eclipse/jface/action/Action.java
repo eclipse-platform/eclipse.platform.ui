@@ -710,14 +710,13 @@ public void setText(String text) {
 		if (acceleratorText != null) {
 			int newAccelerator = convertAccelerator(acceleratorText);
 			//Be sure to not wipe out the accelerator if nothing found
-			if(newAccelerator > 0)
+			if (newAccelerator > 0) {
 				setAccelerator(newAccelerator);
+			}
 		}
 	}
-	if (this.accelerator != oldAccel 
-			|| (this.text == null && oldText != null)
-				|| (this.text != null && oldText == null)
-					|| (this.text != null && oldText != null && !oldText.equals(this.text))) {
+	if (!(this.accelerator == oldAccel &&
+		(oldText == null ? this.text == null : oldText.equals(this.text)))) {
 		firePropertyChange(TEXT, oldText, this.text);
 	}
 }
@@ -728,14 +727,12 @@ public void setText(String text) {
  * if the tool tip text actually changes as a consequence.
  * </p>
  *
- * @param text the tool tip text, or <code>null</code> if none
+ * @param toolTipText the tool tip text, or <code>null</code> if none
  */
-public void setToolTipText(String text) {
-	if ((toolTipText == null && text != null)
-			|| (toolTipText != null && text == null)
-				|| (toolTipText != null && text != null && !text.equals(toolTipText))) {
-		String oldToolTipText= toolTipText;
-		toolTipText= text;
+public void setToolTipText(String toolTipText) {
+	String oldToolTipText= this.toolTipText;
+	if (!(oldToolTipText == null ? toolTipText == null : oldToolTipText.equals(toolTipText))) {
+		this.toolTipText = toolTipText;
 		firePropertyChange(TOOL_TIP_TEXT, oldToolTipText, toolTipText);
 	}
 }
