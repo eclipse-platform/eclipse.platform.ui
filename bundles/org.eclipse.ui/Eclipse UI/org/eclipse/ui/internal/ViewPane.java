@@ -43,10 +43,13 @@ public class ViewPane extends PartPane
 		
 	private boolean fast = false;
 	private boolean showFocus = false;
+	private ToolBar viewToolBar;
+	private ToolBarManager viewToolBarMgr;
 	private ToolBar isvToolBar;
 	private ToolBarManager isvToolBarMgr;
 	private MenuManager isvMenuMgr;
 	private ToolItem pullDownButton;
+	
 	/**
 	 * Indicates whether a toolbar button is shown for the view local menu.
 	 */
@@ -71,15 +74,6 @@ public class ViewPane extends PartPane
 			if (parent.getParent() != null)
 				parent.getParent().layout();
 		}
-		
-		public void update(boolean force) {
-			// ensure the SystemContribution is at the end before updating
-			if (isDirty() || force) {
-				remove(systemContribution);
-				add(systemContribution);
-			}
-			super.update(force);
-		}
 	}
 
 	/**
@@ -93,7 +87,7 @@ public class ViewPane extends PartPane
 			// Changes to the menu can affect whether the toolbar has a menu button.
 			// Update it if necessary.
 			if (showMenuButton != !isEmpty()) {
-				isvToolBarMgr.update(true);
+				viewToolBarMgr.update(true);
 			}
 			super.update(force, recursive);
 		}
@@ -121,11 +115,12 @@ public class ViewPane extends PartPane
 					}
 				});
 			}
-			else{//Clear out the button if we don't need it anymore
+			else {
+				// clear out the button if we don't need it anymore
 				pullDownButton = null;
 			}
 		
-			//check the current internal state
+			// check the current internal fast view state
 			if (fast) {
 				ToolItem pinButton = new ToolItem(toolbar, SWT.PUSH, index++);
 				Image img = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_PIN_VIEW);
@@ -183,7 +178,7 @@ public void createControl(Composite parent) {
 	
 	// Only include the ISV toolbar and the content in the tab list.
 	// All actions on the System toolbar should be accessible on the pane menu.
-	control.setTabList(new Control[] { isvToolBar, control.getContent() });
+	control.setTabList(new Control[] { isvToolBar, viewToolBar, control.getContent() });
 	
 	Platform.run(new SafeRunnableAdapter() {
 		public void run() { 
@@ -249,7 +244,6 @@ protected void createTitleBar() {
 
 	// Title.   
 	titleLabel = new CLabel(control, SWT.SHADOW_NONE);
-	hookFocus(titleLabel);
 	titleLabel.setAlignment(SWT.LEFT);
 	titleLabel.setBackground(null, null);
 	titleLabel.addMouseListener(new MouseAdapter() {
@@ -269,9 +263,21 @@ protected void createTitleBar() {
 	// Listen to title changes.
 	getViewPart().addPropertyListener(this);
 	
+	// View toolbar
+	viewToolBar = new ToolBar(control, SWT.FLAT | SWT.WRAP);
+	control.setTopRight(viewToolBar);
+	viewToolBar.addMouseListener(new MouseAdapter(){
+		public void mouseDoubleClick(MouseEvent event) {
+			// 1GD0ISU: ITPUI:ALL - Dbl click on view tool cause zoom
+			if (viewToolBar.getItem(new Point(event.x, event.y)) == null)
+				doZoom();
+		}
+	});
+	viewToolBarMgr = new PaneToolBarManager(viewToolBar);
+	viewToolBarMgr.add(systemContribution);
+	
 	// ISV toolbar.
 	isvToolBar = new ToolBar(control, SWT.FLAT | SWT.WRAP);
-	hookFocus(isvToolBar);
 	control.setTopCenter(isvToolBar);
 	isvToolBar.addMouseListener(new MouseAdapter(){
 		public void mouseDoubleClick(MouseEvent event) {
@@ -281,7 +287,6 @@ protected void createTitleBar() {
 		}
 	});
 	isvToolBarMgr = new PaneToolBarManager(isvToolBar);
-	isvToolBarMgr.add(systemContribution);
 }
 /**
  * @see PartPane#doHide
@@ -321,12 +326,14 @@ protected void doPin() {
 			titleLabel.setBackground(WorkbenchColors.getActiveViewGradient(), WorkbenchColors.getActiveViewGradientPercents());
 			titleLabel.setForeground(WorkbenchColors.getSystemColor(SWT.COLOR_TITLE_FOREGROUND));
 			titleLabel.update();
+			viewToolBar.setBackground(WorkbenchColors.getActiveViewGradientEnd());
 			isvToolBar.setBackground(WorkbenchColors.getActiveViewGradientEnd());
 		}
 		else {
 			titleLabel.setBackground(WorkbenchColors.getDeactivatedViewGradient(), WorkbenchColors.getDeactivatedViewGradientPercents());
 			titleLabel.setForeground(WorkbenchColors.getSystemColor(SWT.COLOR_TITLE_INACTIVE_FOREGROUND));
 			titleLabel.update();
+			viewToolBar.setBackground(WorkbenchColors.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 			isvToolBar.setBackground(WorkbenchColors.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 		}
 	}
@@ -334,6 +341,7 @@ protected void doPin() {
 		titleLabel.setBackground(null, null);
 		titleLabel.setForeground(null);
 		titleLabel.update();
+		viewToolBar.setBackground(WorkbenchColors.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 		isvToolBar.setBackground(WorkbenchColors.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 	}
 }
@@ -416,8 +424,8 @@ public void propertyChanged(Object source, int propId) {
  */
 public void setFast(boolean b) {
 	fast = b;
-	if (isvToolBarMgr != null) {
-		isvToolBarMgr.update(true);
+	if (viewToolBarMgr != null) {
+		viewToolBarMgr.update(true);
 	}
 }
 public void setFastViewSash(Sash s) {
@@ -570,7 +578,7 @@ public void showViewMenu() {
 	Menu aMenu = isvMenuMgr.createContextMenu(getControl());
 	Rectangle bounds = pullDownButton.getBounds();
 	Point topLeft = new Point(bounds.x, bounds.y + bounds.height);
-	topLeft = isvToolBar.toDisplay(topLeft);
+	topLeft = viewToolBar.toDisplay(topLeft);
 	aMenu.setLocation(topLeft.x, topLeft.y);
 	aMenu.setVisible(true);
 }
@@ -604,8 +612,10 @@ public String toString() {
 public void updateActionBars() {
 	if (isvMenuMgr != null)
 		isvMenuMgr.updateAll(false);
+	if (viewToolBarMgr != null)
+		viewToolBarMgr.update(false);
 	if (isvToolBarMgr != null)
-		getToolBarManager().update(false);
+		isvToolBarMgr.update(false);
 }
 /**
  * Update the title attributes.

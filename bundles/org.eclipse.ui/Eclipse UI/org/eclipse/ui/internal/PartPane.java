@@ -27,11 +27,6 @@ public abstract class PartPane extends LayoutPart
 	protected IWorkbenchPart part;
 	protected WorkbenchPage page;
 	protected ViewForm control;
-	protected MouseListener mouseListener = new MouseAdapter() {
-		public void mouseDown(MouseEvent e) {
-			requestActivation();
-		}
-	};
 	
 	public static class Sashes {
 		public Sash left;
@@ -100,8 +95,6 @@ public void createControl(Composite parent) {
 	
 	// When the pane or any child gains focus, notify the workbench.
 	control.addListener(SWT.Activate, this);
-	hookFocus(control);
-	hookFocus(content);
 
 	page.firePartOpened(part);
 }
@@ -179,12 +172,6 @@ protected ViewForm getViewForm() {
 public void handleEvent(Event event) {
 	if (event.type == SWT.Activate)
 		requestActivation();
-}
-/**
- * Hook focus on a control.
- */
-public void hookFocus(Control ctrl) {
-	ctrl.addMouseListener(mouseListener);
 }
 /**
  * See LayoutPart
