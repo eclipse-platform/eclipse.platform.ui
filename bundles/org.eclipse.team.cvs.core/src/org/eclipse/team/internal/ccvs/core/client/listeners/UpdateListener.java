@@ -115,7 +115,7 @@ public class UpdateListener extends CommandOutputListener {
 				return OK;
 			} else if (message.startsWith("New directory")) { //$NON-NLS-1$
 				if (updateMessageListener != null) {
-					String path = message.substring(15, message.indexOf('\'', 15));
+					String path = message.substring(15, message.lastIndexOf('\''));
 					updateMessageListener.directoryInformation(commandRoot, path, true);
 				}
 				return OK;
