@@ -363,26 +363,26 @@ public class GesturePreferencePage extends org.eclipse.jface.preference.Preferen
 				treeViewerCommands.setInput(new Object());
 	
 			List scopes = new ArrayList();
-			scopes.addAll(coreRegistry.getScopes());
-			scopes.addAll(localRegistry.getScopes());
-			scopes.addAll(preferenceRegistry.getScopes());
+			scopes.addAll(coreRegistry.getContexts());
+			scopes.addAll(localRegistry.getContexts());
+			scopes.addAll(preferenceRegistry.getContexts());
 	
 			if (!Util.equals(scopes, this.scopes)) {
 				this.scopes = Collections.unmodifiableList(scopes);
-				scopesById = Collections.unmodifiableSortedMap(Scope.sortedMapById(this.scopes));
-				scopesByName = Collections.unmodifiableSortedMap(Scope.sortedMapByName(this.scopes));							
+				scopesById = Collections.unmodifiableSortedMap(Context.sortedMapById(this.scopes));
+				scopesByName = Collections.unmodifiableSortedMap(Context.sortedMapByName(this.scopes));							
 				List names = new ArrayList();
 				Iterator iterator = this.scopes.iterator();
 				
 				while (iterator.hasNext()) {
-					Scope scope = (Scope) iterator.next();
+					Context scope = (Context) iterator.next();
 					
 					if (scope != null) {
 						String name = scope.getName();
 						String parent = scope.getParent();
 					
 						if (parent != null) {
-							scope = (Scope) scopesById.get(parent);
+							scope = (Context) scopesById.get(parent);
 						
 							if (scope != null)
 								name = MessageFormat.format(Util.getString(resourceBundle, "extends"), new Object[] { name, scope.getName() }); //$NON-NLS-1$
@@ -1321,7 +1321,7 @@ public class GesturePreferencePage extends org.eclipse.jface.preference.Preferen
 					break;				
 			}
 
-			Scope scope = (Scope) scopesById.get(commandRecord.scope);
+			Context scope = (Context) scopesById.get(commandRecord.scope);
 			tableItem.setText(1, scope != null ? scope.getName() : bracket(commandRecord.scope));
 			Configuration gestureConfiguration = (Configuration) gestureConfigurationsById.get(commandRecord.configuration);			
 			tableItem.setText(2, gestureConfiguration != null ? gestureConfiguration.getName() : bracket(commandRecord.configuration));
@@ -1418,7 +1418,7 @@ public class GesturePreferencePage extends org.eclipse.jface.preference.Preferen
 					break;				
 			}
 
-			Scope scope = (Scope) scopesById.get(gestureSequenceRecord.scope);
+			Context scope = (Context) scopesById.get(gestureSequenceRecord.scope);
 			tableItem.setText(1, scope != null ? scope.getName() : bracket(gestureSequenceRecord.scope));
 			Configuration gestureConfiguration = (Configuration) gestureConfigurationsById.get(gestureSequenceRecord.configuration);			
 			tableItem.setText(2, gestureConfiguration != null ? gestureConfiguration.getName() : bracket(gestureSequenceRecord.configuration));
@@ -1563,7 +1563,7 @@ public class GesturePreferencePage extends org.eclipse.jface.preference.Preferen
 		List scopes = new ArrayList(scopesByName.values());			
 		
 		if (selection >= 0 && selection < scopes.size()) {
-			Scope scope = (Scope) scopes.get(selection);
+			Context scope = (Context) scopes.get(selection);
 			return scope.getId();				
 		}
 		
@@ -1578,7 +1578,7 @@ public class GesturePreferencePage extends org.eclipse.jface.preference.Preferen
 			List scopes = new ArrayList(scopesByName.values());			
 
 			for (int i = 0; i < scopes.size(); i++) {
-				Scope scope = (Scope) scopes.get(i);		
+				Context scope = (Context) scopes.get(i);		
 				
 				if (scope.getId().equals(scopeId)) {
 					comboScope.select(i);
@@ -1668,7 +1668,7 @@ public class GesturePreferencePage extends org.eclipse.jface.preference.Preferen
 			paths.add(locale);
 			State platformLocale = State.create(paths);
 			Integer rank = new Integer(sequenceBinding.getRank());
-			String scope = sequenceBinding.getScope();			
+			String scope = sequenceBinding.getContext();			
 			SortedMap scopeMap = (SortedMap) tree.get(sequence);
 			
 			if (scopeMap == null) {
@@ -1810,7 +1810,7 @@ public class GesturePreferencePage extends org.eclipse.jface.preference.Preferen
 						
 						while (iterator4.hasNext()) {
 							String command = (String) iterator4.next();
-							sequenceBindingSet.add(SequenceBinding.create(configuration, command, Util.ZERO_LENGTH_STRING, Util.ZERO_LENGTH_STRING, null, 0, scope, sequence));									
+							sequenceBindingSet.add(SequenceBinding.create(command, configuration, scope, Util.ZERO_LENGTH_STRING, Util.ZERO_LENGTH_STRING, null, 0, sequence));									
 						}
 					}
 				}

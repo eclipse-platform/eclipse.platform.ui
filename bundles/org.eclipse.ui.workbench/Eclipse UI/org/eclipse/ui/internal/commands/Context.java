@@ -18,66 +18,66 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-public final class Scope implements Comparable {
+public final class Context implements Comparable {
 
-	private final static int HASH_FACTOR = 87;
-	private final static int HASH_INITIAL = 97;
+	private final static int HASH_FACTOR = 89;
+	private final static int HASH_INITIAL = Context.class.getName().hashCode();
 
 	private static Comparator nameComparator;
 	
-	public static Scope create(String description, String id, String name, String parent, String plugin)
+	public static Context create(String description, String id, String name, String parent, String plugin)
 		throws IllegalArgumentException {
-		return new Scope(description, id, name, parent, plugin);
+		return new Context(description, id, name, parent, plugin);
 	}
 
 	public static Comparator nameComparator() {
 		if (nameComparator == null)
 			nameComparator = new Comparator() {
 				public int compare(Object left, Object right) {
-					return Collator.getInstance().compare(((Scope) left).name, ((Scope) right).name);
+					return Collator.getInstance().compare(((Context) left).name, ((Context) right).name);
 				}	
 			};		
 		
 		return nameComparator;
 	}
 
-	public static SortedMap sortedMapById(List scopes)
+	public static SortedMap sortedMapById(List contexts)
 		throws IllegalArgumentException {
-		if (scopes == null)
+		if (contexts == null)
 			throw new IllegalArgumentException();
 
 		SortedMap sortedMap = new TreeMap();			
-		Iterator iterator = scopes.iterator();
+		Iterator iterator = contexts.iterator();
 		
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
 			
-			if (!(object instanceof Scope))
+			if (!(object instanceof Context))
 				throw new IllegalArgumentException();
 				
-			Scope scope = (Scope) object;
-			sortedMap.put(scope.id, scope);									
+			Context context = (Context) object;
+			sortedMap.put(context.id, context);									
 		}			
 		
 		return sortedMap;
 	}
 
-	public static SortedMap sortedMapByName(List scopes)
+	public static SortedMap sortedMapByName(List contexts)
 		throws IllegalArgumentException {
-		if (scopes == null)
+		if (contexts == null)
 			throw new IllegalArgumentException();
 
 		SortedMap sortedMap = new TreeMap();			
-		Iterator iterator = scopes.iterator();
+		Iterator iterator = contexts.iterator();
 		
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
 			
-			if (!(object instanceof Scope))
+			if (!(object instanceof Context))
 				throw new IllegalArgumentException();
 				
-			Scope scope = (Scope) object;
-			sortedMap.put(scope.name, scope);									
+			Context context = (Context) object;
+			sortedMap.put(context.name, context);									
 		}			
 		
 		return sortedMap;
@@ -89,7 +89,7 @@ public final class Scope implements Comparable {
 	private String parent;
 	private String plugin;
 	
-	private Scope(String description, String id, String name, String parent, String plugin)
+	private Context(String description, String id, String name, String parent, String plugin)
 		throws IllegalArgumentException {
 		super();
 		
@@ -104,7 +104,7 @@ public final class Scope implements Comparable {
 	}
 	
 	public int compareTo(Object object) {
-		Scope item = (Scope) object;
+		Context item = (Context) object;
 		int compareTo = id.compareTo(item.id);
 		
 		if (compareTo == 0) {		
@@ -126,11 +126,11 @@ public final class Scope implements Comparable {
 	}
 	
 	public boolean equals(Object object) {
-		if (!(object instanceof Scope))
+		if (!(object instanceof Context))
 			return false;
 
-		Scope scope = (Scope) object;	
-		return Util.equals(description, scope.description) && id.equals(scope.id) && name.equals(scope.name) && Util.equals(parent, scope.parent) && Util.equals(plugin, scope.plugin);
+		Context context = (Context) object;	
+		return Util.equals(description, context.description) && id.equals(context.id) && name.equals(context.name) && Util.equals(parent, context.parent) && Util.equals(plugin, context.plugin);
 	}
 
 	public String getDescription() {

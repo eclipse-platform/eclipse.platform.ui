@@ -62,6 +62,7 @@ public class ContextManager implements IContextResolver {
 	}
 
 	public boolean inContext(String commandId) {
+		/*
 		if (commandId != null) {
 			Command command = (Command) commandsById.get(commandId);
 			
@@ -82,6 +83,7 @@ public class ContextManager implements IContextResolver {
 				}
 			}
 		}
+		*/
 
 		return true;			
 	}

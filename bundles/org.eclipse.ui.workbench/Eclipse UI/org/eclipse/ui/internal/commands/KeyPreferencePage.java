@@ -365,26 +365,26 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 				treeViewerCommands.setInput(new Object());
 	
 			List scopes = new ArrayList();
-			scopes.addAll(coreRegistry.getScopes());
-			scopes.addAll(localRegistry.getScopes());
-			scopes.addAll(preferenceRegistry.getScopes());
+			scopes.addAll(coreRegistry.getContexts());
+			scopes.addAll(localRegistry.getContexts());
+			scopes.addAll(preferenceRegistry.getContexts());
 	
 			if (!Util.equals(scopes, this.scopes)) {
 				this.scopes = Collections.unmodifiableList(scopes);
-				scopesById = Collections.unmodifiableSortedMap(Scope.sortedMapById(this.scopes));
-				scopesByName = Collections.unmodifiableSortedMap(Scope.sortedMapByName(this.scopes));							
+				scopesById = Collections.unmodifiableSortedMap(Context.sortedMapById(this.scopes));
+				scopesByName = Collections.unmodifiableSortedMap(Context.sortedMapByName(this.scopes));							
 				List names = new ArrayList();
 				Iterator iterator = this.scopes.iterator();
 				
 				while (iterator.hasNext()) {
-					Scope scope = (Scope) iterator.next();
+					Context scope = (Context) iterator.next();
 					
 					if (scope != null) {
 						String name = scope.getName();
 						String parent = scope.getParent();
 					
 						if (parent != null) {
-							scope = (Scope) scopesById.get(parent);
+							scope = (Context) scopesById.get(parent);
 						
 							if (scope != null)
 								name = MessageFormat.format(Util.getString(resourceBundle, "extends"), new Object[] { name, scope.getName() }); //$NON-NLS-1$
@@ -1338,7 +1338,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 					break;				
 			}
 
-			Scope scope = (Scope) scopesById.get(commandRecord.scope);
+			Context scope = (Context) scopesById.get(commandRecord.scope);
 			tableItem.setText(1, scope != null ? scope.getName() : bracket(commandRecord.scope));
 			Configuration keyConfiguration = (Configuration) keyConfigurationsById.get(commandRecord.configuration);			
 			tableItem.setText(2, keyConfiguration != null ? keyConfiguration.getName() : bracket(commandRecord.configuration));
@@ -1435,7 +1435,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 					break;				
 			}
 
-			Scope scope = (Scope) scopesById.get(keySequenceRecord.scope);
+			Context scope = (Context) scopesById.get(keySequenceRecord.scope);
 			tableItem.setText(1, scope != null ? scope.getName() : bracket(keySequenceRecord.scope));
 			Configuration keyConfiguration = (Configuration) keyConfigurationsById.get(keySequenceRecord.configuration);			
 			tableItem.setText(2, keyConfiguration != null ? keyConfiguration.getName() : bracket(keySequenceRecord.configuration));
@@ -1580,7 +1580,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		List scopes = new ArrayList(scopesByName.values());			
 		
 		if (selection >= 0 && selection < scopes.size()) {
-			Scope scope = (Scope) scopes.get(selection);
+			Context scope = (Context) scopes.get(selection);
 			return scope.getId();				
 		}
 		
@@ -1595,7 +1595,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 			List scopes = new ArrayList(scopesByName.values());			
 
 			for (int i = 0; i < scopes.size(); i++) {
-				Scope scope = (Scope) scopes.get(i);		
+				Context scope = (Context) scopes.get(i);		
 				
 				if (scope.getId().equals(scopeId)) {
 					comboScope.select(i);
@@ -1685,7 +1685,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 			paths.add(locale);
 			State platformLocale = State.create(paths);
 			Integer rank = new Integer(sequenceBinding.getRank());
-			String scope = sequenceBinding.getScope();			
+			String scope = sequenceBinding.getContext();			
 			SortedMap scopeMap = (SortedMap) tree.get(sequence);
 			
 			if (scopeMap == null) {
@@ -1827,7 +1827,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 						
 						while (iterator4.hasNext()) {
 							String command = (String) iterator4.next();
-							sequenceBindingSet.add(SequenceBinding.create(configuration, command, Util.ZERO_LENGTH_STRING, Util.ZERO_LENGTH_STRING, null, 0, scope, sequence));									
+							sequenceBindingSet.add(SequenceBinding.create(command, configuration, scope, Util.ZERO_LENGTH_STRING, Util.ZERO_LENGTH_STRING, null, 0, sequence));									
 						}
 					}
 				}

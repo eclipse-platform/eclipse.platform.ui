@@ -59,11 +59,12 @@ public final class LocalRegistry extends AbstractMutableRegistry {
 			activeKeyConfigurations = Collections.unmodifiableList(Persistence.readActiveConfigurations(memento, Persistence.TAG_ACTIVE_KEY_CONFIGURATION, null));
 			categories = Collections.unmodifiableList(Persistence.readCategories(memento, Persistence.TAG_CATEGORY, null));
 			commands = Collections.unmodifiableList(Persistence.readCommands(memento, Persistence.TAG_COMMAND, null));
-			gestureBindings = Collections.unmodifiableList(Persistence.readBindings(memento, Persistence.TAG_GESTURE_BINDING, null, RANK_LOCAL));
+			contextBindings = Collections.unmodifiableList(Persistence.readContextBindings(memento, Persistence.TAG_CONTEXT_BINDING, null));
+			contexts = Collections.unmodifiableList(Persistence.readContexts(memento, Persistence.TAG_CONTEXT, null));			
+			gestureBindings = Collections.unmodifiableList(Persistence.readSequenceBindings(memento, Persistence.TAG_GESTURE_BINDING, null, RANK_LOCAL));
 			gestureConfigurations = Collections.unmodifiableList(Persistence.readConfigurations(memento, Persistence.TAG_GESTURE_CONFIGURATION, null));
-			keyBindings = Collections.unmodifiableList(Persistence.readBindings(memento, Persistence.TAG_KEY_BINDING, null, RANK_LOCAL));
+			keyBindings = Collections.unmodifiableList(Persistence.readSequenceBindings(memento, Persistence.TAG_KEY_BINDING, null, RANK_LOCAL));
 			keyConfigurations = Collections.unmodifiableList(Persistence.readConfigurations(memento, Persistence.TAG_KEY_CONFIGURATION, null));
-			scopes = Collections.unmodifiableList(Persistence.readScopes(memento, Persistence.TAG_SCOPE, null));
 		} catch (WorkbenchException eWorkbench) {
 			throw new IOException();
 		} finally {
@@ -78,11 +79,12 @@ public final class LocalRegistry extends AbstractMutableRegistry {
 		Persistence.writeActiveConfigurations(xmlMemento, Persistence.TAG_ACTIVE_KEY_CONFIGURATION, activeKeyConfigurations);		
 		Persistence.writeCategories(xmlMemento, Persistence.TAG_CATEGORY, categories);		
 		Persistence.writeCommands(xmlMemento, Persistence.TAG_COMMAND, commands);
-		Persistence.writeBindings(xmlMemento, Persistence.TAG_GESTURE_BINDING, gestureBindings);
+		Persistence.writeContextBindings(xmlMemento, Persistence.TAG_CONTEXT_BINDING, contextBindings);
+		Persistence.writeContexts(xmlMemento, Persistence.TAG_CONTEXT, contexts);
+		Persistence.writeSequenceBindings(xmlMemento, Persistence.TAG_GESTURE_BINDING, gestureBindings);
 		Persistence.writeConfigurations(xmlMemento, Persistence.TAG_GESTURE_CONFIGURATION, gestureConfigurations);
-		Persistence.writeBindings(xmlMemento, Persistence.TAG_KEY_BINDING, keyBindings);
+		Persistence.writeSequenceBindings(xmlMemento, Persistence.TAG_KEY_BINDING, keyBindings);
 		Persistence.writeConfigurations(xmlMemento, Persistence.TAG_KEY_CONFIGURATION, keyConfigurations);
-		Persistence.writeScopes(xmlMemento, Persistence.TAG_SCOPE, scopes);
 		IPath path = WorkbenchPlugin.getDefault().getStateLocation();
 		path = path.append(PATH);
 		File file = path.toFile();		

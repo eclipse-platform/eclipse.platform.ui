@@ -21,11 +21,12 @@ abstract class AbstractRegistry {
 	protected List activeKeyConfigurations = Collections.EMPTY_LIST;
 	protected List categories = Collections.EMPTY_LIST; 
 	protected List commands = Collections.EMPTY_LIST; 
+	protected List contextBindings = Collections.EMPTY_LIST;
+	protected List contexts = Collections.EMPTY_LIST; 
 	protected List gestureBindings = Collections.EMPTY_LIST;
 	protected List gestureConfigurations = Collections.EMPTY_LIST;
 	protected List keyBindings = Collections.EMPTY_LIST;
 	protected List keyConfigurations = Collections.EMPTY_LIST;
-	protected List scopes = Collections.EMPTY_LIST; 
 
 	protected AbstractRegistry() {
 		super();
@@ -47,6 +48,14 @@ abstract class AbstractRegistry {
 		return commands;
 	}
 
+	public List getContextBindings() {
+		return contextBindings;
+	}
+
+	public List getContexts() {
+		return contexts;
+	}
+
 	public List getGestureBindings() {
 		return gestureBindings;
 	}
@@ -61,10 +70,6 @@ abstract class AbstractRegistry {
 
 	public List getKeyConfigurations() {
 		return keyConfigurations;
-	}
-
-	public List getScopes() {
-		return scopes;
 	}
 	
 	public abstract void load()

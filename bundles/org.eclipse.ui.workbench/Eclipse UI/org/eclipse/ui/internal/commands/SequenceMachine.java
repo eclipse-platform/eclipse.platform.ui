@@ -147,7 +147,7 @@ public final class SequenceMachine {
 				if (strings.contains(id))
 					return null;
 							
-				Scope scope = (Scope) scopeMap.get(id);
+				Context scope = (Context) scopeMap.get(id);
 				
 				if (scope == null)
 					return null;
@@ -393,7 +393,7 @@ public final class SequenceMachine {
 		
 			while (iterator.hasNext()) {
 				SequenceBinding sequenceBinding = (SequenceBinding) iterator.next();
-				Path scope = (Path) scopeMap.get(sequenceBinding.getScope());
+				Path scope = (Path) scopeMap.get(sequenceBinding.getContext());
 		
 				if (scope == null)
 					continue;
