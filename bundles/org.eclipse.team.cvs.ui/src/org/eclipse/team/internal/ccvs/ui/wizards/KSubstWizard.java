@@ -31,6 +31,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -255,6 +256,10 @@ public class KSubstWizard extends Wizard {
 								messages.add(status);
 							}
 						}
+						// Broadcast a decorator change so all interested parties will update their labels.
+						// This is done in particular because the syncview will not see this change
+						// as a change in state for the resources involved
+						CVSUIPlugin.broadcastPropertyChange(new PropertyChangeEvent(this, CVSUIPlugin.P_DECORATORS_CHANGED, null, null));
 					} catch (TeamException e) {
 						throw new InvocationTargetException(e);
 					} finally {
