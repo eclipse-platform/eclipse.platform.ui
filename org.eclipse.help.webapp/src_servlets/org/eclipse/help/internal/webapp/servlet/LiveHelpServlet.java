@@ -18,6 +18,7 @@ import javax.servlet.http.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.ILiveHelpAction;
 import org.eclipse.help.internal.base.BaseHelpSystem;
+import org.osgi.framework.*;
 
 /**
  * Servlet to handle live help action requests
@@ -48,14 +49,15 @@ public class LiveHelpServlet extends HttpServlet {
 		if (className == null)
 			return;
 		String arg = req.getParameter("arg");
-		Plugin plugin = Platform.getPlugin(pluginID);
-		if (plugin == null)
+		Bundle bundle = Platform.getBundle(pluginID);
+		if(bundle==null){
 			return;
-		ClassLoader loader = plugin.getDescriptor().getPluginClassLoader();
+		}
+		
 		try {
-			Class c = loader.loadClass(className);
+			Class c = bundle.loadClass(className);
 			Object o = c.newInstance();
-			if (o instanceof ILiveHelpAction) {
+			if (o != null && o instanceof ILiveHelpAction) {
 				ILiveHelpAction helpExt = (ILiveHelpAction) o;
 				if (arg != null)
 					helpExt.setInitializationString(arg);
