@@ -41,6 +41,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
@@ -59,6 +60,9 @@ public class CVSProjectPropertiesPage extends PropertyPage {
 	IProject project;
 	ICVSRepositoryLocation oldLocation;
 	ICVSRepositoryLocation newLocation = null;
+
+	private static final int TABLE_HEIGHT_HINT = 150;
+	private static final int TABLE_WIDTH_HINT = 300;
 	
 	// Widgets
 	Label methodLabel;
@@ -94,7 +98,12 @@ public class CVSProjectPropertiesPage extends PropertyPage {
 			composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 			createLabel(composite, Policy.bind("CVSProjectPropertiesPage.Select_a_CVS_repository_location_to_share_the_project_with__2"), 1); //$NON-NLS-1$
-			viewer = new TableViewer(composite, SWT.SINGLE);
+			Table table = new Table(composite, SWT.SINGLE | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+			GridData data = new GridData();
+			data.widthHint = TABLE_WIDTH_HINT;
+			data.heightHint = TABLE_HEIGHT_HINT;
+			table.setLayoutData(data);
+			viewer = new TableViewer(table);
 			viewer.setLabelProvider(new WorkbenchLabelProvider());
 			viewer.setContentProvider(new WorkbenchContentProvider() {
 				public Object[] getElements(Object inputElement) {
@@ -170,9 +179,17 @@ public class CVSProjectPropertiesPage extends PropertyPage {
 		createLabel(composite, "", 1); //$NON-NLS-1$
 		createLabel(composite, "", 1); //$NON-NLS-1$
 		createLabel(composite, "", 1); //$NON-NLS-1$
+		
+		label = new Label(composite, SWT.WRAP);
+		label.setText(Policy.bind("CVSProjectPropertiesPage.You_can_change_the_sharing_of_this_project_to_another_repository_location._However,_this_is_only_possible_if_the_new_location_is___compatible___(on_the_same_host_with_the_same_repository_path)._1")); //$NON-NLS-1$
+		GridData data = new GridData();
+		data.widthHint = 300;
+		data.horizontalSpan = 2;
+		label.setLayoutData(data);
+		
 		Button changeButton = new Button(composite, SWT.PUSH);
 		changeButton.setText(Policy.bind("CVSProjectPropertiesPage.Change_Sharing_5")); //$NON-NLS-1$
-		GridData data = new GridData();
+		data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
 		data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
 		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
