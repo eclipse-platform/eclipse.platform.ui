@@ -180,7 +180,7 @@ public class ContentType implements IContentType {
 	public IContentDescriber getDescriber() {
 		if (aliasTarget != null)
 			return getTarget().getDescriber();
-		if (!failedDescriberCreation && contentTypeElement.getChildren("describer").length > 0) //$NON-NLS-1$
+		if (!failedDescriberCreation && (contentTypeElement.getChildren("describer").length > 0 || contentTypeElement.getAttributeAsIs("describer") != null)) //$NON-NLS-1$
 			try {
 				return (IContentDescriber) contentTypeElement.createExecutableExtension("describer"); //$NON-NLS-1$
 			} catch (CoreException ce) {
