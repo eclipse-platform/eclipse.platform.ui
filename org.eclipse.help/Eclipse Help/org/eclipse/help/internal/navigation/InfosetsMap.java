@@ -72,13 +72,16 @@ public class InfosetsMap extends Hashtable {
 						HelpSystem.getRemoteHelpServerPath()
 							+ "/"
 							+ TempURL.getPrefix()
-							+ "/infosets.properties");
+							+ "/"
+							+ INFOSETS_FILENAME);
 				if (Logger.DEBUG)
 					Logger.logDebugMessage(
 						"InfosetsMap",
 						"Loading infosets= " + remoteInfosetFile.toExternalForm());
 
 				input = remoteInfosetFile.openStream();
+				source = new InputSource(input);
+				// set SystemId for error reporting only
 				source.setSystemId(remoteInfosetFile.toExternalForm());
 			} else {
 				String xmlFile =
@@ -95,6 +98,8 @@ public class InfosetsMap extends Hashtable {
 			}
 			ContributionParser parser =
 				new ContributionParser(new InfosetsContributionFactory().instance());
+			if(source==null)
+				return false;
 			parser.parse(source);
 
 			Iterator infosetsIt = parser.getContribution().getChildren();
