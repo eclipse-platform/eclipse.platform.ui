@@ -118,6 +118,7 @@ public interface ICVSUIConstants {
 	public final String PREF_ADDED_FLAG = "pref_added_flag"; //$NON-NLS-1$
 	
 	public final String PREF_CALCULATE_DIRTY = "pref_calculate_dirty";	 //$NON-NLS-1$
+	public final String PREF_USE_FONT_DECORATORS= "pref_use_font_decorators";	//$NON-NLS-1$
 
 	// watch/edit preferences
 	public final String PREF_CHECKOUT_READ_ONLY = "pref_checkout_read_only"; //$NON-NLS-1$

@@ -629,6 +629,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		store.setDefault(ICVSUIConstants.PREF_SHOW_DIRTY_DECORATION, false);
 		store.setDefault(ICVSUIConstants.PREF_SHOW_NEWRESOURCE_DECORATION, true);
 		store.setDefault(ICVSUIConstants.PREF_CALCULATE_DIRTY, true);	
+		store.setDefault(ICVSUIConstants.PREF_USE_FONT_DECORATORS, true);
 		store.setDefault(ICVSUIConstants.PREF_PROMPT_ON_MIXED_TAGS, true);
 		store.setDefault(ICVSUIConstants.PREF_PROMPT_ON_SAVING_IN_SYNC, true);
 		store.setDefault(ICVSUIConstants.PREF_SAVE_DIRTY_EDITORS, ICVSUIConstants.OPTION_PROMPT);

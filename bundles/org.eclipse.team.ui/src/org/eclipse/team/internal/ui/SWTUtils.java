@@ -24,6 +24,8 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+
+
 /**
  * 
  */
@@ -32,6 +34,18 @@ public class SWTUtils {
 	public static final int MARGINS_DEFAULT= -1;
 	public static final int MARGINS_NONE= 0;
 	public static final int MARGINS_DIALOG= 1;
+
+	//TODO: Change to the new API that will be introduced around M5
+	public static PreferenceLinkArea createPreferenceLink(Composite parent, String pageId, String text) {
+		return createPreferenceLink(parent, pageId, text, 1);
+	}
+	
+	//TODO: Change to the new API that will be introduced around M5
+	public static PreferenceLinkArea createPreferenceLink(Composite parent, String pageId, String text, int span) {
+		final PreferenceLinkArea area = new PreferenceLinkArea(parent, SWT.BORDER, pageId, text);
+		area.setLayoutData(createHFillGridData(span));
+		return area;
+	}
 	
     public static GridData createGridData(int width, int height, boolean hFill, boolean vFill) {
         return createGridData(width, height, hFill ? SWT.FILL : SWT.BEGINNING, vFill ? SWT.FILL : SWT.TOP, hFill, vFill);

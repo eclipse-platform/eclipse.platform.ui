@@ -139,6 +139,7 @@ public class CVSDecoration {
 		prefs.setValue(ICVSUIConstants.PREF_CALCULATE_DIRTY, store.getBoolean(ICVSUIConstants.PREF_CALCULATE_DIRTY));
 		prefs.setValue(ICVSUIConstants.PREF_DIRTY_FLAG, store.getString(ICVSUIConstants.PREF_DIRTY_FLAG));
 		prefs.setValue(ICVSUIConstants.PREF_ADDED_FLAG, store.getString(ICVSUIConstants.PREF_ADDED_FLAG));
+		prefs.setValue(ICVSUIConstants.PREF_USE_FONT_DECORATORS, store.getString(ICVSUIConstants.PREF_USE_FONT_DECORATORS));
 		
 		initialize(resourceName, prefs, store.getString(ICVSUIConstants.PREF_FILETEXT_DECORATION), store.getString(ICVSUIConstants.PREF_FOLDERTEXT_DECORATION), store.getString(ICVSUIConstants.PREF_PROJECTTEXT_DECORATION));
 	}
@@ -242,7 +243,6 @@ public class CVSDecoration {
 
 	private void computeText() {
 		Map bindings = new HashMap();
-		IPreferenceStore store = getStore();
 		if (isDirty()) {
 			bindings.put(CVSDecoratorConfiguration.DIRTY_FLAG, preferences.getString(ICVSUIConstants.PREF_DIRTY_FLAG));
 		}
@@ -293,6 +293,9 @@ public class CVSDecoration {
 	}	
 	
 	private void computeColorsAndFonts() {
+		if (!preferences.getBoolean(ICVSUIConstants.PREF_USE_FONT_DECORATORS))
+			return;
+			
 		ITheme current = PlatformUI.getWorkbench().getThemeManager().getCurrentTheme();
 		if(isIgnored()) {
 			setBackgroundColor(current.getColorRegistry().get(CVSDecoratorConfiguration.IGNORED_BACKGROUND_COLOR));
