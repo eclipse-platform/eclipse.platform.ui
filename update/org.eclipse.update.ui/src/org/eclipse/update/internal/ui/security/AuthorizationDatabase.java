@@ -6,17 +6,13 @@ package org.eclipse.update.internal.ui.security;
  */
 
 import java.net.*;
-import java.util.Hashtable;
-import java.util.Map;
+import java.util.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.update.core.Utilities;
 import org.eclipse.update.internal.core.UpdateManagerPlugin;
-import org.eclipse.update.internal.core.UpdateManagerUtils;
 
 /**
  * A transient database that remembers information, such as usernames and
@@ -115,7 +111,7 @@ public class AuthorizationDatabase extends Authenticator {
 	protected PasswordAuthentication getPasswordAuthentication() {
 
 		try {
-			URL url = new URL(getRequestingProtocol(), getRequestingSite().getHostAddress(), getRequestingPort(), ""); //$NON-NLS-1$
+			URL url = new URL(getRequestingProtocol(), getRequestingSite().getHostName(), getRequestingPort(), ""); //$NON-NLS-1$
 			return retrievePasswordAuthentication(url);
 		} catch (MalformedURLException e) {
 			IStatus status = Utilities.newCoreException("",e).getStatus();
