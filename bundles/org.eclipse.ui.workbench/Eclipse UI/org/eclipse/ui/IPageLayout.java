@@ -84,7 +84,7 @@ public interface IPageLayout {
 	/**
 	 * The view id for the workbench's Task List standard component.
 	 */
-	public static String ID_TASK_LIST = "org.eclipse.ui.views.TaskView"; //$NON-NLS-1$
+	public static String ID_TASK_LIST = "org.eclipse.ui.views.TaskList"; //$NON-NLS-1$
 
 	/**
 	 * Id of the navigate action set. 

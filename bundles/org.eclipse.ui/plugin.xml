@@ -2187,10 +2187,6 @@
             name="%Views.Category.Basic"
             id="org.eclipse.ui">
       </category>
-      <category
-      		name="%Views.Category.Deprecated"
-      		id="org.eclipse.ui.deprecated">
-      </category>
       <view
             name="%Views.ResourceNavigator"
             icon="icons/full/cview16/filenav_nav.gif"
@@ -2204,13 +2200,6 @@
             category="org.eclipse.ui"
             class="org.eclipse.ui.views.internal.markers.bookmarks.BookmarkView"
             id="org.eclipse.ui.views.BookmarkView">
-      </view>
-      <view
-            name="%Views.BookmarkNavigator"
-            icon="icons/full/cview16/bkmrk_nav.gif"
-            category="org.eclipse.ui.deprecated"
-            class="org.eclipse.ui.views.bookmarkexplorer.BookmarkNavigator"
-            id="org.eclipse.ui.views.BookmarkNavigator">
       </view>
       <view
             name="%Views.PropertySheet"
@@ -2231,13 +2220,6 @@
             icon="icons/full/cview16/tasks_tsk.gif"
             category="org.eclipse.ui"
             class="org.eclipse.ui.views.internal.markers.tasks.TaskView"
-            id="org.eclipse.ui.views.TaskView">
-      </view>
-      <view
-            name="%Views.TaskList"
-            icon="icons/full/cview16/tasks_tsk.gif"
-            category="org.eclipse.ui.deprecated"
-            class="org.eclipse.ui.views.tasklist.TaskList"
             id="org.eclipse.ui.views.TaskList">
       </view>
       <view
