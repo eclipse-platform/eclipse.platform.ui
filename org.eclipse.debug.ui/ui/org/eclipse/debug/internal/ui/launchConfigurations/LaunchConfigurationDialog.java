@@ -1184,10 +1184,17 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 		
 	 		// update the tabs with the new working copy
 	 		ILaunchConfigurationTab[] tabs = getTabs();
+	 		
+	 		// Set the defaults for all tabs before any are initialized
+	 		// so that every tab can see ALL the default values
+	 		if (init) {
+	 			for (int i = 0; i < tabs.length; i++) {
+					tabs[i].setDefaults(getLaunchConfiguration());
+				}
+	 		}
+
+	 		// update the tabs with the new working copy	 		
 	 		for (int i = 0; i < tabs.length; i++) {
-	 			if (init) {
-	 				tabs[i].setDefaults(getLaunchConfiguration());
-	 			}
 				tabs[i].initializeFrom(getLaunchConfiguration());
 	 		}	 		
 	 		
