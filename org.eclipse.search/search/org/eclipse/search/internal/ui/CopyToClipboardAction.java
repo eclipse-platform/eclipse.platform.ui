@@ -19,13 +19,10 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 
 public class CopyToClipboardAction extends Action {
 
-	SearchResultLabelProvider fLabelProvider;
-	SearchResultViewer fViewer;
+	private SearchResultViewer fViewer;
 	
 	public CopyToClipboardAction(SearchResultViewer viewer) {
 		Assert.isNotNull(viewer);
-		Assert.isTrue(viewer.getLabelProvider() instanceof SearchResultLabelProvider);
-		fLabelProvider= (SearchResultLabelProvider)viewer.getLabelProvider();
 		fViewer= viewer;
 		setText(SearchMessages.getString("CopyToClipboardAction.label")); //$NON-NLS-1$
 		setToolTipText(SearchMessages.getString("CopyToClipboardAction.tooltip")); //$NON-NLS-1$
@@ -38,7 +35,8 @@ public class CopyToClipboardAction extends Action {
 		Shell shell= SearchPlugin.getActiveWorkbenchShell();
 		if (shell == null)
 			return;
-		
+
+		SearchResultLabelProvider labelProvider= (SearchResultLabelProvider)fViewer.getLabelProvider();
 		String lineDelim= System.getProperty("line.separator"); //$NON-NLS-1$
 		StringBuffer buf= new StringBuffer();
 		Iterator iter= getSelection();
@@ -46,7 +44,7 @@ public class CopyToClipboardAction extends Action {
 			if (buf.length() > 0) {
 				buf.append(lineDelim);
 			}
-			buf.append(fLabelProvider.getText(iter.next()));
+			buf.append(labelProvider.getText(iter.next()));
 		}
 		
 		if (buf.length() > 0)
