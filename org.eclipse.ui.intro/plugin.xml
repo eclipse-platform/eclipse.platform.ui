@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin
+   id="org.eclipse.ui.intro"
+   name="%plugin_name"
+   version="3.0.0"
+   provider-name="%provider_name"
+   class="org.eclipse.ui.intro.internal.IntroPlugin">
+
+   <runtime>
+      <library name="intro.jar">
+         <export name="*"/>
+      </library>
+   </runtime>
+   <requires>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.help"/>
+      <import plugin="org.eclipse.core.runtime.compatibility"/>
+      <import plugin="org.eclipse.ui.cheatsheets"/>
+      <import plugin="org.eclipse.ui.forms"/>
+   </requires>
+
+
+<!-- ========== Extension Points ================= -->
+
+<!-- =============================================================================== -->
+<!-- Extension point: org.eclipse.ui.intro.config                                    -->
+<!-- Extension-point for contributing a configuration to a Customizable Intro Part.  -->
+<!--                                                                                 -->
+<!-- =============================================================================== -->
+   <extension-point id="config" name="%config" 
+   			schema="schema/org.eclipse.ui.intro.config.exsd"/>
+
+
+<!-- ================================================================================= -->
+<!-- Extension point: org.eclipse.ui.intro.configExtension                             -->
+<!-- Extension-point for contributing an extension to an existing intro configuration  -->
+<!--                                                                                   -->
+<!-- ================================================================================= -->
+   <extension-point id="configExtension" name="%configExtension" 
+   			schema="schema/org.eclipse.ui.intro.configExtension.exsd"/>
+
+
+</plugin>

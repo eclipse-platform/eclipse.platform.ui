@@ -1,0 +1,14 @@
+# Debugging options for the org.eclipse.ui intro.
+
+# Master flag for all org.eclipse.ui.intro plugin debug options.
+org.eclipse.ui.intro/debug = true
+
+# Enable the tracing in the plugin. By default, information messages in
+# the plugin are not logged. Setting this option to true will enable logging
+# trace information messages.
+org.eclipse.ui.intro/trace/logInfo = true
+
+# Enable printing the generated HTML to the console.  By default, the HTML
+# is not printed.  By setting this option to true, the HTML for each 
+# dynamic page will be printed to the console when the page is loaded in the browser.  
+org.eclipse.ui.intro/trace/printHTML = false
