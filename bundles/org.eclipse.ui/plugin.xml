@@ -1177,13 +1177,6 @@
       <page
             objectClass="org.eclipse.core.resources.IProject"
             adaptable="true"
-            name="%PropertyPages.project.capability"
-            class="org.eclipse.ui.internal.dialogs.ProjectCapabilityEditingPropertyPage"
-            id="org.eclipse.ui.propertypages.project.capability">
-      </page>
-      <page
-            objectClass="org.eclipse.core.resources.IProject"
-            adaptable="true"
             name="%PropertyPages.project.reference"
             class="org.eclipse.ui.internal.dialogs.ProjectReferencePage"
             id="org.eclipse.ui.propertypages.project.reference">
