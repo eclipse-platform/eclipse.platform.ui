@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.help.ui">
+<schema targetNamespace="org.eclipse.help">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.help.ui" id="browser" name="Browser"/>
+         <meta.schema plugin="org.eclipse.help" id="browser" name="Browser"/>
       </appInfo>
       <documentation>
          For providing web browsers capable of displaying html documents at a given URL.
@@ -54,10 +54,10 @@
          <attribute name="factoryclass" type="string">
             <annotation>
                <documentation>
-                  the implementation class for the browser factory.  This class must implement the &lt;samp&gt;org.eclipse.help.IBrowserFactory&lt;/samp&gt; interface.  This attribute may be omitted, and the nested &lt;samp&gt;factoryclass&lt;/samp&gt; element may be provided instead.
+                  the implementation class for the browser factory.  This class must implement the &lt;samp&gt;org.eclipse.help.browser.IBrowserFactory&lt;/samp&gt; interface.  This attribute may be omitted, and the nested &lt;samp&gt;factoryclass&lt;/samp&gt; element may be provided instead.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.help.ui.IBrowserFactory"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.help.browser.IBrowserFactory"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -79,10 +79,10 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  the implementation class for the browser factory.  This class must implement the &lt;samp&gt;org.eclipse.help.ui.IBrowserFactory&lt;/samp&gt; interface.
+                  the implementation class for the browser factory.  This class must implement the &lt;samp&gt;org.eclipse.help.browser.IBrowserFactory&lt;/samp&gt; interface.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.help.ui.IBrowserFactory"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.help.browser.IBrowserFactory"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -134,7 +134,7 @@
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         The supplied factory class must implement the &lt;samp&gt;org.eclipse.help.IBrowserFactory&lt;/samp&gt; interface.
+         The supplied factory class must implement the &lt;samp&gt;org.eclipse.help.browser.IBrowserFactory&lt;/samp&gt; interface.
 Methods in that interface determine whether the factory is available on the given system, i.e. is capable
 of supplying browser instances, and create browser instances that implement IBrowser interface.
       </documentation>
