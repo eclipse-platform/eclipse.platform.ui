@@ -30,17 +30,17 @@ public class DefaultVariableExpander implements IVariableExpander {
 	}
 
 	public IPath getPath(String varTag, String varValue, ExpandVariableContext context) throws CoreException {
-		throwExpansionException(varTag, MessageFormat.format("No expander class defined for the variable {0}", new String[] {varTag}));
+		throwExpansionException(varTag, MessageFormat.format(ExternalToolsVariableMessages.getString("DefaultVariableExpander.No_expander"), new String[] {varTag})); //$NON-NLS-1$
 		return null;
 	}
 
 	public IResource[] getResources(String varTag, String varValue, ExpandVariableContext context) throws CoreException {
-		throwExpansionException(varTag, MessageFormat.format("No expander class defined for the variable {0}", new String[] {varTag}));
+		throwExpansionException(varTag, MessageFormat.format(ExternalToolsVariableMessages.getString("DefaultVariableExpander.No_expander"), new String[] {varTag})); //$NON-NLS-1$
 		return null;
 	}
 
 	public String getText(String varTag, String varValue, ExpandVariableContext context) throws CoreException {
-		throwExpansionException(varTag, MessageFormat.format("No expander class defined for the variable {0}", new String[] {varTag}));
+		throwExpansionException(varTag, MessageFormat.format(ExternalToolsVariableMessages.getString("DefaultVariableExpander.No_expander"), new String[] {varTag})); //$NON-NLS-1$
 		return null;
 	}
 	
@@ -49,7 +49,7 @@ public class DefaultVariableExpander implements IVariableExpander {
 	 * while expanding the given variable tag.
 	 */
 	public static void throwExpansionException(String varTag, String reason) throws CoreException {
-		throw new CoreException(ExternalToolsPlugin.newErrorStatus(MessageFormat.format("An error occurred attempting to expand the variable {0}. {1}", new String[] {varTag, reason}), null));
+		throw new CoreException(ExternalToolsPlugin.newErrorStatus(MessageFormat.format(ExternalToolsVariableMessages.getString("DefaultVariableExpander.Error"), new String[] {varTag, reason}), null)); //$NON-NLS-1$
 	}
 
 }

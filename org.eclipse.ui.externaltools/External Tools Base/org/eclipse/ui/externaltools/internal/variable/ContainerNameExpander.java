@@ -26,9 +26,9 @@ public class ContainerNameExpander extends DefaultVariableExpander {
 			if (parent != null) {
 				return parent.getName();
 			}
-			throwExpansionException(varTag, "No container could be determined for the selected resource.");
+			throwExpansionException(varTag, ExternalToolsVariableMessages.getString("ContainerNameExpander.No_container")); //$NON-NLS-1$
 		}
-		throwExpansionException(varTag, "No resource selected.");
+		throwExpansionException(varTag, ExternalToolsVariableMessages.getString("ContainerNameExpander.No_resource")); //$NON-NLS-1$
 		return null;
 	}
 

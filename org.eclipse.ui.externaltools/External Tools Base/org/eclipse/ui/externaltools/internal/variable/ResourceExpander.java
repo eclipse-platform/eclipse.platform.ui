@@ -66,7 +66,7 @@ public class ResourceExpander extends DefaultVariableExpander {
 				return resource.getLocation();
 			}
 		}
-		throwExpansionException(varTag, "No resource selected.");
+		throwExpansionException(varTag, ExternalToolsVariableMessages.getString("ResourceExpander.No_resource")); //$NON-NLS-1$
 		return null;
 	}
 	
@@ -89,7 +89,7 @@ public class ResourceExpander extends DefaultVariableExpander {
 		if (resource != null) {
 			return new IResource[] {resource};
 		}
-		throwExpansionException(varTag, "No resource selected.");
+		throwExpansionException(varTag, ExternalToolsVariableMessages.getString("ResourceExpander.No_resource")); //$NON-NLS-1$
 		return null;
 	}
 	
@@ -111,7 +111,7 @@ public class ResourceExpander extends DefaultVariableExpander {
 		if (path != null) {
 			return path.toOSString();
 		}
-		throwExpansionException(varTag, "No resource selected.");
+		throwExpansionException(varTag, ExternalToolsVariableMessages.getString("ResourceExpander.No_resource")); //$NON-NLS-1$
 		return null;
 	}
 

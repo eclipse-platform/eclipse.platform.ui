@@ -38,13 +38,13 @@ public class WorkingSetExpander extends DefaultVariableExpander {
 	 */
 	public IResource[] getResources(String varTag, String varValue, ExpandVariableContext context) throws CoreException {
 		if (varValue == null || varValue.length() == 0) {
-			throwExpansionException(varTag, "No working set specified.");
+			throwExpansionException(varTag, ExternalToolsVariableMessages.getString("WorkingSetExpander.No_working_set")); //$NON-NLS-1$
 			return null;
 		}
 
 		IWorkingSet set = PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSet(varValue);
 		if (set == null) {
-			throwExpansionException(varTag, MessageFormat.format("No working set found with the name {0}.", new String[] {varValue}));
+			throwExpansionException(varTag, MessageFormat.format(ExternalToolsVariableMessages.getString("WorkingSetExpander.No_working_set_found"), new String[] {varValue})); //$NON-NLS-1$
 			return null;
 		}
 			
@@ -52,10 +52,11 @@ public class WorkingSetExpander extends DefaultVariableExpander {
 		IResource[] resources = new IResource[elements.length];
 		for (int i = 0; i < elements.length; i++) {
 			IAdaptable adaptable = elements[i];
-			if (adaptable instanceof IResource)
+			if (adaptable instanceof IResource) {
 				resources[i] = (IResource) adaptable;
-			else
+			} else {
 				resources[i] = (IResource) adaptable.getAdapter(IResource.class);
+			}
 		}
 		
 		return resources;

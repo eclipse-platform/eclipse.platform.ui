@@ -23,7 +23,7 @@ public class ResourceNameExpander extends DefaultVariableExpander {
 		if (resource != null) {
 			return resource.getName();
 		}
-		throwExpansionException(varTag, "No resource selected.");
+		throwExpansionException(varTag, ExternalToolsVariableMessages.getString("ResourceNameExpander.No_resource")); //$NON-NLS-1$
 		return null;
 	}
 }

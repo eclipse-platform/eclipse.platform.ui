@@ -24,7 +24,7 @@ public class ProjectNameExpander extends DefaultVariableExpander {
 		if (project != null) {
 			return project.getName();
 		}
-		throwExpansionException(varTag, "No resource selected.");
+		throwExpansionException(varTag, ExternalToolsVariableMessages.getString("ProjectNameExpander.No_resource")); //$NON-NLS-1$
 		return null;
 	}
 }
