@@ -12,8 +12,8 @@ package org.eclipse.team.internal.ui.synchronize;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.jface.action.IAction;
@@ -21,7 +21,8 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.Subscriber;
-import org.eclipse.team.core.synchronize.*;
+import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.core.synchronize.SyncInfoTree;
 import org.eclipse.team.internal.core.Assert;
 import org.eclipse.team.internal.core.subscribers.SubscriberSyncInfoCollector;
 import org.eclipse.team.internal.ui.Policy;
@@ -30,7 +31,6 @@ import org.eclipse.team.ui.synchronize.ISynchronizeManager;
 import org.eclipse.team.ui.synchronize.SubscriberParticipant;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
-import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.progress.IProgressConstants;
 import org.eclipse.ui.progress.UIJob;
 
@@ -278,7 +278,7 @@ public final class RefreshSubscriberJob extends Job {
 				wrappedMonitor = new NonblockingProgressMonitor(monitor, this);
 				subscriber.refresh(roots, IResource.DEPTH_INFINITE, wrappedMonitor);
 				// Prepare the results
-				setProperty(IProgressConstants.KEEP_PROPERTY, Boolean.valueOf(! isJobModal()));
+				setProperty(IProgressConstants.KEEPONE_PROPERTY, Boolean.valueOf(! isJobModal()));
 			} catch(OperationCanceledException e2) {
 				if (monitor.isCanceled()) {
 					// The refresh was cancelled by the user
@@ -568,7 +568,7 @@ public final class RefreshSubscriberJob extends Job {
 	}
 	
 	private boolean isJobModal() {
-		Boolean isModal = (Boolean)getProperty(ProgressManager.PROPERTY_IN_DIALOG);
+		Boolean isModal = (Boolean)getProperty(IProgressConstants.PROPERTY_IN_DIALOG);
 		if(isModal == null) return false;
 		return isModal.booleanValue();
 	}
