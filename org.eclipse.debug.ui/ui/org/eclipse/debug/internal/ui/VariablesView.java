@@ -18,6 +18,7 @@ public class VariablesView extends AbstractDebugView implements ISelectionListen
 	protected ShowTypesAction fShowTypesAction;
 	protected ChangeVariableValueAction fChangeVariableAction;
 	protected AddToInspectorAction fAddToInspectorAction;
+	protected ControlAction fCopyToClipboardAction;
 
 	/**
 	 * Remove myself as a selection listener to the <code>LaunchesView</code> in this perspective.
@@ -129,6 +130,8 @@ public class VariablesView extends AbstractDebugView implements ISelectionListen
 		
 		fChangeVariableAction= new ChangeVariableValueAction(fViewer);
 		fChangeVariableAction.setEnabled(false);
+		
+		fCopyToClipboardAction= new ControlAction(fViewer, new CopyVariablesToClipboardActionDelegate());
 	} 
 
 	/**
@@ -149,6 +152,7 @@ public class VariablesView extends AbstractDebugView implements ISelectionListen
 		menu.add(new Separator(IDebugUIConstants.VARIABLE_GROUP));
 		menu.add(fAddToInspectorAction);
 		menu.add(fChangeVariableAction);
+		menu.add(fCopyToClipboardAction);
 		menu.add(new Separator(IDebugUIConstants.EMPTY_RENDER_GROUP));
 		menu.add(new Separator(IDebugUIConstants.RENDER_GROUP));
 		menu.add(fShowTypesAction);

@@ -17,7 +17,7 @@ import org.eclipse.swt.widgets.Display;
 
 public class CopyToClipboardActionDelegate extends ControlActionDelegate {
 	
-	private ContentViewer fViewer;
+	protected ContentViewer fViewer;
 
 	private static final String PREFIX= "copy_to_clipboard_action.";
 	
@@ -47,8 +47,7 @@ public class CopyToClipboardActionDelegate extends ControlActionDelegate {
 	 * @see ControlActionDelegate
 	 */
 	protected void doAction(Object element, StringBuffer buffer) {
-		IDebugElement de= (IDebugElement) element;
-		append(de, buffer, (ILabelProvider)fViewer.getLabelProvider(), 0);
+		append(element, buffer, (ILabelProvider)fViewer.getLabelProvider(), 0);
 	}
 	
 	/**
@@ -71,20 +70,20 @@ public class CopyToClipboardActionDelegate extends ControlActionDelegate {
 	 * to the buffer.  For elements down to stack frames, children representations
 	 * are append to the buffer as well.
 	 */
-	protected void append(IDebugElement e, StringBuffer buffer, ILabelProvider lp, int indent) {
+	protected void append(Object e, StringBuffer buffer, ILabelProvider lp, int indent) {
 		for (int i= 0; i < indent; i++) {
 			buffer.append('\t');
 		}
 		buffer.append(lp.getText(e));
 		buffer.append(System.getProperty("line.separator"));
-		if (e.getElementType() < IDebugElement.STACK_FRAME) {
-			IDebugElement[] children= new IDebugElement[]{};
+		if (shouldAppendChildren(e)) {
+			Object[] children= new Object[0];
 			try {
-				children= e.getChildren();
+				children= getChildren(e);
 			} catch (DebugException de) {
 			}
 			for (int i = 0;i < children.length; i++) {
-				IDebugElement de= children[i];
+				Object de= children[i];
 				append(de, buffer, lp, indent + 1);
 			}
 		}
@@ -94,15 +93,14 @@ public class CopyToClipboardActionDelegate extends ControlActionDelegate {
 		return IDebugHelpContextIds.COPY_TO_CLIPBOARD_ACTION;
 	}
 	
+	protected Object[] getChildren(Object e) throws DebugException {
+		return ((IDebugElement)e).getChildren();
+	}
 	/**
 	 * Do the specific action using the current selection.
 	 */
 	public void run() {
-		LaunchesView view= getLaunchesView(fMode);
-		if (view == null) {
-			return;
-		}
-		final Iterator iter= pruneSelection(view);
+		final Iterator iter= pruneSelection();
 		String pluginId= DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier();
 		BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
 			public void run() {
@@ -125,17 +123,15 @@ public class CopyToClipboardActionDelegate extends ControlActionDelegate {
 	 * That is, if both a parent and a child are in a selection
 	 * remove the child.
 	 */
-	protected Iterator pruneSelection(LaunchesView view) {
-		IStructuredSelection selection= (IStructuredSelection)view.getSite().getSelectionProvider().getSelection();
+	protected Iterator pruneSelection() {
+		IStructuredSelection selection= (IStructuredSelection)fViewer.getSelection();
 		List elements= new ArrayList(selection.size());
 		Iterator iter= selection.iterator();
 		while (iter.hasNext()) {
 			Object element= iter.next();
 			if (isEnabledFor(element)) {
-				IDebugElement de= (IDebugElement)element;
-				IDebugElement parent= de.getParent();
-				if(walkHierarchy(de, elements)) {
-					elements.add(de);
+				if(walkHierarchy(element, elements)) {
+					elements.add(element);
 				}
 			}
 		}
@@ -144,10 +140,13 @@ public class CopyToClipboardActionDelegate extends ControlActionDelegate {
 	
 	/**
 	 * Returns whether the parent of the specified
-	 * debug element is already contained in the collection.
+	 * element is already contained in the collection.
 	 */
-	protected boolean walkHierarchy(IDebugElement de, List elements) {
-		IDebugElement parent= de.getParent();
+	protected boolean walkHierarchy(Object element, List elements) {
+		Object parent= null;
+		if (element instanceof IDebugElement) {
+			parent= ((IDebugElement)element).getParent();
+		}
 		if (parent == null) {
 			return true;
 		}
@@ -162,5 +161,9 @@ public class CopyToClipboardActionDelegate extends ControlActionDelegate {
 	 * @see ControlActionDelegate
 	 */
 	protected void setActionImages(IAction action) {		
+	}
+	
+	protected boolean shouldAppendChildren(Object e) {
+		return e instanceof IDebugElement && ((IDebugElement)e).getElementType() < IDebugElement.STACK_FRAME;
 	}
 }

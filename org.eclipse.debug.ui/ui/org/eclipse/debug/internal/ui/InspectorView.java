@@ -21,7 +21,7 @@ public class InspectorView extends AbstractDebugView {
 	protected RemoveFromInspectorAction fRemoveFromInspectorAction;
 	protected RemoveAllFromInspectorAction fRemoveAllFromInspectorAction;
 	protected ChangeVariableValueAction fChangeVariableAction;
-	
+	protected ControlAction fCopyToClipboardAction;
 	/**
 	 * @see IWorkbenchPart
 	 */
@@ -68,6 +68,8 @@ public class InspectorView extends AbstractDebugView {
 		
 		fChangeVariableAction= new ChangeVariableValueAction(fViewer);
 		fChangeVariableAction.setEnabled(false);
+		
+		fCopyToClipboardAction= new ControlAction(fViewer, new CopyVariablesToClipboardActionDelegate());
 	}
 
 	/**
@@ -86,12 +88,11 @@ public class InspectorView extends AbstractDebugView {
 	 * Adds items to the context menu including any extension defined actions.
 	 */
 	protected void fillContextMenu(IMenuManager menu) {
-
-		// Add the actions defined in this view
 		menu.add(new Separator(IDebugUIConstants.EMPTY_EXPRESSION_GROUP));
 		menu.add(new Separator(IDebugUIConstants.EXPRESSION_GROUP));
 		menu.add(fAddToInspectorAction);
 		menu.add(fChangeVariableAction);
+		menu.add(fCopyToClipboardAction);
 		menu.add(fRemoveFromInspectorAction);
 		menu.add(fRemoveAllFromInspectorAction);
 		menu.add(new Separator(IDebugUIConstants.EMPTY_RENDER_GROUP));

@@ -25,6 +25,7 @@ public interface IDebugHelpContextIds {
 	public static final String CHANGE_VALUE_ACTION = PREFIX + "change_value_action_context";
 	public static final String CLEAR_CONSOLE_ACTION = PREFIX + "clear_console_action_context";
 	public static final String COPY_TO_CLIPBOARD_ACTION = PREFIX + "copy_to_clipboard_action_context";
+	public static final String COPY_VARIABLES_TO_CLIPBOARD_ACTION = PREFIX + "copy_variables_to_clipboard_action_context";
 	public static final String DISCONNECT_ACTION = PREFIX + "disconnect_action_context";
 	public static final String ENABLE_DISABLE_BREAKPOINT_ACTION = PREFIX + "enable_disable_breakpoint_action_context";
 	public static final String LAUNCH_SELECTION_ACTION = PREFIX + "launch_selection_action_context";
