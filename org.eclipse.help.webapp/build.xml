@@ -41,12 +41,12 @@
 		</copy>
 <!-- custom begin -->
 		<loadfile
-			property="temp_web.xml"
-			srcFile="${temp.folder}/jsp.jar.src/temp_web.xml"/>
+			property="web.xml.fragment"
+			srcFile="${temp.folder}/jsp.jar.src/web.xml.fragment"/>
 		<replace
 			file="${destination.temp.folder}/${full.name}/WEB-INF/web.xml"
 			token="&lt;!-- placeholder for JSPs web.xml --&gt;"
-			value="${temp_web.xml}" />
+			value="${web.xml.fragment}" />
 <!-- custom end -->
 	</target>
 
@@ -124,7 +124,7 @@
 			<arg value="-d" /><arg value="${temp.folder}/jsp.jar.src" />
 			<arg value="-die" />
 			<arg value="-p" /><arg value="org.eclipse.help.internal.webapp.jsp"/>
-			<arg value="-webinc" /><arg value="${temp.folder}/jsp.jar.src/temp_web.xml" />
+			<arg value="-webinc" /><arg value="${temp.folder}/jsp.jar.src/web.xml.fragment" />
 			<arg value="-webapp" /><arg value="${basedir}" />
 		</java>
 <!-- custom end -->	
