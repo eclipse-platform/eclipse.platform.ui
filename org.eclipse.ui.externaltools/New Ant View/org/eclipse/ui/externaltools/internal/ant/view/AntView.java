@@ -22,16 +22,20 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -101,12 +105,14 @@ public class AntView extends ViewPart {
 	 * The tree viewer that displays the users ant projects
 	 */
 	TreeViewer projectViewer;
+	ToolBar projectToolBar;
 	AntProjectContentProvider projectContentProvider;
 
 	/**
 	 * The table viewer that displays the users selected targets
 	 */
 	TableViewer targetViewer;
+	ToolBar targetToolBar;
 	AntTargetContentProvider targetContentProvider;
 
 	/**
@@ -131,10 +137,10 @@ public class AntView extends ViewPart {
 	 */
 	public void createPartControl(Composite parent) {
 		initializeActions();
-		createToolbarActions();
 		sashForm = new SashForm(parent, SWT.NONE);
 		createProjectViewer();
 		createTargetViewer();
+		createToolbarActions();
 	}
 
 	/**
@@ -189,10 +195,20 @@ public class AntView extends ViewPart {
 	private void createToolbarActions() {
 		IToolBarManager toolBarMgr = getViewSite().getActionBars().getToolBarManager();
 		toolBarMgr.add(runActiveTargetsAction);
+		toolBarMgr.add(new Separator());
 		toolBarMgr.add(addProjectAction);
 		toolBarMgr.add(searchForBuildFilesAction);
-		toolBarMgr.add(removeProjectAction);
-		toolBarMgr.add(removeAllAction);
+		
+		ToolBarManager projectManager= new ToolBarManager(projectToolBar);
+		projectManager.add(new Separator());
+		projectManager.add(removeProjectAction);
+		projectManager.add(removeAllAction);
+		projectManager.update(true);
+		
+		ToolBarManager targetManager= new ToolBarManager(targetToolBar);
+		targetManager.add(moveDownAction);
+		targetManager.add(moveUpAction);
+		targetManager.update(true);
 	}
 
 	/**
@@ -221,7 +237,15 @@ public class AntView extends ViewPart {
 	 * Create the viewer which displays the active targets
 	 */
 	private void createTargetViewer() {
-		targetViewer = new TableViewer(sashForm, SWT.H_SCROLL | SWT.V_SCROLL);
+		ViewForm targetForm= new ViewForm(sashForm, SWT.NONE);
+		CLabel title= new CLabel(targetForm, SWT.NONE);
+		title.setText("Active Targets");
+		targetForm.setTopLeft(title);
+		targetToolBar= new ToolBar(targetForm, SWT.FLAT | SWT.WRAP);
+		targetForm.setTopRight(targetToolBar);
+		
+		targetViewer = new TableViewer(targetForm, SWT.H_SCROLL | SWT.V_SCROLL);
+		targetForm.setContent(targetViewer.getTable());
 		targetContentProvider = new AntTargetContentProvider();
 		targetViewer.setContentProvider(targetContentProvider);
 		Iterator targets = restoredTargets.iterator();
@@ -246,7 +270,15 @@ public class AntView extends ViewPart {
 	 * Create the viewer which displays the ant projects
 	 */
 	private void createProjectViewer() {
-		projectViewer = new TreeViewer(sashForm, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI);
+		ViewForm projectForm= new ViewForm(sashForm, SWT.NONE);
+		CLabel title= new CLabel(projectForm, SWT.NONE);
+		title.setText("Projects");
+		projectForm.setTopLeft(title);
+		projectToolBar= new ToolBar(projectForm, SWT.FLAT | SWT.WRAP);
+		projectForm.setTopRight(projectToolBar);
+		 
+		projectViewer = new TreeViewer(projectForm, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI);
+		projectForm.setContent(projectViewer.getTree());
 		projectContentProvider = new AntProjectContentProvider();
 		projectViewer.setContentProvider(projectContentProvider);
 		projectViewer.setLabelProvider(new AntViewLabelProvider());

@@ -14,6 +14,8 @@ public interface IExternalToolsUIConstants {
 	
 	// Action images
 	public static final String IMG_REMOVE= IExternalToolConstants.PLUGIN_ID + ".remove"; //$NON-NLS-1$
+	public static final String IMG_MOVE_UP = IExternalToolConstants.PLUGIN_ID + ".moveUp"; //$NON-NLS-1$
+	public static final String IMG_MOVE_DOWN = IExternalToolConstants.PLUGIN_ID + ".moveDown"; //$NON-NLS-1$
 	public static final String IMG_REMOVE_ALL= IExternalToolConstants.PLUGIN_ID + ".removeAll"; //$NON-NLS-1$
 	public static final String IMG_ADD= IExternalToolConstants.PLUGIN_ID + ".add"; //$NON-NLS-1$
 	public static final String IMG_RUN= IExternalToolConstants.PLUGIN_ID + ".run"; //$NON-NLS-1$

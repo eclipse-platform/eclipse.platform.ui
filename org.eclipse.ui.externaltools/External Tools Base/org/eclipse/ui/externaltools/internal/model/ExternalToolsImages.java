@@ -70,6 +70,8 @@ public class ExternalToolsImages {
 		declareRegistryImage(IExternalToolsUIConstants.IMG_ADD, LOCALTOOL + "add_co.gif"); //$NON-NLS-1$
 		declareRegistryImage(IExternalToolsUIConstants.IMG_RUN, LOCALTOOL + "run_tool.gif"); //$NON-NLS-1$
 		declareRegistryImage(IExternalToolsUIConstants.IMG_SEARCH, LOCALTOOL + "search.gif"); //$NON-NLS-1$
+		declareRegistryImage(IExternalToolsUIConstants.IMG_MOVE_UP, LOCALTOOL + "moveUp.gif"); //$NON-NLS-1$
+		declareRegistryImage(IExternalToolsUIConstants.IMG_MOVE_DOWN, LOCALTOOL + "moveDown.gif"); //$NON-NLS-1$
 		// Ant View Labels
 		declareRegistryImage(IExternalToolsUIConstants.IMG_ANT_PROJECT, LOCALTOOL + "ant_project.gif"); //$NON-NLS-1$
 		declareRegistryImage(IExternalToolsUIConstants.IMG_ANT_PROJECT_ERROR, LOCALTOOL + "ant_project_err.gif"); //$NON-NLS-1$
