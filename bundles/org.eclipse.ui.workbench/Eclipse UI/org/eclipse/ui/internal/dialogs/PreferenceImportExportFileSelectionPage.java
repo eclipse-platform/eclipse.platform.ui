@@ -61,19 +61,19 @@ class PreferenceImportExportFileSelectionPage extends
     /**
      * The accepted extensions for the file chooser dialog.
      */
-    private static final String[] DIALOG_PREFERENCE_EXTENSIONS = new String[] {
+    public static final String[] DIALOG_PREFERENCE_EXTENSIONS = new String[] {
             "*" + PREFERENCE_EXT, "*.*" }; //$NON-NLS-1$ //$NON-NLS-2$
 
     /**
      * The message to display when there are no errors on this page.
      */
-    private static final String EXPORT_MESSAGE = WorkbenchMessages
+    public static final String EXPORT_MESSAGE = WorkbenchMessages
             .getString("ImportExportPages.exportFileSelect"); //$NON-NLS-1$
 
     /**
      * The message to display when there are no errors on this page.
      */
-    private static final String IMPORT_MESSAGE = WorkbenchMessages
+    public static final String IMPORT_MESSAGE = WorkbenchMessages
             .getString("ImportExportPages.importFileSelect"); //$NON-NLS-1$
 
     /**
