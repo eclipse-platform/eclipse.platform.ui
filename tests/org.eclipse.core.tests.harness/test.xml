@@ -1,0 +1,126 @@
+<?xml version="1.0"?>
+
+<project name="Core Resources Automated Tests" default="run" basedir=".">
+
+  <!-- The property ${eclipse-home} should be passed into this script -->
+
+  <!-- sets the properties eclipse-home, and library-file -->
+  <property name="eclipse-home" value="${basedir}/../../"/>
+  <property name="library-file" value="${eclipse-home}/fragments/org.eclipse.test/library.xml"/>
+
+  <!-- This target holds all initialization code that needs to be done for -->
+  <!-- all tests that are to be run. Initialization for individual tests -->
+  <!-- should be done within the body of the suite target. -->
+  <target name="init">
+    <tstamp/>
+  </target>
+
+  <!-- This target defines the tests that need to be run. -->
+  <target name="suite">
+    <property name="location" value="${eclipse-home}/core_sniff_folder"/>
+    <delete dir="${location}" quiet="true"/>
+
+    <!-- Session Test ** Resources ** -->
+    <ant target="core-test" antfile="${library-file}" dir="${eclipse-home}">
+      <property name="data-dir" value="${location}"/>
+      <property name="plugin-name" value="org.eclipse.core.tests.resources"/>
+      <property name="classname" value="org.eclipse.core.tests.resources.AutomatedTests"/>
+    </ant>
+
+    <!-- Session Test ** Runtime ** -->
+    <ant target="core-test" antfile="${library-file}" dir="${eclipse-home}">
+      <property name="data-dir" value="${location}"/>
+      <property name="plugin-name" value="org.eclipse.core.tests.runtime"/>
+      <property name="classname" value="org.eclipse.core.tests.runtime.AutomatedTests"/>
+    </ant>
+
+    <!-- Session Test ** 1G1N9GZ ** -->
+    <ant target="core-test" antfile="${library-file}" dir="${eclipse-home}">
+      <property name="data-dir" value="${location}"/>
+      <property name="plugin-name" value="org.eclipse.core.tests.resources"/>
+      <property name="classname" value="org.eclipse.core.tests.resources.regression.PR_1G1N9GZ_1Test"/>
+    </ant>
+    <ant target="core-test" antfile="${library-file}" dir="${eclipse-home}">
+      <property name="data-dir" value="${location}"/>
+      <property name="plugin-name" value="org.eclipse.core.tests.resources"/>
+      <property name="classname" value="org.eclipse.core.tests.resources.regression.PR_1G1N9GZ_2Test"/>
+    </ant>
+
+    <!-- Session Test ** 1GALH44 ** -->
+    <ant target="core-test" antfile="${library-file}" dir="${eclipse-home}">
+      <property name="data-dir" value="${location}"/>
+      <property name="plugin-name" value="org.eclipse.core.tests.resources"/>
+      <property name="classname" value="org.eclipse.core.tests.resources.regression.PR_1GALH44_1Test"/>
+    </ant>
+    <ant target="core-test" antfile="${library-file}" dir="${eclipse-home}">
+      <property name="data-dir" value="${location}"/>
+      <property name="plugin-name" value="org.eclipse.core.tests.resources"/>
+      <property name="classname" value="org.eclipse.core.tests.resources.regression.PR_1GALH44_2Test"/>
+    </ant>
+    <ant target="core-test" antfile="${library-file}" dir="${eclipse-home}">
+      <property name="data-dir" value="${location}"/>
+      <property name="plugin-name" value="org.eclipse.core.tests.resources"/>
+      <property name="classname" value="org.eclipse.core.tests.resources.regression.PR_1GALH44_3Test"/>
+    </ant>
+
+    <!-- Session Test ** Snapshots ** -->
+    <ant target="core-test" antfile="${library-file}" dir="${eclipse-home}">
+      <property name="data-dir" value="${location}"/>
+      <property name="plugin-name" value="org.eclipse.core.tests.resources"/>
+      <property name="classname" value="org.eclipse.core.tests.resources.usecase.Snapshot1Test"/>
+    </ant>
+    <ant target="core-test" antfile="${library-file}" dir="${eclipse-home}">
+      <property name="data-dir" value="${location}"/>
+      <property name="plugin-name" value="org.eclipse.core.tests.resources"/>
+      <property name="classname" value="org.eclipse.core.tests.resources.usecase.Snapshot2Test"/>
+    </ant>
+    <ant target="core-test" antfile="${library-file}" dir="${eclipse-home}">
+      <property name="data-dir" value="${location}"/>
+      <property name="plugin-name" value="org.eclipse.core.tests.resources"/>
+      <property name="classname" value="org.eclipse.core.tests.resources.usecase.Snapshot3Test"/>
+    </ant>
+    <ant target="core-test" antfile="${library-file}" dir="${eclipse-home}">
+      <property name="data-dir" value="${location}"/>
+      <property name="plugin-name" value="org.eclipse.core.tests.resources"/>
+      <property name="classname" value="org.eclipse.core.tests.resources.usecase.Snapshot4Test"/>
+    </ant>
+    <ant target="core-test" antfile="${library-file}" dir="${eclipse-home}">
+      <property name="data-dir" value="${location}"/>
+      <property name="plugin-name" value="org.eclipse.core.tests.resources"/>
+      <property name="classname" value="org.eclipse.core.tests.resources.usecase.Snapshot5Test"/>
+    </ant>
+
+    <!-- Session Test ** SaveManager ** -->
+    <ant target="core-test" antfile="${library-file}" dir="${eclipse-home}">
+      <property name="data-dir" value="${location}"/>
+      <property name="plugin-name" value="org.eclipse.core.tests.resources.saveparticipant"/>
+      <property name="classname" value="org.eclipse.core.tests.resources.saveparticipant.SaveManager1Test"/>
+    </ant>
+    <ant target="core-test" antfile="${library-file}" dir="${eclipse-home}">
+      <property name="data-dir" value="${location}"/>
+      <property name="plugin-name" value="org.eclipse.core.tests.resources.saveparticipant"/>
+      <property name="classname" value="org.eclipse.core.tests.resources.saveparticipant.SaveManager2Test"/>
+    </ant>
+    <ant target="core-test" antfile="${library-file}" dir="${eclipse-home}">
+      <property name="data-dir" value="${location}"/>
+      <property name="plugin-name" value="org.eclipse.core.tests.resources.saveparticipant"/>
+      <property name="classname" value="org.eclipse.core.tests.resources.saveparticipant.SaveManager3Test"/>
+    </ant>
+
+  </target>
+  
+  <!-- This target holds code to cleanup the testing environment after the tests -->
+  <!-- have been run. You can use this to delete temporary files that are created. -->
+  <target name="cleanup">
+  </target>
+
+  <!-- This target runs the test suite. Any actions that need to happen after all -->
+  <!-- the tests have been run should go here. -->
+  <target name="run" depends="init,suite,cleanup">
+    <ant target="collect" antfile="${library-file}" dir="${eclipse-home}">
+      <property name="includes" value="org*.xml"/>
+      <property name="output-file" value="core-tests-summary.xml"/>
+    </ant>
+  </target>
+
+</project>

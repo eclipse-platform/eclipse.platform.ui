@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin
+  name="Eclipse Core Tests Runtime"
+  id="org.eclipse.core.tests.runtime"
+  version="2.0"
+  provider-name="Object Technology International, Inc.">
+
+  <requires>
+    <import plugin="org.eclipse.core.tests.harness"/>
+    <import plugin="org.junit"/>
+    <import plugin="org.apache.xerces"/>
+  </requires>
+
+  <runtime>
+    <library name="runtimetests.jar">
+      <export name="*"/>
+    </library>
+  </runtime>
+
+  <extension point="org.eclipse.core.tests.harness.tests">
+    <test id="runtime.AllTests">
+      <run class="org.eclipse.core.tests.runtime.AllTests"/>
+    </test>
+    <test id="internal.core.runtime.AllTests">
+      <run class="org.eclipse.core.tests.internal.runtime.AllTests"/>
+    </test>
+   <test id="internal.core.runtime.AuthorizationDatabaseTest">
+      <run class="org.eclipse.core.tests.internal.runtime.AuthorizationDatabaseTest"/>
+    </test>
+   <test id="internal.core.runtime.CipherStreamsTest">
+      <run class="org.eclipse.core.tests.internal.runtime.CipherStreamsTest"/>
+    </test>
+   <test id="internal.core.runtime.CipherTest">
+      <run class="org.eclipse.core.tests.internal.runtime.CipherTest"/>
+    </test>
+   <test id="internal.core.registrycache.SimpleCacheTests">
+      <run class="org.eclipse.core.tests.internal.registrycache.SimpleCacheTests"/>
+    </test>
+   <test id="internal.core.registrycache.AllTests">
+      <run class="org.eclipse.core.tests.internal.registrycache.AllTests"/>
+    </test>
+   <test id="internal.core.plugins.AllTests">
+      <run class="org.eclipse.core.tests.internal.plugins.AllTests"/>
+    </test>
+   <test id="internal.core.plugins.BasicXMLTest">
+      <run class="org.eclipse.core.tests.internal.plugins.BasicXMLTest"/>
+    </test>
+   <test id="internal.core.plugins.ActivationTest_Base">
+      <run class="org.eclipse.core.tests.internal.plugins.ActivationTest_Base"/>
+    </test>
+   <test id="internal.core.plugins.ActivationTest_DirectOtherRef">
+      <run class="org.eclipse.core.tests.internal.plugins.ActivationTest_DirectOtherRef"/>
+    </test>
+   <test id="internal.plugins.PlatformURLPerformanceTest">
+      <run class="org.eclipse.core.tests.internal.plugins.PlatformURLPerformanceTest"/>
+    </test>
+   <test id="internal.plugins.PlatformURLPerformanceTestConnection">
+      <run class="org.eclipse.core.tests.internal.plugins.PlatformURLPerformanceTestConnection"/>
+    </test>
+   <test id="internal.plugins.PlatformURLTest">
+      <run class="org.eclipse.core.tests.internal.plugins.PlatformURLTest"/>
+    </test>
+   <test id="internal.plugins.LoaderTest">
+      <run class="org.eclipse.core.tests.internal.plugins.LoaderTest"/>
+    </test>
+   <test id="internal.plugins.GetPluginPathTest">
+      <run class="org.eclipse.core.tests.internal.plugins.GetPluginPathTest"/>
+    </test>
+
+   <test id="core.tests.runtime.BenchPath">
+      <run class="org.eclipse.core.tests.runtime.BenchPath"/>
+   </test>
+   <test id="core.tests.runtime.CoreExceptionTest">
+      <run class="org.eclipse.core.tests.runtime.CoreExceptionTest"/>
+   </test>
+   <test id="core.tests.runtime.OperationCanceledExceptionTest">
+      <run class="org.eclipse.core.tests.runtime.OperationCanceledExceptionTest"/>
+   </test>
+    <test id="runtime.PathTest">
+      <run class="org.eclipse.core.tests.runtime.PathTest"/>
+    </test>
+   <test id="core.tests.runtime.PlatformTest">
+      <run class="org.eclipse.core.tests.runtime.PlatformTest"/>
+   </test>
+   <test id="core.tests.runtime.PluginVersionIdentifierTest">
+      <run class="org.eclipse.core.tests.runtime.PluginVersionIdentifierTest"/>
+   </test>
+   <test id="core.tests.runtime.ProgressMonitorWrapperTest">
+      <run class="org.eclipse.core.tests.runtime.ProgressMonitorWrapperTest"/>
+   </test>
+   <test id="core.tests.runtime.QualifiedNameTest">
+      <run class="org.eclipse.core.tests.runtime.QualifiedNameTest"/>
+   </test>
+   <test id="core.tests.runtime.StatusTest">
+      <run class="org.eclipse.core.tests.runtime.StatusTest"/>
+   </test>
+    
+   <test id="core.tests.plugintests.PluginTests">
+      <run class="org.eclipse.core.tests.plugintests.PluginTests"/>
+    </test>
+
+   <test id="internal.plugins.ActivationTest_Base">
+      <run class="org.eclipse.core.tests.internal.plugins.ActivationTest_Base"/>
+    </test>
+   <test id="internal.plugins.ActivationTest_DirectOtherRef">
+      <run class="org.eclipse.core.tests.internal.plugins.ActivationTest_DirectOtherRef"/>
+    </test>
+   <test id="internal.plugins.ActivationTest_DirectPluginRef">
+      <run class="org.eclipse.core.tests.internal.plugins.ActivationTest_DirectPluginRef"/>
+    </test>
+   <test id="internal.plugins.ActivationTest_IndirectRef">
+      <run class="org.eclipse.core.tests.internal.plugins.ActivationTest_IndirectRef"/>
+    </test>
+   <test id="internal.plugins.ActivationTest_NoRef">
+      <run class="org.eclipse.core.tests.internal.plugins.ActivationTest_NoRef"/>
+    </test>
+   <test id="internal.plugins.PluginResolveTest_1">
+      <run class="org.eclipse.core.tests.internal.plugins.PluginResolveTest_1"/>
+    </test>
+   <test id="internal.plugins.PluginResolveTest_2">
+      <run class="org.eclipse.core.tests.internal.plugins.PluginResolveTest_2"/>
+    </test>
+    <test id="internal.plugins.PluginResolveTest_3">
+      <run class="org.eclipse.core.tests.internal.plugins.PluginResolveTest_3"/>
+    </test>
+   <test id="internal.plugins.PluginResolveTest_4">
+      <run class="org.eclipse.core.tests.internal.plugins.PluginResolveTest_4"/>
+    </test>
+   <test id="internal.plugins.PluginResolveTest_5">
+      <run class="org.eclipse.core.tests.internal.plugins.PluginResolveTest_5"/>
+    </test>
+   <test id="internal.plugins.PluginResolveTest_6">
+      <run class="org.eclipse.core.tests.internal.plugins.PluginResolveTest_6"/>
+    </test>
+   <test id="internal.plugins.PluginResolveTest_7">
+      <run class="org.eclipse.core.tests.internal.plugins.PluginResolveTest_7"/>
+    </test>
+   <test id="internal.plugins.PluginResolveTest_8">
+      <run class="org.eclipse.core.tests.internal.plugins.PluginResolveTest_8"/>
+    </test>
+   <test id="internal.plugins.PluginVersionTest">
+      <run class="org.eclipse.core.tests.internal.plugins.PluginVersionTest"/>
+    </test>
+   <test id="internal.plugins.PluginVersionTest_2">
+      <run class="org.eclipse.core.tests.internal.plugins.PluginVersionTest_2"/>
+    </test>
+   <test id="internal.plugins.PluginXmlTest">
+      <run class="org.eclipse.core.tests.internal.plugins.PluginXmlTest"/>
+    </test>
+   
+  </extension>
+
+</plugin>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin
+  name="Eclipse Core Tests Harness"
+  id="org.eclipse.core.tests.harness"
+  version="2.0"
+  provider-name="Object Technology International, Inc.">
+
+  <requires>
+    <import plugin="org.eclipse.core.resources"/>
+    <import plugin="org.junit"/>
+  </requires>
+
+  <runtime>
+    <library name="testharness.jar">
+      <export name="*"/>
+    </library>
+  </runtime>
+
+  <extension-point name="Tests" id="tests"/>
+
+  <extension point="org.eclipse.core.tests.harness.tests">
+    <test id="ExampleTest">
+      <run class="org.eclipse.core.tests.harness.ExampleTest"/>
+    </test>
+  </extension>
+
+  <extension point="org.eclipse.core.tests.harness.tests">
+    <test id="ExampleWorkspaceTest">
+      <run class="org.eclipse.core.tests.harness.ExampleWorkspaceTest"/>
+    </test>
+  </extension>
+
+  <extension id="testapplication" point="org.eclipse.core.runtime.applications">
+    <application> 
+      <run class="org.eclipse.core.tests.harness.EclipseTestHarnessApplication"/>
+    </application>
+  </extension>
+
+</plugin>

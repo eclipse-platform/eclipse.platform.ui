@@ -1,0 +1,111 @@
+package org.eclipse.core.tests.runtime;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.tests.harness.CorePerformanceTest;
+
+public class BenchPath extends CorePerformanceTest {
+	public BenchPath() {
+	}
+	public BenchPath(String testName) {
+		super(testName);
+	}
+	public static Test suite() { 
+		TestSuite suite= new TestSuite();
+	
+		suite.addTest(new BenchPath("benchToOSString"));
+	
+	 	return suite;
+	}
+	/**
+	 * Tests the performance of path creation
+	 */
+	public void benchPathCreation() {
+
+		final int repeat = 100000;
+		final int count = repeat * 20;
+	
+		startBench();
+	
+		for (int rep = repeat; --rep >= 0;) {
+			//folders (5)
+			new Path("/");
+			new Path("/Foo");
+			new Path("/Foo/bar");
+			new Path("/Foo/bar/baz");
+			new Path("/Foo/bar/baz/blap");			
+			
+			//files (15)
+			new Path("/Foo/abc.txt");
+			new Path("/Foo/bar/abc.txt");
+			new Path("/Foo/bar/baz/abc.txt");
+			new Path("/Foo/bar/baz/blap/abc.txt");			
+			new Path("/Foo/bar/abc.txt");
+			new Path("/Foo/bar/baz/abc.txt");
+			new Path("/Foo/bar/baz/blap/abc.txt");			
+			new Path("/Foo/bar/baz/abc.txt");
+			new Path("/Foo/bar/baz/blap/abc.txt");			
+			new Path("/Foo/bar/baz/abc.txt");
+			new Path("/Foo/bar/baz/blap/abc.txt");			
+			new Path("/Foo/bar/baz/abc.txt");
+			new Path("/Foo/bar/baz/blap/abc.txt");	
+			new Path("/Foo/bar/baz/blap/blam/abc.txt");	
+			new Path("/Foo/bar/baz/blap/blam/blip/boop/abc.txt");	
+
+		}
+	
+		stopBench("benchPathCreation", count);
+	}
+	/**
+	 * Tests the performance of Path.toOSString
+	 */
+	public void benchToOSString() {
+		final int repeat = 500000;
+		
+		IPath[] paths = generateVariousPaths();
+		final int count = repeat * paths.length;
+	
+		startBench();
+		for (int rep = repeat; --rep >= 0;) {
+			for (int p = paths.length; --p >= 0;) {
+				paths[p].toOSString();
+			}
+		}	
+		stopBench("benchToOSString", count);
+	}
+
+	/**
+	 * Returns an array containing various paths.
+	 */
+	private IPath[] generateVariousPaths() {
+		IPath[] paths = new IPath[20];
+		int i = 0;
+		paths[i++] = new Path("/");
+		paths[i++] = new Path("/Foo");
+		paths[i++] = new Path("/Foo/bar");
+		paths[i++] = new Path("/Foo/bar/baz");
+		paths[i++] = new Path("/Foo/bar/baz/blap");			
+			
+			//files (15)
+		paths[i++] = new Path("/Foo/abc.txt");
+		paths[i++] = new Path("/Foo/bar/abc.txt");
+		paths[i++] = new Path("/Foo/bar/baz/abc.txt");
+		paths[i++] = new Path("/Foo/bar/baz/blap/abc.txt");			
+		paths[i++] = new Path("/Foo/bar/abc.txt");
+		paths[i++] = new Path("/Foo/bar/baz/abc.txt");
+		paths[i++] = new Path("/Foo/bar/baz/blap/abc.txt");			
+		paths[i++] = new Path("/Foo/bar/baz/abc.txt");
+		paths[i++] = new Path("/Foo/bar/baz/blap/abc.txt");			
+		paths[i++] = new Path("/Foo/bar/baz/abc.txt");
+		paths[i++] = new Path("/Foo/bar/baz/blap/abc.txt");			
+		paths[i++] = new Path("/Foo/bar/baz/abc.txt");
+		paths[i++] = new Path("/Foo/bar/baz/blap/abc.txt");	
+		paths[i++] = new Path("/Foo/bar/baz/blap/blam/abc.txt");	
+		paths[i++] = new Path("/Foo/bar/baz/blap/blam/blip/boop/abc.txt");	
+		
+		return paths;
+	}
+}
+

@@ -1,0 +1,745 @@
+package org.eclipse.core.tests.harness;
+
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import java.io.*;
+import java.util.*;
+import junit.framework.*;
+
+/**
+ * Tests which use the Eclipse Platform workspace.
+ */
+
+public class EclipseWorkspaceTest extends TestCase {
+	/** delta change listener if requested */
+	public static IResourceChangeListener deltaListener;
+/**
+ * Need a zero argument constructor to satisfy the test harness.
+ * This constructor should not do any real work nor should it be
+ * called by user code.
+ */
+public EclipseWorkspaceTest() {
+	super(null);
+}
+/**
+ * ServerStoreTestCase constructor comment.
+ * @param name java.lang.String
+ */
+public EclipseWorkspaceTest(String name) {
+	super(name);
+}
+/*
+ * @see Assert#assert(boolean)
+ */
+public static void assertTrue(boolean arg0) {
+	Assert.assert(arg0);
+}
+/*
+ * @see Assert#assert(String, boolean)
+ */
+public static void assertTrue(String arg0, boolean arg1) {
+	Assert.assert(arg0, arg1);
+}
+/**
+ * Assert that each element of the resource array does not exist in the 
+ * local store.
+ */
+public void assertDoesNotExistInFileSystem(IResource[] resources) {
+	assertDoesNotExistInFileSystem("", resources);
+}
+/**
+ * Assert that each element of the resource array does not exist in the 
+ * local store.
+ */
+public void assertDoesNotExistInFileSystem(String message, IResource[] resources) {
+	for (int i = 0; i < resources.length; i++) {
+		assertDoesNotExistInFileSystem(message, resources[i]);
+	}
+}
+/**
+ * Assert that the given resource does not exist in the local store.
+ */
+public void assertDoesNotExistInFileSystem(String message, IResource resource) {
+	try {
+		assertTrue(message, !existsInFileSystem(resource));
+	} catch (CoreException e) {
+		assertTrue(e.toString(), false);
+	}
+}
+/**
+ * Assert that the given resource does not exist in the local store.
+ */
+public void assertDoesNotExistInFileSystem(IResource resource) {
+	assertDoesNotExistInFileSystem("", resource);
+}
+/**
+ * Assert that each element of the resource array does not exist 
+ * in the workspace resource info tree.
+ */
+public void assertDoesNotExistInWorkspace(IResource[] resources) {
+	assertDoesNotExistInWorkspace("", resources);
+}
+/**
+ * Assert that each element of the resource array does not exist 
+ * in the workspace resource info tree.
+ */
+public void assertDoesNotExistInWorkspace(String message, IResource[] resources) {
+	for (int i = 0; i < resources.length; i++) {
+		assertDoesNotExistInWorkspace(message, resources[i]);
+	}
+}
+/**
+ * Assert that the given resource does not exist in the workspace 
+ * resource info tree.
+ */
+public void assertDoesNotExistInWorkspace(String message, IResource resource) {
+	assertTrue(message, !existsInWorkspace(resource));
+}
+/**
+ * Assert that the given resource does not exist in the workspace 
+ * resource info tree.
+ */
+public void assertDoesNotExistInWorkspace(IResource resource) {
+	assertDoesNotExistInWorkspace("", resource);
+}
+/**
+ * Assert that each element in the resource array  exists in the local store.
+ */
+public void assertExistsInFileSystem(IResource[] resources) {
+	assertExistsInFileSystem("", resources);
+}
+/**
+ * Assert that each element in the resource array  exists in the local store.
+ */
+public void assertExistsInFileSystem(String message, IResource[] resources) {
+	for (int i = 0; i < resources.length; i++) {
+		assertExistsInFileSystem(message, resources[i]);
+	}
+}
+/**
+ * Assert whether or not the given resource exists in the local 
+ * store. Use the resource manager to ensure that we have a 
+ * correct Path -> File mapping.
+ */
+public void assertExistsInFileSystem(String message, IResource resource) {
+	try {
+		assertTrue(message, existsInFileSystem(resource));
+	} catch (CoreException e) {
+		assertTrue(e.toString(), false);
+	}
+}
+/**
+ * Assert whether or not the given resource exists in the local 
+ * store. Use the resource manager to ensure that we have a 
+ * correct Path -> File mapping.
+ */
+public void assertExistsInFileSystem(IResource resource) {
+	assertExistsInFileSystem("", resource);
+}
+/**
+ * Assert that each element of the resource array exists in the 
+ * workspace resource info tree.
+ */
+public void assertExistsInWorkspace(IResource[] resources) {
+	assertExistsInWorkspace("", resources);
+}
+/**
+ * Assert that each element of the resource array exists in the 
+ * workspace resource info tree.
+ */
+public void assertExistsInWorkspace(IResource[] resources, boolean phantom) {
+	assertExistsInWorkspace("", resources, phantom);
+}
+/**
+ * Assert that each element of the resource array exists in the 
+ * workspace resource info tree.
+ */
+public void assertExistsInWorkspace(String message, IResource[] resources) {
+	for (int i = 0; i < resources.length; i++) {
+		assertExistsInWorkspace(message, resources[i]);
+	}
+}
+/**
+ * Assert that each element of the resource array exists in the 
+ * workspace resource info tree.
+ */
+public void assertExistsInWorkspace(String message, IResource[] resources, boolean phantom) {
+	for (int i = 0; i < resources.length; i++) {
+		assertExistsInWorkspace(message, resources[i], phantom);
+	}
+}
+/**
+ * Assert whether or not the given resource exists in the workspace 
+ * resource info tree.
+ */
+public void assertExistsInWorkspace(String message, IResource resource) {
+	assertTrue(message, existsInWorkspace(resource));
+}
+/**
+ * Assert whether or not the given resource exists in the workspace 
+ * resource info tree.
+ */
+public void assertExistsInWorkspace(String message, IResource resource, boolean phantom) {
+	assertTrue(message, existsInWorkspace(resource, phantom));
+}
+/**
+ * Assert whether or not the given resource exists in the workspace 
+ * resource info tree.
+ */
+public void assertExistsInWorkspace(IResource resource) {
+	assertExistsInWorkspace("", resource);
+}
+/**
+ * Assert whether or not the given resource exists in the workspace 
+ * resource info tree.
+ */
+public void assertExistsInWorkspace(IResource resource, boolean phantom) {
+	assertExistsInWorkspace("", resource, phantom);
+}
+/**
+ * Return a collection of resources the hierarcy defined by defineHeirarchy().
+ */
+public IResource[] buildResources() {
+	return buildResources(getWorkspace().getRoot(), defineHierarchy());
+}
+/**
+ * Return a collection of resources for the given hierarchy at 
+ * the given root.
+ */
+public IResource[] buildResources(IContainer root, String[] hierarchy) {
+	IResource[] result = new IResource[hierarchy.length];
+	for (int i = 0; i < hierarchy.length; i++) {
+		IPath path = new Path(hierarchy[i]);
+		IPath fullPath = root.getFullPath().append(path);
+		switch (fullPath.segmentCount()) {
+			case 0 :
+				result[i] = getWorkspace().getRoot();
+				break;
+			case 1 :
+				result[i] = getWorkspace().getRoot().getProject(fullPath.segment(0));
+				break;
+			default :
+				if (hierarchy[i].charAt(hierarchy[i].length()-1) == Path.SEPARATOR)
+					result[i] = (IResource) root.getFolder(path);
+				else
+					result[i] = (IResource) root.getFile(path);
+				break;
+		}
+	}
+	return result;
+}
+/**
+ * Returns a boolean value indicating whether or not the contents
+ * of the given streams are considered to be equal. Closes both input streams.
+ */
+public boolean compareContent(InputStream a, InputStream b) {
+	int c, d;
+	if (a == null && b == null)
+		return true;
+	try {
+		if (a == null || b == null)
+			return false;
+		while ((c = a.read()) == (d = b.read()) && (c != -1 && d != -1));
+		return (c == -1 && d == -1);
+	} catch (IOException e) {
+		return false;
+	} finally {
+		try {
+			if (a != null)
+				a.close();
+		} catch (IOException e) {
+		}
+		try {
+			if (b != null)
+				b.close();
+		} catch (IOException e) {
+		}
+	}
+}
+private IPath computeDefaultLocation(IResource target) {
+	switch (target.getType()) {
+		case IResource.ROOT :
+			return Platform.getLocation();
+		case IResource.PROJECT :
+			return Platform.getLocation().append(target.getFullPath());
+		default :
+			IPath location = computeDefaultLocation(target.getProject());
+			location = location.append(target.getFullPath().removeFirstSegments(1));
+			return location;
+	}
+}
+private void create(final IResource resource, boolean local) throws CoreException {
+	if (resource == null || resource.exists())
+		return;
+	if (!resource.getParent().exists())
+		create(resource.getParent(), local);
+	switch (resource.getType()) {
+		case IResource.FILE :
+			 ((IFile) resource).create(local ? new ByteArrayInputStream(new byte[0]) : null, false, getMonitor());
+			break;
+		case IResource.FOLDER :
+			 ((IFolder) resource).create(false, local, getMonitor());
+			break;
+		case IResource.PROJECT :
+			 ((IProject) resource).create(getMonitor());
+			((IProject) resource).open(getMonitor());
+			break;
+	}
+}
+/**
+ * Create the given file in the local store. 
+ */
+public void createFileInFileSystem(IPath path) throws CoreException {
+	java.io.File file = path.toFile();
+	new java.io.File(file.getParent()).mkdirs();
+	FileOutputStream output = null;
+	try {
+		output = new FileOutputStream(file);
+		output.write("".getBytes("UTF8"));
+	} catch (IOException e) {
+		throw new CoreException(new Status(IStatus.ERROR, "foo", 2, "Failed during write: " + path, e));
+	} finally {
+		try {
+			if (output != null)
+				output.close();
+		} catch (IOException e) {
+		}
+	}
+}
+/**
+ * Create the given file in the local store. 
+ */
+public void createFileInFileSystem(IPath path, InputStream contents) throws IOException {
+	java.io.File file = path.toFile();
+	new java.io.File(file.getParent()).mkdirs();
+	FileOutputStream output = new FileOutputStream(file);
+	transferData(contents, output);
+}
+public IResource[] createHierarchy() throws CoreException {
+	IResource[] result = buildResources();
+	ensureExistsInWorkspace(result, true);
+	return result;
+}
+/**
+ * Returns a collection of string paths describing the standard 
+ * resource hierarchy for this test.  In the string forms, folders are
+ * represented as having trailing separators ('/').  All other resources
+ * are files.  It is generally assumed that this hierarchy will be 
+ * inserted under some solution and project structure.
+ * For example, 	
+ * <pre>
+ *    return new String[] {"/", "/1/", "/1/1", "/1/2", "/1/3", "/2/", "/2/1"};
+ * </pre>
+ */
+public String[] defineHierarchy() {
+	return new String[0];
+}
+/**
+ * Delete the resources in the array from the local store.
+ */
+public void ensureDoesNotExistInFileSystem(IResource[] resources) {
+	for (int i = 0; i < resources.length; i++) {
+		ensureDoesNotExistInFileSystem(resources[i]);
+	}
+}
+protected void ensureDoesNotExistInFileSystem(java.io.File file) {
+	if (!file.exists())
+		return;
+	if (file.isDirectory()) {
+		String[] files = file.list();
+		if (files != null) // be carefule since file.list() can return null
+			for (int i = 0; i < files.length; ++i)
+				ensureDoesNotExistInFileSystem(new java.io.File(file, files[i]));
+	}
+	if (!file.delete()) {
+		System.out.println("WARNING: ensureDoesNotExistInFileSystem(File) could not delete: " + file.getPath());
+	}
+}
+/**
+ * Delete the given resource from the local store. Use the resource
+ * manager to ensure that we have a correct Path -> File mapping.
+ */
+public void ensureDoesNotExistInFileSystem(IResource resource) {
+	IPath path = resource.getLocation();
+	if (path != null)
+		ensureDoesNotExistInFileSystem(path.toFile());
+}
+/**
+ * Delete each element of the resource array from the workspace 
+ * resource info tree.
+ */
+public void ensureDoesNotExistInWorkspace(final IResource[] resources) {
+	IWorkspaceRunnable body = new IWorkspaceRunnable() {
+		public void run(IProgressMonitor monitor) throws CoreException {
+			for (int i = 0; i < resources.length; i++) {
+				ensureDoesNotExistInWorkspace(resources[i]);
+			}
+		}
+	};
+	try {
+		getWorkspace().run(body, null);
+	} catch (CoreException e) {
+		fail("#ensureDoesNotExistInWorkspace(IResource[])", e);
+	}
+}
+/**
+ * Delete the given resource from the workspace resource tree.
+ */
+public void ensureDoesNotExistInWorkspace(IResource resource) {
+	try {
+		if (resource.exists())
+			resource.delete(true, null);
+	} catch (CoreException e) {
+		fail("#ensureDoesNotExistInWorkspace(IResource): " + resource.getFullPath(), e);
+	}
+}
+/**
+ * Create the each resource of the array in the local store.
+ */
+public void ensureExistsInFileSystem(IResource[] resources) {
+	for (int i = 0; i < resources.length; i++) {
+		ensureExistsInFileSystem(resources[i]);
+	}
+}
+/**
+ * Create the given file in the local store. Use the resource manager
+ * to ensure that we have a correct Path -> File mapping.
+ */
+public void ensureExistsInFileSystem(IFile file) {
+	IPath path = file.getLocation();
+	try {
+		if (path != null)
+			createFileInFileSystem(path);
+	} catch (CoreException e) {
+		fail("#ensureExistsInFileSystem(IFile): " + file.getFullPath(), e);
+	}
+}
+/**
+ * Create the given folder in the local store. Use the resource
+ * manager to ensure that we have a correct Path -> File mapping.
+ */
+public void ensureExistsInFileSystem(IResource resource) {
+	if (resource instanceof IFile)
+		ensureExistsInFileSystem((IFile) resource);
+	else {
+		IPath path = resource.getLocation();
+		if (path != null)
+			path.toFile().mkdirs();
+	}
+}
+/**
+ * Create each element of the resource array in the workspace resource 
+ * info tree.
+ */
+public void ensureExistsInWorkspace(final IResource[] resources, final boolean local) {
+	IWorkspaceRunnable body = new IWorkspaceRunnable() {
+		public void run(IProgressMonitor monitor) throws CoreException {
+			for (int i = 0; i < resources.length; i++)
+				create(resources[i], local);
+		}
+	};
+	try {
+		getWorkspace().run(body, null);
+	} catch (CoreException e) {
+		fail("#ensureExistsInWorkspace(IResource[])", e);
+	}
+}
+/**
+ * Create the given file in the workspace resource info tree.
+ */
+public void ensureExistsInWorkspace(final IFile resource, final InputStream contents) {
+	if (resource == null)
+		return;
+	IWorkspaceRunnable body = new IWorkspaceRunnable() {
+		public void run(IProgressMonitor monitor) throws CoreException {
+			if (resource.exists()) {
+				resource.setContents(contents, true, false, null);
+			} else {
+				ensureExistsInWorkspace(resource.getParent(), true);
+				resource.create(contents, true, null);
+			}
+		}
+	};
+	try {
+		getWorkspace().run(body, null);
+	} catch (CoreException e) {
+		fail("#ensureExistsInWorkspace(IFile, InputStream): " + resource.getFullPath(), e);
+	}
+}
+/**
+ * Create the given file in the workspace resource info tree.
+ */
+public void ensureExistsInWorkspace(IFile resource, String contents) {
+	ensureExistsInWorkspace(resource, new ByteArrayInputStream(contents.getBytes()));
+}
+/**
+ * Create the given resource in the workspace resource info tree.
+ */
+public void ensureExistsInWorkspace(final IResource resource, final boolean local) {
+	IWorkspaceRunnable body = new IWorkspaceRunnable() {
+		public void run(IProgressMonitor monitor) throws CoreException {
+			create(resource, local);
+		}
+	};
+	try {
+		getWorkspace().run(body, null);
+	} catch (CoreException e) {
+		fail("#ensureExistsInWorkspace(IResource): " + resource.getFullPath(), e);
+	}
+}
+private boolean existsInFileSystem(IResource resource) throws CoreException {
+	IPath path = resource.getLocation();
+	if (path == null)
+		path = computeDefaultLocation(resource);
+	return path.toFile().exists();
+}
+private boolean existsInWorkspace(IResource resource) {
+	return resource.exists();
+}
+private boolean existsInWorkspace(IResource resource, boolean phantom) {
+	IResource target = getWorkspace().getRoot().findMember(resource.getFullPath(), phantom);
+	return target != null && target.getType() == resource.getType();
+}
+/**
+ * Fails the test due to the given exception.
+ * @param message
+ * @param e
+ */
+public void fail(String message, Exception e) {
+	fail(message + ": " + e);
+}
+/**
+ * Does some garbage collections to free unused resources
+ */
+protected static void gc() {
+	/* make sure old stores get finalized so they free old files */
+	for (int i = 0; i < 2; i++) {
+		System.runFinalization();
+		System.gc();
+	}
+}
+/** 
+ * Returns the unqualified class name of the receiver (ie. without the package prefix).
+ */
+protected String getClassName() {
+	String fullClassName = getClass().getName();
+	return fullClassName.substring(fullClassName.lastIndexOf(".") + 1); 
+}
+public InputStream getContents(java.io.File target, String errorCode) {
+	try {
+		return new FileInputStream(target);
+	} catch (IOException e) {
+		fail(errorCode, e);
+	}
+	return null; // never happens
+}
+/**
+ * Return an input stream with some the specified text to use
+ * as contents for a file resource.
+ */
+public InputStream getContents(String text) {
+	return new ByteArrayInputStream(text.getBytes());
+}
+public IProgressMonitor getMonitor() {
+	return new FussyProgressMonitor();
+}
+/**
+ * Return an input stream with some random text to use
+ * as contents for a file resource.
+ */
+public InputStream getRandomContents() {
+	return new ByteArrayInputStream(getRandomString().getBytes());
+}
+/**
+ * Return String with some random text to use
+ * as contents for a file resource.
+ */
+public String getRandomString() {
+	switch ((int) Math.round(Math.random() * 10)) {
+		case 0 :
+			return "este e' o meu conteudo (portuguese)";
+		case 1 :
+			return "ho ho ho";
+		case 2 :
+			return "I'll be back";
+		case 3 :
+			return "don't worry, be happy";
+		case 4 :
+			return "there is no imagination for more sentences";
+		case 5 :
+			return "customize yours";
+		case 6 :
+			return "foo";
+		case 7 :
+			return "bar";
+		case 8 :
+			return "foobar";
+		case 9 :
+			return "case 9";
+		default :
+			return "these are my contents";
+	}
+}
+public static IWorkspace getWorkspace() {
+	return ResourcesPlugin.getWorkspace();
+}
+/**
+ * Modifies the content of the given file in the file system by
+ * appending an 'f'.
+ * @param file
+ */
+protected void modifyInFileSystem(IFile file) {
+	String m = getClassName() + ".modifyInFileSystem(IFile): ";
+	String newContent = readStringInFileSystem(file) + "f";
+	java.io.File osFile = file.getLocation().toFile();
+	try {
+		FileOutputStream os = null;
+		try {
+			os = new FileOutputStream(osFile);
+			os.write(newContent.getBytes("UTF8"));
+		} finally {
+			os.close();
+		}
+	} catch (IOException e) {
+		fail(m + "0.0", e);
+	}
+}
+/**
+ * Modifies the content of the given file in the workspace by
+ * appending a 'w'.
+ * @param file
+ */
+protected void modifyInWorkspace(IFile file) throws CoreException {
+	String m = getClassName() + ".modifyInWorkspace(IFile): ";
+	try {
+		String newContent = readStringInWorkspace(file) + "w";
+		ByteArrayInputStream is = new ByteArrayInputStream(newContent.getBytes("UTF8"));
+		file.setContents(is, false, false, null);
+	} catch (UnsupportedEncodingException e) {
+		fail(m + "0.0");
+	}
+}
+/**
+ * Returns the content of the given file in the file system as a
+ * byte array.
+ * @param file
+ */
+protected byte[] readBytesInFileSystem(IFile file){
+	String m = getClassName()+".readBytesInFileSystem(IFile): ";
+	try {
+		java.io.File osFile = file.getLocation().toFile();
+		FileInputStream is = new FileInputStream(osFile);
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+		transferData(is, os);
+		return os.toByteArray();
+	} catch(IOException e){
+		fail(m+"0.0", e);
+	}
+	return null;
+}
+/**
+ * Returns the content of the given file in the workspace as a
+ * byte array.
+ */
+protected byte[] readBytesInWorkspace(IFile file){
+	String m = getClassName()+".readBytesInWorkspace(IFile): ";
+	try {
+		InputStream is = file.getContents(false);
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+		transferData(is, os);
+		return os.toByteArray();
+	} catch(CoreException e){
+		fail(m+"0.0", e);
+	}
+	return null;
+}
+/**
+ * Returns the content of the given file in the file system as a
+ * String (UTF8).
+ * @param file
+ */
+protected String readStringInFileSystem(IFile file){
+	String m = getClassName()+".readStringInFileSystem(IFile): ";
+	try {
+		return new String(readBytesInFileSystem(file), "UTF8");
+	} catch(UnsupportedEncodingException e){
+		fail(m+"0.0", e);
+	}
+	return null;
+}
+/**
+ * Returns the content of the given file in the workspace as a
+ * String (UTF8).
+ * @param file
+ */
+protected String readStringInWorkspace(IFile file){
+	String m = getClassName()+".readStringInWorkspace(IFile): ";
+	try {
+		return new String(readBytesInWorkspace(file), "UTF8");
+	} catch(UnsupportedEncodingException e){
+		fail(m+"0.0", e);
+	}
+	return null;
+}
+/**
+ * The environment should be set-up in the main method.
+ */
+protected void setUp() throws Exception {
+	assertNotNull("Workspace was not setup", getWorkspace());
+	if (EclipseTestHarnessApplication.deltasEnabled() && deltaListener == null) {
+		deltaListener = new DeltaDebugListener();
+		getWorkspace().addResourceChangeListener(deltaListener);
+	}
+}
+/**
+ * Returns the test suite for this test class.
+ */
+public static Test suite() {
+	TestSuite suite = new TestSuite();
+	return suite;
+}
+/**
+ * Copy the data from the input stream to the output stream.
+ * Close both streams when finished.
+ */
+public void transferData(InputStream input, OutputStream output) {
+	try {
+		try {
+			int c = 0;
+			while ((c = input.read()) != -1) {
+				output.write(c);
+			}
+		} finally {
+			input.close();
+			output.close();
+		}
+	} catch (IOException e) {
+		e.printStackTrace();
+		assertTrue(e.toString(), false);
+	}
+}
+/**
+ * Copy the data from the input stream to the output stream.
+ * Do not close either of the streams.
+ */
+public void transferDataWithoutClose(InputStream input, OutputStream output) {
+	try {
+		int c = 0;
+		while ((c = input.read()) != -1) {
+			output.write(c);
+		}
+	} catch (IOException e) {
+		e.printStackTrace();
+		assertTrue(e.toString(), false);
+	}
+}
+/**
+ * Log messages if we are in debug mode.
+ */
+public static void log(String message) {
+	String id = "org.eclipse.core.tests.harness";
+	Plugin plugin = Platform.getPlugin(id);
+	if (plugin.isDebugging())
+		System.out.println(message);
+}
+}
