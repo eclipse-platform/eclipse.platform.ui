@@ -254,5 +254,15 @@ public abstract class Breakpoint extends PlatformObject implements IBreakpoint {
 		}
 		return m;
 	}
+	
+	/**
+	 * Returns whether this breakpoint has an associated marker that exists.
+	 * 
+	 * @return returns whether this breakpoint has an associated marker that exists
+	 * @since 2.1	 */
+	protected boolean markerExists() {
+		IMarker m = getMarker();
+		return (m != null && m.exists());
+	}
 }
 
