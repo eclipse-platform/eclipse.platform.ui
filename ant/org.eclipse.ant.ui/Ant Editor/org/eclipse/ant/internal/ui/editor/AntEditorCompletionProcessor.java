@@ -944,14 +944,14 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
             // Attribute proposal
             if(lastChar != '>' && lastChar != '<') {
                 String taskString= getTaskStringFromDocumentStringToPrefix(trimmedString);
-                if(taskString != null && isTaskKnown(taskString)) {
+                if(taskString != null && isKnownElement(taskString)) {
                     return PROPOSAL_MODE_ATTRIBUTE_PROPOSAL;
                 }
             }                
         } else if(stringToPrefix.charAt(stringToPrefix.length()-1) == '"' || trimmedString.charAt(trimmedString.length()-1) == ',') {
 			// Attribute value proposal
             String taskString= getTaskStringFromDocumentStringToPrefix(trimmedString);
-            if(taskString != null && isTaskKnown(taskString)) {
+            if (taskString != null && isKnownElement(taskString)) {
                 return PROPOSAL_MODE_ATTRIBUTE_VALUE_PROPOSAL;
             }
         } else {  // Possibly a Task proposal
@@ -1062,10 +1062,10 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 
 
     /**
-     * Returns whether the specified task name is known according to the DTD.
+     * Returns whether the specified element name is known
      */
-    protected boolean isTaskKnown(String taskName) {
-    	return getTaskClass(taskName) != null;
+    protected boolean isKnownElement(String elementName) {
+    	return elementName.equals("target") || elementName.equals("project") || getTaskClass(elementName) != null; //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     private Class getTaskClass(String taskName) {
