@@ -122,6 +122,7 @@ public class IOConsolePage implements IPageBookViewPage, IPropertyChangeListener
     public void createControl(Composite parent) {
 		viewer = new IOConsoleViewer(parent, console);
 		viewer.setConsoleWidth(console.getConsoleWidth());
+		viewer.setTabWidth(console.getTabWidth());
 		console.addPropertyChangeListener(this);
 		JFaceResources.getFontRegistry().addListener(this);
 		
