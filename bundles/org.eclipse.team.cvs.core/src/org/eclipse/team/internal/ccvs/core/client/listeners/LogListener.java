@@ -98,12 +98,10 @@ public class LogListener implements ICommandOutputListener {
 				// that is the root of this branch (e.g. 1.1 is root of branch 1.1.2).
 				boolean isBranch = isBranchTag(tagRevision);
 				if (isBranch) {
-					int zeroIndex = tagRevision.lastIndexOf('0');
-					int lastDot = -1;
-					if (zeroIndex != -1)
-						lastDot = zeroIndex - 1;
-					else
-						lastDot = tagRevision.lastIndexOf('.');
+					int lastDot = tagRevision.lastIndexOf('.');
+					if (tagRevision.charAt(lastDot - 1) == '0' && tagRevision.charAt(lastDot - 2) == '.') {
+						lastDot = lastDot - 2;
+					}
 					tagRevision = tagRevision.substring(0, lastDot);
 				}
 				if (tagRevision.equals(revision)) {
@@ -130,15 +128,20 @@ public class LogListener implements ICommandOutputListener {
 	 *  an even number with a zero as the second last segment
 	 *  e.g: 1.1.1, 1.26.0.2 are branch revision numbers */
 	protected boolean isBranchTag(String tagName) {
-		int numberOfSegments = 0;
-		boolean isBranch = false;
+		// First check if we have an odd number of segments (i.e. even number of dots)
+		int numberOfDots = 0;
+		int lastDot = 0;
 		for (int i = 0; i < tagName.length(); i++) {
-			if (tagName.charAt(i) == '.')
-				numberOfSegments++;
+			if (tagName.charAt(i) == '.') {
+				numberOfDots++;
+				lastDot = i;
+			}
 		}
-		isBranch = (numberOfSegments % 2) == 0;
-		if (!isBranch && tagName.lastIndexOf('0') != -1)
-			isBranch = true;
-		return isBranch;
+		if ((numberOfDots % 2) == 0) return true;
+		if (numberOfDots == 1) return false;
+		
+		// If not, check if the second lat segment is a zero
+		if (tagName.charAt(lastDot - 1) == '0' && tagName.charAt(lastDot - 2) == '.') return true;
+		return false;
 	}
 }
