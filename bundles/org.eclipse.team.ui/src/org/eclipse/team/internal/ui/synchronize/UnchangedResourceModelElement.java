@@ -13,6 +13,7 @@ package org.eclipse.team.internal.ui.synchronize;
 import org.eclipse.compare.structuremergeviewer.IDiffContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.team.internal.core.Assert;
 
 /**
  * DiffNode that represents a resource that is in sync.
@@ -23,6 +24,7 @@ public class UnchangedResourceModelElement extends SynchronizeModelElement imple
 
 	public UnchangedResourceModelElement(IDiffContainer parent, IResource resource) {
 		super(parent);
+		Assert.isNotNull(resource);
 		this.resource = resource;
 	}
 	
