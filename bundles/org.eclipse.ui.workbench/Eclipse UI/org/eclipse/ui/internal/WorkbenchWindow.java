@@ -47,6 +47,9 @@ import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.FormAttachment;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.CoolBar;
@@ -123,6 +126,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	private boolean asMaximizedState = false;
 
 	private CBanner topBar;
+	private Composite topBarParent;
 	
 	/**
 	 * The composite under which workbench pages create their controls.
@@ -196,6 +200,14 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	 */
 	public void addSubmenu(int type) {
 		submenus |= type;
+	}
+
+	/**
+	 * 
+	 */
+	protected void updatePerspectiveBar() {
+		if (perspectiveBar.getControl() != null)
+			createPerspectiveBar();
 	}
 
 	/**
@@ -274,6 +286,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	private Map actionSetHandlersByCommandId = new HashMap();
 	private Map globalActionHandlersByCommandId = new HashMap();
 	List handlerSubmissions = new ArrayList();
+	private boolean dockPerspectiveBar = Workbench.getInstance().getPreferenceStore().getBoolean(IPreferenceConstants.DOCK_PERSPECTIVE_BAR);
 	
 	void registerActionSets(IActionSet[] actionSets) {
 		actionSetHandlersByCommandId.clear();
@@ -610,8 +623,12 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 			shell.setMenuBar(menuBar);
 		}
 	    
-		topBar = new CBanner(shell, SWT.NONE);
-
+	    // Create a parent of the Toolbar, CBanner and perspective switcher bar
+	    topBarParent = new Composite(shell, SWT.NONE);
+	    topBarParent.setLayout(new FormLayout());
+	    
+		topBar = new CBanner(topBarParent, SWT.NONE);
+		
 		Control coolBar = createCoolBarControl(topBar);
 		// need to resize the shell, not just the coolbar's immediate
 		// parent, if the coolbar wants to grow or shrink
@@ -623,14 +640,16 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		if (getWindowConfigurer().getShowCoolBar()) {
 			topBar.setLeft(getCoolBarControl());
 		}
-
+		
+		FormData topBarData = new FormData();
+		topBarData.right = new FormAttachment(100, 0);
+		topBarData.left = new FormAttachment(0,0);
+		topBarData.top = new FormAttachment(0,0);
+		topBar.setLayoutData(topBarData);
+		
 		addPerspectiveBar(perspectiveBarStyle());
-		createPerspectiveBar(topBar);
-		perspectiveBar.setBanner(topBar);
-		if (getWindowConfigurer().getShowPerspectiveBar()) {
-			topBar.setRight(perspectiveBar.getControl());
-		}
-
+		createPerspectiveBar();	
+		
 		createStatusLine(shell);
 		
 		fastViewBar = new FastViewBar(this);
@@ -677,13 +696,33 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		setLayoutDataForContents();
 	}
 	
+	/** 
+	 * Set whether the perspective bar should be docked in the main window toolbar or not
+	 * @param dock  dock the perspective bar in the main window
+	 */
+	public void dockPerspectiveBar(boolean dock) {
+		if (dockPerspectiveBar == dock) {
+			return;
+		}
+		dockPerspectiveBar = dock;
+		createPerspectiveBar();		
+	}
+	
     /**
 	 * Create the perspective toolbar control
 	 */
-	private void createPerspectiveBar(Composite parent) {
+	private void createPerspectiveBar() {
 
+		Control control = perspectiveBar.getControl();
+		if (control != null && !control.isDisposed()) {
+			control.dispose();
+		}
+		
+		if (!getWindowConfigurer().getShowPerspectiveBar()) {
+			return;
+		}
+		
 	    // TODO: encapsulate the listener and showPerspectiveBarPopup in PerspectiveBar
-
 	    Listener listener = new Listener() {
 			public void handleEvent(Event event) {
 				if (event.type == SWT.MenuDetect) {
@@ -691,11 +730,29 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 				}
 			}
 		};
+		
+		if (dockPerspectiveBar) {
+			topBar.setRight(null);
+			perspectiveBar.setBanner(null);
+			topBar.setRightWidth(0);
+			
+			perspectiveBar.createControl(topBarParent);
 
-		perspectiveBar.createControl(parent);
-		
+			FormData perspectiveData = new FormData();
+			perspectiveData.right = new FormAttachment(100, 0);
+			perspectiveData.left = new FormAttachment(0,0);
+			perspectiveData.top = new FormAttachment(topBar,0);
+			perspectiveBar.getControl().setLayoutData(perspectiveData);	
+			perspectiveBar.update(true);
+		} else {
+			topBar.setRightWidth(SWT.DEFAULT);
+			perspectiveBar.createControl(topBar);
+			perspectiveBar.setBanner(topBar);
+			perspectiveBar.update(true);
+			topBar.setRight(perspectiveBar.getControl());
+		}
+		perspectiveBar.getControl().getShell().layout();		
 		perspectiveBar.getControl().addListener(SWT.MenuDetect, listener);
-		
 	}
 	
 	/**
@@ -2207,12 +2264,12 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		// @issue this is not ideal; coolbar and perspective shortcuts should be
 		//   separately configurable
 		if ((getCoolBarVisible() && getWindowConfigurer().getShowCoolBar()) || (getPerspectiveBarVisible() && getWindowConfigurer().getShowPerspectiveBar())) {
-			defaultLayout.addTrim(topBar, SWT.TOP, null);
-			topBar.setVisible(true);
+			defaultLayout.addTrim(topBarParent, SWT.TOP, null);
+			topBarParent.setVisible(true);
 		}
 		else {
-			defaultLayout.removeTrim(topBar);
-			topBar.setVisible(false);
+			defaultLayout.removeTrim(topBarParent);
+			topBarParent.setVisible(false);
 		}
 
 		if (getStatusLineVisible() && getWindowConfigurer().getShowStatusLine()) {

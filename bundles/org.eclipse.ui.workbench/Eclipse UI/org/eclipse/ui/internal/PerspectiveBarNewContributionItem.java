@@ -13,8 +13,11 @@ package org.eclipse.ui.internal;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Menu;
@@ -27,8 +30,7 @@ public class PerspectiveBarNewContributionItem extends ContributionItem {
 
     private MenuManager menuManager = null;
 
-    private ToolBar toolBar = null;
-
+	private Image image;
     private ToolItem toolItem = null;
 
     public PerspectiveBarNewContributionItem(IWorkbenchWindow workbenchWindow) {
@@ -38,13 +40,34 @@ public class PerspectiveBarNewContributionItem extends ContributionItem {
                 .create(workbenchWindow));
     }
 
-    public void fill(ToolBar parent, int index) {
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.ContributionItem#dispose()
+	 */
+	public void dispose() {
+		super.dispose();
+		if (image != null && !image.isDisposed()) {
+			image.dispose();
+			image = null;
+		}
+	}
+
+    public void fill(final ToolBar parent, int index) {
         if (toolItem == null && parent != null) {
-            toolBar = parent;
+            parent.addDisposeListener(new DisposeListener(){
+				public void widgetDisposed(DisposeEvent e) {
+					//toolItem.getImage().dispose();
+					toolItem.dispose();
+					toolItem = null;		
+				}});
+            
             toolItem = new ToolItem(parent, SWT.PUSH);
-            toolItem.setImage(WorkbenchImages.getImageDescriptor(
+            if (image == null || image.isDisposed()) {
+            	image = WorkbenchImages.getImageDescriptor(
                     IWorkbenchGraphicConstants.IMG_ETOOL_NEW_PAGE)
-                    .createImage());
+                    .createImage();
+			}
+			toolItem.setImage(image);
+			
             toolItem.setText(""); //$NON-NLS-1$
             toolItem.setToolTipText(WorkbenchMessages
                     .getString("PerspectiveBarNewContributionItem.toolTip")); //$NON-NLS-1$
@@ -59,8 +82,8 @@ public class PerspectiveBarNewContributionItem extends ContributionItem {
                         point = new Point(rectangle.x, rectangle.y
                                 + rectangle.height);
                     }
-                    Menu menu = menuManager.createContextMenu(toolBar);
-                    point = toolBar.toDisplay(point);
+                    Menu menu = menuManager.createContextMenu(parent);
+                    point = parent.toDisplay(point);
                     menu.setLocation(point.x, point.y);
                     menu.setVisible(true);
                 }

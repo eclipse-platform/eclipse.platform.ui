@@ -17,9 +17,12 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IPerspectiveDescriptor;
@@ -32,7 +35,7 @@ public class PerspectiveBarContributionItem extends ContributionItem {
             .getPreferenceStore();
 
     private ToolItem toolItem = null;
-
+    private Image image;
     private WorkbenchPage workbenchPage;
 
     private IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener() {
@@ -58,22 +61,44 @@ public class PerspectiveBarContributionItem extends ContributionItem {
         this.workbenchPage = workbenchPage;
         preferenceStore.addPropertyChangeListener(propertyChangeListener);
     }
+    
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.ContributionItem#dispose()
+	 */
+	public void dispose() {
+		super.dispose();
+		if (image != null && !image.isDisposed()) {
+			image.dispose();
+			image = null;
+		}
+	}
 
     public void fill(ToolBar parent, int index) {
         if (toolItem == null && parent != null && !parent.isDisposed()) {
+        	
+        	parent.addDisposeListener(new DisposeListener(){
+				public void widgetDisposed(DisposeEvent e) {
+					toolItem.dispose();
+					toolItem = null;		
+				}});
+ 
             if (index >= 0)
                 toolItem = new ToolItem(parent, SWT.CHECK, index);
             else
                 toolItem = new ToolItem(parent, SWT.CHECK);
-            ImageDescriptor imageDescriptor = perspective.getImageDescriptor();
-            if (imageDescriptor != null) {
-                toolItem.setImage(imageDescriptor.createImage());
 
-            } else {
-                toolItem.setImage(WorkbenchImages.getImageDescriptor(
-                        IWorkbenchGraphicConstants.IMG_ETOOL_DEF_PERSPECTIVE)
-                        .createImage());
+            if (image == null || image.isDisposed()) {
+	            ImageDescriptor imageDescriptor = perspective.getImageDescriptor();
+	            if (imageDescriptor != null) {
+	            	image = imageDescriptor.createImage();
+	            } else {
+	            	image = WorkbenchImages.getImageDescriptor(
+	                        IWorkbenchGraphicConstants.IMG_ETOOL_DEF_PERSPECTIVE)
+	                        .createImage();
+	            }
             }
+            toolItem.setImage(image);
+                
             toolItem.setToolTipText(WorkbenchMessages.format(
                     "PerspectiveBarContributionItem.toolTip", //$NON-NLS-1$
                     new Object[] { perspective.getLabel()}));

@@ -11,10 +11,12 @@
 package org.eclipse.ui.internal;
 
 
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
 /**
@@ -31,18 +33,34 @@ public class PlatformUIPreferenceListener implements IPropertyChangeListener {
 	public void propertyChange(PropertyChangeEvent event) {
 
 		String propertyName = event.getProperty();
-		if (IPreferenceConstants.ENABLED_DECORATORS.equals(propertyName))
+		if (IPreferenceConstants.ENABLED_DECORATORS.equals(propertyName)) {
 			WorkbenchPlugin
 				.getDefault()
 				.getDecoratorManager()
 				.restoreListeners();
-
+			return;
+		}
+		
 		if (IWorkbenchPreferenceConstants
 			.DEFAULT_PERSPECTIVE_ID
 			.equals(propertyName)) {
 			IWorkbench workbench = PlatformUI.getWorkbench();
 			
 			workbench.getPerspectiveRegistry().setDefaultPerspective((String) event.getNewValue());
+			return;
+		}
+		
+		if (IPreferenceConstants.DOCK_PERSPECTIVE_BAR
+			.equals(propertyName)) {
+			IPreferenceStore preferenceStore = WorkbenchPlugin.getDefault().getPreferenceStore();
+			IWorkbench workbench = PlatformUI.getWorkbench();
+			IWorkbenchWindow[] workbenchWindows = workbench.getWorkbenchWindows();
+			for (int i = 0; i < workbenchWindows.length; i++) {
+				IWorkbenchWindow window = workbenchWindows[i];
+				if (window instanceof WorkbenchWindow)
+					((WorkbenchWindow)window).dockPerspectiveBar(preferenceStore.getBoolean(IPreferenceConstants.DOCK_PERSPECTIVE_BAR));
+			}
+			return;
 		}
 	}
 }

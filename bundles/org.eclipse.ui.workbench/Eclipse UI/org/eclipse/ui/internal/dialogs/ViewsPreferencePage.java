@@ -55,6 +55,12 @@ public class ViewsPreferencePage
 	private Button showTextOnPerspectiveBar;
 	
 	/*
+	 * indicate whether the perspective bar should be docked in the main
+	 * toolbar
+	 */
+	private Button dockPerspectiveBar;
+	
+	/*
 	 * change the tab style of the workbench
 	 */
 	private Button showTraditionalStyleTabs;
@@ -160,7 +166,7 @@ public class ViewsPreferencePage
 		refreshThemeCombo();
 		
 		createShowTextOnPerspectiveBarPref(composite);
-
+		createDockPerspectiveBarPref(composite);
 		createShowTraditionalStyleTabsPref(composite);
 		
 		return composite;
@@ -304,6 +310,18 @@ public class ViewsPreferencePage
 		showTextOnPerspectiveBar.setFont(composite.getFont());
 		showTextOnPerspectiveBar.setSelection(getPreferenceStore().getBoolean(IPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR));
 		setButtonLayoutData(showTextOnPerspectiveBar);
+	}    
+    
+    /**
+	 * Create the button and text that support setting the preference for showing
+	 * text labels on the perspective switching bar
+	 */
+	protected void createDockPerspectiveBarPref(Composite composite) {
+		dockPerspectiveBar = new Button(composite, SWT.CHECK);
+		dockPerspectiveBar.setText(WorkbenchMessages.getString("WorkbenchPreference.dockPerspectiveBar"));  //$NON-NLS-1$
+		dockPerspectiveBar.setFont(composite.getFont());
+		dockPerspectiveBar.setSelection(getPreferenceStore().getBoolean(IPreferenceConstants.DOCK_PERSPECTIVE_BAR));
+		setButtonLayoutData(dockPerspectiveBar);
 	}
 
 	/**
@@ -346,6 +364,7 @@ public class ViewsPreferencePage
 			WorkbenchPlugin.getDefault().getPreferenceStore();
 
 		showTextOnPerspectiveBar.setSelection(store.getDefaultBoolean(IPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR));
+		dockPerspectiveBar.setSelection(store.getDefaultBoolean(IPreferenceConstants.DOCK_PERSPECTIVE_BAR));
 		showTraditionalStyleTabs.setSelection(store.getDefaultBoolean(IPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS));
 
 		int editorTopValue =
@@ -375,6 +394,7 @@ public class ViewsPreferencePage
 		IPreferenceStore store = getPreferenceStore();
 
 		store.setValue(IPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR, showTextOnPerspectiveBar.getSelection());
+		store.setValue(IPreferenceConstants.DOCK_PERSPECTIVE_BAR, dockPerspectiveBar.getSelection());
 		store.setValue(IPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS, showTraditionalStyleTabs.getSelection());
 		
 		// store the editor tab value to setting

@@ -156,9 +156,25 @@ public interface IPreferenceConstants {
 	 * <p>
 	 * The default value for this preference is: <code>true</code> (show text on the perspective bar)
 	 * </p>
+	 * 
+	 * @since 3.0
 	 */
 	public static String SHOW_TEXT_ON_PERSPECTIVE_BAR = "SHOW_TEXT_ON_PERSPECTIVE_BAR"; //$NON-NLS-1$	
 
+	/**
+	 * Workbench preference id for whether the workbench perspective bar should be docked in the 
+	 * main toolbar. 
+	 * 
+	 * Boolean-valued: <code>true</code>, if bar should be docked in the main toolbar,
+	 * <code>false</code> otherwise.
+	 * <p>
+	 * The default value for this preference is: <code>false</code>
+	 * </p>
+	 * 
+	 * @since 3.0
+	 */
+	public static String DOCK_PERSPECTIVE_BAR = "DOCK_PERSPECTIVE_BAR"; //$NON-NLS-1$	
+	
 	/**
 	 * Workbench preference id for whether the workbench should show multiple 
 	 * editor tabs. 
