@@ -336,11 +336,12 @@
    
 <!-- =================================================================================== -->
 <!-- Capability Support (a.k.a. Activities)														 -->
+<!-- Note: Uncomment the lines below to enable the capabilities. These can't be enabled in the -->
+<!-- examples because some products ship the examples with the product. -->
 <!-- =================================================================================== -->   
-   
+<!--  
 	<extension point="org.eclipse.ui.activities">
     
-    <!-- File System Provider bindings -->
 	<activity
 		name="%activity.team.examples.filesystem.name"
 		description="%activity.team.examples.filesystem.description"
@@ -366,8 +367,7 @@
 		activityId="org.eclipse.team.examples.filesystem"
 		categoryId="org.eclipse.categories.teamCategory">
 	</categoryActivityBinding>
-
-    <!-- Pessimistic Provider bindings -->   
+ 
     <activity
 		name="%activity.team.examples.pessimistic.name"
 		description="%activity.team.examples.pessimistic.description"
@@ -395,4 +395,5 @@
 	</categoryActivityBinding>
 
 	</extension>
+-->
 </plugin>
