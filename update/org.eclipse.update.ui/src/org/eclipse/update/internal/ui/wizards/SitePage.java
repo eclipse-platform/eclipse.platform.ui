@@ -29,19 +29,7 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		implements ITreeContentProvider {
 
 		public Object[] getElements(Object parent) {
-			UpdateModel model = UpdateUI.getDefault().getUpdateModel();
-			Object[] bookmarks = model.getBookmarkLeafs();
-			Object[] sitesToVisit =
-				discoveryFolder.getChildren(discoveryFolder);
-			Object[] all = new Object[bookmarks.length + sitesToVisit.length];
-			System.arraycopy(bookmarks, 0, all, 0, bookmarks.length);
-			System.arraycopy(
-				sitesToVisit,
-				0,
-				all,
-				bookmarks.length,
-				sitesToVisit.length);
-			return all;
+			return getAllSiteBookmarks();
 		}
 
 		public Object[] getChildren(final Object parent) {
@@ -518,8 +506,15 @@ public class SitePage extends BannerPage implements ISearchProvider {
 
 	public void setVisible(boolean value) {
 		super.setVisible(value);
-		if (value)
+		if (value) {
 			searchRunner.setSearchProvider(this);
+			// Reset all unavailable sites, so they can be tried again if the user wants it
+			SiteBookmark[] bookmarks = getAllSiteBookmarks();
+			for (int i=0; i<bookmarks.length; i++) {
+				if (bookmarks[i].isUnavailable())
+					bookmarks[i].setUnavailable(false);
+			}
+		}
 	}
 
 	class CatalogBag {
@@ -564,5 +559,21 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		}
 
 		return (bag.catalog == null) ? new Object[0] : bag.catalog;
+	}
+	
+	private SiteBookmark[] getAllSiteBookmarks() {
+		UpdateModel model = UpdateUI.getDefault().getUpdateModel();
+		Object[] bookmarks = model.getBookmarkLeafs();
+		Object[] sitesToVisit =
+			discoveryFolder.getChildren(discoveryFolder);
+		SiteBookmark[] all = new SiteBookmark[bookmarks.length + sitesToVisit.length];
+		System.arraycopy(bookmarks, 0, all, 0, bookmarks.length);
+		System.arraycopy(
+			sitesToVisit,
+			0,
+			all,
+			bookmarks.length,
+			sitesToVisit.length);
+		return all;
 	}
 }

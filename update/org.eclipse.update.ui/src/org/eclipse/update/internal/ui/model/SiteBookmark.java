@@ -131,6 +131,10 @@ public class SiteBookmark extends NamedModelObject
 		return unavailable;
 	}
 	
+	public void setUnavailable(boolean value) {
+		unavailable = value;
+	}
+	
 	private void createCatalog(IProgressMonitor monitor) {
 		catalog = new Vector();
 		otherCategory = new SiteCategory(this, null, null);
