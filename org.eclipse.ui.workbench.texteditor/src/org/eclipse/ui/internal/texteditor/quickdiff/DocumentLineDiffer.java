@@ -50,7 +50,6 @@ import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 import org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer.DocLineComparator;
 import org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer.RangeDifference;
 import org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer.RangeDifferencer;
-import org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer.LinkedRangeFactory.LowMemoryException;
 
 /**
  * Standard implementation of <code>ILineDiffer</code> as an incremental diff engine. A 
@@ -115,6 +114,9 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	/** Tells whether this class is in debug mode. */
 	private static boolean DEBUG= "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.ui.workbench.texteditor/debug/DocumentLineDiffer"));  //$NON-NLS-1$//$NON-NLS-2$
 
+	/** The delay after which the initialization job is triggered. */
+	private static final int INITIALIZE_DELAY= 500;
+	
 	/** Suspended state */
 	private static final int SUSPENDED= 0;
 	/** Initializing state */
@@ -203,8 +205,8 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		last= fLastDifference;
 		if (last != null)
 			return new DiffRegion(last, line - last.rightStart(), fDifferences, fLeftDocument);
-		else
-			return null;
+		
+		return null;
 	}
 
 	/*
@@ -409,10 +411,11 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		final Job oldJob= fInitializationJob; 
 		if (oldJob != null) {
 			// don't chain up jobs if there is one waiting already.
-			if (oldJob.getState() == Job.WAITING)
+			if (oldJob.getState() == Job.WAITING) {
+				oldJob.wakeUp(INITIALIZE_DELAY);
 				return;
-			else
-				oldJob.cancel();
+			}
+			oldJob.cancel();
 		}
 		
 		fInitializationJob= new Job(QuickDiffMessages.getString("quickdiff.initialize")) { //$NON-NLS-1$
@@ -444,12 +447,11 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 					synchronized (DocumentLineDiffer.this) {
 						if (isCanceled(monitor))
 							return Status.CANCEL_STATUS;
-						else {
-							clearModel();
-							fireModelChanged();
-							DocumentLineDiffer.this.notifyAll();
-							return e.getStatus();
-						}
+						
+						clearModel();
+						fireModelChanged();
+						DocumentLineDiffer.this.notifyAll();
+						return e.getStatus();
 					}
 				} catch (OperationCanceledException e) {
 					return Status.CANCEL_STATUS;
@@ -475,12 +477,11 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 					if (left == null || right == null) {
 						if (isCanceled(monitor))
 							return Status.CANCEL_STATUS;
-						else {
-							clearModel();
-							fireModelChanged();
-							DocumentLineDiffer.this.notifyAll();
-							return Status.OK_STATUS;
-						}
+						
+						clearModel();
+						fireModelChanged();
+						DocumentLineDiffer.this.notifyAll();
+						return Status.OK_STATUS;
 					}
 					
 					// set the reference document
@@ -552,9 +553,9 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 								DocumentLineDiffer.this.notifyAll();
 								
 								break;
-							} else {
-								event= (DocumentEvent) fStoredEvents.remove(0);
 							}
+							
+							event= (DocumentEvent) fStoredEvents.remove(0);
 						}
 						
 						// access documents unsynched:
@@ -567,9 +568,6 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 					left.removeDocumentListener(DocumentLineDiffer.this);
 					clearModel();
 					initialize();
-					return Status.CANCEL_STATUS;
-				} catch (LowMemoryException e) {
-					handleLowMemory(e);
 					return Status.CANCEL_STATUS;
 				}
 				
@@ -616,7 +614,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		fInitializationJob.setSystem(true);
 		fInitializationJob.setPriority(Job.DECORATE);
 		fInitializationJob.setProperty(IProgressConstants.NO_IMMEDIATE_ERROR_PROMPT_PROPERTY, Boolean.TRUE);
-		fInitializationJob.schedule();
+		fInitializationJob.schedule(INITIALIZE_DELAY);
 	}
 
 	/* IDocumentListener implementation */
@@ -660,6 +658,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	 * and {@link #initialize()}. 
 	 * 
 	 * @param event the document event to be handled
+	 * @throws BadLocationException if document access fails
 	 */
 	void handleAboutToBeChanged(DocumentEvent event) throws BadLocationException {
 		IDocument doc= event.getDocument();
@@ -706,9 +705,6 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		} catch (ConcurrentModificationException e) {
 			reinitOnError(e);
 			return;
-		} catch (LowMemoryException e) {
-			handleLowMemory(e);
-			return;
 		}
 		
 		// inform listeners about change
@@ -747,9 +743,9 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	 * Implementation of documentChanged, non synchronized.
 	 * 
 	 * @param event the document event
-	 * @throws LowMemoryException if the differ runs out of memory
+	 * @throws BadLocationException if document access fails somewhere
 	 */
-	void handleChanged(DocumentEvent event) throws BadLocationException, LowMemoryException {
+	void handleChanged(DocumentEvent event) throws BadLocationException {
 		/*
 		 * Now, here we have a great example of object oriented programming.
 		 */
@@ -798,7 +794,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		}
 		
 		// optimize unchanged blocks: if the consistent blocks around the change are larger than
-		// size, we redimension them (especially important when there are only very little changes.
+		// size, we redimension them (especially important when there are only few changes.
 		int shiftBefore= 0;
 		if (consistentBefore.kind() == RangeDifference.NOCHANGE) {
 			int unchanged;
@@ -1387,16 +1383,5 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		if (fRightDocument != null)
 			fRightDocument.addDocumentListener(this);
 		initialize();
-	}
-
-	/**
-	 * Handle low memory situation during diffing. Called from UI and jobs.
-	 * 
-	 * @param e the low memory exception
-	 */
-	private void handleLowMemory(LowMemoryException e) {
-		if (DEBUG)
-			System.err.println("Disabling QuickDiff:\n" + e);  //$NON-NLS-1$
-		suspend();
 	}
 }
