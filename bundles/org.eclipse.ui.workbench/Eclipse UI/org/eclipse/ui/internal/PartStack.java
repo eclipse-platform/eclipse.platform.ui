@@ -576,8 +576,10 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         if (!isDisposed()) {
             child.setContainer(null);
         }
-
-        updateContainerVisibleTab();
+        
+        if (child == current) {
+        	updateContainerVisibleTab();
+        }
     }
 
     /**
