@@ -18,8 +18,10 @@ import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.internal.ui.AlwaysNeverDialog;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.internal.ui.preferences.UserPreferencePromptDialog;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Shell;
 
@@ -55,11 +57,12 @@ public class DebugModePromptStatusHandler implements IStatusHandler {
 			}
 		}
 		
-		boolean switchToDebug = AlwaysNeverDialog.openQuestion(activeShell, title, message, IInternalDebugUIConstants.PREF_RELAUNCH_IN_DEBUG_MODE, store); 
-		if (switchToDebug) {
+		UserPreferencePromptDialog dialog = UserPreferencePromptDialog.openYesNoQuestion(activeShell, title, message, "Don't ask me again", false, store, IInternalDebugUIConstants.PREF_RELAUNCH_IN_DEBUG_MODE);
+		if (dialog.getReturnCode() == IDialogConstants.OK_ID) { 
 			relaunchInDebugMode(configuration);
+			return new Boolean(true);
 		}
-		return new Boolean(switchToDebug);
+		return new Boolean(false);
 	}
 	/**
 	 * @param configuration
