@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.core.internal.resources;
 
 import java.util.Arrays;
+
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.osgi.service.environment.Constants;
 
@@ -30,7 +31,7 @@ static {
 	char[] chars = null;
 	String[] names = null;
 	INSTALLED_PLATFORM = BootLoader.getOS();
-	if (INSTALLED_PLATFORM.equals(BootLoader.OS_WIN32)) {
+	if (INSTALLED_PLATFORM.equals(Constants.OS_WIN32)) {
 			//list taken from http://support.microsoft.com/support/kb/articles/q177/5/06.asp
 			chars = new char[]{'\\', '/', ':', '*', '?', '"', '<', '>', '|'};
 			
