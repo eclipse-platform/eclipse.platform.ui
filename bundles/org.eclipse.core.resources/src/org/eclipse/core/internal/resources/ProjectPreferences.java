@@ -264,7 +264,7 @@ public class ProjectPreferences extends EclipsePreferences {
 					folder.create(IResource.NONE, true, null);
 				}
 				if (Policy.DEBUG_PREFERENCES)
-					Policy.debug("Creating preference file: " + localFile.getFullPath()); //$NON-NLS-1$
+					Policy.debug("Creating preference file: " + localFile.getLocation()); //$NON-NLS-1$
 				localFile.create(input, IResource.NONE, null);
 			}
 		} catch (CoreException e) {
