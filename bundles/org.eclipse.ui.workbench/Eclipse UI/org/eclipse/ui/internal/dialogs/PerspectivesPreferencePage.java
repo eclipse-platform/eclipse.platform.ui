@@ -20,10 +20,12 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.resource.ImageCache;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -31,8 +33,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbench;
@@ -68,8 +71,8 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 
 	private ArrayList perspToRevert = new ArrayList();
 
-	private List list;
-
+	private Table perspectivesTable;
+	
 	private Button revertButton;
 
 	private Button deleteButton;
@@ -89,6 +92,8 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 	private Button openEmbedButton;
 
 	private Button openFastButton;
+    
+    private ImageCache imageCache;
 
 	// labels
 	private final String OVM_TITLE = WorkbenchMessages
@@ -121,7 +126,7 @@ public class PerspectivesPreferencePage extends PreferencePage implements
             return collator.compare(d1.getLabel(), d2.getLabel());
         }
     };
-    
+
 	/**
 	 * Creates the page's UI content.
 	 */
@@ -282,35 +287,45 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 		label.setLayoutData(data);
 		label.setFont(font);
 
-		// Add perspective list.
-		list = new List(perspectivesComponent, SWT.H_SCROLL | SWT.V_SCROLL
+		// Add perspectivesTable.
+		perspectivesTable = new Table(perspectivesComponent, SWT.H_SCROLL | SWT.V_SCROLL
 				| SWT.BORDER);
-		list.addSelectionListener(new SelectionAdapter() {
+	    perspectivesTable.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateButtons();
 			}
 		});
-
-		list.setFont(font);
+        perspectivesTable.setFont(font);
 
 		data = new GridData(GridData.FILL_BOTH);
 		data.grabExcessHorizontalSpace = true;
 		data.grabExcessVerticalSpace = true;
-		list.setLayoutData(data);
+		perspectivesTable.setLayoutData(data);
 
-		// Populate the perspective list
+		// Populate the perspectivesTable
 		IPerspectiveDescriptor[] persps = perspectiveRegistry.getPerspectives();
 		perspectives = new ArrayList(persps.length);
 		for (int i = 0; i < persps.length; i++)
 			perspectives.add(i, persps[i]);
 		Collections.sort(perspectives, comparator);
 		defaultPerspectiveId = perspectiveRegistry.getDefaultPerspective();
-		updateList();
-
+		updatePerspectivesTable();
+		
 		// Create vertical button bar.
 		Composite buttonBar = (Composite) createVerticalButtonBar(perspectivesComponent);
 		data = new GridData(GridData.FILL_VERTICAL);
 		buttonBar.setLayoutData(data);
+		
+		//Add note label
+		String NOTE_LABEL = WorkbenchMessages
+	    .getString("Preference.note"); //$NON-NLS-1$
+		String REVERT_NOTE = WorkbenchMessages
+        .getString("RevertPerspective.note"); //$NON-NLS-1$
+		Composite noteComposite = createNoteComposite(font, parent,
+                NOTE_LABEL, REVERT_NOTE);
+        GridData noteData = new GridData();
+        noteData.horizontalSpan = 2;
+        noteComposite.setLayoutData(noteData);
 		return perspectivesComponent;
 	}
 
@@ -443,8 +458,8 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 		int index = indexOf(currentDefault);
 		if (index >= 0){
 			defaultPerspectiveId = currentDefault;
-			updateList();
-			list.setSelection(index);			
+			updatePerspectivesTable();
+			perspectivesTable.setSelection(index);			
 		}
 		
 		String newDefault = PrefUtil.getAPIPreferenceStore().getDefaultString(
@@ -458,7 +473,7 @@ public class PerspectivesPreferencePage extends PreferencePage implements
         }
         
         defaultPerspectiveId = newDefault;
-        updateList();
+        updatePerspectivesTable();
 
 	}
 
@@ -488,8 +503,10 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 	 * @return boolean <code>true</code> if all of the perspectives could be
 	 *         deleted.
 	 */
-	private boolean deletePerspectives() {
+	private boolean findOpenInstance() {
 		IWorkbenchWindow windows[] = workbench.getWorkbenchWindows();
+		
+		//find all active perspectives currently
 		for (int i = 0; i < windows.length; i++) {
 			IWorkbenchPage pages[] = windows[i].getPages();
 			for (int j = 0; j < pages.length; j++) {
@@ -506,15 +523,13 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 										WorkbenchMessages
 												.format(
 														"PerspectivesPreference.cannotdelete.message", new String[] { desc.getLabel() })); //$NON-NLS-1$
-						return false;
+						return true;
 					}
 				}
 			}
 		}
 
-		//Delete the perspectives from the registry
-		perspectiveRegistry.deletePerspectives(perspToDelete);
-		return true;
+		return false;
 	}
 
 	/**
@@ -525,11 +540,12 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 		if (!Util.equals(defaultPerspectiveId, perspectiveRegistry.getDefaultPerspective())) {
 			perspectiveRegistry.setDefaultPerspective(defaultPerspectiveId);
 		}
-
-		if (!deletePerspectives())
-			return false;
-
-		// Revert the perspectives
+		
+		//Delete the perspective
+		if(perspectives.size()<perspectiveRegistry.getPerspectives().length)
+        	perspectiveRegistry.deletePerspectives(perspToDelete);
+				
+        // Revert the perspectives
 		perspectiveRegistry.revertPerspectives(perspToRevert);
 
 		IPreferenceStore store = getPreferenceStore();
@@ -553,7 +569,7 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 	 */
 	protected void updateButtons() {
 		// Get selection.
-		int index = list.getSelectionIndex();
+		int index = perspectivesTable.getSelectionIndex();
 
 		// Map it to the perspective descriptor
 		PerspectiveDescriptor desc = null;
@@ -575,23 +591,53 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 	}
 
 	/**
-	 * Update the list items.
+	 * Update the perspectivesTable.
 	 */
-	protected void updateList() {
-		list.removeAll();
+	protected void updatePerspectivesTable() {
+        // Populate the table with the items
+		perspectivesTable.removeAll();
 		for (int i = 0; i < perspectives.size(); i++) {
-			IPerspectiveDescriptor desc = (IPerspectiveDescriptor) perspectives
-					.get(i);
-			String label = desc.getLabel();
-			if (desc.getId().equals(defaultPerspectiveId))
-				label = WorkbenchMessages
-						.format(
-								"PerspectivesPreference.defaultLabel", new Object[] { label }); //$NON-NLS-1$
-			list.add(label, i);
-		}
-	}
-
+        	PerspectiveDescriptor persp = (PerspectiveDescriptor) perspectives.get(i);
+        	newPerspectivesTableItem(persp, i, false);
+        }
+    }
+	
 	/**
+	 * Create a new tableItem using given perspective, and set image for the new item.
+	 */
+	protected TableItem newPerspectivesTableItem(IPerspectiveDescriptor persp,
+            int index, boolean selected) {
+        
+        Image image = getImageCache().getImage(persp.getImageDescriptor());
+        
+        TableItem item = new TableItem(perspectivesTable, SWT.NULL, index);
+        if (image != null) {
+            item.setImage(image);
+        }
+        String label=persp.getLabel();
+        if (persp.getId().equals(defaultPerspectiveId)){
+			label = WorkbenchMessages
+					.format(
+							"PerspectivesPreference.defaultLabel", new Object[] { label }); //$NON-NLS-1$
+    	    
+		}
+        item.setText(label);
+        item.setData(persp);
+        if (selected) {
+        	perspectivesTable.setSelection(index);
+        }
+
+        return item;
+    }
+
+	private ImageCache getImageCache() {
+        if (imageCache == null)
+            imageCache = new ImageCache();
+        
+        return imageCache;
+    }
+
+    /**
 	 * Notifies that this page's button with the given id has been pressed.
 	 * 
 	 * @param button
@@ -599,7 +645,7 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 	 */
 	protected void verticalButtonPressed(Widget button) {
 		// Get selection.
-		int index = list.getSelectionIndex();
+		int index = perspectivesTable.getSelectionIndex();
 
 		// Map it to the perspective descriptor
 		PerspectiveDescriptor desc = null;
@@ -617,15 +663,33 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 			if (!desc.isPredefined() && !perspToDelete.contains(desc)) {
 				perspToDelete.add(desc);
 				perspToRevert.remove(desc);
-				perspectives.remove(desc);
-				updateList();
+				if(!findOpenInstance()){
+					
+					//the perspective has no opened instance, it can be deleted 
+					perspectives.remove(desc);				
+					updatePerspectivesTable();
+				}
+				else{
+					perspToDelete.remove(desc);
+					perspToRevert.add(desc);
+										
+				}
+				
 			}
 		} else if (button == setDefaultButton) {
 			defaultPerspectiveId = desc.getId();
-			updateList();
-			list.setSelection(index);
+			updatePerspectivesTable();
+			perspectivesTable.setSelection(index);
 		}
 
 		updateButtons();
 	}
+    
+    public void dispose() {
+         if (imageCache != null) {
+             imageCache.dispose();
+             imageCache = null;
+         }
+         super.dispose();
+    }
 }
