@@ -87,6 +87,10 @@ public class QueryBuilder {
 				if (token.value.indexOf('?') >= 0
 					|| token.value.indexOf('*') >= 0) {
 					newTokens.add(QueryWordsToken.word(token.value));
+					
+					// add word to the list of words to highlight
+					if (!highlightWords.contains(token.value))
+						highlightWords.add(token.value);
 				} else {
 					List wordList = analyzeText(analyzer, token.value);
 					
