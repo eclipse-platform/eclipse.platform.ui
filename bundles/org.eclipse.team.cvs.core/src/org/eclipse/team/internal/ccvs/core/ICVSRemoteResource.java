@@ -6,8 +6,10 @@ package org.eclipse.team.internal.ccvs.core;
  */
  
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteResource;
+import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 
 /**
  * The interface represents a resource that exists in a CVS repository.
@@ -50,4 +52,10 @@ public interface ICVSRemoteResource extends IRemoteResource, ICVSResource {
 	 * @return an indication of whether the objects are equals
 	 */
 	public boolean equals(Object other);
+		
+	/**
+	 * Tag the remote resources referenced by the receiver (using rtag)
+	 */
+	public IStatus tag(CVSTag tag, LocalOption[] localOptions, IProgressMonitor monitor) throws CVSException;
+
 }

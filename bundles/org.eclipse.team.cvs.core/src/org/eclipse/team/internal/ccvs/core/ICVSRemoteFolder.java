@@ -48,9 +48,4 @@ public interface ICVSRemoteFolder extends ICVSRemoteResource, ICVSFolder {
 	 * They can still be checked out.
 	 */
 	public boolean isExpandable();
-	
-	/**
-	 * Tag the remote resources referenced by the remote folder (using rtag)
-	 */
-	public IStatus tag(CVSTag tag, LocalOption[] localOptions, IProgressMonitor monitor) throws CVSException;
 }

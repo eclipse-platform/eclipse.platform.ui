@@ -24,6 +24,7 @@ import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
@@ -42,20 +43,18 @@ import org.eclipse.team.internal.ui.actions.TeamAction;
 /**
  * TagAction tags the selected resources with a version tag specified by the user.
  */
-public class TagAction extends TeamAction {
+public class TagAction extends CVSAction {
 	// The previously remembered tag
 	private static String previousTag = ""; //$NON-NLS-1$
 	
-	/*
-	 * @see IActionDelegate#run(IAction)
+	/**
+	 * @see CVSAction#execute(IAction)
 	 */
-	public void run(IAction action) {
-		final List messages = new ArrayList();
-		final int[] failureCount = new int[] {0};
-		final int[] resourceCount = new int[] {0};
+	public void execute(IAction action) throws InvocationTargetException, InterruptedException {
 		
+		// Prompt for any uncommitted changes
 		PromptingDialog prompt = new PromptingDialog(getShell(), getSelectedResources(),
-		getPromptCondition(), Policy.bind("TagAction.uncommittedChangesTitle"));//$NON-NLS-1$
+			getPromptCondition(), Policy.bind("TagAction.uncommittedChangesTitle"));//$NON-NLS-1$
 		final IResource[] resources;
 		try {
 			 resources = prompt.promptForMultiple();
@@ -67,7 +66,7 @@ public class TagAction extends TeamAction {
 			return;						
 		}
 		
-		resourceCount[0] = resources.length;
+		// Prompt for the tag name
 		final String[] result = new String[1];
 		getShell().getDisplay().syncExec(new Runnable() {
 			public void run() {
@@ -77,7 +76,8 @@ public class TagAction extends TeamAction {
 		});
 		if (result[0] == null) return;
 		
-		run(new IRunnableWithProgress() {
+		// Tag the local resources, divided by project/provider
+		CVSUIPlugin.runWithProgress(getShell(), true, new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				Hashtable table = getProviderMapping(resources);
 				Set keySet = table.keySet();
@@ -90,12 +90,12 @@ public class TagAction extends TeamAction {
 					List list = (List)table.get(provider);
 					IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
 					CVSTag tag = new CVSTag(result[0], CVSTag.VERSION);
-					IStatus status = provider.tag(providerResources, IResource.DEPTH_INFINITE, tag, subMonitor);
-					if (status.getCode() != CVSStatus.OK) {
-						messages.add(status);
-						failureCount[0]++;
+					try {
+						addStatus(provider.tag(providerResources, IResource.DEPTH_INFINITE, tag, subMonitor));
+					} catch (CVSException e) {
+						throw new InvocationTargetException(e);
 					}
-					// Cache the new tag creation even if the tag may of has warnings.
+					// Cache the new tag creation even if the tag may have had warnings.
 					CVSUIPlugin.getPlugin().getRepositoryManager().addVersionTags(
 									CVSWorkspaceRoot.getCVSFolderFor(provider.getProject()), 
 									new CVSTag[] {tag});
@@ -103,41 +103,28 @@ public class TagAction extends TeamAction {
 				}	
 				previousTag = result[0];				
 			}
-		}, Policy.bind("TagAction.tagProblemsMessage"), this.PROGRESS_DIALOG); //$NON-NLS-1$
+		});
+	}
+	
+	/**
+	 * Override to dislay the number of tag operations that succeeded
+	 */
+	protected IStatus getStatusToDisplay(IStatus[] problems) {
+		// We accumulated 1 status per resource above.
+		IStatus[] status = getAccumulatedStatus();
+		int resourceCount = status.length;
 		
-		// Check for any status messages and display them
-		if (!messages.isEmpty()) {
-			boolean error = false;
-			MultiStatus combinedStatus;
-			if(resourceCount[0] == 1) {
-				combinedStatus = new MultiStatus(CVSUIPlugin.ID, 0, Policy.bind("TagAction.tagProblemsMessage"), null); //$NON-NLS-1$
-			} else {
-				combinedStatus = new MultiStatus(CVSUIPlugin.ID, 0, Policy.bind("TagAction.tagProblemsMessageMultiple", //$NON-NLS-1$
-												  Integer.toString(resourceCount[0] - failureCount[0]), Integer.toString(failureCount[0])), null); //$NON-NLS-1$
-			}
-			for (int i = 0; i < messages.size(); i++) {
-				IStatus status = (IStatus)messages.get(i);
-				if (status.getSeverity() == IStatus.ERROR || status.getCode() == CVSStatus.SERVER_ERROR) {
-					error = true;
-				}
-				combinedStatus.merge(status);
-			}
-			String message = null;
-			IStatus statusToDisplay;
-			if (combinedStatus.getChildren().length == 1) {
-				message = combinedStatus.getMessage();
-				statusToDisplay = combinedStatus.getChildren()[0];
-			} else {
-				statusToDisplay = combinedStatus;
-			}
-			String title;
-			if (error) {
-				title = Policy.bind("TagAction.tagErrorTitle"); //$NON-NLS-1$
-			} else {
-				title = Policy.bind("TagAction.tagWarningTitle"); //$NON-NLS-1$
-			}
-			ErrorDialog.openError(getShell(), title, message, statusToDisplay);
-		}		
+		MultiStatus combinedStatus;
+		if(resourceCount == 1) {
+			combinedStatus = new MultiStatus(CVSUIPlugin.ID, 0, Policy.bind("TagAction.tagProblemsMessage"), null); //$NON-NLS-1$
+		} else {
+			combinedStatus = new MultiStatus(CVSUIPlugin.ID, 0, Policy.bind("TagAction.tagProblemsMessageMultiple", //$NON-NLS-1$
+											  Integer.toString(resourceCount - problems.length), Integer.toString(problems.length)), null); //$NON-NLS-1$
+		}
+		for (int i = 0; i < problems.length; i++) {
+			combinedStatus.merge(problems[i]);
+		}
+		return combinedStatus;
 	}
 	
 	/*
@@ -185,6 +172,14 @@ public class TagAction extends TeamAction {
 				return Policy.bind("TagAction.uncommittedChanges", resource.getName());//$NON-NLS-1$
 			}
 		};
+	}
+	
+	protected String getErrorTitle() {
+		return Policy.bind("TagAction.tagErrorTitle");
+	}
+	
+	protected String getWarningTitle() {
+		return Policy.bind("TagAction.tagWarningTitle");
 	}
 }
 

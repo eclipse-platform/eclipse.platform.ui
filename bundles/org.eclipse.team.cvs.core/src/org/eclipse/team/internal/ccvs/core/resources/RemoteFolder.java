@@ -695,23 +695,20 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 	/*
 	 * @see ICVSFolder#tag(CVSTag, LocalOption[], IProgressMonitor)
 	 */
-	public IStatus tag(CVSTag tag, LocalOption[] localOptions, IProgressMonitor monitor) throws CVSException {
-	 	monitor.beginTask(null, 100);
-		Session s = new Session(getRepository(), this, false);
-		s.open(Policy.subMonitorFor(monitor, 10));
-		try {
-			return Command.RTAG.execute(s,
-				Command.NO_GLOBAL_OPTIONS,
-				localOptions,
-				folderInfo.getTag(),
-				tag,
-				new String[] { folderInfo.getRepository() },
-				Policy.subMonitorFor(monitor, 90));
-			
-		} finally {
-			s.close();
-			monitor.done();
-		}
+	public IStatus tag(final CVSTag tag, final LocalOption[] localOptions, IProgressMonitor monitor) throws CVSException {
+		final IStatus[] result = new IStatus[] { null };
+		Session.run(getRepository(), this, true, new ICVSRunnable() {
+			public void run(IProgressMonitor monitor) throws CVSException {
+				result[0] = Command.RTAG.execute(
+					Command.NO_GLOBAL_OPTIONS,
+					localOptions,
+					folderInfo.getTag(),
+					tag,
+					new ICVSRemoteResource[] { RemoteFolder.this },
+					monitor);
+			}
+		}, monitor);
+		return result[0];
 	 }
 	 
 	/**

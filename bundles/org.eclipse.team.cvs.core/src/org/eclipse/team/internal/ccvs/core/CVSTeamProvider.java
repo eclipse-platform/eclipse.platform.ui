@@ -730,7 +730,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 	 *    CVSStatus.SERVER_ERROR - The server reported an error
 	 *    any other code - warning messages received from the server
 	 */
-	public IStatus tag(IResource[] resources, int depth, CVSTag tag, IProgressMonitor progress) {
+	public IStatus tag(IResource[] resources, int depth, CVSTag tag, IProgressMonitor progress) throws CVSException {
 						
 		// Build the local options
 		List localOptions = new ArrayList();
@@ -739,31 +739,26 @@ public class CVSTeamProvider extends RepositoryProvider {
 			localOptions.add(Tag.DO_NOT_RECURSE);
 		LocalOption[] commandOptions = (LocalOption[])localOptions.toArray(new LocalOption[localOptions.size()]);
 				
-		IStatus status;
-		try {
-			// Build the arguments list
-			String[] arguments = getValidArguments(resources, commandOptions);
+		// Build the arguments list
+		String[] arguments = getValidArguments(resources, commandOptions);
 
-			Session s = new Session(workspaceRoot.getRemoteLocation(), workspaceRoot.getLocalRoot());
-			progress.beginTask(null, 100);
-			try {
-				// Opening the session takes 20% of the time
-				s.open(Policy.subMonitorFor(progress, 20));
-				status = Command.TAG.execute(s,
-					Command.NO_GLOBAL_OPTIONS,
-					commandOptions,
-					tag,
-					arguments,
-					null,
-					Policy.subMonitorFor(progress, 80));
-			} finally {
-				s.close();
-				progress.done();
-			}
-		} catch(CVSException e) {
-			status = e.getStatus();
+		// Execute the command
+		Session s = new Session(workspaceRoot.getRemoteLocation(), workspaceRoot.getLocalRoot());
+		progress.beginTask(null, 100);
+		try {
+			// Opening the session takes 20% of the time
+			s.open(Policy.subMonitorFor(progress, 20));
+			return Command.TAG.execute(s,
+				Command.NO_GLOBAL_OPTIONS,
+				commandOptions,
+				tag,
+				arguments,
+				null,
+				Policy.subMonitorFor(progress, 80));
+		} finally {
+			s.close();
+			progress.done();
 		}
-		return status;
 	}
 	
 	/**

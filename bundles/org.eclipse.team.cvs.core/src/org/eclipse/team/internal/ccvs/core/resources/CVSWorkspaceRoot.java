@@ -108,16 +108,28 @@ public class CVSWorkspaceRoot {
 		
 		// The resource doesn't have a remote base. 
 		// However, we still need to check to see if its been created remotely by a third party.
-		if (remote == null) {
-			remote = getRemoteTreeFromParent(resource, managed, tag, progress);
-		} else if(resource.getType() == IResource.FILE) {
+		if(resource.getType() == IResource.FILE) {
 			baseTree = remote;
-			ICVSRepositoryLocation location = remote.getRepository();
+			ICVSRepositoryLocation location;
+			if (remote == null) {
+				// If there's no base for the file, get the repository location from the parent
+				ICVSRemoteResource parent = CVSWorkspaceRoot.getRemoteResourceFor(resource.getParent());
+				if (parent == null) {
+					throw new CVSException(new CVSStatus(CVSStatus.ERROR, resource.getFullPath(), Policy.bind("CVSTeamProvider.unmanagedParent", resource.getFullPath().toString()), null)); //$NON-NLS-1$
+				}
+				location = parent.getRepository();
+			} else {
+				location = remote.getRepository();
+			}
 			remote = RemoteFolderTreeBuilder.buildRemoteTree((CVSRepositoryLocation)location, (ICVSFile)managed, tag, progress);
 		} else {
-			ICVSRepositoryLocation location = remote.getRepository();
-			baseTree = RemoteFolderTreeBuilder.buildBaseTree((CVSRepositoryLocation)location, (ICVSFolder)managed, tag, progress);
-			remote = RemoteFolderTreeBuilder.buildRemoteTree((CVSRepositoryLocation)location, (ICVSFolder)managed, tag, progress);
+			if (remote == null) {
+				remote = getRemoteTreeFromParent(resource, managed, tag, progress);
+			} else {
+				ICVSRepositoryLocation location = remote.getRepository();
+				baseTree = RemoteFolderTreeBuilder.buildBaseTree((CVSRepositoryLocation)location, (ICVSFolder)managed, tag, progress);
+				remote = RemoteFolderTreeBuilder.buildRemoteTree((CVSRepositoryLocation)location, (ICVSFolder)managed, tag, progress);
+			}
 		}
 		return new CVSRemoteSyncElement(true /*three way*/, resource, baseTree, remote);
 	}

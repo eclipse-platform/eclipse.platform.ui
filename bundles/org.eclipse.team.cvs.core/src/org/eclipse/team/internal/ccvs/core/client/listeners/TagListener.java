@@ -40,6 +40,8 @@ public class TagListener implements ICommandOutputListener {
 		// Ignore the lines: Tagging folder1/folder2
 		if( line.startsWith("cvs server: Tagging") ) { //$NON-NLS-1$
 			return OK;
+		} else if( line.startsWith("cvs rtag: Tagging") ) { //$NON-NLS-1$
+			return OK;
 		}
 			
 		return new CVSStatus(CVSStatus.ERROR, CVSStatus.ERROR_LINE, line);

@@ -10,22 +10,29 @@
  ******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.actions;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
@@ -45,6 +52,8 @@ import org.eclipse.ui.PlatformUI;
  */
 abstract public class CVSAction extends TeamAction {
 	
+	private List accumulatedStatus = new ArrayList();
+	
 	/**
 	 * Common run method for all CVS actions.
 	 * 
@@ -54,18 +63,141 @@ abstract public class CVSAction extends TeamAction {
 	 * if they have failed.]
 	 */
 	final public void run(IAction action) {
+		accumulatedStatus.clear();
 		if(needsToSaveDirtyEditors()) {
 			if(!saveAllEditors()) {
 				return;
 			}
 		}
-		execute(action);
+		try {
+			execute(action);
+			if ( ! accumulatedStatus.isEmpty()) {
+				handle(null);
+			}
+		} catch (InvocationTargetException e) {
+			// Handle the exception and any accumulated errors
+			handle(e);
+		} catch (InterruptedException e) {
+			// Show any problems that have occured so far
+			handle(null);
+		}
+	}
+	
+	/**
+	 * Add a status to the list of accumulated status. 
+	 * These will be provided to method handle(Exception, IStatus[])
+	 * when the action completes.
+	 */
+	protected void addStatus(IStatus status) {
+		accumulatedStatus.add(status);
+	}
+	
+	/**
+	 * Return the list of status accumulated so far by the action. This
+	 * will include any OK status that were added using addStatus(IStatus)
+	 */
+	protected IStatus[] getAccumulatedStatus() {
+		return (IStatus[]) accumulatedStatus.toArray(new IStatus[accumulatedStatus.size()]);
+	}
+	
+	/**
+	 * Return the title to be displayed on error dialogs.
+	 * Sunclasses should override to present a custon message.
+	 */
+	protected String getErrorTitle() {
+		return Policy.bind("CVSAction.errorTitle"); //$NON-NLS-1$
+	}
+	
+	/**
+	 * Return the title to be displayed on error dialogs when warnigns occur.
+	 * Sunclasses should override to present a custon message.
+	 */
+	protected String getWarningTitle() {
+		return Policy.bind("CVSAction.warningTitle"); //$NON-NLS-1$
+	}
+
+	/**
+	 * Return the message to be used for the parent MultiStatus when 
+	 * mulitple errors occur during an action.
+	 * Sunclasses should override to present a custon message.
+	 */
+	protected String getMultiStatusMessage() {
+		return Policy.bind("CVSAction.multipleProblemsMessage"); //$NON-NLS-1$
+	}
+	
+	/**
+	 * Return the status to be displayed in an error dialog for the given list
+	 * of non-OK status.
+	 * 
+	 * This method can be overridden bu subclasses. Returning an OK status will 
+	 * prevent the error dialog from being shown.
+	 */
+	protected IStatus getStatusToDisplay(IStatus[] problems) {
+		if (problems.length == 1) {
+			return problems[0];
+		}
+		MultiStatus combinedStatus = new MultiStatus(CVSUIPlugin.ID, 0, getMultiStatusMessage(), null); //$NON-NLS-1$
+		for (int i = 0; i < problems.length; i++) {
+			combinedStatus.merge(problems[i]);
+		}
+		return combinedStatus;
+	}
+	
+	/**
+	 * Method that implements generic handling of an exception. 
+	 * 
+	 * Thsi method will also use any accumulated status when determining what
+	 * information (if any) to show the user.
+	 * 
+	 * @param exception the exception that occured (or null if none occured)
+	 * @param status any status accumulated by the action before the end of 
+	 * the action or the exception occured.
+	 */
+	protected void handle(Exception exception) {
+		// Get the non-OK statii
+		List problems = new ArrayList();
+		IStatus[] status = getAccumulatedStatus();
+		if (status != null) {
+			for (int i = 0; i < status.length; i++) {
+				IStatus iStatus = status[i];
+				if ( ! iStatus.isOK() || iStatus.getCode() == CVSStatus.SERVER_ERROR) {
+					problems.add(iStatus);
+				}
+			}
+		}
+		// Handle the case where there are no problem statii
+		if (problems.size() == 0) {
+			if (exception == null) return;
+			handle(exception, getErrorTitle(), null);
+			return;
+		}
+
+		// For now, display both the exception and the problem status
+		// Later, we can determine how to display both together
+		if (exception != null) {
+			handle(exception, getErrorTitle(), null);
+		}
+		
+		String message = null;
+		IStatus statusToDisplay = getStatusToDisplay((IStatus[]) problems.toArray(new IStatus[problems.size()]));
+		if (statusToDisplay.isOK()) return;
+		if (statusToDisplay.isMultiStatus() && statusToDisplay.getChildren().length == 1) {
+			message = statusToDisplay.getMessage();
+			statusToDisplay = statusToDisplay.getChildren()[0];
+		}
+		String title;
+		if (statusToDisplay.getSeverity() == IStatus.ERROR) {
+			title = getErrorTitle();
+		} else {
+			title = getWarningTitle();
+		}
+		ErrorDialog.openError(getShell(), title, message, statusToDisplay);
 	}
 	
 	/**
 	 * Actions must override to do their work.
 	 */
-	abstract protected void execute(IAction action);
+	abstract protected void execute(IAction action) throws InvocationTargetException, InterruptedException;
 	
 	/**
 	 * Answers if the action would like dirty editors to saved
@@ -118,6 +250,36 @@ abstract public class CVSAction extends TeamAction {
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * Returns the selected CVS resources
+	 */
+	protected ICVSResource[] getSelectedCVSResources() {
+		ArrayList resources = null;
+		if (!selection.isEmpty()) {
+			resources = new ArrayList();
+			Iterator elements = ((IStructuredSelection) selection).iterator();
+			while (elements.hasNext()) {
+				Object next = elements.next();
+				if (next instanceof ICVSResource) {
+					resources.add(next);
+					continue;
+				}
+				if (next instanceof IAdaptable) {
+					IAdaptable a = (IAdaptable) next;
+					Object adapter = a.getAdapter(ICVSResource.class);
+					if (adapter instanceof ICVSResource) {
+						resources.add(adapter);
+						continue;
+					}
+				}
+			}
+		}
+		if (resources != null && !resources.isEmpty()) {
+			return (ICVSResource[])resources.toArray(new ICVSResource[resources.size()]);
+		}
+		return new ICVSResource[0];
 	}
 	
 	/**

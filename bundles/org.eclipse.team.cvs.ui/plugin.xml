@@ -278,18 +278,6 @@
             objectClass="org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder"
             id="org.eclipse.team.ccvs.ui.RemoteFolderContributions">
          <action
-               label="%MoveTagAction.label"
-               tooltip="%MoveTagAction.tooltip"
-               class="org.eclipse.team.internal.ccvs.ui.actions.MoveTagAction"
-               id="org.eclipse.team.ccvs.ui.moveTagInRepository">
-         </action>
-         <action
-               label="%TagInRepositoryAction.label"
-               tooltip="%TagInRepositoryAction.tooltip"
-               class="org.eclipse.team.internal.ccvs.ui.actions.TagInRepositoryAction"
-               id="org.eclipse.team.ccvs.ui.tagInRepository">
-         </action>
-         <action
                label="%CheckoutAsAction.label"
                tooltip="%CheckoutAsAction.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.CheckoutAsAction"
@@ -431,6 +419,18 @@
                class="org.eclipse.team.internal.ccvs.ui.actions.CompareRemoteResourcesAction"
                enablesFor="2"
                id="org.eclipse.team.ccvs.ui.compareRemoteResources">
+         </action>
+         <action
+               label="%MoveTagAction.label"
+               tooltip="%MoveTagAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.MoveRemoteTagAction"
+               id="org.eclipse.team.ccvs.ui.moveTagInRepository">
+         </action>
+         <action
+               label="%TagInRepositoryAction.label"
+               tooltip="%TagInRepositoryAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.TagInRepositoryAction"
+               id="org.eclipse.team.ccvs.ui.tagInRepository">
          </action>
       </objectContribution>
    </extension>

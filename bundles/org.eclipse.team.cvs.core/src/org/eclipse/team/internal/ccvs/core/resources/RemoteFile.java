@@ -434,6 +434,27 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 		return false;
 	}
 	
+	/*
+	 * @see ICVSResource#tag(CVSTag, LocalOption[], IProgressMonitor)
+	 * 
+	 * The revision of the remote file is used as the base for the tagging operation
+	 */
+	 public IStatus tag(final CVSTag tag, final LocalOption[] localOptions, IProgressMonitor monitor) throws CVSException {
+		final IStatus[] result = new IStatus[] { null };
+		Session.run(getRepository(), this.getParent(), true, new ICVSRunnable() {
+			public void run(IProgressMonitor monitor) throws CVSException {
+				result[0] = Command.RTAG.execute(
+					Command.NO_GLOBAL_OPTIONS,
+					localOptions,
+					new CVSTag(getRevision(), CVSTag.VERSION),
+					tag,
+					new ICVSRemoteResource[] { RemoteFile.this },
+					monitor);
+			}
+		}, monitor);
+		return result[0];
+	 }
+	 
 	public boolean updateRevision(CVSTag tag, IProgressMonitor monitor) throws CVSException {
 		return parent.updateRevision(this, tag, monitor);
 	}

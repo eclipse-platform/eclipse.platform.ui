@@ -187,17 +187,13 @@ public class TagAsVersionDialog extends DetailsDialog {
 	 */
 	protected void updateEnablements() {
 		String message = null;
+		boolean exists = false;
 		if(tagName.length() == 0) {
 			message = ""; //$NON-NLS-1$
 		} else {		
 			IStatus status = CVSTag.validateTagName(tagName);
 			if (!status.isOK()) {
 				message = status.getMessage();
-			}
-			
-			boolean exists = doesTagNameExists(tagName);
-			if(exists) {
-				message = Policy.bind("TagAction.tagAlreadyExists"); //$NON-NLS-1$
 			}
 		}
 		setPageComplete(message == null);

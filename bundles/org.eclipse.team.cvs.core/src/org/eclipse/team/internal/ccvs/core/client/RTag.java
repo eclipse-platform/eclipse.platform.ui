@@ -19,10 +19,13 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
+import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.Command.GlobalOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
+import org.eclipse.team.internal.ccvs.core.client.listeners.ICommandOutputListener;
+import org.eclipse.team.internal.ccvs.core.client.listeners.TagListener;
 
 public class RTag extends RemoteCommand {
 	/*** Local options: specific to tag ***/
@@ -30,6 +33,9 @@ public class RTag extends RemoteCommand {
 	public static final LocalOption CLEAR_FROM_REMOVED = new LocalOption("-a", null); //$NON-NLS-1$	
 	public static final LocalOption FORCE_REASSIGNMENT = new LocalOption("-F", null); //$NON-NLS-1$	
 
+	/*** Default command output listener ***/
+	private static final ICommandOutputListener DEFAULT_OUTPUT_LISTENER = new TagListener();
+	
 	/**
 	 * Makes a -r or -D option for a tag.
 	 * Valid for: checkout export history rdiff update
@@ -88,5 +94,28 @@ public class RTag extends RemoteCommand {
 		return execute(session, globalOptions, 
 			(LocalOption[]) modifiedLocalOptions.toArray(new LocalOption[modifiedLocalOptions.size()]), 
 			newArguments, null, monitor);
+	}
+	
+	public IStatus execute(GlobalOption[] globalOptions, LocalOption[] localOptions, 
+		CVSTag sourceTag, CVSTag tag, ICVSRemoteResource[] arguments, IProgressMonitor monitor) 
+		throws CVSException {
+		
+		// Get the open session for the arguments
+		Session session = getOpenSession((ICVSResource[])Arrays.asList(arguments).toArray(new ICVSResource[arguments.length]));
+		if (session == null) {
+			throw new CVSException(Policy.bind("Command.noOpenSession")); //$NON-NLS-1$
+		}
+		
+		// Convert arguments to repository relative path
+		List stringArguments = new ArrayList(arguments.length);
+		for (int i = 0; i < arguments.length; i++) {
+			stringArguments.add(arguments[i].getRepositoryRelativePath());
+		}
+			
+		return execute(session, globalOptions, localOptions, sourceTag, tag, (String[]) stringArguments.toArray(new String[stringArguments.size()]), monitor);
+	}
+	
+	protected ICommandOutputListener getDefaultCommandOutputListener() {
+		return DEFAULT_OUTPUT_LISTENER;
 	}
 }

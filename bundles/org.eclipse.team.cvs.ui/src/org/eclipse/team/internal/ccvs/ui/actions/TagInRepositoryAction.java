@@ -11,97 +11,122 @@
 package org.eclipse.team.internal.ccvs.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Iterator;
 
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
-import org.eclipse.team.internal.ccvs.core.client.Checkout;
+import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.client.Command;
+import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 public class TagInRepositoryAction extends TagAction {
-	/**
-	 * Returns the selected remote folders
-	 */
-	protected ICVSRemoteFolder[] getSelectedRemoteFolders() {
-		ArrayList resources = null;
-		if (!selection.isEmpty()) {
-			resources = new ArrayList();
-			Iterator elements = ((IStructuredSelection) selection).iterator();
-			while (elements.hasNext()) {
-				Object next = elements.next();
-				if (next instanceof ICVSRemoteFolder) {
-					if (!Checkout.ALIAS.isElementOf(((ICVSRemoteFolder)next).getLocalOptions())) {
-						resources.add(next);
-					}
-					continue;
-				}
-				if (next instanceof IAdaptable) {
-					IAdaptable a = (IAdaptable) next;
-					Object adapter = a.getAdapter(ICVSRemoteFolder.class);
-					if (adapter instanceof ICVSRemoteFolder) {
-						if (!Checkout.ALIAS.isElementOf(((ICVSRemoteFolder)adapter).getLocalOptions())) {
-							resources.add(adapter);
-						}
-						continue;
-					}
-				}
-			}
-		}
-		if (resources != null && !resources.isEmpty()) {
-			return (ICVSRemoteFolder[])resources.toArray(new ICVSRemoteFolder[resources.size()]);
-		}
-		return new ICVSRemoteFolder[0];
-	}
-	
-	/*
-	 * @see IActionDelegate#run(IAction)
-	 */
-	public void run(IAction action) {
-		run(new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException {
-				try {
-					final ICVSRemoteFolder[] folders = getSelectedRemoteFolders();
-					final String[] result = new String[1];
-					getShell().getDisplay().syncExec(new Runnable() {
-						public void run() {
-							result[0] = promptForTag(folders[0]);
-						}
-					});
-					if (result[0] == null) return;
 
-					monitor.beginTask(null, 1000 * folders.length);
-					CVSTag tag = new CVSTag(result[0], CVSTag.VERSION);
-					
-					for (int i = 0; i < folders.length; i++) {
-						folders[i].tag(tag, Command.NO_LOCAL_OPTIONS, new SubProgressMonitor(monitor, 1000));
-					}
-				} catch (TeamException e) {
-					throw new InvocationTargetException(e);
-				}
-			}
-		}, Policy.bind("TagAction.tagProblemsMessage"), this.PROGRESS_DIALOG); //$NON-NLS-1$
-	}
-	
-	/*
+	/**
 	 * @see TeamAction#isEnabled()
 	 */
 	protected boolean isEnabled() throws TeamException {
-		ICVSRemoteFolder[] resources = getSelectedRemoteFolders();
+		ICVSResource[] resources = getSelectedCVSResources();
 		if (resources.length == 0) return false;
 		for (int i = 0; i < resources.length; i++) {
 			if (resources[i] instanceof ICVSRepositoryLocation) return false;
 		}
 		return true;
+	}
+	
+	/**
+	 * @see CVSAction#needsToSaveDirtyEditors()
+	 */
+	protected boolean needsToSaveDirtyEditors() {
+		return false;
+	}
+	
+	/**
+	 * @see CVSAction#execute(IAction)
+	 */
+	public void execute(IAction action) throws InvocationTargetException, InterruptedException {
+		
+		// Prompt for the tag
+		final ICVSResource[] resources = getSelectedCVSResources();
+		final CVSTag[] tag = new CVSTag[] { null };
+		getShell().getDisplay().syncExec(new Runnable() {
+			public void run() {
+				// Collect the parent folders from which to determine the tags to show
+				ICVSFolder[] folders = new ICVSFolder[resources.length];
+				for (int i = 0; i < resources.length; i++) {
+					if (resources[i].isFolder()) {
+						folders[i] = (ICVSFolder)resources[i];
+					} else {
+						folders[i] = resources[i].getParent();
+					}
+				}
+				tag[0] = promptForTag(folders);
+			}
+		});
+		if (tag[0] == null) return;
+					
+		CVSUIPlugin.runWithProgress(getShell(), true, new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException {
+				try {
+					monitor.beginTask(null, 1000 * resources.length);
+					for (int i = 0; i < resources.length; i++) {
+						IStatus status = ((ICVSRemoteResource)resources[i]).tag(tag[0], getLocalOptions(), new SubProgressMonitor(monitor, 1000));
+						addStatus(status);
+					}
+				} catch (TeamException e) {
+					throw new InvocationTargetException(e);
+				}
+			}
+		});
+	}
+
+	/**
+	 * Prompt for the tag to be used by the tagging operation. The default behavior
+	 * is to prompt for a name and return a version tag of that name.
+	 * 
+	 * Subclasses can override.
+	 * 
+	 * @param folders the folders from which to obtain a list of existing tags
+	 * @return CVSTag the tag chosen
+	 */
+	protected CVSTag promptForTag(ICVSFolder[] folders) {
+		String name = promptForTag(folders[0]);
+		return new CVSTag(name, CVSTag.VERSION);
+	}
+	
+	/**
+	 * Return the local options that should be used with the rtag command
+	 */
+	protected LocalOption[] getLocalOptions() {
+		return Command.NO_LOCAL_OPTIONS;
+	}
+	
+	/**
+	 * Override to dislay the number of tag operations that succeeded
+	 */
+	protected IStatus getStatusToDisplay(IStatus[] problems) {
+		// We accumulated 1 status per resource above.
+		IStatus[] status = getAccumulatedStatus();
+		int resourceCount = status.length;
+		
+		MultiStatus combinedStatus;
+		if(resourceCount == 1) {
+			combinedStatus = new MultiStatus(CVSUIPlugin.ID, 0, Policy.bind("TagInRepositoryAction.tagProblemsMessage"), null); //$NON-NLS-1$
+		} else {
+			combinedStatus = new MultiStatus(CVSUIPlugin.ID, 0, Policy.bind("TagInRepositoryAction.tagProblemsMessageMultiple"), null); //$NON-NLS-1$
+		}
+		for (int i = 0; i < problems.length; i++) {
+			combinedStatus.merge(problems[i]);
+		}
+		return combinedStatus;
 	}
 }

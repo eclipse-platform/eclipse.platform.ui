@@ -261,6 +261,9 @@ public class RemoteFolderTreeBuilder {
 			RemoteFile remoteFile;
 			Map deltas = (Map)fileDeltas.get(Path.EMPTY);
 			if (deltas == null || deltas.isEmpty()) {
+				if (file.isManaged() && file.getSyncInfo().isAdded()) {
+					return null;
+				}
 				remoteFile = new RemoteFile(remoteRoot, file.getSyncInfo());
 			} else {
 				DeltaNode d = (DeltaNode)deltas.get(file.getName());
