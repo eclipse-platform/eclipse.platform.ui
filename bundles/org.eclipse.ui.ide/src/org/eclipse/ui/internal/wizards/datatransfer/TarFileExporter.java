@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.wizards.datatransfer;
 
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -40,9 +41,9 @@ public class TarFileExporter implements IFileExporter {
     public TarFileExporter(String filename, boolean compress) throws IOException {
     	if(compress) {
     		gzipOutputStream = new GZIPOutputStream(new FileOutputStream(filename));
-    		outputStream = new TarOutputStream(gzipOutputStream);
+    		outputStream = new TarOutputStream(new BufferedOutputStream(gzipOutputStream));
     	} else {
-    		outputStream = new TarOutputStream(new FileOutputStream(filename));
+    		outputStream = new TarOutputStream(new BufferedOutputStream(new FileOutputStream(filename)));
     	}
     }
 
