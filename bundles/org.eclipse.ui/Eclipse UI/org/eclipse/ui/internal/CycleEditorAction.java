@@ -22,12 +22,12 @@ protected CycleEditorAction(IWorkbenchWindow window, boolean forward) {
 protected void setText() {
 	// TBD: Remove text and tooltip when this becomes an invisible action.
 	if (forward) {
-		setText(WorkbenchMessages.getString("NextEditorAction.text"));
-		setToolTipText(WorkbenchMessages.getString("NextEditorAction.toolTip"));
+		setText(WorkbenchMessages.getString("CycleEditorAction.next.text"));
+		setToolTipText(WorkbenchMessages.getString("CycleEditorAction.next.toolTip"));
 	}
 	else {
-		setText(WorkbenchMessages.getString("PrevEditorAction.text"));
-		setToolTipText(WorkbenchMessages.getString("PrevEditorAction.toolTip"));
+		setText(WorkbenchMessages.getString("CycleEditorAction.prev.text"));
+		setToolTipText(WorkbenchMessages.getString("CycleEditorAction.prev.toolTip"));
 	}
 }
 
