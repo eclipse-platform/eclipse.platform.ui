@@ -93,12 +93,8 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 	}	
 
 	ILabelProvider getLabelProvider(String pageId) {
-		if (pageId != null) {
-			Object value;
-			value= fgLabelProviders.get(pageId);
-			if (value instanceof ILabelProvider)
-				return (ILabelProvider)value;
-		}
+		if (pageId != null)
+			return (ILabelProvider)fgLabelProviders.get(pageId);
 		return null;
 	}
 	public ILabelProvider getLabelProvider() {

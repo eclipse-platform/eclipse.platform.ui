@@ -234,7 +234,7 @@ class SearchResultViewer extends TableViewer {
 		ILabelProvider labelProvider= fOuterPart.getLabelProvider(pageId);
 		if (labelProvider != null)
 			internalSetLabelProvider(labelProvider);
-		Object value= value= fSorters.get(pageId);
+		Object value= fSorters.get(pageId);
 		if (value instanceof ViewerSorter)
 			setSorter((ViewerSorter)value);
 	}
