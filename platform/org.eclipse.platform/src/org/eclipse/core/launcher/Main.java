@@ -956,7 +956,6 @@ public class Main {
 				location = location + ".config" + File.separator + CONFIG_FILE; //$NON-NLS-1$
 				url = new URL(location);
 				result = loadProperties(url);
-				mergeProperties(System.getProperties(), result);
 				if (debug)
 					System.out.println("Configuration file\n    " + url.toString()); //$NON-NLS-1$
 			} catch (IOException e1) {
@@ -965,6 +964,8 @@ public class Main {
 					System.out.println("Unable to load configuration\n" + e1); //$NON-NLS-1$
 			}
 		}
+		if (result != null)
+			mergeProperties(System.getProperties(), result);
 		return result;
 	}
 
@@ -1220,6 +1221,11 @@ public class Main {
 	 * resolve platform:/base/ URLs
 	 */
 	private String resolve(String urlString) {
+		// handle the case where people mistakenly spec a refererence: url.
+		if (urlString.startsWith("reference:")) {
+			urlString = urlString.substring(10);
+			System.getProperties().put(CFG_FRAMEWORK, urlString);
+		}
 		if (urlString.startsWith(PLATFORM_URL)) {
 			String root = getInstallLocation();
 			if (!root.endsWith("/")) //$NON-NLS-1$
