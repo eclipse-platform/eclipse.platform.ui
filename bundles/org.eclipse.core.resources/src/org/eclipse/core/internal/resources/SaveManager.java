@@ -510,14 +510,18 @@ protected void restoreMarkers(IResource resource, boolean generateDeltas, IProgr
 		markerManager.restore(resource, generateDeltas, monitor);
 
 	// if we have the workspace root then restore markers for its projects
-	if (resource.getType() == IResource.PROJECT)
+	if (resource.getType() == IResource.PROJECT) {
+		if (Policy.DEBUG_RESTORE_MARKERS) {
+			System.out.println("Restore Markers for " + resource.getFullPath() + ": " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		}
 		return;
+	}
 	IProject[] projects = ((IWorkspaceRoot) resource).getProjects();
 	for (int i = 0; i < projects.length; i++)
 		if (projects[i].isAccessible())
 			markerManager.restore(projects[i], generateDeltas, monitor);
 	if (Policy.DEBUG_RESTORE_MARKERS) {
-		System.out.println("Restore Markers for " + resource.getFullPath() + ": " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		System.out.println("Restore Markers for workspace: " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 }
 protected void restoreMasterTable() throws CoreException {
@@ -544,7 +548,7 @@ protected void restoreMasterTable() throws CoreException {
 		throw new ResourceException(IResourceStatus.INTERNAL_ERROR, null, message, e);
 	}
 	if (Policy.DEBUG_RESTORE_MASTERTABLE)
-		System.out.println("Restore master table for workspace: " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
+		System.out.println("Restore master table for " + location + ": " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 }
 /**
  * Restores the contents of this project.  Throw an exception if the 
@@ -669,14 +673,18 @@ protected void restoreSyncInfo(IResource resource, IProgressMonitor monitor) thr
 		synchronizer.restore(resource, monitor);
 	
 	// restore sync info for all projects if we were given the workspace root.
-	if (resource.getType() == IResource.PROJECT)
+	if (resource.getType() == IResource.PROJECT) {
+		if (Policy.DEBUG_RESTORE_SYNCINFO) {
+			System.out.println("Restore SyncInfo for " + resource.getFullPath() + ": " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		}
 		return;
+	}
 	IProject[] projects = ((IWorkspaceRoot) resource).getProjects();
 	for (int i = 0; i < projects.length; i++)
 		if (projects[i].isAccessible())
 			synchronizer.restore(projects[i], monitor);
 	if (Policy.DEBUG_RESTORE_SYNCINFO) {
-		System.out.println("Restore SyncInfo for " + resource.getFullPath() + ": " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		System.out.println("Restore SyncInfo for workspace: " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 }
 /**
@@ -763,6 +771,7 @@ protected void saveMasterTable() throws CoreException {
 	saveMasterTable(workspace.getMetaArea().getSafeTableLocationFor(pluginId));
 }
 protected void saveMasterTable(IPath location) throws CoreException {
+	long start = System.currentTimeMillis();
 	java.io.File target = location.toFile();
 	try {
 		SafeChunkyOutputStream output = new SafeChunkyOutputStream(target);
@@ -776,6 +785,8 @@ protected void saveMasterTable(IPath location) throws CoreException {
 		String message = Policy.bind("resources.exSaveMaster"); //$NON-NLS-1$
 		throw new ResourceException(IResourceStatus.INTERNAL_ERROR, null, message, e);
 	}
+	if (Policy.DEBUG_SAVE_MASTERTABLE)
+		System.out.println("Save master table for " + location + ": " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 }
 /**
  * Ensures that the project meta-info is saved.  The project meta-info
@@ -785,6 +796,7 @@ protected void saveMasterTable(IPath location) throws CoreException {
  * @return Status object containing non-critical warnings, or an OK status.
  */
 protected IStatus saveMetaInfo(Project project, IProgressMonitor monitor) throws CoreException {
+	long start = System.currentTimeMillis();
 	//if there is nothing on disk, write the description
 	if (!workspace.getFileSystemManager().hasSavedProject(project)) {
 		workspace.getFileSystemManager().writeSilently(project);
@@ -792,6 +804,8 @@ protected IStatus saveMetaInfo(Project project, IProgressMonitor monitor) throws
 		//FIXME: Should just return an INFO status here.
 		return new ResourceStatus(IResourceStatus.MISSING_DESCRIPTION_REPAIRED, project.getFullPath(), msg);
 	}
+	if (Policy.DEBUG_SAVE_METAINFO)
+		System.out.println("Save metainfo for " + project.getFullPath() + ": " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	return ResourceStatus.OK_STATUS;
 }
 /**
@@ -799,6 +813,9 @@ protected IStatus saveMetaInfo(Project project, IProgressMonitor monitor) throws
  * all projects to the local disk.
  */
 protected void saveMetaInfo(Workspace workspace, IProgressMonitor monitor) throws CoreException {
+	if (Policy.DEBUG_SAVE_METAINFO)
+		System.out.println("Save workspace metainfo: starting..."); //$NON-NLS-1$
+	long start = System.currentTimeMillis();
 	// save preferences (workspace description, path variables, etc)
 	ResourcesPlugin.getPlugin().savePluginPreferences();
 	// save projects' meta info
@@ -806,6 +823,8 @@ protected void saveMetaInfo(Workspace workspace, IProgressMonitor monitor) throw
 	for (int i = 0; i < roots.length; i++)
 		if (roots[i].isAccessible())
 			saveMetaInfo((Project) roots[i], null);
+	if (Policy.DEBUG_SAVE_METAINFO)
+		System.out.println("Save workspace metainfo: " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 }
 /**
  * Writes the current state of the entire workspace tree to disk.
@@ -814,6 +833,7 @@ protected void saveMetaInfo(Workspace workspace, IProgressMonitor monitor) throw
  * @exception CoreException if there is a problem writing the tree to disk.
  */
 protected void saveTree(Map contexts, IProgressMonitor monitor) throws CoreException {
+	long start = System.currentTimeMillis();
 	IPath treeLocation = workspace.getMetaArea().getTreeLocationFor(workspace.getRoot(), true);
 	try {
 		IPath tempLocation = workspace.getMetaArea().getBackupLocationFor(treeLocation);
@@ -828,6 +848,8 @@ protected void saveTree(Map contexts, IProgressMonitor monitor) throws CoreExcep
 		String msg = Policy.bind("resources.writeWorkspaceMeta", treeLocation.toString()); //$NON-NLS-1$
 		throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, Path.ROOT, msg, e);
 	}
+	if (Policy.DEBUG_SAVE_TREE)
+		System.out.println("Save Workspace Tree: " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 }
 /**
  * Used in the policy for cleaning up tree's of plug-ins that are not often activated.
@@ -865,12 +887,7 @@ public void snapshotIfNeeded() throws CoreException {
 		}
 		try {
 			EventStats.startSnapshot();
-			long begin = System.currentTimeMillis();
 			save(ISaveContext.SNAPSHOT, null, Policy.monitorFor(null));
-			if (ResourcesPlugin.getPlugin().isDebugging()) {
-				long end = System.currentTimeMillis();
-				System.out.println("Snapshot took: " + (end - begin) + " milliseconds."); //$NON-NLS-1$ //$NON-NLS-2$
-			}
 		} finally {
 			operationCount = 0;
 			snapshotRequested = false;
@@ -894,6 +911,7 @@ public void snapshotIfNeeded() throws CoreException {
  * Performs a snapshot of the workspace tree.
  */
 protected void snapTree(ElementTree tree, IProgressMonitor monitor) throws CoreException {
+	long start = System.currentTimeMillis();
 	monitor = Policy.monitorFor(monitor);
 	String message;
 	try {
@@ -924,6 +942,8 @@ protected void snapTree(ElementTree tree, IProgressMonitor monitor) throws CoreE
 	} finally {
 		monitor.done();
 	}
+	if (Policy.DEBUG_SAVE_TREE)
+		System.out.println("Snapshot Workspace Tree: " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 }
 
 /**
@@ -1047,6 +1067,7 @@ protected void writeTree(Map statesToSave, DataOutputStream output, IProgressMon
 	}
 }
 protected void writeTree(Project project, int depth) throws CoreException {
+	long start = System.currentTimeMillis();
 	IPath treeLocation = workspace.getMetaArea().getTreeLocationFor(project, true);
 	IPath tempLocation = workspace.getMetaArea().getBackupLocationFor(treeLocation);
 	try {
@@ -1062,6 +1083,8 @@ protected void writeTree(Project project, int depth) throws CoreException {
 		String msg = Policy.bind("resources.writeMeta", project.getFullPath().toString()); //$NON-NLS-1$
 		throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, treeLocation, msg, e);
 	}
+	if (Policy.DEBUG_SAVE_TREE)
+		System.out.println("Save tree for " + project.getFullPath() + ": " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 }
 /**
  * Attempts to save all the trees for this project (the current tree
@@ -1183,6 +1206,24 @@ protected void resetSnapshots(IResource resource) throws CoreException {
 		resetSnapshots(projects[i]);
 }
 public IStatus save(int kind, Project project, IProgressMonitor monitor) throws CoreException {
+	String endMessage = null;
+	if (Policy.DEBUG_SAVE) {
+		switch (kind) {
+			case ISaveContext.FULL_SAVE:
+				System.out.println("Full save on workspace: starting..."); //$NON-NLS-1$
+				endMessage = "Full save on workspace: "; //$NON-NLS-1$
+				break;
+			case ISaveContext.SNAPSHOT:
+				System.out.println("Snapshot: starting..."); //$NON-NLS-1$
+				endMessage = "Snapshot: "; //$NON-NLS-1$
+				break;
+			case ISaveContext.PROJECT_SAVE:
+				System.out.println("Save on project " + project.getFullPath() + ": starting..."); //$NON-NLS-1$ //$NON-NLS-2$
+				endMessage = "Save on project " + project.getFullPath() + ": "; //$NON-NLS-1$ //$NON-NLS-2$
+				break;
+		}
+	}
+	long start = System.currentTimeMillis();
 	monitor = Policy.monitorFor(monitor);
 	try {
 		String message = Policy.bind("resources.saving.0"); //$NON-NLS-1$
@@ -1242,6 +1283,8 @@ public IStatus save(int kind, Project project, IProgressMonitor monitor) throws 
 				saveMasterTable();
 				broadcastLifecycle(DONE_SAVING, contexts, warnings, Policy.subMonitorFor(monitor, 1));
 				// as this save operation was successful, we may need to update its participants' save numbers
+				if (Policy.DEBUG_SAVE && endMessage != null)
+					System.out.println(endMessage + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$
 				return warnings;
 			} catch (CoreException e) {
 				broadcastLifecycle(ROLLBACK, contexts, warnings, Policy.subMonitorFor(monitor, 1));
@@ -1310,17 +1353,28 @@ public void visitAndSave(IResource root) throws CoreException {
 
 	final DataOutputStream markersOutput = o1;
 	final DataOutputStream syncInfoOutput = o2;
+	// The following 2 piece array will hold a running total of the times
+	// taken to save markers and syncInfo respectively.  This will cut down
+	// on the number of statements printed out as we would get 2 statements
+	// for each resource otherwise.
+	final long[] saveTimes = new long[2];
 
 	// Create the visitor 
 	IResourceVisitor visitor = new IResourceVisitor() {
 		public boolean visit(IResource resource) throws CoreException {
 			try {
 				// phantom resources don't have markers so skip them
-				if (!resource.isPhantom())
+				if (!resource.isPhantom()) {
+					long start = System.currentTimeMillis();
 					markerManager.save(resource, markersOutput, writtenTypes);
+					saveTimes[0] += System.currentTimeMillis() - start;
+				}
 				// if we have the workspace root then the output stream will be null
-				if (syncInfoOutput != null)
+				if (syncInfoOutput != null) {
+					long start = System.currentTimeMillis();
 					synchronizer.saveSyncInfo(resource, syncInfoOutput, writtenPartners);
+					saveTimes[1] += System.currentTimeMillis() - start;
+				}
 			} catch (IOException e) {
 				String msg = Policy.bind("resources.writeMeta", resource.getFullPath().toString()); //$NON-NLS-1$
 				throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, resource.getFullPath(), msg, e);
@@ -1333,6 +1387,10 @@ public void visitAndSave(IResource root) throws CoreException {
 	try {
 		int depth = root.getType() == IResource.ROOT ? IResource.DEPTH_ZERO : IResource.DEPTH_INFINITE;
 		root.accept(visitor, depth, true);
+		if (Policy.DEBUG_RESTORE_MARKERS)
+			System.out.println("Save Markers for " + root.getFullPath() + ": " + saveTimes[0] + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		if (Policy.DEBUG_RESTORE_SYNCINFO)
+			System.out.println("Save SyncInfo for " + root.getFullPath() + ": " + saveTimes[1] + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		removeGarbage(markersOutput, markersLocation, markersTempLocation);
 		// if we have the workspace root the output stream will be null and we
 		// don't have to perform cleanup code
@@ -1412,17 +1470,28 @@ public void visitAndSnap(IResource root) throws CoreException {
 	final DataOutputStream syncInfoOutput = o2;
 	int markerFileSize = markersOutput.size();
 	int syncInfoFileSize = safeSyncInfoStream == null ? -1 : syncInfoOutput.size();
+	// The following 2 piece array will hold a running total of the times
+	// taken to save markers and syncInfo respectively.  This will cut down
+	// on the number of statements printed out as we would get 2 statements
+	// for each resource otherwise.
+	final long[] snapTimes = new long[2];
 	
 	// Create the visitor 
 	IResourceVisitor visitor = new IResourceVisitor() {
 		public boolean visit(IResource resource) throws CoreException {
 			try {
 				// phantom resources don't have markers so skip them
-				if (!resource.isPhantom())
+				if (!resource.isPhantom()) {
+					long start = System.currentTimeMillis();
 					markerManager.snap(resource, markersOutput);
+					snapTimes[0] += System.currentTimeMillis() - start;
+				}
 				// if we have the workspace root then the output stream will be null
-				if (syncInfoOutput != null)
+				if (syncInfoOutput != null) {
+					long start = System.currentTimeMillis();
 					synchronizer.snapSyncInfo(resource, syncInfoOutput);
+					snapTimes[1] += System.currentTimeMillis() - start;
+				}
 			} catch (IOException e) {
 				String msg = Policy.bind("resources.writeMeta", resource.getFullPath().toString()); //$NON-NLS-1$
 				throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, resource.getFullPath(), msg, e);
@@ -1435,6 +1504,10 @@ public void visitAndSnap(IResource root) throws CoreException {
 	try {
 		int depth = root.getType() == IResource.ROOT ? IResource.DEPTH_ZERO : IResource.DEPTH_INFINITE;
 		root.accept(visitor, depth, true);
+		if (Policy.DEBUG_SAVE_MARKERS)
+			System.out.println("Snap Markers for " + root.getFullPath() + ": " + snapTimes[0] + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		if (Policy.DEBUG_SAVE_SYNCINFO)
+			System.out.println("Snap SyncInfo for " + root.getFullPath() + ": " + snapTimes[1] + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		if (safeMarkerStream != null && markerFileSize != markersOutput.size())
 			safeMarkerStream.succeed();
 		if (safeSyncInfoStream != null && syncInfoFileSize != syncInfoOutput.size())

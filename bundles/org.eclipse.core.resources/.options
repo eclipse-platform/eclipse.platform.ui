@@ -1,7 +1,6 @@
 # Debugging options for the org.eclipse.core.resources plugin.
 
 # Turn on debugging for the org.eclipse.core.resources plugin.
-# Also displays snapshot (incremental save) times.
 org.eclipse.core.resources/debug=false
 
 # Monitor builders and gather time statistics etc.
@@ -37,4 +36,13 @@ org.eclipse.core.resources/restore/tree=false
 org.eclipse.core.resources/restore/metainfo=false
 org.eclipse.core.resources/restore/snapshots=false
 org.eclipse.core.resources/restore/mastertable=false
+
+# Report timings for saving and snapshots on the workspace state
+org.eclipse.core.resources/save=false
+org.eclipse.core.resources/save/markers=false
+org.eclipse.core.resources/save/syncinfo=false
+org.eclipse.core.resources/save/tree=false
+org.eclipse.core.resources/save/metainfo=false
+org.eclipse.core.resources/save/snapshots=false
+org.eclipse.core.resources/save/mastertable=false
 
