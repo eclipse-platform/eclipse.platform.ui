@@ -13,7 +13,6 @@ package org.eclipse.team.internal.ccvs.ui.actions;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
-import org.eclipse.compare.CompareUI;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -30,10 +29,10 @@ import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticipant;
 import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.synchronize.actions.OpenInCompareAction;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.*;
-import org.eclipse.ui.IWorkingSet;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.*;
 
 /**
  * Action to initiate a CVS workspace synchronize
@@ -45,7 +44,7 @@ public class SyncAction extends WorkspaceTraversalAction {
 		if (resources == null || resources.length == 0) return;
 		
 		if(isSingleFile(resources)) {
-			showSingleFileComparison(getShell(), CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber(), resources[0]);
+			showSingleFileComparison(getShell(), CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber(), resources[0], getTargetPage());
 		} else {
 			// First check if there is an existing matching participant
 			WorkspaceSynchronizeParticipant participant = (WorkspaceSynchronizeParticipant)SubscriberParticipant.getMatchingParticipant(WorkspaceSynchronizeParticipant.ID, resources);
@@ -115,7 +114,7 @@ public class SyncAction extends WorkspaceTraversalAction {
 	 * 
 	 * @param resources the file to refresh and compare
 	 */
-	public static void showSingleFileComparison(final Shell shell, final Subscriber subscriber, final IResource resource) {
+	public static void showSingleFileComparison(final Shell shell, final Subscriber subscriber, final IResource resource, final IWorkbenchPage page) {
 		try {
 			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
@@ -134,7 +133,7 @@ public class SyncAction extends WorkspaceTraversalAction {
 						MessageDialog.openInformation(shell, CVSUIMessages.SyncAction_noChangesTitle, CVSUIMessages.SyncAction_noChangesMessage); //$NON-NLS-1$ //$NON-NLS-2$
 					} else {
 						SyncInfoCompareInput input = new SyncInfoCompareInput(subscriber.getName(), info);
-						CompareUI.openCompareEditor(input);
+                        OpenInCompareAction.openCompareEditor(input, page);
 					}
 				}
 			});

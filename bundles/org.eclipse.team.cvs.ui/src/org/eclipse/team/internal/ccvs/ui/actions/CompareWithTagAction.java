@@ -44,7 +44,7 @@ public class CompareWithTagAction extends WorkspaceTraversalAction {
         // Finally, create a subscriber specifically for the resources for display to the user
 		compareSubscriber = new CVSCompareSubscriber(resources, tag);
 		if (SyncAction.isSingleFile(resources)) {
-			SyncAction.showSingleFileComparison(getShell(), compareSubscriber, resources[0]);
+			SyncAction.showSingleFileComparison(getShell(), compareSubscriber, resources[0], getTargetPage());
 			compareSubscriber.dispose();
 		} else {
 			try {

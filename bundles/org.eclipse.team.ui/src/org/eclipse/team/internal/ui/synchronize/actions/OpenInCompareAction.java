@@ -75,21 +75,7 @@ public class OpenInCompareAction extends Action {
 		
 		if(page != null) {
 			
-			IEditorPart editor = findReusableCompareEditor(page);			
-			
-			if(editor != null) {
-				IEditorInput otherInput = editor.getEditorInput();
-				if(otherInput.equals(input)) {
-					// simply provide focus to editor
-					page.activate(editor);
-				} else {
-					// if editor is currently not open on that input either re-use existing
-					CompareUI.reuseCompareEditor(input, (IReusableEditor)editor);
-					page.activate(editor);
-				}
-			} else {
-				CompareUI.openCompareEditor(input);
-			}
+			openCompareEditor(input, page);
 			
 			if(site != null && keepFocus) {
 				site.setFocus();
@@ -98,6 +84,25 @@ public class OpenInCompareAction extends Action {
 		}			
 		return null;
 	}
+
+    public static void openCompareEditor(SyncInfoCompareInput input, IWorkbenchPage page) {
+        if (page == null || input == null) 
+            return;
+        IEditorPart editor = findReusableCompareEditor(page);
+        if(editor != null) {
+        	IEditorInput otherInput = editor.getEditorInput();
+        	if(otherInput.equals(input)) {
+        		// simply provide focus to editor
+        		page.activate(editor);
+        	} else {
+        		// if editor is currently not open on that input either re-use existing
+        		CompareUI.reuseCompareEditor(input, (IReusableEditor)editor);
+        		page.activate(editor);
+        	}
+        } else {
+        	CompareUI.openCompareEditor(input);
+        }
+    }
 	
 	/**
 	 * Returns an editor that can be re-used. An open compare editor that
