@@ -23,12 +23,20 @@ public class QueryBuilder {
 	// List of words to highlight
 	private List highlightWords = new ArrayList();
 	
+	private Locale locale;
+	
 	/**
 	 * Creates a query builder for the search word. The search word is processed
 	 * by a lexical analyzer.
 	 */
-	public QueryBuilder(String searchWords, Analyzer analyzer) {
-		this.analyzer = analyzer;
+	public QueryBuilder(String searchWords, AnalyzerDescriptor analyzerDesc) {
+		String language=analyzerDesc.getLang();
+		if (language.length() >= 5) {
+			this.locale=new Locale(language.substring(0,2),language.substring(3,5));
+		}else{
+			this.locale=new Locale(language.substring(0,2), "");
+		}
+		this.analyzer = analyzerDesc.getAnalyzer();
 		// split search query into tokens
 		List userTokens = tokenizeUserQuery(searchWords);
 		analyzedTokens = analyzeTokens(userTokens);
@@ -86,7 +94,7 @@ public class QueryBuilder {
 			if (token.type == QueryWordsToken.WORD) {
 				if (token.value.indexOf('?') >= 0
 					|| token.value.indexOf('*') >= 0) {
-					newTokens.add(QueryWordsToken.word(token.value));
+					newTokens.add(QueryWordsToken.word(token.value.toLowerCase(locale)));
 					
 					// add word to the list of words to highlight
 					if (!highlightWords.contains(token.value))

@@ -264,7 +264,7 @@ public class SearchIndex {
 			QueryBuilder queryBuilder =
 				new QueryBuilder(
 					searchQuery.getSearchWord(),
-					analyzerDescriptor.getAnalyzer());
+					analyzerDescriptor);
 			Query luceneQuery =
 				queryBuilder.getLuceneQuery(
 					searchQuery.getFieldNames(),
