@@ -96,6 +96,10 @@ public class PreserveSection extends UpdateSection {
 			IInstallConfiguration target = config;
 			localSite.addToPreservedConfigurations(config);
 			localSite.save();
+			IViewPart part = UpdateUI.getActivePage().findView(UpdatePerspective.ID_CONFIGURATION);
+			if (part!=null) {
+				((ConfigurationView)part).expandPreservedConfigurations();
+			}
 		} catch (CoreException e) {
 			UpdateUI.logException(e);
 		}

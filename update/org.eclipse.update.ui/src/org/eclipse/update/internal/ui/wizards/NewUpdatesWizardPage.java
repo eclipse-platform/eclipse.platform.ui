@@ -118,8 +118,7 @@ public class NewUpdatesWizardPage extends BannerPage {
 						case 3 :
 							long size = feature.getDownloadSize();
 							if (size == -1)
-								return UpdateUI.getString(
-									KEY_UNKNOWN_SIZE);
+								return UpdateUI.getString(KEY_UNKNOWN_SIZE);
 							else
 								return feature.getDownloadSize() + "KB";
 					}
@@ -227,7 +226,7 @@ public class NewUpdatesWizardPage extends BannerPage {
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		button.setLayoutData(gd);
 		SWTUtil.setButtonDimensionHint(button);
-		
+
 		moreInfoButton = new Button(buttonContainer, SWT.PUSH);
 		moreInfoButton.setText(UpdateUI.getString(KEY_MORE_INFO));
 		moreInfoButton.addSelectionListener(new SelectionAdapter() {
@@ -241,20 +240,21 @@ public class NewUpdatesWizardPage extends BannerPage {
 
 		tableViewer.setInput(UpdateUI.getDefault().getUpdateModel());
 		tableViewer.setCheckedElements(pendingChanges);
-		
+
 		Label label = new Label(client, SWT.NULL);
 		label.setText(UpdateUI.getString(KEY_FEATURE_DESC));
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
 
-		descriptionArea = new Text(client, SWT.BORDER |SWT.MULTI|SWT.READ_ONLY);
+		descriptionArea =
+			new Text(client, SWT.V_SCROLL | SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.READ_ONLY);
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.heightHint = 64;
 		descriptionArea.setLayoutData(gd);
-		
-		new Label(client, SWT.NULL);		
-		
+
+		new Label(client, SWT.NULL);
+
 		counterLabel = new Label(client, SWT.NULL);
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan = 2;
@@ -275,7 +275,7 @@ public class NewUpdatesWizardPage extends BannerPage {
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan = 2;
 		filterCheck.setLayoutData(gd);
-		
+
 		pageChanged();
 		WorkbenchHelp.setHelp(
 			client,
@@ -309,9 +309,7 @@ public class NewUpdatesWizardPage extends BannerPage {
 		if (!duplicates)
 			setMessage(null);
 		else
-			setMessage(
-				UpdateUI.getString(KEY_DUPLICATE_WARNING),
-				WARNING);
+			setMessage(UpdateUI.getString(KEY_DUPLICATE_WARNING), WARNING);
 	}
 
 	private void createTableViewer(Composite parent) {
@@ -356,38 +354,43 @@ public class NewUpdatesWizardPage extends BannerPage {
 				pageChanged();
 			}
 		});
-		tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+		tableViewer
+			.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent e) {
-				tableSelectionChanged((IStructuredSelection)e.getSelection());
+				tableSelectionChanged((IStructuredSelection) e.getSelection());
 			}
 		});
 	}
-	
+
 	private void tableSelectionChanged(IStructuredSelection selection) {
-		PendingChange selectedJob = (PendingChange)selection.getFirstElement();
-		IFeature feature = selectedJob!=null?selectedJob.getFeature():null;
+		PendingChange selectedJob = (PendingChange) selection.getFirstElement();
+		IFeature feature =
+			selectedJob != null ? selectedJob.getFeature() : null;
 		IURLEntry descEntry = null;
-		
-		if (feature!=null)
+
+		if (feature != null)
 			descEntry = feature.getDescription();
 
-		moreInfoButton.setEnabled(descEntry!=null && descEntry.getURL()!=null);
-		String text = descEntry!=null?descEntry.getAnnotation():null;
-		descriptionArea.setText(text!=null?text:"");		
+		moreInfoButton.setEnabled(
+			descEntry != null && descEntry.getURL() != null);
+		String text = descEntry != null ? descEntry.getAnnotation() : null;
+		descriptionArea.setText(text != null ? text : "");
 	}
-	
+
 	private void doMoreInfo() {
-		IStructuredSelection selection = (IStructuredSelection)tableViewer.getSelection();
-		PendingChange selectedJob = (PendingChange)selection.getFirstElement();
-		IFeature feature = selectedJob!=null?selectedJob.getFeature():null;
+		IStructuredSelection selection =
+			(IStructuredSelection) tableViewer.getSelection();
+		PendingChange selectedJob = (PendingChange) selection.getFirstElement();
+		IFeature feature =
+			selectedJob != null ? selectedJob.getFeature() : null;
 		URL url = null;
-		
-		if (feature!=null) {
+
+		if (feature != null) {
 			IURLEntry descEntry = feature.getDescription();
-			if (descEntry!=null)
+			if (descEntry != null)
 				url = descEntry.getURL();
 		}
-		if (url!=null)
+		if (url != null)
 			DetailsView.showURL(url.toString(), false);
 	}
 

@@ -57,6 +57,8 @@ public class DetailsForm extends PropertyWebForm {
 	private static final String KEY_SIZE_VALUE = "FeaturePage.sizeValue";
 	private static final String KEY_ESTIMATE_VALUE =
 		"FeaturePage.estimateValue";
+	private static final String KEY_MINUTE_ESTIMATE_VALUE = 
+		"FeaturePage.minuteEstimateValue";
 	private static final String KEY_UNKNOWN_SIZE_VALUE =
 		"FeaturePage.unknownSizeValue";
 	private static final String KEY_UNKNOWN_ESTIMATE_VALUE =
@@ -580,12 +582,20 @@ public class DetailsForm extends PropertyWebForm {
 		long estimate = SiteManager.estimate(feature.getURL());
 		String estimateFormat = null;
 		if (estimate >= 0 && size != -1) {
-			String hours = Long.toString(estimate / 3600000);
-			String minutes = Long.toString(estimate % 3600000);
-			estimateFormat =
-				UpdateUI.getFormattedMessage(
-					KEY_ESTIMATE_VALUE,
-					new String[] { hours, minutes });
+			long nhours = estimate / 3600000;
+			long nminutes = estimate % 3600000;
+			
+			if (nhours ==0 && nminutes == 0) {
+				estimateFormat = UpdateUI.getString(KEY_MINUTE_ESTIMATE_VALUE);
+			} else {
+				String hours = Long.toString(nhours);
+				String minutes = Long.toString(nminutes);
+			
+				estimateFormat =
+					UpdateUI.getFormattedMessage(
+						KEY_ESTIMATE_VALUE,
+						new String[] { hours, minutes });
+			}
 		} else {
 			estimateFormat = UpdateUI.getString(KEY_UNKNOWN_ESTIMATE_VALUE);
 		}

@@ -543,6 +543,7 @@ public class ConfigurationView
 	}
 
 	public void expandPreservedConfigurations() {
+		getTreeViewer().refresh(savedFolder);
 		getTreeViewer().setExpandedState(savedFolder, true);
 	}
 

@@ -4,6 +4,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.internal.ui.UpdateUI;
+import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.model.BookmarkFolder;
 import org.eclipse.update.internal.ui.model.NamedModelObject;
 import org.eclipse.update.internal.ui.model.UpdateModel;
@@ -77,6 +78,8 @@ public class UpdatesDragAdapter extends DragSourceAdapter {
 			for (int i = 0; i < objects.length; i++) {
 				NamedModelObject obj = objects[i];
 				Object parent = obj.getParent(obj);
+				if (parent instanceof DiscoveryFolder)
+					continue;
 				if (parent == null) {
 					model.removeBookmark(obj);
 				} else {
@@ -91,7 +94,7 @@ public class UpdatesDragAdapter extends DragSourceAdapter {
 	private boolean canDrag() {
 		return canCopy((IStructuredSelection)selectionProvider.getSelection());
 	}
-
+	
 	static boolean canCopy(IStructuredSelection selection) {
 		for (Iterator iter = selection.iterator(); iter.hasNext();) {
 			Object obj = iter.next();
@@ -99,10 +102,11 @@ public class UpdatesDragAdapter extends DragSourceAdapter {
 				return false;
 			if (obj instanceof SearchObject) {
 				SearchObject sobj = (SearchObject) obj;
-				if (sobj.isCategoryFixed() == false
+				if (sobj.isCategoryFixed()
 					|| sobj.isPersistent() == false)
 					return false;
 			}
+			if (obj instanceof DiscoveryFolder) return false;
 		}
 		return true;
 	}

@@ -23,7 +23,7 @@ public class SearchMonitorManager {
 	class SearchMonitor implements IProgressMonitor {
 		private SearchObject sobj;
 		private int totalWork;
-		private int worked;
+		private double worked;
 		private boolean active;
 
 		public SearchMonitor(SearchObject sobj) {
@@ -60,7 +60,8 @@ public class SearchMonitorManager {
 
 		public String getLabel() {
 			if (active) {
-				int perc = (worked * 100) / totalWork;
+				//int perc = (worked * 100) / totalWork;
+				int perc = (int)(worked * 100)/totalWork;
 				return sobj.getName() + " - " + perc + "%";
 			} else {
 				return sobj.getName();
@@ -71,6 +72,8 @@ public class SearchMonitorManager {
 		 * @see org.eclipse.core.runtime.IProgressMonitor#internalWorked(double)
 		 */
 		public void internalWorked(double work) {
+			worked += work;
+			update();
 		}
 
 		/**
@@ -102,8 +105,7 @@ public class SearchMonitorManager {
 		 * @see org.eclipse.core.runtime.IProgressMonitor#worked(int)
 		 */
 		public void worked(int work) {
-			worked += work;
-			update();
+			internalWorked(work);
 		}
 
 	}

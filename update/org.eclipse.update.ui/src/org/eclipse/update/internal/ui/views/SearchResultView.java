@@ -25,6 +25,7 @@ public class SearchResultView
 	private Action showSearchAction;
 	private ModelListener modelListener;
 	private SearchObject currentSearch;
+	private boolean selectionActive=false;
 	private static final String KEY_C_FEATURE =
 		"SearchResultView.column.feature";
 	private static final String KEY_C_PROVIDER =
@@ -161,7 +162,8 @@ public class SearchResultView
 		viewer.setInput(ResourcesPlugin.getWorkspace());
 	}
 
-	protected void controlCreated() {
+	protected void partControlCreated() {
+		super.partControlCreated();
 		UpdateModel model = UpdateUI.getDefault().getUpdateModel();
 		model.addUpdateModelChangedListener(modelListener);
 		hookSelectionListener(true);
@@ -284,6 +286,10 @@ public class SearchResultView
 		else
 			getSite().setSelectionProvider(null);
 		updateTitle();
+		this.selectionActive = active;
+	}
+	public boolean isSelectionActive() {
+		return selectionActive;
 	}
 
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {

@@ -235,6 +235,11 @@ public class DetailsView extends MultiPageView {
 			return;
 		if (part.getSite().getId().equals(UpdatePerspective.ID_BROWSER))
 			return;
+		if (part instanceof SearchResultView) {
+			SearchResultView searchResult = (SearchResultView)part;
+			if (searchResult.isSelectionActive()==false)
+				return;
+		}
 		Object el = null;
 		if (sel instanceof IStructuredSelection) {
 			IStructuredSelection ssel = (IStructuredSelection) sel;
