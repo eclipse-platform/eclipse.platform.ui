@@ -14,7 +14,31 @@
    <requires>
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.jface.text"/>
+      <import plugin="org.eclipse.text"/>
+      <import plugin="org.eclipse.ui.editors"/>
+      <import plugin="org.eclipse.ui.workbench.texteditor"/>
+      <import plugin="org.eclipse.update.core"/>
    </requires>
 
+
+<!-- IDE extension points -->
+   <extension-point id="exportWizards" name="%ExtPoint.exportWizards" schema="schema/exportWizards.exsd"/>
+   <extension-point id="importWizards" name="%ExtPoint.importWizards" schema="schema/importWizards.exsd"/>
+   <extension-point id="markerHelp" name="%ExtPoint.markerHelp" schema="schema/markerHelp.exsd"/>
+   <extension-point id="markerImageProviders" name="%ExtPoint.markerImageProviders" schema="schema/markerImageProviders.exsd"/>
+   <extension-point id="markerResolution" name="%ExtPoint.markerResolution" schema="schema/markerResolution.exsd"/>
+   <extension-point id="newWizards" name="%ExtPoint.newWizards" schema="schema/newWizards.exsd"/>
+   <extension-point id="projectNatureImages" name="%ExtPoint.projectNatureImages" schema="schema/projectNatureImages.exsd"/>
+
+   <extension
+         id="ide"
+         point="org.eclipse.core.runtime.applications">
+      <application>
+         <run
+               class="org.eclipse.ui.internal.ide.IDEApplication">
+         </run>
+      </application>
+   </extension>
 
 </plugin>
