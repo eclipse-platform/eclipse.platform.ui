@@ -192,6 +192,7 @@ public class AntClasspathBlock {
 					}
 				}
 			}	
+			updateContainer();
 		}
 	}
 
@@ -583,7 +584,7 @@ public class AntClasspathBlock {
 					String name= file.getAbsolutePath();
 					IPath jarPath = new Path(name);
 					URL url = new URL("file:" + jarPath.toOSString()); //$NON-NLS-1$
-					contentProvider.add(ClasspathModel.GLOBAL, url);
+					contentProvider.add(ClasspathModel.ANT_HOME, url);
 				} catch (MalformedURLException e) {
 				}
 			}
@@ -628,7 +629,7 @@ public class AntClasspathBlock {
 		validated++;
 		boolean check= AntUIPlugin.getDefault().getPreferenceStore().getBoolean(IAntUIPreferenceConstants.ANT_TOOLS_JAR_WARNING);
 		if (check && !AntUIPlugin.isMacOS()) {
-			Object[] antURLs= antContentProvider.getModel().getURLEntries(ClasspathModel.GLOBAL);
+			Object[] antURLs= antContentProvider.getModel().getURLEntries(ClasspathModel.ANT_HOME);
 			boolean valid= !JARPresent(antURLs, TOOLS).isEmpty();
 			if (!valid) {
 				antURLs= antContentProvider.getModel().getURLEntries(ClasspathModel.GLOBAL_USER);
@@ -655,7 +656,7 @@ public class AntClasspathBlock {
 		validated++;
 		boolean check= AntUIPlugin.getDefault().getPreferenceStore().getBoolean(IAntUIPreferenceConstants.ANT_XERCES_JARS_WARNING);
 		if (check) {
-			Object[] antURLs= antContentProvider.getModel().getURLEntries(ClasspathModel.GLOBAL);
+			Object[] antURLs= antContentProvider.getModel().getURLEntries(ClasspathModel.ANT_HOME);
 			List suffixes= JARPresent(antURLs, XERCES);
 			if (suffixes.isEmpty()) {
 				Object[] userURLs=  antContentProvider.getModel().getURLEntries(ClasspathModel.GLOBAL_USER);
