@@ -126,6 +126,9 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 					public IStatus runInUIThread(IProgressMonitor monitor) {
 						StructuredViewer tree = getViewer();	
 						tree.refresh();
+						ISynchronizeModelElement root = getModelRoot();
+						if(root instanceof SynchronizeModelElement)
+							((SynchronizeModelElement)root).fireChanges();
 						return Status.OK_STATUS;
 					}
 				};
