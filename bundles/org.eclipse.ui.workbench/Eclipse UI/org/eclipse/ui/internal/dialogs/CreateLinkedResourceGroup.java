@@ -357,30 +357,25 @@ private IStatus validateLinkTargetName(String linkTargetName) {
 public IStatus validateLinkLocation(IResource linkHandle) {
 	IStatus status;
 	IWorkspace workspace = WorkbenchPlugin.getPluginWorkspace();
+	String linkTargetName = linkTargetField.getText();
+	IPath path = new Path(linkTargetName);
 	
 	if (createLink == false)
 		return createStatus(IStatus.OK, "");
-		
-	if (linkHandle.getParent() instanceof IProject == false)
-		return createStatus(
-			IStatus.ERROR,
-			WorkbenchMessages.getString("CreateLinkedResourceGroup.parentNotProject"));	//$NON-NLS-1$
 
-	String linkTargetName = linkTargetField.getText();
+	status = workspace.validateLinkLocation(linkHandle,	path);
+	if (status.isOK() == false) 
+		return status;
+		
 	status = validateLinkTargetName(linkTargetName); 
 	if (status.isOK() == false)
 		return status;
 			
-	IPath path = new Path(linkTargetName);
 	if (path.isAbsolute() == false)
 		return createStatus(
 			IStatus.ERROR,
 			WorkbenchMessages.getString("CreateLinkedResourceGroup.linkTargetNotAbsolute"));	//$NON-NLS-1$
 	
-	status = workspace.validateLinkLocation(linkHandle,	path);
-	if (status.isOK() == false) 
-		return status;
-		
 	File linkTargetFile = new Path(linkTargetName).toFile();
 	if (linkTargetFile.exists() == false) {
 		return createStatus(
