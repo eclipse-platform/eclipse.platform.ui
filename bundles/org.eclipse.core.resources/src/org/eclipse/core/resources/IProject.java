@@ -135,8 +135,8 @@ public void build(int kind, IProgressMonitor monitor) throws CoreException;
  * @exception CoreException if this method fails. Reasons include:
  * <ul>
  * <li> This resource does not exist.</li>
- * <li> Resource changes are disallowed during resource change event
- *      notification.</li>
+ * <li> Resource changes are disallowed during certain types of resource change 
+ *       event notification. See IResourceChangeEvent for more details.</li>
  * </ul>
  * @see #open
  * @see #isOpen
@@ -192,7 +192,8 @@ public void close(IProgressMonitor monitor) throws CoreException;
  *      system and <code>force</code> is <code>false</code>.</li>
  * <li> The workspace and the local file system are out of sync
  *      at the destination resource or one of its descendents.</li>
- * <li> Resource changes are disallowed during resource change event notification.</li>
+ * <li> Resource changes are disallowed during certain types of resource change 
+ *       event notification. See IResourceChangeEvent for more details.</li>
  * </ul>
  */
 public void copy(IProjectDescription description, boolean force, IProgressMonitor monitor) throws CoreException;
@@ -225,8 +226,8 @@ public void copy(IProjectDescription description, boolean force, IProgressMonito
  *    <code>IWorkspace.validateName</code>).</li>
  * <li> The project location is not valid (according to
  *      <code>IWorkspace.validateProjectLocation</code>).</li>
- * <li> Resource changes are disallowed during resource change event 
- *      notification.</li>
+ * <li> Resource changes are disallowed during certain types of resource change 
+ *       event notification. See IResourceChangeEvent for more details.</li>
  * </ul>
  *
  * @see IWorkspace#validateProjectLocation
@@ -266,8 +267,8 @@ public void create(IProjectDescription description, IProgressMonitor monitor) th
  *    <code>IWorkspace.validateName</code>).</li>
  * <li> The project location is not valid (according to
  *      <code>IWorkspace.validateProjectLocation</code>).</li>
- * <li> Resource changes are disallowed during resource change event 
- *      notification.</li>
+ * <li> Resource changes are disallowed during certain types of resource change 
+ *       event notification. See IResourceChangeEvent for more details.</li>
  * </ul>
  *
  * @see IWorkspace#validateProjectLocation
@@ -324,8 +325,8 @@ public void create(IProgressMonitor monitor) throws CoreException;
  * <ul>
  * <li> This project could not be deleted.</li>
  * <li> This project's contents could not be deleted.</li>
- * <li> Resource changes are disallowed during resource change event 
- *      notification.</li>
+ * <li> Resource changes are disallowed during certain types of resource change 
+ *       event notification. See IResourceChangeEvent for more details.</li>
  * </ul>
  * @see IResource#delete
  * @see #open
@@ -528,7 +529,8 @@ public boolean isOpen();
  *      and <code>force</code> is <code>false</code>.</li>
  * <li> The workspace and the local file system are out of sync
  *      at the destination resource or one of its descendents.</li>
- * <li> Resource changes are disallowed during resource change event notification.</li>
+ * <li> Resource changes are disallowed during certain types of resource change 
+ *       event notification. See IResourceChangeEvent for more details.</li>
  * </ul>
  * @see IResourceDelta#getFlags
  */
@@ -554,8 +556,8 @@ public void move(IProjectDescription description, boolean force, IProgressMonito
  *    reporting and cancellation are not desired
  * @exception CoreException if this method fails. Reasons include:
  * <ul>
- * <li> Resource changes are disallowed during resource change event 
- *    notification.</li>
+ * <li> Resource changes are disallowed during certain types of resource change 
+ *       event notification. See IResourceChangeEvent for more details.</li>
  * </ul>
  * @see #close
  */
@@ -598,8 +600,8 @@ public void open(IProgressMonitor monitor) throws CoreException;
  * <li> This project does not exist in the workspace.</li>
  * <li> This project is not open.</li>
  * <li> The project nature extension could not be found.</li>
- * <li> Resource changes are disallowed during resource change event 
- *      notification.</li>
+ * <li> Resource changes are disallowed during certain types of resource change 
+ *       event notification. See IResourceChangeEvent for more details.</li>
  * </ul>
  *
  * @see #getDescription

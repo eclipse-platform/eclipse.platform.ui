@@ -238,7 +238,8 @@ public interface IMarker extends IAdaptable {
  *
  * @exception CoreException if this marker could not be deleted. Reasons include:
  * <ul>
- * <li> Resource changes are disallowed during resource change event notification.</li>
+ * <li> Resource changes are disallowed during certain types of resource change 
+ *       event notification. See IResourceChangeEvent for more details.</li>
  * </ul>
  */
 public void delete() throws CoreException;
@@ -381,6 +382,8 @@ public boolean isSubtypeOf(String superType) throws CoreException;
  * @exception CoreException if this method fails. Reasons include:
  * <ul>
  * <li> This marker does not exist.</li>
+ * <li> Resource changes are disallowed during certain types of resource change 
+ *       event notification. See IResourceChangeEvent for more details.</li>
  * </ul>
  */
 public void setAttribute(String attributeName, int value) throws CoreException;
@@ -400,6 +403,8 @@ public void setAttribute(String attributeName, int value) throws CoreException;
  * @exception CoreException if this method fails. Reasons include:
  * <ul>
  * <li> This marker does not exist.</li>
+ * <li> Resource changes are disallowed during certain types of resource change 
+ *       event notification. See IResourceChangeEvent for more details.</li>
  * </ul>
  */
 public void setAttribute(String attributeName, Object value) throws CoreException;
@@ -416,6 +421,8 @@ public void setAttribute(String attributeName, Object value) throws CoreExceptio
  * @exception CoreException if this method fails. Reasons include:
  * <ul>
  * <li> This marker does not exist.</li>
+ * <li> Resource changes are disallowed during certain types of resource change 
+ *       event notification. See IResourceChangeEvent for more details.</li>
  * </ul>
  */
 public void setAttribute(String attributeName, boolean value) throws CoreException;
@@ -437,6 +444,8 @@ public void setAttribute(String attributeName, boolean value) throws CoreExcepti
  * @exception CoreException if this method fails. Reasons include:
  * <ul>
  * <li> This marker does not exist.</li>
+ * <li> Resource changes are disallowed during certain types of resource change 
+ *       event notification. See IResourceChangeEvent for more details.</li>
  * </ul>
  */
 public void setAttributes(String[] attributeNames, Object[] values) throws CoreException;
@@ -459,6 +468,8 @@ public void setAttributes(String[] attributeNames, Object[] values) throws CoreE
  * @exception CoreException if this method fails. Reasons include:
  * <ul>
  * <li> This marker does not exist.</li>
+ * <li> Resource changes are disallowed during certain types of resource change 
+ *       event notification. See IResourceChangeEvent for more details.</li>
  * </ul>
  */
 public void setAttributes(Map attributes) throws CoreException;

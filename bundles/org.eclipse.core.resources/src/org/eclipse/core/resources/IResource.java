@@ -245,7 +245,8 @@ public void clearHistory(IProgressMonitor monitor) throws CoreException;
  *      system and <code>force</code> is <code>false</code>.</li>
  * <li> The workspace and the local file system are out of sync
  *      at the destination resource or one of its descendents.</li>
- * <li> Resource changes are disallowed during resource change event notification.</li>
+ * <li> Resource changes are disallowed during certain types of resource change 
+ *       event notification. See IResourceChangeEvent for more details.</li>
  * </ul>
  */
 public void copy(IProjectDescription destination, boolean force, IProgressMonitor monitor) throws CoreException;
@@ -316,8 +317,9 @@ public void copy(IProjectDescription destination, boolean force, IProgressMonito
  *      system and <code>force</code> is <code>false</code>.</li>
  * <li> The workspace and the local file system are out of sync
  *      at the destination resource or one of its descendents.</li>
- * <li> Resource changes are disallowed during resource change event notification.</li>
  * <li> The source resource is a file and the destination path specifies a project.</li>
+ * <li> Resource changes are disallowed during certain types of resource change 
+ *       event notification. See IResourceChangeEvent for more details.</li>
  * </ul>
  */
 public void copy(IPath destination, boolean force, IProgressMonitor monitor) throws CoreException;
@@ -403,7 +405,8 @@ public IMarker createMarker(String type) throws CoreException;
  * <li> This resource could not be deleted for some reason.</li>
  * <li> This resource or one of its descendents is out of sync with the local file system
  *      and <code>force</code> is <code>false</code>.</li>
- * <li> Resource changes are disallowed during resource change event notification.</li>
+ * <li> Resource changes are disallowed during certain types of resource change 
+ *       event notification. See IResourceChangeEvent for more details.</li>
  * </ul>
  *
  * @see IFile#delete
@@ -427,7 +430,8 @@ public void delete(boolean force, IProgressMonitor monitor) throws CoreException
  * <ul>
  * <li> This resource does not exist.</li>
  * <li> This resource is a project that is not open.</li>
- * <li> Resource changes are disallowed during resource change event notification.</li>
+ * <li> Resource changes are disallowed during certain types of resource change 
+ *       event notification. See IResourceChangeEvent for more details.</li>
  * </ul>
  * @see IResource#DEPTH_ZERO
  * @see IResource#DEPTH_ONE
@@ -885,7 +889,8 @@ public boolean isReadOnly();
  *      and <code>force</code> is <code>false</code>.</li>
  * <li> The workspace and the local file system are out of sync
  *      at the destination resource or one of its descendents.</li>
- * <li> Resource changes are disallowed during resource change event notification.</li>
+ * <li> Resource changes are disallowed during certain types of resource change 
+ *       event notification. See IResourceChangeEvent for more details.</li>
  * </ul>
  * @see IResourceDelta#getFlags
  */
@@ -967,7 +972,8 @@ public void move(IProjectDescription destination, boolean force, boolean keepHis
  *      and <code>force</code> is <code>false</code>.</li>
  * <li> The workspace and the local file system are out of sync
  *      at the destination resource or one of its descendents.</li>
- * <li> Resource changes are disallowed during resource change event notification.</li>
+ * <li> Resource changes are disallowed during certain types of resource change 
+ *       event notification. See IResourceChangeEvent for more details.</li>
  * <li> The source resource is a file and the destination path specifies a project.</li>
  * </ul>
  * @see IResourceDelta#getFlags
@@ -1000,7 +1006,8 @@ public void move(IPath destination, boolean force, IProgressMonitor monitor) thr
  *    reporting and cancellation are not desired
  * @exception CoreException if this method fails. Reasons include:
  * <ul>
- * <li> Resource changes are disallowed during resource change event notification.</li>
+ * <li> Resource changes are disallowed during certain types of resource change 
+ *       event notification. See IResourceChangeEvent for more details.</li>
  * </ul>
  * @see IResource#DEPTH_ZERO
  * @see IResource#DEPTH_ONE
@@ -1029,7 +1036,8 @@ public void refreshLocal(int depth, IProgressMonitor monitor) throws CoreExcepti
  *    reporting and cancellation are not desired
  * @exception CoreException if this method fails. Reasons include:
  * <ul>
- * <li> Resource changes are disallowed during resource change event notification.</li>
+ * <li> Resource changes are disallowed during certain types of resource change 
+ *       event notification. See IResourceChangeEvent for more details.</li>
  * </ul>
  * @see #isLocal
  */
@@ -1059,7 +1067,8 @@ public void setLocal(boolean flag, int depth, IProgressMonitor monitor) throws C
  * <li> This resource does not exist.</li>
  * <li> This resource is not local.</li>
  * <li> This resource is a project that is not open.</li>
- * <li> Resource changes are disallowed during resource change event notification.</li>
+ * <li> Resource changes are disallowed during certain types of resource change 
+ *       event notification. See IResourceChangeEvent for more details.</li>
  * </ul>
  * @see #getPersistentProperty
  * @see #isLocal
@@ -1097,7 +1106,8 @@ public void setReadOnly(boolean readOnly);
  * <li> This resource does not exist.</li>
  * <li> This resource is not local.</li>
  * <li> This resource is project that is not open.</li>
- * <li> Resource changes are disallowed during resource change event notification.</li>
+ * <li> Resource changes are disallowed during certain types of resource change 
+ *       event notification. See IResourceChangeEvent for more details.</li>
  * </ul>
  * @see #getSessionProperty
  */
@@ -1123,7 +1133,8 @@ public void setSessionProperty(QualifiedName key, Object value) throws CoreExcep
  * <ul>
  * <li> This resource does not exist.</li>
  * <li> This resource is not local.</li>
- * <li> Resource changes are disallowed during resource change event notification.</li>
+ * <li> Resource changes are disallowed during certain types of resource change 
+ *       event notification. See IResourceChangeEvent for more details.</li>
  * </ul>
  */ 
 public void touch(IProgressMonitor monitor) throws CoreException;

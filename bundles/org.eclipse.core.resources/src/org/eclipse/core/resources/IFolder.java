@@ -71,8 +71,8 @@ public interface IFolder extends IContainer, IAdaptable {
  *    by a file (as opposed to a directory).</li>
  * <li> The corresponding location in the local file system is occupied
  *    by a folder and <code>force </code> is <code>false</code>.</li>
- * <li> Resource changes are disallowed during resource change event 
- *    notification.</li>
+ * <li> Resource changes are disallowed during certain types of resource change 
+ *       event notification.  See IResourceChangeEvent for more details.</li>
  * </ul>
  */
 public void create(boolean force, boolean local, IProgressMonitor monitor) throws CoreException;
@@ -99,6 +99,14 @@ public void create(boolean force, boolean local, IProgressMonitor monitor) throw
  *    should be stored in the workspace's local history
   * @param monitor a progress monitor, or <code>null</code> if progress
  *    reporting and cancellation are not desired
+ * @exception CoreException if this method fails. Reasons include:
+ * <ul>
+ * <li> This resource could not be deleted for some reason.</li>
+ * <li> This resource is out of sync with the local file system
+ *      and <code>force</code> is <code>false</code>.</li>
+ * <li> Resource changes are disallowed during certain types of resource change 
+ *       event notification. See IResourceChangeEvent for more details.</li>
+ * </ul>
  *
  * @see IResource#delete
  */
@@ -171,7 +179,8 @@ public IFolder getFolder(String name);
  *      and <code>force</code> is <code>false</code>.</li>
  * <li> The workspace and the local file system are out of sync
  *      at the destination resource or one of its descendents.</li>
- * <li> Resource changes are disallowed during resource change event notification.</li>
+ * <li> Resource changes are disallowed during certain types of resource change 
+ *       event notification. See IResourceChangeEvent for more details.</li>
  * </ul>
  *
  * @see IResource#move

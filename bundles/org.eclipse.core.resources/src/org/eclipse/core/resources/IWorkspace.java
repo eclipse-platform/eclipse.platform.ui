@@ -267,7 +267,8 @@ public IProject[][] computePrerequisiteOrder(IProject[] projects);
  * <li> The path of one of the resources is a prefix of the destination path.</li>
  * <li> One of the resources, or one of its descendents, is out of sync with the
  *      local file system and <code>force</code> is <code>false</code>.</li>
- * <li> Resource changes are disallowed during resource change event notification.</li>
+ * <li> Resource changes are disallowed during certain types of resource change 
+ *       event notification. See IResourceChangeEvent for more details.</li>
  * </ul>
  * @see IResource#copy
  */
@@ -330,7 +331,8 @@ public IStatus delete(IResource[] resources, boolean force, IProgressMonitor mon
  * @param markers the markers to remove
  * @exception CoreException if this method fails. Reasons include:
  * <ul>
- * <li> Resource changes are disallowed during resource change event notification.</li>
+ * <li> Resource changes are disallowed during certain types of resource change 
+ *       event notification. See IResourceChangeEvent for more details.</li>
  * </ul>
  */
 public void deleteMarkers(IMarker[] markers) throws CoreException;
@@ -469,7 +471,8 @@ public boolean isAutoBuilding();
  * <li> The path of one of the resources is a prefix of the destination path.</li>
  * <li> One of the resources, or one of its descendents, is out of sync with the
  *      local file system and <code>force</code> is <code>false</code>.</li>
- * <li> Resource changes are disallowed during resource change event notification.</li>
+ * <li> Resource changes are disallowed during certain types of resource change 
+ *       event notification. See IResourceChangeEvent for more details.</li>
  * </ul>
  * @see IResource#move
  */

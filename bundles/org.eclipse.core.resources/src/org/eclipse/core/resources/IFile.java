@@ -76,7 +76,8 @@ public interface IFile extends IResource, IStorage, IAdaptable {
  *       is occupied by a directory.</li>
  * <li> The workspace is not in sync with the corresponding location
  *       in the local file system and <code>force </code> is <code>false</code>.</li>
- * <li> Resource changes are disallowed during resource change event notification.</li>
+ * <li> Resource changes are disallowed during certain types of resource change 
+ *       event notification. See IResourceChangeEvent for more details.</li>
  * </ul>
  */
 public void appendContents(InputStream source, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException;
@@ -126,8 +127,8 @@ public void appendContents(InputStream source, boolean force, boolean keepHistor
  *    by a directory.</li>
  * <li> The corresponding location in the local file system is occupied
  *    by a file and <code>force </code> is <code>false</code>.</li>
- * <li> Resource changes are disallowed during resource change event
- *    notification.</li>
+ * <li> Resource changes are disallowed during certain types of resource change 
+ *       event notification. See IResourceChangeEvent for more details.</li>
  * </ul>
  */
 public void create(InputStream source, boolean force, IProgressMonitor monitor) throws CoreException;
@@ -159,7 +160,8 @@ public void create(InputStream source, boolean force, IProgressMonitor monitor) 
  * <li> This resource could not be deleted for some reason.</li>
  * <li> This resource is out of sync with the local file system
  *      and <code>force</code> is <code>false</code>.</li>
- * <li> Resource changes are disallowed during resource change event notification.</li>
+ * <li> Resource changes are disallowed during certain types of resource change 
+ *       event notification. See IResourceChangeEvent for more details.</li>
  * </ul>
  * @see IResource#delete
  */
@@ -277,7 +279,8 @@ public boolean isReadOnly();
  *      and <code>force</code> is <code>false</code>.</li>
  * <li> The workspace and the local file system are out of sync
  *      at the destination resource or one of its descendents.</li>
- * <li> Resource changes are disallowed during resource change event notification.</li>
+ * <li> Resource changes are disallowed during certain types of resource change 
+ *       event notification. See IResourceChangeEvent for more details.</li>
  * </ul>
  *
  * @see IResource#move
@@ -331,7 +334,8 @@ public void move(IPath destination, boolean force, boolean keepHistory, IProgres
  *       is occupied by a directory.</li>
  * <li> The workspace is not in sync with the corresponding location
  *       in the local file system and <code>force </code> is <code>false</code>.</li>
- * <li> Resource changes are disallowed during resource change event notification.</li>
+ * <li> Resource changes are disallowed during certain types of resource change 
+ *       event notification. See IResourceChangeEvent for more details.</li>
  * </ul>
  */
 public void setContents(InputStream source, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException;
@@ -380,7 +384,8 @@ public void setContents(InputStream source, boolean force, boolean keepHistory, 
  *       is occupied by a directory.</li>
  * <li> The workspace is not in sync with the corresponding location
  *       in the local file system and <code>force </code> is <code>false</code>.</li>
- * <li> Resource changes are disallowed during resource change event notification.</li>
+ * <li> Resource changes are disallowed during certain types of resource change 
+ *       event notification. See IResourceChangeEvent for more details.</li>
  * </ul>
  */
 public void setContents(IFileState source, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException;

@@ -51,8 +51,8 @@ public interface IWorkspaceRoot extends IContainer, IAdaptable {
  * <ul>
  * <li> A project could not be deleted.</li>
  * <li> A project's contents could not be deleted.</li>
- * <li> Resource changes are disallowed during resource change event 
- *      notification.</li>
+ * <li> Resource changes are disallowed during certain types of resource change 
+ *       event notification. See IResourceChangeEvent for more details.</li>
  * </ul>
  * @see IResource#delete
  * @see IProject#delete
