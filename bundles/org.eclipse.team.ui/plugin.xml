@@ -84,6 +84,7 @@
 		id="org.eclipse.team.ui.sync.SyncView"
 		icon="icons/full/cview16/synch_synch.gif"
 		name="Synchronize"
+		fastViewWidthRatio="0.75"
 		category="org.eclipse.team.ui"
 		class="org.eclipse.team.internal.ui.sync.SyncView">
 	</view>
@@ -120,4 +121,14 @@
          <selection class="org.eclipse.core.resources.IProject"/>
       </wizard>
    </extension> 
+   
+<!-- ***************** Perspective Extensions ********************** -->
+	<extension point="org.eclipse.ui.perspectiveExtensions">
+        <perspectiveExtension
+            targetID="org.eclipse.ui.resourcePerspective">
+           <view id="org.eclipse.team.ui.sync.SyncView"
+                relative="org.eclipse.ui.views.TaskList"
+                relationship="stack"/>
+        </perspectiveExtension>
+    </extension> 
 </plugin>

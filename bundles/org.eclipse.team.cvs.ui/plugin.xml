@@ -462,6 +462,7 @@
             name="%RepositoriesView.name"
             icon="icons/full/cview16/repo_rep.gif"
             category="org.eclipse.team.ccvs.ui"
+       		fastViewWidthRatio="0.5"
             class="org.eclipse.team.internal.ccvs.ui.RepositoriesView"
             id="org.eclipse.team.ccvs.ui.RepositoriesView">
       </view>
@@ -571,6 +572,15 @@
          <perspectiveShortcut
                id="org.eclipse.team.cvs.ui.cvsPerspective">
          </perspectiveShortcut>
+           <view id="org.eclipse.team.ccvs.ui.console"
+                relative="org.eclipse.ui.views.TaskList"
+                relationship="stack"/>
+           <view id="org.eclipse.team.ccvs.ui.HistoryView"
+                relative="org.eclipse.ui.views.TaskList"
+                relationship="stack"/>
+           <view id="org.eclipse.team.ccvs.ui.RepositoriesView"
+                relative="org.eclipse.ui.views.ResourceNavigator"
+                relationship="stack"/>
       </perspectiveExtension>
    </extension>
 
