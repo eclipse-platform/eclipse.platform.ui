@@ -138,21 +138,17 @@ public class IEHost implements Runnable {
 		layout.verticalSpacing = 0;
 		composite.setLayout(layout);
 		// Add a toolbar
-		ToolBar bar = new ToolBar(composite, SWT.FLAT);
+		ToolBar bar = new ToolBar(composite, SWT.FLAT | SWT.HORIZONTAL);
 		GridData gridData = new GridData();
 		gridData.horizontalAlignment = GridData.FILL;
 		gridData.grabExcessHorizontalSpace = true;
 		//gridData.horizontalSpan = 3;
 		bar.setLayoutData(gridData);
-		ToolItem item;
 		// Add a button to navigate back
-		item = new ToolItem(bar, SWT.NONE);
-		item.setToolTipText(ieResources.getString("Previous_page"));
-		item.setImage(
-			ImageDescriptor
-				.createFromURL(ieResources.getImagePath("back_icon"))
-				.createImage());
-		item.addSelectionListener(new SelectionListener() {
+		ToolItem backItem = new ToolItem(bar, SWT.HORIZONTAL, 0);
+		backItem.setText(ieResources.getString("Previous_page"));
+		backItem.setToolTipText(ieResources.getString("Previous_page_tip"));
+		backItem.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
 				webBrowser.back();
 			}
@@ -161,30 +157,12 @@ public class IEHost implements Runnable {
 			}
 		});
 		// Add a button to navigate forward
-		item = new ToolItem(bar, SWT.NONE);
-		item.setToolTipText(ieResources.getString("Next_page"));
-		item.setImage(
-			ImageDescriptor
-				.createFromURL(ieResources.getImagePath("forward_icon"))
-				.createImage());
-		item.addSelectionListener(new SelectionListener() {
+		ToolItem forwardItem = new ToolItem(bar, SWT.NONE, 1	);
+		forwardItem.setText(ieResources.getString("Next_page"));
+		forwardItem.setToolTipText(ieResources.getString("Next_page_tip"));
+		forwardItem.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
 				webBrowser.forward();
-			}
-			public void widgetDefaultSelected(SelectionEvent e) {
-				widgetSelected(e);
-			}
-		});
-		// Add a button to print
-		item = new ToolItem(bar, SWT.NONE);
-		item.setToolTipText(ieResources.getString("Print_page"));
-		item.setImage(
-			ImageDescriptor
-				.createFromURL(ieResources.getImagePath("printer_icon"))
-				.createImage());
-		item.addSelectionListener(new SelectionListener() {
-			public void widgetSelected(SelectionEvent e) {
-				//webBrowser.print(true);
 			}
 			public void widgetDefaultSelected(SelectionEvent e) {
 				widgetSelected(e);
