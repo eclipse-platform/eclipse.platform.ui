@@ -546,7 +546,9 @@ public class InternalAntRunner {
 		} finally {
 			System.setErr(originalErr);
 			System.setOut(originalOut);
-			System.setSecurityManager(originalSM);
+			if (System.getSecurityManager() instanceof AntSecurityManager) {
+				System.setSecurityManager(originalSM);
+			}
 			
 			if (!projectHelp) {				
 				fireBuildFinished(getCurrentProject(), error);
