@@ -9,6 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.forms.widgets;
+import java.io.File;
+
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.*;
@@ -673,15 +675,26 @@ public class FormToolkit {
 		this.borderStyle = style;
 	}
 	private void initialize() {
-		String osname = System.getProperty("os.name");
-		if (osname.equals("Windows XP")) {
-			RGB rgb = colors.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
-			if (rgb.red != 212 && rgb.green != 208 && rgb.blue != 200)
-				borderStyle = SWT.BORDER;
-		}
+		initializeBorderStyle();
 		hyperlinkGroup = new HyperlinkGroup(colors.getDisplay());
 		hyperlinkGroup.setBackground(colors.getBackground());
 		visibilityHandler = new VisibilityHandler();
 		keyboardHandler = new KeyboardHandler();
+	}
+	private void initializeBorderStyle() {
+		String osname = System.getProperty("os.name");
+		if (osname.equals("Windows XP")) {
+			String javaHome = System.getProperty("java.home");
+			File homeDir = new File(javaHome);
+			File binDir = new File(homeDir, "bin");
+			File manifest = new File(binDir, "javaw.exe.manifest");
+			if (manifest.exists()) {
+				// Skinned widgets used - check for Windows Classic
+				// If not used, set the style to BORDER
+				RGB rgb = colors.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
+				if (rgb.red != 212 && rgb.green != 208 && rgb.blue != 200)
+					borderStyle = SWT.BORDER;
+			}
+		}		
 	}
 }
