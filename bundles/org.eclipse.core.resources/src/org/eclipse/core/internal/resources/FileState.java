@@ -50,19 +50,7 @@ public class FileState extends PlatformObject implements IFileState {
 		boolean failed = false;
 		try {
 			IContentDescription description = contentTypeManager.getDescriptionFor(contents, getName(), new QualifiedName[] {IContentDescription.CHARSET});
-			if (description == null)
-				return null;
-			byte[] bom = (byte[]) description.getProperty(IContentDescription.BYTE_ORDER_MARK);
-			if (bom != null)
-				if (bom == IContentDescription.BOM_UTF_8)
-					return "UTF-8"; //$NON-NLS-1$
-				else if (bom == IContentDescription.BOM_UTF_16BE || bom == IContentDescription.BOM_UTF_16LE)
-					// UTF-16 will properly recognize the BOM
-					return "UTF-16"; //$NON-NLS-1$
-				else
-					// unknown BOM... ignore it				
-					;
-			return description.getProperty(IContentDescription.CHARSET) == null ? null : (String) description.getProperty(IContentDescription.CHARSET);
+			return description == null ? null : description.getCharset();
 		} catch (IOException e) {
 			failed = true;
 			String message = Policy.bind("history.errorContentDescription", getFullPath().toString()); //$NON-NLS-1$		
