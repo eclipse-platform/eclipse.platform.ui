@@ -51,9 +51,8 @@ public class EclipseOrg implements ISearchEngine {
 
         public String getHref() {
             String href = null;
-            if (ALL.equals(type))
-                href = "http://eclipse.org/search/search.cgi?ps=20&m=all&q=";
-            else if (ARTICLES.equals(type))
+
+            if (ARTICLES.equals(type))
                 href = "http://eclipse.org/search/search.cgi?ps=20&m=all&ul=%2Farticles%2F&q=";
             else if (DOC.equals(type))
                 href = "http://eclipse.org/search/search.cgi?ps=20&m=all&ul=%2Fdocumentation%2F&q=";
@@ -61,7 +60,8 @@ public class EclipseOrg implements ISearchEngine {
                 href = "http://eclipse.org/search/search.cgi?ps=20&m=all&ul=%2Fmhonarc%2F&q=";
             else if (NEWS.equals(type))
                 href = "http://eclipse.org/search/search.cgi?ps=20&m=all&ul=%2Fnewslists%2F&q=";
-            
+            else
+                href = "http://eclipse.org/search/search.cgi?ps=20&m=all&q=";
             try {
                 href += URLEncoder.encode(query, "UTF-8");
             } catch (UnsupportedEncodingException e) {

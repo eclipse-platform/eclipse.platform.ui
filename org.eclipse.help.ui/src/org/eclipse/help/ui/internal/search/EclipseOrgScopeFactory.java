@@ -18,7 +18,7 @@ import org.eclipse.jface.preference.*;
  * Factory for creating scope objects for the google engine
  */
 public class EclipseOrgScopeFactory implements ISearchScopeFactory {
-    private final static String ENGINE_ID = "org.eclipse.help.ui.google";
+    private final static String ENGINE_ID = "org.eclipse.help.ui.eclipseorg";
     
     /* (non-Javadoc)
      * @see org.eclipse.help.ui.ISearchScopeFactory#createSearchScope(org.eclipse.jface.preference.IPreferenceStore)
