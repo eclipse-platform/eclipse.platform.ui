@@ -10,15 +10,14 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize.actions;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.internal.ui.Utils;
-import org.eclipse.team.internal.ui.synchronize.SubscriberParticipantPage;
-import org.eclipse.team.ui.synchronize.ISynchronizeView;
+import org.eclipse.team.ui.synchronize.ISynchronizePageSite;
+import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.actions.OpenWithMenu;
 import org.eclipse.ui.views.navigator.ResourceNavigatorMessages;
@@ -31,25 +30,27 @@ public class OpenWithActionGroup extends ActionGroup {
 
 	private OpenFileInSystemEditorAction openFileAction;
 	private OpenInCompareAction openInCompareAction;
-	private SubscriberParticipantPage page;
-	private ISynchronizeView view;
 	private String name;
+	private ISynchronizePageSite site;
 
-	public OpenWithActionGroup(ISynchronizeView part, String name) {
+	public OpenWithActionGroup(ISynchronizePageSite site, String name) {
 		this.name = name;
-		this.view = part;
+		this.site = site;
 		makeActions();
 	}
 
 	protected void makeActions() {
-		openFileAction = new OpenFileInSystemEditorAction(view.getSite().getPage());
-		openInCompareAction = new OpenInCompareAction(view, name);		
+		IWorkbenchSite ws = site.getWorkbenchSite();
+		if (ws != null) {
+			openFileAction = new OpenFileInSystemEditorAction(ws.getPage());
+			openInCompareAction = new OpenInCompareAction(site, name);
+		}
 	}
 
-	public void fillContextMenu(IMenuManager menu) {
-		ISelection selection = view.getSite().getPage().getSelection();
+	public void fillContextMenu(IMenuManager menu, String groupId) {
+		ISelection selection = site.getSelectionProvider().getSelection();
 		if (selection instanceof IStructuredSelection) {
-			fillOpenWithMenu(menu, (IStructuredSelection)selection);
+			fillOpenWithMenu(menu, groupId, (IStructuredSelection)selection);
 		}
 	}
 
@@ -59,7 +60,7 @@ public class OpenWithActionGroup extends ActionGroup {
 	 * @param menu the context menu
 	 * @param selection the current selection
 	 */
-	private void fillOpenWithMenu(IMenuManager menu, IStructuredSelection selection) {
+	private void fillOpenWithMenu(IMenuManager menu, String groupId, IStructuredSelection selection) {
 
 		// Only supported if exactly one file is selected.
 		if (selection == null || selection.size() != 1)
@@ -74,29 +75,23 @@ public class OpenWithActionGroup extends ActionGroup {
 		
 		if(resource.getType() != IResource.FILE) return;
 		
-		menu.add(openInCompareAction);
+		menu.appendToGroup(groupId, openInCompareAction);
 		
 		if(!((resource.exists()))) {
 			return;
 		}
 		
-		openFileAction.selectionChanged(selection);
-		menu.add(openFileAction);
-		
-		MenuManager submenu =
-			new MenuManager(ResourceNavigatorMessages.getString("ResourceNavigator.openWith")); //$NON-NLS-1$
-		submenu.add(new OpenWithMenu(view.getSite().getPage(), (IFile) resource));
-		menu.add(submenu);
-	}
-
-	/**
-	 * Runs the default action (open file).
-	 */
-	public void runDefaultAction(IStructuredSelection selection) {
-		Object element = selection.getFirstElement();
-		if (element instanceof IFile) {
+		if (openFileAction != null) {
 			openFileAction.selectionChanged(selection);
-			openFileAction.run();
+			menu.appendToGroup(groupId, openFileAction);
+		}
+		
+		IWorkbenchSite ws = site.getWorkbenchSite();
+		if (ws != null) {
+			MenuManager submenu =
+				new MenuManager(ResourceNavigatorMessages.getString("ResourceNavigator.openWith")); //$NON-NLS-1$
+			submenu.add(new OpenWithMenu(ws.getPage(), resource));
+			menu.appendToGroup(groupId, submenu);
 		}
 	}
 

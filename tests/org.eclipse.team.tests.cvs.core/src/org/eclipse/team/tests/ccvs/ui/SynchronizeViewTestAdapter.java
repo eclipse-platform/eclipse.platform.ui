@@ -11,7 +11,6 @@
 package org.eclipse.team.tests.ccvs.ui;
 
 import junit.framework.AssertionFailedError;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.ISelection;
@@ -30,7 +29,7 @@ import org.eclipse.team.tests.ccvs.core.EclipseTest;
 import org.eclipse.team.tests.ccvs.core.subscriber.SyncInfoSource;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.*;
-import org.eclipse.team.ui.synchronize.subscribers.SubscriberParticipant;
+import org.eclipse.team.ui.synchronize.subscribers.*;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.IPage;
@@ -51,7 +50,7 @@ public class SynchronizeViewTestAdapter extends SyncInfoSource {
 	
 	public SyncInfo getSyncInfo(Subscriber subscriber, IResource resource) throws TeamException {
 		// Wait for the collector
-		SyncInfoSet set = getCollector(subscriber).getSyncInfoTree();
+		SyncInfoSet set = getCollector(subscriber).getSyncInfoSet();
 		// Obtain the sync info from the viewer to ensure that the 
 		// entire chain has the proper state
 		SyncInfo info = internalGetSyncInfo(subscriber, resource);
@@ -103,7 +102,6 @@ public class SynchronizeViewTestAdapter extends SyncInfoSource {
 	private SubscriberSyncInfoCollector getCollector(Subscriber subscriber) {
 		SubscriberParticipant participant = getParticipant(subscriber);
 		if (participant == null) return null;
-		participant.setMode(SubscriberParticipant.BOTH_MODE);
 		SubscriberSyncInfoCollector syncInfoCollector = participant.getSubscriberSyncInfoCollector();
 		EclipseTest.waitForSubscriberInputHandling(syncInfoCollector);
 		return syncInfoCollector;
@@ -114,7 +112,7 @@ public class SynchronizeViewTestAdapter extends SyncInfoSource {
 	 */
 	protected void assertProjectRemoved(Subscriber subscriber, IProject project) throws TeamException {		
 		super.assertProjectRemoved(subscriber, project);
-		SyncInfoTree set = getCollector(subscriber).getSyncInfoTree();
+		SyncInfoTree set = getCollector(subscriber).getSyncInfoSet();
 		if (set.hasMembers(project)) {
 			throw new AssertionFailedError("The sync set still contains resources from the deleted project " + project.getName());	
 		}
@@ -203,7 +201,7 @@ public class SynchronizeViewTestAdapter extends SyncInfoSource {
 			IPage page = ((SynchronizeView)view).getPage(participant);
 			if (page instanceof SubscriberParticipantPage) {
 				SubscriberParticipantPage subscriberPage = (SubscriberParticipantPage)page;
-				ISelection selection = subscriberPage.getViewerAdvisor().getSelection(new Object[] { resource });
+				ISelection selection = subscriberPage.getViewerAdvisor().getModelManager().getSelection(new Object[] { resource });
 				if (!selection.isEmpty() && selection instanceof StructuredSelection) {
 					StructuredSelection ss = (StructuredSelection)selection;
 					Object o = ss.getFirstElement();

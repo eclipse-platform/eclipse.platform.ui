@@ -11,18 +11,15 @@
 package org.eclipse.team.internal.ccvs.ui.actions;
  
 import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.team.core.subscribers.FilteredSyncInfoCollector;
-import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticipant;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * This action shows the CVS workspace participant into a model dialog. For single file
@@ -33,32 +30,16 @@ import org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticip
 public class CompareWithRemoteAction extends WorkspaceAction {
 	
 	public void execute(IAction action) throws InvocationTargetException, InterruptedException {
-		final IResource[] resources = getSelectedResources();
-		
-		SyncInfoFilter contentComparison = new SyncInfoFilter() {
-			private SyncInfoFilter contentCompare = new SyncInfoFilter.ContentComparisonSyncInfoFilter();
-			public boolean select(SyncInfo info, IProgressMonitor monitor) {
-				// Want to select infos whose contents do not match
-				for (int i = 0; i < resources.length; i++) {
-					IResource resource = resources[i];
-					if (resource.getFullPath().isPrefixOf(info.getLocal().getFullPath())) {
-						return !contentCompare.select(info, monitor);
-					}
-				}
-				return false;
-			}
-		};
-		
+		final IResource[] resources = getSelectedResources();		
 		// Show the 3-way comparison in a model dialog
 		WorkspaceSynchronizeParticipant participant = CVSUIPlugin.getPlugin().getCvsWorkspaceSynchronizeParticipant();
-		SyncInfoTree syncInfoSet = new SyncInfoTree();
-		
-		FilteredSyncInfoCollector collector = new FilteredSyncInfoCollector(
-				participant.getSubscriberSyncInfoCollector().getSubscriberSyncInfoSet(), 
-				syncInfoSet, 
-				contentComparison);	
-		collector.start(new NullProgressMonitor());
-		participant.refreshInDialog(getShell(), resources, Policy.bind("Participant.comparing"), participant.getId(), syncInfoSet, null); //$NON-NLS-1$
+		ISynchronizePageConfiguration configuration = participant.createPageConfiguration();
+		configuration.setProperty(ISynchronizePageConfiguration.P_TOOLBAR_MENU, new String[] { 
+				ISynchronizePageConfiguration.NAVIGATE_GROUP, 
+				ISynchronizePageConfiguration.MODE_GROUP, 
+				ISynchronizePageConfiguration.LAYOUT_GROUP });
+		configuration.setWorkingSet(PlatformUI.getWorkbench().getWorkingSetManager().createWorkingSet("", resources));
+		participant.refreshInDialog(getShell(), resources, Policy.bind("Participant.comparing"), configuration, null); //$NON-NLS-1$
 	}
 	
 	/*

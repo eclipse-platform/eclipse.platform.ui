@@ -698,6 +698,14 @@
                menubarPath="SubscriberActionsGroup3"
                id="org.eclipse.team.ccvs.ui.ignore">
          </action>
+          <action
+               label="%RefreshDirtyStateAction.label"
+               helpContextId="org.eclipse.team.cvs.ui.workspace_subscriber_refresh_dirty_state_action_context"
+               tooltip="%RefreshDirtyStateAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.subscriber.RefreshDirtyStateAction"
+               menubarPath="SubscriberActionsGroup4"
+               id="org.eclipse.team.ccvs.ui.ignore">
+         </action>
       </viewerContribution>
       <viewerContribution
             targetID="org.eclipse.team.cvs.ui.cvsmerge-participant"

@@ -12,9 +12,7 @@ package org.eclipse.team.tests.ui.synchronize;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import junit.framework.Test;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -26,6 +24,9 @@ import org.eclipse.team.internal.ui.synchronize.*;
 import org.eclipse.team.tests.core.TeamTest;
 import org.eclipse.team.tests.ui.views.ContentProviderTestView;
 import org.eclipse.team.tests.ui.views.TestTreeViewer;
+import org.eclipse.team.ui.TeamUI;
+import org.eclipse.team.ui.synchronize.*;
+import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
 import org.eclipse.team.ui.synchronize.TreeViewerAdvisor;
 
 
@@ -52,16 +53,27 @@ public class TestDiffNodePresentationModel extends TeamTest {
 	 */
 	protected void setUp() throws Exception {
 		super.setUp();
-		this.set = new SyncInfoTree();
-		this.configuration = new TreeViewerAdvisor(set) {
-			protected ISynchronizeModelProvider getModelProvider() {
-				return TestDiffNodePresentationModel.this.getDiffNodeController(set);
-			}
-		};
+		TestParticipant p = (TestParticipant)getParticipant(TestParticipant.ID);
+		p.reset();
+		this.set = p.getSyncInfoSet();
 		view = ContentProviderTestView.findViewInActivePage(null);
 		configuration.initializeViewer(view.getViewer());
 	}
 	
+	/**
+	 * 
+	 */
+	private ISynchronizeParticipant getParticipant(String id) throws TeamException {
+		ISynchronizeParticipantReference[] refs = TeamUI.getSynchronizeManager().getSynchronizeParticipants();
+		for (int i = 0; i < refs.length; i++) {
+			ISynchronizeParticipantReference reference = refs[i];
+			if (reference.getId().equals(id)) {
+				return reference.getParticipant();
+			}
+		}
+		return null;
+	}
+
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#tearDown()
 	 */

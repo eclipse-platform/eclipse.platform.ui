@@ -10,21 +10,20 @@
  *******************************************************************************/
 package org.eclipse.team.ui.synchronize;
 
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
+import java.util.*;
+import org.eclipse.compare.internal.INavigatable;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.synchronize.SyncInfoTree;
-import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.internal.ui.Policy;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.*;
-import org.eclipse.team.internal.ui.synchronize.CompressedFoldersModelProvider;
-import org.eclipse.team.internal.ui.synchronize.HierarchicalModelProvider;
 import org.eclipse.team.internal.ui.synchronize.actions.ExpandAllAction;
-import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.team.internal.ui.synchronize.actions.NavigateAction;
+import org.eclipse.ui.*;
 import org.eclipse.ui.internal.dialogs.ContainerCheckedTreeViewer;
 
 /**
@@ -42,15 +41,65 @@ import org.eclipse.ui.internal.dialogs.ContainerCheckedTreeViewer;
  * <p>
  * @since 3.0
  */
-public class TreeViewerAdvisor extends StructuredViewerAdvisor implements IPropertyChangeListener {
+public class TreeViewerAdvisor extends StructuredViewerAdvisor {
 	
 	/**
+	 * Style bit that indicates that a checkbox viewer is desired.
+	 */
+	public static final int CHECKBOX = 1;
+	
+	private ExpandAllAction expandAllAction;
+	private Action collapseAll;
+	private NavigateAction gotoNext;
+	private NavigateAction gotoPrevious;	
+	
+	class NavigationActionGroup extends SynchronizePageActionGroup {
+		public void initialize(ISynchronizePageConfiguration configuration) {
+			super.initialize(configuration);
+			final StructuredViewer viewer = getViewer();
+			if (viewer instanceof AbstractTreeViewer) {
+				
+				expandAllAction = new ExpandAllAction((AbstractTreeViewer) viewer);
+				Utils.initAction(expandAllAction, "action.expandAll."); //$NON-NLS-1$
+				
+				collapseAll = new Action() {
+					public void run() {
+						if (viewer == null || viewer.getControl().isDisposed() || !(viewer instanceof AbstractTreeViewer)) return;
+						viewer.getControl().setRedraw(false);		
+						((AbstractTreeViewer)viewer).collapseToLevel(viewer.getInput(), TreeViewer.ALL_LEVELS);
+						viewer.getControl().setRedraw(true);
+					}
+				};
+				Utils.initAction(collapseAll, "action.collapseAll."); //$NON-NLS-1$
+				
+				INavigatable nav = new INavigatable() {
+					public boolean gotoDifference(boolean next) {
+						return TreeViewerAdvisor.this.navigate(next);
+					}
+				};
+				ISynchronizeParticipant participant = configuration.getParticipant();
+				ISynchronizePageSite site = configuration.getSite();
+				gotoNext = new NavigateAction(site, participant.getName(), nav, true /*next*/);		
+				gotoPrevious = new NavigateAction(site, participant.getName(), nav, false /*previous*/);
+			}
+		}
+		public void fillContextMenu(IMenuManager manager) {
+			appendToGroup(manager, ISynchronizePageConfiguration.NAVIGATE_GROUP, expandAllAction);
+		}
+		public void fillActionBars(IActionBars actionBars) {
+			IToolBarManager manager = actionBars.getToolBarManager();
+			appendToGroup(manager, ISynchronizePageConfiguration.NAVIGATE_GROUP, gotoNext);
+			appendToGroup(manager, ISynchronizePageConfiguration.NAVIGATE_GROUP, gotoPrevious);
+			appendToGroup(manager, ISynchronizePageConfiguration.NAVIGATE_GROUP, collapseAll);
+		}
+	}
+	
+ 	/**
 	 * Interface used to implement navigation for tree viewers. This interface is used by
 	 * {@link TreeViewerAdvisor#navigate(TreeViewer, boolean, boolean, boolean) to open 
 	 * selections and navigate.
 	 */
 	public interface ITreeViewerAccessor {
-
 		public void createChildren(TreeItem item);
 		public void openSelection();
 	}
@@ -73,6 +122,77 @@ public class TreeViewerAdvisor extends StructuredViewerAdvisor implements IPrope
 		}
 	}
 	
+	public static class CheckboxSelectionProvider implements ISelectionProvider {
+
+		ContainerCheckedTreeViewer viewer;
+		ISynchronizePageConfiguration configuration;
+		Map listeners = new HashMap();
+		
+		/**
+		 * 
+		 */
+		public CheckboxSelectionProvider(ContainerCheckedTreeViewer viewer, ISynchronizePageConfiguration configuration) {
+			this.viewer = viewer;
+			this.configuration = configuration;
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ISelectionProvider#addSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
+		 */
+		public void addSelectionChangedListener(final ISelectionChangedListener listener) {
+			ICheckStateListener checkListener = new ICheckStateListener() {
+				public void checkStateChanged(CheckStateChangedEvent event) {
+					SelectionChangedEvent se = new SelectionChangedEvent(CheckboxSelectionProvider.this, getSelection());
+					listener.selectionChanged(se);
+				}
+			};
+			viewer.addCheckStateListener(checkListener);
+			listeners.put(listener, checkListener);
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ISelectionProvider#getSelection()
+		 */
+		public ISelection getSelection() {
+			if (viewer == null) {
+				return StructuredSelection.EMPTY;
+			}
+			IResource[] resources = Utils.getResources(viewer.getCheckedElements());
+			ArrayList result = new ArrayList();
+			for (int i = 0; i < resources.length; i++) {
+				IResource resource = resources[i];
+				if (configuration.getSyncInfoSet().getSyncInfo(resource) != null) {
+					result.add(resource);
+				}
+			}
+			return new StructuredSelection((IResource[]) result.toArray(new IResource[result.size()]));
+
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ISelectionProvider#removeSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
+		 */
+		public void removeSelectionChangedListener(ISelectionChangedListener listener) {
+			ICheckStateListener checkListener = (ICheckStateListener)listeners.get(listener);
+			if (checkListener != null) {
+				viewer.removeCheckStateListener(checkListener);
+			}
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ISelectionProvider#setSelection(org.eclipse.jface.viewers.ISelection)
+		 */
+		public void setSelection(ISelection selection) {
+			if (selection instanceof IStructuredSelection) {
+				IStructuredSelection ss = (IStructuredSelection)selection;
+				for (Iterator iter = ss.iterator(); iter.hasNext();) {
+					Object element = (Object) iter.next();
+					// TODO:
+				}
+			}
+		}
+	}
+	
 	/**
 	 * A navigable tree viewer that will work with the <code>navigate</code> method of
 	 * this advisor.
@@ -91,7 +211,18 @@ public class TreeViewerAdvisor extends StructuredViewerAdvisor implements IPrope
 		}
 	}
 	
-	private ExpandAllAction expandAllAction;
+	public static StructuredViewer createViewer(Composite parent, ISynchronizePageConfiguration configuration) {
+		int style = ((SynchronizePageConfiguration)configuration).getViewerStyle();
+		if ((style & CHECKBOX) > 0) {
+			NavigableCheckboxTreeViewer v = new TreeViewerAdvisor.NavigableCheckboxTreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+			configuration.getSite().setSelectionProvider(new CheckboxSelectionProvider(v, configuration));
+			return v;
+		} else {
+			NavigableTreeViewer v = new TreeViewerAdvisor.NavigableTreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+			configuration.getSite().setSelectionProvider(v);
+			return v;
+		}
+	}
 
 	/**
 	 * Create an advisor that will allow viewer contributions with the given <code>targetID</code>. This
@@ -103,30 +234,25 @@ public class TreeViewerAdvisor extends StructuredViewerAdvisor implements IPrope
 	 * case a site will be found using the default workbench page.
 	 * @param set the set of <code>SyncInfo</code> objects that are to be shown to the user.
 	 */
-	public TreeViewerAdvisor(String menuId, IWorkbenchPartSite site, SyncInfoTree set) {
-		super(menuId,site, set);
-		TeamUIPlugin.getPlugin().getPreferenceStore().addPropertyChangeListener(this);
+	public TreeViewerAdvisor(Composite parent, ISynchronizePageConfiguration configuration) {
+		super(configuration);
+		
+		configuration.addActionContribution(new NavigationActionGroup());
+		
+		StructuredViewer viewer = TreeViewerAdvisor.createViewer(parent, configuration);
+		GridData data = new GridData(GridData.FILL_BOTH);
+		viewer.getControl().setLayoutData(data);
+		initializeViewer(viewer);		
 	}
 	
 	/**
-	 * Create a tree viewer advisor that will provide a presentation model based on the given 
-	 * sync info set. Note that it's important to call {@link #dispose()} when finished with 
-	 * an advisor.
-	 * 
-	 * @param set the set of <code>SyncInfo</code> objects that are to be shown to the user.
+	 * Create the model manager to be used by this advisor
+	 * @param configuration
 	 */
-	public TreeViewerAdvisor(SyncInfoTree set) {
-		this(null, null, set);
+	protected SynchronizeModelManager createModelManager(ISynchronizePageConfiguration configuration) {
+		return new HierarchicalModelManager(this, configuration);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.synchronize.viewers.StructuredViewerAdvisor#dispose()
-	 */
-	public void dispose() {
-		TeamUIPlugin.getPlugin().getPreferenceStore().removePropertyChangeListener(this);
-		super.dispose();
-	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.viewers.StructuredViewerAdvisor#navigate(boolean)
 	 */
@@ -135,51 +261,20 @@ public class TreeViewerAdvisor extends StructuredViewerAdvisor implements IPrope
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
-	 */
-	public void propertyChange(PropertyChangeEvent event) {
-		if (getViewer() != null && event.getProperty().equals(IPreferenceIds.SYNCVIEW_COMPRESS_FOLDERS)) {
-			try {
-				prepareInput(null);
-				setInput(getViewer());
-			} catch (TeamException e) {
-				TeamUIPlugin.log(e);
-			}
-		}
-	}
-	
-	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.viewers.StructuredViewerAdvisor#initializeViewer(org.eclipse.jface.viewers.StructuredViewer)
 	 */
 	public boolean validateViewer(StructuredViewer viewer) {
 		return viewer instanceof AbstractTreeViewer;
 	}
-		
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.synchronize.viewers.StructuredViewerAdvisor#fillContextMenu(org.eclipse.jface.viewers.StructuredViewer, org.eclipse.jface.action.IMenuManager)
-	 */
-	protected void fillContextMenu(StructuredViewer viewer, IMenuManager manager) {
-		manager.add(expandAllAction);
-		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.synchronize.viewers.StructuredViewerAdvisor#getDiffNodeController()
-	 */
-	protected ISynchronizeModelProvider getModelProvider() {
-		if(getShowCompressedFolders()) {
-			return new CompressedFoldersModelProvider((SyncInfoTree)getSyncInfoSet());
-		}
-		return new HierarchicalModelProvider((SyncInfoTree)getSyncInfoSet());
-	}
-		
+	
 	/**
 	 * Handles a double-click event from the viewer. Expands or collapses a folder when double-clicked.
 	 * 
 	 * @param viewer the viewer
 	 * @param event the double-click event
 	 */
-	protected void handleDoubleClick(StructuredViewer viewer, DoubleClickEvent event) {
+	protected boolean handleDoubleClick(StructuredViewer viewer, DoubleClickEvent event) {
+		if (super.handleDoubleClick(viewer, event)) return true;
 		IStructuredSelection selection = (IStructuredSelection) event.getSelection();
 		Object element = selection.getFirstElement();
 		AbstractTreeViewer treeViewer = (AbstractTreeViewer) getViewer();
@@ -190,36 +285,46 @@ public class TreeViewerAdvisor extends StructuredViewerAdvisor implements IPrope
 				TreeViewerAdvisor.navigate((TreeViewer)getViewer(), true /* next */, false /* no-open */, true /* only-expand */);
 			}
 		}
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.synchronize.viewers.StructuredViewerAdvisor#initializeActions(org.eclipse.jface.viewers.StructuredViewer)
-	 */
-	protected void initializeActions(StructuredViewer viewer) {
-		super.initializeActions(viewer);
-		expandAllAction = new ExpandAllAction((AbstractTreeViewer) viewer);
-		Utils.initAction(expandAllAction, "action.expandAll."); //$NON-NLS-1$
+		return true;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.viewers.StructuredViewerAdvisor#initializeListeners(org.eclipse.jface.viewers.StructuredViewer)
 	 */
-	protected void initializeListeners(StructuredViewer viewer) {
+	protected void initializeListeners(final StructuredViewer viewer) {
 		super.initializeListeners(viewer);
-		viewer.addDoubleClickListener(new IDoubleClickListener() {
-			public void doubleClick(DoubleClickEvent event) {
-				handleDoubleClick(getViewer(), event);
+		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				updateStatusLine((IStructuredSelection) event.getSelection());
 			}
 		});
 	}
 	
-	/**
-	 * Return the state of the compressed folder setting.
-	 * 
-	 * @return the state of the compressed folder setting.
-	 */
-	private boolean getShowCompressedFolders() {
-		return TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(IPreferenceIds.SYNCVIEW_COMPRESS_FOLDERS);
+	private void updateStatusLine(IStructuredSelection selection) {
+		IWorkbenchSite ws = getConfiguration().getSite().getWorkbenchSite();
+		if (ws != null && ws instanceof IViewSite) {
+			String msg = getStatusLineMessage(selection);
+			((IViewSite)ws).getActionBars().getStatusLineManager().setMessage(msg);
+		}
+	}
+	
+	private String getStatusLineMessage(IStructuredSelection selection) {
+		if (selection.size() == 1) {
+			Object first = selection.getFirstElement();
+			if (first instanceof SyncInfoModelElement) {
+				SyncInfoModelElement node = (SyncInfoModelElement) first;
+				IResource resource = node.getResource();
+				if (resource == null) {
+					return node.getName();
+				} else {
+					return resource.getFullPath().makeRelative().toString();
+				}
+			}
+		}
+		if (selection.size() > 1) {
+			return selection.size() + Policy.bind("SynchronizeView.13"); //$NON-NLS-1$
+		}
+		return ""; //$NON-NLS-1$
 	}
 	
 	private static TreeItem findNextPrev(TreeViewer viewer, TreeItem item, boolean next) {

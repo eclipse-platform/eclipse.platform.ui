@@ -23,10 +23,20 @@ public class ActionDelegateWrapper extends Action {
 	
 	private IActionDelegate delegate;
 
-	public ActionDelegateWrapper(IActionDelegate delegate, IViewPart part) {
+	public ActionDelegateWrapper(IActionDelegate delegate, IWorkbenchPart part) {
 		this.delegate = delegate;
-		if(part != null && delegate instanceof IViewActionDelegate) {
-			((IViewActionDelegate)delegate).init(part);
+		if(part != null) {
+			if (delegate instanceof IObjectActionDelegate) {
+				((IObjectActionDelegate)delegate).setActivePart(this, part);
+			}
+			if (part instanceof IViewPart 
+					&& delegate instanceof IViewActionDelegate) {
+				((IViewActionDelegate)delegate).init((IViewPart)part);
+			}
+			if (part instanceof IEditorPart 
+					&& delegate instanceof IViewActionDelegate) {
+				((IEditorActionDelegate)delegate).setActiveEditor(this, (IEditorPart)part);
+			}
 		}
 		// Assume there is no selection untiul told otherwise
 		setSelection(StructuredSelection.EMPTY);

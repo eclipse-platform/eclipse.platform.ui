@@ -13,8 +13,12 @@ package org.eclipse.team.ui.synchronize;
 import org.eclipse.team.core.TeamException;
 
 /**
- * A reference is a light weight handle used by the {@link ISynchronizeManager} to manage registered
- * participants. 
+ * A reference is a light weight handle used by the {@link ISynchronizeManager} 
+ * to manage registered participants. It is used to reference information
+ * about a particular participant instance without requiring the particpant 
+ * to be instantiated.
+ * <p>
+ * Clients are not intended to implement this interface.
  * 
  * @see ISynchronizeManager
  * @since 3.0

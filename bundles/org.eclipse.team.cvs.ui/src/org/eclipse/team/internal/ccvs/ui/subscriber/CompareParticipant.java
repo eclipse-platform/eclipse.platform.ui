@@ -12,21 +12,15 @@ package org.eclipse.team.internal.ccvs.ui.subscriber;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoFilter;
 import org.eclipse.team.internal.ccvs.core.CVSCompareSubscriber;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
-import org.eclipse.team.internal.ui.synchronize.actions.RemoveSynchronizeParticipantAction;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.*;
-import org.eclipse.team.ui.synchronize.subscribers.SubscriberParticipant;
-import org.eclipse.ui.IActionBars;
 
-public class CompareParticipant extends SubscriberParticipant {
+public class CompareParticipant extends CVSParticipant {
 	
 	private SyncInfoFilter contentComparison = new SyncInfoFilter() {
 		private SyncInfoFilter contentCompare = new SyncInfoFilter.ContentComparisonSyncInfoFilter();
@@ -36,33 +30,7 @@ public class CompareParticipant extends SubscriberParticipant {
 		}
 	};
 	
-	private class CompareParticipantAdvisor extends CVSSynchronizeViewerAdvisor {
-		private RemoveSynchronizeParticipantAction removeAction;
-		
-		public CompareParticipantAdvisor(ISynchronizeView view, SubscriberParticipant participant) {
-			super(view, participant);
-		}
-		
-		protected void initializeActions(StructuredViewer treeViewer) {
-			super.initializeActions(treeViewer);
-			removeAction = new RemoveSynchronizeParticipantAction(getParticipant());
-		}
-		
-		public void setActionBars(IActionBars actionBars) {
-			super.setActionBars(actionBars);
-			if(actionBars != null) {
-				IToolBarManager toolbar = actionBars.getToolBarManager();
-				if(toolbar != null) {
-					toolbar.add(new Separator());
-					toolbar.add(removeAction);
-				}
-			}		
-		}
-	}
-	
 	public CompareParticipant(CVSCompareSubscriber subscriber) {
-		super();
-		setMode(BOTH_MODE);
 		setSubscriber(subscriber);
 	}
 		
@@ -71,6 +39,7 @@ public class CompareParticipant extends SubscriberParticipant {
 	 */
 	protected void setSubscriber(Subscriber subscriber) {
 		super.setSubscriber(subscriber);
+		setSyncInfoFilter(contentComparison);
 		try {
 			ISynchronizeParticipantDescriptor descriptor = TeamUI.getSynchronizeManager().getParticipantDescriptor(CVSCompareSubscriber.ID);
 			setInitializationData(descriptor);
@@ -89,18 +58,12 @@ public class CompareParticipant extends SubscriberParticipant {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipant#updateMode(int)
-	 */
-	protected void updateMode(int mode) {
-		// Don't allow modes to be used with this participant
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipant#preCollectingChanges()
 	 */
 	protected void preCollectingChanges() {
 		super.preCollectingChanges();
-		getSubscriberSyncInfoCollector().setFilter(contentComparison);
+		// JEAN-MICHEL: how to handle filter configurability?
+		//getSubscriberSyncInfoCollector().setFilter(contentComparison);
 	}
 	
 	/* (non-Javadoc)
@@ -109,11 +72,12 @@ public class CompareParticipant extends SubscriberParticipant {
 	public boolean isPersistent() {
 		return false;
 	}
-	
+
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipant#createSynchronizeViewerAdvisor(org.eclipse.team.ui.synchronize.ISynchronizeView)
+	 * @see org.eclipse.team.ui.synchronize.subscribers.SubscriberParticipant#initializeConfiguration(org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration)
 	 */
-	protected StructuredViewerAdvisor createSynchronizeViewerAdvisor(ISynchronizeView view) {
-		return new CompareParticipantAdvisor(view, this);
+	protected void initializeConfiguration(ISynchronizePageConfiguration configuration) {
+		super.initializeConfiguration(configuration);
+		configuration.addMenuGroup(ISynchronizePageConfiguration.P_TOOLBAR_MENU, ISynchronizePageConfiguration.REMOVE_PARTICPANT_GROUP);
 	}
 }

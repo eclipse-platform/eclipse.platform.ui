@@ -14,8 +14,7 @@ import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.wizard.IWizard;
-import org.eclipse.ui.IMemento;
-import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.*;
 import org.eclipse.ui.part.IPageBookViewPage;
 
 /**
@@ -42,10 +41,12 @@ import org.eclipse.ui.part.IPageBookViewPage;
  * A participant must create a page that will be displayed in the ISynchronizeView page 
  * book view. 
  * </p><p>
- * Clients may implement this interface.
+ * Clients are not intended to implement this interface. Instead, they 
+ * should sublcass {@link AbstractSynchronizeParticpant}.
  * </p>
  * @see ISynchronizeView
  * @see ISynchronizeManager
+ * @see AbstractSynchronizeParticpant
  * @since 3.0
  */
 public interface ISynchronizeParticipant extends IExecutableExtension {
@@ -86,6 +87,8 @@ public interface ISynchronizeParticipant extends IExecutableExtension {
 	 */
 	public ImageDescriptor getImageDescriptor();
 	
+	public ISynchronizePageConfiguration createPageConfiguration();
+	
 	/**
 	 * Creates and returns a new page for this synchronize participant. The
 	 * page is displayed for this synchronize participant in the given
@@ -95,7 +98,7 @@ public interface ISynchronizeParticipant extends IExecutableExtension {
 	 * @return a page book view page representation of this synchronize
 	 * participant
 	 */
-	public IPageBookViewPage createPage(ISynchronizeView view);
+	public IPageBookViewPage createPage(ISynchronizePageConfiguration configuration);
 	
 	/**
 	 * Creates and returns a wizard page used to globally synchronize this participant. Participants

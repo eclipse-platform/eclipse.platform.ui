@@ -20,6 +20,7 @@ import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.TagSelectionDialog;
 import org.eclipse.team.internal.ccvs.ui.subscriber.CompareParticipant;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 public class CompareWithTagAction extends WorkspaceAction {
 
@@ -32,12 +33,19 @@ public class CompareWithTagAction extends WorkspaceAction {
 		// Run the comparison
 		CVSCompareSubscriber s = new CVSCompareSubscriber(resources, tag);
 		CompareParticipant participant = new CompareParticipant(s);
+		
+		ISynchronizePageConfiguration configuration = participant.createPageConfiguration();
+		configuration.setProperty(ISynchronizePageConfiguration.P_TOOLBAR_MENU, new String[] { 
+				ISynchronizePageConfiguration.NAVIGATE_GROUP, 
+				ISynchronizePageConfiguration.MODE_GROUP, 
+				ISynchronizePageConfiguration.LAYOUT_GROUP });
+		configuration.setProperty(ISynchronizePageConfiguration.P_OBJECT_CONTRIBUTION_ID, CVSCompareSubscriber.ID_MODAL);
+			
 		participant.refreshInDialog(
 						getShell(),
 						resources,
 						Policy.bind("Participant.comparing"),
-						CVSCompareSubscriber.ID_MODAL,  
-						participant.getSubscriberSyncInfoCollector().getSyncInfoTree(), 
+						configuration,
 						null);
 	}
 	

@@ -10,24 +10,17 @@
  *******************************************************************************/
 package org.eclipse.team.ui.synchronize.subscribers;
 
-import java.lang.reflect.InvocationTargetException;
-import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.subscribers.FilteredSyncInfoCollector;
 import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.dialogs.DetailsDialog;
-import org.eclipse.team.ui.synchronize.SynchronizeCompareInput;
-import org.eclipse.team.ui.synchronize.TreeViewerAdvisor;
 
 /**
  * A dialog that is displayed at the end of a synchronize. The dialog shows the result of
@@ -39,7 +32,6 @@ import org.eclipse.team.ui.synchronize.TreeViewerAdvisor;
 public class RefreshCompleteDialog extends DetailsDialog {
 	private SyncInfoFilter filter;
 	private FilteredSyncInfoCollector collector;
-	private SynchronizeCompareInput compareEditorInput;
 	private IRefreshEvent event;
 	private SubscriberParticipant participant;
 	private Button dontShowAgainButton;
@@ -71,7 +63,7 @@ public class RefreshCompleteDialog extends DetailsDialog {
 			}
 		};
 		this.collector = new FilteredSyncInfoCollector(
-				participant.getSubscriberSyncInfoCollector().getSubscriberSyncInfoSet(), 
+				participant.getSubscriberSyncInfoCollector().getSyncInfoSet(), 
 				syncInfoSet, 
 				filter);		
 		IDialogSettings workbenchSettings = TeamUIPlugin.getPlugin().getDialogSettings();
@@ -97,52 +89,7 @@ public class RefreshCompleteDialog extends DetailsDialog {
 	 * @see org.eclipse.team.internal.ui.dialogs.DetailsDialog#createDropDownDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Composite createDropDownDialogArea(Composite parent) {
-		try {
-			CompareConfiguration compareConfig = new CompareConfiguration();
-			TreeViewerAdvisor viewerAdvisor = new TreeViewerAdvisor(syncInfoSet);
-			compareEditorInput = new SynchronizeCompareInput(compareConfig, viewerAdvisor) {
-				public String getTitle() {
-					return Policy.bind("RefreshCompleteDialog.9"); //$NON-NLS-1$
-				}
-			};
-			// Preparing the input should be fast since we haven't started the collector
-			compareEditorInput.run(new NullProgressMonitor());
-			// Starting the collector will populate the dialog in the background
-			initialize();
-		} catch (InterruptedException e) {
-			Utils.handle(e);
-		} catch (InvocationTargetException e) {
-			Utils.handle(e);
-		}
-		Composite result = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		result.setLayout(layout);
-		GridData data = new GridData(GridData.FILL_BOTH);
-		data.grabExcessHorizontalSpace = true;
-		data.grabExcessVerticalSpace = true;
-		data.heightHint = 350;
-		//data.widthHint = 700;
-		result.setLayoutData(data);
-		Control c = compareEditorInput.createContents(result);
-		data = new GridData(GridData.FILL_BOTH);
-		c.setLayoutData(data);
-		
-		Button onlyNewChangesButton = new Button(result, SWT.CHECK);
-		onlyNewChangesButton.setText(Policy.bind("RefreshCompleteDialog.21")); //$NON-NLS-1$
-		onlyNewChangesButton.setSelection(true);
-		onlyNewChangesButton.addSelectionListener(new SelectionListener() {
-			public void widgetSelected(SelectionEvent e) {
-				if(((Button)e.getSource()).getSelection()) {
-					collector.setFilter(filter, new NullProgressMonitor());
-				} else {
-					collector.setFilter(new FastSyncInfoFilter(), new NullProgressMonitor());
-				}
-			}
-			public void widgetDefaultSelected(SelectionEvent e) {
-			}
-		});
-		
-		return result;
+		return null;
 	}
 
 	/* (non-Javadoc)
@@ -162,7 +109,7 @@ public class RefreshCompleteDialog extends DetailsDialog {
 	}
 
 	protected SyncInfoSet getSubscriberSyncInfoSet() {
-		return participant.getSubscriberSyncInfoCollector().getSubscriberSyncInfoSet();
+		return participant.getSubscriberSyncInfoCollector().getSyncInfoSet();
 	}
 	
 	/* (non-Javadoc)

@@ -213,7 +213,7 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 		SyncInfo[] changes = event.getChanges();
 		IResource[] resources = event.getResources();
 		if (collector != null) {
-			SyncInfoSet set = collector.getSubscriberSyncInfoSet();
+			SyncInfoSet set = collector.getSyncInfoSet();
 			if (refreshedResourcesContainChanges(event)) {
 				code = IRefreshEvent.STATUS_CHANGES;
 				String outgoing = Long.toString(set.countFor(SyncInfo.OUTGOING, SyncInfo.DIRECTION_MASK));
@@ -239,7 +239,7 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 	
 	private boolean refreshedResourcesContainChanges(IRefreshEvent event) {
 		if (collector != null) {
-			SyncInfoTree set = collector.getSubscriberSyncInfoSet();
+			SyncInfoTree set = collector.getSyncInfoSet();
 			IResource[] resources = event.getResources();
 			for (int i = 0; i < resources.length; i++) {
 				IResource resource = resources[i];

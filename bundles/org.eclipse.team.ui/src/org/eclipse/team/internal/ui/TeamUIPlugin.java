@@ -15,7 +15,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
-
 import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -31,7 +30,6 @@ import org.eclipse.team.internal.ui.synchronize.TeamSynchronizingPerspective;
 import org.eclipse.team.internal.ui.synchronize.actions.GlobalRefreshAction;
 import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.team.ui.TeamUI;
-import org.eclipse.team.ui.synchronize.subscribers.SubscriberParticipant;
 import org.eclipse.ui.*;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
@@ -130,7 +128,6 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 		IPreferenceStore store = getPreferenceStore();
 		store.setDefault(IPreferenceIds.SYNCVIEW_VIEW_SYNCINFO_IN_LABEL, false);
 		store.setDefault(IPreferenceIds.SYNCVIEW_COMPRESS_FOLDERS, true);
-		store.setDefault(IPreferenceIds.SYNCVIEW_SELECTED_MODE, SubscriberParticipant.BOTH_MODE);
 		store.setDefault(IPreferenceIds.SYNCVIEW_DEFAULT_PERSPECTIVE, TeamSynchronizingPerspective.ID);
 		store.setDefault(IPreferenceIds.SYNCVIEW_VIEW_PROMPT_WHEN_NO_CHANGES, true);
 		store.setDefault(IPreferenceIds.SYNCVIEW_VIEW_PROMPT_WITH_CHANGES, true);
@@ -339,7 +336,8 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 		
 		// Live Sync View icons
 		createImageDescriptor(plugin, ISharedImages.IMG_COMPRESSED_FOLDER, baseURL);
-		createImageDescriptor(plugin, ISharedImages.IMG_WARNING, baseURL);		
+		createImageDescriptor(plugin, ISharedImages.IMG_WARNING, baseURL);
+		createImageDescriptor(plugin, ISharedImages.IMG_HIERARCHICAL, baseURL);		
 	}
 
 	/**

@@ -17,6 +17,7 @@ import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.internal.ccvs.core.*;
@@ -24,7 +25,10 @@ import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.synchronize.*;
+import org.eclipse.team.ui.ISharedImages;
+import org.eclipse.team.ui.TeamImages;
 import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
 import org.eclipse.ui.progress.UIJob;
 
@@ -118,10 +122,31 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 		}
 	};
 	
+	public static class ChangeLogModelProviderDescriptor implements ISynchronizeModelProviderDescriptor {
+		public static final String ID = TeamUIPlugin.ID + ".modelprovider_hierarchical";
+		public String getId() {
+			return ID;
+		}		
+		public String getName() {
+			return "Change Log";
+		}		
+		public ImageDescriptor getImageDescriptor() {
+			return TeamImages.getImageDescriptor(ISharedImages.IMG_IGNORE_WHITESPACE);
+		}
+	};
+	private static final ChangeLogModelProviderDescriptor descriptor = new ChangeLogModelProviderDescriptor();
+	
 	public ChangeLogModelProvider(SyncInfoSet set) {
 		super(set);
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ui.synchronize.ISynchronizeModelProvider#getDescriptor()
+	 */
+	public ISynchronizeModelProviderDescriptor getDescriptor() {
+		return descriptor;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.viewers.HierarchicalModelProvider#buildModelObjects(org.eclipse.compare.structuremergeviewer.DiffNode)

@@ -10,29 +10,49 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.ResourceBundle;
+import java.util.Set;
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.structuremergeviewer.IDiffContainer;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.ui.TeamImages;
 import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
-import org.eclipse.team.ui.synchronize.subscribers.SubscriberParticipant;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.ui.*;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.IWorkbenchSite;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 
 public class Utils {
@@ -378,13 +398,13 @@ public class Utils {
 
 	public static String modeToString(int mode) {
 		switch (mode) {
-			case SubscriberParticipant.INCOMING_MODE :
+			case ISynchronizePageConfiguration.INCOMING_MODE :
 				return Policy.bind("Utils.22"); //$NON-NLS-1$
-			case SubscriberParticipant.OUTGOING_MODE :
+			case ISynchronizePageConfiguration.OUTGOING_MODE :
 				return Policy.bind("Utils.23"); //$NON-NLS-1$
-			case SubscriberParticipant.BOTH_MODE :
+			case ISynchronizePageConfiguration.BOTH_MODE :
 				return Policy.bind("Utils.24"); //$NON-NLS-1$
-			case SubscriberParticipant.CONFLICTING_MODE :
+			case ISynchronizePageConfiguration.CONFLICTING_MODE :
 				return Policy.bind("Utils.25"); //$NON-NLS-1$
 		}
 		return Policy.bind("Utils.26"); //$NON-NLS-1$
@@ -417,6 +437,7 @@ public class Utils {
 				resource = ((ISynchronizeModelElement) element).getResource();
 			} else {
 				resource = (IResource)getAdapter(element, IResource.class);
+				if(resource != null && resource.getType() == IResource.ROOT) continue;
 			}
 			if (resource != null) {
 				resources.add(resource);
@@ -506,5 +527,9 @@ public class Utils {
 		if (o1 == null && o2 == null) return true;
 		if (o1 == null || o2 == null) return false;
 		return o1.equals(o2);
+	}
+
+	public static String getKey(String id, String secondaryId) {
+	    return secondaryId == null ? id : id + '/' + secondaryId;
 	}
 }

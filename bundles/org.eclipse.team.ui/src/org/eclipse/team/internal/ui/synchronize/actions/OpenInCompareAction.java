@@ -19,9 +19,15 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
-import org.eclipse.team.ui.synchronize.ISynchronizeView;
+import org.eclipse.team.ui.synchronize.ISynchronizePageSite;
 import org.eclipse.team.ui.synchronize.SyncInfoCompareInput;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IReusableEditor;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.IWorkbenchSite;
 
 /**
  * Action to open a compare editor from a SyncInfo object.
@@ -31,32 +37,34 @@ import org.eclipse.ui.*;
  */
 public class OpenInCompareAction extends Action {
 	
-	private ISynchronizeView view;
 	private String name;
+	private ISynchronizePageSite site;
 	
-	public OpenInCompareAction(ISynchronizeView view, String name) {
+	public OpenInCompareAction(ISynchronizePageSite site, String name) {
 		this.name = name;
-		this.view = view;
+		this.site = site;
 		Utils.initAction(this, "action.openInCompareEditor."); //$NON-NLS-1$
 	}
 
 	public void run() {
-		ISelection selection = view.getSite().getPage().getSelection();
+		ISelection selection = site.getSelectionProvider().getSelection();
 		if(selection instanceof IStructuredSelection) {
 		Object obj = ((IStructuredSelection) selection).getFirstElement();
 			if (obj instanceof SyncInfoModelElement) {
 				SyncInfo info = ((SyncInfoModelElement) obj).getSyncInfo();
 				if (info != null) {
-					openCompareEditor(view, name, info, true);
+					openCompareEditor(site, name, info, true);
 				}
 			}
 		}
 	}
 	
-	public static SyncInfoCompareInput openCompareEditor(IWorkbenchPart page, String name, SyncInfo info, boolean keepFocus) {		
+	public static SyncInfoCompareInput openCompareEditor(ISynchronizePageSite site, String name, SyncInfo info, boolean keepFocus) {		
 		SyncInfoCompareInput input = getCompareInput(name, info);
 		if(input != null) {
-			IWorkbenchPage wpage = page.getSite().getPage();
+			IWorkbenchSite ws = site.getWorkbenchSite();
+			if (ws == null) return null;
+			IWorkbenchPage wpage = ws.getPage();
 			IEditorPart editor = findReusableCompareEditor(wpage);			
 			
 			if(editor != null) {
@@ -73,11 +81,11 @@ public class OpenInCompareAction extends Action {
 				}
 			} else {
 				CompareUI.openCompareEditor(input);
-				editor = page.getSite().getPage().getActiveEditor();
+				editor = wpage.getActiveEditor();
 			}
 			
 			if(keepFocus) {
-				wpage.activate(page);
+				site.setFocus();
 			}
 			return input;
 		}			

@@ -11,7 +11,6 @@
 package org.eclipse.team.internal.ccvs.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -25,7 +24,7 @@ import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.CVSCompareRevisionsInput;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.ui.synchronize.SynchronizeDialog;
+import org.eclipse.team.ui.SaveablePartDialog;
 
 /**
  * Compare with revision will allow a user to browse the history of a file, compare with the
@@ -89,10 +88,14 @@ public class CompareWithRevisionAction extends WorkspaceAction {
 		// Show the compare viewer
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
-				CVSCompareRevisionsInput input = new CVSCompareRevisionsInput((IFile)getSelectedResources()[0], entries[0]);
+				CVSCompareRevisionsInput input = new CVSCompareRevisionsInput((IFile)getSelectedResources()[0], entries[0]) {
+					public String getTitle() {
+						return CompareWithRevisionAction.this.getActionTitle();
+					}
+				};
 				// running with a null progress monitor is fine because we have already pre-fetched the log entries above.
 				input.run(new NullProgressMonitor());
-				SynchronizeDialog cd = createCompareDialog(getShell(), input);
+				SaveablePartDialog cd = createCompareDialog(getShell(), input);
 				cd.setBlockOnOpen(true);
 				cd.open();
 			}
@@ -102,8 +105,15 @@ public class CompareWithRevisionAction extends WorkspaceAction {
 	/**
 	 * Return the compare dialog to use to show the compare input.
 	 */
-	protected SynchronizeDialog createCompareDialog(Shell shell, CVSCompareRevisionsInput input) {
-		return  new SynchronizeDialog(getShell(), Policy.bind("CompareWithRevisionAction.4"), input); //$NON-NLS-1$
+	protected SaveablePartDialog createCompareDialog(Shell shell, CVSCompareRevisionsInput input) {
+		return new SaveablePartDialog(shell, input); //$NON-NLS-1$
+	}
+	
+	/**
+	 * Return the text describing this action
+	 */
+	protected String getActionTitle() {
+		return Policy.bind("CompareWithRevisionAction.4");
 	}
 	
 	/* (non-Javadoc)

@@ -17,6 +17,7 @@ import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.registry.SynchronizeParticipantDescriptor;
+import org.eclipse.team.internal.ui.synchronize.SynchronizePageConfiguration;
 import org.eclipse.team.ui.TeamImages;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.ui.IMemento;
@@ -256,4 +257,22 @@ public abstract class AbstractSynchronizeParticipant implements ISynchronizePart
 	 */
 	public void saveState(IMemento memento) {
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#createPageConfiguration()
+	 */
+	public ISynchronizePageConfiguration createPageConfiguration() {
+		SynchronizePageConfiguration configuration = new SynchronizePageConfiguration(this);
+		initializeConfiguration(configuration);
+		return configuration;
+	}
+
+	/**
+	 * This method is invoked after a page configuration is created but before 
+	 * it is returned by the <code>createPageConfiguration</code> method.
+	 * Subclasses can implement this method to tailor the configuration
+	 * in ways appropriate to the participant.
+	 * @param configuration the newly create page configuration
+	 */
+	protected abstract void initializeConfiguration(ISynchronizePageConfiguration configuration);
 }

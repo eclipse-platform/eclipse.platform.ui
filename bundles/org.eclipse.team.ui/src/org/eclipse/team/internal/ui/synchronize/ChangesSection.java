@@ -24,9 +24,7 @@ import org.eclipse.team.core.ITeamStatus;
 import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.ui.ISharedImages;
-import org.eclipse.team.ui.synchronize.ISynchronizeModelChangeListener;
-import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
-import org.eclipse.team.ui.synchronize.subscribers.SubscriberParticipant;
+import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.forms.HyperlinkGroup;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
@@ -42,9 +40,8 @@ import org.eclipse.ui.part.PageBook;
  */
 public class ChangesSection extends Composite {
 	
-	private SubscriberParticipant participant;
-	private Composite parent;
-	private SubscriberParticipantPage page;
+	private ISynchronizeParticipant participant;
+	private SyncInfoSetSynchronizePage page;
 	private FormToolkit forms;
 			
 	/**
@@ -73,9 +70,10 @@ public class ChangesSection extends Composite {
 	private boolean showingError;
 
 	/**
-	 * Listen to sync set changes so that we can update message to user and totals.
+	 * Register an action contribution in order to receive model
+	 * change notification so that we can update message to user and totals.
 	 */
-	private ISynchronizeModelChangeListener changedListener = new ISynchronizeModelChangeListener() {
+	private SynchronizePageActionGroup changedListener = new SynchronizePageActionGroup() {
 		public void modelChanged(ISynchronizeModelElement root) {
 			calculateDescription();
 		}
@@ -113,6 +111,7 @@ public class ChangesSection extends Composite {
 			calculateDescription();
 		}
 	};
+	private ISynchronizePageConfiguration configuration;
 	
 	/**
 	 * Create a changes section on the following page.
@@ -120,11 +119,11 @@ public class ChangesSection extends Composite {
 	 * @param parent the parent control 
 	 * @param page the page showing this section
 	 */
-	public ChangesSection(Composite parent, SubscriberParticipantPage page) {
+	public ChangesSection(Composite parent, SyncInfoSetSynchronizePage page, ISynchronizePageConfiguration configuration) {
 		super(parent, SWT.NONE);
 		this.page = page;
-		this.participant = page.getParticipant();
-		this.parent = parent;
+		this.configuration = configuration;
+		this.participant = configuration.getParticipant();
 		
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
@@ -153,13 +152,13 @@ public class ChangesSection extends Composite {
 	public void setViewer(Viewer viewer) {
 		this.changesViewer = viewer;
 		calculateDescription();
-		page.getViewerAdvisor().addInputChangedListener(changedListener);
-		participant.getSubscriberSyncInfoCollector().getSubscriberSyncInfoSet().addSyncSetChangedListener(subscriberListener);
-		participant.getSubscriberSyncInfoCollector().getSyncInfoTree().addSyncSetChangedListener(outputSetListener);
+		configuration.addActionContribution(changedListener);
+		getParticpantSyncInfoSet().addSyncSetChangedListener(subscriberListener);
+		getSyncInfoTree().addSyncSetChangedListener(outputSetListener);
 	}
 	
 	private void calculateDescription() {
-		SyncInfoTree syncInfoTree = participant.getSubscriberSyncInfoCollector().getSyncInfoTree();
+		SyncInfoTree syncInfoTree = getSyncInfoTree();
 		if (syncInfoTree.getErrors().length > 0) {
 			if (!showingError) {
 				TeamUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
@@ -205,7 +204,7 @@ public class ChangesSection extends Composite {
 	}
 	
 	private boolean isThreeWay() {
-		return page.getParticipant().getSubscriber().getResourceComparator().isThreeWay();
+		return ISynchronizePageConfiguration.THREE_WAY.equals(configuration.getComparisonType());
 	}
 	
 	private Composite getEmptyChangesComposite(Composite parent) {
@@ -223,9 +222,9 @@ public class ChangesSection extends Composite {
 			return composite;
 		}
 		
-		SyncInfoSet workspace = participant.getSubscriberSyncInfoCollector().getSubscriberSyncInfoSet();
-		SyncInfoSet workingSet = participant.getSubscriberSyncInfoCollector().getWorkingSetSyncInfoSet();
-		SyncInfoSet filteredSet = participant.getSubscriberSyncInfoCollector().getSyncInfoTree();
+		SyncInfoSet workspace = getParticpantSyncInfoSet();
+		SyncInfoSet workingSet = getWorkingSetSyncInfoSet();
+		SyncInfoSet filteredSet = getSyncInfoTree();
 		
 		int changesInWorkspace = workspace.size();
 		int changesInWorkingSet = workingSet.size();
@@ -235,11 +234,10 @@ public class ChangesSection extends Composite {
 		long incomingChanges = workingSet.countFor(SyncInfo.INCOMING, SyncInfo.DIRECTION_MASK);		
 		
 		if(changesInFilter == 0 && changesInWorkingSet != 0) {
-			int mode = participant.getMode();
-			final int newMode = outgoingChanges != 0 ? SubscriberParticipant.OUTGOING_MODE : SubscriberParticipant.INCOMING_MODE;
+			final int newMode = outgoingChanges != 0 ? ISynchronizePageConfiguration.OUTGOING_MODE : ISynchronizePageConfiguration.INCOMING_MODE;
 			long numChanges = outgoingChanges != 0 ? outgoingChanges : incomingChanges;
 			StringBuffer text = new StringBuffer();
-			text.append(Policy.bind("ChangesSection.filterHides", Utils.modeToString(participant.getMode()))); //$NON-NLS-1$
+			text.append(Policy.bind("ChangesSection.filterHides", Utils.modeToString(configuration.getMode()))); //$NON-NLS-1$
 			if(numChanges > 1) {
 				text.append(Policy.bind("ChangesSection.filterHidesPlural", Long.toString(numChanges), Utils.modeToString(newMode))); //$NON-NLS-1$
 			} else {
@@ -252,7 +250,7 @@ public class ChangesSection extends Composite {
 			Hyperlink link = forms.createHyperlink(composite, Policy.bind("ChangesSection.filterChange", Utils.modeToString(newMode)), SWT.WRAP); //$NON-NLS-1$
 			link.addHyperlinkListener(new HyperlinkAdapter() {
 				public void linkActivated(HyperlinkEvent e) {
-					participant.setMode(newMode);
+					configuration.setMode(newMode);
 				}
 			});
 			forms.getHyperlinkGroup().add(link);
@@ -264,11 +262,11 @@ public class ChangesSection extends Composite {
 			Hyperlink link = forms.createHyperlink(composite, Policy.bind("ChangesSection.workingSetRemove"), SWT.WRAP); //$NON-NLS-1$
 			link.addHyperlinkListener(new HyperlinkAdapter() {
 				public void linkActivated(HyperlinkEvent e) {
-					participant.setWorkingSet(null);
+					configuration.setWorkingSet(null);
 				}
 			});
 			forms.getHyperlinkGroup().add(link);
-			createDescriptionLabel(composite,Policy.bind("ChangesSection.workingSetHiding", Utils.workingSetToString(participant.getWorkingSet(), 50)));	 //$NON-NLS-1$
+			createDescriptionLabel(composite,Policy.bind("ChangesSection.workingSetHiding", Utils.workingSetToString(configuration.getWorkingSet(), 50)));	 //$NON-NLS-1$
 		} else {
 			createDescriptionLabel(composite,Policy.bind("ChangesSection.noChanges", participant.getName()));	 //$NON-NLS-1$
 		}		
@@ -288,8 +286,8 @@ public class ChangesSection extends Composite {
 	
 	public void dispose() {
 		super.dispose();
-		page.getViewerAdvisor().removeInputChangedListener(changedListener);
-		participant.getSubscriberSyncInfoCollector().getSubscriberSyncInfoSet().removeSyncSetChangedListener(subscriberListener);
+		configuration.removeActionContribution(changedListener);
+		getParticpantSyncInfoSet().removeSyncSetChangedListener(subscriberListener);
 	}
 	
 	private Composite getErrorComposite(Composite parent) {
@@ -316,7 +314,7 @@ public class ChangesSection extends Composite {
 		link.setText(Policy.bind("ChangesSection.9")); //$NON-NLS-1$
 		link.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
-				participant.getSubscriberSyncInfoCollector().reset();
+				page.reset();
 			}
 		});
 		link.setBackground(getBackgroundColor());
@@ -328,7 +326,7 @@ public class ChangesSection extends Composite {
 	}
 	
 	/* private */ void showErrors() {
-		ITeamStatus[] status = participant.getSubscriberSyncInfoCollector().getSyncInfoTree().getErrors();
+		ITeamStatus[] status = getSyncInfoTree().getErrors();
 		String title = Policy.bind("ChangesSection.11"); //$NON-NLS-1$
 		if (status.length == 1) {
 			ErrorDialog.openError(getShell(), title, status[0].getMessage(), status[0]);
@@ -340,5 +338,17 @@ public class ChangesSection extends Composite {
 	
 	protected Color getBackgroundColor() {
 		return getShell().getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
+	}
+	
+	private SyncInfoTree getSyncInfoTree() {
+		return (SyncInfoTree)configuration.getProperty(ISynchronizePageConfiguration.P_SYNC_INFO_SET);
+	}
+	
+	private SyncInfoSet getWorkingSetSyncInfoSet() {
+		return (SyncInfoSet)configuration.getProperty(SynchronizePageConfiguration.P_WORKING_SET_SYNC_INFO_SET);
+	}
+	
+	private SyncInfoSet getParticpantSyncInfoSet() {
+		return (SyncInfoSet)configuration.getProperty(SynchronizePageConfiguration.P_PARTICIPANT_SYNC_INFO_SET);
 	}
 }

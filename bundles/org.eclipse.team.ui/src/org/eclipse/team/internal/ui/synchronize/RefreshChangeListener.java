@@ -25,7 +25,7 @@ public class RefreshChangeListener implements ISubscriberChangeListener {
 	public SyncInfo[] getChanges() {
 		collector.waitForCollector(new NullProgressMonitor());
 		List changedSyncInfos = new ArrayList();
-		SyncInfoSet set = collector.getSubscriberSyncInfoSet();
+		SyncInfoSet set = collector.getSyncInfoSet();
 		for (Iterator it = changes.iterator(); it.hasNext();) {
 			ISubscriberChangeEvent delta = (ISubscriberChangeEvent) it.next();
 			SyncInfo info = set.getSyncInfo(delta.getResource());

@@ -17,16 +17,18 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.subscribers.SubscriberSyncInfoCollector;
-import org.eclipse.team.core.synchronize.*;
-import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.core.synchronize.SyncInfoFilter;
+import org.eclipse.team.core.synchronize.SyncInfoTree;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.*;
 import org.eclipse.team.ui.TeamUI;
-import org.eclipse.team.ui.synchronize.*;
+import org.eclipse.team.ui.synchronize.AbstractSynchronizeParticipant;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.internal.progress.ProgressManager;
@@ -36,22 +38,28 @@ import org.eclipse.ui.progress.UIJob;
 /**
  * A synchronize participant that displays synchronization information for local
  * resources that are managed via a {@link Subscriber}.
+ * 
+ * Participant:
+ * 1. maintains a collection of all out-of-sync resources for a subscriber
+ * 2. synchronize schedule
+ * 3. APIs for creating specific: sync page, sync wizard, sync advisor (control ui pieces)
+ * 4. allows refreshing the participant synchronization state
+ * 
+ * Push Down:
+ * 1. working set
+ * 2. modes
+ * 3. working set/filtered sync sets
  *
  * @since 3.0
  */
 public abstract class SubscriberParticipant extends AbstractSynchronizeParticipant implements IPropertyChangeListener {
 	
-	private boolean DEBUG = false;
-	
+	/**
+	 * Collects and maintains set of all out-of-sync resources of the subscriber
+	 */
 	private SubscriberSyncInfoCollector collector;
 	
 	private SubscriberRefreshSchedule refreshSchedule;
-	
-	private int currentMode;
-	
-	private IWorkingSet workingSet;
-	
-	private ISynchronizeView view;
 	
 	/**
 	 * Key for settings in memento
@@ -64,53 +72,44 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	private static final String CTX_SUBSCRIBER_SCHEDULE_SETTINGS = TeamUIPlugin.ID + ".TEAMSUBSRCIBER_REFRESHSCHEDULE"; //$NON-NLS-1$
 	
 	/**
-	 * Property constant indicating the mode of a page has changed. 
-	 */
-	public static final String P_SYNCVIEWPAGE_WORKINGSET = TeamUIPlugin.ID  + ".P_SYNCVIEWPAGE_WORKINGSET";	 //$NON-NLS-1$
-	
-	/**
 	 * Property constant indicating the schedule of a page has changed. 
 	 */
 	public static final String P_SYNCVIEWPAGE_SCHEDULE = TeamUIPlugin.ID  + ".P_SYNCVIEWPAGE_SCHEDULE";	 //$NON-NLS-1$
-	
-	/**
-	 * Property constant indicating the mode of a page has changed. 
-	 */
-	public static final String P_SYNCVIEWPAGE_MODE = TeamUIPlugin.ID  + ".P_SYNCVIEWPAGE_MODE";	 //$NON-NLS-1$
-	
-	/**
-	 * Property constant indicating the selection has changed.
-	 */
-	public static final String P_SYNCVIEWPAGE_SELECTION = TeamUIPlugin.ID  + ".P_SYNCVIEWPAGE_SELECTION";	 //$NON-NLS-1$
-		
-	/**
-	 * Modes are direction filters for the view
-	 */
-	public final static int INCOMING_MODE = 0x1;
-	public final static int OUTGOING_MODE = 0x2;
-	public final static int BOTH_MODE = 0x4;
-	public final static int CONFLICTING_MODE = 0x8;
-	public final static int ALL_MODES = INCOMING_MODE | OUTGOING_MODE | CONFLICTING_MODE | BOTH_MODE;
-	
-	private final static int[] INCOMING_MODE_FILTER = new int[] {SyncInfo.CONFLICTING, SyncInfo.INCOMING};
-	private final static int[] OUTGOING_MODE_FILTER = new int[] {SyncInfo.CONFLICTING, SyncInfo.OUTGOING};
-	private final static int[] BOTH_MODE_FILTER = new int[] {SyncInfo.CONFLICTING, SyncInfo.INCOMING, SyncInfo.OUTGOING};
-	private final static int[] CONFLICTING_MODE_FILTER = new int[] {SyncInfo.CONFLICTING};
 	
 	public SubscriberParticipant() {
 		super();
 		refreshSchedule = new SubscriberRefreshSchedule(this);
 	}
 	
+	/**
+	 * Initialize the particpant sync info set in the configuration.
+	 * Subclasses may override but must invoke the inherited method.
+	 * @param configuration the page configuration
+	 * @see org.eclipse.team.ui.synchronize.AbstractSynchronizeParticipant#initializeConfiguration(org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration)
+	 */
+	protected void initializeConfiguration(ISynchronizePageConfiguration configuration) {
+		configuration.setProperty(SynchronizePageConfiguration.P_PARTICIPANT_SYNC_INFO_SET, collector.getSyncInfoSet());
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.sync.ISynchronizeViewPage#createPage(org.eclipse.team.ui.sync.ISynchronizeView)
 	 */
-	public final IPageBookViewPage createPage(ISynchronizeView view) {
-		return doCreatePage(view);
+	public final IPageBookViewPage createPage(ISynchronizePageConfiguration configuration) {
+		validateConfiguration(configuration);
+		return new SubscriberParticipantPage(configuration, getSubscriberSyncInfoCollector());
 	}
 	
-	protected SubscriberParticipantPage doCreatePage(ISynchronizeView view) {
-		return new SubscriberParticipantPage(this, view,  createSynchronizeViewerAdvisor(view));
+	/**
+	 * This method is invoked before the given configuration is used to
+	 * create the page (see <code>createPage(ISynchronizePageConfiguration)</code>).
+	 * The configuration would have been initialized by 
+	 * <code>initializeConfiguration(ISynchronizePageConfiguration)</code>
+	 * but may have also been tailored further. This method gives the particpant 
+	 * a chance to validate those changes before the page is created.
+	 * @param configuration the page configuration that is about to be used to create a page.
+	 */
+	protected void validateConfiguration(ISynchronizePageConfiguration configuration) {
+		// Do nothing by default
 	}
 	
 	/* (non-Javadoc)
@@ -120,19 +119,6 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 		return new SubscriberRefreshWizard(this);
 	}
 	
-	public void setMode(int mode) {
-		int oldMode = getMode();
-		if(oldMode == mode) return;
-		currentMode = mode;
-		TeamUIPlugin.getPlugin().getPreferenceStore().setValue(IPreferenceIds.SYNCVIEW_SELECTED_MODE, mode);
-		updateMode(mode);
-		firePropertyChange(this, P_SYNCVIEWPAGE_MODE, new Integer(oldMode), new Integer(mode));
-	}
-	
-	public int getMode() {
-		return currentMode;
-	}
-	
 	public void setRefreshSchedule(SubscriberRefreshSchedule schedule) {
 		this.refreshSchedule = schedule;
 		firePropertyChange(this, P_SYNCVIEWPAGE_SCHEDULE, null, schedule);
@@ -140,24 +126,6 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	
 	public SubscriberRefreshSchedule getRefreshSchedule() {
 		return refreshSchedule;
-	}
-	
-	public void setWorkingSet(IWorkingSet set) {
-		IWorkingSet oldSet = workingSet;
-		if(collector != null) {
-			IResource[] resources = set != null ? Utils.getResources(set.getElements()) : new IResource[0];
-			collector.setWorkingSet(resources);
-			firePropertyChange(this, P_SYNCVIEWPAGE_WORKINGSET, oldSet, set);
-		} 
-		workingSet = set;
-	}
-	
-	public IWorkingSet getWorkingSet() {
-		return workingSet;
-	}
-	
-	public void selectResources(IResource[] resources) {
-		firePropertyChange(this, P_SYNCVIEWPAGE_SELECTION, null, new StructuredSelection(resources));
 	}
 	
 	/* (non-Javadoc)
@@ -252,8 +220,8 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	 * @param taskName
 	 * @param site
 	 */
-	public final void refreshInDialog(Shell shell, IResource[] resources, String taskName, String targetId, SyncInfoTree syncInfoSet, IWorkbenchSite site) {
-		IRefreshSubscriberListener listener =  new RefreshUserNotificationPolicyInModalDialog(shell, targetId, this, syncInfoSet);
+	public final void refreshInDialog(Shell shell, IResource[] resources, String taskName, ISynchronizePageConfiguration configuration, IWorkbenchSite site) {
+		IRefreshSubscriberListener listener =  new RefreshUserNotificationPolicyInModalDialog(shell, configuration, this);
 		internalRefresh(resources, listener, taskName, site);
 	}
 	
@@ -276,12 +244,16 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 		collector.dispose();
 	}
 	
-	/**
+	public SyncInfoTree getSyncInfoSet() {
+		return getSubscriberSyncInfoCollector().getSyncInfoSet();
+	}
+	
+	/*
 	 * Return the <code>SubscriberSyncInfoCollector</code> for the participant.
 	 * This collector maintains the set of all out-of-sync resources for the subscriber.
 	 * @return the <code>SubscriberSyncInfoCollector</code> for this participant
 	 */
-	public final SubscriberSyncInfoCollector getSubscriberSyncInfoCollector() {
+	public SubscriberSyncInfoCollector getSubscriberSyncInfoCollector() {
 		return collector;
 	}
 	
@@ -310,18 +282,7 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	 * as returned by <code>getMode()</code>.
 	 */
 	protected void preCollectingChanges() {
-		if(workingSet != null) {
-			setWorkingSet(workingSet);
-		}
-		updateMode(getMode());
-	}
-	
-	/**
-	 * Returns the viewer advisor which will be used to configure the display of the participant.
-	 * @return
-	 */
-	protected StructuredViewerAdvisor createSynchronizeViewerAdvisor(ISynchronizeView view) {
-		return new SynchronizeViewerAdvisor(view, this);
+		//TODO: Is this needed
 	}
 	
 	/**
@@ -329,6 +290,7 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	 * @return a <code>TamSubscriber</code>
 	 */
 	public Subscriber getSubscriber() {
+		if (collector == null) return null;
 		return collector.getSubscriber();
 	}
 		
@@ -341,37 +303,6 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 		}	
 	}
 	
-	/**
-	 * This method is invoked from <code>setMode</code> when the mode has changed.
-	 * It sets the filter on the collector to show the <code>SyncInfo</code>
-	 * appropriate for the mode.
-	 * @param mode the new mode (one of <code>INCOMING_MODE_FILTER</code>,
-	 * <code>OUTGOING_MODE_FILTER</code>, <code>CONFLICTING_MODE_FILTER</code>
-	 * or <code>BOTH_MODE_FILTER</code>)
-	 */
-	protected void updateMode(int mode) {
-		if(collector != null) {	
-		
-			int[] modeFilter = BOTH_MODE_FILTER;
-			switch(mode) {
-			case SubscriberParticipant.INCOMING_MODE:
-				modeFilter = INCOMING_MODE_FILTER; break;
-			case SubscriberParticipant.OUTGOING_MODE:
-				modeFilter = OUTGOING_MODE_FILTER; break;
-			case SubscriberParticipant.BOTH_MODE:
-				modeFilter = BOTH_MODE_FILTER; break;
-			case SubscriberParticipant.CONFLICTING_MODE:
-				modeFilter = CONFLICTING_MODE_FILTER; break;
-			}
-
-			collector.setFilter(
-					new FastSyncInfoFilter.AndSyncInfoFilter(
-							new FastSyncInfoFilter[] {
-									new FastSyncInfoFilter.SyncInfoDirectionFilter(modeFilter)
-							}));
-		}
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#init(org.eclipse.ui.IMemento)
 	 */
@@ -379,30 +310,9 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 		if(memento != null) {
 			IMemento settings = memento.getChild(CTX_SUBSCRIBER_PARTICIPANT_SETTINGS);
 			if(settings != null) {
-				String setSetting = settings.getString(P_SYNCVIEWPAGE_WORKINGSET);
-				String modeSetting = settings.getString(P_SYNCVIEWPAGE_MODE);
 				SubscriberRefreshSchedule schedule = SubscriberRefreshSchedule.init(settings.getChild(CTX_SUBSCRIBER_SCHEDULE_SETTINGS), this);
 				setRefreshSchedule(schedule);
-				
-				if(setSetting != null) {
-					IWorkingSet workingSet = PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSet(setSetting);
-					if(workingSet != null) {
-						setWorkingSet(workingSet);
-					}
-				}
-				
-				int mode = SubscriberParticipant.BOTH_MODE;
-				if(modeSetting != null) {
-					try {
-						mode = Integer.parseInt(modeSetting);
-					} catch (NumberFormatException e) {
-						mode = SubscriberParticipant.BOTH_MODE;
-					}
-				}
-				setMode(mode);
 			}
-		} else {
-			setMode(BOTH_MODE);
 		}
 	}
 
@@ -411,11 +321,28 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	 */
 	public void saveState(IMemento memento) {
 		IMemento settings = memento.createChild(CTX_SUBSCRIBER_PARTICIPANT_SETTINGS);
-		IWorkingSet set = getWorkingSet();
-		if(set != null) {
-			settings.putString(P_SYNCVIEWPAGE_WORKINGSET, getWorkingSet().getName());
-		}
-		settings.putString(P_SYNCVIEWPAGE_MODE, Integer.toString(getMode()));
 		refreshSchedule.saveState(settings.createChild(CTX_SUBSCRIBER_SCHEDULE_SETTINGS));
+	}
+
+	/**
+	 * Reset the sync set of the particpant by repopulating it from scratch.
+	 */
+	public void reset() {
+		getSubscriberSyncInfoCollector().reset();
+	}
+	
+	/**
+	 * Provide a filter that is used to filter the contents of the
+	 * sync info set for the participant. Normally, all out-of-sync
+	 * resources from the subscriber will be included in the 
+	 * participant's set. However, a filter can be used to exclude
+	 * some of these out-of-sync resources, if desired.
+	 * <p>
+	 * Subsclasses can invoke this method any time after 
+	 * <code>setSubscriber</code> has been invoked.
+	 * @param filter a sync info filter
+	 */
+	protected void setSyncInfoFilter(SyncInfoFilter filter) {
+		collector.setFilter(filter);
 	}
 }

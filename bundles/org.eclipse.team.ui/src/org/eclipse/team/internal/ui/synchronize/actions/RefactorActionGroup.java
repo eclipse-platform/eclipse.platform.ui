@@ -10,10 +10,9 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize.actions;
 
-import java.util.*;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.IMenuManager;
@@ -23,9 +22,16 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.Utils;
-import org.eclipse.team.ui.synchronize.ISynchronizeView;
-import org.eclipse.ui.*;
-import org.eclipse.ui.actions.*;
+import org.eclipse.team.ui.synchronize.ISynchronizePageSite;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IKeyBindingService;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.ActionGroup;
+import org.eclipse.ui.actions.DeleteResourceAction;
+import org.eclipse.ui.actions.MoveResourceAction;
+import org.eclipse.ui.actions.RenameResourceAction;
+import org.eclipse.ui.actions.TextActionHandler;
 
 /**
  * This action group is modeled after the class of the same name in 
@@ -37,15 +43,15 @@ public class RefactorActionGroup extends ActionGroup {
 	private MoveResourceAction moveAction;
 	private RenameResourceAction renameAction;
 	private TextActionHandler textActionHandler;
-	private ISynchronizeView view;
+	private ISynchronizePageSite site;
 	private DeleteResourceAction deleteAction;
 	
-	public RefactorActionGroup(ISynchronizeView view) {
-		this.view = view;
+	public RefactorActionGroup(ISynchronizePageSite site) {
+		this.site = site;
 		makeActions();
 	}
 
-	public void fillContextMenu(IMenuManager parentMenu) {
+	public void fillContextMenu(IMenuManager parentMenu, String groupId) {
 		IStructuredSelection selection = getSelection();
 
 		boolean anyResourceSelected =
@@ -65,7 +71,7 @@ public class RefactorActionGroup extends ActionGroup {
 			renameAction.selectionChanged(convertedSelection);
 			menu.add(renameAction);
 		}
-		parentMenu.add(menu);
+		parentMenu.appendToGroup(groupId, menu);
 	}
 
 	private IStructuredSelection convertSelection(IStructuredSelection selection) {
@@ -80,9 +86,6 @@ public class RefactorActionGroup extends ActionGroup {
 	}
 
 	protected void makeActions() {
-		// Get the key binding service for registering actions with commands. 
-		final IWorkbenchPartSite site = view.getSite();
-		final IKeyBindingService keyBindingService = site.getKeyBindingService();
 		
 		Shell shell = site.getShell();
 		ISharedImages images = PlatformUI.getWorkbench().getSharedImages();
@@ -97,7 +100,12 @@ public class RefactorActionGroup extends ActionGroup {
 		};
 		deleteAction.setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE));			
 		deleteAction.setActionDefinitionId("org.eclipse.ui.edit.delete");  //$NON-NLS-1$
-		keyBindingService.registerAction(deleteAction);
+
+		// Get the key binding service for registering actions with commands. 
+		IKeyBindingService keyBindingService = site.getKeyBindingService();
+		if (keyBindingService != null) {
+			keyBindingService.registerAction(deleteAction);
+		}
 	}
 
 	public void updateActionBars() {
@@ -108,7 +116,7 @@ public class RefactorActionGroup extends ActionGroup {
 	}
 
 	private IStructuredSelection getSelection() {
-		return (IStructuredSelection)view.getSite().getPage().getSelection();
+		return (IStructuredSelection)site.getSelectionProvider().getSelection();
 	}
 
 	private boolean allResourcesAreOfType(IStructuredSelection selection, int resourceMask) {

@@ -8,21 +8,57 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.ui.synchronize;
+package org.eclipse.team.internal.ui.synchronize;
 
 import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 
 /**
- * Decorating label provider that also support color providers.
+ * Decorating label provider that supports multiple decorators and color providers.
  * 
  * @since 3.0
  */
 public class DecoratingColorLabelProvider extends DecoratingLabelProvider implements IColorProvider, IFontProvider {
 
-	public DecoratingColorLabelProvider(ILabelProvider provider, ILabelDecorator decorator) {
-		super(provider, decorator);
+	static class MultiLabelDecorator extends LabelProvider implements ILabelDecorator {
+		private ILabelDecorator[] decorators;
+
+		public MultiLabelDecorator(ILabelDecorator[] decorators) {
+			this.decorators = decorators;
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ILabelDecorator#decorateImage(org.eclipse.swt.graphics.Image, java.lang.Object)
+		 */
+		public Image decorateImage(Image image, Object element) {
+			for (int i = 0; i < decorators.length; i++) {
+				ILabelDecorator decorator = decorators[i];
+				Image newImage = decorator.decorateImage(image, element);
+				if (newImage != null) {
+					image = newImage;
+				}
+			}
+			return image;
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ILabelDecorator#decorateText(java.lang.String, java.lang.Object)
+		 */
+		public String decorateText(String text, Object element) {
+			for (int i = 0; i < decorators.length; i++) {
+				ILabelDecorator decorator = decorators[i];
+				String newText = decorator.decorateText(text, element);
+				if (newText != null) {
+					text = newText;
+				}
+			}
+			return text;
+		}
+	}
+	public DecoratingColorLabelProvider(ILabelProvider provider, ILabelDecorator[] decorators) {
+		super(provider, new MultiLabelDecorator(decorators));
 	}
 
 	/*

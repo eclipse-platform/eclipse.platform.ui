@@ -32,7 +32,6 @@ import org.eclipse.team.internal.core.subscribers.*;
 public final class SubscriberSyncInfoCollector implements IResourceChangeListener, ISubscriberChangeListener {
 
 	private SyncSetInputFromSubscriber subscriberInput;
-	private WorkingSetSyncSetInput workingSetInput;
 	private SyncSetInputFromSyncSet filteredInput;
 	private SubscriberEventHandler eventHandler;
 	private Subscriber subscriber;
@@ -63,17 +62,14 @@ public final class SubscriberSyncInfoCollector implements IResourceChangeListene
 		Assert.isNotNull(subscriber);
 		this.eventHandler = new SubscriberEventHandler(subscriber);
 		this.subscriberInput = eventHandler.getSyncSetInput();
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
-		subscriber.addListener(this);
-		
-		// TODO: optimize and don't use working set if no roots are passed in
-		workingSetInput = new WorkingSetSyncSetInput(subscriberInput.getSyncSet(), getEventHandler());
-		filteredInput = new SyncSetInputFromSyncSet(workingSetInput.getSyncSet(), getEventHandler());
+		filteredInput = new SyncSetInputFromSyncSet(subscriberInput.getSyncSet(), getEventHandler());
 		filteredInput.setFilter(new SyncInfoFilter() {
 			public boolean select(SyncInfo info, IProgressMonitor monitor) {
 				return true;
 			}
 		});
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
+		subscriber.addListener(this);
 	}
 	
 	public void setProgressGroup(IProgressMonitor monitor, int ticks) {
@@ -85,18 +81,6 @@ public final class SubscriberSyncInfoCollector implements IResourceChangeListene
 	 */
 	public void start() {
 		eventHandler.start();
-	}
-	
-	/**
-	 * Return the set that provides access to the out-of-sync resources for the collector's
-	 * subscriber that are descendants of the roots for the collector,
-	 * are in the collector's working set and match the collectors filter. 
-	 * @see getSubscriberSyncInfoSet()
-	 * @see getWorkingSetSyncInfoSet()
-	 * @return a SyncInfoSet containing out-of-sync resources
-	 */
-	public SyncInfoTree getSyncInfoTree() {
-		return filteredInput.getSyncSet();
 	}
 
 	/**
@@ -145,7 +129,6 @@ public final class SubscriberSyncInfoCollector implements IResourceChangeListene
 	public void dispose() {
 		eventHandler.shutdown();
 		subscriberInput.disconnect();
-		workingSetInput.disconnect();
 		if(filteredInput != null) {
 			filteredInput.disconnect();
 		}
@@ -177,7 +160,7 @@ public final class SubscriberSyncInfoCollector implements IResourceChangeListene
 			// Only interested in projects mapped to the provider
 			if (!isAncestorOfRoot(resource, roots)) {
 				// If the project has any entries in the sync set, remove them
-				if (getSyncInfoTree().hasMembers(resource)) {
+				if (getSubscriberSyncInfoSet().hasMembers(resource)) {
 					eventHandler.remove(resource);
 				}
 				return;
@@ -321,21 +304,18 @@ public final class SubscriberSyncInfoCollector implements IResourceChangeListene
 	}
 	
 	/**
-	 * Set the working set resources used to filter the output <code>SyncInfoSet</code>.
-	 * @see getWorkingSetSyncInfoSet()
-	 * @param resources the working set resources
+	 * Return the <code>SyncInfoSet</code> that contains all the all the out-of-sync resources for the
+	 * subscriber that are descendants of the roots of this collector. The set will contain only those resources that are children of the roots
+	 * of the collector unless the roots of the colletor has been set to <code>null</code>
+	 * in which case all out-of-sync resources from the subscriber are collected.
+	 * @return the subscriber sync info set
 	 */
-	public void setWorkingSet(IResource[] resources) {
-		workingSetInput.setWorkingSet(resources);
-		workingSetInput.reset();
+	public SyncInfoTree getSubscriberSyncInfoSet() {
+		return subscriberInput.getSyncSet();
 	}
 	
-	/**
-	 * Get th working set resources used to filter the output sync info set.
-	 * @return the working set resources
-	 */
-	public IResource[] getWorkingSet() {
-		return workingSetInput.getWorkingSet();
+	public SyncInfoTree getSyncInfoSet() {
+		return filteredInput.getSyncSet();
 	}
 	
 	/**
@@ -358,27 +338,5 @@ public final class SubscriberSyncInfoCollector implements IResourceChangeListene
 			return filteredInput.getFilter();
 		}
 		return null;
-	}
-	
-	/**
-	 * Return a <code>SyncInfoSet</code> that contains the out-of-sync elements
-	 * from the subsciber sync info set filtered
-	 * by the working set resources but not the collector's <code>SyncInfoFilter</code>.
-	 * @see getSubscriberSyncInfoSet()
-	 * @return a <code>SyncInfoSet</code>
-	 */
-	public SyncInfoSet getWorkingSetSyncInfoSet() {
-		return workingSetInput.getSyncSet();
-	}
-
-	/**
-	 * Return the <code>SyncInfoSet</code> that contains all the all the out-of-sync resources for the
-	 * subscriber that are descendants of the roots of this collector. The set will contain only those resources that are children of the roots
-	 * of the collector unless the roots of the colletor has been set to <code>null</code>
-	 * in which case all out-of-sync resources from the subscriber are collected.
-	 * @return the subscriber sync info set
-	 */
-	public SyncInfoTree getSubscriberSyncInfoSet() {
-		return (SyncInfoTree)subscriberInput.getSyncSet();
 	}
 }

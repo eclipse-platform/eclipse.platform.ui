@@ -150,12 +150,12 @@ public abstract class ResourceVariantTreeSubscriber extends Subscriber {
 		try {
 			monitor.beginTask(null, IProgressMonitor.UNKNOWN);
 			Set allChanges = new HashSet();
-			IResource[] remoteChanges = getRemoteTree().refresh(new IResource[] {resource}, depth, Policy.subMonitorFor(monitor, IProgressMonitor.UNKNOWN));
-			allChanges.addAll(Arrays.asList(remoteChanges));
 			if (getResourceComparator().isThreeWay()) {
 				IResource[] baseChanges = getBaseTree().refresh(new IResource[] {resource}, depth, Policy.subMonitorFor(monitor, IProgressMonitor.UNKNOWN));
 				allChanges.addAll(Arrays.asList(baseChanges));
 			}
+			IResource[] remoteChanges = getRemoteTree().refresh(new IResource[] {resource}, depth, Policy.subMonitorFor(monitor, IProgressMonitor.UNKNOWN));
+			allChanges.addAll(Arrays.asList(remoteChanges));
 			IResource[] changedResources = (IResource[]) allChanges.toArray(new IResource[allChanges.size()]);
 			fireTeamResourceChange(SubscriberChangeEvent.asSyncChangedDeltas(this, changedResources));
 			return Status.OK_STATUS;

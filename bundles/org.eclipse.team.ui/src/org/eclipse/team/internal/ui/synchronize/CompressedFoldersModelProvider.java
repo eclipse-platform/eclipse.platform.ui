@@ -70,8 +70,29 @@ public class CompressedFoldersModelProvider extends HierarchicalModelProvider {
 		}
 	}
 	
+	public static class CompressedFolderModelProviderDescriptor implements ISynchronizeModelProviderDescriptor {
+		public static final String ID = TeamUIPlugin.ID + ".modelprovider_compressedfolders";
+		public String getId() {
+			return ID;
+		}		
+		public String getName() {
+			return "Compressed Folders";
+		}		
+		public ImageDescriptor getImageDescriptor() {
+			return TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_COMPRESSED_FOLDER);
+		}
+	};
+	private static final CompressedFolderModelProviderDescriptor compressedDescriptor = new CompressedFolderModelProviderDescriptor();
+	
 	public CompressedFoldersModelProvider(SyncInfoTree set) {
 		super(set);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ui.synchronize.HierarchicalModelProvider#getDescriptor()
+	 */
+	public ISynchronizeModelProviderDescriptor getDescriptor() {
+		return compressedDescriptor;
 	}
 	
 	/* (non-Javadoc)

@@ -10,13 +10,11 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.wizards;
 
-import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.swt.SWT;
@@ -27,14 +25,15 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.ITeamStatus;
 import org.eclipse.team.core.TeamStatus;
-import org.eclipse.team.core.subscribers.FilteredSyncInfoCollector;
 import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticipant;
-import org.eclipse.team.internal.ui.Utils;
-import org.eclipse.team.ui.synchronize.SynchronizeCompareInput;
-import org.eclipse.team.ui.synchronize.TreeViewerAdvisor;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
+import org.eclipse.team.ui.synchronize.ParticipantPageSaveablePart;
+import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.part.PageBook;
 
 /**
@@ -42,9 +41,9 @@ import org.eclipse.ui.part.PageBook;
  */
 public class SharingWizardSyncPage extends CVSWizardPage implements ISyncInfoSetChangeListener {
 	
-	private SynchronizeCompareInput input;
-	private FilteredSyncInfoCollector collector;
-	private SyncInfoTree infos;
+	private ParticipantPageSaveablePart input;
+	private ISynchronizePageConfiguration configuration;
+	private SyncInfoSet infos;
 	private IProject project;
 	
 	PageBook pageBook;
@@ -77,8 +76,10 @@ public class SharingWizardSyncPage extends CVSWizardPage implements ISyncInfoSet
 		pageBook.setLayoutData(data);
 		
 		input = createCompareInput();
-		syncPage = input.createContents(pageBook);
-		syncPage.setLayoutData(new GridData(GridData.FILL_BOTH));
+		input.createPartControl(pageBook);
+		syncPage = input.getControl();
+		infos = (SyncInfoSet)configuration.getSyncInfoSet();
+		infos.addSyncSetChangedListener(this);
 		
 		noChangesPage = createNoChangesPage(pageBook);
 		noChangesPage.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -132,43 +133,29 @@ public class SharingWizardSyncPage extends CVSWizardPage implements ISyncInfoSet
 		}
 	}
 	
-	private SynchronizeCompareInput createCompareInput() {
-		infos = new SyncInfoTree();
-		infos.addSyncSetChangedListener(this);
+	private ParticipantPageSaveablePart createCompareInput() {	
 		WorkspaceSynchronizeParticipant participant = CVSUIPlugin.getPlugin().getCvsWorkspaceSynchronizeParticipant();
-		collector = new FilteredSyncInfoCollector(participant.getSubscriberSyncInfoCollector().getSubscriberSyncInfoSet(), infos, new SyncInfoFilter() {
-			public boolean select(SyncInfo info, IProgressMonitor monitor) {
-				if (project == null)return false;
-				return project.getFullPath().isPrefixOf(info.getLocal().getFullPath());
-			}
-		});
-		collector.start(new NullProgressMonitor());
-		TreeViewerAdvisor advisor = new SharingWizardTreeAdviser(participant.getId(), null, infos);
+		configuration = participant.createPageConfiguration();
+		configuration.setProperty(ISynchronizePageConfiguration.P_TOOLBAR_MENU, new String[] {SharingWizardPageActionGroup.ACTION_GROUP});
+		configuration.addActionContribution(new SharingWizardPageActionGroup());
+		
+		IWorkingSetManager manager = TeamUIPlugin.getPlugin().getWorkbench().getWorkingSetManager();
+		IWorkingSet newSet = manager.createWorkingSet("sharing wizard", new IAdaptable[] {project});
+		configuration.setWorkingSet(newSet);
+		
 		CompareConfiguration cc = new CompareConfiguration();
-		SynchronizeCompareInput input = new SynchronizeCompareInput(cc, advisor) {
-			public String getTitle() {
-				return Policy.bind("SharingWizardSyncPage.0"); //$NON-NLS-1$
-			}
-		};
-		try {
-			// model will be built in the background since we know the compare input was 
-			// created with a subscriber participant
-			input.run(new NullProgressMonitor());
-		} catch (InterruptedException e) {
-			Utils.handle(e);
-		} catch (InvocationTargetException e) {
-			Utils.handle(e);
-		}
-		return input;
+		cc.setLeftEditable(false);
+		cc.setRightEditable(false);
+		ParticipantPageSaveablePart part = new ParticipantPageSaveablePart(getShell(), cc, configuration, participant);
+		
+		return part;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
 	 */
 	public void dispose() {
-		if (collector != null) {
-			collector.dispose();
-		}
+		input.dispose();
 	}
 	
 	/* (non-Javadoc)

@@ -67,7 +67,7 @@ public class RefreshUserNotificationPolicy implements IRefreshSubscriberListener
 				// If it's a file, simply show the compare editor
 				if (resources.length == 1 && resources[0].getType() == IResource.FILE) {
 					IResource file = resources[0];
-					SyncInfo info = participant.getSubscriberSyncInfoCollector().getSubscriberSyncInfoSet().getSyncInfo(file);
+					SyncInfo info = participant.getSubscriberSyncInfoCollector().getSyncInfoSet().getSyncInfo(file);
 					if(info != null) {
 						SyncInfoCompareInput input = new SyncInfoCompareInput(participant.getName(), info);
 						CompareUI.openCompareEditor(input);

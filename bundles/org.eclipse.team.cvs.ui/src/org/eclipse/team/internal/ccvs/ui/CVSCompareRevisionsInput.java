@@ -14,7 +14,6 @@ package org.eclipse.team.internal.ccvs.ui;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.compare.*;
 import org.eclipse.compare.structuremergeviewer.*;
 import org.eclipse.core.resources.IFile;
@@ -33,10 +32,13 @@ import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.actions.CVSAction;
 import org.eclipse.team.internal.ccvs.ui.operations.UpdateOperation;
 import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.ui.ISaveableWorkbenchPart;
+import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.help.WorkbenchHelp;
 
-public class CVSCompareRevisionsInput extends CompareEditorInput {
+public class CVSCompareRevisionsInput extends CompareEditorInput implements ISaveableWorkbenchPart {
 	IFile resource;
 	ILogEntry[] editions;
 	TableViewer viewer;
@@ -320,5 +322,85 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 	public String getTitle() {
 		String resourceName = resource.getName();	
 		return Policy.bind("CVSCompareRevisionsInput.compareResourceAndVersions", new Object[] {resource.getFullPath().toString()}); //$NON-NLS-1$
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveablePart#doSave(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public void doSave(IProgressMonitor monitor) {
+		try {
+			saveChanges(monitor);
+		} catch (CoreException e) {
+			Utils.handle(e);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveablePart#doSaveAs()
+	 */
+	public void doSaveAs() {
+		// noop
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveablePart#isDirty()
+	 */
+	public boolean isDirty() {
+		return isSaveNeeded();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveablePart#isSaveAsAllowed()
+	 */
+	public boolean isSaveAsAllowed() {
+		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveablePart#isSaveOnCloseNeeded()
+	 */
+	public boolean isSaveOnCloseNeeded() {
+		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPart#addPropertyListener(org.eclipse.ui.IPropertyListener)
+	 */
+	public void addPropertyListener(IPropertyListener listener) {
+		// noop
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
+	 */
+	public void createPartControl(Composite parent) {
+		createContents(parent);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
+	 */
+	public void dispose() {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPart#getSite()
+	 */
+	public IWorkbenchPartSite getSite() {
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPart#getTitleToolTip()
+	 */
+	public String getTitleToolTip() {
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPart#removePropertyListener(org.eclipse.ui.IPropertyListener)
+	 */
+	public void removePropertyListener(IPropertyListener listener) {
+		// noop
 	}
 }

@@ -23,9 +23,18 @@ import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
  * times without warning.
  */
 public interface ISynchronizeModelProvider {
-
+	/**
+	 * Returns the sync set this model provider is showing.
+	 * @return the sync set this model provider is showing.
+	 */
 	public abstract SyncInfoSet getSyncInfoSet();
 
+	/**
+	 * Returns the description for this model provider.
+	 * @return the description for this model provider.
+	 */
+	public ISynchronizeModelProviderDescriptor getDescriptor();
+	
 	/**
 	 * Return the <code>AbstractTreeViewer</code> asociated with this content
 	 * provider or <code>null</code> if the viewer is not of the proper type.
@@ -33,10 +42,15 @@ public interface ISynchronizeModelProvider {
 	 */
 	public abstract StructuredViewer getViewer();
 
+	/**
+	 * Installed the viewer to be used to display the model.
+	 * @param viewer the viewer in which to diplay the model.
+	 */
 	public abstract void setViewer(StructuredViewer viewer);
 
 	/**
 	 * Builds the viewer model based on the contents of the sync set.
+	 * @return the root element of the generated model.
 	 */
 	public abstract ISynchronizeModelElement prepareInput(IProgressMonitor monitor);
 
@@ -64,5 +78,9 @@ public interface ISynchronizeModelProvider {
 	 */
 	public abstract ISynchronizeModelElement getModelRoot();
 
+	/**
+	 * Returns the sorter for this model.
+	 * @return the sorter for this model.
+	 */
 	public abstract ViewerSorter getViewerSorter();
 }

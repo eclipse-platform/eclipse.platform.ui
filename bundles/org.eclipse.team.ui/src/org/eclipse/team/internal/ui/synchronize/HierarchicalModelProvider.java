@@ -13,9 +13,13 @@ package org.eclipse.team.internal.ui.synchronize;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.team.core.synchronize.*;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.ui.ISharedImages;
+import org.eclipse.team.ui.TeamImages;
 import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
 
 /**
@@ -35,7 +39,21 @@ import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
  * @since 3.0
  */
 public class HierarchicalModelProvider extends SynchronizeModelProvider {
-		
+	
+	public static class HierarchicalModelProviderDescriptor implements ISynchronizeModelProviderDescriptor {
+		public static final String ID = TeamUIPlugin.ID + ".modelprovider_hierarchical";
+		public String getId() {
+			return ID;
+		}		
+		public String getName() {
+			return "Tree";
+		}		
+		public ImageDescriptor getImageDescriptor() {
+			return TeamImages.getImageDescriptor(ISharedImages.IMG_HIERARCHICAL);
+		}
+	};
+	private static final HierarchicalModelProviderDescriptor hierarchicalDescriptor = new HierarchicalModelProviderDescriptor();
+	
 	/**
 	 * Create an input based on the provide sync set. The input is not initialized
 	 * until <code>prepareInput</code> is called. 
@@ -46,6 +64,14 @@ public class HierarchicalModelProvider extends SynchronizeModelProvider {
 		super(set);
 	}
 
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ui.synchronize.ISynchronizeModelProvider#getDescriptor()
+	 */
+	public ISynchronizeModelProviderDescriptor getDescriptor() {
+		return hierarchicalDescriptor;
+	}
+	
 	public ViewerSorter getViewerSorter() {
 		return new SynchronizeModelElementSorter();
 	}

@@ -11,25 +11,23 @@
 package org.eclipse.team.ui.synchronize;
 
 import org.eclipse.compare.structuremergeviewer.*;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.util.ListenerList;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.events.MenuEvent;
-import org.eclipse.swt.events.MenuListener;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.internal.core.Assert;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.synchronize.*;
-import org.eclipse.team.internal.ui.synchronize.SynchronizeModelElementLabelProvider;
-import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.team.internal.ui.synchronize.actions.StatusLineContributionGroup;
+import org.eclipse.team.internal.ui.synchronize.actions.WorkingSetFilterActionGroup;
+import org.eclipse.ui.*;
+import org.eclipse.ui.actions.ActionContext;
+import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.internal.PluginAction;
 import org.eclipse.ui.model.BaseWorkbenchContentProvider;
 
@@ -69,22 +67,38 @@ import org.eclipse.ui.model.BaseWorkbenchContentProvider;
  * @since 3.0
  */
 public abstract class StructuredViewerAdvisor {
-
-	// Workbench site is used to register the context menu for the viewer
-	private IWorkbenchPartSite site;
-	// The id to use for registration of the context menu. If null then menu will not allow viewer contributions. 
-	private String targetID;
-
+	
 	// The physical model shown to the user in the provided viewer. The information in 
 	// this set is transformed by the model provider into the actual logical model displayed
 	// in the viewer.
-	private SyncInfoSet set;
 	private StructuredViewer viewer;
-	private ISynchronizeModelProvider modelProvider;
 	
-	// Listeners for model changes
-	private ListenerList listeners;
+	// The page configuration
+	private ISynchronizePageConfiguration configuration;
 	
+	// Special actions that could not be contributed using an ActionGroup
+	private WorkingSetFilterActionGroup workingSetGroup;
+	private StatusLineContributionGroup statusLine;
+	private SynchronizeModelManager modelManager;
+	
+	// Property change listener which reponds to:
+	//    - working set selection by the user
+	//    - decorator format change selected by the user
+	private IPropertyChangeListener propertyListener = new IPropertyChangeListener() {
+		public void propertyChange(PropertyChangeEvent event) {
+			// Working set changed by user
+			if(event.getProperty().equals(WorkingSetFilterActionGroup.CHANGE_WORKING_SET)) {
+				configuration.setWorkingSet((IWorkingSet)event.getNewValue());
+			} else
+				// Change to showing of sync state in text labels preference
+				if(event.getProperty().equals(IPreferenceIds.SYNCVIEW_VIEW_SYNCINFO_IN_LABEL)) {
+					if(viewer != null && !viewer.getControl().isDisposed()) {
+						viewer.refresh(true /* update labels */);
+					}
+				}
+		}
+	};
+
 	/**
 	 * Create an advisor that will allow viewer contributions with the given <code>targetID</code>. This
 	 * advisor will provide a presentation model based on the given sync info set. The model is disposed
@@ -95,22 +109,18 @@ public abstract class StructuredViewerAdvisor {
 	 * case a site will be found using the default workbench page.
 	 * @param set the set of <code>SyncInfo</code> objects that are to be shown to the user.
 	 */
-	public StructuredViewerAdvisor(String targetID, IWorkbenchPartSite site, SyncInfoSet set) {
-		this.set = set;
-		this.targetID = targetID;
-		this.site = site;
+	public StructuredViewerAdvisor(ISynchronizePageConfiguration configuration) {
+		this.configuration = configuration;
+		configuration.setProperty(SynchronizePageConfiguration.P_ADVISOR, this);
+		modelManager = createModelManager(configuration);
 	}
-
+	
 	/**
-	 * Create an advisor that will provide a presentation model based on the given sync info set.
-	 * Note that it's important to call {@link #dispose()} when finished with an advisor.
-	 * 
-	 * @param set the set of <code>SyncInfo</code> objects that are to be shown to the user.
+	 * Create the model manager to be used by this advisor
+	 * @param configuration
 	 */
-	public StructuredViewerAdvisor(SyncInfoSet set) {
-		this(null, null, set);
-	}
-		
+	protected abstract SynchronizeModelManager createModelManager(ISynchronizePageConfiguration configuration);
+	
 	/**
 	 * Install a viewer to be configured with this advisor. An advisor can only be installed with
 	 * one viewer at a time. When this method completes the viewer is considered initialized and
@@ -118,78 +128,56 @@ public abstract class StructuredViewerAdvisor {
 
 	 * @param viewer the viewer being installed
 	 */
-	public final void initializeViewer(StructuredViewer viewer) {
+	public final void initializeViewer(final StructuredViewer viewer) {
 		Assert.isTrue(this.viewer == null, "Can only be initialized once."); //$NON-NLS-1$
 		Assert.isTrue(validateViewer(viewer));
 		this.viewer = viewer;
 	
 		initializeListeners(viewer);
-		hookContextMenu(viewer);
-		initializeActions(viewer);
 		viewer.setLabelProvider(getLabelProvider());
 		viewer.setContentProvider(getContentProvider());
-		
-		// The input may of been set already. In that case, don't change it and
-		// simply assign it to the view.
-		if(modelProvider == null) {
-			modelProvider = getModelProvider();
-			modelProvider.prepareInput(null);
-		}
-		setInput(viewer);
+		hookContextMenu(viewer);
 	}
 	
-	/**
-	 * This is called to add a listener to the model shown in the viewer. The listener is
-	 * called when the model is changed or updated.
-	 * 
-	 * @param listener the listener to add
+	/*
+	 * Initializes actions that are contributed directly by the advisor.
+	 * @param viewer the viewer being installed
 	 */
-	public void addInputChangedListener(ISynchronizeModelChangeListener listener) {
-		if (listeners == null)
-			listeners= new ListenerList();
-		listeners.add(listener);
-	}
-
-	/**
-	 * Remove a model listener.
-	 * 
-	 * @param listener the listener to remove.
-	 */
-	public void removeInputChangedListener(ISynchronizeModelChangeListener listener) {
-		if (listeners != null) {
-			listeners.remove(listener);
-			if (listeners.isEmpty())
-				listeners= null;
-		}
+	private void initializeWorkingSetActions() {
+		// view menu
+		workingSetGroup = new WorkingSetFilterActionGroup(
+				configuration.getSite().getShell(), 
+				getUniqueId(configuration.getParticipant()), 
+				propertyListener, 
+				configuration.getWorkingSet());
+		configuration.addPropertyChangeListener(new IPropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent event) {
+				if (event.getProperty().equals(ISynchronizePageConfiguration.P_WORKING_SET)) {
+					IWorkingSet set = configuration.getWorkingSet();
+					workingSetGroup.setWorkingSet(set);
+				}
+			}
+		});
+		statusLine = new StatusLineContributionGroup(
+				configuration.getSite().getShell(), 
+				configuration, 
+				workingSetGroup);
 	}
 	
 	/**
 	 * Must be called when an advisor is no longer needed.
 	 */
 	public void dispose() {
-		if(modelProvider != null) {
-			modelProvider.dispose();
+		if (statusLine != null) {
+			statusLine.dispose();
 		}
-	}
-
-	/**
-	 * Return the targetID that is used to obtain context menu items from the workbench. When
-	 * a context menu is added to the viewer, this ID is registered with the workbench to allow
-	 * viewer contributions.
-	 * 
-	 * @return the targetID or <code>null</code> if this advisor doesn't allow contributions.
-	 */
-	public String getTargetID() {
-		return targetID;
-	}
-
-	/**
-	 * Return the <code>SyncInfoSet</code> used to create the model shown by this advisor.
-	 * 
-	 * @return the <code>SyncInfoSet</code> used to create the model shown by this advisor.
-	 */
-	public SyncInfoSet getSyncInfoSet() {
-		return set;
+		if (workingSetGroup != null) {
+			workingSetGroup.dispose();
+		}
+		if (getActionGroup() != null) {
+			getActionGroup().dispose();
+		}
+		TeamUIPlugin.getPlugin().getPreferenceStore().removePropertyChangeListener(propertyListener);
 	}
 	
 	/**
@@ -202,8 +190,8 @@ public abstract class StructuredViewerAdvisor {
 	public abstract boolean navigate(boolean next);
 
 	/**
-	 * Sets a new selection for this viewer and optionally makes it visible. The advisor will try and
-	 * convert the objects into the appropriate viewer objects. This is required because the model
+	 * Sets a new selection for this viewer and optionally makes it visible.
+	 * This is required because the model
 	 * provider controls the actual model elements in the viewer and must be consulted in order to
 	 * understand what objects can be selected in the viewer.
 	 * 
@@ -211,94 +199,10 @@ public abstract class StructuredViewerAdvisor {
 	 * @param reveal <code>true</code> if the selection is to be made visible, and
 	 *                  <code>false</code> otherwise
 	 */
-	public void setSelection(Object[] objects, boolean reveal) {
-		ISelection selection = getSelection(objects);
+	public void setSelection(ISelection selection, boolean reveal) {
 		if (!selection.isEmpty()) {
 			viewer.setSelection(selection, reveal);
 		}
-	}
-	
-	/**
-	 * Gets a new selection that contains the view model objects that
-	 * correspond to the given objects. The advisor will try and
-	 * convert the objects into the appropriate viewer objects. 
-	 * This is required because the model provider controls the actual 
-	 * model elements in the viewer and must be consulted in order to
-	 * understand what objects can be selected in the viewer.
-	 * <p>
-	 * This method does not affect the selection of the viewer itself.
-	 * It's main purpose is for testing and should not be used by other
-	 * clients.
-	 * 
-	 * @param object the objects to select
-	 * @return a selection corresponding to the given objects
-	 */
-	public ISelection getSelection(Object[] objects) {
-		if (modelProvider != null) {
-	 		Object[] viewerObjects = new Object[objects.length];
-			for (int i = 0; i < objects.length; i++) {
-				viewerObjects[i] = modelProvider.getMapping(objects[i]);
-			}
-			return new StructuredSelection(viewerObjects);
-		} else {
-			return StructuredSelection.EMPTY;
-		}
-	}
-	 
-	/**
-	 * Creates the model that will be shown in the viewers. This can be called before the
-	 * viewer has been created.
-	 * <p>
-	 * The result of this method can be shown used as the input to a viewer. However, the
-	 * prefered method of initializing a viewer is to call {@link #initializeViewer(StructuredViewer)}
-	 * directly. This method only exists when the model must be created before the
-	 * viewer.
-	 * </p>
-	 * @param monitor shows progress while preparing the model
-	 * @return the model that can be shown in a viewer
-	 */
-	public Object prepareInput(IProgressMonitor monitor) throws TeamException {
-		if(modelProvider != null) {
-			modelProvider.dispose();
-		}
-		modelProvider = getModelProvider();		
-		return modelProvider.prepareInput(monitor);
-	}
-
-	/**
-	 * Callback that is invoked when a context menu is about to be shown in the
-	 * viewer. Subsclasses must implement to contribute menus. Also, menus can
-	 * contributed by creating a viewer contribution with a <code>targetID</code> 
-	 * that groups sets of actions that are related.
-	 * 
-	 * @param viewer the viewer in which the context menu is being shown.
-	 * @param manager the menu manager to which actions can be added.
-	 */
-	protected void fillContextMenu(StructuredViewer viewer, IMenuManager manager) {
-	}
-	
-	/**
-	 * Allows the advisor to make contributions to the given action bars. Note that some of the 
-	 * items in the action bar may not be accessible.
-	 * 
-	 * @param actionBars the toolbar manager to which to add actions.
-	 */
-	public void setActionBars(IActionBars actionBars) {	
-	}
-	
-	/**
-	 * Method invoked from <code>initializeViewer(Composite, StructuredViewer)</code>
-	 * in order to initialize any actions for the viewer. It is invoked before
-	 * the input is set on the viewer in order to allow actions to be
-	 * initialized before there is any reaction to the input being set (e.g.
-	 * selecting and opening the first element).
-	 * <p>
-	 * The default behavior is to add the up and down navigation nuttons to the
-	 * toolbar. Subclasses can override.
-	 * </p>
-	 * @param viewer the viewer being initialize
-	 */
-	protected void initializeActions(StructuredViewer viewer) {
 	}
 	
 	/**
@@ -313,15 +217,46 @@ public abstract class StructuredViewerAdvisor {
 				StructuredViewerAdvisor.this.dispose();
 			}
 		});
+		viewer.addOpenListener(new IOpenListener() {
+			public void open(OpenEvent event) {
+				handleOpen();
+			}
+		});
+		viewer.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				handleDoubleClick(viewer, event);
+			}
+		});
+		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				// Update the action bars enablement for any contributed action groups
+				updateActionBars((IStructuredSelection)viewer.getSelection());
+			}
+		});
+		TeamUIPlugin.getPlugin().getPreferenceStore().addPropertyChangeListener(propertyListener);
 	}
 	
-	/**
-	 * Get the model provider that will be used to create the input
-	 * for the adviser's viewer.
-	 * @return the model provider
-	 */
-	protected abstract ISynchronizeModelProvider getModelProvider();
+	protected boolean handleDoubleClick(StructuredViewer viewer, DoubleClickEvent event) {
+		IStructuredSelection selection = (IStructuredSelection) event.getSelection();
+		DiffNode node = (DiffNode) selection.getFirstElement();
+		if (node != null && node instanceof SyncInfoModelElement) {
+			SyncInfoModelElement syncNode = (SyncInfoModelElement) node;
+			IResource resource = syncNode.getResource();
+			if (syncNode != null && resource != null && resource.getType() == IResource.FILE) {
+				handleOpen();
+				return true;
+			}
+		}
+		return false;
+	}
 	
+	private void handleOpen() {
+		Object o = getConfiguration().getProperty(SynchronizePageConfiguration.P_OPEN_ACTION);
+		if (o instanceof IAction) {
+			IAction action = (IAction)o;
+			action.run();
+		}
+	}
 	
 	/**
 	 * Subclasses can validate that the viewer being initialized with this advisor
@@ -331,35 +266,6 @@ public abstract class StructuredViewerAdvisor {
 	 * @return <code>true</code> if the viewer is valid, <code>false</code> otherwise.
 	 */
 	protected abstract boolean validateViewer(StructuredViewer viewer);
-	
-	/**
-	 * Returns whether workbench menu items whould be included in the context
-	 * menu. By default, this returns <code>true</code> if there is a menu id
-	 * and <code>false</code> otherwise
-	 * @return whether to include workbench context menu items
-	 */
-	protected boolean allowParticipantMenuContributions() {
-		return getTargetID() != null;
-	}
-
-	/**
-	 * Run the runnable in the UI thread.
-	 * @param r the runnable to run in the UI thread.
-	 */
-	protected void aSyncExec(Runnable r) {
-		final Control ctrl = viewer.getControl();
-		if (ctrl != null && !ctrl.isDisposed()) {
-			ctrl.getDisplay().asyncExec(r);
-		}
-	}
-
-	private void fireChanges() {
-		if (listeners != null) {
-			Object[] l= listeners.getListeners();
-			for (int i= 0; i < l.length; i++)
-				((ISynchronizeModelChangeListener) l[i]).modelChanged(modelProvider.getModelRoot());
-		}
-	}
 
 	/**
 	 * Returns the content provider for the viewer.
@@ -369,7 +275,6 @@ public abstract class StructuredViewerAdvisor {
 	protected IStructuredContentProvider getContentProvider() {
 		return new BaseWorkbenchContentProvider();
 	}
-
 
 	/**
 	 * Get the label provider that will be assigned to the viewer initialized
@@ -383,7 +288,12 @@ public abstract class StructuredViewerAdvisor {
 	 * @see SynchronizeModelElementLabelProvider
 	 */
 	protected ILabelProvider getLabelProvider() {
-		return new SynchronizeModelElementLabelProvider();
+		ILabelProvider provider = new SynchronizeModelElementLabelProvider();
+		ILabelDecorator[] decorators = (ILabelDecorator[])getConfiguration().getProperty(ISynchronizePageConfiguration.P_LABEL_DECORATORS);
+		if (decorators == null) {
+			return provider;
+		}
+		return new DecoratingColorLabelProvider(provider, decorators);
 	}
 
 	/**
@@ -391,11 +301,106 @@ public abstract class StructuredViewerAdvisor {
 	 * 
 	 * @return the viewer configured by this advisor.
 	 */
-	protected StructuredViewer getViewer() {
+	public final StructuredViewer getViewer() {
 		return viewer;
 	}
 
 	/**
+	 * Called to set the input to a viewer. The input to a viewer is always the model created
+	 * by the model provider.
+	 * 
+	 * @param viewer the viewer to set the input.
+	 */
+	public final void setInput(ISynchronizeModelProvider modelProvider) {
+		final ISynchronizeModelElement modelRoot = modelProvider.getModelRoot();
+		getActionGroup().modelChanged(modelRoot);
+		modelRoot.addCompareInputChangeListener(new ICompareInputChangeListener() {
+			public void compareInputChanged(ICompareInput source) {
+				getActionGroup().modelChanged(modelRoot);
+			}
+		});
+		if (viewer != null) {
+			modelProvider.setViewer(viewer);
+			viewer.setSorter(modelProvider.getViewerSorter());
+			viewer.setInput(modelRoot);
+		}
+	}
+	
+	/**
+	 * @return Returns the configuration.
+	 */
+	public ISynchronizePageConfiguration getConfiguration() {
+		return configuration;
+	}
+	
+	/**
+	 * Method invoked from the synchronize page when the action
+	 * bars are set. The advisor uses the configuration to determine
+	 * which groups appear in the action bar menus and allows all
+	 * action groups registered with the configuration to fill the action bars.
+	 * @param actionBars the Action bars for the page
+	 */
+	public final void setActionBars(IActionBars actionBars) {
+		if(actionBars != null) {
+			IToolBarManager manager = actionBars.getToolBarManager();
+			
+			// Populate the toobar menu with the configured groups
+			Object o = configuration.getProperty(ISynchronizePageConfiguration.P_TOOLBAR_MENU);
+			if (!(o instanceof String[])) {
+				o = ISynchronizePageConfiguration.DEFAULT_TOOLBAR_MENU;
+			}
+			String[] groups = (String[])o;
+			for (int i = 0; i < groups.length; i++) {
+				String group = groups[i];
+				// The groupIds must be converted to be unique since the toolbar is shared
+				manager.add(new Separator(getGroupId(group)));
+			}
+
+			// view menu
+			IMenuManager menu = actionBars.getMenuManager();
+			if (menu != null) {
+				// Populate the view dropdown menu with the configured groups
+				o = configuration.getProperty(ISynchronizePageConfiguration.P_VIEW_MENU);
+				if (!(o instanceof String[])) {
+					o = ISynchronizePageConfiguration.DEFAULT_VIEW_MENU;
+				}
+				groups = (String[]) o;
+				int start = 0;
+				if (groups.length > 0
+						&& groups[0]
+								.equals(ISynchronizePageConfiguration.WORKING_SET_GROUP)) {
+					// Special handling for working set group
+					initializeWorkingSetActions();
+					workingSetGroup.fillActionBars(actionBars);
+					menu.add(new Separator());
+					menu.add(new Separator());
+					menu.add(new Separator(getGroupId("others"))); //$NON-NLS-1$
+					menu.add(new Separator());
+					start = 1;
+				}
+				for (int i = start; i < groups.length; i++) {
+					String group = groups[i];
+					// The groupIds must be converted to be unique since the
+					// view menu is shared
+					menu.add(new Separator(getGroupId(group)));
+				}
+			}
+			// status line
+			IStatusLineManager statusLineMgr = actionBars.getStatusLineManager();
+			if (statusLineMgr != null && statusLine != null) {
+				statusLine.fillActionBars(actionBars);
+			}
+			
+			getActionGroup().fillActionBars(actionBars);
+			updateActionBars((IStructuredSelection) getViewer().getSelection());
+			Object input = viewer.getInput();
+			if (input instanceof ISynchronizeModelElement) {
+				getActionGroup().modelChanged((ISynchronizeModelElement) input);
+			}
+		}		
+	}
+	
+	/*
 	 * Method invoked from <code>initializeViewer(StructuredViewer)</code>
 	 * in order to configure the viewer to call <code>fillContextMenu(StructuredViewer, IMenuManager)</code>
 	 * when a context menu is being displayed in viewer.
@@ -403,8 +408,15 @@ public abstract class StructuredViewerAdvisor {
 	 * @param viewer the viewer being initialized
 	 * @see fillContextMenu(StructuredViewer, IMenuManager)
 	 */
-	protected final void hookContextMenu(final StructuredViewer viewer) {
-		final MenuManager menuMgr = new MenuManager(getTargetID()); //$NON-NLS-1$
+	private void hookContextMenu(final StructuredViewer viewer) {
+		String targetID;
+		Object o = configuration.getProperty(ISynchronizePageConfiguration.P_OBJECT_CONTRIBUTION_ID);
+		if (o instanceof String) {
+			targetID = (String)o;
+		} else {
+			targetID = null;
+		}
+		final MenuManager menuMgr = new MenuManager(targetID); //$NON-NLS-1$
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
 	
@@ -436,45 +448,76 @@ public abstract class StructuredViewerAdvisor {
 			}
 		});
 		viewer.getControl().setMenu(menu);
-		if (allowParticipantMenuContributions()) {
-			IWorkbenchPartSite ws = getWorkbenchPartSite();
-			if(ws == null)
-				Utils.findSite(viewer.getControl());
+		if (targetID != null) {
+			IWorkbenchSite workbenchSite = configuration.getSite().getWorkbenchSite();
+			IWorkbenchPartSite ws = null;
+			if (workbenchSite instanceof IWorkbenchPartSite)
+				ws = (IWorkbenchPartSite)workbenchSite;
 			if (ws == null) 
 				ws = Utils.findSite();
 			if (ws != null) {
-				ws.registerContextMenu(getTargetID(), menuMgr, viewer);
+				ws.registerContextMenu(targetID, menuMgr, viewer);
 			} else {
-				TeamUIPlugin.log(IStatus.ERROR, "Cannot add menu contributions because the site cannot be found: " + getTargetID(), null); //$NON-NLS-1$
+				TeamUIPlugin.log(IStatus.ERROR, "Cannot add menu contributions because the site cannot be found: " + targetID, null); //$NON-NLS-1$
 			}
 		}
 	}
-
-	/**
-	 * Called to set the input to a viewer. The input to a viewer is always the model created
-	 * by the model provider.
+	
+	/*
+	 * Callback that is invoked when a context menu is about to be shown in the
+	 * viewer. Subsclasses must implement to contribute menus. Also, menus can
+	 * contributed by creating a viewer contribution with a <code>targetID</code> 
+	 * that groups sets of actions that are related.
 	 * 
-	 * @param viewer the viewer to set the input.
+	 * @param viewer the viewer in which the context menu is being shown.
+	 * @param manager the menu manager to which actions can be added.
 	 */
-	protected final void setInput(StructuredViewer viewer) {
-		modelProvider.setViewer(viewer);
-		viewer.setSorter(modelProvider.getViewerSorter());
-		ISynchronizeModelElement input = modelProvider.getModelRoot();
-		if (input instanceof DiffNode) {
-			((DiffNode) input).addCompareInputChangeListener(new ICompareInputChangeListener() {
-				public void compareInputChanged(ICompareInput source) {
-					fireChanges();
-				}
-			});
+	private void fillContextMenu(StructuredViewer viewer, final IMenuManager manager) {
+		// Populate the menu with the configured groups
+		Object o = configuration.getProperty(ISynchronizePageConfiguration.P_CONTEXT_MENU);
+		if (!(o instanceof String[])) {
+			o = ISynchronizePageConfiguration.DEFAULT_CONTEXT_MENU;
 		}
-		viewer.setInput(modelProvider.getModelRoot());
+		String[] groups = (String[])o;
+		for (int i = 0; i < groups.length; i++) {
+			String group = groups[i];
+			// There is no need to adjust the group ids in a contetx menu (see setActionBars)
+			manager.add(new Separator(group));
+		}
+		getActionGroup().setContext(new ActionContext(viewer.getSelection()));
+		getActionGroup().fillContextMenu(manager);
 	}
 	
-	/**
-	 * Returns the part site in which to register the context menu viewer contributions for this
-	 * advisor.
+	private void updateActionBars(IStructuredSelection selection) {
+		ActionGroup group = getActionGroup();
+		if (group != null) {
+			group.setContext(new ActionContext(selection));
+			group.updateActionBars();
+		}
+	}
+	
+	private SynchronizePageActionGroup getActionGroup() {
+		return (SynchronizePageActionGroup)configuration;
+	}
+	
+	private String getGroupId(String group) {
+		return ((SynchronizePageConfiguration)configuration).getGroupId(group);
+	}
+	
+	private String getUniqueId(ISynchronizeParticipant particpant) {
+		String id = particpant.getId();
+		if (particpant.getSecondaryId() != null) {
+			id += "."; //$NON-NLS-1$
+			id += particpant.getSecondaryId();
+		}
+		return id;
+	}
+	
+	/*
+	 * For use by test cases only
+	 * @return Returns the modelManager.
 	 */
-	protected IWorkbenchPartSite getWorkbenchPartSite() {
-		return this.site;
+	public SynchronizeModelManager getModelManager() {
+		return modelManager;
 	}
 }

@@ -105,5 +105,13 @@
       </view>
    </extension>
 
+<!-- *************** Synchronize Participants **************** -->
 
+      <participant
+            name="Test Particpant"
+            type="static"
+            class="org.eclipse.team.tests.ui.synchronize.TestParticipant"
+            multipleInstances="false"
+            id="org.eclipse.team.tests.ui.test-participant">
+      </participant>
 </plugin>

@@ -12,19 +12,34 @@ package org.eclipse.team.internal.ui.synchronize;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.internal.ui.Policy;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.actions.SynchronizePageDropDownAction;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.*;
+import org.eclipse.team.ui.synchronize.ISynchronizeManager;
+import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
+import org.eclipse.team.ui.synchronize.ISynchronizeParticipantListener;
+import org.eclipse.team.ui.synchronize.ISynchronizeParticipantReference;
+import org.eclipse.team.ui.synchronize.ISynchronizeView;
+import org.eclipse.team.ui.synchronize.ISynchronizePage;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.part.*;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.part.IPage;
+import org.eclipse.ui.part.IPageBookViewPage;
+import org.eclipse.ui.part.MessagePage;
+import org.eclipse.ui.part.PageBook;
+import org.eclipse.ui.part.PageBookView;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 
 /**
@@ -127,22 +142,34 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 	 */
 	protected PageRec doCreatePage(IWorkbenchPart dummyPart) {
 		SynchronizeViewWorkbenchPart part = (SynchronizeViewWorkbenchPart)dummyPart;
-		ISynchronizeParticipant component = part.getParticipant();
-		IPageBookViewPage page = null;
-		if(component instanceof ISynchronizeParticipant) {
-			ISynchronizeParticipant participant = (ISynchronizeParticipant)component;			
-			participant.addPropertyChangeListener(this);
-			page = participant.createPage(this);
-		} else if(component instanceof IPageBookViewPage) {
-			page = (IPageBookViewPage)component;
-		}	
+		ISynchronizeParticipant participant = part.getParticipant();	
+		participant.addPropertyChangeListener(this);
+		ISynchronizePageConfiguration configuration = participant.createPageConfiguration();
+		IPageBookViewPage page = participant.createPage(configuration);
 		if(page != null) {
 			initPage(page);
+			initPage(configuration, page);
 			page.createControl(getPageBook());
 			PageRec rec = new PageRec(dummyPart, page);
 			return rec;
 		}
 		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.PageBookView#initPage(org.eclipse.ui.part.IPageBookViewPage)
+	 */
+	protected void initPage(ISynchronizePageConfiguration configuration, IPageBookViewPage page) {
+		// A page site does not provide everything the page may need
+		// Also provide the synchronize page site if the page is a synchronize view page
+		((SynchronizePageConfiguration)configuration).setSite(new WorkbenchPartSynchronizePageSite(this, getDialogSettings(configuration.getParticipant())));
+		if (page instanceof ISynchronizePage) {
+			try {
+				((ISynchronizePage)page).init(configuration.getSite());
+			} catch (PartInitException e) {
+				TeamUIPlugin.log(IStatus.ERROR, e.getMessage(), e);
+			}
+		}
 	}
 
 	/* (non-Javadoc)
@@ -158,13 +185,8 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 	public void dispose() {
 		super.dispose();
 		TeamUI.getSynchronizeManager().removeSynchronizeParticipantListener(this);
-		
-		IDialogSettings workbenchSettings = TeamUIPlugin.getPlugin().getDialogSettings();
 		if(activeParticipantRef != null) {
-			IDialogSettings section = workbenchSettings.getSection(KEY_SETTINGS_SECTION); //$NON-NLS-1$
-			if (section == null) {
-				section = workbenchSettings.addNewSection(KEY_SETTINGS_SECTION);
-			}
+			IDialogSettings section = getDialogSettings();
 			section.put(KEY_LAST_ACTIVE_PARTICIPANT, activeParticipantRef.getId());
 		}			
 		fParticipantToPart = null;
@@ -210,6 +232,8 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 							if (part != null) {
 								partClosed(part);
 							}
+							// Remove any settings created for the participant
+							removeDialogSettings(participant);
 							if (getParticipant() == null) {
 								ISynchronizeParticipantReference[] available = TeamUI.getSynchronizeManager().getSynchronizeParticipants();
 								if (available.length > 0) {
@@ -339,15 +363,12 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 			// decide which participant to show	on startup
 			if (participants.length > 0) {
 				ISynchronizeParticipantReference participantToSelect = participants[0];
-				IDialogSettings workbenchSettings = TeamUIPlugin.getPlugin().getDialogSettings();
-				IDialogSettings section = workbenchSettings.getSection(KEY_SETTINGS_SECTION);//$NON-NLS-1$
-				if (section != null) {
-					String selectedParticipantId = section.get(KEY_LAST_ACTIVE_PARTICIPANT);
-					if(selectedParticipantId != null) {
-						ISynchronizeParticipantReference selectedParticipant = manager.get(selectedParticipantId, null);
-						if(selectedParticipant != null) {
-							participantToSelect = selectedParticipant;
-						}
+				IDialogSettings section = getDialogSettings();
+				String selectedParticipantId = section.get(KEY_LAST_ACTIVE_PARTICIPANT);
+				if(selectedParticipantId != null) {
+					ISynchronizeParticipantReference selectedParticipant = manager.get(selectedParticipantId, null);
+					if(selectedParticipant != null) {
+						participantToSelect = selectedParticipant;
 					}
 				}
 				display(participantToSelect.getParticipant());
@@ -376,6 +397,44 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 			// The PageRec class is not visible so we can't do a null check
 			// before accessing the page.
 			return null;
+		}
+	}
+	
+	/*
+	 * Return the dialog settings for the view
+	 */
+	private IDialogSettings getDialogSettings() {
+		IDialogSettings workbenchSettings = TeamUIPlugin.getPlugin().getDialogSettings();
+		IDialogSettings syncViewSettings = workbenchSettings.getSection(KEY_SETTINGS_SECTION); //$NON-NLS-1$
+		if (syncViewSettings == null) {
+			syncViewSettings = workbenchSettings.addNewSection(KEY_SETTINGS_SECTION);
+		}
+		return syncViewSettings;
+	}
+	
+	private String getSettingsKey(ISynchronizeParticipant participant) {
+		String id = participant.getId();
+		String secondaryId = participant.getSecondaryId();
+	    return secondaryId == null ? id : id + '.' + secondaryId;
+	}
+	
+	private IDialogSettings getDialogSettings(ISynchronizeParticipant participant) {
+		String key = getSettingsKey(participant);
+		IDialogSettings viewsSettings = getDialogSettings();
+		IDialogSettings settings = viewsSettings.getSection(key);
+		if (settings == null) {
+			settings = viewsSettings.addNewSection(key);
+		}
+		return settings;
+	}
+	
+	private void removeDialogSettings(ISynchronizeParticipant participant) {
+		String key = getSettingsKey(participant);
+		IDialogSettings settings = getDialogSettings();
+		if (settings.getSection(key) != null) {
+			// There isn't an explicit remove so just make sure
+			// That the old settings are forgotten
+			getDialogSettings().addSection(new DialogSettings(key));
 		}
 	}
 }

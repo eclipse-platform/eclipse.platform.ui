@@ -19,9 +19,11 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
-import org.eclipse.team.ui.synchronize.ISynchronizeView;
+import org.eclipse.team.ui.synchronize.ISynchronizePageSite;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IKeyBindingService;
+import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.actions.ActionFactory;
 
 /**
@@ -33,8 +35,9 @@ import org.eclipse.ui.actions.ActionFactory;
  */
 public class NavigateAction extends Action {
 	private final boolean next;
-	private ISynchronizeView view;
 	private INavigatable navigator;
+	private ISynchronizePageSite site;
+	private String title;
 	
 	/**
 	 * Direction to navigate
@@ -42,23 +45,34 @@ public class NavigateAction extends Action {
 	final public static int NEXT = 1;
 	final public static int PREVIOUS = 2;
 	
-	public NavigateAction(ISynchronizeView view, INavigatable navigator, boolean next) {
+	public NavigateAction(ISynchronizePageSite site, String title, INavigatable navigator, boolean next) {
+		this.site = site;
+		this.title = title;
 		this.navigator = navigator;
-		this.view = view;
 		this.next = next;
-
-		IKeyBindingService kbs = view.getSite().getKeyBindingService();		
-		if(next) {
+		IWorkbenchSite workbenchSite = site.getWorkbenchSite();
+		IViewSite viewSite = null;
+		if (workbenchSite instanceof IViewSite) {
+			viewSite = (IViewSite)workbenchSite;
+		}
+		if (next) {
 			Utils.initAction(this, "action.navigateNext."); //$NON-NLS-1$
-			view.getViewSite().getActionBars().setGlobalActionHandler(ActionFactory.NEXT.getId(), this);			
+			if (viewSite != null)
+				viewSite.getActionBars().setGlobalActionHandler(ActionFactory.NEXT.getId(), this);
 		} else {
 			Utils.initAction(this, "action.navigatePrevious."); //$NON-NLS-1$
-			view.getViewSite().getActionBars().setGlobalActionHandler(ActionFactory.PREVIOUS.getId(), this);			
+			if (viewSite != null)
+				viewSite.getActionBars().setGlobalActionHandler(ActionFactory.PREVIOUS.getId(), this);
 		}
 	}
 	
 	public void run() {
-		navigate();
+		IWorkbenchSite ws = site.getWorkbenchSite();
+		if (ws instanceof IWorkbenchPartSite) {
+			navigate();
+		} else {
+			navigator.gotoDifference(next);
+		}
 	}
 	
 	private void navigate() {
@@ -75,37 +89,39 @@ public class NavigateAction extends Action {
 		if(info.getLocal().getType() != IResource.FILE) {
 			if(! navigator.gotoDifference(next)) {
 				info = getSyncInfoFromSelection();
-				OpenInCompareAction.openCompareEditor(view, view.getParticipant().getName(), info, true /* keep focus */);
+				OpenInCompareAction.openCompareEditor(site, getTitle(), info, true /* keep focus */);
 			}
 			return;
 		}
 		
-		IEditorPart editor = OpenInCompareAction.findOpenCompareEditor(view.getSite(), info.getLocal());			
-		boolean atEnd = false;
-		CompareEditorInput input;
-		ICompareNavigator navigator;
-		
-		if(editor != null) {
-			// if an existing editor is open on the current selection, use it			 
-			input = (CompareEditorInput)editor.getEditorInput();
-			navigator = (ICompareNavigator)input.getAdapter(ICompareNavigator.class);
-			if(navigator != null) {
-				if(navigator.selectChange(next)) {
-					if(! this.navigator.gotoDifference(next)) {
-						info = getSyncInfoFromSelection();
-						OpenInCompareAction.openCompareEditor(view, getTitle(), info, true /* keep focus */);
-					}
-				}				
+		IWorkbenchSite ws = site.getWorkbenchSite();
+		if (ws instanceof IWorkbenchPartSite) {
+			IEditorPart editor = OpenInCompareAction.findOpenCompareEditor((IWorkbenchPartSite)ws, info.getLocal());
+			CompareEditorInput input;
+			ICompareNavigator navigator;
+			
+			if(editor != null) {
+				// if an existing editor is open on the current selection, use it			 
+				input = (CompareEditorInput)editor.getEditorInput();
+				navigator = (ICompareNavigator)input.getAdapter(ICompareNavigator.class);
+				if(navigator != null) {
+					if(navigator.selectChange(next)) {
+						if(! this.navigator.gotoDifference(next)) {
+							info = getSyncInfoFromSelection();
+							OpenInCompareAction.openCompareEditor(site, getTitle(), info, true /* keep focus */);
+						}
+					}				
+				}
+			} else {
+				// otherwise, select the next change and open a compare editor which will automatically
+				// show the first change.
+				OpenInCompareAction.openCompareEditor(site, getTitle(), info, true /* keep focus */);
 			}
-		} else {
-			// otherwise, select the next change and open a compare editor which will automatically
-			// show the first change.
-			OpenInCompareAction.openCompareEditor(view, getTitle(), info, true /* keep focus */);
 		}
 	}
 
 	private SyncInfo getSyncInfoFromSelection() {
-		IStructuredSelection selection = (IStructuredSelection)view.getSite().getPage().getSelection();
+		IStructuredSelection selection = (IStructuredSelection)site.getSelectionProvider().getSelection();
 		if(selection == null) return null;
 		Object obj = selection.getFirstElement();
 		if (obj instanceof SyncInfoModelElement) {
@@ -116,6 +132,6 @@ public class NavigateAction extends Action {
 	}
 	
 	private String getTitle() {
-		return view.getParticipant().getName();
+		return title;
 	}
 }
