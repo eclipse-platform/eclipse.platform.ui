@@ -39,7 +39,7 @@
             id="org.eclipse.ui.console.ConsoleView">
       </command>
       <keyBinding
-            string=""
+            keySequence=""
             scope="org.eclipse.ui.globalScope"
             command="org.eclipse.ui.console.ConsoleView"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">

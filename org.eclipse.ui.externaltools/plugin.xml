@@ -71,7 +71,7 @@
             id="org.eclipse.ui.externaltools.ExternalToolMenuDelegateToolbar">
       </command>
       <keyBinding
-            string=""
+            keySequence=""
             scope="org.eclipse.ui.globalScope"
             command="org.eclipse.ui.externaltools.ExternalToolMenuDelegateToolbar"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
