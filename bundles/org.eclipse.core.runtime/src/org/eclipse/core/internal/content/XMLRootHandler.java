@@ -11,6 +11,7 @@
 package org.eclipse.core.internal.content;
 
 import java.io.IOException;
+import java.io.StringReader;
 import javax.xml.parsers.*;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.osgi.framework.ServiceReference;
@@ -178,6 +179,16 @@ public final class XMLRootHandler extends DefaultHandler implements LexicalHandl
 		}
 		return true;
 	}
+	
+	/*
+	 * Resolve external entity definitions to an empty string.  This is to speed
+	 * up processing of files with external DTDs.  Not resolving the contents 
+	 * of the DTD is ok, as only the System ID of the DTD declaration is used.
+	 * @see org.xml.sax.helpers.DefaultHandler#resolveEntity(java.lang.String, java.lang.String)
+	 */
+	public InputSource resolveEntity(String publicId, String systemId) throws SAXException {
+		return new InputSource(new StringReader("")); //$NON-NLS-1$
+	}	
 
 	/*
 	 * (non-Javadoc)

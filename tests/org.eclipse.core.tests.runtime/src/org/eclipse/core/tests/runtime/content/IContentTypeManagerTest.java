@@ -28,11 +28,12 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 	private final static String XML_UTF_16BE = "<?xml version=\"1.0\" encoding=\"UTF-16BE\"?><org.eclipse.core.runtime.tests.root/>";
 	private final static String XML_UTF_16LE = "<?xml version=\"1.0\" encoding=\"UTF-16LE\"?><org.eclipse.core.runtime.tests.root/>";
 	private final static String XML_ISO_8859_1 = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><org.eclipse.core.runtime.tests.root/>";
-	private final static String XML_ISO_8859_1_SINGLE_QUOTES = "<?xml version=\"1.0\" encoding='ISO-8859-1'?><org.eclipse.core.runtime.tests.root/>";	
+	private final static String XML_ISO_8859_1_SINGLE_QUOTES = "<?xml version='1.0' encoding='ISO-8859-1'?><org.eclipse.core.runtime.tests.root/>";
 	private final static String XML_ROOT_ELEMENT_ISO_8859_1 = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><org.eclipse.core.runtime.tests.root-element/>";
-	private final static String XML_ROOT_ELEMENT_EXTERNAL_ENTITY = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><!DOCTYPE project   [<!ENTITY someentity SYSTEM \"someentity.xml\">]><org.eclipse.core.runtime.tests.root-element/>";
+	private final static String XML_ROOT_ELEMENT_EXTERNAL_ENTITY = "<?xml version=\"1.0\"?><!DOCTYPE project   [<!ENTITY someentity SYSTEM \"someentity.xml\">]><org.eclipse.core.runtime.tests.root-element/>";
+	private final static String XML_ROOT_ELEMENT_EXTERNAL_ENTITY2 = "<?xml version=\"1.0\"?><!DOCTYPE org.eclipse.core.runtime.tests.root-element PUBLIC \"org.eclipse.core.runtime.tests.root-elementId\" \"org.eclipse.core.runtime.tests.root-element.dtd\" ><org.eclipse.core.runtime.tests.root-element/>";
 	private final static String XML_DTD_US_ASCII = "<?xml version=\"1.0\" encoding=\"US-ASCII\"?><!DOCTYPE sometype SYSTEM \"org.eclipse.core.runtime.tests.some.dtd\"><org.eclipse.core.runtime.tests.root/>";
-	private final static String XML_DTD_EXTERNAL_ENTITY = "<?xml version=\"1.0\" encoding=\"US-ASCII\"?><!DOCTYPE project  SYSTEM \"org.eclipse.core.runtime.tests.some.dtd\"  [<!ENTITY someentity SYSTEM \"someentity.xml\">]><org.eclipse.core.runtime.tests.root/>";
+	private final static String XML_DTD_EXTERNAL_ENTITY = "<?xml version=\"1.0\"?><!DOCTYPE project  SYSTEM \"org.eclipse.core.runtime.tests.some.dtd\"  [<!ENTITY someentity SYSTEM \"someentity.xml\">]><org.eclipse.core.runtime.tests.root/>";
 	private final static String SAMPLE_BIN1_SIGNATURE = "\u0010\u0011\u0012\u0013";
 	private final static String SAMPLE_BIN1_OFFSET = "12345";
 	private final static String SAMPLE_BIN2_SIGNATURE = "\u0010\u0011\u0012\u0014";
@@ -44,39 +45,49 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 
 	public void testRegistry() {
 		IContentTypeManager contentTypeManager = LocalContentTypeManager.getLocalContentTypeManager();
+		
 		IContentType textContentType = contentTypeManager.getContentType(Platform.PI_RUNTIME + '.' + "text");
 		assertNotNull("1.0", textContentType);
 		assertTrue("1.1", isText(contentTypeManager, textContentType));
 		assertNotNull("1.2", ((ContentType) textContentType).getDescriber());
+		
 		IContentType xmlContentType = contentTypeManager.getContentType(Platform.PI_RUNTIME + ".xml");
 		assertNotNull("2.0", xmlContentType);
 		assertTrue("2.1", isText(contentTypeManager, xmlContentType));
-		assertEquals("2.2", textContentType, xmlContentType.getBaseType());
+		assertEquals("2.2", textContentType, xmlContentType.getBaseType());		
 		IContentDescriber xmlDescriber = ((ContentType) xmlContentType).getDescriber();
 		assertNotNull("2.3", xmlDescriber);
 		assertTrue("2.4", xmlDescriber instanceof XMLContentDescriber);
+		
 		IContentType xmlBasedDifferentExtensionContentType = contentTypeManager.getContentType(RuntimeTest.PI_RUNTIME_TESTS + '.' + "xml-based-different-extension");
 		assertNotNull("3.0", xmlBasedDifferentExtensionContentType);
 		assertTrue("3.1", isText(contentTypeManager, xmlBasedDifferentExtensionContentType));
 		assertEquals("3.2", xmlContentType, xmlBasedDifferentExtensionContentType.getBaseType());
+		
 		IContentType xmlBasedSpecificNameContentType = contentTypeManager.getContentType(RuntimeTest.PI_RUNTIME_TESTS + '.' + "xml-based-specific-name");
 		assertNotNull("4.0", xmlBasedSpecificNameContentType);
 		assertTrue("4.1", isText(contentTypeManager, xmlBasedSpecificNameContentType));
 		assertEquals("4.2", xmlContentType, xmlBasedSpecificNameContentType.getBaseType());
+		
 		IContentType[] xmlTypes = contentTypeManager.findContentTypesFor(changeCase("foo.xml"));
 		assertTrue("5.1", contains(xmlTypes, xmlContentType));
+		
 		IContentType binaryContentType = contentTypeManager.getContentType(RuntimeTest.PI_RUNTIME_TESTS + '.' + "sample-binary1");
 		assertNotNull("6.0", binaryContentType);
 		assertTrue("6.1", !isText(contentTypeManager, binaryContentType));
 		assertNull("6.2", binaryContentType.getBaseType());
+		
 		IContentType[] binaryTypes = contentTypeManager.findContentTypesFor(changeCase("foo.samplebin1"));
 		assertEquals("7.0", 1, binaryTypes.length);
 		assertEquals("7.1", binaryContentType, binaryTypes[0]);
+		
 		IContentType myText = contentTypeManager.getContentType(PI_RUNTIME_TESTS + ".mytext");
 		assertNotNull("8.0", myText);
 		assertEquals("8.1", "BAR", myText.getDefaultCharset());
+		
 		IContentType[] fooBarTypes = contentTypeManager.findContentTypesFor(changeCase("foo.bar"));
 		assertEquals("9.0", 2, fooBarTypes.length);
+		
 		IContentType fooBar = contentTypeManager.getContentType(PI_RUNTIME_TESTS + ".fooBar");
 		assertNotNull("9.1", fooBar);
 		IContentType subFooBar = contentTypeManager.getContentType(PI_RUNTIME_TESTS + ".subFooBar");
@@ -101,13 +112,17 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 		IContentType appropriate = contentTypeManager.getContentType(Platform.PI_RUNTIME + ".xml");
 		IContentType appropriateSpecific1 = contentTypeManager.getContentType(RuntimeTest.PI_RUNTIME_TESTS + ".xml-based-different-extension");
 		IContentType appropriateSpecific2 = contentTypeManager.getContentType(RuntimeTest.PI_RUNTIME_TESTS + ".xml-based-specific-name");
+		
 		// if only inappropriate is provided, none will be selected
 		assertNull("1.0", contentTypeManager.findContentTypeFor(getInputStream(MINIMAL_XML), new IContentType[] {inappropriate}));
+		
 		// if inappropriate and appropriate are provided, appropriate will be selected		
 		assertEquals("2.0", appropriate, contentTypeManager.findContentTypeFor(getInputStream(MINIMAL_XML), new IContentType[] {inappropriate, appropriate}));
+		
 		// if inappropriate, appropriate and a more specific appropriate type are provided, the specific type will be selected		
 		assertEquals("3.0", appropriateSpecific1, contentTypeManager.findContentTypeFor(getInputStream(MINIMAL_XML), new IContentType[] {inappropriate, appropriate, appropriateSpecific1}));
 		assertEquals("3.1", appropriateSpecific2, contentTypeManager.findContentTypeFor(getInputStream(MINIMAL_XML), new IContentType[] {inappropriate, appropriate, appropriateSpecific2}));
+		
 		// if all are provided, the more specific types will appear before the more generic types
 		IContentType[] selected = contentTypeManager.findContentTypesFor(getInputStream(MINIMAL_XML), new IContentType[] {inappropriate, appropriate, appropriateSpecific1, appropriateSpecific2});
 		assertEquals("4.0", 3, selected.length);
@@ -135,57 +150,80 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 		for (int i = 0; i < 2; i++, text = !text) {
 			String sufix = text ? "-text" : "-binary";
 			IContentDescription description;
+
 			description = getDescriptionFor(contentTypeManager, MINIMAL_XML, "UTF-8", "foo.xml", IContentDescription.ALL, text);
 			assertNotNull("1.0" + sufix, description);
 			assertEquals("1.1" + sufix, xmlType, description.getContentType());
+			assertTrue("1.2", description instanceof DefaultDescription);
+
 			description = getDescriptionFor(contentTypeManager, MINIMAL_XML, "UTF-8", "foo.xml", new QualifiedName[] {IContentDescription.CHARSET}, text);
 			assertNotNull("2.0" + sufix, description);
 			assertEquals("2.1" + sufix, xmlType, description.getContentType());
 			// the default charset should have been filled by the content type manager
 			assertEquals("2.2" + sufix, "UTF-8", description.getProperty(IContentDescription.CHARSET));
+			assertTrue("2.3", description instanceof DefaultDescription);
+
 			description = getDescriptionFor(contentTypeManager, XML_ISO_8859_1, "ISO-8859-1", "foo.xml", new QualifiedName[] {IContentDescription.CHARSET}, text);
 			assertNotNull("2.3a" + sufix, description);
 			assertEquals("2.3b" + sufix, xmlType, description.getContentType());
 			assertEquals("2.3c" + sufix, "ISO-8859-1", description.getProperty(IContentDescription.CHARSET));
+			assertFalse("2.3d", description instanceof DefaultDescription);
+
 			// ensure we handle single quotes properly (bug 65443)
 			description = getDescriptionFor(contentTypeManager, XML_ISO_8859_1_SINGLE_QUOTES, "ISO-8859-1", "foo.xml", new QualifiedName[] {IContentDescription.CHARSET}, text);
-			assertNotNull("2.3d" + sufix, description);
-			assertEquals("2.3e" + sufix, xmlType, description.getContentType());
-			assertEquals("2.3f" + sufix, "ISO-8859-1", description.getProperty(IContentDescription.CHARSET));			
-			description = getDescriptionFor(contentTypeManager, XML_UTF_16, "UTF-8", "foo.xml", new QualifiedName[] {IContentDescription.CHARSET}, text);
+			assertNotNull("2.3e" + sufix, description);
+			assertEquals("2.3f" + sufix, xmlType, description.getContentType());
+			assertEquals("2.3g" + sufix, "ISO-8859-1", description.getProperty(IContentDescription.CHARSET));
+			assertFalse("2.3h", description instanceof DefaultDescription);
+
+			description = getDescriptionFor(contentTypeManager, XML_UTF_16, "UTF-16", "foo.xml", new QualifiedName[] {IContentDescription.CHARSET, IContentDescription.BYTE_ORDER_MARK}, text);
 			assertNotNull("2.4a" + sufix, description);
 			assertEquals("2.4b" + sufix, xmlType, description.getContentType());
 			assertEquals("2.4c" + sufix, "UTF-16", description.getProperty(IContentDescription.CHARSET));
+			assertTrue("2.4d" + sufix, text || IContentDescription.BOM_UTF_16BE == description.getProperty(IContentDescription.BYTE_ORDER_MARK));
+			assertFalse("2.4e", description instanceof DefaultDescription);
+
 			description = getDescriptionFor(contentTypeManager, XML_UTF_16BE, "UTF-8", "foo.xml", new QualifiedName[] {IContentDescription.CHARSET}, text);
 			assertNotNull("2.5a" + sufix, description);
 			assertEquals("2.5b" + sufix, xmlType, description.getContentType());
 			assertEquals("2.5c" + sufix, "UTF-16BE", description.getProperty(IContentDescription.CHARSET));
+			assertFalse("2.5d", description instanceof DefaultDescription);
+
 			description = getDescriptionFor(contentTypeManager, XML_UTF_16LE, "UTF-8", "foo.xml", new QualifiedName[] {IContentDescription.CHARSET}, text);
 			assertNotNull("2.6a" + sufix, description);
 			assertEquals("2.6b" + sufix, xmlType, description.getContentType());
 			// the default charset should have been filled by the content type manager
 			assertEquals("2.6c" + sufix, "UTF-16LE", description.getProperty(IContentDescription.CHARSET));
+			assertFalse("2.6d", description instanceof DefaultDescription);
+
 			description = getDescriptionFor(contentTypeManager, MINIMAL_XML, "UTF-8", "foo.xml", IContentDescription.ALL, text);
 			assertNotNull("4.0" + sufix, description);
 			assertEquals("4.1" + sufix, xmlType, description.getContentType());
 			assertEquals("4.2" + sufix, "UTF-8", description.getProperty(IContentDescription.CHARSET));
 			assertNotNull("5.0" + sufix, mytext);
 			assertEquals("5.0b" + sufix, "BAR", mytext.getDefaultCharset());
+			assertTrue("5.0c", description instanceof DefaultDescription);
+
 			description = getDescriptionFor(contentTypeManager, "some contents", null, "abc.tzt", IContentDescription.ALL, text);
 			assertNotNull("5.1" + sufix, description);
 			assertEquals("5.2" + sufix, mytext, description.getContentType());
 			assertEquals("5.3" + sufix, "BAR", description.getProperty(IContentDescription.CHARSET));
+			assertTrue("5.4", description instanceof DefaultDescription);
 			// now plays with setting a non-default default charset
 			mytext.setDefaultCharset("FOO");
+
 			description = getDescriptionFor(contentTypeManager, "some contents", null, "abc.tzt", IContentDescription.ALL, text);
 			assertNotNull("5.5" + sufix, description);
 			assertEquals("5.6" + sufix, mytext, description.getContentType());
 			assertEquals("5.7" + sufix, "FOO", description.getProperty(IContentDescription.CHARSET));
+			assertTrue("5.8", description instanceof DefaultDescription);
 			mytext.setDefaultCharset(null);
+
 			description = getDescriptionFor(contentTypeManager, "some contents", null, "abc.tzt", IContentDescription.ALL, text);
 			assertNotNull("5.10" + sufix, description);
 			assertEquals("5.11" + sufix, mytext, description.getContentType());
 			assertEquals("5.12" + sufix, "BAR", description.getProperty(IContentDescription.CHARSET));
+			assertTrue("5.13", description instanceof DefaultDescription);
 		}
 		assertNotNull("6.0", mytext1);
 		assertEquals("6.1", "BAR", mytext1.getDefaultCharset());
@@ -199,10 +237,12 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 		IContentType sampleBinary1 = contentTypeManager.getContentType(PI_RUNTIME_TESTS + ".sample-binary1");
 		IContentType sampleBinary2 = contentTypeManager.getContentType(PI_RUNTIME_TESTS + ".sample-binary2");
 		InputStream contents;
+		
 		contents = getInputStream(SAMPLE_BIN1_OFFSET + SAMPLE_BIN1_SIGNATURE + " extra contents", "US-ASCII");
 		IContentDescription description = contentTypeManager.getDescriptionFor(contents, null, IContentDescription.ALL);
 		assertNotNull("6.0", description);
 		assertEquals("6.1", sampleBinary1, description.getContentType());
+		
 		contents = getInputStream(SAMPLE_BIN2_OFFSET + SAMPLE_BIN2_SIGNATURE + " extra contents", "US-ASCII");
 		description = contentTypeManager.getDescriptionFor(contents, null, IContentDescription.ALL);
 		assertNotNull("7.0", description);
@@ -260,13 +300,18 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 	public void testFindContentType() throws UnsupportedEncodingException, IOException {
 		IContentTypeManager contentTypeManager = LocalContentTypeManager.getLocalContentTypeManager();
 		IContentType textContentType = contentTypeManager.getContentType(Platform.PI_RUNTIME + '.' + "text");
-		IContentType single = contentTypeManager.findContentTypeFor(getInputStream("Just a test"), changeCase("file.txt"));
+		IContentType xmlContentType = contentTypeManager.getContentType(Platform.PI_RUNTIME + ".xml");
+		
+		IContentType single;
+		
+		single = contentTypeManager.findContentTypeFor(getInputStream("Just a test"), changeCase("file.txt"));		
 		assertNotNull("1.0", single);
 		assertEquals("1.1", textContentType, single);
-		IContentType xmlContentType = contentTypeManager.getContentType(Platform.PI_RUNTIME + ".xml");
+		
 		single = contentTypeManager.findContentTypeFor(getInputStream(XML_UTF_8, "UTF-8"), changeCase("foo.xml"));
 		assertNotNull("2.0", single);
 		assertEquals("2.1", xmlContentType, single);
+		
 		IContentType[] multiple = contentTypeManager.findContentTypesFor(getInputStream(XML_UTF_8, "UTF-8"), null);
 		assertTrue("3.0", contains(multiple, xmlContentType));
 	}
@@ -275,26 +320,31 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 		IContentType text = Platform.getContentTypeManager().getContentType((Platform.PI_RUNTIME + ".text"));
 		// associate a user-defined file spec
 		text.addFileSpec("ini", IContentType.FILE_EXTENSION_SPEC);
+		
 		// test associations
 		assertTrue("0.1", text.isAssociatedWith(changeCase("text.txt")));
 		assertTrue("0.2", text.isAssociatedWith(changeCase("text.ini")));
 		assertTrue("0.3", text.isAssociatedWith(changeCase("text.tkst")));
+		
 		// check provider defined settings
 		String[] providerDefinedExtensions = text.getFileSpecs(IContentType.FILE_EXTENSION_SPEC | IContentType.IGNORE_USER_DEFINED);
 		assertTrue("1.0", contains(providerDefinedExtensions, "txt"));
 		assertTrue("1.1", !contains(providerDefinedExtensions, "ini"));
 		assertTrue("1.2", contains(providerDefinedExtensions, "tkst"));
+		
 		// check user defined settings
 		String[] textUserDefinedExtensions = text.getFileSpecs(IContentType.FILE_EXTENSION_SPEC | IContentType.IGNORE_PRE_DEFINED);
 		assertTrue("2.0", !contains(textUserDefinedExtensions, "txt"));
 		assertTrue("2.1", contains(textUserDefinedExtensions, "ini"));
 		assertTrue("2.2", !contains(textUserDefinedExtensions, "tkst"));
+		
 		// removing pre-defined file specs should not do anything
 		text.removeFileSpec("txt", IContentType.FILE_EXTENSION_SPEC);
 		assertTrue("3.0", contains(text.getFileSpecs(IContentType.FILE_EXTENSION_SPEC | IContentType.IGNORE_USER_DEFINED), "txt"));
 		assertTrue("3.1", text.isAssociatedWith(changeCase("text.txt")));
 		assertTrue("3.2", text.isAssociatedWith(changeCase("text.ini")));
 		assertTrue("3.3", text.isAssociatedWith(changeCase("text.tkst")));
+		
 		// removing user file specs is the normal case and has to work as expected
 		text.removeFileSpec("ini", IContentType.FILE_EXTENSION_SPEC);
 		assertTrue("4.0", !contains(text.getFileSpecs(IContentType.FILE_EXTENSION_SPEC | IContentType.IGNORE_PRE_DEFINED), "ini"));
@@ -352,13 +402,19 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 		IContentType[] contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_ROOT_ELEMENT_ISO_8859_1, "ISO-8859-1"), "fake.xml");
 		assertTrue("1.0", contentTypes.length > 0);
 		assertEquals("1.1", rootElement, contentTypes[0]);
-		contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_ROOT_ELEMENT_EXTERNAL_ENTITY, "ISO-8859-1"), "fake.xml");
+		// bugs 64053 and 63298 
+		contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_ROOT_ELEMENT_EXTERNAL_ENTITY, "UTF-8"), "fake.xml");
 		assertTrue("2.0", contentTypes.length > 0);
 		assertEquals("2.1", rootElement, contentTypes[0]);
+		// bug 63625
+		contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_ROOT_ELEMENT_EXTERNAL_ENTITY2, "UTF-8"), "fake.xml");
+		assertTrue("2.2", contentTypes.length > 0);
+		assertEquals("2.3", rootElement, contentTypes[0]);
+
 		contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_DTD_US_ASCII, "US-ASCII"), "fake.xml");
 		assertTrue("3.0", contentTypes.length > 0);
 		assertEquals("3.1", dtdElement, contentTypes[0]);
-		contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_DTD_EXTERNAL_ENTITY, "US-ASCII"), "fake.xml");
+		contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_DTD_EXTERNAL_ENTITY, "UTF-8"), "fake.xml");
 		assertTrue("4.0", contentTypes.length > 0);
 		assertEquals("4.1", dtdElement, contentTypes[0]);
 	}
