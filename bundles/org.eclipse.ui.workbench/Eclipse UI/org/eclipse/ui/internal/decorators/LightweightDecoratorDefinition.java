@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.jface.viewers.ILightweightLabelDecorator;
-import org.eclipse.ui.internal.ActionExpression;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
@@ -28,6 +27,47 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  */
 class LightweightDecoratorDefinition extends DecoratorDefinition {
 
+	private static final String ATT_LOCATION = "location"; //$NON-NLS-1$
+	
+    static final String ATT_ICON = "icon"; //$NON-NLS-1$
+
+    //Constants for quadrants
+    /**
+     * Position <code>TOP_LEFT</code>.  Value <code>0</code>
+     */
+    public static final int TOP_LEFT = 0;
+
+    /**
+     * Position <code>TOP_RIGHT</code>.  Value <code>1</code>
+     */
+    public static final int TOP_RIGHT = 1;
+
+    /**
+     * Position <code>BOTTOM_LEFT</code>.  Value <code>2</code>
+     */
+    public static final int BOTTOM_LEFT = 2;
+
+    /**
+     * Position <code>BOTTOM_RIGHT</code>.  Value <code>3</code>
+     */
+    public static final int BOTTOM_RIGHT = 3;
+
+    /**
+     * Position <code>UNDERLAY</code>.  Value <code>4</code>
+     */
+    public static final int UNDERLAY = 4;
+    
+    private static final String UNDERLAY_STRING = "UNDERLAY"; //$NON-NLS-1$
+    
+    private static final String ATT_QUADRANT = "quadrant"; //$NON-NLS-1$
+    
+    //Constants for quadrants
+    private static final String TOP_LEFT_STRING = "TOP_LEFT"; //$NON-NLS-1$
+
+    private static final String TOP_RIGHT_STRING = "TOP_RIGHT"; //$NON-NLS-1$
+
+    private static final String BOTTOM_LEFT_STRING = "BOTTOM_LEFT"; //$NON-NLS-1$
+    
     /**
      * The DeclarativeDecorator is the internal decorator
      * supplied by the decorator definition.
@@ -36,16 +76,10 @@ class LightweightDecoratorDefinition extends DecoratorDefinition {
 
     private int quadrant;
 
-    private String iconLocation;
+	private boolean hasReadQuadrant;
 
-    LightweightDecoratorDefinition(String identifier, String label,
-            String decoratorDescription, ActionExpression expression,
-            boolean isAdaptable, boolean initEnabled, int quadrantValue,
-            String iconPath, IConfigurationElement element) {
-        super(identifier, label, decoratorDescription, expression, isAdaptable,
-                initEnabled, element);
-        this.iconLocation = iconPath;
-        this.quadrant = quadrantValue;
+    LightweightDecoratorDefinition(String identifier, IConfigurationElement element) {
+        super(identifier, element);
     }
 
     /**
@@ -65,9 +99,9 @@ class LightweightDecoratorDefinition extends DecoratorDefinition {
 
         if (decorator == null) {
 
-            if (definingElement.getAttribute(DecoratorRegistryReader.ATT_CLASS) == null)
+            if (definingElement.getAttribute(DecoratorDefinition.ATT_CLASS) == null)
                 decorator = new DeclarativeDecorator(definingElement,
-                        iconLocation);
+                        getIconLocation());
             else {
 
                 Platform.run(new ISafeRunnable() {
@@ -75,7 +109,7 @@ class LightweightDecoratorDefinition extends DecoratorDefinition {
                         try {
                             decorator = (ILightweightLabelDecorator) WorkbenchPlugin
                                     .createExtension(definingElement,
-                                            DecoratorRegistryReader.ATT_CLASS);
+                                            DecoratorDefinition.ATT_CLASS);
                             decorator.addListener(WorkbenchPlugin.getDefault()
                                     .getDecoratorManager());
                         } catch (CoreException exception) {
@@ -106,15 +140,24 @@ class LightweightDecoratorDefinition extends DecoratorDefinition {
     }
 
     /**
-     * @see org.eclipse.ui.internal.DecoratorDefinition#internalGetLabelProvider()
+     * Return the icon location.
+     * 
+	 * @return the icon location
+	 */
+	private String getIconLocation() {
+		return definingElement.getAttribute(ATT_ICON);
+	}
+	
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.decorators.DecoratorDefinition#internalGetLabelProvider()
      */
     protected IBaseLabelProvider internalGetLabelProvider()
             throws CoreException {
         return internalGetDecorator();
     }
 
-    /**
-     * @see org.eclipse.ui.internal.DecoratorDefinition#isFull()
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.decorators.DecoratorDefinition#isFull()
      */
     public boolean isFull() {
         return false;
@@ -131,11 +174,43 @@ class LightweightDecoratorDefinition extends DecoratorDefinition {
      * @return int
      */
     public int getQuadrant() {
+    	if (!hasReadQuadrant) {
+    		hasReadQuadrant = true;
+    		quadrant = getLocationConstant(definingElement
+                .getAttribute(ATT_LOCATION), definingElement);
+    	}
         return quadrant;
     }
+    
+    /**
+     * Get the constant value based on the location supplied. Default to bottom
+     * right.
+     * @since 3.1
+     */
+    private int getLocationConstant(String locationDefinition,
+            IConfigurationElement element) {
+
+        //Backwards compatibility
+        if (locationDefinition == null)
+            locationDefinition = element.getAttribute(ATT_QUADRANT);
+
+        if (TOP_RIGHT_STRING.equals(locationDefinition))
+            return TOP_RIGHT;
+        if (TOP_LEFT_STRING.equals(locationDefinition))
+            return TOP_LEFT;
+        if (BOTTOM_LEFT_STRING.equals(locationDefinition))
+            return BOTTOM_LEFT;
+        if (UNDERLAY_STRING.equals(locationDefinition))
+            return UNDERLAY;
+        return BOTTOM_RIGHT;
+
+    }
+
+
 
     /**
-     * @see org.eclipse.jface.viewers.ILightweightLabelDecorator#getOverlay(java.lang.Object)
+     * @param element
+     * @param decoration
      */
     public void decorate(Object element, IDecoration decoration) {
         try {
@@ -161,8 +236,7 @@ class LightweightDecoratorDefinition extends DecoratorDefinition {
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.decorators.DecoratorDefinition#refreshDecorator()
      */
-
-    protected void refreshDecorator() throws CoreException {
+    protected void refreshDecorator() {
         //Only do something if disabled so as to prevent
         //gratutitous activation
         if (!this.enabled && decorator != null) {

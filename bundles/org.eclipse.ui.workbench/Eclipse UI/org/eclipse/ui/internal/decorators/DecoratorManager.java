@@ -21,6 +21,7 @@ import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
@@ -42,9 +43,15 @@ import org.eclipse.ui.IDecoratorManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ActionExpression;
 import org.eclipse.ui.internal.IPreferenceConstants;
+import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.LegacyResourceSupport;
+import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.registry.experimental.IConfigurationElementAdditionHandler;
+import org.eclipse.ui.internal.registry.experimental.IConfigurationElementRemovalHandler;
+import org.eclipse.ui.internal.registry.experimental.IConfigurationElementTracker;
+import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
@@ -54,8 +61,10 @@ import org.eclipse.ui.progress.WorkbenchJob;
  * @since 2.0
  */
 public class DecoratorManager implements IDelayedLabelDecorator,
-        ILabelProviderListener, IDecoratorManager, IFontDecorator, IColorDecorator {
+        ILabelProviderListener, IDecoratorManager, IFontDecorator, IColorDecorator, IConfigurationElementAdditionHandler, IConfigurationElementRemovalHandler {
 
+	private static String EXTENSIONPOINT_UNIQUE_ID = WorkbenchPlugin.PI_WORKBENCH + "." + IWorkbenchConstants.PL_DECORATORS; //$NON-NLS-1$
+	
     /**
      * The family for the decorate job.
      */
@@ -95,6 +104,10 @@ public class DecoratorManager implements IDelayedLabelDecorator,
     public DecoratorManager() {
         
         scheduler = new DecorationScheduler(this);
+        IConfigurationElementTracker tracker = ((Workbench) PlatformUI
+				.getWorkbench()).getConfigurationElementTracker();
+        tracker.registerAdditionHandler(this);
+        tracker.registerRemovalHandler(this);
     }
 
     /**
@@ -108,6 +121,8 @@ public class DecoratorManager implements IDelayedLabelDecorator,
         ArrayList full = new ArrayList();
         ArrayList lightweight = new ArrayList();
         Iterator allDefinitions = values.iterator();
+        IConfigurationElementTracker configurationElementTracker = ((Workbench) PlatformUI
+				.getWorkbench()).getConfigurationElementTracker();
         while (allDefinitions.hasNext()) {
             DecoratorDefinition nextDefinition = (DecoratorDefinition) allDefinitions
                     .next();
@@ -115,6 +130,8 @@ public class DecoratorManager implements IDelayedLabelDecorator,
                 full.add(nextDefinition);
             else
                 lightweight.add(nextDefinition);
+                        
+			configurationElementTracker.registerObject(nextDefinition.getConfigurationElement(), nextDefinition);
         }
 
         fullDefinitions = new FullDecoratorDefinition[full.size()];
@@ -155,6 +172,9 @@ public class DecoratorManager implements IDelayedLabelDecorator,
                 updateForEnablementChange();
             }
         }
+        ((Workbench) PlatformUI.getWorkbench())
+				.getConfigurationElementTracker().registerObject(
+						definition.getConfigurationElement(), definition);
     }
 
     /**
@@ -719,17 +739,33 @@ public class DecoratorManager implements IDelayedLabelDecorator,
     /**
      * Get the FullDecoratorDefinition with the supplied id
      * @return FullDecoratorDefinition or <code>null</code> if it is not found
-     * @param decoratorId String
+     * @param decoratorId the id
      */
     private FullDecoratorDefinition getFullDecoratorDefinition(
             String decoratorId) {
+    	int idx = getFullDecoratorDefinitionIdx(decoratorId);
+    	if (idx != -1)
+    		return getFullDefinitions()[idx];
+    	return null;
+    }
+    
+    /**
+     * Return the index of the definition in the array.
+     * 
+     * @param decoratorId the id
+     * @return the index of the definition in the array or <code>-1</code>
+     * @since 3.1
+     */
+    private int getFullDecoratorDefinitionIdx(
+    		String decoratorId) {
     	FullDecoratorDefinition[] full = getFullDefinitions();
         for (int i = 0; i < full.length; i++) {
             if (full[i].getId().equals(decoratorId))
-                return full[i];
-        }
-        return null;
+                return i;
+        }    	
+    	return -1;
     }
+    		
 
     /**
      * Get the full decorator definitions registered for elements of this type.
@@ -842,5 +878,49 @@ public class DecoratorManager implements IDelayedLabelDecorator,
 		if(fullDefinitions == null)
 			initializeDecoratorDefinitions();
 		return fullDefinitions;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.registry.experimental.IConfigurationElementAdditionHandler#addInstance(org.eclipse.ui.internal.registry.experimental.IConfigurationElementTracker, org.eclipse.core.runtime.IConfigurationElement)
+	 */
+	public void addInstance(IConfigurationElementTracker tracker, IConfigurationElement element) {
+		if (!element.getDeclaringExtension()
+				.getExtensionPointUniqueIdentifier().equals(
+						EXTENSIONPOINT_UNIQUE_ID))
+			return;
+
+		DecoratorRegistryReader reader = new DecoratorRegistryReader();
+		reader.readElement(element);
+		for (Iterator i = reader.getValues().iterator(); i.hasNext(); ) {
+			addDecorator((DecoratorDefinition) i.next());
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.registry.experimental.IConfigurationElementRemovalHandler#removeInstance(org.eclipse.core.runtime.IConfigurationElement, java.lang.Object)
+	 */
+	public void removeInstance(IConfigurationElement source, Object object) {
+		if (object instanceof DecoratorDefinition) {
+			DecoratorDefinition definition = (DecoratorDefinition) object;
+	        if (definition.isFull()) {
+	        	int idx = getFullDecoratorDefinitionIdx(definition.getId());
+	            if (idx != -1) {	            	
+	                FullDecoratorDefinition[] oldDefs = getFullDefinitions();
+					Util
+							.arrayCopyWithRemoval(
+									oldDefs,
+									fullDefinitions = new FullDecoratorDefinition[fullDefinitions.length - 1],
+									idx);	                
+	                clearCaches();
+	                updateForEnablementChange();
+	            }
+	        } else {
+	            if (getLightweightManager().removeDecorator(
+	                    (LightweightDecoratorDefinition) definition)) {
+	                clearCaches();
+	                updateForEnablementChange();
+	            }
+	        }			
+		}		
 	}
 }

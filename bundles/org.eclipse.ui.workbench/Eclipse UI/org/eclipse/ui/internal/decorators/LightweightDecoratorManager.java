@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.StatusUtil;
+import org.eclipse.ui.internal.util.Util;
 
 /**
  * The LightweightDecoratorManager is a decorator manager
@@ -94,7 +95,7 @@ class LightweightDecoratorManager {
     /**
      * For dynamic UI
      * 
-     * @param definition the definition to add
+     * @param decorator the definition to add
      * @return whether the definition was added
      * @since 3.0
      */
@@ -110,6 +111,27 @@ class LightweightDecoratorManager {
         }
         return false;
     }
+    
+    /**
+     * For dynamic-ui
+     * @param decorator the definition to remove
+     * @return whether the definition was removed
+     * @since 3.1
+     */
+    public boolean removeDecorator(LightweightDecoratorDefinition decorator) {
+        int idx = getLightweightDecoratorDefinitionIdx(decorator.getId());
+		if (idx != -1) {        	
+            LightweightDecoratorDefinition[] oldDefs = lightweightDefinitions;            
+            Util
+					.arrayCopyWithRemoval(
+							oldDefs,
+							lightweightDefinitions = new LightweightDecoratorDefinition[lightweightDefinitions.length - 1],
+							idx);
+            // no reset - handled in the DecoratorManager
+            return true;
+        }
+        return false;    	
+    }
 
     /**
      * Get the LightweightDecoratorDefinition with the supplied id
@@ -119,11 +141,26 @@ class LightweightDecoratorManager {
      */
     private LightweightDecoratorDefinition getLightweightDecoratorDefinition(
             String decoratorId) {
+    	int idx = getLightweightDecoratorDefinitionIdx(decoratorId);
+    	if (idx != -1) 
+    		return lightweightDefinitions[idx];
+    	return null;
+    }
+    
+    /**
+     * Return the index of the definition in the array.
+     * 
+     * @param decoratorId the id
+     * @return the index of the definition in the array or <code>-1</code>
+     * @since 3.1
+     */
+    private int getLightweightDecoratorDefinitionIdx(
+            String decoratorId) {
         for (int i = 0; i < lightweightDefinitions.length; i++) {
             if (lightweightDefinitions[i].getId().equals(decoratorId))
-                return lightweightDefinitions[i];
+                return i;
         }
-        return null;
+        return -1;
     }
 
     /**

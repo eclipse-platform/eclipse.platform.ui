@@ -31,14 +31,6 @@ class DecoratorOverlayIcon extends CompositeImageDescriptor {
     // the size
     private Point size;
 
-    public static final int TOP_LEFT = 0;
-
-    public static final int TOP_RIGHT = 1;
-
-    public static final int BOTTOM_LEFT = 2;
-
-    public static final int BOTTOM_RIGHT = 3;
-
     /**
      * OverlayIcon constructor.
      * 
@@ -69,16 +61,16 @@ class DecoratorOverlayIcon extends CompositeImageDescriptor {
                 overlayData = ImageDescriptor.getMissingImageDescriptor()
                         .getImageData();
             switch (i) {
-            case TOP_LEFT:
+            case LightweightDecoratorDefinition.TOP_LEFT:
                 drawImage(overlayData, 0, 0);
                 break;
-            case TOP_RIGHT:
+            case LightweightDecoratorDefinition.TOP_RIGHT:
                 drawImage(overlayData, size.x - overlayData.width, 0);
                 break;
-            case BOTTOM_LEFT:
+            case LightweightDecoratorDefinition.BOTTOM_LEFT:
                 drawImage(overlayData, 0, size.y - overlayData.height);
                 break;
-            case BOTTOM_RIGHT:
+            case LightweightDecoratorDefinition.BOTTOM_RIGHT:
                 drawImage(overlayData, size.x - overlayData.width, size.y
                         - overlayData.height);
                 break;
@@ -104,7 +96,7 @@ class DecoratorOverlayIcon extends CompositeImageDescriptor {
     }
 
     protected void drawCompositeImage(int width, int height) {
-        ImageDescriptor underlay = overlays[DecoratorRegistryReader.UNDERLAY];
+        ImageDescriptor underlay = overlays[LightweightDecoratorDefinition.UNDERLAY];
         if (underlay != null)
             drawImage(underlay.getImageData(), 0, 0);
         drawImage(base.getImageData(), 0, 0);

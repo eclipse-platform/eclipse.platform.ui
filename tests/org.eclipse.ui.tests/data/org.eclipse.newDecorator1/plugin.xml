@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin
+   id="newDecorator1"
+   name="newDecorator1 Plug-in"
+   version="1.0.0">
+
+   <runtime>
+      <library name="decorator.jar">
+         <export name="*"/>
+      </library>
+   </runtime>
+   <requires>
+      <import plugin="org.eclipse.ui"/>
+   </requires>
+   <extension
+         id="testDynamicDecoratorAddition"
+         point="org.eclipse.ui.decorators">
+      <decorator
+            lightweight="false"
+            label="full1"
+            class="org.eclipse.ui.dynamic.DynamicLabelDecorator"
+            state="true"
+            id="fullDecorator1">
+		<enablement>
+			<objectClass name="java.lang.Object"/>
+        </enablement> 
+      </decorator>
+      <decorator
+            lightweight="true"
+            label="light1"
+            icon="anything.gif"
+            state="true"
+            location="TOP_LEFT"
+            id="lightDecorator1">
+         <enablement>
+            <objectClass name="java.lang.Object"/>
+         </enablement>
+      </decorator> 
+      
+      <decorator
+            lightweight="true"
+            label="light2"
+			class="org.eclipse.ui.dynamic.DynamicLightweightLabelDecorator"
+            state="true"
+            location="TOP_LEFT"
+            id="lightDecorator2">
+         <enablement>
+            <objectClass name="java.lang.Object"/>
+         </enablement>
+      </decorator>                 
+   </extension>
+</plugin>

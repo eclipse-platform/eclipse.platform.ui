@@ -49,9 +49,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
-import org.eclipse.ui.internal.decorators.DecoratorDefinition;
-import org.eclipse.ui.internal.decorators.DecoratorManager;
-import org.eclipse.ui.internal.decorators.DecoratorRegistryReader;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceNode;
 import org.eclipse.ui.internal.registry.ActionSetPartAssociationsReader;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
@@ -212,10 +209,6 @@ class ExtensionEventHandler implements IRegistryChangeListener {
             loadFontDefinitions(ext);
             return;
         }
-        if (name.equalsIgnoreCase(IWorkbenchConstants.PL_DECORATORS)) {
-            loadDecorators(ext);
-            return;
-        }
         if (name.equalsIgnoreCase(IWorkbenchConstants.PL_THEMES)) {
             loadThemes(ext);
             return;
@@ -268,21 +261,6 @@ class ExtensionEventHandler implements IRegistryChangeListener {
 
         Map data = reader.getData();
         registry.addData(data);
-    }
-
-    private void loadDecorators(IExtension ext) {
-        DecoratorRegistryReader reader = new DecoratorRegistryReader();
-        IConfigurationElement[] elements = ext.getConfigurationElements();
-        for (int i = 0; i < elements.length; i++) {
-            reader.readElement(elements[i]);
-        }
-
-        Collection decorators = reader.getValues();
-        DecoratorManager manager = (DecoratorManager) workbench
-                .getDecoratorManager();
-        for (Iterator i = decorators.iterator(); i.hasNext();) {
-            manager.addDecorator((DecoratorDefinition) i.next());
-        }
     }
 
     private void loadPreferencePages(IExtension ext) {

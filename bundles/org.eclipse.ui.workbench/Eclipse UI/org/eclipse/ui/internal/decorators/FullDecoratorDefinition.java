@@ -17,7 +17,6 @@ import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.internal.ActionExpression;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
@@ -28,19 +27,15 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 
 class FullDecoratorDefinition extends DecoratorDefinition {
 
-    ILabelDecorator decorator;
+	ILabelDecorator decorator;
 
     /**
      * Create a new instance of the receiver with the
      * supplied values.
      */
 
-    FullDecoratorDefinition(String identifier, String label,
-            String decoratorDescription, ActionExpression expression,
-            boolean isAdaptable, boolean initEnabled,
-            IConfigurationElement element) {
-        super(identifier, label, decoratorDescription, expression, isAdaptable,
-                initEnabled, element);
+    FullDecoratorDefinition(String identifier, IConfigurationElement element) {
+        super(identifier, element);
     }
 
     /**
@@ -68,7 +63,7 @@ class FullDecoratorDefinition extends DecoratorDefinition {
                                 decorator = (ILabelDecorator) WorkbenchPlugin
                                         .createExtension(
                                                 definingElement,
-                                                DecoratorRegistryReader.ATT_CLASS);
+                                                DecoratorDefinition.ATT_CLASS);
                                 decorator.addListener(WorkbenchPlugin
                                         .getDefault().getDecoratorManager());
                             } catch (CoreException exception) {
@@ -93,8 +88,7 @@ class FullDecoratorDefinition extends DecoratorDefinition {
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.decorators.DecoratorDefinition#refreshDecorator()
      */
-
-    protected void refreshDecorator() throws CoreException {
+    protected void refreshDecorator() {
         //Only do something if disabled so as to prevent
         //gratutitous activation
         if (!this.enabled && decorator != null) {
@@ -150,16 +144,16 @@ class FullDecoratorDefinition extends DecoratorDefinition {
         return decorator;
     }
 
-    /**
-     * @see org.eclipse.ui.internal.DecoratorDefinition#internalGetLabelProvider()
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.decorators.DecoratorDefinition#internalGetLabelProvider()
      */
     protected IBaseLabelProvider internalGetLabelProvider()
             throws CoreException {
         return internalGetDecorator();
     }
 
-    /**
-     * @see org.eclipse.ui.internal.DecoratorDefinition#isFull()
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.decorators.DecoratorDefinition#isFull()
      */
     public boolean isFull() {
         return true;

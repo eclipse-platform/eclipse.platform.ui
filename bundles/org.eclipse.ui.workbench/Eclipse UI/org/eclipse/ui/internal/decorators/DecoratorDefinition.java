@@ -16,6 +16,7 @@ import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.ui.internal.ActionExpression;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.registry.RegistryReader;
 
 /**
  * The DecoratorDefinition is the class that holds onto
@@ -24,14 +25,18 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  */
 
 public abstract class DecoratorDefinition {
-
-    private String name;
-
-    private String description;
+	
+    private static final String ATT_LABEL = "label"; //$NON-NLS-1$
+    
+    private static final String ATT_OBJECT_CLASS = "objectClass"; //$NON-NLS-1$
+    
+    static final String CHILD_ENABLEMENT = "enablement"; //$NON-NLS-1$
+    
+    private static final String ATT_ADAPTABLE = "adaptable"; //$NON-NLS-1$
+    
+    private static final String ATT_ENABLED = "state"; //$NON-NLS-1$
 
     private ActionExpression enablement;
-
-    private boolean adaptable;
 
     protected boolean enabled;
 
@@ -44,24 +49,21 @@ public abstract class DecoratorDefinition {
     //A flag that is set if there is an error creating the decorator
     protected boolean labelProviderCreationFailed = false;
 
+	private boolean hasReadEnablement;
+
+	static final String ATT_CLASS = "class";//$NON-NLS-1$
+
     /**
      * Create a new instance of the receiver with the
      * supplied values.
      */
 
-    DecoratorDefinition(String identifier, String label,
-            String decoratorDescription, ActionExpression expression,
-            boolean isAdaptable, boolean initEnabled,
-            IConfigurationElement element) {
+    DecoratorDefinition(String identifier, IConfigurationElement element) {
 
-        this.id = identifier;
-        this.name = label;
-        this.enablement = expression;
-        this.adaptable = isAdaptable;
-        this.description = decoratorDescription;
-        this.enabled = initEnabled;
-        this.defaultEnabled = initEnabled;
+        this.id = identifier;  
         this.definingElement = element;
+        
+        this.enabled = this.defaultEnabled = Boolean.valueOf(element.getAttribute(ATT_ENABLED)).booleanValue();
     }
 
     /**
@@ -69,7 +71,7 @@ public abstract class DecoratorDefinition {
      * @return Returns a String
      */
     public String getName() {
-        return name;
+        return definingElement.getAttribute(ATT_LABEL);
     }
 
     /**
@@ -77,7 +79,7 @@ public abstract class DecoratorDefinition {
      * @return String
      */
     public String getDescription() {
-        return this.description;
+        return RegistryReader.getDescription(definingElement);
     }
 
     /**
@@ -91,7 +93,7 @@ public abstract class DecoratorDefinition {
     /**
      * Sets the enabled flag and adds or removes the decorator
      * manager as a listener as appropriate.
-     * @param enabled The enabled to set
+     * @param newState The enabled to set
      */
     public void setEnabled(boolean newState) {
 
@@ -116,7 +118,7 @@ public abstract class DecoratorDefinition {
     /**
      * Dispose the decorator instance and remove listeners
      * as appropirate.
-     *  @param decorator
+     * @param disposedDecorator
      */
     protected void disposeCachedDecorator(IBaseLabelProvider disposedDecorator) {
         disposedDecorator.removeListener(WorkbenchPlugin.getDefault()
@@ -128,10 +130,12 @@ public abstract class DecoratorDefinition {
     /**
      * Return whether or not this decorator should be 
      * applied to adapted types.
+     * 
+     * @return whether or not this decorator should be 
+     * applied to adapted types
      */
-
     public boolean isAdaptable() {
-        return adaptable;
+    	return Boolean.valueOf(definingElement.getAttribute(ATT_ADAPTABLE)).booleanValue();
     }
 
     /**
@@ -145,6 +149,9 @@ public abstract class DecoratorDefinition {
     /**
      * Return the default value for this type - this value
      * is the value read from the element description.
+     * 
+     * @return the default value for this type - this value
+     * is the value read from the element description
      */
     public boolean getDefaultValue() {
         return defaultEnabled;
@@ -155,6 +162,19 @@ public abstract class DecoratorDefinition {
      * @return ActionExpression
      */
     public ActionExpression getEnablement() {
+    	if (!hasReadEnablement) {
+    		hasReadEnablement = true;
+    		IConfigurationElement[] elements = definingElement.getChildren(CHILD_ENABLEMENT);
+		    if (elements.length == 0) {
+		        String className = definingElement.getAttribute(ATT_OBJECT_CLASS);
+		        if (className == null) 
+		        	return null;
+		        
+		        enablement = new ActionExpression(ATT_OBJECT_CLASS,
+		                    className);
+		    } else
+		    	enablement = new ActionExpression(elements[0]);
+    	}
         return enablement;
     }
 
@@ -229,4 +249,13 @@ public abstract class DecoratorDefinition {
      */
     public abstract boolean isFull();
 
+	/**
+	 * Return the configuration element.
+	 * 
+	 * @return the configuration element
+	 * @since 3.1
+	 */
+	public IConfigurationElement getConfigurationElement() {
+		return definingElement;
+	}
 }
