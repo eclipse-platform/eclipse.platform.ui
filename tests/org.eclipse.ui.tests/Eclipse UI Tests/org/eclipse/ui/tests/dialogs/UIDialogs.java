@@ -18,12 +18,28 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.*;
-import org.eclipse.ui.dialogs.*;
-import org.eclipse.ui.internal.*;
-import org.eclipse.ui.internal.dialogs.*;
-import org.eclipse.ui.internal.ide.IDEApplication;
-import org.eclipse.ui.internal.ide.dialogs.*;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.dialogs.ContainerSelectionDialog;
+import org.eclipse.ui.dialogs.ListSelectionDialog;
+import org.eclipse.ui.dialogs.ProjectLocationSelectionDialog;
+import org.eclipse.ui.dialogs.SaveAsDialog;
+import org.eclipse.ui.dialogs.TypeFilteringDialog;
+import org.eclipse.ui.internal.Perspective;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPage;
+import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.dialogs.CustomizePerspectiveDialog;
+import org.eclipse.ui.internal.dialogs.EditorSelectionDialog;
+import org.eclipse.ui.internal.dialogs.FileExtensionDialog;
+import org.eclipse.ui.internal.dialogs.SavePerspectiveDialog;
+import org.eclipse.ui.internal.dialogs.SelectPerspectiveDialog;
+import org.eclipse.ui.internal.dialogs.ShowViewDialog;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.ide.dialogs.AboutDialog;
+import org.eclipse.ui.internal.ide.dialogs.SimpleListContentProvider;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.internal.registry.PerspectiveRegistry;
 import org.eclipse.ui.tests.util.DialogCheck;
@@ -43,16 +59,12 @@ public class UIDialogs extends TestCase {
 	}
 	public void testAbout() {
 		Dialog dialog = null;
-		dialog = new AboutDialog(getWorkbench().getActiveWorkbenchWindow(), IDEApplication.getPrimaryInfo(), IDEApplication.getFeatureInfos());
+		IDEWorkbenchPlugin plugin = IDEWorkbenchPlugin.getDefault();
+		dialog = new AboutDialog(getWorkbench().getActiveWorkbenchWindow(), plugin.getPrimaryInfo(), plugin.getFeatureInfos());
 		DialogCheck.assertDialog(dialog, this);
 	}
 	public void testAddProjects() {
-		Dialog dialog = new ListSelectionDialog(getShell(),
-			null,
-			new SimpleListContentProvider(),
-			new LabelProvider(),
-			PROJECT_SELECTION_MESSAGE
-		);
+		Dialog dialog = new ListSelectionDialog(getShell(), null, new SimpleListContentProvider(), new LabelProvider(), PROJECT_SELECTION_MESSAGE);
 		DialogCheck.assertDialog(dialog, this);
 	}
 	public void testCopyMoveProject() {
@@ -61,19 +73,22 @@ public class UIDialogs extends TestCase {
 		DialogCheck.assertDialog(dialog, this);
 	}
 	public void testCopyMoveResource() {
-		Dialog dialog = new ContainerSelectionDialog( getShell(), null, true, WorkbenchMessages.getString("CopyResourceAction.selectDestination") );
+		Dialog dialog = new ContainerSelectionDialog(getShell(), null, true, WorkbenchMessages.getString("CopyResourceAction.selectDestination"));
 		DialogCheck.assertDialog(dialog, this);
 	}
 	public void testEditActionSetsDialog() {
 		Dialog dialog;
 		Perspective persp = null;
 		//Test perspective: use current perspective of test case
-		try {/*fixme: should try to get current perspective, or default; currently only
-			 gets first perspective in the registry.*/
-			persp = new Perspective((PerspectiveDescriptor)getWorkbench().getPerspectiveRegistry().getPerspectives()[0],
-			                                    (WorkbenchPage)getWorkbench().getActiveWorkbenchWindow().getActivePage()
-			);
-			dialog = new CustomizePerspectiveDialog(getShell(),  persp);
+		try { /*
+			   * fixme: should try to get current perspective, or default;
+			   * currently only
+			   */
+			persp =
+				new Perspective(
+					(PerspectiveDescriptor) getWorkbench().getPerspectiveRegistry().getPerspectives()[0],
+					(WorkbenchPage) getWorkbench().getActiveWorkbenchWindow().getActivePage());
+			dialog = new CustomizePerspectiveDialog(getShell(), persp);
 		} catch (WorkbenchException e) {
 			dialog = null;
 		}
@@ -83,49 +98,46 @@ public class UIDialogs extends TestCase {
 		}
 	}
 	public void testEditorSelection() {
-		Dialog dialog = new EditorSelectionDialog( getShell() );
+		Dialog dialog = new EditorSelectionDialog(getShell());
 		DialogCheck.assertDialog(dialog, this);
 	}
-/**
- * 1GJWD2E: ITPUI:ALL - Test classes should not be released in public packages.
- * 
-	public void testFindReplace() {
-		Dialog dialog = TextEditorTestStub.newFindReplaceDialog( getShell() );
-		DialogCheck.assertDialog(dialog, this);
-	}
-	public void testGotoResource() {
-		Dialog dialog = NavigatorTestStub.newGotoResourceDialog(getShell(), new IResource[0]);
-		DialogCheck.assertDialog(dialog, this);
-	}
- */
+	/**
+	 * 1GJWD2E: ITPUI:ALL - Test classes should not be released in public
+	 * packages. public void testFindReplace() { Dialog dialog =
+	 * TextEditorTestStub.newFindReplaceDialog( getShell() );
+	 * DialogCheck.assertDialog(dialog, this); } public void testGotoResource() {
+	 * Dialog dialog = NavigatorTestStub.newGotoResourceDialog(getShell(), new
+	 * IResource[0]); DialogCheck.assertDialog(dialog, this); }
+	 */
 	public void testNavigatorFilter() {
 		Dialog dialog = new ListSelectionDialog(getShell(), null, new SimpleListContentProvider(), new LabelProvider(), FILTER_SELECTION_MESSAGE);
 		DialogCheck.assertDialog(dialog, this);
 	}
 	public void testNewFileType() {
-		Dialog dialog = new FileExtensionDialog( getShell() );
+		Dialog dialog = new FileExtensionDialog(getShell());
 		DialogCheck.assertDialog(dialog, this);
 	}
 	public void testProgressInformation() {
-		ProgressMonitorDialog dialog = new ProgressMonitorDialog( getShell() );
+		ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
 		dialog.setBlockOnOpen(true);
 		DialogCheck.assertDialog(dialog, this);
 	}
-	
+
 	public void testSaveAs() {
-		Dialog dialog = new SaveAsDialog( getShell() );
+		Dialog dialog = new SaveAsDialog(getShell());
 		DialogCheck.assertDialog(dialog, this);
 	}
 	public void testSavePerspective() {
-		PerspectiveRegistry reg = (PerspectiveRegistry)WorkbenchPlugin.getDefault().getPerspectiveRegistry();
+		PerspectiveRegistry reg = (PerspectiveRegistry) WorkbenchPlugin.getDefault().getPerspectiveRegistry();
 		// Get persp name.
 		SavePerspectiveDialog dialog = new SavePerspectiveDialog(getShell(), reg);
-		IPerspectiveDescriptor description = reg.findPerspectiveWithId( getWorkbench().getActiveWorkbenchWindow().getActivePage().getPerspective().getId() );
+		IPerspectiveDescriptor description =
+			reg.findPerspectiveWithId(getWorkbench().getActiveWorkbenchWindow().getActivePage().getPerspective().getId());
 		dialog.setInitialSelection(description);
 		DialogCheck.assertDialog(dialog, this);
 	}
 	public void testSelectPerspective() {
-		Dialog dialog = new SelectPerspectiveDialog(getShell(), PlatformUI.getWorkbench().getPerspectiveRegistry() );
+		Dialog dialog = new SelectPerspectiveDialog(getShell(), PlatformUI.getWorkbench().getPerspectiveRegistry());
 		DialogCheck.assertDialog(dialog, this);
 	}
 	public void testSelectTypes() {
@@ -133,16 +145,13 @@ public class UIDialogs extends TestCase {
 		DialogCheck.assertDialog(dialog, this);
 	}
 	public void testShowView() {
-		Dialog dialog = new ShowViewDialog( getShell(), WorkbenchPlugin.getDefault().getViewRegistry() );
+		Dialog dialog = new ShowViewDialog(getShell(), WorkbenchPlugin.getDefault().getViewRegistry());
 		DialogCheck.assertDialog(dialog, this);
 	}
-/**
- * 1GJWD2E: ITPUI:ALL - Test classes should not be released in public packages.
- * 
-	public void testTaskFilters() {
-		Dialog dialog = TaskListTestStub.newFiltersDialog( getShell() );
-		DialogCheck.assertDialog(dialog, this);
-	}
- */
+	/**
+	 * 1GJWD2E: ITPUI:ALL - Test classes should not be released in public
+	 * packages. public void testTaskFilters() { Dialog dialog =
+	 * TaskListTestStub.newFiltersDialog( getShell() );
+	 * DialogCheck.assertDialog(dialog, this); }
+	 */
 }
-
