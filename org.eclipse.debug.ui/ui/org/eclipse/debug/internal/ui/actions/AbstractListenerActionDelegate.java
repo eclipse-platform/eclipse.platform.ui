@@ -1,9 +1,11 @@
 package org.eclipse.debug.internal.ui.actions;
 
-/*
- * (c) Copyright IBM Corp. 2002.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
  
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
@@ -101,7 +103,7 @@ public abstract class AbstractListenerActionDelegate extends AbstractDebugAction
 		if (getWindow() != null) {
 			return getWindow().getActivePage();
 		} else {
-			IWorkbenchWindow window=  DebugUIPlugin.getActiveWorkbenchWindow();
+			IWorkbenchWindow window= DebugUIPlugin.getActiveWorkbenchWindow();
 			if (window != null) {
 				return window.getActivePage();
 			}

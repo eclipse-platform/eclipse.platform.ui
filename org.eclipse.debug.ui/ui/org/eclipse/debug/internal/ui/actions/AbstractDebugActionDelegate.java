@@ -1,9 +1,11 @@
 package org.eclipse.debug.internal.ui.actions;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 
 import java.util.Iterator;
 
@@ -112,10 +114,6 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	}
 
 	/**
-	 * Set the icons for this action on the first selection changed
-	 * event. This is necessary because the XML currently only
-	 * supports setting the enabled icon. 
-	 * <p>
 	 * AbstractDebugActionDelegates come in 2 flavors: IViewActionDelegate, 
 	 * IWorkbenchWindowActionDelegate delegates.
 	 * </p>
