@@ -18,6 +18,10 @@ public class PluginParser extends DefaultHandler implements IModel {
 
 	// concrete object factory
 	Factory factory;
+	
+	// File name for this plugin or fragment
+	// This to help with error reporting
+	String locationName = null;
 
 	// Current State Information
 	Stack stateStack = new Stack();
@@ -511,6 +515,8 @@ public void ignoreableWhitespace(char[] ch, int start, int length) {
 private void logStatus(SAXParseException ex) {
 	String name = ex.getSystemId();
 	if (name == null)
+		name = locationName;
+	if (name == null) 
 		name = "";
 	else
 		name = name.substring(1 + name.lastIndexOf("/"));
@@ -523,11 +529,13 @@ private void logStatus(SAXParseException ex) {
 	factory.error(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, msg, ex));
 }
 synchronized public InstallModel parseInstall(InputSource in) throws Exception {
+	locationName = in.getSystemId();
 	parser.parse(in);
 	return (InstallModel) objectStack.pop();
 }
 
 synchronized public PluginModel parsePlugin(InputSource in) throws Exception {
+	locationName = in.getSystemId();
 	parser.parse(in);
 	return (PluginModel) objectStack.pop();
 }
@@ -968,6 +976,9 @@ public void warning(SAXParseException ex) {
 	logStatus(ex);
 }
 private void internalError(String message) {
-	factory.error(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, message, null));
+	if (locationName != null)
+		factory.error(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, locationName + ": " + message, null));
+	else
+		factory.error(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, message, null));
 }
 }

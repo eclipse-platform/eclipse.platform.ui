@@ -41,14 +41,14 @@ public void badElements() {
 		"badRuntimeElementsTest",
 	};
 	String[] errorMessages = {
-		"Unknown element notAPlugin, found at the top level, ignored.",
-		"Unknown element somethingBad, found within a plugin / fragment, ignored.",
-		"Unknown element nameless, found within a extension-point, ignored.",
-		"Unknown element notAnExport, found within a library, ignored.",
-		"Unknown element badElement, found within a export, ignored.",
-		"Unknown element unrecognizedElement, found within a requires, ignored.",
-		"Unknown element notAnImport, found within a requires, ignored.",
-		"Unknown element notALibrary, found within a runtime, ignored.",
+		"badTopLevelElementsTest.xml: Unknown element notAPlugin, found at the top level, ignored.",
+		"badPluginElementsTest.xml: Unknown element somethingBad, found within a plugin / fragment, ignored.",
+		"badExtensionPointElementsTest.xml: Unknown element nameless, found within a extension-point, ignored.",
+		"badLibrary1ElementsTest.xml: Unknown element notAnExport, found within a library, ignored.",
+		"badLibrary2ElementsTest.xml: Unknown element badElement, found within a export, ignored.",
+		"badRequiresImportElementsTest.xml: Unknown element unrecognizedElement, found within a requires, ignored.",
+		"badRequiresElementsTest.xml: Unknown element notAnImport, found within a requires, ignored.",
+		"badRuntimeElementsTest.xml: Unknown element notALibrary, found within a runtime, ignored.",
 	};
 
 	PluginDescriptor tempPlugin = (PluginDescriptor)Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.core.tests.runtime");
@@ -104,17 +104,17 @@ public void badAttributes() {
 		"badFragment2AttributesTest", 
 	};
 	String[] errorMessages = {
-		"Unknown attribute a-bad-attribute for element plugin ignored.",
-		"Unknown attribute vendor-name for element fragment ignored.",
-		"Unknown attribute bogusAttribute for element extension-point ignored.",
-		"Unknown attribute hello for element extension ignored.",
-		"Unknown attribute badImportAttr for element import ignored.",
-		"notTrue is not a valid value for the attribute \"export\".   Use \"true\" or \"false\".",
-		"incompatible is not a valid value for the attribute \"match\".   Use \"perfect\", \"equivalent\", \"compatible\" or \"greaterOrEqual\".",
-		"Unknown attribute badAttribute for element library ignored.",
-		"Unknown attribute badExportAttribute for element library ignored.",
-		"Unknown library type source for library lib1.jar.",
-		"nothing is not a valid value for the attribute \"match\".   Use \"perfect\", \"equivalent\", \"compatible\" or \"greaterOrEqual\".",
+		"badPluginAttributesTest.xml: Unknown attribute a-bad-attribute for element plugin ignored.",
+		"badFragment1AttributesTest.xml: Unknown attribute vendor-name for element fragment ignored.",
+		"badExtensionPointAttributesTest.xml: Unknown attribute bogusAttribute for element extension-point ignored.",
+		"badExtensionAttributesTest.xml: Unknown attribute hello for element extension ignored.",
+		"badRequiresImport1AttributesTest.xml: Unknown attribute badImportAttr for element import ignored.",
+		"badRequiresImport2AttributesTest.xml: notTrue is not a valid value for the attribute \"export\".   Use \"true\" or \"false\".",
+		"badRequiresImport3AttributesTest.xml: incompatible is not a valid value for the attribute \"match\".   Use \"perfect\", \"equivalent\", \"compatible\" or \"greaterOrEqual\".",
+		"badLibrary1AttributesTest.xml: Unknown attribute badAttribute for element library ignored.",
+		"badLibrary2AttributesTest.xml: Unknown attribute badExportAttribute for element library ignored.",
+		"badLibrary3AttributesTest.xml: Unknown library type source for library lib1.jar.",
+		"badFragment2AttributesTest.xml: nothing is not a valid value for the attribute \"match\".   Use \"perfect\", \"equivalent\", \"compatible\" or \"greaterOrEqual\".",
 	};
 	
 	PluginDescriptor tempPlugin = (PluginDescriptor)Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.core.tests.runtime");

@@ -76,7 +76,11 @@ private PluginModel processManifestFile(URL manifest) {
 	PluginModel result = null;
 	try {
 		try {
-			result = new PluginParser((Factory) factory).parsePlugin(new InputSource(is));
+			InputSource in = new InputSource(is);
+			// Give the system id a value in case we want it for
+			// error reporting within the parser.
+			in.setSystemId(manifest.getFile());
+			result = new PluginParser((Factory) factory).parsePlugin(in);
 		} finally {
 			is.close();
 		}
