@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.presentations;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.Map;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ColorRegistry;
@@ -157,12 +154,10 @@ public class EditorPresentation extends BasicStackPresentation {
     }
 
     public void dispose() {
-        if (openEditorDropDownHandlerSubmission != null) {
-            PlatformUI.getWorkbench().getCommandSupport()
-                    .removeHandlerSubmission(
-                            openEditorDropDownHandlerSubmission);
-            openEditorDropDownHandlerSubmission = null;
-        }
+        PlatformUI.getWorkbench().getCommandSupport()
+                .removeHandlerSubmission(
+                        openEditorDropDownHandlerSubmission);
+
         preferenceStore.removePropertyChangeListener(propertyChangeListener);
         getTabFolder().removeCTabFolder2Listener(showListListener);
         super.dispose();
@@ -244,15 +239,7 @@ public class EditorPresentation extends BasicStackPresentation {
 
     private void showList(Shell parentShell, int x, int y) {
         final CTabFolder tabFolder = getTabFolder();
-        ArrayList items = new ArrayList(Arrays.asList(tabFolder.getItems()));
 
-        for (Iterator iterator = items.iterator(); iterator.hasNext();) {
-            CTabItem tabItem = (CTabItem) iterator.next();
-
-            if (tabItem.isShowing()) iterator.remove();
-        }
-
-        if (items.isEmpty()) return;
         int shellStyle = SWT.RESIZE | SWT.ON_TOP | SWT.NO_TRIM;
         int tableStyle = SWT.V_SCROLL | SWT.H_SCROLL;
         final EditorList editorList = new EditorList(tabFolder.getShell(),
