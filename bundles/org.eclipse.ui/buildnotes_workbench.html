@@ -11,6 +11,158 @@
 <h1>
 Eclipse Platform Build Notes<br>
 Workbench</h1>
+Eclipse Integration Build 20011113
+<h2>
+What's new in this drop</h2>
+
+<h3>
+Dialog to switch between editors</h3>
+You can now open a dialog which allows you to switch between editors by
+choosing Window / Switch to Editor..., or by pressing CTRL+ALT+S.
+<br>It also supports saving modified editors, and closing editors.
+<h3>
+Accelerator support for switching between views and editors</h3>
+You can now use CTRL+F6 to switch between editors, and CTRL+F7 to switch
+between views (includes the editor area).
+<br>The list is shown in most recently used order.&nbsp; The list stays
+up while CTRL is held down, then switches to the selected item when CTRL
+is released.
+<br>Pressing the function key again goes to the next item.&nbsp; Holding
+SHIFT down goes the other way.&nbsp; You can also use the arrow keys.
+<br>The editor switcher replaces the previous CTRL+F6 support for cycling
+between editors (released in build 207).
+<p>Known problems:
+<ul>
+<li>
+There is a blank line at the bottom of the switchers (apparently an SWT
+sizing issue).</li>
+
+<li>
+Not all views always show in the view switcher when a perspective is newly
+opened.&nbsp; Workaround: when a view is activated with the mouse, it will
+appear in the list.</li>
+
+<li>
+ESC is not hooked properly.&nbsp; It will cancel the switcher, but also
+activate the Start menu on Windows.&nbsp; Workaround: use any other key,
+e.g. SPACE, to cancel.</li>
+</ul>
+
+<h3>
+Accelerator to activate editor</h3>
+F12 now activates the editor.&nbsp; This is useful when using the view
+switcher above, to quickly get back to the editor from another view.
+<br>We had to back out of using ESC to activate the editor, because it
+broke other uses of ESC, e.g. rename in Navigator, task editing, code assist.
+<h3>
+Accelerators to activate specific views</h3>
+You can now use accelerators to activate specific views.&nbsp; Eclipse
+UI defines the following view accelerators:
+<br>&nbsp;
+<table BORDER COLS=2 WIDTH="50%" >
+<tr>
+<td><b>View</b></td>
+
+<td><b>Accelerator</b></td>
+</tr>
+
+<tr>
+<td>Navigator</td>
+
+<td>CTRL+ALT+N</td>
+</tr>
+
+<tr>
+<td>Bookmarks</td>
+
+<td>CTRL+ALT+B</td>
+</tr>
+
+<tr>
+<td>Outline</td>
+
+<td>CTRL+ALT+O</td>
+</tr>
+
+<tr>
+<td>Properties</td>
+
+<td>CTRL+ALT+P</td>
+</tr>
+
+<tr>
+<td>Tasks</td>
+
+<td>CTRL+ALT+K</td>
+</tr>
+</table>
+
+<p><b>Note</b>: The view accelerator support is experimental.&nbsp; The
+assigned accelerators may change, or this feature may be removed completely.
+<p>Known problems:
+<ul>
+<li>
+Accelerators only work for views with entries in the Perspective / Show
+View menu.&nbsp; It is currently possible to have a view that is visible
+in the window, but with no entry in the Show View menu.&nbsp; Its accelerator
+(if any) will therefore not work.</li>
+</ul>
+
+<h3>
+PreferenceConverter expanded to provide support for FontData arrays</h3>
+The PreferenceConverter now supports the setting and getting of FontData
+arrays as well as single instances of FontDatas in order to be consistent
+with the way FontDatas are specified in the font resources for the FontRegistry.&nbsp;
+See below for API additions.
+<br>&nbsp;
+<h3>
+API changes</h3>
+
+<h3>
+API additions</h3>
+
+<ul>
+<li>
+Added IntegerFieldEditor.setValidRange(int min, int max) in package org.eclipse.jface.preference.</li>
+
+<li>
+Added the following to PreferenceConverter in package org.eclipse.jface.preference:</li>
+
+<br>public static FontData[] getDefaultFontDataArray(IPreferenceStore,
+String)
+<br>public static FontData[] getFontDataArray(IPreferenceStore, String)
+<br>public static void setDefault(IPreferenceStore, String, FontData[])
+<br>public static void setValue(IPreferenceStore, String, FontData[])
+<p>Also the code used to determine the validity of FontDatas by the FontRegistry
+has now been made public. The new method bestData takes an array of FontDatas
+and returns the first one for which there is corresponding font defined.
+If it cannot find one it returns the first entry. If the array is empty
+null is returned.
+<br>public FontData bestData(FontData[], Display)</ul>
+
+<h3>
+Other highlights</h3>
+Added navigation accelerators:
+<ul>
+<li>
+CTRL+F6 to cycle between editors (+ SHIFT to go the other way) -- (has
+known problem whereby order is not persisted between sessions)</li>
+
+<li>
+ESC to activate editor</li>
+</ul>
+
+<h2>
+Known deficiencies</h2>
+
+<h2>
+Problem reports fixed</h2>
+The following PRs were fixed by the UI team:
+<p>
+<hr SIZE=0 WIDTH="100%">
+<h1>
+Eclipse Platform Build Notes<br>
+Workbench</h1>
 Eclipse SDK Build 207 - November 1, 2001
 <h2>
 What's new in this drop</h2>
