@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -69,7 +69,7 @@ public class RegistryCacheWriter {
 			for (int i = 0; i < length; i++)
 				writeConfigurationElement((ConfigurationElement) elements[i], out);
 		} catch (IOException ioe) {
-			problems.add(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, IPlatform.PARSE_PROBLEM, Policy.bind("meta.regCacheIOException", "ConfigruationElement"), ioe)); //$NON-NLS-1$
+			problems.add(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, IPlatform.PARSE_PROBLEM, Policy.bind("meta.regCacheIOExceptionWriting", "ConfigruationElement"), ioe)); //$NON-NLS-1$
 		}
 	}
 	public void writeConfigurationProperty(ConfigurationProperty object, DataOutputStream out) {
@@ -77,7 +77,7 @@ public class RegistryCacheWriter {
 			writeStringOrNull(object.getName(), out);
 			writeStringOrNull(object.getValue(), out);
 		} catch (IOException ioe) {
-			problems.add(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, IPlatform.PARSE_PROBLEM, Policy.bind("meta.regCacheIOException", "ConfigurationProperty"), ioe)); //$NON-NLS-1$
+			problems.add(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, IPlatform.PARSE_PROBLEM, Policy.bind("meta.regCacheIOExceptionWriting", "ConfigurationProperty"), ioe)); //$NON-NLS-1$
 		}
 	}
 	public void writeExtension(Extension object, DataOutputStream out) {
@@ -94,7 +94,7 @@ public class RegistryCacheWriter {
 			writeStringOrNull(object.getExtensionPointIdentifier(), out);
 			writeSubElements(object, out);
 		} catch (IOException ioe) {
-			problems.add(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, IPlatform.PARSE_PROBLEM, Policy.bind("meta.regCacheIOException", "Extension"), ioe)); //$NON-NLS-1$
+			problems.add(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, IPlatform.PARSE_PROBLEM, Policy.bind("meta.regCacheIOExceptionWriting", "Extension"), ioe)); //$NON-NLS-1$
 		}
 	}
 	public void writeSubElements(Extension object, DataOutputStream out) throws IOException {
@@ -131,9 +131,6 @@ public class RegistryCacheWriter {
 			writeStringOrNull(object.getSimpleIdentifier(), out);
 			writeStringOrNull(object.getName(), out);
 			writeStringOrNull(object.getSchema(), out);
-			BundleModel parent = (BundleModel) object.getParent();
-			if (parent != null)
-				writeBundleModel(parent, out);
 
 			// Now do the extensions.
 			IExtension[] extensions = object.getExtensions();
@@ -142,7 +139,7 @@ public class RegistryCacheWriter {
 			for (int i = 0; i < length; i++)
 				writeExtension((Extension) extensions[i], out);
 		} catch (IOException ioe) {
-			problems.add(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, IPlatform.PARSE_PROBLEM, Policy.bind("meta.regCacheIOException", "ExtensionPoint"), ioe)); //$NON-NLS-1$
+			problems.add(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, IPlatform.PARSE_PROBLEM, Policy.bind("meta.regCacheIOExceptionWriting", "ExtensionPoint"), ioe)); //$NON-NLS-1$
 		}
 	}
 	public void writeHeaderInformation(DataOutputStream out) {
@@ -154,7 +151,7 @@ public class RegistryCacheWriter {
 			out.writeUTF(info.getWS());
 			out.writeUTF(info.getNL());
 		} catch (IOException ioe) {
-			problems.add(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, IPlatform.PARSE_PROBLEM, Policy.bind("meta.regCacheIOException", "HeaderInformation"), ioe)); //$NON-NLS-1$ //$NON-NLS-2$
+			problems.add(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, IPlatform.PARSE_PROBLEM, Policy.bind("meta.regCacheIOExceptionWriting", "HeaderInformation"), ioe)); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	public void writeBundleModel(BundleModel object, DataOutputStream out) {
@@ -192,7 +189,7 @@ public class RegistryCacheWriter {
 			for (int i = 0; i < length; i++)
 				writeBundleModel(fragments[i], out);
 		} catch (IOException ioe) {
-			problems.add(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, IPlatform.PARSE_PROBLEM, Policy.bind("meta.regCacheIOException", "Bundle"), ioe)); //$NON-NLS-1$
+			problems.add(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, IPlatform.PARSE_PROBLEM, Policy.bind("meta.regCacheIOExceptionWriting", "Bundle"), ioe)); //$NON-NLS-1$
 		}
 	}
 
@@ -215,7 +212,7 @@ public class RegistryCacheWriter {
 			for (int i = 0; i < ids.length; i++)
 				writeBundleModel((BundleModel) object.getElement(ids[i]), out);
 		} catch (IOException ioe) {
-			problems.add(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, IPlatform.PARSE_PROBLEM, Policy.bind("meta.regCacheIOException", "ExtensionRegisry"), ioe)); //$NON-NLS-1$
+			problems.add(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, IPlatform.PARSE_PROBLEM, Policy.bind("meta.regCacheIOExceptionWriting", "ExtensionRegisry"), ioe)); //$NON-NLS-1$
 		}
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,16 @@ import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.environment.EnvironmentInfo;
 
+/**
+ * Failure reporting strategy:
+ * - when reading an identified element (bundles, extension points and extensions),
+ * catch any IOExceptions and rethrow them wrapped into a InvalidRegistryCacheException 
+ * that describes where the error happened
+ * - IOExceptions while reading non-identified elements (configuration elements and properties)
+ * are just propagated to their callers
+ * - the public entry points will catch any exceptions to ensure they are logged and return a valid
+ * value instead (for instance, a null reference or an empty array)  
+ */
 public class RegistryCacheReader {
 
 	Factory cacheFactory;
@@ -30,11 +40,9 @@ public class RegistryCacheReader {
 	// cached registry.
 	protected List objectTable = null;
 	private boolean lazilyLoadExtensions;
-	private MultiStatus cacheReadProblems = null;
 	protected File cacheFile;
-	private long timeStamp;
-	
-	public static final byte REGISTRY_CACHE_VERSION = 3;
+
+	public static final byte REGISTRY_CACHE_VERSION = 4;
 	public static final byte NULL = 0;
 	public static final byte OBJECT = 1;
 	public static final byte INDEX = 2;
@@ -58,7 +66,7 @@ public class RegistryCacheReader {
 		System.out.println("RegistryCacheReader: " + msg); //$NON-NLS-1$
 	}
 
-	private boolean readHeaderInformation(DataInputStream in) {
+	private boolean readHeaderInformation(DataInputStream in) throws InvalidRegistryCacheException {
 		try {
 			if (in.readInt() != REGISTRY_CACHE_VERSION)
 				return false;
@@ -68,77 +76,70 @@ public class RegistryCacheReader {
 			String localeStamp = in.readUTF();
 			EnvironmentInfo info = InternalPlatform.getDefault().getEnvironmentInfoService();
 			return ((installStamp == InternalPlatform.getDefault().getStateTimeStamp()) && (osStamp.equals(info.getOS())) && (windowsStamp.equals(info.getWS())) && (localeStamp.equals(info.getNL())));
-		} catch (IOException ioe) {
-			cacheReadProblems.add(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, IPlatform.PARSE_PROBLEM, Policy.bind("meta.regCacheIOException", "HeaderInformation"), ioe)); //$NON-NLS-1$ //$NON-NLS-2$
-			return false;
+		} catch (IOException e) {
+			throw new InvalidRegistryCacheException(Policy.bind("meta.regCacheIOExceptionReading","HeaderInformation"), e);  //$NON-NLS-1$//$NON-NLS-2$
 		}
 	}
 
-	private ConfigurationElement readConfigurationElement(RegistryModelObject parent, DataInputStream in) {
-		try {
-			ConfigurationElement result = cacheFactory.createConfigurationElement();
-			result.setParent(parent);
-			result.setName(readString(in, true));
-			result.setValue(readString(in, true));
+	private ConfigurationElement readConfigurationElement(RegistryModelObject parent, DataInputStream in) throws IOException  {
+		ConfigurationElement result = cacheFactory.createConfigurationElement();
+		result.setParent(parent);
+		result.setName(readString(in, true));
+		result.setValue(readString(in, true));
 
-			int length = in.readInt();
-			ConfigurationProperty[] properties = new ConfigurationProperty[length];
-			for (int i = 0; i < length; i++)
-				properties[i] = readConfigurationProperty(in);
-			result.setProperties(properties);
+		int length = in.readInt();
+		ConfigurationProperty[] properties = new ConfigurationProperty[length];
+		for (int i = 0; i < length; i++)
+			properties[i] = readConfigurationProperty(in);
+		result.setProperties(properties);
 
-			length = in.readInt();
-			IConfigurationElement[] elements = new ConfigurationElement[length];
-			for (int i = 0; i < length; i++)
-				elements[i] = readConfigurationElement(result, in);
-			result.setChildren(elements);
-			return result;
-		} catch (IOException ioe) {
-			cacheReadProblems.add(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, IPlatform.PARSE_PROBLEM, Policy.bind("meta.regCacheIOException", "ConfigurationElement"), ioe)); //$NON-NLS-1$
-			return null;
-		}
+		length = in.readInt();
+		IConfigurationElement[] elements = new ConfigurationElement[length];
+		for (int i = 0; i < length; i++)
+			elements[i] = readConfigurationElement(result, in);
+		result.setChildren(elements);
+		return result;
 	}
-	private ConfigurationProperty readConfigurationProperty(DataInputStream in) {
-		try {
-			ConfigurationProperty result = cacheFactory.createConfigurationProperty();
-			result.setName(readString(in, true));
-			result.setValue(readString(in, true));
-			return result;
-		} catch (IOException ioe) {
-			cacheReadProblems.add(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, IPlatform.PARSE_PROBLEM, Policy.bind("meta.regCacheIOException", "ConfigurationProperty"), ioe)); //$NON-NLS-1$ //$NON-NLS-2$
-			return null;
-		}
+	private ConfigurationProperty readConfigurationProperty(DataInputStream in) throws IOException {
+		ConfigurationProperty result = cacheFactory.createConfigurationProperty();
+		result.setName(readString(in, true));
+		result.setValue(readString(in, true));
+		return result;
 	}
-	private Extension readExtension(DataInputStream in) {
+	private Extension readExtension(DataInputStream in) throws InvalidRegistryCacheException {
+		Extension result = null;		
 		try {
-			Extension result = (Extension) readIndex(in);
+			result = (Extension) readIndex(in);
 			if (result != null)
 				return result;
 			result = cacheFactory.createExtension();
 			addToObjectTable(result);
 			result.setSimpleIdentifier(readString(in, true));
-			result.setParent(readBundleModel(in));
+			result.setParent(readBundleModel(in));			
 			result.setName(readString(in, false));
 			result.setExtensionPointIdentifier(readString(in, true));
 			result.setSubElements(readSubElements(result, in));
 			return result;
-		} catch (IOException ioe) {
-			cacheReadProblems.add(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, IPlatform.PARSE_PROBLEM, Policy.bind("meta.regCacheIOException", "Extension"), ioe)); //$NON-NLS-1$ //$NON-NLS-2$
-			return null;
+		} catch (IOException e) {			
+			String extensionId = null;
+			if (result != null && result.getParent() != null)
+				extensionId = result.getParentIdentifier() + "." + result.getSimpleIdentifier();
+			throw new InvalidRegistryCacheException(Policy.bind("meta.regCacheIOExceptionReading","extension:  " + extensionId), e); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
-	private ExtensionPoint readExtensionPoint(DataInputStream in) {
+	private ExtensionPoint readExtensionPoint(BundleModel bundle, DataInputStream in) throws InvalidRegistryCacheException {
+		ExtensionPoint result = null;
 		try {
-			ExtensionPoint result = (ExtensionPoint) readIndex(in);
+			result = (ExtensionPoint) readIndex(in);
 			if (result != null)
 				return result;
 			result = cacheFactory.createExtensionPoint();
 			addToObjectTable(result);
+			result.setParent(bundle);			
 			result.setSimpleIdentifier(readString(in, true));
 			result.setName(readString(in,false));
 			result.setSchema(readString(in, true));
-			result.setParent(readBundleModel(in));
 
 			// Now do the extensions.
 			int length = in.readInt();
@@ -147,53 +148,54 @@ public class RegistryCacheReader {
 				extensions[i] = readExtension(in);
 			result.setExtensions(extensions);
 			return result;
-		} catch (IOException ioe) {
-			cacheReadProblems.add(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, IPlatform.PARSE_PROBLEM, Policy.bind("meta.regCacheIOException", "ExtensionPoint"), ioe)); //$NON-NLS-1$ //$NON-NLS-2$
-			return null;
+		} catch (IOException e) {
+			String extensionPointId = null;
+			if (result != null && result.getParent() != null) 
+				extensionPointId = result.getUniqueIdentifier();
+			throw new InvalidRegistryCacheException(Policy.bind("meta.regCacheIOExceptionReading","extension point: " + extensionPointId), e); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
-	private BundleModel readBundleModel(DataInputStream in) {
-		try {
-			BundleModel result = (BundleModel) readIndex(in);
-			if (result != null)
+	private BundleModel readBundleModel(DataInputStream in) throws InvalidRegistryCacheException  {
+		BundleModel result = null;
+			try {
+				result = (BundleModel) readIndex(in);
+				if (result != null)
+					return result;
+				result = cacheFactory.createBundle();
+				addToObjectTable(result);
+				result.setUniqueIdentifier(readString(in, true));
+				result.setId(in.readLong());
+				result.setParent(readRegistry(in));
+				result.setHostIdentifier(readString(in, true));
+
+				// now do extension points
+				int length = in.readInt();
+				IExtensionPoint[] extensionPoints = new ExtensionPoint[length];
+				for (int i = 0; i < length; i++)
+					extensionPoints[i] = readExtensionPoint(result, in);
+				result.setExtensionPoints(extensionPoints);
+
+				// and then extensions
+				length = in.readInt();
+				IExtension[] extensions = new Extension[length];
+				for (int i = 0; i < length; i++)
+					extensions[i] = readExtension(in);
+				result.setExtensions(extensions);
+
+				// and then fragments
+				length = in.readInt();
+				BundleModel[] bundles = new BundleModel[length];
+				for (int i = 0; i < length; i++)
+					bundles[i] = readBundleModel(in);
+				result.setFragments(bundles);
 				return result;
-			result = cacheFactory.createBundle();
-			addToObjectTable(result);
-			result.setUniqueIdentifier(readString(in, true));
-			result.setId(in.readLong());
-			result.setParent(readRegistry(in));
-			result.setHostIdentifier(readString(in, true));
-
-			// now do extension points
-			int length = in.readInt();
-			IExtensionPoint[] extensionPoints = new ExtensionPoint[length];
-			for (int i = 0; i < length; i++)
-				extensionPoints[i] = readExtensionPoint(in);
-			result.setExtensionPoints(extensionPoints);
-
-			// and then extensions
-			length = in.readInt();
-			IExtension[] extensions = new Extension[length];
-			for (int i = 0; i < length; i++)
-				extensions[i] = readExtension(in);
-			result.setExtensions(extensions);
-
-			// and then fragments
-			length = in.readInt();
-			BundleModel[] bundles = new BundleModel[length];
-			for (int i = 0; i < length; i++)
-				bundles[i] = readBundleModel(in);
-			result.setFragments(bundles);
-			return result;
-		} catch (IOException ioe) {
-			cacheReadProblems.add(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, IPlatform.PARSE_PROBLEM, Policy.bind("meta.regCacheIOException", "Bundle"), ioe)); //$NON-NLS-1$
-			return null;
-		}
+			} catch (IOException e) {
+				String bundleId = (result == null || result.getUniqueIdentifier() == null) ? "<not available>" : result.getUniqueIdentifier(); //$NON-NLS-1$
+				throw new InvalidRegistryCacheException(Policy.bind("meta.regCacheIOExceptionReading","plugin: " + bundleId), e);  //$NON-NLS-1$//$NON-NLS-2$
+			}
 	}
 
-	private ExtensionRegistry readCache(DataInputStream in) {
-		if (cacheReadProblems == null)
-			cacheReadProblems = new MultiStatus(IPlatform.PI_RUNTIME, IPlatform.PARSE_PROBLEM, Policy.bind("meta.registryCacheReadProblems"), null); //$NON-NLS-1$
+	private ExtensionRegistry readCache(DataInputStream in) throws InvalidRegistryCacheException {
 		if (!readHeaderInformation(in)) {
 			if (InternalPlatform.DEBUG_REGISTRY)
 				debug("Cache header information out of date - ignoring cache"); //$NON-NLS-1$
@@ -202,7 +204,7 @@ public class RegistryCacheReader {
 		return readRegistry(in);
 	}
 
-	private ExtensionRegistry readRegistry(DataInputStream in) {
+	private ExtensionRegistry readRegistry(DataInputStream in) throws InvalidRegistryCacheException {
 		try {
 			ExtensionRegistry result = (ExtensionRegistry) readIndex(in);
 			if (result != null)
@@ -222,13 +224,12 @@ public class RegistryCacheReader {
 			if (lazilyLoadExtensions)
 				result.setCacheReader(this);
 			return result;
-		} catch (IOException ioe) {
-			cacheReadProblems.add(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, IPlatform.PARSE_PROBLEM, Policy.bind("meta.regCacheIOException", "ExtensionRegistry"), ioe)); //$NON-NLS-1$
-			return null;
+		} catch (IOException e) {
+			throw new InvalidRegistryCacheException(Policy.bind("meta.regCacheIOExceptionReading","ExtensionRegistry"), e);  //$NON-NLS-1$//$NON-NLS-2$
 		}
 	}
 
-	private ConfigurationElement[] readSubElements(Extension parent, DataInputStream in) throws IOException {
+	private ConfigurationElement[] readSubElements(Extension parent, DataInputStream in) throws IOException, InvalidRegistryCacheException {
 		int type = in.readByte();
 		if (type == NULL)
 			return null;
@@ -252,18 +253,13 @@ public class RegistryCacheReader {
 		// read the number of sub elements to load
 		int length = in.readInt();
 		ConfigurationElement[] result = new ConfigurationElement[length];
-		for (int i = 0; i < length; i++) {
+		for (int i = 0; i < length; i++) 
 			result[i] = readConfigurationElement(parent, in);
-			if (result[i] == null) {
-				String message = "Unable to read subelement #" + i + " for extension " + parent.getName(); //$NON-NLS-1$ //$NON-NLS-2$ 
-				throw new InvalidRegistryCacheException(message);
-			}
-		}
 		// skip checksum
 		in.readLong();
 		return result;
 	}
-	private void checkSubElements(Extension parent, DataInputStream in) throws IOException {
+	private void checkSubElements(Extension parent, DataInputStream in) throws IOException, InvalidRegistryCacheException {
 		int subElementsDataLength = in.readInt();
 		CheckedInputStream checkedIn = new CheckedInputStream(in, new CRC32());
 		if (checkedIn.skip(subElementsDataLength) != subElementsDataLength) {
@@ -280,15 +276,6 @@ public class RegistryCacheReader {
 			throw new InvalidRegistryCacheException(message);
 		}
 	}
-	public class InvalidRegistryCacheException extends IOException {
-		public InvalidRegistryCacheException() {
-			super();
-		}
-		public InvalidRegistryCacheException(String string) {
-			super(string);
-		}
-	}
-
 	private String readString(DataInputStream in, boolean intern) throws IOException {
 		byte type = in.readByte();
 		if (type == NULL)
@@ -311,37 +298,77 @@ public class RegistryCacheReader {
 	 * Lazily loads an extension model's sub-elements.
 	 */
 	public final ConfigurationElement[] loadConfigurationElements(Extension parent, int offset) {
+		DataInputStream in = null;
 		try {
-			DataInputStream in = openCacheFile();
-			try {
-				in.skipBytes(offset);
-				in.readInt(); // skip the offset itself
-				return readBasicSubElements(parent, in);
-			} finally {
-				in.close();
-			}
+			in = openCacheFile();
+			in.skipBytes(offset);
+			in.readInt(); // skip the offset itself
+			return readBasicSubElements(parent, in);
 		} catch (IOException e) {
-			// an I/O failure would keep the extension elements unloaded
-			//TODO: log this exception?
-			if (InternalPlatform.DEBUG_REGISTRY)
-				e.printStackTrace(System.err);
+			Throwable exception = InternalPlatform.DEBUG_REGISTRY ? e : null;
+			String message = Policy.bind("meta.unableToReadCache"); //$NON-NLS-1$
+			InternalPlatform.getDefault().log(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, 0, message, exception));
+		} catch (Throwable t) {
+			// catch any OutOfMemoryErrors/NullPointerExceptions that may have been caused by corrupted data
+			// log general message
+			String message = Policy.bind("meta.registryCacheReadProblems"); //$NON-NLS-1$						
+			InternalPlatform.getDefault().log(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, 0, message, null));
+			// log actual error			
+			Throwable exceptionToLog = InternalPlatform.DEBUG_REGISTRY ? t : null;
+			InternalPlatform.getDefault().log(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, 0, t.toString(), exceptionToLog));					
+		} finally {
+			try {
+				if (in != null)
+					in.close();
+			} catch (IOException e) {
+				Throwable exception = InternalPlatform.DEBUG_REGISTRY ? e : null;
+				String message = Policy.bind("meta.registryCacheReadProblems"); //$NON-NLS-1$
+				InternalPlatform.getDefault().log(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, 0, message, exception));
+			}
 		}
-		return null;
+		return new ConfigurationElement[0];
 	}
 	public final ExtensionRegistry loadCache() {
+		DataInputStream in = null;
 		try {
-			DataInputStream in = openCacheFile();
-			try {
-				return readCache(in);
-			} finally {
-				in.close();
-			}
+			in = openCacheFile();
+		} catch (IOException e) {
+			Throwable exception = InternalPlatform.DEBUG_REGISTRY ? e : null;
+			String message = Policy.bind("meta.unableToReadCache"); //$NON-NLS-1$
+			InternalPlatform.getDefault().log(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, 0, message, exception));
+			return null;
+		}
+		try {
+			return readCache(in);
+		} catch (InvalidRegistryCacheException e) {
+			Throwable exception = InternalPlatform.DEBUG_REGISTRY ? e.getCause() : null;
+			InternalPlatform.getDefault().log(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, 0, e.getMessage(), exception));
 		} catch (Throwable t) {
-			//TODO: log this exception?
-			if (InternalPlatform.DEBUG_REGISTRY)
-				System.err.println("Error opening cache file: " + t.getMessage()); //$NON-NLS-1$
+			// catch any OutOfMemoryErrors/NullPointerExceptions that may have been caused by corrupted data
+			// log general message
+			String message = Policy.bind("meta.registryCacheReadProblems"); //$NON-NLS-1$						
+			InternalPlatform.getDefault().log(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, 0, message, null));
+			// log actual error			
+			Throwable exceptionToLog = InternalPlatform.DEBUG_REGISTRY ? t : null;
+			InternalPlatform.getDefault().log(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, 0, t.toString(), exceptionToLog));			
+		} finally {
+			try {
+				if (in != null)
+					in.close();
+			} catch (IOException e) {
+				Throwable exception = InternalPlatform.DEBUG_REGISTRY ? e : null;
+				String message = Policy.bind("meta.registryCacheReadProblems"); //$NON-NLS-1$
+				InternalPlatform.getDefault().log(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, 0, message, exception));
+			}
 		}
 		return null;
 	}
-
+	public class InvalidRegistryCacheException extends Exception {
+		public InvalidRegistryCacheException(String msg, Throwable cause) {
+			super(msg, cause);
+		}
+		public InvalidRegistryCacheException(String string) {
+			super(string);
+		}
+	}
 }

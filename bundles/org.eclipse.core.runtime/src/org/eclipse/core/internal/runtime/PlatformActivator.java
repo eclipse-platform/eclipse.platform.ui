@@ -76,8 +76,10 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 			long start = 0;
 			if (InternalPlatform.DEBUG)
 				start = System.currentTimeMillis();
+			
 			boolean lazyLoading = !"true".equals(System.getProperty(InternalPlatform.PROP_NO_LAZY_CACHE_LOADING)); //$NON-NLS-1$
-			registry = new RegistryCacheReader(cacheFile, factory, lazyLoading).loadCache();
+			if (cacheFile.isFile())			
+				registry = new RegistryCacheReader(cacheFile, factory, lazyLoading).loadCache();
 
 			if (InternalPlatform.DEBUG && registry != null)
 				System.out.println("Reading registry cache: " + (System.currentTimeMillis() - start));
