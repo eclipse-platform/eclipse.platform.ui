@@ -141,6 +141,7 @@ protected void createDropDownText(Composite parent) {
 		GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL |
 		GridData.VERTICAL_ALIGN_FILL | GridData.GRAB_VERTICAL);
 	data.heightHint = text.getLineHeight() * TEXT_LINE_COUNT;
+	data.horizontalSpan = 2;
 	text.setLayoutData(data);
 }
 /** 
