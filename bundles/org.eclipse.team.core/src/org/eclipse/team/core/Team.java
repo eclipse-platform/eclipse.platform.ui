@@ -251,13 +251,15 @@ public final class Team {
 		}
 	}
 	
-	/*
+	/**
 	 * Utility method for removing a project nature from a project.
 	 * 
 	 * @param proj the project to remove the nature from
 	 * @param natureId the nature id to remove
 	 * @param monitor a progress monitor to indicate the duration of the operation, or
 	 * <code>null</code> if progress reporting is not required.
+	 * 
+	 * @deprecated
 	 */
 	public static void removeNatureFromProject(IProject proj, String natureId, IProgressMonitor monitor) throws TeamException {
 		try {
@@ -272,7 +274,7 @@ public final class Team {
 		}
 	}
 	
-	/*
+	/**
 	 * Utility method for adding a nature to a project.
 	 * 
 	 * @param proj the project to add the nature
@@ -281,6 +283,8 @@ public final class Team {
 	 * <code>null</code> if progress reporting is not required.
 	 * 
 	 * @exception TeamException if a problem occured setting the nature
+	 * 
+	 * @deprecated
 	 */
 	public static void addNatureToProject(IProject proj, String natureId, IProgressMonitor monitor) throws TeamException {
 		try {

@@ -520,11 +520,13 @@ public abstract class RepositoryProvider implements IProjectNature {
 		return null;
 	}	
 	
-	/*
+	/**
 	 * Convert a project that are using natures to mark them as Team projects
 	 * to instead use persistent properties. Optionally remove the nature from the project.
 	 * Do nothing if the project has no Team nature.
 	 * Assume that the same ID is used for both the nature and the persistent property.
+	 * 
+	 * @deprecated
 	 */
 	public static void convertNatureToProperty(IProject project, boolean removeNature) throws TeamException {
 		RepositoryProvider provider = RepositoryProvider.getProvider(project);
