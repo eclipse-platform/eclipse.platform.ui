@@ -63,6 +63,9 @@ public class IAdapterManagerTest extends TestCase {
 		} finally {
 			manager.unregisterAdapters(fac, TestAdaptable.class);
 		}
+		
+		//request adapter that was unloaded
+		assertTrue("1.4", !manager.hasAdapter(adaptable, "java.lang.String"));
 	}	
 	/**
 	 * Tests API method IAdapterManager.getAdapter.
@@ -98,6 +101,8 @@ public class IAdapterManagerTest extends TestCase {
 		} finally {
 			manager.unregisterAdapters(fac, TestAdaptable.class);
 		}
+		//request adapter that was unloaded
+		assertNull("1.4", manager.getAdapter(adaptable, "java.lang.String"));
 	}	/**
 	 * Tests API method IAdapterManager.loadAdapter.
 	 */
@@ -132,5 +137,7 @@ public class IAdapterManagerTest extends TestCase {
 		} finally {
 			manager.unregisterAdapters(fac, TestAdaptable.class);
 		}
+		//request adapter that was unloaded
+		assertNull("1.4", manager.loadAdapter(adaptable, "java.lang.String"));
 	}
 }
