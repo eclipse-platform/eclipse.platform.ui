@@ -72,8 +72,10 @@ protected void commit() throws IOException {
 protected void copy(File sourceFile, File destinationFile) throws IOException {
 	if (!sourceFile.exists())
 		return;
-	FileInputStream source = new FileInputStream(sourceFile);
-	FileOutputStream destination = new FileOutputStream(destinationFile);
+	if (sourceFile.renameTo(destinationFile))
+		return;
+	InputStream source = new BufferedInputStream(new FileInputStream(sourceFile));
+	OutputStream destination = new BufferedOutputStream(new FileOutputStream(destinationFile));
 	transferStreams(source, destination);
 }
 protected void createTempFile(String tempPath) throws IOException {
