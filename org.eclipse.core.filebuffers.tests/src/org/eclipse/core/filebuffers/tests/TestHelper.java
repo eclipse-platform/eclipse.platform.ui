@@ -75,9 +75,13 @@ public class TestHelper {
 	}
 	
 	public static void delete(final IProject project) throws CoreException {
+		delete(project, true);
+	}
+	
+	public static void delete(final IProject project, boolean deleteContent) throws CoreException {
 		for (int i= 0; i < MAX_RETRY; i++) {
 			try {
-				project.delete(true, true, NULL_MONITOR);
+				project.delete(deleteContent, true, NULL_MONITOR);
 				i= MAX_RETRY;
 			} catch (CoreException x) {
 				if (i == MAX_RETRY - 1) {
