@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteResource;
@@ -56,8 +57,8 @@ public class GetAsAction extends GetAsProjectAction {
 		// Fetch the members of the folder to see if they contain a .project file.
 		final boolean[] hasProjectMetaFile = new boolean[] { false };
 		final boolean[] errorOccured = new boolean[] { false };
-		run(new WorkspaceModifyOperation() {
-			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
+		run(new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
 				try {
 					hasProjectMetaFile[0] = hasProjectMetaFile(remoteFolder, monitor);
 				} catch (TeamException e) {
