@@ -18,16 +18,20 @@ public class AntEditorMessages {
 
 	private static final String BUNDLE_NAME = "org.eclipse.ant.internal.ui.editor.AntEditorMessages"; //$NON-NLS-1$
 
-	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
+	private static final ResourceBundle fgResourceBundle = ResourceBundle.getBundle(BUNDLE_NAME);
 
 	private AntEditorMessages() {
 	}
 
 	public static String getString(String key) {
 		try {
-			return RESOURCE_BUNDLE.getString(key);
+			return fgResourceBundle.getString(key);
 		} catch (MissingResourceException e) {
 			return '!' + key + '!';
 		}
+	}
+
+	protected static ResourceBundle getResourceBundle() {
+		return fgResourceBundle;
 	}
 }
