@@ -16,7 +16,8 @@ import org.eclipse.update.core.IFeatureReference;
 public class ConfigurationPolicy implements IConfigurationPolicy {
 
 	private int policy;
-	private List featureReferences;
+	private List configuredFeatureReferences;
+	private List unconfiguredFeatureReferences;
 
 	/**
 	 * Constructor for ConfigurationPolicy.
@@ -39,9 +40,9 @@ public class ConfigurationPolicy implements IConfigurationPolicy {
 	public IFeatureReference[] getFilteredFeatures(IFeatureReference[] featuresToFilter) {
 
 		IFeatureReference[] result = new IFeatureReference[0];
-		if (featureReferences != null && !featureReferences.isEmpty()) {
-			result = new IFeatureReference[featureReferences.size()];
-			featureReferences.toArray(result);
+		if (configuredFeatureReferences != null && !configuredFeatureReferences.isEmpty()) {
+			result = new IFeatureReference[configuredFeatureReferences.size()];
+			configuredFeatureReferences.toArray(result);
 		}
 		return result;
 	}
@@ -51,21 +52,14 @@ public class ConfigurationPolicy implements IConfigurationPolicy {
 	 * is package because is called by the parser 
 	 * The parse just adds, without knowing if it is configured or not
 	 */
-	/*package*/
-	void addFeatureReference(IFeatureReference feature) {
-		if (featureReferences == null)
-			featureReferences = new ArrayList(0);
-		featureReferences.add(feature);
-	}
-
 	/*
 	 * @see IConfigurationSite#getConfiguredFeatures()
 	 */
 	public IFeatureReference[] getConfiguredFeatures() {
 		IFeatureReference[] result = new IFeatureReference[0];
-		// FIXME:
-		if (policy == IPlatformConfiguration.ISitePolicy.USER_INCLUDE) {
-			result = getFilteredFeatures(null);
+		if (configuredFeatureReferences!=null && !configuredFeatureReferences.isEmpty()){
+			result = new IFeatureReference[configuredFeatureReferences.size()];
+			configuredFeatureReferences.toArray(result);
 		}
 		return result;
 	}
@@ -75,9 +69,9 @@ public class ConfigurationPolicy implements IConfigurationPolicy {
 	 */
 	public IFeatureReference[] getUnconfiguredFeatures() {
 		IFeatureReference[] result = new IFeatureReference[0];
-		// FIXME:
-		if (policy == IPlatformConfiguration.ISitePolicy.USER_EXCLUDE) {
-			result = getFilteredFeatures(null);
+		if (unconfiguredFeatureReferences!=null && !unconfiguredFeatureReferences.isEmpty()){
+			result = new IFeatureReference[unconfiguredFeatureReferences.size()];
+			unconfiguredFeatureReferences.toArray(result);
 		}
 		return result;
 
@@ -88,10 +82,9 @@ public class ConfigurationPolicy implements IConfigurationPolicy {
 	 */
 	public boolean isConfigured(IFeatureReference feature) {
 		boolean result = false;
-		switch (policy) {
-			case IPlatformConfiguration.ISitePolicy.USER_INCLUDE :
+
 				// return true if the feature is part of the configured list
-				Iterator iter = featureReferences.iterator();
+				Iterator iter = configuredFeatureReferences.iterator();
 				boolean found = false;
 				String featureURLString = feature.getURL().toExternalForm();
 				while (iter.hasNext() && !result) {
@@ -100,59 +93,40 @@ public class ConfigurationPolicy implements IConfigurationPolicy {
 						result = true;
 					}
 				}
-				break;
-			case IPlatformConfiguration.ISitePolicy.USER_EXCLUDE :
-				// return true if the feature is NOT part of the list
-				iter = featureReferences.iterator();
-				result = true;
-				featureURLString = feature.getURL().toExternalForm();
-				while (iter.hasNext() && result) {
-					IFeatureReference element = (IFeatureReference) iter.next();
-					if (element.getURL().toExternalForm().trim().equalsIgnoreCase(featureURLString)) {
-						// we found it in teh list of not configured
-						result = false;
-					}
-				}
-				break;
-		}
-		return false;
+		return result;
 	}
 
 	/**
 	 * adds teh feature to teh list of features if the policy is USER_INCLUDE
 	 */
-	/*packahge*/ void configure(IFeatureReference feature) throws CoreException {
-		if (policy == IPlatformConfiguration.ISitePolicy.USER_INCLUDE) {
-			//Start UOW ?
-
-			ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_CONFIGURE);
-			activity.setLabel(feature.getURL().toExternalForm());
-			activity.setDate(new Date());
-			addFeatureReference(feature);
-
-			// everything done ok
-			activity.setStatus(IActivity.STATUS_OK);
-
-			((InstallConfiguration) SiteManager.getLocalSite().getCurrentConfiguration()).addActivity(activity);
-
+	/*package*/
+	void configure(IFeatureReference feature) throws CoreException {
+		if (configuredFeatureReferences == null)
+			configuredFeatureReferences = new ArrayList(0);
+		configuredFeatureReferences.add(feature);
+		
+		// when user configure a feature,
+		// we have to remove it from unconfigured feature if it exists
+		// because the user doesn't know...
+		if (unconfiguredFeatureReferences != null){
+			remove(feature,unconfiguredFeatureReferences);
 		}
 	}
 
 	/**
 	 * adds teh feature to teh list of features if the policy is USER_EXCLUDE
 	 */
-	/*package*/ void unconfigure(IFeatureReference feature) throws CoreException {
-		if (policy == IPlatformConfiguration.ISitePolicy.USER_EXCLUDE) {
-			//Start UOW ?
-			ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_UNCONFIGURE);
-			activity.setLabel(feature.getURL().toExternalForm());
-			activity.setDate(new Date());
-			addFeatureReference(feature);
-
-			// everything done ok
-			activity.setStatus(IActivity.STATUS_OK);
-			((InstallConfiguration) SiteManager.getLocalSite().getCurrentConfiguration()).addActivity(activity);
+	/*package*/
+	void unconfigure(IFeatureReference feature) throws CoreException {
+		if (unconfiguredFeatureReferences == null)
+			unconfiguredFeatureReferences = new ArrayList(0);
+		unconfiguredFeatureReferences.add(feature);
+		// an unconfigured feature is always from a configured one no ?
+		// unless it was parsed right ?
+		if (configuredFeatureReferences != null){
+			remove(feature,configuredFeatureReferences);
 		}
+		
 	}
 
 	/**
@@ -161,10 +135,10 @@ public class ConfigurationPolicy implements IConfigurationPolicy {
 	/*package*/
 	String[] getPlugins() throws CoreException {
 		String[] result = new String[0];
-		if (featureReferences != null && !featureReferences.isEmpty()) {
+		if (configuredFeatureReferences != null && !configuredFeatureReferences.isEmpty()) {
 			List pluginsString = new ArrayList(0);
 
-			Iterator iter = featureReferences.iterator();
+			Iterator iter = configuredFeatureReferences.iterator();
 			while (iter.hasNext()) {
 				IFeatureReference element = (IFeatureReference) iter.next();
 				IFeature feature = element.getFeature();
@@ -182,6 +156,19 @@ public class ConfigurationPolicy implements IConfigurationPolicy {
 
 		}
 		return result;
+	}
+	
+	private void remove(IFeatureReference feature, List list){
+		String featureURLString = feature.getURL().toExternalForm();
+		boolean found = false;
+		Iterator iter = list.iterator();
+		while (iter.hasNext() && !found) {
+			IFeatureReference element = (IFeatureReference) iter.next();
+				if (element.getURL().toExternalForm().trim().equalsIgnoreCase(featureURLString)) {
+					list.remove(element);
+					found = true;
+			}
+		}
 	}
 
 }

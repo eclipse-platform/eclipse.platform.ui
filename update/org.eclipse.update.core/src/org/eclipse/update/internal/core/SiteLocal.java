@@ -313,31 +313,19 @@ public class SiteLocal implements ILocalSite, IWritable {
 	/*
 	 * @see ILocalSite#revertTo(IInstallConfiguration)
 	 */
-	public void revertTo(IInstallConfiguration configuration, IProgressMonitor monitor) throws CoreException {
+	public void revertTo(IInstallConfiguration configuration,IProgressMonitor monitor) throws CoreException {
 		
-		// save previous current configuration
-		if (getCurrentConfiguration()!=null)	((InstallConfiguration)getCurrentConfiguration()).save();
+		// create the activity ?
 		
-		InstallConfiguration result = null;
-		String oldFilename = configuration.getURL().getFile();
-		String newFileName = UpdateManagerUtils.getLocalRandomIdentifier(oldFilename);
-		try {
-			URL newFile = UpdateManagerUtils.getURL(getLocation(), newFileName, null);
-			Date currentDate = new Date();
-			// pass the date onto teh name
-			String name = configuration.getLabel();
-			result = new InstallConfiguration(configuration, newFile, name);
-			// set teh same date in the installConfig
-			result.setCreationDate(currentDate);
-			
-		} catch (MalformedURLException e) {
-			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Cannot revert to configuration in:" + newFileName, e);
-			throw new CoreException(status);
-		}
+		// create a configuration
+		IInstallConfiguration newConfiguration = cloneCurrentConfiguration(null, configuration.getLabel());
+		// process delta
+		// the Configured featuresConfigured are the same as the old configuration
+		// the unconfigured featuresConfigured are the rest...
+		((InstallConfiguration)newConfiguration).revertTo(configuration,monitor);
 
 		// add to the stack which will set up as current
-		addConfiguration(result);
+		addConfiguration(newConfiguration);
 
 	}
 }

@@ -147,16 +147,25 @@ public class InstallConfigurationParser extends DefaultHandler {
 	/** 
 	 * process the Feature info
 	 */
-	private void processFeature(Attributes attributes) throws MalformedURLException {
+	private void processFeature(Attributes attributes) throws MalformedURLException, CoreException {
 
 		// url
 		URL url = UpdateManagerUtils.getURL(configSite.getSite().getURL(), attributes.getValue("url"), null);
+		
+		// configured ?
+		String configuredString = attributes.getValue("configured");
+		boolean configured = configuredString.trim().equalsIgnoreCase("true")?true:false;
 
 		if (url != null) {
 			//IFeatureReference ref = ((Site) configSite.getSite()).getFeatureReferences(url);
 			IFeatureReference ref = new FeatureReference(((Site) configSite.getSite()),url);
 			if (ref != null)
-				 ((ConfigurationPolicy) configSite.getConfigurationPolicy()).addFeatureReference(ref);
+				if (configured){
+					((ConfigurationSite)configSite).addFeatureReference(ref);
+					((ConfigurationPolicy)configSite.getConfigurationPolicy()).configure(ref);					
+				}
+				else
+					((ConfigurationPolicy)configSite.getConfigurationPolicy()).unconfigure(ref);
 
 			// DEBUG:		
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {

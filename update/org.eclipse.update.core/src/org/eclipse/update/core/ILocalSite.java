@@ -3,6 +3,7 @@ package org.eclipse.update.core;
 import java.io.File;
 import java.net.URL;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
@@ -59,7 +60,7 @@ public interface ILocalSite {
 	 * 
 	 * @param IInstallConfiguration the configuration to use
 	 */
-	void revertTo(IInstallConfiguration configuration) throws CoreException;
+	void revertTo(IInstallConfiguration configuration, IProgressMonitor monitor) throws CoreException;
 	
 	/**
 	 * Creates a configuration from a URL.
@@ -99,8 +100,8 @@ public interface ILocalSite {
 	void save() throws CoreException;
 	
 	
-	void addLocalSiteChangedListener(ISiteLocalChangedListener listener);
-	void removeLocalSiteChangedListener(ISiteLocalChangedListener listener);
+	void addLocalSiteChangedListener(ILocalSiteChangedListener listener);
+	void removeLocalSiteChangedListener(ILocalSiteChangedListener listener);
 
 }
 

@@ -42,7 +42,7 @@ public class InstallConfiguration implements IInstallConfiguration, IWritable {
 		if (config!=null){
 			configurationSites = new ArrayList();
 			configurationSites.addAll(Arrays.asList(config.getConfigurationSites()));
-			/*featuresConfigured = new ArrayList();
+			/**featuresConfigured = new ArrayList();
 			featuresConfigured.addAll(Arrays.asList(config.getConfiguredFeatures()));
 			featuresUnconfigured = new ArrayList();
 			featuresUnconfigured.addAll(Arrays.asList(config.getUnconfiguredFeatures()));*/
@@ -339,5 +339,53 @@ public class InstallConfiguration implements IInstallConfiguration, IWritable {
 	}
 
 
+	/**
+	 * reverts this configuration to the match the new one
+	 * 
+	 * remove any site that are in the current but not in the old state
+	 * 
+	 * replace all the config sites of the current state with the old one
+	 * 
+	 * for all the sites left in the current state, calculate the revert
+	 * 
+	 */
+	public void revertTo(IInstallConfiguration configuration,IProgressMonitor monitor) throws CoreException {
+		
+		IConfigurationSite[] oldConfigSites = configuration.getConfigurationSites();
+		
+		// create a hashtable of the *old* sites
+		Map oldSitesMap = new Hashtable(0);
+		for (int i = 0; i < oldConfigSites.length; i++) {
+			IConfigurationSite element = oldConfigSites[i];
+			oldSitesMap.put(element.getSite().getURL().toExternalForm(),element);
+		}
+
+		
+		// create list of all the sites that map the *old* sites
+		// we want the intersection between teh old sites and teh current sites
+		if(configurationSites!=null){
+			
+			// for each current site, ask the old site
+			// to calculate the delta 
+			Iterator currentSites = configurationSites.iterator();
+			String key = null;
+			while (currentSites.hasNext()) {
+				IConfigurationSite element = (IConfigurationSite) currentSites.next();
+				key = element.getSite().getURL().toExternalForm();
+				IConfigurationSite oldSite = (IConfigurationSite)oldSitesMap.get(key);
+				if (oldSite!=null){
+					((ConfigurationSite)oldSite).deltaWith(element);		
+				}
+				
+			}
+			
+			
+			// the new configuration has the exact same sites as the old configuration
+			configurationSites = new ArrayList(0);
+			configurationSites.addAll(oldSitesMap.values());
+			
+		}
+		
+	}
 
 }

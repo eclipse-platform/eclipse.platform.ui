@@ -61,5 +61,11 @@ public interface IConfigurationSite {
 	 */
 	void setInstallSite(boolean installable);
 	
+	/**
+	 * returns the feature used in this configurationSite
+	 * This is a subset of the feature of teh site
+	 */
+	IFeatureReference[] getConfiguredFeatures();
+	
 }
 

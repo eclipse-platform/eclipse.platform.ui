@@ -6,6 +6,8 @@ package org.eclipse.update.internal.core;
 import java.io.PrintWriter;
 import java.util.Date;
 
+import java.util.List;
+import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.update.core.*;
@@ -19,6 +21,7 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 	private ISite site;
 	private IConfigurationPolicy policy;
 	private boolean installable = false;
+	private List configuredFeatures;
 
 	/**
 	 * Constructor
@@ -83,12 +86,14 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 		w.println(">");
 		w.println("");
 
-		// site configurations
-		IFeatureReference[] featuresReferences = getConfigurationPolicy().getFilteredFeatures(null);
+		// configured features ref
+		IFeatureReference[] featuresReferences = getConfiguredFeatures();
 		if (featuresReferences != null) {
 			for (int index = 0; index < featuresReferences.length; index++) {
 				IFeatureReference element = featuresReferences[index];
 				w.print(gap + increment + "<" + InstallConfigurationParser.FEATURE + " ");
+				// configured = true
+				w.print("configured = \"true\" ");
 				// feature URL
 				String URLInfoString = null;
 				if (element.getURL() != null) {
@@ -99,6 +104,26 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 				w.println("/>");
 			}
 		}
+
+		// unconfigured features ref
+		featuresReferences = ((ConfigurationPolicy)getConfigurationPolicy()).getUnconfiguredFeatures();
+		if (featuresReferences != null) {
+			for (int index = 0; index < featuresReferences.length; index++) {
+				IFeatureReference element = featuresReferences[index];
+				w.print(gap + increment + "<" + InstallConfigurationParser.FEATURE + " ");
+				// configured = true
+				w.print("configured = \"false\" ");
+				// feature URL
+				String URLInfoString = null;
+				if (element.getURL() != null) {
+					ISite featureSite = ((FeatureReference) element).getSite();
+					URLInfoString = UpdateManagerUtils.getURLAsString(featureSite.getURL(), element.getURL());
+					w.print("url=\"" + Writer.xmlSafe(URLInfoString) + "\"");
+				}
+				w.println("/>");
+			}
+		}
+
 
 		// end
 		w.println(gap + "</" + InstallConfigurationParser.CONFIGURATION_SITE + ">");
@@ -140,14 +165,76 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 	 * @see IConfigurationSite#configure(IFeatureReference)
 	 */
 	public void configure(IFeatureReference feature) throws CoreException {
-		((ConfigurationPolicy)getConfigurationPolicy()).configure(feature);
+		
+		//Start UOW ?
+		ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_CONFIGURE);
+		activity.setLabel(feature.getURL().toExternalForm());
+		activity.setDate(new Date());
+			
+		addFeatureReference(feature);
+		((ConfigurationPolicy)getConfigurationPolicy()).configure(feature);		
+
+		// everything done ok
+		activity.setStatus(IActivity.STATUS_OK);
+		((InstallConfiguration) SiteManager.getLocalSite().getCurrentConfiguration()).addActivity(activity);
+	}
+
+	/**
+	 * adds a feature in teh list
+	 * also used by the parser to avoid creating another activity
+	 */
+	void addFeatureReference(IFeatureReference feature) {
+		if (configuredFeatures==null) configuredFeatures = new ArrayList(0);
+		configuredFeatures.add(feature);
 	}
 
 	/*
 	 * @see IConfigurationSite#unconfigure(IFeatureReference)
 	 */
 	public void unconfigure(IFeatureReference feature) throws CoreException {
-		((ConfigurationPolicy)getConfigurationPolicy()).unconfigure(feature);		
+		if (configuredFeatures!=null){
+			
+				//Start UOW ?
+			ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_UNCONFIGURE);
+			activity.setLabel(feature.getURL().toExternalForm());
+			activity.setDate(new Date());
+			configuredFeatures.remove(feature);
+			((ConfigurationPolicy)getConfigurationPolicy()).unconfigure(feature);
+
+			// everything done ok
+			activity.setStatus(IActivity.STATUS_OK);
+			((InstallConfiguration) SiteManager.getLocalSite().getCurrentConfiguration()).addActivity(activity);
+		}
+	}
+
+	/*
+	 * @see IConfigurationSite#getConfiguredFeatures()
+	 */
+	public IFeatureReference[] getConfiguredFeatures() {
+		IFeatureReference[] result = new IFeatureReference[0];
+		if (configuredFeatures!=null && !configuredFeatures.isEmpty()){
+			result = new IFeatureReference[configuredFeatures.size()];
+			configuredFeatures.toArray(result);
+		}
+		
+		return result;
+	}
+
+	/**
+	 * process the delta with the configuration site
+	 */
+	/*package*/
+	void deltaWith(IConfigurationSite currentConfiguration){
+		// we keep our configured feature
+		// we remove the unconfigured one
+		// but we process teh delat between what was configured in the current
+		// configuration that is not configured now
+		
+		//is it as simple as  get all configured, add configured
+		// the do teh delat and add to unconfigured
+		// what about history ? I have no idea about history...
+		
+		
 	}
 
 }
