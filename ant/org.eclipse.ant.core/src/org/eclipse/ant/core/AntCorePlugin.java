@@ -223,10 +223,23 @@ public class AntCorePlugin extends Plugin {
 	 * @return the new class loader
 	 */
 	public ClassLoader getNewClassLoader() {
+		return getNewClassLoader(false);
+	}
+	
+	/**
+	 * Returns a new class loader to use when executing Ant builds or 
+	 * other applications such as parsing or code proposal determination 
+	 * @param pluginClassLoadersLoadAntClasses whether to allow plugin classloader loaders to 
+	 * load base Ant classes
+	 * @return the new class loader
+	 */
+	public ClassLoader getNewClassLoader(boolean pluginClassLoadersLoadAntClasses) {
 		AntCorePreferences corePreferences = getPreferences();
 		URL[] urls = corePreferences.getURLs();
 		ClassLoader[] pluginLoaders = corePreferences.getPluginClassLoaders();
-		return new AntClassLoader(urls, pluginLoaders);
+		AntClassLoader loader= new AntClassLoader(urls, pluginLoaders);
+		loader.setPluginClassLoadersLoadAntClasses(pluginClassLoadersLoadAntClasses);
+		return loader;
 	}
 	
 	/**

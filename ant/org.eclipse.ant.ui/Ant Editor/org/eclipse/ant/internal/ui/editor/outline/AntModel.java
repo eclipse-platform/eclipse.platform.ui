@@ -1134,7 +1134,7 @@ public class AntModel {
 	
 	private ClassLoader getClassLoader() {
 		if (fgClassLoader == null) {
-			fgClassLoader= AntCorePlugin.getPlugin().getNewClassLoader();
+			fgClassLoader= AntCorePlugin.getPlugin().getNewClassLoader(true);
 		}
 		return fgClassLoader;
 	}
