@@ -42,6 +42,51 @@ public interface IWatchExpression extends IExpression {
 	 * @param context context in which to update this expression's value, or
 	 * 	<code>null</code> if none
 	 */
-	public void setExpressionContext(Object context);
+	public void setExpressionContext(IDebugElement context);
+	/**
+	 * Returns whether the result of this watch expression is pending.
+	 * An expression is pending if an evaluation has been requested, but
+	 * the value has not yet been returned.
+	 * 
+	 * @return whether this expression's result is pending
+	 */
+	public boolean isPending();
+	/**
+	 * Returns whether this expression has errors to report. An expression
+	 * can have errors if errors were generated the last time its value was
+	 * computed
+	 * 
+	 * @return whether this expression's result has errors
+	 */
+	public boolean hasErrors();
+	/**
+	 * Returns this expression's error messages, if any. An expression can
+	 * have errors if errors were generated the last time its value was
+	 * computed.
+	 *  
+	 * @return this expression's error messages
+	 */
+	public String[] getErrorMessages();
+	/**
+	 * Returns whether this expression is enabled. An enabled expression will
+	 * update its value. A disabled expression will not.
+	 * 
+	 * @return whether this expression is enabled
+	 */
+	public boolean isEnabled();
+	/**
+	 * Sets this expression's enabled state.
+	 * 
+	 * @param enabled whether this expression should be enabled
+	 */
+	public void setEnabled(boolean enabled);
+	/**
+	 * Returns whether this expression's value is obsolete. An expression is
+	 * obsolete if it has a value, is disabled, and then has a new
+	 * context set.
+	 * 
+	 * @return whether this expression's value is obsolete
+	 */
+	public boolean isObsolete();
 
 }

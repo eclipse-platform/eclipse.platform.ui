@@ -627,6 +627,105 @@
    </extension>
    <extension
          point="org.eclipse.ui.popupMenus">
+<!-- Watch expression actions -->
+      <objectContribution
+            objectClass="org.eclipse.debug.core.model.IExpression"
+            id="org.eclipse.debug.ui.ExpressionActions">
+         <visibility>
+	         <not>
+         		<objectClass
+         			name="org.eclipse.debug.core.model.IWatchExpression">
+         		</objectClass>
+         	</not>
+         </visibility>
+         <action
+               label="%convertToWatchExpressionAction.label"
+               helpContextId="convert_to_watch_expression_context"
+               tooltip="%convertToWatchExpressionAction.tooltip"
+               class="org.eclipse.debug.internal.ui.actions.ConvertToWatchExpressionAction"
+               menubarPath="additions"
+               enablesFor="*"
+               id="org.eclipse.debug.ui.actions.ConvertToWatchExpression">
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.debug.core.model.IVariable"
+            id="org.eclipse.debug.ui.WatchActions">
+         <action
+               label="%Watch.label"
+               icon="icons/full/ctool16/watch_exp.gif"
+               helpContextId="variable_watch_action_context"
+               class="org.eclipse.debug.internal.ui.actions.WatchAction"
+               menubarPath="openOnGroup"
+               enablesFor="+"
+               id="org.eclipse.jdt.debug.ui.actions.WatchAction">
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.debug.core.model.IWatchExpression"
+            id="org.eclipse.debug.ui.WatchExpressionActions">
+         <action
+               label="%editWatchExpressionAction.label"
+               helpContextId="edit_watch_expression_context"
+               tooltip="%editWatchExpressionAction.tooltip"
+               class="org.eclipse.debug.internal.ui.actions.EditWatchExpressionAction"
+               menubarPath="additions"
+               enablesFor="1"
+               id="org.eclipse.debug.ui.watchExpressionActions.EditWatchExpression">
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.debug.core.model.IWatchExpression"
+            id="org.eclipse.debug.ui.WatchExpressionActions">
+         <action
+               label="Enable"
+               helpContextId="enable_watch_expression_context"
+               tooltip="Enable watch expression"
+               class="org.eclipse.debug.internal.ui.actions.EnableWatchExpressionAction"
+               menubarPath="additions"
+               enablesFor="1"
+               id="org.eclipse.debug.ui.watchExpressionActions.EnableWatchExpression">
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.debug.core.model.IWatchExpression"
+            id="org.eclipse.debug.ui.WatchExpressionActions">
+         <action
+               label="Disable"
+               helpContextId="disable_watch_expression_context"
+               tooltip="Disable watch expression"
+               class="org.eclipse.debug.internal.ui.actions.DisableWatchExpressionAction"
+               menubarPath="additions"
+               enablesFor="1"
+               id="org.eclipse.debug.ui.watchExpressionActions.DisableWatchExpression">
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.debug.core.model.IWatchExpression"
+            id="org.eclipse.debug.WatchExpressionActions">
+         <action
+               label="%reevaluateWatchExpressionAction.label"
+               helpContextId="reevaluate_watch_expression_context"
+               tooltip="%reevaluateWatchExpressionAction.tooltip"
+               class="org.eclipse.debug.internal.ui.actions.ReevaluateWatchExpressionAction"
+               menubarPath="additions"
+               enablesFor="1"
+               id="org.eclipse.debug.ui.watchExpressionActions.ReevaluateWatchExpression">
+         </action>
+      </objectContribution>
+      <viewerContribution
+            targetID="org.eclipse.debug.ui.ExpressionView"
+            id="org.eclipse.debug.ui.ExpressionViewPopupActions">
+         <action
+               label="%addWatchExpressionAction.label"
+               icon="icons/full/ctool16/watch_exp.gif"
+               helpContextId="add_watch_expression_context"
+               tooltip="%addWatchExpressionAction.tooltip"
+               class="org.eclipse.debug.internal.ui.actions.AddWatchExpressionAction"
+               menubarPath="additions"
+               id="org.eclipse.debug.ui.expressionViewActions.AddWatchExpression">
+         </action>
+      </viewerContribution>
 <!-- Contributions to Debug View Popup Menu -->
       <viewerContribution
             targetID="org.eclipse.debug.ui.DebugView"

@@ -17,6 +17,7 @@ import org.eclipse.debug.core.IExpressionManager;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.debug.core.model.IWatchExpression;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.variables.VariablesViewContentProvider;
 import org.eclipse.debug.ui.IDebugView;
@@ -40,8 +41,16 @@ public class ExpressionViewContentProvider extends VariablesViewContentProvider 
 			if (parent instanceof IExpressionManager) {
 				// do not cache parents
 				return ((IExpressionManager)parent).getExpressions();
-			} else if (parent instanceof IExpression) {				
-				children = getModelSpecificExpressionChildren((IExpression)parent);
+			} else if (parent instanceof IExpression) {
+				if (parent instanceof IWatchExpression) {
+					IWatchExpression watch= (IWatchExpression) parent;
+					if (watch.hasErrors()) {
+						children= watch.getErrorMessages();
+					}
+				}
+				if (children == null) {
+					children = getModelSpecificExpressionChildren((IExpression)parent);
+				}
 			} else if (parent instanceof IVariable) {
 				children = getModelSpecificVariableChildren((IVariable)parent);
 			}
@@ -81,6 +90,9 @@ public class ExpressionViewContentProvider extends VariablesViewContentProvider 
 		if (element instanceof IExpressionManager) {
 			return ((IExpressionManager)element).hasExpressions();
 		} else if (element instanceof IExpression) {
+			if (element instanceof IWatchExpression && ((IWatchExpression) element).hasErrors()) {
+				return true;
+			}
 			IValue v = ((IExpression)element).getValue();
 			if (v == null) {
 				return false;

@@ -31,6 +31,7 @@ import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.debug.core.model.IWatchExpression;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -169,6 +170,8 @@ public class DefaultLabelProvider implements ILabelProvider {
 					label.append(((ILaunchConfiguration)element).getName());
 				} else if (element instanceof ILaunchConfigurationType) {
 					label.append(((ILaunchConfigurationType)element).getName());
+				} else if (element instanceof String) {
+					label.append(element);
 				} else {
 					label.append(getAdapterLabel(element));
 				}
@@ -221,10 +224,13 @@ public class DefaultLabelProvider implements ILabelProvider {
 	}
 
 	protected String getExpressionText(IExpression expression) {
+		if (expression instanceof IWatchExpression) {
+			return getWatchExpressionText((IWatchExpression) expression);
+		}
 		StringBuffer buffer= new StringBuffer(expression.getExpressionText());
 		String valueString= null;
 		IValue value= expression.getValue();
-		if ((valueString == null) || (valueString.length() < 1)) {
+		if (value != null && (valueString == null || valueString.length() < 1)) {
 			try {
 				valueString= value.getValueString();
 			} catch (DebugException de) {
@@ -238,6 +244,35 @@ public class DefaultLabelProvider implements ILabelProvider {
 		return buffer.toString();
 	}	
 	
+	/**
+	 * @param expression
+	 * @return
+	 */
+	protected String getWatchExpressionText(IWatchExpression expression) {
+		StringBuffer result= new StringBuffer();
+		result.append('"').append(expression.getExpressionText()).append('"');
+		if (expression.isPending()) {
+			result.append(" (pending)");
+		} else if (expression.hasErrors()) {
+			result.append(" <error(s)_during_the_evaluation>");
+		} else {
+			IValue value= expression.getValue();
+			if (value != null) {	
+				String valueString= DebugUIPlugin.getModelPresentation().getText(value);
+				if (valueString.length() > 0) {
+					result.append(" = ").append(valueString); //$NON-NLS-1$
+				}
+			}
+		}
+		if (expression.isObsolete()) {
+			result.append(" (obsolete)");
+		}
+		if (!expression.isEnabled()) {
+			result.append(" (disabled)");
+		}
+		return result.toString();
+	}
+
 	protected String getVariableText(IVariable variable) {
 		StringBuffer buffer= new StringBuffer();
 		try {

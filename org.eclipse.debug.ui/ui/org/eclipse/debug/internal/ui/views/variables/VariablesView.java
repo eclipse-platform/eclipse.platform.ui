@@ -118,9 +118,9 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	 * presentation and adds coloring to variables to
 	 * reflect their changed state
 	 */
-	class VariablesViewLabelProvider implements ILabelProvider, IColorProvider {
+	protected class VariablesViewLabelProvider implements ILabelProvider, IColorProvider {
 		
-		private IDebugModelPresentation presentation;
+		protected IDebugModelPresentation presentation;
 
 		public VariablesViewLabelProvider(IDebugModelPresentation presentation) {
 			this.presentation= presentation;
@@ -519,7 +519,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		// add tree viewer
 		final TreeViewer variablesViewer = new VariablesViewer(getSashForm(), SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
 		variablesViewer.setContentProvider(createContentProvider());
-		variablesViewer.setLabelProvider(new VariablesViewLabelProvider(getModelPresentation()));
+		variablesViewer.setLabelProvider(createLabelProvider());
 		variablesViewer.setUseHashlookup(true);
 		variablesViewer.getControl().addFocusListener(new FocusAdapter() {
 			/**
@@ -544,6 +544,15 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		return variablesViewer;
 	}
 	
+	/**
+	 * Creates and returns a label provider for this view.
+	 * 
+	 * @return a label provider for this view.
+	 */
+	protected IBaseLabelProvider createLabelProvider() {
+		return new VariablesViewLabelProvider(getModelPresentation());
+	}
+
 	/**
 	 * Create the widgetry for the details viewer.
 	 */

@@ -12,6 +12,7 @@ package org.eclipse.debug.core;
 
 
 import org.eclipse.debug.core.model.IExpression;
+import org.eclipse.debug.core.model.IWatchExpressionDelegate;
 
 /**
  * The expression manager manages the collection of registered
@@ -126,8 +127,18 @@ public interface IExpressionManager {
 	 * @param listener the listener to remove	
 	 * @since 2.1
 	 */
-	public void removeExpressionListener(IExpressionsListener listener);	
-	
+	public void removeExpressionListener(IExpressionsListener listener);
+		
+	/**
+	 * Retuns the watch expression delegate specified for the given debug
+	 * model via extension or <code>null</code> if no delegate is available.
+	 * 
+	 * @param debugModel the unique identifier of a debug model
+	 * @return the watch expression delegate associated with the given model
+	 * 		or <code>null</code> if none
+	 * @since 3.0
+	 */
+	public IWatchExpressionDelegate getWatchExpressionDelegate(String debugModel);
 }
 
 

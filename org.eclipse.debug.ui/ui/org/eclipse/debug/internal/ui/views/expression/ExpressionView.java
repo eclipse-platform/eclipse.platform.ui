@@ -12,22 +12,29 @@ package org.eclipse.debug.internal.ui.views.expression;
 
  
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IWatchExpression;
+import org.eclipse.debug.internal.ui.ColorManager;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandler;
 import org.eclipse.debug.internal.ui.views.variables.VariablesView;
+import org.eclipse.debug.internal.ui.views.variables.VariablesViewContentProvider;
 import org.eclipse.debug.internal.ui.views.variables.VariablesViewMessages;
+import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
  
@@ -35,7 +42,42 @@ import org.eclipse.ui.IWorkbenchPart;
  * Displays expressions and their values with a detail
  * area.
  */
-public class ExpressionView extends VariablesView {	
+public class ExpressionView extends VariablesView {
+	protected class ExpressionViewLabelProvider extends VariablesView.VariablesViewLabelProvider {
+		/**
+		 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
+		 */
+		public Color getForeground(Object element) {
+			boolean watchExpressionWithError= false;
+			IWatchExpression watch= null;
+			if (element instanceof IWatchExpression) {
+				watch= (IWatchExpression) element;
+			} else if (element instanceof String) {
+				Object parent= ((VariablesViewContentProvider) getVariablesViewer().getContentProvider()).getParent(element);
+				if (parent instanceof IWatchExpression) {
+					watch= (IWatchExpression) parent;
+				}
+			}
+			if (watch != null && watch.hasErrors()) {
+				watchExpressionWithError= true;
+			}
+			if (watchExpressionWithError) {
+				return ColorManager.getDefault().getColor(new RGB(255, 0, 0));
+			}
+			return super.getForeground(element);
+		}
+
+		public ExpressionViewLabelProvider(IDebugModelPresentation presentation) {
+			super(presentation);
+		}
+	}
+	/**
+	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#createLabelProvider()
+	 */
+	protected IBaseLabelProvider createLabelProvider() {
+		return new ExpressionViewLabelProvider(getModelPresentation());
+	}
+
 	/**
 	 * Creates this view's content provider.
 	 * 
@@ -103,10 +145,15 @@ public class ExpressionView extends VariablesView {
 	 */
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 		if (selection instanceof IStructuredSelection) {
-			Object context = null;
+			IDebugElement context = null;
 			IStructuredSelection ss = (IStructuredSelection)selection;
 			if (ss.size() < 2) {
-				context = ss.getFirstElement();
+				Object object = ss.getFirstElement();
+				if (object instanceof IDebugElement) {
+					context= (IDebugElement) object;
+				} else if (object instanceof ILaunch) {
+					context= ((ILaunch) object).getDebugTarget();
+				}
 			}
 			// update watch expressions with new context
 			IExpression[] expressions = DebugPlugin.getDefault().getExpressionManager().getExpressions();

@@ -13,9 +13,12 @@ package org.eclipse.debug.internal.ui.views.expression;
 
 import java.util.List;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IExpressionsListener;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IVariable;
@@ -41,7 +44,13 @@ public class ExpressionViewEventHandler extends VariablesViewEventHandler implem
 		super.doHandleTerminateEvent(event);
 		if (event.getSource() instanceof IDebugTarget) {
 			IExpression[] expressions = DebugPlugin.getDefault().getExpressionManager().getExpressions();
-			Object context = DebugUITools.getDebugContext();
+			IAdaptable object = DebugUITools.getDebugContext();
+			IDebugElement context= null;
+			if (object instanceof IDebugElement) {
+				context= (IDebugElement) object;
+			} else if (object instanceof ILaunch) {
+				context= ((ILaunch) object).getDebugTarget();
+			}
 			for (int i = 0; i < expressions.length; i++) {
 				IExpression expression = expressions[i];
 				if (expression instanceof IWatchExpression) {

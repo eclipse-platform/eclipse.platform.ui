@@ -12,10 +12,15 @@ package org.eclipse.debug.internal.core;
 
  
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
@@ -27,6 +32,7 @@ import org.eclipse.debug.core.IExpressionListener;
 import org.eclipse.debug.core.IExpressionManager;
 import org.eclipse.debug.core.IExpressionsListener;
 import org.eclipse.debug.core.model.IExpression;
+import org.eclipse.debug.core.model.IWatchExpressionDelegate;
 
 /**
  * The expression manager manages all registered expressions
@@ -52,13 +58,58 @@ public class ExpressionManager implements IExpressionManager, IDebugEventSetList
 	/**
 	 * List of (multi) expressions listeners
 	 */
-	private ListenerList fExpressionsListeners = null;	
+	private ListenerList fExpressionsListeners = null;
+	
+	private Map fWatchExpressionDelegates= new HashMap();	
 	
 	// Constants for add/remove/change notification
 	private static final int ADDED = 1;
 	private static final int CHANGED = 2;
 	private static final int REMOVED = 3;
 	
+	public ExpressionManager() {
+		loadPersistedExpressions();
+		loadWatchExpressionDelegates();
+	}
+	
+	/**
+	 * Loads the mapping of debug models to watch expression delegates
+	 * from the org.eclipse.debug.core.watchExpressionDelegates
+	 * extension point.
+	 */
+	private void loadWatchExpressionDelegates() {
+		IExtensionPoint extensionPoint = Platform.getPluginRegistry().getExtensionPoint("org.eclipse.debug.core.watchExpressionDelegates"); //$NON-NLS-1$
+		IConfigurationElement[] configurationElements = extensionPoint.getConfigurationElements();
+		for (int i = 0; i < configurationElements.length; i++) {
+			IConfigurationElement element = configurationElements[i];
+			if (element.getName().equals("watchExpressionDelegate")) { //$NON-NLS-1$
+				String debugModel = element.getAttribute("debugModel"); //$NON-NLS-1$
+				if (debugModel == null || debugModel.length() == 0) {
+					continue;
+				}
+				try {
+					IWatchExpressionDelegate delegate = (IWatchExpressionDelegate) element.createExecutableExtension("delegateClass"); //$NON-NLS-1$
+					fWatchExpressionDelegates.put(debugModel, delegate);
+				} catch (CoreException e) {
+					DebugPlugin.log(e);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * @see IExpressionManager#getWatchExpressionDelegate(String)
+	 */
+	public IWatchExpressionDelegate getWatchExpressionDelegate(String debugModel) {
+		return (IWatchExpressionDelegate) fWatchExpressionDelegates.get(debugModel);
+	}
+
+	/**
+	 * TODO: Implement watch expression persistance
+	 */
+	private void loadPersistedExpressions() {
+	}
+
 	/**
 	 * @see IExpressionManager#addExpression(IExpression)
 	 */
