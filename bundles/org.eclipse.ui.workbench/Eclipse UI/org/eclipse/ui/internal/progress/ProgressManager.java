@@ -41,7 +41,6 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.swt.widgets.Display;
 
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
@@ -739,7 +738,7 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 	 */
 	public void busyCursorWhile(final IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
 
-		final ProgressMonitorDialog dialog = new ProgressMonitorDialog(null);
+		final ProgressMonitorJobsDialog dialog = new ProgressMonitorJobsDialog(null);
 		dialog.setOpenOnRun(false);
 		final boolean[] busy = { true };
 
@@ -760,7 +759,7 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 			}
 		};
 
-		updateJob.schedule(IProgressManager.LONG_OPERATION_MILLISECONDS);
+		updateJob.schedule(100);
 
 		final InvocationTargetException[] invokes = new InvocationTargetException[1];
 		final InterruptedException[] interrupt = new InterruptedException[1];
