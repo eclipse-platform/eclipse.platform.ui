@@ -178,4 +178,14 @@ public class AntProjectNodeProxy extends AntProjectNode {
         } 
         return fModel.getProjectNode().isWarningNode();
     }
+    
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#getAntModel()
+	 */
+	protected IAntModel getAntModel() {
+		if (fProject == null) {
+			parseBuildFile();
+		}
+		return super.getAntModel();
+	}
 }

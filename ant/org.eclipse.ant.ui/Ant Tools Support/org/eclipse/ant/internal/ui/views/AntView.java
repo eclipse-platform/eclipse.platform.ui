@@ -18,7 +18,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.ant.internal.ui.AntUIPlugin;
-import org.eclipse.ant.internal.ui.AntUtil;
 import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
 import org.eclipse.ant.internal.ui.model.AntElementNode;
 import org.eclipse.ant.internal.ui.model.AntModelLabelProvider;
@@ -238,13 +237,20 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	}
 
 	private void addOpenWithMenu(IMenuManager menu) {
-		IFile buildFile= getSelectionBuildFile();
-		if (buildFile != null && buildFile.exists()) {
-			menu.add(new Separator("group.open")); //$NON-NLS-1$
-			IMenuManager submenu= new MenuManager(AntViewMessages.getString("AntView.1"));  //$NON-NLS-1$
-			openWithMenu.setFile(buildFile);
-			submenu.add(openWithMenu);
-			menu.appendToGroup("group.open", submenu); //$NON-NLS-1$
+		AntElementNode node= getSelectionNode();
+		if (node != null) {
+			IFile buildFile= node.getIFile();
+			if (buildFile != null) {
+				menu.add(new Separator("group.open")); //$NON-NLS-1$
+				IMenuManager submenu= new MenuManager(AntViewMessages.getString("AntView.1"));  //$NON-NLS-1$
+				openWithMenu.setFile(buildFile);
+				if (node.getImportNode() != null) {
+					int[] lineAndColumn= node.getExternalInfo();
+					openWithMenu.setExternalInfo(lineAndColumn[0], lineAndColumn[1]);
+				} 
+				submenu.add(openWithMenu);
+				menu.appendToGroup("group.open", submenu); //$NON-NLS-1$
+			}
 		}
 	}
 
@@ -321,7 +327,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 		projectViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
 				if (!event.getSelection().isEmpty()) {
-					handleProjectViewerDoubleClick(event);
+					handleProjectViewerDoubleClick();
 				}
 			}
 		});
@@ -348,17 +354,11 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 		}
 	}
 	
-	private void handleProjectViewerDoubleClick(DoubleClickEvent event) {
-		ISelection s= event.getSelection();
-		if (s.isEmpty() || !(s instanceof IStructuredSelection)) {
-			return;
-		}
-		Object selection= ((IStructuredSelection)s).getFirstElement();
-		if (selection instanceof AntElementNode) {
-		    AntElementNode node = (AntElementNode) selection;
-		    AntProjectNode projectNode= node.getProjectNode();
+	private void handleProjectViewerDoubleClick() {
+		AntElementNode node= getSelectionNode();
+		if (node != null) {
 			IEditorRegistry registry= PlatformUI.getWorkbench().getEditorRegistry();
-			IFile file= AntUtil.getFile(projectNode.getBuildFileName());
+			IFile file= node.getIFile();
 			IEditorDescriptor editor = IDE.getDefaultEditor(file);
 			if (editor == null) {
 				editor= registry.findEditor(IEditorRegistry.SYSTEM_INPLACE_EDITOR_ID);
@@ -702,16 +702,13 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 		toolBarMgr.update(false);	
 	}
 	
-	private IFile getSelectionBuildFile() {
+	private AntElementNode getSelectionNode() {
 		IStructuredSelection selection= (IStructuredSelection)getViewer().getSelection();
 		if (selection.size() == 1) {
 			Object element= selection.getFirstElement(); 
-			AntProjectNode projectNode= null;
 			if (element instanceof AntElementNode) {
-				projectNode= ((AntElementNode)element).getProjectNode();
-			}
-			if (projectNode != null) {
-				return AntUtil.getFile(projectNode.getBuildFileName());
+				AntElementNode node= (AntElementNode) element;
+				return node;
 			}
 		}
 		return null;		
@@ -721,10 +718,13 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	 * @see org.eclipse.ui.part.IShowInSource#getShowInContext()
 	 */
 	public ShowInContext getShowInContext() {
-		IFile buildFile= getSelectionBuildFile();
-		if (buildFile != null && buildFile.exists()) {
-			ISelection selection= new StructuredSelection(buildFile);
-			return new ShowInContext(null, selection);
+		AntElementNode node= getSelectionNode();
+		if (node != null) {
+			IFile buildFile= node.getIFile();
+			if (buildFile != null) {
+				ISelection selection= new StructuredSelection(buildFile);
+				return new ShowInContext(null, selection);
+			}
 		}
 		return null;
 	}

@@ -80,6 +80,8 @@ public class AntOpenWithMenu extends ContributionItem {
 	
 	public void setFile(IAdaptable file) {
 		this.file= file;
+		fLine= -1;
+		fColumn= -1;
 	}
 	
 	public void dispose() {
