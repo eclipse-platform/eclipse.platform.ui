@@ -18,12 +18,12 @@ import junit.framework.TestSuite;
 import org.eclipse.core.internal.registry.*;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.eclipse.core.tests.runtime.RuntimeTest;
 import org.osgi.util.tracker.ServiceTracker;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-public class RegistryCacheTest extends EclipseWorkspaceTest {
+public class RegistryCacheTest extends RuntimeTest {
 	private static final String BUNDLE_B_WITH_EXTENSION = "<plugin><extension point=\"bundleA.xp1\"><cfg1 property=\"value\"><cfg11/></cfg1><cfg2/></extension></plugin>";
 	private static final String BUNDLE_A_WITH_EXTENSION_POINT = "<plugin><extension-point id=\"xp1\"/></plugin>";
 	private static final String BUNDLE_A_WITH_EXTENSION_AND_EXTENSION_POINT = "<plugin><extension-point id=\"xp1\"/><extension point=\"bundleA.xp1\"><cfg1 property=\"value\"><cfg11/></cfg1><cfg2/></extension></plugin>";

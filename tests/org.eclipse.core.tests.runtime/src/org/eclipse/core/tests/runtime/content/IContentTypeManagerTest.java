@@ -20,15 +20,13 @@ import org.eclipse.core.runtime.content.*;
 import org.eclipse.core.runtime.content.IContentTypeManager.ContentTypeChangeEvent;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.tests.harness.BundleTestingHelper;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
-import org.eclipse.core.tests.runtime.RuntimeTestsPlugin;
-import org.eclipse.core.tests.runtime.TestRegistryChangeListener;
+import org.eclipse.core.tests.runtime.*;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
-public class IContentTypeManagerTest extends EclipseWorkspaceTest {
+public class IContentTypeManagerTest extends RuntimeTest {
 	private final static String MINIMAL_XML = "<?xml version=\"1.0\"?><org.eclipse.core.runtime.tests.root/>";
 	private final static String SAMPLE_BIN1_OFFSET = "12345";
 	private final static byte[] SAMPLE_BIN1_SIGNATURE = {0x10, (byte) 0xAB, (byte) 0xCD, (byte) 0xFF};

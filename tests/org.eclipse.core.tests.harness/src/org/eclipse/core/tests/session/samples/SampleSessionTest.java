@@ -11,7 +11,7 @@
 package org.eclipse.core.tests.session.samples;
 
 import junit.framework.*;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.eclipse.core.tests.harness.CoreTest;
 import org.eclipse.core.tests.session.SessionTestSuite;
 import org.eclipse.test.performance.*;
 
@@ -44,7 +44,7 @@ public class SampleSessionTest extends TestCase {
 	}
 
 	public static Test suite() {
-		TestSuite sameSession = new SessionTestSuite(EclipseWorkspaceTest.PI_HARNESS, SampleSessionTest.class);
+		TestSuite sameSession = new SessionTestSuite(CoreTest.PI_HARNESS, SampleSessionTest.class);
 		return sameSession;
 	}
 

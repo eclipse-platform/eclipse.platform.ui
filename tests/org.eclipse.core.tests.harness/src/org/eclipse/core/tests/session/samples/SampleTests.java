@@ -12,14 +12,14 @@ package org.eclipse.core.tests.session.samples;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.eclipse.core.tests.harness.CoreTest;
 import org.eclipse.core.tests.session.SessionTestSuite;
 
 public class SampleTests extends TestSuite {
 	public SampleTests() {
 		addTest(SampleSessionTest.suite());
 		addTest(UISampleSessionTest.suite());
-		TestSuite another = new SessionTestSuite(EclipseWorkspaceTest.PI_HARNESS);
+		TestSuite another = new SessionTestSuite(CoreTest.PI_HARNESS);
 		another.addTestSuite(SampleSessionTest.class);
 		addTest(another);
 	}

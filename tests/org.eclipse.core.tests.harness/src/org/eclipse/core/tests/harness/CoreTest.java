@@ -22,6 +22,9 @@ import org.eclipse.test.performance.PerformanceMeter;
  */
 public class CoreTest extends TestCase {
 
+	// plug-in identified for the core.tests.harness plug-in.
+	public static final String PI_HARNESS = "org.eclipse.core.tests.harness";
+
 	/** counter for generating unique random filesystem locations */
 	protected static int nextLocationCounter = 0;
 
@@ -48,6 +51,21 @@ public class CoreTest extends TestCase {
 		} finally {
 			meter.dispose();
 		}
+	}
+
+	public static void log(String pluginID, IStatus status) {
+		Platform.getLog(Platform.getBundle(pluginID)).log(status);
+	}
+
+	public static void log(String pluginID, Throwable e) {
+		log(pluginID, new Status(IStatus.ERROR, pluginID, IStatus.ERROR, "Error", e)); //$NON-NLS-1$
+	}
+
+	public static void debug(String message) {
+		String id = "org.eclipse.core.tests.harness/debug";
+		String option = Platform.getDebugOption(id);
+		if (Boolean.TRUE.toString().equalsIgnoreCase(option))
+			System.out.println(message);
 	}
 
 	public String getUniqueString() {
@@ -209,6 +227,48 @@ public class CoreTest extends TestCase {
 			fail(errorCode, e);
 		}
 		return null; // never happens
+	}
+
+	protected void ensureDoesNotExistInFileSystem(java.io.File file) {
+		FileSystemHelper.clear(file);
+	}
+
+	protected void assertEquals(String message, Object[] expected, Object[] actual, boolean orderImportant) {
+		// if the order in the array must match exactly, then call the other method
+		if (orderImportant) {
+			assertEquals(message, expected, actual);
+			return;
+		}
+		// otherwise use this method and check that the arrays are equal in any order
+		if (expected == null && actual == null)
+			return;
+		if (expected == actual)
+			return;
+		if (expected == null || actual == null)
+			assertTrue(message + ".1", false);
+		if (expected.length != actual.length)
+			assertTrue(message + ".2", false);
+		boolean[] found = new boolean[expected.length];
+		for (int i = 0; i < expected.length; i++) {
+			for (int j = 0; j < expected.length; j++) {
+				if (!found[j] && expected[i].equals(actual[j]))
+					found[j] = true;
+			}
+		}
+		for (int i = 0; i < found.length; i++)
+			if (!found[i])
+				assertTrue(message + ".3." + i, false);
+	}
+
+	protected void assertEquals(String message, Object[] expected, Object[] actual) {
+		if (expected == null && actual == null)
+			return;
+		if (expected == null || actual == null)
+			fail(message);
+		if (expected.length != actual.length)
+			fail(message);
+		for (int i = 0; i < expected.length; i++)
+			assertEquals(message, expected[i], actual[i]);
 	}
 
 }

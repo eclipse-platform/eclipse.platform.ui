@@ -27,6 +27,7 @@ public class FussyProgressMonitor extends TestProgressMonitor {
 		 * All serializable objects should have a stable serialVersionUID
 		 */
 		private static final long serialVersionUID = 1L;
+
 		FussyProgressAssertionFailed(String name) {
 			super(name);
 		}
@@ -97,7 +98,7 @@ public class FussyProgressMonitor extends TestProgressMonitor {
 		assertTrue("can accept calls to worked/internalWorked only before done is called", doneCalls == 0);
 		assertTrue("amount worked should be positive, not " + work, work >= 0);
 		if (work == 0)
-			EclipseWorkspaceTest.log("INFO: amount worked should be positive, not " + work);
+			CoreTest.debug("INFO: amount worked should be positive, not " + work);
 		workedSoFar += work;
 		assertTrue("worked " + (workedSoFar - totalWork) + " more than totalWork", totalWork == UNKNOWN || workedSoFar <= totalWork + (totalWork * EPS_FACTOR));
 	}
@@ -129,7 +130,7 @@ public class FussyProgressMonitor extends TestProgressMonitor {
 	 */
 	public void sanityCheck() {
 		if (sanityCheckCalled)
-			EclipseWorkspaceTest.log("sanityCheck has already been called");
+			CoreTest.debug("sanityCheck has already been called");
 		sanityCheckCalled = true;
 		//	EclipseWorkspaceTest.log("sanity checking: " + taskName + " : " + (System.currentTimeMillis() - beginTime) + " ms, " + workedSoFar);
 		long duration = System.currentTimeMillis() - beginTime;

@@ -11,12 +11,12 @@
 package org.eclipse.core.tests.session.samples;
 
 import junit.framework.*;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.eclipse.core.tests.harness.CoreTest;
 import org.eclipse.core.tests.session.PerformanceSessionTestSuite;
 
 public class MultipleRunsTest2 extends TestCase {
 	public static Test suite() {
-		PerformanceSessionTestSuite suite = new PerformanceSessionTestSuite(EclipseWorkspaceTest.PI_HARNESS, 1000);
+		PerformanceSessionTestSuite suite = new PerformanceSessionTestSuite(CoreTest.PI_HARNESS, 1000);
 		suite.addTest(new TestSuite(SampleSessionTest.class));
 		return suite;
 	}

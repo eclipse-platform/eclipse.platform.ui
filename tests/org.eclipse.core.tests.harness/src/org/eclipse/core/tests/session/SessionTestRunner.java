@@ -14,7 +14,7 @@ import java.io.*;
 import java.net.*;
 import junit.framework.TestResult;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.eclipse.core.tests.harness.CoreTest;
 
 public class SessionTestRunner {
 
@@ -129,7 +129,7 @@ public class SessionTestRunner {
 					// not expected
 				}
 			} catch (IOException e) {
-				EclipseWorkspaceTest.log(e);
+				CoreTest.log(CoreTest.PI_HARNESS, e);
 			} finally {
 				// remember we are already finished
 				markAsFinished();
@@ -138,13 +138,13 @@ public class SessionTestRunner {
 					if (connection != null && !connection.isClosed())
 						connection.close();
 				} catch (IOException e) {
-					EclipseWorkspaceTest.log(e);
+					CoreTest.log(CoreTest.PI_HARNESS, e);
 				}
 				try {
 					if (serverSocket != null && !serverSocket.isClosed())
 						serverSocket.close();
 				} catch (IOException e) {
-					EclipseWorkspaceTest.log(e);
+					CoreTest.log(CoreTest.PI_HARNESS, e);
 				}
 			}
 		}
@@ -165,7 +165,7 @@ public class SessionTestRunner {
 				try {
 					serverSocket.close();
 				} catch (IOException e) {
-					EclipseWorkspaceTest.log(e);
+					CoreTest.log(CoreTest.PI_HARNESS, e);
 				}
 				notifyAll();
 			}
@@ -251,7 +251,7 @@ public class SessionTestRunner {
 			collector.shutdown();
 			// ensure the session ran without any errors
 			if (!status.isOK()) {
-				EclipseWorkspaceTest.log(status);
+				CoreTest.log(CoreTest.PI_HARNESS, status);
 				if (status.getSeverity() == IStatus.ERROR) {
 					result.addError(descriptor.getTest(), new CoreException(status));
 					return;

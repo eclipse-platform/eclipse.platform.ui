@@ -63,7 +63,7 @@ public class FileSystemHelper {
 		}
 		if (!file.delete()) {
 			String message = "ensureDoesNotExistInFileSystem(File) could not delete: " + file.getPath();
-			EclipseWorkspaceTest.log(new Status(IStatus.WARNING, EclipseWorkspaceTest.PI_HARNESS, IStatus.OK, message, null));
+			CoreTest.log(CoreTest.PI_HARNESS, new Status(IStatus.WARNING, CoreTest.PI_HARNESS, IStatus.OK, message, null));
 		}
 	}
 }

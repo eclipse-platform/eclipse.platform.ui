@@ -13,7 +13,7 @@ package org.eclipse.core.tests.session.samples;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import org.eclipse.core.internal.runtime.Policy;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.eclipse.core.tests.harness.CoreTest;
 import org.eclipse.core.tests.session.SessionTestSuite;
 import org.eclipse.test.performance.*;
 
@@ -35,7 +35,7 @@ public class UISampleSessionTest extends TestCase {
 	}
 
 	public static Test suite() {
-		SessionTestSuite suite = new SessionTestSuite(EclipseWorkspaceTest.PI_HARNESS);
+		SessionTestSuite suite = new SessionTestSuite(CoreTest.PI_HARNESS);
 		suite.setApplicationId(SessionTestSuite.UI_TEST_APPLICATION);
 		for (int i = 0; i < 3; i++)
 			suite.addTest(new UISampleSessionTest("testApplicationStartup"));

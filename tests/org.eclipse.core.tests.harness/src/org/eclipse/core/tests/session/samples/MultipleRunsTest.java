@@ -11,7 +11,7 @@
 package org.eclipse.core.tests.session.samples;
 
 import junit.framework.*;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.eclipse.core.tests.harness.CoreTest;
 import org.eclipse.core.tests.session.*;
 import org.eclipse.test.performance.*;
 
@@ -20,7 +20,7 @@ public class MultipleRunsTest extends TestCase {
 		// the test case to run multiple times
 		TestDescriptor test = new TestDescriptor(SampleSessionTest.class.getName(), "testApplicationStartup");
 		test.setApplicationId(SessionTestSuite.CORE_TEST_APPLICATION);
-		test.setPluginId(EclipseWorkspaceTest.PI_HARNESS);
+		test.setPluginId(CoreTest.PI_HARNESS);
 		test.setTestRunner(new SessionTestRunner());
 		// setup the command line to be passed to the multiple runs so it has the right system properties			
 		test.setSetup(SetupManager.getInstance().getDefaultSetup());
