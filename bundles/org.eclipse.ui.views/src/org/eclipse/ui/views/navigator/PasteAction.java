@@ -106,10 +106,13 @@ public void run() {
 	ResourceTransfer resTransfer = ResourceTransfer.getInstance();
 	IResource[] resourceData = (IResource[])clipboard.getContents(resTransfer);
 	
-	if (resourceData != null) {
-		if (resourceData[0].getType() == IResource.PROJECT){
-			CopyProjectOperation operation = new CopyProjectOperation(this.shell);
-			operation.copyProject((IProject) resourceData[0]);
+	if (resourceData != null && resourceData.length > 0) {
+		if (resourceData[0].getType() == IResource.PROJECT) {
+			// enablement checks for all projects
+			for (int i = 0; i < resourceData.length; i++) {
+				CopyProjectOperation operation = new CopyProjectOperation(this.shell);
+				operation.copyProject((IProject) resourceData[i]);
+			}
 		} else {
 			// enablement should ensure that we always have access to a container
 			IContainer container = getContainer();
@@ -159,15 +162,19 @@ protected boolean updateSelection(IStructuredSelection selection) {
 	if (resourceData == null && fileData == null)
 		return false;
 
-	// can paste an open project regardless of selection
-	if (resourceData != null 
-		&& resourceData.length == 1
-		&& resourceData[0].getType() == IResource.PROJECT) {
-		if (((IProject)resourceData[0]).isOpen())
-			return true;
-		else 
-			return false;
-	}
+	// can paste open projects regardless of selection
+	boolean isProjectRes = resourceData != null
+		&& resourceData.length > 0
+		&& resourceData[0].getType() == IResource.PROJECT;
+	if (isProjectRes) {
+		for (int i = 1; i < resourceData.length; i++) {
+			// make sure all resource data are projects
+			if (resourceData[i].getType() != IResource.PROJECT)
+				return false;
+		}
+		return true;
+	} 
+	 
 	// can paste files and folders to a single selection (project must be open)
 	// or multiple file selection with the same parent
 	if (getSelectedNonResources().size() > 0) 
