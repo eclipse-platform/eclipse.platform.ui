@@ -179,8 +179,19 @@ public class EclipseSynchronizer {
 	public IResource[] members(IContainer folder) throws CVSException {
 		try {
 			ensureChildResourceSyncLoaded(folder);
-			HashMap children = (HashMap)folder.getSessionProperty(RESOURCE_SYNC_KEY);			
-			Set childResources = new HashSet(children.keySet() /*IResource*/);
+			Set childResources = new HashSet();
+			HashMap children = (HashMap)folder.getSessionProperty(RESOURCE_SYNC_KEY);
+			if(children!=null) {
+				for(Iterator it = children.values().iterator(); it.hasNext();) {
+					ResourceSyncInfo info = (ResourceSyncInfo)it.next();
+					IPath path = new Path(info.getName());
+					if(info.isDirectory()) {
+						childResources.add(folder.getFolder(path));
+					} else {
+						childResources.add(folder.getFile(path));
+					}				
+				}
+			}							
 			childResources.addAll(Arrays.asList(folder.members()));
 			return (IResource[])childResources.toArray(new IResource[childResources.size()]);
 		} catch (CoreException e) {
@@ -287,7 +298,7 @@ public class EclipseSynchronizer {
 			if(parent.exists()) {
 				HashMap children = (HashMap)resource.getParent().getSessionProperty(RESOURCE_SYNC_KEY);
 				if(children!=null) {
-					return (ResourceSyncInfo)children.get(resource);
+					return (ResourceSyncInfo)children.get(resource.getName());
 				}
 			}
 			return null;
@@ -326,7 +337,7 @@ public class EclipseSynchronizer {
 					children.remove(resource);
 				} else {
 					// replace or add new resource sync
-					children.put(resource, info);
+					children.put(resource.getName(), info);
 				}
 				parent.setSessionProperty(RESOURCE_SYNC_KEY, children);
 			}
@@ -389,15 +400,8 @@ public class EclipseSynchronizer {
 			if (infos != null) {
 				children = new HashMap(infos.length);
 				for (int i = 0; i < infos.length; i++) {
-					ResourceSyncInfo syncInfo = infos[i];
-					IResource peer;
-					IPath path = new Path(syncInfo.getName());
-					if (syncInfo.isDirectory()) {
-						peer = folder.getFolder(path);
-					} else {
-						peer = folder.getFile(path);
-					}
-					children.put(peer, syncInfo);
+					ResourceSyncInfo syncInfo = infos[i];					
+					children.put(syncInfo.getName(), syncInfo);
 				}
 			} else {
 				children = new HashMap(0);
