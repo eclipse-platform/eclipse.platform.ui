@@ -142,7 +142,7 @@ class DeadlockDetector {
 				return (Thread) lockThreads.get(i);
 		}
 		//toDebugString();
-		throw new IllegalStateException("Lock " + lock + " is involved in deadlock but is not owned by any thread.");
+		throw new IllegalStateException("Lock " + lock + " is involved in deadlock but is not owned by any thread."); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	/**
 	 * Returns the true index of the lock in the array.
@@ -442,10 +442,8 @@ class DeadlockDetector {
 				return candidate;
 			candidate = blockingThread(candidate);
 		}
-		//next choose the thread that owns the lock this thread is waiting for
-		if(lock instanceof ILock)
-			return getThreadOwningLock(lock);
 		//next look for any candidate with a lock
+		candidate = thread;
 		for (int i = 0; i < lockThreads.size(); i++) {
 			if (ownsLocks(candidate))
 				return candidate;
