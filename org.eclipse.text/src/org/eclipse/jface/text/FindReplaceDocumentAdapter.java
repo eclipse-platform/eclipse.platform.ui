@@ -70,7 +70,7 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 	 * @param wholeWord indicates whether the findString should be limited by white spaces as 
 	 * 			defined by Character.isWhiteSpace. Must not be used in combination with <code>regExSearch</code>.
 	 * @param regExSearch if <code>true</code> findString represents a regular expression
-	 * 			Must not be used in combination with <code>regExSearch</code>. 
+	 * 			Must not be used in combination with <code>wholeWord</code>. 
 	 * @return the find or replace region or <code>null</code> if there was no match
 	 * @throws BadLocationException if startOffset is an invalid document offset
 	 * @throws PatternSyntaxException if a regular expression has invalid syntax
