@@ -70,8 +70,7 @@ public class DocumentPartitioningChangedEvent {
 	}
 
 	/**
-	 * Sets the specified range as changed region for the given partitioning
-	 * if this event is not sealed.
+	 * Sets the specified range as changed region for the given partitioning.
 	 * 
 	 * @param partitioning the partitioning
 	 * @param offset the region offset
