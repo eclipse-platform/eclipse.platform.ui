@@ -27,7 +27,7 @@ public Image getImage(Object element) {
 		IPerspectiveDescriptor desc = (IPerspectiveDescriptor) element;
 		ImageDescriptor imageDescriptor = desc.getImageDescriptor();
 		if (imageDescriptor == null) {
-			imageDescriptor = WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_DEF_PERSPECTIVE);
+			imageDescriptor = WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_DEF_PERSPECTIVE_HOVER);
 		}
 		Image image = (Image) imageCache.get(imageDescriptor);
 		if (image == null) {

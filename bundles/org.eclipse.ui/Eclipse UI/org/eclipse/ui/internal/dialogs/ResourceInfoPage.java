@@ -32,7 +32,7 @@ public class ResourceInfoPage extends PropertyPage {
 	
 	private Button editableBox;
 	private boolean readOnlyValue;
-	private static String READ_ONLY = WorkbenchMessages.getString("ResourceInfo.readONly"); //$NON-NLS-1$
+	private static String READ_ONLY = WorkbenchMessages.getString("ResourceInfo.readOnly"); //$NON-NLS-1$
 	private static String NAME_TITLE = WorkbenchMessages.getString("ResourceInfo.name"); //$NON-NLS-1$
 	private static String TYPE_TITLE = WorkbenchMessages.getString("ResourceInfo.type"); //$NON-NLS-1$
 	private static String LOCATION_TITLE = WorkbenchMessages.getString("ResourceInfo.location"); //$NON-NLS-1$

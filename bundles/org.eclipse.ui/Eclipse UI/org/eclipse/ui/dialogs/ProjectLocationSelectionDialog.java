@@ -32,7 +32,7 @@ public class ProjectLocationSelectionDialog extends SelectionDialog {
 	private Button browseButton;
 
 	private static String PROJECT_NAME_LABEL = WorkbenchMessages.getString("ProjectLocationSelectionDialog.nameLabel"); //$NON-NLS-1$
-	private static String LOCATION_LABEL = WorkbenchMessages.getString("ProjectLocationSelectonDialog.locationLabel"); //$NON-NLS-1$
+	private static String LOCATION_LABEL = WorkbenchMessages.getString("ProjectLocationSelectionDialog.locationLabel"); //$NON-NLS-1$
 	private static String BROWSE_LABEL = WorkbenchMessages.getString("ProjectLocationSelectionDialog.browseLabel"); //$NON-NLS-1$
 	private static String DIRECTORY_DIALOG_LABEL = WorkbenchMessages.getString("ProjectLocationSelectionDialog.directoryLabel"); //$NON-NLS-1$
 	private static String INVALID_LOCATION_MESSAGE = WorkbenchMessages.getString("ProjectLocationSelectionDialog.locationError"); //$NON-NLS-1$

@@ -62,7 +62,7 @@ void createMenuItem(Menu menu, int index,
 
 	ImageDescriptor imageDescriptor = desc.getImageDescriptor();
 	if (imageDescriptor == null) {
-		imageDescriptor = WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_DEF_PERSPECTIVE);
+		imageDescriptor = WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_DEF_PERSPECTIVE_HOVER);
 	}
 	mi.setText(desc.getLabel());
 	mi.setImage(imageDescriptor.createImage());

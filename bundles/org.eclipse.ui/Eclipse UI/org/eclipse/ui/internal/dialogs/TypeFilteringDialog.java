@@ -44,7 +44,6 @@ public class TypeFilteringDialog extends SelectionDialog {
 	private final static int SIZING_SELECTION_WIDGET_HEIGHT = 250;
 	private final static int SIZING_SELECTION_WIDGET_WIDTH = 300;
 
-	private final static String ADD_TYPE_TITLE = WorkbenchMessages.getString("TypesFiltering.addExtension"); //$NON-NLS-1$
 	private final static String TYPE_DELIMITER = WorkbenchMessages.getString("TypesFiltering.typeDelimiter"); //$NON-NLS-1$
 	Text userDefinedText;
 

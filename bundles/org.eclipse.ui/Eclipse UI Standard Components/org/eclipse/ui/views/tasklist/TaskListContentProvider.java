@@ -214,7 +214,7 @@ String getSummary(List markers) throws CoreException {
 			}
 		}
 	}
-	String fmt = TaskListMessages.getString("TaskList.summaryFmt"); //$NON-NLS-1$
+	String fmt = TaskListMessages.getString("TaskList.summaryCountFmt"); //$NON-NLS-1$
 	Object[] args = new Object[] {
 		new Integer(numTasks),
 		new Integer(numErrors), 
