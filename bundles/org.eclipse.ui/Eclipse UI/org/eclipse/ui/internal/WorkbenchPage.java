@@ -971,6 +971,8 @@ public void dispose() {
 	// Get rid of composite.
 	window.getClientComposite().removeControlListener(resizeListener);
 	composite.dispose();
+	
+	getNavigationHistory().dispose();
 }
 /**
  * Dispose a perspective.
@@ -1002,12 +1004,21 @@ private void disposePerspective(Perspective persp) {
 public NavigationHistory getNavigationHistory() {
 	return navigationHistory;
 }
+
 /*
  * (non-Javadoc)
  * Method declared on IWorkbenchPage
  */
-public void addNavigationHistoryEntry(ISelection selection) {
-	getNavigationHistory().add(selection);
+public void addNavigationHistoryEntry(IEditorPart part, NavigationLocation entry) {
+	getNavigationHistory().addEntry(part, entry);
+}
+
+/*
+ * (non-Javadoc)
+ * Method declared on IWorkbenchPage
+ */
+public NavigationLocation[] getNavigationHistoryEntries(IEditorPart part) {
+	return getNavigationHistory().getEntries(part);
 }
 
 /**

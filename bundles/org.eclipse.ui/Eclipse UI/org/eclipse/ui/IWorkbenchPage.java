@@ -646,6 +646,12 @@ public int getEditorReuseThreshold();
 public void setEditorReuseThreshold(int openEditors);
 
 /**
- * 2.1 - WORK_IN_PROGRESS do not use. */
-public void addNavigationHistoryEntry(ISelection selection);
+ * 2.1 - WORK_IN_PROGRESS do not use.
+ */
+public void addNavigationHistoryEntry(IEditorPart part, NavigationLocation entry);
+
+/**
+ * 2.1 - WORK_IN_PROGRESS do not use.
+ */
+public NavigationLocation[] getNavigationHistoryEntries(IEditorPart part);
 }
