@@ -73,7 +73,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.keybindings.Action;
+import org.eclipse.ui.internal.keybindings.Identifier;
 import org.eclipse.ui.internal.keybindings.KeyBindingManager;
 import org.eclipse.ui.internal.keybindings.KeySequence;
 import org.eclipse.ui.internal.keybindings.KeyStroke;
@@ -568,7 +568,7 @@ protected MenuManager createMenuManager() {
 					KeySequence keySequence = KeySequence.create(
 						KeyStroke.create(accelerator));						
 					Map sequenceActionMap = KeyBindingManager.getInstance().getKeySequenceActionMapForMode();
-					Action action = (Action) sequenceActionMap.get(keySequence);
+					Identifier action = (Identifier) sequenceActionMap.get(keySequence);
 					
 					if (action == null || action.getValue() == null)
 						return null;
@@ -597,7 +597,7 @@ protected MenuManager createMenuManager() {
 					KeySequence keySequence = KeySequence.create(
 						KeyStroke.create(accelerator));						
 					Map sequenceActionMap = KeyBindingManager.getInstance().getKeySequenceActionMapForMode();
-					Action action = (Action) sequenceActionMap.get(keySequence);
+					Identifier action = (Identifier) sequenceActionMap.get(keySequence);
 					
 					if (action == null || action.getValue() == null)
 						return null;

@@ -29,6 +29,7 @@ import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.internal.keybindings.Identifier;
 import org.eclipse.ui.internal.keybindings.KeyBindingManager;
 import org.eclipse.ui.internal.keybindings.KeySequence;
 import org.eclipse.ui.internal.keybindings.KeyStroke;
@@ -106,8 +107,7 @@ public class WWinKeyBindingService {
 	
 		if (sequenceActionMapForMode.containsKey(sequence)) {
 			clear();			
-			invoke(((org.eclipse.ui.internal.keybindings.Action) 
-				sequenceActionMapForMode.get(sequence)).getValue(), event);	
+			invoke(((Identifier) sequenceActionMapForMode.get(sequence)).getValue(), event);	
 		} else {
 			List strokes = new ArrayList(mode.getKeyStrokes());
 			strokes.add(stroke);
@@ -287,7 +287,7 @@ public class WWinKeyBindingService {
 		if (object == null)
 			return null;
 			
-     	return ((org.eclipse.ui.internal.keybindings.Action) object).getValue();
+     	return ((Identifier) object).getValue();
     }
 
 	/**

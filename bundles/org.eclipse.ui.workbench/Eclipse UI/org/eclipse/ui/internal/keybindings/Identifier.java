@@ -10,16 +10,16 @@ package org.eclipse.ui.internal.keybindings;
 
 import org.eclipse.ui.IMemento;
 
-final class Identifier implements Comparable {
+public final class Identifier implements Comparable {
 	
-	final static String ELEMENT = "identifier"; //$NON-NLS-1$
+	public final static String ELEMENT = "identifier"; //$NON-NLS-1$
 	private final static String ATTRIBUTE_VALUE = "value"; //$NON-NLS-1$	
 	
-	static Identifier create(String value) {
+	public static Identifier create(String value) {
 		return new Identifier(value);
 	}
 
-	static Identifier read(IMemento memento)
+	public static Identifier read(IMemento memento)
 		throws IllegalArgumentException {
 		if (memento == null)
 			throw new IllegalArgumentException();
@@ -34,7 +34,7 @@ final class Identifier implements Comparable {
 		this.value = value;	
 	}
 	
-	String getValue() {
+	public String getValue() {
 		return value;	
 	}
 
@@ -56,7 +56,7 @@ final class Identifier implements Comparable {
 		return Util.hashCode(value);
 	}
 
-	void write(IMemento memento)
+	public void write(IMemento memento)
 		throws IllegalArgumentException {
 		if (memento == null)
 			throw new IllegalArgumentException();

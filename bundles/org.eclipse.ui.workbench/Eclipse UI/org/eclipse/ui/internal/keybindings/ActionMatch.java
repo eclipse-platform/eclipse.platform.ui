@@ -10,15 +10,15 @@ package org.eclipse.ui.internal.keybindings;
 
 final class ActionMatch {
 
-	static ActionMatch create(Action action, int match)
+	static ActionMatch create(Identifier action, int match)
 		throws IllegalArgumentException {
 		return new ActionMatch(action, match);
 	}
 	
-	private Action action;
+	private Identifier action;
 	private int match;
 
-	private ActionMatch(Action action, int match)
+	private ActionMatch(Identifier action, int match)
 		throws IllegalArgumentException {
 		if (action == null || match < 0)
 			throw new IllegalArgumentException();
@@ -27,7 +27,7 @@ final class ActionMatch {
 		this.match = match;
 	}
 
-	Action getAction() {
+	Identifier getAction() {
 		return action;
 	}
 	

@@ -26,6 +26,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.jface.action.Action;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.WorkbenchException;
@@ -439,7 +440,7 @@ public final class KeyBindingManager {
 			IPath path1 = path.append("initialKeyBindings (from tree).xml");
 			FileWriter fileWriter1 = new FileWriter(path1.toFile());
 			writeKeyBindingsToWriter(fileWriter1, "initialkeybindings", Node.toBindings(tree));
-			fileWriter1.close();
+			fileWriter1.close();			
 		} catch (IOException eIO) {
 			eIO.printStackTrace();
 		}
@@ -510,7 +511,7 @@ public final class KeyBindingManager {
 			while (iterator.hasNext()) {
 				Map.Entry entry = (Map.Entry) iterator.next();
 				KeySequence keySequence = (KeySequence) entry.getKey();
-				Action action = (Action) entry.getValue();		
+				Identifier action = (Identifier) entry.getValue();		
 				SortedSet keySequenceSet = 
 					(SortedSet) actionKeySequenceSetMap.get(action);
 				
@@ -548,7 +549,7 @@ public final class KeyBindingManager {
 			while (iterator.hasNext()) {
 				Map.Entry entry = (Map.Entry) iterator.next();
 				KeySequence keySequence = (KeySequence) entry.getKey();
-				Action action = (Action) entry.getValue();		
+				Identifier action = (Identifier) entry.getValue();		
 				SortedSet keySequenceSet = 
 					(SortedSet) actionKeySequenceSetMapForMode.get(action);
 				
@@ -607,7 +608,7 @@ public final class KeyBindingManager {
 
 		SortedMap actionSequenceMap = getActionKeySequenceSetMap();		
 		SortedSet keySequenceSet = 
-			(SortedSet) actionSequenceMap.get(Action.create(action));
+			(SortedSet) actionSequenceMap.get(Identifier.create(action));
 		
 		if (keySequenceSet == null)
 			return null;
@@ -630,9 +631,7 @@ public final class KeyBindingManager {
 
 					KeyStroke keyStroke = (KeyStroke) iterator2.next();
 					int accelerator = keyStroke.getAccelerator();
-					stringBuffer.append(
-						org.eclipse.jface.action.Action.convertAccelerator(
-						accelerator));					
+					stringBuffer.append(Action.convertAccelerator(accelerator));					
 					j++;
 				}
 
