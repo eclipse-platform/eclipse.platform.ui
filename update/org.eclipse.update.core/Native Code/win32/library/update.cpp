@@ -15,12 +15,12 @@ int WINME = 2;
 int WIN2000 = 3;
 int WINXP = 4;
 
-// FLOPPY
-int FLOPPY_3 = 0;
-int FLOPPY_5 = 1;
+// FLOPPY size
+int FLOPPY_3 = 0; // 3 1/2
+int FLOPPY_5 = 1; // 5 1/4
 
 // set to 1 for DEBUG
-int DEBUG = 1;
+int DEBUG = 0;
 
 // set to 0 to run on Windows 95 *Unsupported*
 int NOWIN95 = 1;
@@ -30,7 +30,10 @@ int NOWIN95 = 1;
 // ---------------
 
 /*
- * calls GetVolumeInformation
+ * calls GetVolumeInformation to retrive the label of the volume
+ * Returns NULL if an error occurs
+ * @param driveLetter path to the drive "c:\\"
+ * @prama jnienv JNIEnvironment
  */
 jstring getLabel(char driveLetter[],JNIEnv * jnienv){
 
@@ -113,16 +116,19 @@ int getWindowsVersion(){
 } 
 
 /*
- * Returns the size of the Drive as a label
- * Returns FLOPPY_3,FLOPPY_5 or -1 if Not found
+ * Returns the type of Removable Drive 
+ * Returns 
+ * org_eclipse_update_configuration_LocalSystemInfo_VOLUME_FLOPPY_3
+ * org_eclipse_update_configuration_LocalSystemInfo_VOLUME_FLOPPY_5
+ * org_eclipse_update_configuration_LocalSystemInfo_VOLUME_REMOVABLE
  */
-int getFloppy(char driveLetter[]){
+jlong getFloppy(char driveLetter[]){
 
 	TCHAR floppyPath[8];
 	HANDLE handle;
 	DISK_GEOMETRY geometry[20];
 	DWORD dw;
-	int UNKNOWN = -1;
+	jlong UNKNOWN = org_eclipse_update_configuration_LocalSystemInfo_VOLUME_REMOVABLE;
 
 	sprintf(floppyPath, "\\\\.\\%c:", driveLetter[0]);
 	if (DEBUG)
@@ -147,14 +153,14 @@ int getFloppy(char driveLetter[]){
 			 case F5_1Pt2_512:
 				if (DEBUG)
 					printf("Found 5 1/4 Drive\n");				 	
-			 	return FLOPPY_5;
+			 	return org_eclipse_update_configuration_LocalSystemInfo_VOLUME_FLOPPY_5;
 			 case F3_720_512:			 				 				 				 				 
 			 case F3_1Pt44_512:
 			 case F3_2Pt88_512:
 			 case F3_20Pt8_512:				 				 				 
 				if (DEBUG)
 					printf("Found 3 1/2 Drive\n");				 	
-			 	return FLOPPY_3;
+			 	return org_eclipse_update_configuration_LocalSystemInfo_VOLUME_FLOPPY_3;
 			 default:
 			 	return UNKNOWN;
 			}
@@ -164,7 +170,9 @@ int getFloppy(char driveLetter[]){
 }
 
 /*
- * 
+ * Returns the UNC name of a remote drive
+ * (\\Machine\path\path1\path2$)
+ * returns NULL if an error occurs
  */
  jstring getRemoteNetworkName(char driveLetter[],JNIEnv * jnienv){
  	
@@ -222,8 +230,7 @@ JNIEXPORT jlong JNICALL Java_org_eclipse_update_configuration_LocalSystemInfo_na
 	obj = jnienv -> CallObjectMethod(file, id);
 	lpDirectoryName = jnienv -> GetStringUTFChars((jstring) obj, 0);
 	if (DEBUG)
-		printf("Directory: [%s]\n",lpDirectoryName);		
-	
+		printf("Directory: [%s]\n",lpDirectoryName);
 
 	if (int win = (int)getWindowsVersion()<0 && NOWIN95){
 		// windows 95 or other
@@ -232,12 +239,11 @@ JNIEXPORT jlong JNICALL Java_org_eclipse_update_configuration_LocalSystemInfo_na
 		return result;
 	}
 
-	int err =
-		GetDiskFreeSpaceEx(
-			lpDirectoryName,
-			(PULARGE_INTEGER) & i64FreeBytesAvailableToCaller,
-			(PULARGE_INTEGER) & i64TotalNumberOfBytes,
-			(PULARGE_INTEGER) & i64TotalNumberOfFreeBytes);
+	int err = GetDiskFreeSpaceEx(
+				lpDirectoryName,
+				(PULARGE_INTEGER) & i64FreeBytesAvailableToCaller,
+				(PULARGE_INTEGER) & i64TotalNumberOfBytes,
+				(PULARGE_INTEGER) & i64TotalNumberOfFreeBytes);
 			
 	if (err) {
 		result = (jlong) i64FreeBytesAvailableToCaller;
@@ -270,7 +276,7 @@ JNIEXPORT jstring JNICALL Java_org_eclipse_update_configuration_LocalSystemInfo_
 	obj = jnienv -> CallObjectMethod(file, id);
 	lpDirectoryName = jnienv -> GetStringUTFChars((jstring) obj, 0);
 	if (DEBUG)
-		printf("Directory: [%s]\n",lpDirectoryName);		
+		printf("Directory: [%s]\n",lpDirectoryName);
 
 	//
 	jstring result = NULL;
@@ -289,14 +295,6 @@ JNIEXPORT jstring JNICALL Java_org_eclipse_update_configuration_LocalSystemInfo_
 		memcpy(driveLetter, lpDirectoryName, 2);
 		strcpy(driveLetter + 2, "\\");
 		switch (GetDriveType(driveLetter)) {
-			case DRIVE_REMOVABLE :
-				// check 3.5 or 5.25	
-				if (DEBUG)
-					printf("Floppy Drive");
-				floppy = getFloppy(driveLetter);					
-				if (floppy==FLOPPY_3) return jnienv -> NewStringUTF("3 1/2");
-				if (floppy==FLOPPY_5) return jnienv -> NewStringUTF("5 1/4");				
-				return NULL;
 			case DRIVE_REMOTE :
 				// check name of machine and path of remote
 				if (DEBUG)
@@ -338,7 +336,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_update_configuration_LocalSystemInfo_nat
 	obj = jnienv -> CallObjectMethod(file, id);
 	lpDirectoryName = jnienv -> GetStringUTFChars((jstring) obj, 0);
 	if (DEBUG)
-		printf("Directory: [%s]\n",lpDirectoryName);		
+		printf("Directory: [%s]\n",lpDirectoryName);
 
 	int result = org_eclipse_update_configuration_LocalSystemInfo_VOLUME_UNKNOWN;
 	if (int win = (int)getWindowsVersion()<0 && NOWIN95){
@@ -356,7 +354,11 @@ JNIEXPORT jint JNICALL Java_org_eclipse_update_configuration_LocalSystemInfo_nat
 
 		switch (GetDriveType(driveLetter)) {
 			case DRIVE_REMOVABLE :
-				result = org_eclipse_update_configuration_LocalSystemInfo_VOLUME_REMOVABLE;
+				// check if floppy 3.5, floppy 5.25	
+				// or other removable device (USB,PCMCIA ...)
+				if (DEBUG)
+					printf("Removable Device");
+				result = getFloppy(driveLetter);					
 				break;
 			case DRIVE_CDROM :
 				result = org_eclipse_update_configuration_LocalSystemInfo_VOLUME_CDROM;

@@ -42,7 +42,7 @@ public class LocalSystemInfo {
 	public static final int VOLUME_INVALID_PATH = -2;
 	
 	/**
-	 * Indicates the volume is removable (floppy disk)
+	 * Indicates the volume is removable (other than floppy disk)
 	 * @see LocalSystemInfo#getType(File)
 	 * @since 2.0
 	 */
@@ -75,6 +75,20 @@ public class LocalSystemInfo {
 	 * @since 2.0
 	 */
 	public static final int VOLUME_RAMDISK = 5;	
+	
+	/**
+	 * Indicates the volume is removable (floppy disk 3 1/2)
+	 * @see LocalSystemInfo#getType(File)
+	 * @since 2.0
+	 */
+	public static final int VOLUME_FLOPPY_3 = 6;
+	
+	/**
+	 * Indicates the volume is removable (floppy disk 5 1/4)
+	 * @see LocalSystemInfo#getType(File)
+	 * @since 2.0
+	 */
+	public static final int VOLUME_FLOPPY_5 = 7;		
 	
 	
 	private static ArrayList listeners = new ArrayList();	
