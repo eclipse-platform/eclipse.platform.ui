@@ -17,6 +17,7 @@ import junit.framework.Test;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.connection.CVSCommunicationException;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 
 public class CVSTestSetup extends TestSetup {
@@ -186,11 +187,15 @@ public class CVSTestSetup extends TestSetup {
 		System.out.println("Connecting to: " + repository.getHost());
 		
 		try {
-			repository.validateConnection(new NullProgressMonitor());
+			try {
+				repository.validateConnection(new NullProgressMonitor());
+			} catch (CVSCommunicationException e) {
+				// Try once more, just in case it is a transient server problem
+				repository.validateConnection(new NullProgressMonitor());
+			}
 		} catch (CVSException e) {
 			System.out.println("Unable to connect to remote repository: " + repository.toString());
-			// Try once more, just in case
-			repository.validateConnection(new NullProgressMonitor());
+			throw e;
 		}
 		
 		// Initialize the repo if requested (requires rsh access)
