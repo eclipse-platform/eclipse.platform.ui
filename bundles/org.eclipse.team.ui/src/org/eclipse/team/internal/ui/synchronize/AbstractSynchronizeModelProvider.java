@@ -396,9 +396,9 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
 					String path = (String) it.next();
 					IResource resource = getResourceForPath(container, path);
 					ISynchronizeModelElement[] elements = getModelObjects(resource);
-					for (int i = 0; i < elements.length; i++) {
-                        ISynchronizeModelElement element = elements[i];
-						selectedElements.add(element);
+					// Only preserve the selection if there is one element for the resource
+					if (elements.length == 1) {
+					    selectedElements.add(elements[0]);
 					}
 				}
 			}
