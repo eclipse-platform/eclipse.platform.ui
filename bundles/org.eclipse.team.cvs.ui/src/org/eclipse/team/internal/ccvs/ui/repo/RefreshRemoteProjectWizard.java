@@ -102,20 +102,27 @@ public class RefreshRemoteProjectWizard extends Wizard {
 		try {
 			getContainer().run(true, true, new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-					monitor.beginTask(null, 100 * selectedFolders.length);
-					try {
-						RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
-						for (int i = 0; i < selectedFolders.length; i++) {
-							ICVSRemoteResource resource = selectedFolders[i];
-							if (resource instanceof ICVSFolder) {
-								manager.refreshDefinedTags((ICVSFolder)resource, true /* replace */, true, Policy.subMonitorFor(monitor, 100));
+					final RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
+					// Run in the manager to avoid multiple repo view updates
+					manager.run(new IRunnableWithProgress() {
+						public void run(IProgressMonitor monitor)
+								throws InvocationTargetException,
+								InterruptedException {
+							monitor.beginTask(null, 100 * selectedFolders.length);
+							try {
+								for (int i = 0; i < selectedFolders.length; i++) {
+									ICVSRemoteResource resource = selectedFolders[i];
+									if (resource instanceof ICVSFolder) {
+										manager.refreshDefinedTags((ICVSFolder)resource, true /* replace */, true, Policy.subMonitorFor(monitor, 100));
+									}
+								}
+							} catch (TeamException e) {
+								throw new InvocationTargetException(e);
+							} finally {
+								monitor.done();
 							}
 						}
-					} catch (TeamException e) {
-						throw new InvocationTargetException(e);
-					} finally {
-						monitor.done();
-					}
+					}, monitor);
 				}
 			});
 			return true;
