@@ -668,12 +668,15 @@ public class RegistryResolver {
 	private PluginVersionIdentifier getVersionIdentifier(PluginModel model) {
 		try {
 			return new PluginVersionIdentifier(model.getVersion());
-		} catch (Throwable e) {
+		} catch (RuntimeException e) {
+			// if the version is invalid, an AssertionFailedException (not visible here) will be thrown
+			if (this.DEBUG_RESOLVE)
+				e.printStackTrace(System.out);
 			// Hopefully, we will never get here.  The version number
 			// has already been successfully converted from a string to
 			// a PluginVersionIdentifier and back to a string.  But keep
 			// this catch around in case something does go wrong.
-			return new PluginVersionIdentifier("0.0.0"); //$NON-NLS-1$
+			return new PluginVersionIdentifier(0, 0, 0); //$NON-NLS-1$
 		}
 	}
 
