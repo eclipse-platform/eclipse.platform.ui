@@ -230,7 +230,7 @@ public class RemoteResourceTest extends EclipseTest {
 	 public void testFileRevisions() throws TeamException, CoreException, IOException {
 	 	
 	 	// Create a project with an empty file
-		IProject project = createProject("testEmptyFile", new String[] { "file.txt"});
+		IProject project = createProject("testFileRevisions", new String[] { "file.txt"});
 		IFile file = project.getFile("file.txt");
 		JUnitTestCase.waitMsec(1500);
 		file.setContents(new ByteArrayInputStream("hi there".getBytes()), false, false, DEFAULT_MONITOR);
