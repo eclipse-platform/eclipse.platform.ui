@@ -32,7 +32,7 @@ This infopop opened because you pressed F1 while an infopop was already open.</d
    </context>
 
    <context  id="prefPageCustomBrowserPath" >
-      <description>When custom web browser is selected from the list, specify path to the browser program or script that launches the browser.  If the program is available on your system path, you may specify only the program name.
+      <description>When custom web browser is selected from the list, specify path to the browser program that launches the browser.  If the program is available on your system path, you may specify only the program name.
 
 The program will be passed one parameter - a URL of a page to display.</description>
    </context>
