@@ -25,6 +25,7 @@ import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -43,6 +44,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.ICVSResourceVisitor;
+import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
 import org.eclipse.team.internal.ccvs.core.IResourceStateChangeListener;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.ui.IDecoratorManager;
@@ -455,14 +457,18 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 		deconfiguredProjects.add(project);
 	}
 	
-	public static boolean isDirty(ICVSFile cvsFile) {
+	public static boolean isDirty(final ICVSFile cvsFile) {
 		try {
-			// file is dirty or file has been merged by an update
-			if(!cvsFile.isIgnored()) {
-				return cvsFile.isModified();
-			} else {
-				return false;
-			} 
+			final boolean[] isDirty = new boolean[] {false};
+			cvsFile.getParent().run(new ICVSRunnable() {
+				public void run(IProgressMonitor monitor) throws CVSException {
+					// file is dirty or file has been merged by an update
+					if(!cvsFile.isIgnored()) {
+						isDirty[0] = cvsFile.isModified();
+					}
+				}
+			}, null);
+			return isDirty[0];
 		} catch (CVSException e) {
 			//if we get an error report it to the log but assume dirty
 			CVSUIPlugin.log(e.getStatus());
