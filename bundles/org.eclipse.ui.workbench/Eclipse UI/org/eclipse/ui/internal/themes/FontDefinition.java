@@ -10,20 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.themes;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
-
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.resource.DataFormatException;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.StringConverter;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.ui.internal.Workbench;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 
 
 /**
@@ -31,109 +21,6 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * from the plugin.xml of a type.
  */
 public class FontDefinition implements IHierarchalThemeElementDefinition, ICategorizedThemeElementDefinition {
-
-	
-	private static final String FONT_SEPERATOR = ";"; //$NON-NLS-1$
-	
-    /**
-	 * The FontPreferenceListener is a class that listens to 
-	 * changes in the preference store and propogates the change
-	 * for any special cases that require updating of other
-	 * values within the workbench.
-	 * 
-	 * TODO is this necessary anymore?
-	 */
-	public static class FontPreferenceListener implements IPropertyChangeListener {
-
-		//The values that we need to check default fonts for
-		private Set defaultCheckNames;
-		//The names of all of the fonts that will require updating
-		private Set fontNames;
-		/**
-		 * @see org.eclipse.core.runtime.Preferences.IPropertyChangeListener#propertyChange(PropertyChangeEvent)
-		 */
-		public void propertyChange(PropertyChangeEvent event) {
-
-			String propertyName = event.getProperty();
-
-			//Collect the names if required
-			if (defaultCheckNames == null) {
-				initializeFontNames();
-			}
-
-			if (defaultCheckNames.contains(propertyName)) {
-				processDefaultsTo(propertyName);
-			}
-			if (fontNames.contains(propertyName)) {
-				FontData[] newSetting;
-				Object newValue = event.getNewValue();
-				
-				if (newValue == null)
-					return;
-				
-				//The preference change can come as as a String or a FontData[]
-				//so make sure we have the right type
-				if(newValue instanceof String)
-					newSetting = 
-						PreferenceConverter.readFontData((String) newValue);
-				else
-					newSetting = (FontData[]) newValue;
-				
-				JFaceResources.getFontRegistry().put(propertyName, newSetting);
-				
-			}
-		}
-
-		/**
-		 * There has been an update to a font that other fonts
-		 * default to. Propogate if required.
-		 * @param propertyName
-		 */
-		private void processDefaultsTo(String propertyName) {
-
-			FontDefinition[] defs = WorkbenchPlugin.getDefault().getThemeRegistry().getFonts();
-			IPreferenceStore store =
-				WorkbenchPlugin.getDefault().getPreferenceStore();
-			for (int i = 0; i < defs.length; i++) {
-				String defaultsTo = defs[i].getDefaultsTo();
-				if (defaultsTo != null
-						&& defaultsTo.equals(propertyName)
-						&& store.isDefault(defs[i].getId())) {
-
-					FontData[] data =
-						PreferenceConverter.getFontDataArray(store, defaultsTo);
-					JFaceResources.getFontRegistry().put(
-							defs[i].getId(),
-							data);
-				}
-			}
-		}
-
-		/**
-		 * Initialixe the fontNames and the list of fonts that have a 
-		 * defaultsTo tag.
-		 */
-		private void initializeFontNames() {
-			defaultCheckNames = new HashSet();
-			fontNames = new HashSet();
-			FontDefinition[] defs = WorkbenchPlugin.getDefault().getThemeRegistry().getFonts();
-			for (int i = 0; i < defs.length; i++) {
-				fontNames.add(defs[i].getId());
-				String defaultsTo = defs[i].getDefaultsTo();
-				if (defaultsTo != null)
-					defaultCheckNames.add(defaultsTo);
-			}
-		}
-		
-		/**
-		 * For dynamic UI
-		 */
-		public void clearCache() {
-			defaultCheckNames = null;
-		}
-	}
-	
-	private static FontPreferenceListener fontPreferenceUpdateListener;
 	
 	private String label;
 	private String id;
@@ -145,19 +32,6 @@ public class FontDefinition implements IHierarchalThemeElementDefinition, ICateg
     private boolean isEditable;
 
     private FontData [] parsedValue;
-	/**
-	 * For dynamic UI
-	 * 
-	 * @return a preference listener that will update font settings
-	 * @since 3.0
-	 */
-	public static IPropertyChangeListener getPreferenceListener() {
-		if (fontPreferenceUpdateListener == null) {
-			fontPreferenceUpdateListener = new FontPreferenceListener();
-		}
-		return fontPreferenceUpdateListener;
-		
-	}
 
 	/**
 	 * Create a new instance of the receiver.
@@ -186,6 +60,23 @@ public class FontDefinition implements IHierarchalThemeElementDefinition, ICateg
 	}
 
 	/**
+	 * Create a new instance of the receiver.
+	 * 
+	 * @param original the original definition.  This will be used to populate 
+	 * all fields except defaultsTo and value.  defaultsTo will always be 
+	 * <code>null</code>.
+	 * @param value the FontData[] value
+	 */
+    public FontDefinition(FontDefinition originalFont, FontData[] datas) {
+    	this.label = originalFont.getLabel();
+		this.id = originalFont.getId();		
+		this.categoryId = originalFont.getCategoryId();
+		this.description = originalFont.getDescription();
+		this.isEditable = originalFont.isEditable();
+		this.parsedValue = datas;
+    }
+
+    /**
 	 * Returns the defaultsTo. This is the id of the text font
 	 * that this font defualts to.
 	 * @return String or <pre>null</pre>.
@@ -235,17 +126,11 @@ public class FontDefinition implements IHierarchalThemeElementDefinition, ICateg
         if (value == null)
             return null;
         if (parsedValue == null) {
-            String [] strings = value.split(FONT_SEPERATOR);
-            ArrayList data = new ArrayList(strings.length);
-            for (int i = 0; i < strings.length; i++) {            
-                try {
-                	data.add(StringConverter.asFontData(strings[i]));
-               	}
-               	catch (DataFormatException e) {
-               		//do-nothing
-               	}
-            }
-            parsedValue = JFaceResources.getFontRegistry().bestDataArray((FontData []) data.toArray(new FontData [data.size()]), Workbench.getInstance().getDisplay());
+            parsedValue = JFaceResources
+            	.getFontRegistry()
+            	.bestDataArray(
+            	        StringConverter.asFontDataArray(value), 
+            	        Workbench.getInstance().getDisplay());
         }
 
         return parsedValue;

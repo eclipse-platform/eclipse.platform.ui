@@ -250,8 +250,6 @@ class ExtensionEventHandler implements IRegistryChangeListener {
 		Collection fonts = reader.getFontDefinitions();
 		FontDefinition [] fontDefs = (FontDefinition []) fonts.toArray(new ColorDefinition [fonts.size()]);
 		ThemeElementHelper.populateRegistry(workbench.getThemeManager().getTheme(IThemeManager.DEFAULT_THEME), fontDefs, workbench.getPreferenceStore());		
-		
-		((FontDefinition.FontPreferenceListener)FontDefinition.getPreferenceListener()).clearCache();		
     }
 
     //TODO: confirm
@@ -272,9 +270,7 @@ class ExtensionEventHandler implements IRegistryChangeListener {
 		Collection fonts = reader.getFontDefinitions();
 		FontDefinition [] fontDefs = (FontDefinition []) fonts.toArray(new ColorDefinition [fonts.size()]);
 		ThemeElementHelper.populateRegistry(theme, fontDefs, workbench.getPreferenceStore());		
-		
-		((FontDefinition.FontPreferenceListener)FontDefinition.getPreferenceListener()).clearCache();
-		
+
 		Map data = reader.getData();
 		registry.addData(data);
 	}

@@ -145,8 +145,26 @@ public interface IThemeRegistry {
 	 * @return the colors in this registry
 	 */
 	public ColorDefinition [] getColors();
-
-    	/**
+	
+	/**
+	 * Returns a list of colors defined for the given theme.  This is the
+	 * set of base colours overlayed with any theme specific overrides.
+	 * 
+	 * @param themeId the theme id
+	 * @return the colors in this theme
+	 */
+	public ColorDefinition [] getColorsFor(String themeId);
+	
+	/**
+	 * Returns a list of fonts defined for the given theme.  This is the
+	 * set of base fonts overlayed with any theme specific overrides.
+	 * 
+	 * @param themeId the theme id
+	 * @return the fonts in this theme
+	 */
+	public FontDefinition[] getFontsFor(String themeId);
+		
+    /**
 	 * Returns a list of fonts defined in the registry.
 	 * 
 	 * @return the fonts in this registry

@@ -12,6 +12,8 @@ package org.eclipse.ui.internal.themes;
 
 import java.util.Set;
 
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.DataFormatException;
 import org.eclipse.jface.resource.FontRegistry;
@@ -94,28 +96,82 @@ public class Theme implements ITheme {
 	                        if (((CascadingColorRegistry)getColorRegistry()).hasOverrideFor(key)) {
 		                        RGB rgb = StringConverter.asRGB((String) event.getNewValue());
 		                        getColorRegistry().put(key, rgb);
+		                        processDefaultsTo(key, rgb);
+		                        return;
 		                    }
-		                    else if (((CascadingFontRegistry)getFontRegistry()).hasOverrideFor(key)) {
-		                        FontData data = StringConverter.asFontData((String) event.getNewValue());
-		                        getFontRegistry().put(key, new FontData [] {data});
-		                    }	                        
 	                    }
-	                    else { // we're the default theme
+	                    else {
 	                        if (getColorRegistry().hasValueFor(key)) {
 		                        RGB rgb = StringConverter.asRGB((String) event.getNewValue());
 		                        getColorRegistry().put(key, rgb);
+		                        processDefaultsTo(key, rgb);
+		                        return;
+	                        }
+	                    }	 
+	                    
+	                    if (themeFontRegistry != null) {
+	                        if (((CascadingFontRegistry)getFontRegistry()).hasOverrideFor(key)) {
+		                        FontData [] data = PreferenceConverter.basicGetFontData((String) event.getNewValue());
+		                        getFontRegistry().put(key, data);
+		                        processDefaultsTo(key, data);
+		                        return;
 		                    }
-		                    else if (getFontRegistry().hasValueFor(key)) {
-		                        FontData data = StringConverter.asFontData((String) event.getNewValue());
-		                        getFontRegistry().put(key, new FontData [] {data});
-		                    }	                        
-	                        
+	                    }
+	                    else {
+	                        if (getFontRegistry().hasValueFor(key)) {
+		                        FontData [] data = PreferenceConverter.basicGetFontData((String) event.getNewValue());
+		                        getFontRegistry().put(key, data);
+		                        processDefaultsTo(key, data);
+		                        return;
+		                    }
 	                    }
                     }
                     catch (DataFormatException e) {
                         //no-op
                     }                                                                    
-                }                
+                }  
+                
+                /**
+                 * Process all fonts that default to the given ID.
+                 * 
+                 * @param key the font ID
+                 * @param fd the new FontData for defaulted fonts
+                 */
+                private void processDefaultsTo(String key, FontData [] fd) {
+                    FontDefinition [] defs = WorkbenchPlugin.getDefault().getThemeRegistry().getFontsFor(getId());
+                    for (int i = 0; i < defs.length; i++) {
+                        String defaultsTo = defs[i].getDefaultsTo();
+                        if (defaultsTo != null && defaultsTo.equals(key)) {
+                			IPreferenceStore store =
+                				WorkbenchPlugin.getDefault().getPreferenceStore();
+                			if (store.isDefault(ThemeElementHelper.createPreferenceKey(Theme.this, defs[i].getId()))) {
+                			    getFontRegistry().put(defs[i].getId(), fd);
+                			    processDefaultsTo(defs[i].getId(), fd);
+                			}
+                        }
+                    }                    
+                }
+                
+                /**
+                 * Process all colors that default to the given ID.
+                 * 
+                 * @param key the color ID
+                 * @param rgb the new RGB value for defaulted colors
+                 */
+                private void processDefaultsTo(String key, RGB rgb) {
+                    ColorDefinition [] defs = WorkbenchPlugin.getDefault().getThemeRegistry().getColorsFor(getId());
+                    for (int i = 0; i < defs.length; i++) {
+                        String defaultsTo = defs[i].getDefaultsTo();
+                        if (defaultsTo != null && defaultsTo.equals(key)) {
+                			IPreferenceStore store =
+                				WorkbenchPlugin.getDefault().getPreferenceStore();
+                			if (store.isDefault(ThemeElementHelper.createPreferenceKey(Theme.this, defs[i].getId()))) {
+                			    getColorRegistry().put(defs[i].getId(), rgb);
+                			    processDefaultsTo(defs[i].getId(), rgb);
+                			}
+                        }
+                    }                    
+                }
             };
         }
         return propertyListener;
@@ -162,6 +218,11 @@ public class Theme implements ITheme {
             themeFontRegistry.removeListener(themeListener);
             themeFontRegistry.dispose();
         }
+        WorkbenchPlugin
+        	.getDefault()
+        	.getWorkbench()
+        	.getPreferenceStore()
+        	.removePropertyChangeListener(getPropertyListener());
     }
 
     /* (non-Javadoc)

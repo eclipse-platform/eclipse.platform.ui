@@ -28,6 +28,7 @@ public class ColorDefinition implements IPluginContribution, IHierarchalThemeEle
 	private String rawValue;
 	private String categoryId;
 	boolean isEditable;
+    private RGB parsedValue;
 
 	/**
 	 * Create a new instance of the receiver.
@@ -61,6 +62,28 @@ public class ColorDefinition implements IPluginContribution, IHierarchalThemeEle
 		this.isEditable = isEditable;
 		this.pluginId = pluginId;
 	}
+	
+	/**
+	 * Create a new instance of the receiver.
+	 * 
+	 * @param original the original definition.  This will be used to populate 
+	 * all fields except defaultsTo and value.  defaultsTo will always be 
+	 * <code>null</code>.
+	 * @param value the RGB value
+	 */
+	public ColorDefinition(
+	    ColorDefinition original, 
+		RGB value) {
+
+		this.label = original.getLabel();
+		this.id = original.getId();		
+		this.categoryId = original.getLabel();
+		this.description = original.getDescription();
+		this.isEditable = original.isEditable();
+		this.pluginId = original.getPluginId();
+		
+		this.parsedValue = value;
+	}	
 
     /**
      * @return the categoryId, or <code>null</code> if none was supplied.
@@ -116,7 +139,10 @@ public class ColorDefinition implements IPluginContribution, IHierarchalThemeEle
 	 * evaluated and converted into their RGB value.
 	 */
 	public RGB getValue() {
-	    return ColorUtils.getColorValue(rawValue);
+	    if (parsedValue == null) {
+	        parsedValue = ColorUtils.getColorValue(rawValue);    
+	    }
+	    return parsedValue;	    
 	}
 	
 	/* (non-Javadoc)

@@ -1137,8 +1137,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 			String storeString = getPreferenceStore().getString(key);
 
 			if (!rgbString.equals(storeString)) {
-				currentTheme.getColorRegistry().put(id, rgb);
-				getPreferenceStore().setValue(key, rgbString);
+		        getPreferenceStore().setValue(key, rgbString);
 			}
 		}
 
@@ -1179,13 +1178,17 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
         for (Iterator i = fontPreferencesToSet.keySet().iterator(); i.hasNext();) {
 			String id = (String) i.next();
 			String key = ThemeElementHelper.createPreferenceKey(currentTheme, id);
-			
 			FontData [] fd = (FontData []) fontPreferencesToSet.get(id);
-			currentTheme.getFontRegistry().put(id, fd);
-			getPreferenceStore().setValue(key, PreferenceConverter.getStoredRepresentation(fd));
+			
+			String fdString = PreferenceConverter.getStoredRepresentation(fd);
+			String storeString = getPreferenceStore().getString(key);
+
+			if (!fdString.equals(storeString)) {
+		        getPreferenceStore().setValue(key, fdString);
+			}
 		}
 
-		fontPreferencesToSet.clear();		
+        fontPreferencesToSet.clear();		
 		return true;
     }
     

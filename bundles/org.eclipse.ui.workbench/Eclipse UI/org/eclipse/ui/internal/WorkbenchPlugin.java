@@ -56,7 +56,6 @@ import org.eclipse.ui.internal.registry.PreferencePageRegistryReader;
 import org.eclipse.ui.internal.registry.ViewRegistry;
 import org.eclipse.ui.internal.registry.ViewRegistryReader;
 import org.eclipse.ui.internal.registry.WorkingSetRegistry;
-import org.eclipse.ui.internal.themes.FontDefinition;
 import org.eclipse.ui.internal.themes.IThemeRegistry;
 import org.eclipse.ui.internal.themes.ThemeRegistry;
 import org.eclipse.ui.internal.themes.ThemeRegistryReader;
@@ -498,7 +497,6 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		initializeFont(JFaceResources.HEADER_FONT, registry, store);
 		initializeFont(JFaceResources.TEXT_FONT, registry, store);
 		
-		store.addPropertyChangeListener(FontDefinition.getPreferenceListener());
 		store.addPropertyChangeListener(new PlatformUIPreferenceListener());
 	}
 

@@ -107,7 +107,71 @@ public class ThemeRegistry implements IThemeRegistry {
 		Arrays.sort(retArray, ID_COMPARATOR);
 		return retArray;
 	}
+	
+	 /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.themes.IThemeRegistry#getColorsFor(java.lang.String)
+     */
+    public ColorDefinition[] getColorsFor(String themeId) {
+        ColorDefinition [] defs = getColors();
+        if (themeId == null) 
+            return defs;
+        
+        IThemeDescriptor desc = findTheme(themeId);
+        ColorDefinition [] overrides = desc.getColors();
+        return (ColorDefinition[]) overlay(defs, overrides);
+    }	
     
+	 /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.themes.IThemeRegistry#getFontsFor(java.lang.String)
+     */
+    public FontDefinition[] getFontsFor(String themeId) {
+        FontDefinition [] defs = getFonts();
+        if (themeId == null) 
+            return defs;
+        
+        IThemeDescriptor desc = findTheme(themeId);
+        FontDefinition [] overrides = desc.getFonts();
+        return (FontDefinition[]) overlay(defs, overrides);
+    }	    
+    
+    /**
+     * Overlay the overrides onto the base definitions.
+     * 
+     * @param defs the base definitions
+     * @param overrides the overrides
+     * @return the overlayed elements
+     */
+    private IThemeElementDefinition [] overlay(IThemeElementDefinition [] defs, IThemeElementDefinition [] overrides) {
+        for (int i = 0; i < overrides.length; i++) {
+            int idx = Arrays.binarySearch(defs, overrides[i], IThemeRegistry.ID_COMPARATOR);
+            if (idx >= 0) {
+                defs[idx] = overlay(defs[idx], overrides[i]); 
+            }
+        }
+        return defs;
+    }
+
+    /**
+     * Overlay the override onto the base definition.
+     * 
+     * @param defs the base definition
+     * @param overrides the override
+     * @return the overlayed element
+     */
+    private IThemeElementDefinition overlay(IThemeElementDefinition original, IThemeElementDefinition overlay) {
+        if (original instanceof ColorDefinition) {
+            ColorDefinition originalColor = (ColorDefinition) original;
+            ColorDefinition overlayColor = (ColorDefinition) overlay;            
+            return new ColorDefinition(originalColor, overlayColor.getValue());
+        }
+        else if (original instanceof FontDefinition){
+            FontDefinition originalFont = (FontDefinition) original;
+            FontDefinition overlayFont = (FontDefinition) overlay;            
+            return new FontDefinition(originalFont, overlayFont.getValue());            
+        }
+        return null;
+    }
+
     /**
      * @param definition
      */

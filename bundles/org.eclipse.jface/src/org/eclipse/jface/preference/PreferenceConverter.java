@@ -104,8 +104,10 @@ public class PreferenceConverter {
 	 * Helper method to construct a <code>FontData</code> from the given string.
 	 * String is in the form FontData;FontData; in order that
 	 * multiple FontDatas can be defined.
+	 * 
+	 * @since 3.0
 	 */
-	private static FontData[] basicGetFontData(String value) {
+	public static FontData[] basicGetFontData(String value) {
 		if (IPreferenceStore.STRING_DEFAULT_DEFAULT.equals(value))
 			return FONTDATA_ARRAY_DEFAULT_DEFAULT;
 

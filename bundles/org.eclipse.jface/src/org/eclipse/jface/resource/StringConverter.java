@@ -67,6 +67,13 @@ public class StringConverter {
 	 * font specifications.
 	 */
 	private static final char SEPARATOR = '-';
+
+	/**
+	 * Internal constant for the seperator character used in font list
+	 * specifications.
+	 */
+    private static final String FONT_SEPERATOR = ";"; //$NON-NLS-1$
+    
 	/* (non-Javadoc)
 	 * Declare a private constructor to block instantiation.
 	 */
@@ -268,6 +275,27 @@ public class StringConverter {
 		}
 		return new FontData(name, height, style);
 	}
+	/**
+	 * Convert the given value into an array of SWT font data objects.
+	 * 
+	 * @param value the font list string 
+	 * @return the value as a font list
+	 * @since 3.0
+	 */
+	public static FontData [] asFontDataArray(String value) {
+	    String [] strings = value.split(FONT_SEPERATOR);
+        ArrayList data = new ArrayList(strings.length);
+        for (int i = 0; i < strings.length; i++) {            
+            try {
+            	data.add(StringConverter.asFontData(strings[i]));
+           	}
+           	catch (DataFormatException e) {
+           		//do-nothing
+           	}
+        }
+        return (FontData []) data.toArray(new FontData [data.size()]);
+	}
+	
 	/**
 	 * Converts the given value into an SWT font data object.
 	 * Returns the given default value if the 
@@ -591,6 +619,24 @@ public class StringConverter {
 		Assert.isNotNull(value);
 		return String.valueOf(value.longValue());
 	}
+	/**
+	 * Converts a font data array  to a string. The string representation is
+	 * that of asString(FontData) seperated by ';'
+	 * 
+	 * @param value The font data.
+	 * @return The string representation of the font data arra.
+	 * @since 3.0
+	 */
+	public static String asString(FontData [] value) {
+	    StringBuffer buffer = new StringBuffer();
+	    for (int i = 0; i < value.length; i++) {
+            buffer.append(asString(value[i]));
+            if (i != value.length - 1)
+                buffer.append(FONT_SEPERATOR);
+        }
+	    return buffer.toString();
+	}
+	
 	/**
 	 * Converts a font data object to a string. The string representation is
 	 * "font name-style-height" (for example "Times New Roman-bold-36").
