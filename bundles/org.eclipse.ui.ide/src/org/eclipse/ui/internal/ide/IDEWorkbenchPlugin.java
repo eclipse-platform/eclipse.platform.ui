@@ -57,8 +57,8 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
 	public static final String IDE_WORKBENCH = "org.eclipse.ui.ide"; //$NON-NLS-1$
 
 	/**
-	 * The ID of the default text editor
-	 * @issue better if this was provided by the text editor plug-in
+	 * The ID of the default text editor.
+	 * This must correspond to EditorsUI.DEFAULT_TEXT_EDITOR_ID.
 	 */
 	public static final String DEFAULT_TEXT_EDITOR_ID = "org.eclipse.ui.DefaultTextEditor"; //$NON-NLS-1$
 
