@@ -333,7 +333,7 @@ public class AntModel {
 	}
 
 	private void initializeProject(Project project) {
-		ClassLoader loader= getClassLoader();
+		//ClassLoader loader= getClassLoader();
 		if (fValidateFully) {
     		project.setCoreLoader(getClassLoader());
     	}
