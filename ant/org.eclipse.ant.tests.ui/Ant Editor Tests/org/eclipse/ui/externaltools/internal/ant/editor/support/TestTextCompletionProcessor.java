@@ -18,16 +18,13 @@ import junit.framework.TestCase;
 
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.ui.externaltools.internal.ant.editor.AntEditorCompletionProcessor;
-import org.eclipse.ui.externaltools.internal.ant.editor.test.CodeCompletionTest;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.w3c.dom.Element;
 
 public class TestTextCompletionProcessor extends AntEditorCompletionProcessor {
-	private final CodeCompletionTest TestTextCompletionProcessor;
     
-    public TestTextCompletionProcessor(CodeCompletionTest TestTextCompletionProcessor) {
+    public TestTextCompletionProcessor() {
         cursorPosition = 10;
-		this.TestTextCompletionProcessor = TestTextCompletionProcessor;
     }
     
     public ICompletionProposal[] getAttributeProposals(

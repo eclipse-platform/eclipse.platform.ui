@@ -12,13 +12,12 @@
 package org.eclipse.ui.externaltools.internal.ant.editor.support;
 
 import org.eclipse.ui.externaltools.internal.ant.editor.AntEditor;
-import org.eclipse.ui.externaltools.internal.ant.editor.test.CodeCompletionTest;
 
 public class TestEditor extends AntEditor {
-	private final CodeCompletionTest TestAntEditor;
-	TestEditor(CodeCompletionTest TestAntEditor) {
-		this.TestAntEditor = TestAntEditor;
+	
+	TestEditor() {
 	}
+	
     public void initializeEditor() {
     }
     /** 

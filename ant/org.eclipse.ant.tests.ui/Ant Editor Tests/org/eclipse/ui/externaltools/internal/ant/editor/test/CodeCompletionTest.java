@@ -70,7 +70,7 @@ public class CodeCompletionTest extends TestCase {
      * Tests the code completion for attributes of tasks.
      */
     public void testAttributeProposals() throws IOException {
-        TestTextCompletionProcessor tempProcessor = new TestTextCompletionProcessor(this);
+        TestTextCompletionProcessor tempProcessor = new TestTextCompletionProcessor();
 
         ICompletionProposal[] tempProposals = tempProcessor.getAttributeProposals("contains", "ca");
         assertEquals(1, tempProposals.length);
@@ -121,7 +121,7 @@ public class CodeCompletionTest extends TestCase {
      * Test the code completion for properties.
      */
     public void testPropertyProposals1() {
-		TestTextCompletionProcessor tempProcessor = new TestTextCompletionProcessor(this);
+		TestTextCompletionProcessor tempProcessor = new TestTextCompletionProcessor();
 
         String tempDocumentText = "<project default=\"test\"><property name=\"prop1\" value=\"val1\" />\n";
         tempDocumentText += "<property name=\"prop2\" value=\"val2\" />\n";
@@ -237,7 +237,7 @@ public class CodeCompletionTest extends TestCase {
 	 * a dependent targets.
 	 */
     public void testPropertyProposalDefinedInDependendTargets() throws FileNotFoundException {
-        TestTextCompletionProcessor tempProcessor = new TestTextCompletionProcessor(this);
+        TestTextCompletionProcessor tempProcessor = new TestTextCompletionProcessor();
 
         URL tempURL = getClass().getResource("dependencytest.xml");
         assertNotNull(tempURL);
@@ -264,7 +264,7 @@ public class CodeCompletionTest extends TestCase {
      * Tests the code completion for tasks having parent tasks.
      */
     public void testTaskProposals() throws IOException, ParserConfigurationException {
-		TestTextCompletionProcessor tempProcessor = new TestTextCompletionProcessor(this);
+		TestTextCompletionProcessor tempProcessor = new TestTextCompletionProcessor();
 
         DocumentBuilder tempDocBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         Document tempDocument = tempDocBuilder.newDocument();
@@ -354,7 +354,7 @@ public class CodeCompletionTest extends TestCase {
         tempParentElement.appendChild(tempChildElement);
         
         // Create the processor
-        TestTextCompletionProcessor tempProcessor = new TestTextCompletionProcessor(this);
+        TestTextCompletionProcessor tempProcessor = new TestTextCompletionProcessor();
         
         // Test it!
         tempChildElement = tempProcessor.findChildElementNamedOf(tempParentElement, "jkl");
@@ -396,7 +396,7 @@ public class CodeCompletionTest extends TestCase {
      * Tests how the processor determines the proposal mode.
      */
     public void testDeterminingProposalMode() throws IOException {
-        TestTextCompletionProcessor tempProcessor = new TestTextCompletionProcessor(this);
+        TestTextCompletionProcessor tempProcessor = new TestTextCompletionProcessor();
 
         // Modes:
         // 0 None
@@ -454,7 +454,7 @@ public class CodeCompletionTest extends TestCase {
      * Tests how the prefix will be determined.
      */
     public void testDeterminingPrefix() {
-        TestTextCompletionProcessor tempProcessor = new TestTextCompletionProcessor(this);
+        TestTextCompletionProcessor tempProcessor = new TestTextCompletionProcessor();
 
         // cursor after ${
         String tempPrefix = tempProcessor.getPrefixFromDocument("<project><target name=\"${}\"", 25);
