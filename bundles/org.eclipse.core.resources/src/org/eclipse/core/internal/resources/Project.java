@@ -123,7 +123,7 @@ public class Project extends Container implements IProject {
 	public void checkAccessible(int flags) throws CoreException {
 		super.checkAccessible(flags);
 		if (!isOpen(flags)) {
-			String message = Messages.bind(Messages.resources_mustBeOpen, getFullPath());
+			String message = NLS.bind(Messages.resources_mustBeOpen, getFullPath());
 			throw new ResourceException(IResourceStatus.PROJECT_NOT_OPEN, getFullPath(), message, null);
 		}
 	}
@@ -163,7 +163,7 @@ public class Project extends Container implements IProject {
 	public void close(IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
-			String msg = Messages.bind(Messages.resources_closing_1, getName());
+			String msg = NLS.bind(Messages.resources_closing_1, getName());
 			monitor.beginTask(msg, Policy.totalWork);
 			final ISchedulingRule rule = workspace.getRuleFactory().modifyRule(this);
 			try {
@@ -503,7 +503,7 @@ public class Project extends Container implements IProject {
 	protected void internalCopy(IProjectDescription destDesc, int updateFlags, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
-			String message = Messages.bind(Messages.resources_copying, getFullPath());
+			String message = NLS.bind(Messages.resources_copying, getFullPath());
 			monitor.beginTask(message, Policy.totalWork);
 			String destName = destDesc.getName();
 			IPath destPath = new Path(destName).makeAbsolute();
@@ -720,7 +720,7 @@ public class Project extends Container implements IProject {
 		Assert.isNotNull(description);
 		monitor = Policy.monitorFor(monitor);
 		try {
-			String message = Messages.bind(Messages.resources_moving, getFullPath());
+			String message = NLS.bind(Messages.resources_moving, getFullPath());
 			monitor.beginTask(message, Policy.totalWork);
 			IProject destination = workspace.getRoot().getProject(description.getName());
 			final ISchedulingRule rule = workspace.getRuleFactory().moveRule(this, destination);
@@ -769,7 +769,7 @@ public class Project extends Container implements IProject {
 	public void open(int updateFlags, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
-			String msg = Messages.bind(Messages.resources_opening_1, getName());
+			String msg = NLS.bind(Messages.resources_opening_1, getName());
 			monitor.beginTask(msg, Policy.totalWork);
 			monitor.subTask(msg);
 			final ISchedulingRule rule = workspace.getRuleFactory().modifyRule(this);
@@ -926,7 +926,7 @@ public class Project extends Container implements IProject {
 				if (((updateFlags & IResource.FORCE) == 0)) {
 					hadSavedDescription = getLocalManager().hasSavedProject(this);
 					if (hadSavedDescription && !getLocalManager().isDescriptionSynchronized(this)) {
-						String message = Messages.bind(Messages.resources_projectDescSync, getName());
+						String message = NLS.bind(Messages.resources_projectDescSync, getName());
 						throw new ResourceException(IResourceStatus.OUT_OF_SYNC_LOCAL, getFullPath(), message, null);
 					}
 				}
@@ -945,7 +945,7 @@ public class Project extends Container implements IProject {
 				info.incrementContentId();
 				workspace.updateModificationStamp(info);
 				if (!hadSavedDescription) {
-					String msg = Messages.bind(Messages.resources_missingProjectMetaRepaired, getName());
+					String msg = NLS.bind(Messages.resources_missingProjectMetaRepaired, getName());
 					status.merge(new ResourceStatus(IResourceStatus.MISSING_DESCRIPTION_REPAIRED, getFullPath(), msg));
 				}
 				if (!status.isOK())
@@ -984,7 +984,7 @@ public class Project extends Container implements IProject {
 	public void touch(IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
-			String message = Messages.bind(Messages.resources_touch, getFullPath());
+			String message = NLS.bind(Messages.resources_touch, getFullPath());
 			monitor.beginTask(message, Policy.totalWork);
 			final ISchedulingRule rule = workspace.getRuleFactory().modifyRule(this);
 			try {

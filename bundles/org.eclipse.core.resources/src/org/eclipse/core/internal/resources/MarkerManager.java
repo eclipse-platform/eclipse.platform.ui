@@ -451,7 +451,7 @@ public class MarkerManager implements IManager {
 				input.close();
 			}
 		} catch (IOException e) {
-			String msg = Messages.bind(Messages.resources_readMeta, sourceLocation);
+			String msg = NLS.bind(Messages.resources_readMeta, sourceLocation);
 			throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, sourceLocation, msg, e);
 		}
 	}
@@ -473,7 +473,7 @@ public class MarkerManager implements IManager {
 			}
 		} catch (Exception e) {
 			// only log the exception, we should not fail restoring the snapshot
-			String msg = Messages.bind(Messages.resources_readMeta, sourceLocation);
+			String msg = NLS.bind(Messages.resources_readMeta, sourceLocation);
 			ResourcesPlugin.getPlugin().getLog().log(new ResourceStatus(IResourceStatus.FAILED_READ_METADATA, sourceLocation, msg, e));
 		}
 	}

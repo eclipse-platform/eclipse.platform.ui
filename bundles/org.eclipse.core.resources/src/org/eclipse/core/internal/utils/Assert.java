@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.utils;
 
+import org.eclipse.core.runtime.NLS;
+
 /**
  * <code>Assert</code> is useful for for embedding runtime sanity checks
  * in code.
@@ -79,7 +81,7 @@ public final class Assert {
 	 */
 	public static void isNotNull(Object object, String message) {
 		if (object == null)
-			throw new AssertionFailedException(Messages.bind(Messages.utils_null, message));
+			throw new AssertionFailedException(NLS.bind(Messages.utils_null, message));
 	}
 
 	/** Asserts that the given boolean is <code>true</code>. If this
@@ -104,7 +106,7 @@ public final class Assert {
 	 */
 	public static boolean isTrue(boolean expression, String message) {
 		if (!expression)
-			throw new AssertionFailedException(Messages.bind(Messages.utils_failed, message));
+			throw new AssertionFailedException(NLS.bind(Messages.utils_failed, message));
 		return expression;
 	}
 }

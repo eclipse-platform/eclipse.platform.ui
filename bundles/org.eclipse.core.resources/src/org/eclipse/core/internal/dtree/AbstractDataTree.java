@@ -12,6 +12,7 @@ package org.eclipse.core.internal.dtree;
 
 import java.security.InvalidParameterException;
 import org.eclipse.core.internal.utils.Messages;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
@@ -254,7 +255,7 @@ public abstract class AbstractDataTree {
 	 * unchecked exception.
 	 */
 	static void handleNotFound(IPath key) {
-		throw new ObjectNotFoundException(Messages.bind(Messages.dtree_notFound, key));
+		throw new ObjectNotFoundException(NLS.bind(Messages.dtree_notFound, key));
 	}
 
 	/**

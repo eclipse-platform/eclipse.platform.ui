@@ -571,7 +571,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 						}
 					} else {
 						monitor.worked(1);
-						message = Messages.bind(Messages.resources_notChild, resources[i].getFullPath(), parentPath);
+						message = NLS.bind(Messages.resources_notChild, resources[i].getFullPath(), parentPath);
 						status.merge(new ResourceStatus(IResourceStatus.OPERATION_FAILED, resources[i].getFullPath(), message));
 					}
 				}
@@ -738,7 +738,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				info.set(ICoreConstants.M_MARKERS_SNAP_DIRTY);
 				tree.setElementData(resource.getFullPath(), info);
 			} else {
-				String message = Messages.bind(Messages.resources_mustNotExist, resource.getFullPath());
+				String message = NLS.bind(Messages.resources_mustNotExist, resource.getFullPath());
 				throw new ResourceException(IResourceStatus.RESOURCE_EXISTS, resource.getFullPath(), message, null);
 			}
 		}
@@ -801,7 +801,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 						// Don't really care about the exception unless the resource is still around.
 						ResourceInfo info = resource.getResourceInfo(false, false);
 						if (resource.exists(resource.getFlags(info), false)) {
-							message = Messages.bind(Messages.resources_couldnotDelete, resource.getFullPath());
+							message = NLS.bind(Messages.resources_couldnotDelete, resource.getFullPath());
 							result.merge(new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, resource.getFullPath(), message));
 							result.merge(e.getStatus());
 						}
@@ -1401,7 +1401,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			e = ex;
 		}
 		if (result == null || e != null) {
-			String message = Messages.bind(Messages.resources_errorReadProject, path.toOSString());
+			String message = NLS.bind(Messages.resources_errorReadProject, path.toOSString());
 			IStatus status = new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_READ_METADATA, message, e);
 			throw new ResourceException(status);
 		}
@@ -1458,7 +1458,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 						}
 					} else {
 						monitor.worked(1);
-						message = Messages.bind(Messages.resources_notChild, resource.getFullPath(), parentPath);
+						message = NLS.bind(Messages.resources_notChild, resource.getFullPath(), parentPath);
 						status.merge(new ResourceStatus(IResourceStatus.OPERATION_FAILED, resource.getFullPath(), message));
 					}
 				}
@@ -1896,7 +1896,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			for (int i = 0; i < files.length; i++) {
 				if (files[i].isReadOnly()) {
 					IPath filePath = files[i].getFullPath();
-					message = Messages.bind(Messages.resources_readOnly, filePath);
+					message = NLS.bind(Messages.resources_readOnly, filePath);
 					result.add(new ResourceStatus(IResourceStatus.READ_ONLY_LOCAL, filePath, message));
 				}
 			}
@@ -1931,17 +1931,17 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		String message;
 		//check if resource linking is disabled
 		if (ResourcesPlugin.getPlugin().getPluginPreferences().getBoolean(ResourcesPlugin.PREF_DISABLE_LINKING)) {
-			message = Messages.bind(Messages.links_workspaceVeto, resource.getName());
+			message = NLS.bind(Messages.links_workspaceVeto, resource.getName());
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, resource.getFullPath(), message);
 		}
 		//check that the resource has a project as its parent
 		IContainer parent = resource.getParent();
 		if (parent == null || parent.getType() != IResource.PROJECT) {
-			message = Messages.bind(Messages.links_parentNotProject, resource.getName());
+			message = NLS.bind(Messages.links_parentNotProject, resource.getName());
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, resource.getFullPath(), message);
 		}
 		if (!parent.isAccessible()) {
-			message = Messages.bind(Messages.links_parentNotAccessible, resource.getFullPath());
+			message = NLS.bind(Messages.links_parentNotAccessible, resource.getFullPath());
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, resource.getFullPath(), message);
 		}
 		IPath location = getPathVariableManager().resolvePath(unresolvedLocation);
@@ -1975,20 +1975,20 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		// test if the given location overlaps the platform metadata location
 		IPath testLocation = getMetaArea().getLocation();
 		if (isOverlapping(location, testLocation, true)) {
-			message = Messages.bind(Messages.links_invalidLocation, location.toOSString());
+			message = NLS.bind(Messages.links_invalidLocation, location.toOSString());
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, resource.getFullPath(), message);
 		}
 		//test if the given path overlaps the location of the given project
 		testLocation = resource.getProject().getLocation();
 		if (testLocation != null && isOverlapping(location, testLocation, false)) {
-			message = Messages.bind(Messages.links_locationOverlapsProject, location.toOSString());
+			message = NLS.bind(Messages.links_locationOverlapsProject, location.toOSString());
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, resource.getFullPath(), message);
 		}
 		//warnings (all errors must be checked before all warnings)
 		//check that the location is absolute
 		if (!location.isAbsolute()) {
 			//we know there is at least one segment, because of previous isEmpty check
-			message = Messages.bind(Messages.pathvar_undefined, location.toOSString(), location.segment(0));
+			message = NLS.bind(Messages.pathvar_undefined, location.toOSString(), location.segment(0));
 			return new ResourceStatus(IResourceStatus.VARIABLE_NOT_DEFINED_WARNING, resource.getFullPath(), message);
 		}
 		// Iterate over each known project and ensure that the location does not
@@ -2001,7 +2001,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			IProjectDescription desc = ((Project) project).internalGetDescription();
 			testLocation = desc.getLocation();
 			if (testLocation != null && isOverlapping(location, testLocation, true)) {
-				message = Messages.bind(Messages.links_overlappingResource, location.toOSString());
+				message = NLS.bind(Messages.links_overlappingResource, location.toOSString());
 				return new ResourceStatus(IResourceStatus.OVERLAPPING_LOCATION, resource.getFullPath(), message);
 			}
 			//iterate over linked resources and check for overlap
@@ -2019,7 +2019,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				if (children[j].isLinked()) {
 					testLocation = children[j].getLocation();
 					if (testLocation != null && isOverlapping(location, testLocation, true)) {
-						message = Messages.bind(Messages.links_overlappingResource, location.toOSString());
+						message = NLS.bind(Messages.links_overlappingResource, location.toOSString());
 						return new ResourceStatus(IResourceStatus.OVERLAPPING_LOCATION, resource.getFullPath(), message);
 					}
 				}
@@ -2050,13 +2050,13 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		char[] chars = OS.INVALID_RESOURCE_CHARACTERS;
 		for (int i = 0; i < chars.length; i++)
 			if (segment.indexOf(chars[i]) != -1) {
-				message = Messages.bind(Messages.resources_invalidCharInName, String.valueOf(chars[i]), segment);
+				message = NLS.bind(Messages.resources_invalidCharInName, String.valueOf(chars[i]), segment);
 				return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 			}
 
 		/* test invalid OS names */
 		if (!OS.isNameValid(segment)) {
-			message = Messages.bind(Messages.resources_invalidName, segment);
+			message = NLS.bind(Messages.resources_invalidName, segment);
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 		}
 		return Status.OK_STATUS;
@@ -2099,7 +2099,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 
 		/* path must not have a device separator */
 		if (path.getDevice() != null) {
-			message = Messages.bind(Messages.resources_invalidCharInPath, String.valueOf(IPath.DEVICE_SEPARATOR), path);
+			message = NLS.bind(Messages.resources_invalidCharInPath, String.valueOf(IPath.DEVICE_SEPARATOR), path);
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 		}
 
@@ -2111,7 +2111,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 
 		/* path must be absolute */
 		if (!path.isAbsolute()) {
-			message = Messages.bind(Messages.resources_mustBeAbsolute, path);
+			message = NLS.bind(Messages.resources_mustBeAbsolute, path);
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 		}
 
@@ -2121,13 +2121,13 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			if (numberOfSegments == ICoreConstants.PROJECT_SEGMENT_LENGTH) {
 				return validateName(path.segment(0), IResource.PROJECT);
 			} else if (type == IResource.PROJECT) {
-				message = Messages.bind(Messages.resources_projectPath, path);
+				message = NLS.bind(Messages.resources_projectPath, path);
 				return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 			}
 		}
 		if ((type & (IResource.FILE | IResource.FOLDER)) != 0) {
 			if (numberOfSegments < ICoreConstants.MINIMUM_FILE_SEGMENT_LENGTH) {
-				message = Messages.bind(Messages.resources_resourcePath, path);
+				message = NLS.bind(Messages.resources_resourcePath, path);
 				return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 			}
 			int fileFolderType = type &= ~IResource.PROJECT;
@@ -2145,7 +2145,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			}
 			return Status.OK_STATUS;
 		}
-		message = Messages.bind(Messages.resources_invalidPath, path);
+		message = NLS.bind(Messages.resources_invalidPath, path);
 		return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 	}
 
@@ -2169,7 +2169,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		//check that the location is absolute
 		if (!location.isAbsolute()) {
 			if (location.segmentCount() > 0)
-				message = Messages.bind(Messages.pathvar_undefined, location.toOSString(), location.segment(0));
+				message = NLS.bind(Messages.pathvar_undefined, location.toOSString(), location.segment(0));
 			else
 				message = Messages.links_noPath;
 			return new ResourceStatus(IResourceStatus.VARIABLE_NOT_DEFINED, null, message);
@@ -2180,7 +2180,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		// test if the given location overlaps the default default location
 		IPath defaultDefaultLocation = Platform.getLocation();
 		if (isOverlapping(location, defaultDefaultLocation, true)) {
-			message = Messages.bind(Messages.resources_overlapLocal, location, defaultDefaultLocation);
+			message = NLS.bind(Messages.resources_overlapLocal, location, defaultDefaultLocation);
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 		}
 		// Iterate over each known project and ensure that the location does not
@@ -2199,7 +2199,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			if (project.equals(context) && definedLocalLocation.equals(location))
 				continue;
 			if (isOverlapping(location, definedLocalLocation, true)) {
-				message = Messages.bind(Messages.resources_overlapLocal, location, definedLocalLocation);
+				message = NLS.bind(Messages.resources_overlapLocal, location, definedLocalLocation);
 				return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 			}
 		}
@@ -2217,7 +2217,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 					if (children[i].isLinked()) {
 						IPath testLocation = children[i].getLocation();
 						if (testLocation != null && isOverlapping(testLocation, location, false)) {
-							message = Messages.bind(Messages.links_locationOverlapsLink, location.toOSString());
+							message = NLS.bind(Messages.links_locationOverlapsLink, location.toOSString());
 							return new ResourceStatus(IResourceStatus.OVERLAPPING_LOCATION, context.getFullPath(), message);
 						}
 					}

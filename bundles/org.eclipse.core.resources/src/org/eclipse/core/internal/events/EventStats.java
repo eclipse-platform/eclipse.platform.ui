@@ -103,30 +103,30 @@ public class EventStats {
 		}
 		//dump stats
 		out.println("---------------------------------------------------------------"); //$NON-NLS-1$
-		out.println(Messages.bind(Messages.utils_snapshots, Integer.toString(snapshotCount), Long.toString(snapshotTime)));
+		out.println(NLS.bind(Messages.utils_snapshots, Integer.toString(snapshotCount), Long.toString(snapshotTime)));
 		for (int i = 0; i < allStats.length; i++) {
 			EventStats stats = allStats[i];
-			out.println(Messages.bind(Messages.utils_stats, stats.getName()));
+			out.println(NLS.bind(Messages.utils_stats, stats.getName()));
 
 			int notifyCount = stats.getNotifyCount();
 			if (notifyCount > 0)
-				out.println(Messages.bind(Messages.utils_notifications, Integer.toString(notifyCount), Integer.toString((int) (notifyCount * 100.0 / totalNotifications))));
+				out.println(NLS.bind(Messages.utils_notifications, Integer.toString(notifyCount), Integer.toString((int) (notifyCount * 100.0 / totalNotifications))));
 
 			long notifyTime = stats.getNotifyRunningTime();
 			if (notifyTime > 0)
-				out.println(Messages.bind(Messages.utils_notifyTime, Long.toString(notifyTime), Integer.toString((int) (notifyTime * 100.0 / totalNotifyTime))));
+				out.println(NLS.bind(Messages.utils_notifyTime, Long.toString(notifyTime), Integer.toString((int) (notifyTime * 100.0 / totalNotifyTime))));
 
 			int buildCount = stats.getBuildCount();
 			if (buildCount > 0)
-				out.println(Messages.bind(Messages.utils_builds, Integer.toString(buildCount), Integer.toString((int) (buildCount * 100.0 / totalBuilds))));
+				out.println(NLS.bind(Messages.utils_builds, Integer.toString(buildCount), Integer.toString((int) (buildCount * 100.0 / totalBuilds))));
 
 			long buildTime = stats.getBuildRunningTime();
 			if (buildTime > 0)
-				out.println(Messages.bind(Messages.utils_buildTime, Long.toString(buildTime), Integer.toString((int) (buildTime * 100.0 / totalBuildTime))));
+				out.println(NLS.bind(Messages.utils_buildTime, Long.toString(buildTime), Integer.toString((int) (buildTime * 100.0 / totalBuildTime))));
 
 			int exceptions = stats.getExceptionCount();
 			if (exceptions > 0)
-				out.println(Messages.bind(Messages.utils_exceptions, Integer.toString(exceptions), Integer.toString((int) (exceptions * 100.0 / totalExceptions))));
+				out.println(NLS.bind(Messages.utils_exceptions, Integer.toString(exceptions), Integer.toString((int) (exceptions * 100.0 / totalExceptions))));
 
 			out.println(""); //$NON-NLS-1$
 		}

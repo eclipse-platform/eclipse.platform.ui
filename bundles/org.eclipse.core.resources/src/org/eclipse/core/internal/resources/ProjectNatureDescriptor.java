@@ -40,7 +40,7 @@ public class ProjectNatureDescriptor implements IProjectNatureDescriptor {
 	}
 
 	protected void fail() throws CoreException {
-		fail(Messages.bind(Messages.natures_invalidDefinition, id));
+		fail(NLS.bind(Messages.natures_invalidDefinition, id));
 	}
 
 	protected void fail(String reason) throws CoreException {

@@ -102,7 +102,7 @@ public abstract class CoreFileSystemLibrary {
 		} catch (UnsatisfiedLinkError e) {
 			if (!loggedFailedGetAttributes) {
 				loggedFailedGetAttributes = true;
-				String message = Messages.bind(Messages.resources_getResourceAttributesFailed, fileName);
+				String message = NLS.bind(Messages.resources_getResourceAttributesFailed, fileName);
 				ResourceStatus status = new ResourceStatus(IStatus.INFO, new Path(fileName), message);
 				ResourcesPlugin.getPlugin().getLog().log(status);
 			}
@@ -209,7 +209,7 @@ public abstract class CoreFileSystemLibrary {
 
 	private static void logMissingNativeLibrary(UnsatisfiedLinkError e) {
 		String libName = System.mapLibraryName(LIBRARY_NAME);
-		String message = Messages.bind(Messages.localstore_couldNotLoadLibrary, libName);
+		String message = NLS.bind(Messages.localstore_couldNotLoadLibrary, libName);
 		ResourceStatus status = new ResourceStatus(IStatus.INFO, null, message, null);
 		ResourcesPlugin.getPlugin().getLog().log(status);
 	}
@@ -235,7 +235,7 @@ public abstract class CoreFileSystemLibrary {
 		}
 		if (isUnicode ? internalSetResourceAttributesW(fileName.toCharArray(), attributes) : internalSetResourceAttributes(Convert.toPlatformBytes(fileName), attributes))
 			return;
-		String message = Messages.bind(Messages.resources_setResourceAttributesFailed, fileName);
+		String message = NLS.bind(Messages.resources_setResourceAttributesFailed, fileName);
 		throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, new Path(fileName), message, null);
 	}
 

@@ -50,7 +50,7 @@ public class PropertyStore {
 			cursor.close();
 			return exists;
 		} catch (Exception e) {
-			String message = Messages.bind(Messages.properties_couldNotReadProp, searchKey.getQualifier(), searchKey.getLocalName());
+			String message = NLS.bind(Messages.properties_couldNotReadProp, searchKey.getQualifier(), searchKey.getLocalName());
 			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, searchKey.getResourceName().getPath(), message, e);
 		}
 	}
@@ -64,7 +64,7 @@ public class PropertyStore {
 			ObjectID valueID = store.createObject(value);
 			store.getIndex().insert(key.toBytes(), valueID);
 		} catch (Exception e) {
-			String message = Messages.bind(Messages.properties_couldNotWriteProp, key.getQualifier(), key.getLocalName());
+			String message = NLS.bind(Messages.properties_couldNotWriteProp, key.getQualifier(), key.getLocalName());
 			throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, key.getResourceName().getPath(), message, e);
 		}
 	}
@@ -84,7 +84,7 @@ public class PropertyStore {
 			}
 			cursor.close();
 		} catch (Exception e) {
-			String message = Messages.bind(Messages.properties_couldNotDeleteProp, key.getQualifier(), key.getLocalName());
+			String message = NLS.bind(Messages.properties_couldNotDeleteProp, key.getQualifier(), key.getLocalName());
 			throw new ResourceException(IResourceStatus.FAILED_DELETE_LOCAL, resourceName.getPath(), message, e);
 		}
 		return wasFound;
@@ -103,7 +103,7 @@ public class PropertyStore {
 			}
 			cursor.close();
 		} catch (Exception e) {
-			String message = Messages.bind(Messages.properties_couldNotWriteProp, key.getQualifier(), key.getLocalName());
+			String message = NLS.bind(Messages.properties_couldNotWriteProp, key.getQualifier(), key.getLocalName());
 			throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, key.getResourceName().getPath(), message, e);
 		}
 	}

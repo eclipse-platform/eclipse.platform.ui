@@ -39,7 +39,7 @@ public class CollectSyncStatusVisitor extends RefreshLocalVisitor {
 	}
 
 	protected void changed(Resource target) {
-		String message = Messages.bind(Messages.localstore_resourceIsOutOfSync, target.getFullPath());
+		String message = NLS.bind(Messages.localstore_resourceIsOutOfSync, target.getFullPath());
 		status.add(new ResourceStatus(IResourceStatus.OUT_OF_SYNC_LOCAL, target.getFullPath(), message));
 		affectedResources.add(target);
 		resourceChanged = true;

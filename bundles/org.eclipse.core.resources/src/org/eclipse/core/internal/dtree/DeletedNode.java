@@ -12,6 +12,7 @@ package org.eclipse.core.internal.dtree;
 
 import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.NLS;
 
 /**
  * A <code>DeletedNode</code> represents a node that has been deleted in a 
@@ -42,7 +43,7 @@ public class DeletedNode extends AbstractDataTreeNode {
 	 */
 	AbstractDataTreeNode childAt(String localName) {
 		/* deleted nodes do not have children */
-		throw new ObjectNotFoundException(Messages.bind(Messages.dtree_missingChild, localName));
+		throw new ObjectNotFoundException(NLS.bind(Messages.dtree_missingChild, localName));
 	}
 
 	/**

@@ -182,7 +182,7 @@ public class ProjectPreferences extends EclipsePreferences {
 					try {
 						fileInWorkspace.delete(true, null);
 					} catch (CoreException e) {
-						String message = Messages.bind(Messages.preferences_deleteException, fileInWorkspace.getFullPath());
+						String message = NLS.bind(Messages.preferences_deleteException, fileInWorkspace.getFullPath());
 						log(new Status(IStatus.WARNING, ResourcesPlugin.PI_RESOURCES, IStatus.WARNING, message, null));
 					}
 				}
@@ -193,7 +193,7 @@ public class ProjectPreferences extends EclipsePreferences {
 			try {
 				table.store(output, null);
 			} catch (IOException e) {
-				String message = Messages.bind(Messages.preferences_saveProblems, absolutePath());
+				String message = NLS.bind(Messages.preferences_saveProblems, absolutePath());
 				log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, message, e));
 				throw new BackingStoreException(message);
 			} finally {
@@ -227,7 +227,7 @@ public class ProjectPreferences extends EclipsePreferences {
 				fileInWorkspace.create(input, IResource.NONE, null);
 			}
 		} catch (CoreException e) {
-			String message = Messages.bind(Messages.preferences_saveProblems, fileInWorkspace.getFullPath());
+			String message = NLS.bind(Messages.preferences_saveProblems, fileInWorkspace.getFullPath());
 			log(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, e));
 			throw new BackingStoreException(message);
 		}
@@ -248,11 +248,11 @@ public class ProjectPreferences extends EclipsePreferences {
 			input = new BufferedInputStream(localFile.getContents(true));
 			fromDisk.load(input);
 		} catch (CoreException e) {
-			String message = Messages.bind(Messages.preferences_loadException, localFile.getFullPath());
+			String message = NLS.bind(Messages.preferences_loadException, localFile.getFullPath());
 			log(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, e));
 			throw new BackingStoreException(message);
 		} catch (IOException e) {
-			String message = Messages.bind(Messages.preferences_loadException, localFile.getFullPath());
+			String message = NLS.bind(Messages.preferences_loadException, localFile.getFullPath());
 			log(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, e));
 			throw new BackingStoreException(message);
 		} finally {
@@ -279,7 +279,7 @@ public class ProjectPreferences extends EclipsePreferences {
 		Preferences node = root.node(ProjectScope.SCOPE).node(project).node(qualifier);
 		String message = null;
 		try {
-			message = Messages.bind(Messages.preferences_syncException, node.absolutePath());
+			message = NLS.bind(Messages.preferences_syncException, node.absolutePath());
 			if (!(node instanceof ProjectPreferences))
 				return;
 			ProjectPreferences projectPrefs = (ProjectPreferences) node;
@@ -297,7 +297,7 @@ public class ProjectPreferences extends EclipsePreferences {
 	}
 
 	static void removeNode(Preferences node) throws CoreException {
-		String message = Messages.bind(Messages.preferences_removeNodeException, node.absolutePath());
+		String message = NLS.bind(Messages.preferences_removeNodeException, node.absolutePath());
 		try {
 			node.removeNode();
 		} catch (BackingStoreException e) {

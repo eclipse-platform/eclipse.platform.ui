@@ -66,7 +66,7 @@ public class PropertyManager implements IManager, ILifecycleListener {
 		if (!store.isRunning()) {
 			//if the store is not running then the resource is in the process of being deleted, 
 			//so report the error as if the resource was not found
-			String message = Messages.bind(Messages.resources_mustExist, target.getFullPath());
+			String message = NLS.bind(Messages.resources_mustExist, target.getFullPath());
 			throw new ResourceException(IResourceStatus.RESOURCE_NOT_FOUND, target.getFullPath(), message, null);
 		}
 	}
@@ -181,7 +181,7 @@ public class PropertyManager implements IManager, ILifecycleListener {
 			Resource host = getPropertyHost(target);
 			ResourceInfo info = host.getResourceInfo(false, false);
 			if (info == null) {
-				String message = Messages.bind(Messages.properties_storeNotAvailable, target.getFullPath());
+				String message = NLS.bind(Messages.properties_storeNotAvailable, target.getFullPath());
 				throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, target.getFullPath(), message, null);
 			}
 			PropertyStore store = info.getPropertyStore();
@@ -191,7 +191,7 @@ public class PropertyManager implements IManager, ILifecycleListener {
 		} catch (Exception e) {
 			if (e instanceof CoreException)
 				throw (CoreException) e;
-			String message = Messages.bind(Messages.properties_storeNotAvailable, target.getFullPath());
+			String message = NLS.bind(Messages.properties_storeNotAvailable, target.getFullPath());
 			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, target.getFullPath(), message, e);
 		}
 	}

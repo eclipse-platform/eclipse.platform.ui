@@ -200,14 +200,14 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 
 		char first = name.charAt(0);
 		if (!Character.isLetter(first) && first != '_') {
-			message = Messages.bind(Messages.pathvar_beginLetter, String.valueOf(first));
+			message = NLS.bind(Messages.pathvar_beginLetter, String.valueOf(first));
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 		}
 
 		for (int i = 1; i < name.length(); i++) {
 			char following = name.charAt(i);
 			if (!Character.isLetter(following) && !Character.isDigit(following) && following != '_') {
-				message = Messages.bind(Messages.pathvar_invalidChar, String.valueOf(following));
+				message = NLS.bind(Messages.pathvar_invalidChar, String.valueOf(following));
 				return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 			}
 		}

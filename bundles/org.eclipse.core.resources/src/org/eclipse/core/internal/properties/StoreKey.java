@@ -95,7 +95,7 @@ public class StoreKey {
 				writeBytes(buffer, path);
 				// If prefix matching, cannot allow other fields to be specified
 				if (qualifier != null || localName != null) {
-					String message = Messages.bind(Messages.properties_invalidPropName, qualifier, localName);
+					String message = NLS.bind(Messages.properties_invalidPropName, qualifier, localName);
 					throw new ResourceException(IResourceStatus.INVALID_VALUE, null, message, null);
 				}
 			} else {
@@ -110,7 +110,7 @@ public class StoreKey {
 					writeNullTerminated(buffer, localName);
 			} else if (localName != null) {
 				// Specifying a local name without a qualifier is illegal
-				String message = Messages.bind(Messages.properties_invalidPropName, qualifier, localName);
+				String message = NLS.bind(Messages.properties_invalidPropName, qualifier, localName);
 				throw new ResourceException(IResourceStatus.INVALID_VALUE, null, message, null);
 			}
 			value = buffer.toByteArray();

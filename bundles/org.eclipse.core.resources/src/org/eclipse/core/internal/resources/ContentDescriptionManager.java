@@ -138,7 +138,7 @@ public class ContentDescriptionManager implements IManager {
 			IContentTypeManager contentTypeManager = Platform.getContentTypeManager();			
 			return contentTypeManager.getDescriptionFor(contents, file.getName(), IContentDescription.ALL);
 		} catch (IOException e) {
-			String message = Messages.bind(Messages.resources_errorContentDescription, file.getFullPath());		
+			String message = NLS.bind(Messages.resources_errorContentDescription, file.getFullPath());		
 			throw new ResourceException(IResourceStatus.FAILED_DESCRIBING_CONTENTS, file.getFullPath(), message, e);
 		} finally {
 			file.ensureClosed(contents);

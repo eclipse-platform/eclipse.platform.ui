@@ -136,7 +136,7 @@ public class RefreshJob extends WorkspaceJob {
 						longestRefresh = refreshTime;
 					//show occasional progress
 					if (refreshCount % 100 == 0)
-						monitor.subTask(Messages.bind(Messages.refresh_task, Integer.toString(fRequests.size())));
+						monitor.subTask(NLS.bind(Messages.refresh_task, Integer.toString(fRequests.size())));
 					if (refreshCount % 1000 == 0) {
 						//be polite to other threads (no effect on some platforms)
 						Thread.yield();

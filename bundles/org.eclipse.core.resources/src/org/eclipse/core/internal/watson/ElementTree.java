@@ -13,6 +13,7 @@ package org.eclipse.core.internal.watson;
 import java.util.HashMap;
 import org.eclipse.core.internal.dtree.*;
 import org.eclipse.core.internal.utils.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
@@ -222,7 +223,7 @@ public class ElementTree {
 
 	public ElementTreeDelta computeDeltaWith(ElementTree olderTree, IElementComparator comparator) {
 		if (olderTree == null || comparator == null) {
-			throw new IllegalArgumentException(Messages.bind(Messages.watson_nullArg, "ElementTree.computeDeltaWith")); //$NON-NLS-1$
+			throw new IllegalArgumentException(NLS.bind(Messages.watson_nullArg, "ElementTree.computeDeltaWith")); //$NON-NLS-1$
 		}
 
 		return new ElementTreeDelta(olderTree, this, comparator);
@@ -249,7 +250,7 @@ public class ElementTree {
 
 	public ElementTreeDelta computeDeltaWith(ElementTree olderTree, IElementComparator comparator, IPath path) {
 		if (olderTree == null || comparator == null)
-			throw new IllegalArgumentException(Messages.bind(Messages.watson_nullArg, "ElementTree.computeDeltaWith")); //$NON-NLS-1$
+			throw new IllegalArgumentException(NLS.bind(Messages.watson_nullArg, "ElementTree.computeDeltaWith")); //$NON-NLS-1$
 		/* can optimize certain cases when computing deltas on the whole tree */
 		if (path.isRoot())
 			return new ElementTreeDelta(olderTree, this, comparator);
@@ -369,7 +370,7 @@ public class ElementTree {
 	 * Complains that an element was not found
 	 */
 	protected void elementNotFound(IPath key) {
-		throw new IllegalArgumentException(Messages.bind(Messages.watson_elementNotFound, key));
+		throw new IllegalArgumentException(NLS.bind(Messages.watson_elementNotFound, key));
 	}
 
 	/**
@@ -750,7 +751,7 @@ public class ElementTree {
 	 */
 	public ElementTree mergeDeltaChain(IPath path, ElementTree[] trees) {
 		if (path == null || trees == null) {
-			throw new IllegalArgumentException(Messages.bind(Messages.watson_nullArg, "ElementTree.mergeDeltaChain")); //$NON-NLS-1$
+			throw new IllegalArgumentException(NLS.bind(Messages.watson_nullArg, "ElementTree.mergeDeltaChain")); //$NON-NLS-1$
 		}
 
 		/* The tree has to be open */

@@ -280,7 +280,7 @@ public class RefreshLocalVisitor implements IUnifiedTreeVisitor, ILocalStoreCons
 				}
 			} else {
 				if (node.existsInFileSystem() && !Path.EMPTY.isValidSegment(node.getLocalName())) {
-					String message = Messages.bind(Messages.resources_invalidResourceName, node.getLocalName());
+					String message = NLS.bind(Messages.resources_invalidResourceName, node.getLocalName());
 					errors.merge(new ResourceStatus(IResourceStatus.INVALID_RESOURCE_NAME, message));
 					return false;
 				}

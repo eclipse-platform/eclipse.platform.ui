@@ -157,7 +157,7 @@ public class CopyVisitor implements IUnifiedTreeVisitor {
 			if (node.getLocalLocation() == null) {
 				//should still be a best effort copy
 				IPath path = node.getResource().getFullPath();
-				String message = Messages.bind(Messages.localstore_locationUndefined, path);
+				String message = NLS.bind(Messages.localstore_locationUndefined, path);
 				status.add(new ResourceStatus(IResourceStatus.FAILED_READ_LOCAL, path, message, null));
 				return false;
 			}
@@ -170,14 +170,14 @@ public class CopyVisitor implements IUnifiedTreeVisitor {
 				//if source still doesn't exist, then fail because we can't copy a missing resource
 				if (!node.existsInFileSystem()) {
 					IPath path = node.getResource().getFullPath();
-					String message = Messages.bind(Messages.resources_mustExist, path);
+					String message = NLS.bind(Messages.resources_mustExist, path);
 					status.add(new ResourceStatus(IResourceStatus.RESOURCE_NOT_FOUND, path, message, null));
 					return false;
 				}
 			}
 			if (!force && !wasSynchronized) {
 				IPath path = node.getResource().getFullPath();
-				String message = Messages.bind(Messages.localstore_resourceIsOutOfSync, path);
+				String message = NLS.bind(Messages.localstore_resourceIsOutOfSync, path);
 				status.add(new ResourceStatus(IResourceStatus.OUT_OF_SYNC_LOCAL, path, message, null));
 				return true;
 			}

@@ -14,6 +14,7 @@ import java.util.Map;
 import org.eclipse.core.internal.utils.Assert;
 import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
@@ -53,7 +54,7 @@ public class Marker extends PlatformObject implements IMarker {
 	 */
 	private void checkInfo(MarkerInfo info) throws CoreException {
 		if (info == null) {
-			String message = Messages.bind(Messages.resources_markerNotFound, Long.toString(id));
+			String message = NLS.bind(Messages.resources_markerNotFound, Long.toString(id));
 			throw new ResourceException(new ResourceStatus(IResourceStatus.MARKER_NOT_FOUND, resource.getFullPath(), message));
 		}
 	}

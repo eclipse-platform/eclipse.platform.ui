@@ -17,6 +17,7 @@ import javax.xml.parsers.*;
 import org.eclipse.core.internal.localstore.SafeFileInputStream;
 import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.w3c.dom.*;
@@ -60,7 +61,7 @@ public class WorkspaceDescriptionReader implements IModelObjectConstants {
 	 * Log the exception.
 	 */
 	private void logNumberFormatException(String value, NumberFormatException e) {
-		String msg = Messages.bind(Messages.resources_readWorkspaceMetaValue, value);
+		String msg = NLS.bind(Messages.resources_readWorkspaceMetaValue, value);
 		IStatus status = new ResourceStatus(IResourceStatus.FAILED_READ_METADATA, null, msg, e);
 		ResourcesPlugin.getPlugin().getLog().log(status);
 	}

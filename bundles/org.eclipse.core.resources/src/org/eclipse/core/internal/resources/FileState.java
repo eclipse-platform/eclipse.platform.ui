@@ -53,14 +53,14 @@ public class FileState extends PlatformObject implements IFileState {
 			return description == null ? null : description.getCharset();
 		} catch (IOException e) {
 			failed = true;
-			String message = Messages.bind(Messages.history_errorContentDescription, getFullPath());		
+			String message = NLS.bind(Messages.history_errorContentDescription, getFullPath());		
 			throw new ResourceException(IResourceStatus.FAILED_DESCRIBING_CONTENTS, getFullPath(), message, e);
 		} finally {
 			try {
 				contents.close();
 			} catch (IOException e) {
 				if (!failed) {
-					String message = Messages.bind(Messages.history_errorContentDescription, getFullPath());		
+					String message = NLS.bind(Messages.history_errorContentDescription, getFullPath());		
 					throw new ResourceException(IResourceStatus.FAILED_DESCRIBING_CONTENTS, getFullPath(), message, e);
 				}
 			}

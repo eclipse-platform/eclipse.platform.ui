@@ -99,7 +99,7 @@ class ResourceTree implements IResourceTree {
 				return;
 			// If the destination already exists then we have a problem.
 			if (destination.exists()) {
-				String message = Messages.bind(Messages.resources_mustNotExist, destination.getFullPath());
+				String message = NLS.bind(Messages.resources_mustNotExist, destination.getFullPath());
 				IStatus status = new ResourceStatus(IStatus.ERROR, destination.getFullPath(), message);
 				// log the status but don't return until we try and move the rest of the resource information.
 				failed(status);
@@ -111,7 +111,7 @@ class ResourceTree implements IResourceTree {
 				propertyManager.copy(source, destination, IResource.DEPTH_ZERO);
 				propertyManager.deleteProperties(source, IResource.DEPTH_ZERO);
 			} catch (CoreException e) {
-				String message = Messages.bind(Messages.resources_errorPropertiesMove, source.getFullPath(), destination.getFullPath());
+				String message = NLS.bind(Messages.resources_errorPropertiesMove, source.getFullPath(), destination.getFullPath());
 				IStatus status = new ResourceStatus(IStatus.ERROR, source.getFullPath(), message, e);
 				// log the status but don't return until we try and move the rest of the resource information.
 				failed(status);
@@ -122,7 +122,7 @@ class ResourceTree implements IResourceTree {
 			try {
 				workspace.move((Resource) source, destination.getFullPath(), IResource.DEPTH_ZERO, updateFlags, false);
 			} catch (CoreException e) {
-				String message = Messages.bind(Messages.resources_errorMoving, source.getFullPath(), destination.getFullPath());
+				String message = NLS.bind(Messages.resources_errorMoving, source.getFullPath(), destination.getFullPath());
 				IStatus status = new ResourceStatus(IStatus.ERROR, source.getFullPath(), message, e);
 				// log the status but don't return until we try and move the rest of the resource information.
 				failed(status);
@@ -132,7 +132,7 @@ class ResourceTree implements IResourceTree {
 			try {
 				workspace.getMarkerManager().moved(source, destination, IResource.DEPTH_ZERO);
 			} catch (CoreException e) {
-				String message = Messages.bind(Messages.resources_errorMarkersDelete, source.getFullPath());
+				String message = NLS.bind(Messages.resources_errorMarkersDelete, source.getFullPath());
 				IStatus status = new ResourceStatus(IStatus.ERROR, source.getFullPath(), message, e);
 				failed(status);
 			}
@@ -156,7 +156,7 @@ class ResourceTree implements IResourceTree {
 				return;
 			// If the destination already exists then we have an error.
 			if (destination.exists()) {
-				String message = Messages.bind(Messages.resources_mustNotExist, destination.getFullPath());
+				String message = NLS.bind(Messages.resources_mustNotExist, destination.getFullPath());
 				IStatus status = new ResourceStatus(IStatus.ERROR, destination.getFullPath(), message);
 				failed(status);
 				return;
@@ -169,7 +169,7 @@ class ResourceTree implements IResourceTree {
 				propertyManager.copy(source, destination, depth);
 				propertyManager.deleteProperties(source, depth);
 			} catch (CoreException e) {
-				String message = Messages.bind(Messages.resources_errorPropertiesMove, source.getFullPath(), destination.getFullPath());
+				String message = NLS.bind(Messages.resources_errorPropertiesMove, source.getFullPath(), destination.getFullPath());
 				IStatus status = new ResourceStatus(IStatus.ERROR, source.getFullPath(), message, e);
 				// log the status but don't return until we try and move the rest of the resource info
 				failed(status);
@@ -180,7 +180,7 @@ class ResourceTree implements IResourceTree {
 			try {
 				workspace.move((Resource) source, destination.getFullPath(), depth, updateFlags, false);
 			} catch (CoreException e) {
-				String message = Messages.bind(Messages.resources_errorMoving, source.getFullPath(), destination.getFullPath());
+				String message = NLS.bind(Messages.resources_errorMoving, source.getFullPath(), destination.getFullPath());
 				IStatus status = new ResourceStatus(IStatus.ERROR, source.getFullPath(), message, e);
 				// log the status but don't return until we try and move the rest of the resource info
 				failed(status);
@@ -190,7 +190,7 @@ class ResourceTree implements IResourceTree {
 			try {
 				workspace.getMarkerManager().moved(source, destination, depth);
 			} catch (CoreException e) {
-				String message = Messages.bind(Messages.resources_errorMarkersDelete, source.getFullPath());
+				String message = NLS.bind(Messages.resources_errorMarkersDelete, source.getFullPath());
 				IStatus status = new ResourceStatus(IStatus.ERROR, source.getFullPath(), message, e);
 				failed(status);
 			}
@@ -222,7 +222,7 @@ class ResourceTree implements IResourceTree {
 			// rename the meta area and make changes in the tree.
 			if (isNameChange(source, destDescription)) {
 				if (destination.exists()) {
-					String message = Messages.bind(Messages.resources_mustNotExist, destination.getFullPath());
+					String message = NLS.bind(Messages.resources_mustNotExist, destination.getFullPath());
 					IStatus status = new ResourceStatus(IStatus.ERROR, destination.getFullPath(), message);
 					failed(status);
 					return false;
@@ -232,7 +232,7 @@ class ResourceTree implements IResourceTree {
 				try {
 					source.getPropertyManager().closePropertyStore(source);
 				} catch (CoreException e) {
-					String message = Messages.bind(Messages.properties_couldNotClose, source.getFullPath());
+					String message = NLS.bind(Messages.properties_couldNotClose, source.getFullPath());
 					IStatus status = new ResourceStatus(IStatus.ERROR, source.getFullPath(), message, e);
 					// log the status but don't return until we try and move the rest of the resource info
 					failed(status);
@@ -242,7 +242,7 @@ class ResourceTree implements IResourceTree {
 				try {
 					source.getLocalManager().getStore().move(oldMetaArea, newMetaArea, false, new NullProgressMonitor());
 				} catch (CoreException e) {
-					String message = Messages.bind(Messages.resources_moveMeta, oldMetaArea, newMetaArea);
+					String message = NLS.bind(Messages.resources_moveMeta, oldMetaArea, newMetaArea);
 					IStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_METADATA, destination.getFullPath(), message, e);
 					// log the status but don't return until we try and move the rest of the resource info
 					failed(status);
@@ -252,7 +252,7 @@ class ResourceTree implements IResourceTree {
 				try {
 					workspace.move(source, destination.getFullPath(), depth, updateFlags, true);
 				} catch (CoreException e) {
-					String message = Messages.bind(Messages.resources_errorMoving, source.getFullPath(), destination.getFullPath());
+					String message = NLS.bind(Messages.resources_errorMoving, source.getFullPath(), destination.getFullPath());
 					IStatus status = new ResourceStatus(IStatus.ERROR, source.getFullPath(), message, e);
 					// log the status but don't return until we try and move the rest of the resource info
 					failed(status);
@@ -268,7 +268,7 @@ class ResourceTree implements IResourceTree {
 				try {
 					workspace.getMarkerManager().moved(source, destination, depth);
 				} catch (CoreException e) {
-					String message = Messages.bind(Messages.resources_errorMarkersMove, source.getFullPath(), destination.getFullPath());
+					String message = NLS.bind(Messages.resources_errorMarkersMove, source.getFullPath(), destination.getFullPath());
 					IStatus status = new ResourceStatus(IStatus.ERROR, source.getFullPath(), message, e);
 					// log the status but don't return until we try and move the rest of the resource info
 					failed(status);
@@ -300,7 +300,7 @@ class ResourceTree implements IResourceTree {
 			try {
 				destination.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
 			} catch (CoreException e) {
-				String message = Messages.bind(Messages.resources_errorRefresh, destination.getFullPath());
+				String message = NLS.bind(Messages.resources_errorRefresh, destination.getFullPath());
 				IStatus status = new ResourceStatus(IStatus.ERROR, destination.getFullPath(), message, e);
 				failed(status);
 				return false;
@@ -348,7 +348,7 @@ class ResourceTree implements IResourceTree {
 				// Delete properties, generate marker deltas, and remove the node from the workspace tree.
 				((Resource) file).deleteResource(true, null);
 			} catch (CoreException e) {
-				String message = Messages.bind(Messages.resources_errorDeleting, file.getFullPath());
+				String message = NLS.bind(Messages.resources_errorDeleting, file.getFullPath());
 				IStatus status = new ResourceStatus(IStatus.ERROR, file.getFullPath(), message, e);
 				failed(status);
 			}
@@ -371,7 +371,7 @@ class ResourceTree implements IResourceTree {
 				// Delete properties, generate marker deltas, and remove the node from the workspace tree.
 				((Resource) folder).deleteResource(true, null);
 			} catch (CoreException e) {
-				String message = Messages.bind(Messages.resources_errorDeleting, folder.getFullPath());
+				String message = NLS.bind(Messages.resources_errorDeleting, folder.getFullPath());
 				IStatus status = new ResourceStatus(IStatus.ERROR, folder.getFullPath(), message, e);
 				failed(status);
 			}
@@ -397,7 +397,7 @@ class ResourceTree implements IResourceTree {
 			try {
 				project.deleteResource(false, null);
 			} catch (CoreException e) {
-				String message = Messages.bind(Messages.resources_errorDeleting, project.getFullPath());
+				String message = NLS.bind(Messages.resources_errorDeleting, project.getFullPath());
 				IStatus status = new ResourceStatus(IStatus.ERROR, project.getFullPath(), message, e);
 				// log the status but don't return until we try and delete the rest of the project info
 				failed(status);
@@ -407,7 +407,7 @@ class ResourceTree implements IResourceTree {
 			try {
 				workspace.getMetaArea().delete(project);
 			} catch (CoreException e) {
-				String message = Messages.bind(Messages.resources_deleteMeta, project.getFullPath());
+				String message = NLS.bind(Messages.resources_deleteMeta, project.getFullPath());
 				IStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_METADATA, project.getFullPath(), message, e);
 				// log the status but don't return until we try and delete the rest of the project info
 				failed(status);
@@ -499,7 +499,7 @@ class ResourceTree implements IResourceTree {
 	 */
 	private boolean internalDeleteFile(IFile file, int flags, IProgressMonitor monitor) {
 		try {
-			String message = Messages.bind(Messages.resources_deleting, file.getFullPath());
+			String message = NLS.bind(Messages.resources_deleting, file.getFullPath());
 			monitor.beginTask(message, Policy.totalWork);
 
 			// Do nothing if the file doesn't exist in the workspace.
@@ -535,7 +535,7 @@ class ResourceTree implements IResourceTree {
 				boolean inSync = isSynchronized(file, IResource.DEPTH_ZERO);
 				// only want to fail if the file still exists.
 				if (!inSync && file.getLocation().toFile().exists()) {
-					message = Messages.bind(Messages.localstore_resourceIsOutOfSync, file.getFullPath());
+					message = NLS.bind(Messages.localstore_resourceIsOutOfSync, file.getFullPath());
 					IStatus status = new ResourceStatus(IResourceStatus.OUT_OF_SYNC_LOCAL, file.getFullPath(), message);
 					failed(status);
 					// Indicate that the delete was unsuccessful.
@@ -556,7 +556,7 @@ class ResourceTree implements IResourceTree {
 				// Indicate that the delete was successful.
 				return true;
 			}
-			message = Messages.bind(Messages.resources_couldnotDelete, file.getLocation().toOSString());
+			message = NLS.bind(Messages.resources_couldnotDelete, file.getLocation().toOSString());
 			IStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, file.getFullPath(), message);
 			failed(status);
 			// Indicate that the delete was unsuccessful.
@@ -573,7 +573,7 @@ class ResourceTree implements IResourceTree {
 		Assert.isLegal(isValid);
 		try {
 			lock.acquire();
-			String message = Messages.bind(Messages.resources_deleting, folder.getFullPath());
+			String message = NLS.bind(Messages.resources_deleting, folder.getFullPath());
 			monitor.beginTask(message, Policy.totalWork);
 
 			// Do nothing if the folder doesn't exist in the workspace.
@@ -616,7 +616,7 @@ class ResourceTree implements IResourceTree {
 				java.io.File folderLocation = folder.getLocation().toFile();
 				success = Workspace.clear(folderLocation);
 			} catch (CoreException ce) {
-				message = Messages.bind(Messages.localstore_couldnotDelete, folder.getFullPath());					
+				message = NLS.bind(Messages.localstore_couldnotDelete, folder.getFullPath());					
 				MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_DELETE_LOCAL, message, ce);
 				if (ce.getStatus() != null)
 					status.merge(ce.getStatus());
@@ -630,7 +630,7 @@ class ResourceTree implements IResourceTree {
 			if (success) {
 				deletedFolder(folder);
 			} else {
-				message = Messages.bind(Messages.resources_couldnotDelete, folder.getLocation().toOSString());
+				message = NLS.bind(Messages.resources_couldnotDelete, folder.getLocation().toOSString());
 				IStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, folder.getFullPath(), message);
 				failed(status);
 			}
@@ -672,7 +672,7 @@ class ResourceTree implements IResourceTree {
 		try {
 			members = folder.members(IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
 		} catch (CoreException e) {
-			String message = Messages.bind(Messages.resources_errorMembers, folder.getFullPath());
+			String message = NLS.bind(Messages.resources_errorMembers, folder.getFullPath());
 			IStatus status = new ResourceStatus(IStatus.ERROR, folder.getFullPath(), message, e);
 			failed(status);
 			// Indicate that the delete was unsuccessful.
@@ -713,7 +713,7 @@ class ResourceTree implements IResourceTree {
 			// Indicate that the delete was successful.
 			return true;
 		}
-		String message = Messages.bind(Messages.resources_couldnotDelete, folder.getLocation().toOSString());
+		String message = NLS.bind(Messages.resources_couldnotDelete, folder.getLocation().toOSString());
 		IStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, folder.getFullPath(), message);
 		failed(status);
 		// Indicate that the delete was unsuccessful.
@@ -727,7 +727,7 @@ class ResourceTree implements IResourceTree {
 		Assert.isLegal(isValid);
 		try {
 			lock.acquire();
-			String message = Messages.bind(Messages.resources_deleting, project.getFullPath());
+			String message = NLS.bind(Messages.resources_deleting, project.getFullPath());
 			monitor.beginTask(message, Policy.totalWork);
 			// Do nothing if the project doesn't exist in the workspace tree.
 			if (!project.exists())
@@ -753,7 +753,7 @@ class ResourceTree implements IResourceTree {
 					if (success) {
 						deletedProject(project);
 					} else {
-						message = Messages.bind(Messages.resources_couldnotDelete, project.getLocation().toOSString());
+						message = NLS.bind(Messages.resources_couldnotDelete, project.getLocation().toOSString());
 						IStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, project.getFullPath(), message);
 						failed(status);
 					}
@@ -774,7 +774,7 @@ class ResourceTree implements IResourceTree {
 						if (defaultLocation)
 							success = Workspace.clear(projectLocation);
 					} catch (CoreException ce) {
-						message = Messages.bind(Messages.localstore_couldnotDelete, project.getFullPath());					
+						message = NLS.bind(Messages.localstore_couldnotDelete, project.getFullPath());					
 						MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_DELETE_LOCAL, message, ce);
 						if (ce.getStatus() != null)
 							status.merge(ce.getStatus());
@@ -792,7 +792,7 @@ class ResourceTree implements IResourceTree {
 			if (success)
 				deletedProject(project);
 			else {
-				message = Messages.bind(Messages.localstore_couldnotDelete, project.getFullPath());
+				message = NLS.bind(Messages.localstore_couldnotDelete, project.getFullPath());
 				IStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, project.getFullPath(), message);
 				failed(status);
 			}
@@ -808,7 +808,7 @@ class ResourceTree implements IResourceTree {
 	 */
 	private void moveProjectContent(IProject source, IProjectDescription destDescription, int flags, IProgressMonitor monitor) throws CoreException {
 		try {
-			String message = Messages.bind(Messages.resources_moving, source.getFullPath());
+			String message = NLS.bind(Messages.resources_moving, source.getFullPath());
 			monitor.beginTask(message, 10);
 			IProjectDescription srcDescription = source.getDescription();
 			// If the locations are the same (and non-default) then there is nothing to do.
@@ -843,7 +843,7 @@ class ResourceTree implements IResourceTree {
 				IResource[] children = source.members();
 				for (int i = 0; i < children.length; i++) {
 					if (children[i].isLinked()) {
-						message = Messages.bind(Messages.resources_moving, children[i].getFullPath());
+						message = NLS.bind(Messages.resources_moving, children[i].getFullPath());
 						monitor.subTask(message);
 						java.io.File sourceFile = children[i].getLocation().toFile();
 						java.io.File destFile = destLocation.append(children[i].getName()).toFile();
@@ -869,7 +869,7 @@ class ResourceTree implements IResourceTree {
 		Assert.isLegal(isValid);
 		try {
 			lock.acquire();
-			String message = Messages.bind(Messages.resources_moving, source.getFullPath());
+			String message = NLS.bind(Messages.resources_moving, source.getFullPath());
 			monitor.subTask(message);
 
 			// These pre-conditions should all be ok but just in case...
@@ -883,7 +883,7 @@ class ResourceTree implements IResourceTree {
 			// If the file is not in sync with the local file system and force is false,
 			// then signal that we have an error.
 			if (!force && !isSynchronized(source, IResource.DEPTH_INFINITE)) {
-				message = Messages.bind(Messages.localstore_resourceIsOutOfSync, source.getFullPath());
+				message = NLS.bind(Messages.localstore_resourceIsOutOfSync, source.getFullPath());
 				IStatus status = new ResourceStatus(IResourceStatus.OUT_OF_SYNC_LOCAL, source.getFullPath(), message);
 				failed(status);
 				return;
@@ -932,7 +932,7 @@ class ResourceTree implements IResourceTree {
 		Assert.isLegal(isValid);
 		try {
 			lock.acquire();
-			String message = Messages.bind(Messages.resources_moving, source.getFullPath());
+			String message = NLS.bind(Messages.resources_moving, source.getFullPath());
 			monitor.subTask(message);
 
 			// These pre-conditions should all be ok but just in case...
@@ -944,7 +944,7 @@ class ResourceTree implements IResourceTree {
 			// try and move all resources, doing it in a best-effort manner.
 			boolean force = (flags & IResource.FORCE) != 0;
 			if (!force && !isSynchronized(source, IResource.DEPTH_INFINITE)) {
-				message = Messages.bind(Messages.localstore_resourceIsOutOfSync, source.getFullPath());
+				message = NLS.bind(Messages.localstore_resourceIsOutOfSync, source.getFullPath());
 				IStatus status = new ResourceStatus(IStatus.ERROR, source.getFullPath(), message);
 				failed(status);
 				return;
@@ -981,7 +981,7 @@ class ResourceTree implements IResourceTree {
 				movedFolderSubtree(source, destination);
 				updateTimestamps(destination, isDeep);
 			} else {
-				message = Messages.bind(Messages.localstore_couldNotCreateFolder, destination.getLocation().toOSString());
+				message = NLS.bind(Messages.localstore_couldNotCreateFolder, destination.getLocation().toOSString());
 				IStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, destination.getFullPath(), message);
 				failed(status);
 			}
@@ -1032,7 +1032,7 @@ class ResourceTree implements IResourceTree {
 		try {
 			members = project.members(IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
 		} catch (CoreException e) {
-			String message = Messages.bind(Messages.resources_errorMembers, project.getFullPath());
+			String message = NLS.bind(Messages.resources_errorMembers, project.getFullPath());
 			IStatus status = new ResourceStatus(IStatus.ERROR, project.getFullPath(), message, e);
 			failed(status);
 			// Indicate that the delete was unsuccessful.
@@ -1068,7 +1068,7 @@ class ResourceTree implements IResourceTree {
 				if (file.getType() != IResource.FILE) {
 					// We should never get here since the only reason we skipped it above was because
 					// it was a file named .project.
-					String message = Messages.bind(Messages.resources_couldnotDelete, file.getFullPath());
+					String message = NLS.bind(Messages.resources_couldnotDelete, file.getFullPath());
 					IStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, file.getFullPath(), message);
 					failed(status);
 					// Indicate that the delete was unsuccessful.
@@ -1076,7 +1076,7 @@ class ResourceTree implements IResourceTree {
 				}
 				boolean deletedProjectFile = internalDeleteFile((IFile) file, flags, Policy.monitorFor(null));
 				if (!deletedProjectFile) {
-					String message = Messages.bind(Messages.resources_couldnotDelete, file.getFullPath());
+					String message = NLS.bind(Messages.resources_couldnotDelete, file.getFullPath());
 					IStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, file.getFullPath(), message);
 					failed(status);
 					// Indicate that the delete was unsuccessful.
@@ -1111,7 +1111,7 @@ class ResourceTree implements IResourceTree {
 			// Indicate that the delete was successful.
 			return true;
 		}
-		String message = Messages.bind(Messages.resources_couldnotDelete, project.getLocation().toOSString());
+		String message = NLS.bind(Messages.resources_couldnotDelete, project.getLocation().toOSString());
 		IStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, project.getFullPath(), message);
 		failed(status);
 		// Indicate that the delete was unsuccessful.
@@ -1125,7 +1125,7 @@ class ResourceTree implements IResourceTree {
 		Assert.isLegal(isValid);
 		try {
 			lock.acquire();
-			String message = Messages.bind(Messages.resources_moving, source.getFullPath());
+			String message = NLS.bind(Messages.resources_moving, source.getFullPath());
 			monitor.beginTask(message, Policy.totalWork);
 
 			// Double-check this pre-condition.
@@ -1143,7 +1143,7 @@ class ResourceTree implements IResourceTree {
 			boolean force = (flags & IResource.FORCE) != 0;
 			if (!force && !isSynchronized(source, IResource.DEPTH_INFINITE)) {
 				// FIXME: make this a best effort move?
-				message = Messages.bind(Messages.localstore_resourceIsOutOfSync, source.getFullPath());
+				message = NLS.bind(Messages.localstore_resourceIsOutOfSync, source.getFullPath());
 				IStatus status = new ResourceStatus(IResourceStatus.OUT_OF_SYNC_LOCAL, source.getFullPath(), message);
 				failed(status);
 				return;
@@ -1153,7 +1153,7 @@ class ResourceTree implements IResourceTree {
 			try {
 				moveProjectContent(source, description, flags, Policy.subMonitorFor(monitor, Policy.totalWork * 3 / 4));
 			} catch (CoreException e) {
-				message = Messages.bind(Messages.localstore_couldNotMove, source.getFullPath());
+				message = NLS.bind(Messages.localstore_couldNotMove, source.getFullPath());
 				IStatus status = new ResourceStatus(IStatus.ERROR, source.getFullPath(), message, e);
 				failed(status);
 				return;

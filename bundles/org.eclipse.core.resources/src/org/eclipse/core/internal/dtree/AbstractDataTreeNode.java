@@ -13,6 +13,7 @@ package org.eclipse.core.internal.dtree;
 import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.internal.utils.StringPool;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.NLS;
 
 /**
  * This class and its subclasses are used to represent nodes of AbstractDataTrees.
@@ -198,7 +199,7 @@ public abstract class AbstractDataTreeNode {
 		if (node != null) {
 			return node;
 		}
-		throw new ObjectNotFoundException(Messages.bind(Messages.dtree_missingChild, localName));
+		throw new ObjectNotFoundException(NLS.bind(Messages.dtree_missingChild, localName));
 	}
 
 	/**
@@ -509,7 +510,7 @@ public abstract class AbstractDataTreeNode {
 		if (i >= 0) {
 			children[i] = node;
 		} else {
-			throw new ObjectNotFoundException(Messages.bind(Messages.dtree_missingChild, localName));
+			throw new ObjectNotFoundException(NLS.bind(Messages.dtree_missingChild, localName));
 		}
 	}
 

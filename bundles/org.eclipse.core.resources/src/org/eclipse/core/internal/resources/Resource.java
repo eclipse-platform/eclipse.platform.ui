@@ -155,12 +155,12 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		java.io.File localFile = workspace.getPathVariableManager().resolvePath(localLocation).toFile();
 		boolean localExists = localFile.exists();
 		if (!allowMissingLocal && !localExists) {
-			String msg = Messages.bind(Messages.links_localDoesNotExist, localFile);
+			String msg = NLS.bind(Messages.links_localDoesNotExist, localFile);
 			throw new ResourceException(IResourceStatus.NOT_FOUND_LOCAL, getFullPath(), msg, null);
 		}
 		//resource type and file system type must match
 		if (localExists && ((getType() == IResource.FOLDER) != localFile.isDirectory())) {
-			String msg = Messages.bind(Messages.links_wrongLocalType, getFullPath());
+			String msg = NLS.bind(Messages.links_wrongLocalType, getFullPath());
 			throw new ResourceException(IResourceStatus.WRONG_TYPE_LOCAL, getFullPath(), msg, null);
 		}
 	}
@@ -199,7 +199,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		}
 		destination = makePathAbsolute(destination);
 		if (getFullPath().isPrefixOf(destination)) {
-			message = Messages.bind(Messages.resources_copyDestNotSub, getFullPath());
+			message = NLS.bind(Messages.resources_copyDestNotSub, getFullPath());
 			status.add(new ResourceStatus(IResourceStatus.INVALID_VALUE, getFullPath(), message));
 		}
 		checkValidPath(destination, destinationType, false);
@@ -222,7 +222,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		Container parent = (Container) dest.getParent();
 		boolean isDeepCopy = (updateFlags & IResource.SHALLOW) == 0;
 		if (isLinked() && !isDeepCopy && (parent == null || parent.getType() != IResource.PROJECT)) {
-			message = Messages.bind(Messages.links_copyNotProject, getFullPath(), destination);
+			message = NLS.bind(Messages.links_copyNotProject, getFullPath(), destination);
 			throw new ResourceException(IResourceStatus.INVALID_VALUE, getFullPath(), message, null);
 		}
 
@@ -242,18 +242,18 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			//undefined path variables
 			IPath sourceLocation = getLocation();
 			if (sourceLocation == null) {
-				message = Messages.bind(Messages.localstore_locationUndefined, getFullPath());
+				message = NLS.bind(Messages.localstore_locationUndefined, getFullPath());
 				throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, getFullPath(), message, null);
 			}
 			IPath destLocation = dest.getLocation();
 			if (destLocation == null) {
-				message = Messages.bind(Messages.localstore_locationUndefined, dest.getFullPath());
+				message = NLS.bind(Messages.localstore_locationUndefined, dest.getFullPath());
 				throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, dest.getFullPath(), message, null);
 			}
 			//make sure location of source is not a prefix of the location of the destination
 			//this can occur if the source or destination is a linked resource
 			if (sourceLocation.isPrefixOf(destLocation)) {
-				message = Messages.bind(Messages.resources_copyDestNotSub, getFullPath());
+				message = NLS.bind(Messages.resources_copyDestNotSub, getFullPath());
 				throw new ResourceException(IResourceStatus.INVALID_VALUE, getFullPath(), message, null);
 			}
 		}
@@ -276,7 +276,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		IResource variant = findExistingResourceVariant(getFullPath());
 		if (variant == null)
 			return;
-		String msg = Messages.bind(Messages.resources_existsDifferentCase, variant.getFullPath());
+		String msg = NLS.bind(Messages.resources_existsDifferentCase, variant.getFullPath());
 		throw new ResourceException(IResourceStatus.CASE_VARIANT_EXISTS, variant.getFullPath(), msg, null);
 	}
 
@@ -294,7 +294,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		// If there is nothing there of this resource's type, then return.
 		if ((checkType && !exists(flags, checkType)))
 			return;
-		String message = Messages.bind(Messages.resources_mustNotExist, getFullPath());
+		String message = NLS.bind(Messages.resources_mustNotExist, getFullPath());
 		throw new ResourceException(checkType ? IResourceStatus.RESOURCE_EXISTS : IResourceStatus.PATH_OCCUPIED, getFullPath(), message, null);
 	}
 
@@ -306,7 +306,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	 */
 	public void checkExists(int flags, boolean checkType) throws CoreException {
 		if (!exists(flags, checkType)) {
-			String message = Messages.bind(Messages.resources_mustExist, getFullPath());
+			String message = NLS.bind(Messages.resources_mustExist, getFullPath());
 			throw new ResourceException(IResourceStatus.RESOURCE_NOT_FOUND, getFullPath(), message, null);
 		}
 	}
@@ -318,7 +318,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	 */
 	public void checkLocal(int flags, int depth) throws CoreException {
 		if (!isLocal(flags, depth)) {
-			String message = Messages.bind(Messages.resources_mustBeLocal, getFullPath());
+			String message = NLS.bind(Messages.resources_mustBeLocal, getFullPath());
 			throw new ResourceException(IResourceStatus.RESOURCE_NOT_LOCAL, getFullPath(), message, null);
 		}
 	}
@@ -346,7 +346,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		}
 		destination = makePathAbsolute(destination);
 		if (getFullPath().isPrefixOf(destination)) {
-			message = Messages.bind(Messages.resources_moveDestNotSub, getFullPath());
+			message = NLS.bind(Messages.resources_moveDestNotSub, getFullPath());
 			status.add(new ResourceStatus(IResourceStatus.INVALID_VALUE, getFullPath(), message));
 		}
 		checkValidPath(destination, destinationType, false);
@@ -373,7 +373,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		Container parent = (Container) dest.getParent();
 		boolean isDeepMove = (updateFlags & IResource.SHALLOW) == 0;
 		if (!isDeepMove && isLinked() && (parent == null || parent.getType() != IResource.PROJECT)) {
-			message = Messages.bind(Messages.links_moveNotProject, getFullPath(), destination);
+			message = NLS.bind(Messages.links_moveNotProject, getFullPath(), destination);
 			throw new ResourceException(new ResourceStatus(IResourceStatus.INVALID_VALUE, getFullPath(), message));
 		}
 
@@ -393,18 +393,18 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			//undefined path variables
 			IPath sourceLocation = getLocation();
 			if (sourceLocation == null) {
-				message = Messages.bind(Messages.localstore_locationUndefined, getFullPath());
+				message = NLS.bind(Messages.localstore_locationUndefined, getFullPath());
 				throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, getFullPath(), message, null);
 			}
 			IPath destLocation = dest.getLocation();
 			if (destLocation == null) {
-				message = Messages.bind(Messages.localstore_locationUndefined, dest.getFullPath());
+				message = NLS.bind(Messages.localstore_locationUndefined, dest.getFullPath());
 				throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, dest.getFullPath(), message, null);
 			}
 			//make sure location of source is not a prefix of the location of the destination
 			//this can occur if the source or destination is a linked resource
 			if (sourceLocation.isPrefixOf(destLocation)) {
-				message = Messages.bind(Messages.resources_moveDestNotSub, getFullPath());
+				message = NLS.bind(Messages.resources_moveDestNotSub, getFullPath());
 				throw new ResourceException(IResourceStatus.INVALID_VALUE, getFullPath(), message, null);
 			}
 		}
@@ -474,7 +474,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		Assert.isNotNull(destDesc);
 		monitor = Policy.monitorFor(monitor);
 		try {
-			String message = Messages.bind(Messages.resources_copying, getFullPath());
+			String message = NLS.bind(Messages.resources_copying, getFullPath());
 			monitor.beginTask(message, Policy.totalWork);
 			try {
 				workspace.prepareOperation(workspace.getRoot(), monitor);
@@ -526,7 +526,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	public void copy(IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException {
 		try {
 			monitor = Policy.monitorFor(monitor);
-			String message = Messages.bind(Messages.resources_copying, getFullPath());
+			String message = NLS.bind(Messages.resources_copying, getFullPath());
 			monitor.beginTask(message, Policy.totalWork);
 			Policy.checkCanceled(monitor);
 			destination = makePathAbsolute(destination);
@@ -575,7 +575,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	public void createLink(IPath localLocation, int updateFlags, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
-			String message = Messages.bind(Messages.links_creating, getFullPath());
+			String message = NLS.bind(Messages.links_creating, getFullPath());
 			monitor.beginTask(message, Policy.totalWork);
 			Policy.checkCanceled(monitor);
 			checkValidPath(path, FOLDER, true);
@@ -649,7 +649,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	public void delete(int updateFlags, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
-			String message = Messages.bind(Messages.resources_deleting, getFullPath());
+			String message = NLS.bind(Messages.resources_deleting, getFullPath());
 			monitor.beginTask(message, Policy.totalWork * 1000);
 			final ISchedulingRule rule = workspace.getRuleFactory().deleteRule(this);
 			try {
@@ -1147,7 +1147,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	public void move(IProjectDescription description, int updateFlags, IProgressMonitor monitor) throws CoreException {
 		Assert.isNotNull(description);
 		if (getType() != IResource.PROJECT) {
-			String message = Messages.bind(Messages.resources_moveNotProject, getFullPath(), description.getName());
+			String message = NLS.bind(Messages.resources_moveNotProject, getFullPath(), description.getName());
 			throw new ResourceException(IResourceStatus.INVALID_VALUE, getFullPath(), message, null);
 		}
 		((Project) this).move(description, updateFlags, monitor);
@@ -1175,7 +1175,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	public void move(IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
-			String message = Messages.bind(Messages.resources_moving, getFullPath());
+			String message = NLS.bind(Messages.resources_moving, getFullPath());
 			monitor.beginTask(message, Policy.totalWork);
 			Policy.checkCanceled(monitor);
 			destination = makePathAbsolute(destination);
@@ -1228,7 +1228,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		monitor = Policy.monitorFor(monitor);
 		try {
 			boolean isRoot = getType() == ROOT;
-			String message = isRoot ? Messages.resources_refreshingRoot : Messages.bind(Messages.resources_refreshing, getFullPath());
+			String message = isRoot ? Messages.resources_refreshingRoot : NLS.bind(Messages.resources_refreshing, getFullPath());
 			monitor.beginTask("", Policy.totalWork); //$NON-NLS-1$
 			monitor.subTask(message);
 			boolean build = false;
@@ -1317,7 +1317,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		checkLocal(flags, DEPTH_ZERO);
 		IPath location = getLocation();
 		if (location == null) {
-			String message = Messages.bind(Messages.localstore_locationUndefined, getFullPath());
+			String message = NLS.bind(Messages.localstore_locationUndefined, getFullPath());
 			throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, getFullPath(), message, null);
 		}
 		CoreFileSystemLibrary.setResourceAttributes(location.toOSString(), attributes);
@@ -1358,7 +1358,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	public void touch(IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
-			String message = Messages.bind(Messages.resources_touch, getFullPath());
+			String message = NLS.bind(Messages.resources_touch, getFullPath());
 			monitor.beginTask(message, Policy.totalWork);
 			final ISchedulingRule rule = workspace.getRuleFactory().modifyRule(this);
 			try {

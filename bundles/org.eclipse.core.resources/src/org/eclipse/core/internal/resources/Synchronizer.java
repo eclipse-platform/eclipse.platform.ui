@@ -121,7 +121,7 @@ public class Synchronizer implements ISynchronizer {
 		Assert.isLegal(resource != null);
 
 		if (!isRegistered(partner)) {
-			String message = Messages.bind(Messages.synchronizer_partnerNotRegistered, partner);
+			String message = NLS.bind(Messages.synchronizer_partnerNotRegistered, partner);
 			throw new ResourceException(new ResourceStatus(IResourceStatus.PARTNER_NOT_REGISTERED, message));
 		}
 
@@ -163,7 +163,7 @@ public class Synchronizer implements ISynchronizer {
 				input.close();
 			}
 		} catch (IOException e) {
-			String msg = Messages.bind(Messages.resources_readMeta, sourceLocation);
+			String msg = NLS.bind(Messages.resources_readMeta, sourceLocation);
 			throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, sourceLocation, msg, e);
 		}
 	}
@@ -185,7 +185,7 @@ public class Synchronizer implements ISynchronizer {
 			}
 		} catch (Exception e) {
 			// only log the exception, we should not fail restoring the snapshot
-			String msg = Messages.bind(Messages.resources_readMeta, sourceLocation);
+			String msg = NLS.bind(Messages.resources_readMeta, sourceLocation);
 			ResourcesPlugin.getPlugin().getLog().log(new ResourceStatus(IResourceStatus.FAILED_READ_METADATA, sourceLocation, msg, e));
 		}
 	}
@@ -229,7 +229,7 @@ public class Synchronizer implements ISynchronizer {
 			workspace.prepareOperation(resource, null);
 			workspace.beginOperation(true);
 			if (!isRegistered(partner)) {
-				String message = Messages.bind(Messages.synchronizer_partnerNotRegistered, partner);
+				String message = NLS.bind(Messages.synchronizer_partnerNotRegistered, partner);
 				throw new ResourceException(new ResourceStatus(IResourceStatus.PARTNER_NOT_REGISTERED, message));
 			}
 			// we do not store sync info on the workspace root

@@ -587,7 +587,7 @@ public class AliasManager implements IManager, ILifecycleListener {
 		FileSystemResourceManager localManager = workspace.getFileSystemManager();
 		for (Iterator it = aliases.iterator(); it.hasNext();) {
 			IResource alias = (IResource) it.next();
-			monitor.subTask(Messages.bind(Messages.links_updatingDuplicate, alias.getFullPath()));
+			monitor.subTask(NLS.bind(Messages.links_updatingDuplicate, alias.getFullPath()));
 			localManager.refresh(alias, IResource.DEPTH_INFINITE, false, null);
 		}
 	}

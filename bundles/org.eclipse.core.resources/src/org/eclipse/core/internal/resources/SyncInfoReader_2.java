@@ -75,7 +75,7 @@ public class SyncInfoReader_2 extends SyncInfoReader {
 					break;
 				default :
 					//if we get here then the sync info file is corrupt
-					String msg = Messages.bind(Messages.resources_readSync, path == null ? "" : path.toString()); //$NON-NLS-1$
+					String msg = NLS.bind(Messages.resources_readSync, path == null ? "" : path.toString()); //$NON-NLS-1$
 					throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, path, msg, null);
 			}
 			// read the bytes

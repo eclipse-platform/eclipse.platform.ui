@@ -235,7 +235,7 @@ public abstract class Bucket {
 				int version = source.readByte();
 				if (version != getVersion()) {
 					// unknown version
-					String message = Messages.bind(Messages.resources_readMetaWrongVersion, location.getAbsolutePath(), Integer.toString(version));
+					String message = NLS.bind(Messages.resources_readMetaWrongVersion, location.getAbsolutePath(), Integer.toString(version));
 					ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_READ_METADATA, message);
 					throw new ResourceException(status);
 				}
@@ -246,7 +246,7 @@ public abstract class Bucket {
 				source.close();
 			}
 		} catch (IOException ioe) {
-			String message = Messages.bind(Messages.resources_readMeta, location.getAbsolutePath());
+			String message = NLS.bind(Messages.resources_readMeta, location.getAbsolutePath());
 			ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_READ_METADATA, null, message, ioe);
 			throw new ResourceException(status);
 		}
@@ -279,7 +279,7 @@ public abstract class Bucket {
 			}
 			needSaving = false;
 		} catch (IOException ioe) {
-			String message = Messages.bind(Messages.resources_writeMeta, location.getAbsolutePath());
+			String message = NLS.bind(Messages.resources_writeMeta, location.getAbsolutePath());
 			ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_METADATA, null, message, ioe);
 			throw new ResourceException(status);
 		}

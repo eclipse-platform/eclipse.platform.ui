@@ -9,9 +9,9 @@
  **********************************************************************/
 package org.eclipse.core.internal.utils;
 
-import org.eclipse.core.runtime.PlatformMessages;
+import org.eclipse.core.runtime.NLS;
 
-public class Messages extends PlatformMessages {
+public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.core.internal.utils.messages"; //$NON-NLS-1$
 	
 	// dtree
@@ -416,27 +416,6 @@ public class Messages extends PlatformMessages {
 
 	static {
 		// initialize resource bundles
-		PlatformMessages.initializeMessages(BUNDLE_NAME, Messages.class); //$NON-NLS-1$
-	}
-
-	/**
-	 * Bind the given message's substitution locations with the given string values.
-	 */
-	public static String bind(String message, Object binding) {
-		return PlatformMessages.bind(message, new Object[] {binding});
-	}
-
-	/**
-	 * Bind the given message's substitution locations with the given string values.
-	 */
-	public static String bind(String message, Object binding1, Object binding2) {
-		return PlatformMessages.bind(message, new Object[] {binding1, binding2});
-	}
-
-	/**
-	 * Bind the given message's substitution locations with the given string values.
-	 */
-	public static String bind(String message, Object[] bindings) {
-		return PlatformMessages.bind(message, bindings);
+		NLS.initializeMessages(BUNDLE_NAME, Messages.class); //$NON-NLS-1$
 	}
 }

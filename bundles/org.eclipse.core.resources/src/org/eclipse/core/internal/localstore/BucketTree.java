@@ -111,7 +111,7 @@ public class BucketTree {
 			stream.write(current.getVersion());
 		} catch (IOException e) {
 			failed = true;
-			String message = Messages.bind(Messages.resources_writeWorkspaceMeta, versionFile.getAbsolutePath());
+			String message = NLS.bind(Messages.resources_writeWorkspaceMeta, versionFile.getAbsolutePath());
 			throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, null, message, e);
 		} finally {
 			try {
@@ -119,7 +119,7 @@ public class BucketTree {
 					stream.close();
 			} catch (IOException e) {
 				if (!failed) {
-					String message = Messages.bind(Messages.resources_writeWorkspaceMeta, versionFile.getAbsolutePath());
+					String message = NLS.bind(Messages.resources_writeWorkspaceMeta, versionFile.getAbsolutePath());
 					throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, null, message, e);
 				}
 			}

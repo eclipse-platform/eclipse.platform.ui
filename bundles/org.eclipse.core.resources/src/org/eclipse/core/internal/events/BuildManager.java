@@ -79,7 +79,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		protected IProject[] build(int kind, Map args, IProgressMonitor monitor) {
 			if (!hasBeenBuilt) {
 				hasBeenBuilt = true;
-				String msg = Messages.bind(Messages.events_skippingBuilder, name, getProject().getName());
+				String msg = NLS.bind(Messages.events_skippingBuilder, name, getProject().getName());
 				IStatus status = new Status(IStatus.WARNING, ResourcesPlugin.PI_RESOURCES, 1, msg, null);
 				ResourcesPlugin.getPlugin().getLog().log(status);
 			}
@@ -148,9 +148,9 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 				String name = currentBuilder.getLabel();
 				String message;
 				if (name != null)
-					message = Messages.bind(Messages.events_invoking_2, name, builder.getProject().getFullPath());
+					message = NLS.bind(Messages.events_invoking_2, name, builder.getProject().getFullPath());
 				else
-					message = Messages.bind(Messages.events_invoking_1, builder.getProject().getFullPath());
+					message = NLS.bind(Messages.events_invoking_1, builder.getProject().getFullPath());
 				monitor.subTask(message);
 				hookStartBuild(builder, trigger);
 				//release workspace lock while calling builders
@@ -182,7 +182,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	protected void basicBuild(IProject project, int trigger, ICommand[] commands, MultiStatus status, IProgressMonitor monitor) {
 		monitor = Policy.monitorFor(monitor);
 		try {
-			String message = Messages.bind(Messages.events_building_1, project.getFullPath());
+			String message = NLS.bind(Messages.events_building_1, project.getFullPath());
 			monitor.beginTask(message, Math.max(1, commands.length));
 			for (int i = 0; i < commands.length; i++) {
 				checkCanceled(trigger, monitor);
@@ -218,7 +218,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 				// builder exceptions in core exceptions if required.
 				String message = e.getMessage();
 				if (message == null)
-					message = Messages.bind(Messages.events_unknown, e.getClass().getName(), currentBuilder.getClass().getName());
+					message = NLS.bind(Messages.events_unknown, e.getClass().getName(), currentBuilder.getClass().getName());
 				status.add(new Status(IStatus.WARNING, ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, e));
 			}
 
@@ -306,7 +306,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	public void build(IProject project, int trigger, String builderName, Map args, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
-			String message = Messages.bind(Messages.events_building_1, project.getFullPath());
+			String message = NLS.bind(Messages.events_building_1, project.getFullPath());
 			monitor.beginTask(message, 1);
 			if (!canRun(trigger))
 				return;
@@ -558,7 +558,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 				if (builderName == null || builderName.length() == 0)
 					builderName = currentBuilder.getClass().getName();
 				String pluginId = currentBuilder.getPluginId();
-				String message = Messages.bind(Messages.events_builderError, builderName, currentBuilder.getProject().getName());
+				String message = NLS.bind(Messages.events_builderError, builderName, currentBuilder.getProject().getName());
 				status.add(new Status(IStatus.WARNING, pluginId, IResourceStatus.BUILD_FAILED, message, null));
 
 				//add the exception status to the MultiStatus
@@ -567,7 +567,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 				else {
 					message = e.getMessage();
 					if (message == null)
-						message = Messages.bind(Messages.events_unknown, e.getClass().getName(), builderName);
+						message = NLS.bind(Messages.events_unknown, e.getClass().getName(), builderName);
 					status.add(new Status(IStatus.WARNING, pluginId, IResourceStatus.BUILD_FAILED, message, e));
 				}
 			}
@@ -669,7 +669,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		try {
 			builder = instantiateBuilder(builderName);
 		} catch (CoreException e) {
-			status.add(new ResourceStatus(IResourceStatus.BUILD_FAILED, project.getFullPath(), Messages.bind(Messages.events_instantiate_1, builderName), e));
+			status.add(new ResourceStatus(IResourceStatus.BUILD_FAILED, project.getFullPath(), NLS.bind(Messages.events_instantiate_1, builderName), e));
 			status.add(e.getStatus());
 		}
 		if (builder == null) {

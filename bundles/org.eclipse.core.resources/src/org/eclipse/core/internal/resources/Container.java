@@ -262,7 +262,7 @@ public abstract class Container extends Resource implements IContainer {
 	public void setDefaultCharset(String newCharset, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
-			String message = Messages.bind(Messages.resources_settingDefaultCharsetContainer, getFullPath());
+			String message = NLS.bind(Messages.resources_settingDefaultCharsetContainer, getFullPath());
 			monitor.beginTask(message, Policy.totalWork);
 			// need to get the project as a scheduling rule because we might be 
 			// creating a new folder/file to hold the project settings
