@@ -3,7 +3,7 @@ package org.eclipse.update.core;
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
- 
+
 /**
  * Non-plug-in entry defines an arbitrary non-plug-in data file packaged
  * as part of a feature. Non-plug-in entries are not interpreted by the
@@ -19,7 +19,7 @@ package org.eclipse.update.core;
  * @since 2.0
  */
 public interface INonPluginEntry {
-	
+
 	/** 
 	 * Returns the identifier of this data entry. 
 	 * 
@@ -36,7 +36,7 @@ public interface INonPluginEntry {
 	 * the size could not be determined
 	 * @since 2.0 
 	 */
-	long getDownloadSize(); 
+	long getDownloadSize();
 
 	/**
 	 * Returns the install size of the feature, if it can be determined.
@@ -46,7 +46,7 @@ public interface INonPluginEntry {
 	 * the size could not be determined
 	 * @since 2.0 
 	 */
-	long getInstallSize(); 
+	long getInstallSize();
 
 	/**
 	 * Returns optional operating system specification.
@@ -111,6 +111,5 @@ public interface INonPluginEntry {
 	 * @since 2.0 
 	 */
 	String getNL();
-	
-}
 
+}

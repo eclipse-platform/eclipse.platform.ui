@@ -2,7 +2,7 @@ package org.eclipse.update.core.model;
 /*
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
- */ 
+ */
 
 /**
  * Content entry model object.
@@ -15,21 +15,21 @@ package org.eclipse.update.core.model;
  * @since 2.0
  */
 public abstract class ContentEntryModel extends ModelObject {
-	
+
 	/**
 	 * An indication the size could not be determined
 	 * 
 	 * @since 2.0
 	 */
 	public static final long UNKNOWN_SIZE = -1;
-	
+
 	private long downloadSize = UNKNOWN_SIZE;
 	private long installSize = UNKNOWN_SIZE;
 	private String os;
 	private String ws;
 	private String nl;
 	private String arch;
-	
+
 	/**
 	 * Creates a uninitialized content entry model object.
 	 * 
@@ -38,7 +38,7 @@ public abstract class ContentEntryModel extends ModelObject {
 	protected ContentEntryModel() {
 		super();
 	}
-	
+
 	/**
 	 * Returns the download size of the entry, if it can be determined.
 	 * 
@@ -50,18 +50,18 @@ public abstract class ContentEntryModel extends ModelObject {
 	public long getDownloadSize() {
 		return downloadSize;
 	}
-	
+
 	/**
 	 * Returns the install size of the entry, if it can be determined.
 	 * 
 	 * @return install size of the entry in KiloBytes, or an indication 
 	 * the size could not be determined
 	 * @since 2.0
-	 */	
+	 */
 	public long getInstallSize() {
 		return installSize;
 	}
-	
+
 	/**
 	 * Returns optional operating system specification.
 	 *
@@ -72,7 +72,7 @@ public abstract class ContentEntryModel extends ModelObject {
 	public String getOS() {
 		return os;
 	}
-	
+
 	/**
 	 * Returns optional windowing system specification.
 	 *
@@ -84,7 +84,7 @@ public abstract class ContentEntryModel extends ModelObject {
 	public String getWS() {
 		return ws;
 	}
-	
+
 	/**
 	 * Returns optional system architecture specification. 
 	 *
@@ -95,7 +95,7 @@ public abstract class ContentEntryModel extends ModelObject {
 	public String getArch() {
 		return arch;
 	}
-	
+
 	/**
 	 * Returns optional locale specification.
 	 *
@@ -105,14 +105,14 @@ public abstract class ContentEntryModel extends ModelObject {
 	public String getNL() {
 		return nl;
 	}
-	
+
 	/**
 	 * Sets the download size of the entry.
 	 * Throws a runtime exception if this object is marked read-only.
 	 * 
 	 * @param downloadSize download size of the entry in KiloBytes
 	 * @since 2.0 
-	 */	
+	 */
 	public void setDownloadSize(long downloadSize) {
 		assertIsWriteable();
 		if (downloadSize < 0)
@@ -120,14 +120,14 @@ public abstract class ContentEntryModel extends ModelObject {
 		else
 			this.downloadSize = downloadSize;
 	}
-	
+
 	/**
 	 * Sets the install size of the entry.
 	 * Throws a runtime exception if this object is marked read-only.
 	 * 
 	 * @param installSize install size of the entry in KiloBytes
 	 * @since 2.0
-	 */	
+	 */
 	public void setInstallSize(long installSize) {
 		assertIsWriteable();
 		if (installSize < 0)
@@ -135,7 +135,7 @@ public abstract class ContentEntryModel extends ModelObject {
 		else
 			this.installSize = installSize;
 	}
-	
+
 	/**
 	 * Sets the operating system specification.
 	 * Throws a runtime exception if this object is marked read-only.
@@ -143,12 +143,12 @@ public abstract class ContentEntryModel extends ModelObject {
 	 * @see org.eclipse.core.boot.BootLoader 
 	 * @param os comma-separated list of OS identifiers as defined by Eclipse.
 	 * @since 2.0
-	 */	
+	 */
 	public void setOS(String os) {
 		assertIsWriteable();
 		this.os = os;
 	}
-	
+
 	/**
 	 * Sets the windowing system specification.
 	 * Throws a runtime exception if this object is marked read-only.
@@ -156,7 +156,7 @@ public abstract class ContentEntryModel extends ModelObject {
 	 * @see org.eclipse.core.boot.BootLoader 
 	 * @param ws comma-separated list of WS identifiers as defined by Eclipse.
 	 * @since 2.0
-	 */	
+	 */
 	public void setWS(String ws) {
 		assertIsWriteable();
 		this.ws = ws;
@@ -171,17 +171,17 @@ public abstract class ContentEntryModel extends ModelObject {
 	 * @since 2.0
 	 */
 	public void setArch(String arch) {
-		assertIsWriteable();		
+		assertIsWriteable();
 		this.arch = arch;
 	}
-	
+
 	/**
 	 * Sets the locale specification.
 	 * Throws a runtime exception if this object is marked read-only.
 	 *
 	 * @param nl comma-separated list of locale identifiers.
 	 * @since 2.0
-	 */	
+	 */
 	public void setNL(String nl) {
 		assertIsWriteable();
 		this.nl = nl;

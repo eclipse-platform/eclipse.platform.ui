@@ -4,7 +4,6 @@ package org.eclipse.update.core;
  * All Rights Reserved.
  */
  
-import java.io.IOException;
 import java.net.*;
 import java.util.*;
 
