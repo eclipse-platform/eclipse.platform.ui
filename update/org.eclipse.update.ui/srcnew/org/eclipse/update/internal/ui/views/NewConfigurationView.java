@@ -330,11 +330,14 @@ public class NewConfigurationView
 			public void objectChanged(final Object obj, String property) {
 				if (refreshLock)
 					return;
-				getControl().getDisplay().asyncExec(new Runnable() {
-					public void run() {
-						treeViewer.refresh();
-					}
-				});
+				Control control = getControl();
+				if (!control.isDisposed()) {
+					control.getDisplay().asyncExec(new Runnable() {
+						public void run() {
+							treeViewer.refresh();
+						}
+					});
+				}
 			}
 		};
 		UpdateManager.getOperationsManager().addUpdateModelChangedListener(

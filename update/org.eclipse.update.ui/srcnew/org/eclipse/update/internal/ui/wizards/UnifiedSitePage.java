@@ -232,7 +232,7 @@ public class UnifiedSitePage extends BannerPage2 implements ISearchProvider2 {
 	}
 
 	private void handleAddSite() {
-		NewSiteDialog dialog = new NewSiteDialog(UpdateUI.getActiveWorkbenchShell());
+		NewSiteDialog dialog = new NewSiteDialog(getShell());
 		dialog.create();
 		dialog.getShell().setText("New Update Site");
 		dialog.open();
