@@ -284,7 +284,12 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 	 * @throws CoreException if any exceptions occurr while accessing marker attributes
 	 */
 	protected boolean isLaunchProblem(IMarker problemMarker) throws CoreException {
-		return ((Integer)problemMarker.getAttribute(IMarker.SEVERITY)).intValue() >= IMarker.SEVERITY_ERROR;
+		Integer severity = (Integer)problemMarker.getAttribute(IMarker.SEVERITY);
+		if (severity != null) {
+			return severity.intValue() >= IMarker.SEVERITY_ERROR;
+		} else {
+			return false;
+		}
 	}
 	
 	/**
