@@ -329,6 +329,7 @@ public final class KeySequenceText {
 		 */
 		public void focusGained(FocusEvent event) {
 			Display.getCurrent().addFilter(SWT.Traverse, filter);
+			selectAll();
 		}
 
 		/**
@@ -603,8 +604,22 @@ public final class KeySequenceText {
 		}
 	}
 
+	/**
+	 * Tests whether the cursor is in the last position. This means that the
+	 * selection extends to the last position.
+	 * 
+	 * @return <code>true</code> if the selection extends to the last
+	 *         position; <code>false</code> otherwise.
+	 */
 	boolean isCursorInLastPosition() {
 		return (text.getSelection().y >= getText().length());
+	}
+
+	/**
+	 * Selects all of the text in the widget.
+	 */
+	void selectAll() {
+		text.setSelection(0, getText().length());
 	}
 
 	/**
