@@ -20,6 +20,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.externaltools.internal.ant.launchConfigurations.AntLaunchShortcut;
 import org.eclipse.ui.externaltools.internal.ant.model.AntUtil;
 import org.eclipse.ui.externaltools.internal.ant.view.AntView;
+import org.eclipse.ui.externaltools.internal.ant.view.elements.AntNode;
 import org.eclipse.ui.externaltools.internal.ant.view.elements.ProjectNode;
 import org.eclipse.ui.externaltools.internal.ant.view.elements.TargetNode;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
@@ -29,13 +30,19 @@ import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.texteditor.IUpdate;
 
 /**
- * Actions which runs the selected target or the default target of the selected
+ * Action which runs the selected target or the default target of the selected
  * project in the AntView.
  */
 public class RunTargetAction extends Action implements IUpdate {
 	
 	private AntView view;
 	
+	/**
+	 * Creates a new <code>RunTargetAction</code> which will execute
+	 * targets in the given view.
+	 * @param view the Ant view whose selection this action will use when
+	 * determining which target to run.
+	 */
 	public RunTargetAction(AntView view) {
 		super(AntViewActionMessages.getString("RunTargetAction.Run_1"), ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_RUN)); //$NON-NLS-1$
 		setToolTipText(AntViewActionMessages.getString("RunTargetAction.Run_Default")); //$NON-NLS-1$
@@ -43,6 +50,9 @@ public class RunTargetAction extends Action implements IUpdate {
 		WorkbenchHelp.setHelp(this, IExternalToolsHelpContextIds.RUN_TARGET_ACTION);
 	}
 
+	/**
+	 * Executes the selected target or project in the Ant view.
+	 */
 	public void run() {
 		TargetNode target= getSelectedTarget();
 		if (target == null) {
@@ -53,7 +63,7 @@ public class RunTargetAction extends Action implements IUpdate {
 	
 	/**
 	 * Executes the given target
-	 * @param target
+	 * @param target the target to execute
 	 */
 	public void run(TargetNode target) {
 		IFile file= AntUtil.getFile(target.getProject().getBuildFileName());
@@ -65,7 +75,38 @@ public class RunTargetAction extends Action implements IUpdate {
 	 * Updates the enablement of this action based on the user's selection
 	 */
 	public void update() {
-		setEnabled(getSelectedTarget() != null);
+		AntNode selection= getSelectedElement();
+		boolean enabled= false;
+		if (selection instanceof TargetNode) {
+			if (!((TargetNode) selection).isErrorNode()) {
+				enabled= true;
+			}
+		} else if (selection instanceof ProjectNode) {
+			if (!((ProjectNode) selection).isErrorNode()) {
+				enabled= true;
+			}
+		}
+		setEnabled(enabled);
+	}
+	
+	/**
+	 * Returns the selected target or project node or <code>null</code> if no target or
+	 * project is selected or if more than one element is selected.
+	 * 
+	 * @return AntNode the selected <code>TargetNode</code> or <code>ProjectNode</code>
+	 */
+	private AntNode getSelectedElement() {
+		IStructuredSelection selection= (IStructuredSelection) view.getProjectViewer().getSelection();
+		if (selection.isEmpty()) {
+			return null;
+		}
+		Iterator iter= selection.iterator();
+		Object data= iter.next();
+		if (iter.hasNext() || (!(data instanceof TargetNode) && !(data instanceof ProjectNode))) {
+			// Only return a TargetNode or ProjectNode
+			return null;
+		}
+		return (AntNode) data;
 	}
 	
 	/**
@@ -75,21 +116,13 @@ public class RunTargetAction extends Action implements IUpdate {
 	 * @return TargetNode the selected target
 	 */
 	private TargetNode getSelectedTarget() {
-		IStructuredSelection selection= (IStructuredSelection) view.getProjectViewer().getSelection();
-		if (selection.isEmpty()) {
-			return null;
+		AntNode selectedNode= getSelectedElement();
+		if (selectedNode instanceof TargetNode) {
+			return (TargetNode) selectedNode;
+		} else if (selectedNode instanceof ProjectNode) {
+			return ((ProjectNode) selectedNode).getDefaultTarget();
 		}
-		Iterator iter= selection.iterator();
-		Object data= iter.next();
-		if (iter.hasNext() || (!(data instanceof TargetNode) && !(data instanceof ProjectNode))) {
-			// Only enable for single selection of a TargetNode or ProjectNode
-			return null;
-		}
-		if (data instanceof TargetNode) {
-			return (TargetNode)selection.getFirstElement();
-		} else {
-			return ((ProjectNode)selection.getFirstElement()).getDefaultTarget();
-		}
+		return null;
 	}
 
 }
