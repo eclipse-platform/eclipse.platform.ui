@@ -152,7 +152,7 @@ public class LaunchConfigurationTreeContentProvider implements ITreeContentProvi
 	 * be visible in the specified mode, <code>false</code> otherwise.
 	 */
 	private boolean isVisible(ILaunchConfigurationType configType, String mode) {
-		if (!configType.isPublic() && configType.getCategory() == null) {
+		if (!configType.isPublic() || configType.getCategory() != null) {
 			return false;
 		}
 		if (mode == null) {
