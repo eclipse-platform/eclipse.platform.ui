@@ -156,8 +156,7 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 		setShellStyle(SWT.BORDER | SWT.TITLE | SWT.APPLICATION_MODAL);
 		// no close button
 		setBlockOnOpen(false);
-		setMessage(ProgressMessages.format("BlockedJobsDialog.BlockedMessage", //$NON-NLS-1$
-				new Object[]{blockingStatus.getMessage()}));
+		setMessage(blockingStatus.getMessage());
 	}
 	/**
 	 * This method creates the dialog area under the parent composite.
@@ -173,14 +172,7 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 		showJobDetails(parent);
 		return parent;
 	}
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.dialogs.IconAndMessageDialog#getMessageLabelStyle()
-	 */
-	protected int getMessageLabelStyle() {
-		return super.getMessageLabelStyle() | SWT.CENTER;
-	}
+
 	/**
 	 * This method creates a dialog area in the parent composite and displays a
 	 * progress tree viewer of the running jobs.
@@ -206,21 +198,21 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 				}
 			};
 		else
-			viewer = new ProgressTreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL
-					| SWT.BORDER) {
-				/*
-				 * (non-Javadoc)
-				 * 
-				 * @see org.eclipse.ui.internal.progress.ProgressTreeViewer#updateColors(org.eclipse.swt.widgets.TreeItem,
-				 *      org.eclipse.ui.internal.progress.JobTreeElement)
-				 */
-				protected void updateColors(TreeItem treeItem, JobTreeElement element) {
-					super.updateColors(treeItem, element);
-					//Color the blocked element the not running color.
-					if (element == blockedElement)
-						setNotRunningColor(treeItem);
-				}
-			};
+		viewer = new ProgressTreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL
+				| SWT.BORDER) {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.ui.internal.progress.ProgressTreeViewer#updateColors(org.eclipse.swt.widgets.TreeItem,
+			 *      org.eclipse.ui.internal.progress.JobTreeElement)
+			 */
+			protected void updateColors(TreeItem treeItem, JobTreeElement element) {
+				super.updateColors(treeItem, element);
+				//Color the blocked element the not running color.
+				if (element == blockedElement)
+					setNotRunningColor(treeItem);
+			}
+		};
 		viewer.setUseHashlookup(true);
 		viewer.setSorter(new ViewerSorter() {
 			/*
@@ -275,6 +267,11 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	 * @return parent The parent Composite.
 	 */
 	protected Control createButtonBar(Composite parent) {
+		//new progress view does not need a cancel button
+		//this method can be deleted when the old progress view option
+		//is removed
+		if (ProgressManagerUtil.useNewProgress())
+			return parent;
 		cancelSelected = createButton(parent, ProgressMessages.getString("CancelJobsButton.title"), //$NON-NLS-1$
 				(new SelectionListener() {
 					public void widgetSelected(SelectionEvent e) {
