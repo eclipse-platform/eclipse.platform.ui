@@ -18,8 +18,6 @@ import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.commands.ICommandManager;
-import org.eclipse.ui.contexts.ICompoundContextActivationService;
-import org.eclipse.ui.contexts.IContextActivationService;
 import org.eclipse.ui.progress.IProgressService;
 
 /**

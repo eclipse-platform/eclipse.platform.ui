@@ -140,16 +140,6 @@ public interface IActivity extends Comparable {
 	boolean isEnabled();
 
 	/**
-	 * @deprecated
-	 */
-	boolean isMatch(String string);
-
-	/**
-	 * @deprecated
-	 */
-	boolean match(String string);
-
-	/**
 	 * Unregisters an instance of <code>IActivityListener</code> listening
 	 * for changes to properties of this instance.
 	 * 

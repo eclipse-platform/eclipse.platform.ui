@@ -177,17 +177,13 @@ public final class MutableActivityManager
 	}
 
 	public boolean isMatch(String string, Set activityIds) {
-		return match(string, activityIds);
-	}
-
-	public boolean match(String string, Set activityIds) {
 		activityIds = Util.safeCopy(activityIds, String.class);
 
 		for (Iterator iterator = activityIds.iterator(); iterator.hasNext();) {
 			String activityId = (String) iterator.next();
-			IActivity activity = getActivity(activityId);
+			Activity activity = (Activity) getActivity(activityId);
 
-			if (activity.match(string))
+			if (activity.isMatch(string))
 				return true;
 		}
 
@@ -662,14 +658,14 @@ public final class MutableActivityManager
 			iterator.hasNext();
 			) {
 			String activityId = (String) iterator.next();
-			IActivity activity = getActivity(activityId);
+			Activity activity = (Activity) getActivity(activityId);
 
-			if (activity.match(id))
+			if (activity.isMatch(id))
 				activityIds.add(activityId);
 		}
 
 		boolean enabled =
-			match(id, enabledActivityIds) || !match(id, definedActivityIds);
+			isMatch(id, enabledActivityIds) || !isMatch(id, definedActivityIds);
 		boolean activityIdsChanged = identifier.setActivityIds(activityIds);
 		boolean enabledChanged = identifier.setEnabled(enabled);
 
