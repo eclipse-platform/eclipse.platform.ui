@@ -392,29 +392,32 @@ public class PerspectiveHelper {
     }
 
     /**
-     * Returns true is not in a tab folder or if it is the top one in a tab
-     * folder.
+     * Returns true if the given part is visible.
+     * A part is visible if it's top-level (not in a tab folder) or if it is the top one 
+     * in a tab folder.
      */
-    public boolean isPartVisible(String partId, String secondaryId) {
-        LayoutPart part;
-        if (secondaryId != null)
-            part = findPart(partId, secondaryId);
+    public boolean isPartVisible(IWorkbenchPartReference partRef) {
+        LayoutPart foundPart;
+        if (partRef instanceof IViewReference) 
+            foundPart = findPart(partRef.getId(), ((IViewReference) partRef).getSecondaryId());
         else
-            part = findPart(partId);
-        if (part == null)
+            foundPart = findPart(partRef.getId());
+        if (foundPart == null)
             return false;
-        if (part instanceof PartPlaceholder)
-            return false;
-
-        ILayoutContainer container = part.getContainer();
-        if (container != null && container instanceof ContainerPlaceholder)
+        if (foundPart instanceof PartPlaceholder)
             return false;
 
-        if (container != null && container instanceof ViewStack) {
+        ILayoutContainer container = foundPart.getContainer();
+        
+        if (container instanceof ContainerPlaceholder)
+            return false;
+
+        if (container instanceof ViewStack) {
             ViewStack folder = (ViewStack) container;
-            if (folder.getVisiblePart() == null)
+            PartPane visiblePart = folder.getVisiblePart();
+            if (visiblePart == null)
                 return false;
-            return part.getID().equals(folder.getVisiblePart().getID());
+            return partRef.equals(visiblePart.getPartReference());
         }
         return true;
     }

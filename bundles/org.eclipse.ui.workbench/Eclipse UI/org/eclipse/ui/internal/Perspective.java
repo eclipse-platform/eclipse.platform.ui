@@ -42,6 +42,7 @@ import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -108,7 +109,11 @@ public class Perspective {
     // fields used by fast view resizing via a sash
     private static final int FASTVIEW_HIDE_STEPS = 5;
 
-    private String oldPartID = null;
+    /**
+     * Reference to the part that was previously active
+     * when this perspective was deactivated.
+     */
+    private IWorkbenchPartReference oldPartRef = null;
 
     private boolean shouldHideEditorsOnActivate = false;
 
@@ -1742,19 +1747,22 @@ public class Perspective {
     }
 
     /**
-     * Returns the oldPartID.
-     * @return String
+     * Returns the old part reference.
+     * Returns null if there was no previously active part.
+     * 
+     * @return the old part reference or <code>null</code>
      */
-    public String getOldPartID() {
-        return oldPartID;
+    public IWorkbenchPartReference getOldPartRef() {
+        return oldPartRef;
     }
 
     /**
-     * Sets the oldPartID.
-     * @param oldPartID The oldPartID to set
+     * Sets the old part reference.
+     * 
+     * @param oldPartRef The old part reference to set, or <code>null</code>
      */
-    public void setOldPartID(String oldPartID) {
-        this.oldPartID = oldPartID;
+    public void setOldPartRef(IWorkbenchPartReference oldPartRef) {
+        this.oldPartRef = oldPartRef;
     }
 
     /**
@@ -1764,7 +1772,6 @@ public class Perspective {
      * destinationView is null
      * @param draggedView
      * @param destinationView
-     * @param useDestination
      */
 
     /*package*/void moveFastView(IViewReference draggedView,

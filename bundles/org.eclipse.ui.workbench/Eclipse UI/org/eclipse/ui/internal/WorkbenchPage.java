@@ -2814,15 +2814,16 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	
 	        // Reactivate active part.
 	        if (oldActivePart != null) {
-	            String id = oldActivePart.getSite().getId();
-	            oldPersp.setOldPartID(id);
+	            oldPersp.setOldPartRef(getReference(oldActivePart));
 	            if (oldActivePart instanceof IEditorPart && isEditorAreaVisible()) {
 	                activate(oldActivePart);
 	            } else if (oldActivePart instanceof IViewPart) {
 	                IEditorPart ed = editorMgr.getVisibleEditor();
 	                if (ed != null)
 	                    actionSwitcher.updateTopEditor(ed);
-	                if (findView(id) != null) {
+                    String id = oldActivePart.getSite().getId();
+                    String secondaryId = ((IViewPart) oldActivePart).getViewSite().getSecondaryId();
+	                if (newPersp.findView(id, secondaryId) != null) {
 	                    activate(oldActivePart);
 	                } else {
 	                    activateOldPart(newPersp);
@@ -2894,15 +2895,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             PerspectiveHelper pres = newPersp.getPresentation();
             for (Iterator iter = set.iterator(); iter.hasNext();) {
                 PartPane pane = (PartPane) iter.next();
-                String secondaryId = null;
-                if (pane instanceof ViewPane) {
-                    ViewPane vp = (ViewPane) pane;
-                    IViewReference ref = (IViewReference) vp.getPartReference();
-                    secondaryId = ref.getSecondaryId();
-                }
-                boolean isVisible = pres.isPartVisible(pane.getID(),
-                        secondaryId);
-                pane.setVisible(isVisible);
+                IWorkbenchPartReference partRef = pane.getPartReference();
+                pane.setVisible(pres.isPartVisible(partRef));
             }
         } else {
             for (Iterator iter = set.iterator(); iter.hasNext();) {
@@ -2916,10 +2910,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         if (window.isClosing())
             return;
         if (newPersp != null) {
-            String oldID = newPersp.getOldPartID();
+            IWorkbenchPartReference oldPartRef = newPersp.getOldPartRef();
             IWorkbenchPart prevOldPart = null;
-            if (oldID != null)
-                prevOldPart = findView(oldID);
+            if (oldPartRef != null)
+                prevOldPart = oldPartRef.getPart(false);
             if (prevOldPart != null)
                 activate(prevOldPart);
             else if (isEditorAreaVisible())
@@ -3741,8 +3735,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                     .size()]);
         }
 
-        return new IViewReference[] { findViewReference(part.getSite().getId(),
-                part.getViewSite().getSecondaryId()) };
+        return new IViewReference[] { (IViewReference) getReference(part) };
     }
 
     /* (non-Javadoc)
@@ -3755,7 +3748,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
         IViewPart[] stack = new IViewPart[refStack.length];
         for (int i = 0; i < refStack.length; i++) {
-            stack[i] = findView(refStack[i].getId());
+            stack[i] = refStack[i].getView(true);
         }
 
         return stack;
