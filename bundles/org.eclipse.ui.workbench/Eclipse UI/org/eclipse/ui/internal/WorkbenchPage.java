@@ -72,6 +72,10 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.SubActionBars;
 import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.commands.IActionService;
+import org.eclipse.ui.contexts.IContextActivationService;
+import org.eclipse.ui.internal.commands.ActionService;
+import org.eclipse.ui.internal.contexts.ContextActivationService;
 import org.eclipse.ui.internal.dialogs.CustomizePerspectiveDialog;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
@@ -376,6 +380,25 @@ public WorkbenchPage(WorkbenchWindow w, IAdaptable input)
 	super();
 	init(w, null, input);
 }
+
+private IActionService actionService;
+
+public IActionService getActionService() {
+	if (actionService == null) 
+		actionService = new ActionService();
+		
+	return actionService;
+}
+
+private IContextActivationService contextActivationService;
+
+public IContextActivationService getContextActivationService() {
+	if (contextActivationService == null) 
+		contextActivationService = new ContextActivationService();
+		
+	return contextActivationService;
+}
+
 /**
  * Activates a part.  The part will be brought to the front and given focus.
  *
@@ -536,6 +559,8 @@ public void bringToTop(IWorkbenchPart part) {
 		}
 
 		if (broughtToTop) {
+			// Need to make sure that the part lists are sorted correctly.
+			activationList.setActive(part);
 			firePartBroughtToTop(part);
 		}
 	} finally {
@@ -1626,6 +1651,14 @@ private void hideView(Perspective persp, IViewReference ref) {
 		firePartClosed(ref);
 		disposePart(ref);
 		activationList.remove(ref);		
+
+		/* Bug 42684.  A ViewPane instance has been disposed, but an attempt is
+		 * then made to remove focus from it.  This happens because the ViewPane 
+		 * is still viewed as the active part.  The activePart should always be  
+		 * modified when the view is changed.  activePart isn't really needed
+		 * anymore (see declaration).
+		 */
+		activePart = activationList.getActive();
 	}
 	
 	// Notify interested listeners

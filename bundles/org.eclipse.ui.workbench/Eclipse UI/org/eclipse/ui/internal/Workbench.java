@@ -20,6 +20,12 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.SortedSet;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IExtension;
@@ -32,7 +38,23 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.DeviceData;
+import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.ContextResolver;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IContextResolver;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -49,21 +71,15 @@ import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.window.WindowManager;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.graphics.DeviceData;
-import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.ui.AboutInfo;
 import org.eclipse.ui.IDecoratorManager;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPageListener;
+import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.ISharedImages;
@@ -71,6 +87,8 @@ import org.eclipse.ui.IStartup;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
@@ -78,11 +96,34 @@ import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.application.IWorkbenchPreferences;
 import org.eclipse.ui.application.WorkbenchAdviser;
+import org.eclipse.ui.commands.IActionService;
+import org.eclipse.ui.commands.IActionServiceEvent;
+import org.eclipse.ui.commands.IActionServiceListener;
+import org.eclipse.ui.commands.ICommand;
+import org.eclipse.ui.commands.ICommandManager;
+import org.eclipse.ui.commands.ICommandManagerEvent;
+import org.eclipse.ui.commands.ICommandManagerListener;
+import org.eclipse.ui.contexts.IContextActivationService;
+import org.eclipse.ui.contexts.IContextActivationServiceEvent;
+import org.eclipse.ui.contexts.IContextActivationServiceListener;
+import org.eclipse.ui.contexts.IContextManager;
+import org.eclipse.ui.contexts.IContextManagerEvent;
+import org.eclipse.ui.contexts.IContextManagerListener;
+import org.eclipse.ui.internal.commands.ActionService;
+import org.eclipse.ui.internal.commands.CommandManager;
+import org.eclipse.ui.internal.commands.Match;
+import org.eclipse.ui.internal.contexts.ContextActivationService;
+import org.eclipse.ui.internal.contexts.ContextManager;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.internal.fonts.FontDefinition;
+import org.eclipse.ui.internal.keys.KeySupport;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.misc.UIStats;
+import org.eclipse.ui.internal.roles.RoleManager;
+import org.eclipse.ui.internal.util.StatusLineContributionItem;
+import org.eclipse.ui.keys.KeySequence;
+import org.eclipse.ui.keys.KeyStroke;
 
 /**
  * The workbench class represents the top of the Eclipse user interface. 
@@ -97,7 +138,7 @@ import org.eclipse.ui.internal.misc.UIStats;
  * be rewritten to use the new workbench adviser API.
  * </p>
  */
-public final class Workbench implements IWorkbench {
+public final class Workbench implements IWorkbench, IContextResolver {
 	private static final String VERSION_STRING[] = { "0.046", "2.0" }; //$NON-NLS-1$ //$NON-NLS-2$
 	private static final String DEFAULT_WORKBENCH_STATE_FILENAME = "workbench.xml"; //$NON-NLS-1$
 	private static final int RESTORE_CODE_OK = 0;
@@ -188,6 +229,530 @@ public final class Workbench implements IWorkbench {
 		return workbench.runUI();
 	}
 	
+	/* begin command and context support */
+
+	private final Listener listener = new Listener() {
+		public void handleEvent(Event event) {
+			if ((event.keyCode & SWT.MODIFIER_MASK) != 0)
+				return;
+
+			if (event.widget instanceof Control) {
+				Shell shell = ((Control) event.widget).getShell();
+				if (shell.getParent() != null)
+					return;
+			}
+
+			KeyStroke keyStroke =
+				KeySupport.convertAcceleratorToKeyStroke(
+					KeySupport.convertEventToAccelerator(event));
+
+			if (press(keyStroke, event)) {
+				switch (event.type) {
+					case SWT.KeyDown :
+						event.doit = false;
+						break;
+					case SWT.Traverse :
+						event.detail = SWT.TRAVERSE_NONE;
+						event.doit = true;
+						break;
+					default :
+						}
+
+				event.type = SWT.NONE;
+			}
+		}
+	};
+
+	private final ICommandManagerListener commandManagerListener =
+		new ICommandManagerListener() {
+		public final void commandManagerChanged(final ICommandManagerEvent commandManagerEvent) {
+			updateActiveContextIds();
+		}
+	};
+
+	private final IContextManagerListener contextManagerListener =
+		new IContextManagerListener() {
+		public final void contextManagerChanged(final IContextManagerEvent contextManagerEvent) {
+			updateActiveContextIds();
+		}
+	};
+
+	private IActionServiceListener actionServiceListener =
+		new IActionServiceListener() {
+		public void actionServiceChanged(IActionServiceEvent actionServiceEvent) {
+			updateActiveCommandIdsAndActiveContextIds();
+		}
+	};
+
+	private IContextActivationServiceListener contextActivationServiceListener =
+		new IContextActivationServiceListener() {
+		public void contextActivationServiceChanged(IContextActivationServiceEvent contextActivationServiceEvent) {
+			updateActiveCommandIdsAndActiveContextIds();
+		}
+	};
+
+	private IInternalPerspectiveListener internalPerspectiveListener =
+		new IInternalPerspectiveListener() {
+		public void perspectiveActivated(
+			IWorkbenchPage workbenchPage,
+			IPerspectiveDescriptor perspectiveDescriptor) {
+			updateActiveCommandIdsAndActiveContextIds();
+		}
+
+		public void perspectiveChanged(
+			IWorkbenchPage workbenchPage,
+			IPerspectiveDescriptor perspectiveDescriptor,
+			String changeId) {
+			updateActiveCommandIdsAndActiveContextIds();
+		}
+
+		public void perspectiveClosed(
+			IWorkbenchPage page,
+			IPerspectiveDescriptor perspective) {
+			updateActiveCommandIdsAndActiveContextIds();
+		}
+
+		public void perspectiveOpened(
+			IWorkbenchPage page,
+			IPerspectiveDescriptor perspective) {
+			updateActiveCommandIdsAndActiveContextIds();
+		}
+	};
+
+	private IPageListener pageListener = new IPageListener() {
+		public void pageActivated(IWorkbenchPage workbenchPage) {
+			updateActiveCommandIdsAndActiveContextIds();
+		}
+
+		public void pageClosed(IWorkbenchPage workbenchPage) {
+			updateActiveCommandIdsAndActiveContextIds();
+		}
+
+		public void pageOpened(IWorkbenchPage workbenchPage) {
+			updateActiveCommandIdsAndActiveContextIds();
+		}
+	};
+
+	private IPartListener partListener = new IPartListener() {
+		public void partActivated(IWorkbenchPart workbenchPart) {
+			updateActiveCommandIdsAndActiveContextIds();
+			updateActiveWorkbenchWindowMenuManager();
+		}
+
+		public void partBroughtToTop(IWorkbenchPart workbenchPart) {
+		}
+
+		public void partClosed(IWorkbenchPart workbenchPart) {
+			updateActiveCommandIdsAndActiveContextIds();
+		}
+
+		public void partDeactivated(IWorkbenchPart workbenchPart) {
+			updateActiveCommandIdsAndActiveContextIds();
+		}
+
+		public void partOpened(IWorkbenchPart workbenchPart) {
+			updateActiveCommandIdsAndActiveContextIds();
+		}
+	};
+
+	private IWindowListener windowListener = new IWindowListener() {
+		public void windowActivated(IWorkbenchWindow workbenchWindow) {
+			updateActiveCommandIdsAndActiveContextIds();
+			updateActiveWorkbenchWindowMenuManager();
+		}
+
+		public void windowClosed(IWorkbenchWindow workbenchWindow) {
+			updateActiveCommandIdsAndActiveContextIds();
+			updateActiveWorkbenchWindowMenuManager();
+		}
+
+		public void windowDeactivated(IWorkbenchWindow workbenchWindow) {
+			updateActiveCommandIdsAndActiveContextIds();
+			updateActiveWorkbenchWindowMenuManager();
+		}
+
+		public void windowOpened(IWorkbenchWindow workbenchWindow) {
+			updateActiveCommandIdsAndActiveContextIds();
+			updateActiveWorkbenchWindowMenuManager();
+		}
+	};
+
+	private CommandManager commandManager;
+	private ContextManager contextManager;
+	private StatusLineContributionItem modeContributionItem;
+
+	private IWorkbenchWindow activeWorkbenchWindow;
+	//private IActionService activeWorkbenchWindowActionService;
+	//private IContextActivationService activeWorkbenchWindowContextActivationService;
+
+	private IWorkbenchPage activeWorkbenchPage;
+	private IActionService activeWorkbenchPageActionService;
+	private IContextActivationService activeWorkbenchPageContextActivationService;
+
+	private IWorkbenchPart activeWorkbenchPart;
+	private IActionService activeWorkbenchPartActionService;
+	private IContextActivationService activeWorkbenchPartContextActivationService;
+
+	private IActionService actionService;
+	private IContextActivationService contextActivationService;
+
+	public IActionService getActionService() {
+		if (actionService == null) {
+			actionService = new ActionService();
+			actionService.addActionServiceListener(actionServiceListener);
+		}
+
+		return actionService;
+	}
+
+	public ICommandManager getCommandManager() {
+		return commandManager;
+	}
+
+	public IContextActivationService getContextActivationService() {
+		if (contextActivationService == null) {
+			contextActivationService = new ContextActivationService();
+			contextActivationService.addContextActivationServiceListener(
+				contextActivationServiceListener);
+		}
+
+		return contextActivationService;
+	}
+
+	public IContextManager getContextManager() {
+		return contextManager;
+	}
+
+	public final void disableKeyFilter() {
+		final Display display = Display.getCurrent();
+		display.removeFilter(SWT.KeyDown, listener);
+		display.removeFilter(SWT.Traverse, listener);
+	}
+
+	public final void enableKeyFilter() {
+		final Display display = Display.getCurrent();
+		display.addFilter(SWT.KeyDown, listener);
+		display.addFilter(SWT.Traverse, listener);
+	}
+
+	public final boolean inContext(final String commandId) {
+		if (commandId != null) {
+			final ICommand command = commandManager.getCommand(commandId);
+
+			if (command != null)
+				return command.isDefined() && command.isActive();
+		}
+
+		return true;
+	}
+
+	// TODO move this method to CommandManager once getMode() is added to ICommandManager (and triggers and change event)
+	// TODO remove event parameter once key-modified actions are removed
+	public final boolean press(KeyStroke keyStroke, Event event) {
+		final KeySequence modeBeforeKeyStroke = commandManager.getMode();
+		final List keyStrokes =
+			new ArrayList(modeBeforeKeyStroke.getKeyStrokes());
+		keyStrokes.add(keyStroke);
+		final KeySequence modeAfterKeyStroke =
+			KeySequence.getInstance(keyStrokes);
+		final Map matchesByKeySequenceForModeBeforeKeyStroke =
+			commandManager.getMatchesByKeySequenceForMode();
+		commandManager.setMode(modeAfterKeyStroke);
+		final Map matchesByKeySequenceForModeAfterKeyStroke =
+			commandManager.getMatchesByKeySequenceForMode();
+		boolean consumeKeyStroke = false;
+
+		if (!matchesByKeySequenceForModeAfterKeyStroke.isEmpty()) {
+			// this key stroke is part of one or more possible completions: consume the keystroke
+			modeContributionItem.setText(
+				"carbon".equals(SWT.getPlatform()) ? KeySupport.formatOSX(modeAfterKeyStroke) : modeAfterKeyStroke.format());						
+			consumeKeyStroke = true;
+		} else {
+			// there are no possible longer multi-stroke sequences, allow a completion now if possible
+			final Match match =
+				(Match) matchesByKeySequenceForModeBeforeKeyStroke.get(
+					modeAfterKeyStroke);
+
+			if (match != null) {
+				// a completion was found. 
+				final String commandId = match.getCommandId();
+				final Map actionsById = commandManager.getActionsById();
+				org.eclipse.ui.commands.IAction action =
+					(org.eclipse.ui.commands.IAction) actionsById.get(
+						commandId);
+
+				if (action != null) {
+					// an action was found corresponding to the completion
+
+					if (action.isEnabled()) {
+						try {
+							modeContributionItem.setText(
+								"carbon".equals(SWT.getPlatform()) ? KeySupport.formatOSX(modeAfterKeyStroke) : modeAfterKeyStroke.format());
+							action.execute(event);
+						} catch (final Exception e) {
+							// TODO 						
+						}
+					}
+
+					// consume the keystroke
+					consumeKeyStroke = true;
+				}
+			}
+
+			// possibly no completion was found, or no action was found corresponding to the completion, but if we were already in a mode consume the keystroke anyway.									
+			if (modeBeforeKeyStroke.getKeyStrokes().size() >= 1)
+				consumeKeyStroke = true;
+
+			// clear mode			
+			commandManager.setMode(KeySequence.getInstance());
+			modeContributionItem.setText(
+				"carbon".equals(SWT.getPlatform())
+					? KeySupport.formatOSX(KeySequence.getInstance())
+					: KeySequence.getInstance().format());
+		}
+
+		// TODO is this necessary?		
+		updateActiveContextIds();
+		return consumeKeyStroke;
+	}
+
+	public void updateActiveContextIds() {
+		commandManager.setActiveContextIds(
+			contextManager.getActiveContextIds());
+	}
+
+	public void updateActiveWorkbenchWindowMenuManager() {
+		IWorkbenchWindow workbenchWindow = getActiveWorkbenchWindow();
+
+		if (workbenchWindow != null) {
+			MenuManager menuManager =
+				((WorkbenchWindow) workbenchWindow).getMenuManager();
+			menuManager.update(IAction.TEXT);
+		}
+	}
+
+	void updateActiveCommandIdsAndActiveContextIds() {
+		IWorkbenchWindow activeWorkbenchWindow = getActiveWorkbenchWindow();
+
+		if (activeWorkbenchWindow != null
+			&& !(activeWorkbenchWindow instanceof WorkbenchWindow))
+			activeWorkbenchWindow = null;
+
+		//IActionService activeWorkbenchWindowActionService = activeWorkbenchWindow != null ? ((WorkbenchWindow) activeWorkbenchWindow).getActionService() : null;
+		//IContextActivationService activeWorkbenchWindowContextActivationService = activeWorkbenchWindow != null ? ((WorkbenchWindow) activeWorkbenchWindow).getContextActivationService() : null;
+
+		IWorkbenchPage activeWorkbenchPage =
+			activeWorkbenchWindow != null
+				? activeWorkbenchWindow.getActivePage()
+				: null;
+		IActionService activeWorkbenchPageActionService =
+			activeWorkbenchPage != null
+				? ((WorkbenchPage) activeWorkbenchPage).getActionService()
+				: null;
+		IContextActivationService activeWorkbenchPageContextActivationService =
+			activeWorkbenchPage != null
+				? ((WorkbenchPage) activeWorkbenchPage)
+					.getContextActivationService()
+				: null;
+		IPartService activePartService =
+			activeWorkbenchWindow != null
+				? activeWorkbenchWindow.getPartService()
+				: null;
+		IWorkbenchPart activeWorkbenchPart =
+			activePartService != null
+				? activePartService.getActivePart()
+				: null;
+		IWorkbenchPartSite activeWorkbenchPartSite =
+			activeWorkbenchPart != null ? activeWorkbenchPart.getSite() : null;
+		IActionService activeWorkbenchPartActionService =
+			activeWorkbenchPartSite != null
+				? ((PartSite) activeWorkbenchPartSite).getActionService()
+				: null;
+		IContextActivationService activeWorkbenchPartContextActivationService =
+			activeWorkbenchPartSite != null
+				? ((PartSite) activeWorkbenchPartSite)
+					.getContextActivationService()
+				: null;
+
+		if (activeWorkbenchWindow != this.activeWorkbenchWindow) {
+			if (this.activeWorkbenchWindow != null) {
+				this.activeWorkbenchWindow.removePageListener(pageListener);
+				this.activeWorkbenchWindow.getPartService().removePartListener(
+					partListener);
+				((WorkbenchWindow) this.activeWorkbenchWindow)
+					.getPerspectiveService()
+					.removePerspectiveListener(internalPerspectiveListener);
+			}
+
+			this.activeWorkbenchWindow = activeWorkbenchWindow;
+
+			if (this.activeWorkbenchWindow != null) {
+				this.activeWorkbenchWindow.addPageListener(pageListener);
+				this.activeWorkbenchWindow.getPartService().addPartListener(
+					partListener);
+				((WorkbenchWindow) this.activeWorkbenchWindow)
+					.getPerspectiveService()
+					.addPerspectiveListener(internalPerspectiveListener);
+			}
+		}
+
+		/*
+		if (activeWorkbenchWindowActionService != this.activeWorkbenchWindowActionService) {
+			if (this.activeWorkbenchWindowActionService != null)
+				this.activeWorkbenchWindowActionService.removeActionServiceListener(actionServiceListener);
+					
+			this.activeWorkbenchWindow = activeWorkbenchWindow;
+			this.activeWorkbenchWindowActionService = activeWorkbenchWindowActionService;
+		
+			if (this.activeWorkbenchWindowActionService != null)
+				this.activeWorkbenchWindowActionService.addActionServiceListener(actionServiceListener);
+		}
+		*/
+
+		if (activeWorkbenchPageActionService
+			!= this.activeWorkbenchPageActionService) {
+			if (this.activeWorkbenchPageActionService != null)
+				this
+					.activeWorkbenchPageActionService
+					.removeActionServiceListener(
+					actionServiceListener);
+
+			this.activeWorkbenchPage = activeWorkbenchPage;
+			this.activeWorkbenchPageActionService =
+				activeWorkbenchPageActionService;
+
+			if (this.activeWorkbenchPageActionService != null)
+				this.activeWorkbenchPageActionService.addActionServiceListener(
+					actionServiceListener);
+		}
+
+		if (activeWorkbenchPartActionService
+			!= this.activeWorkbenchPartActionService) {
+			if (this.activeWorkbenchPartActionService != null)
+				this
+					.activeWorkbenchPartActionService
+					.removeActionServiceListener(
+					actionServiceListener);
+
+			this.activeWorkbenchPart = activeWorkbenchPart;
+			this.activeWorkbenchPartActionService =
+				activeWorkbenchPartActionService;
+
+			if (this.activeWorkbenchPartActionService != null)
+				this.activeWorkbenchPartActionService.addActionServiceListener(
+					actionServiceListener);
+		}
+
+		SortedMap actionsById = new TreeMap();
+		actionsById.putAll(getActionService().getActionsById());
+
+		//if (this.activeWorkbenchWindowActionService != null)
+		//	actionsById.putAll(this.activeWorkbenchWindowActionService.getActionsById());
+
+		if (this.activeWorkbenchWindow != null) {
+			actionsById.putAll(
+				((WorkbenchWindow) this.activeWorkbenchWindow)
+					.getActionsForGlobalActions());
+			actionsById.putAll(
+				((WorkbenchWindow) this.activeWorkbenchWindow)
+					.getActionsForActionSets());
+		}
+
+		if (this.activeWorkbenchPageActionService != null)
+			actionsById.putAll(
+				this.activeWorkbenchPageActionService.getActionsById());
+
+		if (this.activeWorkbenchPartActionService != null)
+			actionsById.putAll(
+				this.activeWorkbenchPartActionService.getActionsById());
+
+		commandManager.setActionsById(actionsById);
+
+		/*
+		if (activeWorkbenchWindowContextActivationService != this.activeWorkbenchWindowContextActivationService) {
+			if (this.activeWorkbenchWindowContextActivationService != null)
+				this.activeWorkbenchWindowContextActivationService.removeContextActivationServiceListener(contextActivationServiceListener);
+					
+			this.activeWorkbenchWindow = activeWorkbenchWindow;
+			this.activeWorkbenchWindowContextActivationService = activeWorkbenchWindowContextActivationService;
+		
+			if (this.activeWorkbenchWindowContextActivationService != null)
+				this.activeWorkbenchWindowContextActivationService.addContextActivationServiceListener(contextActivationServiceListener);
+		}
+		*/
+
+		if (activeWorkbenchPageContextActivationService
+			!= this.activeWorkbenchPageContextActivationService) {
+			if (this.activeWorkbenchPageContextActivationService != null)
+				this
+					.activeWorkbenchPageContextActivationService
+					.removeContextActivationServiceListener(contextActivationServiceListener);
+
+			this.activeWorkbenchPage = activeWorkbenchPage;
+			this.activeWorkbenchPageContextActivationService =
+				activeWorkbenchPageContextActivationService;
+
+			if (this.activeWorkbenchPageContextActivationService != null)
+				this
+					.activeWorkbenchPageContextActivationService
+					.addContextActivationServiceListener(contextActivationServiceListener);
+		}
+
+		if (activeWorkbenchPartContextActivationService
+			!= this.activeWorkbenchPartContextActivationService) {
+			if (this.activeWorkbenchPartContextActivationService != null)
+				this
+					.activeWorkbenchPartContextActivationService
+					.removeContextActivationServiceListener(contextActivationServiceListener);
+
+			this.activeWorkbenchPart = activeWorkbenchPart;
+			this.activeWorkbenchPartContextActivationService =
+				activeWorkbenchPartContextActivationService;
+
+			if (this.activeWorkbenchPartContextActivationService != null)
+				this
+					.activeWorkbenchPartContextActivationService
+					.addContextActivationServiceListener(contextActivationServiceListener);
+		}
+
+		SortedSet activeContextIds = new TreeSet();
+		activeContextIds.addAll(
+			getContextActivationService().getActiveContextIds());
+
+		//if (this.activeWorkbenchWindowContextActivationService != null)
+		//	activeContextIds.addAll(this.activeWorkbenchWindowContextActivationService.getActiveContextIds());
+
+		if (this.activeWorkbenchPageContextActivationService != null)
+			activeContextIds.addAll(
+				this
+					.activeWorkbenchPageContextActivationService
+					.getActiveContextIds());
+
+		if (this.activeWorkbenchPartContextActivationService != null)
+			activeContextIds.addAll(
+				this
+					.activeWorkbenchPartContextActivationService
+					.getActiveContextIds());
+
+		contextManager.setActiveContextIds(new ArrayList(activeContextIds));
+	}
+
+	private void initializeCommandsAndContexts(final Display display) {
+		ContextResolver.getInstance().setContextResolver(this);
+		commandManager = CommandManager.getInstance();
+		contextManager = ContextManager.getInstance();
+		modeContributionItem = new StatusLineContributionItem("ModeContributionItem"); //$NON-NLS-1$	
+		commandManager.addCommandManagerListener(commandManagerListener);
+		contextManager.addContextManagerListener(contextManagerListener);
+		updateActiveContextIds();
+		display.addFilter(SWT.Traverse, listener);
+		display.addFilter(SWT.KeyDown, listener);
+		addWindowListener(windowListener);
+		updateActiveCommandIdsAndActiveContextIds();
+	}
+
+	/* end command and context support */
+
 	/* (non-Javadoc)
 	 * Method declared on IWorkbench.
 	 */
@@ -206,6 +771,10 @@ public final class Workbench implements IWorkbench {
 	 * Fire window opened event.
 	 */
 	protected void fireWindowOpened(IWorkbenchWindow window) {
+		if (window instanceof WorkbenchWindow)
+			((WorkbenchWindow) window).getStatusLineManager().add(
+				modeContributionItem);
+
 		Object list[] = windowListeners.getListeners();
 		for (int i = 0; i < list.length; i++) {
 			((IWindowListener) list[i]).windowOpened(window);
@@ -215,6 +784,10 @@ public final class Workbench implements IWorkbench {
 	 * Fire window closed event.
 	 */
 	protected void fireWindowClosed(IWorkbenchWindow window) {
+		if (window instanceof WorkbenchWindow)
+			((WorkbenchWindow) window).getStatusLineManager().add(
+				modeContributionItem);
+
 		if (activatedWindow == window) {
 			// Do not hang onto it so it can be GC'ed
 			activatedWindow = null;
@@ -565,23 +1138,15 @@ public final class Workbench implements IWorkbench {
 	public IWorkingSetManager getWorkingSetManager() {
 		return WorkbenchPlugin.getDefault().getWorkingSetManager();
 	}
-
-	public void updateActiveGestureBindingService() {		
-	}
-
-	public void updateActiveKeyBindingService() {
-		WorkbenchWindow activeWindow = (WorkbenchWindow) getActiveWorkbenchWindow();
-		
-		if (activeWindow != null)
-			activeWindow.updateContextAndHandlerManager();			
-	}
 		
 	/*
 	 * Initializes the workbench now that the display is created.
 	 *
 	 * @return true if init succeeded.
 	 */
-	private boolean init(AboutInfo aboutInfo) {	
+	private boolean init(AboutInfo aboutInfo, Display display) {
+		initializeCommandsAndContexts(display);
+		
 		// setup debug mode if required.
 		if (WorkbenchPlugin.getDefault().isDebugging()) {
 			WorkbenchPlugin.DEBUG = true;
@@ -607,6 +1172,22 @@ public final class Workbench implements IWorkbench {
 		
 		// initialize workbench single-click vs double-click behavior	
 		initializeSingleClickOption();
+
+		// deadlock code
+		boolean avoidDeadlock = true;
+
+		String[] commandLineArgs = Platform.getCommandLineArgs();
+		for (int i = 0; i < commandLineArgs.length; i++) {
+			if (commandLineArgs[i].equalsIgnoreCase("-allowDeadlock")) //$NON-NLS-1$
+				avoidDeadlock = false;
+		}
+
+		if (avoidDeadlock) {
+			UILockListener uiLockListener = new UILockListener(display);
+			Platform.getJobManager().setLockListener(uiLockListener);
+			display.setSynchronizer(
+				new UISynchronizer(display, uiLockListener));
+		}
 
 		// attempt to restore a previous workbench state
 		try {
@@ -1076,7 +1657,12 @@ public final class Workbench implements IWorkbench {
 		
 		// workaround for 1GEZ9UR and 1GF07HN
 		display.setWarnings(false);
-		
+
+		//Set the priority higher than normal so as to be higher 
+		//than the JobManager.
+		Thread.currentThread().setPriority(
+			Math.min(Thread.MAX_PRIORITY, Thread.NORM_PRIORITY + 1));
+
 		// react to display close event by closing the workhench nicely
 		display.addListener(SWT.Close, new Listener() {
 			public void handleEvent(Event event) {
@@ -1119,7 +1705,7 @@ public final class Workbench implements IWorkbench {
 			Window.setExceptionHandler(handler);
 			
 			// initialize workbench and restore or open one window
-			boolean initOK = init(aboutInfo);
+			boolean initOK = init(aboutInfo, display);
 			
 			// drop the splash screen now that a workbench window is up
 			Platform.endSplash();
@@ -1421,6 +2007,7 @@ public final class Workbench implements IWorkbench {
 		if(getDecoratorManager() != null) {
 			((DecoratorManager) getDecoratorManager()).shutdown();
 		}
+		RoleManager.shutdown();
 	}
 
 	/* (non-Javadoc)

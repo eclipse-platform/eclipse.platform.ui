@@ -48,6 +48,7 @@ import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.application.IWorkbenchPreferences;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
+import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceNode;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.EditorRegistry;
@@ -57,6 +58,9 @@ import org.eclipse.ui.internal.registry.PreferencePageRegistryReader;
 import org.eclipse.ui.internal.registry.ViewRegistry;
 import org.eclipse.ui.internal.registry.ViewRegistryReader;
 import org.eclipse.ui.internal.registry.WorkingSetRegistry;
+import org.eclipse.ui.internal.roles.ObjectActivityManager;
+import org.eclipse.ui.internal.roles.ObjectContributionRecord;
+import org.eclipse.ui.internal.roles.RoleManager;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -294,6 +298,19 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 			while (enum.hasNext()) {
 				preferenceManager.addToRoot((IPreferenceNode) enum.next());
 			}
+                        
+			//add all WorkbenchPreferenceNodes to the manager
+			ObjectActivityManager fPrefManager = ObjectActivityManager.getManager(IWorkbenchConstants.PL_PREFERENCES, true);
+			for (Iterator i = preferenceManager.getElements(PreferenceManager.PRE_ORDER).iterator(); i.hasNext(); ) {
+				IPreferenceNode node = (IPreferenceNode) i.next();
+				if (node instanceof WorkbenchPreferenceNode) {
+					WorkbenchPreferenceNode workbenchNode = ((WorkbenchPreferenceNode)node);
+					ObjectContributionRecord record = new ObjectContributionRecord(workbenchNode.getPluginId(), workbenchNode.getExtensionLocalId());
+					fPrefManager.addObject(record, node);  
+				}            
+			}
+			// and then apply the default bindings
+			RoleManager.getInstance().applyPatternBindings(fPrefManager);          
 		}
 		return preferenceManager;
 	}

@@ -23,21 +23,8 @@ import java.util.TreeMap;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.ActionContributionItem;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.action.IContributionManager;
-import org.eclipse.jface.action.IContributionManagerOverrides;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.action.StatusLineManager;
-import org.eclipse.jface.action.SubMenuManager;
-import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.window.ApplicationWindow;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.ControlAdapter;
@@ -48,7 +35,6 @@ import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.ui.application.WorkbenchAdviser;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.CoolBar;
@@ -62,6 +48,21 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
+
+import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IContributionManager;
+import org.eclipse.jface.action.IContributionManagerOverrides;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.StatusLineManager;
+import org.eclipse.jface.action.SubMenuManager;
+import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.window.ApplicationWindow;
+
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IElementFactory;
@@ -79,32 +80,27 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.commands.IHandlerService;
-import org.eclipse.ui.contexts.IContextService;
+import org.eclipse.ui.application.WorkbenchAdviser;
+import org.eclipse.ui.commands.IKeyBinding;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.commands.ActionHandler;
-import org.eclipse.ui.internal.commands.ContextAndHandlerManager;
-import org.eclipse.ui.internal.commands.Manager;
-import org.eclipse.ui.internal.commands.SequenceMachine;
-import org.eclipse.ui.internal.commands.util.Sequence;
-import org.eclipse.ui.internal.commands.SimpleHandlerService;
-import org.eclipse.ui.internal.commands.util.Stroke;
-import org.eclipse.ui.internal.contexts.SimpleContextService;
+import org.eclipse.ui.internal.commands.CommandManager;
+import org.eclipse.ui.internal.commands.Match;
+import org.eclipse.ui.internal.keys.KeySupport;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.progress.AnimationItem;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.IActionSet;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
+import org.eclipse.ui.keys.KeySequence;
+import org.eclipse.ui.keys.KeyStroke;
 
 /**
  * A window within the workbench.
  */
 public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWindow {
 
-	private ContextAndHandlerManager contextAndHandlerManager;
-	private IContextService contextService;
-	private IHandlerService handlerService;
 	private int number;
 	private PageList pageList = new PageList();
 	private PageListenerList pageListeners = new PageListenerList();
@@ -215,22 +211,6 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 			}
 
 			int toolBarWidth = clientArea.width;
-			//Layout the progress indicator
-			if (showProgressIndicator()) {
-				if (animationItem != null) {
-					Control progressWidget =
-						animationItem.getControl();
-					Rectangle bounds =
-					animationItem.getImageBounds();
-					toolBarWidth -= (bounds.width + CLIENT_INSET);
-					progressWidget.setBounds(
-						clientArea.x + toolBarWidth,
-						clientArea.y,
-						bounds.width,
-						bounds.height);
-
-				}
-			}
 
 			//Layout the toolbar	
 			Control toolBar = getToolBarControl();
@@ -274,12 +254,30 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 					sep2.setBounds(0, 0, 0, 0);
 			}
 
+			int width = BAR_SIZE;
+			//Layout the progress indicator
+			if (showProgressIndicator()) {
+				if (animationItem != null) {
+					Control progressWidget = animationItem.getControl();
+					Rectangle bounds = animationItem.getImageBounds();
+					int offset = 0;
+					if (width > bounds.width)
+						offset = (width - bounds.width) / 2;
+					progressWidget.setBounds(
+						offset,
+						clientArea.y + clientArea.height - bounds.height,
+						width,
+						bounds.height);
+					width = Math.max(width, bounds.width);
+
+				}
+			}
+
 			if (getStatusLineManager() != null) {
 				Control statusLine = getStatusLineManager().getControl();
 				if (statusLine != null) {
 					if (getWindowConfigurer().getShowStatusLine()) {
 
-						int width = 0;
 						if (getShortcutBar() != null && getWindowConfigurer().getShowShortcutBar()) {
 							Widget shortcutBar = getShortcutBar().getControl();
 							if (shortcutBar != null
@@ -287,7 +285,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 								ToolBar bar = (ToolBar) shortcutBar;
 								if (bar.getItemCount() > 0) {
 									ToolItem item = bar.getItem(0);
-									width = item.getWidth();
+									width = Math.max(width, item.getWidth());
 									Rectangle trim =
 										bar.computeTrim(0, 0, width, width);
 									width = trim.width;
@@ -320,7 +318,6 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 				if (shortCutBar != null) {
 					if (getWindowConfigurer().getShowShortcutBar()) {
 
-						int width = BAR_SIZE;
 						if (shortCutBar instanceof ToolBar) {
 							ToolBar bar = (ToolBar) shortCutBar;
 							if (bar.getItemCount() > 0) {
@@ -338,10 +335,11 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 							clientArea.height);
 						clientArea.x += width + VGAP;
 						clientArea.width -= width + VGAP;
-					} else
-						getShortcutBar().getControl().setBounds(0, 0, 0, 0);
 				}
 			}
+			} else
+				getShortcutBar().getControl().setBounds(0, 0, 0, 0);
+
 
 			Control sep3 = getSeparator3();
 
@@ -410,30 +408,19 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		getAdviser().preWindowOpen(getWindowConfigurer());
 	}
 
-	void updateContextAndHandlerManager() {
-		if (contextAndHandlerManager != null)
-			contextAndHandlerManager.update();
+	private SortedMap actionsForActionSets = new TreeMap();
+	private SortedMap actionsForGlobalActions = new TreeMap();
+
+	SortedMap getActionsForActionSets() {
+		return actionsForActionSets;
 	}
 
-	public IContextService getContextService() {
-		if (contextService == null)
-			contextService = new SimpleContextService();
-
-		return contextService;
+	SortedMap getActionsForGlobalActions() {
+		return actionsForGlobalActions;
 	}
-
-	public IHandlerService getHandlerService() {
-		if (handlerService == null)
-			handlerService = new SimpleHandlerService();
-
-		return handlerService;
-	}
-
-	private SortedMap actionSetsCommandIdToActionMap = new TreeMap();
-	private SortedMap globalActionsCommandIdToActionMap = new TreeMap();
 
 	void registerActionSets(IActionSet[] actionSets) {
-		actionSetsCommandIdToActionMap.clear();
+		actionsForActionSets.clear();
 
 		for (int i = 0; i < actionSets.length; i++) {
 			if (actionSets[i] instanceof PluginActionSet) {
@@ -446,38 +433,22 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 					String command = pluginAction.getActionDefinitionId();
 
 					if (command != null)
-						actionSetsCommandIdToActionMap.put(
-							command,
-							pluginAction);
+						actionsForActionSets.put(command, new ActionHandler(pluginAction));
 				}
 			}
 		}
 
-		updateHandlerMap();
+		getWorkbenchImpl().updateActiveCommandIdsAndActiveContextIds();
 	}
 
 	void registerGlobalAction(IAction globalAction) {
 		String command = globalAction.getActionDefinitionId();
 
-		if (command != null) {
-			globalActionsCommandIdToActionMap.put(command, globalAction);
-			updateHandlerMap();
-		}
-	}
-
-	private void updateHandlerMap() {
-		SortedMap actionMap = new TreeMap();
-		actionMap.putAll(globalActionsCommandIdToActionMap);
-		actionMap.putAll(actionSetsCommandIdToActionMap);		
-		Iterator iterator = actionMap.entrySet().iterator();
-		SortedMap handlerMap = new TreeMap();
-		
-		while (iterator.hasNext()) {
-			Map.Entry entry = (Map.Entry) iterator.next();
-			handlerMap.put(entry.getKey(), new ActionHandler((IAction) entry.getValue()));				
-		}
-		
-		getHandlerService().setHandlerMap(handlerMap);
+		if (command != null)
+			actionsForGlobalActions.put(
+				command,
+				new ActionHandler(globalAction));
+		getWorkbenchImpl().updateActiveCommandIdsAndActiveContextIds();
 	}
 
 	/*
@@ -602,7 +573,6 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	 */
 	public int open() {
 		int result = super.open();
-		contextAndHandlerManager = new ContextAndHandlerManager(this);
 		getWorkbenchImpl().fireWindowOpened(this);
 		return result;
 	}
@@ -801,47 +771,46 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	 */
 	protected MenuManager createMenuManager() {
 		final MenuManager result = super.createMenuManager();
+		
+		// TODO refactor this to internal.commands? get rid of it entirely?
+		// TODO time to take back the menu, and not allow any contribution item to set an accelerator unless it cooperates with the command manager.
 		result.setOverrides(new IContributionManagerOverrides() {
+
+			private CommandManager commandManager = CommandManager.getInstance();
 
 			public Integer getAccelerator(IContributionItem contributionItem) {
 				if (!(contributionItem instanceof ActionContributionItem))
 					return null;
 
-				ActionContributionItem actionContributionItem =
-					(ActionContributionItem) contributionItem;
-				String commandId =
-					actionContributionItem.getAction().getActionDefinitionId();
+				ActionContributionItem actionContributionItem = (ActionContributionItem) contributionItem;
+				String commandId = actionContributionItem.getAction().getActionDefinitionId();
 
 				if (commandId == null) {
-					int accelerator =
-						actionContributionItem.getAction().getAccelerator();
+					int accelerator = actionContributionItem.getAction().getAccelerator();
 
 					if (accelerator != 0) {
-						Sequence keySequence =
-							Sequence.create(Stroke.create(accelerator));
-						Map keySequenceMapForMode =
-							Manager
-								.getInstance()
-								.getKeyMachine()
-								.getSequenceMapForMode();
+						KeyStroke keyStroke = KeySupport.convertAcceleratorToKeyStroke(accelerator);
+						KeySequence keySequence = KeySequence.getInstance(keyStroke);
+						Map matchesByKeySequence = commandManager.getMatchesByKeySequence();
 
-						if (keySequenceMapForMode.get(keySequence) == null)
+						if (matchesByKeySequence.get(keySequence) == null)
 							return null;
 					}
-				} else if ("carbon".equals(SWT.getPlatform())) { //$NON-NLS-1$ 			
-					Map commandMap =
-						Manager.getInstance().getKeyMachine().getCommandMap();
-					SortedSet keySequenceSet =
-						(SortedSet) commandMap.get(commandId);
+				} else if ("carbon".equals(SWT.getPlatform())) { //$NON-NLS-1$ 		
+					Map keyBindingsByCommandId = commandManager.getKeyBindingsByCommandId();
+					SortedSet keyBindings = (SortedSet) keyBindingsByCommandId.get(commandId);
 
-					if (keySequenceSet != null && !keySequenceSet.isEmpty()) {
-						Sequence keySequence =
-							(Sequence) keySequenceSet.first();
-						List keyStrokes = keySequence.getStrokes();
+					if (keyBindings != null) {
+						IKeyBinding keyBinding = (IKeyBinding) keyBindings.first();
 
-						if (keyStrokes.size() == 1) {
-							Stroke keyStroke = (Stroke) keyStrokes.get(0);
-							return new Integer(keyStroke.getValue());
+						if (keyBinding != null) {
+							KeySequence keySequence = keyBinding.getKeySequence();
+							List keyStrokes = keySequence.getKeyStrokes();
+
+							if (keyStrokes.size() == 1) {
+								KeyStroke keyStroke = (KeyStroke) keyStrokes.get(0);
+								return new Integer(KeySupport.convertKeyStrokeToAccelerator(keyStroke));
+							}
 						}
 					}
 				}
@@ -853,66 +822,32 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 				if (!(contributionItem instanceof ActionContributionItem))
 					return null;
 
-				ActionContributionItem actionContributionItem =
-					(ActionContributionItem) contributionItem;
-				String commandId =
-					actionContributionItem.getAction().getActionDefinitionId();
+				ActionContributionItem actionContributionItem = (ActionContributionItem) contributionItem;
+				String commandId = actionContributionItem.getAction().getActionDefinitionId();
 
 				if (commandId == null) {
-					int accelerator =
-						actionContributionItem.getAction().getAccelerator();
+					int accelerator = actionContributionItem.getAction().getAccelerator();
 
 					if (accelerator != 0) {
-						Sequence keySequence =
-							Sequence.create(Stroke.create(accelerator));
-						Map keySequenceMapForMode =
-							Manager
-								.getInstance()
-								.getKeyMachine()
-								.getSequenceMapForMode();
+						KeyStroke keyStroke = KeySupport.convertAcceleratorToKeyStroke(accelerator);
+						KeySequence keySequence = KeySequence.getInstance(keyStroke);
+						Map matchesByKeySequence = commandManager.getMatchesByKeySequence();
 
-						if (keySequenceMapForMode.get(keySequence) == null)
+						if (matchesByKeySequence.get(keySequence) == null)
 							return null;
 					}
 				} else if ("carbon".equals(SWT.getPlatform())) { //$NON-NLS-1$
-					Map commandMap =
-						Manager.getInstance().getKeyMachine().getCommandMap();
-					SortedSet keySequenceSet =
-						(SortedSet) commandMap.get(commandId);
+					Map keyBindingsByCommandId = commandManager.getKeyBindingsByCommandId();
+					SortedSet keyBindings = (SortedSet) keyBindingsByCommandId.get(commandId);
 
-					if (keySequenceSet != null && !keySequenceSet.isEmpty()) {
-						Sequence keySequence =
-							(Sequence) keySequenceSet.first();
-						List keyStrokes = keySequence.getStrokes();
-						StringBuffer stringBuffer = new StringBuffer();
+					if (keyBindings != null) {
+						IKeyBinding keyBinding = (IKeyBinding) keyBindings.first();
 
-						for (int i = 0; i < keyStrokes.size(); i++) {
-							if (i >= 1)
-								stringBuffer.append(' ');
-
-							Stroke keyStroke = (Stroke) keyStrokes.get(i);
-							int value = keyStroke.getValue();
-
-							if ((value & SWT.SHIFT) != 0)
-								stringBuffer.append('\u21E7');
-
-							if ((value & SWT.CTRL) != 0)
-								stringBuffer.append('\u2303');
-
-							if ((value & SWT.ALT) != 0)
-								stringBuffer.append('\u2325');
-
-							if ((value & SWT.COMMAND) != 0)
-								stringBuffer.append('\u2318');
-
-							stringBuffer.append(Action.findKeyString(value));
-						}
-
-						return stringBuffer.toString();
+						if (keyBinding != null)
+							return KeySupport.formatOSX(keyBinding.getKeySequence());
 					}
 				} else {
-					String acceleratorText =
-						Manager.getInstance().getKeyTextForCommand(commandId);
+					String acceleratorText = commandManager.getKeyTextForCommand(commandId);
 
 					if (acceleratorText != null)
 						return acceleratorText;
@@ -945,16 +880,14 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 					return text;
 
 				char altChar = Character.toUpperCase(text.charAt(index + 1));
-				Manager manager = Manager.getInstance();
-				SequenceMachine keyMachine = manager.getKeyMachine();
-				Sequence mode = keyMachine.getMode();
-				List strokes = new ArrayList(mode.getStrokes());
-				strokes.add(Stroke.create(SWT.ALT | altChar));
-				Sequence childMode = Sequence.create(strokes);
-				Map sequenceMapForMode = keyMachine.getSequenceMapForMode();
-				String commandId = (String) sequenceMapForMode.get(childMode);
+				KeySequence mode = commandManager.getMode();
+				List keyStrokes = new ArrayList(mode.getKeyStrokes());
+				keyStrokes.add(KeySupport.convertAcceleratorToKeyStroke(SWT.ALT | altChar));
+				KeySequence childMode = KeySequence.getInstance(keyStrokes);
+				Map matchesByKeySequence = commandManager.getMatchesByKeySequence();
+				Match match = (Match) matchesByKeySequence.get(childMode);
 
-				if (commandId == null)
+				if (match == null || match.getCommandId() == null)
 					return text;
 
 				if (index == 0)
@@ -1152,7 +1085,10 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	 */
 	public KeyBindingService getKeyBindingService() {
 		if (keyBindingService == null) {
-			keyBindingService = new KeyBindingService(getContextService(), getHandlerService());
+			keyBindingService =
+				new KeyBindingService(
+					getWorkbenchImpl().getActionService(),
+					getWorkbenchImpl().getContextActivationService());
 			updateActiveActions();
 		}
 
@@ -1546,9 +1482,6 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 			newActivePage = (IWorkbenchPage) pageList.getNextActive();
 
 		setActivePage(newActivePage);
-
-		// TODO: is this necessary?
-		updateContextAndHandlerManager();
 
 		// Restore the coolbar manager state. 
 		IMemento coolBarMem =
