@@ -150,28 +150,28 @@ public class CVSProviderTest extends EclipseTest {
 	}
 	
 	public void testMakeBranch() throws TeamException, CoreException, IOException {
-//		// Create a test project
-//		IProject project = createProject("testSyncOnBranch", new String[] { "file1.txt", "file2.txt", "file3.txt", "folder1/", "folder1/a.txt", "folder1/b.txt"});
-//
-//		// Make some local modifications including "cvs adds" and "cvs removes"
-//		addResources(project, new String[] {"folder1/c.txt"}, false);
-//		deleteResources(project, new String[] {"folder1/b.txt"}, false);
-//		changeResources(project, new String[] {"file2.txt"}, false);
-//		
-//		// Make the branch including a pre-version
-//		CVSTag version = new CVSTag("v1", CVSTag.BRANCH);
-//		CVSTag branch = new CVSTag("branch1", CVSTag.BRANCH);
-//		getProvider(project).makeBranch(new IResource[] {project}, version, branch, true, DEFAULT_MONITOR);
-//
-//		// Checkout a copy from the branch and version and compare
-//		IProject branchCopy = checkoutCopy(project, branch);
-//		IProject versionCopy = checkoutCopy(project, branch);
-//		assertEquals(branchCopy, versionCopy, true, false);
-//		
-//		// Commit the project, update the branch and compare
-//		commitProject(project);
-//		updateProject(branchCopy, null, false);
-//		assertEquals(branchCopy, project, false, true);
+		// Create a test project
+		IProject project = createProject("testSyncOnBranch", new String[] { "file1.txt", "file2.txt", "file3.txt", "folder1/", "folder1/a.txt", "folder1/b.txt"});
+
+		// Make some local modifications including "cvs adds" and "cvs removes"
+		addResources(project, new String[] {"folder1/c.txt"}, false);
+		deleteResources(project, new String[] {"folder1/b.txt"}, false);
+		changeResources(project, new String[] {"file2.txt"}, false);
+		
+		// Make the branch including a pre-version
+		CVSTag version = new CVSTag("v1", CVSTag.BRANCH);
+		CVSTag branch = new CVSTag("branch1", CVSTag.BRANCH);
+		getProvider(project).makeBranch(new IResource[] {project}, version, branch, true, true, DEFAULT_MONITOR);
+
+		// Checkout a copy from the branch and version and compare
+		IProject branchCopy = checkoutCopy(project, branch);
+		IProject versionCopy = checkoutCopy(project, branch);
+		assertEquals(branchCopy, versionCopy, true, false);
+		
+		// Commit the project, update the branch and compare
+		commitProject(project);
+		updateProject(branchCopy, null, false);
+		assertEquals(branchCopy, project, false, true);
 	}
 	 
 	public void testPruning() throws TeamException, CoreException, IOException {
