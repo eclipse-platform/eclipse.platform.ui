@@ -2,37 +2,33 @@ package org.eclipse.ui.tests.dialogs;
 
 import junit.framework.TestCase;
 
-import org.eclipse.swt.widgets.Shell;
-
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardDialog;
-
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
 import org.eclipse.ui.dialogs.WizardNewProjectReferencePage;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.dialogs.ExportWizard;
-import org.eclipse.ui.internal.dialogs.ImportWizard;
-import org.eclipse.ui.internal.dialogs.NewWizard;
+import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.dialogs.*;
 import org.eclipse.ui.tests.util.DialogCheck;
-import org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard;
-import org.eclipse.ui.wizards.newresource.BasicNewFolderResourceWizard;
-import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
+import org.eclipse.ui.tests.util.FileUtil;
+import org.eclipse.ui.wizards.newresource.*;
 
 public class UIWizardsAuto extends TestCase {
 	private static final int SIZING_WIZARD_WIDTH    = 470;
 	private static final int SIZING_WIZARD_HEIGHT   = 550;
 	private static final int SIZING_WIZARD_WIDTH_2  = 500;
 	private static final int SIZING_WIZARD_HEIGHT_2 = 500;
-	
+
+	private IProject project;
+		
 	public UIWizardsAuto(String name) {
 		super(name);
 	}
@@ -85,6 +81,22 @@ public class UIWizardsAuto extends TestCase {
 		return dialog;
 	}
 
+	/**
+	 * @see junit.framework.TestCase#tearDown()
+	 */
+	protected void tearDown() throws Exception {
+		super.tearDown();
+		try {
+			if (project != null) {
+				project.delete(true,true,null);
+				project = null;
+			}
+		}
+		catch (CoreException e) {
+			fail(e.toString());
+		}
+	}
+
 	public void testExportResources() {//reference: ExportResourcesAction
 		Dialog dialog = exportWizard(null);
 		DialogCheck.assertDialogTexts(dialog, this);
@@ -125,6 +137,36 @@ public class UIWizardsAuto extends TestCase {
 		dialog.create();
 		dialog.getShell().setText(WorkbenchMessages.getString("CreateFileAction.title")); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(dialog.getShell(), new Object[]{IHelpContextIds.NEW_FILE_WIZARD});
+		DialogCheck.assertDialogTexts(dialog, this);
+	}
+	/**
+	 * Test for bug 30719 [Linked Resources] NullPointerException when setting filename for WizardNewFileCreationPage 
+	 */
+	public void testNewFile2() {
+		BasicNewFileResourceWizard wizard = new BasicNewFileResourceWizard() {
+			public void addPages() {
+				super.addPages();
+				IWizardPage page = getPage("newFilePage1");
+				assertTrue("Expected newFilePage1", page instanceof WizardNewFileCreationPage);
+				WizardNewFileCreationPage fileCreationPage = (WizardNewFileCreationPage) page;
+				
+				try {
+					project = FileUtil.createProject("testNewFile2");
+				}
+				catch (CoreException e) {
+					fail(e.getMessage());
+				}
+				fileCreationPage.setContainerFullPath(project.getFullPath());
+				fileCreationPage.setFileName("testFileName.test");
+			}			
+		};
+	
+		wizard.init( PlatformUI.getWorkbench(), new StructuredSelection() );
+		wizard.setNeedsProgressMonitor(true);
+		WizardDialog dialog = new WizardDialog(getShell(), wizard);
+		dialog.create();
+		dialog.getShell().setText(WorkbenchMessages.getString("CreateFileAction.title")); //$NON-NLS-1$
+		WorkbenchHelp.setHelp(dialog.getShell(), IHelpContextIds.NEW_FILE_WIZARD);
 		DialogCheck.assertDialogTexts(dialog, this);
 	}
 	public void testNewFolder() {
