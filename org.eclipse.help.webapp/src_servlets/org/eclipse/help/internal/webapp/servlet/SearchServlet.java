@@ -16,7 +16,9 @@ import org.eclipse.help.internal.search.*;
 import org.eclipse.help.internal.util.Logger;
 
 /**
- * Servlet to interface client with remote Eclipse
+ * Returns search results.
+ * Each hits contains a prameter "resultsof" that is the url encoded query
+ * string.
  */
 public class SearchServlet extends HttpServlet {
 	private String locale;
@@ -151,7 +153,7 @@ public class SearchServlet extends HttpServlet {
 		*/
 		public void generate(SearchHit[] hits, HttpServletResponse resp) {
 
-			println("<toc>");
+			println("<hits>");
 			pad++;
 			for (int i = 0; i < hits.length; i++) {
 				printPad();
@@ -178,7 +180,7 @@ public class SearchServlet extends HttpServlet {
 				print(" />");
 			}
 			pad--;
-			println("</toc>");
+			println("</hits>");
 		}
 	}
 }
