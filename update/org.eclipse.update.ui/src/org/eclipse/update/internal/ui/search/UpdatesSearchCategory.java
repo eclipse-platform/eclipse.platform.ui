@@ -4,6 +4,7 @@ import java.net.URL;
 import java.util.*;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
@@ -94,9 +95,9 @@ public class UpdatesSearchCategory extends SearchCategory {
 	private boolean isNewerVersion(IFeature feature, IFeature candidate) {
 		VersionedIdentifier fvi = feature.getVersionedIdentifier();
 		VersionedIdentifier cvi = candidate.getVersionedIdentifier();
-		Version fv = fvi.getVersion();
-		Version cv = cvi.getVersion();
-		return cv.compare(fv) > 0;
+		PluginVersionIdentifier fv = fvi.getVersion();
+		PluginVersionIdentifier cv = cvi.getVersion();
+		return cv.isGreaterThan(fv);
 	}
 
 	public void createControl(Composite parent, FormWidgetFactory factory) {

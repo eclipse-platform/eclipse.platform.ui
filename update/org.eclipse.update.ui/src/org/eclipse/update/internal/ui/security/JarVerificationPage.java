@@ -325,7 +325,7 @@ public class JarVerificationPage extends BannerPage {
 			layout.marginWidth = layout.marginHeight = 0;
 			group.setLayout(layout);
 			group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			group.setText("JarVerificationResult.CertificateInfo");
+			group.setText(UpdateUIPlugin.getResourceString("JarVerificationDialog.CertificateInfo"));
 
 			// Signer
 			//-------------------

@@ -123,6 +123,8 @@ public class MyComputerSearchDialog extends Dialog {
 			String label = LocalSystemInfo.getLabel(drives[i]);
 			if (label==null || "".equals(label))
 				label = drives[i].getPath();
+			else
+				label = label+" ("+drives[i].getPath()+")";
 			settings.getDriveSettings(label);
 		}
 	}

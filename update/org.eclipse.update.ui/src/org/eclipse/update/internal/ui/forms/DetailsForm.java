@@ -8,6 +8,7 @@ import java.net.URL;
 import java.util.*;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.*;
@@ -370,7 +371,7 @@ public class DetailsForm extends PropertyWebForm {
 	private String getInstalledVersion(IFeature feature) {
 		alreadyInstalled = false;
 		VersionedIdentifier vid = feature.getVersionedIdentifier();
-		Version version = vid.getVersion();
+		PluginVersionIdentifier version = vid.getVersion();
 		newerVersion = installedFeatures.length > 0;
 
 		StringBuffer buf = new StringBuffer();
@@ -379,12 +380,12 @@ public class DetailsForm extends PropertyWebForm {
 			VersionedIdentifier ivid = installedFeature.getVersionedIdentifier();
 			if (buf.length() > 0)
 				buf.append(", ");
-			Version iversion = ivid.getVersion();
+			PluginVersionIdentifier iversion = ivid.getVersion();
 			buf.append(iversion.toString());
 			if (ivid.equals(vid)) {
 				alreadyInstalled = true;
 			} else {
-				if (version.compare(iversion) <= 0)
+				if (iversion.isGreaterOrEqualTo(version))
 					newerVersion = false;
 			}
 		}

@@ -44,11 +44,18 @@ public class MyComputerDirectory
 	}
 
 	public String getName() {
+		String fileName = root ? file.getPath() : file.getName();
 		if (root) {
 			String nativeLabel = LocalSystemInfo.getLabel(file);
-			if (nativeLabel!=null && !"".equals(nativeLabel)) return nativeLabel;
+			if (nativeLabel!=null && !"".equals(nativeLabel)) {
+				StringBuffer buffer = new StringBuffer(nativeLabel);
+				buffer.append(" (");
+				buffer.append(fileName);
+				buffer.append(")");
+				return buffer.toString();
+			}
 		}
-		return root ? file.getPath() : file.getName();
+		return fileName;
 	}
 	
 	public File getFile() {

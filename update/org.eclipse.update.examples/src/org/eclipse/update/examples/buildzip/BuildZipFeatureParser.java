@@ -12,8 +12,8 @@ import java.util.Enumeration;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
+import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.update.core.ContentReference;
-import org.eclipse.update.core.Version;
 import org.eclipse.update.core.model.FeatureModel;
 import org.eclipse.update.core.model.NonPluginEntryModel;
 import org.eclipse.update.core.model.PluginEntryModel;
@@ -161,7 +161,7 @@ public class BuildZipFeatureParser {
 				pluginVersion = parsePluginVersionInManifest(cp, pluginId, pluginEntry);
 				if (pluginVersion != null) {
 					pluginEntry.setPluginIdentifier(pluginId);
-					pluginEntry.setPluginVersion((new Version(pluginVersion)).toString()+"."+pluginBuildVersion);
+					pluginEntry.setPluginVersion((new PluginVersionIdentifier(pluginVersion)).toString()+"."+pluginBuildVersion);
 					feature.addPluginEntryModel(pluginEntry);
 				}
 			}
