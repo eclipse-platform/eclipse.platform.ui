@@ -805,13 +805,8 @@ public class NewProgressViewer extends ProgressTreeViewer {
 		
 		scroller.setContent(list);
 		
-				
 		// refresh UI
 		refresh(true);
-		
-		Point e= parent.getSize();
-		System.out.println("size: " + e);
-		scroller.setSize(e);
     }
 
     protected void handleDispose(DisposeEvent event) {
