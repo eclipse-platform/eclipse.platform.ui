@@ -35,6 +35,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -79,6 +80,8 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	private TreeViewer fConfigTree;
 	
 	private Object fContext;
+	
+	private ILaunchConfiguration fFirstConfig;
 	
 	private Object fSelectedTreeObject;
 	
@@ -174,9 +177,9 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	private boolean fWorkingCopyUserDirty = false;
 	
 	/**
-	 * Indicates if the working copy is currently being saved.
+	 * Indicates if selection changes in the tree should be ignored
 	 */
-	private boolean fDoingSave = false;
+	private boolean fIgnoreSelectionChanges = false;
 	
 	/**
 	 * The number of 'long-running' operations currently taking place in this dialog
@@ -294,9 +297,55 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 */
 	protected Control createContents(Composite parent) {
 		Control contents = super.createContents(parent);
-		initializeSettings();
 		getLaunchManager().addLaunchConfigurationListener(this);
+		displayFirstConfig();
 		return contents;
+	}
+	
+	/**
+	 * Display the first configuration in this dialog.
+	 */
+	protected void displayFirstConfig() {
+		IStructuredSelection selection = StructuredSelection.EMPTY;
+		if (fFirstConfig instanceof ILaunchConfigurationWorkingCopy) {
+			try {
+				ILaunchConfigurationType firstConfigType = fFirstConfig.getType();
+				selection = new StructuredSelection(firstConfigType);
+				setIgnoreSelectionChanges(true);
+				getTreeViewer().setSelection(selection);			
+				setIgnoreSelectionChanges(false);
+				setLaunchConfiguration(fFirstConfig);
+			} catch (CoreException ce) {
+			}
+		} else if (fFirstConfig instanceof ILaunchConfiguration) {
+			selection = new StructuredSelection(fFirstConfig);			
+			getTreeViewer().setSelection(selection);			
+		} else {
+			getTreeViewer().setSelection(selection);
+		}
+	}
+	
+	/**
+	 * Determine the first configuration for this dialog.  If this configuration verifies
+	 * and the 'single-click launching' preference is turned on, launch the configuration
+	 * WITHOUT realizing the dialog.  Otherwise, call super.open(), which will realize the
+	 * dialog and display the first configuration.
+	 * 
+	 * @see Window#open()
+	 */
+	public int open() {
+		fFirstConfig = determineConfigFromContext();
+		if (fFirstConfig != null) {
+			if (getPreferenceStore().getBoolean(IDebugUIConstants.PREF_SINGLE_CLICK_LAUNCHING)) {				
+				try {
+					fFirstConfig.verify(getMode());
+					fFirstConfig.launch(getMode());
+					return ILaunchConfigurationDialog.SINGLE_CLICK_LAUNCHED;
+				} catch (CoreException ce) {				
+				}
+			}
+		}
+		return super.open();
 	}
 	
 	/**
@@ -321,7 +370,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		topComp.setLayout(topLayout);
 
 		// Set the things that TitleAreaDialog takes care of
-		setTitle("Create, manage and run launch configurations");
+		setTitle("Create, manage & run launch configurations");
 		setMessage("Ready to launch");
 		setModeLabelState();
 
@@ -347,30 +396,21 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	}
 	
 	/**
-	 * Initialize the dialog settings.  This means setting the input for the launch
-	 * config tree, setting the initial selection in the tree, and initializing the
-	 * edit area tabs.  Also set the state of the mode buttons.
+	 * Determine and return an <code>ILaunchConfiguration</code> from the current context.
+	 * If the context is itself an ILaunchConfiguration, this is returned.  Otherwise,
+	 * an <code>ILaunchConfigurationWorkingCopy</code> is created and initialized from 
+	 * the context if possible.
 	 */
-	protected void initializeSettings() {
-		getTreeViewer().setInput(ResourcesPlugin.getWorkspace().getRoot());		
-		initializeFirstConfig();
-	}
-	
-	/**
-	 * Based on the current workbench selection, set the selection in the launch 
-	 * config tree when this dialog is first realized.
-	 */
-	protected void initializeFirstConfig() {
+	protected ILaunchConfiguration determineConfigFromContext() {
 		Object workbenchSelection = getContext();
 		if (workbenchSelection == null) {
-			clearLaunchConfiguration();
-			return;
+			return null;
 		}
 		
 		if (workbenchSelection instanceof ILaunchConfiguration) {
-			initializeFirstConfigForConfiguration();
+			return (ILaunchConfiguration) workbenchSelection;
 		} else {
-			initializeFirstConfigForConfigurationType();
+			return createConfigFromContext();
 		}
 	}
 	
@@ -378,10 +418,12 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * If an actual <code>ILaunchConfiguration</code> was selected in
 	 * the workbench, select it in the tree.  	
 	 */
+	/*
 	protected void initializeFirstConfigForConfiguration() {
 		IStructuredSelection selection = new StructuredSelection(getContext());
 		setTreeViewerSelection(selection);
 	}
+	*/
 	
 	/**
 	 * Something other than an <code>ILaunchConfiguration</code> was selected in
@@ -391,11 +433,11 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * tabs get populated, and finally make sure the config type is selected in the 
 	 * configuration tree.
 	 */
-	protected void initializeFirstConfigForConfigurationType() {
-		ILaunchConfigurationType configType = determineConfigTypeFromSelection();
+	protected ILaunchConfigurationWorkingCopy createConfigFromContext() {
+		ILaunchConfigurationType configType = determineConfigTypeFromContext();
 		if (configType == null) {
 			clearLaunchConfiguration();
-			return;
+			return null;
 		}
 		
 		ILaunchConfigurationWorkingCopy workingCopy = null;
@@ -404,19 +446,22 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			workingCopy = configType.newInstance(null, DEFAULT_NEW_CONFIG_NAME);
 			workingCopy.initializeDefaults(getContext());
 		} catch (CoreException ce) {
-			return;	
 		}
 		
+		return workingCopy;
+		
+		/*
 		setLaunchConfiguration(workingCopy);
 		IStructuredSelection selection = new StructuredSelection(configType);
 		setTreeViewerSelection(selection);
+		*/
 	}
 	
 	/**
 	 * Attempt to determine the launch config type most closely associated
 	 * with the current workbench selection.
 	 */
-	protected ILaunchConfigurationType determineConfigTypeFromSelection() {		
+	protected ILaunchConfigurationType determineConfigTypeFromContext() {		
 		IResource resource = null;
 		Object workbenchSelection = getContext();
 		if (workbenchSelection instanceof IResource) {
@@ -431,6 +476,9 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		return type;		
 	}
 	
+	/**
+	 * Set the title area image based on the mode this dialog was initialized with
+	 */
 	protected void setModeLabelState() {
 		Image image;
 		if (getMode().equals(ILaunchManager.DEBUG_MODE)) {
@@ -477,8 +525,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		// Verify the working copy.  Any CoreExceptions indicate a problem with
 		// the working copy, so update the status area and internal state accordingly
 		try {
-			getWorkingCopy().verify(getMode());
-			verifyStandardAttributes();
+			verify(getWorkingCopy());
 		} catch (CoreException ce) {
 			setWorkingCopyVerifyState(false);
 			String message = ce.getStatus().getMessage();
@@ -491,6 +538,14 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		setWorkingCopyVerifyState(true);
 		setErrorMessage(null);
 		setEnableStateEditButtons();
+	}
+	
+	/**
+	 * Verify the working copy
+	 */
+	protected void verify(ILaunchConfiguration config) throws CoreException {
+		config.verify(getMode());
+		verifyStandardAttributes();	
 	}
 	
 	/**
@@ -571,6 +626,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		tree.setLabelProvider(DebugUITools.newDebugModelPresentation());
 		setTreeViewer(tree);
 		tree.addSelectionChangedListener(this);
+		tree.setInput(ResourcesPlugin.getWorkspace().getRoot());		
 		
 		Button newButton = new Button(c, SWT.PUSH | SWT.CENTER);
 		newButton.setText("Ne&w");
@@ -847,7 +903,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	}	
 		
 	/**
-	 * Notification selection has changed in the launch configuration tree.
+	 * Notification that selection has changed in the launch configuration tree.
 	 * <p>
 	 * If the currently displayed configuration is not saved,
 	 * prompt for saving before moving on to the new selection.
@@ -858,7 +914,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  	public void selectionChanged(SelectionChangedEvent event) {
  		
  		// Ignore selectionChange events that occur while saving
- 		if (doingSave()) {
+ 		if (ignoreSelectionChanges()) {
  			return;
  		}
  		
@@ -874,7 +930,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  		}
  		
 		// Take care of any unsaved changes.  If the user aborts, reset selection
-		// to whatever it was previously
+		// to whatever it was previously selected
  		if (!canReplaceWorkingCopy()) {
  			StructuredSelection prevSelection;
  			Object selectedTreeObject = getSelectedTreeObject();
@@ -1302,12 +1358,12 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		getTreeViewer().remove(configuration);		
 	}
 	
-	protected void setDoingSave(boolean doingSave) {
-		fDoingSave = doingSave;
+	protected void setIgnoreSelectionChanges(boolean ignore) {
+		fIgnoreSelectionChanges = ignore;
 	}
 	
-	protected boolean doingSave() {
-		return fDoingSave;
+	protected boolean ignoreSelectionChanges() {
+		return fIgnoreSelectionChanges;
 	}
 	
 	/**
@@ -1480,9 +1536,9 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		ILaunchConfiguration newConfig = null;
 		setWorkingCopy(null);
 		try {
-			setDoingSave(true);
+			setIgnoreSelectionChanges(true);
 			newConfig = workingCopy.doSave();
-			setDoingSave(false);
+			setIgnoreSelectionChanges(false);
 		} catch (CoreException ce) {			
 		}	
 		setLastSavedName(workingCopy.getName());	
@@ -1501,6 +1557,10 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		} catch (CoreException ce) {
 		}		
 		close();
+	}
+	
+	protected IPreferenceStore getPreferenceStore() {
+		return DebugUIPlugin.getDefault().getPreferenceStore();
 	}
 
 	/***************************************************************************************

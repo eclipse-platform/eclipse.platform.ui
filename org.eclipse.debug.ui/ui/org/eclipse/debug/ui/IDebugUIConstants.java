@@ -175,6 +175,16 @@ public interface IDebugUIConstants {
 	 */
 	public static final String PREF_SHOW_VARIABLE_VALUE_CHANGES = PLUGIN_ID + ".show_variable_value_changes"; //$NON-NLS-1$	
 		
+	/**
+	 * Boolean preference controlling the appearance of the launch configuration dialog
+	 * in situations where the the context for launching is sufficient to generate a
+	 * launch configuration that is ready to launch with no additional input from the user.
+	 * If this preference is <code>true</code>, the launch configuration dialog will not
+	 * appear in such situations, if <code>false</code> it will.
+	 * @since 2.0
+	 */
+	public static final String PREF_SINGLE_CLICK_LAUNCHING = PLUGIN_ID + ".single_click_launching"; //$NON-NLS-1$
+	
 	// Debug views
 	
 	/**

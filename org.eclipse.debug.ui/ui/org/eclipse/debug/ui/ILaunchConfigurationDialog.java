@@ -10,6 +10,12 @@ import org.eclipse.jface.operation.IRunnableContext;
 public interface ILaunchConfigurationDialog extends IRunnableContext {
 	
 	/**
+	 * Constant used as return value from <code>open()</code> method of a
+	 * launch configuration dialog.
+	 */
+	public static final int SINGLE_CLICK_LAUNCHED = 2;
+	
+	/**
 	 * Refresh any status information in this dialog.
 	 */
 	public void refreshStatus();
