@@ -11,6 +11,7 @@
 
 package org.eclipse.jface.action;
 
+import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -279,12 +280,13 @@ public final class ExternalActionManager {
 				if (!command.isDefined()
 						&& (!loggedCommandIds.contains(commandId))) {
 					// The command is not yet defined, so we should log this.
-					IStatus status = new Status(
-							IStatus.ERROR,
+					final String message = MessageFormat.format(Util
+							.translateString(RESOURCE_BUNDLE,
+									"undefinedCommand.WarningMessage", null), //$NON-NLS-1$
+							new String[] { command.getId() });
+					IStatus status = new Status(IStatus.ERROR,
 							"org.eclipse.jface", //$NON-NLS-1$
-							0,
-							Util.translateString(RESOURCE_BUNDLE,
-									"undefinedCommand.WarningMessage", null), null); //$NON-NLS-1$
+							0, message, new Exception());
 					Policy.getLog().log(status);
 
 					// And remember this item so we don't log it again.
