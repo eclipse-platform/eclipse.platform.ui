@@ -15,6 +15,7 @@ package org.eclipse.jface.text.rules;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.DefaultPositionUpdater;
@@ -28,7 +29,6 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TypedPosition;
 import org.eclipse.jface.text.TypedRegion;
-import org.eclipse.jface.util.Assert;
 
 
 

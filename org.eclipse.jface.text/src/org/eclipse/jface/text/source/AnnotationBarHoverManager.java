@@ -17,12 +17,11 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 
 import org.eclipse.jface.text.AbstractHoverInformationControlManager;
+import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewerExtension3;
-
-import org.eclipse.jface.util.Assert;
 
 
 
@@ -32,15 +31,29 @@ import org.eclipse.jface.util.Assert;
  * source viewer.
  * @since 2.0
  */
-class AnnotationBarHoverManager extends AbstractHoverInformationControlManager {
+public class AnnotationBarHoverManager extends AbstractHoverInformationControlManager {
 	
 	/** The source viewer the manager is connected to */
 	private ISourceViewer fSourceViewer;
 	/** The vertical ruler the manager is registered with */
-	private IVerticalRuler fVerticalRuler;
+	private IVerticalRulerInfo fVerticalRulerInfo;
 	/** The annotation hover the manager uses to retrieve the information to display */
 	private IAnnotationHover fAnnotationHover;
 	
+
+	/**
+	 * Creates an annotation hover manager with the given parameters. In addition,
+	 * the hovers anchor is RIGHT and the margin is 5 points to the right.
+	 *
+	 * @param sourceViewer the source viewer this manager connects to
+	 * @param ruler the vertical ruler this manager connects to
+	 * @param annotationHover the annotation hover providing the information to be displayed
+	 * @param creator the information control creator
+	 * @deprecated As of 2.1, replaced by {@link AnnotationBarHoverManager#AnnotationBarHoverManager(ISourceViewer, IVerticalRulerInfo, IAnnotationHover, IInformationControlCreator)}
+	 */
+	public AnnotationBarHoverManager(ISourceViewer sourceViewer, IVerticalRuler ruler, IAnnotationHover annotationHover, IInformationControlCreator creator) {
+		this(ruler, sourceViewer, annotationHover, creator);
+	}
 	
 	/**
 	 * Creates an annotation hover manager with the given parameters. In addition,
@@ -51,14 +64,14 @@ class AnnotationBarHoverManager extends AbstractHoverInformationControlManager {
 	 * @param annotationHover the annotation hover providing the information to be displayed
 	 * @param creator the information control creator
 	 */
-	public AnnotationBarHoverManager(ISourceViewer sourceViewer, IVerticalRuler ruler, IAnnotationHover annotationHover, IInformationControlCreator creator) {
+	public AnnotationBarHoverManager(IVerticalRulerInfo rulerInfo, ISourceViewer sourceViewer, IAnnotationHover annotationHover, IInformationControlCreator creator) {
 		super(creator);
 		
 		Assert.isNotNull(sourceViewer);
 		Assert.isNotNull(annotationHover);
 		
 		fSourceViewer= sourceViewer;
-		fVerticalRuler= ruler;
+		fVerticalRulerInfo= rulerInfo;
 		fAnnotationHover= annotationHover;
 		
 		setAnchor(ANCHOR_RIGHT);
@@ -70,7 +83,7 @@ class AnnotationBarHoverManager extends AbstractHoverInformationControlManager {
 	 */
 	protected void computeInformation() {
 		Point location= getHoverEventLocation();
-		int line= fVerticalRuler.toDocumentLineNumber(location.y);
+		int line= fVerticalRulerInfo.toDocumentLineNumber(location.y);
 		setInformation(fAnnotationHover.getHoverInfo(fSourceViewer, line), computeArea(line));
 	}
 	
@@ -103,11 +116,41 @@ class AnnotationBarHoverManager extends AbstractHoverInformationControlManager {
 			StyledText text= fSourceViewer.getTextWidget();
 			int lineHeight= text.getLineHeight();
 			int y= getWidgetLineNumber(line) * lineHeight - text.getTopPixel();
-			Point size= fVerticalRuler.getControl().getSize();
+			Point size= fVerticalRulerInfo.getControl().getSize();
 			return new Rectangle(0, y, size.x, lineHeight);
 		} catch (BadLocationException x) {
 		}
 		return null;
+	}
+	
+	/**
+	 * Returns the annotation hover for this hover manager.
+	 * 
+	 * @return the annotation hover for this hover manager
+	 * @since 2.1
+	 */
+	protected IAnnotationHover getAnnotationHover() {
+		return fAnnotationHover;
+	}
+
+	/**
+	 * Returns the source viewer for this hover manager.
+	 * 
+	 * @return the source viewer for this hover manager
+	 * @since 2.1
+	 */
+	protected ISourceViewer getSourceViewer() {
+		return fSourceViewer;
+	}
+
+	/**
+	 * Returns the vertical ruler info for this hover manager
+	 * 
+	 * @return the vertical ruler info for this hover manager
+	 * @since 2.1
+	 */
+	protected IVerticalRulerInfo getVerticalRulerInfo() {
+		return fVerticalRulerInfo;
 	}
 }
 

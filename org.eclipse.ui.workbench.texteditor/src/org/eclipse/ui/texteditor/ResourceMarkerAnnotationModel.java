@@ -12,8 +12,6 @@ Contributors:
 package org.eclipse.ui.texteditor;
 
 
-import org.eclipse.jface.util.Assert;
-
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IResource;
@@ -25,6 +23,8 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+
+import org.eclipse.jface.text.Assert;
 
 
 

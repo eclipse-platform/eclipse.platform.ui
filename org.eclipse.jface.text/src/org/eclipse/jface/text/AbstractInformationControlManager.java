@@ -19,8 +19,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 
-import org.eclipse.jface.util.Assert;
-
 
 /**
  * Manages the life cycle, visibility, layout, and contents of an <code>IInformationControl</code>.

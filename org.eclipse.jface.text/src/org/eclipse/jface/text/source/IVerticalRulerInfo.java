@@ -47,7 +47,8 @@ public interface IVerticalRulerInfo {
 	 * the according line number of the document of the connected text viewer.
 	 *
 	 * @param y_coordinate a y-coordinate of the ruler's SWT control
-	 * @return the line number of that coordinate 
+	 * @return the line number of that coordinate or <code>-1</code> if that
+	 * 			coordinate does not correspond to a valid document line
 	 */
 	int toDocumentLineNumber(int y_coordinate);
 	

@@ -14,9 +14,10 @@ package org.eclipse.jface.text.reconciler;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
+import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Region;
-import org.eclipse.jface.util.Assert;
+
 
 /**
  * Standard implementation of <code>IReconciler</code>. The reconciler

@@ -28,8 +28,6 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 
-import org.eclipse.jface.util.Assert;
-
 
 /**
  * An information control manager that shows information on mouse hover events.

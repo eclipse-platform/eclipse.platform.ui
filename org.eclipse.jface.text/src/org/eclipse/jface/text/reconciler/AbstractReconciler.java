@@ -14,13 +14,13 @@ package org.eclipse.jface.text.reconciler;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
+import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.ITextInputListener;
 import org.eclipse.jface.text.ITextViewer;
 
-import org.eclipse.jface.util.Assert;
 
 
 

@@ -11,9 +11,9 @@ Contributors:
 
 package org.eclipse.jface.text.rules;
 
-import org.eclipse.jface.util.Assert;
- 
- 
+import org.eclipse.jface.text.Assert;
+
+
 /**
  * Standard implementation of <code>IToken</code>.
  */

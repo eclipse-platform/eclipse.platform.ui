@@ -31,6 +31,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.jface.text.AbstractInformationControlManager;
+import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IInformationControl;
@@ -43,7 +44,6 @@ import org.eclipse.jface.text.IWidgetTokenKeeper;
 import org.eclipse.jface.text.IWidgetTokenOwner;
 import org.eclipse.jface.text.Region;
 
-import org.eclipse.jface.util.Assert;
  
 /**
  * Standard implementation of <code>IInformationPresenter</code>.

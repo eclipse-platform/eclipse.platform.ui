@@ -12,8 +12,7 @@ Contributors:
 package org.eclipse.jface.text;
 
  
-import java.util.ArrayList;import java.util.Iterator;import java.util.List;import org.eclipse.swt.SWT;import org.eclipse.swt.custom.TextChangeListener;import org.eclipse.swt.custom.TextChangedEvent;import org.eclipse.swt.custom.TextChangingEvent;import org.eclipse.jface.util.Assert;
-
+import java.util.ArrayList;import java.util.Iterator;import java.util.List;import org.eclipse.swt.SWT;import org.eclipse.swt.custom.TextChangeListener;import org.eclipse.swt.custom.TextChangedEvent;import org.eclipse.swt.custom.TextChangingEvent;
 
 /**
  * Adapts an <code>IDocument</code> to the <code>StyledTextContent</code> interface.
