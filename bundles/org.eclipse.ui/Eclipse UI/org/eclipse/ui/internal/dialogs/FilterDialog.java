@@ -1,3 +1,5 @@
+package org.eclipse.ui.internal.dialogs;
+
 /*******************************************************************************
  * Copyright (c) 2002 International Business Machines Corp. and others.
  * All rights reserved. This program and the accompanying materials 
@@ -8,26 +10,18 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
-package org.eclipse.ui.internal.dialogs;
-
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.util.*;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.IWorkingSet;
-import org.eclipse.ui.IWorkingSetManager;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
-import org.eclipse.ui.dialogs.ListSelectionDialog;
+import org.eclipse.ui.*;
+import org.eclipse.ui.dialogs.*;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.*;
 
 /**
  * A filter dialog presents a list of filter patterns and
@@ -139,6 +133,13 @@ public class FilterDialog extends ListSelectionDialog {
 		initializeMru();
 		initializeWorkingSet();
 		return composite;
+	}
+	/* (non-Javadoc)
+	 * Method declared on Window.
+	 */
+	protected void configureShell(Shell newShell) {
+		super.configureShell(newShell);
+		WorkbenchHelp.setHelp(newShell, IHelpContextIds.FILTER_DIALOG);
 	}
 	/**
 	 * Returns the selected working set or null if none is selected.

@@ -1,37 +1,30 @@
 package org.eclipse.ui.internal.dialogs;
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. 
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v0.5
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v05.html
+ 
+Contributors:
+**********************************************************************/
 import java.text.Collator;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.*;
 import java.util.List;
+
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.IEditorDescriptor;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IEditorReference;
-import org.eclipse.ui.IEditorRegistry;
-import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.IPerspectiveDescriptor;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.*;
+import org.eclipse.ui.dialogs.SelectionDialog;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.*;
-import org.eclipse.ui.dialogs.*;
 
 /**
  * Implements a dialog showing all opened editors in the workbench
@@ -104,7 +97,15 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 			}
 		}
 	}
-	
+
+	/* (non-Javadoc)
+	 * Method declared on Window.
+	 */
+	protected void configureShell(Shell newShell) {
+		super.configureShell(newShell);
+		WorkbenchHelp.setHelp(newShell, IHelpContextIds.WORKBENCH_EDITORS_DIALOG);
+	}
+		
 	/**
 	 * Initialize the dialog bounds with the bounds saved
 	 * from the settings.
