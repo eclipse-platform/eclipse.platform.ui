@@ -106,7 +106,7 @@ public class DecoratorManager implements ILabelDecorator{
 		ArrayList decorators = new ArrayList();
 		DecoratorDefinition[] enabledDefinitions = enabledDefinitions();
 
-		allClasses = computeClassOrder(elementClass);
+		allClasses.addAll(computeClassOrder(elementClass));
 		findDecorators(allClasses, enabledDefinitions, decorators);
 
 		findDecorators(
@@ -133,7 +133,7 @@ public class DecoratorManager implements ILabelDecorator{
 		while (classes.hasNext()) {
 			String className = ((Class) classes.next()).getName();
 			for (int i = 0; i < enabledDefinitions.length; i++) {
-				if (className.equals(enabledDefinitions[i].getClass()))
+				if (className.equals(enabledDefinitions[i].getObjectClass()))
 					result.add(enabledDefinitions[i].getDecorator());
 			}
 		}
