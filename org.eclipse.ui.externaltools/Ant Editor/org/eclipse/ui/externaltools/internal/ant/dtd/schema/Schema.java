@@ -49,8 +49,10 @@ public class Schema implements ISchema {
 	}
 	
 	/**
-	 * Method setErrorException.
-	 * @param fErrorException
+	 * Sets the exception thrown by then parser when the schema was built.
+	 * Note that the exception does not necessarily mean the schema is incomplete.
+	 * 
+	 * @param fErrorException the Exception
 	 */
 	public void setErrorException(Exception e) {
 		fErrorException = e;
@@ -60,7 +62,6 @@ public class Schema implements ISchema {
 	 * @see org.eclipse.ui.externaltools.internal.ant.dtd.schema.ISchema#getErrorException()
 	 */
 	public Exception getErrorException() {
-		return null;
+		return fErrorException;
 	}
-
 }
