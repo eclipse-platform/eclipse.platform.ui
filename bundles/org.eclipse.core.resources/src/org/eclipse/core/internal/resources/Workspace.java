@@ -700,6 +700,8 @@ public void endOperation(boolean build, IProgressMonitor monitor) throws CoreExc
 			// Perform a snapshot if we are sufficiently out of date.  Be sure to make the tree immutable first
 			tree.immutable();
 			saveManager.snapshotIfNeeded();
+			//make sure the monitor subtask message is cleared.
+			monitor.subTask("");
 			if (cancel != null)
 				throw cancel;
 			if (signal != null)
