@@ -49,6 +49,7 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobListener;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -109,6 +110,8 @@ import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.model.WorkbenchAdapterBuilder;
+import org.eclipse.ui.internal.progress.BooleanJobCompletionListener;
+import org.eclipse.ui.internal.progress.IJobCompletionListener;
 import org.eclipse.update.core.SiteManager;
 
 /**
@@ -384,7 +387,9 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 					IWorkbenchWindow w = getActiveWorkbenchWindow();
 					if (w == null)
 						w = windows[0];
-					result[0] = EditorManager.saveAll(dirtyEditors, finalConfirm, w);
+					BooleanJobCompletionListener listener = new BooleanJobCompletionListener();
+					EditorManager.saveAll(dirtyEditors, finalConfirm, w,listener);
+					result[0] = listener.completed();
 				}
 			}
 		});

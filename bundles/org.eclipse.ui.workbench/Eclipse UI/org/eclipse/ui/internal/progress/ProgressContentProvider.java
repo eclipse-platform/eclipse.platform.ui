@@ -9,6 +9,7 @@ package org.eclipse.ui.internal.progress;
 import java.util.Hashtable;
 
 import org.eclipse.core.internal.jobs.JobManager;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.jface.viewers.*;
@@ -116,7 +117,10 @@ public class ProgressContentProvider
 	public void beginTask(Job job, String name, int totalWork) {
 		if (job instanceof AnimateJob)
 			return;
-		jobs.put(job, new JobInfoWithProgress(name, totalWork));
+		if(totalWork == IProgressMonitor.UNKNOWN)
+			jobs.put(job, new JobInfo(name));
+		else
+			jobs.put(job, new JobInfoWithProgress(name, totalWork));
 		refreshViewer(null);
 	}
 

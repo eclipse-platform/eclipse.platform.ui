@@ -541,6 +541,7 @@ public class ActionContributionItem extends ContributionItem {
 					 */
 					public IStatus run(IProgressMonitor monitor) {
 						// XXX Auto-generated method stub
+						monitor.beginTask(action.getText(),IProgressMonitor.UNKNOWN);
 						try {
 							if (action.isThreadSafe())
 								action.runWithEvent(e);
