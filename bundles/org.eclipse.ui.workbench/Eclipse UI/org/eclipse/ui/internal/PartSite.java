@@ -256,8 +256,8 @@ public class PartSite implements IWorkbenchPartSite {
 		selectionProvider = provider;
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on IEditorSite.
+	/**
+	 * @see IWorkbenchPartSite#getKeyBindingService()
 	 */
 	public IKeyBindingService getKeyBindingService() {
 		if (keyBindingService == null) {
