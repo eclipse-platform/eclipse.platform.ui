@@ -10,7 +10,6 @@
    <runtime>
       <library name="expressionstests.jar">
          <export name="*"/>
-         <packages prefixes="org.eclipse.core.internal.expressions.tests"/>         
       </library>
    </runtime>
 
