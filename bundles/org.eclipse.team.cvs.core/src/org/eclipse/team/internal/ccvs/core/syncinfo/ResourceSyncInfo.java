@@ -40,7 +40,7 @@ import org.eclipse.team.internal.ccvs.core.util.EmptyTokenizer;
 public class ResourceSyncInfo {
 		
 	// [Note: permissions aren't honoured in this current implementation]
-	// safe default permissions. Permissions are saved separatly so that the correct permissions
+	// safe default permissions. Permissions are saved separately so that the correct permissions
 	// can be sent back to the server on systems that don't save execute bits (e.g. windows).
 	private static final String DEFAULT_PERMISSIONS = "u=rw,g=rw,o=r"; //$NON-NLS-1$
 	
@@ -71,7 +71,7 @@ public class ResourceSyncInfo {
 	
 	// utility constants
 	protected static final String DIRECTORY_PREFIX = "D/"; //$NON-NLS-1$
-	protected static final String SEPERATOR = "/"; //$NON-NLS-1$
+	protected static final String SEPARATOR = "/"; //$NON-NLS-1$
 	
 	// fields describing the synchronization of a resource in CVS parlance
 	protected String name;
@@ -235,7 +235,7 @@ public class ResourceSyncInfo {
 			String permissions = this.permissions;
 			if (permissions == null)
 				permissions = DEFAULT_PERMISSIONS;
-			return SEPERATOR + name + SEPERATOR + permissions;
+			return SEPARATOR + name + SEPARATOR + permissions;
 		}
 	}
 	
@@ -385,7 +385,7 @@ public class ResourceSyncInfo {
 		} else {
 			isDirectory = false;
 		}
-		EmptyTokenizer tokenizer = new EmptyTokenizer(entryLine,SEPERATOR);
+		EmptyTokenizer tokenizer = new EmptyTokenizer(entryLine,SEPARATOR);
 		if(tokenizer.countTokens() != 5) {
 			throw new CVSException(Policy.bind("Malformed_entry_line___11") + entryLine); //$NON-NLS-1$
 		}
@@ -461,15 +461,15 @@ public class ResourceSyncInfo {
 			result.append(DIRECTORY_PREFIX);
 			result.append(name + "////"); //$NON-NLS-1$
 		} else {
-			result.append(SEPERATOR);
+			result.append(SEPARATOR);
 			result.append(name);
-			result.append(SEPERATOR);
+			result.append(SEPARATOR);
 			
 			if(isDeleted){
 				result.append(DELETED_PREFIX); 
 			}
 			result.append(revision);
-			result.append(SEPERATOR);
+			result.append(SEPARATOR);
 			if(includeTimeStamp) {
 				String entryLineTimestamp = ""; //$NON-NLS-1$
 				if(timestampOverride!=null) {
@@ -490,9 +490,9 @@ public class ResourceSyncInfo {
 				}
 				result.append(entryLineTimestamp);
 			}
-			result.append(SEPERATOR);
+			result.append(SEPARATOR);
 			if (keywordMode != null) result.append(keywordMode.toMode());
-			result.append(SEPERATOR);
+			result.append(SEPARATOR);
 			if (tag != null) {
 				result.append(tag.toEntryLineFormat(true));
 			}

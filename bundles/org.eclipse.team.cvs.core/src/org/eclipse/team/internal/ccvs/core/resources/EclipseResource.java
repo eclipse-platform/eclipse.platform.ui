@@ -33,8 +33,8 @@ import org.eclipse.team.internal.core.TeamPlugin;
  */
 abstract class EclipseResource implements ICVSResource, Comparable {
 
-	 // The seperator that must be used when creating CVS resource paths. Never use
-	 // the platform default seperator since it is not compatible with CVS resources.
+	 // The separator that must be used when creating CVS resource paths. Never use
+	 // the platform default separator since it is not compatible with CVS resources.
 	protected static final String SEPARATOR = Session.SERVER_SEPARATOR;
 	protected static final String CURRENT_LOCAL_FOLDER = Session.CURRENT_LOCAL_FOLDER;
 		

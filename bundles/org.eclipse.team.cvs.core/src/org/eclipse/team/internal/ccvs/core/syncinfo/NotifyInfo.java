@@ -36,8 +36,8 @@ public class NotifyInfo {
 	public static final char COMMIT = 'C';
 	public static final char[] ALL = new char[] {EDIT, UNEDIT, COMMIT};
 	
-	protected static final String SEPERATOR = "/"; //$NON-NLS-1$
-	protected static final String TAB_SEPERATOR = "\t"; //$NON-NLS-1$
+	protected static final String SEPARATOR = "/"; //$NON-NLS-1$
+	protected static final String TAB_SEPARATOR = "\t"; //$NON-NLS-1$
 	
 	private String filename;
 	private char notificationType;
@@ -61,7 +61,7 @@ public class NotifyInfo {
 	 */
 	public NotifyInfo(IContainer parent, String line) throws CVSException {
 		ICVSFolder cvsFolder = CVSWorkspaceRoot.getCVSFolderFor(parent);
-		EmptyTokenizer tokenizer = new EmptyTokenizer(line, SEPERATOR);
+		EmptyTokenizer tokenizer = new EmptyTokenizer(line, SEPARATOR);
 		if(tokenizer.countTokens() != 4) {
 			throw new CVSException(Policy.bind("NotifyInfo.MalformedLine", line)); //$NON-NLS-1$
 		}
@@ -101,11 +101,11 @@ public class NotifyInfo {
 	public String getNotifyLine() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(getName());
-		buffer.append(SEPERATOR);
+		buffer.append(SEPARATOR);
 		buffer.append(notificationType);
-		buffer.append(SEPERATOR);
+		buffer.append(SEPARATOR);
 		buffer.append(CVSDateFormatter.dateToEntryLine(timeStamp));
-		buffer.append(SEPERATOR);
+		buffer.append(SEPARATOR);
 		if (watches != null) {
 			for (int i = 0; i < watches.length; i++) {
 				char c = watches[i];
@@ -123,13 +123,13 @@ public class NotifyInfo {
 	public String getServerLine(ICVSFolder parent) throws CVSException {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(notificationType);
-		buffer.append(TAB_SEPERATOR);
+		buffer.append(TAB_SEPARATOR);
 		buffer.append(getServerTimestamp());
-		buffer.append(TAB_SEPERATOR);
+		buffer.append(TAB_SEPARATOR);
 		buffer.append(getHost());
-		buffer.append(TAB_SEPERATOR);
+		buffer.append(TAB_SEPARATOR);
 		buffer.append(getWorkingDirectory(parent));
-		buffer.append(TAB_SEPERATOR);
+		buffer.append(TAB_SEPARATOR);
 		if (watches != null) {
 			for (int i = 0; i < watches.length; i++) {
 				char c = watches[i];

@@ -68,8 +68,8 @@ public class FolderSyncInfo {
 		}
 		if (repository.startsWith(rootDir)) {
 			repository = repository.substring(rootDir.length());
-			if (repository.startsWith(ResourceSyncInfo.SEPERATOR)) {
-				repository = repository.substring(ResourceSyncInfo.SEPERATOR.length());
+			if (repository.startsWith(ResourceSyncInfo.SEPARATOR)) {
+				repository = repository.substring(ResourceSyncInfo.SEPARATOR.length());
 			}
 		}
 	}
@@ -191,7 +191,7 @@ public class FolderSyncInfo {
 	 * @throws a CVSException if the root or repository is malformed.
 	 */
 	public String getRemoteLocation() throws CVSException {
-		return getRootDirectory() + ResourceSyncInfo.SEPERATOR + getRepository(); //$NON-NLS-1$
+		return getRootDirectory() + ResourceSyncInfo.SEPARATOR + getRepository(); //$NON-NLS-1$
 	}
 	
 	/*

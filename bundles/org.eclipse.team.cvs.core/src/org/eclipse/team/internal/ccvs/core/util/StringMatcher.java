@@ -216,7 +216,7 @@ public class StringMatcher {
 		return match(text, 0, text.length());
 	}
 	/**
-	 * This method parses the given pattern into segments seperated by wildcard '*' characters.
+	 * This method parses the given pattern into segments separated by wildcard '*' characters.
 	 * Since wildcards are not being used in this case, the pattern consists of a single segment.
 	 */
 	private void parseNoWildCards() {
@@ -225,7 +225,7 @@ public class StringMatcher {
 		fBound = fLength;
 	}
 	/**
-	 *  This method parses the given pattern into segments seperated by wildcard '*' characters.
+	 *  This method parses the given pattern into segments separated by wildcard '*' characters.
 	 * @param p, a String object that is a simple regular expression with  *  and/or  ? 
 	 */
 	private void parseWildCards() {
