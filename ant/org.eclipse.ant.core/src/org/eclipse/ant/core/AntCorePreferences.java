@@ -334,7 +334,9 @@ public class AntCorePreferences {
 	}
 
 	/**
-	 * Sets the custom URLs specified for the Ant classpath
+	 * Sets the custom URLs specified for the Ant classpath.
+	 * To commit the changes, updatePluginPreferences must be
+	 * called.
 	 * 
 	 * @param the urls defining the Ant classpath
 	 */
