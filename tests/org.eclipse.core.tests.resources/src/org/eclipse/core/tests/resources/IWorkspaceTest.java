@@ -802,11 +802,10 @@ public void testSave() {
 	try {
 		descriptionFile.delete(IResource.NONE, null);
 		IStatus result = getWorkspace().save(true, getMonitor());
-		assertTrue("1.0", result.getSeverity() == IStatus.WARNING);
+		assertEquals("1.0", IStatus.WARNING, result.getSeverity());
 	} catch (CoreException e) {
 		fail("1.99", e);
 	}
-	
 }
 
 /**
