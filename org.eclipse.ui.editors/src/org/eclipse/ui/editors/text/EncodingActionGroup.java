@@ -291,7 +291,7 @@ public class EncodingActionGroup extends ActionGroup {
 		for (int i= 0; i < ENCODINGS.length; i++)
 			fRetargetActions.add(new RetargetTextEditorAction(b, "Editor.ConvertEncoding." + ENCODINGS[i][0] + ".", ENCODINGS[i][0], IAction.AS_RADIO_BUTTON)); //$NON-NLS-1$ //$NON-NLS-2$
 		
-		fRetargetActions.add(new RetargetTextEditorAction(b, "Editor.ConvertEncoding.Custom.", IEncodingActionsConstants.CUSTOM)); //$NON-NLS-1$
+		fRetargetActions.add(new RetargetTextEditorAction(b, "Editor.ConvertEncoding.Custom.", IEncodingActionsConstants.CUSTOM, IAction.AS_PUSH_BUTTON)); //$NON-NLS-1$
 	}
 	
 	/*
