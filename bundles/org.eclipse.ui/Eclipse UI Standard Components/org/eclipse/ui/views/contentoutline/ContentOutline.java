@@ -48,11 +48,13 @@ import org.eclipse.swt.widgets.Composite;
 public class ContentOutline extends PageBookView implements ISelectionProvider, ISelectionChangedListener {
 
 	private static java.util.ResourceBundle resoutline_nls = java.util.ResourceBundle.getBundle("org.eclipse.ui.views.contentoutline.messages");  //$NON-NLS-1$
+	public static final String PREFIX = PlatformUI.PLUGIN_ID + "."; //$NON-NLS-1$
+
 	/**
 	 * Help context id used for the content outline view
 	 * (value <code>"org.eclipse.ui.content_outline_context"</code>).
 	 */
-	public static final String CONTENT_OUTLINE_VIEW_HELP_CONTEXT_ID = "org.eclipse.ui.content_outline_context";//$NON-NLS-1$
+	public static final String CONTENT_OUTLINE_VIEW_HELP_CONTEXT_ID = PREFIX + "content_outline_context";//$NON-NLS-1$
 
 	/**
 	 * Message to show on the default page.
