@@ -28,17 +28,17 @@ body {
 
 #background {
 	background-color : #BCCEE4;
-	min-height : 6%; /* same as background-image top and variable-space height */
+	min-height : 4%; /* same as background-image top and variable-space height */
 }
 
 #variable-space {
 	background-color : #BCCEE4;
-	height : 6%; /* same as background-image and background height */
+	height : 4%; /* same as background-image and background height */
 }
 
 #background-image {
 	position : relative;
-	top : 6%; /* same as variable-space and background height */
+	top : 4%; /* same as variable-space and background height */
 	height : 253px;
 	width : 100%;
 	background-image : url(graphics/background/background.jpg);
@@ -61,7 +61,7 @@ body {
  */
 #navigation-links {
 	position : relative;
-	top : 6%;
+	top : 4%;
 	width : 320px;
 	left : 50%;
 	margin-left : -160px;
