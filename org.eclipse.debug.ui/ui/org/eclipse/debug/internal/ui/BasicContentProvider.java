@@ -40,7 +40,7 @@ public abstract class BasicContentProvider implements IStructuredContentProvider
 	protected void asyncExec(Runnable r) {
 		if (fViewer != null) {
 			Control ctrl= fViewer.getControl();
-			if (ctrl != null) {
+			if (ctrl != null && !ctrl.isDisposed()) {
 				ctrl.getDisplay().asyncExec(r);
 			}
 		}

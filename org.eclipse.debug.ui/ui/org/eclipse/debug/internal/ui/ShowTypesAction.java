@@ -38,6 +38,9 @@ public class ShowTypesAction extends Action {
 	}
 
 	private void valueChanged(boolean on) {
+		if (fViewer.getControl().isDisposed()) {
+			return;
+		}
 		ILabelProvider labelProvider= (ILabelProvider)fViewer.getLabelProvider();
 		if (labelProvider instanceof IDebugModelPresentation) {
 			IDebugModelPresentation debugLabelProvider= (IDebugModelPresentation)labelProvider;

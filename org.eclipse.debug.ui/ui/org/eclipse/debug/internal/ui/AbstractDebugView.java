@@ -82,6 +82,9 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 		// is created
 		Runnable r = new Runnable() {
 			public void run() {
+				if (fViewer.getControl().isDisposed()) {
+					return;
+				}
 				IContributionItem[] items = tbm.getItems();
 				if (items != null) {
 					for (int i = 0; i < items.length; i++) {
@@ -95,10 +98,10 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 				}
 			}
 		};
-		IWorkbenchWindow w = DebugUIPlugin.getActiveWorkbenchWindow();
-		if (w != null) {
-			w.getShell().getDisplay().asyncExec(r);
+		if (fViewer.getControl().isDisposed()) {
+			return;
 		}
+		fViewer.getControl().getDisplay().asyncExec(r);
 	}
 	
 	/**

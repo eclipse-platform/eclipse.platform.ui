@@ -433,7 +433,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChanged
 		return getDefault().getWorkbench().getActiveWorkbenchWindow();
 	}
 
-	/**
+/**
  * Creates an extension.  If the extension plugin has not
  * been loaded a busy cursor will be activated during the duration of
  * the load.

@@ -104,7 +104,11 @@ public class EnableDisableBreakpointAction extends SelectionProviderAction imple
 	 * @see IBreakpointListener
 	 */
 	public void breakpointChanged(IMarker breakpoint, IMarkerDelta delta) {
-		Display.getDefault().asyncExec(new Runnable() {
+		final Display display= Display.getDefault();
+		if (display.isDisposed()) {
+			return;
+		}
+		display.asyncExec(new Runnable() {
 			public void run() {
 				ISelection s= getSelectionProvider().getSelection();
 				if (s instanceof IStructuredSelection) {
@@ -113,6 +117,5 @@ public class EnableDisableBreakpointAction extends SelectionProviderAction imple
 			}
 		});
 	}
-
 }
 
