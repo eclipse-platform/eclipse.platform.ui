@@ -63,14 +63,25 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      */
     AbstractIntroPage(Element element, Bundle bundle) {
         super(element, bundle);
+        content = getAttribute(element, ATT_CONTENT);
+        if (content == null)
+            init(element, bundle);
+        else
+            // Content is not null. Resolve it. Other attributes will be loaded
+            // when xml content file is loaded
+            content = IntroModelRoot.getPluginLocation(content, bundle);
+    }
+
+    private void init(Element element, Bundle bundle) {
         style = getAttribute(element, ATT_STYLE);
         altStyle = getAttribute(element, ATT_ALT_STYLE);
-        content = getAttribute(element, ATT_CONTENT);
+
         // Resolve.
         style = IntroModelRoot.getPluginLocation(style, bundle);
         altStyle = IntroModelRoot.getPluginLocation(altStyle, bundle);
-        content = IntroModelRoot.getPluginLocation(content, bundle);
+
     }
+
 
     /**
      * The page's title. Each page can have one title.
@@ -233,7 +244,9 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
 
     /**
      * load the children of this container. Override parent behavior because we
-     * want to support laoding content from other xml files.
+     * want to support loading content from other xml files. The design is that
+     * only the id and content from the existing page are honored. all other
+     * attributes are what they are defined in the external page.
      * 
      * @return Returns all the children of this container.
      */
@@ -252,16 +265,27 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
 
         Element[] pages = ModelLoaderUtil.getElementsByTagName(dom,
                 IntroPage.TAG_PAGE);
-        if (pages.length != 1) {
-            String message = StringUtil.concat("Content file for page: ",
-                    getId(), " has ", String.valueOf(pages.length), " pages")
-                    .toString();
-            Log.warning(message);
-            // return empty array.
+        if (pages.length == 0) {
+            Log.warning("Content file has no pages.");
             return;
         }
-        // point the element of this page to the new element.
-        this.element = pages[0];
+        // point the element of this page to the new element. Pick first page
+        // with matching id.
+        for (int i = 0; i < pages.length; i++) {
+            Element pageElement = pages[i];
+            if (pageElement.getAttribute(IntroPage.ATT_ID).equals(getId())) {
+                this.element = pageElement;
+                // call init on the new element. the filtering and the style-id
+                // are loaded by the parent class.
+                init(pageElement, getBundle());
+                // TODO: revisit.
+                style_id = element
+                        .getAttribute(AbstractBaseIntroElement.ATT_STYLE_ID);
+                filteredFrom = element
+                        .getAttribute(AbstractBaseIntroElement.ATT_FIlTERED_FROM);
+
+            }
+        }
         // now do children loading as usual.
         super.loadChildren();
     }

@@ -202,15 +202,14 @@ public class IntroModelRoot extends AbstractIntroContainer {
                 IntroPage.TAG_PAGE);
         for (int i = 0; i < pages.length; i++) {
             Element pageElement = pages[i];
-            if (pageElement.getAttribute(IntroPage.ATT_ID).equalsIgnoreCase(
-                    homePageId)) {
+            if (pageElement.getAttribute(IntroPage.ATT_ID).equals(homePageId)) {
                 // Create the model class for the Root Page.
                 homePage = new IntroHomePage(pageElement, bundle);
                 homePage.setParent(this);
                 currentPageId = homePage.getId();
                 children.add(homePage);
-            } else if (pageElement.getAttribute(IntroPage.ATT_ID)
-                    .equalsIgnoreCase(standbyPageId)) {
+            } else if (pageElement.getAttribute(IntroPage.ATT_ID).equals(
+                    standbyPageId)) {
                 // Create the model class for the standby Page.
                 standbyPage = new IntroHomePage(pageElement, bundle);
                 standbyPage.setParent(this);
