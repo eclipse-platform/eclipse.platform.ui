@@ -1785,7 +1785,7 @@
                style="pulldown"
                class="org.eclipse.debug.internal.ui.actions.ContextualLaunchObjectActionDelegate"
                menubarPath="additions"
-               enablesFor="1"
+               enablesFor="+"
                id="org.eclipse.debug.ui.contextualLaunch.submenu">
          </action>
       </objectContribution>
