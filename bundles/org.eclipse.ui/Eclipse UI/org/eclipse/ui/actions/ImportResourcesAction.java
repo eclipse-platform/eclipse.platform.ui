@@ -55,17 +55,21 @@ protected boolean updateSelection(IStructuredSelection selection) {
 	if(!super.updateSelection(selection))
 		return false;
 	
-	if (selection.size() != 1) {
-		return selection.size() == 0;
-	} 
-	
-	//We know there is only one selection
-	IResource resource = (IResource) getSelectedResources().get(0);
-	
-	if(resource.getType() == IResource.FILE)
+	List resources = getSelectedResources();
+	if (resources.isEmpty()) {
+		return true;
+	}
+	if (resources.size() != 1) {
 		return false;
-		
-	return(resource.getProject().isOpen());
+	}
+	IResource resource = (IResource) resources.get(0);
+	switch (resource.getType()) {
+		case IResource.PROJECT:
+			return ((IProject) resource).isOpen();
+		case IResource.FOLDER:
+			return resource.getProject().isOpen();
+	}
+	return false;
 }
 
 
