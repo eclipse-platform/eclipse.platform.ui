@@ -29,8 +29,12 @@ public class BuildOrderPreferencePage
 	implements IWorkbenchPreferencePage {
 		
 	private Button defaultOrderButton;
+	private Label buildLabel;
 	private List buildList;
 	private Composite buttonComposite;
+	
+	private String[] defaultBuildOrder;
+	private String[] customBuildOrder;
 
 	private static String UP_LABEL = WorkbenchMessages.getString("BuildOrderPreference.up"); //$NON-NLS-1$
 	private static String DOWN_LABEL = WorkbenchMessages.getString("BuildOrderPreference.down"); //$NON-NLS-1$
@@ -39,6 +43,8 @@ public class BuildOrderPreferencePage
 	private static String UNSELECTED_PROJECTS = WorkbenchMessages.getString("BuildOrderPreference.selectProject"); //$NON-NLS-1$
 	private static String PROJECT_SELECTION_MESSAGE = WorkbenchMessages.getString("BuildOrderPreference.selectOtherProjects"); //$NON-NLS-1$
 	private static String DEFAULTS_LABEL = WorkbenchMessages.getString("BuildOrderPreference.useDefaults"); //$NON-NLS-1$
+	private static String LIST_LABEL = WorkbenchMessages.getString("BuildOrderPreference.projectBuildOrder"); //$NON-NLS-1$
+	
 /**
  * Add another project to the list at the end.
  */
@@ -91,6 +97,14 @@ private void addProject() {
  */
 private void createBuildOrderList(Composite composite, boolean enabled) {
 
+	this.buildLabel = new Label(composite, SWT.NONE);
+	this.buildLabel.setText(LIST_LABEL);
+	this.buildLabel.setEnabled(enabled);
+	GridData gridData = new GridData();
+	gridData.horizontalAlignment = GridData.FILL;
+	gridData.horizontalSpan = 2;
+	this.buildLabel.setLayoutData(gridData);
+	
 	this.buildList = new List(composite, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 	this.buildList.setEnabled(enabled);
 	GridData data = new GridData();
@@ -103,14 +117,6 @@ private void createBuildOrderList(Composite composite, boolean enabled) {
 	data.grabExcessHorizontalSpace = true;
 	data.grabExcessVerticalSpace = true;
 	this.buildList.setLayoutData(data);
-
-	String[] buildOrder = getCurrentBuildOrder();
-	
-	if (buildOrder == null)
-		this.buildList.setEnabled(false);
-	else
-		this.buildList.setItems(buildOrder);
-
 }
 /**
  * Create the widgets that are used to determine the build order.
@@ -132,12 +138,17 @@ protected Control createContents(Composite parent) {
 	data.horizontalAlignment = GridData.FILL;
 	composite.setLayoutData(data);
 
-	boolean useDefaults = (getCurrentBuildOrder() == null);
-	createDefaultPathButton(composite,useDefaults);
+	String[] buildOrder = getCurrentBuildOrder();
+	boolean useDefault = (buildOrder.length < 1);
 	
-	createBuildOrderList(composite,!useDefaults);
-	createListButtons(composite,!useDefaults);
+	createDefaultPathButton(composite, useDefault);
+	createBuildOrderList(composite, !useDefault);
+	createListButtons(composite, !useDefault);
 
+	if (useDefault)
+		this.buildList.setItems(getDefaultProjectOrder());
+	else
+		this.buildList.setItems(buildOrder);
 
 	return composite;
 
@@ -232,56 +243,59 @@ private void createListButtons(Composite composite, boolean enableComposite) {
  * @param selected - whether or not the defaults button got selected
  */
 private void defaultsButtonSelected(boolean selected) {
-	if (selected)
+	if (selected) {
 		setBuildOrderWidgetsEnablement(false);
+		buildList.setItems(getDefaultProjectOrder());
+	}
 	else {
 		setBuildOrderWidgetsEnablement(true);
-		//if there are no items then add the defaults
-		if (buildList.getItemCount() == 0)
+		String[] buildOrder = getCurrentBuildOrder();
+		if (buildOrder.length < 1)
 			buildList.setItems(getDefaultProjectOrder());
+		else
+			buildList.setItems(buildOrder);
 	}
 }
 /**
- * Get the current build order of the workspace.
+ * Get the project names for the current custom build
+ * order stored in the workspace description.
+ * 
  * @return java.lang.String[]
  */
 private String[] getCurrentBuildOrder() {
-	String [] buildOrder =  getWorkspace().getDescription().getBuildOrder();
-	if(buildOrder == null)
-		return null;
-	//Workaround for 1GBXLX4: ITPCORE:WINNT - getBuildOrder is never null
-	if(buildOrder.length == 0)
-		return null;
-	else return buildOrder;
+	if (customBuildOrder == null) {
+		customBuildOrder = getWorkspace().getDescription().getBuildOrder();
+		if (customBuildOrder == null)
+			customBuildOrder = new String[0];
+	}
+	
+	return customBuildOrder;
 }
 /**
- * Get the names of the projects in thier default build order based on the current Workspace
- * settings.
+ * Get the project names in the default build order
+ * based on the current Workspace settings.
+ * 
  * @return java.lang.String[]
  */
 private String[] getDefaultProjectOrder() {
+	if (defaultBuildOrder == null) {
+		IWorkspace workspace = getWorkspace();
+		IProject[][] projectOrder =
+			getWorkspace().computePrerequisiteOrder(workspace.getRoot().getProjects());
 
-	IWorkspace workspace = getWorkspace();
-	IProject[][] projectOrder =
-		getWorkspace().computePrerequisiteOrder(workspace.getRoot().getProjects());
+		IProject[] foundProjects = projectOrder[0];
+		IProject[] ambiguousProjects = projectOrder[1];
 
-	IProject[] foundProjects = projectOrder[0];
-	IProject[] ambiguousProjects = projectOrder[1];
-
-	String [] projectOrderStrings =
-		new String[foundProjects.length + ambiguousProjects.length];
-
-	int foundSize = foundProjects.length;
-
-	for (int i = 0; i < foundSize; i++) {
-		projectOrderStrings[i] = foundProjects[i].getName();
+		defaultBuildOrder =
+			new String[foundProjects.length + ambiguousProjects.length];
+		int foundSize = foundProjects.length;
+		for (int i = 0; i < foundSize; i++)
+			defaultBuildOrder[i] = foundProjects[i].getName();
+		for (int i = 0; i < ambiguousProjects.length; i++)
+			defaultBuildOrder[i + foundSize] = ambiguousProjects[i].getName();
 	}
-
-	for (int i = 0; i < ambiguousProjects.length; i++) {
-		projectOrderStrings[i + foundSize] = ambiguousProjects[i].getName();
-	}
-
-	return projectOrderStrings;
+	
+	return defaultBuildOrder;
 }
 /**
  * Return the Workspace the build order is from.
@@ -305,7 +319,8 @@ private boolean includes(String[] testArray, String searchElement) {
 /**
  * See IWorkbenchPreferencePage. This class does nothing with he Workbench.
  */
-public void init(IWorkbench workbench) {}
+public void init(IWorkbench workbench) {
+}
 /**
  * Move the current selection in the build list down.
  */
@@ -352,15 +367,16 @@ protected void performDefaults() {
  */
 public boolean performOk() {
 
-	String[] buildPath = null;
+	String[] buildOrder = null;
 
+	// if use defaults is turned off
 	if (!this.defaultOrderButton.getSelection())
-		buildPath = buildList.getItems();
+		buildOrder = buildList.getItems();
 
 	//Get a copy of the description from the workspace, set the build order and then
 	//apply it to the workspace.
 	IWorkspaceDescription description = getWorkspace().getDescription();
-	description.setBuildOrder(buildPath);
+	description.setBuildOrder(buildOrder);
 	try {
 		getWorkspace().setDescription(description);
 	} catch (CoreException exception) {
@@ -368,6 +384,9 @@ public boolean performOk() {
 		return false;
 	}
 
+	// Clear the custom build order cache
+	customBuildOrder = null;
+	
 	return true;
 }
 /**
@@ -383,6 +402,7 @@ private void removeSelection() {
  */
 private void setBuildOrderWidgetsEnablement(boolean value) {
 
+	this.buildLabel.setEnabled(value);
 	this.buildList.setEnabled(value);
 	Control[] children = this.buttonComposite.getChildren();
 	for (int i = 0; i < children.length; i++) {
@@ -391,7 +411,7 @@ private void setBuildOrderWidgetsEnablement(boolean value) {
 
 }
 /**
- * Set the grid data pf the supplied button to grab the whole column
+ * Set the grid data of the supplied button to grab the whole column
  * @param button org.eclipse.swt.widgets.Button
  */
 private void setButtonGridData(Button button) {
