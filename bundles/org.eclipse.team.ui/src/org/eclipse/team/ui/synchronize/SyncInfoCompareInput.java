@@ -148,7 +148,7 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 		}
 	}
 	
-	public void dispose() {
+	private void dispose() {
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 	}
 	

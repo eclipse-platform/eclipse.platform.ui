@@ -74,7 +74,6 @@ public class OpenInCompareAction extends Action {
 					wpage.activate(editor);
 				} else {
 					// if editor is currently not open on that input either re-use existing
-					input.dispose();
 					CompareUI.reuseCompareEditor(input, (IReusableEditor)editor);
 					wpage.activate(editor);
 				}
