@@ -829,6 +829,13 @@ public void reorderTab(EditorPane pane,int newIndex) {
  * Reorder the tab representing the specified pane.
  */
 private void reorderTab(EditorPane pane, CTabItem sourceTab, int newIndex) {
+	int oldIndex = tabFolder.indexOf(sourceTab);
+	if(newIndex < 0)
+		if(oldIndex == tabFolder.getItemCount() - 1)
+			return;
+	else if(oldIndex == newIndex)
+		return;
+	
 	// remember if the source tab was the visible one
 	boolean wasVisible = (tabFolder.getSelection() == sourceTab);
 
