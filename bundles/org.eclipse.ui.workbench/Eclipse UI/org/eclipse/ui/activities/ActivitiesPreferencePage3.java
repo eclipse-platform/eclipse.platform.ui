@@ -312,7 +312,7 @@ public class ActivitiesPreferencePage3 extends PreferencePage implements
 
         {
             Label label = new Label(composite, SWT.NONE);
-            label.setText("D&escription:"); //$NON-NLS-1$
+            label.setText("Cat&egory Description:"); //$NON-NLS-1$
             descriptionText = new Text(composite, SWT.READ_ONLY | SWT.BORDER);
             GridData data = new GridData(GridData.FILL_BOTH);
             data.heightHint = 100;
