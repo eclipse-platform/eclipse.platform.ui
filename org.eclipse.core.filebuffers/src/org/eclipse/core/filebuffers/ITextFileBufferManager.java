@@ -11,7 +11,7 @@ Contributors:
 
 package org.eclipse.core.filebuffers;
 
-import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IPath;
 
 import org.eclipse.jface.text.IDocument;
 
@@ -25,13 +25,13 @@ import org.eclipse.jface.text.IDocument;
 public interface ITextFileBufferManager extends IFileBufferManager {
 	
 	/**
-	 * Returns the text file buffer managed for the given file or <code>null</code> if either
-	 * the file is not connected or the file is not a text file.
+	 * Returns the text file buffer managed for the file at the given location
+	 * or <code>null</code> if either there is no such text file buffer.
 	 * 
-	 * @param file the file
-	 * @return the text file buffer managed for that file or <code>null</code>
+	 * @param location the location
+	 * @return the text file buffer managed for that location or <code>null</code>
 	 */
-	ITextFileBuffer getTextFileBuffer(IFile file);
+	ITextFileBuffer getTextFileBuffer(IPath location);
 	
 	/**
 	 * Returns the default encoding that is used to read the contents of text files
@@ -42,11 +42,11 @@ public interface ITextFileBufferManager extends IFileBufferManager {
 	String getDefaultEncoding();
 	
 	/**
-	 * Creates a new empty document . The document is setup in the same way as it would
-	 * be used in a text file buffer for the given file.
+	 * Creates a new empty document . The document is set up in the same way as it would
+	 * be used in a text file buffer for a file at the given location.
 	 * 
-	 * @param file the file used to setup the newly created document
+	 * @param location the location used to set up the newly created document
 	 * @return a new empty document
 	 */
-	IDocument createEmptyDocument(IFile file);
+	IDocument createEmptyDocument(IPath location);
 }

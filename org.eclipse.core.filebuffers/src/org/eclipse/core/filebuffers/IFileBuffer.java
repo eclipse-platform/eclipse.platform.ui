@@ -10,8 +10,8 @@ Contributors:
 **********************************************************************/
 package org.eclipse.core.filebuffers;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 
@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.IStatus;
  * start of the sequence and the end of the sequence are explicitly indicated. There are
  * no time constraints connected with the sequence of modification steps. A file buffer
  * reifies editing sessions and allows them to interleave.<p>
- * It is not sepcified whether simultaneous editing sessions can be owned by different
+ * It is not specified whether simultaneous editing sessions can be owned by different
  * threads.
  * 
  * @since 3.0
@@ -29,11 +29,11 @@ import org.eclipse.core.runtime.IStatus;
 public interface IFileBuffer {
 	
 	/**
-	 * Returns the underlying file of this file buffer.
+	 * Returns the location of this file buffer.
 	 * 
-	 * @return the underlying file of this file buffer
+	 * @return the location of this file buffer
 	 */
-	IFile getUnderlyingFile();
+	IPath getLocation();
 
 	/**
 	 * Returns whether this file buffer is synchronized with the file system. This is when
@@ -105,4 +105,11 @@ public interface IFileBuffer {
 	 * @return the status of this file buffer
 	 */
 	IStatus getStatus();
+	
+	/**
+	 * Returns the modification stamp of the file underlying this file buffer.
+	 * 
+	 * @return the modification stamp of the file underlying this file buffer
+	 */
+	long getModifcationStamp();
 }

@@ -10,7 +10,8 @@ Contributors:
 **********************************************************************/
 package org.eclipse.core.internal.filebuffers;
 
-import org.eclipse.core.filebuffers.IFileBuffer;
+import java.io.File;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -28,7 +29,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
 
-public abstract class FileBuffer implements IFileBuffer {
+public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 	
 		/**
 		 * Runnable encapsulating an element state change. This runnable ensures 
@@ -61,11 +62,11 @@ public abstract class FileBuffer implements IFileBuffer {
 					return;
 					
 				try {
-					fManager.fireStateChanging(FileBuffer.this);
+					fManager.fireStateChanging(ResourceFileBuffer.this);
 					execute();
 				} catch (Exception x) {
 					FileBuffersPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, "Exception when synchronizing", x)); //$NON-NLS-1$
-					fManager.fireStateChangeFailed(FileBuffer.this);
+					fManager.fireStateChangeFailed(ResourceFileBuffer.this);
 				}
 			}
 		}
@@ -186,7 +187,7 @@ public abstract class FileBuffer implements IFileBuffer {
 	
 	
 	
-	public FileBuffer(TextFileBufferManager manager) {
+	public ResourceFileBuffer(TextFileBufferManager manager) {
 		super();
 		fManager= manager;
 	}
@@ -201,8 +202,11 @@ public abstract class FileBuffer implements IFileBuffer {
 	
 	abstract protected void commitFileBufferContent(IProgressMonitor monitor, boolean overwrite) throws CoreException;
 	
-	
-	public void create(IFile file, IProgressMonitor monitor) throws CoreException {
+	public void create(IPath location, IProgressMonitor monitor) throws CoreException {
+		IFile file= fManager.getWorkspaceFileAtLocation(location);
+		if (file == null || !file.exists())
+			throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, "File does not exist", null));
+		
 		fFile= file;
 		fFileSynchronizer= new FileSynchronizer();
 		
@@ -238,10 +242,10 @@ public abstract class FileBuffer implements IFileBuffer {
 	}
 	
 	/*
-	 * @see org.eclipse.core.filebuffers.IFileBuffer#getUnderlyingFile()
+	 * @see org.eclipse.core.filebuffers.IFileBuffer#getLocation()
 	 */
-	public IFile getUnderlyingFile() {
-		return fFile;
+	public IPath getLocation() {
+		return fFile.getLocation();
 	}
 
 	/*
@@ -310,9 +314,7 @@ public abstract class FileBuffer implements IFileBuffer {
 	 * @param newLocation the path of the new location of the file
 	 */
 	protected void handleFileMoved(IPath newLocation) {
-		IWorkspace workspace=fFile.getWorkspace();
-		IFile newFile= workspace.getRoot().getFile(newLocation);
-		fManager.fireUnderlyingFileMoved(this, newFile);
+		fManager.fireUnderlyingFileMoved(this, newLocation);
 	}
 	
 	/**
@@ -351,6 +353,17 @@ public abstract class FileBuffer implements IFileBuffer {
 	 */
 	public boolean isSynchronized() {
 		return fSynchronizationStamp == fFile.getModificationStamp() && fFile.isSynchronized(IResource.DEPTH_ZERO);
+	}
+	
+	/*
+	 * @see org.eclipse.core.filebuffers.IFileBuffer#getModifcationStamp()
+	 */
+	public long getModifcationStamp() {
+		IPath path= fFile.getLocation();
+		File file= path.toFile();
+		if (file != null)
+			return file.lastModified();
+		return IFile.NULL_STAMP;
 	}
 	
 	/**

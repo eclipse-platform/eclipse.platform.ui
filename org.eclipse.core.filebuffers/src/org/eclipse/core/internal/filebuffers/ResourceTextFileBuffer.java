@@ -34,7 +34,7 @@ import org.eclipse.jface.text.IDocumentListener;
 /**
  * 
  */
-public class TextFileBuffer extends FileBuffer implements ITextFileBuffer {
+public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextFileBuffer {
 	
 	
 	private class DocumentListener implements IDocumentListener {
@@ -51,7 +51,7 @@ public class TextFileBuffer extends FileBuffer implements ITextFileBuffer {
 		public void documentChanged(DocumentEvent event) {
 			fCanBeSaved= true;
 			removeFileBufferContentListeners();
-			fManager.fireDirtyStateChanged(TextFileBuffer.this, fCanBeSaved);
+			fManager.fireDirtyStateChanged(ResourceTextFileBuffer.this, fCanBeSaved);
 		}
 	}
 	
@@ -87,7 +87,7 @@ public class TextFileBuffer extends FileBuffer implements ITextFileBuffer {
 
 
 
-	public TextFileBuffer(TextFileBufferManager manager) {
+	public ResourceTextFileBuffer(TextFileBufferManager manager) {
 		super(manager);
 	}
 
@@ -142,7 +142,7 @@ public class TextFileBuffer extends FileBuffer implements ITextFileBuffer {
 		IStatus status= null;
 		
 		try {
-			original= fManager.createEmptyDocument(fFile);
+			original= fManager.createEmptyDocument(fFile.getLocation());
 			setDocumentContent(original, fFile.getContents(), fEncoding);
 		} catch (CoreException x) {
 			status= x.getStatus();
@@ -194,10 +194,10 @@ public class TextFileBuffer extends FileBuffer implements ITextFileBuffer {
 	protected void initializeFileBufferContent(IProgressMonitor monitor) throws CoreException {		
 		try {
 			fEncoding= fFile.getPersistentProperty(ENCODING_KEY);
-			fDocument= fManager.createEmptyDocument(fFile);
+			fDocument= fManager.createEmptyDocument(fFile.getLocation());
 			setDocumentContent(fDocument, fFile.getContents(), fEncoding);
 		} catch (CoreException x) {
-			fDocument= fManager.createEmptyDocument(fFile);
+			fDocument= fManager.createEmptyDocument(fFile.getLocation());
 			fStatus= x.getStatus();
 		}
 	}
@@ -254,7 +254,7 @@ public class TextFileBuffer extends FileBuffer implements ITextFileBuffer {
 		if (isDisposed())
 			return;
 		
-		IDocument document= fManager.createEmptyDocument(fFile);
+		IDocument document= fManager.createEmptyDocument(fFile.getLocation());
 		IStatus status= null;
 		
 		try {

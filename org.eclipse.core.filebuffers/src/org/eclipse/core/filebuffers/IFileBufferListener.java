@@ -10,7 +10,7 @@ Contributors:
 **********************************************************************/
 package org.eclipse.core.filebuffers;
 
-import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IPath;
 
 /**
  * Interface for listeners of file buffer changes.
@@ -77,9 +77,9 @@ public interface IFileBufferListener {
 	 * given location.
 	 * 
 	 * @param buffer the effected file buffer
-	 * @param target the new location
+	 * @param target the new location (not just the container)
 	 */
-	void underlyingFileMoved(IFileBuffer buffer, IFile target);
+	void underlyingFileMoved(IFileBuffer buffer, IPath path);
 	
 	/**
 	 * Informs the listener that the file underlying the given file buffer has been deleted.

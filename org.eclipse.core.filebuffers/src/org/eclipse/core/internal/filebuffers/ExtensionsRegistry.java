@@ -24,11 +24,11 @@ import java.util.StringTokenizer;
 
 import org.eclipse.core.filebuffers.IDocumentFactory;
 import org.eclipse.core.filebuffers.IDocumentSetupParticipant;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -58,12 +58,11 @@ public class ExtensionsRegistry {
 	 */
 	public ExtensionsRegistry() {
 		initialize("documentCreation", "extensions",  fFactoryDescriptors); //$NON-NLS-1$ //$NON-NLS-2$
-		initialize("documentSetup", "extensions", fSetupParticipantDescriptors);
+		initialize("documentSetup", "extensions", fSetupParticipantDescriptors);   //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	/**
-	 * Reads the comma-separated value of the given configuration element 
-	 * for the given attribute name and remembers the configuration element
+	 * Reads the comma-separated value of the given configuration element for the given attribute name and remembers the configuration element
 	 * in the given map under the individual tokens of the attribute value.
 	 */
 	private void read(String attributeName, IConfigurationElement element, Map map) {
@@ -196,28 +195,28 @@ public class ExtensionsRegistry {
 	}
 	
 	/**
-	 * Returns the shareable document factory for the given file.
+	 * Returns the shareable document factory for the given location.
 	 *
-	 * @param file the file for whose type the factory is looked up
+	 * @param location the location for which to looked up the factory
 	 * @return the shareable document factory
 	 */
-	public IDocumentFactory getDocumentFactory(IFile file) {
-		IDocumentFactory factory= getDocumentFactory(file.getFileExtension());
+	public IDocumentFactory getDocumentFactory(IPath location) {
+		IDocumentFactory factory= getDocumentFactory(location.getFileExtension());
 		if (factory == null)
 			factory= getDocumentFactory(WILDCARD);
 		return factory;
 	}
 	
 	/**
-	 * Returns the shareable set of document setup participants for the given file.
+	 * Returns the shareable set of document setup participants for the given location.
 	 * 
-	 * @param file the file for which to look up the setup participants
+	 * @param location the location for which to look up the setup participants
 	 * @return the shareable set of document setup participants
 	 */
-	public IDocumentSetupParticipant[] getDocumentSetupParticipants(IFile file) {
+	public IDocumentSetupParticipant[] getDocumentSetupParticipants(IPath location) {
 		List participants= new ArrayList();
 		
-		List p= getDocumentSetupParticipants(file.getFileExtension());
+		List p= getDocumentSetupParticipants(location.getFileExtension());
 		if (p != null)
 			participants.addAll(p);
 			

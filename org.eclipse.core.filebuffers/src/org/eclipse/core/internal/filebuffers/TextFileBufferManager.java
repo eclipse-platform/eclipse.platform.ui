@@ -16,6 +16,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+
 import org.eclipse.core.filebuffers.IDocumentFactory;
 import org.eclipse.core.filebuffers.IDocumentSetupParticipant;
 import org.eclipse.core.filebuffers.IFileBuffer;
@@ -23,12 +32,6 @@ import org.eclipse.core.filebuffers.IFileBufferListener;
 import org.eclipse.core.filebuffers.ISynchronizationContext;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.Document;
@@ -50,20 +53,20 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	}
 
 	/*
-	 * @see org.eclipse.core.filebuffers.IFileBufferManager#connect(org.eclipse.core.resources.IFile, org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.core.filebuffers.IFileBufferManager#connect(org.eclipse.core.runtime.IPath, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void connect(IFile file, IProgressMonitor monitor) throws CoreException {
-		Assert.isNotNull(file);
-		FileBuffer fileBuffer= (FileBuffer) fFilesBuffers.get(file);
+	public void connect(IPath location, IProgressMonitor monitor) throws CoreException {
+		Assert.isNotNull(location);
+		AbstractFileBuffer fileBuffer= (AbstractFileBuffer) fFilesBuffers.get(location);
 		if (fileBuffer == null)  {
 			
-			fileBuffer= createFileBuffer(file);
+			fileBuffer= createFileBuffer(location);
 			if (fileBuffer == null)
 				throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, 0, "Cannot create file buffer.", null));
 			
-			fileBuffer.create(file, monitor);
+			fileBuffer.create(location, monitor);
 			fileBuffer.connect();
-			fFilesBuffers.put(file, fileBuffer);
+			fFilesBuffers.put(location, fileBuffer);
 			fireBufferCreated(fileBuffer);
 			
 		} else {
@@ -72,42 +75,62 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	}
 
 	/*
-	 * @see org.eclipse.core.filebuffers.IFileBufferManager#disconnect(org.eclipse.core.resources.IFile, org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.core.filebuffers.IFileBufferManager#disconnect(org.eclipse.core.runtime.IPath, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void disconnect(IFile file, IProgressMonitor monitor) throws CoreException {
-		Assert.isNotNull(file);
-		FileBuffer fileBuffer= (FileBuffer) fFilesBuffers.get(file);
+	public void disconnect(IPath location, IProgressMonitor monitor) throws CoreException {
+		Assert.isNotNull(location);
+		AbstractFileBuffer fileBuffer= (AbstractFileBuffer) fFilesBuffers.get(location);
 		if (fileBuffer != null) {
 			fileBuffer.disconnect();
 			if (fileBuffer.isDisposed()) {
-				fFilesBuffers.remove(file);
+				fFilesBuffers.remove(location);
 				fireBufferDisposed(fileBuffer);
 			}
 		}
 	}
 	
-	private FileBuffer createFileBuffer(IFile file) {
-		if (isTextFile(file))
-			return new TextFileBuffer(this);
-		return null;
+	private AbstractFileBuffer createFileBuffer(IPath location) {
+		if (!isTextFile(location))
+			return null;
+//		
+//		if (isWorkspaceResource(location))
+//			return new ResourceTextFileBuffer(this);
+		
+		return new JavaTextFileBuffer(this);
 	}
 	
-	private boolean isTextFile(IFile file) {
+	/**
+	 * Returns the workspace file at the given location or <code>null</code> if
+	 * the location is not a valid location in the workspace.
+	 * 
+	 * @param location the location
+	 * @return the workspace file at the location or <code>null</code>
+	 */
+	public IFile getWorkspaceFileAtLocation(IPath location) {
+		IWorkspace workspace= ResourcesPlugin.getWorkspace();
+		return workspace.getRoot().getFileForLocation(location);		
+	}
+	
+	private boolean isWorkspaceResource(IPath location) {
+		return getWorkspaceFileAtLocation(location) != null;
+	}
+	
+	private boolean isTextFile(IPath location) {
 		return true;
 	}
 	
 	/*
-	 * @see org.eclipse.core.filebuffers.IFileBufferManager#getFileBuffer(org.eclipse.core.resources.IFile)
+	 * @see org.eclipse.core.filebuffers.IFileBufferManager#getFileBuffer(org.eclipse.core.runtime.IPath)
 	 */
-	public IFileBuffer getFileBuffer(IFile file) {
-		return (IFileBuffer) fFilesBuffers.get(file);
+	public IFileBuffer getFileBuffer(IPath location) {
+		return (IFileBuffer) fFilesBuffers.get(location);
 	}
 	
 	/*
-	 * @see org.eclipse.core.filebuffers.ITextFileBufferManager#getTextFileBuffer(org.eclipse.core.resources.IFile)
+	 * @see org.eclipse.core.filebuffers.ITextFileBufferManager#getTextFileBuffer(org.eclipse.core.runtime.IPath)
 	 */
-	public ITextFileBuffer getTextFileBuffer(IFile file) {
-		return (ITextFileBuffer) fFilesBuffers.get(file);
+	public ITextFileBuffer getTextFileBuffer(IPath location) {
+		return (ITextFileBuffer) fFilesBuffers.get(location);
 	}
 
 	/*
@@ -118,10 +141,10 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	}
 
 	/*
-	 * @see org.eclipse.core.filebuffers.ITextFileBufferManager#createEmptyDocument(org.eclipse.core.resources.IFile)
+	 * @see org.eclipse.core.filebuffers.ITextFileBufferManager#createEmptyDocument(org.eclipse.core.runtime.IPath)
 	 */
-	public IDocument createEmptyDocument(IFile file) {
-		IDocumentFactory factory= fRegistry.getDocumentFactory(file);
+	public IDocument createEmptyDocument(IPath location) {
+		IDocumentFactory factory= fRegistry.getDocumentFactory(location);
 		
 		IDocument document= null;
 		if (factory != null)
@@ -129,7 +152,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		else
 			document= new Document();
 			
-		IDocumentSetupParticipant[] participants= fRegistry.getDocumentSetupParticipants(file);
+		IDocumentSetupParticipant[] participants= fRegistry.getDocumentSetupParticipants(location);
 		if (participants != null) {
 			for (int i= 0; i < participants.length; i++)
 				participants[i].setup(document);
@@ -163,21 +186,21 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	}
 
 	/*
-	 * @see org.eclipse.core.filebuffers.IFileBufferManager#requestSynchronizationContext(org.eclipse.core.resources.IFile)
+	 * @see org.eclipse.core.filebuffers.IFileBufferManager#requestSynchronizationContext(org.eclipse.core.runtime.IPath)
 	 */
-	public void requestSynchronizationContext(IFile file) {
-		Assert.isNotNull(file);
-		FileBuffer fileBuffer= (FileBuffer) fFilesBuffers.get(file);
+	public void requestSynchronizationContext(IPath location) {
+		Assert.isNotNull(location);
+		AbstractFileBuffer fileBuffer= (AbstractFileBuffer) fFilesBuffers.get(location);
 		if (fileBuffer != null)
 			fileBuffer.requestSynchronizationContext();
 	}
 
 	/*
-	 * @see org.eclipse.core.filebuffers.IFileBufferManager#releaseSynchronizationContext(org.eclipse.core.resources.IFile)
+	 * @see org.eclipse.core.filebuffers.IFileBufferManager#releaseSynchronizationContext(org.eclipse.core.runtime.IPath)
 	 */
-	public void releaseSynchronizationContext(IFile file) {
-		Assert.isNotNull(file);
-		FileBuffer fileBuffer= (FileBuffer) fFilesBuffers.get(file);
+	public void releaseSynchronizationContext(IPath location) {
+		Assert.isNotNull(location);
+		AbstractFileBuffer fileBuffer= (AbstractFileBuffer) fFilesBuffers.get(location);
 		if (fileBuffer != null)
 			fileBuffer.releaseSynchronizationContext();
 	}
@@ -220,7 +243,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		}
 	}
 
-	protected void fireUnderlyingFileMoved(IFileBuffer buffer, IFile target) {
+	protected void fireUnderlyingFileMoved(IFileBuffer buffer, IPath target) {
 		Iterator e= new ArrayList(fFileBufferListeners).iterator();
 		while (e.hasNext()) {
 			IFileBufferListener l= (IFileBufferListener) e.next();
