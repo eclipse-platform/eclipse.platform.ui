@@ -1341,7 +1341,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * Value: {@value}
 	 * @since 3.0
 	 */
-	public final static String PREFERENCE_DISABLE_CUSTOM_CARETS= "AbstractTextEditor.Accessibility.DisableCustomCarets"; //$NON-NLS-1$	
+	public final static String PREFERENCE_USE_CUSTOM_CARETS= "AbstractTextEditor.Accessibility.UseCustomCarets"; //$NON-NLS-1$	
 	/** 
 	 * Key used to look up the caret width preference.
 	 * Value: {@value}
@@ -2982,7 +2982,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			initializeViewerColors(fSourceViewer);
 		} else if (PREFERENCE_COLOR_FIND_SCOPE.equals(property)) {
 			initializeFindScopeColor(fSourceViewer);
-		} else if (PREFERENCE_DISABLE_CUSTOM_CARETS.equals(property)) {
+		} else if (PREFERENCE_USE_CUSTOM_CARETS.equals(property)) {
 			updateCaret();
 		} else if (PREFERENCE_WIDE_CARET.equals(property)) {
 			updateCaret();
@@ -4605,7 +4605,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		styledText.setCaret(null);
 		disposeNonDefaultCaret();
 		
-		if (getPreferenceStore().getBoolean(PREFERENCE_DISABLE_CUSTOM_CARETS)) {
+		if (!getPreferenceStore().getBoolean(PREFERENCE_USE_CUSTOM_CARETS)) {
 			Assert.isTrue(fNonDefaultCaret == null);
 		} else if (fIsOverwriting)
 			fNonDefaultCaret= createOverwriteCaret(styledText);

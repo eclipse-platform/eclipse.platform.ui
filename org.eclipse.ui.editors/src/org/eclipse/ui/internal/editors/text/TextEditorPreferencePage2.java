@@ -122,6 +122,14 @@ public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbe
 	 * @since 3.0
 	 */
 	private boolean fFieldsInitialized= false;
+	
+	/**
+	 * List of master/slave listeners when there's a dependency.
+	 * 
+	 * @see #createDependency(Button, String, Control)
+	 * @since 3.0
+	 */
+	private ArrayList fMasterSlaveListeners= new ArrayList();
 
 	
 	public TextEditorPreferencePage2() {
@@ -166,7 +174,7 @@ public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbe
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ExtendedTextEditorPreferenceConstants.QUICK_DIFF_ALWAYS_ON));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ExtendedTextEditorPreferenceConstants.QUICK_DIFF_DEFAULT_PROVIDER));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ExtendedTextEditorPreferenceConstants.QUICK_DIFF_CHARACTER_MODE));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ExtendedTextEditorPreferenceConstants.EDITOR_DISABLE_CUSTOM_CARETS));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ExtendedTextEditorPreferenceConstants.EDITOR_USE_CUSTOM_CARETS));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ExtendedTextEditorPreferenceConstants.EDITOR_WIDE_CARET));
 		
 		OverlayPreferenceStore.OverlayKey[] keys= new OverlayPreferenceStore.OverlayKey[overlayKeys.size()];
@@ -308,10 +316,11 @@ public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbe
 		addCheckBox(appearanceComposite, label, ExtendedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN, 0);
 
 		label= TextEditorMessages.getString("TextEditorPreferencePage.accessibility.disableCustomCarets"); //$NON-NLS-1$
-		addCheckBox(appearanceComposite, label, ExtendedTextEditorPreferenceConstants.EDITOR_DISABLE_CUSTOM_CARETS, 0);
+		Button master= addCheckBox(appearanceComposite, label, ExtendedTextEditorPreferenceConstants.EDITOR_USE_CUSTOM_CARETS, 0);
 
 		label= TextEditorMessages.getString("TextEditorPreferencePage.accessibility.wideCaret"); //$NON-NLS-1$
-		addCheckBox(appearanceComposite, label, ExtendedTextEditorPreferenceConstants.EDITOR_WIDE_CARET, 0);
+		Button slave= addCheckBox(appearanceComposite, label, ExtendedTextEditorPreferenceConstants.EDITOR_WIDE_CARET, 0);
+		createDependency(master, ExtendedTextEditorPreferenceConstants.EDITOR_USE_CUSTOM_CARETS, slave);
 
 		Label l= new Label(appearanceComposite, SWT.LEFT );
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
@@ -713,6 +722,13 @@ public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbe
 		
 		fFieldsInitialized= true;
 		updateStatus(validatePositiveNumber("0")); //$NON-NLS-1$
+		
+        // Update slaves
+        Iterator iter= fMasterSlaveListeners.iterator();
+        while (iter.hasNext()) {
+            SelectionListener listener= (SelectionListener)iter.next();
+            listener.widgetSelected(null);
+        }
 	}
 	
 	/*
@@ -790,6 +806,29 @@ public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbe
 		}
 			
 		return textControl;
+	}
+	
+	private void createDependency(final Button master, String masterKey, final Control slave) {
+		indent(slave);
+		
+		boolean masterState= fOverlayStore.getBoolean(masterKey);
+		slave.setEnabled(masterState);
+		
+		SelectionListener listener= new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				slave.setEnabled(master.getSelection());
+			}
+
+			public void widgetDefaultSelected(SelectionEvent e) {}
+		};
+		master.addSelectionListener(listener);
+		fMasterSlaveListeners.add(listener);
+	}
+	
+	private static void indent(Control control) {
+		GridData gridData= new GridData();
+		gridData.horizontalIndent= 20;
+		control.setLayoutData(gridData);		
 	}
 	
 	private void numberFieldChanged(Text textControl) {
