@@ -91,16 +91,6 @@ public interface IDebugPreferenceConstants {
 	 * launch config dialog.
 	 */
 	public static final String PREF_LAST_LAUNCH_CONFIGURATION_SELECTION = IDebugUIConstants.PLUGIN_ID + ".lastLaunchConfigSelection"; //$NON-NLS-1$
-
-	/**
-	 * Serialized list of the enabled debug action groups
-	 */	
-	public static final String PREF_ENABLED_DEBUG_ACTION_GROUPS = IDebugUIConstants.PLUGIN_ID + "enabledDebugActionGroups"; //$NON-NLS-1$
-	
-	/**
-	 * Serialized list of the disabled debug action groups
-	 */	
-	public static final String PREF_DISABLED_DEBUG_ACTION_GROUPS = IDebugUIConstants.PLUGIN_ID + "disabledDebugActionGroups"; //$NON-NLS-1$
 		
 	/**
 	 * The maximum size of the launch history list

@@ -16,11 +16,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.debug.internal.ui.LazyModelPresentation;
-import org.eclipse.debug.internal.ui.preferences.DebugActionGroupsManager;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
@@ -325,8 +323,6 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 		getMessagePage().createControl(getPageBook());
 		initPage(getMessagePage());
 		
-		DebugActionGroupsManager.getDefault().registerView(this);
-		
 		if (fEarlyMessage != null) { //bug 28127
 			showMessage(fEarlyMessage);
 			fEarlyMessage= null;
@@ -381,7 +377,6 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 		}
 		setViewer(null);
 		fActionMap.clear();
-		DebugActionGroupsManager.getDefault().deregisterView(this);
 		super.dispose();
 	}
 	

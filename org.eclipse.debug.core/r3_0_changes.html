@@ -165,6 +165,18 @@
   
 <h2>API Changes</h2>
 
+<h3>Debug Action Groups removed</h3>
+<p>The Debug Action Groups extension point (org.eclipse.debug.ui.debugActionGroups) has been
+  removed. In Eclipse 3.0, the workbench introduced support for Activities via the
+  org.eclipse.platform.ui.activities extension point. This support provides everything
+  that Debug Action Groups provided and is also easier to use (it supports patterns instead of
+  specifying all actions exhaustively) and has a programmatic API to support it.</p>
+<p>Failing to remove references to the old extension point won't cause any failures.
+  References to the extension point will simply be ignored. Product vendors are encouraged to
+  use the workbench Activities support to associate language-specific debugger actions with
+  language-specific activities (for example, C++ debugging actions might be associated with
+  an activity called "Developing C++").</p>
+
 <h3>Extensible Launch Modes</h3>
 <p>With the introduction of extensible launch modes, more than one launch delegate 
   can exist for a launch configuration type. Releases prior to 3.0 only supported 

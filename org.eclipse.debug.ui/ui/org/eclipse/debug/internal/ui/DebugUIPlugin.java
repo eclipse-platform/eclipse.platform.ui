@@ -49,7 +49,6 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.PerspectiveManager;
-import org.eclipse.debug.internal.ui.preferences.DebugActionGroupsManager;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceManager;
 import org.eclipse.debug.internal.ui.views.console.ConsoleDocumentManager;
@@ -285,9 +284,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	public void shutdown() throws CoreException {
 		if (fPerspectiveManager != null) {
 			fPerspectiveManager.shutdown();
-		}
-		if (DebugActionGroupsManager.defaultExists()) {
-			DebugActionGroupsManager.getDefault().shutdown();
 		}
 		if (fLaunchConfigurationManager != null) {
 			fLaunchConfigurationManager.shutdown();

@@ -904,6 +904,8 @@ public interface IDebugUIConstants {
 	 * (value <code>"debugActionGroups"</code>).
 	 * 
 	 * @since 2.0
+	 * @deprecated The Debug Action Groups extension point no longer exists. Product
+	 *  vendors should use Activities instead. 
 	 */
 	public static final String EXTENSION_POINT_DEBUG_ACTION_GROUPS= "debugActionGroups";	 //$NON-NLS-1$
 	
