@@ -14,10 +14,9 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
-import org.eclipse.team.internal.ccvs.core.ICVSResource;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.listeners.LogEntry;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
@@ -49,10 +48,28 @@ public class ShowAnnotationAction extends WorkspaceAction {
 		final String revision= getRevision(cvsResource);
 		if (revision == null)
 		    return;
-		new ShowAnnotationOperation(getTargetPart(), cvsResource, revision).run();
+		boolean binary = isBinary(cvsResource);
+        if (binary) {
+		    if (!MessageDialog.openQuestion(getShell(), Policy.bind("ShowAnnotationAction.2"), Policy.bind("ShowAnnotationAction.3", cvsResource.getName()))) { //$NON-NLS-1$ //$NON-NLS-2$
+		        return;
+		    }
+		}
+		new ShowAnnotationOperation(getTargetPart(), cvsResource, revision, binary).run();
 	}
 
-	/**
+    private boolean isBinary(ICVSResource cvsResource) {
+        if (cvsResource.isFolder()) return false;
+        try {
+            byte[] syncBytes = ((ICVSFile)cvsResource).getSyncBytes();
+                if (syncBytes == null) 
+                    return false;
+            return ResourceSyncInfo.isBinary(syncBytes);
+        } catch (CVSException e) {
+            return false;
+        }
+    }
+
+    /**
 	 * Ony enabled for single resource selection
 	 */
 	protected boolean isEnabled() throws TeamException {

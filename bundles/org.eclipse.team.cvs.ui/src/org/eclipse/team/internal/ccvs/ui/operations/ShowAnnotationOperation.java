@@ -11,49 +11,30 @@
 
 package org.eclipse.team.internal.ccvs.ui.operations;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.resources.IStorage;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.variants.IResourceVariant;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.CVSStatus;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
-import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
-import org.eclipse.team.internal.ccvs.core.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.client.Annotate;
-import org.eclipse.team.internal.ccvs.core.client.Command;
-import org.eclipse.team.internal.ccvs.core.client.Session;
+import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.client.*;
+import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.client.listeners.AnnotateListener;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
-import org.eclipse.team.internal.ccvs.ui.AnnotateView;
-import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
-import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
+import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.core.TeamPlugin;
 import org.eclipse.team.internal.ui.Utils;
-import org.eclipse.ui.IPerspectiveDescriptor;
-import org.eclipse.ui.IPerspectiveRegistry;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.*;
 
 /**
  * An operation to fetch the annotations for a file from the repository and
@@ -63,11 +44,14 @@ public class ShowAnnotationOperation extends CVSOperation {
     
     final private ICVSResource fCVSResource;
     final private String fRevision;
+    private final boolean binary;
 
-    public ShowAnnotationOperation(IWorkbenchPart part, ICVSResource cvsResource, String revision) {
+    public ShowAnnotationOperation(IWorkbenchPart part, ICVSResource cvsResource, String revision, boolean binary) {
         super(part);
         fCVSResource= cvsResource;
         fRevision= revision;
+        this.binary = binary;
+
     }
 
     /* (non-Javadoc)
@@ -159,14 +143,14 @@ public class ShowAnnotationOperation extends CVSOperation {
             final Command.QuietOption quietness = CVSProviderPlugin.getPlugin().getQuietness();
             try {
                 CVSProviderPlugin.getPlugin().setQuietness(Command.VERBOSE);
-                final Command.LocalOption[] localOption;
-                if (revision == null) {
-                    localOption = Command.NO_LOCAL_OPTIONS;
-                } else {
-                    localOption = new Command.LocalOption[1];
-                    localOption[0] = Annotate.makeRevisionOption(revision);
+                List localOptions = new ArrayList();
+                if (revision != null) {
+                    localOptions.add(Annotate.makeRevisionOption(revision));
                 }
-                final IStatus status = Command.ANNOTATE.execute(session, Command.NO_GLOBAL_OPTIONS, localOption, new ICVSResource[]{cvsResource}, listener, Policy.subMonitorFor(monitor, 90));
+                if (binary) {
+                    localOptions.add(Annotate.FORCE_BINARY_ANNOTATE);
+                }
+                final IStatus status = Command.ANNOTATE.execute(session, Command.NO_GLOBAL_OPTIONS, (LocalOption[]) localOptions.toArray(new LocalOption[localOptions.size()]), new ICVSResource[]{cvsResource}, listener, Policy.subMonitorFor(monitor, 90));
                 if (status.getCode() == CVSStatus.SERVER_ERROR) {
                     throw new CVSServerException(status);
                 }
