@@ -19,10 +19,10 @@ import org.eclipse.team.ui.synchronize.ISynchronizeManager;
  * TeamUI contains public API for generic UI-based Team functionality
  */
 public class TeamUI {
-	
+
 	// manages synchronize participants
 	private static ISynchronizeManager synchronizeManager;
-	
+
 	/**
 	 * Property constant indicating the global ignores list has changed. 
 	 */
@@ -35,12 +35,12 @@ public class TeamUI {
 	 * @since 3.0
 	 */
 	public static ISynchronizeManager getSynchronizeManager() {
-	   if (synchronizeManager == null) {
-		synchronizeManager = new SynchronizeManager();
-	   }
-	   return synchronizeManager;
-   }
-	
+		if (synchronizeManager == null) {
+			synchronizeManager = new SynchronizeManager();
+		}
+		return synchronizeManager;
+	}
+
 	/**
 	 * Register for changes made to Team properties.
 	 * 
@@ -49,7 +49,7 @@ public class TeamUI {
 	public static void addPropertyChangeListener(IPropertyChangeListener listener) {
 		TeamUIPlugin.addPropertyChangeListener(listener);
 	}
-	
+
 	/**
 	 * Deregister as a Team property changes.
 	 * 

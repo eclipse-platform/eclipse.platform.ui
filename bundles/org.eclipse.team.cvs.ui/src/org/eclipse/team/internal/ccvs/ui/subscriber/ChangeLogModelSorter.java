@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.subscriber;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
 import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
-import org.eclipse.ui.views.navigator.ResourceSorter;
 
 /**
  * Sorter for the change log model provider. 
@@ -23,17 +23,23 @@ import org.eclipse.ui.views.navigator.ResourceSorter;
  */
 public class ChangeLogModelSorter extends ViewerSorter {
 	
-	private int criteria;
+	private int commentCriteria;
+	private int resourceCriteria;
 	
+	// Comment sorting options
 	public final static int DATE = 1;
 	public final static int COMMENT = 2;
 	public final static int USER = 3;
-	private ResourceSorter resourceSorter;
 	
-	public ChangeLogModelSorter(int criteria) {
+	// Resource sorting options
+	public final static int NAME = 1;
+	public final static int PATH = 2;
+	public final static int PARENT_NAME = 3;
+	
+	public ChangeLogModelSorter(int commentCriteria, int resourceCriteria) {
 		super();
-		this.criteria = criteria;
-		this.resourceSorter = new ResourceSorter(ResourceSorter.NAME);
+		this.commentCriteria = commentCriteria;
+		this.resourceCriteria = resourceCriteria;
 	}
 	
 	protected int classComparison(Object element) {
@@ -61,33 +67,40 @@ public class ChangeLogModelSorter extends ViewerSorter {
 		if (o1 instanceof  ChangeLogDiffNode && o2 instanceof ChangeLogDiffNode) {
 			ILogEntry r1 = ((ChangeLogDiffNode) o1).getComment();
 			ILogEntry r2 = ((ChangeLogDiffNode) o2).getComment();
-			
-			
-			if (criteria == DATE)
+					
+			if (commentCriteria == DATE)
 				return r1.getDate().compareTo(r2.getDate());
-			else if (criteria == COMMENT)
+			else if (commentCriteria == COMMENT)
 				return compareNames(r1.getComment(), r2.getComment());
-			else if (criteria == USER)
+			else if (commentCriteria == USER)
 				return compareNames(r1.getAuthor(), r2.getAuthor());
 			else
 				return 0;
 		}
 
-		if (o1 instanceof ISynchronizeModelElement && o2 instanceof ISynchronizeModelElement) 
-			return resourceSorter.compare(viewer, ((ISynchronizeModelElement)o1).getResource(), ((ISynchronizeModelElement)o2).getResource());
-		else if (o1 instanceof ISynchronizeModelElement)
-			return -1;
-		else if (o2 instanceof ISynchronizeModelElement)
+		if (o1 instanceof ChangeLogModelProvider.FullPathSyncInfoElement && o2 instanceof ChangeLogModelProvider.FullPathSyncInfoElement) {
+			IResource r1 = ((ISynchronizeModelElement)o1).getResource();
+			IResource r2 = ((ISynchronizeModelElement)o2).getResource();
+			if(resourceCriteria == NAME) 
+				return compareNames(r1.getName(), r2.getName());
+			else if(resourceCriteria == PATH)
+				return compareNames(r1.getFullPath().toString(), r2.getFullPath().toString());
+			else if(resourceCriteria == PARENT_NAME)
+				return compareNames(r1.getParent().getName(), r2.getParent().getName());
+			else return 0;
+		} else if (o1 instanceof ISynchronizeModelElement)
 			return 1;
+		else if (o2 instanceof ISynchronizeModelElement)
+			return -1;
 		
 		return 0;
 	}
 
-	public int getCriteria() {
-		return criteria;
+	public int getCommentCriteria() {
+		return commentCriteria;
 	}
 
-	public void setCriteria(int criteria) {
-		this.criteria = criteria;
+	public int getResourceCriteria() {
+		return resourceCriteria;
 	}
 }

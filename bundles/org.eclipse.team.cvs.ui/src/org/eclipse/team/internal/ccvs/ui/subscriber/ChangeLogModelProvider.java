@@ -62,11 +62,15 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 	/**
 	 * Action that allows changing the model providers sort order.
 	 */
-	private class ToggleModelProviderAction extends Action {
+	private class ToggleSortOrderAction extends Action {
 		private int criteria;
-		protected ToggleModelProviderAction(String name, int criteria) {
+		private int sortType;
+		public final static int RESOURCE_NAME = 1;
+		public final static int COMMENT = 2;
+		protected ToggleSortOrderAction(String name, int criteria, int sortType) {
 			super(name, Action.AS_RADIO_BUTTON);
 			this.criteria = criteria;
+			this.sortType = sortType;
 			update();
 		}
 
@@ -74,8 +78,8 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 			StructuredViewer viewer = getViewer();
 			if (viewer != null && !viewer.getControl().isDisposed()) {
 				ChangeLogModelSorter sorter = (ChangeLogModelSorter) viewer.getSorter();
-				if (isChecked() && sorter != null && sorter.getCriteria() != criteria) {
-					viewer.setSorter(new ChangeLogModelSorter(criteria));
+				if (isChecked() && sorter != null && getCriteria(sorter) != criteria) {
+					viewer.setSorter(createSorter(sorter));
 					update();
 				}
 			}
@@ -86,9 +90,24 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 			if (viewer != null && !viewer.getControl().isDisposed()) {
 				ChangeLogModelSorter sorter = (ChangeLogModelSorter) viewer.getSorter();
 				if (sorter != null) {
-					setChecked(sorter.getCriteria() == criteria);		
+					setChecked(getCriteria(sorter) == criteria);		
 				}
 			}	
+		}
+		
+		protected ChangeLogModelSorter createSorter(ChangeLogModelSorter sorter) {
+			if(sortType == COMMENT) {
+				return new ChangeLogModelSorter(criteria, sorter.getResourceCriteria());
+			}	else {
+				return new ChangeLogModelSorter(sorter.getCommentCriteria(), criteria);
+			}
+		}
+		
+		protected int getCriteria(ChangeLogModelSorter sorter) {
+			if(sortType == COMMENT)
+				return sorter.getCommentCriteria();
+			else
+				return sorter.getResourceCriteria();
 		}
 	}
 	
@@ -98,17 +117,28 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 	public class ChangeLogActionGroup extends SynchronizePageActionGroup {
 		public void initialize(ISynchronizePageConfiguration configuration) {
 			super.initialize(configuration);
-			MenuManager sortBy = new MenuManager(Policy.bind("ChangeLogModelProvider.0"));	 //$NON-NLS-1$
+			MenuManager sortByComment = new MenuManager(Policy.bind("ChangeLogModelProvider.0"));	 //$NON-NLS-1$
+			MenuManager sortByResource = new MenuManager(Policy.bind("ChangeLogModelProvider.6"));	 //$NON-NLS-1$
 			appendToGroup(
 					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 					SORT_ORDER_GROUP, 
-					sortBy);
+					sortByComment);
+			appendToGroup(
+					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+					SORT_ORDER_GROUP, 
+					sortByResource);
 			
-			sortBy.add(new ToggleModelProviderAction(Policy.bind("ChangeLogModelProvider.1"), ChangeLogModelSorter.COMMENT)); //$NON-NLS-1$
-			sortBy.add(new ToggleModelProviderAction(Policy.bind("ChangeLogModelProvider.2"), ChangeLogModelSorter.DATE)); //$NON-NLS-1$
-			Action a = new ToggleModelProviderAction(Policy.bind("ChangeLogModelProvider.3"), ChangeLogModelSorter.USER); //$NON-NLS-1$
+			sortByComment.add(new ToggleSortOrderAction(Policy.bind("ChangeLogModelProvider.1"), ChangeLogModelSorter.COMMENT, ToggleSortOrderAction.COMMENT)); //$NON-NLS-1$
+			sortByComment.add(new ToggleSortOrderAction(Policy.bind("ChangeLogModelProvider.2"), ChangeLogModelSorter.DATE, ToggleSortOrderAction.COMMENT)); //$NON-NLS-1$
+			Action a = new ToggleSortOrderAction(Policy.bind("ChangeLogModelProvider.3"), ChangeLogModelSorter.USER, ToggleSortOrderAction.COMMENT); //$NON-NLS-1$
 			a.setChecked(true);
-			sortBy.add(a);
+			sortByComment.add(a);
+			
+			a = new ToggleSortOrderAction(Policy.bind("ChangeLogModelProvider.8"), ChangeLogModelSorter.PATH, ToggleSortOrderAction.RESOURCE_NAME); //$NON-NLS-1$
+			a.setChecked(true);
+			sortByResource.add(a);
+			sortByResource.add(new ToggleSortOrderAction(Policy.bind("ChangeLogModelProvider.7"), ChangeLogModelSorter.NAME, ToggleSortOrderAction.RESOURCE_NAME)); //$NON-NLS-1$
+			sortByResource.add(new ToggleSortOrderAction(Policy.bind("ChangeLogModelProvider.8"), ChangeLogModelSorter.PARENT_NAME, ToggleSortOrderAction.RESOURCE_NAME)); //$NON-NLS-1$
 		}
 	}
 	
@@ -182,18 +212,7 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 					calculateRoots(updates[i], monitor);
 				}
 								
-				UIJob updateUI = new UIJob("") { //$NON-NLS-1$
-					public IStatus runInUIThread(IProgressMonitor monitor) {
-						StructuredViewer tree = getViewer();	
-						tree.refresh();
-						ISynchronizeModelElement root = getModelRoot();
-						if(root instanceof SynchronizeModelElement)
-							((SynchronizeModelElement)root).fireChanges();
-						return Status.OK_STATUS;
-					}
-				};
-				updateUI.setSystem(true);
-				updateUI.schedule();				
+				refreshViewer();				
 			}
 			return Status.OK_STATUS;
 		}
@@ -257,21 +276,54 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 		fetchLogEntriesJob.add(set);
 	}
 	
-	private ISynchronizeModelElement[] calculateRoots(SyncInfoSet set, IProgressMonitor monitor) {
+	private void refreshViewer() {
+		UIJob updateUI = new UIJob("") { //$NON-NLS-1$
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				StructuredViewer tree = getViewer();	
+				tree.refresh();
+				ISynchronizeModelElement root = getModelRoot();
+				if(root instanceof SynchronizeModelElement)
+					((SynchronizeModelElement)root).fireChanges();
+				return Status.OK_STATUS;
+			}
+		};
+		updateUI.setSystem(true);
+		updateUI.schedule();
+	}
+	
+	private void calculateRoots(SyncInfoSet set, IProgressMonitor monitor) {
 		try {
 			SyncInfo[] infos = set.getSyncInfos();
-			RemoteLogOperation logs = getSyncInfoComment(infos, monitor);
-			if (logs != null) {
-				for (int i = 0; i < infos.length; i++) {
-					addSyncInfoToCommentNode(infos[i], logs);
+			ArrayList commentNodes = new ArrayList();
+			ArrayList resourceNodes = new ArrayList();
+			for (int i = 0; i < infos.length; i++) {
+				SyncInfo info = infos[i];
+				if(isInterestingChange(info)) {
+					commentNodes.add(info);
+				} else {
+					resourceNodes.add(info);
 				}
 			}
-			return (ChangeLogDiffNode[]) commentRoots.values().toArray(new ChangeLogDiffNode[commentRoots.size()]);
+			if(! resourceNodes.isEmpty())
+				refreshViewer();
+				
+			// Show elements that don't need their log histories retreived
+			for (Iterator it = resourceNodes.iterator(); it.hasNext();) {
+				SyncInfo info = (SyncInfo) it.next();
+				addNewElementFor(info, null, null);
+			}
+			
+			// Fetch log histories then add elements
+			SyncInfo[] commentInfos = (SyncInfo[]) commentNodes.toArray(new SyncInfo[commentNodes.size()]);
+			RemoteLogOperation logs = getSyncInfoComment(commentInfos, monitor);
+			if (logs != null) {
+				for (int i = 0; i < commentInfos.length; i++) {
+					addSyncInfoToCommentNode(commentInfos[i], logs);
+				}
+			}
 		} catch (CVSException e) {
 			Utils.handle(e);
-			return new ISynchronizeModelElement[0];
 		} catch (InterruptedException e) {
-			return new ISynchronizeModelElement[0];
 		}
 	}
 	
@@ -303,7 +355,7 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 	private void addNewElementFor(SyncInfo info, ICVSRemoteResource remoteResource, ILogEntry logEntry) {
 		ISynchronizeModelElement element;	
 		// If the element has a comment then group with common comment
-		if(remoteResource != null && logEntry != null) {
+		if(remoteResource != null && logEntry != null && isInterestingChange(info)) {
 			DateComment dateComment = new DateComment(logEntry.getDate(), logEntry.getComment(), logEntry.getAuthor());
 			ChangeLogDiffNode changeRoot = (ChangeLogDiffNode) commentRoots.get(dateComment);
 			if (changeRoot == null) {
@@ -328,6 +380,14 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 		} finally {
 			setAllowRefreshViewer(true);
 		}
+	}
+
+	private boolean isInterestingChange(SyncInfo info) {
+		int kind = info.getKind();
+		if(info.getComparator().isThreeWay()) {
+			return (kind & SyncInfo.DIRECTION_MASK) != SyncInfo.OUTGOING;
+		}
+		return true;
 	}
 
 	/**
@@ -403,7 +463,7 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 	 * @see org.eclipse.team.ui.synchronize.viewers.SynchronizeModelProvider#getViewerSorter()
 	 */
 	public ViewerSorter getViewerSorter() {
-		return new ChangeLogModelSorter(ChangeLogModelSorter.USER);
+		return new ChangeLogModelSorter(ChangeLogModelSorter.USER, ChangeLogModelSorter.PATH);
 	}
 
 	/* (non-Javadoc)
