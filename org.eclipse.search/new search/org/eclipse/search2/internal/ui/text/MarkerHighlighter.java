@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.Position;
 import org.eclipse.search.internal.ui.SearchPlugin;
-import org.eclipse.search.ui.SearchUI;
+import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.search.ui.text.Match;
 import org.eclipse.search2.internal.ui.InternalSearchUI;
 
@@ -64,7 +64,7 @@ public class MarkerHighlighter extends Highlighter {
 			// need to clone position, can't have it twice in a document.
 			position= new Position(position.getOffset(), position.getLength());
 		}
-		IMarker marker= fFile.createMarker(SearchUI.SEARCH_MARKER);
+		IMarker marker= fFile.createMarker(NewSearchUI.SEARCH_MARKER);
 		HashMap attributes= new HashMap(4);
 		if (match.getBaseUnit() == Match.UNIT_CHARACTER) {
 			attributes.put(IMarker.CHAR_START, new Integer(position.getOffset()));
@@ -92,7 +92,7 @@ public class MarkerHighlighter extends Highlighter {
 
 	public  void removeAll() {
 		try {
-			fFile.deleteMarkers(SearchUI.SEARCH_MARKER, true, IResource.DEPTH_INFINITE);
+			fFile.deleteMarkers(NewSearchUI.SEARCH_MARKER, true, IResource.DEPTH_INFINITE);
 			fMatchesToAnnotations.clear();
 		} catch (CoreException e) {
 			// just log the thing. There's nothing we can do anyway.

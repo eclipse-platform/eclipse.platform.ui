@@ -13,17 +13,15 @@ package org.eclipse.search.internal.ui.util;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-
-import org.eclipse.search.internal.ui.SearchMessages;
-import org.eclipse.search.internal.ui.SearchPlugin;
-import org.eclipse.search.ui.SearchUI;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.search.internal.ui.SearchMessages;
+import org.eclipse.search.internal.ui.SearchPlugin;
+import org.eclipse.search.ui.NewSearchUI;
+import org.eclipse.swt.widgets.Shell;
 
 /**
  * The default exception handler shows an error dialog when one of its handle methods
@@ -41,7 +39,7 @@ public class ExceptionHandler {
 	 * logged as an error with the error code <code>JavaStatusConstants.INTERNAL_ERROR</code>.
 	 */
 	public static void log(Throwable t, String message) {
-		SearchPlugin.log(new Status(IStatus.ERROR, SearchUI.PLUGIN_ID, IStatus.ERROR, message, t));
+		SearchPlugin.log(new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, IStatus.ERROR, message, t));
 	}
 	
 	/**

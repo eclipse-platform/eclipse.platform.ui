@@ -28,7 +28,6 @@ import org.eclipse.search.internal.ui.text.FileSearchQuery;
 import org.eclipse.search.internal.ui.text.FileSearchResult;
 import org.eclipse.search.tests.SearchTestPlugin;
 import org.eclipse.search.ui.NewSearchUI;
-import org.eclipse.search.ui.SearchUI;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.Match;
 import org.eclipse.search2.internal.ui.InternalSearchUI;
@@ -94,7 +93,7 @@ public class AnnotationManagerTest extends TestCase {
 			HashSet positions= new HashSet();
 			for (Iterator iter= annotationModel.getAnnotationIterator(); iter.hasNext();) {
 				Annotation annotation= (Annotation) iter.next();
-				if (annotation.getType().equals(fAnnotationTypeLookup.getAnnotationType(SearchUI.SEARCH_MARKER, IMarker.SEVERITY_INFO))) {
+				if (annotation.getType().equals(fAnnotationTypeLookup.getAnnotationType(NewSearchUI.SEARCH_MARKER, IMarker.SEVERITY_INFO))) {
 					positions.add(annotationModel.getPosition(annotation));
 				}
 			}
@@ -131,7 +130,7 @@ public class AnnotationManagerTest extends TestCase {
 			int annotationCount= 0;
 			for (Iterator annotations= annotationModel.getAnnotationIterator(); annotations.hasNext();) {
 				Annotation annotation= (Annotation) annotations.next();
-				if (annotation.getType().equals(fAnnotationTypeLookup.getAnnotationType(SearchUI.SEARCH_MARKER, IMarker.SEVERITY_INFO))) {
+				if (annotation.getType().equals(fAnnotationTypeLookup.getAnnotationType(NewSearchUI.SEARCH_MARKER, IMarker.SEVERITY_INFO))) {
 					annotationCount++;
 				}
 			}
@@ -154,7 +153,7 @@ public class AnnotationManagerTest extends TestCase {
 			IDocument document= editor.getDocumentProvider().getDocument(editor.getEditorInput());
 			for (Iterator annotations= annotationModel.getAnnotationIterator(); annotations.hasNext();) {
 				Annotation annotation= (Annotation) annotations.next();
-				if (annotation.getType().equals(fAnnotationTypeLookup.getAnnotationType(SearchUI.SEARCH_MARKER, IMarker.SEVERITY_INFO))) {
+				if (annotation.getType().equals(fAnnotationTypeLookup.getAnnotationType(NewSearchUI.SEARCH_MARKER, IMarker.SEVERITY_INFO))) {
 					Position p= annotationModel.getPosition(annotation);
 					String text= document.get(p.getOffset(), p.getLength());
 					assertTrue(text.equalsIgnoreCase(fQuery2.getSearchString()));
@@ -179,7 +178,7 @@ public class AnnotationManagerTest extends TestCase {
 			IDocument document= editor.getDocumentProvider().getDocument(editor.getEditorInput());
 			for (Iterator annotations= annotationModel.getAnnotationIterator(); annotations.hasNext();) {
 				Annotation annotation= (Annotation) annotations.next();
-				if (annotation.getType().equals(fAnnotationTypeLookup.getAnnotationType(SearchUI.SEARCH_MARKER, IMarker.SEVERITY_INFO))) {
+				if (annotation.getType().equals(fAnnotationTypeLookup.getAnnotationType(NewSearchUI.SEARCH_MARKER, IMarker.SEVERITY_INFO))) {
 					Position p= annotationModel.getPosition(annotation);
 					String text= document.get(p.getOffset(), p.getLength());
 					assertTrue(text.equalsIgnoreCase(fQuery1.getSearchString()));

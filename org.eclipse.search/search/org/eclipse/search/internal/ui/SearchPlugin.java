@@ -35,6 +35,7 @@ import org.eclipse.search.internal.ui.util.ExceptionHandler;
 import org.eclipse.search.ui.IContextMenuConstants;
 import org.eclipse.search.ui.ISearchResultView;
 import org.eclipse.search.ui.ISearchResultViewEntry;
+import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.search.ui.SearchUI;
 import org.eclipse.search2.internal.ui.InternalSearchUI;
 import org.eclipse.swt.widgets.Control;
@@ -243,7 +244,7 @@ public class SearchPlugin extends AbstractUIPlugin {
 	public List getSearchPageDescriptors() {
 		if (fPageDescriptors == null) {
 			IPluginRegistry registry= Platform.getPluginRegistry();
-			IConfigurationElement[] elements= registry.getConfigurationElementsFor(SearchUI.PLUGIN_ID, SEARCH_PAGE_EXTENSION_POINT);
+			IConfigurationElement[] elements= registry.getConfigurationElementsFor(NewSearchUI.PLUGIN_ID, SEARCH_PAGE_EXTENSION_POINT);
 			fPageDescriptors= createSearchPageDescriptors(elements);
 		}	
 		return fPageDescriptors;
@@ -337,7 +338,7 @@ public class SearchPlugin extends AbstractUIPlugin {
 	}
 
 	public static void log(Throwable e) {
-		log(new Status(IStatus.ERROR, SearchUI.PLUGIN_ID, INTERNAL_ERROR, SearchMessages.getString("SearchPlugin.internal_error"), e)); //$NON-NLS-1$
+		log(new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, INTERNAL_ERROR, SearchMessages.getString("SearchPlugin.internal_error"), e)); //$NON-NLS-1$
 	}
 	
 	public static String getID() {

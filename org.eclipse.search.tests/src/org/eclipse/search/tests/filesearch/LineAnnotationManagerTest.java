@@ -27,7 +27,6 @@ import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.search.internal.core.text.TextSearchScope;
 import org.eclipse.search.tests.SearchTestPlugin;
 import org.eclipse.search.ui.NewSearchUI;
-import org.eclipse.search.ui.SearchUI;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.Match;
 import org.eclipse.search2.internal.ui.InternalSearchUI;
@@ -87,7 +86,7 @@ public class LineAnnotationManagerTest extends TestCase {
 			HashSet positions= new HashSet();
 			for (Iterator iter= annotationModel.getAnnotationIterator(); iter.hasNext();) {
 				Annotation annotation= (Annotation) iter.next();
-				if (annotation.getType().equals(fAnnotationTypeLookup.getAnnotationType(SearchUI.SEARCH_MARKER, IMarker.SEVERITY_INFO))) {
+				if (annotation.getType().equals(fAnnotationTypeLookup.getAnnotationType(NewSearchUI.SEARCH_MARKER, IMarker.SEVERITY_INFO))) {
 					positions.add(annotationModel.getPosition(annotation));
 				}
 			}

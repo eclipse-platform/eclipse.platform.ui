@@ -24,6 +24,9 @@ import org.eclipse.core.resources.IResource;
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
+ * @deprecated use <code>AbstractTextSearchResult</code> and <code>Match</code> instead.
+ * @see org.eclipse.search.ui.text.AbstractTextSearchResult
+ * @see org.eclipse.search.ui.text.Match
  */
 public interface ISearchResultViewEntry {
 

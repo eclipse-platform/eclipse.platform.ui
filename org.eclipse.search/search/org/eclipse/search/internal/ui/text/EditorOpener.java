@@ -12,7 +12,7 @@ package org.eclipse.search.internal.ui.text;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.search.internal.ui.SearchPlugin;
-import org.eclipse.search.ui.SearchUI;
+import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.search.ui.text.Match;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorPart;
@@ -31,7 +31,7 @@ public class EditorOpener {
 	
 	IEditorPart open(Match match) throws PartInitException {
 		IWorkbenchPage wbPage= SearchPlugin.getActivePage();
-		if (SearchUI.reuseEditor())
+		if (NewSearchUI.reuseEditor())
 			return showWithReuse(match, wbPage);
 		else
 			return showWithoutReuse(match, wbPage);

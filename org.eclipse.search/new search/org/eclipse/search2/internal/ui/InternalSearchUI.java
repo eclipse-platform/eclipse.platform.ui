@@ -30,7 +30,7 @@ import org.eclipse.search.internal.ui.util.ExceptionHandler;
 import org.eclipse.search.ui.IQueryListener;
 import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.ISearchResultViewPart;
-import org.eclipse.search.ui.SearchUI;
+import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.search2.internal.ui.text.PositionTracker;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartSite;
@@ -126,7 +126,7 @@ public class InternalSearchUI {
 	}
 
 	public ISearchResultViewPart getSearchView() {
-		return (ISearchResultViewPart) SearchPlugin.getActivePage().findView(SearchUI.SEARCH_VIEW_ID);
+		return (ISearchResultViewPart) SearchPlugin.getActivePage().findView(NewSearchUI.SEARCH_VIEW_ID);
 	}
 
 	public boolean runSearchInBackground(ISearchQuery query) {
@@ -243,7 +243,7 @@ public class InternalSearchUI {
 	}
 
 	public ISearchResultViewPart activateSearchView() {
-		String defaultPerspectiveId= SearchUI.getDefaultPerspectiveId();
+		String defaultPerspectiveId= NewSearchUI.getDefaultPerspectiveId();
 		if (defaultPerspectiveId != null) {
 			IWorkbenchWindow window= window= SearchPlugin.getActiveWorkbenchWindow();
 			if (window != null && window.getShell() != null && !window.getShell().isDisposed()) {
@@ -256,9 +256,9 @@ public class InternalSearchUI {
 		}
 
 		try {
-			ISearchResultViewPart viewPart= (ISearchResultViewPart) SearchPlugin.getActivePage().findView(SearchUI.SEARCH_VIEW_ID);
+			ISearchResultViewPart viewPart= (ISearchResultViewPart) SearchPlugin.getActivePage().findView(NewSearchUI.SEARCH_VIEW_ID);
 			if (viewPart == null || SearchPreferencePage.isViewBroughtToFront()) {
-				viewPart= (ISearchResultViewPart) SearchPlugin.getActivePage().showView(SearchUI.SEARCH_VIEW_ID, null, IWorkbenchPage.VIEW_ACTIVATE);
+				viewPart= (ISearchResultViewPart) SearchPlugin.getActivePage().showView(NewSearchUI.SEARCH_VIEW_ID, null, IWorkbenchPage.VIEW_ACTIVATE);
 			}
 			return viewPart;
 		} catch (PartInitException ex) {

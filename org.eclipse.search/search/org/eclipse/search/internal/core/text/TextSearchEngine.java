@@ -19,13 +19,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
-
 import org.eclipse.jface.util.Assert;
-
-import org.eclipse.search.ui.SearchUI;
-
 import org.eclipse.search.internal.core.ISearchScope;
 import org.eclipse.search.internal.ui.SearchMessages;
+import org.eclipse.search.ui.NewSearchUI;
 
 public class TextSearchEngine {
 	
@@ -47,7 +44,7 @@ public class TextSearchEngine {
 				openProjects.add(project);
 		}
 		String message= SearchMessages.getString("TextSearchEngine.statusMessage"); //$NON-NLS-1$
-		MultiStatus status= new MultiStatus(SearchUI.PLUGIN_ID, IStatus.OK, message, null);
+		MultiStatus status= new MultiStatus(NewSearchUI.PLUGIN_ID, IStatus.OK, message, null);
 		if (!openProjects.isEmpty()) {
 			int amountOfWork= (new AmountOfWorkCalculator(status, visitDerived)).process(openProjects, scope);		
 			try {

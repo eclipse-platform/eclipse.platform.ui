@@ -52,7 +52,7 @@ import org.eclipse.search.internal.ui.SearchMessages;
 import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.internal.ui.util.ExceptionHandler;
 import org.eclipse.search.internal.ui.util.ExtendedDialogWindow;
-import org.eclipse.search.ui.SearchUI;
+import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.search.ui.text.Match;
 import org.eclipse.search2.internal.ui.InternalSearchUI;
 import org.eclipse.search2.internal.ui.text.PositionTracker;
@@ -474,7 +474,7 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 			try {
 				selectEntry(marker);
 				ITextEditor editor= null;
-				if (SearchUI.reuseEditor())
+				if (NewSearchUI.reuseEditor())
 					editor= openEditorReuse(marker);
 				else
 					editor= openEditorNoReuse(marker);

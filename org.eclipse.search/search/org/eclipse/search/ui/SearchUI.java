@@ -10,14 +10,10 @@
  *******************************************************************************/
 package org.eclipse.search.ui;
 
-import org.eclipse.swt.graphics.Image;
-
-import org.eclipse.ui.IWorkbenchWindow;
-
-import org.eclipse.search.internal.ui.OpenSearchDialogAction;
 import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.internal.ui.SearchPluginImages;
-import org.eclipse.search.internal.ui.SearchPreferencePage;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.IWorkbenchWindow;
 
 /**
  * The central class for access to the Search Plug-in's User Interface. 
@@ -30,6 +26,8 @@ import org.eclipse.search.internal.ui.SearchPreferencePage;
  *   window.</li>
  * </ul>
  *
+ * @deprecated use <code>NewSearchUI</code> instead.
+ * @see org.eclipse.search.ui.NewSearchUI
  * @see ISearchResultView
  */
 public final class SearchUI {
@@ -37,14 +35,14 @@ public final class SearchUI {
 	/**
 	 * Search Plug-in Id (value <code>"org.eclipse.search"</code>).
 	 */
-	public static final String PLUGIN_ID= "org.eclipse.search"; //$NON-NLS-1$
+	public static final String PLUGIN_ID= NewSearchUI.PLUGIN_ID;
 
 	/** 
 	 * Search marker type (value <code>"org.eclipse.search.searchmarker"</code>).
 	 *
 	 * @see org.eclipse.core.resources.IMarker
 	 */ 
-	public static final String SEARCH_MARKER=  PLUGIN_ID + ".searchmarker"; //$NON-NLS-1$
+	public static final String SEARCH_MARKER=  NewSearchUI.SEARCH_MARKER;
 
 	/** 
 	 * Line marker attribute (value <code>"line"</code>)
@@ -82,7 +80,7 @@ public final class SearchUI {
 	 * Id of the new Search view
 	 * (value <code>"org.eclipse.search.ui.views.SearchView"</code>).
 	 */
-	public static final String SEARCH_VIEW_ID= "org.eclipse.search.ui.views.SearchView"; //$NON-NLS-1$
+	public static final String SEARCH_VIEW_ID= NewSearchUI.SEARCH_VIEW_ID;
 	
 	/**
 	 * Id of the Search action set
@@ -90,7 +88,7 @@ public final class SearchUI {
 	 *
 	 * @since 2.0
 	 */
-	public static final String ACTION_SET_ID= PLUGIN_ID + ".searchActionSet"; //$NON-NLS-1$
+	public static final String ACTION_SET_ID= NewSearchUI.ACTION_SET_ID;
 
 	/**
 	 * Activates the search result view in the active page of the
@@ -113,7 +111,7 @@ public final class SearchUI {
 	 * @since 2.0
 	 */
 	public static void openSearchDialog(IWorkbenchWindow window, String pageId) {
-		new OpenSearchDialogAction(window, pageId).run();
+		NewSearchUI.openSearchDialog(window, pageId);
 	}		
 
 	/**
@@ -149,7 +147,7 @@ public final class SearchUI {
 	 * @since 2.0
 	 */
 	public static boolean reuseEditor() {
-		return SearchPreferencePage.isEditorReused();
+		return NewSearchUI.reuseEditor();
 	}
 
 	/**
@@ -164,7 +162,7 @@ public final class SearchUI {
 	 * @since 2.1
 	 */
 	public static boolean arePotentialMatchesIgnored() {
-		return SearchPreferencePage.arePotentialMatchesIgnored();
+		return NewSearchUI.arePotentialMatchesIgnored();
 	}
 
 	/**
@@ -178,7 +176,7 @@ public final class SearchUI {
 	 * @since 2.1
 	 */
 	public static String getDefaultPerspectiveId() {
-		return SearchPreferencePage.getDefaultPerspectiveId();
+		return NewSearchUI.getDefaultPerspectiveId();
 	}
 
 	/**

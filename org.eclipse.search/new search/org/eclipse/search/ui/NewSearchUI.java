@@ -10,9 +10,12 @@ package org.eclipse.search.ui;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.search.internal.ui.OpenSearchDialogAction;
 import org.eclipse.search.internal.ui.SearchPlugin;
+import org.eclipse.search.internal.ui.SearchPreferencePage;
 import org.eclipse.search2.internal.ui.InternalSearchUI;
 import org.eclipse.search2.internal.ui.SearchMessages;
+import org.eclipse.ui.IWorkbenchWindow;
 /**
  * A facade for access to the new search UI facilities.
  * 
@@ -121,4 +124,86 @@ public class NewSearchUI {
 	public static boolean isQueryRunning(ISearchQuery query) {
 		return InternalSearchUI.getInstance().isQueryRunning(query);
 	}
+	
+	
+	
+	/**
+	 * Search Plug-in Id (value <code>"org.eclipse.search"</code>).
+	 */
+	public static final String PLUGIN_ID= "org.eclipse.search"; //$NON-NLS-1$
+
+	/** 
+	 * Search marker type (value <code>"org.eclipse.search.searchmarker"</code>).
+	 *
+	 * @see org.eclipse.core.resources.IMarker
+	 */ 
+	public static final String SEARCH_MARKER=  PLUGIN_ID + ".searchmarker"; //$NON-NLS-1$
+
+	/** 
+	 * Id of the new Search view
+	 * (value <code>"org.eclipse.search.ui.views.SearchView"</code>).
+	 */
+	public static final String SEARCH_VIEW_ID= "org.eclipse.search.ui.views.SearchView"; //$NON-NLS-1$
+	
+	/**
+	 * Id of the Search action set
+	 * (value <code>"org.eclipse.search.searchActionSet"</code>).
+	 */
+	public static final String ACTION_SET_ID= PLUGIN_ID + ".searchActionSet"; //$NON-NLS-1$
+
+
+	/**
+	 * Opens the search dialog.
+	 * If <code>pageId</code> is specified and a corresponding page
+	 * is found then it is brought to top.
+	 *
+	 * @param pageId	the page to select or <code>null</code>
+	 * 					if the best fitting page should be selected
+	 */
+	public static void openSearchDialog(IWorkbenchWindow window, String pageId) {
+		new OpenSearchDialogAction(window, pageId).run();
+	}		
+
+	/**
+	 * Returns the preference whether editors should be reused
+	 * when showing search results.
+	 * 
+	 * The goto action can decide to use or ignore this preference.
+	 *
+	 * @return <code>true</code> if editors should be reused for showing search results
+	 * @since 2.0
+	 */
+	public static boolean reuseEditor() {
+		return SearchPreferencePage.isEditorReused();
+	}
+
+	/**
+	 * Returns the preference whether a search engine is
+	 * allowed to report potential matches or not.
+	 * <p>
+	 * Search engines which can report inexact matches must
+	 * respect this preference i.e. they should not report
+	 * inexact matches if this method returns <code>true</code>
+	 * </p>
+	 * @return <code>true</code> if search engine must not report inexact matches
+	 * @since 2.1
+	 */
+	public static boolean arePotentialMatchesIgnored() {
+		return SearchPreferencePage.arePotentialMatchesIgnored();
+	}
+
+	/**
+	 * Returns the ID of the default perspective.
+	 * <p>
+	 * The perspective with this ID will be used to show the Search view.
+	 * If no default perspective is set then the Search view will
+	 * appear in the current perspective.
+	 * </p>
+	 * @return the ID of the default perspective <code>null</code> if no default perspective is set
+	 * @since 2.1
+	 */
+	public static String getDefaultPerspectiveId() {
+		return SearchPreferencePage.getDefaultPerspectiveId();
+	}
+
 }

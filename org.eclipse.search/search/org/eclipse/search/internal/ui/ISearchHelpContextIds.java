@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.search.internal.ui;
 
-import org.eclipse.search.ui.SearchUI;
+import org.eclipse.search.ui.NewSearchUI;
 
 public interface ISearchHelpContextIds {
 	
-	public static final String PREFIX= SearchUI.PLUGIN_ID + "."; //$NON-NLS-1$
+	public static final String PREFIX= NewSearchUI.PLUGIN_ID + "."; //$NON-NLS-1$
 
 	public static final String SEARCH_DIALOG= PREFIX + "search_dialog_context";	 //$NON-NLS-1$
 

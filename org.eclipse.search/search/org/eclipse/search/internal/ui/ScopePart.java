@@ -24,7 +24,7 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.search.internal.ui.util.PixelConverter;
 import org.eclipse.search.internal.ui.util.SWTUtil;
 import org.eclipse.search.ui.ISearchPageContainer;
-import org.eclipse.search.ui.SearchUI;
+import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -152,7 +152,7 @@ public class ScopePart {
 		fScope= scope;
 		if (fScope == ISearchPageContainer.SELECTED_PROJECTS_SCOPE) {
 			if (!fCanSearchEnclosingProjects) {
-				SearchPlugin.log(new Status(IStatus.WARNING, SearchUI.PLUGIN_ID, IStatus.WARNING, "Enclosing projects scope set on search page that does not support it", null)); //$NON-NLS-1$
+				SearchPlugin.log(new Status(IStatus.WARNING, NewSearchUI.PLUGIN_ID, IStatus.WARNING, "Enclosing projects scope set on search page that does not support it", null)); //$NON-NLS-1$
 				fScope= ISearchPageContainer.WORKSPACE_SCOPE;
 			} else if (!fUseProject.isEnabled()) {
 				fScope= ISearchPageContainer.WORKSPACE_SCOPE;
