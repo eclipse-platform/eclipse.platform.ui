@@ -46,6 +46,10 @@ public class TocManager {
 		IToc[] tocs = (IToc[]) tocsByLang.get(locale);
 		if (tocs == null) {
 			build(locale);
+			tocs = (IToc[]) tocsByLang.get(locale);
+			// one more sanity test...
+			if (tocs == null)
+				tocs = new IToc[0];
 		}
 		return tocs;
 	}

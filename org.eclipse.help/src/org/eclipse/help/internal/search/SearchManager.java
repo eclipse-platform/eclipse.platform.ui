@@ -165,12 +165,20 @@ public class SearchManager {
 	 */
 	private static String getLocale(String query) {
 		int indx = query.indexOf("&lang=");
-		if (indx == -1)
+		if (indx == -1 || query.length() < indx+7)
 			return Locale.getDefault().toString();
-		else if (query.charAt(indx + 8) == '_')
-			return query.substring(indx + 6, indx + 11);
-		else
-			return query.substring(indx + 6, indx + 7);
+		else {
+			String clientLocale = query.substring(indx+6);
+			if (clientLocale != null && clientLocale.length() >= 2) {
+				String language = clientLocale.substring(0,2);
+				if (clientLocale.indexOf('_') == 2 && clientLocale.length() >= 5) 
+					return language +"_"+ clientLocale.substring(3,5);
+				else
+					return language;	
+			}
+			else
+				return Locale.getDefault().toString();
+		}
 	}
 	/**
 	 * Searches index for documents containing an expression.
@@ -255,7 +263,7 @@ public class SearchManager {
 			|| fileName.endsWith(".xml");
 	}
 	/**
-	 * Returns the collection of href's of all the help topics.
+	 * Returns the collection of href's for all the help topics.
 	 */
 	private Set getAllDocuments(String locale) {
 		HashSet hrefs = new HashSet();
