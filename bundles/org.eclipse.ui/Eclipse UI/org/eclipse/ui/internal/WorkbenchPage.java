@@ -469,6 +469,10 @@ private Perspective createPerspective(PerspectiveDescriptor desc) {
 	try {
 		Perspective persp = new Perspective(desc, this);
 		perspList.add(persp);
+		IViewPart parts[] = persp.getViews();
+		for (int i = 0; i < parts.length; i++) {
+			addPart(parts[i]);
+		}
 		return persp;
 	} catch (WorkbenchException e) {
 		return null;
