@@ -129,18 +129,10 @@ public class FileTool {
 			os = new FileOutputStream(destination);
 			transferData(is, os);
 		} finally {
-			if(os != null){
-				try {
-					os.close();
-				} catch(IOException e){
-				}
-			}
-			if(is != null){
-				try {
-					is.close();
-				} catch(IOException e){
-				}
-			}
+			if(os != null)
+				os.close();
+			if(is != null)
+				is.close();
 		}
 	}
 	
