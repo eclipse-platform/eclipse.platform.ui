@@ -24,6 +24,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
+import org.eclipse.team.internal.ccvs.ui.operations.CVSOperation;
 import org.eclipse.team.internal.ccvs.ui.operations.CheckoutMultipleProjectsOperation;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
@@ -55,10 +56,12 @@ public class CheckoutOperationTests extends EclipseTest {
 		
 		// checkout the project to the default location		
 		try {
-			new CheckoutMultipleProjectsOperation(
+			CVSOperation op = new CheckoutMultipleProjectsOperation(
 				null /* shell */, 
 				new ICVSRemoteFolder[] { (ICVSRemoteFolder)CVSWorkspaceRoot.getRemoteResourceFor(movedProject) },
-				null /*target location*/).runInContext(DEFAULT_MONITOR);
+				null /*target location*/);
+			op.setCVSRunnableContext(new HeadlessCVSRunnableContext());
+			op.run();
 		} catch (InterruptedException e) {
 			fail("Operation should not have been interrupted");
 		}
@@ -71,10 +74,12 @@ public class CheckoutOperationTests extends EclipseTest {
 		
 		// checkout the non-root folder as a project to the default location		
 		try {
-			new CheckoutMultipleProjectsOperation(
+			CVSOperation op = new CheckoutMultipleProjectsOperation(
 				null /* shell */, 
 				new ICVSRemoteFolder[] { (ICVSRemoteFolder)CVSWorkspaceRoot.getRemoteResourceFor(project.getFolder("folder1")) },
-				null /*target location*/).runInContext(DEFAULT_MONITOR);
+				null /*target location*/);
+			op.setCVSRunnableContext(new HeadlessCVSRunnableContext());
+			op.run();
 		} catch (InterruptedException e) {
 			fail("Operation should not have been interrupted");
 		}
@@ -103,13 +108,15 @@ public class CheckoutOperationTests extends EclipseTest {
 
 		// checkout the project to the default location		
 		try {
-			new CheckoutMultipleProjectsOperation(
+			CVSOperation op = new CheckoutMultipleProjectsOperation(
 				null /* shell */, 
 				new ICVSRemoteFolder[] { 
 					(ICVSRemoteFolder)CVSWorkspaceRoot.getRemoteResourceFor(movedProject1),
 					(ICVSRemoteFolder)CVSWorkspaceRoot.getRemoteResourceFor(movedProject2)
 				},
-				null /*target location*/).runInContext(DEFAULT_MONITOR);
+				null /*target location*/);
+			op.setCVSRunnableContext(new HeadlessCVSRunnableContext());
+			op.run();
 		} catch (InterruptedException e) {
 			fail("Operation should not have been interrupted");
 		}

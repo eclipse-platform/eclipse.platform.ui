@@ -100,6 +100,6 @@ public class TagInRepositoryOperation extends RemoteOperation implements ITagOpe
 	}
 
 	protected String getTaskName() {
-		return Policy.bind("TagFromRepository.taskName");
+		return Policy.bind("TagFromRepository.taskName"); //$NON-NLS-1$
 	}
 }

@@ -14,28 +14,22 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.resources.WorkspaceJob;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
+import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 
 
 /**
@@ -50,91 +44,21 @@ public abstract class CVSOperation implements IRunnableWithProgress {
 
 	private List errors = new ArrayList(); // of IStatus
 
-	protected static final IStatus OK = new CVSStatus(IStatus.OK, Policy.bind("ok")); //$NON-NLS-1$
+	protected static final IStatus OK = Status.OK_STATUS; //$NON-NLS-1$
 	
-	private IRunnableContext runnableContext;
+	// shell to be used if the runnabl context is a blocking context
 	private Shell shell;
-	private boolean interruptable = true;
 	private boolean modifiesWorkspace = true;
 	
 	// instance variable used to indicate behavior while prompting for overwrite
 	private boolean confirmOverwrite = true;
 	
-	// instance variable used to indicate that the operation is running in the background
-	private boolean runningAsJob = false;
+	ICVSRunnableContext cvsRunnableContext;
 	
-	public static void run(Shell shell, CVSOperation operation) throws CVSException, InterruptedException {
-		operation.setShell(shell);
-		operation.setRunnableContext(new ProgressMonitorDialog(shell));
-		operation.run();
-	}
-	
-	/**
-	 * @param shell
-	 */
 	public CVSOperation(Shell shell) {
 		this.shell = shell;
 	}
-	
-	/**
-	 * Execute the operation in the given runnable context. If null is passed, 
-	 * the runnable context assigned to the operation is used.
-	 * 
-	 * @throws InterruptedException
-	 * @throws CVSException
-	 */
-	public void runInContext(IRunnableContext aRunnableContext) throws InterruptedException, CVSException {
-		if (aRunnableContext == null) {
-			aRunnableContext = getRunnableContext();
-		}
-		try {
-			aRunnableContext.run(isInterruptable(), isInterruptable(), this);
-		} catch (InvocationTargetException e) {
-			throw CVSException.wrapException(e);
-		} catch (OperationCanceledException e) {
-			throw new InterruptedException();
-		}
-	}
-	
-	protected void runAsJob() {
-		Job job;
-		if (isModifiesWorkspace()) {
-			job = getWorkspaceJob();
-		} else {
-			job = getBasicJob();
-		}
-		runningAsJob = true;
-		job.schedule();
-	}
-	
-	protected IStatus runInJob(IProgressMonitor monitor) {
-		try {
-			// Don't wrap inside the run since the WorkspaceJob will do the batching
-			CVSOperation.this.run(monitor, false /* wrap in ModifyOperation*/);
-			return Status.OK_STATUS;
-		} catch (InvocationTargetException e) {
-			return CVSException.wrapException(e).getStatus();
-		} catch (InterruptedException e) {
-			return Status.CANCEL_STATUS;
-		}
-	}
-	
-	protected Job getBasicJob() {
-		return new Job(Policy.bind("CVSOperation.operationJobName", getTaskName())) { //$NON-NLS-1$
-			public IStatus run(IProgressMonitor monitor) {
-				return CVSOperation.this.runInJob(monitor);
-			}
-		};
-	}
-	
-	protected Job getWorkspaceJob() {
-		return new WorkspaceJob(Policy.bind("CVSOperation.operationJobName", getTaskName())) { //$NON-NLS-1$
-			public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
-				return CVSOperation.this.runInJob(monitor);
-			}
-		};
-	}
-	
+
 	/**
 	 * Run the operation. Progress feedback will be provided by one of the following mechanisms
 	 * (in priotiry order):
@@ -147,10 +71,13 @@ public abstract class CVSOperation implements IRunnableWithProgress {
 	 * @throws InterruptedException
 	 */
 	public synchronized void run() throws CVSException, InterruptedException {
-		if(canRunAsJob() && !hasRunnableContext() && areJobsEnabled()) {
-			runAsJob();
-		} else {
-			runInContext(getRunnableContext());
+		ICVSRunnableContext context = getCVSRunnableContext();
+		try {
+			getCVSRunnableContext().run(getTaskName(), getSchedulingRule(), this);
+		} catch (InvocationTargetException e) {
+			throw CVSException.wrapException(e);
+		} catch (OperationCanceledException e) {
+			throw new InterruptedException();
 		}
 	}
 	
@@ -166,27 +93,32 @@ public abstract class CVSOperation implements IRunnableWithProgress {
 		return false;
 	}
 	
+	/**
+	 * Return the scheduling rule that defines the scope of the whole operation.
+	 * This method must either return <code>null</code> (in which case, code executed
+	 * by the operation can attempt to obtain any scheduling rules they like but may be
+	 * blocked by other jobs at that point) or a rule (e.g. IResource) that encompasses
+	 * all scheduling rules used by code nested in the operation (in which case the
+	 * operation wil not start until the encompassing rule is free but once the
+	 * operation starts, nested rules will not block on any subsequent contained 
+	 * scheduling rules). By default, <code>null</code> is returned.
+	 * @return
+	 */
+	protected ISchedulingRule getSchedulingRule() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public final void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-		run(monitor, isModifiesWorkspace());
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	private void run(IProgressMonitor monitor, boolean wrapInModifiyOperation) throws InvocationTargetException, InterruptedException {
 		startOperation();
 		try {
-			if (wrapInModifiyOperation) {
-				new CVSWorkspaceModifyOperation(this).run(monitor);
-			} else {
-				execute(monitor);
-			}
+			execute(monitor);
 			endOperation();
 		} catch (CVSException e) {
-			// TODO: errors may not be empty
+			// TODO: errors may not be empty (i.e. endOperation has not been executed)
 			throw new InvocationTargetException(e);
 		}
 	}
@@ -202,67 +134,42 @@ public abstract class CVSOperation implements IRunnableWithProgress {
 	}
 
 	/**
-	 * Subclasses must override to perform the operation
+	 * Subclasses must override this method to perform the operation.
+	 * Clients should never call this method directly.
+	 * 
 	 * @param monitor
 	 * @throws CVSException
 	 * @throws InterruptedException
 	 */
-	public abstract void execute(IProgressMonitor monitor) throws CVSException, InterruptedException;
+	protected abstract void execute(IProgressMonitor monitor) throws CVSException, InterruptedException;
 
-	/**
-	 * @return
+	/*
+	 * Return the ICVSRunnableContext which will be used to run the operation.
 	 */
-	private IRunnableContext getRunnableContext() {
-		if (runnableContext == null) {
-			return PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+	private ICVSRunnableContext getCVSRunnableContext() {
+		if (cvsRunnableContext == null) {
+			if (canRunAsJob() && areJobsEnabled()) {
+				return new CVSNonblockingRunnableContext();
+			} else {
+				return new CVSBlockingRunnableContext(shell);
+			}
 		}
-		return runnableContext;
+		return cvsRunnableContext;
 	}
-
+	
 	/**
-	 * @param context
+	 * Set the CVS runnable context to be used by the operation.
+	 * Although this method can be used by clients, it's main
+	 * purpose is to support the running of headless operations
+	 * for testing purposes.
+	 * @param cvsRunnableContext
 	 */
-	public void setRunnableContext(IRunnableContext context) {
-		this.runnableContext = context;
-	}
-
-	public boolean hasRunnableContext() {
-		return runnableContext != null;
+	public void setCVSRunnableContext(ICVSRunnableContext cvsRunnableContext) {
+		this.cvsRunnableContext = cvsRunnableContext;
 	}
 	
 	public Shell getShell() {
-		if (isRunningAsJob()) {
-			// We can't use the assigned shell as it may have been disposed
-			// run in syncExec because callback is from an operation,
-			// which is probably not running in the UI thread.
-			final Shell[] newShell = new Shell[] { null };
-			Display.getDefault().syncExec(
-				new Runnable() {
-					public void run() {
-						IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-						if (window == null) {
-							Display display = Display.getDefault();
-							newShell[0] = new Shell(display);
-						} else {
-							newShell[0] = window.getShell();
-						}
-					}
-				});
-			return newShell[0];
-		}
-		return shell;
-	}
-
-	public void setShell(Shell shell) {
-		this.shell = shell;
-	}
-	
-	public boolean isInterruptable() {
-		return interruptable;
-	}
-	
-	public void setInterruptable(boolean b) {
-		interruptable = b;
+		return getCVSRunnableContext().getShell();
 	}
 
 	public boolean isModifiesWorkspace() {
@@ -275,16 +182,39 @@ public abstract class CVSOperation implements IRunnableWithProgress {
 
 	protected void addError(IStatus status) {
 		if (status.isOK()) return;
+		if (isLastError(status)) return;
 		errors.add(status);
 	}
-	
+
 	protected void collectStatus(IStatus status)  {
+		if (isLastError(status)) return;
 		statusCount++;
 		if (!status.isOK()) addError(status);
 	}
 	
 	protected void resetErrors() {
 		errors.clear();
+		statusCount = 0;
+	}
+	
+	/**
+	 * Get the last error taht occured. This can be useful when a method
+	 * has a return type but wants to signal an error. The method in question
+	 * can add the error using <code>addError(IStatus)</code> and return null.
+	 * The caller can then query the error using this method. Also, <code>addError(IStatus)</code>
+	 * will not add the error if it is already on the end of the list (using identity comparison)
+	 * which allows the caller to still perform a <code>collectStatus(IStatus)</code>
+	 * to get a valid operation count.
+	 * @return
+	 */
+	protected IStatus getLastError() {
+		Assert.isTrue(errors.size() > 0);
+		IStatus status = (IStatus)errors.get(errors.size() - 1);
+		return status;
+	}
+	
+	private boolean isLastError(IStatus status) {
+		return (errors.size() > 0 && getLastError() == status);
 	}
 	
 	protected void handleErrors(IStatus[] errors) throws CVSException {
@@ -306,7 +236,7 @@ public abstract class CVSOperation implements IRunnableWithProgress {
 	}
 
 	protected String getErrorMessage(IStatus[] failures, int totalOperations) {
-		return "Errors occured in " + failures.length + " of " + totalOperations + " operations.";
+		return Policy.bind("CVSOperation.0", String.valueOf(failures.length),  String.valueOf(totalOperations)); //$NON-NLS-1$
 	}
 
 	/**
@@ -380,9 +310,5 @@ public abstract class CVSOperation implements IRunnableWithProgress {
 	 * @return
 	 */
 	protected abstract String getTaskName();
-	
-	protected boolean isRunningAsJob() {
-		return runningAsJob;
-	}
 
 }

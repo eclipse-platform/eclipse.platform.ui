@@ -122,6 +122,6 @@ public class TagOperation extends RepositoryProviderOperation implements ITagOpe
 	}
 
 	protected  String getTaskName() {
-		return Policy.bind("TagFromWorkspace.taskName");
+		return Policy.bind("TagFromWorkspace.taskName"); //$NON-NLS-1$
 	}
 }

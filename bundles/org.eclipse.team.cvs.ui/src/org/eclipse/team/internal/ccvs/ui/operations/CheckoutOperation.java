@@ -11,6 +11,7 @@
 package org.eclipse.team.internal.ccvs.ui.operations;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
@@ -26,9 +27,27 @@ public abstract class CheckoutOperation extends RemoteOperation {
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void execute(IProgressMonitor monitor) throws CVSException, InterruptedException {
-		String taskName = getTaskName();
-		monitor.beginTask(taskName, 100);
-		checkout(getRemoteFolders(), Policy.subMonitorFor(monitor, 100));
+		ICVSRemoteFolder[] folders = getRemoteFolders();
+		checkout(folders, monitor);
+	}
+	
+	/**
+	 * This method invokes <code>checkout(ICVSRemoteFolder, IProgressMonitor)</code>
+	 * for each remote folder of the operation.
+	 * @param folders the remote folders for the operation
+	 * @param monitor the progress monitor
+	 * @throws CVSException if an error occured that should prevent the remaining
+	 * folders from being checked out
+	 */
+	protected void checkout(ICVSRemoteFolder[] folders, IProgressMonitor monitor) throws CVSException {
+		monitor.beginTask(null, folders.length * 100);
+		for (int i = 0; i < folders.length; i++) {
+			ICVSRemoteFolder folder = folders[i];
+			IStatus result = checkout(folder, Policy.subMonitorFor(monitor, 100));
+			collectStatus(result);
+			Policy.checkCanceled(monitor);
+		}
+		monitor.done();
 	}
 
 	protected ICVSRemoteFolder[] getRemoteFolders() {
@@ -40,7 +59,7 @@ public abstract class CheckoutOperation extends RemoteOperation {
 	 * @param folders
 	 * @param monitor
 	 */
-	protected abstract void checkout(ICVSRemoteFolder[] folders, IProgressMonitor monitor)  throws CVSException;
+	protected abstract IStatus checkout(ICVSRemoteFolder folder, IProgressMonitor monitor)  throws CVSException;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#canRunAsJob()

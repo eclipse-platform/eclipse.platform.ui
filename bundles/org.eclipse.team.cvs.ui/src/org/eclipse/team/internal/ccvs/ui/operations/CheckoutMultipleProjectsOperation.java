@@ -12,9 +12,11 @@ package org.eclipse.team.internal.ccvs.ui.operations;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
-import org.eclipse.team.internal.ccvs.ui.Policy;
 
 /**
  * This operation checks out a multiple remote folders into the workspace.
@@ -42,17 +44,12 @@ public class CheckoutMultipleProjectsOperation extends CheckoutProjectOperation 
 		if (targetLocation == null) return null;
 		return targetLocation.append(project.getName());
 	}
-	
-	protected String getTaskName() {
-		ICVSRemoteFolder[] remoteFolders = getRemoteFolders();
-		return Policy.bind("CheckoutMultipleProjectsOperation.taskName", new Integer(remoteFolders.length).toString());  //$NON-NLS-1$
-	}
-	
+
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ccvs.ui.operations.CheckoutProjectOperation#getTargetProjects(org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder[])
+	 * @see org.eclipse.team.internal.ccvs.ui.operations.CheckoutOperation#checkout(org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected IProject[] getTargetProjects(ICVSRemoteFolder[] folders) {
-		return null;
+	protected IStatus checkout(ICVSRemoteFolder folder, IProgressMonitor monitor) throws CVSException {
+		return checkout(folder, null, monitor);
 	}
 	
 }

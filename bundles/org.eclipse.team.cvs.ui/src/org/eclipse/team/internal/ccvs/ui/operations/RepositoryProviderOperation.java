@@ -54,7 +54,6 @@ public abstract class RepositoryProviderOperation extends CVSOperation {
 		Map table = getProviderMapping(getResources());
 		Set keySet = table.keySet();
 		monitor.beginTask(null, keySet.size() * 1000);
-		monitor.setTaskName(getTaskName());
 		Iterator iterator = keySet.iterator();
 		while (iterator.hasNext()) {
 			IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1000);
@@ -99,13 +98,6 @@ public abstract class RepositoryProviderOperation extends CVSOperation {
 	protected void setResources(IResource[] resources) {
 		this.resources = resources;
 	}
-	
-	/**
-	 * Return the task name associated with the operation. This task name
-	 * will appear in progress feedback presented to the user.
-	 * @return
-	 */
-	protected abstract String getTaskName();
 
 	/**
 	 * Execute the operation on the resources for the given provider.

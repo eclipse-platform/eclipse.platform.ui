@@ -11,7 +11,6 @@
 package org.eclipse.team.internal.ccvs.ui.operations;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
@@ -28,11 +27,8 @@ public class HasProjectMetaFileOperation extends CVSOperation {
 	private ICVSRemoteFolder remoteFolder;
 	private boolean metaFileExists;
 	
-	public static boolean hasMetaFile(Shell shell, ICVSRemoteFolder remoteFolder, IRunnableContext runnableContext) throws CVSException, InterruptedException {
+	public static boolean hasMetaFile(Shell shell, ICVSRemoteFolder remoteFolder) throws CVSException, InterruptedException {
 		HasProjectMetaFileOperation op = new HasProjectMetaFileOperation(shell, remoteFolder);
-		if (runnableContext != null) {
-			op.setRunnableContext(runnableContext);
-		}
 		op.run();
 		return op.metaFileExists();
 	}
@@ -49,7 +45,7 @@ public class HasProjectMetaFileOperation extends CVSOperation {
 	private boolean hasMetaFile(ICVSRemoteFolder folder, IProgressMonitor monitor) throws CVSException {
 		
 		// make a copy of the folder so that we will not effect the original folder when we refetch the members
-		// TODO: this is a strang thing to need to do. We shold fix this.
+		// TODO: this is a strange thing to need to do. We shold fix this.
 		folder = (ICVSRemoteFolder)folder.forTag(remoteFolder.getTag());
 
 		try {
@@ -91,6 +87,15 @@ public class HasProjectMetaFileOperation extends CVSOperation {
 	}
 
 	protected String getTaskName() {
-		return Policy.bind("HasProjectMetaFile.taskName");
+		return Policy.bind("HasProjectMetaFile.taskName"); //$NON-NLS-1$
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#canRunAsJob()
+	 */
+	public boolean canRunAsJob() {
+		// This operation should never be run in the background.
+		return false;
+	}
+
 }
