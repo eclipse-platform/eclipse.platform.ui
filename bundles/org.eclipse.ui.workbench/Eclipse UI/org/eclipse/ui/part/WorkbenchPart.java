@@ -263,7 +263,19 @@ public abstract class WorkbenchPart implements IWorkbenchPart2,
      * @param site the workbench part site
      */
     protected void setSite(IWorkbenchPartSite site) {
+        checkSite(site);
         this.partSite = site;
+    }
+
+    /**
+     * Checks that the given site is valid for this type of part.
+     * The default implementation does nothing.
+     * 
+     * @param site the site to check
+     * @since 3.1
+     */
+    protected void checkSite(IWorkbenchPartSite site) {
+        // do nothing
     }
 
     /**

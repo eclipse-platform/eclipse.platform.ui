@@ -17,7 +17,9 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IWorkbenchPartConstants;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.internal.misc.Assert;
 
 /**
  * Abstract base implementation of all workbench editors.
@@ -256,5 +258,17 @@ public abstract class EditorPart extends WorkbenchPart implements IEditorPart {
     void setDefaultTitle() {
         setTitle(getPartName());
     }
+
+    /**
+     * Checks that the given site is valid for this type of part.
+     * The site for an editor must be an <code>IEditorSite</code>.
+     * 
+     * @param site the site to check
+     * @since 3.1
+     */
+    protected final void checkSite(IWorkbenchPartSite site) {
+        super.checkSite(site);
+        Assert.isTrue(site instanceof IEditorSite, "The site for an editor must be an IEditorSite"); //$NON-NLS-1$
+    }    
 
 }

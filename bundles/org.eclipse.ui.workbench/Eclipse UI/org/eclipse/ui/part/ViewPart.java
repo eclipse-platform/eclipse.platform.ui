@@ -16,7 +16,9 @@ import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPartConstants;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.util.Util;
 
 /**
@@ -171,4 +173,15 @@ public abstract class ViewPart extends WorkbenchPart implements IViewPart {
         }
     }
 
+    /**
+     * Checks that the given site is valid for this type of part.
+     * The site for a view must be an <code>IViewSite</code>.
+     * 
+     * @param site the site to check
+     * @since 3.1
+     */
+    protected final void checkSite(IWorkbenchPartSite site) {
+        super.checkSite(site);
+        Assert.isTrue(site instanceof IViewSite, "The site for a view must be an IViewSite"); //$NON-NLS-1$
+    }    
 }
