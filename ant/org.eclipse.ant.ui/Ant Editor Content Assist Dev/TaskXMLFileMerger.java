@@ -150,11 +150,11 @@ public class TaskXMLFileMerger {
 																		 tmpSourceNode);
 			}
 			else {
-				System.out.println(MessageFormat.format(AntEditorToolsMessages.getString("TaskXMLFileMerger.No_Task"), new String[]{tmpTaskName})); //$NON-NLS-1$
+				System.out.println(MessageFormat.format("Did not find Task \"{0}\" in HTML XML file.", new String[]{tmpTaskName})); //$NON-NLS-1$
 			}
 		}
 		else {
-			System.out.println(MessageFormat.format(AntEditorToolsMessages.getString("TaskXMLFileMerger.No_TaskName"), new String[]{aTargetTaskNode.toString()})); //$NON-NLS-1$
+			System.out.println(MessageFormat.format("Did not find TaskName in TargetTaskNode: {0}", new String[]{aTargetTaskNode.toString()})); //$NON-NLS-1$
 		}
 	}
 	
