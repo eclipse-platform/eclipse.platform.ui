@@ -128,7 +128,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		location= FileBuffers.normalizeLocation(location);
 		
 		IContentTypeManager manager= Platform.getContentTypeManager();
-		IContentType text= manager.getContentType("org.eclipse.core.runtime.text"); //$NON-NLS-1$
+		IContentType text= manager.getContentType(IContentTypeManager.CT_TEXT);
 		
 		IFile file= FileBuffers.getWorkspaceFileAtLocation(location);
 		if (file != null) {
