@@ -1026,6 +1026,10 @@ public final class Workbench implements IWorkbench {
 		Platform.run(new SafeRunnable(WorkbenchMessages
                 .getString("ErrorReadingState")) { //$NON-NLS-1$
 			public void run() throws Exception {
+
+				//notify users of errors restoring the state of hte workbench
+				setIgnoreErrors(false);
+				
 				FileInputStream input = new FileInputStream(stateFile);
 				BufferedReader reader = new BufferedReader(
                                 new InputStreamReader(input, "utf-8")); //$NON-NLS-1$
@@ -1210,15 +1214,27 @@ public final class Workbench implements IWorkbench {
 			// getPerspectiveRegistry().findPerspectiveWithId(initialPerspectiveId);
 			//				result.merge(newWindow.restoreState(childMem, desc));
 			//			}
-			// add the window so that any work done in newWindow.restoreState that relies on Workbench methods has windows to work with			
+			// add the window so that any work done in newWindow.restoreState that relies on Workbench methods has windows to work with						
 			windowManager.add(newWindow);
-			result.merge(newWindow.restoreState(childMem, null));			
+			// whether the window was opened
+			boolean opened = false;
+			// now that we've added it to the window manager we need to listen 
+			// for any exception that might hose us before we get a chance to
+			// open it.  If one occurs, remove the new window from the manager.
 			try {
-				getAdvisor().postWindowRestore(newWindow.getWindowConfigurer());
-			} catch (WorkbenchException e) {
-				result.add(e.getStatus());
+				result.merge(newWindow.restoreState(childMem, null));
+				try {
+					getAdvisor().postWindowRestore(newWindow.getWindowConfigurer());
+				} catch (WorkbenchException e) {
+					result.add(e.getStatus());
+				}
+				newWindow.open();
+				opened = true;
 			}
-			newWindow.open();
+			finally {
+				if (!opened)
+					newWindow.close();
+			}
 		}
 		return result;
 	}
