@@ -141,6 +141,10 @@ public class PresentableViewPart implements IPresentablePart {
 	 */
 	public Control getToolBar() {
 		
+		if (!pane.toolbarIsVisible()) {
+			return null;
+		}
+		
 		ToolBarManager toolbarManager = pane.getToolBarManager();
 		
 		if (toolbarManager == null) {
@@ -151,14 +155,8 @@ public class PresentableViewPart implements IPresentablePart {
 		
 		if (control == null || control.isDisposed() ) {
 			return null;
-		}
+		}		
 		
-		if (control.getItemCount() == 0) {
-			control.setVisible(false);
-			return null;
-		}
-		
-		control.setVisible(true);
 		return control;
 	}
 

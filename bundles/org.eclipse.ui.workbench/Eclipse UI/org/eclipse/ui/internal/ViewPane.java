@@ -286,6 +286,14 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	}
 	
 	private void toolBarResized(ToolBar toolBar, int newSize) {
+		if (isvToolBar != null) {
+			Control ctrl = getControl();
+			
+			boolean visible = ctrl != null && ctrl.isVisible() && toolbarIsVisible();
+			
+			isvToolBar.setVisible(visible);
+		}
+		
 		presentableAdapter.firePropertyChange(IPresentablePart.PROP_TOOLBAR);
 	}
 	
@@ -701,8 +709,24 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		super.setVisible(makeVisible);
 		
 		if (isvToolBar != null) {
-			isvToolBar.setVisible(makeVisible);
+			isvToolBar.setVisible(makeVisible && toolbarIsVisible());
 		}
+	}
+
+	protected boolean toolbarIsVisible() {
+		ToolBarManager toolbarManager = getToolBarManager();
+		
+		if (toolbarManager == null) {
+			return false;
+		}
+		
+		ToolBar control = toolbarManager.getControl();
+		
+		if (control == null || control.isDisposed() ) {
+			return false;
+		}
+		
+		return control.getItemCount() > 0;
 	}
 	
 }
