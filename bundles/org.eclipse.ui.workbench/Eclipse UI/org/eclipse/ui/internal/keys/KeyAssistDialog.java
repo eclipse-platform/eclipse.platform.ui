@@ -203,8 +203,8 @@ final class KeyAssistDialog extends Dialog {
                     commandName = selectedItem.getText(0);
                     keySequence = selectedItem.getText(1);
                 } else {
-                    commandName = null;
-                    keySequence = null;
+                    commandName = Util.ZERO_LENGTH_STRING;
+                    keySequence = Util.ZERO_LENGTH_STRING;
                 }
             }
             completionsTable = null;
