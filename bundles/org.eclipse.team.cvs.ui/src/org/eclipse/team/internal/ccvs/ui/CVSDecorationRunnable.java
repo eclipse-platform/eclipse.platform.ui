@@ -62,7 +62,7 @@ public class CVSDecorationRunnable implements Runnable {
 
 	static {
 		dirty = new CachedImageDescriptor(TeamImages.getImageDescriptor(ISharedImages.IMG_DIRTY_OVR));
-		dirtyLocation = OverlayIcon.TOP_RIGHT;
+		dirtyLocation = OverlayIcon.BOTTOM_RIGHT;
 		checkedIn = new CachedImageDescriptor(TeamImages.getImageDescriptor(ISharedImages.IMG_CHECKEDIN_OVR));
 		checkedInLocation = OverlayIcon.BOTTOM_RIGHT;
 		//checkedOut = new CachedImageDescriptor(TeamImages.getImageDescriptor(ISharedImages.IMG_CHECKEDOUT_OVR));
@@ -317,14 +317,11 @@ public class CVSDecorationRunnable implements Runnable {
 			}
 		}
 		
-		// show outgoing arrow
+		// show outgoing arrow and remote icon
 		if (showDirty && isDirty) {
 			overlays.add(dirty);
 			locations.add(new Integer(dirtyLocation));
-		}
-		
-		// show remote icon
-		if (showHasRemote && provider.hasRemote(resource)) {
+		} else if (showHasRemote && provider.hasRemote(resource)) {
 			overlays.add(checkedIn);
 			locations.add(new Integer(checkedInLocation));
 		}
