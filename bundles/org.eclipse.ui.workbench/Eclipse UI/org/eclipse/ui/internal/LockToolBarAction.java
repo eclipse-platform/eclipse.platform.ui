@@ -41,7 +41,7 @@ public class LockToolBarAction extends Action implements
         setActionDefinitionId("org.eclipse.ui.window.lockToolBar"); //$NON-NLS-1$
         // @issue missing action id
         setToolTipText(WorkbenchMessages.LockToolBarAction_toolTip);
-        setEnabled(false);
+        setEnabled(true);
         // queue the update for the checked state since this action is created 
         // before the coolbar
         window.getWorkbench().getDisplay().asyncExec(new Runnable() {
