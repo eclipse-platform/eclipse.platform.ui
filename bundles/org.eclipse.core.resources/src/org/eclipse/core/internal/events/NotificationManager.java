@@ -367,20 +367,4 @@ public class NotificationManager implements IManager, ILifecycleListener {
 		buildMarkerChangeId = changeId;
 		buildMarkerDeltas = MarkerDelta.merge(buildMarkerDeltas, lastDelta.getDeltaInfo().getMarkerDeltas());
 	}
-
-	/**
-	 * Returns the event type as a string. For debugging purposes only.
-	 */
-	private String getTypeString(int type) {
-		switch (type) {
-			case IResourceChangeEvent.PRE_BUILD:
-				return "PRE_BUILD"; //$NON-NLS-1$
-			case IResourceChangeEvent.POST_BUILD:
-				return "POST_BUILD"; //$NON-NLS-1$
-			case IResourceChangeEvent.POST_CHANGE:
-				return "POST_CHANGE"; //$NON-NLS-1$
-			default:
-				return Integer.toString(type);
-		}
-	}
 }
