@@ -4,13 +4,10 @@ package org.eclipse.update.core;
  * All Rights Reserved.
  */
 import java.net.URL;
-import java.util.*;
 
-import org.eclipse.core.internal.boot.Policy;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.model.*;
-import org.eclipse.update.internal.core.UpdateManagerPlugin;
-import org.eclipse.update.internal.core.UpdateManagerUtils;
+import org.eclipse.update.internal.core.*;
 /**
  * Abstract Class that implements most of the behavior of a feature
  * A feature ALWAYS belongs to an ISite
@@ -386,7 +383,7 @@ public class Feature extends FeatureModel implements IFeature {
 	public IFeatureContentProvider getFeatureContentProvider() throws CoreException {
 		if (featureContentProvider == null) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, Policy.bind("Feature.NoContentProvider", getURL().toExternalForm()), null); //$NON-NLS-1$
+			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, Policy.bind("Feature.NoContentProvider",getVersionIdentifier().toString()), null); //$NON-NLS-1$
 			throw new CoreException(status);
 		}
 		return this.featureContentProvider;
@@ -399,5 +396,13 @@ public class Feature extends FeatureModel implements IFeature {
 		throw new UnsupportedOperationException();
 	}
 
+
+	/*
+	 * @see Object#toString()
+	 */
+	public String toString() {
+		String URLString = (getURL()==null)?"<NO URL>":getURL().toExternalForm();
+		return "Feature: "+URLString+" version:"+getVersionIdentifier().toString();
+	}
 
 }
