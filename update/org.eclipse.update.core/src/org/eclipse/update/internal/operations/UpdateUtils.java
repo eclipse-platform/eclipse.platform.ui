@@ -522,13 +522,10 @@ public class UpdateUtils {
 
 	public static void downloadFeatureContent(
 		IFeature feature,
+		IFeatureReference[] optionalChildren, // null when feature has no optional features
 		IProgressMonitor progress)
 		throws InstallAbortedException, CoreException {
-
-		// only downloads our known feature types
-		if (!(feature instanceof Feature))
-			return;
-			
+		
 		//DEBUG
 		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_INSTALL) {
 			UpdateCore.debug(
@@ -566,12 +563,12 @@ public class UpdateUtils {
 		INonPluginEntry[] nonPluginsToInstall = feature.getNonPluginEntries();
 		
 		IFeatureReference[] children = feature.getIncludedFeatureReferences();
-//		if (optionalfeatures != null) {
-//			children =
-//				UpdateManagerUtils.optionalChildrenToInstall(
-//					children,
-//					optionalfeatures);
-//		}
+		if (optionalChildren != null) {
+			children =
+				UpdateManagerUtils.optionalChildrenToInstall(
+					children,
+					optionalChildren);
+		}
 
 		// make sure we have an InstallMonitor		
 		InstallMonitor monitor;
@@ -614,9 +611,6 @@ public class UpdateUtils {
 			}
 
 			// Download child features
-//		IFeatureReference[] children = feature.getIncludedFeatureReferences();
-
-			// TODO: check if they are optional, and if they should be installed [2.0.1]
 			for (int i = 0; i < children.length; i++) {
 				IFeature childFeature = null;
 				try {
@@ -626,7 +620,7 @@ public class UpdateUtils {
 				}
 				if (childFeature != null) {
 					SubProgressMonitor subMonitor = new SubProgressMonitor(monitor, 3);
-					downloadFeatureContent(childFeature, subMonitor);
+					downloadFeatureContent(childFeature, optionalChildren, subMonitor);
 				}
 			}
 		} finally {

@@ -434,10 +434,9 @@ public class InstallWizard
 			monitor.beginTask(UpdateUI.getString("InstallWizard.download"), 3*ops.length);
 			for (int i=0; i<ops.length; i++) {
 				IInstallFeatureOperation op = (IInstallFeatureOperation)ops[i];
-				IFeatureReference[] optionalFeatures = op.getOptionalFeatures();
 				SubProgressMonitor subMonitor = new SubProgressMonitor(monitor, 3);
 				try {
-					UpdateUtils.downloadFeatureContent(op.getFeature(), subMonitor);
+					UpdateUtils.downloadFeatureContent(op.getFeature(), op.getOptionalFeatures(), subMonitor);
 				} catch (final CoreException e) {
 					if(e instanceof FeatureDownloadException){
 						boolean retry = retryDownload((FeatureDownloadException)e);
