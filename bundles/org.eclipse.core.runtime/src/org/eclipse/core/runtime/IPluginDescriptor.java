@@ -447,7 +447,7 @@ public interface IPluginDescriptor {
 	 * TODO @deprecated 
 	 * Use 
 	 * <pre>
-	 *     bundle.getState == org.osgi.framework.Constants.ACTIVE 
+	 *     bundle.getState == org.osgi.framework.Bundle.ACTIVE 
 	 * </pre>
 	 * where <code>bundle</code> is the bundle associated with 
 	 * the relevant plug-in.
