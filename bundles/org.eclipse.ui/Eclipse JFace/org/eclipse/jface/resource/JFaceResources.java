@@ -146,7 +146,7 @@ public static ResourceBundle getBundle() {
  * @return the font
  */
 public static Font getDefaultFont() {
-	return getFontRegistry().get(DEFAULT_FONT);
+	return getFontRegistry().defaultFont();
 }
 /**
  * Returns the JFace's dialog font.
