@@ -30,7 +30,6 @@ import org.eclipse.jface.text.source.IAnnotationPresentation;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
-
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 
 
@@ -43,7 +42,7 @@ public class DefaultMarkerAnnotationAccess implements IAnnotationAccess, IAnnota
 	 * Constant for the unknown marker type
 	 * @deprecated use Annotation.TYPE_UNKNOWN instead 
 	 */
-	public final static String UNKNOWN= Annotation.TYPE_UNKNOWN;
+	public static final String UNKNOWN= Annotation.TYPE_UNKNOWN;
 	
 	/**
 	 * Constant for the error system image.
@@ -51,35 +50,35 @@ public class DefaultMarkerAnnotationAccess implements IAnnotationAccess, IAnnota
 	 * 
 	 * @since 3.0
 	 */
-	public final static String ERROR_SYSTEM_IMAGE= "error";
+	public static final String ERROR_SYSTEM_IMAGE= "error"; //$NON-NLS-1$
 	/**
 	 * Constant for the warning system image.
 	 * Value: <code>warning</code>
 	 * 
 	 * @since 3.0
 	 */
-	public final static String WARNING_SYSTEM_IMAGE= "warning";
+	public static final String WARNING_SYSTEM_IMAGE= "warning"; //$NON-NLS-1$
 	/**
 	 * Constant for the info system image.
 	 * Value: <code>info</code>
 	 * 
 	 * @since 3.0
 	 */
-	public final static String INFO_SYSTEM_IMAGE= "info";
+	public static final String INFO_SYSTEM_IMAGE= "info"; //$NON-NLS-1$
 	/**
 	 * Constant for the task system image.
 	 * Value: <code>task</code>
 	 * 
 	 * @since 3.0
 	 */
-	public final static String TASK_SYSTEM_IMAGE= "task";
+	public static final String TASK_SYSTEM_IMAGE= "task"; //$NON-NLS-1$
 	/**
 	 * Constant for the bookmark system image.
 	 * Value: <code>bookmark</code>
 	 * 
 	 * @since 3.0
 	 */
-	public final static String BOOKMARK_SYSTEM_IMAGE= "bookmark";
+	public static final String BOOKMARK_SYSTEM_IMAGE= "bookmark"; //$NON-NLS-1$
 	
 	/**
 	 * The mapping between external and internal symbolic system image names.
