@@ -14,11 +14,13 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.taskdefs.Echo;
 import org.apache.tools.ant.types.EnumeratedAttribute;
+import org.apache.tools.ant.types.Reference;
 
 
 public class AntTestTask2 extends Task {
 	
 	String fMessage= "Default";
+	Reference fRef= null;
 	
 	public AntTestTask2() {
 		super();
@@ -36,6 +38,10 @@ public class AntTestTask2 extends Task {
 	
     public void setMessage(Cool attr) {
         fMessage = attr.getValue();
+    }
+    
+    public void setReference(Reference ref) {
+        fRef= ref;
     }
 	
 	/**
