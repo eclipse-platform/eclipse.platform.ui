@@ -31,6 +31,7 @@ private void open() throws CoreException {
 		store = new IndexedStore();
 		store.open(location.toOSString());
 	} catch (Exception e) {
+		store = null;
 		String message = Policy.bind("indexed.couldNotOpen", location.toOSString());
 		ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, location, message, e);
 		throw new CoreException(status);

@@ -113,21 +113,20 @@ protected ResourceName getPropertyKey(IResource target) {
  * given resource.
  */
 protected PropertyStore getPropertyStore(IResource target) throws CoreException {
-	PropertyStore store = null;
 	try {
 		Resource host = (Resource) getPropertyHost(target);
 		ResourceInfo info = (ResourceInfo) host.getResourceInfo(false, false);
 		if (info == null)
 			return null;
-		store = info.getPropertyStore();
+		PropertyStore store = info.getPropertyStore();
 		if (store == null)
 			store = openPropertyStore(host);
 		return store;
-	} finally {
-		if (store == null) {
-			String message = Policy.bind("properties.storeNotAvaiable", target.getFullPath().toString());
-			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, target.getFullPath(), message, null);
-		}
+	} catch (Exception e) {
+		if (e instanceof CoreException)
+			throw (CoreException)e;
+		String message = Policy.bind("properties.storeNotAvaiable", target.getFullPath().toString());
+		throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, target.getFullPath(), message, e);
 	}
 }
 public void opening(IProject target) throws CoreException {
