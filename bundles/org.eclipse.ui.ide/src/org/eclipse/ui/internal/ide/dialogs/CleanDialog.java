@@ -23,6 +23,8 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -36,6 +38,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.GlobalBuildAction;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.actions.BuildUtilities;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
@@ -167,6 +170,19 @@ public class CleanDialog extends MessageDialog {
     	projectNames = CheckboxTableViewer.newCheckList(radioGroup, SWT.BORDER);
     	projectNames.setContentProvider(new WorkbenchContentProvider());
     	projectNames.setLabelProvider(new WorkbenchLabelProvider());
+    	projectNames.setSorter(new ResourceSorter(ResourceSorter.NAME));
+    	projectNames.addFilter(new ViewerFilter() {
+    		private final IProject[] projectHolder = new IProject[1];
+			public boolean select(Viewer viewer, Object parentElement, Object element) {
+				if (!(element instanceof IProject))
+					return false;
+				IProject project = (IProject) element;
+				if (!project.isAccessible())
+					return false;
+				projectHolder[0] = project;
+				return BuildUtilities.isEnabled(projectHolder, IncrementalProjectBuilder.CLEAN_BUILD);
+			}
+		});
     	projectNames.setInput(ResourcesPlugin.getWorkspace().getRoot());
     	GridData data = new GridData(GridData.FILL_BOTH);
     	data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
