@@ -179,6 +179,10 @@ protected void collapseTrees() throws CoreException {
 	ElementTree[] treeArray = new ElementTree[trees.size()];
 	trees.toArray(treeArray);
 	ElementTree[] sorted = sortTrees(treeArray);
+	// if there was a problem sorting the tree, bail on trying to collapse.  We will be able to 
+	// GC the layers at a later time.
+	if (sorted == null)
+		return;
 
 	for (int i = 1; i < sorted.length; i++) {
 		ElementTree oldTree = sorted[i].collapseTo(sorted[i - 1]);
@@ -840,8 +844,13 @@ protected ElementTree[] sortTrees(ElementTree[] trees) {
 		if (i >= 0) {
 			/* find the next tree in the list */
 			ElementTree parent = oldest.getParent();
-			while (table.get(parent) == null) {
+			while (parent != null && table.get(parent) == null) {
 				parent = parent.getParent();
+			}
+			if (parent == null) {
+				IStatus status = new Status(IStatus.WARNING, ResourcesPlugin.PI_RESOURCES, 13, "null parent found while collapsing trees", null);
+				ResourcesPlugin.getPlugin().getLog().log(status);
+				return null;
 			}
 			oldest = parent;
 		}
