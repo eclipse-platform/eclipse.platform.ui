@@ -90,6 +90,7 @@ public abstract class Command {
 		registerResponseHandler(new CheckedInHandler());
 		registerResponseHandler(new CopyHandler());
 		registerResponseHandler(new ModTimeHandler());
+		registerResponseHandler(new NewEntryHandler());
 		registerResponseHandler(new RemovedHandler());
 		registerResponseHandler(new RemoveEntryHandler());
 		registerResponseHandler(new StaticHandler(true));
