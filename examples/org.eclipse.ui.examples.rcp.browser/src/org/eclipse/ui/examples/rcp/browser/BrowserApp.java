@@ -53,8 +53,10 @@ public class BrowserApp implements IPlatformRunnable {
 		try {
 			int code = PlatformUI.createAndRunWorkbench(display,
 					new BrowserAdvisor());
-			// TODO: map return code to what the runtime expects.
-			return new Integer(code);
+			// exit the application with an appropriate return code
+			return code == PlatformUI.RETURN_RESTART
+					? EXIT_RESTART
+					: EXIT_OK;
 		} finally {
 			if (display != null)
 				display.dispose();
