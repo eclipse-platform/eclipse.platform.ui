@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.ccvs.core.EditorsInfo;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 
 
@@ -56,6 +57,10 @@ public class EditorsDialog extends Dialog {
 		editorsView = new EditorsView();
 		editorsView.createPartControl(container);
 		editorsView.setInput(editorsInfo);
+		
+		// set F1 help
+		WorkbenchHelp.setHelp(parent, IHelpContextIds.EDITORS_DIALOG);
+		
 		return parent;
 	}
 	/**
