@@ -103,7 +103,7 @@ public final class InternalPlatform implements IPlatform {
 	private static final String APPLICATION = "-application"; //$NON-NLS-1$	
 	private static final String KEYRING = "-keyring"; //$NON-NLS-1$
 	private static final String PASSWORD = "-password"; //$NON-NLS-1$
-	private static final String NOREGISTRYCACHE = "-noregistrycache"; //$NON-NLS-1$	
+	private static final String NO_REGISTRY_CACHE = "-noregistrycache"; //$NON-NLS-1$	
 	private static final String NO_LAZY_REGISTRY_CACHE_LOADING = "-noLazyRegistryCacheLoading"; //$NON-NLS-1$		
 	private static final String PLUGIN_CUSTOMIZATION = "-plugincustomization"; //$NON-NLS-1$
 	private static final String NO_PACKAGE_PREFIXES = "-noPackagePrefixes"; //$NON-NLS-1$
@@ -476,7 +476,7 @@ public final class InternalPlatform implements IPlatform {
 			// check for args without parameters (i.e., a flag arg)
 
 			// look for the no registry cache flag
-			if (args[i].equalsIgnoreCase(NOREGISTRYCACHE)) {
+			if (args[i].equalsIgnoreCase(NO_REGISTRY_CACHE)) {
 				System.setProperty(PROP_NO_REGISTRY_CACHE, "true"); //$NON-NLS-1$
 				found = true;
 			}
