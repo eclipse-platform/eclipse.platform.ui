@@ -179,7 +179,7 @@ public class PlatformActivator implements BundleActivator, ServiceListener {
 	}
 
 	private void registerPluginConverter() {
-		ServiceRegistration converterRegistration = context.registerService(IPluginConverter.class.getName(), new PluginConverter(), null);
+		converterRegistration = context.registerService(IPluginConverter.class.getName(), new PluginConverter(), null);
 	}
 	
 	private void unregisterPluginConverter() {
