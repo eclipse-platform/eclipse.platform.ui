@@ -160,6 +160,10 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 	private Map buildFilesToProjects = new HashMap();
 	private IResourceDeltaVisitor visitor = null;
 
+	/**
+	 * Visits a resource delta to determine if a file in the Ant view has
+	 * changed
+	 */
 	class AntViewVisitor implements IResourceDeltaVisitor {
 		/**
 		 * Returns whether children should be visited
@@ -380,6 +384,7 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 		goToBuildFileAction = new GoToBuildFileAction(this);
 		updateActions.add(goToBuildFileAction);
 	}
+	
 	/**
 	 * Create the viewer which displays the active targets
 	 */
@@ -410,6 +415,9 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 		createContextMenu(targetViewer);
 	}
 
+	/**
+	 * Updates the enabled state of all IUpdate actions
+	 */
 	private void updateActions() {
 		Iterator iter = updateActions.iterator();
 		while (iter.hasNext()) {
