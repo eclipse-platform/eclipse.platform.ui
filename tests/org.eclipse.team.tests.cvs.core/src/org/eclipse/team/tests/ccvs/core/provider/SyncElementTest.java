@@ -22,6 +22,7 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.ILocalSyncElement;
 import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
+import org.eclipse.team.core.sync.RemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
@@ -78,10 +79,13 @@ public class SyncElementTest extends EclipseTest {
 	public void assertSyncEquals(String message, ILocalSyncElement tree, String[] resources, int[] syncKinds, int granularity) throws TeamException {
 		assertTrue(resources.length == syncKinds.length);
 		for (int i=0;i<resources.length;i++) {
-			int conflictTypeMask = 0x1F; // ignore manual and auto merge sync types for now.
-			int kind = getChild(tree, new Path(resources[i])).getSyncKind(granularity, DEFAULT_MONITOR) & conflictTypeMask;
+			int conflictTypeMask = 0x0F; // ignore manual and auto merge sync types for now.
+			ILocalSyncElement child = getChild(tree, new Path(resources[i]));
+			int kind = child.getSyncKind(granularity, DEFAULT_MONITOR) & conflictTypeMask;
 			int kindOther = syncKinds[i] & conflictTypeMask;
-			assertTrue(message + ": improper sync state for " + resources[i], kind == kindOther);
+			assertTrue(message + ": improper sync state for " + resources[i] + " expected " + 
+					   RemoteSyncElement.kindToString(kindOther) + " but was " +
+					   RemoteSyncElement.kindToString(kind), kind == kindOther);
 		}
 	}
 
