@@ -47,6 +47,16 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
  * explicitly.
  * </p>
  * <p>
+ * The workspace resource namespace is always case-sensitive and 
+ * case-preserving. Thus the workspace allows multiple sibling resources to exist
+ * with names that differ only in case.  The workspace also imposes no
+ * restrictions on valid characters in resource names, the length of resource names,
+ * or the size of resources on disk.  In situations where one or more resources
+ * are stored in a file system that is not case-sensitive, or that imposes restrictions
+ * on resource names, any failure to store or retrieve those resources will
+ * be propagated back to the caller of workspace API.
+ * </p>
+ * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
  * <p>
