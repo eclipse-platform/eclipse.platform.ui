@@ -87,7 +87,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 	private final static RGB RGB_CONFLICT = new RGB(255, 0, 0);
 	private final static RGB RGB_CONFLICT_MINUS = new RGB(255, 192, 192);
 	private final static RGB RGB_MINUS =	new RGB(192, 192, 192);
-	private final static char SPACE = ' '; //$NON-NLS-1$
+	private final static char SPACE = ' ';
 	private final static String ZERO_LENGTH_STRING = ""; //$NON-NLS-1$
 
 	private final class CommandRecord {
@@ -1256,9 +1256,9 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 			}
 
 			Scope scope = (Scope) scopesById.get(commandRecord.scopeId);
-			tableItem.setText(1, scope != null ? scope.getName() : "[" + commandRecord.scopeId + "]");
+			tableItem.setText(1, scope != null ? scope.getName() : bracket(commandRecord.scopeId));
 			KeyConfiguration keyConfiguration = (KeyConfiguration) keyConfigurationsById.get(commandRecord.keyConfigurationId);			
-			tableItem.setText(2, keyConfiguration != null ? keyConfiguration.getName() : "[" + commandRecord.keyConfigurationId + "]");
+			tableItem.setText(2, keyConfiguration != null ? keyConfiguration.getName() : bracket(commandRecord.keyConfigurationId));
 			boolean conflict = commandConflict || alternateCommandConflict;
 			StringBuffer stringBuffer = new StringBuffer();
 
@@ -1266,10 +1266,10 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 				stringBuffer.append(commandRecord.keySequence.toString());
 
 			if (commandConflict)
-				stringBuffer.append(" " + COMMAND_CONFLICT);
+				stringBuffer.append(SPACE + COMMAND_CONFLICT);
 
 			if (difference == DIFFERENCE_CHANGE) {
-				stringBuffer.append(" (was: ");
+				stringBuffer.append(SPACE + "(was: ");
 				String alternateCommandName = null;
 				
 				if (alternateCommandId == null) 
@@ -1280,13 +1280,13 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 					if (command != null)
 						alternateCommandName = command.getName();
 					else
-						alternateCommandName = "[" + alternateCommandId + "]";
+						alternateCommandName = bracket(alternateCommandId);
 				}
 								
 				stringBuffer.append(alternateCommandName);
 
 				if (alternateCommandConflict)
-					stringBuffer.append(" " + COMMAND_CONFLICT);
+					stringBuffer.append(SPACE + COMMAND_CONFLICT);
 
 				stringBuffer.append(')');
 			} else if (difference == DIFFERENCE_MINUS) {
@@ -1302,13 +1302,13 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 					if (command != null)
 						alternateCommandName = command.getName();
 					else
-						alternateCommandName = "[" + alternateCommandId + "]";
+						alternateCommandName = bracket(alternateCommandId);
 				}
 								
 				stringBuffer.append(alternateCommandName);
 				
 				if (alternateCommandConflict)
-					stringBuffer.append(" " + COMMAND_CONFLICT);
+					stringBuffer.append(SPACE + COMMAND_CONFLICT);
 
 				stringBuffer.append(')');
 			}
@@ -1372,9 +1372,9 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 			}
 
 			Scope scope = (Scope) scopesById.get(keySequenceRecord.scopeId);
-			tableItem.setText(1, scope != null ? scope.getName() : "[" + keySequenceRecord.scopeId + "]");
+			tableItem.setText(1, scope != null ? scope.getName() : bracket(keySequenceRecord.scopeId));
 			KeyConfiguration keyConfiguration = (KeyConfiguration) keyConfigurationsById.get(keySequenceRecord.keyConfigurationId);			
-			tableItem.setText(2, keyConfiguration != null ? keyConfiguration.getName() : "[" + keySequenceRecord.keyConfigurationId + "]");
+			tableItem.setText(2, keyConfiguration != null ? keyConfiguration.getName() : bracket(keySequenceRecord.keyConfigurationId));
 			boolean conflict = commandConflict || alternateCommandConflict;
 			StringBuffer stringBuffer = new StringBuffer();
 			String commandName = null;
@@ -1387,16 +1387,16 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 				if (command != null)
 					commandName = command.getName();
 				else
-					commandName = "[" + commandId + "]";
+					commandName = bracket(commandId);
 			}
 			
 			stringBuffer.append(commandName);
 
 			if (commandConflict)
-				stringBuffer.append(" " + COMMAND_CONFLICT);
+				stringBuffer.append(SPACE + COMMAND_CONFLICT);
 
 			if (difference == DIFFERENCE_CHANGE) {
-				stringBuffer.append(" (was: ");
+				stringBuffer.append(SPACE + "(was: ");
 				String alternateCommandName = null;
 					
 				if (alternateCommandId == null) 
@@ -1407,13 +1407,13 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 					if (command != null)
 						alternateCommandName = command.getName();
 					else
-						alternateCommandName = "[" + alternateCommandId + "]";
+						alternateCommandName = bracket(alternateCommandId);
 				}
 									
 				stringBuffer.append(alternateCommandName);
 	
 				if (alternateCommandConflict)
-					stringBuffer.append(" " + COMMAND_CONFLICT);
+					stringBuffer.append(SPACE + COMMAND_CONFLICT);
 	
 				stringBuffer.append(')');
 			}
@@ -1605,7 +1605,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 	}
 
 	private void setKeySequence(KeySequence keySequence) {
-		comboKeySequence.setText(keySequence != null ? keySequence.toString() : ""); //$NON-NLS-1$
+		comboKeySequence.setText(keySequence != null ? keySequence.toString() : ZERO_LENGTH_STRING);
 	}
 
 	private String getScopeId() {
@@ -1667,8 +1667,16 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 			}
 		}
 	}
+
+	private String bracket(String string) {
+		return string != null ? '[' + string + ']' : "[]"; //$NON-NLS-1$	
+	}
 	
-	private String quote(String string) {
+	private String doubleQuote(String string) {
+		return string != null ? '\"' + string + '\"' : "\"\""; //$NON-NLS-1$	
+	}
+
+	private String singleQuote(String string) {
 		return string != null ? '\'' + string + '\'' : "\'\'"; //$NON-NLS-1$	
 	}
 }
