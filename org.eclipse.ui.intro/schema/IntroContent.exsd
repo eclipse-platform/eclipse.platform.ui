@@ -159,6 +159,7 @@ This seperation out of pages can be used when performance is an issue, as the co
       <complexType>
          <sequence>
             <element ref="text" minOccurs="0" maxOccurs="1"/>
+            <element ref="img" minOccurs="0" maxOccurs="1"/>
          </sequence>
          <attribute name="id" type="string">
             <annotation>

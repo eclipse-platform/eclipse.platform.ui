@@ -24,9 +24,11 @@ public class IntroLink extends AbstractTextElement {
 
     private static final String ATT_LABEL = "label"; //$NON-NLS-1$
     private static final String ATT_URL = "url"; //$NON-NLS-1$
+    private static final String TAG_IMG = "img"; //$NON-NLS-1$
 
     private String label;
     private String url;
+    private IntroImage img;
     private IntroURL introURL;
 
     /**
@@ -44,6 +46,15 @@ public class IntroLink extends AbstractTextElement {
             if (parser.hasIntroUrl())
                 introURL = parser.getIntroURL();
         }
+        
+        // There should be at most one img element.
+        NodeList imgElements = element
+                .getElementsByTagName(TAG_IMG);
+        if (imgElements.getLength() > 0) {
+        	img = new IntroImage((Element) imgElements.item(0),
+                    getBundle());
+            img.setParent(this);
+        }          
     }
 
     /**
@@ -79,4 +90,10 @@ public class IntroLink extends AbstractTextElement {
         return AbstractIntroElement.LINK;
     }
 
+	/**
+	 * @return Returns the img.
+	 */
+	public IntroImage getImg() {
+		return img;
+	}
 }

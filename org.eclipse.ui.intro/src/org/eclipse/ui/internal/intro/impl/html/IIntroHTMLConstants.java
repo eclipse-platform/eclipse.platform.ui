@@ -65,6 +65,7 @@ public interface IIntroHTMLConstants {
 	
 	String ANCHOR_CLASS_LINK = "link"; //$NON-NLS-1$
 	String IMAGE_SRC_BLANK = "icons/blank.gif"; //$NON-NLS-1$
+	String IMAGE_CLASS_BG = "background-image"; //$NON-NLS-1$
 	String SPAN_ID_PRESENTATION_TITLE = "presentation-title";  //$NON-NLS-1$
 	String SPAN_ID_PAGE_TITLE = "page-title"; //$NON-NLS-1$
 	String SPAN_CLASS_DIV_LABEL = "div-label"; //$NON-NLS-1$
