@@ -121,7 +121,7 @@
      <actionSet
           id="org.eclipse.help.internal.ui.HelpActionSetExperimental"
           label="Help Experimental"
-          visible="false">
+          visible="true">
 
           <action id="org.eclipse.help.internal.ui.HelpActionExperimental"
                   menubarPath="help/helpEnd"
