@@ -33,7 +33,6 @@ import org.eclipse.ui.internal.dialogs.FileExtensionDialog;
 import org.eclipse.ui.internal.dialogs.SavePerspectiveDialog;
 import org.eclipse.ui.internal.dialogs.SelectPerspectiveDialog;
 import org.eclipse.ui.internal.dialogs.ShowViewDialog;
-import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.dialogs.AboutDialog;
 import org.eclipse.ui.internal.ide.dialogs.SimpleListContentProvider;
 import org.eclipse.ui.internal.registry.PerspectiveRegistry;
@@ -55,8 +54,7 @@ public class UIDialogsAuto extends TestCase {
 
 	public void testAbout() {
 		Dialog dialog = null;
-		IDEWorkbenchPlugin plugin = IDEWorkbenchPlugin.getDefault();
-		dialog = new AboutDialog(getWorkbench().getActiveWorkbenchWindow(), plugin.getPrimaryInfo(), plugin.getFeatureInfos());
+		dialog = new AboutDialog(getShell());
 		DialogCheck.assertDialogTexts(dialog, this);
 	}
 	public void testAddProjects() {

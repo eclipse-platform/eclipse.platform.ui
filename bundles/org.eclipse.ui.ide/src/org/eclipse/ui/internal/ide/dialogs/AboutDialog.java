@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,12 +8,15 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.ui.internal.ide.dialogs;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedList;
 
+import org.eclipse.core.runtime.IBundleGroup;
+import org.eclipse.core.runtime.IBundleGroupProvider;
+import org.eclipse.core.runtime.IProduct;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
@@ -32,9 +35,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.internal.AboutInfo;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.ide.AboutBundleGroupData;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IHelpContextIds;
 
@@ -42,7 +44,7 @@ import org.eclipse.ui.internal.ide.IHelpContextIds;
  * Displays information about the product.
  *
  * @private
- *		This class is internal to the workbench and must not be called outside the workbench
+ *		this class is internal to the ide
  */
 public class AboutDialog extends ProductInfoDialog {
 	private final static int MAX_IMAGE_WIDTH_FOR_TEXT = 250;
@@ -50,108 +52,125 @@ public class AboutDialog extends ProductInfoDialog {
 	private final static int PLUGINS_ID = IDialogConstants.CLIENT_ID + 2;
 	private final static int INFO_ID = IDialogConstants.CLIENT_ID + 3;
 
-	/**
-	 * About info for the primary feature.
-	 * Private field used in inner class.
-	 * @issue org.eclipse.ui.internal.AboutInfo - illegal reference to generic workbench internals
-	 */
-	/* package */ AboutInfo primaryInfo;
-
-	/**
-	 * About info for the all features.
-	 * Private field used in inner class.
-	 * @issue org.eclipse.ui.internal.AboutInfo - illegal reference to generic workbench internals
-	 */
-	/* package */ AboutInfo[] featureInfos;
-	private Image image; //image to display on dialog
+	private String productName;
+	private AboutBundleGroupData[] bundleGroupInfos;
 
 	private ArrayList images = new ArrayList();
+	private AboutFeaturesButtonManager buttonManager = new AboutFeaturesButtonManager();
+
+    // TODO should the styled text be disposed? if not then it likely
+    //      doesn't need to be a member
 	private StyledText text;
 
 	/**
-	 * Create an instance of the AboutDialog
+	 * Create an instance of the AboutDialog for the given window.
 	 */
-	public AboutDialog(
-		IWorkbenchWindow window,
-		AboutInfo primaryInfo,
-		AboutInfo[] featureInfos) {
-		super(window.getShell());
-		this.primaryInfo = primaryInfo;
-		this.featureInfos = featureInfos;
+	public AboutDialog(Shell parentShell) {
+	    super(parentShell);
+
+	    IProduct product = Platform.getProduct();
+	    IBundleGroupProvider[] providers = Platform.getBundleGroupProviders();
+	    
+		String productId = ""; //$NON-NLS-1$
+        if (product == null)
+            productName = IDEWorkbenchMessages
+                    .getString("AboutDialog.defaultProductName"); //$NON-NLS-1$
+        else {
+            productId = product.getId();
+            productName = product.getName();
+        }
+
+        // create a descriptive object for each BundleGroup, putting the primary
+        // first if it can be found
+        LinkedList groups = new LinkedList();
+        if (providers != null)
+            for (int i = 0; i < providers.length; ++i) {
+                IBundleGroup[] bundleGroups = providers[i].getBundleGroups();
+                for (int j = 0; j < bundleGroups.length; ++j) {
+                    AboutBundleGroupData info = new AboutBundleGroupData(
+                                bundleGroups[j]);
+
+                    // if there's a bundle with the same id as the product,
+                    // assume its the primary bundle and put it first
+                    if (info.getId().equals(productId))
+                        groups.addFirst(info);
+                    else
+                        groups.add(info);
+                }
+            }
+        bundleGroupInfos = (AboutBundleGroupData[]) groups
+                .toArray(new AboutBundleGroupData[0]);
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on Dialog.
-	 */
-	protected void buttonPressed(int buttonId) {
-		switch (buttonId) {
-			case FEATURES_ID :
-				new AboutFeaturesDialog(getShell(), primaryInfo, featureInfos)
-					.open();
-				return;
-			case PLUGINS_ID :
-				new AboutPluginsDialog(getShell(), primaryInfo).open();
-				return;
-			case INFO_ID :
-				new SystemSummaryDialog(getShell()).open();
-				return;
-		}
-
-		super.buttonPressed(buttonId);
-	}
+	/*
+     * (non-Javadoc) Method declared on Dialog.
+     */
+    protected void buttonPressed(int buttonId) {
+        switch (buttonId) {
+        case FEATURES_ID:
+            new AboutFeaturesDialog(getShell(), productName, bundleGroupInfos).open();
+            break;
+        case PLUGINS_ID:
+            new AboutPluginsDialog(getShell(), productName).open();
+            break;
+        case INFO_ID:
+            new SystemSummaryDialog(getShell()).open();
+            break;
+        default:
+            super.buttonPressed(buttonId);
+            break;
+        }
+    }
 
 	public boolean close() {
-		//get rid of the image that was displayed on the left-hand side of the Welcome dialog
-		if (image != null) {
-			image.dispose();
-		}
-		for (int i = 0; i < images.size(); i++) {
-			((Image) images.get(i)).dispose();
-		}
-		return super.close();
-	}
-	/* (non-Javadoc)
-	 * Method declared on Window.
-	 */
-	protected void configureShell(Shell newShell) {
-		super.configureShell(newShell);
-		String name = null;
-		if (primaryInfo != null) {
-			name = primaryInfo.getProductName();
-		}
-		if (name != null) {
-			newShell.setText(IDEWorkbenchMessages.format("AboutDialog.shellTitle", new Object[] { name })); //$NON-NLS-1$
-		}
-		WorkbenchHelp.setHelp(newShell, IHelpContextIds.ABOUT_DIALOG);
-	}
+        // dispose all images
+        for (int i = 0; i < images.size(); ++i) {
+            Image image = (Image) images.get(i);
+            image.dispose();
+        }
+
+        return super.close();
+    }
+
+	/*
+     * (non-Javadoc) Method declared on Window.
+     */
+    protected void configureShell(Shell newShell) {
+        super.configureShell(newShell);
+        newShell.setText(IDEWorkbenchMessages.format("AboutDialog.shellTitle", //$NON-NLS-1$
+                new Object[] { productName }));
+        WorkbenchHelp.setHelp(newShell, IHelpContextIds.ABOUT_DIALOG);
+    }
+
 	/**
-	 * Add buttons to the dialog's button bar.
-	 *
-	 * Subclasses should override.
-	 *
-	 * @param parent the button bar composite
-	 */
-	protected void createButtonsForButtonBar(Composite parent) {
-		parent.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+     * Add buttons to the dialog's button bar.
+     * 
+     * Subclasses should override.
+     * 
+     * @param parent
+     *            the button bar composite
+     */
+    protected void createButtonsForButtonBar(Composite parent) {
+        parent.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		createButton(parent, FEATURES_ID, IDEWorkbenchMessages.getString("AboutDialog.featureInfo"), false); //$NON-NLS-1$
-		createButton(parent, PLUGINS_ID, IDEWorkbenchMessages.getString("AboutDialog.pluginInfo"), false); //$NON-NLS-1$
-		createButton(parent, INFO_ID, IDEWorkbenchMessages.getString("AboutDialog.systemInfo"), false); //$NON-NLS-1$
+        createButton(parent, FEATURES_ID, IDEWorkbenchMessages
+                .getString("AboutDialog.featureInfo"), false); //$NON-NLS-1$
+        createButton(parent, PLUGINS_ID, IDEWorkbenchMessages
+                .getString("AboutDialog.pluginInfo"), false); //$NON-NLS-1$
+        createButton(parent, INFO_ID, IDEWorkbenchMessages
+                .getString("AboutDialog.systemInfo"), false); //$NON-NLS-1$
 
-		Label l = new Label(parent, SWT.NONE);
-		l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		GridLayout layout = (GridLayout) parent.getLayout();
-		layout.numColumns++;
-		layout.makeColumnsEqualWidth = false;
+        Label l = new Label(parent, SWT.NONE);
+        l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        GridLayout layout = (GridLayout) parent.getLayout();
+        layout.numColumns++;
+        layout.makeColumnsEqualWidth = false;
 
-		Button b =
-			createButton(
-				parent,
-				IDialogConstants.OK_ID,
-				IDialogConstants.OK_LABEL,
-				true);
-		b.setFocus();
-	}
+        Button b = createButton(parent, IDialogConstants.OK_ID,
+                IDialogConstants.OK_LABEL, true);
+        b.setFocus();
+    }
+
 	/**
 	 * Creates and returns the contents of the upper part 
 	 * of the dialog (above the button bar).
@@ -162,37 +181,42 @@ public class AboutDialog extends ProductInfoDialog {
 	 * @return the dialog area control
 	 */
 	protected Control createDialogArea(Composite parent) {
-		setHandCursor(new Cursor(parent.getDisplay(), SWT.CURSOR_HAND));
-		setBusyCursor(new Cursor(parent.getDisplay(), SWT.CURSOR_WAIT));
-		getShell().addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				if (getHandCursor() != null) {
-					getHandCursor().dispose();
-				}
-				if (getBusyCursor() != null) {
-					getBusyCursor().dispose();
-				}
-			}
-		});
+		final Cursor hand = new Cursor(parent.getDisplay(), SWT.CURSOR_HAND);
+        final Cursor busy = new Cursor(parent.getDisplay(), SWT.CURSOR_WAIT);
+        setHandCursor(hand);
+        setBusyCursor(busy);
+        getShell().addDisposeListener(new DisposeListener() {
+            public void widgetDisposed(DisposeEvent e) {
+                setHandCursor(null);
+                hand.dispose();
+                setBusyCursor(null);
+                busy.dispose();
+            }
+        });
 
-		ImageDescriptor imageDescriptor = null;
-		if (primaryInfo != null) {
-			imageDescriptor = primaryInfo.getAboutImage(); // may be null
-		}
-		if (imageDescriptor != null) {
-			image = imageDescriptor.createImage();
-		}
-		if (image == null
-			|| image.getBounds().width <= MAX_IMAGE_WIDTH_FOR_TEXT) {
-			// show text
-			String aboutText = null;
-			if (primaryInfo != null) {
-				aboutText = primaryInfo.getAboutText(); // may be null
-			}
-			if (aboutText != null) {
-				// get an about item
-				setItem(scan(aboutText));
-			}
+		// if there is product info (index 0), then brand the about box
+		Image aboutImage = null;
+        if (bundleGroupInfos.length > 0) {
+        	AboutBundleGroupData productInfo = bundleGroupInfos[0];
+
+	        ImageDescriptor imageDescriptor = null;
+	        if (productInfo != null)
+	        	imageDescriptor = productInfo.getAboutImage();
+	        if (imageDescriptor != null)
+	            aboutImage = imageDescriptor.createImage();
+
+			// if the about image is small enough, then show the text
+			if (aboutImage == null
+                    || aboutImage.getBounds().width <= MAX_IMAGE_WIDTH_FOR_TEXT) {
+	            String aboutText = null;
+	            if (productInfo != null)
+	            	aboutText = productInfo.getAboutText();
+	            if (aboutText != null)
+	            	setItem(scan(aboutText));
+	        }
+
+			if(aboutImage != null)
+			    images.add(aboutImage);
 		}
 
 		// page group
@@ -205,7 +229,7 @@ public class AboutDialog extends ProductInfoDialog {
 		// the image & text	
 		Composite topContainer = new Composite(outer, SWT.NONE);
 		layout = new GridLayout();
-		layout.numColumns = (image == null || getItem() == null ? 1 : 2);
+		layout.numColumns = (aboutImage == null || getItem() == null ? 1 : 2);
 		layout.marginWidth = 0;
 		topContainer.setLayout(layout);
 		GridData data = new GridData();
@@ -214,14 +238,14 @@ public class AboutDialog extends ProductInfoDialog {
 		topContainer.setLayoutData(data);
 
 		//image on left side of dialog
-		if (image != null) {
+		if (aboutImage != null) {
 			Label imageLabel = new Label(topContainer, SWT.NONE);
 			data = new GridData();
 			data.horizontalAlignment = GridData.FILL;
 			data.verticalAlignment = GridData.BEGINNING;
 			data.grabExcessHorizontalSpace = false;
 			imageLabel.setLayoutData(data);
-			imageLabel.setImage(image);
+			imageLabel.setImage(aboutImage);
 		}
 
 		if (getItem() != null) {
@@ -247,45 +271,8 @@ public class AboutDialog extends ProductInfoDialog {
 		data.horizontalAlignment = GridData.FILL;
 		bar.setLayoutData(data);
 
-		// feature images
-		Composite featureContainer = new Composite(outer, SWT.NONE);
-		RowLayout rowLayout = new RowLayout();
-		rowLayout.wrap = true;
-		featureContainer.setLayout(rowLayout);
-		data = new GridData();
-		data.horizontalAlignment = GridData.FILL;
-		featureContainer.setLayoutData(data);
-
-		final AboutInfo[] infoArray = getFeaturesWithImages();
-		for (int i = 0; i < infoArray.length; i++) {
-			ImageDescriptor desc = infoArray[i].getFeatureImage();
-			Image featureImage = null;
-			if (desc != null) {
-				Button button =
-					new Button(featureContainer, SWT.FLAT | SWT.PUSH);
-				button.setData(infoArray[i]);
-				featureImage = desc.createImage();
-				images.add(featureImage);
-				button.setImage(featureImage);
-				String name = infoArray[i].getProviderName();
-				if (name == null) {
-					name = ""; //$NON-NLS-1$
-				}
-				button.setToolTipText(name);
-				button.addSelectionListener(new SelectionAdapter() {
-					public void widgetSelected(SelectionEvent event) {
-						AboutFeaturesDialog d =
-							new AboutFeaturesDialog(
-								getShell(),
-								primaryInfo,
-								featureInfos);
-						d.setInitialSelection(
-							(AboutInfo) event.widget.getData());
-						d.open();
-					}
-				});
-			}
-		}
+		// add image buttons for bundle groups that have them
+		createFeatureImageButtonRow(outer);
 
 		// spacer
 		bar = new Label(outer, SWT.NONE);
@@ -296,51 +283,49 @@ public class AboutDialog extends ProductInfoDialog {
 		return outer;
 	}
 
-	/**
-	 * Returns the feature info for non-primary features with a feature image.
-	 * If several features share the same image bitmap, include only one per
-	 * provider.
-	 */
-	private AboutInfo[] getFeaturesWithImages() {
-		// quickly exclude any that do not have a provider name and image
-		List infoList = new ArrayList(featureInfos.length + 1);
+	private void createFeatureImageButtonRow(Composite parent) {
+		// feature images
+		Composite featureContainer = new Composite(parent, SWT.NONE);
+		RowLayout rowLayout = new RowLayout();
+		rowLayout.wrap = true;
+		featureContainer.setLayout(rowLayout);
+		GridData data = new GridData();
+		data.horizontalAlignment = GridData.FILL;
+		featureContainer.setLayoutData(data);
 
-		// make sure primary is first
-		if (primaryInfo != null && primaryInfo.getProviderName() != null
-				&& primaryInfo.getFeatureImageName() != null) {
-			infoList.add(primaryInfo);
-		}
+		// create buttons for all the rest
+		for (int i = 0; i < bundleGroupInfos.length; i++)
+			createFeatureButton(featureContainer, bundleGroupInfos[i]);
+	}
 
-		for (int i = 0; i < featureInfos.length; i++) {
-			if (featureInfos[i].getProviderName() != null
-				&& featureInfos[i].getFeatureImageName() != null) {
-				infoList.add(featureInfos[i]);
-			}
-		}
-		List keepers = new ArrayList(infoList.size());
+	private Button createFeatureButton(Composite parent,
+            final AboutBundleGroupData info) {
+        if (!buttonManager.add(info))
+			return null;
 
-		// precompute CRCs of all the feature images
-		long[] featureImageCRCs = new long[infoList.size()];
-		for (int i = 0; i < infoList.size(); i++) {
-			AboutInfo info = (AboutInfo) infoList.get(i);
-			featureImageCRCs[i] = info.getFeatureImageCRC().longValue();
-		}
-		for (int i = 0; i < infoList.size(); i++) {
-			AboutInfo outer = (AboutInfo) infoList.get(i);
-			boolean found = false;
-			// see whether we already have one for same provider and same image
-			for (int j = 0; j < keepers.size(); j++) {
-				AboutInfo k = (AboutInfo) keepers.get(j);
-				if (k.getProviderName().equals(outer.getProviderName())
-					&& featureImageCRCs[j] == featureImageCRCs[i]) {
-					found = true;
-					break;
-				}
-			}
-			if (!found) {
-				keepers.add(outer);
-			}
-		}
-		return (AboutInfo[]) keepers.toArray(new AboutInfo[keepers.size()]);
+        ImageDescriptor desc = info.getFeatureImage();
+        Image featureImage = null;
+
+	    Button button = new Button(parent, SWT.FLAT | SWT.PUSH);
+        button.setData(info);
+        featureImage = desc.createImage();
+        images.add(featureImage);
+        button.setImage(featureImage);
+        button.setToolTipText(info.getProviderName());
+        button.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent event) {
+                AboutBundleGroupData[] groupInfos = buttonManager
+                        .getRelatedInfos(info);
+				AboutBundleGroupData selection = (AboutBundleGroupData) event.widget
+                        .getData();
+
+                AboutFeaturesDialog d = new AboutFeaturesDialog(getShell(),
+                        productName, groupInfos);
+                d.setInitialSelection(selection);
+                d.open();
+            }
+        });
+
+		return button;
 	}
 }
