@@ -32,6 +32,13 @@ import org.eclipse.debug.internal.core.DebugCoreMessages;
  * terminate event for a parent signals that all children have been terminated.
  * </p>
  * <p>
+ * A debug model may define model specific events by specifying a debug event
+ * kind of <code>MODEL_SPECIFIC</code>. A model specific event is identified by the
+ * event source (i.e. by the debug model that generated the event). The detail of
+ * a model specific event is client defined. Note that model specific events are
+ * not understood by the debug platform, and are thus ignored.
+ * </p>
+ * <p>
  * The generic <code>CHANGE</code> event can be fired at any time by any element.
  * Generally, a client of a debug model, such as as a UI, can get sufficient
  * information to update by listening/responding to the other event kinds. However,
@@ -158,6 +165,14 @@ public final class DebugEvent extends EventObject {
 	 * Change event kind.
 	 */
 	public static final int CHANGE= 0x0010;
+	
+	/**
+	 * Model specific event kind. The detail codes
+	 * for a model specific event are client defined.
+	 * 
+	 * @since 3.0
+	 */
+	public static final int MODEL_SPECIFIC= 0x0020;	
 
 	/**
 	 * Step start detail. Indicates a thread was resumed by a step
@@ -253,6 +268,14 @@ public final class DebugEvent extends EventObject {
 	 * this class.
 	 */
 	private int fDetail= UNSPECIFIED;
+	
+	/**
+	 * Client defined data field.
+	 * 
+	 * @since 3.0
+	 */
+	private Object fData = null;
+	
 	/**
 	 * Constructs a new debug event of the given kind with a detail code of
 	 * <code>UNSPECIFIED</code>.
@@ -276,9 +299,9 @@ public final class DebugEvent extends EventObject {
 	 */
 	public DebugEvent(Object eventSource, int kind, int detail) {
 		super(eventSource);
-		if ((kind & (RESUME | SUSPEND | CREATE | TERMINATE | CHANGE)) == 0)
+		if ((kind & (RESUME | SUSPEND | CREATE | TERMINATE | CHANGE | MODEL_SPECIFIC)) == 0)
 			throw new IllegalArgumentException(DebugCoreMessages.getString("DebugEvent.illegal_kind")); //$NON-NLS-1$
-		if (detail != UNSPECIFIED && (detail & (STEP_END | STEP_INTO | STEP_OVER | STEP_RETURN | BREAKPOINT | CLIENT_REQUEST |EVALUATION | EVALUATION_IMPLICIT | STATE | CONTENT)) == 0)
+		if (kind != MODEL_SPECIFIC && detail != UNSPECIFIED && (detail & (STEP_END | STEP_INTO | STEP_OVER | STEP_RETURN | BREAKPOINT | CLIENT_REQUEST |EVALUATION | EVALUATION_IMPLICIT | STATE | CONTENT)) == 0)
 			throw new IllegalArgumentException(DebugCoreMessages.getString("DebugEvent.illegal_detail")); //$NON-NLS-1$
 		fKind= kind;
 		fDetail= detail;
@@ -331,6 +354,26 @@ public final class DebugEvent extends EventObject {
 	}	
 	
 	/**
+	 * Sets this event's application defined data.
+	 * 
+	 * @param data application defined data
+	 * @since 3.0
+	 */
+	public void setData(Object data) {
+		fData = data;
+	}
+	
+	/**
+	 * Returns this event's application defined data, or <code>null</code> if none
+	 * 
+	 * @return appliation defined data, or <code>null</code> if none
+	 * @since 3.0
+	 */
+	public Object getData() {
+		return fData;
+	}
+	
+	/**
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
@@ -359,6 +402,9 @@ public final class DebugEvent extends EventObject {
 				break;
 			case UNSPECIFIED:
 				buf.append("UNSPECIFIED"); //$NON-NLS-1$
+				break;
+			case MODEL_SPECIFIC:
+				buf.append("MODEL_SPECIFIC"); //$NON-NLS-1$
 				break;
 		}
 		buf.append(", "); //$NON-NLS-1$
@@ -395,6 +441,10 @@ public final class DebugEvent extends EventObject {
 				break;					
 			case UNSPECIFIED:
 				buf.append("UNSPECIFIED"); //$NON-NLS-1$
+				break;
+			default:
+				// model specific
+				buf.append(getDetail());
 				break;
 		}
 		buf.append("]"); //$NON-NLS-1$
