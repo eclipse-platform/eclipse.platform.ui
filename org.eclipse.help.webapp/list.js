@@ -173,7 +173,7 @@ function scrollIntoView(node)
 		if (nodeBottom <= pageBottom)
 			return; // already in view
 		else
-			scroll = nodeBottom - pageBottom;
+			scroll = nodeBottom - pageBottom/2;
 	}
 	else
 	{
