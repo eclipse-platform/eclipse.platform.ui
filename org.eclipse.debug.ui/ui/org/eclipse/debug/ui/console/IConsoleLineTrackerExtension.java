@@ -12,7 +12,7 @@ package org.eclipse.debug.ui.console;
 
 /**
  * An extension to the console line tracker interface that console line
- * trackers may implement to be notified when output the console is complete.
+ * trackers may implement to be notified when output from the console is complete.
  * <p>
  * Clients may implement this interface.
  * </p>
