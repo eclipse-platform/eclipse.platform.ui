@@ -84,7 +84,10 @@ public class HistoryItem implements IEncodedStreamContentAccessor, ITypedElement
 	 * @see org.eclipse.compare.IEncodedStreamContentAccessor#getCharset()
 	 */
 	public String getCharset() throws CoreException {
-		return fFileState.getCharset();
+	    String charset= fFileState.getCharset();
+	    if (charset == null && fBase instanceof IEncodedStreamContentAccessor)
+	        charset= ((IEncodedStreamContentAccessor)fBase).getCharset();
+		return charset;
 	}
 }
 
