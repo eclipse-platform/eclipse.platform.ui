@@ -69,7 +69,11 @@ public class ProjectCreator {
 			for (int i = 0; i < classpaths.length; i++) {
 				String cp = classpaths[i];
 				File classpathEntry= new File(cp);
-				addLibrary(javaProject, new Path(classpathEntry.getAbsolutePath()));
+				if (classpathEntry.isFile()) {
+					addLibrary(javaProject, new Path(classpathEntry.getAbsolutePath()));
+				} else {
+					addContainer(javaProject, new Path(classpathEntry.getAbsolutePath()));
+				}
 			}
 		} catch (BuildException be) {
 			IStatus status= new Status(IStatus.ERROR, AntUIPlugin.PI_ANTUI, IStatus.OK, MessageFormat.format(DataTransferMessages.getString("ProjectCreator.0"), new String[]{be.getLocalizedMessage()}), null); //$NON-NLS-1$
@@ -172,18 +176,21 @@ public class ProjectCreator {
 	private void addVariableEntry(IJavaProject jproject, IPath path, IPath sourceAttachPath, IPath sourceAttachRoot) throws JavaModelException {
 		IClasspathEntry cpe= JavaCore.newVariableEntry(path, sourceAttachPath, sourceAttachRoot);
 		addToClasspath(jproject, cpe);
-		IPath resolvedPath= JavaCore.getResolvedVariablePath(path);
-		if (resolvedPath != null) {
-			jproject.getPackageFragmentRoot(resolvedPath.toString());
-		}
 	}
 	
 	/**
-	 * Adds a library entry with source attchment to a IJavaProject.
+	 * Adds a library entry to an IJavaProject.
 	 */			
 	private void addLibrary(IJavaProject jproject, IPath path) throws JavaModelException {
 		IClasspathEntry cpe= JavaCore.newLibraryEntry(path, null, null);
 		addToClasspath(jproject, cpe);
-		jproject.getPackageFragmentRoot(path.toString());
+	}
+	
+	/**
+	 * Adds a container entry to an IJavaProject.
+	 */			
+	private void addContainer(IJavaProject jproject, IPath path) throws JavaModelException {
+		IClasspathEntry cpe= JavaCore.newContainerEntry(path);
+		addToClasspath(jproject, cpe);
 	}
 }
