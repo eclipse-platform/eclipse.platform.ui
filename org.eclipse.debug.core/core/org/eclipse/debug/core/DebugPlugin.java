@@ -355,7 +355,7 @@ public class DebugPlugin extends Plugin {
 		if (lock != null) {
 			scheduler = (IScheduler)fSchedulers.get(lock);
 			if (scheduler == null) {
-				IStatus status = new Status(IStatus.ERROR, getUniqueIdentifier(), INTERNAL_ERROR, "Unable to schedule runnable for execution - associated lock does not have a registered scheduler.", null);
+				IStatus status = new Status(IStatus.ERROR, getUniqueIdentifier(), INTERNAL_ERROR, DebugCoreMessages.getString("DebugPlugin.Unable_to_schedule"), null); //$NON-NLS-1$
 				throw new CoreException(status);
 			}
 			fPendingSchedulers.add(scheduler);
