@@ -1092,9 +1092,9 @@ public IPath getProjectRelativePath();
  * <p>
  * If this resource is an existing project, the returned path will be equal to
  * the location path in the project description.  If this resource is a linked
- * resource, the returned path will be equal to the location path supplied when
- * the linked resource was created.  In all other cases, this method returns
- * the same value as <code>getLocation</code>.
+ * resource in an open project, the returned path will be equal to the location
+ * path supplied when the linked resource was created.  In all other cases, this
+ * method returns the same value as <code>getLocation</code>.
  * </p>
  * 
  * @return the raw path of this resource in the local file system,  or

@@ -54,8 +54,9 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	/**
 	 * @see org.eclipse.core.resources.IPathVariableManager#setValue
 	 */
-	public void setValue(String varName, IPath newValue) {
+	public void setValue(String varName, IPath newValue) throws CoreException {
 		checkIsValidName(varName);
+		checkIsValidValue(newValue);
 		IPath currentValue = getValue(varName);
 
 		boolean variableExists = currentValue != null;
@@ -66,12 +67,22 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 		if (variableExists && currentValue.equals(newValue))
 			return;
 
-		if (newValue == null || Path.EMPTY.equals(newValue))
+		if (newValue == null)
 			removeVariable(varName);
 		else if (variableExists)
 			updateVariable(varName, newValue);
 		else
 			createVariable(varName, newValue);
+	}
+	/**
+	 * Throws a runtime exception if the given name is not valid as a path
+	 * variable value.
+	 */
+	private void checkIsValidValue(IPath newValue) throws CoreException {
+		if (newValue == null || newValue.isAbsolute())
+			return;
+		IStatus status = new ResourceStatus(ResourceStatus.INVALID_VALUE, Policy.bind("pathvar.invalidValue")); //$NON-NLS-1$
+		throw new CoreException(status);
 	}
 	/**
 	 * Return a key to use in the Preferences.
@@ -214,12 +225,13 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 		return ResourceStatus.OK_STATUS;
 	}
 	/**
-	 * Throws a runtime exception if the given name is not value as a path
+	 * Throws a runtime exception if the given name is not valid as a path
 	 * variable name.
 	 */
-	private void checkIsValidName(String name) {
-		if (!validateName(name).isOK())
-			throw new IllegalArgumentException();
+	private void checkIsValidName(String name) throws CoreException {
+		IStatus status = validateName(name);
+		if (!status.isOK())
+			throw new CoreException(status);
 	}
 	/**
 	 * @see org.eclipse.core.internal.resources.IManager#startup
