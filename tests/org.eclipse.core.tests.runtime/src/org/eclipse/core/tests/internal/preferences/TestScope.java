@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.preferences;
 
+import java.util.Properties;
 import org.eclipse.core.internal.preferences.EclipsePreferences;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IScopeContext;
+import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * @since 3.0
@@ -84,5 +86,9 @@ public class TestScope extends EclipsePreferences implements IScopeContext {
 
 	void setDirty(boolean value) {
 		dirty = value;
+	}
+
+	Properties toProperties() throws BackingStoreException {
+		return convertToProperties(new Properties(), "");
 	}
 }
