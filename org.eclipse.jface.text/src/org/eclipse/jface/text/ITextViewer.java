@@ -219,28 +219,30 @@ public interface ITextViewer {
 	
 	/**
 	 * Sets the given document as this viewer's model and 
-	 * makes the specified region visible in the presentation. An appropriate
+	 * exposes the specified region. An appropriate
 	 * <code>TextEvent</code> is issued. The text event does not carry a 
 	 * related document event. This method is a convenience method for
 	 * <code>setDocument(document);setVisibleRegion(offset, length)</code>.
 	 *
 	 * @param document the new input document
-	 * @param visibleRegionOffset the offset of the visible region
-	 * @param visibleRegionLength the length of the visible region
+	 * @param modelRangeOffset the offset of the model range
+	 * @param modelRangeLength the length of the model range
 	 */
-	void setDocument(IDocument document, int visibleRegionOffset, int visibleRegionLength);
+	void setDocument(IDocument document, int modelRangeOffset, int modelRangeLength);
 	
 	/**
 	 * Sets the region of this viewer's document which will be visible in the presentation.
 	 *
 	 * @param offset the offset of the visible region
 	 * @param length the length of the visible region
+	 * @deprecated use <code>ITextViewerExtension5</code> instead
 	 */
 	void setVisibleRegion(int offset, int length);
 	
 	/**
 	 * Resets the region of this viewer's document which is visible in the presentation.
 	 * Afterwards, the whole document is presented again.
+	 * @deprecated use <code>ITextViewerExtension5</code> instead
 	 */
 	void resetVisibleRegion();
 	
@@ -250,6 +252,7 @@ public interface ITextViewer {
 	 * if the document has been modified since then.
 	 *
 	 * @return this viewer's current visible region
+	 * @deprecated use <code>ITextViewerExtension5</code> instead
 	 */
 	IRegion getVisibleRegion();
 	
@@ -257,6 +260,7 @@ public interface ITextViewer {
 	 * Returns whether a given range overlaps with the visible region of this viewer's document.
 	 *
 	 * @return <code>true</code> if the specified range overlaps with the visible region
+	 * @deprecated use <code>ITextViewerExtension5</code> instead
 	 */
 	boolean overlapsWithVisibleRegion(int offset, int length);	
 	
