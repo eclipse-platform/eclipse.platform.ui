@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 
 import org.eclipse.jface.dialogs.Dialog;
@@ -39,6 +40,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.activities.ActivitiesPreferencePage;
 import org.eclipse.ui.activities.IActivity;
 import org.eclipse.ui.activities.ICategory;
 import org.eclipse.ui.activities.ICategoryActivityBinding;
@@ -252,15 +254,22 @@ public class ActivityEnabler {
 	 */
 	protected Text descriptionText;
 
+	private Properties strings;
+
 	/**
 	 * Create a new instance.
 	 * 
 	 * @param activitySupport
 	 *            the <code>IWorkbenchActivitySupport</code> from which to
 	 *            draw the <code>IActivityManager</code>.
+	 * @param strings
+	 *            map of strings to use. See the constants on
+	 *            {@link org.eclipse.ui.activities.ActivitiesPreferencePage} for
+	 *            details.
 	 */
-	public ActivityEnabler(IWorkbenchActivitySupport activitySupport) {
+	public ActivityEnabler(IWorkbenchActivitySupport activitySupport, Properties strings) {
 		this.activitySupport = activitySupport;
+		this.strings = strings;
 	}
 
 	/**
@@ -290,7 +299,7 @@ public class ActivityEnabler {
 		}
 
 		Label label = new Label(c, SWT.NONE);
-		label.setText(ActivityMessages.ActivityEnabler_activities); //$NON-NLS-1$
+		label.setText(strings.getProperty(ActivitiesPreferencePage.ACTIVITY_NAME, ActivityMessages.ActivityEnabler_activities) + ':'); //$NON-NLS-1$
 		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		label.setFont(parent.getFont());
 

@@ -8,8 +8,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.dialogs;
+package org.eclipse.ui.activities;
 
+import java.util.Hashtable;
+import java.util.Properties;
+
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -25,19 +30,43 @@ import org.eclipse.ui.internal.activities.ws.ActivityEnabler;
 import org.eclipse.ui.internal.activities.ws.ActivityMessages;
 
 /**
- * Preference page that allows configuration of the activity set.
-
- * @since 3.0
+ * Preference page that allows configuration of the activity set.  This page may be used
+ * by product developers to provide basic ability to tweak the enabled activity set.  You may
+ * provide the certain strings to this class via method #2 of IExecutableExtension.
+ * <p>
+ * <strong>EXPERIMENTAL</strong>
+ * </p>
+ * @see #ACTIVITY_NAME
+ * @see #ACTIVITY_PROMPT_BUTTON
+ * @see #ACTIVITY_PROMPT_BUTTON_TOOLTIP
+ * @since 3.1
  */
 public class ActivitiesPreferencePage extends PreferencePage implements
-        IWorkbenchPreferencePage {
+        IWorkbenchPreferencePage, IExecutableExtension {
 
-    private Button activityPromptButton;
+	/**
+	 * The name to use for the activities.  Ie: "Capabilities".
+	 */
+    public static final String ACTIVITY_NAME = "activityName"; //$NON-NLS-1$
+    
+	/**
+	 * The label to be used for the prompt button. Ie: "&Prompt when enabling capabilities".
+	 */    
+    public static final String ACTIVITY_PROMPT_BUTTON = "activityPromptButton"; //$NON-NLS-1$
+    
+	/**
+	 * The tooltip to be used for the prompt button. Ie: "Prompt when a feature is first used that requires enablement of capabilities".
+	 */    
+    public static final String ACTIVITY_PROMPT_BUTTON_TOOLTIP = "activityPromptButtonTooltip"; //$NON-NLS-1$
+    
+	private Button activityPromptButton;
 
     private IWorkbench workbench;
 
     private ActivityEnabler enabler;
-
+    
+    private Properties strings = new Properties();
+    
     /**
      * Create the prompt for activity enablement.
      * 
@@ -45,8 +74,8 @@ public class ActivitiesPreferencePage extends PreferencePage implements
      */
     protected void createActivityPromptPref(Composite composite) {
         activityPromptButton = new Button(composite, SWT.CHECK);
-        activityPromptButton.setText(ActivityMessages.activityPromptButton); 
-        activityPromptButton.setToolTipText(ActivityMessages.activityPromptToolTip);
+        activityPromptButton.setText(strings.getProperty(ACTIVITY_PROMPT_BUTTON, ActivityMessages.activityPromptButton)); 
+        activityPromptButton.setToolTipText(strings.getProperty(ACTIVITY_PROMPT_BUTTON_TOOLTIP, ActivityMessages.activityPromptToolTip));
 
         activityPromptButton.setFont(composite.getFont());
         setActivityButtonState();
@@ -76,7 +105,7 @@ public class ActivitiesPreferencePage extends PreferencePage implements
         activityPromptButton.setLayoutData(data);
 
         data = new GridData(GridData.FILL_BOTH);
-        enabler = new ActivityEnabler(workbench.getActivitySupport());
+        enabler = new ActivityEnabler(workbench.getActivitySupport(), strings);
         enabler.createControl(composite).setLayoutData(data);
 
         return composite;
@@ -113,4 +142,13 @@ public class ActivitiesPreferencePage extends PreferencePage implements
                         IPreferenceConstants.SHOULD_PROMPT_FOR_ENABLEMENT));
         super.performDefaults();
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement, java.lang.String, java.lang.Object)
+	 */
+	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) {
+		if (data instanceof Hashtable) {
+			strings.putAll((Hashtable)data);
+		}		
+	}
 }

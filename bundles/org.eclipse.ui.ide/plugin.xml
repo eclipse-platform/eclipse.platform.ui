@@ -353,11 +353,6 @@
             class="org.eclipse.ui.internal.commands.KeysPreferencePage"
             id="org.eclipse.ui.preferencePages.Keys">
       </page>
-      <page
-            class="org.eclipse.ui.internal.dialogs.ActivitiesPreferencePage"
-            category="org.eclipse.ui.preferencePages.Workbench"
-            name="%PreferencePages.Activities"
-            id="org.eclipse.ui.ide.page1"/>
    </extension>
    <extension
          point="org.eclipse.ui.views">
