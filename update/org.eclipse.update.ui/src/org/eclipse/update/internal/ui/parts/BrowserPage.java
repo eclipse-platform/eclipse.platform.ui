@@ -174,9 +174,7 @@ public class BrowserPage implements IUpdateFormPage {
 	}
 	
 	private void navigate(String url) {
-		System.out.println("Begin navigate...");
 		browser.navigate(url);
-		System.out.println("End navigate.");
 		String [] items = addressCombo.getItems();
 		int loc = -1;
 		String normURL = getNormalizedURL(url);

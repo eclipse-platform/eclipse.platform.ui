@@ -21,6 +21,7 @@ public class TableData {
 	public int indent = 0;
 	public int maxWidth = SWT.DEFAULT;
 	public int maxHeight = SWT.DEFAULT;
+	public int heightHint = SWT.DEFAULT;
 	public boolean grabHorizontal=false;
 	
 	//private

@@ -74,12 +74,8 @@ public class InfoGroup extends ExpandableGroup {
 		view.showText(text);
 	}
 	
-	protected URL resolveURL(URL inputURL) {
-		return inputURL;
-	}
-	
 	private void showURL() {
-		URL url = resolveURL(info.getURL());
+		URL url = info.getURL();
 		view.showURL(url.toString());
 	}
 }

@@ -21,7 +21,7 @@ public class DetailsHistory {
 	public void add(DetailsHistoryItem item) {
 		if (history.isEmpty() ||
 		    history.getLast().equals(item)==false) {
-			System.out.println("Item added: "+item);
+			//System.out.println("Item added: "+item);
 			history.addLast(item);
 			if (history.size() > MAX_SIZE)
 		   		history.removeFirst();
@@ -47,7 +47,7 @@ public class DetailsHistory {
 	public DetailsHistoryItem getNext() {
 		if (hasNext()) {
 			DetailsHistoryItem item = (DetailsHistoryItem)history.get(++current);
-			System.out.println("Next returned: "+item);
+			//System.out.println("Next returned: "+item);
 			return item;
 		}
 		return null;
@@ -55,7 +55,7 @@ public class DetailsHistory {
 	public DetailsHistoryItem getPrevious() {
 		if (hasPrevious()) {
 			DetailsHistoryItem item = (DetailsHistoryItem)history.get(--current);
-			System.out.println("Prev returned: "+item);
+			//System.out.println("Prev returned: "+item);
 			return item;
 		}
 		return null;

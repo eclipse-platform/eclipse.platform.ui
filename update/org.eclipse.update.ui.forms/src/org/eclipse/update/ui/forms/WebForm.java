@@ -173,7 +173,6 @@ public void updateSize() {
 	if (size.x < swidth) size.x = swidth;
 	Rectangle trim = control.computeTrim(0, 0, size.x, size.y);
 	size = new Point(trim.width, trim.height);
-	System.out.println("ssize="+ssize.width+", size="+size.x);
 	control.setSize(size);
 }
 

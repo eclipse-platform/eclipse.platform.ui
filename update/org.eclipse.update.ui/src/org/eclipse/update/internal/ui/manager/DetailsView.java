@@ -67,7 +67,7 @@ private void addWebBrowser() {
 	final BrowserPage browser = new BrowserPage(this);
 	browser.setBrowserListener(new IBrowserListener () {
 		public void downloadComplete(String url) {
-			System.out.println("Complete: inHistory="+inHistory+", url="+url);
+			//System.out.println("Complete: inHistory="+inHistory+", url="+url);
 			if (inHistory) {
 				if (!url.equals(browser.getBrowser().getLocationName()))
 				   	inHistory = false;

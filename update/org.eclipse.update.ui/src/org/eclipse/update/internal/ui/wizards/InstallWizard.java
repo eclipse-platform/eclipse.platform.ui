@@ -17,6 +17,7 @@ public class InstallWizard extends Wizard {
 	private ReviewPage reviewPage;
 	private TargetPage targetPage;
 	private ChecklistJob job;
+	private boolean successfulInstall=false;
 
 	public InstallWizard(ChecklistJob job) {
 		setDialogSettings(UpdateUIPlugin.getDefault().getDialogSettings());
@@ -24,6 +25,10 @@ public class InstallWizard extends Wizard {
 		setForcePreviousAndNextButtons(true);
 		setNeedsProgressMonitor(true);
 		this.job = job;
+	}
+	
+	public boolean isSuccessfulInstall() {
+		return successfulInstall;
 	}
 	
 	private boolean hasLicense() {
@@ -41,7 +46,9 @@ public class InstallWizard extends Wizard {
 		final ISite targetSite = targetPage.getTargetSite();
 			public void run(IProgressMonitor monitor) {
 				try {
+					successfulInstall=false;
 					performInstall(targetSite, monitor);
+					successfulInstall = true;
 				} catch (CoreException e) {
 					UpdateUIPlugin.logException(e);
 				} finally {

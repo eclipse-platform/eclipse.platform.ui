@@ -21,11 +21,13 @@ import org.eclipse.update.internal.ui.wizards.*;
 import org.eclipse.jface.wizard.*;
 import java.util.*;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.resource.*;
+import org.eclipse.jface.resource.*;
+import org.eclipse.jface.dialogs.MessageDialog;
 public class DetailsForm extends UpdateWebForm {
 private Label imageLabel;
 private Label providerLabel;
 private Label versionLabel;
+private Label installedVersionLabel;
 private Label sizeLabel;
 private Label osLabel;
 private Label wsLabel;
@@ -35,11 +37,14 @@ private URL infoLinkURL;
 private Label infoLinkLabel;
 private InfoGroup licenseGroup;
 private InfoGroup copyrightGroup;
+private ReflowGroup supportedPlatformsGroup;
 private Image providerImage;
 private Button doButton;
 private IFeature currentFeature;
 private ModelListener modelListener;
 private Hashtable imageCache = new Hashtable();
+private HyperlinkHandler sectionHandler;
+private boolean alreadyInstalled;
 
 class ModelListener implements IUpdateModelChangedListener {
 	/**
@@ -100,15 +105,6 @@ class ReflowInfoGroup extends InfoGroup {
 	public ReflowInfoGroup(DetailsView view) {
 		super(view);
 	}
-	
-	protected URL resolveURL(URL inputURL) {
-		try {
-			return org.eclipse.update.internal.core.UpdateManagerUtils.resolveAsLocal(inputURL);
-		}
-		catch (Exception e) {
-			return inputURL;
-		}
-	}
 	public void expanded() {
 		reflow();
 		updateSize();
@@ -116,6 +112,25 @@ class ReflowInfoGroup extends InfoGroup {
 	public void collapsed() {
 		reflow();
 		updateSize();
+	}
+}
+
+abstract class ReflowGroup extends ExpandableGroup {
+	public void expanded() {
+		reflow();
+		updateSize();
+	}
+	public void collapsed() {
+		reflow();
+		updateSize();
+	}
+	protected Label createTextLabel(Composite parent, FormWidgetFactory factory) {
+		Label label = super.createTextLabel(parent, factory);
+		label.setFont(JFaceResources.getBannerFont());
+		return label;
+	}
+	protected HyperlinkHandler getHyperlinkHandler(FormWidgetFactory factory) {
+		return sectionHandler;
 	}
 }
 
@@ -131,6 +146,7 @@ public DetailsForm(UpdateFormPage page) {
 	modelListener = new ModelListener();
 	UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 	model.addUpdateModelChangedListener(modelListener);
+	sectionHandler = new HyperlinkHandler();
 }
 
 public void dispose() {
@@ -142,6 +158,7 @@ public void dispose() {
 		image.dispose();
 	}
 	imageCache.clear();
+	sectionHandler.dispose();
 	super.dispose();
 }
 	
@@ -152,11 +169,20 @@ public void initialize(Object modelObject) {
 	super.initialize(modelObject);
 }
 
+private void configureSectionHandler(FormWidgetFactory factory) {
+	sectionHandler.setHyperlinkUnderlineMode(HyperlinkHandler.UNDERLINE_NEVER);
+	sectionHandler.setBackground(factory.getBackgroundColor());
+	sectionHandler.setForeground(factory.getColor(factory.COLOR_COMPOSITE_SEPARATOR));
+}
+
 public void createContents(Composite container) {
 	HTMLTableLayout layout = new HTMLTableLayout();
 	layout.numColumns = 2;
 	container.setLayout(layout);
 	layout.rightMargin = 0;
+	GridData gd;
+	
+	configureSectionHandler(factory);
 	
 	GridLayout glayout = new GridLayout();
 	Composite properties = factory.createComposite(container);
@@ -166,18 +192,37 @@ public void createContents(Composite container) {
 
 	providerLabel = createProperty(properties, "Provider");
 	versionLabel = createProperty(properties,"\nVersion" );
+	installedVersionLabel = createProperty(properties, "\nInstalled Version");
 	sizeLabel = createProperty(properties, "\nDownload Size");
-	osLabel = createProperty(properties, "\nOperating System");
-	wsLabel = createProperty(properties, "\nWindowing System");
-	nlLabel = createProperty(properties, "\nSupported Languages");
-
+	supportedPlatformsGroup = new ReflowGroup () {
+		public void fillExpansion(Composite expansion, FormWidgetFactory factory) {
+			GridLayout layout = new GridLayout();
+  			expansion.setLayout(layout);
+   			layout.marginWidth = 0;
+		   	osLabel = createProperty(expansion, "Operating System", true);
+			wsLabel = createProperty(expansion, "\nWindowing System", true);
+			nlLabel = createProperty(expansion, "\nSupported Languages", true);
+			
+		}
+	};
+	supportedPlatformsGroup.setText("Supported Platforms");
+	new Label(properties, SWT.NULL);
+	supportedPlatformsGroup.createControl(properties, factory);
+	/*
+	Composite sep = factory.createCompositeSeparator(properties);
+	sep.setBackground(factory.getBorderColor());
+	gd = new GridData(GridData.FILL_HORIZONTAL);
+	gd.heightHint = 1;
+	sep.setLayoutData(gd);
+	*/
+	
 	imageLabel = factory.createLabel(container, null);
 	TableData td = new TableData();
 	td.align = TableData.CENTER;
 	//td.valign = TableData.MIDDLE;
 	imageLabel.setLayoutData(td);
 	
-	Label label = createHeading(container, "\nDescription");
+	Label label = createHeading(container, "\nDescription", false);
 	td = new TableData();
 	td.colspan = 2;
 	label.setLayoutData(td);
@@ -192,9 +237,11 @@ public void createContents(Composite container) {
 	glayout.horizontalSpacing = 20;
 	glayout.marginWidth = 10;
 	
-	Label l = factory.createSeparator(container, SWT.HORIZONTAL);
+	Composite l = factory.createCompositeSeparator(container);
+	l.setBackground(factory.getBorderColor());
 	td = new TableData();
 	td.colspan = 2;
+	td.heightHint = 1;
 	td.align = TableData.FILL;
 	l.setLayoutData(td);
 		
@@ -211,7 +258,7 @@ public void createContents(Composite container) {
 	};
    	infoLinkLabel = factory.createHyperlinkLabel(footer,
    						"More Info", listener);
-   	GridData gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
+   	gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
    	infoLinkLabel.setLayoutData(gd);
    	licenseGroup = new ReflowInfoGroup((DetailsView)getPage().getView());
    	licenseGroup.setText("License");
@@ -235,20 +282,30 @@ public void createContents(Composite container) {
   	doButton.setLayoutData(gd);
 }
 
-
 private Label createProperty(Composite parent, String name) {
-	createHeading(parent, name);
+	return createProperty(parent, name, false);
+}
+
+private Label createProperty(Composite parent, String name, boolean subHeading) {
+	createHeading(parent, name, subHeading);
 	Label label = factory.createLabel(parent, null);
+	label.setText("");
 	GridData gd = new GridData();
 	gd.horizontalIndent = 10;
 	label.setLayoutData(gd);
 	return label;
 }
 
-Label createHeading(Composite parent, String text) {
-	Color hc = factory.getColor(factory.COLOR_COMPOSITE_SEPARATOR);	
+private Label createHeading(Composite parent, String text, boolean subHeading) {
 	Label l = factory.createHeadingLabel(parent, text);
-	l.setForeground(hc);
+	Color hc;
+	/*
+	if (subHeading)
+	   hc = factory.getBorderColor();
+	else
+	*/
+	   hc = factory.getColor(factory.COLOR_COMPOSITE_SEPARATOR);	
+  	l.setForeground(hc);
 	return l;
 }
 
@@ -275,6 +332,38 @@ public void expandTo(final Object obj) {
 	});
 }
 
+private String getInstalledVersion(IFeature feature) {
+	alreadyInstalled = false;
+	String defaultValue = "Not installed";
+	try {
+		ILocalSite localSite = SiteManager.getLocalSite();
+	   	IInstallConfiguration config = localSite.getCurrentConfiguration();
+	   	ISite [] isites = config.getInstallSites();
+	   	String id = feature.getIdentifier().getIdentifier();
+	   	StringBuffer buf = new StringBuffer();
+	   	for (int i=0; i<isites.length; i++) {
+			ISite isite = isites[i];
+			IFeature[] result = UpdateUIPlugin.searchSite(id, isite);
+			for (int j=0; j<result.length; j++) {
+				IFeature installedFeature = result[j];
+				if (buf.length()>0) 
+			   		buf.append(", ");
+				buf.append(result[j].getIdentifier().getVersion().toString());
+				if (installedFeature.equals(feature)) {
+					alreadyInstalled=true;
+				}
+			}
+		}
+		if (buf.length()>0)
+	   		return buf.toString();
+		else
+	   		return defaultValue;
+	}
+	catch (CoreException e) {
+		return defaultValue;
+	}
+}
+
 private void inputChanged(IFeature feature) {
 	if (currentFeature!=null) {
 		saveSettings(currentFeature);
@@ -285,6 +374,7 @@ private void inputChanged(IFeature feature) {
 	setHeadingText(feature.getLabel());
 	providerLabel.setText(feature.getProvider());
 	versionLabel.setText(feature.getIdentifier().getVersion().toString());
+	installedVersionLabel.setText(getInstalledVersion(feature));
 	sizeLabel.setText("0KB");
 	descriptionText.setText(feature.getDescription().getText());
 	Image logoImage = loadProviderImage(feature);
@@ -307,7 +397,7 @@ private void inputChanged(IFeature feature) {
 	copyrightGroup.setInfo(feature.getCopyright());
 	UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 	doButton.setEnabled(!model.checklistContains(feature));
-	doButton.setVisible(true);
+	doButton.setVisible(!alreadyInstalled);
 	
 	restoreSettings(feature);
 	reflow();
@@ -353,6 +443,7 @@ private Image loadProviderImage(IFeature feature) {
 }
 
 private void reflow() {
+	versionLabel.getParent().layout(true);
 	doButton.getParent().layout(true);
 	imageLabel.getParent().layout(true);
 	((Composite)getControl()).layout(true);
@@ -464,9 +555,15 @@ private void doButtonSelected() {
 				dialog.create();
 				dialog.getShell().setSize(500, 500);
 				dialog.open();
+				if (wizard.isSuccessfulInstall()) {
+					String title = "Install";
+					String message="The feature has been successfully installed. You will need to restart the workbench to be able to use it.";
+					MessageDialog.openInformation(UpdateUIPlugin.getActiveWorkbenchShell(),
+							title,
+							message);
+				}
 			}
 		});
 	}
 }
-
 }

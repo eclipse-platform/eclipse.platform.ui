@@ -130,4 +130,18 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 		ErrorDialog.openError(getActiveWorkbenchShell(), null, null, status);
 		ResourcesPlugin.getPlugin().getLog().log(status);
 	}
+	
+	public static IFeature [] searchSite(String featureId, ISite site) throws CoreException {
+		IFeatureReference [] references = site.getFeatureReferences();
+		Vector result=new Vector();
+
+		for (int i=0; i<references.length; i++) {
+			IFeature feature = references[i].getFeature();
+			String id = feature.getIdentifier().getIdentifier();
+			if (featureId.equals(id)) {
+				result.add(feature);
+			}
+		}
+		return (IFeature[])result.toArray(new IFeature[result.size()]);
+	}
 }

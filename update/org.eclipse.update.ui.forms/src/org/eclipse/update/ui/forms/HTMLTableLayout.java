@@ -195,6 +195,9 @@ public class HTMLTableLayout extends Layout {
 				}
 				Point size = computeSize(child, cwidth, changed);
 				td.compWidth = cwidth;
+				if (td.heightHint!=SWT.DEFAULT) {
+					size = new Point(size.x, td.heightHint);
+				}
 				td.compSize = size;
 				rowHeight = Math.max(rowHeight, size.y);
 			}
@@ -472,8 +475,12 @@ private TableData [] createEmptyRow() {
 					if (k>j) cwidth += horizontalSpacing;
 					cwidth += columnWidths[k];
 				}
-				Point size = computeSize(child, cwidth, changed);
-				rowHeight = Math.max(rowHeight, size.y);
+				int cy = td.heightHint;
+				if (cy == SWT.DEFAULT) {
+				   Point size = computeSize(child, cwidth, changed);
+				   cy = size.y;
+				}
+				rowHeight = Math.max(rowHeight, cy);
 			}
 			y += rowHeight + verticalSpacing;
 		}

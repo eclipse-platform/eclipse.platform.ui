@@ -202,8 +202,8 @@ public Color getColor(String key) {
 public Color getForegroundColor() {
 	return foregroundColor;
 }
-public Color getHyperlinkColor() {
-	return hyperlinkHandler.getForeground();
+public HyperlinkHandler getHyperlinkHandler() {
+	return hyperlinkHandler;
 }
 public Cursor getHyperlinkCursor() {
 	return hyperlinkHandler.getHyperlinkCursor();

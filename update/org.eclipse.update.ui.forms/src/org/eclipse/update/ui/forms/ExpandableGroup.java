@@ -23,11 +23,13 @@ class ExpandableLayout extends Layout {
 		Rectangle clientArea = parent.getClientArea();
 		Point size = textLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed);
 		int x = 0;
+		int y = 0;
 		
-		if (expandable) x = 8 + 8;
-		textLabel.setBounds(x, 0, size.x, size.y);
-		int y;
-		
+		if (expandable) {
+			x = 8 + 8;
+		}
+		textLabel.setBounds(x, y, size.x, size.y);
+	
 		if (expandable)
 		   y = Math.max(size.y, 8) + 2;
 		else
@@ -82,7 +84,8 @@ class ExpandableLayout extends Layout {
 				}
 			}
 		});
-		textLabel = factory.createHyperlinkLabel(container, null, new HyperlinkAdapter () {
+		textLabel = createTextLabel(container, factory);
+		getHyperlinkHandler(factory).registerHyperlink(textLabel, new HyperlinkAdapter () {
 			public void linkActivated(Control link) {
 				ExpandableGroup.this.linkActivated();
 				if (expandable) setExpanded(!isExpanded());
@@ -92,6 +95,14 @@ class ExpandableLayout extends Layout {
 		expansion = factory.createComposite(container);
 		fillExpansion(expansion, factory);
 		this.control = container;
+	}
+	
+	protected Label createTextLabel(Composite parent, FormWidgetFactory factory) {
+		return factory.createLabel(parent, "", SWT.NULL);
+	}
+	
+	protected HyperlinkHandler getHyperlinkHandler(FormWidgetFactory factory) {
+		return factory.getHyperlinkHandler();
 	}
 	
 	public abstract void fillExpansion(Composite expansion, FormWidgetFactory factory);
