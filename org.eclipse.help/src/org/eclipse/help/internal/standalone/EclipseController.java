@@ -132,37 +132,15 @@ public class EclipseController {
 			System.out.println(
 				"Checking if file " + Options.getLockFile() + " exists.");
 		}
-		if (Options.getLockFile().exists()) {
-			if (!Options.getLockFile().delete()) {
-				// already running
-				if (Options.isDebug()) {
-					System.out.println(
-						"File "
-							+ Options.getLockFile()
-							+ " exists and is locked.  Eclipse is already running.");
-				}
-				return;
-			} else {
-				if (Options.isDebug()) {
-					System.out.println("Deleted file " + Options.getLockFile());
-				}
-				// left over files
-				Options.getConnectionFile().delete();
-				if (Options.isDebug()) {
-					System.out.println(
-						"Deleted file " + Options.getConnectionFile());
-				}
-			}
-		} else {
-			if (Options.isDebug()) {
-				System.out.println(
-					"File "
-						+ Options.getLockFile()
-						+ " does not exist.  Eclipse needs to be started.");
-			}
+		if (isAnotherRunning()) {
+			return;
 		}
+		// delete old connection file
+		Options.getConnectionFile().delete();
+
 		if (Options.isDebug()) {
-			System.out.println("Launching Eclipse.");
+			System.out.println(
+				"Ensured old .connection file is deleted.  Launching Eclipse.");
 		}
 		eclipse = new Eclipse();
 		eclipse.start();
@@ -177,6 +155,58 @@ public class EclipseController {
 		}
 		if (Options.isDebug()) {
 			System.out.println("Eclipse launched");
+		}
+	}
+
+	/**
+	 * @return true if eclipse is already running in another process
+	 */
+	private boolean isAnotherRunning() {
+		if (!Options.getLockFile().exists()) {
+			if (Options.isDebug()) {
+				System.out.println(
+					"File "
+						+ Options.getLockFile()
+						+ " does not exist.  Eclipse needs to be started.");
+			}
+			return false;
+		}
+
+		if (System.getProperty("os.name").startsWith("Win")) {
+			// if file cannot be deleted, Eclipse is running
+			if (!Options.getLockFile().delete()) {
+				if (Options.isDebug()) {
+					System.out.println(
+						"File "
+							+ Options.getLockFile()
+							+ " is locked.  Eclipse is already running.");
+				}
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			// if connection to control servlet can be made, Eclipse is running
+			try {
+				connection.renew();
+				if (connection.getHost() != null
+					&& connection.getPort() != null) {
+					URL url = createCommandURL("test", new String[0]);
+					connection.connect(url);
+					if (Options.isDebug()) {
+						System.out.println(
+							"Test connection to Eclipse established.  No need to start new Eclipse instance.");
+					}
+					return true;
+				}
+			} catch (Exception e) {
+			}
+			if (Options.isDebug()) {
+				System.out.println(
+					"Test connection to Eclipse could not be established.  Eclipse instance needs to be started.");
+			}
+			connection.reset();
+			return false;
 		}
 	}
 
