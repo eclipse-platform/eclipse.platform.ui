@@ -86,7 +86,15 @@ public class OpenLogEntryAction extends TeamAction {
 							id = descriptor.getId();
 						}
 						try {
-							page.openEditor(new RemoteFileEditorInput(file), id);
+							try {
+								page.openEditor(new RemoteFileEditorInput(file), id);
+							} catch (PartInitException e) {
+								if (id.equals("org.eclipse.ui.DefaultTextEditor")) { //$NON-NLS-1$
+									throw e;
+								} else {
+									page.openEditor(new RemoteFileEditorInput(file), "org.eclipse.ui.DefaultTextEditor"); //$NON-NLS-1$
+								}
+							}
 						} catch (PartInitException e) {
 							throw new InvocationTargetException(e);
 						}
