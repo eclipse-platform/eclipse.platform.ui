@@ -25,6 +25,17 @@
    </requires>
 
 
+<!-- Startup testing -->
+   <extension
+         point="org.eclipse.ui.startup">
+         <startup/>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.startup">
+         <startup class="org.eclipse.ui.tests.api.StartupClass"/>
+   </extension>
+
 <!-- Utils -->
    <extension
          point="org.eclipse.ui.perspectives">

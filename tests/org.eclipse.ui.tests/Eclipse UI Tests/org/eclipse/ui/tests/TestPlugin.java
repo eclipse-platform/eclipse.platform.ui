@@ -21,16 +21,20 @@ import org.eclipse.core.runtime.IPluginDescriptor;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 
+import org.eclipse.ui.IStartup;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * The main plugin class to be used in the desktop.
  */
-public class TestPlugin extends AbstractUIPlugin {
+public class TestPlugin extends AbstractUIPlugin implements IStartup {
 	//The shared instance.
 	private static TestPlugin plugin;
 	//Resource bundle.
 	private ResourceBundle resourceBundle;
+	// This boolean should only be true if the earlyStartup() method
+	// has been called.
+	private static boolean earlyStartupCalled = false;
 	
 	/**
 	 * The constructor.
@@ -94,5 +98,19 @@ public class TestPlugin extends AbstractUIPlugin {
 			return ImageDescriptor.getMissingImageDescriptor();
 		}
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IStartup#earlyStartup()
+	 */
+	public void earlyStartup() {
+		earlyStartupCalled = true;
+	}
 	
+	public static boolean wasEarlyStartupCalled() {
+		return earlyStartupCalled;
+	}
+
+	public static void clearEarlyStartup() {
+		earlyStartupCalled = false;
+	}
 }
