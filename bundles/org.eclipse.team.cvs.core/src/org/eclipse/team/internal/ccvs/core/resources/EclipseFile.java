@@ -104,7 +104,7 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 		try {
 			EclipseSynchronizer.getInstance().setTimeStamp(getIFile(), time);
 		} finally {
-			handleModification(false /* not an addition */);
+			setModified(false);
 		}
 	}
 

@@ -142,7 +142,6 @@ public class CheckoutOperationTests extends EclipseTest {
 	}
 
 	private void run(CVSOperation op) throws CVSException, InterruptedException {
-		op.setCVSRunnableContext(new HeadlessCVSRunnableContext());
-		op.run();
+		executeHeadless(op);
 	}
 }

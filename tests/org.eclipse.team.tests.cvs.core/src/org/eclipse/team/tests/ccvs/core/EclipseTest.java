@@ -31,6 +31,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
@@ -45,7 +46,6 @@ import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
@@ -63,9 +63,11 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.SyncFileChangeListener;
 import org.eclipse.team.internal.ccvs.ui.operations.CVSOperation;
+import org.eclipse.team.internal.ccvs.ui.operations.CheckoutSingleProjectOperation;
 import org.eclipse.team.internal.ccvs.ui.operations.ITagOperation;
 import org.eclipse.team.internal.ccvs.ui.operations.TagInRepositoryOperation;
 import org.eclipse.team.internal.ccvs.ui.operations.TagOperation;
+import org.eclipse.team.tests.ccvs.ui.unit.HeadlessCVSRunnableContext;
 
 public class EclipseTest extends EclipseWorkspaceTest {
 
@@ -311,20 +313,23 @@ public class EclipseTest extends EclipseWorkspaceTest {
 	 }
 	 
 	public static void checkout(
-		ICVSRepositoryLocation repository,
-		IProject project,
-		String sourceModule,
-		CVSTag tag,
+		final ICVSRepositoryLocation repository,
+		final IProject project,
+		final String sourceModule,
+		final CVSTag tag,
 		IProgressMonitor monitor)
 		throws TeamException {
 		
-		if (sourceModule == null)
-			sourceModule = project.getName();
-		CVSWorkspaceRoot.checkout(new ICVSRemoteFolder[] { new RemoteFolder(null, repository, sourceModule, tag)},
-			new IProject[] { project }, monitor);
+		RemoteFolder remote = new RemoteFolder(null, repository, sourceModule == null ? project.getName() : sourceModule, tag);
+		executeHeadless(new CheckoutSingleProjectOperation(null, remote, project, null, false /* the project is not preconfigured */) {
+			public boolean promptToOverwrite(String title, String msg) {
+				return true;
+			}
+		});
+
 	}
-	 
-	 protected IProject checkoutProject(IProject project, String moduleName, CVSTag tag) throws TeamException {
+
+	protected IProject checkoutProject(IProject project, String moduleName, CVSTag tag) throws TeamException {
 	 	if (project == null)
 	 		project = getWorkspace().getRoot().getProject(new Path(moduleName).lastSegment());
 		checkout(getRepository(), project, moduleName, tag, DEFAULT_MONITOR);
@@ -727,6 +732,15 @@ public class EclipseTest extends EclipseWorkspaceTest {
 			if (count == 5) {
 				fail("Ignore handling job does not seem to be finishing");
 			}
+		}
+	}
+
+	protected static void executeHeadless(CVSOperation op) throws CVSException {
+		try {
+			op.setCVSRunnableContext(new HeadlessCVSRunnableContext());
+			op.run();
+		} catch (InterruptedException e) {
+			throw new OperationCanceledException();
 		}
 	}
 }

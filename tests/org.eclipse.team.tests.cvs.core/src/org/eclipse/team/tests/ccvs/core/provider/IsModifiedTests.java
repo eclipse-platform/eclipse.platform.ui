@@ -541,6 +541,25 @@ public class IsModifiedTests extends EclipseTest {
 		assertTrue(!file.exists());
 		assertModificationState(project, null, true);
 	}
+	
+	public void testIgnoredAfterCheckout() throws TeamException, CoreException {
+		// Bug 43938
+		// Create a project and add a .cvsignore to it
+		IProject project = createProject("testIgnoredAfterCheckout", new String[] { ".changed.txt", "deleted.txt", "folder1/", "folder1/a.txt", "folder1/folder2/b.txt"});
+		project.getFile(".cvsignore").create(new ByteArrayInputStream("ignored".getBytes()), false, DEFAULT_MONITOR);
+		getProvider(project).add(new IResource[] {project.getFile(".cvsignore")}, IResource.DEPTH_ZERO, DEFAULT_MONITOR);
+		commitProject(project);
+		project.getFolder("ignored").create(false, true, DEFAULT_MONITOR);
+		assertModificationState(project, null, true);
+		
+		// Checkout a copy and add the file to ensure it is ignored
+		// Check the project out under a different name
+		IProject copy = checkoutCopy(project, "-copy");
+		waitForIgnoreHandlerCompletion();
+		assertModificationState(copy, null, true);
+		copy.getFolder("ignored").create(false, true, DEFAULT_MONITOR);
+		assertModificationState(copy, null, true);
+	}
 
 }
 

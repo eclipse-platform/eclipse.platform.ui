@@ -137,7 +137,9 @@ public interface ICVSFile extends ICVSResource {
 	Date getTimeStamp();
 
 	/**
-	 * If the date is <code>null</code> then the current time is used.
+	 * If the date is <code>null</code> then the current time is used. After setTimeStamp is
+	 * invoked, it is assumed that the file is CLEAN. If this is not the case, it is the clients
+	 * responsibility to invoke setSyncBytes() with the appropriate modification state.
 	 * 
 	 * This method is used by the command framework and should not be used by other clients.
 	 */
