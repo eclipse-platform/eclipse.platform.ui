@@ -272,7 +272,6 @@ public final class WorkbenchActionBuilder {
 			fileToolBar.add(new GroupMarker(IWorkbenchActionConstants.NEW_EXT));
 			fileToolBar.add(new GroupMarker(IWorkbenchActionConstants.SAVE_GROUP));
 			fileToolBar.add(saveAction);
-			fileToolBar.add(saveAsAction);
 			fileToolBar.add(new GroupMarker(IWorkbenchActionConstants.SAVE_EXT));
 			fileToolBar.add(printAction);
 			fileToolBar.add(new GroupMarker(IWorkbenchActionConstants.PRINT_EXT));
