@@ -26,7 +26,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.swt.custom.TableTree;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DragSource;
@@ -287,7 +286,7 @@ public class PropertySheetPage extends Page implements IPropertySheetPage {
             }
         };
         DragSource dragSource = new DragSource(
-                ((TableTree) viewer.getControl()).getTable(), operations);
+                viewer.getControl(), operations);
         dragSource.setTransfer(transferTypes);
         dragSource.addDragListener(listener);
     }
