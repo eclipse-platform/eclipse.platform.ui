@@ -314,6 +314,9 @@ public class FontRegistry {
 	 */
 	private Font createFont(String symbolicName, FontData[] fonts) {
 		Display display = Display.getCurrent();
+		if(display == null)
+			return null;
+			
 		FontData[] validData = bestDataArray(fonts, display);
 		if (validData == null) {
 			//Nothing specified 
@@ -401,7 +404,6 @@ public class FontRegistry {
 		// Create the font and update the mapping so it can 
 		// be shared.
 		Font font = createFont(symbolicName, (FontData[]) result);
-		stringToFont.put(symbolicName, font);
 
 		// Note, the font may be null if the create() failed. Put a mapping
 		// in for this font to prevent repeated attempts to allocate the
@@ -409,6 +411,8 @@ public class FontRegistry {
 
 		if (font == null)
 			return defaultFont();
+			
+		stringToFont.put(symbolicName, font);
 
 		return font;
 	}
