@@ -1268,6 +1268,7 @@ public static Object run(String flag, String value, String location, String[] ar
 	return null;
 }
 synchronized private void set(VersionedIdentifier id, List active, List inactive) {
+	// common "set" processing used for components and configurations
 	if (id == null)
 		return;
 	for (int i = 0; i < active.size(); i++) {
@@ -1285,8 +1286,19 @@ synchronized private void set(VersionedIdentifier id, List active, List inactive
 			return;
 		}
 	}
-	active.add(id); // did not exist ... add it
+	active.add(id); // did not exist ... add it 
+	inactive.remove(id); // remove from inactive (if existed)
 	setNewHistory();
+}
+
+synchronized private void set(VersionedIdentifier id, List active, List inactive, List unmanaged) {
+	// common "set" processing used for plugins and fragments	
+	if (!active.contains(id)) {
+		active.add(id);	// plugins and fragments can have multiple active versions
+		inactive.remove(id);
+		unmanaged.remove(id);		
+		setNewHistory();
+	}
 }
 
 public void setApplication(String app) {
@@ -1383,10 +1395,7 @@ private void setDefaults() {
 }
 
 public void setFragment(VersionedIdentifier fragment) {
-	if (!fragments.contains(fragment)) {
-		fragments.add(fragment);
-		setNewHistory();
-	}
+	set(fragment, fragments, fragmentsInact, fragmentsUnmgd);
 }
 
 public void setHistoryCount(int count) {
@@ -1448,10 +1457,7 @@ private void setNewId() {
 }
 
 public void setPlugin(VersionedIdentifier plugin) {
-	if (!plugins.contains(plugin)) {
-		plugins.add(plugin);
-		setNewHistory();
-	}
+	set(plugin, plugins, pluginsInact, pluginsUnmgd);
 }
 
 public void setRuntime(VersionedIdentifier runtime) {
