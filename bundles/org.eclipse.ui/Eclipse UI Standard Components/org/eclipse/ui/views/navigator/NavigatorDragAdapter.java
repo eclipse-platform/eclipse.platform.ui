@@ -62,7 +62,7 @@ public void dragFinished(DragSourceEvent event) {
 			return;
 		for (int i = 0; i < resources.length; i++) {
 			try {
-				resources[i].delete(true, null);
+				resources[i].delete(IResource.KEEP_HISTORY | IResource.FORCE, null);
 			} catch (CoreException e) {
 				e.printStackTrace();
 			}

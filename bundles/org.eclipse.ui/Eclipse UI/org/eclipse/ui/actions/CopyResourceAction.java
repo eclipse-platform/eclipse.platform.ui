@@ -637,7 +637,7 @@ private boolean validateNoNameCollisions(
 	    monitor.subTask(WorkbenchMessages.getString("CopyResourceAction.deletingCollision")); //$NON-NLS-1$
 		destination.getWorkspace().delete(
 			deleteResources,
-			false,
+			IResource.KEEP_HISTORY,
 			new SubProgressMonitor(monitor, 25));
 	} catch (CoreException exception) {
 		recordError(exception);

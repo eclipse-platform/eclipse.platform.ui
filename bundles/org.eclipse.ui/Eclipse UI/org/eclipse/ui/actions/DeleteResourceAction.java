@@ -272,7 +272,7 @@ void delete(IResource resourceToDelete, IProgressMonitor monitor) throws CoreExc
 		}
 		else {
 			// if it's not a project, just delete it
-			resourceToDelete.delete(force, monitor);
+			resourceToDelete.delete(IResource.KEEP_HISTORY, monitor);
 		}
 	}
 	catch (CoreException exception) {
@@ -282,18 +282,18 @@ void delete(IResource resourceToDelete, IProgressMonitor monitor) throws CoreExc
 			if (children.length == 1 && 
 				children[0].getCode() == IResourceStatus.OUT_OF_SYNC_LOCAL) {
 				if (forceOutOfSyncDelete) {
-					resourceToDelete.delete(true, monitor);
+					resourceToDelete.delete(IResource.KEEP_HISTORY | IResource.FORCE, monitor);
 				}
 				else {
 					int result = queryDeleteOutOfSync(resourceToDelete);
 			
 					if (result == IDialogConstants.YES_ID) {
-						resourceToDelete.delete(true, monitor);
+						resourceToDelete.delete(IResource.KEEP_HISTORY | IResource.FORCE, monitor);
 					}
 					else
 					if (result == IDialogConstants.YES_TO_ALL_ID) {
 						forceOutOfSyncDelete = true;
-						resourceToDelete.delete(true, monitor);
+						resourceToDelete.delete(IResource.KEEP_HISTORY | IResource.FORCE, monitor);
 					}
 					else
 					if (result == IDialogConstants.CANCEL_ID) {

@@ -469,7 +469,7 @@ import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 		    monitor.subTask(ResourceNavigatorMessages.getString("CopyFilesAndFoldersOperation.deletingCollision")); //$NON-NLS-1$
 			destination.getWorkspace().delete(
 				deleteResources,
-				false,
+				IResource.KEEP_HISTORY,
 				new SubProgressMonitor(monitor, 25));
 		} catch (CoreException exception) {
 			recordError(exception);
@@ -672,8 +672,10 @@ import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 			project.delete(true, force, monitor);
 		}
 		else {
+			int flags = IResource.KEEP_HISTORY;
+			if (force) flags = flags | IResource.FORCE;
 			// if it's not a project, just delete it
-			resourceToDelete.delete(force, monitor);
+			resourceToDelete.delete(flags, monitor);
 		}
 	}
 	

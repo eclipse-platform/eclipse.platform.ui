@@ -74,7 +74,7 @@ protected IStatus doCopy(IProgressMonitor monitor, final IResource source, final
 		if (copy) {
 			source.copy(destination, false, monitor);
 		} else {
-			source.move(destination, false, monitor);
+			source.move(destination, IResource.KEEP_HISTORY, monitor);
 		}
 	} catch (CoreException e) {
 		return e.getStatus();

@@ -8,15 +8,19 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TreeEditor;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.*;
+
+import org.eclipse.core.internal.resources.File;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+
+import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.viewers.IStructuredSelection;
+
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.*;
@@ -186,6 +190,7 @@ private boolean getUpdateValue(IStructuredSelection selection) {
 		
 	return true;
 }
+
 /* (non-Javadoc)
  * Method declared on WorkspaceAction.
  */
@@ -198,7 +203,7 @@ void invokeOperation(IResource resource, IProgressMonitor monitor)
 	IResource newResource = workspaceRoot.findMember(newPath);
 	if (newResource != null) {
 		if (checkOverwrite(getShell(), newResource))
-			newResource.delete(false, new SubProgressMonitor(monitor, 50));
+			newResource.delete(IResource.KEEP_HISTORY, new SubProgressMonitor(monitor, 50));
 		else {
 			monitor.worked(100);
 			return;
@@ -210,7 +215,7 @@ void invokeOperation(IResource resource, IProgressMonitor monitor)
 		description.setName(newPath.segment(0));
 		project.move(description, true, monitor);
 	} else
-		resource.move(newPath, false, new SubProgressMonitor(monitor, 50));
+		resource.move(newPath, IResource.KEEP_HISTORY, new SubProgressMonitor(monitor, 50));
 }
 /**
  *	Return the new name to be given to the target resource.

@@ -135,7 +135,7 @@ boolean performCopy(
 		resources[0].getWorkspace().move(
 			resources,
 			destination,
-			false,
+			IResource.KEEP_HISTORY,
 			new SubProgressMonitor(monitor, 75));
 		for (int i = 0; i < resources.length; i++) {
 			getDestinations().add(destination.append(resources[i].getName()));
