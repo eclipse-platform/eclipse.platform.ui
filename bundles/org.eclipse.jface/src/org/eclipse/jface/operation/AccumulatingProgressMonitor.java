@@ -139,19 +139,23 @@ import org.eclipse.swt.widgets.Display;
     }
 
     /**
-     *  Creates a collector object to accumulate work and subtask calls.
-     * @param subTask
+     * Creates a collector object to accumulate work 
+     * if required and subtask calls. Return whether 
+     * or not this work was required.
+     * @param subTask String
      * @param work
+     * @return boolean <code>true</code> if a collector
+     * was created.
      */
-    private void createCollectorIfRequired(String subTask, double work) {
-    	boolean newCollector = false;
+    private boolean createCollectorIfRequired(String subTask, double work) {
     	synchronized (this) {
-    		if(collector == null)
-    			collector = new Collector(subTask, work, getWrappedProgressMonitor());
+    		if(collector != null)
+    			return false;
+    		collector = new Collector(subTask, work, getWrappedProgressMonitor());
 		}
         
-    	if(newCollector)
-    		display.asyncExec(collector);
+    	display.asyncExec(collector);
+    	return true;
     }
 
     /* (non-Javadoc)
@@ -171,9 +175,13 @@ import org.eclipse.swt.widgets.Display;
     /* (non-Javadoc)
      * Method declared on IProgressMonitor.
      */
-    public synchronized void internalWorked(final double work) {
-        createCollectorIfRequired(null, work);
-        collector.worked(work);
+    public void internalWorked(final double work) {
+        if( createCollectorIfRequired(null, work))
+        	return;
+        synchronized (this) {
+        	collector.worked(work);
+		}
+        
     }
 
     /* (non-Javadoc)
@@ -195,15 +203,17 @@ import org.eclipse.swt.widgets.Display;
      * Method declared on IProgressMonitor.
      */
     public void subTask(final String name) {
-        createCollectorIfRequired(name, 0);
-        collector.subTask(name);
-        
+        if(createCollectorIfRequired(name, 0))
+        	return;
+        synchronized (this) {
+        	collector.subTask(name);
+		}        
     }
 
     /* (non-Javadoc)
      * Method declared on IProgressMonitor.
      */
-    public synchronized void worked(int work) {
+    public void worked(int work) {
         internalWorked(work);
     }
 
