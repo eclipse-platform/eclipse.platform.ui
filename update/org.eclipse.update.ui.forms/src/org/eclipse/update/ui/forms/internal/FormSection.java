@@ -258,7 +258,25 @@ public abstract class FormSection implements IPropertyChangeListener {
 		int hfill = span==1 ? GridData.FILL_HORIZONTAL : GridData.HORIZONTAL_ALIGN_FILL;
 		GridData gd =
 			new GridData(hfill | GridData.VERTICAL_ALIGN_CENTER);
-		//gd.grabExcessHorizontalSpace = true;
+		gd.horizontalSpan = span;
+		text.setLayoutData(gd);
+		return text;
+	}
+	protected Text createText(
+		Composite parent,
+		String label,
+		FormWidgetFactory factory,
+		int span,
+		int style) {
+		Label l = factory.createLabel(parent, label);
+		if ((style & SWT.MULTI)!=0) {
+			GridData gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
+			l.setLayoutData(gd);
+		}
+		Text text = factory.createText(parent, "", style);
+		int hfill = span==1 ? GridData.FILL_HORIZONTAL : GridData.HORIZONTAL_ALIGN_FILL;
+		GridData gd =
+			new GridData(hfill | GridData.VERTICAL_ALIGN_CENTER);
 		gd.horizontalSpan = span;
 		text.setLayoutData(gd);
 		return text;
