@@ -478,4 +478,29 @@ protected boolean sourceConflictsWithDestination(IPath sourcePath){
 	return false;
 }
 
+/**
+ * @see WizardDataTransferPage.determinePageCompletion.
+ */
+protected boolean determinePageCompletion() {
+	//Check for valid projects before making the user do anything 
+	if(noOpenProjects()){
+		setErrorMessage(WorkbenchMessages.getString("WizardImportPage.noOpenProjects"));
+		return false;
+	}
+	return super.determinePageCompletion();
+}	
+
+/**
+ * Returns whether or not the passed workspace has any 
+ * open projects
+ * @return boolean
+ */
+private boolean noOpenProjects(){
+	IProject[] projects = WorkbenchPlugin.getPluginWorkspace().getRoot().getProjects();
+	for(int i = 0; i < projects.length; i ++){
+		if(projects[i].isOpen())
+			return false;
+	}
+	return true;
+}
 }
