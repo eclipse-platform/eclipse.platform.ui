@@ -29,6 +29,9 @@
     <test id="resources.AllTests">
       <run class="org.eclipse.core.tests.resources.AllTests"/>
     </test>
+    <test id="resources.TeamPrivateMemberTest">
+      <run class="org.eclipse.core.tests.resources.TeamPrivateMemberTest"/>
+    </test>
     <test id="resources.IFileTest">
       <run class="org.eclipse.core.tests.resources.IFileTest"/>
     </test>

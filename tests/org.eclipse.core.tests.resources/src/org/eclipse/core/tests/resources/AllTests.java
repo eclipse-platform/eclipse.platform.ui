@@ -33,6 +33,8 @@ public AllTests(String name) {
 		suite.addTest(MarkerTest.suite());
 		suite.addTest(NatureTest.suite());
 		suite.addTest(ResourceURLTest.suite());
+		// FIXME: add this when we enable team private members
+//		suite.addTest(TeamPrivateMemberTest.suite());
 		suite.addTest(WorkspaceTest.suite());
 		return suite;
 	}
