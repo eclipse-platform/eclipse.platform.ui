@@ -12,7 +12,7 @@ import org.eclipse.help.ui.internal.util.StreamConsumer;
 public class MozillaBrowserAdapter implements IBrowser {
 	// delay that it takes mozilla to start responding
 	// to remote command after mozilla has been called
-	private static int DELAY = 5000;
+	private static final int DELAY = 5000;
 	private static long browserFullyOpenedAt = 0;
 	private static BrowserThread lastBrowserThread = null;
 	private static MozillaBrowserAdapter instance;

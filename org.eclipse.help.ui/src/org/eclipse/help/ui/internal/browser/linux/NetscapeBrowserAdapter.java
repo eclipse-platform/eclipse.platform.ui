@@ -12,7 +12,7 @@ import org.eclipse.help.ui.internal.util.StreamConsumer;
 public class NetscapeBrowserAdapter implements IBrowser {
 	// delay that it takes netscape to start responding
 	// to remote command after netscape has been called
-	private static int DELAY = 5000;
+	private static final int DELAY = 5000;
 	private static long browserFullyOpenedAt = 0;
 	private static BrowserThread lastBrowserThread = null;
 	private static NetscapeBrowserAdapter instance;

@@ -12,7 +12,7 @@ import org.eclipse.swt.widgets.Display;
 public class NetscapeBrowserAdapter implements IBrowser {
 	// delay that it takes the browser to start responding
 	// to remote command after browser command has been called
-	private static int DELAY = 5000;
+	private static final int DELAY = 5000;
 	private static long browserFullyOpenedAt = 0;
 	private static boolean opened = false;
 	private static NetscapeBrowserAdapter instance;
