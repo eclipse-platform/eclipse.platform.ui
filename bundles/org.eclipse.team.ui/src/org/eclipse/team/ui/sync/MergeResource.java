@@ -12,6 +12,7 @@ import org.eclipse.compare.ITypedElement;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
@@ -46,7 +47,7 @@ public class MergeResource {
 		IRemoteResource remote = syncTree.getBase();
 		if (remote != null && !remote.isContainer()) {
 			try {
-				return remote.getContents(null);
+				return remote.getContents(new NullProgressMonitor());
 			} catch (TeamException exception) {
 				// The remote resource has gone.
 				return null;
@@ -77,7 +78,7 @@ public class MergeResource {
 	public InputStream getLatestRevision() throws CoreException {
 		IRemoteResource remote = syncTree.getRemote();
 		try {
-			return remote.getContents(null);
+			return remote.getContents(new NullProgressMonitor());
 		} catch (TeamException e) {
 			throw new CoreException(e.getStatus());
 		}
