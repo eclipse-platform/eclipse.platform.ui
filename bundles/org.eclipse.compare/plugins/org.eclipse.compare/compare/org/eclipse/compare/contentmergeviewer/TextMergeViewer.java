@@ -2524,7 +2524,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	
 	private void updateResolveStatus() {
 		Color c= null;
-		if (fUseResolveUI) {
+		CompareConfiguration cc= getCompareConfiguration();
+		if (fUseResolveUI && (cc.isLeftEditable() || cc.isRightEditable())) {
 			boolean unresolved= false;
 			if (fChangeDiffs != null) {
 				Iterator e= fChangeDiffs.iterator();
@@ -3064,7 +3065,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 					}
 				}
 				
-				if (fUseResolveUI) {
+				CompareConfiguration cc= getCompareConfiguration();
+				if (fUseResolveUI && (cc.isLeftEditable() || cc.isRightEditable())) {
 					// draw resolve state
 					int cx= (w-RESOLVE_SIZE)/2;
 					int cy= ((ly+lh/2) + (ry+rh/2) - RESOLVE_SIZE)/2;
