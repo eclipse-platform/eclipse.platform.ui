@@ -218,6 +218,12 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * total available screen width) as a result of tab labels in the edit area.
 	 */
 	protected static final float MAX_DIALOG_WIDTH_PERCENT = 0.75f;
+	
+	/**
+	 * Constant specifying how tall this dialog is allowed to get (as a percentage of
+	 * total available screen height) as a result of preferred tab size.
+	 */
+	protected static final float MAX_DIALOG_HEIGHT_PERCENT = 0.60f;	
 
 	/**
 	 * Empty array
@@ -942,6 +948,9 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 				contentSize.x = runningTabWidth;
 			}
 		}
+		
+		int maxAllowedHeight =(int) (getDisplay().getBounds().height * MAX_DIALOG_HEIGHT_PERCENT);
+		contentSize.y = Math.min(contentSize.y, maxAllowedHeight);
 	
 		// Adjust the maximum tab dimensions to account for the extra space required for the tab labels
 		Rectangle tabFolderBoundingBox = getEditArea().computeTrim(0, 0, contentSize.x, contentSize.y);
