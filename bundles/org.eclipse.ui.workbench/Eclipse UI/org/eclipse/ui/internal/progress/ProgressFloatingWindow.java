@@ -39,7 +39,6 @@ import org.eclipse.ui.internal.WorkbenchWindow;
 class ProgressFloatingWindow extends AssociatedWindow {
 	TableViewer viewer;
 	WorkbenchWindow window;
-	private int maxSize = 500;
 	/**
 	 * Create a new instance of the receiver.
 	 * 
@@ -79,7 +78,7 @@ class ProgressFloatingWindow extends AssociatedWindow {
 	 * @see org.eclipse.jface.window.Window#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createContents(Composite root) {
-		Control buttonBar = createButtons(root);
+		createButtons(root);
 		viewer = new TableViewer(root, SWT.MULTI) {
 			/*
 			 * (non-Javadoc)
@@ -112,7 +111,7 @@ class ProgressFloatingWindow extends AssociatedWindow {
 	 */
 	private LabelProvider viewerLabelProvider() {
 		return new LabelProvider() {
-			private String ellipsis = "...";
+			private String ellipsis = ProgressMessages.getString("ProgressFloatingWindow.EllipsisValue"); //$NON-NLS-1$
 			/*
 			 * (non-Javadoc)
 			 * 
@@ -294,7 +293,7 @@ class ProgressFloatingWindow extends AssociatedWindow {
 			}
 		});
 		
-		minimize.setToolTipText("Close progress window");
+		minimize.setToolTipText(ProgressMessages.getString("ProgressFloatingWindow.CloseToolTip")); //$NON-NLS-1$
 		
 		ToolItem maximize = new ToolItem(buttonBar, SWT.NONE);
 		maximize
@@ -310,7 +309,7 @@ class ProgressFloatingWindow extends AssociatedWindow {
 			}
 		});
 		
-		maximize.setToolTipText("Open progress view");
+		maximize.setToolTipText(ProgressMessages.getString("ProgressFloatingWindow.OpenToolTip")); //$NON-NLS-1$
 		
 		FormData barData = new FormData();
 		barData.right = new FormAttachment(100);
