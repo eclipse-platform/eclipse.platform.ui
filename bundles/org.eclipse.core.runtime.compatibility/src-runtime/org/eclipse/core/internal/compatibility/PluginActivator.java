@@ -23,6 +23,12 @@ public class PluginActivator implements BundleActivator {
 
 	private static ServiceTracker startLevelTracker = null;
 
+	public static void closeStartLevelTracker() {
+		if (startLevelTracker == null)
+			return;
+		startLevelTracker.close();
+		startLevelTracker = null;
+	}
 	public static StartLevel getStartLevel(BundleContext context) {
 		if (startLevelTracker == null) {
 			startLevelTracker = new ServiceTracker(context, StartLevel.class.getName(), null);
@@ -39,10 +45,10 @@ public class PluginActivator implements BundleActivator {
 		super();
 	}
 
-	public void start(BundleContext context) throws Exception {
+	public void start(BundleContext ctx) throws Exception {
 		// will bail if it is not time to start
-		ensureNormalStartup(context);
-		this.context = context;
+		ensureNormalStartup(ctx);
+		this.context = ctx;
 		PluginDescriptor pd = (PluginDescriptor) Platform.getPluginRegistry().getPluginDescriptor(context.getBundle().getSymbolicName());
 		plugin = pd.getPlugin();
 		try {

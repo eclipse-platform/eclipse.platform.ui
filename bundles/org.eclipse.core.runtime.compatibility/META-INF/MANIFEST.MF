@@ -17,3 +17,5 @@ Provide-Package:
 Require-Bundle: 
  org.eclipse.core.runtime; reprovide=true,
  org.eclipse.update.configurator; reprovide=true
+Eclipse-AutoStart: true
+Eclipse-AutoStop: true

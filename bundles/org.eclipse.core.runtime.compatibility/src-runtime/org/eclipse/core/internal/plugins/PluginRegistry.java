@@ -22,14 +22,22 @@ import org.osgi.framework.*;
  */
 public class PluginRegistry implements IPluginRegistry {
 	private IExtensionRegistry extRegistry;
-
+	private RegistryListener listener;
+	
 	protected WeakHashMap descriptors = new WeakHashMap();	//key is a bundle object, value is a pluginDescriptor. The synchornization is required
 
 	public PluginRegistry() {
 		extRegistry = InternalPlatform.getDefault().getRegistry();
-		InternalPlatform.getDefault().getBundleContext().addBundleListener(new RegistryListener());
+		listener = new RegistryListener();
+		InternalPlatform.getDefault().getBundleContext().addBundleListener(listener);
 	}
 
+	public void close() {
+		InternalPlatform.getDefault().getBundleContext().removeBundleListener(listener);
+		listener = null; 
+		descriptors = null;
+	}
+	
 	/**
 	 * @deprecated Marking as deprecated to remove the warnings
 	 */
@@ -97,7 +105,7 @@ public class PluginRegistry implements IPluginRegistry {
 	}
 
 	private PluginDescriptor getPluginDescriptor(Bundle bundle) {
-		if (InternalPlatform.getDefault().isFragment(bundle)) {
+		if (InternalPlatform.getDefault().isFragment(bundle) || descriptors == null) {
 			return null;
 		}
 		synchronized(descriptors) {
@@ -175,6 +183,9 @@ public class PluginRegistry implements IPluginRegistry {
 
 	public class RegistryListener implements BundleListener {
 		public void bundleChanged(BundleEvent event) {
+			if (descriptors == null)
+				return;
+			
 			synchronized(descriptors) {
 				if (event.getType() == BundleEvent.UNINSTALLED || event.getType() == BundleEvent.UNRESOLVED) {
 					descriptors.remove(event.getBundle());

@@ -25,12 +25,16 @@ public class CompatibilityHelper {
 	private static final String OPTION_DEBUG_COMPATIBILITY = Platform.PI_RUNTIME + "/compatibility/debug"; //$NON-NLS-1$
 	public static final boolean DEBUG = Boolean.TRUE.toString().equalsIgnoreCase(InternalPlatform.getDefault().getOption(OPTION_DEBUG_COMPATIBILITY));
 	public static final String PI_RUNTIME_COMPATIBILITY = "org.eclipse.core.runtime.compatibility"; //$NON-NLS-1$
-	public static Bundle compatibility = null;
+	private static Bundle compatibility = null;
 
-	public static Bundle initializeCompatibility() {
+	public synchronized static void nullCompatibility() {
+		compatibility = null;
+	}
+	
+	public synchronized static Bundle initializeCompatibility() {
 		// if compatibility is stale (has been uninstalled or unresolved) 
 		// then we try to get a new resolved compatibility bundle
-		if (compatibility == null || (compatibility.getState() & (Bundle.INSTALLED | Bundle.UNINSTALLED)) != 0)
+		if (compatibility == null || (compatibility.getState() & (Bundle.INSTALLED | Bundle.UNINSTALLED | Bundle.STOPPING)) != 0)
 			compatibility = org.eclipse.core.internal.runtime.InternalPlatform.getDefault().getBundle(PI_RUNTIME_COMPATIBILITY);
 		return compatibility;
 	}
@@ -48,7 +52,7 @@ public class CompatibilityHelper {
 		}
 	}
 
-	public static IPluginDescriptor getPluginDescriptor(String pluginId) {
+	public synchronized static IPluginDescriptor getPluginDescriptor(String pluginId) {
 		//Here we use reflection so the runtime code can run without the compatibility
 		initializeCompatibility();
 		if (compatibility == null)
@@ -70,7 +74,7 @@ public class CompatibilityHelper {
 		return null;
 	}
 
-	public static void setActive(IPluginDescriptor descriptor) {
+	public synchronized static void setActive(IPluginDescriptor descriptor) {
 		initializeCompatibility();
 		if (compatibility == null)
 			throw new IllegalStateException();
@@ -83,7 +87,7 @@ public class CompatibilityHelper {
 		}
 	}
 
-	public static boolean hasPluginObject(IPluginDescriptor descriptor) {
+	public synchronized static boolean hasPluginObject(IPluginDescriptor descriptor) {
 		initializeCompatibility();
 		if (compatibility == null)
 			throw new IllegalStateException();

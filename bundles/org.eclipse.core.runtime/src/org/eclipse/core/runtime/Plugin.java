@@ -254,11 +254,8 @@ public abstract class Plugin implements BundleActivator {
 	public final IPluginDescriptor getDescriptor() {
 		if (descriptor != null)
 			return descriptor;
-		String pluginId = bundle.getSymbolicName();
-		descriptor = CompatibilityHelper.getPluginDescriptor(pluginId);
-		if (descriptor != null)
-			CompatibilityHelper.setPlugin(descriptor, this);
-		return descriptor;
+		
+		return initializeDescriptor(bundle.getSymbolicName());
 	}
 
 	/**
@@ -655,17 +652,23 @@ public abstract class Plugin implements BundleActivator {
 	/**
 	 * @deprecated Marked as deprecated to suppress deprecation warnings.
 	 */
-	private void initializeDescriptor(String symbolicName) {
+	private IPluginDescriptor initializeDescriptor(String symbolicName) {
 		if (CompatibilityHelper.initializeCompatibility() == null)
-			return;
+			return null;
 		
 		//This associate a descriptor to any real bundle that uses this to start
 		if (symbolicName == null)
-			return;
+			return null;
 		
-		descriptor = CompatibilityHelper.getPluginDescriptor(symbolicName);
-		CompatibilityHelper.setPlugin(descriptor, this);
-		CompatibilityHelper.setActive(descriptor);
+		IPluginDescriptor tmp = CompatibilityHelper.getPluginDescriptor(symbolicName);
+		
+		//Runtime descriptor is never set to support dynamic re-installation of compatibility 
+		if (!symbolicName.equals(Platform.PI_RUNTIME))
+			descriptor =  tmp;
+		
+		CompatibilityHelper.setPlugin(tmp, this);
+		CompatibilityHelper.setActive(tmp);
+		return tmp;
 	}
 
 	/**

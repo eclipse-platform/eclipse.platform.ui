@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.plugins;
 
+import org.eclipse.core.internal.compatibility.PluginActivator;
 import org.eclipse.core.internal.runtime.CompatibilityHelper;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.IPluginDescriptor;
@@ -21,10 +22,15 @@ public class CompatibilityActivator implements BundleActivator {
 	public void start(BundleContext context) throws Exception {
 		IPluginDescriptor descriptor = CompatibilityHelper.getPluginDescriptor(Platform.PI_RUNTIME);
 		CompatibilityHelper.setPlugin(descriptor, InternalPlatform.getDefault().getRuntimeInstance());
+		CompatibilityHelper.setActive(descriptor);
 	}
 
 	public void stop(BundleContext context) throws Exception {
-		//Nothing to do
+		IPluginDescriptor descriptor = CompatibilityHelper.getPluginDescriptor(Platform.PI_RUNTIME);
+		CompatibilityHelper.setPlugin(descriptor, null);
+		((PluginRegistry) org.eclipse.core.internal.plugins.InternalPlatform.getPluginRegistry()).close();
+		PluginActivator.closeStartLevelTracker();
+		CompatibilityHelper.nullCompatibility();
 	}
 
 }
