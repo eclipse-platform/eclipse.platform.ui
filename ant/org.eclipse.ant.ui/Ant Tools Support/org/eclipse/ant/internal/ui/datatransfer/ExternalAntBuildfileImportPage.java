@@ -462,7 +462,7 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 				return new Path(buildFile.getAbsolutePath());
 			}
 		});
-		model.reconcile(null);
+		model.reconcile();
 		return model;
 	}
 	

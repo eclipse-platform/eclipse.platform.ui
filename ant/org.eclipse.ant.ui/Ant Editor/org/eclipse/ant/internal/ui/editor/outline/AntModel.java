@@ -65,7 +65,6 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
-import org.eclipse.jface.text.reconciler.DirtyRegion;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXParseException;
 
@@ -83,11 +82,6 @@ public class AntModel {
 	private AntTargetNode fCurrentTargetNode;
 	private AntElementNode fLastNode;
 	private AntElementNode fNodeBeingResolved;
-	
-	private AntTargetNode fIncrementalTarget= null;
-	private boolean fReplaceHasOccurred= false;
-	private int fRemoveLengthOfReplace= 0;
-	private DirtyRegion fDirtyRegion= null;
 	
 	 /**
      * Stack of still open elements.
@@ -158,7 +152,7 @@ public class AntModel {
 			AntDefiningTaskNode.setJavaClassPath();
 		}
 		fIsDirty= true;
-		reconcile(null);
+		reconcile();
 		fCore.notifyAntModelListeners(new AntModelChangeEvent(this, true));
 		fMarkerUpdater.updateMarkers();
 	}
@@ -200,19 +194,9 @@ public class AntModel {
 		}
 	}
 	
-	public void reconcile(DirtyRegion region) {
-		//TODO turn off incremental as it is deferred to post 3.0
-		region= null; 
-		fDirtyRegion= region;
+	public void reconcile() {
 		synchronized (fDirtyLock) {
 			if (!fIsDirty) {
-				return;
-			}
-			if (fReplaceHasOccurred && region != null) {
-				//this is the removed part of a replace
-				//the insert region will be along shortly
-				fRemoveLengthOfReplace= region.getLength();
-				fReplaceHasOccurred= false;
 				return;
 			}
 			fIsDirty= false;
@@ -227,10 +211,8 @@ public class AntModel {
 			if (fDocument == null) {
 				fProjectNode= null;
 			} else {
-				reset(region);
-				parseDocument(fDocument, region);
-				fRemoveLengthOfReplace= 0;
-				fDirtyRegion= null;
+				reset();
+				parseDocument(fDocument);
 				reconcileTaskAndTypes();
 			} 
 	
@@ -238,30 +220,25 @@ public class AntModel {
 		}
 	}
 
-	private void reset(DirtyRegion region) {
-		//TODO this could be better for incremental parsing
-		//cleaning up the task to node map (do when a target is reset)
+	private void reset() {
 		fCurrentTargetNode= null;
-		
-		if (region == null ) {
-			fStillOpenElements= new Stack();
-			fTaskToNode= new HashMap();
-			fTaskNodes= new ArrayList();
-			fNodeBeingResolved= null;
-			fLastNode= null;
-			fNonStructuralNodes= new ArrayList();
-		}
+		fStillOpenElements= new Stack();
+		fTaskToNode= new HashMap();
+		fTaskNodes= new ArrayList();
+		fNodeBeingResolved= null;
+		fLastNode= null;
+		fNonStructuralNodes= new ArrayList();
 	}
 
 	public AntElementNode[] getRootElements() {
-		reconcile(null);
+		reconcile();
 		if (fProjectNode == null) {
 			return new AntElementNode[0];
 		} 
 			return new AntElementNode[] {fProjectNode};
 		}
 
-	private void parseDocument(IDocument input, DirtyRegion region) {
+	private void parseDocument(IDocument input) {
 		boolean parsed= true;
 		if (input.getLength() == 0) {
 			fProjectNode= null;
@@ -271,31 +248,18 @@ public class AntModel {
 		ClassLoader parsingClassLoader= getClassLoader();
 		ClassLoader originalClassLoader= Thread.currentThread().getContextClassLoader();
 		Thread.currentThread().setContextClassLoader(parsingClassLoader);
-		boolean incremental= false;
 		Project project= null;
     	try {
-    		String textToParse= null;
     		ProjectHelper projectHelper= null;
-			if (region == null || fProjectNode == null) {  //full parse
-				if (fProjectNode == null || !fProjectNode.hasChildren()) {
-					fProjectNode= null;
-					project = new AntModelProject();
-					projectHelper= prepareForFullParse(project, parsingClassLoader);
-					textToParse= input.get(); //the entire document
-				} else {
-					project= fProjectNode.getProject();
-					projectHelper= (ProjectHelper)project.getReference("ant.projectHelper"); //$NON-NLS-1$
-					textToParse= prepareForFullIncremental(input);
-				}
-			} else { //incremental
+    		String textToParse= input.get();
+			if (fProjectNode == null || !fProjectNode.hasChildren()) {
+				fProjectNode= null;
+				project = new AntModelProject();
+				projectHelper= prepareForFullParse(project, parsingClassLoader);
+			} else {
 				project= fProjectNode.getProject();
-				textToParse= prepareForIncrementalParse(project, region, input);
-				if (textToParse == null) {
-					parsed= false;
-					return;
-				}
-				incremental= true;
 				projectHelper= (ProjectHelper)project.getReference("ant.projectHelper"); //$NON-NLS-1$
+				prepareForFullIncremental();
 			}
 			beginReporting();
 			Map references= project.getReferences();
@@ -308,46 +272,11 @@ public class AntModel {
     	} finally {
     		Thread.currentThread().setContextClassLoader(originalClassLoader);
     		if (parsed) {
-    			if (incremental) {
-    	    		updateAfterIncrementalChange(region, true);
-    	    	}
     			resolveBuildfile();
     			endReporting();
     			project.fireBuildFinished(null); //cleanup (IntrospectionHelper)
-    			fIncrementalTarget= null;
     		}
     	}
-	}
-	
-	private void updateAfterIncrementalChange(DirtyRegion region, boolean updateProjectLength) {
-		if (fProjectNode == null) {
-			return;
-		}
-		int editAdjustment= determineEditAdjustment(region);
-		if (editAdjustment == 0) {
-			return;
-		}
-		if (updateProjectLength) { //edit within the project 
-			fProjectNode.setLength(fProjectNode.getLength() + editAdjustment);
-		} else {
-			fProjectNode.setOffset(fProjectNode.getOffset() + editAdjustment);
-		}
-		if ((fIncrementalTarget != null || !updateProjectLength) && fProjectNode.hasChildren()) {
-			List children= fProjectNode.getChildNodes();
-			int index= children.indexOf(fIncrementalTarget) + 1;
-			updateNodesForIncrementalParse(editAdjustment, children, index);
-		}
-	}
-
-	private void updateNodesForIncrementalParse(int editAdjustment, List children, int index) {
-		AntElementNode node;
-		for (int i = index; i < children.size(); i++) {
-			node= (AntElementNode)children.get(i);
-			node.setOffset(node.getOffset() + editAdjustment);
-			if (node.hasChildren()) {
-				updateNodesForIncrementalParse(editAdjustment, node.getChildNodes(), 0);
-			}
-		}
 	}
 
 	private ProjectHelper prepareForFullParse(Project project, ClassLoader parsingClassLoader) {
@@ -369,89 +298,10 @@ public class AntModel {
 		return projectHelper;
 	}
 	
-	private String prepareForIncrementalParse(Project project, DirtyRegion region, IDocument input) {
-		String textToParse= null;
-		AntElementNode node= fProjectNode.getNode(region.getOffset());
-		if (node == null) {
-			if (fProjectNode.getLength() > 0) {
-				//outside of any element
-				if (region.getOffset() < fProjectNode.getOffset()) {
-					updateAfterIncrementalChange(region, false);
-				}
-				return null;
-			}
-			//nodes don't know their lengths due to parsing error --> full parse
-			textToParse = prepareForFullIncremental(input);
-			return textToParse;
-		}
-		
-		while (node != null && !(node instanceof AntTargetNode)) {
-			node= node.getParentNode();
-		}
-		if (node == null) { //no enclosing target node found
-			if (region.getText() != null && region.getText().trim().length() == 0) {
-				return null; //no need to parse for whitespace additions
-			}
-			textToParse= prepareForFullIncremental(input);
-		} else {
-			fIncrementalTarget= (AntTargetNode)node;
-			if (fIncrementalTarget.hasChildren()) {
-				Collection nodes= fTaskToNode.values();
-				nodes.removeAll(fIncrementalTarget.getDescendents());
-			}
-			
-			markHierarchy(node, XMLProblem.NO_PROBLEM);
-			
-			StringBuffer temp = createIncrementalContents(project);			
-			fIncrementalTarget.reset();
-			try {
-				int editAdjustment = determineEditAdjustment(region) + 1;
-				String targetString= input.get(node.getOffset() - 1, node.getLength() + editAdjustment);
-				temp.append(targetString);
-				temp.append("\n</project>"); //$NON-NLS-1$
-				textToParse= temp.toString();
-			} catch (BadLocationException e) {
-				textToParse= input.get();
-			}
-		}
-		return textToParse;
-	}
-
-	private String prepareForFullIncremental(IDocument input) {
-		String textToParse=  input.get();
+	private void prepareForFullIncremental() {
 		fProjectNode.reset();
 		fTaskToNode= new HashMap();
 		fTaskNodes= new ArrayList();
-		return textToParse;
-	}
-
-	private StringBuffer createIncrementalContents(Project project) {
-		int offset= fIncrementalTarget.getOffset();
-		int line= getLine(offset) - 1;
-		
-		StringBuffer temp= new StringBuffer("<project");//$NON-NLS-1$
-		String defltTarget= project.getDefaultTarget();
-		if (defltTarget != null) {
-			temp.append(" default=\""); //$NON-NLS-1$
-			temp.append(defltTarget);
-			temp.append("\""); //$NON-NLS-1$
-		}
-		temp.append(">"); //$NON-NLS-1$
-		while (line > 0) {
-			temp.append("\n"); //$NON-NLS-1$
-			line--;
-		}
-		return temp;
-	}
-
-	private int determineEditAdjustment(DirtyRegion region) {
-		int editAdjustment= 0;
-		if (region.getType().equals(DirtyRegion.INSERT)) {
-			editAdjustment+= region.getLength() - fRemoveLengthOfReplace;
-		} else {
-			editAdjustment-= region.getLength();
-		}
-		return editAdjustment;
 	}
 
 	private void initializeProject(Project project, ClassLoader loader) {
@@ -698,26 +548,17 @@ public class AntModel {
 	}
 
 	public void addTarget(Target newTarget, int line, int column) {
-		if (fIncrementalTarget != null) {
-			fCurrentTargetNode= fIncrementalTarget;
-			fCurrentTargetNode.setTarget(newTarget);
-			fStillOpenElements.push(fCurrentTargetNode);
-		} else {
-			AntTargetNode targetNode= new AntTargetNode(newTarget);
-			fProjectNode.addChildNode(targetNode);
-			fCurrentTargetNode= targetNode;
-			fStillOpenElements.push(targetNode);
-			computeOffset(targetNode, line, column);
-			if (fNodeBeingResolved instanceof AntImportNode) {
-				targetNode.setImportNode(fNodeBeingResolved);
-			}
+		AntTargetNode targetNode= new AntTargetNode(newTarget);
+		fProjectNode.addChildNode(targetNode);
+		fCurrentTargetNode= targetNode;
+		fStillOpenElements.push(targetNode);
+		computeOffset(targetNode, line, column);
+		if (fNodeBeingResolved instanceof AntImportNode) {
+			targetNode.setImportNode(fNodeBeingResolved);
 		}
 	}
 	
 	public void addProject(Project project, int line, int column) {
-		if (fIncrementalTarget != null) {
-			return;
-		}
 		fProjectNode= new AntProjectNode((AntModelProject)project, this);
 		fStillOpenElements.push(fProjectNode);
 		computeOffset(fProjectNode, line, column);
@@ -1217,24 +1058,6 @@ public class AntModel {
 				node= parentNode;
 			}
 		}
-		
-		if (fIncrementalTarget != null) { //update the targets length for the edit
-			int editAdjustment= determineEditAdjustment(fDirtyRegion);
-			fIncrementalTarget.setLength(fIncrementalTarget.getLength() + editAdjustment);
-			AntElementNode startingNode= null;	
-			while(fStillOpenElements.peek() != fIncrementalTarget) {
-				startingNode= (AntElementNode)fStillOpenElements.pop();
-				if (startingNode.getLength() > -1) {
-					startingNode.setLength(startingNode.getLength() + editAdjustment);
-				}
-			}
-			fStillOpenElements.pop(); //get rid of the incremental target
-			if (startingNode != null && fIncrementalTarget.hasChildren()) {
-				List children= fIncrementalTarget.getChildNodes();
-				int index= children.indexOf(startingNode);
-				updateNodesForIncrementalParse(editAdjustment, children, index);
-			}
-		}
 	}
 	
 	public void fatalError(Exception exception) {
@@ -1346,7 +1169,7 @@ public class AntModel {
 	public AntProjectNode getProjectNode(boolean doReconcile) {
 		if (doReconcile) {
 			synchronized (this) { //ensure to wait for any current synchronization
-				reconcile(null);
+				reconcile();
 			}
 		}
 		return fProjectNode;
@@ -1356,12 +1179,8 @@ public class AntModel {
 		return getProjectNode(true);
 	}
 	
-	public void setReplaceHasOccurred() {
-		fReplaceHasOccurred= true;
-	}
-	
 	public void updateMarkers() {
-		reconcile(null);
+		reconcile();
 		fMarkerUpdater.updateMarkers();
 	}
 	

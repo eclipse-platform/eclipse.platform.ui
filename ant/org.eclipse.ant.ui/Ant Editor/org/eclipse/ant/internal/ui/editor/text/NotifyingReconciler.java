@@ -27,10 +27,9 @@ public class NotifyingReconciler extends MonoReconciler {
 	/**
 	 * Constructor for NotifyingReconciler.
 	 * @param strategy
-	 * @param isIncremental
 	 */
-	public NotifyingReconciler(IReconcilingStrategy strategy, boolean isIncremental) {
-		super(strategy, isIncremental);
+	public NotifyingReconciler(IReconcilingStrategy strategy) {
+		super(strategy, false);
 	}
 
 	/*

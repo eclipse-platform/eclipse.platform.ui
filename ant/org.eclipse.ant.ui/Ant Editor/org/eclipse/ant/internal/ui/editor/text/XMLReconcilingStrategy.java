@@ -36,14 +36,14 @@ public class XMLReconcilingStrategy implements IReconcilingStrategy, IReconcilin
 		fEditor= editor;
 	}
 
-	private void internalReconcile(DirtyRegion dirtyRegion) {
+	private void internalReconcile() {
 		try {
 			IDocumentProvider provider= fEditor.getDocumentProvider();
 			if (provider instanceof AntEditorDocumentProvider) {
 				AntEditorDocumentProvider documentProvider= (AntEditorDocumentProvider) provider;
 				AntModel model= documentProvider.getAntModel(fEditor.getEditorInput());
 				if (model != null) {
-					model.reconcile(dirtyRegion);
+					model.reconcile();
 				}
 			}
 		} catch (Exception e) {
@@ -57,7 +57,7 @@ public class XMLReconcilingStrategy implements IReconcilingStrategy, IReconcilin
 	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategy#reconcile(org.eclipse.jface.text.IRegion)
 	 */
 	public void reconcile(IRegion partition) {
-		internalReconcile(null);
+		internalReconcile();
 	}
 
 	/*
@@ -67,7 +67,7 @@ public class XMLReconcilingStrategy implements IReconcilingStrategy, IReconcilin
 	 *      org.eclipse.jface.text.IRegion)
 	 */
 	public void reconcile(DirtyRegion dirtyRegion, IRegion subRegion) {
-		internalReconcile(dirtyRegion);
+		internalReconcile();
 	}
 
 	/*
@@ -92,6 +92,6 @@ public class XMLReconcilingStrategy implements IReconcilingStrategy, IReconcilin
 	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategyExtension#initialReconcile()
 	 */
 	public void initialReconcile() {
-		internalReconcile(null);
+		internalReconcile();
 	}
 }

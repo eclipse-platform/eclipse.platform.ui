@@ -124,7 +124,7 @@ public class AntEditorSourceViewerConfiguration extends AbstractAntSourceViewerC
      * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getReconciler(org.eclipse.jface.text.source.ISourceViewer)
      */
     public IReconciler getReconciler(ISourceViewer sourceViewer) {
-	    NotifyingReconciler reconciler= new NotifyingReconciler(new XMLReconcilingStrategy(fEditor), true);
+	    NotifyingReconciler reconciler= new NotifyingReconciler(new XMLReconcilingStrategy(fEditor));
 	    reconciler.setDelay(XMLReconcilingStrategy.DELAY);
 	    reconciler.addReconcilingParticipant(fEditor);
 	    return reconciler;
