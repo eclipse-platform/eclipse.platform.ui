@@ -441,6 +441,7 @@ public synchronized static String getAntVersion() throws BuildException {
 protected void processCommandLine(String[] args) throws BuildException {
 	String searchForThis = null;
 	// cycle through given args
+	boolean canBeTarget = false;
 	for (int i= 0; i < args.length; i++) {
 		String arg = args[i];
 		if (arg.equals("-help")) {
@@ -453,12 +454,15 @@ protected void processCommandLine(String[] args) throws BuildException {
 		}
 		if (arg.equals("-quiet") || arg.equals("-q")) {
 			msgOutputLevel = Project.MSG_WARN;
+			canBeTarget = false;
 		} else if (arg.equals("-verbose") || arg.equals("-v")) {
 			printVersion();
 			msgOutputLevel = Project.MSG_VERBOSE;
+			canBeTarget = false;
 		} else if (arg.equals("-debug")) {
 			printVersion();
 			msgOutputLevel = Project.MSG_DEBUG;
+			canBeTarget = false;
 		} else if (arg.equals("-logfile") || arg.equals("-l")) {
 			try {
 				File logFile = new File(args[i + 1]);
@@ -467,6 +471,7 @@ protected void processCommandLine(String[] args) throws BuildException {
 				err = out;
 				System.setOut(out);
 				System.setErr(out);
+				canBeTarget = false;
 			} catch (IOException ioe) {
 				logMessage(Policy.bind("exception.cannotWriteToLog"), Project.MSG_INFO);
 				return;
@@ -478,6 +483,7 @@ protected void processCommandLine(String[] args) throws BuildException {
 			try {
 				buildFile = new File(args[i + 1]);
 				i++;
+				canBeTarget = true;
 			} catch (ArrayIndexOutOfBoundsException aioobe) {
 				logMessage(Policy.bind("exception.missingBuildFile"), Project.MSG_INFO);
 				return;
@@ -486,6 +492,7 @@ protected void processCommandLine(String[] args) throws BuildException {
 			try {
 				listeners.addElement(args[i + 1]);
 				i++;
+				canBeTarget = false;
 			} catch (ArrayIndexOutOfBoundsException aioobe) {
 				logMessage(Policy.bind("exception.missingClassName"), Project.MSG_INFO);
 				return;
@@ -513,29 +520,37 @@ protected void processCommandLine(String[] args) throws BuildException {
 				value = args[++i];
 
 			definedProps.put(name, value);
+			canBeTarget = false;
 		} else if (arg.equals("-logger")) {
 			if (loggerClassname != null) {
 				logMessage(Policy.bind("exception.multipleLoggers"), Project.MSG_INFO);
 				return;
 			}
 			loggerClassname = args[++i];
-		} else if (arg.equals("-emacs"))
+			canBeTarget = false;
+		} else if (arg.equals("-emacs")) {
 			emacsMode = true;
-		else if (arg.equals("-projecthelp"))
+			canBeTarget = false;
+		} else if (arg.equals("-projecthelp")) {
 			projectHelp = true; // set the flag to display the targets and quit
-		else if (arg.equals("-find")) {
+			canBeTarget = false;
+		} else if (arg.equals("-find")) {
 			// eat up next arg if present, default to build.xml
 			if (i < args.length - 1)
 				searchForThis = args[++i];
 			else
 				searchForThis = DEFAULT_BUILD_FILENAME;
+			canBeTarget = false;
 		} else if (arg.startsWith("-")) {
 			// we don't have any more args to recognize!
 			logMessage(Policy.bind("exception.unknownArgument",arg), Project.MSG_INFO);
 //			printUsage();
 //			return;
-		} else 
-			targets.addElement(arg); // if it's no other arg, it may be the target
+			canBeTarget = false;
+		} else {
+			if (canBeTarget)
+				targets.addElement(arg);
+		}
 	}
 	// if buildFile was not specified on the command line,
 	if (buildFile == null) {
