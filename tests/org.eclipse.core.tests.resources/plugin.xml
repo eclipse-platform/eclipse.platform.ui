@@ -7,6 +7,7 @@
   provider-name="Eclipse.org">
 
   <requires>
+	<import plugin="org.eclipse.osgi.services"/>
     <import plugin="org.eclipse.core.runtime.compatibility"/> 
     <import plugin="org.eclipse.core.resources"/>
     <import plugin="org.eclipse.core.tests.harness"/>

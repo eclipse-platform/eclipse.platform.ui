@@ -33,6 +33,7 @@ public AllTests(String name) {
 		suite.addTest(ModelObjectReaderWriterTest.suite());
 		suite.addTest(ResourceInfoTest.suite());
 		suite.addTest(WorkspacePreferencesTest.suite());
+		suite.addTest(ProjectPreferencesTest.suite());
 		return suite;
 	}
 }

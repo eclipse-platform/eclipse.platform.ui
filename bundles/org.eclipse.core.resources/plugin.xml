@@ -14,6 +14,7 @@
       </library>
    </runtime>
    <requires>
+   	<import plugin="org.eclipse.osgi.services"/>
       <import plugin="org.eclipse.core.runtime.compatibility"/>
    </requires>
 
@@ -25,6 +26,10 @@
    <extension-point id="moveDeleteHook" name="%hookName" schema="schema/moveDeleteHook.mxsd"/>
    <extension-point id="teamHook" name="%teamHookName" schema="schema/teamHook.mxsd"/>
    <extension-point id="refreshProviders" name="%refreshProvidersName" schema="schema/refreshProviders.exsd"/>
+
+	<extension id="preferences" point="org.eclipse.core.runtime.preferences" name="preferences">
+		<preferences scope="project" class="org.eclipse.core.internal.resources.ProjectPreferences"/>
+	</extension>
 
    <extension
          id="marker"

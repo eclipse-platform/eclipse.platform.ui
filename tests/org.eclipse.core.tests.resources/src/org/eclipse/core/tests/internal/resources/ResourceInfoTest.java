@@ -14,6 +14,8 @@ package org.eclipse.core.tests.internal.resources;
 import java.io.*;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 import org.eclipse.core.internal.resources.ResourceInfo;
 import org.eclipse.core.runtime.QualifiedName;
@@ -33,6 +35,15 @@ public ResourceInfoTest() {
 public ResourceInfoTest(String name) {
 	super(name);
 }
+
+public static Test suite() {
+	// all test methods are named "test..."
+	return new TestSuite(ResourceInfoTest.class);
+	//		TestSuite suite = new TestSuite();
+	//		suite.addTest(new ResourceInfoTest("testSimple"));
+	//		return suite;
+}
+
 static public void assertEquals(String message, byte[] expected, byte[] actual) {
 	if (expected == null && actual == null)
 		return;
@@ -70,7 +81,8 @@ static public void assertEquals(String message, ResourceInfo expected, ResourceI
 	different &= expected.getModificationStamp() == actual.getModificationStamp();
 	different &= expected.getNodeId() == actual.getNodeId();
 	different &= expected.getLocalSyncInfo() == actual.getLocalSyncInfo();
-	assertEquals(message, expected.getSyncInfo(false), actual.getSyncInfo(false));
+	// TODO sync info isn't serialized by this class so don't expect it to be loaded
+//	assertEquals(message, expected.getSyncInfo(false), actual.getSyncInfo(false));
 	different &= expected.getMarkerGenerationCount() == actual.getMarkerGenerationCount();
 	if (different)
 		assertTrue(message, false);
