@@ -59,7 +59,15 @@ public class NotificationManager implements IManager, ILifecycleListener {
 	 * autobuild notifications.
 	 */
 	private Map buildMarkerDeltas;
+	/**
+	 * Indicates whether a notification is currently in progress. Used to avoid
+	 * causing a notification to be requested as a result of another notification.
+	 */
 	protected boolean isNotifying;
+	/**
+	 * Indicates if a PRE_BUILD event has occurred during this operation
+	 */
+	protected boolean wasBuild = false;
 
 	// if there are no changes between the current tree and the last delta state then we
 	// can reuse the lastDelta (if any). If the lastMarkerChangeId is different then the current
@@ -116,6 +124,7 @@ public class NotificationManager implements IManager, ILifecycleListener {
 	}
 
 	/**
+	 * Indicates the beginning of a block where periodic notifications should be avoided.
 	 * Returns true if notification avoidance really started, and false for nested
 	 * operations.
 	 */
@@ -124,7 +133,8 @@ public class NotificationManager implements IManager, ILifecycleListener {
 	}
 
 	/**
-	 * Indicates that a notification phase is beginning. */
+	 * Signals the beginning of the notification phase at the end of a top level operation.
+	 */
 	public void beginNotify() {
 		notifyJob.cancel();
 		notificationRequested = false;
@@ -133,39 +143,66 @@ public class NotificationManager implements IManager, ILifecycleListener {
 	/**
 	 * The main broadcast point for notification deltas */
 	public void broadcastChanges(ElementTree lastState, int type, boolean lockTree) throws CoreException {
-		// Do the notification if there are listeners for events of the given type.
-		// Update the state regardless of whether people are listening.
-		ResourceDelta delta = null;
+		System.out.println("Broadcasting: " + getTypeString(type));
 		try {
+			// Do the notification if there are listeners for events of the given type.
+			if (!isBroadcastNeeded(type))
+				return;
 			isNotifying = true;
-			if (listeners.hasListenerFor(type))
-				delta = getDelta(lastState, type);
-			// if the delta is empty the root's change is undefined, there is
-			// nothing to do
-			if ((delta == null || delta.getKind() == 0))
+			ResourceDelta delta = getDelta(lastState, type);
+			// if the delta is empty the root's change is undefined, there is nothing to do
+			if (delta == null || delta.getKind() == 0)
 				return;
 			long start = System.currentTimeMillis();
 			notify(getListeners(), new ResourceChangeEvent(workspace, type, delta), lockTree);
 			lastNotifyDuration = System.currentTimeMillis() - start;
 		} finally {
-			// Remember the current state as the last notified state if requested.
-			// Be sure to clear out the old delta
+			// Update the state regardless of whether people are listening.
 			isNotifying = false;
-			boolean postChange = type == IResourceChangeEvent.POST_CHANGE;
-			if (postChange || type == IResourceChangeEvent.POST_BUILD) {
-				long id = workspace.getMarkerManager().getChangeId();
-				lastState.immutable();
-				if (postChange) {
-					lastPostChangeTree = lastState;
-					lastPostChangeId = id;
-				} else {
-					lastPostBuildTree = lastState;
-					lastPostBuildId = id;
-				}
-				workspace.getMarkerManager().resetMarkerDeltas(Math.min(lastPostBuildId, lastPostChangeId));
-				lastDelta = null;
-				lastDeltaState = lastState;
+			cleanUp(lastState, type);
+		}
+	}
+
+
+
+	/**
+	 * Returns whether a resource change event of the given type is needed.
+	 */
+	private boolean isBroadcastNeeded(int type) {
+		// ensure PRE_BUILD and POST_BUILD are correctly paired
+		if (type == IResourceChangeEvent.PRE_BUILD) {
+			//if there has already been a PRE_BUILD for this operation, don't do another
+			if (wasBuild)
+				return false;
+			wasBuild = true;
+		} else if (type == IResourceChangeEvent.POST_BUILD) {
+			//clear the fact that there was a PRE_BUILD since we're about to do a POST_BUILD
+			wasBuild = false;
+		}
+		//only broadcast if somebody is listening
+		return listeners.hasListenerFor(type);
+	}
+
+	/**
+	 * Performs cleanup at the end of a resource change notification
+	 */
+	private void cleanUp(ElementTree lastState, int type) {
+		// Remember the current state as the last notified state if requested.
+		// Be sure to clear out the old delta
+		boolean postChange = type == IResourceChangeEvent.POST_CHANGE;
+		if (postChange || type == IResourceChangeEvent.POST_BUILD) {
+			long id = workspace.getMarkerManager().getChangeId();
+			lastState.immutable();
+			if (postChange) {
+				lastPostChangeTree = lastState;
+				lastPostChangeId = id;
+			} else {
+				lastPostBuildTree = lastState;
+				lastPostBuildId = id;
 			}
+			workspace.getMarkerManager().resetMarkerDeltas(Math.min(lastPostBuildId, lastPostChangeId));
+			lastDelta = null;
+			lastDeltaState = lastState;
 		}
 	}
 
@@ -177,13 +214,26 @@ public class NotificationManager implements IManager, ILifecycleListener {
 		notify(entries, new ResourceChangeEvent(workspace, type, delta), false);
 	}
 
+	/**
+	 * Indicates the end of a block where periodic notifications should be avoided.
+	 */
 	public void endAvoidNotify() {
 		avoidNotify.remove(Thread.currentThread());
 	}
 
-	public void endOperation() {
+	/**
+	 * Returns whether a build has occurred during this operation.
+	 */
+	public boolean wasBuild() {
+		return wasBuild;
+	}
+
+	/**
+	 * Requests that a periodic notification be scheduled
+	 */
+	public void requestNotify() {
 		//don't do intermediate notifications if the current thread doesn't want them
-		if (avoidNotify.contains(Thread.currentThread()))
+		if (isNotifying || avoidNotify.contains(Thread.currentThread()))
 			return;
 		//notifications must never take more than one tenth of operation time
 		long delay = Math.max(NOTIFICATION_DELAY, lastNotifyDuration * 10);
@@ -191,6 +241,10 @@ public class NotificationManager implements IManager, ILifecycleListener {
 			notifyJob.schedule(delay);
 	}
 
+	/**
+	 * Computes and returns the resource delta for the given event type and the 
+	 * given current tree state.
+	 */
 	protected ResourceDelta getDelta(ElementTree tree, int type) {
 		long id = workspace.getMarkerManager().getChangeId();
 		// if we have a delta from last time and no resources have changed
@@ -259,9 +313,7 @@ public class NotificationManager implements IManager, ILifecycleListener {
 						EventStats.startNotify(listener);
 					Platform.run(new ISafeRunnable() {
 						public void handleException(Throwable e) {
-							//ResourceStats.notifyException(e);
-							// don't log the exception....it is already being
-							// logged in Platform#run
+							// exception logged in Platform#run
 						}
 
 						public void run() throws Exception {
@@ -315,5 +367,21 @@ public class NotificationManager implements IManager, ILifecycleListener {
 			return;
 		buildMarkerChangeId = changeId;
 		buildMarkerDeltas = MarkerDelta.merge(buildMarkerDeltas, lastDelta.getDeltaInfo().getMarkerDeltas());
+	}
+
+	/**
+	 * Returns the event type as a string. For debugging purposes only.
+	 */
+	private String getTypeString(int type) {
+		switch (type) {
+			case IResourceChangeEvent.PRE_BUILD:
+				return "PRE_BUILD"; //$NON-NLS-1$
+			case IResourceChangeEvent.POST_BUILD:
+				return "POST_BUILD"; //$NON-NLS-1$
+			case IResourceChangeEvent.POST_CHANGE:
+				return "POST_CHANGE"; //$NON-NLS-1$
+			default:
+				return Integer.toString(type);
+		}
 	}
 }

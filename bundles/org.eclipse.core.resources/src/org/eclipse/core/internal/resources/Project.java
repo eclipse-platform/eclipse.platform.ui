@@ -74,6 +74,7 @@ public class Project extends Container implements IProject {
 				return;
 
 			workspace.beginOperation(true);
+			workspace.aboutToBuild();
 			workspace.getBuildManager().build(this, kind, builderName, args, monitor);
 		} finally {
 			//building may close the tree, but we are still inside an operation so open it
@@ -96,6 +97,7 @@ public class Project extends Container implements IProject {
 				return;
 
 			workspace.beginOperation(true);
+			workspace.aboutToBuild();
 			workspace.getBuildManager().build(this, trigger, monitor);
 		} finally {
 			//building may close the tree, but we are still inside an operation so open it
@@ -349,8 +351,9 @@ public class Project extends Container implements IProject {
 		return workspace.getRoot();
 	}
 
-	/* (non-Javadoc)
+	/** (non-Javadoc)
 	 * @see IProject#getPluginWorkingLocation(IPluginDescriptor)
+	 * @deprecated
 	 */
 	public IPath getPluginWorkingLocation(IPluginDescriptor plugin) {
 		if (plugin == null)

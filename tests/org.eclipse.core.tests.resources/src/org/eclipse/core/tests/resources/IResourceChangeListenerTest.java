@@ -234,7 +234,7 @@ public class IResourceChangeListenerTest extends EclipseWorkspaceTest {
 	}
 
 	/*
-	 * Create a resource change listener and register it for POST_AUTO_BUILD
+	 * Create a resource change listener and register it for POST_BUILD
 	 * events. Ensure that you are able to modify the workspace tree.
 	 */
 	public void test_1GDK9OG() {
@@ -283,6 +283,14 @@ public class IResourceChangeListenerTest extends EclipseWorkspaceTest {
 				}
 			};
 			getWorkspace().run(body, getMonitor());
+			//wait for autobuild so POST_BUILD will fire
+			try {
+				Platform.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_BUILD, null);
+			} catch (OperationCanceledException e) {
+				//ignore
+			} catch (InterruptedException e) {
+				//ignore
+			}
 		} catch (CoreException e) {
 			fail("2.0", e);
 		} finally {
