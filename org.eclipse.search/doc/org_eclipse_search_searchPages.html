@@ -18,13 +18,14 @@ page for it.
 <p><b><i>Configuration Markup:</i></b>
 <p><tt>&nbsp;&nbsp; &lt;!ELEMENT page EMPTY&gt;</tt>
 <br><tt>&nbsp;&nbsp; &lt;!ATTLIST page</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; label&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; icon&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; sizeHint&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; tabPosition&nbsp;CDATA #IMPLIED</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; extensions&nbsp;&nbsp;CDATA #IMPLIED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; label&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; icon&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; sizeHint&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; tabPosition&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; extensions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; showScopeSection&nbsp;CDATA #IMPLIED</tt>
 <ul>
 <li>
 <b>id</b> - a unique name that will be used to identify this search page</li>
@@ -60,7 +61,13 @@ this hint is omitted the page will be no larger than the other pages.</li>
 search page can operate. Each extension must also include a weight (0 meaning
 lowest weight) which enables the search infrastructure to find the best fitting
 page. The weight is separated from the extension by a colon.
-If a search page can search all possible resources then "*" can be used.</li>
+If a search page can search all possible resources then <tt>"*"</tt> can be used.</li>
+
+<li>
+<b>showScopeSection</b> - if this attribute is missing or set to <tt>"false"</tt> then the
+scope section is not shown in the Search dialog. To see the scope section this
+attribute has to be set to <tt>"true"</tt>. Plug-ins which add their own Search page and
+want to see the scope section have to add this to their plugin.xml.</li>
 
 </ul>
 <b><i>Examples:</i></b>
@@ -73,6 +80,7 @@ If a search page can search all possible resources then "*" can be used.</li>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; sizeHint="250,160"</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; tabPosition="1"</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; extensions="*:1"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; showScopeSection="true"</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class="org.eclipse.search.ui.text.TextSearchPage"</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/page&gt;</tt>
 <br><tt>&nbsp;&nbsp; &lt;/extension&gt;</tt>
