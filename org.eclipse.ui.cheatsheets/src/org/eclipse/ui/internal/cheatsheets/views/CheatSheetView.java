@@ -21,11 +21,6 @@ public class CheatSheetView extends ViewPart {
 	private IMemento memento;
 
 	private void contributeToActionBars() {
-		//here you have to assemble the same list as the list added to the help menu bar.
-		//so an external class should do it so it can be shared with something that
-		//both these classes can use.  I will call it CheatSheetActionGetter.
-		//	System.out.println("Inside of contribute to action bars!!!!");
-	
 		IActionBars bars = getViewSite().getActionBars();
 		IMenuManager menuManager = bars.getMenuManager();
 		IToolBarManager tbmanager = bars.getToolBarManager();
@@ -94,7 +89,7 @@ public class CheatSheetView extends ViewPart {
 		return null;
 	}
 
-	public String getgetCheatSheetID() {
+	public String getCheatSheetID() {
 		if(viewer != null) {
 			return viewer.getCheatSheetID();
 		}

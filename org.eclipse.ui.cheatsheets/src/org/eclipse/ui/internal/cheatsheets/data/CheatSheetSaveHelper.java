@@ -38,7 +38,7 @@ public class CheatSheetSaveHelper {
 		savePath = Platform.getPluginStateLocation(CheatSheetPlugin.getPlugin());
 	}
 
-	private Properties createProperties(int stateNum, ViewItem[] myitems, boolean buttonIsDown, ArrayList expandRestoreStates, String csID) {
+	private Properties createProperties(int currentItemNum, ViewItem[] items, boolean buttonIsDown, ArrayList expandRestoreStates, String csID) {
 		Properties props = new Properties();
 		Hashtable subcompletedTable = new Hashtable(10);
 		Hashtable subskippedTable = new Hashtable(10);
@@ -48,21 +48,21 @@ public class CheatSheetSaveHelper {
 			buttonState = 1;
 
 		props.put(IParserTags.ID, csID);
-		props.put(IParserTags.CURRENT, Integer.toString(stateNum));
-		ArrayList mylist = new ArrayList();
-		ArrayList elist = new ArrayList();
+		props.put(IParserTags.CURRENT, Integer.toString(currentItemNum));
+		ArrayList completedList = new ArrayList();
+		ArrayList expandedList = new ArrayList();
 
 		if (expandRestoreStates == null)
 			expandRestoreStates = new ArrayList();
 
 		//Assemble lists of expanded items and completed items.
-		for (int i = 0; i < myitems.length; i++) {
-			ViewItem item = myitems[i];
+		for (int i = 0; i < items.length; i++) {
+			ViewItem item = items[i];
 			if (item.isCompleted()) {
-				mylist.add(Integer.toString(i));
+				completedList.add(Integer.toString(i));
 			}
 			if (item.isExpanded()) {
-				elist.add(Integer.toString(i));
+				expandedList.add(Integer.toString(i));
 			}
 
 			if (item instanceof CoreItem) {
@@ -96,8 +96,8 @@ public class CheatSheetSaveHelper {
 		}
 
 		//put expanded item list, completed list, button state
-		props.put(IParserTags.COMPLETED, mylist);
-		props.put(IParserTags.EXPANDED, elist);
+		props.put(IParserTags.COMPLETED, completedList);
+		props.put(IParserTags.EXPANDED, expandedList);
 		props.put(IParserTags.EXPANDRESTORE, expandRestoreStates);
 		props.put(IParserTags.BUTTON, Integer.toString(buttonState));
 		if (subcompletedTable != null)
@@ -218,23 +218,23 @@ public class CheatSheetSaveHelper {
 	//returns null if the parse or read fails.
 	private Document readXMLFile(URL url) {
 		InputStream is = null;
-		InputSource mysource = null;
+		InputSource source = null;
 
 		try {
 			is = url.openStream();
 			if (is != null) {
-				mysource = new InputSource(is);
+				source = new InputSource(is);
 			}
 		} catch (Exception e) {
 			return null;
 		}
 
-		if (mysource == null)
+		if (source == null)
 			return null;
 
 		try {
 			DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-			return documentBuilder.parse(mysource);
+			return documentBuilder.parse(source);
 		} catch (Exception e) {
 		} finally {
 			try {
@@ -256,17 +256,17 @@ public class CheatSheetSaveHelper {
 
 			Document doc = documentBuilder.newDocument();
 
-			Properties myprop = saveProperties;
-			csID = (String) myprop.get(IParserTags.ID);
-			String number = (String) myprop.get(IParserTags.CURRENT);
+			Properties properties = saveProperties;
+			csID = (String) properties.get(IParserTags.ID);
+			String number = (String) properties.get(IParserTags.CURRENT);
 
 			Path filePath = new Path(savePath.append(csID+".xml").toOSString()); //$NON-NLS-1$
 
-			ArrayList completedList = (ArrayList) myprop.get(IParserTags.COMPLETED);
-			ArrayList expandedList = (ArrayList) myprop.get(IParserTags.EXPANDED);
-			ArrayList expandRestoreList = (ArrayList) myprop.get(IParserTags.EXPANDRESTORE);
-			Hashtable subcompletedTable = (Hashtable) myprop.get(IParserTags.SUBITEMCOMPLETED);
-			Hashtable subskippedTable = (Hashtable) myprop.get(IParserTags.SUBITEMSKIPPED);
+			ArrayList completedList = (ArrayList) properties.get(IParserTags.COMPLETED);
+			ArrayList expandedList = (ArrayList) properties.get(IParserTags.EXPANDED);
+			ArrayList expandRestoreList = (ArrayList) properties.get(IParserTags.EXPANDRESTORE);
+			Hashtable subcompletedTable = (Hashtable) properties.get(IParserTags.SUBITEMCOMPLETED);
+			Hashtable subskippedTable = (Hashtable) properties.get(IParserTags.SUBITEMSKIPPED);
 
 			//Create the root element for the document now:
 			Element root = doc.createElement(IParserTags.CHEATSHEET);
@@ -320,7 +320,7 @@ public class CheatSheetSaveHelper {
 				}
 			}
 			Element bel = doc.createElement(IParserTags.BUTTON);
-			bel.setAttribute(IParserTags.BUTTONSTATE, (String) myprop.get(IParserTags.BUTTON));
+			bel.setAttribute(IParserTags.BUTTONSTATE, (String) properties.get(IParserTags.BUTTON));
 			root.appendChild(bel);
 
 			//Store cheatsheet data here.
@@ -351,9 +351,9 @@ public class CheatSheetSaveHelper {
 		}
 	}
 
-	public void saveState(int stateNum, ViewItem[] myitems, boolean buttonIsDown, ArrayList expandRestoreStates, String csID, CheatSheetManager csm) {
-		Properties prop = createProperties(stateNum, myitems, buttonIsDown, expandRestoreStates, csID);
-		saveState(prop, csm);
+	public void saveState(int currentItemNum, ViewItem[] items, boolean buttonIsDown, ArrayList expandRestoreStates, String csID, CheatSheetManager csm) {
+		Properties properties = createProperties(currentItemNum, items, buttonIsDown, expandRestoreStates, csID);
+		saveState(properties, csm);
 	}
 
 }

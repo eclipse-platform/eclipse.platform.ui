@@ -174,14 +174,14 @@ public abstract class ViewItem {
 
 		if(number > 0) {
 			mainItemComposite.setTextClient(titleComposite);
-			GridLayout mylayout = new GridLayout(number, false);
-			GridData mydata = new GridData(GridData.FILL_BOTH);
+			GridLayout layout = new GridLayout(number, false);
+			GridData data = new GridData(GridData.FILL_BOTH);
 	
-			titleComposite.setLayout(mylayout);
-			titleComposite.setLayoutData(mydata);
-			mylayout.marginWidth = 0;
-			mylayout.marginHeight = 0;
-			mylayout.verticalSpacing = 0;
+			titleComposite.setLayout(layout);
+			titleComposite.setLayoutData(data);
+			layout.marginWidth = 0;
+			layout.marginHeight = 0;
+			layout.verticalSpacing = 0;
 		}
 
 		//Body wrapper here.   this composite will be hidden and shown as appropriate.

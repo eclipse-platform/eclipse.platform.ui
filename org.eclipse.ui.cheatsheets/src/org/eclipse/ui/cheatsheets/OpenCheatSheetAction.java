@@ -81,21 +81,21 @@ public final class OpenCheatSheetAction extends Action {
 	 * @see IAction#run()
 	 */
 	public void run() {
-		IWorkbench myworkbench = CheatSheetPlugin.getPlugin().getWorkbench();
-		IWorkbenchWindow window = myworkbench.getActiveWorkbenchWindow();
+		IWorkbench workbench = CheatSheetPlugin.getPlugin().getWorkbench();
+		IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
 		IWorkbenchPage page = window.getActivePage();
 
-		CheatSheetView newview = (CheatSheetView) page.findView(ICheatSheetResource.CHEAT_SHEET_VIEW_ID);
-		if (newview != null) {
+		CheatSheetView view = (CheatSheetView) page.findView(ICheatSheetResource.CHEAT_SHEET_VIEW_ID);
+		if (view != null) {
 			if(url == null) {
-				newview.setInput(id);
+				view.setInput(id);
 			} else {
-				newview.setInput(id, name, url);
+				view.setInput(id, name, url);
 			}
-			page.bringToTop(newview);
+			page.bringToTop(view);
 		} else {
 			try {
-				CheatSheetView view = (CheatSheetView)page.showView(ICheatSheetResource.CHEAT_SHEET_VIEW_ID);
+				view = (CheatSheetView)page.showView(ICheatSheetResource.CHEAT_SHEET_VIEW_ID);
 				page.activate(view);
 				if(url == null) {
 					view.setInput(id);

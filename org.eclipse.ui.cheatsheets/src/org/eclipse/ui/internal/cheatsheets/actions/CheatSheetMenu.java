@@ -156,8 +156,8 @@ public class CheatSheetMenu extends ContributionItem {
 	 * @return IWorkbenchPage
 	 */
 	private IWorkbenchPage getActiveWorkbenchPage() {
-		IWorkbench myworkbench = CheatSheetPlugin.getPlugin().getWorkbench();
-		IWorkbenchWindow window = myworkbench.getActiveWorkbenchWindow();
+		IWorkbench workbench = CheatSheetPlugin.getPlugin().getWorkbench();
+		IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
 
 		//get the active cheatsheet view, if opened
 		return window.getActivePage();

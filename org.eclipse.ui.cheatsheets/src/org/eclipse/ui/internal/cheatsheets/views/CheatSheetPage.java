@@ -50,11 +50,11 @@ public class CheatSheetPage extends Page {
 	protected void createInfoArea(Composite parent) {
 		super.createInfoArea(parent);
 	
-		IntroItem myintro = new IntroItem(toolkit, form, cheatSheet.getIntroItem(), activeColor, viewer);
+		IntroItem intro = new IntroItem(toolkit, form, cheatSheet.getIntroItem(), activeColor, viewer);
 	
-		myintro.setItemColor(myintro.alternateColor);
-		myintro.setBold(true);
-		viewItemList.add(myintro);
+		intro.setItemColor(intro.alternateColor);
+		intro.setBold(true);
+		viewItemList.add(intro);
 			
 		//Get the content info from the parser.  This makes up all items except the intro item.
 		ArrayList items = cheatSheet.getItems();
