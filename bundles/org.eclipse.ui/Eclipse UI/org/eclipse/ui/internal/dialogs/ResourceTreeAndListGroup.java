@@ -20,10 +20,10 @@ import java.util.List;
 public class ResourceTreeAndListGroup implements ICheckStateListener, ISelectionChangedListener, ITreeViewerListener {
 	private	Object			root;
 	private	Object			currentTreeSelection;
-	private	List			expandedTreeNodes = new ArrayList();
+	private	Collection			expandedTreeNodes = new HashSet();
 	private	Map		checkedStateStore = new HashMap(9);
-	private List			whiteCheckedTreeItems = new ArrayList();
-	private	List			listeners = new ArrayList();
+	private Collection			whiteCheckedTreeItems = new HashSet();
+	private	Collection			listeners = new HashSet();
 	
 	private	ITreeContentProvider		treeContentProvider;
 	private	IStructuredContentProvider	listContentProvider;
