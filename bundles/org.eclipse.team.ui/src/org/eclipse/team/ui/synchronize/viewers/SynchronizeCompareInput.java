@@ -16,6 +16,7 @@ import org.eclipse.compare.*;
 import org.eclipse.compare.internal.INavigatable;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -128,18 +129,8 @@ public class SynchronizeCompareInput extends CompareEditorInput {
 							// when calling getContents on a diff node.
 							IProgressService manager = PlatformUI.getWorkbench().getProgressService();
 							try {
-								manager.busyCursorWhile(new IRunnableWithProgress() {
-									public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-										try {
-											node.cacheContents(monitor);
-										} catch (TeamException e) {
-											throw new InvocationTargetException(e);
-										}
-									}
-								});
-							} catch (InvocationTargetException e) {
-								Utils.handle(e);
-							} catch (InterruptedException e) {
+								node.cacheContents(new NullProgressMonitor());
+							} catch (TeamException e) {
 								Utils.handle(e);
 							} finally {
 								// Update the labels even if the content wasn't fetched correctly. This is
