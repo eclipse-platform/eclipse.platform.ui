@@ -11,6 +11,8 @@
 package org.eclipse.update.internal.standalone;
 import java.util.*;
 
+import org.eclipse.update.internal.mirror.*;
+
 public class CmdLineArgs {
 	private HashMap options = new HashMap();
 	public CmdLineArgs(String[] args) {
@@ -48,7 +50,8 @@ public class CmdLineArgs {
 			|| cmd.equals("enable")
 			|| cmd.equals("disable")
 			|| cmd.equals("search")
-			|| cmd.equals("update");
+			|| cmd.equals("update")
+			|| cmd.equals("mirror");
 	}
 
 	public ScriptedCommand getCommand() {
@@ -74,12 +77,17 @@ public class CmdLineArgs {
 					(String) options.get("-to"),
 					(String) options.get("-verifyOnly"));
 			else if (cmd.equals("search"))
-				return new SearchCommand(
-					(String) options.get("-from"));
+				return new SearchCommand((String) options.get("-from"));
 			else if (cmd.equals("update"))
 				return new UpdateCommand(
 					(String) options.get("-featureId"),
-					(String) options.get("-verifyOnly"));		
+					(String) options.get("-verifyOnly"));
+			else if (cmd.equals("mirror"))
+				return new MirrorCommand(
+					(String) options.get("-featureId"),
+					(String) options.get("-version"),
+					(String) options.get("-from"),
+					(String) options.get("-to"));
 			return null;
 		} catch (Exception e) {
 			return null;
