@@ -321,6 +321,16 @@ function selectTopic(topic)
  */
 function scrollIntoView(node)
 {
+	var scroll = getVerticalScroll(node);
+	if (scroll != 0)
+		window.scrollBy(0, scroll);
+}
+
+/**
+ * Scrolls the page to show the specified element
+ */
+function getVerticalScroll(node)
+{
 	var nodeTop = node.offsetTop;
 	var nodeBottom = nodeTop + node.offsetHeight;
 	var pageTop = 0;
@@ -342,7 +352,7 @@ function scrollIntoView(node)
 	if (nodeTop >= pageTop )
 	{
 		if (nodeBottom <= pageBottom)
-			return; // already in view
+			scroll = 0; // already in view
 		else
 			scroll = nodeBottom - pageBottom;
 	}
@@ -351,17 +361,24 @@ function scrollIntoView(node)
 		scroll = nodeTop - pageTop;
 	}
 	
-	window.scrollBy(0, scroll);
+	return scroll;
 }
 
+/*
+ * Currently called on IE only
+ */
 function focusHandler(e)
 {
-	try{
-		if (oldActive)
-			oldActive.focus();
+	if (isMozilla)
+		return;
 		
-		if (isMozilla)
-  			e.cancelBubble = true;
+	try{
+		if (oldActive){
+			// only focus when the element is visible
+			var scroll = getVerticalScroll(oldActive);
+			if (scroll == 0)
+				oldActive.focus();
+		}		
 	}
 	catch(e){}
 }
