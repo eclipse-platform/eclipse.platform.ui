@@ -12,30 +12,55 @@
 package org.eclipse.ui.intro.config;
 
 import org.eclipse.ui.internal.intro.impl.model.*;
-import org.eclipse.ui.internal.intro.impl.model.IntroURLParser;
 
 /**
+ * Factory class used to create instances of an Intro URL. Instances of intro
+ * URLs need to be created if you need to programatically construct and execute
+ * a valid Intro URL.
  * 
+ * @see org.eclipse.ui.intro.config.IIntroURL
+ *  
  */
 public final class IntroURLFactory {
-	/**
-	 * Non-instantiable.
-	 */
-	private IntroURLFactory() {
-		// do nothing
-	}
-	
-	/**
-	 * @param url
-	 * @return
-	 */
-	public static IIntroURL createIntroURL(String url) {
-		IntroURLParser parser = new IntroURLParser(url);
-		if (parser.hasIntroUrl()) {
-			IntroURL introURL = parser.getIntroURL();
-			return introURL;
-		}
-		return null;
-	}
+
+    /**
+     * Non-instantiable.
+     */
+    private IntroURLFactory() {
+        // do nothing
+    }
+
+
+    /**
+     * Parses the given string, and returns an IntroURL if the string is a valid
+     * Intro URL. Returns null in all other cases. Example usage:
+     * 
+     * <pre> 
+     * <p>
+     * StringBuffer url = new StringBuffer();
+     * url.append(&quot;http://org.eclipse.ui.intro/showStandby?&quot;);
+     * url.append(&quot;pluginId=org.eclipse.pde.ui&quot;);
+     * url.append(&quot;&amp;&quot;);
+     * url.append(&quot;partId=org.eclipse.pde.ui.sampleStandbyPart&quot;);
+     * url.append(&quot;&amp;&quot;);
+     * url.append(&quot;input=&quot;);
+     * url.append(sampleId);
+     * IIntroURL introURL = IntroURLFactory.createIntroURL(url.toString());
+     * if (introURL != null) {
+     *     introURL.execute();
+     * }
+     * </pre>
+     * 
+     * @param url
+     * @return
+     */
+    public static IIntroURL createIntroURL(String url) {
+        IntroURLParser parser = new IntroURLParser(url);
+        if (parser.hasIntroUrl()) {
+            IntroURL introURL = parser.getIntroURL();
+            return introURL;
+        }
+        return null;
+    }
 
 }

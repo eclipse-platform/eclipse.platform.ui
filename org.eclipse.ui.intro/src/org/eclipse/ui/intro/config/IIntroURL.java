@@ -12,21 +12,42 @@
 package org.eclipse.ui.intro.config;
 
 /**
- * An intro url. An intro URL is a valid http url, with org.eclipse.ui.intro as
- * a host. This class holds all logic to execute Intro URL commands, ie: an
- * Intro URL knows how to execute itself.
+ * An Intro url. An intro URL is a valid http url, with org.eclipse.ui.intro as
+ * a host. It is inteded to only be used in conjunction with the pre-supplied
+ * CustomizableIntroPart.
+ * 
+ * @see org.eclipse.ui.intro.config extension point for more details.
+ * 
+ * <p>
+ * An intro url instance is created by parsing the url and retrieving the
+ * embedded "command" and parametrs. For example, the following urls are valid
+ * intro urls:
+ * <p>
+ * http://org.eclipse.ui.intro/close
+ * http://org.eclipse.ui.intro/runAction?pluginId=x.y.z&class=x.y.z.someClass
+ * 
+ * When parsed, the first url has "close" as a command, and no parameters. While
+ * the second "runAction" as a command and "pluginId" and "class" as parameters.
+ * <p>
+ * There is a number of supported Intro commands. Check docs for more details.
+ * Calling execute runs the command if it happens to be one of the supported
+ * commands.
+ * 
+ * @see org.eclipse.ui.intro.config.IntroURLFactory
+ * @see org.eclipse.ui.intro.config.IIntroAction
  */
 public interface IIntroURL {
-    /**
-     * Executes whatever valid Intro action is embedded in this Intro URL.
-     *  
-     */
-	public void execute();
 
     /**
-     * @return Returns the action imbedded in this URL.
+     * Executes whatever valid Intro command is embedded in this Intro URL.
+     *  
      */
-	public String getAction();
+    public void execute();
+
+    /**
+     * @return Returns the command imbedded in this URL.
+     */
+    public String getAction();
 
     /**
      * Return a parameter defined in the Intro URL. Returns null if the
@@ -35,5 +56,5 @@ public interface IIntroURL {
      * @param parameterId
      * @return
      */
-	public String getParameter(String parameterId);
+    public String getParameter(String parameterId);
 }
