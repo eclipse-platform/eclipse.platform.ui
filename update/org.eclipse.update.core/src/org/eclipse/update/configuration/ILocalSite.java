@@ -7,9 +7,9 @@ package org.eclipse.update.configuration;
  
 import java.io.File;
 import java.net.URL;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 
 
@@ -27,7 +27,7 @@ import org.eclipse.update.core.*;
  * on local installation sites and linked sites)
  * </ul>
  */ 
-public interface ILocalSite {
+public interface ILocalSite extends IAdaptable {
 	
 
 	/**

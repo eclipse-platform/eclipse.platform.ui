@@ -1,5 +1,6 @@
 package org.eclipse.update.configuration;
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.update.core.*;
@@ -20,7 +21,7 @@ import org.eclipse.update.core.ISite;
  * The SiteConfguration reflects the policy used on a site.
  * It also returns if you can write in this site or not
  */ 
-public interface IConfiguredSite {
+public interface IConfiguredSite extends IAdaptable {
 	
 	
 	/**

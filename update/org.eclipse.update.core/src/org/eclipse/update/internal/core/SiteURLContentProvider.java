@@ -26,16 +26,6 @@ public class SiteURLContentProvider extends SiteContentProvider {
 	public SiteURLContentProvider(URL url) {
 		super(url);
 	}
-
-	/*
-	 * @see IAdaptable#getAdapter(Class)
-	 */
-	public Object getAdapter(Class adapter) {
-		return null;
-	}
-
-
-
 	
 	/*
 	 * @see ISiteContentProvider#getArchiveReference(String)

@@ -350,13 +350,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 	}
 	
 	
-	/**
-	 * @see IAdaptable#getAdapter(Class)
-	 */
-	public Object getAdapter(Class adapter) {
-		return null;
-	}
-
+	
 	/**
 	 * @see IInstallConfiguration#getActivities()
 	 */

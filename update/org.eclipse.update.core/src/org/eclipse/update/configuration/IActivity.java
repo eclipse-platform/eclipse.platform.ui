@@ -2,13 +2,15 @@ package org.eclipse.update.configuration;
 
 import java.util.Date;
 
+import org.eclipse.core.runtime.IAdaptable;
+
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
 
-public interface IActivity {
+public interface IActivity extends IAdaptable {
 	
 	public static final int ACTION_FEATURE_INSTALL 	= 1;
 	public static final int ACTION_FEATURE_REMOVE 	= 2;
