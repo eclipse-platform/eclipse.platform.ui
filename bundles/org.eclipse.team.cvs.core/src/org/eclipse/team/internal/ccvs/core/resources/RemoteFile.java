@@ -87,7 +87,17 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 			return null;
 		}
 		
-		RemoteFile file = new RemoteFile(parent, managed.getSyncInfo());
+		// ensure that the entry line has the tag in it. Or else status will return
+		// the latest from the branch of the local resource.
+		if(tag!=null) {
+			MutableResourceSyncInfo newInfo = info.cloneMutable();
+			newInfo.setTag(tag);
+			info = newInfo;
+		}
+		
+		// initialize with new sync info from the local resource, this info will
+		// be updated when updateRevision is called.
+		RemoteFile file = new RemoteFile(parent, info);
 		
 		// use the contents of the file on disk so that the server can calculate the relative
 		// sync state. This is a trick to allow the server to calculate sync state for us.
