@@ -63,6 +63,7 @@
                icon="icons/full/etool16/last_edit_pos.gif"
                label="%goToLastEditPosition.label"
                menubarPath="navigate/"
+               helpContextId="goto_last_edit_position_action_context"
                tooltip="%goToLastEditPosition.tooltip">
          </action>
       </actionSet>

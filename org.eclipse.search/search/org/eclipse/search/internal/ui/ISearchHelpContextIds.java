@@ -26,4 +26,8 @@ public interface ISearchHelpContextIds {
 	public static final String SEARCH_PREFERENCE_PAGE= PREFIX + "search_preference_page_context"; //$NON-NLS-1$
 
 	public static final String SELECT_ALL_ACTION = PREFIX + "select_all_action_context"; //$NON-NLS-1$
+	
+	public static final String SEARCH_ACTION = PREFIX + "search_action_context"; //$NON-NLS-1$
+	
+	public static final String FILE_SEARCH_ACTION= PREFIX + "file_search_action_context"; //$NON-NLS-1$
 }

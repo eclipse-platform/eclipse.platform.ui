@@ -120,6 +120,7 @@
 				menubarPath="org.eclipse.search.menu/internalDialogGroup"
 				label="%openFileSearchPageAction.label"
 				icon="icons/full/obj16/tsearch_obj.gif"
+				helpContextId="file_search_action_context"
 				class="org.eclipse.search.internal.ui.OpenFileSearchPageAction"/>
 	
 			<action id="org.eclipse.search.OpenSearchDialog"
@@ -129,6 +130,7 @@
 				label="%openSearchDialogAction.label"
 				tooltip="%openSearchDialogAction.tooltip"
 				icon="icons/full/ctool16/search.gif"
+				helpContextId="open_search_dialog_action_context"
 				class="org.eclipse.search.internal.ui.OpenSearchDialogAction"/>
 	     </actionSet>
 	</extension>
