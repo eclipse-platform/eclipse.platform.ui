@@ -912,7 +912,7 @@ public class TextViewer extends Viewer implements
 	};
 	
 	/**
-	 * Value object uses as key in the text hover configuration table. It is
+	 * Value object used as key in the text hover configuration table. It is
 	 * modifiable only for efficiency reasons only inside this compilation unit
 	 * to allow the reuse of created objects.	 */
 	protected class TextHoverKey {
