@@ -1590,15 +1590,22 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChanged
 	}
 
 	/**
+	 * Logs the specified status with this plug-in's log.
+	 * 
+	 * @param status status to log
+	 */
+	public static void log(IStatus status) {
+		getDefault().getLog().log(status);
+	}
+	
+	/**
 	 * Convenience method to log internal UI errors
 	 */
 	public static void logError(Exception e) {
 		if (getDefault().isDebugging()) {
 			// this message is intentionally not internationalized, as an exception may
 			// be due to the resource bundle itself
-			System.out.println("Internal error logged from Debug UI: "); //$NON-NLS-1$
-			e.printStackTrace();
-			System.out.println();
+			log(new Status(IStatus.ERROR, getDefault().getDescriptor().getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR, "Internal error logged from Debug UI: ", e));  //$NON-NLS-1$		
 		}
 	}
 	
