@@ -212,10 +212,10 @@ public class ResourceEncodingFieldEditor extends AbstractEncodingFieldEditor {
 			return super.defaultButtonText();
 
 		if (resource instanceof IFile) {
-
 			try {
-				//If we can find a charset then derive from that
-				if (((IFile) resource).getContentDescription() == null)
+				IContentDescription description = ((IFile) resource).getContentDescription();
+				//If we can find a charset from the description then derive from that
+				if (description == null || description.getCharset() == null)
 					return IDEWorkbenchMessages.format("ResourceInfo.fileContainerEncodingFormat", //$NON-NLS-1$
 							new String[] { getDefaultEnc() });
 
