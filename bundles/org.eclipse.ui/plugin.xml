@@ -1428,7 +1428,7 @@
       </keyBinding>
       <!-- Open type hierarchy -->
       <keyBinding
-            commandId="org.eclipse.jdt.ui.edit.text.java.open.hierarchy"
+            commandId="org.eclipse.jdt.ui.edit.text.java.open.type.hierarchy"
             keySequence="M1+J M1+H"
             keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
       </keyBinding>
