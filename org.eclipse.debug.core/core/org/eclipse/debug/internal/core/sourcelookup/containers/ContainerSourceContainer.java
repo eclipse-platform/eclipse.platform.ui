@@ -11,12 +11,15 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.core.sourcelookup.containers;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -41,6 +44,11 @@ public abstract class ContainerSourceContainer extends CompositeSourceContainer 
 
 	private IContainer fContainer = null;
 	private boolean fSubfolders = false;
+	
+	// whether the platform is case insensitive
+	private boolean fCaseInsensitive = new File("A").equals(new File("a"));  //$NON-NLS-1$//$NON-NLS-2$
+	private File fRootFile = null;
+	private IWorkspaceRoot fRoot = null;
 
 	/**
 	 * Constructs a source container on the given workspace container. 
@@ -52,6 +60,13 @@ public abstract class ContainerSourceContainer extends CompositeSourceContainer 
 	public ContainerSourceContainer(IContainer container, boolean subfolders) {
 		fContainer = container;
 		fSubfolders = subfolders;
+		if (fCaseInsensitive) {
+			IPath location = fContainer.getLocation();
+			if (location != null) {
+				fRootFile = location.toFile();
+				fRoot = ResourcesPlugin.getWorkspace().getRoot();
+			}
+		}
 	}
 	
 	/**
@@ -77,11 +92,28 @@ public abstract class ContainerSourceContainer extends CompositeSourceContainer 
 		// To prevent the interruption of the search procedure we check 
 		// if the path is valid before passing it to "getFile".
 		if ( validateFile(name) ) {
-			IPath path = new Path(name);
-			IFile file = getContainer().getFile(path);
-			if (file.exists()) {
-				sources.add(file);
-			}			
+			if (fCaseInsensitive && fRootFile != null) {
+				File osFile = new File(fRootFile, name);
+				if (osFile.exists()) {
+					try {
+						IFile[] files = fRoot.findFilesForLocation(new Path(osFile.getCanonicalPath()));
+						if (isFindDuplicates() && files.length > 1) {
+							for (int i = 0; i < files.length; i++) {
+								sources.add(files[i]);
+							}
+						} else if (files.length > 0) {
+							sources.add(files[0]);
+						}
+					} catch (IOException e) {
+					}
+				}
+			} else {
+				IPath path = new Path(name);
+				IFile file = getContainer().getFile(path);
+				if (file.exists()) {
+					sources.add(file);
+				}
+			}
 		}
 
 		//check subfolders		
