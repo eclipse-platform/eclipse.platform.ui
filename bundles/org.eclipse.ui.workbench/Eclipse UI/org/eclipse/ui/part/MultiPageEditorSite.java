@@ -11,6 +11,8 @@ Contributors:
 	IBM - Initial implementation
 ************************************************************************/
 
+import java.util.ArrayList;
+
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.*;
@@ -51,6 +53,11 @@ public class MultiPageEditorSite implements IEditorSite {
 	 * if not yet created.
 	 */
 	private ISelectionChangedListener selectionChangedListener = null;
+
+	/**
+	 * The list of popup menu extenders; <code>null</code> if none registered.
+	 */
+	private ArrayList menuExtenders;
 	
 	/**
 	 * Creates a site for the given editor nested within the given multi-page editor.
@@ -65,6 +72,18 @@ public class MultiPageEditorSite implements IEditorSite {
 		this.editor = editor;
 	}
 	
+	/**
+	 * Dispose the contributions.
+	 */
+	public void dispose() {
+		if (menuExtenders != null) {
+			for (int i = 0; i < menuExtenders.size(); i++) {
+				((PopupMenuExtender)menuExtenders.get(i)).dispose();
+			}
+			menuExtenders = null;
+		}
+	}
+
 	/**
 	 * The <code>MultiPageEditorSite</code> implementation of this 
 	 * <code>IEditorSite</code> method returns <code>null</code>,
@@ -215,7 +234,10 @@ public class MultiPageEditorSite implements IEditorSite {
 	 * registration.
 	 */
 	public void registerContextMenu(String menuID, MenuManager menuMgr, ISelectionProvider selProvider) {
-		new PopupMenuExtender(menuID, menuMgr, selProvider, editor);
+		if (menuExtenders == null) {
+			menuExtenders = new ArrayList(1);
+		}
+		menuExtenders.add(new PopupMenuExtender(menuID, menuMgr, selProvider, editor));
 	}
 	/**
 	 * The <code>MultiPageEditorSite</code> implementation of this 

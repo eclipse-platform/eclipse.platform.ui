@@ -11,12 +11,15 @@ Contributors:
 	IBM - Initial implementation
 ************************************************************************/
 
+import java.util.ArrayList;
+
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
 
@@ -60,6 +63,25 @@ public class ViewerActionBuilder extends PluginActionBuilder {
 		return new ViewerContribution(provider);
 	}
 
+	/**
+	 * Dispose of the action builder
+	 */
+	public void dispose() {
+		if (cache != null) {
+			for (int i = 0; i < cache.size(); i++) {
+				ArrayList actions = ((BasicContribution)cache.get(i)).actions;
+				if (actions != null) {
+					for (int j = 0; j < actions.size(); j++) {
+						PluginAction proxy = ((ActionDescriptor) actions.get(j)).getAction();
+						if (proxy.getDelegate() instanceof IActionDelegate2)
+							 ((IActionDelegate2) proxy.getDelegate()).dispose();
+					}
+				}
+			}
+			cache = null;
+		}
+	}
+	
 	/* (non-Javadoc)
 	 * Method declared on PluginActionBuilder.
 	 */

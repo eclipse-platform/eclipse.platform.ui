@@ -412,6 +412,10 @@ protected void pageChange(int newPageIndex) {
 private void disposePart(final IWorkbenchPart part) {
 	Platform.run(new SafeRunnable() {
 		public void run() {
+			if (part.getSite() instanceof MultiPageEditorSite) {
+				MultiPageEditorSite partSite = (MultiPageEditorSite) part.getSite();
+				partSite.dispose();
+			}
 			part.dispose();
 		}
 		public void handleException(Throwable e) {

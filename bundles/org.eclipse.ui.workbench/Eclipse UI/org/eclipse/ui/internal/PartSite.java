@@ -1,9 +1,18 @@
 package org.eclipse.ui.internal;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+	IBM - Initial implementation
+************************************************************************/
+
+import java.util.ArrayList;
+
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.jface.action.MenuManager;
@@ -47,173 +56,182 @@ public class PartSite implements IWorkbenchPartSite {
 	private String extensionName;
 	private ISelectionProvider selectionProvider;
 	private SubActionBars actionBars;
-	private KeyBindingService keyBindingService;	
-/**
- * EditorContainer constructor comment.
- */
-public PartSite(IWorkbenchPart part, IWorkbenchPage page) 
-{
-	this.part = part;
-	this.page = page;
-	extensionID = "org.eclipse.ui.UnknownID";//$NON-NLS-1$
-	extensionName = "Unknown Name";//$NON-NLS-1$
-}
-/**
- * Dispose the contributions.
- */
-public void dispose() {
-}
-/**
- * Returns the action bars for the part.
- * If this part is a view then it has exclusive use of the action bars.
- * If this part is an editor then the action bars are shared among this editor and other editors of
- * the same type.
- */
-public IActionBars getActionBars() {
-	return actionBars;
-}
-/**
- * Returns the configuration element for a part.
- */
-public IConfigurationElement getConfigurationElement() {
-	return configElement;
-}
-
-
-/**
- * Returns the part registry extension ID.
- *
- * @return the registry extension ID
- */
-public String getId() {
-	return extensionID;
-}
-/**
- * Returns the page containing this workbench site's part.
- *
- * @return the page containing this part
- */
-public IWorkbenchPage getPage() {
-	return page;
-}
-/**
- * Gets the part pane.
- */
-public PartPane getPane() {
-	return pane;
-}
-/**
- * Returns the part.
- */
-public IWorkbenchPart getPart() {
-	return part;
-}
-/**
- * Returns the part registry plugin ID.  It cannot be <code>null</code>.
- *
- * @return the registry plugin ID
- */
-public String getPluginId() {
-	return pluginID;
-}
-/**
- * Returns the registered name for this part.
- */
-public String getRegisteredName() {
-	return extensionName;
-}
-/**
- * Returns the selection provider for a part.
- */
-public ISelectionProvider getSelectionProvider() {
-	return selectionProvider;
-}
-/**
- * Returns the shell containing this part.
- *
- * @return the shell containing this part
- */
-public Shell getShell() {
-	return page.getWorkbenchWindow().getShell();
-}
-/**
- * Returns the workbench window containing this part.
- *
- * @return the workbench window containing this part
- */
-public IWorkbenchWindow getWorkbenchWindow() {
-	return page.getWorkbenchWindow();
-}
-/**
- * Register a popup menu for extension.
- */
-public void registerContextMenu(String menuID, MenuManager menuMgr, ISelectionProvider selProvider) {
-	new PopupMenuExtender(menuID, menuMgr, selProvider, part);
-}
-/**
- * Register a popup menu with the default id for extension.
- */
-public void registerContextMenu(MenuManager menuMgr, ISelectionProvider selProvider) {
-	registerContextMenu(getId(), menuMgr, selProvider);
-}
-/**
- * Sets the action bars for the part.
- */
-public void setActionBars(SubActionBars bars) {
-	actionBars = bars;
-}
-/**
- * Sets the configuration element for a part.
- */
-public void setConfigurationElement(IConfigurationElement configElement) {
-	// Save for external use.
-	this.configElement = configElement;
+	private KeyBindingService keyBindingService;
+	private ArrayList menuExtenders;
 	
-	// Get extension ID.
-	extensionID = configElement.getAttribute("id");//$NON-NLS-1$
-
-	// Get plugin ID.
-	IPluginDescriptor pd = configElement.getDeclaringExtension().getDeclaringPluginDescriptor();
-	pluginID = pd.getUniqueIdentifier();
-
-	// Get extension name.
-	String name = configElement.getAttribute("name");//$NON-NLS-1$
-	if (name != null)
-		extensionName = name;
-}
-/**
- * Sets the part pane.
- */
-public void setPane(PartPane pane) {
-	this.pane = pane;
-}
-/**
- * Sets the part.
- */
-public void setPart(IWorkbenchPart newPart) {
-	part = newPart;
-}
-/**
- * Set the selection provider for a part.
- */
-public void setSelectionProvider(ISelectionProvider provider) {
-	selectionProvider = provider;
-}
-
-/* (non-Javadoc)
- * Method declared on IEditorSite.
- */
-public IKeyBindingService getKeyBindingService() {
-	if (keyBindingService == null) {
-		keyBindingService = new KeyBindingService(this);
-		keyBindingService.setScopes(new String[] { getInitialScopeId() }); //$NON-NLS-1$
+	/**
+	 * EditorContainer constructor comment.
+	 */
+	public PartSite(IWorkbenchPart part, IWorkbenchPage page) {
+		this.part = part;
+		this.page = page;
+		extensionID = "org.eclipse.ui.UnknownID"; //$NON-NLS-1$
+		extensionName = "Unknown Name"; //$NON-NLS-1$
 	}
-	
-	return keyBindingService;
-}
+	/**
+	 * Dispose the contributions.
+	 */
+	public void dispose() {
+		if (menuExtenders != null) {
+			for (int i = 0; i < menuExtenders.size(); i++) {
+				((PopupMenuExtender)menuExtenders.get(i)).dispose();
+			}
+			menuExtenders = null;
+		}
+	}
+	/**
+	 * Returns the action bars for the part.
+	 * If this part is a view then it has exclusive use of the action bars.
+	 * If this part is an editor then the action bars are shared among this editor and other editors of
+	 * the same type.
+	 */
+	public IActionBars getActionBars() {
+		return actionBars;
+	}
+	/**
+	 * Returns the configuration element for a part.
+	 */
+	public IConfigurationElement getConfigurationElement() {
+		return configElement;
+	}
 
-protected String getInitialScopeId() {
-	return IWorkbenchConstants.DEFAULT_ACCELERATOR_SCOPE_ID;
-}
+	/**
+	 * Returns the part registry extension ID.
+	 *
+	 * @return the registry extension ID
+	 */
+	public String getId() {
+		return extensionID;
+	}
+	/**
+	 * Returns the page containing this workbench site's part.
+	 *
+	 * @return the page containing this part
+	 */
+	public IWorkbenchPage getPage() {
+		return page;
+	}
+	/**
+	 * Gets the part pane.
+	 */
+	public PartPane getPane() {
+		return pane;
+	}
+	/**
+	 * Returns the part.
+	 */
+	public IWorkbenchPart getPart() {
+		return part;
+	}
+	/**
+	 * Returns the part registry plugin ID.  It cannot be <code>null</code>.
+	 *
+	 * @return the registry plugin ID
+	 */
+	public String getPluginId() {
+		return pluginID;
+	}
+	/**
+	 * Returns the registered name for this part.
+	 */
+	public String getRegisteredName() {
+		return extensionName;
+	}
+	/**
+	 * Returns the selection provider for a part.
+	 */
+	public ISelectionProvider getSelectionProvider() {
+		return selectionProvider;
+	}
+	/**
+	 * Returns the shell containing this part.
+	 *
+	 * @return the shell containing this part
+	 */
+	public Shell getShell() {
+		return page.getWorkbenchWindow().getShell();
+	}
+	/**
+	 * Returns the workbench window containing this part.
+	 *
+	 * @return the workbench window containing this part
+	 */
+	public IWorkbenchWindow getWorkbenchWindow() {
+		return page.getWorkbenchWindow();
+	}
+	/**
+	 * Register a popup menu for extension.
+	 */
+	public void registerContextMenu(String menuID, MenuManager menuMgr, ISelectionProvider selProvider) {
+		if (menuExtenders == null) {
+			menuExtenders = new ArrayList(1);
+		}
+		menuExtenders.add(new PopupMenuExtender(menuID, menuMgr, selProvider, part));
+	}
+	/**
+	 * Register a popup menu with the default id for extension.
+	 */
+	public void registerContextMenu(MenuManager menuMgr, ISelectionProvider selProvider) {
+		registerContextMenu(getId(), menuMgr, selProvider);
+	}
+	/**
+	 * Sets the action bars for the part.
+	 */
+	public void setActionBars(SubActionBars bars) {
+		actionBars = bars;
+	}
+	/**
+	 * Sets the configuration element for a part.
+	 */
+	public void setConfigurationElement(IConfigurationElement configElement) {
+		// Save for external use.
+		this.configElement = configElement;
+
+		// Get extension ID.
+		extensionID = configElement.getAttribute("id"); //$NON-NLS-1$
+
+		// Get plugin ID.
+		IPluginDescriptor pd = configElement.getDeclaringExtension().getDeclaringPluginDescriptor();
+		pluginID = pd.getUniqueIdentifier();
+
+		// Get extension name.
+		String name = configElement.getAttribute("name"); //$NON-NLS-1$
+		if (name != null)
+			extensionName = name;
+	}
+	/**
+	 * Sets the part pane.
+	 */
+	public void setPane(PartPane pane) {
+		this.pane = pane;
+	}
+	/**
+	 * Sets the part.
+	 */
+	public void setPart(IWorkbenchPart newPart) {
+		part = newPart;
+	}
+	/**
+	 * Set the selection provider for a part.
+	 */
+	public void setSelectionProvider(ISelectionProvider provider) {
+		selectionProvider = provider;
+	}
+
+	/* (non-Javadoc)
+	 * Method declared on IEditorSite.
+	 */
+	public IKeyBindingService getKeyBindingService() {
+		if (keyBindingService == null) {
+			keyBindingService = new KeyBindingService(this);
+			keyBindingService.setScopes(new String[] { getInitialScopeId()}); //$NON-NLS-1$
+		}
+
+		return keyBindingService;
+	}
+
+	protected String getInitialScopeId() {
+		return IWorkbenchConstants.DEFAULT_ACCELERATOR_SCOPE_ID;
+	}
 
 }
