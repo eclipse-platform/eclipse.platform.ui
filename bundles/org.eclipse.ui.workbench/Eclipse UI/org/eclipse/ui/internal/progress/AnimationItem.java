@@ -44,6 +44,8 @@ public class AnimationItem {
 	private Image disabledImage;
 	private Image animatedImage;
 	private Image errorImage;
+	
+	Color background;
 
 	Canvas imageCanvas;
 	GC imageCanvasGC;
@@ -63,6 +65,7 @@ public class AnimationItem {
 	public AnimationItem(IWorkbenchWindow workbenchWindow) {
 
 		this.window = workbenchWindow;
+
 		//Get the progress manager started if it hasn't already
 		JobProgressManager.getInstance();
 		URL iconsRoot =
@@ -131,6 +134,8 @@ public class AnimationItem {
 	 * @param parent
 	 */
 	public void createControl(Composite parent) {
+
+		this.background = parent.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
 
 		// Canvas to show the image.
 		imageCanvas = new Canvas(parent, SWT.NONE);
@@ -307,7 +312,7 @@ public class AnimationItem {
 		ImageData imageData = imageDataArray[0];
 		Image image = getImage(imageData);
 		int imageDataIndex = 0;
-		final Color[] backgrounds = new Color[1];
+		
 		ImageLoader loader = getLoader();
 
 		Image offScreenImage =
@@ -316,26 +321,15 @@ public class AnimationItem {
 				loader.logicalScreenWidth,
 				loader.logicalScreenHeight);
 		GC offScreenImageGC = new GC(offScreenImage);
+			
 
-		try {
-			final boolean[] disposed = { false };
-			// Use syncExec to get the background color of the imageCanvas.
-			display.syncExec(new Runnable() {
-				public void run() {
-					if (imageCanvas.isDisposed()) {
-						disposed[0] = true;
-						return;
-					}
+		try {		
 
-					backgrounds[0] = imageCanvas.getBackground();
-				}
-			});
-
-			//If we never got the background then leave.
-			if (disposed[0])
-				return;
+			if (getControl().isDisposed())
+				return;			
+				
 			// Fill the off-screen image with the background color of the canvas.
-			offScreenImageGC.setBackground(backgrounds[0]);
+			offScreenImageGC.setBackground(background);
 			offScreenImageGC.fillRectangle(
 				0,
 				0,
@@ -372,7 +366,7 @@ public class AnimationItem {
 						}
 						try {
 							offScreenImageGC.setBackground(
-								bgColor != null ? bgColor : backgrounds[0]);
+								bgColor != null ? bgColor : background);
 							offScreenImageGC.fillRectangle(
 								imageData.x,
 								imageData.y,
@@ -416,6 +410,8 @@ public class AnimationItem {
 						imageData.width,
 						imageData.height);
 
+					if(imageCanvasGC.isDisposed())
+						return;
 					// Draw the off-screen image to the screen.
 					imageCanvasGC.drawImage(offScreenImage, 0, 0);
 
@@ -433,6 +429,7 @@ public class AnimationItem {
 			offScreenImageGC.dispose();
 		}
 	}
+
 
 	/**
 	 * Return the specified number of milliseconds.
