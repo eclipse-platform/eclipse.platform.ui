@@ -11,9 +11,27 @@
 
 package org.eclipse.ui.commands.internal;
 
-import org.eclipse.ui.commands.IActionService;
+import java.util.Collections;
+import java.util.List;
 
-public interface IActionServiceObserver {
+import org.eclipse.ui.internal.commands.Util;
 
-	void actionServiceChanged(IActionService actionService);
+public final class SimpleContextService extends AbstractContextService {
+	
+	private List contextIds;
+	
+	public SimpleContextService() {
+		super();
+		this.contextIds = Collections.EMPTY_LIST;
+	}
+	
+	public List getContexts() {
+		return contextIds;
+	}
+	
+	public void setContexts(List contextIds)
+		throws IllegalArgumentException {
+		this.contextIds = Util.safeCopy(contextIds, String.class);    
+		fireContextServiceChanged(); 
+	}   
 }

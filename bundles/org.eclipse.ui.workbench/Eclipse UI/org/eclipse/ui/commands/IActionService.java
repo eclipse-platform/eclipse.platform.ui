@@ -22,6 +22,20 @@ import java.util.SortedMap;
 public interface IActionService {
 	
 	/**
+	 * Registers an IActionServiceListener instance with this action service.
+	 *
+	 * @param ids the IActionServiceListener instance to register.
+	 */	
+	void addActionServiceListener(IActionServiceListener actionServiceListener);
+
+	/**
+	 * Unregisters an IActionServiceListener instance with this action service.
+	 *
+	 * @param ids the IActionServiceListener instance to unregister.
+	 */
+	void removeActionServiceListener(IActionServiceListener actionServiceListener);
+	
+	/**
 	 * Returns the mapping of command ids to IAction instances.
 	 * 
 	 * @return the mapping of command ids to IAction instances.

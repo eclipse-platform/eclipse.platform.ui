@@ -11,7 +11,17 @@
 
 package org.eclipse.ui.commands;
 
-public interface IAction {
+/**
+ * <p>
+ * This interface is not intended to be extended by clients.
+ * </p>
+ * @since 3.0
+ */
+public interface IActionServiceListener {
 
-	void run();
+	/**
+	 * TODO
+	 * @param actionService
+	 */	
+	void actionServiceChanged(IActionService actionService);
 }

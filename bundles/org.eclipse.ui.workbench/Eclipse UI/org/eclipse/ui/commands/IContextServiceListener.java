@@ -9,11 +9,19 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.commands.internal;
+package org.eclipse.ui.commands;
 
-import org.eclipse.ui.commands.IContextService;
+/**
+ * <p>
+ * This interface is not intended to be extended by clients.
+ * </p>
+ * @since 3.0
+ */
+public interface IContextServiceListener {
 
-public interface IContextServiceObserver {
-
+	/**
+	 * TODO
+	 * @param contextService
+	 */	
 	void contextServiceChanged(IContextService contextService);
 }

@@ -16,23 +16,15 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.eclipse.jface.action.IAction;
-import org.eclipse.ui.commands.IActionService;
 import org.eclipse.ui.internal.commands.Util;
 
-public final class ActionService implements IActionService {
+public final class SimpleActionService extends AbstractActionService {
 	
 	private SortedMap actionMap;
-	private IActionServiceObserver actionServiceObserver;
-	
-	public ActionService(IActionServiceObserver actionServiceObserver)
-		throws IllegalArgumentException {
+
+	public SimpleActionService() {
 		super();
-
-		if (actionServiceObserver == null)
-			throw new IllegalArgumentException();
-
 		this.actionMap = Collections.unmodifiableSortedMap(new TreeMap());
-		this.actionServiceObserver = actionServiceObserver;
 	}
 
 	public SortedMap getActionMap() {
@@ -42,6 +34,6 @@ public final class ActionService implements IActionService {
 	public void setActionMap(SortedMap actionMap)
 		throws IllegalArgumentException {
 		this.actionMap = Util.safeCopy(actionMap, String.class, IAction.class);    
-		actionServiceObserver.actionServiceChanged(this); 
+		fireActionServiceChanged(); 
     }
 }

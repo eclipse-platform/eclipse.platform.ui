@@ -22,6 +22,20 @@ import java.util.List;
 public interface IContextService {
 
 	/**
+	 * Registers an IContextServiceListener instance with this context service.
+	 *
+	 * @param ids the IContextServiceListener instance to register.
+	 */	
+	void addContextServiceListener(IContextServiceListener contextServiceListener);
+
+	/**
+	 * Unregisters an IContextServiceListener instance with this context service.
+	 *
+	 * @param ids the IContextServiceListener instance to unregister.
+	 */
+	void removeContextServiceListener(IContextServiceListener contextServiceListener);
+
+	/**
 	 * Returns the context ids.
 	 *
 	 * @return the context ids.

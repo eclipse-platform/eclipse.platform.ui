@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui;
 
-import org.eclipse.core.runtime.IAdaptable; 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.swt.widgets.Shell;
 
@@ -147,4 +147,8 @@ public IWorkbenchPage openPage(IAdaptable input)
  * @param page the new active page
  */
 public void setActivePage(IWorkbenchPage page);
+
+//public IActionService getActionService();
+
+//public IContextService getContextService();
 }

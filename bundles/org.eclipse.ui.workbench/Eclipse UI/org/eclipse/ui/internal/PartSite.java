@@ -27,6 +27,8 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.SubActionBars;
 import org.eclipse.ui.commands.IActionService;
 import org.eclipse.ui.commands.IContextService;
+import org.eclipse.ui.commands.internal.SimpleActionService;
+import org.eclipse.ui.commands.internal.SimpleContextService;
 
 /**
  * <code>PartSite</code> is the general implementation for an
@@ -248,18 +250,16 @@ public class PartSite implements IWorkbenchPartSite {
 	}
 
 	public IActionService getActionService() {
-		/*
 		if (actionService == null)
-			actionService = new ActionService();
-		*/
+			actionService = new SimpleActionService();
+
 		return actionService;		
 	}
 
 	public IContextService getContextService() {
-		/*
 		if (contextService == null)
-			contextService = new contextService();
-		*/
+			contextService = new SimpleContextService();
+
 		return contextService;		
 	}
 }
