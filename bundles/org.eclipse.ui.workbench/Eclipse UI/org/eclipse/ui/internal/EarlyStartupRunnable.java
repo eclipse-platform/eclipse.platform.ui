@@ -12,11 +12,9 @@ package org.eclipse.ui.internal;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IPlatform;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -37,6 +35,7 @@ public class EarlyStartupRunnable extends SafeRunnable {
     private static final String PLUGIN_DESC_CLASS = "org.eclipse.core.runtime.IPluginDescriptor"; //$NON-NLS-1$
     private static final String GET_PLUGIN_METHOD = "getPlugin"; //$NON-NLS-1$
     private static final String GET_DESC_METHOD = "getDeclaringPluginDescriptor"; //$NON-NLS-1$
+    private static final String PI_RUNTIME_COMPATIBILITY = "org.eclipse.core.runtime.compatibility"; //$NON-NLS-1$ 
 
     private IExtension extension;
 
@@ -119,7 +118,7 @@ public class EarlyStartupRunnable extends SafeRunnable {
     private Object getPluginForCompatibility() {
         // make sure the compatibility bundle is available
         Bundle compatBundle = Platform
-                .getBundle(IPlatform.PI_RUNTIME_COMPATIBILITY);
+                .getBundle(PI_RUNTIME_COMPATIBILITY);
         if (compatBundle == null)
             return null;
 
