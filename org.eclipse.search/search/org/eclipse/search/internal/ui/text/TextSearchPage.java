@@ -469,7 +469,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 
 	private TextSearchScope getSelectedResourcesScope() {
 		TextSearchScope scope= new TextSearchScope(SearchMessages.getString("SelectionScope")); //$NON-NLS-1$
-		if (!getSelection().isEmpty() && getSelection() instanceof IStructuredSelection) {
+		if (getSelection() instanceof IStructuredSelection && !getSelection().isEmpty()) {
 			Iterator iter= ((IStructuredSelection)getSelection()).iterator();
 			while (iter.hasNext()) {
 				Object selection= iter.next();
