@@ -86,18 +86,18 @@ public class RequestData {
 			return request.getParameter(name);
 		}
 	}
-	
+
 	public String[] getDBCSParameters(String name) {
 		if (UrlUtil.isIE(request)
 			&& request.getParameter("encoding") != null) {
 			// parameter is escaped using JavaScript
-			String[] rawValues = UrlUtil.getRawRequestParameters(request,name);
-			if (rawValues == null)
-				return new String[0];
-			else{
+			String[] rawValues = UrlUtil.getRawRequestParameters(request, name);
+			if (rawValues == null || rawValues.length == 0) {
+				return null;
+			} else {
 				String[] values = new String[rawValues.length];
-				for (int i=0; i<rawValues.length; i++)
-					values[i] = UrlUtil.unescape(rawValues[i]) ;
+				for (int i = 0; i < rawValues.length; i++)
+					values[i] = UrlUtil.unescape(rawValues[i]);
 				return values;
 			}
 		} else {
