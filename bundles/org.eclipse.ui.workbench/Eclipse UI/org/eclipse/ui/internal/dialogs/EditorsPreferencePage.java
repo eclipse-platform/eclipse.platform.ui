@@ -57,13 +57,17 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 
 	private Combo accelConfigCombo;
 
+	private Composite editorReuseGroup;
 	private Button reuseEditors;
-	private Group reuseDirtyEditorGroup;		
+	private Composite editorReuseIndentGroup;
+	private Composite editorReuseThresholdGroup;
+	private IntegerFieldEditor reuseEditorsThreshold;	
+	private Group dirtyEditorReuseGroup;		
 	private Button openNewEditor;
 	private Button promptToReuseEditor;
-	private IntegerFieldEditor reuseEditorsThreshold;
-	private Composite editorReuseGroup;
 	
+	private static final int REUSE_INDENT = 10;
+
 	private IntegerFieldEditor recentFilesEditor;
 
 	// hashtable mapping accelerator configuration names to accelerator configuration
@@ -107,14 +111,14 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		updateEncodingState(true);
 		acceleratorPerformDefaults(store);
 		reuseEditors.setSelection(store.getDefaultBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN));
-		reuseDirtyEditorGroup.setEnabled(reuseEditors.getSelection());
+		dirtyEditorReuseGroup.setEnabled(reuseEditors.getSelection());
 		openNewEditor.setSelection(!store.getDefaultBoolean(IPreferenceConstants.REUSE_DIRTY_EDITORS));
 		openNewEditor.setEnabled(reuseEditors.getSelection());
 		promptToReuseEditor.setSelection(store.getDefaultBoolean(IPreferenceConstants.REUSE_DIRTY_EDITORS));
 		promptToReuseEditor.setEnabled(reuseEditors.getSelection());
 		reuseEditorsThreshold.loadDefault();
-		reuseEditorsThreshold.getLabelControl(editorReuseGroup).setEnabled(reuseEditors.getSelection());
-		reuseEditorsThreshold.getTextControl(editorReuseGroup).setEnabled(reuseEditors.getSelection());
+		reuseEditorsThreshold.getLabelControl(editorReuseThresholdGroup).setEnabled(reuseEditors.getSelection());
+		reuseEditorsThreshold.getTextControl(editorReuseThresholdGroup).setEnabled(reuseEditors.getSelection());
 		recentFilesEditor.loadDefault();
 	}
 	
@@ -342,63 +346,41 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		
 		editorReuseGroup = new Composite(composite, SWT.LEFT);
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
+		// Line up with other entries in preference page
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
 		editorReuseGroup.setLayout(layout);
-		GridData gd = new GridData();
-		gd.horizontalAlignment = GridData.FILL;
-		gd.grabExcessHorizontalSpace = true;
-		editorReuseGroup.setLayoutData(gd);	
+		editorReuseGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));	
 		editorReuseGroup.setFont(font);	
 		
 		reuseEditors = new Button(editorReuseGroup, SWT.CHECK);
 		reuseEditors.setText(WorkbenchMessages.getString("WorkbenchPreference.reuseEditors")); //$NON-NLS-1$
-		GridData reuseEditorsData = new GridData();
-		reuseEditorsData.horizontalSpan = layout.numColumns;
-		reuseEditors.setLayoutData(reuseEditorsData);
+		reuseEditors.setLayoutData(new GridData());
 		reuseEditors.setFont(font);
 		
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		reuseEditors.setSelection(store.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN));
 		reuseEditors.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e){
-				reuseEditorsThreshold.getLabelControl(editorReuseGroup).setEnabled(reuseEditors.getSelection());
-				reuseEditorsThreshold.getTextControl(editorReuseGroup).setEnabled(reuseEditors.getSelection());
-				reuseDirtyEditorGroup.setEnabled(reuseEditors.getSelection());
+				reuseEditorsThreshold.getLabelControl(editorReuseThresholdGroup).setEnabled(reuseEditors.getSelection());
+				reuseEditorsThreshold.getTextControl(editorReuseThresholdGroup).setEnabled(reuseEditors.getSelection());
+				dirtyEditorReuseGroup.setEnabled(reuseEditors.getSelection());
 				openNewEditor.setEnabled(reuseEditors.getSelection());
 				promptToReuseEditor.setEnabled(reuseEditors.getSelection());
 			}
 		});
 		
-		reuseDirtyEditorGroup = new Group(editorReuseGroup, SWT.NONE);
-		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-		data.horizontalSpan = layout.numColumns;
-		reuseDirtyEditorGroup.setLayoutData(data);
-		GridLayout groupLayout = new GridLayout();
-		groupLayout.numColumns = 2;
-		reuseDirtyEditorGroup.setLayout(layout);
-		reuseDirtyEditorGroup.setText(WorkbenchMessages.getString("WorkbenchPreference.reuseDirtyEditorGroupTitle")); //$NON-NLS-1$
-		reuseDirtyEditorGroup.setFont(font);
-		reuseDirtyEditorGroup.setEnabled(reuseEditors.getSelection());
+		editorReuseIndentGroup = new Composite(editorReuseGroup, SWT.LEFT);
+		GridLayout indentLayout = new GridLayout();
+		indentLayout.marginWidth = REUSE_INDENT;
+		editorReuseIndentGroup.setLayout(indentLayout);
+		editorReuseIndentGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));	
 		
-		promptToReuseEditor = new Button(reuseDirtyEditorGroup, SWT.RADIO);
-		promptToReuseEditor.setText(WorkbenchMessages.getString("WorkbenchPreference.promptToReuseEditor")); //$NON-NLS-1$
-		GridData promptToReuseEditorData = new GridData();
-		promptToReuseEditorData.horizontalSpan = groupLayout.numColumns;
-		promptToReuseEditor.setLayoutData(promptToReuseEditorData);
-		promptToReuseEditor.setFont(font);	
-		promptToReuseEditor.setSelection(store.getBoolean(IPreferenceConstants.REUSE_DIRTY_EDITORS));
-		promptToReuseEditor.setEnabled(reuseEditors.getSelection());	
-
-		openNewEditor = new Button(reuseDirtyEditorGroup, SWT.RADIO);
-		openNewEditor.setText(WorkbenchMessages.getString("WorkbenchPreference.openNewEditor")); //$NON-NLS-1$
-		GridData reuseDirtyEditorsData = new GridData();
-		reuseDirtyEditorsData.horizontalSpan = groupLayout.numColumns;
-		openNewEditor.setLayoutData(reuseDirtyEditorsData);
-		openNewEditor.setFont(font);	
-		openNewEditor.setSelection(!store.getBoolean(IPreferenceConstants.REUSE_DIRTY_EDITORS));
-		openNewEditor.setEnabled(reuseEditors.getSelection());		
+		editorReuseThresholdGroup = new Composite(editorReuseIndentGroup, SWT.LEFT);
+		editorReuseThresholdGroup.setLayout(new GridLayout());
+		editorReuseThresholdGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));	
 		
-		reuseEditorsThreshold = new IntegerFieldEditor(IPreferenceConstants.REUSE_EDITORS, WorkbenchMessages.getString("WorkbenchPreference.reuseEditorsThreshold"), editorReuseGroup); //$NON-NLS-1$
+		reuseEditorsThreshold = new IntegerFieldEditor(IPreferenceConstants.REUSE_EDITORS, WorkbenchMessages.getString("WorkbenchPreference.reuseEditorsThreshold"), editorReuseThresholdGroup); //$NON-NLS-1$
 		
 		reuseEditorsThreshold.setPreferenceStore(WorkbenchPlugin.getDefault().getPreferenceStore());
 		reuseEditorsThreshold.setPreferencePage(this);
@@ -407,14 +389,34 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		reuseEditorsThreshold.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
 		reuseEditorsThreshold.setValidRange(1, 99);
 		reuseEditorsThreshold.load();
-		reuseEditorsThreshold.getLabelControl(editorReuseGroup).setEnabled(reuseEditors.getSelection());
-		reuseEditorsThreshold.getTextControl(editorReuseGroup).setEnabled(reuseEditors.getSelection());
+		reuseEditorsThreshold.getLabelControl(editorReuseThresholdGroup).setEnabled(reuseEditors.getSelection());
+		reuseEditorsThreshold.getTextControl(editorReuseThresholdGroup).setEnabled(reuseEditors.getSelection());
 		reuseEditorsThreshold.setPropertyChangeListener(new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
 				if (event.getProperty().equals(FieldEditor.IS_VALID)) 
 					setValid(reuseEditorsThreshold.isValid());
 			}
-		});
+		});		
+		
+		dirtyEditorReuseGroup = new Group(editorReuseIndentGroup, SWT.NONE);
+		dirtyEditorReuseGroup.setLayout(new GridLayout());		
+		dirtyEditorReuseGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		dirtyEditorReuseGroup.setText(WorkbenchMessages.getString("WorkbenchPreference.reuseDirtyEditorGroupTitle")); //$NON-NLS-1$
+		dirtyEditorReuseGroup.setFont(font);
+		dirtyEditorReuseGroup.setEnabled(reuseEditors.getSelection());
+		
+		promptToReuseEditor = new Button(dirtyEditorReuseGroup, SWT.RADIO);
+		promptToReuseEditor.setText(WorkbenchMessages.getString("WorkbenchPreference.promptToReuseEditor")); //$NON-NLS-1$
+		promptToReuseEditor.setFont(font);	
+		promptToReuseEditor.setSelection(store.getBoolean(IPreferenceConstants.REUSE_DIRTY_EDITORS));
+		promptToReuseEditor.setEnabled(reuseEditors.getSelection());	
+
+		openNewEditor = new Button(dirtyEditorReuseGroup, SWT.RADIO);
+		openNewEditor.setText(WorkbenchMessages.getString("WorkbenchPreference.openNewEditor")); //$NON-NLS-1$
+		openNewEditor.setFont(font);	
+		openNewEditor.setSelection(!store.getBoolean(IPreferenceConstants.REUSE_DIRTY_EDITORS));
+		openNewEditor.setEnabled(reuseEditors.getSelection());		
+
 	}
 	/**
 	 * Create a composite that contains entry fields specifying editor history preferences.
