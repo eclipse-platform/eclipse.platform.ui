@@ -24,12 +24,8 @@ public class PServerSSH2ServerConnection implements IServerConnection {
 
 	private ICVSRepositoryLocation location;
 	private String password;
-
 	private Session session;
-	private Channel channel;
-
 	private static int localport = 2403;
-
 	private IServerConnection psc = null;
 
 	protected PServerSSH2ServerConnection(ICVSRepositoryLocation location, String password) {
@@ -49,7 +45,7 @@ public class PServerSSH2ServerConnection implements IServerConnection {
 	}
 
 	public void open(IProgressMonitor monitor) throws IOException, CVSAuthenticationException {
-		monitor.subTask("PServerSSH2ServerConnection.open");
+		monitor.subTask("PServerSSH2ServerConnection.open"); //$NON-NLS-1$
 		monitor.worked(1);
 		String cvs_root = location.getRootDirectory();
 		int cvs_port = location.getPort();
@@ -83,16 +79,16 @@ public class PServerSSH2ServerConnection implements IServerConnection {
 		}
 
 		int lport = cvs_port;
-		String rhost = (cvs_host.equals(ssh_host) ? "localhost" : cvs_host);
+		String rhost = (cvs_host.equals(ssh_host) ? "localhost" : cvs_host); //$NON-NLS-1$
 		int rport = cvs_port;
 
 		// ssh -L lport:rhost:rport ssh_user@ssh_host
 		int retry = 1;
 		while (true) {
 			try {
-				session = JSchSession.getSession(location, ssh_user, "", ssh_host, ssh_port, monitor);
+				session = JSchSession.getSession(location, ssh_user, "", ssh_host, ssh_port, monitor); //$NON-NLS-1$
 				String[] list = session.getPortForwardingL();
-				String name = ":" + rhost + ":" + rport;
+				String name = ":" + rhost + ":" + rport; //$NON-NLS-1$ //$NON-NLS-2$
 				boolean done = false;
 				for (int i = 0; i < list.length; i++) {
 					if (list[i].endsWith(name)) {
@@ -126,12 +122,12 @@ public class PServerSSH2ServerConnection implements IServerConnection {
 		// CVSROOT=":pserver:localhost:"+lport+""cvs_root
 		try {
 			Properties prop = new Properties();
-			prop.put("connection", "pserver");
-			prop.put("user", location.getUsername());
-			prop.put("password", password);
-			prop.put("host", "localhost");
-			prop.put("port", Integer.toString(lport));
-			prop.put("root", cvs_root);
+			prop.put("connection", "pserver"); //$NON-NLS-1$ //$NON-NLS-2$
+			prop.put("user", location.getUsername()); //$NON-NLS-1$
+			prop.put("password", password); //$NON-NLS-1$
+			prop.put("host", "localhost"); //$NON-NLS-1$ //$NON-NLS-2$
+			prop.put("port", Integer.toString(lport)); //$NON-NLS-1$
+			prop.put("root", cvs_root); //$NON-NLS-1$
 
 			CVSRepositoryLocation cvsrl = CVSRepositoryLocation.fromProperties(prop);
 

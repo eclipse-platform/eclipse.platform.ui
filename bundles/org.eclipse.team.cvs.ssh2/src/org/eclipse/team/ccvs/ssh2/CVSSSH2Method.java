@@ -22,8 +22,7 @@ public class CVSSSH2Method implements IConnectionMethod {
 	}
 	
 	public IServerConnection createConnection(ICVSRepositoryLocation root, String password) {
-		IPreferenceStore store = CVSSSH2Plugin.getDefault().getPreferenceStore();
-		
+		IPreferenceStore store = CVSSSH2Plugin.getDefault().getPreferenceStore();		
 		// Support for user defined switching between SSH1 and SSH2 for now. Will
 		// improve this to provide automatic server version detection.
 		if(store.getBoolean(CVSSSH2PreferencePage.KEY_USE_SSH2)) {

@@ -27,32 +27,33 @@ import java.io.File;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.KeyPair;
+import org.eclipse.team.ccvs.ssh2.Policy;
 
 public class CVSSSH2PreferencePage extends PreferencePage
   implements IWorkbenchPreferencePage {
 
-  public static String KEY_PROXY="CVSSSH2PreferencePage.PROXY";
-  public static String KEY_PROXY_TYPE="CVSSSH2PreferencePage.PROXY_TYPE";
-  public static String KEY_PROXY_HOST="CVSSSH2PreferencePage.PROXY_HOST";
-  public static String KEY_PROXY_PORT="CVSSSH2PreferencePage.PROXY_PORT";
-  public static String KEY_PROXY_AUTH="CVSSSH2PreferencePage.PROXY_AUTH";
-  public static String KEY_PROXY_USER="CVSSSH2PreferencePage.PROXY_USER";
-  public static String KEY_PROXY_PASS="CVSSSH2PreferencePage.PROXY_PASS";
-  public static String KEY_SSH2HOME="CVSSSH2PreferencePage.SSH2HOME";
-  public static String KEY_KEYFILE="CVSSSH2PreferencePage.KEYFILE";
-  public static String KEY_PRIVATEKEY="CVSSSH2PreferencePage.PRIVATEKEY";
+  public static String KEY_PROXY="CVSSSH2PreferencePage.PROXY"; //$NON-NLS-1$
+  public static String KEY_PROXY_TYPE="CVSSSH2PreferencePage.PROXY_TYPE"; //$NON-NLS-1$
+  public static String KEY_PROXY_HOST="CVSSSH2PreferencePage.PROXY_HOST"; //$NON-NLS-1$
+  public static String KEY_PROXY_PORT="CVSSSH2PreferencePage.PROXY_PORT"; //$NON-NLS-1$
+  public static String KEY_PROXY_AUTH="CVSSSH2PreferencePage.PROXY_AUTH"; //$NON-NLS-1$
+  public static String KEY_PROXY_USER="CVSSSH2PreferencePage.PROXY_USER"; //$NON-NLS-1$
+  public static String KEY_PROXY_PASS="CVSSSH2PreferencePage.PROXY_PASS"; //$NON-NLS-1$
+  public static String KEY_SSH2HOME="CVSSSH2PreferencePage.SSH2HOME"; //$NON-NLS-1$
+  public static String KEY_KEYFILE="CVSSSH2PreferencePage.KEYFILE"; //$NON-NLS-1$
+  public static String KEY_PRIVATEKEY="CVSSSH2PreferencePage.PRIVATEKEY"; //$NON-NLS-1$
   
   // Temporary preference for using ssh2 instead of ssh1
-  public static String KEY_USE_SSH2="CVSSSH2PreferencePage.SSH2_USE_SSH2";
+  public static String KEY_USE_SSH2="CVSSSH2PreferencePage.SSH2_USE_SSH2"; //$NON-NLS-1$
 
-  static String SOCKS5="SOCKS5";
-  static String HTTP="HTTP";
-  private static String HTTP_DEFAULT_PORT="80";
-  private static String SOCKS5_DEFAULT_PORT="1080";
-  private static String privatekeys="id_dsa,id_rsa";
+  static String SOCKS5="SOCKS5"; //$NON-NLS-1$
+  static String HTTP="HTTP"; //$NON-NLS-1$
+  private static String HTTP_DEFAULT_PORT="80"; //$NON-NLS-1$
+  private static String SOCKS5_DEFAULT_PORT="1080"; //$NON-NLS-1$
+  private static String privatekeys="id_dsa,id_rsa"; //$NON-NLS-1$
 
-  static String DSA="DSA";
-  static String RSA="RSA";
+  static String DSA="DSA"; //$NON-NLS-1$
+  static String RSA="RSA"; //$NON-NLS-1$
 
 //  private DirectoryFieldEditor ssh2homeEditor;
 
@@ -81,7 +82,6 @@ public class CVSSSH2PreferencePage extends PreferencePage
   private Combo keyTypeCombo;
   private Button ssh2HomeBrowse;
   private Button keyGenerate;
-  private Button keyLoad;
   private Button saveKeyPair;
   private Label keyCommentLabel;
   private Text keyCommentText;
@@ -100,7 +100,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
 //    super(GRID);
     IPreferenceStore store=CVSSSH2Plugin.getDefault().getPreferenceStore();
     setPreferenceStore(store);
-    setDescription("CVSSSH2 Settings:");
+    setDescription(Policy.bind("CVSSSH2PreferencePage.18")); //$NON-NLS-1$
   }
 
   protected Control createContents(Composite parent) {
@@ -112,15 +112,15 @@ public class CVSSSH2PreferencePage extends PreferencePage
     tabFolder.setLayoutData(new GridData(GridData.FILL_BOTH));
 
     TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
-    tabItem.setText("General");
+    tabItem.setText(Policy.bind("CVSSSH2PreferencePage.19")); //$NON-NLS-1$
     tabItem.setControl(createGeneralPage(tabFolder));
 
     tabItem = new TabItem(tabFolder, SWT.NONE);
-    tabItem.setText("Proxy");
+    tabItem.setText(Policy.bind("CVSSSH2PreferencePage.20")); //$NON-NLS-1$
     tabItem.setControl(createProxyPage(tabFolder));
 
     tabItem = new TabItem(tabFolder, SWT.NONE);
-    tabItem.setText("Key Management");
+    tabItem.setText(Policy.bind("CVSSSH2PreferencePage.21")); //$NON-NLS-1$
     tabItem.setControl(createKeyManagementPage(tabFolder));
 
     IPreferenceStore store=CVSSSH2Plugin.getDefault().getPreferenceStore();
@@ -140,7 +140,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
     group.setLayoutData(data);
 
     enableSSH2=new Button(group, SWT.CHECK);
-    enableSSH2.setText("Enable SSH2 instead of SSH1 (temporary until SSH2 is fully tested)");
+    enableSSH2.setText(Policy.bind("CVSSSH2PreferencePage.22")); //$NON-NLS-1$
     GridData gd=new GridData();
     gd.horizontalSpan=3;
     enableSSH2.setLayoutData(gd);
@@ -148,7 +148,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
     createSpacer(group, 3);
 
     ssh2HomeLabel=new Label(group, SWT.NONE);
-    ssh2HomeLabel.setText("SSH2 Home");
+    ssh2HomeLabel.setText(Policy.bind("CVSSSH2PreferencePage.23")); //$NON-NLS-1$
 
     ssh2HomeText=new Text(group, SWT.SINGLE | SWT.BORDER);
     ssh2HomeText.setFont(group.getFont());
@@ -157,8 +157,8 @@ public class CVSSSH2PreferencePage extends PreferencePage
     ssh2HomeText.setLayoutData(gd);
 
     ssh2HomeBrowse=new Button(group, SWT.NULL);
-    ssh2HomeBrowse.setText("Browse...");
-    gd=new GridData(GridData.HORIZONTAL_ALIGN_END);
+    ssh2HomeBrowse.setText(Policy.bind("CVSSSH2PreferencePage.24")); //$NON-NLS-1$
+    gd=new GridData(GridData.FILL_HORIZONTAL);
     gd.horizontalSpan=1;
     ssh2HomeBrowse.setLayoutData(gd);
 
@@ -166,7 +166,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
     createSpacer(group, 3);
 
     privateKeyLabel=new Label(group, SWT.NONE);
-    privateKeyLabel.setText("Private key");
+    privateKeyLabel.setText(Policy.bind("CVSSSH2PreferencePage.25")); //$NON-NLS-1$
 
     privateKeyText=new Text(group, SWT.SINGLE | SWT.BORDER);
     privateKeyText.setFont(group.getFont());
@@ -175,8 +175,8 @@ public class CVSSSH2PreferencePage extends PreferencePage
     privateKeyText.setLayoutData(gd);
 
     privateKeyAdd=new Button(group, SWT.NULL);
-    privateKeyAdd.setText("Add...");
-    gd=new GridData(GridData.HORIZONTAL_ALIGN_END);
+    privateKeyAdd.setText(Policy.bind("CVSSSH2PreferencePage.26")); //$NON-NLS-1$
+    gd=new GridData(GridData.FILL_HORIZONTAL);
     gd.horizontalSpan=1;
     privateKeyAdd.setLayoutData(gd);
 
@@ -195,7 +195,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
 
 	  DirectoryDialog dd=new DirectoryDialog(getShell());
 	  dd.setFilterPath(home);
-	  dd.setMessage("SSH Home");
+	  dd.setMessage(Policy.bind("CVSSSH2PreferencePage.27")); //$NON-NLS-1$
 	  String dir=dd.open();
 	  if(dir==null){ // cancel
 	    return;
@@ -217,12 +217,12 @@ public class CVSSSH2PreferencePage extends PreferencePage
 	  String[] files=fd.getFileNames();
 	  String keys=privateKeyText.getText();
 	  String dir=fd.getFilterPath();
-	  if(dir.equals(home)){dir="";}
+	  if(dir.equals(home)){dir="";} //$NON-NLS-1$
 	  else{dir+=java.io.File.separator;}
 
 	  for(int i=0; i<files.length; i++){
 	    String foo=files[i];
-	    keys=keys+","+dir+foo;
+	    keys=keys+","+dir+foo; //$NON-NLS-1$
 	  }
 	  privateKeyText.setText(keys);
 	}
@@ -241,13 +241,13 @@ public class CVSSSH2PreferencePage extends PreferencePage
     group.setLayoutData(data);
 
     enableProxy=new Button(group, SWT.CHECK);
-    enableProxy.setText("Enable proxy connection");
+    enableProxy.setText(Policy.bind("CVSSSH2PreferencePage.30")); //$NON-NLS-1$
     GridData gd=new GridData();
     gd.horizontalSpan=3;
     enableProxy.setLayoutData(gd);
 
     proxyTypeLabel=new Label(group, SWT.NONE);
-    proxyTypeLabel.setText("Proxy type");
+    proxyTypeLabel.setText(Policy.bind("CVSSSH2PreferencePage.31")); //$NON-NLS-1$
     proxyTypeCombo=new Combo(group, SWT.READ_ONLY);
     proxyTypeCombo.setFont(group.getFont());
     gd=new GridData(GridData.FILL_HORIZONTAL);
@@ -271,7 +271,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
     proxyTypeCombo.select(0);
 
     proxyHostLabel=new Label(group, SWT.NONE);
-    proxyHostLabel.setText("Proxy host address");
+    proxyHostLabel.setText(Policy.bind("CVSSSH2PreferencePage.32")); //$NON-NLS-1$
 
     proxyHostText=new Text(group, SWT.SINGLE | SWT.BORDER);
     proxyHostText.setFont(group.getFont());
@@ -280,7 +280,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
     proxyHostText.setLayoutData(gd);
 
     proxyPortLabel=new Label(group, SWT.NONE);
-    proxyPortLabel.setText("Proxy host port");
+    proxyPortLabel.setText(Policy.bind("CVSSSH2PreferencePage.33")); //$NON-NLS-1$
 
     proxyPortText=new Text(group, SWT.SINGLE | SWT.BORDER);
     proxyPortText.setFont(group.getFont());
@@ -291,13 +291,13 @@ public class CVSSSH2PreferencePage extends PreferencePage
     createSpacer(group, 3);
 
     enableAuth=new Button(group, SWT.CHECK);
-    enableAuth.setText("Enable proxy authentication");
+    enableAuth.setText(Policy.bind("CVSSSH2PreferencePage.34")); //$NON-NLS-1$
     gd=new GridData();
     gd.horizontalSpan=3;
     enableAuth.setLayoutData(gd);
 
     proxyUserLabel=new Label(group, SWT.NONE);
-    proxyUserLabel.setText("Proxy user name");
+    proxyUserLabel.setText(Policy.bind("CVSSSH2PreferencePage.35")); //$NON-NLS-1$
 
     proxyUserText=new Text(group, SWT.SINGLE | SWT.BORDER);
     proxyUserText.setFont(group.getFont());
@@ -306,7 +306,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
     proxyUserText.setLayoutData(gd);
 
     proxyPassLabel=new Label(group, SWT.NONE);
-    proxyPassLabel.setText("Proxy password");
+    proxyPassLabel.setText(Policy.bind("CVSSSH2PreferencePage.36")); //$NON-NLS-1$
 
     proxyPassText=new Text(group, SWT.SINGLE | SWT.BORDER);
     proxyPassText.setFont(group.getFont());
@@ -345,7 +345,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
     group.setLayoutData(data);
 
     keyTypeLabel=new Label(group, SWT.NONE);
-    keyTypeLabel.setText("Key type");
+    keyTypeLabel.setText(Policy.bind("CVSSSH2PreferencePage.37")); //$NON-NLS-1$
     keyTypeCombo=new Combo(group, SWT.READ_ONLY);
     keyTypeCombo.setFont(group.getFont());
     GridData gd=new GridData(GridData.FILL_HORIZONTAL);
@@ -353,7 +353,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
     keyTypeCombo.setLayoutData(gd);
 
     keyGenerate=new Button(group, SWT.NULL);
-    keyGenerate.setText("Generate");
+    keyGenerate.setText(Policy.bind("CVSSSH2PreferencePage.38")); //$NON-NLS-1$
     gd=new GridData(GridData.HORIZONTAL_ALIGN_END);
     gd.horizontalSpan=columnSpan;
     keyGenerate.setLayoutData(gd);
@@ -367,13 +367,13 @@ public class CVSSSH2PreferencePage extends PreferencePage
 */
 
     publicKeylabel=new Label(group, SWT.NONE);
-    publicKeylabel.setText("You can paste this public key into the remote authorized_keys file:");
+    publicKeylabel.setText(Policy.bind("CVSSSH2PreferencePage.39")); //$NON-NLS-1$
     gd=new GridData();
     gd.horizontalSpan=columnSpan;
     publicKeylabel.setLayoutData(gd);
 
     publicKeyText=new Text(group,SWT.MULTI|SWT.BORDER|SWT.V_SCROLL|SWT.WRAP);
-    publicKeyText.setText("");
+    publicKeyText.setText(""); //$NON-NLS-1$
     publicKeyText.setEditable(false);
     gd=new GridData();
     gd.horizontalSpan=columnSpan;
@@ -384,7 +384,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
     publicKeyText.setLayoutData(gd);
 
     keyFingerPrintLabel=new Label(group, SWT.NONE);
-    keyFingerPrintLabel.setText("Finger print");
+    keyFingerPrintLabel.setText(Policy.bind("CVSSSH2PreferencePage.41")); //$NON-NLS-1$
     keyFingerPrintText=new Text(group, SWT.SINGLE | SWT.BORDER);
     keyFingerPrintText.setFont(group.getFont());
     gd=new GridData(GridData.FILL_HORIZONTAL);
@@ -392,7 +392,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
     keyFingerPrintText.setLayoutData(gd);
 
     keyCommentLabel=new Label(group, SWT.NONE);
-    keyCommentLabel.setText("Comment");
+    keyCommentLabel.setText(Policy.bind("CVSSSH2PreferencePage.42")); //$NON-NLS-1$
     keyCommentText=new Text(group, SWT.SINGLE | SWT.BORDER);
     keyCommentText.setFont(group.getFont());
     gd=new GridData(GridData.FILL_HORIZONTAL);
@@ -400,7 +400,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
     keyCommentText.setLayoutData(gd);
 
     keyPassphrase1Label=new Label(group, SWT.NONE);
-    keyPassphrase1Label.setText("Passphrase");
+    keyPassphrase1Label.setText(Policy.bind("CVSSSH2PreferencePage.43")); //$NON-NLS-1$
     keyPassphrase1Text=new Text(group, SWT.SINGLE | SWT.BORDER);
     keyPassphrase1Text.setFont(group.getFont());
     keyPassphrase1Text.setEchoChar('*');
@@ -409,7 +409,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
     keyPassphrase1Text.setLayoutData(gd);
 
     keyPassphrase2Label=new Label(group, SWT.NONE);
-    keyPassphrase2Label.setText("Confirm passphrase");
+    keyPassphrase2Label.setText(Policy.bind("CVSSSH2PreferencePage.44")); //$NON-NLS-1$
     keyPassphrase2Text=new Text(group, SWT.SINGLE | SWT.BORDER);
     keyPassphrase2Text.setFont(group.getFont());
     keyPassphrase2Text.setEchoChar('*');
@@ -418,7 +418,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
     keyPassphrase2Text.setLayoutData(gd);
 
     saveKeyPair=new Button(group, SWT.NULL);
-    saveKeyPair.setText("Save");
+    saveKeyPair.setText(Policy.bind("CVSSSH2PreferencePage.45")); //$NON-NLS-1$
     gd=new GridData(GridData.HORIZONTAL_ALIGN_END);
     gd.horizontalSpan=columnSpan;
     saveKeyPair.setLayoutData(gd);
@@ -443,7 +443,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
 
 	    kpair=KeyPair.genKeyPair(jsch, type);
 	    ByteArrayOutputStream out=new ByteArrayOutputStream();
-	    kpairComment=_type+"-1024";
+	    kpairComment=_type+"-1024"; //$NON-NLS-1$
 	    kpair.writePublicKey(out, kpairComment);
 	    out.close();
 	    publicKeyText.setText(out.toString());
@@ -458,7 +458,8 @@ public class CVSSSH2PreferencePage extends PreferencePage
 	    ok=false;
 	  }
 	  MessageBox mb=new MessageBox(getShell(),SWT.OK|SWT.ICON_INFORMATION);
-	  mb.setMessage(_type+" 1024bits key is successfully generated.");
+	  mb.setText(Policy.bind("CVSSSH2PreferencePage.info")); //$NON-NLS-1$
+	  mb.setMessage(_type+Policy.bind("CVSSSH2PreferencePage.47")); //$NON-NLS-1$
 	  mb.open();
 	}
       });
@@ -471,13 +472,15 @@ public class CVSSSH2PreferencePage extends PreferencePage
 	  String pass=keyPassphrase1Text.getText();
 	  if(!pass.equals(keyPassphrase2Text.getText())){
 	    mb=new MessageBox(getShell(),SWT.OK|SWT.ICON_ERROR);
-	    mb.setMessage("Given passphrases don't match.");
+	    mb.setText(Policy.bind("CVSSSH2PreferencePage.error")); //$NON-NLS-1$
+	    mb.setMessage(Policy.bind("CVSSSH2PreferencePage.48")); //$NON-NLS-1$
 	    mb.open();
 	    return;
 	  }
 	  if(pass.length()==0){
 	    mb=new MessageBox(getShell(),SWT.YES|SWT.NO|SWT.ICON_WARNING);
-	    mb.setMessage("Are you sure you want to save this private key without the passpharse protection?");
+	    mb.setText(Policy.bind("CVSSSH2PreferencePage.warning")); //$NON-NLS-1$
+	    mb.setMessage(Policy.bind("CVSSSH2PreferencePage.49")); //$NON-NLS-1$
 	    if(mb.open()==SWT.NO){
 	      return;
 	    }
@@ -492,7 +495,8 @@ public class CVSSSH2PreferencePage extends PreferencePage
 
 	  if(!_home.exists()){
 	    mb=new MessageBox(getShell(),SWT.YES|SWT.NO|SWT.ICON_QUESTION);
-	    mb.setMessage(home+" does not exsit.\nAre you sure you want to create it?");
+	    mb.setText(Policy.bind("CVSSSH2PreferencePage.question")); //$NON-NLS-1$
+	    mb.setMessage(home+Policy.bind("CVSSSH2PreferencePage.50")); //$NON-NLS-1$
 	    if(mb.open()==SWT.NO){
 	      return;
 	    }
@@ -503,7 +507,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
 
 	  FileDialog fd=new FileDialog(getShell(), SWT.SAVE);
 	  fd.setFilterPath(home);
-	  String file=(kpair.getKeyType()==KeyPair.RSA) ? "id_rsa" : "id_dsa";
+	  String file=(kpair.getKeyType()==KeyPair.RSA) ? "id_rsa" : "id_dsa"; //$NON-NLS-1$ //$NON-NLS-2$
 	  fd.setFileName(file);
 	  file=fd.open();
 	  if(file==null){ // cancel
@@ -512,7 +516,8 @@ public class CVSSSH2PreferencePage extends PreferencePage
 
 	  if(new File(file).exists()){
 	    mb=new MessageBox(getShell(),SWT.YES|SWT.NO|SWT.ICON_WARNING);
-	    mb.setMessage(file+" has already existed.\nAre you sure you want to over write it?");
+	    mb.setText(Policy.bind("CVSSSH2PreferencePage.warning")); //$NON-NLS-1$
+	    mb.setMessage(file+Policy.bind("CVSSSH2PreferencePage.53")); //$NON-NLS-1$
 	    if(mb.open()==SWT.NO){
 	      return;
 	    }
@@ -521,7 +526,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
 	  boolean ok=true;
 	  try{
 	    kpair.writePrivateKey(file);
-	    kpair.writePublicKey(file+".pub", kpairComment);
+	    kpair.writePublicKey(file+".pub", kpairComment); //$NON-NLS-1$
 	  }
 	  catch(Exception ee){
 	    ok=false;
@@ -529,9 +534,10 @@ public class CVSSSH2PreferencePage extends PreferencePage
 
 	  if(ok){
 	    mb=new MessageBox(getShell(),SWT.OK|SWT.ICON_INFORMATION);
-	    mb.setMessage("Successfully saved."+"\n"+
-			  "Private key: "+file+"\n"+
-			  "Public key: "+file+".pub");
+	    mb.setText(Policy.bind("CVSSSH2PreferencePage.information")); //$NON-NLS-1$
+	    mb.setMessage(Policy.bind("CVSSSH2PreferencePage.55")+"\n"+ //$NON-NLS-1$ //$NON-NLS-2$
+			  Policy.bind("CVSSSH2PreferencePage.57")+file+"\n"+ //$NON-NLS-1$ //$NON-NLS-2$
+			  Policy.bind("CVSSSH2PreferencePage.59")+file+".pub"); //$NON-NLS-1$ //$NON-NLS-2$
 	    mb.open();
 	  }
 	}
@@ -588,9 +594,9 @@ public class CVSSSH2PreferencePage extends PreferencePage
     setDefault(store, KEY_PRIVATEKEY, privatekeys);
     setDefault(store, KEY_PROXY_TYPE, HTTP);
     setDefault(store, KEY_PROXY_PORT, HTTP_DEFAULT_PORT);
-    setDefault(store, KEY_PROXY_AUTH, "false");
-    setDefault(store, KEY_PROXY_USER, "");
-    setDefault(store, KEY_PROXY_PASS, "");
+    setDefault(store, KEY_PROXY_AUTH, "false"); //$NON-NLS-1$
+    setDefault(store, KEY_PROXY_USER, ""); //$NON-NLS-1$
+    setDefault(store, KEY_PROXY_PASS, ""); //$NON-NLS-1$
     store.setDefault(KEY_USE_SSH2, false);
   }
 
@@ -605,12 +611,12 @@ public class CVSSSH2PreferencePage extends PreferencePage
     ssh2HomeText.setText(store.getString(KEY_SSH2HOME));
     privateKeyText.setText(store.getString(KEY_PRIVATEKEY));
     enableSSH2.setSelection(store.getBoolean(KEY_USE_SSH2));
-    useProxy=store.getString(KEY_PROXY).equals("true");
+    useProxy=store.getString(KEY_PROXY).equals("true"); //$NON-NLS-1$
     enableProxy.setSelection(useProxy);
     proxyHostText.setText(store.getString(KEY_PROXY_HOST));
     proxyPortText.setText(store.getString(KEY_PROXY_PORT));
     proxyTypeCombo.select(store.getString(KEY_PROXY_TYPE).equals(HTTP)?0:1);
-    useAuth=store.getString(KEY_PROXY_AUTH).equals("true");
+    useAuth=store.getString(KEY_PROXY_AUTH).equals("true"); //$NON-NLS-1$
     enableAuth.setSelection(useAuth);
     proxyUserText.setText(store.getString(KEY_PROXY_USER));
     proxyPassText.setText(store.getString(KEY_PROXY_PASS));
@@ -619,7 +625,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
   }
   protected void createProxy(Composite composite, int columnSpan) {
     Group group=new Group(composite, SWT.NONE);
-    group.setText("Proxy settings");
+    group.setText(Policy.bind("CVSSSH2PreferencePage.66")); //$NON-NLS-1$
     GridLayout layout=new GridLayout();
     layout.numColumns=2;
     group.setLayout(layout);
@@ -630,13 +636,13 @@ public class CVSSSH2PreferencePage extends PreferencePage
     group.setFont(composite.getFont());
     
     enableProxy=new Button(group, SWT.CHECK);
-    enableProxy.setText("Enable proxy connection");
+    enableProxy.setText(Policy.bind("CVSSSH2PreferencePage.67")); //$NON-NLS-1$
     gd=new GridData();
     gd.horizontalSpan=2;
     enableProxy.setLayoutData(gd);
 
     proxyTypeLabel=new Label(group, SWT.NONE);
-    proxyTypeLabel.setText("Proxy type");
+    proxyTypeLabel.setText(Policy.bind("CVSSSH2PreferencePage.68")); //$NON-NLS-1$
     proxyTypeCombo=new Combo(group, SWT.READ_ONLY);
     proxyTypeCombo.setFont(group.getFont());
     gd=new GridData(GridData.FILL_HORIZONTAL);
@@ -659,7 +665,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
     proxyTypeCombo.select(0);
 
     proxyHostLabel=new Label(group, SWT.NONE);
-    proxyHostLabel.setText("Proxy host address");
+    proxyHostLabel.setText(Policy.bind("CVSSSH2PreferencePage.69")); //$NON-NLS-1$
 
     proxyHostText=new Text(group, SWT.SINGLE | SWT.BORDER);
     proxyHostText.setFont(group.getFont());
@@ -667,7 +673,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
     proxyHostText.setLayoutData(gd);
 
     proxyPortLabel=new Label(group, SWT.NONE);
-    proxyPortLabel.setText("Proxy host port");
+    proxyPortLabel.setText(Policy.bind("CVSSSH2PreferencePage.70")); //$NON-NLS-1$
 
     proxyPortText=new Text(group, SWT.SINGLE | SWT.BORDER);
     proxyPortText.setFont(group.getFont());
@@ -677,13 +683,13 @@ public class CVSSSH2PreferencePage extends PreferencePage
     createSpacer(group, 3);
 
     enableAuth=new Button(group, SWT.CHECK);
-    enableAuth.setText("Enable proxy authentication");
+    enableAuth.setText(Policy.bind("CVSSSH2PreferencePage.71")); //$NON-NLS-1$
     gd=new GridData();
     gd.horizontalSpan=2;
     enableAuth.setLayoutData(gd);
 
     proxyUserLabel=new Label(group, SWT.NONE);
-    proxyUserLabel.setText("Proxy user name");
+    proxyUserLabel.setText(Policy.bind("CVSSSH2PreferencePage.72")); //$NON-NLS-1$
 
     proxyUserText=new Text(group, SWT.SINGLE | SWT.BORDER);
     proxyUserText.setFont(group.getFont());
@@ -692,7 +698,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
     proxyUserText.setLayoutData(gd);
 
     proxyPassLabel=new Label(group, SWT.NONE);
-    proxyPassLabel.setText("Proxy password");
+    proxyPassLabel.setText(Policy.bind("CVSSSH2PreferencePage.73")); //$NON-NLS-1$
 
     proxyPassText=new Text(group, SWT.SINGLE | SWT.BORDER);
     proxyPassText.setFont(group.getFont());
@@ -722,7 +728,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
 
   protected void createKeyGeneration(Composite composite, int columnSpan) {
     Group group=new Group(composite, SWT.NONE);
-    group.setText("Key Management");
+    group.setText(Policy.bind("CVSSSH2PreferencePage.74")); //$NON-NLS-1$
     GridLayout layout=new GridLayout();
     layout.numColumns=2;
     group.setLayout(layout);
@@ -733,14 +739,14 @@ public class CVSSSH2PreferencePage extends PreferencePage
     group.setFont(composite.getFont());
     
     keyTypeLabel=new Label(group, SWT.NONE);
-    keyTypeLabel.setText("Key type");
+    keyTypeLabel.setText(Policy.bind("CVSSSH2PreferencePage.75")); //$NON-NLS-1$
     keyTypeCombo=new Combo(group, SWT.READ_ONLY);
     keyTypeCombo.setFont(group.getFont());
     gd=new GridData(GridData.FILL_HORIZONTAL);
     keyTypeCombo.setLayoutData(gd);
 
     keyGenerate=new Button(group, SWT.NULL);
-    keyGenerate.setText("Generate");
+    keyGenerate.setText(Policy.bind("CVSSSH2PreferencePage.76")); //$NON-NLS-1$
     gd=new GridData(GridData.HORIZONTAL_ALIGN_END);
     gd.horizontalSpan=columnSpan;
     keyGenerate.setLayoutData(gd);
@@ -754,13 +760,13 @@ public class CVSSSH2PreferencePage extends PreferencePage
     */
 
     publicKeylabel=new Label(group, SWT.NONE);
-    publicKeylabel.setText("You can paste this public key into the remote authorized_keys file:");
+    publicKeylabel.setText(Policy.bind("CVSSSH2PreferencePage.77")); //$NON-NLS-1$
     gd=new GridData();
     gd.horizontalSpan=columnSpan;
     publicKeylabel.setLayoutData(gd);
 
     publicKeyText=new Text(group,SWT.MULTI|SWT.BORDER|SWT.V_SCROLL);
-    publicKeyText.setText("");
+    publicKeyText.setText(""); //$NON-NLS-1$
     publicKeyText.setEditable(false);
     gd=new GridData();
     gd.horizontalSpan=columnSpan;
@@ -771,7 +777,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
     publicKeyText.setLayoutData(gd);
 
     keyFingerPrintLabel=new Label(group, SWT.NONE);
-    keyFingerPrintLabel.setText("Finger print");
+    keyFingerPrintLabel.setText(Policy.bind("CVSSSH2PreferencePage.79")); //$NON-NLS-1$
     keyFingerPrintText=new Text(group, SWT.SINGLE | SWT.BORDER);
     keyFingerPrintText.setFont(group.getFont());
     gd=new GridData(GridData.FILL_HORIZONTAL);
@@ -779,7 +785,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
     keyFingerPrintText.setLayoutData(gd);
 
     keyCommentLabel=new Label(group, SWT.NONE);
-    keyCommentLabel.setText("Comment");
+    keyCommentLabel.setText(Policy.bind("CVSSSH2PreferencePage.80")); //$NON-NLS-1$
     keyCommentText=new Text(group, SWT.SINGLE | SWT.BORDER);
     keyCommentText.setFont(group.getFont());
     gd=new GridData(GridData.FILL_HORIZONTAL);
@@ -787,7 +793,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
     keyCommentText.setLayoutData(gd);
 
     keyPassphrase1Label=new Label(group, SWT.NONE);
-    keyPassphrase1Label.setText("Passphrase");
+    keyPassphrase1Label.setText(Policy.bind("CVSSSH2PreferencePage.81")); //$NON-NLS-1$
     keyPassphrase1Text=new Text(group, SWT.SINGLE | SWT.BORDER);
     keyPassphrase1Text.setFont(group.getFont());
     keyPassphrase1Text.setEchoChar('*');
@@ -796,7 +802,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
     keyPassphrase1Text.setLayoutData(gd);
 
     keyPassphrase2Label=new Label(group, SWT.NONE);
-    keyPassphrase2Label.setText("Confirm passphrase");
+    keyPassphrase2Label.setText(Policy.bind("CVSSSH2PreferencePage.82")); //$NON-NLS-1$
     keyPassphrase2Text=new Text(group, SWT.SINGLE | SWT.BORDER);
     keyPassphrase2Text.setFont(group.getFont());
     keyPassphrase2Text.setEchoChar('*');
@@ -805,7 +811,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
     keyPassphrase2Text.setLayoutData(gd);
 
     saveKeyPair=new Button(group, SWT.NULL);
-    saveKeyPair.setText("Save");
+    saveKeyPair.setText(Policy.bind("CVSSSH2PreferencePage.83")); //$NON-NLS-1$
     gd=new GridData(GridData.HORIZONTAL_ALIGN_END);
     gd.horizontalSpan=columnSpan;
     saveKeyPair.setLayoutData(gd);
@@ -830,7 +836,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
 
 	    kpair=KeyPair.genKeyPair(jsch, type);
 	    ByteArrayOutputStream out=new ByteArrayOutputStream();
-	    kpairComment=_type+"-1024";
+	    kpairComment=_type+"-1024"; //$NON-NLS-1$
 	    kpair.writePublicKey(out, kpairComment);
 	    out.close();
 	    publicKeyText.setText(out.toString());
@@ -845,7 +851,8 @@ public class CVSSSH2PreferencePage extends PreferencePage
 	    ok=false;
 	  }
 	  MessageBox mb=new MessageBox(getShell(),SWT.OK|SWT.ICON_INFORMATION);
-	  mb.setMessage(_type+" 1024bits key is successfully generated.");
+	  mb.setText(Policy.bind("CVSSSH2PreferencePage.information")); //$NON-NLS-1$
+	  mb.setMessage(_type+Policy.bind("CVSSSH2PreferencePage.85")); //$NON-NLS-1$
 	  mb.open();
 	}
       });
@@ -858,13 +865,15 @@ public class CVSSSH2PreferencePage extends PreferencePage
 	  String pass=keyPassphrase1Text.getText();
 	  if(!pass.equals(keyPassphrase2Text.getText())){
 	    mb=new MessageBox(getShell(),SWT.OK|SWT.ICON_ERROR);
-	    mb.setMessage("Given passphrases don't match.");
+	    mb.setText(Policy.bind("CVSSSH2PreferencePage.error")); //$NON-NLS-1$
+	    mb.setMessage(Policy.bind("CVSSSH2PreferencePage.86")); //$NON-NLS-1$
 	    mb.open();
 	    return;
 	  }
 	  if(pass.length()==0){
 	    mb=new MessageBox(getShell(),SWT.YES|SWT.NO|SWT.ICON_WARNING);
-	    mb.setMessage("Are you sure you want to save this private key without the passpharse protection?");
+	    mb.setText(Policy.bind("CVSSSH2PreferencePage.awrning")); //$NON-NLS-1$
+	    mb.setMessage(Policy.bind("CVSSSH2PreferencePage.87")); //$NON-NLS-1$
 	    if(mb.open()==SWT.NO){
 	      return;
 	    }
@@ -879,7 +888,8 @@ public class CVSSSH2PreferencePage extends PreferencePage
 
 	  if(!_home.exists()){
 	    mb=new MessageBox(getShell(),SWT.YES|SWT.NO|SWT.ICON_QUESTION);
-	    mb.setMessage(home+" does not exsit.\nAre you sure you want to create it?");
+	    mb.setText(Policy.bind("CVSSSH2PreferencePage.question")); //$NON-NLS-1$
+	    mb.setMessage(home+Policy.bind("CVSSSH2PreferencePage.88")); //$NON-NLS-1$
 	    if(mb.open()==SWT.NO){
 	      return;
 	    }
@@ -890,7 +900,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
 
 	  FileDialog fd=new FileDialog(getShell(), SWT.SAVE);
 	  fd.setFilterPath(home);
-	  String file=(kpair.getKeyType()==KeyPair.RSA) ? "id_rsa" : "id_dsa";
+	  String file=(kpair.getKeyType()==KeyPair.RSA) ? "id_rsa" : "id_dsa"; //$NON-NLS-1$ //$NON-NLS-2$
 	  fd.setFileName(file);
 	  file=fd.open();
 	  if(file==null){ // cancel
@@ -899,7 +909,8 @@ public class CVSSSH2PreferencePage extends PreferencePage
 
 	  if(new File(file).exists()){
 	    mb=new MessageBox(getShell(),SWT.YES|SWT.NO|SWT.ICON_WARNING);
-	    mb.setMessage(file+" has already existed.\nAre you sure you want to over write it?");
+	    mb.setText(Policy.bind("CVSSSH2PreferencePage.warning")); //$NON-NLS-1$
+	    mb.setMessage(file+Policy.bind("CVSSSH2PreferencePage.91")); //$NON-NLS-1$
 	    if(mb.open()==SWT.NO){
 	      return;
 	    }
@@ -908,7 +919,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
 	  boolean ok=true;
 	  try{
 	    kpair.writePrivateKey(file);
-	    kpair.writePublicKey(file+".pub", kpairComment);
+	    kpair.writePublicKey(file+".pub", kpairComment); //$NON-NLS-1$
 	  }
 	  catch(Exception ee){
 	    ok=false;
@@ -916,9 +927,10 @@ public class CVSSSH2PreferencePage extends PreferencePage
 
 	  if(ok){
 	    mb=new MessageBox(getShell(),SWT.OK|SWT.ICON_INFORMATION);
-	    mb.setMessage("Successfully saved."+"\n"+
-			  "Private key: "+file+"\n"+
-			  "Public key: "+file+".pub");
+	    mb.setText(Policy.bind("CVSSSH2PreferencePage.information")); //$NON-NLS-1$
+	    mb.setMessage(Policy.bind("CVSSSH2PreferencePage.93")+"\n"+ //$NON-NLS-1$ //$NON-NLS-2$
+			  Policy.bind("CVSSSH2PreferencePage.95")+file+"\n"+ //$NON-NLS-1$ //$NON-NLS-2$
+			  Policy.bind("CVSSSH2PreferencePage.97")+file+".pub"); //$NON-NLS-1$ //$NON-NLS-2$
 	    mb.open();
 	  }
 	}
@@ -937,11 +949,13 @@ public class CVSSSH2PreferencePage extends PreferencePage
       File _home=new File(home);
       if(!_home.exists()){
 	MessageBox mb=new MessageBox(getShell(),SWT.YES|SWT.NO|SWT.ICON_QUESTION);
-	mb.setMessage(home+" does not exsit.\nAre you sure you want to create it?");
+	mb.setText(Policy.bind("CVSSSH2PreferencePage.question")); //$NON-NLS-1$
+	mb.setMessage(home+Policy.bind("CVSSSH2PreferencePage.99")); //$NON-NLS-1$
 	if(mb.open()==SWT.YES){
 	  if(!(_home.mkdirs())){
 	  mb=new MessageBox(getShell(),SWT.OK|SWT.ICON_ERROR);
-	  mb.setMessage("Failed to create "+home);
+	  mb.setText(Policy.bind("CVSSSH2PreferencePage.error")); //$NON-NLS-1$
+	  mb.setMessage(Policy.bind("CVSSSH2PreferencePage.100")+home); //$NON-NLS-1$
 	  mb.open();
 	  return false;
 	  }
@@ -973,11 +987,13 @@ public class CVSSSH2PreferencePage extends PreferencePage
     File _home=new File(home);
     if(!_home.exists()){
       MessageBox mb=new MessageBox(getShell(),SWT.YES|SWT.NO|SWT.ICON_QUESTION);
-      mb.setMessage(home+" does not exsit.\nAre you sure you want to create it?");
+      mb.setText(Policy.bind("CVSSSH2PreferencePage.question")); //$NON-NLS-1$      
+      mb.setMessage(home+Policy.bind("CVSSSH2PreferencePage.101")); //$NON-NLS-1$
       if(mb.open()==SWT.YES){
 	if(!(_home.mkdirs())){
 	  mb=new MessageBox(getShell(),SWT.OK|SWT.ICON_ERROR);
-	  mb.setMessage("Failed to create "+home);
+	  mb.setText(Policy.bind("CVSSSH2PreferencePage.error")); //$NON-NLS-1$	  
+	  mb.setMessage(Policy.bind("CVSSSH2PreferencePage.102")+home); //$NON-NLS-1$
 	  mb.open();
 	}
       }
@@ -999,12 +1015,12 @@ public class CVSSSH2PreferencePage extends PreferencePage
   protected void performDefaults(){
     super.performDefaults();
     enableProxy.setSelection(false);
-    proxyHostText.setText("");
+    proxyHostText.setText(""); //$NON-NLS-1$
     proxyPortText.setText(HTTP_DEFAULT_PORT);
     proxyTypeCombo.select(0);
     enableAuth.setSelection(false);
-    proxyUserText.setText("");
-    proxyPassText.setText("");
+    proxyUserText.setText(""); //$NON-NLS-1$
+    proxyPassText.setText(""); //$NON-NLS-1$
     updateControls();
   }
 

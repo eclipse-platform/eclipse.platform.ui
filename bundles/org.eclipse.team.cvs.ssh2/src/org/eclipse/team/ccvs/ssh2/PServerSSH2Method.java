@@ -16,7 +16,7 @@ import org.eclipse.team.internal.ccvs.core.IServerConnection;
 
 public class PServerSSH2Method implements IConnectionMethod {
 	public String getName() {
-		return "pserverssh2";
+		return "pserverssh2"; //$NON-NLS-1$
 	}
 	public IServerConnection createConnection(ICVSRepositoryLocation root, String password) {
 		return new PServerSSH2ServerConnection(root, password);

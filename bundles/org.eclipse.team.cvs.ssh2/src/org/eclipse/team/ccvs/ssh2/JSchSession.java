@@ -82,7 +82,6 @@ class JSchSession {
 			IUserAuthenticator authenticator = location.getUserAuthenticator();
 			final String[] _password = new String[1];
 			IUserInfo info = new IUserInfo() {
-				private String a;
 				public String getUsername() {
 					return username;
 				}
@@ -135,11 +134,11 @@ class JSchSession {
 
 			try {
 			  java.io.File file;
-			  file=new java.io.File(ssh_home, "known_hosts");
+			  file=new java.io.File(ssh_home, "known_hosts"); //$NON-NLS-1$
 			  jsch.setKnownHosts(file.getPath());
 
 			  String pkeys=store.getString(CVSSSH2PreferencePage.KEY_PRIVATEKEY);
-			  String[] pkey=pkeys.split(",");
+			  String[] pkey=pkeys.split(","); //$NON-NLS-1$
 			  for(int i=0; i<pkey.length;i++){
 			    file = new java.io.File(ssh_home, pkey[i]);
 			    if (file.exists())
