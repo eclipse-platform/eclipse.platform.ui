@@ -4,6 +4,7 @@ package org.eclipse.update.tests;
  * All Rights Reserved.
  */
 import org.eclipse.core.runtime.*;
+import org.eclipse.help.AppServer;
 import org.eclipse.help.IAppServer;
 import org.eclipse.update.internal.core.UpdateManagerPlugin;
 
@@ -30,10 +31,9 @@ public class UpdateTestsPlugin extends Plugin {
 	 * Called by Platform after loading the plugin
 	 */
 	public void startup() throws CoreException {
-		IAppServer localAppServer = UpdateManagerPlugin.getWebAppServer();
-		localAppServer.add("updatetests", "org.eclipse.update.tests.core", "webserver");		
-		appServerHost = localAppServer.getHost();
-		appServerPort = localAppServer.getPort();
+		AppServer.add("updatetests", "org.eclipse.update.tests.core", "webserver");		
+		appServerHost = AppServer.getHost();
+		appServerPort = AppServer.getPort();
 	}
 
 	/**
@@ -42,8 +42,7 @@ public class UpdateTestsPlugin extends Plugin {
 	 *   this plug-in 
 	 */
 	public void shutdown() throws CoreException {
-		IAppServer localAppServer = UpdateManagerPlugin.getWebAppServer();
-		localAppServer.remove("updatetests", "org.eclipse.update.tests.core");				
+		AppServer.remove("updatetests", "org.eclipse.update.tests.core");				
 		super.shutdown();		
 	}
 

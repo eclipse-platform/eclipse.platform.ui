@@ -65,6 +65,8 @@ public class DefaultFeatureParser extends DefaultHandler {
 	// populating in this plugin descriptor
 	Stack objectStack = new Stack();
 
+	private int currentState;
+
 	/**
 	 * Constructor for DefaultFeatureParser
 	 */
@@ -80,6 +82,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 	 */
 	public FeatureModel parse(InputStream in) throws SAXException, IOException {
 		stateStack.push(new Integer(STATE_INITIAL));
+		currentState = ((Integer) stateStack.peek()).intValue();
 		parser.parse(new InputSource(in));
 		if (objectStack.isEmpty())
 			throw new SAXException("Error parsing stream. cannot find Feature tag. Feature not created.");
@@ -107,8 +110,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 
 		String tag = localName.trim();
 
-		int state = ((Integer) stateStack.peek()).intValue();
-		switch (state) {
+		switch (currentState) {
 			case STATE_IGNORED_ELEMENT :
 				internalErrorUnknownTag("unknown element in ingored state:" + localName);
 				break;
@@ -168,9 +170,13 @@ public class DefaultFeatureParser extends DefaultHandler {
 				break;
 
 			default :
-				internalErrorUnknownTag("Start Element:unknown state:" + state);
+				internalErrorUnknownTag("Start Element:unknown state:" + currentState);
 				break;
 		}
+
+		int newState = ((Integer) stateStack.peek()).intValue();
+		if (newState != STATE_IGNORED_ELEMENT)
+			currentState = newState;
 
 	}
 
@@ -208,19 +214,89 @@ public class DefaultFeatureParser extends DefaultHandler {
 			stateStack.push(new Integer(STATE_DATA));
 			processData(attributes);
 		} else
-			internalErrorUnknownTag("unknown element :" + elementName + " inside feature tag.");
+			internalErrorUnknownTag("unknown element :" + elementName + " after feature tag.");
 	}
 	public void handleHandlerState(String elementName, Attributes attributes) throws SAXException {
-		internalErrorUnknownTag("unknown element :" + elementName + " inside handler tag.");
+		if (elementName.equals(DESCRIPTION)) {
+			stateStack.push(new Integer(STATE_DESCRIPTION));
+			processInfo(attributes);
+		} else if (elementName.equals(COPYRIGHT)) {
+			stateStack.push(new Integer(STATE_COPYRIGHT));
+			processInfo(attributes);
+		} else if (elementName.equals(LICENSE)) {
+			stateStack.push(new Integer(STATE_LICENSE));
+			processInfo(attributes);
+		} else if (elementName.equals(URL)) {
+			stateStack.push(new Integer(STATE_URL));
+			//processURL(attributes);
+		} else if (elementName.equals(REQUIRES)) {
+			stateStack.push(new Integer(STATE_REQUIRES));
+			//processRequire(attributes);
+		} else if (elementName.equals(PLUGIN)) {
+			stateStack.push(new Integer(STATE_PLUGIN));
+			processPlugin(attributes);
+		} else if (elementName.equals(DATA)) {
+			stateStack.push(new Integer(STATE_DATA));
+			processData(attributes);
+		} else
+			internalErrorUnknownTag("unknown element :" + elementName + " after handler tag.");
 	}
 	public void handleCopyrightState(String elementName, Attributes attributes) throws SAXException {
-		internalErrorUnknownTag("unknown element :" + elementName + " inside copyright tag.");
+		if (elementName.equals(LICENSE)) {
+			stateStack.push(new Integer(STATE_LICENSE));
+			processInfo(attributes);
+		} else if (elementName.equals(URL)) {
+			stateStack.push(new Integer(STATE_URL));
+			//processURL(attributes);
+		} else if (elementName.equals(REQUIRES)) {
+			stateStack.push(new Integer(STATE_REQUIRES));
+			//processRequire(attributes);
+		} else if (elementName.equals(PLUGIN)) {
+			stateStack.push(new Integer(STATE_PLUGIN));
+			processPlugin(attributes);
+		} else if (elementName.equals(DATA)) {
+			stateStack.push(new Integer(STATE_DATA));
+			processData(attributes);
+		} else
+			internalErrorUnknownTag("unknown element :" + elementName + " after copyright tag.");
 	}
 	public void handleLicenseState(String elementName, Attributes attributes) throws SAXException {
-		internalErrorUnknownTag("unknown element :" + elementName + " inside license tag.");
+		if (elementName.equals(URL)) {
+			stateStack.push(new Integer(STATE_URL));
+			//processURL(attributes);
+		} else if (elementName.equals(REQUIRES)) {
+			stateStack.push(new Integer(STATE_REQUIRES));
+			//processRequire(attributes);
+		} else if (elementName.equals(PLUGIN)) {
+			stateStack.push(new Integer(STATE_PLUGIN));
+			processPlugin(attributes);
+		} else if (elementName.equals(DATA)) {
+			stateStack.push(new Integer(STATE_DATA));
+			processData(attributes);
+		} else
+			internalErrorUnknownTag("unknown element :" + elementName + " after license tag.");
 	}
 	public void handleDescriptionState(String elementName, Attributes attributes) throws SAXException {
-		internalErrorUnknownTag("unknown element :" + elementName + " inside description tag.");
+		if (elementName.equals(COPYRIGHT)) {
+			stateStack.push(new Integer(STATE_COPYRIGHT));
+			processInfo(attributes);
+		} else if (elementName.equals(LICENSE)) {
+			stateStack.push(new Integer(STATE_LICENSE));
+			processInfo(attributes);
+		} else if (elementName.equals(URL)) {
+			stateStack.push(new Integer(STATE_URL));
+			//processURL(attributes);
+		} else if (elementName.equals(REQUIRES)) {
+			stateStack.push(new Integer(STATE_REQUIRES));
+			//processRequire(attributes);
+		} else if (elementName.equals(PLUGIN)) {
+			stateStack.push(new Integer(STATE_PLUGIN));
+			processPlugin(attributes);
+		} else if (elementName.equals(DATA)) {
+			stateStack.push(new Integer(STATE_DATA));
+			processData(attributes);
+		} else
+			internalErrorUnknownTag("unknown element :" + elementName + " after description tag.");
 	}
 	public void handleURLState(String elementName, Attributes attributes) throws SAXException {
 		if (elementName.equals(UPDATE)) {
@@ -230,29 +306,79 @@ public class DefaultFeatureParser extends DefaultHandler {
 			stateStack.push(new Integer(STATE_DISCOVERY));
 			processURLInfo(attributes);
 		} else
-			internalErrorUnknownTag("unknown element :" + elementName + " inside URL tag.");
+			internalErrorUnknownTag("unknown element :" + elementName + " after URL tag.");
 	}
 	public void handleUpdateState(String elementName, Attributes attributes) throws SAXException {
-		internalErrorUnknownTag("unknown element :" + elementName + " inside update tag.");
+		if (elementName.equals(REQUIRES)) {
+			stateStack.push(new Integer(STATE_REQUIRES));
+			processRequire(attributes);
+		} else if (elementName.equals(PLUGIN)) {
+			stateStack.push(new Integer(STATE_PLUGIN));
+			processPlugin(attributes);
+		} else if (elementName.equals(DATA)) {
+			stateStack.push(new Integer(STATE_DATA));
+			processData(attributes);
+		} else if (elementName.equals(DISCOVERY)) {
+			stateStack.push(new Integer(STATE_DISCOVERY));
+			processURLInfo(attributes);
+		} else
+		internalErrorUnknownTag("unknown element :" + elementName + " after update tag.");
 	}
 	public void handleDiscoveryState(String elementName, Attributes attributes) throws SAXException {
-		internalErrorUnknownTag("unknown element :" + elementName + " inside discovery tag.");
+		if (elementName.equals(REQUIRES)) {
+			stateStack.push(new Integer(STATE_REQUIRES));
+			processRequire(attributes);
+		} else if (elementName.equals(PLUGIN)) {
+			stateStack.push(new Integer(STATE_PLUGIN));
+			processPlugin(attributes);
+		} else if (elementName.equals(DATA)) {
+			stateStack.push(new Integer(STATE_DATA));
+			processData(attributes);
+		} else if (elementName.equals(UPDATE)) {
+			stateStack.push(new Integer(STATE_UPDATE));
+			processURLInfo(attributes);
+		} else if (elementName.equals(DISCOVERY)) {
+			stateStack.push(new Integer(STATE_DISCOVERY));
+			processURLInfo(attributes);
+		} else		
+		internalErrorUnknownTag("unknown element :" + elementName + " after discovery tag.");
 	}
 	public void handleRequiresState(String elementName, Attributes attributes) throws SAXException {
-		if (elementName.equals(IMPORT)) {
+		 if (elementName.equals(IMPORT)) {
 			stateStack.push(new Integer(STATE_IMPORT));
 			processImport(attributes);
 		} else
-			internalErrorUnknownTag("unknown element :" + elementName + " inside require tag.");
+			internalErrorUnknownTag("unknown element :" + elementName + " after require tag.");
 	}
 	public void handleImportState(String elementName, Attributes attributes) throws SAXException {
-		internalErrorUnknownTag("unknown element :" + elementName + " inside import tag.");
+		if (elementName.equals(PLUGIN)) {
+			stateStack.push(new Integer(STATE_PLUGIN));
+			processPlugin(attributes);
+		} else if (elementName.equals(DATA)) {
+			stateStack.push(new Integer(STATE_DATA));
+			processData(attributes);
+		} else if (elementName.equals(IMPORT)) {
+			stateStack.push(new Integer(STATE_IMPORT));
+			processImport(attributes);
+		} else		
+		internalErrorUnknownTag("unknown element :" + elementName + " after import tag.");
 	}
 	public void handlePluginState(String elementName, Attributes attributes) throws SAXException {
-		internalErrorUnknownTag("unknown element :" + elementName + " inside plugin tag.");
+		if (elementName.equals(PLUGIN)) {
+			stateStack.push(new Integer(STATE_PLUGIN));
+			processPlugin(attributes);
+		} else if (elementName.equals(DATA)) {
+			stateStack.push(new Integer(STATE_DATA));
+			processData(attributes);
+		} else
+			internalErrorUnknownTag("unknown element :" + elementName + " after plugin tag.");
 	}
 	public void handleDataState(String elementName, Attributes attributes) throws SAXException {
-		internalErrorUnknownTag("unknown element :" + elementName + " inside data tag.");
+		if (elementName.equals(DATA)) {
+			stateStack.push(new Integer(STATE_DATA));
+			processData(attributes);
+		} else
+			internalErrorUnknownTag("unknown element :" + elementName + " after data tag.");
 	}
 
 	/** 
@@ -311,26 +437,25 @@ public class DefaultFeatureParser extends DefaultHandler {
 		}
 	}
 
-
 	/** 
 	 * process URL info with element text
 	 */
 	private void processHandler(Attributes attributes) {
 		InstallHandlerModel handler = factory.createInstallHandlerModel();
-		
+
 		String handlerURL = attributes.getValue("url");
 		handler.setURLString(handlerURL);
-		
+
 		String library = attributes.getValue("library");
 		handler.setLibrary(library);
-		
+
 		String clazz = attributes.getValue("class");
 		handler.setClassName(clazz);
 
 		objectStack.push(handler);
 
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING)
-			debug("Processed Handler: url:" + handlerURL+" library:"+library+" class:"+clazz);
+			debug("Processed Handler: url:" + handlerURL + " library:" + library + " class:" + clazz);
 	}
 
 	/** 
@@ -387,6 +512,12 @@ public class DefaultFeatureParser extends DefaultHandler {
 
 		}
 	}
+	
+	/** 
+	 * process import info
+	 */
+	private void processRequire(Attributes attributes) {
+	}	
 
 	/** 
 	 * process plugin entry info
@@ -532,7 +663,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 			case STATE_HANDLER :
 				stateStack.pop();
 				InstallHandlerModel handlerModel = (InstallHandlerModel) objectStack.pop();
-				featureModel = (FeatureModel) objectStack.peek();				
+				featureModel = (FeatureModel) objectStack.peek();
 				if (featureModel.getInstallHandlerModel() != null)
 					internalError("Install Handler already set for the Feature");
 				else
@@ -649,8 +780,8 @@ public class DefaultFeatureParser extends DefaultHandler {
 
 			case STATE_REQUIRES :
 				stateStack.pop();
-				featureModel = (FeatureModel) objectStack.peek();				
-				if (featureModel.getImportModels().length==0){
+				featureModel = (FeatureModel) objectStack.peek();
+				if (featureModel.getImportModels().length == 0) {
 					internalError("Require tag didn't describe any import");
 				}
 				break;
@@ -691,10 +822,10 @@ public class DefaultFeatureParser extends DefaultHandler {
 	 */
 	public void characters(char[] ch, int start, int length) {
 		String text = new String(ch, start, length).trim();
-			//only push if not unknown state
-			int state = ((Integer) stateStack.peek()).intValue();
-			if (state == STATE_DESCRIPTION || state==STATE_COPYRIGHT || state == STATE_LICENSE)
-				objectStack.push(text);
+		//only push if not unknown state
+		int state = ((Integer) stateStack.peek()).intValue();
+		if (state == STATE_DESCRIPTION || state == STATE_COPYRIGHT || state == STATE_LICENSE)
+			objectStack.push(text);
 
 	}
 

@@ -54,6 +54,7 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 		return type + entry.getVersionIdentifier().toString() + JAR_EXTENSION;
 	}
 
+	
 	/**
 	 * @see AbstractFeature#getArchiveID()
 	 */
@@ -191,8 +192,24 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 	 * @see IFeatureContentProvider#getNonPluginEntryArchiveReferences(INonPluginEntry)
 	 */
 	public ContentReference[] getNonPluginEntryArchiveReferences(INonPluginEntry nonPluginEntry, InstallMonitor monitor) throws CoreException {
-		// VK: shouldn't htis be returning the non-plugin entries ???
-		return null;
+		
+		// archive = feature/<id>_<ver>/<file>
+		String archiveID = Site.DEFAULT_FEATURE_PATH+((getFeature() != null) ? getFeature().getVersionIdentifier().toString() : "");
+		archiveID+="/"+nonPluginEntry.getIdentifier();		
+		URL url = getFeature().getSite().getSiteContentProvider().getArchiveReference(archiveID);		
+		
+		ContentReference[] references = new ContentReference[1];
+		
+		try {
+			ContentReference currentReference = new ContentReference(nonPluginEntry.getIdentifier(), url);
+			currentReference = asLocalReference(currentReference, monitor);
+			references[0] = currentReference;
+		} catch (IOException e) {
+			String urlString = (getFeature() == null) ? "NO FEATURE" : "" + getFeature().getURL();
+			throw newCoreException("Error retrieving feature Data Archive Reference :" + nonPluginEntry.getIdentifier(), e);
+		}
+		
+		return references;		
 	}
 
 	/*

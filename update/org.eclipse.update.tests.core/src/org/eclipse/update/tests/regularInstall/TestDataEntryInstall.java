@@ -28,7 +28,7 @@ public class TestDataEntryInstall extends UpdateManagerTestCase {
 		File target = new File(TARGET_FILE_SITE.getFile());
 		UpdateManagerUtils.removeFromFileSystem(target);
 		
-		URL newURL =new File(dataPath + "dataEntrySiteTest/site.xml").toURL();
+		URL newURL =new File(dataPath + "dataEntrySiteTest/site1/site.xml").toURL();
 		ISite remoteSite = SiteManager.getSite(newURL);
 		IFeatureReference[] featuresRef = remoteSite.getFeatureReferences();
 		ISite localSite = SiteManager.getSite(TARGET_FILE_SITE);
@@ -53,5 +53,43 @@ public class TestDataEntryInstall extends UpdateManagerTestCase {
 
 	}
 	
+	
+	/**
+	 * With site.xml
+	 */
+	public void testDataEntrySitePackaged() throws Exception {
+
+		//cleanup target 
+		File target = new File(TARGET_FILE_SITE.getFile());
+		UpdateManagerUtils.removeFromFileSystem(target);
+		
+		URL newURL =new File(dataPath + "dataEntrySiteTest/site2/site.xml").toURL();
+		ISite remoteSite = SiteManager.getSite(newURL);
+		IFeatureReference[] featuresRef = remoteSite.getFeatureReferences();
+		ISite localSite = SiteManager.getSite(TARGET_FILE_SITE);
+		IFeature remoteFeature = null;
+		
+		for (int i = 0; i < featuresRef.length; i++) {
+			remoteFeature = featuresRef[i].getFeature();
+			localSite.install(remoteFeature, null);
+
+			// verify
+			String site = localSite.getURL().getFile();
+			INonPluginEntry[] entries = remoteFeature.getNonPluginEntries();
+			assertTrue("no data entry", (entries != null && entries.length != 0));
+			String pluginName = entries[0].getIdentifier().toString();
+			File pluginFile = new File(site, Site.INSTALL_FEATURE_PATH + remoteFeature.getVersionIdentifier().toString()+File.separator+ "nondata"+File.separator+"file1.zip");
+			assertTrue("Data file inside the jar not installed locally:"+pluginFile, pluginFile.exists());
+			pluginFile = new File(site, Site.INSTALL_FEATURE_PATH + remoteFeature.getVersionIdentifier().toString()+File.separator+ "file.zip");
+			assertTrue("Data file outside the jar not installed locally:"+pluginFile, pluginFile.exists());
+			
+		} 
+		
+
+		//cleanup target 
+		UpdateManagerUtils.removeFromFileSystem(target);
+
+
+	}	
 	
 }

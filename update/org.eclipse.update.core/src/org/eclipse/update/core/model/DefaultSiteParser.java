@@ -35,7 +35,8 @@ public class DefaultSiteParser extends DefaultHandler {
 	private static final int STATE_ARCHIVE = 3;
 	private static final int STATE_CATEGORY = 4;
 	private static final int STATE_CATEGORY_DEF = 5;
-	private static final int STATE_DESCRIPTION = 6;
+	private static final int STATE_DESCRIPTION_SITE = 6;
+	private static final int STATE_DESCRIPTION_CATEGORY_DEF = 7;
 	private static final String PLUGIN_ID = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 
 	public static final String SITE = "site";
@@ -53,6 +54,8 @@ public class DefaultSiteParser extends DefaultHandler {
 	// Current object stack (used to hold the current object we are
 	// populating in this plugin descriptor
 	Stack objectStack = new Stack();
+
+	private int currentState;
 
 	/**
 	 * Constructor for DefaultSiteParser
@@ -72,6 +75,7 @@ public class DefaultSiteParser extends DefaultHandler {
 	 */
 	public SiteMapModel parse(InputStream in) throws SAXException, IOException {
 		stateStack.push(new Integer(STATE_INITIAL));
+		currentState = ((Integer) stateStack.peek()).intValue();
 		parser.parse(new InputSource(in));
 		if (objectStack.isEmpty())
 			throw new SAXException("Error parsing stream. cannot find Site tag.Site not created.");
@@ -84,7 +88,7 @@ public class DefaultSiteParser extends DefaultHandler {
 				while (iter.hasNext()) {
 					stack = stack + iter.next().toString() + "\r\n";
 				}
-				throw new SAXException("Internal Error. Wrong parsing stack.\r\n" + stack);
+				throw new SAXException("Internal Error. UnExpected objects in parsing stack.\r\n" + stack);
 			}
 		}
 	}
@@ -95,14 +99,12 @@ public class DefaultSiteParser extends DefaultHandler {
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
-			debug("State: " + (Integer) stateStack.peek());
+			debug("State: " + currentState);
 			debug("Start Element: uri:" + uri + " local Name:" + localName + " qName:" + qName);
 		}
 
 		String tag = localName.trim();
-
-		int state = ((Integer) stateStack.peek()).intValue();
-		switch (state) {
+		switch (currentState) {
 			case STATE_IGNORED_ELEMENT :
 				internalErrorUnknownTag("unknown element in ingored state:" + localName);
 				break;
@@ -130,14 +132,21 @@ public class DefaultSiteParser extends DefaultHandler {
 				handleCategoryDefState(localName, attributes);
 				break;
 
-			case STATE_DESCRIPTION :
-				handleDescriptionState(localName, attributes);
+			case STATE_DESCRIPTION_SITE :
+				handleDescriptionSiteState(localName, attributes);
+				break;
+
+			case STATE_DESCRIPTION_CATEGORY_DEF :
+				handleDescriptionCategoryDefState(localName, attributes);
 				break;
 
 			default :
-				internalErrorUnknownTag("unknown state:" + state);
+				internalErrorUnknownTag("unknown state:" + currentState);
 				break;
 		}
+		int newState = ((Integer) stateStack.peek()).intValue();
+		if (newState!=STATE_IGNORED_ELEMENT)
+			currentState = newState;
 
 	}
 
@@ -151,7 +160,7 @@ public class DefaultSiteParser extends DefaultHandler {
 
 	public void handleSiteState(String elementName, Attributes attributes) {
 		if (elementName.equals(DESCRIPTION)) {
-			stateStack.push(new Integer(STATE_DESCRIPTION));
+			stateStack.push(new Integer(STATE_DESCRIPTION_SITE));
 			processInfo(attributes);
 		} else if (elementName.equals(FEATURE)) {
 			stateStack.push(new Integer(STATE_FEATURE));
@@ -163,31 +172,83 @@ public class DefaultSiteParser extends DefaultHandler {
 			stateStack.push(new Integer(STATE_CATEGORY_DEF));
 			processCategoryDef(attributes);
 		} else
-			internalErrorUnknownTag("unknown element :" + elementName + " inside site tag.");
+			internalErrorUnknownTag("unknown element :" + elementName + " after site tag.");
 	}
 
 	public void handleFeatureState(String elementName, Attributes attributes) {
-		if (elementName.equals(CATEGORY)) {
+		if (elementName.equals(FEATURE)) {
+			stateStack.push(new Integer(STATE_FEATURE));
+			processFeature(attributes);
+		} else if (elementName.equals(ARCHIVE)) {
+			stateStack.push(new Integer(STATE_ARCHIVE));
+			processArchive(attributes);
+		} else if (elementName.equals(CATEGORY_DEF)) {
+			stateStack.push(new Integer(STATE_CATEGORY_DEF));
+			processCategoryDef(attributes);
+		} else if (elementName.equals(CATEGORY)) {
 			stateStack.push(new Integer(STATE_CATEGORY));
 			processCategory(attributes);
 		} else
-			internalErrorUnknownTag("unknown element:" + elementName + " inside feature tag.");
+			internalErrorUnknownTag("unknown element:" + elementName + " after feature tag.");
 	}
 	public void handleArchiveState(String elementName, Attributes attributes) {
-		internalErrorUnknownTag("unknown element:" + elementName + " inside archive tag.");
+		if (elementName.equals(ARCHIVE)) {
+			stateStack.push(new Integer(STATE_ARCHIVE));
+			processArchive(attributes);
+		} else if (elementName.equals(CATEGORY_DEF)) {
+			stateStack.push(new Integer(STATE_CATEGORY_DEF));
+			processCategoryDef(attributes);
+		} else
+			internalErrorUnknownTag("unknown element:" + elementName + " after archive tag.");
 	}
 	public void handleCategoryState(String elementName, Attributes attributes) {
-		internalErrorUnknownTag("unknown element:" + elementName + " inside category tag.");
+		if (elementName.equals(FEATURE)) {
+			stateStack.push(new Integer(STATE_FEATURE));
+			processFeature(attributes);
+		} else if (elementName.equals(ARCHIVE)) {
+			stateStack.push(new Integer(STATE_ARCHIVE));
+			processArchive(attributes);
+		} else if (elementName.equals(CATEGORY_DEF)) {
+			stateStack.push(new Integer(STATE_CATEGORY_DEF));
+			processCategoryDef(attributes);
+		} else if (elementName.equals(CATEGORY)) {
+			stateStack.push(new Integer(STATE_CATEGORY));
+			processCategory(attributes);
+		} else
+			internalErrorUnknownTag("unknown element:" + elementName + " after category tag.");
 	}
 	public void handleCategoryDefState(String elementName, Attributes attributes) {
-		if (elementName.equals(DESCRIPTION)) {
-			stateStack.push(new Integer(STATE_DESCRIPTION));
+		if (elementName.equals(CATEGORY_DEF)) {
+			stateStack.push(new Integer(STATE_CATEGORY_DEF));
+			processCategoryDef(attributes);
+		} else if (elementName.equals(DESCRIPTION)) {
+			stateStack.push(new Integer(STATE_DESCRIPTION_CATEGORY_DEF));
 			processInfo(attributes);
 		} else
-			internalErrorUnknownTag("unknown element:" + elementName + " inside category definition tag.");
+			internalErrorUnknownTag("unknown element:" + elementName + " after category definition tag.");
 	}
-	public void handleDescriptionState(String elementName, Attributes attributes) {
-		internalErrorUnknownTag("unknown element:" + elementName + " inside description tag.");
+	public void handleDescriptionSiteState(String elementName, Attributes attributes) {
+		if (elementName.equals(FEATURE)) {
+			stateStack.push(new Integer(STATE_FEATURE));
+			processFeature(attributes);
+		} else if (elementName.equals(ARCHIVE)) {
+			stateStack.push(new Integer(STATE_ARCHIVE));
+			processArchive(attributes);
+		} else if (elementName.equals(CATEGORY_DEF)) {
+			stateStack.push(new Integer(STATE_CATEGORY_DEF));
+			processCategoryDef(attributes);
+		} else
+			internalErrorUnknownTag("unknown element:" + elementName + " after description of site tag.");
+	}
+	public void handleDescriptionCategoryDefState(String elementName, Attributes attributes) {
+		if (elementName.equals(CATEGORY_DEF)) {
+			stateStack.push(new Integer(STATE_CATEGORY_DEF));
+			processCategoryDef(attributes);
+		} else if (elementName.equals(DESCRIPTION)) {
+			stateStack.push(new Integer(STATE_DESCRIPTION_CATEGORY_DEF));
+			processInfo(attributes);
+		} else
+			internalErrorUnknownTag("unknown element:" + elementName + " after description of cetegory definition tag.");
 	}
 
 	/** 
@@ -323,6 +384,8 @@ public class DefaultSiteParser extends DefaultHandler {
 	public void endElement(String uri, String localName, String qName) {
 
 		String tag = localName.trim();
+		String text = null;
+		URLEntryModel info = null;
 
 		int state = ((Integer) stateStack.peek()).intValue();
 		switch (state) {
@@ -339,11 +402,11 @@ public class DefaultSiteParser extends DefaultHandler {
 			case STATE_SITE :
 				stateStack.pop();
 				if (objectStack.peek() instanceof String) {
-					String text = (String) objectStack.pop();
+					text = (String) objectStack.pop();
 					SiteMapModel site = (SiteMapModel) objectStack.peek();
 					site.getDescriptionModel().setAnnotation(text);
 				}
-				//do not pop
+				//do not pop the object
 				break;
 
 			case STATE_FEATURE :
@@ -354,51 +417,49 @@ public class DefaultSiteParser extends DefaultHandler {
 			case STATE_CATEGORY_DEF :
 				stateStack.pop();
 				if (objectStack.peek() instanceof String) {
-					String text = (String) objectStack.pop();
+					text = (String) objectStack.pop();
 					SiteCategoryModel category = (SiteCategoryModel) objectStack.peek();
 					category.getDescriptionModel().setAnnotation(text);
 				}
 				objectStack.pop();
 				break;
 
-			case STATE_DESCRIPTION :
+			case STATE_DESCRIPTION_SITE :
 				stateStack.pop();
-
-				String text = "";
+				text = "";
 				while (objectStack.peek() instanceof String) {
 					text = (String) objectStack.pop() + text;
 				}
 
-				URLEntryModel info = (URLEntryModel) objectStack.pop();
+				info = (URLEntryModel) objectStack.pop();
 				if (text != null)
 					info.setAnnotation(text);
 
-				int innerState = ((Integer) stateStack.peek()).intValue();
-				switch (innerState) {
+				SiteMapModel siteModel = (SiteMapModel) objectStack.peek();
+				// override description.
+				// do not raise error as previous description may be default one
+				// when parsing site tage
+				if (siteModel.getDescriptionModel() != null)
+					debug("Description already set for the Site");
+				siteModel.setDescriptionModel(info);
+				break;
 
-					case STATE_SITE :
-
-						SiteMapModel siteModel = (SiteMapModel) objectStack.peek();
-						// override description.
-						// do not raise error as previous description may be default one
-						// when parsing site tage
-						if (siteModel.getDescriptionModel() != null)
-							debug("Description already set for the Site");
-							siteModel.setDescriptionModel(info);
-						break;
-
-					case STATE_CATEGORY_DEF :
-						SiteCategoryModel category = (SiteCategoryModel) objectStack.peek();
-						if (category.getDescriptionModel() != null)
-							internalError("Description already set for the Category:" + category.getLabel());
-						else
-							category.setDescriptionModel(info);
-						break;
-
-					default :
-						internalError("Description declared in wrong place; state:" + state);
-						break;
+			case STATE_DESCRIPTION_CATEGORY_DEF :
+				stateStack.pop();
+				text = "";
+				while (objectStack.peek() instanceof String) {
+					text = (String) objectStack.pop() + text;
 				}
+
+				info = (URLEntryModel) objectStack.pop();
+				if (text != null)
+					info.setAnnotation(text);
+
+				SiteCategoryModel category = (SiteCategoryModel) objectStack.peek();
+				if (category.getDescriptionModel() != null)
+					internalError("Description already set for the Category:" + category.getLabel());
+				else
+					category.setDescriptionModel(info);
 				break;
 
 			default :
@@ -417,7 +478,7 @@ public class DefaultSiteParser extends DefaultHandler {
 		String text = new String(ch, start, length).trim();
 		//only push if description
 		int state = ((Integer) stateStack.peek()).intValue();
-		if (state == STATE_DESCRIPTION)
+		if (state == STATE_DESCRIPTION_SITE || state == STATE_DESCRIPTION_CATEGORY_DEF)
 			objectStack.push(text);
 
 	}
@@ -461,6 +522,7 @@ public class DefaultSiteParser extends DefaultHandler {
 		getStatus().add(error);
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING)
 			UpdateManagerPlugin.getPlugin().debug(error.toString());
+			UpdateManagerPlugin.getPlugin().debug(error.toString());			
 	}
 	/**
 	 *

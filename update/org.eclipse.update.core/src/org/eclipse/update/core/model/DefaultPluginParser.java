@@ -28,12 +28,12 @@ public class DefaultPluginParser extends DefaultHandler {
 	private String id = null;
 	private String version = null;
 	private PluginEntry pluginEntry;
-	
+
 	private static final String PLUGIN = "plugin";
 	private static final String FRAGMENT = "fragment";
 	private static final String ID = "id";
-	private static final String VERSION = "version";	
-	
+	private static final String VERSION = "version";
+
 	private class ParseCompleteException extends SAXException {
 		public ParseCompleteException(String arg0) {
 			super(arg0);
@@ -48,40 +48,42 @@ public class DefaultPluginParser extends DefaultHandler {
 		this.parser = new SAXParser();
 		this.parser.setContentHandler(this);
 	}
-	
+
 	/**
 	 * @since 2.0
 	 */
 	public synchronized PluginEntry parse(InputStream in) throws SAXException, IOException {
 		try {
-			pluginEntry = new PluginEntry();			
+			pluginEntry = new PluginEntry();
 			parser.parse(new InputSource(in));
-			pluginEntry.setIdentifier(new VersionedIdentifier(id,version));			
-		} catch(ParseCompleteException e) {
+		} catch (ParseCompleteException e) {
+			// expected, we stopped the parsing
 		}
+
+		pluginEntry.setIdentifier(new VersionedIdentifier(id, version));
 		return pluginEntry;
 	}
-	
+
 	/**
 	 * @see DefaultHandler#startElement(String, String, String, Attributes)
 	 */
-	public void startElement(String uri, String localName,String qName, Attributes attributes) throws SAXException {
-		
+	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+
 		String tag = localName.trim();
-	
+
 		if (tag.equalsIgnoreCase(PLUGIN)) {
 			processPlugin(attributes);
 			pluginEntry.isFragment(false);
 			return;
 		}
-	
+
 		if (tag.equalsIgnoreCase(FRAGMENT)) {
 			processPlugin(attributes);
 			pluginEntry.isFragment(true);
 			return;
 		}
 	}
-	
+
 	/** 
 	 * process plugin entry info
 	 */
@@ -91,5 +93,3 @@ public class DefaultPluginParser extends DefaultHandler {
 		throw new ParseCompleteException("");
 	}
 }
-
-

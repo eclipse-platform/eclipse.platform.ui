@@ -96,4 +96,30 @@ public class TestSiteParse extends UpdateManagerTestCase {
 
 	}
 
+	public void testParseValid3() throws Exception {
+
+		URL remoteURL = new URL(SOURCE_FILE_SITE + "parsertests/reddot1.xml");
+		DefaultSiteParser parser = new DefaultSiteParser(new SiteFileFactory());
+		URL resolvedURL = URLEncoder.encode(remoteURL);		
+		SiteMapModel remoteSite = parser.parse(resolvedURL.openStream());
+		remoteSite.resolve(remoteURL, null);
+
+		FeatureReferenceModel[] feature = remoteSite.getFeatureReferenceModels();
+		SiteCategoryModel[] categories = remoteSite.getCategoryModels();
+		ArchiveReferenceModel[] archives = remoteSite.getArchiveReferenceModels();
+
+		assertTrue("Wrong number of features", feature.length == 2);
+		assertTrue("Wrong number of categories", categories.length == 1);
+		assertTrue("Wrong number of archives", archives.length == 2);
+
+		// FIXME teh parse doesn't return speace before < and after >
+		String valideString = "This category contains all of the<currently>available versions of Red Dot feature.";
+		assertEquals(valideString,remoteSite.getCategoryModels()[0].getDescriptionModel().getAnnotation());
+
+		String path = new URL(SOURCE_FILE_SITE + "parsertests/").getFile();
+		String path2 = remoteSite.getDescriptionModel().getURL().getFile();
+		assertEquals(path + "info/siteInfo.html", path2);
+
+	}
+
 }
