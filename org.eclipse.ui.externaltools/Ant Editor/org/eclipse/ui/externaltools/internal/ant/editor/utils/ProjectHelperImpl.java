@@ -158,11 +158,11 @@ public class ProjectHelperImpl extends org.apache.tools.ant.helper.ProjectHelper
      * 
      * @author Alf Schiefelbein
      */
-    public void parse(Project project, File aFile, String sourceAsString) throws BuildException {
+    public void parse(Project refProject, File aFile, String sourceAsString) throws BuildException {
         FileInputStream inputStream = null;
         InputSource inputSource = null;
 
-        this.project = project;
+        this.project = refProject;
         this.buildFile = new File(aFile.getAbsolutePath());
         buildFileParent = new File(this.buildFile.getParent());
 
@@ -226,8 +226,6 @@ public class ProjectHelperImpl extends org.apache.tools.ant.helper.ProjectHelper
             }
         }
     }
-    
-    
     
 	/**
 	 * The common superclass for all SAX event handlers used to parse

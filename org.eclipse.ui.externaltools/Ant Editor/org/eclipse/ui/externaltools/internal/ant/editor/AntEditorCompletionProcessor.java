@@ -142,7 +142,6 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
             return false;
         }
 
-
         /**
          * Removes the specified proposal.
          * 
@@ -245,8 +244,8 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 	/**
 	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#computeCompletionProposals(ITextViewer, int)
 	 */
-	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int documentOffset) {
-		this.viewer = viewer;
+	public ICompletionProposal[] computeCompletionProposals(ITextViewer refViewer, int documentOffset) {
+		this.viewer = refViewer;
 		return determineProposals();
 	
 	}
@@ -255,7 +254,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 	/**
 	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#computeContextInformation(ITextViewer, int)
 	 */
-	public IContextInformation[] computeContextInformation(ITextViewer viewer, int documentOffset) {
+	public IContextInformation[] computeContextInformation(ITextViewer refViewer, int documentOffset) {
 		return new IContextInformation[0];
 	}
 
