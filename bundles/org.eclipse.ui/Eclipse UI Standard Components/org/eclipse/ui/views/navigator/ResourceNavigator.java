@@ -51,6 +51,8 @@ public class ResourceNavigator
 	
 	//The filter the resources are cleared up on
 	private ResourcePatternFilter patternFilter = new ResourcePatternFilter();
+	
+	private Clipboard clipboard;
 
 	/** Property store constant for sort order. */
 	private static final String STORE_SORT_TYPE = "ResourceViewer.STORE_SORT_TYPE";
@@ -141,6 +143,7 @@ public class ResourceNavigator
 	 * Method declared on IWorkbenchPart.
 	 */
 	public void createPartControl(Composite parent) {
+		clipboard = new Clipboard(parent.getDisplay());
 		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		//	initDrillDownAdapter(viewer);
 		viewer.setUseHashlookup(true);
@@ -214,6 +217,8 @@ public class ResourceNavigator
 	 */
 	public void dispose() {
 		getSite().getPage().removePartListener(partListener);
+		if (clipboard != null)
+			clipboard.dispose();
 		super.dispose();
 	}
 	/**
@@ -336,6 +341,18 @@ public class ResourceNavigator
 	public Shell getShell() {
 		return getViewSite().getShell();
 	}
+	/**
+	 * Returns a clipboard for cut/copy/paste actions.
+	 * <p>
+	 * May only be called after this part's viewer has been created.
+	 * The clipboard is disposed when this part is disposed.
+	 * </p>
+	 * @return a clipboard
+	 * @since 2.0
+	 */
+	/*package*/ Clipboard getClipboard() {
+		return clipboard;
+	} 
 	/**
 	 * Returns the message to show in the status line.
 	 *
@@ -531,6 +548,7 @@ public class ResourceNavigator
 			new ResourceNavigatorActionFactory(
 				frameList,
 				shell,
+				getClipboard(),
 				this);
 				
 		actionFactory.makeActions();

@@ -9,13 +9,13 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.actions.*;
-import org.eclipse.ui.views.navigator.*;
 import org.eclipse.ui.internal.TextActionHandler;
 
 /**
@@ -24,6 +24,8 @@ import org.eclipse.ui.internal.TextActionHandler;
  * location such as rename, move and copy.
  * It also handles referencing actions like the addBookmark
  * action.
+ * 
+ * @since 2.0
  */
 public class RefactorActionFactory
 	extends ActionFactory {
@@ -38,6 +40,7 @@ public class RefactorActionFactory
 
 	protected IViewSite viewSite;
 	protected TreeViewer treeViewer;
+	protected Clipboard clipboard;
 
 	private TextActionHandler textActionHandler;
 
@@ -48,9 +51,10 @@ public class RefactorActionFactory
 	 * @param viewer the tree viewer
 	 * @param site the view site
 	 */
-	public RefactorActionFactory(TreeViewer viewer, IViewSite site) {
-		viewSite = site;
+	public RefactorActionFactory(TreeViewer viewer, IViewSite site, Clipboard clipboard) {
 		treeViewer = viewer;
+		viewSite = site;
+		this.clipboard = clipboard;
 	}
 
 	/*
@@ -59,8 +63,8 @@ public class RefactorActionFactory
 	public void makeActions() {
 
 		Shell shell = getShell();
-		copyAction = new CopyAction(shell);
-		pasteAction = new PasteAction(shell);
+		copyAction = new CopyAction(shell, clipboard);
+		pasteAction = new PasteAction(shell, clipboard);
 		moveResourceAction = new ResourceNavigatorMoveAction(shell, treeViewer);
 		moveProjectAction = new MoveProjectAction(shell);
 		renameResourceAction = new ResourceNavigatorRenameAction(shell, treeViewer);

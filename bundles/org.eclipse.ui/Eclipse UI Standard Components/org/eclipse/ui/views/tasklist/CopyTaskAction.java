@@ -10,7 +10,6 @@ import java.util.List;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Display;
@@ -23,16 +22,10 @@ import org.eclipse.ui.part.MarkerTransfer;
  */
 /*package*/ class CopyTaskAction extends TaskAction {
 	/**
-	 * System clipboard
-	 */
-	private Clipboard clipboard;
-
-	/**
 	 * Creates the action.
 	 */
 	public CopyTaskAction(TaskList tasklist, String id) {
 		super(tasklist, id);
-		clipboard = new Clipboard(Display.getCurrent());
 	}
 	
 	/**
@@ -58,7 +51,7 @@ import org.eclipse.ui.part.MarkerTransfer;
 		Transfer[] transferTypes = new Transfer[] {
 			MarkerTransfer.getInstance(),
 			TextTransfer.getInstance()};
-		clipboard.setContents(data, transferTypes);
+		taskList.getClipboard().setContents(data, transferTypes);
 		
 		//Update paste enablement
 		taskList.updatePasteEnablement();

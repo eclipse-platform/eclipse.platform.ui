@@ -52,13 +52,14 @@ import org.eclipse.ui.part.ResourceTransfer;
  *
  * @param shell the shell for any dialogs
  */
-public PasteAction(Shell shell) {
+public PasteAction(Shell shell, Clipboard clipboard) {
 	super(ResourceNavigatorMessages.getString("PasteAction.title")); //$NON-NLS-1$
 	Assert.isNotNull(shell);
+	Assert.isNotNull(clipboard);
 	this.shell = shell;
+	this.clipboard = clipboard;
 	setToolTipText(ResourceNavigatorMessages.getString("PasteAction.toolTip")); //$NON-NLS-1$
 	setId(PasteAction.ID);
-	clipboard = new Clipboard(shell.getDisplay());
 	WorkbenchHelp.setHelp(this, new Object[] {INavigatorHelpContextIds.PASTE_ACTION});
 }
 /**

@@ -71,6 +71,8 @@ public class TaskList extends ViewPart {
 	private TaskAction resolveMarkerAction;
 	private TaskAction filtersAction;
 	
+	private Clipboard clipboard;
+	 
 	private static String[] tableColumnProperties = {
 		IBasicPropertyConstants.P_IMAGE,
 		IMarker.DONE,
@@ -296,6 +298,7 @@ void createColumns() {
  * Method declared on IWorkbenchPart.
  */
 public void createPartControl(Composite parent) {
+	clipboard = new Clipboard(parent.getDisplay());
 	createTable(parent);
 	viewer = new TableViewer(table);
 	viewer.setUseHashlookup(true);
@@ -412,6 +415,8 @@ public void dispose() {
 		editorActionHandler.dispose();
 		editorActionHandler = null;
 	}
+	if (clipboard != null)
+		clipboard.dispose();
 }
 /**
  * Activates the editor on the given marker.
@@ -466,6 +471,20 @@ void filterChanged() {
 void focusSelectionChanged(SelectionChangedEvent event) {
 	updateFocusResource(event.getSelection());
 }
+
+/**
+ * Returns a clipboard for cut/copy/paste actions.
+ * <p>
+ * May only be called after this part's viewer has been created.
+ * The clipboard is disposed when this part is disposed.
+ * </p>
+ * @return a clipboard
+ * @since 2.0
+ */
+/*package*/ Clipboard getClipboard() {
+	return clipboard;
+} 
+
 /**
  * Returns the filter for the viewer.
  */
@@ -1041,9 +1060,8 @@ void updateFocusResource(ISelection selection) {
  */
 void updatePasteEnablement() {
 	// Paste if clipboard contains tasks
-	Clipboard clipboard = new Clipboard(table.getDisplay());
 	MarkerTransfer transfer = MarkerTransfer.getInstance();
-	IMarker[] markerData = (IMarker[])clipboard.getContents(transfer);
+	IMarker[] markerData = (IMarker[])getClipboard().getContents(transfer);
 	boolean canPaste = false;
 	if (markerData != null) {
 		for (int i = 0; i < markerData.length; i++) {

@@ -33,18 +33,12 @@ import org.eclipse.ui.part.MarkerTransfer;
 	 * The id of this action.
 	 */
 	public static final String ID = PlatformUI.PLUGIN_ID + ".TaskPasteAction";//$NON-NLS-1$
-	
-	/**
-	 * System clipboard
-	 */
-	private Clipboard clipboard;
 
 /**
  * Creates a new action.
  */
 public PasteTaskAction(TaskList tasklist, String id) {
 	super(tasklist, id);
-	clipboard = new Clipboard(Display.getCurrent());
 }
 /**
  * Implementation of method defined on <code>IAction</code>.
@@ -52,7 +46,7 @@ public PasteTaskAction(TaskList tasklist, String id) {
 public void run() {
 	// Get the markers from the clipboard
 	MarkerTransfer transfer = MarkerTransfer.getInstance();
-	final IMarker[] markerData = (IMarker[])clipboard.getContents(transfer);
+	final IMarker[] markerData = (IMarker[])getTaskList().getClipboard().getContents(transfer);
 	
 	if (markerData == null) 
 		return;

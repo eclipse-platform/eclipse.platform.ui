@@ -7,10 +7,17 @@ package org.eclipse.ui.views.navigator;
 
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.views.internal.framelist.FrameList;
+
+/**
+ * Factory to create actions for the resource navigator
+ * 
+ * @since 2.0
+ */
 
 public class ResourceNavigatorActionFactory extends ActionFactory {
 
@@ -31,13 +38,17 @@ public class ResourceNavigatorActionFactory extends ActionFactory {
 	public ResourceNavigatorActionFactory(
 		FrameList frameList,
 		Shell shell,
+		Clipboard clipboard,
 		IResourceTreeNavigatorPart navigatorPart) {
 
 		gotoFactory = new GotoActionFactory(frameList, navigatorPart);
 		openActionFactory =
 			new OpenActionFactory(navigatorPart.getSite(), shell);
 		refactorFactory =
-			new RefactorActionFactory(navigatorPart.getTreeViewer(), navigatorPart.getViewSite());
+			new RefactorActionFactory(
+				navigatorPart.getTreeViewer(), 
+				navigatorPart.getViewSite(),
+				clipboard);
 		workbenchFactory =
 			new WorkbenchStateActionFactory(
 				navigatorPart.getResourceViewer().getControl());
