@@ -40,18 +40,6 @@ public interface ICoolBarManager extends IContributionManager {
     public static final String SIZE = "size"; //$NON-NLS-1$
 
     /**
-     * Property name of a cool item's visiblity (value <code>"visibility"</code>).
-     * <p>
-     * The cool bar manager uses this property to tell its cool items to update
-     * their visibility.
-     * </p>
-     * 
-     * @see IContributionItem#update(String) @issue consider declaring this
-     *      constant elsewhere
-     */
-    public static final String VISIBILITY = "visibility"; //$NON-NLS-1$
-
-    /**
      * A convenience method to add a tool bar as a contribution item to this
      * cool bar manager. Equivalent to <code>add(new ToolBarContributionManager(toolBarManager))</code>.
      * 
