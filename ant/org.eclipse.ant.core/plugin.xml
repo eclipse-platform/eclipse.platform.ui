@@ -17,9 +17,9 @@
      </library>
    </runtime>
 
-   <extension-point id="extraClasspathEntries" name="%classpathName"/>
-   <extension-point id="antTasks" name="%tasksName"/>
-   <extension-point id="antTypes" name="%typesName"/>
+   <extension-point id="extraClasspathEntries" name="%classpathName" schema="schema/extraClasspathEntries.exsd"/>
+   <extension-point id="antTasks" name="%tasksName" schema="schema/antTasks.exsd"/>
+   <extension-point id="antTypes" name="%typesName" schema="schema/antTypes.exsd"/>
 
    <!-- Applications -->
    <extension
