@@ -8,16 +8,78 @@ http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
 import org.eclipse.debug.core.DebugEvent;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchesListener;
+import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.ISuspendResume;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandler;
 import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.ui.IPartListener2;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Updates the variables view
  */
 public class VariablesViewEventHandler extends AbstractDebugEventHandler {
+	
+	private boolean fViewVisible= true;
+	
+	/**
+	 * The part listener for this view. Set to <code>null</code> when this view
+	 * isn't currently listening to part changes.
+	 */
+	private VariablesViewPartListener fPartListener= null;
+	
+	/**
+	 * Part listener that disables updating when the variables view is not
+	 * visible and reenables updating when the view appears.
+	 */
+	private class VariablesViewPartListener implements IPartListener2 {
+		private void visibilityChanged(IWorkbenchPartReference ref) {
+			IWorkbenchPart part= ref.getPart(false);
+			if (part != null && part == getView()) {
+				IWorkbenchPage page= getActivePage();
+				if (page == null) {
+					return;
+				}
+				boolean isVisible= page.isPartVisible(getView());
+				if (isVisible != fViewVisible) {
+					fViewVisible= isVisible;
+					if (isVisible) {
+						refresh();
+					}
+				}
+			}
+		}
+		public void partActivated(IWorkbenchPartReference ref) {
+			visibilityChanged(ref);
+		}
+		public void partBroughtToTop(IWorkbenchPartReference ref) {
+			visibilityChanged(ref);
+		}
+		public void partOpened(IWorkbenchPartReference ref) {
+			visibilityChanged(ref);
+		}
+		public void partVisible(IWorkbenchPartReference ref) {
+			visibilityChanged(ref);
+		}
+		public void partHidden(IWorkbenchPartReference ref) {
+			visibilityChanged(ref);
+		}
+		public void partClosed(IWorkbenchPartReference ref) {
+			visibilityChanged(ref);
+		}
+		public void partDeactivated(IWorkbenchPartReference ref) {
+			visibilityChanged(ref);
+		}
+	}
 	
 	/**
 	 * Constructs a new event handler on the given view
@@ -26,25 +88,67 @@ public class VariablesViewEventHandler extends AbstractDebugEventHandler {
 	 */
 	public VariablesViewEventHandler(AbstractDebugView view) {
 		super(view);
+		final IWorkbenchPage page= getActivePage();
+		// The launch listener registers and deregisters the view's part listener when there are active launches
+		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(new ILaunchesListener() {
+			public void launchesRemoved(ILaunch[] launches) {
+			}
+			/**
+			 * Start listening to part activations when a launch is added.
+			 */
+			public void launchesAdded(ILaunch[] launches) {
+				if (fPartListener == null) {
+					fPartListener= new VariablesViewPartListener();
+					page.addPartListener(new VariablesViewPartListener());
+				}
+			}
+			public void launchesChanged(ILaunch[] launches) {
+			}
+		});
+		if (page != null) {
+			fViewVisible= page.isPartVisible(view);
+		}
+	}
+	
+	/**
+	 * Returns the active workbench page or <code>null</code> if none.
+	 */
+	protected IWorkbenchPage getActivePage() {
+		IWorkbenchWindow window= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if (window == null) {
+			return null;
+		}
+		return window.getActivePage();
 	}
 	
 	/**
 	 * @see AbstractDebugEventHandler#handleDebugEvents(DebugEvent[])
 	 */
-	protected void doHandleDebugEvents(DebugEvent[] events) {	
+	protected void doHandleDebugEvents(DebugEvent[] events) {
+		if (!fViewVisible) {
+			return;
+		}
 		for (int i = 0; i < events.length; i++) {	
 			DebugEvent event = events[i];
 			switch (event.getKind()) {
 				case DebugEvent.SUSPEND:
-					doHandleSuspendEvent(event);
+					if (fViewVisible) {
+						doHandleSuspendEvent(event);
+					}
 					break;
 				case DebugEvent.CHANGE:
-					doHandleChangeEvent(event);
+					if (fViewVisible) {
+						doHandleChangeEvent(event);
+					}
 					break;
 				case DebugEvent.RESUME:
-					doHandleResumeEvent(event);
+					if (fViewVisible) {
+						doHandleResumeEvent(event);
+					}
 					break;
 				case DebugEvent.TERMINATE:
+					// Always handle terminate events so we can deregister the part
+					// listener even if the view isn't visible.
 					doHandleTerminateEvent(event);
 					break;
 			}
@@ -63,10 +167,33 @@ public class VariablesViewEventHandler extends AbstractDebugEventHandler {
 
 	/**
 	 * Clear any cached variable expansion state for the
-	 * terminated thread/target.
+	 * terminated thread/target. Also, remove the part listener if there are
+	 * no more active debug targets.
 	 */
 	protected void doHandleTerminateEvent(DebugEvent event) {
-		getVariablesView().clearExpandedVariables(event.getSource());
+		if (fViewVisible) {
+			getVariablesView().clearExpandedVariables(event.getSource());
+		}
+		if (fPartListener == null) {
+			return;
+		}
+		ILaunch[] launches= DebugPlugin.getDefault().getLaunchManager().getLaunches();
+		// If there are no more active IDebugTargets, stop
+		// listening to part notifications.
+		for (int i= 0; i < launches.length; i++) {
+			IDebugTarget target= launches[i].getDebugTarget();
+			if (target != null) {
+				if (!target.isDisconnected() && !target.isTerminated()) {
+					return;
+				}
+			}
+		}
+		// To get here, there must be no running JDIDebugTargets
+		IWorkbenchPage page= getActivePage();
+		if (page != null) {
+			page.removePartListener(fPartListener);
+			fPartListener= null;
+		}
 	}
 	
 	/**
