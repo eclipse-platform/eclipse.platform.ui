@@ -1,8 +1,14 @@
+/**********************************************************************
+ * Copyright (c) 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.ant.internal.core.ant;
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 /*
  * The Apache Software License, Version 1.1
@@ -260,7 +266,7 @@ public class CommaPatternSet extends PatternSet {
                 line = patternReader.readLine();
             }
         } catch(IOException ioe)  {
-			throw new BuildException(Policy.bind("exception.patternFile",patternfile.toString()),ioe);
+			throw new BuildException(Policy.bind("exception.patternFile", patternfile.toString()), ioe);
         }
     }
 
@@ -390,9 +396,7 @@ public class CommaPatternSet extends PatternSet {
                 if (fileName != null) {
                     File inclFile = p.resolveFile(fileName);
                     if (!inclFile.exists())
-                        throw new BuildException("Includesfile "
-                                                 + inclFile.getAbsolutePath()
-                                                 + " not found.");
+                        throw new BuildException(Policy.bind("exception.missingIncludesFile", inclFile.getAbsolutePath()));
                     readPatterns(inclFile, includeList, p);
                 }
             }
@@ -407,9 +411,7 @@ public class CommaPatternSet extends PatternSet {
                 if (fileName != null) {
                     File exclFile = p.resolveFile(fileName);
                     if (!exclFile.exists())
-                        throw new BuildException("Excludesfile "
-                                                 + exclFile.getAbsolutePath()
-                                                 + " not found.");
+                        throw new BuildException(Policy.bind("exception.missingExcludesFile", exclFile.getAbsolutePath()));
                     readPatterns(exclFile, excludeList, p);
                 }
             }
