@@ -422,7 +422,7 @@ public interface IPluginDescriptor {
 	 * @deprecated 
 	 * Use 
 	 * <pre>
-	 *     String version = bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_VERSION);
+	 *     String version = (String) bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_VERSION);
 	 *     new PluginVersionIdentifier(version); 
 	 * </pre>
 	 * where <code>bundle</code> is the bundle associated with 
