@@ -68,6 +68,6 @@ public class ApiTestSuite extends TestSuite {
         addTest(new TestSuite(RawIViewPartTest.class));
         addTest(new TestSuite(ViewPartTitleTest.class));
         addTest(new TestSuite(OverriddenTitleTest.class));
-     //   addTest(new TestSuite(UIJobTest.class));
+        addTest(new TestSuite(UIJobTest.class));
     }
 }
