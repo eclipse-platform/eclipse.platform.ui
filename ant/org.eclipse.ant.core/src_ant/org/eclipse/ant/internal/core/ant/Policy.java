@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2002 IBM Corporation and others.
+ * Copyright (c) 2000,2002 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -9,19 +9,16 @@
  * IBM - Initial API and implementation
  **********************************************************************/
 package org.eclipse.ant.internal.core.ant;
-import java.util.*;
+import java.text.MessageFormat;
+import java.util.*;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 public class Policy {
-	private static ResourceBundle bundle;
-	private static final String bundleName = "org.eclipse.ant.internal.core.ant.messages";
+	private static final String bundleName = "org.eclipse.ant.internal.core.ant.messages"; //$NON-NLS-1$
+	private static ResourceBundle bundle = ResourceBundle.getBundle(bundleName, Locale.getDefault());
 
-	static {
-		relocalize();
-	}
-	
 /**
  * Lookup the message with the given ID in this catalog 
  */
@@ -54,49 +51,17 @@ public static String bind(String id, String binding1, String binding2) {
  */
 public static String bind(String id, String[] bindings) {
 	if (id == null)
-		return "No message available";
+		return "No message available";//$NON-NLS-1$
 	String message = null;
 	try {
 		message = bundle.getString(id);
 	} catch (MissingResourceException e) {
 		// If we got an exception looking for the message, fail gracefully by just returning
 		// the id we were looking for.  In most cases this is semi-informative so is not too bad.
-		return "Missing message: " + id + " in: " + bundleName;
+		return "Missing message: " + id + " in: " + bundleName;//$NON-NLS-1$
 	}
 	if (bindings == null)
 		return message;
-	int length = message.length();
-	int start = -1;
-	int end = length;
-	StringBuffer output = new StringBuffer(80);
-	while (true) {
-		if ((end = message.indexOf('{', start)) > -1) {
-			output.append(message.substring(start + 1, end));
-			if ((start = message.indexOf('}', end)) > -1) {
-				int index = -1;
-				try {
-					index = Integer.parseInt(message.substring(end + 1, start));
-					output.append(bindings[index]);
-				} catch (NumberFormatException nfe) {
-					output.append(message.substring(end + 1, start + 1));
-				} catch (ArrayIndexOutOfBoundsException e) {
-					output.append("{missing " + Integer.toString(index) + "}");
-				}
-			} else {
-				output.append(message.substring(end, length));
-				break;
-			}
-		} else {
-			output.append(message.substring(start + 1, length));
-			break;
-		}
-	}
-	return output.toString();
-}
-/**
- * Creates a NLS catalog for the given locale.
- */
-public static void relocalize() {
-	bundle = ResourceBundle.getBundle(bundleName, Locale.getDefault());
+	return MessageFormat.format(message, bindings);
 }
 }

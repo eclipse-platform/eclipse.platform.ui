@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2002 IBM Corporation and others.
+ * Copyright (c) 2000,2002 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -10,15 +10,14 @@
  **********************************************************************/
 package org.eclipse.ant.internal.ui;
 
+import java.text.MessageFormat;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
 
 public class Policy {
-	private static ResourceBundle bundle;
-	static {
-		relocalize();
-	}
+	private static ResourceBundle bundle = ResourceBundle.getBundle(AntUIPlugin.PROPERTIES_MESSAGES, Locale.getDefault());
+
 /**
  * Lookup the message with the given ID in this catalog 
  */
@@ -46,55 +45,23 @@ public static String bind(String id, String binding1, String binding2) {
  */
 public static String bind(String id, String[] bindings) {
 	if (id == null)
-		return "No message available";
+		return "No message available";//$NON-NLS-1$
 	String message = null;
 	try {
 		message = bundle.getString(id);
 	} catch (MissingResourceException e) {
 		// If we got an exception looking for the message, fail gracefully by just returning
 		// the id we were looking for.  In most cases this is semi-informative so is not too bad.
-		return "Missing message: " + id + "in: " + AntUIPlugin.PROPERTIES_MESSAGES;
+		return "Missing message: " + id + "in: " + AntUIPlugin.PROPERTIES_MESSAGES;//$NON-NLS-1$
 	}
 	if (bindings == null)
 		return message;
-	int length = message.length();
-	int start = -1;
-	int end = length;
-	StringBuffer output = new StringBuffer(80);
-	while (true) {
-		if ((end = message.indexOf('{', start)) > -1) {
-			output.append(message.substring(start + 1, end));
-			if ((start = message.indexOf('}', end)) > -1) {
-				int index = -1;
-				try {
-					index = Integer.parseInt(message.substring(end + 1, start));
-					output.append(bindings[index]);
-				} catch (NumberFormatException nfe) {
-					output.append(message.substring(end + 1, start + 1));
-				} catch (ArrayIndexOutOfBoundsException e) {
-					output.append("{missing " + Integer.toString(index) + "}");
-				}
-			} else {
-				output.append(message.substring(end, length));
-				break;
-			}
-		} else {
-			output.append(message.substring(start + 1, length));
-			break;
-		}
-	}
-	return output.toString();
+	return MessageFormat.format(message, bindings);
 }
 public static IProgressMonitor monitorFor(IProgressMonitor monitor) {
 	if (monitor == null)
 		return new NullProgressMonitor();
 	return monitor;
-}
-/**
- * Creates a NLS catalog for the given locale.
- */
-public static void relocalize() {
-	bundle = ResourceBundle.getBundle(AntUIPlugin.PROPERTIES_MESSAGES, Locale.getDefault());
 }
 public static IProgressMonitor subMonitorFor(IProgressMonitor monitor, int ticks) {
 	if (monitor == null)
