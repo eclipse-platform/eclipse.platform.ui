@@ -815,14 +815,18 @@ private void setSelection(LayoutPart part) {
 		setControlSize(current);
 	}
 
-	// set the title of the detached window to reflact the active tab
-	Window window = getWindow();
-	if (window instanceof DetachedWindow) {
-		if (current == null || !(current instanceof PartPane))
-			window.getShell().setText("");//$NON-NLS-1$
-		else
-			window.getShell().setText(((PartPane)current).getPart().getTitle());
-	}
+	/*
+	 * Detached window no longer supported - remove when confirmed
+	 *
+	 * // set the title of the detached window to reflact the active tab
+	 * Window window = getWindow();
+	 * if (window instanceof DetachedWindow) {
+	 * 	if (current == null || !(current instanceof PartPane))
+	 * 		window.getShell().setText("");//$NON-NLS-1$
+	 * 	else
+	 * 		window.getShell().setText(((PartPane)current).getPart().getTitle());
+	 * }
+	 */
 }
 /**
  * @see IPartDropTarget::targetPartFor

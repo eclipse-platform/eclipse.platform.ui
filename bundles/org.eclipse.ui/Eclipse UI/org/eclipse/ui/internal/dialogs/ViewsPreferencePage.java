@@ -31,7 +31,10 @@ public class ViewsPreferencePage
 	private Button viewBottomButton;
 	private Button openEmbedButton;
 	private Button openFastButton;
-	private Button openFloatButton;
+	/*
+	 * No longer supported - removed when confirmed!
+	 * private Button openFloatButton;
+	 */
 	private int editorAlignment;
 	private int viewAlignment;
 	private int openViewMode;
@@ -45,7 +48,10 @@ public class ViewsPreferencePage
 	private static final String OVM_TITLE = WorkbenchMessages.getString("OpenViewMode.title"); //$NON-NLS-1$
 	private static final String OVM_EMBED = WorkbenchMessages.getString("OpenViewMode.embed"); //$NON-NLS-1$
 	private static final String OVM_FAST = WorkbenchMessages.getString("OpenViewMode.fast"); //$NON-NLS-1$
-	private static final String OVM_FLOAT = WorkbenchMessages.getString("OpenViewMode.float"); //$NON-NLS-1$
+	/*
+	 * No longer supported - remove when confirmed!
+	 * private static final String OVM_FLOAT = WorkbenchMessages.getString("OpenViewMode.float"); //$NON-NLS-1$
+	 */
 	private static final String NOTE_LABEL = WorkbenchMessages.getString("ViewsPreference.note"); //$NON-NLS-1$
 	private static final String TAB_POSITIONS_LABEL = WorkbenchMessages.getString("ViewsPreference.tabPositions"); //$NON-NLS-1$
 	private static final String APPLY_MESSAGE = WorkbenchMessages.getString("ViewsPreference.applyMessage"); //$NON-NLS-1$
@@ -83,12 +89,9 @@ protected Control createContents(Composite parent) {
 	WorkbenchHelp.setHelp(parent, new DialogPageContextComputer(this, IHelpContextIds.VIEWS_PREFERENCE_PAGE));
 
 	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-	this.editorAlignment =
-		store.getInt(IPreferenceConstants.EDITOR_TAB_POSITION);
-	this.viewAlignment =
-		store.getInt(IPreferenceConstants.VIEW_TAB_POSITION);
-	openViewMode = 
-		store.getInt(IPreferenceConstants.OPEN_VIEW_MODE);
+	editorAlignment = store.getInt(IPreferenceConstants.EDITOR_TAB_POSITION);
+	viewAlignment =	store.getInt(IPreferenceConstants.VIEW_TAB_POSITION);
+	openViewMode = store.getInt(IPreferenceConstants.OPEN_VIEW_MODE);
 
 	Composite composite = new Composite(parent, SWT.NULL);
 	composite.setLayout(new GridLayout());
@@ -110,7 +113,7 @@ protected Control createContents(Composite parent) {
 	messageComposite.setLayoutData(
 		new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 
-	final Label noteLabel = new Label(messageComposite,SWT.BOLD );
+	final Label noteLabel = new Label(messageComposite,SWT.BOLD);
 	noteLabel.setText(NOTE_LABEL);
 	noteLabel.setFont(JFaceResources.getBannerFont());
 	noteLabel.setLayoutData(
@@ -199,6 +202,10 @@ private void createOpenViewButtonGroup(Composite composite) {
 		}
 	});
 
+	// Open view as float no longer supported
+	if (openViewMode == IPreferenceConstants.OVM_FLOAT)
+		openViewMode = IPreferenceConstants.OVM_FAST;
+
 	openFastButton = new Button(buttonComposite, SWT.RADIO);
 	openFastButton.setText(OVM_FAST);
 	openFastButton.setSelection(openViewMode == IPreferenceConstants.OVM_FAST);
@@ -208,16 +215,20 @@ private void createOpenViewButtonGroup(Composite composite) {
 		}
 	});
 
-	if (getShell().isReparentable()) {
-		openFloatButton = new Button(buttonComposite, SWT.RADIO);
-		openFloatButton.setText(OVM_FLOAT);
-		openFloatButton.setSelection(openViewMode == IPreferenceConstants.OVM_FLOAT);
-		openFloatButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				openViewMode = IPreferenceConstants.OVM_FLOAT;
-			}
-		});
-	}
+	/*
+	 * No longer supported - remove when confirmed!
+	 * 
+	 * if (getShell().isReparentable()) {
+	 * 	openFloatButton = new Button(buttonComposite, SWT.RADIO);
+	 * 	openFloatButton.setText(OVM_FLOAT);
+	 * 	openFloatButton.setSelection(openViewMode == IPreferenceConstants.OVM_FLOAT);
+	 * 	openFloatButton.addSelectionListener(new SelectionAdapter() {
+	 * 		public void widgetSelected(SelectionEvent e) {
+	 * 			openViewMode = IPreferenceConstants.OVM_FLOAT;
+	 * 		}
+	 * 	});
+	 * }
+	 */
 }
 /**
  * Create a group for encapsualting the buttons.
@@ -319,11 +330,19 @@ protected void performDefaults() {
 	viewBottomButton.setSelection(viewTopValue == SWT.BOTTOM);
 
 	int value = store.getDefaultInt(IPreferenceConstants.OPEN_VIEW_MODE);
+	// Open view as float no longer supported
+	if (value == IPreferenceConstants.OVM_FLOAT)
+		value = IPreferenceConstants.OVM_FAST;
+		
 	openEmbedButton.setSelection(value == IPreferenceConstants.OVM_EMBED);
 	openFastButton.setSelection(value == IPreferenceConstants.OVM_FAST);
-	if (openFloatButton != null) 
-		openFloatButton.setSelection(value == IPreferenceConstants.OVM_FLOAT);
-
+	
+	/*
+	 * No longer supported - remove when confirmed!
+	 * if (openFloatButton != null) 
+	 * 	openFloatButton.setSelection(value == IPreferenceConstants.OVM_FLOAT);
+	 */
+	 
 	super.performDefaults();
 }
 /**

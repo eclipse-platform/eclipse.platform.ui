@@ -1621,10 +1621,16 @@ public void toggleZoom(IWorkbenchPart part) {
 	if (activePersp == null)
 		return;
 
-	// If target part is detached ignore.
-	PartPane pane = ((PartSite)(part.getSite())).getPane();
-	if (pane.getWindow() instanceof DetachedWindow) 
-		return;
+	 PartPane pane = ((PartSite)(part.getSite())).getPane();
+	 
+	/*
+	 * Detached window no longer supported - remove when confirmed
+	 *
+	 * // If target part is detached ignore.
+	 * if (pane.getWindow() instanceof DetachedWindow) 
+	 * 	return;
+	 */
+	 
 	if (part instanceof IViewPart && isFastView((IViewPart)part))
 		return;
 		
@@ -1654,12 +1660,16 @@ private void updateTabList(IWorkbenchPart part) {
 	if (pane instanceof ViewPane) {
 		ViewPane viewPane = (ViewPane) pane;
 		Control[] tabList = viewPane.getTabList();
-		if (pane.getWindow() instanceof DetachedWindow) {
-			viewPane.getControl().getShell().setTabList(tabList);
-		}
-		else {
-			getClientComposite().setTabList(tabList);
-		}
+		/*
+		 * Detached window no longer supported - remove when confirmed
+		 *
+		 * if (pane.getWindow() instanceof DetachedWindow) {
+		 * 	viewPane.getControl().getShell().setTabList(tabList);
+		 * }
+		 * else {
+		 */
+		getClientComposite().setTabList(tabList);
+		/*}*/
 	}
 	else if (pane instanceof EditorPane) {
 		EditorArea ea = ((EditorPane) pane).getWorkbook().getEditorArea();

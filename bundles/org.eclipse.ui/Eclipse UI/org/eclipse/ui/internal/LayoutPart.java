@@ -102,8 +102,13 @@ public IWorkbenchWindow getWorkbenchWindow() {
 	Window parentWindow = getWindow();
 	if (parentWindow instanceof IWorkbenchWindow)
 		return (IWorkbenchWindow)parentWindow;
-	if (parentWindow instanceof DetachedWindow)
-		return ((DetachedWindow)parentWindow).getWorkbenchPage().getWorkbenchWindow();
+	/*
+	 * Detached window no longer supported - remove when confirmed
+	 *
+	 * if (parentWindow instanceof DetachedWindow)
+	 * 	return ((DetachedWindow)parentWindow).getWorkbenchPage().getWorkbenchWindow();
+	 */
+	 
 	return null;
 }
 /**
