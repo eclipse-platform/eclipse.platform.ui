@@ -74,7 +74,7 @@ Some annotations serve as the UI counterpart of markers (see &lt;code&gt;org.ecl
          <attribute name="markerSeverity">
             <annotation>
                <documentation>
-                  The severity of this annotation type, used for ordering. Any out of 0, 1, 2.
+                  The optional severity of this annotation type, used for mapping an annotation type to a marker. Any out of IMarker.SEVERITY_INFO, IMarker.SEVERITY_WARNING, SEVERITY_ERROR.
                </documentation>
             </annotation>
             <simpleType>
