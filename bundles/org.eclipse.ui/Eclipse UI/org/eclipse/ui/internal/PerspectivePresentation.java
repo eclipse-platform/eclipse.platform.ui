@@ -792,6 +792,16 @@ public boolean isActive() {
 	return active;
 }
 /**
+ * Returns whether the part is a fast view or not
+ */
+private boolean isFastView(IWorkbenchPart part) {
+	if (part instanceof IViewPart) {
+		WorkbenchPage page = (WorkbenchPage) part.getSite().getPage();
+		return page.isFastView((IViewPart)part);
+	}
+	return false;
+}
+/**
  * Returns whether the presentation is zoomed.
  */
 public boolean isZoomed() {
@@ -1136,15 +1146,24 @@ private void onPartDrop(PartDropEvent e) {
  *		- we are zoomed.
  *		- the part is contained in the main window.
  *		- the part is not the zoom part
+ *      - the part is not a fast view
+ *      - the part and the zoom part are not in the same editor workbook
  */
-public boolean partChangeAffectsZoom(PartPane part) {
+public boolean partChangeAffectsZoom(PartPane pane) {
 	if (zoomPart == null)
 		return false;
-	if (part.getWindow().getShell() != 
+	if (pane.getWindow().getShell() != 
 		page.getWorkbenchWindow().getShell())
 		return false;
-	if (part.isZoomed())
+	if (pane.isZoomed())
 		return false;
+	if(isFastView(pane.getPart()))
+		return false;
+	if(pane instanceof EditorPane && getZoomPart() instanceof EditorPane) {
+		if(((EditorPane)pane).getWorkbook().equals(((EditorPane)getZoomPart()).getWorkbook()))
+			return false;
+	}
+
 	return true;
 }
 /**

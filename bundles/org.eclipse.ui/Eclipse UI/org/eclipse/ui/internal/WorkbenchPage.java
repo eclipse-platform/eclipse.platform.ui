@@ -267,7 +267,7 @@ public class WorkbenchPage implements IWorkbenchPage {
  */
 public WorkbenchPage(WorkbenchWindow w, String layoutID, IAdaptable input) 
 	throws WorkbenchException
-{ 
+{
 	super();
 	if (layoutID == null)
 		throw new WorkbenchException(WorkbenchMessages.getString("WorkbenchPage.UndefinedPerspective")); //$NON-NLS-1$
@@ -789,7 +789,6 @@ private void deactivateLastEditor() {
 	SubActionBars actionBars = (SubActionBars) site.getActionBars();
 	actionBars.deactivate(true);
 }
-
 /**
  * Deactivates a part.  The pane is unhilighted and the action bars are hidden.
  */
@@ -1199,7 +1198,7 @@ public void hideView(IViewPart view) {
 		return;
 		
 	// If part is added / removed always unzoom.
-	if (isZoomed())
+	if (isZoomed() && !isFastView(view))
 		zoomOut();
 		
 	// Confirm.
@@ -1384,6 +1383,23 @@ public boolean isZoomed() {
 	return persp.getPresentation().isZoomed();
 }
 /**
+ * Returns <code>true</code> if the window needs to unzoom for the given
+ * IEditorPart to be seen by the user. Returns false otherwise.
+ * 
+ * @return <code>true</code> if the window needs to unzoom for the given
+ * 		IEditorPart to be seen by the user, <code>false</code> otherwise.
+ */
+private boolean needToZoomOut(IEditorPart part) {
+	if(getActivePart() instanceof IViewPart) {
+		if(!isFastView((IViewPart)getActivePart()))
+			return true;
+	}
+	EditorSite site = (EditorSite)part.getEditorSite();
+	EditorPane pane = (EditorPane)site.getPane();
+	EditorWorkbook book = pane.getWorkbook();
+	return !book.equals(book.getEditorArea().getActiveWorkbook());
+}
+/**
  * This method is called when the page is activated.  
  * Normally this will be called as a pair of onDeactivate and onActivate, so the caller is
  * expected to update action bars afterwards.
@@ -1510,11 +1526,7 @@ public IEditorPart openEditor(IEditorInput input, String editorID, boolean activ
  */
 private IEditorPart openEditor(IEditorInput input, String editorID, boolean activate,boolean useEditorID,IFile file) 
 	throws PartInitException
-{
-	// If part is added / removed always unzoom.
-	if (isZoomed())
-		zoomOut();
-	
+{	
 	if(file != null) {
 		// Update the default editor for this file.
 		WorkbenchPlugin.getDefault().getEditorRegistry().setDefaultEditor(
@@ -1524,6 +1536,7 @@ private IEditorPart openEditor(IEditorInput input, String editorID, boolean acti
 	// If an editor already exists for the input use it.
 	IEditorPart editor = getEditorManager().findEditor(input);
 	if (editor != null) {
+		zoomOutIfNecessary(editor);
 		setEditorAreaVisible(true);
 		if (activate)
 			activate(editor);
@@ -1548,6 +1561,7 @@ private IEditorPart openEditor(IEditorInput input, String editorID, boolean acti
 				
 	if (editor != null) {
 		//firePartOpened(editor);
+		zoomOutIfNecessary(editor);
 		setEditorAreaVisible(true);
 		if (activate) {
 			if(editor instanceof MultiEditor)
@@ -1586,11 +1600,13 @@ public void openSystemEditor(IFile input)
 	getEditorManager().openSystemEditor(input);
 }
 /**
- * Returns whether changes to a parts layout will affect zoom.
+ * Returns whether changes to a part will affect zoom.
  * There are a few conditions for this ..
  *		- we are zoomed.
  *		- the part is contained in the main window.
  *		- the part is not the zoom part
+ *      - the part is not a fast view
+ *      - the part and the zoom part are not in the same editor workbook
  */
 private boolean partChangeAffectsZoom(IWorkbenchPart part) {
 	PartPane pane = ((PartSite)part.getSite()).getPane();
@@ -1877,15 +1893,15 @@ private void setActivePart(IWorkbenchPart newPart) {
 /**
  * See IWorkbenchPage.
  */
-public void setEditorAreaVisible(boolean showEditorArea) {
-	// If parts change always update zoom.
-	if (isZoomed())
-		zoomOut();
-	
+public void setEditorAreaVisible(boolean showEditorArea) {	
 	Perspective persp = getActivePerspective();
 	if (persp == null)
 		return;
-
+	if(showEditorArea == persp.isEditorAreaVisible())
+		return;
+	// If parts change always update zoom.
+	if (isZoomed())
+		zoomOut();
 	// Update editor area visibility.
 	if (showEditorArea) {
 		persp.showEditorArea();
@@ -2153,6 +2169,14 @@ private void zoomOut() {
 	Perspective persp = getActivePerspective();
 	if (persp != null)
 		persp.getPresentation().zoomOut();
+}
+/**
+ * Zooms out a zoomed in part if it is necessary to do so for the user
+ * to view the IEditorPart that is the argument. Otherwise, does nothing.
+ */
+private void zoomOutIfNecessary(IEditorPart editor) {
+	if (isZoomed() && needToZoomOut(editor))
+		zoomOut();	
 }
 /**
  * @see IPageLayout.
