@@ -58,6 +58,7 @@ public interface IEclipsePreferences extends Preferences {
 
 		/**
 		 * Notification that a node was added to the preference hierarchy.
+		 * The given event must not be <code>null</code>.
 		 * 
 		 * @param event an event specifying the details about the new node
 		 * @see INodeChangeEvent
@@ -68,6 +69,7 @@ public interface IEclipsePreferences extends Preferences {
 
 		/**
 		 * Notification that a node was removed from the preference hierarchy.
+		 * The given event must not be <code>null</code>.
 		 * 
 		 * @param event an event specifying the details about the removed node
 		 * @see INodeChangeEvent
@@ -119,7 +121,8 @@ public interface IEclipsePreferences extends Preferences {
 
 		/**
 		 * Notification that a preference value has changed in the preference store.
-		 * The given event object describes the change details.
+		 * The given event object describes the change details and must not
+		 * be <code>null</code>.
 		 * 
 		 * @param event the event details
 		 * @see IPreferenceChangeEvent
@@ -131,7 +134,8 @@ public interface IEclipsePreferences extends Preferences {
 
 	/**
 	 * Register the given listener for changes to this node. Duplicate calls
-	 * to this method with the same listener will have no effect.
+	 * to this method with the same listener will have no effect. The given
+	 * listener argument must not be <code>null</code>.
 	 *  
 	 * @param listener the node change listener to add
 	 * @throws IllegalStateException if this node or an ancestor has been removed
@@ -143,7 +147,7 @@ public interface IEclipsePreferences extends Preferences {
 	/**
 	 * De-register the given listener from receiving event change notifications
 	 * for this node. Calling this method with a listener which is not registered
-	 * has no effect.
+	 * has no effect. The given listener argument must not be <code>null</code>.
 	 * 
 	 * @param listener the node change listener to remove
 	 * @throws IllegalStateException if this node or an ancestor has been removed
@@ -154,7 +158,8 @@ public interface IEclipsePreferences extends Preferences {
 
 	/**
 	 * Register the given listener for notification of preference changes to this node.
-	 * Calling this method multiple times with the same listener has no effect.
+	 * Calling this method multiple times with the same listener has no effect. The
+	 * given listener argument must not be <code>null</code>.
 	 * 
 	 * @param listener the preference change listener to register
 	 * @throws IllegalStateException if this node or an ancestor has been removed
@@ -166,7 +171,7 @@ public interface IEclipsePreferences extends Preferences {
 	/**
 	 * De-register the given listner from receiving notification of preference changes
 	 * to this node. Calling this method multiple times with the same listener has no
-	 * effect.
+	 * effect. The given listener argument must not be <code>null</code>.
 	 * 
 	 * @param listener the preference change listener to remove
 	 * @throws IllegalStateException if this node or an ancestor has been removed

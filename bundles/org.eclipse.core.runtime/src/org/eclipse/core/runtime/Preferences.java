@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.core.runtime;
 import java.io.*;
 import java.lang.reflect.Method;
 import java.util.*;
+import org.eclipse.core.internal.preferences.ListenerList;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.osgi.framework.Bundle;
 
@@ -114,14 +115,14 @@ public class Preferences {
 	 * The string representation used for <code>true</code>
 	 * (<code>"true"</code>).
 	 */
-	private static final String TRUE = "true"; //$NON-NLS-1$
+	protected static final String TRUE = "true"; //$NON-NLS-1$
 
 	/**
 	 * The string representation used for <code>false</code>
 	 * (<code>"false"</code>).
 	 */
-	private static final String FALSE = "false"; //$NON-NLS-1$
-	
+	 protected static final String FALSE = "false"; //$NON-NLS-1$
+	 
 	/**
 	 * Singleton empty string array (optimization)
 	 */
@@ -147,7 +148,7 @@ public class Preferences {
 
 		/**
 		 * The name of the changed property.
-			 */
+		 */
 		private String propertyName;
 
 		/**
@@ -173,7 +174,7 @@ public class Preferences {
 		 * @param newValue the new value of the property, or 
 		 *    <code>null</code> if none
 		 */
-		PropertyChangeEvent(Object source, String property, Object oldValue, Object newValue) {
+		protected PropertyChangeEvent(Object source, String property, Object oldValue, Object newValue) {
 
 			super(source);
 			if (property == null) {
@@ -213,6 +214,7 @@ public class Preferences {
 		 *
 		 * @return the old value, or <code>null</code> if not known
 		 *  or not relevant
+		 * @deprecated
 		 */
 		public Object getOldValue() {
 			return oldValue;
@@ -251,171 +253,13 @@ public class Preferences {
 		public void propertyChange(Preferences.PropertyChangeEvent event);
 	}
 
-	/**
-	 * Internal class is used to maintain a list of listeners.
-	 * It is a fairly lightweight object, occupying minimal space when
-	 * no listeners are registered.
-	 * <p>
-	 * Note that the <code>add</code> method checks for and eliminates 
-	 * duplicates based on identity (not equality).  Likewise, the
-	 * <code>remove</code> method compares based on identity.
-	 * </p>
-	 * <p>
-	 * Use the <code>getListeners</code> method when notifying listeners.
-	 * Note that no garbage is created if no listeners are registered.
-	 * The recommended code sequence for notifying all registered listeners
-	 * of say, <code>FooListener.eventHappened</code>, is:
-	 * <pre>
-	 * Object[] listeners = myListenerList.getListeners();
-	 * for (int i = 0; i &lt; listeners.length; ++i) {
-	 *    ((FooListener) listeners[i]).eventHappened(event);
-	 * }
-	 * </pre>
-	 * </p>
-	 */
-	private static class ListenerList {
-		/**
-		 * The initial capacity of the list. Always >= 1.
-		 */
-		private int capacity;
-
-		/**
-		 * The current number of listeners.
-		 * Maintains invariant: 0 <= size <= listeners.length.
-		 */
-		private int size;
-
-		/**
-		 * The list of listeners.  Initially <code>null</code> but initialized
-		 * to an array of size capacity the first time a listener is added.
-		 * Maintains invariant: listeners != null IFF size != 0
-		 */
-		private Object[] listeners = null;
-
-		/**
-		 * The empty array singleton instance, returned by getListeners()
-		 * when size == 0.
-		 */
-		private static final Object[] EmptyArray = new Object[0];
-
-		/**
-		 * Creates a listener list with an initial capacity of 3.
-		 */
-		public ListenerList() {
-			this(1);
-		}
-
-		/**
-		 * Creates a listener list with the given initial capacity.
-		 *
-		 * @param capacity the number of listeners which this list can initially 
-		 *    accept without growing its internal representation; must be at
-		 *    least 1
-		 */
-		public ListenerList(int capacity) {
-			if (capacity < 1) {
-				throw new IllegalArgumentException();
-			}
-			this.capacity = capacity;
-		}
-
-		/**
-		 * Adds the given listener to this list. Has no effect if an identical 
-		 * listener is already registered.
-		 *
-		 * @param listener the listener
-		 */
-		public void add(Object listener) {
-			if (listener == null) {
-				throw new IllegalArgumentException();
-			}
-			if (size == 0) {
-				listeners = new Object[capacity];
-			} else {
-				// check for duplicates using identity
-				for (int i = 0; i < size; ++i) {
-					if (listeners[i] == listener) {
-						return;
-					}
-				}
-				// grow array if necessary
-				if (size == listeners.length) {
-					System.arraycopy(listeners, 0, listeners = new Object[size * 2 + 1], 0, size);
-				}
-			}
-			listeners[size++] = listener;
-		}
-
-		/**
-		 * Returns an array containing all the registered listeners.
-		 * The resulting array is unaffected by subsequent adds or removes.
-		 * If there are no listeners registered, the result is an empty array
-		 * singleton instance (no garbage is created).
-		 * Use this method when notifying listeners, so that any modifications
-		 * to the listener list during the notification will have no effect on 
-		 * the notification itself.
-		 *
-		 * @return the list of registered listeners
-		 */
-		public Object[] getListeners() {
-			if (size == 0)
-				return EmptyArray;
-			Object[] result = new Object[size];
-			System.arraycopy(listeners, 0, result, 0, size);
-			return result;
-		}
-
-		/**
-		 * Returns whether this listener list is empty.
-		 *
-		 * @return <code>true</code> if there are no registered listeners, and
-		 *   <code>false</code> otherwise
-		 */
-		public boolean isEmpty() {
-			return size == 0;
-		}
-
-		/**
-		 * Removes the given listener from this list. Has no effect if an 
-		 * identical listener was not already registered.
-		 *
-		 * @param listener the listener
-		 */
-		public void remove(Object listener) {
-			if (listener == null) {
-				throw new IllegalArgumentException();
-			}
-			for (int i = 0; i < size; ++i) {
-				if (listeners[i] == listener) {
-					if (size == 1) {
-						listeners = null;
-						size = 0;
-					} else {
-						System.arraycopy(listeners, i + 1, listeners, i, --size - i);
-						listeners[size] = null;
-					}
-					return;
-				}
-			}
-		}
-
-		/**
-		 * Returns the number of registered listeners.
-		 *
-		 * @return the number of registered listeners
-		 */
-		public int size() {
-			return size;
-		}
-	}
-
 	/** 
 	 * List of registered listeners (element type: 
 	 * <code>IPropertyChangeListener</code>).
 	 * These listeners are to be informed when the current value of a property
 	 * changes.
 	 */
-	private ListenerList listeners = new ListenerList();
+	protected ListenerList listeners = new ListenerList();
 
 	/**
 	 * The mapping from property name to
@@ -434,7 +278,7 @@ public class Preferences {
 	 * Indicates whether a value has been changed by <code>setToDefault</code>
 	 * or <code>setValue</code>; initially <code>false</code>.
 	 */
-	private boolean dirty = false;
+	protected boolean dirty = false;
 
 	/**
 	 * Exports all non-default-valued preferences for all installed plugins to the 
@@ -469,6 +313,7 @@ public class Preferences {
 			throw new CoreException(new Status(IStatus.INFO, IPlatform.PI_RUNTIME, IStatus.OK, "Preferences import/export not implemented", null));
 		}
 	}
+
 	/**
 	 * Loads the plugin preferences from the given file, and replaces all 
 	 * non-default-valued preferences for all plugins with the values from this file.
@@ -494,6 +339,7 @@ public class Preferences {
 	public static void importPreferences(IPath file) throws CoreException {
 		exporterInvoker("importPreferences", file);
 	}
+
 	/**
 	 * Validates that the preference versions in the given file match the versions
 	 * of the currently installed plugins.  Returns an OK status if all preferences match 
@@ -523,6 +369,7 @@ public class Preferences {
 			return null;
 		}
 	}
+
 	/**
 	 * Creates an empty preference table.
 	 * <p>
@@ -581,7 +428,7 @@ public class Preferences {
 	 * @param newValue the new value, or <code>null</code> if not known or not
 	 *    relevant
 	 */
-	private void firePropertyChangeEvent(String name, Object oldValue, Object newValue) {
+	protected void firePropertyChangeEvent(String name, Object oldValue, Object newValue) {
 
 		if (name == null) {
 			throw new IllegalArgumentException();

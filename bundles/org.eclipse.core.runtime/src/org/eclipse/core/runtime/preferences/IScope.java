@@ -23,7 +23,11 @@ public interface IScope {
 	 * Create and return a new preference node with the given parent and name.
 	 * Must not return <code>null</code>. Clients are able to create a new node
 	 * in memory or load the node's contents from the backing store.
-	 *
+	 * <p>
+	 * Implementors should note that the node might not have been added to the
+	 * child list of the parent yet, and therefore might not be able to be referenced
+	 * through navigation from the root node. 
+	 * </p>
 	 * @param parent the node's parent
 	 * @param name the name of the node
 	 * @return the new node

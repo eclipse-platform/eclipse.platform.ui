@@ -15,10 +15,12 @@ import java.net.*;
 import java.util.*;
 import org.eclipse.core.internal.boot.*;
 import org.eclipse.core.internal.jobs.JobManager;
+import org.eclipse.core.internal.preferences.PreferencesService;
 import org.eclipse.core.internal.registry.BundleModel;
 import org.eclipse.core.internal.registry.ExtensionRegistry;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.IJobManager;
+import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.osgi.framework.log.FrameworkLog;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.service.debug.DebugOptions;
@@ -128,6 +130,7 @@ public final class InternalPlatform implements IPlatform {
 	public static boolean DEBUG_SHUTDOWN = false;
 	public static String DEBUG_REGISTRY_DUMP = null;
 	public static boolean DEBUG_PREFERENCES = false;
+	public static boolean USE_PREFERENCE_NODES = System.getProperty("eclipse.usePreferenceNodes") != null;
 
 	private static final String KEY_PREFIX = "%"; //$NON-NLS-1$
 	private static final String KEY_DOUBLE_PREFIX = "%%"; //$NON-NLS-1$
@@ -687,6 +690,13 @@ public final class InternalPlatform implements IPlatform {
 	 */
 	public Properties getPreferenceTranslator(String uniqueIdentifier, String basePrefFileName) {
 		return new Properties();
+	}
+
+	/**
+	 * 
+	 */
+	public IPreferencesService getPreferencesService() {
+		return PreferencesService.getDefault();
 	}
 
 	/**

@@ -7,6 +7,7 @@
   provider-name="Eclipse.org">
 
   <requires>
+	<import plugin="org.eclipse.osgi.services"/>
 	<import plugin="org.eclipse.core.runtime.compatibility"/> 
     <import plugin="org.eclipse.core.resources"/>
     <import plugin="org.eclipse.core.tests.harness"/>
@@ -18,6 +19,10 @@
       <export name="*"/>
     </library>
   </runtime>
+
+	<extension id="platform-preferences" point="org.eclipse.core.runtime.preferences" name="platform-preferences">
+		<preferences scope="test" class="org.eclipse.core.tests.internal.preferences.TestScope"/>
+	</extension>
 
 	<extension point="org.eclipse.core.runtime.urlHandlers">
 		<handler

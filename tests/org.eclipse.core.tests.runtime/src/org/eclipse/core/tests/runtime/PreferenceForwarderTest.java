@@ -12,68 +12,63 @@ package org.eclipse.core.tests.runtime;
 
 import java.io.*;
 import java.util.*;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.eclipse.core.internal.preferences.PreferenceForwarder;
+import org.eclipse.core.internal.utils.UniversalUniqueIdentifier;
 import org.eclipse.core.runtime.Preferences;
 
 /**
  * Test suite for API class org.eclipse.core.runtime.Preferences
  */
-public class PreferencesTest extends RuntimeTest {
+public class PreferenceForwarderTest extends RuntimeTest {
 
 	class Tracer implements Preferences.IPropertyChangeListener {
 		public StringBuffer log = new StringBuffer();
 
 		private String typeCode(Object value) {
-			if (value == null) {
-				return "";
-			}
-			if (value instanceof Boolean) {
-				return "B";
-			}
-			if (value instanceof Integer) {
-				return "I";
-			}
-			if (value instanceof Long) {
-				return "L";
-			}
-			if (value instanceof Float) {
-				return "F";
-			}
-			if (value instanceof Double) {
-				return "D";
-			}
-			if (value instanceof String) {
-				return "S";
-			}
-			assertTrue("0.0", false);
+			if (value == null)
+				return ""; //$NON-NLS-1$
+			if (value instanceof Boolean)
+				return "B"; //$NON-NLS-1$
+			if (value instanceof Integer)
+				return "I"; //$NON-NLS-1$
+			if (value instanceof Long)
+				return "L"; //$NON-NLS-1$
+			if (value instanceof Float)
+				return "F"; //$NON-NLS-1$
+			if (value instanceof Double)
+				return "D"; //$NON-NLS-1$
+			if (value instanceof String)
+				return "S"; //$NON-NLS-1$
+			assertTrue("0.0", false); //$NON-NLS-1$
 			return null;
 		}
 
 		public void propertyChange(Preferences.PropertyChangeEvent event) {
-			log.append("[");
+			log.append('[');
 			log.append(event.getProperty());
-			log.append(":");
+			log.append(':');
 			log.append(typeCode(event.getOldValue()));
-			log.append(event.getOldValue() == null ? "null" : event.getOldValue());
-			log.append("->");
+			log.append(event.getOldValue() == null ? "null" : event.getOldValue()); //$NON-NLS-1$
+			log.append("->"); //$NON-NLS-1$
 			log.append(typeCode(event.getNewValue()));
-			log.append(event.getNewValue() == null ? "null" : event.getNewValue());
-			log.append("]");
+			log.append(event.getNewValue() == null ? "null" : event.getNewValue()); //$NON-NLS-1$
+			log.append(']');
 		}
 	}
 
-	public PreferencesTest(String name) {
+	public PreferenceForwarderTest(String name) {
 		super(name);
 	}
 
 	public static Test suite() {
 		// all test methods are named "test..."
-		return new TestSuite(PreferencesTest.class);
-//		TestSuite suite = new TestSuite();
-//		suite.addTest(new PreferencesTest("testListeners2"));
-//		return suite;
+		return new TestSuite(PreferenceForwarderTest.class);
+
+		//		TestSuite suite = new TestSuite();
+		//		suite.addTest(new PreferenceForwarderTest("testDefaultPropertyNames"));
+		//		return suite;
 	}
 
 	/*
@@ -100,7 +95,7 @@ public class PreferencesTest extends RuntimeTest {
 
 	public void testBasics() {
 
-		Preferences ps = new Preferences();
+		Preferences ps = new PreferenceForwarder(getUniqueString());
 		final String k1 = "key1";
 		final String v1 = "1";
 		final String v2 = "2";
@@ -176,7 +171,7 @@ public class PreferencesTest extends RuntimeTest {
 
 	public void testBoolean() {
 
-		Preferences ps = new Preferences();
+		Preferences ps = new PreferenceForwarder(getUniqueString());
 		final String k1 = "key1";
 
 		assertEquals("1.0", false, Preferences.BOOLEAN_DEFAULT_DEFAULT);
@@ -194,9 +189,13 @@ public class PreferencesTest extends RuntimeTest {
 
 	}
 
+	private String getUniqueString() {
+		return new UniversalUniqueIdentifier().toString();
+	}
+
 	public void testInteger() {
 
-		Preferences ps = new Preferences();
+		Preferences ps = new PreferenceForwarder(getUniqueString());
 		final String k1 = "key1";
 		final int[] values = {0, 1002, -201788, Integer.MAX_VALUE, Integer.MIN_VALUE};
 
@@ -215,7 +214,7 @@ public class PreferencesTest extends RuntimeTest {
 
 	public void testLong() {
 
-		Preferences ps = new Preferences();
+		Preferences ps = new PreferenceForwarder(getUniqueString());
 		final String k1 = "key1";
 		final long[] values = {0L, 1002L, -201788L, Long.MAX_VALUE, Long.MIN_VALUE};
 
@@ -234,7 +233,7 @@ public class PreferencesTest extends RuntimeTest {
 
 	public void testFloat() {
 
-		Preferences ps = new Preferences();
+		Preferences ps = new PreferenceForwarder(getUniqueString());
 		final String k1 = "key1";
 		final float[] values = {0.0f, 1002.5f, -201788.55f, Float.MAX_VALUE, Float.MIN_VALUE};
 		final float tol = 1.0e-20f;
@@ -262,7 +261,7 @@ public class PreferencesTest extends RuntimeTest {
 
 	public void testDouble() {
 
-		Preferences ps = new Preferences();
+		Preferences ps = new PreferenceForwarder(getUniqueString());
 		final String k1 = "key1";
 		final double[] values = {0.0, 1002.5, -201788.55, Double.MAX_VALUE, Double.MIN_VALUE};
 		final double tol = 1.0e-20;
@@ -290,7 +289,7 @@ public class PreferencesTest extends RuntimeTest {
 
 	public void testString() {
 
-		Preferences ps = new Preferences();
+		Preferences ps = new PreferenceForwarder(getUniqueString());
 		final String k1 = "key1";
 		final String[] values = {"", "hello", " x ", "\n"};
 
@@ -309,7 +308,7 @@ public class PreferencesTest extends RuntimeTest {
 
 	public void testPropertyNames() {
 
-		Preferences ps = new Preferences();
+		Preferences ps = new PreferenceForwarder(getUniqueString());
 
 		// there are no properties initially
 		assertEquals("1.0", 0, ps.propertyNames().length);
@@ -343,7 +342,7 @@ public class PreferencesTest extends RuntimeTest {
 
 	public void testContains() {
 
-		Preferences ps = new Preferences();
+		Preferences ps = new PreferenceForwarder(getUniqueString());
 
 		// there are no properties initially
 		assertEquals("1.0", false, ps.contains("a"));
@@ -371,7 +370,7 @@ public class PreferencesTest extends RuntimeTest {
 
 	public void testDefaultPropertyNames() {
 
-		Preferences ps = new Preferences();
+		Preferences ps = new PreferenceForwarder(getUniqueString());
 
 		// there are no default properties initially
 		assertEquals("1.0", 0, ps.defaultPropertyNames().length);
@@ -402,74 +401,55 @@ public class PreferencesTest extends RuntimeTest {
 		}
 		assertEquals("1.5", keys.length, ps.defaultPropertyNames().length);
 
-		// setting to default-default does not remove name from set either
+		// setting to default-default should remove name from set 
 		for (int i = 0; i < keys.length; i++) {
 			ps.setDefault(keys[i], Preferences.STRING_DEFAULT_DEFAULT);
 			Set s = new HashSet(Arrays.asList(ps.defaultPropertyNames()));
-			assertTrue("1.6.1", s.contains(keys[i]));
+			assertTrue("1.6.1", !s.contains(keys[i]));
 
 			ps.setDefault(keys[i], Preferences.BOOLEAN_DEFAULT_DEFAULT);
 			s = new HashSet(Arrays.asList(ps.defaultPropertyNames()));
-			assertTrue("1.6.2", s.contains(keys[i]));
+			assertTrue("1.6.2", !s.contains(keys[i]));
 
 			ps.setDefault(keys[i], Preferences.INT_DEFAULT_DEFAULT);
 			s = new HashSet(Arrays.asList(ps.defaultPropertyNames()));
-			assertTrue("1.6.3", s.contains(keys[i]));
+			assertTrue("1.6.3", !s.contains(keys[i]));
 
 			ps.setDefault(keys[i], Preferences.LONG_DEFAULT_DEFAULT);
 			s = new HashSet(Arrays.asList(ps.defaultPropertyNames()));
-			assertTrue("1.6.4", s.contains(keys[i]));
+			assertTrue("1.6.4", !s.contains(keys[i]));
 
 			ps.setDefault(keys[i], Preferences.FLOAT_DEFAULT_DEFAULT);
 			s = new HashSet(Arrays.asList(ps.defaultPropertyNames()));
-			assertTrue("1.6.5", s.contains(keys[i]));
+			assertTrue("1.6.5", !s.contains(keys[i]));
 
 			ps.setDefault(keys[i], Preferences.DOUBLE_DEFAULT_DEFAULT);
 			s = new HashSet(Arrays.asList(ps.defaultPropertyNames()));
-			assertTrue("1.6.6", s.contains(keys[i]));
+			assertTrue("1.6.6", !s.contains(keys[i]));
 		}
-		assertEquals("1.7", keys.length, ps.defaultPropertyNames().length);
+		assertEquals("1.7", 0, ps.defaultPropertyNames().length);
 	}
 
 	public void testListeners2() {
+		final Preferences ps = new PreferenceForwarder(getUniqueString());
 
-		final Preferences ps = new Preferences();
-		final Tracer tracer = new Tracer();
-		String key = "a";
+		final Tracer tracer1 = new Tracer();
+		String key = "foo";
 
-		ps.addPropertyChangeListener(tracer);
+		// register one listener
+		ps.addPropertyChangeListener(tracer1);
+		assertEquals("1.0", "", tracer1.log.toString());
 
-		// go from a default value to a real value
-		ps.setDefault(key, 1);
-		ps.setValue(key, 2);
-		assertEquals("1.0", "[a:I1->I2]", tracer.log.toString());
-		
-		// real value to another real value
-		tracer.log.setLength(0);
-		ps.setValue(key, 3);
-		assertEquals("1.1", "[a:I2->I3]", tracer.log.toString());
-		
-		// back to the default
-		tracer.log.setLength(0);
-		ps.setToDefault(key);
-		// TODO strings are reported because we don't know the type
-		assertEquals("1.2", "[a:S3->S1]", tracer.log.toString());
-		
-		// remove the default and then add a real value
-		tracer.log.setLength(0);
-		ps.setDefault(key, 0);
-		ps.setValue(key, 2);
-		assertEquals("1.3", "[a:I0->I2]", tracer.log.toString());
-		
-		// then remove the value
-		tracer.log.setLength(0);
-		ps.setValue(key, ps.getDefaultInt(key));
-		assertEquals("1.4", "[a:I2->I0]", tracer.log.toString());
+		ps.setDefault(key, true);
+		assertEquals("2.0", "", tracer1.log.toString());
+
+		ps.setValue(key, false);
+		assertEquals("3.0", "[foo:Btrue->Bfalse]", tracer1.log.toString());
 	}
 
 	public void testListeners() {
 
-		final Preferences ps = new Preferences();
+		final Preferences ps = new PreferenceForwarder(getUniqueString());
 
 		final Tracer tracer1 = new Tracer();
 		final Tracer tracer2 = new Tracer();
@@ -523,7 +503,7 @@ public class PreferencesTest extends RuntimeTest {
 		assertEquals("1.2.2", "[a:S->S1][a:S1->S2][a:S2->S][a:S->S3]", tracer1.log.toString());
 
 		ps.setToDefault("a");
-		assertEquals("1.2.3", "[a:S->S1][a:S1->S2][a:S2->S][a:S->S3][a:S3->null]", tracer1.log.toString());
+		assertEquals("1.2.3", "[a:S->S1][a:S1->S2][a:S2->S][a:S->S3][a:S3->S]", tracer1.log.toString());
 
 		// change to same value - no one notified
 		ps.setValue("a", "2");
@@ -588,7 +568,7 @@ public class PreferencesTest extends RuntimeTest {
 
 	public void testLoadStore() {
 
-		final Preferences ps = new Preferences();
+		final Preferences ps = new PreferenceForwarder(getUniqueString());
 
 		ps.setValue("b1", true);
 		ps.setValue("i1", 1);
@@ -607,7 +587,7 @@ public class PreferencesTest extends RuntimeTest {
 
 		ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
 
-		final Preferences ps2 = new Preferences();
+		final Preferences ps2 = new PreferenceForwarder(getUniqueString());
 		try {
 			ps2.load(in);
 		} catch (IOException e) {
@@ -627,7 +607,7 @@ public class PreferencesTest extends RuntimeTest {
 
 		// load discards current values
 		in = new ByteArrayInputStream(out.toByteArray());
-		final Preferences ps3 = new Preferences();
+		final Preferences ps3 = new PreferenceForwarder(getUniqueString());
 		ps3.setValue("s1", "y");
 		try {
 			ps3.load(in);
@@ -643,48 +623,48 @@ public class PreferencesTest extends RuntimeTest {
 
 	public void testNeedsSaving() {
 
-		Preferences ps = new Preferences();
+		Preferences ps = new PreferenceForwarder(getUniqueString());
 
 		// setValue dirties
-		ps = new Preferences();
+		ps = new PreferenceForwarder(getUniqueString());
 		assertEquals("1.0", false, ps.needsSaving());
 		ps.setValue("b1", true);
 		assertEquals("1.1", true, ps.needsSaving());
 
-		ps = new Preferences();
+		ps = new PreferenceForwarder(getUniqueString());
 		assertEquals("2.0", false, ps.needsSaving());
 		ps.setValue("i1", 1);
 		assertEquals("2.1", true, ps.needsSaving());
 
-		ps = new Preferences();
+		ps = new PreferenceForwarder(getUniqueString());
 		assertEquals("3.0", false, ps.needsSaving());
 		ps.setValue("l1", 2L);
 		assertEquals("3.1", true, ps.needsSaving());
 
-		ps = new Preferences();
+		ps = new PreferenceForwarder(getUniqueString());
 		assertEquals("4.0", false, ps.needsSaving());
 		ps.setValue("f1", 1.0f);
 		assertEquals("4.1", true, ps.needsSaving());
 
-		ps = new Preferences();
+		ps = new PreferenceForwarder(getUniqueString());
 		assertEquals("5.0", false, ps.needsSaving());
 		ps.setValue("d1", 1.0);
 		assertEquals("5.1", true, ps.needsSaving());
 
-		ps = new Preferences();
+		ps = new PreferenceForwarder(getUniqueString());
 		assertEquals("6.0", false, ps.needsSaving());
 		ps.setValue("s1", "x");
 		assertEquals("6.1", true, ps.needsSaving());
 
 		// setToDefault does not dirty if value not set
-		ps = new Preferences();
+		ps = new PreferenceForwarder(getUniqueString());
 		assertEquals("7.0", false, ps.needsSaving());
 		ps.setToDefault("any");
 		assertEquals("7.1", false, ps.needsSaving());
 
 		// setToDefault dirties if value was set
 		try {
-			ps = new Preferences();
+			ps = new PreferenceForwarder(getUniqueString());
 			assertEquals("7.2", false, ps.needsSaving());
 			ps.setValue("any", "x");
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -699,7 +679,7 @@ public class PreferencesTest extends RuntimeTest {
 		}
 
 		// setDefault, getT, getDefaultT do not dirty
-		ps = new Preferences();
+		ps = new PreferenceForwarder(getUniqueString());
 		assertEquals("8.0", false, ps.needsSaving());
 		ps.setDefault("b1", true);
 		ps.getBoolean("b1");
@@ -722,7 +702,7 @@ public class PreferencesTest extends RuntimeTest {
 		assertEquals("8.1", false, ps.needsSaving());
 
 		try {
-			ps = new Preferences();
+			ps = new PreferenceForwarder(getUniqueString());
 			assertEquals("9.1", false, ps.needsSaving());
 			ps.setValue("b1", true);
 			assertEquals("9.2", true, ps.needsSaving());

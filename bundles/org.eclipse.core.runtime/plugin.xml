@@ -26,20 +26,11 @@
    <extension-point id="adapters" name="%adaptersName" schema="schema/adapters.exsd"/>
 	<extension-point name="preferences" id="preferences"/>
 
-	<extension id="user-preferences" point="org.eclipse.core.runtime.preferences" name="user-preferences">
-		<preferences scope="user" class="org.eclipse.core.runtime.preferences.UserScope"/>
-	</extension>
-
-	<extension id="configuration-preferences" point="org.eclipse.core.runtime.preferences" name="configuration-preferences">
-		<preferences scope="configuration" class="org.eclipse.core.runtime.preferences.ConfigurationScope"/>
-	</extension>
-
-	<extension id="instance-preferences" point="org.eclipse.core.runtime.preferences" name="instance-preferences">
-		<preferences scope="instance" class="org.eclipse.core.runtime.preferences.InstanceScope"/>
-	</extension>
-
-	<extension id="default-preferences" point="org.eclipse.core.runtime.preferences" name="default-preferences">
-		<preferences scope="default" class="org.eclipse.core.runtime.preferences.DefaultScope"/>
+	<extension id="platform-preferences" point="org.eclipse.core.runtime.preferences" name="platform-preferences">
+		<preferences scope="user" class="org.eclipse.core.internal.preferences.UserPreferences"/>
+		<preferences scope="configuration" class="org.eclipse.core.internal.preferences.ConfigurationPreferences"/>
+		<preferences scope="instance" class="org.eclipse.core.internal.preferences.InstancePreferences"/>
+		<preferences scope="default" class="org.eclipse.core.internal.preferences.EclipsePreferences"/>
 	</extension>
 
 </plugin>

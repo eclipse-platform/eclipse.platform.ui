@@ -15,9 +15,11 @@ import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.*;
+import org.eclipse.core.internal.preferences.PreferencesService;
 import org.eclipse.core.internal.runtime.FindSupport;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.jobs.IJobManager;
+import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.service.resolver.PlatformAdmin;
 import org.osgi.framework.Bundle;
@@ -840,6 +842,10 @@ public final class Platform {
 		return InternalPlatform.getDefault().getBundleGroupProviders();
 	}
 
+	public static IPreferencesService getPreferencesService() {
+		return InternalPlatform.getDefault().getPreferencesService();
+	}
+	
 	/**
 	 * Returns the product which was selected when running this Eclipse instance
 	 * or null if none

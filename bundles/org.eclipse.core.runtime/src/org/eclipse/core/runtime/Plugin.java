@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,8 +15,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.*;
+import org.eclipse.core.internal.preferences.PreferenceForwarder;
 import org.eclipse.core.internal.runtime.*;
+import org.eclipse.core.runtime.preferences.IPreferencesService;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.osgi.framework.*;
+import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * The abstract superclass of all plug-in runtime class
@@ -153,6 +157,15 @@ import org.osgi.framework.*;
  * </p>
  */
 public abstract class Plugin implements BundleActivator {
+
+	/**
+	 * String constant used for the default scope name for legacy 
+	 * Eclipse plug-in preferences. 
+	 * 
+	 * @since 3.0
+	 */
+	public static final String PLUGIN_PREFERENCE_SCOPE = InstanceScope.SCOPE;
+
 	/**
 	 * The bundle associated this plug-in
 	 * @since 3.0
@@ -407,7 +420,10 @@ public abstract class Plugin implements BundleActivator {
 		}
 		// lazily create preference store
 		// important: set preferences instance field to prevent re-entry
-		preferences = new Preferences();
+		if (InternalPlatform.USE_PREFERENCE_NODES)
+			preferences = new PreferenceForwarder(getDescriptor().getUniqueIdentifier());
+		else
+			preferences = new Preferences();
 		// load settings into preference store 
 		loadPluginPreferences();
 
@@ -432,6 +448,10 @@ public abstract class Plugin implements BundleActivator {
 	 * @since 2.0
 	 */
 	private void loadPluginPreferences() {
+		// if we have new node prefs do nothing, the prefs will be initialized lazily on a per-node basis
+		if (preferences instanceof PreferenceForwarder)
+			return;
+
 		// the preferences file is located in the plug-in's state area at a well-known name
 		// don't need to create the directory if there are no preferences to load
 		File prefFile = InternalPlatform.getDefault().getMetaArea().getPreferenceLocation(bundle, false).toFile();
@@ -501,6 +521,16 @@ public abstract class Plugin implements BundleActivator {
 			// nothing to save
 			return;
 		}
+		if (preferences instanceof PreferenceForwarder) {
+			try {
+				((PreferenceForwarder) preferences).flush();
+			} catch (BackingStoreException e) {
+				String message = "Exception flushing preferences to file-system: " + e.getMessage();
+				IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, message, e);
+				InternalPlatform.getDefault().log(status);
+			}
+			return;
+		}
 
 		// preferences need to be saved
 		// the preferences file is located in the plug-in's state area
@@ -546,6 +576,7 @@ public abstract class Plugin implements BundleActivator {
 			}
 		}
 	}
+
 	/**
 	 * Initializes the default preferences settings for this plug-in.
 	 * <p>

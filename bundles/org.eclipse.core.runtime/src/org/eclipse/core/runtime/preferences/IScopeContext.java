@@ -15,9 +15,9 @@ import org.osgi.service.prefs.Preferences;
 
 /**
  * Clients implement this interface to provide context to a 
- * particular scope. Implementors of this interface are passed to 
- * the <code>IPreferencesService</code> for use in preference 
- * searching.
+ * particular scope. Instances of implementions of this interface are 
+ * passed to the <code>IPreferencesService</code> for use in 
+ * preference searching.
  * 
  * @see IPreferencesService
  * @since 3.0
@@ -25,7 +25,8 @@ import org.osgi.service.prefs.Preferences;
 public interface IScopeContext {
 	
 	/**
-	 * Return the name of the scope that this context is associated with.
+	 * Return the name of the scope that this context is associated with. 
+	 * Must not be <code>null</code>.
 	 * 
 	 * @return the name of the scope
 	 */
@@ -34,10 +35,18 @@ public interface IScopeContext {
 	/**
 	 * Return the preferences node that contains the preferences for the
 	 * given qualifier or <code>null</code> if the node cannot be determined.
+	 * The given qualifier may be <code>null</code>.
 	 * <p>
 	 * An example of a qualifier in Eclipse 2.1 would be the plug-in identifier that 
 	 * the preference is associated with (e.g. the "org.eclipse.core.resources" 
 	 * plug-in defines the "description.autobuild" preference).
+	 * </p>
+	 * <p>
+	 * This method can be used to determine the appropriate preferences node
+	 * to aid in setting key/value pairs. For instance: 
+	 * <code>new InstanceScope().getNode("org.eclipse.core.resources");</code>
+	 * returns the preference node in the instance scope where the preferences
+	 * for "org.eclipse.core.resources" are stored.
 	 * </p>
 	 * @param qualifier a qualifier for the preference name
 	 * @return the node containing the plug-in preferences or <code>null</code>

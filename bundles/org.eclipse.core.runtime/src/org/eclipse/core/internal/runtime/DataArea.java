@@ -82,14 +82,21 @@ public class DataArea {
 	 */
 	public IPath getStateLocation(Bundle bundle) throws IllegalStateException {
 		assertLocationInitialized();
-		return getMetadataLocation().append(F_PLUGIN_DATA).append(bundle.getSymbolicName());
+		return getStateLocation(bundle.getSymbolicName());
+	}
+	public IPath getStateLocation(String bundleName) throws IllegalStateException {
+		assertLocationInitialized();
+		return getMetadataLocation().append(F_PLUGIN_DATA).append(bundleName);
 	}
 	/**
 	 * Returns the read/write location of the file for storing plugin preferences.
 	 */
 	public IPath getPreferenceLocation(Bundle bundle, boolean create) throws IllegalStateException {
 		assertLocationInitialized();
-		IPath result = getStateLocation(bundle);
+		return getPreferenceLocation(bundle.getSymbolicName(), create);
+	}
+	public IPath getPreferenceLocation(String bundleName, boolean create) throws IllegalStateException {
+		IPath result = getStateLocation(bundleName);
 		if (create)
 			result.toFile().mkdirs();
 		return result.append(PREFERENCES_FILE_NAME);

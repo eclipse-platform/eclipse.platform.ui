@@ -27,30 +27,6 @@ import org.osgi.service.prefs.Preferences;
 public interface IPreferencesService {
 
 	/**
-	 * String constant (value of <code>"instance"</code>) used for the 
-	 * scope name for the instance preference scope.
-	 */
-	public static final String SCOPE_INSTANCE = "instance"; //$NON-NLS-1$
-
-	/**
-	 * String constant (value of <code>"configuration"</code>) used for the 
-	 * scope name for the configuration preference scope.
-	 */
-	public static final String SCOPE_CONFIGURATION = "configuration"; //$NON-NLS-1$
-
-	/**
-	 * String constant (value of <code>"user"</code>) used for the 
-	 * scope name for the user preference scope.
-	 */
-	public static final String SCOPE_USER = "user"; //$NON-NLS-1$
-
-	/**
-	 * String constant (value of <code>"default"</code>) used for the 
-	 * scope name for the default preference scope.
-	 */
-	public static final String SCOPE_DEFAULT = "default"; //$NON-NLS-1$
-
-	/**
 	 * Lookup the given key in the specified preference nodes in the given order.
 	 * Return the set value from the first node the key is found in. If the key is not
 	 * defined in any of the given nodes, then return the specified default value.

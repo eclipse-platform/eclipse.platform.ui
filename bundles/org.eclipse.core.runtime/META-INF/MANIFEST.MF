@@ -4,9 +4,12 @@ Bundle-SymbolicName: org.eclipse.core.runtime
 Bundle-Vendor: %providerName
 Bundle-ClassPath: runtime.jar
 Bundle-Activator: org.eclipse.core.internal.runtime.PlatformActivator
+Export-Package:
+ org.eclipse.core.runtime.preferences
 Provide-Package: 
  org.eclipse.core.internal.registry,
  org.eclipse.core.internal.runtime,
+ org.eclipse.core.internal.preferences,
  org.eclipse.core.internal.boot,
  org.eclipse.core.runtime.preferences,
  org.eclipse.core.internal.jobs,
