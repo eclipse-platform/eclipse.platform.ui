@@ -1320,8 +1320,13 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChanged
 	 * Adjust all histories, removing deleted launches.
 	 */
 	protected void removeDeletedHistories() {
-		removeDeletedHistories(fDebugHistory);
-		removeDeletedHistories(fRunHistory);
+		Runnable r = new Runnable() {
+			public void run() {
+				removeDeletedHistories(fDebugHistory);
+				removeDeletedHistories(fRunHistory);
+			}
+		};
+		getDisplay().asyncExec(r);
 	}	
 	
 	/**
