@@ -9,6 +9,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.CompareEditorInput;
+import org.eclipse.compare.structuremergeviewer.DiffContainer;
 import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.compare.structuremergeviewer.ICompareInputChangeListener;
@@ -253,18 +254,24 @@ public abstract class SyncCompareInput extends CompareEditorInput {
 	}
 	
 	void makeParents(IDiffElement element) {
-		ITeamNode node = (ITeamNode)element;
+		IDiffElement node = element;
 	
-		IResource resource = node.getResource().getParent();
-		while (resource.getType() != IResource.ROOT) {
-			UnchangedTeamContainer container = new UnchangedTeamContainer(this, null, resource);	
-			if (diffRoot.findChild(container.getName()) == null) {
-				container.add(node);
+		IResource resource = ((ITeamNode)element).getResource().getParent();
+		boolean found = false;
+		while (resource.getType() != IResource.ROOT && !found) {
+			DiffContainer container = (DiffContainer)diffRoot.findChild(resource.getName());
+			if (container == null) {
+				container = new UnchangedTeamContainer(this, null, resource);
+			} else {
+				found = true;
 			}
+			container.add(node);
 			node = container;
 			resource = resource.getParent();
 		}
-		diffRoot.add(node);
+		if (!found) {
+			diffRoot.add(node);
+		}
 	}
 	
 	/**
