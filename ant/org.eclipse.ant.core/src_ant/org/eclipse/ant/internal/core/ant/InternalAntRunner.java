@@ -94,7 +94,7 @@ public class InternalAntRunner {
 	 */
 	private String antVersionNumber= null;
 
-	/** Our current message output status. Follows Project.MSG_XXX */
+	/** Current message output status. Follows Project.MSG_XXX */
 	private int messageOutputLevel = Project.MSG_INFO;
 
 	/** Indicates whether output to the log is to be unadorned. */
