@@ -42,6 +42,9 @@ public class DuplicateConflictsDialog extends MessageDialog {
 		public IdEntry(IFeature feature, IConfiguredSite csite) {
 			this.feature = feature;
 			this.csite = csite;
+			if (csite == null) {
+				System.out.println("csite null");
+			}
 		}
 		public boolean isInstallCandidate() {
 			return csite != null;
@@ -191,6 +194,15 @@ public class DuplicateConflictsDialog extends MessageDialog {
 		return computeConflicts(featureTable);
 	}
 
+	static ArrayList computeDuplicateConflicts(
+		MultiTargetPage.JobTargetSite[] jobSites,
+		IInstallConfiguration config) {
+		Hashtable featureTable = new Hashtable();
+		computePresentState(featureTable, config);
+		computeNewFeatures(jobSites, config, featureTable);
+		return computeConflicts(featureTable);
+	}
+
 	private static ArrayList computeConflicts(Hashtable featureTable) {
 		ArrayList result = null;
 		for (Enumeration enum = featureTable.elements();
@@ -246,6 +258,22 @@ public class DuplicateConflictsDialog extends MessageDialog {
 			PendingChange job = jobs[i];
 			IConfiguredSite targetSite =
 				TargetPage.getDefaultTargetSite(config, job);
+			IFeature newFeature = job.getFeature();
+			try {
+				computeNewFeature(newFeature, targetSite, featureTable, null);
+			} catch (CoreException e) {
+			}
+		}
+	}
+
+	private static void computeNewFeatures(
+		MultiTargetPage.JobTargetSite[] jobSites,
+		IInstallConfiguration config,
+		Hashtable featureTable) {
+		for (int i = 0; i < jobSites.length; i++) {
+			MultiTargetPage.JobTargetSite jobSite = jobSites[i];
+			PendingChange job = jobSite.job;
+			IConfiguredSite targetSite = jobSite.targetSite;
 			IFeature newFeature = job.getFeature();
 			try {
 				computeNewFeature(newFeature, targetSite, featureTable, null);

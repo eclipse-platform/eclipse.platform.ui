@@ -124,6 +124,7 @@ public class DetailsForm extends PropertyWebForm {
 	private Label descriptionText;
 	private URL infoLinkURL;
 	private SelectableFormLabel infoLinkLabel;
+	private SelectableFormLabel itemsLink;
 	private InfoLink licenseLink;
 	private InfoLink copyrightLink;
 	private ReflowGroup supportedPlatformsGroup;
@@ -439,7 +440,7 @@ public class DetailsForm extends PropertyWebForm {
 			}
 		});
 		addButton.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
-		SelectableFormLabel itemsLink =
+		itemsLink =
 			factory.createSelectableLabel(batch, "Selected Updates");
 		factory.turnIntoHyperlink(itemsLink, new HyperlinkAdapter() {
 			public void linkActivated(Control link) {
@@ -605,6 +606,7 @@ public class DetailsForm extends PropertyWebForm {
 			model.findRelatedPendingChange(currentFeature);
 		doButton.setVisible(getDoButtonVisibility(false, relatedJob));
 		addButton.setVisible(getDoButtonVisibility(true, relatedJob));
+		itemsLink.setVisible(addButton.isVisible());
 		if (addButton.isVisible()) {
 			if (relatedJob != null) {
 				IFeature relatedFeature = relatedJob.getFeature();

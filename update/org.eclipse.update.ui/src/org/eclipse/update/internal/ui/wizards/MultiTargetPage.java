@@ -608,6 +608,16 @@ public class MultiTargetPage extends BannerPage implements IDynamicPage {
 		}
 		return null;
 	}
+	
+	public JobTargetSite [] getTargetSites() {
+		JobTargetSite [] sites = new JobTargetSite[jobs.length];
+		for (int i=0; i<jobs.length; i++) {
+			PendingChange job = jobs[i];
+			JobTargetSite jobSite = (JobTargetSite)targetSites.get(job);
+			sites[i] = jobSite;
+		}
+		return sites;
+	}
 
 	public IConfiguredSite getTargetSite(PendingChange job) {
 		JobTargetSite jobSite = (JobTargetSite)targetSites.get(job);

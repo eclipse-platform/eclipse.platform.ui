@@ -59,16 +59,18 @@ public class MultiInstallWizard extends Wizard {
 		final PendingChange[] selectedJobs = reviewPage.getSelectedJobs();
 		installCount = 0;
 
-		// Check for duplication conflicts
-		ArrayList conflicts =
-			DuplicateConflictsDialog.computeDuplicateConflicts(
-				selectedJobs,
-				config);
-		if (conflicts != null) {
-			DuplicateConflictsDialog dialog =
-				new DuplicateConflictsDialog(getShell(), conflicts);
-			if (dialog.open() != 0)
-				return false;
+		if (targetPage != null) {
+			// Check for duplication conflicts
+			ArrayList conflicts =
+				DuplicateConflictsDialog.computeDuplicateConflicts(
+					targetPage.getTargetSites(),
+					config);
+			if (conflicts != null) {
+				DuplicateConflictsDialog dialog =
+					new DuplicateConflictsDialog(getShell(), conflicts);
+				if (dialog.open() != 0)
+					return false;
+			}
 		}
 
 		// ok to continue		
@@ -348,7 +350,8 @@ public class MultiInstallWizard extends Wizard {
 			return;
 		}
 		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
-		model.addPendingChange(job);
+		job.markProcessed();
+		model.fireObjectChanged(job, null);
 	}
 
 	static void ensureUnique(
