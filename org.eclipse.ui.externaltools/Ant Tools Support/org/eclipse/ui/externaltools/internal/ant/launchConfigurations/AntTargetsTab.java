@@ -25,6 +25,7 @@ import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -52,7 +53,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	
 	private TargetInfo fDefaultTarget = null;
 	private TargetInfo[] fAllTargets= null;
-	private List fOrderdTargets = null;
+	private List fOrderedTargets = null;
 	
 	private String fLocation= null;
 	
@@ -119,13 +120,13 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	}
 	
 	private void handleOrderPressed() {
-		TargetOrderDialog dialog = new TargetOrderDialog(getShell(), fOrderdTargets.toArray());
+		TargetOrderDialog dialog = new TargetOrderDialog(getShell(), fOrderedTargets.toArray());
 		int ok = dialog.open();
 		if (ok == Dialog.OK) {
-			fOrderdTargets.clear();
+			fOrderedTargets.clear();
 			Object[] targets = dialog.getTargets();
 			for (int i = 0; i < targets.length; i++) {
-				fOrderdTargets.add(targets[i]);
+				fOrderedTargets.add(targets[i]);
 				updateSelectionCount();
 				updateLaunchConfigurationDialog();
 			}
@@ -158,6 +159,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		column2.setText(AntLaunchConfigurationMessages.getString("AntTargetsTab.Description_6")); //$NON-NLS-1$
 		
 		fTableViewer = new CheckboxTableViewer(table);
+		fTableViewer.setSorter(new ViewerSorter() {});
 		fTableViewer.setLabelProvider(new TargetTableLabelProvider());
 		fTableViewer.setContentProvider(new AntTargetContentProvider());
 		
@@ -167,11 +169,11 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 				int index = fTableViewer.getTable().indexOf(item);
 				Object element = fAllTargets[index];
 				if (fTableViewer.getChecked(element)) {
-					if (!fOrderdTargets.contains(element)) {
-						fOrderdTargets.add(element);
+					if (!fOrderedTargets.contains(element)) {
+						fOrderedTargets.add(element);
 					}
 				} else {
-					fOrderdTargets.remove(element);
+					fOrderedTargets.remove(element);
 				}
 				updateSelectionCount();
 				updateLaunchConfigurationDialog();
@@ -192,7 +194,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		fOrderButton.setEnabled(checked.length > 1);
 		
 		StringBuffer buffer = new StringBuffer();
-		Iterator iter = fOrderdTargets.iterator();
+		Iterator iter = fOrderedTargets.iterator();
 		while (iter.hasNext()) {
 			buffer.append(((TargetInfo)iter.next()).getName());
 			buffer.append(", "); //$NON-NLS-1$
@@ -255,7 +257,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		setMessage(null);
 		String configTargets= null;
 		String newLocation= null;
-		fOrderdTargets = new ArrayList();
+		fOrderedTargets = new ArrayList();
 		try {
 			configTargets= configuration.getAttribute(IExternalToolConstants.ATTR_ANT_TARGETS, (String)null);
 			newLocation= configuration.getAttribute(IExternalToolConstants.ATTR_LOCATION, (String)null);
@@ -285,7 +287,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		
 		String[] targetNames= AntUtil.parseRunTargets(configTargets);
 		if (targetNames.length == 0) {
-			fOrderdTargets.add(fDefaultTarget);
+			fOrderedTargets.add(fDefaultTarget);
 			fTableViewer.setAllChecked(false);
 			setExecuteInput(allInfos);
 			if (fDefaultTarget != null) {
@@ -300,7 +302,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		for (int i = 0; i < targetNames.length; i++) {
 			for (int j = 0; j < fAllTargets.length; j++) {
 				if (targetNames[i].equals(fAllTargets[j].getName())) {
-					fOrderdTargets.add(fAllTargets[j]);
+					fOrderedTargets.add(fAllTargets[j]);
 					fTableViewer.setChecked(fAllTargets[j], true);
 				}
 			}
@@ -321,18 +323,18 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {		
-		if (fOrderdTargets.size() == 1) {
-			TargetInfo item = (TargetInfo)fOrderdTargets.get(0);
+		if (fOrderedTargets.size() == 1) {
+			TargetInfo item = (TargetInfo)fOrderedTargets.get(0);
 			if (item.isDefault()) {
 				configuration.setAttribute(IExternalToolConstants.ATTR_ANT_TARGETS, (String)null);
 				return;
 			}
-		} else if (fOrderdTargets.size() == 0) {
+		} else if (fOrderedTargets.size() == 0) {
 			return;
 		}
 		
 		StringBuffer buff= new StringBuffer();
-		Iterator iter = fOrderdTargets.iterator();
+		Iterator iter = fOrderedTargets.iterator();
 		String targets = null;
 		while (iter.hasNext()) {
 			TargetInfo item = (TargetInfo)iter.next();
