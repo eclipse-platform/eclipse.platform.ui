@@ -358,7 +358,7 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 				}
 			}
 		} else {// user input.
-			int amountDeleted = event.getLength() ;//- event.getText().length();
+			int amountDeleted = event.getLength() ;
 			
 			if (amountDeleted > 0) {
 				int offset = event.fOffset;    
@@ -378,20 +378,51 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 					lastPartition.append(event.fText);
 				}
 				
+				int lastLineDelimiter = -1;
+				String partitionText = lastPartition.getString();
 				for (int i = 0; i < lld.length; i++) {
 					String ld = lld[i];
-					if (event.fText.endsWith(ld)) {
-						StringBuffer input = new StringBuffer();
-						for (Iterator it = inputPartitions.iterator(); it.hasNext(); ) {
-							IOConsolePartition partition = (IOConsolePartition) it.next();
-							input.append(partition.getString());
+					int index = partitionText.lastIndexOf(ld);
+					if (index != -1) {
+					    index += ld.length();
+					}
+					if (index > lastLineDelimiter) {
+					    lastLineDelimiter = index;
+					}
+				}
+				if (lastLineDelimiter != -1) {
+					StringBuffer input = new StringBuffer();
+					Iterator it = inputPartitions.iterator();
+					while (lastLineDelimiter > 0 && it.hasNext()) {
+					    IOConsolePartition partition = (IOConsolePartition) it.next();
+					    if (partition.getLength() <= lastLineDelimiter) {
+					        lastLineDelimiter -= partition.getLength();
+					        input.append(partitionText);
 							partition.clearBuffer();
 							partition.setReadOnly();
-						}
-						inputStream.appendData(input.toString());
-						inputPartitions.clear();
-						break;
+							inputPartitions.remove(partition);
+							lastPartition = null;
+					    } else {
+					        //create a new partition containing everything up to the line delimiter
+					        //and append that to the string buffer.
+					        String contentBefore = partitionText.substring(0, lastLineDelimiter);
+					        IOConsolePartition newPartition = new IOConsolePartition(inputStream, contentBefore);
+					        newPartition.setOffset(partition.getOffset());
+					        newPartition.setReadOnly();
+					        newPartition.clearBuffer();
+					        int index = partitions.indexOf(partition);
+						    partitions.add(index, newPartition);
+					        input.append(contentBefore);
+					        //delete everything that has been appended to the buffer.
+					        partition.delete(0, lastLineDelimiter);
+					        partition.setOffset(lastLineDelimiter + partition.getOffset());
+					        lastLineDelimiter = 0;
+					    }
 					}
+					if (input.length() > 0) {
+					    inputStream.appendData(input.toString());
+					}
+
 				}
 			}
 		}   
