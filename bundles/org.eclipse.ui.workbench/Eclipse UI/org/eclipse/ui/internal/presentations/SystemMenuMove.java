@@ -10,64 +10,40 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.presentations;
 
-import org.eclipse.jface.action.ContributionItem;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.presentations.IStackPresentationSite;
 
-public class SystemMenuMove extends ContributionItem {
-
-    private IPresentablePart presentablePart;
+public class SystemMenuMove extends MenuManager {
 
     private IStackPresentationSite stackPresentationSite;
-
-    public SystemMenuMove(IPresentablePart presentablePart,
-            IStackPresentationSite stackPresentationSite) {
-        this.presentablePart = presentablePart;
+    private String movePart;
+    
+    private SystemMenuMovePane movePaneAction;
+    private SystemMenuMoveFolder moveFolderAction;
+        
+    public SystemMenuMove(IStackPresentationSite stackPresentationSite, String partName) {
+    	super(WorkbenchMessages.getString("PartPane.move")); //$NON-NLS-1$
         this.stackPresentationSite = stackPresentationSite;
+        this.movePart = partName;
+        
+        movePaneAction = new SystemMenuMovePane(stackPresentationSite);
+        movePaneAction.setText(partName);
+        moveFolderAction = new SystemMenuMoveFolder(stackPresentationSite);
+        
+        
+        add(movePaneAction);
+        add(moveFolderAction);
     }
+   
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.MenuManager#update(boolean, boolean)
+	 */
+	protected void update(boolean force, boolean recursive) {
+    	movePaneAction.update();
+    	moveFolderAction.update();
 
-    public void dispose() {
-        presentablePart = null;
-        stackPresentationSite = null;
-    }
-
-    protected void fill(Menu menu, int index, String movePart) {
-        MenuItem menuItem = new MenuItem(menu, SWT.CASCADE);
-        menuItem.setText(WorkbenchMessages.getString("PartPane.move")); //$NON-NLS-1$
-        Menu moveMenu = new Menu(menu);
-        menuItem.setMenu(moveMenu);
-        final Display display = moveMenu.getDisplay();
-        MenuItem menuItem2 = new MenuItem(moveMenu, SWT.NONE);
-        menuItem2.setText(WorkbenchMessages.getString(movePart)); //$NON-NLS-1$
-        menuItem2.addSelectionListener(new SelectionAdapter() {
-
-            public void widgetSelected(SelectionEvent e) {
-                stackPresentationSite.dragStart(presentablePart, display
-                        .getCursorLocation(), true);
-            }
-        });
-        menuItem2.setEnabled(presentablePart != null
-                && stackPresentationSite.isMoveable(presentablePart));
-        MenuItem menuItem3 = new MenuItem(moveMenu, SWT.NONE);
-        menuItem3.setText(WorkbenchMessages.getString("ViewPane.moveFolder")); //$NON-NLS-1$
-        menuItem3.addSelectionListener(new SelectionAdapter() {
-
-            public void widgetSelected(SelectionEvent e) {
-                stackPresentationSite.dragStart(display.getCursorLocation(),
-                        true);
-            }
-        });
-        menuItem3.setEnabled(stackPresentationSite.isMoveable(null));
-    }
-
-    public boolean isDynamic() {
-        return true;
-    }
+		super.update(force, recursive);
+	}
+	
 }
