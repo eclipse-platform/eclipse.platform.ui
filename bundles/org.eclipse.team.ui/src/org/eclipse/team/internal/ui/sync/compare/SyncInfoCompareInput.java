@@ -95,7 +95,7 @@ public class SyncInfoCompareInput extends CompareEditorInput {
 	protected void updateLabels() {
 		CompareConfiguration config = getCompareConfiguration();
 		IRemoteResource remote = sync.getRemote();
-		IRemoteResource base = sync.getRemote();
+		IRemoteResource base = sync.getBase();
 		
 		config.setLeftLabel(Policy.bind("SyncInfoCompareInput.localLabel")); //$NON-NLS-1$
 		
