@@ -27,6 +27,7 @@ public class SiteManager {
 	private static String os;
 	private static String ws;
 	private static String arch;
+	private static String nl;	
 	
 	private SiteManager() {
 	}
@@ -163,6 +164,13 @@ public class SiteManager {
 	}
 	
 	/**
+	 * Sets the nl.
+	 * @param nl The nl to set
+	 */
+	public static void setNL(String nl) {
+		SiteManager.nl = nl;
+	}	
+	/**
 	 * Returns an estimate of bytes per milliseconds transfer rate for this URL
 	 * @param URL the URL of the site
 	 * @return long a bytes per millisecond estimate rate
@@ -172,6 +180,17 @@ public class SiteManager {
 		if (site==null) return 0;
 		return InternalSiteManager.estimate(site.getHost());
 	}
-
-
+	
+	/**
+	 * Returns current locale
+	 * 
+	 * @see BootLoader#getNL()
+	 * @return the string name of the current locale or <code>null</code>
+	 * @since 2.1
+	 */
+	public static String getNL() {
+		if (nl==null)
+			nl = BootLoader.getNL();
+		return nl;		
+	}
 }

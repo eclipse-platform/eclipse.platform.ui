@@ -8,8 +8,11 @@ import java.lang.reflect.Array;
 import java.net.*;
 import java.util.*;
 
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.update.core.Feature;
+import org.eclipse.update.core.SiteManager;
 import org.eclipse.update.internal.core.*;
 
 /**
@@ -136,7 +139,7 @@ public abstract class ModelObject extends PlatformObject {
 	 * @exception MalformedURLException
 	 * @since 2.0
 	 */
-	protected void resolveListReference(ModelObject[] o, URL url,URL bundleURL) throws MalformedURLException {
+	protected void resolveListReference(ModelObject[] o, URL url, URL bundleURL) throws MalformedURLException {
 		if (o == null)
 			return;
 		for (int i = 0; i < o.length; i++) {
@@ -163,12 +166,68 @@ public abstract class ModelObject extends PlatformObject {
 		// check to see if we have NL-sensitive URL
 		String resolvedUrlString = resolveNLString(bundleURL, urlString);
 
+		resolvedUrlString = resolvePlatfromConfiguration(resolvedUrlString);
+
 		// if we don't have a base url, use only the supplied string
 		if (context == null)
 			return new URL(resolvedUrlString);
 
 		// otherwise return new URL in context of base URL
 		return new URL(context, resolvedUrlString);
+	}
+	/**
+	 * Resolves the URL based on platfrom Configuration
+	 * $os$\$ws$\license.txt will become
+	 * win32\win32\license.txt on a system where os=win32 and ws=win32
+	 * 
+	 * @param resolvedUrlString
+	 * @return String
+	 */
+	private String resolvePlatfromConfiguration(String resolvedUrlString) {
+		int osIndex = resolvedUrlString.indexOf("$os$");
+		if (osIndex != -1)
+			return getExtendedString(resolvedUrlString);
+
+		int wsIndex = resolvedUrlString.indexOf("$ws$");
+		if (wsIndex != -1)
+			return getExtendedString(resolvedUrlString);
+
+		int nlIndex = resolvedUrlString.indexOf("$nl$");
+		if (nlIndex != -1)
+			return getExtendedString(resolvedUrlString);
+
+		int archIndex = resolvedUrlString.indexOf("$arch$");
+		if (archIndex != -1)
+			return getExtendedString(resolvedUrlString);
+
+		return resolvedUrlString;
+	}
+
+	private String getExtendedString(String resolvedUrlString) {
+		IPath path = new Path(resolvedUrlString);
+		path = getExpandedPath(path);
+		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
+			UpdateManagerPlugin.warn("Resolved :" + resolvedUrlString + " as:" + path.toOSString());
+		}
+
+		return path.toOSString();
+	}
+
+	private IPath getExpandedPath(IPath path) {
+		String first = path.segment(0);
+		if (first != null) {
+			IPath rest = getExpandedPath(path.removeFirstSegments(1));
+			if (first.equals("$ws$")) {
+				path = new Path(SiteManager.getWS()).append(rest);
+			} else if (first.equals("$os$")) {
+				path = new Path(SiteManager.getOS()).append(rest);
+			} else if (first.equals("$nl$")) {
+				path = new Path(SiteManager.getNL()).append(rest);
+			} else if (first.equals("$arch$")) {
+				path = new Path(SiteManager.getOSArch()).append(rest);
+			}
+		}
+		return path;
 	}
 
 	/**
@@ -268,7 +327,7 @@ public abstract class ModelObject extends PlatformObject {
 		return (Object[]) Array.newInstance(i.next().getClass(), 0);
 	}
 
-	   /**
+	/**
 		* Helper method to access resouce bundle for feature. The default 
 		* implementation attempts to load the appropriately localized 
 		* feature.properties file.
@@ -277,32 +336,33 @@ public abstract class ModelObject extends PlatformObject {
 		* @return resource bundle, or <code>null</code>.
 		* @since 2.0
 		*/
-		protected ResourceBundle getResourceBundle(URL url)  {
-	
-			if (url == null)
-				return null;
-	
-			if (bundles==null){
-				bundles = new HashMap();
-			} else {
-				ResourceBundle bundle = (ResourceBundle)bundles.get(url.toExternalForm());
-				if (bundle!=null) return bundle;
-			}
-	
-			ResourceBundle bundle = null;
-			try {
-				url = UpdateManagerUtils.asDirectoryURL(url);
-				ClassLoader l = new URLClassLoader(new URL[] { url }, null);
-				bundle = ResourceBundle.getBundle(getPropertyName(), Locale.getDefault(), l);
-				bundles.put(url.toExternalForm(),bundle);
-			} catch (MissingResourceException e) {
-				UpdateManagerPlugin.warn(e.getLocalizedMessage() + ":" + url.toExternalForm()); //$NON-NLS-1$
-			} catch (MalformedURLException e) {
-				UpdateManagerPlugin.warn(e.getLocalizedMessage()); //$NON-NLS-1$
-			}
-			return bundle;
+	protected ResourceBundle getResourceBundle(URL url) {
+
+		if (url == null)
+			return null;
+
+		if (bundles == null) {
+			bundles = new HashMap();
+		} else {
+			ResourceBundle bundle = (ResourceBundle) bundles.get(url.toExternalForm());
+			if (bundle != null)
+				return bundle;
 		}
-		
+
+		ResourceBundle bundle = null;
+		try {
+			url = UpdateManagerUtils.asDirectoryURL(url);
+			ClassLoader l = new URLClassLoader(new URL[] { url }, null);
+			bundle = ResourceBundle.getBundle(getPropertyName(), Locale.getDefault(), l);
+			bundles.put(url.toExternalForm(), bundle);
+		} catch (MissingResourceException e) {
+			UpdateManagerPlugin.warn(e.getLocalizedMessage() + ":" + url.toExternalForm()); //$NON-NLS-1$
+		} catch (MalformedURLException e) {
+			UpdateManagerPlugin.warn(e.getLocalizedMessage()); //$NON-NLS-1$
+		}
+		return bundle;
+	}
+
 	/**
 	 * Method getPropertyName.
 	 * @return String
