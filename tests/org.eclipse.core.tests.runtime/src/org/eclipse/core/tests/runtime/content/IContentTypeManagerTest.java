@@ -21,11 +21,11 @@ import org.eclipse.core.tests.runtime.RuntimeTest;
 import org.osgi.framework.Bundle;
 
 public class IContentTypeManagerTest extends DynamicPluginTest {
-	private final static String MINIMAL_XML = "<?xml version=\"1.0\"?><root/>";
-	private final static String XML_UTF_8 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><some-element/>";
-	private final static String XML_ISO_8859_1 = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><some-element/>";
-	private final static String XML_ROOT_ELEMENT_ISO_8859_1 = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><root-element/>";
-	private final static String XML_DTD_US_ASCII = "<?xml version=\"1.0\" encoding=\"US-ASCII\"?><some-element/>";
+	private final static String MINIMAL_XML = "<?xml version=\"1.0\"?><org.eclipse.core.runtime.tests.root/>";
+	private final static String XML_UTF_8 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><org.eclipse.core.runtime.tests.root/>";
+	private final static String XML_ISO_8859_1 = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><org.eclipse.core.runtime.tests.root/>";
+	private final static String XML_ROOT_ELEMENT_ISO_8859_1 = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><org.eclipse.core.runtime.tests.root-element/>";
+	private final static String XML_DTD_US_ASCII = "<?xml version=\"1.0\" encoding=\"US-ASCII\"?><org.eclipse.core.runtime.tests.root/>";
 	private final static String BOM_UTF_32_BE = "\u0000\u0000\u00FE\u00FF";
 	private final static String BOM_UTF_32_LE = "\u00FF\u00FE\u0000\u0000";
 	private final static String BOM_UTF_16_BE = "\u00FE\u00FF";
