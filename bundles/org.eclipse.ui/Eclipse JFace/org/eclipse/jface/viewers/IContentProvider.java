@@ -15,6 +15,10 @@ public interface IContentProvider {
 /**
  * Disposes of this content provider.  
  * This is called by the viewer when it is disposed.
+ * <p>
+ * The viewer should not updated during this call, as it is in the process
+ * of being disposed.
+ * </p>
  */
 public void dispose();
 /**
@@ -24,7 +28,11 @@ public void dispose();
  * A typical use for this method is registering the content provider as a listener
  * to changes on the new input (using model-specific means), and deregistering the viewer 
  * from the old input. In response to these change notifications, the content provider
- * propagates the changes to the viewer.
+ * should update the viewer (see the add, remove, update and refresh methods on the viewers).
+ * </p>
+ * <p>
+ * The viewer should not updated during this call, as it might be in the process
+ * of being disposed.
  * </p>
  *
  * @param viewer the viewer
