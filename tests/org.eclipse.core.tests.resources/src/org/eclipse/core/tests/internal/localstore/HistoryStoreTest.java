@@ -27,7 +27,7 @@ import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
  */
 
 public class HistoryStoreTest extends EclipseWorkspaceTest {
-
+	
 	class VerificationFailedException extends Exception {
 		VerificationFailedException(String message) {
 			super(message);
@@ -2026,7 +2026,7 @@ public void testBug28603() {
 	} catch (CoreException e) {
 		fail("0.0", e);
 	}
-//	System.out.println("Maximum number of file states = " + ResourcesPlugin.getWorkspace().getDescription().getMaxFileStates());
+	int maxStates = ResourcesPlugin.getWorkspace().getDescription().getMaxFileStates();
 	
 	IFileState[] states = null;
 	try {
@@ -2035,45 +2035,40 @@ public void testBug28603() {
 		fail("1.0", e);
 	}
 	assertEquals("1.1", 3, states.length);
+	int currentStates = 3;
 
-	for (int i=0; i<10; i++) {
-//		long start = System.currentTimeMillis();	
-		
+	for (int i = 0; i < maxStates + 10; i++) {	
 		try {
 			states = file1.getHistory(getMonitor());
 		} catch (CoreException e) {
 			fail("2.0", e);
 		}
-//		System.out.println("file1 states: " + states.length);
+		assertEquals("2.1 file1 states", currentStates, states.length);
 		try {
 			file1.move(file2.getFullPath(), true, true, getMonitor());
 		} catch (CoreException e) {
-			fail("2.1", e);
+			fail("2.2", e);
 		}
-//		long stop = System.currentTimeMillis();
-//		System.out.println("\nmove: " + file1.getFullPath() + " to " + file2.getFullPath() + " took: " + (stop - start) + "ms");
 		
 		try {
 			states = file2.getHistory(getMonitor());
 		} catch (CoreException e) {
-			fail("2.2", e);
+			fail("2.3", e);
 		}
-//		System.out.println("file2 states: " + states.length);
-//		start = System.currentTimeMillis();	
+		currentStates = currentStates < maxStates ? currentStates + 1 : maxStates;
+		assertEquals("2.4 file2 states", currentStates, states.length);
 		try {
 			file2.move(file1.getFullPath(), true, true, getMonitor());
 		} catch (CoreException e) {
-			fail("2.3", e);
+			fail("2.5", e);
 		}
 		try {
 			states = file1.getHistory(getMonitor());
 		} catch (CoreException e) {
-			fail("2.4", e);
+			fail("2.6", e);
 		}
-//		System.out.println("file1 states: " + states.length);
-
-//		stop = System.currentTimeMillis();
-//		System.out.println("move: " + file2.getFullPath() + " to " + file1.getFullPath() + " took: " + (stop - start) + "ms");
+		currentStates = currentStates < maxStates ? currentStates + 1 : maxStates;
+		assertEquals("2.7 file1 states", currentStates, states.length);
 	}
 }
 protected void addToHistory(String message, HistoryStore store, IPath path, InputStream input) {
