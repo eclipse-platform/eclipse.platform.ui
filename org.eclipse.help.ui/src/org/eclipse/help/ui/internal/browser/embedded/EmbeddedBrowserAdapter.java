@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.browser.embedded;
 import org.eclipse.help.browser.*;
-import org.eclipse.help.internal.base.*;
-import org.eclipse.help.ui.internal.*;
 /**
  * Web browser.
  */
@@ -74,14 +72,5 @@ public class EmbeddedBrowserAdapter implements IBrowser {
 	 */
 	public void setSize(int width, int height) {
 		getBrowser().setSize(width, height);
-	}
-	private String getWindowTitle() {
-		if ("true".equalsIgnoreCase(HelpBasePlugin.getDefault()
-				.getPluginPreferences().getString("windowTitlePrefix"))) {
-			return HelpUIResources.getString("browserTitle", BaseHelpSystem
-					.getProductName());
-		} else {
-			return BaseHelpSystem.getProductName();
-		}
 	}
 }
