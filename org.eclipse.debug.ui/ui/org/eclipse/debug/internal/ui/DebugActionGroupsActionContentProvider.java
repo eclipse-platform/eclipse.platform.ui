@@ -41,7 +41,7 @@ public class DebugActionGroupsActionContentProvider implements IStructuredConten
 				return actionContributionItems.toArray();
 			}
 		} else {
-			return new String[]{DebugUIMessages.getString("DebugActionGroupsActionContentProvider.Updated_when_Debug_perspective_activated_2")}; //$NON-NLS-1$
+			return new String[]{DebugUIMessages.getString("DebugActionGroupsActionContentProvider.Updated_when_Debug_perspective_activated_1")}; //$NON-NLS-1$
 		}
 	}
 	/**
