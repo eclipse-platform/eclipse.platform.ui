@@ -308,6 +308,9 @@ public interface IDebugUIConstants {
 	/** Run mode launch image identifier. */
 	public static final String IMG_OBJS_LAUNCH_RUN= "IMG_OBJS_LAUNCH_RUN"; //$NON-NLS-1$
 	
+	/** Terminated run mode launch image identifier. */
+	public static final String IMG_OBJS_LAUNCH_RUN_TERMINATED= "IMG_OBJS_LAUNCH_RUN_TERMINATED"; //$NON-NLS-1$
+	
 	/** Running debug target image identifier. */
 	public static final String IMG_OBJS_DEBUG_TARGET= "IMG_OBJS_DEBUG_TARGET"; //$NON-NLS-1$
 	

@@ -97,11 +97,14 @@ public class DefaultLabelProvider implements ILabelProvider {
 					return IDebugUIConstants.IMG_OBJS_OS_PROCESS;
 				}
 			} else if (element instanceof ILaunch) {
-				if (((ILaunch)element).getLaunchMode().equals(ILaunchManager.DEBUG_MODE)) {
-					return IDebugUIConstants.IMG_ACT_DEBUG;
+				ILaunch launch= (ILaunch)element;
+				if (launch.getLaunchMode().equals(ILaunchManager.DEBUG_MODE)) {
+					return IDebugUIConstants.IMG_OBJS_LAUNCH_DEBUG;
+				} else if (launch.isTerminated()) {
+					return IDebugUIConstants.IMG_OBJS_LAUNCH_RUN_TERMINATED;
 				} else {
-					return IDebugUIConstants.IMG_ACT_RUN;
-				}
+					return IDebugUIConstants.IMG_OBJS_LAUNCH_RUN;
+				}	
 			} else if (element instanceof ILaunchConfigurationType) {
 				return ((ILaunchConfigurationType)element).getIdentifier();
 			} else if (element instanceof ILaunchConfiguration) {
