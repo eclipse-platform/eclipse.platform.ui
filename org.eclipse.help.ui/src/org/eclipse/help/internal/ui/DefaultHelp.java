@@ -62,38 +62,22 @@ public class DefaultHelp implements IHelp
 			//Documentation is not installed.
 			return;
 		}
-		
 		if (!AppServer.isRunning())
 			return; // may want to display an error message
-			
-		String base = "http://"
-				+ AppServer.getHost()
-				+ ":"
-				+ AppServer.getPort();
-				
+		String base = "http://" + AppServer.getHost() + ":" + AppServer.getPort();
 		String query = "";
-		if (toc != null)
-		{
-			query="?toc="+toc;
+		if (toc != null) {
+			query = "?toc=" + toc;
 			if (topic != null)
-				query = query + "&topic="+encodeTopicParameter(topic);
-		}
-		else
-		{
+				query = query + "&topic=" + URLEncoder.encode(createTopicURL(topic));
+		} else {
 			if (topic != null)
-				query = "?topic="+encodeTopicParameter(topic);
+				query = "?topic=" + URLEncoder.encode(createTopicURL(topic));
 		}
-		
-		String url ="http://"
-				+ AppServer.getHost()
-				+ ":"
-				+ AppServer.getPort()
-				+"/help"
-				+ query;
-				  
+		String url =
+			"http://" + AppServer.getHost() + ":" + AppServer.getPort() + "/help" + query;
 		WorkbenchHelpPlugin.getDefault().getHelpBrowser().displayURL(url);
-	}
-	
+	}	
 	/**
 	 * Displays context-sensitive help for specified context
 	 * @param contextIds context identifier
@@ -138,13 +122,9 @@ public class DefaultHelp implements IHelp
 				+ ":"
 				+ AppServer.getPort()
 				+ "/help?tab=links&contextId="
-				+ contextID
-				+ "&topic=http://"
-				+ AppServer.getHost()
-				+ ":"
-				+ AppServer.getPort()
-				+ "/help/content/help:"
-				+ topic.getHref();
+				+ URLEncoder.encode(contextID)
+				+ "&topic="
+				+ URLEncoder.encode(createTopicURL(topic.getHref()));
 		WorkbenchHelpPlugin.getDefault().getHelpBrowser().displayURL(url);
 	}
 	/**
@@ -166,10 +146,9 @@ public class DefaultHelp implements IHelp
 				+ "/help?tab=search&query="
 				+ URLCoder.encode(query)
 				+ "&topic="
-				+ encodeTopicParameter(topic);
+				+ URLEncoder.encode(createTopicURL(topic));
 		WorkbenchHelpPlugin.getDefault().getHelpBrowser().displayURL(url);
-	}	
-	/**
+	}	/**
 	 * Computes context information for a given context ID.
 	 * @param contextID java.lang.String ID of the context
 	 * @return IContext
@@ -197,24 +176,16 @@ public class DefaultHelp implements IHelp
 		return id;
 	}
 	
-	private String encodeTopicParameter(String topic)
-	{
-			if (topic == null)
-				return null;
-				
-			if (topic.startsWith("http://") || topic.startsWith("file:"))
-				return topic;
-				
-			if (topic.startsWith("../"))
-				topic  = topic.substring(2);
-				
-			if (topic.startsWith("/"))
-			{
-					String base = "http://"+ AppServer.getHost()+ ":"+ AppServer.getPort();
-					base += "/help/content/help:";
-					return base + URLEncoder.encode(topic);
-			}
-			
+	private String createTopicURL(String topic) {
+		if (topic == null)
 			return null;
+		if (topic.startsWith("../"))
+			topic = topic.substring(2);
+		if (topic.startsWith("/")) {
+			String base = "http://" + AppServer.getHost() + ":" + AppServer.getPort();
+			base += "/help/content/help:";
+			topic = base + topic;
+		}
+		return topic;
 	}
 }
