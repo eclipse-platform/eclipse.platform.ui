@@ -28,7 +28,7 @@ import org.eclipse.ui.progress.UIJob;
  */
 class StatusLineProgressListener implements IJobProgressManagerListener {
 
-	List jobInfos = new ArrayList();
+	List jobInfos = Collections.synchronizedList(new ArrayList());
 
 	private class RefreshJob extends UIJob {
 
