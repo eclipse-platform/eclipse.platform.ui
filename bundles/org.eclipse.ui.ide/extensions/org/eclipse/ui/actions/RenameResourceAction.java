@@ -69,12 +69,6 @@ public class RenameResourceAction extends WorkspaceAction {
 	private static String RESOURCE_EXISTS_TITLE = IDEWorkbenchMessages.getString("RenameResourceAction.resourceExists"); //$NON-NLS-1$
 	private static String RESOURCE_EXISTS_MESSAGE = IDEWorkbenchMessages.getString("RenameResourceAction.overwriteQuestion"); //$NON-NLS-1$
 	private static String RENAMING_MESSAGE = IDEWorkbenchMessages.getString("RenameResourceAction.progressMessage"); //$NON-NLS-1$
-
-	/* On Mac the text widget already provides a border when it has focus, so there is no need to draw another one.
-	 * The value of INSET controls the inset we apply to the text field bound's in order to get space for drawing a border.
-	 * A value of 1 means a one-pixel wide border around the text field. A negative value supresses the border.
-	 */
-	private static int INSET= "carbon".equals(SWT.getPlatform()) ? -2 : 1;	//$NON-NLS-1$
 /**
  * Creates a new action. Using this constructor directly will rename using a
  * dialog rather than the inline editor of a ResourceNavigator.
@@ -157,6 +151,22 @@ Composite createParent() {
 	return result;
 }
 /**
+ * On Mac the text widget already provides a border when it has focus, so there is no need to draw another one.
+ * The value of returned by this method is usd to control the inset we apply to the text field bound's in order to get space for drawing a border.
+ * A value of 1 means a one-pixel wide border around the text field. A negative value supresses the border.
+ * However, in M9 the system property "org.eclipse.swt.internal.carbon.noFocusRing" has been introduced
+ * as a temporary workaround for bug #28842. The existence of the property turns the native focus ring off
+ * if the widget is contained in a main window (not dialog).
+ * The check for the property should be removed after a final fix for #28842 has been provided.
+ */
+private static int getCellEditorInset(Control c) {
+    if ("carbon".equals(SWT.getPlatform())) {	// special case for MacOS X //$NON-NLS-1$
+        if (System.getProperty("org.eclipse.swt.internal.carbon.noFocusRing") == null || c.getShell().getParent() != null) //$NON-NLS-1$
+            return -2;	// native border
+    }
+    return 1;	//  one pixel wide black border
+}
+/**
  * Create the text editor widget.
  * 
  * @param resource the resource to rename
@@ -165,7 +175,8 @@ private void createTextEditor(final IResource resource) {
 	// Create text editor parent.  This draws a nice bounding rect.
 	textEditorParent = createParent();
 	textEditorParent.setVisible(false);
-	if (INSET > 0)	// only register for paint events if we have a border
+	final int inset = getCellEditorInset(textEditorParent);
+	if (inset > 0)	// only register for paint events if we have a border
 		textEditorParent.addListener(SWT.Paint, new Listener() {
 			public void handleEvent (Event e) {
 				Point textSize = textEditor.getSize();
@@ -182,7 +193,7 @@ private void createTextEditor(final IResource resource) {
 			Point textSize = textEditor.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 			textSize.x += textSize.y; // Add extra space for new characters.
 			Point parentSize = textEditorParent.getSize();
-			textEditor.setBounds(2, INSET, Math.min(textSize.x, parentSize.x - 4), parentSize.y -2*INSET);
+			textEditor.setBounds(2, inset, Math.min(textSize.x, parentSize.x - 4), parentSize.y -2*inset);
 			textEditorParent.redraw();
 		}
 	});
@@ -362,7 +373,8 @@ private void queryNewResourceNameInline(final IResource resource) {
 	Point textSize = textEditor.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 	textSize.x += textSize.y; // Add extra space for new characters.
 	Point parentSize = textEditorParent.getSize();
-	textEditor.setBounds(2, INSET, Math.min(textSize.x, parentSize.x - 4), parentSize.y - 2*INSET);
+	int inset = getCellEditorInset(textEditorParent);
+	textEditor.setBounds(2, inset, Math.min(textSize.x, parentSize.x - 4), parentSize.y - 2*inset);
 	textEditorParent.redraw();
 	textEditor.selectAll ();
 	textEditor.setFocus ();
