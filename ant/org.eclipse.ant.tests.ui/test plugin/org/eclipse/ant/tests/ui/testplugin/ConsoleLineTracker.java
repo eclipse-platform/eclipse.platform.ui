@@ -88,24 +88,23 @@ public class ConsoleLineTracker implements IConsoleLineTrackerExtension {
 	}
 	
 	public static void waitForConsole() {
-		if (consoleClosed) {
-			return;
-		}
-		try {
-			synchronized (lines) {
-				lines.wait(20000);
+		synchronized (lines) {
+			if (consoleClosed) {
+				return;
 			}
-		} catch (InterruptedException ie) {
-		}
+			try {
+				lines.wait(20000);
+			} catch (InterruptedException ie) {
+			}
+	}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.console.IConsoleLineTrackerExtension#consoleClosed()
 	 */
 	public void consoleClosed() {
-		consoleClosed= true;
-		
 		synchronized (lines) {
+			consoleClosed= true;
 			lines.notifyAll();
 		}
 	}
