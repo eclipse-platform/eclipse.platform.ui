@@ -15,15 +15,11 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.Job;
-
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.jface.text.IDocument;
-
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -145,34 +141,6 @@ public class EditorTestHelper {
 		}
 //		System.out.println();
 		return true;
-	}
-
-//	private static String getStateName(int state) {
-//		switch (state) {
-//			case Job.RUNNING: return "RUNNING";
-//			case Job.WAITING: return "WAITING";
-//			case Job.SLEEPING: return "SLEEPING";
-//			case Job.NONE: return "NONE";
-//			default: return "unknown " + state;
-//		}
-//	}
-
-	public static boolean showView(String viewId) throws PartInitException {
-		IWorkbenchPage activePage= getActivePage();
-		IViewReference view= activePage.findViewReference(viewId);
-		boolean notShown= view == null;
-		if (notShown)
-			activePage.showView(viewId);
-		return notShown;
-	}
-
-	public static boolean hideView(String viewId) {
-		IWorkbenchPage activePage= getActivePage();
-		IViewReference view= activePage.findViewReference(viewId);
-		boolean shown= view != null;
-		if (shown)
-			activePage.hideView(view);
-		return shown;
 	}
 
 	public static void bringToTop() {
