@@ -638,7 +638,7 @@
             id="org.eclipse.update.ui.softwareUpdates">
          <menu
                label="%UpdateActionSet.menu.label"
-               path="help/helpEnd"
+               path="help/group.updates"
                id="org.eclipse.update.ui.updateMenu">
             <separator
                   name="group0">
