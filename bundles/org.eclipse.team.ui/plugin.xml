@@ -10,6 +10,7 @@
    <import plugin="org.eclipse.core.resources"/>
    <import plugin="org.eclipse.team.core"/>
    <import plugin="org.eclipse.ui"/>
+   <import plugin="org.eclipse.compare"/>
 </requires>
 
 <runtime>
@@ -158,5 +159,20 @@
 		</action>				
 	</objectContribution>
 </extension>
+
+	<!-- ************** Views ********************** -->
+	<extension point="org.eclipse.ui.views">
+		<category 
+			id="org.eclipse.team.ui"
+			name="Team">
+		</category>
+		<view
+			id="org.eclipse.team.ui.sync.SyncView"
+			icon="icons/full/cview16/synch_synch.gif"
+			name="Synchronize"
+			category="org.eclipse.team.ui"
+			class="org.eclipse.team.internal.ui.sync.SyncView">
+		</view>
+	</extension>
 
 </plugin>

@@ -8,13 +8,13 @@
     <classpathentry kind="var"
         path="ECLIPSE_HOME/plugins/org.eclipse.core.resources/resources.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.core.resources/resourcessrc.zip"/>
     <classpathentry kind="var"
-        path="ECLIPSE_HOME/plugins/org.eclipse.ui/workbench.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.ui/workbench.jar"/>
+        path="ECLIPSE_HOME/plugins/org.eclipse.ui/workbench.jar"
+        rootpath="" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.ui/workbenchsrc.zip"/>
     <classpathentry kind="var"
         path="ECLIPSE_HOME/plugins/org.eclipse.swt/swt.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.swt/swtsrc.zip"/>
     <classpathentry kind="var"
         path="ECLIPSE_HOME/plugins/org.eclipse.core.runtime/runtime.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.core.runtime/runtimesrc.zip"/>
     <classpathentry kind="var"
-        path="ECLIPSE_HOME/plugins/org.eclipse.jdt.ui/jdt.jar"
-        rootpath="" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.jdt.ui/jdtsrc.zip"/>
+        path="ECLIPSE_HOME/plugins/org.eclipse.jdt.ui/jdt.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.jdt.ui/jdtsrc.zip"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>

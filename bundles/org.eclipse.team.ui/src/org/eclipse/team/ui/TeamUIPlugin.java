@@ -154,6 +154,15 @@ public class TeamUIPlugin extends AbstractUIPlugin implements ISharedImages {
 		createImageDescriptor(ISharedImages.IMG_DIRTY_OVR, baseURL);
 		createImageDescriptor(ISharedImages.IMG_CHECKEDIN_OVR, baseURL);
 		createImageDescriptor(ISharedImages.IMG_CHECKEDOUT_OVR, baseURL);
+		
+		createImageDescriptor(UIConstants.IMG_DLG_SYNC_INCOMING, baseURL);
+		createImageDescriptor(UIConstants.IMG_DLG_SYNC_OUTGOING, baseURL);
+		createImageDescriptor(UIConstants.IMG_DLG_SYNC_CONFLICTING, baseURL);
+		createImageDescriptor(UIConstants.IMG_REFRESH, baseURL);
+		createImageDescriptor(UIConstants.IMG_IGNORE_WHITESPACE, baseURL);
+		createImageDescriptor(UIConstants.IMG_SYNC_MODE_CATCHUP, baseURL);
+		createImageDescriptor(UIConstants.IMG_SYNC_MODE_RELEASE, baseURL);
+		createImageDescriptor(UIConstants.IMG_SYNC_MODE_FREE, baseURL);
 	}
 	/**
 	 * Initializes the preferences for this plugin if necessary.
