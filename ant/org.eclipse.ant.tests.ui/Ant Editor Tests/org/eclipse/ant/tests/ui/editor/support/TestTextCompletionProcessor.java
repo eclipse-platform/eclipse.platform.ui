@@ -27,6 +27,14 @@ import org.w3c.dom.Element;
 
 public class TestTextCompletionProcessor extends AntEditorCompletionProcessor {
 
+	public final static int TEST_PROPOSAL_MODE_NONE = AntEditorCompletionProcessor.PROPOSAL_MODE_NONE;
+	public final static int TEST_PROPOSAL_MODE_BUILDFILE = AntEditorCompletionProcessor.PROPOSAL_MODE_BUILDFILE;
+	public final static int TEST_PROPOSAL_MODE_TASK_PROPOSAL = AntEditorCompletionProcessor.PROPOSAL_MODE_TASK_PROPOSAL;
+	public final static int TEST_PROPOSAL_MODE_PROPERTY_PROPOSAL = AntEditorCompletionProcessor.PROPOSAL_MODE_PROPERTY_PROPOSAL;
+	public final static int TEST_PROPOSAL_MODE_ATTRIBUTE_PROPOSAL = AntEditorCompletionProcessor.PROPOSAL_MODE_ATTRIBUTE_PROPOSAL;
+	public final static int TEST_PROPOSAL_MODE_TASK_PROPOSAL_CLOSING = AntEditorCompletionProcessor.PROPOSAL_MODE_TASK_PROPOSAL_CLOSING;
+	public final static int TEST_PROPOSAL_MODE_ATTRIBUTE_VALUE_PROPOSAL = AntEditorCompletionProcessor.PROPOSAL_MODE_ATTRIBUTE_VALUE_PROPOSAL;
+	
 	private File editedFile;
 
 	public TestTextCompletionProcessor(AntModel model) {
@@ -37,18 +45,18 @@ public class TestTextCompletionProcessor extends AntEditorCompletionProcessor {
 		super(null);
 	}
 	
-    public ICompletionProposal[] getAttributeProposals(String aTaskName, String aPrefix) {
-    	cursorPosition= aTaskName.length();
-        return super.getAttributeProposals(aTaskName, aPrefix);
+    public ICompletionProposal[] getAttributeProposals(String taskName, String prefix) {
+    	cursorPosition= taskName.length();
+        return super.getAttributeProposals(taskName, prefix);
     }
 
-    public Element findChildElementNamedOf(Element anElement, String aChildElementName) {
-        return super.findChildElementNamedOf(anElement, aChildElementName);
+    public Element findChildElementNamedOf(Element anElement, String childElementName) {
+        return super.findChildElementNamedOf(anElement, childElementName);
     }
 
-    public ICompletionProposal[] getTaskProposals(String text, String parentName, String aPrefix) {
+    public ICompletionProposal[] getTaskProposals(String text, String parentName, String prefix) {
     	cursorPosition= Math.max(0, text.length() - 1);
-        return super.getTaskProposals(new Document(text), parentName, aPrefix);
+        return super.getTaskProposals(new Document(text), parentName, prefix);
     }
     
     public ICompletionProposal[] getTaskProposals(IDocument document, String parentName, String aPrefix) {
@@ -61,8 +69,8 @@ public class TestTextCompletionProcessor extends AntEditorCompletionProcessor {
     	return new ArrayList();
     }
 
-    public int determineProposalMode(String text, int aCursorPosition, String aPrefix) {
-        return super.determineProposalMode(new Document(text), aCursorPosition, aPrefix);
+    public int determineProposalMode(String text, int theCursorPosition, String prefix) {
+        return super.determineProposalMode(new Document(text), theCursorPosition, prefix);
     }
 
     public String getParentName(String text, int aLineNumber, int aColumnNumber) {
@@ -77,8 +85,8 @@ public class TestTextCompletionProcessor extends AntEditorCompletionProcessor {
         return super.getPrefixFromDocument(aDocumentText, anOffset);
     }
 
-    public ICompletionProposal[] getPropertyProposals(IDocument document, String aPrefix, int cursorPos) {
-        return super.getPropertyProposals(document, aPrefix, cursorPos);
+    public ICompletionProposal[] getPropertyProposals(IDocument document, String prefix, int cursorPos) {
+        return super.getPropertyProposals(document, prefix, cursorPos);
     }
 
     /**
@@ -144,5 +152,12 @@ public class TestTextCompletionProcessor extends AntEditorCompletionProcessor {
 	 */
 	public ICompletionProposal[] getProposalsFromDocument(IDocument document, String prefix) {
 		return super.getProposalsFromDocument(document, prefix);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.editor.AntEditorCompletionProcessor#getBuildFileProposals(org.eclipse.jface.text.IDocument, java.lang.String)
+	 */
+	public ICompletionProposal[] getBuildFileProposals(String text, String prefix) {
+		return super.getBuildFileProposals(new Document(text), prefix);
 	}
 }

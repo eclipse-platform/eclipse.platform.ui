@@ -300,17 +300,6 @@ public class CodeCompletionTest extends AbstractAntUITest {
         ICompletionProposal[] proposals = processor.getTaskProposals("         <", "rename", "");
         assertEquals(0, proposals.length);
 
-//        proposals = processor.getTaskProposals("       <cl", createTestPropertyElement(doc), "cl");
-//        assertEquals(1, proposals.length);
-//        ICompletionProposal proposal = proposals[0];
-//        assertEquals("classpath", proposal.getDisplayString());
-//        
-//        //case insensitivity
-//		proposals = processor.getTaskProposals("       <CL", createTestPropertyElement(doc), "cl");
-//	   	assertEquals(1, proposals.length);
-//	   	proposal = proposals[0];
-//	   	assertEquals("classpath", proposal.getDisplayString());
-
         proposals = processor.getTaskProposals("       <cl", "property", "cl");
         assertEquals(1, proposals.length);
         ICompletionProposal proposal = proposals[0];
@@ -320,42 +309,13 @@ public class CodeCompletionTest extends AbstractAntUITest {
         assertEquals(1, proposals.length);
         proposal = proposals[0];
         assertEquals("classpath", proposal.getDisplayString());
-
-//        proposals = processor.getTaskProposals("       <pr", createTestProjectElement(doc), "pr");
-//        assertEquals(1, proposals.length); // is choice and already used with classpath
-//        proposal = proposals[0];
-//        assertEquals("property", proposal.getDisplayString());
-//        
-//        proposals = processor.getTaskProposals("       <fi", createTestProjectElement(doc), "fi");
-//        assertEquals(5, proposals.length); // is choice and already used with classpath
-
-        proposals = processor.getTaskProposals("          ", null, "");
-        assertEquals(1, proposals.length);
-        proposal = proposals[0];
-        assertEquals("project", proposal.getDisplayString());
-
-        proposals = processor.getTaskProposals("            jl", null, "jl");
-        assertEquals(0, proposals.length);
-
-        proposals = processor.getTaskProposals("             ", "projexxx", "");
-        assertEquals(0, proposals.length);
-
-        proposals = processor.getTaskProposals("              ", "filelist", "");
-        assertEquals(0, proposals.length);
-
+        
         // "<project><target><mk"
         proposals = processor.getTaskProposals("<project><target><mk", "target", "mk");
         assertEquals(1, proposals.length);
         proposal = proposals[0];
         assertEquals("mkdir", proposal.getDisplayString());
         
-        proposals = processor.getTaskProposals("", null, "");
-        assertEquals(1, proposals.length);
-        proposal = proposals[0];
-        assertEquals("project", proposal.getDisplayString());
-
-        proposals = processor.getTaskProposals("    \n<project></project>", null, "");
-        assertEquals(1, proposals.length);
     }
     
 	/**
@@ -410,27 +370,18 @@ public class CodeCompletionTest extends AbstractAntUITest {
      */
     public void testDeterminingAttributeProposalMode() {
         TestTextCompletionProcessor processor = new TestTextCompletionProcessor();
-
-        // Modes:
-        // 0 None
-        // 1 Task Proposal
-        // 2 Attribute Proposal
-        // 3 Task Closing Proposal
-        // 4 Attribute Value Proposal
-        // 5 Property Proposal
-        
         int mode = processor.determineProposalMode("<project><property ta", 21, "ta");
-        assertEquals(2, mode);
+        assertEquals(TestTextCompletionProcessor.TEST_PROPOSAL_MODE_ATTRIBUTE_PROPOSAL, mode);
         mode = processor.determineProposalMode("<project><property ", 19, "");
-        assertEquals(2, mode);
+        assertEquals(TestTextCompletionProcessor.TEST_PROPOSAL_MODE_ATTRIBUTE_PROPOSAL, mode);
         mode = processor.determineProposalMode("<project><property   ", 21, "");
-        assertEquals(2, mode);
+        assertEquals(TestTextCompletionProcessor.TEST_PROPOSAL_MODE_ATTRIBUTE_PROPOSAL, mode);
         mode = processor.determineProposalMode("<property id=\"hu\" ", 18, "");
-        assertEquals(2, mode);
+        assertEquals(TestTextCompletionProcessor.TEST_PROPOSAL_MODE_ATTRIBUTE_PROPOSAL, mode);
         mode = processor.determineProposalMode("<property id=\"hu\" \r\n ", 21, "");
-        assertEquals(2, mode);
+        assertEquals(TestTextCompletionProcessor.TEST_PROPOSAL_MODE_ATTRIBUTE_PROPOSAL, mode);
         mode = processor.determineProposalMode("<property\n", 10, "");
-        assertEquals(2, mode);
+        assertEquals(TestTextCompletionProcessor.TEST_PROPOSAL_MODE_ATTRIBUTE_PROPOSAL, mode);
     }
     
 	/**
@@ -438,24 +389,15 @@ public class CodeCompletionTest extends AbstractAntUITest {
 	*/
    public void testDeterminingPropertyProposalMode() {
 	   TestTextCompletionProcessor processor = new TestTextCompletionProcessor();
-
-	   // Modes:
-	   // 0 None
-	   // 1 Task Proposal
-	   // 2 Attribute Proposal
-	   // 3 Task Closing Proposal
-	   // 4 Attribute Value Proposal
-	   // 5 Property Proposal
-    
 	   int mode =processor.determineProposalMode("<project><target name=\"$\"", 24, "");
-	   assertEquals(5, mode);
+	   assertEquals(TestTextCompletionProcessor.TEST_PROPOSAL_MODE_PROPERTY_PROPOSAL, mode);
 	   mode = processor.determineProposalMode("<project><target name=\"${\"", 25, "");
-	   assertEquals(5, mode);
+	   assertEquals(TestTextCompletionProcessor.TEST_PROPOSAL_MODE_PROPERTY_PROPOSAL, mode);
 	   mode = processor.determineProposalMode("<project><target name=\"${ja.bl\"", 30, "ja.bl");
-	   assertEquals(5, mode);
+	   assertEquals(TestTextCompletionProcessor.TEST_PROPOSAL_MODE_PROPERTY_PROPOSAL, mode);
 	  
 		mode = processor.determineProposalMode("<project><target><echo>${", 25, "");
-		assertEquals(5, mode);
+		assertEquals(TestTextCompletionProcessor.TEST_PROPOSAL_MODE_PROPERTY_PROPOSAL, mode);
    }
     
 	/**
@@ -463,43 +405,35 @@ public class CodeCompletionTest extends AbstractAntUITest {
 	 */
 	public void testDeterminingTaskProposalMode() {
 		TestTextCompletionProcessor processor = new TestTextCompletionProcessor();
-
-		// Modes:
-		// 0 None
-		// 1 Task Proposal
-		// 2 Attribute Proposal
-		// 3 Task Closing Proposal
-		// 4 Attribute Value Proposal
-		// 5 Property Proposal
     
 		int mode = processor.determineProposalMode("<project><prop", 14, "prop");
-		assertEquals(1, mode);
+		assertEquals(TestTextCompletionProcessor.TEST_PROPOSAL_MODE_TASK_PROPOSAL, mode);
 		mode = processor.determineProposalMode("<project> hjk", 13, "");
-		assertEquals(1, mode);
+		assertEquals(TestTextCompletionProcessor.TEST_PROPOSAL_MODE_TASK_PROPOSAL, mode);
 		mode = processor.determineProposalMode("<project> hjk<", 14, "");
-		assertEquals(1, mode); // allow this case though it is not valid with Ant
+		assertEquals(TestTextCompletionProcessor.TEST_PROPOSAL_MODE_TASK_PROPOSAL, mode); // allow this case though it is not valid with Ant
 		mode = processor.determineProposalMode("<project>", 9, "");
-		assertEquals(1, mode);
+		assertEquals(TestTextCompletionProcessor.TEST_PROPOSAL_MODE_TASK_PROPOSAL, mode);
 		mode = processor.determineProposalMode("<project> ", 10, "");
-		assertEquals(1, mode);
+		assertEquals(TestTextCompletionProcessor.TEST_PROPOSAL_MODE_TASK_PROPOSAL, mode);
 		mode = processor.determineProposalMode("<project></", 11, "");
-		assertEquals(3, mode);
+		assertEquals(TestTextCompletionProcessor.TEST_PROPOSAL_MODE_TASK_PROPOSAL_CLOSING, mode);
 		mode = processor.determineProposalMode("<project>< </project>", 10, "");
-		assertEquals(1, mode);
+		assertEquals(TestTextCompletionProcessor.TEST_PROPOSAL_MODE_TASK_PROPOSAL, mode);
 		mode = processor.determineProposalMode("<project default=\"hey\"><target name=\"hey\">a</target></project>", 44, "a");
-		assertEquals(1, mode);
+		assertEquals(TestTextCompletionProcessor.TEST_PROPOSAL_MODE_TASK_PROPOSAL, mode);
 		mode = processor.determineProposalMode("<project default=\"hey\"><target name=\"hey\"></target></project>", 43, "");
-		assertEquals(1, mode);
+		assertEquals(TestTextCompletionProcessor.TEST_PROPOSAL_MODE_TASK_PROPOSAL, mode);
 		mode = processor.determineProposalMode("<project default=\"hey\"><target name=\"hey\"><a</target></project>", 45, "<a");
-		assertEquals(1, mode);
+		assertEquals(TestTextCompletionProcessor.TEST_PROPOSAL_MODE_TASK_PROPOSAL, mode);
 		mode = processor.determineProposalMode("<target name=\"main\"><zip><size></size></zip></", 46, "");
-		assertEquals(3, mode);
+		assertEquals(TestTextCompletionProcessor.TEST_PROPOSAL_MODE_TASK_PROPOSAL_CLOSING, mode);
 		mode = processor.determineProposalMode("", 0, "");
-		assertEquals(1, mode);
+		assertEquals(TestTextCompletionProcessor.TEST_PROPOSAL_MODE_BUILDFILE, mode);
 		mode= processor.determineProposalMode("<project default=\"hey\"><target name=\"hey\"><javac>a</javac></target></project>", 51, "a");
-		assertEquals(1, mode);
+		assertEquals(TestTextCompletionProcessor.TEST_PROPOSAL_MODE_TASK_PROPOSAL, mode);
 		mode = processor.determineProposalMode("<project> hjk", 13, "");
-		assertEquals(1, mode);
+		assertEquals(TestTextCompletionProcessor.TEST_PROPOSAL_MODE_TASK_PROPOSAL, mode);
 	}
 	
 	/**
@@ -508,16 +442,8 @@ public class CodeCompletionTest extends AbstractAntUITest {
 	public void testDeterminingTaskClosingProposalMode() {
 		TestTextCompletionProcessor processor = new TestTextCompletionProcessor();
 	
-		// Modes:
-		// 0 None
-		// 1 Task Proposal
-		// 2 Attribute Proposal
-		// 3 Task Closing Proposal
-		// 4 Attribute Value Proposal
-		// 5 Property Proposal
-	
 		int mode = processor.determineProposalMode("<target name=\"main\"><zip><size></size></zip></", 46, "");
-		assertEquals(3, mode);
+		assertEquals(TestTextCompletionProcessor.TEST_PROPOSAL_MODE_TASK_PROPOSAL_CLOSING, mode);
 	}
 
     /**
@@ -555,18 +481,10 @@ public class CodeCompletionTest extends AbstractAntUITest {
     public void testDeterminingNoneProposalMode() {
         TestTextCompletionProcessor processor = new TestTextCompletionProcessor();
 
-        // Modes:
-        // 0 None
-        // 1 Task Proposal
-        // 2 Attribute Proposal
-        // 3 Task Closing Proposal
-        // 4 Attribute Value Proposal
-        // 5 Property Proposal
-        
         int mode = processor.determineProposalMode("<project><prop bla", 18, "bla");
-        assertEquals(0, mode);
+        assertEquals(TestTextCompletionProcessor.TEST_PROPOSAL_MODE_NONE, mode);
 		mode= processor.determineProposalMode("<project default=\"hey\"><target name=", 37, "name=");
-		assertEquals(0, mode);
+		assertEquals(TestTextCompletionProcessor.TEST_PROPOSAL_MODE_NONE, mode);
 	}
     
     /**
@@ -575,9 +493,15 @@ public class CodeCompletionTest extends AbstractAntUITest {
     public void testTaskProposalsForEmptyBuildFile() {
 		TestTextCompletionProcessor processor = new TestTextCompletionProcessor(getAntModel("empty.xml"));
 
-        ICompletionProposal[] proposals = processor.getTaskProposals("", null, "");
+        ICompletionProposal[] proposals = processor.getBuildFileProposals("", "");
         assertEquals(1, proposals.length);
         assertEquals("project", proposals[0].getDisplayString());
+        
+        proposals = processor.getBuildFileProposals("            jl", "jl");
+        assertEquals(0, proposals.length);
+        
+        proposals = processor.getBuildFileProposals("    \n<project></project>", "");
+        assertEquals(1, proposals.length);
     }
     
     /**
@@ -598,5 +522,23 @@ public class CodeCompletionTest extends AbstractAntUITest {
     	assertContains("project.class.path", proposals);
     	assertDoesNotContain("project.class.path2", proposals);
     }
+    
+    /**
+     * Tests the code completion for refids (Bug 49830)
+     */
+    public void testCustomBooleanProposals() throws BadLocationException {
+		TestTextCompletionProcessor processor = new TestTextCompletionProcessor(getAntModel("customBoolean.xml"));
 
+		int lineNumber= 2;
+    	int columnNumber= 44;
+    	int lineOffset= getCurrentDocument().getLineOffset(lineNumber);
+    	processor.setLineNumber(lineNumber);
+    	processor.setColumnNumber(columnNumber);
+    	processor.setCursorPosition(lineOffset + columnNumber);
+    	ICompletionProposal[] proposals = processor.getProposalsFromDocument(getCurrentDocument(), "");
+    	//true false yes no on off
+    	assertTrue(proposals.length == 6);
+    	assertContains("true", proposals);
+    	assertContains("no", proposals);
+    }
 }
