@@ -188,7 +188,7 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 	 * Returns the associated Ant process, finding it if necessary, if not
 	 * already found.
 	 */
-	private AntProcess getAntProcess(String processId) {
+	protected AntProcess getAntProcess(String processId) {
 		if (fProcess == null && processId != null) {
 			IProcess[] all = DebugPlugin.getDefault().getLaunchManager().getProcesses();
 			for (int i = 0; i < all.length; i++) {
