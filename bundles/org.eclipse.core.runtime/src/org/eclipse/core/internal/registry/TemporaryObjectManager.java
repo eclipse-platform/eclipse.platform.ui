@@ -11,7 +11,6 @@
 package org.eclipse.core.internal.registry;
 
 import java.util.Map;
-import org.eclipse.core.internal.runtime.Policy;
 
 /**
  * @since 3.1
@@ -95,7 +94,7 @@ public class TemporaryObjectManager implements IObjectManager {
 			}
 		}
 		if (result == null)
-			throw new InvalidHandleException(Policy.bind("registry.staleHandle", Integer.toString(id))); //$NON-NLS-1$
+			throw new InvalidHandleException(id); //$NON-NLS-1$
 		return result;
 	}
 

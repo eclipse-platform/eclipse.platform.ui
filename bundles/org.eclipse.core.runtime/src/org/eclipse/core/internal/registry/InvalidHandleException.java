@@ -10,13 +10,21 @@
  *******************************************************************************/
 package org.eclipse.core.internal.registry;
 
+import org.eclipse.core.internal.runtime.Policy;
+
 public class InvalidHandleException extends IllegalStateException {
 	/**
 	 * Comment for <code>serialVersionUID</code>
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public InvalidHandleException(String message) {
-		super(message);
+	private int staleId;
+	
+	public InvalidHandleException(int objectId) {
+		staleId = objectId;
+	}
+	
+	public String getMessage() {
+		return Policy.bind("registry.staleHandle", Integer.toString(staleId)); //$NON-NLS-1$
 	}
 }
