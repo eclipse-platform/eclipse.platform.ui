@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  */
 public interface IFeatureContentConsumer {
 
+	
 	/**
 	 * Store a feature file.
 	 * Note that only the feature definition files should be stored using
@@ -57,7 +58,6 @@ public interface IFeatureContentConsumer {
 	 * @exception CoreException
 	 * @since 2.0 
 	 */
-
 	public IContentConsumer open(IPluginEntry pluginEntry) throws CoreException;
 
 	/**
@@ -71,19 +71,6 @@ public interface IFeatureContentConsumer {
 	 * @since 2.0 
 	 */
 	public IContentConsumer open(INonPluginEntry nonPluginEntry)
-		throws CoreException;
-
-	/**
-	 * Opens a generic content consumer for the specified feature reference.
-	 * Feature reference files corresponding to this entry should be stored
-	 * using this feature content consumer.
-	 * 
-	 * @param featureReference feature reference.
-	 * @return feature content consumer for the feature reference
-	 * @exception CoreException
-	 * @since 2.0 
-	 */
-	public IFeatureContentConsumer open(IFeatureReference featureReference)
 		throws CoreException;
 
 	/**
@@ -127,6 +114,16 @@ public interface IFeatureContentConsumer {
 	public IFeature getFeature();
 
 	/**
+	 * Sets the parent for this content consumer.
+	 * In general, this method should only be called as part of
+	 * feature creation. Once set, the feature should not be reset.
+	 * 
+	 * @param parent parent feature content consumer.
+	 * @since 2.0 
+	 */
+	public void setParent(IFeatureContentConsumer parent);
+
+	/**
 	 * Returns the feature content consumer that opened
 	 * this feature content consumer, or <code>null</code>
 	 * if this feature content consumer is a root feature
@@ -136,6 +133,16 @@ public interface IFeatureContentConsumer {
 	 * @since 2.0
 	 */
 	public IFeatureContentConsumer getParent();
+
+	/**
+	 * Link the content consumer of the feature as a child
+	 * content consumer
+	 * 
+	 * @param feature the child feature.
+	 * @throws CoreException 
+	 * @since 2.0 
+	 */
+	public void addChild(IFeature feature) throws CoreException;
 
 	/**
 	 * Returns the feature content consumers that

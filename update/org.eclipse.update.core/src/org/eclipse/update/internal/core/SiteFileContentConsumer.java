@@ -10,6 +10,8 @@ import java.net.URL;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.core.model.*;
+import org.eclipse.update.core.model.ArchiveReferenceModel;
 import org.eclipse.update.core.model.FeatureModel;
 
 /**
@@ -112,8 +114,11 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 			//$NON-NLS-1$
 		}
 
-		if (ref != null)
+		if (ref != null){
+			commitPlugins(ref);
 			ref.markReadOnly();
+		}
+		
 		return ref;
 	}
 
@@ -121,6 +126,48 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 	 * 
 	 */
 	public void abort() {
+		// FIXME
 	}
+
+	/*
+	 * commit the plugins installed as archive on the site
+	 */
+	 private void commitPlugins(IFeatureReference localFeatureReference) throws CoreException {
+
+		((SiteFile)getSite()).addFeatureReferenceModel((FeatureReferenceModel) localFeatureReference);
+
+		// add the installed plugins directories as archives entry
+		SiteFileFactory archiveFactory = new SiteFileFactory();
+		ArchiveReferenceModel archive = null;
+		IPluginEntry[] pluginEntries =
+			localFeatureReference.getFeature().getPluginEntries();
+		for (int i = 0; i < pluginEntries.length; i++) {
+			String versionId = pluginEntries[i].getVersionedIdentifier().toString();
+			String pluginID =
+				Site.DEFAULT_PLUGIN_PATH
+					+ versionId
+					+ FeaturePackagedContentProvider.JAR_EXTENSION;
+			archive = archiveFactory.createArchiveReferenceModel();
+			archive.setPath(pluginID);
+			try {
+				URL url =
+					new URL(getSite().getURL(), Site.DEFAULT_PLUGIN_PATH + versionId + File.separator);
+				archive.setURLString(url.toExternalForm());
+				archive.resolve(url, null);
+				((SiteFile)getSite()).addArchiveReferenceModel(archive);
+			} catch (MalformedURLException e) {
+				String id =
+					UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+				String urlString = (getSite().getURL() != null) ? getSite().getURL().toExternalForm() : "";
+				//$NON-NLS-1$
+				urlString += Site.DEFAULT_PLUGIN_PATH + pluginEntries[i].toString();
+				throw Utilities.newCoreException(
+					Policy.bind("SiteFile.UnableToCreateURL", urlString),
+					e);
+				//$NON-NLS-1$
+			}
+		}
+		return;
+	 }
 
 }

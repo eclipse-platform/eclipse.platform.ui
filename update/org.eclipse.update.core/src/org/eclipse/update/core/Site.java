@@ -337,7 +337,6 @@ public class Site extends SiteModel implements ISite {
 				pluginsToRemove = new IPluginEntry[plugins.size()];
 				plugins.toArray(pluginsToRemove);
 			}
-
 		}
 
 		return pluginsToRemove;
@@ -393,6 +392,25 @@ public class Site extends SiteModel implements ISite {
 	 */
 	public IFeatureReference install(
 		IFeature sourceFeature,
+		IVerificationListener verificationListener,
+		IProgressMonitor progress)
+		throws CoreException {
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * Install the specified feature on this site using the content consumer as 
+	 * a context to install the feature in.
+	 * This implementation always throws UnsupportedOperationException
+	 * because this implementation does not support the install action.
+	 * 
+	 * @see ISite#install(IFeature, IFeatureContentConsumer, IVerificationListener, IProgressMonitor)
+	 * @exception java.jang.UnsupportedOperationException
+	 * @since 2.0
+	 */
+	 public IFeatureReference  install(
+		IFeature sourceFeature,
+		IFeatureContentConsumer parentContentConsumer,
 		IVerificationListener verificationListener,
 		IProgressMonitor progress)
 		throws CoreException {

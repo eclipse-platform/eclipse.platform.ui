@@ -64,43 +64,40 @@ public class SiteFile extends Site {
 
 		// create new executable feature and install source content into it
 		IFeature localFeature = createExecutableFeature(sourceFeature);
+
 		IFeatureReference localFeatureReference =
 			sourceFeature.install(localFeature, verificationListener, monitor);
-		if (localFeature instanceof FeatureModel)
-			 ((FeatureModel) localFeature).markReadOnly();
-		this.addFeatureReference(localFeatureReference);
+		return localFeatureReference;
+	}
 
-		// add the installed plugins directories as archives entry
-		SiteFileFactory archiveFactory = new SiteFileFactory();
-		ArchiveReferenceModel archive = null;
-		IPluginEntry[] pluginEntries =
-			localFeatureReference.getFeature().getPluginEntries();
-		for (int i = 0; i < pluginEntries.length; i++) {
-			String versionId = pluginEntries[i].getVersionedIdentifier().toString();
-			String pluginID =
-				Site.DEFAULT_PLUGIN_PATH
-					+ versionId
-					+ FeaturePackagedContentProvider.JAR_EXTENSION;
-			archive = archiveFactory.createArchiveReferenceModel();
-			archive.setPath(pluginID);
-			try {
-				URL url =
-					new URL(getURL(), Site.DEFAULT_PLUGIN_PATH + versionId + File.separator);
-				archive.setURLString(url.toExternalForm());
-				archive.resolve(url, null);
-				this.addArchiveReferenceModel(archive);
-			} catch (MalformedURLException e) {
-				String id =
-					UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-				String urlString = (getURL() != null) ? getURL().toExternalForm() : "";
-				//$NON-NLS-1$
-				urlString += Site.DEFAULT_PLUGIN_PATH + pluginEntries[i].toString();
-				throw Utilities.newCoreException(
-					Policy.bind("SiteFile.UnableToCreateURL", urlString),
-					e);
-				//$NON-NLS-1$
-			}
-		}
+	/*
+	 * @see ISite#install(IFeature,IFeatureContentConsumer, IVerifier, IProgressMonitor)
+	 */
+	public IFeatureReference install(
+		IFeature sourceFeature,
+		IFeatureContentConsumer parentContentConsumer,
+		IVerificationListener verificationListener,
+		IProgressMonitor progress)
+		throws CoreException {
+
+		if (sourceFeature == null)
+			return null;
+
+		// make sure we have an InstallMonitor		
+		InstallMonitor monitor;
+		if (progress == null)
+			monitor = null;
+		else if (progress instanceof InstallMonitor)
+			monitor = (InstallMonitor) progress;
+		else
+			monitor = new InstallMonitor(progress);
+
+		// create new executable feature and install source content into it
+		IFeature localFeature = createExecutableFeature(sourceFeature);
+		parentContentConsumer.addChild(localFeature);
+
+		IFeatureReference localFeatureReference =
+			sourceFeature.install(localFeature, verificationListener, monitor);
 		return localFeatureReference;
 	}
 
@@ -186,9 +183,9 @@ public class SiteFile extends Site {
 			// remove any children feature
 			IFeatureReference[] childrenRef = feature.getIncludedFeatureReferences();
 			for (int i = 0; i < childrenRef.length; i++) {
-				remove(childrenRef[i].getFeature(),monitor);
+				remove(childrenRef[i].getFeature(), monitor);
 			}
-			
+
 			success = true;
 		} catch (Throwable t) {
 			originalException = t;
@@ -324,14 +321,6 @@ public class SiteFile extends Site {
 	}
 
 	/**
-	 * adds a feature reference
-	 * @param feature The feature reference to add
-	 */
-	private void addFeatureReference(IFeatureReference feature) {
-		addFeatureReferenceModel((FeatureReferenceModel) feature);
-	}
-
-	/**
 	 * 
 	 */
 	private void remove(
@@ -363,5 +352,4 @@ public class SiteFile extends Site {
 			}
 		}
 	}
-
 }

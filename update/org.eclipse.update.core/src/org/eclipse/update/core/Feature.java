@@ -5,30 +5,13 @@ package org.eclipse.update.core;
  */
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
-import java.util.Set;
+import java.net.*;
+import java.util.*;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.update.core.model.ContentEntryModel;
-import org.eclipse.update.core.model.FeatureModel;
-import org.eclipse.update.core.model.ImportModel;
-import org.eclipse.update.core.model.NonPluginEntryModel;
-import org.eclipse.update.core.model.PluginEntryModel;
-import org.eclipse.update.core.model.URLEntryModel;
-import org.eclipse.update.internal.core.InstallHandlerProxy;
-import org.eclipse.update.internal.core.Policy;
-import org.eclipse.update.internal.core.UpdateManagerPlugin;
-import org.eclipse.update.internal.core.UpdateManagerUtils;
+import org.eclipse.update.core.model.*;
+import org.eclipse.update.internal.core.*;
 
 /**
  * Convenience implementation of a feature.
@@ -79,7 +62,6 @@ public class Feature extends FeatureModel implements IFeature {
 			return false;
 		IFeature f = (IFeature) object;
 		return super.equals(object);
-
 	}
 
 	/**
@@ -229,7 +211,6 @@ public class Feature extends FeatureModel implements IFeature {
 			UpdateManagerPlugin.getPlugin().debug(
 				"Installing...:" + getURL().toExternalForm());
 		}
-
 		// make sure we have an InstallMonitor		
 		InstallMonitor monitor;
 		if (progress == null)
@@ -249,22 +230,33 @@ public class Feature extends FeatureModel implements IFeature {
 		boolean success = false;
 		Throwable originalException = null;
 
-		// Get source feature provider and verifier. Initialize target variables.
+		// Get source feature provider, parentVerifier and verifier.
+		// Initialize target variables.
 		IFeatureContentProvider provider = getFeatureContentProvider();
 
-		IVerifier parentVerifier=null;
+		IVerifier parentVerifier = null;
 		if (targetFeature.getFeatureContentConsumer().getParent() != null) {
 			IFeatureContentConsumer parentConsumer =
 				targetFeature.getFeatureContentConsumer().getParent();
 			IFeature parentFeature = parentConsumer.getFeature();
 			parentVerifier = parentFeature.getFeatureContentProvider().getVerifier();
 		}
-
 		IVerifier verifier = provider.getVerifier();
 		IFeatureReference result = null;
 		IFeatureContentConsumer consumer = null;
 
 		try {
+			// install the children feature
+			IFeatureReference[] children = getIncludedFeatureReferences();
+			for (int i = 0; i < children.length; i++) {
+				Site targetSite = (Site) targetFeature.getSite();
+				targetSite.install(
+					children[i].getFeature(),
+					targetFeature.getFeatureContentConsumer(),
+					verificationListener,
+					monitor);
+			}
+
 			// determine list of plugins to install
 			// find the intersection between the plugin entries already contained
 			// on the target site, and plugin entries packaged in source feature
@@ -300,7 +292,7 @@ public class Feature extends FeatureModel implements IFeature {
 			// verify ourself
 			if (verifier != null || parentVerifier != null) {
 				for (int i = 0; i < references.length; i++) {
-					vr=null;
+					vr = null;
 					if (parentVerifier != null) {
 						vr = parentVerifier.verify(this, references[i], true, monitor);
 						if (vr.getVerificationCode() == IVerificationResult.TYPE_ENTRY_UNRECOGNIZED) {
@@ -331,7 +323,7 @@ public class Feature extends FeatureModel implements IFeature {
 				// VERIFICATION
 				if (verifier != null || parentVerifier != null) {
 					for (int j = 0; j < references.length; j++) {
-						vr=null;
+						vr = null;
 						if (parentVerifier != null) {
 							vr = parentVerifier.verify(this, references[j], false, monitor);
 							if (vr.getVerificationCode() == IVerificationResult.TYPE_ENTRY_UNRECOGNIZED) {
@@ -420,23 +412,24 @@ public class Feature extends FeatureModel implements IFeature {
 			// indicate install success
 			success = true;
 
-		} catch (Throwable t) {
-			originalException = t;
+		} catch (Exception e) {
+			originalException = e;
 		} finally {
 			if (monitor != null)
 				monitor.done();
 
-			Throwable newException = null;
+			Exception newException = null;
 			try {
 				if (consumer != null) {
-					if (success)
+					if (success){
 						result = consumer.close();
-					else
+					} else {
 						consumer.abort();
+					}
 				}
 				handler.installCompleted(success);
-			} catch (Throwable t) {
-				newException = t;
+			} catch (Exception e) {
+				newException = e;
 			}
 			if (originalException != null) // original exception wins
 				throw Utilities.newCoreException(

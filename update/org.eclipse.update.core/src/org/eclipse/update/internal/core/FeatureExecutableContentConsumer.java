@@ -42,15 +42,14 @@ public class FeatureExecutableContentConsumer extends FeatureContentConsumer {
 	}
 
 	/*
-	 * @see IContentConsumer#open(IFeatureReference)
+	 * @see IContentConsumer#addChild(IFeature)
 	 */
-	public IFeatureContentConsumer open(IFeatureReference featureReference)
-		throws CoreException{
-		FeatureExecutableContentConsumer childConsumer = new FeatureExecutableContentConsumer();
+	public void addChild(IFeature child) throws CoreException {
+		IFeatureContentConsumer childConsumer = child.getFeatureContentConsumer();
 		childConsumer.setParent(this);
 		if (children==null) children = new ArrayList();
 		children.add(childConsumer);
-		return childConsumer;
+		return;
 	}
 
 
