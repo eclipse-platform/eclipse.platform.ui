@@ -312,14 +312,24 @@ class JobInfo extends JobTreeElement {
 	 */
 	private int compareJobs(Job job1, Job job2){
 		
+		//User jobs have top priority
+		if(job.isUser()){
+			if(!job2.isUser())
+				return -1;
+		}
+		else{
+			if(job2.isUser())
+				return 1;		
+		}
+		
 		if (job1.getPriority() == job2.getPriority()){
 			return job1.getName().compareTo(job2.getName());
 		}
 		
 		if (job1.getPriority() > job2.getPriority())
-			return 1;
-		else
 			return -1;
+		else
+			return 1;
 	}
 	
 	
