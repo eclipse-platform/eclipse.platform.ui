@@ -260,21 +260,11 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 	}
 	
 	private void updateTitle(ISearchResult search) {
-		String label= SearchMessages.getString("SearchView.title.search"); //$NON-NLS-1$
-		
-		// TODO workaround for bug 53391
-		label+= "("; //$NON-NLS-1$
 		if (search != null) {
 			boolean queryRunning= InternalSearchUI.getInstance().isQueryRunning(search.getQuery());
 			fCancelAction.setEnabled(queryRunning);
-			if (queryRunning) {
-				label= label+SearchMessages.getString("SearchView.title.running"); //$NON-NLS-1$
-			}
-			label= label+" "+search.getLabel(); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		// TODO workaround for bug 53391
-		label+= ")"; //$NON-NLS-1$
-		setTitle(label);
+		setTitle(search.getLabel());
 	}
 	
 	public void updateTitle() {
