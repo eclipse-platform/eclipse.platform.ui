@@ -26,12 +26,14 @@ public class RefreshUserNotificationPolicy implements IRefreshSubscriberListener
 	 * (non-Javadoc)
 	 * @see org.eclipse.team.internal.ui.jobs.IRefreshSubscriberListener#refreshStarted(org.eclipse.team.internal.ui.jobs.IRefreshEvent)
 	 */
-	public void refreshStarted(IRefreshEvent event) {
+	public void refreshStarted(final IRefreshEvent event) {
 		TeamUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
-			public void run() {			
-				ISynchronizeView view = TeamUI.getSynchronizeManager().showSynchronizeViewInActivePage();
-				if(view != null) {
-					view.display(participant);
+			public void run() {
+				if (event.getRefreshType() == IRefreshEvent.USER_REFRESH) {
+					ISynchronizeView view = TeamUI.getSynchronizeManager().showSynchronizeViewInActivePage();
+					if (view != null) {
+						view.display(participant);
+					}
 				}
 			}
 		});
@@ -74,12 +76,6 @@ public class RefreshUserNotificationPolicy implements IRefreshSubscriberListener
 				// Prompt user if preferences are set for this type of refresh.
 				if (prompt) {
 					notifyIfNeededModal(event);
-				} else {
-				// Else simply show the synchronize view
-					ISynchronizeView view = TeamUI.getSynchronizeManager().showSynchronizeViewInActivePage();
-					if(view != null) {
-						view.display(participant);
-					}
 				}
 				setToolTipText(getToolTipText());
 			}
