@@ -291,8 +291,8 @@ public class EditorManager {
 		if (!(editorInput instanceof IFileEditorInput))
 			throw new PartInitException(
 				WorkbenchMessages.format(
-					"EditorManager.unableToOpenExternalEditor", //$NON-NLS-1$
-					new Object[] { editorInput }));
+					"EditorManager.unableToOpenEditor", //$NON-NLS-1$
+					new Object[] { editorInput.getName() }));
 					
 		IFileEditorInput input = (IFileEditorInput)editorInput;
 		IFile file = input.getFile();
