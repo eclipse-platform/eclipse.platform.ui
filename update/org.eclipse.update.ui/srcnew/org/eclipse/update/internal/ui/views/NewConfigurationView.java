@@ -563,39 +563,26 @@ public class NewConfigurationView
 
 		if (obj instanceof ILocalSite) {
 			manager.add(revertAction);
-			preserveAction.setConfiguration(((ILocalSite) obj).getCurrentConfiguration());
 			manager.add(preserveAction);
 			manager.add(new Separator());
 		} else if (obj instanceof IConfiguredSiteAdapter) {
-			siteStateAction.setSite(((IConfiguredSiteAdapter) obj).getConfiguredSite());
 			manager.add(siteStateAction);
 			manager.add(new Separator());
 		} else if (obj instanceof ConfiguredFeatureAdapter) {
 			try {
-				ConfiguredFeatureAdapter adapter = (ConfiguredFeatureAdapter) obj;
-				IFeature feature = adapter.getFeature(null);
-				boolean enable = (adapter.isOptional() || !adapter.isIncluded());
-
 				MenuManager mgr = new MenuManager("Replace with");
 				mgr.add(swapVersionAction);
-				swapVersionAction.setEnabled(enable);
 				manager.add(mgr);
 
-				featureStateAction.setFeature(adapter);
-				featureStateAction.setEnabled(enable);
 				manager.add(featureStateAction);
 
+				IFeature feature = ((ConfiguredFeatureAdapter) obj).getFeature(null);
 				if (feature instanceof MissingFeature) {
-					MissingFeature mf = (MissingFeature) feature;
-					installOptFeatureAction.setEnabled(
-						mf.isOptional() && mf.getOriginatingSiteURL() != null);
 					manager.add(installOptFeatureAction);
 				} else {
-					uninstallFeatureAction.setEnabled(enable);
 					manager.add(uninstallFeatureAction);
 				}
 				manager.add(new Separator());
-
 			} catch (CoreException e) {
 			}
 		}
@@ -820,8 +807,9 @@ public class NewConfigurationView
 		}
 		return code;
 	}
+	
 	protected void handleSelectionChanged(SelectionChangedEvent e) {
-		IStructuredSelection ssel = (IStructuredSelection)e.getSelection();
+		IStructuredSelection ssel = (IStructuredSelection) e.getSelection();
 		Object obj = ssel.getFirstElement();
 		if (obj instanceof IFeatureAdapter) {
 			try {
@@ -838,23 +826,23 @@ public class NewConfigurationView
 						mf.isOptional() && mf.getOriginatingSiteURL() != null);
 					uninstallFeatureAction.setEnabled(false);
 				} else {
-					uninstallFeatureAction.setEnabled(enable);
+					uninstallFeatureAction.setEnabled(enable && !adapter.isConfigured());
 					installOptFeatureAction.setEnabled(false);
 				}
-			}
-			catch (CoreException ex) {
+			} catch (CoreException ex) {
 				UpdateUI.logException(ex);
 			}
 			propertiesAction.setEnabled(true);
-		}		
-		else
+		} else {
 			propertiesAction.setEnabled(false);
+		}
 		if (obj instanceof ILocalSite) {
 			preserveAction.setConfiguration(((ILocalSite) obj).getCurrentConfiguration());
-		}
- 		else if (obj instanceof IConfiguredSiteAdapter) {
+			preserveAction.setEnabled(true);
+		} else if (obj instanceof IConfiguredSiteAdapter) {
 			siteStateAction.setSite(((IConfiguredSiteAdapter) obj).getConfiguredSite());
- 		}
+			siteStateAction.setEnabled(true);
+		}
 		preview.setSelection(ssel);
 	}
 
