@@ -303,7 +303,7 @@ public class AnimationItem {
 			if (animateJob != null)
 				animateJob.cancel();
 
-			animateJob = new AnimateJob() {
+			animateJob = new Job(ProgressMessages.getString("AnimateJob.JobName")) {//$NON-NLS-1$
 				/* (non-Javadoc)
 				 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 				 */
@@ -316,7 +316,8 @@ public class AnimationItem {
 					}
 				}
 			};
-
+			animateJob.setSystem(true);
+			animateJob.setPriority(Job.DECORATE);
 			animateJob.schedule();
 		}
 	}
