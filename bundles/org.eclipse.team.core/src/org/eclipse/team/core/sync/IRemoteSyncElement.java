@@ -1,9 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.team.core.sync;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import org.eclipse.team.core.TeamException;
 
@@ -14,13 +19,15 @@ import org.eclipse.team.core.TeamException;
  * adopters on the understanding that any code that uses this API will almost 
  * certainly be broken (repeatedly) as the API evolves.
  * 
- * A <code>ILocalSyncElement</code> describes the relative synchronization of a <b>local</b> 
+ * A <code>IRemoteSyncElement</code> describes the relative synchronization of a <b>local</b> 
  * and <b>remote</b> resource using a <b>base</b> resource for comparison.
  * <p>
  * Differences between the base and remote resources are classified as <b>incoming changes</b>; 
  * if there is a difference, the remote resource is considered the <b>incoming resource</b>. </p>
  * 
  * @see ILocalSyncElement
+ * 
+ * @since 2.0
  */
 public interface IRemoteSyncElement extends ILocalSyncElement {
 	

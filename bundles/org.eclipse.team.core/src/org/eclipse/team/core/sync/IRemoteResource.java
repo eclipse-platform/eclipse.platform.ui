@@ -24,6 +24,8 @@ import org.eclipse.team.core.TeamException;
  * certainly be broken (repeatedly) as the API evolves.
  * 
  * Interface for resources that are not local. 
+ * 
+ * @since 2.0
  */
 public interface IRemoteResource extends IAdaptable {
 

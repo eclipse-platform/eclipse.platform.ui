@@ -18,6 +18,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * of references to projects.  Given a project, it can produce a
  * UTF-8 encoded String which can be stored in a file.
  * Given this String, it can create in the workspace an IProject.
+ * 
+ * @since 2.0
  */
 
 public interface IProjectSetSerializer {

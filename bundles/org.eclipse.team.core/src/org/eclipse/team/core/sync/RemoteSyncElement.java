@@ -1,9 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.team.core.sync;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2002.
- * All Rights Reserved.
- */
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -39,6 +44,8 @@ import org.eclipse.team.internal.core.Policy;
  * provided will create a unified tree based on the local, base, and remote
  * children. The <code>getSyncKind</code> method will calculate the relative
  * sync kind of the remote node.
+ * 
+ * @since 2.0
  */
 public abstract class RemoteSyncElement extends LocalSyncElement implements IRemoteSyncElement {
 
@@ -378,7 +385,7 @@ public abstract class RemoteSyncElement extends LocalSyncElement implements IRem
 	}
 
 	/*
-	 * Only skip CRs for now.
+	 * Skip all whitspace.
 	 */
 	private boolean isWhitespace(int c) {
 		if (c == -1) return false;
