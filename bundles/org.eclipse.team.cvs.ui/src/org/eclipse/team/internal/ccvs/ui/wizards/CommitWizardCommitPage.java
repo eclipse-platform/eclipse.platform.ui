@@ -31,6 +31,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.team.core.subscribers.ChangeSet;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.internal.ccvs.core.CVSException;
@@ -192,6 +193,9 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
         fSettingsSaver= new SettingsSaver();
         fFileTypePage= fileTypePage;
         fCommentArea= new CommitCommentArea();
+        fCommentArea.setProposedComment(getProposedComment(resources));
+        if (resources.length > 0)
+            fCommentArea.setProject(resources[0].getProject());
         fResources= resources;
     }
     
@@ -230,9 +234,6 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
         fCommentArea.addPropertyChangeListener(this);
         
         createPlaceholder(composite);
-        
-        if (fResources.length > 0)
-            fCommentArea.setProject(fResources[0].getProject());
     }
     
     private void createChangesArea(Composite parent) {
@@ -386,6 +387,34 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
             validatePage(true); 
         }
     }
+    
+	/*
+	 * Get a proposed comment by looking at the active change sets
+	 */
+    private String getProposedComment(IResource[] resourcesToCommit) {
+    	StringBuffer comment = new StringBuffer();
+        ChangeSet[] sets = CVSUIPlugin.getPlugin().getChangeSetManager().getSets();
+        int numMatchedSets = 0;
+        for (int i = 0; i < sets.length; i++) {
+            ChangeSet set = sets[i];
+            if (containsOne(set, resourcesToCommit)) {
+            	if(numMatchedSets > 0) comment.append(System.getProperty("line.separator")); //$NON-NLS-1$
+                comment.append(set.getComment());
+                numMatchedSets++;
+            }
+        }
+        return comment.toString();
+    }
+    
+    private boolean containsOne(ChangeSet set, IResource[] resourcesToCommit) {
+   	 for (int j = 0; j < resourcesToCommit.length; j++) {
+           IResource resource = resourcesToCommit[j];
+           if (set.contains(resource)) {
+               return true;
+           }
+       }
+       return false;
+   }
     
 }    
 

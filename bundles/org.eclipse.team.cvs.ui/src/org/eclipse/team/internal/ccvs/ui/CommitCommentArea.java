@@ -231,7 +231,11 @@ public class CommitCommentArea extends DialogArea {
     }
     
     public void setProposedComment(String proposedComment) {
-        this.fProposedComment = proposedComment;
+    	if (proposedComment == null || proposedComment.length() == 0) {
+    		this.fProposedComment = null;
+    	} else {
+    		this.fProposedComment = proposedComment;
+    	}
     }
     
     public boolean hasCommitTemplate() {
