@@ -1173,10 +1173,11 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				int cy= ((ly+lh/2) + (ry+rh/2) - RESOLVE_SIZE)/2; 
 				if (my >= cy && my < cy+RESOLVE_SIZE && mx >= cx && mx < cx+RESOLVE_SIZE) {
 					if (r != null) {
-						r.x= cx+RESOLVE_SIZE/2-10;
-						r.y= cy+RESOLVE_SIZE/2-10;
-						r.width= 20;
-						r.height= 20;
+						int SIZE= fIsCarbon ? 30 : 20;
+						r.x= cx+(RESOLVE_SIZE-SIZE)/2;
+						r.y= cy+(RESOLVE_SIZE-SIZE)/2;
+						r.width= SIZE;
+						r.height= SIZE;
 					}
 					return diff;
 				}
