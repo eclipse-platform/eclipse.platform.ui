@@ -42,7 +42,6 @@ import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.ICheckStateListener;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -114,18 +113,7 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 			public void treeCollapsed(TreeExpansionEvent event) {
 			}
 		});
-		viewer.addDoubleClickListener(new IDoubleClickListener() {
-            public void doubleClick(DoubleClickEvent event) {
-                IStructuredSelection selection= (IStructuredSelection) event.getSelection();
-                if (selection.size() == 1) {
-                    Object element = selection.getFirstElement();
-                    if (element instanceof String) {
-                        viewer.setExpandedState(element, !viewer.getExpandedState(element));
-                    }
-                }
-                
-            }
-        });
+		
 		// Necessary so that the PropertySheetView hears about selections in this view
 		getSite().setSelectionProvider(viewer);
 		initIsTrackingSelection();
@@ -552,4 +540,18 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
         }
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IDoubleClickListener#doubleClick(org.eclipse.jface.viewers.DoubleClickEvent)
+	 */
+	public void doubleClick(DoubleClickEvent event) {
+		  IStructuredSelection selection= (IStructuredSelection) event.getSelection();
+          if (selection.size() == 1) {
+              Object element = selection.getFirstElement();
+              if (element instanceof String) {
+                  getCheckboxViewer().setExpandedState(element, !getCheckboxViewer().getExpandedState(element));
+                  return;
+              }
+          }
+		super.doubleClick(event);
+	}
 }
