@@ -18,6 +18,8 @@
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.help"/>
       <import plugin="org.eclipse.ui.forms"/>
+      <import plugin="org.eclipse.help.base"/>
+      <import plugin="org.eclipse.help.appserver"/> 
    </requires>
 
 

@@ -17,6 +17,8 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Properties;
 
+import org.eclipse.help.internal.appserver.WebappManager;
+import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.util.Geometry;
@@ -89,13 +91,14 @@ public class IntroURL implements IIntroURL {
     public static final String KEY_MESSAGE = "message"; //$NON-NLS-1$
     public static final String KEY_URL = "url"; //$NON-NLS-1$
     public static final String KEY_DIRECTION = "direction"; //$NON-NLS-1$
+    public static final String KEY_EMBED = "embed"; //$NON-NLS-1$
 
 
     public static final String VALUE_BACKWARD = "backward"; //$NON-NLS-1$
     public static final String VALUE_FORWARD = "forward"; //$NON-NLS-1$
     public static final String VALUE_HOME = "home"; //$NON-NLS-1$
     public static final String VALUE_TRUE = "true"; //$NON-NLS-1$
-    public static final String VALUE_FALSE = "false"; //$NON-NLS-1$
+
 
 
     private String action = null;
@@ -150,7 +153,8 @@ public class IntroURL implements IIntroURL {
         else if (action.equals(SHOW_HELP_TOPIC))
             // display a Help System Topic. It can be displayed in the Help
             // system window, or embedded as an intro page.
-            return showHelpTopic(getParameter(KEY_ID));
+            // return showHelpTopic(getParameter(KEY_ID));
+            return showHelpTopic(getParameter(KEY_ID), getParameter(KEY_EMBED));
 
         else if (action.equals(OPEN_BROWSER))
             // display url in external browser
@@ -284,12 +288,70 @@ public class IntroURL implements IIntroURL {
     /**
      * Open a help topic.
      */
-    private boolean showHelpTopic(String href) {
-        // show href in Help window. WorkbenchHelp takes care of error
-        // handling.
-        PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(href);
-        return true;
+    // private boolean showHelpTopic(String href) {
+    // show href in Help window. WorkbenchHelp takes care of error
+    // handling.
+    // PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(href);
+    // return true;
+    // }
+    /**
+     * Open a help topic. If embed="true", open the help href as an intro page.
+     * If false, open the href in the Help system window. In the case of SWT
+     * presentation, embedd flag is ignored and the topic is opened in the Help
+     * system window.
+     */
+    private boolean showHelpTopic(String href, String embed) {
+        if (href == null)
+            return false;
+
+        boolean isEmbedded = (embed != null && embed.equals(VALUE_TRUE)) ? true
+                : false;
+        IntroModelRoot model = IntroPlugin.getDefault().getIntroModelRoot();
+        String presentationStyle = model.getPresentation()
+            .getImplementationKind();
+
+        if (isEmbedded
+                && presentationStyle
+                    .equals(IntroPartPresentation.BROWSER_IMPL_KIND)) {
+            // we want embedded and we have HTML presentation, show href
+            // embedded.
+            BrowserIntroPartImplementation impl = (BrowserIntroPartImplementation) model
+                .getPresentation().getIntroParttImplementation();
+            href = toAbsoluteURL(href);
+            impl.getBrowser().setUrl(href);
+            return true;
+        } else {
+            // show href in Help window. SWT presentation is handled here.
+            // WorkbenchHelp takes care of error
+            // handling.
+            PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(href);
+            return true;
+        }
     }
+
+
+    /*
+     * INTRO: Internal method usage that needs to be removed asap!
+     */
+
+    private String toAbsoluteURL(String url) {
+        if (url == null || url.indexOf("://") != -1) //$NON-NLS-1$
+            return url;
+        BaseHelpSystem.ensureWebappRunning();
+        String base = getBase();
+        if (url.startsWith("/"))
+            return base + url;
+        else
+            return base + "/" + url;
+    }
+
+    private String getBase() {
+        return "http://" //$NON-NLS-1$
+                + WebappManager.getHost() + ":" //$NON-NLS-1$
+                + WebappManager.getPort() + "/help/nftopic"; //$NON-NLS-1$
+    }
+
+
 
 
     /**

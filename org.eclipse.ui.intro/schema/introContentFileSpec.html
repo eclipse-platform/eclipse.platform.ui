@@ -107,44 +107,47 @@ no parameters required<br>
 <i>direction = ("backward" | "forward" | "home")</i> - specifies the direction to navigate<br>
 <br>
 
-<b>openBrowser</b> - open the url in an external browser<br>
+<b>openBrowser</b> - open the url in an external browser. The workbench Browser support is used in this action. This means that any user preferences set for the browser will be honored. <br>
 <i>url</i> - a valid URL to an external web site or a static HTML file<br>
-<i>pluginId (optional)</i> - only required if a static HTML file is specified. This is the id of the plug-in containing the file.<br>
-<br>
-
-<b>runAction</b> - runs the specified action<br>
-<i>class</i> - the fully qualified class name of the class that implements one of <code>org.eclipse.ui.intro.config.IIntroAction</code>,
-               <code>org.eclipse.jface.action.IAction</code>, or <code>org.eclipse.ui.IActionDelegate</code><br>
-<i>pluginId</i> - The id of the plug-in which contains the class.<br>
-<i>standby (optional) = ("true" | "false") "false"</i> - indicate whether to set the intro into standby mode after executing the action<br>
-additional parameters - any additional parameters are passed to actions that implement <code>org.eclipse.ui.intro.config.IIntroAction</code><br>
-<br>
-
-<b>setStandbyMode</b> - sets the state of the intro part<br>
-<i>standby = ("true" | "false")</i> - true to put the intro part in its partially visible 
-standby mode, and false to make it fully visible<br>
-<br>
-
+<i>pluginId (optional)</i> - only required if a static HTML file is specified. This is the id of the plug-in containing the file.</p>
+<p style="margin-left:15px;"><b>openURL</b> - open the url embedded in the Welcome page. In the case of SWT presentation, the url is displayed in an external browser (similar to the openBrowser action above). <br>
+  <i>url</i> - a valid URL to an external web site or a static HTML file<br>
+  <i>pluginId (optional)</i> - only required if a static HTML file is specified. This is the id of the plug-in containing the file.<br>
+  <br>
+  
+  <b>runAction</b> - runs the specified action<br>
+  <i>class</i> - the fully qualified class name of the class that implements one of <code>org.eclipse.ui.intro.config.IIntroAction</code>, <code>org.eclipse.jface.action.IAction</code>, or <code>org.eclipse.ui.IActionDelegate</code><br>
+  <i>pluginId</i> - The id of the plug-in which contains the class.<br>
+  <i>standby (optional) = ("true" | "false") "false"</i> - indicate whether to set the intro into standby mode after executing the action<br>
+  additional parameters - any additional parameters are passed to actions that implement <code>org.eclipse.ui.intro.config.IIntroAction</code><br>
+  <br>
+  
+  <b>setStandbyMode</b> - sets the state of the intro part<br>
+  <i>standby = ("true" | "false")</i> - true to put the intro part in its partially visible 
+  standby mode, and false to make it fully visible<br>
+  <br>
+  
 <b>showHelp</b> - Open the help system.<br>
-no parameters required<br>
-<br>
-
+  no parameters required<br>
+  <br>
+  
 <b>showHelpTopic</b> - Open a help topic.<br>
-<i>id</i> - the URL of the help resource. (See Javadoc for <code>org.eclipse.ui.help.WorkbenchHelp.displayHelpResource</code><br>
-<br>
-
-<b>showMessage</b> - Displays a message to the user using a standard information dialog.<br>
-<i>message</i> - the message to show the user<br>
-<br>
-
-<b>showStandby</b> - Sets the intro part to standby mode and shows the standbyContentPart with the given input<br>
-<i>partId</i> - the id of the standbyContentPart to show<br>
-<i>input</i> - the input to set on the standbyContentPart<br>
-<br>
-
-<b>showPage</b> - show the intro page with the given id<br>
-<i>id</i> - the id of the intro page to show<br>
-<i>standby (optional) = ("true" | "false") "false"</i> - indicate whether to set the intro into standby mode after showing the page<br>
+  <i>id</i> - the URL of the help resource. (See Javadoc for <code>org.eclipse.ui.help.WorkbenchHelp.displayHelpResource</code><br>
+<i>embed </i><i>(optional) = ("true" | "false") "true"</i> - indicates that the help resource needs to be displayed embedded as part of the welcome pages. Default is false. This flag is simply ignored in the case of the SWT presentation.</p>
+<p style="margin-left:15px;"><br>
+    
+  <b>showMessage</b> - Displays a message to the user using a standard information dialog.<br>
+  <i>message</i> - the message to show the user<br>
+  <br>
+    
+  <b>showStandby</b> - Sets the intro part to standby mode and shows the standbyContentPart with the given input<br>
+  <i>partId</i> - the id of the standbyContentPart to show<br>
+  <i>input</i> - the input to set on the standbyContentPart<br>
+  <br>
+    
+  <b>showPage</b> - show the intro page with the given id<br>
+  <i>id</i> - the id of the intro page to show<br>
+  <i>standby (optional) = ("true" | "false") "false"</i> - indicate whether to set the intro into standby mode after showing the page<br>
 </p>
 <br></li>
 <li><b>style-id</b> - A means to classify this link into a given category so that a common style may be applied.</li>
