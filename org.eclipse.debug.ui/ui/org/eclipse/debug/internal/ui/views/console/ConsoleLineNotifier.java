@@ -138,8 +138,12 @@ public class ConsoleLineNotifier implements IPatternMatchListener {
             IDocument document = fConsole.getDocument();
             int line = document.getLineOfOffset(event.getOffset());
             String delimiter = document.getLineDelimiter(line);
-            int delimLength = delimiter != null ? delimiter.length() : 0;
-            Region region = new Region(event.getOffset(), event.getLength() - delimLength); 
+            // int delimLength = delimiter != null ? delimiter.length() : 0;
+            // TODO: looks like a bug in text support - on Windows, line delim is /r/n
+            // but the event on includes /r
+            String text = document.get(event.getOffset(), event.getLength());
+            int delimStart = text.lastIndexOf(delimiter.charAt(0));
+            Region region = new Region(event.getOffset(), delimStart); 
             lineAppended(region);
         } catch (BadLocationException e) {}
     }
