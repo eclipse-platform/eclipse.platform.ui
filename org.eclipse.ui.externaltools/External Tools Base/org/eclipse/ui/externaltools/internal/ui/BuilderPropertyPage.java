@@ -83,7 +83,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.progress.IProgressService;
 
 /**
- * Property page to add external tools in between builders.
+ * Property page to add external tools builders.
  */
 public final class BuilderPropertyPage extends PropertyPage implements ICheckStateListener {
 
@@ -937,6 +937,18 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 		monitor.done();
 	}
 	
+	private void checkBuilderFolder() {
+		try {
+			IFolder builderFolder= BuilderUtils.getBuilderFolder(getInputProject(), false);
+			if (builderFolder != null && builderFolder.exists() && builderFolder.members().length == 0) {
+				// All files in the builder folder have been deleted. Clean up
+				builderFolder.delete(true, false, null);
+			}
+		} catch (CoreException e) {
+			handleException(e);
+		}
+	}
+
 	/**
 	 * A non-external tool builder builder was disabled.
 	 * It has been re-enabled. Translate the disabled external tool builder launch configuration
@@ -1016,6 +1028,8 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 				ILaunchConfiguration element = (ILaunchConfiguration) itr.next();
 				element.delete();
 			}
+			
+			checkBuilderFolder();
 		} catch (CoreException e) {
 			handleException(e);
 		} finally {
@@ -1092,15 +1106,8 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 				handleException(e);
 			}
 		}
-		try {
-			IFolder builderFolder= BuilderUtils.getBuilderFolder(getInputProject(), false);
-			if (builderFolder != null && builderFolder.exists() && builderFolder.members().length == 0) {
-				// All files in the builder folder were newly created. Clean up
-				builderFolder.delete(true, false, null);
-			}
-		} catch (CoreException e) {
-			handleException(e);
-		}
+		
+		checkBuilderFolder();
 		
 		//remove the local marking of the enabled state of the commands
 		Table builderTable= viewer.getTable();
