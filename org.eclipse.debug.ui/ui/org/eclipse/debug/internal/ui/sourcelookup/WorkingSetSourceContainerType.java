@@ -58,7 +58,7 @@ public class WorkingSetSourceContainerType extends AbstractSourceContainerTypeDe
 			InputSource source = new InputSource(reader);
 			root = parser.parse(source).getDocumentElement();
 			
-			String name = root.getAttribute("setName");//$NON-NLS-1$
+			String name = root.getAttribute("name");//$NON-NLS-1$
 			
 			if (isEmpty(name)) {
 				abort(SourceLookupUIMessages.getString("sourceSearch.initError"),null);//$NON-NLS-1$
