@@ -166,11 +166,11 @@ public class RemoteResourceTest extends EclipseTest {
 	public void testGetRemoteResource() throws CoreException, TeamException, IOException {
 		IProject project = createProject("testGetRemoteResource", new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder2/", "folder2/a.txt", "folder2/folder3/", "folder2/folder3/b.txt", "folder2/folder3/c.txt"});
 		ICVSRemoteResource file = CVSWorkspaceRoot.getRemoteResourceFor(project.getFile("folder1/a.txt"));
-		assertTrue("File should exist remotely", file.exists());
+		assertTrue("File should exist remotely", file.exists(DEFAULT_MONITOR));
 		assertEquals(Path.EMPTY, (ICVSResource)file, (ICVSResource)CVSWorkspaceRoot.getRemoteResourceFor(project.getFile("folder1/a.txt")), false, false);
 		ICVSRemoteResource folder = CVSWorkspaceRoot.getRemoteResourceFor(project.getFolder("folder2/folder3/"));
 		getMembers((ICVSRemoteFolder)folder, true);
-		assertTrue("Folder should exist remotely", folder.exists());
+		assertTrue("Folder should exist remotely", folder.exists(DEFAULT_MONITOR));
 		// XXX this didn't work right. I'll need to check into it later
 //		assertEquals("Remote folder should match local folder", (ICVSResource)folder, (ICVSResource)Client.getManagedFolder(project.getFolder("folder2/folder3/").getLocation().toFile()));
 	}
@@ -278,6 +278,14 @@ public class RemoteResourceTest extends EclipseTest {
 		v1.tag(tag2, Command.NO_LOCAL_OPTIONS, DEFAULT_MONITOR);
 		ICVSRemoteFolder v2 = (ICVSRemoteFolder)CVSWorkspaceRoot.getRemoteTree(project, tag2, DEFAULT_MONITOR);
 		assertEquals(Path.EMPTY, remote, v2, false);
+	 }
+	 
+	 public void testExists() throws TeamException, CoreException, IOException {
+	 	IProject project = createProject("testExists", new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder2/", "folder2/a.txt", "folder2/folder3/", "folder2/folder3/b.txt", "folder2/folder3/c.txt"});
+	 	ICVSRemoteResource resource = CVSWorkspaceRoot.getRemoteResourceFor(project.getFile("file1.txt"));
+	 	assertTrue(resource.exists(DEFAULT_MONITOR));
+	 	resource = (ICVSRemoteFolder)CVSWorkspaceRoot.getRemoteResourceFor(project.getFolder("folder2/folder3/"));
+	 	assertTrue(resource.exists(DEFAULT_MONITOR));
 	 }
 }
 
