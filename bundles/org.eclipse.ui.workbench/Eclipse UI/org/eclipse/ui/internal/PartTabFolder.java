@@ -570,11 +570,14 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer {
     public void remove(LayoutPart child) {
         IPresentablePart presentablePart = child.getPresentablePart();
 
+        // Need to remove it from the list of children before notifying the presentation
+        // since it may setVisible(false) on the part, leading to a partHidden notification,
+        // during which findView must not find the view being removed.  See bug 60039. 
+        children.remove(child);
+        
         if (presentablePart != null) {
             presentationSite.getPresentation().removePart(presentablePart);
         }
-
-        children.remove(child);
 
         if (active) {
             child.setContainer(null);
