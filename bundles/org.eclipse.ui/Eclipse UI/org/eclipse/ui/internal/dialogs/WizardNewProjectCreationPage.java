@@ -11,6 +11,7 @@ Contributors:
 **********************************************************************/
 import java.io.File;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -331,6 +332,16 @@ public class WizardNewProjectCreationPage extends WizardPage {
 	}
 	
 	/**
+	 * Returns whether the currently specified project
+	 * content directory points to an exising project
+	 */
+	private boolean isExistingProjectLocation() {
+		IPath path = getLocationPath();
+		path = path.append(IProjectDescription.DESCRIPTION_FILE_NAME);
+		return path.toFile().exists();
+	}
+	
+	/**
 	 * Sets the initial project name that this page will use when
 	 * created. The name is ignored if the createControl(Composite)
 	 * method has already been called. Leading and trailing spaces
@@ -401,6 +412,11 @@ public class WizardNewProjectCreationPage extends WizardPage {
 			return false;
 		}
 
+		if (isExistingProjectLocation()) {
+			setErrorMessage(WorkbenchMessages.getString("WizardNewProjectCreationPage.projectLocationExistsMessage")); //$NON-NLS-1$
+			return false;
+		}
+		
 		setErrorMessage(null);
 		setMessage(null);
 		return true;
