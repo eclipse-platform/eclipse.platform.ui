@@ -41,7 +41,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	private static final String TRUE = "true"; //$NON-NLS-1$
 	protected static final String VERSION_KEY = "eclipse.preferences.version"; //$NON-NLS-1$
 	protected static final String VERSION_VALUE = "1"; //$NON-NLS-1$
-	protected static final String PATH_SEPARATOR = new Character(IPath.SEPARATOR).toString();
+	protected static final String PATH_SEPARATOR = String.valueOf(IPath.SEPARATOR);
 	protected static final String DOUBLE_SLASH = "//"; //$NON-NLS-1$
 	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
