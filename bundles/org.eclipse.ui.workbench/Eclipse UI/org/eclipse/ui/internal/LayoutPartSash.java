@@ -56,10 +56,10 @@ class LayoutPartSash extends LayoutPart {
             public void widgetSelected(SelectionEvent e) { 
                 checkDragLimit(e);
                 
-                //if (e.detail != SWT.DRAG) {    
+                if (e.detail != SWT.DRAG) {    
                     LayoutPartSash.this.widgetSelected(e.x, e.y, e.width,
                             e.height);
-                //}
+                }
             }
         };
     }
@@ -116,7 +116,7 @@ class LayoutPartSash extends LayoutPart {
      */
     private void doCreateControl() {
         if (sash == null) {
-	        sash = new Sash(this.rootContainer.getParent(), style);
+	        sash = new Sash(this.rootContainer.getParent(), style | SWT.SMOOTH);
 	        sash.addSelectionListener(selectionListener);
 	        sash.setEnabled(enabled);
         }
