@@ -264,7 +264,7 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 		IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
         store.addPropertyChangeListener(this);
         if (store.getBoolean(IDebugPreferenceConstants.CONSOLE_WRAP)) {
-            setWaterMarks(store.getInt(IDebugPreferenceConstants.CONSOLE_LOW_WATER_MARK), store.getInt(IDebugPreferenceConstants.CONSOLE_HIGH_WATER_MARK));
+            setConsoleWidth(store.getInt(IDebugPreferenceConstants.CONSOLE_WIDTH));
         }
         setTabWidth(store.getInt(IDebugPreferenceConstants.CONSOLE_TAB_WIDTH));
         
