@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.update.internal.core;
 import java.io.*;
+import java.lang.reflect.*;
 import java.net.*;
 import java.util.*;
 
@@ -273,27 +274,50 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 	 */
 	public String[] getPluginPath(ISite site, String[] pluginRead) throws CoreException {
 
-		String[] result;
 		String[] pluginsToWrite;
 
+		// Note: with the new changes for patches, we leave patched
+		//       features configured, so we need to take this into
+		//       account when computing configured/unconfigured plugins
+		
+		// Note: important: it is assumed that the patch lists all the plugins
+		//       in the patched feature, including those that haven't changed.
+		//       This limitation will be removed later.
+		
+		// all unconfigured features. Note that patched features are still configured
+		IFeatureReference[] unconfiguredFeatures = getUnconfiguredFeatures();
+		// all configured features, including patches and patched features
+		IFeatureReference[] configuredFeatures = getConfiguredFeatures();
+		// configured patched features
+		IFeatureReference[] patched = getPatchedFeatures(configuredFeatures);
+		
 		if (getPolicy() == IPlatformConfiguration.ISitePolicy.USER_EXCLUDE) {
 			//	EXCLUDE: return unconfigured plugins MINUS any plugins that
 			//           are configured
+			
 			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_CONFIGURATION)
 				UpdateCore.warn("UNCONFIGURED PLUGINS");
-			String[] unconfigured = getPluginString(site, getUnconfiguredFeatures());
+			
+			// virtually unconfigured 
+			unconfiguredFeatures = (IFeatureReference[]) union(patched, unconfiguredFeatures);
+			String[] unconfiguredPlugins = getPluginString(site, unconfiguredFeatures);
+			
 			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_CONFIGURATION)
 				UpdateCore.warn("CONFIGURED PLUGINS");
-			String[] configured = getPluginString(site, getConfiguredFeatures());
+			
+			// virtually configured
+			configuredFeatures = (IFeatureReference[]) subtract(patched, configuredFeatures);
+			String[] configuredPlugins = getPluginString(site, configuredFeatures);
 			if (isEnabled())
-				pluginsToWrite = delta(configured, unconfigured);
+				pluginsToWrite = (String[]) subtract(configuredPlugins, unconfiguredPlugins);
 			else
-				pluginsToWrite = union(configured, unconfigured);
+				pluginsToWrite = (String[]) union(configuredPlugins, unconfiguredPlugins);
 		} else {
 			// INCLUDE: return configured plugins
-			if (isEnabled())
-				pluginsToWrite = getPluginString(site, getConfiguredFeatures());
-			else
+			if (isEnabled()) {
+				configuredFeatures = (IFeatureReference[]) subtract(patched, configuredFeatures);
+				pluginsToWrite = getPluginString(site, configuredFeatures);
+			} else
 				pluginsToWrite = new String[0];
 		}
 
@@ -305,40 +329,47 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 			}
 		}
 
-		// Calculate which plugins we read should still be written out
-		// (pluginNotToWrite-pluginRead = delta that should be written out)
-		// pluginsToWrite+delta = all that should be written out
-		/*IFeatureReference[] arrayOfFeatureRef = null;		
-		if (getPolicy() == IPlatformConfiguration.ISitePolicy.USER_EXCLUDE) {
-			if (getConfiguredFeatures() != null)
-				arrayOfFeatureRef = getConfiguredFeatures();
-		} else {
-			if (getUnconfiguredFeatures() != null)
-				arrayOfFeatureRef = getUnconfiguredFeatures();
-		}
-		String[] pluginsNotToWrite = getPluginString(site, arrayOfFeatureRef);
-		//TRACE
-		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER){
-			for (int i = 0; i < pluginsNotToWrite.length; i++) {
-				UpdateCore.debug("Not to write:"+pluginsNotToWrite[i]);
-			}
-		}		
-		
-		String[] included = delta(pluginsNotToWrite, pluginRead);
-		//TRACE
-		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER){
-			if (included!=null)
-			for (int i = 0; i < included.length; i++) {
-				UpdateCore.debug("Delta with read:"+included[i]);
-			}
-		}		
-		result = union(included, pluginsToWrite);*/
-
-		result = pluginsToWrite;
-
-		return result;
+		return pluginsToWrite;
 	}
+	
+	/**
+	 * @return the list of features that are patched.
+	 */
+	private IFeatureReference[] getPatchedFeatures(IFeatureReference[] features) {
+		// Collect identifiers of all patched features
+		ArrayList patchedIdentifiers = new ArrayList();
+		for (int f = 0; f < features.length; f++) {
+			IFeatureReference fRef = features[f];
+			// if patches anything add the patched to the list
+			try {
+				IFeature feature = fRef.getFeature(null);
+				IImport[] imports = feature.getImports();
+				for (int i = 0; i < imports.length; i++) {
+					IImport oneImport = imports[i];
+					if (!oneImport.isPatch())
+						continue;
+					patchedIdentifiers.add(oneImport.getVersionedIdentifier());
+				}
+			} catch (CoreException e) {
+				UpdateCore.warn(null, e);
+			}
+		}
+		// Create a list of configured features which identifiers are in list of patched
+		ArrayList patchedFeatureRefs = new ArrayList();
+		for (int f = 0; f < features.length; f++) {
+			IFeatureReference enabled = features[f];
+			try {
+				VersionedIdentifier vi=enabled.getVersionedIdentifier();
+				if(patchedIdentifiers.contains(vi))
+					patchedFeatureRefs.add(features[f]);
+			} catch (CoreException e) {
+				UpdateCore.warn(null, e);
+			}
+		}
 
+		return (IFeatureReference[]) patchedFeatureRefs.toArray(new IFeatureReference[patchedFeatureRefs.size()]);
+		
+	}
 	/**
 	 * @since 2.0
 	 */
@@ -454,7 +485,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 	*	 remove them from include
 	*	 we can compare the String of the URL
 	*/
-	private String[] delta(String[] pluginsToRemove, String[] allPlugins) {
+	private Object[] subtract(Object[] pluginsToRemove, Object[] allPlugins) {
 		// No plugins to remove, return allPlugins 
 		if (pluginsToRemove == null || pluginsToRemove.length == 0) {
 			return allPlugins;
@@ -467,49 +498,41 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 
 		// if a String from pluginsToRemove IS in
 		// allPlugins, remove it from allPlugins
-		List list1 = new ArrayList();
-		list1.addAll(Arrays.asList(allPlugins));
+		List resultList = new ArrayList();
+		resultList.addAll(Arrays.asList(allPlugins));
 		for (int i = 0; i < pluginsToRemove.length; i++) {
-			if (list1.contains(pluginsToRemove[i])) {
-				list1.remove(pluginsToRemove[i]);
+			if (resultList.contains(pluginsToRemove[i])) {
+				resultList.remove(pluginsToRemove[i]);
 			}
 		}
-
-		String[] resultEntry = new String[list1.size()];
-		if (list1.size() > 0)
-			list1.toArray(resultEntry);
-
-		return resultEntry;
+		
+		return arrayTypeFor(resultList);
 	}
 
 	/**
 	 * Returns and array with the union of plugins
 	*/
-	private String[] union(String[] targetArray, String[] sourceArray) {
+	private Object[] union(Object[] array1, Object[] array2) {
 
 		// No string 
-		if (sourceArray == null || sourceArray.length == 0) {
-			return targetArray;
+		if (array2 == null || array2.length == 0) {
+			return array1;
 		}
 
 		// No string
-		if (targetArray == null || targetArray.length == 0) {
-			return sourceArray;
+		if (array1 == null || array1.length == 0) {
+			return array2;
 		}
 
 		// if a String from sourceArray is NOT in
 		// targetArray, add it to targetArray
-		List list1 = new ArrayList();
-		list1.addAll(Arrays.asList(targetArray));
-		for (int i = 0; i < sourceArray.length; i++) {
-			if (!list1.contains(sourceArray[i]))
-				list1.add(sourceArray[i]);
+		List resultList = new ArrayList();
+		resultList.addAll(Arrays.asList(array1));
+		for (int i = 0; i < array2.length; i++) {
+			if (!resultList.contains(array2[i]))
+				resultList.add(array2[i]);
 		}
 
-		String[] resultEntry = new String[list1.size()];
-		if (list1.size() > 0)
-			list1.toArray(resultEntry);
-
-		return resultEntry;
+		return arrayTypeFor(resultList);
 	}
 }
