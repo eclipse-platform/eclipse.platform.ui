@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.intro.impl.model.loader;
 
-import java.util.*;
-
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.internal.intro.impl.model.*;
 import org.eclipse.ui.internal.intro.impl.util.*;
@@ -156,90 +154,6 @@ public class ModelLoaderUtil {
 
 
     /**
-     * Returns an Element array of all first level descendant Elements with a
-     * given tag name, in the order in which they are encountered in the DOM.
-     * Unlike the JAXP apis, which returns preorder traversal of this Element
-     * tree, this method filters out children deeper than first level child
-     * nodes.
-     */
-    public static Element[] getElementsByTagName(Element parent, String tagName) {
-        NodeList allChildElements = parent.getElementsByTagName(tagName);
-        Vector vector = new Vector();
-        for (int i = 0; i < allChildElements.getLength(); i++) {
-            // we know that the nodelist is of elements.
-            Element aElement = (Element) allChildElements.item(i);
-            if (aElement.getParentNode().equals(parent))
-                // first level child element. add it.
-                vector.add(aElement);
-        }
-        Element[] filteredElements = new Element[vector.size()];
-        vector.copyInto(filteredElements);
-        return filteredElements;
-    }
-
-    /**
-     * @see getElementsByTagName(Element parent, String tagName)
-     */
-    public static Element[] getElementsByTagName(Document dom, String tagName) {
-        NodeList allChildElements = dom.getElementsByTagName(tagName);
-        Vector vector = new Vector();
-        for (int i = 0; i < allChildElements.getLength(); i++) {
-            // we know that the nodelist is of elements.
-            Element aElement = (Element) allChildElements.item(i);
-            if (aElement.getParentNode().equals(dom.getDocumentElement()))
-                // first level child element. add it. Cant use getParent
-                // here.
-                vector.add(aElement);
-        }
-        Element[] filteredElements = new Element[vector.size()];
-        vector.copyInto(filteredElements);
-        return filteredElements;
-    }
-
-    public static Bundle getBundleFromConfigurationElement(
-            IConfigurationElement cfg) {
-        return Platform.getBundle(cfg.getNamespace());
-    }
-
-    /**
-     * Utility method to validate the state of a bundle. Log invalid bundles to
-     * log file.
-     */
-    public static boolean bundleHasValidState(Bundle bundle) {
-        if (bundle == null || bundle.getState() == Bundle.UNINSTALLED
-                || bundle.getState() == Bundle.INSTALLED) {
-
-            if (bundle == null)
-                Log.error("Intro tried accessing a NULL bundle.", null); //$NON-NLS-1$
-            else {
-                String msg = StringUtil
-                        .concat(
-                                "Intro tried accessing Bundle: ", getBundleHeader( //$NON-NLS-1$
-                                        bundle, Constants.BUNDLE_NAME),
-                                " vendor: ", //$NON-NLS-1$
-                                getBundleHeader(bundle, Constants.BUNDLE_VENDOR),
-                                " bundle state: ", String.valueOf(bundle.getState())).toString(); //$NON-NLS-1$
-                Log.error(msg, null);
-            }
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Retrieves the given key from the bundle header.
-     * 
-     * @param bundle
-     * @param key
-     * @return
-     */
-    public static String getBundleHeader(Bundle bundle, String key) {
-        return (String) bundle.getHeaders().get(key);
-    }
-
-
-    /**
      * Util class for creating class instances from plugins.
      * 
      * @param pluginId
@@ -248,10 +162,10 @@ public class ModelLoaderUtil {
      */
     public static Object createClassInstance(String pluginId, String className) {
         // quick exits.
-        if (pluginId == null | className == null)
+        if (pluginId == null || className == null)
             return null;
         Bundle bundle = Platform.getBundle(pluginId);
-        if (!bundleHasValidState(bundle))
+        if (!BundleUtil.bundleHasValidState(bundle))
             return null;
 
         Class aClass;

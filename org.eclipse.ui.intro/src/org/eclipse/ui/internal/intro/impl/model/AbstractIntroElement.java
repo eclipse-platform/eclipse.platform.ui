@@ -12,7 +12,6 @@
 package org.eclipse.ui.internal.intro.impl.model;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.ui.internal.intro.impl.model.loader.*;
 import org.osgi.framework.*;
 import org.w3c.dom.*;
 
@@ -160,7 +159,7 @@ public abstract class AbstractIntroElement implements Cloneable {
      */
     AbstractIntroElement(IConfigurationElement element) {
         cfgElement = element;
-        bundle = ModelLoaderUtil.getBundleFromConfigurationElement(cfgElement);
+        bundle = BundleUtil.getBundleFromConfigurationElement(cfgElement);
     }
 
 

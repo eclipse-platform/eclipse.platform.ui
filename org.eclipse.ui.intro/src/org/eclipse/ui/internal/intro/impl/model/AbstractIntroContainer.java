@@ -288,7 +288,8 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
 
 
     /**
-     * Resolve each include in this container's children.
+     * Resolve each include in this container's children. Includes are lazily
+     * resolved on a per container basis, when the container is resolved.
      */
     protected void resolveChildren() {
         for (int i = 0; i < children.size(); i++) {
@@ -347,7 +348,8 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
     }
 
     /**
-     * Finds the child element that corresponds to the given path in a model.
+     * Finds the child element that corresponds to the given path in the passed
+     * model.
      * 
      * @param model
      * @param path
@@ -393,7 +395,9 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
 
     /*
      * searches direct children for the first child with the given id. The type
-     * of the child must br of the passed model types mask.
+     * of the child must be of the passed model types mask. This method handles
+     * the 3.0 style model for content. Pages enhance this behavior with DOM
+     * apis.
      * 
      * @see org.eclipse.ui.internal.intro.impl.model.IntroElement#getType()
      */
@@ -416,7 +420,7 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
                     && child.isOfType(elementMask))
                 return child;
         }
-        // no child with given id amd type found.
+        // no child with given id and type found.
         return null;
     }
 
@@ -516,13 +520,6 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
      */
     public int getType() {
         return AbstractIntroElement.ABSTRACT_CONTAINER;
-    }
-
-    /**
-     * @return Returns the loaded.
-     */
-    protected boolean isLoaded() {
-        return loaded;
     }
 
     /**

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.intro.impl.model;
 
-import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
@@ -117,7 +116,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
     }
 
     /**
-     * loads the full model. The children of a model root are the presentation,
+     * Loads the full model. The children of a model root are the presentation,
      * followed by all pages, and all shared groups. Then if the model has
      * extension, its the unresolved container extensions, followed by all
      * extension pages and groups. The presentation is loaded from the
@@ -127,7 +126,6 @@ public class IntroModelRoot extends AbstractIntroContainer {
      */
     protected void loadChildren() {
         children = new Vector();
-
         Log.info("Loading Intro plugin model...."); //$NON-NLS-1$
 
         // load presentation first and create the model class for it. If there
@@ -207,7 +205,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
     private void loadPages(Document dom, Bundle bundle) {
         String homePageId = getPresentation().getHomePageId();
         String standbyPageId = getPresentation().getStandbyPageId();
-        Element[] pages = ModelLoaderUtil.getElementsByTagName(dom,
+        Element[] pages = ModelUtil.getElementsByTagName(dom,
                 IntroPage.TAG_PAGE);
         for (int i = 0; i < pages.length; i++) {
             Element pageElement = pages[i];
@@ -238,7 +236,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
      * Loads all shared groups defined in this config, from the DOM.
      */
     private void loadSharedGroups(Document dom, Bundle bundle) {
-        Element[] groups = ModelLoaderUtil.getElementsByTagName(dom,
+        Element[] groups = ModelUtil.getElementsByTagName(dom,
                 IntroGroup.TAG_GROUP);
         for (int i = 0; i < groups.length; i++) {
             IntroGroup group = new IntroGroup(groups[i], bundle);
@@ -255,7 +253,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
         for (int i = 0; i < configExtensionElements.length; i++) {
             // get the bundle from the extensions since they are defined in
             // other plugins.
-            Bundle bundle = ModelLoaderUtil
+            Bundle bundle = BundleUtil
                     .getBundleFromConfigurationElement(configExtensionElements[i]);
 
             Document dom = loadDOM(configExtensionElements[i]);
@@ -276,16 +274,20 @@ public class IntroModelRoot extends AbstractIntroContainer {
             if (extensionContentElement.hasAttribute("failed")) { //$NON-NLS-1$
                 // we failed to resolve this configExtension, because target
                 // could not be found or is not an anchor, add the extension
-                // as a (unresolved) child of this model.
+                // as a (unresolved) child of this model, and log fact.
                 children.add(new IntroExtensionContent(extensionContentElement,
                         bundle));
+                // INTRO: fix log strings.
+                Log.warning("Could not resolve the following configExtension: " //$NON-NLS-1$
+                        + ModelLoaderUtil.getLogString(extensionContentElement,
+                                ATT_CONTENT));
                 continue;
             }
 
             // Now load all pages and shared groups from this config extension
             // only if we resolved this extension. No point adding pages that
             // will never be referenced.
-            Element[] pages = ModelLoaderUtil.getElementsByTagName(dom,
+            Element[] pages = ModelUtil.getElementsByTagName(dom,
                     IntroPage.TAG_PAGE);
             for (int j = 0; j < pages.length; j++) {
                 // Create the model class for an intro Page.
@@ -303,15 +305,22 @@ public class IntroModelRoot extends AbstractIntroContainer {
      * load the extension content of this configExtension into model classes,
      * and insert them at target. A config extension can have only ONE extension
      * content. This is because if the extension fails, we need to be able to
-     * not include the page and group contributions as part of the model.
+     * not include the page and group contributions as part of the model. If
+     * extension content has XHTML content (ie: content attribute is defined) we
+     * load extension DOM into target page dom.
+     * 
+     * note: the extension Element is returned to enable creating a child model
+     * element on failure.
      * 
      * @param
      * @return
      */
     private Element loadExtensionContent(Document dom, Bundle bundle) {
-        Element[] extensionContents = ModelLoaderUtil.getElementsByTagName(dom,
+        Element[] extensionContents = ModelUtil.getElementsByTagName(dom,
                 IntroExtensionContent.TAG_CONTAINER_EXTENSION);
-        // There should only be one container extension.
+        // INTRO: change this. we need to load more than one extension content
+        // here.
+        // There should only be one container extension. (ver3.0)
         Element extensionContentElement = ModelLoaderUtil
                 .validateSingleContribution(extensionContents,
                         IntroExtensionContent.ATT_PATH);
@@ -319,25 +328,103 @@ public class IntroModelRoot extends AbstractIntroContainer {
             // no extensionContent defined.
             return null;
 
-        // Create the model class.
+        // Create the model class for extension content.
         IntroExtensionContent extensionContent = new IntroExtensionContent(
                 extensionContentElement, bundle);
-        // now resolve this extension.
+        boolean success = false;
+        if (extensionContent.isXHTMLContent())
+            success = loadXHTMLExtensionContent(extensionContent);
+        else
+            success = load3_0ExtensionContent(extensionContent);
+
+        if (!success)
+            extensionContentElement.setAttribute("failed", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+
+        return extensionContentElement;
+
+    }
+
+
+
+    /**
+     * Insert the extension content into the target.
+     * 
+     * @param extensionContent
+     * @return
+     */
+    private boolean loadXHTMLExtensionContent(
+            IntroExtensionContent extensionContent) {
+        String path = extensionContent.getPath();
+        // path must be pageId/anchorID in the case of anchors in XHTML pages.
+        String[] pathSegments = path.split("/"); //$NON-NLS-1$
+        if (pathSegments.length != 2)
+            // path does not have correct format.
+            return false;
+        AbstractIntroPage targetPage = (AbstractIntroPage) findChild(
+                pathSegments[0], ABSTRACT_PAGE);
+        if (targetPage == null)
+            // target could not be found. Signal failure.
+            return false;
+        else {
+            // extensions are only for anchors. Insert all children of this
+            // extension before the target anchor. Anchors need to stay in DOM ,
+            // even after all extensions have been resolved, to enable other
+            // plugins to contribute. Find the taget node.
+            Document pageDom = targetPage.getDocument();
+            Element targetAnchor = targetPage.findDomChild(pathSegments[1],
+                    IntroAnchor.TAG_ANCHOR);
+            if (targetAnchor == null)
+                return false;
+
+            // get extension content node.
+            Document extensionDom = extensionContent.getDocument();
+            if (extensionDom == null)
+                return false;
+
+            Element extensionBody = ModelUtil.getBodyElement(extensionDom);
+            Element[] children = ModelUtil.getElementsByTagName(extensionBody,
+                    "*"); //$NON-NLS-1$
+            // insert all children before anchor in page body.
+            for (int i = 0; i < children.length; i++) {
+                Node targetNode = pageDom.importNode(children[i], true);
+                // update the src attribute of this node, if defined by w3
+                // specs.
+                String localContentFilePath = extensionContent.getContent();
+                ModelUtil.updateResourceAttributes((Element) targetNode,
+                        localContentFilePath);
+                targetAnchor.getParentNode().insertBefore(targetNode,
+                        targetAnchor);
+            }
+            return true;
+        }
+    }
+
+
+
+    /**
+     * Insert the extension content (3.0 format) into the target.
+     * 
+     * @param extensionContent
+     * @return
+     */
+    private boolean load3_0ExtensionContent(
+            IntroExtensionContent extensionContent) {
         String path = extensionContent.getPath();
         AbstractIntroElement target = findTarget(this, path);
         if (target == null || !target.isOfType(AbstractIntroElement.ANCHOR))
             // target could not be found. Signal failure.
-            extensionContentElement.setAttribute("failed", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+            return false;
         else {
             // extensions are only for anchors. Insert all children of this
             // extension before this anchor. Anchors need to stay as model
             // children, even after all extensions have been
             // resolved, to enable other plugins to contribute.
             IntroAnchor targetAnchor = (IntroAnchor) target;
-            insertAnchorChildren(targetAnchor, extensionContent, bundle);
+            insertAnchorChildren(targetAnchor, extensionContent,
+                    extensionContent.getBundle());
             handleExtensionStyleInheritence(targetAnchor, extensionContent);
+            return true;
         }
-        return extensionContentElement;
     }
 
 
@@ -574,125 +661,9 @@ public class IntroModelRoot extends AbstractIntroContainer {
     protected Document loadDOM(IConfigurationElement cfgElement) {
         String content = cfgElement.getAttribute(ATT_CONTENT);
         // Resolve.
-        content = IntroModelRoot.getPluginLocation(content, cfgElement);
+        content = BundleUtil.getPluginLocation(content, cfgElement);
         Document document = new IntroContentParser(content).getDocument();
         return document;
-    }
-
-
-
-    /*
-     * ======================= Util Methods for Model. =======================
-     */
-
-    /**
-     * Checks to see if the passed string is a valid URL (has a protocol), if
-     * yes, returns it as is. If no, treats it as a resource relative to the
-     * declaring plugin. Return the plugin relative location, fully qualified.
-     * Retruns null if the passed string itself is null.
-     * 
-     * @param resource
-     * @param pluginDesc
-     * @return returns the URL as is if it had a protocol.
-     */
-    protected static String resolveURL(String url, String pluginId) {
-        Bundle bundle = null;
-        if (pluginId != null)
-            // if pluginId is not null, use it.
-            bundle = Platform.getBundle(pluginId);
-        return resolveURL(url, bundle);
-    }
-
-    /**
-     * Checks to see if the passed string is a valid URL (has a protocol), if
-     * yes, returns it as is. If no, treats it as a resource relative to the
-     * declaring plugin. Return the plugin relative location, fully qualified.
-     * Retruns null if the passed string itself is null.
-     * 
-     * @param resource
-     * @param pluginDesc
-     * @return returns the URL as is if it had a protocol.
-     */
-    protected static String resolveURL(String url, IConfigurationElement element) {
-        Bundle bundle = ModelLoaderUtil
-                .getBundleFromConfigurationElement(element);
-        return resolveURL(url, bundle);
-    }
-
-    /**
-     * @see resolveURL(String url, IConfigurationElement element)
-     */
-    protected static String resolveURL(String url, Bundle bundle) {
-        // quick exit
-        if (url == null)
-            return null;
-        IntroURLParser parser = new IntroURLParser(url);
-        if (parser.hasProtocol())
-            return url;
-        else
-            // make plugin relative url. Only now we need the pd.
-            return getPluginLocation(url, bundle);
-    }
-
-
-
-    /**
-     * Returns the fully qualified location of the passed resource string from
-     * the declaring plugin. If the file could not be loaded from the plugin,
-     * the resource is returned as is.
-     * 
-     * @param resource
-     * @return
-     */
-    public static String getPluginLocation(String resource,
-            IConfigurationElement element) {
-        Bundle bundle = ModelLoaderUtil
-                .getBundleFromConfigurationElement(element);
-        return getPluginLocation(resource, bundle);
-    }
-
-    public static String getPluginLocation(String resource, Bundle bundle) {
-
-        // quick exits.
-        if (resource == null || !ModelLoaderUtil.bundleHasValidState(bundle))
-            return null;
-
-        URL localLocation = null;
-        try {
-            // we need to perform a 'resolve' on this URL.
-            localLocation = Platform.find(bundle, new Path(resource));
-            if (localLocation == null) {
-                // localLocation can be null if the passed resource could not
-                // be found relative to the plugin. log fact, return resource,
-                // as is.
-                String msg = StringUtil.concat("Could not find resource: ", //$NON-NLS-1$
-                        resource, " in ", ModelLoaderUtil.getBundleHeader( //$NON-NLS-1$
-                                bundle, Constants.BUNDLE_NAME)).toString();
-                Log.warning(msg);
-                return resource;
-            }
-            localLocation = Platform.asLocalURL(localLocation);
-            return localLocation.toExternalForm();
-        } catch (Exception e) {
-            String msg = StringUtil.concat("Failed to load resource: ", //$NON-NLS-1$
-                    resource, " from ", ModelLoaderUtil.getBundleHeader(bundle, //$NON-NLS-1$
-                            Constants.BUNDLE_NAME)).toString();
-            Log.error(msg, e);
-            return resource;
-        }
-    }
-
-    /**
-     * Returns the fully qualified location of the passed resource string from
-     * the passed plugin id. If the file could not be loaded from the plugin,
-     * the resource is returned as is.
-     * 
-     * @param resource
-     * @return
-     */
-    public static String getPluginLocation(String resource, String pluginId) {
-        Bundle bundle = Platform.getBundle(pluginId);
-        return getPluginLocation(resource, bundle);
     }
 
 

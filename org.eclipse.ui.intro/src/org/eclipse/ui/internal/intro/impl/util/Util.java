@@ -223,10 +223,10 @@ public class Util {
                         if (process == null)
                             result[0] = false;
                         else
-                        	result[0] = process.exitValue() == 0 ? true : false;
-                        if(result[0] == false)
-                        	// make sure we display error if we fail.
-                        	openBrowserError(display, null);
+                            result[0] = process.exitValue() == 0 ? true : false;
+                        if (result[0] == false)
+                            // make sure we display error if we fail.
+                            openBrowserError(display, null);
                     } catch (Exception e) {
                         openBrowserError(display, e);
                         result[0] = false;

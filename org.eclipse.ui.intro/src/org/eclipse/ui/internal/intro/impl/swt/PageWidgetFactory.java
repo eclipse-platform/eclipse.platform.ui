@@ -332,7 +332,7 @@ public class PageWidgetFactory {
         layout.leftMargin = 0;
         layout.rightMargin = 0;
         container.setLayout(layout);
-        
+
 
         IIntroContentProvider providerClass = ContentProviderManager.getInst()
                 .getContentProvider(provider);
@@ -347,7 +347,7 @@ public class PageWidgetFactory {
                         toolkit);
             } catch (Exception e) {
                 Log
-                        .warning("Failed to create the content of Intro model content provider: "
+                        .warning("Failed to create the content of Intro model content provider: " //$NON-NLS-1$
                                 + provider.getClassName());
                 // null provider.
                 providerClass = null;

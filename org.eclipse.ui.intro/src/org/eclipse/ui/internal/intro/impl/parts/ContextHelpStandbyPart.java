@@ -256,7 +256,9 @@ public class ContextHelpStandbyPart implements IStandbyContentPart {
                 break;
             node = node.getParent();
         } while (node != null);
-        if (contextId != null) { return HelpSystem.getContext(contextId); }
+        if (contextId != null) {
+            return HelpSystem.getContext(contextId);
+        }
         return null;
     }
 

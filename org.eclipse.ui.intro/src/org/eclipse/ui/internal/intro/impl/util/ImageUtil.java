@@ -96,7 +96,7 @@ public final class ImageUtil {
      * @return
      */
     public static Image getImage(String key) {
-        // DONOW: Image registry should not have the same life span
+        // INTRO: Image registry should not have the same life span
         // as the intro plug-in. It should be disposed when
         // presentation is disposed, otherwise images will
         // stay around once Inro has been loaded.

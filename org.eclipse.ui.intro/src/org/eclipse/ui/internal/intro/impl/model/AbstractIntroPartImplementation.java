@@ -223,7 +223,7 @@ public abstract class AbstractIntroPartImplementation {
 
 
     private boolean badNavigationLocation(int navigationLocation) {
-        if (navigationLocation < 0 | navigationLocation >= history.size())
+        if (navigationLocation < 0 || navigationLocation >= history.size())
             // bad nav location.
             return true;
         else

@@ -111,7 +111,7 @@ public class IntroHTMLGenerator {
         // add the title
         head.addContent(generateTitleElement(null, indentLevel + 1));
         // create the BASE element
-        String basePath = HTMLUtil.getResolvedBundleLocation(introPage
+        String basePath = BundleUtil.getResolvedBundleLocation(introPage
                 .getBundle());
         HTMLElement base = generateBaseElement(indentLevel + 1, basePath);
         if (base != null)
@@ -321,7 +321,7 @@ public class IntroHTMLGenerator {
     private HTMLElement generateIntroLink(IntroLink element, int indentLevel) {
         HTMLElement anchor = generateAnchorElement(element, indentLevel);
         // add <IMG src="blank.gif">
-        String blankImageURL = IntroModelRoot.getPluginLocation(
+        String blankImageURL = BundleUtil.getResolvedBundleLocation(
                 IIntroHTMLConstants.IMAGE_SRC_BLANK, IIntroConstants.PLUGIN_ID);
         if (blankImageURL != null) {
             anchor.addContent(generateImageElement(blankImageURL, null,
@@ -1133,7 +1133,7 @@ public class IntroHTMLGenerator {
                         // look up the plugin id. If it is a valid id
                         // return the absolute path to this plugin.
                         // otherwise return null.
-                        String path = HTMLUtil
+                        String path = BundleUtil
                                 .getResolvedBundleLocation(pluginId.toString());
 
                         // If the plugin id was not valid, reset reader to the

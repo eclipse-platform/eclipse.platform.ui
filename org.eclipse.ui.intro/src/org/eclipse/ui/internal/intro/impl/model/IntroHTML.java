@@ -45,7 +45,7 @@ public class IntroHTML extends AbstractTextElement {
         html_type = getAttribute(element, ATT_TYPE);
         encoding = getAttribute(element, ATT_ENCODING);
         if (encoding == null)
-            encoding = "UTF-8";
+            encoding = "UTF-8"; //$NON-NLS-1$
         if (html_type != null && !html_type.equalsIgnoreCase("inline") //$NON-NLS-1$
                 && !html_type.equalsIgnoreCase("embed")) //$NON-NLS-1$
             // if type is not correct, null it.
@@ -55,7 +55,7 @@ public class IntroHTML extends AbstractTextElement {
         introImage = getIntroImage(element);
 
         // Resolve.
-        src = IntroModelRoot.getPluginLocation(src, bundle);
+        src = BundleUtil.getResolvedBundleLocation(src, bundle);
     }
 
     /**

@@ -101,8 +101,8 @@ public class IntroPartPresentation extends AbstractIntroElement {
             // Implementation class is created lazily by UI.
             head = getHead(element);
             // Resolve.
-            implementationStyle = IntroModelRoot.resolveURL(
-                    implementationStyle, element);
+            implementationStyle = ModelUtil.resolveURL(implementationStyle,
+                    element);
         }
     }
 
@@ -329,7 +329,7 @@ public class IntroPartPresentation extends AbstractIntroElement {
                 // found implementation with matching kind.
                 String style = implementationElements[i]
                         .getAttribute(ATT_STYLE);
-                return IntroModelRoot.resolveURL(style, getCfgElement());
+                return ModelUtil.resolveURL(style, getCfgElement());
             }
         }
         return null;

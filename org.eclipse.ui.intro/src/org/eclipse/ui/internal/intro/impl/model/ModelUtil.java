@@ -1,0 +1,235 @@
+/*******************************************************************************
+ * Copyright (c) 2004 IBM Corporation and others. All rights reserved. This
+ * program and the accompanying materials are made available under the terms of
+ * the Common Public License v1.0 which accompanies this distribution, and is
+ * available at http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors: IBM Corporation - initial API and implementation
+ ******************************************************************************/
+
+package org.eclipse.ui.internal.intro.impl.model;
+
+import java.util.*;
+
+import org.eclipse.core.runtime.*;
+import org.osgi.framework.*;
+import org.w3c.dom.*;
+
+
+/**
+ * Util class for model. Has methods for resolving model attributes, and methods
+ * for manipulating XHTML DOM.
+ */
+public class ModelUtil {
+
+    private static String TAG_BODY = "body"; //$NON-NLS-1$
+    private static String TAG_HEAD = "head"; //$NON-NLS-1$
+    private static String TAG_BASE = "base"; //$NON-NLS-1$
+    private static String ATT_SRC = "src"; //$NON-NLS-1$
+    private static String ATT_HREF = "href"; //$NON-NLS-1$
+
+    /*
+     * ********* Model util methods ************************************
+     */
+
+    /**
+     * Checks to see if the passed string is a valid URL (has a protocol), if
+     * yes, returns it as is. If no, treats it as a resource relative to the
+     * declaring plugin. Return the plugin relative location, fully qualified.
+     * Retruns null if the passed string itself is null.
+     * 
+     * @param resource
+     * @param pluginDesc
+     * @return returns the URL as is if it had a protocol.
+     */
+    protected static String resolveURL(String url, String pluginId) {
+        Bundle bundle = null;
+        if (pluginId != null)
+            // if pluginId is not null, use it.
+            bundle = Platform.getBundle(pluginId);
+        return resolveURL(url, bundle);
+    }
+
+
+
+    /**
+     * Checks to see if the passed string is a valid URL (has a protocol), if
+     * yes, returns it as is. If no, treats it as a resource relative to the
+     * declaring plugin. Return the plugin relative location, fully qualified.
+     * Retruns null if the passed string itself is null.
+     * 
+     * @param resource
+     * @param pluginDesc
+     * @return returns the URL as is if it had a protocol.
+     */
+    protected static String resolveURL(String url, IConfigurationElement element) {
+        Bundle bundle = BundleUtil.getBundleFromConfigurationElement(element);
+        return resolveURL(url, bundle);
+    }
+
+
+
+    /**
+     * @see resolveURL(String url, IConfigurationElement element)
+     */
+    protected static String resolveURL(String url, Bundle bundle) {
+        // quick exit
+        if (url == null)
+            return null;
+        IntroURLParser parser = new IntroURLParser(url);
+        if (parser.hasProtocol())
+            return url;
+        else
+            // make plugin relative url. Only now we need the bundle.
+            return BundleUtil.getResolvedBundleLocation(url, bundle);
+    }
+
+
+
+    /*
+     * 
+     * ******** XHTML DOM util methods *********************************
+     */
+
+    /**
+     * Returns the path to the parent folder containing the passed content xml
+     * file. It is assumed that the path is a local url representing a content
+     * file.
+     */
+    public static String getFolderPath(String contentFilePath) {
+        IPath path = new Path(contentFilePath);
+        path = path.removeLastSegments(1).addTrailingSeparator();
+        return path.toOSString();
+    }
+
+
+
+    public static void insertBase(Document dom, String baseURL) {
+        // there should only be one head and one base element dom.
+        NodeList headList = dom.getElementsByTagName(TAG_HEAD);
+        Element head = (Element) headList.item(0);
+        NodeList baseList = head.getElementsByTagName(TAG_BASE);
+        if (baseList.getLength() == 0) {
+            // insert a base element, since one is not defined already.
+            Element base = dom.createElement(TAG_BASE);
+            base.setAttribute(ATT_HREF, baseURL);
+            head.insertBefore(base, head.getFirstChild());
+        }
+    }
+
+
+    /**
+     * Returns a reference to the body of the DOM.
+     * 
+     * @param dom
+     * @return
+     */
+    public static Element getBodyElement(Document dom) {
+        // there should only be one body element dom.
+        NodeList bodyList = dom.getElementsByTagName(TAG_BODY);
+        Element body = (Element) bodyList.item(0);
+        return body;
+    }
+
+
+    /**
+     * Returns an Element array of all first level descendant Elements with a
+     * given tag name, in the order in which they are encountered in the DOM.
+     * Unlike the JAXP apis, which returns preorder traversal of this Element
+     * tree, this method filters out children deeper than first level child
+     * nodes.
+     */
+    public static Element[] getElementsByTagName(Element parent, String tagName) {
+        NodeList allChildElements = parent.getElementsByTagName(tagName);
+        Vector vector = new Vector();
+        for (int i = 0; i < allChildElements.getLength(); i++) {
+            // we know that the nodelist is of elements.
+            Element aElement = (Element) allChildElements.item(i);
+            if (aElement.getParentNode().equals(parent))
+                // first level child element. add it.
+                vector.add(aElement);
+        }
+        Element[] filteredElements = new Element[vector.size()];
+        vector.copyInto(filteredElements);
+        return filteredElements;
+    }
+
+    /**
+     * Same as getElementsByTagName(Element parent, String tagName) but the
+     * parent element is assumed to be the root of the document.
+     * 
+     * @see getElementsByTagName(Element parent, String tagName)
+     */
+    public static Element[] getElementsByTagName(Document dom, String tagName) {
+        NodeList allChildElements = dom.getElementsByTagName(tagName);
+        Vector vector = new Vector();
+        for (int i = 0; i < allChildElements.getLength(); i++) {
+            // we know that the nodelist is of elements.
+            Element aElement = (Element) allChildElements.item(i);
+            if (aElement.getParentNode().equals(dom.getDocumentElement()))
+                // first level child element. add it. Cant use getParent
+                // here.
+                vector.add(aElement);
+        }
+        Element[] filteredElements = new Element[vector.size()];
+        vector.copyInto(filteredElements);
+        return filteredElements;
+    }
+
+
+
+    /**
+     * Updates the "src" attribute of the passed element to point to a local
+     * resolved url.
+     * 
+     * @param element
+     * @param extensionContent
+     */
+    public static void updateResourceAttributes(Element element,
+            String localContentFilePath) {
+
+        String folderLocalPath = getFolderPath(localContentFilePath);
+        doUpdateResourceAttributes(element, folderLocalPath);
+        NodeList children = element.getElementsByTagName("*"); //$NON-NLS-1$
+        for (int i = 0; i < children.getLength(); i++) {
+            Element child = (Element) children.item(i);
+            doUpdateResourceAttributes(child, folderLocalPath);
+        }
+    }
+
+    private static void doUpdateResourceAttributes(Element element,
+            String folderLocalPath) {
+        qualifyAttribute(element, ATT_SRC, folderLocalPath);
+        qualifyAttribute(element, ATT_HREF, folderLocalPath);
+    }
+
+    private static void qualifyAttribute(Element element, String attributeName,
+            String folderLocalPath) {
+        if (element.hasAttribute(attributeName)) {
+            String attributeValue = element.getAttribute(attributeName);
+            if (new IntroURLParser(attributeValue).hasProtocol())
+                return;
+            IPath localSrcPath = new Path(folderLocalPath)
+                    .append(attributeValue);
+            element.setAttribute(attributeName, localSrcPath.toOSString());
+        }
+    }
+
+
+    /**
+     * Returns an array version of the passed NodeList. Used to work around DOM
+     * design issues.
+     */
+    public static Node[] getArray(NodeList nodeList) {
+        Node[] nodes = new Node[nodeList.getLength()];
+        for (int i = 0; i < nodeList.getLength(); i++)
+            nodes[i] = nodeList.item(i);
+        return nodes;
+
+    }
+
+
+
+}
+
+

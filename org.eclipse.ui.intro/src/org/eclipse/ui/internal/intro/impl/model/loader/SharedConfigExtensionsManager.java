@@ -59,7 +59,7 @@ public class SharedConfigExtensionsManager {
             createModelClass(element);
         }
     }
-   
+
 
     /**
      * Create an intro standby part or an intro command model class.

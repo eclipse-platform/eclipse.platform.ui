@@ -274,7 +274,7 @@ public class IntroURL implements IIntroURL {
         // no need to decode url because we will create another url from this
         // url anyway. Resolve the url just in case we are trying to load a
         // plugin relative file.
-        url = IntroModelRoot.resolveURL(url, pluginId);
+        url = ModelUtil.resolveURL(url, pluginId);
         return Util.openBrowser(url);
     }
 

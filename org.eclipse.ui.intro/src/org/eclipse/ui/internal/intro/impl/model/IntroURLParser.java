@@ -52,8 +52,7 @@ public class IntroURLParser {
         }
 
         if (url_inst.getProtocol() != null) {
-            // URL has some valid protocol. Check to see if it is an intro
-            // url.
+            // URL has some valid protocol. Check to see if it is an intro url.
             hasProtocol = true;
             isIntroUrl = isIntoUrl(url_inst);
             if (isIntroUrl) {

@@ -18,6 +18,7 @@ import org.eclipse.ui.actions.*;
 import org.eclipse.ui.internal.intro.impl.*;
 import org.eclipse.ui.internal.intro.impl.html.*;
 import org.eclipse.ui.internal.intro.impl.model.*;
+import org.eclipse.ui.internal.intro.impl.model.loader.*;
 import org.eclipse.ui.internal.intro.impl.util.*;
 import org.eclipse.ui.intro.config.*;
 
@@ -146,18 +147,25 @@ public class BrowserIntroPartImplementation extends
      *            the page to generate HTML for
      */
     private boolean generateDynamicContentForPage(AbstractIntroPage page) {
+        String content = null;
+        if (page.isXHTMLPage())
+            content = generateXHTMLPage(page);
+        else {
+            HTMLElement html = getHTMLGenerator().generateHTMLforPage(page,
+                    this);
+            if (html != null)
+                content = html.toString();
+        }
 
-        HTMLElement html = getHTMLGenerator().generateHTMLforPage(page, this);
-
-        if (html == null) {
+        if (content == null) {
             // there was an error generating the html. log an error
-            Log.error("Error generating HTML", null); //$NON-NLS-1$
+            Log.error("Error generating HTML content for page", null); //$NON-NLS-1$
             return false;
         }
         // set the browser's HTML.
         boolean success = false;
         if (browser != null) {
-            success = browser.setText(html.toString());
+            success = browser.setText(content);
             if (!success)
                 Log.error("Unable to set HTML on the browser", null); //$NON-NLS-1$
         }
@@ -166,10 +174,15 @@ public class BrowserIntroPartImplementation extends
             String printHtml = Platform
                     .getDebugOption("org.eclipse.ui.intro/trace/printHTML"); //$NON-NLS-1$
             if (printHtml != null && printHtml.equalsIgnoreCase("true")) { //$NON-NLS-1$
-                System.out.println(html);
+                System.out.println(content);
             }
         }
         return success;
+    }
+
+    private String generateXHTMLPage(AbstractIntroPage page) {
+        // if page is an XHTML page, we know it has a DOM cached.
+        return IntroContentParser.convertToString(page.getResolvedDocument());
     }
 
     /**

@@ -38,7 +38,7 @@ public class IntroHomePage extends AbstractIntroPage {
             isDynamic = true;
         else
             // check the url/standby-url attributes and update accordingly.
-            url = IntroModelRoot.resolveURL(url, bundle);
+            url = ModelUtil.resolveURL(url, bundle);
     }
 
 

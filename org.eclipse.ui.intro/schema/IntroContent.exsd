@@ -97,6 +97,8 @@ The subelements used in a dynamic page are as follows: A &lt;b&gt;group&lt;/b&gt
                <documentation>
                   an optional attribute which can define the location of an introContent.xml file that represents the content of this page. When this attribute is defined, all children and attributes in this page element, except id, are ignored. This is because the content of this page is now assumed to reside in the xml file pointed to by the content file attribute. When resolving to the content of this file, the page with an id that matches the id defined in this page element is chosen.
 This seperation of pages can be used when performance is an issue, as the content of a page is now loaded more lazily.
+
+If the content of the external file is XHTML, then the page is rendered as is. TO DO (finish docs) since 3.1
                </documentation>
             </annotation>
          </attribute>
@@ -593,7 +595,14 @@ Inclusion allows for including an html snippet directly from a file into the dyn
          <attribute name="path" type="string" use="required">
             <annotation>
                <documentation>
-                  the path that uniquely represents the path to an anchor. (e.g. page/group1/group2/anchorId) within the target configuration to be extended. It can only be an anchor which can be in any page or group, including shared groups at configuration level
+                  the path that uniquely represents the path to an anchor. (e.g. page/group1/group2/anchorId) within the target configuration to be extended. It can only be an anchor which can be in any page or group, including shared groups at configuration level.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="content" type="string">
+            <annotation>
+               <documentation>
+                  if content is defined, it is assumed that the extension content is defined in an external XHTML file. In that case the resource pointed to by this content attribute is loaded and the path attribute is now resolved in this external file. since 3.1
                </documentation>
             </annotation>
          </attribute>

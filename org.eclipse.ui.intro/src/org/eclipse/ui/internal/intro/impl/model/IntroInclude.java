@@ -22,7 +22,7 @@ public class IntroInclude extends AbstractIntroElement {
     protected static final String TAG_INCLUDE = "include"; //$NON-NLS-1$
 
     private static final String ATT_CONFIG_ID = "configId"; //$NON-NLS-1$
-    private static final String ATT_PATH = "path"; //$NON-NLS-1$
+    protected static final String ATT_PATH = "path"; //$NON-NLS-1$
     /**
      * boolean attribute, default is false.
      */

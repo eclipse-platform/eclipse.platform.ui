@@ -39,7 +39,7 @@ public class IntroLink extends AbstractTextElement {
         url = getAttribute(element, ATT_URL);
         label = getAttribute(element, ATT_LABEL);
 
-        url = IntroModelRoot.resolveURL(url, bundle);
+        url = ModelUtil.resolveURL(url, bundle);
         if (url != null) {
             // check the URL.
             IntroURLParser parser = new IntroURLParser(url);

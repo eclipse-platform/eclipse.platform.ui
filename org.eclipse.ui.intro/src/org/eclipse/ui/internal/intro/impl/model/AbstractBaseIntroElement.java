@@ -31,7 +31,7 @@ import org.w3c.dom.*;
 public abstract class AbstractBaseIntroElement extends AbstractIntroIdElement {
 
     protected static final String ATT_STYLE_ID = "style-id"; //$NON-NLS-1$
-    protected static final String ATT_FIlTERED_FROM = "filteredFrom"; //$NON-NLS-1$
+    protected static final String ATT_FILTERED_FROM = "filteredFrom"; //$NON-NLS-1$
 
     protected String style_id;
     protected String filteredFrom;
@@ -40,13 +40,13 @@ public abstract class AbstractBaseIntroElement extends AbstractIntroIdElement {
     AbstractBaseIntroElement(IConfigurationElement element) {
         super(element);
         style_id = element.getAttribute(ATT_STYLE_ID);
-        filteredFrom = element.getAttribute(ATT_FIlTERED_FROM);
+        filteredFrom = element.getAttribute(ATT_FILTERED_FROM);
     }
 
     AbstractBaseIntroElement(Element element, Bundle bundle) {
         super(element, bundle);
         style_id = getAttribute(element, ATT_STYLE_ID);
-        filteredFrom = getAttribute(element, ATT_FIlTERED_FROM);
+        filteredFrom = getAttribute(element, ATT_FILTERED_FROM);
     }
 
     /**

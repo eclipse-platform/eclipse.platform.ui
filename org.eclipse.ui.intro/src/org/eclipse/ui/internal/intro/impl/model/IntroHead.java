@@ -35,10 +35,10 @@ public class IntroHead extends AbstractIntroElement {
         src = element.getAttribute(ATT_SRC);
         encoding = element.getAttribute(ATT_ENCODING);
         if (encoding == null)
-            encoding = "UTF-8";
+            encoding = "UTF-8"; //$NON-NLS-1$
 
         // Resolve.
-        src = IntroModelRoot.getPluginLocation(src, element);
+        src = BundleUtil.getPluginLocation(src, element);
     }
 
     IntroHead(Element element, Bundle bundle) {
@@ -46,10 +46,10 @@ public class IntroHead extends AbstractIntroElement {
         src = getAttribute(element, ATT_SRC);
         encoding = getAttribute(element, ATT_ENCODING);
         if (encoding == null)
-            encoding = "UTF-8";
+            encoding = "UTF-8"; //$NON-NLS-1$
 
         // Resolve.
-        src = IntroModelRoot.getPluginLocation(src, bundle);
+        src = BundleUtil.getResolvedBundleLocation(src, bundle);
     }
 
     /**

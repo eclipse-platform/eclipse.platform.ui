@@ -13,11 +13,15 @@ package org.eclipse.ui.internal.intro.impl.model;
 
 import java.util.*;
 
+import org.eclipse.ui.internal.intro.impl.model.loader.*;
 import org.osgi.framework.*;
 import org.w3c.dom.*;
 
 /**
- * An intro container extension.
+ * An intro container extension. If the content attribute is defined, then it is
+ * assumed that we have XHTML content in an external file. Load content from
+ * external DOM. No need to worry about caching here because this is a transient
+ * model class. It is used and then disregarded from the model.
  */
 public class IntroExtensionContent extends AbstractIntroElement {
 
@@ -26,10 +30,12 @@ public class IntroExtensionContent extends AbstractIntroElement {
     protected static final String ATT_PATH = "path"; //$NON-NLS-1$
     private static final String ATT_STYLE = "style"; //$NON-NLS-1$
     private static final String ATT_ALT_STYLE = "alt-style"; //$NON-NLS-1$
+    private static final String ATT_CONTENT = "content"; //$NON-NLS-1$
 
     private String path;
     private String style;
     private String altStyle;
+    private String content;
 
     private Element element;
 
@@ -38,11 +44,14 @@ public class IntroExtensionContent extends AbstractIntroElement {
         path = getAttribute(element, ATT_PATH);
         style = getAttribute(element, ATT_STYLE);
         altStyle = getAttribute(element, ATT_ALT_STYLE);
+        content = getAttribute(element, ATT_CONTENT);
         this.element = element;
 
         // Resolve.
-        style = IntroModelRoot.getPluginLocation(style, bundle);
-        altStyle = IntroModelRoot.getPluginLocation(altStyle, bundle);
+        style = BundleUtil.getResolvedBundleLocation(style, bundle);
+        altStyle = BundleUtil.getResolvedBundleLocation(altStyle, bundle);
+        // if content is not null we have XHTML extension.
+        content = BundleUtil.getResolvedBundleLocation(content, bundle);
     }
 
     /**
@@ -77,6 +86,26 @@ public class IntroExtensionContent extends AbstractIntroElement {
         return filteredElements;
     }
 
+    public boolean isXHTMLContent() {
+        return content != null ? true : false;
+    }
+
+    public Document getDocument() {
+        if (isXHTMLContent()) {
+            IntroContentParser parser = new IntroContentParser(content);
+            Document dom = parser.getDocument();
+            if (dom == null)
+                // bad xml. Parser would have logged fact.
+                return null;
+            // parser content should be XHTML because defining content here
+            // means that we want XHTML extension.
+            if (parser.hasXHTMLContent())
+                return dom;
+
+        }
+        return null;
+    }
+
     /**
      * @return Returns the altStyle.
      */
@@ -91,4 +120,10 @@ public class IntroExtensionContent extends AbstractIntroElement {
         return style;
     }
 
+    /**
+     * @return Returns the content.
+     */
+    public String getContent() {
+        return content;
+    }
 }
