@@ -19,7 +19,10 @@ import org.eclipse.ui.internal.console.IOConsolePartitioner;
 
 /**
  * OutputStream used to write to an IOConsole.
- * 
+ * <p>
+ * Clients are not intended to instantiate this class directly, instead
+ * use <code>IOConsole.newOutputStream()</code>.
+ * </p>
  * @since 3.1
  */
 public class IOConsoleOutputStream extends OutputStream {
@@ -57,22 +60,29 @@ public class IOConsoleOutputStream extends OutputStream {
     private String fEncoding;
     private String fDefaultEncoding = WorkbenchEncoding.getWorkbenchDefaultEncoding();
     
+    /**
+     * Constructs a new output stream on the given console.
+     * 
+     * @param console I/O console
+     */
     IOConsoleOutputStream(IOConsole console) {
         this.console = console;
         this.partitioner = (IOConsolePartitioner) console.getPartitioner();
     }
 
     /**
-     * Returns the font style used to decorate data written to this stream
-     * @return The font style used to decorate data written to this stream
+     * Returns the font style used to decorate data written to this stream.
+     * 
+     * @return the font style used to decorate data written to this stream
      */
     public int getFontStyle() {
         return fontStyle;
     }
     
     /**
-     * Sets the font style to be used to decorate data written to this stream
-     * @param newFontStyle The font style to be used to decorate data written to this stream
+     * Sets the font style to be used to decorate data written to this stream.
+     * 
+     * @param newFontStyle the font style to be used to decorate data written to this stream
      */
     public void setFontStyle(int newFontStyle) {
         if (newFontStyle != fontStyle) {
@@ -83,27 +93,32 @@ public class IOConsoleOutputStream extends OutputStream {
     }
     
     /**
-     * Returns the value of activateOnWrite
-     * @return true if console is activated automatically when data is written to this stream, false if the 
-     * console is not activated by data being written to this stream.
+     * Returns whether the console this stream is writing to will be activated when this stream
+     * is written to.
+     * 
+     * @return whether the console this stream is writing to will be activated when this stream
+     * is written to.
      */
     public boolean isActivateOnWrite() {
         return activateOnWrite;
     }
 
     /**
-     * Sets the value of activateOnWrite
-     * @param activateOnWrite true if the console should be activated when data is written to this
-     * stream, false if it should not be activated.
+     * Sets whether to activate the console this stream is writing to when this stream
+     * is written to.
+     * 
+     * @param activateOnWrite whether the console this stream is writing to will be activated when this stream
+     * is written to.
      */
     public void setActivateOnWrite(boolean activateOnWrite) {
         this.activateOnWrite = activateOnWrite;
     }
     
 	/**
-	 * Sets the color of this message stream
+	 * Sets the color of this stream. Use <code>null</code> to indicate
+     * the default color.
 	 * 
-	 * @param color color of this message stream, possibly <code>null</code>
+	 * @param color color of this stream, or <code>null</code>
 	 */
 	public void setColor(Color newColor) {
 		Color old = color;
@@ -114,24 +129,14 @@ public class IOConsoleOutputStream extends OutputStream {
 	}
 	
 	/**
-	 * Returns the color of this message stream, or <code>null</code>
+	 * Returns the color of this stream, or <code>null</code>
 	 * if default.
 	 * 
-	 * @return the color of this message stream, or <code>null</code>
+	 * @return the color of this stream, or <code>null</code>
 	 */
 	public Color getColor() {
 	    return color;
 	}
-
-	
-	/**
-	 * Returns the console this stream is connected to.
-	 * 
-	 * @return the console this stream is connected to
-	 */
-	public Object getConsole() {
-        return console;
-    }
 	
 	/*
 	 *  (non-Javadoc)
@@ -183,8 +188,9 @@ public class IOConsoleOutputStream extends OutputStream {
     }    
     
     /**
-     * Writes a String to the attached console.
-     * @param str The string to write to the attached console.
+     * Writes a string to the attached console.
+     * 
+     * @param str the string to write to the attached console.
      * @throws IOException if the stream is closed.
      */
     public synchronized void write(String str) throws IOException {
@@ -208,7 +214,9 @@ public class IOConsoleOutputStream extends OutputStream {
     }
 
     /**
-     * @param encoding
+     * Sets the character encoding used to interpret characters written to this steam. 
+     * 
+     * @param encoding endcoding identifier
      */
     public void setEncoding(String encoding) {
         fEncoding = encoding;

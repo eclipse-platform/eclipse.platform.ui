@@ -98,14 +98,27 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
 		}
 	};
 	
+    /**
+     * Constructs a text console page for the given console in the given view.
+     * 
+     * @param console text console
+     * @param view console view the page is contained in
+     */
 	public TextConsolePage(TextConsole console, IConsoleView view) {
 	    fConsole = console;
 	    fConsoleView = view;
 	}
 	
-	protected TextConsoleViewer createViewer(Composite parent, TextConsole console) {
-	    return new TextConsoleViewer(parent, console);
+    /**
+     * Returns a viewer used to display the contents of this page's console.
+     * 
+     * @param parent container for the viewer
+     * @return a viewer used to display the contents of this page's console
+     */
+	protected TextConsoleViewer createViewer(Composite parent) {
+	    return new TextConsoleViewer(parent, fConsole);
 	}
+    
     /*
      *  (non-Javadoc)
      * @see org.eclipse.ui.part.IPageBookViewPage#getSite()
@@ -122,6 +135,9 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
         fSite = pageSite;
     }
 
+    /**
+     * Updates selection dependent actions.
+     */
     protected void updateSelectionDependentActions() {
 		Iterator iterator= fSelectionActions.iterator();
 		while (iterator.hasNext()) {
@@ -134,7 +150,7 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
      * @see org.eclipse.ui.part.IPage#createControl(org.eclipse.swt.widgets.Composite)
      */
     public void createControl(Composite parent) {
-        fViewer = createViewer(parent, fConsole);
+        fViewer = createViewer(parent);
 		fViewer.setConsoleWidth(fConsole.getConsoleWidth());
 		fViewer.setTabWidth(fConsole.getTabWidth());
 		fConsole.addPropertyChangeListener(this);
@@ -250,6 +266,9 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
         }
 	}
 
+    /**
+     * Creates actions.
+     */
     protected void createActions() {
         IActionBars actionBars= getSite().getActionBars();
         TextViewerAction action= new TextViewerAction(fViewer, ITextOperationTarget.SELECT_ALL);
@@ -287,6 +306,13 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
 		actionBars.updateActionBars();
     }
     
+    /**
+     * Configures an action for key bindings.
+     * 
+     * @param actionBars action bars for this page
+     * @param actionID action definition id
+     * @param action associated action
+     */
     protected void setGlobalAction(IActionBars actionBars, String actionID, IAction action) {
         fGlobalActions.put(actionID, action);  
         actionBars.setGlobalActionHandler(actionID, action);
@@ -306,7 +332,7 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
     }
     
     /**
-	 * Returns the view this page is contained in
+	 * Returns the view this page is contained in.
 	 * 
 	 * @return the view this page is contained in
 	 */
@@ -315,7 +341,7 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
 	}
 	
 	/**
-	 * Returns the console this page is displaying
+	 * Returns the console this page is displaying.
 	 * 
 	 * @return the console this page is displaying
 	 */
@@ -323,6 +349,11 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
 		return fConsole;
 	}
 	
+    /**
+     * Updates the global action with the given id
+     * 
+     * @param actionId action definition id
+     */
 	protected void updateAction(String actionId) {
 		IAction action= (IAction)fGlobalActions.get(actionId);
 		if (action instanceof IUpdate) {
@@ -361,13 +392,18 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
 
 
     /**
-     * @return Returns the viewer.
+     * Returns the viewer contained in this page.
+     * 
+     * @return the viewer contained in this page
      */
     public TextConsoleViewer getViewer() {
         return fViewer;
     }
+    
     /**
-     * @param viewer The viewer to set.
+     * Sets the viewer contained in this page.
+     * 
+     * @param viewer text viewer
      */
     public void setViewer(TextConsoleViewer viewer) {
         this.fViewer = viewer;

@@ -20,6 +20,9 @@ import java.io.IOException;
  * @since 3.0
  */
 public class MessageConsoleStream extends IOConsoleOutputStream {
+    
+    private MessageConsole fMessageConsole;
+    
 	/**
 	 * Constructs a new stream connected to the given console.
 	 * 
@@ -27,6 +30,7 @@ public class MessageConsoleStream extends IOConsoleOutputStream {
 	 */
 	public MessageConsoleStream(MessageConsole console) {
 	    super(console);
+        fMessageConsole = console;
 	}
 	
 	/**
@@ -64,4 +68,13 @@ public class MessageConsoleStream extends IOConsoleOutputStream {
 		print(message);
 		println();
 	}	
+    
+    /**
+     * Returns the console this stream is connected to.
+     * 
+     * @return the console this stream is connected to
+     */
+    public MessageConsole getConsole() {
+        return fMessageConsole;
+    }    
 }

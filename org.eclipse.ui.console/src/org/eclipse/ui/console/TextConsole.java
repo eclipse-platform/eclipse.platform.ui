@@ -34,7 +34,7 @@ import org.eclipse.ui.part.IPageBookViewPage;
  * <p>
  * Pattern match listeners can be registered with a console programmatically
  * or via the <code>org.eclipse.ui.console.consolePatternMatchListeners</code>
- * extension point. Listeners are notified of matches in the console.
+ * extension point.
  * </p>
  * <p>
  * Clients may subclass this class. Subclasses must provide a document partitioner.
@@ -164,7 +164,7 @@ public abstract class TextConsole extends AbstractConsole {
     }
 
 	/**
-	 * Sets the tab width.
+	 * Sets the tab width used in this console.
 	 * 
 	 * @param newTabWidth the tab width 
 	 */
@@ -181,9 +181,9 @@ public abstract class TextConsole extends AbstractConsole {
     }
     
 	/**
-	 * Returns the tab width.
+	 * Returns the tab width used in this console.
 	 * 
-	 * @return tab width
+	 * @return tab width used in this console
 	 */
     public int getTabWidth() {
         return fTabWidth;
@@ -275,8 +275,8 @@ public abstract class TextConsole extends AbstractConsole {
     /**
      * Returns the hyperlink at the given offset of <code>null</code> if none.
      * 
-     * @param offset the hyperlink at the given offset of <code>null</code> if none
-     * @return
+     * @param offset offset for which a hyperlink is requested
+     * @return the hyperlink at the given offset of <code>null</code> if none
      */
     public IHyperlink getHyperlink(int offset) {
         try {
@@ -338,7 +338,8 @@ public abstract class TextConsole extends AbstractConsole {
 
     /**
      * Adds the given pattern match listener to this console. The listener will
-     * be connected and receive match notifications.
+     * be connected and receive match notifications. Has no effect if an identical
+     * listener has already been added.
      * 
      * @param listener the listener to add
      */
@@ -348,9 +349,10 @@ public abstract class TextConsole extends AbstractConsole {
     
     /**
      * Removes the given pattern match listener from this console. The listener will be
-     * disconnected and will no longer receive match notifications.
+     * disconnected and will no longer receive match notifications. Has no effect
+     * if the listener was not previously added.
      * 
-     * @param listener the pattern match listener to remove.
+     * @param listener the pattern match listener to remove
      */
     public void removePatternMatchListener(IPatternMatchListener listener) {
         fPatternMatcher.removePatternMatchListener(listener);
@@ -382,15 +384,18 @@ public abstract class TextConsole extends AbstractConsole {
     }
     
     /**
+     * Returns a scheduling rule which can be used to prevent jobs from running
+     * while this console's pattern matcher is active.
+     * 
      * @return a scheduling rule which can be used to prevent jobs from running
-     * while the console's pattern matcher is active.
+     * while this console's pattern matcher is active
      */
     public ISchedulingRule getSchedulingRule() {
         return new MatcherSchedulingRule();
     }
     
     /**
-     * Partitioners should call this method when they are not expecting any new data
+     * This console's partitioner should call this method when it is not expecting any new data
      * to be appended to the document. 
      */
     public void partitionerFinished() {
@@ -400,10 +405,10 @@ public abstract class TextConsole extends AbstractConsole {
     }
     
     /**
-     * Called by the Console's Pattern Matcher when matching is complete and all
-     * listeners have been notified.
-     * 
+     * Called by this console's pattern matcher when matching is complete.
+     * <p>
      * Clients should not call this method.
+     * <p>
      */
     public void matcherFinished() {
         fMatcherFinished = true;
@@ -467,7 +472,7 @@ public abstract class TextConsole extends AbstractConsole {
      * Returns the attribue associated with the specified key.
      * 
      * @param key attribute key
-     * @return Returns the attribue associated with the specified key
+     * @return the attribue associated with the specified key
      */
     public Object getAttribute(String key) {
         synchronized (fAttributes) {
@@ -476,7 +481,7 @@ public abstract class TextConsole extends AbstractConsole {
     }
     
     /**
-     * Sets an attribute value.
+     * Sets an attribute value. Intended for client data.
      * 
      * @param key attribute key
      * @param value attribute value

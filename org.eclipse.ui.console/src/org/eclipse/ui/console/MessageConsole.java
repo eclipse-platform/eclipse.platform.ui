@@ -26,6 +26,12 @@ import org.eclipse.ui.part.IPageBookViewPage;
  */
 public class MessageConsole extends IOConsole {
 
+    /**
+     * Consturcts a message console with the given name and image.
+     * 
+     * @param name console name
+     * @param imageDescriptor console image descriptor or <code>null</code>
+     */
 	public MessageConsole(String name, ImageDescriptor imageDescriptor) {
 		this(name, imageDescriptor, true);
 	}
@@ -34,7 +40,7 @@ public class MessageConsole extends IOConsole {
 	 * Constructs a message console.
 	 * 
 	 * @param name console name
-	 * @param imageDescriptor console image descriptor
+	 * @param imageDescriptor console image descriptor or <code>null</code>
 	 * @param autoLifecycle whether lifecycle methods should be called automatically
 	 *  when added and removed from the console manager
 	 * @since 3.1
@@ -67,4 +73,5 @@ public class MessageConsole extends IOConsole {
     public IOConsoleInputStream getInputStream() {
         throw new UnsupportedOperationException("Message Console does not support user input"); //$NON-NLS-1$
     }
+    
 }

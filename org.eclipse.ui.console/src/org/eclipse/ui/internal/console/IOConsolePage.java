@@ -67,8 +67,8 @@ public class IOConsolePage extends TextConsolePage {
      * @see org.eclipse.ui.console.TextConsolePage#createViewer(org.eclipse.swt.widgets.Composite,
      *      org.eclipse.ui.console.TextConsole)
      */
-    protected TextConsoleViewer createViewer(Composite parent, TextConsole console) {
-        return new IOConsoleViewer(parent, console);
+    protected TextConsoleViewer createViewer(Composite parent) {
+        return new IOConsoleViewer(parent, (TextConsole)getConsole());
     }
 
     public void setAutoScroll(boolean scroll) {
@@ -79,7 +79,7 @@ public class IOConsolePage extends TextConsolePage {
     }
 
     /**
-     * inform the viewer that it's text widget should not be editable.
+     * Informs the viewer that it's text widget should not be editable.
      */
     public void setReadOnly() {
         fReadOnly = true;

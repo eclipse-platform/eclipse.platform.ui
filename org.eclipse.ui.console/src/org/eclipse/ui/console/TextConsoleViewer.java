@@ -49,7 +49,7 @@ import org.eclipse.ui.internal.console.ConsoleDocumentAdapter;
 import org.eclipse.ui.internal.console.ConsoleHyperlinkPosition;
 
 /**
- * Viewer used to display a TextConsole
+ * Default viewer used to display a <code>TextConsole</code>.
  * <p>
  * Clients may subclass this class.
  * </p>
@@ -73,6 +73,12 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
     
     private IPropertyChangeListener propertyChangeListener;
 
+    /**
+     * Constructs a new viewer in the given parent for the specified console.
+     * 
+     * @param parent containing widget
+     * @param console text console
+     */
     public TextConsoleViewer(Composite parent, TextConsole console) {
         super(parent, SWT.H_SCROLL | SWT.V_SCROLL);
         this.console = console;
@@ -92,18 +98,31 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
         colorRegistry.addListener(propertyChangeListener);
     }
 
+    /**
+     * Sets the tab width used by this viewer.
+     * 
+     * @param tabWidth the tab width used by this viewer
+     */
     public void setTabWidth(int tabWidth) {
         StyledText styledText = getTextWidget();
         styledText.setTabs(tabWidth);
         styledText.redraw();
     }
 
+    /**
+     * Sets the font used by this viewer.
+     * 
+     * @param font the font used by this viewer
+     */
     public void setFont(Font font) {
         StyledText styledText = getTextWidget();
         styledText.setFont(font);
         styledText.redraw();
     }
 
+    /**
+     * Positions the cursor at the end of the document.
+     */
     protected void revealEndOfDocument() {
         StyledText text = getTextWidget();
         if (text != null) {
@@ -318,6 +337,11 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
         }
     }
 
+    /**
+     * Returns the hand cursor.
+     * 
+     * @return the hand cursor
+     */
     protected Cursor getHandCursor() {
         if (handCursor == null) {
             handCursor = new Cursor(ConsolePlugin.getStandardDisplay(), SWT.CURSOR_HAND);
@@ -325,6 +349,11 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
         return handCursor;
     }
 
+    /**
+     * Returns the text cursor.
+     * 
+     * @return the text cursor
+     */
     protected Cursor getTextCursor() {
         if (textCursor == null) {
             textCursor = new Cursor(ConsolePlugin.getStandardDisplay(), SWT.CURSOR_IBEAM);
@@ -332,6 +361,11 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
         return textCursor;
     }
 
+    /**
+     * Notification a hyperlink has been entered.
+     * 
+     * @param link the link that was entered
+     */
     protected void linkEntered(IHyperlink link) {
         Control control = getTextWidget();
         control.setRedraw(false);
@@ -346,6 +380,11 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
         control.addMouseListener(this);
     }
 
+    /**
+     * Notification a link was exited.
+     * 
+     * @param link the link that was exited
+     */
     protected void linkExited(IHyperlink link) {
         link.linkExited();
         hyperlink = null;
@@ -423,14 +462,20 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
     }
 
     /**
-     * Returns the current value of <code>hyperlink</code> field
+     * Returns the currently active hyperlink or <code>null</code> if none.
      * 
-     * @return The current value of <code>hyperlink</code> field
+     * @return the currently active hyperlink or <code>null</code> if none
      */
     public IHyperlink getHyperlink() {
         return hyperlink;
     }
 
+    /**
+     * Returns the hyperlink at the specified offset, or <code>null</code> if none.
+     * 
+     * @param offset offset at which a hyperlink has been requested
+     * @return hyperlink at the specified offset, or <code>null</code> if none
+     */
     public IHyperlink getHyperlink(int offset) {
         if (offset >= 0 && console != null) {
             return console.getHyperlink(offset);
@@ -483,7 +528,10 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
     }
 
     /**
-     * @param consoleWidth
+     * Sets the console to have a fixed character width. Use -1 to indicate that a fixed
+     * width should not be used.
+     * 
+     * @param consoleWidth fixed characater width of the console, or -1 
      */
     public void setConsoleWidth(int width) {
         consoleWidth = width;

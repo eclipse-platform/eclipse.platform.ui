@@ -13,11 +13,11 @@ package org.eclipse.ui.console;
 import java.util.EventObject;
 
 /**
- * An event describing a pattern match in a console. The source of the event
- * is an <code>IOConsole</code>.
+ * An event describing a pattern match in a text console. The source of the event
+ * is a <code>TextConsole</code>.
  * 
  * @see org.eclipse.ui.console.IPatternMatchListener
- * @see org.eclipse.ui.console.IOConsole
+ * @see org.eclipse.ui.console.TextConsole
  * @since 3.1
  */
 public class PatternMatchEvent extends EventObject {

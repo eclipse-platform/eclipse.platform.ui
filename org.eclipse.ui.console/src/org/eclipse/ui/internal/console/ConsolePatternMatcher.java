@@ -197,7 +197,15 @@ public class ConsolePatternMatcher implements IDocumentListener {
      */
     public void addPatternMatchListener(IPatternMatchListener matchListener) {
         synchronized (patterns) {
-            // TODO: check for dups
+            
+            // check for dups
+            for (Iterator iter = patterns.iterator(); iter.hasNext();) {
+                CompiledPatternMatchListener element = (CompiledPatternMatchListener) iter.next();
+                if (element.listener == matchListener) {
+                    return;
+                }
+            }
+            
             if (matchListener == null || matchListener.getPattern() == null) {
                 throw new IllegalArgumentException("Pattern cannot be null"); //$NON-NLS-1$
             }

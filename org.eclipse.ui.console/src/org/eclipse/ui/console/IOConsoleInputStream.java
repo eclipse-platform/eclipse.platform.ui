@@ -18,9 +18,11 @@ import org.eclipse.swt.graphics.Color;
 
 /**
  * InputStream used to read input from an IOConsole. 
- * This stream will buffer input that it receives from the console
- * until it has been read.
- * 
+ * This stream will buffer input that it receives until it has been read.
+ * <p>
+ * Clients are not intended to instantiate this class directly, instead
+ * use <code>IOConsole.getInputStream()</code>.
+ * </p>
  * @since 3.1
  *
  */
@@ -73,6 +75,11 @@ public class IOConsoleInputStream extends InputStream {
     private int fontStyle = SWT.NORMAL;
 
 
+    /**
+     * Constructs a new input stream on the given console.
+     * 
+     * @param console I/O console
+     */
     IOConsoleInputStream(IOConsole console) {
         this.console = console;
     }
@@ -129,7 +136,7 @@ public class IOConsoleInputStream extends InputStream {
     }
     
     /**
-     * blocks until data is available to be read.
+     * Blocks until data is available to be read.
      * Ensure that the monitor for this object is obtained before
      * calling this method.
      */
@@ -143,8 +150,9 @@ public class IOConsoleInputStream extends InputStream {
     }
 
     /**
-     * appends data to this input stream's buffer
-     * @param text The data to append to the buffer.
+     * Appends text to this input stream's buffer.
+     * 
+     * @param text the text to append to the buffer.
      */
     public synchronized void appendData(String text) {
         byte[] newData = text.getBytes();
@@ -192,16 +200,18 @@ public class IOConsoleInputStream extends InputStream {
     }
 
     /**
-     * Returns this console's font style.
-     * @return The font style used to decorate input in the associated console
+     * Returns this stream's font style.
+     * 
+     * @return the font style used to decorate input in the associated console
      */
     public int getFontStyle() {
         return fontStyle;
     }
 
     /**
-     * Sets the font style
-     * @param newFontStyle The font style to be used to decorate input in the associated console
+     * Sets this stream's font style.
+     * 
+     * @param newFontStyle the font style to be used to decorate input in the associated console
      */
     public void setFontStyle(int newFontStyle) {
         if (newFontStyle != fontStyle) {
@@ -213,7 +223,8 @@ public class IOConsoleInputStream extends InputStream {
     
     /**
      * Sets the color to used to decorate input in the associated console.
-     * @param newColor The color to used to decorate input in the associated console.
+     * 
+     * @param newColor the color to used to decorate input in the associated console.
      */
     public void setColor(Color newColor) {
         Color old = color;
@@ -225,7 +236,8 @@ public class IOConsoleInputStream extends InputStream {
     
     /**
      * Returns the color used to decorate input in the associated console
-     * @return The color used to decorate input in the associated console
+     * 
+     * @return the color used to decorate input in the associated console
      */
     public Color getColor() {
         return color;
