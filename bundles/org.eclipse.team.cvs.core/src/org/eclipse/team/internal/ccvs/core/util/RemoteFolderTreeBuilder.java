@@ -445,7 +445,7 @@ public class RemoteFolderTreeBuilder {
 
 
 	private PrintStream getPrintStream() {
-		return CVSProviderPlugin.getProvider().getPrintStream();
+		return NullOutputStream.DEFAULT;
 	}
 	
 	private boolean pruneEmptyDirectories() {

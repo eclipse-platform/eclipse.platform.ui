@@ -6,20 +6,15 @@ package org.eclipse.team.internal.ccvs.core.resources;
  */
  
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.PlatformObject;
-import org.eclipse.team.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
-import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.Client;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
+import org.eclipse.team.internal.ccvs.core.util.NullOutputStream;
 
 /**
  * The purpose of this class and its subclasses is to implement the corresponding
@@ -103,7 +98,7 @@ public abstract class RemoteResource extends PlatformObject implements ICVSRemot
 	}
 
 	protected PrintStream getPrintStream() {
-		return CVSProviderPlugin.getProvider().getPrintStream();
+		return NullOutputStream.DEFAULT;
 	}
 	
 	/*
