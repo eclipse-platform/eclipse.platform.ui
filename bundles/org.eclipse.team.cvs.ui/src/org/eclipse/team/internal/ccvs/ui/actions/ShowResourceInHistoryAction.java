@@ -1,7 +1,7 @@
 package org.eclipse.team.internal.ccvs.ui.actions;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 
@@ -28,37 +28,17 @@ import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.ui.actions.TeamAction;
 
 public class ShowResourceInHistoryAction extends TeamAction {
-	/**
-	 * Returns the selected remote file
-	 */
-	protected ICVSRemoteFile getSelectedRemoteFile() {
-		IResource[] resources = getSelectedResources();
-		if (resources.length != 1) return null;
-		if (!(resources[0] instanceof IFile)) return null;
-		IFile file = (IFile)resources[0];
-		CVSTeamProvider provider = (CVSTeamProvider)TeamPlugin.getManager().getProvider(file.getProject());
-		try {
-			return (ICVSRemoteFile)provider.getRemoteResource(file);
-		} catch (TeamException e) {
-			CVSUIPlugin.log(e.getStatus());
-			return null;
-		}
-	}
 	/*
 	 * @see IActionDelegate#run(IAction)
 	 */
 	public void run(IAction action) {
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
-				ICVSRemoteFile file = getSelectedRemoteFile();
-				if (file == null) {
-					// No history for selected file
-					MessageDialog.openWarning(getShell(), Policy.bind("ShowHistoryAction.noHistory"), Policy.bind("ShowHistoryAction.noHistoryLong"));
-					return;
-				}
+				IResource[] resources = getSelectedResources();
+				if (resources.length != 1) return;
 				HistoryView view = HistoryView.openInActivePerspective();
 				if (view != null) {
-					view.showHistory(file);
+					view.showHistory(resources[0]);
 				}
 			}
 		}, Policy.bind("ShowHistoryAction.showHistory"), this.PROGRESS_BUSYCURSOR);

@@ -1,10 +1,14 @@
 package org.eclipse.team.internal.ccvs.ui;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
  
+import java.io.InputStream;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -39,9 +43,12 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.team.ccvs.core.CVSTag;
+import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.ccvs.core.ILogEntry;
+import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.ui.actions.OpenRemoteFileAction;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISelectionListener;
@@ -58,6 +65,7 @@ import org.eclipse.ui.part.ViewPart;
  */
 public class HistoryView extends ViewPart implements ISelectionListener {
 	private ICVSRemoteFile remoteFile;
+	private IFile file;
 	
 	private TableViewer viewer;
 	private StyledText text;
@@ -66,6 +74,7 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 	private IAction toggleTextAction;
 	private Action copyAction;
 	private Action selectAllAction;
+	private Action addAction;
 	
 	private SashForm sashForm;
 	
@@ -123,6 +132,30 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 				openAction.run(null);
 			}
 		});
+
+		addAction = new Action(Policy.bind("HistoryView.addToWorkspace")) {
+			public void run() {
+				if (file == null) return;
+				ISelection selection = viewer.getSelection();
+				if (!(selection instanceof IStructuredSelection)) return;
+				IStructuredSelection ss = (IStructuredSelection)selection;
+				Object o = ss.getFirstElement();
+				ILogEntry entry = (ILogEntry)o;
+				ICVSRemoteFile remoteFile = entry.getRemoteFile();
+				// Do the load. This just consists of setting the local contents. We don't
+				// actually want to change the base.
+				try {
+					InputStream in = remoteFile.getContents(new NullProgressMonitor());
+					file.setContents(in, false, true, new NullProgressMonitor());				
+				} catch (TeamException e) {
+					CVSUIPlugin.log(e.getStatus());
+					return;
+				} catch (CoreException e) {
+					CVSUIPlugin.log(e.getStatus());
+					return;
+				}
+			}
+		};
 
 		// Toggle text visible action
 		final IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
@@ -338,7 +371,17 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 	private void fillTableMenu(IMenuManager manager) {
 		// file actions go first (view file)
 		manager.add(new Separator(IWorkbenchActionConstants.GROUP_FILE));
-	
+		if (file != null) {
+			// Add the "Add to Workspace" action if 1 revision is selected.
+			ISelection sel = viewer.getSelection();
+			if (!sel.isEmpty()) {
+				if (sel instanceof IStructuredSelection) {
+					if (((IStructuredSelection)sel).size() == 1) {
+						manager.add(addAction);
+					}
+				}
+			}
+		}
 		manager.add(new Separator("additions"));
 		manager.add(new Separator("additions-end"));
 	}
@@ -389,10 +432,34 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 			}
 		}
 	}
+	
 	/**
-	 * Shows the given log entries in the view.
+	 * Shows the history for the given IResource in the view.
+	 * 
+	 * Only files are supported for now.
+	 */
+	public void showHistory(IResource resource) {
+		if (!(resource instanceof IFile)) return;
+		IFile file = (IFile)resource;
+		this.file = file;
+		ITeamProvider provider = TeamPlugin.getManager().getProvider(file.getProject());
+		if (provider == null) return;
+		if (!(provider instanceof CVSTeamProvider)) return;
+		CVSTeamProvider cvsProvider = (CVSTeamProvider)provider;
+		try {
+			init((ICVSRemoteFile)cvsProvider.getRemoteResource(file));
+		} catch (TeamException e) {
+			CVSUIPlugin.log(e.getStatus());
+		}
+	}
+	
+	/**
+	 * Shows the history for the given ICVSRemoteFile in the view.
 	 */
 	public void showHistory(ICVSRemoteFile file) {
+		this.file = null;
+	}
+	private void init(ICVSRemoteFile file) {
 		this.remoteFile = file;
 		if (remoteFile == null) {
 			setTitle(Policy.bind("HistoryView.title"));
