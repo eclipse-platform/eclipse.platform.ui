@@ -26,9 +26,16 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.ccvs.core.ICVSFile;
+import org.eclipse.team.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.ccvs.core.ICVSResource;
@@ -121,6 +128,13 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 		if (element instanceof ResourceEditionNode) {
 			ICVSRemoteResource edition = ((ResourceEditionNode)element).getRemoteResource();
 			ICVSResource resource = (ICVSResource)edition;
+			if (edition instanceof ICVSRemoteFile) {
+				try {
+					return resource.getName() + " " + ((ICVSRemoteFile)edition).getRevision();
+				} catch (TeamException e) {
+					// fall through
+				}
+			}
 			try {
 				if (edition.isContainer()) {
 					CVSTag tag = ((ICVSRemoteFolder)edition).getTag();
@@ -220,19 +234,10 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 	 */
 	private void initLabels() {
 		CompareConfiguration cc = (CompareConfiguration) getCompareConfiguration();
-	
-		String leftLabel = getLabel(left);
-		cc.setLeftLabel(leftLabel);
-		cc.setLeftImage(left.getImage());
-	
-		String rightLabel = getLabel(right);
-		cc.setRightLabel(rightLabel);
-		cc.setRightImage(right.getImage());
-	
+		setLabels(cc, new StructuredSelection());
+		
 		String title;
 		if (ancestor != null) {
-			cc.setAncestorLabel(getLabel(ancestor));
-			cc.setAncestorImage(ancestor.getImage());
 			title = Policy.bind("CVSCompareEditorInput.titleAncestor", new Object[] {guessResourceName(), getVersionLabel(ancestor), getVersionLabel(left), getVersionLabel(right)} );
 		} else {
 			String leftName = null;
@@ -247,6 +252,46 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 			}
 		}
 		setTitle(title);
+	}
+	
+	private void setLabels(CompareConfiguration cc, IStructuredSelection selection) {
+		ITypedElement left = this.left;
+		ITypedElement right = this.right;
+		ITypedElement ancestor = this.ancestor;
+		
+		if (selection.size() == 1) {
+			Object s = selection.getFirstElement();
+			if (s instanceof ResourceDiffNode) {
+				ResourceDiffNode node = (ResourceDiffNode)s;
+				left = node.getLeft();
+				right = node.getRight();
+				ancestor = node.getAncestor();
+				if (left == null) {
+					cc.setLeftLabel(Policy.bind("CVSCompareEditorInput.noWorkspaceFile"));
+					cc.setLeftImage(right.getImage());
+				}
+				if (right == null) {
+					cc.setRightLabel(Policy.bind("CVSCompareEditorInput.noRepositoryFile"));
+					cc.setRightImage(left.getImage());
+				}
+				if (ancestor == null) ancestor = this.ancestor;
+			}
+		}
+		
+		if (left != null) {
+			cc.setLeftLabel(getLabel(left));
+			cc.setLeftImage(left.getImage());
+		}
+	
+		if (right != null) {
+			cc.setRightLabel(getLabel(right));
+			cc.setRightImage(right.getImage());
+		}
+		
+		if (ancestor != null) {
+			cc.setAncestorLabel(getLabel(ancestor));
+			cc.setAncestorImage(ancestor.getImage());
+		}
 	}
 	
 	/* (Non-javadoc)
@@ -397,4 +442,15 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 	private boolean considerContentIfRevisionOrPathDiffers() {
 		return CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.PREF_CONSIDER_CONTENTS);
 	}
+	public Viewer createDiffViewer(Composite parent) {
+		Viewer viewer = super.createDiffViewer(parent);
+		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				CompareConfiguration cc = getCompareConfiguration();
+				setLabels(cc, (IStructuredSelection)event.getSelection());
+			}
+		});
+		return viewer;
+	}
+	
 }
