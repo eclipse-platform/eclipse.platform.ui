@@ -107,7 +107,7 @@ public class SiteModel extends ModelObject {
 		if (categories == null)
 			return new CategoryModel[0];
 
-		return (CategoryModel[]) categories.toArray(arrayTypeFor(categories));
+		return (CategoryModel[]) categories.toArray(new CategoryModel[categories.size()]);
 	}
 
 	/**
