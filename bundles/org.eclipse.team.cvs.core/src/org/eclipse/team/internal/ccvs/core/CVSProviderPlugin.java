@@ -660,7 +660,7 @@ public class CVSProviderPlugin extends Plugin {
 	 * resource with CVS information.
 	 */
 	public void addDecoratorEnablementListener(ICVSDecoratorEnablementListener listener) {
-		repositoryListeners.add(listener);
+		decoratorEnablementListeners.add(listener);
 	}
 	
 	/**
@@ -674,7 +674,7 @@ public class CVSProviderPlugin extends Plugin {
 	 * De-register the decorator enablement listener. 
 	 */
 	public void removeDecoratorEnablementListener(ICVSDecoratorEnablementListener listener) {
-		repositoryListeners.remove(listener);
+		decoratorEnablementListeners.remove(listener);
 	}
 	
 	/**
