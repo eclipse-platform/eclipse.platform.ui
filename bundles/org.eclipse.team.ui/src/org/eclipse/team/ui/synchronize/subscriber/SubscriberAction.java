@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.ui.actions;
+package org.eclipse.team.ui.synchronize.subscriber;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -27,12 +27,14 @@ import org.eclipse.ui.*;
  * This action provides utilities for performing operations on selections that
  * are obtained from a view populated by a 
  * {@link org.eclipse.team.ui.synchronize.viewers.SynchronizeModelProvider}.
+ * The {@link org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipantPage} is an example of such a view.
  * Subclasses can use this support to filter the selection in order to 
- * determine action enablement and generate the input to a {@link SubscriberOperation}.
+ * determine action enablement and generate the input for a {@link SubscriberOperation}.
  * @see SyncInfo
  * @see SyncInfoSet
  * @see org.eclipse.team.ui.synchronize.viewers.SynchronizeModelProvider
- * @see org.eclipse.team.internal.ui.actions.SubscriberOperation
+ * @see org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipantPage
+ * @see org.eclipse.team.ui.synchronize.subscriber.SubscriberOperation
  * @since 3.0
  */
 public abstract class SubscriberAction implements IObjectActionDelegate, IViewActionDelegate, IEditorActionDelegate {
@@ -88,7 +90,6 @@ public abstract class SubscriberAction implements IObjectActionDelegate, IViewAc
 	 * The default enablement behavior for subscriber actions is to enable
 	 * the action if there is at least one SyncInfo in the selection
 	 * for which the action's filter passes.
-	 * @see org.eclipse.team.internal.ui.actions.TeamAction#isEnabled()
 	 */
 	protected boolean isEnabled() {
 		return (getFilteredDiffElements().length > 0);

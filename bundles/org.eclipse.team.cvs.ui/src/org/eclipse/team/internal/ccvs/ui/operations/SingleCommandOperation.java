@@ -13,19 +13,19 @@ package org.eclipse.team.internal.ccvs.ui.operations;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.ui.IWorkbenchPart;
 
 public abstract class SingleCommandOperation extends RepositoryProviderOperation {
 	
 	private LocalOption[] options = Command.NO_LOCAL_OPTIONS;
 	
-	public SingleCommandOperation(Shell shell, IResource[] resources, LocalOption[] options) {
-		super(shell, resources);
+	public SingleCommandOperation(IWorkbenchPart part, IResource[] resources, LocalOption[] options) {
+		super(part, resources);
 		if (options != null) {
 			this.options = options;
 		}

@@ -10,16 +10,16 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.operations;
 
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
+import org.eclipse.ui.IWorkbenchPart;
 
 public abstract class RemoteOperation extends CVSOperation {
 
 	private ICVSRemoteResource[] remoteResources;
 
-	protected RemoteOperation(Shell shell, ICVSRemoteResource[] remoteResources) {
-		super(shell);
+	protected RemoteOperation(IWorkbenchPart part, ICVSRemoteResource[] remoteResources) {
+		super(part);
 		this.remoteResources =remoteResources;
 	}
 

@@ -11,12 +11,10 @@
 package org.eclipse.team.internal.ccvs.ui.operations;
 
 import java.util.*;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * A specialized Replace operation that will update managed resources and
@@ -26,8 +24,8 @@ public class OverrideAndUpdateOperation extends ReplaceOperation {
 
 	private IResource[] conflictingAdditions;
 
-	public OverrideAndUpdateOperation(Shell shell, IResource[] allResources, IResource[] conflictingAdditions, CVSTag tag, boolean recurse) {
-		super(shell, allResources, tag, recurse);
+	public OverrideAndUpdateOperation(IWorkbenchPart part, IResource[] allResources, IResource[] conflictingAdditions, CVSTag tag, boolean recurse) {
+		super(part, allResources, tag, recurse);
 		this.conflictingAdditions = conflictingAdditions;
 	}
 

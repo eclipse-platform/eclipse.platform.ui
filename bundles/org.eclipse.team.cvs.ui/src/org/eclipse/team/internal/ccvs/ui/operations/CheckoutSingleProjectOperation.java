@@ -13,9 +13,9 @@ package org.eclipse.team.internal.ccvs.ui.operations;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
+import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * This operation checks out a single remote folder into the workspace as
@@ -26,8 +26,8 @@ public class CheckoutSingleProjectOperation extends CheckoutProjectOperation {
 	private boolean preconfigured;
 	private IProject targetProject;
 	
-	public CheckoutSingleProjectOperation(Shell shell, ICVSRemoteFolder remoteFolder, IProject targetProject, String targetLocation, boolean preconfigured) {
-		super(shell, new ICVSRemoteFolder[] { remoteFolder }, targetLocation);
+	public CheckoutSingleProjectOperation(IWorkbenchPart part, ICVSRemoteFolder remoteFolder, IProject targetProject, String targetLocation, boolean preconfigured) {
+		super(part, new ICVSRemoteFolder[] { remoteFolder }, targetLocation);
 		this.targetProject = targetProject;
 		this.preconfigured = preconfigured;
 	}

@@ -13,8 +13,8 @@ package org.eclipse.team.internal.ccvs.ui.subscriber;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter.SyncInfoDirectionFilter;
-import org.eclipse.team.internal.ui.actions.SubscriberAction;
-import org.eclipse.team.internal.ui.actions.SubscriberOperation;
+import org.eclipse.team.ui.synchronize.subscriber.SubscriberAction;
+import org.eclipse.team.ui.synchronize.subscriber.SubscriberOperation;
 import org.eclipse.ui.IWorkbenchPart;
 
 public class OverrideAndCommitAction extends SubscriberAction {

@@ -14,7 +14,6 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.ui.operations.CheckoutMultipleProjectsOperation;
@@ -25,21 +24,17 @@ import org.eclipse.team.internal.ccvs.ui.operations.CheckoutMultipleProjectsOper
  */
 public class CheckoutAction extends CVSAction {
 	
-	/**
-	 * @see CVSAction#execute(IAction)
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#execute(org.eclipse.jface.action.IAction)
 	 */
 	protected void execute(IAction action) throws InvocationTargetException, InterruptedException {
-		try {
-			new CheckoutMultipleProjectsOperation(getShell(), getSelectedRemoteFolders(), null)
-				.run();
-		} catch (CVSException e) {
-			throw new InvocationTargetException(e);
-		}
+		new CheckoutMultipleProjectsOperation(getTargetPart(), getSelectedRemoteFolders(), null)
+			.run();
 	}
 	
-	/**
-	* @see TeamAction#isEnabled()
-	*/
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ui.actions.TeamAction#isEnabled()
+	 */
    protected boolean isEnabled() throws TeamException {
 	   ICVSRemoteFolder[] folders = getSelectedRemoteFolders();
 	   if (folders.length == 0) return false;

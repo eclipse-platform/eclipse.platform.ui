@@ -15,7 +15,6 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.HasProjectMetaFileOperation;
@@ -32,19 +31,15 @@ public class CheckoutAsAction extends AddToWorkspaceAction {
 	 * @see IActionDelegate#run(IAction)
 	 */
 	public void execute(IAction action) throws InvocationTargetException, InterruptedException {
-		final ICVSRemoteFolder[] folders = getSelectedRemoteFolders();
-		try {
-			CheckoutAsWizard wizard = new CheckoutAsWizard(folders, allowProjectConfiguration(folders));
-			WizardDialog dialog = new WizardDialog(shell, wizard);
-			dialog.open();
-		} catch (CVSException e) {
-			throw new InvocationTargetException(e);
-		}
+		ICVSRemoteFolder[] folders = getSelectedRemoteFolders();
+		CheckoutAsWizard wizard = new CheckoutAsWizard(getTargetPart(), folders, allowProjectConfiguration(folders));
+		WizardDialog dialog = new WizardDialog(shell, wizard);
+		dialog.open();
 	}
 	
-	protected boolean allowProjectConfiguration(ICVSRemoteFolder[] folders) throws CVSException, InterruptedException {
+	protected boolean allowProjectConfiguration(ICVSRemoteFolder[] folders) throws InvocationTargetException, InterruptedException {
 		if (folders.length != 1) return false;
-		return !HasProjectMetaFileOperation.hasMetaFile(getShell(), folders[0]);	
+		return !HasProjectMetaFileOperation.hasMetaFile(getTargetPart(), folders[0]);	
 	}
 	
 	/*

@@ -10,10 +10,8 @@
  *******************************************************************************/
 package org.eclipse.team.tests.ccvs.core.provider;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -23,17 +21,13 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
-import org.eclipse.core.runtime.jobs.IJobChangeListener;
-import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.progress.IElementCollector;
-import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.operations.FetchMembersOperation;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
-import org.eclipse.team.tests.ccvs.ui.HeadlessCVSRunnableContext;
 
 public class ConcurrencyTests extends EclipseTest {
 
@@ -55,7 +49,7 @@ public class ConcurrencyTests extends EclipseTest {
 		}
 	}
 	
-	public void testBackgroundMemberFetch() throws InterruptedException, TeamException, CoreException {
+	public void testBackgroundMemberFetch() throws CoreException, InvocationTargetException, InterruptedException {
 		IProject project = createProject("testBackgroundMemberFetch", new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder2/", "folder2/a.txt", "folder2/folder3/", "folder2/folder3/b.txt", "folder2/folder3/c.txt"});
 		ICVSRemoteFolder folder = (ICVSRemoteFolder)CVSWorkspaceRoot.getRemoteResourceFor(project);
 		final List result = new ArrayList(); 
@@ -72,13 +66,12 @@ public class ConcurrencyTests extends EclipseTest {
 			}
 		};
 		
-		IJobChangeListener listener = new JobChangeAdapter() {
+		FetchMembersOperation operation = new FetchMembersOperation(null, folder, collector) {
 			public void done(IJobChangeEvent event) {
 				done[0] = true;
+				super.done(event);
 			}
 		};
-		FetchMembersOperation operation = new FetchMembersOperation(null, folder, collector);
-		operation.setCVSRunnableContext(new HeadlessCVSRunnableContext(listener));
 		operation.run();
 		int count = 0;
 		while (!done[0]) {

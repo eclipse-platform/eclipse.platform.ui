@@ -13,14 +13,12 @@ package org.eclipse.team.internal.ccvs.ui.operations;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * Disconnect the given projects from CVS control
@@ -29,8 +27,8 @@ public class DisconnectOperation extends RepositoryProviderOperation {
 
 	private boolean unmanage;
 
-	public DisconnectOperation(Shell shell, IProject[] projects, boolean unmanage) {
-		super(shell, projects);
+	public DisconnectOperation(IWorkbenchPart part, IProject[] projects, boolean unmanage) {
+		super(part, projects);
 		this.unmanage = unmanage;
 	}
 

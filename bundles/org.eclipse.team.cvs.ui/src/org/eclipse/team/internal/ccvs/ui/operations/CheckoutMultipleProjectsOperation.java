@@ -11,12 +11,10 @@
 package org.eclipse.team.internal.ccvs.ui.operations;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.core.runtime.*;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
+import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * This operation checks out a multiple remote folders into the workspace.
@@ -27,8 +25,8 @@ public class CheckoutMultipleProjectsOperation extends CheckoutProjectOperation 
 
 	boolean hasTargetLocation;
 	
-	public CheckoutMultipleProjectsOperation(Shell shell, ICVSRemoteFolder[] remoteFolders, String targetLocation) {
-		super(shell, remoteFolders, targetLocation);
+	public CheckoutMultipleProjectsOperation(IWorkbenchPart part, ICVSRemoteFolder[] remoteFolders, String targetLocation) {
+		super(part, remoteFolders, targetLocation);
 		hasTargetLocation = targetLocation != null;
 		setInvolvesMultipleResources(remoteFolders.length > 1);
 	}

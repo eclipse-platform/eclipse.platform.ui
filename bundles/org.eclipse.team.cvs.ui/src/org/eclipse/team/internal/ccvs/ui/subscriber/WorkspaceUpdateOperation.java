@@ -62,7 +62,7 @@ public class WorkspaceUpdateOperation extends SafeUpdateOperation {
 	 */
 	protected void overwriteUpdate(SyncInfoSet syncSet, IProgressMonitor monitor) throws TeamException {
 		try {
-			new ReplaceOperation(getShell(), syncSet.getResources(), null /* tag */, false /* recurse */)
+			new ReplaceOperation(getPart(), syncSet.getResources(), null /* tag */, false /* recurse */)
 				.run(monitor);
 		} catch (InvocationTargetException e) {
 			throw CVSException.wrapException(e);

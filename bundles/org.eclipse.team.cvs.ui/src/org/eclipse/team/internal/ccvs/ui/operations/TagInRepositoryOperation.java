@@ -14,18 +14,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
+import org.eclipse.core.runtime.*;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.RTag;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.actions.TagAction;
+import org.eclipse.ui.IWorkbenchPart;
 
 
 public class TagInRepositoryOperation extends RemoteOperation implements ITagOperation {
@@ -33,8 +29,8 @@ public class TagInRepositoryOperation extends RemoteOperation implements ITagOpe
 	private Set localOptions = new HashSet();
 	private CVSTag tag;
 
-	public TagInRepositoryOperation(Shell shell, ICVSRemoteResource[] remoteResource) {
-		super(shell, remoteResource);
+	public TagInRepositoryOperation(IWorkbenchPart part, ICVSRemoteResource[] remoteResource) {
+		super(part, remoteResource);
 	}
 
 	/* (non-Javadoc)

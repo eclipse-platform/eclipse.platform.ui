@@ -350,7 +350,7 @@ public abstract class SafeUpdateOperation extends CVSSubscriberOperation {
 	
 	protected void safeUpdate(IResource[] resources, LocalOption[] localOptions, IProgressMonitor monitor) throws TeamException {
 		try {
-			UpdateOnlyMergableOperation operation = new UpdateOnlyMergableOperation(getShell(), resources, localOptions);
+			UpdateOnlyMergableOperation operation = new UpdateOnlyMergableOperation(getPart(), resources, localOptions);
 			operation.run(monitor);
 			addSkippedFiles(operation.getSkippedFiles());
 		} catch (InvocationTargetException e) {

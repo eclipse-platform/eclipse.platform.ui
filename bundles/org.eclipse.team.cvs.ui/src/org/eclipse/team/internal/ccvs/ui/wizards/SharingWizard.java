@@ -246,7 +246,8 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 							}
 							
 							// Create the remote module for the project
-							ShareProjectOperation op = new ShareProjectOperation(getShell(), location, project, getModuleName());
+							ShareProjectOperation op = new ShareProjectOperation(null, location, project, getModuleName());
+							op.setShell(getShell());
 							op.run(new SubProgressMonitor(monitor, 50));
 						}
 					} catch (TeamException e) {
@@ -303,7 +304,8 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 	private void mapProject(final String moduleName, final CVSTag tag) throws InvocationTargetException, InterruptedException {
 		try {
 			ICVSRemoteFolder remote = new RemoteFolder(null, getLocation(), moduleName, tag);
-			new ReconcileProjectOperation(getShell(), project, remote).run();
+			// TODO: Shoudl have a part but this code will be changing soon anyway
+			new ReconcileProjectOperation(null /* part */, project, remote).run();
 		} catch (TeamException e) {
 			throw new InvocationTargetException(e);
 		} 

@@ -15,7 +15,6 @@ import java.util.*;
 import org.eclipse.compare.CompareUI;
 import org.eclipse.core.runtime.*;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.*;
@@ -28,6 +27,7 @@ import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * Compare the two versions of given remote folders obtained from the two tags specified.
@@ -68,8 +68,8 @@ public class RemoteCompareOperation extends RemoteOperation  implements RDiffSum
 	 * @param left the earlier tag (not null)
 	 * @param right the later tag (not null)
 	 */
-	public RemoteCompareOperation(Shell shell, ICVSRemoteResource remoteResource, CVSTag tag) {
-		super(shell, new ICVSRemoteResource[] {remoteResource});
+	public RemoteCompareOperation(IWorkbenchPart part, ICVSRemoteResource remoteResource, CVSTag tag) {
+		super(part, new ICVSRemoteResource[] {remoteResource});
 		Assert.isNotNull(tag);
 		this.right = tag;
 		try {

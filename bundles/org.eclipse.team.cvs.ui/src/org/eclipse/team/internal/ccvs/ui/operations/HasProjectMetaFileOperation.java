@@ -10,12 +10,14 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.operations;
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * Operation which checks for the existance of the .project file
@@ -27,14 +29,14 @@ public class HasProjectMetaFileOperation extends CVSOperation {
 	private ICVSRemoteFolder remoteFolder;
 	private boolean metaFileExists;
 	
-	public static boolean hasMetaFile(Shell shell, ICVSRemoteFolder remoteFolder) throws CVSException, InterruptedException {
-		HasProjectMetaFileOperation op = new HasProjectMetaFileOperation(shell, remoteFolder);
+	public static boolean hasMetaFile(IWorkbenchPart part, ICVSRemoteFolder remoteFolder) throws InvocationTargetException, InterruptedException {
+		HasProjectMetaFileOperation op = new HasProjectMetaFileOperation(part, remoteFolder);
 		op.run();
 		return op.metaFileExists();
 	}
 	
-	public HasProjectMetaFileOperation(Shell shell, ICVSRemoteFolder remoteFolder) {
-		super(shell);
+	public HasProjectMetaFileOperation(IWorkbenchPart part, ICVSRemoteFolder remoteFolder) {
+		super(part);
 		this.remoteFolder = remoteFolder;
 	}
 	

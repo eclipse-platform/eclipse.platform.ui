@@ -86,12 +86,8 @@ public class ReplaceWithTagAction extends WorkspaceAction {
 		
 		if (resources[0] == null || resources[0].length == 0 || tag[0] == null) return;
 		
-		try {
-			// Peform the replace in the background
-			new ReplaceOperation(getShell(), resources[0], tag[0], recurse[0]).run();
-		} catch (CVSException e) {
-			throw new InvocationTargetException(e);
-		}
+		// Peform the replace in the background
+		new ReplaceOperation(getTargetPart(), resources[0], tag[0], recurse[0]).run();
 	}
 	
 	/**

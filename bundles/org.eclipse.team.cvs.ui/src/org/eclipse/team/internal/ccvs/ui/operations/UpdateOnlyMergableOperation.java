@@ -10,23 +10,17 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.operations;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
-import org.eclipse.team.internal.ccvs.core.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.client.Command;
-import org.eclipse.team.internal.ccvs.core.client.Session;
-import org.eclipse.team.internal.ccvs.core.client.UpdateMergableOnly;
+import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.client.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * This operation performs an update that will only effect files
@@ -36,8 +30,8 @@ public class UpdateOnlyMergableOperation extends SingleCommandOperation {
 
 	List skippedFiles = new ArrayList();
 	
-	public UpdateOnlyMergableOperation(Shell shell, IResource[] resources, LocalOption[] localOptions) {
-		super(shell, resources, localOptions);
+	public UpdateOnlyMergableOperation(IWorkbenchPart part, IResource[] resources, LocalOption[] localOptions) {
+		super(part, resources, localOptions);
 	}
 
 	/* (non-Javadoc)

@@ -10,37 +10,29 @@
  *******************************************************************************/
 package org.eclipse.team.tests.ccvs.ui;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.operations.RemoteCompareOperation;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
+import org.eclipse.ui.IWorkbenchPart;
 
 public class CompareOperationTests extends CVSOperationTest {
 
 	public class TestRemoteCompareOperation extends RemoteCompareOperation {
 		private ICVSRemoteFolder leftTree, rightTree;
 
-		public TestRemoteCompareOperation(Shell shell, ICVSRemoteResource resource, CVSTag tag) {
-			super(shell, resource, tag);
+		public TestRemoteCompareOperation(IWorkbenchPart part, ICVSRemoteResource resource, CVSTag tag) {
+			super(part, resource, tag);
 		}
 		
 		/*

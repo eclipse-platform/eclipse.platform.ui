@@ -15,11 +15,11 @@ import java.util.*;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * Performs a cvs operation on multiple repository providers
@@ -31,8 +31,8 @@ public abstract class RepositoryProviderOperation extends CVSOperation {
 	/**
 	 * @param shell
 	 */
-	public RepositoryProviderOperation(Shell shell, IResource[] resources) {
-		super(shell);
+	public RepositoryProviderOperation(IWorkbenchPart part, IResource[] resources) {
+		super(part);
 		this.resources = resources;
 	}
 

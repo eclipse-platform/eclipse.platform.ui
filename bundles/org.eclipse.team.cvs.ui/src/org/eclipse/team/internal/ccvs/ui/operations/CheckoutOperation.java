@@ -12,15 +12,15 @@ package org.eclipse.team.internal.ccvs.ui.operations;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.ui.IWorkbenchPart;
 
 public abstract class CheckoutOperation extends RemoteOperation {
 
-	public CheckoutOperation(Shell shell, ICVSRemoteFolder[] remoteFolders) {
-		super(shell, remoteFolders);
+	public CheckoutOperation(IWorkbenchPart part, ICVSRemoteFolder[] remoteFolders) {
+		super(part, remoteFolders);
 	}
 
 	/* (non-Javadoc)

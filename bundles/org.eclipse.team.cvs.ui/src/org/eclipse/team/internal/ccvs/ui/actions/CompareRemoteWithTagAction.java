@@ -15,11 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.ui.TagSelectionDialog;
 import org.eclipse.team.internal.ccvs.ui.operations.RemoteCompareOperation;
 
@@ -53,12 +49,8 @@ public class CompareRemoteWithTagAction extends CVSAction {
 		if (tag[0] == null) return;
 		
 		// Run the compare operation in the background
-		try {
-			new RemoteCompareOperation(null, resource, tag[0])
-				.run();
-		} catch (CVSException e) {
-			throw new InvocationTargetException(e);
-		}
+		new RemoteCompareOperation(getTargetPart(), resource, tag[0])
+			.run();
 	}
 
 	/**

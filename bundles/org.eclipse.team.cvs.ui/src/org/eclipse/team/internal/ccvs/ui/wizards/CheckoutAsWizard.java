@@ -10,23 +10,16 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.wizards;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.ResourcesPlugin;
+import java.lang.reflect.InvocationTargetException;
+
+import org.eclipse.core.resources.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
-import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
-import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
-import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.ccvs.ui.operations.CheckoutIntoOperation;
-import org.eclipse.team.internal.ccvs.ui.operations.CheckoutMultipleProjectsOperation;
-import org.eclipse.team.internal.ccvs.ui.operations.CheckoutSingleProjectOperation;
+import org.eclipse.team.internal.ccvs.ui.*;
+import org.eclipse.team.internal.ccvs.ui.operations.*;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.NewProjectAction;
 
@@ -44,6 +37,7 @@ public class CheckoutAsWizard extends Wizard {
 	private CheckoutAsMainPage mainPage;
 	private CheckoutAsProjectSelectionPage projectSelectionPage;
 	private CheckoutAsLocationSelectionPage locationSelectionPage;
+	private IWorkbenchPart part;
 
 	class NewProjectListener implements IResourceChangeListener {
 		private IProject newProject = null;
@@ -70,8 +64,8 @@ public class CheckoutAsWizard extends Wizard {
 		}
 	}
 	
-	public CheckoutAsWizard(ICVSRemoteFolder[] remoteFolders, boolean allowProjectConfiguration) {
-		super();
+	public CheckoutAsWizard(IWorkbenchPart part, ICVSRemoteFolder[] remoteFolders, boolean allowProjectConfiguration) {
+		this.part = part;
 		this.remoteFolders = remoteFolders;
 		setWindowTitle(Policy.bind("CheckoutAsWizard.title")); //$NON-NLS-1$
 		this.allowProjectConfiguration = allowProjectConfiguration;
@@ -110,7 +104,7 @@ public class CheckoutAsWizard extends Wizard {
 			} else if (mainPage.isPerformCheckoutInto()) {
 				return performCheckoutInto();
 			}
-		} catch (CVSException e) {
+		} catch (InvocationTargetException e) {
 			handle(e);
 			// drop through
 		} catch (InterruptedException e) {
@@ -171,19 +165,19 @@ public class CheckoutAsWizard extends Wizard {
 	 * Configure a local project and checkout the selected remote folder into the project.
 	 * This only occurs for single folders.
 	 */
-	private boolean performConfigureAndCheckout() throws CVSException, InterruptedException {
+	private boolean performConfigureAndCheckout() throws InvocationTargetException, InterruptedException {
 		IProject newProject = getNewProject();
 		if (newProject == null) return false;
 		// Run the checkout in the background
-		new CheckoutSingleProjectOperation(getShell(), remoteFolders[0], newProject, null, true).run();
+		new CheckoutSingleProjectOperation(part, remoteFolders[0], newProject, null, true).run();
 		return true;
 	}
 	
-	private boolean performSingleCheckoutAs() throws CVSException, InterruptedException {
+	private boolean performSingleCheckoutAs() throws InvocationTargetException, InterruptedException {
 		IProject newProject = ResourcesPlugin.getWorkspace().getRoot().getProject(mainPage.getProjectName());
 		String targetLocation = locationSelectionPage.getTargetLocation();
 		// Run the checkout in the background
-		new CheckoutSingleProjectOperation(getShell(), remoteFolders[0], newProject, targetLocation, false).run();
+		new CheckoutSingleProjectOperation(part, remoteFolders[0], newProject, targetLocation, false).run();
 		return true;
 	}
 
@@ -191,20 +185,20 @@ public class CheckoutAsWizard extends Wizard {
 	 * Check out multiple folders to the workspace using a custom location if one is
 	 * specified.
 	 */
-	private boolean performMultipleCheckoutAs() throws CVSException, InterruptedException {
+	private boolean performMultipleCheckoutAs() throws InvocationTargetException, InterruptedException {
 		String targetLocation = locationSelectionPage.getTargetLocation();
 		// Run the checkout in the background
-		new CheckoutMultipleProjectsOperation(getShell(), remoteFolders, targetLocation).run();
+		new CheckoutMultipleProjectsOperation(part, remoteFolders, targetLocation).run();
 		return true;
 	}
 
-	private boolean performCheckoutInto() throws CVSException, InterruptedException {
+	private boolean performCheckoutInto() throws InvocationTargetException, InterruptedException {
 		CheckoutIntoOperation operation;
 		boolean recursive = projectSelectionPage.isRecurse();
 		if (isSingleFolder()) {
-			operation = new CheckoutIntoOperation(getShell(), remoteFolders[0] , projectSelectionPage.getLocalFolder(), recursive);
+			operation = new CheckoutIntoOperation(part, remoteFolders[0] , projectSelectionPage.getLocalFolder(), recursive);
 		} else {
-			operation = new CheckoutIntoOperation(getShell(), remoteFolders, projectSelectionPage.getParentFolder(), recursive);
+			operation = new CheckoutIntoOperation(part, remoteFolders, projectSelectionPage.getParentFolder(), recursive);
 		}
 		// Run the checkout in the background
 		operation.run();

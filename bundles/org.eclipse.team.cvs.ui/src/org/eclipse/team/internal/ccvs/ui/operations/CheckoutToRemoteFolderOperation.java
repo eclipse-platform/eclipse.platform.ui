@@ -11,34 +11,17 @@
 package org.eclipse.team.internal.ccvs.ui.operations;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSStatus;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
-import org.eclipse.team.internal.ccvs.core.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.client.Checkout;
-import org.eclipse.team.internal.ccvs.core.client.Command;
-import org.eclipse.team.internal.ccvs.core.client.ResponseHandler;
-import org.eclipse.team.internal.ccvs.core.client.Session;
-import org.eclipse.team.internal.ccvs.core.client.Update;
-import org.eclipse.team.internal.ccvs.core.client.UpdatedHandler;
+import org.eclipse.core.runtime.*;
+import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.client.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.client.listeners.ICommandOutputListener;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolderSandbox;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * Checkout a remote folder into a sandbox that is contained within remote folder handles and
@@ -140,13 +123,13 @@ public class CheckoutToRemoteFolderOperation extends CheckoutOperation {
 		}
 
 }
-	public static ICVSRemoteFolder  checkoutRemoteFolder(Shell shell, ICVSRemoteFolder folder, IProgressMonitor monitor) throws CVSException, InvocationTargetException, InterruptedException {
-		CheckoutToRemoteFolderOperation op = new CheckoutToRemoteFolderOperation(shell, folder);
+	public static ICVSRemoteFolder  checkoutRemoteFolder(IWorkbenchPart part, ICVSRemoteFolder folder, IProgressMonitor monitor) throws CVSException, InvocationTargetException, InterruptedException {
+		CheckoutToRemoteFolderOperation op = new CheckoutToRemoteFolderOperation(part, folder);
 		op.run(monitor);
 		return op.getResultingFolder();
 	}
-	public CheckoutToRemoteFolderOperation(Shell shell, ICVSRemoteFolder remoteFolder) {
-		super(shell, new ICVSRemoteFolder[] { remoteFolder });
+	public CheckoutToRemoteFolderOperation(IWorkbenchPart part, ICVSRemoteFolder remoteFolder) {
+		super(part, new ICVSRemoteFolder[] { remoteFolder });
 	}
 
 	/* (non-Javadoc)

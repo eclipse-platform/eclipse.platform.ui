@@ -18,25 +18,29 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
-import org.eclipse.team.internal.ccvs.core.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.client.Command;
-import org.eclipse.team.internal.ccvs.core.client.Session;
-import org.eclipse.team.internal.ccvs.core.client.Tag;
+import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.client.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.actions.TagAction;
+import org.eclipse.ui.IWorkbenchPart;
 
 public class TagOperation extends RepositoryProviderOperation implements ITagOperation {
 
 	private Set localOptions = new HashSet();
 	private CVSTag tag;
 
+	public TagOperation(IWorkbenchPart part, IResource[] resources) {
+		super(part, resources);
+	}
+
+	/**
+	 * TODO: needed to prevent re-release of releng tool.
+	 * Shoudl eb able to remove eventually
+	 */
 	public TagOperation(Shell shell, IResource[] resources) {
-		super(shell, resources);
+		super(null, resources);
 	}
 
 	public CVSTag getTag() {

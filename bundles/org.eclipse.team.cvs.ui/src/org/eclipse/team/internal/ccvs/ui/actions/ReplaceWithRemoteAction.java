@@ -45,12 +45,8 @@ public class ReplaceWithRemoteAction extends WorkspaceAction {
 		
 		if (resources[0] == null || resources[0].length == 0) return;
 		
-		try {
-			// Peform the replace in the background
-			new ReplaceOperation(getShell(), resources[0], null, true).run();
-		} catch (CVSException e) {
-			throw new InvocationTargetException(e);
-		}
+		// Peform the replace in the background
+		new ReplaceOperation(getTargetPart(), resources[0], null, true).run();
 	}
 	
 	protected IPromptCondition getPromptCondition(IResource[] dirtyResources) {

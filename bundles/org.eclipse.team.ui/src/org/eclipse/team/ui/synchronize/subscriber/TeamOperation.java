@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.ui.actions;
+package org.eclipse.team.ui.synchronize.subscriber;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.actions.*;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchSite;
 
@@ -49,6 +50,14 @@ public abstract class TeamOperation extends JobChangeAdapter implements IRunnabl
 	 */
 	protected TeamOperation(IWorkbenchPart part) {
 		this.part = part;
+	}
+	
+	/**
+	 * Return the part that is associated with this operation.
+	 * @return Returns the part or <code>null</code>
+	 */
+	public IWorkbenchPart getPart() {
+		return part;
 	}
 	
 	/**

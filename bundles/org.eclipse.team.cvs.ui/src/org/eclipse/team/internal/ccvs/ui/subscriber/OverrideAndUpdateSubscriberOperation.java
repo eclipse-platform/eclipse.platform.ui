@@ -48,7 +48,7 @@ public class OverrideAndUpdateSubscriberOperation extends CVSSubscriberOperation
 				SyncInfo info = conflicts[i];
 				conflictingResources.add(info.getLocal());
 			}
-			new OverrideAndUpdateOperation(getShell(), set.getResources(), (IResource[]) conflictingResources.toArray(new IResource[conflictingResources.size()]), null /* tag */, false /* recurse */).run(monitor);
+			new OverrideAndUpdateOperation(getPart(), set.getResources(), (IResource[]) conflictingResources.toArray(new IResource[conflictingResources.size()]), null /* tag */, false /* recurse */).run(monitor);
 		} catch (InvocationTargetException e) {
 			throw CVSException.wrapException(e);
 		} catch (InterruptedException e) {

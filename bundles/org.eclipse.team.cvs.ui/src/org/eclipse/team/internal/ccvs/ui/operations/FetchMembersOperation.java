@@ -16,13 +16,13 @@ import java.util.List;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.progress.IElementCollector;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolderMemberFetcher;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * Fetch the members of a remote folder in the background, passing incremental
@@ -88,8 +88,8 @@ public class FetchMembersOperation extends RemoteOperation {
 		}
 	}
 
-	public FetchMembersOperation(Shell shell, ICVSRemoteFolder folder, IElementCollector collector) {
-		super(shell, new ICVSRemoteResource[] { folder });
+	public FetchMembersOperation(IWorkbenchPart part, ICVSRemoteFolder folder, IElementCollector collector) {
+		super(part, new ICVSRemoteResource[] { folder });
 		this.collector = collector;
 	}
 

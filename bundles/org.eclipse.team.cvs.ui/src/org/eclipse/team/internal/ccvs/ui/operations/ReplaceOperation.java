@@ -16,13 +16,13 @@ import java.util.List;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.PrepareForReplaceVisitor;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * Thsi operation replaces the local resources with their remote contents
@@ -31,8 +31,8 @@ public class ReplaceOperation extends UpdateOperation {
 
 	boolean recurse = true; 
 
-	public ReplaceOperation(Shell shell, IResource[] resources, CVSTag tag, boolean recurse) {
-		super(shell, resources, getReplaceOptions(recurse), tag);
+	public ReplaceOperation(IWorkbenchPart part, IResource[] resources, CVSTag tag, boolean recurse) {
+		super(part, resources, getReplaceOptions(recurse), tag);
 		this.recurse = recurse;
 	}
 

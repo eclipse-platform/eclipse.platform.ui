@@ -32,7 +32,7 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.SyncFileChangeListener;
 import org.eclipse.team.internal.ccvs.ui.operations.*;
-import org.eclipse.team.tests.ccvs.ui.HeadlessCVSRunnableContext;
+import org.eclipse.ui.IWorkbenchPart;
 
 public class EclipseTest extends EclipseWorkspaceTest {
 
@@ -253,7 +253,7 @@ public class EclipseTest extends EclipseWorkspaceTest {
 	 * Commit the resources from an existing container to the CVS repository
 	 */
 	public void tagProject(IProject project, CVSTag tag, boolean force) throws TeamException {
-		ITagOperation op = new TagOperation(null, new IResource[] {project});
+		ITagOperation op = new TagOperation((IWorkbenchPart)null, new IResource[] {project});
 		runTag(op, tag, force);
 	}
 	
@@ -791,8 +791,12 @@ public class EclipseTest extends EclipseWorkspaceTest {
 
 	protected static void executeHeadless(CVSOperation op) throws CVSException {
 		try {
-			op.setCVSRunnableContext(new HeadlessCVSRunnableContext());
-			op.run();
+			try {
+				// Bypass contxt by executing run(IProgressMonitor) directly
+				op.run(DEFAULT_MONITOR);
+			} catch (InvocationTargetException e1) {
+				throw CVSException.wrapException(e1);
+			}
 		} catch (InterruptedException e) {
 			throw new OperationCanceledException();
 		}

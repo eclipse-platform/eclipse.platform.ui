@@ -45,6 +45,6 @@ public class TagInRepositoryAction extends TagAction {
 	}
 
 	protected ITagOperation createTagOperation() {
-		return new TagInRepositoryOperation(getShell(), getSelectedRemoteResources());
+		return new TagInRepositoryOperation(getTargetPart(), getSelectedRemoteResources());
 	}
 }

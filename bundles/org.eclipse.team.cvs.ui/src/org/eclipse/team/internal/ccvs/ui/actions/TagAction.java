@@ -64,11 +64,7 @@ public abstract class TagAction extends WorkspaceAction {
 			return;
 		}
 		
-		try {
-			result[0].run();
-		} catch (CVSException e1) {
-			throw new InvocationTargetException(e1);
-		}
+		result[0].run();
 	}
 	
 	protected boolean performPrompting()  {

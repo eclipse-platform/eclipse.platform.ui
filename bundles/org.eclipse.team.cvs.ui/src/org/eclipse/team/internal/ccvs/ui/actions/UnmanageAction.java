@@ -111,12 +111,8 @@ public class UnmanageAction extends WorkspaceAction {
 	 */
 	public void execute(IAction action) throws InterruptedException, InvocationTargetException {
 		if(confirmDeleteProjects()) {
-			try {
-				new DisconnectOperation(getShell(), getSelectedProjects(), deleteContent)
-					.run();
-			} catch (CVSException e) {
-				throw new InvocationTargetException(e);
-			}	
+			new DisconnectOperation(getTargetPart(), getSelectedProjects(), deleteContent)
+				.run();
 		}
 	}
 

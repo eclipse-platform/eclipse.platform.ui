@@ -15,8 +15,8 @@ import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter.OrSyncInfoFilter;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter.SyncInfoDirectionFilter;
-import org.eclipse.team.internal.ui.actions.SubscriberAction;
-import org.eclipse.team.internal.ui.actions.SubscriberOperation;
+import org.eclipse.team.ui.synchronize.subscriber.SubscriberAction;
+import org.eclipse.team.ui.synchronize.subscriber.SubscriberOperation;
 import org.eclipse.ui.IWorkbenchPart;
 
 

@@ -10,14 +10,15 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.operations;
 
-import org.eclipse.team.internal.ccvs.core.CVSException;
+import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 
 public interface ITagOperation {
 	public abstract CVSTag getTag();
 	public abstract void setTag(CVSTag tag);
-	public abstract void run() throws CVSException, InterruptedException;
+	public abstract void run() throws InvocationTargetException, InterruptedException;
 	public abstract ICVSResource[] getCVSResources();
 	public abstract void moveTag();
 	public abstract void recurse();
