@@ -17,7 +17,6 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.internal.cheatsheets.data.*;
-import org.eclipse.ui.internal.cheatsheets.data.Item;
 
 public class CheatSheetPage extends Page {
 	//Colors
@@ -54,7 +53,7 @@ public class CheatSheetPage extends Page {
 	protected void createInfoArea(Composite parent) {
 		super.createInfoArea(parent);
 	
-		IntroItem myintro = new IntroItem(form, form.getBody(), parser.getIntroItem(), darkGrey, cheatSheetView);
+		IntroItem myintro = new IntroItem(toolkit, form, parser.getIntroItem(), darkGrey, cheatSheetView);
 	
 		myintro.setItemColor(myintro.lightGrey);
 		myintro.setBold(true);
@@ -62,29 +61,11 @@ public class CheatSheetPage extends Page {
 			
 		//Get the content info from the parser.  This makes up all items except the intro item.
 		ArrayList items = parser.getItems();
-
-		int switcher = 0;
-	
 		for (int i = 0; i < items.size(); i++) {
-			if (switcher == 0) {
-				if (items.get(i) instanceof ItemWithSubItems) {
-					CoreItem ciws = new CoreItem(form, form.getBody(), (ItemWithSubItems) items.get(i), backgroundColor, cheatSheetView);
-					viewItemList.add(ciws);
-				} else {
-					CoreItem mycore = new CoreItem(form, form.getBody(), (Item) items.get(i), backgroundColor, cheatSheetView);
-					viewItemList.add(mycore);
-				}
-				switcher = 1;
-			} else {
-				if (items.get(i) instanceof ItemWithSubItems) {
-					CoreItem ciws = new CoreItem(form, form.getBody(), (ItemWithSubItems) items.get(i), lightGrey, cheatSheetView);
-					viewItemList.add(ciws);
-				} else {
-					CoreItem mycore = new CoreItem(form, form.getBody(), (Item) items.get(i), lightGrey, cheatSheetView);
-					viewItemList.add(mycore);
-				}
-				switcher = 0;
-			}
+			Color color = (i%2) == 0 ? backgroundColor : lightGrey;
+
+			CoreItem coreItem = new CoreItem(toolkit, form, (IContainsContent)items.get(i), color, cheatSheetView);
+			viewItemList.add(coreItem);
 		}
 	}
 
@@ -98,7 +79,7 @@ public class CheatSheetPage extends Page {
 		if(parser != null & parser.getTitle() != null)
 			return parser.getTitle();
 		else
-			return "";//$NON-NLS-1$
+			return ""; //$NON-NLS-1$
 	}
 
 	public void dispose() {
