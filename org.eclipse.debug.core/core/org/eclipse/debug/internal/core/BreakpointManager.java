@@ -354,7 +354,9 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 					public void run(IProgressMonitor monitor) {
 						try {
 							IBreakpoint breakpoint= getBreakpoint(marker);
-							breakpoint.delete();
+							if (breakpoint != null) {
+								breakpoint.delete();
+							}
 						} catch (CoreException ce) {
 							logError(ce);
 						}
