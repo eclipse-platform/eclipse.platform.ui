@@ -22,6 +22,7 @@ import org.eclipse.swt.ole.win32.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.dialogs.SaveAsDialog;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.part.EditorPart;
@@ -484,24 +485,24 @@ public class OleEditor extends EditorPart {
 
 		return new WorkspaceModifyOperation() {
 			public void execute(final IProgressMonitor monitor) throws CoreException {
-
-				InputDialog dialog =
-					new InputDialog(
-						clientFrame.getShell(),
-						FILE_PROMPTER_TITLE,
-						FILE_PROMPTER_MESSAGE,
-						source.getName(),
-						null);
-				dialog.setBlockOnOpen(true);
+				SaveAsDialog dialog = new SaveAsDialog(clientFrame.getShell());
+				IFileEditorInput input = (IFileEditorInput)getEditorInput();
+				IFile sFile = input.getFile();
+				dialog.setOriginalFile(sFile);
 				dialog.open();
-
+				
+				IPath newPath = dialog.getResult();
+				if(newPath == null)
+					return;
+					
 				if (dialog.getReturnCode() == dialog.OK) {
-					File newFile = new File(source.getParentFile(), dialog.getValue());
-
+					String projectName = newPath.segment(0);
+					newPath = newPath.removeFirstSegments(1);
+					IProject project = resource.getWorkspace().getRoot().getProject(projectName);
+					newPath = project.getLocation().append(newPath);
+					File newFile = newPath.toFile();
 					if (saveFile(newFile)) {
-						IFile newResource =
-							resource.getWorkspace().getRoot().getFileForLocation(
-								new Path(newFile.getAbsolutePath()));
+						IFile newResource = resource.getWorkspace().getRoot().getFileForLocation(newPath);
 						if (newResource != null) {
 							sourceChanged(newResource);
 							newResource.refreshLocal(IResource.DEPTH_ZERO, monitor);
