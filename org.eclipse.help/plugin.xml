@@ -93,5 +93,9 @@
 	<extension point="org.eclipse.core.runtime.urlHandlers"> 
 		<handler protocol="links" class="org.eclipse.help.internal.protocols.links.Handler"/> 
 	</extension> 
+
+	<extension point="org.eclipse.core.runtime.urlHandlers"> 
+		<handler protocol="livehelp" class="org.eclipse.help.internal.protocols.livehelp.Handler"/> 
+	</extension> 
 	
 </plugin>
