@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,7 +27,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTargetEvent;
-import org.eclipse.swt.dnd.DropTargetListener;
 import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.widgets.Display;
@@ -218,7 +217,7 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements
 
     /**
      * Perform the drop.
-     * @see DropTargetListener#drop(org.eclipse.swt.dnd.DropTargetEvent)
+     * @see org.eclipse.swt.dnd.DropTargetListener#drop(org.eclipse.swt.dnd.DropTargetEvent)
      */
     public boolean performDrop(final Object data) {
         alwaysOverwrite = false;
@@ -320,7 +319,7 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements
     }
 
     /*
-     * @see IOverwriteQuery#queryOverwrite(String)
+     * @see org.eclipse.ui.dialogs.IOverwriteQuery#queryOverwrite(java.lang.String)
      */
     public String queryOverwrite(String pathString) {
         if (alwaysOverwrite)
