@@ -62,19 +62,18 @@ public class LockManager {
 	public LockManager() {
 	}
 	/* (non-Javadoc)
-	 * Method declared on LockListener
+	 * Method declared on ILockListener
 	 */
 	public void aboutToRelease() {
 		if (lockListener != null)
 			lockListener.aboutToRelease();
 	}
 	/* (non-Javadoc)
-	 * Method declared on LockListener
+	 * Method declared on ILockListener
 	 */
-	public boolean aboutToWait(Thread lockOwner) {
+	public void aboutToWait(Thread lockOwner) {
 		if (lockListener != null)
-			return lockListener.aboutToWait(lockOwner);
-		return false;
+			lockListener.aboutToWait(lockOwner);
 	}
 	/**
 	 * This thread has just acquired a lock.  Add to the locking thread set if necessary,

@@ -138,11 +138,7 @@ public class OrderedLock implements ILock {
 		if (semaphore != null) {
 			boolean success = false;
 			//notifiy hook to service pending syncExecs before falling asleep
-			if (manager.aboutToWait(getCurrentOperationThread())) {
-				//hook granted immediate access
-				operations.dequeue();
-				return true;
-			}
+			manager.aboutToWait(getCurrentOperationThread());
 			try {
 				success = semaphore.acquire(delay);
 			} catch (InterruptedException e) {
@@ -195,6 +191,7 @@ public class OrderedLock implements ILock {
 	 * @see ILock#release
 	 */
 	public synchronized void release() {
+		Assert.isTrue(currentOperationThread == Thread.currentThread(), "Attempt to release lock not owned by this thread"); //$NON-NLS-1$
 		if (depth == 0)
 			return;
 		//only release the lock when the depth reaches zero

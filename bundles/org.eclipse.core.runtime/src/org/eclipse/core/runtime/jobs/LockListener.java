@@ -28,15 +28,11 @@ public class LockListener {
 	private final LockManager manager = ((JobManager)Platform.getJobManager()).getLockManager();
 	/**
 	 * Notification that a thread is about to block on an attempt to acquire a lock.
-	 * Returns whether the thread should be granted immediate access to the lock.
 	 * 
 	 * @param lockOwner the thread that currently owns the lock this thread is
 	 * waiting for
-	 * @return <code>true</code> if the thread should be granted immediate access, 
-	 * and <code>false</code> if it should wait for the lock to be available
 	 */
-	public boolean aboutToWait(Thread lockOwner)  {
-		return false;
+	public void aboutToWait(Thread lockOwner)  {
 	}
 	/**
 	 * Notification that a thread is about to release a lock.
