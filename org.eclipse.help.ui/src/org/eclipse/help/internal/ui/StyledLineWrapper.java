@@ -24,6 +24,8 @@ public class StyledLineWrapper implements StyledTextContent {
 	 * Constructor
 	 */
 	public StyledLineWrapper(String text) {
+		if (text == null || text.length() == 0)
+			text = " "; // use one blank space
 		setText(text);
 	}
 	/**
