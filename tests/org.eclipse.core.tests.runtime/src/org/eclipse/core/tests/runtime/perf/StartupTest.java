@@ -27,6 +27,8 @@ public class StartupTest extends TestCase {
 		PerformanceMeter meter = Performance.getDefault().createPerformanceMeter(getClass().getName() + '.' + getName());
 		try {
 			meter.stop();
+			// tag for showing in the performance fingerprint graph
+			Performance.getDefault().tagAsGlobalSummary(meter, "Core Headless Startup", Dimension.ELAPSED_PROCESS);
 			meter.commit();
 			Performance.getDefault().assertPerformanceInRelativeBand(meter, Dimension.ELAPSED_PROCESS, -50, 5);
 		} finally {

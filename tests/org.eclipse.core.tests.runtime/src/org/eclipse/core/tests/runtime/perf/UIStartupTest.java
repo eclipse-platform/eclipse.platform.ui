@@ -27,6 +27,7 @@ public class UIStartupTest extends TestCase {
 		PerformanceMeter meter = Performance.getDefault().createPerformanceMeter(getClass().getName() + '.' + getName());
 		try {
 			meter.stop();
+			Performance.getDefault().tagAsGlobalSummary(meter, "Core UI Startup", Dimension.ELAPSED_PROCESS);						
 			meter.commit();
 			Performance.getDefault().assertPerformanceInRelativeBand(meter, Dimension.ELAPSED_PROCESS, -50, 5);
 		} finally {
