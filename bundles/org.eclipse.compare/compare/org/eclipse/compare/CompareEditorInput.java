@@ -697,14 +697,16 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 * see IPropertyChangeNotifier.addListener
 	 */
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
-		fListenerList.add(listener);
+		if (listener != null)
+			fListenerList.add(listener);
 	}
 
 	/* (non Javadoc)
 	 * see IPropertyChangeNotifier.removeListener
 	 */
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
-		fListenerList.remove(listener);
+		if (listener != null)
+			fListenerList.remove(listener);
 	}
 
 	/**
