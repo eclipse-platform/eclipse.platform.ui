@@ -24,20 +24,23 @@ import org.eclipse.ui.internal.progress.ProgressMessages;
 public abstract class UIJob extends Job {
 	private Display display;
 
+
 	/**
-	 * Create a new instance of the receiver.
+	 * Create a new instance of the receiver with the supplied name.
+	 * @param name
 	 */
-	public UIJob() {
-		super();
+	public UIJob(String name) {
+		super(name);
 	}
 
 	/**
 	 * Create a new instance of the receiver with the supplied
 	 * Display.
 	 * @param jobDisplay
+	 * @param name
 	 */
-	public UIJob(Display jobDisplay) {
-		this();
+	public UIJob(Display jobDisplay,String name) {
+		this(name);
 		display = jobDisplay;
 	}
 

@@ -124,7 +124,7 @@ public class DeferredTreeContentManager {
 
 		// Cancel any jobs currently fetching children for the same parent instance.
 		Platform.getJobManager().cancel(parent);
-		Job job = new Job() {
+		Job job = new Job(ProgressMessages.getString("DeferredTreeContentManager.FetchChildrenJob")) { //$NON-NLS-1$
 			public IStatus run(IProgressMonitor monitor) {
 				try {
 					adapter.fetchDeferredChildren(parent, collector, monitor);
@@ -153,7 +153,7 @@ public class DeferredTreeContentManager {
 		final Object[] children,
 		IProgressMonitor monitor) {
 
-		UIJob updateJob = new UIJob() {
+		UIJob updateJob = new UIJob(ProgressMessages.getString("DeferredTreeContentManager.AddChildrenJob")) { //$NON-NLS-1$
 			/* (non-Javadoc)
 			 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
 			 */
