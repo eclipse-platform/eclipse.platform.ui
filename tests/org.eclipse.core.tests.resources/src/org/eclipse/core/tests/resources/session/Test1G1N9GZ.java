@@ -36,8 +36,7 @@ public void test1() throws CoreException {
 	command.setBuilderName(SortBuilder.BUILDER_NAME);
 	command.getArguments().put(SortBuilder.BUILD_ID, "P1Build1");
 	desc.setBuildSpec(new ICommand[] {command});
-	setUpMonitor();
-	p1.setDescription(desc, monitor);
+	p1.setDescription(desc, getMonitor());
 
 	/* create P2 and set a builder */
 	IProject p2 = workspace.getRoot().getProject("p2");
@@ -48,21 +47,15 @@ public void test1() throws CoreException {
 	command.setBuilderName(SortBuilder.BUILDER_NAME);
 	command.getArguments().put(SortBuilder.BUILD_ID, "P2Build1");
 	desc.setBuildSpec(new ICommand[] {command});
-	setUpMonitor();
-	p1.setDescription(desc, monitor);
+	p1.setDescription(desc, getMonitor());
 
 	/* PR test case */
-	setUpMonitor();
-	workspace.save(true, monitor);
+	workspace.save(true, getMonitor());
 }
 public void test2() throws CoreException {
-	setUpMonitor();
-	workspace.save(true, monitor);
+	workspace.save(true, getMonitor());
 }
 public void test3() throws CoreException {	
-	/* open again and try to create a files */
-	ResourcesPlugin.getPlugin().startup();
-
 	/* get new handles */
 	IProject p1 = workspace.getRoot().getProject("p1");
 	IProject p2 = workspace.getRoot().getProject("p2");

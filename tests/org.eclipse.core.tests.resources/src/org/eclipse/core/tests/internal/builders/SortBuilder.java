@@ -32,6 +32,11 @@ public class SortBuilder extends TestBuilder {
 	 * Whether the last build was full, auto or incremental
 	 */
 	private int triggerForLastBuild;
+	
+	/**
+	 * Whether the last build provided a null delta.
+	 */
+	private boolean wasDeltaNull = false;
 
 	/**
 	 * Build command parameters.
@@ -60,6 +65,7 @@ protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws 
 	super.build(kind, args,  monitor);
 	triggerForLastBuild = kind;
 	IResourceDelta delta = getDelta(getProject());
+	wasDeltaNull = delta == null;
 
 	if (delta == null || kind == IncrementalProjectBuilder.FULL_BUILD) {
 		fullBuild();
@@ -384,6 +390,9 @@ protected boolean visitDelta(IResourceDelta delta) throws CoreException {
 }
 public boolean wasAutoBuild() {
 	return triggerForLastBuild == IncrementalProjectBuilder.AUTO_BUILD;
+}
+public boolean wasDeltaNull() {
+	return wasDeltaNull;
 }
 public boolean wasFullBuild() {
 	return triggerForLastBuild == IncrementalProjectBuilder.FULL_BUILD;

@@ -36,6 +36,19 @@ public void test2() throws CoreException {
 	assertEquals("1.0", 1, members.length);
 	assertTrue("1.1", members[0].getType() == IResource.PROJECT);
 	IProject project  = (IProject)members[0];
+	assertTrue("1.2", project.exists());
+	assertEquals("1.3", 0, project.members().length);
+	IFolder folder = project.getFolder(FOLDER);
+	IFile file = folder.getFile(FILE);	
+	assertTrue("1.4", !folder.exists());
+	assertTrue("1.5", !file.exists());
+
+	//opening the project does an automatic local refresh	
+	project.open(null);
+	
+	assertEquals("2.0", 1, project.members().length);
+	assertTrue("2.1", folder.exists());
+	assertTrue("2.2", file.exists());
 }
 }
 
