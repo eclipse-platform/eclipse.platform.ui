@@ -24,6 +24,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.*;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -160,10 +161,16 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChanged
 		}
 		
 		protected void shutdown() {
+			Shell shell= fWindow.getShell();
+			if (shell == null || shell.isDisposed()) {
+				return;
+			}
 			if (fPage != null) {
 				fPage.removePartListener(this);
 			}
-			fWindow.removePageListener(this);
+			if (fWindow != null) {
+				fWindow.removePageListener(this);
+			}
 		}
 		
 		/**
