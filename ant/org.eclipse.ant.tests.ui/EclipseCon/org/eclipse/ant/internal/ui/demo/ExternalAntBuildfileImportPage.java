@@ -81,9 +81,16 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 	private Button browseButton;
 	
 	private AntModel fAntModel;
-	private IDocument fCurrentDocument;
 
-	private Listener modifyListener = new Listener() {
+	private Listener locationModifyListener = new Listener() {
+		public void handleEvent(Event e) {
+			fAntModel= getAntModel(getBuildFile(getProjectLocationFieldValue()));
+			setProjectName();
+			setPageComplete(validatePage());
+		}
+	};
+	
+	private Listener nameModifyListener = new Listener() {
 		public void handleEvent(Event e) {
 			setPageComplete(validatePage());
 		}
@@ -173,7 +180,7 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 		projectNameField.setLayoutData(data);
 		projectNameField.setFont(dialogFont);
 		
-		projectNameField.addListener(SWT.Modify, modifyListener);
+		projectNameField.addListener(SWT.Modify, nameModifyListener);
 	}
 	/**
 	 * Creates the project location specification controls.
@@ -204,31 +211,9 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 			}
 		});
 
-		locationPathField.addListener(SWT.Modify, modifyListener);
+		locationPathField.addListener(SWT.Modify, locationModifyListener);
 	}
-	/**
-	 * Returns the current project location path as entered by 
-	 * the user, or its anticipated initial value.
-	 *
-	 * @return the project location path, its anticipated initial value, or <code>null</code>
-	 *   if no project location path is known
-	 */
-	public IPath getLocationPath() {
 
-		return new Path(getProjectLocationFieldValue());
-	}
-	/**
-	 * Creates a project resource handle for the current project name field value.
-	 * <p>
-	 * This method does not create the project resource; this is the responsibility
-	 * of <code>IProject::create</code> invoked by the new project resource wizard.
-	 * </p>
-	 *
-	 * @return the new project resource handle
-	 */
-	public IProject getProjectHandle() {
-		return ResourcesPlugin.getWorkspace().getRoot().getProject(getProjectName(getProjectNode()));
-	}
 	/**
 	 * Returns the current project name as entered by the user, or its anticipated
 	 * initial value.
@@ -236,7 +221,7 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 	 * @return the project name, its anticipated initial value, or <code>null</code>
 	 *   if no project name is known
 	 */
-	public String getProjectName(AntProjectNode projectNode) {
+	private String getProjectName(AntProjectNode projectNode) {
 		String userSpecifiedName= getProjectNameFieldValue();
 		if (userSpecifiedName.length() > 0) {
 			return userSpecifiedName;
@@ -294,8 +279,6 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 			
 //			previouslyBrowsedDirectory = selectedDirectory;
 			locationPathField.setText(path.toOSString());
-			fAntModel= getAntModel(getBuildFile(getProjectLocationFieldValue()));
-			setProjectName();
 	}
 
 	/**
@@ -321,6 +304,11 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 			return false;
 		}
 
+		if (fAntModel == null) {
+			setErrorMessage("Specified buildfile could not be parsed successfully");
+			return false;
+		}
+		
 		if (getProjectNameFieldValue().length() == 0) {
 			setErrorMessage("Project name must be specified");
 			return false;
@@ -461,8 +449,11 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 	}
 	
 	private AntModel getAntModel(final File buildFile) {
-		fCurrentDocument= getDocument(buildFile);
-		AntModel model= new AntModel(XMLCore.getDefault(), fCurrentDocument, null, new ILocationProvider() {
+		IDocument doc= getDocument(buildFile);
+		if (doc == null) {
+			return null;
+		}
+		AntModel model= new AntModel(XMLCore.getDefault(), doc, null, new ILocationProvider() {
 			/* (non-Javadoc)
 			 * @see org.eclipse.ant.internal.ui.editor.outline.ILocationProvider#getLocation()
 			 */
