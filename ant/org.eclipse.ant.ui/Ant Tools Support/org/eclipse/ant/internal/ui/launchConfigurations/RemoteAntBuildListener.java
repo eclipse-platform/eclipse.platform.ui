@@ -31,8 +31,8 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchesListener;
 import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.debug.ui.console.IConsoleHyperlink;
 import org.eclipse.jface.text.Region;
+import org.eclipse.ui.console.IHyperlink;
 
 /**
  * Parts adapted from org.eclipse.jdt.internal.junit.ui.RemoteTestRunnerClient
@@ -161,7 +161,7 @@ public class RemoteAntBuildListener implements ILaunchesListener{
 			int size = IAntUIConstants.LEFT_COLUMN_SIZE - (taskName.length() + 3);
 			int offset = Math.max(size - 2, 1);
 			int length = IAntUIConstants.LEFT_COLUMN_SIZE - size - 3;
-			IConsoleHyperlink taskLink = AntUtil.getTaskLink(location, fBuildFileParent);
+			IHyperlink taskLink = AntUtil.getTaskLink(location, fBuildFileParent);
 			if (taskLink != null) {
 				TaskLinkManager.addTaskHyperlink(getProcess(), taskLink, new Region(offset, length), line);
 			}

@@ -44,8 +44,8 @@
 			 		${eclipse.home}/plugins/org.eclipse.ant.core${version.suffix}/antsupport.jar;
 			 		${basedir}/../org.eclipse.debug.core/bin;
 			 		${eclipse.home}/plugins/org.eclipse.debug.core${version.suffix}/dtcore.jar;
-			 		${basedir}/../org.eclipse.debug.ui/bin;
-					${eclipse.home}/plugins/org.eclipse.debug.ui${version.suffix}/dtui.jar;
+					${basedir}/../org.eclipse.ui.console/bin;
+					${eclipse.home}/plugins/org.eclipse.ui.console${version.suffix}/console.jar;
 			 		${basedir}/../org.eclipse.jface/bin;
 			 		${eclipse.home}/plugins/org.eclipse.jface${version.suffix}/jface.jar;">
 			<src path="Ant Runner Support/"/>

@@ -51,6 +51,7 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.console.IHyperlink;
 
 /**
  * General utility class dealing with Ant build files
@@ -374,7 +375,7 @@ public final class AntUtil {
 		return root.getFile(new Path(fullPath));
 	}
 
-	public static FileLink getTaskLink(String path, File buildFileParent) {
+	public static IHyperlink getTaskLink(String path, File buildFileParent) {
 		path = path.trim();
 		if (path.length() == 0) {
 			return null;

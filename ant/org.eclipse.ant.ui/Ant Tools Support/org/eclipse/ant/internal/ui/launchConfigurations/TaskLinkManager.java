@@ -22,9 +22,9 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.ui.console.FileLink;
 import org.eclipse.debug.ui.console.IConsole;
-import org.eclipse.debug.ui.console.IConsoleHyperlink;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.ui.console.IHyperlink;
 
 /**
  * Manages task links per process. As messages are logged to the console from
@@ -52,11 +52,11 @@ public class TaskLinkManager {
 	private static List fgAntBuilds;
 	
 	private static class HyperlinkEntry {
-		private IConsoleHyperlink fLink;
+		private IHyperlink fLink;
 		private IRegion fRegion;
 		private String fMessage;
 		
-		public HyperlinkEntry(IConsoleHyperlink link, IRegion region, String message) {
+		public HyperlinkEntry(IHyperlink link, IRegion region, String message) {
 			fLink = link;
 			fRegion = region;	
 			fMessage = message;
@@ -66,7 +66,7 @@ public class TaskLinkManager {
 			return fRegion;
 		}
 		
-		public IConsoleHyperlink getLink() {
+		public IHyperlink getLink() {
 			return fLink;
 		}
 		
@@ -109,7 +109,7 @@ public class TaskLinkManager {
 	 * @param region The region within the line
 	 * @param message The message related to the link
 	 */
-	public static synchronized void addTaskHyperlink(IProcess process, IConsoleHyperlink link, IRegion region, String message) {
+	public static synchronized void addTaskHyperlink(IProcess process, IHyperlink link, IRegion region, String message) {
 		if (fgProcessToNewLines != null) {
 			List newLines = (List)fgProcessToNewLines.get(process);
 			if (newLines != null) {
@@ -136,7 +136,7 @@ public class TaskLinkManager {
 		links.add(new HyperlinkEntry(link, region, message));
 	}
 	
-	private static boolean addLink(IConsole console, IConsoleHyperlink link, IRegion lineRegion, IRegion region, String message) {
+	private static boolean addLink(IConsole console, IHyperlink link, IRegion lineRegion, IRegion region, String message) {
 		
 		int length = region.getLength();
 		
