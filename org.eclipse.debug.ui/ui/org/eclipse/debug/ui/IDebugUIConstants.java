@@ -369,6 +369,9 @@ public interface IDebugUIConstants {
 	/** Running debug target image identifier. */
 	public static final String IMG_OBJS_DEBUG_TARGET= "IMG_OBJS_DEBUG_TARGET"; //$NON-NLS-1$
 	
+	/** Suspended debug target image identifier. */
+	public static final String IMG_OBJS_DEBUG_TARGET_SUSPENDED= "IMG_OBJS_DEBUG_TARGET_SUSPENDED"; //$NON-NLS-1$
+	
 	/** Terminated debug target image identifier. */
 	public static final String IMG_OBJS_DEBUG_TARGET_TERMINATED= "IMG_OBJS_DEBUG_TARGET_TERMINATED"; //$NON-NLS-1$
 	

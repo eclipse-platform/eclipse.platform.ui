@@ -90,6 +90,8 @@ public class DefaultLabelProvider implements ILabelProvider {
 				IDebugTarget target= (IDebugTarget) element;
 				if (target.isTerminated() || target.isDisconnected()) {
 					return IDebugUIConstants.IMG_OBJS_DEBUG_TARGET_TERMINATED;
+				} else if (target.isSuspended()) {
+					return IDebugUIConstants.IMG_OBJS_DEBUG_TARGET_SUSPENDED;
 				} else {
 					return IDebugUIConstants.IMG_OBJS_DEBUG_TARGET;
 				}
