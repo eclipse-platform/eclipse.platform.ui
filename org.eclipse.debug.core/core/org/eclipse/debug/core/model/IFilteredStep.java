@@ -21,6 +21,7 @@ import org.eclipse.debug.core.DebugException;
  * Clients may implement this interface.
  * </p>
  * @since 2.1
+ * @deprecated clients should implement <code>IStepFilters</code> instead
  */
 public interface IFilteredStep extends IStep {
 	/**

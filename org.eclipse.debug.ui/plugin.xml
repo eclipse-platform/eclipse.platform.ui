@@ -147,6 +147,19 @@
             </groupMarker>
          </menu>
          <action
+               id="org.eclipse.debug.internal.ui.actions.ToggleStepFiltersActionDelegate"
+               hoverIcon="icons/full/clcl16/stepbystep_co.gif"
+               class="org.eclipse.debug.internal.ui.actions.ToggleStepFiltersActionDelegate"
+               definitionId="org.eclipse.debug.internal.ui.actions.ToggleStepFiltersActionDelegate"
+               disabledIcon="icons/full/dlcl16/stepbystep_co.gif"
+               icon="icons/full/elcl16/stepbystep_co.gif"
+               helpContextId="step_with_filters_action_context"
+               label="%StepWithFiltersAction.label"
+               menubarPath="org.eclipse.ui.run/emptyStepGroup"
+               style="toggle"
+               state="false">
+         </action>         
+         <action
                id="org.eclipse.debug.internal.ui.actions.StepReturnActionDelegate"
                hoverIcon="icons/full/clcl16/stepreturn_co.gif"
                class="org.eclipse.debug.internal.ui.actions.StepReturnActionDelegate"
@@ -177,17 +190,6 @@
                icon="icons/full/elcl16/stepinto_co.gif"
                helpContextId="step_into_action_context"
                label="%StepIntoAction.label"
-               menubarPath="org.eclipse.ui.run/stepIntoGroup">
-         </action>
-         <action
-               id="org.eclipse.debug.internal.ui.actions.StepWithFiltersActionDelegate"
-               hoverIcon="icons/full/clcl16/stepbystep_co.gif"
-               class="org.eclipse.debug.internal.ui.actions.StepWithFiltersActionDelegate"
-               definitionId="org.eclipse.debug.internal.ui.actions.StepWithFiltersActionDelegate"
-               disabledIcon="icons/full/dlcl16/stepbystep_co.gif"
-               icon="icons/full/elcl16/stepbystep_co.gif"
-               helpContextId="step_with_filters_action_context"
-               label="%StepWithFiltersAction.label"
                menubarPath="org.eclipse.ui.run/stepIntoGroup">
          </action>
          <action
@@ -485,6 +487,19 @@
          </action>
 <!-- Step Group -->
          <action
+               id="org.eclipse.debug.ui.debugview.toolbar.toggleStepFilters"
+               toolbarPath="emptyStepGroup"
+               hoverIcon="icons/full/clcl16/stepbystep_co.gif"
+               class="org.eclipse.debug.internal.ui.actions.ToggleStepFiltersActionDelegate"
+               disabledIcon="icons/full/dlcl16/stepbystep_co.gif"
+               icon="icons/full/elcl16/stepbystep_co.gif"
+               label="%StepWithFiltersAction.label"
+               helpContextId="step_with_filters_action_context"
+               tooltip="%StepWithFiltersAction.tooltip"
+               style="toggle"
+               state="false">
+         </action>
+         <action
                id="org.eclipse.debug.ui.debugview.toolbar.stepReturn"
                toolbarPath="stepReturnGroup"
                hoverIcon="icons/full/clcl16/stepreturn_co.gif"
@@ -525,21 +540,6 @@
                label="%StepIntoAction.label"
                helpContextId="step_into_action_context"
                tooltip="%StepIntoAction.tooltip">
-            <selection
-                  class="org.eclipse.debug.core.model.IStep">
-            </selection>
-         </action>
-         <action
-               id="org.eclipse.debug.ui.debugview.toolbar.stepWithFilters"
-               toolbarPath="stepIntoGroup"
-               hoverIcon="icons/full/clcl16/stepbystep_co.gif"
-               class="org.eclipse.debug.internal.ui.actions.StepWithFiltersActionDelegate"
-               disabledIcon="icons/full/dlcl16/stepbystep_co.gif"
-               enablesFor="1"
-               icon="icons/full/elcl16/stepbystep_co.gif"
-               label="%StepWithFiltersAction.label"
-               helpContextId="step_with_filters_action_context"
-               tooltip="%StepWithFiltersAction.tooltip">
             <selection
                   class="org.eclipse.debug.core.model.IStep">
             </selection>
@@ -833,6 +833,16 @@
          </action>
 <!-- Step Group -->
          <action
+               label="%StepWithFiltersAction.label"
+               icon="icons/full/clcl16/stepbystep_co.gif"
+               helpContextId="step_with_filters_action_context"
+               class="org.eclipse.debug.internal.ui.actions.ToggleStepFiltersActionDelegate"
+               menubarPath="stepReturnGroup"
+               id="org.eclipse.debug.ui.debugview.popupMenu.stepWithFilters"
+               style="toggle"
+               state="false">
+         </action>
+         <action
                label="%StepReturnAction.label"
                icon="icons/full/clcl16/stepreturn_co.gif"
                helpContextId="step_return_action_context"
@@ -864,18 +874,6 @@
                menubarPath="stepIntoGroup"
                enablesFor="1"
                id="org.eclipse.debug.ui.debugview.popupMenu.stepInto">
-            <selection
-                  class="org.eclipse.debug.core.model.IStep">
-            </selection>
-         </action>
-         <action
-               label="%StepWithFiltersAction.label"
-               icon="icons/full/clcl16/stepbystep_co.gif"
-               helpContextId="step_with_filters_action_context"
-               class="org.eclipse.debug.internal.ui.actions.StepWithFiltersActionDelegate"
-               menubarPath="stepIntoGroup"
-               enablesFor="1"
-               id="org.eclipse.debug.ui.debugview.popupMenu.stepWithFilters">
             <selection
                   class="org.eclipse.debug.core.model.IStep">
             </selection>
@@ -1109,12 +1107,12 @@
             name="%ActionDefinition.stepWithFilters.name"
             category="org.eclipse.debug.ui.category.run"
             description="%ActionDefinition.stepWithFilters.description"
-            id="org.eclipse.debug.internal.ui.actions.StepWithFiltersActionDelegate">
+            id="org.eclipse.debug.internal.ui.actions.ToggleStepFiltersActionDelegate">
       </command>
       <keyBinding
             string="Shift+F5"
             scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.debug.internal.ui.actions.StepWithFiltersActionDelegate"
+            command="org.eclipse.debug.internal.ui.actions.ToggleStepFiltersActionDelegate"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command

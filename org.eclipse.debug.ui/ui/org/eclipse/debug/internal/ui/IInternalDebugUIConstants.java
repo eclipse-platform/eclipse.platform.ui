@@ -79,6 +79,13 @@ public interface IInternalDebugUIConstants {
 	 * @since 3.0
 	 */
 	public static final String PREF_LAUNCH_PERSPECTIVES = IDebugUIConstants.PLUGIN_ID + ".PREF_LAUNCH_PERSPECTIVES"; //$NON-NLS-1$
+	
+	/**
+	 * Preference for using step filters.
+	 * 
+	 * @since 3.0
+	 */
+	public static final String PREF_USE_STEP_FILTERS = IDebugUIConstants.PLUGIN_ID + ".USE_STEP_FILTERS"; //$NON-NLS-1$	
 	 
 	/** Transparent overlay image identifier. */
 	public static final String IMG_OVR_TRANSPARENT = "IMG_OVR_TRANSPARENT";  //$NON-NLS-1$

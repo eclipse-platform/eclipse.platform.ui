@@ -18,8 +18,13 @@ import org.eclipse.debug.core.DebugException;
  * from the current execution location.  Implementations
  * must be non-blocking.
  * <p>
+ * Implementations should honor step filter settings in their
+ * associated debug target, as defined by <code>IStepFilters</code>.
+ * </p>
+ * <p>
  * Clients may implement this interface.
  * </p>
+ * @see org.eclipse.debug.core.model.IStepFilters
  */
 public interface IStep {
 	/**

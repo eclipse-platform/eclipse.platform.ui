@@ -121,6 +121,11 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	private LaunchConfigurationManager fLaunchConfigurationManager = null;
 	
 	/**
+	 * Step filter manager
+	 */
+	private StepFilterManager fStepFilterManager = null;
+	
+	/**
 	 * Returns whether the debug UI plug-in is in trace
 	 * mode.
 	 * 
@@ -279,6 +284,9 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		if (fConsoleDocumentManager != null) {
 			fConsoleDocumentManager.shutdown();
 		}
+		if (fStepFilterManager != null) {
+			fStepFilterManager.shutdown();
+		}
 		
 		ColorManager.getDefault().dispose();
 		if (fgPresentation != null) {
@@ -354,6 +362,9 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		prefs.setDefault(IDebugUIConstants.ID_EXPRESSION_VIEW + '+' + "org.eclipse.debug.ui.ShowDetailPaneAction", true); //$NON-NLS-1$
 		prefs.setDefault(IDebugUIConstants.ID_VARIABLE_VIEW + '+' + "org.eclipse.debug.ui.ShowTypeNamesAction", false); //$NON-NLS-1$
 		prefs.setDefault(IDebugUIConstants.ID_EXPRESSION_VIEW + '+' + "org.eclipse.debug.ui.ShowTypeNamesAction", false);		 //$NON-NLS-1$
+		
+		// Step filter preferences
+		prefs.setDefault(IInternalDebugUIConstants.PREF_USE_STEP_FILTERS, false);
 	}
 
 	protected IProcess getProcessFromInput(Object input) {
@@ -657,6 +668,10 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 			manager.launchAdded(launch);
 		}
 		
+		if (fStepFilterManager == null) {
+			getStepFilterManager().launchAdded(launch);
+		}
+		
 		getLaunchConfigurationManager().startup();
 	}
 	
@@ -671,6 +686,18 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 			fPerspectiveManager.startup();			
 		}
 		return fPerspectiveManager;
+	}
+	
+	/**
+	 * Returns the singleton step filter manager.
+	 * 
+	 * @return the step filter manager
+	 */
+	public StepFilterManager getStepFilterManager() {
+		if (fStepFilterManager == null) {
+			fStepFilterManager = new StepFilterManager();
+		}
+		return fStepFilterManager;
 	}
 
 	/**
