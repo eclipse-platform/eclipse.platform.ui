@@ -42,8 +42,12 @@ public class ResourceResolver implements IDynamicVariableResolver {
 			resource = getWorkspaceRoot().findMember(new Path(argument));
 		}
 		if (resource != null && resource.exists()) {
-			resource = translateSelectedResource(resource);
-			return translateToValue(resource, variable);
+			if (argument == null) {
+				resource = translateSelectedResource(resource);
+			}
+			if (resource != null) {
+				return translateToValue(resource, variable);
+			}
 		}
 		abort(MessageFormat.format(StringSubstitutionMessages.getString("ResourceResolver.6"), new String[]{getReferenceExpression(variable, argument)}), null);				 //$NON-NLS-1$
 		return null;
