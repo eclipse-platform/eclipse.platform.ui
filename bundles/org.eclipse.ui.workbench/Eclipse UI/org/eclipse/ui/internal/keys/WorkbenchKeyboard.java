@@ -223,7 +223,9 @@ public class WorkbenchKeyboard {
 	private void checkModifierKeys(Event event) {
 		if ((event.type == SWT.KeyUp) && (event.stateMask == event.keyCode)) {
 			state.setCollapseFully(true);
-			state.reset();
+			if (state.isSafeToReset()) {
+				state.reset();
+			}
 		}
 	}
 

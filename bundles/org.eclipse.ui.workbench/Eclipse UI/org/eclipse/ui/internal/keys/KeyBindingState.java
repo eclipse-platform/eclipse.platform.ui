@@ -39,6 +39,25 @@ import org.eclipse.ui.internal.util.StatusLineContributionItem;
  * @since 3.0
  */
 class KeyBindingState {
+
+	/**
+	 * A utility method for checking whether the first key stroke in a list
+	 * contains any modifier keys.
+	 * 
+	 * @param keyStrokes
+	 *            The list of key strokes to check; must not be <code>null</code>.
+	 * @return <code>true</code> if the list is not empty and the first key
+	 *         stroke has modifier keys; <code>false</code> otherwise.
+	 */
+	private static boolean isFirstStrokeModified(List keyStrokes) {
+		if (keyStrokes.isEmpty()) {
+			return false;
+		}
+
+		KeyStroke firstStroke = (KeyStroke) keyStrokes.get(0);
+		return (!firstStroke.getModifierKeys().isEmpty());
+
+	}
 	/**
 	 * Whether the key sequence should be completely cleared when this state is
 	 * told to reset itself. Otherwise, the key sequence will only reset part
@@ -54,6 +73,12 @@ class KeyBindingState {
 	 */
 	private KeySequence currentSequence;
 	/**
+	 * whether the state can be reset safely -- without destroying a partial
+	 * sequence the user has entered. This is used to make the transition from
+	 * not fully collapsable to fully collapsable.
+	 */
+	private boolean safeToReset;
+	/**
 	 * The workbench that should be notified of changes to the key binding
 	 * state. This is done by updating one of the contribution items on the
 	 * status line.
@@ -64,13 +89,14 @@ class KeyBindingState {
 	 * Constructs a new instance of <code>KeyBindingState</code> with an
 	 * empty key sequence, set to reset fully.
 	 * 
-	 * @param workbench
+	 * @param workbenchToNotify
 	 *            The workbench that this state should keep advised of changes
 	 *            to the key binding state; must not be <code>null</code>.
 	 */
 	KeyBindingState(IWorkbench workbenchToNotify) {
 		currentSequence = KeySequence.getInstance();
 		collapseFully = true;
+		safeToReset = true;
 		workbench = workbenchToNotify;
 	}
 
@@ -82,6 +108,18 @@ class KeyBindingState {
 	 */
 	KeySequence getCurrentSequence() {
 		return currentSequence;
+	}
+
+	/**
+	 * Whether it is safe for someone to issue a reset after switching to a
+	 * fully collapsable state. This checks to see if they have been any
+	 * changes to the sequence made since the last reset.
+	 * 
+	 * @return <code>true</code> if the state can be reset when the state
+	 *         changes to fully collapsable; <code>false</code> otherwise.
+	 */
+	boolean isSafeToReset() {
+		return safeToReset;
 	}
 
 	/**
@@ -97,12 +135,19 @@ class KeyBindingState {
 	 */
 	void reset() {
 		if (collapseFully) {
+			safeToReset = true;
 			currentSequence = KeySequence.getInstance();
 			updateStatusLines();
 		} else {
 			List currentStrokes = currentSequence.getKeyStrokes();
 			if (!currentStrokes.isEmpty()) {
-				currentSequence = KeySequence.getInstance((KeyStroke) currentStrokes.get(0));
+				safeToReset = true;
+				KeyStroke firstStroke = (KeyStroke) currentStrokes.get(0);
+				if (firstStroke.getModifierKeys().isEmpty()) {
+					currentSequence = KeySequence.getInstance();
+				} else {
+					currentSequence = KeySequence.getInstance(firstStroke);
+				}
 				updateStatusLines();
 			}
 		}
@@ -127,7 +172,12 @@ class KeyBindingState {
 	 *            but may be empty.
 	 */
 	void setCurrentSequence(KeySequence sequence) {
+		List keyStrokes = sequence.getKeyStrokes();
+		if ((keyStrokes.size() > 2) && (isFirstStrokeModified(keyStrokes))) {
+			safeToReset = false;
+		}
 		currentSequence = sequence;
+		updateStatusLines();
 	}
 
 	/**
@@ -156,7 +206,6 @@ class KeyBindingState {
 	private void updateStatusLines() {
 		// Format the mode into text.
 		String text = getCurrentSequence().format();
-
 		// Update each open window's status line.
 		IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
 		for (int i = 0; i < windows.length; i++) {
