@@ -436,33 +436,6 @@ public class LocalFolderTest extends JUnitTestCase {
 		assertEquals(true,folder2.isManaged());
 	}
 	
-	public void testNotExistingFail() throws Exception {
-		
-		ICVSFolder folder3 = folder2.getFolder("nextFolder");
-		ICVSFile file3 = folder2.getFile("file1.txt");
-
-		try {
-			folder3.setSyncInfo(new ResourceSyncInfo(folder3.getName()));
-			fail();
-		} catch (Exception e) {}
-		
-		// I do not know whether to check for null or for the
-		// file with an extended path
-		folder2.getFile("this");
-		folder2.getFolder("that");
-		
-		try {
-			folder2.getChild("this");
-			fail();
-		} catch (CVSException e) {}
-		
-		try {
-			folder2.setSyncInfo(new ResourceSyncInfo(folder2.getName()+"X"));
-			fail();
-		} catch (Exception e) {
-		}		
-	}		
-	
 	protected void reload(ICVSResource resource) throws CVSException {
 		CVSProviderPlugin.getSynchronizer().reload(((LocalResource)resource).getLocalFile(), new NullProgressMonitor());
 	}

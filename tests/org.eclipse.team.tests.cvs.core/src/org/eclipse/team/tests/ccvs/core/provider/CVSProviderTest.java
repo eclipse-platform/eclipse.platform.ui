@@ -78,6 +78,7 @@ public class CVSProviderTest extends EclipseTest {
 		// Perform some operations on the copy
 		addResources(copy, new String[] { "added.txt", "folder2/", "folder2/added.txt" }, false);
 		IFile file = copy.getFile("changed.txt");
+		JUnitTestCase.waitMsec(1500);
 		file.setContents(getRandomContents(), false, false, null);
 		getProvider(copy).delete(new IResource[] {copy.getFile("deleted.txt")}, DEFAULT_MONITOR);
 		

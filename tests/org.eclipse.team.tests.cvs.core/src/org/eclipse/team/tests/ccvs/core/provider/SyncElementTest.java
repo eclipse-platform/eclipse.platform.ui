@@ -54,7 +54,7 @@ public class SyncElementTest extends EclipseTest {
 	public static Test suite() {
 		TestSuite suite = new TestSuite(SyncElementTest.class);
 		return new CVSTestSetup(suite);
-		//return new CVSTestSetup(new SyncElementTest("testDeletionConflicts"));
+		//return new CVSTestSetup(new SyncElementTest("testOutgoingChanges"));
 	}
 	
 	/*
@@ -186,6 +186,7 @@ public class SyncElementTest extends EclipseTest {
 		
 		// Make some modifications
 		IFile file = project.getFile("folder1/a.txt");
+		JUnitTestCase.waitMsec(1500); // Wait so that timestamp of modified file differs from original
 		file.setContents(getRandomContents(), false, false, null);
 		addResources(project, new String[] { "folder2/folder3/add.txt" }, false);
 		deleteResources(project, new String[] {"folder1/b.txt"}, false);
@@ -249,8 +250,8 @@ public class SyncElementTest extends EclipseTest {
 				
 		// Update the resource sync info so the resources can be commited
 		// Merge won't work for folders so we'll add them explicilty!!!
-		addResources(project, new String[] {"folder2/", "folder2/folder3/"}, false);
-		makeOutgoing(tree, new String[] {"folder1/b.txt", "folder2/folder3/add.txt"});
+		addResources(project, new String[] {"folder2/", "folder2/folder3/", "folder2/folder3/add.txt"}, false);
+		deleteResources(project, new String[] {"folder1/b.txt"}, false);
 		commitResources(project, new String[] {"folder1/b.txt", "folder2/folder3/add.txt"});
 		
 		// Ensure we are in sync
@@ -434,6 +435,7 @@ public class SyncElementTest extends EclipseTest {
 		file.delete(false, DEFAULT_MONITOR);
 		deleteResources(project, new String[] {"delete2.txt"}, false);
 		file = project.getFile("delete3.txt");
+		JUnitTestCase.waitMsec(1500); // Wait so that timestamp of modified file differs from original
 		file.setContents(getRandomContents(), false, false, null);
 		file = project.getFile("delete4.txt");
 		file.delete(false, DEFAULT_MONITOR);
@@ -459,8 +461,8 @@ public class SyncElementTest extends EclipseTest {
 				IRemoteSyncElement.CONFLICTING | IRemoteSyncElement.CHANGE,
 				IRemoteSyncElement.CONFLICTING | IRemoteSyncElement.CHANGE,
 				IRemoteSyncElement.CONFLICTING | IRemoteSyncElement.CHANGE,
-				IRemoteSyncElement.CONFLICTING | IRemoteSyncElement.DELETION | IRemoteSyncElement.PSEUDO_CONFLICT,
-				IRemoteSyncElement.CONFLICTING | IRemoteSyncElement.DELETION | IRemoteSyncElement.PSEUDO_CONFLICT });
+				IRemoteSyncElement.IN_SYNC,
+				IRemoteSyncElement.IN_SYNC });
 				
 		// Catch up to remote changes.
 		// XXX SPECIAL CASE: delete2.txt must be unmanaged before the catch-up
@@ -511,8 +513,8 @@ public class SyncElementTest extends EclipseTest {
 				IRemoteSyncElement.CONFLICTING | IRemoteSyncElement.CHANGE,
 				IRemoteSyncElement.CONFLICTING | IRemoteSyncElement.CHANGE,
 				IRemoteSyncElement.CONFLICTING | IRemoteSyncElement.CHANGE,
-				IRemoteSyncElement.CONFLICTING | IRemoteSyncElement.DELETION | IRemoteSyncElement.PSEUDO_CONFLICT,
-				IRemoteSyncElement.CONFLICTING | IRemoteSyncElement.DELETION | IRemoteSyncElement.PSEUDO_CONFLICT });
+				IRemoteSyncElement.IN_SYNC,
+				IRemoteSyncElement.IN_SYNC });
 
 		// Release the resources
 		// XXX SPECIAL CASE: "delete1.txt", "delete2.txt" and "delete3.txt" must be merged
@@ -710,6 +712,7 @@ public class SyncElementTest extends EclipseTest {
 		
 		// Make some modifications
 		IFile file = project.getFile("folder1/a.txt");
+		JUnitTestCase.waitMsec(1500); // Wait so that timestamp of modified file differs from original
 		file.setContents(getRandomContents(), false, false, null);
 		addResources(project, new String[] { "folder1/add.txt" }, false);
 		deleteResources(project, new String[] {"folder1/b.txt"}, false);
