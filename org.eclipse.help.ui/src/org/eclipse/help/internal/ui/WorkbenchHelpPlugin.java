@@ -32,7 +32,7 @@ public class WorkbenchHelpPlugin extends AbstractUIPlugin {
 		// set dynamic address
 		appServer = getAppServer();
 		if (appServer != null)
-			appServer.setAddress(null, 0);
+			appServer.setAddress(null, 80);
 	}
 	/**
 	 * @return HelpViewerPlugin
@@ -49,7 +49,6 @@ public class WorkbenchHelpPlugin extends AbstractUIPlugin {
 		// stop the web app
 		if (getAppServer() != null) {
 			getAppServer().remove("help", "org.eclipse.help.webapp");
-			getAppServer().stop();
 		}
 		BrowserManager.getInstance().closeAll();
 		HelpServer.instance().close();
@@ -61,7 +60,6 @@ public class WorkbenchHelpPlugin extends AbstractUIPlugin {
 	public void startup() {
 		// get an app server and start the help web app
 		if (getAppServer() != null) {
-			getAppServer().start();
 			getAppServer().add("help", "org.eclipse.help.webapp", "");
 		}
 		HelpServer.instance();
