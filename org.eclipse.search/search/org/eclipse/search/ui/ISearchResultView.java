@@ -123,7 +123,7 @@ public interface ISearchResultView extends IViewPart {
 	 *
 	 * @param	description		the text description of the match
 	 * @param	groupByKey		the <code>Object</code> by which this match is grouped
- 	 * @param	marker		the marker for this match
+ 	 * @param	marker			the marker for this match
 	 * @param	resource		the marker's resource passed for optimization
 	 */
 	public void addMatch(String description, Object groupByKey, IResource resource, IMarker marker);
