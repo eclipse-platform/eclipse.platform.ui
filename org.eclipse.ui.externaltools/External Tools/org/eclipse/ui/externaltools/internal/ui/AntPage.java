@@ -1,88 +1,104 @@
 package org.eclipse.ui.externaltools.internal.ui;
 
 /**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+Copyright (c) 2002 IBM Corp. and others. All rights reserved.
 This file is made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
+ 
+Contributors:
 **********************************************************************/
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.FontMetrics;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.externaltools.internal.core.ToolMessages;
 
 /**
- * Abstract superclass for all tabs that contribute to the ant
- * preference page.
+ * Provides the generic implementation for a sub-page in the
+ * Ant preference page.
  */
-public abstract class AntPage extends Object {
-	SelectionAdapter selectionAdapter = new SelectionAdapter() {
+public abstract class AntPage {
+	private SelectionAdapter selectionAdapter = new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
 			buttonPressed(((Integer) e.widget.getData()).intValue());
 		}
 	};
-	protected FontMetrics fontMetrics;
-	protected TableViewer tableViewer;
-	protected AntPageContentProvider contentProvider;
+	private AntPreferencePage preferencePage;
+	private TableViewer tableViewer;
+	private AntPageContentProvider contentProvider;
+	
+	protected Button editButton;
+	protected Button removeButton;
 
 	/**
-	 * This is where subclasses should add the buttons that are interesting for their page.
+	 * Creates an instance of this page.
+	 */
+	public AntPage(AntPreferencePage preferencePage) {
+		super();
+		this.preferencePage = preferencePage;
+	}
+	
+	/**
+	 * Adds buttons specific to the page.
 	 */
 	protected abstract void addButtonsToButtonGroup(Composite parent);
+	
 	/**
-	 * Should be overwritten by subclasses to handle button behaviour.
+	 * Adds an object to the contents
+	 */
+	protected final void addContent(Object o) {
+		if (contentProvider != null)
+			contentProvider.add(o);
+	}
+	
+	/**
+	 * Handles a button pressed event.
 	 */
 	protected void buttonPressed(int buttonId) {
 	}
 
 	/**
 	 * Creates and returns a button with appropriate size and layout.
-	 * @param parent
-	 * @param labelKey The button text key, used to fetch the appropriate
-	 * message from the externalized catalog.
+	 * 
+	 * @param parent the control to create the button on
+	 * @param labelKey the key to lookup the button's label
+	 * @param buttonId the id to assign to this button
+	 * @return a new and initialized button
 	 */
 	protected Button createButton(Composite parent, String labelKey, int buttonId) {
 		Button button = new Button(parent, SWT.PUSH);
 		button.setText(ToolMessages.getString(labelKey));
-		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-		int widthHint =
-			Dialog.convertHorizontalDLUsToPixels(
-				fontMetrics,
-				IDialogConstants.BUTTON_WIDTH);
-		data.widthHint =
-			Math.max(
-				widthHint,
-				button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
-		data.heightHint =
-			Dialog.convertVerticalDLUsToPixels(
-				fontMetrics,
-				IDialogConstants.BUTTON_HEIGHT);
-		button.setLayoutData(data);
 		button.setData(new Integer(buttonId));
 		button.addSelectionListener(selectionAdapter);
+		preferencePage.setButtonGridData(button);
 		return button;
 	}
 	
-	protected void createButtonGroup(Composite top) {
+	/**
+	 * Creates the group which will contain the buttons.
+	 */
+	private void createButtonGroup(Composite top) {
 		Composite buttonGroup = new Composite(top, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
@@ -93,52 +109,78 @@ public abstract class AntPage extends Object {
 		addButtonsToButtonGroup(buttonGroup);
 	}
 
-	protected Label createSeparator(Composite parent) {
+	/**
+	 * Creates a space between controls
+	 */
+	protected final Label createSeparator(Composite parent) {
 		Label separator = new Label(parent, SWT.NONE);
-		separator.setVisible(false);
-		GridData gd = new GridData();
-		gd.horizontalAlignment = GridData.FILL;
-		gd.verticalAlignment = GridData.BEGINNING;
+		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_BEGINNING);
 		gd.heightHint = 4;
 		separator.setLayoutData(gd);
 		return separator;
 	}
 	
-	protected void createTable(Composite parent) {
-		Table table =
-			new Table(parent, SWT.MULTI | SWT.FULL_SELECTION | SWT.BORDER);
+	/**
+	 * Creates the table viewer.
+	 */
+	private void createTable(Composite parent) {
+		Table table = new Table(parent, SWT.MULTI | SWT.FULL_SELECTION | SWT.BORDER);
 		table.setLayoutData(new GridData(GridData.FILL_BOTH));
-		tableViewer = new TableViewer(table);
 		contentProvider = new AntPageContentProvider();
+		tableViewer = new TableViewer(table);
 		tableViewer.setContentProvider(contentProvider);
-		tableViewer.setLabelProvider(new AntPageLabelProvider());
-		tableViewer
-			.addSelectionChangedListener(new ISelectionChangedListener() {
+		tableViewer.setLabelProvider(getLabelProvider());
+		tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
-				tableSelectionChanged(
-					(IStructuredSelection) event.getSelection());
+				tableSelectionChanged((IStructuredSelection) event.getSelection());
 			}
 		});
 	}
 
 	/**
-	 * Returns the currently listed objects in the table.  Returns <code>null</code>
+	 * Returns the currently listed objects in the table.  Returns null
 	 * if this widget has not yet been created or has been disposed.
 	 */
 	public List getContents() {
-		if (tableViewer == null || tableViewer.getControl().isDisposed()) {
+		if (tableViewer == null || tableViewer.getControl().isDisposed())
 			return null;
-		}
 		Object[] elements = contentProvider.getElements(tableViewer.getInput());
 		return Arrays.asList(elements);
 	}
 	
+	/**
+	 * Returns the label provider the sub-page wants to use
+	 * to display its content with.
+	 */
+	protected abstract ITableLabelProvider getLabelProvider();
+	
+	/**
+	 * Returns the first selected element in the viewer, or
+	 * <code>null</code> if none.
+	 */
+	protected final Object getSelectedElement() {
+		if (tableViewer == null || tableViewer.getControl().isDisposed())
+			return null;
+		return ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
+	}
+	
+	/**
+	 * Returns the shell of the sub-page.
+	 */
+	protected final Shell getShell() {
+		if (tableViewer == null || tableViewer.getControl().isDisposed())
+			return null;
+		return tableViewer.getControl().getShell();
+	}
+	
+	/**
+	 * Handles the remove button pressed event
+	 */
 	protected void removeButtonPressed() {
-		IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
-		Object[] selected = selection.toArray();
-		for (int i = 0; i < selected.length; i++) {
-			contentProvider.remove(selected[i]);
-		}
+		IStructuredSelection sel = (IStructuredSelection) tableViewer.getSelection();
+		Iterator enum = sel.iterator();
+		while (enum.hasNext())
+			contentProvider.remove(enum.next());
 	}
 	
 	/**
@@ -146,21 +188,28 @@ public abstract class AntPage extends Object {
 	 * if this widget has not yet been created or has been disposed.
 	 */
 	public void setInput(List inputs) {
-		if (tableViewer == null || tableViewer.getControl().isDisposed()) {
+		if (tableViewer == null || tableViewer.getControl().isDisposed())
 			return;
-		}
 		tableViewer.setInput(inputs);
 		tableSelectionChanged((IStructuredSelection) tableViewer.getSelection());
 	}
-	
 	/**
-	 * Subclasses may override to add behaviour when table selection changes.
+	 * Handles selection changes in the table viewer.
 	 */
 	protected void tableSelectionChanged(IStructuredSelection newSelection) {
 	}
 
 	/**
-	 * Creates and returns a control that contains this widget group.
+	 * Updates the content element in the table viewer.
+	 */
+	protected final void updateContent(Object element) {
+		if (tableViewer == null || tableViewer.getControl().isDisposed())
+			return;
+		tableViewer.update(element, null);
+	}
+	
+	/**
+	 * Creates this page's controls
 	 */
 	public Control createControl(Composite parent) {
 		Composite top = new Composite(parent, SWT.NONE);
@@ -170,14 +219,50 @@ public abstract class AntPage extends Object {
 		layout.marginWidth = 2;
 		top.setLayout(layout);
 
-		//get font metrics for DLU -> pixel conversions
-		GC gc = new GC(top);
-		gc.setFont(top.getFont());
-		fontMetrics = gc.getFontMetrics();
-		gc.dispose();
-
 		createTable(top);
 		createButtonGroup(top);
+		
 		return top;
+	}
+
+
+	/**
+	 * Content provider that maintains a generic list of objects which
+	 * are shown in a table viewer.
+	 */
+	private static final class AntPageContentProvider implements IStructuredContentProvider {
+		private ArrayList elements = new ArrayList();
+		private TableViewer viewer;
+	
+		public void add(Object o) {
+			if (elements.contains(o)) {
+				return;
+			}
+			elements.add(o);
+			viewer.add(o);
+		}
+		
+		public void dispose() {
+		}
+		
+		public Object[] getElements(Object inputElement) {
+			return (Object[]) elements.toArray(new Object[elements.size()]);
+		}
+		
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+			this.viewer = (TableViewer) viewer;
+			elements.clear();
+			if (newInput != null)
+				elements.addAll((List) newInput);
+		}
+		
+		public void remove(Object o) {
+			elements.remove(o);
+			viewer.remove(o);
+		}
+	}
+	
+	protected AntPreferencePage getPreferencePage() {
+		return preferencePage;
 	}
 }
