@@ -366,7 +366,8 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 		if (configuration == null)
 			return new IBundleGroup[0];
 		else {
-			return (FeatureEntry[])configuration.getConfiguredFeatureEntries();
+			// TODO handle unmanaged plugins later
+			return (IBundleGroup[])configuration.getConfiguredFeatureEntries();
 		}
 	}
 }

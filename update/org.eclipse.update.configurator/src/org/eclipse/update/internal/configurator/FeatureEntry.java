@@ -18,7 +18,7 @@ import org.osgi.framework.*;
 import org.w3c.dom.*;
 
 
-public class FeatureEntry implements IPlatformConfiguration.IFeatureEntry, IConfigurationConstants, IBundleGroup {
+public class FeatureEntry implements IPlatformConfiguration.IFeatureEntry, IConfigurationConstants, IBundleGroup, IProduct {
 	private String id;
 	private String version;
 	private String pluginVersion;
@@ -187,5 +187,17 @@ public class FeatureEntry implements IPlatformConfiguration.IFeatureEntry, IConf
 	 */
 	public String getVersion() {
 		return version;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IProduct#getApplication()
+	 */
+	public String getApplication() {
+		return application;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IProduct#getId()
+	 */
+	public String getId() {
+		return id;
 	}
 }
