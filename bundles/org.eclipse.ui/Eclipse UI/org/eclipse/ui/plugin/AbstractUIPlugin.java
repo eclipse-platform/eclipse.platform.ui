@@ -10,28 +10,21 @@
  ******************************************************************************/
 package org.eclipse.ui.plugin;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.List;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPluginDescriptor;
-import org.eclipse.core.runtime.Plugin;
-import org.eclipse.core.runtime.Preferences;
+import org.eclipse.swt.widgets.Display;
+
+import org.eclipse.core.runtime.*;
+
 import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.jface.util.*;
+
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.Workbench;
@@ -148,7 +141,7 @@ public abstract class AbstractUIPlugin extends Plugin
 		 * Identity list of old listeners (element type: 
 		 * <code>org.eclipse.jface.util.IPropertyChangeListener</code>).
 		 */
-		private List listeners = new ArrayList(1);
+		private ListenerList listeners = new ListenerList();
 	
 		/**
 		 * Indicates whether property change events should be suppressed
@@ -187,7 +180,7 @@ public abstract class AbstractUIPlugin extends Plugin
 		}
 	
 		/**
-		 * Returns the underlying preference store. Initializes it is required.
+		 * Returns the underlying preference store. Initializing it is required.
 		 * 
 		 * @return the underlying preference store
 		 */
@@ -202,17 +195,6 @@ public abstract class AbstractUIPlugin extends Plugin
 		 * Method declared on IPreferenceStore
 		 */
 		public void addPropertyChangeListener(final IPropertyChangeListener listener) {
-			if (listener == null) {
-				throw new IllegalArgumentException();
-			}
-	
-			// look for identical listener (DO NOT USE equals())
-			for (Iterator it = listeners.iterator(); it.hasNext();) {
-				if (listener == it.next()) {
-					// ignore - identical listener is already present
-					return;
-				}
-			}
 			listeners.add(listener);
 		}
 	
@@ -220,18 +202,7 @@ public abstract class AbstractUIPlugin extends Plugin
 		 * Method declared on IPreferenceStore
 		 */
 		public void removePropertyChangeListener(IPropertyChangeListener listener) {
-			if (listener == null) {
-				throw new IllegalArgumentException();
-			}
-	
-			// look for identical listener (DO NOT USE equals())
-			for (Iterator it = listeners.iterator(); it.hasNext();) {
-				if (listener == it.next()) {
-					// remove listener
-					it.remove();
-					return;
-				}
-			}
+			listeners.remove(listener);
 		}
 	
 		/* (non-javadoc)
@@ -243,20 +214,18 @@ public abstract class AbstractUIPlugin extends Plugin
 			Object newValue) {
 	
 			// efficiently handle case of 0 listeners
-			if (listeners.size() == 0) {
+			if (listeners.isEmpty()) {
 				// no one interested
 				return;
 			}
 	
 			// important: create intermediate array to protect against listeners 
 			// being added/removed during the notification
-			IPropertyChangeListener[] listenerCopy =
-				new IPropertyChangeListener[listeners.size()];
-			listeners.toArray(listenerCopy);
+			Object[] list = listeners.getListeners();
 			PropertyChangeEvent event =
 				new PropertyChangeEvent(this, name, oldValue, newValue);
-			for (int i = 0; i < listenerCopy.length; i++) {
-				listenerCopy[i].propertyChange(event);
+			for (int i = 0; i < list.length; i++) {
+				((IPropertyChangeListener) list[i]).propertyChange(event);
 			}
 		}
 	
