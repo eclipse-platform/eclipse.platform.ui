@@ -30,27 +30,27 @@ import org.eclipse.core.runtime.QualifiedName;
  */
 public interface IContentDescriber {
 	/**
-	 * Description result constant, indicating the contents are valid for 
-	 * the intended content type.
-	 * 
-	 * @see #describe
-	 */
-	public final static int VALID = 0;
-	/**
-	 * Description result constant, indicating the contents are invalid for 
-	 * the intended content type.
-	 * 
-	 * @see #describe
-	 */
-	public final static int INVALID = 1;
-	/**
 	 * Description result constant, indicating that it was not possible 
 	 * to determine whether the contents were valid for 
 	 * the intended content type.
 	 * 
 	 * @see #describe
 	 */
-	public final static int INDETERMINATE = -1;
+	public final static int INDETERMINATE = 1;
+	/**
+	 * Description result constant, indicating the contents are invalid for 
+	 * the intended content type.
+	 * 
+	 * @see #describe
+	 */
+	public final static int INVALID = 0;
+	/**
+	 * Description result constant, indicating the contents are valid for 
+	 * the intended content type.
+	 * 
+	 * @see #describe
+	 */
+	public final static int VALID = 2;
 
 	/**
 	 * Tries to fill a description for the given contents. Returns 
