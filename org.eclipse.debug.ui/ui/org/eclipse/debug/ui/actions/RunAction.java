@@ -9,12 +9,9 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.actions.ExecutionAction;
 
 /**
- * Action to launch a program in run mode.
- * <p>
- * This action is selection dependent, and acts on the selection
- * in the current workbench page. If the selected object is
- * a launch configuration, it will be launched in debug mode.
- * Otherwise, the launch configuration dialog will be openned.
+ * Action to launch the last launch configuration that was succuessfully
+ * launched, in run mode. If no configurations have been launched,
+ * the launch configuration dialog is opened.
  * </p>
  * <p>
  * This class is not intended to be subclassed. This class may
