@@ -47,7 +47,7 @@ public final class BaseHelpSystem {
 	private boolean webappStarted = false;
 	private IErrorUtil defaultErrorMessenger;
 	private IBrowser browser;
-	private DefaultHelpSupport helpSupport = null;
+	private HelpDisplay helpDisplay = null;
 	private boolean webappRunning = false;
 
 	/**
@@ -101,10 +101,10 @@ public final class BaseHelpSystem {
 		return getInstance().browser;
 	}
 
-	public static synchronized DefaultHelpSupport getHelpSupport() {
-		if (getInstance().helpSupport == null)
-			getInstance().helpSupport = new DefaultHelpSupport();
-		return getInstance().helpSupport;
+	public static synchronized HelpDisplay getHelpDisplay() {
+		if (getInstance().helpDisplay == null)
+			getInstance().helpDisplay = new HelpDisplay();
+		return getInstance().helpDisplay;
 	}
 	/**
 	 */

@@ -22,12 +22,12 @@ import org.eclipse.help.internal.context.*;
  * In is registered into the support extension point, and all 
  * requests to display help are delegated to this class.
  */
-public class DefaultHelpSupport {
+public class HelpDisplay {
 
 	/**
 	 * BaseHelpViewer constructor.
 	 */
-	public DefaultHelpSupport() {
+	public HelpDisplay() {
 		super();
 	}
 
@@ -125,7 +125,7 @@ public class DefaultHelpSupport {
 	 * Displays the specified url.
 	 * The url can contain query parameters to identify how help displays the document
 	 */
-	void displayHelpURL(String helpURL) {
+	private void displayHelpURL(String helpURL) {
 		if (!BaseHelpSystem.ensureWebappRunning()) {
 			BaseHelpSystem.getDefaultErrorUtil().displayError(
 				HelpBaseResources.getString("E043"));
