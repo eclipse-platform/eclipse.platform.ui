@@ -22,6 +22,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 
 import org.eclipse.ui.IWorkbenchWindow;
@@ -32,7 +33,6 @@ import org.eclipse.ltk.core.refactoring.IValidationCheckResultQuery;
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.UndoManagerAdapter;
-
 import org.eclipse.ltk.ui.refactoring.RefactoringUI;
 
 public abstract class UndoManagerAction implements IWorkbenchWindowActionDelegate {
@@ -140,7 +140,9 @@ public abstract class UndoManagerAction implements IWorkbenchWindowActionDelegat
 		Shell parent= fWorkbenchWindow.getShell();
 		IRunnableWithProgress op= createOperation(parent);
 		try {
-			ProgressService.runSuspended(false, false, op, ResourcesPlugin.getWorkspace().getRoot());
+			PlatformUI.getWorkbench().getProgressService().runInUI(
+				new ProgressMonitorDialog(fWorkbenchWindow.getShell()),
+				op, ResourcesPlugin.getWorkspace().getRoot());
 		} catch (InvocationTargetException e) {
 			RefactoringCore.getUndoManager().flush();
 			ExceptionHandler.handle(e,
