@@ -3,12 +3,13 @@ package org.eclipse.help.internal.ui;
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
-import java.net.*;
+import java.net.URLEncoder;
 
 import org.eclipse.help.*;
-import org.eclipse.help.internal.*;
+import org.eclipse.help.internal.HelpSystem;
 import org.eclipse.help.internal.context.*;
 import org.eclipse.help.internal.ui.util.*;
+import org.eclipse.help.internal.util.URLCoder;
 
 /**
  * This class is an implementation of the pluggable help support.
@@ -146,8 +147,28 @@ public class DefaultHelp implements IHelp
 				+ topic.getHref();
 		WorkbenchHelpPlugin.getDefault().getHelpBrowser().displayURL(url);
 	}
-	
-	
+	/**
+	 * Display help to search view for given query
+	 * and selected topic.
+	 * @param query user search query
+	 * @param topic selected from the search results
+	 */
+	public void displaySearch(String query, String topic) {
+		if (query == null || topic == null)
+			return;
+		if (!AppServer.isRunning())
+			return; // may want to display an error message
+		String url =
+			"http://"
+				+ AppServer.getHost()
+				+ ":"
+				+ AppServer.getPort()
+				+ "/help?tab=search&query="
+				+ URLCoder.encode(query)
+				+ "&topic="
+				+ encodeTopicParameter(topic);
+		WorkbenchHelpPlugin.getDefault().getHelpBrowser().displayURL(url);
+	}	
 	/**
 	 * Computes context information for a given context ID.
 	 * @param contextID java.lang.String ID of the context
