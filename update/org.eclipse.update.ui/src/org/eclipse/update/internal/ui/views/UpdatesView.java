@@ -1070,7 +1070,7 @@ public class UpdatesView
 					getControl().getShell(),
 					config,
 					dir,
-					true)) {
+					true)!=null) {
 				InstallWizard.makeConfigurationCurrent(config, null);
 				InstallWizard.saveLocalSite();
 				UpdateUI.informRestartNeeded();

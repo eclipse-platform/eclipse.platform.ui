@@ -33,6 +33,7 @@ public class MultiTargetPage extends BannerPage implements IDynamicPage {
 	private static final String KEY_SITE_LABEL =
 		"MultiInstallWizard.TargetPage.siteLabel";
 	private static final String KEY_NEW = "MultiInstallWizard.TargetPage.new";
+	private static final String KEY_DELETE = "MultiInstallWizard.TargetPage.delete";
 	private static final String KEY_REQUIRED_FREE_SPACE =
 		"MultiInstallWizard.TargetPage.requiredSpace";
 	private static final String KEY_AVAILABLE_FREE_SPACE =
@@ -61,6 +62,8 @@ public class MultiTargetPage extends BannerPage implements IDynamicPage {
 	private PendingChange[] jobs;
 	private Hashtable targetSites;
 	private Button addButton;
+	private Button deleteButton;
+	private HashSet added;
 
 	static class JobTargetSite {
 		PendingChange job;
@@ -141,11 +144,23 @@ public class MultiTargetPage extends BannerPage implements IDynamicPage {
 	class ConfigListener implements IInstallConfigurationChangedListener {
 		public void installSiteAdded(IConfiguredSite csite) {
 			siteViewer.add(csite);
+			if (added==null) added = new HashSet();
+			added.add(csite);
 			siteViewer.setSelection(new StructuredSelection(csite));
+			siteViewer.getControl().setFocus();
 		}
 
 		public void installSiteRemoved(IConfiguredSite csite) {
 			siteViewer.remove(csite);
+			if (added!=null) added.remove(csite);
+			PendingChange job = (PendingChange)siteViewer.getInput();
+			if (job!=null) {
+				JobTargetSite jobSite = (JobTargetSite) targetSites.get(job);
+				IConfiguredSite defaultSite = computeTargetSite(jobSite);
+				if (defaultSite!=null)
+					siteViewer.setSelection(new StructuredSelection(defaultSite));
+			}
+			siteViewer.getControl().setFocus();
 		}
 	}
 
@@ -298,6 +313,26 @@ public class MultiTargetPage extends BannerPage implements IDynamicPage {
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_CENTER);
 		addButton.setLayoutData(gd);
 		SWTUtil.setButtonDimensionHint(addButton);
+		
+		deleteButton = new Button(buttonContainer, SWT.PUSH);
+		deleteButton.setText(UpdateUI.getString(KEY_DELETE));
+		deleteButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				try {
+					removeSelection();
+				}
+				catch (CoreException ex) {
+					UpdateUI.logException(ex);
+				}
+			}
+		});
+		deleteButton.setEnabled(false);
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_CENTER);
+		deleteButton.setLayoutData(gd);
+		SWTUtil.setButtonDimensionHint(deleteButton);		
+		
+		
+		
 		Composite status = new Composite(client, SWT.NULL);
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan = 3;
@@ -357,14 +392,18 @@ public class MultiTargetPage extends BannerPage implements IDynamicPage {
 			jobSite.affinitySite = getAffinitySite(config, job.getFeature());
 			if (jobSite.affinitySite == null)
 				jobSite.affinitySite = job.getDefaultTargetSite();
-			jobSite.targetSite =
-				jobSite.affinitySite != null
-					? jobSite.affinitySite
-					: jobSite.defaultSite;
-			if (jobSite.targetSite == null)
-				jobSite.targetSite = getFirstTarget(jobSite);
+			jobSite.targetSite = computeTargetSite(jobSite);
 			targetSites.put(job, jobSite);
 		}
+	}
+	
+	IConfiguredSite computeTargetSite(JobTargetSite jobSite) {
+		IConfiguredSite csite = jobSite.affinitySite != null
+			? jobSite.affinitySite
+			: jobSite.defaultSite;
+		if (csite == null)
+			csite = getFirstTarget(jobSite);
+		return csite;
 	}
 
 	private void createSiteViewer(Composite parent) {
@@ -388,11 +427,28 @@ public class MultiTargetPage extends BannerPage implements IDynamicPage {
 			public void selectionChanged(SelectionChangedEvent event) {
 				ISelection selection = event.getSelection();
 				selectTargetSite((IStructuredSelection) selection);
+				updateDeleteButton((IStructuredSelection) selection);
 			}
 		});
 
 		if (config != null)
 			config.addInstallConfigurationChangedListener(configListener);
+	}
+	
+	private void updateDeleteButton(IStructuredSelection selection) {
+		boolean hasUserSites = added!=null && !added.isEmpty();
+		boolean enable = !selection.isEmpty() && hasUserSites;
+
+		if (hasUserSites) {
+			for (Iterator iter = selection.iterator(); iter.hasNext();) {
+				Object obj = iter.next();
+				if (added.contains(obj) == false) {
+					enable = false;
+					break;
+				}
+			}
+		}
+		deleteButton.setEnabled(enable);
 	}
 
 	public void setVisible(boolean visible) {
@@ -403,6 +459,8 @@ public class MultiTargetPage extends BannerPage implements IDynamicPage {
 		super.setVisible(visible);
 		if (visible) {
 			jobViewer.getTable().setFocus();
+			if (jobs.length>0)
+				jobViewer.setSelection(new StructuredSelection(jobs[0]));
 		}
 	}
 
@@ -472,8 +530,18 @@ public class MultiTargetPage extends BannerPage implements IDynamicPage {
 			addConfiguredSite(getContainer().getShell(), config, file, false);
 		}
 	}
+	
+	private void removeSelection() throws CoreException {
+		IStructuredSelection selection =
+			(IStructuredSelection) siteViewer.getSelection();
+		for (Iterator iter = selection.iterator(); iter.hasNext();) {
+			Object obj = iter.next();
+			IConfiguredSite csite = (IConfiguredSite)obj;
+			config.removeConfiguredSite(csite);
+		}
+	}
 
-	public static boolean addConfiguredSite(
+	public static IConfiguredSite addConfiguredSite(
 		Shell shell,
 		IInstallConfiguration config,
 		File file,
@@ -501,14 +569,14 @@ public class MultiTargetPage extends BannerPage implements IDynamicPage {
 							status.getMessage());
 					message = message + "\r\n" + message2;
 					ErrorDialog.openError(shell, title, message, status);
-					return false;
+					return null;
 				}
 			}
+			return csite;
 		} catch (CoreException e) {
 			UpdateUI.logException(e);
-			return false;
+			return null;
 		}
-		return true;
 	}
 
 	private void updateStatus(Object element) {
