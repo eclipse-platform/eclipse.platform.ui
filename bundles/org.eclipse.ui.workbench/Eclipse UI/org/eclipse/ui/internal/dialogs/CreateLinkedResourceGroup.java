@@ -298,14 +298,19 @@ protected void initializeDialogUnits(Control control) {
  * Displays the resolved value if the entered value is a variable.
  */
 private void resolveVariable() {
+	IPathVariableManager pathVariableManager = ResourcesPlugin.getWorkspace().getPathVariableManager();
 	IPath path = new Path(linkTargetField.getText());
+	IPath resolvedPath = pathVariableManager.resolvePath(path);
 	
-	if (path.isAbsolute() == false) {
-		IPathVariableManager pathVariableManager = ResourcesPlugin.getWorkspace().getPathVariableManager();
-		
-		path = pathVariableManager.resolvePath(path);
+	if (path.equals(resolvedPath)) {
+		resolvedPathLabelText.setVisible(false);
+		resolvedPathLabelData.setVisible(false);
 	}
-	resolvedPathLabelData.setText(path.toOSString());
+	else {
+		resolvedPathLabelText.setVisible(true);
+		resolvedPathLabelData.setVisible(true);
+		resolvedPathLabelData.setText(resolvedPath.toOSString());
+	}
 }
 /**
  * Sets the <code>GridData</code> on the specified button to
