@@ -160,20 +160,20 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 * Enables a certain behavior.
 	 * Indicates whether this provider should behave as described in
 	 * use case 5 of http://bugs.eclipse.org/bugs/show_bug.cgi?id=10806.
-	 * Current value: <code>false</code>
+	 * Current value: <code>true</code> since 3.0
 	 * @since 2.0
 	 */ 
-	static final protected boolean PR10806_UC5_ENABLED= false;
+	static final protected boolean PR10806_UC5_ENABLED= true;
 	
 	/**
 	 * Enables a certain behavior.
 	 * Indicates whether this provider should behave as described in
 	 * http://bugs.eclipse.org/bugs/show_bug.cgi?id=14469
 	 * Notes: This contradicts <code>PR10806_UC5_ENABLED</code>.
-	 * Current value: <code>true</code>
+	 * Current value: <code>false</code> since 3.0
 	 * @since 2.0
 	 */
-	static final protected boolean PR14469_ENABLED= true;
+	static final protected boolean PR14469_ENABLED= false;
 	
 	/**
 	 * Constant for representing the ok status. This is considered a value object.

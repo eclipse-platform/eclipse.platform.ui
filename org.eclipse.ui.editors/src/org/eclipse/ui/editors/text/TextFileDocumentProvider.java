@@ -919,7 +919,8 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		if (info != null) {
 			boolean isReadOnly= isSystemFileReadOnly(info);
 			// See http://bugs.eclipse.org/bugs/show_bug.cgi?id=14469 for the dirty bit check
-			if (!info.fCachedReadOnlyState && isReadOnly && info.fTextFileBuffer.isDirty())
+			// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=50699 for commenting that out
+			if (!info.fCachedReadOnlyState && isReadOnly /*&& !info.fTextFileBuffer.isDirty()*/)
 				info.fTextFileBuffer.resetStateValidation();
 			info.fCachedReadOnlyState= isReadOnly;
 		} else {
