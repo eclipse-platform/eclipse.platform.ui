@@ -67,13 +67,14 @@ public class LaunchManager extends PlatformObject implements ILaunchManager  {
 	 * @see ILaunchManager
 	 */
 	public ILaunch findLaunch(IProcess process) {
-		Iterator list= fLaunches.iterator();
-		while (list.hasNext()) {
-			ILaunch l= (ILaunch) list.next();
-			IProcess[] ps= l.getProcesses();
-			for (int i= 0; i < ps.length; i++) {
-				if (ps[i].equals(process)) {
-					return l;
+		synchronized (fLaunches) {
+			for (int i= 0; i < fLaunches.size(); i++) {
+				ILaunch l= (ILaunch) fLaunches.elementAt(i);
+				IProcess[] ps= l.getProcesses();
+				for (int j= 0; j < ps.length; j++) {
+					if (ps[j].equals(process)) {
+							return l;
+					}
 				}
 			}
 		}
@@ -84,11 +85,12 @@ public class LaunchManager extends PlatformObject implements ILaunchManager  {
 	 * @see ILaunchManager
 	 */
 	public ILaunch findLaunch(IDebugTarget target) {
-		Iterator list= fLaunches.iterator();
-		while (list.hasNext()) {
-			ILaunch l= (ILaunch) list.next();
-			if (target.equals(l.getDebugTarget())) {
-				return l;
+		synchronized (fLaunches) {
+			for (int i= 0; i < fLaunches.size(); i++) {
+				ILaunch l= (ILaunch) fLaunches.elementAt(i);
+				if (target.equals(l.getDebugTarget())) {
+					return l;
+				}
 			}
 		}
 		return null;
