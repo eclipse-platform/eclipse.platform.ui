@@ -167,7 +167,7 @@ public String copyStream(InputStream streamInput, OutputStream streamOutput, lon
 			try {
 				iBytesReceived = streamInput.read(byteArray);
 			}
-			catch (IOException ex) {
+			catch (Exception ex) {
 				iBytesReceived = 0;
 				strErrorMessage = UpdateManagerStrings.getString("S_Error_reading_from_input_stream") + ": " + ex.getMessage();
 			}
@@ -393,7 +393,8 @@ public boolean doUnzip(IProgressMonitor progressMonitor) {
 	// set up the list of directories to look for
 	//-----------------------------------------------------
 	Vector dirNames = new Vector();
-	Vector dirNamesInstalled = new Vector();	// keep track of plugins/fragments unzipped
+	Vector dirNamesInstalled = new Vector();// keep track of plugins/fragments unzipped
+	Vector dirNamesUnexpected = new Vector();	// keep track of unexpected plugins/fragments dir
 	if (getAction() == UpdateManagerConstants.OPERATION_UNZIP_PLUGINS ) {
 		IComponentDescriptor comp = null;
 		if (getData() instanceof IComponentEntryDescriptor) {
@@ -481,8 +482,11 @@ public boolean doUnzip(IProgressMonitor progressMonitor) {
 				if (second_slash > 0) 
 					prefix = entryName.substring(0,second_slash);
 				int match = dirNames.indexOf(prefix);
-				if (match < 0) 
+				if (match < 0) {   // not a valid plugin
+					if (!dirNamesUnexpected.contains(prefix))
+						dirNamesUnexpected.addElement(prefix);
 					continue;
+				}
 				// got an entry with matching directory 
 				// keep track of which ones they are
 				if (!dirNamesInstalled.contains(prefix))
@@ -546,6 +550,7 @@ public boolean doUnzip(IProgressMonitor progressMonitor) {
 				}
 				catch (MalformedURLException ex) {
 					strErrorMessage = createMessageString(UpdateManagerStrings.getString("S_Unable_to_create_jar_entry_URL"), ex);
+					break;
 				}
 			}
 
@@ -595,20 +600,22 @@ public boolean doUnzip(IProgressMonitor progressMonitor) {
 		lock.remove();
 	}	// if jarFile is not null
 
-	if (getAction() == UpdateManagerConstants.OPERATION_UNZIP_PLUGINS ) {
-		// tally up what's unzipped and what's not
-		if (!dirNames.containsAll(dirNamesInstalled)) {
-			rc = UpdateManagerConstants.UNDEFINED_CONTENTS;
-			strErrorMessage = UpdateManagerStrings.getString("S_Undefined_contents_found_in_Jar");
-		}
-		else if (!dirNamesInstalled.containsAll(dirNames)) {
-			rc = UpdateManagerConstants.MISSING_CONTENTS;
-			strErrorMessage = UpdateManagerStrings.getString("S_Unable_to_find_defined_contents_in_Jar");
-		}
-	} else if (getAction() == UpdateManagerConstants.OPERATION_UNZIP_INSTALL) {
-		if (rc != UpdateManagerConstants.OK)
-			strErrorMessage = UpdateManagerStrings.getString("S_Unable_to_find_install_manifest_file_in_Jar");
-	}		
+	if (strErrorMessage == null) {
+		if (getAction() == UpdateManagerConstants.OPERATION_UNZIP_PLUGINS ) {
+			// tally up what's unzipped and what's not
+			if (dirNamesUnexpected.size() > 0) {
+				rc = UpdateManagerConstants.UNDEFINED_CONTENTS;
+				strErrorMessage = UpdateManagerStrings.getString("S_Undefined_contents_found_in_Jar");
+			}
+			else if (!dirNamesInstalled.containsAll(dirNames)) {
+				rc = UpdateManagerConstants.MISSING_CONTENTS;
+				strErrorMessage = UpdateManagerStrings.getString("S_Unable_to_find_defined_contents_in_Jar");
+			} 
+		} else if (getAction() == UpdateManagerConstants.OPERATION_UNZIP_INSTALL) {
+			if (rc != UpdateManagerConstants.OK)
+				strErrorMessage = UpdateManagerStrings.getString("S_Unable_to_find_install_manifest_file_in_Jar");
+		}		
+	}
 
 	
 	if (progressMonitor != null) progressMonitor.done();
@@ -955,21 +962,34 @@ public boolean undoUnzip(IProgressMonitor progressMonitor) {
 		strErrorMessage = createMessageString(UpdateManagerStrings.getString("S_Target_URL_is_malformed"), ex);
 	}
 
-	// For unzipping plugins or component/configuration jar, 
+	// For plugins or component/configuration jar, 
 	// set up the list of directories to look for
-	//-----------------------------------------------------
+	// This section contains subtle differences from doUnzip()
+	//--------------------------------------------------------
 	Vector dirNames = new Vector();
 	if (getAction() == UpdateManagerConstants.OPERATION_UNZIP_PLUGINS ) {
-		IComponentDescriptor comp = (IComponentDescriptor) getData();
-		IPluginEntryDescriptor[] plugins = comp.getPluginEntries();
-		for (int i=0; i<plugins.length; i++) 
-			dirNames.addElement( UMEclipseTree.PLUGINS_DIR + "/" + plugins[i].getDirName());
-		IFragmentEntryDescriptor[] fragments = comp.getFragmentEntries();
-		for (int i=0; i<fragments.length; i++) 
-			dirNames.addElement( UMEclipseTree.FRAGMENTS_DIR + "/" + fragments[i].getDirName());	
+		IComponentDescriptor comp = null;
+		if (getData() instanceof IComponentEntryDescriptor) {
+			comp = ((IComponentEntryDescriptor) getData()).getComponentDescriptor();
+		} else {
+			comp = (IComponentDescriptor) getData();
+		}
+		if (comp != null) {
+			IPluginEntryDescriptor[] plugins = comp.getPluginEntries();
+			for (int i=0; i<plugins.length; i++) 
+				dirNames.addElement( UMEclipseTree.PLUGINS_DIR + "/" + plugins[i].getDirName());
+			IFragmentEntryDescriptor[] fragments = comp.getFragmentEntries();
+			for (int i=0; i<fragments.length; i++) 
+				dirNames.addElement( UMEclipseTree.FRAGMENTS_DIR + "/" + fragments[i].getDirName());	
+		} else {
+			strErrorMessage = UpdateManagerStrings.getString("S_Error_in_registry");
+		}
 	} else if (getAction() == UpdateManagerConstants.OPERATION_UNZIP_INSTALL) {
-		IManifestDescriptor desc = (IManifestDescriptor) getData();
-		dirNames.addElement(UMEclipseTree.INSTALL_DIR + "/" + UMEclipseTree.COMPONENTS_DIR + "/" + desc.getDirName());
+		IInstallable desc = (IInstallable) getData();
+		if (getData() instanceof IProductDescriptor) 
+			dirNames.addElement(UMEclipseTree.INSTALL_DIR + "/" + UMEclipseTree.PRODUCTS_DIR + "/" + desc.getDirName() + "/");
+		else 
+			dirNames.addElement(UMEclipseTree.INSTALL_DIR + "/" + UMEclipseTree.COMPONENTS_DIR + "/" + desc.getDirName() + "/");
 	}
 	
 	// Create a file specification from the input URL
@@ -1016,11 +1036,6 @@ public boolean undoUnzip(IProgressMonitor progressMonitor) {
 		while (enum.hasMoreElements() == true) {
 			entry = (JarEntry) enum.nextElement();
 			String entryName = entry.getName();
-
-			if (entryName.startsWith(IManifestAttributes.MANIFEST_DIR))  {
-				if (progressMonitor != null) progressMonitor.worked(1);
-				continue;
-			}
 			
 			if (getAction().equals(UpdateManagerConstants.OPERATION_UNZIP_PLUGINS)) {
 				// Remove the plugins and fragments.  Skip entries not under plugins/ or fragments/ trees
@@ -1038,7 +1053,7 @@ public boolean undoUnzip(IProgressMonitor progressMonitor) {
 			} else if (getAction().equals(UpdateManagerConstants.OPERATION_UNZIP_INSTALL)) {
 				// Remove the component/product items.  Skip over entries that don't match the dirname
 				//------------------------------------------------------------------------------------
-				if (!entryName.startsWith((String)dirNames.firstElement()) || entryName.endsWith("/")) {
+				if (!entryName.startsWith((String)dirNames.firstElement())) {
 					if (progressMonitor != null) progressMonitor.worked(1);
 					continue;
 				}
