@@ -342,7 +342,7 @@ public interface IWorkbenchActionConstants {
 // Standard workbench actions:
 	/**
 	 * Workbench menu: name of group for start of menu
-	 * (value <code>"wbstart"</code>).
+	 * (value <code>"wbStart"</code>).
 	 */
 	public static final String WB_START = "wbStart";		// Group. //$NON-NLS-1$
 	
@@ -414,91 +414,127 @@ public interface IWorkbenchActionConstants {
 	
 // menu reorg
 	/**
-	 * Name of standard Revert global action
+	 * File menu: name of standard Revert global action
 	 * (value <code>"revert"</code>).
 	 */
 	public static final String REVERT = "revert";	// Global action. //$NON-NLS-1$
 
 	/**
-	 * Name of standard Refresh global action
+	 * File menu: name of standard Refresh global action
 	 * (value <code>"refresh"</code>).
 	 */
 	public static final String REFRESH = "refresh";	// Global action. //$NON-NLS-1$
 
 	/**
-	 * Name of standard Properties global action
+	 * File menu: name of standard Properties global action
 	 * (value <code>"properties"</code>).
 	 */
 	public static final String PROPERTIES = "properties";	// Global action. //$NON-NLS-1$
 
 	/**
-	 * Name of standard Move global action
+	 * Edit menu: name of standard Move global action
 	 * (value <code>"move"</code>).
 	 */
 	public static final String MOVE = "move";	// Global action. //$NON-NLS-1$
 
 	/**
-	 * Name of standard Rename global action
+	 * Edit menu: name of standard Rename global action
 	 * (value <code>"rename"</code>).
 	 */
 	public static final String RENAME = "rename";	// Global action. //$NON-NLS-1$
 
 	/**
-	 * Name of standard Add Task global action
+	 * Edit menu: name of standard Add Task global action
 	 * (value <code>"addTask"</code>).
 	 */
 //	public static final String ADD_TASK = "addTask";	// Global action. //$NON-NLS-1$
 
 	/**
-	 * Name of standard Go Into global action
+	 * Navigate menu: name of group for start of menu
+	 * (value <code>"navStart"</code>).
+	 */
+	public static final String NAV_START = "navStart";	// Group. //$NON-NLS-1$
+
+	/**
+	 * Navigate menu: name of group for end of menu
+	 * (value <code>"navStart"</code>).
+	 */
+	public static final String NAV_END = "navStart";		// Group. //$NON-NLS-1$
+
+	/**
+	 * Navigate menu: name of group for extra Open actions
+	 * (value <code>"open.ext"</code>).
+	 */
+	public static final String OPEN_EXT = "open.ext";		// Group. //$NON-NLS-1$
+
+	/**
+	 * Navigate menu: name of group for extra Show actions
+	 * (value <code>"show.ext"</code>).
+	 */
+	public static final String SHOW_EXT = "show.ext";		// Group. //$NON-NLS-1$
+
+	/**
+	 * Navigate menu: name of standard Go Into global action
 	 * (value <code>"goInto"</code>).
 	 */
 	public static final String GO_INTO = "goInto";	// Global action. //$NON-NLS-1$
 
 	/**
-	 * Name of standard Go To submenu
+	 * Navigate menu: name of standard Go To submenu
 	 * (value <code>"goTo"</code>).
 	 */
 	public static final String GO_TO = "goTo";	//$NON-NLS-1$
 
 	/**
-	 * Name of standard Back global action
+	 * Navigate menu: name of standard Back global action
 	 * (value <code>"back"</code>).
 	 */
 	public static final String BACK = "back";	// Global action. //$NON-NLS-1$
 
 	/**
-	 * Name of standard Forward global action
+	 * Navigate menu: name of standard Forward global action
 	 * (value <code>"forward"</code>).
 	 */
 	public static final String FORWARD = "forward";	// Global action. //$NON-NLS-1$
 
 	/**
-	 * Name of standard Up global action
+	 * Navigate menu: name of standard Up global action
 	 * (value <code>"up"</code>).
 	 */
 	public static final String UP = "up";	// Global action. //$NON-NLS-1$
 
 	/**
-	 * Name of standard Build Project global action
+	 * Project menu: name of group for start of menu
+	 * (value <code>"projStart"</code>).
+	 */
+	public static final String PROJ_START = "projStart";	// Group. //$NON-NLS-1$
+
+	/**
+	 * Project menu: name of group for start of menu
+	 * (value <code>"projEnd"</code>).
+	 */
+	public static final String PROJ_END = "projEnd";	// Group. //$NON-NLS-1$
+
+	/**
+	 * Project menu: name of standard Build Project global action
 	 * (value <code>"buildProject"</code>).
 	 */
 	public static final String BUILD_PROJECT = "buildProject";	// Global action. //$NON-NLS-1$
 
 	/**
-	 * Name of standard Rebuild Project global action
+	 * Project menu: name of standard Rebuild Project global action
 	 * (value <code>"rebuildProject"</code>).
 	 */
 	public static final String REBUILD_PROJECT = "rebuildProject";	// Global action. //$NON-NLS-1$
 
 	/**
-	 * Name of standard Open Project global action
+	 * Project menu: name of standard Open Project global action
 	 * (value <code>"openProject"</code>).
 	 */
 	public static final String OPEN_PROJECT = "openProject";	// Global action. //$NON-NLS-1$
 
 	/**
-	 * Name of standard Close Project global action
+	 * Project menu: name of standard Close Project global action
 	 * (value <code>"closeProject"</code>).
 	 */
 	public static final String CLOSE_PROJECT = "closeProject";	// Global action. //$NON-NLS-1$

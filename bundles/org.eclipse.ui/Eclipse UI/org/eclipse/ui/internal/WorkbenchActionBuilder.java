@@ -364,6 +364,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	 */
 	private MenuManager createNavigateMenu() {
 		MenuManager menu = new MenuManager(WorkbenchMessages.getString("Workbench.navigate"), IWorkbenchActionConstants.M_NAVIGATE); //$NON-NLS-1$
+		menu.add(new GroupMarker(IWorkbenchActionConstants.NAV_START));
 		menu.add(goIntoAction);
 
 		MenuManager goToSubMenu = new MenuManager(WorkbenchMessages.getString("Workbench.goTo"), IWorkbenchActionConstants.GO_TO); //$NON-NLS-1$
@@ -371,11 +372,12 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		goToSubMenu.add(backAction);
 		goToSubMenu.add(forwardAction);
 		goToSubMenu.add(upAction);
-		goToSubMenu.add(new Separator());
-		goToSubMenu.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
+		goToSubMenu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 
-		menu.add(new Separator());
-		menu.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
+		menu.add(new Separator(IWorkbenchActionConstants.OPEN_EXT));
+		menu.add(new Separator(IWorkbenchActionConstants.SHOW_EXT));
+		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+		menu.add(new GroupMarker(IWorkbenchActionConstants.NAV_END));
 		return menu;
 	}
 
@@ -385,6 +387,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private MenuManager createProjectMenu() {
 		boolean autoBuild = ResourcesPlugin.getWorkspace().isAutoBuilding();
 		MenuManager menu = new MenuManager(WorkbenchMessages.getString("Workbench.project"), IWorkbenchActionConstants.M_PROJECT); //$NON-NLS-1$
+		menu.add(new GroupMarker(IWorkbenchActionConstants.PROJ_START));
 		// Only add the manual incremental build if auto build off
 		if (!autoBuild)
 			menu.add(buildProjectAction);
@@ -393,11 +396,14 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 			menu.add(buildAction);
 		}
 		menu.add(rebuildAllAction);
+		menu.add(new GroupMarker(IWorkbenchActionConstants.BUILD_EXT));
 		menu.add(new Separator());
 		menu.add(openProjectAction);
 		menu.add(closeProjectAction);
+		menu.add(new GroupMarker(IWorkbenchActionConstants.OPEN_EXT));
 		menu.add(new Separator());
 		menu.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
+		menu.add(new GroupMarker(IWorkbenchActionConstants.PROJ_END));
 		return menu;
 	}
 
