@@ -280,25 +280,34 @@ public class XMLTextHover implements ITextHover, ITextHoverExtension {
             try {
                 char c= document.getChar(region.getOffset() - 1);
                 if (c != '{') {
-                    //do not allow spaces in region as not a property
-                    String text= document.get(region.getOffset(), region.getLength());
-                    StringTokenizer tokenizer= new StringTokenizer(text, " "); //$NON-NLS-1$
-                    if (tokenizer.countTokens() != 1) {
-                        while(tokenizer.hasMoreTokens()) {
-                            String token= tokenizer.nextToken();
-                            int index= text.indexOf(token);
-                            if (region.getOffset() + index <= offset && region.getOffset() + index + token.length() >= offset) {
-                                region= new Region(region.getOffset() + index, token.length());
-                                break;
-                            }
-                        }
-                    }
-                    
+                	region = cleanRegionForNonProperty(offset, document, region);
                 }
             } catch (BadLocationException e) {
             }
         }
             
+		return region;
+	}
+
+	private static IRegion cleanRegionForNonProperty(int offset, IDocument document, IRegion region) throws BadLocationException {
+		//do not allow spaces in region that is not a property
+		String text= document.get(region.getOffset(), region.getLength());
+		if (text.startsWith("/")) { //$NON-NLS-1$
+			text= text.substring(1);
+			region= new Region(region.getOffset() + 1, region.getLength() - 1);
+		}
+		StringTokenizer tokenizer= new StringTokenizer(text, " "); //$NON-NLS-1$
+		if (tokenizer.countTokens() != 1) {
+		    while(tokenizer.hasMoreTokens()) {
+		        String token= tokenizer.nextToken();
+		        int index= text.indexOf(token);
+		        if (region.getOffset() + index <= offset && region.getOffset() + index + token.length() >= offset) {
+		            region= new Region(region.getOffset() + index, token.length());
+		            break;
+		        }
+		    }
+		}
+		
 		return region;
 	}
 	
