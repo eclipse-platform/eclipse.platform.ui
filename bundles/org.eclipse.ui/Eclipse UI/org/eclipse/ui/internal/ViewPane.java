@@ -418,10 +418,14 @@ protected Sashes findSashes() {
 		result.right = fastViewSash;		
 		return result;
 	}
+	RootLayoutContainer	container = getRootContainer();
+	if(container == null)
+		return result;
+		
 	if (this.getContainer() instanceof PartTabFolder)
-		getRootContainer().findSashes((PartTabFolder)this.getContainer(),result);
+		container.findSashes((PartTabFolder)this.getContainer(),result);
 	else
-		getRootContainer().findSashes(this,result);
+		container.findSashes(this,result);
 	return result;
 }
 /**
