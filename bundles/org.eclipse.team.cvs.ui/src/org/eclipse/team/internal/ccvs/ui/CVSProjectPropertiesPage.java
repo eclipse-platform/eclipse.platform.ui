@@ -66,7 +66,6 @@ public class CVSProjectPropertiesPage extends CVSPropertiesPage {
 	ICVSRepositoryLocation newLocation = null;
 
 	private static final int TABLE_HEIGHT_HINT = 150;
-	private static final int TABLE_WIDTH_HINT = 300;
 	
 	// Widgets
 	Label methodLabel;
@@ -123,14 +122,11 @@ public class CVSProjectPropertiesPage extends CVSPropertiesPage {
 		}
 		protected Control createDialogArea(Composite parent) {
 			parent.getShell().setText(Policy.bind("CVSProjectPropertiesPage.Select_a_Repository_1")); //$NON-NLS-1$
-			Composite composite = new Composite(parent, SWT.NONE);
-			composite.setLayout(new GridLayout());
-			composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+			Composite composite = (Composite) super.createDialogArea(parent);
 		
 			createLabel(composite, Policy.bind("CVSProjectPropertiesPage.Select_a_CVS_repository_location_to_share_the_project_with__2"), 1); //$NON-NLS-1$
 			Table table = new Table(composite, SWT.SINGLE | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
-			GridData data = new GridData();
-			data.widthHint = TABLE_WIDTH_HINT;
+			GridData data = new GridData(GridData.FILL_HORIZONTAL);
 			data.heightHint = TABLE_HEIGHT_HINT;
 			table.setLayoutData(data);
 			viewer = new TableViewer(table);
@@ -171,6 +167,9 @@ public class CVSProjectPropertiesPage extends CVSPropertiesPage {
 					viewer.refresh();
 				}
 			});
+
+			Dialog.applyDialogFont(parent);
+			
 			return composite;
 		}
 		protected void cancelPressed() {
