@@ -37,19 +37,6 @@ public class NavigatorDropAdapter
 	implements IOverwriteQuery {
 		
 	/**
-	 * The time the mouse first started hovering over the current target
-	 */
-	private long hoverStart = 0;
-	/**
-	 * The amount of time to hover over a tree item before expanding it
-	 */
-	private static final long hoverThreshold = 1500;
-
-	/**
-	 * A flag indicating that the drop has been cancelled by the user.
-	 */
-	private boolean isCanceled = false;
-	/**
 	 * A flag indicating that overwrites should always occur.
 	 */
 	private boolean alwaysOverwrite = false;
@@ -77,30 +64,6 @@ public class NavigatorDropAdapter
 		}		
 		super.dragEnter(event);
 	}
-	/**
-	 * @see DropTargetListener#dragOver
-	 */
-	public void dragOver(DropTargetEvent event) {
-		try {
-			//this method implements the UI behaviour that when the user hovers 
-			//over an unexpanded tree item long enough, it will auto-expand.
-			Object oldTarget = getCurrentTarget();
-			super.dragOver(event);
-			if (oldTarget != getCurrentTarget()) {
-				hoverStart = System.currentTimeMillis();
-			} else {
-				//if we've been hovering over this item awhile, expand it.
-				if (hoverStart > 0
-					&& (System.currentTimeMillis() - hoverStart) > hoverThreshold) {
-					expandSelection((TreeItem) event.item);
-					hoverStart = 0;
-				}
-			}
-		} catch (Throwable t) {
-			handleException(t, event);
-		}
-	}
-	
 	/**
 	 * Returns an error status with the given info.
 	 */
@@ -265,7 +228,6 @@ public class NavigatorDropAdapter
 	 * @see DropTargetListener#performDrop
 	 */
 	public boolean performDrop(final Object data) {
-		isCanceled = false;
 		alwaysOverwrite = false;
 		if (getCurrentTarget() == null || data == null) {
 			return false;
