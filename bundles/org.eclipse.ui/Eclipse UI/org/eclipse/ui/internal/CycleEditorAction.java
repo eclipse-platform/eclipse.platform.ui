@@ -52,7 +52,10 @@ protected void addItems(Table table,WorkbenchPage page) {
 		TableItem item  = null;
 		if(parts[i] instanceof IEditorPart) {
 			item = new TableItem(table,SWT.NONE);
-			item.setText(parts[i].getTitle());
+			if(parts[i].isDirty())
+				item.setText("*" + parts[i].getTitle());
+			else
+				item.setText(parts[i].getTitle());
 			item.setImage(parts[i].getTitleImage());
 			item.setData(parts[i]);
 		}

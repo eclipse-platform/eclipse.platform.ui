@@ -189,9 +189,9 @@ private void addKeyListener(final Table table,final Shell dialog) {
 			int acelaratorKey = getAcceleratorKey();
 			if((e.character == SWT.CR) || (e.character == SWT.LF)) {
 				ok(dialog,table);
-			} else if((e.keyCode & SWT.SHIFT) != 0) {
+			} else if(e.keyCode == SWT.SHIFT) {
 				forward = false;
-			} else if((e.keyCode & acelaratorKey) == acelaratorKey) {
+			} else if(e.keyCode == acelaratorKey) {
 				int index = table.getSelectionIndex();
 				if(forward) {
 					index = (index + 1) % table.getItemCount();
@@ -200,19 +200,19 @@ private void addKeyListener(final Table table,final Shell dialog) {
 					index = index >= 0 ? index : table.getItemCount() - 1;
 				}
 				table.setSelection(index);
-			} else if (((e.keyCode & SWT.ARROW_DOWN) != 0) ||
-				((e.keyCode & SWT.ARROW_UP) != 0) ||
-				((e.keyCode & SWT.ARROW_LEFT) != 0) ||
-				((e.keyCode & SWT.ARROW_RIGHT) != 0)) {
+			} else if ((e.keyCode == SWT.ARROW_DOWN) ||
+				(e.keyCode == SWT.ARROW_UP) ||
+				(e.keyCode == SWT.ARROW_LEFT) ||
+				(e.keyCode == SWT.ARROW_RIGHT)) {
 					//Do nothing.
 			} else {
 				cancel(dialog);
 			}
 		}
 		public void keyReleased(KeyEvent e) {
-			if((e.keyCode & SWT.SHIFT) != 0) {
+			if(e.keyCode == SWT.SHIFT) {
 				forward = true;
-			} else if(((e.keyCode & SWT.ALT) != 0) || ((e.keyCode & SWT.CTRL) != 0)) {
+			} else if((e.keyCode == SWT.ALT) || (e.keyCode == SWT.CTRL)) {
 				ok(dialog, table);
 			}
 		}
