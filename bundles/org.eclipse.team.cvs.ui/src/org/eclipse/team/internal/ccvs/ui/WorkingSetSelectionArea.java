@@ -20,14 +20,9 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ui.dialogs.DialogArea;
-import org.eclipse.ui.IWorkingSet;
-import org.eclipse.ui.IWorkingSetManager;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 
 /**
@@ -98,7 +93,7 @@ public class WorkingSetSelectionArea extends DialogArea {
 	 *
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(Composite)
 	 */
-	public Control createArea(Composite parent) {
+	public void createArea(Composite parent) {
         Dialog.applyDialogFont(parent);
 		Composite composite = createComposite(parent, 2);
 		initializeDialogUnits(composite);
@@ -146,8 +141,6 @@ public class WorkingSetSelectionArea extends DialogArea {
 				handleMruSelection();
 			}
 		});
-		
-		return composite;
 	}
 
 	/**

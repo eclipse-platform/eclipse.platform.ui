@@ -37,7 +37,12 @@ public abstract class DialogArea {
 	
 	protected List listeners;
 	
-	public DialogArea(Dialog parentDialog, IDialogSettings settings) {
+	/**
+	 * Create a dialog area
+	 * @param parentDialog the parent dialog or <code>null</code>
+	 * @param settings the dialog settings stroe or <code>null</code>
+	 */
+	protected DialogArea(Dialog parentDialog, IDialogSettings settings) {
 		this.listeners = new ArrayList();
 		this.parentDialog = parentDialog;
 		this.settings = settings;
@@ -87,13 +92,21 @@ public abstract class DialogArea {
 		gc.dispose();
 	}
 
-	public abstract Control createArea(Composite parent);
+	/**
+	 * Create the area using the given parent as the containing composite
+	 * @param parent
+	 */
+	public abstract void createArea(Composite parent);
 
 	/**
-	 * Returns the shell.
-	 * @return Shell
+	 * Returns a shell that can be used to show error conditions, etc.
+	 * This method will return <code>null</code> if there is no parent dialog.
+	 * @return a shell or <code>null</code>
 	 */
 	protected Shell getShell() {
+		if (parentDialog == null) {
+			return null;
+		}
 		return parentDialog.getShell();
 	}
 	
@@ -116,7 +129,7 @@ public abstract class DialogArea {
 		data.heightHint = Dialog.convertVerticalDLUsToPixels(fontMetrics, IDialogConstants.BUTTON_HEIGHT);
 		int widthHint = Dialog.convertHorizontalDLUsToPixels(fontMetrics, IDialogConstants.BUTTON_WIDTH);
 		data.widthHint = Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
-		button.setLayoutData(data);;
+		button.setLayoutData(data);
 		return button;
 	}
 
@@ -159,7 +172,7 @@ public abstract class DialogArea {
 	protected Composite createComposite(Composite parent, int numColumns) {
 		Composite composite = new Composite(parent, SWT.NULL);
 		Font font = parent.getFont();
-		composite.setFont(parent.getFont());
+		composite.setFont(font);
 		
 		// GridLayout
 		GridLayout layout = new GridLayout();
@@ -184,7 +197,7 @@ public abstract class DialogArea {
 	protected Composite createGrabbingComposite(Composite parent, int numColumns) {
 		Composite composite = new Composite(parent, SWT.NULL);
 		Font font = parent.getFont();
-		composite.setFont(parent.getFont());
+		composite.setFont(font);
 		
 		// GridLayout
 		GridLayout layout = new GridLayout();

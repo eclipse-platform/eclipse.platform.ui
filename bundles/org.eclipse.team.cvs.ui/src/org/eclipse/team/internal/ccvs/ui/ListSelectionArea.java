@@ -10,25 +10,16 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
-import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.ICheckStateListener;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.team.internal.ui.dialogs.DialogArea;
 
 /**
@@ -75,7 +66,7 @@ public class ListSelectionArea extends DialogArea {
 	/**
 	 * @see org.eclipse.team.internal.ccvs.ui.DialogArea#createArea(org.eclipse.swt.widgets.Composite)
 	 */
-	public Control createArea(Composite parent) {
+	public void createArea(Composite parent) {
         Dialog.applyDialogFont(parent);
 		Composite composite = createComposite(parent, 1);
 		initializeDialogUnits(composite);
@@ -107,8 +98,6 @@ public class ListSelectionArea extends DialogArea {
 		// initialize page
 		if (!getInitialElementSelections().isEmpty())
 			checkInitialSelections();
-
-		return composite;
 	}
 	
 	/**

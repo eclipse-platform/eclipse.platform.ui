@@ -11,26 +11,14 @@
 package org.eclipse.team.internal.ccvs.ui;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.RepositoryProvider;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ui.dialogs.DialogArea;
 
 /**
@@ -62,7 +50,7 @@ public class CommitCommentArea extends DialogArea {
 	/**
 	 * @see org.eclipse.team.internal.ccvs.ui.DialogArea#createArea(org.eclipse.swt.widgets.Composite)
 	 */
-	public Control createArea(Composite parent) {
+	public void createArea(Composite parent) {
         Dialog.applyDialogFont(parent);
 		Composite composite = createGrabbingComposite(parent, 1);
 		initializeDialogUnits(composite);
@@ -114,8 +102,6 @@ public class CommitCommentArea extends DialogArea {
 					text.setText(comments[index]);
 			}
 		});
-		
-		return composite;
 	}
 
 	/**
