@@ -342,6 +342,8 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AntEditorPreferenceConstants.EDITOR_BROWSER_LIKE_LINKS_KEY_MODIFIER));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AntEditorPreferenceConstants.EDITOR_BROWSER_LIKE_LINKS_KEY_MODIFIER_MASK));
 		
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AntEditorPreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE));
+		
 		for (int i= 0; i < fSyntaxColorListModel.length; i++) {
 			String colorKey= fSyntaxColorListModel[i][1];
 			addTextKeyToCover(overlayKeys, colorKey);
@@ -410,7 +412,9 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 				
 		labelText= AntPreferencesMessages.getString("AntEditorPreferencePage.showPrintMargin"); //$NON-NLS-1$
 		addCheckBox(appearanceComposite, labelText, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN, 0);
-
+		
+		labelText= AntPreferencesMessages.getString("AntEditorPreferencePage.32"); //$NON-NLS-1$
+		addCheckBox(appearanceComposite, labelText, AntEditorPreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE, 0);
 
 		Label label= new Label(appearanceComposite, SWT.LEFT );
 		label.setFont(font);

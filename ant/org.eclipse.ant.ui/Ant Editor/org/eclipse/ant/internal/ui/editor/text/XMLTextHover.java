@@ -17,6 +17,7 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.AbstractFileSet;
 import org.apache.tools.ant.types.Path;
 import org.apache.tools.ant.types.PatternSet;
+import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.editor.AntEditor;
 import org.eclipse.ant.internal.ui.editor.derived.HTMLPrinter;
 import org.eclipse.ant.internal.ui.editor.derived.HTMLTextPresenter;
@@ -24,7 +25,7 @@ import org.eclipse.ant.internal.ui.model.AntElementNode;
 import org.eclipse.ant.internal.ui.model.AntModel;
 import org.eclipse.ant.internal.ui.model.AntPropertyNode;
 import org.eclipse.ant.internal.ui.model.IAntModel;
-import org.eclipse.jdt.ui.PreferenceConstants;
+import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IDocument;
@@ -258,7 +259,7 @@ public class XMLTextHover implements ITextHover, ITextHoverExtension {
 	 * @see org.eclipse.jface.text.ITextHoverExtension#getHoverControlCreator()
 	 */
 	public IInformationControlCreator getHoverControlCreator() {
-		if (PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE)) {
+		if (AntUIPlugin.getDefault().getPreferenceStore().getBoolean(AntEditorPreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE)) {
 			return new IInformationControlCreator() {
 				public IInformationControl createInformationControl(Shell parent) {
 	  				return new DefaultInformationControl(parent, SWT.NONE, 
