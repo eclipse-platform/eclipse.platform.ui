@@ -162,6 +162,33 @@
    <test id="org.eclipse.core.tests.plugintests.PluginFindTests">
       <run class="org.eclipse.core.tests.plugintests.PluginFindTests"/>
     </test>
-  </extension>
+   <test id="org.eclipse.core.tests.plugintests.PreferencesRuntimeTests">
+      <run class="org.eclipse.core.tests.plugintests.PreferencesRuntimeTests"/>
+    </test>
+   <test id="org.eclipse.core.tests.plugintests.CmdLinePreferencesTest">
+      <run class="org.eclipse.core.tests.plugintests.CmdLinePreferencesTest"/>
+    </test>
+   <test id="org.eclipse.core.tests.plugintests.CmdLineAndStateTest">
+      <run class="org.eclipse.core.tests.plugintests.CmdLineAndStateTest"/>
+    </test>
+   <test id="org.eclipse.core.tests.plugintests.CmdLineAndPluginLocalTest">
+      <run class="org.eclipse.core.tests.plugintests.CmdLineAndPluginLocalTest"/>
+    </test>
+   <test id="org.eclipse.core.tests.plugintests.CmdLineAndPrimaryFeatureTest">
+      <run class="org.eclipse.core.tests.plugintests.CmdLineAndPrimaryFeatureTest"/>
+    </test>
+   <test id="org.eclipse.core.tests.plugintests.CmdLineAndStateAndPluginLocalTest">
+      <run class="org.eclipse.core.tests.plugintests.CmdLineAndStateAndPluginLocalTest"/>
+    </test>
+   <test id="org.eclipse.core.tests.plugintests.CmdLineAndPluginLocalAndPrimaryFeatureTest">
+      <run class="org.eclipse.core.tests.plugintests.CmdLineAndPluginLocalAndPrimaryFeatureTest"/>
+    </test>
+   <test id="org.eclipse.core.tests.plugintests.CmdLineAndStateAndPluginLocalAndPrimaryFeatureTest">
+      <run class="org.eclipse.core.tests.plugintests.CmdLineAndStateAndPluginLocalAndPrimaryFeatureTest"/>
+    </test>
+   <test id="org.eclipse.core.tests.plugintests.CmdLineAndStateAndPrimaryFeatureTest">
+      <run class="org.eclipse.core.tests.plugintests.CmdLineAndStateAndPrimaryFeatureTest"/>
+    </test>
+ </extension>
 
 </plugin>
