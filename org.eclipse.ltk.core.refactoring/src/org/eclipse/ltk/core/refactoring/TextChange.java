@@ -346,6 +346,29 @@ public abstract class TextChange extends Change {
 	//---- Method to access the current content of the text change ---------
 
 	/**
+	 * Returns the document this text change is applied to. The returned
+	 * document must not be modified by the client. Doing so will result
+	 * in an unexpected behaviour when the change is performed.
+	 * 
+	 * @param pm a progress monitor to report progress
+	 * @return the document this change is working on
+	 * 
+	 * @throws CoreException if the document can't be acquired
+	 */
+	public IDocument getCurrentDocument(IProgressMonitor pm) throws CoreException {
+		IDocument result= null;
+		pm.beginTask("", 2); //$NON-NLS-1$
+		try{
+			result= acquireDocument(new SubProgressMonitor(pm, 1));
+		} finally {
+			if (result != null)
+				releaseDocument(result, new SubProgressMonitor(pm, 1));
+		}
+		pm.done();
+		return result;
+	}
+	
+	/**
 	 * Returns the current content of the document this text
 	 * change is applied to.
 	 * 
@@ -354,7 +377,7 @@ public abstract class TextChange extends Change {
 	 * @exception CoreException if the content can't be accessed
 	 */
 	public String getCurrentContent() throws CoreException {
-		return getDocument().get();
+		return getCurrentDocument(new NullProgressMonitor()).get();
 	}
 	
 	/**
@@ -390,7 +413,7 @@ public abstract class TextChange extends Change {
 	public String getCurrentContent(IRegion region, boolean expandRegionToFullLine, int surroundingLines) throws CoreException {
 		Assert.isNotNull(region);
 		Assert.isTrue(surroundingLines >= 0);
-		IDocument document= getDocument();
+		IDocument document= getCurrentDocument(new NullProgressMonitor());
 		Assert.isTrue(document.getLength() >= region.getOffset() + region.getLength());
 		return getContent(document, region, expandRegionToFullLine, surroundingLines);
 	}
@@ -546,7 +569,7 @@ public abstract class TextChange extends Change {
 	//---- private helper methods --------------------------------------------------
 	
 	private PreviewAndRegion getPreviewDocument(TextEditChangeGroup[] changes) throws CoreException {
-		IDocument document= new Document(getDocument().get());
+		IDocument document= new Document(getCurrentDocument(new NullProgressMonitor()).get());
 		boolean trackChanges= fTrackEdits;
 		setKeepPreviewEdits(true);
 		TextEditProcessor processor= changes == ALL_EDITS
@@ -612,17 +635,6 @@ public abstract class TextChange extends Change {
 			fCopier));
 		if (!fTrackEdits)
 			fCopier= null;
-		return result;
-	}
-	
-	private IDocument getDocument() throws CoreException {
-		IDocument result= null;
-		try{
-			result= acquireDocument(new NullProgressMonitor());
-		} finally {
-			if (result != null)
-				releaseDocument(result, new NullProgressMonitor());
-		}
 		return result;
 	}
 	
