@@ -43,28 +43,6 @@ class ImplicitJobs {
 		this.manager = manager;
 	}
 
-	/**
-	 * Called when a worker thread has finished running a job. At this
-	 * point, the worker thread must not own any scheduling rules
-	 * @param lastJob The last job to run in this thread
-	 */
-	void cleanup(InternalJob lastJob) {
-		final Thread currentThread = Thread.currentThread();
-		synchronized (this) {
-			ThreadJob threadJob = 	(ThreadJob) threadJobs.get(currentThread);
-			if (threadJob == null)
-				return;
-			String msg = "Worker thread ended job: " + lastJob + ", but still holds rule: " + threadJob; //$NON-NLS-1$ //$NON-NLS-2$
-			IStatus error = new Status(IStatus.ERROR, Platform.PI_RUNTIME, 1, msg, null);
-			InternalPlatform.getDefault().log(error);
-			//just log the error for now, but the code below should be added to properly cleanup in this case
-			//discard rules for this thread
-//			threadJobs.remove(currentThread);
-//			//if this job had a rule, then we are essentially releasing a lock
-//			if (threadJob.acquireRule)
-//				manager.getLockManager().removeLockThread(Thread.currentThread(), threadJob.getRule());
-		}
-	}
 	/* (Non-javadoc) 
 	 * @see IJobManager#beginRule 
 	 */
@@ -119,6 +97,56 @@ class ImplicitJobs {
 			}
 		}
 	}
+
+	/* (Non-javadoc) 
+	 * @see IJobManager#endRule 
+	 */
+	synchronized void end(ISchedulingRule rule, boolean resume) {
+		if (JobManager.DEBUG_BEGIN_END)
+			JobManager.debug("End rule: " + rule); //$NON-NLS-1$
+		ThreadJob threadJob = 	(ThreadJob) threadJobs.get(Thread.currentThread());
+		if (threadJob == null)
+			Assert.isLegal(rule == null, "endRule without matching beginRule: " + rule); //$NON-NLS-1$
+		else if (threadJob.pop(rule)) {
+			endThreadJob(threadJob, resume);
+		}
+	}
+	/**
+	 * Called when a worker thread has finished running a job. At this
+	 * point, the worker thread must not own any scheduling rules
+	 * @param lastJob The last job to run in this thread
+	 */
+	void endJob(InternalJob lastJob) {
+		final Thread currentThread = Thread.currentThread();
+		synchronized (this) {
+			ThreadJob threadJob = 	(ThreadJob) threadJobs.get(currentThread);
+			if (threadJob == null)
+				return;
+			String msg = "Worker thread ended job: " + lastJob + ", but still holds rule: " + threadJob; //$NON-NLS-1$ //$NON-NLS-2$
+			IStatus error = new Status(IStatus.ERROR, Platform.PI_RUNTIME, 1, msg, null);
+			InternalPlatform.getDefault().log(error);
+			//end the thread job
+			endThreadJob(threadJob, false);
+		}
+	}
+
+	private void endThreadJob(ThreadJob threadJob, boolean resume) {
+		Thread currentThread = Thread.currentThread();
+		//clean up when last rule scope exits
+		threadJobs.remove(currentThread);
+		ISchedulingRule rule = threadJob.getRule();
+		if (resume && rule != null)
+			suspendedRules.remove(rule);
+		//if this job had a rule, then we are essentially releasing a lock
+		//note it is safe to do this even if the acquire was aborted
+		if (threadJob.acquireRule)
+			manager.getLockManager().removeLockThread(currentThread, rule);
+		//if the job was started, we need to notify job manager to end it
+		if (threadJob.isRunning())
+			manager.endJob(threadJob, Status.OK_STATUS, false);
+		recycle(threadJob);
+	}
+
 	/**
 	 * Returns true if this rule has been suspended, and false otherwise.
 	 */
@@ -129,32 +157,6 @@ class ImplicitJobs {
 			if (((ISchedulingRule)it.next()).contains(rule))
 				return true;
 		return false;
-	}
-
-	/* (Non-javadoc) 
-	 * @see IJobManager#endRule 
-	 */
-	synchronized void end(ISchedulingRule rule, boolean resume) {
-		if (JobManager.DEBUG_BEGIN_END)
-			JobManager.debug("End rule: " + rule); //$NON-NLS-1$
-		final Thread currentThread = Thread.currentThread();
-		ThreadJob threadJob = 	(ThreadJob) threadJobs.get(currentThread);
-		if (threadJob == null)
-			Assert.isLegal(rule == null, "endRule without matching beginRule: " + rule); //$NON-NLS-1$
-		else if (threadJob.pop(rule)) {
-			//clean up when last rule scope exits
-			threadJobs.remove(currentThread);
-			if (resume && rule != null)
-				suspendedRules.remove(rule);
-			//if this job had a rule, then we are essentially releasing a lock
-			//note it is safe to do this even if the acquire was aborted
-			if (threadJob.acquireRule)
-				manager.getLockManager().removeLockThread(Thread.currentThread(), threadJob.getRule());
-			//if the job was started, we need to notify job manager to end it
-			if (threadJob.isRunning())
-				manager.endJob(threadJob, Status.OK_STATUS, false);
-			recycle(threadJob);
-		}
 	}
 
 	/**

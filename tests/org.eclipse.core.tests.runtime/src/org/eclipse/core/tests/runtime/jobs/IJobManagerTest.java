@@ -144,6 +144,31 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		super.tearDown();
 		//		manager.startup();
 	}
+	
+	/**
+	 * Tests running a job that begins a rule but never ends it
+	 */
+	public void testBeginRuleNoEnd() {
+		final PathRule rule = new PathRule("testBeginRuleNoEnd");
+		Job job = new Job("testBeginRuleNoEnd") {
+			protected IStatus run(IProgressMonitor monitor) {
+				Platform.getJobManager().beginRule(rule, null);
+				return Status.OK_STATUS;
+			}
+		};
+		job.schedule();
+		try {
+			job.join();
+		} catch (InterruptedException e) {
+			fail("4.99", e);
+		}
+		//another thread should be able to access the rule now
+		try {
+			manager.beginRule(rule, null);
+		} finally {
+			manager.endRule(rule);
+		}
+	}
 
 	public void testBug48073() {
 		ISchedulingRule ruleA = new PathRule("/testBug48073");
@@ -1047,7 +1072,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		for (int i = 0; i < JOBS_PER_FAMILY; i++) {
 			//the running job may not respond immediately
 			if (!family2[i].cancel())
-				waitForCancel(family2[i]);
+			waitForCancel(family2[i]);
 			assertState("5." + i, family2[i], Job.NONE);
 		}
 

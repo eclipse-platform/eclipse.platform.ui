@@ -92,7 +92,7 @@ class WorkerPool {
 		}
 		manager.endJob(job, result, true);
 		//ensure this thread no longer owns any scheduling rules
-		manager.implicitJobs.cleanup(job);
+		manager.implicitJobs.endJob(job);
 	}
 
 	/**
