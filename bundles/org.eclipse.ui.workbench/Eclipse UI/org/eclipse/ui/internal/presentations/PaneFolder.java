@@ -99,6 +99,10 @@ public final class PaneFolder {
 		public void widgetDisposed(DisposeEvent e) {
 			Control disposedControl = (Control)e.widget;
 			
+			if (isDisposed()) {
+				return;
+			}
+			
 			// Probably unnecessary, but it can't hurt garbage collection
 			disposedControl.removeDisposeListener(this);			
 			
