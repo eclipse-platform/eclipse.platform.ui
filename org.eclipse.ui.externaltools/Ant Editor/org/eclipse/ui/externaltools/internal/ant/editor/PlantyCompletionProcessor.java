@@ -1047,7 +1047,6 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
         try {
             tempParser.parse(tempInputSource, tempHandler);
         } catch(SAXParseException e) {
-         //   PlantyPlugin.log(e);
             // Ignore since that happens always if the edited file is not valid. We try to handle that.
         } catch (SAXException e) {
             ExternalToolsPlugin.getDefault().log(e);
