@@ -56,6 +56,16 @@ public void addToLocalHistory(IFile file) {
 	((Resource) file).getLocalManager().getHistoryStore().addState(file.getFullPath(), path, lastModified, false);
 }
 
+/*
+ * Copies the local history of source to destination.  Note that if source
+ * is an IFolder, it is assumed that the same structure exists under destination
+ * and the local history of any IFile under source will be copied to the
+ * associated IFile under destination.
+ */
+private void copyLocalHistory (IResource source, IResource destination) {
+	((Resource) destination).getLocalManager().getHistoryStore().copyHistory(source.getFullPath(), destination.getFullPath());
+}
+
 /**
  * @see IResourceTree#movedFile
  */
@@ -103,6 +113,9 @@ public void movedFile(IFile source, IFile destination) {
 		IStatus status = new ResourceStatus(IStatus.ERROR, source.getFullPath(), message, e);
 		failed(status);
 	}
+
+	// Copy the local history information
+	copyLocalHistory(source, destination);
 }
 /**
  * @see IResourceTree#movedFolderSubtree
@@ -153,6 +166,9 @@ public void movedFolderSubtree(IFolder source, IFolder destination) {
 		IStatus status = new ResourceStatus(IStatus.ERROR, source.getFullPath(), message, e);
 		failed(status);
 	}
+	
+	// Copy the local history for this folder
+	copyLocalHistory(source, destination);
 }
 
 /**
@@ -226,6 +242,8 @@ public boolean movedProjectSubtree(IProject project, IProjectDescription destDes
 			// log the status but don't return until we try and move the rest of the resource info
 			failed(status);
 		}
+		// Copy the local history
+		copyLocalHistory(source, destination);
 	}
 	
 	// Set the new project description on the destination project.

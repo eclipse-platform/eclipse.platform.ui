@@ -85,6 +85,7 @@ protected boolean copyContents(UnifiedTreeNode node, Resource source, Resource d
 		destinationLocation.toFile().setLastModified(lastModified);
 		// update file attributes
 		CoreFileSystemLibrary.copyAttributes(source.getLocation().toOSString(), destinationLocation.toOSString(), false);
+		destination.getLocalManager().getHistoryStore().copyHistory(source.getFullPath(), destination.getFullPath());
 	} catch (CoreException e) {
 		status.add(e.getStatus());
 	}

@@ -22,10 +22,11 @@ import java.io.InputStream;
  * a limited history of earlier states of a file.
  * </p>
  * <p>
- * This history is based on paths only. Thus, for example, moving a file
- * does not move its history. The history, if any, remains related to
- * the original path. Deleting a file and creating another one at the
- * same path also does not affect the history. If the original file had
+ * Moving or copying a file will cause a copy of its local history to appear
+ * at the new location as well as at the original location.  Subsequent
+ * changes to either file will only affect the local history of the file
+ * changed.  Deleting a file and creating another one at the
+ * same path does not affect the history. If the original file had
  * history, that same history will be available for the new one.
  * </p>
  * <p>

@@ -77,6 +77,8 @@ protected void accept(IPath path, IHistoryStoreVisitor visitor, boolean visitOnP
  */
 protected void addState(IPath path, UniversalUniqueIdentifier uuid, long lastModified) {
 	// Determine how many states already exist for this path and timestamp.
+	// This count is just used to distinguish between states that have the
+	// same path and last modified timestamp.
 	class CountVisitor implements IHistoryStoreVisitor {
 		byte count = 0;
 		public boolean visit(HistoryStoreEntry entry) throws IndexedStoreException {
@@ -94,6 +96,7 @@ protected void addState(IPath path, UniversalUniqueIdentifier uuid, long lastMod
 	accept(keyPrefix, visitor, true);
 	HistoryStoreEntry entryToInsert = new HistoryStoreEntry(path, uuid, lastModified, visitor.getCount());
 	try {
+		// valueToBytes just converts the uuid to byte form
 		ObjectID valueID = store.createObject(entryToInsert.valueToBytes());
 		store.getIndex().insert(entryToInsert.getKey(), valueID);
 	} catch (Exception e) {
@@ -179,6 +182,52 @@ public void clean() {
 	}
 }
 /**
+ * Copies the history store information from the source path given destination path.
+ * Note that destination may already have some history store information. Also note
+ * that this is a DEPTH_INFINITY operation. That is, history will be copied  for partial
+ * matches of the source path.
+ * 
+ * @param source the path containing the original copy of the history store information
+ * @param destination the target path for the copy
+ * @since  2.1
+ */
+public void copyHistory(final IPath source, final IPath destination) {
+	// return early if either of the paths are null or if the source and
+	// destination are the same.
+	if (source == null || destination == null || source.equals(destination))
+		return;
+	IHistoryStoreVisitor visitor = new IHistoryStoreVisitor () {
+		public boolean visit(HistoryStoreEntry entry) throws IndexedStoreException {
+			IPath path = entry.getPath();
+			int prefixSegments = source.matchingFirstSegments(path);
+			// if there are no matching segments then we have an internal error...something
+			// is wrong with the visitor
+			if (prefixSegments == 0) {
+				String message = Policy.bind("history.interalPathErrors", source.toString(), path.toString()); //$NON-NLS-1$
+				ResourceStatus status = new ResourceStatus(IResourceStatus.INTERNAL_ERROR, source, message, null);
+				ResourcesPlugin.getPlugin().getLog().log(status);
+				return false;
+			}
+			// Otherwise create the appropriate destination path and add the state.
+			path = destination.append(path.removeFirstSegments(prefixSegments));
+			addState(path, entry.getUUID(), entry.getLastModified());
+			return true;
+		}
+	};
+	// Visit all the entries. Visit partial matches too since this is a depth infinity operation
+	// and we want to copy history for children.
+	accept(source, visitor, true);
+	// We need to do a commit here.  The addState method we are
+	// using won't commit store.  The public ones will.
+	try {
+		store.commit();
+	} catch (CoreException e) {
+		String message = Policy.bind("history.problemsCopying", source.toString(), destination.toString()); //$NON-NLS-1$
+		ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_METADATA, source, message, e);
+		ResourcesPlugin.getPlugin().getLog().log(status);
+	}
+}
+/**
  * Verifies existence of specified resource in the history store.
  *
  * @param target File state to be verified.
@@ -239,7 +288,8 @@ public boolean isValid(java.io.File localFile) {
 	return result;
 }
 protected void remove(HistoryStoreEntry entry) throws IndexedStoreException {
-	blobStore.deleteBlob(entry.getUUID());
+	// Do not remove the blob yet.  It may be referenced by another
+	// history store entry.
 	entry.remove();
 }
 /**

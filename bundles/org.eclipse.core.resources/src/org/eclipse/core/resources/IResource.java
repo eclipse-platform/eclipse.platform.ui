@@ -188,7 +188,8 @@ public interface IResource extends IAdaptable {
 	 * 
 	 * @see IFolder#createLink
 	 * @see IFile#createLink
-	 * @since 2.1	 */
+	 * @since 2.1
+	 */
 	public static final int ALLOW_MISSING_LOCAL = 0x10;
 
 	/**
@@ -465,6 +466,11 @@ public void copy(IPath destination, boolean force, IProgressMonitor monitor) thr
  * resource copy has been added to its new parent.
  * </p>
  * <p>
+ * An attempt will be made to copy the local history for this resource and its children,
+ * to the destination. Since local history existence is a safetly-net mechanism, failure
+ * of this action will not result in automatic failure of the copy operation.
+ * </p>
+ * <p>
  * This operation is long-running; progress and cancellation are provided
  * by the given progress monitor. 
  * </p>
@@ -551,8 +557,7 @@ public void copy(IProjectDescription description, boolean force, IProgressMonito
  * When a resource is copied, its persistent properties are copied with it.
  * Session properties and markers are not copied.
  * </p>
- * <p>
- * The <code>FORCE</code> update flag controls how this method deals with
+ * <p> The <code>FORCE</code> update flag controls how this method deals with
  * cases where the workspace is not completely in sync with the local file
  * system. If <code>FORCE</code> is not specified, the method will only attempt
  * to copy resources that are in sync with the corresponding files and
@@ -580,8 +585,12 @@ public void copy(IProjectDescription description, boolean force, IProgressMonito
  * <p>
  * Update flags other than <code>FORCE</code> or <code>SHALLOW</code> are ignored.
  * </p>
- * <p> 
- * This operation changes resources; these changes will be reported in a
+ * <p>
+ * An attempt will be made to copy the local history for this resource and its children,
+ * to the destination. Since local history existence is a safetly-net mechanism, failure
+ * of this action will not result in automatic failure of the copy operation.
+ * </p>
+ * <p> This operation changes resources; these changes will be reported in a
  * subsequent resource change event that will include an indication that the
  * resource copy has been added to its new parent.
  * </p>
@@ -1413,6 +1422,12 @@ public void move(IPath destination, boolean force, IProgressMonitor monitor) thr
  * when moving files and folders, but not whole projects.
  * </p>
  * <p>
+ * If this resource is not a project, an attempt will be made to copy the local history 
+ * for this resource and its children, to the destination. Since local history existence 
+ * is a safetly-net mechanism, failure of this action will not result in automatic failure 
+ * of the move operation.
+ * </p>
+ * <p>
  * The <code>SHALLOW</code> update flag controls how this method deals with linked
  * resources.  If <code>SHALLOW</code> is not specified, then the underlying
  * contents of the linked resource will always be moved in the file system.  In
@@ -1569,6 +1584,10 @@ public void move(IProjectDescription description, boolean force, boolean keepHis
  * with each individual project, and gets discarded when a project is deleted
  * from the workspace. Hence <code>KEEP_HISTORY</code> is only really applicable
  * when moving files and folders, but not whole projects.
+ * </p>
+ * <p>
+ * Local history information for this project and its children will not be moved to the
+ * destination.
  * </p>
  * <p>
  * The <code>SHALLOW</code> update flag controls how this method deals with linked

@@ -28,6 +28,11 @@ import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 /**
  * This class defines all tests for the HistoryStore Class.
  */
+
+// FIXME Should explicitly test each of the public methods in the 
+// HistoryStore class (e.g. ensure we test copyHistory explicitly.  These
+// tests only test it through the resources that use it.)
+
 public class HistoryStoreTest extends EclipseWorkspaceTest {
 public HistoryStoreTest() {
 	super();
@@ -44,7 +49,59 @@ public static Test suite() {
 protected void tearDown() throws Exception {
 	IProject[] projects = getWorkspace().getRoot().getProjects();
 	getWorkspace().delete(projects, true, null);
+	wipeHistoryStore();
 }
+private int numBytes (InputStream input) {
+	int i = 0;
+	int c = -1;
+	try {
+		c = input.read();
+		while (c != -1) {
+			i++;
+			c = input.read();
+		}
+	} catch (IOException e) {
+		i = 0;
+	}
+	if (c != -1)
+		i = 0;
+	return i;
+}
+/**
+ * Test the various policies in place to ensure that the history store 
+ * does not grow to unmanageable size.  The policies currently in place
+ * include:
+ * - store only a maximum number of states for each file
+ * - do not store files greater than some stated size
+ * - consider history store information stale after some specified period
+ *   of time and discard stale data
+ * 
+ * History store states are always stored in order from the newest state to
+ * the oldest state.  This will be tested as well
+ *
+ * Scenario:
+ *   1. Create project					AddStateAndPoliciesProject
+ *   2. Create file	(file.txt)			random contents
+ *   3. Set policy information in the workspace description as follows:
+ * 			- don't store states older than 1 day
+ * 			- keep a maximum of 5 states per file
+ * 			- file states must be less than 1 Mb
+ *   4. Make 8 modifications to file.txt (causing 8 states to be created)
+ *   5. Ensure only 5 states were kept.
+ *   6. Ensure states are in order from newest to oldest.
+ *   7. Set policy such that file states must be no greater than 7 bytes.
+ *   8. Create a new file file1.txt
+ *   9. Add 10 bytes of data to this file.
+ *  10. Check each of the states for this file and ensure they are not
+ *      greater than 7 bytes.
+ *  11. Revert to policy in #3
+ *  12. Make sure we still have 5 states for file.txt (the first file we 
+ *      worked with)
+ *  13. Change the policy so that data older than 10 seconds is stale.
+ *  14. Wait 12 seconds (make it longer than 10 seconds to ensure we don't
+ *      encounter granularity issues).
+ *  15. Check file states.  There should be none left.
+ */
 public void testAddStateAndPolicies() {
 
 	/* Create common objects. */
@@ -59,11 +116,16 @@ public void testAddStateAndPolicies() {
 	}
 
 	/* set local history policies */
-	IWorkspaceDescription originalDescription = getWorkspace().getDescription(); // keep orignal
-	IWorkspaceDescription description = getWorkspace().getDescription(); // get another copy for changes
-	description.setFileStateLongevity(1000 * 3600 * 24); // 1 day
+	// keep orignal
+	IWorkspaceDescription originalDescription = getWorkspace().getDescription();
+	// get another copy for changes
+	IWorkspaceDescription description = getWorkspace().getDescription();
+	// longevity set to 1 day
+	description.setFileStateLongevity(1000 * 3600 * 24);
+	// keep a max of 5 file states
 	description.setMaxFileStates(5);
-	description.setMaxFileStateSize(1024 * 1024); // 1 Mb
+	// max size of file = 1 Mb
+	description.setMaxFileStateSize(1024 * 1024);
 	try {
 		getWorkspace().setDescription(description);
 	} catch (CoreException e) {
@@ -87,6 +149,7 @@ public void testAddStateAndPolicies() {
 	} catch (CoreException e) {
 		fail("1.1", e);
 	}
+	// We added 8 states.  Make sure we only have 5 (the max).
 	assertEquals("1.2", description.getMaxFileStates(), states.length);
 
 	// assert that states are in the correct order (newer ones first)
@@ -98,7 +161,8 @@ public void testAddStateAndPolicies() {
 
 	/* test max file state size */
 	description.setMaxFileStates(15);
-	description.setMaxFileStateSize(7); // 7 bytes
+	// max size of file = 7 bytes
+	description.setMaxFileStateSize(7);
 	try {
 		getWorkspace().setDescription(description);
 	} catch (CoreException e) {
@@ -110,6 +174,7 @@ public void testAddStateAndPolicies() {
 	} catch (CoreException e) {
 		fail("2.0", e);
 	}
+	// Add 10 bytes to exceed the max file state size.
 	for (int i = 0; i < 10; i++) {
 		try {
 			file.appendContents(getContents("a"), true, true, getMonitor());
@@ -121,42 +186,56 @@ public void testAddStateAndPolicies() {
 		getWorkspace().save(true, null);
 		states = file.getHistory(getMonitor());
 		// #states = size + 1 for the 0 byte length file to begin with.
-		assertEquals("2.2", description.getMaxFileStateSize() + 1, states.length);
+		for (int i = 0; i < states.length; i++) {
+			int bytesRead = numBytes(states[i].getContents());
+			assertTrue("2.2." + i, bytesRead <= description.getMaxFileStateSize());
+		}
 	} catch (CoreException e) {
 		fail("2.3", e);
 	}
 
 	/* test max file longevity */
-	file = project.getFile("file.txt"); // use the file of the first test
-	description.setFileStateLongevity(1000 * 3600 * 24); // 1 day
+	// use the file of the first test
+	file = project.getFile("file.txt");
+	// 1 day
+	description.setFileStateLongevity(1000 * 3600 * 24);
 	description.setMaxFileStates(5);
-	description.setMaxFileStateSize(1024 * 1024); // 1 Mb
-	try { // the description should be the same as the first test
+	// 1 Mb
+	description.setMaxFileStateSize(1024 * 1024);
+	// the description should be the same as the first test
+	try {
 		getWorkspace().setDescription(description);
 	} catch (CoreException e) {
 		fail("3.0", e);
 	}
 	try {
 		states = file.getHistory(getMonitor());
+		// Make sure we have 5 states for file file.txt
 		assertEquals("3.3", description.getMaxFileStates(), states.length);
 	} catch (CoreException e) {
 		fail("3.2", e);
 	}
 	// change policies
-	description.setFileStateLongevity(1000 * 10); // 10 seconds
-	description.setMaxFileStateSize(1024 * 1024); // 1 Mb
+	// 10 seconds
+	description.setFileStateLongevity(1000 * 10);
+	// 1 Mb
+	description.setMaxFileStateSize(1024 * 1024);
 	try {
 		getWorkspace().setDescription(description);
 	} catch (CoreException e) {
 		fail("3.3", e);
 	}
 	try {
-		Thread.sleep(1000 * 10); // sleep for 10 seconds
+		// sleep for more than 10 seconds (the granularity varies on
+		// some machines so we will sleep for 12 seconds)
+		Thread.sleep(1000 * 12);
 	} catch (InterruptedException e) {
 	}
 	try {
 		getWorkspace().save(true, null);
 		states = file.getHistory(getMonitor());
+		// The 5 states for file.txt should have exceeded their longevity
+		// and been removed.  Make sure we have 0 states left.
 		assertEquals("3.4", 0, states.length);
 	} catch (CoreException e) {
 		fail("3.5", e);
@@ -174,6 +253,17 @@ public void testAddStateAndPolicies() {
 		fail("20.1", e);
 	}
 }
+
+/*
+ * Test the functionality in store.clean() which is called to ensure
+ * the history store to ensure that the history store does not grow to
+ * unmanageable size.  The policies currently in place include:
+ * - store only a maximum number of states for each file
+ * - do not store files greater than some stated size
+ * - consider history store information stale after some specified period
+ *   of time and discard stale data
+ * 
+ */
 public void testClean() {
 
 	/* Create common objects. */
@@ -187,19 +277,25 @@ public void testClean() {
 		fail("0.0", e);
 	}
 	HistoryStore store = ((Workspace) getWorkspace()).getFileSystemManager().getHistoryStore();
-	IWorkspaceDescription originalDescription = getWorkspace().getDescription(); // keep orignal
-	IWorkspaceDescription description = getWorkspace().getDescription(); // get another copy for changes
+	// keep orignal
+	IWorkspaceDescription originalDescription = getWorkspace().getDescription();
+	// get another copy for changes
+	IWorkspaceDescription description = getWorkspace().getDescription();
 
 	/* test max file states */
-	description.setFileStateLongevity(1000 * 3600 * 24); // 1 day
+	// 1 day
+	description.setFileStateLongevity(1000 * 3600 * 24);
+	// 500 states per file max.
 	description.setMaxFileStates(500);
-	description.setMaxFileStateSize(1024 * 1024); // 1 Mb
+	// 1Mb max size
+	description.setMaxFileStateSize(1024 * 1024);
 	try {
 		getWorkspace().setDescription(description);
 	} catch (CoreException e) {
 		fail("0.1", e);
 	}
 
+	// Set up 8 file states for this file when 500 are allowed
 	for (int i = 0; i < 8; i++) {
 		try {
 			ensureOutOfSync(file);
@@ -213,20 +309,28 @@ public void testClean() {
 			fail("1.0", e);
 		}
 	}
+	// All 8 states should exist.
+	long oldLastModTimes[] = new long[8];
 	try {
 		IFileState[] states = file.getHistory(getMonitor());
 		assertEquals("1.1", 8, states.length);
+		for (int i = 0; i < 8; i++) {
+			oldLastModTimes[i] = states[i].getModificationTime();
+		}
 	} catch (CoreException e) {
 		fail("1.2", e);
 	}
 
+	// Set max. number of file states to be 3
 	description.setMaxFileStates(3);
 	try {
 		getWorkspace().setDescription(description);
 	} catch (CoreException e) {
 		fail("2.0", e);
 	}
+	// Run 'clean' - should cause 5 of 8 states to be removed
 	store.clean();
+	// Restore max. number of states/file to 500
 	description.setMaxFileStates(500);
 	try {
 		getWorkspace().setDescription(description);
@@ -234,6 +338,8 @@ public void testClean() {
 		fail("2.2", e);
 	}
 
+	// Check to ensure only 3 states remain.  Make sure these are the 3
+	// newer states.
 	try {
 		IFileState[] states = file.getHistory(getMonitor());
 		assertEquals("2.3", 3, states.length);
@@ -243,8 +349,12 @@ public void testClean() {
 			assertTrue("2.4." + i, lastModified > states[i].getModificationTime());
 			lastModified = states[i].getModificationTime();
 		}
+		// Make sure we kept the 3 newer states.
+		for (int i = 0; i < states.length; i++) {
+			assertTrue("2.5." + i, oldLastModTimes[i] == states[i].getModificationTime());
+		}
 	} catch (CoreException e) {
-		fail("2.5", e);
+		fail("2.6", e);
 	}
 
 	/* test max file longevity */
@@ -252,7 +362,8 @@ public void testClean() {
 	description.setFileStateLongevity(1000 * 3600 * 24); // 1 day
 	description.setMaxFileStates(500);
 	description.setMaxFileStateSize(1024 * 1024); // 1 Mb
-	try { // the description should be the same as the first test
+	// the description should be the same as the first test
+	try {
 		getWorkspace().setDescription(description);
 	} catch (CoreException e) {
 		fail("3.0", e);
@@ -264,26 +375,34 @@ public void testClean() {
 		fail("3.2", e);
 	}
 	// change policies
-	description.setFileStateLongevity(1000 * 10); // 10 seconds
-	description.setMaxFileStateSize(1024 * 1024); // 1 Mb
+	// 10 seconds
+	description.setFileStateLongevity(1000 * 10);
+	// 1 Mb
+	description.setMaxFileStateSize(1024 * 1024);
 	try {
 		getWorkspace().setDescription(description);
 	} catch (CoreException e) {
 		fail("4.0", e);
 	}
 	try {
-		Thread.sleep(1000 * 10); // sleep for 10 seconds
+		// sleep for 12 seconds (must exceed 10 seconds).  This should
+		// cause all 3 states for file.txt to be considered stale.
+		Thread.sleep(1000 * 12);
 	} catch (InterruptedException e) {
 	}
 	store.clean();
-	// change policies
-	description.setFileStateLongevity(1000 * 3600 * 24); // 1 day
-	description.setMaxFileStateSize(1024 * 1024); // 1 Mb
+	// change policies - restore to original values
+	// 1 day
+	description.setFileStateLongevity(1000 * 3600 * 24);
+	// 1 Mb
+	description.setMaxFileStateSize(1024 * 1024);
 	try {
 		getWorkspace().setDescription(description);
 	} catch (CoreException e) {
 		fail("5.0", e);
 	}
+	// Ensure we have no state information left.  It should have been 
+	// considered stale.
 	try {
 		IFileState[] states = file.getHistory(getMonitor());
 		assertEquals("5.1", 0, states.length);
@@ -318,6 +437,8 @@ public void testExists() throws Throwable {
 	} catch (CoreException e) {
 		fail("0.0", e);
 	}
+	
+	// Constant for the number of states we will create
 	final int ITERATIONS = 20;
 
 	/* Add multiple states for one file location. */
@@ -336,7 +457,9 @@ public void testExists() throws Throwable {
 	} catch (CoreException e) {
 		fail("5.0", e);
 	}
+	// Make sure we have ITERATIONS number of states
 	assertTrue("5.1", states.length == ITERATIONS);
+	// Make sure that each of these states really exists in the filesystem.
 	for (int i = 0; i < states.length; i++)
 		assertTrue("5.2." + i, states[i].exists());
 
@@ -597,191 +720,6 @@ public void testRemoveAll() {
 	}
 }
 /**
- * Simple copy case for History Store.
- *
- * Scenario:
- *   1. Create file					"content 1"
- *   2. Set new content				"content 2"
- *   3. Set new content				"content 3"
- *   4. Copy file
- *   2. Set new content	to copy		"content 1"
- *   3. Set new content to copy		"content 2"
- *
- * The original file and the copied file should each have two states available.
- */
-public void testSimpleCopy() {
-	
-	/* Initialize common objects. */
-	IProject project = getWorkspace().getRoot().getProject("Project");
-	try {
-		project.create(getMonitor());
-		project.open(getMonitor());
-	} catch (CoreException e) {
-		fail("0.0", e);
-	}
-	String[] contents = {"content1", "content2", "content3"};
-	IFile file = project.getFile("simpleCopyFile");
-	IFile copyFile = project.getFile("copyOfSimpleCopyFile");
-	
-	/* Create first file. */
-	try {
-		file.create(getContents(contents[0]), true, null);
-	} catch (CoreException e) {
-		fail("1.2", e);
-	}
-
-	/* Set new contents on first file. Should add two entries to the history store. */
-	try {
-		file.setContents(getContents(contents[1]), true, true, null);
-		file.setContents(getContents(contents[2]), true, true, null);
-	} catch (CoreException e) {
-		fail("2.0", e);
-	}
-	
-	/* Copy first file to the second. Second file should have no history. */
-	try {
-		file.copy(copyFile.getFullPath(), true, null);
-	} catch (CoreException e) {
-		fail("3.0", e);
-	}
-
-	/* Check history for both files. */
-	try {
-		IFileState[] states = file.getHistory(null);
-		assertTrue("4.0", states.length == 2);
-		states= copyFile.getHistory(null);
-		assertTrue("4.1", states.length == 0);
-	} catch (CoreException e) {
-		fail("4.2", e);
-	}
-
-	/* Set new contents on second file. Should add two entries to the history store. */
-	try {
-		copyFile.setContents(getContents(contents[0]), true, true, null);
-		copyFile.setContents(getContents(contents[1]), true, true, null);
-	} catch (CoreException e) {
-		fail("5.0", e);
-	}
-
-	/* Check history for both files. */
-	try {
-		// Check log for original file.
-		IFileState[] states = file.getHistory(null);
-		assertTrue("6.0", states.length == 2);
-		assertTrue("6.1", compareContent(getContents(contents[1]), states[0].getContents()));
-		assertTrue("6.2", compareContent(getContents(contents[0]), states[1].getContents()));
-
-		// Check log for copy.
-		states = copyFile.getHistory(null);
-		assertTrue("6.3", states.length == 2);
-		assertTrue("6.4", compareContent(getContents(contents[0]), states[0].getContents()));
-		assertTrue("6.5", compareContent(getContents(contents[2]), states[1].getContents()));
-		
-	} catch (CoreException e) {
-		fail("6.6", e);
-	}
-	
-
-	/* remove garbage */
-	try {
-		project.delete(true, getMonitor());
-	} catch (CoreException e) {
-		fail("20.0", e);
-	}
-}
-/**
- * Simple move case for History Store.
- *
- * Scenario:
- *   1. Create file						"content 1"
- *   2. Set new content					"content 2"
- *   3. Set new content					"content 3"
- *   4. Move file
- *   5. Set new content	to moved file	"content 1"
- *   6. Set new content to moved file	"content 2"
- *
- * The original file and the moved file should each have two states available.
- */
-public void testSimpleMove() {
-
-	/* Initialize common objects. */
-	IProject project = getWorkspace().getRoot().getProject("Project");
-	try {
-		project.create(getMonitor());
-		project.open(getMonitor());
-	} catch (CoreException e) {
-		fail("0.0", e);
-	}
-	String[] contents = { "content1", "content2", "content3" };
-	IFile file = project.getFile("simpleMoveFile");
-	IFile moveFile = project.getFile("copyOfSimpleMoveFile");
-
-	/* Create first file. */
-	try {
-		file.create(getContents(contents[0]), true, null);
-	} catch (CoreException e) {
-		fail("1.2", e);
-	}
-
-	/* Set new contents on source file. Should add two entries to the history store. */
-	try {
-		file.setContents(getContents(contents[1]), true, true, null);
-		file.setContents(getContents(contents[2]), true, true, null);
-	} catch (CoreException e) {
-		fail("2.0", e);
-	}
-
-	/* Move source file to second location. Moved files should have no history. */
-	try {
-		file.move(moveFile.getFullPath(), true, null);
-	} catch (CoreException e) {
-		fail("3.0", e);
-	}
-
-	/* Check history for both files. */
-	try {
-		IFileState[] states = file.getHistory(null);
-		assertTrue("4.0", states.length == 2);
-		states = moveFile.getHistory(null);
-		assertTrue("4.1", states.length == 0);
-	} catch (CoreException e) {
-		fail("4.2", e);
-	}
-
-	/* Set new contents on moved file. Should add two entries to the history store. */
-	try {
-		moveFile.setContents(getContents(contents[0]), true, true, null);
-		moveFile.setContents(getContents(contents[1]), true, true, null);
-	} catch (CoreException e) {
-		fail("5.0", e);
-	}
-
-	/* Check history for both files. */
-	try {
-		// Check log for original file.
-		IFileState[] states = file.getHistory(null);
-		assertTrue("6.0", states.length == 2);
-		assertTrue("6.1", compareContent(getContents(contents[1]), states[0].getContents()));
-		assertTrue("6.2", compareContent(getContents(contents[0]), states[1].getContents()));
-
-		// Check log for moved file.
-		states = moveFile.getHistory(null);
-		assertTrue("6.3", states.length == 2);
-		assertTrue("6.4", compareContent(getContents(contents[0]), states[0].getContents()));
-		assertTrue("6.5", compareContent(getContents(contents[2]), states[1].getContents()));
-
-	} catch (CoreException e) {
-		fail("6.6", e);
-	}
-
-	/* remove garbage */
-	try {
-		project.delete(true, getMonitor());
-	} catch (CoreException e) {
-		fail("20.0", e);
-	}
-}
-/**
  * Simple use case for History Store.
  *
  * Scenario:									   # Editions
@@ -824,7 +762,7 @@ public void testSimpleUse() {
 	/* Ensure two entries are available for the file, and that content matches. */
 	try {
 		IFileState[] states = file.getHistory(getMonitor());
-		assertTrue("3.0", states.length == 2);
+		assertEquals("3.0", 2, states.length);
 		assertTrue("3.1.1", compareContent(getContents(contents[1]), states[0].getContents()));
 		assertTrue("3.1.2", compareContent(getContents(contents[0]), states[1].getContents()));
 	} catch (CoreException e) {
@@ -841,7 +779,7 @@ public void testSimpleUse() {
 	/* Ensure three entries are available for the file, and that content matches. */
 	try {
 		IFileState[] states = file.getHistory(getMonitor());
-		assertTrue("5.0", states.length == 3);
+		assertEquals("5.0", 3, states.length);
 		assertTrue("5.1.1", compareContent(getContents(contents[2]), states[0].getContents()));
 		assertTrue("5.1.2", compareContent(getContents(contents[1]), states[1].getContents()));
 		assertTrue("5.1.3", compareContent(getContents(contents[0]), states[2].getContents()));
@@ -858,7 +796,7 @@ public void testSimpleUse() {
 
 		// Check history store.
 		states = file.getHistory(getMonitor());
-		assertTrue("6.0", states.length == 3);
+		assertEquals("6.0", 3, states.length);
 		assertTrue("6.1.1", compareContent(getContents(contents[2]), states[0].getContents()));
 		assertTrue("6.1.2", compareContent(getContents(contents[1]), states[1].getContents()));
 		assertTrue("6.1.3", compareContent(getContents(contents[0]), states[2].getContents()));
@@ -880,7 +818,7 @@ public void testSimpleUse() {
 	/* Ensure four entries are available for the file, and that entries match. */
 	try {
 		IFileState[] states = file.getHistory(getMonitor());
-		assertTrue("8.0", states.length == 4);
+		assertEquals("8.0", 4, states.length);
 		assertTrue("8.1.1", compareContent(getContents(contents[2]), states[0].getContents()));
 		assertTrue("8.1.2", compareContent(getContents(contents[2]), states[1].getContents()));
 		assertTrue("8.1.3", compareContent(getContents(contents[1]), states[2].getContents()));
@@ -897,7 +835,7 @@ public void testSimpleUse() {
 
 		// Check history log.
 		states = file.getHistory(getMonitor());
-		assertTrue("9.0", states.length == 5);
+		assertEquals("9.0", 5, states.length);
 		assertTrue("9.1.1", compareContent(getContents(contents[1]), states[0].getContents()));
 		assertTrue("9.1.2", compareContent(getContents(contents[2]), states[1].getContents()));
 		assertTrue("9.1.3", compareContent(getContents(contents[2]), states[2].getContents()));
@@ -934,27 +872,49 @@ public void testDelete() {
 		file.create(getRandomContents(), true, getMonitor());
 		file.setContents(getRandomContents(), true, true, getMonitor());
 		file.setContents(getRandomContents(), true, true, getMonitor());
-		file.delete(true, true, getMonitor());
-		file.create(getRandomContents(), true, getMonitor());
+		
+		// Check to see that there are only 2 states before the deletion
 		IFileState[] states = file.getHistory(getMonitor());
-		assertEquals("1.0", 3, states.length);
+		assertEquals("1.0", 2, states.length);
+		
+		// Delete the file.  This should add a state to the history store.
+		file.delete(true, true, getMonitor());
+		states = file.getHistory(getMonitor());
+		assertEquals("1.1", 3, states.length);
+
+		// Re-create the file.  This should not affect the history store.
+		file.create(getRandomContents(), true, getMonitor());		
+		states = file.getHistory(getMonitor());
+		assertEquals("1.2", 3, states.length);
 	} catch (CoreException e) {
 		fail("1.20", e);
 	}
 
 	// test folder
 	IFolder folder = project.getFolder("folder");
-	file = folder.getFile("file.txt");
+	// Make sure this has a different name as the history store information
+	// for the first 'file.txt' is likely still around.
+	file = folder.getFile("file2.txt");
 	try {
 		folder.create(true, true, getMonitor());
 		file.create(getRandomContents(), true, getMonitor());
 		file.setContents(getRandomContents(), true, true, getMonitor());
 		file.setContents(getRandomContents(), true, true, getMonitor());
+		
+		// There should only be 2 history store entries.
+		IFileState[] states = file.getHistory(getMonitor());
+		assertEquals("2.0", 2, states.length);
+		
+		// Delete the folder.  This should cause one more history store entry.
 		folder.delete(true, true, getMonitor());
+		states = file.getHistory(getMonitor());
+		assertEquals("2.1", 3, states.length);
+
+		// Re-create the folder.  There should be no new history store entries.
 		folder.create(true, true, getMonitor());
 		file.create(getRandomContents(), true, getMonitor());
-		IFileState[] states = file.getHistory(getMonitor());
-		assertEquals("2.0", 3, states.length);
+		states = file.getHistory(getMonitor());
+		assertEquals("2.2", 3, states.length);
 	} catch (CoreException e) {
 		fail("2.20", e);
 	}
@@ -981,7 +941,7 @@ public void testFindDeleted() {
 	}
 	
 	// test that a deleted file can be found
-	IFile pfile = project.getFile("file.txt");
+	IFile pfile = project.getFile("findDeletedFile.txt");
 	try {
 		// create and delete a file
 		pfile.create(getRandomContents(), true, getMonitor());
@@ -1051,7 +1011,7 @@ public void testFindDeleted() {
 	
 	// test folder
 	IFolder folder = project.getFolder("folder");
-	IFile file = folder.getFile("file.txt");
+	IFile file = folder.getFile("filex.txt");
 	IFile folderAsFile = project.getFile(folder.getProjectRelativePath());
 	try {
 		// create and delete a file in a folder
@@ -1257,7 +1217,227 @@ public void testFindDeleted() {
 	}
 }
 
-public void testMove() {
+/**
+ * Simple move case for History Store when the local history is being
+ * copied.
+ *
+ * Scenario:
+ *   1. Create file						"content 1"
+ *   2. Set new content					"content 2"
+ *   3. Set new content					"content 3"
+ *   4. Move file
+ *   5. Set new content	to moved file	"content 4"
+ *   6. Set new content to moved file	"content 5"
+ *
+ * The original file should have two states available.
+ * But the moved file should have 4 states as it retains the states from
+ * before the move took place as well.
+ */
+public void testSimpleMove() {
+
+	/* Initialize common objects. */
+	IProject project = getWorkspace().getRoot().getProject("SimpleMoveProject");
+	try {
+		project.create(getMonitor());
+		project.open(getMonitor());
+	} catch (CoreException e) {
+		fail("0.0", e);
+	}
+	String[] contents = { "content1", "content2", "content3", "content4",
+		                  "content5" };
+	IFile file = project.getFile("simpleMoveFileWithCopy");
+	IFile moveFile = project.getFile("copyOfSimpleMoveFileWithCopy");
+
+	/* Create first file. */
+	try {
+		file.create(getContents(contents[0]), true, null);
+	} catch (CoreException e) {
+		fail("1.2", e);
+	}
+
+	/* Set new contents on source file. Should add two entries to the history store. */
+	try {
+		file.setContents(getContents(contents[1]), true, true, null);
+		file.setContents(getContents(contents[2]), true, true, null);
+	} catch (CoreException e) {
+		fail("2.0", e);
+	}
+
+	/* Move source file to second location. 
+	 * Moved files should have the history of the original file.
+	 */
+	try {
+		file.move(moveFile.getFullPath(),true, null);
+	} catch (CoreException e) {
+		fail("3.0", e);
+	}
+
+	/* Check history for both files. */
+	try {
+		IFileState[] states = file.getHistory(null);
+		assertEquals("4.0", 2, states.length);
+		states = moveFile.getHistory(null);
+		assertEquals("4.1", 2, states.length);
+	} catch (CoreException e) {
+		fail("4.2", e);
+	}
+
+	/* Set new contents on moved file. Should add two entries to the history store. */
+	try {
+		moveFile.setContents(getContents(contents[3]), true, true, null);
+		moveFile.setContents(getContents(contents[4]), true, true, null);
+	} catch (CoreException e) {
+		fail("5.0", e);
+	}
+
+	/* Check history for both files. */
+	try {
+		// Check log for original file.
+		IFileState[] states = file.getHistory(null);
+		assertEquals("6.0", 2, states.length);
+		assertTrue("6.1", compareContent(getContents(contents[1]), states[0].getContents()));
+		assertTrue("6.2", compareContent(getContents(contents[0]), states[1].getContents()));
+
+		// Check log for moved file.
+		states = moveFile.getHistory(null);
+		assertEquals("6.3", 4, states.length);
+		assertTrue("6.4", compareContent(getContents(contents[3]), states[0].getContents()));
+		assertTrue("6.5", compareContent(getContents(contents[2]), states[1].getContents()));
+		assertTrue("6.6", compareContent(getContents(contents[1]), states[2].getContents()));
+		assertTrue("6.7", compareContent(getContents(contents[0]), states[3].getContents()));
+
+	} catch (CoreException e) {
+		fail("6.8", e);
+	}
+
+	/* remove garbage */
+	try {
+		project.delete(true, getMonitor());
+	} catch (CoreException e) {
+		fail("7.0", e);
+	}
+}
+
+/**
+ * Simple copy case for History Store when the local history is being
+ * copied.
+ *
+ * Scenario:
+ *   1. Create file						"content 1"
+ *   2. Set new content					"content 2"
+ *   3. Set new content					"content 3"
+ *   4. Move file
+ *   5. Set new content	to copied file	"content 4"
+ *   6. Set new content to copied file	"content 5"
+ *
+ * The original file should have two states available.
+ * But the copied file should have 4 states as it retains the states from
+ * before the copy took place as well.
+ */
+public void testSimpleCopy() {
+
+	/* Initialize common objects. */
+	IProject project = getWorkspace().getRoot().getProject("SimpleCopyProject");
+	try {
+		project.create(getMonitor());
+		project.open(getMonitor());
+	} catch (CoreException e) {
+		fail("0.0", e);
+	}
+	String[] contents = {"content1", "content2", "content3", "content4",
+	                     "content5"};
+	IFile file = project.getFile("simpleCopyFileWithHistoryCopy");
+	IFile copyFile = project.getFile("copyOfSimpleCopyFileWithHistoryCopy");
+
+	/* Create first file. */
+	try {
+		file.create(getContents(contents[0]), true, null);
+	} catch (CoreException e) {
+		fail("1.2", e);
+	}
+
+	/* Set new contents on first file. Should add two entries to the history store. */
+	try {
+		file.setContents(getContents(contents[1]), true, true, null);
+		file.setContents(getContents(contents[2]), true, true, null);
+	} catch (CoreException e) {
+		fail("2.0", e);
+	}
+
+	/* Copy first file to the second. Second file should have no history. */
+	try {
+		file.copy(copyFile.getFullPath(), true, null);
+	} catch (CoreException e) {
+		fail("3.0", e);
+	}
+
+	/* Check history for both files. */
+	try {
+		IFileState[] states = file.getHistory(null);
+		assertEquals("4.0", 2, states.length);
+		states = copyFile.getHistory(null);
+		assertEquals("4.1", 2, states.length);
+	} catch (CoreException e) {
+		fail("4.2", e);
+	}
+
+	/* Set new contents on second file. Should add two entries to the history store. */
+	try {
+		copyFile.setContents(getContents(contents[3]), true, true, null);
+		copyFile.setContents(getContents(contents[4]), true, true, null);
+	} catch (CoreException e) {
+		fail("5.0", e);
+	}
+
+	/* Check history for both files. */
+	try {
+		// Check log for original file.
+		IFileState[] states = file.getHistory(null);
+		assertEquals("6.0", 2, states.length);
+		assertTrue("6.1", compareContent(getContents(contents[1]), states[0].getContents()));
+		assertTrue("6.2", compareContent(getContents(contents[0]), states[1].getContents()));
+
+		// Check log for copy.
+		states = copyFile.getHistory(null);
+		assertEquals("6.3", 4, states.length);
+		assertTrue("6.4", compareContent(getContents(contents[3]), states[0].getContents()));
+		assertTrue("6.5", compareContent(getContents(contents[2]), states[1].getContents()));
+		assertTrue("6.6", compareContent(getContents(contents[1]), states[2].getContents()));
+		assertTrue("6.7", compareContent(getContents(contents[0]), states[3].getContents()));
+
+	} catch (CoreException e) {
+		fail("6.8", e);
+	}
+
+
+	/* remove garbage */
+	try {
+		project.delete(true, getMonitor());
+	} catch (CoreException e) {
+		fail("7.0", e);
+	}
+}
+
+/**
+ * Move case for History Store of folder when the local history is being
+ * copied.
+ *
+ * Scenario:
+ *   1. Create folder (folder1)
+ *   2. Create file						"content 1"
+ *   3. Set new content					"content 2"
+ *   4. Set new content					"content 3"
+ *   5. Move folder
+ *   6. Set new content	to moved file	"content 4"
+ *   7. Set new content to moved file	"content 5"
+ *
+ * The original file should have two states available.
+ * But the moved file should have 4 states as it retains the states from
+ * before the move took place as well.
+ */
+public void testMoveFolder() {
+	String[] contents = {"content1", "content2", "content3", "content4",
+						 "content5"};
 	// create common objects
 	IProject project = getWorkspace().getRoot().getProject("MyProject");
 	try {
@@ -1266,44 +1446,221 @@ public void testMove() {
 	} catch (CoreException e) {
 		fail("0.0", e);
 	}
-	
-	// test file
-	IFile file = project.getFile("file.txt");
-	IFile file2 = project.getFile("moved file.txt");
+
+	IFile file = project.getFile("file1.txt");
+
+	IFolder folder = project.getFolder("folder1");
+	IFolder folder2 = project.getFolder("folder2");
+	file = folder.getFile("file1.txt");
 	try {
-		file.create(getRandomContents(), true, getMonitor());
-		file.setContents(getRandomContents(), true, true, getMonitor());
-		file.setContents(getRandomContents(), true, true, getMonitor());
-		file.move(file2.getFullPath(), true, true, getMonitor());
-		file.create(getRandomContents(), true, getMonitor());
+		// Setup folder1 and file1.txt with some local history
+		folder.create(true, true, getMonitor());
+		file.create(getContents(contents[0]), true, getMonitor());
+		file.setContents(getContents(contents[1]), true, true, getMonitor());
+		file.setContents(getContents(contents[2]), true, true, getMonitor());
 		IFileState[] states = file.getHistory(getMonitor());
-		assertEquals("1.0", 3, states.length);
+		assertEquals("1.0", 2, states.length);
+		assertTrue("1.1", compareContent(getContents(contents[1]), states[0].getContents()));
+		assertTrue("1.2", compareContent(getContents(contents[0]), states[1].getContents()));
+		
+		// Now do the move
+		folder.move(folder2.getFullPath(), true, getMonitor());
+		
+		// Check to make sure the file has been moved
+		IFile file2 = folder2.getFile("file1.txt");
+		assertTrue("1.3", file2.getFullPath().toString().endsWith("folder2/file1.txt"));
+		
+		// Give the new (moved file) some new contents
+		file2.setContents(getContents(contents[3]), true, true, getMonitor());
+		file2.setContents(getContents(contents[4]), true, true, getMonitor());
+		
+		// Check the local history of both files
+		states = file.getHistory(getMonitor());
+		assertEquals("2.0", 2, states.length);
+		assertTrue("2.1", compareContent(getContents(contents[1]), states[0].getContents()));
+		assertTrue("2.2", compareContent(getContents(contents[0]), states[1].getContents()));
+		states = file2.getHistory(getMonitor());
+		assertEquals("2.3", 4, states.length);
+		assertTrue("2.4", compareContent(getContents(contents[3]), states[0].getContents()));
+		assertTrue("2.5", compareContent(getContents(contents[2]), states[1].getContents()));
+		assertTrue("2.6", compareContent(getContents(contents[1]), states[2].getContents()));
+		assertTrue("2.7", compareContent(getContents(contents[0]), states[3].getContents()));
 	} catch (CoreException e) {
-		fail("1.20", e);
+		fail("2.8", e);
 	}
 
-	// test folder
-	IFolder folder = project.getFolder("folder");
-	IFolder folder2 = project.getFolder("moved folder");
-	file = folder.getFile("file.txt");
-	try {
-		folder.create(true, true, getMonitor());
-		file.create(getRandomContents(), true, getMonitor());
-		file.setContents(getRandomContents(), true, true, getMonitor());
-		file.setContents(getRandomContents(), true, true, getMonitor());
-		folder.move(folder2.getFullPath(), true, true, getMonitor());
-		folder.create(true, true, getMonitor());
-		file.create(getRandomContents(), true, getMonitor());
-		IFileState[] states = file.getHistory(getMonitor());
-		assertEquals("2.0", 3, states.length);
-	} catch (CoreException e) {
-		fail("2.20", e);
-	}
-	
 	try {
 		project.delete(true, getMonitor());
 	} catch (CoreException e) {
-		fail("20.0", e);
+		fail("3.0", e);
 	}
+}
+
+/**
+ * Copy case for History Store of folder when the local history is being
+ * copied.
+ *
+ * Scenario:
+ *   1. Create folder (folder1)
+ *   2. Create file						"content 1"
+ *   3. Set new content					"content 2"
+ *   4. Set new content					"content 3"
+ *   5. Copy folder
+ *   6. Set new content	to moved file	"content 4"
+ *   7. Set new content to moved file	"content 5"
+ *
+ * The original file should have two states available.
+ * But the copied file should have 4 states as it retains the states from
+ * before the copy took place as well.
+ */
+public void testCopyFolder() {
+	String[] contents = {"content1", "content2", "content3", "content4",
+						 "content5"};
+	// create common objects
+	IProject project = getWorkspace().getRoot().getProject("CopyFolderProject");
+	try {
+		project.create(getMonitor());
+		project.open(getMonitor());
+	} catch (CoreException e) {
+		fail("0.0", e);
+	}
+
+	IFile file = project.getFile("file1.txt");
+
+	IFolder folder = project.getFolder("folder1");
+	IFolder folder2 = project.getFolder("folder2");
+	file = folder.getFile("file1.txt");
+	try {
+		// Setup folder1 and file1.txt with some local history
+		folder.create(true, true, getMonitor());
+		file.create(getContents(contents[0]), true, getMonitor());
+		file.setContents(getContents(contents[1]), true, true, getMonitor());
+		file.setContents(getContents(contents[2]), true, true, getMonitor());
+		IFileState[] states = file.getHistory(getMonitor());
+		assertEquals("1.0", 2, states.length);
+		assertTrue("1.1", compareContent(getContents(contents[1]), states[0].getContents()));
+		assertTrue("1.2", compareContent(getContents(contents[0]), states[1].getContents()));
+
+		// Now do the move
+		folder.copy(folder2.getFullPath(), true, getMonitor());
+
+		// Check to make sure the file has been copied
+		IFile file2 = folder2.getFile("file1.txt");
+		assertTrue("1.3", file2.getFullPath().toString().endsWith("folder2/file1.txt"));
+
+		// Give the new (copied file) some new contents
+		file2.setContents(getContents(contents[3]), true, true, getMonitor());
+		file2.setContents(getContents(contents[4]), true, true, getMonitor());
+
+		// Check the local history of both files
+		states = file.getHistory(getMonitor());
+		assertEquals("2.0", 2, states.length);
+		assertTrue("2.1", compareContent(getContents(contents[1]), states[0].getContents()));
+		assertTrue("2.2", compareContent(getContents(contents[0]), states[1].getContents()));
+		states = file2.getHistory(getMonitor());
+		assertEquals("2.3", 4, states.length);
+		assertTrue("2.4", compareContent(getContents(contents[3]), states[0].getContents()));
+		assertTrue("2.5", compareContent(getContents(contents[2]), states[1].getContents()));
+		assertTrue("2.6", compareContent(getContents(contents[1]), states[2].getContents()));
+		assertTrue("2.7", compareContent(getContents(contents[0]), states[3].getContents()));
+	} catch (CoreException e) {
+		fail("2.8", e);
+	}
+
+	try {
+		project.delete(true, getMonitor());
+	} catch (CoreException e) {
+		fail("3.0", e);
+	}
+}
+
+/**
+ * Move case for History Store of project.  Note that local history is
+ * NOT copied for a project move.
+ *
+ * Scenario:
+ *   1. Create folder (folder1)
+ *   2. Create file						"content 1"
+ *   2. Set new content					"content 2"
+ *   3. Set new content					"content 3"
+ *   4. Copy folder
+ *   5. Set new content	to moved file	"content 4"
+ *   6. Set new content to moved file	"content 5"
+ *
+ * The original file should have two states available.
+ * But the copied file should have 4 states as it retains the states from
+ * before the copy took place as well.
+ */
+public void testMoveProject() {
+	String[] contents = {"content1", "content2", "content3", "content4",
+						 "content5"};
+	// create common objects
+	IProject project = getWorkspace().getRoot().getProject("MoveProjectProject");
+	IProject project2 = getWorkspace().getRoot().getProject("SecondMoveProjectProject");
+	try {
+		project.create(getMonitor());
+		project.open(getMonitor());
+	} catch (CoreException e) {
+		fail("0.0", e);
+	}
+
+	IFile file = project.getFile("file1.txt");
+
+	IFolder folder = project.getFolder("folder1");
+	file = folder.getFile("file1.txt");
+	try {
+		// Setup folder1 and file1.txt with some local history
+		folder.create(true, true, getMonitor());
+		file.create(getContents(contents[0]), true, getMonitor());
+		file.setContents(getContents(contents[1]), true, true, getMonitor());
+		file.setContents(getContents(contents[2]), true, true, getMonitor());
+		IFileState[] states = file.getHistory(getMonitor());
+		assertEquals("1.0", 2, states.length);
+		assertTrue("1.1", compareContent(getContents(contents[1]), states[0].getContents()));
+		assertTrue("1.2", compareContent(getContents(contents[0]), states[1].getContents()));
+
+		// Now do the move
+		project.move(new Path("SecondMoveProjectProject"), true, getMonitor());
+
+		// Check to make sure the file has been moved
+		IFile file2 = project2.getFile("folder1/file1.txt");
+		assertTrue("1.3", file2.getFullPath().toString().endsWith("SecondMoveProjectProject/folder1/file1.txt"));
+
+		// Give the new (copied file) some new contents
+		file2.setContents(getContents(contents[3]), true, true, getMonitor());
+		file2.setContents(getContents(contents[4]), true, true, getMonitor());
+
+		// Check the local history of both files
+		states = file.getHistory(getMonitor());
+		assertEquals("2.0", 2, states.length);
+		assertTrue("2.1", compareContent(getContents(contents[1]), states[0].getContents()));
+		assertTrue("2.2", compareContent(getContents(contents[0]), states[1].getContents()));
+		states = file2.getHistory(getMonitor());
+		assertEquals("2.3", 2, states.length);
+		assertTrue("2.4", compareContent(getContents(contents[3]), states[0].getContents()));
+		assertTrue("2.5", compareContent(getContents(contents[2]), states[1].getContents()));
+	} catch (CoreException e) {
+		fail("2.8", e);
+	}
+
+	try {
+		project.delete(true, getMonitor());
+	} catch (CoreException e) {
+		fail("3.0", e);
+	}
+}
+/*
+ * This little helper method makes sure that the history store is
+ * completely clean after it is invoked.  If a history store entry or
+ * a file is left, it may become part of the history for another file in
+ * another test (if this file has the same name).
+ */
+private void wipeHistoryStore() {
+	 HistoryStore store = ((Workspace) getWorkspace()).getFileSystemManager().getHistoryStore();
+	// Remove all the entries from the history store index.  Note that
+	// this does not cause the history store states to be removed.
+	store.removeAll();
+	// Now make sure all the states are really removed.
+	store.removeGarbage();
 }
 }
