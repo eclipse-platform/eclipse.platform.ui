@@ -73,6 +73,7 @@ public class NewConfigurationView
 	private RevertConfigurationAction revertAction;
 	private Action propertiesAction;
 	private SiteStateAction2 siteStateAction;
+	private Action installationHistoryAction;
 	private SashForm splitter;
 	private ConfigurationPreview preview;
 	private Hashtable previewTasks;
@@ -465,6 +466,8 @@ public class NewConfigurationView
 		WorkbenchHelp.setHelp(
 			revertAction,
 			"org.eclipse.update.ui.CofigurationView_revertAction");
+			
+		installationHistoryAction = new InstallationHistoryAction("Installation History", UpdateUIImages.DESC_HISTORY_OBJ);
 
 		propertiesAction =
 			new PropertyDialogAction(
@@ -611,6 +614,9 @@ public class NewConfigurationView
 			manager.add(new Separator());
 			manager.add(propertiesAction);
 		}
+		if (obj instanceof ILocalSite)
+			manager.add(installationHistoryAction);
+
 	}
 
 	public void installSiteAdded(IConfiguredSite csite) {
@@ -952,6 +958,12 @@ public class NewConfigurationView
 				"Show Activities",
 				"This task allows you to view the activities that caused the creation of this configuration.",
 				propertiesAction));
+		array.add(
+			new PreviewTask(
+				"View Installation History",
+				"View all activities since the installation of the product.",
+				installationHistoryAction));
+				
 		previewTasks.put(key, array.toArray(new IPreviewTask[array.size()]));
 
 		// configured site tasks
@@ -1019,15 +1031,14 @@ public class NewConfigurationView
 			setTitleToolTip(getTitle());
 		}
 	}
+	public String getViewName() {
+		return viewName;
+	}
 	
 	public void setViewName(String viewName) {
 		this.viewName = viewName;
 	}
 	
-	public String getViewName() {
-		return viewName;
-	}
-
 	public void setFocus() {
 	}	
 
