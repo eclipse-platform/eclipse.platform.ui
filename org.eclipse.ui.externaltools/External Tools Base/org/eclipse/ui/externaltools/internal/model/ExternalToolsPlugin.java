@@ -45,7 +45,7 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin {
 	private RefreshScopeVariableRegistry refreshVarRegistry;
 	private ExternalToolVariableRegistry toolVariableRegistry;
 	
-	public static final String EMPTY_STRING= "";
+	public static final String EMPTY_STRING= ""; //$NON-NLS-1$
 
 	/**
 	 * Create an instance of the External Tools plug-in.

@@ -25,7 +25,6 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
-import org.eclipse.ui.externaltools.internal.model.ToolMessages;
 import org.eclipse.ui.externaltools.internal.model.ToolUtil;
 import org.eclipse.ui.externaltools.internal.model.VariableContextManager;
 import org.eclipse.ui.externaltools.internal.registry.ExternalToolMigration;
@@ -96,14 +95,14 @@ public class ExternalToolsUtil {
 			String expandedLocation = ToolUtil.expandFileLocation(location, context, status);
 			if (status.isOK()) {
 				if (expandedLocation == null || expandedLocation.length() == 0) {
-					String msg = MessageFormat.format(ToolMessages.getString("DefaultRunnerContext.invalidLocation"), new Object[] { configuration.getName()}); //$NON-NLS-1$
+					String msg = MessageFormat.format(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.invalidLocation"), new Object[] { configuration.getName()}); //$NON-NLS-1$
 					abort(msg, null, 0);
 				} else {
 					File file = new File(expandedLocation);
 					if (file.isFile()) {
 						return new Path(expandedLocation);
 					} else {
-						String msg = MessageFormat.format(ToolMessages.getString("DefaultRunnerContext.invalidLocation"), new Object[] { configuration.getName()}); //$NON-NLS-1$
+						String msg = MessageFormat.format(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.invalidLocation"), new Object[] { configuration.getName()}); //$NON-NLS-1$
 						abort(msg, null, 0);
 					}
 				}
@@ -142,7 +141,7 @@ public class ExternalToolsUtil {
 					if (path.isDirectory()) {
 						return new Path(expandedLocation);
 					} else {
-						String msg = MessageFormat.format(ToolMessages.getString("DefaultRunnerContext.invalidDirectory"), new Object[] { expandedLocation, configuration.getName()}); //$NON-NLS-1$
+						String msg = MessageFormat.format(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.invalidDirectory"), new Object[] { expandedLocation, configuration.getName()}); //$NON-NLS-1$
 						abort(msg, null, 0);
 					}
 				}
@@ -213,19 +212,20 @@ public class ExternalToolsUtil {
 	 */
 	public static void refreshResources(ILaunchConfiguration configuration, ExpandVariableContext context, IProgressMonitor monitor) throws CoreException {
 		String scope = getRefreshScope(configuration);
-		if (scope == null)
+		if (scope == null) {
 			return;
+		}
 
 		ToolUtil.VariableDefinition varDef = ToolUtil.extractVariableTag(scope, 0);
 		if (varDef.start == -1 || varDef.end == -1 || varDef.name == null) {
-			String msg = MessageFormat.format(ToolMessages.getString("DefaultRunnerContext.invalidRefreshVarFormat"), new Object[] { configuration.getName()}); //$NON-NLS-1$
+			String msg = MessageFormat.format(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.invalidRefreshVarFormat"), new Object[] { configuration.getName()}); //$NON-NLS-1$
 			abort(msg, null, 0);
 		}
 
 		RefreshScopeVariableRegistry registry = ExternalToolsPlugin.getDefault().getRefreshVariableRegistry();
 		ExternalToolVariable variable = registry.getVariable(varDef.name);
 		if (variable == null) {
-			String msg = MessageFormat.format(ToolMessages.getString("DefaultRunnerContext.noRefreshVarNamed"), new Object[] { configuration.getName(), varDef.name }); //$NON-NLS-1$
+			String msg = MessageFormat.format(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.noRefreshVarNamed"), new Object[] { configuration.getName(), varDef.name }); //$NON-NLS-1$
 			abort(msg, null, 0);
 		}
 
@@ -240,7 +240,7 @@ public class ExternalToolsUtil {
 		if (resources == null || resources.length == 0)
 			return;
 
-		monitor.beginTask(ToolMessages.getString("DefaultRunnerContext.refreshResources"), //$NON-NLS-1$
+		monitor.beginTask(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.refreshResources"), //$NON-NLS-1$
 		resources.length);
 
 		MultiStatus status = new MultiStatus(IExternalToolConstants.PLUGIN_ID, 0, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.Exception(s)_occurred_during_refresh._2"), null); //$NON-NLS-1$

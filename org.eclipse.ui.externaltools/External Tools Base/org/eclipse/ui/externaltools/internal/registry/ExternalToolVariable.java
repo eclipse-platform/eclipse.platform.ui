@@ -18,8 +18,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.externaltools.internal.group.IGroupDialogPage;
+import org.eclipse.ui.externaltools.internal.model.ExternalToolsModelMessages;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
-import org.eclipse.ui.externaltools.internal.model.ToolMessages;
 import org.eclipse.ui.externaltools.internal.variable.DefaultVariableExpander;
 import org.eclipse.ui.externaltools.internal.variable.IVariableComponent;
 import org.eclipse.ui.externaltools.internal.variable.IVariableExpander;
@@ -140,7 +140,7 @@ public class ExternalToolVariable {
 				GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 				message.setLayoutData(data);
 				message.setFont(parent.getFont());
-				message.setText(ToolMessages.getString("ExternalToolVariable.componentErrorMessage")); //$NON-NLS-1$
+				message.setText(ExternalToolsModelMessages.getString("ExternalToolVariable.componentErrorMessage")); //$NON-NLS-1$
 				message.setForeground(JFaceColors.getErrorText(message.getDisplay()));
 			}
 		}

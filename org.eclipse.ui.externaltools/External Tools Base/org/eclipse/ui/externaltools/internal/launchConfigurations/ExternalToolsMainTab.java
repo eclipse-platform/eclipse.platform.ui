@@ -431,14 +431,14 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 		VariableDefinition variable = ToolUtil.extractVariableTag(value, start);
 		while (variable.start != -1) {
 			if (variable.end == -1) {
-				return "Invalid variable format. Expected closing }";
+				return ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Invalid_Expected_closing_}"); //$NON-NLS-1$
 			}
 			if (variable.name == null || variable.name.length() == 0) {
-				return "Invalid variable format. No variable specified";
+				return ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.No_variable_specified"); //$NON-NLS-1$
 			}
 			ExternalToolVariableRegistry registry = ExternalToolsPlugin.getDefault().getToolVariableRegistry();
 			if (registry.getVariable(variable.name) == null) {
-				return MessageFormat.format("Unknown variable: {0}", new String[] {variable.name});
+				return MessageFormat.format(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Unknown_variable"), new String[] {variable.name}); //$NON-NLS-1$
 			}
 			start= variable.end;
 			variable = ToolUtil.extractVariableTag(value, start);
@@ -475,7 +475,7 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 			return false;
 		}
 		if (!file.isDirectory()) {
-			setErrorMessage("The specified location is not a directory");
+			setErrorMessage(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Not_a_directory")); //$NON-NLS-1$
 			return false;
 		}
 		return true;
