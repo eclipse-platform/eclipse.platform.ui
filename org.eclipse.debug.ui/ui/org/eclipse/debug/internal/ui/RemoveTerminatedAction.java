@@ -10,13 +10,12 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.jface.action.Action;
-import org.eclipse.ui.texteditor.IUpdate;
  
 /**
  * Removes all terminated/detached launches from the UI. 
  * Clears the launches output as well.
  */
-public class RemoveTerminatedAction extends Action implements IUpdate {
+public class RemoveTerminatedAction extends Action {
 	
 	private static final String PREFIX= "remove_all_terminated_action.";
 	boolean fRemoveDebug;
@@ -48,7 +47,6 @@ public class RemoveTerminatedAction extends Action implements IUpdate {
 	/** 
 	 * Updates the enabled state of this action to enabled if at
 	 * least one launch is terminated and relative to the current perspective.
-	 * @see IUpdate
 	 */
 	public void update() {
 		ILaunchManager lManager= DebugPlugin.getDefault().getLaunchManager();

@@ -8,12 +8,11 @@ package org.eclipse.debug.internal.ui;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.debug.core.*;
 import org.eclipse.jface.action.Action;
-import org.eclipse.ui.texteditor.IUpdate;
 
 /**
  * Terminates all launches.
  */
-public class TerminateAllAction extends Action implements IUpdate {
+public class TerminateAllAction extends Action {
 	
 	private static final String PREFIX= "terminate_all_action.";
 	private static final String STATUS= "status";
@@ -47,7 +46,7 @@ public class TerminateAllAction extends Action implements IUpdate {
 	}
 
 	/**
-	 * @see IUpdate
+	 * Updates the enabled state of this action.
 	 */
 	public void update() {
 		ILaunchManager lManager= DebugPlugin.getDefault().getLaunchManager();

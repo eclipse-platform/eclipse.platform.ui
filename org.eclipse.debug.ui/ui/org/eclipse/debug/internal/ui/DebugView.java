@@ -359,7 +359,7 @@ public class DebugView extends LaunchesView {
 		};
 	}
 	/**
-	 * Updates the enablement of the buttons in the view
+	 * Updates the enablement of the buttons/actions in the view
 	 */
 	protected void updateButtons() {
 		ISelection s= fViewer.getSelection();
@@ -374,6 +374,7 @@ public class DebugView extends LaunchesView {
 			fStepReturnAction.selectionChanged(selection);
 		}
 		fRemoveTerminatedAction.update();
+		fTerminateAllAction.update();
 	}
 
 	/**
