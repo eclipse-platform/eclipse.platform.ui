@@ -319,14 +319,14 @@ public class JobManager implements IJobManager {
 	/**
 	 * Adds all family members in the list of jobs to the collection
 	 */
-	private void select(List members, String family, Job firstJob) {
+	private void select(List members, String family, InternalJob firstJob) {
 		if (firstJob == null)
 			return;
-		Job job = firstJob;
+		InternalJob job = firstJob;
 		do {
 			if (job.belongsTo(family))
 				members.add(job);
-			job = (Job)((InternalJob)job).previous();
+			job = job.previous();
 		} while (job != null && job != firstJob);
 	}
 	/**
@@ -336,10 +336,10 @@ public class JobManager implements IJobManager {
 		List members = new ArrayList();
 		synchronized (lock) {
 			for (Iterator it = running.iterator(); it.hasNext();) {
-				select(members, family, (Job)it.next());
+				select(members, family, (InternalJob)it.next());
 			}
-			select(members, family, (Job)waiting.peek());
-			select(members, family, (Job)sleeping.peek());
+			select(members, family, (InternalJob)waiting.peek());
+			select(members, family, (InternalJob)sleeping.peek());
 		}
 		return members;
 	}

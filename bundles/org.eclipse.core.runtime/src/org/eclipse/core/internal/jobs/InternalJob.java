@@ -138,6 +138,9 @@ public abstract class InternalJob implements Comparable {
 		} else
 			previous.addLast(entry);
 	}
+	public boolean belongsTo(String family) {
+		return false;
+	}
 	/**
 	 * Returns the next entry (ahead of this one) in the list, or null if there is no next entry
 	 */
