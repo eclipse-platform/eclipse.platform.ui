@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.elements.adapters;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -101,21 +104,38 @@ public class DeferredVariable extends DeferredDebugElementWorkbenchAdapter {
 	 * @return
 	 */
 	protected IValue getLogicalValue(IValue value) {
-		if (isShowLogicalStructure()) {
-			ILogicalStructureType[] types = DebugPlugin.getLogicalStructureTypes(value);
-			if (types.length > 0) {
+		return getLogicalValue(value, new ArrayList());
+	}
+    
+    /**
+     * Returns any logical value for the raw value. This method will recurse
+     * over the returned value until the same structure is encountered again
+     * (to avoid infinite recursion).
+     * 
+     * @param value
+     * @param previousStructureIds the list of logical structures that have already
+     *  been applied to the returned value during the recursion of this method. Callers
+     *  should always pass in a new, empty list.
+     * @return
+     */
+    private IValue getLogicalValue(IValue value, List previousStructureIds) {
+        if (isShowLogicalStructure()) {
+            ILogicalStructureType[] types = DebugPlugin.getLogicalStructureTypes(value);
+            if (types.length > 0) {
                 ILogicalStructureType type = DebugPlugin.getSelectedStructureType(types);
-				if (type != null) {
-					try {
-						return type.getLogicalStructure(value);
-					} catch (CoreException e) {
-						// unable to display logical structure
-					}
-				}
-			}
-		}
-		return value;
-	}	
+                if (type != null && !previousStructureIds.contains(type.getId())) {
+                    try {
+                        value= type.getLogicalStructure(value);
+                        previousStructureIds.add(type.getId());
+                        return getLogicalValue(value, previousStructureIds);
+                    } catch (CoreException e) {
+                        // unable to display logical structure
+                    }
+                }
+            }
+        }
+        return value;
+    }
 
 	/**
 	 * Return wether to show compute a logical structure or a raw structure.
