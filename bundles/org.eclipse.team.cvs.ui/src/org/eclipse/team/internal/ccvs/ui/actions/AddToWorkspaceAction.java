@@ -71,6 +71,11 @@ public class AddToWorkspaceAction extends TeamAction {
 			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
 				try {
 					ICVSRemoteFolder[] folders = getSelectedRemoteFolders();
+		
+					monitor.beginTask(null, 100);
+					monitor.setTaskName(getTaskName(folders));
+
+					
 					boolean yesToAll = false;
 					String [] expansions = CVSProviderPlugin.getProvider().getExpansions(folders, Policy.subMonitorFor(monitor, 10));
 					for (int i = 0; i < expansions.length; i++) {
@@ -98,6 +103,17 @@ public class AddToWorkspaceAction extends TeamAction {
 			}
 		}, Policy.bind("AddToWorkspaceAction.checkoutFailed"), this.PROGRESS_DIALOG);
 	}
+	
+	private static String getTaskName(ICVSRemoteFolder[] remoteFolders) {
+		if (remoteFolders.length == 1) {
+			ICVSRemoteFolder folder = remoteFolders[0];
+			return Policy.bind("AddToWorkspace.taskName1", folder.getRepositoryRelativePath());  //$NON-NLS-1$
+		}
+		else {
+			return Policy.bind("AddToWorkspace.taskNameN", new Integer(remoteFolders.length).toString());  //$NON-NLS-1$
+		}
+	}
+	
 	private int confirmOverwrite(IProject project) {
 		if (!project.exists()) return 0;
 		final MessageDialog dialog = 
