@@ -401,7 +401,6 @@ public abstract class Command {
 			// Finished adds last 5% of work.
 			commandFinished(session, gOptions, lOptions, resources, Policy.subMonitorFor(monitor, 5),
 				status.getCode() != CVSStatus.SERVER_ERROR);
-			monitor.worked(5);
 			return status;
 		} finally {
 			// Give the synchronizer a chance to persist any pending changes.

@@ -10,6 +10,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.ccvs.core.CVSStatus;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.Command.GlobalOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.Option;
@@ -110,10 +111,10 @@ public class Checkout extends Command {
 	public IStatus execute(Session session, GlobalOption[] globalOptions,
 		LocalOption[] localOptions, String[] arguments, ICommandOutputListener listener,
 		IProgressMonitor monitor) throws CVSException {
-		
+		monitor.beginTask(null, 100);
 		// Execute the expand-modules command. 
 		// This will put the expansions in the session for later retrieval
-		IStatus status = EXPAND_MODULES.execute(session, arguments, monitor);
+		IStatus status = EXPAND_MODULES.execute(session, arguments, Policy.subMonitorFor(monitor, 10));
 		if (status.getCode() == CVSStatus.SERVER_ERROR)
 			return status;
 		
@@ -127,7 +128,7 @@ public class Checkout extends Command {
 			}
 		}
 		
-		return super.execute(session, globalOptions, localOptions, arguments, listener, monitor);
+		return super.execute(session, globalOptions, localOptions, arguments, listener, Policy.subMonitorFor(monitor, 90));
 	}
 	
 	/**

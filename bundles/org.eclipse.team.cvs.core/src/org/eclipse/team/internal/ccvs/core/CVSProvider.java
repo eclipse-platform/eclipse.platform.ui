@@ -137,38 +137,42 @@ public class CVSProvider implements ICVSProvider {
 		// Perform a checkout
 		IStatus status;
 		Session s = new Session(repository, root);
-		s.open(monitor);
+		monitor.beginTask(null, 100);
 		try {
-			status = Command.CHECKOUT.execute(s,
-				getDefaultGlobalOptions(),
-				(LocalOption[])localOptions.toArray(new LocalOption[localOptions.size()]),
-				new String[]{module},
-				null,
-				monitor);
-		} finally {
-			s.close();
-		}
-		if (status.getCode() == CVSStatus.SERVER_ERROR) {
-			throw new CVSServerException(status);
-		}
-		
-		try {
-			// Create, open and/or refresh the project
-			if (!project.exists())
-				project.create(Policy.subMonitorFor(monitor, 1));
-			if (!project.isOpen())
-				project.open(Policy.subMonitorFor(monitor, 5));
-			else
-				project.refreshLocal(IResource.DEPTH_INFINITE, Policy.subMonitorFor(monitor, 5));
-						
-			// Register the project with Team
-			// (unless the project already has the proper nature from the project meta-information)
-			if (!project.getDescription().hasNature(CVSProviderPlugin.NATURE_ID)) {
-				TeamPlugin.getManager().setProvider(project, CVSProviderPlugin.NATURE_ID, null, Policy.subMonitorFor(monitor, 1));
+			// Opening the session takes 10% of the time
+			s.open(Policy.subMonitorFor(monitor, 10));
+			try {
+				status = Command.CHECKOUT.execute(s,
+					getDefaultGlobalOptions(),
+					(LocalOption[])localOptions.toArray(new LocalOption[localOptions.size()]),
+					new String[]{module},
+					null,
+					Policy.subMonitorFor(monitor, 80));
+			} finally {
+				s.close();
+			}
+			if (status.getCode() == CVSStatus.SERVER_ERROR) {
+				throw new CVSServerException(status);
 			}
 			
-		} catch (CoreException e) {
-			throw wrapException(e);
+			try {
+				// Create, open and/or refresh the project
+				if (!project.exists())
+					project.create(Policy.subMonitorFor(monitor, 1));
+				if (!project.isOpen())
+					project.open(Policy.subMonitorFor(monitor, 5));
+				else
+					project.refreshLocal(IResource.DEPTH_INFINITE, Policy.subMonitorFor(monitor, 5));
+							
+				// Register the project with Team
+				// (unless the project already has the proper nature from the project meta-information)
+				if (!project.getDescription().hasNature(CVSProviderPlugin.NATURE_ID)) {
+					TeamPlugin.getManager().setProvider(project, CVSProviderPlugin.NATURE_ID, null, Policy.subMonitorFor(monitor, 1));
+				}
+				
+			} catch (CoreException e) {
+				throw wrapException(e);
+			}
 		} finally {
 			monitor.done();
 		}
@@ -200,13 +204,14 @@ public class CVSProvider implements ICVSProvider {
 								// XXX: temporary code to support creating a java project for sources in CVS
 								// should be removed once nature support is added to the UI.
 								// delete children, keep project 
-								pm.subTask("Srubbing local project...");
+								pm.subTask(Policy.bind("CVSProvider.Scrubbing_local_project_1")); //$NON-NLS-1$
 								IResource[] children = project.members();
 								IProgressMonitor subMonitor = Policy.subMonitorFor(pm, 90);
 								subMonitor.beginTask(null, children.length * 100);
 								for (int j = 0; j < children.length; j++) {
 										children[j].delete(true /*force*/, Policy.subMonitorFor(subMonitor, 100));
 								}
+								subMonitor.done();
 							}
 							
 							checkout(resource.getRepository(), project, resource.getRepositoryRelativePath(), resource.getTag(), Policy.subMonitorFor(pm, 900));

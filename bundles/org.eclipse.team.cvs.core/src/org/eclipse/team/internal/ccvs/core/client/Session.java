@@ -137,20 +137,25 @@ public class Session {
 	 */
 	public void open(IProgressMonitor monitor) throws CVSException {
 		if (connection != null) throw new IllegalStateException();
-		connection = location.openConnection(monitor);
-		
-		// tell the server the names of the responses we can handle
-		connection.writeLine("Valid-responses " + Command.makeResponseList()); //$NON-NLS-1$
-
-		// ask for the set of valid requests
-		boolean saveOutputToConsole = outputToConsole;
-		outputToConsole = false;
-		Command.VALID_REQUESTS.execute(this, Command.NO_GLOBAL_OPTIONS, Command.NO_LOCAL_OPTIONS,
-			Command.NO_ARGUMENTS, null, monitor);
-		outputToConsole = saveOutputToConsole;
-
-		// set the root directory on the server for this connection
-		connection.writeLine("Root " + getRepositoryRoot()); //$NON-NLS-1$
+		monitor.beginTask(null, 100);
+		try {
+			connection = location.openConnection(Policy.subMonitorFor(monitor, 50));
+			
+			// tell the server the names of the responses we can handle
+			connection.writeLine("Valid-responses " + Command.makeResponseList()); //$NON-NLS-1$
+	
+			// ask for the set of valid requests
+			boolean saveOutputToConsole = outputToConsole;
+			outputToConsole = false;
+			Command.VALID_REQUESTS.execute(this, Command.NO_GLOBAL_OPTIONS, Command.NO_LOCAL_OPTIONS,
+				Command.NO_ARGUMENTS, null, Policy.subMonitorFor(monitor, 50));
+			outputToConsole = saveOutputToConsole;
+	
+			// set the root directory on the server for this connection
+			connection.writeLine("Root " + getRepositoryRoot()); //$NON-NLS-1$
+		} finally {
+			monitor.done();
+		}
 	}		
 	
 	/**
@@ -718,7 +723,6 @@ public class Session {
 				if (totalRead > nextProgressThresh) {
 					monitor.subTask(Policy.bind("Session.transfer", //$NON-NLS-1$
 							new Object[] { title, new Long(totalRead / 1024), ksize}));
-					monitor.worked(read);
 					nextProgressThresh = totalRead + TRANSFER_PROGRESS_INCREMENT;
 				}
 			}
