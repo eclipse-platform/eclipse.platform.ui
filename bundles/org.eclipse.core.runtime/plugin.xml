@@ -3,7 +3,7 @@
   name="%pluginName"
   id="org.eclipse.core.runtime"
   version="2.0.10"
-  provider-name="Object Technology International, Inc.">
+  provider-name="%providerName">
 
   <runtime>
     <library name="runtime.jar">
