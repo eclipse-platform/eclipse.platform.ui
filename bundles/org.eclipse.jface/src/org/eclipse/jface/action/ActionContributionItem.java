@@ -922,13 +922,13 @@ public class ActionContributionItem extends ContributionItem {
                 // convert the hover image to gray and use it as the regular image.
                 if (image == null && hoverImage != null) {
                     image = cache
-                            .getGrayImage(action.getHoverImageDescriptor());
+                            .getImage(action.getHoverImageDescriptor(), ImageCache.GRAY);
                 } else {
                     // If there is no hover image, use the regular image as the hover image,
                     // and convert the regular image to gray
                     if (hoverImage == null && image != null) {
                         hoverImage = image;
-                        image = cache.getGrayImage(action.getImageDescriptor());
+                        image = cache.getImage(action.getImageDescriptor(), ImageCache.GRAY);
                     }
                 }
 
