@@ -884,35 +884,35 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 		final String PATH_DTOOL = ICONS_PATH+"dtool16/"; //Disabled toolbar icons.//$NON-NLS-1$
 	
 		final String PATH_CLOCALTOOL = ICONS_PATH+"clcl16/"; //Colored local toolbar icons - hover.//$NON-NLS-1$
-		final String PATH_ELOCALTOOL = ICONS_PATH+"elcl16/"; //Enabled local toolbar icons.//$NON-NLS-1$
-		final String PATH_DLOCALTOOL = ICONS_PATH+"dlcl16/"; //Disabled local toolbar icons.//$NON-NLS-1$
+		//final String PATH_ELOCALTOOL = ICONS_PATH+"elcl16/"; //Enabled local toolbar icons.//$NON-NLS-1$
+		//final String PATH_DLOCALTOOL = ICONS_PATH+"dlcl16/"; //Disabled local toolbar icons.//$NON-NLS-1$
 	
-		final String PATH_CVIEW = ICONS_PATH+"cview16/"; //Colored view icons.//$NON-NLS-1$
-		final String PATH_EVIEW = ICONS_PATH+"eview16/"; //View icons//$NON-NLS-1$
+		//final String PATH_CVIEW = ICONS_PATH+"cview16/"; //Colored view icons.//$NON-NLS-1$
+		//final String PATH_EVIEW = ICONS_PATH+"eview16/"; //View icons//$NON-NLS-1$
 	
 		final String PATH_OBJECT = ICONS_PATH+"obj16/"; //Model object icons//$NON-NLS-1$
-		final String PATH_DND = ICONS_PATH+"dnd/";  //DND icons//$NON-NLS-1$
+		//final String PATH_DND = ICONS_PATH+"dnd/";  //DND icons//$NON-NLS-1$
 		final String PATH_WIZBAN = ICONS_PATH+"wizban/"; //Wizard icons//$NON-NLS-1$
 	
 		//final String PATH_STAT = ICONS_PATH+"stat/";
 		//final String PATH_MISC = ICONS_PATH+"misc/";
 		//final String PATH_OVERLAY = ICONS_PATH+"ovr16/";
 	
-		declareWorkbenchImage(IDE.SharedImages.IMG_TOOL_NEW_WIZARD, PATH_ETOOL+"new_wiz.gif", true);
-		declareWorkbenchImage(IDE.SharedImages.IMG_TOOL_NEW_WIZARD_HOVER, PATH_CTOOL+"new_wiz.gif", true);
-		declareWorkbenchImage(IDE.SharedImages.IMG_TOOL_NEW_WIZARD_DISABLED, PATH_DTOOL+"new_wiz.gif", true);
+		declareWorkbenchImage(IDE.SharedImages.IMG_TOOL_NEW_WIZARD, PATH_ETOOL+"new_wiz.gif", true); //$NON-NLS-1$
+		declareWorkbenchImage(IDE.SharedImages.IMG_TOOL_NEW_WIZARD_HOVER, PATH_CTOOL+"new_wiz.gif", true); //$NON-NLS-1$
+		declareWorkbenchImage(IDE.SharedImages.IMG_TOOL_NEW_WIZARD_DISABLED, PATH_DTOOL+"new_wiz.gif", true); //$NON-NLS-1$
 		
-		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_CTOOL_IMPORT_WIZ, PATH_CTOOL+"import_wiz.gif", false);
+		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_CTOOL_IMPORT_WIZ, PATH_CTOOL+"import_wiz.gif", false); //$NON-NLS-1$
 		
-		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_CTOOL_EXPORT_WIZ, PATH_CTOOL+"export_wiz.gif", false);
+		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_CTOOL_EXPORT_WIZ, PATH_CTOOL+"export_wiz.gif", false); //$NON-NLS-1$
 	
-		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_CTOOL_BUILD_EXEC, PATH_ETOOL+"build_exec.gif", false);
-		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_CTOOL_BUILD_EXEC_HOVER, PATH_CTOOL+"build_exec.gif", false);
-		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_CTOOL_BUILD_EXEC_DISABLED, PATH_DTOOL+"build_exec.gif", false);
+		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_CTOOL_BUILD_EXEC, PATH_ETOOL+"build_exec.gif", false); //$NON-NLS-1$
+		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_CTOOL_BUILD_EXEC_HOVER, PATH_CTOOL+"build_exec.gif", false); //$NON-NLS-1$
+		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_CTOOL_BUILD_EXEC_DISABLED, PATH_DTOOL+"build_exec.gif", false); //$NON-NLS-1$
 		
-		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_CTOOL_SEARCH_SRC, PATH_ETOOL+"search_src.gif", false);
-		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_CTOOL_SEARCH_SRC_HOVER, PATH_CTOOL+"search_src.gif", false);
-		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_CTOOL_SEARCH_SRC_DISABLED, PATH_DTOOL+"search_src.gif", false);
+		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_CTOOL_SEARCH_SRC, PATH_ETOOL+"search_src.gif", false); //$NON-NLS-1$
+		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_CTOOL_SEARCH_SRC_HOVER, PATH_CTOOL+"search_src.gif", false); //$NON-NLS-1$
+		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_CTOOL_SEARCH_SRC_DISABLED, PATH_DTOOL+"search_src.gif", false); //$NON-NLS-1$
 	
 	//	declareImage(IDEInternalWorkbenchImages.IMG_CTOOL_REFRESH_NAV, PATH_CTOOL+"refresh_nav.gif");
 	//	declareImage(IDEInternalWorkbenchImages.IMG_CTOOL_REFRESH_NAV_HOVER, PATH_CTOOL+"refresh_nav.gif");
@@ -922,43 +922,43 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 	//	declareImage(IDEInternalWorkbenchImages.IMG_CTOOL_STOP_NAV_HOVER, PATH_CTOOL+"stop_nav.gif");
 	//	declareImage(IDEInternalWorkbenchImages.IMG_CTOOL_STOP_NAV_DISABLED, PATH_DTOOL+"stop_nav.gif");
 	
-		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_CTOOL_NEXT_NAV, PATH_CTOOL+"next_nav.gif", false);
+		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_CTOOL_NEXT_NAV, PATH_CTOOL+"next_nav.gif", false); //$NON-NLS-1$
 
-		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_CTOOL_PREVIOUS_NAV, PATH_CTOOL+"prev_nav.gif", false);
+		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_CTOOL_PREVIOUS_NAV, PATH_CTOOL+"prev_nav.gif", false); //$NON-NLS-1$
 				
-		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_WIZBAN_NEW_WIZ, PATH_WIZBAN+"new_wiz.gif", false);
-		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_WIZBAN_NEWPRJ_WIZ, PATH_WIZBAN+"newprj_wiz.gif", false);
-		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_WIZBAN_NEWFOLDER_WIZ, PATH_WIZBAN+"newfolder_wiz.gif", false);
-		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_WIZBAN_NEWFILE_WIZ, PATH_WIZBAN+"newfile_wiz.gif", false);
+		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_WIZBAN_NEW_WIZ, PATH_WIZBAN+"new_wiz.gif", false); //$NON-NLS-1$
+		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_WIZBAN_NEWPRJ_WIZ, PATH_WIZBAN+"newprj_wiz.gif", false); //$NON-NLS-1$
+		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_WIZBAN_NEWFOLDER_WIZ, PATH_WIZBAN+"newfolder_wiz.gif", false); //$NON-NLS-1$
+		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_WIZBAN_NEWFILE_WIZ, PATH_WIZBAN+"newfile_wiz.gif", false); //$NON-NLS-1$
 	
-		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_WIZBAN_IMPORT_WIZ, PATH_WIZBAN+"import_wiz.gif", false);
-		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_WIZBAN_IMPORTDIR_WIZ, PATH_WIZBAN+"importdir_wiz.gif", false);
-		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_WIZBAN_IMPORTZIP_WIZ, PATH_WIZBAN+"importzip_wiz.gif", false);
+		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_WIZBAN_IMPORT_WIZ, PATH_WIZBAN+"import_wiz.gif", false); //$NON-NLS-1$
+		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_WIZBAN_IMPORTDIR_WIZ, PATH_WIZBAN+"importdir_wiz.gif", false); //$NON-NLS-1$
+		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_WIZBAN_IMPORTZIP_WIZ, PATH_WIZBAN+"importzip_wiz.gif", false); //$NON-NLS-1$
 	
-		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_WIZBAN_EXPORT_WIZ, PATH_WIZBAN+"export_wiz.gif", false);
-		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_WIZBAN_EXPORTDIR_WIZ, PATH_WIZBAN+"exportdir_wiz.gif", false);
-		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_WIZBAN_EXPORTZIP_WIZ, PATH_WIZBAN+"exportzip_wiz.gif", false);
+		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_WIZBAN_EXPORT_WIZ, PATH_WIZBAN+"export_wiz.gif", false); //$NON-NLS-1$
+		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_WIZBAN_EXPORTDIR_WIZ, PATH_WIZBAN+"exportdir_wiz.gif", false); //$NON-NLS-1$
+		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_WIZBAN_EXPORTZIP_WIZ, PATH_WIZBAN+"exportzip_wiz.gif", false); //$NON-NLS-1$
 	
-		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_WIZBAN_RESOURCEWORKINGSET_WIZ, PATH_WIZBAN+"workset_wiz.gif", false);
+		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_WIZBAN_RESOURCEWORKINGSET_WIZ, PATH_WIZBAN+"res_workset_wiz.gif", false); //$NON-NLS-1$
 	
 		/* Cache the commonly used ones */
 		
-		declareWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT, PATH_OBJECT+"prj_obj.gif", true);
-		declareWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT_CLOSED, PATH_OBJECT+"cprj_obj.gif", true);
-		declareWorkbenchImage(IDE.SharedImages.IMG_OPEN_MARKER, PATH_CLOCALTOOL+"gotoobj_tsk.gif", true);
+		declareWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT, PATH_OBJECT+"prj_obj.gif", true); //$NON-NLS-1$
+		declareWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT_CLOSED, PATH_OBJECT+"cprj_obj.gif", true); //$NON-NLS-1$
+		declareWorkbenchImage(IDE.SharedImages.IMG_OPEN_MARKER, PATH_CLOCALTOOL+"gotoobj_tsk.gif", true); //$NON-NLS-1$
 			
 		// task objects
 		//declareRegistryImage(IDEInternalWorkbenchImages.IMG_OBJS_HPRIO_TSK, PATH_OBJECT+"hprio_tsk.gif");
 		//declareRegistryImage(IDEInternalWorkbenchImages.IMG_OBJS_MPRIO_TSK, PATH_OBJECT+"mprio_tsk.gif");
 		//declareRegistryImage(IDEInternalWorkbenchImages.IMG_OBJS_LPRIO_TSK, PATH_OBJECT+"lprio_tsk.gif");
 	
-		declareWorkbenchImage(IDE.SharedImages.IMG_OBJS_TASK_TSK, PATH_OBJECT+"taskmrk_tsk.gif", true);
-		declareWorkbenchImage(IDE.SharedImages.IMG_OBJS_BKMRK_TSK, PATH_OBJECT+"bkmrk_tsk.gif", true);
+		declareWorkbenchImage(IDE.SharedImages.IMG_OBJS_TASK_TSK, PATH_OBJECT+"taskmrk_tsk.gif", true); //$NON-NLS-1$
+		declareWorkbenchImage(IDE.SharedImages.IMG_OBJS_BKMRK_TSK, PATH_OBJECT+"bkmrk_tsk.gif", true); //$NON-NLS-1$
 	
-		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_OBJS_COMPLETE_TSK, PATH_OBJECT+"complete_tsk.gif", true);
-		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_OBJS_INCOMPLETE_TSK, PATH_OBJECT+"incomplete_tsk.gif", true);
-		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_OBJS_WELCOME_ITEM, PATH_OBJECT+"welcome_item.gif", true);
-		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_OBJS_WELCOME_BANNER, PATH_OBJECT+"welcome_banner.gif", true);
+		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_OBJS_COMPLETE_TSK, PATH_OBJECT+"complete_tsk.gif", true); //$NON-NLS-1$
+		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_OBJS_INCOMPLETE_TSK, PATH_OBJECT+"incomplete_tsk.gif", true); //$NON-NLS-1$
+		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_OBJS_WELCOME_ITEM, PATH_OBJECT+"welcome_item.gif", true); //$NON-NLS-1$
+		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_OBJS_WELCOME_BANNER, PATH_OBJECT+"welcome_banner.gif", true); //$NON-NLS-1$
 	
 		// synchronization indicator objects
 		//declareRegistryImage(IDEInternalWorkbenchImages.IMG_OBJS_WBET_STAT, PATH_OVERLAY+"wbet_stat.gif");
