@@ -39,7 +39,7 @@ public class ExamplesPlugin extends AbstractUIPlugin {
 	public static final String IMG_VERTICAL = "vertical";
 	public static final String IMG_SAMPLE = "sample";
 	public static final String IMG_WIZBAN = "wizban";
-	public static final String IMG_HELP_TOPIC = "help-topic";
+	public static final String IMG_HELP_TOPIC = "linkto_help";
 
 	/**
 	 * The constructor.
