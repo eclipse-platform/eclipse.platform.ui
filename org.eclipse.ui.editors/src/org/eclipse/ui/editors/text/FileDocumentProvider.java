@@ -20,6 +20,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 
+import org.eclipse.core.internal.filebuffers.ContainerGenerator;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -54,7 +55,6 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.dialogs.ContainerGenerator;
 import org.eclipse.ui.internal.editors.text.WorkspaceOperationRunner;
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 import org.eclipse.ui.part.FileEditorInput;
@@ -553,7 +553,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 				} else {
 					try {
 						monitor.beginTask(TextEditorMessages.getString("FileDocumentProvider.task.saving"), 2000); //$NON-NLS-1$
-						ContainerGenerator generator = new ContainerGenerator(file.getParent().getFullPath());
+						ContainerGenerator generator = new ContainerGenerator(file.getWorkspace(), file.getParent().getFullPath());
 						generator.generateContainer(new SubProgressMonitor(monitor, 1000));
 						file.create(stream, false, new SubProgressMonitor(monitor, 1000));
 					}
@@ -957,11 +957,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	protected ISchedulingRule getSaveRule(Object element) {
 		if (element instanceof IFileEditorInput) {			
 			IFileEditorInput input= (IFileEditorInput) element;
-			IFile file= input.getFile();
-			if (file.exists())
-				return fResourceRuleFactory.modifyRule(input.getFile());
-			else
-				return fResourceRuleFactory.createRule(input.getFile());
+			return computeSchedulingRule(input.getFile());
 		} else {
 			return null;
 		}
@@ -1027,5 +1023,29 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	 * @deprecated as of 3.0 this method is no longer in use and does nothing
 	 */
 	protected void readUTF8BOM(IFile file, String encoding, Object element) throws CoreException {
+	}
+	
+	/**
+	 * Computes the scheduling rule needed to create or modify a resource. If
+	 * the resource exists, its modify rule is returned. If it does not, the 
+	 * resource hierarchy is iterated towards the workspace root to find the
+	 * first parent of <code>toCreateOrModify</code> that exists. Then the
+	 * 'create' rule for the last non-existing resource is returned. 
+	 * 
+	 * @param toCreateOrModify the resource to create or modify
+	 * @return the minimal scheduling rule needed to modify or create a resource
+	 */
+	private ISchedulingRule computeSchedulingRule(IResource toCreateOrModify) {
+		if (toCreateOrModify.exists()) {
+			return fResourceRuleFactory.modifyRule(toCreateOrModify);
+		} else {
+			IResource parent= toCreateOrModify;
+			do {
+				toCreateOrModify= parent;
+				parent= toCreateOrModify.getParent();
+			} while (parent != null && !parent.exists());
+			
+			return fResourceRuleFactory.createRule(toCreateOrModify);
+		}
 	}
 }

@@ -647,7 +647,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 				public ISchedulingRule getSchedulingRule() {
 					if (info.fElement instanceof IFileEditorInput) {
 						IFileEditorInput input= (IFileEditorInput) info.fElement;
-						return fResourceRuleFactory.modifyRule(input.getFile());
+						return computeSchedulingRule(input.getFile());
 					} else
 						return null;
 				}
@@ -667,7 +667,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 				 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider.DocumentProviderOperation#getSchedulingRule()
 				 */
 				public ISchedulingRule getSchedulingRule() {
-					return fResourceRuleFactory.createRule(file);
+					return computeSchedulingRule(file);
 				}
 			};
 		}
@@ -1087,6 +1087,33 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 				IElementStateListenerExtension x= (IElementStateListenerExtension) l;
 				x.elementStateChangeFailed(element);
 			}
+		}
+	}
+	
+	/**
+	 * Computes the scheduling rule needed to create or modify a resource. If
+	 * the resource exists, its modify rule is returned. If it does not, the 
+	 * resource hierarchy is iterated towards the workspace root to find the
+	 * first parent of <code>toCreateOrModify</code> that exists. Then the
+	 * 'create' rule for the last non-existing resource is returned.
+	 * <p> 
+	 * XXX to be made protected after 3.0
+	 * </p>
+	 * 
+	 * @param toCreateOrModify the resource to create or modify
+	 * @return the minimal scheduling rule needed to modify or create a resource
+	 */
+	private ISchedulingRule computeSchedulingRule(IResource toCreateOrModify) {
+		if (toCreateOrModify.exists()) {
+			return fResourceRuleFactory.modifyRule(toCreateOrModify);
+		} else {
+			IResource parent= toCreateOrModify;
+			do {
+				toCreateOrModify= parent;
+				parent= toCreateOrModify.getParent();
+			} while (parent != null && !parent.exists());
+			
+			return fResourceRuleFactory.createRule(toCreateOrModify);
 		}
 	}
 }
