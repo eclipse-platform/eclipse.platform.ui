@@ -2,9 +2,40 @@
 <?NLS TYPE="org.eclipse.help.contexts"?>
 <contexts>
 
+	<!-- ********************************** -->
+ 	<!-- Wizard Pages 					-->
+ 	<!-- ********************************** -->
+ 	
+ 	<context  id="share_project_page_context">
+      <description>Create a new site
+      </description>
+   	</context>
+   	
+   	<context  id="import_project_set_page_context">
+      <description>Import a project from elsewhere
+      </description>
+   	</context>
+	
+	<context  id="export_project_set_page_context">
+      <description>Export a project to an external system
+      </description>
+   	</context>
+	
+	<context  id="target_new_site_page_context">
+      <description>Pick a site to use as a target
+      </description>
+   	</context>
+	
+	<context  id="target_mapping_selection_page_context">
+      <description>map a site
+      </description>
+   	</context>
+	
+	
  	<!-- ********************************** -->
  	<!-- Preference Pages 					-->
  	<!-- ********************************** -->
+ 	
  	<context  id="ignore_preference_page_context" >
       <description>You may wish to exclude certain resources from version control. Resources whose names match any enabled pattern will not be released. The wildcard characters '*' and '?' are permitted. These settings will not affect resources already under version control.
       </description>

@@ -32,7 +32,9 @@ import org.eclipse.team.internal.core.target.Site;
 import org.eclipse.team.internal.core.target.TargetManager;
 import org.eclipse.team.internal.core.target.TargetProvider;
 import org.eclipse.team.internal.core.target.UrlUtil;
+import org.eclipse.team.internal.ui.IHelpContextIds;
 import org.eclipse.team.internal.ui.Policy;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
@@ -70,6 +72,8 @@ public class SiteSelectionPage extends TargetWizardPage {
 	
 	public void createControl(Composite parent) {
 		Composite composite = createComposite(parent, 2);
+		// set F1 help
+		WorkbenchHelp.setHelp(composite, IHelpContextIds.TARGET_NEW_SITE_PAGE);
 		
 		Label description = new Label(composite, SWT.WRAP);
 		GridData data = new GridData();

@@ -22,6 +22,8 @@ public interface IHelpContextIds {
 	public static final String SHARE_PROJECT_PAGE = PREFIX + "share_project_page_context"; //$NON-NLS-1$
 	public static final String IMPORT_PROJECT_SET_PAGE = PREFIX + "import_project_set_page_context"; //$NON-NLS-1$
 	public static final String EXPORT_PROJECT_SET_PAGE = PREFIX + "export_project_set_page_context"; //$NON-NLS-1$
+	public static final String TARGET_NEW_SITE_PAGE = PREFIX + "target_new_site_page_context"; //$NON-NLS-1$
+	public static final String TARGET_MAPPING_SELECTION_PAGE = PREFIX + "target_mapping_selection_page_context"; //$NON-NLS-1$
 
 	// Catchup Release Viewers
 	public static final String TARGET_CATCHUP_RELEASE_VIEWER = PREFIX + "target_catchup_release_viewer_context"; //$NON-NLS-1$

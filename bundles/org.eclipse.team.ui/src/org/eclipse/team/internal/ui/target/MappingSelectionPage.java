@@ -37,8 +37,10 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.core.target.IRemoteTargetResource;
 import org.eclipse.team.internal.core.target.Site;
 import org.eclipse.team.internal.core.target.UrlUtil;
+import org.eclipse.team.internal.ui.IHelpContextIds;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 public class MappingSelectionPage extends TargetWizardPage {
@@ -62,6 +64,8 @@ public class MappingSelectionPage extends TargetWizardPage {
 	
 	public void createControl(Composite p) {
 		Composite composite = createComposite(p, 1);
+		// set F1 help
+		WorkbenchHelp.setHelp(composite, IHelpContextIds.TARGET_MAPPING_SELECTION_PAGE);
 		
 		createLabel(composite, Policy.bind("MappingSelectionPage.label")); //$NON-NLS-1$
 		
