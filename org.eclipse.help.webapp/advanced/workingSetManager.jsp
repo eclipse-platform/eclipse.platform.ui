@@ -124,7 +124,7 @@ function selectWorkingSet() {
 		search = "?";
 	}
 
-	search += "workingSet=" + escape(workingSet);
+	search += "workingSet=" + escape(workingSet)+"&encoding=js";
 
 	window.opener.location.replace(
 		window.opener.location.protocol +

@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.webapp.servlet.ServletResources;
-import org.eclipse.help.internal.webapp.servlet.UrlUtil;
 import org.eclipse.help.internal.workingset.*;
 
 /**
@@ -36,11 +35,7 @@ public class WorkingSetManagerData extends RequestData {
 		HttpServletRequest request) {
 		super(context, request);
 
-		name =
-			UrlUtil.isIE(request)
-				? UrlUtil.unescape(
-					UrlUtil.getRawRequestParameter(request, "workingSet"))
-				: request.getParameter("workingSet");
+		name = getDBCSParameter("workingSet");
 
 		if (!workingSetsSynchronized && getMode() == MODE_WORKBENCH) {
 			// upon startup in workbench mode, make sure working sets are in synch with those from UI

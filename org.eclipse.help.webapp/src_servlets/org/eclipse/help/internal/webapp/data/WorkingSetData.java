@@ -39,11 +39,7 @@ public class WorkingSetData extends RequestData {
 	}
 
 	public String getWorkingSetName() {
-		String name =
-			UrlUtil.isIE(request)
-				? UrlUtil.unescape(
-					UrlUtil.getRawRequestParameter(request, "workingSet"))
-				: request.getParameter("workingSet");
+		String name = getDBCSParameter("workingSet");
 		if (name == null)
 			name = "";
 		return name;

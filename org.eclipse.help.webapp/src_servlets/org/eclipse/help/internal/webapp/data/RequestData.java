@@ -17,7 +17,7 @@ public class RequestData {
 	public final static int MODE_WORKBENCH = HelpSystem.MODE_WORKBENCH;
 	public final static int MODE_INFOCENTER = HelpSystem.MODE_INFOCENTER;
 	public final static int MODE_STANDALONE = HelpSystem.MODE_STANDALONE;
-	
+
 	protected ServletContext context;
 	protected HttpServletRequest request;
 	protected String locale;
@@ -30,7 +30,7 @@ public class RequestData {
 	public RequestData(ServletContext context, HttpServletRequest request) {
 		this.context = context;
 		this.request = request;
-		preferences=new WebappPreferences();
+		preferences = new WebappPreferences();
 
 		locale = UrlUtil.getLocale(request);
 	}
@@ -57,16 +57,27 @@ public class RequestData {
 	public boolean isMozilla() {
 		return UrlUtil.isMozilla(request);
 	}
-	
+
 	public boolean isOpera() {
 		return UrlUtil.isOpera(request);
 	}
-	
+
 	public String getLocale() {
 		return locale;
 	}
-	
-	public int getMode(){
+
+	public int getMode() {
 		return HelpSystem.getMode();
+	}
+
+	public String getDBCSParameter(String name) {
+		if (UrlUtil.isIE(request)
+			&& request.getParameter("encoding") != null) {
+			// parameter is escaped using JavaScript
+			return UrlUtil.unescape(
+				UrlUtil.getRawRequestParameter(request, name));
+		} else {
+			return request.getParameter(name);
+		}
 	}
 }

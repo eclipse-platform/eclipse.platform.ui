@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.util.*;
-import org.eclipse.help.internal.webapp.servlet.*;
 
 /**
  * This class manages bookmarks.
@@ -43,11 +42,7 @@ public class BookmarksData extends RequestData {
 		if (bookmarkURL != null
 			&& bookmarkURL.length() > 0
 			&& !bookmarkURL.equals("about:blank")) {
-			String title =
-				UrlUtil.isIE(request)
-					? UrlUtil.unescape(
-						UrlUtil.getRawRequestParameter(request, "title"))
-					: request.getParameter("title");
+			String title = getDBCSParameter("title");
 			Preferences prefs = HelpPlugin.getDefault().getPluginPreferences();
 			String bookmarks = prefs.getString(HelpSystem.BOOKMARKS);
 
@@ -68,11 +63,7 @@ public class BookmarksData extends RequestData {
 		if (bookmarkURL != null
 			&& bookmarkURL.length() > 0
 			&& !bookmarkURL.equals("about:blank")) {
-			String title =
-				UrlUtil.isIE(request)
-					? UrlUtil.unescape(
-						UrlUtil.getRawRequestParameter(request, "title"))
-					: request.getParameter("title");
+			String title = getDBCSParameter("title");
 			Preferences prefs = HelpPlugin.getDefault().getPluginPreferences();
 			String bookmarks = prefs.getString(HelpSystem.BOOKMARKS);
 			String removeString =

@@ -43,15 +43,7 @@ public class SearchData extends RequestData {
 		if (topicHref != null && topicHref.length() == 0)
 			topicHref = null;
 
-		if (UrlUtil.isIE(request)
-			&& request.getParameter("encoding") != null) {
-			// parameter is escaped using JavaScript
-			searchWord =
-				UrlUtil.unescape(
-					UrlUtil.getRawRequestParameter(request, "searchWord"));
-		} else {
-			searchWord = request.getParameter("searchWord");
-		}
+		searchWord = getDBCSParameter("searchWord");
 
 		// try loading search results or get the indexing progress info.
 		if (isSearchRequest() && !isScopeRequest()) {
@@ -193,9 +185,9 @@ public class SearchData extends RequestData {
 			workingSetName = request.getParameter("scope");
 			// if we have already set the working set, then use it.
 			if (workingSetName == null)
-				workingSetName = request.getParameter("workingSet");
+				workingSetName = getDBCSParameter("workingSet");
 		} else if (isScopeRequest()) {
-			workingSetName = request.getParameter("workingSet");
+			workingSetName = getDBCSParameter("workingSet");
 		} else {
 			workingSetName =
 				HelpPlugin.getDefault().getPluginPreferences().getString(

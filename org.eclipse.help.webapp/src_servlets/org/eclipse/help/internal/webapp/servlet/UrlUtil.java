@@ -24,6 +24,8 @@ public class UrlUtil {
 	 * Handles DBCS charactes that escape encoded as %uHHLL.
 	 */
 	public static String unescape(String encodedURL) {
+		if (encodedURL == null)
+			return null;
 		int len = encodedURL.length();
 		StringBuffer buf = new StringBuffer();
 		for (int i = 0; i < len;) {
