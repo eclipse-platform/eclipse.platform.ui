@@ -93,7 +93,6 @@ public class PerspectivePresentation {
 			testChild.dispose();
 		}
 
-		initDETACHABLE();
 
 		this.partDropListener = new IPartDropListener() {
 			public void dragOver(PartDropEvent e) {
@@ -104,16 +103,7 @@ public class PerspectivePresentation {
 			};
 		};
 	}
-	/* temp method. Should be deleted it */
-	private void initDETACHABLE() {
-		String commandLineArgs[] = Platform.getCommandLineArgs();
-		for (int i = 0; i < commandLineArgs.length; i++) {
-			if (commandLineArgs[i].equalsIgnoreCase("-detach")) { //$NON-NLS-1$
-				return;
-			}
-		}
-		this.detachable = false;
-	}
+	
 	/**
 	 * Show the presentation.
 	 */

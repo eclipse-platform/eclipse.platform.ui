@@ -11,15 +11,22 @@
 
 package org.eclipse.ui.internal;
 
-import org.eclipse.ui.*;
-import org.eclipse.ui.help.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.jface.window.*;
-import java.util.*;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.Vector;
+
+import org.eclipse.jface.window.Window;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder2;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 public class DetachedWindow extends Window   {
 
@@ -44,6 +51,7 @@ public class DetachedWindow extends Window   {
 	 * Supports reparenting.
 	 */
 	public void add(ViewPane part, IPartDropListener listener) {
+		
 		Shell shell = getShell();
 		if (shell != null)
 			part.reparent(shell);
@@ -91,7 +99,7 @@ public class DetachedWindow extends Window   {
 				Control[] children = shell.getChildren();
 				if (children != null) {
 					for (int i = 0, length = children.length; i < length; i++) {
-						if (children[i] instanceof CTabFolder) {
+						if (children[i] instanceof CTabFolder2) {
 							children[i].setBounds(shell.getClientArea());
 							break;
 						}
