@@ -114,10 +114,13 @@ import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IKeyBindingService;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IReusableEditor;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.NavigationLocation;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.SelectionNavigationLocation;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.EditorPluginAction;
@@ -2391,6 +2394,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		
 			provider.aboutToChange(getEditorInput());
 			operation.run(progressMonitor);
+			editorSaved();
 		
 		} catch (InterruptedException x) {
 		} catch (InvocationTargetException x) {
@@ -3304,12 +3308,25 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		widget.setRedraw(true);
 	}
 	
-	/*
+	/**
 	 * Writes a check mark of the given situation into the navigation history.
 	 */
 	protected void markInNavigationHistory() {
-		ISelection selection= fSourceViewer.getSelectionProvider().getSelection();
-		getEditorSite().getPage().addNavigationHistoryEntry(selection);
+		IWorkbenchPage page= getEditorSite().getPage();
+		page.addNavigationHistoryEntry(this, new TextSelectionNavigationLocation(this));
+	}
+	
+	/**
+	 * Subclasses may extend.	 */
+	protected void editorSaved() {
+		IWorkbenchPage page= getEditorSite().getPage();
+		NavigationLocation[] locations= page.getNavigationHistoryEntries(this);
+		for (int i= 0; i < locations.length; i++) {
+			if (locations[i] instanceof TextSelectionNavigationLocation) {
+				TextSelectionNavigationLocation location= (TextSelectionNavigationLocation) locations[i];
+				location.partSaved(this);
+			}
+		}
 	}
 	
 	/*
