@@ -18,11 +18,6 @@ import org.eclipse.update.internal.ui.UpdateUIPlugin;
 public class MyComputerDirectory
 	extends UIModelObject
 	implements IWorkbenchAdapter {
-	private static final String KEY_VOLUME_CDROM = "MyComputerDirectory.cdrom";
-	private static final String KEY_VOLUME_FLOPPY_3 =
-		"MyComputerDirectory.floppy3";
-	private static final String KEY_VOLUME_FLOPPY_5 =
-		"MyComputerDirectory.floppy5";
 	private UIModelObject parent;
 	private File file;
 	private IVolume volume;
@@ -52,45 +47,8 @@ public class MyComputerDirectory
 		return volume;
 	}
 	
-	private String getVolumeName() {
-		String name = file.getPath();
-		if (name.endsWith(File.separator) && name.length()>1) {
-			name = name.substring(0, name.length()-1);
-		}
-		return name;
-	}
-
 	public String getName() {
-		String fileName = volume != null ? getVolumeName() : file.getName();
-		if (volume != null) {
-			String nativeLabel = volume.getLabel();
-			if (nativeLabel == null || nativeLabel.length() == 0) {
-				// set well-known names for types
-				int type = volume.getType();
-				switch (type) {
-					case LocalSystemInfo.VOLUME_CDROM :
-						nativeLabel =
-							UpdateUIPlugin.getResourceString(KEY_VOLUME_CDROM);
-						break;
-					case LocalSystemInfo.VOLUME_FLOPPY_3 :
-						nativeLabel =
-							UpdateUIPlugin.getResourceString(
-								KEY_VOLUME_FLOPPY_3);
-						break;
-					case LocalSystemInfo.VOLUME_FLOPPY_5 :
-						nativeLabel =
-							UpdateUIPlugin.getResourceString(
-								KEY_VOLUME_FLOPPY_5);
-						break;
-				}
-			}
-			if (nativeLabel != null && nativeLabel.length()>0) {
-				return nativeLabel + " (" + fileName + ")";
-			} else {
-				return fileName;
-			}
-		}
-		return fileName;
+		return file.getPath();
 	}
 
 	public File getFile() {
@@ -189,7 +147,7 @@ public class MyComputerDirectory
 	 * @see IWorkbenchAdapter#getLabel(Object)
 	 */
 	public String getLabel(Object obj) {
-		return getName();
+		return file.getName();
 	}
 
 	/**

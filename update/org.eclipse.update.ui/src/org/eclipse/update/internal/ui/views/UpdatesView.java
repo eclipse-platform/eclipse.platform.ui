@@ -17,12 +17,11 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.texteditor.IUpdate;
-import org.eclipse.update.configuration.*;
 import org.eclipse.update.configuration.IVolume;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;
-import org.eclipse.update.internal.ui.parts.DefaultContentProvider;
+import org.eclipse.update.internal.ui.parts.*;
 import org.eclipse.update.internal.ui.search.*;
 import org.eclipse.update.internal.ui.security.AuthorizationDatabase;
 import org.eclipse.update.internal.ui.wizards.*;
@@ -65,11 +64,7 @@ public class UpdatesView
 	private Image discoveryImage;
 	private Image bookmarkFolderImage;
 	private Image computerImage;
-	private Image floppyImage;
-	private Image cdImage;
-	private Image vfixedImage;
-	private Image vremoteImage;
-	private Image vremovableImage;
+	private VolumeLabelProvider volumeLabelProvider;
 	private Action refreshAction;
 	private SearchObject updateSearchObject;
 	private SelectionChangedListener selectionListener;
@@ -221,6 +216,14 @@ public class UpdatesView
 					UpdateUIPlugin.logException(e);
 				}
 			}
+			if (obj instanceof MyComputerDirectory) {
+				MyComputerDirectory dir = (MyComputerDirectory)obj;
+				IVolume volume = dir.getVolume();
+				if (volume!=null)
+					return volumeLabelProvider.getText(volume);
+				else
+					return dir.getLabel(dir);
+			}
 			return super.getText(obj);
 		}
 		public Image getImage(Object obj) {
@@ -237,7 +240,7 @@ public class UpdatesView
 			if (obj instanceof MyComputerDirectory) {
 				IVolume volume = ((MyComputerDirectory) obj).getVolume();
 				if (volume != null) {
-					Image image = getVolumeImage(volume);
+					Image image = volumeLabelProvider.getImage(volume);
 					if (image != null)
 						return image;
 				}
@@ -691,12 +694,7 @@ public class UpdatesView
 		bookmarkFolderImage = UpdateUIPluginImages.DESC_BFOLDER_OBJ.createImage();
 		categoryImage = UpdateUIPluginImages.DESC_CATEGORY_OBJ.createImage();
 		computerImage = UpdateUIPluginImages.DESC_COMPUTER_OBJ.createImage();
-		floppyImage = UpdateUIPluginImages.DESC_FLOPPY_OBJ.createImage();
-		cdImage = UpdateUIPluginImages.DESC_CD_OBJ.createImage();
-		vfixedImage = UpdateUIPluginImages.DESC_VFIXED_OBJ.createImage();
-		vremoteImage = UpdateUIPluginImages.DESC_VREMOTE_OBJ.createImage();
-		vremovableImage =
-			UpdateUIPluginImages.DESC_VREMOVABLE_OBJ.createImage();
+		volumeLabelProvider = new VolumeLabelProvider();
 	}
 	private void disposeImages() {
 		siteImage.dispose();
@@ -705,33 +703,13 @@ public class UpdatesView
 		bookmarkFolderImage.dispose();
 		categoryImage.dispose();
 		computerImage.dispose();
-		floppyImage.dispose();
-		cdImage.dispose();
-		vfixedImage.dispose();
-		vremoteImage.dispose();
-		vremovableImage.dispose();
 		for (Enumeration enum = fileImages.elements();
 			enum.hasMoreElements();
 			) {
 			((Image) enum.nextElement()).dispose();
 		}
+		volumeLabelProvider.dispose();
 	}
 
-	private Image getVolumeImage(IVolume volume) {
-		switch (volume.getType()) {
-			case LocalSystemInfo.VOLUME_CDROM :
-				return cdImage;
-			case LocalSystemInfo.VOLUME_FIXED :
-				return vfixedImage;
-			case LocalSystemInfo.VOLUME_FLOPPY_3 :
-			case LocalSystemInfo.VOLUME_FLOPPY_5 :
-				return floppyImage;
-			case LocalSystemInfo.VOLUME_RAMDISK :
-			case LocalSystemInfo.VOLUME_REMOVABLE :
-				return vremovableImage;
-			case LocalSystemInfo.VOLUME_REMOTE :
-				return vremoteImage;
-		}
-		return null;
-	}
+
 }

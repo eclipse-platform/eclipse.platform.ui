@@ -2,66 +2,75 @@
  * (c) Copyright 2001 MyCorporation.
  * All Rights Reserved.
  */
-package org.eclipse.update.internal.ui.forms;
+package org.eclipse.update.internal.ui.search;
 
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.SWT;
-import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.update.internal.ui.parts.DefaultContentProvider;
-import org.eclipse.update.internal.ui.search.*;
-import org.eclipse.update.internal.ui.model.*;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.*;
-import java.io.File;
-import java.util.Vector;
+import java.util.*;
+
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.update.configuration.*;
 import org.eclipse.update.internal.ui.UpdateUIPlugin;
-import org.eclipse.update.configuration.IVolume;
-import org.eclipse.update.configuration.LocalSystemInfo;
+import org.eclipse.update.internal.ui.parts.*;
+import org.eclipse.jface.dialogs.Dialog;
 
 /**
  * @version 	1.0
  * @author
  */
 public class MyComputerSearchDialog extends Dialog {
-	MyComputerSearchSettings settings;
-	Button okButton;
-	Image driveImage;
-	CheckboxTableViewer viewer;
-	boolean loaded=false;
-	SearchObject search;
-	
-	class DriveContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
-		public Object [] getElements(Object input) {
-			if (!loaded) initializeDrives();
+	private static final String KEY_LABEL = "MyComputerSearchDialog.label";
+	private MyComputerSearchSettings settings;
+	private Button okButton;
+	private VolumeLabelProvider volumeLabelProvider;
+	private CheckboxTableViewer viewer;
+	private boolean loaded = false;
+	private SearchObject search;
+	private Hashtable driveMap = new Hashtable();
+
+	class DriveContentProvider
+		extends DefaultContentProvider
+		implements IStructuredContentProvider {
+		public Object[] getElements(Object input) {
+			if (!loaded)
+				initializeDrives();
 			return settings.getDriveSettings();
 		}
 	}
-	
+
 	class DriveLabelProvider extends LabelProvider {
 		public String getText(Object obj) {
-			return ((DriveSearchSettings)obj).getName();
+			IVolume volume = (IVolume)driveMap.get(obj);
+			if (volume!=null) return volumeLabelProvider.getText(volume);
+			return ((DriveSearchSettings) obj).getName();
 		}
 		public Image getImage(Object obj) {
-			return driveImage;
+			IVolume volume = (IVolume)driveMap.get(obj);
+			return volumeLabelProvider.getImage(volume);
 		}
 	}
-	
+
 	/**
 	 * Constructor for MyComputerSearchDialog.
 	 * @param parentShell
 	 */
 	public MyComputerSearchDialog(Shell parentShell, SearchObject search) {
 		super(parentShell);
-		driveImage = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
 		settings = new MyComputerSearchSettings(search);
+		volumeLabelProvider = new VolumeLabelProvider();
+	}
+	
+	public boolean close() {
+		boolean value = super.close();
+		volumeLabelProvider.dispose();
+		return value;
 	}
 	
 	public void buttonPressed(int id) {
-		if (id==IDialogConstants.OK_ID) {
+		if (id == IDialogConstants.OK_ID) {
 			storeSettings();
 		}
 		super.buttonPressed(id);
@@ -70,7 +79,11 @@ public class MyComputerSearchDialog extends Dialog {
 	protected void createButtonsForButtonBar(Composite parent) {
 		// create OK and Cancel buttons by default
 		okButton =
-			createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
+			createButton(
+				parent,
+				IDialogConstants.OK_ID,
+				IDialogConstants.OK_LABEL,
+				true);
 		createButton(
 			parent,
 			IDialogConstants.CANCEL_ID,
@@ -86,16 +99,18 @@ public class MyComputerSearchDialog extends Dialog {
 		layout.marginWidth = 10;
 		container.setLayout(layout);
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+
 		Label label = new Label(container, SWT.NULL);
-		label.setText("Select the root folders that should be searched:");
-		
+		label.setText(UpdateUIPlugin.getResourceString(KEY_LABEL));
+
 		viewer = CheckboxTableViewer.newCheckList(container, SWT.BORDER);
 		viewer.setContentProvider(new DriveContentProvider());
 		viewer.setLabelProvider(new DriveLabelProvider());
 		viewer.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {
-				handleDriveChecked((DriveSearchSettings)event.getElement(), event.getChecked());
+				handleDriveChecked(
+					(DriveSearchSettings) event.getElement(),
+					event.getChecked());
 			}
 		});
 		viewer.setInput(UpdateUIPlugin.getDefault());
@@ -106,31 +121,34 @@ public class MyComputerSearchDialog extends Dialog {
 		loadSettings();
 		return container;
 	}
-	
+
 	private void loadSettings() {
 		Vector selected = new Vector();
-		DriveSearchSettings [] drives = settings.getDriveSettings();
-		for (int i=0; i<drives.length; i++) {
+		DriveSearchSettings[] drives = settings.getDriveSettings();
+		for (int i = 0; i < drives.length; i++) {
 			if (drives[i].isChecked())
-			   selected.add(drives[i]);
+				selected.add(drives[i]);
 		}
 		viewer.setCheckedElements(selected.toArray());
 	}
-	
+
 	private void initializeDrives() {
 		IVolume[] volumes = LocalSystemInfo.getVolumes();
-		for (int i=0; i<volumes.length; i++) {
+		for (int i = 0; i < volumes.length; i++) {
 			// Ensure settings exists
 			String label = volumes[i].getLabel();
-			if (label==null || "".equals(label))
+			if (label == null || "".equals(label))
 				label = volumes[i].getFile().getPath();
 			else
-				label = label+" ("+volumes[i].getFile().getPath()+")";
-			settings.getDriveSettings(label);
+				label = label + " (" + volumes[i].getFile().getPath() + ")";
+			DriveSearchSettings drive = settings.getDriveSettings(label);
+			driveMap.put(drive, volumes[i]);
 		}
 	}
-	
-	private void handleDriveChecked(DriveSearchSettings drive, boolean checked) {
+
+	private void handleDriveChecked(
+		DriveSearchSettings drive,
+		boolean checked) {
 		drive.setChecked(checked);
 	}
 

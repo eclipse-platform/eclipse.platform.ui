@@ -4,31 +4,23 @@ package org.eclipse.update.internal.ui.forms;
  * All Rights Reserved.
  */
 
-import org.eclipse.update.internal.ui.pages.*;
-import org.eclipse.update.internal.ui.parts.*;
-import org.eclipse.update.internal.ui.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.update.ui.forms.internal.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.ui.*;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.update.core.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.update.configuration.IVolume;
 import org.eclipse.update.internal.ui.model.*;
-import org.eclipse.swt.custom.BusyIndicator;
-import java.net.URL;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.swt.events.*;
-import org.eclipse.update.ui.forms.internal.engine.FormEngine;
+import org.eclipse.update.internal.ui.pages.UpdateFormPage;
+import org.eclipse.update.internal.ui.parts.VolumeLabelProvider;
+import org.eclipse.update.ui.forms.internal.*;
 
 public class UnknownObjectForm extends UpdateWebForm {
 	private Object currentObj;
+	private VolumeLabelProvider volumeProvider;
 
 	public UnknownObjectForm(UpdateFormPage page) {
 		super(page);
 	}
 
 	public void dispose() {
+		if (volumeProvider!=null) volumeProvider.dispose();
 		super.dispose();
 	}
 
@@ -55,13 +47,25 @@ public class UnknownObjectForm extends UpdateWebForm {
 	public void expandTo(Object obj) {
 		String name = "";
 
-		if (obj != null && obj instanceof UIModelObject)
-			name = obj.toString();
+		if (obj != null && obj instanceof UIModelObject) {
+			if (obj instanceof MyComputerDirectory) {
+				MyComputerDirectory dir = (MyComputerDirectory)obj;
+				IVolume volume = dir.getVolume();
+				if (volume!=null) name = getVolumeName(volume);
+			}
+			if (name.length()==0)
+				name = obj.toString();
+		}
 		setHeadingText(name);
 		if (getControl() != null) {
 			((Composite) getControl()).layout();
 			getControl().redraw();
 		}
 		currentObj = obj;
+	}
+	private String getVolumeName(IVolume volume) {
+		if (volumeProvider==null)
+			volumeProvider = new VolumeLabelProvider();
+		return volumeProvider.getText(volume);
 	}
 }
