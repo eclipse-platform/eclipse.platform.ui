@@ -3,18 +3,17 @@ package org.eclipse.core.internal.filebuffers;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import org.eclipse.core.runtime.Plugin;
+
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
 
 import org.eclipse.jface.text.Assert;
 
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IPluginDescriptor;
-import org.eclipse.core.runtime.Plugin;
-
 
 /**
- * The main plugin class to be used in the desktop.
+ * The plug-in runtime class for the file buffers plug-in (id <code>"org.eclipse.core.filebuffers"</code>).
+ * 
+ * @since 3.0
  */
 public class FileBuffersPlugin extends Plugin {
 	
@@ -33,15 +32,6 @@ public class FileBuffersPlugin extends Plugin {
 	public FileBuffersPlugin() {
 		Assert.isTrue(fgPlugin == null);
 		fgPlugin= this;
-	}
-
-	/**
-	 * Creates a plug-in instance.
-	 */
-	public FileBuffersPlugin(IPluginDescriptor descriptor) {
-		super(descriptor);
-		Assert.isTrue(fgPlugin == null);
-		fgPlugin= this;
 		try {
 			fResourceBundle= ResourceBundle.getBundle("org.eclipse.core.internal.filebuffers.FileBuffersPlugin");  //$NON-NLS-1$
 		} catch (MissingResourceException x) {
@@ -51,21 +41,19 @@ public class FileBuffersPlugin extends Plugin {
 
 	/**
 	 * Returns the shared instance.
+	 * 
+	 * @return the default plug-in instance
 	 */
 	public static FileBuffersPlugin getDefault() {
 		return fgPlugin;
 	}
 
 	/**
-	 * Returns the workspace instance.
-	 */
-	public static IWorkspace getWorkspace() {
-		return ResourcesPlugin.getWorkspace();
-	}
-
-	/**
 	 * Returns the string from the plugin's resource bundle,
 	 * or 'key' if not found.
+	 * 
+	 * @param key the resource string key
+	 * @return the resource string for the given key
 	 */
 	public static String getResourceString(String key) {
 		ResourceBundle bundle= FileBuffersPlugin.getDefault().getResourceBundle();
@@ -77,9 +65,11 @@ public class FileBuffersPlugin extends Plugin {
 	}
 
 	/**
-	 * Returns the plugin's resource bundle,
+	 * Returns the plugin's resource bundle.
+	 * 
+	 * @return the resource bundle
 	 */
-	public ResourceBundle getResourceBundle() {
+	private ResourceBundle getResourceBundle() {
 		return fResourceBundle;
 	}
 	
