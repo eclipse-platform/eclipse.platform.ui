@@ -143,7 +143,7 @@ class ImplicitJobs {
 	 * @param rule
 	 */
 	/* (Non-javadoc)
-	 * @see IJobManager#begin
+	 * @see IJobManager#beginRule
 	 */
 	void begin(ISchedulingRule rule) {
 		boolean join = false;
@@ -179,7 +179,7 @@ class ImplicitJobs {
 	}
 
 	/* (Non-javadoc)
-	 * @see IJobManager#end
+	 * @see IJobManager#endRule
 	 */
 	synchronized void end(ISchedulingRule rule) {
 		Thread currentThread = Thread.currentThread();
