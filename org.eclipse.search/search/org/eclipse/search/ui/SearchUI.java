@@ -133,7 +133,7 @@ public final class SearchUI {
 	}
 
 	/**
-	 a working set by name.
+	 * Returns a working set by name.
 	 *
 	 * This method is for internal use only due to issue below. Once
 	 * the issues is solved there will be an official API.
@@ -147,6 +147,23 @@ public final class SearchUI {
 	 */
 	public static IWorkingSet findWorkingSet(String name) {
 		return WorkingSet.find(name);
+	}
+
+	/**
+	 * Returns the preference whether editors should be reused
+	 * when showing search results.
+	 * 
+	 * The goto action can decide to use or ignore this preference.
+	 *
+	 * <p>
+	 * [Issue: Always returns <code>true</code> yet due to bug 6784.]
+	 * </p>
+	 * 
+	 * @param name the name the working set
+	 * @return <code>true</code> if editors should be reused for showing search results
+	 */
+	public static boolean reuseEditor() {
+		return true;
 	}
 
 	/**

@@ -4,8 +4,28 @@
  */
 package org.eclipse.search.internal.ui.text;
 
-import org.eclipse.core.resources.IFile;import org.eclipse.core.resources.IMarker;import org.eclipse.core.resources.IResource;import org.eclipse.jface.action.Action;import org.eclipse.jface.viewers.ISelection;import org.eclipse.jface.viewers.IStructuredSelection;import org.eclipse.ui.IEditorDescriptor;import org.eclipse.ui.IEditorInput;import org.eclipse.ui.IEditorPart;import org.eclipse.ui.IWorkbenchPage;import org.eclipse.ui.PartInitException;import org.eclipse.ui.part.FileEditorInput;import org.eclipse.search.internal.ui.SearchPlugin;import org.eclipse.search.internal.ui.util.ExceptionHandler;import org.eclipse.search.ui.ISearchResultView;import org.eclipse.search.ui.ISearchResultViewEntry;import org.eclipse.search.ui.SearchUI;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
+
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+
+import org.eclipse.ui.IEditorDescriptor;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.part.FileEditorInput;
+
+import org.eclipse.search.ui.ISearchResultView;
+import org.eclipse.search.ui.ISearchResultViewEntry;
+import org.eclipse.search.ui.SearchUI;
+
 import org.eclipse.search.internal.ui.SearchMessages;
+import org.eclipse.search.internal.ui.SearchPlugin;
+import org.eclipse.search.internal.ui.util.ExceptionHandler;
 
 class GotoMarkerAction extends Action {
 
@@ -22,8 +42,15 @@ class GotoMarkerAction extends Action {
 			show(entry.getSelectedMarker());
 		}
 	}
-	
-	public void show(IMarker marker) {
+
+	private void show(IMarker marker) {
+		if (SearchUI.reuseEditor())
+			showWithReuse(marker);
+		else
+			showWithoutReuse(marker);
+	}
+
+	private void showWithReuse(IMarker marker) {
 		IWorkbenchPage page= SearchPlugin.getActivePage();
 		IResource resource= marker.getResource();
 		if (page == null || !(resource instanceof IFile))
@@ -62,6 +89,19 @@ class GotoMarkerAction extends Action {
 		if (editor != null) {
 			editor.gotoMarker(marker);
 			fEditor= editor;
+		}
+	}
+	
+	private void showWithoutReuse(IMarker marker) {
+		IWorkbenchPage page= SearchPlugin.getActivePage();
+		if (page == null)
+			return;
+
+		try {
+			page.openEditor(marker, false);
+		} catch (PartInitException ex) {
+			ExceptionHandler.handle(ex, SearchMessages.getString("Search.Error.openEditor.title"), SearchMessages.getString("Search.Error.openEditor.message")); //$NON-NLS-2$ //$NON-NLS-1$
+			return;
 		}
 	}
 }
