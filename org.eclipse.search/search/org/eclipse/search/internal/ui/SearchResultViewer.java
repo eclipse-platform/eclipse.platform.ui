@@ -254,7 +254,9 @@ public class SearchResultViewer extends TableViewer {
 		ISelection selection= getSelection();
 		
 		if (fActionGroup != null) {
-			fActionGroup.setContext(new ActionContext(selection));
+			ActionContext context= new ActionContext(selection);
+			context.setInput(getInput());
+			fActionGroup.setContext(context);
 			fActionGroup.fillContextMenu(menu);
 			fActionGroup.setContext(null);
 		}

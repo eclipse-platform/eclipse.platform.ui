@@ -8,23 +8,27 @@ import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
 
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.viewers.IInputSelectionProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
-
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
-import org.eclipse.search.internal.core.text.ITextSearchResultCollector;
-import org.eclipse.search.internal.ui.SearchPlugin;
-import org.eclipse.search.internal.ui.util.FileLabelProvider;
-import org.eclipse.search.ui.IContextMenuContributor;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
+
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.actions.ActionGroup;
+
+import org.eclipse.search.ui.IActionGroupFactory;
 import org.eclipse.search.ui.ISearchResultView;
 import org.eclipse.search.ui.SearchUI;
+
+import org.eclipse.search.internal.core.text.ITextSearchResultCollector;
 import org.eclipse.search.internal.ui.SearchMessages;
+import org.eclipse.search.internal.ui.util.FileLabelProvider;
 
 public class TextSearchResultCollector implements ITextSearchResultCollector {
 	
@@ -37,15 +41,32 @@ public class TextSearchResultCollector implements ITextSearchResultCollector {
 	private TextSearchOperation fOperation;
 	private int fMatchCount= 0;
 	private Integer[] fMessageFormatArgs= new Integer[1];
+	
+
+	private class TextSearchActionGroupFactory implements IActionGroupFactory {
+		public ActionGroup createActionGroup(ISearchResultView part) {
+			return new TextSearchActionGroup(part);
+		}
+	}
+	
+	private class TextSearchActionGroup extends ActionGroup {
+	
+		private ISelectionProvider fSelectionProvider;		
+	
+		public TextSearchActionGroup(IViewPart part) {
+			Assert.isNotNull(part);
+			fSelectionProvider= part.getSite().getSelectionProvider();
+		}
 		
-	private class ContextMenuContributor implements IContextMenuContributor {
-		public void fill(IMenuManager menu, IInputSelectionProvider inputProvider) {
+		public void fillContextMenu(IMenuManager menu) {
 			// view must exist if we create a context menu for it.
 			ISearchResultView view= SearchUI.getSearchResultView();
-			IStructuredSelection selection= inputProvider.getSelection() instanceof IStructuredSelection 
-				?  (IStructuredSelection)inputProvider.getSelection() 
-				: StructuredSelection.EMPTY;
-			ReplaceAction replaceAll= new ReplaceAction(view.getSite(), (List)inputProvider.getInput());
+			IStructuredSelection selection= null;
+			if (getContext().getSelection() instanceof IStructuredSelection)
+				selection= (IStructuredSelection)getContext().getSelection();
+			else
+				selection= StructuredSelection.EMPTY;
+			ReplaceAction replaceAll= new ReplaceAction(view.getSite(), (List)getContext().getInput());
 			if (replaceAll.isEnabled())
 				menu.add(replaceAll);
 			ReplaceAction replaceSelected= new ReplaceAction(view.getSite(), selection);
@@ -73,11 +94,11 @@ public class TextSearchResultCollector implements ITextSearchResultCollector {
 		fMatchCount= 0;
 		if (fView != null) {
 			fView.searchStarted(
-				TextSearchPage.EXTENSION_POINT_ID,
+				new TextSearchActionGroupFactory(),
 				fOperation.getSingularLabel(),
 				fOperation.getPluralLabelPattern(),
 				fOperation.getImageDescriptor(),
-				new ContextMenuContributor(),
+				TextSearchPage.EXTENSION_POINT_ID,
 				new FileLabelProvider(FileLabelProvider.SHOW_LABEL_PATH),
 				new GotoMarkerAction(),
 				new GroupByKeyComputer(),
