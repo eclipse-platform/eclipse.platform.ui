@@ -495,7 +495,7 @@ public abstract class FormSection implements IPropertyChangeListener {
 	}
 
 	public void propertyChange(PropertyChangeEvent arg0) {
-		if (control != null && header != null) {
+		if (control != null && header != null && !control.isDisposed() && !header.isDisposed()) {
 			header.setFont(JFaceResources.getBannerFont());
 			control.layout(true);
 		}
