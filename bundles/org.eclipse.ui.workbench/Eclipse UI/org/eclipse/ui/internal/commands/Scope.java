@@ -20,8 +20,8 @@ import java.util.TreeMap;
 
 public final class Scope implements Comparable {
 
-	private final static int HASH_FACTOR = 97;
-	private final static int HASH_INITIAL = 107;
+	private final static int HASH_FACTOR = 87;
+	private final static int HASH_INITIAL = 97;
 
 	private static Comparator nameComparator;
 	

@@ -204,12 +204,14 @@ public void setSelectionProvider(ISelectionProvider provider) {
  * Method declared on IEditorSite.
  */
 public IKeyBindingService getKeyBindingService() {
-	if(keyBindingService == null) {
-		keyBindingService = new KeyBindingService(((WorkbenchWindow)getWorkbenchWindow()).getKeyBindingService(),this);
-		keyBindingService.setActiveAcceleratorScopeId(getInitialScopeId()); //$NON-NLS-1$
-	}	
+	if (keyBindingService == null) {
+		keyBindingService = new KeyBindingService(this);
+		keyBindingService.setScopes(new String[] { getInitialScopeId() }); //$NON-NLS-1$
+	}
+	
 	return keyBindingService;
 }
+
 protected String getInitialScopeId() {
 	return IWorkbenchConstants.DEFAULT_ACCELERATOR_SCOPE_ID;
 }

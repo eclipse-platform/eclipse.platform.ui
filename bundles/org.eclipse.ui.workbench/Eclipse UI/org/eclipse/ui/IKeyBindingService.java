@@ -29,14 +29,14 @@ public interface IKeyBindingService {
 	 * 
 	 * @return the active accelerator scope ids.
 	 */
-	String[] getScopeIds();
+	String[] getScopes();
 	
 	/**
 	 * Sets the active accelerator scope ids.
 	 *
 	 * @param ids the active accelerator scope ids.
 	 */	
-	void setScopeIds(String[] scopeIds)
+	void setScopes(String[] scopes)
 		throws IllegalArgumentException;
 
 	/**

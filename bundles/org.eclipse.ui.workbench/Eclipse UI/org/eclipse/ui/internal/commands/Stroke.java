@@ -11,14 +11,7 @@ Contributors:
 
 package org.eclipse.ui.internal.commands;
 
-import org.eclipse.jface.action.Action;
-
 public final class Stroke implements Comparable {
-
-	public final static Stroke EAST = new Stroke(6);  
-	public final static Stroke NORTH = new Stroke(8);
-	public final static Stroke SOUTH = new Stroke(2);
-	public final static Stroke WEST = new Stroke(4);
 
 	public static Stroke create(int value) {
 		return new Stroke(value);
@@ -37,20 +30,6 @@ public final class Stroke implements Comparable {
 		return strokes;			
 	}
 
-	public static Stroke parseKeyStroke(String string)
-		throws IllegalArgumentException {
-		if (string == null)
-			throw new IllegalArgumentException();
-		
-		int value = Action.convertAccelerator(string);
-		
-		//TODO uncomment
-		//if (value == 0)
-		//	throw new IllegalArgumentException();
-			
-		return create(value);
-	}
-
 	private int value;
 
 	private Stroke(int value) {
@@ -64,10 +43,6 @@ public final class Stroke implements Comparable {
 	
 	public boolean equals(Object object) {
 		return object instanceof Stroke && value == ((Stroke) object).value;	
-	}
-
-	public String formatKeyStroke() {
-		return Action.convertAccelerator(value);
 	}
 
 	public int getValue() {

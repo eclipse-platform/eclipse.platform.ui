@@ -23,19 +23,19 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-final class Node {
+final class SequenceNode {
 
-	static void add(SortedMap tree, Binding binding, State scopeConfiguration, State platformLocale) {
-		List strokes = binding.getSequence().getStrokes();		
+	static void add(SortedMap tree, SequenceBinding sequenceBinding, State scopeConfiguration, State platformLocale) {
+		List strokes = sequenceBinding.getSequence().getStrokes();		
 		SortedMap root = tree;
-		Node node = null;
+		SequenceNode node = null;
 	
 		for (int i = 0; i < strokes.size(); i++) {
 			Stroke stroke = (Stroke) strokes.get(i);
-			node = (Node) root.get(stroke);
+			node = (SequenceNode) root.get(stroke);
 			
 			if (node == null) {
-				node = new Node();	
+				node = new SequenceNode();	
 				root.put(stroke, node);
 			}
 			
@@ -43,7 +43,7 @@ final class Node {
 		}
 
 		if (node != null)
-			add(node.scopeConfigurationMap, scopeConfiguration, new Integer(binding.getRank()), platformLocale, binding.getCommand());
+			add(node.scopeConfigurationMap, scopeConfiguration, new Integer(sequenceBinding.getRank()), platformLocale, sequenceBinding.getCommand());
 	}
 
 	static void add(SortedMap scopeConfigurationMap, State scopeConfiguration, Integer rank, State platformLocale, String command) {			
@@ -75,7 +75,7 @@ final class Node {
 		Iterator iterator = prefix.getStrokes().iterator();
 	
 		while (iterator.hasNext()) {
-			Node node = (Node) tree.get(iterator.next());
+			SequenceNode node = (SequenceNode) tree.get(iterator.next());
 			
 			if (node == null)
 				return new TreeMap();
@@ -86,14 +86,14 @@ final class Node {
 		return tree;			
 	}
 
-	static void remove(SortedMap tree, Binding binding, State scopeConfiguration, State platformLocale) {
-		List strokes = binding.getSequence().getStrokes();		
+	static void remove(SortedMap tree, SequenceBinding sequenceBinding, State scopeConfiguration, State platformLocale) {
+		List strokes = sequenceBinding.getSequence().getStrokes();		
 		SortedMap root = tree;
-		Node node = null;
+		SequenceNode node = null;
 	
 		for (int i = 0; i < strokes.size(); i++) {
 			Stroke stroke = (Stroke) strokes.get(i);
-			node = (Node) root.get(stroke);
+			node = (SequenceNode) root.get(stroke);
 			
 			if (node == null)
 				break;
@@ -102,7 +102,7 @@ final class Node {
 		}
 
 		if (node != null)
-			remove(node.scopeConfigurationMap, scopeConfiguration, new Integer(binding.getRank()), platformLocale, binding.getCommand());
+			remove(node.scopeConfigurationMap, scopeConfiguration, new Integer(sequenceBinding.getRank()), platformLocale, sequenceBinding.getCommand());
 	}
 
 	static void remove(SortedMap scopeConfigurationMap, State scopeConfiguration, Integer rank, State platformLocale, String command) {
@@ -136,46 +136,46 @@ final class Node {
 		Iterator iterator = tree.values().iterator();	
 		
 		while (iterator.hasNext()) {
-			Node node = (Node) iterator.next();			
-			node.command = solveScopeConfigurationMap(node.scopeConfigurationMap, scopeConfigurations, platformLocales);
+			SequenceNode node = (SequenceNode) iterator.next();			
+			CommandEnvelope commandEnvelope = solveScopeConfigurationMap(node.scopeConfigurationMap, scopeConfigurations, platformLocales);					
+			node.command = commandEnvelope != null ? commandEnvelope.getCommand() : null;
 			solve(node.childMap, scopeConfigurations, platformLocales);								
 		}		
 	}
 	
-	static CommandEnvelope solveCommandSet(Set commandSet) {	
-		return commandSet.size() == 1 ? CommandEnvelope.create((String) commandSet.iterator().next()) : null;
+	static String solveCommandSet(Set commandSet) {	
+		return commandSet != null && commandSet.size() == 1 ? (String) commandSet.iterator().next() : null;
 	}
 
 	static CommandEnvelope solvePlatformLocaleMap(SortedMap platformLocaleMap, State platformLocale) {
 		int bestMatch = -1;
-		CommandEnvelope bestCommandEnvelope = null;
+		String bestCommand = null;		
 		Iterator iterator = platformLocaleMap.entrySet().iterator();
+		boolean match = false;
 
 		while (iterator.hasNext()) {
 			Map.Entry entry = (Map.Entry) iterator.next();
 			State testPlatformLocale = (State) entry.getKey();
 			Set testCommandSet = (Set) entry.getValue();
+			int testMatch = testPlatformLocale.match(platformLocale);
 
-			if (testCommandSet != null) {
-				CommandEnvelope testCommandEnvelope = solveCommandSet(testCommandSet);
-				
-				if (testCommandEnvelope != null) {
-					int testMatch = testPlatformLocale.match(platformLocale);	
-				
-					if (testMatch >= 0) {
-						if (bestMatch == -1 || testMatch < bestMatch) {
-							bestMatch = testMatch;
-							bestCommandEnvelope = testCommandEnvelope;
-						}
-						
-						if (bestMatch == 0)
-							break;
-					}								
-				}
-			}
+			if (testMatch >= 0) {
+				match = true;
+				String testCommand = solveCommandSet(testCommandSet);
+
+				if (testCommand != null) {
+					if (bestMatch == -1 || testMatch < bestMatch) {
+						bestMatch = testMatch;
+						bestCommand = testCommand;
+					}
+								
+					if (bestMatch == 0)
+						break;				
+				}					
+			}	
 		}
-		
-		return bestCommandEnvelope;
+
+		return match ? CommandEnvelope.create(bestCommand) : null;
 	}	
 
 	static CommandEnvelope solvePlatformLocaleMap(SortedMap platformLocaleMap, State[] platformLocales) {
@@ -194,56 +194,52 @@ final class Node {
 		
 		while (iterator.hasNext()) {
 			SortedMap platformLocaleMap = (SortedMap) iterator.next();
+			CommandEnvelope commandEnvelope = solvePlatformLocaleMap(platformLocaleMap, platformLocales);
 			
-			if (platformLocaleMap != null) {
-				CommandEnvelope commandEnvelope = solvePlatformLocaleMap(platformLocaleMap, platformLocales);
-			
-				if (commandEnvelope != null)
-					return commandEnvelope.getCommand();
-			}								
+			if (commandEnvelope != null)
+				return commandEnvelope.getCommand();
 		}
 
 		return null;
 	}
 
-	static String solveScopeConfigurationMap(SortedMap scopeConfigurationMap, State scopeConfiguration, State[] platformLocales) {
+	static CommandEnvelope solveScopeConfigurationMap(SortedMap scopeConfigurationMap, State scopeConfiguration, State[] platformLocales) {
 		int bestMatch = -1;
 		String bestCommand = null;
 		Iterator iterator = scopeConfigurationMap.entrySet().iterator();
+		boolean match = false;
 
 		while (iterator.hasNext()) {
 			Map.Entry entry = (Map.Entry) iterator.next();
 			State testScopeConfiguration = (State) entry.getKey();
 			SortedMap testRankMap = (SortedMap) entry.getValue();
+			int testMatch = testScopeConfiguration.match(scopeConfiguration);	
 
-			if (testRankMap != null) {
+			if (testMatch >= 0) {
+				match = true;
 				String testCommand = solveRankMap(testRankMap, platformLocales);
-				
+
 				if (testCommand != null) {
-					int testMatch = testScopeConfiguration.match(scopeConfiguration);	
-				
-					if (testMatch >= 0) {
-						if (bestMatch == -1 || testMatch < bestMatch) {
-							bestMatch = testMatch;
-							bestCommand = testCommand;
-						}
-						
-						if (bestMatch == 0)
-							break;
-					}								
-				}
-			}
+					if (bestMatch == -1 || testMatch < bestMatch) {
+						bestMatch = testMatch;
+						bestCommand = testCommand;
+					}
+								
+					if (bestMatch == 0)
+						break;
+				}					
+			}	
 		}
-		
-		return bestCommand;
+
+		return match ? CommandEnvelope.create(bestCommand) : null;
 	}
 
-	static String solveScopeConfigurationMap(SortedMap scopeConfigurationMap, State[] scopeConfigurations, State[] platformLocales) {
+	static CommandEnvelope solveScopeConfigurationMap(SortedMap scopeConfigurationMap, State[] scopeConfigurations, State[] platformLocales) {
 		for (int i = 0; i < scopeConfigurations.length; i++) {
-			String command = solveScopeConfigurationMap(scopeConfigurationMap, scopeConfigurations[i], platformLocales);
+			CommandEnvelope commandEnvelope = solveScopeConfigurationMap(scopeConfigurationMap, scopeConfigurations[i], platformLocales);
 				
-			if (command != null)
-				return command;
+			if (commandEnvelope != null)
+				return commandEnvelope;
 		}
 		
 		return null;
@@ -277,7 +273,7 @@ final class Node {
 		while (iterator.hasNext()) {
 			Map.Entry entry = (Map.Entry) iterator.next();
 			Stroke stroke = (Stroke) entry.getKey();			
-			Node node = (Node) entry.getValue();					
+			SequenceNode node = (SequenceNode) entry.getValue();					
 			List list = new ArrayList(prefix.getStrokes());
 			list.add(stroke);
 			Sequence sequence = Sequence.create(list);
@@ -285,7 +281,7 @@ final class Node {
 
 			if (childSequenceMap.size() >= 1)
 				sequenceMap.putAll(childSequenceMap);
-			else if (node.command != null)		
+			else if (node.command != null && !node.command.equals(Util.ZERO_LENGTH_STRING))		
 				sequenceMap.put(sequence, node.command);
 		}
 
@@ -296,7 +292,7 @@ final class Node {
 	private String command = null;
 	private SortedMap scopeConfigurationMap = new TreeMap();
 	
-	private Node() {
+	private SequenceNode() {
 		super();
 	}
 }

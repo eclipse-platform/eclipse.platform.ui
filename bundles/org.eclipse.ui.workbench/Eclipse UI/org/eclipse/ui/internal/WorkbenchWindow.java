@@ -80,7 +80,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.commands.Machine;
+import org.eclipse.ui.internal.commands.SequenceMachine;
 import org.eclipse.ui.internal.commands.Manager;
 import org.eclipse.ui.internal.commands.Sequence;
 import org.eclipse.ui.internal.commands.Stroke;
@@ -766,7 +766,7 @@ protected MenuManager createMenuManager() {
 				
 			char altChar = Character.toUpperCase(text.charAt(index + 1));
 			Manager manager = Manager.getInstance();
-			Machine keyMachine = manager.getKeyMachine();        
+			SequenceMachine keyMachine = manager.getKeyMachine();        
 			Sequence mode = keyMachine.getMode();
 			List strokes = new ArrayList(mode.getStrokes());
 			strokes.add(Stroke.create(SWT.ALT | altChar));
@@ -1104,8 +1104,6 @@ private boolean hardClose() {
 		actionPresentation.clearActionSets(); // fix for bug 27416
 		closeAllPages();
 		actionBuilder.dispose();
-		if(keyBindingService != null)
-			keyBindingService.dispose();
 		workbench.fireWindowClosed(this);
 	} finally {
 		return super.close();
@@ -1341,8 +1339,9 @@ public IStatus restoreState(IMemento memento, IPerspectiveDescriptor activeDescr
 		
 	setActivePage(newActivePage);
 	IWorkbenchPart part = newActivePage.getActivePart();
-	if(part != null)
-		getKeyBindingService().update(part,true);
+	
+	if (part != null)
+		getKeyBindingService().update(part);
 		
 	return result;
 }

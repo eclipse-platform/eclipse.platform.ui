@@ -16,21 +16,163 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.SortedSet;
+import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-public final class Machine {
+import org.eclipse.swt.SWT;
 
-	public static Machine create() {
-		return new Machine();
+public final class SequenceMachine {
+
+	public static SequenceMachine create() {
+		return new SequenceMachine();
+	}
+
+	private final static String LOCALE_SEPARATOR = "_"; //$NON-NLS-1$
+	private final static Locale SYSTEM_LOCALE = Locale.getDefault();
+	private final static String SYSTEM_PLATFORM = SWT.getPlatform();
+
+	static SortedMap buildPathMapForConfigurationMap(SortedMap configurationMap) {
+		SortedMap pathMap = new TreeMap();
+		Iterator iterator = configurationMap.keySet().iterator();
+
+		while (iterator.hasNext()) {
+			String id = (String) iterator.next();
+			
+			if (id != null) {			
+				Path path = getPathForConfiguration(id, configurationMap);
+			
+				if (path != null)
+					pathMap.put(id, path);
+			}			
+		}
+
+		return pathMap;		
+	}
+
+	static SortedMap buildPathMapForScopeMap(SortedMap scopeMap) {
+		SortedMap pathMap = new TreeMap();
+		Iterator iterator = scopeMap.keySet().iterator();
+
+		while (iterator.hasNext()) {
+			String id = (String) iterator.next();
+			
+			if (id != null) {			
+				Path path = getPathForScope(id, scopeMap);
+			
+				if (path != null)
+					pathMap.put(id, path);
+			}			
+		}
+
+		return pathMap;		
+	}
+
+	static Path getPathForConfiguration(String id, Map configurationMap) {
+		Path path = null;
+
+		if (id != null) {
+			List strings = new ArrayList();
+
+			while (id != null) {	
+				if (strings.contains(id))
+					return null;
+							
+				Configuration configuration = (Configuration) configurationMap.get(id);
+				
+				if (configuration == null)
+					return null;
+							
+				strings.add(0, id);
+				id = configuration.getParent();
+			}
+		
+			path = Path.create(strings);
+		}
+		
+		return path;			
+	}
+
+	static Path getPathForLocale(String locale) {
+		Path path = null;
+
+		if (locale != null) {
+			List strings = new ArrayList();				
+			locale = locale.trim();
+			
+			if (locale.length() > 0) {
+				StringTokenizer st = new StringTokenizer(locale, LOCALE_SEPARATOR);
+						
+				while (st.hasMoreElements()) {
+					String string = ((String) st.nextElement()).trim();
+					
+					if (string != null)
+						strings.add(string);
+				}
+			}
+
+			path = Path.create(strings);
+		}
+			
+		return path;		
+	}
+
+	static Path getPathForPlatform(String platform) {
+		Path path = null;
+
+		if (platform != null) {
+			List strings = new ArrayList();				
+			platform = platform.trim();
+			
+			if (platform.length() > 0)
+				strings.add(platform);
+
+			path = Path.create(strings);
+		}
+			
+		return path;		
+	}
+
+	static Path getPathForScope(String id, Map scopeMap) {
+		Path path = null;
+
+		if (id != null) {
+			List strings = new ArrayList();
+
+			while (id != null) {	
+				if (strings.contains(id))
+					return null;
+							
+				Scope scope = (Scope) scopeMap.get(id);
+				
+				if (scope == null)
+					return null;
+							
+				strings.add(0, id);
+				id = scope.getParent();
+			}
+		
+			path = Path.create(strings);
+		}
+		
+		return path;			
+	}	
+
+	static Path getSystemLocale() {
+		return SYSTEM_LOCALE != null ? getPathForLocale(SYSTEM_LOCALE.toString()) : null;
+	}
+
+	static Path getSystemPlatform() {
+		return getPathForPlatform(SYSTEM_PLATFORM);
 	}
 
 	private Map commandMap;
 	private Map commandMapForMode;	
-	private SortedSet bindingSet;
+	private SortedSet sequenceBindingSet;
 	private String configuration;
 	private SortedMap configurationMap;	
 	private SortedMap sequenceMap;
@@ -41,20 +183,20 @@ public final class Machine {
 	private boolean solved;
 	private SortedMap tree;
 
-	private Machine() {
+	private SequenceMachine() {
 		super();
 		configurationMap = new TreeMap();
 		scopeMap = new TreeMap();
-		bindingSet = new TreeSet();
-		configuration = ""; //$NON-NLS-1$
-		scopes = new String[] { "" }; //$NON-NLS-1$
+		sequenceBindingSet = new TreeSet();
+		configuration = Util.ZERO_LENGTH_STRING;
+		scopes = new String[] { Util.ZERO_LENGTH_STRING };
 		mode = Sequence.create();	
 	}
 
 	public Map getCommandMap() {
 		if (commandMap == null) {
 			solve();
-			commandMap = Collections.unmodifiableMap(Node.toCommandMap(getSequenceMap()));				
+			commandMap = Collections.unmodifiableMap(SequenceNode.toCommandMap(getSequenceMap()));				
 		}
 		
 		return commandMap;
@@ -63,19 +205,19 @@ public final class Machine {
 	public Map getCommandMapForMode() {
 		if (commandMapForMode == null) {
 			solve();
-			SortedMap tree = Node.find(this.tree, mode);
+			SortedMap tree = SequenceNode.find(this.tree, mode);
 	
 			if (tree == null)
 				tree = new TreeMap();
 
-			commandMapForMode = Collections.unmodifiableMap(Node.toCommandMap(getSequenceMapForMode()));				
+			commandMapForMode = Collections.unmodifiableMap(SequenceNode.toCommandMap(getSequenceMapForMode()));				
 		}
 		
 		return commandMapForMode;
 	}
 
-	public SortedSet getBindingSet() {
-		return bindingSet;	
+	public SortedSet getSequenceBindingSet() {
+		return sequenceBindingSet;	
 	}
 
 	public String getConfiguration() {
@@ -86,10 +228,23 @@ public final class Machine {
 		return configurationMap;	
 	}
 
+	public Sequence getFirstSequenceForCommand(String command)
+		throws IllegalArgumentException {
+		if (command == null)
+			throw new IllegalArgumentException();					
+
+		SortedSet sequenceSet = (SortedSet) getCommandMap().get(command);
+		
+		if (sequenceSet != null && !sequenceSet.isEmpty())
+			return (Sequence) sequenceSet.first();
+		
+		return null;
+	}
+
 	public SortedMap getSequenceMap() {
 		if (sequenceMap == null) {
 			solve();
-			sequenceMap = Collections.unmodifiableSortedMap(Node.toSequenceMap(tree, Sequence.create()));				
+			sequenceMap = Collections.unmodifiableSortedMap(SequenceNode.toSequenceMap(tree, Sequence.create()));				
 		}
 		
 		return sequenceMap;
@@ -98,12 +253,12 @@ public final class Machine {
 	public SortedMap getSequenceMapForMode() {
 		if (sequenceMapForMode == null) {
 			solve();
-			SortedMap tree = Node.find(this.tree, mode);
+			SortedMap tree = SequenceNode.find(this.tree, mode);
 	
 			if (tree == null)
 				tree = new TreeMap();
 							
-			sequenceMapForMode = Collections.unmodifiableSortedMap(Node.toSequenceMap(tree, mode));				
+			sequenceMapForMode = Collections.unmodifiableSortedMap(SequenceNode.toSequenceMap(tree, mode));				
 		}
 		
 		return sequenceMapForMode;
@@ -121,22 +276,22 @@ public final class Machine {
 		return (String[]) scopes.clone();
 	}		
 
-	public boolean setBindingSet(SortedSet bindingSet)
+	public boolean setBindingSet(SortedSet sequenceBindingSet)
 		throws IllegalArgumentException {
-		if (bindingSet == null)
+		if (sequenceBindingSet == null)
 			throw new IllegalArgumentException();
 		
-		bindingSet = new TreeSet(bindingSet);
-		Iterator iterator = bindingSet.iterator();
+		sequenceBindingSet = new TreeSet(sequenceBindingSet);
+		Iterator iterator = sequenceBindingSet.iterator();
 		
 		while (iterator.hasNext())
-			if (!(iterator.next() instanceof Binding))
+			if (!(iterator.next() instanceof SequenceBinding))
 				throw new IllegalArgumentException();
 
-		if (this.bindingSet.equals(bindingSet))
+		if (this.sequenceBindingSet.equals(sequenceBindingSet))
 			return false;
 		
-		this.bindingSet = Collections.unmodifiableSortedSet(bindingSet);
+		this.sequenceBindingSet = Collections.unmodifiableSortedSet(sequenceBindingSet);
 		invalidateTree();
 		return true;
 	}
@@ -234,16 +389,16 @@ public final class Machine {
 	private void build() {
 		if (tree == null) {		
 			tree = new TreeMap();
-			Iterator iterator = bindingSet.iterator();
+			Iterator iterator = sequenceBindingSet.iterator();
 		
 			while (iterator.hasNext()) {
-				Binding binding = (Binding) iterator.next();
-				Path scope = (Path) scopeMap.get(binding.getScope());
+				SequenceBinding sequenceBinding = (SequenceBinding) iterator.next();
+				Path scope = (Path) scopeMap.get(sequenceBinding.getScope());
 		
 				if (scope == null)
 					continue;
 
-				Path configuration = (Path) configurationMap.get(binding.getConfiguration());
+				Path configuration = (Path) configurationMap.get(sequenceBinding.getConfiguration());
 					
 				if (configuration == null)
 					continue;
@@ -253,10 +408,10 @@ public final class Machine {
 				paths.add(configuration);
 				State scopeConfiguration = State.create(paths);						
 				paths = new ArrayList();
-				paths.add(Manager.pathForPlatform(binding.getPlatform()));
-				paths.add(Manager.pathForLocale(binding.getLocale()));
+				paths.add(getPathForPlatform(sequenceBinding.getPlatform()));
+				paths.add(getPathForLocale(sequenceBinding.getLocale()));
 				State platformLocale = State.create(paths);		
-				Node.add(tree, binding, scopeConfiguration, platformLocale);
+				SequenceNode.add(tree, sequenceBinding, scopeConfiguration, platformLocale);
 			}
 		}
 	}
@@ -300,10 +455,10 @@ public final class Machine {
 			}
 			
 			List paths = new ArrayList();
-			paths.add(Manager.systemPlatform());
-			paths.add(Manager.systemLocale());
+			paths.add(getSystemPlatform());
+			paths.add(getSystemLocale());
 			State platformLocale = State.create(paths);			
-			Node.solve(tree, scopeConfigurations, new State[] { platformLocale } );
+			SequenceNode.solve(tree, scopeConfigurations, new State[] { platformLocale } );
 			solved = true;
 		}
 	}

@@ -45,7 +45,7 @@ abstract class AbstractMutableRegistry extends AbstractRegistry {
 	
 	public void setGestureBindings(List gestureBindings)
 		throws IllegalArgumentException {
-		this.gestureBindings = Util.safeCopy(gestureBindings, Binding.class);	
+		this.gestureBindings = Util.safeCopy(gestureBindings, SequenceBinding.class);	
 	}
 	
 	public void setGestureConfigurations(List gestureConfigurations)
@@ -55,7 +55,7 @@ abstract class AbstractMutableRegistry extends AbstractRegistry {
 	
 	public void setKeyBindings(List keyBindings)
 		throws IllegalArgumentException {
-		this.keyBindings = Util.safeCopy(keyBindings, Binding.class);	
+		this.keyBindings = Util.safeCopy(keyBindings, SequenceBinding.class);	
 	}
 	
 	public void setKeyConfigurations(List keyConfigurations)

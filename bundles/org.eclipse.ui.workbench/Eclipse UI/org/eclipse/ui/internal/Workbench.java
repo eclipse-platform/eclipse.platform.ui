@@ -682,7 +682,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 					IWorkbenchPart activePart = activePage.getActivePart();
 							
 					if (activePart != null) {
-						wWinKeyBindingService.update(activePart, true);
+						wWinKeyBindingService.update(activePart);
 						return;
 					}
 				}

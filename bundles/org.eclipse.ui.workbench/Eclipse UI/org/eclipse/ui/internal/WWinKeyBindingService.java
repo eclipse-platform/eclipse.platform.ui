@@ -12,19 +12,18 @@ Contributors:
 package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
 import java.util.SortedSet;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.StatusLineLayoutData;
-import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -43,14 +42,14 @@ import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.internal.commands.Machine;
+import org.eclipse.ui.internal.commands.KeySupport;
 import org.eclipse.ui.internal.commands.Manager;
 import org.eclipse.ui.internal.commands.Sequence;
+import org.eclipse.ui.internal.commands.SequenceMachine;
 import org.eclipse.ui.internal.commands.Stroke;
-import org.eclipse.ui.internal.commands.Util;
 import org.eclipse.ui.internal.registry.IActionSet;
 
-public class WWinKeyBindingService {
+final class WWinKeyBindingService {
 
 	private static class KeyModeContributionItem extends ContributionItem {
 
@@ -58,11 +57,11 @@ public class WWinKeyBindingService {
 		private String text;
 		private CLabel label;
 	
-		public KeyModeContributionItem(String id) {
+		KeyModeContributionItem(String id) {
 			super(id);
 		}
 	
-		public void setText(String msg) {
+		void setText(String msg) {
 			text = msg;
 			
 			if (label != null && !label.isDisposed())
@@ -100,33 +99,93 @@ public class WWinKeyBindingService {
 		}
 	}
 
-	private final KeyModeContributionItem statusItem = new KeyModeContributionItem("KeyModeContribution"); //$NON-NLS-1$
+	private final KeyModeContributionItem keyModeContributionItem = new KeyModeContributionItem("KeyModeContribution"); //$NON-NLS-1$
 
-	private HashMap globalActionDefIdToAction = new HashMap();
-	private HashMap actionSetDefIdToAction = new HashMap();
-	private IPropertyChangeListener propertyListener;
-	private KeyBindingService activeService;
-	private WorkbenchWindow window;
-	private AcceleratorMenu acceleratorMenu;
+	private final IPartListener partListener = new IPartListener() {
+		public void partActivated(IWorkbenchPart part) {
+			update(part);
+		}
+			
+		public void partBroughtToTop(IWorkbenchPart part) {
+		}
+			
+		public void partClosed(IWorkbenchPart part) {
+		}
+			
+		public void partDeactivated(IWorkbenchPart part) {
+			clear();
+		}
+			
+		public void partOpened(IWorkbenchPart part) {
+		}
+	};
+		
+	private final ShellListener shellListener = new ShellAdapter() {
+		public void shellDeactivated(ShellEvent e) {
+			clear();
+		}
+	};
 
-	private VerifyListener verifyListener = new VerifyListener() {
+	private final VerifyListener verifyListener = new VerifyListener() {
 		public void verifyText(VerifyEvent event) {
 			event.doit = false;
 			clear();
 		}
 	};
 
-	public void clear() {		
-		Manager manager = Manager.getInstance();
-		Machine keyMachine = manager.getKeyMachine();
-		keyMachine.setMode(Sequence.create());
-		statusItem.setText(""); //$NON-NLS-1$	
+	private AcceleratorMenu acceleratorMenu;
+	private SortedMap actionSetsCommandIdToActionMap = new TreeMap();
+	private KeyBindingService activeKeyBindingService;
+	private SortedMap globalActionsCommandIdToActionMap = new TreeMap();
+	private WorkbenchWindow workbenchWindow;
+	
+	WWinKeyBindingService(WorkbenchWindow workbenchWindow) {
+		this.workbenchWindow = workbenchWindow;
+		workbenchWindow.getStatusLineManager().add(keyModeContributionItem);		
+		workbenchWindow.getPartService().addPartListener(partListener);
+		final WorkbenchWindow finalWorkbenchWindow = this.workbenchWindow; 
+		
+		this.workbenchWindow.addPageListener(new IPageListener() {			
+			public void pageActivated(IWorkbenchPage page) {
+			}
+			
+			public void pageClosed(IWorkbenchPage page) {
+			}
+			
+			public void pageOpened(IWorkbenchPage page) {
+				page.addPartListener(partListener);
+				update(page.getActivePart());
+				finalWorkbenchWindow.getShell().removeShellListener(shellListener);				
+				finalWorkbenchWindow.getShell().addShellListener(shellListener);				
+			}
+		});		
+	}
+
+	void clear() {		
+		Manager.getInstance().getKeyMachine().setMode(Sequence.create());
+		keyModeContributionItem.setText(""); //$NON-NLS-1$	
 		updateAccelerators();
 	}
-	
-	public void pressed(Stroke stroke, Event event) { 
+
+	IAction getAction(String command) {
+		IAction action = null;
+		
+		if (activeKeyBindingService != null)
+			action = (IAction) activeKeyBindingService.getAction(command);
+    	
+		if (action == null) {
+			action = (IAction) actionSetsCommandIdToActionMap.get(command);
+		
+			if (action == null)
+				action = (IAction) globalActionsCommandIdToActionMap.get(command);
+		}
+    	    		
+		return action;
+	}
+
+	void pressed(Stroke stroke, Event event) { 
 		Manager manager = Manager.getInstance();
-		Machine keyMachine = manager.getKeyMachine();				
+		SequenceMachine keyMachine = manager.getKeyMachine();				
 		Sequence mode = keyMachine.getMode();					
 		List strokes = new ArrayList(keyMachine.getMode().getStrokes());
 		strokes.add(stroke);
@@ -139,166 +198,104 @@ public class WWinKeyBindingService {
 			clear();
 			String command = (String) sequenceMapForMode.get(childMode);
 
-			if (command != null && activeService != null) {
-				IAction action = activeService.getAction(command);
+			if (command != null && activeKeyBindingService != null) {
+				IAction action = getAction(command);
 			
 				if (action != null && action.isEnabled())
 					action.runWithEvent(event);
 			}
 		}
 		else {
-			statusItem.setText(childMode.formatKeySequence());
+			keyModeContributionItem.setText(KeySupport.formatSequence(childMode));
 			updateAccelerators();
 		}
 	}
 
-	public WWinKeyBindingService(WorkbenchWindow workbenchWindow) {
-		this.window = workbenchWindow;
-		window.getStatusLineManager().add(statusItem);		
-		IWorkbenchPage[] pages = window.getPages();
+	void registerActionSets(IActionSet[] actionSets) {
+		actionSetsCommandIdToActionMap.clear();
 		
-		final IPartListener partListener = new IPartListener() {
-			public void partActivated(IWorkbenchPart part) {
-				update(part, false);
-			}
-			
-			public void partBroughtToTop(IWorkbenchPart part) {
-			}
-			
-			public void partClosed(IWorkbenchPart part) {
-			}
-			
-			public void partDeactivated(IWorkbenchPart part) {
-				clear();
-			}
-			
-			public void partOpened(IWorkbenchPart part) {
-			}
-		};
-		
-		final ShellListener shellListener = new ShellAdapter() {
-			public void shellDeactivated(ShellEvent e) {
-				clear();
-			}
-		};
-		
-		// TODO: Just use getPartService to add listener.		
-		for (int i = 0; i < pages.length; i++) {
-			pages[i].addPartListener(partListener);
-		}
-		
-		window.addPageListener(new IPageListener() {			
-			public void pageActivated(IWorkbenchPage page) {
-			}
-			
-			public void pageClosed(IWorkbenchPage page) {
-			}
-			
-			public void pageOpened(IWorkbenchPage page) {
-				page.addPartListener(partListener);
-				partListener.partActivated(page.getActivePart());
-				window.getShell().removeShellListener(shellListener);				
-				window.getShell().addShellListener(shellListener);				
-			}
-		});		
-	}
-
-	public void dispose() {
-	}
-
-	public void registerGlobalAction(IAction action) {
-		globalActionDefIdToAction.put(action.getActionDefinitionId(),action);
-	}
-
-	public void registerActionSets(IActionSet sets[]) {
-		actionSetDefIdToAction.clear();
-		
-		for (int i=0; i<sets.length; i++) {
-			if (sets[i] instanceof PluginActionSet) {
-				PluginActionSet set = (PluginActionSet)sets[i];
-				IAction actions[] = set.getPluginActions();
+		for (int i = 0; i < actionSets.length; i++) {
+			if (actionSets[i] instanceof PluginActionSet) {
+				PluginActionSet pluginActionSet = (PluginActionSet) actionSets[i];
+				IAction[] pluginActions = pluginActionSet.getPluginActions();
 				
-				for (int j = 0; j < actions.length; j++) {
-					Action action = (Action)actions[j];
-					String defId = action.getActionDefinitionId();
+				for (int j = 0; j < pluginActions.length; j++) {
+					IAction pluginAction = (IAction) pluginActions[j];
+					String command = pluginAction.getActionDefinitionId();
 					
-					if (defId != null) {
-						actionSetDefIdToAction.put(action.getActionDefinitionId(),action);
-					}
+					if (command != null)
+						actionSetsCommandIdToActionMap.put(command, pluginAction);
 				}
 			}
 		}
 	}
 
-	public HashMap getMapping() {
-		// TODO this could be a performance problem.
-		HashMap result = (HashMap) globalActionDefIdToAction.clone();
-		result.putAll(actionSetDefIdToAction);
-		return result;
+	void registerGlobalAction(IAction globalAction) {
+		String command = globalAction.getActionDefinitionId();
+
+		if (command != null)		
+			globalActionsCommandIdToActionMap.put(command, globalAction);
 	}
 
-	public void update(IWorkbenchPart part, boolean force) {
+	void update(IWorkbenchPart part) {
 		if (part == null)
 			return;
    		
-		String[] oldScopeIds = new String[0];
-   		
-		if (activeService != null)
-			oldScopeIds = activeService.getScopeIds();
-   			
-		activeService = (KeyBindingService) part.getSite().getKeyBindingService();
+		String[] oldScopes = new String[] { "" }; //$NON-NLS-1$
+		
+		if (activeKeyBindingService != null)
+			oldScopes = activeKeyBindingService.getScopes();
+
+		activeKeyBindingService = (KeyBindingService) part.getSite().getKeyBindingService();
 		clear();
-
-		String[] newScopeIds = new String[0];
-  		
-		if (activeService != null)
-			newScopeIds = activeService.getScopeIds();
-
-		if (force || Util.compare(oldScopeIds, newScopeIds) != 0) {
-			Manager manager = Manager.getInstance();
-			Machine keyMachine = manager.getKeyMachine();
-
-			// TODO
-			if (newScopeIds == null || newScopeIds.length == 0)
-				newScopeIds = new String[] { "org.eclipse.ui.globalScope" }; //$NON-NLS-1$
-	    	
-			try {
-				keyMachine.setScopes(newScopeIds);
-			} catch (IllegalArgumentException eIllegalArgument) {
-				System.err.println(eIllegalArgument);
+		String[] newScopes = new String[] { "" }; //$NON-NLS-1$
+		
+		if (activeKeyBindingService != null)
+			newScopes = activeKeyBindingService.getScopes();
+		
+		try {
+			if (Manager.getInstance().getKeyMachine().setScopes(newScopes)) {
+				MenuManager menuManager = workbenchWindow.getMenuManager();
+				menuManager.update(IAction.TEXT);				
 			}
-	    			    	   	
-			MenuManager menuManager = window.getMenuManager();
-			menuManager.update(IAction.TEXT);
+		} catch (IllegalArgumentException eIllegalArgument) {
+			System.err.println(eIllegalArgument);
 		}
 	}
 
-	public void updateAccelerators() {
-		Manager manager = Manager.getInstance();
-		Machine keyMachine = manager.getKeyMachine();      		
+	void updateAccelerators() {
+		SequenceMachine keyMachine = Manager.getInstance().getKeyMachine();      		
 		Sequence mode = keyMachine.getMode();
 		List strokes = mode.getStrokes();
 		int size = strokes.size();		
 		Map sequenceMapForMode = keyMachine.getSequenceMapForMode();
 		SortedSet strokeSetForMode = new TreeSet();
-		Iterator iterator = sequenceMapForMode.keySet().iterator();
+		Iterator iterator = sequenceMapForMode.entrySet().iterator();
 
-		while (iterator.hasNext()) {
-			Sequence sequence = (Sequence) iterator.next();
-			
-			if (sequence.isChildOf(mode, false))
-				strokeSetForMode.add(sequence.getStrokes().get(size));	
+		if (activeKeyBindingService != null) {					
+			while (iterator.hasNext()) {
+				Map.Entry entry = (Map.Entry) iterator.next();
+				Sequence sequence = (Sequence) entry.getKey();
+				String command = (String) entry.getValue();		
+
+				if (sequence.isChildOf(mode, false)) {
+					IAction action = getAction(command);
+					
+					if (action != null)
+						strokeSetForMode.add(sequence.getStrokes().get(size));	
+				}
+			}
 		}
-
-	   	iterator = strokeSetForMode.iterator();
-	   	int[] accelerators = new int[strokeSetForMode.size()];
+		
+		iterator = strokeSetForMode.iterator();
+		int[] accelerators = new int[strokeSetForMode.size()];
 		int i = 0;
 			   	
-	   	while (iterator.hasNext())
-	   		accelerators[i++] = ((Stroke) iterator.next()).getValue();	   		
-
+		while (iterator.hasNext())
+			accelerators[i++] = ((Stroke) iterator.next()).getValue();
+		
 		if (acceleratorMenu == null || acceleratorMenu.isDisposed()) {		
-			Menu parent = window.getShell().getMenuBar();
+			Menu parent = workbenchWindow.getShell().getMenuBar();
 			
 			if (parent == null || parent.getItemCount() < 1)
 				return;
@@ -328,7 +325,7 @@ public class WWinKeyBindingService {
 			}
 		});
 
-		if (mode.getStrokes().size() == 0)
+		if (size == 0)
 			acceleratorMenu.removeVerifyListener(verifyListener);
 		else
 			acceleratorMenu.addVerifyListener(verifyListener);

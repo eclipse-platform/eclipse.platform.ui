@@ -20,6 +20,8 @@ import java.util.ResourceBundle;
 
 public final class Util {
 
+	public final static String ZERO_LENGTH_STRING = ""; //$NON-NLS-1$
+
 	public static int compare(Comparable left, Comparable right) {
 		if (left == null && right == null)
 			return 0;	

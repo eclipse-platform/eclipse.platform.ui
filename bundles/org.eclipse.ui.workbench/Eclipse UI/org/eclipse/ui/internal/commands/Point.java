@@ -13,8 +13,8 @@ package org.eclipse.ui.internal.commands;
 
 public final class Point implements Comparable {
 
-	private final static int HASH_FACTOR = 87;
-	private final static int HASH_INITIAL = 97;
+	private final static int HASH_FACTOR = 77;
+	private final static int HASH_INITIAL = 87;
 
 	public static Point create(int x, int y) {
 		return new Point(x, y);

@@ -20,8 +20,8 @@ import java.util.TreeMap;
 
 public final class Category implements Comparable {
 
-	private final static int HASH_FACTOR = 47;
-	private final static int HASH_INITIAL = 57;
+	private final static int HASH_FACTOR = 37;
+	private final static int HASH_INITIAL = 47;
 
 	private static Comparator nameComparator;
 	

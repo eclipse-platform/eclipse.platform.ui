@@ -235,36 +235,36 @@ public final class CoreRegistry extends AbstractRegistry {
 			String key = element.getAttribute(DEPRECATED_TAG_KEY);
 
 			if (key != null) {
-				List keySequences = new ArrayList();	
+				List sequences = new ArrayList();	
 				StringTokenizer orTokenizer = new StringTokenizer(key, DEPRECATED_KEY_SEQUENCE_SEPARATOR); 
 			
 				while (orTokenizer.hasMoreTokens()) {					
 					try {			
-						Sequence keySequence = Sequence.parseKeySequence(orTokenizer.nextToken());
+						Sequence sequence = KeySupport.parseSequence(orTokenizer.nextToken());
 
-						if (keySequence.getStrokes().size() >= 1)
-							keySequences.add(keySequence);		
+						if (sequence.getStrokes().size() >= 1)
+							sequences.add(sequence);		
 					} catch (IllegalArgumentException eIllegalArgument) {					
 					}
 				}		
 				
-				if (keySequences.size() >= 1) {
+				if (sequences.size() >= 1) {
 					String locale = element.getAttribute(Persistence.TAG_LOCALE);
 		
 					if (locale == null)
-						locale = Persistence.ZERO_LENGTH_STRING;
+						locale = Util.ZERO_LENGTH_STRING;
 		
 					String platform = element.getAttribute(Persistence.TAG_PLATFORM);
 		
 					if (platform == null)
-						platform = Persistence.ZERO_LENGTH_STRING;
+						platform = Util.ZERO_LENGTH_STRING;
 		
 					String plugin = getPlugin(element);				
-					Iterator iterator = keySequences.iterator();
+					Iterator iterator = sequences.iterator();
 				
 					while (iterator.hasNext()) {
-						Sequence keySequence = (Sequence) iterator.next();			
-						keyBindings.add(Binding.create(keyConfiguration, id, locale, platform, plugin, RANK_CORE, scope, keySequence));	
+						Sequence sequence = (Sequence) iterator.next();			
+						keyBindings.add(SequenceBinding.create(keyConfiguration, id, locale, platform, plugin, RANK_CORE, scope, sequence));	
 					}
 				}
 			}
@@ -285,7 +285,7 @@ public final class CoreRegistry extends AbstractRegistry {
 		}	
 
 		private boolean readGestureBinding(IConfigurationElement element) {
-			Binding gestureBinding = Persistence.readBinding(ConfigurationElementMemento.create(element), getPlugin(element), RANK_CORE);
+			SequenceBinding gestureBinding = Persistence.readBinding(ConfigurationElementMemento.create(element), getPlugin(element), RANK_CORE);
 
 			if (gestureBinding != null)
 				gestureBindings.add(gestureBinding);
@@ -303,7 +303,7 @@ public final class CoreRegistry extends AbstractRegistry {
 		}
 
 		private boolean readKeyBinding(IConfigurationElement element) {
-			Binding keyBinding = Persistence.readBinding(ConfigurationElementMemento.create(element), getPlugin(element), RANK_CORE);
+			SequenceBinding keyBinding = Persistence.readBinding(ConfigurationElementMemento.create(element), getPlugin(element), RANK_CORE);
 
 			if (keyBinding != null)
 				keyBindings.add(keyBinding);

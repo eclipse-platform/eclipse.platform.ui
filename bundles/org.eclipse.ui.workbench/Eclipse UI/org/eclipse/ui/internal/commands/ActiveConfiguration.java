@@ -36,11 +36,11 @@ public final class ActiveConfiguration implements Comparable {
 	}
 	
 	public int compareTo(Object object) {
-		ActiveConfiguration activeKeyConfiguration = (ActiveConfiguration) object;
-		int compareTo = Util.compare(plugin, activeKeyConfiguration.plugin);
+		ActiveConfiguration activeConfiguration = (ActiveConfiguration) object;
+		int compareTo = Util.compare(plugin, activeConfiguration.plugin);
 		
 		if (compareTo == 0)		
-			compareTo = value.compareTo(activeKeyConfiguration.value);			
+			compareTo = value.compareTo(activeConfiguration.value);			
 		
 		return compareTo;	
 	}
@@ -49,8 +49,8 @@ public final class ActiveConfiguration implements Comparable {
 		if (!(object instanceof ActiveConfiguration))
 			return false;
 
-		ActiveConfiguration activeKeyConfiguration = (ActiveConfiguration) object;	
-		return Util.equals(plugin, activeKeyConfiguration.plugin) && value.equals(activeKeyConfiguration.value);
+		ActiveConfiguration activeConfiguration = (ActiveConfiguration) object;	
+		return Util.equals(plugin, activeConfiguration.plugin) && value.equals(activeConfiguration.value);
 	}
 
 	public String getPlugin() {

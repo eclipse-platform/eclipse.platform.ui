@@ -15,8 +15,8 @@ import java.util.Arrays;
 
 public final class CaptureEvent implements Comparable {
 
-	private final static int HASH_FACTOR = 37;
-	private final static int HASH_INITIAL = 47;
+	private final static int HASH_FACTOR = 27;
+	private final static int HASH_INITIAL = 37;
 
 	public static CaptureEvent create(int data, int pen, Point[] points)
 		throws IllegalArgumentException {

@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -71,11 +70,13 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 	private final static ResourceBundle resourceBundle = ResourceBundle.getBundle(KeyPreferencePage.class.getName());
 
 	private final static String COMMAND_CONFLICT = Util.getString(resourceBundle, "commandConflict"); //$NON-NLS-1$
+	private final static String COMMAND_NOTHING = Util.getString(resourceBundle, "commandNothing"); //$NON-NLS-1$
 	private final static String COMMAND_UNDEFINED = Util.getString(resourceBundle, "commandUndefined"); //$NON-NLS-1$
 	private final static int DIFFERENCE_ADD = 0;	
 	private final static int DIFFERENCE_CHANGE = 1;	
 	private final static int DIFFERENCE_MINUS = 2;	
 	private final static int DIFFERENCE_NONE = 3;	
+	private final static Image IMAGE_BLANK = ImageFactory.getImage("blank"); //$NON-NLS-1$
 	private final static Image IMAGE_CHANGE = ImageFactory.getImage("change"); //$NON-NLS-1$
 	private final static Image IMAGE_MINUS = ImageFactory.getImage("minus"); //$NON-NLS-1$
 	private final static Image IMAGE_PLUS = ImageFactory.getImage("plus"); //$NON-NLS-1$
@@ -83,57 +84,62 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 	private final static RGB RGB_CONFLICT_MINUS = new RGB(255, 192, 192);
 	private final static RGB RGB_MINUS =	new RGB(192, 192, 192);
 	private final static char SPACE = ' ';
-	private final static String ZERO_LENGTH_STRING = ""; //$NON-NLS-1$
+
+	private final class CommandSetPair {
+		
+		Set customSet;
+		Set defaultSet;		
+	}
 
 	private final class CommandRecord {
 
-		String commandId;
-		Sequence keySequence;
-		String scopeId;
-		String keyConfigurationId;
+		String command;
+		Sequence sequence;
+		String scope;
+		String configuration;
 		Set customSet;
 		Set defaultSet;
 
 		boolean customConflict = false;
-		String customCommandId = null;
+		String customCommand = null;
 		boolean defaultConflict = false;
-		String defaultCommandId = null;	
+		String defaultCommand = null;	
 
 		void calculate() {
 			if (customSet.size() > 1)
 				customConflict = true;
 			else if (!customSet.isEmpty())				
-				customCommandId = (String) customSet.iterator().next();
+				customCommand = (String) customSet.iterator().next();
 	
 			if (defaultSet.size() > 1)
 				defaultConflict = true;
 			else if (!defaultSet.isEmpty())				
-				defaultCommandId = (String) defaultSet.iterator().next();
+				defaultCommand = (String) defaultSet.iterator().next();
 		}
 	}
 
-	private final class KeySequenceRecord {
+	private final class SequenceRecord {
 
-		String scopeId;
-		String keyConfigurationId;
+		String scope;
+		String configuration;
 		Set customSet;
 		Set defaultSet;
 
 		boolean customConflict = false;
-		String customCommandId = null;
+		String customCommand = null;
 		boolean defaultConflict = false;
-		String defaultCommandId = null;	
+		String defaultCommand = null;	
 
 		void calculate() {
 			if (customSet.size() > 1)
 				customConflict = true;
 			else if (!customSet.isEmpty())				
-				customCommandId = (String) customSet.iterator().next();
+				customCommand = (String) customSet.iterator().next();
 	
 			if (defaultSet.size() > 1)
 				defaultConflict = true;
 			else if (!defaultSet.isEmpty())				
-				defaultCommandId = (String) defaultSet.iterator().next();
+				defaultCommand = (String) defaultSet.iterator().next();
 		}
 	}	
 
@@ -213,30 +219,29 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		}						
 	};
 
-	private Label labelActiveKeyConfiguration; 
-	private Combo comboActiveKeyConfiguration;
+	private Label labelActiveConfiguration; 
+	private Combo comboActiveConfiguration;
 	//private Button buttonNew; 
 	//private Button buttonRename;
 	//private Button buttonDelete;
 	private Label labelCommands;
 	private TreeViewer treeViewerCommands;
 	//private Button buttonCategorize;
-	private Label labelKeySequencesForCommand;
-	private Table tableKeySequencesForCommand;
-	//private TableViewer tableViewerKeySequencesForCommand;	
-	private Label labelKeySequence;
-	private Combo comboKeySequence;
+	private Label labelSequencesForCommand;
+	private Table tableSequencesForCommand;
+	//private TableViewer ;	
+	private Label labelSequence;
+	private Combo comboSequence;
 	private Label labelScope; 
 	private Combo comboScope;
-	private Label labelKeyConfiguration; 
-	private Combo comboKeyConfiguration;
+	private Label labelConfiguration; 
+	private Combo comboConfiguration;
 	private Button buttonChange;
-	private Label labelCommandsForKeySequence;
-	private Table tableCommandsForKeySequence;
-	//private TableViewer tableViewerCommandsForKeySequence;
+	private Label labelCommandsForSequence;
+	private Table tableCommandsForSequence;
+	//private TableViewer tableViewerCommandsForSequence;
 
 	private IWorkbench workbench;
-	private State state;
 
 	private List categories;
 	private SortedMap categoriesById;
@@ -272,10 +277,6 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 
 	public void init(IWorkbench workbench) {
 		this.workbench = workbench;
-		List paths = new ArrayList();
-		paths.add(Manager.systemPlatform());
-		paths.add(Manager.systemLocale());
-		state = State.create(paths);
 		PreferenceRegistry preferenceRegistry = PreferenceRegistry.getInstance();
 
 		try {
@@ -286,8 +287,6 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		preferenceActiveKeyConfigurations = new ArrayList(preferenceRegistry.getActiveKeyConfigurations());
 		preferenceKeyBindings = new ArrayList(preferenceRegistry.getKeyBindings());
 		preferenceKeyConfigurations = new ArrayList(preferenceRegistry.getKeyConfigurations());
-		
-		// TODO solve preferenceKeyBindings for PL
 	}
 
 	public boolean performOk() {
@@ -302,8 +301,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		} catch (IOException eIO) {
 		}
 
-		Manager.getInstance().getKeyMachine().setConfiguration(activeKeyConfiguration != null ? activeKeyConfiguration.getValue() : ZERO_LENGTH_STRING); //$NON-NLS-1$
-		Manager.getInstance().update();
+		Manager.getInstance().reset();
 
 		if (workbench instanceof Workbench)
 			((Workbench) this.workbench).updateKeys();
@@ -382,8 +380,6 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 			localKeyBindings = new ArrayList(localRegistry.getKeyBindings());
 			localKeyConfigurations = new ArrayList(localRegistry.getKeyConfigurations());
 
-			// TODO solve core and local KeyBindings for PL
-	
 			copyToUI();
 			update();
 		} else
@@ -417,10 +413,10 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 	private void copyFromUI() {
 		activeKeyConfiguration = null; 		
 		preferenceActiveKeyConfigurations = new ArrayList();		
-		int index = comboActiveKeyConfiguration.getSelectionIndex();
+		int index = comboActiveConfiguration.getSelectionIndex();
 				
 		if (index >= 0) {
-			Configuration keyConfiguration = (Configuration) keyConfigurationsByName.get(comboActiveKeyConfiguration.getItem(index));
+			Configuration keyConfiguration = (Configuration) keyConfigurationsByName.get(comboActiveConfiguration.getItem(index));
 			activeKeyConfiguration = ActiveConfiguration.create(null, keyConfiguration.getId());
 			preferenceActiveKeyConfigurations.add(activeKeyConfiguration);
 		}
@@ -450,8 +446,8 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 			keyConfigurationsById = Collections.unmodifiableSortedMap(Configuration.sortedMapById(this.keyConfigurations));
 			keyConfigurationsByName = Collections.unmodifiableSortedMap(Configuration.sortedMapByName(this.keyConfigurations));
 			Set keyConfigurationNameSet = keyConfigurationsByName.keySet();
-			comboActiveKeyConfiguration.setItems((String[]) keyConfigurationNameSet.toArray(new String[keyConfigurationNameSet.size()]));
-			comboKeyConfiguration.setItems((String[]) keyConfigurationNameSet.toArray(new String[keyConfigurationNameSet.size()]));
+			comboActiveConfiguration.setItems((String[]) keyConfigurationNameSet.toArray(new String[keyConfigurationNameSet.size()]));
+			comboConfiguration.setItems((String[]) keyConfigurationNameSet.toArray(new String[keyConfigurationNameSet.size()]));
 		}		
 
 		int index = -1;
@@ -460,43 +456,38 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 			Configuration keyConfiguration = (Configuration) keyConfigurationsById.get(activeKeyConfiguration.getValue());
 
 			if (keyConfiguration != null)
-				index = comboActiveKeyConfiguration.indexOf(keyConfiguration.getName());
+				index = comboActiveConfiguration.indexOf(keyConfiguration.getName());
 		}
 			
 		if (index >= 0)
-			comboActiveKeyConfiguration.select(index);
+			comboActiveConfiguration.select(index);
 		else {
-			comboActiveKeyConfiguration.clearSelection();
-			comboActiveKeyConfiguration.deselectAll();
+			comboActiveConfiguration.clearSelection();
+			comboActiveConfiguration.deselectAll();
 		}
 
-		tree = new TreeMap();
 		SortedSet keyBindingSet = new TreeSet();
 		keyBindingSet.addAll(coreKeyBindings);
 		keyBindingSet.addAll(localKeyBindings);
 		keyBindingSet.addAll(preferenceKeyBindings);
-		Iterator iterator = keyBindingSet.iterator();
-		
-		while (iterator.hasNext()) {
-			Binding keyBinding = (Binding) iterator.next();				
-			set(tree, keyBinding, false);			
-		}
+
+		tree = build(keyBindingSet);	
 
 		keySequencesByName = new TreeMap();
-		iterator = tree.keySet().iterator();
+		Iterator iterator = tree.keySet().iterator();
 
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
 			
 			if (object instanceof Sequence) {
 				Sequence keySequence = (Sequence) object;
-				String name = keySequence.formatKeySequence();
+				String name = KeySupport.formatSequence(keySequence);
 				keySequencesByName.put(name, keySequence);
 			}
 		}		
 
 		Set keySequenceNameSet = keySequencesByName.keySet();
-		comboKeySequence.setItems((String[]) keySequenceNameSet.toArray(new String[keySequenceNameSet.size()]));
+		comboSequence.setItems((String[]) keySequenceNameSet.toArray(new String[keySequenceNameSet.size()]));
 		selectedTreeViewerCommands();
 	}
 
@@ -516,15 +507,15 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		gridLayout.numColumns = 5;
 		compositeActiveKeyConfiguration.setLayout(gridLayout);
 
-		labelActiveKeyConfiguration = new Label(compositeActiveKeyConfiguration, SWT.LEFT);
-		labelActiveKeyConfiguration.setFont(compositeActiveKeyConfiguration.getFont());
-		labelActiveKeyConfiguration.setText(Util.getString(resourceBundle, "labelActiveKeyConfiguration")); //$NON-NLS-1$
+		labelActiveConfiguration = new Label(compositeActiveKeyConfiguration, SWT.LEFT);
+		labelActiveConfiguration.setFont(compositeActiveKeyConfiguration.getFont());
+		labelActiveConfiguration.setText(Util.getString(resourceBundle, "labelActiveConfiguration")); //$NON-NLS-1$
 
-		comboActiveKeyConfiguration = new Combo(compositeActiveKeyConfiguration, SWT.READ_ONLY);
-		comboActiveKeyConfiguration.setFont(compositeActiveKeyConfiguration.getFont());
+		comboActiveConfiguration = new Combo(compositeActiveKeyConfiguration, SWT.READ_ONLY);
+		comboActiveConfiguration.setFont(compositeActiveKeyConfiguration.getFont());
 		GridData gridData = new GridData();
 		gridData.widthHint = 150;
-		comboActiveKeyConfiguration.setLayoutData(gridData);
+		comboActiveConfiguration.setLayoutData(gridData);
 
 		//buttonNew = new Button(compositeActiveKeyConfiguration, SWT.CENTER | SWT.PUSH);
 		//buttonNew.setFont(compositeActiveKeyConfiguration.getFont());
@@ -586,8 +577,8 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
  
 		treeViewerCommands = new TreeViewer(compositeAssignmentLeft);
 		gridData = new GridData(GridData.FILL_BOTH);
-		gridData.heightHint = 200;
-		gridData.widthHint = 220;
+		gridData.heightHint = 0;
+		gridData.widthHint = 200;
 		treeViewerCommands.getControl().setLayoutData(gridData);
 		treeViewerCommands.setContentProvider(new TreeViewerCommandsContentProvider());	
 		treeViewerCommands.setLabelProvider(new TreeViewerCommandsLabelProvider());		
@@ -606,37 +597,37 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		compositeAssignmentRight.setLayout(gridLayout);
 		compositeAssignmentRight.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		labelKeySequencesForCommand = new Label(compositeAssignmentRight, SWT.LEFT);
-		labelKeySequencesForCommand.setFont(compositeAssignmentRight.getFont());
-		labelKeySequencesForCommand.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		labelKeySequencesForCommand.setText(Util.getString(resourceBundle, "labelKeySequencesForCommand.noSelection")); //$NON-NLS-1$
+		labelSequencesForCommand = new Label(compositeAssignmentRight, SWT.LEFT);
+		labelSequencesForCommand.setFont(compositeAssignmentRight.getFont());
+		labelSequencesForCommand.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		labelSequencesForCommand.setText(Util.getString(resourceBundle, "labelSequencesForCommand.noSelection")); //$NON-NLS-1$
 
-		tableKeySequencesForCommand = new Table(compositeAssignmentRight, SWT.BORDER | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
-		tableKeySequencesForCommand.setFont(compositeAssignmentRight.getFont());
-		tableKeySequencesForCommand.setHeaderVisible(true);
+		tableSequencesForCommand = new Table(compositeAssignmentRight, SWT.BORDER | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
+		tableSequencesForCommand.setFont(compositeAssignmentRight.getFont());
+		tableSequencesForCommand.setHeaderVisible(true);
 		gridData = new GridData(GridData.FILL_BOTH);
 		gridData.heightHint = 90;
-		gridData.widthHint = 400;	
-		tableKeySequencesForCommand.setLayoutData(gridData);
+		gridData.widthHint = 440;	
+		tableSequencesForCommand.setLayoutData(gridData);
 
-		TableColumn tableColumn = new TableColumn(tableKeySequencesForCommand, SWT.NULL, 0);
+		TableColumn tableColumn = new TableColumn(tableSequencesForCommand, SWT.NULL, 0);
 		tableColumn.setResizable(false);
-		tableColumn.setText(ZERO_LENGTH_STRING);
+		tableColumn.setText(Util.ZERO_LENGTH_STRING);
 		tableColumn.setWidth(20);
 
-		tableColumn = new TableColumn(tableKeySequencesForCommand, SWT.NULL, 1);
+		tableColumn = new TableColumn(tableSequencesForCommand, SWT.NULL, 1);
 		tableColumn.setResizable(true);
 		tableColumn.setText(Util.getString(resourceBundle, "tableColumnScope")); //$NON-NLS-1$
-		tableColumn.setWidth(80);
+		tableColumn.setWidth(100);
 
-		tableColumn = new TableColumn(tableKeySequencesForCommand, SWT.NULL, 2);
+		tableColumn = new TableColumn(tableSequencesForCommand, SWT.NULL, 2);
 		tableColumn.setResizable(true);
-		tableColumn.setText(Util.getString(resourceBundle, "tableColumnKeyConfiguration")); //$NON-NLS-1$
-		tableColumn.setWidth(80);
+		tableColumn.setText(Util.getString(resourceBundle, "tableColumnConfiguration")); //$NON-NLS-1$
+		tableColumn.setWidth(100);
 
-		tableColumn = new TableColumn(tableKeySequencesForCommand, SWT.NULL, 3);
+		tableColumn = new TableColumn(tableSequencesForCommand, SWT.NULL, 3);
 		tableColumn.setResizable(true);
-		tableColumn.setText(Util.getString(resourceBundle, "tableColumnKeySequence")); //$NON-NLS-1$
+		tableColumn.setText(Util.getString(resourceBundle, "tableColumnSequence")); //$NON-NLS-1$
 		tableColumn.setWidth(220);	
 		
 		//tableViewerKeySequencesForCommand = new TableViewer(tableKeySequencesForCommand);
@@ -661,25 +652,25 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		gridData.widthHint = 150;
 		comboScope.setLayoutData(gridData);
 		
-		labelKeyConfiguration = new Label(compositeAssignmentChange, SWT.LEFT);
-		labelKeyConfiguration.setFont(compositeAssignmentChange.getFont());
-		labelKeyConfiguration.setText(Util.getString(resourceBundle, "labelKeyConfiguration")); //$NON-NLS-1$
+		labelConfiguration = new Label(compositeAssignmentChange, SWT.LEFT);
+		labelConfiguration.setFont(compositeAssignmentChange.getFont());
+		labelConfiguration.setText(Util.getString(resourceBundle, "labelConfiguration")); //$NON-NLS-1$
 
-		comboKeyConfiguration = new Combo(compositeAssignmentChange, SWT.READ_ONLY);
-		comboKeyConfiguration.setFont(compositeAssignmentChange.getFont());
+		comboConfiguration = new Combo(compositeAssignmentChange, SWT.READ_ONLY);
+		comboConfiguration.setFont(compositeAssignmentChange.getFont());
 		gridData = new GridData();
 		gridData.widthHint = 150;
-		comboKeyConfiguration.setLayoutData(gridData);
+		comboConfiguration.setLayoutData(gridData);
 
-		labelKeySequence = new Label(compositeAssignmentChange, SWT.LEFT);
-		labelKeySequence.setFont(compositeAssignmentChange.getFont());
-		labelKeySequence.setText(Util.getString(resourceBundle, "labelKeySequence")); //$NON-NLS-1$
+		labelSequence = new Label(compositeAssignmentChange, SWT.LEFT);
+		labelSequence.setFont(compositeAssignmentChange.getFont());
+		labelSequence.setText(Util.getString(resourceBundle, "labelSequence")); //$NON-NLS-1$
 
-		comboKeySequence = new Combo(compositeAssignmentChange, SWT.NULL);
-		comboKeySequence.setFont(compositeAssignmentChange.getFont());
+		comboSequence = new Combo(compositeAssignmentChange, SWT.NULL);
+		comboSequence.setFont(compositeAssignmentChange.getFont());
 		gridData = new GridData();
 		gridData.widthHint = 220;
-		comboKeySequence.setLayoutData(gridData);
+		comboSequence.setLayoutData(gridData);
 
 		Control spacer = new Composite(compositeAssignmentChange, SWT.NULL);	
 		gridData = new GridData();
@@ -715,35 +706,35 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		gridData.widthHint = 0;
 		spacer.setLayoutData(gridData);
 		
-		labelCommandsForKeySequence = new Label(compositeAssignmentRight, SWT.LEFT);
-		labelCommandsForKeySequence.setFont(compositeAssignmentRight.getFont());
-		labelCommandsForKeySequence.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		labelCommandsForKeySequence.setText(Util.getString(resourceBundle, "labelCommandsForKeySequence.noSelection")); //$NON-NLS-1$
+		labelCommandsForSequence = new Label(compositeAssignmentRight, SWT.LEFT);
+		labelCommandsForSequence.setFont(compositeAssignmentRight.getFont());
+		labelCommandsForSequence.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		labelCommandsForSequence.setText(Util.getString(resourceBundle, "labelCommandsForSequence.noSelection")); //$NON-NLS-1$
 
-		tableCommandsForKeySequence = new Table(compositeAssignmentRight, SWT.BORDER | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
-		tableCommandsForKeySequence.setFont(compositeAssignmentRight.getFont());
-		tableCommandsForKeySequence.setHeaderVisible(true);
+		tableCommandsForSequence = new Table(compositeAssignmentRight, SWT.BORDER | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
+		tableCommandsForSequence.setFont(compositeAssignmentRight.getFont());
+		tableCommandsForSequence.setHeaderVisible(true);
 		gridData = new GridData(GridData.FILL_BOTH);
 		gridData.heightHint = 60;
-		gridData.widthHint = 400;	
-		tableCommandsForKeySequence.setLayoutData(gridData);
+		gridData.widthHint = 440;	
+		tableCommandsForSequence.setLayoutData(gridData);
 
-		tableColumn = new TableColumn(tableCommandsForKeySequence, SWT.NULL, 0);
+		tableColumn = new TableColumn(tableCommandsForSequence, SWT.NULL, 0);
 		tableColumn.setResizable(false);
-		tableColumn.setText(ZERO_LENGTH_STRING);
+		tableColumn.setText(Util.ZERO_LENGTH_STRING);
 		tableColumn.setWidth(20);
 		
-		tableColumn = new TableColumn(tableCommandsForKeySequence, SWT.NULL, 1);
+		tableColumn = new TableColumn(tableCommandsForSequence, SWT.NULL, 1);
 		tableColumn.setResizable(true);
 		tableColumn.setText(Util.getString(resourceBundle, "tableColumnScope")); //$NON-NLS-1$
-		tableColumn.setWidth(80);
+		tableColumn.setWidth(100);
 
-		tableColumn = new TableColumn(tableCommandsForKeySequence, SWT.NULL, 2);
+		tableColumn = new TableColumn(tableCommandsForSequence, SWT.NULL, 2);
 		tableColumn.setResizable(true);
-		tableColumn.setText(Util.getString(resourceBundle, "tableColumnKeyConfiguration")); //$NON-NLS-1$
-		tableColumn.setWidth(80);
+		tableColumn.setText(Util.getString(resourceBundle, "tableColumnConfiguration")); //$NON-NLS-1$
+		tableColumn.setWidth(100);
 
-		tableColumn = new TableColumn(tableCommandsForKeySequence, SWT.NULL, 3);
+		tableColumn = new TableColumn(tableCommandsForSequence, SWT.NULL, 3);
 		tableColumn.setResizable(true);
 		tableColumn.setText(Util.getString(resourceBundle, "tableColumnCommand")); //$NON-NLS-1$
 		tableColumn.setWidth(220);	
@@ -752,7 +743,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		//tableViewerCommandsForKeySequence.setContentProvider(new TableViewerCommandsForKeySequenceContentProvider());
 		//tableViewerCommandsForKeySequence.setLabelProvider(new TableViewerCommandsForKeySequenceLabelProvider());
 
-		comboActiveKeyConfiguration.addSelectionListener(new SelectionAdapter() {
+		comboActiveConfiguration.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent selectionEvent) {
 				selectedComboActiveKeyConfiguration();
 			}	
@@ -790,13 +781,13 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		//	}	
 		//});
 
-		tableKeySequencesForCommand.addMouseListener(new MouseAdapter() {
+		tableSequencesForCommand.addMouseListener(new MouseAdapter() {
 			public void mouseDoubleClick(MouseEvent mouseEvent) {
 				doubleClickedTableKeySequencesForCommand();	
 			}			
 		});		
 
-		tableKeySequencesForCommand.addSelectionListener(new SelectionAdapter() {
+		tableSequencesForCommand.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent selectionEvent) {			
 				selectedTableKeySequencesForCommand();
 			}	
@@ -812,13 +803,13 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		//	}
 		//});
 
-		comboKeySequence.addModifyListener(new ModifyListener() {			
+		comboSequence.addModifyListener(new ModifyListener() {			
 			public void modifyText(ModifyEvent modifyEvent) {
 				modifiedComboKeySequence();
 			}	
 		});
 
-		comboKeySequence.addSelectionListener(new SelectionAdapter() {
+		comboSequence.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent selectionEvent) {
 				selectedComboKeySequence();
 			}	
@@ -830,7 +821,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 			}	
 		});
 		
-		comboKeyConfiguration.addSelectionListener(new SelectionAdapter() {
+		comboConfiguration.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent selectionEvent) {
 				selectedComboKeyConfiguration();
 			}	
@@ -842,13 +833,13 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 			}	
 		});
 
-		tableCommandsForKeySequence.addMouseListener(new MouseAdapter() {
+		tableCommandsForSequence.addMouseListener(new MouseAdapter() {
 			public void mouseDoubleClick(MouseEvent mouseEvent) {
 				doubleClickedTableCommandsForKeySequence();	
 			}			
 		});		
 
-		tableCommandsForKeySequence.addSelectionListener(new SelectionAdapter() {
+		tableCommandsForSequence.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent selectionEvent) {			
 				selectedTableCommandsForKeySequence();
 			}	
@@ -900,9 +891,9 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		CommandRecord commandRecord = (CommandRecord) getSelectedCommandRecord();
 		
 		if (commandRecord != null) {
-			setScopeId(commandRecord.scopeId);
-			setKeyConfigurationId(commandRecord.keyConfigurationId);				
-			setKeySequence(commandRecord.keySequence);
+			setScopeId(commandRecord.scope);
+			setKeyConfigurationId(commandRecord.configuration);				
+			setKeySequence(commandRecord.sequence);
 		}
 		
 		update();
@@ -918,7 +909,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		String keyConfigurationId = getKeyConfigurationId();
 		selectTableCommand(scopeId, keyConfigurationId, keySequence);						
 		keySequenceRecords.clear();
-		buildKeySequenceRecords(tree, keySequence, keySequenceRecords);
+		buildSequenceRecords(tree, keySequence, keySequenceRecords);
 		buildTableKeySequence();	
 		selectTableKeySequence(scopeId, keyConfigurationId);		
 		update();
@@ -964,14 +955,12 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 			CommandRecord commandRecord = getSelectedCommandRecord();
 		
 			if (commandRecord == null)
-				// TODO constant RANK_PREFERENCE instead of 0
-				set(tree, Binding.create(keyConfigurationId, commandId, "", "", null, 0, scopeId, keySequence), true);			 
+				set(tree, keySequence, scopeId, keyConfigurationId, commandId);			 
 			else {
 				if (!commandRecord.customSet.isEmpty())
 					clear(tree, keySequence, scopeId, keyConfigurationId);
 				else
-					// TODO constant RANK_PREFERENCE instead of 0
-					set(tree, Binding.create(keyConfigurationId, null, "", "", null, 0, scopeId, keySequence), true);			 
+					set(tree, keySequence, scopeId, keyConfigurationId, null);
 			}
 
 			commandRecords.clear();
@@ -979,7 +968,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 			buildTableCommand();
 			selectTableCommand(scopeId, keyConfigurationId, keySequence);							
 			keySequenceRecords.clear();
-			buildKeySequenceRecords(tree, keySequence, keySequenceRecords);
+			buildSequenceRecords(tree, keySequence, keySequenceRecords);
 			buildTableKeySequence();	
 			selectTableKeySequence(scopeId, keyConfigurationId);
 			update();
@@ -1012,23 +1001,23 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		String keyConfigurationId = getKeyConfigurationId();
 		boolean validKeyConfigurationId = keyConfigurationId != null && keyConfigurationsById.get(keyConfigurationId) != null;
 
-		labelKeySequencesForCommand.setEnabled(commandSelected);
-		tableKeySequencesForCommand.setEnabled(commandSelected);
-		labelKeySequence.setEnabled(commandSelected);		
-		comboKeySequence.setEnabled(commandSelected);
+		labelSequencesForCommand.setEnabled(commandSelected);
+		tableSequencesForCommand.setEnabled(commandSelected);
+		labelSequence.setEnabled(commandSelected);		
+		comboSequence.setEnabled(commandSelected);
 		labelScope.setEnabled(commandSelected);		
 		comboScope.setEnabled(commandSelected);
-		labelKeyConfiguration.setEnabled(commandSelected);	
-		comboKeyConfiguration.setEnabled(commandSelected);	
+		labelConfiguration.setEnabled(commandSelected);	
+		comboConfiguration.setEnabled(commandSelected);	
 		buttonChange.setEnabled(commandSelected && validKeySequence && validScopeId && validKeyConfigurationId);		
-		labelCommandsForKeySequence.setEnabled(validKeySequence);		
-		tableCommandsForKeySequence.setEnabled(validKeySequence);		
+		labelCommandsForSequence.setEnabled(validKeySequence);		
+		tableCommandsForSequence.setEnabled(validKeySequence);		
 
 		if (commandSelected) {
-			String text = MessageFormat.format(Util.getString(resourceBundle, "labelKeySequencesForCommand.selection"), new Object[] { '\'' + command.getName() + '\'' }); //$NON-NLS-1$
-			labelKeySequencesForCommand.setText(text);		
+			String text = MessageFormat.format(Util.getString(resourceBundle, "labelSequencesForCommand.selection"), new Object[] { '\'' + command.getName() + '\'' }); //$NON-NLS-1$
+			labelSequencesForCommand.setText(text);		
 		} else 
-			labelKeySequencesForCommand.setText(Util.getString(resourceBundle, "labelKeySequencesForCommand.noSelection")); //$NON-NLS-1$
+			labelSequencesForCommand.setText(Util.getString(resourceBundle, "labelSequencesForCommand.noSelection")); //$NON-NLS-1$
 		
 		CommandRecord commandRecord = getSelectedCommandRecord();
 		
@@ -1042,13 +1031,13 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		}
 
 		if (validKeySequence) {
-			String text = MessageFormat.format(Util.getString(resourceBundle, "labelCommandsForKeySequence.selection"), new Object[] { '\''+ keySequence.formatKeySequence() + '\''}); //$NON-NLS-1$
-			labelCommandsForKeySequence.setText(text);
+			String text = MessageFormat.format(Util.getString(resourceBundle, "labelCommandsForSequence.selection"), new Object[] { '\''+ KeySupport.formatSequence(keySequence) + '\''}); //$NON-NLS-1$
+			labelCommandsForSequence.setText(text);
 		} else 
-			labelCommandsForKeySequence.setText(Util.getString(resourceBundle, "labelCommandsForKeySequence.noSelection")); //$NON-NLS-1$
+			labelCommandsForSequence.setText(Util.getString(resourceBundle, "labelCommandsForSequence.noSelection")); //$NON-NLS-1$
 	}
 
-	private void buildCommandRecords(SortedMap tree, String commandId, List commandRecords) {
+	private void buildCommandRecords(SortedMap tree, String command, List commandRecords) {
 		if (commandRecords != null) {
 			commandRecords.clear();
 				
@@ -1057,7 +1046,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 					
 				while (iterator.hasNext()) {
 					Map.Entry entry = (Map.Entry) iterator.next();
-					Sequence keySequence = (Sequence) entry.getKey();					
+					Sequence sequence = (Sequence) entry.getKey();					
 					Map scopeMap = (Map) entry.getValue();						
 		
 					if (scopeMap != null) {
@@ -1065,24 +1054,29 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 						
 						while (iterator2.hasNext()) {
 							Map.Entry entry2 = (Map.Entry) iterator2.next();
-							String scopeId = (String) entry2.getKey();										
-							Map keyConfigurationMap = (Map) entry2.getValue();						
-							Iterator iterator3 = keyConfigurationMap.entrySet().iterator();
+							String scope = (String) entry2.getKey();										
+							Map configurationMap = (Map) entry2.getValue();						
+							Iterator iterator3 = configurationMap.entrySet().iterator();
 										
 							while (iterator3.hasNext()) {
 								Map.Entry entry3 = (Map.Entry) iterator3.next();
-								String keyConfigurationId = (String) entry3.getKey();					
-								Map pluginMap = (Map) entry3.getValue();													
+								String configuration = (String) entry3.getKey();					
+								CommandSetPair commandSetPair = (CommandSetPair) entry3.getValue();													
 								Set customSet = new HashSet();
 								Set defaultSet = new HashSet();						
-								buildPluginSets(pluginMap, customSet, defaultSet);
+	
+								if (commandSetPair.customSet != null)
+									customSet.addAll(commandSetPair.customSet);
 
-								if (customSet.contains(commandId) || defaultSet.contains(commandId)) {
+								if (commandSetPair.defaultSet != null)
+									defaultSet.addAll(commandSetPair.defaultSet);
+									
+								if (customSet.contains(command) || defaultSet.contains(command)) {
 									CommandRecord commandRecord = new CommandRecord();
-									commandRecord.commandId = commandId;
-									commandRecord.keySequence = keySequence;
-									commandRecord.scopeId = scopeId;
-									commandRecord.keyConfigurationId = keyConfigurationId;
+									commandRecord.command = command;
+									commandRecord.sequence = sequence;
+									commandRecord.scope = scope;
+									commandRecord.configuration = configuration;
 									commandRecord.customSet = customSet;
 									commandRecord.defaultSet = defaultSet;
 									commandRecord.calculate();	
@@ -1096,34 +1090,42 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		}
 	}
 	
-	private void buildKeySequenceRecords(SortedMap tree, Sequence keySequence, List keySequenceRecords) {
-		if (keySequenceRecords != null) {
-			keySequenceRecords.clear();
+	private void buildSequenceRecords(SortedMap tree, Sequence sequence, List sequenceRecords) {
+		if (sequenceRecords != null) {
+			sequenceRecords.clear();
 			
-			if (tree != null && keySequence != null) {
-				Map scopeMap = (Map) tree.get(keySequence);
+			if (tree != null && sequence != null) {
+				Map scopeMap = (Map) tree.get(sequence);
 			
 				if (scopeMap != null) {
 					Iterator iterator = scopeMap.entrySet().iterator();
 			
 					while (iterator.hasNext()) {
 						Map.Entry entry = (Map.Entry) iterator.next();
-						String scopeId2 = (String) entry.getKey();					
-						Map keyConfigurationMap = (Map) entry.getValue();						
-						Iterator iterator2 = keyConfigurationMap.entrySet().iterator();
+						String scope = (String) entry.getKey();					
+						Map configurationMap = (Map) entry.getValue();						
+						Iterator iterator2 = configurationMap.entrySet().iterator();
 							
 						while (iterator2.hasNext()) {
 							Map.Entry entry2 = (Map.Entry) iterator2.next();
-							String keyConfigurationId2 = (String) entry2.getKey();					
-							Map pluginMap = (Map) entry2.getValue();			
-							KeySequenceRecord keySequenceRecord = new KeySequenceRecord();
-							keySequenceRecord.scopeId = scopeId2;
-							keySequenceRecord.keyConfigurationId = keyConfigurationId2;							
-							keySequenceRecord.customSet = new HashSet();
-							keySequenceRecord.defaultSet = new HashSet();						
-							buildPluginSets(pluginMap, keySequenceRecord.customSet, keySequenceRecord.defaultSet);			
-							keySequenceRecord.calculate();
-							keySequenceRecords.add(keySequenceRecord);
+							String configuration = (String) entry2.getKey();					
+							CommandSetPair commandSetPair = (CommandSetPair) entry2.getValue();													
+							Set customSet = new HashSet();
+							Set defaultSet = new HashSet();						
+	
+							if (commandSetPair.customSet != null)
+								customSet.addAll(commandSetPair.customSet);
+
+							if (commandSetPair.defaultSet != null)
+								defaultSet.addAll(commandSetPair.defaultSet);							
+
+							SequenceRecord sequenceRecord = new SequenceRecord();
+							sequenceRecord.scope = scope;
+							sequenceRecord.configuration = configuration;							
+							sequenceRecord.customSet = customSet;
+							sequenceRecord.defaultSet = defaultSet;		
+							sequenceRecord.calculate();
+							sequenceRecords.add(sequenceRecord);
 						}												
 					}	
 				}								
@@ -1131,28 +1133,8 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		}
 	}
 
-	private void buildPluginSets(Map pluginMap, Set customSet, Set defaultSet) {
-		Iterator iterator = pluginMap.entrySet().iterator(); 
-
-		while (iterator.hasNext()) {
-			Map.Entry entry = (Map.Entry) iterator.next();
-			String pluginId = (String) entry.getKey();
-			Map commandMap = (Map) entry.getValue();
-			Iterator iterator2 = commandMap.keySet().iterator();
-	
-			while (iterator2.hasNext()) {
-				String commandId = (String) iterator2.next();
-		
-				if (pluginId == null)
-					customSet.add(commandId);
-				else 
-					defaultSet.add(commandId);									
-			}
-		}
-	}
-
 	private void buildTableCommand() {
-		tableKeySequencesForCommand.removeAll();
+		tableSequencesForCommand.removeAll();
 
 		for (int i = 0; i < commandRecords.size(); i++) {
 			CommandRecord commandRecord = (CommandRecord) commandRecords.get(i);
@@ -1165,37 +1147,37 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 			boolean alternateCommandConflict = false;
 	
 			if (customSet.isEmpty()) {
-				if (defaultSet.contains(commandRecord.commandId)) {												
+				if (defaultSet.contains(commandRecord.command)) {												
 					//commandId = commandRecord.commandId;
 					commandConflict = commandRecord.defaultConflict;					
 				}
 			} else {
 				if (defaultSet.isEmpty()) {									
-					if (customSet.contains(commandRecord.commandId)) {													
+					if (customSet.contains(commandRecord.command)) {													
 						difference = DIFFERENCE_ADD;
 						//commandId = commandRecord.commandId;
 						commandConflict = commandRecord.customConflict;
 					}
 				} else {
-					if (customSet.contains(commandRecord.commandId)) {
+					if (customSet.contains(commandRecord.command)) {
 						difference = DIFFERENCE_CHANGE;
 						//commandId = commandRecord.commandId;
 						commandConflict = commandRecord.customConflict;		
-						alternateCommandId = commandRecord.defaultCommandId;
+						alternateCommandId = commandRecord.defaultCommand;
 						alternateCommandConflict = commandRecord.defaultConflict;
 					} else {
-						if (defaultSet.contains(commandRecord.commandId)) {	
+						if (defaultSet.contains(commandRecord.command)) {	
 							difference = DIFFERENCE_MINUS;
 							//commandId = commandRecord.commandId;
 							commandConflict = commandRecord.defaultConflict;		
-							alternateCommandId = commandRecord.customCommandId;
+							alternateCommandId = commandRecord.customCommand;
 							alternateCommandConflict = commandRecord.customConflict;
 						}
 					}
 				}								
 			}
 
-			TableItem tableItem = new TableItem(tableKeySequencesForCommand, SWT.NULL);					
+			TableItem tableItem = new TableItem(tableSequencesForCommand, SWT.NULL);					
 
 			switch (difference) {
 				case DIFFERENCE_ADD:
@@ -1211,18 +1193,19 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 					break;
 
 				case DIFFERENCE_NONE:
+					tableItem.setImage(0, IMAGE_BLANK);
 					break;				
 			}
 
-			Scope scope = (Scope) scopesById.get(commandRecord.scopeId);
-			tableItem.setText(1, scope != null ? scope.getName() : bracket(commandRecord.scopeId));
-			Configuration keyConfiguration = (Configuration) keyConfigurationsById.get(commandRecord.keyConfigurationId);			
-			tableItem.setText(2, keyConfiguration != null ? keyConfiguration.getName() : bracket(commandRecord.keyConfigurationId));
+			Scope scope = (Scope) scopesById.get(commandRecord.scope);
+			tableItem.setText(1, scope != null ? scope.getName() : bracket(commandRecord.scope));
+			Configuration keyConfiguration = (Configuration) keyConfigurationsById.get(commandRecord.configuration);			
+			tableItem.setText(2, keyConfiguration != null ? keyConfiguration.getName() : bracket(commandRecord.configuration));
 			boolean conflict = commandConflict || alternateCommandConflict;
 			StringBuffer stringBuffer = new StringBuffer();
 
-			if (commandRecord.keySequence != null)
-				stringBuffer.append(commandRecord.keySequence.formatKeySequence());
+			if (commandRecord.sequence != null)
+				stringBuffer.append(KeySupport.formatSequence(commandRecord.sequence));
 
 			if (commandConflict)
 				stringBuffer.append(SPACE + COMMAND_CONFLICT);
@@ -1231,6 +1214,8 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 				
 			if (alternateCommandId == null) 
 				alternateCommandName = COMMAND_UNDEFINED;
+			else if (alternateCommandId.length() == 0)
+				alternateCommandName = COMMAND_NOTHING;				
 			else {
 				Command command = (Command) commandsById.get(alternateCommandId);
 					
@@ -1263,10 +1248,10 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 	}
 	
 	private void buildTableKeySequence() {
-		tableCommandsForKeySequence.removeAll();
+		tableCommandsForSequence.removeAll();
 	
 		for (int i = 0; i < keySequenceRecords.size(); i++) {
-			KeySequenceRecord keySequenceRecord = (KeySequenceRecord) keySequenceRecords.get(i);
+			SequenceRecord keySequenceRecord = (SequenceRecord) keySequenceRecords.get(i);
 			int difference = DIFFERENCE_NONE;
 			String commandId = null;
 			boolean commandConflict = false;
@@ -1274,22 +1259,22 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 			boolean alternateCommandConflict = false;
 
 			if (keySequenceRecord.customSet.isEmpty()) {
-				commandId = keySequenceRecord.defaultCommandId;															
+				commandId = keySequenceRecord.defaultCommand;															
 				commandConflict = keySequenceRecord.defaultConflict;
 			} else {
-				commandId = keySequenceRecord.customCommandId;															
+				commandId = keySequenceRecord.customCommand;															
 				commandConflict = keySequenceRecord.customConflict;						
 
 				if (keySequenceRecord.defaultSet.isEmpty())
 					difference = DIFFERENCE_ADD;
 				else {
 					difference = DIFFERENCE_CHANGE;									
-					alternateCommandId = keySequenceRecord.defaultCommandId;
+					alternateCommandId = keySequenceRecord.defaultCommand;
 					alternateCommandConflict = keySequenceRecord.defaultConflict;																		
 				}
 			}
 
-			TableItem tableItem = new TableItem(tableCommandsForKeySequence, SWT.NULL);					
+			TableItem tableItem = new TableItem(tableCommandsForSequence, SWT.NULL);					
 
 			switch (difference) {
 				case DIFFERENCE_ADD:
@@ -1305,19 +1290,22 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 					break;
 	
 				case DIFFERENCE_NONE:
+					tableItem.setImage(0, IMAGE_BLANK);
 					break;				
 			}
 
-			Scope scope = (Scope) scopesById.get(keySequenceRecord.scopeId);
-			tableItem.setText(1, scope != null ? scope.getName() : bracket(keySequenceRecord.scopeId));
-			Configuration keyConfiguration = (Configuration) keyConfigurationsById.get(keySequenceRecord.keyConfigurationId);			
-			tableItem.setText(2, keyConfiguration != null ? keyConfiguration.getName() : bracket(keySequenceRecord.keyConfigurationId));
+			Scope scope = (Scope) scopesById.get(keySequenceRecord.scope);
+			tableItem.setText(1, scope != null ? scope.getName() : bracket(keySequenceRecord.scope));
+			Configuration keyConfiguration = (Configuration) keyConfigurationsById.get(keySequenceRecord.configuration);			
+			tableItem.setText(2, keyConfiguration != null ? keyConfiguration.getName() : bracket(keySequenceRecord.configuration));
 			boolean conflict = commandConflict || alternateCommandConflict;
 			StringBuffer stringBuffer = new StringBuffer();
 			String commandName = null;
 					
 			if (commandId == null) 
 				commandName = COMMAND_UNDEFINED;
+			else if (commandId.length() == 0)
+				commandName = COMMAND_NOTHING;				
 			else {
 				Command command = (Command) commandsById.get(commandId);
 						
@@ -1336,6 +1324,8 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 				
 			if (alternateCommandId == null) 
 				alternateCommandName = COMMAND_UNDEFINED;
+			else if (alternateCommandId.length() == 0)
+				alternateCommandName = COMMAND_NOTHING;				
 			else {
 				Command command = (Command) commandsById.get(alternateCommandId);
 					
@@ -1371,20 +1361,20 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		for (int i = 0; i < commandRecords.size(); i++) {
 			CommandRecord commandRecord = (CommandRecord) commandRecords.get(i);			
 			
-			if (Util.equals(scopeId, commandRecord.scopeId) && Util.equals(keyConfigurationId, commandRecord.keyConfigurationId) && Util.equals(keySequence, commandRecord.keySequence)) {
+			if (Util.equals(scopeId, commandRecord.scope) && Util.equals(keyConfigurationId, commandRecord.configuration) && Util.equals(keySequence, commandRecord.sequence)) {
 				selection = i;
 				break;			
 			}			
 		}
 
-		if (tableKeySequencesForCommand.getSelectionCount() > 1)
-			tableKeySequencesForCommand.deselectAll();
+		if (tableSequencesForCommand.getSelectionCount() > 1)
+			tableSequencesForCommand.deselectAll();
 
-		if (selection != tableKeySequencesForCommand.getSelectionIndex()) {
-			if (selection == -1 || selection >= tableKeySequencesForCommand.getItemCount())
-				tableKeySequencesForCommand.deselectAll();
+		if (selection != tableSequencesForCommand.getSelectionIndex()) {
+			if (selection == -1 || selection >= tableSequencesForCommand.getItemCount())
+				tableSequencesForCommand.deselectAll();
 			else
-				tableKeySequencesForCommand.select(selection);
+				tableSequencesForCommand.select(selection);
 		}
 	}
 
@@ -1392,155 +1382,56 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		int selection = -1;
 		
 		for (int i = 0; i < keySequenceRecords.size(); i++) {
-			KeySequenceRecord keySequenceRecord = (KeySequenceRecord) keySequenceRecords.get(i);			
+			SequenceRecord keySequenceRecord = (SequenceRecord) keySequenceRecords.get(i);			
 			
-			if (Util.equals(scopeId, keySequenceRecord.scopeId) && Util.equals(keyConfigurationId, keySequenceRecord.keyConfigurationId)) {
+			if (Util.equals(scopeId, keySequenceRecord.scope) && Util.equals(keyConfigurationId, keySequenceRecord.configuration)) {
 				selection = i;
 				break;			
 			}			
 		}
 
-		if (tableCommandsForKeySequence.getSelectionCount() > 1)
-			tableCommandsForKeySequence.deselectAll();
+		if (tableCommandsForSequence.getSelectionCount() > 1)
+			tableCommandsForSequence.deselectAll();
 
-		if (selection != tableCommandsForKeySequence.getSelectionIndex()) {
-			if (selection == -1 || selection >= tableCommandsForKeySequence.getItemCount())
-				tableCommandsForKeySequence.deselectAll();
+		if (selection != tableCommandsForSequence.getSelectionIndex()) {
+			if (selection == -1 || selection >= tableCommandsForSequence.getItemCount())
+				tableCommandsForSequence.deselectAll();
 			else
-				tableCommandsForKeySequence.select(selection);
+				tableCommandsForSequence.select(selection);
 		}
-	}
-
-	private void clear(SortedMap tree, Sequence keySequence, String scope, String keyConfiguration) {			
-		Map scopeMap = (Map) tree.get(keySequence);
-		
-		if (scopeMap != null) {
-			Map keyConfigurationMap = (Map) scopeMap.get(scope);
-		
-			if (keyConfigurationMap != null) {
-				Map pluginMap = (Map) keyConfigurationMap.get(keyConfiguration);
-	
-				if (pluginMap != null) {
-					pluginMap.remove(null);
-					
-					if (pluginMap.isEmpty()) {
-						keyConfigurationMap.remove(keyConfiguration);
-						
-						if (keyConfigurationMap.isEmpty()) {
-							scopeMap.remove(scope);	
-
-							if (scopeMap.isEmpty()) {
-								tree.remove(keySequence);	
-							}							
-						}	
-					}	
-				}	
-			}
-		}
-	}
-
-	private void set(SortedMap tree, Binding binding, boolean consolidate) {			
-		Map scopeMap = (Map) tree.get(binding.getSequence());
-		
-		if (scopeMap == null) {
-			scopeMap = new TreeMap();	
-			tree.put(binding.getSequence(), scopeMap);
-		}
-
-		Map keyConfigurationMap = (Map) scopeMap.get(binding.getScope());
-		
-		if (keyConfigurationMap == null) {
-			keyConfigurationMap = new TreeMap();	
-			scopeMap.put(binding.getScope(), keyConfigurationMap);
-		}
-		
-		Map pluginMap = (Map) keyConfigurationMap.get(binding.getConfiguration());
-		
-		if (pluginMap == null) {
-			pluginMap = new HashMap();	
-			keyConfigurationMap.put(binding.getConfiguration(), pluginMap);
-		}
-
-		Map commandMap = consolidate ? null : (Map) pluginMap.get(binding.getPlugin());
-		
-		if (commandMap == null) {
-			commandMap = new HashMap();	
-			pluginMap.put(binding.getPlugin(), commandMap);
-		}
-
-		Set bindingSet = (Set) commandMap.get(binding.getCommand());
-		
-		if (bindingSet == null) {
-			bindingSet = new TreeSet();
-			commandMap.put(binding.getCommand(), bindingSet);	
-		}
-
-		if (consolidate)
-			bindingSet.clear();
-		
-		bindingSet.add(binding);
-	}
-
-	private SortedSet solve(SortedMap tree) {
-		SortedSet bindingSet = new TreeSet();
-		Iterator iterator = tree.values().iterator();
-		
-		while (iterator.hasNext()) {
-			Map scopeMap = (Map) iterator.next();
-			Iterator iterator2 = scopeMap.values().iterator();
-			
-			while (iterator2.hasNext()) {
-				Map keyConfigurationMap = (Map) iterator2.next();
-				Iterator iterator3 = keyConfigurationMap.values().iterator();
-				
-				while (iterator3.hasNext()) {
-					Map pluginMap = (Map) iterator3.next();
-					Map commandMap = (Map) pluginMap.get(null);
-					
-					if (commandMap != null) {
-						Iterator iterator4 = commandMap.values().iterator();
-						
-						while (iterator4.hasNext())
-							bindingSet.addAll((Set) iterator4.next());
-					}
-				}
-			}		
-		}
-		
-		return bindingSet;
 	}
 
 	private CommandRecord getSelectedCommandRecord() {		
-		int selection = tableKeySequencesForCommand.getSelectionIndex();
+		int selection = tableSequencesForCommand.getSelectionIndex();
 		
-		if (selection >= 0 && selection < commandRecords.size() && tableKeySequencesForCommand.getSelectionCount() == 1)
+		if (selection >= 0 && selection < commandRecords.size() && tableSequencesForCommand.getSelectionCount() == 1)
 			return (CommandRecord) commandRecords.get(selection);
 		else
 			return null;
 	}
 
-	private KeySequenceRecord getSelectedKeySequenceRecord() {		
-		int selection = tableCommandsForKeySequence.getSelectionIndex();
+	private SequenceRecord getSelectedKeySequenceRecord() {		
+		int selection = tableCommandsForSequence.getSelectionIndex();
 		
-		if (selection >= 0 && selection < keySequenceRecords.size() && tableCommandsForKeySequence.getSelectionCount() == 1)
-			return (KeySequenceRecord) keySequenceRecords.get(selection);
+		if (selection >= 0 && selection < keySequenceRecords.size() && tableCommandsForSequence.getSelectionCount() == 1)
+			return (SequenceRecord) keySequenceRecords.get(selection);
 		else
 			return null;
 	}
 
 	private Sequence getKeySequence() {
 		Sequence keySequence = null;
-		String name = comboKeySequence.getText();		
+		String name = comboSequence.getText();		
 		keySequence = (Sequence) keySequencesByName.get(name);
 			
 		if (keySequence == null)
-			keySequence = Sequence.parseKeySequence(name);
+			keySequence = KeySupport.parseSequence(name);
 
 		return keySequence;
 	}
 
 	private void setKeySequence(Sequence keySequence) {
-		comboKeySequence.setText(keySequence != null ? keySequence.formatKeySequence() : ZERO_LENGTH_STRING);
+		comboSequence.setText(keySequence != null ? KeySupport.formatSequence(keySequence) : Util.ZERO_LENGTH_STRING);
 	}
 
 	private String getScopeId() {
@@ -1574,7 +1465,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 	}
 
 	private String getKeyConfigurationId() {
-		int selection = comboKeyConfiguration.getSelectionIndex();
+		int selection = comboConfiguration.getSelectionIndex();
 		List keyConfigurations = new ArrayList(keyConfigurationsByName.values());
 		
 		if (selection >= 0 && selection < keyConfigurations.size()) {
@@ -1586,8 +1477,8 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 	}
 
 	private void setKeyConfigurationId(String keyConfigurationId) {				
-		comboKeyConfiguration.clearSelection();
-		comboKeyConfiguration.deselectAll();
+		comboConfiguration.clearSelection();
+		comboConfiguration.deselectAll();
 		
 		if (keyConfigurationId != null) {
 			List keyConfigurations = new ArrayList(keyConfigurationsByName.values());
@@ -1596,7 +1487,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 				Configuration keyConfiguration = (Configuration) keyConfigurations.get(i);		
 				
 				if (keyConfiguration.getId().equals(keyConfigurationId)) {
-					comboKeyConfiguration.select(i);
+					comboConfiguration.select(i);
 					break;		
 				}
 			}
@@ -1605,5 +1496,227 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 
 	private String bracket(String string) {
 		return string != null ? '[' + string + ']' : "[]"; //$NON-NLS-1$	
+	}
+
+	private SortedMap build(SortedSet sequenceBindingSet) {
+		SortedMap tree = new TreeMap();
+		Iterator iterator = sequenceBindingSet.iterator();
+		
+		while (iterator.hasNext()) {
+			SequenceBinding sequenceBinding = (SequenceBinding) iterator.next();
+			Sequence sequence = sequenceBinding.getSequence();
+			String configuration = sequenceBinding.getConfiguration();			
+			String command = sequenceBinding.getCommand();			
+			Path locale = SequenceMachine.getPathForLocale(sequenceBinding.getLocale());
+			Path platform = SequenceMachine.getPathForPlatform(sequenceBinding.getPlatform());
+			List paths = new ArrayList();
+			paths.add(platform);
+			paths.add(locale);
+			State platformLocale = State.create(paths);
+			Integer rank = new Integer(sequenceBinding.getRank());
+			String scope = sequenceBinding.getScope();			
+			SortedMap scopeMap = (SortedMap) tree.get(sequence);
+			
+			if (scopeMap == null) {
+				scopeMap = new TreeMap();
+				tree.put(sequence, scopeMap);
+			}
+
+			SortedMap configurationMap = (SortedMap) scopeMap.get(scope);
+			
+			if (configurationMap == null) {
+				configurationMap = new TreeMap();
+				scopeMap.put(scope, configurationMap);
+			}
+
+			SortedMap rankMap = (SortedMap) configurationMap.get(configuration);
+		
+			if (rankMap == null) {
+				rankMap = new TreeMap();	
+				configurationMap.put(configuration, rankMap);
+			}
+
+			SortedMap platformLocaleMap = (SortedMap) rankMap.get(rank);
+
+			if (platformLocaleMap == null) {
+				platformLocaleMap = new TreeMap();	
+				rankMap.put(rank, platformLocaleMap);
+			}
+
+			Set commandSet = (Set) platformLocaleMap.get(platformLocale);
+
+			if (commandSet == null) {
+				commandSet = new HashSet();	
+				platformLocaleMap.put(platformLocale, commandSet);
+			}
+
+			commandSet.add(command);										
+		}
+
+		List paths = new ArrayList();
+		paths.add(SequenceMachine.getSystemPlatform());
+		paths.add(SequenceMachine.getSystemLocale());
+		State platformLocale = State.create(paths);
+		iterator = tree.values().iterator();
+		
+		while (iterator.hasNext()) {
+			SortedMap scopeMap = (SortedMap) iterator.next();			
+			Iterator iterator2 = scopeMap.values().iterator();
+			
+			while (iterator2.hasNext()) {
+				SortedMap configurationMap = (SortedMap) iterator2.next();			
+				Iterator iterator3 = configurationMap.entrySet().iterator();
+				
+				while (iterator3.hasNext()) {
+					Map.Entry entry = (Map.Entry) iterator3.next();
+					entry.setValue(solveRankMap((SortedMap) entry.getValue(), platformLocale));
+				}
+			}
+		}
+		
+		return tree;
+	}
+
+	private CommandSetPair solveRankMap(SortedMap rankMap, State platformLocale) {
+		CommandSetPair commandSetPair = new CommandSetPair();		
+		Iterator iterator = rankMap.entrySet().iterator();
+		
+		while (iterator.hasNext()) {
+			Map.Entry entry = (Map.Entry) iterator.next();
+			Integer rank = (Integer) entry.getKey();
+			SortedMap platformLocaleMap = (SortedMap) entry.getValue();			
+			Set commandSet = solvePlatformLocaleMap(platformLocaleMap, platformLocale);
+
+			if (rank.intValue() == 0)
+				commandSetPair.customSet = commandSet;
+			else if (commandSetPair.defaultSet == null)
+				commandSetPair.defaultSet = commandSet;
+		}
+
+		return commandSetPair;
+	}
+
+	private Set solvePlatformLocaleMap(SortedMap platformLocaleMap, State platformLocale) {
+		int bestDefinedMatch = -1;
+		Set bestDefinedCommandSet = null;		
+		int bestUndefinedMatch = -1;
+		Set bestUndefinedCommandSet = null;		
+		Iterator iterator = platformLocaleMap.entrySet().iterator();
+		
+		while (iterator.hasNext()) {
+			Map.Entry entry = (Map.Entry) iterator.next();
+			State testPlatformLocale = (State) entry.getKey();
+			Set testCommandSet = (Set) entry.getValue();
+			int testMatch = testPlatformLocale.match(platformLocale);
+
+			if (testMatch >= 0) {
+				String testCommand = SequenceNode.solveCommandSet(testCommandSet);
+
+				if (testCommand != null) {
+					if (bestDefinedMatch == -1 || testMatch < bestDefinedMatch) {
+						bestDefinedMatch = testMatch;
+						bestDefinedCommandSet = testCommandSet;
+					}	
+				} else {
+					if (bestUndefinedMatch == -1 || testMatch < bestUndefinedMatch) {
+						bestUndefinedMatch = testMatch;
+						bestUndefinedCommandSet = testCommandSet;
+					}					
+				}
+			}	
+		}
+
+		return bestDefinedMatch >= 0 ? bestDefinedCommandSet : bestUndefinedCommandSet; 
+	}
+
+	private SortedSet solve(SortedMap tree) {
+		SortedSet sequenceBindingSet = new TreeSet();		
+		Iterator iterator = tree.entrySet().iterator();
+		
+		while (iterator.hasNext()) {
+			Map.Entry entry = (Map.Entry) iterator.next();	
+			Sequence sequence = (Sequence) entry.getKey();
+			SortedMap scopeMap = (SortedMap) entry.getValue();			
+			Iterator iterator2 = scopeMap.entrySet().iterator();
+			
+			while (iterator2.hasNext()) {
+				Map.Entry entry2 = (Map.Entry) iterator2.next();	
+				String scope = (String) entry2.getKey();
+				SortedMap configurationMap = (SortedMap) entry2.getValue();
+				Iterator iterator3 = configurationMap.entrySet().iterator();
+				
+				while (iterator3.hasNext()) {
+					Map.Entry entry3 = (Map.Entry) iterator3.next();					
+					String configuration = (String) entry3.getKey();
+					CommandSetPair commandSetPair = (CommandSetPair) entry3.getValue();
+					Set customSet = commandSetPair.customSet;
+					
+					if (customSet != null) {
+						Iterator iterator4 = customSet.iterator();
+						
+						while (iterator4.hasNext()) {
+							String command = (String) iterator4.next();
+							sequenceBindingSet.add(SequenceBinding.create(configuration, command, Util.ZERO_LENGTH_STRING, Util.ZERO_LENGTH_STRING, null, 0, scope, sequence));									
+						}
+					}
+				}
+			}
+		}
+		
+		return sequenceBindingSet;		
+	}
+
+	private void set(SortedMap tree, Sequence sequence, String scope, String configuration, String command) {
+		SortedMap scopeMap = (SortedMap) tree.get(sequence);
+			
+		if (scopeMap == null) {
+			scopeMap = new TreeMap();
+			tree.put(sequence, scopeMap);
+		}
+
+		SortedMap configurationMap = (SortedMap) scopeMap.get(scope);
+			
+		if (configurationMap == null) {
+			configurationMap = new TreeMap();
+			scopeMap.put(scope, configurationMap);
+		}
+	
+		CommandSetPair commandSetPair = (CommandSetPair) configurationMap.get(configuration);
+		
+		if (commandSetPair == null) {
+			commandSetPair = new CommandSetPair();
+			configurationMap.put(configuration, commandSetPair);
+		}
+		
+		Set customSet = new HashSet();
+		customSet.add(command);		
+		commandSetPair.customSet = customSet;		
+	}
+
+	private void clear(SortedMap tree, Sequence sequence, String scope, String configuration) {
+		SortedMap scopeMap = (SortedMap) tree.get(sequence);
+
+		if (scopeMap != null) {
+			SortedMap configurationMap = (SortedMap) scopeMap.get(scope);
+			
+			if (configurationMap != null) {
+				CommandSetPair commandSetPair = (CommandSetPair) configurationMap.get(configuration);
+				
+				if (commandSetPair != null) {				
+					commandSetPair.customSet = null;
+
+					if (commandSetPair.defaultSet == null) {					
+						configurationMap.remove(configuration);
+						
+						if (configurationMap.isEmpty()) {
+							scopeMap.remove(scope);
+				
+							if (scopeMap.isEmpty())
+								tree.remove(sequence);
+						}
+					}
+				}
+			}
+		}
 	}
 }

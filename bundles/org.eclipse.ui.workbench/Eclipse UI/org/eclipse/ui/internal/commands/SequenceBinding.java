@@ -11,14 +11,14 @@ Contributors:
 
 package org.eclipse.ui.internal.commands;
 
-public final class Binding implements Comparable {
+public final class SequenceBinding implements Comparable {
 
-	private final static int HASH_FACTOR = 27;
-	private final static int HASH_INITIAL = 37;
+	private final static int HASH_FACTOR = 107;
+	private final static int HASH_INITIAL = 117;
 	
-	public static Binding create(String configuration, String command, String locale, String platform, String plugin, int rank, String scope, Sequence sequence)
+	public static SequenceBinding create(String configuration, String command, String locale, String platform, String plugin, int rank, String scope, Sequence sequence)
 		throws IllegalArgumentException {
-		return new Binding(configuration, command, locale, platform, plugin, rank, scope, sequence);
+		return new SequenceBinding(configuration, command, locale, platform, plugin, rank, scope, sequence);
 	}
 
 	private String configuration;
@@ -30,7 +30,7 @@ public final class Binding implements Comparable {
 	private String scope;
 	private Sequence sequence;
 
-	private Binding(String configuration, String command, String locale, String platform, String plugin, int rank, String scope, Sequence sequence)
+	private SequenceBinding(String configuration, String command, String locale, String platform, String plugin, int rank, String scope, Sequence sequence)
 		throws IllegalArgumentException {
 		super();
 		
@@ -48,29 +48,29 @@ public final class Binding implements Comparable {
 	}
 
 	public int compareTo(Object object) {
-		Binding binding = (Binding) object;
-		int compareTo = configuration.compareTo(binding.configuration); 
+		SequenceBinding sequenceBinding = (SequenceBinding) object;
+		int compareTo = configuration.compareTo(sequenceBinding.configuration); 
 		
 		if (compareTo == 0) {
-			compareTo = Util.compare(command, binding.command);
+			compareTo = Util.compare(command, sequenceBinding.command);
 
 			if (compareTo == 0) {		
-				compareTo = locale.compareTo(binding.locale);
+				compareTo = locale.compareTo(sequenceBinding.locale);
 
 				if (compareTo == 0) {		
-					compareTo = platform.compareTo(binding.platform);
+					compareTo = platform.compareTo(sequenceBinding.platform);
 
 					if (compareTo == 0) {		
-						compareTo = Util.compare(plugin, binding.plugin);
+						compareTo = Util.compare(plugin, sequenceBinding.plugin);
 
 						if (compareTo == 0) {		
-							compareTo = rank - binding.rank;
+							compareTo = rank - sequenceBinding.rank;
 		
 							if (compareTo == 0) {
-								compareTo = scope.compareTo(binding.scope);
+								compareTo = scope.compareTo(sequenceBinding.scope);
 		
 								if (compareTo == 0)
-									compareTo = sequence.compareTo(binding.sequence);
+									compareTo = sequence.compareTo(sequenceBinding.sequence);
 							}
 						}
 					}
@@ -82,12 +82,12 @@ public final class Binding implements Comparable {
 	}
 	
 	public boolean equals(Object object) {
-		if (!(object instanceof Binding))
+		if (!(object instanceof SequenceBinding))
 			return false;
 		
-		Binding binding = (Binding) object;
-		return configuration.equals(binding.configuration) && Util.equals(command, binding.command) && locale.equals(binding.locale) && platform.equals(binding.platform) && 
-			Util.equals(plugin, binding.plugin) && rank == binding.rank && scope.equals(binding.scope) && sequence.equals(binding.sequence);
+		SequenceBinding sequenceBinding = (SequenceBinding) object;
+		return configuration.equals(sequenceBinding.configuration) && Util.equals(command, sequenceBinding.command) && locale.equals(sequenceBinding.locale) && 
+			platform.equals(sequenceBinding.platform) && Util.equals(plugin, sequenceBinding.plugin) && rank == sequenceBinding.rank && scope.equals(sequenceBinding.scope) && sequence.equals(sequenceBinding.sequence);
 	}
 
 	public String getConfiguration() {

@@ -31,10 +31,10 @@ final class Persistence {
 	final static String TAG_ID = "id"; //$NON-NLS-1$
 	final static String TAG_KEY_BINDING = "keyBinding"; //$NON-NLS-1$
 	final static String TAG_KEY_CONFIGURATION = "keyConfiguration"; //$NON-NLS-1$
-	final static String TAG_CONFIGURATION = "keyConfiguration"; //$NON-NLS-1$ // TODO
-	final static String TAG_SEQUENCE = "keySequence"; //$NON-NLS-1$ // TODO
-	final static String TAG_STRING = "keyString"; //$NON-NLS-1$ // TODO
-	final static String TAG_STROKE = "keyStroke"; //$NON-NLS-1$ // TODO
+	final static String TAG_CONFIGURATION = "configuration"; //$NON-NLS-1$
+	final static String TAG_SEQUENCE = "sequence"; //$NON-NLS-1$
+	final static String TAG_STRING = "string"; //$NON-NLS-1$
+	final static String TAG_STROKE = "stroke"; //$NON-NLS-1$
 	final static String TAG_LOCALE = "locale"; //$NON-NLS-1$		
 	final static String TAG_NAME = "name"; //$NON-NLS-1$
 	final static String TAG_PARENT = "parent"; //$NON-NLS-1$
@@ -44,7 +44,6 @@ final class Persistence {
 	final static String TAG_VALUE = "value"; //$NON-NLS-1$
 	final static Integer ZERO = new Integer(0);
 	final static Sequence ZERO_LENGTH_SEQUENCE = Sequence.create(); //$NON-NLS-1$
-	final static String ZERO_LENGTH_STRING = ""; //$NON-NLS-1$
 
 	static ActiveConfiguration readActiveConfiguration(IMemento memento, String pluginOverride)
 		throws IllegalArgumentException {
@@ -55,7 +54,7 @@ final class Persistence {
 		String value = memento.getString(TAG_VALUE);
 
 		if (value == null)
-			value = ZERO_LENGTH_STRING;
+			value = Util.ZERO_LENGTH_STRING;
 
 		return ActiveConfiguration.create(plugin, value);
 	}
@@ -87,12 +86,12 @@ final class Persistence {
 		String id = memento.getString(TAG_ID);
 
 		if (id == null)
-			id = ZERO_LENGTH_STRING;
+			id = Util.ZERO_LENGTH_STRING;
 		
 		String name = memento.getString(TAG_NAME);
 
 		if (name == null)
-			name = ZERO_LENGTH_STRING;
+			name = Util.ZERO_LENGTH_STRING;
 		
 		String plugin = pluginOverride != null ? pluginOverride : memento.getString(TAG_PLUGIN);
 		return Category.create(description, id, name, plugin);
@@ -126,12 +125,12 @@ final class Persistence {
 		String id = memento.getString(TAG_ID);
 
 		if (id == null)
-			id = ZERO_LENGTH_STRING;
+			id = Util.ZERO_LENGTH_STRING;
 		
 		String name = memento.getString(TAG_NAME);
 
 		if (name == null)
-			name = ZERO_LENGTH_STRING;
+			name = Util.ZERO_LENGTH_STRING;
 		
 		String plugin = pluginOverride != null ? pluginOverride : memento.getString(TAG_PLUGIN);
 		return Command.create(category, description, id, name, plugin);
@@ -155,31 +154,54 @@ final class Persistence {
 		return list;				
 	}
 
-	static Binding readBinding(IMemento memento, String pluginOverride, int rank)
+	static SequenceBinding readBinding(IMemento memento, String pluginOverride, int rank)
 		throws IllegalArgumentException {
 		if (memento == null)
 			throw new IllegalArgumentException();
 
 		String command = memento.getString(TAG_COMMAND);
 		String configuration = memento.getString(TAG_CONFIGURATION);
-		
+			
+		// TODO remove after 2.1 ships (BEGIN)
 		if (configuration == null)
-			configuration = ZERO_LENGTH_STRING;
+			configuration = memento.getString("keyConfiguration"); //$NON-NLS-1$
+		// TODO remove after 2.1 ships (END)
+
+		if (configuration == null)
+			configuration = Util.ZERO_LENGTH_STRING;
 
 		Sequence sequence = null;
-		IMemento mementoKeySequence = memento.getChild(TAG_SEQUENCE);
+		IMemento mementoSequence = memento.getChild(TAG_SEQUENCE);
 		
-		if (mementoKeySequence != null) 
-			sequence = readSequence(mementoKeySequence);	
+		if (mementoSequence != null) 
+			sequence = readSequence(mementoSequence);	
 		else {
-			String keyString = memento.getString(TAG_STRING);
+			String string = memento.getString(TAG_STRING);
 			
-			if (keyString != null)			
+			if (string != null)			
 				try {			
-					sequence = Sequence.parseKeySequence(keyString);
+					sequence = KeySupport.parseSequence(string);
 				} catch (IllegalArgumentException eIllegalArgument) {					
 				}
 		}
+
+		// TODO remove after 2.1 ships (BEGIN)
+		if (sequence == null) {
+			mementoSequence = memento.getChild("keySequence"); //$NON-NLS-1$
+		
+			if (mementoSequence != null) 
+				sequence = readSequence(mementoSequence);	
+			else {
+				String string = memento.getString("keyString"); //$NON-NLS-1$
+			
+				if (string != null)			
+					try {			
+						sequence = KeySupport.parseSequence(string);
+					} catch (IllegalArgumentException eIllegalArgument) {					
+					}
+			}
+		}
+		// TODO remove after 2.1 ships (END)
 		
 		if (sequence == null)
 			sequence = ZERO_LENGTH_SEQUENCE;
@@ -187,20 +209,20 @@ final class Persistence {
 		String locale = memento.getString(TAG_LOCALE);
 	
 		if (locale == null)
-			locale = ZERO_LENGTH_STRING;
+			locale = Util.ZERO_LENGTH_STRING;
 
 		String platform = memento.getString(TAG_PLATFORM);
 
 		if (platform == null)
-			platform = ZERO_LENGTH_STRING;
+			platform = Util.ZERO_LENGTH_STRING;
 		
 		String plugin = pluginOverride != null ? pluginOverride : memento.getString(TAG_PLUGIN);
 		String scope = memento.getString(TAG_SCOPE);
 
 		if (scope == null)
-			scope = ZERO_LENGTH_STRING;
+			scope = Util.ZERO_LENGTH_STRING;
 
-		return Binding.create(configuration, command, locale, platform, plugin, rank, scope, sequence);
+		return SequenceBinding.create(configuration, command, locale, platform, plugin, rank, scope, sequence);
 	}
 
 	static List readBindings(IMemento memento, String name, String pluginOverride, int rank)
@@ -230,12 +252,12 @@ final class Persistence {
 		String id = memento.getString(TAG_ID);
 
 		if (id == null)
-			id = ZERO_LENGTH_STRING;
+			id = Util.ZERO_LENGTH_STRING;
 		
 		String name = memento.getString(TAG_NAME);
 
 		if (name == null)
-			name = ZERO_LENGTH_STRING;
+			name = Util.ZERO_LENGTH_STRING;
 		
 		String parent = memento.getString(TAG_PARENT);
 		String plugin = pluginOverride != null ? pluginOverride : memento.getString(TAG_PLUGIN);
@@ -266,16 +288,21 @@ final class Persistence {
 			throw new IllegalArgumentException();
 			
 		IMemento[] mementos = memento.getChildren(TAG_STROKE);
-		
+
+		// TODO remove after 2.1 ships (BEGIN)
+		if (mementos == null)
+			mementos = memento.getChildren("keyStroke"); //$NON-NLS-1$
+		// TODO remove after 2.1 ships (END)
+
 		if (mementos == null)
 			throw new IllegalArgumentException();
 		
-		List keyStrokes = new ArrayList(mementos.length);
+		List strokes = new ArrayList(mementos.length);
 		
 		for (int i = 0; i < mementos.length; i++)
-			keyStrokes.add(readStroke(mementos[i]));
+			strokes.add(readStroke(mementos[i]));
 		
-		return Sequence.create(keyStrokes);
+		return Sequence.create(strokes);
 	}
 
 	static Stroke readStroke(IMemento memento)
@@ -300,12 +327,12 @@ final class Persistence {
 		String id = memento.getString(TAG_ID);
 
 		if (id == null)
-			id = ZERO_LENGTH_STRING;
+			id = Util.ZERO_LENGTH_STRING;
 		
 		String name = memento.getString(TAG_NAME);
 
 		if (name == null)
-			name = ZERO_LENGTH_STRING;
+			name = Util.ZERO_LENGTH_STRING;
 		
 		String parent = memento.getString(TAG_PARENT);
 		String plugin = pluginOverride != null ? pluginOverride : memento.getString(TAG_PLUGIN);
@@ -416,36 +443,36 @@ final class Persistence {
 			writeCommand(memento.createChild(name), (Command) iterator.next());
 	}
 	
-	static void writeBinding(IMemento memento, Binding binding)
+	static void writeBinding(IMemento memento, SequenceBinding sequenceBinding)
 		throws IllegalArgumentException {
 		if (memento == null)
 			throw new IllegalArgumentException();
 
-		memento.putString(TAG_COMMAND, binding.getCommand());
-		memento.putString(TAG_CONFIGURATION, binding.getConfiguration());
-		writeSequence(memento.createChild(TAG_SEQUENCE), binding.getSequence());		
-		memento.putString(TAG_LOCALE, binding.getLocale());
-		memento.putString(TAG_PLATFORM, binding.getPlatform());
-		memento.putString(TAG_PLUGIN, binding.getPlugin());
-		memento.putString(TAG_SCOPE, binding.getScope());
+		memento.putString(TAG_COMMAND, sequenceBinding.getCommand());
+		memento.putString(TAG_CONFIGURATION, sequenceBinding.getConfiguration());
+		writeSequence(memento.createChild(TAG_SEQUENCE), sequenceBinding.getSequence());		
+		memento.putString(TAG_LOCALE, sequenceBinding.getLocale());
+		memento.putString(TAG_PLATFORM, sequenceBinding.getPlatform());
+		memento.putString(TAG_PLUGIN, sequenceBinding.getPlugin());
+		memento.putString(TAG_SCOPE, sequenceBinding.getScope());
 	}	
 
-	static void writeBindings(IMemento memento, String name, List bindings)
+	static void writeBindings(IMemento memento, String name, List sequenceBindings)
 		throws IllegalArgumentException {
-		if (memento == null || name == null || bindings == null)
+		if (memento == null || name == null || sequenceBindings == null)
 			throw new IllegalArgumentException();
 		
-		bindings = new ArrayList(bindings);
-		Iterator iterator = bindings.iterator();
+		sequenceBindings = new ArrayList(sequenceBindings);
+		Iterator iterator = sequenceBindings.iterator();
 		
 		while (iterator.hasNext()) 
-			if (!(iterator.next() instanceof Binding))
+			if (!(iterator.next() instanceof SequenceBinding))
 				throw new IllegalArgumentException();
 
-		iterator = bindings.iterator();
+		iterator = sequenceBindings.iterator();
 
 		while (iterator.hasNext()) 
-			writeBinding(memento.createChild(name), (Binding) iterator.next());
+			writeBinding(memento.createChild(name), (SequenceBinding) iterator.next());
 	}
 
 	static void writeConfiguration(IMemento memento, Configuration configuration)
@@ -478,12 +505,12 @@ final class Persistence {
 			writeConfiguration(memento.createChild(name), (Configuration) iterator.next());
 	}
 
-	static void writeSequence(IMemento memento, Sequence keySequence)
+	static void writeSequence(IMemento memento, Sequence sequence)
 		throws IllegalArgumentException {
-		if (memento == null || keySequence == null)
+		if (memento == null || sequence == null)
 			throw new IllegalArgumentException();
 			
-		Iterator iterator = keySequence.getStrokes().iterator();
+		Iterator iterator = sequence.getStrokes().iterator();
 
 		while (iterator.hasNext())
 			writeStroke(memento.createChild(TAG_STROKE), (Stroke) iterator.next());

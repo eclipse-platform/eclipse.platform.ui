@@ -146,7 +146,7 @@ public final class PreferenceRegistry extends AbstractMutableRegistry {
 		}
 	}
 
-	private static Binding readDeprecatedKeyBinding(IMemento memento)
+	private static SequenceBinding readDeprecatedKeyBinding(IMemento memento)
 		throws IllegalArgumentException {
 		if (memento == null)
 			throw new IllegalArgumentException();
@@ -155,24 +155,24 @@ public final class PreferenceRegistry extends AbstractMutableRegistry {
 		String keyConfiguration = memento.getString(DEPRECATED_TAG_CONFIGURATION);
 		
 		if (keyConfiguration == null)
-			keyConfiguration = Persistence.ZERO_LENGTH_STRING;
+			keyConfiguration = Util.ZERO_LENGTH_STRING;
 
-		Sequence keySequence = null;
-		IMemento mementoKeySequence = memento.getChild(DEPRECATED_TAG_KEY_SEQUENCE);
+		Sequence sequence = null;
+		IMemento mementoSequence = memento.getChild(DEPRECATED_TAG_KEY_SEQUENCE);
 		
-		if (mementoKeySequence != null) 
-			keySequence = readDeprecatedKeySequence(mementoKeySequence);	
+		if (mementoSequence != null) 
+			sequence = readDeprecatedKeySequence(mementoSequence);	
 
-		if (keySequence == null)
-			keySequence = Persistence.ZERO_LENGTH_SEQUENCE;
+		if (sequence == null)
+			sequence = Persistence.ZERO_LENGTH_SEQUENCE;
 		
 		String plugin = memento.getString(DEPRECATED_TAG_PLUGIN);	
 		String scope = memento.getString(DEPRECATED_TAG_SCOPE);
 
 		if (scope == null)
-			scope = Persistence.ZERO_LENGTH_STRING;
+			scope = Util.ZERO_LENGTH_STRING;
 
-		return Binding.create(keyConfiguration, command, Persistence.ZERO_LENGTH_STRING, Persistence.ZERO_LENGTH_STRING, plugin, RANK_PREFERENCE, scope, keySequence);
+		return SequenceBinding.create(keyConfiguration, command, Util.ZERO_LENGTH_STRING, Util.ZERO_LENGTH_STRING, plugin, RANK_PREFERENCE, scope, sequence);
 	}
 
 	private static List readDeprecatedKeyBindings(IMemento memento, String name)
@@ -203,12 +203,12 @@ public final class PreferenceRegistry extends AbstractMutableRegistry {
 		if (mementos == null)
 			throw new IllegalArgumentException();
 		
-		List keyStrokes = new ArrayList(mementos.length);
+		List strokes = new ArrayList(mementos.length);
 		
 		for (int i = 0; i < mementos.length; i++)
-			keyStrokes.add(readDeprecatedKeyStroke(mementos[i]));
+			strokes.add(readDeprecatedKeyStroke(mementos[i]));
 		
-		return Sequence.create(keyStrokes);
+		return Sequence.create(strokes);
 	}
 
 	private static Stroke readDeprecatedKeyStroke(IMemento memento)
