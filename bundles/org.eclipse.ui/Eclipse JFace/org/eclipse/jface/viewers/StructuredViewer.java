@@ -159,7 +159,8 @@ protected void disassociate(Item item) {
 	Object element = item.getData();
 	Assert.isNotNull(element);
 	item.setData(null);
-	if (elementMap != null && findItem(element) == item)
+	// double-check that the element actually maps to the given item before unmapping it
+	if (elementMap != null && elementMap.get(element) == item)
 		unmapElement(element);
 }
 /**
@@ -830,8 +831,14 @@ public Widget testFindItem(Object element) {
  * </p>
  */
 protected void unmapAllElements() {
-	if (elementMap != null)
+	if (elementMap != null) {
+		// need to clear the Item->element association as well as the element->Item association
+		for (Iterator i = elementMap.values().iterator(); i.hasNext();) {
+			Widget w = (Widget) i.next();
+			w.setData(null);
+		}
 		elementMap = new HashMap();
+	}
 }
 /**
  * Removes the given element from the internal element to widget map.
