@@ -91,7 +91,7 @@ public void flushSyncInfo(final QualifiedName partner, final IResource root, fin
 			root.accept(visitor, depth, true);
 		}
 	};
-	workspace.run(body, null);
+	workspace.run(body, root, null);
 }
 /**
  * @see ISynchronizer#getPartners
