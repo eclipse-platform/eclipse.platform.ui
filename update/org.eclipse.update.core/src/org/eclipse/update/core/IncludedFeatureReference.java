@@ -188,18 +188,4 @@ public class IncludedFeatureReference extends IncludedFeatureReferenceModel impl
 	public IFeature getFeature() throws CoreException {
 		return getFeature(false,null);
 	}
-
-	/**
-	 * @see org.eclipse.update.core.IIncludedFeatureReference#matchesPlatform()
-	 */
-	public boolean matchesPlatform() {
-		if (getWS()!=null && !SiteManager.getWS().equalsIgnoreCase(getWS()))
-			return false;
-		if (getOS() != null && !SiteManager.getOS().equalsIgnoreCase(getOS()))
-			return false;
-		if (getOSArch()!= null && !SiteManager.getOSArch().equalsIgnoreCase(getOSArch()))
-			return false;
-		return true;		
-	}
-
 }

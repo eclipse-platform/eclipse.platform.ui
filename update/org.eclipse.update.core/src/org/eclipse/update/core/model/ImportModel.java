@@ -21,6 +21,10 @@ public class ImportModel extends ModelObject {
 	private String matchingRuleName;
 	private boolean featureImport;
 	private boolean patch;
+	private String osArch;
+	private String ws;
+	private String os;
+	private String nl;
 
 	/**
 	 * Creates a uninitialized plug-in dependency model object.
@@ -173,4 +177,68 @@ public class ImportModel extends ModelObject {
 	public void setPatch(boolean patch) {
 		this.patch = patch;
 	}
+	/**
+	 * Returns the os.
+	 * @return String
+	 */
+	public String getOS() {
+		return os;
+	}
+
+	/**
+	 * Returns the osArch.
+	 * @return String
+	 */
+	public String getOSArch() {
+		return osArch;
+	}
+
+	/**
+	 * Returns the ws.
+	 * @return String
+	 */
+	public String getWS() {
+		return ws;
+	}
+
+	/**
+	 * Sets the os.
+	 * @param os The os to set
+	 */
+	public void setOS(String os) {
+		this.os = os;
+	}
+
+	/**
+	 * Sets the osArch.
+	 * @param osArch The osArch to set
+	 */
+	public void setOSArch(String osArch) {
+		this.osArch = osArch;
+	}
+
+	/**
+	 * Sets the ws.
+	 * @param ws The ws to set
+	 */
+	public void setWS(String ws) {
+		this.ws = ws;
+	}
+
+	/**
+	 * Returns the nl.
+	 * @return String
+	 */
+	public String getNL() {
+		return nl;
+	}
+
+	/**
+	 * Sets the nl.
+	 * @param nl The nl to set
+	 */
+	public void setNL(String nl) {
+		this.nl = nl;
+	}
+
 }

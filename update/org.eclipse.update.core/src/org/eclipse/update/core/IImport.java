@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.IAdaptable;
  * @see org.eclipse.update.core.Import
  * @since 2.0
  */
-public interface IImport extends IAdaptable, IUpdateConstants {
+public interface IImport extends IAdaptable, IUpdateConstants, IPlatformEnvironment {
 
 	/**
 	 * The import relates to a plugin

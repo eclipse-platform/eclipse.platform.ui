@@ -206,12 +206,25 @@ public interface IFeature extends IAdaptable, IPlatformEnvironment {
 	 * Return a list of plug-in dependencies for this feature. A plug-in
 	 * dependency is a reference to a plug-in required for feature execution
 	 * that is not packaged as part of the feature.
+	 * filtered by the operating system, windowing system and architecture system
+	 * set in <code>Sitemanager</code>
 	 * 
 	 * @return the list of required plug-in dependencies, or an empty array.
 	 * @since 2.0 
 	 */
 	public IImport[] getImports();
 
+	/**
+	 * Return a list of plug-in dependencies for this feature. A plug-in
+	 * dependency is a reference to a plug-in required for feature execution
+	 * that is not packaged as part of the feature.
+ 	 * No filtering occurs
+	 * 
+	 * @return the list of required plug-in dependencies, or an empty array.
+	 * @since 2.1
+	 */
+	public IImport[] getRawImports();
+	
 	/**
 	 * Return the identifier of the primary plugin associated to this feature
 	 * or <code>null</code> if the feature is not a primary feature.
@@ -294,7 +307,7 @@ public interface IFeature extends IAdaptable, IPlatformEnvironment {
 	 * No filtering occurs
 	 * 
 	 * @return an erray of plug-in entries, or an empty array.
-	 * @since 2.0
+	 * @since 2.1
 	 */
 	public IPluginEntry[] getRawPluginEntries();
 
@@ -321,7 +334,7 @@ public interface IFeature extends IAdaptable, IPlatformEnvironment {
 	 * No filtering occurs
 	 * 
 	 * @return an erray of non-plug-in entries, or an empty array.
-	 * @since 2.0
+	 * @since 2.1
 	 */
 	public INonPluginEntry[] getRawNonPluginEntries();
 

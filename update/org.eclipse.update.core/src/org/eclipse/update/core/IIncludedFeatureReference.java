@@ -95,17 +95,5 @@ public interface IIncludedFeatureReference extends IFeatureReference, IPlatformE
 	 */
 
 	public int getSearchLocation();
-	
-
-	/**
-	 * Returns <code>true</code> if the feature references can be run on the platform specified by the 
-	 * <code>Sitemanager</code>.
-	 * returns <code>false</code> if either the operating system, the windowing system or the architecture system
-	 * is not <code>null</code> and does not match the one specified in <code>SiteManager</code>
-	 * 
-	 * @return <code>true</code> if the included feature operating system, windowing system and srchitecture system
-	 * match the one specified in <code>SiteManager</code>
-	 */
-	public boolean matchesPlatform();
 
 }

@@ -178,10 +178,10 @@ public class Feature extends FeatureModel implements IFeature {
 	/**
 	 * Return a list of plug-in dependencies for this feature.
 	 * 
-	 * @see IFeature#getImports()
+	 * @see IFeature#getRawImports()
 	 * @since 2.0
 	 */
-	public IImport[] getImports() {
+	public IImport[] getRawImports() {
 		ImportModel[] result = getImportModels();
 		if (result.length == 0)
 			return new IImport[0];
@@ -700,7 +700,7 @@ public class Feature extends FeatureModel implements IFeature {
 		if (allIncluded!=null){
 			for (int i = 0; i < allIncluded.length; i++) {
 				IIncludedFeatureReference included = allIncluded[i];
-				if (included.matchesPlatform())
+				if (UpdateManagerUtils.isValidEnvironment(allIncluded[i]))
 					list.add(included);
 			}
 		}
@@ -957,6 +957,35 @@ public class Feature extends FeatureModel implements IFeature {
 	 */
 	public IPluginEntry[] getPluginEntries() {
 		return filterPluginEntry(getRawPluginEntries());
+	}
+
+	/**
+	 * @see org.eclipse.update.core.IFeature#getImports()
+	 */
+	public IImport[] getImports() {
+		return filterImports(getRawImports());
+	}
+	
+	/**
+	 * Method filterImports.
+	 * @param iImports
+	 * @return IImport[]
+	 */
+	private IImport[] filterImports(IImport[] all) {
+		List list = new ArrayList();
+		if (all!=null){
+			for (int i = 0; i < all.length; i++) {
+				if (UpdateManagerUtils.isValidEnvironment(all[i]))
+					list.add((IImport)all[i]);
+			}
+		}
+		
+		IImport[] result = new IImport[list.size()];
+		if (!list.isEmpty()){
+			list.toArray(result);
+		}
+		
+		return result;
 	}
 
 }
