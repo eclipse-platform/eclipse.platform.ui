@@ -31,6 +31,10 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 	private final static String BOM_UTF_16_BE = "\u00FE\u00FF";
 	private final static String BOM_UTF_16_LE = "\u00FF\u00FE";
 	private final static String BOM_UTF_8 = "\u00EF\u00BB\u00BF";
+	private final static String SAMPLE_BIN1_SIGNATURE = "\u0010\u0011\u0012\u0013";
+	private final static String SAMPLE_BIN1_OFFSET = "12345";
+	private final static String SAMPLE_BIN2_SIGNATURE = "\u0010\u0011\u0012\u0014";
+	private final static String SAMPLE_BIN2_OFFSET = "";
 
 	public IContentTypeManagerTest(String name) {
 		super(name);
@@ -59,11 +63,11 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 		assertEquals("4.2", xmlContentType, xmlBasedSpecificNameContentType.getBaseType());
 		IContentType[] xmlTypes = contentTypeManager.findContentTypesFor("foo.xml");
 		assertTrue("5.1", contains(xmlTypes, xmlContentType));
-		IContentType binaryContentType = contentTypeManager.getContentType(RuntimeTest.PI_RUNTIME_TESTS + '.' + "sample-binary");
+		IContentType binaryContentType = contentTypeManager.getContentType(RuntimeTest.PI_RUNTIME_TESTS + '.' + "sample-binary1");
 		assertNotNull("6.0", binaryContentType);
 		assertTrue("6.1", !isText(contentTypeManager, binaryContentType));
 		assertNull("6.2", binaryContentType.getBaseType());
-		IContentType[] binaryTypes = contentTypeManager.findContentTypesFor("foo.samplebin");
+		IContentType[] binaryTypes = contentTypeManager.findContentTypesFor("foo.samplebin1");
 		assertEquals("7.0", 1, binaryTypes.length);
 		assertEquals("7.1", binaryContentType, binaryTypes[0]);
 		IContentType myText = contentTypeManager.getContentType(PI_RUNTIME_TESTS + ".mytext");
@@ -91,7 +95,7 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 	 */
 	public void testContentDetection() throws IOException {
 		ContentTypeManager contentTypeManager = (ContentTypeManager) LocalContentTypeManager.getLocalContentTypeManager();
-		IContentType inappropriate = contentTypeManager.getContentType(RuntimeTest.PI_RUNTIME_TESTS + ".sample-binary");
+		IContentType inappropriate = contentTypeManager.getContentType(RuntimeTest.PI_RUNTIME_TESTS + ".sample-binary1");
 		IContentType appropriate = contentTypeManager.getContentType(IPlatform.PI_RUNTIME + ".xml");
 		IContentType appropriateSpecific1 = contentTypeManager.getContentType(RuntimeTest.PI_RUNTIME_TESTS + ".xml-based-different-extension");
 		IContentType appropriateSpecific2 = contentTypeManager.getContentType(RuntimeTest.PI_RUNTIME_TESTS + ".xml-based-specific-name");
@@ -104,7 +108,7 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 		assertEquals("3.1", appropriateSpecific2, contentTypeManager.findContentTypeFor(getInputStream(MINIMAL_XML), new IContentType[] {inappropriate, appropriate, appropriateSpecific2}));
 		// if all are provided, the more specific types will appear before the more generic types
 		IContentType[] selected = contentTypeManager.findContentTypesFor(getInputStream(MINIMAL_XML), new IContentType[] {inappropriate, appropriate, appropriateSpecific1, appropriateSpecific2});
-		assertEquals("4.0", 3, selected.length);		
+		assertEquals("4.0", 3, selected.length);
 		assertTrue("4.1", appropriateSpecific1 == selected[0] || appropriateSpecific1 == selected[1]);
 		assertTrue("4.2", appropriateSpecific2 == selected[0] || appropriateSpecific2 == selected[1]);
 		assertTrue("4.3", appropriate == selected[2]);
@@ -133,14 +137,21 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 		description = contentTypeManager.getDescriptionFor(getInputStream("some contents"), "abc.tzt", IContentDescription.ALL);
 		assertNotNull("5.0", description);
 		assertEquals("5.1", "BAR", description.getCharset());
-		// test full lookup
-		IContentType sampleBinary = contentTypeManager.getContentType(PI_RUNTIME_TESTS + ".sample-binary");
+	}
+
+	public void testBinaryTypes() throws IOException {
+		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
+		IContentType sampleBinary1 = contentTypeManager.getContentType(PI_RUNTIME_TESTS + ".sample-binary1");
+		IContentType sampleBinary2 = contentTypeManager.getContentType(PI_RUNTIME_TESTS + ".sample-binary2");
 		InputStream contents;
-		contents = getInputStream(SampleBinaryDescriber.TAG + " extra contents", "US-ASCII");
-		IContentType[] selected;
-		description = contentTypeManager.getDescriptionFor(contents, null, 0);
+		contents = getInputStream(SAMPLE_BIN1_OFFSET + SAMPLE_BIN1_SIGNATURE + " extra contents", "US-ASCII");
+		IContentDescription description = contentTypeManager.getDescriptionFor(contents, null, 0);
 		assertNotNull("6.0", description);
-		assertEquals("6.1", sampleBinary, description.getContentType());
+		assertEquals("6.1", sampleBinary1, description.getContentType());
+		contents = getInputStream(SAMPLE_BIN2_OFFSET + SAMPLE_BIN2_SIGNATURE + " extra contents", "US-ASCII");
+		description = contentTypeManager.getDescriptionFor(contents, null, 0);
+		assertNotNull("7.0", description);
+		assertEquals("7.1", sampleBinary2, description.getContentType());
 	}
 
 	public InputStream getInputStream(String contents, String encoding) throws UnsupportedEncodingException {
@@ -176,7 +187,7 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 		IContentType xmlContentType = contentTypeManager.getContentType(IPlatform.PI_RUNTIME + ".xml");
 		IContentType xmlBasedDifferentExtensionContentType = contentTypeManager.getContentType(RuntimeTest.PI_RUNTIME_TESTS + '.' + "xml-based-different-extension");
 		IContentType xmlBasedSpecificNameContentType = contentTypeManager.getContentType(RuntimeTest.PI_RUNTIME_TESTS + '.' + "xml-based-specific-name");
-		IContentType binaryContentType = contentTypeManager.getContentType(RuntimeTest.PI_RUNTIME_TESTS + '.' + "sample-binary");
+		IContentType binaryContentType = contentTypeManager.getContentType(RuntimeTest.PI_RUNTIME_TESTS + '.' + "sample-binary1");
 		assertTrue("1.0", textContentType.isKindOf(textContentType));
 		assertTrue("2.0", xmlContentType.isKindOf(textContentType));
 		assertTrue("2.1", !textContentType.isKindOf(xmlContentType));
