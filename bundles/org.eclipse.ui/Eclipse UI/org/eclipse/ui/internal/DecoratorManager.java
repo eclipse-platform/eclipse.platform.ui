@@ -5,12 +5,9 @@ package org.eclipse.ui.internal;
  * All Rights Reserved.
  */
 import java.util.*;
-
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.viewers.ILabelDecorator;
-import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IContributorResourceAdapter;
 
@@ -21,7 +18,7 @@ import org.eclipse.ui.IContributorResourceAdapter;
  * @since 2.0
  */
 public class DecoratorManager
-	implements IBatchLabelDecorator, ILabelProviderListener {
+	implements ILabelDecorator, ILabelProviderListener {
 
 	//Hold onto the list of listeners to be told if a change has occured
 	private HashSet listeners = new HashSet();
@@ -39,7 +36,6 @@ public class DecoratorManager
 	private final String VALUE_SEPARATOR = ":";
 	private final String P_TRUE = "true";
 	private final String P_FALSE = "false";
-
 
 	/**
 	 * Create a new instance of the receiver and load the
@@ -86,7 +82,6 @@ public class DecoratorManager
 	 */
 	private void fireListeners(LabelProviderChangedEvent event) {
 		Iterator iterator = listeners.iterator();
-
 		while (iterator.hasNext()) {
 			ILabelProviderListener listener = (ILabelProviderListener) iterator.next();
 			listener.labelProviderChanged(event);
@@ -95,51 +90,16 @@ public class DecoratorManager
 
 	/**
 	 * Decorate the text provided for the element type.
-	 * @return null if there are none defined for this type.
+	 * Return null if there are none defined for this type.
 	 */
 	public String decorateText(String text, Object element) {
 		return decorateText(text, element, true);
 	}
 
 	/**
-	 * Assign the result of decorating the text and image in the 
-	 * supplied DecorationResult to the decorators defined
-	 * for element. Apply the adapted decorations as well.
-	 * 			
-	 */
-	public void decorateTextAndImage(Object element, Decoration decorationResult) {
-		decorateTextAndImage(element, decorationResult, true);
-	}
-
-	/**
-	 * Assign the result of decorating the text and image in the 
-	 * supplied DecorationResult to the decorators defined
-	 * for element. Apply the decorators to the adapted result
-	 * if checkAdapted is true.
-	 * 			
-	 */
-	public void decorateTextAndImage(
-		Object element,
-		Decoration decorationResult,
-		boolean checkAdapted) {
-
-		DecoratorDefinition[] decorators = getDecoratorsFor(element);
-		for (int i = 0; i < decorators.length; i++) {
-			decorators[i].decorateTextAndImage(element, decorationResult);
-		}
-
-		if (checkAdapted) {
-			//Get any adaptions to IResource
-			Object adapted = getResourceAdapter(element);
-			if (adapted != null)
-				decorateTextAndImage(adapted, decorationResult, false);
-		}
-	}
-
-	/**
 	 * Decorate the text provided for the element type.
 	 * Check for an adapted resource if checkAdapted is true.
-	 * @return null if there are none defined for this type.
+	 * Return null if there are none defined for this type.
 	 */
 	private String decorateText(
 		String text,
@@ -472,7 +432,7 @@ public class DecoratorManager
 		}
 
 	}
-
+	
 	/**
 	 * Shutdown the decorator manager by disabling all
 	 * of the decorators so that dispose() will be called
@@ -486,5 +446,4 @@ public class DecoratorManager
 				definitions[i].setEnabled(false);
 		}
 	}
-
 }

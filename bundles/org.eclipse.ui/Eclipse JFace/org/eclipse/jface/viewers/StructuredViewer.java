@@ -442,9 +442,9 @@ protected void handleInvalidSelection(ISelection invalidSelection, ISelection ne
  * </p>
  */
 protected void handleLabelProviderChanged(LabelProviderChangedEvent event) {
-	Object[] elements = event.getElements();
-	if (elements != null) {
-		update(elements, null);
+	Object element = event.getElement();
+	if (element != null) {
+		update(element, null);
 	}
 	else {
 		super.handleLabelProviderChanged(event);
