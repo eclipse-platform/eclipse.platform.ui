@@ -16,7 +16,7 @@ public class AntClassLoader extends URLClassLoader {
 	private static final String ANT_PACKAGES_PREFIX= "org.apache.tools.ant"; //$NON-NLS-1$
 
 	public AntClassLoader(URL[] urls, ClassLoader[] pluginLoaders) {
-		super(urls, null);
+		super(urls, ClassLoader.getSystemClassLoader());
 		this.pluginLoaders = pluginLoaders;
 	}
 
