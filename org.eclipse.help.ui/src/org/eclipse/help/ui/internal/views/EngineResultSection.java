@@ -88,7 +88,7 @@ public class EngineResultSection {
 		container.setLayout(layout);
 		createFormText(container, toolkit);
 		searchResults.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
-		searchResults.setColor("summary", toolkit.getColors().getColor(FormColors.TITLE)); //$NON-NLS-1$
+		searchResults.setColor("summary", parent.getDisplay().getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW)); //$NON-NLS-1$
 		section.setClient(container);
 		updateSectionTitle();
 		section.addExpansionListener(new IExpansionListener() {
@@ -315,9 +315,9 @@ public class EngineResultSection {
 				String summary = getSummary(hit);
 				if (summary != null) {
 					buff.append("<br/>"); //$NON-NLS-1$
-					buff.append("<span color=\"summary\">"); //$NON-NLS-1$
+					//buff.append("<span color=\"summary\">"); //$NON-NLS-1$
 					buff.append(summary);
-					buff.append("</span>"); //$NON-NLS-1$
+					//buff.append("</span>"); //$NON-NLS-1$
 				}
 			}
 			buff.append("</li>"); //$NON-NLS-1$
