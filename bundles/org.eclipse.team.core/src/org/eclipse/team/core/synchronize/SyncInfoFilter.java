@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.eclipse.team.core.synchronize;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.core.variants.*;
-import org.eclipse.team.internal.core.subscribers.*;
+import org.eclipse.team.core.variants.IResourceVariant;
+import org.eclipse.team.internal.core.Assert;
+import org.eclipse.team.internal.core.subscribers.ContentComparator;
 
 /**
  * A <code>SyncInfoFilter</code> tests a <code>SyncInfo</code> for inclusion,
@@ -51,12 +53,31 @@ public abstract class SyncInfoFilter {
 		public ContentComparisonSyncInfoFilter(boolean ignoreWhitespace) {
 			criteria = new ContentComparator(ignoreWhitespace);
 		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.team.core.synchronize.SyncInfoFilter#select(org.eclipse.team.core.synchronize.SyncInfo, org.eclipse.core.runtime.IProgressMonitor)
+		 */
 		public boolean select(SyncInfo info, IProgressMonitor monitor) {
 			IResourceVariant remote = info.getRemote();
 			IResource local = info.getLocal();
 			if (local.getType() != IResource.FILE) return true;
 			if (remote == null) return !local.exists();
 			if (!local.exists()) return false;
+			return compareContents((IFile)local, remote, monitor);
+		}
+		
+		/**
+		 * Compare the contents of the local file and its variant.
+		 * This is used by the <code>select</code> method to compare the
+		 * contents of two non-null files.
+		 * @param local a local file
+		 * @param remote a resource variant of the file
+		 * @param monitor a progress monitor
+		 * @return whether the contents of the two files are equal
+		 */
+		public boolean compareContents(IFile local, IResourceVariant remote, IProgressMonitor monitor) {
+			Assert.isNotNull(local);
+			Assert.isNotNull(remote);
 			return criteria.compare(local, remote, monitor);
 		}
 	}
