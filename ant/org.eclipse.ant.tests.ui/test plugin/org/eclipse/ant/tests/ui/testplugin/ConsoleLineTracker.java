@@ -113,4 +113,10 @@ public class ConsoleLineTracker implements IConsoleLineTracker {
 			System.err.println("Interrupted waiting for console");
 		}
 	}
+
+	/**
+	 * @see org.eclipse.debug.ui.console.IConsoleLineTracker#streamClosed()
+	 */
+	public void streamClosed() {
+	}
 }
