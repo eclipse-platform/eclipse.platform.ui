@@ -394,10 +394,15 @@ public void connect(IProgressMonitor monitor) throws IOException, CVSAuthenticat
 		serverId = buf.toString();
 		
 		if (Policy.DEBUG_SSH_PROTOCOL) {
-			System.out.println("SSH > server ID: " + serverId);
-			System.out.println("SSH > client ID: " + clientId);
+			System.out.println("SSH > server ID: " + serverId); //$NON-NLS-1$
+			System.out.println("SSH > client ID: " + clientId); //$NON-NLS-1$
 		}
-
+		
+		if (!serverId.startsWith("SSH-1.")) { //$NON-NLS-1$
+			String sshVersion = (serverId.startsWith("SSH-")? serverId:""); //$NON-NLS-1$ //$NON-NLS-2$
+			throw new IOException(Policy.bind("Client.sshProtocolVersion", sshVersion));//$NON-NLS-1$
+		} 
+		
 		// send our id.
 		socketOut.write(clientId.getBytes());
 		socketOut.flush();
