@@ -31,61 +31,43 @@ var isMozilla = navigator.userAgent.toLowerCase().indexOf('mozilla') != -1 && pa
 var isIE = navigator.userAgent.toLowerCase().indexOf('msie') != -1;
 
 
-// Handle resize events
-window.onresize = resizeContent;
+// preload rollover images
+var navVisible = true;
+var imgs = new Array();
 
+imgs[0] = new Image();
+imgs[0].src = 'images/eclipse_collapse_over.gif';
+imgs[1] = new Image();
+imgs[1].src = 'images/eclipse_sync_over.gif';
+imgs[2] = new Image();		
+imgs[2].src = 'images/eclipse_print_over.gif';
+imgs[3] = new Image();	
+imgs[3].src = 'images/eclipse_close_over.gif';	
 
-/* Handler: resizes the internal frames */
-function resizeContent()
-{
- var w = 0;
- var h = 0;
- if (isIE)
- {
-  w = document.body.clientWidth;
-  h = document.body.clientHeight;
- } 
- else if (isMozilla)
- {
-  w = window.innerWidth;
-  h = window.innerHeight;
- }
- 
- var titlebar = document.getElementById("titlebar");
- titlebar.width = w; 
-}
-
-function mouseover(img)
-{
-	img.className="hover";
-	window.event.cancelBubble = true;
-}
-
-function mouseout(img)
-{
-	img.className="normal";
-	window.event.cancelBubble = true;
-}
 
 function search()
 {
 	parent.TabsFrame.showNavFrame("search");
 }
 
-function hidenav()
+function toggleNav()
 {
 	var frameset = parent.document.getElementById("contentFrameset"); 
 	var navFrameSize = frameset.getAttribute("cols");
-	if (navFrameSize == "*,100%")
+	if (navVisible)
 	{
-		frameset.setAttribute("cols", parent.oldSize);
-	}
-	else
-	{
+		document["hide_nav"].src = "images/eclipse_collapsedepressed.gif";
 		parent.oldSize = navFrameSize;
 		frameset.setAttribute("cols", "*,100%");
 	}
+	else
+	{
+		document["hide_nav"].src = "images/eclipse_collapse.gif";
+		frameset.setAttribute("cols", parent.oldSize);
+	}
+	navVisible = !navVisible;
 }
+
 
 function resynch()
 {
@@ -93,33 +75,48 @@ function resynch()
 	parent.NavFrame.displayTocFor(topic);
 }
 
+function printContent()
+{
+/*
+	parent.MainFrame.focus();
+	print();
+*/
+alert("To fix: printing will freeze the browser..");
+}
+
 function setToc(label)
 {
 	var title = document.getElementById("title");
 	var text = title.lastChild;
-	text.nodeValue = label;
+	text.nodeValue = " "+label;
 }
 
 
 </script>
    </head>
    
-   <body">
-      <img alt="titlebar" id="titlebar" src="images/titlebar.jpg" height="24" 
-	       style="position:absolute; top:0; left:0; z-order:10;"> 
-	  <div id="title" style="position:absolute; top:0; left:0; z-order:20; color:#ffffff; font-size:smaller; font-style: Regular;"><img src="images/view.gif">&nbsp;Bookshelf</div>
-	  
-	  <div style="right:20; position:absolute; z-order:20;">
-	  
-     	<IMG alt="Search" title="Search" onmouseover="mouseover(this)" onmouseout="mouseout(this)"  onclick="search()"  src="images/search_src.gif" class="normal">
-      
-     	<IMG alt="Toggle TOC" title="Toggle TOC"  onmouseover="mouseover(this)" onmouseout="mouseout(this)"  onclick="hidenav();" src="images/hidenav.gif" class="normal">
-        <IMG alt="Resynch" title="Resynch TOC"  onmouseover="mouseover(this)" onmouseout="mouseout(this)" onclick="resynch();" src="images/resynch.gif" class="normal">
-	  </div>
-	  
-<script type="text/javascript" language="JavaScript">
-resizeContent()
-</script>
+   <body leftmargin="0" topmargin="0" marginheight="0" marginwidth="0" bgcolor="#D4D0C8">
+   
+ 	  
+	  <div id="title" style="position:absolute; top:4; left:24; z-order:20; color:#ffffff;">&nbsp;Bookshelf</div>
+
+
+	  <table width="100%" height="23" cellspacing="0" cellpadding="0" border="0">
+	  	<tr>
+			<td width="100%" colspan="7" bgcolor="#FFFFFF"><img src="images/transparentDot.gif" width="1" height="1" alt="" border="0"/></td>
+	  	</tr>
+	  	<tr>
+
+		<td width="100%" bgcolor="#223E7F"><img src="images/eclipse_appicon.gif" height="22" alt="" border="0"/></td>
+		<td><img src="images/eclipse_titleGradient.gif" width="530" height="22" alt="" border="0"></td>
+		<td><a href="#" onclick="toggleNav();" onmouseover="if(navVisible) document['hide_nav'].src=imgs[0].src;" onmouseout="if(navVisible) document['hide_nav'].src='images/eclipse_collapse.gif';"><img src="images/eclipse_collapse.gif" alt="Hide Navigation" border="0" name="hide_nav"></a></td>
+		<td><a href="#" onclick="resynch()" onmouseover="document['sync_nav'].src=imgs[1].src;" onmouseout="document['sync_nav'].src='images/eclipse_sync.gif';"><img src="images/eclipse_sync.gif" alt="Synchronize Navigation" border="0" name="sync_nav"></a></td>
+		<td><a href="#" onclick="printContent()" onmouseover="document['print'].src=imgs[2].src;" onmouseout="document['print'].src='images/eclipse_print.gif';"><img src="images/eclipse_print.gif" alt="Print Page" border="0" name="print"></a></td>
+		<td><a href="#" onclick="parent.window.close();" onmouseover="document['close'].src=imgs[3].src;" onmouseout="document['close'].src='images/eclipse_close.gif';" ><img src="images/eclipse_close.gif" alt="Close" border="0" name="close"></a></td>
+
+		</tr>
+	  </table>
+
    </body>
 </html>
 
