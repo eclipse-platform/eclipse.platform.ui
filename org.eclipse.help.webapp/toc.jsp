@@ -133,14 +133,16 @@ if (parent.parent.temp){
 	}
 	String tocDescription = tocElement.getAttribute("topic");
 	if (tocDescription == null || tocDescription.length() == 0)
-		tocDescription = "javascript: void 0;";
+		tocDescription = "about:blank";
 	else
 		tocDescription = "content/help:" + tocDescription;
 
 %>
-<body onload='onloadHandler("<%=tocHref%>", "<%=UrlUtil.JavaScriptEncode(tocElement.getAttribute("label"))%>", "<%=tocDescription%>", <%=topicHref != null%>)'>
+<body>
 	<ul class='expanded' id='root'>
-		<nobr class='book'><a class='book' href='<%=tocDescription%>'><img src="images/container_obj.gif"><%=tocElement.getAttribute("label")%></a></nobr>
+		<li>
+		<nobr><img id="book" src="images/container_obj.gif"><a class='book' href='<%=tocDescription%>'><%=tocElement.getAttribute("label")%></a></nobr>
+		</li>
 <%
 	// JSP does not have good support for recursive calls using scriplets
 	// or at least I could not find a simple way...
@@ -211,19 +213,42 @@ if (parent.parent.temp){
 <%
 	if("yes".equalsIgnoreCase(request.getParameter("synch"))){
 %>
-	parent.parent.switchTab("toc");
+		parent.parent.switchTab("toc");
 <%
 	}
 %>	
+		// set title
+		tocTitle = '<%=UrlUtil.JavaScriptEncode(tocElement.getAttribute("label"))%>';
+		parent.parent.setToolbarTitle(tocTitle);
 		
-	// Highlight topic
-	var topic = '<%=topicHref != null ? topicHref : ""%>';
-	if (topic != "")
-	{
-		if (topic.indexOf(window.location.protocol) != 0)
-			topic = window.location.protocol + "//" +window.location.host +"<%=request.getContextPath()%>" + "/content/help:"+ topic;
-		selectTopic(topic);
-	}
+		// select specified topic, or else the book
+		var topic = '<%=topicHref != null ? topicHref : ""%>';
+
+		if (topic != "")
+		{
+			if (topic.indexOf(window.location.protocol) != 0)
+				topic = window.location.protocol + "//" +window.location.host +"<%=request.getContextPath()%>" + "/content/help:"+ topic;
+			selectTopic(topic);
+		}
+		else
+		{		
+			topic = '<%=tocDescription%>';
+			if (topic == "about:blank")
+			{
+				selectTopic(topic);
+				if (isMozilla)
+					parent.parent.MainFrame.location="home.jsp?title="+escape(tocTitle);
+				else
+					parent.parent.MainFrame.location="home.jsp?titleJS13="+escape(tocTitle);
+			} else {
+				if (topic.indexOf(window.location.protocol) != 0)
+					topic = window.location.protocol + "//" +window.location.host +"<%=request.getContextPath()%>" + "/"+ topic;
+			
+				selectTopic(topic);
+				parent.parent.MainFrame.location = topic;
+			}
+		}
+
 	</script>
 
 </body>

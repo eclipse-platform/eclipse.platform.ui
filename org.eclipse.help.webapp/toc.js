@@ -290,27 +290,6 @@ function mouseClickHandler(e) {
   	else if (isIE)
   		window.event.cancelBubble = true;
 }
-	
-/**
- * Handles the onload event
- */
-function onloadHandler(toc, title, tocDescription, isTopicSelected)
-{
-	tocTitle = title;
-	parent.parent.setToolbarTitle(title);
-	
-	// clear the content page
-	if (!isTopicSelected)
-	{
-		if (tocDescription.indexOf("javascript:") == 0)
-			if (isMozilla)
-				parent.parent.MainFrame.location="home.jsp?title="+escape(title);
-			else
-				parent.parent.MainFrame.location="home.jsp?titleJS13="+escape(title);
-		else
-			parent.parent.MainFrame.location = tocDescription;
-	}
-}
 
 
 document.onclick = mouseClickHandler;
