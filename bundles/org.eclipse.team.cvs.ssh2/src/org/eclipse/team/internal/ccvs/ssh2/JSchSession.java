@@ -16,6 +16,7 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Enumeration;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -274,8 +275,15 @@ class JSchSession {
 					String _port = store.getString(CVSSSH2PreferencePage.KEY_PROXY_PORT);
 
 					boolean useAuth = store.getString(CVSSSH2PreferencePage.KEY_PROXY_AUTH).equals("true"); //$NON-NLS-1$
-					String _user = store.getString(CVSSSH2PreferencePage.KEY_PROXY_USER);
-					String _pass = store.getString(CVSSSH2PreferencePage.KEY_PROXY_PASS);
+					String _user = ""; //$NON-NLS-1$
+					String _pass = ""; //$NON-NLS-1$
+					
+					// Retrieve username and password from keyring.
+					Map map = Platform.getAuthorizationInfo(CVSSSH2PreferencePage.FAKE_URL, "proxy", CVSSSH2PreferencePage.AUTH_SCHEME); //$NON-NLS-1$
+				    if(map!=null){
+				      _user=(String) map.get(CVSSSH2PreferencePage.KEY_PROXY_USER);
+				      _pass=(String) map.get(CVSSSH2PreferencePage.KEY_PROXY_PASS);
+				    }
 
 					Proxy proxy = null;
 					String proxyhost = _host + ":" + _port; //$NON-NLS-1$

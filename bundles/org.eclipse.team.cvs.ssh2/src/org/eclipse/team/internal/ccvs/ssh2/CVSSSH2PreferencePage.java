@@ -26,6 +26,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.team.internal.ccvs.core.util.Util;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import com.jcraft.jsch.*;
@@ -111,7 +112,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
     setPreferenceStore(store);
     setDescription(Policy.bind("CVSSSH2PreferencePage.18")); //$NON-NLS-1$
   }
-
+  
   protected Control createContents(Composite parent) {
     Composite container = new Composite(parent, SWT.NULL);
     GridLayout layout = new GridLayout();
@@ -936,8 +937,6 @@ public class CVSSSH2PreferencePage extends PreferencePage
     setDefault(store, KEY_PROXY_TYPE, HTTP);
     setDefault(store, KEY_PROXY_PORT, HTTP_DEFAULT_PORT);
     setDefault(store, KEY_PROXY_AUTH, "false"); //$NON-NLS-1$
-    setDefault(store, KEY_PROXY_USER, ""); //$NON-NLS-1$
-    setDefault(store, KEY_PROXY_PASS, ""); //$NON-NLS-1$
   }
 
   private static void setDefault(IPreferenceStore store, String key, String value){
@@ -970,49 +969,49 @@ public class CVSSSH2PreferencePage extends PreferencePage
     updateControls();
   }
   public boolean performOk() {
-    boolean result=super.performOk();
-    if(result){
-      setErrorMessage(null);
-      String home=ssh2HomeText.getText();
-      File _home=new File(home);
-      if(!_home.exists()){
-	if(MessageDialog.openQuestion(getShell(),
-				      Policy.bind("CVSSSH2PreferencePage.question"), //$NON-NLS-1$
-				      Policy.bind("CVSSSH2PreferencePage.99", home) //$NON-NLS-1$
-				      )){
-	  if(!(_home.mkdirs())){
-	    setErrorMessage(Policy.bind("CVSSSH2PreferencePage.100")+home); //$NON-NLS-1$
-	    return false;
-	  }
+		boolean result = super.performOk();
+		if (result) {
+			setErrorMessage(null);
+			String home = ssh2HomeText.getText();
+			File _home = new File(home);
+			if (!_home.exists()) {
+				if (MessageDialog.openQuestion(getShell(), Policy.bind("CVSSSH2PreferencePage.question"), //$NON-NLS-1$
+						Policy.bind("CVSSSH2PreferencePage.99", home) //$NON-NLS-1$
+						)) {
+					if (!(_home.mkdirs())) {
+						setErrorMessage(Policy.bind("CVSSSH2PreferencePage.100") + home); //$NON-NLS-1$
+						return false;
+					}
+				}
+			}
+			if (enableProxy.getSelection() && !isValidPort(proxyPortText.getText())) {
+				return false;
+			}
+			IPreferenceStore store = CVSSSH2Plugin.getDefault().getPreferenceStore();
+			store.setValue(KEY_SSH2HOME, home);
+			store.setValue(KEY_PRIVATEKEY, privateKeyText.getText());
+			store.setValue(KEY_PROXY, enableProxy.getSelection());
+			store.setValue(KEY_PROXY_TYPE, proxyTypeCombo.getText());
+			store.setValue(KEY_PROXY_HOST, proxyHostText.getText());
+			store.setValue(KEY_PROXY_PORT, proxyPortText.getText());
+			store.setValue(KEY_PROXY_AUTH, enableAuth.getSelection());
+			
+			// Store proxy username and password in the keyring file for now. This is
+			// not ultra secure, but at least it will be saved between sessions.
+			Map map = Platform.getAuthorizationInfo(FAKE_URL, "proxy", AUTH_SCHEME); //$NON-NLS-1$
+			if (map == null)
+				map = new java.util.HashMap(10);
+			map.put(KEY_PROXY_USER, proxyUserText.getText());
+			map.put(KEY_PROXY_PASS, proxyPassText.getText());
+			try {
+				Platform.addAuthorizationInfo(FAKE_URL, "proxy", AUTH_SCHEME, map); //$NON-NLS-1$
+			} catch (CoreException e) {
+				Util.logError("Cannot save ssh2 proxy authentication information to keyring file", e); //$NON-NLS-1$
+			}
+		}
+		CVSSSH2Plugin.getDefault().savePluginPreferences();
+		return result;
 	}
-      }
-
-      if(enableProxy.getSelection() && !isValidPort(proxyPortText.getText())){
-      	return false;
-      }
-      
-      IPreferenceStore store=CVSSSH2Plugin.getDefault().getPreferenceStore();
-      store.setValue(KEY_SSH2HOME, home);
-      store.setValue(KEY_PRIVATEKEY, privateKeyText.getText());
-      store.setValue(KEY_PROXY, enableProxy.getSelection());
-      store.setValue(KEY_PROXY_TYPE, proxyTypeCombo.getText());
-      store.setValue(KEY_PROXY_HOST, proxyHostText.getText());
-      store.setValue(KEY_PROXY_PORT, proxyPortText.getText());
-
-      store.setValue(KEY_PROXY_AUTH, enableAuth.getSelection());
-      store.setValue(KEY_PROXY_USER, ""); //$NON-NLS-1$
-      store.setValue(KEY_PROXY_PASS, ""); //$NON-NLS-1$
- 
-      Map map = Platform.getAuthorizationInfo(FAKE_URL, "proxy", AUTH_SCHEME); //$NON-NLS-1$
-      if(map==null) map=new java.util.HashMap(10);
-      map.put(KEY_PROXY_USER, proxyUserText.getText());
-      map.put(KEY_PROXY_PASS, proxyPassText.getText());
-      try{ Platform.addAuthorizationInfo(FAKE_URL, "proxy", AUTH_SCHEME, map);} //$NON-NLS-1$
-      catch(CoreException e){}
-    }
-    CVSSSH2Plugin.getDefault().savePluginPreferences();
-    return result;
-  }
 
   private boolean isValidPort(String port){
   	int i=-1;
@@ -1029,42 +1028,9 @@ public class CVSSSH2PreferencePage extends PreferencePage
   	}
   	return true;
   }
+  
   public void performApply() {
-    setErrorMessage(null);
-    String home=ssh2HomeText.getText();
-    File _home=new File(home);
-    if(!_home.exists()){
-      if(MessageDialog.openQuestion(getShell(),
-				    Policy.bind("CVSSSH2PreferencePage.question"), //$NON-NLS-1$
-				    Policy.bind("CVSSSH2PreferencePage.101", home) //$NON-NLS-1$
-				      )){
-	if(!(_home.mkdirs())){
-	  setErrorMessage(Policy.bind("CVSSSH2PreferencePage.102")+home); //$NON-NLS-1$
-	  return;
-	}
-      }
-    }
-
-    if(enableProxy.getSelection() && !isValidPort(proxyPortText.getText())){
-    	return;
-    }
-    
-    IPreferenceStore store=CVSSSH2Plugin.getDefault().getPreferenceStore();
-    store.setValue(KEY_SSH2HOME, ssh2HomeText.getText());
-    store.setValue(KEY_PRIVATEKEY, privateKeyText.getText());
-    store.setValue(KEY_PROXY, enableProxy.getSelection());
-    store.setValue(KEY_PROXY_TYPE, proxyTypeCombo.getText());
-    store.setValue(KEY_PROXY_HOST, proxyHostText.getText());
-    store.setValue(KEY_PROXY_PORT, proxyPortText.getText());
-
-    store.setValue(KEY_PROXY_AUTH, enableAuth.getSelection());
-
-    Map map = Platform.getAuthorizationInfo(FAKE_URL, "proxy", AUTH_SCHEME); //$NON-NLS-1$
-    if(map==null) map=new java.util.HashMap(10);
-    map.put(KEY_PROXY_USER, proxyUserText.getText());
-    map.put(KEY_PROXY_PASS, proxyPassText.getText());
-    try{Platform.addAuthorizationInfo(FAKE_URL, "proxy", AUTH_SCHEME, map);} //$NON-NLS-1$
-    catch (CoreException e) {}
+    performOk();
   }
 
   protected void performDefaults(){
