@@ -24,11 +24,6 @@ package org.eclipse.debug.core.variables;
  */
 public interface ISimpleVariableRegistry {
 	/**
-	 * Adds the given variable to this variable registry.
-	 * @param variable the variable to add
-	 */
-	public void addVariable(ISimpleLaunchVariable variable);
-	/**
 	 * Adds the given variables to this variable registry
 	 * @param variables the variables to add
 	 */

@@ -181,7 +181,7 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 		if (name.length() > 0) {
 			ISimpleLaunchVariable variable= new SimpleLaunchVariable(dialog.getValue());
 			if (editVariable(variable)) {
-				getVariableRegistry().addVariable(variable);
+				getVariableRegistry().addVariables(new ISimpleLaunchVariable[] {variable});
 				variableTable.refresh();
 			}
 		}
@@ -239,9 +239,6 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 		getVariableRegistry().clear();
 		variableTable.refresh();
 		super.performDefaults();
-	}
-	
-	private void restoreVariableState() {
 	}
 
 	public boolean performOk() {

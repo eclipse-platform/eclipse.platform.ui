@@ -37,7 +37,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.variables.ISimpleLaunchVariable;
 import org.eclipse.debug.core.variables.ISimpleVariableRegistry;
-import org.eclipse.debug.core.variables.IVariableInitializer;
+import org.eclipse.debug.core.variables.ILaunchVariableInitializer;
 import org.eclipse.debug.core.variables.SimpleLaunchVariable;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -131,10 +131,10 @@ public class SimpleVariableRegistry implements ISimpleVariableRegistry {
 				DebugPlugin.logMessage(MessageFormat.format("Invalid simple launch variable extension found: {0}", new String[] {element.getDeclaringExtension().getLabel()}), null); //$NON-NLS-1$
 				continue;
 			}
-			IVariableInitializer initializer= null;
+			ILaunchVariableInitializer initializer= null;
 			if (element.getAttribute(ATTR_INITIALIZER_CLASS) != null) {
 				try {
-					initializer= (IVariableInitializer) element.createExecutableExtension(ATTR_INITIALIZER_CLASS);
+					initializer= (ILaunchVariableInitializer) element.createExecutableExtension(ATTR_INITIALIZER_CLASS);
 				} catch (CoreException e) {
 					DebugPlugin.logMessage(MessageFormat.format("Failed to load launch variable initializer: {0}", new String[] {element.getAttribute(ATTR_INITIALIZER_CLASS)}), e); //$NON-NLS-1$
 				}

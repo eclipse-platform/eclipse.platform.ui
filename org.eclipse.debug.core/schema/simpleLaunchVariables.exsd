@@ -58,7 +58,7 @@
          <attribute name="initializerClass" type="string">
             <annotation>
                <documentation>
-                  specifies the fully qualified name of the java class that implements &lt;samp&gt;org.eclipse.debug.core.variables.IVariableInitializer&lt;/samp&gt;.
+                  specifies the fully qualified name of the java class that implements &lt;samp&gt;org.eclipse.debug.core.variables.ILaunchVariableInitializer&lt;/samp&gt;.
                </documentation>
             </annotation>
          </attribute>

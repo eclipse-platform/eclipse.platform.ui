@@ -11,7 +11,37 @@
 package org.eclipse.debug.core.variables;
 
 /**
- * A variable that can be assigned a value.
+ * A variable that can be assigned a value. Simple variables are
+ * key/value pairs that are typically created and managed by the
+ * user. Plug-ins that wish to contribute variables may do so using
+ * the <code>org.eclipse.debug.core.simpleLaunchVariables</code>
+ * extension point.
+ * <p>
+ * Extenders may provide an initial value, or an initializer class, or
+ * neither. The initializer class, which must implement
+ * <code>org.eclipse.debug.core.variables.ILaunchVariableInitializer</code>,
+ * will be queried for a value if the variable is queried before a value has been set.
+ * <p>
+ * For example, the following is a definition of a simple launch variable with
+ * an initializer.
+ * <pre>
+ * &lt;extension point="org.eclipse.debug.core.simpleLaunchVariables"&gt;
+ *   &lt;variable 
+ *      name="FOO_HOME"
+ *      initializerClass="com.example.FooInitializer"
+ *   &lt;/variable&gt;
+ * &lt;/extension&gt;
+ * </pre>
+ * The following is a definition of a simple launch variable with
+ * an initial value.
+ * <pre>
+ * &lt;extension point="org.eclipse.debug.core.simpleLaunchVariables"&gt;
+ *   &lt;variable 
+ *      name="FOO_HOME"
+ *      initialValue="/usr/local/foo"
+ *   &lt;/variable&gt;
+ * &lt;/extension&gt;
+ * </pre>
  * <p>
  * Clients may implement this interface.
  * </p>

@@ -13,7 +13,7 @@ package org.eclipse.debug.core.variables;
 
 public class SimpleLaunchVariable implements ISimpleLaunchVariable {
 	
-	protected IVariableInitializer fVariableInitializer= null;
+	protected ILaunchVariableInitializer fVariableInitializer= null;
 	protected String fName= null;
 	protected String fValue= null;
 	protected String fDescription= null;
@@ -28,7 +28,7 @@ public class SimpleLaunchVariable implements ISimpleLaunchVariable {
 	 * @param description the variable's description or <code>null</code> if no
 	 * description is specified.
 	 */
-	public SimpleLaunchVariable(String name, IVariableInitializer initializer, String initialValue, String description) {
+	public SimpleLaunchVariable(String name, ILaunchVariableInitializer initializer, String initialValue, String description) {
 		this(name);
 		fVariableInitializer= initializer;
 		fValue= initialValue;
@@ -52,7 +52,7 @@ public class SimpleLaunchVariable implements ISimpleLaunchVariable {
 	/**
 	 * @see ISimpleLaunchVariable#getInitializer()
 	 */
-	public IVariableInitializer getInitializer() {
+	public ILaunchVariableInitializer getInitializer() {
 		return fVariableInitializer;
 	}
 	

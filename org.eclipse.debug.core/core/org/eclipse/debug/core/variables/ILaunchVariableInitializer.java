@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.core.variables;
 
-public interface IVariableInitializer {
+public interface ILaunchVariableInitializer {
 	/**
 	 * Runs this initializer and returns the computed value.
 	 * @return the variable value computed by this initializer
