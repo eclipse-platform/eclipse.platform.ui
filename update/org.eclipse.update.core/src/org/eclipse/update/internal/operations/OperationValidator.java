@@ -370,12 +370,13 @@ public class OperationValidator implements IOperationValidator {
 				checkConstraints(features, status);
 				if (status.size() > 0
 					&& !isBetterStatus(beforeStatus, status)) {
-					IStatus conflict =
-						createStatus(
-							newFeature,
-							FeatureStatus.CODE_OTHER,
-							Policy.bind(KEY_CONFLICT));
-					status.add(0, conflict);
+// bug 75613
+//					IStatus conflict =
+//						createStatus(
+//							newFeature,
+//							FeatureStatus.CODE_OTHER,
+//							Policy.bind(KEY_CONFLICT));
+//					status.add(0, conflict);
 					return;
 				}
 			}
