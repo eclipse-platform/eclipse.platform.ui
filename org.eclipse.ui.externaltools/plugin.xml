@@ -102,14 +102,6 @@
 			class="org.eclipse.ui.externaltools.internal.ant.preferences.AntConsolePreferencePage"
 			category="org.eclipse.ui.externaltools.AntPreferencePage">
 		</page>
-		<!--	
-	    <page
-	        id="org.eclipse.ui.externaltools.AntViewPreferencePage"
-	        name="%View.antView"
-	        class="org.eclipse.ui.externaltools.internal.ant.antview.preferences.AntViewPreferencePage"
-	        category="org.eclipse.ui.externaltools.AntPreferencePage">
-	    </page>
-	    -->
 	</extension>
 	
 	<extension point="org.eclipse.ui.popupMenus">
