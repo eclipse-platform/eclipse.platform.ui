@@ -13,7 +13,6 @@ import java.util.*;
 
 import org.eclipse.core.boot.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.*;
 import org.eclipse.help.browser.*;
 import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.appserver.*;
