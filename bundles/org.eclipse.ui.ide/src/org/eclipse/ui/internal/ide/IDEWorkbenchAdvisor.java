@@ -149,7 +149,9 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	    IPreferenceStore uiStore = PlatformUI.getPreferenceStore();
         uiStore.setDefault(IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR,
                 IWorkbenchPreferenceConstants.TOP_RIGHT);
-
+        uiStore.setDefault(IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS,
+        		false);
+        
 	    // make sure we always save and restore workspace state
 	    configurer.setSaveAndRestore(true);
 
