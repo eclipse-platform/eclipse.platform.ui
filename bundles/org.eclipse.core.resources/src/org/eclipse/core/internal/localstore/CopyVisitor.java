@@ -120,10 +120,15 @@ protected void synchronize(UnifiedTreeNode node) throws CoreException {
 }
 public boolean visit(UnifiedTreeNode node) throws CoreException {
 	Policy.checkCanceled(monitor);
+	int work = 1;
 	try {
 		boolean wasSynchronized = isSynchronized(node);
-		if (!wasSynchronized)
+		if (!wasSynchronized) {
 			synchronize(node);
+			// If not synchronized, the monitor did not take this resource into account.
+			// So, do not report work on it.
+			work = 0;
+		}
 		if (!force && !wasSynchronized) {
 			IPath path = node.getResource().getFullPath();
 			String message = Policy.bind("resourcesDifferent", null);
@@ -133,7 +138,7 @@ public boolean visit(UnifiedTreeNode node) throws CoreException {
 		copy(node);
 		return true;
 	} finally {
-		monitor.worked(1);
+		monitor.worked(work);
 	}
 }
 }
