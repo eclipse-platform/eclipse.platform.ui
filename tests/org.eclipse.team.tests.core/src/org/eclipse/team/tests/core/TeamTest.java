@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteResource;
+import org.eclipse.team.core.target.IRemoteTargetResource;
 import org.eclipse.team.core.target.Site;
 import org.eclipse.team.core.target.TargetManager;
 import org.eclipse.team.core.target.TargetProvider;
@@ -143,6 +144,12 @@ public class TeamTest extends EclipseWorkspaceTest {
 		}
 	}
 	public TargetProvider createProvider(IProject project) throws TeamException {
+		// Ensure the remote folder exists
+		IRemoteTargetResource remote = getSite().getRemoteResource().getFolder(
+			new Path(properties.getProperty("test_dir")).append(project.getName()).toString());
+		if (! remote.exists(null)) {
+			remote.mkdirs(null);
+		}
 		TargetManager.map(project, getSite(), new Path(properties.getProperty("test_dir")).append(project.getName()));
 		TargetProvider target = getProvider(project);
 		return target;
