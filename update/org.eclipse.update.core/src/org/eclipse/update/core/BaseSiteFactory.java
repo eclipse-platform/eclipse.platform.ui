@@ -50,49 +50,17 @@ public abstract class BaseSiteFactory extends SiteModelFactory implements ISiteF
 		ResourceBundle bundle = null;
 
 		try {
-			URL resolvedURL = URLEncoder.encode(url);
-			ClassLoader l = new URLClassLoader(new URL[] { resolvedURL }, null);
+			url = UpdateManagerUtils.asDirectoryURL(url);
+			ClassLoader l = new URLClassLoader(new URL[] { url }, null);
 			bundle = ResourceBundle.getBundle(Site.SITE_FILE, Locale.getDefault(), l);
 		} catch (MissingResourceException e) {
-			//if there is no bundle, keep it as null
 			//DEBUG:
-			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
+			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS)
 				UpdateManagerPlugin.getPlugin().debug(e.getLocalizedMessage() + ":" + url.toExternalForm()); //$NON-NLS-1$
-			}
-
-			// do not attempt retry if URL is like <protocol://....#....>
-			if (url.getRef() == null) {
-				// the URL may point ot a file.. attempt to use the parent directory
-				String file = url.getFile();
-				if (!file.endsWith("/")) { //$NON-NLS-1$
-					try {
-						int index = file.lastIndexOf('/');
-						if (index != -1) {
-							file = file.substring(0, index + 1);
-							url = new URL(url.getProtocol(), url.getHost(), url.getPort(), file);
-							URL resolvedURL = URLEncoder.encode(url);
-							ClassLoader l = new URLClassLoader(new URL[] { resolvedURL }, null);
-							bundle = ResourceBundle.getBundle(Site.SITE_FILE, Locale.getDefault(), l);
-						}
-					} catch (MalformedURLException e1) {
-						//DEBUG:
-						if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
-							UpdateManagerPlugin.getPlugin().debug(Policy.bind("BaseSiteFactory.CannotRetriveParentDirectory", url.toExternalForm()));  //$NON-NLS-1$
-						}
-					} catch (MissingResourceException e2) { 
-						//if there is no bundle, keep it as null
-						//DEBUG:
-						if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
-							UpdateManagerPlugin.getPlugin().debug(e2.getLocalizedMessage() + ":" + url.toExternalForm());  //$NON-NLS-1$
-						}
-					}
-				}
-			}
-		} catch (MalformedURLException e1) {
+		} catch (MalformedURLException e) {
 			//DEBUG:
-			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
-				UpdateManagerPlugin.getPlugin().debug(Policy.bind("BaseSiteFactory.CannotEncodeURL", url.toExternalForm()));  //$NON-NLS-1$
-			}
+			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS)
+				UpdateManagerPlugin.getPlugin().debug(Policy.bind("BaseSiteFactory.CannotRetriveParentDirectory", url.toExternalForm()));  //$NON-NLS-1$
 		}
 
 		return bundle;

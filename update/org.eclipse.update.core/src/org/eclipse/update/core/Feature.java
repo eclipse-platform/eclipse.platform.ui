@@ -5,14 +5,30 @@ package org.eclipse.update.core;
  */
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
+import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.update.core.model.*;
-import org.eclipse.update.internal.core.*;
+import org.eclipse.update.core.model.ContentEntryModel;
+import org.eclipse.update.core.model.FeatureModel;
+import org.eclipse.update.core.model.ImportModel;
+import org.eclipse.update.core.model.NonPluginEntryModel;
+import org.eclipse.update.core.model.PluginEntryModel;
+import org.eclipse.update.core.model.URLEntryModel;
+import org.eclipse.update.internal.core.InstallHandlerProxy;
+import org.eclipse.update.internal.core.Policy;
+import org.eclipse.update.internal.core.UpdateManagerPlugin;
+import org.eclipse.update.internal.core.UpdateManagerUtils;
 
 /**
  * Convenience implementation of a feature.
@@ -769,13 +785,18 @@ public class Feature extends FeatureModel implements IFeature {
 
 		ResourceBundle bundle = null;
 		try {
+			url = UpdateManagerUtils.asDirectoryURL(url);
 			ClassLoader l = new URLClassLoader(new URL[] { url }, null);
 			bundle = ResourceBundle.getBundle(Site.SITE_FILE, Locale.getDefault(), l);
 		} catch (MissingResourceException e) {
-			//if there is no bundle, keep it as null
 			//DEBUG:
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
 				UpdateManagerPlugin.getPlugin().debug(e.getLocalizedMessage() + ":" + url.toExternalForm()); //$NON-NLS-1$
+			}
+		} catch (MalformedURLException e) {
+			//DEBUG:
+			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
+				UpdateManagerPlugin.getPlugin().debug(e.getLocalizedMessage()); //$NON-NLS-1$
 			}
 		}
 		return bundle;

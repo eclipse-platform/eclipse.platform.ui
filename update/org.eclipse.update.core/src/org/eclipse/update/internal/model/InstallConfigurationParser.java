@@ -63,14 +63,20 @@ public class InstallConfigurationParser extends DefaultHandler {
 	 */
 	private ResourceBundle getResourceBundle() throws IOException, CoreException {
 		ResourceBundle bundle = null;
+		URL url = null;
 		try {
-			ClassLoader l = new URLClassLoader(new URL[] { config.getURL()}, null);
+			url = UpdateManagerUtils.asDirectoryURL(config.getURL());
+			ClassLoader l = new URLClassLoader(new URL[] { url }, null);
 			bundle = ResourceBundle.getBundle(SiteLocalModel.SITE_LOCAL_FILE, Locale.getDefault(), l);
 		} catch (MissingResourceException e) {
-			//ok, there is no bundle, keep it as null
 			//DEBUG:
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
-				UpdateManagerPlugin.getPlugin().debug(e.getLocalizedMessage() + ":" + config.getURL().toExternalForm()); //$NON-NLS-1$
+				UpdateManagerPlugin.getPlugin().debug(e.getLocalizedMessage() + ":" + url.toExternalForm()); //$NON-NLS-1$
+			}
+		} catch (MalformedURLException e) {
+			//DEBUG:
+			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
+				UpdateManagerPlugin.getPlugin().debug(e.getLocalizedMessage()); //$NON-NLS-1$
 			}
 		}
 		return bundle;

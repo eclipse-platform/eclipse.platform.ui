@@ -318,5 +318,22 @@ public class UpdateManagerUtils {
 		}
 		return url;
 	}
-
+	
+	/**
+	 * 
+	 */
+	public static URL asDirectoryURL(URL url) throws MalformedURLException {
+		
+		url = URLEncoder.encode(url);
+		String path = url.getFile();
+		if (!path.endsWith("/")) {		
+			int index = path.lastIndexOf('/');
+			if (index != -1)
+				path = path.substring(0, index + 1);
+			// ignore any ref in original URL
+			url = new URL(url.getProtocol(), url.getHost(), url.getPort(), path);
+		}
+		return url;
 	}
+
+}

@@ -784,6 +784,7 @@ public class SiteLocal
 	private static ResourceBundle getResourceBundle(URL url) throws CoreException {
 		ResourceBundle bundle = null;
 		try {
+			url = UpdateManagerUtils.asDirectoryURL(url);
 			ClassLoader l = new URLClassLoader(new URL[] { url }, null);
 			bundle =
 				ResourceBundle.getBundle(
@@ -796,6 +797,14 @@ public class SiteLocal
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
 				UpdateManagerPlugin.getPlugin().debug(
 					e.getLocalizedMessage() + ":" + url.toExternalForm());
+				//$NON-NLS-1$
+			}
+		} catch (MalformedURLException e) {
+			//ok, there is no bundle, keep it as null
+			//DEBUG:
+			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
+				UpdateManagerPlugin.getPlugin().debug(
+					e.getLocalizedMessage());
 				//$NON-NLS-1$
 			}
 		}
