@@ -58,7 +58,7 @@ public class PageStyleManager extends SharedStyleManager {
 
     // Override parent method to include alt styles.
     public String getProperty(String key) {
-        Properties aProperties = findProperty(key);
+        Properties aProperties = findPropertyOwner(key);
         return super.doGetProperty(aProperties, key);
     }
 
@@ -70,8 +70,12 @@ public class PageStyleManager extends SharedStyleManager {
      * @param key
      * @return
      */
-    private Properties findProperty(String key) {
-        // search inherited properties first.
+    private Properties findPropertyOwner(String key) {
+        // search for the key in this page's properties first.
+        if (properties.containsKey(key))
+            return properties;
+
+        // search inherited properties second.
         Enumeration inheritedPageProperties = altStyleProperties.keys();
         while (inheritedPageProperties.hasMoreElements()) {
             Properties aProperties = (Properties) inheritedPageProperties
@@ -79,7 +83,7 @@ public class PageStyleManager extends SharedStyleManager {
             if (aProperties.containsKey(key))
                 return aProperties;
         }
-        // search the page and shared properties last.
+        // we did not find the key. Return the local properties anyway.
         return properties;
     }
 
@@ -90,7 +94,7 @@ public class PageStyleManager extends SharedStyleManager {
      * @return
      */
     private Bundle getAltStyleBundle(String key) {
-        Properties aProperties = findProperty(key);
+        Properties aProperties = findPropertyOwner(key);
         return (Bundle) altStyleProperties.get(aProperties);
     }
 
@@ -102,7 +106,7 @@ public class PageStyleManager extends SharedStyleManager {
      * @return
      */
     protected Bundle getAssociatedBundle(String key) {
-        Properties aProperties = findProperty(key);
+        Properties aProperties = findPropertyOwner(key);
         Bundle bundle = (Bundle) altStyleProperties.get(aProperties);
         if (bundle != null)
             return bundle;
