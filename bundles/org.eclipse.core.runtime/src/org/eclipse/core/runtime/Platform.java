@@ -395,7 +395,6 @@ public final class Platform {
 	 *
 	 * @param plugin the plug-in whose state location is returned
 	 * @return a local file system path
-	 * @deprecated 
 	 */
 	public static IPath getPluginStateLocation(Plugin plugin) {
 		return plugin.getStateLocation();
