@@ -10,13 +10,14 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-
 /**
  * The ViewsPreferencePage is the page used to set preferences for the look of the
  * views in the workbench.
@@ -99,11 +100,27 @@ protected Control createContents(Composite parent) {
 	messageComposite.setLayoutData(
 		new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 
-	Label noteLabel = new Label(messageComposite,SWT.BOLD );
+	final Label noteLabel = new Label(messageComposite,SWT.BOLD );
 	noteLabel.setText(NOTE_LABEL);
 	noteLabel.setFont(JFaceResources.getBannerFont());
 	noteLabel.setLayoutData(
 		new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
+		
+	final IPropertyChangeListener fontListener = new IPropertyChangeListener() {
+		public void propertyChange(PropertyChangeEvent event) {
+			if(JFaceResources.BANNER_FONT.equals(event.getProperty())) {
+				noteLabel.setFont(JFaceResources.getFont(JFaceResources.BANNER_FONT));
+			}
+		}
+	};
+	
+	noteLabel.addDisposeListener(new DisposeListener() {
+		public void widgetDisposed(DisposeEvent event) {
+			JFaceResources.getFontRegistry().removeListener(fontListener);
+		}
+	});
+	
+	JFaceResources.getFontRegistry().addListener(fontListener);
 	
 	Label messageLabel = new Label(messageComposite,SWT.NONE);
 	messageLabel.setText(APPLY_MESSAGE);
