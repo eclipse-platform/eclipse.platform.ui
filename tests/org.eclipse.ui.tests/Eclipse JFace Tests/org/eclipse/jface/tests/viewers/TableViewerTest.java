@@ -24,71 +24,73 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
 public class TableViewerTest extends StructuredItemViewerTest {
-    public static class TableTestLabelProvider extends TestLabelProvider
-            implements ITableLabelProvider {
-        public boolean fExtended = false;
+	public static class TableTestLabelProvider extends TestLabelProvider
+			implements ITableLabelProvider {
+		public boolean fExtended = false;
 
-        public String getText(Object element) {
-            if (fExtended)
-                return providedString((String) element);
-            return element.toString();
-        }
+		public String getText(Object element) {
+			if (fExtended)
+				return providedString((String) element);
+			return element.toString();
+		}
 
-        public String getColumnText(Object element, int index) {
-            if (fExtended)
-                return providedString((TestElement) element);
-            return element.toString();
-        }
+		public String getColumnText(Object element, int index) {
+			if (fExtended)
+				return providedString((TestElement) element);
+			return element.toString();
+		}
 
-        public Image getColumnImage(Object element, int columnIndex) {
-            return null;
-        }
-    }
+		public Image getColumnImage(Object element, int columnIndex) {
+			return null;
+		}
+	}
 
-    public TableViewerTest(String name) {
-        super(name);
-    }
+	public TableViewerTest(String name) {
+		super(name);
+	}
 
-    /**
-     * Creates the viewer used by this test, under the given parent widget.
-     */
-    protected StructuredViewer createViewer(Composite parent) {
-        TableViewer viewer = createTableViewer(parent);
-        viewer.setContentProvider(getContentProvider());
-        viewer.setLabelProvider(new TableTestLabelProvider());
-        viewer.getTable().setLinesVisible(true);
+	/**
+	 * Creates the viewer used by this test, under the given parent widget.
+	 */
+	protected StructuredViewer createViewer(Composite parent) {
+		TableViewer viewer = createTableViewer(parent);
+		viewer.setContentProvider(getContentProvider());
+		viewer.setLabelProvider(new TableTestLabelProvider());
+		viewer.getTable().setLinesVisible(true);
 
-        TableLayout layout = new TableLayout();
-        viewer.getTable().setLayout(layout);
-        viewer.getTable().setHeaderVisible(true);
-        String headers[] = { "column 1 header", "column 2 header" };
+		TableLayout layout = new TableLayout();
+		viewer.getTable().setLayout(layout);
+		viewer.getTable().setHeaderVisible(true);
+		String headers[] = { "column 1 header", "column 2 header" };
 
-        ColumnLayoutData layouts[] = { new ColumnWeightData(100),
-                new ColumnWeightData(100) };
+		ColumnLayoutData layouts[] = { new ColumnWeightData(100),
+				new ColumnWeightData(100) };
 
-        final TableColumn columns[] = new TableColumn[headers.length];
+		final TableColumn columns[] = new TableColumn[headers.length];
 
-        for (int i = 0; i < headers.length; i++) {
-            layout.addColumnData(layouts[i]);
-            TableColumn tc = new TableColumn(viewer.getTable(), SWT.NONE, i);
-            tc.setResizable(layouts[i].resizable);
-            tc.setText(headers[i]);
-            columns[i] = tc;
-        }
+		for (int i = 0; i < headers.length; i++) {
+			layout.addColumnData(layouts[i]);
+			TableColumn tc = new TableColumn(viewer.getTable(), SWT.NONE, i);
+			tc.setResizable(layouts[i].resizable);
+			tc.setText(headers[i]);
+			columns[i] = tc;
+		}
 
-        return viewer;
-    }
+		return viewer;
+	}
 
 	/**
 	 * Get the content provider for the viewer.
+	 * 
 	 * @return IContentProvider
 	 */
 	protected TestModelContentProvider getContentProvider() {
 		return new TestModelContentProvider();
 	}
 
-    /**
-     * Create the table viewer for the test
+	/**
+	 * Create the table viewer for the test
+	 * 
 	 * @param parent
 	 * @return
 	 */
@@ -97,51 +99,65 @@ public class TableViewerTest extends StructuredItemViewerTest {
 	}
 
 	protected int getItemCount() {
-        TestElement first = fRootElement.getFirstChild();
-        TableItem ti = (TableItem) fViewer.testFindItem(first);
-        Table table = ti.getParent();
-        return table.getItemCount();
-    }
+		TestElement first = fRootElement.getFirstChild();
+		TableItem ti = (TableItem) fViewer.testFindItem(first);
+		Table table = ti.getParent();
+		return table.getItemCount();
+	}
 
-    protected String getItemText(int at) {
-        Table table = (Table) fViewer.getControl();
-        return table.getItem(at).getText();
-    }
+	protected String getItemText(int at) {
+		Table table = (Table) fViewer.getControl();
+		return table.getItem(at).getText();
+	}
 
-    public static void main(String args[]) {
-        junit.textui.TestRunner.run(TableViewerTest.class);
-    }
+	public static void main(String args[]) {
+		junit.textui.TestRunner.run(TableViewerTest.class);
+	}
 
-    public void testLabelProvider() {
+	public void testLabelProvider() {
 
-        TableViewer viewer = (TableViewer) fViewer;
-        TableTestLabelProvider provider = (TableTestLabelProvider) viewer
-                .getLabelProvider();
+		TableViewer viewer = (TableViewer) fViewer;
+		TableTestLabelProvider provider = (TableTestLabelProvider) viewer
+				.getLabelProvider();
 
-        provider.fExtended = true;
-        // BUG 1FZ5SDC: JFUIF:WINNT - TableViewerColumn should listen for LabelProvider changes
-        fViewer.refresh();
-        TestElement first = fRootElement.getFirstChild();
-        String newLabel = providedString(first);
-        assertEquals("rendered label", newLabel, getItemText(0));
-        provider.fExtended = false;
-        // BUG 1FZ5SDC: JFUIF:WINNT - TableViewerColumn should listen for LabelProvider changes
-    }
+		provider.fExtended = true;
+		// BUG 1FZ5SDC: JFUIF:WINNT - TableViewerColumn should listen for
+		// LabelProvider changes
+		fViewer.refresh();
+		TestElement first = fRootElement.getFirstChild();
+		String newLabel = providedString(first);
+		assertEquals("rendered label", newLabel, getItemText(0));
+		provider.fExtended = false;
+		// BUG 1FZ5SDC: JFUIF:WINNT - TableViewerColumn should listen for
+		// LabelProvider changes
+	}
 
-    public void testLabelProviderStateChange() {
-        TableViewer tableviewer = (TableViewer) fViewer;
-        TableTestLabelProvider provider = (TableTestLabelProvider) tableviewer
-                .getLabelProvider();
+	public void testLabelProviderStateChange() {
+		TableViewer tableviewer = (TableViewer) fViewer;
+		TableTestLabelProvider provider = (TableTestLabelProvider) tableviewer
+				.getLabelProvider();
 
-        provider.fExtended = true;
-        provider.setSuffix("added suffix");
-        // BUG 1FZ5SDC: JFUIF:WINNT - TableViewerColumn should listen for LabelProvider changes
-        tableviewer.refresh();
-        TestElement first = fRootElement.getFirstChild();
-        String newLabel = providedString(first);
-        assertEquals("rendered label", newLabel, getItemText(0));
-        provider.fExtended = false;
-        // BUG 1FZ5SDC: JFUIF:WINNT - TableViewerColumn should listen for LabelProvider changes
-        fViewer.refresh();
-    }
+		provider.fExtended = true;
+		provider.setSuffix("added suffix");
+		// BUG 1FZ5SDC: JFUIF:WINNT - TableViewerColumn should listen for
+		// LabelProvider changes
+		tableviewer.refresh();
+		TestElement first = fRootElement.getFirstChild();
+		String newLabel = providedString(first);
+		assertEquals("rendered label", newLabel, getItemText(0));
+		provider.fExtended = false;
+		// BUG 1FZ5SDC: JFUIF:WINNT - TableViewerColumn should listen for
+		// LabelProvider changes
+		fViewer.refresh();
+	}
+
+	public void testRemove() {
+		TableViewer tableviewer = (TableViewer) fViewer;
+		TestElement first = fRootElement.getFirstChild();
+		tableviewer.remove(first);
+		assertTrue("Removed item still exists",
+				fViewer.testFindItem(first) == null);
+
+	}
+
 }

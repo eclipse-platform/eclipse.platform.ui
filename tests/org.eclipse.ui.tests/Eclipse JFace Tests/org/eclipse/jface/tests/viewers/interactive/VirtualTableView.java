@@ -12,22 +12,27 @@ package org.eclipse.jface.tests.viewers.interactive;
 
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 
 /**
- * The is a test VirtualTableView of the support for SWT.VIRTUAL
- * in JFace.
+ * The is a test VirtualTableView of the support for SWT.VIRTUAL in JFace.
+ * 
  * @since 3.1
  */
 public class VirtualTableView extends ViewPart {
-	
+
 	TableViewer viewer;
+
+	int itemCount = 10000;
 
 	/**
 	 * Create a new instance of the receiver.
@@ -36,21 +41,40 @@ public class VirtualTableView extends ViewPart {
 		super();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createPartControl(Composite parent) {
-		
-		viewer = new TableViewer(parent,SWT.VIRTUAL);
+
+		viewer = new TableViewer(parent, SWT.VIRTUAL);
 		viewer.setContentProvider(getContentProvider());
 		viewer.setInput(this);
-		viewer.setItemCount(10000);
+		viewer.setItemCount(itemCount);
+		
+		Composite buttonComposite = new Composite(parent,SWT.NONE);
+		buttonComposite.setLayout(new GridLayout());
 
-		Button blam = new Button(parent,SWT.PUSH);
-		blam.setText("Blam");
-		blam.addSelectionListener(new SelectionAdapter(){
+		Button resetInput = new Button(buttonComposite,SWT.PUSH);
+		resetInput.setText("Reset input");
+		resetInput.addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(org.eclipse.swt.events.SelectionEvent e){
 				viewer.setInput(this);
+			}
+		});
+		
+		Button delete = new Button(buttonComposite, SWT.PUSH);
+		delete.setText("Delete selection");
+		delete.addSelectionListener(new SelectionAdapter() {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+			 */
+			public void widgetSelected(SelectionEvent e) {
+
+				viewer.remove(((IStructuredSelection) viewer.getSelection()).toArray());
 			}
 		});
 
@@ -58,41 +82,51 @@ public class VirtualTableView extends ViewPart {
 
 	/**
 	 * Get the content provider for the receiver.
+	 * 
 	 * @return IContentProvider
 	 */
 	protected IContentProvider getContentProvider() {
-		return new IStructuredContentProvider(){
-			/* (non-Javadoc)
+		return new IStructuredContentProvider() {
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 			 */
 			public void dispose() {
-//				Nothing to do here.
+				// Nothing to do here.
 
 			}
-			
-			/* (non-Javadoc)
+
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 			 */
 			public Object[] getElements(Object inputElement) {
-				String[] elements = new String[10000];
-				for (int i = 0; i < 10000; i++){
-					elements[i] = "Element " + String.valueOf(i);					
+				String[] elements = new String[itemCount];
+				for (int i = 0; i < itemCount; i++) {
+					elements[i] = "Element " + String.valueOf(i);
 				}
 				return elements;
 			}
-			
-			/* (non-Javadoc)
-			 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
+			 *      java.lang.Object, java.lang.Object)
 			 */
 			public void inputChanged(Viewer viewer, Object oldInput,
 					Object newInput) {
-				//Nothing to do here.
+				// Nothing to do here.
 
 			}
 		};
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPart#setFocus()
 	 */
 	public void setFocus() {
