@@ -57,6 +57,8 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.wizard.ProgressMonitorPart;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -747,6 +749,11 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		tree.setInput(ResourcesPlugin.getWorkspace().getRoot());
 		tree.expandAll();
 		tree.addDoubleClickListener(this);
+		tree.getControl().addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent e) {
+				handleKeyPressed(e);
+			}
+		});
 		
 		Button newButton = SWTUtil.createPushButton(c, LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Ne&w_13"), null); //$NON-NLS-1$
 		setNewButton(newButton);
@@ -779,6 +786,18 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		);			
 		
 		return c;
+	}	
+	
+	/**
+	 * Handles key events in tree viewer. Specifically
+	 * when the delete key is pressed.
+	 */
+	protected void handleKeyPressed(KeyEvent event) {
+		if (event.character == SWT.DEL && event.stateMask == 0) {
+			if (getDeleteButton().isEnabled()) {
+				handleDeletePressed();
+			}
+		}
 	}	
 	
 	/**
