@@ -82,6 +82,30 @@ final class ExtensionContextRegistry extends AbstractContextRegistry {
 		else
 			contextDefinitions.clear();
 
+		// TODO deprecated start
+		IConfigurationElement[] deprecatedConfigurationElements = extensionRegistry.getConfigurationElementsFor("org.eclipse.ui.acceleratorScopes"); //$NON-NLS-1$
+
+		for (int i = 0; i < deprecatedConfigurationElements.length; i++) {
+			IConfigurationElement deprecatedConfigurationElement =
+				deprecatedConfigurationElements[i];
+			String name = deprecatedConfigurationElement.getName();
+
+			if ("acceleratorScope".equals(name)) //$NON-NLS-1$
+				readContextDefinition(deprecatedConfigurationElement);
+		}
+		
+		deprecatedConfigurationElements = extensionRegistry.getConfigurationElementsFor("org.eclipse.ui.commands"); //$NON-NLS-1$
+
+		for (int i = 0; i < deprecatedConfigurationElements.length; i++) {
+			IConfigurationElement deprecatedConfigurationElement =
+				deprecatedConfigurationElements[i];
+			String name = deprecatedConfigurationElement.getName();
+
+			if ("scope".equals(name)) //$NON-NLS-1$
+				readContextDefinition(deprecatedConfigurationElement);
+		}
+		// TODO deprecated end
+		
 		IConfigurationElement[] configurationElements =
 			extensionRegistry.getConfigurationElementsFor(
 				Persistence.PACKAGE_FULL);
