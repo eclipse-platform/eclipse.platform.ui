@@ -232,4 +232,14 @@ public abstract class UITestCase extends TestCase {
     protected void manageWindows(boolean manage) {
         windowListener.setEnabled(manage);
     }
+    
+    /**
+     * Returns the workbench.
+     * 
+     * @return the workbench
+     * @since 3.1
+     */
+    protected IWorkbench getWorkbench() {
+        return fWorkbench;
+    }
 }
