@@ -70,7 +70,7 @@
          <action
                label="%CHEAT_SHEETS_MENU"
                class="org.eclipse.ui.internal.cheatsheets.actions.CheatSheetHelpMenuAction"
-               menubarPath="help/helpStart"
+               menubarPath="help/group.tutorials"
                id="org.eclipse.ui.cheatsheets.actions.CheatSheetHelpMenuAction">
          </action>
       </actionSet>
