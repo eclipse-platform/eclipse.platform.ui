@@ -13,6 +13,10 @@ package org.eclipse.debug.internal.ui.actions;
  
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.IBreakpointsListener;
@@ -32,8 +36,8 @@ public class RemoveAllBreakpointsAction extends AbstractRemoveAllActionDelegate 
 	 * @see org.eclipse.debug.internal.ui.actions.AbstractRemoveAllActionDelegate#doAction()
 	 */
 	protected void doAction() {
-		IBreakpointManager breakpointManager= DebugPlugin.getDefault().getBreakpointManager();
-		IBreakpoint[] breakpoints= breakpointManager.getBreakpoints();
+		final IBreakpointManager breakpointManager= DebugPlugin.getDefault().getBreakpointManager();
+		final IBreakpoint[] breakpoints= breakpointManager.getBreakpoints();
 		if (breakpoints.length < 1) {
 			return;
 		}
@@ -43,11 +47,17 @@ public class RemoveAllBreakpointsAction extends AbstractRemoveAllActionDelegate 
 		}
 		boolean proceed = MessageDialog.openQuestion(window.getShell(), ActionMessages.getString("RemoveAllBreakpointsAction.0"), ActionMessages.getString("RemoveAllBreakpointsAction.1")); //$NON-NLS-1$ //$NON-NLS-2$
 		if (proceed) {
-			try {
-				breakpointManager.removeBreakpoints(breakpoints, true);
-			} catch (CoreException e) {
-				DebugUIPlugin.errorDialog(window.getShell(), ActionMessages.getString("RemoveAllBreakpointsAction.Removing_all_breakpoints_4"),ActionMessages.getString("RemoveAllBreakpointsAction.Exceptions_occurred_removing_breakpoints._5"), e); //$NON-NLS-1$ //$NON-NLS-2$
-			}
+            new Job(ActionMessages.getString("RemoveAllBreakpointsAction.2")) { //$NON-NLS-1$
+                protected IStatus run(IProgressMonitor monitor) {
+                    try {
+                        breakpointManager.removeBreakpoints(breakpoints, true);
+                    } catch (CoreException e) {
+                        DebugUIPlugin.log(e);
+                        return Status.CANCEL_STATUS;
+                    }
+                    return Status.OK_STATUS;
+                }
+            }.schedule();
 		}
 	}
 	

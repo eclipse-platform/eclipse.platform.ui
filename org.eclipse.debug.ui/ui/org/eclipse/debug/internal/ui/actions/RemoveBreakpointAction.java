@@ -19,12 +19,14 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointContainer;
+import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
@@ -48,7 +50,6 @@ public class RemoveBreakpointAction extends AbstractRemoveActionDelegate {
 		final CoreException[] exception= new CoreException[1];
 		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) {
-				IBreakpointManager breakpointManager = DebugPlugin.getDefault().getBreakpointManager();
 				List breakpointsToDelete= new ArrayList();
 				boolean deleteContainers= false;
 				while (itr.hasNext()) {		
@@ -71,15 +72,22 @@ public class RemoveBreakpointAction extends AbstractRemoveActionDelegate {
                             }
 						}
 				}
-				IBreakpoint[] breakpoints= (IBreakpoint[]) breakpointsToDelete.toArray(new IBreakpoint[0]);
-				try {
-					breakpointManager.removeBreakpoints(breakpoints, true);
-					if (newSelection != null) {
-						((BreakpointsView) getView()).getCheckboxViewer().setSelection(new StructuredSelection(newSelection));
-					}
-				} catch (CoreException ce) {
-					exception[0]= ce;
-				}
+				final IBreakpoint[] breakpoints= (IBreakpoint[]) breakpointsToDelete.toArray(new IBreakpoint[0]);
+				new Job(ActionMessages.getString("RemoveBreakpointAction.2")) { //$NON-NLS-1$
+                    protected IStatus run(IProgressMonitor pmonitor) {
+                        try {
+                            DebugPlugin.getDefault().getBreakpointManager().removeBreakpoints(breakpoints, true);
+                            return Status.OK_STATUS;
+                        } catch (CoreException e) {
+                            DebugUIPlugin.log(e);
+                        }
+                        return Status.CANCEL_STATUS;
+                    }   
+                }.schedule();
+                
+                if (newSelection != null) {
+                	((BreakpointsView) getView()).getCheckboxViewer().setSelection(new StructuredSelection(newSelection));
+                }
 			}
 		};
 		try {

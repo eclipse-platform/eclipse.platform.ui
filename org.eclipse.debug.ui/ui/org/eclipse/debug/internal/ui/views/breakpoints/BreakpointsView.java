@@ -21,6 +21,9 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.IBreakpointManagerListener;
@@ -63,6 +66,7 @@ import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
@@ -323,19 +327,30 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 	 * A breakpoint has been checked/unchecked. Update the group
 	 * element's checked/grayed state as appropriate.
 	 */
-	private void handleBreakpointChecked(CheckStateChangedEvent event, IBreakpoint breakpoint) {
-		boolean enable= event.getChecked();
-		try {
-			breakpoint.setEnabled(enable);
-		} catch (CoreException e) {
-			String titleState= enable ? DebugUIViewsMessages.getString("BreakpointsView.6") : DebugUIViewsMessages.getString("BreakpointsView.7"); //$NON-NLS-1$ //$NON-NLS-2$
-			String messageState= enable ? DebugUIViewsMessages.getString("BreakpointsView.8") : DebugUIViewsMessages.getString("BreakpointsView.9");  //$NON-NLS-1$ //$NON-NLS-2$
-			DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), MessageFormat.format(DebugUIViewsMessages.getString("BreakpointsView.10"), new String[] { titleState }), MessageFormat.format(DebugUIViewsMessages.getString("BreakpointsView.11"), new String[] { messageState }), e); //$NON-NLS-1$ //$NON-NLS-2$
-			// If the breakpoint fails to update, reset its check state.
-			getCheckboxViewer().removeCheckStateListener(fCheckListener);
-			event.getCheckable().setChecked(breakpoint, !event.getChecked());
-			getCheckboxViewer().addCheckStateListener(fCheckListener);
-		}
+	private void handleBreakpointChecked(final CheckStateChangedEvent event, final IBreakpoint breakpoint) {
+		final boolean enable= event.getChecked();
+        String jobName = enable ? DebugUIViewsMessages.getString("BreakpointsView.0") : DebugUIViewsMessages.getString("BreakpointsView.1"); //$NON-NLS-1$ //$NON-NLS-2$
+        new Job(jobName) {
+            protected IStatus run(IProgressMonitor monitor) {
+                try {
+                    breakpoint.setEnabled(enable);
+                    return Status.OK_STATUS;
+                } catch (final CoreException e) {
+                    Display.getDefault().asyncExec(new Runnable() {
+                        public void run() {
+                            String titleState= enable ? DebugUIViewsMessages.getString("BreakpointsView.6") : DebugUIViewsMessages.getString("BreakpointsView.7"); //$NON-NLS-1$ //$NON-NLS-2$
+                            String messageState= enable ? DebugUIViewsMessages.getString("BreakpointsView.8") : DebugUIViewsMessages.getString("BreakpointsView.9");  //$NON-NLS-1$ //$NON-NLS-2$
+                            DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), MessageFormat.format(DebugUIViewsMessages.getString("BreakpointsView.10"), new String[] { titleState }), MessageFormat.format(DebugUIViewsMessages.getString("BreakpointsView.11"), new String[] { messageState }), e); //$NON-NLS-1$ //$NON-NLS-2$
+                            // If the breakpoint fails to update, reset its check state.
+                            getCheckboxViewer().removeCheckStateListener(fCheckListener);
+                            event.getCheckable().setChecked(breakpoint, !event.getChecked());
+                            getCheckboxViewer().addCheckStateListener(fCheckListener);                            
+                        }
+                    });
+                }
+                return Status.CANCEL_STATUS;
+            }
+        }.schedule();
     }
 
 	/**
