@@ -322,7 +322,7 @@ public static byte[] md5(byte[] b) throws IOException {
 		try {
 			md5 = MessageDigest.getInstance("MD5");//$NON-NLS-1$
 		} catch (NoSuchAlgorithmException e) {
-			throw new IOException(Policy.bind("Misc.missingMD5", e.getMessage()));
+			throw new IOException(Policy.bind("Misc.missingMD5", e.getMessage())); //$NON-NLS-1$
 		}
 	}
 
