@@ -37,18 +37,18 @@ import java.util.HashSet;
 	boolean filterOnCompletion;
 	int completionFilter;
 
-	private static final String TAG_ID = "id";
-	private static final String TAG_TYPE = "type"; 
-	private static final String TAG_ON_RESOURCE = "onResource";
-	private static final String TAG_FILTER_ON_DESCRIPTION = "filterOnDescription";
-	private static final String TAG_DESCRIPTION_FILTER_KIND = "descriptionFilterKind";
-	private static final String TAG_DESCRIPTION_FILTER = "descriptionFilter";
-	private static final String TAG_FILTER_ON_SEVERITY = "filterOnSeverity";
-	private static final String TAG_SEVERITY_FILTER = "severityFilter";
-	private static final String TAG_FILTER_ON_PRIORITY = "filterOnPriority";
-	private static final String TAG_PRIORITY_FILTER = "priorityFilter";
-	private static final String TAG_FILTER_ON_COMPLETION = "filterOnCompletion";
-	private static final String TAG_COMPLETION_FILTER = "completionFilter";
+	private static final String TAG_ID = "id"; //$NON-NLS-1$
+	private static final String TAG_TYPE = "type";  //$NON-NLS-1$
+	private static final String TAG_ON_RESOURCE = "onResource"; //$NON-NLS-1$
+	private static final String TAG_FILTER_ON_DESCRIPTION = "filterOnDescription"; //$NON-NLS-1$
+	private static final String TAG_DESCRIPTION_FILTER_KIND = "descriptionFilterKind"; //$NON-NLS-1$
+	private static final String TAG_DESCRIPTION_FILTER = "descriptionFilter"; //$NON-NLS-1$
+	private static final String TAG_FILTER_ON_SEVERITY = "filterOnSeverity"; //$NON-NLS-1$
+	private static final String TAG_SEVERITY_FILTER = "severityFilter"; //$NON-NLS-1$
+	private static final String TAG_FILTER_ON_PRIORITY = "filterOnPriority"; //$NON-NLS-1$
+	private static final String TAG_PRIORITY_FILTER = "priorityFilter"; //$NON-NLS-1$
+	private static final String TAG_FILTER_ON_COMPLETION = "filterOnCompletion"; //$NON-NLS-1$
+	private static final String TAG_COMPLETION_FILTER = "completionFilter"; //$NON-NLS-1$
 public TasksFilter() {
 	reset();
 }
@@ -83,7 +83,7 @@ public void reset() {
 	types = ROOT_TYPES;
 	onResource = ON_ANY_RESOURCE;
 	filterOnDescription = false;
-	descriptionFilter = "";
+	descriptionFilter = ""; //$NON-NLS-1$
 	filterOnSeverity = false;
 	severityFilter = 0;
 	filterOnPriority = false;
@@ -108,7 +108,7 @@ public void restoreState(IMemento memento) {
 	descriptionFilterKind = ival == null ? FILTER_CONTAINS : ival.intValue();
 	descriptionFilter = memento.getString(TAG_DESCRIPTION_FILTER);
 	if (descriptionFilter == null)
-		descriptionFilter = "";
+		descriptionFilter = ""; //$NON-NLS-1$
 	ival = memento.getInteger(TAG_FILTER_ON_SEVERITY);
 	filterOnSeverity = ival != null && ival.intValue() == 1;
 	ival = memento.getInteger(TAG_SEVERITY_FILTER);

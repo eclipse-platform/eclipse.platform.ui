@@ -70,17 +70,17 @@ public class TaskList extends ViewPart {
 		IMarkerConstants.P_LINE_AND_LOCATION};
 
 	// Persistance tags.
-	private static final String TAG_COLUMN = "column";
-	private static final String TAG_NUMBER = "number";
-	private static final String TAG_WIDTH = "width";
-	private static final String TAG_SORTER_COLUMN = "sorterColumn"; 
-	private static final String TAG_SORTER_REVERSED = "sorterReversed"; 
-	private static final String TAG_FILTER = "filter"; 
-	private static final String TAG_SELECTION = "selection"; 
-	private static final String TAG_ID = "id";
-	private static final String TAG_MARKER = "marker";
-	private static final String TAG_RESOURCE = "resource";
-	private static final String TAG_TOP_INDEX = "topIndex";
+	private static final String TAG_COLUMN = "column"; //$NON-NLS-1$
+	private static final String TAG_NUMBER = "number"; //$NON-NLS-1$
+	private static final String TAG_WIDTH = "width"; //$NON-NLS-1$
+	private static final String TAG_SORTER_COLUMN = "sorterColumn";  //$NON-NLS-1$
+	private static final String TAG_SORTER_REVERSED = "sorterReversed";  //$NON-NLS-1$
+	private static final String TAG_FILTER = "filter";  //$NON-NLS-1$
+	private static final String TAG_SELECTION = "selection";  //$NON-NLS-1$
+	private static final String TAG_ID = "id"; //$NON-NLS-1$
+	private static final String TAG_MARKER = "marker"; //$NON-NLS-1$
+	private static final String TAG_RESOURCE = "resource"; //$NON-NLS-1$
+	private static final String TAG_TOP_INDEX = "topIndex"; //$NON-NLS-1$
 
 
 	static class TaskListLabelProvider
@@ -99,7 +99,7 @@ public class TaskList extends ViewPart {
 		public String getColumnText(Object element, int columnIndex) {
 			if (columnIndex >= 3 && columnIndex <= 6)
 				return (String) MarkerUtil.getProperty(element, keys[columnIndex]);
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 		public Image getColumnImage(Object element, int columnIndex) {
 			if (columnIndex >= 0 && columnIndex <= 2) {
@@ -110,7 +110,14 @@ public class TaskList extends ViewPart {
 	}
 
 	private String columnHeaders[] = {
-		"","C", "!","Description","Resource", "In Folder", "Location"};
+		TaskListMessages.getString("TaskList.headerIcon"), //$NON-NLS-1$
+		TaskListMessages.getString("TaskList.headerCompleted"), //$NON-NLS-1$
+		TaskListMessages.getString("TaskList.headerPriority"), //$NON-NLS-1$
+		TaskListMessages.getString("TaskList.headerDescription"), //$NON-NLS-1$
+		TaskListMessages.getString("TaskList.headerResource"), //$NON-NLS-1$
+		TaskListMessages.getString("TaskList.headerFolder"), //$NON-NLS-1$
+		TaskListMessages.getString("TaskList.headerLocation") //$NON-NLS-1$
+	};
 
 	private ColumnLayoutData columnLayouts[] = {
 		new ColumnPixelData(19, false),
@@ -189,7 +196,6 @@ void cancelEditing() {
 	getTableViewer().cancelEditing();
 }
 void createColumns() {
-
 	/**
  	 * This class handles selections of the column headers.
 	 * Selection of the column header will cause resorting
@@ -247,6 +253,7 @@ void createColumns() {
 		tc.setText(columnHeaders[i]);
 		tc.addSelectionListener(headerListener);
 	}
+
 }
 /**
  * Returns a string that summarizes the contents of the
@@ -254,13 +261,15 @@ void createColumns() {
  */
 static String createMarkerReport(IMarker[] markers) {
 	StringBuffer buf = new StringBuffer();
-	buf.append("Report for ");
-	buf.append(markers.length);
-	buf.append(" markers:\n");
+	buf.append(
+		TaskListMessages.format("TaskList.reportHdr", //$NON-NLS-1$
+			new Object[] { new Integer(markers.length) }));
+	buf.append("\n"); //$NON-NLS-1$
 	for (int i = 0; i < markers.length; i++) {
-		buf.append("Marker ");
-		buf.append(i+1);
-		buf.append(":\n");
+		buf.append( 
+			TaskListMessages.format("TaskList.reportMarker", //$NON-NLS-1$
+				new Object[] { new Integer(i+1) }));
+		buf.append("\n");
 		writeMarker(buf, markers[i]);
 	}
 	return buf.toString();
@@ -314,14 +323,18 @@ public void createPartControl(Composite parent) {
 	
 	CellEditor editors[] = new CellEditor[columnHeaders.length];
 	editors[1] = new CheckboxCellEditor(table);
-	editors[2] = new ComboBoxCellEditor(table,new String[] {"High","Normal","Low"});
+	editors[2] = new ComboBoxCellEditor(table,new String[] {
+		TaskListMessages.getString("TaskList.high"), //$NON-NLS-1$
+		TaskListMessages.getString("TaskList.normal"), //$NON-NLS-1$
+		TaskListMessages.getString("TaskList.low") //$NON-NLS-1$
+	});
 	editors[3] = descriptionEditor = new TextCellEditor(table);
 	viewer.setCellEditors(editors);
 	viewer.setCellModifier(cellModifier);
 	viewer.setColumnProperties(tableColumnProperties);
 
 	// Configure the context menu to be lazily populated on each pop-up.
-	MenuManager menuMgr = new MenuManager("#PopupMenu");
+	MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
 	menuMgr.setRemoveAllWhenShown(true);
 	menuMgr.addMenuListener(
 		new IMenuListener() {
@@ -407,7 +420,7 @@ void fillContextMenu(IMenuManager menu) {
 	menu.add(purgeCompletedAction);
 	menu.add(new Separator());
 	menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));	
-	menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS+"-end"));	
+	menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS+"-end"));	 //$NON-NLS-1$
 }
 /**
  * The filter settings have changed.
@@ -497,7 +510,7 @@ String getStatusMessage(IStructuredSelection selection) {
 	TaskListContentProvider provider = (TaskListContentProvider) viewer.getContentProvider();
 	if (selection.size() > 1) {
 		try {
-			String fmt = "{0} items selected: {1}";
+			String fmt = TaskListMessages.getString("TaskList.selectedFmt"); //$NON-NLS-1$
 			Object[] args = new Object[] {
 				new Integer(selection.size()),
 				provider.getSummary(selection.toList())
@@ -547,47 +560,47 @@ public void init(IViewSite site,IMemento memento) throws PartInitException {
  */
 void makeActions() {
 	// goto
-	gotoTaskAction = new GotoTaskAction(this, "gotoFile");
-	gotoTaskAction.setText("&Go to File");
-	gotoTaskAction.setToolTipText("Go to File");
-	gotoTaskAction.setHoverImageDescriptor(MarkerUtil.getImageDescriptor("gotoobj"));
-	gotoTaskAction.setImageDescriptor(MarkerUtil.getImageDescriptor("gotoobj_grey"));
+	gotoTaskAction = new GotoTaskAction(this, "gotoFile"); //$NON-NLS-1$
+	gotoTaskAction.setText(TaskListMessages.getString("GotoTask.text")); //$NON-NLS-1$
+	gotoTaskAction.setToolTipText(TaskListMessages.getString("GotoTask.tooltip")); //$NON-NLS-1$
+	gotoTaskAction.setHoverImageDescriptor(MarkerUtil.getImageDescriptor("gotoobj")); //$NON-NLS-1$
+	gotoTaskAction.setImageDescriptor(MarkerUtil.getImageDescriptor("gotoobj_grey")); //$NON-NLS-1$
 	gotoTaskAction.setEnabled(false);
 
 	// new task
-	newTaskAction = new NewTaskAction(this, "newTask");
-	newTaskAction.setText("&New Task");
-	newTaskAction.setToolTipText("New Task");
-	newTaskAction.setHoverImageDescriptor(MarkerUtil.getImageDescriptor("addtsk"));
-	newTaskAction.setImageDescriptor(MarkerUtil.getImageDescriptor("addtsk_grey"));
-	newTaskAction.setDisabledImageDescriptor(MarkerUtil.getImageDescriptor("addtsk_disabled"));
+	newTaskAction = new NewTaskAction(this, "newTask"); //$NON-NLS-1$
+	newTaskAction.setText(TaskListMessages.getString("NewTask.text")); //$NON-NLS-1$
+	newTaskAction.setToolTipText(TaskListMessages.getString("NewTask.tooltip")); //$NON-NLS-1$
+	newTaskAction.setHoverImageDescriptor(MarkerUtil.getImageDescriptor("addtsk")); //$NON-NLS-1$
+	newTaskAction.setImageDescriptor(MarkerUtil.getImageDescriptor("addtsk_grey")); //$NON-NLS-1$
+	newTaskAction.setDisabledImageDescriptor(MarkerUtil.getImageDescriptor("addtsk_disabled")); //$NON-NLS-1$
 
 	// remove task
-	removeTaskAction = new RemoveTaskAction(this, "delete");
-	removeTaskAction.setText("&Delete");
-	removeTaskAction.setToolTipText("Delete");
-	removeTaskAction.setHoverImageDescriptor(MarkerUtil.getImageDescriptor("remtsk"));
-	removeTaskAction.setImageDescriptor(MarkerUtil.getImageDescriptor("remtsk_grey"));
-	removeTaskAction.setDisabledImageDescriptor(MarkerUtil.getImageDescriptor("remtsk_disabled"));
+	removeTaskAction = new RemoveTaskAction(this, "delete"); //$NON-NLS-1$
+	removeTaskAction.setText(TaskListMessages.getString("RemoveTask.text")); //$NON-NLS-1$
+	removeTaskAction.setToolTipText(TaskListMessages.getString("RemoveTask.tooltip")); //$NON-NLS-1$
+	removeTaskAction.setHoverImageDescriptor(MarkerUtil.getImageDescriptor("remtsk")); //$NON-NLS-1$
+	removeTaskAction.setImageDescriptor(MarkerUtil.getImageDescriptor("remtsk_grey")); //$NON-NLS-1$
+	removeTaskAction.setDisabledImageDescriptor(MarkerUtil.getImageDescriptor("remtsk_disabled")); //$NON-NLS-1$
 	removeTaskAction.setEnabled(false);
 
 	// delete completed tasks
-	purgeCompletedAction = new PurgeCompletedAction(this, "deleteCompleted");
-	purgeCompletedAction.setImageDescriptor(MarkerUtil.getImageDescriptor("delete_edit"));
+	purgeCompletedAction = new PurgeCompletedAction(this, "deleteCompleted"); //$NON-NLS-1$
+	purgeCompletedAction.setText(TaskListMessages.getString("PurgeCompleted.text")); //$NON-NLS-1$
+	purgeCompletedAction.setToolTipText(TaskListMessages.getString("PurgeCompleted.tooltip")); //$NON-NLS-1$
+	purgeCompletedAction.setImageDescriptor(MarkerUtil.getImageDescriptor("delete_edit")); //$NON-NLS-1$
 	purgeCompletedAction.setEnabled(true);
-	purgeCompletedAction.setText("&Delete Completed Tasks");
-	purgeCompletedAction.setToolTipText("Delete Completed Tasks");
 
 	// select all
-	selectAllAction = new SelectAllTasksAction(this, "selectAll");
-	selectAllAction.setText("Select A&ll");
-	selectAllAction.setToolTipText("Select All");
+	selectAllAction = new SelectAllTasksAction(this, "selectAll"); //$NON-NLS-1$
+	selectAllAction.setText(TaskListMessages.getString("SelectAll.text")); //$NON-NLS-1$
+	selectAllAction.setToolTipText(TaskListMessages.getString("SelectAll.tooltip")); //$NON-NLS-1$
 
 	// filters...
-	filtersAction = new FiltersAction(this, "filter");
-	filtersAction.setText("&Filter...");
-	filtersAction.setToolTipText("Filter");
-	filtersAction.setImageDescriptor(MarkerUtil.getImageDescriptor("filter"));
+	filtersAction = new FiltersAction(this, "filter"); //$NON-NLS-1$
+	filtersAction.setText(TaskListMessages.getString("Filters.text")); //$NON-NLS-1$
+	filtersAction.setToolTipText(TaskListMessages.getString("Filters.tooltip")); //$NON-NLS-1$
+	filtersAction.setImageDescriptor(MarkerUtil.getImageDescriptor("filter")); //$NON-NLS-1$
 }
 /**
  * The markers have changed.  Update the status line and title bar.
@@ -823,7 +836,8 @@ void setProperty(IMarker marker, String property, Object value) {
 		}
 	}
 	catch (CoreException e) {
-		ErrorDialog.openError(getSite().getShell(), "Error modifying task", null, e.getStatus());
+		String msg = TaskListMessages.getString("TaskList.errorModifyingTask"); //$NON-NLS-1$
+		ErrorDialog.openError(getSite().getShell(), msg, null, e.getStatus());
 	}
 }
 /**
@@ -962,49 +976,50 @@ void updateStatusMessage(IStructuredSelection selection) {
  * Updates the title of the view.  Should be called when filters change.
  */
 void updateTitle() {
-	String name = getConfigurationElement().getAttribute("name");
+	String name = getConfigurationElement().getAttribute("name"); //$NON-NLS-1$
 	TaskListContentProvider provider = (TaskListContentProvider) getTableViewer().getContentProvider();
-	String title = name + " " + provider.getTitleSummary();
+	String title = name + " " + provider.getTitleSummary(); //$NON-NLS-1$
 	setTitle(title);
 }
 /**
- * Writes a string representation of the given marker to the buffer
+ * Writes a string representation of the given marker to the buffer.
  */
 static void writeMarker(StringBuffer buf, IMarker marker) {
 	try {
-		if (marker.getResource() == null) {
-			buf.append("  Marker on workbench");
-		} else {
-			buf.append("  Resource: ");
-			buf.append(marker.getResource().getName());
-			buf.append(", Line: ");
-			buf.append(MarkerUtil.getLineNumber(marker));
-		}
-		buf.append("\n  Message: ");
-		buf.append(MarkerUtil.getMessage(marker));
-
-		//	buf.append("\n  Created: ");
-		//	buf.append(new java.util.Date(marker.getTimestamp()));
-
-		buf.append("\n  Marker type: " + marker.getType());
-
-		buf.append("  Priority: ");
+		buf.append("  ");
+		buf.append(
+			TaskListMessages.format("TaskList.reportResourceAndLine", //$NON-NLS-1$
+				new Object[] { marker.getResource().getFullPath(), new Integer(MarkerUtil.getLineNumber(marker)) }));
+		buf.append("\n  "); //$NON-NLS-1$
+		buf.append(
+			TaskListMessages.format("TaskList.reportMessage", //$NON-NLS-1$
+				new Object[] { MarkerUtil.getMessage(marker) }));
+		buf.append("\n  "); //$NON-NLS-1$
+		buf.append(
+			TaskListMessages.format("TaskList.reportType", //$NON-NLS-1$
+				new Object[] { marker.getType() }));
+		buf.append("\n  "); //$NON-NLS-1$
+		String priority;
 		switch (MarkerUtil.getPriority(marker)) {
 			case IMarker.PRIORITY_HIGH:
-				buf.append("high!");
-				break;
-			case IMarker.PRIORITY_NORMAL:
-				buf.append("normal");
+				priority = TaskListMessages.getString("TaskList.high"); //$NON-NLS-1$
 				break;
 			case IMarker.PRIORITY_LOW:
-				buf.append("low");
+				priority = TaskListMessages.getString("TaskList.low"); //$NON-NLS-1$
+				break;
+			default:
+				priority = TaskListMessages.getString("TaskList.normal"); //$NON-NLS-1$
 				break;
 		}
-
-		buf.append("\n\n");
+		buf.append(
+			TaskListMessages.format("TaskList.reportPriority", //$NON-NLS-1$
+				new Object[] { priority }));
+		buf.append("\n\n"); //$NON-NLS-1$
 	}
 	catch (CoreException e) {
+		buf.append("  ");
 	    buf.append(e.getStatus().toString());
+		buf.append("\n\n"); //$NON-NLS-1$
 	}
 }
 }

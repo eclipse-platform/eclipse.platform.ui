@@ -128,7 +128,7 @@ public static String getContainerName(IMarker marker) {
 	String path = marker.getResource().getFullPath().toString();
 	int i = path.lastIndexOf(IPath.SEPARATOR);
 	if (i == 0)
-		return "";
+		return ""; //$NON-NLS-1$
 	return path.substring(1, i);
 }
 	
@@ -195,16 +195,10 @@ public static String getLineAndLocation(IMarker marker) {
 	}
 	else {
 		if (location.equals("")) {//$NON-NLS-1$
-			return "line " + lineNumber;
+			return TaskListMessages.format("TaskList.line", new Object[] { new Integer(lineNumber) }); //$NON-NLS-1$
 		}
 		else {
-			// XXX: Workaround for Java problems also showing "line # in"
-			String prefix = "line " + lineNumber + " in ";
-			if (location.startsWith(prefix)) {
-				return location;
-			} else {
-				return prefix + location;
-			}
+			return TaskListMessages.format("TaskList.lineAndLocation", new Object[] { new Integer(lineNumber), location }); //$NON-NLS-1$
 		}
 	}
 }

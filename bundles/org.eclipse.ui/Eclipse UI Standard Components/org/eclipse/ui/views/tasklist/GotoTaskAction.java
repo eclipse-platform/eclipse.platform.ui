@@ -42,7 +42,7 @@ public void run() {
 		} catch (PartInitException e) {
 			DialogUtil.openError(
 				page.getWorkbenchWindow().getShell(),
-				TaskListMessages.getString("GoToTask.errorMessage"), //$NON-NLS-1$
+				TaskListMessages.getString("GotoTask.errorMessage"), //$NON-NLS-1$
 				e.getMessage(),
 				e);
 		}

@@ -74,10 +74,10 @@ void computeSummary() {
 	try {
 		TasksFilter filter = (TasksFilter) taskList.getFilter();
 		IMarker[] markers = getMarkers();
-		String summaryFmt = "{0} item(s): {1}";
-		String unfilteredTitleFmt1 = "({0} item)";
-		String unfilteredTitleFmtN = "({0} items)";
-		String filteredTitleFmt = "(Filter showing {0} of {1} items)";
+		String summaryFmt = TaskListMessages.getString("TaskList.summaryFmt"); //$NON-NLS-1$
+		String unfilteredTitleFmt1 = TaskListMessages.getString("TaskList.unfilteredTitleFmt1"); //$NON-NLS-1$
+		String unfilteredTitleFmtN = TaskListMessages.getString("TaskList.unfilteredTitleFmtN"); //$NON-NLS-1$
+		String filteredTitleFmt = TaskListMessages.getString("TaskList.filteredTitleFmt"); //$NON-NLS-1$
 		if (filter.showAll()) {
 			summary = MessageFormat.format(summaryFmt, new Object[] {
 				new Integer(markers.length),
@@ -101,7 +101,7 @@ void computeSummary() {
 		}
 	}
 	catch (CoreException e) {
-		summary = titleSummary = "";
+		summary = titleSummary = ""; //$NON-NLS-1$
 	}
 }
 /**
@@ -214,7 +214,7 @@ String getSummary(List markers) throws CoreException {
 			}
 		}
 	}
-	String fmt = "{0} tasks, {1} errors, {2} warnings, {3} infos";
+	String fmt = TaskListMessages.getString("TaskList.summaryFmt"); //$NON-NLS-1$
 	Object[] args = new Object[] {
 		new Integer(numTasks),
 		new Integer(numErrors), 
