@@ -31,7 +31,9 @@ public class WorkspaceSynchronizePage extends CVSSynchronizeViewPage {
 		modes = new DirectionFilterActionGroup(getParticipant(), TeamSubscriberParticipant.ALL_MODES);
 
 		commitToolbar = new CVSActionDelegate(new SubscriberCommitAction());
-		updateToolbar = new CVSActionDelegate(new WorkspaceUpdateAction());
+		WorkspaceUpdateAction action = new WorkspaceUpdateAction();
+		action.setPromptBeforeUpdate(true);
+		updateToolbar = new CVSActionDelegate(action);
 
 		Utils.initAction(commitToolbar, "action.SynchronizeViewCommit.", Policy.getBundle()); //$NON-NLS-1$
 		Utils.initAction(updateToolbar, "action.SynchronizeViewUpdate.", Policy.getBundle()); //$NON-NLS-1$

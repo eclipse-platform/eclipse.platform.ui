@@ -11,7 +11,11 @@
 package org.eclipse.team.internal.ccvs.ui.subscriber;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -21,8 +25,8 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.core.sync.IRemoteResource;
-import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
@@ -32,7 +36,9 @@ import org.eclipse.team.internal.ccvs.ui.operations.UpdateOnlyMergableOperation;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.ui.synchronize.actions.SyncInfoFilter;
 import org.eclipse.team.ui.synchronize.actions.SyncInfoSet;
-import org.eclipse.team.ui.synchronize.actions.SyncInfoFilter.*;
+import org.eclipse.team.ui.synchronize.actions.SyncInfoFilter.AndSyncInfoFilter;
+import org.eclipse.team.ui.synchronize.actions.SyncInfoFilter.OrSyncInfoFilter;
+import org.eclipse.team.ui.synchronize.actions.SyncInfoFilter.SyncInfoDirectionFilter;
 
 /**
  * This update action will update all mergable resources first and then prompt the
@@ -44,13 +50,14 @@ import org.eclipse.team.ui.synchronize.actions.SyncInfoFilter.*;
 public abstract class SafeUpdateAction extends CVSSubscriberAction {
 
 	private List skippedFiles = new ArrayList();
+	private boolean promptBeforeUpdate = false;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.CVSSubscriberAction#run(org.eclipse.team.ui.sync.SyncInfoSet, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void run(SyncInfoSet syncSet, IProgressMonitor monitor) throws TeamException {
 		try {
-			
+			if(! promptIfNeeded(syncSet)) return;
 			// First, remove any known failure cases
 			SyncInfoFilter failFilter = getKnownFailureCases();
 			SyncInfo[] willFail = syncSet.getNodes(failFilter);
@@ -345,4 +352,33 @@ public abstract class SafeUpdateAction extends CVSSubscriberAction {
 		return Policy.bind("UpdateAction.jobName", new Integer(syncSet.size()).toString()); //$NON-NLS-1$
 	}
 
+	/**
+	 * Confirm with the user what we are going to be doing. By default the update action doesn't 
+	 * prompt because the user has usually selected resources first. But in some cases, for example
+	 * when performing a toolbar action, a confirmation prompt is nice.
+	 * @param set the resources to be updated
+	 * @return <code>true</code> if the update operation can continue, and <code>false</code>
+	 * if the update has been cancelled by the user.
+	 */
+	private boolean promptIfNeeded(final SyncInfoSet set) {
+		final boolean[] result = new boolean[] {true};
+		if(getPromptBeforeUpdate()) {
+			TeamUIPlugin.getStandardDisplay().syncExec(new Runnable() {
+				public void run() {
+					String sizeString = Integer.toString(set.size());
+					String message = set.size() > 1 ? Policy.bind("UpdateAction.promptForUpdateSeveral", sizeString) : Policy.bind("UpdateAction.promptForUpdateOne", sizeString);
+					result[0] = MessageDialog.openQuestion(getShell(), Policy.bind("UpdateAction.promptForUpdateTitle", sizeString), message); 					
+				}
+			});
+		}
+		return result[0];
+	}
+	
+	public void setPromptBeforeUpdate(boolean prompt) {
+		this.promptBeforeUpdate = prompt;
+	}
+	
+	public boolean getPromptBeforeUpdate() {
+		return promptBeforeUpdate;
+	}
 }

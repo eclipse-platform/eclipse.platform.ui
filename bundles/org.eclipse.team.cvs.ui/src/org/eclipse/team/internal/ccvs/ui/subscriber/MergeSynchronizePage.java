@@ -31,7 +31,9 @@ public class MergeSynchronizePage extends CVSSynchronizeViewPage {
 		super(participant, view, input);		
 		removeAction = new RemoveSynchronizeParticipantAction(getParticipant());
 		modes = new DirectionFilterActionGroup(getParticipant(), TeamSubscriberParticipant.INCOMING_MODE | TeamSubscriberParticipant.CONFLICTING_MODE);
-		updateAdapter = new CVSActionDelegate(new MergeUpdateAction());
+		MergeUpdateAction action = new MergeUpdateAction();
+		action.setPromptBeforeUpdate(true);
+		updateAdapter = new CVSActionDelegate(action);
 		
 		Utils.initAction(updateAdapter, "action.SynchronizeViewUpdate.", Policy.getBundle()); //$NON-NLS-1$
 		getParticipant().setMode(TeamSubscriberParticipant.INCOMING_MODE);
