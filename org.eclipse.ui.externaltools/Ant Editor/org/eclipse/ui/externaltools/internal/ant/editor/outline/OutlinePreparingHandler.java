@@ -52,7 +52,6 @@ import org.xml.sax.helpers.DefaultHandler;
  * set at this point are only the ones that the locator gives us in 
  * <code>startElement()</code> and <code>endElement()</code>.
  * 
- * @version 25.11.2002
  * @author Alf Schiefelbein
  */
 public class OutlinePreparingHandler extends DefaultHandler implements LexicalHandler {
@@ -101,7 +100,7 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
      * Whether the current callbacks are from elements in the DTD.
      */
     private boolean isInDTD;
-
+   
     /**
      * Creates an instance.
      */
@@ -577,6 +576,9 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
 	 * @see org.xml.sax.ext.LexicalHandler#startEntity(java.lang.String)
 	 */
 	public void startEntity(String name) throws SAXException {
+		if (isInDTD) {
+			return;
+		}
 		boolean isNestedRootExternal= isExternal();
 		if (!isNestedRootExternal) {
 			isTopLevelRootExternal= true;
@@ -611,7 +613,7 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
 				offset= document.search(offset, prefix + element.getName(), false, false, false);
 			} else {
 				offset= getOffset(locatorLine, locatorColumn);
-				offset= document.search(offset, prefix, false, true, false); 
+				offset= document.search(offset - 1, prefix, false, true, false); 
 			}
 			
 			int line= getLine(offset);
@@ -677,6 +679,10 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
 			
 			if (line <= 0) {
 				line= locator.getLineNumber();
+				if (line <= 0) {
+					line= 1;
+				}
+				
 				startColumn= locator.getColumnNumber();
 			}
 
@@ -735,6 +741,10 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
 			} else {
 				line= e.getLineNumber();
 				column= e.getColumnNumber();
+				
+				if (line <= 0) {
+					line= 1;
+				}
 				
 				if (column <= 0) {
 					column= 1;
