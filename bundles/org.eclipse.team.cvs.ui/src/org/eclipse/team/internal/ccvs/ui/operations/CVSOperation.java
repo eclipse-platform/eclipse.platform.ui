@@ -86,11 +86,13 @@ public abstract class CVSOperation implements IRunnableWithProgress {
 	}
 
 	/**
-	 * Returns true if the operation can be run as a background job
+	 * Returns true if the operation can be run as a background job.
+	 * The default is to support running as a job. Subclass should override
+	 * to prevent background execution of the operation.
 	 * @return whether operation can be run as a job
 	 */
 	public boolean canRunAsJob() {
-		return false;
+		return true;
 	}
 	
 	/**
