@@ -77,6 +77,7 @@ public class IOConsolePage extends TextConsolePage {
         IOConsoleViewer viewer = (IOConsoleViewer) getViewer();
         if (viewer != null) {
             viewer.setAutoScroll(scroll);
+            fScrollLockAction.setChecked(!scroll);
         }
     }
 
@@ -136,4 +137,5 @@ public class IOConsolePage extends TextConsolePage {
         getConsole().removePropertyChangeListener(fPropertyChangeListener);
         super.dispose();
     }
+
 }
