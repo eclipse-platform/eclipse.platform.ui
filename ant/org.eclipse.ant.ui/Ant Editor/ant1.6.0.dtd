@@ -4579,12 +4579,15 @@
           taskname CDATA #IMPLIED
           description CDATA #IMPLIED>
 
+<!--define the top level fail which is more common than the sound fail nested element-->
 <!ELEMENT fail EMPTY>
 <!ATTLIST fail
           id ID #IMPLIED
-          loops CDATA #IMPLIED
-          source CDATA #IMPLIED
-          duration CDATA #IMPLIED>
+          taskname CDATA #IMPLIED
+          description CDATA #IMPLIED
+          message CDATA #IMPLIED
+          if CDATA #IMPLIED
+          unless CDATA #IMPLIED>
 
 <!ELEMENT success EMPTY>
 <!ATTLIST success

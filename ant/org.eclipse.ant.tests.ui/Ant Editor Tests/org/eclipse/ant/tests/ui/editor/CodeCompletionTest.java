@@ -407,6 +407,21 @@ public class CodeCompletionTest extends AbstractAntUITest {
         
     }
     
+    /**
+     * Tests the code completion for the fail task
+     * bug 73637
+     */
+    public void testFailProposals() {
+		TestTextCompletionProcessor processor = new TestTextCompletionProcessor(getAntModel("buildtest1.xml"));
+
+		ICompletionProposal[] proposals = processor.getAttributeProposals("fail", "");
+        assertEquals(6, proposals.length);
+        
+        assertContains("message", proposals);
+        assertContains("if", proposals);
+        assertContains("unless", proposals);
+    }
+    
 	/**
 	 * Test for bug 40951
 	 */
