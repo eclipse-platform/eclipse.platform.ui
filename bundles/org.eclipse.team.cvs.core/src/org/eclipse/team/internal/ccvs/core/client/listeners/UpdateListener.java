@@ -12,6 +12,7 @@ package org.eclipse.team.internal.ccvs.core.client.listeners;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
@@ -99,87 +100,96 @@ public class UpdateListener extends CommandOutputListener {
 	public IStatus errorLine(String line, ICVSRepositoryLocation location, ICVSFolder commandRoot,
 		IProgressMonitor monitor) {
 		
-		String serverMessage = getServerMessage(line, location);
-		if (serverMessage != null) {
-			// Strip the prefix from the line
-			String message = serverMessage;
-			if (message.startsWith("Updating")) { //$NON-NLS-1$
-				if (updateMessageListener != null) {
-					String path = message.substring(9);
-					updateMessageListener.directoryInformation(commandRoot, path, false);
-				}
-				return OK;
-			} else if (message.startsWith("skipping directory")) { //$NON-NLS-1$
-				if (updateMessageListener != null) {
-					String path = message.substring(18).trim();
-					updateMessageListener.directoryDoesNotExist(commandRoot, path);
-				}
-				return OK;
-			} else if (message.startsWith("New directory")) { //$NON-NLS-1$
-				if (updateMessageListener != null) {
-					String path = message.substring(15, message.lastIndexOf('\''));
-					updateMessageListener.directoryInformation(commandRoot, path, true);
-				}
-				return OK;
-			} else if (message.endsWith("is no longer in the repository")) { //$NON-NLS-1$
-				if (updateMessageListener != null) {
-					String filename = message.substring(0, message.length() - 31);
-					updateMessageListener.fileDoesNotExist(commandRoot, filename);
-				}
-				return OK;
-			} else if (message.startsWith("conflict:")) { //$NON-NLS-1$
-				/*
-				 * We can get the following conflict warnings
-				 *    cvs server: conflict: folder/file.ext created independently by second party 
-				 *    cvs server: conflict: removed file.txt was modified by second party
-				 *    cvs server: conflict: file.txt is modified but no longer in the repository
-				 * If we get the above line, we have conflicting additions or deletions and we can expect a server error.
-				 * We still get "C foler/file.ext" so we don't need to do anything else (except in the remotely deleted case)
-				 */
-				if (updateMessageListener != null) {
-					if (message.endsWith("is modified but no longer in the repository")) { //$NON-NLS-1$
-						// The "C foler/file.ext" will come after this so if whould be ignored!
-						String filename = message.substring(10, message.length() - 44);
-						updateMessageListener.fileDoesNotExist(commandRoot, filename);
-					}
-				}
-				return new CVSStatus(CVSStatus.WARNING, CVSStatus.CONFLICT, commandRoot, line);
-			} else if (message.startsWith("warning:")) { //$NON-NLS-1$
-				/*
-				 * We can get the following conflict warnings
-				 *    cvs server: warning: folder1/file.ext is not (any longer) pertinent
-				 * If we get the above line, we have local changes to a remotely deleted file.
-				 */
-				if (updateMessageListener != null) {
-					if (message.endsWith("is not (any longer) pertinent")) { //$NON-NLS-1$
-						String filename = message.substring(9, message.length() - 30);
-						updateMessageListener.fileDoesNotExist(commandRoot, filename);
-					}
-				}
-				return new CVSStatus(CVSStatus.WARNING, CVSStatus.CONFLICT, commandRoot, line);
-			} else if (message.startsWith("conflicts")) { //$NON-NLS-1$
-				// This line is info only. The server doesn't report an error.
-				return new CVSStatus(IStatus.INFO, CVSStatus.CONFLICT, commandRoot, line);
-			} else if (!message.startsWith("cannot open directory") //$NON-NLS-1$
-					&& !message.startsWith("nothing known about")) { //$NON-NLS-1$
-				return super.errorLine(line, location, commandRoot, monitor);
-			}
-		} else {
-			String serverAbortedMessage = getServerAbortedMessage(line, location);
-			if (serverAbortedMessage != null) {
+		try {
+			String serverMessage = getServerMessage(line, location);
+			if (serverMessage != null) {
 				// Strip the prefix from the line
-				String message = serverAbortedMessage;
-				if (message.startsWith("no such tag")) { //$NON-NLS-1$
-					// This is reported from CVS when a tag is used on the update there are no files in the directory
-					// To get the folders, the update request should be re-issued for HEAD
-					return new CVSStatus(CVSStatus.WARNING, CVSStatus.NO_SUCH_TAG, commandRoot, line);
-				} else {
+				String message = serverMessage;
+				if (message.startsWith("Updating")) { //$NON-NLS-1$
+					if (updateMessageListener != null) {
+						String path = message.substring(9);
+						updateMessageListener.directoryInformation(commandRoot, path, false);
+					}
+					return OK;
+				} else if (message.startsWith("skipping directory")) { //$NON-NLS-1$
+					if (updateMessageListener != null) {
+						String path = message.substring(18).trim();
+						updateMessageListener.directoryDoesNotExist(commandRoot, path);
+					}
+					return OK;
+				} else if (message.startsWith("New directory")) { //$NON-NLS-1$
+					if (updateMessageListener != null) {
+						String path = message.substring(15, message.lastIndexOf('\''));
+						updateMessageListener.directoryInformation(commandRoot, path, true);
+					}
+					return OK;
+				} else if (message.endsWith("is no longer in the repository")) { //$NON-NLS-1$
+					if (updateMessageListener != null) {
+						String filename = message.substring(0, message.length() - 31);
+						updateMessageListener.fileDoesNotExist(commandRoot, filename);
+					}
+					return OK;
+				} else if (message.startsWith("conflict:")) { //$NON-NLS-1$
+					/*
+					 * We can get the following conflict warnings
+					 *    cvs server: conflict: folder/file.ext created independently by second party 
+					 *    cvs server: conflict: removed file.txt was modified by second party
+					 *    cvs server: conflict: file.txt is modified but no longer in the repository
+					 * If we get the above line, we have conflicting additions or deletions and we can expect a server error.
+					 * We still get "C foler/file.ext" so we don't need to do anything else (except in the remotely deleted case)
+					 */
+					if (updateMessageListener != null) {
+						if (message.endsWith("is modified but no longer in the repository")) { //$NON-NLS-1$
+							// The "C foler/file.ext" will come after this so if whould be ignored!
+							String filename = message.substring(10, message.length() - 44);
+							updateMessageListener.fileDoesNotExist(commandRoot, filename);
+						}
+					}
+					return new CVSStatus(CVSStatus.WARNING, CVSStatus.CONFLICT, commandRoot, line);
+				} else if (message.startsWith("warning:")) { //$NON-NLS-1$
+					/*
+					 * We can get the following conflict warnings
+					 *    cvs server: warning: folder1/file.ext is not (any longer) pertinent
+					 * If we get the above line, we have local changes to a remotely deleted file.
+					 */
+					if (updateMessageListener != null) {
+						if (message.endsWith("is not (any longer) pertinent")) { //$NON-NLS-1$
+							String filename = message.substring(9, message.length() - 30);
+							updateMessageListener.fileDoesNotExist(commandRoot, filename);
+						}
+					}
+					return new CVSStatus(CVSStatus.WARNING, CVSStatus.CONFLICT, commandRoot, line);
+				} else if (message.startsWith("conflicts")) { //$NON-NLS-1$
+					// This line is info only. The server doesn't report an error.
+					return new CVSStatus(IStatus.INFO, CVSStatus.CONFLICT, commandRoot, line);
+				} else if (!message.startsWith("cannot open directory") //$NON-NLS-1$
+						&& !message.startsWith("nothing known about")) { //$NON-NLS-1$
 					return super.errorLine(line, location, commandRoot, monitor);
 				}
-			} else if (line.equals("rcsmerge: warning: conflicts during merge")) {
-				// There were conflicts in the merge
-				return new CVSStatus(CVSStatus.WARNING, CVSStatus.CONFLICT, commandRoot, line);
+			} else {
+				String serverAbortedMessage = getServerAbortedMessage(line, location);
+				if (serverAbortedMessage != null) {
+					// Strip the prefix from the line
+					String message = serverAbortedMessage;
+					if (message.startsWith("no such tag")) { //$NON-NLS-1$
+						// This is reported from CVS when a tag is used on the update there are no files in the directory
+						// To get the folders, the update request should be re-issued for HEAD
+						return new CVSStatus(CVSStatus.WARNING, CVSStatus.NO_SUCH_TAG, commandRoot, line);
+					} else {
+						return super.errorLine(line, location, commandRoot, monitor);
+					}
+				} else if (line.equals("rcsmerge: warning: conflicts during merge")) {
+					// There were conflicts in the merge
+					return new CVSStatus(CVSStatus.WARNING, CVSStatus.CONFLICT, commandRoot, line);
+				}
 			}
+		} catch (StringIndexOutOfBoundsException e) {
+			// Something went wrong in the parsing of the message.
+			// Return a status indicating the problem
+			if (CVSProviderPlugin.getPlugin().isDebugging()) {
+				System.out.println("Error parsing E line: " + line);
+			}
+			return new CVSStatus(CVSStatus.ERROR, CVSStatus.ERROR_LINE_PARSE_FAILURE, commandRoot, line);
 		}
 		return super.errorLine(line, location, commandRoot, monitor);
 	}
