@@ -906,10 +906,10 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 					case IDialogConstants.CANCEL_ID:
 						return;
 					case IDialogConstants.YES_ID:
-						wait = false;
+						wait = true;
 						break;
 					case IDialogConstants.NO_ID:
-						wait = true;
+						wait = false;
 						break;
 				}
 			}
