@@ -24,7 +24,7 @@ public class NavigationBuilder {
 		for (Iterator it = contributedTopicsFiles.iterator(); it.hasNext();) {
 			TopicsFile topicsFile = (TopicsFile) it.next();
 			Topics topics = topicsFile.getTopics();
-			if (topics != null && topics.getTopicsFile().isBook() && !isIntegrated(topics))
+			if (topics != null && topics.getTopicsFile().isTOC() && !isIntegrated(topics))
 				topicsCol.add((topics));
 		}
 		return topicsCol;
@@ -114,19 +114,19 @@ public class NavigationBuilder {
 	}
 	/** 
 	 * Checks if navigation element has been integrated
-	 * into another book.
+	 * into another TOC.
 	 */
 	private boolean isIntegrated (NavigationElement element){
-		// check if there if there is book in ancestor hierarchy (depth first)
+		// check if there if there is TOC in ancestor hierarchy (depth first)
 		for(Iterator it=element.getParents().iterator();it.hasNext();){
 			NavigationElement parent=(NavigationElement)it.next();
-			if(parent instanceof Topics && ((Topics)parent).getTopicsFile().isBook()){
+			if(parent instanceof Topics && ((Topics)parent).getTopicsFile().isTOC()){
 				return true;
 			}else if(isIntegrated(parent)){
 				return true;
 			}
 		}
-		// no ancestor is a book
+		// no ancestor is a TOC
 		return false;
 	}
 }

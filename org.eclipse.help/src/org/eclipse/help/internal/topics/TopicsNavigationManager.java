@@ -166,9 +166,9 @@ public class TopicsNavigationManager {
 							.getDeclaringPluginDescriptor()
 							.getUniqueIdentifier();
 					String href = configElements[j].getAttribute("file");
-					boolean isBook = "book".equals(configElements[j].getAttribute("type"));
+					boolean isTOC = "toc".equals(configElements[j].getAttribute("type"));
 					if (href != null)
-						contributedTopicsFiles.add(new TopicsFile(pluginId, href, isBook));
+						contributedTopicsFiles.add(new TopicsFile(pluginId, href, isTOC));
 				}
 		}
 		return contributedTopicsFiles;

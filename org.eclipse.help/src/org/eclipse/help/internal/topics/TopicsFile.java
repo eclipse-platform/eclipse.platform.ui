@@ -15,7 +15,7 @@ public class TopicsFile {
 
 	protected String plugin;
 	protected String href;
-	protected boolean book;
+	protected boolean toc;
 
 
 	// used for fast access to anchors
@@ -24,10 +24,10 @@ public class TopicsFile {
 	/**
 	 * Topics File Contstructor
 	 */
-	protected TopicsFile(String plugin, String href, boolean isBook) {
+	protected TopicsFile(String plugin, String href, boolean isTOC) {
 		this.plugin = plugin;
 		this.href = href;
-		this.book = isBook;
+		this.toc = isTOC;
 	}
 
 	/**
@@ -108,11 +108,11 @@ public class TopicsFile {
 		return plugin + "/" + href;
 	}
 	/**
-	 * Checks if this file specifies a book.
+	 * Checks if this file specifies a TOC.
 	 * @return Returns a boolean
 	 */
-	public boolean isBook() {
-		return book;
+	public boolean isTOC() {
+		return toc;
 	}
 
 }
