@@ -39,6 +39,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -527,14 +528,18 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		textKeySequenceManager.setMaxStrokes(4);
 
 		// Button for adding trapped key strokes
-		buttonAddKey = new Button(groupKeySequence, SWT.CENTER | SWT.ARROW | SWT.DOWN);
+		buttonAddKey = new Button(groupKeySequence, SWT.LEFT | SWT.ARROW);
 		buttonAddKey.setToolTipText(Util.translateString(RESOURCE_BUNDLE, "buttonAddKey.ToolTipText"));
 		gridData = new GridData();
 		gridData.heightHint = comboCategory.getTextHeight();
 		buttonAddKey.setLayoutData(gridData);
 		buttonAddKey.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent selectionEvent) {
-				selectedButtonAddKey();
+				Point buttonLocation = buttonAddKey.getLocation();
+				buttonLocation = groupKeySequence.toDisplay(buttonLocation.x, buttonLocation.y);
+				Point buttonSize = buttonAddKey.getSize();
+				menuButtonAddKey.setLocation(buttonLocation.x, buttonLocation.y + buttonSize.y);
+				menuButtonAddKey.setVisible(true);
 			}
 		});
 
@@ -832,10 +837,6 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		List preferenceKeySequenceBindingDefinitions = new ArrayList();
 		KeySequenceBindingNode.getKeySequenceBindingDefinitions(tree, KeySequence.getInstance(), 0, preferenceKeySequenceBindingDefinitions);
 		update();
-	}
-
-	private void selectedButtonAddKey() {
-		menuButtonAddKey.setVisible(true);
 	}
 
 	private void selectedButtonRemove() {
@@ -1447,145 +1448,223 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		labelKeyConfigurationExtends.setText(Util.ZERO_LENGTH_STRING);
 	}
 
-	/*
-	 * private void selectedButtonChange() { KeySequence keySequence =
-	 * getKeySequence(); boolean validKeySequence = keySequence != null &&
-	 * validateSequence(keySequence); String scopeId = getScopeId(); boolean
-	 * validScopeId = scopeId != null && activitiesDefinitionsById.get(scopeId) !=
-	 * null; String keyConfigurationId = getKeyConfigurationId(); boolean
-	 * validKeyConfigurationId = keyConfigurationId != null &&
-	 * keyConfigurationsById.get(keyConfigurationId) != null; if
-	 * (validKeySequence && validScopeId && validKeyConfigurationId) { String
-	 * commandId = null; ISelection selection =
-	 * treeViewerCommands.getSelection(); if (selection instanceof
-	 * IStructuredSelection && !selection.isEmpty()) { Object object =
-	 * ((IStructuredSelection) selection).getFirstElement(); if (object
-	 * instanceof ICommandDefinition) commandId = ((ICommandDefinition)
-	 * object).getId(); } CommandRecord commandRecord =
-	 * getSelectedCommandRecord(); if (commandRecord == null) set(tree,
-	 * keySequence, scopeId, keyConfigurationId, commandId); else { if
-	 * (!commandRecord.customSet.isEmpty()) clear(tree, keySequence, scopeId,
-	 * keyConfigurationId); else set(tree, keySequence, scopeId,
-	 * keyConfigurationId, null); } commandRecords.clear();
-	 * buildCommandRecords(tree, commandId, commandRecords);
-	 * buildTableCommand(); selectTableCommand(scopeId, keyConfigurationId,
-	 * keySequence); keySequenceRecords.clear(); buildSequenceRecords(tree,
-	 * keySequence, keySequenceRecords); buildTableKeySequence();
-	 * selectTableKeySequence(scopeId, keyConfigurationId); update(); } }
-	 * private void buildTableCommand() { tableSequencesForCommand.removeAll();
-	 * for (int i = 0; i < commandRecords.size(); i++) { CommandRecord
-	 * commandRecord = (CommandRecord) commandRecords.get(i); Set customSet =
-	 * commandRecord.customSet; Set defaultSet = commandRecord.defaultSet; int
-	 * difference = DIFFERENCE_NONE; //String commandId = null; boolean
-	 * commandConflict = false; String alternateCommandId = null; boolean
-	 * alternateCommandConflict = false; if (customSet.isEmpty()) { if
-	 * (defaultSet.contains(commandRecord.command)) { //commandId =
-	 * commandRecord.commandId; commandConflict =
-	 * commandRecord.defaultConflict; } } else { if (defaultSet.isEmpty()) { if
-	 * (customSet.contains(commandRecord.command)) { difference =
-	 * DIFFERENCE_ADD; //commandId = commandRecord.commandId; commandConflict =
-	 * commandRecord.customConflict; } } else { if
-	 * (customSet.contains(commandRecord.command)) { difference =
-	 * DIFFERENCE_CHANGE; //commandId = commandRecord.commandId;
-	 * commandConflict = commandRecord.customConflict; alternateCommandId =
-	 * commandRecord.defaultCommand; alternateCommandConflict =
-	 * commandRecord.defaultConflict; } else { if
-	 * (defaultSet.contains(commandRecord.command)) { difference =
-	 * DIFFERENCE_MINUS; //commandId = commandRecord.commandId; commandConflict =
-	 * commandRecord.defaultConflict; alternateCommandId =
-	 * commandRecord.customCommand; alternateCommandConflict =
-	 * commandRecord.customConflict; } } } } TableItem tableItem = new
-	 * TableItem(tableSequencesForCommand, SWT.NULL); switch (difference) {
-	 * case DIFFERENCE_ADD: tableItem.setImage(0, IMAGE_PLUS); break; case
-	 * DIFFERENCE_CHANGE: tableItem.setImage(0, IMAGE_CHANGE); break; case
-	 * DIFFERENCE_MINUS: tableItem.setImage(0, IMAGE_MINUS); break; case
-	 * DIFFERENCE_NONE: tableItem.setImage(0, IMAGE_BLANK); break; }
-	 * IActivityDefinition scope = (IActivityDefinition)
-	 * activitiesById.get(commandRecord.scope); tableItem.setText(1, scope !=
-	 * null ? scope.getName() : bracket(commandRecord.scope)); Configuration
-	 * keyConfiguration = (Configuration)
-	 * keyConfigurationsById.get(commandRecord.configuration);
-	 * tableItem.setText(2, keyConfiguration != null ?
-	 * keyConfiguration.getName() : bracket(commandRecord.configuration));
-	 * boolean conflict = commandConflict || alternateCommandConflict;
-	 * StringBuffer stringBuffer = new StringBuffer(); if
-	 * (commandRecord.sequence != null)
-	 * stringBuffer.append(KeySupport.formatSequence(commandRecord.sequence,
-	 * true)); if (commandConflict) stringBuffer.append(SPACE +
-	 * COMMAND_CONFLICT); String alternateCommandName = null; if
-	 * (alternateCommandId == null) alternateCommandName = COMMAND_UNDEFINED;
-	 * else if (alternateCommandId.length() == 0) alternateCommandName =
-	 * COMMAND_NOTHING; else { ICommandDefinition command =
-	 * (ICommandDefinition) commandsById.get(alternateCommandId); if (command !=
-	 * null) alternateCommandName = command.getName(); else
-	 * alternateCommandName = bracket(alternateCommandId); } if
-	 * (alternateCommandConflict) alternateCommandName += SPACE +
-	 * COMMAND_CONFLICT; stringBuffer.append(SPACE); if (difference ==
-	 * DIFFERENCE_CHANGE)
-	 * stringBuffer.append(MessageFormat.format(Util.getString(resourceBundle,
-	 * "was"), new Object[] { alternateCommandName })); //$NON-NLS-1$ else if
-	 * (difference == DIFFERENCE_MINUS)
-	 * stringBuffer.append(MessageFormat.format(Util.getString(resourceBundle,
-	 * "now"), new Object[] { alternateCommandName })); //$NON-NLS-1$
-	 * tableItem.setText(3, stringBuffer.toString()); if (difference ==
-	 * DIFFERENCE_MINUS) { if (conflict) tableItem.setForeground(new
-	 * Color(getShell().getDisplay(), RGB_CONFLICT_MINUS)); else
-	 * tableItem.setForeground(new Color(getShell().getDisplay(), RGB_MINUS)); }
-	 * else if (conflict) tableItem.setForeground(new
-	 * Color(getShell().getDisplay(), RGB_CONFLICT)); } } private void
-	 * buildTableKeySequence() { tableCommandsForSequence.removeAll(); for (int
-	 * i = 0; i < keySequenceRecords.size(); i++) { KeySequenceRecord
-	 * keySequenceRecord = (KeySequenceRecord) keySequenceRecords.get(i); int
-	 * difference = DIFFERENCE_NONE; String commandId = null; boolean
-	 * commandConflict = false; String alternateCommandId = null; boolean
-	 * alternateCommandConflict = false; if
-	 * (keySequenceRecord.customSet.isEmpty()) { commandId =
-	 * keySequenceRecord.defaultCommand; commandConflict =
-	 * keySequenceRecord.defaultConflict; } else { commandId =
-	 * keySequenceRecord.customCommand; commandConflict =
-	 * keySequenceRecord.customConflict; if
-	 * (keySequenceRecord.defaultSet.isEmpty()) difference = DIFFERENCE_ADD;
-	 * else { difference = DIFFERENCE_CHANGE; alternateCommandId =
-	 * keySequenceRecord.defaultCommand; alternateCommandConflict =
-	 * keySequenceRecord.defaultConflict; } } TableItem tableItem = new
-	 * TableItem(tableCommandsForSequence, SWT.NULL); switch (difference) {
-	 * case DIFFERENCE_ADD: tableItem.setImage(0, IMAGE_PLUS); break; case
-	 * DIFFERENCE_CHANGE: tableItem.setImage(0, IMAGE_CHANGE); break; case
-	 * DIFFERENCE_MINUS: tableItem.setImage(0, IMAGE_MINUS); break; case
-	 * DIFFERENCE_NONE: tableItem.setImage(0, IMAGE_BLANK); break; }
-	 * IActivityDefinition scope = (IActivityDefinition)
-	 * activitiesById.get(keySequenceRecord.scope); tableItem.setText(1, scope !=
-	 * null ? scope.getName() : bracket(keySequenceRecord.scope));
-	 * Configuration keyConfiguration = (Configuration)
-	 * keyConfigurationsById.get(keySequenceRecord.configuration);
-	 * tableItem.setText(2, keyConfiguration != null ?
-	 * keyConfiguration.getName() : bracket(keySequenceRecord.configuration));
-	 * boolean conflict = commandConflict || alternateCommandConflict;
-	 * StringBuffer stringBuffer = new StringBuffer(); String commandName =
-	 * null; if (commandId == null) commandName = COMMAND_UNDEFINED; else if
-	 * (commandId.length() == 0) commandName = COMMAND_NOTHING; else {
-	 * ICommandDefinition command = (ICommandDefinition)
-	 * commandsById.get(commandId); if (command != null) commandName =
-	 * command.getName(); else commandName = bracket(commandId); }
-	 * stringBuffer.append(commandName); if (commandConflict)
-	 * stringBuffer.append(SPACE + COMMAND_CONFLICT); String
-	 * alternateCommandName = null; if (alternateCommandId == null)
-	 * alternateCommandName = COMMAND_UNDEFINED; else if
-	 * (alternateCommandId.length() == 0) alternateCommandName =
-	 * COMMAND_NOTHING; else { ICommandDefinition command =
-	 * (ICommandDefinition) commandsById.get(alternateCommandId); if (command !=
-	 * null) alternateCommandName = command.getName(); else
-	 * alternateCommandName = bracket(alternateCommandId); } if
-	 * (alternateCommandConflict) alternateCommandName += SPACE +
-	 * COMMAND_CONFLICT; stringBuffer.append(SPACE); if (difference ==
-	 * DIFFERENCE_CHANGE)
-	 * stringBuffer.append(MessageFormat.format(Util.getString(resourceBundle,
-	 * "was"), new Object[] { alternateCommandName })); //$NON-NLS-1$
-	 * tableItem.setText(3, stringBuffer.toString()); if (difference ==
-	 * DIFFERENCE_MINUS) { if (conflict) tableItem.setForeground(new
-	 * Color(getShell().getDisplay(), RGB_CONFLICT_MINUS)); else
-	 * tableItem.setForeground(new Color(getShell().getDisplay(), RGB_MINUS)); }
-	 * else if (conflict) tableItem.setForeground(new
-	 * Color(getShell().getDisplay(), RGB_CONFLICT)); } }
-	 */
+	/*private void selectedButtonChange() {
+		KeySequence keySequence = getKeySequence();
+		boolean validKeySequence = keySequence != null && validateSequence(keySequence);
+		String scopeId = getScopeId();
+		boolean validScopeId = scopeId != null && activitiesDefinitionsById.get(scopeId) != null;
+		String keyConfigurationId = getKeyConfigurationId();
+		boolean validKeyConfigurationId = keyConfigurationId != null && keyConfigurationsById.get(keyConfigurationId) != null;
+		if (validKeySequence && validScopeId && validKeyConfigurationId) {
+			String commandId = null;
+			ISelection selection = treeViewerCommands.getSelection();
+			if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
+				Object object = ((IStructuredSelection) selection).getFirstElement();
+				if (object instanceof ICommandDefinition)
+					commandId = ((ICommandDefinition) object).getId();
+			}
+			CommandRecord commandRecord = getSelectedCommandRecord();
+			if (commandRecord == null)
+				set(tree, keySequence, scopeId, keyConfigurationId, commandId);
+			else {
+				if (!commandRecord.customSet.isEmpty())
+					clear(tree, keySequence, scopeId, keyConfigurationId);
+				else
+					set(tree, keySequence, scopeId, keyConfigurationId, null);
+			}
+			commandRecords.clear();
+			buildCommandRecords(tree, commandId, commandRecords);
+			buildTableCommand();
+			selectTableCommand(scopeId, keyConfigurationId, keySequence);
+			keySequenceRecords.clear();
+			buildSequenceRecords(tree, keySequence, keySequenceRecords);
+			buildTableKeySequence();
+			selectTableKeySequence(scopeId, keyConfigurationId);
+			update();
+		}
+	}
+	private void buildTableCommand() {
+		tableSequencesForCommand.removeAll();
+		for (int i = 0; i < commandRecords.size(); i++) {
+			CommandRecord commandRecord = (CommandRecord) commandRecords.get(i);
+			Set customSet = commandRecord.customSet;
+			Set defaultSet = commandRecord.defaultSet;
+			int difference = DIFFERENCE_NONE; //String commandId = null;
+											  // boolean
+			commandConflict = false;
+			String alternateCommandId = null;
+			boolean alternateCommandConflict = false;
+			if (customSet.isEmpty()) {
+				if (defaultSet.contains(commandRecord.command)) { //commandId
+																  // =
+					commandRecord.commandId;
+					commandConflict = commandRecord.defaultConflict;
+				}
+			} else {
+				if (defaultSet.isEmpty()) {
+					if (customSet.contains(commandRecord.command)) {
+						difference = DIFFERENCE_ADD; //commandId =
+													 // commandRecord.commandId;
+													 // commandConflict =
+						commandRecord.customConflict;
+					}
+				} else {
+					if (customSet.contains(commandRecord.command)) {
+						difference = DIFFERENCE_CHANGE; //commandId =
+														// commandRecord.commandId;
+						commandConflict = commandRecord.customConflict;
+						alternateCommandId = commandRecord.defaultCommand;
+						alternateCommandConflict = commandRecord.defaultConflict;
+					} else {
+						if (defaultSet.contains(commandRecord.command)) {
+							difference = DIFFERENCE_MINUS; //commandId =
+														   // commandRecord.commandId;
+														   // commandConflict =
+							commandRecord.defaultConflict;
+							alternateCommandId = commandRecord.customCommand;
+							alternateCommandConflict = commandRecord.customConflict;
+						}
+					}
+				}
+			}
+			TableItem tableItem = new TableItem(tableSequencesForCommand, SWT.NULL);
+			switch (difference) {
+				case DIFFERENCE_ADD :
+					tableItem.setImage(0, IMAGE_PLUS);
+					break;
+				case DIFFERENCE_CHANGE :
+					tableItem.setImage(0, IMAGE_CHANGE);
+					break;
+				case DIFFERENCE_MINUS :
+					tableItem.setImage(0, IMAGE_MINUS);
+					break;
+				case DIFFERENCE_NONE :
+					tableItem.setImage(0, IMAGE_BLANK);
+					break;
+			}
+			IActivityDefinition scope = (IActivityDefinition) activitiesById.get(commandRecord.scope);
+			tableItem.setText(1, scope != null ? scope.getName() : bracket(commandRecord.scope));
+			Configuration keyConfiguration = (Configuration) keyConfigurationsById.get(commandRecord.configuration);
+			tableItem.setText(2, keyConfiguration != null ? keyConfiguration.getName() : bracket(commandRecord.configuration));
+			boolean conflict = commandConflict || alternateCommandConflict;
+			StringBuffer stringBuffer = new StringBuffer();
+			if (commandRecord.sequence != null)
+				stringBuffer.append(KeySupport.formatSequence(commandRecord.sequence, true));
+			if (commandConflict)
+				stringBuffer.append(SPACE + COMMAND_CONFLICT);
+			String alternateCommandName = null;
+			if (alternateCommandId == null)
+				alternateCommandName = COMMAND_UNDEFINED;
+			else if (alternateCommandId.length() == 0)
+				alternateCommandName = COMMAND_NOTHING;
+			else {
+				ICommandDefinition command = (ICommandDefinition) commandsById.get(alternateCommandId);
+				if (command != null)
+					alternateCommandName = command.getName();
+				else
+					alternateCommandName = bracket(alternateCommandId);
+			}
+			if (alternateCommandConflict)
+				alternateCommandName += SPACE + COMMAND_CONFLICT;
+			stringBuffer.append(SPACE);
+			if (difference == DIFFERENCE_CHANGE)
+				stringBuffer.append(MessageFormat.format(Util.getString(resourceBundle, "was"), new Object[] { alternateCommandName })); //$NON-NLS-1$ else if
+			 (difference == DIFFERENCE_MINUS) stringBuffer.append(MessageFormat.format(Util.getString(resourceBundle, "now"), new Object[] { alternateCommandName })); //$NON-NLS-1$
+			tableItem.setText(3, stringBuffer.toString());
+			if (difference == DIFFERENCE_MINUS) {
+				if (conflict)
+					tableItem.setForeground(new Color(getShell().getDisplay(), RGB_CONFLICT_MINUS));
+				else
+					tableItem.setForeground(new Color(getShell().getDisplay(), RGB_MINUS));
+			} else if (conflict)
+				tableItem.setForeground(new Color(getShell().getDisplay(), RGB_CONFLICT));
+		}
+	}
+	private void buildTableKeySequence() {
+		tableCommandsForSequence.removeAll();
+		for (int i = 0; i < keySequenceRecords.size(); i++) {
+			KeySequenceRecord keySequenceRecord = (KeySequenceRecord) keySequenceRecords.get(i);
+			int difference = DIFFERENCE_NONE;
+			String commandId = null;
+			boolean commandConflict = false;
+			String alternateCommandId = null;
+			boolean alternateCommandConflict = false;
+			if (keySequenceRecord.customSet.isEmpty()) {
+				commandId = keySequenceRecord.defaultCommand;
+				commandConflict = keySequenceRecord.defaultConflict;
+			} else {
+				commandId = keySequenceRecord.customCommand;
+				commandConflict = keySequenceRecord.customConflict;
+				if (keySequenceRecord.defaultSet.isEmpty())
+					difference = DIFFERENCE_ADD;
+				else {
+					difference = DIFFERENCE_CHANGE;
+					alternateCommandId = keySequenceRecord.defaultCommand;
+					alternateCommandConflict = keySequenceRecord.defaultConflict;
+				}
+			}
+			TableItem tableItem = new TableItem(tableCommandsForSequence, SWT.NULL);
+			switch (difference) {
+				case DIFFERENCE_ADD :
+					tableItem.setImage(0, IMAGE_PLUS);
+					break;
+				case DIFFERENCE_CHANGE :
+					tableItem.setImage(0, IMAGE_CHANGE);
+					break;
+				case DIFFERENCE_MINUS :
+					tableItem.setImage(0, IMAGE_MINUS);
+					break;
+				case DIFFERENCE_NONE :
+					tableItem.setImage(0, IMAGE_BLANK);
+					break;
+			}
+			IActivityDefinition scope = (IActivityDefinition) activitiesById.get(keySequenceRecord.scope);
+			tableItem.setText(1, scope != null ? scope.getName() : bracket(keySequenceRecord.scope));
+			Configuration keyConfiguration = (Configuration) keyConfigurationsById.get(keySequenceRecord.configuration);
+			tableItem.setText(2, keyConfiguration != null ? keyConfiguration.getName() : bracket(keySequenceRecord.configuration));
+			boolean conflict = commandConflict || alternateCommandConflict;
+			StringBuffer stringBuffer = new StringBuffer();
+			String commandName = null;
+			if (commandId == null)
+				commandName = COMMAND_UNDEFINED;
+			else if (commandId.length() == 0)
+				commandName = COMMAND_NOTHING;
+			else {
+				ICommandDefinition command = (ICommandDefinition) commandsById.get(commandId);
+				if (command != null)
+					commandName = command.getName();
+				else
+					commandName = bracket(commandId);
+			}
+			stringBuffer.append(commandName);
+			if (commandConflict)
+				stringBuffer.append(SPACE + COMMAND_CONFLICT);
+			String alternateCommandName = null;
+			if (alternateCommandId == null)
+				alternateCommandName = COMMAND_UNDEFINED;
+			else if (alternateCommandId.length() == 0)
+				alternateCommandName = COMMAND_NOTHING;
+			else {
+				ICommandDefinition command = (ICommandDefinition) commandsById.get(alternateCommandId);
+				if (command != null)
+					alternateCommandName = command.getName();
+				else
+					alternateCommandName = bracket(alternateCommandId);
+			}
+			if (alternateCommandConflict)
+				alternateCommandName += SPACE + COMMAND_CONFLICT;
+			stringBuffer.append(SPACE);
+			if (difference == DIFFERENCE_CHANGE)
+				stringBuffer.append(MessageFormat.format(Util.getString(resourceBundle, "was"), new Object[] { alternateCommandName })); //$NON-NLS-1$
+			tableItem.setText(3, stringBuffer.toString());
+			if (difference == DIFFERENCE_MINUS) {
+				if (conflict)
+					tableItem.setForeground(new Color(getShell().getDisplay(), RGB_CONFLICT_MINUS));
+				else
+					tableItem.setForeground(new Color(getShell().getDisplay(), RGB_MINUS));
+			} else if (conflict)
+				tableItem.setForeground(new Color(getShell().getDisplay(), RGB_CONFLICT));
+		}
+	}
+*/
 }
