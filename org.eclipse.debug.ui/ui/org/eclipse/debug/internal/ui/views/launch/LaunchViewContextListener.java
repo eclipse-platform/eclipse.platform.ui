@@ -27,17 +27,16 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugModelProvider;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.actions.DebugContextManager;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartReference;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.IActivity;
@@ -68,7 +67,7 @@ import org.eclipse.ui.contexts.NotDefinedException;
  * an element with the specified debug model identifier is selected,
  * the specified activity will be enabled.
  */
-public class LaunchViewContextListener implements IPartListener2, IContextManagerListener {
+public class LaunchViewContextListener implements IContextManagerListener {
 
 	public static final String DEBUG_MODEL_ACTIVITY_SUFFIX = "debugModel"; //$NON-NLS-1$
 	public static final String ID_CONTEXT_VIEW_BINDINGS= "contextViewBindings"; //$NON-NLS-1$
@@ -147,6 +146,13 @@ public class LaunchViewContextListener implements IPartListener2, IContextManage
 	 * The collection of context ids which were most recently enabled. 
 	 */
 	private List lastEnabledIds= new ArrayList();
+	/**
+	 * Boolean flag controlling whether or not this listener is
+	 * tracking part changes. This is necessary since this class
+	 * doesn't implement its own listener, but it informed of
+	 * perspective change events by the LaunchView.
+	 */
+	private boolean fIsTrackingPartChanges;
 	
 	/**
 	 * Creates a fully initialized context listener.
@@ -155,6 +161,7 @@ public class LaunchViewContextListener implements IPartListener2, IContextManage
 	 */
 	public LaunchViewContextListener(LaunchView view) {
 		launchView= view;
+		loadTrackViews();
 		loadDebugModelContextExtensions();
 		loadDebugModelActivityExtensions();
 		loadContextToViewExtensions(true);
@@ -410,7 +417,7 @@ public class LaunchViewContextListener implements IPartListener2, IContextManage
 		if (!launchView.isAutoManageViews()) {
 			return;
 		}
-		IWorkbenchPage page= getActiveWorkbenchPage();
+		IWorkbenchPage page= getPage();
 		// We ignore the "Debugging" context since we use it
 		// to provide a base set of views for other context
 		// bindings to inherit. If we don't ignore it, we'll
@@ -423,7 +430,7 @@ public class LaunchViewContextListener implements IPartListener2, IContextManage
 		Set viewsToShow= new HashSet();
 		Set viewsToOpen= new HashSet();
 		computeViewActivation(contextIds, viewsToOpen, viewsToShow);
-		page.removePartListener(this); // Stop listening before opening/activating views
+		fIsTrackingPartChanges= false;
 		Iterator iterator= viewsToOpen.iterator();
 		while (iterator.hasNext()) {
 			String viewId = (String) iterator.next();
@@ -463,7 +470,7 @@ public class LaunchViewContextListener implements IPartListener2, IContextManage
 				page.bringToTop(view);
 			}
 		}
-		restorePartListener(page);
+		loadTrackViews();
 	}
 	
 	/**
@@ -477,7 +484,7 @@ public class LaunchViewContextListener implements IPartListener2, IContextManage
 	 *  collection of view identifiers (String) that should be brought to top
 	 */
 	private void computeViewActivation(Set contextIds, Set viewIdsToOpen, Set viewIdsShow) {
-		IWorkbenchPage page = getActiveWorkbenchPage();
+		IWorkbenchPage page = getPage();
 		if (page == null) {
 			return;
 		}
@@ -514,7 +521,7 @@ public class LaunchViewContextListener implements IPartListener2, IContextManage
 	 * @param contexts
 	 */
 	public void contextsDisabled(Set contexts) {
-		IWorkbenchPage page= getActiveWorkbenchPage();
+		IWorkbenchPage page= getPage();
 		if (page == null || contexts.size() == 0) {
 			return;
 		}
@@ -522,7 +529,7 @@ public class LaunchViewContextListener implements IPartListener2, IContextManage
 		if (viewsToClose.isEmpty()) { 
 			return;
 		}
-		page.removePartListener(this);
+		fIsTrackingPartChanges= false;
 		Iterator iter= viewsToClose.iterator();
 		while (iter.hasNext()) {
 			String viewId= (String) iter.next();
@@ -533,7 +540,7 @@ public class LaunchViewContextListener implements IPartListener2, IContextManage
 			}
 		}
 		saveOpenedViews();
-		restorePartListener(page);
+		loadTrackViews();
 	}
 	
 	/**
@@ -838,22 +845,12 @@ public class LaunchViewContextListener implements IPartListener2, IContextManage
 	}
 	
 	/**
-	 * Returns the workbench page in which views should be managed.
-	 * The page containing the debug view, the active workbench page, or
-	 * <code>null</code> if neither of these is available.
+	 * Returns the workbench page containing the launch view.
 	 * 
-	 * @return the workbench page in which views should be managed or
-	 *  <code>null</code>
+	 * @return the workbench page containing the launch view
 	 */
-	public IWorkbenchPage getActiveWorkbenchPage() {
-		IWorkbenchPage page= launchView.getViewSite().getWorkbenchWindow().getActivePage();
-		if (page == null) {
-			IWorkbenchWindow window= DebugUIPlugin.getActiveWorkbenchWindow();
-			if (window != null) {
-				page= window.getActivePage();
-			}
-		}
-		return page;
+	public IWorkbenchPage getPage() {
+		return launchView.getSite().getPage();
 	}
 	
 	/**
@@ -864,32 +861,31 @@ public class LaunchViewContextListener implements IPartListener2, IContextManage
 	 */
 	public void perspectiveChanged(IWorkbenchPage page, String changeId) {
 		if (changeId.equals(IWorkbenchPage.CHANGE_RESET)) {
-			page.removePartListener(this);
+			fIsTrackingPartChanges= false;
 		} else if (changeId.equals(IWorkbenchPage.CHANGE_RESET_COMPLETE)) {
-			restorePartListener(page);
+			loadTrackViews();
 		}
 	}
 	
 	/**
-	 * Restores this view as a part listener on the given
-	 * page as appropriate. Has no effect if the user has
-	 * specified to not track views.
+	 * Notifies this listener that the given perspective change
+	 * has occurred.
 	 * 
-	 * @param page the page with which the listener will
-	 *  be registered
+	 * When a part is opened/closed, do not close/open it automatically. 
 	 */
-	private void restorePartListener(IWorkbenchPage page) {
-		if (launchView.isTrackViews()) {
-			page.addPartListener(this);
+	public void perspectiveChanged(IWorkbenchPage page, IWorkbenchPartReference ref, String changeId) {
+		if (!fIsTrackingPartChanges) {
+			return;
 		}
-	}
-
-	/**
-	 * When the user opens a view, do not automatically
-	 * close that view in the future.
-	 */
-	public void partOpened(IWorkbenchPartReference ref) {
-		if (ref instanceof IViewReference) {
+		if (IWorkbenchPage.CHANGE_VIEW_HIDE.equals(changeId) && (ref instanceof IViewReference)) {
+			String id = ((IViewReference) ref).getId();
+			if (managedViewIds.contains(id)) {
+				viewIdsToNotOpen.add(id);
+				saveViewsToNotOpen();
+			}
+			openedViewIds.remove(id);
+			saveOpenedViews();
+		} else if (IWorkbenchPage.CHANGE_VIEW_SHOW.equals(changeId) && ref instanceof IViewReference) {
 			String id = ((IViewReference) ref).getId();
 			openedViewIds.remove(id);
 			saveOpenedViews();
@@ -897,37 +893,13 @@ public class LaunchViewContextListener implements IPartListener2, IContextManage
 	}
 	
 	/**
-	 * When the user closes a view, do not automatically
-	 * open that view in the future.
+	 * Reads the preference specifying whether this view automatically
+	 * tracks views being opened and closed for the purpose of not
+	 * automatically managing those views once they've been opened/closed
+	 * manually.
 	 */
-	public void partHidden(IWorkbenchPartReference ref) {
-		if (ref instanceof IViewReference) {
-			String id = ((IViewReference) ref).getId();
-			// partHidden is sent whenever the view is made not
-			// visible. To tell that the view has been "closed",
-			// try to find it.
-			if (getActiveWorkbenchPage().findView(id) == null) {
-				if (managedViewIds.contains(id)) {
-					viewIdsToNotOpen.add(id);
-					saveViewsToNotOpen();
-				}
-				openedViewIds.remove(id);
-				saveOpenedViews();
-			}
-		}
-	}
-	
-	public void partVisible(IWorkbenchPartReference ref) {
-	}
-	public void partActivated(IWorkbenchPartReference ref) {
-	}
-	public void partBroughtToTop(IWorkbenchPartReference ref) {
-	}
-	public void partClosed(IWorkbenchPartReference ref) {
-	}
-	public void partDeactivated(IWorkbenchPartReference ref) {
-	}
-	public void partInputChanged(IWorkbenchPartReference ref) {
+	public void loadTrackViews() {
+		fIsTrackingPartChanges= DebugUITools.getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_TRACK_VIEWS);
 	}
 
 	/**

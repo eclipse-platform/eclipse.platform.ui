@@ -54,7 +54,6 @@ import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.debug.internal.ui.views.DebugViewDecoratingLabelProvider;
 import org.eclipse.debug.internal.ui.views.DebugViewInterimLabelProvider;
 import org.eclipse.debug.internal.ui.views.DebugViewLabelDecorator;
-import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugEditorPresentation;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -92,7 +91,7 @@ import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IPerspectiveDescriptor;
-import org.eclipse.ui.IPerspectiveListener;
+import org.eclipse.ui.IPerspectiveListener2;
 import org.eclipse.ui.IReusableEditor;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -110,13 +109,13 @@ import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-public class LaunchView extends AbstractDebugEventHandlerView implements ISelectionChangedListener, IPerspectiveListener, IPageListener, IPropertyChangeListener, IResourceChangeListener, IShowInTarget, IShowInSource, IShowInTargetList, IPartListener2 {
+public class LaunchView extends AbstractDebugEventHandlerView implements ISelectionChangedListener, IPerspectiveListener2, IPageListener, IPropertyChangeListener, IResourceChangeListener, IShowInTarget, IShowInSource, IShowInTargetList, IPartListener2 {
 	
 	public static final String ID_CONTEXT_ACTIVITY_BINDINGS = "contextActivityBindings"; //$NON-NLS-1$
 
 	private boolean fShowingEditor = false;
 			
-	/**
+	/**s
 	 * Cache of the stack frame that source was displayed
 	 * for.
 	 */
@@ -445,7 +444,6 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		}
 		IWorkbenchPage page = getSite().getPage();
 		page.removePartListener((IPartListener2) this);
-		page.removePartListener(fContextListener);
 		IWorkbenchWindow window = getSite().getWorkbenchWindow();
 		window.removePerspectiveListener(this);
 		window.removePageListener(this);
@@ -517,18 +515,6 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 			}
 		}
 		return false;
-	}
-	
-	/**
-	 * Returns whether this view automatically tracks views being
-	 * opened and closed for the purpose of not automatically
-	 * managing those views once they've been opened/closed manually.
-	 * 
-	 * @return whether this view automatically tracks views being
-	 *  opened and closed.
-	 */
-	public boolean isTrackViews() {
-		return DebugUITools.getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_TRACK_VIEWS);
 	}
 	
 	/**
@@ -648,6 +634,15 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 			fContextListener.perspectiveChanged(page, changeId);
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPerspectiveListener2#perspectiveChanged(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor, org.eclipse.ui.IWorkbenchPartReference, java.lang.String)
+	 */
+	public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, IWorkbenchPartReference partRef, String changeId) {
+		if (fContextListener != null) {
+			fContextListener.perspectiveChanged(page, partRef, changeId);
+		}
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPageListener#pageActivated(org.eclipse.ui.IWorkbenchPage)
@@ -657,14 +652,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 			setActive(true);
 			updateObjects();
 			showEditorForCurrentSelection();
-			if (isTrackViews()) {
-				page.addPartListener(fContextListener);
-			} else {
-				// Since there are no "part deactivated" notifications...
-				// The context listener could have been registered on 
-				// a previous activation of the page.
-				page.removePartListener(fContextListener);
-			}
+			fContextListener.loadTrackViews();
 		}
 	}
 
@@ -672,7 +660,6 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 * @see org.eclipse.ui.IPageListener#pageClosed(org.eclipse.ui.IWorkbenchPage)
 	 */
 	public void pageClosed(IWorkbenchPage page) {
-		page.removePartListener(fContextListener);
 	}
 
 	/* (non-Javadoc)
@@ -1231,11 +1218,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		} else if (property.equals(LaunchViewContextListener.PREF_VIEWS_TO_NOT_OPEN) && fContextListener != null) {
 			fContextListener.loadViewsToNotOpen();
 		} else if (property.equals(IInternalDebugUIConstants.PREF_TRACK_VIEWS) && fContextListener != null) {
-			if (isTrackViews()) {
-				getSite().getPage().addPartListener(fContextListener);
-			} else {
-				getSite().getPage().removePartListener(fContextListener);
-			}
+			fContextListener.loadTrackViews();
 		}
 	}
 
