@@ -538,7 +538,12 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 						Status status= new Status(IStatus.WARNING, TextEditorPlugin.PLUGIN_ID, IStatus.ERROR, EditorMessages.getString("AbstractDocumentProvider.error.save.inuse"), null); //$NON-NLS-1$
 						throw new CoreException(status);				
 					}
+					
 					doSaveDocument(monitor, element, document, overwrite);
+					
+					if (monitor != null && monitor.isCanceled())
+						return;
+					
 					info.fCanBeSaved= false;
 					addUnchangedElementListeners(element, info);
 					fireElementDirtyStateChanged(element, false);
