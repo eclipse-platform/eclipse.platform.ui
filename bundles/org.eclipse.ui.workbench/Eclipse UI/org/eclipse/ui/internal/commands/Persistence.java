@@ -695,12 +695,12 @@ final class Persistence {
 
 	private static int[] readDeprecatedSequence(IMemento memento) {
 		if (memento == null)
-			throw new IllegalArgumentException();
+			throw new NullPointerException();
 			
 		IMemento[] mementos = memento.getChildren("stroke"); //$NON-NLS-1$ 
 
 		if (mementos == null)
-			throw new IllegalArgumentException();
+			throw new NullPointerException();
 		
 		int[] strokes = new int[mementos.length];
 		
@@ -712,7 +712,7 @@ final class Persistence {
 	
 	private static int readDeprecatedStroke(IMemento memento) {
 		if (memento == null)
-			throw new IllegalArgumentException();
+			throw new NullPointerException();
 
 		Integer value = memento.getInteger("value"); //$NON-NLS-1$
 		return value != null ? value.intValue() : 0;

@@ -45,7 +45,7 @@ public class ViewContentProvider implements ITreeContentProvider {
             IObjectActivityManager objectManager = 
             	WorkbenchPlugin.getDefault()
             		.getWorkbench()
-            		.getActivityManager(
+            		.getObjectActivityManager(
             			IWorkbenchConstants.PL_VIEWS, false);
             if (objectManager != null) {
                 ArrayList filtered = new ArrayList();
@@ -65,7 +65,7 @@ public class ViewContentProvider implements ITreeContentProvider {
 				IObjectActivityManager objectManager = 
 					WorkbenchPlugin.getDefault()
 						.getWorkbench()
-						.getActivityManager(
+						.getObjectActivityManager(
 							IWorkbenchConstants.PL_VIEWS, false);              
                 if (objectManager != null) {
 					Collection activeObjects = objectManager.getActiveObjects();

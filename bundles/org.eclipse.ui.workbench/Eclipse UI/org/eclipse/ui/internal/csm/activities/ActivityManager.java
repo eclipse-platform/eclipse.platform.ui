@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.activities.IActivity;
@@ -51,24 +52,28 @@ public final class ActivityManager implements IActivityManager {
 	private Map activityDefinitionsById = new HashMap();
 	private IActivityManagerEvent activityManagerEvent;
 	private List activityManagerListeners;
+	private IActivityRegistry activityRegistry;	
 	private Set definedActivityIds = new HashSet();
 	private Set enabledActivityIds = new HashSet();	
-	private ExtensionActivityRegistry extensionActivityRegistry;	
 	private Map patternBindingsByActivityId = new HashMap();
 
 	public ActivityManager() {
-		if (extensionActivityRegistry == null)
-			extensionActivityRegistry = new ExtensionActivityRegistry(Platform.getExtensionRegistry());
+		this(new ExtensionActivityRegistry(Platform.getExtensionRegistry()));
+	}
 
-		extensionActivityRegistry.addActivityRegistryListener(new IActivityRegistryListener() {
+	public ActivityManager(IActivityRegistry activityRegistry) {
+		if (activityRegistry == null)
+			throw new NullPointerException();
+
+		activityRegistry.addActivityRegistryListener(new IActivityRegistryListener() {
 			public void activityRegistryChanged(IActivityRegistryEvent activityRegistryEvent) {
 				readRegistry();
 			}
 		});
 
 		readRegistry();
-	}
-
+	}	
+	
 	public void addActivityManagerListener(IActivityManagerListener activityManagerListener) {
 		if (activityManagerListener == null)
 			throw new NullPointerException();
@@ -186,7 +191,7 @@ public final class ActivityManager implements IActivityManager {
 
 	private void readRegistry() {
 		Collection activityDefinitions = new ArrayList();
-		activityDefinitions.addAll(extensionActivityRegistry.getActivityDefinitions());				
+		activityDefinitions.addAll(activityRegistry.getActivityDefinitions());				
 		Map activityDefinitionsById = new HashMap(ActivityDefinition.activityDefinitionsById(activityDefinitions, false));
 
 		for (Iterator iterator = activityDefinitionsById.values().iterator(); iterator.hasNext();) {
@@ -201,7 +206,7 @@ public final class ActivityManager implements IActivityManager {
 			if (!isActivityDefinitionChildOf(null, (String) iterator.next(), activityDefinitionsById))
 				iterator.remove();
 
-		Map activityPatternBindingDefinitionsByActivityId = ActivityPatternBindingDefinition.activityPatternBindingDefinitionsByActivityId(extensionActivityRegistry.getActivityPatternBindingDefinitions());
+		Map activityPatternBindingDefinitionsByActivityId = ActivityPatternBindingDefinition.activityPatternBindingDefinitionsByActivityId(activityRegistry.getActivityPatternBindingDefinitions());
 		Map patternBindingsByActivityId = new HashMap();		
 
 		for (Iterator iterator = activityPatternBindingDefinitionsByActivityId.entrySet().iterator(); iterator.hasNext();) {
@@ -217,7 +222,7 @@ public final class ActivityManager implements IActivityManager {
 						String pattern = activityPatternBindingDefinition.getPattern();
 					
 						if (pattern != null && pattern.length() != 0) {
-							IPatternBinding patternBinding = new PatternBinding(activityPatternBindingDefinition.isInclusive(), pattern);	
+							IPatternBinding patternBinding = new PatternBinding(activityPatternBindingDefinition.isInclusive(), Pattern.compile(pattern));	
 							List patternBindings = (List) patternBindingsByActivityId.get(activityId);
 							
 							if (patternBindings == null) {

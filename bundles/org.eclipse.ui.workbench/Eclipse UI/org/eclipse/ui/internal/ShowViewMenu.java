@@ -122,7 +122,7 @@ public class ShowViewMenu extends ContributionItem {
 		// Get visible actions. (copy, we're going to be modifying it)
 		List viewIds = new ArrayList(((WorkbenchPage) page).getShowViewActionIds());
         
-        IObjectActivityManager objectManager = window.getWorkbench().getActivityManager(IWorkbenchConstants.PL_VIEWS, false);
+        IObjectActivityManager objectManager = window.getWorkbench().getObjectActivityManager(IWorkbenchConstants.PL_VIEWS, false);
         if (objectManager != null) {
             // prune off all filtered views
             viewIds.retainAll(objectManager.getActiveObjects());

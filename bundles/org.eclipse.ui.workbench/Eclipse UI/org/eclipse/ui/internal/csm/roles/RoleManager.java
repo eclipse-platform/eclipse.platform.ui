@@ -33,17 +33,21 @@ public final class RoleManager implements IRoleManager {
 
 	private Map activityBindingsByRoleId = new HashMap();
 	private Set definedRoleIds = new HashSet();
-	private ExtensionRoleRegistry extensionRoleRegistry;
 	private Map roleDefinitionsById = new HashMap();
 	private IRoleManagerEvent roleManagerEvent;
 	private List roleManagerListeners;	
+	private IRoleRegistry roleRegistry;
 	private Map rolesById = new HashMap();	
 
 	public RoleManager() {
-		if (extensionRoleRegistry == null)
-			extensionRoleRegistry = new ExtensionRoleRegistry(Platform.getExtensionRegistry());
+		this(new ExtensionRoleRegistry(Platform.getExtensionRegistry()));
+	}	
+	
+	public RoleManager(IRoleRegistry roleRegistry) {
+		if (roleRegistry == null)
+			throw new NullPointerException();
 			
-		extensionRoleRegistry.addRoleRegistryListener(new IRoleRegistryListener() {
+		roleRegistry.addRoleRegistryListener(new IRoleRegistryListener() {
 			public void roleRegistryChanged(IRoleRegistryEvent roleRegistryEvent) {
 				readRegistry();
 			}
@@ -112,7 +116,7 @@ public final class RoleManager implements IRoleManager {
 
 	private void readRegistry() {
 		Collection roleDefinitions = new ArrayList();
-		roleDefinitions.addAll(extensionRoleRegistry.getRoleDefinitions());				
+		roleDefinitions.addAll(roleRegistry.getRoleDefinitions());				
 		Map roleDefinitionsById = new HashMap(RoleDefinition.roleDefinitionsById(roleDefinitions, false));
 
 		for (Iterator iterator = roleDefinitionsById.values().iterator(); iterator.hasNext();) {
@@ -123,7 +127,7 @@ public final class RoleManager implements IRoleManager {
 				iterator.remove();
 		}
 
-		Map roleActivityBindingDefinitionsByRoleId = RoleActivityBindingDefinition.roleActivityBindingDefinitionsByRoleId(extensionRoleRegistry.getRoleActivityBindingDefinitions());
+		Map roleActivityBindingDefinitionsByRoleId = RoleActivityBindingDefinition.roleActivityBindingDefinitionsByRoleId(roleRegistry.getRoleActivityBindingDefinitions());
 		Map activityBindingsByRoleId = new HashMap();		
 
 		for (Iterator iterator = roleActivityBindingDefinitionsByRoleId.entrySet().iterator(); iterator.hasNext();) {

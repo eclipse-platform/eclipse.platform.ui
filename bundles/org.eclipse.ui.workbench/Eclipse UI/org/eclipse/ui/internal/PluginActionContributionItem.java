@@ -35,7 +35,7 @@ public class PluginActionContributionItem extends ActionContributionItem {
 	public PluginActionContributionItem(PluginAction action) {
 		super(action);
         
-        IObjectActivityManager objectManager = PlatformUI.getWorkbench().getActivityManager(PLUGIN_CONTRIBUTION_ITEM, true);
+        IObjectActivityManager objectManager = PlatformUI.getWorkbench().getObjectActivityManager(PLUGIN_CONTRIBUTION_ITEM, true);
         if(objectManager != null){
 	        Object activityObject = getActivityObject(action);
 	        if (activityObject != null) {
@@ -91,7 +91,7 @@ public class PluginActionContributionItem extends ActionContributionItem {
 	 */
 	public boolean isVisible() {
 	
-        IObjectActivityManager objectManager = PlatformUI.getWorkbench().getActivityManager(PLUGIN_CONTRIBUTION_ITEM, false);
+        IObjectActivityManager objectManager = PlatformUI.getWorkbench().getObjectActivityManager(PLUGIN_CONTRIBUTION_ITEM, false);
 		// if there was no manager return isVisible().
 		if (objectManager == null) 
 			return super.isVisible();

@@ -11,6 +11,8 @@
 
 package org.eclipse.ui.internal.csm.activities;
 
+import java.util.regex.Pattern;
+
 import org.eclipse.ui.activities.IPatternBinding;
 import org.eclipse.ui.internal.util.Util;
 
@@ -20,13 +22,13 @@ final class PatternBinding implements IPatternBinding {
 	private final static int HASH_INITIAL = PatternBinding.class.getName().hashCode();
 	
 	private boolean inclusive;
-	private String pattern;
+	private Pattern pattern;
 
 	private transient int hashCode;
 	private transient boolean hashCodeComputed;
 	private transient String string;
 
-	PatternBinding(boolean inclusive, String pattern) {	
+	PatternBinding(boolean inclusive, Pattern pattern) {	
 		if (pattern == null)
 			throw new NullPointerException();
 
@@ -39,7 +41,7 @@ final class PatternBinding implements IPatternBinding {
 		int compareTo = Util.compare(inclusive, patternBinding.inclusive);			
 		
 		if (compareTo == 0)			
-			compareTo = Util.compare(pattern, patternBinding.pattern);
+			compareTo = Util.compare(pattern.pattern(), patternBinding.pattern.pattern());
 		
 		return compareTo;	
 	}
@@ -55,7 +57,7 @@ final class PatternBinding implements IPatternBinding {
 		return equals;
 	}
 
-	public String getPattern() {
+	public Pattern getPattern() {
 		return pattern;
 	}
 

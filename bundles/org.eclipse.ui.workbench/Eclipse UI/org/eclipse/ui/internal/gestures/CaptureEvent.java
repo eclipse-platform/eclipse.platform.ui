@@ -36,7 +36,7 @@ public final class CaptureEvent implements Comparable {
 		this.pen = pen;
 
 		if (points == null)
-			throw new IllegalArgumentException();
+			throw new NullPointerException();
 		
 		points = (Point[]) points.clone();
 

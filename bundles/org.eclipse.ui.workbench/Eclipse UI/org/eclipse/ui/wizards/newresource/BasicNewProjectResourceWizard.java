@@ -386,7 +386,7 @@ public class BasicNewProjectResourceWizard
 			//Enable the role if required.
             IObjectActivityManager activityManager = 
             	PlatformUI.getWorkbench().
-            		getActivityManager(IWorkbenchConstants.PL_PERSPECTIVES, false);
+            		getObjectActivityManager(IWorkbenchConstants.PL_PERSPECTIVES, false);
             if (activityManager != null) {
                 activityManager.setEnablementFor(finalPerspId, true);
             }

@@ -103,7 +103,7 @@ public class FileEditorMapping extends Object implements IFileEditorMapping, Clo
     private IObjectActivityManager getObjectActivityManager() {
         return 
         	WorkbenchPlugin.getDefault().getWorkbench().
-				getActivityManager(IWorkbenchConstants.PL_EDITOR + getName() + getExtension(), true);
+				getObjectActivityManager(IWorkbenchConstants.PL_EDITOR + getName() + getExtension(), true);
     }
     /**
 	 * Clone the receiver.

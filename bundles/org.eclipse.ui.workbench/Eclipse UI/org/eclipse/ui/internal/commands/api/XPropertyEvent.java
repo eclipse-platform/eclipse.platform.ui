@@ -37,7 +37,7 @@ public class XPropertyEvent {
 		super();
 		
 		if (name == null)
-			throw new IllegalArgumentException();
+			throw new NullPointerException();
 		
 		this.name = name;
 	}

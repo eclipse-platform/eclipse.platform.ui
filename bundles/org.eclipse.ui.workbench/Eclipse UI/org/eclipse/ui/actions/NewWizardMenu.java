@@ -107,7 +107,7 @@ public class NewWizardMenu extends ContributionItem {
 				actions = new ArrayList(((WorkbenchPage) page).getNewWizardActionIds());
                                 
 			if (actions != null) {
-                IObjectActivityManager manager = window.getWorkbench().getActivityManager(IWorkbenchConstants.PL_NEW, false);
+                IObjectActivityManager manager = window.getWorkbench().getObjectActivityManager(IWorkbenchConstants.PL_NEW, false);
                 
                if (manager != null) {
                     // prune away all IDs that arent active based on the managers opinion.

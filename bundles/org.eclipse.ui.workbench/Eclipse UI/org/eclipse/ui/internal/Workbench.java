@@ -455,14 +455,17 @@ public class Workbench
 		return actionService;
 	}
 
-	// TODO change this method name!
-	public IActivityManager getNewActivityManager() {
+	public IActivityManager getActivityManager() {
 		return activityManager;
 	}
 	
 	public ICommandManager getCommandManager() {
 		return commandManager;
 	}
+	
+	public IRoleManager getRoleManager() {
+		return roleManager;
+	}	
 
 	public IContextActivationService getContextActivationService() {
 		if (contextActivationService == null) {
@@ -2667,7 +2670,7 @@ public class Workbench
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbench#getActivityManager(java.lang.String, boolean)
 	 */
-	public IObjectActivityManager getActivityManager(String id, boolean create) {
+	public IObjectActivityManager getObjectActivityManager(String id, boolean create) {
 		if(RoleManager.getInstance().isFiltering())
 			return ObjectActivityManager.getManager(id,create);
 		else
