@@ -12,6 +12,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
+import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
@@ -41,10 +45,14 @@ public class ExpressionManager implements IExpressionManager, IDebugEventSetList
 	 */
 	private ListenerList fListeners = null;
 	
+	private ExpressionNotifier fExpressionNotifier = null;
+	
 	/**
 	 * List of (multi) expressions listeners
 	 */
 	private ListenerList fExpressionsListeners = null;	
+	
+	private ExpressionsNotifier fExpressionsNotifier = null;
 	
 	// Constants for add/remove/change notification
 	private static final int ADDED = 1;
@@ -204,17 +212,7 @@ public class ExpressionManager implements IExpressionManager, IDebugEventSetList
 				IExpressionListener listener = (IExpressionListener)copiedListeners[i];
 				for (int j = 0; j < expressions.length; j++) {
 					IExpression expression = expressions[j];
-					switch (update) {
-						case ADDED:
-							listener.expressionAdded(expression);
-							break;
-						case REMOVED:
-							listener.expressionRemoved(expression);
-							break;
-						case CHANGED:
-							listener.expressionChanged(expression);		
-							break;
-					}				
+					getExpressionNotifier().notify(listener, expression, update);
 				}
 			}
 		}
@@ -224,17 +222,7 @@ public class ExpressionManager implements IExpressionManager, IDebugEventSetList
 			Object[] copiedListeners = fExpressionsListeners.getListeners();
 			for (int i= 0; i < copiedListeners.length; i++) {
 				IExpressionsListener listener = (IExpressionsListener)copiedListeners[i];
-				switch (update) {
-					case ADDED:
-						listener.expressionsAdded(expressions);
-						break;
-					case REMOVED:
-						listener.expressionsRemoved(expressions);
-						break;
-					case CHANGED:
-						listener.expressionsChanged(expressions);		
-						break;
-				}
+				getExpressionsNotifier().notify(listener, expressions, update);
 			}		
 		}
 	}	
@@ -265,5 +253,119 @@ public class ExpressionManager implements IExpressionManager, IDebugEventSetList
 		}
 		fExpressionsListeners.remove(listener);
 	}
+	
+	private ExpressionNotifier getExpressionNotifier() {
+		if (fExpressionNotifier == null) {
+			fExpressionNotifier = new ExpressionNotifier();
+		}
+		return fExpressionNotifier;
+	}
+	
+	/**
+	 * Notifies an expression listener (single expression) in a safe runnable to
+	 * handle exceptions.
+	 */
+	class ExpressionNotifier implements ISafeRunnable {
+		
+		private IExpressionListener fListener;
+		private int fType;
+		private IExpression fExpression;
+		
+		/**
+		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
+		 */
+		public void handleException(Throwable exception) {
+			IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "An exception occurred during expression change notification.", exception);
+			DebugPlugin.log(status);
+		}
+
+		/**
+		 * @see org.eclipse.core.runtime.ISafeRunnable#run()
+		 */
+		public void run() throws Exception {
+			switch (fType) {
+				case ADDED:
+					fListener.expressionAdded(fExpression);
+					break;
+				case REMOVED:
+					fListener.expressionRemoved(fExpression);
+					break;
+				case CHANGED:
+					fListener.expressionChanged(fExpression);		
+					break;
+			}			
+		}
+
+		/**
+		 * Notifies the given listener of the add/change/remove
+		 * 
+		 * @param listener the listener to notify
+		 * @param expression the expression that has changed
+		 * @param update the type of change
+		 */
+		public void notify(IExpressionListener listener, IExpression expression, int update) {
+			fListener = listener;
+			fExpression = expression;
+			fType = update;
+			Platform.run(this);
+		}
+	}
+	
+	private ExpressionsNotifier getExpressionsNotifier() {
+		if (fExpressionsNotifier == null) {
+			fExpressionsNotifier = new ExpressionsNotifier();
+		}
+		return fExpressionsNotifier;
+	}
+	
+	/**
+	 * Notifies an expression listener (multiple expressions) in a safe runnable
+	 * to handle exceptions.
+	 */
+	class ExpressionsNotifier implements ISafeRunnable {
+		
+		private IExpressionsListener fListener;
+		private int fType;
+		private IExpression[] fExpressions;
+		
+		/**
+		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
+		 */
+		public void handleException(Throwable exception) {
+			IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "An exception occurred during expression change notification.", exception);
+			DebugPlugin.log(status);
+		}
+
+		/**
+		 * @see org.eclipse.core.runtime.ISafeRunnable#run()
+		 */
+		public void run() throws Exception {
+			switch (fType) {
+				case ADDED:
+					fListener.expressionsAdded(fExpressions);
+					break;
+				case REMOVED:
+					fListener.expressionsRemoved(fExpressions);
+					break;
+				case CHANGED:
+					fListener.expressionsChanged(fExpressions);		
+					break;
+			}			
+		}
+
+		/**
+		 * Notifies the given listener of the adds/changes/removes
+		 * 
+		 * @param listener the listener to notify
+		 * @param expressions the expressions that changed
+		 * @param update the type of change
+		 */
+		public void notify(IExpressionsListener listener, IExpression[] expressions, int update) {
+			fListener = listener;
+			fExpressions = expressions;
+			fType = update;
+			Platform.run(this);
+		}
+	}		
 
 }
