@@ -10,14 +10,15 @@
  *******************************************************************************/
 package org.eclipse.update.internal.scheduler;
 
-import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.jface.dialogs.*;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.plugin.*;
 
 /**
  * This plug-in is loaded on startup to fork a job that
@@ -33,6 +34,9 @@ public class UpdateScheduler extends AbstractUIPlugin implements IStartup {
 	private static UpdateScheduler plugin;
 	//Resource bundle.
 	private ResourceBundle resourceBundle;
+	// Keeps track of running job
+	private Job job;
+	
 	/**
 	 * The constructor.
 	 */
@@ -44,6 +48,14 @@ public class UpdateScheduler extends AbstractUIPlugin implements IStartup {
 		} catch (MissingResourceException x) {
 			resourceBundle = null;
 		}
+		
+		Platform.getJobManager().addJobChangeListener(new JobChangeAdapter() {
+			public void done(Job job, IStatus result) {
+				if (job == UpdateScheduler.this.job) {
+					scheduleUpdateJob();
+				}
+			}
+		});
 	}
 
 	public ResourceBundle getResourceBundle() {
@@ -163,13 +175,17 @@ public class UpdateScheduler extends AbstractUIPlugin implements IStartup {
 	}
 
 	public void earlyStartup() {
+		scheduleUpdateJob();
+	}
+	
+	public void scheduleUpdateJob() {
 		Preferences pref = getPluginPreferences();
 		// See if automatic search is enabled at all
 		if (pref.getBoolean(P_ENABLED)==false) return;
 
 		String schedule = pref.getString(P_SCHEDULE);
 		long delay = -1L;
-		if (schedule.equals(VALUE_ON_STARTUP))
+		if (job == null && schedule.equals(VALUE_ON_STARTUP))
 			delay = 0L;
 		else
 			delay = computeDelay(pref);
@@ -187,7 +203,11 @@ public class UpdateScheduler extends AbstractUIPlugin implements IStartup {
 	}
 	
 	private void startSearch(long delay) {
-		AutomaticUpdatesJob job = new AutomaticUpdatesJob();
+		if (job != null) {
+			// cancel old job
+			Platform.getJobManager().cancel(AutomaticUpdatesJob.family);
+		}
+		job = new AutomaticUpdatesJob();
 		job.schedule(delay);
 	}
 }

@@ -29,6 +29,10 @@ import org.eclipse.update.search.*;
 public class AutomaticUpdatesJob
 	extends Job
 	implements IUpdateSearchResultCollector {
+	
+	// job family	
+	public static final Object family = new Object();
+	
 	private static final IStatus OK_STATUS =
 		new Status(
 			IStatus.OK,
@@ -65,6 +69,10 @@ public class AutomaticUpdatesJob
 		return display;
 	}
 
+	public boolean belongsTo(Object family) {
+		return AutomaticUpdatesJob.family == family;
+	}
+	
 	public IStatus run(IProgressMonitor monitor) {
 		System.out.println("Automatic update search started.");
 		UpdateSearchScope scope = new UpdateSearchScope();

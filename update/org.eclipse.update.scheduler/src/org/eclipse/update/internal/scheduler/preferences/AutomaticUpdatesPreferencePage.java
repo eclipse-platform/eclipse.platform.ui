@@ -171,6 +171,7 @@ public class AutomaticUpdatesPreferencePage
 	public boolean performOk() {
 		Preferences pref = UpdateScheduler.getDefault().getPluginPreferences();
 		pref.setValue(UpdateScheduler.P_ENABLED, enabledCheck.getSelection());
+		UpdateScheduler.getDefault().scheduleUpdateJob();
 		return true;
 	}
 }
