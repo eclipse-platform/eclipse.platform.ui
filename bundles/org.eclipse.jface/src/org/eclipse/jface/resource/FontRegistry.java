@@ -61,7 +61,7 @@ public class FontRegistry {
 	 * when it is safe to do so (i.e. on shutdown).
 	 * @see List
 	 */
-	private List staleFonts;
+	private List staleFonts = new ArrayList();
 
 	/**
 	 * Creates an empty font registry.
