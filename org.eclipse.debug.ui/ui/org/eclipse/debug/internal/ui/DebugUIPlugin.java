@@ -173,9 +173,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 			if (delta == null) {
 				return false;
 			}
-			if (usingConfigurationStyleLaunching()) {
-				return true;
-			}
 			if (delta.getKind() != IResourceDelta.REMOVED) {
 				return true;
 			}
@@ -550,6 +547,11 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 	 * @see IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
 	 */
 	public void resourceChanged(IResourceChangeEvent event) {
+		// only traverse the delta if using old launchers
+		if (usingConfigurationStyleLaunching()) {
+			return;
+		}
+		
 		IResourceDelta delta= event.getDelta();
 		if (delta != null) {
 			try {
