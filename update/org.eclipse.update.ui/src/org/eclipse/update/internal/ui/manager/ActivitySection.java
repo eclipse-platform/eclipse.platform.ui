@@ -29,10 +29,9 @@ public class ActivitySection extends UpdateSection {
 	private static final String KEY_SITE_REMOVE = "SnapshotPage.ActivitySection.action.siteRemove";	
 	private static final String KEY_UNCONFIGURE = "SnapshotPage.ActivitySection.action.unconfigure";
 	private static final String KEY_UNKNOWN = "SnapshotPage.ActivitySection.action.unknown";
-
+	private static final String KEY_REVERT = "SnapshotPage.ActivitySection.action.revert";
 	private static final String KEY_OK = "SnapshotPage.ActivitySection.status.ok";
 	private static final String KEY_NOK = "SnapshotPage.ActivitySection.status.nok";
-	private static final String KEY_REVERT = "SnapshotPage.ActivitySection.action.revert";
 
 	private Composite container;
 	private FormWidgetFactory factory;
@@ -127,6 +126,8 @@ public class ActivitySection extends UpdateSection {
 				return UpdateUIPlugin.getResourceString(KEY_SITE_REMOVE);
 			case IActivity.ACTION_UNCONFIGURE:
 				return UpdateUIPlugin.getResourceString(KEY_UNCONFIGURE);
+			case IActivity.ACTION_REVERT:
+				return UpdateUIPlugin.getResourceString(KEY_REVERT);
 			default:
 				return UpdateUIPlugin.getResourceString(KEY_UNKNOWN);		
 		}
@@ -138,8 +139,6 @@ public class ActivitySection extends UpdateSection {
 				return UpdateUIPlugin.getResourceString(KEY_OK);
 			case IActivity.STATUS_NOK:
 				return UpdateUIPlugin.getResourceString(KEY_NOK);
-			case IActivity.STATUS_REVERT:
-				return UpdateUIPlugin.getResourceString(KEY_REVERT);
 		}
 		return UpdateUIPlugin.getResourceString(KEY_UNKNOWN);
 	}

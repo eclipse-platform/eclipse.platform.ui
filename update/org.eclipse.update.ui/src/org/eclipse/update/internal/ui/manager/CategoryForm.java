@@ -86,7 +86,7 @@ public void expandTo(Object obj) {
 }
 
 private void inputChanged(SiteCategory category) {
-	setHeadingText(category.getName());
+	setHeadingText(category.getCategory().getLabel());
 	IInfo info = category.getCategory().getDescription();
 	if (info!=null) {
 		String text = info.getText();
