@@ -8,36 +8,55 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.tests.api;
+package org.eclipse.ui.tests.api.workbenchpart;
 
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.IViewSite;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
 
 /**
  * @since 3.0
  */
-public class NullTitleView extends ViewPart {
+public class EmptyView extends ViewPart {
+
+	/**
+	 * 
+	 */
+	public EmptyView() {
+		super();
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createPartControl(Composite parent) {
-		
+
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPart#setFocus()
 	 */
 	public void setFocus() {
-		
+
 	}
+	
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IViewPart#init(org.eclipse.ui.IViewSite)
+	 * @see org.eclipse.ui.part.WorkbenchPart#setContentDescription(java.lang.String)
 	 */
-	public void init(IViewSite site) throws PartInitException {
-		super.init(site);
-		
-		setTitle(null);
+	public void setContentDescription(String description) {
+		super.setContentDescription(description);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.WorkbenchPart#setPartName(java.lang.String)
+	 */
+	public void setPartName(String partName) {
+		super.setPartName(partName);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.WorkbenchPart#setTitle(java.lang.String)
+	 */
+	public void setTitle(String title) {
+		super.setTitle(title);
 	}
 }

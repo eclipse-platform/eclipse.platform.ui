@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.part;
 
+import java.text.MessageFormat;
+
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.core.runtime.Platform;
@@ -27,6 +29,7 @@ import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ReferenceCounter;
 import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -151,8 +154,8 @@ public IWorkbenchPartSite getSite() {
 /**
  * {@inheritDoc}
  * <p>
- * It is considered extremely bad practise to overload or extend this method.
- * Parts should set their title by calling setPartName and setContentDescription.
+ * It is considered bad practise to overload or extend this method.
+ * Parts should set their title by calling setPartName and/or setContentDescription.
  * </p>
  */
 public String getTitle() {
@@ -207,7 +210,8 @@ public void setInitializationData(IConfigurationElement cfig, String propertyNam
 	configElement = cfig;
 
 	// Part name and title.  
-	title = Util.safeString(cfig.getAttribute("name"));//$NON-NLS-1$;
+	partName = Util.safeString(cfig.getAttribute("name"));//$NON-NLS-1$;
+	title = partName;
 
 	// Icon.
 	String strIcon = cfig.getAttribute("icon");//$NON-NLS-1$
@@ -331,15 +335,22 @@ public String getPartName() {
  * @since 3.0
  */
 protected void setPartName(String partName) {
-	partName = Util.safeString(partName);
-	
-	Assert.isNotNull(partName);
 
-	//Do not send changes if they are the same
-	if(Util.equals(this.partName, partName))
-		return;
-	this.partName = partName;
-	firePropertyChange(IWorkbenchPartConstants.PROP_PART_NAME);
+	internalSetPartName(partName);
+	
+	setDefaultTitle();
+}
+
+void setDefaultTitle() {
+	String description = getContentDescription();
+	String name = getPartName();
+	String newTitle = name;
+	
+	if (!Util.equals(description, "")) { //$NON-NLS-1$
+		newTitle = MessageFormat.format(WorkbenchMessages.getString("WorkbenchPart.AutoTitleFormat"), new String[] {name, description}); //$NON-NLS-1$
+	}
+
+	setTitle(newTitle);
 }
 
 /**
@@ -357,7 +368,11 @@ public String getContentDescription() {
  * Sets the content description for this part. The content description is typically
  * a short string describing the current contents of the part. Setting this to the
  * empty string will cause a default content description to be used. Clients should
- * call this method instead of overriding getContentDescription() 
+ * call this method instead of overriding getContentDescription(). For views, the
+ * content description is shown (by default) in a line near the top of the view. For
+ * editors, the content description is shown beside the part name when showing a
+ * list of editors. If the editor is open on a file, this typically contains the path 
+ * to the input file, without the filename or trailing slash.
  *
  * <p>
  * This may overwrite a value that was previously set in setTitle
@@ -368,14 +383,34 @@ public String getContentDescription() {
  * @since 3.0
  */
 protected void setContentDescription(String description) {
+	internalSetContentDescription(description);
+	
+	setDefaultTitle();
+}
+
+void internalSetContentDescription(String description) {
 	Assert.isNotNull(description);
 	
 	//Do not send changes if they are the same
 	if(Util.equals(contentDescription, description))
 		return;
-	this.contentDescription = description;
+	this.contentDescription = description;	
 	
 	firePropertyChange(IWorkbenchPartConstants.PROP_CONTENT_DESCRIPTION);
+}
+
+void internalSetPartName(String partName) {
+	partName = Util.safeString(partName);
+	
+	Assert.isNotNull(partName);
+
+	//Do not send changes if they are the same
+	if(Util.equals(this.partName, partName))
+		return;
+	this.partName = partName;
+	
+	firePropertyChange(IWorkbenchPartConstants.PROP_PART_NAME);
+	
 }
 
 }

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
 
@@ -29,6 +28,7 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPart2;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.misc.UIStats;
@@ -131,44 +131,25 @@ import org.eclipse.ui.internal.util.Util;
 		}
 		
 		protected String computePartName() {
-			String result = super.computePartName();
-			
-			if (result.equals("")) { //$NON-NLS-1$
-				result = getRegisteredName();
+			if (part instanceof IWorkbenchPart2) {
+				return super.computePartName();
+			} else {
+				return getRegisteredName();
 			}
-			
-			return result;
-		}
-		
-		protected String computeTitle() {
-			String result = super.computeTitle();
-			String registeredName = getRegisteredName();
-			
-			if (result.equals("") || result.equals(registeredName)) { //$NON-NLS-1$
-				String description = getRawContentDescription();
-				result = computePartName();
-				
-				if (!Util.equals(description, "")) { //$NON-NLS-1$
-					result = MessageFormat.format(WorkbenchMessages.getString("WorkbenchPart.AutoTitleFormat"), new String[] {result, description}); //$NON-NLS-1$
-				}
-			}
-			
-			return result;
 		}
 		
 		protected String computeContentDescription() {
-			String result = super.computeContentDescription();
-			
-			if (result.equals("")) { //$NON-NLS-1$
-				String title = getRawTitle();
-				String partName = computePartName();
+			if (part instanceof IWorkbenchPart2) {
+				return super.computeContentDescription();
+			} else {
+				String rawTitle = getRawTitle();
 				
-				if (!Util.equals(title, partName)) {
-					result = title;
+				if (!Util.equals(rawTitle, getRegisteredName())) { 
+					return rawTitle;
 				}
+				
+				return ""; //$NON-NLS-1$
 			}
-			
-			return result;
 		}
 		
 		/* (non-Javadoc)

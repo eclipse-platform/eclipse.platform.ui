@@ -77,7 +77,7 @@
       <view
        		name="Title Test View"
        		icon="icons\view.gif"
-       		class="org.eclipse.ui.tests.api.TitleTestView"
+       		class="org.eclipse.ui.tests.api.workbenchpart.TitleTestView"
        		id="org.eclipse.ui.tests.api.TitleTestView">
       </view>
       <view
@@ -160,12 +160,24 @@
             id="org.eclipse.ui.tests.adaptable.adaptedHierarchy">
       </view>
       <view
-            name="NullTitle"
+            name="EmptyView"
             icon="icons/view.gif"
-            class="org.eclipse.ui.tests.api.NullTitleView"
-            id="org.eclipse.ui.tests.NullTitleView">
+            class="org.eclipse.ui.tests.api.workbenchpart.EmptyView"
+            id="org.eclipse.ui.tests.workbenchpart.EmptyView">
       </view>
-      
+      <view
+            name="OverriddenTitleView"
+            icon="icons/view.gif"
+            class="org.eclipse.ui.tests.api.workbenchpart.OverriddenTitleView"
+            id="org.eclipse.ui.tests.workbenchpart.OverriddenTitleView">
+      </view>
+      <view
+            name="RawIViewPart"
+            icon="icons/view.gif"
+            class="org.eclipse.ui.tests.api.workbenchpart.RawIViewPart"
+            id="org.eclipse.ui.tests.workbenchpart.RawIViewPart">
+      </view>
+            
       <view
             name="StickyViewRight1"
             icon="icons/view.gif"
@@ -311,7 +323,7 @@
             id="org.eclipse.ui.tests.multipageeditor.TestMultiPageEditor">
       </editor>
       <editor
-            class="org.eclipse.ui.tests.api.TitleTestEditor"
+            class="org.eclipse.ui.tests.api.workbenchpart.TitleTestEditor"
             icon="icons/anything.gif"
             default="true"
             name="Title Test Editor"

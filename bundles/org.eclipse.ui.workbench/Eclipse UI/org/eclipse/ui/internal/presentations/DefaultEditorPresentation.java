@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.presentations;
 
+import java.text.MessageFormat;
+
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -220,21 +222,30 @@ public class DefaultEditorPresentation extends DefaultPartPresentation {
 		String text = title;
 
         if (includePath) {
-            String titleTooltip = presentablePart.getTitleToolTip().trim();
-
-            if (titleTooltip.endsWith(title))
-                    titleTooltip = titleTooltip.substring(0,
-                            titleTooltip.lastIndexOf(title)).trim();
-
-            if (titleTooltip.endsWith("\\")) //$NON-NLS-1$
-                    titleTooltip = titleTooltip.substring(0,
-                            titleTooltip.lastIndexOf("\\")).trim(); //$NON-NLS-1$
-
-            if (titleTooltip.endsWith("/")) //$NON-NLS-1$
-                    titleTooltip = titleTooltip.substring(0,
-                            titleTooltip.lastIndexOf("/")).trim(); //$NON-NLS-1$
-
-            if (titleTooltip.length() >= 1) text += " - " + titleTooltip; //$NON-NLS-1$
+        	String contentDescription = presentablePart.getTitleStatus();
+        	
+        	if (contentDescription.equals("")) { //$NON-NLS-1$
+	        	
+	            String titleTooltip = presentablePart.getTitleToolTip().trim();
+	
+	            if (titleTooltip.endsWith(title))
+	                    titleTooltip = titleTooltip.substring(0,
+	                            titleTooltip.lastIndexOf(title)).trim();
+	
+	            if (titleTooltip.endsWith("\\")) //$NON-NLS-1$
+	                    titleTooltip = titleTooltip.substring(0,
+	                            titleTooltip.lastIndexOf("\\")).trim(); //$NON-NLS-1$
+	
+	            if (titleTooltip.endsWith("/")) //$NON-NLS-1$
+	                    titleTooltip = titleTooltip.substring(0,
+	                            titleTooltip.lastIndexOf("/")).trim(); //$NON-NLS-1$
+	            
+	            contentDescription = titleTooltip;	            
+        	}
+        	
+        	if (!contentDescription.equals("")) {  //$NON-NLS-1$
+        		text = MessageFormat.format(WorkbenchMessages.getString("EditorPart.AutoTitleFormat"), new String[] {text, contentDescription}); //$NON-NLS-1$
+        	}
         }
 
         if (presentablePart.isDirty()) {

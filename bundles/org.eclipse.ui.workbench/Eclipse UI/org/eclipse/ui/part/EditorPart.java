@@ -10,10 +10,13 @@
  *******************************************************************************/
 package org.eclipse.ui.part;
 
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.IWorkbenchPartConstants;
 import org.eclipse.ui.PartInitException;
 
 /**
@@ -69,11 +72,31 @@ public abstract class EditorPart extends WorkbenchPart implements IEditorPart {
 	 * Editor input, or <code>null</code> if none.
 	 */
 	private IEditorInput editorInput = null;
+	
+	/**
+	 * Listens to PROP_TITLE property changes in this object until the first call to
+	 * setContentDescription. Used for compatibility with old parts that call setTitle
+	 * or overload getTitle instead of using setContentDescription. 
+	 */
+	private IPropertyListener compatibilityTitleListener = new IPropertyListener() {
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.IPropertyListener#propertyChanged(java.lang.Object, int)
+		 */
+		public void propertyChanged(Object source, int propId) {
+			if (propId == IWorkbenchPartConstants.PROP_TITLE) {
+				setDefaultPartName();
+			}
+		}
+	};
+
+	
 /**
  * Creates a new workbench editor.
  */
 protected EditorPart() {
 	super();
+	
+	addPropertyListener(compatibilityTitleListener);
 }
 /* (non-Javadoc)
  * Saves the contents of this editor.
@@ -172,6 +195,52 @@ public boolean isSaveOnCloseNeeded() {
  */
 protected void setInput(IEditorInput input) {
 	editorInput = input;
+}
+
+/* (non-Javadoc)
+ * @see org.eclipse.ui.part.WorkbenchPart#setContentDescription(java.lang.String)
+ */
+protected void setContentDescription(String description) {
+	if (compatibilityTitleListener != null) {
+		removePropertyListener(compatibilityTitleListener);
+		compatibilityTitleListener = null;
+	}
+	
+	super.setContentDescription(description);
+}
+
+/* (non-Javadoc)
+ * @see org.eclipse.ui.part.WorkbenchPart#setPartName(java.lang.String)
+ */
+protected void setPartName(String partName) {
+	if (compatibilityTitleListener != null) {
+		removePropertyListener(compatibilityTitleListener);
+		compatibilityTitleListener = null;
+	}
+	
+	super.setPartName(partName);
+}
+
+/* (non-Javadoc)
+ * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement, java.lang.String, java.lang.Object)
+ */
+public void setInitializationData(IConfigurationElement cfig,
+		String propertyName, Object data) {
+	super.setInitializationData(cfig, propertyName, data);
+	
+	setDefaultPartName();
+}
+
+private void setDefaultPartName() {
+	if (compatibilityTitleListener == null) {
+		return;
+	}
+	
+	internalSetPartName(getTitle());
+}
+
+void setDefaultTitle() {
+	setTitle(getPartName());
 }
 
 }

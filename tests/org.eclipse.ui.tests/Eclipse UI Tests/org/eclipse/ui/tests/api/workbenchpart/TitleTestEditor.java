@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.tests.api;
+package org.eclipse.ui.tests.api.workbenchpart;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.internal.layout.CellLayout;
 import org.eclipse.ui.internal.layout.Row;
@@ -34,7 +35,9 @@ public class TitleTestEditor extends EditorPart {
 	Text title;
 	Text name;
 	Text contentDescription;
-	
+	Label titleLabel;
+	Label nameLabel;
+	Label cdLabel;
 	
 	/**
 	 * 
@@ -125,6 +128,35 @@ public class TitleTestEditor extends EditorPart {
 				setContentDescription(contentDescription.getText());
 			}
 		});	
+		
+		Label tlLabel = new Label(composite, SWT.NONE);
+		tlLabel.setText("getTitle() = ");
+		titleLabel = new Label(composite, SWT.NONE);
+		
+		Label nmLabel = new Label(composite, SWT.NONE);
+		nmLabel.setText("getPartName() = ");
+		nameLabel = new Label(composite, SWT.NONE);
+		
+		Label descLabel = new Label(composite, SWT.NONE);
+		descLabel.setText("getContentDescription() = ");
+		cdLabel = new Label(composite, SWT.NONE);
+		
+		updateLabels();
+		
+		addPropertyListener(new IPropertyListener() {
+			/* (non-Javadoc)
+			 * @see org.eclipse.ui.IPropertyListener#propertyChanged(java.lang.Object, int)
+			 */
+			public void propertyChanged(Object source, int propId) {
+				updateLabels();
+			}
+		});
+	}
+	
+	private void updateLabels() {
+		titleLabel.setText(getTitle());
+		nameLabel.setText(getPartName());
+		cdLabel.setText(getContentDescription());
 	}
 
 	/* (non-Javadoc)

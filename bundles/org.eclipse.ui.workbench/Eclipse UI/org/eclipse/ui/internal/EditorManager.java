@@ -69,6 +69,7 @@ import org.eclipse.ui.IReusableEditor;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPart2;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
@@ -1333,23 +1334,11 @@ public class EditorManager {
 		}
 		
 		protected String computePartName() {
-			String result = super.computePartName();
-			
-			if (result.equals("")) { //$NON-NLS-1$
-				result = computeTitle();
+			if (part instanceof IWorkbenchPart2) {
+				return super.computePartName();
+			} else {
+				return getRawTitle();
 			}
-			
-			return result;
-		}
-		
-		protected String computeTitle() {
-			String result = super.computeTitle();
-			
-			if (result.equals("")) { //$NON-NLS-1$
-				result = getRawPartName();
-			}
-			
-			return result;
 		}
 		
 		public String getName() {

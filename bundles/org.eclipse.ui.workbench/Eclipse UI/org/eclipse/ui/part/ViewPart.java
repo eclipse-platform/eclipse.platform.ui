@@ -10,10 +10,14 @@
  *******************************************************************************/
 package org.eclipse.ui.part;
 
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.IWorkbenchPartConstants;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.internal.util.Util;
 
 /**
  * Abstract base implementation of all workbench views.
@@ -55,12 +59,30 @@ import org.eclipse.ui.PartInitException;
  * </p>
  */
 public abstract class ViewPart extends WorkbenchPart implements IViewPart {
-	
+
+/**
+ * Listens to PROP_TITLE property changes in this object until the first call to
+ * setContentDescription. Used for compatibility with old parts that call setTitle
+ * or overload getTitle instead of using setContentDescription. 
+ */
+private IPropertyListener compatibilityTitleListener = new IPropertyListener() {
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPropertyListener#propertyChanged(java.lang.Object, int)
+	 */
+	public void propertyChanged(Object source, int propId) {
+		if (propId == IWorkbenchPartConstants.PROP_TITLE) {
+			setDefaultContentDescription();
+		}
+	}
+};
+
 /**
  * Creates a new view.
  */
 protected ViewPart() {
 	super();
+	
+	addPropertyListener(compatibilityTitleListener);
 }
 /* (non-Javadoc)
  * Method declared on IViewPart.
@@ -73,6 +95,8 @@ public IViewSite getViewSite() {
  */
 public void init(IViewSite site) throws PartInitException {
 	setSite(site);
+	
+	setDefaultContentDescription();
 }
 /* (non-Javadoc)
  * Initializes this view with the given view site.  A memento is passed to
@@ -92,6 +116,52 @@ public void init(IViewSite site,IMemento memento) throws PartInitException {
  */
 public void saveState(IMemento memento){
     // do nothing
+}
+
+protected void setPartName(String partName) {
+	if (compatibilityTitleListener != null) {
+		removePropertyListener(compatibilityTitleListener);
+		compatibilityTitleListener = null;
+	}
+
+	super.setPartName(partName);
+}
+
+/* (non-Javadoc)
+ * @see org.eclipse.ui.part.WorkbenchPart#setContentDescription(java.lang.String)
+ */
+protected void setContentDescription(String description) {
+	if (compatibilityTitleListener != null) {
+		removePropertyListener(compatibilityTitleListener);
+		compatibilityTitleListener = null;
+	}
+	
+	super.setContentDescription(description);
+}
+
+/* (non-Javadoc)
+ * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement, java.lang.String, java.lang.Object)
+ */
+public void setInitializationData(IConfigurationElement cfig,
+		String propertyName, Object data) {
+	super.setInitializationData(cfig, propertyName, data);
+	
+	setDefaultContentDescription();
+}
+
+private void setDefaultContentDescription() {
+	if (compatibilityTitleListener == null) {
+		return;
+	}
+	
+	String partName = getPartName();
+	String title = getTitle();
+	
+	if (Util.equals(partName, title)) {
+		internalSetContentDescription("");
+	} else {
+		internalSetContentDescription(title);
+	}
 }
 
 }

@@ -12,6 +12,10 @@ package org.eclipse.ui.tests.api;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.ui.tests.api.workbenchpart.OverriddenTitleTest;
+import org.eclipse.ui.tests.api.workbenchpart.RawIViewPartTest;
+import org.eclipse.ui.tests.api.workbenchpart.ViewPartTitleTest;
+
 /**
  * Test all areas of the UI API.
  */
@@ -28,7 +32,7 @@ public class ApiTestSuite extends TestSuite {
 	/**
 	 * Construct the test suite.
 	 */
-	public ApiTestSuite() {
+	public ApiTestSuite() {		
 		addTest(new TestSuite(PlatformUITest.class));
 		addTest(new TestSuite(IWorkbenchTest.class));
 		addTest(new TestSuite(IWorkbenchWindowTest.class));
@@ -58,8 +62,10 @@ public class ApiTestSuite extends TestSuite {
 		addTest(new TestSuite(MockWorkingSetTest.class));	
 		addTest(new TestSuite(StartupTest.class));		
 		addTest(new TestSuite(Bug42616Test.class));
-		addTest(new TestSuite(NullTitleTest.class));
 		addTest(new TestSuite(StickyViewTest.class));
 		addTest(new TestSuite(EditorIconTest.class));
+		addTest(new TestSuite(RawIViewPartTest.class));
+		addTest(new TestSuite(ViewPartTitleTest.class));
+		addTest(new TestSuite(OverriddenTitleTest.class));
 	}
 }
