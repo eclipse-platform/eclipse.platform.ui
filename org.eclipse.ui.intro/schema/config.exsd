@@ -10,11 +10,8 @@
 &lt;p&gt;
 The intros are organized into pages which usually reflect a particular category of introductory material.  For instance, a What&apos;s New page may introduce new concepts or functionality since previous versions.  The content defined by one intro configuration can be referenced and extended from other plug-ins using the &lt;a href=&quot;org.eclipse.ui.intro.configExtension.exsd&quot;&gt;org.eclipse.ui.intro.configExtension&lt;/a&gt; extension point.
 &lt;p&gt;
-todo - add other APIs here such as IStandbyPart
       </documentation>
    </annotation>
-
-   <include schemaLocation="IntroContent.exsd"/>
 
    <element name="extension">
       <complexType>
@@ -94,7 +91,7 @@ The content file is parsed at run time by the intro framework. Based on the sett
          <attribute name="home-page-id" type="string" use="required">
             <annotation>
                <documentation>
-                  the id of the home (root) page.
+                  the id of the home (root) page, which is the first page of the introduction.  This page can be used as an entry point to the other main pages that make up the intro.
                </documentation>
             </annotation>
          </attribute>
@@ -111,7 +108,7 @@ The content file is parsed at run time by the intro framework. Based on the sett
    <element name="implementation">
       <annotation>
          <documentation>
-            The presentation of the Platform&apos;s out of the box experience has two implementations. One of them is SWT Browser based, while the other is UI Forms based. The customizable intro part can be configured to pick one of those two presentation based on the current OS and WS. The type of the implementation can be swt or html.
+            The presentation of the Platform&apos;s out of the box experience has two implementations. One of them is SWT Browser based, while the other is UI Forms based. The customizable intro part can be configured to pick one of those two presentations based on the current OS and WS. The type of the implementation can be swt or html.
          </documentation>
       </annotation>
       <complexType>
@@ -121,7 +118,7 @@ The content file is parsed at run time by the intro framework. Based on the sett
          <attribute name="kind" use="required">
             <annotation>
                <documentation>
-                  
+                  Specifies the type of this implementation.  The swt kind indicates a UI Forms based implementation, and the html kind indicates an SWT Browser based implementation
                </documentation>
             </annotation>
             <simpleType>
@@ -143,14 +140,14 @@ The content file is parsed at run time by the intro framework. Based on the sett
          <attribute name="os" type="string">
             <annotation>
                <documentation>
-                  os string used when choosing the presentation&apos;s implementation based on current OS. eg: win32,linux (todo - where are the valid OS strings used by Eclipse defined?)
+                  The optional operating system specification used when choosing the presentation&apos;s implementation.  It can be any of the os designators defined by Eclipse, e.g., win32, linux, etc (see Javadoc for &lt;code&gt;org.eclipse.core.runtime.Platform&lt;/code&gt;).
                </documentation>
             </annotation>
          </attribute>
          <attribute name="ws" type="string">
             <annotation>
                <documentation>
-                  ws string used when choosing the presentation&apos;s implementation based on current WS. eg: win32,gtk (todo - where are the valid WS strings used by Eclipse defined? Should we expand WS to windowing system?)
+                  The optional windowing system specification used when choosing the presentation&apos;s implementation.  It can be any of the ws designators defined by Eclipse (see Javadoc for &lt;code&gt;org.eclipse.core.runtime.Platform&lt;/code&gt;).
                </documentation>
             </annotation>
          </attribute>
@@ -172,7 +169,8 @@ The content file is parsed at run time by the intro framework. Based on the sett
       </appInfo>
       <documentation>
          Here is a sample usage of the config extension point.
-
+&lt;p&gt;
+&lt;pre&gt;
 &lt;extension id=&quot;intro&quot; point=&quot;org.eclipse.ui.intro.config&quot;&gt;
    &lt;config
       introId=&quot;com.org.xyz.intro&quot;
@@ -194,6 +192,8 @@ The content file is parsed at run time by the intro framework. Based on the sett
       &lt;/presentation&gt;
    &lt;/config&gt;
 &lt;/extension&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
       </documentation>
    </annotation>
 
@@ -202,7 +202,7 @@ The content file is parsed at run time by the intro framework. Based on the sett
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         [Enter API information here.]
+         For further details see the spec for the org.eclipse.ui.intro.config API package.
       </documentation>
    </annotation>
 
