@@ -39,6 +39,10 @@ public class RectangleAnimation extends Job {
 	private Rectangle end;
 	private Rectangle last;
 	private boolean done = false;
+	
+	/**
+	 * Canvas used to draw the animation, or null if the animation should be skipped.
+	 */
 	private Canvas canvas;
 	
 	private static Rectangle interpolate(Rectangle start, Rectangle end, double amount) {
@@ -123,8 +127,17 @@ public class RectangleAnimation extends Job {
 		this.duration = duration;
 		this.start = start;
 		this.end = end;
-		this.canvas = new Canvas(whereToDraw, SWT.NO_BACKGROUND);
+	
 		setSystem(true);
+
+		// Determine if we're on a platform where animations look ugly. 
+		// If so, we indicate this by setting canvas=null, in which case this job does nothing.
+		String platform = SWT.getPlatform();
+		if ("gtk".equals(platform)) { //$NON-NLS-1$
+			return;
+		}
+		
+		this.canvas = new Canvas(whereToDraw, SWT.NO_BACKGROUND);
 		canvas.setBounds(whereToDraw.getClientArea());
 		
 		canvas.addPaintListener(new PaintListener() {
@@ -140,6 +153,11 @@ public class RectangleAnimation extends Job {
 	 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected IStatus run(IProgressMonitor monitor) {
+		
+		// We use canvas = null to indicate that the animation should be skipped on this platform.
+		if (canvas == null) {
+			return Status.OK_STATUS;
+		}
 		
 		startTime = System.currentTimeMillis();
 		
