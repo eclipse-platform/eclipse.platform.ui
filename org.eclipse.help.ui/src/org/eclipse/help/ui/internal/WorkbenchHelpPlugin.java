@@ -16,6 +16,11 @@ import org.eclipse.ui.plugin.*;
   * plugin if the plugin class is moved into the base help.
   */
 public class WorkbenchHelpPlugin extends AbstractUIPlugin {
+	// debug options
+	public static boolean DEBUG = false;
+	public static boolean DEBUG_IE_ADAPTER = false;
+	public static boolean DEBUG_IE_ADAPTER_IN_PROCESS = false;
+
 	private static WorkbenchHelpPlugin plugin;
 	private HelpWorkingSetSynchronizer workingSetListener;
 
@@ -55,6 +60,13 @@ public class WorkbenchHelpPlugin extends AbstractUIPlugin {
 	 * Called by Platform after loading the plugin
 	 */
 	public void startup() {
+		// Setup debugging options
+		DEBUG = isDebugging();
+		if (DEBUG) {
+			DEBUG_IE_ADAPTER = "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.help.ui/debug/ieadapter")); //$NON-NLS-1$
+			DEBUG_IE_ADAPTER_IN_PROCESS = "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.help.ui/debug/ieadapter/inprocess")); //$NON-NLS-1$
+		}
+
 		HelpSystem.setDefaultErrorUtil(new ErrorUtil());
 		if (HelpSystem.getMode() == HelpSystem.MODE_WORKBENCH) {
 			// register the working set listener to keep the ui and the help working sets in sych
