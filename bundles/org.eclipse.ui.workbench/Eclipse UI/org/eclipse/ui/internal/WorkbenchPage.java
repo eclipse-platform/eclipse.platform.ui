@@ -2599,7 +2599,9 @@ private void setPerspective(Perspective newPersp) {
 			activateOldPart(newPersp);
 		}
 	}
-	
+	if(getActivePart() == null && activationList.getActive() != null) {
+		activate(activationList.getActive());
+	}
 	
 	// Update the Coolbar layout.  Do this after the part is activated,
 	// since the layout may contain items associated to the part.
