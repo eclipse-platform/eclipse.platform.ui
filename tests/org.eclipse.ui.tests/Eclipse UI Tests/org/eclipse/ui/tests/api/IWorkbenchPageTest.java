@@ -28,7 +28,9 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.internal.ClosePerspectiveAction;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
@@ -37,6 +39,7 @@ import org.eclipse.ui.tests.TestPlugin;
 import org.eclipse.ui.tests.util.CallHistory;
 import org.eclipse.ui.tests.util.EmptyPerspective;
 import org.eclipse.ui.tests.util.FileUtil;
+import org.eclipse.ui.tests.util.PerspectiveWithFastView;
 import org.eclipse.ui.tests.util.PlatformUtil;
 import org.eclipse.ui.tests.util.UITestCase;
 
@@ -1311,5 +1314,30 @@ public class IWorkbenchPageTest extends UITestCase {
 	    catch (PartInitException e) {
 	        fail(e.getMessage());
 	    }
-	}		
+	}
+	
+	/**
+	 * Test opening a perspective with a fast view.
+	 */
+	public void testOpenPerspectiveWithFastView() {
+		WorkbenchPage page = (WorkbenchPage) fActivePage;
+
+		try {
+			fWin.getWorkbench().showPerspective(
+					PerspectiveWithFastView.PERSP_ID, fWin);
+		} catch (WorkbenchException e) {
+			e.printStackTrace(System.err);
+		}
+
+		assertEquals(page.getFastViews().length, 1);
+		assertEquals(page.getFastViews()[0].getId(),
+				"org.eclipse.ui.views.ResourceNavigator");
+		assertEquals(page.getViewReferences().length, 1);
+		assertTrue(page.getViewReferences()[0].isFastView());
+
+		ClosePerspectiveAction closePespective = new ClosePerspectiveAction(
+				fWin);
+		closePespective.run();
+
+	}
 }

@@ -61,6 +61,11 @@
             icon="icons/anything.gif"
             class="org.eclipse.ui.tests.api.ViewPerspective"
             id="org.eclipse.ui.tests.api.ViewPerspective">
+      </perspective>
+      <perspective
+            class="org.eclipse.ui.tests.util.PerspectiveWithFastView"
+            name="Perspective with Fast View"
+            id="org.eclipse.ui.tests.fastview_perspective">
       </perspective>      
    </extension>
 <!-- Utils End -->
