@@ -42,7 +42,19 @@ import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
  *    type of launch configuration suports - <code>"run"</code> and/or <code>"debug"</code>.</li>
  * <li><code>name</code> specifies a human readable name for this type
  *    of launch configuration.</li>
+ * <li><code>category</code> is an optional attribute that specifies a category
+ * for this launch configuration type. Categories are client defined. This
+ * attribute was added in the 2.1 release.</li>
  * </ul>
+ * </p>
+ * <p>
+ * The <code>category</code> attribute has been added in release 2.1, such that other
+ * tools may re-use the launch configuration framework for purposes other than
+ * the standard running and debugging of programs under developement. Such that
+ * clients may access arbitrary attribtes specified in launch configuration type
+ * extension definitions, the method <code>getAttribute</code> has also been
+ * added. Launch configurations that are to be recognized as standard run/debug
+ * launch configurations should not specify the <code>category</code> attribute.
  * </p>
  * <p>
  * This interface is not intended to be implemented by clients. Clients
@@ -119,5 +131,26 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	 *  delegate
 	 */	
 	public ILaunchConfigurationDelegate getDelegate() throws CoreException;
+	
+	/**
+	 * Returns this launch configuration type's category, or <code>null</code>
+	 * if unspecified. This corresponds to the category attribute specified in
+	 * the extension definition.
+	 * 
+	 * @return this launch configuration type's category, or <code>null</code>
+	 * @since 2.1
+	 */
+	public String getCategory();
+	
+	/**
+	 * Returns the attribute with the given name, as specified by this launch
+	 * configuration type's extension definition, or <code>null</code> if
+	 * unspecified.
+	 * 
+	 * @param attributeName attribute name
+	 * @return the specified extension attribute, or <code>null</code>
+	 * @since 2.1
+	 */
+	public String getAttribute(String attributeName);	
 		
 }

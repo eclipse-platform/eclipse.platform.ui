@@ -16,7 +16,6 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Shell;
@@ -54,6 +53,11 @@ public class LaunchConfigurationTreeContentProvider implements ITreeContentProvi
 	 * Actual launch configurations have no children.  Launch configuration types have
 	 * all configurations of that type as children, minus any configurations that are 
 	 * marked as private.
+	 * <p>
+	 * In 2.1, the <code>category</code> attribute was added to launch config
+	 * types. The debug UI only displays those configs that do not specify a
+	 * category.
+	 * </p>
 	 * 
 	 * @see ITreeContentProvider#getChildren(Object)
 	 */
@@ -67,7 +71,7 @@ public class LaunchConfigurationTreeContentProvider implements ITreeContentProvi
 				ArrayList filteredConfigs = new ArrayList(allConfigs.length);
 				for (int i = 0; i < allConfigs.length; i++) {
 					ILaunchConfiguration config = allConfigs[i];
-					if (config.getAttribute(IDebugUIConstants.ATTR_PRIVATE, false)) {
+					if (!LaunchConfigurationManager.isVisible(config)) {
 						continue;
 					}
 					filteredConfigs.add(config);

@@ -113,6 +113,20 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 	}
 
 	/**
+	 * @see ILaunchConfigurationType#getCategory()
+	 */
+	public String getCategory() {
+		return getConfigurationElement().getAttribute("category"); //$NON-NLS-1$
+	}
+	
+	/**
+	 * @see ILaunchConfigurationType#getAttribute(String)
+	 */
+	public String getAttribute(String attributeName) {
+		return getConfigurationElement().getAttribute(attributeName);
+	}	
+	
+	/**
 	 * @see ILaunchConfigurationType#isPublic()
 	 */
 	public boolean isPublic() {

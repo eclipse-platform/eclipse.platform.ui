@@ -176,6 +176,23 @@ public class LaunchConfigurationManager implements ILaunchListener,
 	}
 	
 	/**
+	 * Returns whether the given launch configuraiton should be visible in the
+	 * debug ui. If the config is marked as private, or belongs to a different
+	 * category (i.e. non-null), then this configuration should not be displayed
+	 * in the debug ui.
+	 * 
+	 * @param launchConfiguration	 * @return boolean	 */
+	public static boolean isVisible(ILaunchConfiguration launchConfiguration) {
+		try {
+			return !(launchConfiguration.getAttribute(IDebugUIConstants.ATTR_PRIVATE, false)) &&
+			launchConfiguration.getType().getCategory() == null;
+		} catch (CoreException e) {
+			DebugUIPlugin.log(e);
+		}
+		return false;
+	}
+	
+	/**
 	 * Returns whether the singleton instance of the manager exists
 	 */
 	public static boolean defaultExists() {
@@ -427,8 +444,7 @@ public class LaunchConfigurationManager implements ILaunchListener,
 			return false;
 		}
 		try {
-			if (!launchConfig.supportsMode(mode) ||
-				 launchConfig.getAttribute(IDebugUIConstants.ATTR_PRIVATE, false)) {
+			if (!launchConfig.supportsMode(mode) || !isVisible(launchConfig)) {
 				return false;
 			}
 		} catch (CoreException ce) {

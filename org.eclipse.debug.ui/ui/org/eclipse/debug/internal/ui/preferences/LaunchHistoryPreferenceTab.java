@@ -14,8 +14,14 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.SWTUtil;
+import org
+	.eclipse
+	.debug
+	.internal
+	.ui
+	.launchConfigurations
+	.LaunchConfigurationManager;
 import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -468,7 +474,7 @@ public abstract class LaunchHistoryPreferenceTab {
 			String mode = (String)inputElement;
 			for (int i = 0; i < all.length; i++) {
 				try {
-					if (all[i].getType().supportsMode(mode) && !all[i].getAttribute(IDebugUIConstants.ATTR_PRIVATE, false)) {
+					if (all[i].getType().supportsMode(mode) && LaunchConfigurationManager.isVisible(all[i])) {
 						list.add(all[i]);
 					}
 				} catch (CoreException e) {

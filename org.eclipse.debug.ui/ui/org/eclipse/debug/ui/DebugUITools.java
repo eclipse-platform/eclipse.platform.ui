@@ -26,6 +26,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
@@ -267,6 +268,54 @@ public class DebugUITools {
 		}
 	}
 	
+	/**
+	 * Open the launch configuration dialog with the specified initial selection.
+	 * The selection may be <code>null</code>, or contain any mix of 
+	 * <code>ILaunchConfiguration</code> or <code>ILaunchConfigurationType</code>
+	 * elements.
+	 * <p>
+	 * Before opening a new dialog, this method checks if there is an existing open
+	 * launch configuration dialog.  If there is, this dialog is used with the
+	 * specified selection.  If there is no existing dialog, a new one is created.
+	 * </p>
+	 * <p>
+	 * Note that if an existing dialog is reused, the <code>mode</code> argument is ignored
+	 * and the existing dialog keeps its original mode.
+	 * </p>
+	 * 
+	 * @param shell the parent shell for the launch configuration dialog
+	 * @param selection the initial selection for the dialog
+	 * @param mode the mode (run or debug) in which to open the launch configuration dialog.
+	 *  This should be one of the constants defined in <code>ILaunchManager</code>.
+	 * @param shellTitle the title to display on the dialog, and as the label
+	 * for the tree of launch configurations, or <code>null</code> if the
+	 * default title should be used
+	 * @param title the title to display in the banner area, or
+	 * <code>null</code> if the default title should be used
+	 * @param image the image to display in the banner area of <code>null</code>
+	 * if the default image should be used
+	 * @param filter a filter to apply to the launch configuration tree, or
+	 * <code>null</code> if none
+	 * @return the return code from opening the launch configuration dialog
+	 * @since 2.1
+	 */
+	public static int openLaunchConfigurationDialog(Shell shell, IStructuredSelection selection, String mode, String shellTitle, String message, Image image, ViewerFilter filter) {
+		LaunchConfigurationDialog dialog = (LaunchConfigurationDialog) LaunchConfigurationDialog.getCurrentlyVisibleLaunchConfigurationDialog();
+		if (dialog != null) {
+			dialog.setTreeViewerSelection(selection);
+			return LaunchConfigurationDialog.LAUNCH_CONFIGURATION_DIALOG_REUSE_OPEN;
+		} else {
+			dialog = new LaunchConfigurationDialog(shell, null, mode);
+			dialog.setOpenMode(LaunchConfigurationDialog.LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_SELECTION);
+			dialog.setInitialSelection(selection);
+			dialog.setShellText(shellTitle);
+			dialog.setTitleText(message);
+			dialog.setTitleImage(image);
+			dialog.addFilter(filter);
+			return dialog.open();			
+		}
+	}
+		
 	/**
 	 * Saves all dirty editors and builds the workspace according to current
 	 * preference settings, and returns whether a launch should proceed.

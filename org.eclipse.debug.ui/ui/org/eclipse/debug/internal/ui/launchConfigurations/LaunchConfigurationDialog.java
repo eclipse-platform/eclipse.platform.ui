@@ -1,16 +1,11 @@
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
-/**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
-This file is made available under the terms of the Common Public License v1.0
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v10.html
-**********************************************************************/
- 
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
@@ -62,6 +57,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.wizard.ProgressMonitorPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -94,6 +90,14 @@ import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchViewerSorter;
+
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
+ 
 
 /**
  * The dialog used to edit and launch launch configurations.
@@ -282,6 +286,30 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * The number of 'long-running' operations currently taking place in this dialog
 	 */	
 	private long fActiveRunningOperations = 0;
+	
+	/**
+	 * List of filters applied to the launch config tree, or <code>null</code>
+	 * if none.
+	 */
+	private List fFilters;
+	
+	/**
+	 * Dialog title & label for launch config tree,
+	 * or <code>null</code> if the default title should be used.
+	 */
+	private String fShellTitle = null;
+	
+	/**
+	 * Dialog image or <code>null</code> if the default image should
+	 * be used.
+	 */
+	private Image fDialogImage = null;
+	
+	/**
+	 * Title area title, or <code>null</code> if the default title should be
+	 * used.
+	 */
+	private String fTitleAreaTitle = null;
 		
 	/**
 	 * Id for 'Launch' button.
@@ -724,7 +752,11 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		topComp.setLayout(topLayout);
 
 		// Set the things that TitleAreaDialog takes care of
-		setTitle(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Create,_manage,_and_run_launch_configurations_8")); //$NON-NLS-1$
+		String message = fTitleAreaTitle;
+		if (message == null) {
+			message = (LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Create,_manage,_and_run_launch_configurations_8")); //$NON-NLS-1$
+		} 
+		setTitle(message);
 		setMessage(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Ready_to_launch_2")); //$NON-NLS-1$
 		setModeLabelState();
 
@@ -858,11 +890,13 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * Set the title area image based on the mode this dialog was initialized with
 	 */
 	protected void setModeLabelState() {
-		Image image;
-		if (getMode().equals(ILaunchManager.DEBUG_MODE)) {
-			image = DebugUITools.getImage(IDebugUIConstants.IMG_WIZBAN_DEBUG);
-		} else {
-			image = DebugUITools.getImage(IDebugUIConstants.IMG_WIZBAN_RUN);
+		Image image = fDialogImage;
+		if (image == null) {
+			if (getMode().equals(ILaunchManager.DEBUG_MODE)) {
+				image = DebugUITools.getImage(IDebugUIConstants.IMG_WIZBAN_DEBUG);
+			} else {
+				image = DebugUITools.getImage(IDebugUIConstants.IMG_WIZBAN_RUN);
+			}
 		}
 		setTitleImage(image);
 	}
@@ -987,7 +1021,11 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		GridData gd = new GridData();
 		gd.horizontalSpan = 3;
 		getTreeLabel().setLayoutData(gd);
-		getTreeLabel().setText(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Launch_Con&figurations__1")); //$NON-NLS-1$		
+		String label = fShellTitle;
+		if (fShellTitle == null) {
+			label = (LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Launch_Con&figurations__1")); //$NON-NLS-1$
+		}
+		getTreeLabel().setText(label);		
 		updateTreeLabelTooltip();
 		
 		TreeViewer tree = new TreeViewer(comp);
@@ -1000,6 +1038,12 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		tree.setContentProvider(new LaunchConfigurationTreeContentProvider(getMode(), getShell()));
 		tree.setLabelProvider(DebugUITools.newDebugModelPresentation());
 		tree.setSorter(new WorkbenchViewerSorter());
+		if (fFilters != null) {
+			Iterator filters = fFilters.iterator();
+			while (filters.hasNext()) {
+				tree.addFilter((ViewerFilter)filters.next());
+			}
+		}
 		setTreeViewer(tree);
 		tree.addSelectionChangedListener(this);
 		tree.setInput(ResourcesPlugin.getWorkspace().getRoot());
@@ -1167,7 +1211,11 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 */
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
-		shell.setText(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Launch_Configurations_18")); //$NON-NLS-1$
+		String title = fShellTitle;
+		if (title == null) {
+			title = LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Launch_Configurations_18"); //$NON-NLS-1$
+		}
+		shell.setText(title);
 		WorkbenchHelp.setHelp(
 			shell,
 			IDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG);
@@ -3037,6 +3085,59 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		public void run() {
 			handleDeleteAction();
 		}
+	}
+	
+	/**
+	 * Adds a filter to the launch configuration viewer contained in this
+	 * dialog. Clients extending the launch configuration framework should use
+	 * this method to override the default set of launch configurations
+	 * displayed in the tree. Should be called before the dialog is opened.
+	 * 
+	 * @param filter a viewer filter
+	 * @since 2.1
+	 */
+	public void addFilter(ViewerFilter filter) {
+		if (fFilters == null) {
+			fFilters = new ArrayList();
+		}
+		fFilters.add(filter);
+	}
+	
+	/**
+	 * Sets the label of the dialog shell, and the launch configuration tree.
+	 * Clients extending the launch configuration framework should use the
+	 * method to override the default text. Should be called before the dialog
+	 * is opened.
+	 * 
+	 * @param text the text to display
+	 * @since 2.1
+	 */
+	public void setShellText(String title) {
+		fShellTitle = title;
+	}
+	
+	/**
+	 * Sets the default title in the title area of this dialog. Clients
+	 * extending the launch configuration framework should use this method to
+	 * override the default text. Should be called before the dialog is opened.
+	 * 
+	 * @param title the title to display
+	 * @since 2.1
+	 */
+	public void setTitleText(String text) {
+		fTitleAreaTitle = text;
+	}
+	
+	/**
+	 * Sets the image to display in the title area of this dialog. Clients
+	 * extending the launch configuration framework should use this method to
+	 * override the default image. Should be called before the dialog is opened.
+	 * 
+	 * @param image the image to display
+	 * @since 2.1
+	 */
+	public void setTitleImage(Image image) {
+		fDialogImage = image;
 	}
 
 }
