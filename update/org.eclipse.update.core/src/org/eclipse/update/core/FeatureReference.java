@@ -150,10 +150,8 @@ public class FeatureReference
 	 */
 	private IFeature createFeature(String featureType, URL url, ISite site)
 		throws CoreException {
-		IFeature feature = null;
 		IFeatureFactory factory =
 			FeatureTypeFactory.getInstance().getFactory(featureType);
-		feature = factory.createFeature(url, site);
-		return feature;
+		return factory.createFeature(url, site);
 	}
 }

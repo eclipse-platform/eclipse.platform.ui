@@ -50,7 +50,7 @@ public class FeatureExecutableFactory extends BaseFeatureFactory {
 
 			feature.resolve(url, getResourceBundle(url));
 			feature.markReadOnly();
-		} catch (IOException e) {
+/*		} catch (IOException e) {
 			// if we cannot find the feature or the feature.xml...
 			// We should not stop the execution 
 			// but we must Log it all the time, not only when debugging...
@@ -65,7 +65,7 @@ public class FeatureExecutableFactory extends BaseFeatureFactory {
 						+ url.toExternalForm(),
 					e);
 			//$NON-NLS-1$
-			UpdateManagerPlugin.getPlugin().getLog().log(status);
+			UpdateManagerPlugin.getPlugin().getLog().log(status);*/
 		} catch (Exception e) {
 			//catch (SAXException e) parseFeature
 			//catch (ParsingException)  parseFeature

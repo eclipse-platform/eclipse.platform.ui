@@ -1074,10 +1074,18 @@ public class DefaultFeatureParser extends DefaultHandler {
 			ImportModel imp = factory.createImportModel();
 			String ver = attributes.getValue("version"); //$NON-NLS-1$
 			String match = attributes.getValue("match"); //$NON-NLS-1$
+						
+			if (ver==null){
+				ver = "0.0.0";
+				match = "greaterOrHigher";
+			} else {
+				if (match==null)
+					match = "compatible";
+			}
+			
 			imp.setPluginIdentifier(id);
 			imp.setPluginVersion(ver);
 			imp.setMatchingRuleName(match);
-
 			objectStack.push(imp);
 
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {

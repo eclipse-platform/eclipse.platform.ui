@@ -25,7 +25,6 @@ public class SiteLocal
 	extends SiteLocalModel
 	implements ILocalSite, IWritable {
 
-	private static IPluginEntry[] allRunningPluginEntry;
 	private ListenersList listeners = new ListenersList();
 	private SiteReconciler reconciler;
 	private boolean isTransient = false;
@@ -33,6 +32,11 @@ public class SiteLocal
 	allConfiguredPlugins;
 
 	private static final String UPDATE_STATE_SUFFIX = ".metadata";
+	
+	/*
+	 * Have new features been found during reconciliation
+	 */
+	public static boolean newFeaturesFound = false;
 
 	/*
 	 * initialize the configurations from the persistent model.
@@ -84,7 +88,7 @@ public class SiteLocal
 							+ localSite.getStamp());
 					//$NON-NLS-1$ //$NON-NLS-2$
 				}
-				localSite.reconcile(isOptimistic);
+				newFeaturesFound = localSite.reconcile(isOptimistic);
 
 			} else {
 				// no reconciliation, preserve the list of plugins from the platform anyway
@@ -125,7 +129,7 @@ public class SiteLocal
 						+ " does not exist, there is no previous state or install history we can recover from, we shall use default from platform configuration.");
 				//$NON-NLS-1$
 			}
-			localSite.reconcile(isOptimistic);
+			newFeaturesFound = localSite.reconcile(isOptimistic);
 			
 		} catch (SAXException exception) {
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
@@ -625,15 +629,10 @@ public class SiteLocal
 	 * Reconciliation is the comparison between the old preserved state and the new one from platform.cfg
 	 * 
 	 * If the old state contained sites that are not in the new state, the old sites are not added to the state
-	 * 
 	 * If the new state contains sites that were not in the old state, configure the site and configure all the found features
-	 * 
 	 * If the sites are in both states, verify the features
-	 * 
 	 * if the old site contained features that are not in the new site, the features are not added to the site
-	 * 
 	 * if the new site contains feature that were not in the old site, configure the new feature
-	 * 
 	 * if the feature is in both site (old and new), use old feature state
 	 * 
 	 * When adding a feature to a site, we will check if the feature is broken or not. 
@@ -641,9 +640,12 @@ public class SiteLocal
 	 * 
 	 * At the end, go over all the site, get the configured features and make sure that if we find duplicates
 	 * only one feature is configured
+	 * 
+	 * returns true if new features have been found during a pessimistic reconcile
+	 * otherwise returns false
 	 */
-	public void reconcile(boolean isOptimistic) throws CoreException {
-		getReconciler().reconcile(isOptimistic);
+	public boolean reconcile(boolean isOptimistic) throws CoreException {
+		return getReconciler().reconcile(isOptimistic);
 	}
 
 	/*
@@ -831,8 +833,14 @@ public class SiteLocal
 		if (featureRef1 == null)
 			return 0;
 
-		IFeature feature1 = featureRef1.getFeature();
-		IFeature feature2 = featureRef2.getFeature();
+		IFeature feature1=null;
+		IFeature feature2=null;
+		try {
+			feature1 = featureRef1.getFeature();
+			feature2 = featureRef2.getFeature();
+		} catch (CoreException e){
+			return 0;
+		}
 
 		if (feature1 == null || feature2 == null) {
 			return 0;

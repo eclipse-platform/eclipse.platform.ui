@@ -25,10 +25,8 @@ public class FeaturePackagedFactory extends BaseFeatureFactory {
 		InputStream featureStream = null;
 		
 		try {		
-			
 			IFeatureContentProvider contentProvider = new FeaturePackagedContentProvider(url);		
 			ContentReference manifest = contentProvider.getFeatureManifestReference(null/*IProgressMonitor*/);
-			if (manifest==null) throw new IOException();
 			
 			featureStream = manifest.getInputStream();
 			feature = (Feature)parseFeature(featureStream);
@@ -55,13 +53,13 @@ public class FeaturePackagedFactory extends BaseFeatureFactory {
 			feature.resolve(baseUrl, getResourceBundle(baseUrl));
 			feature.markReadOnly();			
 			
-		} catch (IOException e) {
+/*		} catch (IOException e) {
 			// if we cannot find the feature or the feature.xml...
 			// We should not stop the execution 
 			// but we must Log it all the time, not only when debugging...
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 			IStatus status = new Status(IStatus.WARNING, id, IStatus.OK, "IOException opening the 'feature.xml' stream in the feature archive:"  + url.toExternalForm(), e); //$NON-NLS-1$
-			UpdateManagerPlugin.getPlugin().getLog().log(status);
+			UpdateManagerPlugin.getPlugin().getLog().log(status);*/
 		} catch (Exception e) { 
 			// other errors, we stop execution
 			if (e instanceof CoreException) {

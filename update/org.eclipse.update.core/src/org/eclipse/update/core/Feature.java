@@ -71,7 +71,9 @@ public class Feature extends FeatureModel implements IFeature {
 	 * @since 2.0
 	 */
 	public VersionedIdentifier getVersionedIdentifier() {
-		return new VersionedIdentifier(getFeatureIdentifier(), getFeatureVersion());
+		return new VersionedIdentifier(
+			getFeatureIdentifier(),
+			getFeatureVersion());
 	}
 
 	/**
@@ -209,7 +211,8 @@ public class Feature extends FeatureModel implements IFeature {
 		ErrorRecoveryLog recoveryLog = ErrorRecoveryLog.getLog();
 
 		//DEBUG
-		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_INSTALL) {
+		if (UpdateManagerPlugin.DEBUG
+			&& UpdateManagerPlugin.DEBUG_SHOW_INSTALL) {
 			UpdateManagerPlugin.getPlugin().debug(
 				"Installing...:" + getURL().toExternalForm());
 		}
@@ -246,9 +249,13 @@ public class Feature extends FeatureModel implements IFeature {
 			IPluginEntry[] sourceFeaturePluginEntries = getPluginEntries();
 			ISite targetSite = targetFeature.getSite();
 			IPluginEntry[] targetSitePluginEntries =
-				(targetSite != null) ? targetSite.getPluginEntries() : new IPluginEntry[0];
+				(targetSite != null)
+					? targetSite.getPluginEntries()
+					: new IPluginEntry[0];
 			IPluginEntry[] pluginsToInstall =
-				UpdateManagerUtils.diff(sourceFeaturePluginEntries, targetSitePluginEntries);
+				UpdateManagerUtils.diff(
+					sourceFeaturePluginEntries,
+					targetSitePluginEntries);
 			INonPluginEntry[] nonPluginsToInstall = getNonPluginEntries();
 
 			// determine number of monitor tasks
@@ -257,7 +264,10 @@ public class Feature extends FeatureModel implements IFeature {
 			// + 1*m tasks per non-plugin data entry (download for each)
 			// + 1 task for custom non-plugin entry handling (1 for all combined)
 			int taskCount =
-				2 + 2 * pluginsToInstall.length + nonPluginsToInstall.length + 1;
+				2
+					+ 2 * pluginsToInstall.length
+					+ nonPluginsToInstall.length
+					+ 1;
 			if (monitor != null)
 				monitor.beginTask("", taskCount);
 
@@ -274,7 +284,12 @@ public class Feature extends FeatureModel implements IFeature {
 			for (int i = 0; i < pluginsToInstall.length; i++) {
 				if (verifier != null) {
 					for (int j = 0; j < references.length; j++) {
-						vr = verifier.verify(this, references[j], false, monitor);
+						vr =
+							verifier.verify(
+								this,
+								references[j],
+								false,
+								monitor);
 						if (vr != null) {
 							promptForVerification(vr, verificationListener);
 						}
@@ -291,10 +306,17 @@ public class Feature extends FeatureModel implements IFeature {
 			// Download and verify plugin archives
 			for (int i = 0; i < pluginsToInstall.length; i++) {
 				references =
-					provider.getPluginEntryArchiveReferences(pluginsToInstall[i], monitor);
+					provider.getPluginEntryArchiveReferences(
+						pluginsToInstall[i],
+						monitor);
 				if (verifier != null) {
 					for (int j = 0; j < references.length; j++) {
-						vr = verifier.verify(this, references[j], false, monitor);
+						vr =
+							verifier.verify(
+								this,
+								references[j],
+								false,
+								monitor);
 						if (vr != null) {
 							promptForVerification(vr, verificationListener);
 						}
@@ -312,14 +334,18 @@ public class Feature extends FeatureModel implements IFeature {
 			// Download non-plugin archives. Verification handled by optional install handler
 			for (int i = 0; i < nonPluginsToInstall.length; i++) {
 				references =
-					provider.getNonPluginEntryArchiveReferences(nonPluginsToInstall[i], monitor);
+					provider.getNonPluginEntryArchiveReferences(
+						nonPluginsToInstall[i],
+						monitor);
 				if (monitor != null) {
 					monitor.worked(1);
 					if (monitor.isCanceled())
 						abort();
 				}
 			}
-			handler.nonPluginDataDownloaded(nonPluginsToInstall, verificationListener);
+			handler.nonPluginDataDownloaded(
+				nonPluginsToInstall,
+				verificationListener);
 
 			// All archives are downloaded and verified. Get ready to install
 			consumer = targetFeature.getFeatureContentConsumer();
@@ -327,15 +353,19 @@ public class Feature extends FeatureModel implements IFeature {
 			// install the children feature
 			IFeatureReference[] children = getIncludedFeatureReferences();
 			for (int i = 0; i < children.length; i++) {
-				IFeature childFeature = children[i].getFeature();
-				((Site)targetSite).install( // need to cast
+				IFeature childFeature = null;
+				try {
+					childFeature = children[i].getFeature();
+				} catch (CoreException e) {
+				}
+				if (childFeature != null)
+					 ((Site) targetSite).install(// need to cast
 					childFeature,
-					consumer,
-					verifier,
-					verificationListener,
-					monitor);
+						consumer,
+						verifier,
+						verificationListener,
+						monitor);
 			}
-
 
 			// Install plugin files
 			for (int i = 0; i < pluginsToInstall.length; i++) {
@@ -343,11 +373,16 @@ public class Feature extends FeatureModel implements IFeature {
 					monitor.setTaskName(
 						Policy.bind(
 							"Feature.TaskInstallPluginFiles",
-							pluginsToInstall[i].getVersionedIdentifier().getIdentifier()));
+							pluginsToInstall[i]
+								.getVersionedIdentifier()
+								.getIdentifier()));
 				//$NON-NLS-1$
-				IContentConsumer pluginConsumer = consumer.open(pluginsToInstall[i]);
+				IContentConsumer pluginConsumer =
+					consumer.open(pluginsToInstall[i]);
 				references =
-					provider.getPluginEntryContentReferences(pluginsToInstall[i], monitor);
+					provider.getPluginEntryContentReferences(
+						pluginsToInstall[i],
+						monitor);
 				for (int j = 0; j < references.length; j++) {
 					if (monitor != null)
 						monitor.subTask(references[j].getIdentifier());
@@ -385,14 +420,14 @@ public class Feature extends FeatureModel implements IFeature {
 			}
 			// indicate install success
 			success = true;
-			
+
 			// close the log
 			// do not close in finally block
 			// as it is caled when an error occured
 			recoveryLog.append(recoveryLog.END_INSTALL_LOG);
-			recoveryLog.close();			
+			recoveryLog.close();
 			recoveryLog.delete();
-			
+
 		} catch (Exception e) {
 			originalException = e;
 		} finally {
@@ -513,7 +548,8 @@ public class Feature extends FeatureModel implements IFeature {
 				allNonPluginEntries.addAll(Arrays.asList(nonPlugins));
 			}
 
-			IPluginEntry[] totalPlugins = new IPluginEntry[allPluginEntries.size()];
+			IPluginEntry[] totalPlugins =
+				new IPluginEntry[allPluginEntries.size()];
 			INonPluginEntry[] totalNonPlugins =
 				new INonPluginEntry[allNonPluginEntries.size()];
 			if (allPluginEntries.size() != 0) {
@@ -557,7 +593,8 @@ public class Feature extends FeatureModel implements IFeature {
 				allNonPluginEntries.addAll(Arrays.asList(nonPlugins));
 			}
 
-			IPluginEntry[] totalPlugins = new IPluginEntry[allPluginEntries.size()];
+			IPluginEntry[] totalPlugins =
+				new IPluginEntry[allPluginEntries.size()];
 			INonPluginEntry[] totalNonPlugins =
 				new INonPluginEntry[allNonPluginEntries.size()];
 			if (allPluginEntries.size() != 0) {
@@ -587,7 +624,9 @@ public class Feature extends FeatureModel implements IFeature {
 		throws CoreException {
 		if (featureContentProvider == null) {
 			throw Utilities.newCoreException(
-				Policy.bind("Feature.NoContentProvider", getVersionedIdentifier().toString()),
+				Policy.bind(
+					"Feature.NoContentProvider",
+					getVersionedIdentifier().toString()),
 				null);
 			//$NON-NLS-1$
 		}
@@ -613,7 +652,8 @@ public class Feature extends FeatureModel implements IFeature {
 	 */
 	public void setSite(ISite site) throws CoreException {
 		if (this.site != null) {
-			String featureURLString = (getURL() != null) ? getURL().toExternalForm() : "";
+			String featureURLString =
+				(getURL() != null) ? getURL().toExternalForm() : "";
 			throw Utilities.newCoreException(
 				Policy.bind("Feature.SiteAlreadySet", featureURLString),
 				null);
@@ -641,7 +681,9 @@ public class Feature extends FeatureModel implements IFeature {
 	 */
 	public String toString() {
 		String URLString =
-			(getURL() == null) ? Policy.bind("Feature.NoURL") : getURL().toExternalForm();
+			(getURL() == null)
+				? Policy.bind("Feature.NoURL")
+				: getURL().toExternalForm();
 		//$NON-NLS-1$
 		return Policy.bind(
 			"Feature.FeatureVersionToString",
@@ -665,13 +707,16 @@ public class Feature extends FeatureModel implements IFeature {
 
 		if (result == IVerificationListener.CHOICE_ABORT) {
 			throw Utilities
-				.newCoreException(Policy.bind("JarVerificationService.CancelInstall"),
+				.newCoreException(
+					Policy.bind("JarVerificationService.CancelInstall"),
 			//$NON-NLS-1$
 			verificationResult.getVerificationException());
 		}
 		if (result == IVerificationListener.CHOICE_ERROR) {
 			throw Utilities
-				.newCoreException(Policy.bind("JarVerificationService.UnsucessfulVerification"),
+				.newCoreException(
+					Policy.bind(
+						"JarVerificationService.UnsucessfulVerification"),
 			//$NON-NLS-1$
 			verificationResult.getVerificationException());
 		}
@@ -696,9 +741,11 @@ public class Feature extends FeatureModel implements IFeature {
 	private void initializeIncludedReferences() throws CoreException {
 		includedFeatureReferences = new ArrayList();
 
-		VersionedIdentifier[] identifiers = getFeatureIncludeVersionedIdentifier();
+		VersionedIdentifier[] identifiers =
+			getFeatureIncludeVersionedIdentifier();
 		ISite site = getSite();
-		IFeatureReference[] refs = (site == null) ? null : site.getFeatureReferences();
+		IFeatureReference[] refs =
+			(site == null) ? null : site.getFeatureReferences();
 
 		for (int i = 0; i < identifiers.length; i++) {
 			VersionedIdentifier identifier = identifiers[i];
@@ -707,9 +754,16 @@ public class Feature extends FeatureModel implements IFeature {
 			// check if declared on the Site
 			if (refs != null) {
 				for (int ref = 0; ref < refs.length && !found; ref++) {
-					IFeature feature = (refs[ref] == null) ? null : refs[ref].getFeature();
+					IFeature feature = null;
+					try {
+						feature =
+							(refs[ref] == null) ? null : refs[ref].getFeature();
+					} catch (CoreException e) {
+					};
+
 					if (feature != null) {
-						if (identifier.equals(feature.getVersionedIdentifier())) {
+						if (identifier
+							.equals(feature.getVersionedIdentifier())) {
 							includedFeatureReferences.add(refs[ref]);
 							found = true;
 						}
@@ -722,15 +776,21 @@ public class Feature extends FeatureModel implements IFeature {
 				// in future we may ask for a factory to create the feature ref
 				FeatureReference newRef = new FeatureReference();
 				newRef.setSite(getSite());
-				IFeatureReference parentRef = getSite().getFeatureReference(this);
+				IFeatureReference parentRef =
+					getSite().getFeatureReference(this);
 				if (parentRef instanceof FeatureReference) {
 					newRef.setType(((FeatureReference) parentRef).getType());
 				}
-				String featureID = Site.DEFAULT_FEATURE_PATH + identifier.toString() + ".jar";
-				URL featureURL = getSite().getSiteContentProvider().getArchiveReference(featureID);
+				String featureID =
+					Site.DEFAULT_FEATURE_PATH + identifier.toString() + ".jar";
+				URL featureURL =
+					getSite().getSiteContentProvider().getArchiveReference(
+						featureID);
 				newRef.setURL(featureURL);
 				try {
-					newRef.resolve(getSite().getURL(), getResourceBundle(getSite().getURL()));
+					newRef.resolve(
+						getSite().getURL(),
+						getResourceBundle(getSite().getURL()));
 					includedFeatureReferences.add(newRef);
 				} catch (Exception e) {
 					throw Utilities.newCoreException(
@@ -762,15 +822,21 @@ public class Feature extends FeatureModel implements IFeature {
 		try {
 			url = UpdateManagerUtils.asDirectoryURL(url);
 			ClassLoader l = new URLClassLoader(new URL[] { url }, null);
-			bundle = ResourceBundle.getBundle(Site.SITE_FILE, Locale.getDefault(), l);
+			bundle =
+				ResourceBundle.getBundle(
+					Site.SITE_FILE,
+					Locale.getDefault(),
+					l);
 		} catch (MissingResourceException e) {
 			//DEBUG:
-			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
+			if (UpdateManagerPlugin.DEBUG
+				&& UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
 				UpdateManagerPlugin.getPlugin().debug(e.getLocalizedMessage() + ":" + url.toExternalForm()); //$NON-NLS-1$
 			}
 		} catch (MalformedURLException e) {
 			//DEBUG:
-			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
+			if (UpdateManagerPlugin.DEBUG
+				&& UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
 				UpdateManagerPlugin.getPlugin().debug(e.getLocalizedMessage()); //$NON-NLS-1$
 			}
 		}

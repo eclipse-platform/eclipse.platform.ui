@@ -171,7 +171,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 	 * Method parseFeature.
 	 * @throws CoreException
 	 */
-	private void parseInstalledFeature(File directory){
+	private void parseInstalledFeature(File directory) throws CoreException {
 
 		File featureDir = new File(directory, Site.DEFAULT_INSTALLED_FEATURE_PATH);
 		if (featureDir.exists()) {
@@ -199,11 +199,10 @@ public class SiteFileFactory extends BaseSiteFactory {
 
 				}
 			} catch (MalformedURLException e) {
-				CoreException exc = Utilities.newCoreException(
+				throw Utilities.newCoreException(
 					Policy.bind("SiteFileFactory.UnableToCreateURLForFile", newFilePath),
 					e);
 				//$NON-NLS-1$
-				UpdateManagerPlugin.getPlugin().getLog().log(exc.getStatus());				
 			}
 		}
 	}
@@ -212,7 +211,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 	* Method parseFeature.
 	* @throws CoreException
 	*/
-	private void parsePackagedFeature(File directory){
+	private void parsePackagedFeature(File directory) throws CoreException {
 
 		// FEATURES
 		File featureDir = new File(directory, Site.DEFAULT_FEATURE_PATH);
@@ -237,11 +236,10 @@ public class SiteFileFactory extends BaseSiteFactory {
 					site.addFeatureReferenceModel(featureRef);
 				}
 			} catch (MalformedURLException e) {
-				CoreException exc = Utilities.newCoreException(
+				throw Utilities.newCoreException(
 					Policy.bind("SiteFileFactory.UnableToCreateURLForFile", newFilePath),
 					e);
 				//$NON-NLS-1$
-				UpdateManagerPlugin.getPlugin().getLog().log(exc.getStatus());				
 			}
 		}
 	}
@@ -255,7 +253,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 	 * @return VersionedIdentifier
 	 * @throws CoreException
 	 */
-	private void parseInstalledPlugin(File dir){
+	private void parseInstalledPlugin(File dir) throws CoreException{
 		PluginIdentifier plugin = null;
 		File pluginFile = null;
 		String pluginFileString = null;
@@ -285,17 +283,15 @@ public class SiteFileFactory extends BaseSiteFactory {
 				}
 			} // path is a directory
 		} catch (IOException e) {
-			CoreException exc = Utilities.newCoreException(
+			throw Utilities.newCoreException(
 				Policy.bind("SiteFileFactory.ErrorAccessing", pluginFileString),
 				e);
 			//$NON-NLS-1$
-			UpdateManagerPlugin.getPlugin().getLog().log(exc.getStatus());			
 		} catch (SAXException e) {
-			CoreException exc = Utilities.newCoreException(
+			throw Utilities.newCoreException(
 				Policy.bind("SiteFileFactory.ErrorParsingFile", pluginFileString),
 				e);
 			//$NON-NLS-1$
-			UpdateManagerPlugin.getPlugin().getLog().log(exc.getStatus());			
 		}
 
 	}
@@ -305,7 +301,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 	 * @param model
 	 * @throws CoreException
 	 */
-	private void addParsedPlugin(PluginIdentifier plugin) {
+	private void addParsedPlugin(PluginIdentifier plugin) throws CoreException {
 
 		// tranform each Plugin and Fragment in an ArchiveEntry
 		// and a PluginEntry for the Site
@@ -330,18 +326,17 @@ public class SiteFileFactory extends BaseSiteFactory {
 				((Site) site).addArchiveReferenceModel(archive);
 			}
 		} catch (MalformedURLException e) {
-			CoreException exc =  Utilities.newCoreException(
+			throw  Utilities.newCoreException(
 				Policy.bind("SiteFileFactory.UnableToCreateURLForFile", location),
 				e);
 			//$NON-NLS-1$
-			UpdateManagerPlugin.getPlugin().getLog().log(exc.getStatus());			
 		}
 	}
 
 	/**
 	 * 
 	 */
-	private void parsePackagedPlugins(File pluginDir) {
+	private void parsePackagedPlugins(File pluginDir) throws CoreException {
 
 		File file = null;
 		String[] dir;
@@ -372,17 +367,15 @@ public class SiteFileFactory extends BaseSiteFactory {
 			}
 
 		} catch (IOException e) {
-			CoreException exc = Utilities.newCoreException(
+			throw Utilities.newCoreException(
 				Policy.bind("SiteFileFactory.ErrorAccessing", refString),
 				e);
 			//$NON-NLS-1$
-			UpdateManagerPlugin.getPlugin().getLog().log(exc.getStatus());
 		} catch (SAXException e) {
-			CoreException exc = Utilities.newCoreException(
+			throw Utilities.newCoreException(
 				Policy.bind("SiteFileFactory.ErrorParsingFile", refString),
 				e);
 			//$NON-NLS-1$
-			UpdateManagerPlugin.getPlugin().getLog().log(exc.getStatus());			
 		}
 	}
 

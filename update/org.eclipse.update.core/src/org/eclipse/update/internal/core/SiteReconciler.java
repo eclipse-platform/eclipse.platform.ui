@@ -50,8 +50,11 @@ public class SiteReconciler extends ModelObject implements IWritable {
 	 * 
 	 * At the end, go over all the site, get the configured features and make sure that if we find duplicates
 	 * only one feature is configured
+	 * 
+	 * returns true if new features have been found during a pessimistic reconcile
+	 * otherwise returns false
 	 */
-	public void reconcile(boolean isOptimistic) throws CoreException {
+	public boolean reconcile(boolean isOptimistic) throws CoreException {
 
 		IPlatformConfiguration platformConfig =
 			BootLoader.getCurrentPlatformConfiguration();
@@ -104,9 +107,10 @@ public class SiteReconciler extends ModelObject implements IWritable {
 				index < oldConfiguredSites.length && !found;
 				index++) {
 				currentConfigurationSite = oldConfiguredSites[index];
-				URL currentConfigURL = currentConfigurationSite.getSite().getURL();
-		
-				if (sameURL(resolvedURL,currentConfigURL)) {
+				URL currentConfigURL =
+					currentConfigurationSite.getSite().getURL();
+
+				if (sameURL(resolvedURL, currentConfigURL)) {
 					found = true;
 					ConfiguredSite reconciledConfiguredSite =
 						reconcile(currentConfigurationSite, isOptimistic);
@@ -123,10 +127,9 @@ public class SiteReconciler extends ModelObject implements IWritable {
 				if (UpdateManagerPlugin.DEBUG
 					&& UpdateManagerPlugin.DEBUG_SHOW_RECONCILER) {
 					UpdateManagerPlugin.getPlugin().debug(
-						"Configured Site to create:"
-							+ resolvedURL);
+						"Configured Site to create:" + resolvedURL);
 				}
-				
+
 				ISite site = SiteManager.getSite(resolvedURL);
 
 				//site policy
@@ -154,20 +157,20 @@ public class SiteReconciler extends ModelObject implements IWritable {
 					FeatureReferenceModel newFeatureRefModel =
 						(FeatureReferenceModel) newFeaturesRef[i];
 
-					// DEBUG:
+					// TRACE
 					if (UpdateManagerPlugin.DEBUG
 						&& UpdateManagerPlugin.DEBUG_SHOW_RECONCILER) {
 						String reconciliationType =
 							isOptimistic
-								? "optimistic (enable)"
-								: "passimistic (disable)";
+								? "enable (optimistic)"
+								: "disable (pessimistic)";
 						UpdateManagerPlugin.getPlugin().debug(
-							"Configure "
+							"New Site:New Feature: "
 								+ newFeatureRefModel.getURLString()
 								+ " as "
 								+ reconciliationType);
 					}
-
+					
 					if (isOptimistic) {
 						configSite
 							.getConfigurationPolicy()
@@ -178,7 +181,7 @@ public class SiteReconciler extends ModelObject implements IWritable {
 							.getConfigurationPolicy()
 							.addUnconfiguredFeatureReference(
 							newFeatureRefModel);
-							newFoundFeatures.add(newFeatureRefModel);							
+						newFoundFeatures.add(newFeatureRefModel);
 					}
 				}
 				newDefaultConfiguration.addConfiguredSite(configSite);
@@ -202,7 +205,13 @@ public class SiteReconciler extends ModelObject implements IWritable {
 		// add the configuration as the currentConfig
 		siteLocal.addConfiguration(newDefaultConfiguration);
 		siteLocal.save();
-		saveNewFeatures();
+
+		if (getFeatureReferences().length != 0) {
+			saveNewFeatures();
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
@@ -320,7 +329,7 @@ public class SiteReconciler extends ModelObject implements IWritable {
 				} else {
 					newSitePolicy.addUnconfiguredFeatureReference(
 						currentFeatureRefModel);
-					newFoundFeatures.add(currentFeatureRefModel);						
+					newFoundFeatures.add(currentFeatureRefModel);
 				}
 			}
 		}
@@ -475,8 +484,14 @@ public class SiteReconciler extends ModelObject implements IWritable {
 		if (featureRef1 == null)
 			return 0;
 
-		IFeature feature1 = featureRef1.getFeature();
-		IFeature feature2 = featureRef2.getFeature();
+		IFeature feature1 = null;
+		IFeature feature2 = null;
+		try {
+			feature1 = featureRef1.getFeature();
+			feature2 = featureRef2.getFeature();
+		} catch (CoreException e) {
+			return 0;
+		}
 
 		if (feature1 == null || feature2 == null) {
 			return 0;
@@ -546,10 +561,6 @@ public class SiteReconciler extends ModelObject implements IWritable {
 	 * 
 	 */
 	private void saveNewFeatures() throws CoreException {
-
-		if (getFeatureReferences().length==0) {
-			return;
-		}
 
 		date = new Date();
 		String fileName =
@@ -673,24 +684,27 @@ public class SiteReconciler extends ModelObject implements IWritable {
 	 * Compares two URL for equality
 	 * Return false if one of them is null
 	 */
-	public boolean sameURL(URL url1, URL url2) {
+	private boolean sameURL(URL url1, URL url2) {
 		if (url1 == null)
 			return false;
-		if (url1.equals(url2)) return true;
-			
+		if (url1.equals(url2))
+			return true;
+
 		// check if URL are file: URL as we may
 		// have 2 URL pointing to the same featureReference
 		// but with different representation
 		// (i.e. file:/C;/ and file:C:/)
-		if (!"file".equalsIgnoreCase(url1.getProtocol())) return false;
-		if (!"file".equalsIgnoreCase(url2.getProtocol())) return false;		
-		
+		if (!"file".equalsIgnoreCase(url1.getProtocol()))
+			return false;
+		if (!"file".equalsIgnoreCase(url2.getProtocol()))
+			return false;
+
 		File file1 = new File(url1.getFile());
 		File file2 = new File(url2.getFile());
-		
-		if (file1==null) return false;
-		
-		return (file1.equals(file2));		
-	}
 
+		if (file1 == null)
+			return false;
+
+		return (file1.equals(file2));
+	}
 }

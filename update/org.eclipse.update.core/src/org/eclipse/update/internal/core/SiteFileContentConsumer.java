@@ -36,7 +36,8 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 	private String getFeaturePath() throws CoreException {
 		String featurePath = null;
 		try {
-			VersionedIdentifier featureIdentifier = feature.getVersionedIdentifier();
+			VersionedIdentifier featureIdentifier =
+				feature.getVersionedIdentifier();
 			String path =
 				Site.DEFAULT_INSTALLED_FEATURE_PATH
 					+ featureIdentifier.toString()
@@ -45,7 +46,8 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 			featurePath = newURL.getFile();
 		} catch (MalformedURLException e) {
 			throw Utilities.newCoreException(
-				Policy.bind("SiteFileContentConsumer.UnableToCreateURL") + e.getMessage(),
+				Policy.bind("SiteFileContentConsumer.UnableToCreateURL")
+					+ e.getMessage(),
 				e);
 			//$NON-NLS-1$
 		}
@@ -63,14 +65,17 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 	/*
 	 * @see ISiteContentConsumer#open(IPluginEntry)
 	 */
-	public IContentConsumer open(IPluginEntry pluginEntry) throws CoreException {
+	public IContentConsumer open(IPluginEntry pluginEntry)
+		throws CoreException {
 		return new SiteFilePluginContentConsumer(pluginEntry, getSite());
 	}
 
 	/*
 	 * @see ISiteContentConsumer#store(ContentReference, IProgressMonitor)
 	 */
-	public void store(ContentReference contentReference, IProgressMonitor monitor)
+	public void store(
+		ContentReference contentReference,
+		IProgressMonitor monitor)
 		throws CoreException {
 		InputStream inStream = null;
 		String featurePath = getFeaturePath();
@@ -113,7 +118,7 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 		InternalFeatureReference ref = new InternalFeatureReference();
 		ref.setSite(getSite());
 		File file = null;
-		
+
 		try {
 			file = new File(getFeaturePath());
 			ref.setURL(file.toURL());
@@ -153,16 +158,19 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 		// get the feature
 		((SiteFile) getSite()).addFeatureReferenceModel(
 			(FeatureReferenceModel) localFeatureReference);
-		IFeature feature =localFeatureReference.getFeature();
-		if (feature==null) return;
-
+		try {
+			IFeature feature = localFeatureReference.getFeature();
+		} catch (CoreException e) {
+			return;
+		}
 
 		// add the installed plugins directories as archives entry
 		SiteFileFactory archiveFactory = new SiteFileFactory();
 		ArchiveReferenceModel archive = null;
 		IPluginEntry[] pluginEntries = feature.getPluginEntries();
 		for (int i = 0; i < pluginEntries.length; i++) {
-			String versionId = pluginEntries[i].getVersionedIdentifier().toString();
+			String versionId =
+				pluginEntries[i].getVersionedIdentifier().toString();
 			String pluginID =
 				Site.DEFAULT_PLUGIN_PATH
 					+ versionId
@@ -179,11 +187,17 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 				((SiteFile) getSite()).addArchiveReferenceModel(archive);
 			} catch (MalformedURLException e) {
 				String id =
-					UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+					UpdateManagerPlugin
+						.getPlugin()
+						.getDescriptor()
+						.getUniqueIdentifier();
 				String urlString =
-					(getSite().getURL() != null) ? getSite().getURL().toExternalForm() : "";
+					(getSite().getURL() != null)
+						? getSite().getURL().toExternalForm()
+						: "";
 				//$NON-NLS-1$
-				urlString += Site.DEFAULT_PLUGIN_PATH + pluginEntries[i].toString();
+				urlString += Site.DEFAULT_PLUGIN_PATH
+					+ pluginEntries[i].toString();
 				throw Utilities.newCoreException(
 					Policy.bind("SiteFile.UnableToCreateURL", urlString),
 					e);

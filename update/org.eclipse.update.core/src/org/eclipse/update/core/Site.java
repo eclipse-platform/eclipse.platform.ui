@@ -309,7 +309,12 @@ public class Site extends SiteModel implements ISite {
 			IFeatureReference[] features = getFeatureReferences();
 			if (features != null) {
 				for (int indexFeatures = 0; indexFeatures < features.length; indexFeatures++) {
-					IFeature featureToCompare = features[indexFeatures].getFeature();
+					IFeature featureToCompare = null;
+					try {
+						features[indexFeatures].getFeature();
+					} catch (CoreException e){
+						// eat the exception
+					}
 					if (!feature.equals(featureToCompare)) {
 						IPluginEntry[] pluginEntries =
 							features[indexFeatures].getFeature().getPluginEntries();

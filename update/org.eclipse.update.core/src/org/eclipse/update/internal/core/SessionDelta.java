@@ -62,8 +62,6 @@ public class SessionDelta extends ModelObject implements ISessionDelta {
 
 		// process all feature reference to configure
 		if (configure) {
-			// pm.
-
 			// loop through all the configured site
 			// find the configuredSite that maintains this featureReference
 			// configure the feature
@@ -78,7 +76,14 @@ public class SessionDelta extends ModelObject implements ISessionDelta {
 							IFeatureReference ref = (IFeatureReference) iterator.next();
 							ISite site = ref.getSite();
 							if(site!=null && site.equals(configSites[i])){
-								configSites[i].configure(ref.getFeature());
+								IFeature featureToConfigure = null;
+								try {
+									featureToConfigure = ref.getFeature();
+								} catch (CoreException e){
+									// eat teh exception									
+								}
+								if (featureToConfigure!=null)
+									configSites[i].configure(featureToConfigure);									
 							}
 						}
 					}

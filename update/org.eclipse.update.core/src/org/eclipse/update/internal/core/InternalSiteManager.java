@@ -414,11 +414,12 @@ public class InternalSiteManager {
 	 */
 	public static boolean reconcile(boolean optimisticReconciliation)
 		throws CoreException {
+		// reconcile
 		internalGetLocalSite(optimisticReconciliation);
-		// does the reconciliation
-		ISessionDelta[] deltas = InternalSiteManager.getSessionDeltas();
-		if (deltas != null && deltas.length > 0) {
-			return true;
+		
+		// check if new features have been found
+		if (localSite instanceof SiteLocal){
+			return ((SiteLocal)localSite).newFeaturesFound;
 		}
 		return false;
 	}

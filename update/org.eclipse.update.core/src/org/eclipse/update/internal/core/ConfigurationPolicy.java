@@ -68,7 +68,13 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 
 		if (featureReference == null)
 			return;
-		IFeature feature = featureReference.getFeature();
+			
+		IFeature feature = null;			
+		try {
+			feature = featureReference.getFeature();
+		} catch (CoreException e){
+			return;
+		}
 		if (feature == null)
 			return;
 
@@ -144,7 +150,10 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 			}
 			return false;
 		}
-		IFeature feature = featureReference.getFeature();
+		IFeature feature = null;
+		try {
+			featureReference.getFeature();
+		} catch (CoreException e){};
 		if (feature == null){
 			//DEBUG
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS){
@@ -173,7 +182,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 			ConfigurationActivity activity =
 				new ConfigurationActivity(IActivity.ACTION_UNCONFIGURE);
 			activity.setLabel(
-				featureReference.getFeature().getVersionedIdentifier().toString());
+				feature.getVersionedIdentifier().toString());
 			activity.setDate(new Date());
 
 			addUnconfiguredFeatureReference((FeatureReferenceModel) featureReference);
@@ -266,7 +275,10 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 			List pluginsString = new ArrayList();
 			for (int i = 0; i < arrayOfFeatureRef.length; i++) {
 				IFeatureReference element = arrayOfFeatureRef[i];
-				IFeature feature = element.getFeature();
+				IFeature feature = null;
+				try {
+					element.getFeature();
+				} catch (CoreException e){};
 				IPluginEntry[] entries =
 					(feature == null) ? new IPluginEntry[0] : feature.getPluginEntries();
 
