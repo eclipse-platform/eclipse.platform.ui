@@ -133,8 +133,7 @@ public class SiteBookmark extends NamedModelObject
 		}
 	}
 	private void addFeatureToCatalog(IFeatureReference feature) {
-		ICategory [] categories;
-		categories = feature.getCategories();
+		ICategory [] categories = feature.getCategories();
 		boolean orphan = true;
 
 		for (int i=0; i<categories.length; i++) {
