@@ -41,7 +41,6 @@ public class UninstallCommand extends ScriptedCommand {
 			if (toSite != null) {
 				URL toSiteURL = new File(toSite).toURL();
 				if (SiteManager.getSite(toSiteURL, null) == null) {
-					System.out.println("Cannot find site " + toSite);
 					throw new Exception("Cannot find site " + toSite);
 				}
 				targetSite =
@@ -61,8 +60,6 @@ public class UninstallCommand extends ScriptedCommand {
 			IFeature[] features =
 				UpdateUtils.searchSite(featureId, targetSite, false);
 			if (features == null || features.length == 0) {
-				System.out.println(
-					"There are no unconfigured features with id:" + featureId);
 				throw new Exception(
 					"There are no unconfigured features with id:" + featureId);
 			}
@@ -81,11 +78,6 @@ public class UninstallCommand extends ScriptedCommand {
 					}
 				}
 			if (feature == null) {
-				System.out.println(
-					"Cannot find unconfigured feature "
-						+ featureId
-						+ " with version "
-						+ version);
 				throw new Exception(
 					"Cannot find unconfigured feature "
 						+ featureId
@@ -94,10 +86,8 @@ public class UninstallCommand extends ScriptedCommand {
 			}
 
 		} catch (MalformedURLException e) {
-			e.printStackTrace();
 			throw e;
 		} catch (CoreException e) {
-			e.printStackTrace();
 			throw e;
 		}
 	}
@@ -107,7 +97,8 @@ public class UninstallCommand extends ScriptedCommand {
 	 */
 	public boolean run() {
 		if (InstallRegistry.getInstance().get("feature_"+ feature.getVersionedIdentifier()) == null) {
-			System.out.println("Feature " + feature + " was not installed by the update manager, so it cannot be uninstalled.");
+			StandaloneUpdateApplication.exceptionLogged();
+			UpdateCore.log(Utilities.newCoreException("Feature " + feature + " was not installed by the update manager, so it cannot be uninstalled.",null));
 			return false;
 		}
 							
@@ -125,10 +116,12 @@ public class UninstallCommand extends ScriptedCommand {
 		try {
 			return uninstallOperation.execute(null, null);
 		} catch (CoreException e) {
-			System.out.println(e.getStatus().getMessage());
+			StandaloneUpdateApplication.exceptionLogged();
+			UpdateCore.log(e);
 			return false;
 		} catch (InvocationTargetException e) {
-			System.out.println(e.getTargetException());
+			StandaloneUpdateApplication.exceptionLogged();
+			UpdateCore.log(e);
 			return false;
 		}
 	}

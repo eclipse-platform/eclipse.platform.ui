@@ -17,6 +17,7 @@ import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.model.*;
+import org.eclipse.update.internal.standalone.*;
 import org.xml.sax.*;
 
 public class MirrorSiteFactory extends BaseSiteFactory {
@@ -44,17 +45,16 @@ public class MirrorSiteFactory extends BaseSiteFactory {
 		if (!siteLocation.exists()) {
 			if (!siteLocation.mkdirs()) {
 				throw Utilities.newCoreException(
-					Policy.bind(
-						"SiteMirrorFactory.CannotCreateDirectory",
-						siteLocation.getAbsolutePath()),
+					"Directory "
+						+ siteLocation.getAbsolutePath()
+						+ " could not be created.",
 					null);
 			}
 		}
 		if (!siteLocation.isDirectory() || !siteLocation.canWrite())
 			throw Utilities.newCoreException(
-				Policy.bind(
-					"SiteMirrorFactory.SiteNotADirectoryOrNotWritable",
-					siteLocation.getAbsolutePath()),
+				siteLocation.getAbsolutePath()
+					+ " is not a directory or is not writtable.",
 				null);
 
 		MirrorSite site = null;
@@ -88,7 +88,11 @@ public class MirrorSiteFactory extends BaseSiteFactory {
 		try {
 			url = siteLocation.toURL();
 		} catch (MalformedURLException mue) {
-			throw Utilities.newCoreException(Policy.bind("SiteMirrorFactory.UnableToCreateUrlFor", siteLocation.getAbsolutePath()), mue); //$NON-NLS-1$
+			throw Utilities.newCoreException(
+				"A URL for site "
+					+ siteLocation.getAbsolutePath()
+					+ " could not be created.",
+				mue);
 		}
 		SiteContentProvider contentProvider = null;
 		contentProvider = new SiteFileContentProvider(url);
@@ -98,7 +102,10 @@ public class MirrorSiteFactory extends BaseSiteFactory {
 		try {
 			site.resolve(url, url);
 		} catch (MalformedURLException mue) {
-			throw Utilities.newCoreException(Policy.bind("SiteMirrorFactory.UnableToCreateURL", url == null ? "" : url.toExternalForm()), mue); //$NON-NLS-1$
+			throw Utilities.newCoreException(
+				"Unable to resolve URL "
+					+ (url == null ? "" : url.toExternalForm()),
+				mue);
 		}
 		return site;
 	}
@@ -136,12 +143,11 @@ public class MirrorSiteFactory extends BaseSiteFactory {
 			}
 
 		} catch (IOException e) {
-			System.out.println(e);
-			e.printStackTrace();
-
+			StandaloneUpdateApplication.exceptionLogged();
+			UpdateCore.log(e);
 		} catch (SAXException e) {
-			System.out.println(e);
-			e.printStackTrace();
+			StandaloneUpdateApplication.exceptionLogged();
+			UpdateCore.log(e);
 		}
 	}
 	/**
@@ -199,11 +205,8 @@ public class MirrorSiteFactory extends BaseSiteFactory {
 				}
 			} catch (MalformedURLException e) {
 				throw Utilities.newCoreException(
-					Policy.bind(
-						"SiteFileFactory.UnableToCreateURLForFile",
-						newFilePath),
+					"Unable to create URL for file " + newFilePath + ".",
 					e);
-				//$NON-NLS-1$
 			}
 		}
 	}

@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.core.*;
+import org.eclipse.update.internal.standalone.*;
 
 /**
  * Local mirror site.  Read/Write
@@ -329,6 +330,8 @@ public class MirrorSite extends Site {
 					addFeatureReferenceModel(featureReference);
 				}
 			} catch (CoreException ce) {
+				StandaloneUpdateApplication.exceptionLogged();
+				UpdateCore.log(ce);
 			}
 		}
 		save();
@@ -373,7 +376,7 @@ public class MirrorSite extends Site {
 			UpdateManagerUtils.copyToLocal(inStream, featurePath, null);
 		} catch (IOException e) {
 			throw Utilities.newCoreException(
-				Policy.bind("MirrorSite.ErrorCreatingFile", featurePath),
+				"Error occurred while creating "+ featurePath+" file.",
 				e);
 		} finally {
 			if (inStream != null) {
@@ -400,7 +403,7 @@ public class MirrorSite extends Site {
 			UpdateManagerUtils.copyToLocal(inStream, pluginPath, null);
 		} catch (IOException e) {
 			throw Utilities.newCoreException(
-				Policy.bind("MirrorSite.ErrorCreatingFile", pluginPath),
+			"Error occurred while creating "+ pluginPath+" file.",
 				e);
 		} finally {
 			if (inStream != null) {
@@ -437,10 +440,8 @@ public class MirrorSite extends Site {
 				null);
 		} catch (IOException e) {
 			throw Utilities.newCoreException(
-				Policy.bind(
-					"MirrorSite.ErrorCreatingFile",
-					nonPluginArchivePath.getAbsolutePath()),
-				e);
+			"Error occurred while creating "+ nonPluginArchivePath.getAbsolutePath()+" file."
+				,e);
 		} finally {
 			if (inStream != null) {
 				try {
@@ -461,6 +462,11 @@ public class MirrorSite extends Site {
 			save(writer);
 			writer.flush();
 		} catch (IOException ioe) {
+			StandaloneUpdateApplication.exceptionLogged();
+			UpdateCore.log(
+				Utilities.newCoreException(
+					"Site XML could not be saved.",
+					ioe));
 		} finally {
 			if (fos != null) {
 				try {
@@ -716,6 +722,11 @@ public class MirrorSite extends Site {
 
 			writer.flush();
 		} catch (IOException ioe) {
+			StandaloneUpdateApplication.exceptionLogged();
+			UpdateCore.log(
+				Utilities.newCoreException(
+					"policy.xml could not be saved",
+					ioe));
 		} finally {
 			if (fos != null) {
 				try {

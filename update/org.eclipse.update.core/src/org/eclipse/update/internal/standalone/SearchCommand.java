@@ -14,25 +14,31 @@ import java.net.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.search.*;
 import org.eclipse.update.operations.*;
 import org.eclipse.update.search.*;
 
 public class SearchCommand extends ScriptedCommand {
-	
+
 	private URL remoteSiteURL;
 	private UpdateSearchRequest searchRequest;
 	private IUpdateSearchResultCollector collector;
-	
+
 	public SearchCommand(String fromSite) {
 		try {
 			this.remoteSiteURL = new URL(URLDecoder.decode(fromSite, "UTF-8"));
 			UpdateSearchScope searchScope = new UpdateSearchScope();
-			searchScope.addSearchSite("remoteSite", remoteSiteURL, new String[0]);
-			searchRequest = new UpdateSearchRequest(new SiteSearchCategory(), searchScope);
+			searchScope.addSearchSite(
+				"remoteSite",
+				remoteSiteURL,
+				new String[0]);
+			searchRequest =
+				new UpdateSearchRequest(new SiteSearchCategory(), searchScope);
 			collector = new UpdateSearchResultCollector();
 		} catch (MalformedURLException e) {
-			e.printStackTrace();
+			StandaloneUpdateApplication.exceptionLogged();
+			UpdateCore.log(e);
 		} catch (UnsupportedEncodingException e) {
 		}
 	}
@@ -52,6 +58,9 @@ public class SearchCommand extends ScriptedCommand {
 				// Just show this but do not throw exception
 				// because there may be results anyway.
 				System.out.println("Connection Error");
+			} else {
+				StandaloneUpdateApplication.exceptionLogged();
+				UpdateCore.log(ce);
 			}
 			return false;
 		}
@@ -71,10 +80,15 @@ public class SearchCommand extends ScriptedCommand {
 		return true;
 	}
 
-
 	class UpdateSearchResultCollector implements IUpdateSearchResultCollector {
 		public void accept(IFeature feature) {
-			System.out.println("\""+feature.getLabel() + "\" " + feature.getVersionedIdentifier().getIdentifier() + " " +feature.getVersionedIdentifier().getVersion());
+			System.out.println(
+				"\""
+					+ feature.getLabel()
+					+ "\" "
+					+ feature.getVersionedIdentifier().getIdentifier()
+					+ " "
+					+ feature.getVersionedIdentifier().getVersion());
 		}
 	}
 }

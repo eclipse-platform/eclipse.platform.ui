@@ -16,6 +16,7 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.internal.search.*;
 import org.eclipse.update.operations.*;
@@ -35,7 +36,8 @@ public class InstallCommand extends ScriptedCommand {
 		String version,
 		String fromSite,
 		String toSite,
-		String verifyOnly) throws Exception {
+		String verifyOnly)
+		throws Exception {
 
 		super(verifyOnly);
 
@@ -50,9 +52,8 @@ public class InstallCommand extends ScriptedCommand {
 			if (toSite != null) {
 				URL toSiteURL = new File(toSite).toURL();
 				if (SiteManager.getSite(toSiteURL, null) == null) {
-					System.out.println(
+					throw new Exception(
 						"Cannot find site to install to: " + toSite);
-					throw new Exception("Cannot find site to install to: " + toSite);
 				}
 				targetSite =
 					SiteManager
@@ -86,10 +87,8 @@ public class InstallCommand extends ScriptedCommand {
 			collector = new UpdateSearchResultCollector();
 
 		} catch (MalformedURLException e) {
-			e.printStackTrace();
 			throw e;
 		} catch (CoreException e) {
-			e.printStackTrace();
 			throw e;
 		}
 	}
@@ -101,15 +100,15 @@ public class InstallCommand extends ScriptedCommand {
 			searchRequest.performSearch(collector, new NullProgressMonitor());
 			IInstallFeatureOperation[] operations = collector.getOperations();
 			if (operations == null || operations.length == 0) {
-				System.out.println(
+				throw Utilities.newCoreException(
 					"Feature "
 						+ featureId
 						+ " "
 						+ version
 						+ " cannot be found on "
 						+ remoteSiteURL
-						+ "\nor a newer version is already installed.");
-				return false;
+						+ "\nor a newer version is already installed.",
+					null);
 			}
 			JobTargetSite[] jobTargetSites =
 				new JobTargetSite[operations.length];
@@ -125,8 +124,7 @@ public class InstallCommand extends ScriptedCommand {
 					jobTargetSites,
 					getConfiguration());
 			if (conflicts != null) {
-				System.out.println("Duplicate conflicts");
-				return false;
+				throw Utilities.newCoreException("Duplicate conflicts", null);
 			}
 
 			if (isVerifyOnly()) {
@@ -148,17 +146,13 @@ public class InstallCommand extends ScriptedCommand {
 						+ " has successfully been installed");
 				return true;
 			} catch (Exception e) {
-				System.out.println(
-					"Cannot install feature " + featureId + " " + version);
-				e.printStackTrace();
-				return false;
+				throw Utilities.newCoreException(
+					"Cannot install feature " + featureId + " " + version,
+					e);
 			}
 		} catch (CoreException ce) {
-			IStatus status = ce.getStatus();
-			if (status == null)
-				System.out.println("Connection Error");
-			else
-				System.out.println(status.getMessage());
+			StandaloneUpdateApplication.exceptionLogged();
+			UpdateCore.log(ce);
 			return false;
 		}
 	}

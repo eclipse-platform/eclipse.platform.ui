@@ -16,6 +16,7 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
+import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.standalone.*;
 
 /**
@@ -62,8 +63,11 @@ public class MirrorCommand extends ScriptedCommand {
 			ISiteFeatureReference featureReferencesToMirror[] =
 				findFeaturesToMirror(remoteSite);
 			if (featureReferencesToMirror.length == 0) {
-				System.out.println(
-					"No matching features found on " + remoteSiteUrl + ".");
+				StandaloneUpdateApplication.exceptionLogged();
+				UpdateCore.log(
+					Utilities.newCoreException(
+						"No matching features found on " + remoteSiteUrl + ".",
+						null));
 				return false;
 			}
 
@@ -72,15 +76,14 @@ public class MirrorCommand extends ScriptedCommand {
 				featureReferencesToMirror,
 				null,
 				mirrorURL);
-			System.out.println("Mirror command completed successfully.");
 			return true;
 		} catch (MalformedURLException e) {
-			System.out.println(e);
-			e.printStackTrace();
+			StandaloneUpdateApplication.exceptionLogged();
+			UpdateCore.log(e);
 			return false;
 		} catch (CoreException ce) {
-			System.out.println(ce.getMessage());
-			ce.printStackTrace();
+			StandaloneUpdateApplication.exceptionLogged();
+			UpdateCore.log(ce);
 			return false;
 		} finally {
 			JarContentReference.shutdown();
@@ -88,17 +91,23 @@ public class MirrorCommand extends ScriptedCommand {
 	}
 	private boolean validateParameters() {
 		if (fromSiteUrl == null || fromSiteUrl.length() <= 0) {
-			System.out.println("from parameter missing.");
+			StandaloneUpdateApplication.exceptionLogged();
+			UpdateCore.log(
+				Utilities.newCoreException("from parameter is missing.", null));
 			return false;
 		}
 		try {
 			new URL(fromSiteUrl);
 		} catch (MalformedURLException mue) {
-			System.out.println("from must be valid URL");
+			StandaloneUpdateApplication.exceptionLogged();
+			UpdateCore.log(
+				Utilities.newCoreException("from must be a valid URL", null));
 			return false;
 		}
 		if (toSiteDir == null || toSiteDir.length() <= 0) {
-			System.out.println("to parameter missing.");
+			StandaloneUpdateApplication.exceptionLogged();
+			UpdateCore.log(
+				Utilities.newCoreException("to parameter is missing.", null));
 			return false;
 		}
 		return true;
@@ -118,8 +127,11 @@ public class MirrorCommand extends ScriptedCommand {
 				System.out.println("  Done.");
 			}
 			if (mirrorSite == null) {
-				System.out.println(
-					"Cannot access site to mirror to: " + toSiteDir);
+				StandaloneUpdateApplication.exceptionLogged();
+				UpdateCore.log(
+					Utilities.newCoreException(
+						"Mirror site at " + toSiteDir + " cannot be accessed.",
+						null));
 				return null;
 			}
 		}

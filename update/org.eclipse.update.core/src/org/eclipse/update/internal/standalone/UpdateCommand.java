@@ -10,11 +10,12 @@
  *******************************************************************************/
 package org.eclipse.update.internal.standalone;
 import java.net.*;
-import java.util.ArrayList;
+import java.util.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.update.configuration.IConfiguredSite;
+import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.operations.*;
 import org.eclipse.update.search.*;
@@ -40,16 +41,14 @@ public class UpdateCommand extends ScriptedCommand {
 						getConfiguration(),
 						featureId);
 				if (targetSite == null) {
-					System.out.println(
+					throw new Exception(
 						"Cannot find configured site for " + featureId);
-					throw new Exception();
 				}
 				IFeature[] currentFeatures =
 					UpdateUtils.searchSite(featureId, targetSite, true);
 				if (currentFeatures == null || currentFeatures.length == 0) {
-					System.out.println(
+					throw new Exception(
 						"Cannot find configured feature " + featureId);
-					throw new Exception();
 				}
 				this.currentFeature = currentFeatures[0];
 			} else {
@@ -73,9 +72,11 @@ public class UpdateCommand extends ScriptedCommand {
 			collector = new UpdateSearchResultCollector();
 
 		} catch (MalformedURLException e) {
-			e.printStackTrace();
+			StandaloneUpdateApplication.exceptionLogged();
+			UpdateCore.log(e);
 		} catch (CoreException e) {
-			e.printStackTrace();
+			StandaloneUpdateApplication.exceptionLogged();
+			UpdateCore.log(e);
 		}
 	}
 
@@ -86,8 +87,11 @@ public class UpdateCommand extends ScriptedCommand {
 			searchRequest.performSearch(collector, new NullProgressMonitor());
 			IInstallFeatureOperation[] operations = collector.getOperations();
 			if (operations == null || operations.length == 0) {
-				System.out.println(
-					"Feature " + featureId + " cannot be updated.");
+				StandaloneUpdateApplication.exceptionLogged();
+				UpdateCore.log(
+					Utilities.newCoreException(
+						"Feature " + featureId + " cannot be updated.",
+						null));
 				return false;
 			}
 			JobTargetSite[] jobTargetSites =
@@ -104,7 +108,9 @@ public class UpdateCommand extends ScriptedCommand {
 					jobTargetSites,
 					getConfiguration());
 			if (conflicts != null) {
-				System.out.println("Duplicate conflicts");
+				StandaloneUpdateApplication.exceptionLogged();
+				UpdateCore.log(
+					Utilities.newCoreException("Duplicate conflicts", null));
 				return false;
 			}
 
@@ -122,8 +128,11 @@ public class UpdateCommand extends ScriptedCommand {
 					"Feature " + featureId + " has successfully been updated");
 				return true;
 			} catch (Exception e) {
-				System.out.println("Cannot update feature " + featureId);
-				e.printStackTrace();
+				StandaloneUpdateApplication.exceptionLogged();
+				UpdateCore.log(
+					Utilities.newCoreException(
+						"Cannot update feature " + featureId,
+						e));
 				return false;
 			}
 		} catch (CoreException ce) {
@@ -133,6 +142,9 @@ public class UpdateCommand extends ScriptedCommand {
 				// Just show this but do not throw exception
 				// because there may be results anyway.
 				System.out.println("Connection Error");
+			} else {
+				StandaloneUpdateApplication.exceptionLogged();
+				UpdateCore.log(ce);
 			}
 			return false;
 		}

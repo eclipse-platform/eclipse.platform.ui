@@ -12,6 +12,7 @@ package org.eclipse.update.internal.standalone;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.internal.core.*;
 import org.eclipse.update.operations.*;
 
 public abstract class ScriptedCommand implements IOperationListener {
@@ -60,8 +61,8 @@ public abstract class ScriptedCommand implements IOperationListener {
 				ILocalSite localSite = SiteManager.getLocalSite();
 				config = localSite.getCurrentConfiguration();
 			} catch (CoreException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				StandaloneUpdateApplication.exceptionLogged();
+				UpdateCore.log(e);
 			}
 		}
 		return config;

@@ -16,6 +16,7 @@ import java.net.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.operations.*;
 
@@ -40,7 +41,6 @@ public class DisableCommand extends ScriptedCommand {
 			if (toSite != null) {
 				URL toSiteURL = new File(toSite).toURL();
 				if (SiteManager.getSite(toSiteURL, null) == null) {
-					System.out.println("Cannot find site " + toSite);
 					throw new Exception("Cannot find site " + toSite);
 				}
 				targetSite =
@@ -60,8 +60,6 @@ public class DisableCommand extends ScriptedCommand {
 			IFeature[] features =
 				UpdateUtils.searchSite(featureId, targetSite, true);
 			if (features == null || features.length == 0) {
-				System.out.println(
-					"There are no configured features with id:" + featureId);
 				throw new Exception(
 					"There are no configured features with id:" + featureId);
 			}
@@ -79,11 +77,6 @@ public class DisableCommand extends ScriptedCommand {
 					}
 				}
 			if (feature == null) {
-				System.out.println(
-					"Cannot find configured feature "
-						+ featureId
-						+ " with version "
-						+ version);
 				throw new Exception(
 					"Cannot find configured feature "
 						+ featureId
@@ -92,10 +85,8 @@ public class DisableCommand extends ScriptedCommand {
 			}
 
 		} catch (MalformedURLException e) {
-			e.printStackTrace();
 			throw e;
 		} catch (CoreException e) {
-			e.printStackTrace();
 			throw e;
 		}
 	}
@@ -120,10 +111,12 @@ public class DisableCommand extends ScriptedCommand {
 		try {
 			return configOperation.execute(null, null);
 		} catch (CoreException e) {
-			System.out.println(e.getStatus().getMessage());
+			StandaloneUpdateApplication.exceptionLogged();
+			UpdateCore.log(e);
 			return false;
 		} catch (InvocationTargetException e) {
-			System.out.println(e.getTargetException());
+			StandaloneUpdateApplication.exceptionLogged();
+			UpdateCore.log(e);
 			return false;
 		}
 	}

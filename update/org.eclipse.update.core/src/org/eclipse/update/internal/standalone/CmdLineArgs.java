@@ -12,6 +12,8 @@ package org.eclipse.update.internal.standalone;
 import java.net.*;
 import java.util.*;
 
+import org.eclipse.update.core.*;
+import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.mirror.*;
 
 public class CmdLineArgs {
@@ -26,7 +28,11 @@ public class CmdLineArgs {
 					options.put("-command", args[i + 1]);
 					i++;
 				} else {
-					System.out.println("Invalid command:" + args[i + 1]);
+					StandaloneUpdateApplication.exceptionLogged();
+					UpdateCore.log(
+						Utilities.newCoreException(
+							"Invalid command:" + args[i + 1],
+							null));
 					return;
 				}
 			}
@@ -41,7 +47,6 @@ public class CmdLineArgs {
 				try {
 					URL url = new URL(to);
 					options.put("-to", url.getFile());
-					continue;
 				} catch (MalformedURLException mue) {
 				}
 			}
@@ -111,6 +116,8 @@ public class CmdLineArgs {
 					(String) options.get("-verifyOnly"));
 			return null;
 		} catch (Exception e) {
+			StandaloneUpdateApplication.exceptionLogged();
+			UpdateCore.log(e);
 			return null;
 		}
 	}
