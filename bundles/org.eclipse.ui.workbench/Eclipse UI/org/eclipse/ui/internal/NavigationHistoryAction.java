@@ -25,6 +25,7 @@ import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.viewers.ISelection;
 
 import org.eclipse.ui.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * The <code>NavigationHistoryAction</code> moves navigation history 
@@ -46,9 +47,11 @@ public class NavigationHistoryAction extends PageEventAction implements IWorkben
 		if(forward) {
 			setText(WorkbenchMessages.getString("NavigationHistoryAction.forward.text")); //$NON-NLS-1$
 			setToolTipText(WorkbenchMessages.getString("NavigationHistoryAction.forward.toolTip")); //$NON-NLS-1$
+			WorkbenchHelp.setHelp(this, IHelpContextIds.NAVIGATION_HISTORY_FORWARD);
 		} else {
 			setText(WorkbenchMessages.getString("NavigationHistoryAction.backward.text")); //$NON-NLS-1$
 			setToolTipText(WorkbenchMessages.getString("NavigationHistoryAction.backward.toolTip")); //$NON-NLS-1$
+			WorkbenchHelp.setHelp(this, IHelpContextIds.NAVIGATION_HISTORY_BACKWARD);
 		}
 		// WorkbenchHelp.setHelp(this, IHelpContextIds.CLOSE_ALL_PAGES_ACTION);
 		setEnabled(false);

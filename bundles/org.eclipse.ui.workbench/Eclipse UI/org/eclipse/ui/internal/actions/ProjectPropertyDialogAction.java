@@ -43,6 +43,7 @@ public ProjectPropertyDialogAction(IWorkbenchWindow window) {
 	this.window = window;
 	setText(WorkbenchMessages.getString("PropertyDialog.text")); //$NON-NLS-1$
 	setToolTipText(WorkbenchMessages.getString("PropertyDialog.toolTip")); //$NON-NLS-1$
+	WorkbenchHelp.setHelp(this, IHelpContextIds.PROJECT_PROPERTY_DIALOG_ACTION);
 	window.getSelectionService().addSelectionListener(this);
 }
 /**

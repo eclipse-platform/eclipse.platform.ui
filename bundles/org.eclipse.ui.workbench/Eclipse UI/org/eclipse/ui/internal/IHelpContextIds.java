@@ -41,6 +41,7 @@ public interface IHelpContextIds {
 	public static final String RENAME_RESOURCE_ACTION = PREFIX + "rename_resource_action_context"; //$NON-NLS-1$
 	public static final String DELETE_RESOURCE_ACTION = PREFIX + "delete_resource_action_context"; //$NON-NLS-1$
 	public static final String PROPERTY_DIALOG_ACTION = PREFIX + "property_dialog_action_context"; //$NON-NLS-1$
+	public static final String PROJECT_PROPERTY_DIALOG_ACTION = PREFIX + "project_property_dialog_action_context"; //$NON-NLS-1$
 	public static final String CREATE_FOLDER_ACTION = PREFIX + "create_folder_action_context"; //$NON-NLS-1$
 	public static final String CREATE_FILE_ACTION = PREFIX + "create_file_action_context"; //$NON-NLS-1$
 	public static final String NEW_ACTION = PREFIX + "new_action_context"; //$NON-NLS-1$
@@ -105,6 +106,8 @@ public interface IHelpContextIds {
 	public static final String CLEAR_WORKING_SET_ACTION = PREFIX + "clear_working_set_action_context"; //$NON-NLS-1$
 	public static final String EDIT_WORKING_SET_ACTION = PREFIX + "edit_working_set_action_context"; //$NON-NLS-1$
 	public static final String SHOW_IN_ACTION = PREFIX + "show_in_action_context"; //$NON-NLS-1$
+	public static final String NAVIGATION_HISTORY_FORWARD = PREFIX + "navigation_history_forward"; //$NON-NLS-1$
+	public static final String NAVIGATION_HISTORY_BACKWARD = PREFIX + "navigation_history_backward"; //$NON-NLS-1$
 		
 	// Dialogs
 	public static final String ABOUT_DIALOG = PREFIX + "about_dialog_context"; //$NON-NLS-1$
