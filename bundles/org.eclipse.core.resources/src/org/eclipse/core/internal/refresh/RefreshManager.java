@@ -83,7 +83,7 @@ public class RefreshManager implements IRefreshResult, IManager, Preferences.IPr
 	}
 	public void startup(IProgressMonitor monitor) {
 		Preferences preferences= ResourcesPlugin.getPlugin().getPluginPreferences();
-		preferences.setDefault(ResourcesPlugin.PREF_AUTO_REFRESH, false);
+		preferences.setDefault(ResourcesPlugin.PREF_AUTO_REFRESH, true);
 		preferences.setDefault(ResourcesPlugin.PREF_REFRESH_POLLING_DELAY, 30000);
 		preferences.addPropertyChangeListener(this);
 		long pollingDelay = preferences.getLong(ResourcesPlugin.PREF_REFRESH_POLLING_DELAY);

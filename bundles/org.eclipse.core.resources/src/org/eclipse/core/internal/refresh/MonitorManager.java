@@ -11,6 +11,7 @@ package org.eclipse.core.internal.refresh;
 
 import java.util.*;
 
+import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.refresh.IRefreshMonitor;
 import org.eclipse.core.resources.refresh.RefreshProvider;
@@ -114,7 +115,7 @@ class MonitorManager implements IResourceChangeListener, IResourceDeltaVisitor, 
 		boolean pollingMonitorNeeded = true;
 		RefreshProvider[] providers = getRefreshProviders();
 		for (int i = 0; i < providers.length; i++) {
-			IRefreshMonitor monitor = providers[i].installMonitor(resource, refreshManager);
+				IRefreshMonitor monitor = safeInstallMonitor(providers[i], resource);
 			if (monitor != null) {
 				registerMonitor(monitor, resource);
 				pollingMonitorNeeded = false;
@@ -125,6 +126,22 @@ class MonitorManager implements IResourceChangeListener, IResourceDeltaVisitor, 
 			registerMonitor(pollMonitor, resource);
 		}
 	}
+	private IRefreshMonitor safeInstallMonitor(RefreshProvider provider, IResource resource) {
+		Throwable t = null;
+		try {
+			return provider.installMonitor(resource, refreshManager);
+		} catch (Exception e) {
+			t = e;
+		} catch (LinkageError e) {
+			t = e;
+		}
+		if (t != null) {
+			IStatus error = new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, 1, Policy.bind("refresh.installError"), t); //$NON-NLS-1$
+			ResourcesPlugin.getPlugin().getLog().log(error);
+		}
+		return null;
+	}
+
 	/* (non-Javadoc)
 	 * @see IRefreshResult#monitorFailed
 	 */
