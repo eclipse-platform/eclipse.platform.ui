@@ -101,10 +101,11 @@
          </description>
       </engine>
       <engine
+            scopeFactory="org.eclipse.help.ui.internal.search.GoogleScopeFactory"
             label="Google"
             class="org.eclipse.help.ui.internal.search.Google"
-            pageClass="org.eclipse.help.ui.internal.search.GooglePage"
-            id="org.eclipse.help.ui.google">
+            id="org.eclipse.help.ui.google"
+            pageClass="org.eclipse.help.ui.internal.search.GooglePage">
          <description>
             Searches another  best system in the world on the Web (but not locally). We should have bought Google when it was $5 :-(.
          </description>
