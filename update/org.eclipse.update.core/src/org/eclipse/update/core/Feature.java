@@ -237,9 +237,9 @@ public class Feature extends FeatureModel implements IFeature {
 		IFeatureContentProvider provider = getFeatureContentProvider();
 
 		IVerifier parentVerifier=null;
-		if (getFeatureContentConsumer().getParent() != null) {
+		if (targetFeature.getFeatureContentConsumer().getParent() != null) {
 			IFeatureContentConsumer parentConsumer =
-				getFeatureContentConsumer().getParent();
+				targetFeature.getFeatureContentConsumer().getParent();
 			IFeature parentFeature = parentConsumer.getFeature();
 			parentVerifier = parentFeature.getFeatureContentProvider().getVerifier();
 		}
@@ -320,11 +320,11 @@ public class Feature extends FeatureModel implements IFeature {
 							vr = parentVerifier.verify(this, references[j], false, monitor);
 							if (vr.getVerificationCode() == IVerificationResult.TYPE_ENTRY_UNRECOGNIZED) {
 								if (verifier != null)
-									vr = verifier.verify(this, references[i], true, monitor);
+									vr = verifier.verify(this, references[j], true, monitor);
 							}
 						} else {
 							if (verifier != null)
-								vr = verifier.verify(this, references[i], true, monitor);
+								vr = verifier.verify(this, references[j], true, monitor);
 						}
 						if (vr != null) {
 							promptForVerification(vr, verificationListener);

@@ -5,6 +5,9 @@ package org.eclipse.update.internal.core;
  * All Rights Reserved.
  */
  
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.update.core.*;
@@ -17,7 +20,10 @@ public class FeatureExecutableContentConsumer extends FeatureContentConsumer {
 
 	private IFeature feature;
 	private boolean closed= false;
+	private boolean aborted= false;	
 	private ISiteContentConsumer contentConsumer;
+	private IFeatureContentConsumer parent = null;
+	private List /* of IFeatureContentCOnsumer */ children;
 
 	/*
 	 * @see IContentConsumer#open(INonPluginEntry)
@@ -40,7 +46,11 @@ public class FeatureExecutableContentConsumer extends FeatureContentConsumer {
 	 */
 	public IFeatureContentConsumer open(IFeatureReference featureReference)
 		throws CoreException{
-		return null;
+		FeatureExecutableContentConsumer childConsumer = new FeatureExecutableContentConsumer();
+		childConsumer.setParent(this);
+		if (children==null) children = new ArrayList();
+		children.add(childConsumer);
+		return childConsumer;
 	}
 
 
@@ -56,7 +66,17 @@ public class FeatureExecutableContentConsumer extends FeatureContentConsumer {
 	 * @see IFeatureContentConsumer#close()
 	 */
 	public IFeatureReference close() throws CoreException {
-		closed= true;
+		
+		if (!closed && getParent()!=null){
+			closed=true;
+			return null;
+		}
+		
+		IFeatureContentConsumer[] children = getChildren();
+		for (int i = 0; i < children.length; i++) {
+			children[i].close();
+		}
+				
 		if (contentConsumer != null)
 			return contentConsumer.close();
 		return null;
@@ -67,6 +87,13 @@ public class FeatureExecutableContentConsumer extends FeatureContentConsumer {
 	 */
 	public void setFeature(IFeature feature) {
 		this.feature= feature;
+	}
+
+	/*
+	 * Sets the parent 
+	 */
+	public void setParent(IFeatureContentConsumer featureContentConsumer) {
+		this.parent= featureContentConsumer;
 	}
 
 	/*
@@ -89,29 +116,48 @@ public class FeatureExecutableContentConsumer extends FeatureContentConsumer {
 	/*
 	 * @see IFeatureContentConsumer#abort()
 	 */
-	public void abort() {
-		//FIXME implement the abort
+	public void abort() throws CoreException {
+
+		if (aborted) return;
+		
+		IFeatureContentConsumer[] children = getChildren();
+		for (int i = 0; i < children.length; i++) {
+			try {
+			children[i].abort();
+			} catch (Exception e){
+				//do Nothing
+			}
+		}
+
+		//FIXME implement the cleanup
+		
+		aborted = true;
+		throw Utilities.newCoreException("",null);
+
 	}
 
 	/*
 	 * @see IFeatureContentConsumer#getFeature()
 	 */
 	public IFeature getFeature(){
-		return null;
+		return feature;
 	}
 
 	/*
 	 * @see IFeatureContentConsumer#getParent()
 	 */
 	public IFeatureContentConsumer getParent(){
-		return null;
+		return parent;
 	}
 
 	/*
 	 * @see IFeatureContentConsumer#getChildren()
 	 */
 	public IFeatureContentConsumer[] getChildren(){
-		return null;
+		if (children==null)
+			return new IFeatureContentConsumer[0];
+
+		return (IFeatureContentConsumer[]) children.toArray(arrayTypeFor(children));
 	}
 
 
