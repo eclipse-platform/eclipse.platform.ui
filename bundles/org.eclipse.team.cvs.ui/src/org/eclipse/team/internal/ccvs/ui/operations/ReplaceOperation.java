@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.client.Update;
@@ -64,7 +65,7 @@ public class ReplaceOperation extends UpdateOperation {
 	protected IStatus executeCommand(
 		Session session,
 		CVSTeamProvider provider,
-		IResource[] resources,
+		ICVSResource[] resources,
 		IProgressMonitor monitor)
 		throws CVSException, InterruptedException {
 			

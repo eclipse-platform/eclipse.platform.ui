@@ -180,6 +180,13 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	
 	/* package*/ void fetchContents(IProgressMonitor monitor) throws CVSException {
 		monitor.beginTask(Policy.bind("RemoteFile.getContents"), 100);//$NON-NLS-1$
+		if (getRevision().equals(ResourceSyncInfo.ADDED_REVISION)) {
+			// The revision of the remote file is not known so we need to use the tag to get the status of the file
+			CVSTag tag = getSyncInfo().getTag();
+			if (tag == null) tag = CVSTag.DEFAULT;
+			RemoteFolderMemberFetcher fetcher = new RemoteFolderMemberFetcher((RemoteFolder)getParent(), tag);
+			fetcher.updateFileRevisions(new ICVSFile[] { this }, Policy.subMonitorFor(monitor, 10));
+		}
 		Session session = new Session(getRepository(), parent, false /* create backups */);
 		session.open(Policy.subMonitorFor(monitor, 10), false /* read-only */);
 		try {
@@ -191,7 +198,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 					Update.IGNORE_LOCAL_CHANGES },
 				new ICVSResource[] { this },
 				null,
-				Policy.subMonitorFor(monitor, 90));
+				Policy.subMonitorFor(monitor, 80));
 			if (status.getCode() == CVSStatus.SERVER_ERROR) {
 				throw new CVSServerException(status);
 			}
@@ -412,13 +419,15 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	 * Return whether there are already contents cached for the given handle
 	 */
 	public boolean isContentsCached() {
+		if (getRevision().equals(ResourceSyncInfo.ADDED_REVISION)) return false;
 		return getRemoteContentsCache().hasContents(getCacheRelativePath());
 	}
 	
 	/*
 	 * @see ICVSFile#setReadOnly(boolean)
 	 */
-	public void setReadOnly(boolean readOnly) throws CVSException {
+	public void setReadOnly(boolean readOnly) {
+		// RemoteFiles are always read only
  	}
 
 	/*
@@ -438,20 +447,21 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	/*
 	 * @see ICVSFile#setTimeStamp(Date)
 	 */
-	public void setTimeStamp(Date date) throws CVSException {
+	public void setTimeStamp(Date date) {
+		// RemoteFiles are not muttable so do not support timestamp changes
 	}
 
 	/**
 	 * @see ICVSFile#moveTo(String)
 	 */
-	public void copyTo(String mFile) throws CVSException {		
+	public void copyTo(String mFile) {		
 		// Do nothing
 	}
 	
 	/*
 	 * @see IRemoteResource#members(IProgressMonitor)
 	 */
-	public IRemoteResource[] members(IProgressMonitor progress) throws TeamException {
+	public IRemoteResource[] members(IProgressMonitor progress) {
 		return new IRemoteResource[0];
 	}
 
@@ -505,14 +515,14 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	/**
 	 * @see org.eclipse.team.internal.ccvs.core.ICVSFile#checkout(int)
 	 */
-	public void edit(int notifications, IProgressMonitor monitor) throws CVSException {
+	public void edit(int notifications, IProgressMonitor monitor) {
 		// do nothing
 	}
 
 	/**
 	 * @see org.eclipse.team.internal.ccvs.core.ICVSFile#uncheckout()
 	 */
-	public void unedit(IProgressMonitor monitor) throws CVSException {
+	public void unedit(IProgressMonitor monitor) {
 		// do nothing
 	}
 
@@ -526,7 +536,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	/**
 	 * @see org.eclipse.team.internal.ccvs.core.ICVSFile#getPendingNotification()
 	 */
-	public NotifyInfo getPendingNotification() throws CVSException {
+	public NotifyInfo getPendingNotification() {
 		return null;
 	}
 
@@ -551,13 +561,13 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	/**
 	 * @see org.eclipse.team.internal.ccvs.core.ICVSFile#committed(org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo)
 	 */
-	public void checkedIn(String info) throws CVSException {
+	public void checkedIn(String info) {
 		// do nothing
 	}
 	/**
 	 * @see org.eclipse.team.internal.ccvs.core.ICVSFile#isEdited()
 	 */
-	public boolean isEdited() throws CVSException {
+	public boolean isEdited() {
 		return false;
 	}
 	/**
@@ -588,7 +598,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.sync.IRemoteResource#getContentIdentifier()
 	 */
-	public String getContentIdentifier() throws CVSException {
+	public String getContentIdentifier() {
 		return getRevision();
 	}
 

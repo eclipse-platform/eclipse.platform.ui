@@ -50,7 +50,7 @@ public class UpdateOperation extends SingleCommandOperation {
 	protected IStatus executeCommand(
 		Session session,
 		CVSTeamProvider provider,
-		IResource[] resources,
+		ICVSResource[] resources,
 		IProgressMonitor monitor)
 		throws CVSException, InterruptedException {
 			
@@ -65,13 +65,12 @@ public class UpdateOperation extends SingleCommandOperation {
 			// Build the arguments list
 			localOptions.addAll(Arrays.asList(getLocalOptions()));
 			LocalOption[] commandOptions = (LocalOption[])localOptions.toArray(new LocalOption[localOptions.size()]);
-			ICVSResource[] arguments = getCVSArguments(resources);
 
 			return Command.UPDATE.execute(
 				session,
 				Command.NO_GLOBAL_OPTIONS, 
 				commandOptions, 
-				arguments,
+				resources,
 				null,
 				monitor);
 	}

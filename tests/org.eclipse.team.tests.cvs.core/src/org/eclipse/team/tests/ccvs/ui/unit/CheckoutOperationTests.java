@@ -20,7 +20,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
@@ -29,9 +28,8 @@ import org.eclipse.team.internal.ccvs.ui.operations.CVSOperation;
 import org.eclipse.team.internal.ccvs.ui.operations.CheckoutMultipleProjectsOperation;
 import org.eclipse.team.internal.ccvs.ui.operations.CheckoutSingleProjectOperation;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
-import org.eclipse.team.tests.ccvs.core.EclipseTest;
 
-public class CheckoutOperationTests extends EclipseTest {
+public class CheckoutOperationTests extends CVSOperationTest { 
 
 	public CheckoutOperationTests() {
 	}
@@ -57,15 +55,11 @@ public class CheckoutOperationTests extends EclipseTest {
 		IProject movedProject = ResourcesPlugin.getWorkspace().getRoot().getProject("moved-project");
 		
 		// checkout the project to the default location		
-		try {
-			CVSOperation op = new CheckoutMultipleProjectsOperation(
-				null /* shell */, 
-				new ICVSRemoteFolder[] { (ICVSRemoteFolder)CVSWorkspaceRoot.getRemoteResourceFor(movedProject) },
-				null /*target location*/);
-			run(op);
-		} catch (InterruptedException e) {
-			fail("Operation should not have been interrupted");
-		}
+		CVSOperation op = new CheckoutMultipleProjectsOperation(
+			null /* shell */, 
+			new ICVSRemoteFolder[] { (ICVSRemoteFolder)CVSWorkspaceRoot.getRemoteResourceFor(movedProject) },
+			null /*target location*/);
+		run(op);
 		
 		assertEquals(project, movedProject);
 	}
@@ -74,15 +68,11 @@ public class CheckoutOperationTests extends EclipseTest {
 		IProject project = createProject("testNonRootCheckout", new String[] { "changed.txt", "deleted.txt", "folder1/", "folder1/a.txt" });
 		
 		// checkout the non-root folder as a project to the default location		
-		try {
-			CVSOperation op = new CheckoutMultipleProjectsOperation(
-				null /* shell */, 
-				new ICVSRemoteFolder[] { (ICVSRemoteFolder)CVSWorkspaceRoot.getRemoteResourceFor(project.getFolder("folder1")) },
-				null /*target location*/);
-			run(op);
-		} catch (InterruptedException e) {
-			fail("Operation should not have been interrupted");
-		}
+		CVSOperation op = new CheckoutMultipleProjectsOperation(
+			null /* shell */, 
+			new ICVSRemoteFolder[] { (ICVSRemoteFolder)CVSWorkspaceRoot.getRemoteResourceFor(project.getFolder("folder1")) },
+			null /*target location*/);
+		run(op);
 		
 		IProject newProject = ResourcesPlugin.getWorkspace().getRoot().getProject("folder1");
 		assertTrue(newProject.exists());
@@ -107,18 +97,14 @@ public class CheckoutOperationTests extends EclipseTest {
 
 
 		// checkout the project to the default location		
-		try {
-			CVSOperation op = new CheckoutMultipleProjectsOperation(
-				null /* shell */, 
-				new ICVSRemoteFolder[] { 
-					(ICVSRemoteFolder)CVSWorkspaceRoot.getRemoteResourceFor(movedProject1),
-					(ICVSRemoteFolder)CVSWorkspaceRoot.getRemoteResourceFor(movedProject2)
-				},
-				null /*target location*/);
-			run(op);
-		} catch (InterruptedException e) {
-			fail("Operation should not have been interrupted");
-		}
+		CVSOperation op = new CheckoutMultipleProjectsOperation(
+			null /* shell */, 
+			new ICVSRemoteFolder[] { 
+				(ICVSRemoteFolder)CVSWorkspaceRoot.getRemoteResourceFor(movedProject1),
+				(ICVSRemoteFolder)CVSWorkspaceRoot.getRemoteResourceFor(movedProject2)
+			},
+			null /*target location*/);
+		run(op);
 	}
 	
 	public void testCheckoutAs() throws TeamException, CoreException, IOException {
@@ -126,22 +112,15 @@ public class CheckoutOperationTests extends EclipseTest {
 		IProject copy = ResourcesPlugin.getWorkspace().getRoot().getProject(project.getName() + "-copy");
 		
 		// checkout the project to the default location		
-		try {
-			CVSOperation op = new CheckoutSingleProjectOperation(
-				null /* shell */, 
-				(ICVSRemoteFolder)CVSWorkspaceRoot.getRemoteResourceFor(project),
-				copy,
-				null /*target location*/,
-				false);
-			run(op);
-		} catch (InterruptedException e) {
-			fail("Operation should not have been interrupted");
-		}
+		CVSOperation op = new CheckoutSingleProjectOperation(
+			null /* shell */, 
+			(ICVSRemoteFolder)CVSWorkspaceRoot.getRemoteResourceFor(project),
+			copy,
+			null /*target location*/,
+			false);
+		run(op);
 		
 		assertEquals(project, copy);
 	}
 
-	private void run(CVSOperation op) throws CVSException, InterruptedException {
-		executeHeadless(op);
-	}
 }

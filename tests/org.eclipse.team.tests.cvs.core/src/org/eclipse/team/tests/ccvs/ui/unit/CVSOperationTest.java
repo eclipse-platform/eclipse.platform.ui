@@ -10,26 +10,21 @@
  *******************************************************************************/
 package org.eclipse.team.tests.ccvs.ui.unit;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.ui.operations.CVSOperation;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
 
-public class AllUIUnitTests extends EclipseTest {
-
-	public AllUIUnitTests() {
+public abstract class CVSOperationTest extends EclipseTest {
+	
+	protected CVSOperationTest() {
 		super();
 	}
 
-	public AllUIUnitTests(String name) {
+	protected CVSOperationTest(String name) {
 		super(name);
 	}
 
-	public static Test suite() {
-		TestSuite suite = new TestSuite();
-		suite.addTest(CheckoutOperationTests.suite());
-		suite.addTest(CompareOperationTests.suite());
-		return suite;
+	protected void run(CVSOperation op) throws CVSException {
+		executeHeadless(op);
 	}
-	
 }

@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.client.UpdateMergableOnly;
@@ -42,13 +43,13 @@ public class UpdateOnlyMergableOperation extends SingleCommandOperation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.SingleCommandOperation#executeCommand(org.eclipse.team.internal.ccvs.core.client.Session, org.eclipse.team.internal.ccvs.core.CVSTeamProvider, org.eclipse.core.resources.IResource[], org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected IStatus executeCommand(Session session, CVSTeamProvider provider, IResource[] resources, IProgressMonitor monitor) throws CVSException, InterruptedException {
+	protected IStatus executeCommand(Session session, CVSTeamProvider provider, ICVSResource[] resources, IProgressMonitor monitor) throws CVSException, InterruptedException {
 		UpdateMergableOnly update = new UpdateMergableOnly();
 		IStatus status = update.execute(
 			session,
 			Command.NO_GLOBAL_OPTIONS, 
 			getLocalOptions(), 
-			getCVSArguments(resources),
+			resources,
 			null, 
 			Policy.subMonitorFor(monitor, 90));
 		if (status.getCode() != IStatus.ERROR) {

@@ -540,4 +540,8 @@ public class Util {
 		}
 		return resource.getName();
 	}
+	
+	public static String getVariablePattern(String pattern, String variableName) {
+		return "(" + variableName + ":" + pattern + ":" + variableName + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+	}
 }

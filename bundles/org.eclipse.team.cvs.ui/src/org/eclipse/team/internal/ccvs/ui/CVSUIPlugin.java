@@ -623,7 +623,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		CVSProviderPlugin.getPlugin().setRepositoriesAreBinary(store.getBoolean(ICVSUIConstants.PREF_REPOSITORIES_ARE_BINARY));
 		CVSProviderPlugin.getPlugin().setDetermineVersionEnabled(store.getBoolean(ICVSUIConstants.PREF_DETERMINE_SERVER_VERSION));
 		CVSProviderPlugin.getPlugin().setConfirmMoveTagEnabled(store.getBoolean(ICVSUIConstants.PREF_CONFIRM_MOVE_TAG));
-		CVSProviderPlugin.getPlugin().setDebugProtocol(store.getBoolean(ICVSUIConstants.PREF_DEBUG_PROTOCOL));
+		CVSProviderPlugin.getPlugin().setDebugProtocol(CVSProviderPlugin.getPlugin().isDebugProtocol() || store.getBoolean(ICVSUIConstants.PREF_DEBUG_PROTOCOL));
 	}
 
 	/**

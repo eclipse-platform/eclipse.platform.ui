@@ -15,7 +15,6 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 
 /**
@@ -42,12 +41,20 @@ public abstract class RemoteCommand extends Command {
 		// do nothing
 	}
 
-	protected String[] convertArgumentsForOpenSession(ICVSRemoteResource[] arguments) throws CVSException {
-		// Convert arguments
-		List stringArguments = new ArrayList(arguments.length);
-		for (int i = 0; i < arguments.length; i++) {
-			stringArguments.add(arguments[i].getRepositoryRelativePath());
-		}
-		return (String[]) stringArguments.toArray(new String[stringArguments.size()]);
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.core.client.Command#convertArgumentsForOpenSession(org.eclipse.team.internal.ccvs.core.ICVSResource[], org.eclipse.team.internal.ccvs.core.client.Session)
+	 */
+	protected String[] convertArgumentsForOpenSession(
+		ICVSResource[] arguments,
+		Session openSession)
+		throws CVSException {
+		
+			// Convert arguments
+			List stringArguments = new ArrayList(arguments.length);
+			for (int i = 0; i < arguments.length; i++) {
+				stringArguments.add(arguments[i].getRepositoryRelativePath());
+			}
+			return (String[]) stringArguments.toArray(new String[stringArguments.size()]);
 	}
+
 }

@@ -16,6 +16,7 @@ import java.util.List;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
@@ -47,6 +48,18 @@ public class FileContentCachingService {
 		} finally {
 			monitor.done();
 		}
+	}
+	
+	/**
+	 * Fetch and cache the file contents for the specified files.
+	 * @param root the root folder for the files being fetched
+	 * @param filePaths the root relative file paths
+	 * @param monitor
+	 * @throws CVSException
+	 */
+	public static void fetchFileContents(RemoteFolderTree root, String[] filePaths, IProgressMonitor monitor) throws CVSException {
+		FileContentCachingService service = new FileContentCachingService((CVSRepositoryLocation)root.getRepository(), root, filePaths);
+		service.cacheFileContents(monitor);
 	}
 	
 	public static RemoteFile buildRemoteTree(CVSRepositoryLocation repository, ICVSFile file, CVSTag tag, IProgressMonitor monitor) throws CVSException {
@@ -86,6 +99,10 @@ public class FileContentCachingService {
 				files,
 				null,
 				Policy.subMonitorFor(monitor, files.length * 100));
+			if (!status.isOK()) {
+				// No big deal but log the problem anyway
+				CVSProviderPlugin.log (new CVSException(status));
+			}
 		} finally {
 			session.close();
 			monitor.done();

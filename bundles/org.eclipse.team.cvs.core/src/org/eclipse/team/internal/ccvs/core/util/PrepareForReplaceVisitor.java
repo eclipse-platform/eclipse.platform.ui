@@ -91,7 +91,7 @@ public class PrepareForReplaceVisitor implements ICVSResourceVisitor {
 		monitor.worked(1);
 	}
 	
-	public void visitResources(IProject project, final IResource[] resources, final String key, int depth, IProgressMonitor pm) throws CVSException {
+	public void visitResources(IProject project, final ICVSResource[] resources, final String key, int depth, IProgressMonitor pm) throws CVSException {
 		this.depth = depth;
 		CVSWorkspaceRoot.getCVSFolderFor(project).run(new ICVSRunnable() {
 			public void run(IProgressMonitor pm) throws CVSException {
@@ -99,10 +99,9 @@ public class PrepareForReplaceVisitor implements ICVSResourceVisitor {
 				monitor.beginTask(null, 512);
 				for (int i = 0; i < resources.length; i++) {
 					if (key != null) {
-						monitor.subTask(Policy.bind(key, resources[i].getFullPath().toString())); //$NON-NLS-1$
+						monitor.subTask(Policy.bind(key, resources[i].getIResource().getFullPath().toString())); //$NON-NLS-1$
 					}
-					IResource resource = resources[i];
-					CVSWorkspaceRoot.getCVSResourceFor(resource).accept(PrepareForReplaceVisitor.this);
+					resources[i].accept(PrepareForReplaceVisitor.this);
 				}
 				monitor.done();
 			}

@@ -737,6 +737,10 @@ public class CVSProviderPlugin extends Plugin {
 		Policy.DEBUG_CVS_PROTOCOL = value;		
 	}
 	
+	public boolean isDebugProtocol() {
+		return Policy.DEBUG_CVS_PROTOCOL;
+	}
+
 	/*
 	 * Create the crash indicator file. This method returns true if the file
 	 * already existed, indicating that a crash occurred on the last invokation of

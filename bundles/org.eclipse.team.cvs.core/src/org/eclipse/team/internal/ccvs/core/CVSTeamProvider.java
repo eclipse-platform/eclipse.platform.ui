@@ -649,7 +649,11 @@ public class CVSTeamProvider extends RepositoryProvider {
 		Session session = new Session(workspaceRoot.getRemoteLocation(), workspaceRoot.getLocalRoot(), true /* output to console */);
 		session.open(Policy.subMonitorFor(progress,10), false /* read-only */);
 		try {
-			new PrepareForReplaceVisitor().visitResources(getProject(), resources, "CVSTeamProvider.scrubbingResource", depth, Policy.subMonitorFor(progress, 20)); //$NON-NLS-1$
+				ICVSResource[] cvsResources = new ICVSResource[resources.length];
+				for (int i = 0; i < cvsResources.length; i++) {
+					cvsResources[i] = CVSWorkspaceRoot.getCVSResourceFor(resources[i]);
+				}
+			new PrepareForReplaceVisitor().visitResources(getProject(), cvsResources, "CVSTeamProvider.scrubbingResource", depth, Policy.subMonitorFor(progress, 20)); //$NON-NLS-1$
 			
 			List options = new ArrayList();
 			options.add(Update.IGNORE_LOCAL_CHANGES);

@@ -18,10 +18,16 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSTag;
+import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
+import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
+import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.CVSCompareEditorInput;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.ResourceEditionNode;
+import org.eclipse.team.internal.ccvs.ui.operations.RemoteCompareOperation;
 
 /**
  * This action is used for comparing two arbitrary remote resources. This is
@@ -37,13 +43,42 @@ public class CompareRemoteResourcesAction extends CVSAction {
 					MessageDialog.openError(getShell(), Policy.bind("CompareRemoteResourcesAction.unableToCompare"), Policy.bind("CompareRemoteResourcesAction.selectTwoResources")); //$NON-NLS-1$ //$NON-NLS-2$
 					return;
 				}
-				ResourceEditionNode left = new ResourceEditionNode(editions[0]);
-				ResourceEditionNode right = new ResourceEditionNode(editions[1]);
-				CompareUI.openCompareEditorOnPage(
-				  new CVSCompareEditorInput(left, right),
-				  getTargetPage());
+				if (isSameFolder(editions)) {
+					// Run the compare operation in the background
+					try {
+						new RemoteCompareOperation(null, editions[0], getTag(editions[1]))
+							.run();
+					} catch (CVSException e) {
+						throw new InvocationTargetException(e);
+					} catch (InterruptedException e) {
+						// Ignored
+					}
+				} else {
+					ResourceEditionNode left = new ResourceEditionNode(editions[0]);
+					ResourceEditionNode right = new ResourceEditionNode(editions[1]);
+					CompareUI.openCompareEditorOnPage(
+					  new CVSCompareEditorInput(left, right),
+					  getTargetPage());
+				}
 			}
 		}, false /* cancelable */, PROGRESS_BUSYCURSOR);
+	}
+	
+	protected CVSTag getTag(ICVSRemoteResource resource) throws CVSException {
+		CVSTag tag = null;
+		if (resource.isContainer()) {
+			tag = ((ICVSRemoteFolder)resource).getTag();
+		} else {
+			ResourceSyncInfo info = ((ICVSRemoteFile)resource).getSyncInfo();
+			if (info != null) tag = info.getTag();
+		}
+		if (tag == null) tag = CVSTag.DEFAULT;
+		return tag;
+	}
+
+	protected boolean isSameFolder(ICVSRemoteResource[] editions) {
+		return editions[0].getRepository().equals(editions[1].getRepository())
+				&& editions[0].getRepositoryRelativePath().equals(editions[1].getRepositoryRelativePath());
 	}
 	
 	/*
@@ -52,7 +87,9 @@ public class CompareRemoteResourcesAction extends CVSAction {
 	protected boolean isEnabled() throws TeamException {
 		ICVSRemoteResource[] resources = getSelectedRemoteResources();
 		if (resources.length != 2) return false;
-		return resources[0].isContainer() == resources[1].isContainer();
+		if (resources[0].isContainer() != resources[1].isContainer()) return false;
+		// Don't allow comparisons of two unrelated remote projects
+		return !resources[0].isContainer() || isSameFolder(resources);
 	}
 
 }

@@ -348,6 +348,13 @@ public class EclipseTest extends EclipseWorkspaceTest {
 	}
 	
 	/*
+	 * Create a test project using the currently running test case as the project name prefix
+	 */
+	protected IProject createProject(String[] strings) throws TeamException, CoreException {
+		return createProject(getName(), strings);
+	}
+	
+	/*
 	 * Compare two projects by comparing thier providers
 	 */
 	protected void assertEquals(IProject project1, IProject project2) throws CoreException, TeamException, IOException {

@@ -15,8 +15,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
@@ -24,7 +24,7 @@ import org.eclipse.team.internal.ccvs.ui.Policy;
 
 public abstract class SingleCommandOperation extends RepositoryProviderOperation {
 	
-	LocalOption[] options = Command.NO_LOCAL_OPTIONS;
+	private LocalOption[] options = Command.NO_LOCAL_OPTIONS;
 	
 	public SingleCommandOperation(Shell shell, IResource[] resources, LocalOption[] options) {
 		super(shell, resources);
@@ -41,10 +41,8 @@ public abstract class SingleCommandOperation extends RepositoryProviderOperation
 		Session session = new Session(getRemoteLocation(provider), getLocalRoot(provider), true /* output to console */);
 		session.open(Policy.subMonitorFor(monitor, 10), isServerModificationOperation());
 		try {
-			IStatus status = executeCommand(session, provider, resources, Policy.subMonitorFor(monitor, 90));
-			if (status.getCode() == CVSStatus.SERVER_ERROR) {
-				addError(status);
-			}
+			IStatus status = executeCommand(session, provider, getCVSArguments(resources), Policy.subMonitorFor(monitor, 90));
+			collectStatus(status);
 		} finally {
 			session.close();
 		}
@@ -62,7 +60,7 @@ public abstract class SingleCommandOperation extends RepositoryProviderOperation
 	/**
 	 * Method overridden by subclasses to issue the command to the CVS repository using the given session.
 	 */
-	protected abstract IStatus executeCommand(Session session, CVSTeamProvider provider, IResource[] resources, IProgressMonitor monitor) throws CVSException, InterruptedException;
+	protected abstract IStatus executeCommand(Session session, CVSTeamProvider provider, ICVSResource[] resources, IProgressMonitor monitor) throws CVSException, InterruptedException;
 
 	protected LocalOption[] getLocalOptions() {
 		return options;
@@ -72,4 +70,10 @@ public abstract class SingleCommandOperation extends RepositoryProviderOperation
 		this.options = options;
 	}
 
+	protected void addLocalOption(LocalOption option) {
+		LocalOption[] newOptions = new LocalOption[options.length + 1];
+		System.arraycopy(options, 0, newOptions, 0, options.length);
+		newOptions[options.length] = option;
+		options = newOptions;
+	}
 }
