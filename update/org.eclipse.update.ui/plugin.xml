@@ -124,12 +124,6 @@
             id="org.eclipse.update.internal.ui.preferences.MainPreferencePage">
       </page>
       <page
-            name="%appServerPreference.name"
-            category="org.eclipse.update.internal.ui.preferences.MainPreferencePage"
-            class="org.eclipse.update.internal.ui.preferences.AppServerPreferencePage"
-            id="org.eclipse.update.internal.ui.preferences.AppServerPreferencePage">
-      </page>
-      <page
             name="%updateSettingsPreference.name"
             category="org.eclipse.update.internal.ui.preferences.MainPreferencePage"
             class="org.eclipse.update.internal.ui.preferences.UpdateSettingsPreferencePage"
