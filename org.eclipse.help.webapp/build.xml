@@ -90,8 +90,11 @@
 	<target name="gather.sources" depends="init" if="destination">
 		<mkdir dir="${destination}/${full.name}"/>
 		<copy file="${build.result.folder}/WEB-INF/lib/webappsrc.zip" todir="${destination}/${full.name}"/>
+		<copy todir="${destination}/${full.name}">
+			<fileset dir="${basedir}" includes="about.html"/>
+		</copy>
 	</target>
-	
+
 	
 	<target name="gather.logs" depends="init" if="destination">
 		<mkdir dir="${destination}/${full.name}"/>
