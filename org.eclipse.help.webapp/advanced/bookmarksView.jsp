@@ -137,8 +137,8 @@ if(data.getBookmarks().length == 0) {
 
 </table>
 <div id="menu">
-	<div class="unselectedMenuItem" onmouseover="this.className='selectedMenuItem'" onmouseout="this.className='unselectedMenuItem'" onclick="removeBookmark()" ><%=ServletResources.getString("RemoveBookmark",request)%></div>
-	<div class="unselectedMenuItem" onmouseover="this.className='selectedMenuItem'" onmouseout="this.className='unselectedMenuItem'" onclick="removeAllBookmarks()" ><%=ServletResources.getString("RemoveAllBookmarks",request)%></div>
+	<div class="unselectedMenuItem" onmouseover="this.className='selectedMenuItem'" onmouseout="this.className='unselectedMenuItem'" onclick="removeBookmark()" ><nobr><%=ServletResources.getString("RemoveBookmark",request)%></nobr></div>
+	<div class="unselectedMenuItem" onmouseover="this.className='selectedMenuItem'" onmouseout="this.className='unselectedMenuItem'" onclick="removeAllBookmarks()" ><nobr><%=ServletResources.getString("RemoveAllBookmarks",request)%></nobr></div>
 </div>
 
 <%
