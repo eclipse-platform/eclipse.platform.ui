@@ -7,7 +7,7 @@
    <context  id="embeddedHelpView" >
       <description><b>Navigate</b> to the desired topic in the <b>left</b> part of Help view.  <b>Topics</b> will be displayed on the <b>right</b>.</description>
       <topic href="contexts/embeddedHelpView1.html"  label="embeddedHelpView Related Topic 1"/>
-      <topic href="contexts/embeddedHelpView2.html"  label="embeddedHelpView Related Topic 1"/>
+      <topic href="contexts/embeddedHelpView2.html"  label="embeddedHelpView Related Topic 2"/>
    </context>
    <context  id="browser" >
       <description>This displays <b>content of the document</b> that you select to view.</description>
