@@ -109,7 +109,7 @@ public class DocumentProviderRegistry {
 	private void initialize() {
 		
 		IExtensionPoint extensionPoint;
-		extensionPoint= Platform.getPluginRegistry().getExtensionPoint(EditorsPlugin.getPluginId(), "documentProviders"); //$NON-NLS-1$
+		extensionPoint= Platform.getPluginRegistry().getExtensionPoint(EditorsPlugin.PLUGIN_ID, "documentProviders"); //$NON-NLS-1$
 		
 		if (extensionPoint == null) {
 			String msg= MessageFormat.format(TextEditorMessages.getString("DocumentProviderRegistry.error.extension_point_not_found"), new Object[] { PlatformUI.PLUGIN_ID }); //$NON-NLS-1$

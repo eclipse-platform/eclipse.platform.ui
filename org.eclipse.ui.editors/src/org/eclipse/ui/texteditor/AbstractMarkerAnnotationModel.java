@@ -285,7 +285,7 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel {
 		fInstantiatedMarkerUpdaters= new ArrayList(2);
 		
 		// populate list
-		IExtensionPoint extensionPoint= Platform.getPluginRegistry().getExtensionPoint(EditorsPlugin.getPluginId(), "markerUpdaters"); //$NON-NLS-1$
+		IExtensionPoint extensionPoint= Platform.getPluginRegistry().getExtensionPoint(EditorsPlugin.PLUGIN_ID, "markerUpdaters"); //$NON-NLS-1$
 		if (extensionPoint != null) {
 			IConfigurationElement[] elements= extensionPoint.getConfigurationElements();
 			for (int i= 0; i < elements.length; i++)

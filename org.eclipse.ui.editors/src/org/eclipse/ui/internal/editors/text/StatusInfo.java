@@ -150,7 +150,7 @@ class StatusInfo implements IStatus {
 	 * @see IStatus#getPlugin()
 	 */
 	public String getPlugin() {
-		return EditorsPlugin.getPluginId();
+		return EditorsPlugin.PLUGIN_ID;
 	}
 
 	/**

@@ -51,6 +51,8 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel;
 import org.eclipse.ui.texteditor.ResourceMarkerAnnotationModel;
 
+import org.eclipse.ui.internal.editors.text.EditorsPlugin;
+
 
 
 /**
@@ -65,7 +67,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	 * 
 	 * @since 2.1
 	 */
-	private static final QualifiedName ENCODING_KEY = new QualifiedName("org.eclipse.ui.editors", "encoding"); //$NON-NLS-1$ //$NON-NLS-2$
+	private static final QualifiedName ENCODING_KEY = new QualifiedName(EditorsPlugin.PLUGIN_ID, "encoding"); //$NON-NLS-1$
 	/** 
 	 * The runnable context for that provider.
 	 * @since 3.0
