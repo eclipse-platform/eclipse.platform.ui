@@ -248,7 +248,7 @@
                label="%Synchronize.label"
                tooltip="%Synchronize.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.SyncAction"
-               menubarPath="team.main/group1
+               menubarPath="team.main/group1"
                helpContextId="org.eclipse.team.cvs.ui.team_synchronize_action_context"
                id="org.eclipse.team.ccvs.ui.sync">
          </action>
