@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.views.properties;
 
+import org.eclipse.ui.internal.views.properties.IDEPropertiesMessages;
+
 /**
  * This interface documents the property constants used by the resource
  * property source.

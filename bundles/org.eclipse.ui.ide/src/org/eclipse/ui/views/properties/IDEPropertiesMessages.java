@@ -1,44 +1,54 @@
-/**********************************************************************
- * Copyright (c) 2005 IBM Corporation and others. All rights reserved.   This
- * program and the accompanying materials are made available under the terms of
- * the Eclipse Public License v1.0 which accompanies this distribution, and is
- * available at http://www.eclipse.org/legal/epl-v10.html
- * 
- * Contributors: 
- * IBM - Initial API and implementation
- **********************************************************************/
+/*******************************************************************************
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+
 package org.eclipse.ui.views.properties;
 
-import org.eclipse.osgi.util.NLS;
+import java.util.ResourceBundle;
 
-public class IDEPropertiesMessages extends NLS {
-	private static final String BUNDLE_NAME = "org.eclipse.ui.views.properties.ideMessages";//$NON-NLS-1$
+/**
+ * Utility class which helps manage messages.
+ * @deprecated These messages are not API and should not be referenced
+ * outside of this plug-in.
+ */
+class IDEPropertiesMessages {
+    private static final String RESOURCE_BUNDLE = "org.eclipse.ui.views.properties.ideMessages";//$NON-NLS-1$
 
-	// ==============================================================================
-	// Properties View - IDE-specific strings
-	// ==============================================================================
+    private static ResourceBundle bundle = ResourceBundle
+            .getBundle(RESOURCE_BUNDLE);
 
-	public static String PropertySource_notLocal;
-	public static String PropertySource_notFound;
-	public static String PropertySource_readOnly;
-	public static String PropertySource_undefinedPathVariable;
-	public static String PropertySource_fileNotExist;
+    private IDEPropertiesMessages() {
+        // prevent instantiation of class
+    }
 
-	public static String IResourcePropertyConstants_name;
-	public static String IResourcePropertyConstants_path;
-	public static String IResourcePropertyConstants_editable;
-	public static String IResourcePropertyConstants_derived;
-	public static String IResourcePropertyConstants_size;
-	public static String IResourcePropertyConstants_lastModified;
-	public static String IResourcePropertyConstants_info;
-	public static String IResourcePropertyConstants_location;
-	public static String IResourcePropertyConstants_resolvedLocation;
-	public static String IResourcePropertyConstants_linked;
-	public static String ResourceProperty_false;
-	public static String ResourceProperty_true;
+    /**
+     * Returns the formatted message for the given key in
+     * the resource bundle. 
+     *
+     * @param key the resource name
+     * @param args the message arguments
+     * @return the string
+     */
+    public static String format(String key, Object[] args) {
+        return key;
+    }
 
-	static {
-		// load message values from bundle file
-		NLS.initializeMessages(BUNDLE_NAME, IDEPropertiesMessages.class);
-	}
+    /**
+     * Returns the resource object with the given key in
+     * the resource bundle. If there isn't any value under
+     * the given key, the key is returned.
+     *
+     * @param key the resource name
+     * @return the string
+     */
+    public static String getString(String key) {
+        return key;
+    }
 }

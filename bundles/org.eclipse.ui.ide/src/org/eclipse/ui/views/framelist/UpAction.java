@@ -13,6 +13,7 @@ package org.eclipse.ui.views.framelist;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.views.framelist.FrameListMessages;
 
 /**
  * Generic "Up" action which goes to the parent frame for the current frame.
