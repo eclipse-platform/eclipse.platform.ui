@@ -206,10 +206,15 @@ public class LaunchConfigurationVariableForm {
 	private void populateVariableList() {
 		String[] items = new String[variables.length];
 		StringBuffer buffer = new StringBuffer(80);
+		ILaunchVariable variable;
 		for (int i = 0; i < variables.length; i++) {
-			LaunchVariableUtil.buildVariableTag(variables[i].getName(), null, buffer);
-			buffer.append(" - "); //$NON-NLS-1$
-			buffer.append(variables[i].getDescription());
+			variable= variables[i];
+			LaunchVariableUtil.buildVariableTag(variable.getName(), null, buffer);
+			String description= variable.getDescription();
+			if (description != null && description.length() != 0) {
+				buffer.append(" - "); //$NON-NLS-1$
+				buffer.append(description);
+			}
 			items[i] = buffer.toString();
 			buffer.setLength(0);
 		}
