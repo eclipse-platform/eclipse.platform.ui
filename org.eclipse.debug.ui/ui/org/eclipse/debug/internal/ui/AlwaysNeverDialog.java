@@ -40,10 +40,7 @@ public class AlwaysNeverDialog extends MessageDialog {
 	 * This key must be a boolean preference in the preference store.
 	 */
 	private String fPreferenceKey = null;
-	/**
-	 * The message displayed to the user, with the toggle button
-	 */
-	private String fToggleMessage = null;
+	
 	/**
 	 * The preference store which will be affected by the toggle button
 	 */
