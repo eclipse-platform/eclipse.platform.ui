@@ -16,7 +16,7 @@ import java.util.*;
  * <p>
  * An image registry owns all of the image objects registered
  * with it, and automatically disposes of them when the SWT Display
- * that creates the fonts is disposed. Because of this, clients do not 
+ * that creates the images is disposed. Because of this, clients do not 
  * need to (indeed, must not attempt to) dispose of these images themselves.
  * </p>
  * <p>
