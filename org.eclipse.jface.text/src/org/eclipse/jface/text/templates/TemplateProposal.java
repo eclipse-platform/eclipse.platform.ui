@@ -112,15 +112,8 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 				return;
 			}
 			
-			int start, end;
-			if (fContext instanceof DocumentTemplateContext) {
-				DocumentTemplateContext docContext = (DocumentTemplateContext)fContext;
-				start= docContext.getStart();
-				end= docContext.getEnd();
-			} else {
-				start= fRegion.getOffset();
-				end= start + fRegion.getLength();
-			}
+			int start= getReplaceOffset();
+			int end= getReplaceEndOffset();
 			
 			// insert template string
 			IDocument document= viewer.getDocument();
@@ -224,6 +217,42 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 		return buffer.getString().length();
 	}
 	
+	/**
+	 * Returns the offset of the range in the document that will be replaced by
+	 * applying this template.
+	 * 
+	 * @return the offset of the range in the document that will be replaced by
+	 *         applying this template
+	 */
+	private int getReplaceOffset() {
+		int start;
+		if (fContext instanceof DocumentTemplateContext) {
+			DocumentTemplateContext docContext = (DocumentTemplateContext)fContext;
+			start= docContext.getStart();
+		} else {
+			start= fRegion.getOffset();
+		}
+		return start;
+	}
+
+	/**
+	 * Returns the end offset of the range in the document that will be replaced
+	 * by applying this template.
+	 * 
+	 * @return the end offset of the range in the document that will be replaced
+	 *         by applying this template
+	 */
+	private int getReplaceEndOffset() {
+		int end;
+		if (fContext instanceof DocumentTemplateContext) {
+			DocumentTemplateContext docContext = (DocumentTemplateContext)fContext;
+			end= docContext.getEnd();
+		} else {
+			end= fRegion.getOffset() + fRegion.getLength();
+		}
+		return end;
+	}
+
 	/*
 	 * @see ICompletionProposal#getSelection(IDocument)
 	 */
@@ -311,6 +340,13 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension2#validate(org.eclipse.jface.text.IDocument, int, org.eclipse.jface.text.DocumentEvent)
 	 */
 	public boolean validate(IDocument document, int offset, DocumentEvent event) {
+		try {
+			int replaceOffset= getReplaceOffset();
+			String content= document.get(replaceOffset, getReplaceEndOffset() - replaceOffset);
+			return fTemplate.getName().startsWith(content);
+		} catch (BadLocationException e) {
+			// concurrent modification - ignore
+		}
 		return false;
 	}
 
