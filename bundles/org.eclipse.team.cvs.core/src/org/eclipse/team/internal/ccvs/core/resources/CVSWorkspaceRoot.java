@@ -461,7 +461,9 @@ public class CVSWorkspaceRoot {
 					// We do not want to delete the project to avoid a project deletion delta
 					// We do not want to delete the .project to avoid core exceptions
 					monitor.subTask(Policy.bind("CVSProvider.Scrubbing_local_project_1")); //$NON-NLS-1$
-					EclipseSynchronizer.getInstance().prepareForDeletion(project);
+					// unmap the project from any previous repository provider
+					if (RepositoryProvider.getProvider(project) != null)
+						RepositoryProvider.unmap(project);
 					IResource[] children = project.members(IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
 					IProgressMonitor subMonitor = Policy.subMonitorFor(monitor, 80);
 					subMonitor.beginTask(null, children.length * 100);
@@ -474,7 +476,6 @@ public class CVSWorkspaceRoot {
 					} finally {
 						subMonitor.done();
 					}
-					CVSWorkspaceRoot.getCVSFolderFor(project).unmanage(Policy.subMonitorFor(monitor, 10));
 				} else if (project != null) {
 					// Make sure there is no directory in the local file system.
 					File location = new File(project.getParent().getLocation().toFile(), project.getName());
@@ -484,6 +485,8 @@ public class CVSWorkspaceRoot {
 				}
 			}
 		} catch (CoreException e) {
+			throw CVSException.wrapException(e);
+		} catch (TeamException e) {
 			throw CVSException.wrapException(e);
 		} finally {
 			monitor.done();
