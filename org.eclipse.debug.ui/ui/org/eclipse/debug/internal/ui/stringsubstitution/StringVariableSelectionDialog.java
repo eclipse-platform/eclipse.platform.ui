@@ -19,7 +19,6 @@ import org.eclipse.debug.internal.ui.SWTUtil;
 import org.eclipse.debug.internal.ui.preferences.StringVariablePreferencePage;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.preference.PreferenceManager;
@@ -263,21 +262,12 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 		super.okPressed();
 	}
 
-	protected IDialogSettings getDialogSettings() {
-		IDialogSettings settings = DebugUIPlugin.getDefault().getDialogSettings();
-		IDialogSettings section = settings.getSection(getDialogSettingsSectionName());
-		if (section == null) {
-			section = settings.addNewSection(getDialogSettingsSectionName());
-		} 
-		return section;
-	}
-	
 	/**
 	 * Returns the name of the section that this dialog stores its settings in
 	 * 
 	 * @return String
 	 */
-	protected String getDialogSettingsSectionName() {
+	private String getDialogSettingsSectionName() {
 		return IDebugUIConstants.PLUGIN_ID + ".STRING_VARIABLE_SELECTION_DIALOG_SECTION"; //$NON-NLS-1$
 	}
 
