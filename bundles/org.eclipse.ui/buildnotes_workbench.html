@@ -11,6 +11,113 @@
 <h1>
 Eclipse Platform Build Notes<br>
 Workbench</h1>
+Eclipse Integration Build 20011204
+<h2>
+What's new in this drop</h2>
+
+<h3>
+Added adaptable tag for contributions to IResource</h3>
+An adaptable tag has been added to property page and object contribution.
+By setting this value to true on the xml definition for a property page
+or object contribution with an objectClass of IResource, your contribution
+will appear on other objects that adapt to IResource.
+<p>By default this tag is false. Those who have removed duplicate plug-in
+definitions of objectContributions should add the adaptable tag to any
+object contributions that use IResource .
+<p>Here is an example of a properties page definition using the Team property
+page for VCM.
+<p>&lt;extension point="org.eclipse.ui.propertyPages">
+<br>&nbsp; &lt;page name="%Managing"
+<br>&nbsp;&nbsp;&nbsp; id="org.eclipse.vcm.propertypages.resource"
+<br>&nbsp;&nbsp;&nbsp; objectClass="org.eclipse.core.resources.IResource"
+<br>&nbsp;&nbsp;&nbsp; class="org.eclipse.vcm.internal.ui.VCMPropertyPage"
+<br>&nbsp;&nbsp;&nbsp; adaptable="true">
+<br>&nbsp; &lt;/page>
+<br>&lt;/extension>
+<h3>
+Prototype decorators extension point</h3>
+A org.eclipse.ui.decorators extension point has been added for the registration
+of decorators for use by views that choose to subscribe to a new Decorator
+Manager service rather than define thier own ILabelDecorators. The service
+uses ILabelDecorators defined for a particular type in the plugin.xml.
+To use this service with a DecoratingLabelProvider use the result of IViewSite.getDecoratorManager()
+as your decorator when creating it. This is currently used by the ResourceNavigator.
+<p>The full documentation for this extension is in the file org_eclipse_ui_decorators.html
+in the doc directory of org.eclipse.ui.
+<h3>
+Prototype improvement to action set enablement</h3>
+In version 1 of Eclipse the enablement and visibility of window, view,
+editor and popup menu action extensions was defined using a limited set
+of elements in xml.&nbsp; The existing tags cannot adequately describe
+the conditions when an action should be enabled or visible.&nbsp; To resolve
+these issues, the following approach has been prototyped:
+<p>- if a plug-in is loaded, we will instantiate every action in the plug-in.
+<br>- new features have been added to the XML to define action enablement
+and visibility.&nbsp; These features can be used to test system properties,
+plugin installation, and object state.&nbsp; In addition, they can be combined
+using AND, OR, and NOT tags.&nbsp; These features extend the existing markup,
+and do not replace it.
+<p>A number of people rallied for eager plugin loading.&nbsp; This is infeasable.&nbsp;
+Within the workbench action enablement should be quick to calculate.&nbsp;
+If it is too expensive to calculate the enablement, the action should be
+optimistically enabled, and a dialog should appear if the action is invoked
+and cannot perform the required operation.&nbsp; See the CVS actions as
+an example.&nbsp; This heuristic for expensive actions can also be applied
+to action extension enablement.&nbsp; If we load a plugin to enable an
+action, it may induce a tremendous delay, especially when there may be
+hundreds of plugins in Eclipse.&nbsp; To avoid this delay, we must define
+the action enablement criteria using XML.&nbsp; If it is not possible to
+define the enablement criteria accurately using xml, the action should
+be enabled optimistically.
+<p>The latest drop contains the following changes:
+<p>- the AbstractUIPlugin class has changed.&nbsp; When the startup method
+is called, the plugin automatically instantiates all of the action delegates
+contributed by the plugin.&nbsp; This is done by calling AbstractUIPlugin.refreshPluginActions().&nbsp;
+To benefit from this change, subclasses of AbstractUIPlugin should which
+override startup() should call super.startup(), or invoke refreshPluginActions()
+directly.
+<br>- a new enablement element has been added to action markup.&nbsp; This
+can be used to define the enablement criteria for any action, and is a
+sub element of the action element.
+<br>- a new visibility element has been added to popup menu extension action
+markup.&nbsp; This can be used to define the visibility criteria for the
+action, and is a sub element of the object contribution element.
+<p>For more information on the visibility and enablement criteria, see
+expressions.html in the doc directory.
+<h3>
+API changes</h3>
+
+<h3>
+API additions</h3>
+
+<ul>
+<li>
+Added IViewSite.getDecoratorManager()</li>
+
+<li>
+Added adaptable tag to extension points org.eclipse.ui.propertyPages and
+org.eclipse.ui.objectContribution</li>
+
+<li>
+Added AbstractUIPlugin.refreshPluginActions()</li>
+</ul>
+
+<h3>
+Other highlights</h3>
+
+<h2>
+Known deficiencies</h2>
+
+<h2>
+Problem reports fixed</h2>
+<a href="http://dev.eclipse.org/bugs/buglist.cgi?bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&chfield=bug_status&chfieldfrom=2001%2F11%2F27&chfieldto=2001%2F12%2F04&product=Platform&component=UI&cmdtype=doit&&order=Bug+Number">Click
+here</a> to see PRs which have been marked as RESOLVED, VERIFIED or CLOSED
+between 2001/11/27 and 2001/12/04.
+<p>
+<hr SIZE=0 WIDTH="100%">
+<h1>
+Eclipse Platform Build Notes<br>
+Workbench</h1>
 Eclipse Integration Build 20011127
 <h2>
 What's new in this drop</h2>
