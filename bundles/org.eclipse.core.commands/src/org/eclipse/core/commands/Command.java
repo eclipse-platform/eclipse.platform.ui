@@ -372,8 +372,11 @@ public final class Command extends NamedHandleObject implements Comparable {
 		}
 
 		// Figure out if the attributes are changing.
-		Map previousAttributeValuesByName = this.handler
-				.getAttributeValuesByName();
+		Map previousAttributeValuesByName = null;
+		if (this.handler != null) {
+			previousAttributeValuesByName = this.handler
+					.getAttributeValuesByName();
+		}
 		final boolean attributesValuesChanged = !Util.equals(
 				previousAttributeValuesByName, handler
 						.getAttributeValuesByName());
