@@ -305,7 +305,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 * @see IPageListener#pageActivated(IWorkbenchPage)
 	 */
 	public void pageActivated(IWorkbenchPage page) {
-		if (page.equals(getSite().getPage())) {
+		if (getSite().getPage().equals(page)) {
 			setActive(true);
 			updateActions();
 			showMarkerForCurrentSelection();

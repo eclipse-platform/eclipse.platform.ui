@@ -161,7 +161,7 @@ public abstract class AbstractListenerActionDelegate extends AbstractDebugAction
 	 * @see IPageListener#pageActivated(IWorkbenchPage)
 	 */
 	public void pageActivated(final IWorkbenchPage page) {	
-		if (page.equals(getPage())) {
+		if (getPage() != null && getPage().equals(page)) {
 			Runnable r= new Runnable() {
 				public void run() {
 					if (!getPage().getWorkbenchWindow().getShell().isDisposed()) {
