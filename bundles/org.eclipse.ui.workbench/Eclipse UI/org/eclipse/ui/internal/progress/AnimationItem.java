@@ -30,12 +30,11 @@ import org.eclipse.ui.progress.UIJob;
 
 public class AnimationItem {
 
-	private IWorkbenchWindow window;
+	IWorkbenchWindow window;
 	private static final String PROGRESS_FOLDER = "icons/full/progress/"; //$NON-NLS-1$
 	private static final String RUNNING_ICON = "running.gif"; //$NON-NLS-1$
 	private static final String BACKGROUND_ICON = "back.gif"; //$NON-NLS-1$
-	private static final String PROGRESS_VIEW_NAME = "org.eclipse.ui.views.ProgressView"; //$NON-NLS-1$
-
+	
 	private ImageData[] animatedData;
 	private ImageData[] disabledData;
 	private Image animatedImage;
@@ -76,31 +75,8 @@ public class AnimationItem {
 			listener = getJobListener();
 			Platform.getJobManager().addJobChangeListener(listener);
 		} catch (MalformedURLException exception) {
-			logException(exception);
+			ProgressUtil.logException(exception);
 		}
-	}
-
-	/**
-	 * Log the exception for debugging.
-	 * @param exception
-	 */
-	private void logException(Throwable exception) {
-		Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog().log(
-			exceptionStatus(exception));
-	}
-
-	/**
-	 * Return a status for the exception.
-	 * @param exception
-	 * @return
-	 */
-	Status exceptionStatus(Throwable exception) {
-		return new Status(
-			IStatus.ERROR,
-			PlatformUI.PLUGIN_ID,
-			IStatus.ERROR,
-			exception.getMessage(),
-			exception);
 	}
 
 	/**
@@ -125,10 +101,10 @@ public class AnimationItem {
 			stream.close();
 			return result;
 		} catch (FileNotFoundException exception) {
-			logException(exception);
+			ProgressUtil.logException(exception);
 			return null;
 		} catch (IOException exception) {
-			logException(exception);
+			ProgressUtil.logException(exception);
 			return null;
 		}
 	}
@@ -162,7 +138,7 @@ public class AnimationItem {
 			 * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
 			 */
 			public void mouseDoubleClick(MouseEvent arg0) {
-				openProgressView();
+				ProgressUtil.openProgressView(window);
 			}
 			/* (non-Javadoc)
 			 * @see org.eclipse.swt.events.MouseListener#mouseDown(org.eclipse.swt.events.MouseEvent)
@@ -492,16 +468,6 @@ public class AnimationItem {
 		};
 	}
 
-	/**
-	 * Open a progress view in the current page.
-	 */
-	void openProgressView() {
-		try {
-			window.getActivePage().showView(PROGRESS_VIEW_NAME);
-		} catch (PartInitException exception) {
-			logException(exception);
-		}
-	}
 
 	private Job getAnimateJob() {
 		if (animateJob == null) {
@@ -514,7 +480,7 @@ public class AnimationItem {
 						animateLoop(monitor);
 						return Status.OK_STATUS;
 					} catch (SWTException exception) {
-						return exceptionStatus(exception);
+						return ProgressUtil.exceptionStatus(exception);
 					}
 				}
 			};

@@ -14,6 +14,10 @@ import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.progress.UIJob;
+import org.eclipse.ui.internal.progress.ProgressMessages;
 
 /**
  * JobProgressManager provides the progress monitor to the 
@@ -27,6 +31,7 @@ public class JobProgressManager
 	private static JobProgressManager singleton;
 	private Map jobs = Collections.synchronizedMap(new HashMap());
 	boolean debug = false;
+	static final String PROGRESS_VIEW_NAME = "org.eclipse.ui.views.ProgressView"; //$NON-NLS-1$
 
 	/**
 	 * Get the progress manager currently in use.
@@ -204,6 +209,25 @@ public class JobProgressManager
 		JobInfo info = getJobInfo(event.getJob());
 		if (event.getResult().getSeverity() == IStatus.ERROR) {
 			info.setError(event.getResult());
+			UIJob job = new UIJob(ProgressMessages.getString("JobProgressManager.OpenProgressJob")) { //$NON-NLS-1$
+				/* (non-Javadoc)
+				 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+				 */
+				public IStatus runInUIThread(IProgressMonitor monitor) {
+					IWorkbenchWindow window =
+						WorkbenchPlugin
+							.getDefault()
+							.getWorkbench()
+							.getActiveWorkbenchWindow();
+
+					if (window == null)
+						return Status.CANCEL_STATUS;
+					ProgressUtil.openProgressView(window);
+					return Status.OK_STATUS;
+				}
+			};
+			job.schedule();
+
 		} else
 			jobs.remove(event.getJob());
 		//Only refresh if we are showing it
@@ -305,11 +329,7 @@ public class JobProgressManager
 		if (job == null)
 			return true;
 		//Never display the update job
-		if (job
-			.getName()
-			.equals(
-				ProgressMessages.getString(
-					"ProgressContentProvider.UpdateProgressJob"))) //$NON-NLS-1$
+		if (job.getName().equals(ProgressMessages.getString("ProgressContentProvider.UpdateProgressJob"))) //$NON-NLS-1$
 			return true;
 		return false;
 	}
