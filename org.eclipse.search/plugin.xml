@@ -78,6 +78,7 @@
 			label="%openSearchDialogAction.label"
 			tooltip="%openSearchDialogAction.tooltip"
 			icon="icons/full/ctool16/search.gif"
+			accelerator="Ctrl+H"
 			class="org.eclipse.search.internal.ui.OpenSearchDialogAction"/>
 
      </actionSet>
