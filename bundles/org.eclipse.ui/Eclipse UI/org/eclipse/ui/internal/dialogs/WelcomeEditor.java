@@ -44,7 +44,10 @@ public class WelcomeEditor extends EditorPart {
 	private final String TAG_INTRO = "intro";//$NON-NLS-1$
 	private final String TAG_ITEM = "item";//$NON-NLS-1$
 	private final String TAG_CONTENTS = "contents";//$NON-NLS-1$
-
+	
+	private final static int HORZ_SCROLL_INCREMENT = 20;
+	private final static int VERT_SCROLL_INCREMENT = 20;
+	
 	private Composite editorComposite;
 
 	private Cursor handCursor;
@@ -115,10 +118,12 @@ private Composite createInfoArea(Composite parent) {
 	Color bg = display.getSystemColor(SWT.COLOR_WHITE);
 	infoArea.setBackground(bg);
 
+	StyledText sampleStyledText = null;
 	// Create the intro item
 	WelcomeItem item = getIntroItem();
 	if (item != null) {
 		StyledText styledText = new StyledText(infoArea, SWT.MULTI | SWT.READ_ONLY);
+		sampleStyledText = styledText;
 		styledText.setCursor(null);
 		styledText.getCaret().setVisible(false);
 		styledText.setBackground(bg);
@@ -152,6 +157,7 @@ private Composite createInfoArea(Composite parent) {
 		image.setLayoutData(gd);
 
 		StyledText styledText = new StyledText(infoArea, SWT.MULTI | SWT.READ_ONLY);
+		sampleStyledText = styledText;
 		styledText.setCursor(null);
 		styledText.getCaret().setVisible(false);
 		styledText.setBackground(bg);
@@ -180,6 +186,30 @@ private Composite createInfoArea(Composite parent) {
 	sc.setMinWidth(p.x);
 	sc.setExpandHorizontal(true);
 	sc.setExpandVertical(true);
+
+	// Adjust the scrollbar increments
+	if (sampleStyledText == null) {
+		sc.getHorizontalBar().setIncrement(HORZ_SCROLL_INCREMENT);
+		sc.getVerticalBar().setIncrement(VERT_SCROLL_INCREMENT);
+	} else {
+		GC gc = new GC(sampleStyledText);
+		int width = gc.getFontMetrics().getAverageCharWidth();
+		gc.dispose();
+		sc.getHorizontalBar().setIncrement(width);
+		sc.getVerticalBar().setIncrement(sampleStyledText.getLineHeight());
+	}
+	sc.addControlListener(new ControlAdapter() {
+		public void controlResized(ControlEvent e) {
+			ScrolledComposite localSC = (ScrolledComposite)e.widget;
+			ScrollBar horizontal = localSC.getHorizontalBar();
+			ScrollBar vertical = localSC.getVerticalBar();
+			Rectangle clientArea = localSC.getClientArea(); 
+
+			horizontal.setPageIncrement(clientArea.width - horizontal.getIncrement());
+			vertical.setPageIncrement(clientArea.height - vertical.getIncrement());
+		}
+	});
+
 	return infoArea;
 }
 /**
