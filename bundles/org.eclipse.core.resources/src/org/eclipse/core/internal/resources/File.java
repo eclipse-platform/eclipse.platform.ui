@@ -225,9 +225,9 @@ public class File extends Resource implements IFile {
 			else if (bom == IContentDescription.BOM_UTF_16BE || bom == IContentDescription.BOM_UTF_16LE)
 				// UTF-16 will properly recognize the BOM
 				return "UTF-16"; //$NON-NLS-1$
-			else
+			else {
 				// unknown BOM... ignore it				
-				;
+			}
 		return description.getProperty(IContentDescription.CHARSET) == null ? getParent().getDefaultCharset() : (String) description.getProperty(IContentDescription.CHARSET);
 	}
 

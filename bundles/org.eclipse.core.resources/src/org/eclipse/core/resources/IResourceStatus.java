@@ -252,12 +252,30 @@ public interface IResourceStatus extends IStatus {
 	 * @since 2.1
 	 */
 	public static final int WORKSPACE_LOCKED = 380;
-
+	
 	/** Status code constant (value 381) indicating that a problem occurred while
 	 * retrieving the content description for a resource.
-	 * Severity: error. Category: workspace. 
+	 * Severity: error. Category: workspace.
+	 * @see IFile#getContentDescription
+	 * @since 3.0 
 	 */
-	public static final int FAILED_DESCRIBING_CONTENTS = 381;
+	public static final int FAILED_DESCRIBING_CONTENTS = 381;	
+
+	/** Status code constant (value 382) indicating that a problem occurred while
+	 * setting the charset for a resource.
+	 * Severity: error. Category: workspace.
+	 * @see IContainer#setDefaultCharset
+	 * @see IFile#setCharset
+	 * @since 3.0 
+	 */
+	public static final int FAILED_SETTING_CHARSET = 382;
+	
+	/** Status code constant (value 383) indicating that a problem occurred while
+	 * getting the charset for a resource.
+	 * Severity: error. Category: workspace.
+	 * @since 3.0 
+	 */
+	public static final int FAILED_GETTING_CHARSET = 383;	
 
 	// Internal constants [500-598]
 	// Information Only [500-532]

@@ -12,20 +12,27 @@ package org.eclipse.core.tests.resources;
 
 import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.Map;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.internal.resources.*;
+import org.eclipse.core.internal.preferences.EclipsePreferences;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 
 public class CharsetTest extends EclipseWorkspaceTest {
+	private static final String SAMPLE_XML_DEFAULT_ENCODING = "<?xml version=\"1.0\"?><org.eclipse.core.resources.tests.root/>";
 	private static final String SAMPLE_XML_US_ASCII_ENCODING = "<?xml version=\"1.0\" encoding=\"US-ASCII\"?><org.eclipse.core.resources.tests.root/>";
 	private static final String SAMPLE_XML_UTF_8_ENCODING = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><org.eclipse.core.resources.tests.root/>";
-	private static final String SAMPLE_XML_DEFAULT_ENCODING = "<?xml version=\"1.0\"?><org.eclipse.core.resources.tests.root/>";
+
+	public static Test suite() {
+		//		TestSuite suite = new TestSuite();
+		//		suite.addTest(new CharsetTest("testFileCreation"));
+		//		suite.addTest(new CharsetTest("testPrefsFileCreation"));
+		//		return suite;
+		//return new CharsetTest("testPrefsFileCreation");
+		return new TestSuite(CharsetTest.class);
+	}
 
 	public CharsetTest() {
 		super();
@@ -33,6 +40,149 @@ public class CharsetTest extends EclipseWorkspaceTest {
 
 	public CharsetTest(String name) {
 		super(name);
+	}
+
+	/**
+	 * Asserts that the given resources have the given [default] charset.
+	 */
+	private void assertCharsetIs(String tag, String encoding, IResource[] resources, boolean checkImplicit) throws CoreException {
+		for (int i = 0; i < resources.length; i++) {
+			String resourceCharset = resources[i] instanceof IFile ? ((IFile) resources[i]).getCharset(checkImplicit) : ((IContainer) resources[i]).getDefaultCharset(checkImplicit);
+			assertEquals(tag + " " + resources[i].getFullPath(), encoding, resourceCharset);
+		}
+	}
+
+	private IFile getProjectEncodingSettings(IProject project) {
+		IPath projectScopeLocation = new ProjectScope(project).getLocation();
+		return project.getWorkspace().getRoot().getFileForLocation(projectScopeLocation.append(ResourcesPlugin.PI_RESOURCES + '.' + EclipsePreferences.PREFS_FILE_EXTENSION));
+	}
+
+	public void testChangesDifferentProject() throws CoreException {
+		IWorkspace workspace = getWorkspace();
+		IProject project1 = workspace.getRoot().getProject("Project1");
+		IProject project2 = workspace.getRoot().getProject("Project2");
+		try {
+			IFolder folder = project1.getFolder("folder1");
+			IFile file1 = project1.getFile("file1.txt");
+			IFile file2 = folder.getFile("file2.txt");
+			ensureExistsInWorkspace(new IResource[] {file1, file2, project2}, true);
+			project1.setDefaultCharset("FOO");
+			project2.setDefaultCharset("ZOO");
+			folder.setDefaultCharset("BAR");
+			// move a folder to another project and ensure its encoding is
+			// preserved
+			folder.move(project2.getFullPath().append("folder"), false, false, null);
+			folder = project2.getFolder("folder");
+			assertEquals("1.0", "BAR", folder.getDefaultCharset());
+			assertEquals("1.1", "BAR", folder.getFile("file2.txt").getCharset());
+			// move a file with no charset set and check if it inherits
+			// properly from the new parent
+			assertEquals("2.0", project1.getDefaultCharset(), file1.getCharset());
+			file1.move(project2.getFullPath().append("file1.txt"), false, false, null);
+			file1 = project2.getFile("file1.txt");
+			assertEquals("2.1", project2.getDefaultCharset(), file1.getCharset());
+		} finally {
+			ensureDoesNotExistInWorkspace(project1);
+			ensureDoesNotExistInWorkspace(project2);
+		}
+	}
+
+	public void testChangesSameProject() throws CoreException {
+		IWorkspace workspace = getWorkspace();
+		IProject project = workspace.getRoot().getProject("MyProject");
+		try {
+			IFolder folder = project.getFolder("folder1");
+			IFile file1 = project.getFile("file1.txt");
+			IFile file2 = folder.getFile("file2.txt");
+			ensureExistsInWorkspace(new IResource[] {file1, file2}, true);
+			project.setDefaultCharset("FOO");
+			file1.setCharset("FRED");
+			folder.setDefaultCharset("BAR");
+			// move a folder inside the project and ensure its encoding is
+			// preserved
+			folder.move(project.getFullPath().append("folder2"), false, false, null);
+			folder = project.getFolder("folder2");
+			assertEquals("1.0", "BAR", folder.getDefaultCharset());
+			assertEquals("1.1", "BAR", folder.getFile("file2.txt").getCharset());
+			// move a file inside the project and ensure its encoding is
+			// update accordingly
+			file2 = folder.getFile("file2.txt");
+			file2.move(project.getFullPath().append("file2.txt"), false, false, null);
+			file2 = project.getFile("file2.txt");
+			assertEquals("2.0", project.getDefaultCharset(), file2.getCharset());
+			// delete a file and recreate it and ensure the encoding is not
+			// remembered
+			file1.delete(false, false, null);
+			ensureExistsInWorkspace(new IResource[] {file1}, true);
+			assertEquals("3.0", project.getDefaultCharset(), file1.getCharset());
+		} finally {
+			ensureDoesNotExistInWorkspace(project);
+		}
+	}
+
+	public void testClosingAndReopeningProject() throws CoreException {
+		IWorkspace workspace = getWorkspace();
+		IProject project = workspace.getRoot().getProject("MyProject");
+		try {
+			// create a project and set some explicit encodings
+			IFolder folder = project.getFolder("folder");
+			IFile file1 = project.getFile("file1.txt");
+			IFile file2 = folder.getFile("file2.txt");
+			ensureExistsInWorkspace(new IResource[] {file1, file2}, true);
+			project.setDefaultCharset("FOO");
+			file1.setCharset("FRED");
+			folder.setDefaultCharset("BAR");
+			project.close(null);
+			// now reopen the project and ensure the settings were not
+			// forgotten
+			IProject projectB = workspace.getRoot().getProject(project.getName());
+			projectB.open(null);
+			assertExistsInWorkspace("0.9", getProjectEncodingSettings(projectB));
+			assertEquals("1.0", "FOO", projectB.getDefaultCharset());
+			assertEquals("3.0", "FRED", projectB.getFile("file1.txt").getCharset());
+			assertEquals("2.0", "BAR", projectB.getFolder("folder").getDefaultCharset());
+			assertEquals("2.1", "BAR", projectB.getFolder("folder").getFile("file2.txt").getCharset());
+		} finally {
+			ensureDoesNotExistInWorkspace(project);
+		}
+	}
+
+	/**
+	 * Tests Content Manager-based charset setting.  
+	 */
+	public void testContentBasedCharset() throws CoreException, UnsupportedEncodingException {
+		IWorkspace workspace = getWorkspace();
+		IProject project = workspace.getRoot().getProject("MyProject");
+		try {
+			ensureExistsInWorkspace(project, true);
+			project.setDefaultCharset("FOO");
+			IFile file = project.getFile("file.xml");
+			assertEquals("0.9", "FOO", project.getDefaultCharset());
+			// content-based encoding is BAR			
+			ensureExistsInWorkspace(file, new ByteArrayInputStream(SAMPLE_XML_US_ASCII_ENCODING.getBytes("UTF-8")));
+			assertEquals("1.0", "US-ASCII", file.getCharset());
+			// content-based encoding is FRED			
+			file.setContents(new ByteArrayInputStream(SAMPLE_XML_UTF_8_ENCODING.getBytes("UTF-8")), false, false, null);
+			assertEquals("2.0", "ISO-8859-1", file.getCharset());
+			// content-based encoding is UTF-8 (default for XML)
+			file.setContents(new ByteArrayInputStream(SAMPLE_XML_DEFAULT_ENCODING.getBytes("UTF-8")), false, false, null);
+			assertEquals("3.0", "UTF-8", file.getCharset());
+			// tests with BOM -BOMs are strings for convenience, encoded itno bytes using ISO-8859-1 (which handles 128-255 bytes better) 
+			// tests with UTF-8 BOM
+			String UTF8_BOM = new String(IContentDescription.BOM_UTF_8, "ISO-8859-1");
+			file.setContents(new ByteArrayInputStream((UTF8_BOM + SAMPLE_XML_DEFAULT_ENCODING).getBytes("ISO-8859-1")), false, false, null);
+			assertEquals("4.0", "UTF-8", file.getCharset());
+			// tests with UTF-16 Little Endian BOM			
+			String UTF16_LE_BOM = new String(IContentDescription.BOM_UTF_16LE, "ISO-8859-1");
+			file.setContents(new ByteArrayInputStream((UTF16_LE_BOM + SAMPLE_XML_DEFAULT_ENCODING).getBytes("ISO-8859-1")), false, false, null);
+			assertEquals("5.0", "UTF-16", file.getCharset());
+			// tests with UTF-16 Big Endian BOM			
+			String UTF16_BE_BOM = new String(IContentDescription.BOM_UTF_16BE, "ISO-8859-1");
+			file.setContents(new ByteArrayInputStream((UTF16_BE_BOM + SAMPLE_XML_DEFAULT_ENCODING).getBytes("ISO-8859-1")), false, false, null);
+			assertEquals("6.0", "UTF-16", file.getCharset());
+		} finally {
+			ensureDoesNotExistInWorkspace(project);
+		}
 	}
 
 	public void testDefaults() throws CoreException {
@@ -104,151 +254,19 @@ public class CharsetTest extends EclipseWorkspaceTest {
 			IFile file1 = project.getFile("file1.txt");
 			IFile file2 = folder.getFile("file2.txt");
 			ensureExistsInWorkspace(new IResource[] {file1, file2}, true);
-			assertDoesNotExistInWorkspace("1.0", project.getFile(CharsetManager.ENCODING_FILE));
+			assertDoesNotExistInWorkspace("1.0", getProjectEncodingSettings(project));
 			project.setDefaultCharset("FOO");
-			assertExistsInWorkspace("2.0", project.getFile(CharsetManager.ENCODING_FILE));
+			assertExistsInWorkspace("2.0", getProjectEncodingSettings(project));
 			project.setDefaultCharset(null);
-			assertDoesNotExistInWorkspace("3.0", project.getFile(CharsetManager.ENCODING_FILE));
+			assertDoesNotExistInWorkspace("3.0", getProjectEncodingSettings(project));
 			file1.setCharset("FRED");
-			assertExistsInWorkspace("4.0", project.getFile(CharsetManager.ENCODING_FILE));
+			assertExistsInWorkspace("4.0", getProjectEncodingSettings(project));
 			folder.setDefaultCharset("BAR");
-			assertExistsInWorkspace("5.0", project.getFile(CharsetManager.ENCODING_FILE));
+			assertExistsInWorkspace("5.0", getProjectEncodingSettings(project));
 			file1.setCharset(null);
-			assertExistsInWorkspace("6.0", project.getFile(CharsetManager.ENCODING_FILE));
+			assertExistsInWorkspace("6.0", getProjectEncodingSettings(project));
 			folder.setDefaultCharset(null);
-			assertDoesNotExistInWorkspace("7.0", project.getFile(CharsetManager.ENCODING_FILE));
-		} finally {
-			ensureDoesNotExistInWorkspace(project);
-		}
-	}
-
-	public void testClosingAndReopeningProject() throws CoreException {
-		IWorkspace workspace = getWorkspace();
-		IProject project = workspace.getRoot().getProject("MyProject");
-		try {
-			// create a project and set some explicit encodings
-			IFolder folder = project.getFolder("folder");
-			IFile file1 = project.getFile("file1.txt");
-			IFile file2 = folder.getFile("file2.txt");
-			ensureExistsInWorkspace(new IResource[] {file1, file2}, true);
-			project.setDefaultCharset("FOO");
-			file1.setCharset("FRED");
-			folder.setDefaultCharset("BAR");
-			project.close(null);
-			// now reopen the project and ensure the settings were not
-			// forgotten
-			IProject projectB = workspace.getRoot().getProject(project.getName());
-			projectB.open(null);
-			assertExistsInWorkspace("0.9", projectB.getFile(CharsetManager.ENCODING_FILE));
-			assertEquals("1.0", "FOO", projectB.getDefaultCharset());
-			assertEquals("3.0", "FRED", projectB.getFile("file1.txt").getCharset());
-			assertEquals("2.0", "BAR", projectB.getFolder("folder").getDefaultCharset());
-			assertEquals("2.1", "BAR", projectB.getFolder("folder").getFile("file2.txt").getCharset());
-		} finally {
-			ensureDoesNotExistInWorkspace(project);
-		}
-	}
-
-	public void testChangesSameProject() throws CoreException {
-		IWorkspace workspace = getWorkspace();
-		IProject project = workspace.getRoot().getProject("MyProject");
-		try {
-			IFolder folder = project.getFolder("folder1");
-			IFile file1 = project.getFile("file1.txt");
-			IFile file2 = folder.getFile("file2.txt");
-			ensureExistsInWorkspace(new IResource[] {file1, file2}, true);
-			project.setDefaultCharset("FOO");
-			file1.setCharset("FRED");
-			folder.setDefaultCharset("BAR");
-			// move a folder inside the project and ensure its encoding is
-			// preserved
-			folder.move(project.getFullPath().append("folder2"), false, false, null);
-			folder = project.getFolder("folder2");
-			assertEquals("1.0", "BAR", folder.getDefaultCharset());
-			assertEquals("1.1", "BAR", folder.getFile("file2.txt").getCharset());
-			// move a file inside the project and ensure its encoding is
-			// update accordingly
-			file2 = folder.getFile("file2.txt");
-			file2.move(project.getFullPath().append("file2.txt"), false, false, null);
-			file2 = project.getFile("file2.txt");
-			assertEquals("2.0", project.getDefaultCharset(), file2.getCharset());
-			// delete a file and recreate it and ensure the encoding is not
-			// remembered
-			file1.delete(false, false, null);
-			ensureExistsInWorkspace(new IResource[] {file1}, true);
-			assertEquals("3.0", project.getDefaultCharset(), file1.getCharset());
-		} finally {
-			ensureDoesNotExistInWorkspace(project);
-		}
-	}
-
-	public void testChangesDifferentProject() throws CoreException {
-		IWorkspace workspace = getWorkspace();
-		IProject project1 = workspace.getRoot().getProject("Project1");
-		IProject project2 = workspace.getRoot().getProject("Project2");
-		try {
-			IFolder folder = project1.getFolder("folder1");
-			IFile file1 = project1.getFile("file1.txt");
-			IFile file2 = folder.getFile("file2.txt");
-			ensureExistsInWorkspace(new IResource[] {file1, file2, project2}, true);
-			project1.setDefaultCharset("FOO");
-			project2.setDefaultCharset("ZOO");
-			folder.setDefaultCharset("BAR");
-			// move a folder to another project and ensure its encoding is
-			// preserved
-			folder.move(project2.getFullPath().append("folder"), false, false, null);
-			folder = project2.getFolder("folder");
-			assertEquals("1.0", "BAR", folder.getDefaultCharset());
-			assertEquals("1.1", "BAR", folder.getFile("file2.txt").getCharset());
-			// move a file with no charset set and check if it inherits
-			// properly from the new parent
-			assertEquals("2.0", project1.getDefaultCharset(), file1.getCharset());
-			file1.move(project2.getFullPath().append("file1.txt"), false, false, null);
-			file1 = project2.getFile("file1.txt");
-			assertEquals("2.1", project2.getDefaultCharset(), file1.getCharset());
-		} finally {
-			ensureDoesNotExistInWorkspace(project1);
-			ensureDoesNotExistInWorkspace(project2);
-		}
-	}
-
-	/**
-	 * Ensures we are not discarding the cached info when we receive our own
-	 * changes.
-	 */
-	public void testAvoidOwnChanges() throws CoreException {
-		IWorkspace workspace = getWorkspace();
-		IProject project = workspace.getRoot().getProject("MyProject");
-		try {
-			IFile file = project.getFile("file.txt");
-			ensureExistsInWorkspace(file, true);
-			file.setCharset("FOO");
-			Map charsets = ((ProjectInfo) ((Project) project).getResourceInfo(false, false)).getCharsets();
-			assertNotNull("1.0", charsets);
-			assertTrue("1.1", !charsets.isEmpty());
-			assertTrue("1.2", charsets.containsKey(file.getFullPath().removeFirstSegments(1)));
-			assertEquals("1.3", "FOO", charsets.get(file.getFullPath().removeFirstSegments(1)));
-		} finally {
-			ensureDoesNotExistInWorkspace(project);
-		}
-	}
-
-	/**
-	 * Ensure external changes to the encoding file are properly acknowledged. 
-	 */
-	public void testExternalChanges() throws CoreException {
-		IWorkspace workspace = getWorkspace();
-		IProject project = workspace.getRoot().getProject("MyProject");
-		try {
-			IFile file = project.getFile("file.txt");
-			ensureExistsInWorkspace(file, true);
-			// cause an external change to the encoding file
-			this.ensureExistsInWorkspace(project.getFile(CharsetManager.ENCODING_FILE), file.getFullPath().removeFirstSegments(1) + ":" + "ZOO");
-			// we should have invalidated the cached info
-			assertNull("1.0", ((ProjectInfo) ((Project) project).getResourceInfo(false, false)).getCharsets());
-			// asking for the resource's charset should see the new encoding
-			// set externally
-			assertEquals("2.0", "ZOO", file.getCharset());
+			assertDoesNotExistInWorkspace("7.0", getProjectEncodingSettings(project));
 		} finally {
 			ensureDoesNotExistInWorkspace(project);
 		}
@@ -268,58 +286,26 @@ public class CharsetTest extends EclipseWorkspaceTest {
 			ensureExistsInWorkspace(new IResource[] {file1, file2}, true);
 			project1.setDefaultCharset("FOO");
 			folder.setDefaultCharset("BAR");
+
+			assertEquals("1.0", "BAR", folder.getDefaultCharset());
+			assertEquals("1.1", "BAR", file2.getCharset());
+			assertEquals("1.2", "FOO", file1.getCharset());
+			assertEquals("1.3", "FOO", project1.getDefaultCharset());
+
 			// move project and ensures charsets settings are preserved
 			project1.move(new Path("Project2"), false, null);
 			project2 = workspace.getRoot().getProject("Project2");
 			folder = project2.getFolder("folder1");
 			file1 = project2.getFile("file1.txt");
 			file2 = folder.getFile("file2.txt");
-			assertEquals("1.0", "BAR", folder.getDefaultCharset());
-			assertEquals("1.1", "BAR", file2.getCharset());
-			assertEquals("1.2", "FOO", file1.getCharset());
-			assertEquals("1.3", "FOO", project2.getDefaultCharset());
+			assertEquals("2.0", "BAR", folder.getDefaultCharset());
+			assertEquals("2.1", "BAR", file2.getCharset());
+			assertEquals("2.2", "FOO", project2.getDefaultCharset());
+			assertEquals("2.3", "FOO", file1.getCharset());
 		} finally {
 			ensureDoesNotExistInWorkspace(project1);
 			if (project2 != null)
 				ensureDoesNotExistInWorkspace(project2);
-		}
-	}
-
-	/**
-	 * Tests Content Manager-based charset setting.  
-	 */
-	public void testContentBasedCharset() throws CoreException, UnsupportedEncodingException {
-		IWorkspace workspace = getWorkspace();
-		IProject project = workspace.getRoot().getProject("MyProject");
-		try {
-			ensureExistsInWorkspace(project, true);
-			project.setDefaultCharset("FOO");
-			IFile file = project.getFile("file.xml");
-			assertEquals("0.9", "FOO", project.getDefaultCharset());
-			// content-based encoding is BAR			
-			ensureExistsInWorkspace(file, new ByteArrayInputStream(SAMPLE_XML_US_ASCII_ENCODING.getBytes("UTF-8")));
-			assertEquals("1.0", "US-ASCII", file.getCharset());
-			// content-based encoding is FRED			
-			file.setContents(new ByteArrayInputStream(SAMPLE_XML_UTF_8_ENCODING.getBytes("UTF-8")), false, false, null);
-			assertEquals("2.0", "ISO-8859-1", file.getCharset());
-			// content-based encoding is UTF-8 (default for XML)
-			file.setContents(new ByteArrayInputStream(SAMPLE_XML_DEFAULT_ENCODING.getBytes("UTF-8")), false, false, null);
-			assertEquals("3.0", "UTF-8", file.getCharset());
-			// tests with BOM -BOMs are strings for convenience, encoded itno bytes using ISO-8859-1 (which handles 128-255 bytes better) 
-			// tests with UTF-8 BOM
-			String UTF8_BOM = new String(IContentDescription.BOM_UTF_8, "ISO-8859-1");
-			file.setContents(new ByteArrayInputStream((UTF8_BOM + SAMPLE_XML_DEFAULT_ENCODING).getBytes("ISO-8859-1")), false, false, null);
-			assertEquals("4.0", "UTF-8", file.getCharset());
-			// tests with UTF-16 Little Endian BOM			
-			String UTF16_LE_BOM = new String(IContentDescription.BOM_UTF_16LE, "ISO-8859-1");
-			file.setContents(new ByteArrayInputStream((UTF16_LE_BOM + SAMPLE_XML_DEFAULT_ENCODING).getBytes("ISO-8859-1")), false, false, null);
-			assertEquals("5.0", "UTF-16", file.getCharset());
-			// tests with UTF-16 Big Endian BOM			
-			String UTF16_BE_BOM = new String(IContentDescription.BOM_UTF_16BE, "ISO-8859-1");
-			file.setContents(new ByteArrayInputStream((UTF16_BE_BOM + SAMPLE_XML_DEFAULT_ENCODING).getBytes("ISO-8859-1")), false, false, null);
-			assertEquals("6.0", "UTF-16", file.getCharset());
-		} finally {
-			ensureDoesNotExistInWorkspace(project);
 		}
 	}
 
@@ -360,19 +346,5 @@ public class CharsetTest extends EclipseWorkspaceTest {
 		} finally {
 			ensureDoesNotExistInWorkspace(project);
 		}
-	}
-
-	/**
-	 * Asserts that the given resources have the given [default] charset.
-	 */
-	private void assertCharsetIs(String tag, String encoding, IResource[] resources, boolean checkImplicit) throws CoreException {
-		for (int i = 0; i < resources.length; i++) {
-			String resourceCharset = resources[i] instanceof IFile ? ((IFile) resources[i]).getCharset(checkImplicit) : ((IContainer) resources[i]).getDefaultCharset(checkImplicit);
-			assertEquals(tag + " " + resources[i].getFullPath(), encoding, resourceCharset);
-		}
-	}
-
-	public static Test suite() {
-		return new TestSuite(CharsetTest.class);
 	}
 }

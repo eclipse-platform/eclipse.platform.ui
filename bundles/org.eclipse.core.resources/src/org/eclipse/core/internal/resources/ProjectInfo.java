@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Hashtable;
 import org.eclipse.core.internal.properties.PropertyStore;
 import org.eclipse.core.resources.IProjectNature;
 
@@ -27,10 +28,6 @@ public class ProjectInfo extends ResourceInfo {
 	/** The list of natures for this project */
 	protected HashMap natures = null;
 
-	/** Map of all resources with user-defined charsets (project relative path -> charset) */
-	// don't use properties because keys are non-string 
-	protected Map charsets = null;
-
 	public synchronized void clearNatures() {
 		natures = null;
 	}
@@ -39,10 +36,6 @@ public class ProjectInfo extends ResourceInfo {
 		if (builders == null)
 			builders = new Hashtable(5);
 		return builders;
-	}
-
-	public synchronized Map getCharsets() {
-		return charsets;
 	}
 
 	/**
@@ -69,10 +62,6 @@ public class ProjectInfo extends ResourceInfo {
 
 	public void setBuilders(Hashtable value) {
 		builders = value;
-	}
-
-	public synchronized void setCharsets(Map value) {
-		charsets = value;
 	}
 
 	/**
