@@ -32,17 +32,9 @@ public class HelpActivitySupport implements IHelpActivitySupport {
 	 * @see org.eclipse.help.internal.base.IHelpActivitySupport#isEnabled()
 	 */
 	public boolean isEnabled(String href) {
-		if (activitySupport == null) {
-			return true;
-		}
-
-		// For the time being, only look at plugin id filtering
-		if (href.startsWith("/"))
+		if (href.startsWith("/")){
 			href = href.substring(1);
-		int i = href.indexOf("/");
-		if (i > 0)
-			href = href.substring(0, i);
-
+		}
         
         return activitySupport.getActivityManager().getIdentifier(href).isEnabled();
 	}
@@ -53,18 +45,10 @@ public class HelpActivitySupport implements IHelpActivitySupport {
 	 * @see org.eclipse.help.internal.base.IHelpActivitySupport#enableActivities(java.lang.String)
 	 */
 	public void enableActivities(String href) {
-		if (activitySupport == null) {
-			return;
-		}
-
-		// For the time being, only look at plugin id filtering
-		if (href.startsWith("/"))
+		if (href.startsWith("/")){
 			href = href.substring(1);
-		int i = href.indexOf("/");
-		if (i > 0)
-			href = href.substring(0, i);
-
-        
+		}
+     
         IIdentifier identifier = activitySupport.getActivityManager().getIdentifier(href);
         Set activitityIds = identifier.getActivityIds();
         if (activitityIds.isEmpty()) { // if there are no activities that match this identifier, do nothing.
