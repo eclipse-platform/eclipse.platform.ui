@@ -62,7 +62,8 @@ public class RevertSelectionAction extends QuickDiffRestoreAction {
 		if (ruler == null)
 			return;
 		int activityLine= ruler.getLineOfLastMouseButtonActivity();
-		if (activityLine < fStartLine || activityLine > fEndLine)
+		if (activityLine < fStartLine || activityLine > fEndLine + 1)
+			// + 1 to cover the case where the selection goes to the offset of the next line
 			return;
 
 		ILineDiffer differ= getDiffer();
