@@ -24,7 +24,9 @@ public class TString {
 			return in;
 		if (oldPat.length() == 1 && newPat.length() == 1)
 			return in.replace(oldPat.charAt(0), newPat.charAt(0));
-
+		if(in.indexOf(oldPat)<0)
+			return in;
+		
 		int lastIndex = 0;
 		int newIndex = 0;
 		StringBuffer newString = new StringBuffer();

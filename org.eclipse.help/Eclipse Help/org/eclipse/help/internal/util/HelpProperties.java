@@ -9,54 +9,37 @@ import java.util.*;
 import org.eclipse.help.internal.HelpSystem;
 
 /**
- * Persistent Hashtable with keys and values of type String.
+ * Properties stored in HelpPlugin work area.
  */
 public class HelpProperties extends Properties {
 	private File file = null;
-	private File tempfile = null;
 	protected String name = null;
 	/**
-	 * Creates empty table for use by Help Plugin.
+	 * Creates empty Properties.
 	 * @param name name of the table;
 	 */
 	public HelpProperties(String name) {
-		this(HelpSystem.getPlugin().getStateLocation().toFile().getPath(), name);
-	}
-	/**
-	 * Creates empty table for use by Help Plugin.
-	 * @param name name of the table;
-	 */
-	public HelpProperties(String dir, String name) {
 		super();
 		this.name = name;
-		file = new File(dir, name + ".properties");
-		tempfile = new File(dir, name + "_.properties");
-	}
-	public boolean exists() {
-		return file.exists() || tempfile.exists();
+		file =
+			new File(
+				HelpSystem.getPlugin().getStateLocation().toFile().getPath(),
+				name + ".properties");
 	}
 	/**
-	 * Restores contents of the table from a file.
+	 * Restores contents of the Properties from a file.
 	 * @return true if persistant data was read in
 	 */
 	public boolean restore() {
-		File usedfile = file;
 		InputStream in = null;
 		boolean loaded = false;
-		if (!usedfile.exists()) {
-			usedfile = tempfile;
-		}
-		if (!usedfile.exists()) {
-			return loaded;
-		}
 		clear();
 		try {
-			in = new FileInputStream(usedfile);
+			in = new FileInputStream(file);
 			super.load(in);
+			loaded = true;
 		} catch (IOException ioe00) {
-			Logger.logError(Resources.getString("Table", name), null);
-			Logger.logError(Resources.getString("File4", usedfile.getName()), null);
-			loaded = false;
+			Logger.logError(Resources.getString("File4", file.getName()), null);
 		} finally {
 			if (in != null)
 				try {
@@ -73,20 +56,13 @@ public class HelpProperties extends Properties {
 	public boolean save() {
 		OutputStream out = null;
 		boolean ret = false;
-		tempfile.delete();
-		if (tempfile.exists()) {
-			Logger.logError(
-				Resources.getString("Table2", name, tempfile.getAbsolutePath()),
-				null);
-			return ret;
-		}
 		try {
-			out = new FileOutputStream(tempfile);
+			out = new FileOutputStream(file);
 			super.store(out, "This is a generated file; do not edit.");
 			ret = true;
 		} catch (IOException ioe00) {
 			Logger.logError(
-				Resources.getString("Exception_occured", name, tempfile.getAbsolutePath()),
+				Resources.getString("Exception_occured", name, file.getAbsolutePath()),
 				null);
 		} finally {
 			try {
@@ -95,11 +71,6 @@ public class HelpProperties extends Properties {
 				}
 			} catch (IOException ioe01) {
 			}
-		}
-		if (tempfile.exists()) {
-			file.delete();
-			if (!tempfile.renameTo(file))
-				ret = false;
 		}
 		return ret;
 	}
