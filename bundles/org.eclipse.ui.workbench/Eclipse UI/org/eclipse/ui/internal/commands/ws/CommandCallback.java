@@ -14,14 +14,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.jface.action.ExternalActionManager.IActionTextListener;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.ExternalActionManager.ICallback;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.commands.CommandEvent;
 import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.ICommandListener;
 import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.IKeySequenceBinding;
+import org.eclipse.ui.commands.NotDefinedException;
 import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.KeyStroke;
 import org.eclipse.ui.keys.SWTKeySupport;
@@ -32,11 +35,11 @@ import org.eclipse.ui.keys.SWTKeySupport;
 public final class CommandCallback implements ICallback {
 
     /**
-     * The list of listeners that have registered for text change notification.
-     * This is a map os <code>IActionTextListener</code> to
+     * The list of listeners that have registered for property change
+     * notification. This is a map os <code>IPropertyChangeListener</code> to
      * <code>ICommandListener</code>.
      */
-    private final Map registeredTextListeners = new HashMap();
+    private final Map registeredListeners = new HashMap();
 
     /**
      * The workbench to query about command and context information. This value
@@ -57,11 +60,11 @@ public final class CommandCallback implements ICallback {
     }
 
     /**
-     * @see org.eclipse.jface.action.ExternalActionManager.ICallback#addActionTextListener(String,
-     *      IActionTextListener)
+     * @see org.eclipse.jface.action.ExternalActionManager.ICallback#addPropertyChangeListener(String,
+     *      IPropertyChangeListener)
      */
-    public void addActionTextListener(final String commandId,
-            final IActionTextListener listener) {
+    public void addPropertyChangeListener(final String commandId,
+            final IPropertyChangeListener listener) {
         final ICommand command = workbench.getCommandSupport()
                 .getCommandManager().getCommand(commandId);
         final ICommandListener commandListener = new ICommandListener() {
@@ -72,15 +75,28 @@ public final class CommandCallback implements ICallback {
              * @see org.eclipse.ui.commands.ICommandListener#commandChanged(org.eclipse.ui.commands.CommandEvent)
              */
             public void commandChanged(CommandEvent commandEvent) {
+                // Check if the text has changed.
                 if (commandEvent.hasNameChanged()
                         || commandEvent.haveKeySequenceBindingsChanged()) {
-                    listener.textChanged();
+                    PropertyChangeEvent event;
+                    try {
+                        event = new PropertyChangeEvent(command, IAction.TEXT,
+                                null /* TODO Don't have enough information */,
+                                command.getName());
+                    } catch (final NotDefinedException e) {
+                        event = new PropertyChangeEvent(command, IAction.TEXT,
+                                null /* TODO Don't have enough information */,
+                                null /* Couldn't get the name */);
+                    }
+                    listener.propertyChange(event);
                 }
+
+                // TODO Add enabled property change.
             }
         };
 
         command.addCommandListener(commandListener);
-        registeredTextListeners.put(listener, commandListener);
+        registeredListeners.put(listener, commandListener);
     }
 
     /**
@@ -165,14 +181,14 @@ public final class CommandCallback implements ICallback {
     }
 
     /**
-     * @see org.eclipse.jface.action.ExternalActionManager.ICallback#removeActionTextListener(String,
-     *      IActionTextListener)
+     * @see org.eclipse.jface.action.ExternalActionManager.ICallback#removePropertyChangeListener(String,
+     *      IPropertyChangeListener)
      */
-    public final void removeActionTextListener(final String commandId,
-            final IActionTextListener listener) {
+    public final void removePropertyChangeListener(final String commandId,
+            final IPropertyChangeListener listener) {
         final ICommand command = workbench.getCommandSupport()
                 .getCommandManager().getCommand(commandId);
-        final Object associatedListener = registeredTextListeners.remove(listener);
+        final Object associatedListener = registeredListeners.remove(listener);
         if (associatedListener instanceof ICommandListener) {
             final ICommandListener commandListener = (ICommandListener) associatedListener;
             command.removeCommandListener(commandListener);

@@ -14,6 +14,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.Policy;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
@@ -30,11 +34,6 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
-
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.Policy;
-import org.eclipse.jface.util.PropertyChangeEvent;
 
 /**
  * A contribution item which delegates to an action.
@@ -174,15 +173,13 @@ public class ActionContributionItem extends ContributionItem {
      * The listener for changes to the text of the action contributed by an
      * external source.
      */
-    private final ExternalActionManager.IActionTextListener actionTextListener = new ExternalActionManager.IActionTextListener() {
+    private final IPropertyChangeListener actionTextListener = new IPropertyChangeListener() {
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.eclipse.jface.action.CommandResolver.IActionTextListener#textChanged()
+        /**
+         * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
          */
-        public void textChanged() {
-            update(IAction.TEXT);
+        public void propertyChange(PropertyChangeEvent event) {
+            update(event.getProperty());
         }
     };
 
@@ -295,7 +292,7 @@ public class ActionContributionItem extends ContributionItem {
 	                    .getCallback();
 
 	            if ((callback != null) && (commandId != null)) {
-	                callback.addActionTextListener(commandId, actionTextListener);
+	                callback.addPropertyChangeListener(commandId, actionTextListener);
 	            }
 	        }
 		}
@@ -353,7 +350,7 @@ public class ActionContributionItem extends ContributionItem {
 	                    .getCallback();
 
 	            if ((callback != null) && (commandId != null)) {
-	                callback.addActionTextListener(commandId, actionTextListener);
+	                callback.addPropertyChangeListener(commandId, actionTextListener);
 	            }
 	        }
 		}
@@ -400,7 +397,7 @@ public class ActionContributionItem extends ContributionItem {
 	                    .getCallback();
 
 	            if ((callback != null) && (commandId != null)) {
-	                callback.addActionTextListener(commandId, actionTextListener);
+	                callback.addPropertyChangeListener(commandId, actionTextListener);
 	            }
 	        }
 		}
@@ -549,7 +546,7 @@ public class ActionContributionItem extends ContributionItem {
 	                    .getCallback();
 
 	            if ((callback != null) && (commandId != null)) {
-	                callback.removeActionTextListener(commandId, actionTextListener);
+	                callback.removePropertyChangeListener(commandId, actionTextListener);
 	            }
 	        }
 	        

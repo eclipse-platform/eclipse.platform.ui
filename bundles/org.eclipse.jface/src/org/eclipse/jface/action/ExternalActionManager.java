@@ -11,6 +11,8 @@
 
 package org.eclipse.jface.action;
 
+import org.eclipse.jface.util.IPropertyChangeListener;
+
 /**
  * <p>
  * A manager for a callback facility which is capable of querying external
@@ -38,7 +40,7 @@ public final class ExternalActionManager {
         /**
          * <p>
          * Adds a listener to the object referenced by <code>identifier</code>.
-         * This listener will be notified if the visible text of the item is to
+         * This listener will be notified if a property of the item is to be
          * changed. This identifier is specific to mechanism being used. In the
          * case of the Eclipse workbench, this is the command identifier.
          * </p>
@@ -54,8 +56,8 @@ public final class ExternalActionManager {
          * @param listener
          *            The listener to be added; must not be <code>null</code>.
          */
-        public void addActionTextListener(String identifier,
-                IActionTextListener listener);
+        public void addPropertyChangeListener(String identifier,
+                IPropertyChangeListener listener);
 
         /**
          * An accessor for the accelerator associated with the item indicated by
@@ -123,24 +125,8 @@ public final class ExternalActionManager {
          * @param listener
          *            The listener to be removed; must not be <code>null</code>.
          */
-        public void removeActionTextListener(String identifier,
-                IActionTextListener listener);
-    }
-
-    /**
-     * A listener for changes to an action's text -- as dictated by some
-     * external tool. The listener simply receives a notice that the text has
-     * changed, and should go about updating visual controls appropriately.
-     * 
-     * @since 3.0
-     */
-    public static interface IActionTextListener {
-
-        /**
-         * This method is called when the text of the associated item is
-         * changed.
-         */
-        public void textChanged();
+        public void removePropertyChangeListener(String identifier,
+                IPropertyChangeListener listener);
     }
 
     /**
