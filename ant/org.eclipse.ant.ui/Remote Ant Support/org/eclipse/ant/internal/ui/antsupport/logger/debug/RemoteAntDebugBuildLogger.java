@@ -80,16 +80,14 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 						
 						if (message.startsWith(DebugMessageIds.STEP_INTO)){
 							synchronized(RemoteAntDebugBuildLogger.this) {
+							    fStepIntoSuspend= true;
 								RemoteAntDebugBuildLogger.this.notifyAll();
-								fStepIntoSuspend= true;
-								sendRequestResponse(DebugMessageIds.RESUMED + DebugMessageIds.STEP);
 							}
 						} if (message.startsWith(DebugMessageIds.STEP_OVER)){
 							synchronized(RemoteAntDebugBuildLogger.this) {
-								RemoteAntDebugBuildLogger.this.notifyAll();
-								fStepOverSuspend= true;
+							    fStepOverSuspend= true;
 								fStepOverTask= fCurrentTask;
-								sendRequestResponse(DebugMessageIds.RESUMED + DebugMessageIds.STEP);
+								RemoteAntDebugBuildLogger.this.notifyAll();
 							}
 						} else if (message.startsWith(DebugMessageIds.SUSPEND)) {
 							synchronized(RemoteAntDebugBuildLogger.this) {
@@ -99,7 +97,6 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 							synchronized(RemoteAntDebugBuildLogger.this) {
 								RemoteAntDebugBuildLogger.this.notifyAll();
 							}
-							sendRequestResponse(DebugMessageIds.RESUMED + DebugMessageIds.CLIENT_REQUEST);
 						} else if (message.startsWith(DebugMessageIds.TERMINATE)) {
 						    sendRequestResponse(DebugMessageIds.TERMINATED);
 							shutDown();

@@ -194,18 +194,8 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget {
 	 * @see org.eclipse.debug.core.model.ISuspendResume#resume()
 	 */
 	public void resume() throws DebugException {
+	    fSuspended= false;
 		sendRequest(DebugMessageIds.RESUME);
-	}
-	
-	/**
-	 * Notification the target has resumed for the given reason
-	 * 
-	 * @param detail reason for the resume
-	 */
-	protected void resumed(int detail) {
-		fSuspended = false;
-		fThread.setBreakpoints(null);
-		fThread.fireResumeEvent(detail);
 	}
 	
 	/**
@@ -357,6 +347,7 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget {
 	 * @throws DebugException if the request fails
 	 */
 	protected void stepOver() throws DebugException {
+	    fSuspended= false;
 		sendRequest(DebugMessageIds.STEP_OVER);
 	}
 	
@@ -366,6 +357,7 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget {
 	 * @throws DebugException if the request fails
 	 */
 	protected void stepInto() throws DebugException {
+	    fSuspended= false;
 		sendRequest(DebugMessageIds.STEP_INTO);
 	}
 	

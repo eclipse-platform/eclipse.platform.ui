@@ -20,22 +20,20 @@ import org.eclipse.debug.core.model.IVariable;
 public class AntProperty extends AntDebugElement implements IVariable {
 
 	private String fName;
-	private AntStackFrame fFrame;
 	private IValue fValue;
 	
 	/**
-	 * Constructs a variable contained in the given stack frame
+	 * Constructs a variable associated with the debug target
 	 * with the given name and value.
 	 * 
-	 * @param frame owning stack frame
+	 * @param target the debug target
 	 * @param name property name
 	 * @param value property value
 	 */
-	public AntProperty(AntStackFrame frame, String name, String value) {
-		super((AntDebugTarget) frame.getDebugTarget());
-		fFrame = frame;
+	public AntProperty(AntDebugTarget target, String name, String value) {
+		super(target);
 		fName = name;
-		fValue= new AntValue((AntDebugTarget)getDebugTarget(), value);
+		fValue= new AntValue(target, value);
 	}
 	
 	/* (non-Javadoc)
@@ -97,14 +95,5 @@ public class AntProperty extends AntDebugElement implements IVariable {
 	 */
 	public boolean verifyValue(IValue value) throws DebugException {
 		return false;
-	}
-	
-	/**
-	 * Returns the stack frame owning this variable.
-	 * 
-	 * @return the stack frame owning this variable
-	 */
-	protected AntStackFrame getStackFrame() {
-		return fFrame;
 	}
 }

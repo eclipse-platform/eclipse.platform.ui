@@ -18,6 +18,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
+import org.eclipse.debug.core.model.IVariable;
 
 /**
  * A Ant build thread.
@@ -30,12 +31,22 @@ public class AntThread extends AntDebugElement implements IThread {
 	 */
 	private IBreakpoint[] fBreakpoints;
 	
+	/**
+	 * The stackframes associated with this thread
+	 */
 	private List fFrames;
 	
 	/**
 	 * Whether this thread is stepping
 	 */
 	private boolean fStepping = false;
+	
+	/**
+	 * The properties associated with this thread
+	 */
+	private List fProperties;
+	
+	private boolean fRefreshProperties= true;
 	
 	/**
 	 * Constructs a new thread for the given target
@@ -49,15 +60,14 @@ public class AntThread extends AntDebugElement implements IThread {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IThread#getStackFrames()
 	 */
-	public IStackFrame[] getStackFrames() throws DebugException {
+	public synchronized IStackFrame[] getStackFrames() throws DebugException {
 		if (isSuspended()) {
 			if (fFrames == null || fFrames.size() == 0) {
 				getStackFrames0();
 				fireChangeEvent(DebugEvent.CONTENT);
 			}
-		} else {
-			fFrames= new ArrayList();
-		}
+		} 
+		
 		return (IStackFrame[]) fFrames.toArray(new IStackFrame[fFrames.size()]);
 	}
 	
@@ -67,13 +77,11 @@ public class AntThread extends AntDebugElement implements IThread {
 	 * @return the current stack frames in the target
 	 * @throws DebugException if unable to perform the request
 	 */
-	protected void getStackFrames0() throws DebugException {
-		sendRequest(DebugMessageIds.STACK);
-		synchronized (this) {
-		    try {
-                wait();
-            } catch (InterruptedException e) {
-            }
+	private void getStackFrames0() throws DebugException {
+		sendRequest(DebugMessageIds.STACK);		
+		try {
+		    wait();
+		} catch (InterruptedException e) {
 		}
 	}
 	
@@ -154,15 +162,15 @@ public class AntThread extends AntDebugElement implements IThread {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ISuspendResume#resume()
 	 */
-	public void resume() throws DebugException {
-		fFrames= null;
+	public synchronized void resume() throws DebugException {
+		aboutToResume(DebugEvent.CLIENT_REQUEST, false);
 		getDebugTarget().resume();
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ISuspendResume#suspend()
 	 */
-	public void suspend() throws DebugException {
+	public synchronized void suspend() throws DebugException {
 		getDebugTarget().suspend();
 	}
 	
@@ -197,23 +205,31 @@ public class AntThread extends AntDebugElement implements IThread {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStep#stepInto()
 	 */
-	public void stepInto() throws DebugException {
-	    fFrames= null;
+	public synchronized void stepInto() throws DebugException {
+	    aboutToResume(DebugEvent.STEP_INTO, true);
 		((AntDebugTarget)getDebugTarget()).stepInto();
 	}
 	
-	/* (non-Javadoc)
+	private void aboutToResume(int detail, boolean stepping) {
+	    fRefreshProperties= true;
+        fFrames.clear();
+	    setStepping(stepping);
+	    setBreakpoints(null);
+		fireResumeEvent(detail);
+    }
+
+    /* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStep#stepOver()
 	 */
-	public void stepOver() throws DebugException {
-		fFrames= null;
+	public synchronized void stepOver() throws DebugException {
+	    aboutToResume(DebugEvent.STEP_OVER, true);
 		((AntDebugTarget)getDebugTarget()).stepOver();
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStep#stepReturn()
 	 */
-	public void stepReturn() throws DebugException {
+	public synchronized void stepReturn() throws DebugException {
 	}
 	
 	/* (non-Javadoc)
@@ -244,11 +260,10 @@ public class AntThread extends AntDebugElement implements IThread {
 	 * @param stepping whether stepping
 	 */
 	protected void setStepping(boolean stepping) {
-	    fFrames= new ArrayList();
 		fStepping = stepping;
 	}
 
-    protected void buildStack(String data) {
+    protected synchronized void buildStack(String data) {
 		String[] strings= data.split(DebugMessageIds.MESSAGE_DELIMITER);
 		//0 STACK message
 		//1 targetName
@@ -269,8 +284,60 @@ public class AntThread extends AntDebugElement implements IThread {
 			frame= new AntStackFrame(this, stackFrameId++, name, filePath, lineNumber);
 			fFrames.add(frame);
 		}
-		synchronized (this) {
-		    notifyAll();
-		}
+		//wake up the call from getStackFrames
+		notifyAll();
     }
+    
+    protected synchronized void newProperties(String data) {
+	    try {
+	    	String[] datum= data.split(DebugMessageIds.MESSAGE_DELIMITER);
+	    	if (fProperties == null) {
+	    		fProperties= new ArrayList(datum.length);
+	    	}
+	    	//0 PROPERTIES message
+	    	//1 propertyName length
+	    	//2 propertyName
+	    	//3 propertyValue length
+	    	//3 propertyValue
+	    	//4 ...
+	    	if (datum.length > 1) { //new properties
+	    		String propertyName;
+	    		String propertyValue;
+	    		AntProperty property;
+	    		int propertyNameLength;
+	    		int propertyValueLength;
+	    		for (int i = 1; i < datum.length; i++) {
+	    			propertyNameLength= Integer.parseInt(datum[i]);
+	    			propertyName= datum[++i];
+	    			while (propertyName.length() != propertyNameLength) {
+	    				propertyName+= DebugMessageIds.MESSAGE_DELIMITER + datum[++i];
+	    			}
+	    			propertyValueLength= Integer.parseInt(datum[++i]);
+	    			propertyValue= datum[++i];
+	    			while (propertyValue.length() != propertyValueLength) {
+	    				propertyValue+= DebugMessageIds.MESSAGE_DELIMITER + datum[++i];
+	    			}
+	    			
+	    			property= new AntProperty((AntDebugTarget) getDebugTarget(), propertyName, propertyValue);
+	    			fProperties.add(property);
+	    		}
+	    	}
+	    } finally {
+	        //wake up the call from getVariables
+	    	notifyAll();
+	    }
+	}
+    
+    protected synchronized IVariable[] getVariables() throws DebugException {
+        if (fRefreshProperties) {
+            fRefreshProperties= false;
+            sendRequest(DebugMessageIds.PROPERTIES);
+            try {
+                wait();
+            } catch (InterruptedException ie) {
+            }
+        }
+        
+        return (IVariable[])fProperties.toArray(new IVariable[fProperties.size()]);
+      }
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003 IBM Corporation and others.
+ * Copyright (c) 2003, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,6 @@ import java.net.UnknownHostException;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.launchConfigurations.RemoteAntBuildListener;
 import org.eclipse.debug.core.DebugEvent;
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IProcess;
@@ -51,7 +50,7 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener {
 				String message= null; 
 				while (fResponseReader != null) { 
 				    synchronized (RemoteAntDebugBuildListener.this) {
-				        if ((message= fResponseReader.readLine()) != null) {
+				        if (fResponseReader != null && (message= fResponseReader.readLine()) != null) {
 				            receiveMessage(message);
 				        }
 				    }
@@ -80,33 +79,18 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener {
 			fTarget.terminated();
 		} else if (message.startsWith(DebugMessageIds.SUSPENDED)){
 			handleSuspendMessage(message);
-		} else if (message.startsWith(DebugMessageIds.RESUMED)){
-			handleResumeMessage(message);
 		} else if (message.startsWith(DebugMessageIds.TERMINATED)){
 			fTarget.terminated();
 		} else if (message.startsWith(DebugMessageIds.STACK)){
 			AntThread thread= (AntThread) fTarget.getThreads()[0];
 			thread.buildStack(message);
 		} else if (message.startsWith(DebugMessageIds.PROPERTIES)){
-			try {
-				AntStackFrame frame= (AntStackFrame) fTarget.getThreads()[0].getTopStackFrame();
-				frame.newProperties(message);
-			} catch (DebugException de) {
-				
-			}
+		    AntThread thread= (AntThread) fTarget.getThreads()[0];
+		    thread.newProperties(message);
 		} else {
 			super.receiveMessage(message);
 		}
 	}
-	
-	private void handleResumeMessage(String message) {
-        if (message.endsWith(DebugMessageIds.STEP)) {
-        	((AntThread)fTarget.getThreads()[0]).setStepping(true);
-        	fTarget.resumed(DebugEvent.STEP_OVER);
-        } else if (message.endsWith(DebugMessageIds.CLIENT_REQUEST)) {
-        	fTarget.resumed(DebugEvent.CLIENT_REQUEST);
-        }
-    }
 
     private void handleSuspendMessage(String message) {
         if (message.endsWith(DebugMessageIds.CLIENT_REQUEST)) {
@@ -147,10 +131,10 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener {
 			readerThread.start();
 		} catch (UnknownHostException e) {
 			//TODO
-			//fTarget.abort("Unable to connect to PDA VM", e);
+			//fTarget.abort("Unable to connect to Ant build", e);
 			
 		} catch (IOException e) {
-			//fTarget.abort("Unable to connect to PDA VM", e);
+			//fTarget.abort("Unable to connect to Ant build", e);
 			//TODO
 		}
 	}

@@ -32,7 +32,6 @@ public class DebugMessageIds extends MessageIds {
 	public final static String SUSPEND= "suspend"; //$NON-NLS-1$
 	public final static String SUSPENDED= "suspended"; //$NON-NLS-1$
 	public final static String RESUME= "resume"; //$NON-NLS-1$
-	public final static String RESUMED= "resumed"; //$NON-NLS-1$
 	
 	public final static String STACK= "stack"; //$NON-NLS-1$
 	
