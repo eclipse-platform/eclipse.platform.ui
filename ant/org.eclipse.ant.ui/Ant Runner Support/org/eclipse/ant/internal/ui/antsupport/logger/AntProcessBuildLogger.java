@@ -124,7 +124,10 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 		if (location != null) {
 			String newLine= (label + line).trim();
 			IRegion region= new Region(offset, label.length() - 3); // only want the name length "[name] "
-			TaskLinkManager.addTaskHyperlink(getAntProcess(null), getTaskLink(location), region, newLine);
+			IConsoleHyperlink link= getTaskLink(location);
+			if (link != null) {
+				TaskLinkManager.addTaskHyperlink(getAntProcess(null), link, region, newLine);
+			}
 		}
 	}
 
