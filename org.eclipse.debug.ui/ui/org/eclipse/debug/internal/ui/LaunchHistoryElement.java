@@ -5,7 +5,11 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
  
-import org.eclipse.core.resources.IResource; 
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILauncher;
+import org.eclipse.ui.model.IWorkbenchAdapter; 
 
  /**
   * Stores information required to re-launch a
@@ -33,17 +37,11 @@ public class LaunchHistoryElement {
 	 */
 	protected String fLabel=null;
 	
-	/**
-	 * The resource associated with the launched element
-	 */
-	protected IResource fResource;
-	
-	public LaunchHistoryElement(String launcherId, String elementMemento, String mode, String label, IResource resource) {
+	public LaunchHistoryElement(String launcherId, String elementMemento, String mode, String label) {
 		fLauncherIdentifier = launcherId;
 		fMemento = elementMemento;
 		fMode = mode;
 		fLabel = label;
-		fResource = resource;
 	}
 	
 	/**
@@ -76,13 +74,6 @@ public class LaunchHistoryElement {
 		return fLabel;
 	}
 	
-	/**
-	 * Returns the resource associated with the launched element
-	 */
-	public IResource getResource() {
-		return fResource;
-	}
-	
 	public boolean equals(Object o) {
 		if (o instanceof LaunchHistoryElement) {
 			LaunchHistoryElement e= (LaunchHistoryElement)o;
@@ -93,5 +84,24 @@ public class LaunchHistoryElement {
 		}
 		return false;
 	}
+	
+	public ILauncher getLauncher() {
+		ILauncher[] launchers = DebugPlugin.getDefault().getLaunchManager().getLaunchers();
+		for (int i = 0; i < launchers.length; i++) {
+			if (launchers[i].getIdentifier().equals(getLauncherIdentifier())) {
+				return launchers[i];
+			}
+		}
+		return null;
+	}
+	
+	public Object getLaunchElement() {
+		ILauncher launcher = getLauncher();
+		if (launcher != null) {
+			return launcher.getDelegate().getLaunchObject(getElementMemento());
+		}
+		return null;
+	}
+	
 }
 

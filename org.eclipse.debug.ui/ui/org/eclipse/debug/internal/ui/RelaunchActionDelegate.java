@@ -46,14 +46,7 @@ public class RelaunchActionDelegate extends ControlActionDelegate {
 	}
 	
 	public static void relaunch(LaunchHistoryElement history) {
-		ILauncher[] launchers = DebugPlugin.getDefault().getLaunchManager().getLaunchers();
-		for (int i = 0; i < launchers.length; i++) {
-			if (launchers[i].getIdentifier().equals(history.getLauncherIdentifier())) {
-				Object element = launchers[i].getDelegate().getLaunchObject(history.getElementMemento());
-				relaunch(launchers[i], history.getMode(), element);
-				return;
-			}
-		}
+		relaunch(history.getLauncher(), history.getMode(), history.getLaunchElement());
 	}
 	
 	public static void relaunch(IDebugElement element) {

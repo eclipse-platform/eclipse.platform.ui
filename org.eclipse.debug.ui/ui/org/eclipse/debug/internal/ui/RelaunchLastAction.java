@@ -23,7 +23,7 @@ public class RelaunchLastAction extends Action implements IWorkbenchWindowAction
 	 * @see IAction
 	 */
 	public void run() {
-		final ILaunch recent= DebugUIPlugin.getDefault().getLastLaunch();
+		final LaunchHistoryElement recent= DebugUIPlugin.getDefault().getLastLaunch();
 		if (recent == null) {
 			Display.getCurrent().beep();
 		} else {

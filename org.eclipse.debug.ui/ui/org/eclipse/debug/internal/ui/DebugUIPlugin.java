@@ -5,7 +5,11 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
+import java.io.*;
 import java.util.*;
+import javax.xml.parsers.*;
+import org.apache.xerces.dom.DocumentImpl;
+import org.apache.xml.serialize.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
@@ -23,6 +27,9 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.w3c.dom.*;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 /**
  * The Debug UI Plugin.
@@ -80,7 +87,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChanged
 	/**
 	 * The most recent launch
 	 */
-	protected ILaunch fRecentLaunch = null;
+	protected LaunchHistoryElement fRecentLaunch = null;
 	
 	protected final static int MAX_HISTORY_SIZE= 5;
 	/**
@@ -117,9 +124,9 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChanged
 			if (delta.getKind() != IResourceDelta.REMOVED) {
 				return true;
 			}
-			IResource resource= delta.getResource();
-			updateHistoriesForDeletedResource(resource);
-			return true;
+			// check for deletions in launch history
+			removeDeletedHistories();
+			return false;
 		}
 	}
 
@@ -652,6 +659,11 @@ public static Object createExtension(final IConfigurationElement element, final 
 			doc.close();
 		}
 		fSwitchContext.shutdown();
+		try {
+			persistLaunchHistory();
+		} catch (IOException e) {
+			DebugUIUtils.logError(e);
+		}
 	}
 
 	/**
@@ -669,6 +681,11 @@ public static Object createExtension(final IConfigurationElement element, final 
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
 		//set up the docs for launches already registered
 		ILaunch[] launches= launchManager.getLaunches();
+		try {
+			restoreLaunchHistory();
+		} catch (IOException e) {
+			DebugUIUtils.logError(e);
+		}
 		for (int i = 0; i < launches.length; i++) {
 			launchRegistered(launches[i]);
 		}
@@ -1012,9 +1029,6 @@ public static Object createExtension(final IConfigurationElement element, final 
 	 * @see ILaunchListener
 	 */
 	public void launchRegistered(final ILaunch launch) {
-		if (DebugUIPlugin.getDefault().isVisible(launch.getLauncher())) {
-			fRecentLaunch = launch;		
-		}
 		updateHistories(launch);
 		switchToDebugPerspectiveIfPreferred(launch);
 		
@@ -1128,28 +1142,27 @@ public static Object createExtension(final IConfigurationElement element, final 
 	 *	
 	 * @return the last launch, or <code>null</code> if none
 	 */	
-	public ILaunch getLastLaunch() {
+	public LaunchHistoryElement getLastLaunch() {
 		return fRecentLaunch;
 	}
 	
 	/**
-	 * Adjust all histories for the given deleted resource.
+	 * Adjust all histories, removing deleted launches.
 	 */
-	protected void updateHistoriesForDeletedResource(IResource deletedResource) {
-		updateHistoryForDeletedResource(deletedResource, fDebugHistory);
-		updateHistoryForDeletedResource(deletedResource, fRunHistory);
+	protected void removeDeletedHistories() {
+		removeDeletedHistories(fDebugHistory);
+		removeDeletedHistories(fRunHistory);
 	}	
 	
 	/**
-	 * Remove the given resource from the resource history, and remove the corresponding
-	 * launch from the launch history.
+	 * Update the given history, removing launches with no element.
 	 */
-	protected void updateHistoryForDeletedResource(IResource deletedResource, Vector history) {
+	protected void removeDeletedHistories(Vector history) {
 		List remove = null;
 		Iterator iter = history.iterator();
 		while (iter.hasNext()) {
 			LaunchHistoryElement element = (LaunchHistoryElement)iter.next();
-			if (deletedResource.equals(element.getResource())) {
+			if (element.getLaunchElement() == null) {
 				if (remove == null) {
 					remove = new ArrayList(1);
 				}
@@ -1173,9 +1186,8 @@ public static Object createExtension(final IConfigurationElement element, final 
 			if (elementMemento == null) {
 				return;
 			}
-			IResource resource= getResourceForLaunch(launch);
-			updateHistory(ILaunchManager.DEBUG_MODE, fDebugHistory, launch, resource, elementMemento);
-			updateHistory(ILaunchManager.RUN_MODE, fRunHistory, launch, resource, elementMemento);
+			updateHistory(ILaunchManager.DEBUG_MODE, fDebugHistory, launch, elementMemento);
+			updateHistory(ILaunchManager.RUN_MODE, fRunHistory, launch, elementMemento);
 		}
 	}
 	
@@ -1183,7 +1195,7 @@ public static Object createExtension(final IConfigurationElement element, final 
 	 * Add the given launch to the debug history if the
 	 * launcher supports the debug mode.  
 	 */
-	protected void updateHistory(String mode, Vector history, ILaunch launch, IResource resource, String memento) {
+	protected void updateHistory(String mode, Vector history, ILaunch launch, String memento) {
 		
 		// First make sure the launcher used supports the mode of the history list
 		ILauncher launcher= launch.getLauncher();
@@ -1193,7 +1205,12 @@ public static Object createExtension(final IConfigurationElement element, final 
 		}
 		
 		// create new history item
-		LaunchHistoryElement item= new LaunchHistoryElement(launcher.getIdentifier(), memento, mode, getModelPresentation().getText(launch), resource);
+		LaunchHistoryElement item= new LaunchHistoryElement(launcher.getIdentifier(), memento, mode, getModelPresentation().getText(launch));
+		
+		// update the most recent launch
+		if (launch.getLaunchMode().equals(mode)) {
+			fRecentLaunch = item;
+		}
 		
 		// Look for an equivalent launch in the history list
 		int index;
@@ -1216,28 +1233,127 @@ public static Object createExtension(final IConfigurationElement element, final 
 		}	
 	}	
 	
-	/**
-	 * Return the IResource adapter associated with the given launch, or null 
-	 * if there is none.
-	 */
-	protected IResource getResourceForLaunch(ILaunch launch) {
-		Object candidate= launch.getElement();
-		IResource resource= null;
-		// If the launched element doesn't have an IResource adapter, work up the parental
-		// chain until we find someone who does
-		while (candidate instanceof IAdaptable) {
-			IResource candidateResource= (IResource)((IAdaptable)candidate).getAdapter(IResource.class);
-			if (candidateResource != null) {
-				return candidateResource;
+	protected String getHistoryAsXML() throws IOException {
+
+		org.w3c.dom.Document doc = new DocumentImpl();
+		Element historyRootElement = doc.createElement("launchHistory");
+		doc.appendChild(historyRootElement);
+		
+		List all = new ArrayList(fDebugHistory.size() + fRunHistory.size());
+		all.addAll(fDebugHistory);
+		all.addAll(fRunHistory);
+
+		Iterator iter = all.iterator();
+		while (iter.hasNext()) {
+			Element historyElement =
+				getHistoryEntryAsXMLElement(doc, (LaunchHistoryElement)iter.next());
+			historyRootElement.appendChild(historyElement);
+		}
+		if (fRecentLaunch != null) {
+			Element recent = getRecentLaunchAsXMLElement(doc, fRecentLaunch);
+			historyRootElement.appendChild(recent);
+		}
+
+		// produce a String output
+		StringWriter writer = new StringWriter();
+		OutputFormat format = new OutputFormat();
+		format.setIndenting(true);
+		Serializer serializer =
+			SerializerFactory.getSerializerFactory(Method.XML).makeSerializer(
+				writer,
+				format);
+		serializer.asDOMSerializer().serialize(doc);
+		return writer.toString();
+			
+	}
+	
+	protected Element getHistoryEntryAsXMLElement(org.w3c.dom.Document doc, LaunchHistoryElement element) {
+		Element entry = doc.createElement("launch");
+		setAttributes(entry, element);
+		return entry;
+	}
+	
+	protected Element getRecentLaunchAsXMLElement(org.w3c.dom.Document doc, LaunchHistoryElement element) {
+		Element entry = doc.createElement("lastLaunch");
+		setAttributes(entry, element);
+		return entry;
+	}
+	
+	protected void setAttributes(Element entry, LaunchHistoryElement element) {
+		entry.setAttribute("launcherId", element.getLauncherIdentifier());
+		entry.setAttribute("elementMemento", element.getElementMemento());
+		entry.setAttribute("launchLabel", element.getLabel());
+		entry.setAttribute("mode", element.getMode());		
+	}
+	
+	
+	protected void persistLaunchHistory() throws IOException {
+		IPath path = getStateLocation();
+		path = path.append("launchHistory.xml");
+		String osPath = path.toOSString();
+		File file = new File(osPath);
+		file.createNewFile();
+		FileWriter writer = new FileWriter(file);
+		writer.write(getHistoryAsXML());
+		writer.close();
+	}
+	
+	protected void restoreLaunchHistory() throws IOException {
+		IPath path = getStateLocation();
+		path = path.append("launchHistory.xml");
+		String osPath = path.toOSString();
+		File file = new File(osPath);
+		
+		if (!file.exists()) {
+			// no history to restore
+			return;
+		}
+		
+		FileInputStream stream = new FileInputStream(file);
+		Element rootHistoryElement = null;
+		try {
+			DocumentBuilder parser =
+				DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			rootHistoryElement = parser.parse(new InputSource(stream)).getDocumentElement();
+		} catch (SAXException e) {
+			DebugUIUtils.logError(e);
+			return;
+		} catch (ParserConfigurationException e) {
+			DebugUIUtils.logError(e);
+			return;
+		} finally {
+			stream.close();
+		}
+		if (!rootHistoryElement.getNodeName().equalsIgnoreCase("launchHistory")) {
+			return;
+		}
+		NodeList list = rootHistoryElement.getChildNodes();
+		int length = list.getLength();
+		for (int i = 0; i < length; ++i) {
+			Node node = list.item(i);
+			short type = node.getNodeType();
+			if (type == Node.ELEMENT_NODE) {
+				Element entry = (Element) node;
+				if (entry.getNodeName().equalsIgnoreCase("launch")) {
+					LaunchHistoryElement item = createHistoryElement(entry);
+					if (item.getMode().equals(ILaunchManager.DEBUG_MODE)) {
+						fDebugHistory.add(item);
+					} else {
+						fRunHistory.add(item);
+					}
+				} else if (entry.getNodeName().equalsIgnoreCase("lastLaunch")) {
+					fRecentLaunch = createHistoryElement(entry);
+				}
 			}
-			IWorkbenchAdapter workbenchAdapter= (IWorkbenchAdapter)((IAdaptable)candidate).getAdapter(IWorkbenchAdapter.class);
-			if (workbenchAdapter != null) {
-				candidate= workbenchAdapter.getParent(candidate);
-			} else {
-				return null;
-			}
-		}		
-		return resource;
+		}
+	}
+	
+	public LaunchHistoryElement createHistoryElement(Element entry) {
+		String launcherId = entry.getAttribute("launcherId");
+		String mode = entry.getAttribute("mode");
+		String memento = entry.getAttribute("elementMemento");
+		String label = entry.getAttribute("launchLabel");
+		return new LaunchHistoryElement(launcherId, memento, mode, label);
 	}
 	
 	public void addEventFilter(IDebugUIEventFilter filter) {
