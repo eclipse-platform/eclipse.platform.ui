@@ -1632,7 +1632,7 @@
             quadrant="BOTTOM_RIGHT"
             lightweight="true">
          <description>
-            %DecoratorLinkedResource.desc
+            %DecoratorLinkedResource.description
 	     </description>
 	     <enablement>
 	        <objectClass name="org.eclipse.core.resources.IResource"/>
