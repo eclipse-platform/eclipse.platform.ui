@@ -11,21 +11,38 @@
 package org.eclipse.ui.internal.dialogs;
 
 import java.io.File;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.preference.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Preferences;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Widget;
 
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.preference.IPreferenceNode;
+import org.eclipse.jface.preference.IPreferencePage;
+import org.eclipse.jface.preference.PreferenceDialog;
+import org.eclipse.jface.preference.PreferenceManager;
+import org.eclipse.jface.window.Window;
+
+import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.roles.RoleManager;
+import org.eclipse.ui.internal.roles.ObjectActivityManager;
 
 
 
@@ -62,7 +79,14 @@ public class WorkbenchPreferenceDialog extends PreferenceDialog {
 	 * The extensions for the file dialogs
 	 */
 	private final static String[] DIALOG_PREFERENCE_EXTENSIONS = new String[] {"*."+PREFERENCE_EXT, "*.*"}; //$NON-NLS-2$ //$NON-NLS-1$
-
+    
+    /**
+     * The set of currently active pages, as described by the 
+     * ObjectContextManager corresponding to the preference page class.  
+     * This field can go away when we introduce caching into the ObjectActivityManager.
+     */
+    private Collection activePages = Collections.EMPTY_SET;
+    
 	/**
 	 * Creates a new preference dialog under the control of the given preference 
 	 * manager.
@@ -72,6 +96,10 @@ public class WorkbenchPreferenceDialog extends PreferenceDialog {
 	 */
 	public WorkbenchPreferenceDialog(Shell parentShell, PreferenceManager manager) {
 		super(parentShell, manager);
+
+ 		// populate the activePages collection.  Note that if this dialog ever becomes capable of responding to role changes without exiting, then this update may need to be done elsewhere.
+        ObjectActivityManager prefManager = ObjectActivityManager.getManager(IWorkbenchConstants.PL_PREFERENCES, true);
+        activePages = prefManager.getActiveObjects();
 	}
 		
 	/* (non-Javadoc)
@@ -96,7 +124,7 @@ public class WorkbenchPreferenceDialog extends PreferenceDialog {
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
 		parent.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
+        		
 		createButton(parent, LOAD_ID, WorkbenchMessages.getString("WorkbenchPreferenceDialog.load"), false); //$NON-NLS-1$
 		createButton(parent, SAVE_ID, WorkbenchMessages.getString("WorkbenchPreferenceDialog.save"), false); //$NON-NLS-1$
 		Label l = new Label(parent, SWT.NONE);
@@ -149,7 +177,7 @@ public class WorkbenchPreferenceDialog extends PreferenceDialog {
 				WorkbenchMessages.getString("WorkbenchPreferenceDialog.loadErrorTitle"), //$NON-NLS-1$
 				WorkbenchMessages.format("WorkbenchPreferenceDialog.verifyWarningMessage", new Object[]{filename}), //$NON-NLS-1$
 				status);
-			if (result != Dialog.OK)
+			if (result != Window.OK)
 				return;	
 		}
 		// Load file
@@ -247,25 +275,17 @@ public class WorkbenchPreferenceDialog extends PreferenceDialog {
 	
 	/** 
 	 * Checks whether the given preference node is contributed via the registry 
-	 * and if so filters it based on the currently enabled roles.  Note that 
-	 * if a given node is filtered out of the view, then its subnodes are 
-	 * filtered out as well.
+	 * and if so filters it based on the currently enabled pages (as specified 
+     * by the preference page ObjectActivityManager).  Note that if a given node
+     * is filtered out of the view, then its subnodes are filtered out as well.
 	 * 
 	 * @see org.eclipse.jface.preference.PreferenceDialog#createTreeItemFor(org.eclipse.swt.widgets.Widget, org.eclipse.jface.preference.IPreferenceNode)
 	 */
 	protected void createTreeItemFor(Widget parent, IPreferenceNode node) {
-		if (node instanceof WorkbenchPreferenceNode) {
-			IConfigurationElement configElement = ((WorkbenchPreferenceNode)node).getConfigurationElement();
-			if (configElement != null) {
-				//String uID = configElement.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier();
-				String uID = configElement.getAttribute("id"); //$NON-NLS-1$
-				if (!RoleManager.getInstance().isEnabledId(uID)) {
-					return;
-				}
-			}		
+		if (node instanceof WorkbenchPreferenceNode && !activePages.contains(node)) {
+            return;
 		}
 		super.createTreeItemFor(parent, node);
-	}
-
+	}    
 }
 
