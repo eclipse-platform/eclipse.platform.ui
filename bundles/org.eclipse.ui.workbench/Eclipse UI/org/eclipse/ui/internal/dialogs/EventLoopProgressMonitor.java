@@ -99,7 +99,7 @@ public class EventLoopProgressMonitor extends ProgressMonitorWrapper
 		}
 		
 		//Initialize an exception handler from the window class.
-		ExceptionHandler handler = new ExceptionHandler();
+		ExceptionHandler handler = ExceptionHandler.getInstance();
 		
 		for (;;) {
 			try {

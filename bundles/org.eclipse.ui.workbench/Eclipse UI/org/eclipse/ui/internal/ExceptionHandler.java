@@ -18,14 +18,23 @@ import org.eclipse.jface.window.Window;
  * <code>ThreadDeath</code> error is simply thrown again, and is not 
  * passed along.
  */
-public class ExceptionHandler implements Window.IExceptionHandler {
+public final class ExceptionHandler implements Window.IExceptionHandler {
+    
+    private static final ExceptionHandler instance = new ExceptionHandler();
+    
+    /**
+     * Returns the singleton exception handler.
+     * 
+     * @return the singleton exception handler
+     */
+    public static ExceptionHandler getInstance() {
+        return instance;
+    }
+    
 	private int exceptionCount = 0; // To avoid recursive errors
 
-	/**
-	 * Creates the exception handler.
-	 */
-	public ExceptionHandler() {
-		super();
+	private ExceptionHandler() {
+		// prevents instantiation
 	}
 	
 	/* (non-javadoc)

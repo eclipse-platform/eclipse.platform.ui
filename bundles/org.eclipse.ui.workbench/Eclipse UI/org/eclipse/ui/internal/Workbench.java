@@ -1288,7 +1288,7 @@ public final class Workbench implements IWorkbench {
 		};
 		
 		// Initialize an exception handler.
-		Window.IExceptionHandler handler = new ExceptionHandler();
+		Window.IExceptionHandler handler = ExceptionHandler.getInstance();
 
 		try {
 			// react to display close event by closing workbench nicely
