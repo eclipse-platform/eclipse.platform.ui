@@ -120,6 +120,8 @@ public abstract class PerspectiveMenu extends ContributionItem {
         super(id);
         this.window = window;
         reg = window.getWorkbench().getPerspectiveRegistry();
+		openOtherAction
+				.setActionDefinitionId("org.eclipse.ui.perspectives.showPerspective"); //$NON-NLS-1$
     }
 
     /*

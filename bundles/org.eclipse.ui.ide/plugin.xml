@@ -466,39 +466,14 @@
       			values="org.eclipse.ui.internal.ide.registry.ViewParameterValues" />
       </command>
       <command
-      		name="%Perspective.resourcePerspective"
-      		description="%command.openResourcePerspective.description"
+      		name="%command.showPerspective.name"
+      		description="%command.showPerspective.description"
       		categoryId="org.eclipse.ui.category.perspectives"
-      		id="org.eclipse.ui.resourcePerspective" />
-      <command
-            name="%Views.Problem"
-            description="%command.showProblemsView.description"
-            categoryId="org.eclipse.ui.category.views"
-            id="org.eclipse.ui.views.ProblemView">
-      </command>
-      <command
-            name="%Views.ResourceNavigator"
-            description="%command.showResourceNavigator.description"
-            categoryId="org.eclipse.ui.category.views"
-            id="org.eclipse.ui.views.ResourceNavigator">
-      </command>  
-      <command
-            name="%Views.Progress"
-            description="%command.showProgressView.description"
-            categoryId="org.eclipse.ui.category.views"
-            id="org.eclipse.ui.views.ProgressView">
-      </command>
-      <command
-            name="%Views.Bookmark"
-            description="%command.showBookmarkView.description"
-            categoryId="org.eclipse.ui.category.views"
-            id="org.eclipse.ui.views.BookmarkView">
-      </command>
-      <command
-            name="%Views.Task"
-            description="%command.showTaskView.description"
-            categoryId="org.eclipse.ui.category.views"
-            id="org.eclipse.ui.views.TaskList">
+      		id="org.eclipse.ui.perspectives.showPerspective">
+      		<parameter
+      			id="org.eclipse.ui.perspectives.showPerspective.perspectiveId"
+      			name="%command.showPerspective.perspectiveIdParameter"
+      			values="org.eclipse.ui.internal.ide.registry.PerspectiveParameterValues" />
       </command>
       <command
             name="%command.openWorkspace.name"

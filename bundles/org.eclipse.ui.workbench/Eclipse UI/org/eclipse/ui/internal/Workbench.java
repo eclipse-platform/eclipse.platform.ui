@@ -94,6 +94,7 @@ import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.help.IWorkbenchHelpSystem;
 import org.eclipse.ui.internal.activities.ws.WorkbenchActivitySupport;
 import org.eclipse.ui.internal.commands.CommandService;
+import org.eclipse.ui.internal.commands.ws.ShowPerspectiveHandler;
 import org.eclipse.ui.internal.commands.ws.ShowViewHandler;
 import org.eclipse.ui.internal.commands.ws.WorkbenchCommandSupport;
 import org.eclipse.ui.internal.contexts.ContextService;
@@ -867,13 +868,17 @@ public final class Workbench implements IWorkbench {
 				bindingManager);
 		services[IWorkbenchServices.BINDING] = bindingService;
 		bindingService.readRegistryAndPreferences(commandService);
-		
+
 		/*
-		 * TODO Putting this here is a like a sword in my side.  But alas, the
+		 * TODO Putting this here is a like a sword in my side. But alas, the
 		 * handler support from XML just isn't up to the task yet.
-		 */  
-		final Command command = commandService.getCommand("org.eclipse.ui.views.showView"); //$NON-NLS-1$
-		command.setHandler(new ShowViewHandler());
+		 */
+		final Command showViewCommand = commandService
+				.getCommand("org.eclipse.ui.views.showView"); //$NON-NLS-1$
+		showViewCommand.setHandler(new ShowViewHandler());
+		final Command showPerspectiveCommand = commandService
+				.getCommand("org.eclipse.ui.perspectives.showPerspective"); //$NON-NLS-1$
+		showPerspectiveCommand.setHandler(new ShowPerspectiveHandler());
 
 		/*
 		 * TODO This is the deprecated support. It would be nice to pull out all
