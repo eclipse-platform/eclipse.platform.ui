@@ -116,21 +116,27 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	 *      <code>IPathVariableChangeEvent.VARIABLE_CHANGED</code>, or
 	 *      <code>IPathVariableChangeEvent.VARIABLE_DELETED</code>
 	 * @see IPathVariableChangeEvent
-	 * @see IPathVariableChangeEvent.VARIABLE_CREATED
-	 * @see IPathVariableChangeEvent.VARIABLE_CHANGED
-	 * @see IPathVariableChangeEvent.VARIABLE_DELETED
+	 * @see IPathVariableChangeEvent#VARIABLE_CREATED
+	 * @see IPathVariableChangeEvent#VARIABLE_CHANGED
+	 * @see IPathVariableChangeEvent#VARIABLE_DELETED
 	 */
 	private void fireVariableChangeEvent(String name, IPath value, int type) {
-
 		if (this.listeners.size() == 0)
 			return;
-
 		// use a separate collection to avoid interference of simultaneous additions/removals 
 		Object[] listenerArray = this.listeners.toArray();
-		PathVariableChangeEvent pve = new PathVariableChangeEvent(this, name, value, type);
+		final PathVariableChangeEvent pve = new PathVariableChangeEvent(this, name, value, type);
 		for (int i = 0; i < listenerArray.length; ++i) {
-			IPathVariableChangeListener l = (IPathVariableChangeListener) listenerArray[i];
-			l.pathVariableChanged(pve);
+			final IPathVariableChangeListener l = (IPathVariableChangeListener) listenerArray[i];
+			ISafeRunnable job = new ISafeRunnable() {
+				public void handleException(Throwable exception) {
+					// already being logged in Platform#run()
+				}
+				public void run() throws Exception {
+					l.pathVariableChanged(pve);
+				}
+			};
+			Platform.run(job);
 		}
 	}
 
