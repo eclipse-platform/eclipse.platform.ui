@@ -1608,6 +1608,8 @@ public class TextViewer extends Viewer implements
 			if (fDocumentSelection != null) {
 				fDocumentSelection.offset= selectionOffset;
 				fDocumentSelection.length= selectionLength;
+				// http://bugs.eclipse.org/bugs/show_bug.cgi?id=32795
+				fDocumentSelection.isDeleted= false;
 			}
 			return;
 		}
