@@ -283,7 +283,7 @@ public void testLeafFolderMove() throws Exception {
 	assertDoesNotExistInWorkspace("1.1", source);
 }
 public void testReadOnlyFolderCopy() throws Exception {
-	// We need to know whether or not we can set the folder to be read-only
+	// We need to know whether or not we can unset the read-only flag
 	// in order to perform this test.
 	if (!CoreFileSystemLibrary.usingNatives())
 		return;

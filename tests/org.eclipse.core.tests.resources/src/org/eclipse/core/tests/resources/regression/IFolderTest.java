@@ -43,7 +43,7 @@ public class IFolderTest extends EclipseWorkspaceTest {
 	 */
 	public void testBug25662() {
 
-		// We need to know whether or not we can set the parent folder to be read-only
+		// We need to know whether or not we can unset the read-only flag
 		// in order to perform this test.
 		if (!CoreFileSystemLibrary.usingNatives())
 			return;

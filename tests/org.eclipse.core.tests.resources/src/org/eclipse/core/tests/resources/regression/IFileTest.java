@@ -48,7 +48,7 @@ public void testBug25658() {
 	if (true)
 		return;
 
-	// We need to know whether or not we can set the folder to be read-only
+	// We need to know whether or not we can unset the read-only flag
 	// in order to perform this test.
 	if (!CoreFileSystemLibrary.usingNatives())
 		return;
@@ -82,7 +82,7 @@ public void testBug25658() {
  */
 public void testBug25662() {
 	
-	// We need to know whether or not we can set the folder to be read-only
+	// We need to know whether or not we can unset the read-only flag
 	// in order to perform this test.
 	if (!CoreFileSystemLibrary.usingNatives())
 		return;

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.localstore;
 
-import java.io.File;
+import java.io.File; 
 import java.io.IOException;
 import java.util.Date;
 
@@ -142,23 +142,27 @@ public void testCopyFile() throws Throwable {
 	assertTrue("2.1", compareContent(getContents(content), store.read(copyOfTarget)));
 	copyOfTarget.delete();
 
-	/* make source read-only and try the copy temp\target -> temp\copy of target */
-	copyOfTarget = new File(temp, "copy of target");
-	CoreFileSystemLibrary.setReadOnly(target.getAbsolutePath(), true);
-	store.copy(target, copyOfTarget, IResource.DEPTH_INFINITE, null);
-	assertTrue("3.1", compareContent(getContents(content), store.read(copyOfTarget)));
-	// reset readonly flag for cleanup
-	CoreFileSystemLibrary.setReadOnly(copyOfTarget.getAbsolutePath(), false);
-	copyOfTarget.delete();
+	// We need to know whether or not we can unset the read-only flag
+	// in order to perform this part of the test.
+	if (CoreFileSystemLibrary.usingNatives()) {
+		/* make source read-only and try the copy temp\target -> temp\copy of target */
+		copyOfTarget = new File(temp, "copy of target");
+		CoreFileSystemLibrary.setReadOnly(target.getAbsolutePath(), true);
+		store.copy(target, copyOfTarget, IResource.DEPTH_INFINITE, null);
+		assertTrue("3.1", compareContent(getContents(content), store.read(copyOfTarget)));
+		// reset readonly flag for cleanup
+		CoreFileSystemLibrary.setReadOnly(copyOfTarget.getAbsolutePath(), false);
+		copyOfTarget.delete();
+		// reset the readonly flag for cleanup
+		CoreFileSystemLibrary.setReadOnly(target.getAbsolutePath(), false);
+		Workspace.clear(target);		
+	}
 
 	/* copy a big file to test progress monitor */
 	StringBuffer sb = new StringBuffer();
 	for (int i = 0; i < 1000; i++)
 		sb.append("asdjhasldhaslkfjhasldkfjhasdlkfjhasdlfkjhasdflkjhsdaf");
 	File bigFile = new File(temp, "bigFile");
-	// reset the readonly flag for cleanup
-	CoreFileSystemLibrary.setReadOnly(target.getAbsolutePath(), false);
-	Workspace.clear(target);
 	createFile(bigFile, sb.toString());
 	assertTrue("7.1", bigFile.exists());
 	assertTrue("7.2", compareContent(getContents(sb.toString()), store.read(bigFile)));
@@ -387,7 +391,7 @@ public void testMoveAcrossVolumes() throws Throwable {
 	Workspace.clear(tree);
 }
 public void testReadOnly() throws IOException {
-	// We need to know whether or not we can set the folder to be read-only
+	// We need to know whether or not we can unset the read-only flag
 	// in order to perform this test.
 	if (!CoreFileSystemLibrary.usingNatives())
 		return;
