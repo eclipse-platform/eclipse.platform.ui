@@ -31,7 +31,8 @@ public class ViewsPreferencePage
 	private Button viewBottomButton;
 	private Button openEmbedButton;
 	private Button openFastButton;
-	private ColorFieldEditor colorEditor;
+	private ColorFieldEditor errorColorEditor;
+	private ColorFieldEditor hyperlinkColorEditor;
 	/*
 	 * No longer supported - removed when confirmed!
 	 * private Button openFloatButton;
@@ -49,7 +50,6 @@ public class ViewsPreferencePage
 	private static final String OVM_TITLE = WorkbenchMessages.getString("OpenViewMode.title"); //$NON-NLS-1$
 	private static final String OVM_EMBED = WorkbenchMessages.getString("OpenViewMode.embed"); //$NON-NLS-1$
 	private static final String OVM_FAST = WorkbenchMessages.getString("OpenViewMode.fast"); //$NON-NLS-1$
-	private static final String STATUS_LINE = WorkbenchMessages.getString("ErrorText.color"); //$NON-NLS-1$
 	/*
 	 * No longer supported - remove when confirmed!
 	 * private static final String OVM_FLOAT = WorkbenchMessages.getString("OpenViewMode.float"); //$NON-NLS-1$
@@ -139,20 +139,33 @@ protected Control createContents(Composite parent) {
 	
 	createSpacer(composite);
 	
-	Composite colorComposite = new Composite(composite,SWT.NULL);
+	Group colorComposite = new Group(composite,SWT.NULL);
 	colorComposite.setLayout(new GridLayout());
+	colorComposite.setText(WorkbenchMessages.getString("ViewsPreference.ColorsTitle")); //$NON-NLS-1$
 				
-	GridData data = new GridData();
+	GridData data = new GridData(GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL);
 	data.horizontalSpan = 2;
 	colorComposite.setLayoutData(data);	
 	
-	colorEditor = new ColorFieldEditor(
-			JFacePreferences.ERROR_COLOUR,
-			STATUS_LINE,
-			colorComposite);
+	//Add in an intermediate composite to allow for spacing
+	Composite spacingComposite = new Composite(colorComposite,SWT.NULL);
+	spacingComposite.setLayout(new GridLayout());
+	
+	errorColorEditor = new ColorFieldEditor(
+			JFacePreferences.ERROR_COLOR,
+			WorkbenchMessages.getString("ViewsPreference.ErrorText"), //$NON-NLS-1$,
+			spacingComposite);
 			
-	colorEditor.setPreferenceStore(doGetPreferenceStore());
-	colorEditor.load();
+	errorColorEditor.setPreferenceStore(doGetPreferenceStore());
+	errorColorEditor.load();
+	
+	hyperlinkColorEditor = new ColorFieldEditor(
+			JFacePreferences.HYPERLINK_COLOR,
+			WorkbenchMessages.getString("ViewsPreference.HyperlinkText"), //$NON-NLS-1$
+			spacingComposite);
+			
+	hyperlinkColorEditor.setPreferenceStore(doGetPreferenceStore());
+	hyperlinkColorEditor.load();
 	
 	return composite;
 }
@@ -329,7 +342,8 @@ protected void performDefaults() {
 	openEmbedButton.setSelection(value == IPreferenceConstants.OVM_EMBED);
 	openFastButton.setSelection(value == IPreferenceConstants.OVM_FAST);
 	
-	colorEditor.loadDefault();
+	errorColorEditor.loadDefault();
+	hyperlinkColorEditor.loadDefault();
 	
 	/*
 	 * No longer supported - remove when confirmed!
@@ -354,8 +368,8 @@ public boolean performOk() {
 	// store the open view mode to setting
 	store.setValue(IPreferenceConstants.OPEN_VIEW_MODE, openViewMode);
 	
-	colorEditor.store();
-
+	errorColorEditor.store();
+	hyperlinkColorEditor.store();
 	return true;
 }
 }
