@@ -14,6 +14,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.ui.activities.IActivationService;
 
 /**
  * A workbench page consists of an arrangement of views and editors intended to
@@ -671,5 +672,11 @@ public void setEditorReuseThreshold(int openEditors);
  */
 public INavigationHistory getNavigationHistory();
 
-//IContextActivationService getContextActivationService();
+/**
+ * TODO javadoc
+ * 
+ * @return
+ * @since 3.0
+ */
+public IActivationService getActivationService();
 }

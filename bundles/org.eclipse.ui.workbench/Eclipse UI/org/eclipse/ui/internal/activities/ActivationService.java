@@ -32,7 +32,7 @@ public final class ActivationService implements IActivationService {
 
 	public ActivationService() {
 	}
-
+	
 	public void addActivationServiceListener(IActivationServiceListener activationServiceListener) {
 		if (disposed)
 			return;

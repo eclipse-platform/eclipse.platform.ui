@@ -394,8 +394,8 @@ public WorkbenchPage(WorkbenchWindow w, IAdaptable input)
 
 
 
-private final IActivationService activationService = ActivationServiceFactory.getActivationService();
 private final HashSet activationServices = new HashSet();
+private final IActivationService compositeActivationService = ActivationServiceFactory.getActivationService();
 
 private final IActivationServiceListener activationServiceListener = new IActivationServiceListener() {
 	public void activationServiceChanged(IActivationServiceEvent activationServiceEvent) {
@@ -412,7 +412,7 @@ private final IActivationServiceListener activationServiceListener = new IActiva
 		}
 		
 		try {
-			activationService.setActiveActivityIds(activeActivityIds);
+			compositeActivationService.setActiveActivityIds(activeActivityIds);
 		} catch (DisposedException eDisposed) {			
 		}
 	}
@@ -425,12 +425,8 @@ public IActivationService getActivationService() {
 	return activationService;	
 }
 
-public Set getActiveActivityIds() {
-	try {
-		return activationService.getActiveActivityIds();
-	} catch (DisposedException eDisposed) {
-		return Collections.EMPTY_SET;
-	}
+public IActivationService getCompositeActivationService() {
+	return compositeActivationService;
 }
 
 

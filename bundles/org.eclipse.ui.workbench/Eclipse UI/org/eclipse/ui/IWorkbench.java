@@ -13,6 +13,7 @@ package org.eclipse.ui;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceManager;
+import org.eclipse.ui.activities.IActivationService;
 import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.activities.IObjectActivityManager;
 import org.eclipse.ui.commands.ICommandManager;
@@ -365,4 +366,12 @@ public ICommandManager getCommandManager();
  * @since 3.0
  */
 public IRoleManager getRoleManager();
+
+/**
+ * TODO javadoc
+ * 
+ * @return
+ * @since 3.0
+ */
+public IActivationService getActivationService();
 }

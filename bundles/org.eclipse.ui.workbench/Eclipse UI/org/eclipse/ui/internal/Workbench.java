@@ -195,7 +195,7 @@ public class Workbench
 
 	public IRoleManager getRoleManager() {
 		return roleManager;
-	}		
+	}	
 
 	public final void disableKeyFilter() {
 		synchronized (keyFilterMutex) {
