@@ -1,9 +1,15 @@
 package org.eclipse.ui.tests.navigator;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
-import org.eclipse.jface.viewers.*;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.jface.viewers.ILabelDecorator;
+import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.internal.misc.Assert;
 
 public class TestDecoratorContributor implements ILabelDecorator {
 
@@ -19,12 +25,15 @@ public class TestDecoratorContributor implements ILabelDecorator {
 	 * @see ILabelDecorator#decorateText(String, Object)
 	 */
 	public String decorateText(String text, Object element) {
+		//Check that the element is adapted to IResource
+		Assert.isTrue(element instanceof IResource);
 		return text + DECORATOR_SUFFIX;
 	}
 	/*
 	 * @see ILabelDecorator#decorateImage(Image, Object)
 	 */
 	public Image decorateImage(Image image, Object element) {
+		Assert.isTrue(element instanceof IResource);
 		return image;
 	}
 
