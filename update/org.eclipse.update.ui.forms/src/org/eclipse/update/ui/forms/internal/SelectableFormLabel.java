@@ -1,9 +1,9 @@
 package org.eclipse.update.ui.forms.internal;
 
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.*;
 
 public class SelectableFormLabel extends FormLabel {
 	private boolean hasFocus;
