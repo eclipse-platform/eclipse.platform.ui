@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.ui.commands.ExecutionException;
 import org.eclipse.ui.commands.ICommand;
@@ -86,7 +87,8 @@ final class CommandWrapper implements ICommand {
     public final Object execute(Map parameterValuesByName)
             throws ExecutionException, NotHandledException {
         try {
-            return command.execute(parameterValuesByName);
+            return command.execute(new ExecutionEvent(parameterValuesByName,
+					null, null));
         } catch (final org.eclipse.core.commands.ExecutionException e) {
             throw new ExecutionException(e);
         } catch (final org.eclipse.core.commands.NotHandledException e) {

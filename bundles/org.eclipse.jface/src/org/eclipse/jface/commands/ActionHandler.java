@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.HandlerEvent;
 import org.eclipse.core.commands.IHandler;
@@ -173,16 +174,21 @@ public class ActionHandler extends AbstractHandler {
     }
 
     /**
-     * @see IHandler#execute(Map)
+     * @see IHandler#execute(ExecutionEvent)
      */
-    public final Object execute(final Map parameterValuesByName)
+    public final Object execute(final ExecutionEvent event)
             throws ExecutionException {
         if ((action.getStyle() == IAction.AS_CHECK_BOX)
                 || (action.getStyle() == IAction.AS_RADIO_BUTTON))
-            action.setChecked(!action.isChecked());
-        try {
-            action.runWithEvent(new Event());
-        } catch (Exception e) {
+			action.setChecked(!action.isChecked());
+		final Object trigger = event.getTrigger();
+		try {
+			if (trigger instanceof Event) {
+				action.runWithEvent((Event) trigger);
+			} else {
+				action.runWithEvent(new Event());
+			}
+		} catch (Exception e) {
             throw new ExecutionException(
                     "While executing the action, an exception occurred", e); //$NON-NLS-1$
         }
