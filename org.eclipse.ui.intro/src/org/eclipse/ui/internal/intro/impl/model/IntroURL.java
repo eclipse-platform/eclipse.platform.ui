@@ -53,6 +53,8 @@ public class IntroURL implements IIntroURL {
     public static final String RUN_ACTION = "runAction"; //$NON-NLS-1$
     public static final String SHOW_PAGE = "showPage"; //$NON-NLS-1$
     public static final String SHOW_MESSAGE = "showMessage"; //$NON-NLS-1$
+    public static final String NAVIGATE_FORWARD = "navigateForward";
+    public static final String NAVIGATE_BACKWARD = "navigateBackward";
 
     /**
      * Constants that represent valid action keys.
@@ -307,6 +309,11 @@ public class IntroURL implements IIntroURL {
         } else
             return false;
     }
+
+
+    
+
+
 
     /**
      * @return Returns the action imbedded in this URL.

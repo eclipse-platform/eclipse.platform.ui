@@ -46,7 +46,7 @@ import org.eclipse.ui.part.*;
  * saving state. The memento is paased shortlt before shutdown to enable storing
  * of part specific data.
  * 
- * Note: This class was made public on for re-use as-is as a valid class for the
+ * Note: This class was made public for re-use, as-is, as a valid class for the
  * <code>org.eclipse.ui.intro</code> extension point. It is not intended to be
  * subclassed or used otheriwse.
  * </p>

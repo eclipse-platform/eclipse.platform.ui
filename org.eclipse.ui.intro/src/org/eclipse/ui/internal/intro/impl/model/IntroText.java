@@ -33,14 +33,10 @@ public class IntroText extends AbstractBaseIntroElement {
         Node textNode = element.getFirstChild();
         if (textNode == null)
             return;
-        if (textNode.getNodeType() == Node.TEXT_NODE) {
+        if (textNode.getNodeType() == Node.TEXT_NODE
+                || textNode.getNodeType() == Node.CDATA_SECTION_NODE) {
+            // we may have a text or a CDATA nodes.
             text = textNode.getNodeValue();
-            if (text.equals(" ")) { //$NON-NLS-1$
-                // we may have CDATA nodes, use first one.
-                Text childText = (Text) element.getChildNodes().item(1);
-                if (childText != null)
-                    text = childText.getData();
-            }
             isFormatted = checkIfFormatted();
         }
     }
@@ -66,6 +62,8 @@ public class IntroText extends AbstractBaseIntroElement {
      *         it formatted.
      */
     public boolean checkIfFormatted() {
+        if (text == null)
+            return false;
         int i = text.indexOf("<"); //$NON-NLS-1$
         return i == -1 ? false : true;
     }
