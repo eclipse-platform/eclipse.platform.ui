@@ -27,12 +27,6 @@ public class ListenerList {
 	 * when size == 0.
 	 */
 	private static final Object[] EmptyArray= new Object[0];
-	/**
-	 * Creates a listener list with an initial capacity of 3.
-	 */
-	public ListenerList() {
-		this(3);
-	}
 
 	/**
 	 * Creates a listener list with the given initial capacity.
@@ -45,6 +39,7 @@ public class ListenerList {
 			throw new IllegalArgumentException();
 		}
 		fListeners= new Object[capacity];
+		fSize= 0;
 	}
 
 	/**
@@ -82,8 +77,9 @@ public class ListenerList {
 	 * notification itself.
 	 */
 	public synchronized Object[] getListeners() {
-		if (fSize == 0)
+		if (fSize == 0) {
 			return EmptyArray;
+		}
 		Object[] result= new Object[fSize];
 		System.arraycopy(fListeners, 0, result, 0, fSize);
 		return result;
@@ -113,6 +109,14 @@ public class ListenerList {
 				return;
 			}
 		}
+	}
+
+	/**
+	 * Removes all the listeners from the list.
+	 */
+	public void removeAll() {
+		fListeners= new Object[0];
+		fSize= 0;
 	}
 
 	/**

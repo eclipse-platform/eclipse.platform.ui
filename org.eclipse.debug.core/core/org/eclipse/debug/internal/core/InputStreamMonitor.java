@@ -71,6 +71,7 @@ public class InputStreamMonitor implements IStreamMonitor {
 		if (fThread != null) {
 			Thread thread= fThread;
 			fThread= null;
+			fListeners.removeAll();
 			try {
 				thread.join();
 			} catch (InterruptedException ie) {

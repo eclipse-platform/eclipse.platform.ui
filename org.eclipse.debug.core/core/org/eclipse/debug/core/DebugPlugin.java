@@ -221,6 +221,7 @@ public class DebugPlugin extends Plugin {
 		super.shutdown();
 		fLaunchManager.shutdown();
 		fBreakpointManager.shutdown();
+		fEventListeners.removeAll();
 		setDefault(null);
 	}
 

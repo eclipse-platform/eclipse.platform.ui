@@ -237,6 +237,7 @@ public class LaunchManager implements ILaunchManager  {
 	 * Terminates/Disconnects any active debug targets/processes.
 	 */
 	public void shutdown() {
+		fListeners.removeAll();
 		ILaunch[] launches = getLaunches();
 		for (int i= 0; i < launches.length; i++) {
 			ILaunch launch= launches[i];

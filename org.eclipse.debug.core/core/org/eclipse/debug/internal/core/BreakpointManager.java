@@ -132,9 +132,11 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	
 	/**
 	 * Removes this manager as a resource change listener
+	 * and removes all breakpoint listeners.
 	 */
 	public void shutdown() {
 		getWorkspace().removeResourceChangeListener(this);
+		fBreakpointListeners.removeAll();
 	}
 
 	/**
