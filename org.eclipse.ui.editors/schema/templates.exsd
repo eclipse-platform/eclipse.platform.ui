@@ -67,7 +67,7 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  A subclass of &lt;code&gt;org.eclipse.jface.text.templates.ContextType&lt;/code&gt;.
+                  A subclass of &lt;code&gt;org.eclipse.jface.text.templates.TemplateContextType&lt;/code&gt;.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java"/>
@@ -77,7 +77,7 @@
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  
+                  The display name of this context.
                </documentation>
             </annotation>
          </attribute>
@@ -128,14 +128,14 @@
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  The UI name of this resolver.
+                  The display name of this resolver.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="icon" type="string">
             <annotation>
                <documentation>
-                  
+                  An icon that may be displayed in the user interface.
                </documentation>
                <appInfo>
                   <meta.attribute kind="resource"/>
@@ -189,7 +189,7 @@
          <attribute name="icon" type="string">
             <annotation>
                <documentation>
-                  
+                  An icon that may be displayed in the UI for this template, for example in content assist proposals.
                </documentation>
                <appInfo>
                   <meta.attribute kind="resource"/>

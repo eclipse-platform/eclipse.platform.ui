@@ -521,7 +521,7 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.IDocumentPartitionerExtension2#computeZeroLengthPartitioning(int, int)
+	 * @see org.eclipse.jface.text.IDocumentPartitionerExtension2#computePartitioning(int, int, boolean)
 	 * @since 3.0
 	 */
 	public ITypedRegion[] computePartitioning(int offset, int length, boolean includeZeroLengthPartitions) {
