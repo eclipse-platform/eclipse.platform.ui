@@ -271,11 +271,11 @@
       <documentation>
          &lt;pre&gt;
    &lt;extension
-         point=&quot;org.eclipse.ui.examples.templateeditor.template&quot;&gt;
+         point=&quot;org.eclipse.ui.editors.templates&quot;&gt;
       &lt;template
-         name=&quot;javac&quot;
-         context=&quot;ant&quot;
-         editorId=&quot;org.eclipse.ui.examples.templateeditor.editors.TemplateEditor&quot;
+         name=&quot;%ant.tasks.javac.name&quot;
+         contextTypeId=&quot;org.eclipse.ui.examples.templateeditor.antcontext&quot;
+         id=&quot;org.eclipse.ui.examples.templateeditor.templates.javac&quot;
          description=&quot;%ant.tasks.javac.description&quot;&gt;
           &lt;pattern&gt;
              &lt;javac srcdir=&quot;${src}&quot;
@@ -286,16 +286,14 @@
       &lt;/template&gt;
       
       &lt;resolver
-         context=&quot;ant&quot;
+         contextTypeId=&quot;org.eclipse.ui.examples.templateeditor.antcontext&quot;
          type=&quot;src&quot;
-         editorId=&quot;org.eclipse.ui.examples.templateeditor.editors.TemplateEditor&quot;
          class=&quot;org.eclipse.ui.examples.templateeditor.editors.AntVariableResolver&quot;&gt;
       &lt;/resolver&gt;
       
       &lt;resolver
-         context=&quot;ant&quot;
+         contextTypeId=&quot;org.eclipse.ui.examples.templateeditor.antcontext&quot;
          type=&quot;dst&quot;
-         editorId=&quot;org.eclipse.ui.examples.templateeditor.editors.TemplateEditor&quot;
          class=&quot;org.eclipse.ui.examples.templateeditor.editors.AntVariableResolver&quot;&gt;
       &lt;/resolver&gt;
    &lt;/extension&gt;
