@@ -539,6 +539,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 				for (int index = 0; index < configured.length && !found; index++) {
 					if (configured[index].getSite().getURL().equals(resolvedURL)) {
 						found = true;
+						((ConfigurationSite)configured[index]).setPreviousPluginPath(siteEntries[siteIndex].getPlugins());						
 						modified.add(configured[index]);
 						configured[index] = null;
 					}
@@ -550,6 +551,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 					IPlatformConfiguration.ISitePolicy sitePolicy = siteEntries[siteIndex].getSitePolicy();
 					ConfigurationSite configSite = (ConfigurationSite) new BaseSiteLocalFactory().createConfigurationSiteModel((SiteMapModel) site, sitePolicy.getType());
 					configSite.setPlatformURLString(siteEntries[siteIndex].getURL().toExternalForm());
+					configSite.setPreviousPluginPath(siteEntries[siteIndex].getPlugins());
 
 					//the site may not be read-write
 					configSite.setInstallSite(siteEntries[siteIndex].isUpdateable());
@@ -637,7 +639,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 		while (featureIter.hasNext()) {
 			IFeatureReference element = (IFeatureReference) featureIter.next();
 
-			if (currentSite.equals(element.getSite())) {
+			if (currentSite==null || !currentSite.equals(element.getSite())) {
 				currentSite = element.getSite();
 				siteEntries = currentSite.getPluginEntries();
 			}

@@ -187,11 +187,13 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		ConfigurationSiteModel[] configurationSites = getConfigurationSitesModel();
 		
 		for (int i = 0; i < configurationSites.length; i++) {
-			IConfigurationSite element = (IConfigurationSite) configurationSites[i];
+			ConfigurationSite element = (ConfigurationSite) configurationSites[i];
 			ConfigurationPolicy configurationPolicy = (ConfigurationPolicy) element.getConfigurationPolicy();
 			
 			// obtain the list of plugins
 			String[] pluginPath = configurationPolicy.getPluginPath(element.getSite());
+			pluginPath = union(element.getPreviousPluginPath(),pluginPath);
+			
 			IPlatformConfiguration.ISitePolicy sitePolicy = runtimeConfiguration.createSitePolicy(configurationPolicy.getPolicy(), pluginPath);
 			
 			// determine the URL to check 
@@ -334,5 +336,37 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			return new IActivity[0];
 		return (IActivity[]) getActivityModel();
 	}
+
+
+	/**
+	 * Returns and array with the union of plugins
+	 */
+	private String[] union(String[] sourceArray, String[] targetArray) {
+
+		// No string 
+		if (sourceArray == null || sourceArray.length == 0) {
+			return targetArray;
+		}
+
+		// No string
+		if (targetArray == null || targetArray.length == 0) {
+			return sourceArray;
+		}
+
+		// if a String from sourceArray is NOT in
+		// targetArray, add it to targetArray
+		List list1 = Arrays.asList(targetArray);
+		for (int i = 0; i < sourceArray.length; i++) {
+			if (!list1.contains(sourceArray[i]))
+				list1.add(sourceArray[i]);
+		}
+
+		String[] resultEntry = new String[list1.size()];
+		if (list1.size() > 0)
+			list1.toArray(resultEntry);
+
+		return resultEntry;
+	}
+
 
 }

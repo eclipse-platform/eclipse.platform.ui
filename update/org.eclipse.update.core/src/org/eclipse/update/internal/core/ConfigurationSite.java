@@ -26,6 +26,9 @@ import org.eclipse.update.core.model.SiteMapModel;
  */
 public class ConfigurationSite extends ConfigurationSiteModel implements IConfigurationSite, IWritable {
 
+
+	private String[] previousPluginPath;
+	
 	/**
  	 * 
  	 */
@@ -434,4 +437,20 @@ public class ConfigurationSite extends ConfigurationSiteModel implements IConfig
 
 	
 	
+	/**
+	 * Gets the previousPluginPath. The list of plugins the platform had.
+	 * @return Returns a String[]
+	 */
+	public String[] getPreviousPluginPath() {
+		return previousPluginPath;
+	}
+
+	/**
+	 * Sets the previousPluginPath.
+	 * @param previousPluginPath The previousPluginPath to set
+	 */
+	public void setPreviousPluginPath(String[] previousPluginPath) {
+		this.previousPluginPath = previousPluginPath;
+	}
+
 }
