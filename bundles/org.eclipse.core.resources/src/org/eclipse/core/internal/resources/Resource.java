@@ -439,17 +439,16 @@ public void createLink(IPath localLocation, int updateFlags, IProgressMonitor mo
 		checkValidPath(path, FOLDER);
 		try {
 			workspace.prepareOperation();
-			// resolve any path variables which may be in the location
-			IPath resolvedLocation = workspace.getPathVariableManager().resolvePath(localLocation);
-			assertLinkRequirements(resolvedLocation, updateFlags);
+			assertLinkRequirements(localLocation, updateFlags);
 			workspace.beginOperation(true);
 			ResourceInfo info = workspace.createResource(this, false);
 			info.set(M_LINK);
-			getLocalManager().link(this, resolvedLocation);
+			getLocalManager().link(this, localLocation);
 			monitor.worked(Policy.opWork * 5 / 100);
 			//save the location in the project description
 			Project project = (Project)getProject();
-			project.internalGetDescription().setLinkLocation(getName(), new LinkDescription(this, localLocation));
+			project.internalGetDescription().setLinkLocation(getName(), 
+				new LinkDescription(this,localLocation));
 			project.writeDescription(IResource.NONE);
 			monitor.worked(Policy.opWork * 5 / 100);
 			
