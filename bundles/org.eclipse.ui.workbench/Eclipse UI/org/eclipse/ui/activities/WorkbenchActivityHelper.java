@@ -10,7 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.activities;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.IPluginContribution;
@@ -27,6 +31,68 @@ import org.eclipse.ui.internal.IWorkbenchConstants;
 public final class WorkbenchActivityHelper {
 
 	/**
+	 * Answers whether a given contribution is allowed to be used based on 
+	 * activity enablement.  If it is currently disabled, then a dialog is 
+	 * opened and the user is prompted to activate the requried activities.  If 
+	 * the user declines their activation then false is returned.  In all other 
+	 * cases true is returned.
+	 * 
+	 * @param object the contribution to test.
+	 * @return whether the contribution is allowed to be used based on activity 
+	 * enablement.
+	 */
+	public static boolean allowUseOf(Object object) {
+	    if (!isFiltering())
+			return true;
+		if (object instanceof IPluginContribution) {
+			IPluginContribution contribution = (IPluginContribution) object;
+			if (contribution.getPluginId() != null) {
+				IWorkbenchActivitySupport workbenchActivitySupport =
+				PlatformUI.getWorkbench().getActivitySupport();
+				IIdentifier identifier =
+					workbenchActivitySupport
+						.getActivityManager()
+						.getIdentifier(
+						createUnifiedId(contribution));
+				return allow(identifier);
+			}
+		}
+		return true;
+	}
+	
+	/**
+	 * Answers whether a given identifier is enabled.  If it is not enabled, 
+	 * then a dialog is opened and the user is prompted to enable the associated 
+	 * activities.  
+	 *  
+	 * @param identifier the identifier to test.
+	 * @return whether the identifier is enabled.
+	 */
+	private static boolean allow(IIdentifier identifier) {
+	    if (identifier.isEnabled()) { 
+	        return true;
+	    }
+	    
+	    if (!PlatformUI
+	    	.getWorkbench()
+	    	.getPreferenceStore()
+	    	.getBoolean(
+	    	    IWorkbenchPreferenceConstants.SHOULD_PROMPT_FOR_ENABLEMENT)) {
+	        enableIdentifier(identifier);
+	        return true;
+	    }
+	    
+	    EnablementDialog dialog = new EnablementDialog(PlatformUI.getWorkbench().getDisplay().getActiveShell(), identifier);
+	    if (dialog.open() == Window.OK) {
+	        enableIdentifier(identifier);
+	        return true;
+	    }
+	    
+	    return false;
+	}
+    
+    
+	/**
 	 * Utility method to create a <code>String</code> containing the plugin
 	 * and local ids of a contribution.
 	 * 
@@ -38,6 +104,18 @@ public final class WorkbenchActivityHelper {
 		if (contribution.getPluginId() != null)
 			return contribution.getPluginId() + '/' + contribution.getLocalId();
 		return contribution.getLocalId();
+	}
+	
+	/**
+	 * Enables the activities associated with the given identifier.
+	 * 
+	 * @param identifier the identifier to enable
+	 */
+	private static final void enableIdentifier(IIdentifier identifier) {       
+	    IWorkbenchActivitySupport activitySupport = PlatformUI.getWorkbench().getActivitySupport();
+        Set newSet = new HashSet(activitySupport.getActivityManager().getEnabledActivityIds());
+        newSet.addAll(identifier.getActivityIds());
+        activitySupport.setEnabledActivityIds(newSet);	    
 	}
 	
     /**
@@ -107,5 +185,5 @@ public final class WorkbenchActivityHelper {
 	 */
 	private WorkbenchActivityHelper() {
 	    // no-op
-	}
+	}	
 }

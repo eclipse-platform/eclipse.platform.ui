@@ -431,6 +431,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		store.setDefault(IPreferenceConstants.CLOSE_EDITORS_ON_EXIT, false);
 		// Allow 'show all' option by default
 		store.setDefault(IWorkbenchPreferenceConstants.SHOULD_ALLOW_SHOW_ALL, true);		
+		store.setDefault(IWorkbenchPreferenceConstants.SHOULD_PROMPT_FOR_ENABLEMENT, true);
 		
 		// @issue some of these may be IDE-specific
 		store.setDefault(IPreferenceConstants.EDITORLIST_PULLDOWN_ACTIVE, false);

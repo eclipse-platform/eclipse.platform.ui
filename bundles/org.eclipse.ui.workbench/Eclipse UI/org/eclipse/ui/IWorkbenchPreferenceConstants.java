@@ -144,4 +144,16 @@ public interface IWorkbenchPreferenceConstants {
 	 */
 	public static final String SHOULD_ALLOW_SHOW_ALL = "SHOULD_ALLOW_SHOW_ALL"; //$NON-NLS-1$
 
+	/**
+	 * Workbench preference id for determining whether the user will be prompted 
+	 * for activity enablement.  If this is false then activities are enabled
+	 * automatically.
+	 * <p>
+	 * The default value for this preference is: <code>true</code> (prompt)
+	 * </p>
+	 * @since 3.0
+	 * @issue does this need to be API?
+	 */
+    public static final String SHOULD_PROMPT_FOR_ENABLEMENT = "shouldPromptForEnablement"; //$NON-NLS-1$
+
 }
