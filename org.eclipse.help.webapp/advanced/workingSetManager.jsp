@@ -79,6 +79,11 @@ function enableButtons() {
 	}
 }
 
+function selectRadio(radioId) {
+	if (!(document.getElementById(radioId).checked)){
+		document.getElementById(radioId).click();
+	}
+}
 
 function getWorkingSet()
 {
@@ -150,10 +155,10 @@ function closeWorkingSetDialog()
 <form>
 <div style="overflow:auto;height:250px;width:100%;">
   	<table id="filterTable" cellspacing=0 cellpading=0 border=0 align=center  style="background:<%=prefs.getToolbarBackground()%>;margin-top:5px;width:100%;">
-		<tr><td>
+		<tr><td onclick="selectRadio('alldocs')">
 			<input id="alldocs" type="radio" name="workingSet" onclick="enableButtons()"><%=ServletResources.getString("All", request)%>
 		</td></tr>
-		<tr><td>
+		<tr><td onclick="selectRadio('selectws')">
 			<input id="selectws" type="radio" name="workingSet"  onclick="enableButtons()"><%=ServletResources.getString("selectWorkingSet", request)%>:		
 		</td></tr>
 		<tr><td>
