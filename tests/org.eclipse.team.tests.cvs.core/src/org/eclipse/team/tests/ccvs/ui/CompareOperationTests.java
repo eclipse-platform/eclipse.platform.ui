@@ -173,8 +173,16 @@ public class CompareOperationTests extends CVSOperationTest {
 		assertRevisionsMatch(op.getLeftTree(), copy, new String[] {"folder1/a.txt"}, new String[] {"folder1/newFile" } /* files with no revision */);
 		
 		// Run the operation on a single file
-		remoteResource = CVSWorkspaceRoot.getRemoteResourceFor(project.getFile("folder1/a.txt"));
+		remoteResource = CVSWorkspaceRoot.getRemoteResourceFor(copy.getFile("folder1/a.txt"));
 		op = new TestRemoteCompareOperation(null, remoteResource, v1);
+		run(op);
+		assertRevisionsMatch(op.getRightTree(), project, new String[] {"folder1/a.txt"}, null);
+		assertRevisionsMatch(op.getLeftTree(), copy, new String[] {"folder1/a.txt" }, null /* files with no revision */);
+		
+		// Run the operation on a single file using RemoteCompareOperation.getTag
+		// to determine the tag
+		remoteResource = CVSWorkspaceRoot.getRemoteResourceFor(copy.getFile("folder1/a.txt"));
+		op = new TestRemoteCompareOperation(null, remoteResource, RemoteCompareOperation.getTag(CVSWorkspaceRoot.getRemoteResourceFor(project.getFile("folder1/a.txt"))));
 		run(op);
 		assertRevisionsMatch(op.getRightTree(), project, new String[] {"folder1/a.txt"}, null);
 		assertRevisionsMatch(op.getLeftTree(), copy, new String[] {"folder1/a.txt" }, null /* files with no revision */);

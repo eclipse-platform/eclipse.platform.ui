@@ -10,40 +10,22 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.operations;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.eclipse.compare.CompareUI;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.*;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
-import org.eclipse.team.internal.ccvs.core.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.client.Command;
-import org.eclipse.team.internal.ccvs.core.client.RDiff;
-import org.eclipse.team.internal.ccvs.core.client.Session;
+import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.client.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.client.listeners.RDiffSummaryListener;
-import org.eclipse.team.internal.ccvs.core.resources.FileContentCachingService;
-import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
-import org.eclipse.team.internal.ccvs.core.resources.RemoteFolderTree;
+import org.eclipse.team.internal.ccvs.core.resources.*;
+import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
-import org.eclipse.team.internal.ccvs.ui.CVSCompareEditorInput;
-import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
-import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
+import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.ccvs.ui.ResourceEditionNode;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.ui.IWorkbenchPage;
 
@@ -57,6 +39,28 @@ public class RemoteCompareOperation extends RemoteOperation  implements RDiffSum
 	
 	private RemoteFolderTree leftTree, rightTree;
 
+	public static CVSTag getTag(ICVSRemoteResource resource) throws CVSException {
+		CVSTag tag = null;
+		try {
+			if (resource.isContainer()) {
+				tag = ((ICVSRemoteFolder)resource).getTag();
+			} else {
+				ICVSRemoteFile file = (ICVSRemoteFile)resource;
+				String revision = file.getRevision();
+				if (revision.equals(ResourceSyncInfo.ADDED_REVISION)) {
+					ResourceSyncInfo info =file.getSyncInfo();
+					if (info != null) tag = info.getTag();
+				} else {
+					tag = new CVSTag(revision, CVSTag.VERSION);
+				}
+			}
+		} catch (TeamException e) {
+			throw CVSException.wrapException(e);
+		}
+		if (tag == null) tag = CVSTag.DEFAULT;
+		return tag;
+	}
+	
 	/**
 	 * Compare two versions of the given remote resource.
 	 * @param shell
@@ -68,15 +72,11 @@ public class RemoteCompareOperation extends RemoteOperation  implements RDiffSum
 		super(shell, new ICVSRemoteResource[] {remoteResource});
 		Assert.isNotNull(tag);
 		this.right = tag;
-		if (remoteResource.isContainer()) {
-			this.left = ((ICVSRemoteFolder)remoteResource).getTag();
-		} else {
-			try {
-				this.left = remoteResource.getSyncInfo().getTag();
-			} catch (CVSException e) {
-				// This shouldn't happen but log it just in case
-				CVSProviderPlugin.log(e);
-			}
+		try {
+			this.left = getTag(remoteResource);
+		} catch (CVSException e) {
+			// This shouldn't happen but log it just in case
+			CVSProviderPlugin.log(e);
 		}
 		if (this.left == null) {
 			this.left = CVSTag.DEFAULT;
@@ -154,7 +154,9 @@ public class RemoteCompareOperation extends RemoteOperation  implements RDiffSum
 	private IStatus buildTrees(ICVSRemoteResource resource, IProgressMonitor monitor) throws CVSException {
 		// Initialize the resulting trees
 		leftTree = new RemoteFolderTree(null, resource.getRepository(), ICVSRemoteFolder.REPOSITORY_ROOT_FOLDER_NAME, left);
+		leftTree.setChildren(new ICVSRemoteResource[0]);
 		rightTree = new RemoteFolderTree(null, resource.getRepository(), ICVSRemoteFolder.REPOSITORY_ROOT_FOLDER_NAME, right);
+		rightTree.setChildren(new ICVSRemoteResource[0]);
 		Command.QuietOption oldOption= CVSProviderPlugin.getPlugin().getQuietness();
 		Session session = new Session(resource.getRepository(), leftTree, false);
 		try {

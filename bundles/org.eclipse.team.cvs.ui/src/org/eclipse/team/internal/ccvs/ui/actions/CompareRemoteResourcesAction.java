@@ -19,14 +19,8 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
-import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
-import org.eclipse.team.internal.ccvs.ui.CVSCompareEditorInput;
-import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.ccvs.ui.ResourceEditionNode;
+import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.operations.RemoteCompareOperation;
 
 /**
@@ -46,7 +40,7 @@ public class CompareRemoteResourcesAction extends CVSAction {
 				if (isSameFolder(editions)) {
 					// Run the compare operation in the background
 					try {
-						new RemoteCompareOperation(null, editions[0], getTag(editions[1]))
+						new RemoteCompareOperation(null, editions[0], RemoteCompareOperation.getTag(editions[1]))
 							.run();
 					} catch (CVSException e) {
 						throw new InvocationTargetException(e);
@@ -62,18 +56,6 @@ public class CompareRemoteResourcesAction extends CVSAction {
 				}
 			}
 		}, false /* cancelable */, PROGRESS_BUSYCURSOR);
-	}
-	
-	protected CVSTag getTag(ICVSRemoteResource resource) throws CVSException {
-		CVSTag tag = null;
-		if (resource.isContainer()) {
-			tag = ((ICVSRemoteFolder)resource).getTag();
-		} else {
-			ResourceSyncInfo info = ((ICVSRemoteFile)resource).getSyncInfo();
-			if (info != null) tag = info.getTag();
-		}
-		if (tag == null) tag = CVSTag.DEFAULT;
-		return tag;
 	}
 
 	protected boolean isSameFolder(ICVSRemoteResource[] editions) {
