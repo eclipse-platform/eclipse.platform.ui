@@ -13,7 +13,6 @@ import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
-import org.eclipse.update.configurator.*;
 import org.eclipse.update.core.*;
 
 /**
