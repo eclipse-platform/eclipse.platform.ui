@@ -23,9 +23,12 @@ import org.eclipse.debug.core.variables.LaunchVariableUtil;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsMessages;
+import org.eclipse.debug.internal.ui.preferences.MultipleInputDialog;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnWeightData;
-import org.eclipse.jface.viewers.ICellModifier;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -34,8 +37,8 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -68,6 +71,8 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		new ColumnWeightData(50),
 		new ColumnWeightData(50)
 	};
+	private static final String NAME_LABEL= LaunchConfigurationsMessages.getString("EnvironmentTab.8"); //$NON-NLS-1$
+	private static final String VALUE_LABEL= LaunchConfigurationsMessages.getString("EnvironmentTab.9"); //$NON-NLS-1$
 	protected static final String P_VARIABLE = "variable"; //$NON-NLS-1$
 	protected static final String P_VALUE = "value"; //$NON-NLS-1$
 	protected static String[] envTableColumnProperties =
@@ -78,38 +83,6 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	protected Button envAddButton;
 	protected Button envEditButton;
 	protected Button envRemoveButton;
-	
-	/**
-	 * Cell modifier for the environment table
-	 */
-	protected class EnvironmentCellModifier implements ICellModifier {
-		public boolean canModify(Object element, String property) {
-			return true;
-		}
-		public Object getValue(Object element, String property) {
-			String result = null;
-			EnvironmentVariable var = (EnvironmentVariable) element;
-			if (property.equals(P_VARIABLE))
-				result = var.getName();
-			else if (property.equals(P_VALUE))
-				result = var.getValue();
-			return result;
-		}
-		public void modify(Object element, String property, Object value) {
-			TableItem ti = (TableItem) element;
-			EnvironmentVariable var = (EnvironmentVariable) ti.getData();
-			if (property.equals(P_VARIABLE))
-				var.setName((String) value);
-			else if (property.equals(P_VALUE))
-				var.setValue((String) value);
-			else return;
-			// update viewer's display and update the dialog
-			String properties[] = new String[1];
-			properties[0] = property;
-			environmentTable.update(var, properties);
-			updateLaunchConfigurationDialog();
-		}
-	}
 	
 	/**
 	 * Content provider for the environment table
@@ -138,6 +111,26 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		public void dispose() {
 		}
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+			if (newInput == null){
+				return;
+			}
+			if (viewer instanceof TableViewer){
+				TableViewer tableViewer= (TableViewer) viewer;
+				if (tableViewer.getTable().isDisposed()) {
+					return;
+				}
+				tableViewer.setSorter(new ViewerSorter() {
+					public int compare(Viewer viewer, Object e1, Object e2) {
+						if (e1 == null) {
+							return -1;
+						} else if (e2 == null) {
+							return 1;
+						} else {
+							return ((EnvironmentVariable)e1).getName().compareTo(((EnvironmentVariable)e2).getName());
+						}
+					}
+				});
+			}
 		}
 	}
 	
@@ -223,6 +216,11 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 				handleTableSelectionChanged(event);
 			}
 		});
+		environmentTable.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				handleEnvEditButtonSelected();
+			}
+		});
 		// Create columns
 		for (int i = 0; i < envTableColumnHeaders.length; i++) {
 			tableLayout.addColumnData(envTableColumnLayouts[i]);
@@ -230,12 +228,6 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 			tc.setResizable(envTableColumnLayouts[i].resizable);
 			tc.setText(envTableColumnHeaders[i]);
 		}
-		// Cell Editors
-		TextCellEditor[] cellEditors = new TextCellEditor[envTableColumnHeaders.length];
-		cellEditors[0] = new TextCellEditor(table);
-		cellEditors[1] = new TextCellEditor(table);
-		environmentTable.setCellEditors(cellEditors);
-		environmentTable.setCellModifier(new EnvironmentCellModifier());
 	}
 	
 	/**
@@ -295,11 +287,26 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	 * Adds a new environment variable to the table.
 	 */
 	protected void handleEnvAddButtonSelected() {
-		String name = LaunchConfigurationsMessages.getString("EnvironmentTab.variable_7"); //$NON-NLS-1$
-		String value = LaunchConfigurationsMessages.getString("EnvironmentTab.value_8"); //$NON-NLS-1$
-		EnvironmentVariable var = new EnvironmentVariable(name, value);
-		environmentTable.add(var);
-		environmentTable.editElement(var, 0);
+		MultipleInputDialog dialog= new MultipleInputDialog(getShell(), LaunchConfigurationsMessages.getString("EnvironmentTab.10"), new String[] {NAME_LABEL, VALUE_LABEL}, null, null); //$NON-NLS-1$
+		if (dialog.open() != Dialog.OK) {
+			return;
+		}
+		String name= dialog.getValue(NAME_LABEL);
+		if (name.length() < 1) {
+			return;
+		}
+		String value= dialog.getValue(VALUE_LABEL);
+		EnvironmentVariable newVariable = new EnvironmentVariable(name, value);
+		String newName= newVariable.getName();
+		TableItem[] items = environmentTable.getTable().getItems();
+		for (int i = 0; i < items.length; i++) {
+			EnvironmentVariable variable = (EnvironmentVariable) items[i].getData();
+			if (variable.getName().equals(newName)) {
+				environmentTable.remove(variable);
+				break;
+			}
+		}
+		environmentTable.add(newVariable);
 		updateLaunchConfigurationDialog();
 	}
 
@@ -311,7 +318,12 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 			(IStructuredSelection) environmentTable.getSelection();
 		EnvironmentVariable var =
 			(EnvironmentVariable) sel.getFirstElement();
-		environmentTable.editElement(var, 1);
+		MultipleInputDialog dialog= new MultipleInputDialog(getShell(), LaunchConfigurationsMessages.getString("EnvironmentTab.11"), new String[] {VALUE_LABEL}, null, null); //$NON-NLS-1$
+		if (dialog.open() != Dialog.OK) {
+			return;
+		}
+		var.setValue(dialog.getValue(VALUE_LABEL));
+		environmentTable.update(var, null);
 		updateLaunchConfigurationDialog();
 	}
 
@@ -373,6 +385,6 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
-		return LaunchConfigurationsMessages.getString("EnvironmentTab.Environment_9"); //$NON-NLS-1$
+		return LaunchConfigurationsMessages.getString("EnvironmentTab.Environment_7"); //$NON-NLS-1$
 	}
 }
