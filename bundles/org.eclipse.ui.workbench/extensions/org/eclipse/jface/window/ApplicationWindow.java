@@ -1,19 +1,41 @@
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+	IBM Corporation - Initial implementation
+**********************************************************************/
+
 package org.eclipse.jface.window;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.operation.*;
-import org.eclipse.jface.resource.JFaceResources;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.ToolBar;
+
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.StatusLineManager;
+import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.operation.ModalContext;
+import org.eclipse.jface.resource.JFaceResources;
 
 /**
  * An application window is a high-level "main window", with built-in
@@ -226,7 +248,8 @@ protected void configureShell(Shell shell) {
 	// we need a special layout
 	shell.setLayout(new ApplicationWindowLayout());
 
-	new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL);
+	if (! "carbon".equals(SWT.getPlatform()))
+		 new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL);
 
 	createToolBarControl(shell);
 
