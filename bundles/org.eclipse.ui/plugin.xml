@@ -503,7 +503,7 @@
                id="org.eclipse.ui.edit.text.select.textEnd">
          </accelerator>
          <accelerator
-               key="DELETE"
+               key="Ctrl+DELETE"
                id="org.eclipse.ui.edit.text.deletePrevious">
          </accelerator>
          <accelerator
