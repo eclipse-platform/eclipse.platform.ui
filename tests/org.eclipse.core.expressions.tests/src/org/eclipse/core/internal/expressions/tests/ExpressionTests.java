@@ -15,10 +15,15 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.IPluginRegistry;
+import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.EvaluationResult;
+import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.expressions.ExpressionConverter;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.expressions.IVariableResolver;
 import org.eclipse.core.internal.expressions.AdaptExpression;
@@ -182,5 +187,26 @@ public class ExpressionTests extends TestCase {
 		exp= new EqualsExpression("name");
 		context= new EvaluationContext(null, Boolean.TRUE);
 		assertTrue(EvaluationResult.FALSE == exp.evaluate(context));		
+	}
+	
+	public void testReadXMLExpression() throws Exception {
+		IPluginRegistry registry= Platform.getPluginRegistry();
+		IConfigurationElement[] ces= registry.getConfigurationElementsFor("org.eclipse.core.expressions.tests", "testParticipants");
+		
+		IConfigurationElement enable= findExtension(ces, "test1").getChildren("enablement")[0];
+		Expression exp= ExpressionConverter.getDefault().perform(enable);
+		ref(exp);
+	}
+
+	private IConfigurationElement findExtension(IConfigurationElement[] ces, String id) {
+		for (int i= 0; i < ces.length; i++) {
+			if (id.equals(ces[i].getAttribute("id")))
+				return ces[i];
+		}
+		return null;
+	}
+	
+	protected void ref(Expression exp) {
+		
 	}
 }

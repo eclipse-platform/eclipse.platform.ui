@@ -66,5 +66,107 @@
             adaptableType="org.eclipse.core.internal.expressions.tests.Adaptee">
             <adapter type="org.eclipse.core.internal.expressions.tests.Adapter"/>
 		</factory>
-   </extension>     	
+   </extension>
+   
+   <extension-point id="testParticipants" name="%testParticipant" schema="schema/testParticipants.exsd"/>
+   
+	<extension point="org.eclipse.core.expressions.tests.testParticipants">
+	  <testParticipant id="test1">
+		<enablement>
+			<and>
+	            <and/> 
+	            <or/>
+	            <not><count value="1"/></not>
+	            <instanceof value="org.eclipse.core.expressions.Expression"/>
+	            <test property="namespace.isDefault"/>
+	            <systemTest property="isDefault" value="xx"/>
+	            <equals value= "string"/>
+				<count value="1"/>
+				<with variable="eclipse"/>
+				<resolve variable="eclipse"/>
+			    <adapt type="org.eclipse.core.expressions.Expression"/>            
+	            <iterate/> 
+			</and>
+			<or>
+	            <and/> 
+	            <or/>
+	            <not><count value="1"/></not>
+	            <instanceof value="org.eclipse.core.expressions.Expression"/>
+	            <test property="namespace.isDefault"/>
+	            <systemTest property="isDefault" value="xx"/>
+	            <equals value= "string"/>
+				<count value="1"/>
+				<with variable="eclipse"/>
+				<resolve variable="eclipse"/>
+			    <adapt type="org.eclipse.core.expressions.Expression"/>            
+	            <iterate/> 
+			</or> 
+			<not><count value="1"/></not>
+            <instanceof value="org.eclipse.core.expressions.Expression"/>
+            <test property="namespace.isDefault"/>
+            <test property="namespace.isDefault" value="default"/>
+            <test property="namespace.isDefault" args="'arg1', 'arg2'" value="default"/>
+	        <systemTest property="isDefault" value="xx"/>
+	        <equals value= "string"/>
+            <count value="1"/>
+            <with variable= "element">
+	            <and/> 
+	            <or/>
+	            <not><count value="1"/></not>
+	            <instanceof value="org.eclipse.core.expressions.Expression"/>
+	            <test property="namespace.isDefault"/>
+	            <systemTest property="isDefault" value="xx"/>
+	            <equals value= "string"/>
+				<count value="1"/>
+				<with variable="eclipse"/>
+				<resolve variable="eclipse"/>
+			    <adapt type="org.eclipse.core.expressions.Expression"/>            
+	            <iterate/> 
+            </with>
+            <resolve variable="eclipse">
+	            <and/> 
+	            <or/>
+	            <not><count value="1"/></not>
+	            <instanceof value="org.eclipse.core.expressions.Expression"/>
+	            <test property="namespace.isDefault"/>
+	            <systemTest property="isDefault" value="xx"/>
+	            <equals value= "string"/>
+				<count value="1"/>
+				<with variable="eclipse"/>
+				<resolve variable="eclipse"/>
+			    <adapt type="org.eclipse.core.expressions.Expression"/>            
+	            <iterate/> 
+            </resolve>
+            <resolve variable="eclipse" args="1, true"/>
+            <adapt type="org.eclipse.core.expressions.Expression">
+	            <and/> 
+	            <or/>
+	            <not><count value="1"/></not>
+	            <instanceof value="org.eclipse.core.expressions.Expression"/>
+	            <test property="namespace.isDefault"/>
+	            <systemTest property="isDefault" value="xx"/>
+	            <equals value= "string"/>
+				<count value="1"/>
+				<with variable="eclipse"/>
+				<resolve variable="eclipse"/>
+			    <adapt type="org.eclipse.core.expressions.Expression"/>            
+	            <iterate/> 
+            </adapt>
+            <iterate>
+	            <and/> 
+	            <or/>
+	            <not><count value="1"/></not>
+	            <instanceof value="org.eclipse.core.expressions.Expression"/>
+	            <test property="namespace.isDefault"/>
+	            <systemTest property="isDefault" value="xx"/>
+	            <equals value= "string"/>
+				<count value="1"/>
+				<with variable="eclipse"/>
+				<resolve variable="eclipse"/>
+			    <adapt type="org.eclipse.core.expressions.Expression"/>            
+	            <iterate/> 
+            </iterate>
+      </enablement>
+     </testParticipant>
+   </extension>
 </plugin>
