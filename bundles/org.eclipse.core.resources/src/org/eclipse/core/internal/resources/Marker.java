@@ -191,17 +191,18 @@ public void setAttribute(String attributeName, int value) throws CoreException {
  */
 public void setAttribute(String attributeName, Object value) throws CoreException {
 	Assert.isNotNull(attributeName);
+	Workspace workspace = getWorkspace();
 	try {
-		getWorkspace().prepareOperation();
-		getWorkspace().beginOperation(true);
-		MarkerInfo info = getInfo();
-		checkInfo(info);
-		info.setAttribute(attributeName, value);
-		((Resource) resource).getResourceInfo(false, true).set(ICoreConstants.M_MARKERS_SNAP_DIRTY);
-		IMarkerDelta[] change = new IMarkerDelta[] { new MarkerDelta(IResourceDelta.CHANGED, resource, info)};
-		getWorkspace().getMarkerManager().changedMarkers(resource, change);
+		workspace.prepareOperation();
+		workspace.beginOperation(true);
+		ResourceInfo resourceInfo = ((Resource)resource).getResourceInfo(false ,true);
+		MarkerInfo markerInfo = (MarkerInfo)resourceInfo.getMarkers().get(id);
+		checkInfo(markerInfo);
+		markerInfo.setAttribute(attributeName, value);
+		resourceInfo.set(ICoreConstants.M_MARKERS_SNAP_DIRTY);
+		workspace.getMarkerManager().changedMarker(IResourceDelta.CHANGED, resource, resourceInfo, markerInfo);
 	} finally {
-		getWorkspace().endOperation(false, null);
+		workspace.endOperation(false, null);
 	}
 }
 /**

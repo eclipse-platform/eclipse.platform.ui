@@ -162,6 +162,25 @@ private void buildMarkers(IMarkerSetElement[] markers, IPath path, ArrayList lis
 	}
 }
 /**
+ * A marker has changed on a given resource. This is an optimized marker
+ * merge for the common case of a single attribute change.
+ */
+protected void changedMarker(int changeKind, IResource resource, ResourceInfo resourceInfo, MarkerInfo markerInfo) {
+	if (markerDeltas == null)
+		markerDeltas = new Hashtable(11);
+	IPath path = resource.getFullPath();
+	MarkerSet previousChanges = (MarkerSet) markerDeltas.get(path);
+	
+	MarkerSet result = MarkerDelta.mergeSingle(previousChanges, changeKind, resource, markerInfo);
+	if (result.size() == 0)
+		markerDeltas.remove(path);
+	else if(previousChanges != result)
+		markerDeltas.put(path, result);
+	changeId++;
+	if (resourceInfo != null)
+		resourceInfo.incrementMarkerGenerationCount();
+}
+/**
  * Markers have changed on the given resource.  Remember the changes for subsequent notification.
  */
 protected void changedMarkers(IResource resource, IMarkerDelta[] changes) {
