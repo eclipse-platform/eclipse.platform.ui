@@ -54,9 +54,13 @@ public class HrefUtil {
 		if (href.startsWith("../")) { //$NON-NLS-1$
 			return href.substring(2);
 		} else {
-			if (href.length() > 0)
-				return "/" + pluginID + "/" + href; //$NON-NLS-1$ //$NON-NLS-2$
-			else
+			if (href.length() > 0) {
+				StringBuffer buf = new StringBuffer(2 + pluginID.length()
+						+ href.length());
+				buf.append('/').append(pluginID);
+				buf.append('/').append(href);
+				return buf.toString();
+			} else
 				return "/" + pluginID; //$NON-NLS-1$
 		}
 	}
