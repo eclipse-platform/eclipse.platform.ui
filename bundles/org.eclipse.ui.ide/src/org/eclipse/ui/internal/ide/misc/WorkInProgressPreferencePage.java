@@ -69,7 +69,7 @@ public class WorkInProgressPreferencePage
 
 	private void createBuildControls(Composite parent) {
 		buildPreference = new Button(parent, SWT.CHECK);
-		buildPreference.setText("Temporarily restore 2.1 rebuild actions"); //$NON-NLS-1$
+		buildPreference.setText("Restore 2.1 rebuild actions for this session"); //$NON-NLS-1$
 		buildPreference.setSelection(WorkbenchActionBuilder.INCLUDE_REBUILD_ACTIONS);
 		buildPreference.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
