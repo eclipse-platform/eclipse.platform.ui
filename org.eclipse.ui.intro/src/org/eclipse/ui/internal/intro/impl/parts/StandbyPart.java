@@ -351,6 +351,9 @@ public class StandbyPart implements IIntroConstants {
      * @see org.eclipse.ui.internal.intro.impl.parts.IStandbyContentPart#setFocus()
      */
     public void setFocus() {
+        // grab foxus first, then delegate. This way if content part does
+        // nothing on focus, part still works.
+        returnLink.setFocus();
         if (cachedControlKey != null)
             cachedControlKey.getContentPart().setFocus();
     }

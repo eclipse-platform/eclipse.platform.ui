@@ -60,6 +60,8 @@ public final class CustomizableIntroPart extends IntroPart implements
     private IntroPartPresentation presentation;
     private StandbyPart standbyPart;
     private Composite container;
+    private IMemento memento;
+    private boolean standbyPartCreated;
 
     // Adapter factory to abstract out the StandbyPart implementation from APIs.
     IAdapterFactory factory = new IAdapterFactory() {
@@ -115,9 +117,8 @@ public final class CustomizableIntroPart extends IntroPart implements
             if (presentation != null)
                 presentation.init(this, getMemento(memento,
                         MEMENTO_PRESENTATION_TAG));
-            standbyPart = new StandbyPart(model);
-            standbyPart.init(this,
-                    getMemento(memento, MEMENTO_STANDBY_PART_TAG));
+            // standby part is not created here for performance.
+            this.memento = memento;
         }
 
         if (model == null || !model.hasValidConfig())
@@ -142,7 +143,7 @@ public final class CustomizableIntroPart extends IntroPart implements
 
         if (model != null && model.hasValidConfig()) {
             presentation.createPartControl(container);
-            standbyPart.createPartControl(container);
+            // do not create the standby part here for performance.
         }
         // Util.highlightFocusControl();
     }
@@ -155,17 +156,44 @@ public final class CustomizableIntroPart extends IntroPart implements
     public void standbyStateChanged(boolean standby) {
         // do this only if there is a valid config.
         if (model != null && model.hasValidConfig()) {
-            if (standby)
-                standbyPart.setFocus();
-            else
-                presentation.setFocus();
+            if (standby && !standbyPartCreated)
+                // if standby part is not created yet, create it only if in
+                // standby.
+                createStandbyPart();
+            handleSetFocus(standby);
             setTopControl(standby ? getStandbyControl()
                     : getPresentationControl());
         }
         // Util.highlightFocusControl();
     }
 
+    /*
+     * Create standby part. Called only when really needed.
+     */
+    private void createStandbyPart() {
+        standbyPart = new StandbyPart(model);
+        standbyPart.init(this, getMemento(memento, MEMENTO_STANDBY_PART_TAG));
+        standbyPart.createPartControl((Composite) getControl());
+        standbyPartCreated = true;
+    }
 
+
+    private void handleSetFocus(boolean standby) {
+        if (standby)
+            standbyPart.setFocus();
+        else
+            presentation.setFocus();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.IWorkbenchPart#setFocus()
+     */
+    public void setFocus() {
+        handleSetFocus(PlatformUI.getWorkbench().getIntroManager()
+                .isIntroStandby(this));
+    }
 
     private void setTopControl(Control c) {
         // container has stack layout. safe to cast.
@@ -179,21 +207,15 @@ public final class CustomizableIntroPart extends IntroPart implements
     }
 
     private Control getStandbyControl() {
-        return container.getChildren()[1];
+        // the Containet top control may have only one child if the stanndby
+        // part is not created yet. This happens if the intro never goes into
+        // standby. Doing this for performance.
+        if (standbyPartCreated)
+            return container.getChildren()[1];
+        return null;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.IWorkbenchPart#setFocus()
-     */
-    public void setFocus() {
-        if (PlatformUI.getWorkbench().getIntroManager().isIntroStandby(this)) {
-            if (standbyPart != null)
-                standbyPart.setFocus();
-        } else if (presentation != null)
-            presentation.setFocus();
-    }
+
 
     /*
      * (non-Javadoc)
