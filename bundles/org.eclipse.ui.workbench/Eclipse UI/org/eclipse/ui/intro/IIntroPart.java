@@ -30,13 +30,13 @@ public interface IIntroPart extends IWorkbenchPart {
 	IIntroSite getIntroSite();
 
 	/**
-	 * Primes the part with the intro area object immediately after the creation.
+	 * Primes the part with the intro site object immediately after the creation.
 	 * 
-	 * @param area the <code>IIntroArea</code>.
-	 * @throws PartInitException thrown if the <code>IntroPart</code> was not initialized 
+	 * @param site the <code>IIntroSite</code>.
+	 * @throws PartInitException thrown if the <code>IIntroPart</code> was not initialized 
 	 * successfully.
 	 */
-	void init(IIntroSite area) throws PartInitException;
+	void init(IIntroSite site) throws PartInitException;
 
 	/**
 	 * Notifies the part that the intro area has been made fullscreen or put on 
