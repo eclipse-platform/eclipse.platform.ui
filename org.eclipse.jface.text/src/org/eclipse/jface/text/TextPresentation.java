@@ -344,7 +344,7 @@ public class TextPresentation {
 				defaultRange.start= start;
 				defaultRange.length= end - start;
 				defaultRange.background= range.background;
-				fRanges.add(last, defaultRange);
+				fRanges.add(last + insertOffset, defaultRange);
 			}
 		}
 	}

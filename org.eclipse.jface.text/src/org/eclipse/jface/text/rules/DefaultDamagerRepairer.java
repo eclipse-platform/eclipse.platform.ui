@@ -75,6 +75,7 @@ public class DefaultDamagerRepairer implements IPresentationDamager, IPresentati
 		Assert.isNotNull(scanner);
 		
 		fScanner= scanner;
+		fDefaultTextAttribute= new TextAttribute(null);
 	}
 	
 	/*
@@ -164,8 +165,8 @@ public class DefaultDamagerRepairer implements IPresentationDamager, IPresentati
 			IToken token= fScanner.nextToken();			
 			if (token.isEOF())
 				break;
-			
-			TextAttribute attribute= getTokenTextAttribute(token);			
+		
+			TextAttribute attribute= getTokenTextAttribute(token);
 			if (lastAttribute != null && lastAttribute.equals(attribute)) {
 				length += fScanner.getTokenLength();
 			} else {
