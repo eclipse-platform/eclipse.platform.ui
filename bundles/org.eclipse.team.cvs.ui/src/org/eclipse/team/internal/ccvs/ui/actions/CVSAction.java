@@ -356,7 +356,7 @@ abstract public class CVSAction extends TeamAction implements IEditorActionDeleg
 				break;
 			case PROGRESS_DIALOG :
 			default :
-				new ProgressMonitorDialog(getShell()).run(cancelable, true, innerRunnable);
+				new ProgressMonitorDialog(getShell()).run(cancelable, cancelable, innerRunnable);
 				break;
 		}
 		if (exceptions[0] != null) {
