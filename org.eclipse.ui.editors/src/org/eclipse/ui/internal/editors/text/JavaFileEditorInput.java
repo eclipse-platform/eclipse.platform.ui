@@ -18,20 +18,59 @@ import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 
+import org.eclipse.ui.editors.text.ILocationProvider;
+
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPersistableElement;
-import org.eclipse.ui.editors.text.ILocationProvider;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
  * @since 3.0
  */
 public class JavaFileEditorInput implements IEditorInput, ILocationProvider {
 
+	/**
+	 * The workbench adapter which simply provides the label.
+	 * 
+	 * @since 3.1
+	 */
+	private class WorkbenchAdapter implements IWorkbenchAdapter {
+		/*
+		 * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(java.lang.Object)
+		 */
+		public Object[] getChildren(Object o) {
+			return null;
+		}
+	
+		/*
+		 * @see org.eclipse.ui.model.IWorkbenchAdapter#getImageDescriptor(java.lang.Object)
+		 */
+		public ImageDescriptor getImageDescriptor(Object object) {
+			return null;
+		}
+	
+		/*
+		 * @see org.eclipse.ui.model.IWorkbenchAdapter#getLabel(java.lang.Object)
+		 */
+		public String getLabel(Object o) {
+			return ((JavaFileEditorInput)o).getName();
+		}
+	
+		/*
+		 * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)
+		 */
+		public Object getParent(Object o) {
+			return null;
+		}
+	}
+
 	private File fFile;
+	private WorkbenchAdapter fWorkbenchAdapter= new WorkbenchAdapter();
 
 	public JavaFileEditorInput(File file) {
 		super();
 		fFile= file;
+		fWorkbenchAdapter= new WorkbenchAdapter();
 	}
 	/*
 	 * @see org.eclipse.ui.IEditorInput#exists()
@@ -74,6 +113,8 @@ public class JavaFileEditorInput implements IEditorInput, ILocationProvider {
 	public Object getAdapter(Class adapter) {
 		if (ILocationProvider.class.equals(adapter))
 			return this;
+		if (IWorkbenchAdapter.class.equals(adapter))
+			return fWorkbenchAdapter;
 		return Platform.getAdapterManager().getAdapter(this, adapter);
 	}
 
