@@ -69,8 +69,11 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 			autoconnectPage.setProject(project);
 			addPage(autoconnectPage);
 		} else {
-			locationPage = new RepositorySelectionPage("importPage", Policy.bind("SharingWizard.importTitle"), null);
-			addPage(locationPage);
+			ICVSRepositoryLocation[] locations = CVSUIPlugin.getPlugin().getRepositoryManager().getKnownRoots();
+			if (locations.length > 0) {
+				locationPage = new RepositorySelectionPage("importPage", Policy.bind("SharingWizard.importTitle"), null);
+				addPage(locationPage);
+			}
 			createLocationPage = new ConfigurationWizardMainPage("createLocationPage", Policy.bind("SharingWizard.enterInformation"), null);
 			addPage(createLocationPage);
 			modulePage = new ModuleSelectionPage("modulePage", Policy.bind("SharingWizard.enterModuleName"), null);
@@ -233,19 +236,21 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 	 */
 	private Properties getProperties() {
 		// If the import page has a location, use it.
-		ICVSRepositoryLocation location = locationPage.getLocation();
-		if (location != null) {
-			Properties result = new Properties();
-			result.setProperty("host", location.getHost());
-			result.setProperty("connection", location.getMethod().getName());
-			result.setProperty("user", location.getUsername());
-			int port = location.getPort();
-			if (port != ICVSRepositoryLocation.USE_DEFAULT_PORT) {
-				result.setProperty("port", "" + port);
+		if (locationPage != null) {
+			ICVSRepositoryLocation location = locationPage.getLocation();
+			if (location != null) {
+				Properties result = new Properties();
+				result.setProperty("host", location.getHost());
+				result.setProperty("connection", location.getMethod().getName());
+				result.setProperty("user", location.getUsername());
+				int port = location.getPort();
+				if (port != ICVSRepositoryLocation.USE_DEFAULT_PORT) {
+					result.setProperty("port", "" + port);
+				}
+				result.setProperty("root", location.getRootDirectory());
+				result.setProperty("module", getModuleName());
+				return result;
 			}
-			result.setProperty("root", location.getRootDirectory());
-			result.setProperty("module", getModuleName());
-			return result;
 		}
 		Properties properties = createLocationPage.getProperties();
 		properties.setProperty("module", getModuleName());
@@ -256,9 +261,11 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 	 */
 	private ICVSRepositoryLocation getLocation() {
 		// If the import page has a location, use it.
-		ICVSRepositoryLocation location = locationPage.getLocation();
-		if (location != null) return location;
-		
+		if (locationPage != null) {
+			ICVSRepositoryLocation location = locationPage.getLocation();
+			if (location != null) return location;
+		}
+				
 		getShell().getDisplay().syncExec(new Runnable() {
 			public void run() {
 				createLocationPage.finish(new NullProgressMonitor());
