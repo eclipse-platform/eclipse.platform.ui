@@ -289,7 +289,7 @@ public class EditionSelectionDialog extends ResizableDialog {
 				pair= new Pair(null, edition);
 			}
 			
-			if (! fTargetPair.equals(pair)) {
+			if (pair != null && !fTargetPair.equals(pair)) {
 				return pair.fItem;
 			}
 		}

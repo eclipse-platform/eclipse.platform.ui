@@ -939,7 +939,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 						r.y= yy;
 						r.width= size.x-(2*BIRDS_EYE_VIEW_INSET)-1;
 						r.height= hh;
-						if (diff == fCurrentDiff) {
+						if (diff == fCurrentDiff ||
+								(fCurrentDiff != null && diff == fCurrentDiff.fParent)) {
 							gc.setLineWidth(2);
 							r.x++;
 							r.y++;
