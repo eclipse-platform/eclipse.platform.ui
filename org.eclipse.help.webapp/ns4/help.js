@@ -144,7 +144,7 @@ function showBookshelf()
 	tocURL = "tocs.jsp";
 	switchTab("toc");
 	// clear the content page
-	parent.MainFrame.location=help_home;
+	parent.MainFrame.location=escape(help_home);
 }
 
 /**

@@ -40,7 +40,7 @@
 	}
 	
 	if (help_home != null)
-		help_home = escape("content/help:") + help_home;
+		help_home = "content/help:" + help_home;
 	else
 		help_home = "home.jsp";
 		
