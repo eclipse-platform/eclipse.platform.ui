@@ -61,7 +61,6 @@ protected AbstractDataTreeNode readNode(IPath parentPath) throws IOException {
 
 	/* maybe read the data */
 	IPath path;
-	Object data = null;
 
 	/* if not the root node */
 	if (parentPath != null) {
@@ -70,6 +69,7 @@ protected AbstractDataTreeNode readNode(IPath parentPath) throws IOException {
 		path = Path.ROOT;
 	}
 		
+	Object data = null;
 	if (hasData(nodeType)) {
 
 		/* read flag indicating if the data is null */
@@ -83,9 +83,14 @@ protected AbstractDataTreeNode readNode(IPath parentPath) throws IOException {
 	int childCount = readNumber();
 
 	/* read the children */
-	AbstractDataTreeNode[] children = new AbstractDataTreeNode[childCount];
-	for (int i = 0; i < childCount; i++) {
-		children[i] = readNode(path);
+	AbstractDataTreeNode[] children;
+	if (childCount == 0) {
+		children = AbstractDataTreeNode.NO_CHILDREN;
+	} else {
+	 	children = new AbstractDataTreeNode[childCount];
+		for (int i = 0; i < childCount; i++) {
+			children[i] = readNode(path);
+		}
 	}
 
 	/* create the appropriate node */
