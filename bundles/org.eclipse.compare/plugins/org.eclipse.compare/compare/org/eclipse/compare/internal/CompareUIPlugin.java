@@ -299,19 +299,28 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	 * compare editor on the result.
 	 *
 	 * @param input the input on which to open the compare editor
+	 * @param page the workbench page on which to create a new compare editor
+	 * @param editor if not null the input is opened in this editor
 	 * @see CompareEditorInput
 	 */
-	public void openCompareEditor(CompareEditorInput input, IWorkbenchPage page) {
+	public void openCompareEditor(CompareEditorInput input, IWorkbenchPage page, IReusableEditor editor) {
 		
 		if (compareResultOK(input)) {
+			
+			if (editor != null) {	// reuse the given editor
+				editor.setInput(input);
+				return;
+			}
+			
 			if (page == null)
 				page= getActivePage();
 			if (page != null) {
+				// open new CompareEditor on page
 				try {
 					page.openEditor(input, COMPARE_EDITOR);
 				} catch (PartInitException e) {
 					MessageDialog.openError(getShell(), Utilities.getString("CompareUIPlugin.openEditorError"), e.getMessage()); //$NON-NLS-1$
-				}					
+				}		
 			} else {
 				MessageDialog.openError(getShell(),
 						Utilities.getString("CompareUIPlugin.openEditorError"), //$NON-NLS-1$
