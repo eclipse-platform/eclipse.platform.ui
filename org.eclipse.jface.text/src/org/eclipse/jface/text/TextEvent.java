@@ -20,7 +20,7 @@ package org.eclipse.jface.text;
  * or when the viewer's visual content has been changed. In the first case, the text event
  * also carries the original document event. Depending on the viewer's presentation mode,
  * the text event coordinates are different from the document event's coordinates.
- * Client's other than text viewer's don't create instances of this class.
+ * Clients other than text viewer's don't create instances of this class.
  *
  * @see ITextListener
  * @see ITextViewer

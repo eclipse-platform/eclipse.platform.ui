@@ -200,16 +200,11 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 						damage= new Region(0, document.getLength());
 			 		} else {
 						IRegion region= widgetRegion2ModelRegion(e);
-						if (region == null) {
-							// TODO restrict to visible region
-							damage= new Region(0, document.getLength());
-						} else {
-							try {
-								String text= document.get(region.getOffset(), region.getLength());
-								DocumentEvent de= new DocumentEvent(document, region.getOffset(), region.getLength(), text);
-								damage= getDamage(de, false);
-							} catch (BadLocationException x) {
-							}
+						try {
+							String text= document.get(region.getOffset(), region.getLength());
+							DocumentEvent de= new DocumentEvent(document, region.getOffset(), region.getLength(), text);
+							damage= getDamage(de, false);
+						} catch (BadLocationException x) {
 						}
 			 		}
 		 		}
@@ -234,13 +229,17 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 		 * @since 2.1
 		 */
 		protected IRegion widgetRegion2ModelRegion(TextEvent e) {
+			
+			String text= e.getText();
+			int length= text == null ? 0 : text.length();
+			
 			if (fViewer instanceof ITextViewerExtension5) {
 				ITextViewerExtension5 extension= (ITextViewerExtension5) fViewer;
-				return extension.widgetRange2ModelRange(new Region(e.getOffset(), e.getLength()));
+				return extension.widgetRange2ModelRange(new Region(e.getOffset(), length));
 			}
 			
 			IRegion visible= fViewer.getVisibleRegion();
-			IRegion region= new Region(e.getOffset() + visible.getOffset(), e.getLength());
+			IRegion region= new Region(e.getOffset() + visible.getOffset(), length);
 			return region;
 		}
 	}

@@ -2969,6 +2969,12 @@ public class TextViewer extends Viewer implements
 	 */
 	protected void setVisibleDocument(IDocument document) {
 		
+		if (fVisibleDocument == document && fVisibleDocument instanceof ChildDocument) {
+			// optimization for new child documents
+			resetPlugins();
+			return;
+		}
+		
 		if (fVisibleDocument != null) {
 			if (fDocumentListener != null)
 				fVisibleDocument.removeDocumentListener(fDocumentListener);
@@ -3066,12 +3072,17 @@ public class TextViewer extends Viewer implements
 			return;
 		}
 		
+		setRedraw(false);
 		try {
+			
 			IDocument slaveDocument= createSlaveDocument(getVisibleDocument());
 			if (updateSlaveDocument(slaveDocument, start, length))
 				setVisibleDocument(slaveDocument);
+			
 		} catch (BadLocationException x) {
 			throw new IllegalArgumentException(JFaceTextMessages.getString("TextViewer.error.invalid_visible_region_2")); //$NON-NLS-1$
+		} finally {
+			setRedraw(true);
 		}
 	}
 				

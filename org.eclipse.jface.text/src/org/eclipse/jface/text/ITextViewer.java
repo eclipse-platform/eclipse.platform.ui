@@ -235,7 +235,6 @@ public interface ITextViewer {
 	 *
 	 * @param offset the offset of the visible region
 	 * @param length the length of the visible region
-	 * @deprecated use <code>ITextViewerExtension5</code> instead
 	 */
 	void setVisibleRegion(int offset, int length);
 	
