@@ -36,7 +36,7 @@ public class JarVerificationDialog extends TitleAreaDialog {
 	 */
 	public JarVerificationDialog(Shell parentShell,IDialogPage dialogPage, IVerificationResult verificationResult) {
 		super(parentShell);
-		setShellStyle(SWT.TITLE | SWT.BORDER | SWT.APPLICATION_MODAL);		
+		setShellStyle(SWT.TITLE | SWT.BORDER | SWT.APPLICATION_MODAL | SWT.RESIZE);		
 		_VerificationResult = verificationResult;
 		_DialogPage = dialogPage;
 		if (dialogPage instanceof JarVerificationPage){
