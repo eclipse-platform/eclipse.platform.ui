@@ -97,7 +97,7 @@ public class AntCompletionProposal implements ICompletionProposal, ICompletionPr
 			enteredText = document.get(fReplacementOffset, offset-fReplacementOffset);
 		} catch (BadLocationException e) {
 		}
-		if ((fType == TASK_PROPOSAL || fType == TAG_CLOSING_PROPOSAL) && enteredText.startsWith("<")) { //$NON-NLS-1$
+		if (fType == TASK_PROPOSAL && enteredText.startsWith("<")) { //$NON-NLS-1$
 			enteredText= enteredText.substring(1);
 		} else if (fType == PROPERTY_PROPOSAL) {
 			if(enteredText.startsWith("${")) { //$NON-NLS-1$
@@ -106,6 +106,19 @@ public class AntCompletionProposal implements ICompletionProposal, ICompletionPr
 			if(enteredText.startsWith("$")) { //$NON-NLS-1$
 				enteredText= enteredText.substring(1);
 			}	
+		} else if (fType == TAG_CLOSING_PROPOSAL) {
+			if (enteredText.startsWith("</")) { //$NON-NLS-1$
+				enteredText= enteredText.substring(2);
+			} else if (enteredText.startsWith("/")) {  //$NON-NLS-1$
+				try {
+					if (document.getChar(fReplacementOffset - 1) == '<') {
+						enteredText= enteredText.substring(1);
+					}
+				} catch (BadLocationException e) {
+				}
+			} else if (enteredText.startsWith("<")) { //$NON-NLS-1$
+				enteredText= enteredText.substring(1);
+			}
 		}
 		boolean valid= fDisplayString.toLowerCase().startsWith(enteredText.toLowerCase());
 		if (valid) {
