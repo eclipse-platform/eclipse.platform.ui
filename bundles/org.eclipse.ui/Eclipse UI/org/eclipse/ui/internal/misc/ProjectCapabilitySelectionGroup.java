@@ -227,6 +227,7 @@ public class ProjectCapabilitySelectionGroup {
 						ICategory cat = (ICategory)enum.next();
 						visibleCapabilities.addAll(cat.getElements());
 					}
+					Collections.sort(visibleCapabilities, capabilityComparator);
 					checkboxViewer.refresh();
 					enum = visibleCapabilities.iterator();
 					while (enum.hasNext()) {
