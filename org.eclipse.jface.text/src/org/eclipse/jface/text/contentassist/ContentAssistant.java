@@ -530,6 +530,8 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper {
 		protected Point getBelowLocation(Shell shell, int offset) {
 			StyledText text= fViewer.getTextWidget();
 			Point location= text.getLocationAtOffset(offset);
+			if (location.x < 0) location.x= 0;
+			if (location.y < 0) location.y= 0;
 			location= text.toDisplay(location);
 			
 			Rectangle shellBounds= shell.getBounds();

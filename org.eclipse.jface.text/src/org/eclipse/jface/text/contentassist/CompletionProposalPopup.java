@@ -200,7 +200,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 		
 		fProposalTable.setLocation(0, 0);
 		if (fAdditionalInfoController != null)
-		fAdditionalInfoController.setSizeConstraints(50, 10, true, false);
+			fAdditionalInfoController.setSizeConstraints(50, 10, true, false);
 		
 		GridLayout layout= new GridLayout();
 		layout.marginWidth= 0;
@@ -215,17 +215,16 @@ class CompletionProposalPopup implements IContentAssistListener {
 		fProposalShell.pack();
 		
 		if (fAdditionalInfoController != null) {
-		fProposalShell.addControlListener(new ControlListener() {
-			
-			public void controlMoved(ControlEvent e) {}
-			
-			public void controlResized(ControlEvent e) {
-				// resets the cached resize constraints
-				fAdditionalInfoController.setSizeConstraints(50, 10, true, false);
-			}
-		});
+			fProposalShell.addControlListener(new ControlListener() {
+				
+				public void controlMoved(ControlEvent e) {}
+				
+				public void controlResized(ControlEvent e) {
+					// resets the cached resize constraints
+					fAdditionalInfoController.setSizeConstraints(50, 10, true, false);
+				}
+			});
 		}
-
 		
 		fProposalShell.setBackground(control.getDisplay().getSystemColor(SWT.COLOR_BLACK));
 		
@@ -240,8 +239,8 @@ class CompletionProposalPopup implements IContentAssistListener {
 		fProposalTable.setForeground(c);
 		
 		fProposalTable.addSelectionListener(new SelectionListener() {
-			public void widgetSelected(SelectionEvent e) {
-			}
+			
+			public void widgetSelected(SelectionEvent e) {}
 
 			public void widgetDefaultSelected(SelectionEvent e) {
 				selectProposalWithMask(e.stateMask);
@@ -446,6 +445,8 @@ class CompletionProposalPopup implements IContentAssistListener {
 		StyledText text= fViewer.getTextWidget();
 		int caret= text.getCaretOffset();
 		Point p= text.getLocationAtOffset(caret);
+		if (p.x < 0) p.x= 0;
+		if (p.y < 0) p.y= 0;
 		p= new Point(p.x, p.y + text.getLineHeight());
 		return text.toDisplay(p);
 	}
