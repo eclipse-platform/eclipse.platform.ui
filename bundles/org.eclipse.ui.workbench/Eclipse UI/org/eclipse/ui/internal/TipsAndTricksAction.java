@@ -19,6 +19,7 @@ import org.eclipse.help.IHelp;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -89,20 +90,24 @@ public void run() {
 	 * Open the tips and trick help topic
 	 */
 	if (feature != null) {
-		IHelp helpSupport = WorkbenchHelp.getHelpSupport();
-		if (helpSupport != null) {
-			String href = feature.getTipsAndTricksHref();
-			if (href != null) {
-				helpSupport.displayHelpResource(href);
-			} else {
-				IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 1, WorkbenchMessages.getString("TipsAndTricksAction.hrefNotDefined"), null); //$NON-NLS-1$
-				ErrorDialog.openError(
-					workbench.getActiveWorkbenchWindow().getShell(),
-					WorkbenchMessages.getString("TipsAndTricksErrorDialog.title"),  //$NON-NLS-1$
-					WorkbenchMessages.getString("TipsAndTricksErrorDialog.noHref"),  //$NON-NLS-1$
-					status);				
-			}
-		}		
+		final String href = feature.getTipsAndTricksHref();
+		if (href != null) {
+			BusyIndicator.showWhile(shell.getDisplay(), new Runnable() {
+				public void run() {
+					final IHelp helpSupport = WorkbenchHelp.getHelpSupport();
+					if (helpSupport != null) {
+						helpSupport.displayHelpResource(href);
+					}
+				}
+			});
+		} else {
+			IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 1, WorkbenchMessages.getString("TipsAndTricksAction.hrefNotDefined"), null); //$NON-NLS-1$
+			ErrorDialog.openError(
+				workbench.getActiveWorkbenchWindow().getShell(),
+				WorkbenchMessages.getString("TipsAndTricksErrorDialog.title"),  //$NON-NLS-1$
+				WorkbenchMessages.getString("TipsAndTricksErrorDialog.noHref"),  //$NON-NLS-1$
+				status);				
+		}	
 	} else {
 		IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 1, WorkbenchMessages.getString("TipsAndTricksAction.hrefNotDefined"), null); //$NON-NLS-1$
 		ErrorDialog.openError(
