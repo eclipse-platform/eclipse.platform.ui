@@ -221,12 +221,6 @@ public class BranchPromptDialog extends DetailsDialog {
 					} else {
 						if(versionTag.length() != 0 && versionTag.equals(branchTag)) {
 							message = Policy.bind("BranchWizard.branchAndVersionMustBeDifferent"); //$NON-NLS-1$
-						} else {
-							if(doesTagNameExists(versionTag)) {
-								message = Policy.bind("BranchWizard.versionNameAlreadyExists"); //$NON-NLS-1$
-							} else if(doesBranchNameExists(branchTag)) {
-								message = Policy.bind("BranchWizard.branchNameAlreadyExists"); //$NON-NLS-1$
-							}
 						}
 					}
 				}
