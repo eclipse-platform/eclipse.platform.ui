@@ -498,11 +498,21 @@ public class Session {
 		for (;;) {
 			int pos = arg.indexOf('\n', oldPos);
 			if (pos == -1) break;
-			connection.writeLine(arg.substring(oldPos, pos));
+			connection.writeLine(stripTrainingCR(arg.substring(oldPos, pos)));
 			connection.write("Argumentx "); //$NON-NLS-1$
 			oldPos = pos + 1;
 		}
-		connection.writeLine(arg.substring(oldPos));
+		connection.writeLine(stripTrainingCR(arg.substring(oldPos)));
+	}
+
+	/*
+	 * Remove any trailing CR from the string
+	 */
+	private String stripTrainingCR(String string) {
+		if (string.endsWith("\r")) { //$NON-NLS-1$
+			return string.substring(0, string.length() - 1);
+		}
+		return string;
 	}
 
 	/**
