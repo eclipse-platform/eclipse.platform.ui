@@ -65,13 +65,13 @@ import org.eclipse.ui.internal.dialogs.EventLoopProgressMonitor;
 public class ProgressManager extends ProgressProvider implements IProgressService {
 
 	private static ProgressManager singleton;
-	private Map jobs = Collections.synchronizedMap(new HashMap());
+	final private Map jobs = Collections.synchronizedMap(new HashMap());
 
-	private Collection listeners = Collections.synchronizedList(new ArrayList());
-	Object listenerKey = new Object();
-	ErrorNotificationManager errorManager = new ErrorNotificationManager();
-	private WorkbenchMonitorProvider monitorProvider;
-	private ProgressFeedbackManager feedbackManager = new ProgressFeedbackManager();
+	final private Collection listeners = Collections.synchronizedList(new ArrayList());
+	final Object listenerKey = new Object();
+	final ErrorNotificationManager errorManager = new ErrorNotificationManager();
+	final private WorkbenchMonitorProvider monitorProvider = new WorkbenchMonitorProvider();
+	final private ProgressFeedbackManager feedbackManager = new ProgressFeedbackManager();
 	IJobChangeListener changeListener;
 
 	static final String PROGRESS_VIEW_NAME = "org.eclipse.ui.views.ProgressView"; //$NON-NLS-1$
@@ -108,7 +108,7 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	public static final String MAXIMIZE_KEY = "MAXIMIZE_FLOATING"; //$NON-NLS-1$
 
 	//A list of keys for looking up the images in the image registry
-	static String[] keys =
+	final static String[] keys =
 		new String[] {
 			PROGRESS_20_KEY,
 			PROGRESS_40_KEY,
@@ -116,7 +116,7 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 			PROGRESS_80_KEY,
 			PROGRESS_100_KEY };
 
-	Hashtable runnableMonitors = new Hashtable();
+	final Hashtable runnableMonitors = new Hashtable();
 
 	/**
 	 * Get the progress manager currently in use.
@@ -299,7 +299,6 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 		Platform.getJobManager().setProgressProvider(this);
 		createChangeListener();
 		Platform.getJobManager().addJobChangeListener(this.changeListener);
-		monitorProvider = new WorkbenchMonitorProvider();
 		URL iconsRoot =
 			Platform.getPlugin(PlatformUI.PLUGIN_ID).find(
 				new Path(ProgressManager.PROGRESS_FOLDER));
