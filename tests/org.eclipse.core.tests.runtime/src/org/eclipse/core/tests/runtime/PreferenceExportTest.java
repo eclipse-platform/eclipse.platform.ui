@@ -120,7 +120,7 @@ public class PreferenceExportTest extends RuntimeTest {
 		Preferences prefs = testPlugin.getPluginPreferences();
 		Preferences.IPropertyChangeListener listener = new Preferences.IPropertyChangeListener() {
 			public void propertyChange(Preferences.PropertyChangeEvent event) {
-				assertTrue("1.0", event.getProperty() == key);
+				assertSame("1.0", event.getProperty(), key);
 			}
 		};
 		prefs.addPropertyChangeListener(listener);
