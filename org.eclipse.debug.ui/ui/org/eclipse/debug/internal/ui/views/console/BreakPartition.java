@@ -18,7 +18,7 @@ public class BreakPartition extends StreamPartition {
 	/**
 	 * Partition type
 	 */
-	public static final String BREAK_PARTITION_TYPE = DebugUIPlugin.getUniqueIdentifier() + ".BREAK_PARTITION_TYPE";
+	public static final String BREAK_PARTITION_TYPE = DebugUIPlugin.getUniqueIdentifier() + ".BREAK_PARTITION_TYPE"; //$NON-NLS-1$
 	
 	
 	public BreakPartition(String streamIdentifier, int offset, int length) {

@@ -17,7 +17,7 @@ public class OutputPartition extends StreamPartition {
 	/**
 	 * Partition type
 	 */
-	public static final String OUTPUT_PARTITION_TYPE = DebugUIPlugin.getUniqueIdentifier() + ".OUTPUT_PARTITION_TYPE";
+	public static final String OUTPUT_PARTITION_TYPE = DebugUIPlugin.getUniqueIdentifier() + ".OUTPUT_PARTITION_TYPE"; //$NON-NLS-1$
 	
 	
 	public OutputPartition(String streamIdentifier, int offset, int length) {

@@ -17,7 +17,7 @@ public class InputPartition extends StreamPartition {
 	/**
 	 * Partition type
 	 */
-	public static final String INPUT_PARTITION_TYPE = DebugUIPlugin.getUniqueIdentifier() + ".INPUT_PARTITION_TYPE";
+	public static final String INPUT_PARTITION_TYPE = DebugUIPlugin.getUniqueIdentifier() + ".INPUT_PARTITION_TYPE"; //$NON-NLS-1$
 	
 	
 	public InputPartition(String streamIdentifier, int offset, int length) {

@@ -106,7 +106,7 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 	public void clearDocument() {
 		IDocument doc= getDocument();
 		if (doc != null) {
-			doc.set("");
+			doc.set(""); //$NON-NLS-1$
 		}
 		selectionChanged(0, 0);
 	}

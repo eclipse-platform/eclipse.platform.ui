@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
@@ -45,30 +46,30 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 	protected IProcess fProcess;
 	protected IConsoleDocumentContentProvider fContentProvider;
 	private IStreamsProxy fProxy;
-	protected boolean fNeedsToStartReading= true;
+	protected List fStreamListeners = new ArrayList(2);
 	
 	private String[] fSortedLineDelimiters;
 	
 	class StreamEntry {
 		/**
-		 * Whether written to std out or std err - one of OUT/ERR
+		 * Identifier of the stream written to.
 		 */
-		private int fKind = -1;
+		private String fStreamIdentifier;
 		/**
 		 * The text written
 		 */
 		private String fText = null;
 		
-		StreamEntry(String text, int kind) {
+		StreamEntry(String text, String streamIdentifier) {
 			fText = text;
-			fKind = kind;
+			fStreamIdentifier = streamIdentifier;
 		}
 		
 		/**
-		 * Returns the kind of entry - OUT or ERR
+		 * Returns the stream identifier
 		 */
-		public int getKind() {
-			return fKind;
+		public String getStreamIdentifier() {
+			return fStreamIdentifier;
 		}
 		
 		/**
@@ -78,6 +79,35 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 			return fText;
 		}
 	}
+	
+	class StreamListener implements IStreamListener {
+		
+		private String fStreamIdentifier;
+		private IStreamMonitor fStreamMonitor;
+	
+		public StreamListener(String streamIdentifier, IStreamMonitor streamMonitor) {
+			fStreamIdentifier = streamIdentifier;
+			fStreamMonitor = streamMonitor;
+		}
+		
+		public void streamAppended(String newText, IStreamMonitor monitor) {
+			DebugUIPlugin.getConsoleDocumentManager().aboutToWriteSystemErr(fDocument);
+			ConsoleDocumentPartitioner.this.streamAppended(newText, fStreamIdentifier);
+		}
+		
+		public void connect() {
+			fStreamMonitor.addListener(this);
+			String contents= fStreamMonitor.getContents();
+			if (contents.length() > 0) {
+				ConsoleDocumentPartitioner.this.streamAppended(contents, fStreamIdentifier);
+			}
+		}
+		
+		public void disconnect() {
+			fStreamMonitor.removeListener(this);
+		}
+	}
+
 	
 	/**
 	 * A queue of stream entries written to standard out and standard err.
@@ -132,30 +162,12 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 	private static final long BASE_DELAY= 100L;
 	
 	/**
-	 * The last partition type being appended	 */
-	private int fPartitionType = -1;
+	 * The identifier of the stream that was last appended to	 */
+	private String fLastStreamIdentifier= null;
 	
 	/**
 	 * Keyboard input buffer	 */
 	private StringBuffer fInputBuffer = new StringBuffer();
-		
-	public static final int OUT= 0;
-	public static final int ERR= 1;
-	
-	protected IStreamListener fSystemOutListener= new IStreamListener() {
-				public void streamAppended(String newText, IStreamMonitor monitor) {
-					DebugUIPlugin.getConsoleDocumentManager().aboutToWriteSystemOut(fDocument);
-					systemOutAppended(newText);
-				}
-			};
-			
-	protected IStreamListener fSystemErrListener= new IStreamListener() {
-				public void streamAppended(String newText, IStreamMonitor monitor) {
-					DebugUIPlugin.getConsoleDocumentManager().aboutToWriteSystemErr(fDocument);
-					systemErrAppended(newText);
-				}
-			};
-
 
 	/**
 	 * @see org.eclipse.jface.text.IDocumentPartitioner#connect(org.eclipse.jface.text.IDocument)
@@ -254,8 +266,7 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 		String text = event.getText();
 		if (isAppendInProgress()) {
 			// stream input
-			String streamIdentifier= (fPartitionType == OUT) ? IDebugPreferenceConstants.CONSOLE_SYS_OUT_RGB : IDebugPreferenceConstants.CONSOLE_SYS_ERR_RGB;
-			addPartition(new OutputPartition(streamIdentifier, event.getOffset(), text.length()));
+			addPartition(new OutputPartition(fLastStreamIdentifier, event.getOffset(), text.length()));
 		} else {
 			// console keyboard input
 			int amountDeleted = event.getLength() - text.length();
@@ -266,6 +277,7 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 			
 			if (docLength == 0) {
 				// cleared
+				fQueue.clear();
 				fInputBuffer.setLength(0);
 				fPartitions.clear();
 				return new Region(0,0);
@@ -308,10 +320,12 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 						addPartition(new InputPartition(IDebugPreferenceConstants.CONSOLE_SYS_IN_RGB, partitionOffset, split));
 						partitionOffset += split;
 						addPartition(new InputPartition(IDebugPreferenceConstants.CONSOLE_SYS_IN_RGB, partitionOffset, 0));
-						try {
-							fProxy.write(buffer);
-						} catch (IOException ioe) {
-							DebugUIPlugin.log(ioe);
+						if (fProxy != null) {
+							try {
+								fProxy.write(buffer);
+							} catch (IOException ioe) {
+								DebugUIPlugin.log(ioe);
+							}
 						}
 						lf = remaining.indexOf(lineDelimiters[i]);
 					}
@@ -369,7 +383,12 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 	public void close() {
 		if (!fClosed) {
 			fClosed= true;
-			stopReading();
+			fPoll = false;
+			Iterator iter = fStreamListeners.iterator();
+			while (iter.hasNext()) {
+				StreamListener listener = (StreamListener)iter.next();
+				listener.disconnect();
+			}
 			DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
 			fDocument.set(""); //$NON-NLS-1$
 		}
@@ -390,30 +409,10 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 		return fClosed;
 	}
 		
-	public void startReading() {
-		if (fProxy == null) {
+	public synchronized void startReading() {
+		if (fPollingThread != null) {
+			// already polling
 			return;
-		}
-		
-		if (!fNeedsToStartReading) {
-			return;
-		}
-		fNeedsToStartReading= false;
-		IStreamMonitor monitor= fProxy.getOutputStreamMonitor();
-		if (monitor != null) {
-			monitor.addListener(fSystemOutListener);
-			String contents= monitor.getContents();
-			if (contents.length() > 0) {
-				systemOutAppended(contents);
-			}
-		}
-		monitor= fProxy.getErrorStreamMonitor();
-		if (monitor != null) {
-			monitor.addListener(fSystemErrListener);
-			String contents= monitor.getContents();
-			if (contents.length() > 0) {
-				systemErrAppended(contents);
-			}
 		}
 		Runnable r = new Runnable() {
 			public void run() {
@@ -454,7 +453,7 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 			String[] lds = fDocument.getLegalLineDelimiters();
 			while (!fKilled && processed < fQueue.size() && amount < 8096) {
 				StreamEntry entry = (StreamEntry)fQueue.get(processed);
-				if (prev == null || prev.getKind() == entry.getKind()) {
+				if (prev == null || prev.getStreamIdentifier().equals(entry.getStreamIdentifier())) {
 					String text = entry.getText();
 					if (buffer == null) {
 						buffer = new StringBuffer(text.length());
@@ -496,7 +495,7 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 				amount+= entry.getText().length();
 			}
 			if (buffer != null) {
-				appendToDocument(buffer.toString(), prev.getKind());
+				appendToDocument(buffer.toString(), prev.getStreamIdentifier());
 			}
 			for (int i = 0; i < processed; i++) {
 				fQueue.remove(0);
@@ -535,29 +534,17 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 		return fWrap;
 	}
 	
-	protected void stopReading() {
-		fPoll = false;
-		if (fProxy == null) {
-			return;
-		}
-		fNeedsToStartReading= true;
-		IStreamMonitor monitor= fProxy.getOutputStreamMonitor();
-		monitor.removeListener(fSystemOutListener);
-		monitor= fProxy.getErrorStreamMonitor();
-		monitor.removeListener(fSystemErrListener);
-	}
-
 	/**
 	 * System out or System error has had text append to it.
 	 * Adds the new text to the document.
 	 * 
 	 * @see IStreamListener#streamAppended(String, IStreamMonitor)
 	 */
-	protected void appendToDocument(final String text, final int source) {
+	protected void appendToDocument(final String text, final String streamIdentifier) {
 		Runnable r = new Runnable() {
 			public void run() {
 				setAppendInProgress(true);
-				fPartitionType = source;
+				fLastStreamIdentifier = streamIdentifier;
 				try {
 					fDocument.replace(fDocument.getLength(), 0, text);
 				} catch (BadLocationException e) {
@@ -575,24 +562,10 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 	 * System out or System error has had text append to it.
 	 * Adds a new entry to the queue.
 	 */
-	protected void streamAppended(String text, int source) {
-		fQueue.add(new StreamEntry(text, source));
+	protected void streamAppended(String text, String streamIdetifier) {
+		fQueue.add(new StreamEntry(text, streamIdetifier));
 	}
-			
-	/**
-	 * @see IStreamListener#streamAppended(String, IStreamMonitor)
-	 */
-	protected void systemErrAppended(String text) {
-		streamAppended(text, ERR);
-	}
-
-	/**
-	 * @see IStreamListener#streamAppended(String, IStreamMonitor)
-	 */
-	protected void systemOutAppended(String text) {
-		streamAppended(text, OUT);
-	}
-		
+					
 	/**
 	 * Sets whether a runnable has been submitted to update the console
 	 * document.
@@ -648,11 +621,16 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 	}
 
 	/**
-	 * TODO: only the standard streams are currently implemented.
-	 * 
 	 * @see org.eclipse.debug.internal.ui.views.console.IConsoleDocumentPartitioner#connect(org.eclipse.debug.core.model.IStreamMonitor, java.lang.String)
 	 */
 	public void connect(IStreamMonitor streamMonitor, String streamIdentifer) {
+		if (streamMonitor != null) {
+			StreamListener listener = new StreamListener(streamIdentifer, streamMonitor);
+			fStreamListeners.add(listener);
+			listener.connect();
+			// ensure we start polling for output
+			startReading();
+		}
 	}
 
 	/**
@@ -660,7 +638,8 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 	 */
 	public void connect(IStreamsProxy streamsProxy) {
 		fProxy = streamsProxy;
-		startReading();
+		connect(streamsProxy.getOutputStreamMonitor(), IDebugPreferenceConstants.CONSOLE_SYS_OUT_RGB);
+		connect(streamsProxy.getErrorStreamMonitor(), IDebugPreferenceConstants.CONSOLE_SYS_ERR_RGB);
 	}
 	
 	protected boolean isTerminated() {
