@@ -26,15 +26,19 @@ import org.eclipse.ui.internal.activities.ws.EnablementDialog;
  * 
  * Workbench implementation prompts the user with a dialog unless they've said
  * that they don't want to be prompted. You may provide the certain strings to
- * this class via method #2 of IExecutableExtension.
+ * this class via method #2 of
+ * {@link org.eclipse.core.runtime.IExecutableExtension}. This is provided as
+ * API so that non-SDK Eclipse applications can reuse and augment the default
+ * SDK trigger point behaviour.
  * 
  * @see #PROCEED_MULTI
  * @see #PROCEED_SINGLE
  * @see #DONT_ASK
- * @see #NO_DETAILS 
+ * @see #NO_DETAILS
  * @since 3.1
  */
-public class WorkbenchTriggerPointAdvisor extends BasicTriggerPointAdvisor implements IExecutableExtension {
+public class WorkbenchTriggerPointAdvisor implements ITriggerPointAdvisor,
+        IExecutableExtension {
 
 	/**
 	 * The string to be used when prompting to proceed with multiple activities.
