@@ -89,7 +89,7 @@ public class SearchManager implements ITocsChangedListener{
 			if (HelpBasePlugin.DEBUG_SEARCH) {
 				System.out.println(
 					this.getClass().getName()
-						+ " IndexUpdateException occured.");
+						+ " IndexUpdateException occurred.");
 			}
 		}
 		index.search(searchQuery, collector);
@@ -99,7 +99,7 @@ public class SearchManager implements ITocsChangedListener{
 	 * Updates index.  Checks if all contributions were indexed.
 	 * If not, it indexes them.
 	 * @throws OperationCanceledException if indexing was cancelled
-	 * @throws Exception if error occured
+	 * @throws Exception if error occurred
 	 */
 	public void ensureIndexUpdated(IProgressMonitor pm, SearchIndexWithIndexingProgress index)
 		throws OperationCanceledException, IndexingOperation.IndexingException {

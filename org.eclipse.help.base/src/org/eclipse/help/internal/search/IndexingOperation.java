@@ -57,7 +57,7 @@ class IndexingOperation {
 	 * @param monitor progres monitor to be used during this long operation
 	 *  for reporting progress
 	 * @throws OperationCanceledException if indexing was cancelled
-	 * @throws Exception if error occured
+	 * @throws Exception if error occurred
 	 */
 	protected void execute(IProgressMonitor pm)
 		throws OperationCanceledException, IndexingException {

@@ -86,7 +86,7 @@ public class HelpProperties extends Properties {
 		} catch (IOException ioe00) {
 			HelpPlugin.logError(
 				HelpBaseResources.getString(
-					"Exception_occured",
+					"Exception_occurred",
 					name,
 					file.getAbsolutePath()),
 				ioe00);
