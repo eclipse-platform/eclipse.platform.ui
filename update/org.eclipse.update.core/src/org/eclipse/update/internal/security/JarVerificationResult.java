@@ -40,6 +40,9 @@ public class JarVerificationResult implements IVerificationResult {
 	private boolean featureVerification;
 	private boolean alreadySeen;
 
+	public JarVerificationResult() {
+	}
+	
 	/*
 	 * 
 	 */
