@@ -91,7 +91,7 @@ public class DirectorySourceContainer extends AbstractSourceContainer {
 		File directory = getDirectory();
 		File file = new File(directory, name);
 		if (file.exists() && file.isFile()) {
-			sources.add(new LocalFileStorage(file));
+			sources.add(file);
 		}
 		
 		//check subfolders		
