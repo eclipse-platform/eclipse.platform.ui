@@ -889,7 +889,7 @@ public class WorkbenchWindow
 						IKeyBinding keyBinding = (IKeyBinding) keyBindings.first();
 
 						if (keyBinding != null)
-							return KeySupport.formatCarbon(keyBinding.getKeySequence());
+							return KeySupport.formatOSX(keyBinding.getKeySequence());
 					}
 				} else {
 					String acceleratorText = commandManager.getKeyTextForCommand(commandId);

@@ -210,7 +210,7 @@ public final class KeySupport {
 		return accelerator;
 	}
 
-	public static String formatCarbon(KeySequence keySequence) {
+	public static String formatOSX(KeySequence keySequence) {
 		StringBuffer stringBuffer = new StringBuffer();
 		List keyStrokes = keySequence.getKeyStrokes();
 
@@ -219,13 +219,13 @@ public final class KeySupport {
 				stringBuffer.append(',');
 
 			KeyStroke keyStroke = (KeyStroke) keyStrokes.get(i);
-			stringBuffer.append(formatCarbon(keyStroke));
+			stringBuffer.append(formatOSX(keyStroke));
 		}
 
 		return stringBuffer.toString();
 	}
 
-	public static String formatCarbon(KeyStroke keyStroke) {
+	public static String formatOSX(KeyStroke keyStroke) {
 		StringBuffer stringBuffer = new StringBuffer();
 		Set modifierKeys = keyStroke.getModifierKeys();
 

@@ -389,7 +389,7 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 		final KeySequence modeAfterKeyStroke = KeySequence.getInstance(keyStrokes);
 		final Map matchesByKeySequenceForModeBeforeKeyStroke = commandManager.getMatchesByKeySequenceForMode();
 		commandManager.setMode(modeAfterKeyStroke);
-		modeContributionItem.setText("carbon".equals(SWT.getPlatform()) ? KeySupport.formatCarbon(modeAfterKeyStroke) : modeAfterKeyStroke.format());					
+		modeContributionItem.setText("carbon".equals(SWT.getPlatform()) ? KeySupport.formatOSX(modeAfterKeyStroke) : modeAfterKeyStroke.format());					
 		final Map matchesByKeySequenceForModeAfterKeyStroke = commandManager.getMatchesByKeySequenceForMode();
 		boolean consumeKeyStroke = false;
 
@@ -428,7 +428,7 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 
 			// clear mode			
 			commandManager.setMode(KeySequence.getInstance());	
-			modeContributionItem.setText("carbon".equals(SWT.getPlatform()) ? KeySupport.formatCarbon(KeySequence.getInstance()) : KeySequence.getInstance().format());				
+			modeContributionItem.setText("carbon".equals(SWT.getPlatform()) ? KeySupport.formatOSX(KeySequence.getInstance()) : KeySequence.getInstance().format());				
 		}
 
 		// TODO is this necessary?		
