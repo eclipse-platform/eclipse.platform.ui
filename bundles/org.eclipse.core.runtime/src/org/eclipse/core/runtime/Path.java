@@ -143,7 +143,7 @@ public IPath addTrailingSeparator() {
  */
 public IPath append(String tail) {
 	//optimize addition of a single segment
-	if (tail.indexOf(SEPARATOR) == -1 && tail.indexOf("\\") == -1) { //$NON-NLS-1$
+	if (tail.indexOf(SEPARATOR) == -1 && tail.indexOf("\\") == -1 && tail.indexOf(DEVICE_SEPARATOR) == -1) { //$NON-NLS-1$
 		int tailLength = tail.length();
 		if (tailLength < 3) {
 			//some special cases
@@ -155,7 +155,7 @@ public IPath append(String tail) {
 		}
 		//just add the segment
 		int myLen = segments.length;
-		String[] newSegments = new String[myLen+1];
+		String[] newSegments = new String[myLen + 1];
 		System.arraycopy(segments, 0, newSegments, 0, myLen);
 		newSegments[myLen] = tail;
 		return new Path(device, newSegments, separators & ~HAS_TRAILING);
@@ -165,7 +165,7 @@ public IPath append(String tail) {
 	if (this.isRoot())
 		return new Path(device, tail).makeAbsolute();
 
-	//go with easy implementation for now
+	//go with easy implementation
 	return append(new Path(tail));
 }
 /* (Intentionally not included in javadoc)
@@ -173,7 +173,7 @@ public IPath append(String tail) {
  */
 public IPath append(IPath tail) {
 	//optimize some easy cases
-	if (tail == null || tail.isEmpty() || tail.isRoot())
+	if (tail == null || tail.segmentCount() == 0)
 		return this;
 	if (this.isEmpty())
 		return tail.setDevice(device).makeRelative();
