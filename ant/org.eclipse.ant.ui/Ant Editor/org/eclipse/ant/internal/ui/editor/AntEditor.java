@@ -18,6 +18,7 @@ package org.eclipse.ant.internal.ui.editor;
 import java.util.ResourceBundle;
 
 import org.eclipse.ant.internal.ui.editor.model.AntElementNode;
+import org.eclipse.ant.internal.ui.editor.model.AntProjectNode;
 import org.eclipse.ant.internal.ui.editor.outline.AntEditorContentOutlinePage;
 import org.eclipse.ant.internal.ui.editor.outline.AntModel;
 import org.eclipse.ant.internal.ui.editor.outline.XMLCore;
@@ -710,9 +711,12 @@ public class AntEditor extends TextEditor {
 		if (titleImage == null) {
 			return;
 		}
-		Image newImage= getAntModel().getProjectNode().getImage();
-		if (titleImage != newImage) {
-			postImageChange(newImage);
+		AntProjectNode node= getAntModel().getProjectNode();
+		if (node != null) {
+			Image newImage= node.getImage();
+			if (titleImage != newImage) {
+				postImageChange(newImage);
+			}
 		}
 	}
 	
