@@ -66,7 +66,7 @@ class TeamFile extends DiffElement implements ICompareInput, ITeamNode {
 				fireContentChanged();
 			}
 			public ITypedElement replace(ITypedElement child, ITypedElement other) {
-				System.out.println("TeamNode.replace");
+				System.out.println("TeamFile.replace");
 				return null;
 			}
 		};
@@ -77,26 +77,6 @@ class TeamFile extends DiffElement implements ICompareInput, ITeamNode {
 			listeners = new ListenerList();
 		}
 		listeners.add(l);
-	}
-	
-	public boolean canCatchup() {
-		switch (getKind() & Differencer.DIRECTION_MASK) {
-			case Differencer.CONFLICTING :
-			case ITeamNode.INCOMING :
-				return true;
-		}
-		// Allow to catchup outgoing deletions
-		return (getKind() & Differencer.CHANGE_TYPE_MASK) == Differencer.DELETION;
-	}
-	
-	public boolean canRelease() {
-		switch (getKind() & Differencer.DIRECTION_MASK) {
-			case Differencer.CONFLICTING :
-			case ITeamNode.OUTGOING :
-				return true;
-		}
-		// Allow to release over incoming deletions
-		return (getKind() & Differencer.CHANGE_TYPE_MASK) == Differencer.DELETION;
 	}
 	
 	public void copy(boolean leftToRight) {
@@ -217,7 +197,7 @@ class TeamFile extends DiffElement implements ICompareInput, ITeamNode {
 			setKind(OUTGOING | (getKind() & Differencer.CHANGE_TYPE_MASK));
 			fireThreeWayInputChange();
 		} catch (CoreException e) {
-			ErrorDialog.openError(WorkbenchPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell(), Policy.bind("VCMFile.saveChanges", getName()), null, e.getStatus());
+			ErrorDialog.openError(WorkbenchPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell(), Policy.bind("TeamFile.saveChanges", getName()), null, e.getStatus());
 		}
 	}
 	

@@ -35,32 +35,6 @@ public class UnchangedTeamContainer extends DiffNode implements ITeamNode {
 	/*
 	 * Method declared on ITeamNode
 	 */
-	public boolean canCatchup() {
-		IDiffElement[] children = getChildren();
-		for (int i = 0; i < children.length; i++) {
-			if (((ITeamNode) children[i]).canCatchup()) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/*
-	 * Method declared on ITeamNode
-	 */
-	public boolean canRelease() {
-		IDiffElement[] children = getChildren();
-		for (int i = 0; i < children.length; i++) {
-			if (((ITeamNode) children[i]).canRelease()) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/*
-	 * Method declared on ITeamNode
-	 */
 	public int getChangeDirection() {
 		return ITeamNode.NO_CHANGE;
 	}
@@ -88,6 +62,6 @@ public class UnchangedTeamContainer extends DiffNode implements ITeamNode {
 	 * For debugging purposes only.
 	 */
 	public String toString() {
-		return "UnchangedTeamainer(" + resource.getName() + ")";
+		return "UnchangedTeamContainer(" + resource.getName() + ")";
 	}
 }

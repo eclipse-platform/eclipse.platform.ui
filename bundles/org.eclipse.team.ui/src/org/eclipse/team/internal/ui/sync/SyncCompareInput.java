@@ -34,73 +34,36 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.core.sync.ILocalSyncElement;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.ui.TeamUIPlugin;
 import org.eclipse.ui.IViewSite;
-import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 /**
  * Performs a catchup or release operation on an array of resources.
  */
-public class SyncCompareInput extends CompareEditorInput implements ICompareInputChangeListener {
+public abstract class SyncCompareInput extends CompareEditorInput {
 	private IRemoteSyncElement[] trees;
 	private CatchupReleaseViewer catchupReleaseViewer;
 	private DiffNode diffRoot;
 	private Shell shell;
 	private IViewSite viewSite;
-
-	/**
-	 * Creates a new catchup operation.  This constructor is invoked by subclasses
-	 * that only support subscription, not releasing.
-	 */
-	protected SyncCompareInput(Shell shell, IRemoteSyncElement[] trees) {
-		super(new CompareConfiguration());
-		this.trees = trees;
-		this.shell = shell;
-	}
 	
+	private ICompareInputChangeListener listener = new ICompareInputChangeListener() {
+		public void compareInputChanged(ICompareInput source) {
+			catchupReleaseViewer.update(source, new String[] {CatchupReleaseViewer.PROP_KIND});
+			updateStatusLine();
+		}
+	};
+
 	/**
 	 * Creates a new catchup or release operation.
 	 */
-	protected SyncCompareInput(IViewSite viewSite, IRemoteSyncElement[] trees) {
+	public SyncCompareInput(IRemoteSyncElement[] trees) {
 		super(new CompareConfiguration());
 		this.trees = trees;
-		this.shell = viewSite.getShell();
-		this.viewSite = viewSite;
-	}
-	
-	/*
-	 * Method declared on ICompareInputChangeListener
-	 */
-	public void compareInputChanged(ICompareInput source) {
-		catchupReleaseViewer.update(source, new String[] {CatchupReleaseViewer.PROP_KIND});
-		updateStatusLine();
-	}
-	
-	/**
-	 * Returns true if the model contains the given resource, and false otherwise.
-	 */
-	private boolean containsResource(IResource resource) {
-		String[] paths = resource.getFullPath().segments();
-		IDiffElement element = diffRoot;
-		i: for (int i = 0; i < paths.length; i++) {
-			if (element instanceof IDiffContainer) {
-				IDiffElement[] children = ((IDiffContainer)element).getChildren();
-				for (int j = 0; j < children.length; j++) {
-					if (children[j].getName().equals(paths[i])) {
-						element = children[j];
-						continue i;
-					}
-				}
-			}
-			return false;
-		}
-		return element != null;
 	}
 	
 	/*
@@ -113,12 +76,10 @@ public class SyncCompareInput extends CompareEditorInput implements ICompareInpu
 	}
 
 	/**
-	 * Overridden to create a custom DiffTreeViewer in the top left pane of the CompareProvider.
+	 * Subclasses must create and return a new CatchupReleaseViewer, and set the viewer
+	 * using setViewer().
 	 */
-	public Viewer createDiffViewer(Composite parent) {
-		catchupReleaseViewer = new CatchupReleaseViewer(parent, this);
-		return catchupReleaseViewer;
-	}
+	public abstract Viewer createDiffViewer(Composite parent);
 	
 	/**
 	 * Returns the root node of the diff tree.
@@ -151,29 +112,11 @@ public class SyncCompareInput extends CompareEditorInput implements ICompareInpu
 		}
 		return null;
 	}
+
+	protected Shell getShell() {
+		return shell;
+	}
 	
-	/**
-	 * Returns an appropriate error message for the given severity.
-	 * @see IStatus#getSeverity.
-	 */
-	private String getProblemMessage(int severity) {
-		if (severity == IStatus.OK) {
-			return Policy.bind("SyncCompareInput.ok");
-		} else if (severity == IStatus.INFO) {
-			return Policy.bind("SyncCompareInput.info");
-		} else {
-			return Policy.bind("SyncCompareInput.failure");
-		}
-	}
-
-	/**
-	 * Returns the title for any problem dialog that needs to popup
-	 * during catchup/release.
-	 */
-	private String getProblemTitle() {
-		return Policy.bind("SyncCompareInput.problemsDuringSync");
-	}
-
 	/**
 	 * Returns the name of this operation.
 	 * It is dipslayed in the CompareEditor's title bar.
@@ -230,69 +173,6 @@ public class SyncCompareInput extends CompareEditorInput implements ICompareInpu
 	}
 
 	/**
-	 * Performs a catchup or release on the given set of ITeamNodes.  Returns the set
-	 * of nodes that were actually loaded or released, or null if the user canceled.
-	 */
-	private SyncSet performSync(SyncSet syncSet, int kind, IProgressMonitor monitor) throws CoreException, InvocationTargetException, InterruptedException {
-		ITeamNode[] changed = syncSet.getChangedNodes();
-		switch (kind) {
-			case MergeAction.CHECKIN:
-				for (int i = 0; i < changed.length; i++) {
-					ITeamProvider provider = TeamPlugin.getManager().getProvider(changed[i].getResource().getProject());
-					try {
-						provider.checkin(new IResource[] {changed[i].getResource()}, IResource.DEPTH_INFINITE, new NullProgressMonitor());
-					} catch (TeamException e) {
-						// remove the change from the set, add an error
-					}
-				}
-				break;
-			case MergeAction.GET:
-				for (int i = 0; i < changed.length; i++) {
-					ITeamProvider provider = TeamPlugin.getManager().getProvider(changed[i].getResource().getProject());
-					try {
-						provider.get(new IResource[] {changed[i].getResource()}, IResource.DEPTH_INFINITE, new NullProgressMonitor());
-					} catch (TeamException e) {
-						// remove the change from the set, add an error
-					}
-				}
-				break;
-			case MergeAction.DELETE_REMOTE:
-				for (int i = 0; i < changed.length; i++) {
-					ITeamProvider provider = TeamPlugin.getManager().getProvider(changed[i].getResource().getProject());
-					try {
-						provider.delete(new IResource[] {changed[i].getResource()}, new NullProgressMonitor());
-					} catch (TeamException e) {
-						// remove the change from the set, add an error
-					}
-				}		
-				break;
-			case MergeAction.DELETE_LOCAL:
-				for (int i = 0; i < changed.length; i++) {
-					changed[i].getResource().delete(false, new NullProgressMonitor());
-				}		
-				break;
-		}
-		
-		//display low-level warnings, if any.
-	/*	if (!result.isOK()) {
-			if (shell != null && !shell.isDisposed()) {
-				shell.getDisplay().syncExec(new Runnable() {
-					public void run() {
-						ErrorDialog.openError(shell, 
-							Policy.bind("SyncCompareInput.problemsDuringSync"),
-							Policy.bind("SyncCompareInput.info"),
-							result);
-					}
-				});
-			}
-		}*/
-		if (monitor.isCanceled()) {
-			return null;
-		}
-		return syncSet;
-	}
-
-	/**
 	 * Performs a compare on the given selection.
 	 * This method is called before the CompareEditor has been opened.
 	 * If the result of the diff is empty (or an error has occured)
@@ -341,7 +221,7 @@ public class SyncCompareInput extends CompareEditorInput implements ICompareInpu
 	
 	void doServerDelta(IProgressMonitor pm) throws InterruptedException {
 		pm.beginTask("", trees.length * 1000);
-		pm.setTaskName(Policy.bind("Synchronizing with server..."));
+		pm.setTaskName(Policy.bind("SyncCompareInput.taskTitle"));
 		for (int i = 0; i < trees.length; i++) {
 			IProgressMonitor subMonitor = new SubProgressMonitor(pm, 1000);
 			IRemoteSyncElement tree = trees[i];
@@ -367,7 +247,7 @@ public class SyncCompareInput extends CompareEditorInput implements ICompareInpu
 			return element;
 		} else {
 			TeamFile file = new TeamFile(parent, mergeResource, type);
-			file.addCompareInputChangeListener(this);
+			file.addCompareInputChangeListener(listener);
 			return file;
 		}
 	}
@@ -408,52 +288,8 @@ public class SyncCompareInput extends CompareEditorInput implements ICompareInpu
 			MessageDialog.openInformation(shell, Policy.bind("nothingToSynchronize"), Policy.bind("SyncCompareInput.nothingText"));
 		}
 	}
-	
-	/**
-	 * The given nodes have been synchronized.  Remove them from
-	 * the view.
-	 */
-	private void removeNodes(final ITeamNode[] nodes) {
-		// Update the model
-		for (int i = 0; i < nodes.length; i++) {
-			if (nodes[i].getClass() == UnchangedTeamContainer.class) {
-				// Unchanged containers get removed automatically when all
-				// children are removed
-				continue;
-			}
-			if (nodes[i].getClass() == ChangedTeamContainer.class) {
-				// If this node still has children, convert to an
-				// unchanged container, then it will disappear when
-				// all children have been removed.
-				ChangedTeamContainer container = (ChangedTeamContainer)nodes[i];
-				IDiffElement[] children = container.getChildren();
-				if (children.length > 0) {
-					IDiffContainer parent = container.getParent();
-					parent.removeToRoot(container);
-					UnchangedTeamContainer unchanged = new UnchangedTeamContainer(this, parent, container.getResource());
-					for (int j = 0; j < children.length; j++) {
-						unchanged.add(children[j]);
-					}
-					continue;
-				}
-				// No children, it will get removed below.
-			}
-			nodes[i].getParent().removeToRoot(nodes[i]);
-			
-		}
-		
-		// Update the view
-		if (diffRoot.hasChildren()) {
-			catchupReleaseViewer.refresh();
-		} else {
-			catchupReleaseViewer.setInput(null);
-		}
-		
-		// Update the status line
-		updateStatusLine();
-	}
-	
-	private void run(IRunnableWithProgress op, String problemMessage) throws InterruptedException {
+
+	protected void run(IRunnableWithProgress op, String problemMessage) throws InterruptedException {
 		ProgressMonitorDialog dialog = new ProgressMonitorDialog(shell);
 		try {
 			dialog.run(true, true, op);
@@ -470,33 +306,19 @@ public class SyncCompareInput extends CompareEditorInput implements ICompareInpu
 		}
 	}
 
-	/**
-	 * Peforms a catchup or release on the given set of nodes.
-	 */
-	void sync(final SyncSet nodes, final int kind) {
-		final SyncSet[] result = new SyncSet[1];
-		WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
-			public void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				try {
-					result[0] = performSync(nodes, kind, monitor);
-				} catch (CoreException e) {
-					throw new InvocationTargetException(e);
-				}
-			}
-		};
-		try {
-			run(op, getProblemTitle());
-		} catch (InterruptedException e) {
-		}
-		if (result[0] != null) {
-			removeNodes(result[0].getChangedNodes());
-		}
+	public void setViewSite(IViewSite viewSite) {
+		this.viewSite = viewSite;
+		this.shell = viewSite.getShell();
+	}
+
+	public void setViewer(CatchupReleaseViewer viewer) {
+		this.catchupReleaseViewer = viewer;
 	}
 
 	/**
 	 * Updates the status line.
 	 */
-	private void updateStatusLine() {
+	protected void updateStatusLine() {
 		if (viewSite != null && !shell.isDisposed()) {
 			Runnable update = new Runnable() {
 				public void run() {

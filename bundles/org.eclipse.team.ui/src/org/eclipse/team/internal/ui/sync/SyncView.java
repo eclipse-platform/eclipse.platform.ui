@@ -7,7 +7,6 @@ package org.eclipse.team.internal.ui.sync;
  
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -26,7 +25,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.UIConstants;
 import org.eclipse.team.ui.TeamUIPlugin;
@@ -47,14 +45,14 @@ public class SyncView extends ViewPart {
 	
 	// The possible sync modes
 	public static final int SYNC_NONE = 0;
-	public static final int SYNC_CATCHUP = 1;
-	public static final int SYNC_RELEASE = 2;
+	public static final int SYNC_INCOMING = 1;
+	public static final int SYNC_OUTGOING = 2;
 	public static final int SYNC_BOTH = 3;
 	public static final int SYNC_MERGE = 4;
 	
 	// Titles cached for efficiency
-	private final String CATCHUP_TITLE = Policy.bind("SyncView.catchupModeTitle");
-	private final String RELEASE_TITLE = Policy.bind("SyncView.releaseModeTitle");
+	private final String CATCHUP_TITLE = Policy.bind("SyncView.incomingModeTitle");
+	private final String RELEASE_TITLE = Policy.bind("SyncView.outgoingModeTitle");
 	private final String FREE_TITLE = Policy.bind("SyncView.freeModeTitle");
 	
 	private int currentSyncMode = SYNC_NONE;
@@ -74,8 +72,8 @@ public class SyncView extends ViewPart {
 		}
 	}
 	
-	private SyncModeAction catchupMode;
-	private SyncModeAction releaseMode;
+	private SyncModeAction incomingMode;
+	private SyncModeAction outgoingMode;
 	private SyncModeAction freeMode;
 	
 	/**
@@ -109,8 +107,8 @@ public class SyncView extends ViewPart {
 	}
 	
 	/**
-	 * Makes the history view visible in the active perspective. If there
-	 * isn't a history view registered <code>null</code> is returned.
+	 * Makes the sync view visible in the active perspective. If there
+	 * isn't a sync view registered <code>null</code> is returned.
 	 * Otherwise the opened view part is returned.
 	 */
 	public static SyncView findInActivePerspective() {
@@ -130,19 +128,19 @@ public class SyncView extends ViewPart {
 	 */
 	private void initializeSyncModes() {
 		// Create the actions
-		catchupMode = new SyncModeAction(
-			Policy.bind("SyncView.catchupModeAction"),
+		incomingMode = new SyncModeAction(
+			Policy.bind("SyncView.incomingModeAction"),
 			TeamUIPlugin.getPlugin().getImageDescriptor(UIConstants.IMG_SYNC_MODE_CATCHUP),
-			SYNC_CATCHUP);
-		catchupMode.setToolTipText(Policy.bind("SyncView.catchupModeToolTip"));
-		catchupMode.setChecked(false);
+			SYNC_INCOMING);
+		incomingMode.setToolTipText(Policy.bind("SyncView.incomingModeToolTip"));
+		incomingMode.setChecked(false);
 		
-		releaseMode = new SyncModeAction(
-			Policy.bind("SyncView.releaseModeAction"),
+		outgoingMode = new SyncModeAction(
+			Policy.bind("SyncView.outgoingModeAction"),
 			TeamUIPlugin.getPlugin().getImageDescriptor(UIConstants.IMG_SYNC_MODE_RELEASE),
-			SYNC_RELEASE);
-		releaseMode.setToolTipText(Policy.bind("SyncView.releaseModeToolTip"));
-		releaseMode.setChecked(false);
+			SYNC_OUTGOING);
+		outgoingMode.setToolTipText(Policy.bind("SyncView.outgoingModeToolTip"));
+		outgoingMode.setChecked(false);
 		
 		freeMode = new SyncModeAction(
 			Policy.bind("SyncView.freeModeAction"),
@@ -192,22 +190,22 @@ public class SyncView extends ViewPart {
 	void setSyncMode(int mode) {
 		// Implement radio button behaviour
 		switch (mode) {
-			case SYNC_CATCHUP:
-				catchupMode.setChecked(true);
-				releaseMode.setChecked(false);
+			case SYNC_INCOMING:
+				incomingMode.setChecked(true);
+				outgoingMode.setChecked(false);
 				freeMode.setChecked(false);
 				setTitle(CATCHUP_TITLE);
 				break;
-			case SYNC_RELEASE:
-				releaseMode.setChecked(true);
-				catchupMode.setChecked(false);
+			case SYNC_OUTGOING:
+				outgoingMode.setChecked(true);
+				incomingMode.setChecked(false);
 				freeMode.setChecked(false);
 				setTitle(RELEASE_TITLE);
 				break;
 			case SYNC_BOTH:
 				freeMode.setChecked(true);
-				releaseMode.setChecked(false);
-				catchupMode.setChecked(false);
+				outgoingMode.setChecked(false);
+				incomingMode.setChecked(false);
 				setTitle(FREE_TITLE);
 				break;
 		}
@@ -231,8 +229,9 @@ public class SyncView extends ViewPart {
 	/**
 	 * Shows synchronization information for the given resources in the sync view.
 	 */
-	public void showSync(IRemoteSyncElement[] trees) {
-		input = new SyncCompareInput(getViewSite(), trees);
+	public void showSync(SyncCompareInput input) {
+		input.setViewSite(getViewSite());
+		this.input = input;
 		currentSyncMode = SYNC_NONE;
 		
 		// Run the diff and stop if cancel or error occurred.
@@ -286,9 +285,9 @@ public class SyncView extends ViewPart {
 	//		freeMode.run();
 	//	} else {
 			if (input.hasIncomingChanges()) {
-				catchupMode.run();
+				incomingMode.run();
 			} else {
-				releaseMode.run();
+				outgoingMode.run();
 			}
 	//	}
 		// Reveal if fast view
@@ -309,8 +308,8 @@ public class SyncView extends ViewPart {
 		toolBar.removeAll();
 		menu.removeAll();
 		
-		toolBar.add(catchupMode);
-		toolBar.add(releaseMode);
+		toolBar.add(incomingMode);
+		toolBar.add(outgoingMode);
 		toolBar.add(freeMode);
 		input.getViewer().contributeToActionBars(bars);
 		

@@ -49,7 +49,7 @@ import org.eclipse.ui.views.navigator.ResourceNavigator;
  * not contain references to workbench actions. Actions should be contributed
  * by the view.
  */
-public class CatchupReleaseViewer extends DiffTreeViewer implements ISelectionChangedListener {
+public abstract class CatchupReleaseViewer extends DiffTreeViewer implements ISelectionChangedListener {
 	
 	/**
 	 * This filter hides all empty categories tree nodes.
@@ -72,7 +72,7 @@ public class CatchupReleaseViewer extends DiffTreeViewer implements ISelectionCh
 			this.showMask = mask;
 		}
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
-			// Tf this element has visible children, always show it.
+			// If this element has visible children, always show it.
 			// This is not great -- O(n^2) filtering
 			if (hasFilteredChildren(element)) {
 				return true;
@@ -113,12 +113,7 @@ public class CatchupReleaseViewer extends DiffTreeViewer implements ISelectionCh
 	// The current sync mode
 	private int syncMode = SyncView.SYNC_NONE;
 	
-	// Tctions
-	private MergeAction getAction;
-	private MergeAction checkinAction;
-	private MergeAction delRemoteAction;
-	private MergeAction delLocalAction;
-		
+	// Actions
 	private FilterAction showIncoming;
 	private FilterAction showOutgoing;
 	private FilterAction showOnlyConflicts;
@@ -128,13 +123,13 @@ public class CatchupReleaseViewer extends DiffTreeViewer implements ISelectionCh
 	private Action ignoreWhiteSpace;
 	
 	// Property constant for diff mode kind
-	static final String PROP_KIND = "vcm.ui.PropKind";
+	static final String PROP_KIND = "team.ui.PropKind";
 
 
 	/**
 	 * Creates a new catchup/release viewer.
 	 */
-	CatchupReleaseViewer(Composite parent, SyncCompareInput model) {
+	protected CatchupReleaseViewer(Composite parent, SyncCompareInput model) {
 		super(parent, model.getCompareConfiguration());
 		initializeActions(model);
 	}
@@ -144,7 +139,6 @@ public class CatchupReleaseViewer extends DiffTreeViewer implements ISelectionCh
 	 */
 	void contributeToActionBars(IActionBars actionBars) {
 		IToolBarManager toolBar = actionBars.getToolBarManager();
-	
 	
 		toolBar.add(new Separator());
 		toolBar.add(showOnlyConflicts);
@@ -167,20 +161,6 @@ public class CatchupReleaseViewer extends DiffTreeViewer implements ISelectionCh
 		if (showInNavigator != null) {
 			manager.add(showInNavigator);
 		}
-		if (syncMode == SyncView.SYNC_RELEASE) {
-			manager.add(new Separator());
-			checkinAction.update();
-			delRemoteAction.update();
-			manager.add(checkinAction);
-			manager.add(delRemoteAction);
-		}
-		if (syncMode == SyncView.SYNC_CATCHUP) {
-			manager.add(new Separator());
-			getAction.update();
-			delLocalAction.update();
-			manager.add(getAction);
-			manager.add(delLocalAction);
-		}
 	}
 	
 	/**
@@ -197,6 +177,10 @@ public class CatchupReleaseViewer extends DiffTreeViewer implements ISelectionCh
 		}
 	}
 	
+	protected int getSyncMode() {
+		return syncMode;
+	}
+	
 	/**
 	 * Returns true if the given element has filtered children, and false otherwise.
 	 */
@@ -208,31 +192,6 @@ public class CatchupReleaseViewer extends DiffTreeViewer implements ISelectionCh
 	 * Creates the actions for this viewer.
 	 */
 	private void initializeActions(final SyncCompareInput diffModel) {
-		checkinAction = new MergeAction(diffModel, this, MergeAction.CHECKIN, IRemoteSyncElement.OUTGOING, "Check In") {
-			protected boolean isMatchingKind(int kind) {
-				if ((kind & IRemoteSyncElement.DIRECTION_MASK) != IRemoteSyncElement.OUTGOING) return false;
-				int change = kind & IRemoteSyncElement.CHANGE_MASK;
-				return (change == IRemoteSyncElement.CHANGE || change == IRemoteSyncElement.ADDITION);
-			}
-		};
-		getAction = new MergeAction(diffModel, this, MergeAction.GET, IRemoteSyncElement.INCOMING, "Get") {
-			protected boolean isMatchingKind(int kind) {
-				if ((kind & IRemoteSyncElement.DIRECTION_MASK) != IRemoteSyncElement.INCOMING) return false;
-				int change = kind & IRemoteSyncElement.CHANGE_MASK;
-				return (change == IRemoteSyncElement.CHANGE || change == IRemoteSyncElement.ADDITION);
-			}
-	 	};
-		delRemoteAction = new MergeAction(diffModel, this, MergeAction.DELETE_REMOTE, IRemoteSyncElement.OUTGOING, "Delete Remote") {
-			protected boolean isMatchingKind(int kind) {
-				return kind == (IRemoteSyncElement.OUTGOING | IRemoteSyncElement.DELETION);
-			}
-	 	};
-		delLocalAction = new MergeAction(diffModel, this, MergeAction.DELETE_LOCAL, IRemoteSyncElement.INCOMING, "Delete Local") {
-			protected boolean isMatchingKind(int kind) {
-				return kind == (IRemoteSyncElement.INCOMING | IRemoteSyncElement.DELETION);
-			}
-	 	};
-	
 		// Mask actions
 		ImageDescriptor image = TeamUIPlugin.getPlugin().getImageDescriptor(UIConstants.IMG_DLG_SYNC_INCOMING);
 		showIncoming = new FilterAction(Policy.bind("CatchupReleaseViewer.showIncomingAction"), image);
@@ -281,7 +240,7 @@ public class CatchupReleaseViewer extends DiffTreeViewer implements ISelectionCh
 				diffModel.getCompareConfiguration().setProperty(CompareConfiguration.IGNORE_WHITESPACE, value);
 			}
 		};
-		ignoreWhiteSpace.setId("vcm.ignoreWhiteSpace");
+		ignoreWhiteSpace.setId("team.ignoreWhiteSpace");
 		ignoreWhiteSpace.setChecked(false);
 		
 		// Add a selection listener to set the left label
@@ -303,7 +262,7 @@ public class CatchupReleaseViewer extends DiffTreeViewer implements ISelectionCh
 			}
 		});
 	
-		// Aet an initial filter -- show all changes
+		// Set an initial filter -- show all changes
 		showIncoming.setChecked(true);
 		showOutgoing.setChecked(true);
 		showOnlyConflicts.setChecked(false);
@@ -315,7 +274,7 @@ public class CatchupReleaseViewer extends DiffTreeViewer implements ISelectionCh
 	 */
 	protected void inputChanged(Object input, Object oldInput) {
 		super.inputChanged(input, oldInput);
-		// Ipdate the refresh action
+		// Update the refresh action
 		if (refresh != null) {
 			Tree tree = getTree();
 			if (tree != null) {
@@ -429,12 +388,12 @@ public class CatchupReleaseViewer extends DiffTreeViewer implements ISelectionCh
 		
 		//determine what other filters to apply based on current action states
 		switch (syncMode) {
-			case SyncView.SYNC_CATCHUP:
+			case SyncView.SYNC_INCOMING:
 				if (!showOnlyConflicts.isChecked()) {
 					filters |= CategoryFilter.SHOW_INCOMING;
 				}
 				break;
-			case SyncView.SYNC_RELEASE:
+			case SyncView.SYNC_OUTGOING:
 				if (!showOnlyConflicts.isChecked()) {
 					filters |= CategoryFilter.SHOW_OUTGOING;
 				}

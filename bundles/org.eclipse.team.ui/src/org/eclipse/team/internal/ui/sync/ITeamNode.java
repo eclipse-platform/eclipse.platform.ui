@@ -20,18 +20,6 @@ public interface ITeamNode extends IDiffElement {
 	static final int NO_CHANGE = Differencer.NO_CHANGE;
 	
 	/**
-	 * Returns true if it is valid to load this resource from the server.
-	 * The operation is valid if it is valid for at least one node in the subtree.
-	 */
-	public boolean canCatchup();
-	
-	/**
-	 * Returns true if it is valid to release this resource to the server.
-	 * The operation is valid if it is valid for at least one node in the subtree.
-	 */
-	public boolean canRelease();
-	
-	/**
 	 * Returns the change direction for this resource.  One of:
 	 * INCOMING, OUTGOING, CONFLICTING, NO_CHANGE.
 	 */

@@ -140,19 +140,18 @@ class MergeResource {
 	
 		IRemoteResource remote = syncTree.getRemote();
 		if (remote != null) {
-			// externalize
-			config.setRightLabel("Repository File: " + name);
+			config.setRightLabel(Policy.bind("MergeResource.repositoryFile", name));
 	//		config.setRightLabel(TeamUIPlugin.getResourceString("MergeResource.repositoryFile", new Object[] {name, remote.getVersionName()} ));
 		} else {
 			config.setRightLabel(Policy.bind("MergeResource.noRepositoryFile"));
 		}
 	
-	
-	//	IResourceEdition common = info.getCommon();
-	//	if (common != null) {
+		IRemoteResource base = syncTree.getBase();
+		if (base != null) {
+			config.setAncestorLabel(Policy.bind("MergeResource.commonFile", name));
 	//		config.setAncestorLabel(TeamUIPlugin.getResourceString("MergeResource.commonFile", new Object[] {name, common.getVersionName()} ));
-	//	} else {
-	//		config.setAncestorLabel(TeamUIPlugin.getResourceString("MergeResource.noCommonFile"));
-	//	}
+		} else {
+			config.setAncestorLabel(Policy.bind("MergeResource.noCommonFile"));
+		}
 	}
 }

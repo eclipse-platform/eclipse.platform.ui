@@ -17,32 +17,11 @@ public class ChangedTeamContainer extends UnchangedTeamContainer {
 	private MergeResource mergeResource;
 	
 	/**
-	 * ChangedVCMContainer constructor
+	 * ChangedTeamContainer constructor
 	 */
 	public ChangedTeamContainer(SyncCompareInput input, IDiffContainer parent, MergeResource resource, int description) {
 		super(input, parent, resource.getResource(), description);
 		this.mergeResource = resource;
-	}
-	/*
-	 * Method declared on ITeamNode
-	 */
-	public boolean canCatchup() {
-		// First check for changes to this folder
-		int kind = getKind() & Differencer.DIRECTION_MASK;
-		if (kind == ITeamNode.INCOMING || kind == Differencer.CONFLICTING) {
-			return true;
-		}
-		return super.canCatchup();
-	}
-	
-	/*
-	 * Method declared on ITeamNode
-	 */
-	public boolean canRelease() {
-		if ((getKind() & Differencer.DIRECTION_MASK) == ITeamNode.OUTGOING) {
-			return true;
-		}
-		return super.canRelease();
 	}
 	
 	/*
