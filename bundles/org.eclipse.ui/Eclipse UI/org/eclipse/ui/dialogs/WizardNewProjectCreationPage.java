@@ -128,7 +128,7 @@ private final void createProjectLocationGroup(Composite parent) {
 			locationLabel.setEnabled(!useDefaults);
 			setLocationForSelection();
 			if (!useDefaults)
-				locationPathField.setText("");
+				locationPathField.setText(""); //$NON-NLS-1$
 		}
 	};
 	useDefaultsButton.addSelectionListener(listener);
@@ -275,9 +275,9 @@ private boolean validatePage() {
 	IWorkspace workspace = WorkbenchPlugin.getPluginWorkspace();
 
 	String projectFieldContents = projectNameField.getText();
-	if (projectFieldContents.equals("")) {
+	if (projectFieldContents.equals("")) { //$NON-NLS-1$
 		setErrorMessage(null);
-		setMessage(WorkbenchMessages.getString("WizardNewProjectCreationPage.projectNameEmpty"));
+		setMessage(WorkbenchMessages.getString("WizardNewProjectCreationPage.projectNameEmpty")); //$NON-NLS-1$
 		return false;
 	}
 	

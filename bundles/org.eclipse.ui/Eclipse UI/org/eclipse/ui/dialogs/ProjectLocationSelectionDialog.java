@@ -129,7 +129,7 @@ private String checkValidName() {
 		return nameStatus.getMessage();
 	IProject newProject = workspace.getRoot().getProject(name);
 	if (newProject.exists()) {
-		return WorkbenchMessages.format("CopyProjectAction.alreadyExists", new Object[] { name });
+		return WorkbenchMessages.format("CopyProjectAction.alreadyExists", new Object[] { name }); //$NON-NLS-1$
 	}
 
 	return null;
@@ -229,7 +229,7 @@ private final void createProjectLocationGroup(Composite parent) {
 			locationLabel.setEnabled(!useDefaults);
 			setLocationForSelection();
 			if (!useDefaults)
-				locationPathField.setText("");
+				locationPathField.setText(""); //$NON-NLS-1$
 		}
 	};
 	useDefaultsButton.addSelectionListener(listener);
