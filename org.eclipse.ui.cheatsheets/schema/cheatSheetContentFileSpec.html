@@ -21,8 +21,7 @@ DTD fragments.</p>
 <pre>&lt;?xml encoding=&quot;US-ASCII&quot;?&gt;&nbsp;
 &lt;!ELEMENT cheatsheet (intro, item+)&gt;&nbsp;
 &lt;!ATTLIST cheatsheet&nbsp;
-&nbsp; title&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED&nbsp;
-&nbsp; version&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED&nbsp;
+&nbsp; title&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED
 &gt;</pre>
 
 <p>The
@@ -31,8 +30,6 @@ DTD fragments.</p>
 <ul type="disc">
   <li><b>title</b>
     - the title of the cheat sheet
-  <li><b>version
-    </b>- reserved for future use [TODO (lorne) - need a spec here]</li>
 </ul>
 <pre>&lt;?xml encoding=&quot;US-ASCII&quot;?&gt;&nbsp;
 &lt;!ELEMENT intro ()&gt;&nbsp;
@@ -56,17 +53,15 @@ The text between the &lt;intro&gt; and &lt;/intro&gt; tags is the introduction.
 &lt;!ELEMENT item (subitem*)&gt;&nbsp;
 &lt;!ATTLIST item&nbsp;
 &nbsp; title&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED
-&nbsp; perform&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (true | false) &quot;false&quot;
-&nbsp; skip   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (true | false) &quot;false&quot;
-&nbsp; complete&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (true | false) &quot;false&quot;
+&nbsp; kind&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    (&quot;action&quot; | &quot;manual&quot; | &quot;both&quot;)
+&nbsp; skip   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&quot;true&quot; | &quot;false&quot;) &quot;false&quot;
 &nbsp; class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED
+&nbsp; pluginId&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED
 &nbsp; actionparam0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED
 &nbsp; actionparam1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED
 &nbsp; ...
 &nbsp; actionparam9&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED
-&nbsp; pluginId&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED&nbsp;   [TODO (lorne) - is this need this]
 &nbsp; href &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED
-&nbsp; id   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED&nbsp;  [TODO (lorne) - are item ids needed at all?]
 &gt;</pre>
 
 <p>Each &lt;item&gt; element describes
@@ -78,30 +73,38 @@ into sub-steps. &lt;item&gt; attributes are as follows:</p>
 <ul type="disc">
   <li><b>title</b>
     - title of the cheat sheet item
-  <li><b>perform</b>
-    - perform=&quot;true&quot; means that the step has an accompanying
-    computed-provided action; the UI generally shows a button that the user can
+  <li><b>kind</b> - the kind of step
+    <ul type="disc">
+      <li><b>&quot;action&quot;</b> - the step has an accompanying
+    computed-provided action (&quot;class&quot; and &quot;pluginId&quot;
+        attributes); the UI generally shows a button that the user can
     press to invoke that action</li>
+      <li><b>&quot;manual&quot;</b> - the step involves the user doing
+    something on their own; the UI generally shows a button that the user can
+    press to indicate that they have done whatever they were supposed to do</li>
+      <li><b>&quot;both&quot;</b> - the step has both a computer-provided action
+        but also requires the user to manually perform some steps and confirm
+        that they have done so</li>
+    </ul>
+  </li>
   <li><b>skip</b>
     - skip=&quot;true&quot; means that the step can be skipped; the UI generally
     shows a button that the user can press to indicate that they are skipping
     this step
-  <li><b>complete</b>
-    - complete=&quot;true&quot; means that the step involves the user doing
-    something on their own; the UI generally shows a button that the user can
-    press to indicate that they have done whatever they were supposed to do
   <li><b>class</b>
     - the fully-qualified name of the Java class implementing <code>org.eclipse.ui.cheatsheets.ICheatSheetAction</code>
-    or its superinterface <code>org.eclipse.jface.action.IAction</code></li>
+    or its superinterface <code>org.eclipse.jface.action.IAction</code>; the
+    pluginId attribute must be present whenever the class attribute is present</li>
+  <li><b>pluginId
+    </b>- the id of the plug-in which contains the Java class of the action
+    class; this attribute must be present whenever the &quot;class&quot;
+    attribute is present</li>
   <li><b>actionparam<i>N</i></b>
     - for action classes that implement <code>org.eclipse.ui.cheatsheets.ICheatSheetAction</code>,
     the string values of these attributes are passed to the action when it is invoked.
     You can pass up to 10 parameters to a cheat sheet item's action
     (actionParam0, actionParam1, etc.) [TODO - need to complete spec for variables determined at cheat sheet execution
     time; e.g., actionParam0=&quot;${var1}&quot;]</li>
-  <li><b>pluginId
-    </b>- the id of the plug-in which contains the Java class of the action
-    class</li>
   <li><b>href</b>
     - the cheat sheet items's optional task documentation link; when the user clicks the
     item's help link, this document is shown in the help browser</li>
@@ -112,62 +115,60 @@ into sub-steps. &lt;item&gt; attributes are as follows:</p>
 &lt;!ELEMENT subitem EMPTY&gt;&nbsp;
 &lt;!ATTLIST subitem&nbsp;
 &nbsp; label&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED
-&nbsp; perform&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (true | false) &quot;false&quot;
-&nbsp; skip   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (true | false) &quot;false&quot;
-&nbsp; complete&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (true | false) &quot;false&quot;
+&nbsp; kind&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    (&quot;action&quot; | &quot;manual&quot; | &quot;both&quot;)
+&nbsp; skip   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&quot;true&quot; | &quot;false&quot;) &quot;false&quot;
 &nbsp; class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED
-&nbsp; pluginId&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED&nbsp;   [TODO (lorne) - is this need this]
+&nbsp; pluginId&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED
 &nbsp; actionparam0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED
 &nbsp; actionparam1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED
 &nbsp; ...
 &nbsp; actionparam9&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED
-&nbsp; id   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED&nbsp;  [TODO (lorne) - are item ids needed at all?]
 &gt;</pre>
 
 <p>Each &lt;subitem&gt; element describes
 a sub-item (or sub-step) in a cheat sheet. A &lt;subitem&gt; carries a simple
-text label, but has neither a lengthy description nor further subitems. There
+text label, but has neither a lengthy description nor further sub-items. There
 should be a least 2 sub-items within the item. Each sub-item has its own action
 buttons.</p>
 <p>Note
 that help and extension items buttons are generally presented only on items, not
-subitems.</p>
+sub-items.</p>
 <p>Unlike
-items, which must be followed in strict sequence, the subitems of a given item
+items, which must be followed in strict sequence, the sub-items of a given item
 can be performed in any order. 
-All subitems within an item have to be attempted (that is, performed, skipped,
+All sub-items within an item have to be attempted (that is, performed, skipped,
 or completed) before progressing to the next item. (Which means actions that
-must be performed in a required sequence cannot be represented as subitems.)&nbsp;</p>
+must be performed in a required sequence cannot be represented as sub-items.)&nbsp;</p>
 <p>&lt;subitem&gt;
 attributes are as follows:</p>
 <ul type="disc">
   <li><b>label</b>
-    - title of the cheat sheet subitem [TODO (lorne) - rename to
-    &quot;title&quot;? ]
-  <li><b>perform</b>
-    - perform=&quot;true&quot; means that the step has an accompanying
-    computed-provided action; the UI generally shows a button that the user can
+    - title of the cheat sheet sub-item
+  <li><b>kind</b>
+    - the kind of step (
+    <ul type="disc">
+      <li><b>&quot;action&quot;</b> - the step has an accompanying
+    computed-provided action (&quot;class&quot; and &quot;pluginId&quot;
+        attributes); the UI generally shows a button that the user can
     press to invoke that action</li>
-  <li><b>skip</b>
-    - skip=&quot;true&quot; means that the step can be skipped; the UI generally
-    shows a button that the user can press to indicate that they are skipping
-    this step
-  <li><b>complete</b>
-    - complete=&quot;true&quot; means that the step involves the user doing
+      <li><b>&quot;manual&quot;</b> - the step involves the user doing
     something on their own; the UI generally shows a button that the user can
-    press to indicate that they have done whatever they were supposed to do
+    press to indicate that they have done whatever they were supposed to do</li>
+      <li><b>&quot;both&quot;</b> - the step has both a computer-provided action
+        but also requires the user to manually perform some steps and confirm
+        that they have done so</li>
+    </ul>
+  </li>
   <li><b>class</b>
     - the fully-qualified name of the Java class implementing <code>org.eclipse.ui.cheatsheets.ICheatSheetAction</code>
-    or its superinterface <code>org.eclipse.jface.action.IAction</code></li>
+    or its superinterface <code>org.eclipse.jface.action.IAction</code>; the
+    pluginId attribute must be present whenever the class attribute is present</li>
   <li><b>actionparam<i>N</i></b>
     - for action classes that implement <code>org.eclipse.ui.cheatsheets.ICheatSheetAction</code>,
     the string values of these attributes are passed to the action when it is invoked.
     You can pass up to 10 parameters to a cheat sheet item's action
     (actionParam0, actionParam1, etc.) [TODO - need to complete spec for variables determined at cheat sheet execution
     time; e.g., actionParam0=&quot;${var1}&quot;]</li>
-  <li><b>pluginId
-    </b>- the id of the plug-in which contains the Java class of the action
-    class</li>
 </ul>
 
 <h2>Basic Elements and Attributes</h2>
@@ -193,7 +194,7 @@ Let's get started!
       id=&quot;0&quot; 
       title=&quot;Open the Java Perspective&quot;&nbsp; 
       href=&quot;/org.eclipse.platform.doc.user/concepts/concepts-4.htm&quot; 
-      actionphrase=&quot;2&quot;&nbsp; 
+      kind=&quot;manual&quot;&nbsp; 
       pluginId=&quot;org.eclipse.ui.cheatsheet.sample&quot; 
       class=&quot;org.eclipse.ui.cheatsheets.sample.pattern.actions.LaunchPatternSelectionDialogAction&quot;&gt;
 To begin, open the Java Perspective in the Eclipse workbench.&nbsp; 
