@@ -327,9 +327,7 @@ public class ProgressManager extends ProgressProvider
 					next.incrementBusy(event.getJob());
 				}
 				if (event.getJob().isUser()) {
-					boolean noDialog = WorkbenchPlugin.getDefault()
-							.getPreferenceStore().getBoolean(
-									IPreferenceConstants.RUN_IN_BACKGROUND);
+					boolean noDialog = shouldRunInBackground();
 					if (!noDialog) {
 						final IJobChangeEvent finalEvent = event;
 						WorkbenchJob showJob = new WorkbenchJob(
@@ -937,6 +935,9 @@ public class ProgressManager extends ProgressProvider
 	 *      org.eclipse.core.runtime.jobs.Job)
 	 */
 	public void showInDialog(Shell shell, Job job) {
+		if(shouldRunInBackground())
+			return;
+			
 		final ProgressMonitorFocusJobDialog dialog = new ProgressMonitorFocusJobDialog(
 				shell);
 		dialog.show(job);
@@ -1091,5 +1092,14 @@ public class ProgressManager extends ProgressProvider
 		}
 
 		return pruned;
+	}
+	/**
+	 * Return whether or not dialogs should be run in the background
+	 * @return <code>true</code> if the dialog should not be shown.
+	 */
+	private boolean shouldRunInBackground() {
+		return WorkbenchPlugin.getDefault()
+				.getPreferenceStore().getBoolean(
+						IPreferenceConstants.RUN_IN_BACKGROUND);
 	}
 }
