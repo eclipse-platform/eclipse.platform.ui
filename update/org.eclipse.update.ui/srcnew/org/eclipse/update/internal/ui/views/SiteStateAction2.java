@@ -50,8 +50,8 @@ public class SiteStateAction2 extends Action {
 			if (!confirm(!oldValue))
 				return;
 			
-			IOperation toggleSiteOperation = UpdateManager.getOperationsManager().createToggleSiteOperation(site, null);
-			boolean restartNeeded = toggleSiteOperation.execute(null);
+			IOperation toggleSiteOperation = UpdateManager.getOperationsManager().createToggleSiteOperation(site);
+			boolean restartNeeded = toggleSiteOperation.execute(null, null);
 					
 			if (restartNeeded)
 				UpdateUI.informRestartNeeded();

@@ -35,15 +35,13 @@ public class FeatureStateAction extends Action {
 						.createUnconfigOperation(
 						adapter.getInstallConfiguration(),
 						adapter.getConfiguredSite(),
-						adapter.getFeature(null),
-						null)
+						adapter.getFeature(null))
 					: UpdateManager.getOperationsManager().createConfigOperation(
 						adapter.getInstallConfiguration(),
 						adapter.getConfiguredSite(),
-						adapter.getFeature(null),
-						null);
+						adapter.getFeature(null));
 
-			boolean restartNeeded = toggleOperation.execute(null);			
+			boolean restartNeeded = toggleOperation.execute(null, null);			
 			if (restartNeeded)
 				UpdateUI.informRestartNeeded();
 

@@ -24,9 +24,8 @@ public class RevertConfigurationOperation extends Operation implements IRevertCo
 
 	public RevertConfigurationOperation(
 		IInstallConfiguration config,
-		IProblemHandler problemHandler,
-		IOperationListener listener) {
-		super(listener);
+		IProblemHandler problemHandler) {
+		super();
 		this.config = config;
 		this.problemHandler = problemHandler;
 	}
@@ -34,7 +33,7 @@ public class RevertConfigurationOperation extends Operation implements IRevertCo
 	/* (non-Javadoc)
 	 * @see org.eclipse.update.operations.IOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public boolean execute(IProgressMonitor monitor)
+	public boolean execute(IProgressMonitor monitor, IOperationListener listener)
 		throws CoreException, InvocationTargetException {
 		IStatus status =
 			UpdateManager.getValidator().validatePendingRevert(config);

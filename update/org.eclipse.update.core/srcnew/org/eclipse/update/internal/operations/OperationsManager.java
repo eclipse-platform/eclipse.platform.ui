@@ -32,9 +32,8 @@ public class OperationsManager implements IAdaptable, IOperationFactory {
 	public IOperation createConfigOperation(
 		IInstallConfiguration config,
 		IConfiguredSite targetSite,
-		IFeature feature,
-		IOperationListener listener) {
-		return new ConfigOperation(config, targetSite, feature, listener);
+		IFeature feature) {
+		return new ConfigOperation(config, targetSite, feature);
 	}
 
 	public IOperation createBatchInstallOperation(IInstallFeatureOperation[] operations) {
@@ -47,49 +46,41 @@ public class OperationsManager implements IAdaptable, IOperationFactory {
 		IFeature feature,
 		IFeatureReference[] optionalFeatures,
 		IFeature[] unconfiguredOptionalFeatures,
-		IVerificationListener verifier,
-		IOperationListener listener) {
+		IVerificationListener verifier) {
 		return new InstallOperation(
 			config,
 			targetSite,
 			feature,
 			optionalFeatures,
 			unconfiguredOptionalFeatures,
-			verifier,
-			listener);
+			verifier);
 	}
 
 	public IOperation createUnconfigOperation(
 		IInstallConfiguration config,
 		IConfiguredSite targetSite,
-		IFeature feature,
-		IOperationListener listener) {
-		return new UnconfigOperation(config, targetSite, feature, listener);
+		IFeature feature) {
+		return new UnconfigOperation(config, targetSite, feature);
 	}
 
 	public IOperation createUninstallOperation(
 		IInstallConfiguration config,
 		IConfiguredSite targetSite,
-		IFeature feature,
-		IOperationListener listener) {
-		// TODO Auto-generated method stub
-		return null;
+		IFeature feature) {
+		return new UninstallOperation(config, targetSite, feature);
 	}
 
 	public IOperation createRevertConfigurationOperation(
 		IInstallConfiguration config,
-		IProblemHandler problemHandler,
-		IOperationListener listener) {
+		IProblemHandler problemHandler) {
 		return new RevertConfigurationOperation(
 			config,
-			problemHandler,
-			listener);
+			problemHandler);
 	}
 
 	public IOperation createToggleSiteOperation(
-		IConfiguredSite site,
-		IOperationListener listener) {
-		return new ToggleSiteOperation(site, listener);
+		IConfiguredSite site) {
+		return new ToggleSiteOperation(site);
 	}
 
 	public IFeatureOperation findPendingOperation(IFeature feature) {

@@ -28,8 +28,8 @@ public abstract class SingleOperation extends Operation implements IFeatureOpera
 //	private boolean optionalDelta;
 	
 	
-	public SingleOperation(IInstallConfiguration config, IConfiguredSite targetSite, IFeature feature, IOperationListener listener) {
-		super(listener);
+	public SingleOperation(IInstallConfiguration config, IConfiguredSite targetSite, IFeature feature) {
+		super();
 		this.feature = feature;
 		this.config = config;
 		this.targetSite = targetSite;

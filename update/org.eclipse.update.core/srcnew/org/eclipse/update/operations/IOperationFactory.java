@@ -21,32 +21,26 @@ public interface IOperationFactory {
 	public IOperation createConfigOperation(
 		IInstallConfiguration config,
 		IConfiguredSite targetSite,
-		IFeature feature,
-		IOperationListener listener);
+		IFeature feature);
 	public IOperation createUnconfigOperation(
 		IInstallConfiguration config,
 		IConfiguredSite targetSite,
-		IFeature feature,
-		IOperationListener listener);
+		IFeature feature);
 	public IOperation createInstallOperation(
 		IInstallConfiguration config,
 		IConfiguredSite targetSite,
 		IFeature feature,
 		IFeatureReference[] optionalFeatures,
 		IFeature[] unconfiguredOptionalFeatures,
-		IVerificationListener verifier,
-		IOperationListener listener);
+		IVerificationListener verifier);
 	public IOperation createUninstallOperation(
 		IInstallConfiguration config,
 		IConfiguredSite targetSite,
-		IFeature feature,
-		IOperationListener listener);
+		IFeature feature);
 	public IOperation createBatchInstallOperation(IInstallFeatureOperation[] operations);
 	public IOperation createToggleSiteOperation(
-		IConfiguredSite site,
-		IOperationListener listener);
+		IConfiguredSite site);
 	public IOperation createRevertConfigurationOperation(
 		IInstallConfiguration config,
-		IProblemHandler problemHandler,
-		IOperationListener listener);
+		IProblemHandler problemHandler);
 }

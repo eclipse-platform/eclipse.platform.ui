@@ -233,10 +233,9 @@ public class RevertConfigurationWizardPage extends WizardPage {
 				throws InvocationTargetException {
 				IOperation revertOperation = UpdateManager.getOperationsManager().createRevertConfigurationOperation(
 						target,
-						new UIProblemHandler(),
-						null);
+						new UIProblemHandler());
 				try {
-					revertOperation.execute(monitor);
+					revertOperation.execute(monitor, null);
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);
 				} finally {

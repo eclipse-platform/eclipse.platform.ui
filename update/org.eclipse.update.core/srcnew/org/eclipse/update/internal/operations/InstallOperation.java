@@ -34,9 +34,8 @@ public class InstallOperation
 		IFeature feature,
 		IFeatureReference[] optionalFeatures,
 		IFeature[] unconfiguredOptionalElements,
-		IVerificationListener verifier,
-		IOperationListener listener) {
-		super(config, site, feature, listener);
+		IVerificationListener verifier) {
+		super(config, site, feature);
 		IFeature[] installed = UpdateManager.getInstalledFeatures(feature);
 		if (installed.length > 0)
 			this.oldFeature = installed[0];
@@ -49,7 +48,7 @@ public class InstallOperation
 		return optionalFeatures;
 	}
 
-	public boolean execute(IProgressMonitor pm) throws CoreException {
+	public boolean execute(IProgressMonitor pm, IOperationListener listener) throws CoreException {
 
 		if (optionalFeatures == null)
 			targetSite.install(feature, verifier, pm);

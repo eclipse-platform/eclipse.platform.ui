@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.update.internal.operations;
 
-import java.lang.reflect.*;
-
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
@@ -24,16 +22,15 @@ public class ToggleSiteOperation
 	private IConfiguredSite site;
 
 	public ToggleSiteOperation(
-		IConfiguredSite site,
-		IOperationListener listener) {
-		super(listener);
+		IConfiguredSite site) {
+		super();
 		this.site = site;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.update.operations.IOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public boolean execute(IProgressMonitor monitor)
+	public boolean execute(IProgressMonitor monitor, IOperationListener listener)
 		throws CoreException {
 		if (site == null)
 			return false;

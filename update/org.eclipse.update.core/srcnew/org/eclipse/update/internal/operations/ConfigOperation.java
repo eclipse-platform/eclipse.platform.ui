@@ -21,11 +21,11 @@ import org.eclipse.update.operations.*;
  */
 public class ConfigOperation extends SingleOperation implements IConfigFeatureOperation {
 	
-	public ConfigOperation(IInstallConfiguration config, IConfiguredSite site, IFeature feature, IOperationListener listener) {
-		super(config, site, feature, listener);
+	public ConfigOperation(IInstallConfiguration config, IConfiguredSite site, IFeature feature) {
+		super(config, site, feature);
 	}
 	
-	public boolean execute(IProgressMonitor pm) throws CoreException {
+	public boolean execute(IProgressMonitor pm, IOperationListener listener) throws CoreException {
 
 		IStatus status = UpdateManager.getValidator().validatePendingConfig(feature);
 		if (status != null) {

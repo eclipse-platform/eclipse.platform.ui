@@ -22,8 +22,8 @@ import org.eclipse.update.operations.*;
 public class UninstallOperation extends SingleOperation implements IUninstallFeatureOperation{
 	private static final String KEY_OLD = "OperationsManager.error.old";
 
-	public UninstallOperation(IInstallConfiguration config, IConfiguredSite site, IFeature feature, IOperationListener listener) {
-		super(config, site, feature, listener);
+	public UninstallOperation(IInstallConfiguration config, IConfiguredSite site, IFeature feature) {
+		super(config, site, feature);
 	}
 
 	public void setInstallConfiguration(IInstallConfiguration config) {
@@ -34,7 +34,7 @@ public class UninstallOperation extends SingleOperation implements IUninstallFea
 		this.targetSite = targetSite;
 	}
 
-	public boolean execute(IProgressMonitor pm) throws CoreException {
+	public boolean execute(IProgressMonitor pm, IOperationListener listener) throws CoreException {
 
 		//find the  config site of this feature
 //			IConfiguredSite site = UpdateManager.getConfigSite(feature, config);

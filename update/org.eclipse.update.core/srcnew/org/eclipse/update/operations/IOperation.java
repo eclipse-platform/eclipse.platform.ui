@@ -19,8 +19,7 @@ import org.eclipse.core.runtime.*;
  * IOperation
  */
 public interface IOperation {
-	public abstract IOperationListener getOperationListener();
 	public abstract boolean isProcessed();
 	public abstract void markProcessed();
-	public abstract boolean execute(IProgressMonitor pm) throws CoreException, InvocationTargetException;
+	public abstract boolean execute(IProgressMonitor pm, IOperationListener listener) throws CoreException, InvocationTargetException;
 }

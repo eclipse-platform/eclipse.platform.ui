@@ -15,16 +15,10 @@ import org.eclipse.update.operations.*;
 
 public abstract class Operation implements IOperation {
 	
-	protected IOperationListener listener;
 	private boolean processed;
 	
 	
-	public Operation(IOperationListener listener) {
-		this.listener = listener;
-	}
-	
-	public IOperationListener getOperationListener() {
-		return listener;
+	public Operation() {
 	}
 	
 	public boolean isProcessed() {

@@ -24,7 +24,7 @@ public class BatchInstallOperation
 	protected IInstallFeatureOperation[] operations;
 
 	public BatchInstallOperation(IInstallFeatureOperation[] operations) {
-		super(null);
+		super();
 		this.operations = operations;
 	}
 
@@ -38,7 +38,7 @@ public class BatchInstallOperation
 	/* (non-Javadoc)
 	 * @see org.eclipse.update.operations.IOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public boolean execute(IProgressMonitor monitor) throws CoreException, InvocationTargetException {
+	public boolean execute(IProgressMonitor monitor, IOperationListener listener) throws CoreException, InvocationTargetException {
 		int installCount = 0;
 
 		try {
@@ -57,12 +57,12 @@ public class BatchInstallOperation
 						1,
 						SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK);
 
-				boolean needsRestart = operations[i].execute(subMonitor);
+				boolean needsRestart = operations[i].execute(subMonitor, listener);
 				UpdateManager.getOperationsManager().addPendingOperation(operations[i]);
 
 				operations[i].markProcessed();
-				if (operations[i].getOperationListener() != null)
-					operations[i].getOperationListener().afterExecute(operations[i]);
+				if (listener != null)
+					listener.afterExecute(operations[i]);
 
 				//monitor.worked(1);
 				UpdateManager.saveLocalSite();

@@ -100,8 +100,7 @@ public class UnifiedInstallWizard
 							optionalFeatures,
 							unconfiguredOptionalFeatures,
 							new JarVerificationService(
-								UnifiedInstallWizard.this.getShell()),
-							UnifiedInstallWizard.this);
+								UnifiedInstallWizard.this.getShell()));
 					operations[i] = op;
 				}
 				IOperation installOperation =
@@ -110,7 +109,7 @@ public class UnifiedInstallWizard
 						.createBatchInstallOperation(
 						operations);
 				try {
-					installOperation.execute(monitor);
+					installOperation.execute(monitor, UnifiedInstallWizard.this);
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);
 				} finally {
@@ -304,7 +303,6 @@ public class UnifiedInstallWizard
 	 * @see org.eclipse.update.operations.IOperationListener#beforeExecute(org.eclipse.update.operations.IOperation)
 	 */
 	public boolean beforeExecute(IOperation operation) {
-		// TODO Auto-generated method stub
 		return true;
 	}
 
