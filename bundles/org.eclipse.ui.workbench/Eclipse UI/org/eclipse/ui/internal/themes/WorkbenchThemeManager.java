@@ -25,6 +25,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.themes.ITheme;
 import org.eclipse.ui.themes.IThemeManager;
 
@@ -144,8 +145,8 @@ public class WorkbenchThemeManager implements IThemeManager {
      * @see org.eclipse.ui.themes.IThemeManager#getCurrentTheme()
      */
     public ITheme getCurrentTheme() {
-        if (currentTheme == null) {
-            String themeId = PlatformUI.getWorkbench().getPreferenceStore()
+        if (currentTheme == null) {			
+            String themeId = PrefUtil.getAPIPreferenceStore()
                     .getString(IWorkbenchPreferenceConstants.CURRENT_THEME_ID);
             if (themeId.equals("")) //$NON-NLS-1$
                 themeId = IThemeManager.DEFAULT_THEME;
@@ -228,11 +229,11 @@ public class WorkbenchThemeManager implements IThemeManager {
             currentTheme.addPropertyChangeListener(currentThemeListener);
 
             // update the preference if required.
-            if (!WorkbenchPlugin.getDefault().getPreferenceStore().getString(
+            if (!PrefUtil.getAPIPreferenceStore().getString(
                     IWorkbenchPreferenceConstants.CURRENT_THEME_ID).equals(id)) {
-                WorkbenchPlugin.getDefault().getPreferenceStore().setValue(
+				PrefUtil.getAPIPreferenceStore().setValue(
                         IWorkbenchPreferenceConstants.CURRENT_THEME_ID, id); //$NON-NLS-1$
-                WorkbenchPlugin.getDefault().savePluginPreferences();
+				PrefUtil.saveAPIPrefs();
             }
 
             //update the jface registries

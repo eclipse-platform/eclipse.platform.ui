@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
+import org.eclipse.ui.themes.IThemeManager;
 import org.osgi.service.prefs.BackingStoreException;
 
 /**
@@ -83,6 +84,9 @@ public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
 		//Preference for showing system jobs in the jobs view
 		node.putBoolean(IWorkbenchPreferenceConstants.SHOW_SYSTEM_JOBS,false);
 
+		//Set the default theme.
+		node.put(IWorkbenchPreferenceConstants.CURRENT_THEME_ID,
+				IThemeManager.DEFAULT_THEME);
 		
 		//The default character width is undefined (i.e., -1)
 		node

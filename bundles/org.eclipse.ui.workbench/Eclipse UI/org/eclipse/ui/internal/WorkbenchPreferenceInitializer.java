@@ -21,8 +21,6 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent;
 import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.swt.SWT;
-import org.eclipse.ui.IWorkbenchPreferenceConstants;
-import org.eclipse.ui.themes.IThemeManager;
 import org.osgi.service.prefs.BackingStoreException;
 
 /**
@@ -94,10 +92,6 @@ public class WorkbenchPreferenceInitializer extends
 		node.putBoolean("ENABLE_NEW_MENUS", true); //$NON-NLS-1$   
 		//Temporary option to turn off the dialog font
 		node.putBoolean("DISABLE_DIALOG_FONT", false); //$NON-NLS-1$
-
-		//Set the default theme.
-		node.put(IWorkbenchPreferenceConstants.CURRENT_THEME_ID,
-				IThemeManager.DEFAULT_THEME);
 
 		IEclipsePreferences rootNode = (IEclipsePreferences) Platform
 				.getPreferencesService().getRootNode()
