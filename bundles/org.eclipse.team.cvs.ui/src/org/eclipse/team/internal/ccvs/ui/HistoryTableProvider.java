@@ -16,33 +16,13 @@ import java.util.Date;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.ColumnWeightData;
-import org.eclipse.jface.viewers.IColorProvider;
-import org.eclipse.jface.viewers.ITableLabelProvider;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.TableLayout;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.ILogEntry;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
-import org.eclipse.ui.internal.WorkbenchColors;
 
 /**
  * This class provides the table and it's required components for a file's revision
@@ -123,7 +103,7 @@ public class HistoryTableProvider {
 		public Color getForeground(Object element) {
 			ILogEntry entry = adaptToLogEntry(element);
 			if (entry.isDeletion())  {
-				return WorkbenchColors.getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
+				return Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
 			} else  {
 				return null;
 			}
