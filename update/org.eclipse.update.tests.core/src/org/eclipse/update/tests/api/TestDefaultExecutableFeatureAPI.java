@@ -31,7 +31,7 @@ public class TestDefaultExecutableFeatureAPI extends UpdateManagerTestCase {
 		if (remoteFeature == null){
 
 		ISite site = SiteManager.getSite(SOURCE_FILE_SITE);
-		URL id = UpdateManagerUtils.getURL(site.getURL(),"org.eclipse.update.core.feature1_1.0.0.jar",null);
+		URL id = UpdateManagerUtils.getURL(site.getURL(),"install/features/feature3/",null);
 		remoteFeature = new FeatureExecutable(id,site);
 
 		}
@@ -68,7 +68,7 @@ public class TestDefaultExecutableFeatureAPI extends UpdateManagerTestCase {
 	 * @see IFeature#testSite()
 	 */
 	public void testSite() throws MalformedURLException, CoreException{
-		String ident1 = "org.eclipse.test.feature_1.0.0.jar";		
+		String ident1 = "install/features/feature3/";		
 
 			ISite site = SiteManager.getSite(SOURCE_FILE_SITE);
 			

@@ -72,11 +72,20 @@ public interface ILocalSite {
 	 * creates a new currentConfiguration based on the current configuration
 	 * The newly created configuration is added to the local site
 	 * 
+	 * ILocalSite site = SiteManager.getLocalSite();
+	 * 
+	 * The following line creates a new current configuration in the local site
+	 * IInstallConfiguration currentConfig = site.createNewCurrentConfiguration(null,"new Label"); 
+	 * IConfigurationSite configSite = -obtain a configuration site from the InstallConfiguration-
+	 * configSite.install(IFeature,IProgressMonitor);
+	 * 
+	 * the following line saves the state of the configuration
+	 * currentConfig.save();
+	 * 
 	 * If <code>name</code> is <code>null</code> we'll create a name based on the creation date
 	 * if <code>newFile</code> is <code>null</code> we'll create a new file based on the creation date 
 	 */
 	IInstallConfiguration createNewCurrentConfiguration(URL newFile,String name) throws CoreException;
-	
 
 	/**
 	 * Adds a new configuration to the LocalSite

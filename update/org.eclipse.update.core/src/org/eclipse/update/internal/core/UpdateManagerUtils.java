@@ -9,6 +9,8 @@ import java.net.URL;
 import java.util.Date;
 import java.util.ResourceBundle;
 
+import org.eclipse.core.boot.BootLoader2;
+import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.SiteManager;
 
@@ -288,6 +290,21 @@ public class UpdateManagerUtils {
 		}
 		return result;*/
 		return url.getPath();
+	}
+	
+	/**
+	 * Returns teh runtime configuration from core boot
+	 */
+	public static IPlatformConfiguration getRuntimeConfiguration() throws CoreException {
+		IPlatformConfiguration result = null;	
+		try {
+			result = BootLoader2.getCurrentPlatformConfiguration();
+		} catch (IOException exception) {
+			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Cannot find platform configuration" , exception);
+			throw new CoreException(status);
+		}
+		return result;
 	}
 	
 

@@ -7,6 +7,8 @@ import java.io.*;
 import java.net.URL;
 import java.util.*;
 
+import org.eclipse.core.boot.BootLoader2;
+import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
 import org.xml.sax.SAXException;
@@ -330,11 +332,13 @@ public class InstallConfiguration implements IInstallConfiguration, IWritable {
 		
 		
 		// Write info for the next runtime
+		IPlatformConfiguration runtimeConfiguration = UpdateManagerUtils.getRuntimeConfiguration();
 		Iterator iterConfigurationSites = configurationSites.iterator();
 		while (iterConfigurationSites.hasNext()) {
 			IConfigurationSite element = (IConfigurationSite) iterConfigurationSites.next();
-			
-			
+			ConfigurationPolicy configurationPolicy = (ConfigurationPolicy)element.getConfigurationPolicy();
+			IPlatformConfiguration.ISitePolicy sitePolicy = runtimeConfiguration.createSitePolicy(configurationPolicy.getPolicy(),configurationPolicy.getPlugins());
+			runtimeConfiguration.createSiteEntry(element.getSite().getURL(),sitePolicy);	
 		}
 		
 	}

@@ -38,25 +38,10 @@ public class ConfigurationPolicy implements IConfigurationPolicy {
 	public IFeatureReference[] getFilteredFeatures(IFeatureReference[] featuresToFilter) {
 
 		IFeatureReference[] result = new IFeatureReference[0];
-
-		switch (policy) {
-			case IPlatformConfiguration.ISitePolicy.USER_INCLUDE :
-				if (!featureReferences.isEmpty()) {
-					result = new IFeatureReference[featureReferences.size()];
-					featureReferences.toArray(result);
-				}
-				break;
-
-			case IPlatformConfiguration.ISitePolicy.USER_EXCLUDE :
-
-				break;
-
-			case IPlatformConfiguration.ISitePolicy.SITE_INCLUDE :
-				// no features, let teh remote site decide						
-				break;
-
+		if (featureReferences!=null && !featureReferences.isEmpty()) {
+				result = new IFeatureReference[featureReferences.size()];
+				featureReferences.toArray(result);
 		}
-
 		return result;
 	}
 
@@ -126,43 +111,62 @@ public class ConfigurationPolicy implements IConfigurationPolicy {
 	 * @see IConfigurationSite#configure(IFeatureReference)
 	 */
 	public void configure(IFeatureReference feature) throws CoreException{
+		if (policy==IPlatformConfiguration.ISitePolicy.USER_INCLUDE){
 		//Start UOW ?
 		ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_CONFIGURE);
 		activity.setLabel("configured feature: "+feature.getURL().toExternalForm());
 		activity.setDate(new Date());
-			
-		// FIXME:
-		if (policy == IPlatformConfiguration.ISitePolicy.USER_INCLUDE) {
-			addFeatureReference(feature);
-		}
+		addFeatureReference(feature);
 		
 		// everything done ok
 		activity.setStatus(IActivity.STATUS_OK);
 		((InstallConfiguration)SiteManager.getLocalSite().getCurrentConfiguration()).addActivity(activity);
-		
+		}		
 	}
 
 	/*
 	 * @see IConfigurationSite#unconfigure(IFeatureReference)
 	 */
 	public void unconfigure(IFeatureReference feature) throws CoreException {
+		if (policy==IPlatformConfiguration.ISitePolicy.USER_EXCLUDE){		
 		//Start UOW ?
 		ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_UNCONFIGURE);
 		activity.setLabel("configured feature: "+feature.getURL().toExternalForm());
 		activity.setDate(new Date());
-			
-		// FIXME:
-		if (policy == IPlatformConfiguration.ISitePolicy.USER_EXCLUDE) {
-			if (featureReferences == null)
-				featureReferences = new ArrayList(0);
-			featureReferences.add(feature);
-			addFeatureReference(feature);
-		}
+		addFeatureReference(feature);
 		
 		// everything done ok
 		activity.setStatus(IActivity.STATUS_OK);
 		((InstallConfiguration)SiteManager.getLocalSite().getCurrentConfiguration()).addActivity(activity);
-		
+		}	
+	}
+	
+	/**
+	 * returns an array of string corresponding to plugin
+	 */
+	/*package*/ String[] getPlugins() throws CoreException {
+		String[] result = new String[0];
+		if (featureReferences!=null && !featureReferences.isEmpty()){
+			List pluginsString = new ArrayList(0);
+
+			Iterator iter = featureReferences.iterator();
+			while (iter.hasNext()) {
+				IFeatureReference element = (IFeatureReference) iter.next();
+				IFeature feature = element.getFeature();
+				IPluginEntry[] entries = feature.getPluginEntries();
+				for (int index = 0; index < entries.length; index++) {
+					IPluginEntry entry = entries[index];
+					pluginsString.add(entry.getIdentifier().toString());
+				}
+			}
+
+			if (!pluginsString.isEmpty()){
+				result = new String[pluginsString.size()];
+				pluginsString.toArray(result);
+			}			
+			
+		}
+	return result;
 	}
 
 }

@@ -91,11 +91,12 @@ public class SiteLocal implements ILocalSite, IWritable {
 	 * is shared between the workspaces.
 	 */
 	private void initialize() throws CoreException {
-
+		
+		URL configXml=null;
 		try {
-			IPlatformConfiguration platformConfig = BootLoader2.getCurrentPlatformConfiguration();
+			IPlatformConfiguration platformConfig = UpdateManagerUtils.getRuntimeConfiguration();
 			location = platformConfig.getConfigurationLocation();
-			URL configXml = UpdateManagerUtils.getURL(location, SITE_LOCAL_FILE, null);
+			configXml = UpdateManagerUtils.getURL(location, SITE_LOCAL_FILE, null);
 			//if the file exists, parse it			
 			SiteLocalParser parser = new SiteLocalParser(configXml.openStream(), this);
 		}  catch (FileNotFoundException exception) {
@@ -113,9 +114,13 @@ public class SiteLocal implements ILocalSite, IWritable {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Error during parsing of the install config XML:" + location.toExternalForm(), exception);
 			throw new CoreException(status);
-		} catch (IOException exception) {
+		}catch (MalformedURLException exception) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Cannot find platform configuration" , exception);
+			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Cannot create URL from: "+location.toExternalForm() +" & "+SITE_LOCAL_FILE , exception);
+			throw new CoreException(status);
+		}	catch (IOException exception) {
+			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Cannot read xml file: "+configXml , exception);
 			throw new CoreException(status);
 		}
 

@@ -113,13 +113,28 @@ public class TestLocalSite extends UpdateManagerTestCase {
 	
 	public void testRetriveConfig() throws Exception {
 
-		//do not cleanup, we want to reuse previously created local site
-		// but force re-read of xml File
-		InternalSiteManager.localSite=null;
-		
+		// cleanup
+		File localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),SiteLocal.SITE_LOCAL_FILE).getFile());
+		UpdateManagerUtils.removeFromFileSystem(localFile);		
+		InternalSiteManager.localSite=null;		
+
 		ILocalSite site = SiteManager.getLocalSite();
 		ISite remoteSite = SiteManager.getSite(SOURCE_FILE_SITE);
 		IFeature feature = remoteSite.getFeatureReferences()[0].getFeature();
+		
+		// we are not checking if this is read only
+		IInstallConfiguration newConfig = site.createNewCurrentConfiguration(null,"new Label");
+		IConfigurationSite configSite = newConfig.getConfigurationSites()[0];
+		configSite.setConfigurationPolicy(SiteManager.createConfigurationPolicy(IPlatformConfiguration.ISitePolicy.USER_INCLUDE));
+		configSite.install(feature,null);
+		site.save();
+		
+		// we created the second xml file
+
+		//do not cleanup, we want to reuse previously created local site
+		// but force re-read of xml File
+		InternalSiteManager.localSite=null;
+		site = SiteManager.getLocalSite();
 		
 		// check
 		// there are 2 configuration
@@ -151,7 +166,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		
 		
 		// cleanup
-		File localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),SiteLocal.SITE_LOCAL_FILE).getFile());
+		localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),SiteLocal.SITE_LOCAL_FILE).getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);		
 		localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),SiteLocal.DEFAULT_CONFIG_FILE).getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);				
