@@ -30,7 +30,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -97,9 +99,19 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	private ListenerList fBreakpointListeners= new ListenerList(6);
 	
 	/**
+	 * Notifier that uses a safe runnable to dispatch changes.
+	 */
+	private BreakpointNotifier fBreakpointNotifier = null;
+	
+	/**
 	 * Collection of (multi) breakpoint listeners.
 	 */
 	private ListenerList fBreakpointsListeners= new ListenerList(6);	
+	
+	/**
+	 * Notifier that uses a safe runnable to dispatch changes
+	 */
+	private BreakpointsNotifier fBreakpointsNotifier = null;
 
 	/**
 	 * Singleton resource delta visitor which handles marker
@@ -195,9 +207,21 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		IExtensionPoint ep= DebugPlugin.getDefault().getDescriptor().getExtensionPoint(DebugPlugin.EXTENSION_POINT_BREAKPOINTS);
 		IConfigurationElement[] elements = ep.getConfigurationElements();
 		for (int i= 0; i < elements.length; i++) {
-			fBreakpointExtensions.put(elements[i].getAttribute(MARKER_TYPE), elements[i]);
+			String markerType = elements[i].getAttribute(MARKER_TYPE);
+			String className = elements[i].getAttribute(CLASS);
+			if (markerType == null) {
+				invalidBreakpointExtension(MessageFormat.format(DebugCoreMessages.getString("BreakpointManager.Breakpoint_extension_{0}_missing_required_attribute__markerType_1"), new String[]{elements[i].getDeclaringExtension().getUniqueIdentifier()})); //$NON-NLS-1$
+			} else if (className == null){
+				invalidBreakpointExtension(MessageFormat.format(DebugCoreMessages.getString("BreakpointManager.Breakpoint_extension_{0}_missing_required_attribute__class_2"), new String[]{elements[i].getDeclaringExtension().getUniqueIdentifier()})); //$NON-NLS-1$
+			} else {
+				fBreakpointExtensions.put(markerType, elements[i]);
+			}
 		}
-		
+	}
+	
+	private void invalidBreakpointExtension(String message) {
+		IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, message, null);
+		DebugPlugin.log(status);
 	}
 
 	/**
@@ -356,8 +380,13 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 				throw new DebugException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), 
 					DebugException.CONFIGURATION_INVALID, MessageFormat.format(DebugCoreMessages.getString("BreakpointManager.Missing_breakpoint_definition"), new String[] {marker.getType()}), null)); //$NON-NLS-1$
 			}
-			breakpoint = (IBreakpoint)config.createExecutableExtension(CLASS);
-			breakpoint.setMarker(marker);
+			Object object = config.createExecutableExtension(CLASS);
+			if (object instanceof IBreakpoint) {
+				breakpoint = (IBreakpoint)object;
+				breakpoint.setMarker(marker);
+			} else {
+				invalidBreakpointExtension(MessageFormat.format(DebugCoreMessages.getString("BreakpointManager.Class_{0}_specified_by_breakpoint_extension_{1}_does_not_implement_required_interface_IBreakpoint._3"), new String[]{config.getAttribute(CLASS), config.getDeclaringExtension().getUniqueIdentifier()})); //$NON-NLS-1$
+			}
 			return breakpoint;		
 		} catch (CoreException e) {
 			throw new DebugException(e.getStatus());
@@ -648,17 +677,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 			for (int j = 0; j < bpArray.length; j++) {
 				IBreakpoint breakpoint = bpArray[j];
 				IMarkerDelta delta = deltaArray[j];
-				switch (update) {
-					case ADDED:
-						listener.breakpointAdded(breakpoint);
-						break;
-					case REMOVED:
-						listener.breakpointRemoved(breakpoint, delta);
-						break;
-					case CHANGED:
-						listener.breakpointChanged(breakpoint, delta);		
-						break;
-				}				
+				getBreakpointNotifier().notify(listener, breakpoint, delta, update);				
 			}
 		}
 		
@@ -666,17 +685,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		copiedListeners = fBreakpointsListeners.getListeners();
 		for (int i= 0; i < copiedListeners.length; i++) {
 			IBreakpointsListener listener = (IBreakpointsListener)copiedListeners[i];
-			switch (update) {
-				case ADDED:
-					listener.breakpointsAdded(bpArray);
-					break;
-				case REMOVED:
-					listener.breakpointsRemoved(bpArray, deltaArray);
-					break;
-				case CHANGED:
-					listener.breakpointsChanged(bpArray, deltaArray);		
-					break;
-			}
+			getBreakpointsNotifier().notify(listener, bpArray, deltaArray, update);
 		}		
 	}	
 
@@ -717,5 +726,124 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		fBreakpointsListeners.remove(listener);
 	}
 
+	private BreakpointNotifier getBreakpointNotifier() {
+		if (fBreakpointNotifier == null) {
+			fBreakpointNotifier = new BreakpointNotifier();
+		}
+		return fBreakpointNotifier;
+	}
+	
+	/**
+	 * Notifies breakpoint listener (single breakpoint) in a safe runnable to
+	 * handle exceptions.
+	 */
+	class BreakpointNotifier implements ISafeRunnable {
+		
+		private IBreakpointListener fListener;
+		private int fType;
+		private IMarkerDelta fDelta;
+		private IBreakpoint fBreakpoint;
+		
+		/**
+		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
+		 */
+		public void handleException(Throwable exception) {
+			IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, DebugCoreMessages.getString("BreakpointManager.An_exception_occurred_during_breakpoint_change_notification._4"), exception); //$NON-NLS-1$
+			DebugPlugin.log(status);
+		}
+
+		/**
+		 * @see org.eclipse.core.runtime.ISafeRunnable#run()
+		 */
+		public void run() throws Exception {
+			switch (fType) {
+				case ADDED:
+					fListener.breakpointAdded(fBreakpoint);
+					break;
+				case REMOVED:
+					fListener.breakpointRemoved(fBreakpoint, fDelta);
+					break;
+				case CHANGED:
+					fListener.breakpointChanged(fBreakpoint, fDelta);		
+					break;
+			}			
+		}
+
+		/**
+		 * Notifies the given listener of the add/change/remove
+		 * 
+		 * @param listener the listener to notify
+		 * @param breakpoint the breakpoint that has changed
+		 * @param delta the delta associated with the change
+		 * @param update the type of change
+		 */
+		public void notify(IBreakpointListener listener, IBreakpoint breakpoint, IMarkerDelta delta, int update) {
+			fListener = listener;
+			fBreakpoint = breakpoint;
+			fDelta = delta;
+			fType = update;
+			Platform.run(this);
+		}
+	}
+	
+	private BreakpointsNotifier getBreakpointsNotifier() {
+		if (fBreakpointsNotifier == null) {
+			fBreakpointsNotifier = new BreakpointsNotifier();
+		}
+		return fBreakpointsNotifier;
+	}
+	
+	/**
+	 * Notifies breakpoint listener (multiple breakpoints) in a safe runnable to
+	 * handle exceptions.
+	 */
+	class BreakpointsNotifier implements ISafeRunnable {
+		
+		private IBreakpointsListener fListener;
+		private int fType;
+		private IMarkerDelta[] fDeltas;
+		private IBreakpoint[] fBreakpoints;
+		
+		/**
+		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
+		 */
+		public void handleException(Throwable exception) {
+			IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, DebugCoreMessages.getString("BreakpointManager.An_exception_occurred_during_breakpoint_change_notification._5"), exception); //$NON-NLS-1$
+			DebugPlugin.log(status);
+		}
+
+		/**
+		 * @see org.eclipse.core.runtime.ISafeRunnable#run()
+		 */
+		public void run() throws Exception {
+			switch (fType) {
+				case ADDED:
+					fListener.breakpointsAdded(fBreakpoints);
+					break;
+				case REMOVED:
+					fListener.breakpointsRemoved(fBreakpoints, fDeltas);
+					break;
+				case CHANGED:
+					fListener.breakpointsChanged(fBreakpoints, fDeltas);		
+					break;
+			}			
+		}
+
+		/**
+		 * Notifies the given listener of the adds/changes/removes
+		 * 
+		 * @param listener the listener to notify
+		 * @param breakpoints the breakpoints that changed
+		 * @param deltas the deltas associated with the changed breakpoints
+		 * @param update the type of change
+		 */
+		public void notify(IBreakpointsListener listener, IBreakpoint[] breakpoints, IMarkerDelta[] deltas, int update) {
+			fListener = listener;
+			fBreakpoints = breakpoints;
+			fDeltas = deltas;
+			fType = update;
+			Platform.run(this);
+		}
+	}	
 }
 
