@@ -13,7 +13,8 @@ package org.eclipse.core.internal.preferences;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import org.eclipse.core.internal.runtime.*;
+import org.eclipse.core.internal.runtime.InternalPlatform;
+import org.eclipse.core.internal.runtime.SafeFileInputStream;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -47,40 +48,12 @@ public class InstancePreferences extends EclipsePreferences {
 		initialize();
 	}
 
-	private boolean alreadyLoaded(String nodeName) {
-		return loadedNodes.contains(nodeName);
+	protected boolean isAlreadyLoaded(IEclipsePreferences node) {
+		return loadedNodes.contains(node.name());
 	}
 
-	/*
-	 * @see org.osgi.service.prefs.Preferences#flush()
-	 */
-	public void flush() throws BackingStoreException {
-		if (!dirty)
-			return;
-		super.flush();
-		// TODO move this to superclass?
-		if (!isLoadLevel()) {
-			// TODO need to flush in the right direction. 
-			// flush children
-			for (Iterator i = children.values().iterator(); i.hasNext();) {
-				IEclipsePreferences child = (IEclipsePreferences) i.next();
-				child.flush();
-			}
-			return;
-		}
-		if (location == null) {
-			if (InternalPlatform.DEBUG_PREFERENCES)
-				System.out.println("Unable to determine location of preference file for node: " + absolutePath()); //$NON-NLS-1$
-			return;
-		}
-		EclipsePreferences node = getLoadLevel();
-		if (node == null) {
-			if (InternalPlatform.DEBUG_PREFERENCES)
-				System.out.println("Preference node is not a load root: " + absolutePath()); //$NON-NLS-1$
-			return;
-		}
-		node.save(location);
-		makeClean();
+	protected void loaded(IEclipsePreferences node) {
+		loadedNodes.add(node.name());
 	}
 
 	/*
@@ -95,15 +68,16 @@ public class InstancePreferences extends EclipsePreferences {
 				System.out.println("Unable to determine location of preference file for node: " + absolutePath()); //$NON-NLS-1$
 			return;
 		}
-		EclipsePreferences node = getLoadLevel();
+		IEclipsePreferences node = getLoadLevel();
 		if (node == null) {
 			if (InternalPlatform.DEBUG_PREFERENCES)
 				System.out.println("Preference node is not a load root: " + absolutePath()); //$NON-NLS-1$
 			return;
 		}
-		node.load(location);
-		node.flush();
-		dirty = false;
+		if (node instanceof EclipsePreferences) {
+			((EclipsePreferences) node).load(location);
+			node.flush();
+		}
 	}
 
 	/**
@@ -182,6 +156,10 @@ public class InstancePreferences extends EclipsePreferences {
 				System.out.println("Unable to rename legacy preferences file: " + prefFile + " -> " + destFile); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
+	protected IPath getLocation() {
+		return location;
+	}
+
 	/*
 	 * Parse this node's absolute path and initialize some cached values for
 	 * later use.
@@ -212,7 +190,7 @@ public class InstancePreferences extends EclipsePreferences {
 	/*
 	 * Return the node at which these preferences are loaded/saved.
 	 */
-	private EclipsePreferences getLoadLevel() {
+	protected IEclipsePreferences getLoadLevel() {
 		if (loadLevel == null) {
 			if (qualifier == null)
 				return null;
@@ -231,24 +209,7 @@ public class InstancePreferences extends EclipsePreferences {
 		return getLoadLevel() == this;
 	}
 
-	/*
-	 * @see org.eclipse.core.runtime.preferences.IScope#create(org.eclipse.core.runtime.preferences.IEclipsePreferences, java.lang.String)
-	 */
-	public IEclipsePreferences create(IEclipsePreferences nodeParent, String nodeName) {
-		InstancePreferences result = new InstancePreferences(nodeParent, nodeName);
-		// lazy loaded for the nodes in this scope.
-		if (result.isLoadLevel() && !isLoading() && !alreadyLoaded(nodeName))
-			try {
-				isLoading = true;
-				result.sync();
-				loadedNodes.add(nodeName);
-			} catch (BackingStoreException e) {
-				String message = Policy.bind("preferences.syncException", result.absolutePath()); //$NON-NLS-1$
-				IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, message, e);
-				InternalPlatform.getDefault().log(status);
-			} finally {
-				isLoading = false;
-			}
-		return result;
+	protected EclipsePreferences internalCreate(IEclipsePreferences nodeParent, String nodeName) {
+		return new InstancePreferences(nodeParent, nodeName);
 	}
 }

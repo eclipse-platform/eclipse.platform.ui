@@ -42,6 +42,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	protected ListenerList preferenceListeners;
 	protected boolean isLoading = false;
 	protected boolean dirty = false;
+	protected boolean loading = false;
 	private String cachedPath;
 
 	public EclipsePreferences() {
@@ -54,86 +55,16 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		this.name = name;
 	}
 
-	/*
-	 * @see INodeChangeEvent
-	 */
-	public class NodeChangeEvent extends EventObject implements INodeChangeEvent {
-
-		private Preferences child;
-
-		protected NodeChangeEvent(Preferences parent, Preferences child) {
-			super(parent);
-			this.child = child;
-		}
-
-		/*
-		 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.INodeChangeEvent#getParent()
-		 */
-		public Preferences getParent() {
-			return (Preferences) getSource();
-		}
-
-		/*
-		 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.INodeChangeEvent#getChild()
-		 */
-		public Preferences getChild() {
-			return child;
-		}
-
-		public String toString() {
-			return "NodeChangeEvent(" + getParent().absolutePath() + ", " + getChild().absolutePath() + ")"; //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
-		}
-	}
-
-	/*
-	 * @see IPreferenceChangeEvent
-	 */
-	public class PreferenceChangeEvent extends EventObject implements IPreferenceChangeEvent {
-
-		private String key;
-		private Object newValue;
-		public Object oldValue;
-
-		protected PreferenceChangeEvent(Object node, String key, Object oldValue, Object newValue) {
-			super(node);
-			if (key == null)
-				throw new IllegalArgumentException();
-			this.key = key;
-			this.newValue = newValue;
-			this.oldValue = oldValue;
-		}
-
-		/*
-		 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeEvent#getKey()
-		 */
-		public String getKey() {
-			return key;
-		}
-
-		/*
-		 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeEvent#getNewValue()
-		 */
-		public Object getNewValue() {
-			return newValue;
-		}
-
-		/*
-		 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeEvent#getOldValue()
-		 */
-		public Object getOldValue() {
-			return oldValue;
-		}
-
-		public String toString() {
-			return "PreferenceChangeEvent(" + getKey() + ": " + getNewValue() + "->" + getOldValue() + ")"; //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$ //$NON-NLS-4$
-		}
-	}
-
 	protected void log(IStatus status) {
 		InternalPlatform.getDefault().log(status);
 	}
 
 	public void load(IPath location) throws BackingStoreException {
+		if (location == null) {
+			if (InternalPlatform.DEBUG_PREFERENCES)
+				System.out.println("Unable to determine location of preference file for node: " + absolutePath()); //$NON-NLS-1$
+			return;
+		}
 		if (InternalPlatform.DEBUG_PREFERENCES)
 			System.out.println("Loading preferences from file: " + location); //$NON-NLS-1$
 		InputStream input = null;
@@ -162,6 +93,11 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	}
 
 	public void save(IPath location) throws BackingStoreException {
+		if (location == null) {
+			if (InternalPlatform.DEBUG_PREFERENCES)
+				System.out.println("Unable to determine location of preference file for node: " + absolutePath()); //$NON-NLS-1$
+			return;
+		}
 		if (InternalPlatform.DEBUG_PREFERENCES)
 			System.out.println("Saving preferences to file: " + location); //$NON-NLS-1$
 		Properties table = convertToProperties(new Properties(), new Path(absolutePath()));
@@ -806,22 +742,98 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	public void flush() throws BackingStoreException {
 		// illegal state if this node has been removed
 		checkRemoved();
-		// do nothing...subclasses to provide implementation
+
+		// any work to do?
+		if (!dirty)
+			return;
+
+		IEclipsePreferences loadLevel = getLoadLevel();
+
+		// if this node or a parent is not the load level, then flush the children
+		if (loadLevel == null) {
+			String[] childrenNames = childrenNames();
+			for (int i = 0; i < childrenNames.length; i++)
+				node(childrenNames[i]).flush();
+			return;
+		}
+
+		// a parent is the load level for this node
+		if (this != loadLevel) {
+			loadLevel.flush();
+			return;
+		}
+
+		// this node is a load level
+		save(getLocation());
+		makeClean();
+	}
+
+	protected IEclipsePreferences getLoadLevel() {
+		return null;
 	}
 
 	/*
-	 * @see org.osgi.service.prefs.Preferences#sync()
+	 * Subclasses to over-ride
 	 */
-	public void sync() throws BackingStoreException {
-		// illegal state if this node has been removed
-		checkRemoved();
-		// do nothing...subclasses to provide implementation
+	protected IPath getLocation() {
+		return null;
+	}
+
+	protected void loaded(IEclipsePreferences node) {
+		// do nothing
 	}
 
 	/*
 	 * @see org.eclipse.core.runtime.preferences.IScope#create(org.eclipse.core.runtime.preferences.IEclipsePreferences)
 	 */
 	public IEclipsePreferences create(IEclipsePreferences nodeParent, String nodeName) {
+		EclipsePreferences result = internalCreate(nodeParent, nodeName);
+		IEclipsePreferences loadLevel = result.getLoadLevel();
+
+		// if this node or a parent node is not the load level then return
+		if (loadLevel == null)
+			return result;
+
+		// if the result node is not a load level, then a child must be
+		if (result != loadLevel)
+			return result;
+
+		// the result node is a load level
+		if (isAlreadyLoaded(result))
+			return result;
+		if (loading)
+			return result;
+		try {
+			loading = true;
+			result.load(result.getLocation());
+		} catch (BackingStoreException e) {
+			String message = "Exception loading preferences";
+			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, message, e);
+			InternalPlatform.getDefault().log(status);
+		} finally {
+			loading = false;
+		}
+		return result;
+	}
+
+	/*
+	 * Subclasses to over-ride.
+	 */
+	protected boolean isAlreadyLoaded(IEclipsePreferences node) {
+		return true;
+	}
+
+	/*
+	 * @see org.osgi.service.prefs.Preferences#sync()
+	 */
+
+	public void sync() throws BackingStoreException {
+		// illegal state if this node has been removed
+		checkRemoved();
+		// do nothing...subclasses to provide implementation
+	}
+
+	protected EclipsePreferences internalCreate(IEclipsePreferences nodeParent, String nodeName) {
 		return new EclipsePreferences(nodeParent, nodeName);
 	}
 

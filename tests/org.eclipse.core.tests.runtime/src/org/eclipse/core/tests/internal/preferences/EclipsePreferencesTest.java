@@ -17,7 +17,6 @@ import junit.framework.TestSuite;
 import org.eclipse.core.internal.utils.UniversalUniqueIdentifier;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences.INodeChangeEvent;
 import org.eclipse.core.tests.runtime.RuntimeTest;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
@@ -30,7 +29,7 @@ public class EclipsePreferencesTest extends RuntimeTest {
 	class NodeTracer implements IEclipsePreferences.INodeChangeListener {
 		StringBuffer log = new StringBuffer();
 
-		public void added(INodeChangeEvent event) {
+		public void added(IEclipsePreferences.NodeChangeEvent event) {
 			log.append("[A:");
 			log.append(event.getParent().absolutePath());
 			log.append(',');
@@ -38,7 +37,7 @@ public class EclipsePreferencesTest extends RuntimeTest {
 			log.append(']');
 		}
 
-		public void removed(INodeChangeEvent event) {
+		public void removed(IEclipsePreferences.NodeChangeEvent event) {
 			log.append("[R:");
 			log.append(event.getParent().absolutePath());
 			log.append(',');
@@ -71,10 +70,7 @@ public class EclipsePreferencesTest extends RuntimeTest {
 			return null;
 		}
 
-		/*
-		 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener#preferenceChange(org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent)
-		 */
-		public void preferenceChange(IEclipsePreferences.IPreferenceChangeEvent event) {
+		public void preferenceChange(IEclipsePreferences.PreferenceChangeEvent event) {
 			log.append("[");
 			log.append(event.getKey());
 			log.append(":");
@@ -293,11 +289,11 @@ public class EclipsePreferencesTest extends RuntimeTest {
 	private byte[][] getByteValues() {
 		ArrayList result = new ArrayList();
 		result.add(new byte[0]);
-//TODO		result.add(new byte[]{127});
-//TODO		result.add(new byte[]{-128});
+		//TODO		result.add(new byte[]{127});
+		//TODO		result.add(new byte[]{-128});
 		result.add(new byte[]{0});
 		result.add(new byte[]{5});
-//TODO		result.add(new byte[]{-23});
+		//TODO		result.add(new byte[]{-23});
 		return (byte[][]) result.toArray(new byte[result.size()][]);
 	}
 

@@ -15,9 +15,8 @@ import java.util.Iterator;
 import java.util.Properties;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.preferences.*;
+import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeEvent;
 import org.osgi.service.prefs.BackingStoreException;
 
 /**
@@ -56,17 +55,17 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	}
 
 	/*
-	 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.INodeChangeListener#added(org.eclipse.core.runtime.preferences.IEclipsePreferences.INodeChangeEvent)
+	 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.INodeChangeListener#added(org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent)
 	 */
-	public void added(IEclipsePreferences.INodeChangeEvent event) {
+	public void added(IEclipsePreferences.NodeChangeEvent event) {
 		if (pluginID.equals(event.getChild().name()))
 			getPluginPreferences().addPreferenceChangeListener(this);
 	}
 
 	/*
-	 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.INodeChangeListener#removed(org.eclipse.core.runtime.preferences.IEclipsePreferences.INodeChangeEvent)
+	 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.INodeChangeListener#removed(org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent)
 	 */
-	public void removed(IEclipsePreferences.INodeChangeEvent event) {
+	public void removed(IEclipsePreferences.NodeChangeEvent event) {
 		// don't worry about removing the preference change listener since
 		// we won't get any notification from a removed node anyways.
 	}
@@ -84,9 +83,9 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	}
 
 	/*
-	 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener#preferenceChange(org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeEvent)
+	 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener#preferenceChange(org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent)
 	 */
-	public void preferenceChange(IPreferenceChangeEvent event) {
+	public void preferenceChange(IEclipsePreferences.PreferenceChangeEvent event) {
 		dirty = true;
 		if (listeners == null)
 			return;
