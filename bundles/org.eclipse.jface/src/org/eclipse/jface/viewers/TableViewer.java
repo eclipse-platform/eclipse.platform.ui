@@ -1006,10 +1006,7 @@ public class TableViewer extends StructuredViewer {
 	 * This method assumes all of these values are correct
 	 * and will not call the content provider to verify.
 	 * <strong>Note that this method will create a TableItem
-	 * for all of the elements so it should not be called if 
-	 * the table is SWT.VIRTUAL and the elements may not exist.
-	 * If using an SWT.VIRTUAL table it is recommended that
-	 * an ILazyContentProvider is used to get updates.
+	 * for all of the elements provided</strong>.
 	 * @param elements
 	 * @param index
 	 * @see ILazyContentProvider
