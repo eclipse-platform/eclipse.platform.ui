@@ -45,15 +45,17 @@ import org.eclipse.core.runtime.Path;
 public class ResourceDeltaVerifier extends Assert implements IResourceChangeListener{
 	private class ExpectedChange {
 		IResource fResource;
-		IPath fMovedPath;
+		IPath movedFromPath;
+		IPath movedToPath;
 		int fKind;
 		int fChangeFlags;
 
-		public ExpectedChange(IResource resource, int kind, int changeFlags, IPath movedPath){
+		public ExpectedChange(IResource resource, int kind, int changeFlags, IPath movedFromPath, IPath movedToPath){
 			fResource = resource;
 			fKind = kind;
 			fChangeFlags = changeFlags;
-			fMovedPath = movedPath;
+			this.movedFromPath = movedFromPath;
+			this.movedToPath = movedToPath;
 		}
 
 		public int getChangeFlags(){
@@ -62,7 +64,7 @@ public class ResourceDeltaVerifier extends Assert implements IResourceChangeList
 
 		public IPath getMovedFromPath(){
 			if((fChangeFlags & IResourceDelta.MOVED_FROM) != 0){
-				return fMovedPath;
+				return movedFromPath;
 			} else {
 				return null;
 			}
@@ -70,7 +72,7 @@ public class ResourceDeltaVerifier extends Assert implements IResourceChangeList
 
 		public IPath getMovedToPath(){
 			if((fChangeFlags & IResourceDelta.MOVED_TO) != 0){
-				return fMovedPath;
+				return movedToPath;
 			} else {
 				return null;
 			}
@@ -127,7 +129,7 @@ public class ResourceDeltaVerifier extends Assert implements IResourceChangeList
  */
 public void addExpectedChange(IResource[] resources, int status, int changeFlags) {
 	for (int i = 0; i < resources.length; i++)
-		addExpectedChange(resources[i], null, status, changeFlags, null);
+		addExpectedChange(resources[i], null, status, changeFlags, null, null);
 }
 /**
  * Adds an expected deletion for the given resource and all children.
@@ -156,7 +158,7 @@ public void addExpectedDeletion(IResource resource) {
  * @see IResourceConstants
  */
 public void addExpectedChange(IResource resource, int status, int changeFlags){
-	addExpectedChange(resource, null, status, changeFlags, null);
+	addExpectedChange(resource, null, status, changeFlags, null, null);
 }
 /**
  * Signals to the comparer that the given resource is expected to
@@ -168,8 +170,8 @@ public void addExpectedChange(IResource resource, int status, int changeFlags){
  * @param movedPath or null
  * @see IResourceConstants
  */
-public void addExpectedChange(IResource resource, int status, int changeFlags, IPath movedPath){
-	addExpectedChange(resource, null, status, changeFlags, movedPath);
+public void addExpectedChange(IResource resource, int status, int changeFlags, IPath movedFromPath, IPath movedToPath){
+	addExpectedChange(resource, null, status, changeFlags, movedFromPath, movedToPath);
 }
 /**
  * Signals to the comparer that the given resource is expected to
@@ -183,7 +185,7 @@ public void addExpectedChange(IResource resource, int status, int changeFlags, I
  * @see IResourceConstants
  */
 public void addExpectedChange(IResource resource, IResource topLevelParent, int status, int changeFlags){
-	addExpectedChange(resource, topLevelParent, status, changeFlags, null);
+	addExpectedChange(resource, topLevelParent, status, changeFlags, null, null);
 }
 /**
  * Signals to the comparer that the given resource is expected to
@@ -196,10 +198,10 @@ public void addExpectedChange(IResource resource, IResource topLevelParent, int 
  * @param movedPath or null
  * @see IResourceConstants
  */
-public void addExpectedChange(IResource resource, IResource topLevelParent, int status, int changeFlags, IPath movedPath) {
+public void addExpectedChange(IResource resource, IResource topLevelParent, int status, int changeFlags, IPath movedFromPath, IPath movedToPath) {
 	resetIfNecessary();
 
-	ExpectedChange expectedChange = new ExpectedChange(resource, status, changeFlags, movedPath);
+	ExpectedChange expectedChange = new ExpectedChange(resource, status, changeFlags, movedFromPath, movedToPath);
 	fExpectedChanges.put(resource.getFullPath(), expectedChange);
 
 	// Add changes for all resources above this one and limited by the topLevelParent
@@ -209,7 +211,7 @@ public void addExpectedChange(IResource resource, IResource topLevelParent, int 
 		//change table is keyed by resource path
 		IPath key = parentResource.getFullPath();
 		if (fExpectedChanges.get(key) == null) {
-			ExpectedChange parentExpectedChange = new ExpectedChange(parentResource, IResourceDelta.CHANGED, 0, null);
+			ExpectedChange parentExpectedChange = new ExpectedChange(parentResource, IResourceDelta.CHANGED, 0, null, null);
 			fExpectedChanges.put(key, parentExpectedChange);
 		}
 		parentResource = parentResource.getParent();

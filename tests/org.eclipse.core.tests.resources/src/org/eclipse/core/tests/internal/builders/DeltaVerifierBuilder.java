@@ -84,7 +84,7 @@ public static DeltaVerifierBuilder getInstance() {
  * @see IResourceConstants
  */
 public void addExpectedChange(IResource resource, IResource topLevelParent, int status, int changeFlags){
-	verifier.addExpectedChange(resource, topLevelParent, status, changeFlags, null);
+	verifier.addExpectedChange(resource, topLevelParent, status, changeFlags, null, null);
 }
 /**
  * Signals to the comparer that the given resource is expected to
@@ -97,8 +97,8 @@ public void addExpectedChange(IResource resource, IResource topLevelParent, int 
  * @param movedPath or null
  * @see IResourceConstants
  */
-public void addExpectedChange(IResource resource, IResource topLevelParent, int status, int changeFlags, IPath movedPath){
-	verifier.addExpectedChange(resource, topLevelParent, status, changeFlags, movedPath);
+public void addExpectedChange(IResource resource, IResource topLevelParent, int status, int changeFlags, IPath movedFromPath, IPath movedToPath){
+	verifier.addExpectedChange(resource, topLevelParent, status, changeFlags, movedFromPath, movedToPath);
 }
 /**
  * Like a wiley restaurant critic, this method masquerades as a builder, but is actually

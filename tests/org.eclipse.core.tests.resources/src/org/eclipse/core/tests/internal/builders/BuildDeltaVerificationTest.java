@@ -326,20 +326,13 @@ public void testCloseOpenReplaceFile() {
 public void testMoveFile() {
 	try {
 		verifier.addExpectedChange(folder2, project1, IResourceDelta.ADDED, 0);
-		verifier.addExpectedChange(file1, project1, IResourceDelta.REMOVED, IResourceDelta.MOVED_TO, file3.getFullPath());
-		verifier.addExpectedChange(file3, project1, IResourceDelta.ADDED, IResourceDelta.MOVED_FROM, file1.getFullPath());
+		verifier.addExpectedChange(file1, project1, IResourceDelta.REMOVED, IResourceDelta.MOVED_TO, null, file3.getFullPath());
+		verifier.addExpectedChange(file3, project1, IResourceDelta.ADDED, IResourceDelta.MOVED_FROM, file1.getFullPath(), null);
 
 		folder2.create(true, true, getMonitor());
 		file1.move(file3.getFullPath(), true, getMonitor());
 		rebuild();
-		try {
-			assertDelta();
-		} catch (AssertionFailedError e) {
-			//Fails because resource starts out unknown, but moving
-			//makes it workspace_better.  Once resources start out
-			//as workspace_better, this shouldn't fail
-			fail("Will fail until sync status Y_UNKNOWN is removed");
-		}
+		assertDelta();
 	} catch (CoreException e) {
 		handleCoreException(e);
 	}
