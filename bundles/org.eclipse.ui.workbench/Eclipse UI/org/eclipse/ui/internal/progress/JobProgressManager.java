@@ -69,6 +69,9 @@ public class JobProgressManager
 		 * @see org.eclipse.core.runtime.IProgressMonitor#done()
 		 */
 		public void done() {
+			JobInfo info = getJobInfo(job);
+			info.clearTaskInfo();
+			info.clearChildren();
 		}
 
 		/* (non-Javadoc)
@@ -183,8 +186,8 @@ public class JobProgressManager
 		jobs.put(event.getJob(), info);
 		if (!isNonDisplayableJob(event.getJob()))
 			add(info);
-	} 
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#aboutToRun(org.eclipse.core.runtime.jobs.IJobChangeEvent)
 	 */
@@ -193,25 +196,23 @@ public class JobProgressManager
 			JobInfo info = getJobInfo(event.getJob());
 			refresh(info);
 		}
-	} 
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
 	 */
 	public void done(IJobChangeEvent event) {
-		if (!isNonDisplayableJob(event.getJob())) {
-			JobInfo info = getJobInfo(event.getJob());
-			if (event.getResult().getCode() == IStatus.ERROR) {
-				info.setError(event.getResult());
-				refresh(info);
-			} else {
-				jobs.remove(event.getJob());
-				remove(info);
-			}
-		}
 
-	} 
-	
+		JobInfo info = getJobInfo(event.getJob());
+		if (event.getResult().getCode() == IStatus.ERROR) {
+			info.setError(event.getResult());
+		} else
+			jobs.remove(event.getJob());
+		//Only refresh if we are showing it
+		if (!isNonDisplayableJob(event.getJob()))
+			remove(info);
+	}
+
 	/**
 	 * Get the JobInfo for the job. If it does not exist
 	 * create it.
@@ -225,8 +226,8 @@ public class JobProgressManager
 			jobs.put(job, info);
 		}
 		return info;
-	} 
-	
+	}
+
 	/**
 	 * Refresh the content providers as a result of a change in info.
 	 * @param info
@@ -239,8 +240,8 @@ public class JobProgressManager
 			provider.refresh(info);
 		}
 
-	} 
-	
+	}
+
 	/**
 	 * Refresh all the content providers as a result of a change in the whole model.
 	 * @param info
@@ -253,8 +254,8 @@ public class JobProgressManager
 			provider.refreshAll();
 		}
 
-	} 
-	
+	}
+
 	/**
 	 * Refresh the content providers as a result of a deletion of info.
 	 * @param info
@@ -267,8 +268,8 @@ public class JobProgressManager
 			provider.remove(info);
 		}
 
-	} 
-	
+	}
+
 	/**
 	 * Refresh the content providers as a result of an addition of info.
 	 * @param info
@@ -281,8 +282,8 @@ public class JobProgressManager
 			provider.add(info);
 		}
 
-	} 
-	
+	}
+
 	/**
 	 * Return whether or not this job is currently displayable.
 	 * @param job
@@ -295,8 +296,8 @@ public class JobProgressManager
 			return false;
 		else
 			return job.isSystem() || job.getState() == Job.SLEEPING;
-	} 
-	
+	}
+
 	/**
 	 * Return whether or not this job is ever displayable.
 	 * @param job
@@ -313,25 +314,25 @@ public class JobProgressManager
 					"ProgressContentProvider.UpdateProgressJob")))
 			return true;
 		return false;
-	} 
-	
+	}
+
 	/**
 	 * Get the jobs currently being displayed.
 	 * @return Object[]
 	 */
 	public Object[] getJobs() {
-		
+
 		Iterator iterator = jobs.keySet().iterator();
 		Collection result = new ArrayList();
-		while(iterator.hasNext()){
+		while (iterator.hasNext()) {
 			Job next = (Job) iterator.next();
-			if(isNonDisplayableJob(next))
+			if (isNonDisplayableJob(next))
 				continue;
 			result.add(jobs.get(next));
 		}
 		return result.toArray();
-	} 
-	
+	}
+
 	/**
 	 * Clear the job out of the list of those being displayed.
 	 * Only do this for jobs that are an error.
