@@ -383,13 +383,12 @@ import org.eclipse.ui.views.IViewRegistry;
         // End of things that need to be explicitly disposed from the try block
         
         try {
-            IViewPart view;
+            IViewPart view = null;
             try { 
                 UIStats.start(UIStats.CREATE_PART, label);
-                
                 view = desc.createView();
             } finally {
-                UIStats.end(UIStats.CREATE_PART, ref, label);    
+                UIStats.end(UIStats.CREATE_PART, view, label);    
             }
 
             // Create site
