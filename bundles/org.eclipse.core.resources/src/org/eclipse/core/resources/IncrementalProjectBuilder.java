@@ -50,6 +50,12 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 */
 	public static final int AUTO_BUILD = 9;
 	
+	/** Build kind constant (value 15) indicating a build clean request
+	 * @see IProject#build
+	 */
+	public static final int CLEAN_BUILD = 15;
+
+	
 /**
  * Runs this builder on the given changes in the specified manner.
  * Subclasses should implement this method to do the processing 
