@@ -6,6 +6,9 @@
 
 <% 
 	LayoutData data = new LayoutData(application,request);
+	String search_jsp = "search.jsp";
+	if (getMode() == RequestData.MODE_INFOCENTER)
+		search_jsp = "searchInfocenter.jsp";
 %>
 
 <html>
@@ -21,7 +24,7 @@
 
 <frameset rows="<%=data.getBannerHeight()%>,24,*"  frameborder="0" framespacing="0" border=0 spacing=0 style="border:1px solid WindowText;">
 	<frame name="BannerFrame" src='<%=data.getBannerURL()%>'  marginwidth="0" marginheight="0" scrolling="no" frameborder="0" noresize=0>
-	<frame name="SearchFrame" src='<%="advanced/search.jsp"+data.getQuery()%>'  marginwidth="0" marginheight="0" scrolling="no" frameborder="0" noresize=0>
+	<frame name="SearchFrame" src='<%="advanced/"+ search_jsp+data.getQuery()%>'  marginwidth="0" marginheight="0" scrolling="no" frameborder="0" noresize=0>
 	<frame name="HelpFrame" src='<%="advanced/help.jsp"+data.getQuery()%>'  marginwidth="0" marginheight="0" scrolling="no" frameborder="0" >
 </frameset>
 

@@ -183,6 +183,11 @@ description, distributable, and context-param elements.
 		<servlet-name>org.eclipse.help.jsp.advanced.search</servlet-name>
 		<servlet-class>org.eclipse.help.jsp.advanced.search</servlet-class>
 	</servlet>
+	
+	<servlet>
+		<servlet-name>org.eclipse.help.jsp.advanced.searchInfocenter</servlet-name>
+		<servlet-class>org.eclipse.help.jsp.advanced.searchInfocenter</servlet-class>
+	</servlet>
 
 	<servlet>
 		<servlet-name>org.eclipse.help.jsp.advanced.searchToolbar</servlet-name>
@@ -387,6 +392,11 @@ description, distributable, and context-param elements.
 	<servlet-mapping>
 		<servlet-name>org.eclipse.help.jsp.advanced.search</servlet-name>
 		<url-pattern>/advanced/search.jsp</url-pattern>
+	</servlet-mapping>
+	
+	<servlet-mapping>
+		<servlet-name>org.eclipse.help.jsp.advanced.searchInfocenter</servlet-name>
+		<url-pattern>/advanced/searchInfocenter.jsp</url-pattern>
 	</servlet-mapping>
 
 	<servlet-mapping>
