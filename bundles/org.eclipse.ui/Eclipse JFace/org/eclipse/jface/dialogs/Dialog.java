@@ -179,6 +179,20 @@ public static int convertWidthInCharsToPixels(FontMetrics fontMetrics, int chars
 }
 
 /**
+ * Creates a dialog instance.
+ * Note that the window will have no visual representation (no widgets)
+ * until it is told to open. 
+ * By default, <code>open</code> blocks for dialogs.
+ *
+ * @param parentShell the parent shell, or <code>null</code> to create a top-level shell
+ */
+protected Dialog(Shell parentShell) {
+	super(parentShell);
+	setShellStyle(SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
+	setBlockOnOpen(true);
+}
+
+/**
  * Notifies that this dialog's button with the given id has been pressed.
  * <p>
  * The <code>Dialog</code> implementation of this framework method calls
@@ -192,19 +206,6 @@ public static int convertWidthInCharsToPixels(FontMetrics fontMetrics, int chars
  * @param buttonId the id of the button that was pressed (see
  *  <code>IDialogConstants.*_ID</code> constants)
  */
-/**
- * Creates a dialog instance.
- * Note that the window will have no visual representation (no widgets)
- * until it is told to open. 
- * By default, <code>open</code> blocks for dialogs.
- *
- * @param parentShell the parent shell, or <code>null</code> to create a top-level shell
- */
-protected Dialog(Shell parentShell) {
-	super(parentShell);
-	setShellStyle(SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
-	setBlockOnOpen(true);
-}
 protected void buttonPressed(int buttonId) {
 	if (IDialogConstants.OK_ID == buttonId) 
 		okPressed();
