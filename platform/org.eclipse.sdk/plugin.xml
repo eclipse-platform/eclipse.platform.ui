@@ -160,5 +160,18 @@
             id="org.eclipse.pde.ui.NewProductConfigurationWizard">
       </primaryWizard>
    </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+	  <page            
+            category="org.eclipse.ui.preferencePages.Workbench"
+            name="%PreferencePages.Capabilities"
+            id="org.eclipse.sdk.capabilities">
+            <class class="org.eclipse.ui.activities.ActivitiesPreferencePage">
+            	<parameter name="activityName" value="%PreferencePages.Capabilities.activityName" />
+            	<parameter name="activityPromptButton" value="%PreferencePages.Capabilities.activityPromptButton"/>
+            	<parameter name="activityPromptButtonTooltip" value="%PreferencePages.Capabilities.activityPromptButtonTooltip"/>
+            </class>
+      </page>   
+   </extension>
 
 </plugin>
