@@ -11,8 +11,12 @@
 package org.eclipse.ui.internal.console;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
@@ -29,6 +33,8 @@ import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.console.IConsoleListener;
 import org.eclipse.ui.console.IConsoleManager;
 import org.eclipse.ui.console.IConsoleView;
+import org.eclipse.ui.console.IOConsole;
+import org.eclipse.ui.console.IPatternMatchListener;
 
 /**
  * The singleton console manager.
@@ -50,6 +56,8 @@ public class ConsoleManager implements IConsoleManager {
 	// change notification constants
 	private final static int ADDED = 1;
 	private final static int REMOVED = 2;
+
+    private List fPatternMatchListeners;
 	
 	/**
 	 * Notifies a console listener of additions or removals
@@ -129,7 +137,14 @@ public class ConsoleManager implements IConsoleManager {
 	public synchronized void addConsoles(IConsole[] consoles) {
 		List added = new ArrayList(consoles.length);
 		for (int i = 0; i < consoles.length; i++) {
-			IConsole console = consoles[i];
+		    IConsole console = consoles[i];
+		    if(console instanceof IOConsole) {
+		        IOConsole ioconsole = (IOConsole)console;
+		        IPatternMatchListener[] matchListeners = getPatternMatchListeners(ioconsole);
+		        for (int j = 0; j < matchListeners.length; j++) {
+		            ioconsole.addPatternMatchListener(matchListeners[j]);
+		        }
+		    }
 			if (!fConsoles.contains(console)) {
 				fConsoles.add(console);
 				added.add(console);
@@ -237,5 +252,32 @@ public class ConsoleManager implements IConsoleManager {
 			}
 		}
 	}
-	
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.console.IConsoleManager#getPatternMatchListenerDelegates(org.eclipse.ui.console.IConsole)
+     */
+    public IPatternMatchListener[] getPatternMatchListeners(IConsole console) {
+    		if (fPatternMatchListeners == null) {
+    		    fPatternMatchListeners = new ArrayList();
+    			IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(ConsolePlugin.getUniqueIdentifier(), IConsoleConstants.EXTENSION_POINT_CONSOLE_PATTERN_MATCH_LISTENER);
+    			IConfigurationElement[] elements = extensionPoint.getConfigurationElements();
+    			for (int i = 0; i < elements.length; i++) {
+    				IConfigurationElement extension = elements[i];
+    				PatternMatchListenerExtension listener = new PatternMatchListenerExtension(extension);
+    				fPatternMatchListeners.add(listener); //$NON-NLS-1$
+    			}
+    		}
+    		ArrayList list = new ArrayList();
+    		for(Iterator i = fPatternMatchListeners.iterator(); i.hasNext(); ) {
+    		    PatternMatchListenerExtension extension = (PatternMatchListenerExtension) i.next();
+    		    try {
+    		        if (extension.isEnabledFor(console)) {
+    		            list.add(new PatternMatchListener(extension));
+    		        }
+    		    } catch (CoreException e) {
+    		        ConsolePlugin.log(e);
+    		    }
+    		}
+        return (PatternMatchListener[])list.toArray(new PatternMatchListener[0]);
+    }
 }

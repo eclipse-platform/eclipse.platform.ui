@@ -62,18 +62,19 @@ import org.eclipse.ui.part.IPageBookViewPage;
  * @since 3.0
  */
 public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSetListener, IPropertyChangeListener {
+    public static final String TYPE = "org.eclipse.debug.ProcessConsole"; //$NON-NLS-1$
 	
 	private IProcess fProcess = null;
 	private List streamListeners = new ArrayList();
     private IConsoleColorProvider fColorProvider;
 	private IOConsoleInputStream in;
-    private ConsoleLineNotifier fLineNotifier;
+   
 	
 	/**
 	 * Proxy to a console document
 	 */
 	public ProcessConsole(IProcess process, IConsoleColorProvider colorProvider) {
-		super("", null); //$NON-NLS-1$
+		super("", TYPE, null); //$NON-NLS-1$
 		fProcess = process;
 		
 		fColorProvider = colorProvider;
@@ -281,35 +282,26 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 	 * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent[])
 	 */
 	public void handleDebugEvents(DebugEvent[] events) {
-		for (int i = 0; i < events.length; i++) {
-			DebugEvent event = events[i];
-			if (event.getSource().equals(getProcess())) {
-			    
-			    if (event.getKind() == DebugEvent.TERMINATE) {
-			        setFinished();
-					DebugPlugin.getDefault().removeDebugEventListener(this);
-			    }
-			    
-				Runnable r = new Runnable() {
-					public void run() {
-						setName(computeName());
-						warnOfContentChange();
-					}
-				};	
-				DebugUIPlugin.getStandardDisplay().asyncExec(r);
-			}
-		}
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.console.IOConsole#partitionerFinished()
-	 */
-	public void partitionerFinished() {
-	    super.partitionerFinished();
-	    if (fLineNotifier != null) {
-	        fLineNotifier.streamsClosed();
+	    for (int i = 0; i < events.length; i++) {
+	        DebugEvent event = events[i];
+	        if (event.getSource().equals(getProcess())) {
+	            
+	            if (event.getKind() == DebugEvent.TERMINATE) {
+	                setFinished();
+	                DebugPlugin.getDefault().removeDebugEventListener(this);
+	            }
+	            
+	            Runnable r = new Runnable() {
+	                public void run() {
+	                    setName(computeName());
+	                    warnOfContentChange();
+	                }
+	            };	
+	            DebugUIPlugin.getStandardDisplay().asyncExec(r);
+	        }
 	    }
 	}
+	
 	
 	private void warnOfContentChange() {
 		ConsolePlugin.getDefault().getConsoleManager().warnOfContentChange(DebugUITools.getConsole(fProcess));
@@ -435,17 +427,4 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
             return Status.OK_STATUS;
         }
     }
-
-
-    /**
-     * @param lineNotifier
-     */
-    public void setLineNotifier(ConsoleLineNotifier lineNotifier) {
-        fLineNotifier = lineNotifier;
-        fLineNotifier.connect(this);
-        if (fProcess.isTerminated()) {
-            setFinished();
-        }
-    }
-
 }

@@ -11,45 +11,25 @@
 package org.eclipse.ui.console;
 
 /**
- * A pattern match listener is registered with an <code>IOConsole</code>,
- * and is notified when its pattern has been matched to the contents in
- * that console.
- * 
  * @see org.eclipse.ui.console.IOConsole
  * @since 3.1
  */
-public interface IPatternMatchListener {
+public interface IPatternMatchListenerDelegate {
     /**
-     * Returns the pattern to be used for matching. The pattern is
-     * a string representing a regular expression. 
-     * 
-     * @return the regular expression to be used for matching
+     * Connects the delegate to the console being monitored
+     * @param console the console being monitored
      */
-    public String getPattern();
+    public void connect(IConsole console);
     
     /**
-     * Returns an int to be used by <code>Pattern.compile(String regex, int flags)</code>
-     * @return
+     * Disconnects the delegate from the console
      */
-    public int getCompilerFlags();
+    public void disconnect();
     
     /**
      * Notification that a match has been found.
      * 
      * @param event event describing where the match was found
      */
-
     public void matchFound(PatternMatchEvent event);
-
-    /**
-     * Connects this PatternMatchListener to the console
-     * @param console The console this Listener is attached to
-     */
-    public void connect(IConsole console);
-    
-    /**
-     * Disconnects this PatternMatchListener from the console
-     */
-    public void disconnect();
-    
 }

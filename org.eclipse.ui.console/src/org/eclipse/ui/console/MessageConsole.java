@@ -27,7 +27,7 @@ import org.eclipse.ui.part.IPageBookViewPage;
 public class MessageConsole extends IOConsole {
 
 	public MessageConsole(String name, ImageDescriptor imageDescriptor) {
-		super(name, imageDescriptor);
+		super(name, IConsoleConstants.MESSAGE_CONSOLE_TYPE, imageDescriptor);
 	}
 		
 	/**

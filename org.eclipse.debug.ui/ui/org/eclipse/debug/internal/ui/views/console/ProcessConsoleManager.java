@@ -50,7 +50,8 @@ public class ProcessConsoleManager implements ILaunchListener {
 	private Map fColorProviders;
 	
 	/**
-	 * 
+	 * The default color provider. Used if no color provider is contributed
+	 * for the given process type.
 	 */
 	private IConsoleColorProvider fDefaultColorProvider;
 	
@@ -91,11 +92,6 @@ public class ProcessConsoleManager implements ILaunchListener {
 	 */
 	private void removeProcess(IProcess iProcess) {
 		IConsole console = getConsole(iProcess);
-		
-		ConsoleLineNotifier lineNotifier = getLineNotifier(iProcess);
-		if (lineNotifier != null) {
-		    lineNotifier.disconnect();
-		}
 		
 		if (console != null) {
 			IConsoleManager manager = ConsolePlugin.getDefault().getConsoleManager();
@@ -144,11 +140,6 @@ public class ProcessConsoleManager implements ILaunchListener {
 						//create a new console.
 						IConsoleColorProvider colorProvider = getColorProvider(process.getAttribute(IProcess.ATTR_PROCESS_TYPE));
 						ProcessConsole pc = new ProcessConsole(process, colorProvider);
-						//connect Line Notifier
-						ConsoleLineNotifier lineNotifier = getLineNotifier(process);
-						if(lineNotifier != null) {
-						    pc.setLineNotifier(lineNotifier);
-						}
 						//add new console to console manager.
 						ConsolePlugin.getDefault().getConsoleManager().addConsoles(new IConsole[]{pc});
 					}
@@ -275,30 +266,14 @@ public class ProcessConsoleManager implements ILaunchListener {
 		return fDefaultColorProvider;
 	} 
 	
-	
 	/**
-	 * Returns the line notifier for this console, or <code>null</code> if none.
-	 * 
-	 * @param process
-	 * @return line notifier, or <code>null</code>
+	 * Returns the Line Trackers for a given process type.
+	 * @param process The process for which line trackers are required.
+	 * @return An array of line trackers which match the given process type.
 	 */
-	protected ConsoleLineNotifier getLineNotifier(IProcess process) {
+	public IConsoleLineTracker[] getLineTrackers(IProcess process) {
 		String type = process.getAttribute(IProcess.ATTR_PROCESS_TYPE);
-		if (type != null) {
-			return newLineNotifier(type);
-		}
-		return null;
-	}
-	
-	/**
-	 * Creates and retuns a new line notifier for the given type of process, or
-	 * <code>null</code> if none. The notifier will be seeded with new console
-	 * line listeners registered for the given process type.
-	 * 
-	 * @param type process type
-	 * @return line notifier or <code>null</code>
-	 */
-	public ConsoleLineNotifier newLineNotifier(String type) {
+
 		if (fLineTrackers == null) {
 			fLineTrackers = new HashMap();
 			IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.EXTENSION_POINT_CONSOLE_LINE_TRACKERS);
@@ -314,26 +289,17 @@ public class ProcessConsoleManager implements ILaunchListener {
 				list.add(extension);
 			}
 		}
-		List extensions = (List)fLineTrackers.get(type);
-		ConsoleLineNotifier lineNotifier = null;
-		if (extensions != null) {
-			lineNotifier = new ConsoleLineNotifier();
-			Iterator iter = extensions.iterator();
-			while (iter.hasNext()) {
-				IConfigurationElement extension = (IConfigurationElement)iter.next();
-				try {
-					Object tracker = extension.createExecutableExtension("class"); //$NON-NLS-1$
-					if (tracker instanceof IConsoleLineTracker) {
-						lineNotifier.addConsoleListener((IConsoleLineTracker)tracker);
-					} else {
-						DebugUIPlugin.logErrorMessage(MessageFormat.format(ConsoleMessages.getString("ConsoleDocumentManager.2"),new String[]{extension.getDeclaringExtension().getUniqueIdentifier()})); //$NON-NLS-1$
-					}
-				} catch (CoreException e) {
-					DebugUIPlugin.log(e);
-				}
-			}
+		
+		ArrayList trackers = new ArrayList();
+		for(Iterator i = ((List)fLineTrackers.get(type)).iterator(); i.hasNext(); ) {
+		    IConfigurationElement element = (IConfigurationElement) i.next();
+		    try {
+                trackers.add(element.createExecutableExtension("class")); //$NON-NLS-1$
+            } catch (CoreException e) {
+                DebugUIPlugin.log(e);
+            }
 		}
-		return lineNotifier;		
+		return (IConsoleLineTracker[]) trackers.toArray(new IConsoleLineTracker[0]);
 	}
 	
 	/**

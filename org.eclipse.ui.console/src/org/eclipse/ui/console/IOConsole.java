@@ -13,6 +13,7 @@ package org.eclipse.ui.console;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -107,8 +108,13 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
     
     private ArrayList patterns = new ArrayList();
 
-    public IOConsole(String name, ImageDescriptor imageDescriptor) {
+    private String type;
+    
+    private HashMap attributes = new HashMap();
+
+    public IOConsole(String name, String consoleType, ImageDescriptor imageDescriptor) {
         super(name, imageDescriptor);
+        type = consoleType;
         inputStream = new IOConsoleInputStream(this);
         partitioner = new IOConsolePartitioner(inputStream, this);
         Document document = new Document();
@@ -116,7 +122,42 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
         partitioner.connect(document);
         document.addDocumentListener(this);
     }
+    
+    public IOConsole(String name, ImageDescriptor imageDescriptor) {
+        this(name, null, imageDescriptor);
+    }
 
+    
+    /**
+     * @return Returns the type.
+     */
+    public String getType() {
+        return type;
+    }
+    /**
+     * @param type The type to set.
+     */
+    public void setType(String type) {
+        this.type = type;
+    }
+    
+    
+    /**
+     * @return Returns the attribute matching the specified key.
+     */
+    public String getAttribute(String key) {
+        return (String)attributes.get(key);
+    }
+    /**
+     * @param key The key used to store the attribute
+     * @param value The attribute to set.
+     */
+    public void setAttribute(String key, String value) {
+        synchronized(attributes) {
+            attributes.put(key, value);
+        }
+    }
+    
 	/**
 	 * Returns the document this console writes to.
 	 * 
@@ -319,6 +360,9 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
         synchronized (patterns) {
             patterns.clear();
         }
+        synchronized(attributes) {
+            attributes.clear();
+        }
     }
     
     /**
@@ -334,6 +378,7 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
             Pattern pattern = Pattern.compile(matchListener.getPattern(), matchListener.getCompilerFlags());
             CompiledPatternMatchListener notifier = new CompiledPatternMatchListener(pattern, matchListener);
             patterns.add(notifier);
+            matchListener.connect(this);
             
             try {
                 testForMatch(notifier, 0);
@@ -352,6 +397,7 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
                 CompiledPatternMatchListener element = (CompiledPatternMatchListener) iter.next();
                 if (element.listener == matchListener) {
                     iter.remove();
+                    matchListener.disconnect();
                 }
             }
         }

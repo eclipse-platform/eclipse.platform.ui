@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.console;
 
+
 /**
  * Manages consoles.
  * <p>
@@ -75,4 +76,13 @@ public interface IConsoleManager {
 	 * @param console the console that has changed
 	 */
 	public void warnOfContentChange(IConsole console);
+	
+	/**
+	 * Returns an array of pattern match listeners which should be enabled for
+	 * the given console.
+	 * @param console The console for which PatternMatchListeners are required
+	 * @return an array of IPatternMatchListner
+	 * @since 3.1
+	 */
+	public IPatternMatchListener[] getPatternMatchListeners(IConsole console);
 }

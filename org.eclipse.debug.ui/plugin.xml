@@ -1965,5 +1965,16 @@ M4 = Platform-specific fourth key
 	            value="org.eclipse.debug.internal.ui.views.memory.HexRenderer">
 	        </rendering_property>
 	  </rendering>
+   </extension>
+   <extension
+         point="org.eclipse.ui.console.consolePatternMatchListener">
+      <consolePatternMatchListener
+            class="org.eclipse.debug.internal.ui.views.console.ConsoleLineNotifier"
+            id="org.eclipse.debug.ui.consoleLineNotifier"
+            regex=".*\r(\n?)|.*\n">
+         <enablement>
+            <instanceof value="org.eclipse.debug.internal.ui.views.console.ProcessConsole"/>
+         </enablement>
+      </consolePatternMatchListener>
    </extension>   
 </plugin>

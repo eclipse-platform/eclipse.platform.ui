@@ -27,6 +27,12 @@ public interface IConsoleConstants {
 	 * Console view identifier (value <code>"org.eclipse.ui.console.ConsoleView"</code>).
 	 */
 	public static final String ID_CONSOLE_VIEW= "org.eclipse.ui.console.ConsoleView"; //$NON-NLS-1$
+
+	/**
+	 * Type identifier for MessageConsole
+	 * @since 3.1
+	 */
+    public static final String MESSAGE_CONSOLE_TYPE = "org.eclipse.ui.MessageConsole"; //$NON-NLS-1$
 	
 	/**
 	 * The name of the font to use for the Console (value <code>"org.eclipse.ui.console.ConsoleFont"</code>).
@@ -58,4 +64,12 @@ public interface IConsoleConstants {
 	 * Status code indicating an unexpected internal error.
 	 */
 	public static final int INTERNAL_ERROR = 120;
+
+	/**
+	 * Console Pattern Match Listener extension point identifier
+	 * (value <code>"consolePatternMatchListener"</code>).
+	 * 
+	 * @since 3.1 
+	 */
+    public static final String EXTENSION_POINT_CONSOLE_PATTERN_MATCH_LISTENER = "consolePatternMatchListener"; //$NON-NLS-1$
 }

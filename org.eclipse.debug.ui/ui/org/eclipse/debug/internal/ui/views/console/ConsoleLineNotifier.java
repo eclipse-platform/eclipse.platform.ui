@@ -11,22 +11,26 @@
 package org.eclipse.debug.internal.ui.views.console;
 
 
-import org.eclipse.debug.ui.console.IConsole;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.console.IConsoleLineTracker;
 import org.eclipse.debug.ui.console.IConsoleLineTrackerExtension;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
+import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.ListenerList;
-import org.eclipse.ui.console.IPatternMatchListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.ui.console.IConsole;
+import org.eclipse.ui.console.IOConsole;
+import org.eclipse.ui.console.IPatternMatchListenerDelegate;
 import org.eclipse.ui.console.PatternMatchEvent;
 
 /**
  * Tracks text appended to the console and notifies listeners in terms of whole
  * lines.
  */
-public class ConsoleLineNotifier implements IPatternMatchListener {
+public class ConsoleLineNotifier implements IPatternMatchListenerDelegate, IPropertyChangeListener {
 	/**
 	 * Console listeners
 	 */
@@ -35,7 +39,7 @@ public class ConsoleLineNotifier implements IPatternMatchListener {
 	/**
 	 * The console this notifier is tracking 
 	 */
-	private IConsole fConsole = null;
+	private ProcessConsole fConsole = null;
 	
 	/**
 	 * Connects this notifier to the given console.
@@ -43,13 +47,17 @@ public class ConsoleLineNotifier implements IPatternMatchListener {
 	 * @param console
 	 */
 	public void connect(IConsole console) {
-		fConsole = console;
-		Object[] listeners = fListeners.getListeners();
-		for (int i = 0; i < listeners.length; i++) {
-			IConsoleLineTracker listener = (IConsoleLineTracker)listeners[i];
-			listener.init(console);
-		}
-		fConsole.addPatternMatchListener(this);
+	    if (console instanceof ProcessConsole) {
+	        fConsole = (ProcessConsole)console;
+
+	        IConsoleLineTracker[] lineTrackers = DebugUIPlugin.getDefault().getProcessConsoleManager().getLineTrackers(fConsole.getProcess());
+	        for (int i = 0; i < lineTrackers.length; i++) {
+	            lineTrackers[i].init(fConsole);
+                addConsoleListener(lineTrackers[i]);
+            }
+	        
+	        fConsole.addPropertyChangeListener(this);
+	    }
 	}
 	
 	/**
@@ -59,12 +67,15 @@ public class ConsoleLineNotifier implements IPatternMatchListener {
 	    if (fConsole == null) {
 	        return; //already disconnected
 	    }
-	    fConsole.removePatternMatchListener(this);
+
 	    Object[] listeners = fListeners.getListeners();
 	    for (int i = 0; i < listeners.length; i++) {
 	        IConsoleLineTracker listener = (IConsoleLineTracker)listeners[i];
 	        listener.dispose();
 	    }
+	
+	    fConsole.removePropertyChangeListener(this);
+	    
 	    fListeners = null;
 	    fConsole = null;
 	}
@@ -106,20 +117,6 @@ public class ConsoleLineNotifier implements IPatternMatchListener {
 	public void addConsoleListener(IConsoleLineTracker listener) {
 		fListeners.add(listener);
 	}
-
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.console.IPatternMatchListener#getPattern()
-     */
-    public String getPattern() {
-    	return ".*\r(\n?)|.*\n"; //$NON-NLS-1$
-    }
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.console.IPatternMatchListener#getModifiers()
-	 */
-	public int getCompilerFlags() {
-		return 0;
-	}
 	
     /* (non-Javadoc)
      * @see org.eclipse.ui.console.IPatternMatchListener#matchFound(org.eclipse.ui.console.PatternMatchEvent)
@@ -152,5 +149,13 @@ public class ConsoleLineNotifier implements IPatternMatchListener {
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
+     */
+    public void propertyChange(PropertyChangeEvent event) {
+        if(event.getProperty().equals(IOConsole.P_CONSOLE_OUTPUT_COMPLETE)) {
+            streamsClosed();
+        }
+    }
 
 }

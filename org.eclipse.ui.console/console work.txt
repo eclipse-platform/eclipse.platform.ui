@@ -1,0 +1,38 @@
+1. Extension Point: IPatternMatchListenerDelegate
+	id:
+	class: (new IPatternMatchListenerDelegate... only matchFound())
+	regex:
+	flags:
+	enablement:
+		 test consoleType
+	
+2. IConsoleManager
+	#getPatternMatchExtensions(IConsole)
+	#getPageParticipantExtensions(IConsole)
+	
+3. IOConsole
+	get/setAttribute()
+	ATTR_CONSOLE_TYPE
+	
+4. IConsolePageParticipantDelegate
+	init(IPageBookViewPage)
+	dispose()
+	contextMenuAboutToShoe(MenuThing)
+	toolbar(toolbar manager)
+	
+5. Extension Point: IConsolePageParticipantDelegate
+	id:
+	class:
+	enablement:
+	
+6. Extension: ConsoleFactory
+	id:
+	class:
+	enablement:
+	label:
+	image:
+	
+7. IConsoleFactory (really a delegate)
+	IConsole openConsole() 
+	
+8. Clean up the junk that isn't used anymore. (ConsoleDocumentPartitioner, ConsoleDocumentProvider...)	
