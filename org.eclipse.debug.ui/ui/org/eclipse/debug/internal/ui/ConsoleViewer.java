@@ -5,7 +5,7 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
-import org.eclipse.jface.text.*;import org.eclipse.jface.util.IPropertyChangeListener;import org.eclipse.jface.util.PropertyChangeEvent;import org.eclipse.swt.SWT;import org.eclipse.swt.custom.StyleRange;import org.eclipse.swt.custom.StyledText;import org.eclipse.swt.events.VerifyEvent;import org.eclipse.swt.events.VerifyListener;import org.eclipse.swt.graphics.Font;import org.eclipse.swt.graphics.FontData;import org.eclipse.swt.widgets.Composite;
+import org.eclipse.jface.text.*;import org.eclipse.jface.util.IPropertyChangeListener;import org.eclipse.jface.util.PropertyChangeEvent;import org.eclipse.swt.SWT;import org.eclipse.swt.custom.StyleRange;import org.eclipse.swt.custom.StyledText;import org.eclipse.swt.events.VerifyEvent;import org.eclipse.swt.events.VerifyListener;import org.eclipse.swt.graphics.Font;import org.eclipse.swt.graphics.FontData;import org.eclipse.swt.widgets.Composite;import org.eclipse.swt.widgets.Control;
 
 public class ConsoleViewer extends TextViewer implements IPropertyChangeListener{
 
@@ -161,6 +161,7 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 	 * Dispose this viewer and resources
 	 */
 	protected void dispose() {
+		DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
 		fFont.dispose();
 	}
 }
