@@ -1268,4 +1268,12 @@ public IStatus validatePath(String path, int typeMask);
  * @see IStatus#OK
  */
 public IStatus validateProjectLocation(IProject project, IPath location);
+/**
+ * Returns the path variable manager for this workspace.
+ * 
+ * @return the path variable manager
+ * @see IPathVariableManager
+ * @since 2.1
+ */
+public IPathVariableManager getPathVariableManager();
 }

@@ -35,7 +35,8 @@ public class LocalMetaArea implements ICoreConstants {
 	/* package */ static final String F_SNAP = ".snap"; //$NON-NLS-1$
 	/* package */ static final String F_SNAP_EXTENSION = "snap"; //$NON-NLS-1$
 	/* package */ static final String F_SYNCINFO = ".syncinfo"; //$NON-NLS-1$
-	/* package */ static final String F_TREE = ".tree"; //$NON-NLS-1$
+    /* package */ static final String F_TREE = ".tree"; //$NON-NLS-1$
+    /* package */ static final String F_PATH_VARIABLES = ".pathvars"; //$NON-NLS-1$
 public LocalMetaArea() {
 }
 /**
@@ -96,6 +97,13 @@ public IPath getMarkersLocationFor(IResource resource) {
 	Assert.isNotNull(resource);
 	Assert.isLegal(resource.getType() == IResource.ROOT || resource.getType() == IResource.PROJECT);
 	return locationFor(resource).append(F_MARKERS);
+}
+/**
+ * Returns the path of the file in which to save the declarations of the path
+ * variables for the workspace.
+ */
+public IPath getPathVariablesLocation() {
+    return getLocation().append(F_PATH_VARIABLES);
 }
 /**
  * Returns the path of the file in which to snapshot markers for the given resource.

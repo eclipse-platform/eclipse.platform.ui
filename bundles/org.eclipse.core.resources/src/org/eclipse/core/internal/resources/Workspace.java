@@ -36,6 +36,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	protected NatureManager natureManager;
 	protected NotificationManager notificationManager;
 	protected FileSystemResourceManager fileSystemManager;
+	protected PathVariableManager pathVariableManager;
 	protected PropertyManager propertyManager;
 	protected MarkerManager markerManager;
 	protected long nextNodeId = 0;
@@ -1028,6 +1029,11 @@ public NatureManager getNatureManager() {
 public NotificationManager getNotificationManager() {
 	return notificationManager;
 }
+/**
+ * @see org.eclipse.core.resources.IWorkspace#getPathVariableManager() */
+public IPathVariableManager getPathVariableManager() {
+	return pathVariableManager;
+} 
 public PropertyManager getPropertyManager() {
 	return propertyManager;
 }
@@ -1627,7 +1633,7 @@ private boolean shouldBuild() throws CoreException {
 protected void shutdown(IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		IManager[] managers = { buildManager, notificationManager, propertyManager, fileSystemManager, markerManager, saveManager, workManager };
+		IManager[] managers = { buildManager, notificationManager, propertyManager, pathVariableManager, fileSystemManager, markerManager, saveManager, workManager };
 		monitor.beginTask(null, managers.length);
 		String message = Policy.bind("resources.shutdownProblems"); //$NON-NLS-1$
 		MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, null);
@@ -1648,6 +1654,7 @@ protected void shutdown(IProgressMonitor monitor) throws CoreException {
 		buildManager = null;
 		notificationManager = null;
 		propertyManager = null;
+		pathVariableManager = null;
 		fileSystemManager = null;
 		markerManager = null;
 		synchronizer = null;
@@ -1673,6 +1680,8 @@ protected void startup(IProgressMonitor monitor) throws CoreException {
 	fileSystemManager.startup(monitor);
 	propertyManager = new PropertyManager(this);
 	propertyManager.startup(monitor);
+	pathVariableManager = new PathVariableManager(this);
+	pathVariableManager.startup(null);
 	natureManager = new NatureManager();
 	buildManager = new BuildManager(this);
 	buildManager.startup(null);
