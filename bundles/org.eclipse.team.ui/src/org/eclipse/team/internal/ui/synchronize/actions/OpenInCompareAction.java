@@ -106,7 +106,7 @@ public class OpenInCompareAction extends Action {
 	public static IEditorPart findReusableCompareEditor(IWorkbenchPage page) {
 		IEditorReference[] editorRefs = page.getEditorReferences();	
 		for (int i = 0; i < editorRefs.length; i++) {
-			IEditorPart part = editorRefs[i].getEditor(true);
+			IEditorPart part = editorRefs[i].getEditor(false);
 			if(part != null && part.getEditorInput() instanceof SyncInfoCompareInput && part instanceof IReusableEditor) {
 				if(! part.isDirty()) {	
 					return part;	
