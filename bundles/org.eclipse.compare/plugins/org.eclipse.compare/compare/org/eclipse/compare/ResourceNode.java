@@ -177,8 +177,21 @@ public class ResourceNode extends BufferedContent
 	 * @exception CoreException if the contents of this storage could not be accessed
 	 */
 	protected InputStream createStream() throws CoreException {
-		if (fResource instanceof IStorage)
-			return new BufferedInputStream(((IStorage)fResource).getContents());
+		if (fResource instanceof IStorage) {
+			InputStream is= null;
+			IStorage storage= (IStorage) fResource;
+			try {
+				is= storage.getContents();
+			} catch (CoreException e) {
+				if (e.getStatus().getCode() == IResourceStatus.OUT_OF_SYNC_LOCAL) {
+					fResource.refreshLocal(IResource.DEPTH_INFINITE, null);
+					is= storage.getContents();
+				} else
+					throw e;
+			}
+			if (is != null)
+				return new BufferedInputStream(is);
+		}
 		return null;
 	}
 			
