@@ -597,7 +597,7 @@ public class LaunchViewContextListener implements IPartListener2, IPageListener,
 		Set idsToEnable= new HashSet();
 		Iterator iter= activityIds.iterator();
 		while (iter.hasNext()) {
-			idsToEnable.add((String) iter.next());
+			idsToEnable.add(iter.next());
 		}
 		if (!idsToEnable.isEmpty()) {
 			idsToEnable.addAll(enabledIds);
