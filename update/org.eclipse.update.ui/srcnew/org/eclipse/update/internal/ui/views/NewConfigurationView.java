@@ -141,9 +141,12 @@ public class NewConfigurationView
 			if (parent instanceof ConfiguredSiteAdapter) {
 				IConfiguredSite site =
 					((ConfiguredSiteAdapter) parent).getConfiguredSite();
-				if (showUnconfFeaturesAction.isChecked())
+				if (site.isEnabled()) {
+					if (!showUnconfFeaturesAction.isChecked())
+						return site.getConfiguredFeatures().length > 0;
 					return site.getFeatureReferences().length > 0;
-				return site.getConfiguredFeatures().length > 0;
+				}
+				return (showUnconfFeaturesAction.isChecked());
 			}
 			return true;
 		}

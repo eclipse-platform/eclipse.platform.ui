@@ -63,6 +63,7 @@ public class SiteStateAction extends Action {
 			try {
 				SiteManager.getLocalSite().save();
 				UpdateUI.informRestartNeeded();
+				UpdateUI.getDefault().getUpdateModel().fireObjectChanged(site, "");
 			} catch (CoreException e) {
 				site.setEnabled(oldValue);
 				UpdateUI.logException(e);
