@@ -29,7 +29,7 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 	 */
 	public ConsolePreferencePage() {
 		super(GRID);
-		setDescription(DebugUIMessages.getString("ConsolePreferencePage.Console_text_color_settings._1")); //$NON-NLS-1$
+		setDescription(DebugUIMessages.getString("ConsolePreferencePage.Console_settings")); //$NON-NLS-1$
 		setPreferenceStore(DebugUIPlugin.getDefault().getPreferenceStore());
 	}
 
@@ -48,8 +48,8 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 	 */
 	public void createFieldEditors() {
 		
-		addField(new BooleanFieldEditor(CONSOLE_OPEN_ON_OUT, DebugUIMessages.getString("DebugPreferencePage.Show_&Console_View_when_there_is_program_output_3"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$		addField(new BooleanFieldEditor(CONSOLE_OPEN_ON_OUT, DebugUIMessages.getString("DebugPreferencePage.Show_&Console_View_when_there_is_program_output_3"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
-		addField(new BooleanFieldEditor(CONSOLE_OPEN_ON_ERR, DebugUIMessages.getString("DebugPreferencePage.Show_&Console_View_when_there_is_program_error_3"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
+		addField(new BooleanFieldEditor(CONSOLE_OPEN_ON_OUT, DebugUIMessages.getString("ConsolePreferencePage.Show_&Console_View_when_there_is_program_output_3"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
+		addField(new BooleanFieldEditor(CONSOLE_OPEN_ON_ERR, DebugUIMessages.getString("ConsolePreferencePage.Show_&Console_View_when_there_is_program_error_3"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
 
 		// Note: first String value is the key for the preference bundle and second the
 		// second String value is the label displayed in front of the editor.
@@ -73,7 +73,11 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 	}
 	
 	/**
-	 * Returns the a color based on the type.
+	 * Returns the a color based on the type of output.
+	 * Valid types:
+	 * <li>CONSOLE_SYS_OUT_RGB</li>
+	 * <li>CONSOLE_SYS_ERR_RGB</li>
+	 * <li>CONSOLE_SYS_IN_RGB</li>
 	 */
 	public static Color getPreferenceColor(String type) {
 		IPreferenceStore pstore= DebugUIPlugin.getDefault().getPreferenceStore();
