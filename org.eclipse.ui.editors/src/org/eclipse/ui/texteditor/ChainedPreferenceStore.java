@@ -109,7 +109,8 @@ public class ChainedPreferenceStore implements IPreferenceStore {
 	 */
 	public ChainedPreferenceStore(IPreferenceStore[] preferenceStores) {
 		Assert.isTrue(preferenceStores != null && preferenceStores.length > 0);
-		fPreferenceStores= preferenceStores;
+		fPreferenceStores= new IPreferenceStore[preferenceStores.length];
+		System.arraycopy(preferenceStores, 0, fPreferenceStores, 0, preferenceStores.length);
 		// Create listeners
 		for (int i= 0, length= fPreferenceStores.length; i < length; i++) {
 			PropertyChangeListener listener= new PropertyChangeListener(fPreferenceStores[i]);
@@ -496,7 +497,7 @@ public class ChainedPreferenceStore implements IPreferenceStore {
 	private Object getOtherValue(String property, IPreferenceStore store, Object thisValue) {
 
 		if (thisValue instanceof Boolean)
-			return new Boolean(store.getBoolean(property));
+			return store.getBoolean(property) ? Boolean.TRUE : Boolean.FALSE;
 		else if (thisValue instanceof Double)
 			return new Double(store.getDouble(property));
 		else if (thisValue instanceof Float)
