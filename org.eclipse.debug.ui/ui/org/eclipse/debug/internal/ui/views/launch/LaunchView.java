@@ -31,11 +31,9 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.debug.core.model.IThread;
-import org.eclipse.debug.core.sourcelookup.AbstractSourceLookupDirector;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
@@ -43,7 +41,6 @@ import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.InstructionPointerManager;
 import org.eclipse.debug.internal.ui.actions.AddToFavoritesAction;
 import org.eclipse.debug.internal.ui.actions.EditLaunchConfigurationAction;
-import org.eclipse.debug.internal.ui.sourcelookup.CommonSourceNotFoundEditorInput;
 import org.eclipse.debug.internal.ui.sourcelookup.EditSourceLookupPathAction;
 import org.eclipse.debug.internal.ui.sourcelookup.LookupSourceAction;
 import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandlerView;
@@ -52,18 +49,16 @@ import org.eclipse.debug.internal.ui.views.DebugViewDecoratingLabelProvider;
 import org.eclipse.debug.internal.ui.views.DebugViewInterimLabelProvider;
 import org.eclipse.debug.internal.ui.views.DebugViewLabelDecorator;
 import org.eclipse.debug.internal.ui.views.RemoteTreeViewer;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugEditorPresentation;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.ISourcePresentation;
+import org.eclipse.debug.ui.sourcelookup.ISourceLookupResult;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -75,21 +70,17 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener2;
-import org.eclipse.ui.IReusableEditor;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
@@ -103,8 +94,6 @@ import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.IShowInTarget;
 import org.eclipse.ui.part.IShowInTargetList;
 import org.eclipse.ui.part.ShowInContext;
-import org.eclipse.ui.texteditor.IDocumentProvider;
-import org.eclipse.ui.texteditor.ITextEditor;
 
 public class LaunchView extends AbstractDebugEventHandlerView implements ISelectionChangedListener, IPerspectiveListener2, IPageListener, IPropertyChangeListener, IResourceChangeListener, IShowInTarget, IShowInSource, IShowInTargetList, IPartListener2 {
 	
@@ -119,39 +108,14 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	private IStackFrame fStackFrame = null;
 	
 	/**
-	 * Cache of the editor input used to display source
+	 * Result of last source lookup
 	 */
-	private IEditorInput fEditorInput = null;
-	
-	/**
-	 * Cache of the editor id used to display source
-	 */
-	private String fEditorId = null;
-	
+	private ISourceLookupResult fResult = null;
+		
 	/**
 	 * Whether this view is in the active page of a perspective.
 	 */
 	private boolean fIsActive = true; 	
-	
-	/**
-	 * Editor to reuse
-	 */
-	private IEditorPart fEditor = null;
-	
-	/**
-	 * The source element corresponding to the selected stack frame
-	 */
-	private Object fSourceElement = null;
-	
-	/**
-	 * The restored editor index of the editor to re-use
-	 */
-	private int fEditorIndex = -1;
-	
-	/**
-	 * Whether to re-use editors
-	 */
-	private boolean fReuseEditor = DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_REUSE_EDITOR);
 	
 	/**
 	 * Resource delta visitor
@@ -397,16 +361,17 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		if (memento == null) {
 			return;
 		}
-		if (fReuseEditor) {
-			String index = memento.getString(IDebugUIConstants.PREF_REUSE_EDITOR);
-			if (index != null) {
-				try {
-					fEditorIndex = Integer.parseInt(index);
-				} catch (NumberFormatException e) {
-					DebugUIPlugin.log(e);
-				}
-			}
-		}
+		// TODO: persist editor to re-use
+//		if (fReuseEditor) {
+//			String index = memento.getString(IDebugUIConstants.PREF_REUSE_EDITOR);
+//			if (index != null) {
+//				try {
+//					fEditorIndex = Integer.parseInt(index);
+//				} catch (NumberFormatException e) {
+//					DebugUIPlugin.log(e);
+//				}
+//			}
+//		}
 	}
 		
 	/* (non-Javadoc)
@@ -451,9 +416,16 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 * Disposes of cached information
 	 */
 	protected void cleanup() {
-		setEditorId(null);
-		setEditorInput(null);
+		setSourceLookupResult(null);
 		setStackFrame(null);
+	}
+	
+	private void setSourceLookupResult(ISourceLookupResult result) {
+	    fResult = result;
+	}
+	
+	private ISourceLookupResult getSourceLookupResult() {
+	    return fResult;
 	}
 	
 	/**
@@ -596,51 +568,6 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		openEditorForStackFrame((IStackFrame) obj);
 	}
 	
-	/**
-	 * Translate to an editor input using the source presentation
-	 * provided by the source locator, or the default debug model
-     * presentation.
-     */
-	private void lookupEditorInput(IStackFrame stackFrame) {
-		setEditorId(null);
-		setEditorInput(null);
-		setSourceElement(null);
-		Object sourceElement= null;
-		ILaunch launch= stackFrame.getLaunch();
-		if (launch == null) {
-			return;
-		}
-		ISourceLocator locator= launch.getSourceLocator();
-		if (locator == null) {
-			return;
-		}
-		sourceElement= locator.getSourceElement(stackFrame);
-		if (sourceElement == null) {
-			if (locator instanceof AbstractSourceLookupDirector)
-				commonSourceNotFound(stackFrame);
-			else
-				sourceNotFound(stackFrame);
-			return;
-		}
-		ISourcePresentation presentation= null;
-		if (locator instanceof ISourcePresentation) {
-			presentation= (ISourcePresentation) locator;
-		} else {
-			presentation= getPresentation(stackFrame.getModelIdentifier());
-		}
-		IEditorInput editorInput= null;
-		String editorId= null;
-		if (presentation != null) {
-			editorInput= presentation.getEditorInput(sourceElement);
-		}
-		if (editorInput != null) {
-			editorId= presentation.getEditorId(editorInput, sourceElement);
-		}
-		setEditorInput(editorInput);
-		setEditorId(editorId);
-		setSourceElement(sourceElement);
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDebugView#getPresentation(java.lang.String)
 	 */
@@ -648,22 +575,6 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		return ((DelegatingModelPresentation)fEditorPresentation).getPresentation(id);
 	}
 	
-	/**
-	 * Sets editor id and input for the "source not found" editor.
-	 */
-	private void sourceNotFound(IStackFrame frame) {
-		setEditorInput(new SourceNotFoundEditorInput(frame));
-		setEditorId(IInternalDebugUIConstants.ID_SOURCE_NOT_FOUND_EDITOR);
-	}
-
-	/**
-	 * Sets editor id and input for the "common source not found" editor.
-	 */
-	private void commonSourceNotFound(IStackFrame frame) {
-		setEditorInput(new CommonSourceNotFoundEditorInput(frame));
-		setEditorId(IInternalDebugUIConstants.ID_COMMON_SOURCE_NOT_FOUND_EDITOR);
-	}
-
 	/**
 	 * Get the active window and open/bring to the front an editor on the stack
 	 * frame. Selection is based on the line number OR the char start and end.
@@ -679,180 +590,30 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 				return;
 			}
 
-			if (stackFrame.equals(getStackFrame())) {
-				if (getEditorInput() == null || getEditorId() == null) {
-					lookupEditorInput(stackFrame);
-				}
-			} else {
-				setStackFrame(stackFrame);
-				lookupEditorInput(stackFrame);
+			if (!stackFrame.equals(getStackFrame()) || (getEditorInput() == null || getEditorId() == null)) {
+				setSourceLookupResult(DebugUITools.lookupSource(stackFrame, null));
 			}
-			if (getEditorInput() == null || getEditorId() == null) {
-				return;
-			}
-			IEditorPart editor= openEditor();
-			if (editor == null) {
-				return;
-			}
-			// position and annotate editor for stack frame
-			if (fEditorPresentation.addAnnotations(editor, stackFrame)) {
-				Decoration decoration = new StandardDecoration(fEditorPresentation, editor, stackFrame.getThread());
-				DecorationManager.addDecoration(decoration);				
-			} else {
-				// perform standard positioning and annotations
-				ITextEditor textEditor = null;
-				if (editor instanceof ITextEditor) {					
-					textEditor = (ITextEditor)editor;
-				} else {
-					textEditor = (ITextEditor) editor.getAdapter(ITextEditor.class);
-				}
-				if (textEditor != null) {
-					positionEditor(textEditor, stackFrame);
-					InstructionPointerManager.getDefault().addAnnotation(textEditor, stackFrame);
-				}
-			}
+			setStackFrame(stackFrame);
+			DebugUITools.displaySource(getSourceLookupResult(), getSite().getPage());
 		} finally {
 			fShowingEditor= false;
 		}
 	}
 	
-	/**
-	 * Positions the text editor for the given stack frame
-	 */
-	private void positionEditor(ITextEditor editor, IStackFrame frame) {
-		try {
-			int charStart = frame.getCharStart();
-			if (charStart > 0) {
-				editor.selectAndReveal(charStart, 0);
-				return;
-			}
-			int lineNumber = frame.getLineNumber();
-			lineNumber--; // Document line numbers are 0-based. Debug line numbers are 1-based.
-			IRegion region= getLineInformation(editor, lineNumber);
-			if (region != null) {
-				editor.selectAndReveal(region.getOffset(), 0);
-			}
-		} catch (DebugException e) {
-		}
-	}
-	
-	/**
-	 * Returns the line information for the given line in the given editor
-	 */
-	private IRegion getLineInformation(ITextEditor editor, int lineNumber) {
-		IDocumentProvider provider= editor.getDocumentProvider();
-		IEditorInput input= editor.getEditorInput();
-		try {
-			provider.connect(input);
-		} catch (CoreException e) {
-			return null;
-		}
-		try {
-			IDocument document= provider.getDocument(input);
-			if (document != null)
-				return document.getLineInformation(lineNumber);
-		} catch (BadLocationException e) {
-		} finally {
-			provider.disconnect(input);
+	private IEditorInput getEditorInput() {
+		if (fResult != null) {
+			return fResult.getEditorInput();
 		}
 		return null;
 	}
-
-
-	/**
-	 * Opens the editor used to display the source for an element selected in
-	 * this view and returns the editor that was opened or <code>null</code> if
-	 * no editor could be opened.
-	 */
-	private IEditorPart openEditor() {
-		IWorkbenchWindow window= getSite().getWorkbenchWindow();
-		if (window == null) {
-			return null;
+	
+	private String getEditorId() {
+		if (fResult != null) {
+			return fResult.getEditorId();
 		}
-		IWorkbenchPage page= window.getActivePage();
-		if (page == null) {
-			return null;
-		}
-
-		if (fEditorIndex >= 0) {
-			// first restoration of editor re-use
-			IEditorReference[] refs = page.getEditorReferences();
-			if (fEditorIndex < refs.length) {
-				fEditor = refs[fEditorIndex].getEditor(false);
-			}
-			fEditorIndex = -1;
-		}
-
-		IEditorPart editor = null;
-		IEditorInput input= getEditorInput();
-		String id= getEditorId();
-		if (input == null || id == null) {
-			return null;
-		}
-		if (fReuseEditor) {
-			editor = page.getActiveEditor();
-			if (editor != null) {
-				// The active editor is the one we want to reuse
-				if (!editor.getEditorInput().equals(input)) {
-					editor = null;
-				}
-			}
-			if (editor == null) {
-				// Try to find the editor we want to reuse and activate it
-				IEditorReference[] refs = page.getEditorReferences();
-				for (int i = 0; i < refs.length; i++) {
-					IEditorPart refEditor= refs[i].getEditor(false);
-					if (refEditor != null && input.equals(refEditor.getEditorInput())) {
-						editor = refEditor;
-						page.bringToTop(editor);
-						break;
-					}
-				}
-			}
-			if (editor == null) {
-				if (fEditor == null || fEditor.isDirty() || page.isEditorPinned(fEditor)) {
-					editor = openEditor(page, input, id);
-					fEditor = editor;
-				} else if (fEditor instanceof IReusableEditor && fEditor.getSite().getId().equals(id)) {
-					((IReusableEditor)fEditor).setInput(input);
-					editor = fEditor;
-					page.bringToTop(editor);
-				} else {
-					editor = openEditor(page, input, id);
-					page.closeEditor(fEditor, false);
-					fEditor = editor;
-				}
-			}
-		} else {
-			// Open a new editor
-			editor = openEditor(page, input, id);
-		}
-		return editor;
+		return null;
 	}
 	
-	/**
-	 * Opens an editor in the workbench and returns the editor that was opened
-	 * or <code>null</code> if an error occurred while attempting to open the
-	 * editor.
-	 */
-	private IEditorPart openEditor(final IWorkbenchPage page, final IEditorInput input, final String id) {
-		final IEditorPart[] editor = new IEditorPart[] {null};
-		Runnable r = new Runnable() {
-			public void run() {
-				try {
-					editor[0] = page.openEditor(input, id, false);
-				} catch (PartInitException e) {
-					DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), 
-						DebugUIViewsMessages.getString("LaunchView.Error_1"),  //$NON-NLS-1$
-						DebugUIViewsMessages.getString("LaunchView.Exception_occurred_opening_editor_for_debugger._2"),  //$NON-NLS-1$
-						e);
-				}					
-			}
-		}; 
-		BusyIndicator.showWhile(DebugUIPlugin.getStandardDisplay(), r);
-		return editor[0];
-	}
-
 	/**
 	 * Deselects any source decorations associated with the given thread or
 	 * debug target.
@@ -1011,65 +772,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	protected void setStackFrame(IStackFrame frame) {
 		fStackFrame= frame;
 	}	
-	
-	/**
-	 * Sets the editor input that was resolved for the
-	 * source display.
-	 * 
-	 * @param editorInput editor input
-	 */
-	private void setEditorInput(IEditorInput editorInput) {
-		fEditorInput = editorInput;
-	}
-	
-	/**
-	 * Returns the editor input that was resolved for the
-	 * source display.
-	 * 
-	 * @return editor input
-	 */
-	protected IEditorInput getEditorInput() {
-		return fEditorInput;
-	}	
-	
-	/**
-	 * Sets the id of the editor opened when displaying
-	 * source.
-	 * 
-	 * @param editorId editor id
-	 */
-	private void setEditorId(String editorId) {
-		fEditorId = editorId;
-	}
-	
-	/**
-	 * Returns the id of the editor opened when displaying
-	 * source.
-	 * 
-	 * @return editor id
-	 */
-	protected String getEditorId() {
-		return fEditorId;
-	}	
-	
-	/**
-	 * Sets the current source element, possibly <code>null</code>
-	 * 
-	 * @param sourceElement
-	 */
-	private void setSourceElement(Object sourceElement) {
-		fSourceElement = sourceElement;
-	}
-	
-	/**
-	 * Returns the current source element, possibly <code>null</code>
-	 * 
-	 * @return Object
-	 */
-	protected Object getSourceElement() {
-		return fSourceElement;
-	}
-	
+		
 	/**
 	 * Sets whether this view is in the active page of a
 	 * perspective. Since a page can have more than one
@@ -1099,9 +802,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
 		String property = event.getProperty();
-		if (property.equals(IDebugUIConstants.PREF_REUSE_EDITOR)) {
-			fReuseEditor = DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_REUSE_EDITOR);
-		} else if (property.equals(IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES)) {
+		if (property.equals(IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES)) {
 			fContextListener.reloadAutoManagePerspectives(((IStructuredSelection) getViewer().getSelection()).getFirstElement());
 		} else if (property.equals(LaunchViewContextListener.PREF_OPENED_VIEWS) && fContextListener != null) {
 			fContextListener.loadOpenedViews();
@@ -1117,27 +818,28 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 */
 	public void saveState(IMemento memento) {
 		super.saveState(memento);
-		if (fReuseEditor && fEditor != null) {
-			IWorkbenchWindow dwindow= getSite().getWorkbenchWindow();
-			if (dwindow == null) {
-				return;
-			}	
-			IWorkbenchPage page= dwindow.getActivePage();
-			if (page == null) {
-				return;
-			}
-			IEditorReference[] refs = page.getEditorReferences();
-			int index = -1;
-			for (int i = 0; i < refs.length; i++) {
-				if (fEditor.equals(refs[i].getEditor(false))) {
-					index = i;
-					break;
-				}
-			}
-			if (index >= 0) {	
-				memento.putString(IDebugUIConstants.PREF_REUSE_EDITOR, Integer.toString(index));
-			}
-		}
+		// TODO: persist editor to re-use
+//		if (fReuseEditor && fEditor != null) {
+//			IWorkbenchWindow dwindow= getSite().getWorkbenchWindow();
+//			if (dwindow == null) {
+//				return;
+//			}	
+//			IWorkbenchPage page= dwindow.getActivePage();
+//			if (page == null) {
+//				return;
+//			}
+//			IEditorReference[] refs = page.getEditorReferences();
+//			int index = -1;
+//			for (int i = 0; i < refs.length; i++) {
+//				if (fEditor.equals(refs[i].getEditor(false))) {
+//					index = i;
+//					break;
+//				}
+//			}
+//			if (index >= 0) {	
+//				memento.putString(IDebugUIConstants.PREF_REUSE_EDITOR, Integer.toString(index));
+//			}
+//		}
 	}
 
 	/**
@@ -1235,10 +937,13 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		if (isActive()) { 
 			IStructuredSelection selection = (IStructuredSelection)getViewer().getSelection();
 			if (!selection.isEmpty()) { 
-				Object sourceElement = getSourceElement();
+				Object sourceElement = null;
+				if (fResult != null) {
+					sourceElement = fResult.getSourceElement();
+				}
 				if (sourceElement instanceof IAdaptable) {
 					if (((IAdaptable)sourceElement).getAdapter(IResource.class) != null) {
-						return new ShowInContext(null, new StructuredSelection(getSourceElement()));
+						return new ShowInContext(null, new StructuredSelection(sourceElement));
 					}
 				}
 			}
@@ -1257,10 +962,6 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 * @see org.eclipse.ui.IPartListener2#partClosed(org.eclipse.ui.IWorkbenchPartReference)
 	 */
 	public void partClosed(IWorkbenchPartReference partRef) {
-		IWorkbenchPart part = partRef.getPart(false);
-		if (part != null && part.equals(fEditor)) {
-			fEditor = null;
-		}
 	}
 
 	/* (non-Javadoc)

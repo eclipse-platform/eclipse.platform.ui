@@ -27,6 +27,7 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DefaultLabelProvider;
@@ -37,7 +38,9 @@ import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationMan
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPropertiesDialog;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
+import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupFacility;
 import org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceManager;
+import org.eclipse.debug.ui.sourcelookup.ISourceLookupResult;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -45,6 +48,7 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.console.IConsole;
 
 /**
@@ -631,9 +635,39 @@ public class DebugUITools {
 	 * @param mode
 	 * @return the launch group the given launch configuration belongs to, for
 	 * the specified mode, or <code>null</code> if none
+	 * @since 3.0
 	 */
 	public static ILaunchGroup getLaunchGroup(ILaunchConfiguration configuration, String mode) {
 		return DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(configuration, mode);
 	}
 	
+    /**
+     * Performs source lookup on the given artifact and returns the result.
+     * Optionally, a source locator may be specified.
+     *  
+     * @param artifact object for which source is to be resolved
+     * @param locator the source locator to use, or <code>null</code>. When <code>null</code>
+     *   a source locator is determined from the artifact, if possible. If the artifact
+     *   is a debug element, the source locator from its associated launch is used. 
+     * @return a source lookup result
+     * @since 3.1
+     */
+    public static ISourceLookupResult lookupSource(Object artifact, ISourceLocator locator) {	
+    	return SourceLookupFacility.getDefault().lookup(artifact, locator);
+    }
+	
+    /**
+     * Displays the given source lookup result in an editor in the given workbench
+     * page. Has no effect if the result has an unknown editor id or editor input.
+     * The editor is opened, positioned, and annotated.
+     * <p>
+     * Honors user preference for editors re-use.
+     * </p> 
+     * @param result source lookup result to display
+     * @param page the page to display the result in
+     * @since 3.1
+     */
+    public static void displaySource(ISourceLookupResult result, IWorkbenchPage page) {
+    	SourceLookupFacility.getDefault().display(result, page);
+    }
 }
