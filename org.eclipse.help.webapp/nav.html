@@ -114,9 +114,8 @@ function getFrameInput(nav)
 		break;
 		
 	case "links":
-	
 		if(args && args["contextId"])
-			return "links.html?contextId="+args["contextId"];
+			return "links.jsp?contextId="+args["contextId"];
 		else
 			return "about:blank";
 		break;
