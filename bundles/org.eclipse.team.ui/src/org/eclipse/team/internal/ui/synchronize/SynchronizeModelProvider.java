@@ -161,6 +161,7 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 		// Connect to the sync set which will register us as a listener and give us a reset event
 		// in a background thread
 		getSyncInfoSet().connect(this, monitor);
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
 		return getModelRoot();
 	}
 	
@@ -184,6 +185,7 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 	public void dispose() {
 		resourceMap.clear();
 		getSyncInfoSet().removeSyncSetChangedListener(this);
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
 	}
 	
 	/**
@@ -515,7 +517,6 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 			});
 		}
 	}
-	
 	
 	protected String[] getMarkerTypes() {
 		return new String[] {IMarker.PROBLEM};
