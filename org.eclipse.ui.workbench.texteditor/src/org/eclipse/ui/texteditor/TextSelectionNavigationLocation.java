@@ -30,7 +30,7 @@ import org.eclipse.ui.internal.IWorkbenchConstants;
 
 
 /**
- * 2.1 - WORK_IN_PROGRESS do not use.
+ * Represents the text selection context marked for the user in the navigation history.
  * 
  * @since 2.1
  */

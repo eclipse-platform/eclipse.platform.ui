@@ -36,23 +36,25 @@ import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 /**
  * A preference page to set the font used in the default text editor.
+ * <p>
  * This preference page uses the text editor's preference bundle and
  * uses the key <code>"PreferencePage.description"</code> to look up
  * the page description. In addition, it uses <code>"PreferencePage.fontEditor"</code>
  * for the editor description.
- * 
+ * </p>
  * @deprecated As of 2.1 fonts are managed by the workbench
  */
 public class TextEditorPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 	
 	/**
-	 * Indicates whether the preferences this page maniulates have been initialized.
+	 * Indicates whether the preferences that this page maniulates have been initialized.
+	 * 
 	 * @since 2.0
 	 */
 	private static boolean fgInitialized= false;
 	
 	/**
-	 * Create the preference page.
+	 * Creates and returns the text editor preference page.
 	 */
 	public TextEditorPreferencePage() {
 		super(GRID);
@@ -66,7 +68,7 @@ public class TextEditorPreferencePage extends FieldEditorPreferencePage implemen
 	}
 	
 	/*
-	 * @see IDialogPage#createControl(Composite)
+	 * @see IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
 		super.createControl(parent);
@@ -74,20 +76,21 @@ public class TextEditorPreferencePage extends FieldEditorPreferencePage implemen
 	}	
 	
 	/*
-	 * @see FieldEditorPreferencePage#createFieldEditors
+	 * @see FieldEditorPreferencePage#createFieldEditors()
 	 */
 	public void createFieldEditors() {
 		addField(new FontFieldEditor(JFaceResources.TEXT_FONT, TextEditorMessages.getString("PreferencePage.fontEditor"), getFieldEditorParent())); //$NON-NLS-1$
 	}
 
 	/*
-	 * @see IWorkbenchPreferencePage#init
+	 * @see IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
 	public void init(IWorkbench workbench) {
 	}
 	
 	/**
 	 * Initialzes the defaults for the given store.
+	 * 
 	 * @param store the preference store
 	 * @since 2.0
 	 */

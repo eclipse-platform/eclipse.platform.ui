@@ -198,6 +198,7 @@ public class TextEditor extends StatusTextEditor {
 
 	/**
 	 * Initializes the key binding scopes of this editor.
+	 * 
 	 * @since 2.1
 	 */
 	protected void initializeKeyBindingScopes() {
@@ -226,7 +227,7 @@ public class TextEditor extends StatusTextEditor {
 	}
 
 	/*
-	 * @see AbstractTextEditor#doSaveAs
+	 * @see AbstractTextEditor#doSaveAs()
 	 * @since 2.1
 	 */
 	public void doSaveAs() {
@@ -387,7 +388,7 @@ public class TextEditor extends StatusTextEditor {
 	}
 	
 	/*
-	 * @see IEditorPart#isSaveAsAllowed()
+	 * @see org.eclipse.ui.part.EditorPart#isSaveAsAllowed()
 	 */
 	public boolean isSaveAsAllowed() {
 		return true;
@@ -478,7 +479,7 @@ public class TextEditor extends StatusTextEditor {
 	}
 	
 	/*
-	 * @see IAdaptable#getAdapter(Class)
+	 * @see IAdaptable#getAdapter(java.lang.Class)
 	 * @since 2.0
 	 */
 	public Object getAdapter(Class adapter) {
@@ -508,7 +509,7 @@ public class TextEditor extends StatusTextEditor {
 	}
 	
 	/*
-	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#createSourceViewer(org.eclipse.swt.widgets.Composite, org.eclipse.jface.text.source.IVerticalRuler, int)
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#createSourceViewer(Composite, IVerticalRuler, int)
 	 * @since 2.1
 	 */
 	protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
@@ -533,6 +534,7 @@ public class TextEditor extends StatusTextEditor {
 
 	/**
 	 * Creates the annotation access for this editor.
+	 * 
 	 * @return the created annotation access
 	 * @since 2.1
 	 */
@@ -541,6 +543,8 @@ public class TextEditor extends StatusTextEditor {
 	}
 
 	/**
+	 * Configures the decoration support for this editor's the source viewer.
+	 * 
 	 * @since 2.1
 	 */
 	protected void configureSourceViewerDecorationSupport() {
@@ -566,6 +570,8 @@ public class TextEditor extends StatusTextEditor {
 	}
 
 	/**
+	 * Hides the overview ruler.
+	 * 
 	 * @since 2.1
 	 */
 	private void hideOverviewRuler() {
@@ -576,6 +582,8 @@ public class TextEditor extends StatusTextEditor {
 	}
 
 	/**
+	 * Tells whether the overview ruler is visible.
+	 * 
 	 * @since 2.1
 	 */
 	protected boolean isOverviewRulerVisible() {
@@ -585,6 +593,7 @@ public class TextEditor extends StatusTextEditor {
 
 	/**
 	 * Shows the line number ruler column.
+	 * 
 	 * @since 2.1
 	 */
 	private void showLineNumberRuler() {
@@ -599,6 +608,7 @@ public class TextEditor extends StatusTextEditor {
 	
 	/**
 	 * Hides the line number ruler column.
+	 * 
 	 * @since 2.1
 	 */
 	private void hideLineNumberRuler() {
@@ -613,8 +623,9 @@ public class TextEditor extends StatusTextEditor {
 	}
 	
 	/**
-	 * Return whether the line number ruler column should be 
+	 * Returns whether the line number ruler column should be 
 	 * visible according to the preference store settings.
+	 * 
 	 * @return <code>true</code> if the line numbers should be visible
 	 * @since 2.1
 	 */
@@ -625,6 +636,7 @@ public class TextEditor extends StatusTextEditor {
 
 	/**
 	 * Initializes the given line number ruler column from the preference store.
+	 * 
 	 * @param rulerColumn the ruler column to be initialized
 	 * @since 2.1
 	 */
@@ -662,6 +674,7 @@ public class TextEditor extends StatusTextEditor {
 	
 	/**
 	 * Creates a new line number ruler column that is appropriately initialized.
+	 * 
 	 * @since 2.1
 	 */
 	protected IVerticalRulerColumn createLineNumberRulerColumn() {
@@ -725,7 +738,7 @@ public class TextEditor extends StatusTextEditor {
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 * @since 2.1
 	 */

@@ -51,12 +51,15 @@ import org.eclipse.ui.texteditor.ResourceMarkerAnnotationModel;
 
 
 /**
- * Shareable document provider specialized for file resources (<code>IFile</code>).<p>
- * This class may be instantiated or be subclassed.
+ * Shareable document provider specialized for file resources (<code>IFile</code>).
+ * <p>
+ * This class may be instantiated or be subclassed.</p>
  */
 public class FileDocumentProvider extends StorageDocumentProvider {
 
 	/**
+	 * Qualified name for the encoding key.
+	 * 
 	 * @since 2.1
 	 */
 	private static final QualifiedName ENCODING_KEY = new QualifiedName("org.eclipse.ui.editors", "encoding"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -65,6 +68,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	 * Runnable encapsulating an element state change. This runnable ensures 
 	 * that a element change failed message is sent out to the element state listeners
 	 * in case an exception occurred.
+	 * 
 	 * @since 2.0
 	 */
 	protected class SafeChange implements Runnable {
@@ -74,6 +78,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		
 		/**
 		 * Creates a new safe runnable for the given input.
+		 * 
 		 * @param input the input
 		 */
 		public SafeChange(IFileEditorInput input) {
@@ -81,9 +86,11 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		}
 		
 		/** 
+		 * Execute the change.
 		 * Subclass responsibility.
+		 * 
 		 * @param input the input
-		 * @exception Exception in case of error
+		 * @exception an exception in case of error
 		 */
 		protected void execute(IFileEditorInput input) throws Exception {
 		}
@@ -112,16 +119,18 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	 */
 	protected class FileSynchronizer implements IResourceChangeListener, IResourceDeltaVisitor {
 		
-		/** The file editor input */
+		/** The file editor input. */
 		protected IFileEditorInput fFileEditorInput;
 		/**
 		 * A flag indicating whether this synchronizer is installed or not.
+		 * 
 		 * @since 2.1
 		 */
 		protected boolean fIsInstalled= false;
 		
 		/**
 		 * Creates a new file synchronizer. Is not yet installed on a resource.
+		 * 
 		 * @param fileEditorInput the editor input to be synchronized
 		 */
 		public FileSynchronizer(IFileEditorInput fileEditorInput) {
@@ -129,7 +138,8 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		};
 		
 		/**
-		 * Creates a new file synchronizer. Is not yet installed on a resource.
+		 * Creates a new file synchronizer which is not yet installed on a resource.
+		 * 
 		 * @param fileEditorInput the editor input to be synchronized
 		 * @deprecated use FileSynchronizer(IFileEditorInput)
 		 */
@@ -139,6 +149,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		
 		/**
 		 * Returns the file wrapped by the file editor input.
+		 * 
 		 * @return the file wrapped by the editor input associated with that synchronizer
 		 */
 		protected IFile getFile() {
@@ -175,7 +186,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		}
 		
 		/*
-		 * @see IResourceDeltaVisitor#visit(IResourceDelta)
+		 * @see IResourceDeltaVisitor#visit(org.eclipse.core.resources.IResourceDelta)
 		 */
 		public boolean visit(IResourceDelta delta) throws CoreException {
 						
@@ -252,13 +263,14 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	 */
 	protected class FileInfo extends StorageInfo {
 		
-		/** The file synchronizer */
+		/** The file synchronizer. */
 		public FileSynchronizer fFileSynchronizer;
-		/** The time stamp at which this provider changed the file */
+		/** The time stamp at which this provider changed the file. */
 		public long fModificationStamp= IResource.NULL_STAMP;
 		
 		/**
-		 * Creates a new file info.
+		 * Creates and returns a new file info.
+		 * 
 		 * @param document the document
 		 * @param model the annotation model
 		 * @param fileSynchronizer the file synchronizer
@@ -271,7 +283,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	
 	
 	/**
-	 * Creates a new document provider.
+	 * Creates and returns a new document provider.
 	 */
 	public FileDocumentProvider() {
 		super();
@@ -279,6 +291,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	
 	/**
 	 * Overrides <code>StorageDocumentProvider#setDocumentContent(IDocument, IEditorInput)</code>.
+	 * 
 	 * @deprecated use file encoding based version
 	 * @since 2.0
 	 */
@@ -687,10 +700,10 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	}
 	
 	/**
-	 * Refresh the given file resource.
+	 * Refreshes the given file resource.
 	 * 
 	 * @param file
-	 * @throws CoreException
+	 * @throws  a CoreException if the refresh fails
 	 * @since 2.1
 	 */
 	protected void refreshFile(IFile file) throws CoreException {
@@ -703,6 +716,9 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	// --------------- Encoding support ---------------
 	
 	/**
+	 * Returns the persited encoding for the given element.
+	 * 
+	 * @param element the element for which to get the persisted encoding
 	 * @since 2.1
 	 */
 	protected String getPersistedEncoding(Object element) {
@@ -720,6 +736,10 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	}
 
 	/**
+	 * Persists the given encoding for the given element.
+	 * 
+	 * @param element the element for which to store the persisted encoding
+	 * @param encoding the encoding
 	 * @since 2.1
 	 */
 	protected void persistEncoding(Object element, String encoding) throws CoreException {
