@@ -14,8 +14,7 @@ import java.util.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 
 /**
@@ -137,7 +136,7 @@ public class IPathVariableTest extends EclipseWorkspaceTest {
 	/**
 	 * Test IPathVariableManager#getPathVariableNames
 	 */
-	public void testGetPathVariableNames() {
+	public void testGetPathVariableNames() throws CoreException {
 		String[] names = null;
 
 		// should be empty to start
@@ -170,7 +169,7 @@ public class IPathVariableTest extends EclipseWorkspaceTest {
 	/**
 	 * Test IPathVariableManager#getValue and IPathVariableManager#setValue
 	 */
-	public void testGetSetValue() {
+	public void testGetSetValue() throws CoreException {
 		IPath pathOne = new Path("c:\\temp");
 		IPath pathTwo = new Path("/tmp/backup");
 		IPath pathOneEdit = new Path("d:/foobar");
@@ -199,23 +198,28 @@ public class IPathVariableTest extends EclipseWorkspaceTest {
 		// setting with value == null will remove
 		manager.setValue("one", null);
 		assertNull("4.0", manager.getValue("one"));
-		// setting with value == Path.EMPTY will remove
-		manager.setValue("two", Path.EMPTY);
-		assertNull("4.1", manager.getValue("two"));
 
 		// set values with bogus names 
 		try {
 			manager.setValue("ECLIPSE$HOME", Path.ROOT);
 			fail("5.0 Accepted invalid variable name in setValue()");
-		} catch (IllegalArgumentException iae) {
+		} catch (CoreException ce) {
 			// success
 		}
+		
+		// set value with relative path
+		try {
+			manager.setValue("one", new Path("foo/bar"));
+			fail("5.0 Accepted invalid variable value in setValue()");
+		} catch (CoreException ce) {
+			// success
+		}		
 
 	}
 	/**
 	 * Test IPathVariableManager#isDefined
 	 */
-	public void testIsDefined() {
+	public void testIsDefined() throws CoreException {
 		assertTrue("0.0", !manager.isDefined("one"));
 		manager.setValue("one", Path.ROOT);
 		assertTrue("0.1", manager.isDefined("one"));
@@ -225,7 +229,7 @@ public class IPathVariableTest extends EclipseWorkspaceTest {
 	/**
 	 * Test IPathVariableManager#resolvePath
 	 */
-	public void testResolvePath() {
+	public void testResolvePath() throws CoreException {
 		IPath pathOne = new Path("c:/temp/foo");
 		IPath pathTwo = new Path("/tmp/backup");
 
@@ -295,7 +299,7 @@ public class IPathVariableTest extends EclipseWorkspaceTest {
 	/**
 	 * Test IPathVariableManager#addChangeListener and IPathVariableManager#removeChangeListener
 	 */
-	public void testListeners() {
+	public void testListeners() throws CoreException {
 		PathVariableChangeVerifier listener = new PathVariableChangeVerifier();
 		manager.addChangeListener(listener);
 		IPath pathOne = new Path("/tmp/foobar");
@@ -345,8 +349,6 @@ public class IPathVariableTest extends EclipseWorkspaceTest {
 	}
 	/**
 	 * Ensure there are no path variables in the workspace.
-	 * 
-	 * @see junit.framework.TestCase#tearDown()
 	 */
 	protected void tearDown() throws Exception {
 		super.tearDown();
