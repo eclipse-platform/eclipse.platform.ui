@@ -20,7 +20,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
  */
 public interface IWorkingSet {
 	public static final String CHANGE_WORKING_SET_CONTENT_CHANGE = "workingSetContentChange";	//$NON-NLS-1$
-	public static final String CHANGE_WORKING_SET_NAME_CHANGE = "workingSetNAmeChange";	//$NON-NLS-1$	
+	public static final String CHANGE_WORKING_SET_NAME_CHANGE = "workingSetNameChange";	//$NON-NLS-1$	
 		
 	public void addPropertyChangeListener(IPropertyChangeListener listener);
 

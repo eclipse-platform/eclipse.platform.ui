@@ -54,6 +54,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	private DecoratorManager decoratorManager;
 	// Manager that maps markers to help context ids and resolutions
 	private MarkerHelpRegistry markerHelpRegistry;
+	private WorkingSetRegistry workingSetRegistry;
 	
 	// Global workbench ui plugin flag. Only workbench implementation is allowed to use this flag
 	// All other plugins, examples, or test cases must *not* use this flag.
@@ -307,8 +308,12 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	public static IWorkspace getPluginWorkspace() {
 		return ResourcesPlugin.getWorkspace();
 	}
-	public static IWorkingSetRegistry getWorkingSetRegistry() {
-		return WorkingSetRegistry.getInstance();
+	public IWorkingSetRegistry getWorkingSetRegistry() {
+		if (workingSetRegistry == null) {
+			workingSetRegistry = new WorkingSetRegistry();
+			workingSetRegistry.load();
+		}
+		return workingSetRegistry;
 	}
 	/*
 	 * Get the preference manager.

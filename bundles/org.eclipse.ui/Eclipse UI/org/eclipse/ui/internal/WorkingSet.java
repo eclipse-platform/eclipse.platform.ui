@@ -10,6 +10,7 @@ import java.util.Set;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.util.*;
 import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.IWorkingSetRegistry;
 import org.eclipse.ui.internal.model.WorkbenchWorkingSet;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
@@ -67,8 +68,14 @@ public class WorkingSet implements IWorkingSet, IAdaptable {
 	 */
 	public void setItems(IAdaptable[] elements) {
 		setItems(elements, false);
-		WorkingSetRegistry.getInstance().saveWorkingSets();
+		saveWorkingSets();
 		firePropertyChange(CHANGE_WORKING_SET_CONTENT_CHANGE, this, this);		
+	}
+	private void saveWorkingSets() {
+		IWorkingSetRegistry registry = WorkbenchPlugin.getDefault().getWorkingSetRegistry();
+		if (registry instanceof WorkingSetRegistry) {
+			((WorkingSetRegistry) registry).saveWorkingSets();
+		}
 	}
 
 	private void setItems(IAdaptable[] elements, boolean internal) {
@@ -78,8 +85,9 @@ public class WorkingSet implements IWorkingSet, IAdaptable {
 			Assert.isTrue(!items.contains(elements[i]), "elements must only contain each element once"); //$NON-NLS-1$
 			items.add(elements[i]);
 		}
-		if (!internal)
-			WorkingSetRegistry.getInstance().saveWorkingSets();
+		if (!internal) {
+			saveWorkingSets();
+		}
 	}
 	/*
 	 * Public for use by org.eclipse.ui.internal.dialogs.WorkingSetDialog.
@@ -87,7 +95,7 @@ public class WorkingSet implements IWorkingSet, IAdaptable {
 	public void setName(String name) {
 		Assert.isNotNull(name, "name must not be null"); //$NON-NLS-1$
 		this.name = name;
-		WorkingSetRegistry.getInstance().saveWorkingSets();
+		saveWorkingSets();		
 		firePropertyChange(CHANGE_WORKING_SET_NAME_CHANGE, this, this);
 	}
 	//--- Persistency -----------------------------------------------

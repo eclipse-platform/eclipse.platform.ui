@@ -16,10 +16,9 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.SelectionDialog;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.*;
 import org.eclipse.ui.model.WorkbenchViewerSorter;
 
 public class WorkingSetSelectionDialog extends SelectionDialog {
@@ -64,9 +63,7 @@ public class WorkingSetSelectionDialog extends SelectionDialog {
 		contentProvider = new ListContentProvider();
 		labelProvider = new WorkingSetLabelProvider();
 		setMessage(WorkbenchMessages.getString("WorkingSetSelectionDialog.message")); //$NON-NLS-1$
-
 	}
-
 	/**
 	 * Add the modify buttons to the dialog.
 	 */
@@ -84,22 +81,39 @@ public class WorkingSetSelectionDialog extends SelectionDialog {
 		newButton = createButton(buttonComposite, id++, WorkbenchMessages.getString("WorkingSetSelectionDialog.newButton.label"), false); //$NON-NLS-1$
 		newButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				WorkingSetDialog dlg = new WorkingSetDialog(getShell());
-				if (dlg.open() == dlg.OK) {
-					listViewer.add(dlg.getWorkingSet());
-					listViewer.setSelection(new StructuredSelection(dlg.getWorkingSet()), true);
-					WorkbenchPlugin.getWorkingSetRegistry().add(dlg.getWorkingSet());
+				WorkingSetRegistry registry = getWorkingSetRegistry();
+				if (registry != null) {
+					// TODO - determine which type of dialog to open
+					IWorkingSetDialog dlg = registry.getWorkingSetDialog(WorkingSet.class);
+
+					if (dlg != null) {
+						dlg.init(getShell());
+						if (dlg.open() == IWorkingSetDialog.OK) {
+							IWorkingSet workingSet = dlg.getWorkingSet();
+							listViewer.add(workingSet);
+							listViewer.setSelection(new StructuredSelection(workingSet), true);
+							registry.add(workingSet);
+						}
+					}
 				}
 			}
 		});
 
-		detailsButton = createButton(buttonComposite, id++, WorkbenchMessages.getString("WorkingSetSelectionDialog.detailsButton.label"), false);
-		//$NON-NLS-1$
+		detailsButton = createButton(buttonComposite, id++, WorkbenchMessages.getString("WorkingSetSelectionDialog.detailsButton.label"), false);//$NON-NLS-1$
 		detailsButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				WorkingSetDialog dlg = new WorkingSetDialog(getShell(), getWorkingSet());
-				if (dlg.open() == dlg.OK)
-					listViewer.update(dlg.getWorkingSet(), null);
+				WorkingSetRegistry registry = getWorkingSetRegistry();
+				if (registry != null) {
+					IWorkingSet workingSet = getWorkingSet();
+					IWorkingSetDialog dlg = registry.getWorkingSetDialog(workingSet.getClass());
+					
+					if (dlg != null) {
+						dlg.init(getShell(), workingSet);
+						if (dlg.open() == IWorkingSetDialog.OK) {
+							listViewer.update(dlg.getWorkingSet(), null);
+						}
+					}
+				}
 			}
 		});
 
@@ -173,12 +187,19 @@ public class WorkingSetSelectionDialog extends SelectionDialog {
 
 		return control;
 	}
+	private WorkingSetRegistry getWorkingSetRegistry() {
+		IWorkingSetRegistry registry = WorkbenchPlugin.getDefault().getWorkingSetRegistry();
 
+		if (registry instanceof WorkingSetRegistry) {
+			return (WorkingSetRegistry) registry;
+		}
+		return null;
+	}
 	/**
 	 * Initializes this dialog's viewer after it has been laid out.
 	 */
 	private void initializeViewer() {
-		listViewer.setInput(Arrays.asList(WorkbenchPlugin.getWorkingSetRegistry().getWorkingSets()));
+		listViewer.setInput(Arrays.asList(WorkbenchPlugin.getDefault().getWorkingSetRegistry().getWorkingSets()));
 	}
 
 	/*
@@ -211,10 +232,13 @@ public class WorkingSetSelectionDialog extends SelectionDialog {
 
 	private void removeSelectedWorkingSets() {
 		ISelection selection = listViewer.getSelection();
-		if (selection instanceof IStructuredSelection) {
+		WorkingSetRegistry registry = getWorkingSetRegistry();
+			
+		if (selection instanceof IStructuredSelection && registry != null) {
 			Iterator iter = ((IStructuredSelection) selection).iterator();
-			while (iter.hasNext())
-				WorkbenchPlugin.getWorkingSetRegistry().remove(((IWorkingSet) iter.next()));
+			while (iter.hasNext()) {
+				registry.remove(((IWorkingSet) iter.next()));
+			}
 			listViewer.remove(((IStructuredSelection) selection).toArray());
 		}
 	}

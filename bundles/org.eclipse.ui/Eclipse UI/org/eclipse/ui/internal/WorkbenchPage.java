@@ -953,6 +953,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 			if (container != null) {
 				try {
+					// TODO: default working set needs to update when container 
+					// members set changes (adding/removing resources)
 					inputWorkingSet = new WorkingSet("", container.members());
 				} catch (CoreException exception) {
 					MessageDialog.openError(

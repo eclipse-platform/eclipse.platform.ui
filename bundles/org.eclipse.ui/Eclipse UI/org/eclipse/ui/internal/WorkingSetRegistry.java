@@ -8,14 +8,14 @@ import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.util.*;
+import org.eclipse.ui.*;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetRegistry;
+import org.eclipse.ui.internal.registry.WorkingSetDescriptor;
+import org.eclipse.ui.internal.registry.WorkingSetRegistryReader;
 
 public class WorkingSetRegistry implements IWorkingSetRegistry, IResourceChangeListener, IResourceDeltaVisitor {
-	private static WorkingSetRegistry instance;
-
 	// XML tags
 	static String TAG_WORKINGSETS = "workingsets"; //$NON-NLS-1$
 	static String TAG_WORKINGSET = "workingset"; //$NON-NLS-1$
@@ -31,14 +31,9 @@ public class WorkingSetRegistry implements IWorkingSetRegistry, IResourceChangeL
 
 	private SortedSet workingSets = new TreeSet(new WorkingSetComparator());
 	private ListenerList propertyChangeListeners = new ListenerList();
+	private HashMap workingSetDescriptors = new HashMap();
 
-	public static WorkingSetRegistry getInstance() {
-		if (instance == null) {
-			instance = new WorkingSetRegistry();
-		}
-		return instance;
-	}
-	private WorkingSetRegistry() {
+	public WorkingSetRegistry() {
 		WorkbenchPlugin.getPluginWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
 	}
 	/**
@@ -55,9 +50,12 @@ public class WorkingSetRegistry implements IWorkingSetRegistry, IResourceChangeL
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
 		propertyChangeListeners.add(listener);
 	}
-
+	public void addWorkingSetDescriptor(WorkingSetDescriptor descriptor) {
+		Assert.isTrue(!workingSetDescriptors.containsValue(descriptor), "working set descriptor already registered"); //$NON-NLS-1$
+		workingSetDescriptors.put(descriptor.getWorkingSetClassName(), descriptor);
+	}
 	public boolean equals(Object o) {
-		return (o instanceof IWorkingSetRegistry) && ((IWorkingSetRegistry) o).getWorkingSets().equals(getWorkingSets());
+		return (o instanceof WorkingSetRegistry) && ((WorkingSetRegistry) o).getWorkingSets().equals(getWorkingSets());
 	}
 	private void firePropertyChange(String changeId, Object oldValue, Object newValue) {
 		Object[] listeners = propertyChangeListeners.getListeners();
@@ -92,10 +90,21 @@ public class WorkingSetRegistry implements IWorkingSetRegistry, IResourceChangeL
 		}
 		return null;
 	}
+	public IWorkingSetDialog getWorkingSetDialog(Class workingSetClass) {
+		WorkingSetDescriptor descriptor = (WorkingSetDescriptor) workingSetDescriptors.get(workingSetClass.getName());
+		
+		if (descriptor != null) {
+			return descriptor.createWorkingSetDialog();
+		}
+		return null;
+	}
 	public int hashCode() {
 		return workingSets.hashCode();
 	}
-
+	public void load() {
+		WorkingSetRegistryReader reader = new WorkingSetRegistryReader();
+		reader.readWorkingSets(Platform.getPluginRegistry(), this);
+	}	
 	/**
 	 * Returns all working sets for the workspace.
 	 *

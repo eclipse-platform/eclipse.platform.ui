@@ -41,8 +41,15 @@ public static boolean allResourcesAreOfType(IStructuredSelection selection, int 
 	Iterator resources = selection.iterator();
 	while (resources.hasNext()) {
 		Object next = resources.next();
-		if (!(next instanceof IResource))
-			return false;
+		if (!(next instanceof IResource)) {
+			if (!(next instanceof IAdaptable)) {
+				return false;
+			}
+			next = ((IAdaptable) next).getAdapter(IResource.class);
+			if (next == null) {
+				return false;
+			}
+		}			
 		if (!resourceIsType((IResource)next, resourceMask))
 			return false;
 	}
