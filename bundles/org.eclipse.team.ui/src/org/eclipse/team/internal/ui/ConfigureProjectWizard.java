@@ -100,10 +100,6 @@ public class ConfigureProjectWizard extends Wizard implements IConfigurationWiza
 		if (wizard != null) {
 			return wizard.performFinish();
 		}
-		IConfigurationWizard selectedWizard = mainPage.getSelectedWizard();
-		if (selectedWizard != null) {
-			return selectedWizard.performFinish();
-		}
 		return true;
 	}
 	/**
