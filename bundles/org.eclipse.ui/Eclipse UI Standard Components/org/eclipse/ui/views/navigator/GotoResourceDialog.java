@@ -11,6 +11,8 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.core.resources.*;
 import org.eclipse.ui.dialogs.*;
+
+import java.text.Collator;
 import java.util.*;
 import org.eclipse.ui.model.*;
 import org.eclipse.ui.help.*;
@@ -27,6 +29,13 @@ import org.eclipse.ui.help.*;
 
 	String patternString;
 	IResource selection;
+	private static Collator collator;
+	{
+		collator = Collator.getInstance();
+		//Set the strength to secondary so that the TERTIARY
+		//case is ignored
+		collator.setStrength(Collator.SECONDARY);
+	}
 	
 	StringMatcher stringMatcher;
 	
@@ -40,7 +49,7 @@ import org.eclipse.ui.help.*;
 		String label;
 		ArrayList resources = new ArrayList(1);
 		public int compareTo(Object o) {
-			return label.compareToIgnoreCase(((ResourceDescriptor)o).label);
+			return collator.compare(label,((ResourceDescriptor)o).label);
 		}
 	}
 	
