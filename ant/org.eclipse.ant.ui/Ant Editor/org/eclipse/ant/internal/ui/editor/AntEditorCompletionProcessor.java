@@ -123,7 +123,6 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 	protected final static int PROPOSAL_MODE_TASK_PROPOSAL_CLOSING = 5;
 	protected final static int PROPOSAL_MODE_ATTRIBUTE_VALUE_PROPOSAL = 6;
 	protected final static int PROPOSAL_MODE_NESTED_ELEMENT_PROPOSAL = 7;
-	protected final static int PROPOSAL_MODE_MACRODEF_PROPOSAL = 8;
 	
 	private final static ICompletionProposal[] NO_PROPOSALS= new ICompletionProposal[0];
 	
@@ -648,7 +647,6 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 	}
     
     private void addMacroDefElementProposals(String taskName, String prefix, List proposals) {
-    	currentProposalMode= PROPOSAL_MODE_ATTRIBUTE_PROPOSAL;
 		AntDefiningTaskNode node= antModel.getDefininingTaskNode(taskName);
 		Object task= node.getRealTask();
 		if (!(task instanceof MacroDef)) {
@@ -915,7 +913,7 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 				Class taskClass= getTaskClass(parentName);
 	        	if (taskClass != null) {
 	        		if (taskClass == MacroInstance.class) {
-	        			currentProposalMode= PROPOSAL_MODE_MACRODEF_PROPOSAL;
+	        			currentProposalMode= PROPOSAL_MODE_ATTRIBUTE_PROPOSAL;
 	        			addMacroDefElementProposals(parentName, prefix, proposals);
 	        		} else {
 	        			currentProposalMode= PROPOSAL_MODE_NESTED_ELEMENT_PROPOSAL;
@@ -1573,7 +1571,6 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
             case PROPOSAL_MODE_TASK_PROPOSAL_CLOSING:
             case PROPOSAL_MODE_ATTRIBUTE_VALUE_PROPOSAL:
             case PROPOSAL_MODE_PROPERTY_PROPOSAL:
-            case PROPOSAL_MODE_MACRODEF_PROPOSAL:
             case PROPOSAL_MODE_NESTED_ELEMENT_PROPOSAL:
             default :
             	return null;
