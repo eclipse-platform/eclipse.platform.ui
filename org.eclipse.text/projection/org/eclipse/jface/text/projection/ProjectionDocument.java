@@ -703,6 +703,7 @@ public class ProjectionDocument extends AbstractDocument {
 	protected void updateDocumentStructures(DocumentEvent event) {
 		super.updateDocumentStructures(event);
 		ensureWellFormedSegmentation();
+		fMapping.projectionChanged();
 	}
 	
 	private void ensureWellFormedSegmentation() {

@@ -42,7 +42,11 @@ public class ProjectionMapping implements IDocumentInformationMapping , IDocumen
 	private IDocument fSlaveDocument;
 	/** The position category to manage the projection segments inside the slave document. */
 	private String fSegmentsCategory;
-
+	/** Cached segments */
+	private Position[] fCachedSegments;
+	/** Cached fragments */
+	private Position[] fCachedFragments;
+	
 
 	/**
 	 * Creates a new mapping between the given parent document and the given projection document.
@@ -59,22 +63,34 @@ public class ProjectionMapping implements IDocumentInformationMapping , IDocumen
 		fSegmentsCategory= segmentsCategory;
 	}
 	
+	/**
+	 * Notifies this projection mapping that there was a projection change.
+	 */
+	public void projectionChanged() {
+		fCachedSegments= null;
+		fCachedFragments= null;
+	}
+	
 	private Position[] getSegments() {
-		try {
-			return fSlaveDocument.getPositions(fSegmentsCategory);
-		} catch (BadPositionCategoryException e) {
+		if (fCachedSegments == null) {
+			try {
+				fCachedSegments= fSlaveDocument.getPositions(fSegmentsCategory);
+			} catch (BadPositionCategoryException e) {
+				return new Position[0];
+			}
 		}
-		
-		return new Position[0];
+		return fCachedSegments;
 	}
 	
 	private Position[] getFragments() {
-		try {
-			return fMasterDocument.getPositions(fFragmentsCategory);
-		} catch (BadPositionCategoryException e) {
+		if (fCachedFragments == null) {
+			try {
+				fCachedFragments= fMasterDocument.getPositions(fFragmentsCategory);
+			} catch (BadPositionCategoryException e) {
+				return new Position[0];
+			}
 		}
-		
-		return new Position[0];
+		return fCachedFragments;
 	}
 	
 	private int findSegmentIndex(int offset) throws BadLocationException {
