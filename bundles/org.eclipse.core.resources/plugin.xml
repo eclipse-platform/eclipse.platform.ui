@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin
-  name="Eclipse Core Resource Management"
+  name="Core Resource Management"
   id="org.eclipse.core.resources"
   version="0.9"
   provider-name="Object Technology International, Inc."
