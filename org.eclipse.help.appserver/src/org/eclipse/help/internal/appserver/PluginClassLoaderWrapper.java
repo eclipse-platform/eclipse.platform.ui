@@ -64,26 +64,10 @@ public class PluginClassLoaderWrapper extends URLClassLoader {
 				urls.add(pluginURLs[i]);
 			}
 		}
-		urls.addAll(getPrereqClasspath(pd));
-		return urls;
-	}
-
-	private List getPrereqClasspath(IPluginDescriptor plugin) {// TODO remove compatibility requirement
-		ArrayList urls = new ArrayList();
-		IPluginPrerequisite[] prereqs = plugin.getPluginPrerequisites();
+		IPluginPrerequisite[] prereqs = pd.getPluginPrerequisites();
 		for (int i = 0; i < prereqs.length; i++) {
 			String id = prereqs[i].getUniqueIdentifier();
-			IPluginDescriptor pd = // TODO remove compatibility requirement
-				Platform.getPluginRegistry().getPluginDescriptor(id);
-
-			ClassLoader loader = pd.getPluginClassLoader();
-			URL[] prereqURLs = null;
-			if (loader instanceof URLClassLoader)
-				prereqURLs = ((URLClassLoader) loader).getURLs();
-			for (int j = 0; j < prereqURLs.length; j++)
-				// Note: this check is for bugs 6750 and 6751
-				if ((new File(prereqURLs[j].getFile())).exists())
-					urls.add(prereqURLs[j]);
+			urls.addAll(getPluginClasspath(id));
 		}
 		return urls;
 	}
