@@ -17,7 +17,7 @@ import org.eclipse.swt.widgets.*;
 /**
  * A simple input dialog for soliciting an input string from the user.
  * <p>
- * This concete dialog class can be instantiated as is, or further subclassed as
+ * This concrete dialog class can be instantiated as is, or further subclassed as
  * required.
  * </p>
  */
