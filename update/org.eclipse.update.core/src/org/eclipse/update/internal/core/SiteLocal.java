@@ -970,7 +970,9 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 					if (featureID.getIdentifier().equals(compareID.getIdentifier())) {
 						if (!featureID.getVersion().equals(compareID.getVersion())) {
 							// there is a plugin with a different version on the path
-							Object[] values = new Object[]{feature[k].getLabel(),featureID.getVersion(),compareID};
+							VersionedIdentifier versionID = feature[k].getVersionedIdentifier();
+							String featureVer = (versionID==null)?"":versionID.getVersion().toString();							
+							Object[] values = new Object[]{feature[k].getLabel(),featureVer,compareID};
 							String msg = Policy.bind("SiteLocal.TwoVersionSamePlugin",values);
 							UpdateManagerPlugin.warn("Found 2 versions of the same plugin on the path:" + featureID.toString() + " & " + compareID.toString());
 							multi.add(createStatus(IStatus.ERROR,IFeature.STATUS_AMBIGUOUS,msg,null));
