@@ -111,7 +111,7 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 	 * Return the CVSDecorator instance that is currently enabled.
 	 * Return null if we don't have a decorator or its not enabled.
 	 */ 
-	private static CVSDecorator getActiveCVSDecorator() {
+	/* package */ static CVSDecorator getActiveCVSDecorator() {
 		IDecoratorManager manager = CVSUIPlugin.getPlugin().getWorkbench().getDecoratorManager();
 		if (manager.getEnabled(CVSUIPlugin.DECORATOR_ID))
 			return (CVSDecorator) manager.getLabelDecorator(CVSUIPlugin.DECORATOR_ID);
@@ -269,13 +269,14 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 					}
 					
 					if (resource.getType() == IResource.PROJECT) {
-						// If there is no CVS nature, don't continue
+						// deconfigure if appropriate (see CVSDecorator#projectDeconfigured(IProject))
+						// do this even if there is a provider (this is required since old projects may still have a cvs nature)
+						if (deconfiguredProjects.contains(resource)) {
+							deconfiguredProjects.remove(resource);
+							refresh((IProject)resource);
+						}
+						// If there is no CVS provider, don't continue
 						if (RepositoryProvider.getProvider((IProject)resource, CVSProviderPlugin.getTypeId()) == null) {
-							// deconfigure if appropriate (see CVSDecorator#projectDeconfigured(IProject))
-							if (deconfiguredProjects.contains(resource)) {
-								refresh((IProject)resource);
-								deconfiguredProjects.remove(resource);
-							}
 							return false;
 						}
 					}
@@ -512,4 +513,14 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 		}
 		return false;
 	}
+	/**
+	 * This method is used to indicate whether a particular resource is a member of
+	 * a project that is in the process of being deconfigured. Such resources should not
+	 * be decorated.
+	 */
+	/* package */ boolean isMemberDeconfiguredProject(IResource resource) {
+		if (deconfiguredProjects.isEmpty()) return false;
+		return deconfiguredProjects.contains(resource.getProject());
+	}
+
 }

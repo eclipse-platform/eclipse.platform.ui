@@ -106,7 +106,9 @@ public class CVSDecorationRunnable implements Runnable {
 			
 			CVSDecoration decoration;
 			try {
-				decoration = decorate(resource);
+				decoration = CVSDecorator.getActiveCVSDecorator().isMemberDeconfiguredProject(resource)
+					? null
+					: decorate(resource);
 			} catch (Exception e) {
 				// If there was a problem, log it and set the decoration to null
 				CVSUIPlugin.log(new Status(IStatus.ERROR, CVSUIPlugin.ID, 0, Policy.bind("simpleInternal"), e));
