@@ -635,6 +635,6 @@ public void updateLaunchInfoPlugin(IPluginEntryDescriptor descriptor, LaunchInfo
  */
 public void updateLaunchInfoProduct(IProductDescriptor descriptor, LaunchInfo launchInfo) {
 
-	launchInfo.setConfiguration(new LaunchInfo.VersionedIdentifier(descriptor.getUniqueIdentifier(),descriptor.getVersionStr()));
+	launchInfo.setConfiguration(new LaunchInfo.VersionedIdentifier(descriptor.getUniqueIdentifier(),descriptor.getVersionStr()), descriptor.getApplication());
 }
 }
