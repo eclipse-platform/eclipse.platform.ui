@@ -7,7 +7,6 @@ package org.eclipse.debug.internal.ui.views;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -27,7 +26,6 @@ import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 
@@ -298,7 +296,6 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 		Runnable r= new Runnable() {
 			public void run() {
 				if (isAvailable()) {		
-					removeTerminatedLaunches(newLaunch);
 					insert(newLaunch);
 					if (newLaunch.hasChildren()) {
 						getLaunchView().autoExpand(newLaunch, false, true);
@@ -310,19 +307,6 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 		getView().syncExec(r);
 	}
 	
-	protected void removeTerminatedLaunches(ILaunch newLaunch) {
-		if (DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_AUTO_REMOVE_OLD_LAUNCHES)) {
-			ILaunchManager lManager= DebugPlugin.getDefault().getLaunchManager();
-			Object[] launches= lManager.getLaunches();
-			for (int i= 0; i < launches.length; i++) {
-				ILaunch launch= (ILaunch)launches[i];
-				if (launch != newLaunch && launch.isTerminated()) {
-					lManager.removeLaunch(launch);
-				}
-			}
-		}
-	}
-
 	/**
 	 * De-registers this event handler from the debug model.
 	 */

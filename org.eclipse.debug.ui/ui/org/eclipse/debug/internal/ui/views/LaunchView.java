@@ -318,10 +318,6 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 			setActive(true);
 			updateObjects();
 			showMarkerForCurrentSelection();
-			ILaunch[] launches= DebugPlugin.getDefault().getLaunchManager().getLaunches();
-			if (launches.length > 0) {
-				((LaunchViewEventHandler)getEventHandler()).removeTerminatedLaunches(launches[launches.length - 1]);
-			}
 		}
 	}
 	
