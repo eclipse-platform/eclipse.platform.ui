@@ -796,10 +796,11 @@ public class ViewTabCursorManager
 		
 		ICellModifier cellModifier = null;
 		
-		if (fTableViewer != null)
+		if (fTableViewer == null)
 		{
-			cellModifier = fTableViewer.getCellModifier();
+			return;
 		}
+		cellModifier = fTableViewer.getCellModifier();
 		
 		TableItem tableItem = fTable.getItem(fRow);
 		
