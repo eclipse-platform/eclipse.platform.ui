@@ -35,9 +35,11 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
+import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.ICVSResourceVisitor;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
@@ -223,6 +225,8 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 								location = getLocation();
 								isKnown = CVSProviderPlugin.getPlugin().isKnownRepository(location.getLocation());
 								location.validateConnection(monitor);
+								// Purge any CVS folders that may exists in subfolders
+								purgeAnyCVSFolders();
 								String moduleName = getModuleName();
 								ICVSRemoteFolder folder = location.getRemoteFolder(moduleName, null);
 								if (folder.exists(new SubProgressMonitor(monitor, 50))) {
@@ -246,6 +250,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 							if (!isKnown) {
 								CVSProviderPlugin.getPlugin().addRepository(location);
 							}
+							
 							// Create the remote module for the project
 							CVSWorkspaceRoot.createModule(location, project, getModuleName(), new SubProgressMonitor(monitor, 50));
 						}
@@ -439,5 +444,30 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 			CVSUIPlugin.log(CVSException.wrapException(ex).getStatus());
 		}
 		return null;
+	}
+
+	/**
+	 * Method findCommonRootInSubfolders.
+	 * @return String
+	 */
+	private void purgeAnyCVSFolders() {
+		try {
+			ICVSFolder folder = CVSWorkspaceRoot.getCVSFolderFor(project);
+			folder.accept(new ICVSResourceVisitor() {
+				public void visitFile(ICVSFile file) throws CVSException {
+					// nothing to do for files
+				}
+				public void visitFolder(ICVSFolder folder) throws CVSException {
+					if (folder.isCVSFolder()) {
+						// for now, just unmanage
+						folder.unmanage(null);
+					}
+					folder.acceptChildren(this);
+				}
+			});
+		} catch (CVSException e) {
+			// log the exception and return null
+			CVSUIPlugin.log(e);
+		}
 	}
 }

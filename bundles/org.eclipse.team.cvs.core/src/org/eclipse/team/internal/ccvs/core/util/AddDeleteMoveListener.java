@@ -108,9 +108,6 @@ public class AddDeleteMoveListener implements IResourceDeltaVisitor, IResourceCh
 		try {
 			ICVSFolder mFolder = CVSWorkspaceRoot.getCVSFolderFor((IContainer)resource);
 			if (mFolder.isCVSFolder() && ! mFolder.isManaged() && mFolder.getIResource().getParent().getType() != IResource.ROOT) {
-				// Determine whether the new folder can be managed by the parent
-				ICVSFolder projectFolder = CVSWorkspaceRoot.getCVSFolderFor(resource.getProject());
-				String root = projectFolder.getFolderSyncInfo().getRoot();
 				mFolder.unmanage(null);
 				return true;
 			}
@@ -119,7 +116,8 @@ public class AddDeleteMoveListener implements IResourceDeltaVisitor, IResourceCh
 		}
 		return false;
 	}
-
+	
+	
 	/*
 	 * Mark deleted managed files as outgoing deletions
 	 */

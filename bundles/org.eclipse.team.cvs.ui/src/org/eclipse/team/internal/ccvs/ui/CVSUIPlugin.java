@@ -385,8 +385,6 @@ public class CVSUIPlugin extends AbstractUIPlugin implements IPropertyChangeList
 		}
 		
 		Console.startup();
-		
-		ManageFolderDialog.register();
 	}
 	
 	/**
