@@ -113,16 +113,24 @@ public class ConfigureProjectWizard extends Wizard implements IConfigurationWiza
 	 * @see Wizard#performFinish
 	 */
 	public boolean performFinish() {
+		// There is only one wizard with at least one page
 		if (wizard != null) {
 			return wizard.performFinish();
 		}
-// Code added for 13722 which causes CVS share project wizard to be finished twice
-//		IConfigurationWizard wizard = mainPage.getSelectedWizard();
-//		if (wizard != null) {
-//			if (wizard.canFinish()) {
-//				return wizard.performFinish();
-//			}
-//		}
+		// If we are on the first page and the selected wizard has no pages then
+		// allow it to finish.
+		if (getContainer().getCurrentPage() == mainPage) {
+			IConfigurationWizard noPageWizard = mainPage.getSelectedWizard();
+			if (noPageWizard != null) {
+				if (noPageWizard.canFinish()) 
+				{
+					return noPageWizard.performFinish();
+				}
+			}
+		}
+		// If the wizard has pages and there are several
+		// wizards registered then the registered wizard
+		// will call it's own performFinish().		
 		return true;
 	}
 	/**
