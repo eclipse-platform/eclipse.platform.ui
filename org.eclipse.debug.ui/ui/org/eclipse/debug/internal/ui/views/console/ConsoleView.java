@@ -346,7 +346,9 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 		if (fCurrentDocument != null) {
 			fCurrentDocument.removeDocumentListener(this);
 		}
-		fFollowLinkAction.dispose();
+		if (fFollowLinkAction != null) {
+			fFollowLinkAction.dispose();
+		}
 		super.dispose();
 	}
 	
