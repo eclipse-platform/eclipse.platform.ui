@@ -17,10 +17,24 @@ import org.eclipse.ui.internal.cheatsheets.*;
 
 public class ErrorPage extends Page {
 
+	private String message;
+	
+	public ErrorPage() {
+	}
+
+	public ErrorPage(String errorMessage) {
+		this.message = errorMessage;
+	}
+
 	protected void createInfoArea(Composite parent) {
 		super.createInfoArea(parent);
 
-		String errorString = CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_PAGE_MESSAGE); 
+		String errorString = null;
+		if(message == null) {
+			errorString = CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_PAGE_MESSAGE);
+		} else {
+			errorString = message;
+		}
 		Label errorLabel = toolkit.createLabel(form.getBody(), errorString, SWT.WRAP);
 		errorLabel.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 	}
