@@ -13,6 +13,7 @@
 
 package org.eclipse.ui.internal.ide.dialogs;
 
+import java.io.IOException;
 import java.net.URL;
 import java.text.Collator;
 import java.util.Arrays;
@@ -39,9 +40,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
-//@issue org.eclipse.ui.internal.AboutInfo - illegal reference to generic workbench internals
-import org.eclipse.ui.internal.AboutInfo;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.AboutInfo;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IHelpContextIds;
@@ -290,7 +290,7 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 			if (infoURL == null && IDEWorkbenchPlugin.DEBUG) {
 				// only report ini problems if the -debug command line argument is used
 				IDEWorkbenchPlugin.log("Problem reading plugin info for: " + desc.getLabel()); //$NON-NLS-1$
-			} 
+			}
 			return infoURL != null;
 	}
 
@@ -325,6 +325,15 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 	 */
 	private void openMoreInfo(IPluginDescriptor desc) {
 		URL infoURL = desc.find(new Path(PLUGININFO));
+
+        if (infoURL != null) {
+            try {
+                infoURL = Platform.asLocalURL(infoURL);
+            } catch (IOException e) {
+                // do nothing
+            }
+        }
+
 		if (infoURL == null) {
 			MessageDialog.openError(
 				getShell(), 
