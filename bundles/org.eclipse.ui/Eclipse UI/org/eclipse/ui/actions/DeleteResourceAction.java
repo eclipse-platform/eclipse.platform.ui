@@ -95,11 +95,13 @@ public class DeleteResourceAction extends SelectionListenerAction {
 				text1 = WorkbenchMessages.getString("DeleteResourceAction.deleteContentsN");  //$NON-NLS-1$
 			}
 			radio1.setText(text1);
+			radio1.setFont(parent.getFont());
 
 			radio2 = new Button(composite, SWT.RADIO);
 			radio2.addSelectionListener(selectionListener);
 			String text2 = WorkbenchMessages.getString("DeleteResourceAction.doNotDeleteContents");  //$NON-NLS-1$
 			radio2.setText(text2);
+			radio2.setFont(parent.getFont());
 			
 			// set initial state
 			radio1.setSelection(deleteContent);

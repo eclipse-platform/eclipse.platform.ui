@@ -111,6 +111,7 @@ private void toggleDetailsArea() {
 protected void createDropDownText(Composite parent) {
 	// create the list
 	text = new Text(parent, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+	text.setFont(parent.getFont());
 
 	// print the stacktrace in the text field
 	try {
