@@ -21,6 +21,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.LazyModelPresentation;
+import org.eclipse.debug.internal.ui.VariablesViewModelPresentation;
 import org.eclipse.debug.internal.ui.actions.ChangeVariableValueAction;
 import org.eclipse.debug.internal.ui.actions.ShowDetailPaneAction;
 import org.eclipse.debug.internal.ui.actions.ShowTypesAction;
@@ -141,7 +142,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	 * The model presentation used as the label provider for the tree viewer,
 	 * and also as the detail information provider for the detail pane.
 	 */
-	private DelegatingModelPresentation fModelPresentation;
+	private VariablesViewModelPresentation fModelPresentation;
 	
 	/**
 	 * The UI construct that provides a sliding sash between the variables tree
@@ -289,7 +290,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	 */
 	public Viewer createViewer(Composite parent) {
 		
-		fModelPresentation = new DelegatingModelPresentation();
+		fModelPresentation = new VariablesViewModelPresentation();
 		DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
 		// create the sash form that will contain the tree viewer & text viewer
 		fSashForm = new SashForm(parent, SWT.NONE);
@@ -722,7 +723,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	
 	protected IDebugModelPresentation getModelPresentation() {
 		if (fModelPresentation == null) {
-			fModelPresentation = new DelegatingModelPresentation();
+			fModelPresentation = new VariablesViewModelPresentation();
 		}
 		return fModelPresentation;
 	}
