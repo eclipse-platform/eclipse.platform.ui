@@ -43,7 +43,7 @@ function mouseout(img)
 	<table width="100%" height="39" style="background-color:#D4D0C8;" border="0" cellspacing="0" cellpadding="0">
 	  <tr>
 		 <td width="100%">
-            <input type="text" class="txtInput" name="keyword" maxlength=256 style="margin-left:3px;">
+            <input type="text" class="txtInput" name="keyword" value="<%= request.getParameter("keyword")!=null?request.getParameter("keyword"):""%>" maxlength=256 style="margin-left:3px;">
           </td>
           <td>  
             <input value='<%=WebappResources.getString("Go", null)%>' type="submit" alt='<%=WebappResources.getString("Search", null)%>' src="images/go.gif" class="normal" onmouseover="mouseover(this)" onmouseout="mouseout(this)" >
