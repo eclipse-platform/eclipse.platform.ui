@@ -57,27 +57,24 @@ public EclipseProject() {
  * @exception BuildException thrown if a problem occurs during data type creation
  */
 public Object createDataType(String typeName) throws BuildException {
-	// look in the predeclared types.  If found, do the super behavior.
-	// If its not found, look in the types defined in the plugin extension point.
-	Class c = (Class) getDataTypeDefinitions().get(typeName);
-	if (c != null && c != EclipseProject.class)
-		return internalCreateDataType(typeName);
+	// First look in the types defined in the plugin extension points. If not
+	// found, do the super behaviour.
 	// check to see if the ant plugin is available.  If we are running from
 	// the command line (i.e., no platform) it will not be.
 	if (AntPlugin.getPlugin() == null)
-		return null;
+		return internalCreateDataType(typeName);
 	Map types = AntPlugin.getPlugin().getTypeExtensions();
 	if (types == null)
-		return null;
+		return internalCreateDataType(typeName);
 	IConfigurationElement declaration = (IConfigurationElement) types.get(typeName);
 	if (declaration == null)
-		return null;
+		return internalCreateDataType(typeName);
 	String className = declaration.getAttribute(AntPlugin.CLASS);
 	try {
 		Class typeClass = declaration.getDeclaringExtension().getDeclaringPluginDescriptor().getPluginClassLoader().loadClass(className);
 		addDataTypeDefinition(typeName, typeClass);
 	} catch (ClassNotFoundException e) {
-		return null;
+		return internalCreateDataType(typeName);
 	}
 	return internalCreateDataType(typeName);
 }
@@ -89,27 +86,24 @@ public Object createDataType(String typeName) throws BuildException {
  * @exception BuildException thrown if a problem occurs during task creation
  */
 public Task createTask(String taskName) throws BuildException {
-	// look in the predeclared tasks.  If found, do the super behavior.
-	// If its not found, look in the tasks defined in the plugin extension point.
-	Class c = (Class) getTaskDefinitions().get(taskName);
-	if (c != null)
-		return super.createTask(taskName);
+	// First try to find if the task is defined in a plug-in. If not, call
+	// the super method.
 	// check to see if the ant plugin is available.  If we are running from
 	// the command line (i.e., no platform) it will not be.
 	if (AntPlugin.getPlugin() == null)
-		return null;
+		return super.createTask(taskName);
 	Map tasks = AntPlugin.getPlugin().getTaskExtensions();
 	if (tasks == null)
-		return null;
+		return super.createTask(taskName);
 	IConfigurationElement declaration = (IConfigurationElement) tasks.get(taskName);
 	if (declaration == null)
-		return null;
+		return super.createTask(taskName);
 	String className = declaration.getAttribute(AntPlugin.CLASS);
 	try {
 		Class taskClass = declaration.getDeclaringExtension().getDeclaringPluginDescriptor().getPluginClassLoader().loadClass(className);
 		addTaskDefinition(taskName, taskClass);
 	} catch (ClassNotFoundException e) {
-		return null;
+		return super.createTask(taskName);
 	}
 	return super.createTask(taskName);
 }
