@@ -437,7 +437,10 @@ public class Preferences {
 	 * The file that is written can be read later using the importPreferences method.
 	 * </p>
 	 * @param file The absolute filesystem path of the file to export preferences to.
-	 * @exception CoreException if there are problems writing the file.
+	 * @exception CoreException if this method fails. Reasons include:
+	 * <ul>
+	 * <li> The file could not be written.</li>
+	 * </ul>
 	 * @see #importPreferences
 	 * @see #validatePreferenceVersions
 	 */
@@ -458,7 +461,11 @@ public class Preferences {
 	 * The file must have been written by the exportPreferences method.
 	 * </p>
 	 * @param file The absolute filesystem path of the file to import preferences from.
-	 * @exception CoreException if there are problems reading the file.
+	 * @exception CoreException if this method fails. Reasons include:
+	 * <ul>
+	 * <li> The file does not exist.</li>
+	 * <li> The file could not be read.</li>
+	 * </ul>
 	 * @see #exportPreferences
 	 * @see #validatePreferenceVersions
 	 */
