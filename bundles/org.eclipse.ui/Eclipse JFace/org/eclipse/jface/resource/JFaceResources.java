@@ -75,6 +75,8 @@ public class JFaceResources {
 	/**
 	 * The symbolic font name for the terminal font 
 	 * (value <code>"org.eclipse.jface.terminalfont"</code>).
+	 * This value is subject to change and is not to be 
+	 * considered API yet.
 	 */
 	public static final String TERMINAL_FONT = "org.eclipse.jface.terminalfont";//$NON-NLS-1$
 	
