@@ -68,4 +68,12 @@ public class AntClasspathEntry implements IAntClasspathEntry {
 	public int hashCode() {
 		return entryString.hashCode();
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return getLabel();
+	}
+
 }
