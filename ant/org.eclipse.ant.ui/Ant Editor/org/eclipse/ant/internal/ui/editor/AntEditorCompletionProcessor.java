@@ -60,6 +60,7 @@ import org.eclipse.ant.internal.ui.editor.model.AntTargetNode;
 import org.eclipse.ant.internal.ui.editor.model.AntTaskNode;
 import org.eclipse.ant.internal.ui.editor.outline.AntModel;
 import org.eclipse.ant.internal.ui.editor.templates.AntTemplateAccess;
+import org.eclipse.ant.internal.ui.editor.templates.AntTemplateProposal;
 import org.eclipse.ant.internal.ui.editor.templates.BuildFileContextType;
 import org.eclipse.ant.internal.ui.editor.templates.TaskContextType;
 import org.eclipse.ant.internal.ui.model.AntUIImages;
@@ -70,12 +71,14 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 import org.eclipse.jface.text.templates.Template;
 import org.eclipse.jface.text.templates.TemplateCompletionProcessor;
+import org.eclipse.jface.text.templates.TemplateContext;
 import org.eclipse.jface.text.templates.TemplateContextType;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IEditorPart;
@@ -1495,4 +1498,11 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 //		}
 //		return null;
 //	}
+    
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.templates.TemplateCompletionProcessor#createProposal(org.eclipse.jface.text.templates.Template, org.eclipse.jface.text.templates.TemplateContext, org.eclipse.jface.text.Region, int)
+	 */
+	protected ICompletionProposal createProposal(Template template,TemplateContext context, Region region, int relevance) {
+		return new AntTemplateProposal(template, context, region, getImage(template), relevance);
+	}
 }
