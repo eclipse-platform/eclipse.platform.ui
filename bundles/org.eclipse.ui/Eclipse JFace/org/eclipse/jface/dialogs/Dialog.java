@@ -361,7 +361,11 @@ protected Button createButton(Composite parent, int id, String label, boolean de
  * lays out a button bar and calls the <code>createButtonsForButtonBar</code>
  * framework method to populate it. Subclasses may override.
  * </p>
- *
+ * <p>
+ * The returned control's layout data must be an instance of 
+ * <code>GridData</code>.
+ * </p>
+ * 
  * @param parent the parent composite to contain the button bar
  * @return the button bar control
  */
@@ -443,10 +447,22 @@ protected Control createContents(Composite parent) {
  * <p>
  * The <code>Dialog</code> implementation of this framework method
  * creates and returns a new <code>Composite</code> with
- * standard margins and spacing. Subclasses should override.
+ * standard margins and spacing. 
  * </p>
+ * <p>
+ * The returned control's layout data must be an instance of 
+ * <code>GridData</code>.
+ * </p>
+ * <p>
+ * Subclasses must override this method but may call <code>super</code>
+ * as in the following example:
+ * </p>	
+ * <pre>
+ * 	Composite composite = (Composite)super.createDialogArea(parent);
+ * 	//add controls to composite as necessary
+ * </pre>
  *
- * @param the parent composite to contain the dialog area
+ * @param parent the parent composite to contain the dialog area
  * @return the dialog area control
  */
 protected Control createDialogArea(Composite parent) {
