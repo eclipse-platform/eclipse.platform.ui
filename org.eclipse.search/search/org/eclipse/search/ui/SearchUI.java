@@ -1,5 +1,5 @@
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 package org.eclipse.search.ui;
@@ -153,6 +153,20 @@ public final class SearchUI {
 	 */
 	public static boolean arePotentialMatchesIgnored() {
 		return SearchPreferencePage.arePotentialMatchesIgnored();
+	}
+
+	/**
+	 * Returns the ID of the default perspective.
+	 * <p>
+	 * The perspective with this ID will be used to show the Search view.
+	 * If no default perspective is set then the Search view will
+	 * appear in the current perspective.
+	 * </p>
+	 * @return the ID of the default perspective <code>null</code> if no default perspective is set
+	 * @since 2.1
+	 */
+	public static String getDefaultPerspectiveId() {
+		return SearchPreferencePage.getDefaultPerspectiveId();
 	}
 
 	/**

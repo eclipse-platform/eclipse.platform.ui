@@ -1,5 +1,5 @@
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 package org.eclipse.search.internal.ui;
@@ -34,6 +34,8 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import org.eclipse.search.ui.IContextMenuConstants;
@@ -164,6 +166,19 @@ public class SearchPlugin extends AbstractUIPlugin {
 	 * @return <code>true</code> if the search result view could be activated
 	 */
 	public static boolean activateSearchResultView() {
+
+		String defaultPerspectiveId= SearchUI.getDefaultPerspectiveId();
+		if (defaultPerspectiveId != null) {
+			IWorkbenchWindow window= window= getActiveWorkbenchWindow();
+			if (window != null && window.getShell() != null && !window.getShell().isDisposed()) {
+				try {
+					PlatformUI.getWorkbench().showPerspective(defaultPerspectiveId, window);
+				} catch (WorkbenchException ex) {
+					// show view in current perspective
+				}
+			}
+		}
+
 		try {
 			return (getActivePage().showView(SearchUI.SEARCH_RESULT_VIEW_ID) != null);
 		} catch (PartInitException ex) {
