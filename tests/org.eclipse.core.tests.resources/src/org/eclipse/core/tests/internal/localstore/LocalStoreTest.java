@@ -11,7 +11,6 @@
 package org.eclipse.core.tests.internal.localstore;
 
 import java.io.*;
-
 import org.eclipse.core.internal.localstore.FileSystemResourceManager;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;

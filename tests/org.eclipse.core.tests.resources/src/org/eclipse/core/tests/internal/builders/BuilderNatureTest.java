@@ -12,7 +12,6 @@ package org.eclipse.core.tests.internal.builders;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;

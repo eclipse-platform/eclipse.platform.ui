@@ -11,8 +11,8 @@
 package org.eclipse.core.tests.internal.indexing;
 
 import java.util.*;
-import org.eclipse.core.internal.indexing.*;
 import junit.framework.*;
+import org.eclipse.core.internal.indexing.*;
 
 public class BasicFieldTest extends TestCase {
 

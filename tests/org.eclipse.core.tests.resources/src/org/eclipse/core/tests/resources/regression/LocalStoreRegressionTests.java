@@ -12,14 +12,16 @@ package org.eclipse.core.tests.resources.regression;
 
 /**
  */
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.internal.localstore.*;
-import org.eclipse.core.internal.resources.Workspace;
-import org.eclipse.core.tests.internal.localstore.LocalStoreTest;
 import java.io.*;
-import java.util.*;
-import junit.framework.*;
+import java.util.Date;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.eclipse.core.internal.localstore.SafeChunkyInputStream;
+import org.eclipse.core.internal.localstore.SafeChunkyOutputStream;
+import org.eclipse.core.internal.resources.Workspace;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.tests.internal.localstore.LocalStoreTest;
 
 //
 

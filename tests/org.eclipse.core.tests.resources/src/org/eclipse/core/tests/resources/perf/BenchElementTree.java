@@ -11,7 +11,6 @@
 package org.eclipse.core.tests.resources.perf;
 
 import java.util.Vector;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.watson.DefaultElementComparator;

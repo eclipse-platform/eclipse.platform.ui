@@ -11,7 +11,6 @@
 package org.eclipse.core.tests.resources.regression;
 
 import java.io.ByteArrayInputStream;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;

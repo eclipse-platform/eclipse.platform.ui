@@ -11,8 +11,8 @@
 package org.eclipse.core.tests.internal.builders;
 
 import java.io.ByteArrayInputStream;
-
-import junit.framework.*;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 

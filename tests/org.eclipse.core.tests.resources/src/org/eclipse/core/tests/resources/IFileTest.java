@@ -13,7 +13,6 @@ package org.eclipse.core.tests.resources;
 import java.io.*;
 import java.util.Enumeration;
 import java.util.Vector;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.boot.BootLoader;

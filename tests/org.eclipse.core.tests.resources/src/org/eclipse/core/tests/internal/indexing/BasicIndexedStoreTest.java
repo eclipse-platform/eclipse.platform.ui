@@ -12,7 +12,6 @@ package org.eclipse.core.tests.internal.indexing;
 
 import java.io.StringWriter;
 import java.util.*;
-
 import junit.framework.*;
 import org.eclipse.core.internal.indexing.*;
 

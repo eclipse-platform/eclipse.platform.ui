@@ -12,7 +12,6 @@ package org.eclipse.core.tests.internal.builders;
 
 import java.io.FileOutputStream;
 import java.util.Map;
-
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 

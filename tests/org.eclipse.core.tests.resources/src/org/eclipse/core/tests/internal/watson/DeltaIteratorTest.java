@@ -11,7 +11,6 @@
 package org.eclipse.core.tests.internal.watson;
 
 import java.util.Hashtable;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.watson.*;

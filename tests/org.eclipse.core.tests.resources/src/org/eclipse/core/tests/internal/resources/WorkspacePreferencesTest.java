@@ -11,9 +11,7 @@
 package org.eclipse.core.tests.internal.resources;
 
 import java.util.*;
-
 import junit.framework.*;
-
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;

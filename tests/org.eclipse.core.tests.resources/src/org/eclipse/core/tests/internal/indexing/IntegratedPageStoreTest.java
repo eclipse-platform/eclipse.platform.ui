@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.indexing;
 
-import junit.framework.*;
+import junit.framework.Test;
 
 public class IntegratedPageStoreTest {
 

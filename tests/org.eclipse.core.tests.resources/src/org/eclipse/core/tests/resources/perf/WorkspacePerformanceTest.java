@@ -12,7 +12,6 @@ package org.eclipse.core.tests.resources.perf;
 
 import java.io.ByteArrayInputStream;
 import java.util.Random;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;

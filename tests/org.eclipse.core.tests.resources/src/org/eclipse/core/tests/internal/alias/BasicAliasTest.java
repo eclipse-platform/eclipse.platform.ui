@@ -12,7 +12,6 @@ package org.eclipse.core.tests.internal.alias;
 
 import java.util.Arrays;
 import java.util.Comparator;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.resources.Workspace;

@@ -11,7 +11,6 @@
 package org.eclipse.core.tests.internal.utils;
 
 import java.util.Enumeration;
-
 import junit.framework.*;
 import org.eclipse.core.internal.utils.Queue;
 

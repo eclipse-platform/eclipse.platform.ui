@@ -11,8 +11,6 @@
 package org.eclipse.core.tests.internal.utils;
 
 import java.util.*;
-import java.util.Collection;
-import java.util.Set;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.utils.ObjectMap;

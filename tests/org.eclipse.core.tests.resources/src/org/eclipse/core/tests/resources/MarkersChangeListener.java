@@ -12,7 +12,6 @@ package org.eclipse.core.tests.resources;
 
 import java.util.Hashtable;
 import java.util.Vector;
-
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;

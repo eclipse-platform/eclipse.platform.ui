@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.usecase;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * This operation does not change any resource. It only has one

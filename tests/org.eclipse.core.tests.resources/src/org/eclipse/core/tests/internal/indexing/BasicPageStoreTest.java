@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.indexing;
 
-import org.eclipse.core.internal.indexing.*;
-import java.util.*;
+import java.util.Random;
 import junit.framework.*;
+import org.eclipse.core.internal.indexing.PageStore;
 
 public class BasicPageStoreTest extends TestCase {
 

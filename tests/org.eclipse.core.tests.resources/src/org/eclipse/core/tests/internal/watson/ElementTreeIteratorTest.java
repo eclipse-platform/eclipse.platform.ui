@@ -12,7 +12,6 @@ package org.eclipse.core.tests.internal.watson;
 
 import java.util.ArrayList;
 import java.util.Stack;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.watson.*;

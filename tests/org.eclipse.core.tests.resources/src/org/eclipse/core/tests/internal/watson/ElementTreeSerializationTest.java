@@ -11,7 +11,6 @@
 package org.eclipse.core.tests.internal.watson;
 
 import java.io.*;
-
 import org.eclipse.core.internal.watson.*;
 import org.eclipse.core.runtime.IPath;
 

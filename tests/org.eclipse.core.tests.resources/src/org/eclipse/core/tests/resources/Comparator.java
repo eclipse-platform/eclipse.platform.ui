@@ -11,7 +11,6 @@
 package org.eclipse.core.tests.resources;
 
 import java.util.*;
-
 import org.eclipse.core.resources.ICommand;
 
 /**

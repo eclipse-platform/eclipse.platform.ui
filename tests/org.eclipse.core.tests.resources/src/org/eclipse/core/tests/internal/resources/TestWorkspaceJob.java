@@ -10,8 +10,6 @@
 package org.eclipse.core.tests.internal.resources;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.*;
 
 /**

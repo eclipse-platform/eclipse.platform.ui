@@ -13,7 +13,6 @@ package org.eclipse.core.tests.resources;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;

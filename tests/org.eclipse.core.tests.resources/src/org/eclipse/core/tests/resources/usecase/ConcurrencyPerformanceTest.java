@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.usecase;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.tests.harness.CorePerformanceTest;
-import junit.framework.*;
 
 public class ConcurrencyPerformanceTest extends CorePerformanceTest {
 	public ConcurrencyPerformanceTest() {

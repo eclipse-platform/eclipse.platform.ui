@@ -12,7 +12,6 @@ package org.eclipse.core.tests.resources.session;
 
 import java.util.ArrayList;
 import java.util.Map;
-
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.tests.harness.WorkspaceSessionTest;

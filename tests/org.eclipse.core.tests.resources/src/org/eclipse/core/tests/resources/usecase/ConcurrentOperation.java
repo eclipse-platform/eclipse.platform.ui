@@ -10,9 +10,10 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.usecase;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.resources.*;
 import org.eclipse.core.internal.resources.ResourceStatus;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.runtime.*;
 
 /**
  * A class to help testing use cases that access the workspace concurrently but in

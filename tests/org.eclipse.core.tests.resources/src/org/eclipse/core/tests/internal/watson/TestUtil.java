@@ -12,7 +12,6 @@ package org.eclipse.core.tests.internal.watson;
 
 import java.util.Random;
 import java.util.Vector;
-
 import org.eclipse.core.internal.watson.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;

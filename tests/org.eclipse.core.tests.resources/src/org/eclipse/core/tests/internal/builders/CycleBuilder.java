@@ -13,7 +13,6 @@ package org.eclipse.core.tests.internal.builders;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Map;
-
 import junit.framework.Assert;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;

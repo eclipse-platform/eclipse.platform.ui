@@ -10,10 +10,11 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.indexing;
 
-import java.util.*;
-import java.io.*;
-import org.eclipse.core.internal.indexing.*;
+import java.io.StringWriter;
+import java.util.Vector;
 import junit.framework.*;
+import org.eclipse.core.internal.indexing.ObjectAddress;
+import org.eclipse.core.internal.indexing.ObjectStore;
 
 public class BasicObjectStoreTest extends TestCase {
 

@@ -12,7 +12,6 @@ package org.eclipse.core.tests.resources.usecase;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;

@@ -12,14 +12,13 @@ package org.eclipse.core.tests.resources.regression;
 
 import java.io.IOException;
 import java.io.InputStream;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 
 /**

@@ -11,7 +11,6 @@
 package org.eclipse.core.tests.internal.resources;
 
 import java.util.HashMap;
-
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.tests.internal.builders.SortBuilder;

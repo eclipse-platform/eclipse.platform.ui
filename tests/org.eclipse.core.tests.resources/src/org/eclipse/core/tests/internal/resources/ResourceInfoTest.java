@@ -15,7 +15,6 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
 import org.eclipse.core.internal.resources.ResourceInfo;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;

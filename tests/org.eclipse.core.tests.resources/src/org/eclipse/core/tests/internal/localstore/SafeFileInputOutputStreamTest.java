@@ -11,7 +11,6 @@
 package org.eclipse.core.tests.internal.localstore;
 
 import java.io.*;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.localstore.*;

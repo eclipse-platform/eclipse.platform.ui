@@ -12,10 +12,8 @@
 package org.eclipse.core.tests.resources;
 
 import java.io.ByteArrayInputStream;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;

@@ -14,7 +14,6 @@ import java.io.*;
 import java.util.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
 import org.eclipse.core.internal.indexing.IndexCursor;
 import org.eclipse.core.internal.indexing.IndexedStoreException;
 import org.eclipse.core.internal.localstore.*;

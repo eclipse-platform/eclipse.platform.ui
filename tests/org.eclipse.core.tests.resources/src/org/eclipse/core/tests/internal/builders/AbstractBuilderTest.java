@@ -11,11 +11,8 @@
 package org.eclipse.core.tests.internal.builders;
 
 import java.util.Map;
-
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 
 /**

@@ -10,7 +10,6 @@
 package org.eclipse.core.tests.resources.session;
 
 import java.util.Properties;
-
 import org.eclipse.core.internal.resources.TestingSupport;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;

@@ -13,7 +13,6 @@ package org.eclipse.core.tests.internal.localstore;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;

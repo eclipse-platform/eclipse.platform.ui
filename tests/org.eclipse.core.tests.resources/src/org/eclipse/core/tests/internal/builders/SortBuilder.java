@@ -13,7 +13,6 @@ package org.eclipse.core.tests.internal.builders;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Map;
-
 import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -228,7 +227,7 @@ public class SortBuilder extends TestBuilder {
 	/**
 	 * Performs a full build by discarding the results of the previous
 	 * build and sorting all files in the unsorted folder.
-	 * @exception BuildException if the build can't proceed
+	 * @exception CoreException if the build can't proceed
 	 */
 	private void fullBuild() throws CoreException {
 		try {
