@@ -14,6 +14,8 @@ import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.core.sync.RemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSProvider;
+import org.eclipse.team.internal.ccvs.core.Client;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 
@@ -159,58 +161,119 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 	}
 	
 	/*
-	 * Update the sync info of the local resource in response to the remote changes being merged with the local.
-	 * 
-	 * The purpose of this method is to update the local sync info so the local resource can be committed.
-	 * However, it also clears the sync info for conflicting deletions.
-	 * 
-	 * It is only valid to invoke this message on sync elements that have conflicts.
-	 * We shold never have conflicts on folders.
+	 * Update the sync info of the local resource in such a way that the local changes can be committed.
 	 */
-	public void merged(IProgressMonitor monitor) throws TeamException {
+	public void makeOutgoing(IProgressMonitor monitor) throws TeamException {
 		
-		// XXX should we add asserts for conflict and !folder?
+		int syncKind = getSyncKind(GRANULARITY_TIMESTAMP, monitor);
+		boolean conflict = (syncKind & DIRECTION_MASK) == CONFLICTING;
+		boolean incoming = (syncKind & DIRECTION_MASK) == INCOMING;
+		boolean outgoing = (syncKind & DIRECTION_MASK) == OUTGOING;
+
+		ICVSResource local = localSync.getCVSResource();
+		RemoteResource remote = (RemoteResource)getRemote();
+		ResourceSyncInfo info = local.getSyncInfo();
+		String revision = null;
 		
-		boolean syncChanged = false;
-		try {
-			ICVSResource local = localSync.getCVSResource();
-			
-			// If both the local and remote exists, we need to merge the remote sync info into the local
-			if (local.exists()) {
-				ResourceSyncInfo info;
-				String revision;
-				if (hasRemote()) {
-					if (hasBase()) {
-						info = local.getSyncInfo();
-						revision = ((RemoteResource)getRemote()).getSyncInfo().getRevision();
-					} else {
-						// We need to fetch the contents of the remote to get all the relevant information (timestamp, permissions)
-						getRemote().getContents(Policy.monitorFor(monitor));
-						info = ((RemoteResource)getRemote()).getSyncInfo();
-						revision = info.getRevision();
-					}
-				} else if (hasBase()) {
-					info = local.getSyncInfo();
-					revision = ResourceSyncInfo.ADDED_REVISION;
-				} else {
-					// There's a local, no base and no remote. This is invalid
-					throw new CVSException(Policy.bind("CVSRemoteSyncElement.invalidMergedRequest"));
-				} 
-				info = new ResourceSyncInfo(info.getName(), revision, info.getTimeStamp(), info.getKeywordMode(), local.getParent().getFolderSyncInfo().getTag(), info.getPermissions());
-				local.setSyncInfo(info);
-				syncChanged = true;
+		if (outgoing) {
+			// We have an outgoing change that's not a conflict.
+			// Make sure the entry is right for additions and deletions
+			if (remote == null) {
+				// We have an add. Make sure there is an entry for the add
+				if (info != null) {
+					// The sync info is alright
+					return;
+				}
+				Assert.isTrue(local.exists());
+				// XXX We need to create the proper sync info
+				info =  new ResourceSyncInfo(local.getName(), ResourceSyncInfo.ADDED_REVISION, "dummy timestamp", CVSProvider.isText(local.getName())?"":"-kb", local.getParent().getFolderSyncInfo().getTag(), null);
+				revision = info.getRevision();
 			} else {
-				// There is no local
-				if (hasRemote()) {
-					// XXX Do we simply make sure that the local sync has an outgoing deletions
+				Assert.isNotNull(info);
+				if (! local.exists() && ! info.isDeleted()) {
+					// We have a delete. Update the entry if required
+					revision = ResourceSyncInfo.DELETED_PREFIX + info.getRevision();
 				} else {
-					local.setSyncInfo(null);
-					syncChanged = true;
+					// The sync info is alright
+					return;
 				}
 			}
-		} finally {
-			if (syncChanged)
+		} else if (incoming) {
+			// We have an incoming change, addition, or deletion that we want to ignore
+			if (local.exists()) {
+				// We could have an incoming change or deletion
+				info = remote.getSyncInfo();
+				if (info.isDeleted()) {
+					// For a deletion, change the revision to an add
+					revision = ResourceSyncInfo.ADDED_REVISION;
+				} else {
+					// Otherwise change the revision to the remote revision
+					revision = info.getRevision();
+				}
+				// Use the local sync info for the other info
+				info = local.getSyncInfo();
+			} else {
+				// We have an incoming add, turn it around as an outgoing delete
+				info = remote.getSyncInfo();
+				revision = ResourceSyncInfo.DELETED_PREFIX + info.getRevision();
+			}
+		} else if (local.exists()) {
+			// We have a conflict and a local resource!
+			if (hasRemote()) {
+				if (hasBase()) {
+					// We have a conflicting change, Update the local revision
+					revision = remote.getSyncInfo().getRevision();
+				} else {
+					// We have conflictin additions.
+					// We need to fetch the contents of the remote to get all the relevant information (timestamp, permissions)
+					remote.getContents(Policy.monitorFor(monitor));
+					info = remote.getSyncInfo();
+					revision = info.getRevision();
+				}
+			} else if (hasBase()) {
+				// We have a remote deletion. Make the local an addition
+				revision = ResourceSyncInfo.ADDED_REVISION;
+			} else {
+				// There's a local, no base and no remote. We can't possible have a conflict!
+				Assert.isTrue(false);
+			} 
+		} else {
+			// We have a conflict and there is no local!
+			if (hasRemote()) {
+				// We have a local deletion that conflicts with remote changes.
+				revision = ResourceSyncInfo.DELETED_PREFIX + remote.getSyncInfo().getRevision();
+			} else {
+				// We have conflicting deletions. Clear the sync info
+				local.setSyncInfo(null);
 				Synchronizer.getInstance().save(Policy.monitorFor(monitor));
+				return;
+			}
+		}
+		info = new ResourceSyncInfo(info.getName(), revision, info.getTimeStamp(), info.getKeywordMode(), local.getParent().getFolderSyncInfo().getTag(), info.getPermissions());
+		local.setSyncInfo(info);
+		Synchronizer.getInstance().save(Policy.monitorFor(monitor));
+	}
+	
+	/*
+	 * Update the sync info of the local resource in such a way that the remote resource can be loaded ignore any local changes.
+	 */
+	public void makeIncoming(IProgressMonitor monitor) throws TeamException {
+		
+		int syncKind = getSyncKind(GRANULARITY_TIMESTAMP, monitor);
+		boolean conflict = (syncKind & DIRECTION_MASK) == CONFLICTING;
+		boolean incoming = (syncKind & DIRECTION_MASK) == INCOMING;
+		boolean outgoing = (syncKind & DIRECTION_MASK) == OUTGOING;
+		
+		if (incoming) {
+			// No need to do anything
+		} else if (outgoing) {
+			// For now, just unmanage the local resource so the remote change can be loaded with an update
+			Client.getManagedResource(getLocal()).unmanage();
+			Synchronizer.getInstance().save(Policy.monitorFor(monitor));
+		} else {
+			// For now, just unmanage the local resource so the remote change can be loaded with an update
+			Client.getManagedResource(getLocal()).unmanage();
+			Synchronizer.getInstance().save(Policy.monitorFor(monitor));
 		}
 	}
 }

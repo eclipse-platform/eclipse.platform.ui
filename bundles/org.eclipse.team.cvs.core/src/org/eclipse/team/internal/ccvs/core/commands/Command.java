@@ -348,11 +348,11 @@ abstract class Command implements ICommand {
 		for (int i=0; i<mWorkResources.length; i++) {
 			if (mWorkResources[i].isFolder()) {
 				if (!((ICVSFolder) mWorkResources[i]).isCVSFolder()) {
-					throw new CVSException("Argument " + mWorkResources[i].getName() + "is not managed");
+					throw new CVSException("Argument " + mWorkResources[i].getName() + " is not managed");
 				}
 			} else {
 				if (!mWorkResources[i].getParent().isCVSFolder()) {
-					throw new CVSException("Argument " + mWorkResources[i].getParent() + "is not managed");
+					throw new CVSException("Argument " + mWorkResources[i].getParent() + " is not managed");
 				}					
 			}	
 		}	

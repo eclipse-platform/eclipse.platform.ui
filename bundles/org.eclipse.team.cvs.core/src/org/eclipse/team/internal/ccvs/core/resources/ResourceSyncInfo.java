@@ -38,7 +38,8 @@ public class ResourceSyncInfo {
 	
 	// file sync information can be associated with a local resource that has been deleted. This is
 	// noted by prefixing the revision with this character.
-	private static final String DELETED_PREFIX = "-";
+	// XXX Should this be private
+	static final String DELETED_PREFIX = "-";
 	private boolean isDeleted = false;
 	
 	// a sync element with a revision of '0' is considered a new file that has

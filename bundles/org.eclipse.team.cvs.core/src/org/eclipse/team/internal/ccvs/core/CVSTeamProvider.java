@@ -856,7 +856,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	 */
 	public void merged(IRemoteSyncElement[] elements) throws TeamException {	
 		for (int i=0;i<elements.length;i++) {
-			((CVSRemoteSyncElement)elements[i]).merged(null);
+			((CVSRemoteSyncElement)elements[i]).makeOutgoing(null);
 		}
 	}
 	

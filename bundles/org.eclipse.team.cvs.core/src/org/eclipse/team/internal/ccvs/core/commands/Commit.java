@@ -61,6 +61,7 @@ class Commit extends Command {
 		sendHomeFolder();
 			
 		// Send the changed files as arguments
+		// XXX Is this the way the command line client works?
 		changedFiles = visitor.getSentFiles();
 		for (int i = 0; i < changedFiles.length; i++) {
 			requestSender.sendArgument(changedFiles[i].getRelativePath(getRoot()));
