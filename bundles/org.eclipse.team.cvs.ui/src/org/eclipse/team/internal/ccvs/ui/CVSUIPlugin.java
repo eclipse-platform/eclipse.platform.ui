@@ -15,7 +15,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
-
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.*;
@@ -664,6 +663,9 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		Platform.getAdapterManager().registerAdapters(factory, RepositoryRoot.class);
 		
 		console = new CVSOutputConsole();
+		
+		// Ensure that known repository locations are cached.
+		getRepositoryManager().startup();
 		
 		IPreferenceStore store = getPreferenceStore();
 		if (store.getBoolean(ICVSUIConstants.PREF_FIRST_STARTUP)) {
