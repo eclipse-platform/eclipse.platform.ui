@@ -20,6 +20,27 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 
 public class NotificationManager implements IManager, ILifecycleListener {
+	class NotifyJob extends Job {
+		private final IWorkspaceRunnable noop = new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+			}
+		};
+		public NotifyJob() {
+			super(ICoreConstants.MSG_RESOURCES_UPDATING);
+			setSystem(true);
+		}
+		public IStatus run(IProgressMonitor monitor) {
+			if (monitor.isCanceled())
+				return Status.CANCEL_STATUS;
+			notificationRequested = true;
+			try {
+				workspace.run(noop, null, null);
+			} catch (CoreException e) {
+				return e.getStatus();
+			}
+			return Status.OK_STATUS;
+		}
+	}
 	private static final long NOTIFICATION_DELAY = 1500;
 	/**
 	 * The marker change stamp that was last used to update the build marker
@@ -47,7 +68,7 @@ public class NotificationManager implements IManager, ILifecycleListener {
 	/**
 	 * the marker change Id the last time we computed a delta
 	 */
-	private long lastDeltaId; 
+	private long lastDeltaId;
 	/**
 	 * The state of the workspace at the end of the last POST_BUILD
 	 * notification
@@ -68,7 +89,7 @@ public class NotificationManager implements IManager, ILifecycleListener {
 	private long lastPostChangeId = 0;
 
 	private ResourceChangeListenerList listeners;
-	private Workspace workspace;
+	Workspace workspace;
 
 	protected boolean notificationRequested = false;
 	private Job notifyJob;
@@ -78,15 +99,7 @@ public class NotificationManager implements IManager, ILifecycleListener {
 	public NotificationManager(Workspace workspace) {
 		this.workspace = workspace;
 		listeners = new ResourceChangeListenerList();
-		notifyJob = new Job(ICoreConstants.MSG_RESOURCES_UPDATING) {
-			public IStatus run(IProgressMonitor monitor) {
-				if (monitor.isCanceled())
-					return Status.CANCEL_STATUS;
-				notificationRequested = true;
-				return Status.OK_STATUS;
-			}
-		};
-		notifyJob.setSystem(true);
+		notifyJob = new NotifyJob();
 	}
 	public void addListener(IResourceChangeListener listener, int eventMask) {
 		synchronized (listeners) {
