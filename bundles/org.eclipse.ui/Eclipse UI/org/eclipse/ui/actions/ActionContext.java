@@ -7,7 +7,7 @@ import org.eclipse.jface.viewers.ISelection;
  * which actions are added by an <code>ActionGroup</code>, and what their 
  * enabled state should be.
  * <p>
- * This class encapsulates only a selection.
+ * This class encapsulates a selection and an input element.
  * Clients may subclass this class to add more information to the context.
  * </p>
  */
@@ -17,6 +17,11 @@ public class ActionContext {
 	 * The selection.
 	 */
 	private ISelection selection;
+	
+	/**
+	 * The input element.
+	 */
+	private Object input;
 	
 	/**
 	 * Creates a new action context with the given selection.
@@ -37,5 +42,21 @@ public class ActionContext {
      */
     public void setSelection(ISelection selection) {
     	this.selection = selection;
+    }
+
+	/**
+	 * Returns the input element.
+	 */    
+    public Object getInput() {
+    	return input;
+    }
+    
+    /**
+     * Sets the input element.
+     * 
+     * @input the input element
+     */
+    public void setInput(Object input) {
+    	this.input = input;
     }
 }
