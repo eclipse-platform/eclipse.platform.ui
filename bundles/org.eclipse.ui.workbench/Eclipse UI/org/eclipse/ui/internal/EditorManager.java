@@ -464,8 +464,9 @@ public class EditorManager implements IExtensionRemovalHandler {
         IEditorReference[] editors = editorPresentation.getEditors();
         for (int i = 0; i < editors.length; i++) {
             IEditorPart part = (IEditorPart) editors[i].getPart(false);
-            if (part != null && input.equals(part.getEditorInput()))
+            if (part != null && part.getEditorInput() != null && part.getEditorInput().equals(input)) {
                 return part;
+            }
         }
         String name = input.getName();
         IPersistableElement persistable = input.getPersistable();
@@ -479,7 +480,7 @@ public class EditorManager implements IExtensionRemovalHandler {
             if (e.getPart(false) == null) {
                 if (name.equals(e.getName()) && id.equals(e.getFactoryId())) {
                     IEditorInput restoredInput = e.getRestoredInput();
-                    if (input.equals(restoredInput)) {
+                    if (restoredInput.equals(input)) {
                         return e.getEditor(true);
                     }
                 }
