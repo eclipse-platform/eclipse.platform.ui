@@ -12,6 +12,7 @@ package org.eclipse.ui.progress;
 /**
  * The UIJob is a Job that runs within the UI Thread via an
  * asyncExec.
+ *  @since 3.0
  */
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
