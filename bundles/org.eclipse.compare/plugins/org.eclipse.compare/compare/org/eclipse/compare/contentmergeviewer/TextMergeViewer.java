@@ -265,6 +265,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	private MenuManager fCenterMenuManager;
 	private Menu fCenterMenu;
 	private Button fCenterButton;
+	private Diff fButtonDiff;
 					
 	/**
 	 * The position updater used to adapt the positions representing
@@ -1233,22 +1234,26 @@ public class TextMergeViewer extends ContentMergeViewer  {
 							Diff diff= getDiffUnderMouse(canvas, e.x, e.y, r);
 							if (diff != null && diff.isResolved()/*!diff.isUnresolvedIncomingOrConflicting()*/ )
 								diff= null;
-							if (diff != fCurrentDiff) {
-								setCurrentDiff(diff, false);
+							if (diff != fButtonDiff) {
+								//setCurrentDiff(diff, false);
 								if (diff != null) {
 									if (fLeft.isEditable() && diff.isUnresolvedIncoming()) {
+										fButtonDiff= diff;
 										fCenterButton.setText("<");
 										fCenterButton.setToolTipText("Copy to left");
 										fCenterButton.setBounds(r);
 										fCenterButton.setVisible(true);
 									} else if (fRight.isEditable()) {
+										fButtonDiff= diff;
 										fCenterButton.setText(">");
 										fCenterButton.setToolTipText("Copy to right");
 										fCenterButton.setBounds(r);
 										fCenterButton.setVisible(true);										
-									}
+									} else
+										fButtonDiff= null;
 								} else {
 									fCenterButton.setVisible(false);
+									fButtonDiff= null;
 								}
 							}
 						}
@@ -1276,7 +1281,10 @@ public class TextMergeViewer extends ContentMergeViewer  {
 					new SelectionAdapter() {
 						public void widgetSelected(SelectionEvent e) {
 							fCenterButton.setVisible(false);
-							copy(fCurrentDiff, false, fCurrentDiff.fDirection == RangeDifference.CONFLICT, false);
+							if (fButtonDiff != null) {
+								setCurrentDiff(fButtonDiff, false);
+								copy(fCurrentDiff, false, fCurrentDiff.fDirection == RangeDifference.CONFLICT, false);
+							}
 						}
 					}
 				);
