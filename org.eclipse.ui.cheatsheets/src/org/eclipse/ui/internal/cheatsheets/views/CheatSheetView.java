@@ -21,6 +21,7 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.cheatsheets.ICheatSheetEvent;
+import org.eclipse.ui.forms.internal.widgets.FormUtil;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.part.ViewPart;
 
@@ -197,7 +198,7 @@ public class CheatSheetView extends ViewPart {
 				currentItem = nextItem;
 			}
 
-			scrollIfNeeded();
+			FormUtil.ensureVisible(currentItem.getMainItemComposite());
 		} else if (index == viewItemList.size()) {
 			saveCurrentSheet();
 			getViewItemArray()[0].setExpanded();
@@ -256,7 +257,7 @@ public class CheatSheetView extends ViewPart {
 			return;
 		}
 
-		scrollIfNeeded();
+		FormUtil.ensureVisible(currentItem.getMainItemComposite());
 		saveCurrentSheet();
 	}
 
@@ -526,7 +527,7 @@ public class CheatSheetView extends ViewPart {
 //			fireManagerItemEvent(ICheatSheetItemEvent.ITEM_ACTIVATED, getViewItemArray()[0]);
 		}
 
-		scrollIfNeeded();
+		FormUtil.ensureVisible(currentItem.getMainItemComposite());
 		savedProps = null;
 	}
 
@@ -786,7 +787,7 @@ public class CheatSheetView extends ViewPart {
 		currentItem = null;
 		nextItem = null;
 
-		currentItemNum = -1;
+		currentItemNum = 0;
 		viewItemList = new ArrayList();
 
 		// read our contents;
@@ -902,7 +903,7 @@ public class CheatSheetView extends ViewPart {
 		} catch (RuntimeException e) {
 			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_RUNNING_ACTION), e);
 			CheatSheetPlugin.getPlugin().getLog().log(status);
-			org.eclipse.jface.dialogs.ErrorDialog.openError(new Shell(), CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_RUNNING_ACTION), null, status);
+			org.eclipse.jface.dialogs.ErrorDialog.openError(getViewSite().getShell(), CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_RUNNING_ACTION), null, status);
 
 		} finally {
 			mylabel.setCursor(null);
@@ -962,118 +963,6 @@ public class CheatSheetView extends ViewPart {
 			//			IPath savePath = Platform.getPluginStateLocation(CheatSheetPlugin.getPlugin());
 			saveCurrentSheet();
 		}
-	}
-
-	/**
-	 * Scroll the our contents to keep the current entry on the screen.  Should be
-	 * called each time currentEntry is changed.
-	 */
-	/*package*/ void scrollIfNeeded() {
-/*
-		//		System.out.println("Scrolling if needed!!!");
-		// First thing, decide on our target widget - for an InfoAreaEntry, this will 
-		// be its composite, for a closing item, it will be the StyledText.  Doesn't matter,
-		// so long as it's whatever widget has 'infoArea' as a parent.
-		Composite targetComposite = null;
-		//if(currentItemNum>0 && currentItem == null) {
-		// We are at the end, our target widget is the closing text
-		//	targetComposite = closingText;
-		//} else 
-		if (nextItem != null) {
-			targetComposite = nextItem.getCheckAndMainItemComposite();
-		} else if (currentItem != null) {
-			targetComposite = currentItem.getCheckAndMainItemComposite();
-		}
-		//		System.out.println("The target composite beginning "+targetComposite);
-		if (targetComposite == null) {
-			//			System.out.println("The target composite was null!!!");
-			return;
-		}
-		// In an effort to make everything more readable, we will extract out all the
-		// values of relevance into seperate variables, and alias all the relevant composites
-
-		//		Composite infoArea = targetComposite.getParent();
-		//		System.out.println("The info area is "+infoArea);
-
-		//		ScrolledComposite scrolledComposite = (ScrolledComposite) infoArea.getParent();
-		//		System.out.println("The sc is "+scrolledComposite);
-
-		// The scrollbar will need to be updated as well.  We use its increment because it's
-		// probably better than some arbitrary number
-		//		System.out.println("Getting vertical bar");
-		ScrollBar vBar = scrolledComposite.getVerticalBar();
-		int increment = (vBar.getIncrement()) * 4;
-		//		int increment = (vBar.getIncrement());
-		// When scrolling, the situation is that infoArea is *larger* than scrolledComposite,
-		// which encloses it.  Thus the viewable area of infoArea is a question of how far off
-		// the top of scrolledComposite it begins, and how much of it scrolledComposite can display.
-		int topOfInfoArea = infoArea.getBounds().y;
-		int bottomOfInfoArea = infoArea.getBounds().height;
-		int firstPixelViewable = -topOfInfoArea;
-		int lastPixelViewable = scrolledComposite.getSize().y + firstPixelViewable;
-		int firstPixelOfTarget = targetComposite.getLocation().y;
-		//		int geoffPixelofTarget = targetComposite.getBounds().y;
-		//	int otherPixelofTarget = targetComposite.get
-
-		int lastPixelOfTarget = firstPixelOfTarget + targetComposite.getSize().y;
-		// If target is on screen already, don't do anything
-		if ((firstPixelOfTarget >= firstPixelViewable) && (lastPixelOfTarget <= lastPixelViewable)) {
-			//			System.out.println("Doing nothing!!!");
-			return;
-		}
-
-		//	    System.out.println("CHECK 1");
-
-		int totalinc = 0;
-		int myint = infoArea.getBounds().y;
-		// Whether we're scrolling up or down, the principle is the same, get the top of the
-		// current entry to within 'increment' pixels of the top of the viewable area.  
-		//UPDATED: 05/31/2002 : keeps track of the increment until it has figured out the
-		//scroll value.  Then the target area is redrawn.  The result is no flicker,
-		//just one refresh redrawn.  NICE.
-
-		scrolledComposite.setVisible(false);
-
-		if (firstPixelOfTarget < firstPixelViewable) {
-			while (firstPixelOfTarget < firstPixelViewable) {
-				// We are scrolling up, target is above viewable
-				// Don't scroll past top though
-				//				System.err.println("Scrolling UP");
-				if (topOfInfoArea >= firstPixelViewable)
-					break;
-				vBar.setSelection(vBar.getSelection() - increment);
-				totalinc -= increment;
-				myint += increment;
-				// Update relevant indices			
-				topOfInfoArea = myint;
-				firstPixelViewable = -topOfInfoArea;
-				lastPixelViewable = scrolledComposite.getSize().y + firstPixelViewable;
-			}
-			infoArea.setLocation(infoArea.getLocation().x, infoArea.getLocation().y - totalinc);
-		} else if (firstPixelOfTarget > (firstPixelViewable + increment)) {
-			while (firstPixelOfTarget > (firstPixelViewable + increment)) {
-				//				System.err.println("Scrolling Down");
-				// We are scrolling down, target is below viewable.  
-				// Don't scroll past bottom though
-				if (bottomOfInfoArea <= lastPixelViewable)
-					break;
-				vBar.setSelection(vBar.getSelection() + increment + 5);
-				totalinc += increment;
-				myint -= increment;
-				// Update relevant indices			
-				topOfInfoArea = myint;
-				firstPixelViewable = -topOfInfoArea;
-				lastPixelViewable = scrolledComposite.getSize().y + firstPixelViewable;
-			}
-			infoArea.setLocation(infoArea.getLocation().x, infoArea.getLocation().y - totalinc);
-		}
-		//		System.out.println("Total increment to incrememt = "+totalinc);
-		//Set the info area location last.
-		scrolledComposite.setVisible(true);
-// TODO: LP - Needed? 20040321 
-//		scrolledComposite.layout(true);
-//		infoArea.layout(true);
-*/
 	}
 
 	public void setContent(CheatSheetElement element) {
