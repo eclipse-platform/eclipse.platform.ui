@@ -14,8 +14,12 @@
 		<project>org.eclipse.jdt.core</project>
 		<project>org.eclipse.jdt.debug</project>
 		<project>org.eclipse.jdt.launching</project>
+		<project>org.eclipse.jface.text</project>
 		<project>org.eclipse.ui</project>
+		<project>org.eclipse.ui.editors</project>
 		<project>org.eclipse.ui.externaltools</project>
+		<project>org.eclipse.ui.ide</project>
+		<project>org.eclipse.ui.workbench.texteditor</project>
 		<project>org.eclipse.update.core</project>
 		<project>org.junit</project>
 	</projects>
@@ -28,5 +32,6 @@
 	</buildSpec>
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
+		<nature>org.eclipse.pde.PluginNature</nature>
 	</natures>
 </projectDescription>

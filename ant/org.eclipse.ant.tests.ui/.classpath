@@ -20,5 +20,9 @@
 	<classpathentry kind="src" path="/org.eclipse.jdt.debug"/>
 	<classpathentry kind="src" path="Ant Tests"/>
 	<classpathentry kind="src" path="External Tools"/>
+	<classpathentry kind="src" path="/org.eclipse.ui.ide"/>
+	<classpathentry kind="src" path="/org.eclipse.ui.editors"/>
+	<classpathentry kind="src" path="/org.eclipse.jface.text"/>
+	<classpathentry kind="src" path="/org.eclipse.ui.workbench.texteditor"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
