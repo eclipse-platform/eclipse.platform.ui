@@ -124,7 +124,7 @@ public class EditionSelectionDialog extends Dialog {
 	private List fCurrentEditions;
 	private Thread fThread;
 
-	private ITypedElement fTargetItem;
+	private Pair fTargetPair;
 	/** The selected edition in the edition viewer */
 	private ITypedElement fSelectedItem;
 	
@@ -201,7 +201,7 @@ public class EditionSelectionDialog extends Dialog {
 	public ITypedElement selectEdition(final ITypedElement target, ITypedElement[] inputEditions, Object ppath) {
 		
 		Assert.isNotNull(target);
-		fTargetItem= target;
+		fTargetPair= new Pair(target, target, null);
 
 		// sort input editions
 		final int count= inputEditions.length;
@@ -224,14 +224,15 @@ public class EditionSelectionDialog extends Dialog {
 			
 			if (structureCreator != null) {
 				Object item= structureCreator.locate(ppath, target);
-				if (item instanceof ITypedElement)
-					fTargetItem= (ITypedElement) item;
-				else
+				if (item instanceof ITypedElement) {
+					ITypedElement targetItem= (ITypedElement) item;
+					fTargetPair= new Pair(target, targetItem, structureCreator.getContents(targetItem, false));
+				} else
 					ppath= null;	// couldn't extract item
 			}
 			
 			// set the left and right labels for the compare viewer
-			String targetLabel= getTargetLabel(target, fTargetItem);
+			String targetLabel= getTargetLabel(target, fTargetPair.getItem());
 			if (fTargetIsRight)
 				fCompareConfiguration.setRightLabel(targetLabel);
 			else
@@ -274,7 +275,7 @@ public class EditionSelectionDialog extends Dialog {
 			}
 			
 		} else {
-			
+			// add mode
 			final Object container= ppath;
 			Assert.isNotNull(container);
 								
@@ -342,7 +343,7 @@ public class EditionSelectionDialog extends Dialog {
 	 * @return the last specified target or a subsection thereof.
 	 */
 	public ITypedElement getTarget() {
-		return fTargetItem;
+		return fTargetPair.getItem();
 	}
  	
  	/**
@@ -457,7 +458,7 @@ public class EditionSelectionDialog extends Dialog {
 		}
 		
 		String titleFormat= Utilities.getString(fBundle, "treeTitleFormat", "treeTitleFormat");
-		String title= MessageFormat.format(titleFormat, new Object[] { fTargetItem.getName() });
+		String title= MessageFormat.format(titleFormat, new Object[] { fTargetPair.getItem().getName() });
 		fEditionPane.setText(title);
 		
 		fEditionTree= new Tree(fEditionPane, SWT.H_SCROLL + SWT.V_SCROLL);
@@ -549,7 +550,6 @@ public class EditionSelectionDialog extends Dialog {
 		
 		if (left < original_right)
 			internalSort(keys, left, original_right); 
-		 
 	}
 	
 	/**
@@ -561,7 +561,7 @@ public class EditionSelectionDialog extends Dialog {
 	 */
 	private void addMemberEdition(Pair pair) {
 		
-		if (pair == null) {
+		if (pair == null) {	// end of list of pairs
 			if (fMemberTable != null) {
 				if (!fMemberTable.isDisposed() && fMemberTable.getItemCount() == 0) {
 					TableItem ti= new TableItem(fMemberTable, SWT.NONE);
@@ -606,12 +606,12 @@ public class EditionSelectionDialog extends Dialog {
 			}
 		}
 		if (HIDE_IDENTICAL) {
+			Pair last= fTargetPair;
 			int size= editions.size();
-			if (size > 0) {
-				Pair last= (Pair) editions.get(size-1);
-				if (last != null && last.equals(pair))
-					return;	// don't add since the new one is equal to old
-			}
+			if (size > 0)
+				last= (Pair) editions.get(size-1);
+			if (last != null && last.equals(pair))
+				return;	// don't add since the new one is equal to old
 		}
 		editions.add(pair);
 		
@@ -712,10 +712,10 @@ public class EditionSelectionDialog extends Dialog {
 			} else {
 				if (fTargetIsRight) {
 					fCompareConfiguration.setLeftLabel(editionLabel);
-					fContentPane.setInput(new DiffNode(fSelectedItem, fTargetItem));
+					fContentPane.setInput(new DiffNode(fSelectedItem, fTargetPair.getItem()));
 				} else {
 					fCompareConfiguration.setRightLabel(editionLabel);
-					fContentPane.setInput(new DiffNode(fTargetItem, fSelectedItem));
+					fContentPane.setInput(new DiffNode(fTargetPair.getItem(), fSelectedItem));
 				}
 			}
 		} else {
