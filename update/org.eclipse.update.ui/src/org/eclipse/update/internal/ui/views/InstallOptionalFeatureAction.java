@@ -12,6 +12,7 @@ package org.eclipse.update.internal.ui.views;
 
 import java.net.*;
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.wizard.*;
@@ -44,6 +45,16 @@ public class InstallOptionalFeatureAction extends Action {
 	public void run() {
 		if (missingFeature == null)
 			return;
+		
+		IStatus status = OperationsManager.getValidator().validatePlatformConfigValid();
+		if (status != null) {
+			ErrorDialog.openError(
+					UpdateUI.getActiveWorkbenchShell(),
+					null,
+					null,
+					status);
+			return;
+		}
 		
 		// If current config is broken, confirm with the user to continue
 		if (OperationsManager.getValidator().validateCurrentState() != null &&

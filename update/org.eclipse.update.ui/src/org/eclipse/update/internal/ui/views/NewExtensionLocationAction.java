@@ -19,7 +19,7 @@ import org.eclipse.jface.resource.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.internal.operations.*;
+import org.eclipse.update.internal.api.operations.*;
 import org.eclipse.update.internal.ui.*;
 
 public class NewExtensionLocationAction extends Action {
@@ -29,6 +29,17 @@ public class NewExtensionLocationAction extends Action {
 	}
 
 	public void run() {
+		
+		IStatus status = OperationsManager.getValidator().validatePlatformConfigValid();
+		if (status != null) {
+			ErrorDialog.openError(
+					UpdateUI.getActiveWorkbenchShell(),
+					null,
+					null,
+					status);
+			return;
+		}
+		
 		DirectoryDialog dialog =
 			new DirectoryDialog(UpdateUI.getActiveWorkbenchShell());
 		dialog.setMessage(UpdateUI.getString("NewExtensionLocationAction.selectExtLocation")); //$NON-NLS-1$

@@ -37,6 +37,10 @@ public class FeatureStateAction extends Action {
 			if (adapter == null)
 				return;
 			
+			IStatus status = OperationsManager.getValidator().validatePlatformConfigValid();
+			if (status != null)
+				throw new CoreException(status);
+			
 			boolean isConfigured = adapter.isConfigured();
 			// Ask user to confirm the operation
 			String message =

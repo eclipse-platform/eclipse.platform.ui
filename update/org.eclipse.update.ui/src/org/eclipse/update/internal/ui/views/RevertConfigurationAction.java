@@ -10,8 +10,11 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.views;
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.wizard.*;
+import org.eclipse.update.internal.api.operations.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.wizards.*;
 
@@ -21,6 +24,16 @@ public class RevertConfigurationAction extends Action {
 	}
 	
 	public void run() {
+		IStatus status = OperationsManager.getValidator().validatePlatformConfigValid();
+		if (status != null) {
+			ErrorDialog.openError(
+					UpdateUI.getActiveWorkbenchShell(),
+					null,
+					null,
+					status);
+			return;
+		}
+		
 		RevertConfigurationWizard wizard = new RevertConfigurationWizard();
 		WizardDialog dialog = new WizardDialog(UpdateUI.getActiveWorkbenchShell(), wizard);
 		dialog.create();

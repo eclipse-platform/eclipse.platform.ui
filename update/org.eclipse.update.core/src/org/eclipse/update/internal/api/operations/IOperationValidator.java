@@ -22,31 +22,31 @@ public interface IOperationValidator {
 
 	/**
 	 * Called before performing install.
-	 * Returns null when status cannot be reported.
+	 * @return the error status, or null if no errors
 	 */
 	public IStatus validatePendingInstall(IFeature oldFeature, IFeature newFeature);
 
 	/**
 	 * Called before performing operation.
-	 * Returns null when status cannot be reported.
+	 * @return the error status, or null if no errors
 	 */
 	public IStatus validatePendingConfig(IFeature feature);
 	
 	/**
 	 * Called before performing operation.
-	 * Returns null when status cannot be reported.
+	 * @return the error status, or null if no errors
 	 */
 	public IStatus validatePendingUnconfig(IFeature feature);
 	
 	/**
 	 * Called before performing operation.
-	 * Returns null when status cannot be reported.
+	 * @return the error status, or null if no errors
 	 */
 	public IStatus validatePendingReplaceVersion(IFeature feature, IFeature anotherFeature);
 	
 	/**
 	 * Called before processing a delta.
-	 * Returns null when status cannot be reported.
+	 * @return the error status, or null if no errors
 	 */
 	public IStatus validateSessionDelta(
 		ISessionDelta delta,
@@ -54,20 +54,26 @@ public interface IOperationValidator {
 
 	/**
 	 * Called before doing a revert/ restore operation
-	 * Returns null when status cannot be reported.
+	 * @return the error status, or null if no errors
 	 */
 	public IStatus validatePendingRevert(IInstallConfiguration config);
 
 	/**
 	 * Called by the UI before doing a batched processing of
 	 * several pending changes.
-	 * Returns null when status cannot be reported.
+	 * @return the error status, or null if no errors
 	 */
 	public IStatus validatePendingChanges(IInstallFeatureOperation[] jobs);
 
 	/**
 	 * Check the current state.
-	 * Returns null when status cannot be reported.
+	 * @return the error status, or null if no errors
 	 */
 	public IStatus validateCurrentState();
+	
+	/**
+	 * Checks if the platform configuration has been modified outside this program.
+	 * @return the error status, or null if no errors
+	 */
+	public IStatus validatePlatformConfigValid();
 }

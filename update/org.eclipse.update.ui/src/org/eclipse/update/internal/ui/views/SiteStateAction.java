@@ -44,6 +44,17 @@ public class SiteStateAction extends Action {
 		try {
 			if (site == null)
 				return;
+			
+			IStatus status = OperationsManager.getValidator().validatePlatformConfigValid();
+			if (status != null) {
+				ErrorDialog.openError(
+						UpdateUI.getActiveWorkbenchShell(),
+						null,
+						null,
+						status);
+				return;
+			}
+			
 			boolean oldValue = site.isEnabled();
 			if (!confirm(!oldValue))
 				return;

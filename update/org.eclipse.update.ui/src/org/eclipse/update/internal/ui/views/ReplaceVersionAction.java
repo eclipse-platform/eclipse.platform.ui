@@ -10,9 +10,12 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.views;
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.update.core.IFeature;
+import org.eclipse.update.internal.api.operations.*;
 import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.internal.ui.wizards.ReplaceFeatureVersionWizard;
 
@@ -37,6 +40,16 @@ public class ReplaceVersionAction extends Action {
 		if (currentFeature == null || features == null || features.length < 2)
 			return;
 			
+		IStatus status = OperationsManager.getValidator().validatePlatformConfigValid();
+		if (status != null) {
+			ErrorDialog.openError(
+					UpdateUI.getActiveWorkbenchShell(),
+					null,
+					null,
+					status);
+			return;
+		}
+		
 		ReplaceFeatureVersionWizard wizard = new ReplaceFeatureVersionWizard(currentFeature, features);
 		WizardDialog dialog = new WizardDialog(UpdateUI.getActiveWorkbenchShell(), wizard);
 		dialog.create();

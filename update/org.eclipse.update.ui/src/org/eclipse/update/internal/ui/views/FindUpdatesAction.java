@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.views;
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.wizard.*;
@@ -37,6 +38,16 @@ public class FindUpdatesAction extends Action {
 	}
 
 	public void run() {
+		
+		IStatus status = OperationsManager.getValidator().validatePlatformConfigValid();
+		if (status != null) {
+			ErrorDialog.openError(
+					UpdateUI.getActiveWorkbenchShell(),
+					null,
+					null,
+					status);
+			return;
+		}
 		
 		// If current config is broken, confirm with the user to continue
 		if (OperationsManager.getValidator().validateCurrentState() != null &&

@@ -13,6 +13,8 @@ package org.eclipse.update.internal.operations;
 //import java.io.*;
 //import java.net.*;
 //import java.nio.channels.*;
+import java.io.*;
+import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
@@ -64,6 +66,20 @@ public class OperationValidator implements IOperationValidator {
 	private static final String KEY_NO_LICENSE =
 		"ActivityConstraints.noLicense";
 
+	/**
+	 * Checks if the platform configuration has been modified outside this program.
+	 * @return the error status, or null if no errors
+	 */
+	public IStatus validatePlatformConfigValid() {
+		ArrayList status = new ArrayList(1);
+		checkPlatformWasModified(status);
+		
+		// report status
+		if (status.size() > 0)
+			return createMultiStatus(KEY_ROOT_MESSAGE, status, IStatus.ERROR);
+		return null;
+	}
+	
 	/*
 	 * Called by UI before performing operation. Returns null if no errors, a
 	 * status with IStatus.WARNING code when the initial configuration is
@@ -79,6 +95,7 @@ public class OperationValidator implements IOperationValidator {
 
 		// check proposed change
 		ArrayList status = new ArrayList();
+		checkPlatformWasModified(status);
 		validateInstall(oldFeature, newFeature, status);
 
 		// report status
@@ -95,6 +112,7 @@ public class OperationValidator implements IOperationValidator {
 
 		// check proposed change
 		ArrayList status = new ArrayList();
+		checkPlatformWasModified(status);
 		validateUnconfigure(feature, status);
 
 		// report status
@@ -111,6 +129,7 @@ public class OperationValidator implements IOperationValidator {
 
 		// check proposed change
 		ArrayList status = new ArrayList();
+		checkPlatformWasModified(status);
 		validateConfigure(feature, status);
 
 		// report status
@@ -129,6 +148,7 @@ public class OperationValidator implements IOperationValidator {
 
 		// check proposed change
 		ArrayList status = new ArrayList();
+		checkPlatformWasModified(status);
 		validateReplaceVersion(feature, anotherFeature, status);
 
 		// report status
@@ -167,6 +187,7 @@ public class OperationValidator implements IOperationValidator {
 
 		// check proposed change
 		ArrayList status = new ArrayList();
+		checkPlatformWasModified(status);
 		validateRevert(config, status);
 
 		// report status
@@ -181,6 +202,7 @@ public class OperationValidator implements IOperationValidator {
 		// check initial state
 		ArrayList beforeStatus = new ArrayList();
 		validateInitialState(beforeStatus);
+		checkPlatformWasModified(beforeStatus);
 
 		// check proposed change
 		ArrayList status = new ArrayList();
@@ -196,6 +218,7 @@ public class OperationValidator implements IOperationValidator {
 	public IStatus validateCurrentState() {
 		// check the state
 		ArrayList status = new ArrayList();
+		checkPlatformWasModified(status);
 		validateInitialState(status);
 
 		// report status
@@ -421,6 +444,25 @@ public class OperationValidator implements IOperationValidator {
 			}
 		} catch (CoreException e) {
 			status.add(e.getStatus());
+		}
+	}
+	
+	private static void checkPlatformWasModified(ArrayList status) {
+		try {
+			// checks if the platform has been modified outside this eclipse instance
+			IPlatformConfiguration platformConfig = ConfiguratorUtils.getCurrentPlatformConfiguration();
+			// Divide timestamp by 1000 so we compare up to second, to account for filesystem particulars
+			long currentTimeStamp = platformConfig.getChangeStamp()/1000;
+			URL platformXML = platformConfig.getConfigurationLocation();
+			URLConnection connection = platformXML.openConnection();
+			long actualTimeStamp = connection.getLastModified()/1000;
+			if (currentTimeStamp != actualTimeStamp)
+				status.add(createStatus(
+								null,
+								FeatureStatus.CODE_OTHER,
+								UpdateUtils.getString("ActivityConstraints.platformModified")));
+		} catch (IOException e) {
+			// ignore
 		}
 	}
 	
