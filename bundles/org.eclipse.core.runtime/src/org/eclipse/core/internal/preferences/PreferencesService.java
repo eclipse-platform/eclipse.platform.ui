@@ -312,6 +312,7 @@ public class PreferencesService implements IPreferencesService {
 			String value = properties.getProperty(fullPath);
 			IPath path = new Path(fullPath);
 			String key = path.lastSegment();
+			key = key.intern();
 			path = path.removeLastSegments(1);
 			Preferences node = localRoot.node(path.toString());
 			node.put(key, value);
