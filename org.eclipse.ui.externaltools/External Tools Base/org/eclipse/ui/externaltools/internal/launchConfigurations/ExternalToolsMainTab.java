@@ -130,7 +130,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		composite.setLayoutData(gridData);
 		
 		Label label = new Label(composite, SWT.NONE);
-		label.setText(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.&Location___2")); //$NON-NLS-1$
+		label.setText(getLocationLabel());
 		label.setFont(font);
 		
 		locationField = new Text(composite, SWT.BORDER);
@@ -159,6 +159,10 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		locationField.addModifyListener(fListener);
 	}
 	
+	protected String getLocationLabel() {
+		return ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.&Location___2"); //$NON-NLS-1$
+	}
+
 	/**
 	 * Creates the controls needed to edit the working directory
 	 * attribute of an external tool
