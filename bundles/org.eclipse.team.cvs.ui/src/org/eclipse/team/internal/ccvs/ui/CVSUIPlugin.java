@@ -22,7 +22,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -32,7 +31,6 @@ import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -223,46 +221,7 @@ public class CVSUIPlugin extends AbstractUIPlugin implements IPropertyChangeList
 	 */
 	public static void runWithProgress(Shell parent, boolean cancelable,
 		final IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
-		boolean createdShell = false;
-		try {
-			if (parent == null || parent.isDisposed()) {
-				Display display = Display.getCurrent();
-				if (display == null) {
-					// cannot provide progress (not in UI thread)
-					runnable.run(new NullProgressMonitor());
-					return;
-				}
-				// get the active shell or a suitable top-level shell
-				parent = display.getActiveShell();
-				if (parent == null) {
-					parent = new Shell(display);
-					createdShell = true;
-				}
-			}
-			// pop up progress dialog after a short delay
-			final Exception[] holder = new Exception[1];
-			BusyIndicator.showWhile(parent.getDisplay(), new Runnable() {
-				public void run() {
-					try {
-						runnable.run(new NullProgressMonitor());
-					} catch (InvocationTargetException e) {
-						holder[0] = e;
-					} catch (InterruptedException e) {
-						holder[0] = e;
-					}
-				}
-			});
-			if (holder[0] != null) {
-				if (holder[0] instanceof InvocationTargetException) {
-					throw (InvocationTargetException) holder[0];
-				} else {
-					throw (InterruptedException) holder[0];
-				}
-			}
-			//new TimeoutProgressMonitorDialog(parent, TIMEOUT).run(true /*fork*/, cancelable, runnable);
-		} finally {
-			if (createdShell) parent.dispose();
-		}
+		TeamUIPlugin.runWithProgress(parent, cancelable, runnable);
 	}
 	
 	/**
