@@ -33,26 +33,26 @@ public final class ActivityEvent {
 	 * Creates a new instance of this class.
 	 * 
 	 * @param activity
-	 *            the instance of the interface that changed.
+ *            the instance of the interface that changed.
 	 * @param activityActivityBindingsChanged
-	 *            true, iff the activityActivityBindings property changed.
+ *            true, iff the activityActivityBindings property changed.
 	 * @param activityPatternBindingsChanged
-	 *            true, iff the activityPatternBindings property changed.
+ *            true, iff the activityPatternBindings property changed.
 	 * @param definedChanged
-	 *            true, iff the defined property changed.
+ *            true, iff the defined property changed.
 	 * @param enabledChanged
-	 *            true, iff the enabled property changed.
+ *            true, iff the enabled property changed.
 	 * @param nameChanged
-	 *            true, iff the name property changed.
+ *            true, iff the name property changed.
 	 */
 	public ActivityEvent(
 		IActivity activity,
 		boolean activityActivityBindingsChanged,
 		boolean activityPatternBindingsChanged,
 		boolean definedChanged,
-		boolean enabledChanged,
-		boolean nameChanged, 
-		boolean descriptionChanged) {
+		boolean descriptionChanged,
+		boolean enabledChanged, 
+		boolean nameChanged) {
 		if (activity == null)
 			throw new NullPointerException();
 
