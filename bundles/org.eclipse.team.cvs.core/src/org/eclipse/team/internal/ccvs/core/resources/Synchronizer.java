@@ -478,6 +478,8 @@ public class Synchronizer {
 				entriesSync.config.put(infos[i].getName(), infos[i]);
 			}
 			entriesCache.put(entriesFile, entriesSync);
+			// notify of sync changes
+			broadcastSyncChange(file);
 		}
 		return (ResourceSyncInfo)entriesSync.config.get(file.getName());
 	}

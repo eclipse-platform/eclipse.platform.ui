@@ -70,9 +70,10 @@ public class ResourceSyncInfo {
 		Assert.isNotNull(entryLine);
 		
 		setEntryLine(entryLine);
+		
 		if (permissions != null)  {
 			this.permissions = permissions;
-		}			
+		}
 		// override the timestamp that may of been in entryLine. In some cases the timestamp is not in the
 		// entry line (e.g. receiving entry lines from the server versus reading them from the Entry file).
 		if(timestamp!=null) {
@@ -216,8 +217,15 @@ public class ResourceSyncInfo {
 	 * @return a string of the format "u=rw,g=rw,o=r"
 	 */
 	public String getPermissions() {
-		return permissions;
-
+		if(isDirectory) {
+			return null;
+		} else {
+			if(permissions==null) {
+				return DEFAULT_PERMISSIONS;
+			} else {
+				return permissions;
+			}
+		}
 	}
 
 	/**

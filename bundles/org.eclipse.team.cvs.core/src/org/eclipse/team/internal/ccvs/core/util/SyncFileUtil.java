@@ -30,6 +30,10 @@ public class SyncFileUtil {
 	// of only a 'D'. It is safe to ingnore these entries.	
 	private static final String FOLDER_TAG="D";
 
+	/**
+	 * Reads the CVS/Entry and CVS/Permissions files for the given folder. If the folder does not have a 
+	 * CVS subdirectory then <code>null</code> is returned.
+	 */
 	public static ResourceSyncInfo[] readEntriesFile(File parent) throws CVSException {
 		
 		File cvsSubDir = getCVSSubdirectory(parent);
@@ -68,16 +72,19 @@ public class SyncFileUtil {
 				String name = tokenizer.nextToken();
 				String perms = tokenizer.nextToken();
 				ResourceSyncInfo info = (ResourceSyncInfo) infos.get(name);
-				if (info == null) {
-					throw new CVSException("Entries-File modified");
+				// Running the command line tool will update the Entries file and thus cause 
+				// the Permissions to be out-of-sync. 
+				if (info != null) {
+					infos.put(name, new ResourceSyncInfo(info.getEntryLine(true), perms, null));
 				}
-				infos.put(name, new ResourceSyncInfo(info.getEntryLine(true), perms, null));
 			}
-		}
-		
+		}		
 		return (ResourceSyncInfo[])infos.values().toArray(new ResourceSyncInfo[infos.size()]);
 	}
 	
+	/**
+	 * Writes the given resource sync infos into the CVS/Entry and CVS/Permissions files.
+	 */
 	public static void writeEntriesFile(File entryFile, ResourceSyncInfo[] infos) throws CVSException {
 		
 		String[] entries = new String[infos.length];
@@ -93,6 +100,10 @@ public class SyncFileUtil {
 		FileUtil.writeLines(new File(entryFile.getParentFile(),PERMISSIONS), (String[])permissions.toArray(new String[permissions.size()]));
 	}
 	
+	/**
+	 * Read folder sync info, returns <code>null</code> if the folder does not have
+	 * a CVS subdirectory.
+	 */
 	public static FolderSyncInfo readFolderConfig(File folder) throws CVSException {
 		
 		File cvsSubDir = getCVSSubdirectory(folder);
