@@ -68,8 +68,9 @@ protected void configureShell(Shell shell) {
 /* (non-Javadoc)
  * Method declared in Window.
  */
-public void create() {
-	super.create();
+protected Control createContents(Composite parent) {
+	
+	Control contents = super.createContents(parent);
 	
 	initializeControls();
 	validatePage();
@@ -78,6 +79,8 @@ public void create() {
 	dlgTitleImage = WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_DLGBAN_SAVEAS_DLG).createImage();
 	setTitleImage(dlgTitleImage);
 	setMessage(WorkbenchMessages.getString("SaveAsDialog.message")); //$NON-NLS-1$
+	
+	return contents;
 }
 /** 
  * The <code>SaveAsDialog</code> implementation of this <code>Window</code>
