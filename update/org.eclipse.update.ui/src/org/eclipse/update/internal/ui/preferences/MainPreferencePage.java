@@ -6,6 +6,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
@@ -48,11 +49,10 @@ public class MainPreferencePage
 	public static final String EQUIVALENT_VALUE = "equivalent";
 	public static final String COMPATIBLE_VALUE = "compatible";
 	
-	
-	private Text httpProxyHostText;
-	private Text httpProxyPortText;
 	private Label httpProxyHostLabel;
 	private Label httpProxyPortLabel;
+	private Text httpProxyHostText;
+	private Text httpProxyPortText;
 	private Button enableHttpProxy;
 	private static final String KEY_ENABLE_HTTP_PROXY = "MainPreferencePage.enableHttpProxy";
 	private static final String KEY_HTTP_PROXY_SERVER = "MainPreferencePage.httpProxyHost";
@@ -96,7 +96,7 @@ public class MainPreferencePage
 						{
 					UpdateUI.getString(KEY_BROWSER_CHOICE_SYSTEM),
 						SYSTEM_VALUE }
-			}, getFieldEditorParent());
+			}, getFieldEditorParent(), true);
 			addField(browser);
 		}
 		createSpacer(getFieldEditorParent(), 2);
@@ -115,7 +115,7 @@ public class MainPreferencePage
 				UpdateUI.getString(
 					KEY_UPDATE_VERSIONS_COMPATIBLE),
 					COMPATIBLE_VALUE }
-		}, getFieldEditorParent());
+		}, getFieldEditorParent(), true);
 		addField(updateVersions);
 		
 		createSpacer(getFieldEditorParent(), 2);
@@ -138,39 +138,37 @@ public class MainPreferencePage
 		label.setLayoutData(gd);
 	}
 	protected void createHttpProxy(Composite composite, int columnSpan) {
-		
-		enableHttpProxy = new Button(composite,SWT.CHECK);
-		enableHttpProxy.setText(UpdateUI.getString(KEY_ENABLE_HTTP_PROXY));
+		Group group = new Group(composite, SWT.NONE);
+		group.setText(UpdateUI.getString("MainPreferencePage.proxyGroup"));
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		group.setLayout(layout);
 		GridData gd = new GridData();
 		gd.horizontalSpan = columnSpan;
+		gd.horizontalAlignment = GridData.FILL;
+		group.setLayoutData(gd);
+		group.setFont(composite.getFont());
+		
+		enableHttpProxy = new Button(group, SWT.CHECK);
+		enableHttpProxy.setText(UpdateUI.getString(KEY_ENABLE_HTTP_PROXY));
+		gd = new GridData();
+		gd.horizontalSpan = 2;
 		enableHttpProxy.setLayoutData(gd);
 		
-		httpProxyHostLabel = new Label(composite, SWT.NONE);
-		gd = new GridData();
-		gd.horizontalSpan = 1;
-		httpProxyHostLabel.setLayoutData(gd);
+		httpProxyHostLabel = new Label(group, SWT.NONE);
 		httpProxyHostLabel.setText(UpdateUI.getString(KEY_HTTP_PROXY_SERVER));
 		
-		httpProxyHostText = new Text(composite, SWT.SINGLE | SWT.BORDER);
-		httpProxyHostText.setFont(composite.getFont());
-		gd = new GridData();
-		gd.horizontalSpan = columnSpan-1;
-		gd.horizontalAlignment = GridData.FILL;
-		gd.grabExcessHorizontalSpace=true;
+		httpProxyHostText = new Text(group, SWT.SINGLE | SWT.BORDER);
+		httpProxyHostText.setFont(group.getFont());
+		gd = new GridData(GridData.FILL_HORIZONTAL);
 		httpProxyHostText.setLayoutData(gd);
 		
-		httpProxyPortLabel = new Label(composite, SWT.NONE);
-		gd = new GridData();
-		gd.horizontalSpan = 1;
-		httpProxyPortLabel.setLayoutData(gd);
+		httpProxyPortLabel = new Label(group, SWT.NONE);
 		httpProxyPortLabel.setText(UpdateUI.getString(KEY_HTTP_PROXY_PORT));
 
-		httpProxyPortText = new Text(composite, SWT.SINGLE | SWT.BORDER);
-		httpProxyPortText.setFont(composite.getFont());
-		gd = new GridData();
-		gd.horizontalSpan = columnSpan-1;
-		gd.horizontalAlignment = GridData.FILL;
-		gd.grabExcessHorizontalSpace=true;
+		httpProxyPortText = new Text(group, SWT.SINGLE | SWT.BORDER);
+		httpProxyPortText.setFont(group.getFont());
+		gd = new GridData(GridData.FILL_HORIZONTAL);
 		httpProxyPortText.setLayoutData(gd);
 
 		performDefaults();
@@ -179,8 +177,8 @@ public class MainPreferencePage
 			public void widgetSelected(SelectionEvent e) {
 				boolean enable = enableHttpProxy.getSelection();
 				httpProxyPortLabel.setEnabled(enable);
-				httpProxyPortText.setEnabled(enable);
 				httpProxyHostLabel.setEnabled(enable);
+				httpProxyPortText.setEnabled(enable);
 				httpProxyHostText.setEnabled(enable);
 			}
 			public void widgetDefaultSelected(SelectionEvent e) {
@@ -240,8 +238,8 @@ public class MainPreferencePage
 		if (portValue!=null) httpProxyPortText.setText(portValue);
 
 		httpProxyPortLabel.setEnabled(enableHttpProxy.getSelection());
+		httpProxyHostLabel.setEnabled(enableHttpProxy.getSelection());		
 		httpProxyPortText.setEnabled(enableHttpProxy.getSelection());
-		httpProxyHostLabel.setEnabled(enableHttpProxy.getSelection());
 		httpProxyHostText.setEnabled(enableHttpProxy.getSelection());
 	}
 
