@@ -478,25 +478,28 @@ public class DebugView extends LaunchesView implements IPartListener {
 	/**
 	 * @see IPartListener#partOpened(org.eclipse.ui.IWorkbenchPart)
 	 */
-	public void partOpened(IWorkbenchPart arg0) {
+	public void partOpened(IWorkbenchPart part) {
 	}
 
 	/**
 	 * @see IPartListener#partDeactivated(org.eclipse.ui.IWorkbenchPart)
 	 */
-	public void partDeactivated(IWorkbenchPart arg0) {
+	public void partDeactivated(IWorkbenchPart part) {
 	}
 
 	/**
 	 * @see IPartListener#partBroughtToTop(org.eclipse.ui.IWorkbenchPart)
 	 */
-	public void partBroughtToTop(IWorkbenchPart arg0) {
+	public void partBroughtToTop(IWorkbenchPart part) {
 	}
 
 	/**
 	 * @see IPartListener#partActivated(org.eclipse.ui.IWorkbenchPart)
 	 */
-	public void partActivated(IWorkbenchPart arg0) {
+	public void partActivated(IWorkbenchPart part) {
+		if (part == this) {
+			showMarkerForCurrentSelection();
+		}		
 	}	
 
 	/**
