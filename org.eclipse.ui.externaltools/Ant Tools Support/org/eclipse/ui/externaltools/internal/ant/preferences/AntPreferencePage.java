@@ -116,9 +116,7 @@ public class AntPreferencePage extends PreferencePage implements IWorkbenchPrefe
 		}
 		
 		String antHome= classpathPage.getAntHome();
-		if (antHome.length() > 0) {
-			prefs.setAntHome(antHome);
-		}
+		prefs.setAntHome(antHome);
 		
 		contents = tasksPage.getContents();
 		if (contents != null) {

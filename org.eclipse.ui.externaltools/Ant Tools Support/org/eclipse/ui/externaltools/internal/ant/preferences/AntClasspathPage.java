@@ -212,14 +212,8 @@ public class AntClasspathPage extends AntPage {
 		}
 		
 		antHome.setText(path);
-		
-		File rootDir = validateAntHome(path);
-		if (rootDir == null) {
-			return;
-		}
-		setAntHome(rootDir);
-		
 	}
+	
 	private void setAntHome(File rootDir) {
 		AntClasspathContentProvider contentProvider= (AntClasspathContentProvider)getTableViewer().getContentProvider();
 		contentProvider.removeAll();
@@ -586,6 +580,10 @@ public class AntClasspathPage extends AntPage {
 	}
 	
 	protected String getAntHome() {
-		return antHome.getText();
+		if (antHomeButton.getSelection()) {
+			return antHome.getText();
+		} else {
+			return "";
+		}
 	}
 }
