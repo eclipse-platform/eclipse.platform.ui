@@ -56,13 +56,13 @@ public class AntTypesPage extends AntPage {
 	private void addTypeButtonPressed() {
 		String title = AntPreferencesMessages.getString("AntTypesPage.addTypeDialogTitle"); //$NON-NLS-1$
 		String msg = AntPreferencesMessages.getString("AntTypesPage.addTypeDialogDescription"); //$NON-NLS-1$
-		AddCustomDialog dialog = new AddCustomDialog(getShell(), getPreferencePage().getLibraryURLs(), title, msg);
+		AddCustomDialog dialog = new AddCustomDialog(getShell(), getPreferencePage().getLibraryURLs(), title, msg, null);
 		if (dialog.open() == Dialog.CANCEL) {
 			return;
 		}
 
 		Type type = new Type();
-		type.setTypeName(dialog.getTaskName());
+		type.setTypeName(dialog.getName());
 		type.setClassName(dialog.getClassName());
 		type.setLibrary(dialog.getLibrary());
 		addContent(type);
@@ -107,16 +107,16 @@ public class AntTypesPage extends AntPage {
 		}
 		String title = AntPreferencesMessages.getString("AntTypesPage.editTypeDialogTitle"); //$NON-NLS-1$
 		String msg = AntPreferencesMessages.getString("AntTypesPage.editTypeDialogDescription"); //$NON-NLS-1$
-		AddCustomDialog dialog = new AddCustomDialog(getShell(), getPreferencePage().getLibraryURLs(), title, msg);
+		AddCustomDialog dialog = new AddCustomDialog(getShell(), getPreferencePage().getLibraryURLs(), title, msg, null);
 		
 		dialog.setClassName(type.getClassName());
-		dialog.setTaskName(type.getTypeName());
+		dialog.setName(type.getTypeName());
 		dialog.setLibrary(type.getLibrary());
 		if (dialog.open() == Dialog.CANCEL) {
 			return;
 		}
 
-		type.setTypeName(dialog.getTaskName());
+		type.setTypeName(dialog.getName());
 		type.setClassName(dialog.getClassName());
 		type.setLibrary(dialog.getLibrary());
 		updateContent(type);

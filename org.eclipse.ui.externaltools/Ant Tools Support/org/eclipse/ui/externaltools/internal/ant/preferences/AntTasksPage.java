@@ -56,12 +56,12 @@ public class AntTasksPage extends AntPage {
 	private void addTaskButtonPressed() {
 		String title = AntPreferencesMessages.getString("AntTasksPage.addTaskDialogTitle"); //$NON-NLS-1$
 		String msg = AntPreferencesMessages.getString("AntTasksPage.addTaskDialogDescription"); //$NON-NLS-1$
-		AddCustomDialog dialog = new AddCustomDialog(getShell(), getPreferencePage().getLibraryURLs(), title, msg);
+		AddCustomDialog dialog = new AddCustomDialog(getShell(), getPreferencePage().getLibraryURLs(), title, msg, null);
 		if (dialog.open() == Dialog.CANCEL)
 			return;
 
 		Task task = new Task();
-		task.setTaskName(dialog.getTaskName());
+		task.setTaskName(dialog.getName());
 		task.setClassName(dialog.getClassName());
 		task.setLibrary(dialog.getLibrary());
 		addContent(task);
@@ -106,16 +106,16 @@ public class AntTasksPage extends AntPage {
 		}
 		String title = AntPreferencesMessages.getString("AntTasksPage.editTaskDialogTitle"); //$NON-NLS-1$
 		String msg = AntPreferencesMessages.getString("AntTasksPage.editTaskDialogDescription"); //$NON-NLS-1$
-		AddCustomDialog dialog = new AddCustomDialog(getShell(), getPreferencePage().getLibraryURLs(), title, msg);
+		AddCustomDialog dialog = new AddCustomDialog(getShell(), getPreferencePage().getLibraryURLs(), title, msg, null);
 		
 		dialog.setClassName(task.getClassName());
-		dialog.setTaskName(task.getTaskName());
+		dialog.setName(task.getTaskName());
 		dialog.setLibrary(task.getLibrary());
 		if (dialog.open() == Dialog.CANCEL) {
 			return;
 		}
 
-		task.setTaskName(dialog.getTaskName());
+		task.setTaskName(dialog.getName());
 		task.setClassName(dialog.getClassName());
 		task.setLibrary(dialog.getLibrary());
 		updateContent(task);

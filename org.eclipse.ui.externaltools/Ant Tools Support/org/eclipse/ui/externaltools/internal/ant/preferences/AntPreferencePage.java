@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
+import org.eclipse.ant.core.Property;
 import org.eclipse.ant.core.Task;
 import org.eclipse.ant.core.Type;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -39,7 +40,7 @@ public class AntPreferencePage extends PreferencePage implements IWorkbenchPrefe
 	private AntClasspathPage classpathPage;
 	private AntTasksPage tasksPage;
 	private AntTypesPage typesPage;
-	private AntGlobalPage globalPage;
+	private AntPropertiesPage propertiesPage;
 	
 	/**
 	 * Creates the preference page
@@ -71,14 +72,14 @@ public class AntPreferencePage extends PreferencePage implements IWorkbenchPrefe
 		typesPage = new AntTypesPage(this);
 		typesPage.createTabItem(folder);
 
-		globalPage= new AntGlobalPage(this);
-		globalPage.createTabItem(folder);
+		propertiesPage= new AntPropertiesPage(this);
+		propertiesPage.createTabItem(folder);
 	
 		AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
 		classpathPage.setInput(Arrays.asList(prefs.getCustomURLs()));
 		tasksPage.setInput(Arrays.asList(prefs.getCustomTasks()));
 		typesPage.setInput(Arrays.asList(prefs.getCustomTypes()));
-		globalPage.initialize();
+		propertiesPage.initialize();
 
 		return folder;
 	}
@@ -93,7 +94,7 @@ public class AntPreferencePage extends PreferencePage implements IWorkbenchPrefe
 		classpathPage.setInput(Arrays.asList(prefs.getDefaultCustomURLs()));
 		tasksPage.setInput(Arrays.asList(prefs.getCustomTasks()));
 		typesPage.setInput(Arrays.asList(prefs.getCustomTypes()));
-		globalPage.performDefaults();
+		propertiesPage.performDefaults();
 	}
 	
 	/* (non-Javadoc)
@@ -119,6 +120,15 @@ public class AntPreferencePage extends PreferencePage implements IWorkbenchPrefe
 			Type[] types = (Type[]) contents.toArray(new Type[contents.size()]);
 			prefs.setCustomTypes(types);
 		}
+		
+		contents = propertiesPage.getContents();
+		if (contents != null) {
+			Property[] properties = (Property[]) contents.toArray(new Property[contents.size()]);
+			prefs.setCustomProperties(properties);
+		}
+		
+		String[] files = propertiesPage.getPropertyFiles();
+		prefs.setCustomPropertyFiles(files);
 		
 		prefs.updatePluginPreferences();
 		return super.performOk();

@@ -10,20 +10,25 @@ Contributors:
 **********************************************************************/
 
 import java.net.URL;
-import java.util.*;
-import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.externaltools.internal.model.IHelpContextIds;
-import org.eclipse.ui.externaltools.internal.model.ToolMessages;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
@@ -34,7 +39,7 @@ public class AddCustomDialog extends Dialog {
 	private String description;
 
 	//task/type attributes
-	private String taskName;
+	private String name;
 	private String className;
 	private URL library;
 
@@ -43,17 +48,25 @@ public class AddCustomDialog extends Dialog {
 	private Text nameField;
 	private Text classField;
 	private org.eclipse.swt.widgets.List libraryField;
+	
+	private boolean showLibraryURLs= false;
 
 	private List libraryUrls;
+	
+	private String buttonLabel;
 
 	/**
 	 * Creates a new dialog with the given shell and title.
 	 */
-	protected AddCustomDialog(Shell parent, List libraryUrls, String title, String description) {
+	protected AddCustomDialog(Shell parent, List libraryUrls, String title, String description, String buttonLabel) {
 		super(parent);
 		this.title = title;
 		this.description = description;
-		this.libraryUrls= libraryUrls;
+		if (libraryUrls != null) {
+			this.libraryUrls= libraryUrls;
+			showLibraryURLs= true;
+		}
+		this.buttonLabel= buttonLabel;
 	}
 	
 	/* (non-Javadoc)
@@ -69,16 +82,8 @@ public class AddCustomDialog extends Dialog {
 	 * Method declared on Dialog.
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
-		okButton = createButton(
-			parent,
-			IDialogConstants.OK_ID,
-			IDialogConstants.OK_LABEL,
-			true);
-		createButton(
-			parent,
-			IDialogConstants.CANCEL_ID,
-			IDialogConstants.CANCEL_LABEL,
-			false);
+		okButton = createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
+		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 		updateEnablement();
 	}
 
@@ -100,7 +105,7 @@ public class AddCustomDialog extends Dialog {
 		label.setLayoutData(data);
 
 		label = new Label(dialogArea, SWT.NONE);
-		label.setText(ToolMessages.getString("AddCustomDialog.name")); //$NON-NLS-1$;
+		label.setText(AntPreferencesMessages.getString("AddCustomDialog.name")); //$NON-NLS-1$;
 		nameField = new Text(dialogArea, SWT.BORDER);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
@@ -112,7 +117,11 @@ public class AddCustomDialog extends Dialog {
 		});
 
 		label = new Label(dialogArea, SWT.NONE);
-		label.setText(ToolMessages.getString("AddCustomDialog.class")); //$NON-NLS-1$;
+		if (buttonLabel == null) {
+			label.setText(AntPreferencesMessages.getString("AddCustomDialog.class")); //$NON-NLS-1$;
+		} else {
+			label.setText(buttonLabel);
+		}
 		classField = new Text(dialogArea, SWT.BORDER);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
@@ -123,44 +132,47 @@ public class AddCustomDialog extends Dialog {
 			}
 		});
 
-		label = new Label(dialogArea, SWT.NONE);
-		label.setText(ToolMessages.getString("AddCustomDialog.library")); //$NON-NLS-1$;
-		libraryField = new org.eclipse.swt.widgets.List(dialogArea, SWT.READ_ONLY | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+		if (showLibraryURLs) {
+			label = new Label(dialogArea, SWT.NONE);
+			label.setText(AntPreferencesMessages.getString("AddCustomDialog.library")); //$NON-NLS-1$;
+			libraryField = new org.eclipse.swt.widgets.List(dialogArea, SWT.READ_ONLY | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 
-		data = new GridData(GridData.FILL_HORIZONTAL);
-		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
-		libraryField.setLayoutData(data);
-		libraryField.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				updateEnablement();
-			}
-		});
+			data = new GridData(GridData.FILL_HORIZONTAL);
+			data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
+			libraryField.setLayoutData(data);
+			libraryField.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					updateEnablement();
+				}
+			});
 
-		//populate library combo and select input library
-		if (libraryUrls == null) {
-			libraryUrls = Arrays.asList(AntCorePlugin.getPlugin().getPreferences().getCustomURLs());
-		}
-		int selection = 0;
-		Iterator itr= libraryUrls.iterator();
-		int i= 0;
-		while (itr.hasNext()) {
-			URL lib = (URL) itr.next();
-			libraryField.add(lib.getFile());
-			if (lib.equals(library)) {
-				selection = i;
+			//populate library combo and select input library
+			//if (libraryUrls == null) {
+			//libraryUrls = Arrays.asList(AntCorePlugin.getPlugin().getPreferences().getCustomURLs());
+			//}
+			int selection = 0;
+			Iterator itr= libraryUrls.iterator();
+			int i= 0;
+			while (itr.hasNext()) {
+				URL lib = (URL) itr.next();
+				libraryField.add(lib.getFile());
+				if (lib.equals(library)) {
+					selection = i;
+				}
+				i++;
 			}
-			i++;
+			
+			if (libraryUrls.size() >= 0) {
+				libraryField.select(selection);
+			}
 		}
 			
 		//intialize fields
-		if (taskName != null) {
-			nameField.setText(taskName);
+		if (name != null) {
+			nameField.setText(name);
 		}
 		if (className != null) {
 			classField.setText(className);
-		}
-		if (libraryUrls.size() >= 0) {
-			libraryField.select(selection);
 		}
 
 		return dialogArea;
@@ -174,8 +186,8 @@ public class AddCustomDialog extends Dialog {
 		return library;
 	}
 	
-	public String getTaskName() {
-		return taskName;
+	public String getName() {
+		return name;
 	}
 
 	/* (non-Javadoc)
@@ -183,10 +195,12 @@ public class AddCustomDialog extends Dialog {
 	 */
 	protected void okPressed() {
 		className = classField.getText();
-		taskName = nameField.getText();
-		int selection = libraryField.getSelectionIndex();
-		if (selection >= 0) {
-			library = (URL)libraryUrls.get(selection);
+		name = nameField.getText();
+		if (libraryField != null) {
+			int selection = libraryField.getSelectionIndex();
+			if (selection >= 0) {
+				library = (URL)libraryUrls.get(selection);
+			}
 		}
 		super.okPressed();
 	}
@@ -199,8 +213,8 @@ public class AddCustomDialog extends Dialog {
 		this.library = library;
 	}
 
-	public void setTaskName(String taskName) {
-		this.taskName = taskName;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	private void updateEnablement() {
@@ -208,7 +222,7 @@ public class AddCustomDialog extends Dialog {
 			okButton.setEnabled(
 				nameField.getText().length() > 0
 					&& classField.getText().length() > 0
-					&& libraryField.getSelectionIndex() >= 0);
+					&& (libraryField == null || libraryField.getSelectionIndex() >= 0));
 		}
 	}
 }

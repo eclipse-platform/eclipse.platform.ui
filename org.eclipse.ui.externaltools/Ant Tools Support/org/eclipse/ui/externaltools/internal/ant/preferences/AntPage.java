@@ -68,9 +68,10 @@ public abstract class AntPage {
 	/**
 	 * Adds an object to the contents
 	 */
-	protected final void addContent(Object o) {
-		if (contentProvider != null)
+	protected void addContent(Object o) {
+		if (contentProvider != null) {
 			contentProvider.add(o);
+		}
 	}
 	
 	/**
@@ -202,8 +203,9 @@ public abstract class AntPage {
 	protected void removeButtonPressed() {
 		IStructuredSelection sel = (IStructuredSelection) tableViewer.getSelection();
 		Iterator enum = sel.iterator();
-		while (enum.hasNext())
+		while (enum.hasNext()) {
 			contentProvider.remove(enum.next());
+		}
 	}
 	
 	/**
@@ -272,8 +274,9 @@ public abstract class AntPage {
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			this.viewer = (TableViewer) viewer;
 			elements.clear();
-			if (newInput != null)
+			if (newInput != null) {
 				elements.addAll((List) newInput);
+			}
 		}
 		
 		public void remove(Object o) {
