@@ -19,6 +19,7 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -910,5 +911,86 @@ public class EclipseSynchronizer {
 		if (info == null || info.isAdded() || info.isDeleted())
 			return;
 		SyncFileWriter.writeFileToBaseDirectory(file, info);
+	}
+	
+	/**
+	 * Method isSyncInfoLoaded returns true if all the sync info for the
+	 * provided resources is loaded into the internal cache.
+	 * 
+	 * @param resources
+	 * @param i
+	 * @return boolean
+	 */
+	public boolean isSyncInfoLoaded(IResource[] resources, int depth) throws CVSException {
+		// get the folders involved
+		IContainer[] folders = getParentFolders(resources, depth);
+		// for all folders that have a CVS folder, ensure the sync info is cached
+		for (int i = 0; i < folders.length; i++) {
+			IContainer parent = folders[i];
+			try {
+				if (parent.getFolder(new Path(SyncFileWriter.CVS_DIRNAME)).exists()) {
+					if (parent.getSessionProperty(RESOURCE_SYNC_KEY) == null)
+						return false;
+					if (parent.getSessionProperty(FOLDER_SYNC_KEY) == null)
+						return false;
+					if (parent.getSessionProperty(IGNORE_SYNC_KEY) == null)
+						return false;
+				}
+			} catch (CoreException e) {
+				// let future operations surface the error
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Method ensureSyncInfoLoaded loads all the relevent sync info into the cache
+	 * @param resources
+	 * @param i
+	 * @return Object
+	 */
+	public void ensureSyncInfoLoaded(IResource[] resources, int depth) throws CVSException {
+		// get the folders involved
+		IContainer[] folders = getParentFolders(resources, depth);
+		// Cache the sync info for all the folders
+		for (int i = 0; i < folders.length; i++) {
+			IContainer parent = folders[i];
+			try {
+				beginOperation(null);
+				cacheResourceSyncForChildren(parent);
+				cacheFolderSync(parent);
+				cacheFolderIgnores(parent);
+			} finally {
+				endOperation(null);
+			}
+		}
+	}
+
+	/*
+	 * Collect the projects and parent folders of the resources since 
+	 * thats were the sync info is kept.
+	 */
+	private IContainer[] getParentFolders(IResource[] resources, int depth) throws CVSException {
+		final Set folders = new HashSet();
+		for (int i = 0; i < resources.length; i++) {
+			IResource resource = resources[i];
+			folders.add(resource.getProject());
+			folders.add(resource.getParent());
+			// use the depth to gather child folders when appropriate
+			try {
+				resource.accept(new IResourceVisitor() {
+					public boolean visit(IResource resource) throws CoreException {
+						if (resource.getType() == IResource.FOLDER)
+							folders.add(resource);
+						// let the depth determine who we visit
+						return true;
+					}
+				}, depth, false);
+			} catch (CoreException e) {
+				throw CVSException.wrapException(e);
+			}
+		}
+		return (IContainer[]) folders.toArray(new IContainer[folders.size()]);
 	}
 }
