@@ -31,7 +31,7 @@ import org.osgi.framework.*;
  */
 
 public class InstallConfiguration extends InstallConfigurationModel implements IInstallConfiguration {
-
+	private static boolean isWindows = System.getProperty("os.name").startsWith("Win");
 	private ListenersList listeners = new ListenersList();
 
 	/*
@@ -794,29 +794,43 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 	 * @return true if restart is needed
 	 */
 	private boolean isRestartNeeded(IPlatformConfiguration runtimeConfig) {
-		URL[] newBundlePaths = runtimeConfig.getPluginPath();
-		HashMap newMap = new HashMap();
-		for (int i=0; i<newBundlePaths.length; i++) 
-			newMap.put(newBundlePaths[i].toExternalForm(), newBundlePaths[i]);
 
+		// First, create a map for faster lookups
+		URL[] newBundlePaths = runtimeConfig.getPluginPath();
+		HashSet newPluginsSet = new HashSet(newBundlePaths.length);
+		for (int i=0; i<newBundlePaths.length; i++) {
+			
+			String pluginLocation = "reference:" + newBundlePaths[i].toExternalForm();
+			newPluginsSet.add(pluginLocation);
+			// On windows, we will be doing case insensitive search as well, so lower it now
+			if (isWindows)
+				newPluginsSet.add(pluginLocation.toLowerCase());
+		}
+		
 		PlatformAdmin platformAdmin = Platform.getPlatformAdmin();
 		State state = platformAdmin.getState();
 		BundleDescription[] oldBundles = state.getBundles();
-		
-		int start = "reference:".length();
+
 		for (int i=0; i<oldBundles.length; i++) {
 			if (oldBundles[i].getBundleId() == 0)
-				continue; // skip the system bundle)
-			String location = oldBundles[i].getLocation();
-			location = location.substring(start);
-			// If any existing bundle is removed in the new configuration, don't apply the changes.
-			// TODO remove when platform fixes file:/ correctly
-			if (!(newMap.get(location) != null || newMap.get(location+'/') != null || newMap.get("file:/"+location.substring(5)) != null)) {
-				if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_CONFIGURATION)
-					UpdateCore.debug("Bundle " + location + " has been removed");
-				return true;
-			}
+				continue; // skip the system bundle
+			String oldBundleLocation = oldBundles[i].getLocation();
+			// TODO fix this when the platform correctly resolves local file urls
+			if (isWindows && 
+					!oldBundleLocation.startsWith("reference:file:/") && 
+					oldBundleLocation.startsWith("reference:file:"))
+				oldBundleLocation = "reference:file:/"+oldBundleLocation.substring(15);
+			
+			if (newPluginsSet.contains(oldBundleLocation))
+				continue;
+			if (isWindows && newPluginsSet.contains(oldBundleLocation.toLowerCase()))
+				continue;
+			
+			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_CONFIGURATION)
+				UpdateCore.debug("Bundle " + oldBundleLocation + " has been removed");
+			return true;
 		}
+
 		return false;
 	}
 	
