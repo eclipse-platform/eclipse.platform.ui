@@ -185,7 +185,6 @@ public void badPlugins() {
 		"Plugin version identifier, ..., must not start with a separator character.",
 		"The major (1st) component of plugin version identifier, one, must be numeric.",
 		"Plugin version identifier, 1.2.3.4.5, can contain a maximum of four components.",
-		"Error while processing file:",
 	};
 	
 	PluginDescriptor tempPlugin = (PluginDescriptor)Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.core.tests.runtime");
