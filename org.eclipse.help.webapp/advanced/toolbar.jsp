@@ -36,6 +36,7 @@ BODY {
 
 #titleText {
 	font-weight:bold;
+	color:WindowText;
 }
  
 .buttonOn a { 

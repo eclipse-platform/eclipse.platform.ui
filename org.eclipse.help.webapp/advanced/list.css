@@ -11,6 +11,7 @@
 
 BODY {
 	background-color: <%=prefs.getViewBackground()%>;
+	color:WindowText;
 	font: <%=prefs.getViewFont()%>;
 	margin-top:5px;
 	margin-<%=isRTL?"right":"left"%>:5px;

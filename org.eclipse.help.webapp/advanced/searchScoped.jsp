@@ -75,6 +75,10 @@ A {
 	border:1px solid ThreeDShadow;
 }
 
+#searchLabel {
+	color:WindowText;
+}
+
 #go {
 	background:ThreeDShadow;
 	color:Window;

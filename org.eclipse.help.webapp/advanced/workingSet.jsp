@@ -38,6 +38,7 @@ HTML, BODY {
 BODY {
 	font: <%=prefs.getViewFont()%>;
 	background:<%=prefs.getToolbarBackground()%>;
+	color: WindowText;
 }
 
 TABLE {
@@ -59,6 +60,7 @@ TD, TR {
 
 #booksContainer {
 	background:Window;
+	color:WindowText;
 	border:	2px inset ThreeDHighlight;
 	margin:10px;
 	margin-top:2px;

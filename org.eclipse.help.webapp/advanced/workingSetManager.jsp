@@ -40,6 +40,7 @@ HTML, BODY {
 
 BODY {
 	background-color: <%=prefs.getToolbarBackground()%>;
+	color:WindowText; 	
 }
 
 TABLE {
@@ -61,6 +62,7 @@ BUTTON {
 
 #workingSetContainer {
 	background:Window;
+	color:WindowText; 
 	border: 2px inset ThreeDHighlight;
 	margin:0px 5px;
 	padding:5px;
