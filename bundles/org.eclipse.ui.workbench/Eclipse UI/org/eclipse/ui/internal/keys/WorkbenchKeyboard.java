@@ -45,6 +45,7 @@ import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.commands.CommandException;
 import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.ICommandManager;
+import org.eclipse.ui.commands.NoSuchAttributeException;
 import org.eclipse.ui.commands.NotDefinedException;
 import org.eclipse.ui.commands.NotHandledException;
 import org.eclipse.ui.internal.IPreferenceConstants;
@@ -405,11 +406,11 @@ public final class WorkbenchKeyboard {
     private static boolean isEnabled(ICommand command) {
         try {
             return Boolean.TRUE.equals(command.getAttributeValue("enabled")); //$NON-NLS-1$
+        } catch (NoSuchAttributeException eNoSuchAttribute) {
+            return true;
         } catch (NotHandledException eNotHandled) {
             return false;
-        } catch (NotDefinedException eNotDefined) {
-            return true;
-        }
+        } 
     }
 
     /**

@@ -37,6 +37,8 @@ import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.CommandResolver;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -88,9 +90,13 @@ import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.application.WorkbenchAdvisor;
+import org.eclipse.ui.commands.CommandManagerEvent;
 import org.eclipse.ui.commands.ICommand;
+import org.eclipse.ui.commands.ICommandManagerListener;
 import org.eclipse.ui.commands.IKeySequenceBinding;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
+import org.eclipse.ui.contexts.ContextManagerEvent;
+import org.eclipse.ui.contexts.IContextManagerListener;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.internal.activities.ws.WorkbenchActivitySupport;
 import org.eclipse.ui.internal.colors.ColorDefinition;
@@ -752,94 +758,105 @@ public final class Workbench implements IWorkbench {
 			introDescriptor = (IntroDescriptor) introRegistry.getIntros()[0];
 		}		
 		
-		// begin the initialization of the activity, command, and context
-		// mangers
+        // begin the initialization of the activity, command, and context
+        // mangers
 
 		workbenchActivitySupport = new WorkbenchActivitySupport();
-		workbenchCommandSupport = new WorkbenchCommandSupport(this);
-		workbenchContextSupport = new WorkbenchContextSupport(this);
+        workbenchCommandSupport = new WorkbenchCommandSupport(this);
+        workbenchContextSupport = new WorkbenchContextSupport(this);
 
-		workbenchCommandSupport.getCommandManager().addCommandManagerListener(
-			workbenchCommandsAndContexts.commandManagerListener);
+        workbenchCommandSupport.getCommandManager().addCommandManagerListener(
+                commandManagerListener);
 
-		workbenchContextSupport.getContextManager().addContextManagerListener(
-			workbenchCommandsAndContexts.contextManagerListener);
+        workbenchContextSupport.getContextManager().addContextManagerListener(
+                contextManagerListener);
 
-		// establish relationship between jface and the command manager
-		CommandResolver.getInstance().setCommandResolver(new CommandResolver.ICallback() {
+        // establish relationship between jface and the command manager
 
-			public Integer getAccelerator(String commandId) {
-				Integer accelerator = null;
-				ICommand command =
-					workbenchCommandSupport.getCommandManager().getCommand(commandId);
+        CommandResolver.getInstance().setCommandResolver(
+                new CommandResolver.ICallback() {
 
-				if (command.isDefined()) {
-					List keySequenceBindings = command.getKeySequenceBindings();
-					final int size = keySequenceBindings.size();
-					
-					for (int i = 0; i < size; i++) {
-						IKeySequenceBinding keySequenceBinding =
-							(IKeySequenceBinding) keySequenceBindings.get(i);
-						KeySequence keySequence = keySequenceBinding.getKeySequence();
-						List keyStrokes = keySequence.getKeyStrokes();
+                    public Integer getAccelerator(String commandId) {
+                        Integer accelerator = null;
+                        ICommand command = getCommandSupport()
+                                .getCommandManager().getCommand(commandId);
 
-						if (keyStrokes.size() == 1) {
-							KeyStroke keyStroke = (KeyStroke) keyStrokes.get(0);
-							accelerator =
-								new Integer(SWTKeySupport.convertKeyStrokeToAccelerator(keyStroke));
-							break;
-						}
-					}
-				}
+                        if (command.isDefined()) {
+                            List keySequenceBindings = command
+                                    .getKeySequenceBindings();
+                            final int size = keySequenceBindings.size();
 
-				return accelerator;
-			}
+                            for (int i = 0; i < size; i++) {
+                                IKeySequenceBinding keySequenceBinding = (IKeySequenceBinding) keySequenceBindings
+                                        .get(i);
+                                KeySequence keySequence = keySequenceBinding
+                                        .getKeySequence();
+                                List keyStrokes = keySequence.getKeyStrokes();
 
-			public String getAcceleratorText(String commandId) {
-				String acceleratorText = null;
-				ICommand command =
-					workbenchCommandSupport.getCommandManager().getCommand(commandId);
+                                if (keyStrokes.size() == 1) {
+                                    KeyStroke keyStroke = (KeyStroke) keyStrokes
+                                            .get(0);
+                                    accelerator = new Integer(
+                                            SWTKeySupport
+                                                    .convertKeyStrokeToAccelerator(keyStroke));
+                                    break;
+                                }
+                            }
+                        }
 
-				if (command.isDefined()) {
-					List keySequenceBindings = command.getKeySequenceBindings();
+                        return accelerator;
+                    }
 
-					if (!keySequenceBindings.isEmpty()) {
-						IKeySequenceBinding keySequenceBinding =
-							(IKeySequenceBinding) keySequenceBindings.get(0);
-						acceleratorText = keySequenceBinding.getKeySequence().format();
-					}
-				}
+                    public String getAcceleratorText(String commandId) {
+                        String acceleratorText = null;
+                        ICommand command = getCommandSupport()
+                                .getCommandManager().getCommand(commandId);
 
-				return acceleratorText;
-			}
+                        if (command.isDefined()) {
+                            List keySequenceBindings = command
+                                    .getKeySequenceBindings();
 
-			public boolean isAcceleratorInUse(int accelerator) {
-				KeySequence keySequence =
-					KeySequence.getInstance(
-						SWTKeySupport.convertAcceleratorToKeyStroke(accelerator));
-				return workbenchCommandSupport.getCommandManager().isPerfectMatch(keySequence)
-					|| workbenchCommandSupport.getCommandManager().isPartialMatch(keySequence);
-			}
+                            if (!keySequenceBindings.isEmpty()) {
+                                IKeySequenceBinding keySequenceBinding = (IKeySequenceBinding) keySequenceBindings
+                                        .get(0);
+                                acceleratorText = keySequenceBinding
+                                        .getKeySequence().format();
+                            }
+                        }
 
-			public final boolean isActive(final String commandId) {
-				if (commandId != null) {
-					final ICommand command =
-						workbenchCommandSupport.getCommandManager().getCommand(commandId);
+                        return acceleratorText;
+                    }
 
-					if (command != null)
-						return command.isDefined() && workbenchActivitySupport.getActivityManager().getIdentifier(command.getId()).isEnabled();
-				}
+                    public boolean isAcceleratorInUse(int accelerator) {
+                        KeySequence keySequence = KeySequence
+                                .getInstance(SWTKeySupport
+                                        .convertAcceleratorToKeyStroke(accelerator));
+                        return getCommandSupport().getCommandManager()
+                                .isPerfectMatch(keySequence)
+                                || workbenchCommandSupport.getCommandManager()
+                                        .isPartialMatch(keySequence);
+                    }
 
-				return true;
-			}
-		});
+                    public final boolean isActive(final String commandId) {
+                        if (commandId != null) {
+                            final ICommand command = getCommandSupport()
+                                    .getCommandManager().getCommand(commandId);
 
-		addWindowListener(workbenchCommandsAndContexts.windowListener);
-		workbenchCommandsAndContexts.commandHandlerServiceChanged();		
-		workbenchCommandsAndContexts.contextActivationServiceChanged();
+                            if (command != null)
+                                    return command.isDefined()
+                                            && getActivitySupport()
+                                                    .getActivityManager()
+                                                    .getIdentifier(
+                                                            command.getId())
+                                                    .isEnabled();
+                        }
 
-		// end the initialization of the activity, command, and context
-		// managers
+                        return true;
+                    }
+                });
+
+        // end the initialization of the activity, command, and context
+        // managers
 
 		// allow the workbench configurer to initialize
 		getWorkbenchConfigurer().init();
@@ -1947,24 +1964,58 @@ public final class Workbench implements IWorkbench {
 	}
 
 	private WorkbenchActivitySupport workbenchActivitySupport;
-	private WorkbenchCommandSupport workbenchCommandSupport;
-	private WorkbenchContextSupport workbenchContextSupport;
 
-	public IWorkbenchActivitySupport getActivitySupport() {
-		return workbenchActivitySupport;
-	}
+    private WorkbenchCommandSupport workbenchCommandSupport;
 
-	public IWorkbenchCommandSupport getCommandSupport() {
-		return workbenchCommandSupport;
-	}
+    private WorkbenchContextSupport workbenchContextSupport;
 
-	public IWorkbenchContextSupport getContextSupport() {
-		return workbenchContextSupport;
-	}
+    public IWorkbenchActivitySupport getActivitySupport() {
+        return workbenchActivitySupport;
+    }
 
-	/* TODO: reduce visibility, or better - get rid of entirely */
-	public WorkbenchCommandsAndContexts workbenchCommandsAndContexts =
-		new WorkbenchCommandsAndContexts(this);
+    public IWorkbenchCommandSupport getCommandSupport() {
+        return workbenchCommandSupport;
+    }
+
+    public IWorkbenchContextSupport getContextSupport() {
+        return workbenchContextSupport;
+    }
+
+    private final ICommandManagerListener commandManagerListener = new ICommandManagerListener() {
+
+        public final void commandManagerChanged(
+                final CommandManagerEvent commandManagerEvent) {
+            System.out.println("commandManagerChanged");
+            updateActiveWorkbenchWindowMenuManager(false);
+        }
+    };
+
+    private final IContextManagerListener contextManagerListener = new IContextManagerListener() {
+
+        public final void contextManagerChanged(
+                final ContextManagerEvent contextManagerEvent) {
+            System.out.println("contextManagerChanged");
+            getCommandSupport().getCommandManager().setActiveContextIds(
+                    getContextSupport().getContextManager()
+                            .getEnabledContextIds());
+            updateActiveWorkbenchWindowMenuManager(false);
+        }
+    };
+
+    private void updateActiveWorkbenchWindowMenuManager(boolean textOnly) {
+        IWorkbenchWindow workbenchWindow = getActiveWorkbenchWindow();
+
+        if (workbenchWindow instanceof WorkbenchWindow) {
+            MenuManager menuManager = ((WorkbenchWindow) workbenchWindow)
+                    .getMenuManager();
+
+            if (textOnly)
+                menuManager.update(IAction.TEXT);
+            else
+                menuManager.updateAll(true);
+        }
+    }
+	
 	private ActivityPersistanceHelper activityHelper;
 
 	/* (non-Javadoc)

@@ -78,16 +78,10 @@ import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.commands.ActionHandler;
-import org.eclipse.ui.commands.CommandHandlerServiceFactory;
 import org.eclipse.ui.commands.HandlerSubmission;
 import org.eclipse.ui.commands.IHandler;
-import org.eclipse.ui.commands.IMutableCommandHandlerService;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
-import org.eclipse.ui.commands.IWorkbenchWindowCommandSupport;
-import org.eclipse.ui.contexts.IWorkbenchWindowContextSupport;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.commands.ws.WorkbenchWindowCommandSupport;
-import org.eclipse.ui.internal.contexts.ws.WorkbenchWindowContextSupport;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.Policy;
@@ -141,16 +135,6 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	 */
 	private int submenus = 0x00;
 
-	/**
-	 * @since 3.0
-	 */
-	private IWorkbenchWindowCommandSupport workbenchWindowCommandSupport;
-
-	/**
-	 * @since 3.0
-	 */
-	private IWorkbenchWindowContextSupport workbenchWindowContextSupport;
-	
 	/**
 	 * Object for configuring this workbench window. Lazily initialized to
 	 * an instance unique to this window.
@@ -275,10 +259,6 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 			this,
 			getWindowConfigurer().getActionBarConfigurer(),
 			FILL_ALL_ACTION_BARS);
-
-		workbenchWindowCommandSupport = new WorkbenchWindowCommandSupport(this);
-		workbenchWindowContextSupport = new WorkbenchWindowContextSupport(this);
-		((WorkbenchWindowCommandSupport) workbenchWindowCommandSupport).addCommandHandlerService(actionSetAndGlobalActionCommandHandlerService);
 	}
 
 	/**
@@ -291,7 +271,6 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 
 	private Map actionSetHandlersByCommandId = new HashMap();
 	private Map globalActionHandlersByCommandId = new HashMap();
-	public IMutableCommandHandlerService actionSetAndGlobalActionCommandHandlerService = CommandHandlerServiceFactory.getMutableCommandHandlerService();
 	private TrimDropTarget trimDropTarget;
 	
 	void registerActionSets(IActionSet[] actionSets) {
@@ -345,8 +324,6 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		Workbench.getInstance().getCommandSupport().removeHandlerSubmissions(this.handlerSubmissions);
 		this.handlerSubmissions = handlerSubmissions;
 		Workbench.getInstance().getCommandSupport().addHandlerSubmissions(this.handlerSubmissions);		
-		
-		actionSetAndGlobalActionCommandHandlerService.setHandlersByCommandId(handlersByCommandId);
 	}	
 	
 	/*
@@ -2246,18 +2223,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		layout.removeTrim(fastViewBar.getControl());
 		getShell().layout();
 	}
-	
-	public IWorkbenchWindowContextSupport getContextSupport() {
-		return workbenchWindowContextSupport;
-	}	
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchWindow#getCommandSupport()
-	 */
-	public IWorkbenchWindowCommandSupport getCommandSupport() {
-		return workbenchWindowCommandSupport;
-	}
-	
+		
 	/**
 	 * Returns the fast view bar.
 	 */
@@ -2273,12 +2239,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	}
 
 	public Object getAdapter(Class adapter) {
-		if (IWorkbenchWindowCommandSupport.class.equals(adapter))
-			return getCommandSupport();
-		else if (IWorkbenchWindowContextSupport.class.equals(adapter))
-			return getContextSupport();
-		else
-			return null;
+	    return null;
 	}
 	
 //for dynamic UI

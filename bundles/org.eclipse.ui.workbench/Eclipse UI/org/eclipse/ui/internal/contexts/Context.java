@@ -21,7 +21,6 @@ import org.eclipse.ui.contexts.IContext;
 import org.eclipse.ui.contexts.IContextContextBinding;
 import org.eclipse.ui.contexts.IContextListener;
 import org.eclipse.ui.contexts.NotDefinedException;
-
 import org.eclipse.ui.internal.util.Util;
 
 final class Context implements IContext {

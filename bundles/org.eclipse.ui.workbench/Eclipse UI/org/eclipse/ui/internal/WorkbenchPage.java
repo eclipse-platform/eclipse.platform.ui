@@ -75,10 +75,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.SubActionBars;
 import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.commands.IWorkbenchPageCommandSupport;
-import org.eclipse.ui.contexts.IWorkbenchPageContextSupport;
-import org.eclipse.ui.internal.commands.ws.WorkbenchPageCommandSupport;
-import org.eclipse.ui.internal.contexts.ws.WorkbenchPageContextSupport;
 import org.eclipse.ui.internal.dialogs.CustomizePerspectiveDialog;
 import org.eclipse.ui.internal.intro.IIntroConstants;
 import org.eclipse.ui.internal.intro.IntroMessages;
@@ -1837,9 +1833,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 			perspList.setActive(persp);
 			window.firePerspectiveActivated(this, desc);
 		}
-
-		workbenchPageCommandSupport = new WorkbenchPageCommandSupport(this);
-		workbenchPageContextSupport = new WorkbenchPageContextSupport(this);
 	}
 	/**
 	 * See IWorkbenchPage.
@@ -3405,17 +3398,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 				usedList.add(perspective);
 			}
 		}
-	}
-
-	private IWorkbenchPageCommandSupport workbenchPageCommandSupport;
-	private IWorkbenchPageContextSupport workbenchPageContextSupport;
-
-	public IWorkbenchPageCommandSupport getCommandSupport() {
-		return workbenchPageCommandSupport;
-	}
-
-	public IWorkbenchPageContextSupport getContextSupport() {
-		return workbenchPageContextSupport;
 	}
 
 	//for dynamic UI

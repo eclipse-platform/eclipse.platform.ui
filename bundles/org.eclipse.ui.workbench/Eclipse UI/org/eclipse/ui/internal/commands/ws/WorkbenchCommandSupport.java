@@ -23,14 +23,13 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.commands.CommandHandlerServiceFactory;
 import org.eclipse.ui.commands.CommandManagerFactory;
 import org.eclipse.ui.commands.HandlerSubmission;
 import org.eclipse.ui.commands.ICommandManager;
-import org.eclipse.ui.commands.ICompoundCommandHandlerService;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.commands.CommandManager;
 import org.eclipse.ui.internal.keys.WorkbenchKeyboard;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeyFormatterFactory;
@@ -45,8 +44,6 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
     private String activePerspectiveId;
 
     private IWorkbenchWindow activeWorkbenchWindow;
-
-    private ICompoundCommandHandlerService compoundCommandHandlerService;
 
     private Map handlerSubmissionsByCommandId = new HashMap();
 
@@ -143,8 +140,6 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
     public WorkbenchCommandSupport(Workbench workbench) {
         this.workbench = workbench;
         mutableCommandManager = CommandManagerFactory.getCommandManager();
-        compoundCommandHandlerService = CommandHandlerServiceFactory
-                .getCompoundCommandHandlerService();
         KeyFormatterFactory.setDefault(SWTKeySupport
                 .getKeyFormatterForPlatform());
         keyboard = new WorkbenchKeyboard(workbench, workbench
@@ -192,20 +187,6 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
         return mutableCommandManager;
     }
 
-    public ICompoundCommandHandlerService getCompoundCommandHandlerService() {
-        return compoundCommandHandlerService;
-    }
-
-    /**
-     * <p>
-     * An accessor for the keyboard interface this workbench is using. This can
-     * be used by external class to get a reference with which they can
-     * simulate key presses in the key binding architecture. This is used for
-     * testing purposes currently.
-     * </p>
-     * 
-     * @return A reference to the workbench keyboard interface; never <code>null</code>.
-     */
     public WorkbenchKeyboard getKeyboard() {
         return keyboard;
     }
@@ -321,10 +302,8 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
                 }
             }
 
-            // TODO switch to this from the old mechanism in
-            // WorkbenchCommandsAndContexts
-            //((CommandManager) mutableCommandManager)
-            //        .setHandlersByCommandId(handlersByCommandId);
+            ((CommandManager) mutableCommandManager)
+                    .setHandlersByCommandId(handlersByCommandId);
         }
     }
 

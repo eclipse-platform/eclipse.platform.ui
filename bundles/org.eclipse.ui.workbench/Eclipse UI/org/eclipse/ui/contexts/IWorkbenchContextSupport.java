@@ -25,19 +25,12 @@ import java.util.List;
 public interface IWorkbenchContextSupport {
 
     /**
-     * TODO - sends request only; context manager not necessarily updated right away
+     * TODO - sends request only; context manager not necessarily updated right
+     * away
      * 
      * @param enabledSubmissions
      */
     void addEnabledSubmissions(List enabledSubmissions);
-
-    /**
-     * Returns the compound context activation service for the workbench.
-     * 
-     * @return the compound context activation service for the workbench.
-     *         Guaranteed not to be <code>null</code>.
-     */
-    ICompoundContextActivationService getCompoundContextActivationService();
 
     /**
      * Returns the context manager for the workbench.
@@ -48,7 +41,8 @@ public interface IWorkbenchContextSupport {
     IContextManager getContextManager();
 
     /**
-     * TODO - sends request only; context manager not necessarily updated right away
+     * TODO - sends request only; context manager not necessarily updated right
+     * away
      * 
      * @param enabledSubmissions
      */

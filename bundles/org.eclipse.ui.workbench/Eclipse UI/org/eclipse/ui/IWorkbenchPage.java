@@ -12,9 +12,6 @@ package org.eclipse.ui;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.ui.commands.IWorkbenchPageCommandSupport;
-import org.eclipse.ui.contexts.IWorkbenchPageContextSupport;
-
 import org.eclipse.ui.internal.ICompatibleWorkbenchPage;
 
 /**
@@ -698,24 +695,6 @@ public interface IWorkbenchPage extends IPartService, ISelectionService, ICompat
 	 * @since 2.1
 	 */
 	public INavigationHistory getNavigationHistory();
-
-	/**
-	 * Returns an interface to manage commands at the workbench page level.
-	 * 
-	 * @return an interface to manage commands at the workbench page level.
-	 *         Guaranteed not to be <code>null</code>.
-	 * @since 3.0
-	 */
-	IWorkbenchPageCommandSupport getCommandSupport();
-
-	/**
-	 * Returns an interface to manage contexts at the workbench page level.
-	 * 
-	 * @return an interface to manage contexts at the workbench page level.
-	 *         Guaranteed not to be <code>null</code>.
-	 * @since 3.0
-	 */
-	IWorkbenchPageContextSupport getContextSupport();
 
 	/**
 	 * Returns an array of IViewParts that are stacked with the given part.

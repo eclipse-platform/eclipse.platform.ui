@@ -17,9 +17,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.eclipse.ui.keys.KeySequence;
-
 import org.eclipse.ui.internal.util.Util;
+import org.eclipse.ui.keys.KeySequence;
 
 public final class KeySequenceBindingDefinition
 	implements Comparable {

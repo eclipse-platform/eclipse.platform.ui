@@ -28,10 +28,8 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.contexts.ContextActivationServiceFactory;
 import org.eclipse.ui.contexts.ContextManagerFactory;
 import org.eclipse.ui.contexts.EnabledSubmission;
-import org.eclipse.ui.contexts.ICompoundContextActivationService;
 import org.eclipse.ui.contexts.IContextManager;
 import org.eclipse.ui.contexts.IMutableContextManager;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
@@ -48,8 +46,6 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
     private String activePerspectiveId;
 
     private IWorkbenchWindow activeWorkbenchWindow;
-
-    private ICompoundContextActivationService compoundContextActivationService;
 
     private Map enabledSubmissionsByContextId = new HashMap();
 
@@ -146,8 +142,6 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
         mutableContextManager = ContextManagerFactory
                 .getMutableContextManager();
         proxyContextManager = new ProxyContextManager(mutableContextManager);
-        compoundContextActivationService = ContextActivationServiceFactory
-                .getCompoundContextActivationService();
         workbench.addWindowListener(windowListener);
     }
 
@@ -173,10 +167,6 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
         }
 
         processEnabledSubmissions(true);
-    }
-
-    public ICompoundContextActivationService getCompoundContextActivationService() {
-        return compoundContextActivationService;
     }
 
     public IContextManager getContextManager() {
@@ -291,12 +281,8 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
                  */
             }
 
-            /*
-             * TODO switch to this from the old mechanism in
-             * WorkbenchContextsAndContexts ((ContextManager)
-             * mutableContextManager)
-             * .setEnabledsByContextId(enabledsByContextId);
-             */
+            System.out.println(enabledContextIds);
+            mutableContextManager.setEnabledContextIds(enabledContextIds);
         }
     }
 

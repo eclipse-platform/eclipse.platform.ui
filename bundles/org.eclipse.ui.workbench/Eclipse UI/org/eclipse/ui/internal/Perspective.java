@@ -41,10 +41,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
-import org.eclipse.ui.commands.CommandHandlerServiceFactory;
-import org.eclipse.ui.commands.ICompoundCommandHandlerService;
-import org.eclipse.ui.contexts.ContextActivationServiceFactory;
-import org.eclipse.ui.contexts.ICompoundContextActivationService;
 import org.eclipse.ui.internal.intro.IIntroConstants;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
@@ -112,17 +108,6 @@ protected Perspective(WorkbenchPage page) throws WorkbenchException {
 	alwaysOffActionSets = new ArrayList(2);
 	fastViews = new ArrayList(2);
 	fixedViews = new ArrayList(2);
-}
-
-private final ICompoundCommandHandlerService compoundCommandHandlerService = CommandHandlerServiceFactory.getCompoundCommandHandlerService();
-private final ICompoundContextActivationService compoundContextActivationService = ContextActivationServiceFactory.getCompoundContextActivationService();
-
-public ICompoundCommandHandlerService getCompoundCommandHandlerService() {
-	return compoundCommandHandlerService;
-}
-
-public ICompoundContextActivationService getCompoundContextActivationService() {
-	return compoundContextActivationService;
 }
 
 /**

@@ -14,11 +14,9 @@ package org.eclipse.ui.internal.commands;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.swt.graphics.Image;
-
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
-
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.internal.util.ImageSupport;
 
 final class ImageFactory {

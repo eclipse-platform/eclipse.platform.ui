@@ -83,9 +83,9 @@ public class ActionHandler extends AbstractHandler {
     }
 
     public Object getAttributeValue(String attributeName)
-            throws NotDefinedException {
+            throws NoSuchAttributeException {
         if (!definedAttributeNames.contains(attributeName))
-            throw new NotDefinedException();
+            throw new NoSuchAttributeException();
         else if (ATTRIBUTE_CHECKED.equals(attributeName))
             return action.isChecked() ? Boolean.TRUE : Boolean.FALSE;
         else if (ATTRIBUTE_ENABLED.equals(attributeName))
@@ -95,7 +95,7 @@ public class ActionHandler extends AbstractHandler {
         else if (ATTRIBUTE_STYLE.equals(attributeName))
             return new Integer(action.getStyle());
         else
-            throw new NotDefinedException();
+            throw new NoSuchAttributeException();
     }
 
     public Set getDefinedAttributeNames() {

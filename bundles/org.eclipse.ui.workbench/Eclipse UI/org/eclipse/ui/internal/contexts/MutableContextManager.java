@@ -23,13 +23,11 @@ import java.util.TreeMap;
 import java.util.WeakHashMap;
 
 import org.eclipse.core.runtime.Platform;
-
 import org.eclipse.ui.contexts.ContextEvent;
 import org.eclipse.ui.contexts.ContextManagerEvent;
 import org.eclipse.ui.contexts.IContext;
 import org.eclipse.ui.contexts.IContextContextBinding;
 import org.eclipse.ui.contexts.IMutableContextManager;
-
 import org.eclipse.ui.internal.util.Util;
 
 public final class MutableContextManager

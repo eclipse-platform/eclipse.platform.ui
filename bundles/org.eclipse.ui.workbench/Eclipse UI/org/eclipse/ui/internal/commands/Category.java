@@ -19,7 +19,6 @@ import org.eclipse.ui.commands.CategoryEvent;
 import org.eclipse.ui.commands.ICategory;
 import org.eclipse.ui.commands.ICategoryListener;
 import org.eclipse.ui.commands.NotDefinedException;
-
 import org.eclipse.ui.internal.util.Util;
 
 final class Category implements ICategory {

@@ -23,6 +23,7 @@ import org.eclipse.ui.commands.IContextBinding;
 import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.commands.IImageBinding;
 import org.eclipse.ui.commands.IKeySequenceBinding;
+import org.eclipse.ui.commands.NoSuchAttributeException;
 import org.eclipse.ui.commands.NotDefinedException;
 import org.eclipse.ui.commands.NotHandledException;
 import org.eclipse.ui.internal.util.Util;
@@ -171,7 +172,7 @@ final class Command implements ICommand {
     }
 
     public Object getAttributeValue(String attributeName)
-            throws NotDefinedException, NotHandledException {
+            throws NoSuchAttributeException, NotHandledException {
         IHandler handler = this.handler;
 
         if (handler != null)

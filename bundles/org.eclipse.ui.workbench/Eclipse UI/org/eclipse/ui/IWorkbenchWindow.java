@@ -13,8 +13,6 @@ package org.eclipse.ui;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.commands.IWorkbenchWindowCommandSupport;
-import org.eclipse.ui.contexts.IWorkbenchWindowContextSupport;
 
 /**
  * A workbench window is a top level window in a workbench. Visually, a
@@ -158,24 +156,6 @@ public interface IWorkbenchWindow extends IPageService, IRunnableContext {
 	 *            the new active page
 	 */
 	public void setActivePage(IWorkbenchPage page);
-
-	/**
-	 * Returns an interface to manage commands at the workbench window level.
-	 * 
-	 * @return an interface to manage commands at the workbench window level.
-	 *         Guaranteed not to be <code>null</code>.
-	 * @since 3.0
-	 */
-	IWorkbenchWindowCommandSupport getCommandSupport();
-
-	/**
-	 * Returns an interface to manage contexts at the workbench window level.
-	 * 
-	 * @return an interface to manage contexts at the workbench window level.
-	 *         Guaranteed not to be <code>null</code>.
-	 * @since 3.0
-	 */
-	IWorkbenchWindowContextSupport getContextSupport();
 
 	/**
 	 * @deprecated please change before next i-build to use the equivalent

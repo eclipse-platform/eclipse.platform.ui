@@ -12,7 +12,6 @@
 package org.eclipse.ui.internal.contexts;
 
 import org.eclipse.ui.contexts.IContextContextBinding;
-
 import org.eclipse.ui.internal.util.Util;
 
 final class ContextContextBinding implements IContextContextBinding {

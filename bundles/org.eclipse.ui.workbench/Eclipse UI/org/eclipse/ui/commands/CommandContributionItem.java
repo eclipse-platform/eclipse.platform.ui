@@ -734,11 +734,11 @@ public class CommandContributionItem
 	private static boolean isEnabled(ICommand command) {
 	    try {
 	        return Boolean.TRUE.equals(command.getAttributeValue("enabled")); //$NON-NLS-1$
+	    } catch (NoSuchAttributeException eNoSuchAttribute) {
+	        return true;
 	    } catch (NotHandledException eNotHandled) {		        
 	        return false;
-	    } catch (NotDefinedException eNotDefined) {
-	        return true;
-	    }
+	    } 
 	}    	
 	
 	/**

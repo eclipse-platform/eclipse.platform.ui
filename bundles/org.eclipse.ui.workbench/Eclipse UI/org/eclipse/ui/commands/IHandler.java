@@ -52,10 +52,11 @@ public interface IHandler {
      * @param attributeName
      *            the name of the attribute. Must not be <code>null</code>.
      * @return the value of the attribute.
-     * @throws NotDefinedException
+     * @throws NoSuchAttributeException
      *             if the attribute is not defined.
      */
-    Object getAttributeValue(String attributeName) throws NotDefinedException;
+    Object getAttributeValue(String attributeName)
+            throws NoSuchAttributeException;
 
     /**
      * Returns the set of names of defined attributes.

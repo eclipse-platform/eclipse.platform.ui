@@ -31,7 +31,8 @@ import org.eclipse.swt.widgets.Shell;
 public interface IWorkbenchCommandSupport {
 
     /**
-     * TODO - sends request only; command manager not necessarily updated right away
+     * TODO - sends request only; command manager not necessarily updated right
+     * away
      * 
      * @param handlerSubmissions
      */
@@ -54,14 +55,6 @@ public interface IWorkbenchCommandSupport {
      *         <code>null</code>.
      */
     ICommandManager getCommandManager();
-
-    /**
-     * Returns the compound command handler service for the workbench.
-     * 
-     * @return the compound command handler service for the workbench.
-     *         Guaranteed not to be <code>null</code>.
-     */
-    ICompoundCommandHandlerService getCompoundCommandHandlerService();
 
     /**
      * Tests whether the global key binding architecture is currently active.
@@ -88,7 +81,8 @@ public interface IWorkbenchCommandSupport {
     void registerForKeyBindings(Shell shell, boolean dialogOnly);
 
     /**
-     * TODO - sends request only; command manager not necessarily updated right away
+     * TODO - sends request only; command manager not necessarily updated right
+     * away
      * 
      * @param handlerSubmissions
      */
