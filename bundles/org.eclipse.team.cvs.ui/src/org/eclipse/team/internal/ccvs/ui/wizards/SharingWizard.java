@@ -98,6 +98,8 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 			}
 		} else if (page == modulePage) {
 			return modulePage.useProjectName() || modulePage.getModuleName() != null;
+		} else if (page == finishPage) {
+			return true;
 		}
 		return super.canFinish();
 	}
