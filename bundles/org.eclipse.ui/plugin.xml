@@ -1099,12 +1099,6 @@
       </keyConfiguration>
       
 <!-- New 3.0 key binding work: Standard configuration -->
-<!-- Backspace -->
-      <keyBinding
-            commandId="org.eclipse.ui.edit.deletePrevious"
-            keySequence="BS"
-            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
-      </keyBinding>
 <!-- Delete -->
       <keyBinding
             commandId="org.eclipse.ui.edit.delete"
