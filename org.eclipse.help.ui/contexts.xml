@@ -15,6 +15,7 @@ This infopop opened because you pressed F1 while an infopop was already open.</d
 <!-- Help Menu: Help Contents -->
    <context  id="helpContentsMenu" >
       <description>This command displays the help view. The help view contains help books, topics, and information related to the workbench and installed components.</description>
+      <topic label="Online Help System" href="/org.eclipse.platform.doc.user/concepts/chelpsys.htm"/>
       <topic label="Help Menu - Help Contents" href="/org.eclipse.platform.doc.user/reference/ref-61.htm"/>
    </context>
    
