@@ -233,10 +233,8 @@ final class KeyNode {
 
 			if (childKeySequenceMap.size() >= 1)
 				keySequenceMap.putAll(childKeySequenceMap);
-			else if (keyNode.command != null) {
-				System.out.println(keySequence + ", " + keyNode.command);				
+			else if (keyNode.command != null)		
 				keySequenceMap.put(keySequence, keyNode.command);
-			}
 		}
 
 		return keySequenceMap;
