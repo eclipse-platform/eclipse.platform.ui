@@ -720,8 +720,6 @@ class ExtensionEventHandler implements IRegistryChangeListener {
                             ((WorkbenchPage) pages[j]));
                     result.merge(persp.restoreState(memento));
                     ((WorkbenchPage) pages[j]).addPerspective(persp);
-                    ((WorkbenchWindow) windows[i]).addPerspectiveShortcut(persp
-                            .getDesc(), (WorkbenchPage) pages[j]);
                 } catch (WorkbenchException e) {
                 }
             }

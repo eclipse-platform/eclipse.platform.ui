@@ -45,6 +45,7 @@ import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PerspectiveAdapter;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.dnd.AbstractDropTarget;
 import org.eclipse.ui.internal.dnd.DragUtil;
@@ -65,7 +66,7 @@ import org.eclipse.ui.presentations.PresentationUtil;
  */
 public class PerspectiveSwitcher {
 
-    private WorkbenchWindow window;
+    private IWorkbenchWindow window;
 
     private CBanner topBar;
 
@@ -126,6 +127,28 @@ public class PerspectiveSwitcher {
         }
     };
 
+    private PerspectiveAdapter perspectiveAdapter = new PerspectiveAdapter() {
+        public void perspectiveOpened(IWorkbenchPage page,
+                IPerspectiveDescriptor perspective) {
+            addPerspectiveShortcut(perspective, page);
+        }
+        public void perspectiveClosed(IWorkbenchPage page,
+                IPerspectiveDescriptor perspective) {
+            removePerspectiveShortcut(perspective, page);
+        }
+        public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
+            selectPerspectiveShortcut(perspective, page, true);
+        }
+        public void perspectiveDeactivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
+            selectPerspectiveShortcut(perspective, page, false);
+        }
+        public void perspectiveSavedAs(IWorkbenchPage page,
+                IPerspectiveDescriptor oldPerspective,
+                IPerspectiveDescriptor newPerspective) {
+            updatePerspectiveShortcut(oldPerspective, newPerspective, page);
+        }
+    };
+    
 	private Listener dragListener;
 
 	private IDragOverListener dragTarget;
@@ -134,7 +157,7 @@ public class PerspectiveSwitcher {
 
 	private DisposeListener toolBarListener;
 
-	public PerspectiveSwitcher(WorkbenchWindow window, CBanner topBar, int style) {
+	public PerspectiveSwitcher(IWorkbenchWindow window, CBanner topBar, int style) {
 		this.window = window;
 		this.topBar = topBar;
 		this.style = style;
@@ -146,6 +169,7 @@ public class PerspectiveSwitcher {
 				dispose();
 			}
 		};
+        window.addPerspectiveListener(perspectiveAdapter);
 	}
 
 	private static int convertLocation(String preference) {
@@ -168,8 +192,8 @@ public class PerspectiveSwitcher {
 				IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR));
 	}
 
-	public void addPerspectiveShortcut(IPerspectiveDescriptor perspective,
-			WorkbenchPage workbenchPage) {
+	private void addPerspectiveShortcut(IPerspectiveDescriptor perspective,
+			IWorkbenchPage workbenchPage) {
 		if (perspectiveBar == null)
 			return;
 
@@ -184,7 +208,7 @@ public class PerspectiveSwitcher {
 	}
 
 	public IContributionItem findPerspectiveShortcut(
-			IPerspectiveDescriptor perspective, WorkbenchPage page) {
+			IPerspectiveDescriptor perspective, IWorkbenchPage page) {
 		if (perspectiveBar == null)
 			return null;
 
@@ -200,8 +224,8 @@ public class PerspectiveSwitcher {
 		return null;
 	}
 
-	public void removePerspectiveShortcut(IPerspectiveDescriptor perspective,
-			WorkbenchPage page) {
+	private void removePerspectiveShortcut(IPerspectiveDescriptor perspective,
+			IWorkbenchPage page) {
 		if (perspectiveBar == null)
 			return;
 
@@ -252,7 +276,7 @@ public class PerspectiveSwitcher {
 			topBar.setBottom(null);
 			topBar.setRight(null);
 			LayoutUtil.resize(topBar);
-			window.addPerspectiveBarToTrim(trimControl, SWT.LEFT);
+			((WorkbenchWindow) window).addToTrim(trimControl, SWT.LEFT);
 			break;
 		default:
 			return;
@@ -282,8 +306,8 @@ public class PerspectiveSwitcher {
 		}
 	}
 
-	public void selectPerspectiveShortcut(IPerspectiveDescriptor perspective,
-			WorkbenchPage page, boolean selected) {
+	private void selectPerspectiveShortcut(IPerspectiveDescriptor perspective,
+			IWorkbenchPage page, boolean selected) {
 		IContributionItem item = findPerspectiveShortcut(perspective, page);
 		if (item != null && (item instanceof PerspectiveBarContributionItem)) {
 			if (selected) {
@@ -296,8 +320,8 @@ public class PerspectiveSwitcher {
 		}
 	}
 
-	public void updatePerspectiveShortcut(IPerspectiveDescriptor oldDesc,
-			IPerspectiveDescriptor newDesc, WorkbenchPage page) {
+	private void updatePerspectiveShortcut(IPerspectiveDescriptor oldDesc,
+			IPerspectiveDescriptor newDesc, IWorkbenchPage page) {
 		IContributionItem item = findPerspectiveShortcut(oldDesc, page);
 		if (item != null && (item instanceof PerspectiveBarContributionItem))
 			((PerspectiveBarContributionItem) item).update(newDesc);
@@ -308,6 +332,7 @@ public class PerspectiveSwitcher {
 	}
 
 	public void dispose() {
+        window.removePerspectiveListener(perspectiveAdapter);
 		if (propertyChangeListener != null) {
 			apiPreferenceStore
 					.removePropertyChangeListener(propertyChangeListener);

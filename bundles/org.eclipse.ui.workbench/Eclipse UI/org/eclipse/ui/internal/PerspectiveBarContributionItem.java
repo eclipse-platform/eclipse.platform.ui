@@ -164,7 +164,7 @@ public class PerspectiveBarContributionItem extends ContributionItem {
     }
 
     public boolean handles(IPerspectiveDescriptor perspective,
-            WorkbenchPage workbenchPage) {
+            IWorkbenchPage workbenchPage) {
         return this.perspective == perspective
                 && this.workbenchPage == workbenchPage;
     }

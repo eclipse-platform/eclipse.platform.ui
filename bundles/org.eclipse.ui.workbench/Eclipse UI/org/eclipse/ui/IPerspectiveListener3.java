@@ -65,8 +65,7 @@ public interface IPerspectiveListener3 extends IPerspectiveListener2 {
 
     /**
      * Notifies this listener that a perspective in the given page has been
-     * saved as a new perspective with a different different perspective
-     * descriptor.
+     * saved as a new perspective with a different perspective descriptor.
      * 
      * @param page
      *            the page containing the saved perspective

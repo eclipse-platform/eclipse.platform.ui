@@ -28,7 +28,6 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.CoolBarManager;
-import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -699,13 +698,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             // Update the perspective list and shortcut
             perspList.swap(oldPersp, newPersp);
 
-            IContributionItem item = window.findPerspectiveShortcut(oldPersp
-                    .getDesc(), this);
-            if (item != null) {
-                ((PerspectiveBarContributionItem) item).setPerspective(newPersp
-                        .getDesc());
-            }
-
             // Install new persp.
             setPerspective(newPersp);
 
@@ -764,7 +756,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                 newPersp = createPerspective(realDesc);
                 if (newPersp == null)
                     return;
-                window.addPerspectiveShortcut(realDesc, this);
             }
 
             // Change layout.
@@ -1089,7 +1080,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
         // Dispose of the perspective
         boolean isActive = (perspList.getActive() == persp);
-        window.removePerspectiveShortcut(persp.getDesc(), this);
         if (isActive)
             setPerspective(perspList.getNextActive());
         disposePerspective(persp);
@@ -1263,7 +1253,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         Iterator itr = perspList.iterator();
         while (itr.hasNext()) {
             Perspective perspective = (Perspective) itr.next();
-            window.removePerspectiveShortcut(perspective.getDesc(), this);
             window.firePerspectiveClosed(this, perspective.getDesc());
             perspective.dispose();
         }
@@ -2043,16 +2032,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * This method is called when the page is activated.
      */
     protected void onActivate() {
-        Iterator itr = perspList.iterator();
-        while (itr.hasNext()) {
-            Perspective perspective = (Perspective) itr.next();
-            window.addPerspectiveShortcut(perspective.getDesc(), this);
-        }
         composite.setVisible(true);
         Perspective persp = getActivePerspective();
 
         if (persp != null) {
-            window.selectPerspectiveShortcut(persp.getDesc(), this, true);
             persp.onActivate();
             updateVisibility(null, persp);
         }
@@ -2107,11 +2090,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         if (getActivePerspective() != null)
             getActivePerspective().onDeactivate();
         composite.setVisible(false);
-        Iterator itr = perspList.iterator();
-        while (itr.hasNext()) {
-            Perspective perspective = (Perspective) itr.next();
-            window.removePerspectiveShortcut(perspective.getDesc(), this);
-        }
     }
 
     /**
@@ -2503,6 +2481,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                             && desc.getId().equals(activePerspectiveID))
                         activePerspective = persp;
                     perspList.add(persp);
+                    window.firePerspectiveOpened(this, desc);
                 } catch (WorkbenchException e) {
                 }
             }
@@ -2628,7 +2607,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             zoomOut();
 
         persp.saveDescAs(newDesc);
-        window.updatePerspectiveShortcut(oldDesc, newDesc, this);
+        window.firePerspectiveSavedAs(this, oldDesc, newDesc);
     }
 
     /**
@@ -2819,7 +2798,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	        // Deactivate the old layout
 	        if (oldPersp != null) {
 	            oldPersp.onDeactivate();
-	            window.selectPerspectiveShortcut(oldPersp.getDesc(), this, false);
+                
+                // Notify listeners of deactivation
+                window.firePerspectiveDeactivated(this, oldPersp.getDesc());
 	        }
 	
 	        // Activate the new layout
@@ -2829,9 +2810,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	
 	            // Notify listeners of activation
 	            window.firePerspectiveActivated(this, newPersp.getDesc());
-	
-	            // Update the shortcut
-	            window.selectPerspectiveShortcut(newPersp.getDesc(), this, true);
 	        } else {
 	            //setActivePart(null);
 	            // No need to remember old active part since there
@@ -3726,6 +3704,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     //for dynamic UI
     protected void addPerspective(Perspective persp) {
         perspList.add(persp);
+        window.firePerspectiveOpened(this, persp.getDesc());
     }
 
     /**

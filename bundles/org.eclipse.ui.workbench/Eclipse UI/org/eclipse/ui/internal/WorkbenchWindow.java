@@ -111,10 +111,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 
     private PageListenerList pageListeners = new PageListenerList();
 
-    private PerspectiveListenerListOld perspectiveListeners = new PerspectiveListenerListOld();
-
-    private WWinPerspectiveService perspectiveService = new WWinPerspectiveService(
-            this);
+    private PerspectiveListenerList perspectiveListeners = new PerspectiveListenerList();
 
     private WWinPartService partService = new WWinPartService(this);
 
@@ -491,23 +488,11 @@ public class WorkbenchWindow extends ApplicationWindow implements
         pageListeners.addPageListener(l);
     }
 
-    /*
-     * Adds an listener to the perspective service.
-     *
-     * NOTE: Internally, please use getPerspectiveService instead.
+    /**
+     * @see org.eclipse.ui.IPageService
      */
     public void addPerspectiveListener(org.eclipse.ui.IPerspectiveListener l) {
         perspectiveListeners.addPerspectiveListener(l);
-    }
-
-    /**
-     * add a shortcut for the page.
-     */
-    void addPerspectiveShortcut(IPerspectiveDescriptor perspective,
-            WorkbenchPage workbenchPage) {
-        if (perspectiveSwitcher != null)
-            perspectiveSwitcher.addPerspectiveShortcut(perspective,
-                    workbenchPage);
     }
 
     /**
@@ -872,16 +857,6 @@ public class WorkbenchWindow extends ApplicationWindow implements
     }
 
     /**
-     * Returns the shortcut for a page.
-     */
-    /* protected */
-    IContributionItem findPerspectiveShortcut(
-            IPerspectiveDescriptor perspective, WorkbenchPage page) {
-        return perspectiveSwitcher == null ? null : perspectiveSwitcher
-                .findPerspectiveShortcut(perspective, page);
-    }
-
-    /**
      * Fires page activated
      */
     private void firePageActivated(IWorkbenchPage page) {
@@ -944,20 +919,29 @@ public class WorkbenchWindow extends ApplicationWindow implements
         }
         try {	        
             UIStats.start(UIStats.NOTIFY_PERSPECTIVE_LISTENERS, label);
-
 	        perspectiveListeners.firePerspectiveActivated(page, perspective);
-	        perspectiveService.firePerspectiveActivated(page, perspective);
         } finally {
             UIStats.end(UIStats.NOTIFY_PERSPECTIVE_LISTENERS, label);
         }
     }
 
-    private String getPerspectiveId(IPerspectiveDescriptor perspective) {
-        if (perspective == null) {
-            return "null"; //$NON-NLS-1$
+    /**
+     * Fires perspective deactivated.
+     * 
+     * @since 3.1
+     */
+    void firePerspectiveDeactivated(IWorkbenchPage page,
+            IPerspectiveDescriptor perspective) {
+        String label = null; // debugging only
+        if (UIStats.isDebugging(UIStats.NOTIFY_PERSPECTIVE_LISTENERS)) {
+            label = "deactivated page = " + page.getLabel() + ", perspective = " + getPerspectiveId(perspective); //$NON-NLS-1$ //$NON-NLS-2$
         }
-        
-        return perspective.getId();
+        try {           
+            UIStats.start(UIStats.NOTIFY_PERSPECTIVE_LISTENERS, label);
+            perspectiveListeners.firePerspectiveDeactivated(page, perspective);
+        } finally {
+            UIStats.end(UIStats.NOTIFY_PERSPECTIVE_LISTENERS, label);
+        }
     }
     
     /**
@@ -973,10 +957,8 @@ public class WorkbenchWindow extends ApplicationWindow implements
         }
         try {	        
             UIStats.start(UIStats.NOTIFY_PERSPECTIVE_LISTENERS, label);
-
-	        perspectiveListeners
-	                .firePerspectiveChanged(page, perspective, changeId);
-	        perspectiveService.firePerspectiveChanged(page, perspective, changeId);
+	        perspectiveListeners.firePerspectiveChanged(page, perspective,
+                    changeId);
         } finally {
             UIStats.end(UIStats.NOTIFY_PERSPECTIVE_LISTENERS, label);
         }
@@ -995,9 +977,8 @@ public class WorkbenchWindow extends ApplicationWindow implements
         }
         try {	        
             UIStats.start(UIStats.NOTIFY_PERSPECTIVE_LISTENERS, label);
-
-	        perspectiveListeners.firePerspectiveChanged(page, perspective, partRef,
-	                changeId);
+            perspectiveListeners.firePerspectiveChanged(page, perspective,
+                    partRef, changeId);
         } finally {
             UIStats.end(UIStats.NOTIFY_PERSPECTIVE_LISTENERS, label);
         }
@@ -1009,7 +990,16 @@ public class WorkbenchWindow extends ApplicationWindow implements
      */
     void firePerspectiveClosed(IWorkbenchPage page,
             IPerspectiveDescriptor perspective) {
-        perspectiveService.firePerspectiveClosed(page, perspective);
+        String label = null; // debugging only
+        if (UIStats.isDebugging(UIStats.NOTIFY_PERSPECTIVE_LISTENERS)) {
+            label = "closed perspective = " + getPerspectiveId(perspective) + ", page = " + page.getLabel();   //$NON-NLS-1$ //$NON-NLS-2$
+        }
+        try {           
+            UIStats.start(UIStats.NOTIFY_PERSPECTIVE_LISTENERS, label);
+            perspectiveListeners.firePerspectiveClosed(page, perspective);
+        } finally {
+            UIStats.end(UIStats.NOTIFY_PERSPECTIVE_LISTENERS, label);
+        }
     }
 
     /**
@@ -1017,9 +1007,45 @@ public class WorkbenchWindow extends ApplicationWindow implements
      */
     void firePerspectiveOpened(IWorkbenchPage page,
             IPerspectiveDescriptor perspective) {
-        perspectiveService.firePerspectiveOpened(page, perspective);
+        String label = null; // debugging only
+        if (UIStats.isDebugging(UIStats.NOTIFY_PERSPECTIVE_LISTENERS)) {
+            label = "opened perspective = " + getPerspectiveId(perspective) + ", page = " + page.getLabel();   //$NON-NLS-1$ //$NON-NLS-2$
+        }
+        try {           
+            UIStats.start(UIStats.NOTIFY_PERSPECTIVE_LISTENERS, label);
+            perspectiveListeners.firePerspectiveOpened(page, perspective);
+        } finally {
+            UIStats.end(UIStats.NOTIFY_PERSPECTIVE_LISTENERS, label);
+        }
     }
 
+    /**
+     * Fires perspective saved as.
+     * 
+     * @since 3.1
+     */
+    void firePerspectiveSavedAs(IWorkbenchPage page,
+            IPerspectiveDescriptor oldPerspective, IPerspectiveDescriptor newPerspective) {
+        String label = null; // debugging only
+        if (UIStats.isDebugging(UIStats.NOTIFY_PERSPECTIVE_LISTENERS)) {
+            label = "saved perspective = " + getPerspectiveId(oldPerspective) + ", as = " + getPerspectiveId(newPerspective) + ", page = " + page.getLabel();   //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        }
+        try {           
+            UIStats.start(UIStats.NOTIFY_PERSPECTIVE_LISTENERS, label);
+            perspectiveListeners.firePerspectiveSavedAs(page, oldPerspective, newPerspective);
+        } finally {
+            UIStats.end(UIStats.NOTIFY_PERSPECTIVE_LISTENERS, label);
+        }
+    }
+
+    private String getPerspectiveId(IPerspectiveDescriptor perspective) {
+        if (perspective == null) {
+            return "null"; //$NON-NLS-1$
+        }
+        
+        return perspective.getId();
+    }
+    
     /**
      * Returns the action bars for this window.
      */
@@ -1095,13 +1121,6 @@ public class WorkbenchWindow extends ApplicationWindow implements
      */
     protected Layout getLayout() {
         return null;
-    }
-
-    /**
-     * @see IWorkbenchWindow
-     */
-    public IPerspectiveService getPerspectiveService() {
-        return perspectiveService;
     }
 
     /**
@@ -1302,23 +1321,11 @@ public class WorkbenchWindow extends ApplicationWindow implements
         pageListeners.removePageListener(l);
     }
 
-    /*
-     * Removes an listener from the perspective service.
-     *
-     * NOTE: Internally, please use getPerspectiveService instead.
+    /**
+     * @see org.eclipse.ui.IPageService
      */
     public void removePerspectiveListener(org.eclipse.ui.IPerspectiveListener l) {
         perspectiveListeners.removePerspectiveListener(l);
-    }
-
-    /**
-     * Remove the shortcut for a page.
-     */
-    /* package */
-    void removePerspectiveShortcut(IPerspectiveDescriptor perspective,
-            WorkbenchPage page) {
-        if (perspectiveSwitcher != null)
-            perspectiveSwitcher.removePerspectiveShortcut(perspective, page);
     }
 
     private IStatus unableToRestorePage(IMemento pageMem) {
@@ -2106,20 +2113,9 @@ public class WorkbenchWindow extends ApplicationWindow implements
     }
 
     /**
-     * Select the shortcut for a perspective.
-     */
-    /* package */
-    void selectPerspectiveShortcut(IPerspectiveDescriptor perspective,
-            WorkbenchPage page, boolean selected) {
-        if (perspectiveSwitcher != null)
-            perspectiveSwitcher.selectPerspectiveShortcut(perspective, page,
-                    selected);
-    }
-
-    /**
      * Sets the active page within the window.
      *
-     * @param page identifies the new active page.
+     * @param in identifies the new active page.
      */
     public void setActivePage(final IWorkbenchPage in) {
         if (getActiveWorkbenchPage() == in)
@@ -2354,20 +2350,6 @@ public class WorkbenchWindow extends ApplicationWindow implements
             return;
         item.setVisible(manager.getItems().length >= 2);
         // there is a separator for the additions group thus >= 2
-    }
-
-    /**
-     * Updates the shorcut item
-     */
-    /* package */
-    void updatePerspectiveShortcut(IPerspectiveDescriptor oldDesc,
-            IPerspectiveDescriptor newDesc, WorkbenchPage page) {
-        if (updateDisabled)
-            return;
-
-        if (perspectiveSwitcher != null)
-            perspectiveSwitcher.updatePerspectiveShortcut(oldDesc, newDesc,
-                    page);
     }
 
     /**
@@ -2810,8 +2792,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
     }
 
     /**
-     * Add the argument perspective bar control to the argument side of this
-     * window's trim.
+     * Adds the given control to the specified side of this window's trim.
      * 
      * @param control
      *            the perspective bar's control
@@ -2820,7 +2801,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
      *            or <code>SWT.RIGHT</code> (only LEFT has been tested)
      * @since 3.0
      */
-    public void addPerspectiveBarToTrim(Control control, int side) {
+    public void addToTrim(Control control, int side) {
         Control reference = null;
 
         // the perspective bar should go before the fast view bar they're on the
