@@ -5,19 +5,36 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.*;
-import org.eclipse.debug.core.*;
-import org.eclipse.debug.core.model.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IDebugConstants;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.ILauncher;
+import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.core.model.IDebugElement;
+import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.core.model.IStackFrame;
+import org.eclipse.debug.core.model.ITerminate;
+import org.eclipse.debug.core.model.IThread;
+import org.eclipse.debug.core.model.IValue;
+import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
@@ -32,24 +49,16 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  * to the extension registered for that debug model. 
  */
 public class DelegatingModelPresentation implements IDebugModelPresentation {
-
-	private final static String TOP_PREFIX= "presentation.";
-	private final static String BREAKPOINT_LABEL= TOP_PREFIX + "breakpoint_label";
 	
 	/**
 	 * A mapping of attribute ids to their values
 	 * @see IDebugModelPresentation#setAttribute
 	 */
-	protected HashMap fAttributes= new HashMap(3);
+	private HashMap fAttributes= new HashMap(3);
 	/**
 	 * A table of label providers keyed by debug model identifiers.
 	 */
-	protected HashMap fLabelProviders= new HashMap(5);
-
-	// Resource String keys
-	private static final String PREFIX= "label_provider.";
-	private static final String TERMINATED= PREFIX + "terminated";
-	private static final String UNKNOWN= PREFIX + "unknown";
+	private HashMap fLabelProviders= new HashMap(5);
 
 	/**
 	 * Constructs a new DelegatingLabelProvider that delegates to extensions
@@ -68,7 +77,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 					String id= elt.getAttribute("id");
 					if (id != null) {
 						IDebugModelPresentation lp= new LazyModelPresentation(elt);
-						fLabelProviders.put(id, lp);
+						getLabelProviders().put(id, lp);
 					}
 				}
 			}
@@ -78,10 +87,10 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 	/**
 	 * Delegate to all extensions.
 	 *
-	 * @see ILabelProvider
+	 * @see IBaseLabelProvider#addListener(ILabelProviderListener)
 	 */
 	public void addListener(ILabelProviderListener listener) {
-		Iterator i= fLabelProviders.values().iterator();
+		Iterator i= getLabelProviders().values().iterator();
 		while (i.hasNext()) {
 			((ILabelProvider) i.next()).addListener(listener);
 		}
@@ -90,18 +99,17 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 	/**
 	 * Delegate to all extensions.
 	 *
-	 * @see ILabelProvider
+	 * @see IBaseLabelProvider#dispose()
 	 */
 	public void dispose() {
-		Iterator i= fLabelProviders.values().iterator();
+		Iterator i= getLabelProviders().values().iterator();
 		while (i.hasNext()) {
 			((ILabelProvider) i.next()).dispose();
 		}
 	}
 
 	/**
-	 * Returns an image for the item
-	 * Can return <code>null</code>
+	 * @see IDebugModelPresentation#getImage(Object)
 	 */
 	public Image getImage(Object item) {
 		if (item instanceof IDebugElement || item instanceof IMarker || item instanceof IBreakpoint) {
@@ -158,7 +166,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 	}
 	
 	/**
-	 * @see IDebugModelPresentation
+	 * @see IDebugModelPresentation#getEditorInput(Object)
 	 */
 	public IEditorInput getEditorInput(Object item) {
 		IDebugModelPresentation lp= getConfiguredPresentation(item);
@@ -169,7 +177,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 	}
 	
 	/**
-	 * @see IDebugModelPresentation
+	 * @see IDebugModelPresentation#getEditorId(IEditorInput, Object)
 	 */
 	public String getEditorId(IEditorInput input, Object objectInput) {
 		IDebugModelPresentation lp= getConfiguredPresentation(objectInput);
@@ -183,7 +191,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 	/**
 	 * Returns a default image for the debug element
 	 */
-	public String getDefaultText(Object element) {
+	protected String getDefaultText(Object element) {
 		if (element instanceof IDebugElement) {
 			try {
 				switch (((IDebugElement) element).getElementType()) {
@@ -199,24 +207,26 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 						return "";
 				}
 			} catch (DebugException de) {
+				DebugUIUtils.logError(de);
 			}
 		} else
 			if (element instanceof IMarker) {
 				IMarker m= (IMarker) element;
 				try {
 					if (m.exists() && m.isSubtypeOf(IDebugConstants.BREAKPOINT_MARKER)) {
-						return DebugUIUtils.getResourceString(BREAKPOINT_LABEL);
+						return "Breakpoint";
 					}
 				} catch (CoreException e) {
+					DebugUIUtils.logError(e);
 				}
 			}
-		return DebugUIUtils.getResourceString(UNKNOWN);
+		return "<unknown>";
 	}
 
 	/**
 	 * Returns a default image for the debug element
 	 */
-	public Image getDefaultImage(Object element) {
+	protected Image getDefaultImage(Object element) {
 		ImageRegistry iRegistry= DebugUIPlugin.getDefault().getImageRegistry();
 		if (element instanceof IThread) {
 			IThread thread = (IThread)element;
@@ -265,7 +275,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 	}
 
 	/**
-	 * Returns a label for the item
+	 * @see IDebugModelPresentation#getText(Object)
 	 */
 	public String getText(Object item) {
 		boolean displayVariableTypes= showVariableTypeNames();
@@ -331,7 +341,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 					}
 
 			if ((item instanceof ITerminate) && ((ITerminate) item).isTerminated()) {
-				label= DebugUIUtils.getResourceString(TERMINATED) + label;
+				label= "<terminated> " + label;
 			}
 			return label;
 		}
@@ -365,10 +375,10 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 	/**
 	 * Delegate to all extensions.
 	 *
-	 * @see ILabelProvider
+	 * @see IBaseLabelProvider#removeListener(ILabelProviderListener)
 	 */
 	public void removeListener(ILabelProviderListener listener) {
-		Iterator i= fLabelProviders.values().iterator();
+		Iterator i= getLabelProviders().values().iterator();
 		while (i.hasNext()) {
 			((ILabelProvider) i.next()).removeListener(listener);
 		}
@@ -382,13 +392,13 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 			}
 		}
 
-		return DebugUIUtils.getResourceString(UNKNOWN);
+		return "<unknown>";
 	}
 
 	/**
 	 * Delegate to the appropriate label provider.
 	 *
-	 * @see ILabelProvider
+	 * @see IBaseLabelProvider#isLabelProperty(Object, String)
 	 */
 	public boolean isLabelProperty(Object element, String property) {
 		if (element instanceof IDebugElement) {
@@ -434,12 +444,12 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 	 * of nothing is registered for the id.
 	 */
 	protected IDebugModelPresentation getPresentation(String id) {
-		IDebugModelPresentation lp= (IDebugModelPresentation) fLabelProviders.get(id);
+		IDebugModelPresentation lp= (IDebugModelPresentation) getLabelProviders().get(id);
 		if (lp != null) {
-			Iterator keys= fAttributes.keySet().iterator();
+			Iterator keys= getAttributes().keySet().iterator();
 			while (keys.hasNext()) {
 				String key= (String)keys.next();
-				lp.setAttribute(key, fAttributes.get(key));
+				lp.setAttribute(key, getAttributes().get(key));
 			}
 			return lp;
 		}
@@ -450,7 +460,11 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 	 * Used to render launch history items in the re-launch drop downs
 	 */
 	protected String getLaunchText(ILaunch launch) {
-		return getDesktopLabel(launch.getElement()) + " [" + getText(launch.getLauncher()) + "]";
+		StringBuffer buff= new StringBuffer(getDesktopLabel(launch.getElement()));
+		buff.append(" [");
+		buff.append(getText(launch.getLauncher()));
+		buff.append("]");
+		return buff.toString();
 	}
 	
 	/**
@@ -460,7 +474,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 		if (value == null) {
 			return;
 		}
-		fAttributes.put(id, value);
+		getAttributes().put(id, value);
 	}
 
 	protected boolean showVariableTypeNames() {
@@ -473,6 +487,22 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 		Boolean show= (Boolean) fAttributes.get(DISPLAY_QUALIFIED_NAMES);
 		show= show == null ? new Boolean(false) : show;
 		return show.booleanValue();
+	}
+	
+	protected HashMap getAttributes() {
+		return fAttributes;
+	}
+
+	protected void setAttributes(HashMap attributes) {
+		fAttributes = attributes;
+	}
+
+	protected HashMap getLabelProviders() {
+		return fLabelProviders;
+	}
+
+	protected void setLabelProviders(HashMap labelProviders) {
+		fLabelProviders = labelProviders;
 	}
 }
 
