@@ -418,7 +418,7 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 
 	/**
 	 * Returns the default perspective to switch to when a configuration of the given
-	 * type is lanuched in the given mode, or <code>null</code> if none.
+	 * type is launched in the given mode, or <code>null</code> if none.
 	 * 
 	 * @param type launch configuration type
 	 * @param mode launch mode
@@ -443,7 +443,7 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 	
 	/**
 	 * Returns the user specified perspective to switch to when a configuration of the
-	 * given type is lanuched in the given mode, or <code>null</code> if unspecified.
+	 * given type is launched in the given mode, or <code>null</code> if unspecified.
 	 * Returns <code>PERSPECTIVE_NONE</code> to indicate no switch
 	 * 
 	 * @param type launch configuration type
