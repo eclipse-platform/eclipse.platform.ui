@@ -236,97 +236,104 @@ public class DecorationScheduler {
 				*/
 			public void run() {
 				while (true) {
-					// will block if there are no resources to be decorated
-					DecorationReference reference = next();
-					DecorationBuilder cacheResult = new DecorationBuilder();
+					try {
 
-					// if next() returned null, we are done and should shut down.
-					if (reference == null) {
-						return;
-					}
+						// will block if there are no resources to be decorated
+						DecorationReference reference = next();
+						DecorationBuilder cacheResult = new DecorationBuilder();
 
-					//Don't decorate if there is already a pending result
-					Object element = reference.getElement();
-					Object adapted = reference.getAdaptedElement();
-					boolean elementIsCached = true;
-					DecorationResult adaptedResult = null;
-
-					//Synchronize on the result lock as we want to
-					//be sure that we do not try and decorate during
-					//label update servicing.
-					synchronized (resultLock) {
-						elementIsCached = resultCache.containsKey(element);
-						if (elementIsCached) {
-							pendingUpdate.add(element);
-						}
-						if (adapted != null) {
-							adaptedResult =
-								(DecorationResult) resultCache.get(adapted);
-						}
-					}
-					if (!elementIsCached) {
-						//Just build for the resource first
-						if (adapted != null) {
-							if (adaptedResult == null) {
-								decoratorManager
-									.getLightweightManager()
-									.getDecorations(
-									adapted,
-									cacheResult);
-								if (cacheResult.hasValue()) {
-									adaptedResult = cacheResult.createResult();
-								}
-							} else {
-								// If we already calculated the decoration 
-								// for the adapted element, reuse the result.
-								cacheResult.applyResult(adaptedResult);
-								// Set adaptedResult to null to indicate that
-								// we do not need to cache the result again.
-								adaptedResult = null;
-							}
+						// if next() returned null, we are done and should shut down.
+						if (reference == null) {
+							return;
 						}
 
-						//Now add in the results for the main object
+						//Don't decorate if there is already a pending result
+						Object element = reference.getElement();
+						Object adapted = reference.getAdaptedElement();
+						boolean elementIsCached = true;
+						DecorationResult adaptedResult = null;
 
-						decoratorManager
-							.getLightweightManager()
-							.getDecorations(
-							element,
-							cacheResult);
-
-						//If we should update regardless then put a result anyways
-						if (cacheResult.hasValue()
-							|| reference.shouldForceUpdate()) {
-
-							//Synchronize on the result lock as we want to
-							//be sure that we do not try and decorate during
-							//label update servicing.
-							//Note: resultCache and pendingUpdate modifications
-							//must be done atomically.  
-							synchronized (resultLock) {
-								if (adaptedResult != null) {
-									resultCache.put(adapted, adaptedResult);
-								}
-								//Only add something to look up if it is interesting
-								if (cacheResult.hasValue()) {
-									resultCache.put(
-										element,
-										cacheResult.createResult());
-								}
-
-								//Add an update for only the original element to 
-								//prevent multiple updates and clear the cache.
+						//Synchronize on the result lock as we want to
+						//be sure that we do not try and decorate during
+						//label update servicing.
+						synchronized (resultLock) {
+							elementIsCached = resultCache.containsKey(element);
+							if (elementIsCached) {
 								pendingUpdate.add(element);
 							}
-						};
-					}
+							if (adapted != null) {
+								adaptedResult =
+									(DecorationResult) resultCache.get(adapted);
+							}
+						}
+						if (!elementIsCached) {
+							//Just build for the resource first
+							if (adapted != null) {
+								if (adaptedResult == null) {
+									decoratorManager
+										.getLightweightManager()
+										.getDecorations(
+										adapted,
+										cacheResult);
+									if (cacheResult.hasValue()) {
+										adaptedResult =
+											cacheResult.createResult();
+									}
+								} else {
+									// If we already calculated the decoration 
+									// for the adapted element, reuse the result.
+									cacheResult.applyResult(adaptedResult);
+									// Set adaptedResult to null to indicate that
+									// we do not need to cache the result again.
+									adaptedResult = null;
+								}
+							}
 
-					// Only notify listeners when we have exhausted the
-					// queue of decoration requests.
-					if (awaitingDecoration.isEmpty()) {
-						decorated();
-					}
+							//Now add in the results for the main object
 
+							decoratorManager
+								.getLightweightManager()
+								.getDecorations(
+								element,
+								cacheResult);
+
+							//If we should update regardless then put a result anyways
+							if (cacheResult.hasValue()
+								|| reference.shouldForceUpdate()) {
+
+								//Synchronize on the result lock as we want to
+								//be sure that we do not try and decorate during
+								//label update servicing.
+								//Note: resultCache and pendingUpdate modifications
+								//must be done atomically.  
+								synchronized (resultLock) {
+									if (adaptedResult != null) {
+										resultCache.put(adapted, adaptedResult);
+									}
+									//Only add something to look up if it is interesting
+									if (cacheResult.hasValue()) {
+										resultCache.put(
+											element,
+											cacheResult.createResult());
+									}
+
+									//Add an update for only the original element to 
+									//prevent multiple updates and clear the cache.
+									pendingUpdate.add(element);
+								}
+							};
+						}
+
+						// Only notify listeners when we have exhausted the
+						// queue of decoration requests.
+						if (awaitingDecoration.isEmpty()) {
+							decorated();
+						}
+
+					} catch (Exception exception) {
+						//Catch and log any exceptions so that the thread does not die
+						exception.printStackTrace();
+					}
 				}
 			};
 		};
