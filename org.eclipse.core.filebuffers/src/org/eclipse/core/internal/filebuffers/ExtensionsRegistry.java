@@ -21,6 +21,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -29,11 +31,14 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 
 import org.eclipse.core.filebuffers.IDocumentFactory;
 import org.eclipse.core.filebuffers.IDocumentSetupParticipant;
+
+import org.eclipse.jface.text.Assert;
 
 
 /**
@@ -41,6 +46,59 @@ import org.eclipse.core.filebuffers.IDocumentSetupParticipant;
  * in <code>plugin.xml</code> per file name extension.
  */
 public class ExtensionsRegistry {
+	
+	/**
+	 * Adapts IContentType with the ability to check
+	 * equality. This allows to use them in a collection.
+	 */
+	private static class ContentTypeAdapter {
+		
+		/** The adapted content type. */
+		private IContentType fContentType;
+
+		/**
+		 * Creates a new content type adapter for the
+		 * given content type.
+		 * 
+		 * @param contentType the content type to be adapted
+		 */
+		public ContentTypeAdapter(IContentType  contentType) {
+			Assert.isNotNull(contentType);
+			fContentType= contentType;
+		}
+		
+		/**
+		 * Return the adapted content type.
+		 * 
+		 * @return the content type
+		 */
+		public IContentType getContentType() {
+			return fContentType;
+		}
+
+		/**
+		 * Return the Id of the adapted content type.
+		 * 
+		 * @return the Id
+		 */
+		public String getId() {
+			return fContentType.getId();
+		}
+
+		/*
+		 * @see java.lang.Object#equals(java.lang.Object)
+		 */
+		public boolean equals(Object obj) {
+			return obj instanceof ContentTypeAdapter && fContentType.getId().equals(((ContentTypeAdapter)obj).getId());
+		}
+		
+		/*
+		 * @see java.lang.Object#hashCode()
+		 */
+		public int hashCode() {
+			return fContentType.getId().hashCode();
+		}
+	}
 	
 	private final static String WILDCARD= "*";  //$NON-NLS-1$
 	
@@ -106,10 +164,15 @@ public class ExtensionsRegistry {
 		String value= element.getAttribute(attributeName);
 		if (value != null) {
 			IContentType contentType= fContentTypeManager.getContentType(value);
-			Set s= (Set) map.get(contentType);
+			if (contentType == null) {
+				log(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, 0, FileBuffersMessages.getFormattedString("ExtensionsRegistry.error.contentTypeDoesNotExist", new Object[] { value }), null)); //$NON-NLS-1$
+				return;
+			}
+			ContentTypeAdapter adapter= new ContentTypeAdapter(contentType);
+			Set s= (Set) map.get(adapter);
 			if (s == null) {
 				s= new HashSet();
-				map.put(contentType, s);
+				map.put(adapter, s);
 			}
 			s.add(element);
 		}
@@ -211,23 +274,30 @@ public class ExtensionsRegistry {
 	 * Returns a sharable document factory for the given file name extension.
 	 *
 	 * @param extension the name extension to be used for lookup
-	 * @param isFileExtension <code>true</code> if the name extension is a file extension
 	 * @return the sharable document factory or <code>null</code>
 	 */
-	private IDocumentFactory getDocumentFactory(String extension, boolean isFileExtension) {
+	private IDocumentFactory getDocumentFactory(String extension) {
+		Set set= (Set) fFactoryDescriptors.get(extension);
+		if (set != null) {
+			IConfigurationElement entry= selectConfigurationElement(set);
+			return (IDocumentFactory) getExtension(entry, fFactories, IDocumentFactory.class);
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns a sharable document factory for the given content types.
+	 *
+	 * @param contentTypes the content types used to find the factory
+	 * @return the sharable document factory or <code>null</code>
+	 */
+	private IDocumentFactory getDocumentFactory(IContentType[] contentTypes) {
 		Set set= null;
-		
-		if (!isFileExtension) {
-			IContentType[] contentTypes= fContentTypeManager.findContentTypesFor(extension);
-			int i= 0;
-			while (i < contentTypes.length && set == null) {
-				set= (Set) fFactoryDescriptors.get(contentTypes[i++]);
-			}
+		int i= 0;
+		while (i < contentTypes.length && set == null) {
+			set= (Set) fFactoryDescriptors.get(new ContentTypeAdapter(contentTypes[i++]));
 		}
 
-		if (set == null)
-			set= (Set) fFactoryDescriptors.get(extension);
-		
 		if (set != null) {
 			IConfigurationElement entry= selectConfigurationElement(set);
 			return (IDocumentFactory) getExtension(entry, fFactories, IDocumentFactory.class);
@@ -239,25 +309,39 @@ public class ExtensionsRegistry {
 	 * Returns the set of setup participants for the given file name.
 	 * 
 	 * @param extension the name extension to be used for lookup
-	 * @param isFileExtension <code>true</code> if the name extension is a file extension
 	 * @return the sharable set of document setup participants
 	 */
-	private List getDocumentSetupParticipants(String extension, boolean isFileExtension) {
-		Set resultSet= new HashSet();
+	private List getDocumentSetupParticipants(String extension) {
+		Set set= (Set) fSetupParticipantDescriptors.get(extension);
+		if (set == null)
+			return null;
 		
-		if (!isFileExtension) {
-			IContentType[] contentTypes= fContentTypeManager.findContentTypesFor(extension);
-			int i= 0;
-			while (i < contentTypes.length) {
-				Set set= (Set) fFactoryDescriptors.get(contentTypes[i++]);
-				if (set != null)
-					resultSet.addAll(set);
-			}
+		List participants= new ArrayList();
+		Iterator e= set.iterator();
+		while (e.hasNext()) {
+			IConfigurationElement entry= (IConfigurationElement) e.next();
+			Object participant= getExtension(entry, fSetupParticipants, IDocumentSetupParticipant.class);
+			if (participant != null)
+				participants.add(participant);
 		}
 		
-		Set set= (Set) fSetupParticipantDescriptors.get(extension);
-		if (set != null)
-			resultSet.addAll(set);
+		return participants;
+	}
+	
+	/**
+	 * Returns the set of setup participants for the given content types.
+	 * 
+	 * @param contentTypes the contentTypes to be used for lookup
+	 * @return the sharable set of document setup participants
+	 */
+	private List getDocumentSetupParticipants(IContentType[] contentTypes) {
+		Set resultSet= new HashSet();
+		int i= 0;
+		while (i < contentTypes.length) {
+			Set set= (Set) fFactoryDescriptors.get(new ContentTypeAdapter(contentTypes[i++]));
+			if (set != null)
+				resultSet.addAll(set);
+		}
 		
 		List participants= new ArrayList();
 		Iterator e= resultSet.iterator();
@@ -271,6 +355,25 @@ public class ExtensionsRegistry {
 		return participants;
 	}
 	
+	private IContentType[] findContentTypes(IPath path) {
+		IFile file= ResourcesPlugin.getWorkspace().getRoot().getFile(path);
+		
+		IContentDescription contentDescription;
+		try {
+			contentDescription= file.getContentDescription();
+		} catch (CoreException ex) {
+			contentDescription= null;
+		}
+		
+		if (contentDescription != null) {
+			IContentType contentType= contentDescription.getContentType();
+			if (contentType != null)
+				return new IContentType[] {contentType};
+		}
+		
+		return fContentTypeManager.findContentTypesFor(path.lastSegment());
+	}
+	
 	/**
 	 * Returns the sharable document factory for the given location.
 	 *
@@ -278,11 +381,13 @@ public class ExtensionsRegistry {
 	 * @return the sharable document factory
 	 */
 	public IDocumentFactory getDocumentFactory(IPath location) {
-		IDocumentFactory factory= getDocumentFactory(location.lastSegment(), false);
+		IDocumentFactory factory= getDocumentFactory(findContentTypes(location));
 		if (factory == null)
-			factory= getDocumentFactory(location.getFileExtension(), true);
+			factory= getDocumentFactory(location.lastSegment());
 		if (factory == null)
-			factory= getDocumentFactory(WILDCARD, true);
+			factory= getDocumentFactory(location.getFileExtension());
+		if (factory == null)
+			factory= getDocumentFactory(WILDCARD);
 		return factory;
 	}
 	
@@ -295,15 +400,19 @@ public class ExtensionsRegistry {
 	public IDocumentSetupParticipant[] getDocumentSetupParticipants(IPath location) {
 		List participants= new ArrayList();
 		
-		List p= getDocumentSetupParticipants(location.lastSegment(), false);
+		List p= getDocumentSetupParticipants(findContentTypes(location));
 		if (p != null)
 			participants.addAll(p);
 		
-		p= getDocumentSetupParticipants(location.getFileExtension(), true);
+		p= getDocumentSetupParticipants(location.lastSegment());
+		if (p != null)
+			participants.addAll(p);
+		
+		p= getDocumentSetupParticipants(location.getFileExtension());
 		if (p != null)
 			participants.addAll(p);
 			
-		p= getDocumentSetupParticipants(WILDCARD, true);
+		p= getDocumentSetupParticipants(WILDCARD);
 		if (p != null)
 			participants.addAll(p);
 			

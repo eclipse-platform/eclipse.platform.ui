@@ -4,6 +4,9 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
+
+import org.eclipse.jface.text.Assert;
+
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPluginDescriptor;
@@ -25,11 +28,20 @@ public class FileBuffersPlugin extends Plugin {
 	private ITextFileBufferManager fTextFileBufferManager;
 	
 	/**
-	 * The constructor.
+	 * Creates a plug-in instance.
+	 */
+	public FileBuffersPlugin() {
+		Assert.isTrue(fgPlugin == null);
+		fgPlugin= this;
+	}
+
+	/**
+	 * Creates a plug-in instance.
 	 */
 	public FileBuffersPlugin(IPluginDescriptor descriptor) {
 		super(descriptor);
-		fgPlugin = this;
+		Assert.isTrue(fgPlugin == null);
+		fgPlugin= this;
 		try {
 			fResourceBundle= ResourceBundle.getBundle("org.eclipse.core.internal.filebuffers.FileBuffersPlugin");  //$NON-NLS-1$
 		} catch (MissingResourceException x) {
