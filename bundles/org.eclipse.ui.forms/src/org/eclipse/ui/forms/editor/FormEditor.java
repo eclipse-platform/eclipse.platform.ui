@@ -39,6 +39,11 @@ public abstract class FormEditor extends MultiPageEditorPart {
 	public FormEditor() {
 		pages = new Vector();
 	}
+	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
+		setSite(site);
+		setInput(input);
+		site.setSelectionProvider(new FormEditorSelectionProvider(this));
+	}
 	/**
 	 * Creates the common toolkit for this editor and adds pages to the editor.
 	 * 
