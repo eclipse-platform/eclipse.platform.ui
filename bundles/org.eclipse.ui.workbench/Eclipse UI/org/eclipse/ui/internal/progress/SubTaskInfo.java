@@ -74,4 +74,11 @@ class SubTaskInfo extends JobTreeElement {
 	boolean isJobInfo() {
 		return false;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.progress.JobTreeElement#isActive()
+	 */
+	boolean isActive() {
+		return jobInfo.isActive();
+	}
 }

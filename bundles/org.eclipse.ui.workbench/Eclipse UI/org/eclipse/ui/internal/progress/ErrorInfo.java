@@ -85,4 +85,11 @@ public class ErrorInfo extends JobTreeElement {
 	IStatus getErrorStatus() {
 		return errorStatus;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.progress.JobTreeElement#isActive()
+	 */
+	boolean isActive() {
+		return true;
+	}
 }

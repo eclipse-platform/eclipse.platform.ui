@@ -45,10 +45,7 @@ public class ProgressView extends ViewPart implements IViewPart {
 	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createPartControl(Composite parent) {
-		viewer =
-			new ProgressTreeViewer(
-				parent,
-				SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		viewer = new ProgressTreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setUseHashlookup(true);
 		viewer.setSorter(ProgressManagerUtil.getProgressViewerSorter());
 
@@ -104,8 +101,7 @@ public class ProgressView extends ViewPart implements IViewPart {
 	}
 
 	private void initPulldownMenu() {
-		IMenuManager menuMgr =
-			((ViewSite) getSite()).getActionBars().getMenuManager();
+		IMenuManager menuMgr = ((ViewSite) getSite()).getActionBars().getMenuManager();
 		menuMgr.add(new Action(ProgressMessages.getString("ProgressView.VerboseAction"), IAction.AS_CHECK_BOX) { //$NON-NLS-1$
 
 			/*
@@ -114,8 +110,7 @@ public class ProgressView extends ViewPart implements IViewPart {
 			 * @see org.eclipse.jface.action.Action#run()
 			 */
 			public void run() {
-				ProgressViewUpdater updater =
-					ProgressViewUpdater.getSingleton();
+				ProgressViewUpdater updater = ProgressViewUpdater.getSingleton();
 				updater.debug = !updater.debug;
 				setChecked(updater.debug);
 				updater.refreshAll();
@@ -153,8 +148,7 @@ public class ProgressView extends ViewPart implements IViewPart {
 	JobInfo getSelectedInfo() {
 		IStructuredSelection selection = getSelection();
 		if (selection != null && selection.size() == 1) {
-			JobTreeElement element =
-				(JobTreeElement) selection.getFirstElement();
+			JobTreeElement element = (JobTreeElement) selection.getFirstElement();
 			if (element.isJobInfo())
 				return (JobInfo) element;
 		}
@@ -181,12 +175,11 @@ public class ProgressView extends ViewPart implements IViewPart {
 					return;
 				}
 				element.cancel();
-				ProgressManager.getInstance().refresh(element);
+				ProgressManager.getInstance().refreshJobInfo(element);
 
 			}
 
 		};
 	}
 
-	
 }

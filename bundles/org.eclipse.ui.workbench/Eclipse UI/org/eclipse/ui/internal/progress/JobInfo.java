@@ -26,6 +26,9 @@ class JobInfo extends JobTreeElement {
 	private IStatus blockedStatus;
 	private boolean canceled = false;
 	private GroupInfo parent;
+	
+	//Default to no progress
+	private int ticks = -1;
 
 	/**
 	 * Return the job that the receiver is collecting data
@@ -140,8 +143,13 @@ class JobInfo extends JobTreeElement {
 	 * @param workIncrement
 	 */
 	void addWork(double workIncrement) {
-		if (taskInfo != null)
+		if (taskInfo == null)
+			return;
+		
+		if(parent == null || ticks < 1)
 			taskInfo.addWork(workIncrement);
+		else
+			taskInfo.addWork(workIncrement,parent,ticks);
 	}
 	/**
 	 * Clear the collection of subtasks an the task info.
@@ -278,4 +286,30 @@ class JobInfo extends JobTreeElement {
 		else
 			return null;
 	}
+	/**
+	 * Set the number of ticks this job represents.
+	 * Default is indeterminate (-1).
+	 * @param ticks The ticks to set.
+	 */
+	public void setTicks(int ticks) {
+		this.ticks = ticks;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.progress.JobTreeElement#isActive()
+	 */
+	boolean isActive() {
+		return getJob().getState() == Job.NONE;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.progress.JobTreeElement#getCondensedDisplayString()
+	 */
+	String getCondensedDisplayString() {
+		if(hasTaskInfo())
+			return getTaskInfo().getDisplayStringWithoutTask();
+		else
+			return getJob().getName();
+	}
+
 }

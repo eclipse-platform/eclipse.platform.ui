@@ -25,6 +25,8 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
 	private Object lock = new Object();
 	private String taskName;
 	boolean isActive = false;
+	double total = -1;
+	double currentWork;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.progress.JobTreeElement#getParent()
@@ -40,7 +42,7 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
 		synchronized (lock) {
 			return !infos.isEmpty();
 		}
-		
+
 	}
 
 	/* (non-Javadoc)
@@ -56,7 +58,23 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
 	 * @see org.eclipse.ui.internal.progress.JobTreeElement#getDisplayString()
 	 */
 	String getDisplayString() {
-		return taskName;
+		if (total < 0)
+			return taskName;
+		else {
+			String[] messageValues = new String[2];
+			messageValues[0] = taskName;
+			messageValues[1] = String.valueOf(getPercentDone());
+			return ProgressMessages.format("JobInfo.NoTaskNameDoneMessage", messageValues); //$NON-NLS-1$
+		}
+
+	}
+
+	/**
+	 * Return an integer representing the amount of work completed.
+	 * @return int
+	 */
+	int getPercentDone() {
+		return (int) (currentWork * 100 / total);
 	}
 
 	/* (non-Javadoc)
@@ -78,7 +96,8 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
 	 */
 	public void beginTask(String name, int totalWork) {
 		taskName = name;
-		synchronized(this){
+		total = totalWork;
+		synchronized (lock) {
 			isActive = true;
 		}
 		ProgressManager.getInstance().addGroup(this);
@@ -89,7 +108,7 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
 	 * @see org.eclipse.core.runtime.IProgressMonitor#done()
 	 */
 	public void done() {
-		synchronized(this){
+		synchronized (lock) {
 			isActive = false;
 		}
 		ProgressManager.getInstance().removeGroup(this);
@@ -100,7 +119,10 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
 	 * @see org.eclipse.core.runtime.IProgressMonitor#internalWorked(double)
 	 */
 	public void internalWorked(double work) {
-		//No behavior as this is a display item
+		synchronized(lock){
+			currentWork += work;
+		}
+		
 	}
 
 	/* (non-Javadoc)
@@ -122,7 +144,7 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
 	 * @see org.eclipse.core.runtime.IProgressMonitor#setTaskName(java.lang.String)
 	 */
 	public void setTaskName(String name) {
-		synchronized(this){
+		synchronized (this) {
 			isActive = true;
 		}
 		taskName = name;
@@ -140,7 +162,7 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
 	 * @see org.eclipse.core.runtime.IProgressMonitor#worked(int)
 	 */
 	public void worked(int work) {
-		//Not interesting for this monitor
+		internalWorked(work);
 	}
 
 	/**
@@ -152,7 +174,7 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
 			infos.remove(job);
 		}
 	}
-	
+
 	/**
 	 * Remove the job from the list of jobs.
 	 * @param job
@@ -162,12 +184,14 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
 			infos.add(job);
 		}
 	}
-	/**
-	 * @return Returns whether or not there is
-	 * an active task.
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.progress.JobTreeElement#isActive()
 	 */
-	public boolean isActive() {
+	boolean isActive() {
 		return isActive;
 	}
+	
+	
 
 }

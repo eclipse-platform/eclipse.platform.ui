@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 
-import java.util.Collection;
 import java.util.HashSet;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -34,10 +33,7 @@ public class ProgressTableContentProvider
 	 * @see org.eclipse.ui.internal.progress.IProgressUpdateCollector#add(org.eclipse.ui.internal.progress.JobTreeElement[])
 	 */
 	public void add(Object[] elements) {
-		Object[] infos = getJobInfos(elements);
-		if (infos == null)
-			return;
-		viewer.add(infos);
+		viewer.add(getRoots(elements,false));
 
 	}
 
@@ -53,9 +49,11 @@ public class ProgressTableContentProvider
 	 * @see org.eclipse.ui.internal.progress.IProgressUpdateCollector#refresh(org.eclipse.ui.internal.progress.JobTreeElement[])
 	 */
 	public void refresh(Object[] elements) {
-		for (int i = 0; i < elements.length; i++) {
-			if (elements[i] instanceof JobInfo)
-				viewer.refresh(elements[i], true);
+		
+		Object[] refreshes = getRoots(elements,true);
+		
+		for (int i = 0; i < refreshes.length; i++) {
+			viewer.refresh(refreshes[i], true);
 		}
 	}
 
@@ -63,29 +61,7 @@ public class ProgressTableContentProvider
 	 * @see org.eclipse.ui.internal.progress.IProgressUpdateCollector#remove(org.eclipse.ui.internal.progress.JobTreeElement[])
 	 */
 	public void remove(Object[] elements) {
-		Object[] infos = getJobInfos(elements);
-		if (infos == null)
-			return;
-		viewer.remove(infos);
-
-	}
-	/**
-	 * We are only showing job infos here so filter out the
-	 * groups.
-	 * @return Object[] or null if there aren't any
-	 */
-	private Object[] getJobInfos(Object[] elements) {
-		Collection result = new HashSet();
-		for (int i = 0; i < elements.length; i++) {
-			Object object = elements[i];
-			if (object instanceof JobInfo)
-				result.add(object);
-		}
-
-		if (result.isEmpty())
-			return null;
-		else
-			return result.toArray();
+		viewer.remove(getRoots(elements,false));
 
 	}
 
@@ -93,7 +69,35 @@ public class ProgressTableContentProvider
 	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 	 */
 	public Object[] getElements(Object inputElement) {
-		return ProgressManager.getInstance().getJobInfos(ProgressViewUpdater.getSingleton().debug);
+		return ProgressManager.getInstance().getRootElements(ProgressViewUpdater.getSingleton().debug);
+	}
+	
+	/**
+	 * Get the root elements of the passed elements as we only show roots.
+	 * Replace the element with its parent if subWithParent is true
+	 * @param elements
+	 * @param boolean subWithParent
+	 * @return
+	 */
+	private Object[] getRoots(Object[] elements, boolean subWithParent){
+		HashSet roots = new HashSet();
+		for (int i = 0; i < elements.length; i++) {
+			JobTreeElement element = (JobTreeElement) elements[i];
+			if(element.isJobInfo()){
+				GroupInfo group = ((JobInfo) element).getGroupInfo();
+				if(group == null)
+					roots.add(element);
+				else{
+					if(subWithParent)
+						roots.add(group);
+				}
+					
+			}
+			else
+				roots.add(element);
+		}
+		
+		return roots.toArray();
 	}
 
 }

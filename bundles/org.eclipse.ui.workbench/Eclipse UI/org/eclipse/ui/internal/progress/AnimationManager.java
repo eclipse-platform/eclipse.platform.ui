@@ -372,12 +372,11 @@ class AnimationManager {
 				incrementJobCount(info);
 
 			}
-
+			
 			/* (non-Javadoc)
-			 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#refresh(org.eclipse.ui.internal.progress.JobInfo)
+			 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#refreshJobInfo(org.eclipse.ui.internal.progress.JobInfo)
 			 */
-			public void refresh(JobInfo info) {
-
+			public void refreshJobInfo(JobInfo info) {
 				int state = info.getJob().getState();
 				if (state == Job.RUNNING)
 					addJob(info);
@@ -456,7 +455,13 @@ class AnimationManager {
 			 */
 			public void removeGroup(GroupInfo group) {
 				//Don't care about groups
-
+			}
+			
+			/* (non-Javadoc)
+			 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#refreshGroup(org.eclipse.ui.internal.progress.GroupInfo)
+			 */
+			public void refreshGroup(GroupInfo info) {
+				//Don't care about groups
 			}
 		};
 	}

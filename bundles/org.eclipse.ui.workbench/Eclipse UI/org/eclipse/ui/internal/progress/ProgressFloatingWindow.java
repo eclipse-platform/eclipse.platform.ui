@@ -94,11 +94,9 @@ class ProgressFloatingWindow extends AssociatedWindow {
 			 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
 			 */
 			public String getText(Object element) {
-				JobInfo info = (JobInfo) element;
-				if (info.hasTaskInfo())
-					return info.getTaskInfo().getDisplayStringWithoutTask();
-				else
-					return info.getJob().getName();
+				JobTreeElement info = (JobTreeElement) element;
+							
+				return info.getCondensedDisplayString();
 			}
 		});
 

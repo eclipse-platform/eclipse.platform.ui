@@ -150,7 +150,7 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 		public void beginTask(String taskName, int totalWork) {
 			JobInfo info = getJobInfo(job);
 			info.beginTask(taskName, totalWork);
-			refresh(info);
+			refreshJobInfo(info);
 			currentTaskName = taskName;
 			workbenchMonitor.beginTask(taskName, totalWork);
 		}
@@ -176,7 +176,7 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 			JobInfo info = getJobInfo(job);
 			if (info.hasTaskInfo()) {
 				info.addWork(work);
-				refresh(info);
+				refreshJobInfo(info);
 			}
 			workbenchMonitor.internalWorked(work);
 		}
@@ -220,7 +220,7 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 			}
 
 			info.clearChildren();
-			refresh(info);
+			refreshJobInfo(info);
 			currentTaskName = taskName;
 			workbenchMonitor.setTaskName(taskName);
 		}
@@ -238,7 +238,7 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 
 			info.clearChildren();
 			info.addSubTask(name);
-			refresh(info);
+			refreshJobInfo(info);
 			workbenchMonitor.subTask(name);
 		}
 
@@ -259,7 +259,7 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 		public void clearBlocked() {
 			JobInfo info = getJobInfo(job);
 			info.setBlockedStatus(null);
-			refresh(info);
+			refreshJobInfo(info);
 
 		}
 
@@ -271,7 +271,7 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 		public void setBlocked(IStatus reason) {
 			JobInfo info = getJobInfo(job);
 			info.setBlockedStatus(null);
-			refresh(info);
+			refreshJobInfo(info);
 		}
 	}
 
@@ -323,7 +323,7 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 			 */
 			public void aboutToRun(IJobChangeEvent event) {
 				JobInfo info = getJobInfo(event.getJob());
-				refresh(info);
+				refreshJobInfo(info);
 			}
 
 			/*
@@ -359,7 +359,7 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 					return;
 
 				if (jobs.containsKey(event.getJob()))
-					refresh(getJobInfo(event.getJob()));
+					refreshJobInfo(getJobInfo(event.getJob()));
 				else {
 					addJobInfo(new JobInfo(event.getJob()));
 				}
@@ -466,7 +466,11 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	 * 
 	 * @param info
 	 */
-	public void refresh(JobInfo info) {
+	public void refreshJobInfo(JobInfo info) {
+		
+		GroupInfo group = info.getGroupInfo();
+		if(group != null)
+			refreshGroup(group);
 
 		synchronized (listenerKey) {
 			Iterator iterator = listeners.iterator();
@@ -474,7 +478,25 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 				IJobProgressManagerListener listener =
 					(IJobProgressManagerListener) iterator.next();
 				if (!isNonDisplayableJob(info.getJob(), listener.showsDebug()))
-					listener.refresh(info);
+					listener.refreshJobInfo(info);
+			}
+		}
+	}
+	
+	/**
+	 * Refresh the IJobProgressManagerListeners as a result of a change in
+	 * info.
+	 * 
+	 * @param info
+	 */
+	public void refreshGroup(GroupInfo info) {
+
+		synchronized (listenerKey) {
+			Iterator iterator = listeners.iterator();
+			while (iterator.hasNext()) {
+				IJobProgressManagerListener listener =
+					(IJobProgressManagerListener) iterator.next();
+				listener.refreshGroup(info);
 			}
 		}
 	}
@@ -540,6 +562,11 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	 * @param info
 	 */
 	public void addJobInfo(JobInfo info) {
+		
+		GroupInfo group = info.getGroupInfo();
+		if(group != null)
+			refreshGroup(group);
+		
 		synchronized (listenerKey) {
 
 			jobs.put(info.getJob(), info);
@@ -932,6 +959,7 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 			GroupInfo groupInfo = (GroupInfo) group;
 			JobInfo jobInfo = getJobInfo(job);
 			jobInfo.setGroupInfo(groupInfo);
+			jobInfo.setTicks(ticks);
 			groupInfo.addJobInfo(jobInfo);
 		}
 		return monitor;
