@@ -43,7 +43,7 @@ public class SeparateVMTests extends AbstractAntUIBuildTest {
      */
     public void testBuild() throws CoreException {
       	launch("echoingSepVM");
-      	assertTrue("Incorrect number of messages logged for build. Should be 5. Was " + ConsoleLineTracker.getNumberOfMessages(), ConsoleLineTracker.getNumberOfMessages() == 5);
+      	assertTrue("Incorrect number of messages logged for build. Should be 6. Was " + ConsoleLineTracker.getNumberOfMessages(), ConsoleLineTracker.getNumberOfMessages() == 6);
       	assertTrue("Incorrect last message. Should start with Total time:. Message: " + ConsoleLineTracker.getMessage(4), ConsoleLineTracker.getMessage(4).startsWith("Total time:"));
     }
     
@@ -96,7 +96,8 @@ public class SeparateVMTests extends AbstractAntUIBuildTest {
 		copy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, getJavaProject().getProject().getLocation().toOSString());
 		copy.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_TARGETS, "Bug42984");
 		launchAndTerminate(copy, 10000);
-		assertTrue("Incorrect number of messages logged for build. Should be 5. Was " + ConsoleLineTracker.getNumberOfMessages(), ConsoleLineTracker.getNumberOfMessages() == 5);
+		ConsoleLineTracker.waitForConsole();
+		assertTrue("Incorrect number of messages logged for build. Should be 6. Was " + ConsoleLineTracker.getNumberOfMessages(), ConsoleLineTracker.getNumberOfMessages() == 6);
 		assertTrue("Incorrect last message. Should end with AntUITests. Message: " + ConsoleLineTracker.getMessage(2), ConsoleLineTracker.getMessage(2).endsWith("AntUITests"));
 	}
 }
