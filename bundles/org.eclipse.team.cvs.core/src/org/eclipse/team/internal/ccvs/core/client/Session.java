@@ -738,15 +738,22 @@ public class Session {
 		// get the file size from the server
 		long size;
 		boolean compressed = false;
+		String sizeLine = null;
 		try {
-			String sizeLine = readLine();
+			sizeLine = readLine();
 			if (sizeLine.charAt(0) == 'z') {
 				compressed = true;
 				sizeLine = sizeLine.substring(1);
 			}
 			size = Long.parseLong(sizeLine, 10);
 		} catch (NumberFormatException e) {
-			throw new CVSException(Policy.bind("Session.badInt"), e); //$NON-NLS-1$
+		    // In some cases, the server will give us an error line here
+		    if (sizeLine != null && sizeLine.startsWith("E")) { //$NON-NLS-1$
+		        handleErrorLine(sizeLine.substring(1).trim(), org.eclipse.core.runtime.Status.OK_STATUS);
+		        return;
+		    } else {
+		        throw new CVSException(Policy.bind("Session.badInt"), e); //$NON-NLS-1$
+		    }
 		}
 		// create an input stream that spans the next 'size' bytes from the connection
 		InputStream in = new SizeConstrainedInputStream(connection.getInputStream(), size, true /*discardOnClose*/);
@@ -784,6 +791,15 @@ public class Session {
 	}
 
 	/**
+	 * Report the given error line to any listeners
+     * @param line the error line
+     * @param status the status that indicates any problems encountered parsing the line
+     */
+    public void handleErrorLine(String line, IStatus status) {
+        ConsoleListeners.getInstance().errorLineReceived(this, line, status);
+    }
+
+    /**
 	 * Stores the value of the last Mod-time response encountered.
 	 * Valid only for the duration of a single CVS command.
 	 */
