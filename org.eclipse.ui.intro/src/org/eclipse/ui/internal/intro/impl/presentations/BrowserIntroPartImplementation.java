@@ -158,7 +158,7 @@ public class BrowserIntroPartImplementation extends
         String cachedPage = getCachedCurrentPage();
         if (cachedPage != null) {
             // we have a cached state. handle appropriately
-            if (cachedPage.startsWith("http:")) {
+            if (isURL(cachedPage)) {
                 // set the URL the browser should display
                 boolean success = browser.setUrl(cachedPage);
                 if (!success) {
@@ -196,7 +196,7 @@ public class BrowserIntroPartImplementation extends
         // defined in the root page. But first check memento if we can
         // restore last visited page.
         String url = getCachedCurrentPage();
-        if (url == null || !url.startsWith("http:"))
+        if (!isURL(url))
             // no cached state, or invalid state.
             url = getModelRoot().getHomePage().getUrl();
 
@@ -315,14 +315,20 @@ public class BrowserIntroPartImplementation extends
             if (currentURL != null) {
                 IMemento introMemento = memento
                         .createChild(IIntroConstants.MEMENTO_PRESENTATION_TAG);
-                introMemento
-                        .putString(IIntroConstants.MEMENTO_CURRENT_PAGE, currentURL);
+                introMemento.putString(IIntroConstants.MEMENTO_CURRENT_PAGE,
+                        currentURL);
             }
         } else {
             super.saveCurrentPage(memento);
         }
     }
 
+    private boolean isURL(String url) {
+        IntroURLParser parser = new IntroURLParser(url);
+        if (parser.hasProtocol())
+            return true;
+        return false;
+    }
 
 
 }

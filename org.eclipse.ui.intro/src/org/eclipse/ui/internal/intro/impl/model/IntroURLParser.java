@@ -41,6 +41,8 @@ public class IntroURLParser {
     }
 
     private void parseUrl(String url) {
+        if (url == null)
+            return;
         URL url_inst = null;
         try {
             url_inst = new URL(url);
@@ -85,8 +87,8 @@ public class IntroURLParser {
     }
 
     /**
-     * Retruns the path attribute of the passed URL, stripped out of the
-     * leading "/". Returns null if the url does not have a path.
+     * Retruns the path attribute of the passed URL, stripped out of the leading
+     * "/". Returns null if the url does not have a path.
      * 
      * @param url
      * @return
