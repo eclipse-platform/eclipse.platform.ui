@@ -740,9 +740,6 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 			}
 		}
 		
-		if (fDefaultTarget == null) {//error message already set
-			return false;
-		}
 		if (fAllTargets != null && fTableViewer.getCheckedElements().length == 0) {
 			setErrorMessage(AntLaunchConfigurationMessages.getString("AntTargetsTab.No_targets")); //$NON-NLS-1$
 			return false;

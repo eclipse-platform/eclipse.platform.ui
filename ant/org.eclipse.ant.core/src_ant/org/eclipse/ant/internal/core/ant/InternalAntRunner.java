@@ -716,7 +716,9 @@ public class InternalAntRunner {
 	
 	private void validateDefaultTarget() {
 		defaultTarget = getCurrentProject().getDefaultTarget();
-		
+		if (defaultTarget == null) {
+		    return;      
+        }
 		Enumeration currentTargets = getCurrentProject().getTargets().elements();
 		boolean defaultFound= false;
 		while (currentTargets.hasMoreElements()) {
