@@ -1772,9 +1772,9 @@ public final class Workbench implements IWorkbench {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbench#getProgressManager()
+	 * @see org.eclipse.ui.IWorkbench#getProgressService()
 	 */
-	public IProgressService getProgressManager() {
+	public IProgressService getProgressService() {
 		return ProgressManager.getInstance();
 	}
 

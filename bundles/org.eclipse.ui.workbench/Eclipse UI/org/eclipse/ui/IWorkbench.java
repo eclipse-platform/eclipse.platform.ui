@@ -347,13 +347,13 @@ public IElementFactory getElementFactory(String factoryId);
 public IObjectActivityManager getObjectActivityManager(String id, boolean create);
 
 /**
- * Return the progress manager for the workbench.
- * @return IProgressManager
+ * Return the progress service for the workbench.
+ * @return IProgressService
  * @since 3.0
  * <b>NOTE: This is experimental API and subject to change at any
  * time</b>.
  */
-public IProgressService getProgressManager();
+public IProgressService getProgressService();
 
 /**
  * Returns the activity manager for the workbench. 
