@@ -34,7 +34,7 @@ import org.eclipse.swt.widgets.Button;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.dialogs.IDialogConstants;
 
@@ -682,6 +682,13 @@ public class EditionSelectionDialog extends Dialog {
 						return null;
 					}
 				};
+				fStructuredComparePane.addSelectionChangedListener(
+					new ISelectionChangedListener() {
+						public void selectionChanged(SelectionChangedEvent e) {
+							feedInput2(e.getSelection());
+						}
+					}
+				);
 			} else {
 				// only a single pane showing the editions
 				fEditionPane= new CompareViewerPane(vsplitter, SWT.BORDER | SWT.FLAT);
@@ -1018,5 +1025,16 @@ public class EditionSelectionDialog extends Dialog {
 		}
 		if (fCommitButton != null)
 			fCommitButton.setEnabled(isOK && fSelectedItem != null && fTargetPair.getItem() != fSelectedItem);
+	}
+	
+	/*
+	 * Feeds selection from structure viewer to content viewer.
+	 */
+	private void feedInput2(ISelection sel) {
+		if (sel instanceof IStructuredSelection) {
+			IStructuredSelection ss= (IStructuredSelection) sel;
+			if (ss.size() == 1)
+				fContentPane.setInput(ss.getFirstElement());
+		}
 	}
 }
