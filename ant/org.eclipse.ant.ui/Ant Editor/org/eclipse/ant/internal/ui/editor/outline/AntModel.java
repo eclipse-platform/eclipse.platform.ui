@@ -297,7 +297,6 @@ public class AntModel {
 				return null;
 			} else { //nodes don't know their lengths due to parsing error --> full parse
 				fProjectNode.reset();
-				System.out.println("full parse");
 				return input.get();
 			}
 			
@@ -312,7 +311,6 @@ public class AntModel {
 			}
 			textToParse= input.get();
 			fProjectNode.reset();
-			System.out.println("full parse");
 		} else {
 			fIncrementalTarget= (AntTargetNode)node;
 			markHierarchy(node, false);
