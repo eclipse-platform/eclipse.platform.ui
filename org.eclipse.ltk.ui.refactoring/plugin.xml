@@ -10,7 +10,6 @@
    <runtime>
       <library name="refui.jar">
          <export name="*"/>
-         <packages prefixes="org.eclipse.ltk.ui.refactoring,org.eclipse.ltk.internal.ui.refactoring"/>
       </library>
    </runtime>
 

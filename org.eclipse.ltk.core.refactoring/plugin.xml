@@ -10,7 +10,6 @@
    <runtime>
       <library name="refcore.jar">
          <export name="*"/>
-         <packages prefixes="org.eclipse.ltk.core.refactoring,org.eclipse.ltk.internal.core.refactoring"/>
       </library>
    </runtime>
    
