@@ -1,4 +1,4 @@
-<project name="Eching" default="echo1" basedir="..">
+<project name="Echoing" default="echo1" basedir="..">
 
 	<target name="echo1">
 		<echo message="echo1"/>
