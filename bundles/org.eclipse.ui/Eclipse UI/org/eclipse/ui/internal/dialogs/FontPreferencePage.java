@@ -79,44 +79,5 @@ public class FontPreferencePage
 	public void init(IWorkbench workbench) {
 	}
 
-	/**
-	 * Set the value for the font in the registry based on the 
-	 * current value at preferenceName.
-	 */
-
-	private void setRegistryValue(String preferenceKey) {
-		FontData[] data = new FontData[1];
-		data[0] = PreferenceConverter.getFontData(getPreferenceStore(), preferenceKey);
-
-		//Only update if there has been a change
-		FontData[] currentSetting =
-			JFaceResources.getFontRegistry().get(preferenceKey).getFontData();
-		if (currentSetting[0].equals(data[0]))
-			return;
-
-		JFaceResources.getFontRegistry().put(preferenceKey, data);
-	}
-
-	/** 
-	* The font editor preference page implementation of this 
-	* <code>PreferencePage</code> method saves all field editors by
-	* calling <code>FieldEditor.store</code>. It then will
-	* update the entries in the FontRegistry with the new
-	* values.
-	*
-	* @see FieldEditor#store()
-	*/
-	public boolean performOk() {
-
-		if (super.performOk()) {
-			setRegistryValue(JFaceResources.BANNER_FONT);
-			setRegistryValue(JFaceResources.DIALOG_FONT);
-			setRegistryValue(JFaceResources.TERMINAL_FONT);
-			setRegistryValue(JFaceResources.TEXT_FONT);
-			return true;
-		}
-		return false;
-
-	}
 
 }

@@ -192,6 +192,10 @@ public class FontFieldEditor extends FieldEditor {
 			getPreferenceStore(),
 			getPreferenceName(),
 			chosenFont);
+			
+		FontData[] data = new FontData[] {chosenFont};
+
+		JFaceResources.getFontRegistry().put(getPreferenceName(), data);
 	}
 	/**
 	 * Returns the change button for this field editor.

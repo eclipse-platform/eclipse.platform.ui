@@ -347,7 +347,11 @@ public void put(String symbolicName, FontData[] fontData) {
 
 	Assert.isNotNull(symbolicName);
 	Assert.isNotNull(fontData);
-	
+		
+	FontData[] existing = (FontData []) stringToFontData.get(symbolicName);
+	if(fontData.equals(existing))
+		return;
+		
 	Font oldFont = (Font)stringToFont.remove(symbolicName);
 	stringToFontData.put(symbolicName, fontData);
 	fireFontMappingChanged(symbolicName);
