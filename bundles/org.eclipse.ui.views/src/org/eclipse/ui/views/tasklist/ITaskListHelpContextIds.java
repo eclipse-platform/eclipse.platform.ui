@@ -36,6 +36,16 @@ interface ITaskListHelpContextIds {
 	public static final String RESOLVE_MARKER_ACTION = PREFIX + "resolve_marker_action_context"; //$NON-NLS-1$
 	public static final String SELECT_ALL_TASKS_ACTION = PREFIX + "select_all_tasks_action_context"; //$NON-NLS-1$
 	public static final String TASK_PROPERTIES_ACTION = PREFIX + "task_properties_action_context"; //$NON-NLS-1$
+	public static final String TASK_SORT_TYPE_ACTION = PREFIX + "task_sort_type_action_context"; //$NON-NLS-1$
+	public static final String TASK_SORT_COMPLETED_ACTION = PREFIX + "task_sort_completed_action_context"; //$NON-NLS-1$
+	public static final String TASK_SORT_PRIORITY_ACTION = PREFIX + "task_sort_priority_action_context"; //$NON-NLS-1$
+	public static final String TASK_SORT_DESCRIPTION_ACTION = PREFIX + "task_sort_description_action_context"; //$NON-NLS-1$
+	public static final String TASK_SORT_RESOURCE_ACTION = PREFIX + "task_sort_resource_action_context"; //$NON-NLS-1$
+	public static final String TASK_SORT_FOLDER_ACTION = PREFIX + "task_sort_folder_action_context"; //$NON-NLS-1$
+	public static final String TASK_SORT_LOCATION_ACTION = PREFIX + "task_sort_location_action_context"; //$NON-NLS-1$
+	public static final String TASK_SORT_CREATION_TIME_ACTION = PREFIX + "task_sort_creation_time_action_context"; //$NON-NLS-1$
+	public static final String TASK_SORT_ASCENDING_ACTION = PREFIX + "task_sort_ascending_action_context"; //$NON-NLS-1$
+	public static final String TASK_SORT_DESCENDING_ACTION = PREFIX + "task_sort_descending_action_context"; //$NON-NLS-1$
 
 	// Dialogs
 	public static final String FILTERS_DIALOG = PREFIX + "task_filters_dialog_context"; //$NON-NLS-1$

@@ -601,24 +601,31 @@ public class BookmarkNavigator extends ViewPart {
 	void createSortActions() {
 		sortByDescriptionAction = new SortByAction(BookmarkSorter.DESCRIPTION);
 		sortByDescriptionAction.setText(BookmarkMessages.getString("ColumnDescription.text")); //$NON-NLS-1$
+		WorkbenchHelp.setHelp(sortByDescriptionAction, IBookmarkHelpContextIds.SORT_DESCRIPTION_ACTION);
 		
 		sortByResourceAction = new SortByAction(BookmarkSorter.RESOURCE);
 		sortByResourceAction.setText(BookmarkMessages.getString("ColumnResource.text")); //$NON-NLS-1$
+		WorkbenchHelp.setHelp(sortByResourceAction, IBookmarkHelpContextIds.SORT_RESOURCE_ACTION);
 		
 		sortByFolderAction = new SortByAction(BookmarkSorter.FOLDER);
 		sortByFolderAction.setText(BookmarkMessages.getString("ColumnFolder.text")); //$NON-NLS-1$
+		WorkbenchHelp.setHelp(sortByFolderAction, IBookmarkHelpContextIds.SORT_FOLDER_ACTION);
 		
 		sortByLineAction = new SortByAction(BookmarkSorter.LOCATION);
 		sortByLineAction.setText(BookmarkMessages.getString("ColumnLocation.text"));//$NON-NLS-1$
+		WorkbenchHelp.setHelp(sortByLineAction, IBookmarkHelpContextIds.SORT_LOCATION_ACTION);
 		
 		sortByCreationTime = new SortByAction(BookmarkSorter.CREATION_TIME);
 		sortByCreationTime.setText(BookmarkMessages.getString("ColumnCreationTime.text"));//$NON-NLS-1$
+		WorkbenchHelp.setHelp(sortByCreationTime, IBookmarkHelpContextIds.SORT_CREATION_TIME_ACTION);
 		
 		sortAscendingAction = new ChangeSortDirectionAction(BookmarkSorter.ASCENDING);
 		sortAscendingAction.setText(BookmarkMessages.getString("SortDirectionAscending.text"));//$NON-NLS-1$
+		WorkbenchHelp.setHelp(sortAscendingAction, IBookmarkHelpContextIds.SORT_ASCENDING_ACTION);
 		
 		sortDescendingAction = new ChangeSortDirectionAction(BookmarkSorter.DESCENDING);
 		sortDescendingAction.setText(BookmarkMessages.getString("SortDirectionDescending.text"));//$NON-NLS-1$
+		WorkbenchHelp.setHelp(sortDescendingAction, IBookmarkHelpContextIds.SORT_DESCENDING_ACTION);
 	}
 	
 	void updateSortState() {

@@ -18,6 +18,7 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
@@ -27,6 +28,7 @@ class EditBookmarkAction extends BookmarkAction {
 	
 	protected EditBookmarkAction(BookmarkNavigator view) {
 		super(view, BookmarkMessages.getString("Properties.text")); //$NON-NLS-1$
+		WorkbenchHelp.setHelp(this, IBookmarkHelpContextIds.BOOKMARK_PROPERTIES_ACTION);
 		setEnabled(false);
 	}
 

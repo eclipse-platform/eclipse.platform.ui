@@ -1068,42 +1068,52 @@ public class TaskList extends ViewPart {
 		sortByCategoryAction = new SortByAction(TaskSorter.TYPE);
 		sortByCategoryAction.setText(TaskListMessages.getString("SortByCategory.text")); //$NON-NLS-1$
 		sortByCategoryAction.setToolTipText(TaskListMessages.getString("SortByCategory.tooltip")); //$NON-NLS-1$
+		WorkbenchHelp.setHelp(sortByCategoryAction, ITaskListHelpContextIds.TASK_SORT_TYPE_ACTION);
 
 		sortByCompletedAction = new SortByAction(TaskSorter.COMPLETION);
 		sortByCompletedAction.setText(TaskListMessages.getString("SortByCompleted.text")); //$NON-NLS-1$
 		sortByCompletedAction.setToolTipText(TaskListMessages.getString("SortByCompleted.tooltip")); //$NON-NLS-1$
+		WorkbenchHelp.setHelp(sortByCompletedAction, ITaskListHelpContextIds.TASK_SORT_COMPLETED_ACTION);
 
 		sortByPriorityAction = new SortByAction(TaskSorter.PRIORITY);
 		sortByPriorityAction.setText(TaskListMessages.getString("SortByPriority.text")); //$NON-NLS-1$
 		sortByPriorityAction.setToolTipText(TaskListMessages.getString("SortByPriority.tooltip")); //$NON-NLS-1$
+		WorkbenchHelp.setHelp(sortByPriorityAction, ITaskListHelpContextIds.TASK_SORT_PRIORITY_ACTION);
 
 		sortByDescriptionAction = new SortByAction(TaskSorter.DESCRIPTION);
 		sortByDescriptionAction.setText(TaskListMessages.getString("SortByDescription.text")); //$NON-NLS-1$
 		sortByDescriptionAction.setToolTipText(TaskListMessages.getString("SortByDescription.tooltip")); //$NON-NLS-1$
+		WorkbenchHelp.setHelp(sortByDescriptionAction, ITaskListHelpContextIds.TASK_SORT_DESCRIPTION_ACTION);
 
 		sortByResourceAction = new SortByAction(TaskSorter.RESOURCE);
 		sortByResourceAction.setText(TaskListMessages.getString("SortByResource.text")); //$NON-NLS-1$
 		sortByResourceAction.setToolTipText(TaskListMessages.getString("SortByResource.tooltip")); //$NON-NLS-1$
+		WorkbenchHelp.setHelp(sortByResourceAction, ITaskListHelpContextIds.TASK_SORT_RESOURCE_ACTION);
 
 		sortByContainerAction = new SortByAction(TaskSorter.FOLDER);
 		sortByContainerAction.setText(TaskListMessages.getString("SortByContainer.text")); //$NON-NLS-1$
 		sortByContainerAction.setToolTipText(TaskListMessages.getString("SortByContainer.tooltip")); //$NON-NLS-1$
+		WorkbenchHelp.setHelp(sortByContainerAction, ITaskListHelpContextIds.TASK_SORT_FOLDER_ACTION);
 
 		sortByLocationAction = new SortByAction(TaskSorter.LOCATION);
 		sortByLocationAction.setText(TaskListMessages.getString("SortByLocation.text")); //$NON-NLS-1$
 		sortByLocationAction.setToolTipText(TaskListMessages.getString("SortByLocation.tooltip")); //$NON-NLS-1$
+		WorkbenchHelp.setHelp(sortByLocationAction, ITaskListHelpContextIds.TASK_SORT_LOCATION_ACTION);
 
 		sortByCreationTimeAction = new SortByAction(TaskSorter.CREATION_TIME);
 		sortByCreationTimeAction.setText(TaskListMessages.getString("SortByCreationTime.text")); //$NON-NLS-1$
 		sortByCreationTimeAction.setToolTipText(TaskListMessages.getString("SortByCreationTime.tooltip")); //$NON-NLS-1$
+		WorkbenchHelp.setHelp(sortByCreationTimeAction, ITaskListHelpContextIds.TASK_SORT_CREATION_TIME_ACTION);
 
 		sortAscendingAction = new SortDirectionAction(TaskSorter.ASCENDING);
 		sortAscendingAction.setText(TaskListMessages.getString("SortAscending.text")); //$NON-NLS-1$
 		sortAscendingAction.setToolTipText(TaskListMessages.getString("SortAscending.tooltip")); //$NON-NLS-1$
+		WorkbenchHelp.setHelp(sortAscendingAction, ITaskListHelpContextIds.TASK_SORT_ASCENDING_ACTION);
 
 		sortDescendingAction = new SortDirectionAction(TaskSorter.DESCENDING);
 		sortDescendingAction.setText(TaskListMessages.getString("SortDescending.text")); //$NON-NLS-1$
 		sortDescendingAction.setToolTipText(TaskListMessages.getString("SortDescending.tooltip")); //$NON-NLS-1$
+		WorkbenchHelp.setHelp(sortDescendingAction, ITaskListHelpContextIds.TASK_SORT_DESCENDING_ACTION);
 
 		// filters...
 		filtersAction = new FiltersAction(this, "filter"); //$NON-NLS-1$
