@@ -36,12 +36,6 @@
             class="org.eclipse.ui.views.contentoutline.ContentOutline"
             id="org.eclipse.ui.views.ContentOutline">
       </view>
-      <view
-            name="%Views.IntroAdapter"
-            category="org.eclipse.ui"
-            class="org.eclipse.ui.internal.ViewIntroAdapterPart"
-            id="org.eclipse.ui.internal.introview">
-      </view>
    </extension>
 
 </plugin>

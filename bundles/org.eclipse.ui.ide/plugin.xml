@@ -388,6 +388,12 @@
             class="org.eclipse.ui.views.markers.ProblemView"
             id="org.eclipse.ui.views.ProblemView">
       </view>
+      <view
+            name="%Views.IntroAdapter"
+            category="org.eclipse.ui"
+            class="org.eclipse.ui.internal.ViewIntroAdapterPart"
+            id="org.eclipse.ui.internal.introview">
+      </view>      
    </extension>
    <extension
          point="org.eclipse.ui.ide.resourceFilters">
