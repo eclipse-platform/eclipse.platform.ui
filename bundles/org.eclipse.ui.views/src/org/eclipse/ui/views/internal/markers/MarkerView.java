@@ -45,6 +45,7 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -476,26 +477,47 @@ public abstract class MarkerView extends TableView {
 		});
 	}
 
-
 	void checkMarkerLimit() {
 		IFilter iFilter = getFilter();
-		if (iFilter == null || !(iFilter instanceof MarkerFilter)) {
+		
+		if (iFilter == null || !(iFilter instanceof MarkerFilter))
 			return; 
-		}
+		
 		MarkerFilter filter = (MarkerFilter) iFilter;
-		TableViewer viewer = getViewer();
 		int itemCount = getRegistry().getItemCount();
-		Composite parent = viewer.getTable().getParent();
+			
 		if (getFilter() == null || !filter.getFilterOnMarkerLimit() || itemCount <= filter.getMarkerLimit()) {
 			if (stackLayout.topControl != viewer.getTable()) {
 				stackLayout.topControl = viewer.getTable();
-				parent.layout();
+				TableViewer viewer = getViewer();
+		
+				if (viewer != null) {
+					Table table = viewer.getTable();
+					
+					if (table != null && !table.isDisposed()) {
+						Composite parent = table.getParent();
+						
+						if (parent != null && !parent.isDisposed())
+							parent.layout();
+					}
+				}
 			}
 		}
 		else {
 			if (stackLayout.topControl != compositeMarkerLimitExceeded) {
 				stackLayout.topControl = compositeMarkerLimitExceeded;
-				parent.layout();
+				TableViewer viewer = getViewer();
+		
+				if (viewer != null) {
+					Table table = viewer.getTable();
+					
+					if (table != null && !table.isDisposed()) {
+						Composite parent = table.getParent();
+						
+						if (parent != null && !parent.isDisposed())
+							parent.layout();
+					}
+				}
 			}
 		}
 	}
