@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.editors.quickdiff.providers;
+package org.eclipse.ui.internal.editors.quickdiff;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -34,6 +34,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * Default provider for the quickdiff display - the saved document is taken as the reference.
+ * 
  * @since 3.0
  */
 public class LastSaveReferenceProvider implements IQuickDiffProviderImplementation, IElementStateListener {
@@ -48,7 +49,7 @@ public class LastSaveReferenceProvider implements IQuickDiffProviderImplementati
 	private String fId;
 
 	/*
-	 * @see org.eclipse.test.quickdiff.DocumentLineDiffer.IQuickDiffReferenceProvider#getReference()
+	 * @see org.eclipse.ui.editors.quickdiff.IQuickDiffReferenceProvider#getReference()
 	 */
 	public IDocument getReference() {
 		if (!fDocumentRead)
@@ -137,7 +138,9 @@ public class LastSaveReferenceProvider implements IQuickDiffProviderImplementati
 	}
 
 	/**
-	 * @return
+	 * Returns <code>true</code> if the receiver has been initialized, i.e. an editor has been set.
+	 * 
+	 * @return <code>true</code> if the receiver has been initialized.
 	 */
 	private boolean initialized() {
 		return fEditor != null;
@@ -167,6 +170,9 @@ public class LastSaveReferenceProvider implements IQuickDiffProviderImplementati
 	public void elementMoved(Object originalElement, Object movedElement) {
 	}
 
+	/*
+	 * @see org.eclipse.ui.editors.quickdiff.IQuickDiffProviderImplementation#setActiveEditor(org.eclipse.ui.texteditor.ITextEditor)
+	 */
 	public void setActiveEditor(ITextEditor targetEditor) {
 		if (targetEditor != fEditor) {
 			dispose();
@@ -175,14 +181,14 @@ public class LastSaveReferenceProvider implements IQuickDiffProviderImplementati
 	}
 
 	/*
-	 * @see org.eclipse.quickdiff.QuickDiffTestPlugin.IQuickDiffProviderImplementation#isEnabled()
+	 * @see org.eclipse.ui.editors.quickdiff.IQuickDiffProviderImplementation#isEnabled()
 	 */
 	public boolean isEnabled() {
 		return initialized();
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.source.diff.DocumentLineDiffer.IQuickDiffReferenceProvider#dispose()
+	 * @see org.eclipse.ui.editors.quickdiff.IQuickDiffReferenceProvider#dispose()
 	 */
 	public void dispose() {
 		if (fEditor != null)
@@ -192,14 +198,14 @@ public class LastSaveReferenceProvider implements IQuickDiffProviderImplementati
 	}
 
 	/*
-	 * @see org.eclipse.quickdiff.QuickDiffTestPlugin.IQuickDiffProviderImplementation#setId(java.lang.String)
+	 * @see org.eclipse.ui.editors.quickdiff.IQuickDiffProviderImplementation#setId(java.lang.String)
 	 */
 	public void setId(String id) {
 		fId= id;
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.source.diff.DocumentLineDiffer.IQuickDiffReferenceProvider#getId()
+	 * @see org.eclipse.ui.editors.quickdiff.IQuickDiffReferenceProvider#getId()
 	 */
 	public String getId() {
 		return fId;

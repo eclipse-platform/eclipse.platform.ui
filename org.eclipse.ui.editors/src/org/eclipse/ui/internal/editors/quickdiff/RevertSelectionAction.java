@@ -8,33 +8,41 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.editors.quickdiff.restore;
+package org.eclipse.ui.internal.editors.quickdiff;
 
-import org.eclipse.ui.internal.editors.quickdiff.QuickDiffTestPlugin;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.source.ILineDiffInfo;
 import org.eclipse.jface.text.source.ILineDiffer;
-import org.eclipse.jface.text.source.ILineRestorer;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
 
 import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
+ * Action that will revert the added, deleted and changes lines in the selection on the currently 
+ * displayed document to the state in the reference document.
  * 
+ * @since 3.0
  */
 public class RevertSelectionAction extends QuickDiffRestoreAction {
+	/** The first line to be restored. Set in <code>update()</code>. */
 	private int fStartLine;
+	/** The last line to be restored. Set in <code>update()</code>. */
 	private int fEndLine;
 
 	/**
-	 * @param editor
+	 * Creates a new instance.
+	 * 
+	 * @param editor the editor this action belongs to
 	 */
 	public RevertSelectionAction(ITextEditor editor) {
-		super(QuickDiffTestPlugin.getDefault().getResourceBundle(), "RevertSelectionAction.", editor); //$NON-NLS-1$
+		super(QuickDiffMessages.getResourceBundle(), "RevertSelectionAction.", editor); //$NON-NLS-1$
 	}
 
+	/*
+	 * @see org.eclipse.ui.texteditor.IUpdate#update()
+	 */
 	public void update() {
 		setEnabled(false);
 
@@ -67,15 +75,18 @@ public class RevertSelectionAction extends QuickDiffRestoreAction {
 		}
 	}
 
+	/*
+	 * @see org.eclipse.ui.internal.editors.quickdiff.QuickDiffRestoreAction#runCompoundChange()
+	 */
 	public void runCompoundChange() {
 		// recheck if run without being enabled
 		if (!isEnabled())
 			return;
 
-		ILineRestorer restorer= getRestorer();
-		if (restorer != null) {
+		ILineDiffer differ= getDiffer();
+		if (differ != null) {
 			try {
-				restorer.revertSelection(fStartLine, fEndLine - fStartLine + 1);
+				differ.revertSelection(fStartLine, fEndLine - fStartLine + 1);
 			} catch (BadLocationException e) {
 			}
 		}

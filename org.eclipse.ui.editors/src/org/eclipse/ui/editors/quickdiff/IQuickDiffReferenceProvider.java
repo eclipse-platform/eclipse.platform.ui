@@ -19,12 +19,14 @@ import org.eclipse.jface.text.IDocument;
  * diff information is generated.
  * <p>Extensions to the extension point <code>quickdiff.referenceprovider</code> have to implement
  * this interface (plus another interface for plugin and UI management.</p>
+ * 
  * @since 3.0
  * @see IQuickDiffProviderImplementation
  */
 public interface IQuickDiffReferenceProvider {
 	/**
 	 * Returns the reference document for the quick diff display.
+	 * 
 	 * @return the reference document for the quick diff display
 	 */
 	IDocument getReference();
@@ -36,6 +38,7 @@ public interface IQuickDiffReferenceProvider {
 
 	/**
 	 * Returns the id of this reference provider.
+	 * 
 	 * @return the id of this provider as stated in the extending plugin's manifest.
 	 */
 	String getId();

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.editors.quickdiff.restore;
+package org.eclipse.ui.internal.editors.quickdiff;
 
 import java.util.ResourceBundle;
 
@@ -20,21 +20,43 @@ import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModelExtension;
 import org.eclipse.jface.text.source.ILineDiffer;
-import org.eclipse.jface.text.source.ILineRestorer;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
+import org.eclipse.jface.text.source.LineNumberChangeRulerColumn;
 
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.TextEditorAction;
 
+/**
+ * Abstract superclass of actions that restore / revert parts of a document displayed in the action's
+ * editor to the state described by the {@link ILineDiffer ILineDiffer} associated with the document's 
+ * {@link IAnnotationModel IAnnotationModel}.
+ * 
+ * @since 3.0
+ */
 public abstract class QuickDiffRestoreAction extends TextEditorAction {
+	
+	/**
+	 * Creates a new instance.
+	 * 
+	 * @param editor the editor this action belongs to
+	 */
 	QuickDiffRestoreAction(ResourceBundle bundle, String prefix, ITextEditor editor) {
 		super(bundle, prefix, editor);
 	}
 	
+	/**
+	 * Called by this action's run method inside a pair of calls to <code>IRewriteTarget.beginCompoundChange</code>
+	 * and <code>IRewriteTarget.endCompoundChange</code>().
+	 *
+	 * @see IRewriteTarget
+	 */
 	protected abstract void runCompoundChange();
 	
+	/*
+	 * @see org.eclipse.jface.action.IAction#run()
+	 */
 	public void run() {
 		ITextEditor editor= getTextEditor();
 		if (editor == null)
@@ -48,6 +70,11 @@ public abstract class QuickDiffRestoreAction extends TextEditorAction {
 		
 	}
 
+	/**
+	 * Returns the selection of the editor this action belongs to.
+	 * 
+	 * @return the editor's selection, or <code>null</code>
+	 */
 	protected ITextSelection getSelection() {
 		if (getTextEditor() == null)
 			return null;
@@ -61,6 +88,12 @@ public abstract class QuickDiffRestoreAction extends TextEditorAction {
 			return null;
 	}
 
+	/**
+	 * Returns the annotation model of the document displayed in this action's editor, if it
+	 * implements the {@link IAnnotationModelExtension IAnnotationModelExtension} interface.
+	 * 
+	 * @return the displayed document's annotation model if it is an <code>IAnnotationModelExtension</code>, or <code>null</code>
+	 */
 	private IAnnotationModelExtension getModel() {
 		if (getTextEditor() == null)
 			return null;
@@ -74,22 +107,25 @@ public abstract class QuickDiffRestoreAction extends TextEditorAction {
 		}
 	}
 
+	/**
+	 * Returns the diff model associated with the annotation model of the document currently displayed
+	 * in this action's editor, if any.
+	 * 
+	 * @return the diff model associated with the displayed document, or <code>null</code>
+	 */
 	protected ILineDiffer getDiffer() {
 		IAnnotationModelExtension extension= getModel();
 		if (extension != null)
-			return (ILineDiffer)extension.getAnnotationModel(ILineDiffer.ID);
+			return (ILineDiffer)extension.getAnnotationModel(LineNumberChangeRulerColumn.QUICK_DIFF_MODEL_ID);
 		else
 			return null;
 	}
 
-	protected ILineRestorer getRestorer() {
-		ILineDiffer differ= getDiffer();
-		if (differ instanceof ILineRestorer)
-			return (ILineRestorer)differ;
-		else
-			return null;
-	}
-
+	/**
+	 * Returns a <code>IVerticalRulerInfo</code> if this action's editor adapts to one.
+	 * 
+	 * @return the <code>IVerticalRulerInfo</code> for the editor's vertical ruler, or <code>null</code>
+	 */
 	protected IVerticalRulerInfo getRuler() {
 		if (getTextEditor() != null)
 			return (IVerticalRulerInfo)getTextEditor().getAdapter(IVerticalRulerInfo.class);

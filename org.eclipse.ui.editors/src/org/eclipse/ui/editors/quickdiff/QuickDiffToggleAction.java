@@ -9,15 +9,9 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.editors.quickdiff;
+package org.eclipse.ui.editors.quickdiff;
 
 import java.util.Iterator;
-
-import org.eclipse.ui.internal.editors.quickdiff.restore.QuickDiffRestoreAction;
-import org.eclipse.ui.internal.editors.quickdiff.restore.RestoreAction;
-import org.eclipse.ui.internal.editors.quickdiff.restore.RevertBlockAction;
-import org.eclipse.ui.internal.editors.quickdiff.restore.RevertLineAction;
-import org.eclipse.ui.internal.editors.quickdiff.restore.RevertSelectionAction;
 
 import org.eclipse.core.runtime.IAdaptable;
 
@@ -35,10 +29,10 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.CompositeRuler;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModelExtension;
-import org.eclipse.jface.text.source.ILineDiffer;
 import org.eclipse.jface.text.source.IVerticalRulerColumn;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.jface.text.source.IVerticalRulerInfoExtension;
+import org.eclipse.jface.text.source.LineNumberChangeRulerColumn;
 import org.eclipse.jface.text.source.LineNumberRulerColumn;
 
 import org.eclipse.ui.IEditorActionDelegate;
@@ -47,18 +41,27 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.editors.quickdiff.*;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.ITextEditorExtension;
 import org.eclipse.ui.texteditor.IUpdate;
 
-import org.eclipse.ui.internal.editors.quickdiff.engine.DocumentLineDiffer;
+import org.eclipse.ui.internal.editors.quickdiff.DocumentLineDiffer;
+import org.eclipse.ui.internal.editors.quickdiff.QuickDiffMessages;
+import org.eclipse.ui.internal.editors.quickdiff.QuickDiffRestoreAction;
+import org.eclipse.ui.internal.editors.quickdiff.ReferenceProviderDescriptor;
+import org.eclipse.ui.internal.editors.quickdiff.ReferenceSelectionAction;
+import org.eclipse.ui.internal.editors.quickdiff.RestoreAction;
+import org.eclipse.ui.internal.editors.quickdiff.RevertBlockAction;
+import org.eclipse.ui.internal.editors.quickdiff.RevertLineAction;
+import org.eclipse.ui.internal.editors.quickdiff.RevertSelectionAction;
+import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 
 /**
  * Action to toggle the line number bar's quick diff display. When turned on, quick diff shows
  * the changes relative to the saved version of the file.
+ * 
  * @since 3.0
  */
 public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
@@ -71,8 +74,10 @@ public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
 	
 	/** The editor we are working on. */
 	ITextEditor fEditor= null;
+	
 	/** Our UI proxy action. */
 	IAction fProxy;
+	
 	/** The restore actions associated with this toggle action. */
 	QuickDiffRestoreAction[] fRestoreActions= 
 		new QuickDiffRestoreAction[] { 
@@ -81,6 +86,7 @@ public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
 			new RevertLineAction(fEditor), 
 			new RestoreAction(fEditor)
 		};
+		
 	/** The menu listener that adds the ruler context menu. */
 	private IMenuListener fListener= new IMenuListener() {
 		/** Group name for additions, in CompilationUnitEditor... */
@@ -116,8 +122,8 @@ public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
 					manager.insertAfter(GROUP_RESTORE, new Separator(GROUP_QUICKDIFF));
 
 				// create quickdiff menu
-				menu= new MenuManager(QuickDiffTestPlugin.getResourceString(MENU_LABEL_KEY), MENU_ID);
-				ReferenceProviderDescriptor[] descriptors= QuickDiffTestPlugin.getDefault().getExtensions();
+				menu= new MenuManager(QuickDiffMessages.getString(MENU_LABEL_KEY), MENU_ID);
+				ReferenceProviderDescriptor[] descriptors= EditorsPlugin.getDefault().getExtensions();
 				for (int i= 0; i < descriptors.length; i++) {
 					ReferenceProviderDescriptor desc= descriptors[i];
 					ReferenceSelectionAction action= new ReferenceSelectionAction(desc, fEditor);
@@ -170,7 +176,7 @@ public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
 	private void postAutoInit() {
 		Runnable runnable= new Runnable() {
 			public void run() {
-				boolean enable= TextEditorPlugin.getDefault().getPreferenceStore().getBoolean(PREF_ENABLE_ON_OPEN);
+				boolean enable= EditorsPlugin.getDefault().getPreferenceStore().getBoolean(PREF_ENABLE_ON_OPEN);
 				if (enable && !hasDiffer())
 					QuickDiffToggleAction.this.run(fProxy);
 			}
@@ -192,7 +198,7 @@ public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
 	}
 
 	/**
-	 * 
+	 * Removes the ruler context menu listener from the current editor.
 	 */
 	private void removePopupMenu() {
 		if (!(fEditor instanceof ITextEditorExtension))
@@ -203,7 +209,8 @@ public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
 	/**
 	 * Installs a submenu with <code>fEditor</code>'s ruler context menu that contains the choices
 	 * for the quick diff reference. This allows the toggle action to lazily install the menu once
-	 * quick diff has been enabled. 
+	 * quick diff has been enabled.
+	 * 
 	 * @param editor the editor that the menu gets installed in.
 	 * @see QuickDiffToggleAction
 	 */
@@ -216,6 +223,7 @@ public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
 	/**
 	 * States whether this toggle action has been installed and a incremental differ has been
 	 * installed with the line number bar.
+	 * 
 	 * @return <code>true</code> if a differ has been installed on <code>fEditor</code>.
 	 */
 	boolean isConnected() {
@@ -259,11 +267,23 @@ public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
 		}
 	}
 
+	/**
+	 * Checks if the document currently displayed in <code>fEditor</code> has a 
+	 * diff model associated with its annotation model.
+	 * 
+	 * @return <code>true</code> if the document has an associated diff model, <code>false</code> otherwise
+	 */
 	boolean hasDiffer() {
 		IAnnotationModelExtension model= getModel();
 		return (model != null && getDiffer(model) != null);
 	}
 
+	/**
+	 * Returns the <code>IAnnotationModelExtension</code> for the document currently
+	 * displayed in <code>fEditor</code>. 
+	 * 
+	 * @return the displayed document's annotation model if it implements <code>IAnnotationModelExtension</code>, or <code>null</code> 
+	 */
 	private IAnnotationModelExtension getModel() {
 		if (fEditor == null)
 			return null;
@@ -280,6 +300,7 @@ public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
 	/**
 	 * Returns the linenumber ruler of <code>fEditor</code>, or <code>null</code> if it cannot be
 	 * found.
+	 * 
 	 * @return an instance of <code>LineNumberRulerColumn</code> or <code>null</code>.
 	 */
 	private IVerticalRulerColumn getColumn() {
@@ -307,24 +328,26 @@ public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
 
 	/**
 	 * Extracts the line differ from the annotation model.
+	 * 
 	 * @param model the model
 	 * @return the linediffer, or <code>null</code> if none found.
 	 */
 	private DocumentLineDiffer getDiffer(IAnnotationModelExtension model) {
-		return (DocumentLineDiffer)model.getAnnotationModel(ILineDiffer.ID);
+		return (DocumentLineDiffer)model.getAnnotationModel(LineNumberChangeRulerColumn.QUICK_DIFF_MODEL_ID);
 	}
 
 	/**
 	 * Creates a new <code>DocumentLineDiffer</code> and installs it with <code>model</code>.
-	 * The default reference provider is installed with the newly created differ. 
+	 * The default reference provider is installed with the newly created differ.
+	 * 
 	 * @param model the annotation model of the current document.
 	 * @return a new <code>DocumentLineDiffer</code> instance.
 	 */
 	private DocumentLineDiffer createDiffer(IAnnotationModelExtension model) {
 		DocumentLineDiffer differ;
 		differ= new DocumentLineDiffer();
-		String defaultID= TextEditorPlugin.getDefault().getPreferenceStore().getString(PREF_PREFERRED_REFERENCE);
-		ReferenceProviderDescriptor[] descs= QuickDiffTestPlugin.getDefault().getExtensions();
+		String defaultID= EditorsPlugin.getDefault().getPreferenceStore().getString(PREF_PREFERRED_REFERENCE);
+		ReferenceProviderDescriptor[] descs= EditorsPlugin.getDefault().getExtensions();
 		IQuickDiffProviderImplementation provider= null;
 		// try to fetch preferred provider; load if needed
 		for (int i= 0; i < descs.length; i++) {
@@ -341,7 +364,7 @@ public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
 		}
 		// if not found, get default provider
 		if (provider == null) {
-			provider= QuickDiffTestPlugin.getDefault().getDefaultProvider().createProvider();
+			provider= EditorsPlugin.getDefault().getDefaultProvider().createProvider();
 			if (provider != null) {
 				provider.setActiveEditor(fEditor);
 				if (!provider.isEnabled()) {
@@ -352,7 +375,7 @@ public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
 		}
 		if (provider != null)
 			differ.setReferenceProvider(provider);
-		model.addAnnotationModel(ILineDiffer.ID, differ);
+		model.addAnnotationModel(LineNumberChangeRulerColumn.QUICK_DIFF_MODEL_ID, differ);
 		return differ;
 	}
 
@@ -363,9 +386,9 @@ public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
 		if (fProxy == null)
 			return;
 		if (isConnected())
-			fProxy.setText(QuickDiffTestPlugin.getResourceString("quickdiff.toggle.disable")); //$NON-NLS-1$
+			fProxy.setText(QuickDiffMessages.getString("quickdiff.toggle.disable")); //$NON-NLS-1$
 		else
-			fProxy.setText(QuickDiffTestPlugin.getResourceString("quickdiff.toggle.enable")); //$NON-NLS-1$
+			fProxy.setText(QuickDiffMessages.getString("quickdiff.toggle.enable")); //$NON-NLS-1$
 	}
 
 }

@@ -10,18 +10,27 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.editors.text;
 
+import java.util.ArrayList;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
+
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-
-import org.eclipse.jface.text.source.ISharedTextColors;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 
+import org.eclipse.jface.text.source.ISharedTextColors;
+
 import org.eclipse.ui.editors.text.TextEditorPreferenceConstants;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+
+import org.eclipse.ui.internal.editors.quickdiff.ReferenceProviderDescriptor;
 
 /**
  * Represents the editors plug-in. It provides a series of convenience methods such as
@@ -30,8 +39,15 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * @since 2.1
  */
 public class EditorsPlugin extends AbstractUIPlugin {
+
+	private static final String REFERENCE_PROVIDER_EXTENSION_POINT= "quickDiffReferenceProvider"; //$NON-NLS-1$
 	
 	private static EditorsPlugin fgInst;
+
+	/** The default reference provider's descriptor. */
+	private ReferenceProviderDescriptor fDefaultDescriptor;
+	/** The menu entries for the editor's ruler context menu. */
+	ArrayList fMenuEntries;
 
 	private ISharedTextColors fSharedTextColors;
 
@@ -92,5 +108,34 @@ public class EditorsPlugin extends AbstractUIPlugin {
 			fSharedTextColors= null;
 		}
 		super.shutdown();
+	}
+
+	/** reads all extensions */
+	private void registerExtensions() {
+		IPluginRegistry registry= Platform.getPluginRegistry();
+		fMenuEntries= new ArrayList();
+
+		IConfigurationElement[] elements= registry.getConfigurationElementsFor(getPluginId(), REFERENCE_PROVIDER_EXTENSION_POINT);
+		for (int i= 0; i < elements.length; i++) {
+			ReferenceProviderDescriptor desc= new ReferenceProviderDescriptor(elements[i]);
+			if (fDefaultDescriptor == null && desc.getDefault())
+				fDefaultDescriptor= desc;
+			fMenuEntries.add(desc);
+		}
+	}
+
+	public ReferenceProviderDescriptor[] getExtensions() {
+		if (fMenuEntries == null)
+			registerExtensions();
+		ReferenceProviderDescriptor[] arr= new ReferenceProviderDescriptor[fMenuEntries.size()];
+		return (ReferenceProviderDescriptor[])fMenuEntries.toArray(arr);
+	}
+
+	/**
+	 * Returns the first descriptor with the <code>default</code> attribute set to <code>true</code>.
+	 * @return the descriptor of the default reference provider.
+	 */
+	public ReferenceProviderDescriptor getDefaultProvider() {
+		return fDefaultDescriptor;
 	}
 }

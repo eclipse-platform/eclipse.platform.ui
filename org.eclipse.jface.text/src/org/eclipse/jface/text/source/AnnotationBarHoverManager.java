@@ -26,6 +26,7 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewerExtension3;
 
 
@@ -89,13 +90,16 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 		MouseEvent event= getHoverEvent();
 		IAnnotationHover hover= getHover(event);
 
-		if (hover instanceof IAnnotationHoverExtension)
-			setCustomInformationControlCreator(((IAnnotationHoverExtension) hover).getInformationControlCreator());
-		else
-			setCustomInformationControlCreator(null);
-			
 		int line= getHoverLine(event);
-		setInformation(hover.getHoverInfo(fSourceViewer, line), computeArea(line));
+		if (hover instanceof IAnnotationHoverExtension) {
+			IAnnotationHoverExtension extension= (IAnnotationHoverExtension) hover;
+			setCustomInformationControlCreator(extension.getInformationControlCreator());
+			setInformation(extension.getHoverInfo(fSourceViewer, line, fSourceViewer.getTopIndex(), fSourceViewer.getBottomIndex()), computeArea(line));
+		} else {
+			setCustomInformationControlCreator(null);
+			setInformation(hover.getHoverInfo(fSourceViewer, line), computeArea(line));
+		}
+			
 	}
 	
 	/**
@@ -230,8 +234,8 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 		IAnnotationHover hover= getHover(event);
 
 		if (hover instanceof IAnnotationHoverExtension)  {
-			Point lineRange= ((IAnnotationHoverExtension) hover).getLineRange(fSourceViewer, getHoverLine(event));
-			if (lineRange != null)
+			ITextSelection lineRange= ((IAnnotationHoverExtension) hover).getLineRange(fSourceViewer, getHoverLine(event), fSourceViewer.getTopIndex(), fSourceViewer.getBottomIndex());
+			if (lineRange != null && !lineRange.isEmpty())
 				return computeViewerRange(lineRange);
 		}
 		return super.computeInformationControlLocation(subjectArea, controlSize);
@@ -240,14 +244,14 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 	/**
 	 * Computes the hover location for the given line range.
 	 * 
-	 * @param location the first and last line covered by the hover, encoded as the <code>x</code> and <code>y</code> fields of a <code>Point</code>
+	 * @param lineRange the first and last line covered by the hover, encoded as the <code>x</code> and <code>y</code> fields of a <code>Point</code>
 	 * @return a <code>Point</code>containing the display coordinates of the hover location
 	 * @since 3.0
 	 */
-	private Point computeViewerRange(Point location) {
+	private Point computeViewerRange(ITextSelection lineRange) {
 		final int topLine= fSourceViewer.getTopIndex();
 		// compute pixel offset taking in account partially visible lines.
-		int lineDelta= location.x - topLine;
+		int lineDelta= lineRange.getStartLine() - topLine;
 		StyledText textWidget= fSourceViewer.getTextWidget();
 		int lineHeight= textWidget.getLineHeight();
 		// note that this works independently of the widget2model mapping, since we just get the 

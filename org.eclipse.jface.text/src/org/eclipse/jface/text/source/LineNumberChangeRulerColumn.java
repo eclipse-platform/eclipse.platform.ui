@@ -10,16 +10,10 @@
  *******************************************************************************/
 package org.eclipse.jface.text.source;
 
-import java.util.Iterator;
-
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 
 import org.eclipse.jface.text.Assert;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.jface.text.Position;
 
 /**
  * A vertical ruler column displaying line numbers and serving as a UI for quick diff.
@@ -28,6 +22,9 @@ import org.eclipse.jface.text.Position;
  * @since 3.0
  */
 public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn implements IVerticalRulerInfo, IVerticalRulerInfoExtension {
+	
+	/** The ID under which the quick diff model is registered with a document's annotation model. */
+	public static final String QUICK_DIFF_MODEL_ID= "diff"; //$NON-NLS-1$
 
 	/** Width of the triangle displayed for deleted lines. */
 	private final static int fTriangleWidth= 7;
@@ -160,46 +157,13 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 		if (fAnnotationModel == null)
 			return null;
 
-		// optimize if we have direct access
+		// assume direct access
 		if (fAnnotationModel instanceof ILineDiffer) {
 			ILineDiffer differ= (ILineDiffer)fAnnotationModel;
 			return differ.getLineInfo(line);
 		}
-
-		// no optimization - scan from start
-		Iterator it= fAnnotationModel.getAnnotationIterator();
-		while (it.hasNext()) {
-			Object annotation= it.next();
-			if (isInfoForLine(annotation, line))
-				return (ILineDiffInfo)annotation;
-		}
+		
 		return null;
-	}
-
-	/**
-	 * Checks whether an annotation is the <code>ILineDiffInfo</code> for <code>line</code>.
-	 * 
-	 * @param a an annotation to be checked
-	 * @param line the line number
-	 * @return <code>true</code> if <code>a</code> is a <code>ILineDiffInfo</code> instance for 
-	 * <code>line</code>
-	 */
-	private boolean isInfoForLine(Object a, int line) {
-		if (a instanceof ILineDiffInfo && a instanceof Annotation) {
-			ITextViewer viewer= getParentRuler().getTextViewer();
-			if (viewer == null)
-				return false;
-			IDocument doc= viewer.getDocument();
-			if (doc != null) {
-				Position pos= fAnnotationModel.getPosition((Annotation)a);
-				try {
-					if (pos != null && pos.overlapsWith(doc.getLineOffset(line), doc.getLineLength(line)))
-						return true;
-				} catch (BadLocationException e) {
-				}
-			}
-		}
-		return false;
 	}
 
 	/**
@@ -266,7 +230,7 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 	public void setModel(IAnnotationModel model) {
 		IAnnotationModel newModel;
 		if (model instanceof IAnnotationModelExtension) {
-			newModel= ((IAnnotationModelExtension)model).getAnnotationModel(ILineDiffer.ID);
+			newModel= ((IAnnotationModelExtension)model).getAnnotationModel(QUICK_DIFF_MODEL_ID);
 		} else {
 			newModel= model;
 		}

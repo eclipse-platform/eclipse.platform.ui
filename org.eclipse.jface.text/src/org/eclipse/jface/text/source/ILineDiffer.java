@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jface.text.source;
 
+import org.eclipse.jface.text.BadLocationException;
+
 
 /**
  * Protocol that allows direct access to line information. Usually, implementations will also 
@@ -20,12 +22,6 @@ package org.eclipse.jface.text.source;
  */
 public interface ILineDiffer {
 	
-	/** 
-	 * The id that instances of this interface are stored under in a document's annotation model.
-	 * @see IAnnotationModelExtension
-	 */
-	final static String ID= "diff"; //$NON-NLS-1$
-	
 	/**
 	 * Determines the line state for line <code>line</code> in the targeted document.
 	 * 
@@ -33,4 +29,42 @@ public interface ILineDiffer {
 	 * @return the line information object for <code>line</code>.
 	 */
 	ILineDiffInfo getLineInfo(int line);
+
+	/**
+	 * Reverts a single changed line to its original state, not touching any lines that
+	 * are deleted at its borders.
+	 * 
+	 * @param line the line number of the line to be restored.
+	 * @throws BadLocationException if <code>line</code> is out of bounds.
+	 */
+	void revertLine(int line) throws BadLocationException;
+
+	/**
+	 * Reverts a block of modified / added lines to their original state, including any deleted
+	 * lines inside the block or at its borders. A block is considered to be a range of modified
+	 * (e.g. changed, or added) lines.
+	 * 
+	 * @param line any line in the block to be reverted.
+	 * @throws BadLocationException if <code>line</code> is out of bounds.
+	 */
+	void revertBlock(int line) throws BadLocationException;
+
+	/**
+	 * Reverts a range of lines to their original state, including any deleted
+	 * lines inside the block or at its borders.
+	 * 
+	 * @param line any line in the block to be reverted.
+	 * @param nLines the number of lines to be reverted, must be &gt; 0.
+	 * @throws BadLocationException if <code>line</code> is out of bounds.
+	 */
+	void revertSelection(int line, int nLines) throws BadLocationException;
+
+	/**
+	 * Restores the deleted lines after <code>line</code>.
+	 * 
+	 * @param line the deleted lines following this line number are restored.
+	 * @return the number of restored lines.
+	 * @throws BadLocationException if <code>line</code> is out of bounds.
+	 */
+	int restoreAfterLine(int line) throws BadLocationException;
 }

@@ -15,18 +15,25 @@ import org.eclipse.core.runtime.IConfigurationElement;
 
 import org.eclipse.jface.util.Assert;
 
-import org.eclipse.ui.editors.quickdiff.*;
+import org.eclipse.ui.editors.quickdiff.IQuickDiffProviderImplementation;
+
 
 /**
  * Describes an extension to the <code>quickdiff.referenceprovider</code> extension point.
+ * 
  * @since 3.0
  * @see ReferenceSelectionAction
  * @see QuickDiffTestPlugin
  */
 public class ReferenceProviderDescriptor {
+	
+	/** Name of the <code>label</code> attribute. */
 	private static final String LABEL_ATTRIBUTE= "label"; //$NON-NLS-1$
+	/** Name of the <code>class</code> attribute. */
 	private static final String CLASS_ATTRIBUTE= "class"; //$NON-NLS-1$
+	/** Name of the <code>id</code> attribute. */
 	private static final String ID_ATTRIBUTE= "id"; //$NON-NLS-1$
+	/** Name of the <code>default</code> attribute. */
 	private static final String DEFAULT_ATTRIBUTE= "default"; //$NON-NLS-1$
 
 	/** The configuration element describing this extension. */
@@ -42,6 +49,7 @@ public class ReferenceProviderDescriptor {
 
 	/**
 	 * Creates a new descriptor for <code>element</code>.
+	 * 
 	 * @param element the extension point element to be described.
 	 */
 	public ReferenceProviderDescriptor(IConfigurationElement element) {
@@ -50,6 +58,7 @@ public class ReferenceProviderDescriptor {
 
 	/**
 	 * Reads (if needed) and returns the label of this extension.
+	 * 
 	 * @return the label for this extension.
 	 */
 	public String getLabel() {
@@ -62,6 +71,7 @@ public class ReferenceProviderDescriptor {
 
 	/**
 	 * Reads (if needed) and returns the id of this extension.
+	 * 
 	 * @return the id for this extension.
 	 */
 	public String getId() {
@@ -89,6 +99,7 @@ public class ReferenceProviderDescriptor {
 
 	/**
 	 * States whether this extension has been loaded already.
+	 * 
 	 * @return <code>true</code> if the extension point has been loaded, <code>false</code> otherwise.
 	 */
 	public boolean isPluginLoaded() {
@@ -97,6 +108,7 @@ public class ReferenceProviderDescriptor {
 
 	/**
 	 * Reads (if needed) and returns the default attribute value of this extension.
+	 * 
 	 * @return the default attribute value for this extension.
 	 */
 	public boolean getDefault() {

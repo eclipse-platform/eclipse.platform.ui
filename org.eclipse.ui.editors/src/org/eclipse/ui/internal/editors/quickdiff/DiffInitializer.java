@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.editors.quickdiff.engine;
+package org.eclipse.ui.internal.editors.quickdiff;
 
 import java.util.ArrayList;
 import java.util.SortedMap;
@@ -29,9 +29,11 @@ import org.eclipse.ui.internal.editors.quickdiff.compare.rangedifferencer.DocLin
 /**
  * Utility class that bridges between the diff engine of org.eclipse.compare and the 
  * incremental diff engine in quickdiff.
+ * 
  * @since 3.0
  */
 class DiffInitializer {
+	
 	/**
 	 * Local implemenentation of the <code>ILineDiffInfo</code> interface.
 	 */
@@ -43,14 +45,29 @@ class DiffInitializer {
 		int deletedBefore= 0;
 		ArrayList restore= new ArrayList();
 
+		/**
+		 * Utility method to return the last line covered by this region.
+		 * 
+		 * @return <code>first + lines - 1</code>
+		 */
 		int last() {
 			return first + lines - 1;
 		}
 
+		/**
+		 * Calls <code>DiffRegion(type, removedLines, 0)</code>.
+		 */
 		DiffRegion(int type, int removedLines) {
 			this(type, removedLines, 0);
 		}
 		
+		/**
+		 * Creates a new region.
+		 * 
+		 * @param type the type (added, changed, or unchanged)
+		 * @param removedAfter number of deleted lines below this region
+		 * @param removedBefore number of deleted lines before this region
+		 */
 		DiffRegion(int type, int removedAfter, int removedBefore) {
 			this.type= type;
 			deletedBehind= removedAfter;
@@ -99,6 +116,7 @@ class DiffInitializer {
 	/**
 	 * Initializes the given <code>ILineDiffer</code> with the differences in <code>actual</code> when
 	 * compared to <code>reference</code>.
+	 * 
 	 * @param differ the <code>ILineDiffer</code> to be initialized
 	 * @param reference the reference document
 	 * @param actual the actual (current) document

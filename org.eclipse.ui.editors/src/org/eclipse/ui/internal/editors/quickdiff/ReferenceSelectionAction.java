@@ -21,25 +21,26 @@ import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.source.CompositeRuler;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModelExtension;
-import org.eclipse.jface.text.source.ILineDiffer;
 import org.eclipse.jface.text.source.IVerticalRulerColumn;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.jface.text.source.IVerticalRulerInfoExtension;
+import org.eclipse.jface.text.source.LineNumberChangeRulerColumn;
 import org.eclipse.jface.text.source.LineNumberRulerColumn;
 
 import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.editors.quickdiff.*;
+import org.eclipse.ui.editors.quickdiff.IQuickDiffProviderImplementation;
+import org.eclipse.ui.editors.quickdiff.IQuickDiffReferenceProvider;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.IUpdate;
 
-import org.eclipse.ui.internal.editors.quickdiff.engine.DocumentLineDiffer;
 
 /**
  * Action to set the quick diff reference for the document displayed in the editor. An instance of
  * this class is created for every extension to the extension point <code>quickdiff.referenceprovider</code>, and for
  * every editor. It acts as a proxy; its <code>run</code> method installs the reference provider
  * specified by the extension with the quick diff differ on the current document.
+ * 
  * @since 3.0
  */
 public class ReferenceSelectionAction extends Action implements IUpdate {
@@ -53,6 +54,7 @@ public class ReferenceSelectionAction extends Action implements IUpdate {
 
 	/**
 	 * Creates a new instance that will lazily create the implementation provided by the extension.
+	 * 
 	 * @param descriptor describes the extension.
 	 * @param editor the editor for which this action is created.
 	 */
@@ -138,6 +140,7 @@ public class ReferenceSelectionAction extends Action implements IUpdate {
 	 * Fetches the differ installed with the current editor's document's annotation model. If none
 	 * is installed yet, and <code>createIfNeeded</code> is true, one is created and attached to the
 	 * model.
+	 * 
 	 * @param createIfNeeded when set to <code>true</code>, a new differ will be created if needed.
 	 * @return the differ installed with the annotation model, or <code>null</code>.
 	 */
@@ -154,11 +157,11 @@ public class ReferenceSelectionAction extends Action implements IUpdate {
 			return null;
 		}
 
-		DocumentLineDiffer differ= (DocumentLineDiffer)model.getAnnotationModel(ILineDiffer.ID);
+		DocumentLineDiffer differ= (DocumentLineDiffer)model.getAnnotationModel(LineNumberChangeRulerColumn.QUICK_DIFF_MODEL_ID);
 
 		if (differ == null && createIfNeeded) {
 			differ= new DocumentLineDiffer();
-			model.addAnnotationModel(ILineDiffer.ID, differ);
+			model.addAnnotationModel(LineNumberChangeRulerColumn.QUICK_DIFF_MODEL_ID, differ);
 		}
 		return differ;
 	}
@@ -166,6 +169,7 @@ public class ReferenceSelectionAction extends Action implements IUpdate {
 	/**
 	 * States whether an incremental differ has been
 	 * installed with the line number bar.
+	 * 
 	 * @return <code>true</code> if a differ has been installed on <code>fEditor</code>.
 	 */
 	private boolean isConnected() {
@@ -181,6 +185,7 @@ public class ReferenceSelectionAction extends Action implements IUpdate {
 	/**
 	 * Returns the linenumber ruler of <code>fEditor</code>, or <code>null</code> if it cannot be
 	 * found.
+	 * 
 	 * @return an instance of <code>LineNumberRulerColumn</code> or <code>null</code>.
 	 */
 	private IVerticalRulerColumn getColumn() {

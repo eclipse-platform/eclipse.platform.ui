@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.editors.quickdiff.engine;
+package org.eclipse.ui.internal.editors.quickdiff;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -41,7 +41,6 @@ import org.eclipse.jface.text.source.IAnnotationModelListener;
 import org.eclipse.jface.text.source.IAnnotationModelListenerExtension;
 import org.eclipse.jface.text.source.ILineDiffInfo;
 import org.eclipse.jface.text.source.ILineDiffer;
-import org.eclipse.jface.text.source.ILineRestorer;
 
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -54,17 +53,19 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * <code>DocumentLineDiffer</code> can be initialized to some start state. Once connected to a 
  * <code>IDocument</code> and a reference document has been set, changes reported via the 
  * <code>IDocumentListener</code> interface will be tracked and the incremental diff updated.
- * <p>
- * The diff state can be queried using the <code>ILineDiffer</code> interface.
- * </p><p>
- * Since diff information is model information attached to a document, this class implements 
+ * 
+ * <p>The diff state can be queried using the <code>ILineDiffer</code> interface.</p>
+ * 
+ * <p>Since diff information is model information attached to a document, this class implements 
  * <code>IAnnotationModel</code> and can be attached to <code>IAnnotationModelExtension</code>s.</p>
+ * 
  * <p>This class is not supposed to be subclassed.</p>
+ * 
  * @since 3.0
  * @see IAnnotationModelExtension
  * @see DiffInitializer
  */
-public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, ILineRestorer, IAnnotationModel {
+public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnnotationModel {
 
 	/**
 	 * Manages the reference document. Upon changes of the reference document, the differ is
@@ -76,6 +77,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, ILine
 
 		/**
 		 * Installs a new reference document. Any previously installed listener is removed.
+		 * 
 		 * @param doc the new reference document, or <code>null</code>.
 		 */
 		public void installDocument(IDocument doc) {
@@ -147,6 +149,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, ILine
 
 		/**
 		 * Creates a new instance.
+		 * 
 		 * @param type the type of the instance, either <code>ADDED</code>, <code>CHANGED</code>, 
 		 * or <code>UNCHANGED</code>.
 		 * @param removedLines the number of deleted lines after this line, must be &gt;= 0.
@@ -250,16 +253,155 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, ILine
 		return null;
 	}
 
+	/*
+	 * @see org.eclipse.jface.text.source.ILineDiffer#revertLine(int)
+	 */
+	public void revertLine(int line) throws BadLocationException {
+		revertLine(line, false);
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.source.ILineDiffer#revertBlock(int)
+	 */
+	public void revertBlock(int line) throws BadLocationException {
+		/* Grow block forward and backward */
+		final int nLines= fLines.size();
+		if (line < 0 || line >= nLines)
+			throw new BadLocationException("index out of bounds"); //$NON-NLS-1$
+		int from= line + 1, to= line - 1;
+
+		// grow backward
+		while (from > 0) {
+			DiffRegion region= (DiffRegion)fLines.get(from - 1);
+			if (region.type == ILineDiffInfo.UNCHANGED)
+				break;
+			from--;
+		}
+
+		// grow forward
+		while (to < nLines - 1) {
+			DiffRegion region= (DiffRegion)fLines.get(to + 1);
+			if (region.type == ILineDiffInfo.UNCHANGED)
+				break;
+			to++;
+		}
+
+		revertSelection(from, to - from + 1);
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.source.ILineDiffer#revertSelection(int, int)
+	 */
+	public void revertSelection(int line, int nLines) throws BadLocationException {
+		if (nLines < 1)
+			return;
+
+		// restore after first line
+		line += internalRestoreAfterLine(line - 1);
+		int to= line + nLines - 1;
+		int lineDelta= 0; // accumulates changes to the line table by restoration / deletion
+		while (line <= to) {
+			lineDelta += revertLine(lineDelta + line++, true);
+		}
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.source.ILineDiffer#restoreAfterLine(int)
+	 */
+	public int restoreAfterLine(int line) throws BadLocationException {
+		return internalRestoreAfterLine(line);
+	}
+
+	/**
+	 * Reverts the line with line number <code>line</code>.
+	 * 
+	 * @param line the line number of the line to be reverted.
+	 * @param restore <code>true</code> if deleted lines after the line should also be restored.
+	 * @return the number of inserted lines;
+	 */
+	private int revertLine(int line, boolean restore) throws BadLocationException {
+		IDocument doc= getDocument();
+		if (doc != null && line < fLines.size()) {
+			DiffRegion dr= (DiffRegion)fLines.get(line);
+			int deleted= 0;
+			if (dr.type == ILineDiffInfo.CHANGED) {
+				Assert.isNotNull(dr.restore, "restore buffer is empty"); //$NON-NLS-1$
+				fIsRestoring= true;
+				doc.replace(doc.getLineOffset(line), doc.getLineLength(line), dr.restore);
+				fIsRestoring= false;
+			} else if (dr.type == ILineDiffInfo.ADDED) {
+				fIsRestoring= true;
+				doc.replace(doc.getLineOffset(line), doc.getLineLength(line), ""); //$NON-NLS-1$
+				fIsRestoring= false;
+				deleted= 1;
+			}
+			int restored= 0;
+			if (restore)
+				restored= internalRestoreAfterLine(line);
+			return restored - deleted;
+		}
+		return 0;
+	}
+
+	/**
+	 * Does the work on <code>restoreAfterLine</code>, without compound change notification.
+	 * 
+	 * @param line the line where deleted lines are to be restored.
+	 * @return the number of restored lines
+	 * @throws BadLocationException if there are concurrent modifications to the document
+	 */
+	private int internalRestoreAfterLine(int line) throws BadLocationException {
+		IDocument doc= getDocument();
+		if (doc == null)
+			return 0;
+
+		if (line >= 0 && line < fLines.size()) {
+			DiffRegion dr= (DiffRegion)fLines.get(line);
+			final int nRestored= dr.hidden == null ? 0 : dr.hidden.size();
+			if (nRestored > 0) {
+
+				// build insertion text
+				String insertion= ""; //$NON-NLS-1$
+				for (Iterator it= dr.hidden.iterator(); it.hasNext();) {
+					insertion += (String)it.next();
+				}
+
+				// compute insertion offset, handle EOF
+				int offset;
+				if (line < fLines.size() - 1) {
+					offset= doc.getLineOffset(line + 1);
+				} else {
+					offset= doc.getLength();
+					String delimiter;
+					if (line > 0)
+						delimiter= doc.getLineDelimiter(line - 1);
+					else
+						delimiter= doc.getLegalLineDelimiters()[0];
+					insertion= delimiter + insertion;
+				}
+
+				// insert
+				fIsRestoring= true;
+				doc.replace(offset, 0, insertion);
+				fIsRestoring= false;
+			}
+			return nRestored;
+		}
+		return 0;
+	}
+
 	/**
 	 * Initializes this line differ with initial diff information obtained from an outside source
 	 * (e.g. compare). The passed instances of <code>ILineDiffInfo</code> will not be altered and no
 	 * references to them will be kept inside the differ. The map must be sorted with low line numbers
 	 * first. The passed map must not be empty.
-	 * <p>The document that the diff is based on should be the same as this instance is connected to
+	 * 
+	 * <p>The document that the diff is based on should be the same as this instance is connected to.</p>
+	 * 
 	 * @param changes a <code>Map</code> of line numbers (<code>Integer</code>s) to 
-	 * <code>ILineDiffInfo</code>s that will initialize the differ.
+	 * <code>ILineDiffInfo</code>s that will initialize the differ
 	 * @param nLines the number of lines in the document. This number must correspond to the number of 
-	 * lines in the document connected to this instance of <code>ILineDiffer</code>.
+	 * lines in the document connected to this instance of <code>ILineDiffer</code>
 	 */
 	void initialize(SortedMap diffs, int nLines) {
 		ArrayList table= new ArrayList(nLines);
@@ -325,6 +467,8 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, ILine
 	}
 
 	/**
+	 * Returns the receivers initialization state.
+	 * 
 	 * @return <code>true</code> if we are initialized and in sync with the document.
 	 */
 	private boolean isInitialized() {
@@ -334,6 +478,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, ILine
 	/**
 	 * Sets the reference provider for this instance. If one has been installed before, it is 
 	 * disposed.
+	 * 
 	 * @param provider the new provider
 	 */
 	public void setReferenceProvider(IQuickDiffReferenceProvider provider) {
@@ -348,6 +493,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, ILine
 
 	/**
 	 * Returns the reference provider currently installed, or <code>null</code> if none is installed.
+	 * 
 	 * @return the current reference provider.
 	 */
 	public IQuickDiffReferenceProvider getReferenceProvider() {
@@ -402,6 +548,8 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, ILine
 
 	/**
 	 * Returns the current shell.
+	 * 
+	 * @return the shell of the currently open window
 	 */
 	private Shell getShell() {
 		// TODO this is a hack
@@ -419,6 +567,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, ILine
 
 	/**
 	 * Returns the document we are working on.
+	 * 
 	 * @return the current document, or <code>null</code>
 	 */
 	protected IDocument getDocument() {
@@ -495,7 +644,9 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, ILine
 	 * <li>the number of added lines (added after the changed lines)</li>
 	 * <li>the number of deleted lines (deleted after the changed lines)</li>
 	 * </ul>
-	 * There are either added or deleted lines, but never both.
+	 * 
+	 * <p>There are either added or deleted lines, but never both.</p>
+	 * 
 	 * @param doc the actual document
 	 * @param event the modification event on that document (not yet applied, though)
 	 * @return a <code>LineAnalysis</code> for the modifications of <code>event</code> on <code>document</code>
@@ -533,6 +684,14 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, ILine
 	 * but cover the following:
 	 * if a line appears to be altered from the change offset, but was just changed at its end or
 	 * beginning, we do not consider it altered.
+	 * 
+	 * @param doc the current document
+	 * @param offset the offset of the document change
+	 * @param length the length of the document change
+	 * @param text the text inserted by the document change
+	 * @param replaced the text replaced by the document change
+	 * @param a a call object where the changes are returned in
+	 * @throws BadLocationException if <code>offset</code> or <code>length</code> are not valid position information for <code>doc</code> 
 	 */
 	private void delimiterAdjust(IDocument doc, int offset, int length, String text, String replaced, LineAnalysis a) throws BadLocationException {
 
@@ -570,6 +729,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, ILine
 
 	/**
 	 * Takes away the line change in the last line and moves the addition / deletion up one line.
+	 * 
 	 * @param a the line analysis to be altered.
 	 */
 	private void lastUnchanged(LineAnalysis a) {
@@ -581,6 +741,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, ILine
 
 	/**
 	 * Takes away the line change in the first line and moves the addition /deletion down one line.
+	 * 
 	 * @param a the line analysis to be altered.
 	 */
 	private void firstUnchanged(LineAnalysis a) {
@@ -593,6 +754,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, ILine
 
 	/**
 	 * Applies the changes contained in <code>analysis</code> to the line table.
+	 * 
 	 * @param analysis the change analysis to be applied
 	 * @return the index after the application
 	 */
@@ -622,6 +784,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, ILine
 
 	/**
 	 * Applies the additions contained in <code>analysis</code> to the line table.
+	 * 
 	 * @param analysis the change analysis to be applied
 	 * @param i the index to add lines at
 	 * @return the index after the application
@@ -675,6 +838,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, ILine
 
 	/**
 	 * Applies the deletions in <code>analysis</code> to the line table.
+	 * 
 	 * @param analysis the change analysis to be applied
 	 * @param i the index to start with the deletions
 	 * @return the index after the application
@@ -739,143 +903,6 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, ILine
 			Assert.isTrue(fLines.size() == doc.getNumberOfLines(), "Invariant violated (lines: " + doc.getNumberOfLines() + " size: " //$NON-NLS-1$ //$NON-NLS-2$
 			+fLines.size() + ")"); //$NON-NLS-1$
 		}
-	}
-
-	/* ILineRestorer implementation */
-
-	/*
-	 * @see org.eclipse.jface.text.source.ILineRestorer#revertLine(int)
-	 */
-	public void revertLine(int line) throws BadLocationException {
-		revertLine(line, false);
-	}
-
-	/*
-	 * @see org.eclipse.jface.text.source.ILineRestorer#revertBlock(int)
-	 */
-	public void revertBlock(int line) throws BadLocationException {
-		/* Grow block forward and backward */
-		final int nLines= fLines.size();
-		if (line < 0 || line >= nLines)
-			throw new BadLocationException("index out of bounds"); //$NON-NLS-1$
-		int from= line + 1, to= line - 1;
-
-		// grow backward
-		while (from > 0) {
-			DiffRegion region= (DiffRegion)fLines.get(from - 1);
-			if (region.type == ILineDiffInfo.UNCHANGED)
-				break;
-			from--;
-		}
-
-		// grow forward
-		while (to < nLines - 1) {
-			DiffRegion region= (DiffRegion)fLines.get(to + 1);
-			if (region.type == ILineDiffInfo.UNCHANGED)
-				break;
-			to++;
-		}
-
-		revertSelection(from, to - from + 1);
-	}
-
-	/*
-	 * @see org.eclipse.jface.text.source.ILineRestorer#revertSelection(int, int)
-	 */
-	public void revertSelection(int line, int nLines) throws BadLocationException {
-		if (nLines < 1)
-			return;
-
-		// restore after first line
-		line += internalRestoreAfterLine(line - 1);
-		int to= line + nLines - 1;
-		int lineDelta= 0; // accumulates changes to the line table by restoration / deletion
-		while (line <= to) {
-			lineDelta += revertLine(lineDelta + line++, true);
-		}
-	}
-
-	/*
-	 * @see org.eclipse.jface.text.source.ILineRestorer#restoreAfterLine(int)
-	 */
-	public int restoreAfterLine(int line) throws BadLocationException {
-		return internalRestoreAfterLine(line);
-	}
-
-	/**
-	 * Reverts the line with line number <code>line</code>.
-	 * @param line the line number of the line to be reverted.
-	 * @param restore <code>true</code> if deleted lines after the line should also be restored.
-	 * @return the number of inserted lines;
-	 */
-	private int revertLine(int line, boolean restore) throws BadLocationException {
-		IDocument doc= getDocument();
-		if (doc != null && line < fLines.size()) {
-			DiffRegion dr= (DiffRegion)fLines.get(line);
-			int deleted= 0;
-			if (dr.type == ILineDiffInfo.CHANGED) {
-				Assert.isNotNull(dr.restore, "restore buffer is empty"); //$NON-NLS-1$
-				fIsRestoring= true;
-				doc.replace(doc.getLineOffset(line), doc.getLineLength(line), dr.restore);
-				fIsRestoring= false;
-			} else if (dr.type == ILineDiffInfo.ADDED) {
-				fIsRestoring= true;
-				doc.replace(doc.getLineOffset(line), doc.getLineLength(line), ""); //$NON-NLS-1$
-				fIsRestoring= false;
-				deleted= 1;
-			}
-			int restored= 0;
-			if (restore)
-				restored= internalRestoreAfterLine(line);
-			return restored - deleted;
-		}
-		return 0;
-	}
-
-	/**
-	 * Does the work on <code>restoreAfterLine</code>, without compound change notification.
-	 * @param line the line where deleted lines are to be restored.
-	 * @return the number of restored lines
-	 * @throws BadLocationException
-	 */
-	private int internalRestoreAfterLine(int line) throws BadLocationException {
-		IDocument doc= getDocument();
-		if (doc == null)
-			return 0;
-
-		if (line >= 0 && line < fLines.size()) {
-			DiffRegion dr= (DiffRegion)fLines.get(line);
-			final int nRestored= dr.hidden == null ? 0 : dr.hidden.size();
-			if (nRestored > 0) {
-
-				// build insertion text
-				String insertion= ""; //$NON-NLS-1$
-				for (Iterator it= dr.hidden.iterator(); it.hasNext();) {
-					insertion += (String)it.next();
-				}
-
-				// compute insertion offset, handle EOF
-				int offset;
-				if (line < fLines.size() - 1) {
-					offset= doc.getLineOffset(line + 1);
-				} else {
-					offset= doc.getLength();
-					String delimiter;
-					if (line > 0)
-						delimiter= doc.getLineDelimiter(line - 1);
-					else
-						delimiter= doc.getLegalLineDelimiters()[0];
-					insertion= delimiter + insertion;
-				}
-
-				// insert
-				fIsRestoring= true;
-				doc.replace(offset, 0, insertion);
-				fIsRestoring= false;
-			}
-			return nRestored;
-		}
-		return 0;
 	}
 
 	/*

@@ -24,7 +24,7 @@
    </requires>
 
 <!-- quick diff reference provider extension point -->
-   <extension-point id="quickdiffreferenceprovider" name="%referenceProvider" schema="schema/quickdiff.referenceprovider.exsd"/>
+   <extension-point id="quickDiffReferenceProvider" name="%referenceProvider" schema="schema/quickdiff.referenceprovider.exsd"/>
 
 <!-- add the quick diff context menu -->
    <extension
@@ -32,12 +32,12 @@
 <!-- default -->
       <viewerContribution
             targetID="#RulerContext"
-            id="QuickDiffTest.DefaultEditorContribution">
+            id="org.eclipse.ui.quickdiff.DefaultEditorContribution">
          <action
                label="%quickdiff.toggle.enable"
                style="push"
                helpContextId="quickdiff.toggle"
-               class="org.eclipse.ui.internal.editors.quickdiff.QuickDiffToggleAction"
+               class="org.eclipse.ui.editors.quickdiff.QuickDiffToggleAction"
                menubarPath="quickdiff"
                id="quickdiff.toggle">
          </action>
@@ -45,25 +45,12 @@
 <!-- text editor -->
       <viewerContribution
             targetID="#TextRulerContext"
-            id="QuickDiffTest.TextEditorContribution">
+            id="org.eclipse.ui.quickdiff.TextEditorContribution">
          <action
                label="%quickdiff.toggle.enable"
                style="push"
                helpContextId="quickdiff.toggle"
-               class="org.eclipse.ui.internal.editors.quickdiff.QuickDiffToggleAction"
-               menubarPath="quickdiff"
-               id="quickdiff.toggle">
-         </action>
-      </viewerContribution>
-<!-- compilation unit editor -->
-      <viewerContribution
-            targetID="#CompilationUnitRulerContext"
-            id="QuickDiffTest.CompilationUnitEditorContribution">
-         <action
-               label="%quickdiff.toggle.enable"
-               style="push"
-               helpContextId="quickdiff.toggle"
-               class="org.eclipse.ui.internal.editors.quickdiff.QuickDiffToggleAction"
+               class="org.eclipse.ui.editors.quickdiff.QuickDiffToggleAction"
                menubarPath="quickdiff"
                id="quickdiff.toggle">
          </action>
@@ -71,12 +58,12 @@
    </extension>
 <!-- add the standard reference provider -->
    <extension
-         point="org.eclipse.ui.editors.quickdiffreferenceprovider">
+         point="org.eclipse.ui.editors.quickDiffReferenceProvider">
       <referenceprovider
             label="%lastSaveReferenceProvider.label"
             default="true"
-            class="org.eclipse.ui.internal.editors.quickdiff.providers.LastSaveReferenceProvider"
-            id="org.eclipse.ui.internal.editors.quickdiff.providers.LastSaveReferenceProvider">
+            class="org.eclipse.ui.internal.editors.quickdiff.LastSaveReferenceProvider"
+            id="org.eclipse.ui.internal.editors.quickdiff.LastSaveReferenceProvider">
       </referenceprovider>
    </extension>
 <!-- add the toggle command so we can provide a shortcut -->
@@ -105,30 +92,8 @@
          <action
                definitionId="org.eclipse.quickdiff.toggle"
                label="%quickdiff.toggle.enable"
-               class="org.eclipse.ui.internal.editors.quickdiff.QuickDiffToggleAction"
-               id="org.eclipse.quickdiff.QuickDiffToggleAction">
-         </action>
-      </editorContribution>
-<!-- properties editor -->
-      <editorContribution
-            targetID="org.eclipse.jdt.ui.DefaultTextEditor"
-            id="org.eclipse.quickdiff.editoractions.propertieseditor">
-         <action
-               definitionId="org.eclipse.quickdiff.toggle"
-               label="%quickdiff.toggle.enable"
-               class="org.eclipse.ui.internal.editors.quickdiff.QuickDiffToggleAction"
-               id="org.eclipse.quickdiff.QuickDiffToggleAction">
-         </action>
-      </editorContribution>
-<!-- compilation unit editor -->
-      <editorContribution
-            targetID="org.eclipse.jdt.ui.CompilationUnitEditor"
-            id="org.eclipse.quickdiff.editoractions.cueditor">
-         <action
-               definitionId="org.eclipse.quickdiff.toggle"
-               label="%quickdiff.toggle.enable"
-               class="org.eclipse.ui.internal.editors.quickdiff.QuickDiffToggleAction"
-               id="org.eclipse.quickdiff.QuickDiffToggleAction">
+               class="org.eclipse.ui.editors.quickdiff.QuickDiffToggleAction"
+               id="org.eclipse.ui.editors.quickdiff.QuickDiffToggleAction">
          </action>
       </editorContribution>
    </extension>
