@@ -25,13 +25,6 @@ public class ResourceNavigatorTest extends UITestCase {
 		super(testName);
 	}
 
-	private TreeViewer getViewer(ResourceNavigator view) throws Throwable {
-		Class clazz = view.getClass();
-		Method method = clazz.getDeclaredMethod("getResourceViewer", new Class [0]);
-		method.setAccessible(true);
-		return (TreeViewer) method.invoke(view, new Object[0]);
-	}
-	
 	public void setUp() {
 		workbenchWindow = openTestWindow();
 		activePage = workbenchWindow.getActivePage();
@@ -102,7 +95,7 @@ public class ResourceNavigatorTest extends UITestCase {
 		setupResources();
 			
 		ISetSelectionTarget part = (ISetSelectionTarget) view;
-		TreeViewer tree = getViewer((ResourceNavigator)view);
+		TreeViewer tree = ((ResourceNavigator) view).getViewer();
 
 		// Set the selection in the navigator
 		IStructuredSelection sel1 = new StructuredSelection(f1);
