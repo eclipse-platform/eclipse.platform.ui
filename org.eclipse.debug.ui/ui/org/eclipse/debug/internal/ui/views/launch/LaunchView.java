@@ -85,10 +85,12 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
+import org.eclipse.ui.part.IShowInTarget;
+import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-public class LaunchView extends AbstractDebugEventHandlerView implements ISelectionChangedListener, IPerspectiveListener, IPageListener, IPropertyChangeListener, IResourceChangeListener {
+public class LaunchView extends AbstractDebugEventHandlerView implements ISelectionChangedListener, IPerspectiveListener, IPageListener, IPropertyChangeListener, IResourceChangeListener, IShowInTarget {
 	
 	/**
 	 * A marker for the source selection and icon for an
@@ -1188,6 +1190,26 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		if (selection.isEmpty() || !selection.getFirstElement().equals(getStackFrame())) {
 			initializeSelection();
 		}
+	}
+	
+	/**
+	 * @see IShowInTarget#show(org.eclipse.ui.part.ShowInContext)
+	 */
+	public boolean show(ShowInContext context) {
+		ISelection selection = context.getSelection();
+		if (selection != null) {
+			if (selection instanceof IStructuredSelection) {
+				IStructuredSelection ss = (IStructuredSelection)selection;
+				if (ss.size() == 1) {
+					Object obj = ss.getFirstElement();
+					if (obj instanceof IDebugTarget || obj instanceof IProcess) {
+						getViewer().setSelection(selection, true);
+						return true;
+					}
+				}
+			}
+		}
+		return false;
 	}
 
 }

@@ -45,6 +45,7 @@ import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.VerifyKeyListener;
@@ -59,11 +60,14 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.part.IShowInSource;
+import org.eclipse.ui.part.IShowInTargetList;
+import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.texteditor.FindReplaceAction;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.IUpdate;
 
-public class ConsoleView extends AbstractDebugEventHandlerView implements IDocumentListener, ISelectionListener {
+public class ConsoleView extends AbstractDebugEventHandlerView implements IDocumentListener, ISelectionListener, IShowInSource, IShowInTargetList {
 
 	protected ClearOutputAction fClearOutputAction= null;
 	protected FollowHyperlinkAction fFollowLinkAction = null;
@@ -370,6 +374,12 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 		if (Widget.class.equals(required)) {
 			return getConsoleViewer().getTextWidget();
 		}
+		if (IShowInSource.class.equals(required)) {
+			return this;
+		}
+		if (IShowInTargetList.class.equals(required)) {
+			return this; 
+		}
 		return super.getAdapter(required);
 	}
 
@@ -552,5 +562,31 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 			}
 		}
 	}
-
+	
+	/**
+	 * @see IShowInSource#getShowInContext()
+	 */
+	public ShowInContext getShowInContext() {
+		IProcess process = getProcess();
+		if (process == null) {
+			return null;
+		} else {
+			IDebugTarget target = (IDebugTarget)process.getAdapter(IDebugTarget.class);
+			ISelection selection = null;
+			if (target == null) {
+				selection = new StructuredSelection(process);
+			} else {
+				selection = new StructuredSelection(target);
+			}
+			return new ShowInContext(null, selection);
+		}
+	}
+	
+	/**
+	 * @see IShowInTargetList#getShowInTargetIds()
+	 */
+	public String[] getShowInTargetIds() {
+		return new String[] {IDebugUIConstants.ID_DEBUG_VIEW};
+	}
+	
 }
