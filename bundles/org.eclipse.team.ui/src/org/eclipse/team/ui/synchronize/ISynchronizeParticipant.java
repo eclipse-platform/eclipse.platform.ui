@@ -60,20 +60,22 @@ public interface ISynchronizeParticipant extends IExecutableExtension {
 	public String getId();
 	
 	/**
+	 * Returns the instance id that identified the unique instance of this
+	 * participant. The synchronize manager supports registering
+	 * several instances of the same participant type and this id is used
+	 * to differentiate between them.
+	 * 
+	 * @return  the instance id that identified the unique instance of this
+	 * participant.
+	 */	
+	public String getSecondaryId();
+	
+	/**
 	 * Returns the name of this synchronize participant.
 	 * 
 	 * @return the name of this synchronize participant
 	 */
 	public String getName();
-	
-	/**
-	 * Returns <code>true</code> if this participant should be persisted between
-	 * workbench sessions and <code>false</code> otherwise.
-	 * 
-	 * @return <code>true</code> if this participant should be persisted between
-	 * workbench sessions and <code>false</code> otherwise.
-	 */
-	public boolean isPersistent();
 	
 	/**
 	 * Returns an image descriptor for this synchronize participant, or <code>null</code>
@@ -99,7 +101,8 @@ public interface ISynchronizeParticipant extends IExecutableExtension {
 	 * Creates and returns a wizard page used to globally synchronize this participant. Participants
 	 * returning a wizard will get added to the global Team synchronize action and users can
 	 * easily initiate a synchronization on the participant. The implementor can decide exactly
-	 * what information is needed from the user to synchronize.
+	 * what information is needed from the user to synchronize and perform the action
+	 * when the wizard is closed.
 	 * 
 	 * @return a wizard that prompts the user for information necessary to synchronize this
 	 * participant or <code>null</code> if this participant doesn't want to support global refresh.
@@ -107,21 +110,12 @@ public interface ISynchronizeParticipant extends IExecutableExtension {
 	public IWizard createSynchronizeWizard();
 	
 	/**
-	 * Returns if this participant supports a global synchronize action and will return a wizard
-	 * if {@link #createSynchronizeWizard()} is called.
-	 * 
-	 * @return <code>true</code> if this participant supports a global synchronize action and
-	 * <code>false</code> otherwise.
-	 */
-	public boolean doesSupportSynchronize();
-	
-	/**
 	 * Initializes this participant with the given participant state.  
 	 * A memento is passed to the participant which contains a snapshot 
 	 * of the participants state from a previous session.
 	 * <p>
 	 * This method is automatically called by the team plugin shortly after
-	 * participant construction. It marks the start of the views's
+	 * participant construction. It marks the start of the views
 	 * lifecycle. Clients must not call this method.
 	 * </p> 
 	 * @param memento the participant state or <code>null</code> if there 
@@ -129,12 +123,13 @@ public interface ISynchronizeParticipant extends IExecutableExtension {
 	 * @exception PartInitException if this participant was not initialized 
 	 * successfully
 	 */
-	public void init(IMemento memento) throws PartInitException;
+	public void init(String secondaryId, IMemento memento) throws PartInitException;
 	
 	/**
-	 * Disposes of this synchronize participant. This is the last method called 
-	 * on the <code>ISynchronizeParticipant</code>. It marks the end of the
-	 * participants lifecycle. 
+	 * Disposes of this synchronize participant and is called to free the 
+	 * resources associated with a participant. When a participant is added
+	 * to the {@link ISynchronizeManager} this method is called when the
+	 * manager is shutdown or the participant is removed from the manager.
 	 * </p>
 	 * <p>
 	 * Within this method a participant may release any resources, fonts, images, etc. 
@@ -150,6 +145,10 @@ public interface ISynchronizeParticipant extends IExecutableExtension {
 	/**
 	 * Saves the participants object state within the memento. This state
 	 * will be available when the participant is restored via <code>init</code>.
+	 * <p>
+	 * This method can be called multiple times during the lifetime of the
+	 * participant object.
+	 * </p>
 	 * @param memento a memento to receive the object state
 	 */
 	public void saveState(IMemento memento);

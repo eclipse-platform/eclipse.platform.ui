@@ -12,37 +12,40 @@ package org.eclipse.team.internal.ui.synchronize;
 
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.*;
+import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
+import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartSite;
 
 /**
  * Fake part to use as keys in page book for synchronize participants
  */
 public class SynchronizeViewWorkbenchPart implements IWorkbenchPart {
 
-	private Object page = null;
-	private IWorkbenchPartSite site = null;
+	private ISynchronizeParticipant participant;
+	private IWorkbenchPartSite site;
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	public boolean equals(Object obj) {
 		return (obj instanceof SynchronizeViewWorkbenchPart) &&
-			page.equals(((SynchronizeViewWorkbenchPart)obj).getPage());
+		participant.equals(((SynchronizeViewWorkbenchPart)participant).getParticipant());
 	}
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {
-		return page.hashCode();
+		return participant.hashCode();
 	}
 
 	/**
 	 * Constructs a part for the given participant that binds to the given
 	 * site
 	 */
-	public SynchronizeViewWorkbenchPart(Object page, IWorkbenchPartSite site) {
-		this.page = page;
+	public SynchronizeViewWorkbenchPart(ISynchronizeParticipant participant, IWorkbenchPartSite site) {
+		this.participant = participant;
 		this.site = site;
 	}
 
@@ -116,7 +119,7 @@ public class SynchronizeViewWorkbenchPart implements IWorkbenchPart {
 	 * 
 	 * @return participant associated with this part
 	 */
-	protected Object getPage() {
-		return page;
+	public ISynchronizeParticipant getParticipant() {
+		return participant;
 	}
 }

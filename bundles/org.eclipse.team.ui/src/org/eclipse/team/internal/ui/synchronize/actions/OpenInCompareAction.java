@@ -19,9 +19,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
-import org.eclipse.team.ui.synchronize.*;
-import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
 import org.eclipse.team.ui.synchronize.ISynchronizeView;
+import org.eclipse.team.ui.synchronize.SyncInfoCompareInput;
 import org.eclipse.ui.*;
 
 /**
@@ -33,10 +32,10 @@ import org.eclipse.ui.*;
 public class OpenInCompareAction extends Action {
 	
 	private ISynchronizeView view;
-	private ISynchronizeParticipant participant;
+	private String name;
 	
-	public OpenInCompareAction(ISynchronizeView view, ISynchronizeParticipant participant) {
-		this.participant = participant;
+	public OpenInCompareAction(ISynchronizeView view, String name) {
+		this.name = name;
 		this.view = view;
 		Utils.initAction(this, "action.openInCompareEditor."); //$NON-NLS-1$
 	}
@@ -48,14 +47,14 @@ public class OpenInCompareAction extends Action {
 			if (obj instanceof SyncInfoModelElement) {
 				SyncInfo info = ((SyncInfoModelElement) obj).getSyncInfo();
 				if (info != null) {
-					openCompareEditor(view, participant, info, true);
+					openCompareEditor(view, name, info, true);
 				}
 			}
 		}
 	}
 	
-	public static SyncInfoCompareInput openCompareEditor(IWorkbenchPart page, ISynchronizeParticipant participant, SyncInfo info, boolean keepFocus) {		
-		SyncInfoCompareInput input = getCompareInput(participant, info);
+	public static SyncInfoCompareInput openCompareEditor(IWorkbenchPart page, String name, SyncInfo info, boolean keepFocus) {		
+		SyncInfoCompareInput input = getCompareInput(name, info);
 		if(input != null) {
 			IWorkbenchPage wpage = page.getSite().getPage();
 			IEditorPart editor = findReusableCompareEditor(wpage);			
@@ -88,9 +87,9 @@ public class OpenInCompareAction extends Action {
 	/**
 	 * Returns a SyncInfoCompareInput instance for the current selection.
 	 */
-	private static SyncInfoCompareInput getCompareInput(ISynchronizeParticipant participant, SyncInfo info) {
+	private static SyncInfoCompareInput getCompareInput(String name, SyncInfo info) {
 		if (info != null && info.getLocal() instanceof IFile) {
-			return new SyncInfoCompareInput(participant.getName(), info);
+			return new SyncInfoCompareInput(name, info);
 		}
 		return null;
 	}				

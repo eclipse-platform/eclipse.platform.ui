@@ -13,6 +13,7 @@ package org.eclipse.team.internal.ui.synchronize.actions;
 import org.eclipse.jface.action.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.TeamUI;
@@ -28,7 +29,7 @@ public class SynchronizePageDropDownAction extends Action implements IMenuCreato
 		 * @see org.eclipse.ui.texteditor.IUpdate#update()
 		 */
 		public void update() {
-			ISynchronizeParticipant[] pages = TeamUI.getSynchronizeManager().getSynchronizeParticipants();
+			ISynchronizeParticipantReference[] pages = TeamUI.getSynchronizeManager().getSynchronizeParticipants();
 			setEnabled(pages.length >= 1);
 		}
 
@@ -65,12 +66,16 @@ public class SynchronizePageDropDownAction extends Action implements IMenuCreato
 				fMenu.dispose();
 			}		
 			fMenu= new Menu(parent);
-			ISynchronizeParticipant[] pages = TeamUI.getSynchronizeManager().getSynchronizeParticipants();
+			ISynchronizeParticipantReference[] pages = TeamUI.getSynchronizeManager().getSynchronizeParticipants();
 			ISynchronizeParticipant current = fView.getParticipant();
 			for (int i = 0; i < pages.length; i++) {
-				ISynchronizeParticipant page = pages[i];
+				ISynchronizeParticipantReference page = pages[i];
 				Action action = new ShowSynchronizeParticipantAction(fView, page);  
-				action.setChecked(page.equals(current));
+				try {
+					action.setChecked(page.getParticipant().equals(current));
+				} catch (TeamException e) {
+					continue;
+				}
 				addActionToMenu(fMenu, action);
 			}
 			TeamUI.getSynchronizeManager().addSynchronizeParticipantListener(this);	

@@ -20,8 +20,6 @@ import org.eclipse.team.core.subscribers.SubscriberSyncInfoCollector;
 import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.synchronize.*;
-import org.eclipse.team.internal.ui.synchronize.RefreshUserNotificationPolicy;
-import org.eclipse.team.internal.ui.synchronize.RefreshUserNotificationPolicyInModalDialog;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.*;
@@ -34,6 +32,8 @@ import org.eclipse.ui.part.IPageBookViewPage;
  * @since 3.0
  */
 public abstract class SubscriberParticipant extends AbstractSynchronizeParticipant implements IPropertyChangeListener {
+	
+	private boolean DEBUG = false;
 	
 	private SubscriberSyncInfoCollector collector;
 	
@@ -208,6 +208,10 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 		refreshSchedule.dispose();				
 		TeamUI.removePropertyChangeListener(this);
 		collector.dispose();
+		
+		if(DEBUG) {
+			System.out.println("** DISPOSING: " + getName()); //$NON-NLS-1$
+		}
 	}
 	
 	/**
@@ -233,6 +237,10 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 		SubscriberRefreshSchedule schedule = getRefreshSchedule();
 		if(schedule.isEnabled()) {
 			getRefreshSchedule().startJob();
+		}
+		
+		if(DEBUG) {
+			System.out.println("** CREATING: " + getName()); //$NON-NLS-1$
 		}
 	}
 	
@@ -313,7 +321,7 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#init(org.eclipse.ui.IMemento)
 	 */
-	public void init(IMemento memento) throws PartInitException {
+	public void init(String secondaryId, IMemento memento) throws PartInitException {
 		if(memento != null) {
 			IMemento settings = memento.getChild(CTX_SUBSCRIBER_PARTICIPANT_SETTINGS);
 			if(settings != null) {
@@ -355,18 +363,5 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 		}
 		settings.putString(P_SYNCVIEWPAGE_MODE, Integer.toString(getMode()));
 		refreshSchedule.saveState(settings.createChild(CTX_SUBSCRIBER_SCHEDULE_SETTINGS));
-	}
-	
-	public static SubscriberParticipant find(Subscriber s) {
-		ISynchronizeParticipant[] participants = TeamUI.getSynchronizeManager().getSynchronizeParticipants();
-		for (int i = 0; i < participants.length; i++) {
-			ISynchronizeParticipant p = participants[i];
-			if(p instanceof SubscriberParticipant) {
-				if(((SubscriberParticipant)p).getSubscriber().equals(s)) {
-					return (SubscriberParticipant)p;
-				}
-			}
-		}
-		return null;
 	}
 }

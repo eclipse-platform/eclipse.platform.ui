@@ -46,7 +46,7 @@ public class SynchronizeViewerAdvisor extends TreeViewerAdvisor {
 
 	protected void initializeActions(StructuredViewer treeViewer) {
 		super.initializeActions(treeViewer);
-		openWithActions = new OpenWithActionGroup(view, participant);
+		openWithActions = new OpenWithActionGroup(view, participant.getName());
 		refactorActions = new RefactorActionGroup(view);
 		refreshSelectionAction = new Action() {
 			public void run() {

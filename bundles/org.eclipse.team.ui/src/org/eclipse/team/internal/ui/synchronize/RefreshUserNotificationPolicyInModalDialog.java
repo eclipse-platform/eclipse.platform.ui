@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoTree;
 import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.team.ui.synchronize.subscribers.*;
 
@@ -43,21 +44,30 @@ public class RefreshUserNotificationPolicyInModalDialog implements IRefreshSubsc
 	}
 
 	public void refreshDone(final IRefreshEvent event) {
-		// Ensure that this event was generated for this participant
-		if (event.getSubscriber() != participant.getSubscriberSyncInfoCollector().getSubscriber()) return;
 		// Operation cancelled, there is no reason to prompt the user
-		if(! event.getStatus().isOK()) return;
 		TeamUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
-
 			public void run() {
-				if (! areChanges()) {
-					MessageDialog.openInformation(Display.getCurrent().getActiveShell(), Policy.bind("OpenComparedDialog.noChangeTitle"), Policy.bind("OpenComparedDialog.noChangesMessage")); //$NON-NLS-1$ //$NON-NLS-2$
-					return;
-				}
-				if (isSingleFileCompare(event.getResources())) {
-					compareAndOpenEditors(event, participant);
-				} else {
-					compareAndOpenDialog(event, participant);
+				try {
+					//	Ensure that this event was generated for this participant
+					if (event.getSubscriber() != participant.getSubscriberSyncInfoCollector().getSubscriber())
+						return;
+					// If the refresh was cancelled or returned an error there is nothing to report here.
+					if (!event.getStatus().isOK())
+						return;
+					// If there are no changes
+					if (!areChanges()) {
+						MessageDialog.openInformation(Display.getCurrent().getActiveShell(), Policy.bind("OpenComparedDialog.noChangeTitle"), Policy.bind("OpenComparedDialog.noChangesMessage")); //$NON-NLS-1$ //$NON-NLS-2$
+						return;
+					}
+					if (isSingleFileCompare(event.getResources())) {
+						compareAndOpenEditors(event, participant);
+					} else {
+						compareAndOpenDialog(event, participant);
+					}
+				} finally {
+					if (TeamUI.getSynchronizeManager().get(participant.getId(), participant.getSecondaryId()) == null) {
+						participant.dispose();
+					}
 				}
 			}
 		});

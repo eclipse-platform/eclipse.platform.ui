@@ -15,8 +15,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.*;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ui.Policy;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.registry.SynchronizeParticipantDescriptor;
 import org.eclipse.team.ui.TeamImages;
 import org.eclipse.team.ui.TeamUI;
@@ -37,6 +36,7 @@ public abstract class AbstractSynchronizeParticipant implements ISynchronizePart
 
 	private String fName;
 	private String fId;
+	private String fSecondaryId;
 	private ImageDescriptor fImageDescriptor;
 	protected IConfigurationElement configElement;
 
@@ -103,9 +103,7 @@ public abstract class AbstractSynchronizeParticipant implements ISynchronizePart
 		return fImageDescriptor;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.sync.ISynchronizeParticipant#getId()
 	 */
 	public String getId() {
@@ -113,18 +111,28 @@ public abstract class AbstractSynchronizeParticipant implements ISynchronizePart
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#isPersistent()
+	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#getSecondaryId()
 	 */
-	public boolean isPersistent() {
-		return true;
+	public String getSecondaryId() {
+		return fSecondaryId;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object obj) {
+		if(obj == this) return true;
+		if( ! (obj instanceof ISynchronizeParticipant)) return false;
+		ISynchronizeParticipant other = (ISynchronizeParticipant)obj;
+		return getId().equals(other.getId()) && Utils.equalObject(getSecondaryId(), other.getSecondaryId());
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#doesSupportRefresh()
 	 */
 	public boolean doesSupportSynchronize() {
-		ISynchronizeParticipantDescriptor d = TeamUI.getSynchronizeManager().getParticipantDescriptor(getId());
-		return d == null ? false : d.doesSupportRefresh();
+		ISynchronizeParticipantReference ref = TeamUI.getSynchronizeManager().get(getId(), getSecondaryId());
+		return ref == null ? false : ref.getDescriptor().isGlobalSynchronize();
 	}
 	
 	/*
@@ -182,7 +190,7 @@ public abstract class AbstractSynchronizeParticipant implements ISynchronizePart
 
 		// Id
 		fId = config.getAttribute("id"); //$NON-NLS-1$
-
+		
 		// Title.
 		fName = config.getAttribute("name"); //$NON-NLS-1$
 		if (config == null) {
@@ -208,8 +216,7 @@ public abstract class AbstractSynchronizeParticipant implements ISynchronizePart
 	 * Sets the name of this console to the specified value and notifies
 	 * property listeners of the change.
 	 * 
-	 * @param name
-	 *            the new name
+	 * @param name the new name
 	 */
 	protected void setName(String name) {
 		String old = fName;
@@ -221,8 +228,7 @@ public abstract class AbstractSynchronizeParticipant implements ISynchronizePart
 	 * Sets the image descriptor for this console to the specified value and
 	 * notifies property listeners of the change.
 	 * 
-	 * @param imageDescriptor
-	 *            the new image descriptor
+	 * @param imageDescriptor the new image descriptor
 	 */
 	protected void setImageDescriptor(ImageDescriptor imageDescriptor) {
 		ImageDescriptor old = fImageDescriptor;
@@ -230,10 +236,19 @@ public abstract class AbstractSynchronizeParticipant implements ISynchronizePart
 		firePropertyChange(this, IBasicPropertyConstants.P_IMAGE, old, imageDescriptor);
 	}
 	
+	/**
+	 * Sets the secondary id for this participant.
+	 * 
+	 * @param secondaryId the secondary id for this participant.
+	 */
+	protected void setSecondaryId(String secondaryId) {
+		this.fSecondaryId = secondaryId; 
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#init(org.eclipse.ui.IMemento)
 	 */
-	public void init(IMemento memento) throws PartInitException {
+	public void init(String secondaryId, IMemento memento) throws PartInitException {
 	}
 
 	/* (non-Javadoc)

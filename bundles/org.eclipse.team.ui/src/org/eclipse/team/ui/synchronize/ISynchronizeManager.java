@@ -13,8 +13,14 @@ package org.eclipse.team.ui.synchronize;
 
 /**
  * Manages synchronization view participants. Clients can programatically add 
- * or remove participants via this manager.
+ * or remove participants from this manager. Managed participants are available to
+ * clients whereas un-managed participants can still exist but won't be available 
+ * generally available to clients until explicitly added to the manager.
  * <p>
+ * Participants added to the manager will benefit from the manager's lifecycle
+ * support. The participants will automatically have their #init method and #dispose
+ * called when the manager starts and is shutdown.
+ * </p><p>
  * Clients are not intended to implement this interface.
  * </p>
  * @see ISynchronizeParticipant
@@ -59,7 +65,19 @@ public interface ISynchronizeManager {
 	 * 
 	 * @return a collection of synchronize participants registered with the synchronize manager.
 	 */
-	public ISynchronizeParticipant[] getSynchronizeParticipants();
+	public ISynchronizeParticipantReference[] getSynchronizeParticipants();
+	
+	/**
+	 * Returns the registered synchronize participants with the given id. It is
+	 * possible to have multiple instances of the same participant type.
+	 * 
+	 * @param id the type indentifier for the participant
+	 * @param secondaryId the instance identifier for this participant type or <code>null</code>
+	 * if this participant doesn't support multiple instances.
+	 * @return the registered synchronize participants with the given id, or 
+	 * <code>null</code> if none with that id is not registered.
+	 */
+	public ISynchronizeParticipantReference get(String id, String secondayId);
 	
 	/**
 	 * Opens the synchronize views in the perspective defined by the user in the team synchronize
@@ -68,16 +86,7 @@ public interface ISynchronizeManager {
 	 * @return the opened synchronize view or <code>null</code> if it can't be opened.
 	 */
 	public ISynchronizeView showSynchronizeViewInActivePage();
-	
-	/**
-	 * Returns the registered synchronize participants with the given id. It is
-	 * possible to have multiple instances of the same participant type.
-	 * 
-	 * @return the registered synchronize participants with the given id, or 
-	 * <code>null</code> if none with that id is not registered.
-	 */
-	public ISynchronizeParticipant[] find(String id);
-	
+
 	/**
 	 * Returns the participant descriptor for the given participant id or 
 	 * <code>null</code> if a descriptor is not found for that id.
@@ -85,5 +94,5 @@ public interface ISynchronizeManager {
 	 * @return the participant descriptor for the given participant id or 
 	 * <code>null</code> if a descriptor is not found for that id.
 	 */
-	public ISynchronizeParticipantDescriptor getParticipantDescriptor(String id);
+	public ISynchronizeParticipantDescriptor getParticipantDescriptor(String type);
 }

@@ -83,9 +83,14 @@ public class SynchronizeViewTestAdapter extends SyncInfoSource {
 	
 	private SubscriberParticipant getParticipant(Subscriber subscriber) {
 		// show the sync view
-		ISynchronizeParticipant[] participants = TeamUI.getSynchronizeManager().getSynchronizeParticipants();
+		ISynchronizeParticipantReference[] participants = TeamUI.getSynchronizeManager().getSynchronizeParticipants();
 		for (int i = 0; i < participants.length; i++) {
-			ISynchronizeParticipant participant = participants[i];
+			ISynchronizeParticipant participant;
+			try {
+				participant = participants[i].getParticipant();
+			} catch (TeamException e) {
+				return null;
+			}
 			if(participant instanceof SubscriberParticipant) {
 				if(((SubscriberParticipant)participant).getSubscriber() == subscriber) {
 					return (SubscriberParticipant)participant;
@@ -158,11 +163,15 @@ public class SynchronizeViewTestAdapter extends SyncInfoSource {
 	 * @see org.eclipse.team.tests.ccvs.core.subscriber.SyncInfoSource#tearDown()
 	 */
 	public void tearDown() {
-		ISynchronizeParticipant[] participants = TeamUI.getSynchronizeManager().getSynchronizeParticipants();
+		ISynchronizeParticipantReference[] participants = TeamUI.getSynchronizeManager().getSynchronizeParticipants();
 		for (int i = 0; i < participants.length; i++) {
-			ISynchronizeParticipant participant = participants[i];
-			if(participant.getId().equals(CVSMergeSubscriber.ID)) {
-				TeamUI.getSynchronizeManager().removeSynchronizeParticipants(new ISynchronizeParticipant[] {participant});
+			try {
+				ISynchronizeParticipantReference ref = participants[i];
+				if(ref.getParticipant().getId().equals(CVSMergeSubscriber.ID)) {
+					TeamUI.getSynchronizeManager().removeSynchronizeParticipants(new ISynchronizeParticipant[] {ref.getParticipant()});
+				}
+			} catch (TeamException e) {
+				return;
 			}
 		}
 		// Process all async events that may have been generated above

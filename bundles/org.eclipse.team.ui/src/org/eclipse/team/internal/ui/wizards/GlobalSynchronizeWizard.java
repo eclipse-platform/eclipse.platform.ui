@@ -13,17 +13,11 @@ package org.eclipse.team.internal.ui.wizards;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.jface.wizard.IWizard;
-import org.eclipse.jface.wizard.IWizardPage;
-import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.team.internal.ui.IPreferenceIds;
-import org.eclipse.team.internal.ui.Policy;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.ui.ISharedImages;
-import org.eclipse.team.ui.TeamImages;
-import org.eclipse.team.ui.TeamUI;
-import org.eclipse.team.ui.synchronize.ISynchronizeManager;
-import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
+import org.eclipse.jface.wizard.*;
+import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.ui.*;
+import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.IWorkbench;
 
 /**
@@ -36,7 +30,7 @@ public class GlobalSynchronizeWizard extends Wizard {
 	protected IWorkbench workbench;
 	protected IWizard wizard;
 	protected GlobalRefreshParticipantSelectionPage mainPage;
-	protected ISynchronizeParticipant participant;
+	protected ISynchronizeParticipantReference participant;
 	private String pluginId = TeamUIPlugin.PLUGIN_ID;
 
 	public GlobalSynchronizeWizard() {
@@ -45,42 +39,45 @@ public class GlobalSynchronizeWizard extends Wizard {
 		setForcePreviousAndNextButtons(true);
 		setNeedsProgressMonitor(false);
 	}
-
-	public GlobalSynchronizeWizard(ISynchronizeParticipant participant) {
-		this();
-		this.participant = participant;
-	}
 	
 	/*
 	 * @see Wizard#addPages
 	 */
 	public void addPages() {
-		ISynchronizeParticipant[] participants = getParticipants();
+		ISynchronizeParticipantReference[] participants = getParticipants();
 		if (participants.length == 1) {
 			// If there is only one wizard, skip the first page.
 			// Only skip the first page if the one wizard has at least one
 			// page.
-			participant = participants[0];
+			try {
+				participant = participants[0];
+				ISynchronizeParticipant p = participant.getParticipant();
+				IWizard wizard = p.createSynchronizeWizard();
+				wizard.addPages();
+				if (wizard.getPageCount() > 0) {
+					wizard.setContainer(getContainer());
+					IWizardPage[] pages = wizard.getPages();
+					for (int i = 0; i < pages.length; i++) {
+						addPage(pages[i]);
+					}
+					return;
+				}
+			} catch (TeamException e) {
+				Utils.handle(e);
+				return;
+			}	
 		}
-		if (participant != null) {
-			wizard = participants[0].createSynchronizeWizard();
-			addWizardPages(participant.createSynchronizeWizard());
-		} else {
-			mainPage = new GlobalRefreshParticipantSelectionPage();
-			addPage(mainPage);
-		}
+		mainPage = new GlobalRefreshParticipantSelectionPage();
+		addPage(mainPage);
 	}
 
-	private void addWizardPages(IWizard wizard) {
-		wizard.addPages();
-		if (wizard.getPageCount() > 0) {
-			wizard.setContainer(getContainer());
-			IWizardPage[] pages = wizard.getPages();
-			for (int i = 0; i < pages.length; i++) {
-				addPage(pages[i]);
-			}
-		}
-	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.wizard.Wizard#dispose()
+	 */
+	public void dispose() {
+		super.dispose();
+		ISynchronizeParticipantReference participant = getSelectedParticipant();
+	}	
 	
 	public IWizardPage getNextPage(IWizardPage page) {
 		return super.getNextPage(page);
@@ -127,24 +124,24 @@ public class GlobalSynchronizeWizard extends Wizard {
 		return true;
 	}
 
-	protected ISynchronizeParticipant[] getParticipants() {
+	protected ISynchronizeParticipantReference[] getParticipants() {
 		List participants = new ArrayList();
 		ISynchronizeManager manager = (ISynchronizeManager) TeamUI.getSynchronizeManager();
-		ISynchronizeParticipant[] desciptors = manager.getSynchronizeParticipants();
+		ISynchronizeParticipantReference[] desciptors = manager.getSynchronizeParticipants();
 		for (int i = 0; i < desciptors.length; i++) {
-			ISynchronizeParticipant descriptor = desciptors[i];
-			if (descriptor.doesSupportSynchronize()) {
+			ISynchronizeParticipantReference descriptor = desciptors[i];
+			if (descriptor.getDescriptor().isGlobalSynchronize()) {
 				participants.add(descriptor);
 			}
 		}
-		return (ISynchronizeParticipant[]) participants.toArray(new ISynchronizeParticipant[participants.size()]);
+		return (ISynchronizeParticipantReference[]) participants.toArray(new ISynchronizeParticipantReference[participants.size()]);
 	}
 	
-	protected ISynchronizeParticipant getSelectedParticipant() {
+	protected ISynchronizeParticipantReference getSelectedParticipant() {
 		if(participant == null && mainPage != null) {
 			return mainPage.getSelectedParticipant();
 		} else {
 			return participant;
 		}
-	}
+	}	
 }

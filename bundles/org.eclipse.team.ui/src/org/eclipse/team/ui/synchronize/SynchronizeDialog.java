@@ -86,7 +86,7 @@ public class SynchronizeDialog extends ResizableDialog implements IPropertyChang
 		Control c = fCompareEditorInput.createContents(parent);
 		c.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		ISynchronizeParticipant[] participants = TeamUI.getSynchronizeManager().getSynchronizeParticipants();
+		ISynchronizeParticipantReference[] participants = TeamUI.getSynchronizeManager().getSynchronizeParticipants();
 		
 		if (participant != null && ! particantRegisteredWithSynchronizeManager(participant)) {
 			rememberParticipantButton = new Button(parent, SWT.CHECK);
@@ -100,11 +100,7 @@ public class SynchronizeDialog extends ResizableDialog implements IPropertyChang
 	}
 	
 	private boolean particantRegisteredWithSynchronizeManager(ISynchronizeParticipant participant) {
-		ISynchronizeParticipant[] participants = TeamUI.getSynchronizeManager().getSynchronizeParticipants();
-		for (int i = 0; i < participants.length; i++) {
-			if(participants[i] == participant) return true;
-		}
-		return false;
+		return TeamUI.getSynchronizeManager().get(participant.getId(), participant.getSecondaryId()) != null;
 	}
 	
 	/* (non-Javadoc)
@@ -114,7 +110,7 @@ public class SynchronizeDialog extends ResizableDialog implements IPropertyChang
 		saveChanges();
 		if(buttonId == IDialogConstants.OK_ID && isRememberParticipant()) {
 			rememberParticipant();
-		} 
+		}
 		super.buttonPressed(buttonId);
 	}
 		
@@ -134,7 +130,7 @@ public class SynchronizeDialog extends ResizableDialog implements IPropertyChang
 		if(getParticipant() != null) {
 			ISynchronizeManager mgr = TeamUI.getSynchronizeManager();
 			ISynchronizeView view = mgr.showSynchronizeViewInActivePage();
-			mgr.addSynchronizeParticipants(new ISynchronizeParticipant[] {participant});
+			mgr.addSynchronizeParticipants(new ISynchronizeParticipant[] {getParticipant()});
 			view.display(participant);
 		}
 	}
@@ -169,7 +165,7 @@ public class SynchronizeDialog extends ResizableDialog implements IPropertyChang
 		}
 	}
 	
-	protected Object getParticipant() {
+	protected ISynchronizeParticipant getParticipant() {
 		return participant;
 	}
 	

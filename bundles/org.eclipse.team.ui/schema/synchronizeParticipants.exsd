@@ -79,6 +79,51 @@ Providers may provide an extension for this extension point, and an implementati
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="persistent">
+            <annotation>
+               <documentation>
+                  By default participants will be persisted between sessions. Set this attribute to false if this participant should not be persisted between sessions.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="true">
+                  </enumeration>
+                  <enumeration value="false">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+         <attribute name="multipleInstances">
+            <annotation>
+               <documentation>
+                  By default a multiple participant instances can be added to the synchronize manager. If only one instance of this participant is allowed set this property to false.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="true">
+                  </enumeration>
+                  <enumeration value="false">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+         <attribute name="globalSynchronize">
+            <annotation>
+               <documentation>
+                  By default participants add a wizard to the global Team Synchronize action. If this participant doesn&apos;t not support a global synchronize action then set this to false.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="true">
+                  </enumeration>
+                  <enumeration value="false">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
       </complexType>
    </element>
 

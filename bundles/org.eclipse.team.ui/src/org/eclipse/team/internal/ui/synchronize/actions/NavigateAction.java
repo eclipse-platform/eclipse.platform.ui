@@ -75,7 +75,7 @@ public class NavigateAction extends Action {
 		if(info.getLocal().getType() != IResource.FILE) {
 			if(! navigator.gotoDifference(next)) {
 				info = getSyncInfoFromSelection();
-				OpenInCompareAction.openCompareEditor(view, view.getParticipant(), info, true /* keep focus */);
+				OpenInCompareAction.openCompareEditor(view, view.getParticipant().getName(), info, true /* keep focus */);
 			}
 			return;
 		}
@@ -93,14 +93,14 @@ public class NavigateAction extends Action {
 				if(navigator.selectChange(next)) {
 					if(! this.navigator.gotoDifference(next)) {
 						info = getSyncInfoFromSelection();
-						OpenInCompareAction.openCompareEditor(view, view.getParticipant(), info, true /* keep focus */);
+						OpenInCompareAction.openCompareEditor(view, getTitle(), info, true /* keep focus */);
 					}
 				}				
 			}
 		} else {
 			// otherwise, select the next change and open a compare editor which will automatically
 			// show the first change.
-			OpenInCompareAction.openCompareEditor(view, view.getParticipant(), info, true /* keep focus */);
+			OpenInCompareAction.openCompareEditor(view, getTitle(), info, true /* keep focus */);
 		}
 	}
 
@@ -113,5 +113,9 @@ public class NavigateAction extends Action {
 		} else {
 			return null;
 		}
+	}
+	
+	private String getTitle() {
+		return view.getParticipant().getName();
 	}
 }

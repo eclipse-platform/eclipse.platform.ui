@@ -22,7 +22,9 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ui.Policy;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.model.BaseWorkbenchContentProvider;
@@ -41,7 +43,7 @@ public class GlobalRefreshParticipantSelectionPage extends WizardPage implements
 	private TableViewer fViewer;
 	private ISynchronizeParticipantDescriptor selectedParticipantDescriptor;
 	private IWizard wizard;
-	private ISynchronizeParticipant participant;
+	private ISynchronizeParticipantReference participant;
 	private List createdImages;
 
 	class MyContentProvider extends BaseWorkbenchContentProvider {
@@ -49,14 +51,14 @@ public class GlobalRefreshParticipantSelectionPage extends WizardPage implements
 			if(element instanceof ISynchronizeManager) {
 				List participants = new ArrayList();
 				ISynchronizeManager manager = (ISynchronizeManager)element;
-				ISynchronizeParticipant[] desciptors = manager.getSynchronizeParticipants();
+				ISynchronizeParticipantReference[] desciptors = manager.getSynchronizeParticipants();
 				for (int i = 0; i < desciptors.length; i++) {
-					ISynchronizeParticipant descriptor = desciptors[i];
-					if(descriptor.doesSupportSynchronize()) {
+					ISynchronizeParticipantReference descriptor = desciptors[i];
+					if(descriptor.getDescriptor().isGlobalSynchronize()) {
 						participants.add(descriptor);
 					}
 				}
-				return (ISynchronizeParticipant[]) participants.toArray(new ISynchronizeParticipant[participants.size()]);
+				return (ISynchronizeParticipantReference[]) participants.toArray(new ISynchronizeParticipantReference[participants.size()]);
 			}
 			return super.getChildren(element);
 		}
@@ -64,17 +66,17 @@ public class GlobalRefreshParticipantSelectionPage extends WizardPage implements
 	
 	class MyLabelProvider extends LabelProvider {
 		public String getText(Object element) {
-			if(element instanceof ISynchronizeParticipant) {
-				ISynchronizeParticipant descriptor = (ISynchronizeParticipant)element;
-				return descriptor.getName();
+			if(element instanceof ISynchronizeParticipantReference) {
+				ISynchronizeParticipantReference descriptor = (ISynchronizeParticipantReference)element;
+				return descriptor.getDescriptor().getName();
 			}
 			return null;
 		}	
 		
 		public Image getImage(Object element) {
-			if(element instanceof ISynchronizeParticipant) {
-				ISynchronizeParticipant descriptor = (ISynchronizeParticipant)element;
-				ImageDescriptor d = descriptor.getImageDescriptor();
+			if(element instanceof ISynchronizeParticipantReference) {
+				ISynchronizeParticipantReference descriptor = (ISynchronizeParticipantReference)element;
+				ImageDescriptor d = descriptor.getDescriptor().getImageDescriptor();
 				if(createdImages == null) {
 					createdImages = new ArrayList(3);
 				}
@@ -150,18 +152,23 @@ public class GlobalRefreshParticipantSelectionPage extends WizardPage implements
 			setPageComplete(false);
 			return;
 		}
-		participant = (ISynchronizeParticipant)ss.getFirstElement();
-		wizard = participant.createSynchronizeWizard();
-		wizard.addPages();		
-		// Ask the container to update button enablement
-		setPageComplete(true);
+		participant = (ISynchronizeParticipantReference)ss.getFirstElement();
+		try {
+			wizard = participant.getParticipant().createSynchronizeWizard();
+			wizard.addPages();		
+			// Ask the container to update button enablement
+			setPageComplete(true);
+		} catch (TeamException e) {
+			Utils.handle(e);
+			setPageComplete(false);
+		}
 	}
 	
 	public IWizard getSelectedWizard() {
 		return this.wizard;
 	}
 	
-	public ISynchronizeParticipant getSelectedParticipant() {
+	public ISynchronizeParticipantReference getSelectedParticipant() {
 		return this.participant;
 	}
 	
