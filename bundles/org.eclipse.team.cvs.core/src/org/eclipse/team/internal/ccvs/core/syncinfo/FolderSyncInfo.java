@@ -121,6 +121,14 @@ public class FolderSyncInfo {
 	 * Returns:
 	 * 	/home/users/repo/folder1/folder2
 	 * 
+	 * Note: CVS supports repository root directories that end in a slash (/).
+	 * For these directories, the remote location must contain two slashes (//)
+	 * between the root directory and the rest of the path. For example:
+	 * 	root = :pserver:user@host:/home/user/repo/
+	 * 	repository = folder1/folder2
+	 * must return:
+	 * 	/home/users/repo//folder1/folder2
+	 * 
 	 * @return the full path of this folder on the server.
 	 * @throws a CVSException if the root or repository is malformed.
 	 */
