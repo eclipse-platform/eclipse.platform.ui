@@ -27,6 +27,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.test.performance.Performance;
+import org.eclipse.test.performance.PerformanceMeter;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.ide.IDE;
@@ -38,6 +41,8 @@ import org.eclipse.ui.tests.util.UITestCase;
  */
 public class EditorSwitchTest extends UITestCase {
 
+    private PerformanceMeter performanceMeter;
+
     /**
      * Constructor.
      * 
@@ -48,33 +53,38 @@ public class EditorSwitchTest extends UITestCase {
         super(testName);
     }
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.tests.util.UITestCase#doSetUp()
+	 */
+	protected void doSetUp() throws Exception {
+	    super.doSetUp();
+		Performance performance = Performance.getDefault();
+		performanceMeter = performance.createPerformanceMeter(performance.getDefaultScenarioId(this));
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.tests.util.UITestCase#doTearDown()
+	 */
+	protected void doTearDown() throws Exception {
+	    super.doTearDown();
+		performanceMeter.dispose();
+	}	
+	
     /**
      * Test perspective switching performance. This test always fails.
      */
-    public void testPerspectiveSwitching() throws CoreException, IOException,
+    public void testEditorSwitching() throws CoreException, IOException,
             WorkbenchException {
 
         /*
          * Open a workbench window on the first perspective. Make it the Java
          * perspective to force plug-in loading.
          */
-        final Display display = fWorkbench.getDisplay();
-        final IWorkbenchWindow window = fWorkbench.openWorkbenchWindow(
-                "org.eclipse.jdt.ui.JavaPerspective", null);
+//        final Display display = fWorkbench.getDisplay();
+//        final IWorkbenchWindow window = fWorkbench.openWorkbenchWindow(
+//                "org.eclipse.jdt.ui.JavaPerspective", null);
 
-        // Create a java project.
-        IWorkspace workspace = ResourcesPlugin.getWorkspace();
-        IProject testProject = workspace.getRoot().getProject(
-                "PerspectiveSwitchTest Project");
-        testProject.create(null);
-        testProject.open(null);
-        IProjectDescription projectDescription = testProject.getDescription();
-        String[] natureIds = { "org.eclipse.jdt.core.javanature" };
-        projectDescription.setNatureIds(natureIds);
-        ICommand buildCommand = new BuildCommand();
-        buildCommand.setBuilderName("org.eclipse.jdt.core.javabuilder");
-        projectDescription.setBuildSpec(new ICommand[] { buildCommand });
-        testProject.setDescription(projectDescription, null);
+        IProject testProject = ResourcesPlugin.getWorkspace().getRoot().getProject(UIPerformanceTestSetup.PROJECT_NAME);
 
         // Create a test java file.
         TestPlugin plugin = TestPlugin.getDefault();
@@ -83,29 +93,35 @@ public class EditorSwitchTest extends UITestCase {
         IPath path = new Path(fullPathString.getPath());
         File file = path.toFile();
         InputStream inputStream = new FileInputStream(file);
-        IFile javaFile = testProject.getFile("Util.java");
+        IFile javaFile = testProject.getFile("Util2.java");
         javaFile.create(inputStream, true, null);
 
         // Create a test text file.
-        inputStream.reset();
+        inputStream = new FileInputStream(file);
         IFile textFile = testProject.getFile("A.txt");
         textFile.create(inputStream, true, null);
         inputStream.close();
 
         // Open the file.
-        IDE.openEditor(window.getActivePage(), javaFile, true);
+        IWorkbenchPage activePage = fWorkbench.getActiveWorkbenchWindow().getActivePage();
+        IDE.openEditor(activePage, javaFile, true);
 
         // Switch between the two editors one hundred times.
-        long elapsedTime = -System.currentTimeMillis();
-        for (int i = 0; i < 100; i++) {
-            IDE.openEditor(window.getActivePage(), textFile, true);
-            while (display.readAndDispatch())
-                ; // allow repaints
-            IDE.openEditor(window.getActivePage(), javaFile, true);
-            while (display.readAndDispatch())
-                ; // allow repaints
+        for (int i = 0; i < 20; i++) {
+            performanceMeter.start();
+            IDE.openEditor(activePage, textFile, true);
+            processEvents();
+            IDE.openEditor(activePage, javaFile, true);
+            performanceMeter.stop();
+            processEvents();
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
-        elapsedTime += System.currentTimeMillis();
-        fail("Elapsed Time: " + elapsedTime);
-    }
+        performanceMeter.commit();
+        Performance.getDefault().assertPerformance(performanceMeter);
+   }
 }

@@ -22,6 +22,7 @@
       <import plugin="org.eclipse.ui.views"/>
       <import plugin="org.eclipse.text"/>
       <import plugin="org.eclipse.jface.text"/>
+      <import plugin="org.eclipse.test.performance"/>
    </requires>
 
 

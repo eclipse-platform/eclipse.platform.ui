@@ -26,8 +26,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.test.performance.Performance;
+import org.eclipse.test.performance.PerformanceMeter;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.ide.IDE;
@@ -40,6 +43,7 @@ import org.eclipse.ui.tests.util.UITestCase;
  */
 public class PerspectiveSwitchTest extends UITestCase {
 
+    private PerformanceMeter performanceMeter;
     /**
      * Constructor.
      * 
@@ -49,7 +53,23 @@ public class PerspectiveSwitchTest extends UITestCase {
     public PerspectiveSwitchTest(String testName) {
         super(testName);
     }
-
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.tests.util.UITestCase#doSetUp()
+	 */
+	protected void doSetUp() throws Exception {
+	    super.doSetUp();
+		Performance performance = Performance.getDefault();
+		performanceMeter = performance.createPerformanceMeter(performance.getDefaultScenarioId(this));
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.tests.util.UITestCase#doTearDown()
+	 */
+	protected void doTearDown() throws Exception {
+	    super.doTearDown();
+		performanceMeter.dispose();
+	}
+	
     /**
      * Test perspective switching performance. This test always fails.
      */
@@ -67,23 +87,7 @@ public class PerspectiveSwitchTest extends UITestCase {
          * Open a workbench window on the first perspective. Make it the Java
          * perspective to force plug-in loading.
          */
-        final Display display = fWorkbench.getDisplay();
-        final IWorkbenchWindow window = fWorkbench.openWorkbenchWindow(
-                javaPerspective.getId(), null);
-
-        // Create a java project.
-        IWorkspace workspace = ResourcesPlugin.getWorkspace();
-        IProject testProject = workspace.getRoot().getProject(
-                "PerspectiveSwitchTest Project");
-        testProject.create(null);
-        testProject.open(null);
-        IProjectDescription projectDescription = testProject.getDescription();
-        String[] natureIds = { "org.eclipse.jdt.core.javanature" };
-        projectDescription.setNatureIds(natureIds);
-        ICommand buildCommand = new BuildCommand();
-        buildCommand.setBuilderName("org.eclipse.jdt.core.javabuilder");
-        projectDescription.setBuildSpec(new ICommand[] { buildCommand });
-        testProject.setDescription(projectDescription, null);
+        IProject testProject = ResourcesPlugin.getWorkspace().getRoot().getProject(UIPerformanceTestSetup.PROJECT_NAME);
 
         // Create a test java file.
         TestPlugin plugin = TestPlugin.getDefault();
@@ -92,23 +96,28 @@ public class PerspectiveSwitchTest extends UITestCase {
         IPath path = new Path(fullPathString.getPath());
         File file = path.toFile();
         FileInputStream inputStream = new FileInputStream(file);
-        IFile javaFile = testProject.getFile("Util.java");
-        javaFile.create(inputStream, true, null);
+        IFile javaFile = testProject.getFile("Util1.java");
+        javaFile.create(inputStream, true, null);	    
 
         // Open the file.
-        IDE.openEditor(window.getActivePage(), javaFile, true);
+        IWorkbenchPage activePage = fWorkbench.getActiveWorkbenchWindow().getActivePage();
+        IDE.openEditor(activePage, javaFile, true);
 
-        // Switch between the two perspectives one hundred times.
-        long elapsedTime = -System.currentTimeMillis();
-        for (int i = 0; i < 100; i++) {
-            window.getActivePage().setPerspective(resourcePerspective);
-            while (display.readAndDispatch())
-                ; // allow repaints
-            window.getActivePage().setPerspective(javaPerspective);
-            while (display.readAndDispatch())
-                ; // allow repaints
+        for (int i = 0; i < 20; i++) {
+            performanceMeter.start();
+            activePage.setPerspective(resourcePerspective);
+            processEvents();
+            activePage.setPerspective(javaPerspective);
+            performanceMeter.stop();
+            processEvents();
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }            
         }
-        elapsedTime += System.currentTimeMillis();
-        fail("Elapsed Time: " + elapsedTime);
+        performanceMeter.commit();
+        Performance.getDefault().assertPerformance(performanceMeter);
     }
 }
