@@ -255,8 +255,17 @@ public final class ToolUtil {
 		IWorkbenchPage page = window.getActivePage();
 		LogConsoleView console = null;
 		try {
-			if (page != null)
-				console = (LogConsoleView) page.showView(ExternalToolsPlugin.LOG_CONSOLE_ID);
+			if (page != null) {
+				console= (LogConsoleView)page.findView(ExternalToolsPlugin.LOG_CONSOLE_ID);
+				if(console == null) {
+					IWorkbenchPart activePart= page.getActivePart();
+					page.showView(ExternalToolsPlugin.LOG_CONSOLE_ID);
+					//restore focus stolen by the creation of the console
+					page.activate(activePart);
+				} else {
+					page.bringToTop(console);
+				}
+			}
 		} catch (PartInitException e) {
 			ExternalToolsPlugin.getDefault().getLog().log(e.getStatus());
 		}
