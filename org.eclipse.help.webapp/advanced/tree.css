@@ -1,0 +1,83 @@
+
+BODY {
+	background-color: <%=prefs.getViewBackground()%>;
+	font: <%=prefs.getViewFont()%>;
+	margin:0;
+	padding:0;
+	border:0;
+}
+
+UL { 
+	border-width:0; 
+	margin-left:20px; 
+}
+
+#root {
+	margin-top:5px;
+	margin-left:5px;
+}
+  
+UL.expanded {
+	display:block; 
+}
+
+UL.collapsed { 
+	display: none;
+}
+
+LI { 
+	margin-top:3px; 
+	list-style-image:none;
+	list-style-type:none;
+}
+
+IMG {
+	border:0px;
+	margin:0px;
+	padding:0px;
+	margin-right:4px;
+}
+
+
+A {
+	text-decoration:none; 
+	color:WindowText;
+	padding-right:2px;
+	/* this works in ie5.5, but not in ie5.0  */
+	white-space: nowrap;
+}
+
+A:hover{
+	text-decoration:underline; 
+}
+
+A.active{ 
+	background:<%=prefs.getToolbarBackground()%>;
+	width:100%;
+}
+
+A.active:hover{
+	text-decoration:underline; 
+	background:<%=prefs.getToolbarBackground()%>;
+	width:100%;
+}
+
+<% 
+if (data.isMozilla()){
+%>
+UL { 
+	margin-left:-20px;
+} 
+#root{ 
+	margin-left:-35px; 
+	margin-top:5px;
+} 
+A.active, 
+A.active:hover {
+	background:WindowText;
+	color:Window;
+} 
+<%
+}
+%>
+ 

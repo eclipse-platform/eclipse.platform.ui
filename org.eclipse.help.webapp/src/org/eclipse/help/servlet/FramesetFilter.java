@@ -13,7 +13,7 @@ import javax.servlet.http.*;
  */
 public class FramesetFilter implements IFilter {
 	private static final String scriptPart1 =
-		"<script>if( self == top ){ window.location.replace(\"";
+		"<script>if( self == top ){ window.location.replace( \"";
 	private static final String scriptPart3 = "\");}</script>";
 	private StringBuffer location;
 

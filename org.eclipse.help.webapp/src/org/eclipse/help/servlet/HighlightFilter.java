@@ -24,22 +24,27 @@ public class HighlightFilter implements IFilter {
 	 */
 	public HighlightFilter(HttpServletRequest request) {
 		this.request = request;
-		this.searchWord = UrlUtil.getRequestParameter(request, "resultof");
+		this.searchWord = request.getParameter("resultof");
 	}
 
 	/*
 	 * @see IFilter#filter(byte[])
 	 */
 	public byte[] filter(byte[] input) {
-		if (searchWord == null)
+		if (searchWord == null) {
 			return input;
+		}
+		if (!(UrlUtil.isIE(request) || UrlUtil.isMozilla(request))) {
+			return input;
+		}
 
 		Collection keywords = getWords();
 		keywords = removeWildCards(keywords);
 		keywords = encodeKeyWords(keywords);
 		byte[] script = createJScript(keywords);
-		if (script == null)
+		if (script == null) {
 			return input;
+		}
 
 		return HeadFilterHelper.filter(input, script);
 	}

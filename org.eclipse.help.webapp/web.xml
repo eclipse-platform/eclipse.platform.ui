@@ -7,7 +7,12 @@
 
 <web-app>
 
-   <servlet>
+    <servlet>
+        <servlet-name>control</servlet-name>
+        <servlet-class>org.eclipse.help.servlet.ControlServlet</servlet-class>
+    </servlet>
+    
+    <servlet>
         <servlet-name>content</servlet-name>
         <servlet-class>org.eclipse.help.servlet.ContentServlet</servlet-class>
     </servlet>
@@ -22,149 +27,214 @@
         <servlet-class>org.eclipse.help.servlet.LiveHelpServlet</servlet-class>
     </servlet>
         
-     <!-- **** begin precompiled JSP config ***** -->
-	<servlet>
-		<servlet-name>jsp.advanced</servlet-name>
-		<servlet-class>jsp.advanced</servlet-class>
-	</servlet>
-	
-	<servlet>
-		<servlet-name>jsp.bookmarks</servlet-name>
-		<servlet-class>jsp.bookmarks</servlet-class>
-	</servlet>
-
-
-	<servlet>
-		<servlet-name>jsp.search</servlet-name>
-		<servlet-class>jsp.search</servlet-class>
-	</servlet>
-
-	<servlet>
-		<servlet-name>jsp.err</servlet-name>
-		<servlet-class>jsp.err</servlet-class>
-	</servlet>
-
-	<servlet>
-		<servlet-name>jsp.help</servlet-name>
-		<servlet-class>jsp.help</servlet-class>
-	</servlet>
-
-	<servlet>
-		<servlet-name>jsp.home</servlet-name>
-		<servlet-class>jsp.home</servlet-class>
-	</servlet>
-
+    <!-- **** begin precompiled JSP config ***** -->
+    
 	<servlet>
 		<servlet-name>jsp.index</servlet-name>
 		<servlet-class>jsp.index</servlet-class>
 	</servlet>
 
 	<servlet>
-		<servlet-name>jsp.links</servlet-name>
-		<servlet-class>jsp.links</servlet-class>
+		<servlet-name>jsp.basic.advanced</servlet-name>
+		<servlet-class>jsp.basic.advanced</servlet-class>
 	</servlet>
 
 	<servlet>
-		<servlet-name>jsp.navToolbar</servlet-name>
-		<servlet-class>jsp.navToolbar</servlet-class>
+		<servlet-name>jsp.basic.bookmarksToolbar</servlet-name>
+		<servlet-class>jsp.basic.bookmarksToolbar</servlet-class>
 	</servlet>
 
 	<servlet>
-		<servlet-name>jsp.search_results</servlet-name>
-		<servlet-class>jsp.search_results</servlet-class>
+		<servlet-name>jsp.basic.bookmarksView</servlet-name>
+		<servlet-class>jsp.basic.bookmarksView</servlet-class>
 	</servlet>
 
 	<servlet>
-		<servlet-name>jsp.tabs</servlet-name>
-		<servlet-class>jsp.tabs</servlet-class>
+		<servlet-name>jsp.basic.err</servlet-name>
+		<servlet-class>jsp.basic.err</servlet-class>
 	</servlet>
 
 	<servlet>
-		<servlet-name>jsp.toc</servlet-name>
-		<servlet-class>jsp.toc</servlet-class>
+		<servlet-name>jsp.basic.header</servlet-name>
+		<servlet-class>jsp.basic.header</servlet-class>
 	</servlet>
 
 	<servlet>
-		<servlet-name>jsp.tocs</servlet-name>
-		<servlet-class>jsp.tocs</servlet-class>
+		<servlet-name>jsp.basic.help</servlet-name>
+		<servlet-class>jsp.basic.help</servlet-class>
 	</servlet>
 
 	<servlet>
-		<servlet-name>jsp.toolbar</servlet-name>
-		<servlet-class>jsp.toolbar</servlet-class>
-	</servlet>
-	
-	<servlet>
-		<servlet-name>jsp.ns4.advanced</servlet-name>
-		<servlet-class>jsp.ns4.advanced</servlet-class>
-	</servlet>
-	
-	<servlet>
-		<servlet-name>jsp.ns4.bookmarks</servlet-name>
-		<servlet-class>jsp.ns4.bookmarks</servlet-class>
+		<servlet-name>jsp.basic.index</servlet-name>
+		<servlet-class>jsp.basic.index</servlet-class>
 	</servlet>
 
 	<servlet>
-		<servlet-name>jsp.ns4.search</servlet-name>
-		<servlet-class>jsp.ns4.search</servlet-class>
+		<servlet-name>jsp.basic.linksToolbar</servlet-name>
+		<servlet-class>jsp.basic.linksToolbar</servlet-class>
 	</servlet>
 
 	<servlet>
-		<servlet-name>jsp.ns4.err</servlet-name>
-		<servlet-class>jsp.ns4.err</servlet-class>
+		<servlet-name>jsp.basic.linksView</servlet-name>
+		<servlet-class>jsp.basic.linksView</servlet-class>
 	</servlet>
 
 	<servlet>
-		<servlet-name>jsp.ns4.help</servlet-name>
-		<servlet-class>jsp.ns4.help</servlet-class>
+		<servlet-name>jsp.basic.livehelp_0002ejs</servlet-name>
+		<servlet-class>jsp.basic.livehelp_0002ejs</servlet-class>
 	</servlet>
 
 	<servlet>
-		<servlet-name>jsp.ns4.home</servlet-name>
-		<servlet-class>jsp.ns4.home</servlet-class>
+		<servlet-name>jsp.basic.searchToolbar</servlet-name>
+		<servlet-class>jsp.basic.searchToolbar</servlet-class>
 	</servlet>
 
 	<servlet>
-		<servlet-name>jsp.ns4.index</servlet-name>
-		<servlet-class>jsp.ns4.index</servlet-class>
+		<servlet-name>jsp.basic.searchView</servlet-name>
+		<servlet-class>jsp.basic.searchView</servlet-class>
 	</servlet>
 
 	<servlet>
-		<servlet-name>jsp.ns4.links</servlet-name>
-		<servlet-class>jsp.ns4.links</servlet-class>
+		<servlet-name>jsp.basic.tabs</servlet-name>
+		<servlet-class>jsp.basic.tabs</servlet-class>
 	</servlet>
 
 	<servlet>
-		<servlet-name>jsp.ns4.navToolbar</servlet-name>
-		<servlet-class>jsp.ns4.navToolbar</servlet-class>
+		<servlet-name>jsp.basic.tocToolbar</servlet-name>
+		<servlet-class>jsp.basic.tocToolbar</servlet-class>
 	</servlet>
 
 	<servlet>
-		<servlet-name>jsp.ns4.search_results</servlet-name>
-		<servlet-class>jsp.ns4.search_results</servlet-class>
+		<servlet-name>jsp.basic.tocView</servlet-name>
+		<servlet-class>jsp.basic.tocView</servlet-class>
 	</servlet>
 
 	<servlet>
-		<servlet-name>jsp.ns4.tabs</servlet-name>
-		<servlet-class>jsp.ns4.tabs</servlet-class>
+		<servlet-name>jsp.basic.toolbar</servlet-name>
+		<servlet-class>jsp.basic.toolbar</servlet-class>
 	</servlet>
 
 	<servlet>
-		<servlet-name>jsp.ns4.toc</servlet-name>
-		<servlet-class>jsp.ns4.toc</servlet-class>
+		<servlet-name>jsp.basic.view</servlet-name>
+		<servlet-class>jsp.basic.view</servlet-class>
 	</servlet>
 
 	<servlet>
-		<servlet-name>jsp.ns4.tocs</servlet-name>
-		<servlet-class>jsp.ns4.tocs</servlet-class>
+		<servlet-name>jsp.advanced.advanced</servlet-name>
+		<servlet-class>jsp.advanced.advanced</servlet-class>
 	</servlet>
 
 	<servlet>
-		<servlet-name>jsp.ns4.toolbar</servlet-name>
-		<servlet-class>jsp.ns4.toolbar</servlet-class>
+		<servlet-name>jsp.advanced.bookmarksToolbar</servlet-name>
+		<servlet-class>jsp.advanced.bookmarksToolbar</servlet-class>
 	</servlet>
 
+	<servlet>
+		<servlet-name>jsp.advanced.bookmarksView</servlet-name>
+		<servlet-class>jsp.advanced.bookmarksView</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>jsp.advanced.content</servlet-name>
+		<servlet-class>jsp.advanced.content</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>jsp.advanced.contentToolbar</servlet-name>
+		<servlet-class>jsp.advanced.contentToolbar</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>jsp.advanced.err</servlet-name>
+		<servlet-class>jsp.advanced.err</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>jsp.advanced.header</servlet-name>
+		<servlet-class>jsp.advanced.header</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>jsp.advanced.help</servlet-name>
+		<servlet-class>jsp.advanced.help</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>jsp.advanced.index</servlet-name>
+		<servlet-class>jsp.advanced.index</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>jsp.advanced.linksToolbar</servlet-name>
+		<servlet-class>jsp.advanced.linksToolbar</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>jsp.advanced.linksView</servlet-name>
+		<servlet-class>jsp.advanced.linksView</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>jsp.advanced.livehelp_0002ejs</servlet-name>
+		<servlet-class>jsp.advanced.livehelp_0002ejs</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>jsp.advanced.nav</servlet-name>
+		<servlet-class>jsp.advanced.nav</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>jsp.advanced.search</servlet-name>
+		<servlet-class>jsp.advanced.search</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>jsp.advanced.searchToolbar</servlet-name>
+		<servlet-class>jsp.advanced.searchToolbar</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>jsp.advanced.searchView</servlet-name>
+		<servlet-class>jsp.advanced.searchView</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>jsp.advanced.tabs</servlet-name>
+		<servlet-class>jsp.advanced.tabs</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>jsp.advanced.tocToolbar</servlet-name>
+		<servlet-class>jsp.advanced.tocToolbar</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>jsp.advanced.tocView</servlet-name>
+		<servlet-class>jsp.advanced.tocView</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>jsp.advanced.toolbar</servlet-name>
+		<servlet-class>jsp.advanced.toolbar</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>jsp.advanced.view</servlet-name>
+		<servlet-class>jsp.advanced.view</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>jsp.advanced.views</servlet-name>
+		<servlet-class>jsp.advanced.views</servlet-class>
+	</servlet>
+ 
     <!-- ***** end precompiled JSP config ***** -->
+    
+    <servlet-mapping>
+        <servlet-name>control</servlet-name>
+        <url-pattern>/control.html</url-pattern>
+    </servlet-mapping>
     
 	<servlet-mapping>
 		<servlet-name>content</servlet-name>
@@ -204,147 +274,208 @@
     <!-- **** begin precompiled JSP config ***** -->
 
 	<servlet-mapping>
-		<servlet-name>jsp.advanced</servlet-name>
-		<url-pattern>/advanced.jsp</url-pattern>
-	</servlet-mapping>
-	
-	<servlet-mapping>
-		<servlet-name>jsp.bookmarks</servlet-name>
-		<url-pattern>/bookmarks.jsp</url-pattern>
-	</servlet-mapping>
-
-	<servlet-mapping>
-		<servlet-name>jsp.search</servlet-name>
-		<url-pattern>/search.jsp</url-pattern>
-	</servlet-mapping>
-
-	<servlet-mapping>
-		<servlet-name>jsp.err</servlet-name>
-		<url-pattern>/err.jsp</url-pattern>
-	</servlet-mapping>
-
-	<servlet-mapping>
-		<servlet-name>jsp.help</servlet-name>
-		<url-pattern>/help.jsp</url-pattern>
-	</servlet-mapping>
-
-	<servlet-mapping>
-		<servlet-name>jsp.home</servlet-name>
-		<url-pattern>/home.jsp</url-pattern>
-	</servlet-mapping>
-
-	<servlet-mapping>
 		<servlet-name>jsp.index</servlet-name>
 		<url-pattern>/index.jsp</url-pattern>
 	</servlet-mapping>
 
 	<servlet-mapping>
-		<servlet-name>jsp.links</servlet-name>
-		<url-pattern>/links.jsp</url-pattern>
+		<servlet-name>jsp.basic.advanced</servlet-name>
+		<url-pattern>/basic/advanced.jsp</url-pattern>
 	</servlet-mapping>
 
 	<servlet-mapping>
-		<servlet-name>jsp.navToolbar</servlet-name>
-		<url-pattern>/navToolbar.jsp</url-pattern>
+		<servlet-name>jsp.basic.bookmarksToolbar</servlet-name>
+		<url-pattern>/basic/bookmarksToolbar.jsp</url-pattern>
 	</servlet-mapping>
 
 	<servlet-mapping>
-		<servlet-name>jsp.search_results</servlet-name>
-		<url-pattern>/search_results.jsp</url-pattern>
+		<servlet-name>jsp.basic.bookmarksView</servlet-name>
+		<url-pattern>/basic/bookmarksView.jsp</url-pattern>
 	</servlet-mapping>
 
 	<servlet-mapping>
-		<servlet-name>jsp.tabs</servlet-name>
-		<url-pattern>/tabs.jsp</url-pattern>
+		<servlet-name>jsp.basic.err</servlet-name>
+		<url-pattern>/basic/err.jsp</url-pattern>
 	</servlet-mapping>
 
 	<servlet-mapping>
-		<servlet-name>jsp.toc</servlet-name>
-		<url-pattern>/toc.jsp</url-pattern>
+		<servlet-name>jsp.basic.header</servlet-name>
+		<url-pattern>/basic/header.jsp</url-pattern>
 	</servlet-mapping>
 
 	<servlet-mapping>
-		<servlet-name>jsp.tocs</servlet-name>
-		<url-pattern>/tocs.jsp</url-pattern>
+		<servlet-name>jsp.basic.help</servlet-name>
+		<url-pattern>/basic/help.jsp</url-pattern>
 	</servlet-mapping>
 
 	<servlet-mapping>
-		<servlet-name>jsp.toolbar</servlet-name>
-		<url-pattern>/toolbar.jsp</url-pattern>
-	</servlet-mapping>
-   
-	<servlet-mapping>
-		<servlet-name>jsp.ns4.advanced</servlet-name>
-		<url-pattern>/ns4/advanced.jsp</url-pattern>
+		<servlet-name>jsp.basic.index</servlet-name>
+		<url-pattern>/basic/index.jsp</url-pattern>
 	</servlet-mapping>
 
 	<servlet-mapping>
-		<servlet-name>jsp.ns4.bookmarks</servlet-name>
-		<url-pattern>/ns4/bookmarks.jsp</url-pattern>
-	</servlet-mapping>
-	
-	<servlet-mapping>
-		<servlet-name>jsp.ns4.search</servlet-name>
-		<url-pattern>/ns4/search.jsp</url-pattern>
+		<servlet-name>jsp.basic.linksToolbar</servlet-name>
+		<url-pattern>/basic/linksToolbar.jsp</url-pattern>
 	</servlet-mapping>
 
 	<servlet-mapping>
-		<servlet-name>jsp.ns4.err</servlet-name>
-		<url-pattern>/ns4/err.jsp</url-pattern>
+		<servlet-name>jsp.basic.linksView</servlet-name>
+		<url-pattern>/basic/linksView.jsp</url-pattern>
 	</servlet-mapping>
 
 	<servlet-mapping>
-		<servlet-name>jsp.ns4.help</servlet-name>
-		<url-pattern>/ns4/help.jsp</url-pattern>
+		<servlet-name>jsp.basic.livehelp_0002ejs</servlet-name>
+		<url-pattern>/basic/livehelp.js.jsp</url-pattern>
 	</servlet-mapping>
 
 	<servlet-mapping>
-		<servlet-name>jsp.ns4.home</servlet-name>
-		<url-pattern>/ns4/home.jsp</url-pattern>
+		<servlet-name>jsp.basic.searchToolbar</servlet-name>
+		<url-pattern>/basic/searchToolbar.jsp</url-pattern>
 	</servlet-mapping>
 
 	<servlet-mapping>
-		<servlet-name>jsp.ns4.index</servlet-name>
-		<url-pattern>/ns4/index.jsp</url-pattern>
+		<servlet-name>jsp.basic.searchView</servlet-name>
+		<url-pattern>/basic/searchView.jsp</url-pattern>
 	</servlet-mapping>
 
 	<servlet-mapping>
-		<servlet-name>jsp.ns4.links</servlet-name>
-		<url-pattern>/ns4/links.jsp</url-pattern>
+		<servlet-name>jsp.basic.tabs</servlet-name>
+		<url-pattern>/basic/tabs.jsp</url-pattern>
 	</servlet-mapping>
 
 	<servlet-mapping>
-		<servlet-name>jsp.ns4.navToolbar</servlet-name>
-		<url-pattern>/ns4/navToolbar.jsp</url-pattern>
+		<servlet-name>jsp.basic.tocToolbar</servlet-name>
+		<url-pattern>/basic/tocToolbar.jsp</url-pattern>
 	</servlet-mapping>
 
 	<servlet-mapping>
-		<servlet-name>jsp.ns4.search_results</servlet-name>
-		<url-pattern>/ns4/search_results.jsp</url-pattern>
+		<servlet-name>jsp.basic.tocView</servlet-name>
+		<url-pattern>/basic/tocView.jsp</url-pattern>
 	</servlet-mapping>
 
 	<servlet-mapping>
-		<servlet-name>jsp.ns4.tabs</servlet-name>
-		<url-pattern>/ns4/tabs.jsp</url-pattern>
+		<servlet-name>jsp.basic.toolbar</servlet-name>
+		<url-pattern>/basic/toolbar.jsp</url-pattern>
 	</servlet-mapping>
 
 	<servlet-mapping>
-		<servlet-name>jsp.ns4.toc</servlet-name>
-		<url-pattern>/ns4/toc.jsp</url-pattern>
+		<servlet-name>jsp.basic.view</servlet-name>
+		<url-pattern>/basic/view.jsp</url-pattern>
 	</servlet-mapping>
 
 	<servlet-mapping>
-		<servlet-name>jsp.ns4.tocs</servlet-name>
-		<url-pattern>/ns4/tocs.jsp</url-pattern>
+		<servlet-name>jsp.advanced.advanced</servlet-name>
+		<url-pattern>/advanced/advanced.jsp</url-pattern>
 	</servlet-mapping>
 
 	<servlet-mapping>
-		<servlet-name>jsp.ns4.toolbar</servlet-name>
-		<url-pattern>/ns4/toolbar.jsp</url-pattern>
+		<servlet-name>jsp.advanced.bookmarksToolbar</servlet-name>
+		<url-pattern>/advanced/bookmarksToolbar.jsp</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>jsp.advanced.bookmarksView</servlet-name>
+		<url-pattern>/advanced/bookmarksView.jsp</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>jsp.advanced.content</servlet-name>
+		<url-pattern>/advanced/content.jsp</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>jsp.advanced.contentToolbar</servlet-name>
+		<url-pattern>/advanced/contentToolbar.jsp</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>jsp.advanced.err</servlet-name>
+		<url-pattern>/advanced/err.jsp</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>jsp.advanced.header</servlet-name>
+		<url-pattern>/advanced/header.jsp</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>jsp.advanced.help</servlet-name>
+		<url-pattern>/advanced/help.jsp</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>jsp.advanced.index</servlet-name>
+		<url-pattern>/advanced/index.jsp</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>jsp.advanced.linksToolbar</servlet-name>
+		<url-pattern>/advanced/linksToolbar.jsp</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>jsp.advanced.linksView</servlet-name>
+		<url-pattern>/advanced/linksView.jsp</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>jsp.advanced.livehelp_0002ejs</servlet-name>
+		<url-pattern>/advanced/livehelp.js.jsp</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>jsp.advanced.nav</servlet-name>
+		<url-pattern>/advanced/nav.jsp</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>jsp.advanced.search</servlet-name>
+		<url-pattern>/advanced/search.jsp</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>jsp.advanced.searchToolbar</servlet-name>
+		<url-pattern>/advanced/searchToolbar.jsp</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>jsp.advanced.searchView</servlet-name>
+		<url-pattern>/advanced/searchView.jsp</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>jsp.advanced.tabs</servlet-name>
+		<url-pattern>/advanced/tabs.jsp</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>jsp.advanced.tocToolbar</servlet-name>
+		<url-pattern>/advanced/tocToolbar.jsp</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>jsp.advanced.tocView</servlet-name>
+		<url-pattern>/advanced/tocView.jsp</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>jsp.advanced.toolbar</servlet-name>
+		<url-pattern>/advanced/toolbar.jsp</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>jsp.advanced.view</servlet-name>
+		<url-pattern>/advanced/view.jsp</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>jsp.advanced.views</servlet-name>
+		<url-pattern>/advanced/views.jsp</url-pattern>
 	</servlet-mapping>
 
     <!-- ***** end precompiled JSP config ***** -->
-    
+
+
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
 		<welcome-file>index.htm</welcome-file>

@@ -7,7 +7,12 @@
 
 <web-app>
 
-   <servlet>
+    <servlet>
+        <servlet-name>control</servlet-name>
+        <servlet-class>org.eclipse.help.servlet.ControlServlet</servlet-class>
+    </servlet>
+    
+    <servlet>
         <servlet-name>content</servlet-name>
         <servlet-class>org.eclipse.help.servlet.ContentServlet</servlet-class>
     </servlet>
@@ -22,6 +27,11 @@
         <servlet-class>org.eclipse.help.servlet.LiveHelpServlet</servlet-class>
     </servlet>
         
+    <servlet-mapping>
+        <servlet-name>control</servlet-name>
+        <url-pattern>/control.html</url-pattern>
+    </servlet-mapping>
+    
 	<servlet-mapping>
 		<servlet-name>content</servlet-name>
 		<url-pattern>/servlet/org.eclipse.help.servlet.ContentServlet</url-pattern>

@@ -61,9 +61,9 @@ public class ContentUtil {
 	}
 	
 	/**
-	 * Loads the toc containing specified topic
+	 * Loads all (for now just one) tocs containing specified topic
 	 */
-	public Element loadTOCcontainingTopic(String topicHref) {
+	public Element loadTocsContainingTopic(String topicHref) {
 		if (topicHref == null || topicHref.trim().length() == 0)
 			return null;
 		try {

@@ -16,17 +16,13 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class WebappResources {
 
-	// properties indexed by locale
-	private static HashMap propertiesTable = new HashMap();
-	private static EclipseConnector connector;
-
+	// resource bundles indexed by locale
+	private static HashMap resourceBundleTable = new HashMap();
 	/**
-	 * Resources constructort.
+	 * Resources constructor.
 	 */
 	protected WebappResources(ServletContext context) {
 		super();
-		if (this.connector == null)
-			this.connector = new EclipseConnector(context);
 	}
 
 	/**
@@ -35,42 +31,27 @@ public class WebappResources {
 	 * @param request HttpServletRequest or null; default locale will be used if null passed
 	 */
 	public static String getString(String name, HttpServletRequest request) {
-
-		String locale = request == null? Locale.getDefault().toString() : request.getLocale().toString();
+		Locale locale =
+			request == null ? Locale.getDefault() : request.getLocale();
 
 		// check cache
-		Properties properties = (Properties) propertiesTable.get(locale);
+		ResourceBundle bundle =
+			(ResourceBundle) resourceBundleTable.get(locale);
 
-		// load context.properties
-		if (properties == null)
-			properties = loadProperties(request);
+		// load bundle
+		if (bundle == null) {
+			bundle = ResourceBundle.getBundle("webapp", locale);
+			if (bundle != null) {
+				resourceBundleTable.put(locale, bundle);
+			} else {
+				return name;
+			}
+		}
 
-		if (properties == null)
-			return name;
-
-		String value = properties.getProperty(name);
+		String value = bundle.getString(name);
 		if (value != null)
 			return value;
 		else
 			return name;
-	}
-
-	/**
-	 * Loads properties file for a locale and adds to cache
-	 * @param locale the input locale or null; default locale will be used if null passed
-	 * @return property file or null if not exists
-	 */
-	private static Properties loadProperties(HttpServletRequest request) {
-		try {
-			String propURL = "help:/org.eclipse.help.webapp/webapp.properties";
-			InputStream propertiesStream = connector.openStream(propURL, request);
-			Properties localProp = new Properties();
-			localProp.load(propertiesStream);
-			String locale = request == null? Locale.getDefault().toString() : request.getLocale().toString();
-			propertiesTable.put(locale, localProp);
-			return localProp;
-		} catch (Throwable ex) {
-		}
-		return null;
 	}
 }

@@ -4,9 +4,7 @@
  */
 package org.eclipse.help.servlet;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import java.io.IOException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.*;
@@ -32,9 +30,10 @@ public class ContentServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 		throws ServletException, IOException {
-
-			if (connector != null)
-				connector.transfer(req, resp);
+		req.setCharacterEncoding("UTF-8");
+		if (connector != null){
+			connector.transfer(req, resp);
+		}
 	}
 	/**
 	 *
@@ -47,6 +46,6 @@ public class ContentServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 		throws ServletException, IOException {
 		if (connector != null)
-				connector.transfer(req, resp);
+			connector.transfer(req, resp);
 	}
 }

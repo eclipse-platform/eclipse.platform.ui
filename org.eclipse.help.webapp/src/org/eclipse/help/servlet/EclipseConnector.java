@@ -11,6 +11,8 @@ import java.util.*;
 import javax.servlet.ServletContext;
 import javax.servlet.http.*;
 
+import org.eclipse.help.internal.HelpSystem;
+
 /**
  * Performs transfer of data from eclipse to a jsp/servlet
  */
@@ -131,11 +133,8 @@ public class EclipseConnector {
 		throws Exception {
 		//System.out.println("help content for: " + url);
 
-		Eclipse eclipse =
-			(Eclipse) context.getAttribute("org.eclipse.help.servlet.eclipse");
-
 		URLConnection con = null;
-		if (eclipse != null) {
+		if (HelpSystem.getMode() == HelpSystem.MODE_INFOCENTER) {
 			// it is an infocentre, add client locale to url
 			String locale =
 				request == null
@@ -146,11 +145,17 @@ public class EclipseConnector {
 			} else {
 				url = url + "?lang=" + locale;
 			}
-			con = eclipse.openConnection(url);
-		} else {
-			URL helpURL = new URL(url);
-			con = helpURL.openConnection();
 		}
+		URL helpURL = new URL(url);
+		String protocol = helpURL.getProtocol();
+		if (!("help".equals(protocol)
+			|| "search".equals(protocol)
+			|| "links".equals(protocol)
+			|| "file".equals(protocol)
+			|| "livehelp".equals(protocol))) {
+			throw new IOException();
+		}
+		con = helpURL.openConnection();
 
 		con.setAllowUserInteraction(false);
 		con.setDoInput(true);
@@ -195,9 +200,8 @@ public class EclipseConnector {
 		String uri = req.getRequestURI();
 		//String agent = req.getHeader("User-Agent").toLowerCase(Locale.US);
 		//boolean ie = (agent.indexOf("msie") != -1);
-
 		if (uri != null && (uri.endsWith("html") || uri.endsWith("htm"))) {
-			if (UrlUtil.getRequestParameter(req, "resultof") != null)
+			if (req.getParameter("resultof") != null)
 				return new IFilter[] {
 					new FramesetFilter(req),
 					new HighlightFilter(req)};
@@ -205,6 +209,5 @@ public class EclipseConnector {
 				return new IFilter[] { new FramesetFilter(req)};
 		} else
 			return noFilters;
-
 	}
 }
