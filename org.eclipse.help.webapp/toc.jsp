@@ -146,7 +146,7 @@ A.book {
 		return;
 	}
 %>
-<body onload="onloadHandler('<%=tocHref%>', '<%=tocElement.getAttribute("label")%>')">
+<body onload="onloadHandler('<%=tocHref%>', '<%=tocElement.getAttribute("label")%>', <%=topicHref != null%>)">
 	<ul class='expanded' id='root'>
 		<a class='book' href='javascript: void 0;'><nobr class='book'><%=tocElement.getAttribute("label")%></nobr></a>
 <%

@@ -263,14 +263,14 @@ var tocTitle = "";
 /**
  * Handles the onload event
  */
-function onloadHandler(toc, title)
+function onloadHandler(toc, title, isTopicSelected)
 {
 	tocTitle = title;
 	parent.parent.setToolbarTitle(title);
 	
 	// clear the content page
-	parent.parent.MainFrame.location="home.jsp?title="+escape(title);
-
+	if (!isTopicSelected)
+		parent.parent.MainFrame.location="home.jsp?title="+escape(title);
 }
 
 
