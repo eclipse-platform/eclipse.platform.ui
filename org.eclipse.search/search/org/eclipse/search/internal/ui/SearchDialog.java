@@ -32,6 +32,9 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
+import org.eclipse.jface.viewers.CheckboxTableViewer;
+import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -159,11 +162,18 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 		Object input= SearchPlugin.getDefault().getSearchPageDescriptors();
 		String message= SearchMessages.getString("SearchPageSelectionDialog.message"); //$NON-NLS-1$
 		
-		/*
-		 * XXX:	Empty selection should be forbidden but it can't:
-		 *      see bug 15077: Can't validate ListSelectionDialog
-		 */
-		ListSelectionDialog dialog= new ListSelectionDialog(getShell(), input, new ListContentProvider(), labelProvider, message);
+		ListSelectionDialog dialog= new ListSelectionDialog(getShell(), input, new ListContentProvider(), labelProvider, message) {
+				public void create() {
+					super.create();
+					final CheckboxTableViewer viewer= getViewer();
+					final Button okButton= this.getOkButton();
+					viewer.addCheckStateListener(new ICheckStateListener() {
+						public void checkStateChanged(CheckStateChangedEvent event) {
+							okButton.setEnabled(viewer.getCheckedElements().length > 0);
+						}
+					});
+				}
+			};
 		dialog.setTitle(SearchMessages.getString("SearchPageSelectionDialog.title")); //$NON-NLS-1$
 		dialog.setInitialSelections(SearchPlugin.getDefault().getEnabledSearchPageDescriptors(fInitialPageId).toArray());
 		if (dialog.open() == dialog.OK) {
