@@ -587,15 +587,11 @@ public final class WorkbenchKeyboard {
      * 
      * @param keySequence
      *            The key sequence to check for a match; must never be <code>null</code>.
-     * @param allowInDialog
-     *            Whether the match should only occur with key bindings allowed
-     *            in dialogs.
      * @return The command identifier for the perfectly matching command;
      *         <code>null</code> if no command matches.
      */
-    private String getPerfectMatch(KeySequence keySequence,
-            boolean allowInDialog) {
-        return commandManager.getPerfectMatch(keySequence, allowInDialog);
+    private String getPerfectMatch(KeySequence keySequence) {
+        return commandManager.getPerfectMatch(keySequence);
     }
 
     /**
@@ -607,11 +603,8 @@ public final class WorkbenchKeyboard {
      * 
      * @param sequence
      *            The new key sequence for the state; should not be <code>null</code>.
-     * @param dialogOnly
-     *            Whether the state is only expecting to match on dialogs.
      */
-    private void incrementState(final KeySequence sequence,
-            final boolean dialogOnly) {
+    private void incrementState(KeySequence sequence) {
         // Record the starting time.
         startTime = System.currentTimeMillis();
         final long myStartTime = startTime;
@@ -632,7 +625,7 @@ public final class WorkbenchKeyboard {
                 public void run() {
                     if ((System.currentTimeMillis() > (myStartTime - delay))
                             && (startTime == myStartTime)) {
-                        openMultiKeyAssistShell(display, dialogOnly);
+                        openMultiKeyAssistShell(display);
                     }
                 }
             });
@@ -646,14 +639,11 @@ public final class WorkbenchKeyboard {
      * @param keySequence
      *            The key sequence to check for a partial match; must never be
      *            <code>null</code>.
-     * @param dialogOnly
-     *            Whether the match should only be allowed to occur on dialog
-     *            keys.
      * @return <code>true</code> if there is a partial match; <code>false</code>
      *         otherwise.
      */
-    private boolean isPartialMatch(KeySequence keySequence, boolean dialogOnly) {
-        return commandManager.isPartialMatch(keySequence, dialogOnly);
+    private boolean isPartialMatch(KeySequence keySequence) {
+        return commandManager.isPartialMatch(keySequence);
     }
 
     /**
@@ -663,14 +653,11 @@ public final class WorkbenchKeyboard {
      * @param keySequence
      *            The key sequence to check for a perfect match; must never be
      *            <code>null</code>.
-     * @param dialogOnly
-     *            Whether the match should only be allowed to occur on dialog
-     *            keys.
      * @return <code>true</code> if there is a perfect match; <code>false</code>
      *         otherwise.
      */
-    private boolean isPerfectMatch(KeySequence keySequence, boolean dialogOnly) {
-        return commandManager.isPerfectMatch(keySequence, dialogOnly);
+    private boolean isPerfectMatch(KeySequence keySequence) {
+        return commandManager.isPerfectMatch(keySequence);
     }
 
     /**
@@ -681,12 +668,8 @@ public final class WorkbenchKeyboard {
      * @param display
      *            The display on which the shell should be opened; must not be
      *            <code>null</code>.
-     * @param dialogOnly
-     *            Whether only the key bindings available in dialogs should be
-     *            listed.
      */
-    private void openMultiKeyAssistShell(final Display display,
-            final boolean dialogOnly) {
+    private void openMultiKeyAssistShell(final Display display) {
         // Safety check to close an already open shell, if there is one.
         if (multiKeyAssistShell != null) {
             multiKeyAssistShell.close();
@@ -717,7 +700,7 @@ public final class WorkbenchKeyboard {
             }
         });
         partialMatches.putAll(commandManager.getPartialMatches(state
-                .getCurrentSequence(), dialogOnly));
+                .getCurrentSequence()));
         Iterator partialMatchItr = partialMatches.entrySet().iterator();
         while (partialMatchItr.hasNext()) {
             Map.Entry entry = (Map.Entry) partialMatchItr.next();
@@ -859,18 +842,20 @@ public final class WorkbenchKeyboard {
                             + dialogOnly + ")"); //$NON-NLS-1$
         }
 
+        // TODO Add proper dialog support
+        if (dialogOnly) { return false; }
+
         KeySequence sequenceBeforeKeyStroke = state.getCurrentSequence();
         for (Iterator iterator = potentialKeyStrokes.iterator(); iterator
                 .hasNext();) {
             KeySequence sequenceAfterKeyStroke = KeySequence.getInstance(
                     sequenceBeforeKeyStroke, (KeyStroke) iterator.next());
-            if (isPartialMatch(sequenceAfterKeyStroke, dialogOnly)) {
-                incrementState(sequenceAfterKeyStroke, dialogOnly);
+            if (isPartialMatch(sequenceAfterKeyStroke)) {
+                incrementState(sequenceAfterKeyStroke);
                 return true;
 
-            } else if (isPerfectMatch(sequenceAfterKeyStroke, dialogOnly)) {
-                String commandId = getPerfectMatch(sequenceAfterKeyStroke,
-                        dialogOnly);
+            } else if (isPerfectMatch(sequenceAfterKeyStroke)) {
+                String commandId = getPerfectMatch(sequenceAfterKeyStroke);
                 return (executeCommand(commandId, event) || sequenceBeforeKeyStroke
                         .isEmpty());
 

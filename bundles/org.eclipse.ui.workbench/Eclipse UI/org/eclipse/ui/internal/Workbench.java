@@ -817,8 +817,8 @@ public final class Workbench implements IWorkbench {
 				KeySequence keySequence =
 					KeySequence.getInstance(
 						SWTKeySupport.convertAcceleratorToKeyStroke(accelerator));
-				return workbenchCommandSupport.getCommandManager().isPerfectMatch(keySequence, false)
-					|| workbenchCommandSupport.getCommandManager().isPartialMatch(keySequence, false);
+				return workbenchCommandSupport.getCommandManager().isPerfectMatch(keySequence)
+					|| workbenchCommandSupport.getCommandManager().isPartialMatch(keySequence);
 			}
 
 			public final boolean isActive(final String commandId) {
