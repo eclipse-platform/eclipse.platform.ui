@@ -212,8 +212,9 @@ protected void createButtonsForButtonBar(Composite parent) {
  * @return the custom area control, or <code>null</code>
  */
 protected Control createCustomArea(Composite parent) {
-	// by default, do nothing
-	return null;
+	
+	Label emptyLabel = new Label(parent,SWT.NULL);
+	return emptyLabel;
 }
 /**
  * This implementation of the <code>Dialog</code> framework 
@@ -225,7 +226,7 @@ protected Control createCustomArea(Composite parent) {
 protected Control createDialogArea(Composite parent) {
 	
 	// create message area
-	Control messageArea = createMessageArea(parent);
+	createMessageArea(parent);
 	
 	// create the top level composite for the dialog area
 	Composite composite = new Composite(parent, SWT.NULL);
@@ -236,21 +237,14 @@ protected Control createDialogArea(Composite parent) {
 	
 	GridData data = new GridData(GridData.FILL_BOTH);
 	data.horizontalSpan = 2;
-	composite.setLayoutData(data);
 	
+	composite.setLayoutData(data);
 	composite.setFont(parent.getFont());
 
 	// allow subclasses to add custom controls
-	Control custom = createCustomArea(composite);
-	
-	//If there is no custom area then return the message area
-	//as the one to attach to and delete the unnecessary Composite.
-	if(custom == null && (composite.getChildren().length == 0)){
-		composite.dispose();
-		return messageArea;	
-	}
-	else
-		return composite;
+	createCustomArea(composite);
+
+	return composite;
 }
 /**
  * Creates and returns the contents of the message area
