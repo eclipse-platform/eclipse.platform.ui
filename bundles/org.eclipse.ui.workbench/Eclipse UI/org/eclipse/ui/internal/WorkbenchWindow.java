@@ -1844,14 +1844,14 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		FormData perspectiveData = new FormData();
 
 		perspectiveData.top = new FormAttachment(0);
-		perspectiveData.left = new FormAttachment(0,5);
+		perspectiveData.right = new FormAttachment(100,-5);
 
 		perspectiveBar.getControl().setLayoutData(perspectiveData);
 
 		FormData toolBarData = new FormData();
 		toolBarData.top = new FormAttachment(0);
-		toolBarData.right = new FormAttachment(100);
-		toolBarData.left = new FormAttachment(perspectiveBar.getControl(), 5);
+		toolBarData.right = new FormAttachment(perspectiveBar.getControl(), -5);
+		toolBarData.left = new FormAttachment(0);
 
 		getToolBarControl().setLayoutData(toolBarData);
 
