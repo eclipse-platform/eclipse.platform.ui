@@ -51,7 +51,7 @@ public final class HandlerProxy extends AbstractHandler {
      * The name of the configuration element attribute which contains the
      * information necessary to instantiate the real handler.
      */
-    private static final String CLASS_ATTRIBUTE_NAME = "class"; //$NON-NLS-1$
+    private static final String HANDLER_ATTRIBUTE_NAME = "handler"; //$NON-NLS-1$
 
     /**
      * The identifier for the command to which this proxy should be associated.
@@ -124,7 +124,7 @@ public final class HandlerProxy extends AbstractHandler {
             // Load the handler.
             try {
                 handler = (IHandler) configurationElement
-                        .createExecutableExtension(CLASS_ATTRIBUTE_NAME);
+                        .createExecutableExtension(HANDLER_ATTRIBUTE_NAME);
                 configurationElement = null;
                 return true;
             } catch (final CoreException e) {

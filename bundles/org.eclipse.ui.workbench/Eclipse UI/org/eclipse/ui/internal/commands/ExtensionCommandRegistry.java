@@ -216,7 +216,7 @@ public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
 			else if (Persistence.TAG_COMMAND.equals(name))
 				readCommandDefinition(configurationElement);
 			else if (Persistence.TAG_HANDLER.equals(name)) {
-			    readHandlerDefinition(configurationElement);
+			    readHandlerSubmissionDefinition(configurationElement);
 			} else if (Persistence.TAG_IMAGE_BINDING.equals(name))
 				readImageBindingDefinition(configurationElement);
 			else if (Persistence.TAG_KEY_CONFIGURATION.equals(name))
@@ -331,9 +331,9 @@ public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
 	 * @param configurationElement The configuration element from which to read;
 	 * must not be <code>null</code>.
 	 */
-	private final void readHandlerDefinition(final IConfigurationElement configurationElement) {
+	private final void readHandlerSubmissionDefinition(final IConfigurationElement configurationElement) {
 	    final IHandler handler =
-			Persistence.readHandlerDefinition(configurationElement);
+			Persistence.readHandlerSubmissionDefinition(configurationElement);
 
 		if (handler != null)
 			handlers.add(handler);

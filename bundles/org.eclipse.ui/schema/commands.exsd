@@ -288,13 +288,6 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
       </complexType>
    </element>
 
-<!--element name="sequence">
-      <complexType>
-         <sequence>
-            <element ref="stroke" minOccurs="1" maxOccurs="unbounded"/>
-         </sequence>
-      </complexType>
-   </element-->
 <!--element name="stroke">
       <complexType>
          <attribute name="value" type="string">
@@ -304,6 +297,13 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
                </documentation>
             </annotation>
          </attribute>
+      </complexType>
+   </element-->
+<!--element name="sequence">
+      <complexType>
+         <sequence>
+            <element ref="stroke" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
       </complexType>
    </element-->
    <element name="context">
@@ -351,7 +351,7 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
       </complexType>
    </element>
 
-   <element name="handler">
+   <element name="handlerSubmission">
       <annotation>
          <documentation>
             &lt;p&gt;
@@ -370,7 +370,7 @@ This particular API should still be considered experimental.  While you may use 
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="class" type="string" use="required">
+         <attribute name="handler" type="string" use="required">
             <annotation>
                <documentation>
                   The name of the class of the handler.  If the class is an implementation of IExecutableExtension, then it is possible to pass data into the object.  This handler will be proxied until the handler is queried for information -- at which point the class will be loaded, and an instance created.

@@ -488,18 +488,18 @@
             categoryId="org.eclipse.ui.category.window"
             id="org.eclipse.ui.window.savePerspective">
       </command>
-      <handler
+      <handlerSubmission
             commandId="org.eclipse.ui.edit.copy"
-            class="org.eclipse.ui.handlers.WidgetMethodHandler:copy" />
-      <handler
+            handler="org.eclipse.ui.handlers.WidgetMethodHandler:copy" />
+      <handlerSubmission
             commandId="org.eclipse.ui.edit.cut"
-            class="org.eclipse.ui.handlers.WidgetMethodHandler:cut" />
-      <handler
+            handler="org.eclipse.ui.handlers.WidgetMethodHandler:cut" />
+      <handlerSubmission
             commandId="org.eclipse.ui.edit.paste"
-            class="org.eclipse.ui.handlers.WidgetMethodHandler:paste" />
-      <handler
+            handler="org.eclipse.ui.handlers.WidgetMethodHandler:paste" />
+      <handlerSubmission
             commandId="org.eclipse.ui.edit.selectAll"
-            class="org.eclipse.ui.handlers.WidgetMethodHandler:selectAll" />
+            handler="org.eclipse.ui.handlers.WidgetMethodHandler:selectAll" />
       <keyBinding
             commandId="org.eclipse.ui.newWizard"
             keySequence="Ctrl+N"
