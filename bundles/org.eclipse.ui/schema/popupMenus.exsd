@@ -220,7 +220,7 @@ The path is relative to the location of the &lt;samp&gt;plugin.xml&lt;/samp&gt; 
          <attribute name="state" type="boolean">
             <annotation>
                <documentation>
-                  an optional attribute indicating the initial state (either &lt;samp&gt;true&lt;/samp&gt; or &lt;samp&gt;false&lt;/samp&gt;), used when the &lt;samp&gt;style&lt;/samp&gt; attribute has the value &lt;samp&gt;radio&lt;samp&gt; or &lt;samp&gt;toggle&lt;/samp&gt;.
+                  an optional attribute indicating the initial state (either &lt;samp&gt;true&lt;/samp&gt; or &lt;samp&gt;false&lt;/samp&gt;), used when the &lt;samp&gt;style&lt;/samp&gt; attribute has the value &lt;samp&gt;radio&lt;/samp&gt; or &lt;samp&gt;toggle&lt;/samp&gt;.
                </documentation>
             </annotation>
          </attribute>

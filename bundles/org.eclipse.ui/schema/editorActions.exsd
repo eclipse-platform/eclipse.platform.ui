@@ -218,7 +218,7 @@ If its is omitted, the normal icon will be used.  This path is relative to the l
          <attribute name="state" type="boolean">
             <annotation>
                <documentation>
-                  an optional attribute indicating the initial state (either &lt;samp&gt;true&lt;/samp&gt; or &lt;samp&gt;false&lt;/samp&gt;), used when the &lt;samp&gt;style&lt;/samp&gt; attribute has the value &lt;samp&gt;radio&lt;samp&gt; or &lt;samp&gt;toggle&lt;/samp&gt;.
+                  an optional attribute indicating the initial state (either &lt;samp&gt;true&lt;/samp&gt; or &lt;samp&gt;false&lt;/samp&gt;), used when the &lt;samp&gt;style&lt;/samp&gt; attribute has the value &lt;samp&gt;radio&lt;/samp&gt; or &lt;samp&gt;toggle&lt;/samp&gt;.
                </documentation>
             </annotation>
          </attribute>
@@ -243,34 +243,34 @@ If no attribute is specified, the action is enabled for any number of items sele
 The following attribute formats are supported: 
     &lt;table border="0" width="80%"&gt;
       &lt;tr&gt;
-	&lt;td valign="top" width="25"&gt;&lt;/td&gt;
+ &lt;td valign="top" width="25"&gt;&lt;/td&gt;
         &lt;td valign="top" nowrap&gt;&lt;b&gt;!&lt;/b&gt;&lt;/td&gt;
         &lt;td valign="top"&gt;- 0 items selected&lt;/td&gt;
       &lt;/tr&gt;
       &lt;tr&gt;
-	&lt;td valign="top" width="25"&gt;&lt;/td&gt;
+ &lt;td valign="top" width="25"&gt;&lt;/td&gt;
         &lt;td valign="top" nowrap&gt;&lt;b&gt;?&lt;/b&gt;&lt;/td&gt;
         &lt;td valign="top"&gt;- 0 or 1 items selected&lt;/td&gt;
       &lt;/tr&gt;
       &lt;tr&gt;
-	&lt;td valign="top" width="25"&gt;&lt;/td&gt;
+ &lt;td valign="top" width="25"&gt;&lt;/td&gt;
         &lt;td valign="top" nowrap&gt;&lt;b&gt;+&lt;/b&gt;&lt;/td&gt;
         &lt;td valign="top"&gt;- 1 or more items selected&lt;/td&gt;
       &lt;/tr&gt;
       &lt;tr&gt;
-	&lt;td valign="top" width="25"&gt;&lt;/td&gt;
+ &lt;td valign="top" width="25"&gt;&lt;/td&gt;
         &lt;td valign="top" nowrap&gt;&lt;b&gt;multiple, 2+&lt;/b&gt;&lt;/td&gt;
         &lt;td valign="top"&gt;- 2 or more items selected&lt;/td&gt;
       &lt;/tr&gt;
       &lt;tr&gt;
-	&lt;td valign="top" width="25"&gt;&lt;/td&gt;
+ &lt;td valign="top" width="25"&gt;&lt;/td&gt;
         &lt;td valign="top" nowrap&gt;&lt;b&gt;n&lt;/b&gt;&lt;/td&gt;
         &lt;td valign="top"&gt;- a precise number of items selected.a precise number of items selected.&amp;nbsp;
           For example: enablesFor=&amp;quot; 4&amp;quot; enables the action only when 4
           items are selected&lt;/td&gt;
       &lt;/tr&gt;
       &lt;tr&gt;
-	&lt;td valign="top" width="25"&gt;&lt;/td&gt;
+ &lt;td valign="top" width="25"&gt;&lt;/td&gt;
         &lt;td valign="top" nowrap&gt;&lt;b&gt;*&lt;/b&gt;&lt;/td&gt;
         &lt;td valign="top"&gt;- any number of items selected&lt;/td&gt;
       &lt;/tr&gt;
@@ -284,17 +284,17 @@ The following attribute formats are supported:
                   an optional attribute to define the user interface style type for the action. If defined, the attribute value will be one of the following:
     &lt;table border="0" width="80%"&gt;
       &lt;tr&gt;
-	&lt;td valign="top" width="25"&gt;&lt;/td&gt;
+ &lt;td valign="top" width="25"&gt;&lt;/td&gt;
         &lt;td valign="top" nowrap&gt;&lt;b&gt;push&lt;/b&gt;&lt;/td&gt;
         &lt;td valign="top"&gt;- as a regular menu item or tool item.&lt;/td&gt;
       &lt;/tr&gt;
       &lt;tr&gt;
-	&lt;td valign="top" width="25"&gt;&lt;/td&gt;
+ &lt;td valign="top" width="25"&gt;&lt;/td&gt;
         &lt;td valign="top" nowrap&gt;&lt;b&gt;radio&lt;/b&gt;&lt;/td&gt;
         &lt;td valign="top"&gt;- as a radio style menu item or tool item. Actions with the radio style within the same menu or toolbar group behave as a radio set. The initial value is specified by the &lt;samp&gt;state&lt;/samp&gt; attribute.&lt;/td&gt;
       &lt;/tr&gt;
       &lt;tr&gt;
-	&lt;td valign="top" width="25"&gt;&lt;/td&gt;
+ &lt;td valign="top" width="25"&gt;&lt;/td&gt;
         &lt;td valign="top" nowrap&gt;&lt;b&gt;toggle&lt;/b&gt;&lt;/td&gt;
         &lt;td valign="top"&gt;- as a checked style menu item or as a toggle tool item. The initial value is specified by the &lt;samp&gt;state&lt;/samp&gt; attribute.&lt;/td&gt;
       &lt;/tr&gt;
