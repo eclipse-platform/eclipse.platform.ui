@@ -36,7 +36,7 @@ public class CommitAction extends TeamAction {
 					RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
 					String comment = manager.promptForComment(getShell());
 					if (comment != null) {
-						manager.commit(getSelectedResources(), comment, getShell(), monitor);
+						manager.commit(getSelectedResources(), comment, monitor);
 					}
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);

@@ -174,7 +174,7 @@ public class CommitSyncAction extends MergeAction {
 			if (toMerge.size() != 0) {
 				manager.merged((IRemoteSyncElement[])toMerge.toArray(new IRemoteSyncElement[0]));
 			}
-			manager.commit(changedResources, comment, getShell(), monitor);
+			manager.commit(changedResources, comment, monitor);
 			
 			it = incoming.iterator();
 			while (it.hasNext()) {

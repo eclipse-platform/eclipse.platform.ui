@@ -470,14 +470,10 @@ public class RepositoryManager {
 	/**
 	 * Commit the given resources to their associated providers.
 	 * 
-	 * What should happen with errors?
-	 * Should this do a workspace operation?
-	 * 
 	 * @param resources  the resources to commit
-	 * @param shell  the shell that will be the parent of the release comment dialog
 	 * @param monitor  the progress monitor
 	 */
-	public void commit(IResource[] resources, String comment, final Shell shell, IProgressMonitor monitor) throws TeamException {
+	public void commit(IResource[] resources, String comment, IProgressMonitor monitor) throws TeamException {
 		Hashtable table = getProviderMapping(resources);
 		Set keySet = table.keySet();
 		monitor.beginTask("", keySet.size() * 1000);
