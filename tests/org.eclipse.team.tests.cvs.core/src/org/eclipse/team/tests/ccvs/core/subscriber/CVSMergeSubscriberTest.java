@@ -74,14 +74,6 @@ public class CVSMergeSubscriberTest extends CVSSyncSubscriberTest {
 		action.getRunnable(new SyncInfoSet(infos)).run(DEFAULT_MONITOR);
 	}
 	
-	
-	private void markAsMerged(CVSMergeSubscriber subscriber, IProject project, String[] resourcePaths) throws CoreException, TeamException, InvocationTargetException, InterruptedException {
-		IResource[] resources = getResources(project, resourcePaths);
-		SyncInfo[] infos = createSyncInfos(subscriber, resources);
-		TestMarkAsMergedAction action = new TestMarkAsMergedAction();
-		action.getRunnable(new SyncInfoSet(infos)).run(DEFAULT_MONITOR);
-	}
-	
 	/**
 	 * Test the basic incoming changes cases
 	 * - incoming addition

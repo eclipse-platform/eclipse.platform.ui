@@ -11,10 +11,14 @@
 package org.eclipse.team.internal.ccvs.ui.subscriber;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSSyncInfo;
+import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.ui.synchronize.actions.SyncInfoFilter;
 import org.eclipse.team.ui.synchronize.actions.SyncInfoSet;
@@ -41,13 +45,10 @@ public class SubscriberConfirmMergedAction extends CVSSubscriberAction {
 		monitor.beginTask(null, 100 * syncResources.length);
 		try {
 			for (int i = 0; i < syncResources.length; i++) {
-				SyncInfo resource = syncResources[i];
-				
-					CVSSyncInfo cvsInfo = getCVSSyncInfo(resource);
-					if (cvsInfo != null) {
-						cvsInfo.makeOutgoing(Policy.subMonitorFor(monitor, 100));
-					}
-	
+				SyncInfo info = syncResources[i];
+				if (!makeOutgoing(info, Policy.subMonitorFor(monitor, 100))) {
+					// Failure was logged in makeOutgoing
+				}
 			}
 		} catch (TeamException e) {
 			handle(e);
@@ -56,4 +57,27 @@ public class SubscriberConfirmMergedAction extends CVSSubscriberAction {
 		}
 	}
 
+	private boolean makeOutgoing(SyncInfo info, IProgressMonitor monitor) throws CVSException, TeamException {
+		monitor.beginTask(null, 100);
+		try {
+			CVSSyncInfo cvsInfo = getCVSSyncInfo(info);
+			if (cvsInfo == null) {
+				CVSUIPlugin.log(IStatus.ERROR, "Synchronization information is missing for resource {0}" + cvsInfo.getLocal().getFullPath().toString(), null);
+				return false;
+			}
+			// Make sure the parent is managed
+			ICVSFolder parent = CVSWorkspaceRoot.getCVSFolderFor(cvsInfo.getLocal().getParent());
+			if (!parent.isCVSFolder()) {
+				// the parents must be made outgoing before the child can
+				SyncInfo parentInfo = cvsInfo.getSubscriber().getSyncInfo(parent.getIResource(), Policy.subMonitorFor(monitor, 10));
+				if (!makeOutgoing(parentInfo, Policy.subMonitorFor(monitor, 10))) {
+					return false;
+				}
+			}
+			cvsInfo.makeOutgoing(Policy.subMonitorFor(monitor, 80));
+			return true;
+		} finally {
+			monitor.done();
+		}
+	}
 }

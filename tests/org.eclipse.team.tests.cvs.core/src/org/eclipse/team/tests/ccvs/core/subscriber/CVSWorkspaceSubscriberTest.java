@@ -62,8 +62,8 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 		}
 	}
 	
-	protected TeamSubscriber getSubscriber() throws TeamException {
-		return getWorkspaceSubscriber();
+	protected CVSSyncTreeSubscriber getSubscriber() throws TeamException {
+		return (CVSSyncTreeSubscriber)getWorkspaceSubscriber();
 	}
 	
 	/* (non-Javadoc)
@@ -1250,6 +1250,29 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 		if (syncBytes != null) {
 			assertTrue(ResourceSyncInfo.isBinary(syncBytes));
 		}
-		
+	}
+	
+	public void testNestedMarkAsMerged() throws CoreException, InvocationTargetException, InterruptedException {
+		// Create a project and checkout a copy
+		IProject project = createProject(new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder1/b.txt"});
+		IProject copy = checkoutCopy(project, "-copy");
+		// Add the same resources to both projects to create conflicting additions
+		buildResources(project, new String[] { "folder2/", "folder2/file.txt", "folder2/file2.txt"}, false);
+		addResources(copy, new String[] { "folder2/", "folder2/file.txt", "folder2/file2.txt"}, true);
+		assertSyncEquals("testNestedMarkAsMerged sync check", project,
+				new String[] { "folder2/", "folder2/file.txt", "folder2/file.txt"},
+				true, new int[] { 
+					SyncInfo.CONFLICTING | SyncInfo.ADDITION,
+					SyncInfo.CONFLICTING | SyncInfo.ADDITION,
+					SyncInfo.CONFLICTING | SyncInfo.ADDITION
+				});
+		markAsMerged(getSubscriber(), project, new String[] {"folder2/file.txt"});
+		assertSyncEquals("testNestedMarkAsMerged sync check", project,
+				new String[] { "folder2/", "folder2/file.txt", "folder2/file2.txt"},
+				true, new int[] { 
+				SyncInfo.IN_SYNC,
+				SyncInfo.OUTGOING | SyncInfo.CHANGE,
+				SyncInfo.CONFLICTING | SyncInfo.ADDITION
+		});
 	}
 }

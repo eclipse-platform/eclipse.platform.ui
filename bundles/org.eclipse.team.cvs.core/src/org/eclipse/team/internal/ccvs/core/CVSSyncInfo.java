@@ -140,8 +140,11 @@ public class CVSSyncInfo extends SyncInfo {
 	 */
 	public void makeOutgoing(IProgressMonitor monitor) throws TeamException {
 		
-		// TODO: What is the impact of using whatever the current granularity is?
-		// int syncKind = getSyncKind(GRANULARITY_TIMESTAMP , monitor);
+		// For folders, there is no outgoing, only in-sync
+		if (getLocal().getType() == IResource.FOLDER) {
+			makeInSync();
+			return;
+		}
 		int syncKind = getKind();
 		boolean incoming = (syncKind & DIRECTION_MASK) == INCOMING;
 		boolean outgoing = (syncKind & DIRECTION_MASK) == OUTGOING;
@@ -206,7 +209,9 @@ public class CVSSyncInfo extends SyncInfo {
 			}
 		}
 		if(info!=null) {
-			info.setTag(local.getParent().getFolderSyncInfo().getTag());
+			FolderSyncInfo parentInfo = local.getParent().getFolderSyncInfo();
+			Assert.isNotNull(parentInfo);
+			info.setTag(parentInfo.getTag());
 		}
 		((ICVSFile)local).setSyncInfo(info, ICVSFile.UNKNOWN);
 	}
