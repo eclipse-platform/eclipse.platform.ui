@@ -1,39 +1,71 @@
 package org.eclipse.team.internal.ccvs.core.resources;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+ 
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.util.Assert;
 
+/**
+ * Value (immutable) object that represents workspace state information about the contents of a
+ * folder that was retreived from a CVS repository. It is a specialized representation of the files from
+ * the CVS sub-directory that contain folder specific connection information (e.g. Root, Repository, Tag).
+ *  
+ * @see ICVSFolder#getFolderSyncInfo()
+ */
 public class FolderSyncInfo {
 
+	// relative path of this folder in the repository, project1/folder1/folder2
 	private String repository;
+	
+	// :pserver:user@host:/home/user/repo
 	private String root;
+	
+	// sticky tag (e.g. version, date, or branch tag applied to folder)
 	private CVSEntryLineTag tag;
+	
+	// if true then it means only part of the folder was fetched from the repository, and CVS will not create 
+	// additional files in that folder.
 	private boolean isStatic;
 
-	public FolderSyncInfo() {
-	}
-
-	public FolderSyncInfo(String repo, String root, boolean isStatic) {
+	/**
+	 * Construct a folder sync object.
+	 * 
+	 * @param repo the relative path of this folder in the repository, cannot be <code>null</code>.
+	 * @param root the location of the repository, cannot be <code>null</code>.
+	 * @param tag the tag set for the folder or <code>null</code> if there is no tag applied.
+	 * @param isStatic to indicate is only part of the folder was fetched from the server.
+	 */
+	public FolderSyncInfo(String repo, String root, CVSTag tag, boolean isStatic) {
+		Assert.isNotNull(repo);
+		Assert.isNotNull(root);
 		this.repository = repo;
 		this.root = root;
 		this.isStatic = isStatic;
+		if(tag != null) {
+			this.tag = new CVSEntryLineTag(tag);
+		}
 	}
 	
+	/**
+	 * Construct a folder sync object.
+	 * 
+	 * @param repo the relative path of this folder in the repository, cannot be <code>null</code>.
+	 * @param root the location of the repository, cannot be <code>null</code>.
+	 * @param tag the entry line format of the tag. The first character is a single character indicating the type of 
+	 * tag: T, N, or D, for branch tag, nonbranch tag, or date. The rest of the line is the tag or the date itself. 
+	 * @param isStatic to indicate is only part of the folder was fetched from the server.
+	 */
 	public FolderSyncInfo(String repo, String root, String entryLineTag, boolean isStatic) {
-		this(repo, root, isStatic);
-		if(entryLineTag!=null) {
-			this.tag = new CVSEntryLineTag(entryLineTag);
-		}
+		this(repo, root, entryLineTag!=null ? new CVSEntryLineTag(entryLineTag) : null, isStatic);
 	}		
 	
-	public FolderSyncInfo(String repo, String root, CVSTag tag, boolean isStatic) {
-		this(repo, root, isStatic);
-		if (tag != null)
-			this.tag = new CVSEntryLineTag(tag);
-	}		
-
 	/**
-	 * Gets the root.
+	 * Gets the root, cannot be <code>null.
+	 * 
 	 * @return Returns a String
 	 */
 	public String getRoot() {
@@ -41,15 +73,8 @@ public class FolderSyncInfo {
 	}
 
 	/**
-	 * Sets the root.
-	 * @param root The root to set
-	 */
-	public void setRoot(String root) {
-		this.root = root;
-	}
-
-	/**
-	 * Gets the tag.
+	 * Gets the tag, may be <code>null</code>.
+	 * 
 	 * @return Returns a String
 	 */
 	public CVSEntryLineTag getTag() {
@@ -57,19 +82,8 @@ public class FolderSyncInfo {
 	}
 
 	/**
-	 * Sets the tag for the folder.  The provided tag must not be null.
-	 * @param tag The tag to set
-	 */
-	public void setTag(CVSTag tag) {
-		if (tag == null) {
-			this.tag = null;
-		} else {
-			this.tag = new CVSEntryLineTag(tag);
-		}
-	}
-
-	/**
-	 * Gets the repository.
+	 * Gets the repository, may be <code>null</code>.
+	 * 
 	 * @return Returns a String
 	 */
 	public String getRepository() {
@@ -77,14 +91,8 @@ public class FolderSyncInfo {
 	}
 
 	/**
-	 * Sets the repository.
-	 * @param repository The repository to set
-	 */
-	public void setRepository(String repository) {
-		this.repository = repository;
-	}
-	/**
 	 * Gets the isStatic.
+	 * 
 	 * @return Returns a boolean
 	 */
 	public boolean getIsStatic() {
@@ -92,15 +100,18 @@ public class FolderSyncInfo {
 	}
 
 	/**
-	 * Sets the isStatic.
-	 * @param isStatic The isStatic to set
-	 */
-	public void setIsStatic(boolean isStatic) {
-		this.isStatic = isStatic;
-	}
-	
-	/**
-	 * Compute the remote-location out of root and repository
+	 * Answers a full path to the folder on the remote server. This by appending the repository to the
+	 * repository location speficied in the root.
+	 * 
+	 * Example:
+	 * 	root = :pserver:user@host:/home/user/repo
+	 * 	repository = folder1/folder2
+	 * 
+	 * Returns:
+	 * 	/home/users/repo/folder1/folder2
+	 * 
+	 * @return the full path of this folder on the server.
+	 * @throws a CVSException if the root or repository is malformed.
 	 */
 	public String getRemoteLocation() throws CVSException {
 		
@@ -116,5 +127,17 @@ public class FolderSyncInfo {
 		
 		return result;
 	}
+	
+	/**
+	 * Sets the tag for the folder.
+	 * 
+	 * @param tag The tag to set
+	 */
+	private void setTag(CVSTag tag) {
+		if (tag == null) {
+			this.tag = null;
+		} else {
+			this.tag = new CVSEntryLineTag(tag);
+		}
+	}
 }
-

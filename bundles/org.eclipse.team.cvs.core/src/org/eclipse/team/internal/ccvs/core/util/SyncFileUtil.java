@@ -8,9 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.resources.CVSEntryLineTag;
 import org.eclipse.team.internal.ccvs.core.resources.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.resources.ResourceSyncInfo;
 
@@ -47,7 +45,7 @@ public class SyncFileUtil {
 		for (int i = 0; i < entries.length; i++) {
 			String line = entries[i];
 			if(!FOLDER_TAG.equals(line) && !"".equals(line)) {
-				ResourceSyncInfo info = new ResourceSyncInfo(line, null);
+				ResourceSyncInfo info = new ResourceSyncInfo(line, null, null);
 				infos.put(info.getName(), info);			
 			}
 		}
@@ -58,12 +56,14 @@ public class SyncFileUtil {
 					continue;
 				}
 				String line = permissions[i];
-				String name = line.substring(1,line.indexOf("/",1));
+				EmptyTokenizer tokenizer = new EmptyTokenizer(line,"/");
+				String name = tokenizer.nextToken();
+				String perms = tokenizer.nextToken();
 				ResourceSyncInfo info = (ResourceSyncInfo) infos.get(name);
 				if (info == null) {
 					throw new CVSException("Entries-File modified");
 				}
-				info.setPermissionLine(line);
+				infos.put(name, new ResourceSyncInfo(info.getEntryLine(true), perms, null));
 			}
 		}
 		
@@ -215,7 +215,7 @@ public class SyncFileUtil {
 		String[] entries = FileUtil.readLines(entriesFile);
 		for (int i = 0; i < entries.length; i++) {
 			if (!FOLDER_TAG.equals(entries[i])) {
-				mergedEntries.put((new ResourceSyncInfo(entries[i],null)).getName(),entries[i]);
+				mergedEntries.put((new ResourceSyncInfo(entries[i],null, null)).getName(),entries[i]);
 			}
 		}
 		
@@ -224,10 +224,10 @@ public class SyncFileUtil {
 			
 			if (logEntries[i].startsWith(ADD_TAG)) {
 				String newEntry = logEntries[i].substring(ADD_TAG.length());
-				mergedEntries.put((new ResourceSyncInfo(newEntry,null)).getName(),newEntry);		
+				mergedEntries.put((new ResourceSyncInfo(newEntry,null, null)).getName(),newEntry);		
 			} else if (logEntries[i].startsWith(REMOVE_TAG)) {
 				String newEntry = logEntries[i].substring(REMOVE_TAG.length());
-				mergedEntries.remove((new ResourceSyncInfo(newEntry,null)).getName());
+				mergedEntries.remove((new ResourceSyncInfo(newEntry,null, null)).getName());
 			}
 		}
 		

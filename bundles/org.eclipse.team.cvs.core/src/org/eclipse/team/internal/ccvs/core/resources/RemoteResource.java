@@ -19,6 +19,7 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Client;
 import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.ccvs.core.util.Assert;
 
 /**
  * The purpose of this class and its subclasses is to implement the corresponding
@@ -31,12 +32,6 @@ public abstract class RemoteResource extends PlatformObject implements ICVSRemot
 	protected ResourceSyncInfo info;
 	protected RemoteFolder parent;
 
-	protected RemoteResource(RemoteFolder parent, String name, CVSTag tag, boolean isFolder) {
-		info = new ResourceSyncInfo(name, isFolder);
-		info.setTag(tag);
-		this.parent = parent;
-	}
-	
 	/*
 	 * @see ICVSRemoteResource#getName()
 	 */
@@ -50,20 +45,7 @@ public abstract class RemoteResource extends PlatformObject implements ICVSRemot
 	public ICVSRemoteResource getRemoteParent() {
 		return parent;
 	}
-
-	/*
-	 * Get the local options for including a tag in a CVS command
-	 */
-	protected List getLocalOptionsForTag() {
-		List localOptions = new ArrayList();
-		CVSTag tag = info.getTag();
-		if ((tag != null) && (tag.getType() != tag.HEAD)) { 
-			localOptions.add(Client.TAG_OPTION);
-			localOptions.add(tag.getName()); 
-		}
-		return localOptions;
-	}
-		
+			
 	public abstract String getRemotePath();
 	
 	public abstract ICVSRepositoryLocation getRepository();
@@ -134,6 +116,7 @@ public abstract class RemoteResource extends PlatformObject implements ICVSRemot
 	 * @see ICVSResource#setSyncInfo(ResourceSyncInfo)
 	 */
 	public void setSyncInfo(ResourceSyncInfo info) {
-		//this.info = info;
+		// ensure that clients are not trying to set sync info on remote handles.
+		Assert.isTrue(false);
 	}
 }

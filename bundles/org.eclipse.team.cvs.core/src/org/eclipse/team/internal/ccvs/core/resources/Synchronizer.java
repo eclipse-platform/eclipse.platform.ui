@@ -6,8 +6,10 @@ package org.eclipse.team.internal.ccvs.core.resources;
  */
  
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -15,17 +17,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
-import org.eclipse.team.internal.ccvs.core.util.ResourceDeltaVisitor;
 import org.eclipse.team.internal.ccvs.core.util.SyncFileUtil;
 
 /**
@@ -129,6 +128,17 @@ public class Synchronizer {
 		return (ResourceSyncInfo)entriesSync.config.get(file.getName());
 	}
 
+	protected ResourceSyncInfo[] getResourceSyncForFolder(File folder) throws CVSException {
+		File entriesFile = new File(SyncFileUtil.getCVSSubdirectory(folder), SyncFileUtil.ENTRIES);
+		SyncFile entriesSync = (SyncFile)entriesCache.get(entriesFile);		
+		if(entriesSync==null) {
+			getResourceSync(new File(folder, "dummy"), true);
+			entriesSync = (SyncFile)entriesCache.get(entriesFile);
+		}
+		Collection entries = entriesSync.config.values();
+		return (ResourceSyncInfo[])entries.toArray(new ResourceSyncInfo[entries.size()]);
+	}
+	
 	public void setFolderSync(File folder, FolderSyncInfo info) throws CVSException {
 		
 		Assert.isNotNull(info);
@@ -136,7 +146,7 @@ public class Synchronizer {
 		// if parent has the sync folder (e.g. CVS) then ensure that the directory
 		// entry for this folder is added.
 		if(getFolderSync(folder.getParentFile())!=null) {
-			ResourceSyncInfo resourceInfo = new ResourceSyncInfo(folder.getName(), true);
+			ResourceSyncInfo resourceInfo = new ResourceSyncInfo(folder.getName());
 			setResourceSync(folder, resourceInfo);
 		}
 		
@@ -176,6 +186,11 @@ public class Synchronizer {
 	}
 	
 	public void deleteFolderSync(File folder) throws CVSException {
+		clearFolder(folder);
+		broadcastSyncChange(folder);
+	}
+	
+	protected void clearFolder(File folder) throws CVSException {
 		
 		// remove resource sync entries file from the cache
 		File entriesFile = new File(SyncFileUtil.getCVSSubdirectory(folder), SyncFileUtil.ENTRIES);
@@ -186,8 +201,23 @@ public class Synchronizer {
 		
 		// remove folder sync
 		folderConfigCache.remove(folder);
+	}
+	
+	public void deleteFolderSyncDeep(File folder) throws CVSException {
+		Assert.isTrue(folder.isDirectory());
 		
-		broadcastSyncChange(folder);
+		File[] childDirs = folder.listFiles(new FileFilter() {
+			public boolean accept(File file) {
+				return file.isDirectory();
+			}
+		});
+		
+		for (int i = 0; i < childDirs.length; i++) {
+			File file = childDirs[i];
+			deleteFolderSyncDeep(file);			
+		}
+		
+		clearFolder(folder);
 	}
 	
 	public void save() throws CVSException {
@@ -301,9 +331,9 @@ public class Synchronizer {
 	 * Utils
 	 */
 	
-	public ResourceSyncInfo[] members(File file) throws CVSException {
-		if(file.isDirectory()) {
-			return SyncFileUtil.readEntriesFile(file);
+	public ResourceSyncInfo[] members(File folder) throws CVSException {
+		if(folder.isDirectory()) {
+			return getResourceSyncForFolder(folder);
 		} else {
 			return new ResourceSyncInfo[0];
 		}

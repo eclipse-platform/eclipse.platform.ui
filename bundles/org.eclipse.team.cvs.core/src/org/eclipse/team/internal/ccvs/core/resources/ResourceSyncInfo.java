@@ -10,18 +10,42 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.core.util.EmptyTokenizer;
 
+/**
+ * Value (immutable) object that represents workspace state information about a resource contained in
+ * a CVS repository. It is a specialized representation of a line in the CVS/Entry file with the addition of 
+ * file permissions.
+ * 
+ * Example entry line from the CVS/Entry file:
+ * 
+ * /new.java/1.2/Fri Dec 07 00:17:52 2001/-kb/
+ * D/src////
+ *  
+ * @see ICVSResource#getSyncInfo()
+ */
 public class ResourceSyncInfo {
 	
+	// a directory sync info will have nothing more than a name
 	private boolean isDirectory = false;
 	
+	// utility constants
 	private static final String DIRECTORY_PREFIX = "D/";
 	public static final String BINARY_TAG = "-kb";
 	private static final String SEPERATOR = "/";
 	
+	// safe default permissions. Permissions are saved separatly so that the correct permissions
+	// can be sent back to the server on systems that don't save execute bits (e.g. windows).
 	private static final String DEFAULT_PERMISSIONS = "u=rw,g=rw,o=r";
 	
+	// file sync information can be associated with a local resource that has been deleted. This is
+	// noted by prefixing the revision with this character.
 	private static final String DELETED_PREFIX = "-";
+	private boolean isDeleted = false;
 	
+	// a sync element with a revision of '0' is considered a new file that has
+	// not been comitted to the repo.
+	private static final String ADDED_REVISION = "0";
+	
+	// fields describing the synchronization of a resource in CVS parlance
 	private int type;
 	private String name;
 	private String revision;
@@ -29,34 +53,112 @@ public class ResourceSyncInfo {
 	private String keywordMode;
 	private CVSEntryLineTag tag;
 	private String permissions;
-	private boolean isDeleted = false;
 
-	public ResourceSyncInfo(String entryLine, String permissions) throws CVSException {
+	/**
+	 * Constructor to create a sync object from entry line formats. The entry lines are parsed by this class.
+	 * 
+	 * @param entryLine the entry line (e.g.  /new.java/1.2/Fri Dec 07 00:17:52 2001/-kb/)
+	 * @param permissions the file permission (e.g. u=rw,g=rw,o=r). May be <code>null</code>.
+	 * @param timestamp if not included in the entry line. Will overide the value in the entry line. The
+	 * timestamp should be in the format specified in ICVSFile#getTimestamp(). May be <code>null</code>.
+	 * 
+	 * @exception CVSException is thrown if the entry cannot be parsed.
+	 */
+	public ResourceSyncInfo(String entryLine, String permissions, String timestamp) throws CVSException {
+		Assert.isNotNull(entryLine);
+		
 		setEntryLine(entryLine);
-		if (permissions != null) 
-			setPermissions(permissions);			
+		if (permissions != null)  {
+			this.permissions = permissions;
+		}			
+		// override the timestamp that may of been in entryLine. In some cases the timestamp is not in the
+		// entry line (e.g. receiving entry lines from the server versus reading them from the Entry file).
+		if(timestamp!=null) {
+			this.timeStamp = timestamp;
+		}
 	}
 	
-	public ResourceSyncInfo(String name, boolean isDirectory) {
+	/**
+	 * Constructor to create a sync object from predefined values.
+	 * 
+	 * @param name of the resource for which this sync state is associated, cannot be <code>null</code>.
+	 * @param revision of the resource, cannot be <code>null</code>.
+	 * @param timestamp can be <code>null</code>.
+	 * @param keywordMode can be <code>null</code>
+	 * @param tag can be <code>null</code>
+	 * @param permissions can be <code>null</code>
+	 */
+	public ResourceSyncInfo(String name, String revision, String timestamp, String keywordMode, CVSTag tag, String permissions) {
+		Assert.isNotNull(name);
+		Assert.isNotNull(revision);		
+		this.name = name;
+		this.timeStamp = timestamp;
+		this.keywordMode = keywordMode;
+		this.permissions = permissions;
+		setRevision(revision);
+		setTag(tag);
+	}
+	
+	/**
+	 * Constructor to create a folder sync object.
+	 * 
+	 * @param name of the resource for which this sync state is associatied, cannot be <code>null</code>.
+	 */
+	public ResourceSyncInfo(String name) {
 		Assert.isNotNull(name);
 		this.name = name;
-		this.isDirectory = isDirectory;
+		this.isDirectory = true;
 	}
 
+	/**
+	 * Answers if this sync information is for a folder in which case only a name is
+	 * available.
+	 * 
+	 * @return <code>true</code> if the sync information is for a folder and <code>false</code>
+	 * if it is for a file.
+	 */
 	public boolean isDirectory() {
 		return isDirectory;
 	}
 	
 	/**
-	 * Cosntruct a CVS compatible entry line 
-	 * that can be stored on disk.
-	 * @return null if the entry line was not set or set to null
+	 * Answers if this sync information is for a file that has been added but not comitted
+	 * to the CVS repository yet.
+	 * 
+	 * @return <code>true</code> if the sync information is new or <code>false</code> if 
+	 * the sync is for an file that exists remotely. For folder sync info this returns
+	 * <code>false</code>.
+	 */
+	public boolean isAdded() {
+		if(!isDirectory) {
+			return getRevision().equals(ADDED_REVISION);
+		} else {
+			return false;
+		}
+	}
+	
+	/**
+	 * Answers if this sync information is for a file that is scheduled to be deleted
+	 * from the repository but the deletion has not yet been comitted.
+	 * 
+	 * @return <code>true</code> if the sync information is deleted or <code>false</code> if 
+	 * the sync is for an file that exists remotely.
+	 */
+	public boolean isDeleted() {
+		return isDeleted;
+	}
+	
+	/**
+	 * Answers a CVS compatible entry line. The client can use this line to store in the CVS/Entry file or
+	 * sent it to the server.
+	 * 
+	 * @param includeTimeStamp determines if the timestamp will be included in the returned entry line. In 
+	 * some usages the timestamp should not be included in entry lines, for example when sending the entries 
+	 * to the server.
+	 * 
+	 * @return a file or folder entry line reflecting the state of this sync object.
 	 */
 	public String getEntryLine(boolean includeTimeStamp) {
-		
-		if(name == null) {
-			return null;
-		}
 		
 		StringBuffer result = new StringBuffer();
 		
@@ -74,7 +176,7 @@ public class ResourceSyncInfo {
 				
 			result.append(revision);
 			result.append(SEPERATOR);
-			// in some cases the timestamp not include in entry lines
+
 			if(includeTimeStamp) {
 				result.append(timeStamp);
 			}
@@ -89,6 +191,12 @@ public class ResourceSyncInfo {
 		return result.toString();
 	}
 	
+	/**
+	 * Anwsers the a compatible permissions line for files.
+	 * 
+	 * @return a permission line for files and <code>null</code> if this sync object is
+	 * a directory.
+	 */
 	public String getPermissionLine() {
 		if(isDirectory) {
 			return null;
@@ -101,17 +209,98 @@ public class ResourceSyncInfo {
 	}
 	
 	/**
+	 * Gets the permissions or <code>null</code> if permissions are not available.
+	 * 
+	 * @return a string of the format "u=rw,g=rw,o=r"
+	 */
+	public String getPermissions() {
+		return permissions;
+
+	}
+
+	/**
+	 * Gets the tag or <code>null</code> if a tag is not available.
+	 * 
+	 * @return Returns a String
+	 */
+	public CVSTag getTag() {
+		return tag;
+	}
+
+	/**
+	 * Gets the timeStamp or <code>null</code> if a timestamp is not available.
+	 * 
+	 * @return a string of the format "Thu Oct 18 20:21:13 2001"
+	 */
+	public String getTimeStamp() {
+		return timeStamp;
+	}
+
+	/**
+	 * Gets the version or <code>null</code> if this is a folder sync info. The returned
+	 * revision will never include the DELETED_PREFIX. To found out if this sync info is
+	 * for a deleted resource call isDeleted().
+	 * 
+	 * @return Returns a String
+	 */
+	public String getRevision() {
+		return revision;
+	}
+	
+
+	/**
+	 * Gets the name.
+	 * 
+	 * @return Returns a String
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * Gets the keyword mode or <code>null</code> if a keyword mode is available.
+	 * 
+	 * @return 
+	 */
+	public String getKeywordMode() {
+		return keywordMode;
+	}
+	
+	/**
+	 * Name equality between resource sync info objects.
+	 */
+	public boolean equals(Object other) {
+		if(other instanceof ResourceSyncInfo) {
+			ResourceSyncInfo syncInfo = ((ResourceSyncInfo)other);
+			if(other == this) return true;
+			if(getName() == syncInfo.getName()) return true;
+			return getName().equals(syncInfo.getName());
+		} else {
+			return false;
+		}
+	}
+	
+	public int hashCode() {
+		return getName().hashCode();
+	}
+	
+	/**
+	 * Sets the tag for the resource.
+	 */
+	private void setTag(CVSTag tag) {
+		if(tag!=null) {
+			this.tag = new CVSEntryLineTag(tag);
+		} else {
+			this.tag = null;
+		}					
+	}
+
+	/**
 	 * Set the entry line 
+	 * 
 	 * @throws CVSException if the entryLine is malformed
 	 */
-	public void setEntryLine(String entryLine) throws CVSException {
-
-		Assert.isTrue(entryLine!=null);
-
-		//Assert.isLegal(entryLine.startsWith(seperator) &&
-		//			   tokenizer.countTokens() == 5,
-		//			   Policy.bind("FileProperties.invalidEntryLine"));
-
+	private void setEntryLine(String entryLine) throws CVSException {
 		if(entryLine.startsWith(DIRECTORY_PREFIX)) {
 			isDirectory = true;
 			entryLine = entryLine.substring(1);
@@ -126,96 +315,25 @@ public class ResourceSyncInfo {
 		timeStamp = tokenizer.nextToken();
 		keywordMode = tokenizer.nextToken();
 		String tagEntry = tokenizer.nextToken();
+		
+		if(tokenizer.countTokens() != 5) {
+			throw new CVSException("Malformed entry line: " + entryLine);
+		}
+		
 		if(tagEntry.length()>0) {
 			tag = new CVSEntryLineTag(tagEntry);
 		} else {
 			tag = null;
 		}
 	}
-
-	/**
-	 * Gets the permissions
-	 * @return Returns a String
-	 */
-	public String getPermissions() {
-		return permissions;
-
-	}
-
-	/**
-	 * Sets the permissions
-	 * 
-	 *   /foo.java/u=rw,g=rw,o=rw
-	 * 
-	 * @param permissions The permissions to set
-	 */
-	public void setPermissionLine(String permissionLine) throws CVSException {
-
-		Assert.isTrue(permissionLine != null);
-
-		EmptyTokenizer tokenizer;
-		tokenizer = new EmptyTokenizer(permissionLine,SEPERATOR);
-		String filename = tokenizer.nextToken();
-		permissions = tokenizer.nextToken();
-	}
 	
 	/**
-	 * u=rw,g=rw,o=rw
-	 */
-	public void setPermissions(String permissions) {
-		this.permissions = permissions;
-	}
-
-	/**
-	 * Gets the tag
-	 * @return Returns a String
-	 */
-	public CVSTag getTag() {
-		return tag;
-	}
-	/**
-	 * Sets the tag for the resource. The provided tag must not be null.
-	 * @param tag The tag to set 
-	 */
-	public void setTag(CVSTag tag) {
-		if(tag!=null) {
-			this.tag = new CVSEntryLineTag(tag);
-		} else {
-			this.tag = null;
-		}					
-	}
-
-	/**
-	 * Gets the timeStamp
-	 * @return Returns a String usually in the format 
-	            "Thu Oct 18 20:21:13 2001"
-	 */
-	public String getTimeStamp() {
-		return timeStamp;
-	}
-	/**
-	 * Sets the timeStamp
+	 * Sets the version and decides if the revision is for a deleted resource the revision field
+	 * will not include the deleted prefix '-'.
 	 * 
-	 * @param timeStamp The timeStamp to set
-	 *         has the format "Thu Oct 18 20:21:13 2001" otherwise
-	 *         isDirty is allways true
-	 */
-	public void setTimeStamp(String timeStamp) {
-		this.timeStamp = timeStamp;
-	}
-
-	/**
-	 * Gets the version
-	 * @return Returns a String
-	 */
-	public String getRevision() {
-		return revision;
-	}
-	/**
-	 * Sets the version
 	 * @param version the version to set
 	 */
-	public void setRevision(String revision) {
+	private void setRevision(String revision) {
 		if(revision.startsWith(DELETED_PREFIX)) {
 			this.revision = revision.substring(DELETED_PREFIX.length());
 			isDeleted = true;
@@ -223,58 +341,5 @@ public class ResourceSyncInfo {
 			this.revision = revision;
 			isDeleted = false;
 		}
-	}
-
-	/**
-	 * Gets the name
-	 * @return Returns a String
-	 */
-	public String getName() {
-		return name;
-	}
-	/**
-	 * Sets the name
-	 * @param name The name to set
-	 */
-	public void setName(String name) {
-		Assert.isTrue(name!=null);
-		this.name = name;
-	}
-
-	/**
-	 * Gets the keyword mode
-	 * @return Returns a String
-	 */
-	public String getKeywordMode() {
-		return keywordMode;
-	}
-	
-	/**
-	 * Sets the keyword mode
-	 * @param keywordMode The keyword expansion mode (-kb, -ko, etc.)
-	 */
-	public void setKeywordMode(String keywordMode) {
-		this.keywordMode = keywordMode;
-	}
-	
-	public boolean equals(Object other) {
-		if(other instanceof ResourceSyncInfo) {
-			
-			ResourceSyncInfo syncInfo = ((ResourceSyncInfo)other);
-			
-			// We have to avoid Null-Pointer-Exceptions, other and this are not null
-			// for sure the rest has to be checked
-			if(other == this) return true;
-			if(getName() == syncInfo.getName()) return true;
-			if ((getName()==null) != (syncInfo.getName()==null)) return false;
-			return getName().equals(syncInfo.getName());
-			
-		} else {
-			return false;
-		}
-	}
-	
-	public int hashCode() {
-		return getName().hashCode();
 	}
 }

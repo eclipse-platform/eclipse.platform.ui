@@ -55,11 +55,10 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 	}
 	
 	public RemoteFile(RemoteFolder parent, String name, String revision, CVSTag tag) {
-		super(parent, name, tag, false);
-		info.setTimeStamp("dummy");
-		info.setKeywordMode("-kb"); // NOTE: We need to get the right one
-		info.setRevision(revision);
-		info.setPermissions("u=rw,g=rw,o=rw");
+		// XXX the keyword type of this remote file must be set correctly or else the 
+		// getContents may mangle the file.
+		this.parent = parent;
+		info = new ResourceSyncInfo(name, revision, "dummy", "-kb", tag, "u=rw,g=rw,o=rw");
 	}
 
 	/**
@@ -183,8 +182,8 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 		info = fileInfo;
 	}
 
-	protected void setRevision(String revision) {
-		info.setRevision(revision);
+	public void setRevision(String revision) {
+		new ResourceSyncInfo(info.getName(), revision, info.getTimeStamp(), info.getKeywordMode(), info.getTag(), info.getPermissions());
 	}
 		
 	/**
@@ -282,6 +281,18 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 	public boolean updateRevision(CVSTag tag, IProgressMonitor monitor) throws CVSException {
 		return parent.updateRevision(this, tag, monitor);
 	}
-
+	
+	/*
+	 * Get the local options for including a tag in a CVS command
+	 */
+	protected List getLocalOptionsForTag() {
+		List localOptions = new ArrayList();
+		CVSTag tag = info.getTag();
+		if ((tag != null) && (tag.getType() != tag.HEAD)) { 
+			localOptions.add(Client.TAG_OPTION);
+			localOptions.add(tag.getName()); 
+		}
+		return localOptions;
+	}
 }
 

@@ -46,14 +46,18 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 	private ICVSRemoteResource[] children;
 	private CVSRepositoryLocation repository;
 	private IPath repositoryRelativePath;
+	private CVSTag tag;
 	
 	/**
 	 * Constructor for RemoteFolder.
 	 */
 	public RemoteFolder(RemoteFolder parent, ICVSRepositoryLocation repository, IPath repositoryRelativePath, CVSTag tag) {
-		super(parent, repositoryRelativePath.lastSegment() == null ? "" : repositoryRelativePath.lastSegment() , tag, true);
+		String name = repositoryRelativePath.lastSegment() == null ? "" : repositoryRelativePath.lastSegment();
+		this.info = new ResourceSyncInfo(name);
+		this.parent = parent;
+		this.tag = tag;
 		this.repository = (CVSRepositoryLocation)repository;
-		this.repositoryRelativePath = repositoryRelativePath;
+		this.repositoryRelativePath = repositoryRelativePath;		
 	}
 
 	// Get the file revisions for the given filenames
@@ -507,14 +511,14 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 	 * @see ICVSRemoteFolder#setTag(String)
 	 */
 	public void setTag(CVSTag tag) {
-		getSyncInfo().setTag(tag);
+		this.tag = tag;
 	}
 
 	/*
 	 * @see ICVSRemoteFolder#getTag()
 	 */
 	public CVSTag getTag() {
-		return getSyncInfo().getTag();
+		return tag;
 	}
 	/*
 	 * @see ICVSFolder#setFolderInfo(FolderSyncInfo)

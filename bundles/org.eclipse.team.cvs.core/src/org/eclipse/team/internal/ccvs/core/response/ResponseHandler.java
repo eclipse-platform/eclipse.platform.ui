@@ -74,32 +74,32 @@ public abstract class ResponseHandler implements IResponseHandler {
 		
 		FolderSyncInfo info;
 		ICVSFolder mFolder;
+		String repo;
+		String root;
+
 		
 		mFolder = mRoot.getFolder(local);
 		
 		if (mFolder.exists() && mFolder.isCVSFolder()) {
-			info = mFolder.getFolderSyncInfo();	
+			info = mFolder.getFolderSyncInfo();
+			root = info.getRoot();
+			repo = info.getRepository();
 		} else {
 			mFolder.mkdir();
-			info = new FolderSyncInfo();
-			info.setRoot(connection.getCVSRoot().getLocation());
-			info.setRepository(Util.getRelativePath(connection.getRootDirectory(),
-									  							remote));
+			root = connection.getCVSRoot().getLocation();
+			repo = Util.getRelativePath(connection.getRootDirectory(), remote);
 		}
+		
+		CVSEntryLineTag newTag = null;
+		boolean isStatic = setStatic ? staticFolder : false;
 		
 		if (setTag) {
-			if (tag == null) {
-				info.setTag(null);
-			} else {
-				info.setTag(new CVSEntryLineTag(tag));
+			if(tag!=null) {
+				newTag = new CVSEntryLineTag(tag);
 			}
-		}
+		}		
 		
-		if (setStatic) {
-			info.setIsStatic(staticFolder);
-		}
-		
-		mFolder.setFolderSyncInfo(info);
+		mFolder.setFolderSyncInfo(new FolderSyncInfo(repo, root, newTag, isStatic));
 	}
 }
 

@@ -24,17 +24,19 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 
 	CVSLocalSyncElement localSync;
 	IRemoteResource remote;
+	boolean ignoreBaseTree = true;
 
-	public CVSRemoteSyncElement(IResource local, IRemoteResource base, IRemoteResource remote) {
+	public CVSRemoteSyncElement(boolean ignoreBaseTree, IResource local, IRemoteResource base, IRemoteResource remote) {
 		localSync = new CVSLocalSyncElement(local, base);
-		this.remote = remote;				
+		this.remote = remote;	
+		this.ignoreBaseTree = ignoreBaseTree;			
 	}
 
 	/*
 	 * @see RemoteSyncElement#create(IResource, IRemoteResource, IRemoteResource)
 	 */
-	public IRemoteSyncElement create(IResource local, IRemoteResource base, IRemoteResource remote, Object data) {
-		return new CVSRemoteSyncElement(local, base, remote);
+	public IRemoteSyncElement create(boolean ignoreBaseTree, IResource local, IRemoteResource base, IRemoteResource remote, Object data) {
+		return new CVSRemoteSyncElement(ignoreBaseTree, local, base, remote);
 	}
 
 	/*
@@ -141,5 +143,11 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 	 */
 	protected boolean isIgnored(IResource resource) {
 		return localSync.isIgnored(resource);
+	}
+	/*
+	 * @see IRemoteSyncElement#ignoreBaseTree()
+	 */
+	public boolean ignoreBaseTree() {
+		return ignoreBaseTree;
 	}
 }

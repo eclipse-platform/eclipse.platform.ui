@@ -376,7 +376,7 @@ public class RemoteFolderTreeBuilder {
 	}
 	
 	private void updateRevision(RemoteFolder root, IPath path, String revision) throws CVSException {
-		((RemoteFile)root.getFile(path.toString())).getSyncInfo().setRevision(revision);
+		((RemoteFile)root.getFile(path.toString())).setRevision(revision);
 	}
 }
 

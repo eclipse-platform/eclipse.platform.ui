@@ -71,25 +71,17 @@ class CheckedIn extends ResponseHandler {
 		// file and therefore a file that is dirty after the check-in
 		// as well
 		changeFile = changeFile || !mFile.exists();
+		ResourceSyncInfo newInfo;
 		
 		if (changeFile) {
-			fileInfo = new ResourceSyncInfo(entryLine, null);
+			newInfo = new ResourceSyncInfo(entryLine, null, DUMMY_TIMESTAMP);
 		} else {
 			fileInfo = mFile.getSyncInfo();
-			fileInfo.setEntryLine(entryLine);
+			newInfo = new ResourceSyncInfo(entryLine, fileInfo.getPermissions(), mFile.getTimeStamp());
 		}
 
-		if (changeFile) {
-			fileInfo.setTimeStamp(DUMMY_TIMESTAMP);
-		} else {
-			fileInfo.setTimeStamp(mFile.getTimeStamp());
-		}			
-
-		mFile.setSyncInfo(fileInfo);
-		
+		mFile.setSyncInfo(newInfo);
 		Assert.isTrue(changeFile == mFile.isDirty());
-
 	}
-
 }
 

@@ -105,21 +105,11 @@ class Add extends Command {
 				
 		for (int i=0; i<mWorkResources.length; i++) {
 			if (mWorkResources[i].isFolder()) {
-				FolderSyncInfo newFolderInfo = new FolderSyncInfo();
-				
 				mFolder = (ICVSFolder) mWorkResources[i];
-				FolderSyncInfo folderInfo = mFolder.getParent().getFolderSyncInfo();
-				
-				newFolderInfo.setRepository(folderInfo.getRepository() + 
-										Client.SERVER_SEPARATOR + mFolder.getName());
-				newFolderInfo.setRoot(folderInfo.getRoot());
-				newFolderInfo.setTag(folderInfo.getTag());
-				
-				mFolder.setFolderSyncInfo(newFolderInfo);				
+				FolderSyncInfo info = mFolder.getParent().getFolderSyncInfo();				
+				String repository = info.getRepository() + Client.SERVER_SEPARATOR + mFolder.getName();			
+				mFolder.setFolderSyncInfo(new FolderSyncInfo(repository, info.getRoot(), info.getTag(), info.getIsStatic()));
 			}
 		}
-
-	}
-	
+	}	
 }
-

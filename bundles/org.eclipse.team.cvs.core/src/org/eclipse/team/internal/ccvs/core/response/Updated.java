@@ -111,21 +111,20 @@ class Updated extends ResponseHandler {
 		
 		in = connection.getResponseStream();
 
-		fileInfo = new ResourceSyncInfo(entry, permissions);
-		binary = fileInfo.getKeywordMode().indexOf(ResourceSyncInfo.BINARY_TAG) != -1;
+		binary = entry.indexOf("/"+ResourceSyncInfo.BINARY_TAG) != -1;
 		readOnly = permissions.indexOf(READ_ONLY_FLAG) == -1;
 		
 		mFile.receiveFrom(in,monitor,size,binary,readOnly);
 		
-		// Set the timestamp in the file
-		// set the result in the fileInfo
+		// Set the timestamp in the file, set the result in the fileInfo
+		String timestamp;
 		mFile.setTimeStamp(modTimeHandler.pullLastTime());
 		if (upToDate) {
-			fileInfo.setTimeStamp(mFile.getTimeStamp());
+			timestamp = mFile.getTimeStamp();
 		} else {
-			fileInfo.setTimeStamp(RESULT_OF_MERGE + mFile.getTimeStamp());
+			timestamp = RESULT_OF_MERGE + mFile.getTimeStamp();
 		}			
-		mFile.setSyncInfo(fileInfo);
+		mFile.setSyncInfo(new ResourceSyncInfo(entry, permissions, timestamp));
 
 		Assert.isTrue(mFile.isDirty()!=upToDate);
 	}

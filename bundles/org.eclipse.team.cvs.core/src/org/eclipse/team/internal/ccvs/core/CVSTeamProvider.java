@@ -680,7 +680,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 				remote = null;
 			}
 		}
-		return new CVSRemoteSyncElement(resource, null, remote);
+		return new CVSRemoteSyncElement(true /* ignore base tree */, resource, null, remote);
 	}
 	
 	/**
@@ -849,8 +849,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 			public void visitFile(ICVSFile file) throws CVSException {};
 			public void visitFolder(ICVSFolder folder) throws CVSException {
 				FolderSyncInfo info = folder.getFolderSyncInfo();
-				info.setRoot(root);
-				folder.setFolderSyncInfo(info);
+				folder.setFolderSyncInfo(new FolderSyncInfo(info.getRepository(), root, info.getTag(), info.getIsStatic()));
 				folder.acceptChildren(this);
 			};
 		});
