@@ -5,6 +5,7 @@ package org.eclipse.ui.internal;
  */
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.*;
 
@@ -147,6 +148,7 @@ private void openDialog(WorkbenchPage page) {
 	tc.pack();
 	table.pack();
 	dialog.pack();
+
  	tc.setWidth(table.getClientArea().width);
 	table.setFocus();
 	table.addFocusListener(new FocusListener() {
@@ -156,11 +158,15 @@ private void openDialog(WorkbenchPage page) {
 		}
 	});
 	
-	int x = dialog.getBounds().width;
-	x = (display.getBounds().width - x) / 2;
-	int y = dialog.getBounds().height;
-	y = (display.getBounds().height - y) / 2;
-	dialog.setLocation(x,y);
+	Rectangle dialogBounds = dialog.getBounds();
+	Rectangle displayBounds = display.getBounds();
+	dialogBounds.x = dialogBounds.width;
+	dialogBounds.x = (displayBounds.width - dialogBounds.x) / 2;
+	dialogBounds.y = dialog.getBounds().height;
+	dialogBounds.y = (display.getBounds().height - dialogBounds.y) / 2;
+	dialogBounds.height = dialogBounds.height + 3 - table.getHorizontalBar().getSize().y;
+	
+	dialog.setBounds(dialogBounds);
 
 	addMouseListener(table,dialog);
 	addKeyListener(table,dialog);
