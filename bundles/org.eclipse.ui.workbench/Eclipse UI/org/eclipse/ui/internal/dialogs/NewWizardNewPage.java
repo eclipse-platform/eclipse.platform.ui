@@ -275,7 +275,9 @@ class NewWizardNewPage
 	 * expanded no longer exists then it is ignored.
 	 */
 	protected void expandPreviouslyExpandedCategories() {
-		expandViewer(filteredViewer, STORE_EXPANDED_CATEGORIES_ID);		
+		expandViewer(filteredViewer, STORE_EXPANDED_CATEGORIES_ID);	
+		if (unfilteredViewer != null)
+		    expandViewer(unfilteredViewer, STORE_EXPANDED_CATEGORIES_ID);
 	}
 
 	/**
@@ -409,8 +411,9 @@ class NewWizardNewPage
 
 		if (unfilteredViewer != null && unfilteredSelected) {
 		    updateViewerSelection(unfilteredViewer, STORE_SELECTED_ID);
-			stackLayout.topControl = unfilteredViewer.getControl();
-			stackContainer.layout();		    
+		    showAllCheck.setSelection(true);
+			stackLayout.topControl = unfilteredViewer.getControl().getParent();
+			stackContainer.layout();
 		}
 		else
 		    updateViewerSelection(filteredViewer, STORE_SELECTED_ID);
