@@ -121,6 +121,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	
 	private static final boolean DEBUG= false;
 	
+	private static final boolean FIX_47640= true;
+	
 	private static final String[] GLOBAL_ACTIONS= {
 		ActionFactory.UNDO.getId(),
 		ActionFactory.REDO.getId(),
@@ -590,17 +592,13 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		/**
 		 * Returns true if given character range overlaps with this Diff.
 		 */
-		boolean contains(MergeSourceViewer w, int start, int end) {
+		boolean overlaps(MergeSourceViewer w, int start, int end) {
 			Position h= getPosition(w);
 			if (h != null) {
-				int offset= h.getOffset();
-				if (start >= offset) {
-					int endPos= offset+h.getLength();
-					if (end < endPos)
-						return true;
-					if (endPos == w.getDocument().getLength())
-						return true;
-				}
+				int ds= h.getOffset();
+				int de= ds + h.getLength();
+				if ((start < de) && (end >= ds))
+					return true;	
 			}
 			return false;
 		}
@@ -1618,6 +1616,42 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		
 		boolean emptyInput= (ancestor == null && left == null && right == null);
 
+		Object input= getInput();
+
+		Position ancestorRange= null;
+		Position leftRange= null;
+		Position rightRange= null;
+		
+		int dir= 0;
+		
+		// if one side is empty use container
+		if (FIX_47640 && !emptyInput && (left == null || right == null)) {
+			if (input instanceof IDiffElement) {
+				IDiffContainer parent= ((IDiffElement)input).getParent();
+				if (parent instanceof ICompareInput) {
+				    ICompareInput ci= (ICompareInput) parent;
+				    
+				    if (ci.getAncestor() instanceof IDocumentRange
+				            || ci.getLeft() instanceof IDocumentRange
+				            		|| ci.getRight() instanceof IDocumentRange) {
+				    
+				        	if (ancestor instanceof IDocumentRange)
+				        	    ancestorRange= ((IDocumentRange)ancestor).getRange();
+				        	if (left instanceof IDocumentRange)
+				        	    leftRange= ((IDocumentRange)left).getRange();
+				        	if (right instanceof IDocumentRange)
+				        	    rightRange= ((IDocumentRange)right).getRange();
+					    
+					    ancestor= ci.getAncestor();
+					    left= ci.getLeft();
+					    right= ci.getRight();
+					    
+					    dir= ((IDiffElement)input).getKind();
+				    }
+				}
+			}
+		}
+
 		int n= 0;
 		if (left != null)
 			n++;
@@ -1634,8 +1668,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		CompareConfiguration cc= getCompareConfiguration();
 		IMergeViewerContentProvider cp= getMergeContentProvider();
 		
-		boolean rightEditable= cc.isRightEditable() && cp.isRightEditable(getInput());
-		boolean leftEditable= cc.isLeftEditable() && cp.isLeftEditable(getInput());
+		boolean rightEditable= cc.isRightEditable() && cp.isRightEditable(input);
+		boolean leftEditable= cc.isLeftEditable() && cp.isLeftEditable(input);
 		
 		fRight.setEditable(rightEditable);
 		fLeft.setEditable(leftEditable);
@@ -1650,30 +1684,54 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		fRightEncoding= getEncoding(right);
 		
 		setDocument(fAncestor, 'A', ancestor);
+		
+	    doDiff();
 					
-		doDiff();
-				
 		invalidateLines();
 		updateVScrollBar();
 		refreshBirdsEyeView();
 		
 		if (!emptyInput && !fComposite.isDisposed()) {
-			if (true) {	// see #13844
-				selectFirstDiff();
-			} else {
-				// delay so that StyledText widget gets a chance to resize itself
-				// (otherwise selectFirstDiff would not know its visible area)
-				fComposite.getDisplay().asyncExec(
-					new Runnable() {
-						public void run() {
-							selectFirstDiff();
-						}
-					}
-				);
+			Diff selectDiff= null;
+			if (FIX_47640) {
+				if (leftRange != null)
+				    selectDiff= findDiff('L', leftRange);
+				else if (rightRange != null)
+				    selectDiff= findDiff('R', rightRange);
 			}
+			if (selectDiff != null)
+				setCurrentDiff(selectDiff, true);
+			else
+				selectFirstDiff();
 		}
 	}
-	
+
+	private Diff findDiff(char c, Position range) {
+		
+		MergeSourceViewer v;
+		int start= range.getOffset();
+		int end= start + range.getLength();
+		if (c == 'L')
+			v= fLeft;
+		else if (c == 'R')
+			v= fRight;
+		else
+			return null;
+		
+		if (fChangeDiffs != null) {
+			boolean threeWay= isThreeWay();
+			Iterator iter= fChangeDiffs.iterator();
+			while (iter.hasNext()) {
+				Diff diff= (Diff) iter.next();
+				if (diff.isDeleted() || diff.fDirection == RangeDifference.NOCHANGE)
+				    continue;
+				if (diff.overlaps(v, start, end))
+					return diff;
+			}
+		}
+		return null;
+	}
+
 	private static String getEncoding(Object o) {
 		String encoding= null;
 		if (o instanceof IEncodedStreamContentAccessor) {
@@ -1751,19 +1809,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 
 		updateLines(doc);
 	}
-	
-//	private static ITypedElement getLeg(ICompareInput input, char type) {
-//		switch (type) {
-//		case 'A':
-//			return input.getAncestor();
-//		case 'L':
-//			return input.getLeft();
-//		case 'R':
-//			return input.getRight();
-//		}
-//		return null;			
-//	}
-	
+		
 	/**
 	 * This method is called if a range of text on one side is copied into an empty subdocument
 	 * on the other side. The method returns the position where the subdocument is placed into the base document.
@@ -3615,7 +3661,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			Iterator e= fChangeDiffs.iterator();
 			while (e.hasNext()) {
 				Diff diff= (Diff) e.next();
-				if (diff.contains(tp, rangeStart, rangeEnd))
+				if (diff.overlaps(tp, rangeStart, rangeEnd))
 					return diff;
 			}
 		}
