@@ -207,6 +207,15 @@ public interface IDebugUIConstants {
 	 */
 	public static final String PREF_ACTIVATE_WORKBENCH= PLUGIN_ID + ".activate_workbench"; //$NON-NLS-1$	
 	
+	/**
+	 * Boolean preference controlling whether the text in the detail panes is
+	 * wrapped. When <code>true</code> the text in the detail panes will be
+	 * wrapped in new variable view.
+	 *
+	 * @since 2.1
+	 */
+	public static final String PREF_DETAIL_PANE_WORD_WRAP = PLUGIN_ID + ".detail_pane_word_wrap"; //$NON-NLS-1$
+	
 		
 	// Debug views
 	

@@ -55,8 +55,9 @@ public class VariableViewsPreferencePage extends FieldEditorPreferencePage imple
 		
 		createSpacer(getFieldEditorParent(), 1);
 		
-		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_SHOW_DETAIL_PANE, DebugPreferencesMessages.getString("VariableViewPreferencePage.&Show_detail_pane_by_default_1"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
 		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_SHOW_TYPE_NAMES, DebugPreferencesMessages.getString("VariableViewPreferencePage.Show_type_&names_by_default_2"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
+		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_SHOW_DETAIL_PANE, DebugPreferencesMessages.getString("VariableViewPreferencePage.&Show_detail_pane_by_default_1"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
+		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_DETAIL_PANE_WORD_WRAP, "Use word &wrap in the detail pane", SWT.NONE, getFieldEditorParent()));
 		
 		createSpacer(getFieldEditorParent(), 1);
 		
@@ -81,6 +82,7 @@ public class VariableViewsPreferencePage extends FieldEditorPreferencePage imple
 		
 		store.setDefault(IDebugUIConstants.PREF_SHOW_DETAIL_PANE, false);
 		store.setDefault(IDebugUIConstants.PREF_SHOW_TYPE_NAMES, false);
+		store.setDefault(IDebugUIConstants.PREF_DETAIL_PANE_WORD_WRAP, false);
 		
 		PreferenceConverter.setDefault(store, CHANGED_VARIABLE_RGB, new RGB(255, 0, 0));
 	}

@@ -399,6 +399,8 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 			setDetailPaneOrientation(DebugUIPlugin.getDefault().getPreferenceStore().getString(IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_ORIENTATION));
 		} else if (propertyName.equals(IDebugPreferenceConstants.CHANGED_VARIABLE_RGB)) {
 			getEventHandler().refresh();
+		} else if (propertyName.equals(IDebugUIConstants.PREF_DETAIL_PANE_WORD_WRAP)) {
+			toggleDetailPaneWrodWrap(DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_DETAIL_PANE_WORD_WRAP));
 		}
 	}
 	
@@ -443,6 +445,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		getDetailDocument().addDocumentListener(getDetailDocumentListener());
 		detailsViewer.setEditable(false);
 		getSashForm().setMaximizedControl(variablesViewer.getControl());
+		toggleDetailPaneWrodWrap(DebugUIPlugin.getDefault().getPluginPreferences().getBoolean(IDebugUIConstants.PREF_DETAIL_PANE_WORD_WRAP));
 		
 		detailsViewer.getSelectionProvider().addSelectionChangedListener(getDetailSelectionChangedListener());
 
@@ -544,6 +547,13 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 			}
 			getSashForm().setMaximizedControl(getViewer().getControl());
 		}
+	}
+	
+	/**
+	 * Set on or off the word wrap flag for the detail pane.
+	 */
+	public void toggleDetailPaneWrodWrap(boolean on) {
+		fDetailViewer.getTextWidget().setWordWrap(on);
 	}
 	
 	/**
