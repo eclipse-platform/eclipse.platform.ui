@@ -12,85 +12,13 @@ import java.util.ArrayList;import java.util.Iterator;import java.util.List;i
  * Adapts an <code>IDocument</code> to the <code>StyledTextContent</code> interface.
  */
 class DocumentAdapter implements IDocumentAdapter, IDocumentListener {
-	
-	
-	/**
-	 * Remembers a document event and related information such as the number of lines
-	 * as well as the text replaced by the changed described by the document change
-	 * event.
-	 */
-	class EventInfo {
-		/** The number of replaced lines. */
-		int fReplacedLines;
-		/** The replaced text. */
-		String fReplacedText;
-		/** Inserted lines */
-		int fInsertedLines;
-		/** The document event */
-		DocumentEvent fEvent;
-		
-		/**
-		 * The the given event as the event to be remembered and for which
-		 * to remember the associated information.
-		 *
-		 * @param event the document event to be remembered
-		 */
-		void setEvent(DocumentEvent event) {
-			
-			fEvent= event;
-			if (fEvent != null) {
-				IDocument document= fEvent.getDocument();
-				if (document != null) {
-					
-					// check whether replace or set
-					if (fEvent.fOffset != 0 || fEvent.fLength != document.getLength()) {
-						try {
-							fReplacedLines= document.getNumberOfLines(fEvent.fOffset, fEvent.fLength) - 1;
-							fReplacedText= (fEvent.fLength > 0 ? document.get(fEvent.fOffset, fEvent.fLength) : ""); //$NON-NLS-1$
-							fInsertedLines= (fEvent.fText == null ? 0 : document.computeNumberOfLines(fEvent.fText));
-							return;
-						} catch (BadLocationException x) {
-							fEvent= null;
-						}
-					}
-				} else
-					fEvent= null;
-			}
-			
-			fReplacedLines= -1;
-			fReplacedText= null;
-			fInsertedLines= -1;
-		}
-		
-		/**
-		 * Checks whether the given event is the one which this info is about.
-		 *
-		 * @param event the event to be checked
-		 * @return <code>true</code> if this info is about the given event
-		 */
-		boolean refersTo(DocumentEvent event) {	
-			if (fEvent == null)
-				return false;
-			return (event == fEvent);
-		}
-		
-		/**
-		 * Checks whether the remembered event describes a set text or replace operation.
-		 *
-		 * @return <code>true</code> if the remembered event describes a set text operation
-		 */
-		boolean isTextSet() {
-			return (fEvent != null && fReplacedLines == -1 && fReplacedText == null);
-		}	
-	};
-	
-	
+
 	/** The adapted document. */
 	private IDocument fDocument;
 	/** The registered text change listeners */
 	private List fTextChangeListeners= new ArrayList(1);
-	/** The remembered event information */
-	private EventInfo fEventInfo= new EventInfo();
+	/** The remembered document event */
+	private DocumentEvent fEvent;
 	/** The line delimiter */
 	private String fLineDelimiter= null;
 	
@@ -257,19 +185,17 @@ class DocumentAdapter implements IDocumentAdapter, IDocumentListener {
 	 * @see IDocumentListener#documentChanged(DocumentEvent)
 	 */
 	public void documentChanged(DocumentEvent event) {
-		if (fEventInfo.refersTo(event)) {
-			if (fEventInfo.isTextSet())
-				fireTextSet();
-			else
-				fireTextChanged();
-		}
+		// check whether the given event is the one which was remembered
+		if (fEvent != null && event == fEvent)
+			fireTextChanged();
 	}
 	
 	/*
 	 * @see IDocumentListener#documentAboutToBeChanged(DocumentEvent)
 	 */
 	public void documentAboutToBeChanged(DocumentEvent event) {
-		fEventInfo.setEvent(event);
+		// Remember the given event
+	    fEvent= event;
 		fireTextChanging();
 	}
 	
@@ -302,20 +228,27 @@ class DocumentAdapter implements IDocumentAdapter, IDocumentListener {
 	/**
 	 * Sends the text changing event to all registered listeners.
 	 */
-	private void fireTextChanging() {
-		TextChangingEvent event= new TextChangingEvent(this);
+	private void fireTextChanging() {    
+		try {
+		    IDocument document= fEvent.getDocument();
+		    if (document == null)
+		    	return;
 
-		event.start= fEventInfo.fEvent.fOffset;
-		event.replaceCharCount= fEventInfo.fEvent.fLength;
-		event.newCharCount= (fEventInfo.fEvent.fText == null ? 0 : fEventInfo.fEvent.fText.length());
-		event.replaceLineCount= fEventInfo.fReplacedLines;
-		event.newText= fEventInfo.fEvent.fText;
-		event.newLineCount= fEventInfo.fInsertedLines;
-		
-		if (fTextChangeListeners != null && fTextChangeListeners.size() > 0) {
-			Iterator e= new ArrayList(fTextChangeListeners).iterator();
-			while (e.hasNext())
-				 ((TextChangeListener) e.next()).textChanging(event);
+			TextChangingEvent event= new TextChangingEvent(this);
+			event.start= fEvent.fOffset;
+			event.replaceCharCount= fEvent.fLength;
+			event.replaceLineCount= document.getNumberOfLines(fEvent.fOffset, fEvent.fLength) - 1;
+			event.newText= fEvent.fText;
+			event.newCharCount= (fEvent.fText == null ? 0 : fEvent.fText.length());
+			event.newLineCount= (fEvent.fText == null ? 0 : document.computeNumberOfLines(fEvent.fText));
+			
+			if (fTextChangeListeners != null && fTextChangeListeners.size() > 0) {
+				Iterator e= new ArrayList(fTextChangeListeners).iterator();
+				while (e.hasNext())
+					 ((TextChangeListener) e.next()).textChanging(event);
+			}
+
+		} catch (BadLocationException e) {
 		}
 	}	
 }

@@ -37,6 +37,8 @@ import org.eclipse.jface.text.IEventConsumer;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.IViewportListener;
+import org.eclipse.jface.text.IWidgetTokenOwner;
+
 import org.eclipse.jface.util.Assert;
 
 
@@ -956,7 +958,32 @@ public class ContentAssistant implements IContentAssistant {
 		StyledText text= fViewer.getTextWidget();
 		return text.getSelectionRange().x;
 	}
-
+	
+	/**
+	 * Returns whether the widget token could be acquired.
+	 * The following are valid listener types:
+	 * <ul>
+	 *   <li>AUTO_ASSIST
+	 *   <li>CONTEXT_SELECTOR
+	 *   <li>PROPOSAL_SELECTOR
+	 *   <li>CONTEXT_INFO_POPUP
+	 * <ul>
+	 * @param type the listener type for which to acquire
+	 * @return <code>true</code> if the widget token could be acquired
+	 */
+	private boolean acquireWidgetToken(int type) {
+		switch (type) {
+			case CONTEXT_SELECTOR:
+			case PROPOSAL_SELECTOR:
+				if (fViewer instanceof IWidgetTokenOwner) {
+					IWidgetTokenOwner owner= (IWidgetTokenOwner) fViewer;
+					return owner.requestWidgetToken(this);
+				}
+				return false;
+		}	
+		return true;
+	}
+	
 	/**
 	 * Registers a content assist listener.
 	 * The following are valid listener types:
@@ -966,21 +993,33 @@ public class ContentAssistant implements IContentAssistant {
 	 *   <li>PROPOSAL_SELECTOR
 	 *   <li>CONTEXT_INFO_POPUP
 	 * <ul>
+	 * Returns whether the listener could be added successfully. A listener
+	 * can not be added if the widget token could not be acquired.
 	 *
 	 * @param listener the listener to register
 	 * @param type the type of listener
+	 * @return <code>true</code> if the listener could be added
 	 */
-	void addContentAssistListener(IContentAssistListener listener, int type) {
-		fListeners[type]= listener;
+	boolean addContentAssistListener(IContentAssistListener listener, int type) {
 		
-		if (fCloser == null && isCloserNeeded()) {
-			fCloser= new Closer();
-			fCloser.install();
+		if (acquireWidgetToken(type)) {
+			
+			fListeners[type]= listener;
+			
+			if (fCloser == null && isCloserNeeded()) {
+				fCloser= new Closer();
+				fCloser.install();
+			}
+			
+			if (isListenerHookNeeded()) {
+				fViewer.setEventConsumer(fInternalListener);
+				installKeyListener();
+			}
+			
+			return true;
 		}
-		if (isListenerHookNeeded()) {
-			fViewer.setEventConsumer(fInternalListener);
-			installKeyListener();
-		}
+		
+		return false;
 	}
 	
 	/**
@@ -992,6 +1031,28 @@ public class ContentAssistant implements IContentAssistant {
 			if (Helper.okToUse(text)) {
 				text.addVerifyKeyListener(fInternalListener);
 				fKeyListenerHooked= true;
+			}
+		}
+	}
+	
+	/**
+	 * Releases the previously acquired widget token if the token
+	 * is no longer necessary.
+	 * The following are valid listener types:
+	 * <ul>
+	 *   <li>AUTO_ASSIST
+	 *   <li>CONTEXT_SELECTOR
+	 *   <li>PROPOSAL_SELECTOR
+	 *   <li>CONTEXT_INFO_POPUP
+	 * <ul>
+	 * 
+	 * @param type the listener type
+	 */
+	private void releaseWidgetToken(int type) {
+		if (fListeners[CONTEXT_SELECTOR] == null && fListeners[PROPOSAL_SELECTOR] == null) {
+			if (fViewer instanceof IWidgetTokenOwner) {
+				IWidgetTokenOwner owner= (IWidgetTokenOwner) fViewer;
+				owner.releaseWidgetToken(this);
 			}
 		}
 	}
@@ -1011,10 +1072,13 @@ public class ContentAssistant implements IContentAssistant {
 			fCloser.uninstall();
 			fCloser= null;
 		}
+		
 		if (!isListenerHookNeeded()) {
 			uninstallKeyListener();
 			fViewer.setEventConsumer(null);
 		}
+		
+		releaseWidgetToken(type);
 	}
 	
 	/**

@@ -536,7 +536,7 @@ abstract public class AbstractInformationControlManager {
 		computeInformation();
 		
 		if (fSubjectArea != null && fInformation != null && fInformation.trim().length() > 0)
-			showInformationControl(fSubjectArea, fInformation);
+			internalShowInformationControl(fSubjectArea, fInformation);
 		else
 			hideInformationControl();
 	}
@@ -548,7 +548,7 @@ abstract public class AbstractInformationControlManager {
 	 * @param subjectArea the information area
 	 * @param information the information
 	 */
-	private void showInformationControl(Rectangle subjectArea, String information) {
+	private void internalShowInformationControl(Rectangle subjectArea, String information) {
 	
 		IInformationControl hoverControl= getInformationControl();
 		if (hoverControl != null) {
@@ -578,12 +578,7 @@ abstract public class AbstractInformationControlManager {
 			Point location= computeInformationControlLocation(subjectArea, size);
 			hoverControl.setLocation(location);
 			
-			hoverControl.setVisible(true);
-			if (fTakesFocusWhenVisible)
-				hoverControl.setFocus();
-			
-			if (fInformationControlCloser != null)
-				fInformationControlCloser.start(subjectArea);
+			showInformationControl(subjectArea);
 		}
 	}
 	
@@ -596,6 +591,22 @@ abstract public class AbstractInformationControlManager {
 			if (fInformationControlCloser != null)
 				fInformationControlCloser.stop();
 		}
+	}
+	
+	/**
+	 * Shows the information control and starts the information control closer.
+	 * This method may not be called by clients.
+	 * 
+	 * @param subjectArea the information area
+	 */
+	protected void showInformationControl(Rectangle subjectArea) {
+		fInformationControl.setVisible(true);
+		
+		if (fTakesFocusWhenVisible)
+			fInformationControl.setFocus();
+		
+		if (fInformationControlCloser != null)
+			fInformationControlCloser.start(subjectArea);
 	}
 	
 	/**

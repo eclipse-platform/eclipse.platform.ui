@@ -258,11 +258,12 @@ class CompletionProposalPopup implements IContentAssistListener {
 	}
 
 	private void displayProposals() {
-		fContentAssistant.addContentAssistListener(this, ContentAssistant.PROPOSAL_SELECTOR);
-		fProposalShell.setVisible(true);
-		if (fAdditionalInfoController != null) {
-			fAdditionalInfoController.install(fProposalTable);		
-			fAdditionalInfoController.handleTableSelectionChanged();
+		if (fContentAssistant.addContentAssistListener(this, ContentAssistant.PROPOSAL_SELECTOR)) {
+			fProposalShell.setVisible(true);
+			if (fAdditionalInfoController != null) {
+				fAdditionalInfoController.install(fProposalTable);		
+				fAdditionalInfoController.handleTableSelectionChanged();
+			}
 		}
 	}
 	

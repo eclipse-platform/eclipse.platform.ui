@@ -156,9 +156,10 @@ class ContextInformationPopup implements IContentAssistListener {
 		}
 		
 		if (initial) {
-			fContentAssistant.addToLayout(this, fContextInfoPopup, ContentAssistant.LayoutManager.LAYOUT_CONTEXT_INFO_POPUP, frame.fVisibleOffset);
-			fContextInfoPopup.setVisible(true);
-			fContentAssistant.addContentAssistListener(this, ContentAssistant.CONTEXT_INFO_POPUP);
+			if (fContentAssistant.addContentAssistListener(this, ContentAssistant.CONTEXT_INFO_POPUP)) {	
+				fContentAssistant.addToLayout(this, fContextInfoPopup, ContentAssistant.LayoutManager.LAYOUT_CONTEXT_INFO_POPUP, frame.fVisibleOffset);
+				fContextInfoPopup.setVisible(true);
+			}
 		} else {
 			fContentAssistant.layout(ContentAssistant.LayoutManager.LAYOUT_CONTEXT_INFO_POPUP, frame.fVisibleOffset);
 		}
@@ -307,8 +308,8 @@ class ContextInformationPopup implements IContentAssistListener {
 	}
 	
 	private void displayContextSelector() {
-		fContentAssistant.addContentAssistListener(this, ContentAssistant.CONTEXT_SELECTOR);
-		fContextSelectorShell.setVisible(true);
+		if (fContentAssistant.addContentAssistListener(this, ContentAssistant.CONTEXT_SELECTOR))
+			fContextSelectorShell.setVisible(true);
 	}
 
 	private void hideContextSelector() {

@@ -12,6 +12,7 @@ import java.io.IOException;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Control;
@@ -162,7 +163,7 @@ public class HoverBrowserControl  implements IInformationControl {
 	 * @see IHoverControl#isFocusControl()
 	 */
 	public boolean isFocusControl() {
-		return (fShell.isFocusControl() || fBrowser.getControl().isFocusControl());
+		return fBrowser.getControl().isFocusControl();
 	}
 	
 	/*
@@ -171,5 +172,20 @@ public class HoverBrowserControl  implements IInformationControl {
 	public void setFocus() {
 		fBrowser.getControl().setFocus();
 	}
+	
+	/*
+	 * @see IInformationControl#addFocusListener(FocusListener)
+	 */
+	public void addFocusListener(FocusListener listener) {
+		fBrowser.getControl().addFocusListener(listener);
+	}
+
+	/*
+	 * @see IInformationControl#removeFocusListener(FocusListener)
+	 */
+	public void removeFocusListener(FocusListener listener) {
+		fBrowser.getControl().removeFocusListener(listener);
+	}
+
 }
 

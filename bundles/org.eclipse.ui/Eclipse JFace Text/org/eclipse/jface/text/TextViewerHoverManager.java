@@ -148,5 +148,37 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager {
 		int height= lowerRight.y - upperLeft.y;
 		return new Rectangle(upperLeft.x, upperLeft.y, width, height);
 	}
+	
+	/*
+	 * @see AbstractInformationControlManager#showInformationControl(Rectangle)
+	 */
+	protected void showInformationControl(Rectangle subjectArea) {
+		if (fTextViewer != null && fTextViewer.requestWidgetToken(this))
+			super.showInformationControl(subjectArea);
+	}
+
+	/*
+	 * @see AbstractInformationControlManager#hideInformationControl()
+	 */
+	protected void hideInformationControl() {
+		try {
+			super.hideInformationControl();
+		} finally {
+			if (fTextViewer != null)
+				fTextViewer.releaseWidgetToken(this);
+		}
+	}
+
+	/*
+	 * @see AbstractInformationControlManager#handleInformationControlDisposed()
+	 */
+	protected void handleInformationControlDisposed() {
+		try {
+			super.handleInformationControlDisposed();
+		} finally {
+			if (fTextViewer != null)
+				fTextViewer.releaseWidgetToken(this);
+		}
+	}
 }
 

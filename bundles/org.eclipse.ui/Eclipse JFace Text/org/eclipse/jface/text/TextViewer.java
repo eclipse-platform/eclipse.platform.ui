@@ -58,7 +58,7 @@ import org.eclipse.jface.viewers.Viewer;
  * 
  * @see ITextViewer
  */  
-public class TextViewer extends Viewer implements ITextViewer, ITextOperationTarget {
+public class TextViewer extends Viewer implements ITextViewer, ITextOperationTarget, IWidgetTokenOwner {
 	
 	
 	public static boolean TRACE_ERRORS= false;
@@ -447,6 +447,8 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 	private DocumentCommand fDocumentCommand= new DocumentCommand();
 	/** The viewer's find/replace target */
 	private IFindReplaceTarget fFindReplaceTarget;
+	/** The viewer widget token keeper */
+	private Object fWidgetTokenKeeper;
 
 	
 	/** Should the auto indent strategies ignore the next edit operation */
@@ -806,6 +808,28 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 	 */
 	public void setHoverControlCreator(IInformationControlCreator creator) {
 		fHoverControlCreator= creator;
+	}
+	
+	/*
+	 * @see IWidgetTokenOwner#requestWidgetToken(Object)
+	 */
+	public synchronized boolean requestWidgetToken(Object tokenRequester) {
+		if (fTextWidget != null) {
+			if (fWidgetTokenKeeper == null) {
+				fWidgetTokenKeeper= tokenRequester;
+				return true;
+			}
+			return (fWidgetTokenKeeper == tokenRequester);
+		}
+		return false;
+	}
+	
+	/*
+	 * @see IWidgetTokenOwner#releaseWidgetToken(Object)
+	 */
+	public synchronized void releaseWidgetToken(Object tokenKeeper) {
+		if (fWidgetTokenKeeper == tokenKeeper)
+			fWidgetTokenKeeper= null;
 	}
 	
 	

@@ -7,6 +7,7 @@ package org.eclipse.jface.text;
 
 
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 
@@ -114,4 +115,20 @@ public interface IInformationControl {
 	 * Sets the keyboard focus to this information control.
 	 */
 	void setFocus();
+	
+	/**
+	 * Adds the given listener to the list of focus listeners. 
+	 * If the listener is already registered it is not registered again.
+	 * 
+	 * @param listener the listener to be added
+	 */
+	void addFocusListener(FocusListener listener);
+	
+	/**
+	 * Removes the given listeners from the list of focus listeners.
+	 * If the listener is not registered this call has no affect.
+	 * 
+	 * @param listener the listener to be removed 
+	 */
+	void removeFocusListener(FocusListener listener);
 }

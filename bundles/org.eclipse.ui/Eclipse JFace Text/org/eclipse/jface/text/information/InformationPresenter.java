@@ -33,6 +33,8 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.IViewportListener;
+import org.eclipse.jface.text.IWidgetTokenOwner;
+
 import org.eclipse.jface.util.Assert;
  
 /**
@@ -81,6 +83,9 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 				fSubjectControl.addKeyListener(this);
 			}
 			
+			if (fInformationControl != null)
+				fInformationControl.addFocusListener(this);
+			
 			fTextViewer.addViewportListener(this);			
 		}
 		
@@ -88,8 +93,12 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 		 * @see IInformationControlCloser#stop()
 		 */
 		public void stop() {
-			if (fInformationControl != null)
+			fTextViewer.removeViewportListener(this);			
+			
+			if (fInformationControl != null) {
+				fInformationControl.removeFocusListener(this);
 				fInformationControl.setVisible(false);
+			}
 			
 			if (fSubjectControl != null && !fSubjectControl.isDisposed()) {
 				fSubjectControl.removeControlListener(this);
@@ -97,8 +106,6 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 				fSubjectControl.removeFocusListener(this);
 				fSubjectControl.removeKeyListener(this);
 			}
-			
-			fTextViewer.removeViewportListener(this);			
 		}
 		
 		/*
@@ -311,6 +318,45 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 	 */
 	public void uninstall() {
 		dispose();
+	}
+	
+	/*
+	 * @see AbstractInformationControlManager#showInformationControl(Rectangle)
+	 */
+	protected void showInformationControl(Rectangle subjectArea) {
+		if (fTextViewer instanceof IWidgetTokenOwner) {
+			IWidgetTokenOwner owner= (IWidgetTokenOwner) fTextViewer;
+			if (owner.requestWidgetToken(this))
+				super.showInformationControl(subjectArea);
+		}
+	}
+
+	/*
+	 * @see AbstractInformationControlManager#hideInformationControl()
+	 */
+	protected void hideInformationControl() {
+		try {
+			super.hideInformationControl();
+		} finally {
+			if (fTextViewer instanceof IWidgetTokenOwner) {
+				IWidgetTokenOwner owner= (IWidgetTokenOwner) fTextViewer;
+				owner.releaseWidgetToken(this);
+			}
+		}
+	}
+
+	/*
+	 * @see AbstractInformationControlManager#handleInformationControlDisposed()
+	 */
+	protected void handleInformationControlDisposed() {
+		try {
+			super.handleInformationControlDisposed();
+		} finally {
+			if (fTextViewer instanceof IWidgetTokenOwner) {
+				IWidgetTokenOwner owner= (IWidgetTokenOwner) fTextViewer;
+				owner.releaseWidgetToken(this);
+			}
+		}
 	}
 }
 

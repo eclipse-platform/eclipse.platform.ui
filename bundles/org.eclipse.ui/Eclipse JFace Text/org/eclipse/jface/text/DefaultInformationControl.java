@@ -9,6 +9,7 @@ package org.eclipse.jface.text;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.graphics.Color;
@@ -221,7 +222,7 @@ public class DefaultInformationControl implements IInformationControl {
 	 * @see IInformationControl#isFocusControl()
 	 */
 	public boolean isFocusControl() {
-		return (fShell.isFocusControl() || fText.isFocusControl());
+		return fText.isFocusControl();
 	}
 	
 	/*
@@ -229,6 +230,20 @@ public class DefaultInformationControl implements IInformationControl {
 	 */
 	public void setFocus() {
 		fText.setFocus();
+	}
+	
+	/*
+	 * @see IInformationControl#addFocusListener(FocusListener)
+	 */
+	public void addFocusListener(FocusListener listener) {
+		fText.addFocusListener(listener);
+	}
+	
+	/*
+	 * @see IInformationControl#removeFocusListener(FocusListener)
+	 */
+	public void removeFocusListener(FocusListener listener) {
+		fText.removeFocusListener(listener);
 	}
 }
 

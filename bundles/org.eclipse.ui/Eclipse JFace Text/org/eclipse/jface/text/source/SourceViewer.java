@@ -384,10 +384,8 @@ public class SourceViewer extends TextViewer implements ISourceViewer {
 					document.addPosition(p);
 					fContentFormatter.format(document, r);
 
-					// XXX check required until bug 5471 is fixed
-					if (p.getOffset() + p.getLength() <= document.getLength())
-						setSelectedRange(p.getOffset(), p.getLength());
-
+					setSelectedRange(p.getOffset(), p.getLength());
+						
 				} catch (BadLocationException e) {
 					// should not happen
 				} finally {
