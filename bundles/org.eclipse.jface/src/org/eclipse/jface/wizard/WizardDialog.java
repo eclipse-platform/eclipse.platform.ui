@@ -445,6 +445,18 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2 {
 		return button;
 	}
 	/**
+	 * Return the cancel button if the id is a the cancel id.
+	 * @param id the button id
+	 * @return the button corresponding to the button id
+	 */
+	protected Button getButton(int id)
+	{
+		if(id == IDialogConstants.CANCEL_ID)
+			return cancelButton;
+		return super.getButton(id);
+	}
+	
+	/**
 	 * The <code>WizardDialog</code> implementation of this <code>Window</code>
 	 * method calls call <code>IWizard.addPages</code> to allow the current
 	 * wizard to add extra pages, then <code>super.createContents</code> to create
