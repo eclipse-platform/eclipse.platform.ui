@@ -27,7 +27,7 @@ public class SearchIndex {
 	private static final String INDEXED_CONTRIBUTION_INFO_FILE =
 		"indexed_contributions";
 	public static final String INDEXED_DOCS_FILE = "indexed_docs";
-	public static final String ANALYZER_VERSION_FILENAME = "analyzer_ver";
+	private static final String ANALYZER_VERSION_FILENAME = "indexed_analyzer";
 	private File analyzerVersionFile;
 	private File inconsistencyFile;
 	public SearchIndex(String locale) {
@@ -301,12 +301,17 @@ public class SearchIndex {
 		return !analyzerDescriptor.getId().equals(readAnalyzerId());
 	}
 	/**
-	 * Writes a deletes inconsistency flag file
+	 * Writes or deletes inconsistency flag file
 	 */
 	private void setInconsistent(boolean inconsistent) {
-		if (inconsistent)
+		if (inconsistent) {
+			try {
+				FileOutputStream fos = new FileOutputStream(inconsistencyFile);
+				fos.close();
+			} catch (IOException ioe) {
+			}
 			inconsistencyFile.mkdirs();
-		else
+		} else
 			inconsistencyFile.delete();
 	}
 }
