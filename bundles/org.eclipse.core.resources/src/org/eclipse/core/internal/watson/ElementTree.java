@@ -250,15 +250,12 @@ public class ElementTree {
 	 */
 
 	public ElementTreeDelta computeDeltaWith(ElementTree olderTree, IElementComparator comparator, IPath path) {
-		if (olderTree == null || comparator == null) {
+		if (olderTree == null || comparator == null)
 			throw new IllegalArgumentException(Policy.bind("watson.nullArg", "ElementTree.computeDeltaWith")); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		if (path.isRoot()) {
-			/* can optimize certain cases when computing deltas on the whole tree */
+		/* can optimize certain cases when computing deltas on the whole tree */
+		if (path.isRoot())
 			return new ElementTreeDelta(olderTree, this, comparator);
-		} else {
-			return new ElementTreeDelta(olderTree, this, comparator, path);
-		}
+		return new ElementTreeDelta(olderTree, this, comparator, path);
 	}
 
 	/** 
@@ -459,13 +456,11 @@ public class ElementTree {
 			return cache.childPaths;
 		}
 		try {
-			if (key == null) {
+			if (key == null)
 				return new IPath[] {tree.rootKey()};
-			} else {
-				IPath[] children = tree.getChildren(key);
-				childIDsCache = new ChildIDsCache(key, children); // Cache the result
-				return children;
-			}
+			IPath[] children = tree.getChildren(key);
+			childIDsCache = new ChildIDsCache(key, children); // Cache the result
+			return children;
 		} catch (ObjectNotFoundException e) {
 			elementNotFound(key);
 			return null; // can't get here
@@ -515,12 +510,10 @@ public class ElementTree {
 		if (lookup == null || lookup.key != key) {
 			lookupCache = lookup = tree.lookup(key);
 		}
-		if (lookup.isPresent) {
+		if (lookup.isPresent)
 			return lookup.data;
-		} else {
-			elementNotFound(key);
-			return null; // can't get here
-		}
+		elementNotFound(key);
+		return null; // can't get here
 	}
 
 	/**
@@ -540,11 +533,9 @@ public class ElementTree {
 	 */
 	public String[] getNamesOfChildren(IPath key) {
 		try {
-			if (key == null) {
+			if (key == null)
 				return new String[] {""}; //$NON-NLS-1$
-			} else {
-				return tree.getNamesOfChildren(key);
-			}
+			return tree.getNamesOfChildren(key);
 		} catch (ObjectNotFoundException e) {
 			elementNotFound(key);
 			return null; // can't get here

@@ -15,6 +15,7 @@ import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.resources.*;
 
 public class ResourceChangeEvent extends EventObject implements IResourceChangeEvent {
+	private static final long serialVersionUID = 1L;
 	int type;
 	IResource resource;
 	IResourceDelta delta;

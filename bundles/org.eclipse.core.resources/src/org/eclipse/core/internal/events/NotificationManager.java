@@ -137,7 +137,7 @@ public class NotificationManager implements IManager, ILifecycleListener {
 	/**
 	 * The main broadcast point for notification deltas 
 	 */
-	public void broadcastChanges(ElementTree lastState, int type, boolean lockTree) throws CoreException {
+	public void broadcastChanges(ElementTree lastState, int type, boolean lockTree) {
 		try {
 			// Do the notification if there are listeners for events of the given type.
 			if (!listeners.hasListenerFor(type))

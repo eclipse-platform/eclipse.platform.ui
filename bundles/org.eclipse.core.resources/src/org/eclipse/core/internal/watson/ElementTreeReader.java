@@ -59,16 +59,15 @@ public class ElementTreeReader {
 		/* wrap the IElementInfoFlattener in an IDataFlattener */
 		IDataFlattener f = new IDataFlattener() {
 			public void writeData(IPath path, Object data, DataOutput output) {
+				//not needed
 			}
 
 			public Object readData(IPath path, DataInput input) throws IOException {
 				//never read the root node of an ElementTree
 				//this node is reserved for the parent backpointer
-				if (!Path.ROOT.equals(path)) {
+				if (!Path.ROOT.equals(path))
 					return factory.readElement(path, input);
-				} else {
-					return null;
-				}
+				return null;
 			}
 		};
 		dataTreeReader = new DataTreeReader(f);

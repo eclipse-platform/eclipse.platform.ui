@@ -88,7 +88,7 @@ public class SafeFileOutputStream extends OutputStream {
 		transferStreams(source, destination);
 	}
 
-	protected void createTempFile(String tempPath) throws IOException {
+	protected void createTempFile(String tempPath) {
 		if (tempPath == null)
 			tempPath = target.getAbsolutePath() + EXTENSION;
 		temp = new File(tempPath);

@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  */
 public class IsSynchronizedVisitor extends CollectSyncStatusVisitor {
 	static class ResourceChangedException extends RuntimeException {
-		// empty
+		private static final long serialVersionUID = 1L;
 	}
 
 	protected static ResourceChangedException exception = new ResourceChangedException();

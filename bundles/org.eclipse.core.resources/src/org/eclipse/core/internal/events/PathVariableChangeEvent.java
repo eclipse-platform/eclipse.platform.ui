@@ -21,6 +21,8 @@ import org.eclipse.core.runtime.IPath;
  * <code>IPathVariableChangeEvent</code> interface.
  */
 public class PathVariableChangeEvent extends EventObject implements IPathVariableChangeEvent {
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * The name of the changed variable.
 	 */

@@ -134,12 +134,11 @@ public class ElementDelta {
 		 * comparison as parent.  Is this reasonable?
 		 */
 		if (filter.includeElement(comparison.getUserComparison())) {
-			if (compare == NodeComparison.K_ADDED) {
-				/* look in new tree */
+			if (compare == NodeComparison.K_ADDED)
+				// look in new tree 
 				return treeDelta.getElementTree().getChildCount(pathInTrees) > 0;
-			} else {
-				return treeDelta.getParent().getChildCount(pathInTrees) > 0;
-			}
+			// look in parent tree
+			return treeDelta.getParent().getChildCount(pathInTrees) > 0;
 		}
 		return false;
 	}
