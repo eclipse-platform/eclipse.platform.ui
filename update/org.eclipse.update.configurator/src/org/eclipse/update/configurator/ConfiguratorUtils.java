@@ -74,6 +74,9 @@ public class ConfiguratorUtils {
 		return config;
 	}
 	
+	/**
+	 * @return the URL of this eclispe installation
+	 */
 	public static URL getInstallURL() {
 		return ConfigurationActivator.getInstallURL();
 	}

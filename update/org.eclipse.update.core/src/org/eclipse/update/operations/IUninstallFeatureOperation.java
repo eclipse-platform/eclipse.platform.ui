@@ -13,7 +13,7 @@ package org.eclipse.update.operations;
 
 
 /**
- * A feature uninstall operation.
+ * A feature uninstall operation. The feature is removed from the disk when uninstalled.
  * <p>
  * <b>Note:</b> This class/interface is part of an interim API that is still under development and expected to
  * change significantly before reaching stability. It is being made available at this early stage to solicit feedback

@@ -12,7 +12,8 @@
 package org.eclipse.update.operations;
 
 /**
- * Listener for operation lifecycle.
+ * Listener for the operation lifecycle. This allows listeners to execute certain code before an operation
+ * starts, or after it completes.
  * <p>
  * <b>Note:</b> This class/interface is part of an interim API that is still under development and expected to
  * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
@@ -24,16 +25,16 @@ package org.eclipse.update.operations;
 public interface IOperationListener {
 	/**
 	 * May be called before an operation starts executing.
-	 * @param operation
-	 * @param data
-	 * @return
+	 * @param operation operation to listen to
+	 * @param data info specific to the operation
+	 * @return not used
 	 */
 	public boolean beforeExecute(IOperation operation, Object data);
 	/**
 	 * May be called after an operation finishes executing.
-	 * @param operation
-	 * @param data
-	 * @return
+	 * @param operation operation to listen to 
+	 * @param data info specific to the operation
+	 * @return not used
 	 */
 	public boolean afterExecute(IOperation operation, Object data);
 }

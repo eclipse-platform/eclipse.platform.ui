@@ -26,20 +26,20 @@ package org.eclipse.update.operations;
 public interface IUpdateModelChangedListener {
 	/**
 	 * Called after a feature/site/etc. is added
-	 * @param parent
-	 * @param children
+	 * @param parent parent object
+	 * @param children added children
 	 */
 	public void objectsAdded(Object parent, Object [] children);
 	/**
 	 * Called after a feature/site/etc. is removed.
-	 * @param parent
-	 * @param children
+	 * @param parent parent object
+	 * @param children removed children
 	 */
 	public void objectsRemoved(Object parent, Object [] children);
 	/**
 	 * Called when there are changes to a site/feature/etc.
-	 * @param object
-	 * @param property
+	 * @param object object that changed
+	 * @param property object property that changed
 	 */
 	public void objectChanged(Object object, String property);
 }

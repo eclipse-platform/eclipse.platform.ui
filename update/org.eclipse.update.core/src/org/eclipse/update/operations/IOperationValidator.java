@@ -15,7 +15,8 @@ import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 
 /**
- * Operation validator.
+ * This class contains various validation methods to be invoked before or during executing update manager
+ * operations.
  * <p>
  * <b>Note:</b> This class/interface is part of an interim API that is still under development and expected to
  * change significantly before reaching stability. It is being made available at this early stage to solicit feedback

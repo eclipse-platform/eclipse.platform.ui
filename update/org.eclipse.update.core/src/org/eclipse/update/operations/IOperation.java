@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.*;
 public interface IOperation {
 	/**
 	 * Returns true when the operation has been processed.
-	 * @return
+	 * @return true when the operation completed.
 	 */
 	public abstract boolean isProcessed();
 	/**

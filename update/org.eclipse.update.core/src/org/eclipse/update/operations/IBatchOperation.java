@@ -12,7 +12,9 @@
 package org.eclipse.update.operations;
 
 /**
- * Batch of operations on feature. For example, a batch features installation.
+ * A batch operation is needed to execute a group of feature operations, such as installing a set of features.
+ * In fact, for installing features, it is recommended to wrap individual feature install operations as a 
+ * batch operation, to ensure proper validation and configuration saving.
  * <p>
  * <b>Note:</b> This class/interface is part of an interim API that is still under development and expected to
  * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
@@ -23,8 +25,8 @@ package org.eclipse.update.operations;
  */
 public interface IBatchOperation  extends IOperation {
 	/**
-	 * Returns the batch operations.
-	 * @return
+	 * Returns the batched operations.
+	 * @return the batched operations
 	 */
 	public abstract IFeatureOperation[] getOperations();
 }

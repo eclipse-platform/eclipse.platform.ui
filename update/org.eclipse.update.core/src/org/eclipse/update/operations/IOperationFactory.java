@@ -26,33 +26,33 @@ import org.eclipse.update.core.*;
  */
 public interface IOperationFactory {
 	/**
-	 * Creates a "configure feature" operation.
-	 * @param targetSite
-	 * @param feature
-	 * @return
+	 * Creates an operation for configuring an installed feature in the specified site.
+	 * @param targetSite site containing the feature to configure
+	 * @param feature feature to be configured
+	 * @return the configure operation
 	 */
 	public IConfigFeatureOperation createConfigOperation(
 		IConfiguredSite targetSite,
 		IFeature feature);
 		
 	/**
-	 * Creates an "unconfigure feature" operation.
-	 * @param targetSite
-	 * @param feature
-	 * @return
+	 * Creates an operation for unconfiguring a feature
+	 * @param targetSite site containing the feature to unconfigure
+	 * @param feature feature to be unconfigured
+	 * @return the unconfigure operation
 	 */
 	public IUnconfigFeatureOperation createUnconfigOperation(
 		IConfiguredSite targetSite,
 		IFeature feature);
 	
 	/**
-	 * Creates a "intall feature" operation.
-	 * @param targetSite
-	 * @param feature
-	 * @param optionalFeatures
-	 * @param unconfiguredOptionalFeatures
-	 * @param verifier
-	 * @return
+	 * Creates an operation for installing a feature.
+	 * @param targetSite site in which the feature is to be installed
+	 * @param feature feature to be installed
+	 * @param optionalFeatures optionally included features to be installed (if any)
+	 * @param unconfiguredOptionalFeatures when installing optional features, some can be left unconfigured
+	 * @param verifier operation verification listener
+	 * @return the install operation
 	 */
 	public IInstallFeatureOperation createInstallOperation(
 		IConfiguredSite targetSite,
@@ -62,46 +62,46 @@ public interface IOperationFactory {
 		IVerificationListener verifier);
 		
 	/**
-	 * Creates an "uninstall feature" operation.
-	 * @param targetSite
-	 * @param feature
-	 * @return
+	 * Creates an operation to uninstall a feature
+	 * @param targetSite site containing the feature to uninstall
+	 * @param feature feature to be uninstalled
+	 * @return the uninstall operation
 	 */
 	public IUninstallFeatureOperation createUninstallOperation(
 		IConfiguredSite targetSite,
 		IFeature feature);
 		
 	/**
-	 * Creates a "revert feature version" operation.
+	 * Creates an operation for replacing this feature by a previous version
 	 * @param feature current feature
 	 * @param anotherFeature the new feature to be swapped in
-	 * @return
+	 * @return the revert feature version operation
 	 */
 	public IConfigFeatureOperation createReplaceFeatureVersionOperation(
 		IFeature feature,
 		IFeature anotherFeature);
 		
 	/**
-	 * Creates a "batch install" operation.
-	 * @param operations
-	 * @return
+	 * Creates an operation for executing a set of feature operation in batch mode
+	 * @param operations operation to execute in batch mode	
+	 * @return the batch operation
 	 */
 	public IBatchOperation createBatchInstallOperation(IInstallFeatureOperation[] operations);
 	
 	/**
-	 * Creates an "enable/disable site" operation.
-	 * @param site
-	 * @return
+	 * Creates ann operation to configure/unconfigure an installation site (also known as enable/disable site)
+	 * @param site site to configure/unconfigure
+	 * @return the toggle site operation
 	 */
 	public IToggleSiteOperation createToggleSiteOperation(
 		IConfiguredSite site);
 		
 
 	/**
-	 * Creates a "revert to a previous configuration" operation.
-	 * @param config
-	 * @param problemHandler
-	 * @return
+	 * Creates an operation to revert to a previous installation configuration.
+	 * @param config configuration to revert to
+	 * @param problemHandler error handler
+	 * @return the revert operation
 	 */
 	public IRevertConfigurationOperation createRevertConfigurationOperation(
 		IInstallConfiguration config,

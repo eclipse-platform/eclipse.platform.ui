@@ -27,8 +27,9 @@ import org.eclipse.update.core.*;
  */
 public interface IInstallFeatureOperation extends IFeatureOperation {
 	/**
-	 * Returns the list of optional features to be installed.
-	 * @return
+	 * If the feature includes optional features, thi method returns the list 
+	 * of optional features to be installed.
+	 * @return the list of optional features to be installed.
 	 */
 	public IFeatureReference[] getOptionalFeatures();
 }

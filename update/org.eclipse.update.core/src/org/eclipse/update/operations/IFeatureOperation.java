@@ -26,23 +26,23 @@ import org.eclipse.update.core.*;
  */
 public interface IFeatureOperation extends IOperation {
 	/**
-	 * Return the feature to which the operation applies.
-	 * @return
+	 * Returns the feature to operate on.
+	 * @return the feature to operate on.
 	 */
 	public abstract IFeature getFeature();
 	/**
 	 * Returns the site in which the operation is applied.
-	 * @return
+	 * @return the site that owns or will own the feature.
 	 */
 	public abstract IConfiguredSite getTargetSite();
 	/**
 	 * Returns the previous version of the feature (if any).
-	 * @return
+	 * @return the previous installed version of a feature (if any).
 	 */
 	public abstract IFeature getOldFeature();
 	/**
 	 * Sets the site in which the feature is being operated on.
-	 * @param targetSite
+	 * @param targetSite the site in which the featre is being operated on.
 	 */
 	public abstract void setTargetSite(IConfiguredSite targetSite);
 }

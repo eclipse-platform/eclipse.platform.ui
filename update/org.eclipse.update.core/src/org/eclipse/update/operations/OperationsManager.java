@@ -17,7 +17,8 @@ import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.operations.*;
 
 /**
- * Entry point for update manager operations.
+ * Entry point for update manager operations. Use this class to obtain the factory that creates
+ * update manager operations, or to get the operation validator.
  * <p>
  * <b>Note:</b> This class/interface is part of an interim API that is still under development and expected to
  * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
@@ -40,6 +41,7 @@ public class OperationsManager {
 	/**
 	 * Each update operations must be created by the operation factory. 
 	 * Use this method to obtain the factory.
+	 * @return returns the operation factory
 	 */
 	public static IOperationFactory getOperationFactory() {
 		if (operationFactory == null)
@@ -51,8 +53,8 @@ public class OperationsManager {
 	 * Check if the feature is the subject of an update operation such as install,
 	 * configure, etc. and return it. Currently there can only be one pending
 	 * operation on a feature.
-	 * @param feature
-	 * @return
+	 * @param feature feature to check for pending operations
+	 * @return pending operation if any, otherwise null.
 	 */
 	public static IFeatureOperation findPendingOperation(IFeature feature) {
 		for (int i = 0; i < pendingOperations.size(); i++) {
@@ -66,7 +68,7 @@ public class OperationsManager {
 	
 	/**
 	 * Register a pending operation.
-	 * @param operation
+	 * @param operation pending operation
 	 */
 	public static void addPendingOperation(IOperation operation) {
 		pendingOperations.add(operation);
@@ -75,7 +77,7 @@ public class OperationsManager {
 
 	/**
 	 * Unregister a pending operation.
-	 * @param operation
+	 * @param operation pending operation
 	 */
 	public static void removePendingOperation(IOperation operation) {
 		pendingOperations.remove(operation);
@@ -84,7 +86,7 @@ public class OperationsManager {
 
 	/**
 	 * Adds a model changed listener.
-	 * @param listener
+	 * @param listener update model change listener
 	 */
 	public static void addUpdateModelChangedListener(IUpdateModelChangedListener listener) {
 		if (!listeners.contains(listener))
@@ -93,7 +95,7 @@ public class OperationsManager {
 
 	/**
 	 * Removes an model changed listener.
-	 * @param listener
+	 * @param listener update model change listener
 	 */
 	public static void removeUpdateModelChangedListener(IUpdateModelChangedListener listener) {
 		if (listeners.contains(listener))
@@ -102,8 +104,8 @@ public class OperationsManager {
 
 	/**
 	 * Notifies model changed listeners when features/sites/etc. are added.
-	 * @param parent
-	 * @param children
+	 * @param parent parent object
+	 * @param children children added
 	 */
 	public static void fireObjectsAdded(Object parent, Object[] children) {
 		for (Iterator iter = listeners.iterator(); iter.hasNext();) {
@@ -115,8 +117,8 @@ public class OperationsManager {
 
 	/**
 	 * Notifies model changed listeners when features/sites/etc are removed.
-	 * @param parent
-	 * @param children
+	 * @param parent parent object
+	 * @param children children removed
 	 */
 	public static void fireObjectsRemoved(Object parent, Object[] children) {
 		for (Iterator iter = listeners.iterator(); iter.hasNext();) {
@@ -128,8 +130,8 @@ public class OperationsManager {
 
 	/**
 	 * Notifies model changed listeners when features/sites/etc. have changed.
-	 * @param object
-	 * @param property
+	 * @param object changed object
+	 * @param property changed object property
 	 */
 	public static void fireObjectChanged(Object object, String property) {
 		for (Iterator iter = listeners.iterator(); iter.hasNext();) {
@@ -140,9 +142,9 @@ public class OperationsManager {
 	}
 
 	/**
-	 * Returns true when any of the install operations requires a licence agreement.
-	 * @param jobs
-	 * @return
+	 * Returns true when any of the install operations requires a license agreement.
+	 * @param jobs features to install
+	 * @return true when any of the features to install have a license
 	 */
 	public static boolean hasSelectedJobsWithLicenses(IInstallFeatureOperation[] jobs) {
 		for (int i = 0; i < jobs.length; i++) {
@@ -154,8 +156,8 @@ public class OperationsManager {
 
 	/**
 	 * Returns true when any of the features to install has optional features.
-	 * @param jobs
-	 * @return
+	 * @param jobs features to install
+	 * @return true when any of the features has optional features
 	 */
 	public static boolean hasSelectedJobsWithOptionalFeatures(IInstallFeatureOperation[] jobs) {
 		for (int i = 0; i < jobs.length; i++) {
@@ -166,9 +168,9 @@ public class OperationsManager {
 	}
 
 	/**
-	 * Returns the list of operations that need a licence agreement.
-	 * @param jobs
-	 * @return
+	 * Returns the list of operations that need a license agreement.
+	 * @param jobs features to install
+	 * @return the list of operation that need a license agreement
 	 */
 	public static IInstallFeatureOperation[] getSelectedJobsWithLicenses(IInstallFeatureOperation[] jobs) {
 		ArrayList list = new ArrayList();
@@ -182,8 +184,8 @@ public class OperationsManager {
 
 	/**
 	 * Returns the list of operations that have optional features to install.
-	 * @param jobs
-	 * @return
+	 * @param jobs features to install
+	 * @return list of operations that have optional features to install
 	 */
 	public static IInstallFeatureOperation[] getSelectedJobsWithOptionalFeatures(IInstallFeatureOperation[] jobs) {
 		ArrayList list = new ArrayList();
@@ -197,7 +199,7 @@ public class OperationsManager {
 	
 	/**
 	 * Sets whether any operations is in progress.
-	 * @param inProgress
+	 * @param inProgress true when operation is in progress
 	 */
 	public static synchronized void setInProgress(boolean inProgress) {
 		OperationsManager.inProgress = inProgress;
@@ -205,7 +207,7 @@ public class OperationsManager {
 	
 	/**
 	 * Returns true when some operation is being executed, false otherwise.
-	 * @return
+	 * @return true when some operation execution is in progress, false otherwise
 	 */
 	public static synchronized boolean isInProgress() {
 		return inProgress;
@@ -213,7 +215,7 @@ public class OperationsManager {
 
 	/**
 	 * Returns the operations validator.
-	 * @return
+	 * @return the operation validator
 	 */
 	public static IOperationValidator getValidator() {
 		if (validator == null)
@@ -223,7 +225,7 @@ public class OperationsManager {
 	
 	/**
 	 * Sets a custom operation validator
-	 * @param validator
+	 * @param validator the custom validator
 	 */
 	public static void setValidator(IOperationValidator validator) {
 		OperationsManager.validator = validator;
