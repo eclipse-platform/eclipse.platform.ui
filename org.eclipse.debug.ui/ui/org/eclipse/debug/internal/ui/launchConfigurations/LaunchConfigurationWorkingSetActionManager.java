@@ -276,7 +276,7 @@ public class LaunchConfigurationWorkingSetActionManager {
 		fTitleUpdater = titleUpdater;
 	}
 
-	private IPropertyChangeListener getTitleUpdater() {
+	protected IPropertyChangeListener getTitleUpdater() {
 		return fTitleUpdater;
 	}
 	

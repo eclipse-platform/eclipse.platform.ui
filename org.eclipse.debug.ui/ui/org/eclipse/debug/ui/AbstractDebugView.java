@@ -345,7 +345,9 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 		menuControl.setMenu(menu);
 
 		// register the context menu such that other plugins may contribute to it
-		getSite().registerContextMenu(menuMgr, getViewer());
+		if (getSite() != null) {
+			getSite().registerContextMenu(menuMgr, getViewer());
+		}
 		addContextMenuManager(menuMgr);
 	}
 	

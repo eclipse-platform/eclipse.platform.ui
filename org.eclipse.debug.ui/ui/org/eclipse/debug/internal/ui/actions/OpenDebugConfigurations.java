@@ -1,6 +1,5 @@
 package org.eclipse.debug.internal.ui.actions;
 
-import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
 
 /*
@@ -15,10 +14,6 @@ public class OpenDebugConfigurations extends OpenLaunchConfigurationsAction {
 
 	public OpenDebugConfigurations() {
 		super();
-	}
-
-	public OpenDebugConfigurations(ILaunchConfigurationType configType) {
-		super(configType);
 	}
 	
 	/**

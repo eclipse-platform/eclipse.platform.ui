@@ -10,20 +10,8 @@ import java.text.MessageFormat;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org
-	.eclipse
-	.debug
-	.internal
-	.ui
-	.launchConfigurations
-	.LaunchConfigurationDialog;
-import org
-	.eclipse
-	.debug
-	.internal
-	.ui
-	.launchConfigurations
-	.LaunchConfigurationManager;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -86,8 +74,8 @@ public abstract class RelaunchLastAction implements IWorkbenchWindowActionDelega
 			return;
 		}
 		IStructuredSelection selection= DebugUIPlugin.resolveSelection(dwindow);
-		LaunchConfigurationDialog dialog = new LaunchConfigurationDialog(DebugUIPlugin.getShell(), selection, LaunchConfigurationManager.getDefault().getDefaultLanuchGroup(getMode()));		
-		dialog.setOpenMode(LaunchConfigurationDialog.LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_LAST_LAUNCHED);
+		LaunchConfigurationsDialog dialog = new LaunchConfigurationsDialog(DebugUIPlugin.getShell(), selection, LaunchConfigurationManager.getDefault().getDefaultLanuchGroup(getMode()));		
+		dialog.setOpenMode(LaunchConfigurationsDialog.LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_LAST_LAUNCHED);
 		dialog.open();
 	}
 	

@@ -99,6 +99,8 @@ import org.eclipse.ui.model.WorkbenchViewerSorter;
 
 /**
  * The dialog used to edit and launch launch configurations.
+ * 
+ * @deprecated use LaunchConfigurationsDialog instead
  */
 public class LaunchConfigurationDialog extends TitleAreaDialog 
 										implements ISelectionChangedListener, 

@@ -31,20 +31,8 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DefaultLabelProvider;
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.debug.internal.ui.LazyModelPresentation;
-import org
-	.eclipse
-	.debug
-	.internal
-	.ui
-	.launchConfigurations
-	.LaunchConfigurationDialog;
-import org
-	.eclipse
-	.debug
-	.internal
-	.ui
-	.launchConfigurations
-	.LaunchConfigurationManager;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -52,6 +40,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
@@ -315,13 +304,14 @@ public class DebugUITools {
 	 * @since 2.1
 	 */
 	public static int openLaunchConfigurationDialogOnGroup(Shell shell, IStructuredSelection selection, String groupIdentifier) {
-		LaunchConfigurationDialog dialog = (LaunchConfigurationDialog) LaunchConfigurationDialog.getCurrentlyVisibleLaunchConfigurationDialog();
+		LaunchConfigurationsDialog dialog = (LaunchConfigurationsDialog) LaunchConfigurationsDialog.getCurrentlyVisibleLaunchConfigurationDialog();
 		if (dialog != null) {
-			dialog.setTreeViewerSelection(selection);
-			return LaunchConfigurationDialog.LAUNCH_CONFIGURATION_DIALOG_REUSE_OPEN;
+			dialog.setInitialSelection(selection);
+			dialog.doInitialTreeSelection();
+			return Window.OK;
 		} else {
-			dialog = new LaunchConfigurationDialog(shell, null, LaunchConfigurationManager.getDefault().getLaunchGroup(groupIdentifier));
-			dialog.setOpenMode(LaunchConfigurationDialog.LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_SELECTION);
+			dialog = new LaunchConfigurationsDialog(shell, null, LaunchConfigurationManager.getDefault().getLaunchGroup(groupIdentifier));
+			dialog.setOpenMode(LaunchConfigurationsDialog.LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_SELECTION);
 			dialog.setInitialSelection(selection);
 			return dialog.open();			
 		}
