@@ -13,11 +13,9 @@
         path="ECLIPSE_HOME/plugins/org.eclipse.swt/swt.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.swt/swtsrc.zip"/>
     <classpathentry kind="var"
         path="ECLIPSE_HOME/plugins/org.junit/junit.jar" sourcepath="ECLIPSE_PLUGINS/org.junit/src.jar"/>
-    <classpathentry kind="var"
-        path="ECLIPSE_HOME/plugins/org.eclipse.jdt.junit/junitsupport.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.jdt.junit/srcjunitsupport.jar"/>
-    <classpathentry kind="var"
-        path="ECLIPSE_HOME/plugins/org.eclipse.jdt.junit.eclipse/eclipsejdtjunit.jar"
-        rootpath="" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.jdt.junit.eclipse/srceclipsejdtjunit.jar"/>
     <classpathentry kind="src" path="Eclipse UI Tests"/>
+    <classpathentry kind="src" path="/org.eclipse.jdt.junit.eclipse"/>
+    <classpathentry kind="src" path="/org.eclipse.jdt.junit"/>
+    <classpathentry kind="src" path="Eclipse JFace Tests"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>
