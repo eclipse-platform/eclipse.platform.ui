@@ -25,6 +25,7 @@ import org.eclipse.team.internal.ui.registry.SynchronizeParticipantRegistry;
 import org.eclipse.team.ui.ITeamUIConstants;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.*;
+import org.eclipse.team.internal.ui.Policy;
 
 /**
  * Manages the registered synchronize participants. It handles notification of
@@ -325,7 +326,14 @@ public class SynchronizeManager implements ISynchronizeManager {
 				if (activePage == null)
 					return null;
 			}
-			return (ISynchronizeView) activePage.showView(ISynchronizeView.VIEW_ID);
+			IViewPart part = activePage.showView(ISynchronizeView.VIEW_ID);
+			try {
+				return (ISynchronizeView) part;
+			} catch (ClassCastException e) {
+				// Strange that we cannot cast the part (see bug 53671)
+				TeamUIPlugin.log(IStatus.ERROR, Policy.bind("SynchronizeManager.18", part.getClass().getName()), e); //$NON-NLS-1$
+				return null;
+			}
 		} catch (PartInitException pe) {
 			Utils.handleError(window.getShell(), pe, Policy.bind("SynchronizeView.16"), pe.getMessage()); //$NON-NLS-1$
 			return null;
