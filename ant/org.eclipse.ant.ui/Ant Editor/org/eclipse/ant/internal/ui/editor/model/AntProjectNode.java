@@ -12,6 +12,7 @@
 package org.eclipse.ant.internal.ui.editor.model;
 
 import org.apache.tools.ant.Project;
+import org.eclipse.ant.internal.ui.editor.outline.AntModel;
 import org.eclipse.ant.internal.ui.model.AntUIImages;
 import org.eclipse.ant.internal.ui.model.IAntUIConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -19,11 +20,13 @@ import org.eclipse.jface.resource.ImageDescriptor;
 
 public class AntProjectNode extends AntElementNode {
 
-	private Project fProject= null;
+	private Project fProject;
+	private AntModel fModel;
 	
-	public AntProjectNode(Project project) {
+	public AntProjectNode(Project project, AntModel antModel) {
 		super("project"); //$NON-NLS-1$
 		fProject= project;
+		fModel= antModel;
 	}
 	
 	/* (non-Javadoc)
@@ -49,5 +52,9 @@ public class AntProjectNode extends AntElementNode {
 	 */
 	public Project getProject() {
 		return fProject;
+	}
+	
+	protected AntModel getAntModel() {
+		return fModel;
 	}
 }

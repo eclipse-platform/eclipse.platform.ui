@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Stack;
 
 import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Location;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Target;
 import org.apache.tools.ant.Task;
@@ -175,25 +176,38 @@ public class AntModel {
 			beginReporting();
 			project.addReference("ant.projectHelper", projectHelper); //$NON-NLS-1$
     		projectHelper.parse(project, input.get());  // File will be parsed here
-    		
-    		configureProperties();
     	} catch(BuildException e) {
-			try {
-				int line= e.getLocation().getLineNumber();
-				int originalOffset= getOffset(line, 1);
-				int nonWhitespaceOffset= originalOffset; 
+			handleBuildException(e, null);
+    	} finally {
+    		configureProperties();
+    		endReporting();
+    	}
+	}
+
+	public void handleBuildException(BuildException e, AntElementNode node) {
+		try {
+			Location location= e.getLocation();
+			int line= 0;
+			int originalOffset= 0;
+			int nonWhitespaceOffset= 0; 
+			int length= 0;
+			if (location == Location.UNKNOWN_LOCATION && node != null) {
+				nonWhitespaceOffset= node.getOffset();
+				length= node.getLength();
+			} else {
+				line= location.getLineNumber();
+				originalOffset= getOffset(line, 1);
+				nonWhitespaceOffset= originalOffset;
+				length= getLastCharColumn(line) - (nonWhitespaceOffset - originalOffset);
 				try {
 					nonWhitespaceOffset= getNonWhitespaceOffset(line, 1);
 				} catch (BadLocationException be) {
 				}
-				
-				int length= getLastCharColumn(line) - (nonWhitespaceOffset - originalOffset);
-				notifyProblemRequestor(e, nonWhitespaceOffset, length, XMLProblem.SEVERTITY_ERROR);
-			} catch (BadLocationException e1) {
 			}
-    	} finally {
-    		endReporting();
-    	}
+			
+			notifyProblemRequestor(e, nonWhitespaceOffset, length, XMLProblem.SEVERTITY_ERROR);
+		} catch (BadLocationException e1) {
+		}
 	}
 
 	private void configureProperties() throws BuildException {
@@ -234,7 +248,7 @@ public class AntModel {
 	}
 	
 	public void addProject(Project project, int line, int column) {
-		fProjectNode= new AntProjectNode(project);
+		fProjectNode= new AntProjectNode(project, this);
 		fStillOpenElements.push(fProjectNode);
 		computeOffset(fProjectNode, line, column);
 	}

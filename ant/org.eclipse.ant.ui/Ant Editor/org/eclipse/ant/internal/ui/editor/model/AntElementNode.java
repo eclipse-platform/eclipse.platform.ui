@@ -23,6 +23,7 @@ import java.util.List;
 import org.apache.xml.utils.URI;
 import org.apache.xml.utils.URI.MalformedURIException;
 import org.eclipse.ant.internal.ui.editor.AntEditorException;
+import org.eclipse.ant.internal.ui.editor.outline.AntModel;
 import org.eclipse.ant.internal.ui.model.AntImageDescriptor;
 import org.eclipse.ant.internal.ui.model.AntUIImages;
 import org.eclipse.ant.internal.ui.model.IAntUIConstants;
@@ -425,5 +426,13 @@ public class AntElementNode {
 
 	protected ImageDescriptor getBaseImageDescriptor() {
 		return AntUIImages.getImageDescriptor(IAntUIConstants.IMG_TASK_PROPOSAL);
+	}
+	
+	protected AntModel getAntModel() {
+		AntElementNode parentNode= getParentNode();
+		while (!(parentNode instanceof AntProjectNode)) {
+			parentNode= parentNode.getParentNode();
+		}
+		return parentNode.getAntModel();
 	}
 }
