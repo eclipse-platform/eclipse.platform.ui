@@ -27,9 +27,13 @@ class LogReader {
 	 */
 	public static Map getModifiedPages(PageStore store) throws PageStoreException {
 		LogReader reader = new LogReader(store);
-		reader.open(store);
-		Map modifiedPages = reader.getModifiedPages();
-		reader.close();
+		Map modifiedPages = null;
+		try {
+			reader.open(store);
+			modifiedPages = reader.getModifiedPages();
+		} finally {
+			reader.close();
+		}
 		return modifiedPages;
 	}
 
@@ -42,8 +46,8 @@ class LogReader {
 	/** 
 	 * Open a log for reading.
 	 */
-	protected void open(PageStore store) throws PageStoreException {
-		String name = store.getName();
+	protected void open(PageStore pageStore) throws PageStoreException {
+		String name = pageStore.getName();
 		if (!Log.exists(name))
 			return;
 		try {
@@ -57,11 +61,11 @@ class LogReader {
 	 * Closes the log.
 	 */
 	protected void close() {
-		if (in == null)
-			return;
 		try {
-			in.close();
+			if (in != null)
+				in.close();
 		} catch (IOException e) {
+			// ignore
 		}
 		in = null;
 	}

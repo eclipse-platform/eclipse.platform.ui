@@ -188,11 +188,13 @@ public class PageStore implements Observer {
 			try {
 				commit();
 			} catch (PageStoreException e) {
+				// ignore
 			}
 		}
 		try {
 			file.close();
 		} catch (IOException e) {
+			// ignore
 		}
 		file = null;
 	}

@@ -25,18 +25,21 @@ class LogWriter {
 	 */
 	public static void putModifiedPages(PageStore pageStore, Map modifiedPages) throws PageStoreException {
 		LogWriter writer = new LogWriter();
-		writer.open(pageStore);
-		writer.putModifiedPages(modifiedPages);
-		writer.close();
+		try {
+			writer.open(pageStore);
+			writer.putModifiedPages(modifiedPages);
+		} finally {
+			writer.close();
+		}
 	}
 
 	/**
 	 * Opens the log.
 	 */
-	protected void open(PageStore pageStore) throws PageStoreException {
-		this.pageStore = pageStore;
+	protected void open(PageStore store) throws PageStoreException {
+		this.pageStore = store;
 		try {
-			out = new FileOutputStream(Log.name(pageStore.getName()));
+			out = new FileOutputStream(Log.name(store.getName()));
 		} catch (IOException e) {
 			throw new PageStoreException(PageStoreException.LogOpenFailure, e);
 		}
@@ -47,8 +50,10 @@ class LogWriter {
 	 */
 	protected void close() {
 		try {
-			out.close();
+			if (out != null)
+				out.close();
 		} catch (IOException e) {
+			// ignore
 		}
 		out = null;
 	}
