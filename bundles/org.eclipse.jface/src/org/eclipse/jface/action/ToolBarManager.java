@@ -112,9 +112,6 @@ public class ToolBarManager extends ContributionManager implements IToolBarManag
 			getContextMenuManager().dispose();
 			setContextMenuManager(null);
 		}
-		
-		// Prevents a memory leak (e.g., EditorActionBars$Overrides).
-		setOverrides(null);		
 	}
 	
 	/**
