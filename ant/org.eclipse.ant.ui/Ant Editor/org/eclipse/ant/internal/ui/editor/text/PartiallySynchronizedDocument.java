@@ -11,7 +11,6 @@
 
 package org.eclipse.ant.internal.ui.editor.text;
 
-import org.eclipse.ant.internal.ui.editor.outline.AntModel;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.ISynchronizable;
@@ -23,8 +22,6 @@ public class PartiallySynchronizedDocument extends Document implements ISynchron
     
     private final Object fInternalLockObject= new Object();
     private Object fLockObject;
-	
-	private AntModel fAntModel= null; 
 			
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.IDocumentExtension#startSequentialRewrite(boolean)
@@ -81,10 +78,6 @@ public class PartiallySynchronizedDocument extends Document implements ISynchron
 	 */
 	synchronized public void set(String text) {
 		super.set(text);
-	}
-	
-	public void setAntModel(AntModel model) {
-		fAntModel= model;
 	}
 	
 	/*

@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
-
 import org.apache.tools.ant.AntTypeDefinition;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.ComponentHelper;
@@ -44,7 +43,6 @@ import org.eclipse.ant.internal.ui.editor.model.AntPropertyNode;
 import org.eclipse.ant.internal.ui.editor.model.AntTargetNode;
 import org.eclipse.ant.internal.ui.editor.model.AntTaskNode;
 import org.eclipse.ant.internal.ui.editor.model.IAntModelConstants;
-import org.eclipse.ant.internal.ui.editor.text.PartiallySynchronizedDocument;
 import org.eclipse.ant.internal.ui.editor.text.XMLReconcilingStrategy;
 import org.eclipse.ant.internal.ui.editor.utils.ProjectHelper;
 import org.eclipse.core.resources.IFile;
@@ -109,9 +107,6 @@ public class AntModel {
 	public AntModel(XMLCore core, IDocument document, IProblemRequestor problemRequestor, LocationProvider locationProvider) {
 		fCore= core;
 		fDocument= document;
-		if (document instanceof PartiallySynchronizedDocument) {
-			((PartiallySynchronizedDocument)document).setAntModel(this);
-		}
 		fProblemRequestor= problemRequestor;
 		fMarkerUpdater= new AntEditorMarkerUpdater();
 		fMarkerUpdater.setModel(this);
@@ -136,9 +131,6 @@ public class AntModel {
 		synchronized (this) {
 			if (fDocument != null) {
 				fDocument.removeDocumentListener(fListener);
-				if (fDocument instanceof PartiallySynchronizedDocument) {
-					((PartiallySynchronizedDocument)fDocument).setAntModel(null);
-				}
 			}
 			fDocument= null;
 			fCore= null;
