@@ -20,10 +20,9 @@
       <import plugin="org.eclipse.ui"/>
    </requires>
 
-   <extension
-         point="org.eclipse.ui.startup"
-         id="carbonenhancer">
-      <class class="org.eclipse.ui.carbon.CarbonUIEnhancer"/>
+   <extension point="org.eclipse.ui.startup">
+		<class class="org.eclipse.ui.carbon.CarbonUIEnhancer"/>
+		<startup class="org.eclipse.ui.carbon.CarbonUIEnhancer"/>
    </extension>
    
 </fragment>
