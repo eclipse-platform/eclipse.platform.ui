@@ -38,6 +38,7 @@ public class ShowViewTest extends BasicPerformanceTest {
         // prime it
         IViewPart view = page.showView(viewId);
         page.hideView(view);
+        processEvents();
     	        
         for (int i = 0; i < RUNS; i++) {
             performanceMeter.start();
