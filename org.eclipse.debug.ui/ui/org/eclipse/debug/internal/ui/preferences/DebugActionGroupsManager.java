@@ -39,6 +39,11 @@ import org.eclipse.ui.IViewPart;
 
 public class DebugActionGroupsManager implements IMenuListener {
 	
+	// constants indicating action locations
+	public static final int TYPE_TOOLBAR = 0;
+	public static final int TYPE_VIEW_MENU = 1;
+	public static final int TYPE_CONTEXT_MENU = 2;
+	
 	protected List fDebugViews= new ArrayList(6);
 	protected Map fDebugViewsWithMenu= new HashMap(6);
 	protected Map fDebugActionGroups;
@@ -192,13 +197,23 @@ public class DebugActionGroupsManager implements IMenuListener {
 		
 		IActionBars actionBars = viewPart.getViewSite().getActionBars();
 		IToolBarManager toolBarManager = actionBars.getToolBarManager();
-		if (processContributionItems(toolBarManager.getItems(), viewPart.getTitle(), viewPart.getSite().getId(),true)) {
+		boolean refresh = false;
+		if (processContributionItems(toolBarManager.getItems(), viewPart.getTitle(), viewPart.getSite().getId(),TYPE_TOOLBAR)) {
 			toolBarManager.markDirty();
+			refresh = true;
+		}
+		IMenuManager menuManager = actionBars.getMenuManager();
+		if (processContributionItems(menuManager.getItems(), viewPart.getTitle(), viewPart.getSite().getId(), TYPE_VIEW_MENU)) {
+			menuManager.markDirty();
+			refresh = true;
+		}
+		
+		if (refresh) {
 			actionBars.updateActionBars();
 		}
 	}
 	
-	protected boolean processContributionItems(IContributionItem[] items, String viewName, String viewId, boolean toolbarAction) {
+	protected boolean processContributionItems(IContributionItem[] items, String viewName, String viewId, int type) {
 		boolean visibilityChanged = false;
 		for (int i = 0; i < items.length; i++) {
 			IContributionItem iContributionItem = items[i];
@@ -214,7 +229,7 @@ public class DebugActionGroupsManager implements IMenuListener {
 					if (actionSet != null) {
 						iContributionItem.setVisible(actionSet.isVisible());
 						visibilityChanged = true;
-						DebugActionGroupAction action= new DebugActionGroupAction(id, item.getAction().getText(), viewName, viewId, item.getAction().getImageDescriptor(), toolbarAction);
+						DebugActionGroupAction action= new DebugActionGroupAction(id, item.getAction().getText(), viewName, viewId, item.getAction().getImageDescriptor(), type);
 						List actions= (List)fDebugActionGroupActions.get(id);
 						if (actions == null) {
 							actions= new ArrayList(1);
@@ -337,7 +352,7 @@ public class DebugActionGroupsManager implements IMenuListener {
 		if (view != null) {
 			String viewName= view.getTitle();
 			String viewId= view.getSite().getId();
-			processContributionItems(manager.getItems(), viewName, viewId, false);
+			processContributionItems(manager.getItems(), viewName, viewId, TYPE_CONTEXT_MENU);
 		}
 	}
 	
@@ -411,10 +426,10 @@ public class DebugActionGroupsManager implements IMenuListener {
 		private String fViewId;
 		private ImageDescriptor fImageDescriptor;
 		private Image fImage;
-		private boolean fToolbarAction;
+		private int fType;
 
-		protected DebugActionGroupAction(String id, String name, String viewName, String viewId, ImageDescriptor imageDescriptor, boolean toolbarAction) {
-			fToolbarAction = toolbarAction;
+		protected DebugActionGroupAction(String id, String name, String viewName, String viewId, ImageDescriptor imageDescriptor, int type) {
+			fType = type;
 			fId = id;
 			fName = cleanName(name);
 			fImageDescriptor= imageDescriptor;
@@ -426,11 +441,7 @@ public class DebugActionGroupsManager implements IMenuListener {
 		 * @see Object#hashCode()
 		 */
 		public int hashCode() {
-			if (fToolbarAction) {
-				return fId.hashCode() | fViewId.hashCode() | 1;
-			} else {
-				return fId.hashCode() | fViewId.hashCode();	
-			}
+			return fId.hashCode() | fViewId.hashCode() | fType;
 		}
 
 		/**
@@ -439,7 +450,7 @@ public class DebugActionGroupsManager implements IMenuListener {
 		public boolean equals(Object obj) {
 			if (obj instanceof DebugActionGroupAction) {
 				DebugActionGroupAction s = (DebugActionGroupAction) obj;
-				return getId() == s.getId() && getViewId() == s.getViewId() && fToolbarAction == s.fToolbarAction;
+				return getId() == s.getId() && getViewId() == s.getViewId() && fType == s.fType;
 			}
 			return false;
 		}
@@ -468,11 +479,15 @@ public class DebugActionGroupsManager implements IMenuListener {
 		}
 		
 		protected String getDescriptor() {
-			if (fToolbarAction) {
-				return DebugPreferencesMessages.getString("DebugActionGroupsManager.toolbar_7"); //$NON-NLS-1$
-			} else {
-				return DebugPreferencesMessages.getString("DebugActionGroupsManager.context_menu_8"); //$NON-NLS-1$
+			switch (fType) {
+				case TYPE_TOOLBAR:
+					return DebugPreferencesMessages.getString("DebugActionGroupsManager.toolbar_7"); //$NON-NLS-1$
+				case TYPE_CONTEXT_MENU:
+					return DebugPreferencesMessages.getString("DebugActionGroupsManager.context_menu_8"); //$NON-NLS-1$
+				case TYPE_VIEW_MENU:
+				    return DebugPreferencesMessages.getString("DebugActionGroupsManager.pull-down_menu_1"); //$NON-NLS-1$
 			}
+			return ""; //$NON-NLS-1$
 		}
 		
 		/**
