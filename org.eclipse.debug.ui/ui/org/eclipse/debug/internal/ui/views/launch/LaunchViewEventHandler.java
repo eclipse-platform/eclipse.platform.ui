@@ -446,10 +446,10 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 		Runnable r= new Runnable() {
 			public void run() {
 				if (isAvailable()) {
-					if (launches.length > 1) {
-						refresh();
-					} else {
+					if (launches.length == 1) {
 						insert(launches[0]);
+					} else {
+						refresh();
 					}
 					for (int i = 0; i < launches.length; i++) {
 						if (launches[i].hasChildren()) {
@@ -495,10 +495,10 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 		Runnable r= new Runnable() {
 			public void run() {
 				if (isAvailable()) {
-					if (launches.length > 1) {
-						refresh();
-					} else {
+					if (launches.length == 1) {
 						remove(launches[0]);
+					} else {
+						refresh();
 					}
 					ILaunchManager lm= DebugPlugin.getDefault().getLaunchManager();
 					IDebugTarget[] targets= lm.getDebugTargets();
