@@ -24,12 +24,6 @@ import org.eclipse.core.runtime.Path;
  * each node, the visitor is passed the entire tree, the object in the tree at
  * that node, and a callback for requesting the full path of that node.
  * <p>
- * NOTE: The constructor of the ElementTreeIterator is NOT thread safe.  This
- * method must only be called when it is certain that the tree is not being
- * modified by other threads.  Once the iterator has been created, the
- * <code>iterate()</code> method is guaranteed to be threadsafe.  The iteration
- * operates on an immutable tree so modification is not possible.
- * <p>
  * <b>Example:</b>
 <code><pre>
 // printing a crude representation of the posterchild
@@ -64,7 +58,8 @@ public class ElementTreeIterator implements IPathRequestor {
 	public ElementTreeIterator(ElementTree tree, IPath path) {
 		this.tree = tree;
 		this.path = path;
-		treeRoot = (DataTreeNode) tree.getDataTree().copyCompleteSubtree(path);
+		//treeRoot can be null if deleted concurrently
+		treeRoot = (DataTreeNode) tree.getDataTree().safeCopyCompleteSubtree(path);
 	}
 	/**
 	 * Iterates through the given element tree and visit each element (node)
@@ -110,12 +105,16 @@ public class ElementTreeIterator implements IPathRequestor {
 		if (path.isRoot()) {
 			//special visit for root element to use special treeData
 			if (visitor.visitElement(tree, this, tree.getTreeData())) {
+				if (treeRoot == null)
+					return;
 				AbstractDataTreeNode[] children = treeRoot.getChildren();
 				for (int i = children.length; --i >= 0;) {
 					doIteration((DataTreeNode) children[i], visitor);
 				}
 			}
 		} else {
+			if (treeRoot == null)
+				return;
 			push(path, path.segmentCount() - 1);
 			doIteration(treeRoot, visitor);
 		}

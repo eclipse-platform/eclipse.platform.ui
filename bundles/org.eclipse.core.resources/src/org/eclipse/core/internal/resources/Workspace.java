@@ -43,7 +43,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	protected MarkerManager markerManager;
 	protected WorkManager workManager;
 	protected AliasManager aliasManager;
-	protected long nextNodeId = 0;
+	protected long nextNodeId = 1;
 	protected long nextModificationStamp = 0;
 	protected long nextMarkerId = 0;
 	protected Synchronizer synchronizer;
@@ -710,37 +710,6 @@ public ResourceInfo createResource(IResource resource, ResourceInfo info, boolea
 		}
 	}
 	return info;
-}
-/**
- * Creates and returns a new ElementTreeIterator on the current tree.  Takes
- * care of acquiring the workspace lock for the duration of the time to create
- * the iterator. This method only needs to be called when creating an iterator
- * outside of a resource changing operation.
- */
-protected ElementTreeIterator createTreeIterator(IPath rootPath) {
-	ElementTreeIterator iterator;
-	try {
-		//set tree as unlocked, otherwise the UIWorkspaceLock will complain
-		overrideTreeLock = true;
-		try {
-			workManager.checkIn();
-		} catch (CoreException e) {
-			//can only happen if workspace is closed
-			ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
-		}
-		iterator = new ElementTreeIterator(tree, rootPath);
-		//now the lock can be freed
-	} finally {
-		//switch the tree lock back to its previous state
-		overrideTreeLock = false;
-		try {
-			workManager.checkOut();
-		} catch (CoreException e) {
-			//can only happen if workspace is closed
-			ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
-		}
-	}
-	return iterator;
 }
 /*
  * Creates the given resource in the tree and returns the new resource info object.  

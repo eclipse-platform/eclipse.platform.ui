@@ -417,9 +417,7 @@ void emptyDelta() {
 	rootNode = new NoDataDeltaNode(null);
 }
 
-public boolean isEmptyDelta() {
-	return rootNode.getChildren().length == 0;
-}
+
 /**
  * Returns a node of the tree if it is present, otherwise returns null
  *
@@ -649,6 +647,7 @@ public NodeInfo getNodeInfo (IPath key) {
 	
 	return found.nodeInfoAt(this);
 }
+
 /** 
  * Returns the parent of the tree.
  */
@@ -683,6 +682,9 @@ protected boolean hasAncestor (DeltaDataTree ancestor) {
  */
 public boolean includes (IPath key) {
 	return searchNodeAt(key) != null;
+}
+public boolean isEmptyDelta() {
+	return rootNode.getChildren().length == 0;
 }
 /**
  * Returns an object containing:
@@ -749,9 +751,9 @@ protected AbstractDataTreeNode naiveCopyCompleteSubtree (IPath key) {
 	if (numChildren == 0) {
 		childNodes = AbstractDataTreeNode.NO_CHILDREN;
 	} else {
-		childNodes = new AbstractDataTreeNode[childNames.length];
+		childNodes = new AbstractDataTreeNode[numChildren];
 		/* do for each child */
-		for (int i = childNames.length; --i >= 0;) {
+		for (int i = numChildren; --i >= 0;) {
 			childNodes[i] = copyCompleteSubtree(key.append(childNames[i]));
 		}
 	}
@@ -820,6 +822,64 @@ protected void reroot(DeltaDataTree sourceTree) {
 	sourceTree.setParent(null);
 	parent.setRootNode(backwardDelta.getRootNode());
 	parent.setParent(sourceTree);
+}
+/**
+ * Returns a complete node containing the contents of a subtree of the tree.
+ * Returns null  if the node at this key does not exist.  This is a thread-safe
+ * version of copyCompleteSubtree
+ *
+ * @param key key of subtree to copy
+ */
+public AbstractDataTreeNode safeCopyCompleteSubtree (IPath key) {
+
+	AbstractDataTreeNode node = searchNodeAt(key);
+	if (node == null) {
+		return null;
+	}
+	if (node.isDelta()) {
+		return safeNaiveCopyCompleteSubtree(key);
+	} else {
+		//copy the node in case the user wants to hammer the subtree name
+		return node.copy();
+	}
+}
+/**
+ * Returns a complete node containing the contents of the subtree 
+ * rooted at @key in the receiver.  Returns null if this node does not exist in
+ * the tree.  This is a thread-safe version of naiveCopyCompleteSubtree
+ *
+ * @param key
+ *	key of subtree whose contents we want to copy.
+ */
+protected AbstractDataTreeNode safeNaiveCopyCompleteSubtree (IPath key) {
+	try {
+		String[] childNames = getNamesOfChildren (key);
+		int numChildren = childNames.length;
+		AbstractDataTreeNode[] childNodes;
+		if (numChildren == 0) {
+			childNodes = AbstractDataTreeNode.NO_CHILDREN;
+		} else {
+			childNodes = new AbstractDataTreeNode[numChildren];
+			/* do for each child */
+			int actualChildCount = 0;
+			for (int i = numChildren; --i >= 0;) {
+				childNodes[i] = safeCopyCompleteSubtree(key.append(childNames[i]));
+				if (childNodes[i] != null)
+					actualChildCount++;
+			}
+			//if there are less actual children due to concurrent deletion, shrink the child array
+			if (actualChildCount < numChildren) {
+				AbstractDataTreeNode[] actualChildNodes = new AbstractDataTreeNode[actualChildCount];
+				for (int iOld = 0, iNew = 0; iOld < numChildren; iOld++)
+					if (childNodes[iOld] != null)
+						actualChildNodes[iNew++] = childNodes[iOld];
+				childNodes = actualChildNodes;
+			}
+		}
+		return new DataTreeNode(key.lastSegment(), getData(key), childNodes);
+	} catch (ObjectNotFoundException e) {
+		return null;
+	}
 }
 /**
  * Returns the specified node.  Search in the parent if necessary.  Return null

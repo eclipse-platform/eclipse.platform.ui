@@ -11,6 +11,7 @@ package org.eclipse.core.internal.resources;
 
 import java.io.*;
 import java.util.*;
+
 import org.eclipse.core.internal.localstore.SafeChunkyInputStream;
 import org.eclipse.core.internal.localstore.SafeFileInputStream;
 import org.eclipse.core.internal.utils.Policy;
@@ -363,7 +364,7 @@ private void visitorFindMarkers(IPath path, final ArrayList list, final String t
 			return true;
 		}
 	};
-	workspace.createTreeIterator(path).iterate(visitor);
+	new ElementTreeIterator(workspace.getElementTree(), path).iterate(visitor);
 }
 /**
  * Adds the markers for a subtree of resources to the list.

@@ -12,6 +12,7 @@ package org.eclipse.core.internal.resources;
 
 import java.io.*;
 import java.util.*;
+
 import org.eclipse.core.internal.events.*;
 import org.eclipse.core.internal.localstore.*;
 import org.eclipse.core.internal.utils.*;
@@ -1429,7 +1430,7 @@ public void visitAndSave(final IResource root) throws CoreException {
 	// Call the visitor
 	try {
 		try {
-			workspace.createTreeIterator(root.getFullPath()).iterate(visitor);
+			new ElementTreeIterator(workspace.getElementTree(), root.getFullPath()).iterate(visitor);
 		} catch (WrappedRuntimeException e) {
 			throw (IOException) e.getTargetException();
 		}
@@ -1550,7 +1551,7 @@ public void visitAndSnap(final IResource root) throws CoreException {
 	try {
 		// Call the visitor
 		try {
-			workspace.createTreeIterator(root.getFullPath()).iterate(visitor);
+			new ElementTreeIterator(workspace.getElementTree(), root.getFullPath()).iterate(visitor);
 		} catch (WrappedRuntimeException e) {
 			throw (IOException) e.getTargetException();
 		}
