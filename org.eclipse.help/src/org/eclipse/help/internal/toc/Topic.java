@@ -23,14 +23,14 @@ class Topic extends TocNode implements ITopic {
 		if (attrs == null)
 			return;
 		href = attrs.getValue("href");
-		if (href != null && !"".equals(href))
+		if (href != null && href.length()>0)
 			href = HrefUtil.normalizeHref(tocFile.getPluginID(), href);
 		label = attrs.getValue("label");
 	}
 	/**
 	 * Implements abstract method.
 	 */
-	public void build(TocBuilder builder) {
+	public final void build(TocBuilder builder) {
 		builder.buildTopic(this);
 	}
 	public String getHref() {

@@ -33,17 +33,16 @@ public class HrefUtil {
 	 * @return String representation of href,
 	 * formatted as /pluginID/path[#anchorID]
 	 */
-	public static String normalizeHref(String pluginID, String href) {
+	public final static String normalizeHref(String pluginID, String href) {
 		if (href == null)
 			return null;
 		if (href.startsWith("/"))
 			// already normalized
 			return href;
-		if (href.startsWith("http://")|| href.startsWith("file:/"))
+		if (href.startsWith("http:")|| href.startsWith("file:"))
 			// external doc
 			return href;
-		int ddIndex = href.indexOf("../");
-		if (ddIndex == 0) {
+		if (href.startsWith("../")) {
 			return href.substring(2);
 		} else {
 			if (href.length() > 0)

@@ -49,7 +49,7 @@ public class TocFile {
 	 * Gets the pluginID
 	 * @return Returns a String
 	 */
-	public String getPluginID() {
+	public final String getPluginID() {
 		return plugin;
 	}
 

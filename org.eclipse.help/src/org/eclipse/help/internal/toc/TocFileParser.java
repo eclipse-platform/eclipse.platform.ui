@@ -93,7 +93,7 @@ class TocFileParser extends DefaultHandler {
 	/**
 	 * @see ContentHandler#startElement(String, String, String, Attributes)
 	 */
-	public void startElement(
+	public final void startElement(
 		String namespaceURI,
 		String localName,
 		String qName,
@@ -120,7 +120,7 @@ class TocFileParser extends DefaultHandler {
 	/**
 	 * @see ContentHandler#endElement(String, String, String)
 	 */
-	public void endElement(String namespaceURI, String localName, String qName)
+	public final void endElement(String namespaceURI, String localName, String qName)
 		throws SAXException {
 		elementStack.pop();
 	}
