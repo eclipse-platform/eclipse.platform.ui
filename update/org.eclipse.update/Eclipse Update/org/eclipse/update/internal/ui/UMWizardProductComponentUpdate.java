@@ -23,7 +23,7 @@ public class UMWizardProductComponentUpdate extends UMWizard {
 
 		setWindowTitle(UpdateManagerStrings.getString("S_Installation"));
 
-		ImageDescriptor imageDescriptor = UpdateManagerPlugin.getImageDescriptor("icons/basic/wizban/update_wiz.gif");
+		ImageDescriptor imageDescriptor = UpdateManagerPlugin.getImageDescriptor("icons/full/wizban/update.gif");
 		setDefaultPageImageDescriptor(imageDescriptor);
 	}
 	/**

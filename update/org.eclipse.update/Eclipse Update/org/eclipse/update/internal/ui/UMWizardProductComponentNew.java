@@ -24,7 +24,7 @@ public UMWizardProductComponentNew(UMDialog dialog) {
 
 	setWindowTitle(UpdateManagerStrings.getString("S_Installation"));
 
-	ImageDescriptor imageDescriptor = UpdateManagerPlugin.getImageDescriptor("icons/basic/wizban/new_wiz.gif");
+	ImageDescriptor imageDescriptor = UpdateManagerPlugin.getImageDescriptor("icons/full/wizban/new.gif");
 	setDefaultPageImageDescriptor(imageDescriptor);
 }
 /**
