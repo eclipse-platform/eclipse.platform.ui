@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin
-  name="%pluginName"
-  id="org.eclipse.core.boot"
-  version="2.0.4"
-  provider-name="Object Technology International, Inc.">
+   id="org.eclipse.core.boot"
+   name="%pluginName"
+   version="2.0.5"
+   provider-name="Object Technology International, Inc.">
 
-  <runtime>
-    <library name="boot.jar" >
+<runtime>
+   <library name="boot.jar">
       <export name="*"/>
-    </library>
-  </runtime>
+   </library>
+</runtime>
 
 </plugin>
