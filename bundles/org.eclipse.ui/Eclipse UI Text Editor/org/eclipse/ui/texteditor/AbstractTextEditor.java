@@ -325,7 +325,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				StyledText text= fSourceViewer.getTextWidget();
 				text.addVerifyKeyListener(this);
 				fKeyBindingService= getEditorSite().getKeyBindingService();
-				fKeyBindingService.enable(true);
+				// fKeyBindingService.enable(true);
 				fIsInstalled= true;
 			}
 		}
@@ -892,6 +892,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				}
 				
 				public void mouseUp(MouseEvent e) {
+					setFocus();
 					if (1 == e.button && !fDoubleClicked)
 						triggerAction(ITextEditorActionConstants.RULER_CLICK);
 					fDoubleClicked= false;
@@ -2127,8 +2128,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		markAsSelectionDependentAction(ITextEditorActionConstants.SHIFT_RIGHT, true);
 		markAsSelectionDependentAction(ITextEditorActionConstants.SHIFT_LEFT, true);
 		
-//		setActionActivationCode(ITextEditorActionConstants.SHIFT_RIGHT,'\t', 0, 0);
-//		setActionActivationCode(ITextEditorActionConstants.SHIFT_LEFT, '\t', 0, SWT.SHIFT);
+		setActionActivationCode(ITextEditorActionConstants.SHIFT_RIGHT,'\t', 0, 0);
+		setActionActivationCode(ITextEditorActionConstants.SHIFT_LEFT, '\t', 0, SWT.SHIFT);
 	}
 	
 	/**

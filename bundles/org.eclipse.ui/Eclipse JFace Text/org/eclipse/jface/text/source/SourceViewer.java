@@ -118,8 +118,8 @@ public class SourceViewer extends TextViewer implements ISourceViewer {
 	public SourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
 		super();
 		
-		fIsVerticalRulerVisible= true;
 		fVerticalRuler= ruler;
+		fIsVerticalRulerVisible= (ruler != null);
 		createControl(parent, styles);
 	}
 	
@@ -446,7 +446,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer {
 	 */
 	public void showAnnotations(boolean show) {
 		boolean old= fIsVerticalRulerVisible;
-		fIsVerticalRulerVisible= show;
+		fIsVerticalRulerVisible= (show && fVerticalRuler != null);
 		if (old != fIsVerticalRulerVisible)
 			fComposite.layout();
 	}		

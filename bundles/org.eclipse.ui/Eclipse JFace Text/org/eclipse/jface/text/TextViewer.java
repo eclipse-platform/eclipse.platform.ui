@@ -387,16 +387,9 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 			
 			if (fTextWidget != null) {
 				int offset= event.lineOffset + TextViewer.this.getVisibleRegionOffset();
-				int length= event.lineText.length();
 				
-				if (fPosition.includes(offset) && (length == 0 || fPosition.includes(offset + length - 1)) &&
-					(event.lineBackground == null ||
-					event.lineBackground.equals(fTextWidget.getBackground())))
-				{
+				if (fPosition.includes(offset))
 					event.lineBackground= fHighlightColor;
-				}
-//				else
-//					event.lineBackground= fTextWidget.getBackground();
 			}
 		}
 		
@@ -436,6 +429,18 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 		private void paint() {
 			int offset= fPosition.getOffset() - TextViewer.this.getVisibleRegionOffset();
 			int length= fPosition.getLength();
+
+			int count= fTextWidget.getCharCount();
+			if (offset + length >= count) {
+				length= count - offset; // clip
+
+				Point upperLeft= fTextWidget.getLocationAtOffset(offset);
+				Point lowerRight= fTextWidget.getLocationAtOffset(offset + length);
+				int width= fTextWidget.getClientArea().width;
+				int height= fTextWidget.getLineHeight() + lowerRight.y - upperLeft.y;
+				fTextWidget.redraw(upperLeft.x, upperLeft.y, width, height, false);
+			}			
+			
 			fTextWidget.redrawRange(offset, length, true);
 		}
 
@@ -571,8 +576,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 
 				// end of line
 				line= document.getLineOfOffset(point.x + point.y);
-				IRegion info= document.getLineInformation(line); // no delimiter
-				int length= info.getOffset() + info.getLength() - offset;
+				int length= document.getLineOffset(line) + document.getLineLength(line)	- offset;
 
 				return new Point(offset, length);
 
