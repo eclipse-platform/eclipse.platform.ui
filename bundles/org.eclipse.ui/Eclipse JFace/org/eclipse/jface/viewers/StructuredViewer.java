@@ -832,11 +832,6 @@ public Widget testFindItem(Object element) {
  */
 protected void unmapAllElements() {
 	if (elementMap != null) {
-		// need to clear the Item->element association as well as the element->Item association
-		for (Iterator i = elementMap.values().iterator(); i.hasNext();) {
-			Widget w = (Widget) i.next();
-			w.setData(null);
-		}
 		elementMap = new HashMap();
 	}
 }
