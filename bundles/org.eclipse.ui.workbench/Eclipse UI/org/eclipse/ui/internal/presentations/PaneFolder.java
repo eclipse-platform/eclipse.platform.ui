@@ -188,6 +188,10 @@ public final class PaneFolder {
 				viewForm.setTopCenter(viewFormTopCenterProxy.getControl());
 			}
 			topCenter.setBackground(putTrimOnTop ? backgroundGradientEnd : background );
+		} else {
+			if (!putTrimOnTop) {
+				viewForm.setTopCenter(null);
+			}
 		}
 	}
 	
@@ -204,6 +208,10 @@ public final class PaneFolder {
 				viewForm.setTopRight(viewFormTopRightProxy.getControl());
 			}
 			topRight.setBackground(putTrimOnTop ? backgroundGradientEnd : background );
+		} else {
+			if (!putTrimOnTop) {
+				viewForm.setTopRight(null);
+			}
 		}
 	}
 	
