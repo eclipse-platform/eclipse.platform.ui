@@ -219,8 +219,11 @@ public void load(Reader r) {
 		}
 		load(document, (Element) root);
 	} catch (ParserConfigurationException e) {
+		// ignore
 	} catch (IOException e) {
+		// ignore
 	} catch (SAXException e) {
+		// ignore
 	}
 }
 /* (non-Javadoc)
@@ -372,14 +375,16 @@ private void save(Document document,Node parent) {
 		String key = (String)i.next();
 		Element child = document.createElement(TAG_LIST);
 		root.appendChild(child);
-		child.setAttribute(TAG_KEY, key == null ? "" : key);
+		child.setAttribute(TAG_KEY, key == null ? "" : key); //$NON-NLS-1$
 		String[] value = (String[])arrayItems.get(key);
-		for (int index = 0; index < value.length; index++){
-			Element c = document.createElement(TAG_ITEM);
-			child.appendChild(c);
-			String string = value[index];
-            c.setAttribute(TAG_VALUE, string == null ? "" : string); //$NON-NLS-1$
-		}	
+		if (value != null) {
+			for (int index = 0; index < value.length; index++){
+				Element c = document.createElement(TAG_ITEM);
+				child.appendChild(c);
+				String string = value[index];
+	            c.setAttribute(TAG_VALUE, string == null ? "" : string); //$NON-NLS-1$
+			}
+		}
 	}
 	for(Iterator i = sections.values().iterator();i.hasNext();) {
 		((DialogSettings)i.next()).save(document,root);
