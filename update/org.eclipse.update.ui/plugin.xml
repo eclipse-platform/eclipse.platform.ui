@@ -22,7 +22,7 @@
    </requires>
 
 
-   <extension-point id="searchCategory" name="Search Category" schema="schema/searchCategory.exsd"/>
+   <extension-point id="searchCategory" name="%searchCategory.name" schema="schema/searchCategory.exsd"/>
 
    <extension
          point="org.eclipse.ui.actionSets">
@@ -44,25 +44,25 @@
          <action
                label="%actionSets.newUpdates.label"
                icon="icons/full/obj16/usearch_obj.gif"
+               helpContextId="org.eclipse.update.ui.newUpdates"
                class="org.eclipse.update.internal.ui.NewUpdatesAction"
                menubarPath="help/org.eclipse.update.ui.updateMenu/group1"
-               id="org.eclipse.update.ui.newUpdates"
-               helpContextId="org.eclipse.update.ui.newUpdates">
+               id="org.eclipse.update.ui.newUpdates">
          </action>
          <action
                label="%actionSets.pendingChanges.label"
+               helpContextId="org.eclipse.update.ui.pendingChanges"
                class="org.eclipse.update.internal.ui.DeltaWizardAction"
                menubarPath="help/org.eclipse.update.ui.updateMenu/group2"
-               id="org.eclipse.update.ui.pendingChanges"
-               helpContextId="org.eclipse.update.ui.pendingChanges">
+               id="org.eclipse.update.ui.pendingChanges">
          </action>
          <action
                label="%actionSets.updateManager.label"
                icon="icons/full/cview16/update_pers.gif"
+               helpContextId="org.eclipse.update.ui.updateManager"
                class="org.eclipse.update.internal.ui.UpdateManagerAction"
                menubarPath="help/org.eclipse.update.ui.updateMenu/group2"
-               id="org.eclipse.update.ui.updateManager"
-               helpContextId="org.eclipse.update.ui.updateManager">
+               id="org.eclipse.update.ui.updateManager">
          </action>
       </actionSet>
    </extension>
@@ -168,5 +168,5 @@
             class="org.eclipse.update.internal.ui.wizards.InstallDeltaWizard">
       </display>
    </extension>
-   
+
 </plugin>
