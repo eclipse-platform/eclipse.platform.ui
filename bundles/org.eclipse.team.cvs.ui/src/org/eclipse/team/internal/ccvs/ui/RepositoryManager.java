@@ -37,7 +37,9 @@ import org.eclipse.team.core.ITeamManager;
 import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
+import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.ui.model.BranchTag;
+import org.eclipse.team.ui.sync.TeamFile;
 
 /**
  * This class is repsible for maintaining the UI's list of known repositories,
@@ -403,7 +405,7 @@ public class RepositoryManager {
 			provider.setComment(previousComment);
 			List list = (List)table.get(provider);
 			IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
-			provider.add(providerResources, IResource.DEPTH_INFINITE, subMonitor);
+			provider.add(providerResources, IResource.DEPTH_ZERO, subMonitor);
 		}		
 	}
 	
@@ -424,6 +426,21 @@ public class RepositoryManager {
 			List list = (List)table.get(provider);
 			IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
 			provider.delete(providerResources, subMonitor);
+		}		
+	}
+	/**
+	 * Mark the files as merged.
+	 */
+	public void merged(IRemoteSyncElement[] elements) throws TeamException {
+		Hashtable table = getProviderMapping(elements);
+		Set keySet = table.keySet();
+		Iterator iterator = keySet.iterator();
+		while (iterator.hasNext()) {
+			CVSTeamProvider provider = (CVSTeamProvider)iterator.next();
+			provider.setComment(previousComment);
+			List list = (List)table.get(provider);
+			IRemoteSyncElement[] providerElements = (IRemoteSyncElement[])list.toArray(new IRemoteSyncElement[list.size()]);
+			provider.merged(providerElements);
 		}		
 	}
 	/**
@@ -500,6 +517,23 @@ public class RepositoryManager {
 				result.put(provider, list);
 			}
 			list.add(resources[i]);
+		}
+		return result;
+	}
+	/**
+	 * Helper method. Return a hashtable mapping provider to a list of IRemoteSyncElements
+	 * shared with that provider.
+	 */
+	private Hashtable getProviderMapping(IRemoteSyncElement[] elements) {
+		Hashtable result = new Hashtable();
+		for (int i = 0; i < elements.length; i++) {
+			ITeamProvider provider = TeamPlugin.getManager().getProvider(elements[i].getLocal().getProject());
+			List list = (List)result.get(provider);
+			if (list == null) {
+				list = new ArrayList();
+				result.put(provider, list);
+			}
+			list.add(elements[i]);
 		}
 		return result;
 	}

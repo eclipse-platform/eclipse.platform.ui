@@ -69,6 +69,7 @@ public class CommitMergeAction extends MergeAction {
 		IResource[] changedResources = new IResource[changed.length];
 		List additions = new ArrayList();
 		List deletions = new ArrayList();
+		List conflicts = new ArrayList();
 		for (int i = 0; i < changed.length; i++) {
 			changedResources[i] = changed[i].getResource();
 			// If it's an outgoing addition we need to 'add' it before comitting.
@@ -84,12 +85,7 @@ public class CommitMergeAction extends MergeAction {
 			// If it's a conflicting change we need to mark it as merged before committing.
 			if ((changed[i].getKind() & Differencer.DIRECTION_MASK) == Differencer.CONFLICTING) {
 				if (changed[i] instanceof TeamFile) {
-					CVSTeamProvider provider = (CVSTeamProvider)TeamPlugin.getManager().getProvider(changedResources[i].getProject());
-					try {
-						provider.merged(((TeamFile)changed[i]).getMergeResource().getSyncElement());
-					} catch (TeamException e) {
-						CVSUIPlugin.log(e.getStatus());
-					}
+					conflicts.add(((TeamFile)changed[i]).getMergeResource().getSyncElement());
 				}
 			}
 		}
@@ -100,6 +96,9 @@ public class CommitMergeAction extends MergeAction {
 			}
 			if (deletions.size() != 0) {
 				manager.delete((IResource[])deletions.toArray(new IResource[0]), monitor);
+			}
+			if (conflicts.size() != 0) {
+				manager.merged((IRemoteSyncElement[])conflicts.toArray(new IRemoteSyncElement[0]));
 			}
 			manager.commit(changedResources, getShell(), monitor);
 		} catch (TeamException e) {
