@@ -1,4 +1,4 @@
-package org.eclipse.ui.externaltools.internal.ant.view.actions;
+package org.eclipse.ui.externaltools.internal.ui;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,15 +20,15 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.ui.externaltools.internal.ui.TreeAndListGroup;
+import org.eclipse.ui.externaltools.model.StringMatcher;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
- * Dialog for selecting an XML file in the workspace. Derived from org.eclipse.
- * ui. dialogs.
+ * Dialog for selecting a file in the workspace. Derived from 
+ * org.eclipse.ui.dialogs.ResourceSelectionDialog
  */
-public class BuildFileSelectionDialog extends MessageDialog {
+public class FileSelectionDialog extends MessageDialog {
 	// the root element to populate the viewer with
 	private IAdaptable					root;
 
@@ -41,6 +41,10 @@ public class BuildFileSelectionDialog extends MessageDialog {
 	 * The file selected by the user.
 	 */
 	private IFile result= null;
+	/**
+	 * String matcher used to filter content
+	 */
+	private StringMatcher stringMatcher= null;
 /**
  * Creates a resource selection dialog rooted at the given element.
  *
@@ -49,10 +53,28 @@ public class BuildFileSelectionDialog extends MessageDialog {
  * @param message the message to be displayed at the top of this dialog, or
  *    <code>null</code> to display a default message
  */
-public BuildFileSelectionDialog(Shell parentShell, IAdaptable rootElement, String message) {
+public FileSelectionDialog(Shell parentShell, IAdaptable rootElement, String message) {
 	super(parentShell, "Add Build File", null, message, MessageDialog.NONE, new String[] {"Ok", "Cancel"}, 0);
 	root = rootElement;
 	setShellStyle(getShellStyle() | SWT.RESIZE);
+}
+/**
+ * Limits the files displayed in this dialog to files matching the given
+ * pattern. The string can be a filename or a regular expression containing
+ * '*' for any series of characters or '?' for any single character.
+ * 
+ * @param pattern a pattern used to filter the displayed files or
+ * <code>null</code> to display all files. If a pattern is supplied, only files
+ * whose names match the given pattern will be available for selection.
+ * @param ignoreCase if true, case is ignored. If the pattern argument is
+ * <code>null</code>, this argument is ignored.
+ */
+public void addFileFilter(String pattern, boolean ignoreCase) {
+	if (pattern != null) {
+		stringMatcher= new StringMatcher(pattern, ignoreCase, false);
+	} else {
+		stringMatcher= null;
+	}
 }
 /* (non-Javadoc)
  * Method declared in Window.
@@ -133,7 +155,9 @@ private ITreeContentProvider getResourceProvider(final int resourceType) {
 				for (int i = 0; i < members.length; i++) {
 					//And the test bits with the resource types to see if they are what we want
 					if ((members[i].getType() & resourceType) > 0) {
-						if (members[i].getType() == IResource.FILE && !"xml".equalsIgnoreCase(members[i].getFileExtension())) { //$NON-NLS-1$
+						if (members[i].getType() == IResource.FILE &&
+								stringMatcher != null &&
+								!stringMatcher.match(members[i].getName())) {
 							continue;
 						}
 						results.add(members[i]);

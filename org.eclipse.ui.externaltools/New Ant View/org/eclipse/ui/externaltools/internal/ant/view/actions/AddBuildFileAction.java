@@ -13,6 +13,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.externaltools.internal.ant.view.AntView;
 import org.eclipse.ui.externaltools.internal.ant.view.elements.ProjectNode;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
+import org.eclipse.ui.externaltools.internal.ui.*;
 import org.eclipse.ui.externaltools.internal.ui.IExternalToolsUIConstants;
 
 /**
@@ -33,7 +34,8 @@ public class AddBuildFileAction extends Action {
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	public void run() {
-		BuildFileSelectionDialog dialog = new BuildFileSelectionDialog(Display.getCurrent().getActiveShell(), ResourcesPlugin.getWorkspace().getRoot(), "&Select a build file:");
+		FileSelectionDialog dialog = new FileSelectionDialog(Display.getCurrent().getActiveShell(), ResourcesPlugin.getWorkspace().getRoot(), "&Select a build file:");
+		dialog.addFileFilter("*.xml", true); //$NON-NLS-1$
 		dialog.open();
 		IFile file= dialog.getResult();
 		if (file == null) {

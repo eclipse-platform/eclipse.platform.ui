@@ -1,4 +1,4 @@
-package org.eclipse.ui.externaltools.internal.ant.view.actions;
+package org.eclipse.ui.externaltools.model;
 /**********************************************************************
 Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
 This file is made available under the terms of the Common Public License v1.0

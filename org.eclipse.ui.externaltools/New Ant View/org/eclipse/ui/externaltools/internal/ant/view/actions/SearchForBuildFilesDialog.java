@@ -36,6 +36,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.IPreferenceConstants;
+import org.eclipse.ui.externaltools.model.*;
 
 /**
  * This dialog allows the user to search for Ant build files whose names match a
