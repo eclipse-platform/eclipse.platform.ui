@@ -760,6 +760,9 @@ public class TagConfigurationDialog extends Dialog {
 		
 		WorkbenchHelp.setHelp(refreshButton, IHelpContextIds.TAG_CONFIGURATION_REFRESHACTION);
 		WorkbenchHelp.setHelp(addButton, IHelpContextIds.TAG_CONFIGURATION_OVERVIEW);
+		
+		Dialog.applyDialogFont(buttonComp);
+		
 		return buttonComp;
 	 }
 	 
