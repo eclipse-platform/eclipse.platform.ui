@@ -31,7 +31,6 @@ import org.eclipse.ui.WorkbenchException;
  * defined by launch configurations. Specifically it: <ul>
  * <li>changes perspectives as launches are registered</li>
  * <li>change perspective when a thread suspends</li>
- * <li>(will) open the console when there is program output</li>
  * </ul>
  * 
  * @see IDebugUIContants.ATTR_RUN_PERSPECTIVE
@@ -205,9 +204,9 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 					DebugUIPlugin.log(e);
 				}
 				// if no perspective specified, always switch to debug
-			// perspective 
+				// perspective 
 
-			// this has to be done in an asynch, such that the workbench
+				// this has to be done in an asynch, such that the workbench
 				// window can be accessed
 				final String id = perspectiveId;
 				Runnable r = new Runnable() {
@@ -274,5 +273,4 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 		}
 		return perspectiveId;
 	}
-	
 }
