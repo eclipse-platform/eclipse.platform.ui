@@ -181,13 +181,13 @@ public class SearchData extends RequestData {
 		if (workingSetName != null)
 			return workingSetName;
 
-		if (isSearchRequest()) {
+		if (isScopeRequest()) {
+			workingSetName = getDBCSParameter("workingSet");
+		} else if (isSearchRequest()) {
 			workingSetName = request.getParameter("scope");
 			// if we have already set the working set, then use it.
 			if (workingSetName == null)
 				workingSetName = getDBCSParameter("workingSet");
-		} else if (isScopeRequest()) {
-			workingSetName = getDBCSParameter("workingSet");
 		} else {
 			workingSetName =
 				HelpPlugin.getDefault().getPluginPreferences().getString(
