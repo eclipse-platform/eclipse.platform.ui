@@ -37,6 +37,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ScrollBar;
+import org.eclipse.swt.printing.PrintDialog;
+import org.eclipse.swt.printing.PrinterData;
+import org.eclipse.swt.printing.Printer;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ISelection;
@@ -804,20 +809,19 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 	}
 	
 	protected void printContents() {
-		//this will look something like fTextWidget.print();
-		//for now, do something to make sure it works
-		 org.eclipse.swt.widgets.Shell shell = new org.eclipse.swt.widgets.Shell();
-         shell.setLayout(new org.eclipse.swt.layout.FillLayout());
-         shell.setSize(200, 100);
-         
-         StyledText widget = new StyledText(shell, 10);
-         widget.setText("This is the StyledText widget.");
 
-         shell.open();
-         Display display = shell.getDisplay();
-         while (!shell.isDisposed()) {
-         	if (!display.readAndDispatch()) display.sleep();
-         }
+		Thread printingThread = new Thread("Printing") {
+			public void run() {
+				Shell shell = new Shell(new Display());
+				PrintDialog dialog = new PrintDialog(shell, SWT.NULL);
+				PrinterData data = dialog.open();
+				if (data == null) return;
+				Printer printer = new Printer(data);
+				fTextWidget.print(printer);
+				printer.dispose();
+			}
+		};
+		printingThread.start();
     }
 	
 	/**
