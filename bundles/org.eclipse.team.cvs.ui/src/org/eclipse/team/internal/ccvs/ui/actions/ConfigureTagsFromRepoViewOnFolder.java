@@ -25,6 +25,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.TagConfigurationDialog;
+import org.eclipse.team.internal.ccvs.ui.model.RemoteModule;
 ;
 
 /**
@@ -42,6 +43,9 @@ public class ConfigureTagsFromRepoViewOnFolder extends CVSAction {
 			Iterator elements = ((IStructuredSelection) selection).iterator();
 			while (elements.hasNext()) {
 				Object next = elements.next();
+				if (next instanceof RemoteModule) {
+					next = ((RemoteModule)next).getCVSResource();
+				}
 				if (next instanceof ICVSRemoteFolder) {
 					ICVSRemoteFolder folder = (ICVSRemoteFolder)next;
 					if (folder.isDefinedModule()) {
