@@ -236,7 +236,7 @@
       </actionSet>
       <actionSet
             label="Drag Test"
-            visible="true"
+            visible="false"
             id="org.eclipse.ui.tests.dragTestActions">
          <action
                label="Drag-Drop Snapshot"
