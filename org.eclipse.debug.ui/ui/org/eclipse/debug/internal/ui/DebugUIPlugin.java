@@ -247,11 +247,13 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChanged
 		if (debugPart != null) {
 			final LaunchesView dp= debugPart;
 			Display display= getDisplay();
+			if (display != null) {
 				display.asyncExec(new Runnable() {
 					public void run() {
 						dp.autoExpand(source);
 					}
 				});
+			}
 		}
 	}
 	
@@ -267,13 +269,16 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChanged
 	 *			 first element is a window, the second is a page
 	 */
 	protected Object[] findDebugPresentation(final Object source, String mode, String layoutId, boolean suspendTriggered) {
+		Display display= getDisplay();
+		if (display == null) {
+			return null;
+		}
 		IWorkbenchWindow[] windows= getWorkbench().getWorkbenchWindows();
 		IWorkbenchWindow activeWindow= getActiveWorkbenchWindow();
 		int i;
 		if (suspendTriggered) {
 			final LaunchesView part= findDebugPart(activeWindow, mode);
 			if (part != null) {
-				Display display= getDisplay();
 				display.asyncExec(new Runnable() {
 					public void run() {
 						part.autoExpand(source);
@@ -286,7 +291,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChanged
 				IWorkbenchWindow window= windows[i];
 				final LaunchesView lPart= findDebugPart(window, mode);
 				if (lPart != null) {
-					Display display= getDisplay();
 					display.asyncExec(new Runnable() {
 						public void run() {
 							lPart.autoExpand(source);
@@ -1105,12 +1109,14 @@ public static Object createExtension(final IConfigurationElement element, final 
 	 */
 	public void removeEventFilter(final IDebugUIEventFilter filter) {
 		Display display= getDisplay();
-		Runnable runnable = new Runnable() {
-			public void run() {
-				fEventFilters.remove(filter);
-			}
-		};
-		display.asyncExec(runnable);
+		if (display != null) {
+			Runnable runnable = new Runnable() {
+				public void run() {
+					fEventFilters.remove(filter);
+				}
+			};
+			display.asyncExec(runnable);
+		}
 	}
 	
 	/**
