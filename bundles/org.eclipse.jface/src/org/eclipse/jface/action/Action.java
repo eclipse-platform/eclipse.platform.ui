@@ -1051,12 +1051,4 @@ public abstract class Action implements IAction {
 	public void setAccelerator(int keycode) {
 		this.accelerator = keycode;
 	}
-	
-	/**
-	 * Return whether or not this actions shows text in the toolbar.
-	 * @return
-	 */
-	public boolean showTextInToolBar(){
-		return false;
-	}
 }
