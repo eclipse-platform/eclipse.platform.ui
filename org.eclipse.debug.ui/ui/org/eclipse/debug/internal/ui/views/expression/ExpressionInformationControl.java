@@ -8,17 +8,17 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.actions;
+package org.eclipse.debug.internal.ui.views.expression;
 
 import java.util.Iterator;
 import java.util.Map;
-
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.views.expression.ExpressionPopupContentProvider;
+import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.debug.internal.ui.views.variables.IndexedVariablePartition;
 import org.eclipse.debug.internal.ui.views.variables.VariablesView;
 import org.eclipse.debug.internal.ui.views.variables.VariablesViewContentProvider;
@@ -27,7 +27,6 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IValueDetailListener;
-import org.eclipse.debug.ui.actions.IPopupInformationControlAdapter;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.ViewerFilter;
@@ -40,14 +39,23 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
 
-
-public class ExpressionInformationControlAdapter implements IPopupInformationControlAdapter {
+/**
+ * A popup that displays an expression with a details area.
+ * <p>
+ * Clients may instantiate this class; this class is not intended
+ * to be subclassed.
+ * </p>
+ * @since 3.0
+ */
+public class ExpressionInformationControl extends PopupInformationControl {
 	private static final int[] DEFAULT_SASH_WEIGHTS = new int[] {90, 10};
 	private static final String SASH_KEY = "SASH_WEIGHT";  //$NON-NLS-1$
 	
@@ -57,21 +65,25 @@ public class ExpressionInformationControlAdapter implements IPopupInformationCon
 	private IDebugModelPresentation modelPresentation;
 	private StyledText valueDisplay;
 	private SashForm sashForm;
-	private String actionDefinitionId;
-	private String label;
-	
 
-	public ExpressionInformationControlAdapter(IWorkbenchPage page, IExpression exp, String label, String actionDefinitionId) {
+	/**
+	 * Constructs a popup to display an expression. A label and handler
+	 * are provided to move the expression to the Expressions view when
+	 * dismissed with the given command.
+	 * 
+	 * @param page the workbench page on which the popup should be displayed
+	 * @param exp the expression to display
+	 * @param commandId identifier of the command used to dismiss the popup 
+	 */
+	public ExpressionInformationControl(IWorkbenchPage page, IExpression exp, String commandId) {
+		super(page.getWorkbenchWindow().getShell(), DebugUIViewsMessages.getString("ExpressionInformationControl.5"), commandId); //$NON-NLS-1$
 		this.page = page;
 		this.exp = exp;
-		this.label = label;
-		this.actionDefinitionId = actionDefinitionId;
-	}
-	
-	public boolean isFocusControl() {
-		return viewer.getTree().isFocusControl();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.IInformationControl#setInformation(String)
+	 */
 	public void setInformation(String information) {
 		VariablesView view = getViewToEmulate();
 		viewer.getContentProvider();
@@ -110,15 +122,54 @@ public class ExpressionInformationControlAdapter implements IPopupInformationCon
 			}
 		}
 	}
+
+	/*
+	 * TODO: This method not used yet
+	 */
+	protected int[] getInitialSashWeights() {
+		IDialogSettings settings = getDialogSettings();
+		int[] sashes = new int[2];
+		try {
+			sashes[0] = settings.getInt(SASH_KEY+"_ONE");  //$NON-NLS-1$
+			sashes[1] = settings.getInt(SASH_KEY+"_TWO");  //$NON-NLS-1$
+			return sashes;
+		} catch (NumberFormatException nfe) {
+		} 
+		
+		return DEFAULT_SASH_WEIGHTS;
+	}
 	
-	public boolean hasContents() {
-		return (viewer != null);
+	/*
+	 * TODO: This method not used yet
+	 */	
+	protected void persistSashWeights() {
+		IDialogSettings settings = getDialogSettings();
+		int[] sashes = sashForm.getWeights();
+		settings.put(SASH_KEY+"_ONE", sashes[0]); //$NON-NLS-1$
+		settings.put(SASH_KEY+"_TWO", sashes[1]); //$NON-NLS-1$
 	}
 
-	public Composite createInformationComposite(Shell parent) {
+	private void updateValueDisplay(IValue val) {
+		IValueDetailListener valueDetailListener = new IValueDetailListener() {
+			public void detailComputed(IValue value, final String result) {
+				Display.getDefault().asyncExec(new Runnable() {
+					public void run() {
+						valueDisplay.setText(result);
+					}
+				});
+			}
+		};
+		modelPresentation.computeDetail(val, valueDetailListener);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.actions.PopupInformationControl#createControl(org.eclipse.swt.widgets.Composite)
+	 */
+	protected Control createControl(Composite parent) {
 		Composite composite = new Composite(parent, parent.getStyle());
 		GridLayout layout = new GridLayout();
 		composite.setLayout(layout);
+		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		sashForm = new SashForm(composite, parent.getStyle());
 		sashForm.setOrientation(SWT.VERTICAL);
@@ -173,71 +224,32 @@ public class ExpressionInformationControlAdapter implements IPopupInformationCon
 		valueDisplay.setForeground(foreground);
 		valueDisplay.setBackground(background);
 		
-//		sashForm.setWeights(getInitialSashWeights());
-		sashForm.setWeights(DEFAULT_SASH_WEIGHTS);
+		//sashForm.setWeights(getInitialSashWeights());
+		sashForm.setWeights(DEFAULT_SASH_WEIGHTS);		
 		
-		return composite;
+		return tree;
 	}
 
-
-	/*
-	 * TODO: This method not used yet
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.IInformationControlExtension#hasContents()
 	 */
-	protected int[] getInitialSashWeights() {
-		IDialogSettings settings = getDialogSettings();
-		int[] sashes = new int[2];
-		try {
-			sashes[0] = settings.getInt(SASH_KEY+"_ONE");  //$NON-NLS-1$
-			sashes[1] = settings.getInt(SASH_KEY+"_TWO");  //$NON-NLS-1$
-			return sashes;
-		} catch (NumberFormatException nfe) {
-		} 
-		
-		return DEFAULT_SASH_WEIGHTS;
-	}
-	
-	/*
-	 * TODO: This method not used yet
-	 */	
-	protected void persistSashWeights() {
-		IDialogSettings settings = getDialogSettings();
-		int[] sashes = sashForm.getWeights();
-		settings.put(SASH_KEY+"_ONE", sashes[0]); //$NON-NLS-1$
-		settings.put(SASH_KEY+"_TWO", sashes[1]); //$NON-NLS-1$
+	public boolean hasContents() {
+		return (viewer != null);
 	}
 
-	private void updateValueDisplay(IValue val) {
-		IValueDetailListener valueDetailListener = new IValueDetailListener() {
-			public void detailComputed(IValue value, final String result) {
-				Display.getDefault().asyncExec(new Runnable() {
-					public void run() {
-						valueDisplay.setText(result);
-					}
-				});
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.actions.PopupInformationControl#performCommand()
+	 */
+	protected void performCommand() {
+		DebugPlugin.getDefault().getExpressionManager().addExpression(exp);	
+		IViewPart part = page.findView(IDebugUIConstants.ID_EXPRESSION_VIEW);
+		if (part == null) {
+			try {
+				page.showView(IDebugUIConstants.ID_EXPRESSION_VIEW);
+			} catch (PartInitException e) {
 			}
-		};
-		modelPresentation.computeDetail(val, valueDetailListener);
+		} else {
+			page.bringToTop(part);
+		}
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.actions.IPopupInformationControlAdapter#getDialogSettings()
-	 */
-	public IDialogSettings getDialogSettings() {
-		return DebugUIPlugin.getDefault().getDialogSettings();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.actions.IPopupInformationControlAdapter#getLabel()
-	 */
-	public String getLabel() {
-		return label;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.actions.IPopupInformationControlAdapter#getActionDefinitionId()
-	 */
-	public String getActionDefinitionId() {
-		return actionDefinitionId;
-	}
-
 }
