@@ -293,6 +293,20 @@ public void setContents(InputStream content, int updateFlags, IProgressMonitor m
 		ensureClosed(content);
 	}
 }
+/* (non-Javadoc)
+ * @see org.eclipse.core.resources.IResource#setLocalTimeStamp(long)
+ */
+public long setLocalTimeStamp(long value) throws CoreException {
+	//override to handle changing timestamp on project description file
+	long result = super.setLocalTimeStamp(value);
+	if (path.segmentCount() == 2 && path.segment(1).equals(IProjectDescription.DESCRIPTION_FILE_NAME)) {
+		//handle concurrent project deletion
+		ResourceInfo projectInfo = ((Project)getProject()).getResourceInfo(false, false);
+		if (projectInfo != null)
+			getLocalManager().updateLocalSync(projectInfo, result);
+	}
+	return result;
+}
 /**
  * If this file represents a project description file (.project), then force
  * an update on the project's description.
