@@ -1,9 +1,15 @@
 package org.eclipse.ui;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v0.5
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v05.html
+ 
+Contributors:
+**********************************************************************/
+
  
 /**
  * An <code>IFolderLayout</code> is used to define the initial pages within a folder.
@@ -14,19 +20,7 @@ package org.eclipse.ui;
  *
  * @see IPageLayout#createFolder
  */
-public interface IFolderLayout {
-/**
- * Adds an invisible placeholder for a view with the given id to this folder.
- * A view placeholder is used to define the position of a view before the view
- * appears.  Initially, it is invisible; however, if the user ever opens a view
- * with the same id as a placeholder, the view will replace the placeholder
- * as it is being made visible.
- * The id must name a view contributed to the workbench's view extension point 
- * (named <code>"org.eclipse.ui.views"</code>).
- *
- * @param viewId the view id
- */
-public void addPlaceholder(String viewId);
+public interface IFolderLayout extends IPlaceholderFolderLayout {
 /**
  * Adds a view with the given id to this folder.
  * The id must name a view contributed to the workbench's view extension point 

@@ -1,9 +1,14 @@
 package org.eclipse.ui;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v0.5
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v05.html
+ 
+Contributors:
+**********************************************************************/
 
 /**
  * A page layout defines the initial layout for a page in a workbench window.
@@ -210,6 +215,30 @@ public void addView(String viewId, int relationship, float ratio, String refId);
  * @return the new folder
  */
 public IFolderLayout createFolder(String folderId, int relationship, float ratio, String refId);
+/**
+ * Creates and adds a placeholder for a new folder with the given id to this page layout.
+ * The position and relative size of the folder is expressed relative to
+ * a reference part.
+ * 
+ * @param folderId the id for the new folder.  This must be unique within
+ *  the layout to avoid collision with other parts.
+ * @param relationship the position relative to the reference part;
+ *  one of <code>TOP</code>, <code>BOTTOM</code>, <code>LEFT</code>,
+ *  or <code>RIGHT</code>
+ * @param ratio a ratio specifying how to divide the space currently occupied by the reference part,
+ *    in the range <code>0.05f</code> to <code>0.95f</code>.
+ *    Values outside this range will be clipped to facilitate direct manipulation.
+ *    For a vertical split, the part on top gets the specified ratio of the current space
+ *    and the part on bottom gets the rest.
+ *    Likewise, for a horizontal split, the part at left gets the specified ratio of the current space
+ *    and the part at right gets the rest.
+ * @param refId the id of the reference part; either a view id, a folder id,
+ *   or the special editor area id returned by <code>getEditorArea</code>
+ * @return a placeholder for the new folder
+ * @since 2.0
+ */
+public IPlaceholderFolderLayout createPlaceholderFolder(String folderId, int relationship, float ratio, String refId);
+
 /**
  * Returns the special identifier for the editor area in this page 
  * layout.  The identifier for the editor area is also stored in

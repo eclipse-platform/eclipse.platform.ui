@@ -1,9 +1,15 @@
 package org.eclipse.ui.internal;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v0.5
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v05.html
+ 
+Contributors:
+**********************************************************************/
+ 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.EditorPresentation;
@@ -200,6 +206,24 @@ public IFolderLayout createFolder(String folderId, int relationship, float ratio
 	return new FolderLayout(this, folder, viewFactory);
 }
 /**
+ * @see IPageLayout
+ */
+public IPlaceholderFolderLayout createPlaceholderFolder(String folderId, int relationship, float ratio, String refId) {
+	if (checkPartInLayout(folderId))
+		return new PlaceholderFolderLayout(this, (ContainerPlaceholder) getRefPart(folderId));
+
+	// Create the folder.
+	ContainerPlaceholder folder = new ContainerPlaceholder(null);
+	folder.setContainer(rootLayoutContainer);
+	folder.setRealContainer(new PartTabFolder());
+	folder.setID(folderId);
+	addPart(folder, folderId, relationship, ratio, refId);
+	
+	// Create a wrapper.
+	return new PlaceholderFolderLayout(this, folder);
+}
+
+/**
  * Create the given view.
  */
 private LayoutPart createView(String partID)
@@ -336,6 +360,13 @@ public void setEditorAreaVisible(boolean showEditorArea) {
  */
 /*package*/ void setFolderPart(String viewId, PartTabFolder folder) {
 	mapIDtoFolder.put(viewId, folder);
+}
+/**
+ * Map the folder part containing the given view ID.
+ */
+/*package*/ void setFolderPart(String viewId, ContainerPlaceholder container) {
+	LayoutPart tabFolder = container.getRealContainer();
+	mapIDtoFolder.put(viewId, tabFolder);
 }
 /**
  * Stack one view on top of another.
