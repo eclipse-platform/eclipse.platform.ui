@@ -259,7 +259,7 @@ private void onPartDrop(PartDropEvent e) {
 			if (e.dragSource instanceof EditorPane) {
 				EditorWorkbook sourceWorkbook = ((EditorPane)e.dragSource).getWorkbook();
 				if (sourceWorkbook == e.dropTarget) {
-					sourceWorkbook.reorderTab((EditorPane)e.dragSource, e.cursorX, e.cursorY);
+					sourceWorkbook.reorderTab((EditorPane)e.dragSource, e.cursorX, e.cursorY,e.dragSourceActive);
 					break;
 				}
 			}

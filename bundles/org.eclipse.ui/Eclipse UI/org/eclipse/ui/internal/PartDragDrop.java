@@ -49,6 +49,7 @@ public class PartDragDrop extends Object
 	private int xAnchor;
 	private int yAnchor;
 	private boolean mouseDown = false;
+	private PartDropEvent dropEvent;
 
 	private IPartDropListener[] dropListeners;
 /**
@@ -84,7 +85,7 @@ public void addDropListener(IPartDropListener listener) {
 /**
  * Returns a drag event representing the current state of dragging.
  */
-private PartDropEvent createDropEvent(Tracker tracker) {
+protected PartDropEvent createDropEvent(Tracker tracker) {
 	
 	Display display= dragControl.getDisplay();
 	Control targetControl= display.getCursorControl();
@@ -95,6 +96,7 @@ private PartDropEvent createDropEvent(Tracker tracker) {
 	event.x = rect.x;
 	event.y = rect.y;
 	event.dragSource = sourcePart;
+	event.dragSourceActive = true;
 	
 	if (targetControl == null) {
 		// cursor is outside of the shell
@@ -258,6 +260,7 @@ public void mouseDoubleClick(MouseEvent e) {
  */
 public void mouseDown(MouseEvent e) {
 	// track left button only.
+	dropEvent = null;
 	if (e.button != 1) 
 		return;
 
@@ -338,12 +341,8 @@ public void mouseMove(MouseEvent e) {
 	event.cursorY = p1.y;
 	if (!dragControl.isDisposed())
 		dragControl.setCursor(null);
-	if (dropListeners != null && trackingOk) {
-		for(int i = 0, length = dropListeners.length; i < length; i++) {
-			dropListeners[i].dragOver(event);
-			dropListeners[i].drop(event);
-		}
-	}
+	if (dropListeners != null && trackingOk)
+		dropEvent = event;
 
 	// Cleanup.
 	tracker.dispose();
@@ -353,6 +352,13 @@ public void mouseMove(MouseEvent e) {
  */
 public void mouseUp(MouseEvent e) {
 	mouseDown = false;
+	if (dropListeners != null && dropEvent != null) {
+		for(int i = 0, length = dropListeners.length; i < length; i++) {
+			dropListeners[i].dragOver(dropEvent);
+			dropListeners[i].drop(dropEvent);
+		}
+		dropEvent = null;
+	}
 }
 /**	 
  * Removes the listener.

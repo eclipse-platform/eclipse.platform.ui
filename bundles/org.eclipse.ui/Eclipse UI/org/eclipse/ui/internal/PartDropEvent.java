@@ -13,4 +13,5 @@ public class PartDropEvent {
 	public int relativePosition;
 	public LayoutPart dragSource;
 	public LayoutPart dropTarget;
+	public boolean dragSourceActive;
 }

@@ -21,6 +21,16 @@ public CTabPartDragDrop(LayoutPart dragPart, CTabFolder tabFolder, CTabItem tabI
 	super(dragPart, tabFolder);
 	this.tab = tabItem;
 }
+
+/**
+ * Returns a drag event representing the current state of dragging.
+ */
+protected PartDropEvent createDropEvent(Tracker tracker) {
+	PartDropEvent result = super.createDropEvent(tracker);
+	result.dragSourceActive = tab == tab.getParent().getSelection();
+	return result;
+}
+
 protected CTabFolder getCTabFolder() {
 	return (CTabFolder) getDragControl();
 }
@@ -42,6 +52,17 @@ public void mouseDown(MouseEvent e) {
 	CTabItem tabUnderPointer = tabFolder.getItem(new Point(e.x, e.y));
 	if (tabUnderPointer != tab)
 		return;
+	if(tabUnderPointer == null) {
+		//Avoid drag from the borders.
+		Rectangle clientArea = tabFolder.getClientArea();
+		if((tabFolder.getStyle() & SWT.TOP) != 0) {
+			if(e.y > clientArea.y)
+				return;
+		} else {
+			if(e.y < clientArea.y + clientArea.height)
+				return;
+		}
+	}
 
 	super.mouseDown(e);
 }
