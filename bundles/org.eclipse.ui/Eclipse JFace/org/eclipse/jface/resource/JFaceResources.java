@@ -71,15 +71,6 @@ public class JFaceResources {
 	 * (value <code>"org.eclipse.jface.viewerfont"</code>).
 	 */
 	public static final String VIEWER_FONT = "org.eclipse.jface.viewerfont";//$NON-NLS-1$
-	
-	/**
-	 * The symbolic font name for the terminal font 
-	 * (value <code>"org.eclipse.jface.terminalfont"</code>).
-	 * This value is subject to change and is not to be 
-	 * considered API yet.
-	 */
-	public static final String TERMINAL_FONT = "org.eclipse.jface.terminalfont";//$NON-NLS-1$
-	
 
 	/**
 	 * The symbolic font name for the text font 
@@ -92,6 +83,12 @@ public class JFaceResources {
 	 * (value <code>"org.eclipse.jface.windowfont"</code>).
 	 */
 	public static final String WINDOW_FONT = "org.eclipse.jface.windowfont";//$NON-NLS-1$
+	
+	/**
+	 * The symbolic font name for the terminal font 
+	 * (value <code>"org.eclipse.jface.terminalfont"</code>).
+	 */
+	public static final String TERMINAL_FONT = "org.eclipse.jface.terminalfont";//$NON-NLS-1$
 	
 /* (non-Javadoc)
  * Declare a private constructor to block instantiation.
@@ -250,6 +247,18 @@ public static String[] getStrings(String[] keys) {
 	for (int i = 0; i < length; i++)
 		result[i] = getString(keys[i]);
 	return result;
+}
+/**
+ * Returns the JFace's terminal font.
+ * Convenience method equivalent to
+ * <pre>
+ * JFaceResources.getFontRegistry().get(JFaceResources.TERMINAL_FONT)
+ * </pre>
+ *
+ * @return the font
+ */
+public static Font getTerminalFont() {
+	return getFontRegistry().get(TERMINAL_FONT);
 }
 /**
  * Returns the JFace's text font.
