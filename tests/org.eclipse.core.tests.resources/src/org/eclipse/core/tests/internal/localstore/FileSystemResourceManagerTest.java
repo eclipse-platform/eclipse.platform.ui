@@ -14,6 +14,7 @@ import java.io.InputStream;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -93,7 +94,7 @@ public void testCreateFile() throws Throwable {
 	}
 	assertTrue("1.2", file.exists());
 	assertTrue("1.3", file.isLocal(IResource.DEPTH_ZERO));
-	assertEquals("1.4", file.getLocation().toFile().lastModified(), ((Resource) file).getResourceInfo(false, false).getLocalSyncInfo());
+	assertEquals("1.4", CoreFileSystemLibrary.getLastModified(file.getLocation().toOSString()), ((Resource) file).getResourceInfo(false, false).getLocalSyncInfo());
 	try {
 		assertTrue("1.5", compareContent(getContents(originalContent), getLocalManager().read((org.eclipse.core.internal.resources.File) file, true, null)));
 	} catch (CoreException e) {
@@ -416,7 +417,7 @@ public void testWriteProject() throws Throwable {
 		}
 	}, null);
 	assertTrue("2.2", location.toFile().isDirectory());
-	long lastModified = getLocalManager().getDescriptionLocationFor(project).toFile().lastModified();
+	long lastModified = CoreFileSystemLibrary.getLastModified(getLocalManager().getDescriptionLocationFor(project).toOSString());
 	assertEquals("2.3", lastModified, ((Resource) project).getResourceInfo(false, false).getLocalSyncInfo());
 }
 protected void write(final IFile file, final InputStream contents, final boolean force, IProgressMonitor monitor) throws CoreException {

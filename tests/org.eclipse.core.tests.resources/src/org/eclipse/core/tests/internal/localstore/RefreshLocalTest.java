@@ -17,6 +17,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.core.boot.BootLoader;
+import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -208,12 +209,12 @@ public void testRefreshFolder() throws Throwable {
 	ensureExistsInWorkspace(file, true);
 	assertTrue("4.1", file.exists());
 	assertTrue("4.2", file.isLocal(IResource.DEPTH_ZERO));
-	assertEquals("4.3", file.getLocation().toFile().lastModified(), ((Resource) file).getResourceInfo(false, false).getLocalSyncInfo());
+	assertEquals("4.3", CoreFileSystemLibrary.getLastModified(file.getLocation().toOSString()), ((Resource) file).getResourceInfo(false, false).getLocalSyncInfo());
 	Thread.sleep(sleepTime);
 	ensureExistsInFileSystem(file);
-	assertTrue("4.4", ((Resource) file).getResourceInfo(false, false).getLocalSyncInfo() != file.getLocation().toFile().lastModified());
+	assertTrue("4.4", ((Resource) file).getResourceInfo(false, false).getLocalSyncInfo() != CoreFileSystemLibrary.getLastModified(file.getLocation().toOSString()));
 	project.refreshLocal(IResource.DEPTH_INFINITE, null);
-	assertEquals("4.5", file.getLocation().toFile().lastModified(), ((Resource) file).getResourceInfo(false, false).getLocalSyncInfo());
+	assertEquals("4.5", CoreFileSystemLibrary.getLastModified(file.getLocation().toOSString()), ((Resource) file).getResourceInfo(false, false).getLocalSyncInfo());
 	ensureDoesNotExistInWorkspace(file);
 	ensureDoesNotExistInFileSystem(file);
 }
