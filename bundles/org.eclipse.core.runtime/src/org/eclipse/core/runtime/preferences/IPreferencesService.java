@@ -402,7 +402,17 @@ public interface IPreferencesService {
 	 * Exports all preferences for the given preference node and all its children to the specified
 	 * output stream. It is the responsibility of the client to close the given output stream.
 	 * <p>
-	 * TODO: explain the excludes list
+	 * If the given export list is <code>null</code> then all preferences for all subnodes
+	 * of the given node are exported to the given stream. Otherwise the export list is
+	 * consulted before exporting each preference value. If there is a string match then
+	 * the preference is not exported. The exclusion can also occur at a per-node level. 
+	 * Wildcards are <em>not</em> accepted in the excludes list as a basic String compare
+	 * is done. The basic algorithm is similar to the following:
+	 * <pre>
+	 * String fullPath = node.absolutePath() + '/' + key;
+	 * if (!fullPath.startsWith(excludesList[i]))
+	 * 	// export preference
+	 * </pre>
 	 * </p>
 	 * <p>
 	 * The values stored in the resulting stream are suitable for later being read by the
@@ -410,7 +420,7 @@ public interface IPreferencesService {
 	 * </p>
 	 * @param node the node to treat as the root of the export
 	 * @param output the stream to write to
-	 * @param excludesList a list of path prefixes to exclude from the export
+	 * @param excludesList a list of path prefixes to exclude from the export, or <code>null</code>
 	 * @return a status object describing success or detailing failure reasons
 	 * @throws CoreException if there was a problem exporting the preferences
 	 * @throws IllegalArgumentException if the node or stream is <code>null</code>
