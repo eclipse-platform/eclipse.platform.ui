@@ -186,7 +186,7 @@ public class CommitSyncAction extends MergeAction {
 				if (resource.getType() == IResource.FILE) {
 					ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor((IFile)resource);
 					// If the file is still modified after the commit, it probably is a pseudo change
-					if (cvsFile.isModified()) {
+					if (cvsFile.exists() && cvsFile.isModified()) {
 						cvsFile.setTimeStamp(cvsFile.getSyncInfo().getTimeStamp());
 					}
 				}
