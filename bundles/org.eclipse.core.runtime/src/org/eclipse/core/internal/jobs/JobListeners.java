@@ -63,7 +63,7 @@ class JobListeners {
 	 * Concurrency - this array is copied every time it is modified, to allow
 	 * concurrent reads to happen while listeners are being added or removed
 	 */
-	protected IJobChangeListener[] global = EMPTY_LISTENERS;
+	protected volatile IJobChangeListener[] global = EMPTY_LISTENERS;
 
 	/**
 	 * TODO Could use an instance pool to re-use old event objects

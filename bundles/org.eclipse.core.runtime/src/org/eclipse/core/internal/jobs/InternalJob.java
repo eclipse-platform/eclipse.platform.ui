@@ -51,7 +51,7 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 
 	private volatile int flags = Job.NONE;
 	private final int jobNumber = nextJobNumber++;
-	private IJobChangeListener[] listeners = JobListeners.EMPTY_LISTENERS;
+	private volatile IJobChangeListener[] listeners = JobListeners.EMPTY_LISTENERS;
 	private IProgressMonitor monitor;
 	private String name;
 	/**
@@ -258,8 +258,7 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 		//if one of the rules is a compound rule, it must be asked the question.
 		if (schedulingRule.getClass() == MultiRule.class)
 			return schedulingRule.isConflicting(otherRule);
-		else
-			return otherRule.isConflicting(schedulingRule);
+		return otherRule.isConflicting(schedulingRule);
 	}
 	/* (non-javadoc)
 	 * @see Job.isSystem()
@@ -317,7 +316,7 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 			if (tempListeners[i] == listener) {
 				IJobChangeListener[] newListeners = new IJobChangeListener[oldCount-1];
 				System.arraycopy(tempListeners, 0, newListeners, 0, i);
-				System.arraycopy(tempListeners, 0, newListeners, i, oldCount-i-1);
+				System.arraycopy(tempListeners, i+1, newListeners, i, oldCount-i-1);
 				listeners = newListeners;
 				return;
 			}

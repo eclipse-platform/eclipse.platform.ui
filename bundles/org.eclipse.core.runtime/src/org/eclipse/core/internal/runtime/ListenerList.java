@@ -35,7 +35,7 @@ public class ListenerList {
 	 * to an array of size capacity the first time a listener is added.
 	 * Maintains invariant: listeners != null
 	 */
-	private Object[] listeners = EmptyArray;
+	private volatile Object[] listeners = EmptyArray;
 
 	/**
 	 * Creates a listener list.
