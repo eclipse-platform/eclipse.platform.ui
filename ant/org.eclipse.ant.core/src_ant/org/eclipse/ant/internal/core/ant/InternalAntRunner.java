@@ -417,7 +417,9 @@ public class InternalAntRunner {
 			if (!executeScript) {
 				return;
 			}
-			processProperties(argList);
+			if (argList != null) {
+				processProperties(argList);
+			}
 			addBuildListeners(getCurrentProject());
 			System.setOut(new PrintStream(new DemuxOutputStream(getCurrentProject(), false)));
 			System.setErr(new PrintStream(new DemuxOutputStream(getCurrentProject(), true)));
