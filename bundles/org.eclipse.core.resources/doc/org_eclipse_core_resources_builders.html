@@ -55,7 +55,7 @@ available to instances of the specified builder class</li>
 </ul>
 <b><i>Examples:</i></b>
 <p>Following is an example of a builder configuration:
-<p><tt>&nbsp;&nbsp; &lt;extension id="com.xyz.coolBuilder" name="Cool Builder"
+<p><tt>&nbsp;&nbsp; &lt;extension id="coolbuilder" name="Cool Builder"
 point="org.eclipse.core.resources.builders"></tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;builder></tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;run class="com.xyz.builders.Cool"></tt>
@@ -66,6 +66,8 @@ point="org.eclipse.core.resources.builders"></tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/run></tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/builder></tt>
 <br><tt>&nbsp;&nbsp; &lt;/extension></tt>
+<p>If this extension was defined in a plug-in with id "com.xyz.coolplugin", the fully qualified name 
+of this builder would be "com.xyz.coolplugin.coolbuilder".
 <p><b><i>API Information</i>: </b>The value of the <tt>class</tt> attribute
 must represent a subclass of <tt>org.eclipse.core.resources.IncrementalProjectBuilder</tt>.
 <p><b><i>Supplied Implementation:</i></b> The platform itself does not
