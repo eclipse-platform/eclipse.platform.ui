@@ -840,7 +840,7 @@
                id="org.eclipse.ui.edit.paste">
          </accelerator>
          <accelerator
-               key="DELETE"
+               key=""
                id="org.eclipse.ui.edit.delete">
          </accelerator>
          <accelerator
