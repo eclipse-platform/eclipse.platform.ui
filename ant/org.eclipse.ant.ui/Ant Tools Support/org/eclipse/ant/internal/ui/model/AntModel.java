@@ -697,14 +697,13 @@ public class AntModel implements IAntModel {
         		|| taskName.equalsIgnoreCase("presetdef") //$NON-NLS-1$
 				|| taskName.equalsIgnoreCase("typedef") //$NON-NLS-1$
 				|| taskName.equalsIgnoreCase("taskdef")) { //$NON-NLS-1$
-                    String name = attributes.getValue(IAntModelConstants.ATTR_NAME);
-                    newNode= new AntDefiningTaskNode(newTask, name);
-		} else if(taskName.equalsIgnoreCase("antcall")) { //$NON-NLS-1$
+		    newNode= new AntDefiningTaskNode(newTask, attributes);
+        } else if(taskName.equalsIgnoreCase("antcall")) { //$NON-NLS-1$
             newNode= new AntTaskNode(newTask, generateLabel(taskName, attributes, IAntModelConstants.ATTR_TARGET));
         } else if(taskName.equalsIgnoreCase("mkdir")) { //$NON-NLS-1$
             newNode= new AntTaskNode(newTask, generateLabel(taskName, attributes, IAntModelConstants.ATTR_DIR));
         } else if(taskName.equalsIgnoreCase("copy")) { //$NON-NLS-1$
-        	 newNode= new AntTaskNode(newTask, generateLabel(taskName, attributes, IAntModelConstants.ATTR_DESTFILE));
+            newNode= new AntTaskNode(newTask, generateLabel(taskName, attributes, IAntModelConstants.ATTR_DESTFILE));
         } else if(taskName.equalsIgnoreCase("tar")  //$NON-NLS-1$
         	|| taskName.equalsIgnoreCase("jar") //$NON-NLS-1$
         	|| taskName.equalsIgnoreCase("war") //$NON-NLS-1$

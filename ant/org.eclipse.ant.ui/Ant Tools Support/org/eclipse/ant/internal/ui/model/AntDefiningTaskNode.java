@@ -23,7 +23,6 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.ComponentHelper;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.UnknownElement;
-import org.apache.tools.ant.taskdefs.Definer;
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.internal.ui.AntUIImages;
@@ -33,14 +32,36 @@ import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.xml.sax.Attributes;
 
 public class AntDefiningTaskNode extends AntTaskNode {
 	
     private boolean fNeedsToBeConfigured= true;
+    private String fIdentifier= null;
     
-	public AntDefiningTaskNode(Task task, String label) {
-		super(task, label);
-	}
+    public AntDefiningTaskNode(Task task, Attributes attributes) {
+        super(task);
+        String label= attributes.getValue(IAntModelConstants.ATTR_NAME);
+        if (label == null) {
+            label= task.getTaskName();
+        
+            String file= attributes.getValue(IAntModelConstants.ATTR_FILE);
+            if(file != null) {
+                label=  label + " " + file; //$NON-NLS-1$
+                fIdentifier= file;
+            } else {    
+                String resource=  attributes.getValue(IAntModelConstants.ATTR_RESOURCE);
+                if (resource != null) {
+                    label= label + " " + resource; //$NON-NLS-1$
+                    fIdentifier= resource;
+                } 
+            }
+        } else {
+            fIdentifier= label;
+        }
+        
+        setBaseLabel(label);
+    }
 	
 	protected ImageDescriptor getBaseImageDescriptor() {
 		String taskName= getTask().getTaskName();
@@ -92,22 +113,8 @@ public class AntDefiningTaskNode extends AntTaskNode {
 		return task;
 	}
     
-    protected Object getIdentifier() {
-        Object key= null;
-        Task task= (Task) getRealTask();
-        if (task instanceof Definer) {
-            Definer definer= (Definer) task;
-            key= definer.getName();
-            if (key == null) {
-                key= definer.getResource();
-                if (key == null) {
-                    key= definer.getFile();
-                }
-            }
-        } else {
-            key= getLabel();
-        }
-        return key;
+    protected String getIdentifier() {
+        return fIdentifier;
     }
 	
 	/*
