@@ -74,7 +74,6 @@ public class SearchForBuildFilesDialog extends InputDialog {
 	 */
 	private Button includeErrorResultButton;
 	private static IPreferenceStore store= ExternalToolsPlugin.getDefault().getPreferenceStore();
-	//private boolean includeErrorResults= false;
 
 	public SearchForBuildFilesDialog() {
 		super(Display.getCurrent().getActiveShell(), "Search for Build Files", "Input a build file name (* = any string, ? = any character):",
@@ -98,13 +97,10 @@ public class SearchForBuildFilesDialog extends InputDialog {
 
 		String workingSetName= store.getString(IPreferenceConstants.ANTVIEW_LAST_WORKINGSET_SEARCH_SCOPE);
 		if (workingSetName.length() > 0) {
-			IWorkingSet set= PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSet(workingSetName);
-			if (set != null) {
-				setWorkingSet(set);
-			}
+			setWorkingSet(PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSet(workingSetName));
 		}
 		if (!store.getBoolean(IPreferenceConstants.ANTVIEW_USE_WORKINGSET_SEARCH_SCOPE)) {
-			workspaceScopeButton.setSelection(true);
+			selectRadioButton(workspaceScopeButton);
 			handleRadioButtonPressed();
 		}
 	}
@@ -145,13 +141,14 @@ public class SearchForBuildFilesDialog extends InputDialog {
 		workspaceScopeButton= new Button(radioComposite, SWT.RADIO);
 		workspaceScopeButton.setFont(font);
 		workspaceScopeButton.setText("Workspace");
-		workspaceScopeButton.setSelection(true);
 		workspaceScopeButton.addSelectionListener(selectionListener);
 
 		workingSetScopeButton=new Button(radioComposite, SWT.RADIO);
 		workingSetScopeButton.setFont(font);
 		workingSetScopeButton.setText("Working Set:");
 		workingSetScopeButton.addSelectionListener(selectionListener);
+		
+		selectRadioButton(workspaceScopeButton);
 
 		workingSetText= new Text(scope, SWT.BORDER);
 		workingSetText.setEditable(false);
@@ -169,6 +166,24 @@ public class SearchForBuildFilesDialog extends InputDialog {
 				handleChooseButtonPressed();
 			}
 		});
+	}
+	
+	/**
+	 * Programatically selects the given radio button, deselecting the other
+	 * radio button.
+	 * 
+	 * @param button the radio button to select. This parameter must be one of
+	 * either the <code>workingSetScopeButton</code> or the
+	 * <code>workspaceScopeButton</code> or this method will have no effect.
+	 */
+	private void selectRadioButton(Button button) {
+		if (button == workingSetScopeButton) {
+			workingSetScopeButton.setSelection(true);
+			workspaceScopeButton.setSelection(false);
+		} else if (button == workspaceScopeButton) {
+			workspaceScopeButton.setSelection(true);
+			workingSetScopeButton.setSelection(false);
+		}
 	}
 	
 	/**
@@ -274,7 +289,7 @@ public class SearchForBuildFilesDialog extends InputDialog {
 			}
 		}
 		workingSetText.setText(set.getName());
-		workingSetScopeButton.setSelection(true);
+		selectRadioButton(workingSetScopeButton);
 		
 		updateOkEnabled();
 	}
