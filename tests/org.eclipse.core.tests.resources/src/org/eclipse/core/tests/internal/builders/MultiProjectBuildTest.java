@@ -204,7 +204,7 @@ public void testDeltas() {
  * Test for Bug #5102.  Never reproduced but interesting little test, worth keeping around
  */
 public void testPR() throws Exception {
-	//create a project with a RefreshLocalJavaFileBuilder and a JavaBuilder on the classpath
+	//create a project with a RefreshLocalJavaFileBuilder and a SortBuilder on the classpath
 	IProject project = getWorkspace().getRoot().getProject("P1");
 	project.create(null);
 	project.open(null);
@@ -212,9 +212,8 @@ public void testPR() throws Exception {
 	ICommand one = desc.newCommand();
 	one.setBuilderName(RefreshLocalJavaFileBuilder.BUILDER_NAME);
 	ICommand two = desc.newCommand();
-	two.setBuilderName("org.eclipse.jdt.core.javabuilder");
+	two.setBuilderName(SortBuilder.BUILDER_NAME);
 	desc.setBuildSpec(new ICommand[] {one, two});
-	desc.setNatureIds(new String[] {"org.eclipse.jdt.core.javanature"});
 	project.setDescription(desc, null);
 	
 	//do a full build
