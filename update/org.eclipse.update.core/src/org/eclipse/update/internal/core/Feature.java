@@ -670,7 +670,7 @@ public abstract class Feature implements IFeature {
 			// the name of the file in the temp directory
 			// should be the regular plugins/pluginID_ver as the Temp site is OUR site
 			newFile = Site.DEFAULT_PLUGIN_PATH + archiveIDToInstall[i];
-			newURL = UpdateManagerUtils.resolveAsLocal(sourceURL, newFile);
+			newURL = UpdateManagerUtils.resolveAsLocal(sourceURL, newFile,monitor);
 
 			// transfer the possible mapping to the temp site						
 			 ((Site) tempSite).addArchive(new Info(archiveIDToInstall[i], newURL));

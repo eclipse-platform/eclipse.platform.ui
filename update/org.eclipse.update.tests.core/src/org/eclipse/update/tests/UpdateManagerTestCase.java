@@ -48,7 +48,7 @@ public abstract class UpdateManagerTestCase extends TestCase {
 
 		IPluginDescriptor dataDesc =
 			Platform.getPluginRegistry().getPluginDescriptor(
-				"org.eclipse.update.core.tests");
+				"org.eclipse.update.tests.core");
 		URL resolvedURL = Platform.resolve(dataDesc.getInstallURL());
 		String path = UpdateManagerUtils.getPath(resolvedURL);			
 		URL dataURL = new URL(resolvedURL.getProtocol(), resolvedURL.getHost(),path+DATA_PATH);

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- File written by PDE 1.0 -->
 <plugin
-   id="org.eclipse.update.core.tests"
+   id="org.eclipse.update.tests.core"
    name="Tests"
    version="0.0.1">
 <requires>

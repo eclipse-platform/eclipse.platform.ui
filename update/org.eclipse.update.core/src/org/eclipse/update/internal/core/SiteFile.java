@@ -50,7 +50,7 @@ public class SiteFile extends SiteURL {
 		pluginPath += pluginPath.endsWith(File.separator) ? contentKey : File.separator + contentKey;
 
 		try {
-			UpdateManagerUtils.copyToLocal(inStream, pluginPath);
+			UpdateManagerUtils.copyToLocal(inStream, pluginPath,null);
 
 		} catch (IOException e) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
@@ -73,7 +73,7 @@ public class SiteFile extends SiteURL {
 		String featurePath = path + INSTALL_FEATURE_PATH + featureIdentifier.toString();
 		featurePath += featurePath.endsWith(File.separator) ? contentKey : File.separator + contentKey;
 		try {
-			UpdateManagerUtils.copyToLocal(inStream, featurePath);
+			UpdateManagerUtils.copyToLocal(inStream, featurePath,null);
 		} catch (IOException e) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Error creating file:" + featurePath, e);

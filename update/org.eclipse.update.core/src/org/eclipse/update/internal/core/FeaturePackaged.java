@@ -137,7 +137,7 @@ public class FeaturePackaged extends Feature {
 
 		try {
 			String path = UpdateManagerUtils.getPath(getURL());			
-			URL resolvedURL = UpdateManagerUtils.resolveAsLocal(getURL(),path);
+			URL resolvedURL = UpdateManagerUtils.resolveAsLocal(getURL(),path,null);
 			this.setURL(resolvedURL);
 
 			// DEBUG:

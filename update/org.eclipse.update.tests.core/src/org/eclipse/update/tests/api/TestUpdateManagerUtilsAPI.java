@@ -242,19 +242,19 @@ public class TestUpdateManagerUtilsAPI extends UpdateManagerTestCase {
 		assertEquals("1.0","file",resultURL1.getProtocol());
 		
 		//1.1
-		resultURL1 = UpdateManagerUtils.resolveAsLocal(url1,str1);
+		resultURL1 = UpdateManagerUtils.resolveAsLocal(url1,str1,null);
 		resultURL1.openStream();
 		assertEquals("1.1 file:","file",resultURL1.getProtocol());
 		assertTrue("1.1 path:",resultURL1.getFile().endsWith("path"+File.separator+"file.1"));
 		
 		//1.2
-		resultURL1 = UpdateManagerUtils.resolveAsLocal(url1,str2);
+		resultURL1 = UpdateManagerUtils.resolveAsLocal(url1,str2,null);
 		resultURL1.openStream();
 		assertEquals("1.2 file:","file",resultURL1.getProtocol());
 		assertTrue("1.2 path:",resultURL1.getFile().endsWith("path"+File.separator+"file"));
 		
 		//1.3
-		resultURL1 = UpdateManagerUtils.resolveAsLocal(url1,str3);
+		resultURL1 = UpdateManagerUtils.resolveAsLocal(url1,str3,null);
 		resultURL1.openStream();
 		assertEquals("1.3 file:","file",resultURL1.getProtocol());
 		assertTrue("1.3 path:",resultURL1.getFile().endsWith("file"));
@@ -266,17 +266,17 @@ public class TestUpdateManagerUtilsAPI extends UpdateManagerTestCase {
 		assertEquals("2.0.1",url2.getFile(),resultURL1.getFile());
 		
 		//2.1
-		resultURL1 = UpdateManagerUtils.resolveAsLocal(url2,str1);
+		resultURL1 = UpdateManagerUtils.resolveAsLocal(url2,str1,null);
 		assertEquals("2.1 file:","file",resultURL1.getProtocol());
 		assertEquals("2.1.1",url2.getFile(),resultURL1.getFile());
 		
 		//2.2
-		resultURL1 = UpdateManagerUtils.resolveAsLocal(url2,str2);
+		resultURL1 = UpdateManagerUtils.resolveAsLocal(url2,str2,null);
 		assertEquals("2.2 file:","file",resultURL1.getProtocol());
 		assertEquals("2.2.1",url2.getFile(),resultURL1.getFile());
 		
 		//2.3
-		resultURL1 = UpdateManagerUtils.resolveAsLocal(url2,str3);
+		resultURL1 = UpdateManagerUtils.resolveAsLocal(url2,str3,null);
 		assertEquals("2.3 file:","file",resultURL1.getProtocol());
 		assertEquals("2.0.1",url2.getFile(),resultURL1.getFile());
 		
@@ -287,19 +287,19 @@ public class TestUpdateManagerUtilsAPI extends UpdateManagerTestCase {
 		assertEquals("3.0","file",resultURL1.getProtocol());
 		
 		//3.1
-		resultURL1 = UpdateManagerUtils.resolveAsLocal(url3,str1);
+		resultURL1 = UpdateManagerUtils.resolveAsLocal(url3,str1,null);
 		resultURL1.openStream();
 		assertEquals("3.1 file:","file",resultURL1.getProtocol());
 		assertTrue("3.1 path:",resultURL1.getFile().endsWith("path"+File.separator+"file.1"));
 		
 		//3.2
-		resultURL1 = UpdateManagerUtils.resolveAsLocal(url3,str2);
+		resultURL1 = UpdateManagerUtils.resolveAsLocal(url3,str2,null);
 		resultURL1.openStream();
 		assertEquals("3.2 file:","file",resultURL1.getProtocol());
 		assertTrue("3.2 path:",resultURL1.getFile().endsWith("path"+File.separator+"file"));
 		
 		//3.3
-		resultURL1 = UpdateManagerUtils.resolveAsLocal(url3,str3);
+		resultURL1 = UpdateManagerUtils.resolveAsLocal(url3,str3,null);
 		resultURL1.openStream();
 		assertEquals("3.3 file:","file",resultURL1.getProtocol());
 		assertTrue("3.3 path:",resultURL1.getFile().endsWith("file"));		

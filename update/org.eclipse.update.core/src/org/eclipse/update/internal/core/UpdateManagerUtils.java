@@ -13,6 +13,24 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.SiteManager;
 
 public class UpdateManagerUtils {
+	
+	
+	public static int AVAILABLE = 1000;
+	
+	/**
+	 * 
+	 */
+	private static IOException CANCEL_EXCEPTION;
+
+
+	/**
+	 * Static block to initialize the possible CANCEL ERROR
+	 * thrown when the USER cancels teh operation
+	 */
+	static {
+		//	in case we throw a cancel exception
+		CANCEL_EXCEPTION = new IOException("Install has been cancelled");
+	}
 
 	/**
 	 * return the urlString if it is a absolute URL
@@ -65,7 +83,7 @@ public class UpdateManagerUtils {
 	 * and return the new URL
 	 */
 	public static URL resolveAsLocal(URL remoteURL) throws MalformedURLException, IOException, CoreException {
-		return resolveAsLocal(remoteURL, null);
+		return resolveAsLocal(remoteURL, null,null);
 	}
 
 	/**
@@ -73,7 +91,7 @@ public class UpdateManagerUtils {
 	 * if the URL is not a file URL, transfer the stream to teh temp directory 
 	 * and return the new URL
 	 */
-	public static URL resolveAsLocal(URL remoteURL, String localName) throws MalformedURLException, IOException, CoreException {
+	public static URL resolveAsLocal(URL remoteURL, String localName, IProgressMonitor monitor) throws MalformedURLException, IOException, CoreException {
 		URL result = remoteURL;
 
 		if (!(remoteURL == null || remoteURL.getProtocol().equals("file"))) {
@@ -89,7 +107,7 @@ public class UpdateManagerUtils {
 
 				}
 
-				result = copyToLocal(sourceContentReferenceStream, newFile);
+				result = copyToLocal(sourceContentReferenceStream, newFile,monitor);
 			} else {
 				throw new IOException("Couldn\'t find the file: " + remoteURL.toExternalForm());
 			}
@@ -105,7 +123,7 @@ public class UpdateManagerUtils {
 	/**
 	 * 
 	 */
-	public static URL copyToLocal(InputStream sourceContentReferenceStream, String localName) throws MalformedURLException, IOException {
+	public static URL copyToLocal(InputStream sourceContentReferenceStream, String localName, IProgressMonitor monitor) throws MalformedURLException, IOException {
 		URL result = null;
 
 		// create the Dir is they do not exist
@@ -122,7 +140,7 @@ public class UpdateManagerUtils {
 		// transfer teh content of the File
 		if (!localFile.isDirectory()) {
 			FileOutputStream localContentReferenceStream = new FileOutputStream(localFile);
-			transferStreams(sourceContentReferenceStream, localContentReferenceStream);
+			transferStreams(sourceContentReferenceStream, localContentReferenceStream,monitor);
 		}
 		result = new URL("file", null, localFile.getPath());
 
@@ -152,18 +170,36 @@ public class UpdateManagerUtils {
 	 * This method also closes both streams.
 	 * Taken from FileSystemStore
 	 */
-	private static void transferStreams(InputStream source, OutputStream destination) throws IOException {
+	private static void transferStreams(InputStream source, OutputStream destination, IProgressMonitor monitor) throws IOException {
 
 		Assert.isNotNull(source);
 		Assert.isNotNull(destination);
+		
+		if (monitor != null) {
+				monitor.beginTask("downloading...",AVAILABLE);
+		}
 
 		try {
+			int total = 0;
+			long loaded = 0;
 			byte[] buffer = new byte[8192];
 			while (true) {
 				int bytesRead = source.read(buffer);
 				if (bytesRead == -1)
 					break;
 				destination.write(buffer, 0, bytesRead);
+				if (monitor != null) {
+					monitor.worked(1);
+					loaded = loaded + bytesRead;
+					if (monitor.isCanceled()) {
+							throw CANCEL_EXCEPTION; 
+					}
+					if (++total==AVAILABLE){
+						monitor.beginTask("downloading...",AVAILABLE);
+						total = 0;						
+					}
+					monitor.setTaskName("loaded:"+loaded);
+				}
 			}
 		} finally {
 			try {
