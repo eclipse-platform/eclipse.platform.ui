@@ -928,7 +928,7 @@ public final class Platform {
 	 * @return the currently registered bundle group providers
 	 * @since 3.0
 	 */
-	public IBundleGroupProvider[] getBundleGroupProviders() {
+	public static  IBundleGroupProvider[] getBundleGroupProviders() {
 		return InternalPlatform.getDefault().getBundleGroupProviders();
 	}
 
@@ -938,7 +938,7 @@ public final class Platform {
 	 * @return the current product or null if none
 	 * @since 3.0
 	 */
-	public IProduct getProduct() {
+	public static IProduct getProduct() {
 		return InternalPlatform.getDefault().getProduct();
 	}
 
@@ -947,7 +947,7 @@ public final class Platform {
 	 * @param provider a provider to register
 	 * @since 3.0
 	 */
-	public void registerBundleGroupProvider(IBundleGroupProvider provider) {
+	public static void registerBundleGroupProvider(IBundleGroupProvider provider) {
 		InternalPlatform.getDefault().registerBundleGroupProvider(provider);		
 	}
 	
@@ -956,7 +956,7 @@ public final class Platform {
 	 * @param provider a provider to deregister
 	 * @since 3.0
 	 */
-	public void unregisterBundleGroupProvider(IBundleGroupProvider provider) {
+	public static void unregisterBundleGroupProvider(IBundleGroupProvider provider) {
 		InternalPlatform.getDefault().unregisterBundleGroupProvider(provider);		
 	}
 
@@ -970,7 +970,7 @@ public final class Platform {
 	 * @return the path indicating the directory containing the configuration 
 	 * metadata for this running Eclipse.
 	 */
-	public IPath getConfigurationMetadataLocation() {
+	public static IPath getConfigurationMetadataLocation() {
 		return InternalPlatform.getDefault().getConfigurationMetadataLocation();
 	}
 
