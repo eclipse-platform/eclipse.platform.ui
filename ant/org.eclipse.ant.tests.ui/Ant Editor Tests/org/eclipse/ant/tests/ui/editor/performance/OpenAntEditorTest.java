@@ -49,6 +49,7 @@ public class OpenAntEditorTest extends PerformanceTestCase {
 	    try {
 		IFile file= getIFile("build.xml");
 		store.setValue(AntEditorPreferenceConstants.EDITOR_FOLDING_ENABLED, false);
+		tagAsSummary("Open Ant Editor; No folding", Dimension.CPU_TIME);
 		measureOpenInEditor(file);
 	    } finally {
 	        store.setToDefault(AntEditorPreferenceConstants.EDITOR_FOLDING_ENABLED);
