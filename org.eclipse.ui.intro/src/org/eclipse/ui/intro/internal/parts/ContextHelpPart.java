@@ -176,7 +176,7 @@ public class ContextHelpPart implements IStandbyContentPart {
         text = toolkit.createFormText(form.getBody(), true);
         text.setImage(ImageUtil.HELP_TOPIC, ImageUtil
                 .getImage(ImageUtil.HELP_TOPIC));
-        text.addHyperlinkListener(new HyperlinkAdapter() {
+        text.addHyperlinkListener(new HyperlinkAdapter() {   
 
             public void linkActivated(HyperlinkEvent e) {
                 openLink(e.getHref());
