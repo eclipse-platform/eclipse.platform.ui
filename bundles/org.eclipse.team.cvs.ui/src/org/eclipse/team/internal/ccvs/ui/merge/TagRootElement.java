@@ -46,6 +46,8 @@ public class TagRootElement implements IWorkbenchAdapter, IAdaptable {
 				childTags = CVSUIPlugin.getPlugin().getRepositoryManager().getKnownTags(project, CVSTag.BRANCH);
 			} else if(typeOfTagRoot==CVSTag.VERSION) {
 				childTags = CVSUIPlugin.getPlugin().getRepositoryManager().getKnownTags(project, CVSTag.VERSION);
+			}else if(typeOfTagRoot==CVSTag.DATE){
+				childTags = CVSUIPlugin.getPlugin().getRepositoryManager().getKnownTags(project, CVSTag.DATE);
 			}
 		} else {
 			childTags = getTags();
@@ -60,6 +62,12 @@ public class TagRootElement implements IWorkbenchAdapter, IAdaptable {
 		if(cachedTags!=null) {
 			cachedTags.clear();
 		}
+	}
+	public void add(CVSTag tag){
+		if(cachedTags==null) {
+			cachedTags = new ArrayList();
+		}
+		cachedTags.add(tag);
 	}
 	public void add(CVSTag[] tags) {
 		if(cachedTags==null) {
@@ -86,14 +94,18 @@ public class TagRootElement implements IWorkbenchAdapter, IAdaptable {
 	public ImageDescriptor getImageDescriptor(Object object) {
 		if(typeOfTagRoot==CVSTag.BRANCH) {
 			return CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_BRANCHES_CATEGORY);
-		} else {
+		} else if(typeOfTagRoot==CVSTag.DATE){
+			return CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_DATES_CATEGORY);
+		}else {
 			return CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_VERSIONS_CATEGORY);
 		}
 	}
 	public String getLabel(Object o) {
 		if(typeOfTagRoot==CVSTag.BRANCH) {
 			return Policy.bind("MergeWizardEndPage.branches"); //$NON-NLS-1$
-		} else {
+		} else if(typeOfTagRoot==CVSTag.DATE){
+			return "Dates";
+		}else {
 			return Policy.bind("VersionsElement.versions"); //$NON-NLS-1$
 		}	
 	}

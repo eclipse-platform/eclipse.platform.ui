@@ -381,6 +381,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		createImageDescriptor(ICVSUIConstants.IMG_CLEAR_DISABLED, baseURL);
 		createImageDescriptor(ICVSUIConstants.IMG_BRANCHES_CATEGORY, baseURL);
 		createImageDescriptor(ICVSUIConstants.IMG_VERSIONS_CATEGORY, baseURL);
+		createImageDescriptor(ICVSUIConstants.IMG_DATES_CATEGORY, baseURL);
 		createImageDescriptor(ICVSUIConstants.IMG_PROJECT_VERSION, baseURL);
 		createImageDescriptor(ICVSUIConstants.IMG_WIZBAN_MERGE, baseURL);
 		createImageDescriptor(ICVSUIConstants.IMG_WIZBAN_SHARE, baseURL);

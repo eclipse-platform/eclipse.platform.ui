@@ -20,6 +20,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.ui.model.BranchCategory;
 import org.eclipse.team.internal.ccvs.ui.model.CVSTagElement;
+import org.eclipse.team.internal.ccvs.ui.model.DateTagCategory;
 import org.eclipse.team.internal.ccvs.ui.model.RemoteModule;
 import org.eclipse.team.internal.ccvs.ui.model.VersionCategory;
 
@@ -52,8 +53,10 @@ public class RepositorySorter extends ViewerSorter {
 				return 4;
 			} else if (tagElement.getTag().getType() == CVSTag.VERSION) {
 				return 5;
-			} else {
+			} else if (tagElement.getTag().getType() == CVSTag.DATE){
 				return 6;
+			}else{
+				return 7;
 			}
 		}
 		if (element instanceof BranchCategory) {
@@ -62,6 +65,9 @@ public class RepositorySorter extends ViewerSorter {
 		if (element instanceof VersionCategory) {
 			return 5;
 		} 
+		if (element instanceof DateTagCategory){
+			return 6;
+		}
 		return 0;
 	}
 

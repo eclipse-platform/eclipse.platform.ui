@@ -33,6 +33,7 @@ import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -64,6 +65,7 @@ import org.eclipse.team.internal.ccvs.ui.model.CVSFileElement;
 import org.eclipse.team.internal.ccvs.ui.model.CVSFolderElement;
 import org.eclipse.team.internal.ccvs.ui.model.CVSRootFolderElement;
 import org.eclipse.team.internal.ccvs.ui.model.RemoteContentProvider;
+import org.eclipse.team.internal.ccvs.ui.repo.NewDateTagAction;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchContentProvider;
@@ -160,8 +162,8 @@ public class TagConfigurationDialog extends Dialog {
 		GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = 2;
 		gridLayout.makeColumnsEqualWidth = true;
-        gridLayout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
-        gridLayout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);        
+	    gridLayout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
+	    gridLayout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);        
 		shell.setLayout (gridLayout);
 		
 		Composite comp = new Composite(shell, SWT.NULL);
@@ -177,7 +179,7 @@ public class TagConfigurationDialog extends Dialog {
 		data = new GridData();
 		data.horizontalSpan = 1;
 		cvsResourceTreeLabel.setLayoutData(data);
-
+	
 		Tree tree = new Tree(comp, SWT.BORDER | SWT.MULTI);
 		cvsResourceTree = new TreeViewer (tree);
 		cvsResourceTree.setContentProvider(new RemoteContentProvider());
@@ -198,8 +200,8 @@ public class TagConfigurationDialog extends Dialog {
 				updateEnablements();
 			}
 		});
-
-
+	
+	
 		comp = new Composite(shell, SWT.NULL);
 		gridLayout = new GridLayout();
 		gridLayout.numColumns = 1;
@@ -207,7 +209,7 @@ public class TagConfigurationDialog extends Dialog {
 		gridLayout.marginHeight = 0;
 		comp.setLayout(gridLayout);
 		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
-
+	
 		Label cvsTagTreeLabel = new Label(comp, SWT.NONE);
 		cvsTagTreeLabel.setText(Policy.bind("TagConfigurationDialog.6")); //$NON-NLS-1$
 		data = new GridData();
@@ -283,7 +285,7 @@ public class TagConfigurationDialog extends Dialog {
 		gridLayout.marginHeight = 0;
 		gridLayout.marginWidth = 0;
 		rememberedTags.setLayout (gridLayout);
-
+	
 		Label rememberedTagsLabel = new Label (rememberedTags, SWT.NONE);
 		rememberedTagsLabel.setText (Policy.bind("TagConfigurationDialog.7")); //$NON-NLS-1$
 		data = new GridData ();
@@ -299,9 +301,10 @@ public class TagConfigurationDialog extends Dialog {
 		data.horizontalAlignment = GridData.FILL;
 		data.grabExcessHorizontalSpace = true;
 		cvsDefinedTagsTree.getTree().setLayoutData(data);
-		cvsDefinedTagsRootElement = new ProjectElement(roots[0], ProjectElement.INCLUDE_BRANCHES | ProjectElement.INCLUDE_VERSIONS);
+		cvsDefinedTagsRootElement = new ProjectElement(roots[0], ProjectElement.INCLUDE_BRANCHES | ProjectElement.INCLUDE_VERSIONS |ProjectElement.INCLUDE_DATES);
 		cvsDefinedTagsRootElement.getBranches().add(CVSUIPlugin.getPlugin().getRepositoryManager().getKnownTags(root, CVSTag.BRANCH));
 		cvsDefinedTagsRootElement.getVersions().add(CVSUIPlugin.getPlugin().getRepositoryManager().getKnownTags(root, CVSTag.VERSION));
+		cvsDefinedTagsRootElement.getDates().add(CVSUIPlugin.getPlugin().getRepositoryManager().getKnownTags(root, CVSTag.DATE));
 		cvsDefinedTagsTree.setInput(cvsDefinedTagsRootElement);
 		cvsDefinedTagsTree.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
@@ -309,7 +312,7 @@ public class TagConfigurationDialog extends Dialog {
 			}
 		});
 		cvsDefinedTagsTree.setSorter(new ProjectElementSorter());
-
+	
 		Composite buttonComposite = new Composite(rememberedTags, SWT.NONE);
 		data = new GridData ();
 		data.verticalAlignment = GridData.BEGINNING;		
@@ -331,7 +334,19 @@ public class TagConfigurationDialog extends Dialog {
 					updateEnablements();
 				}
 			});			
-			
+		Button addDatesButton = new Button(buttonComposite, SWT.PUSH);
+		addDatesButton.setText("Add Date...");
+		data = getStandardButtonData(addDatesButton);
+		data.horizontalAlignment = GridData.FILL;
+		addDatesButton.setLayoutData(data);
+		addDatesButton.addListener(SWT.Selection, new Listener(){
+			public void handleEvent(Event event){
+				CVSTag dateTag = NewDateTagAction.getDateTag(getShell(), CVSUIPlugin.getPlugin().getRepositoryManager().getRepositoryLocationFor(root));
+				addDateTagsSelected(dateTag);
+				updateShownTags();
+				updateEnablements();
+			}
+		});
 		removeTagButton = new Button (buttonComposite, SWT.PUSH);
 		removeTagButton.setText (Policy.bind("TagConfigurationDialog.9")); //$NON-NLS-1$
 		data = getStandardButtonData(removeTagButton);
@@ -428,14 +443,14 @@ public class TagConfigurationDialog extends Dialog {
 		data = new GridData (GridData.FILL_BOTH);		
 		data.horizontalSpan = 2;
 		seperator.setLayoutData(data);
-
+	
 		WorkbenchHelp.setHelp(shell, IHelpContextIds.TAG_CONFIGURATION_OVERVIEW);
-
+	
 		updateEnablements();
-        Dialog.applyDialogFont(parent);
+	    Dialog.applyDialogFont(parent);
 		return shell;
 	}
-	
+
 	private void updateShownTags() {
 		final CVSFileElement[] filesSelection = getSelectedFiles();
 		final Set tags = new HashSet();
@@ -467,6 +482,7 @@ public class TagConfigurationDialog extends Dialog {
 				List knownTags = new ArrayList();
 				knownTags.addAll(Arrays.asList(cvsDefinedTagsRootElement.getBranches().getTags()));
 				knownTags.addAll(Arrays.asList(cvsDefinedTagsRootElement.getVersions().getTags()));
+				knownTags.addAll(Arrays.asList(cvsDefinedTagsRootElement.getDates().getTags()));
 				if(!knownTags.contains(tag)) {
 					TagElement tagElem = new TagElement(tag);
 					cvsTagTree.add(tagElem);
@@ -539,7 +555,9 @@ public class TagConfigurationDialog extends Dialog {
 			CVSTag tag = ((TagElement)checked[i]).getTag();
 			if(tag.getType() == CVSTag.BRANCH) {
 				cvsDefinedTagsRootElement.getBranches().add(new CVSTag[] {tag});
-			} else {
+			}else if(tag.getType() == CVSTag.DATE){
+				cvsDefinedTagsRootElement.getDates().add(new CVSTag[] {tag});
+			}else {
 				cvsDefinedTagsRootElement.getVersions().add(new CVSTag[] {tag});
 			}
 		}
@@ -558,14 +576,25 @@ public class TagConfigurationDialog extends Dialog {
 						cvsDefinedTagsRootElement.getBranches().remove(tag);
 					} else if(tag.getType()==CVSTag.VERSION) {						
 						cvsDefinedTagsRootElement.getVersions().remove(tag);
-					}					
+					} else if(tag.getType() == CVSTag.DATE){
+						cvsDefinedTagsRootElement.getDates().remove(tag);
+					}
 				}
 			}
 		}
 		cvsDefinedTagsTree.refresh();
 		cvsDefinedTagsTree.getTree().setFocus();
 	}
-	
+	private void addDateTagsSelected(CVSTag tag){
+		if(tag == null) return;
+		List knownTags = new ArrayList();
+		knownTags.addAll(Arrays.asList(cvsDefinedTagsRootElement.getDates().getTags()));
+		if(!knownTags.contains( tag)){
+			cvsDefinedTagsRootElement.getDates().add(tag);
+		}
+		cvsDefinedTagsTree.refresh();
+		cvsDefinedTagsTree.getTree().setFocus();
+	}
 	private boolean isTagSelectedInKnownTagTree() {
 		IStructuredSelection selection = (IStructuredSelection)cvsDefinedTagsTree.getSelection();
 		if (!selection.isEmpty()) {
@@ -585,6 +614,7 @@ public class TagConfigurationDialog extends Dialog {
 	private void removeAllKnownTags() {
 		cvsDefinedTagsRootElement.getBranches().removeAll();
 		cvsDefinedTagsRootElement.getVersions().removeAll();
+		cvsDefinedTagsRootElement.getDates().removeAll();
 		cvsDefinedTagsTree.refresh();
 	}
 	
@@ -622,6 +652,7 @@ public class TagConfigurationDialog extends Dialog {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					CVSTag[] branches = cvsDefinedTagsRootElement.getBranches().getTags();
 					CVSTag[] versions = cvsDefinedTagsRootElement.getVersions().getTags();
+					CVSTag[] dates = cvsDefinedTagsRootElement.getDates().getTags();
 					try {
 						for(int i = 0; i < roots.length; i++) {
 							CVSTag[] oldTags = manager.getKnownTags(roots[i]);
@@ -631,7 +662,10 @@ public class TagConfigurationDialog extends Dialog {
 							}
 							if(versions.length>0) {
 								manager.addTags(roots[i], versions);
-							}			
+							}
+							if(dates.length>0) {
+								manager.addTags(roots[i], dates);
+							}
 						}
 					} catch (CVSException e) {
 						throw new InvocationTargetException(e);

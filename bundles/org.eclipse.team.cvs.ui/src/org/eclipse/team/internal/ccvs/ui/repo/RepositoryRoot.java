@@ -28,11 +28,13 @@ public class RepositoryRoot extends PlatformObject {
 	ICVSRepositoryLocation root;
 	String name;
 	// Map of String (remote folder path) -> Set (CVS tags)
-	Map knownTags = new HashMap();
+	Map versionAndBranchTags = new HashMap();
 	// Map of String (remote folder path) -> Set (file paths that are project relative)
 	Map autoRefreshFiles = new HashMap();
 	// Map of String (module name) -> ICVSRemoteFolder (that is a defined module)
 	Map modulesCache;
+	// Lis of date tags
+	List dateTags = new ArrayList();
 	
 	public RepositoryRoot(ICVSRepositoryLocation root) {
 		this.root = root;
@@ -157,20 +159,51 @@ public class RepositoryRoot extends PlatformObject {
 	 * It is the reponsibility of the caller to ensure that the given remote path is valid.
 	 */
 	public void addTags(String remotePath, CVSTag[] tags) {	
+		addDateTags(tags);
+		addVersionAndBranchTags(remotePath, tags);
+	}
+	private void addDateTags(CVSTag[] tags){
+		for(int i = 0; i < tags.length; i++){
+			if(tags[i].getType() == CVSTag.DATE){
+				dateTags.add(tags[i]);
+			}
+		}
+	}
+	private void addVersionAndBranchTags(String remotePath, CVSTag[] tags) {
 		// Get the name to cache the version tags with
 		String name = getCachePathFor(remotePath);
 		
 		// Make sure there is a table for the ancestor that holds the tags
-		Set set = (Set)knownTags.get(name);
+		Set set = (Set)versionAndBranchTags.get(name);
 		if (set == null) {
 			set = new HashSet();
-			knownTags.put(name, set);
+			versionAndBranchTags.put(name, set);
 		}
 		
 		// Store the tag with the appropriate ancestor
 		for (int i = 0; i < tags.length; i++) {
-			set.add(tags[i]);
+			if(tags[i].getType() != CVSTag.DATE){
+				set.add(tags[i]);
+			}
 		}
+	}
+
+	/**
+	 * Add the given date tag to the list of date tags associated with the repository.
+	 * @param tag a date tag
+	 */
+	public void addDateTag(CVSTag tag) {
+		if (!dateTags.contains(tag)) {
+			dateTags.add(tag);
+		}
+	}
+	
+	/**
+	 * Return the list of date tags assocaiated with the repository.
+	 * @return the list of date tags
+	 */
+	public CVSTag[] getDateTags() {
+		return (CVSTag[]) dateTags.toArray(new CVSTag[dateTags.size()]);
 	}
 	
 	/**
@@ -178,12 +211,25 @@ public class RepositoryRoot extends PlatformObject {
 	 * @param remotePath
 	 * @param tags
 	 */
-	public void removeTags(String remotePath, CVSTag[] tags) {	
+	public void removeTags(String remotePath, CVSTag[] tags) {
+		removeDateTags(tags);
+		removeVersionAndBranchTags(remotePath, tags);
+	}
+	
+	private void removeDateTags(CVSTag[] tags) {		
+		if(dateTags.isEmpty())return;
+		// Store the tag with the appropriate ancestor
+		for (int i = 0; i < tags.length; i++) {
+			dateTags.remove(tags[i]);
+		}
+	}
+
+	private void removeVersionAndBranchTags(String remotePath, CVSTag[] tags) {
 		// Get the name to cache the version tags with
 		String name = getCachePathFor(remotePath);
 		
 		// Make sure there is a table for the ancestor that holds the tags
-		Set set = (Set)knownTags.get(name);
+		Set set = (Set)versionAndBranchTags.get(name);
 		if (set == null) {
 			return;
 		}
@@ -193,7 +239,7 @@ public class RepositoryRoot extends PlatformObject {
 			set.remove(tags[i]);
 		}
 	}
-	
+
 	/**
 	 * Returns the absolute paths of the auto refresh files relative to the
 	 * repository.
@@ -316,10 +362,19 @@ public class RepositoryRoot extends PlatformObject {
 		}
 		
 		writer.startTag(RepositoriesViewContentHandler.REPOSITORY_TAG, attributes, true);
+
+		//put date tag under repository
+		if(!dateTags.isEmpty()){
+			writer.startTag(RepositoriesViewContentHandler.DATE_TAGS_TAG, attributes, true);
+			Iterator iter = dateTags.iterator();
+			while(iter.hasNext()){
+				CVSTag tag = (CVSTag)iter.next();
+				writeATag(writer, attributes, tag, RepositoriesViewContentHandler.DATE_TAG_TAG);
+			}
+			writer.endTag(RepositoriesViewContentHandler.DATE_TAGS_TAG);
+		}
 		
 		// Gather all the modules that have tags and/or auto-refresh files
-		
-
 		// for each module, write the moduel, tags and auto-refresh files.
 		String[] paths = getKnownRemotePaths();
 		for (int i = 0; i < paths.length; i++) {
@@ -328,19 +383,17 @@ public class RepositoryRoot extends PlatformObject {
 			String name = path;
 			if (isDefinedModuleName(path)) {
 				name = getDefinedModuleName(path);
+				
 				attributes.put(RepositoriesViewContentHandler.TYPE_ATTRIBUTE, RepositoriesViewContentHandler.DEFINED_MODULE_TYPE);
 			}
 			attributes.put(RepositoriesViewContentHandler.PATH_ATTRIBUTE, name);
 			writer.startTag(RepositoriesViewContentHandler.MODULE_TAG, attributes, true);
-			Set tagSet = (Set)knownTags.get(path);
+			Set tagSet = (Set)versionAndBranchTags.get(path);
 			if (tagSet != null) {
 				Iterator tagIt = tagSet.iterator();
 				while (tagIt.hasNext()) {
 					CVSTag tag = (CVSTag)tagIt.next();
-					attributes.clear();
-					attributes.put(RepositoriesViewContentHandler.NAME_ATTRIBUTE, tag.getName());
-					attributes.put(RepositoriesViewContentHandler.TYPE_ATTRIBUTE, RepositoriesViewContentHandler.TAG_TYPES[tag.getType()]);
-					writer.startAndEndTag(RepositoriesViewContentHandler.TAG_TAG, attributes, true);
+					writeATag(writer, attributes, tag, RepositoriesViewContentHandler.TAG_TAG);
 				}
 			}
 			Set refreshSet = (Set)autoRefreshFiles.get(path);
@@ -358,20 +411,40 @@ public class RepositoryRoot extends PlatformObject {
 		writer.endTag(RepositoriesViewContentHandler.REPOSITORY_TAG);
 	}
 	
+
+	private void writeATag(XMLWriter writer, HashMap attributes, CVSTag tag, String s) {
+		attributes.clear();
+		attributes.put(RepositoriesViewContentHandler.NAME_ATTRIBUTE, tag.getName());
+		writer.startAndEndTag(s, attributes, true);
+	}
+
 	/**
 	 * Method getKnownTags.
 	 * @param remotePath
 	 * @return CVSTag[]
 	 */
-	public CVSTag[] getKnownTags(String remotePath) {
-		Set tagSet = (Set)knownTags.get(getCachePathFor(remotePath));
-		if (tagSet == null) return new CVSTag[0];
-		return (CVSTag[]) tagSet.toArray(new CVSTag[tagSet.size()]);
+	public CVSTag[] getAllKnownTags(String remotePath) {
+		Set tagSet = (Set)versionAndBranchTags.get(getCachePathFor(remotePath));
+		if(tagSet != null){
+			CVSTag [] tags1 = (CVSTag[]) tagSet.toArray(new CVSTag[tagSet.size()]);
+			CVSTag[] tags2 = getDateTags();
+			int len = tags1.length + tags2.length;
+			CVSTag[] tags = new CVSTag[len];
+			for(int i = 0; i < len; i++){
+				if(i < tags1.length){
+					tags[i] = tags1[i];
+				}else{
+					tags[i] = tags2[i-tags1.length];
+				}
+			}
+			return tags;
+		}
+		return getDateTags();
 	}
-	
+
 	public String[] getKnownRemotePaths() {
 		Set paths = new HashSet();
-		paths.addAll(knownTags.keySet());
+		paths.addAll(versionAndBranchTags.keySet());
 		paths.addAll(autoRefreshFiles.keySet());
 		return (String[]) paths.toArray(new String[paths.size()]);
 	}
@@ -406,7 +479,7 @@ public class RepositoryRoot extends PlatformObject {
 		if (remoteResource instanceof ICVSRemoteFolder) {
 			ICVSRemoteFolder folder = (ICVSRemoteFolder) remoteResource;
 			String path = getCachePathFor(folder.getRepositoryRelativePath());
-			CVSTag[] tags = getKnownTags(path);
+			CVSTag[] tags = getAllKnownTags(path);
 			CVSTag tag = folder.getTag();
 			for (int i = 0; i < tags.length; i++) {
 				CVSTag knownTag = tags[i];

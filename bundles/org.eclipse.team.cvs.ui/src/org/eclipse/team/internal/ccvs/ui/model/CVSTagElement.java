@@ -11,6 +11,7 @@
 package org.eclipse.team.internal.ccvs.ui.model;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Date;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
@@ -23,6 +24,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
+import org.eclipse.team.internal.ccvs.core.util.CVSDateFormatter;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.Policy;
@@ -71,13 +73,21 @@ public class CVSTagElement extends CVSModelElement implements IDeferredWorkbench
 				ICVSUIConstants.IMG_PROJECT_VERSION);
 		} else {
 			// This could be a Date tag
-			return null;
+			return CVSUIPlugin.getPlugin().getImageDescriptor(
+					ICVSUIConstants.IMG_DATE);
 		}
 	}
 	public String getLabel(Object o) {
 		if (!(o instanceof CVSTagElement))
 			return null;
-		return ((CVSTagElement) o).tag.getName();
+		CVSTag aTag = ((CVSTagElement) o).tag;
+		if(aTag.getType() == CVSTag.DATE){
+			Date date = tag.asDate();
+			if (date != null){
+				return CVSDateFormatter.repoViewTimeStamp(date);
+			}
+		}
+		return aTag.getName();
 	}
 	
 	public String toString() {
@@ -98,7 +108,7 @@ public class CVSTagElement extends CVSModelElement implements IDeferredWorkbench
 	}
 	
 	public void fetchDeferredChildren(Object o, IElementCollector collector, IProgressMonitor monitor) {
-		if (tag.getType() == CVSTag.HEAD) {
+		if (tag.getType() == CVSTag.HEAD || tag.getType() == CVSTag.DATE) {
 			try {
 				monitor = Policy.monitorFor(monitor);
 				RemoteFolder folder = new RemoteFolder(null, root, ICVSRemoteFolder.REPOSITORY_ROOT_FOLDER_NAME, tag);

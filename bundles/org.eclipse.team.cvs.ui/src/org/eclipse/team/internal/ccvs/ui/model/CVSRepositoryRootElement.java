@@ -67,7 +67,8 @@ public class CVSRepositoryRootElement extends CVSModelElement {
 		return new Object[] {
 			new CVSTagElement(CVSTag.DEFAULT, location),
 			new BranchCategory(location),
-			new VersionCategory(location)
+			new VersionCategory(location),
+			new DateTagCategory(location)
 		};
 	}
 }

@@ -157,7 +157,6 @@ public class RepositoriesView extends RemoteViewPart {
 	protected void addWorkbenchActions(IMenuManager manager) {
 		// New actions go next
 		MenuManager sub = new MenuManager(Policy.bind("RepositoriesView.newSubmenu"), IWorkbenchActionConstants.GROUP_ADD); //$NON-NLS-1$
-		sub.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		manager.add(sub);
 		super.addWorkbenchActions(manager);
 		IStructuredSelection selection = (IStructuredSelection)getViewer().getSelection();
@@ -173,7 +172,8 @@ public class RepositoriesView extends RemoteViewPart {
 		}
 		sub.add(newAction);
 		if (newAnonAction != null)
-			sub.add(newAnonAction);		
+			sub.add(newAnonAction);
+		sub.add(new Separator("group1"));
 	}
 	
 	/*

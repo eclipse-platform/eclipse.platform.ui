@@ -55,6 +55,7 @@ public class TagSelectionDialog extends Dialog {
 	public static final int INCLUDE_BASE_TAG = ProjectElement.INCLUDE_BASE_TAG;
 	public static final int INCLUDE_BRANCHES = ProjectElement.INCLUDE_BRANCHES;
 	public static final int INCLUDE_VERSIONS = ProjectElement.INCLUDE_VERSIONS;
+	public static final int INCLUDE_DATES = ProjectElement.INCLUDE_DATES;
 	public static final int INCLUDE_ALL_TAGS = ProjectElement.INCLUDE_ALL_TAGS;
 	
 	// widgets;

@@ -30,6 +30,8 @@ public class RepositoriesViewContentHandler extends DefaultHandler {
 	public static final String MODULE_TAG = "module"; //$NON-NLS-1$
 	public static final String TAG_TAG = "tag"; //$NON-NLS-1$
 	public static final String AUTO_REFRESH_FILE_TAG = "auto-refresh-file"; //$NON-NLS-1$
+	public static final String DATE_TAGS_TAG = "date-tags";
+	public static final String DATE_TAG_TAG = "date-tag";
 	
 	public static final String ID_ATTRIBUTE = "id"; //$NON-NLS-1$
 	public static final String NAME_ATTRIBUTE = "name"; //$NON-NLS-1$
@@ -46,9 +48,11 @@ public class RepositoriesViewContentHandler extends DefaultHandler {
 	private RepositoryManager manager;
 	private StringBuffer buffer = new StringBuffer();
 	private Stack tagStack = new Stack();
+	private Stack dateTagStack = new Stack();
 	private RepositoryRoot currentRepositoryRoot;
 	private String currentRemotePath;
 	private List tags;
+	private List dateTags;
 	private List autoRefreshFiles;
 	private boolean ignoreElements;
 
@@ -92,6 +96,14 @@ public class RepositoriesViewContentHandler extends DefaultHandler {
 					(CVSTag[]) tags.toArray(new CVSTag[tags.size()]));
 				currentRepositoryRoot.setAutoRefreshFiles(currentRemotePath,
 					(String[]) autoRefreshFiles.toArray(new String[autoRefreshFiles.size()]));
+			}
+		}else if(elementName.equals(DATE_TAG_TAG)){
+			if (! ignoreElements && currentRepositoryRoot != null) {
+				Iterator iter = dateTags.iterator();
+				while(iter.hasNext()){
+					CVSTag tag = (CVSTag)iter.next();
+					currentRepositoryRoot.addDateTag(tag);
+				}
 			}
 		}
 		tagStack.pop();
@@ -137,7 +149,16 @@ public class RepositoriesViewContentHandler extends DefaultHandler {
 			if (writeLocation != null) {
 				((CVSRepositoryLocation)root).setWriteLocation(writeLocation);
 			}
-		} else if (elementName.equals(WORKING_SET_TAG)) {
+		} else if(elementName.equals(DATE_TAGS_TAG)){
+			//prepare to collect date tag
+			dateTags = new ArrayList();
+		} else if (elementName.equals(DATE_TAG_TAG)){
+			String name = atts.getValue(NAME_ATTRIBUTE);
+			if (name == null) {
+				throw new SAXException(Policy.bind("RepositoriesViewContentHandler.missingAttribute", DATE_TAGS_TAG, NAME_ATTRIBUTE)); //$NON-NLS-1$
+			}
+			dateTags.add(new CVSTag(name, CVSTag.DATE));
+		}else if (elementName.equals(WORKING_SET_TAG)) {
 			String name = atts.getValue(NAME_ATTRIBUTE);
 			if (name == null) {
 				throw new SAXException(Policy.bind("RepositoriesViewContentHandler.missingAttribute", WORKING_SET_TAG, NAME_ATTRIBUTE)); //$NON-NLS-1$

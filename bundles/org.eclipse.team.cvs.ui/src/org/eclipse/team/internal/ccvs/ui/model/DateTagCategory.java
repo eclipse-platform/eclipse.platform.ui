@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.model;
 
- 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
@@ -18,42 +17,45 @@ import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
-import org.eclipse.team.internal.ccvs.ui.Policy;
-/**
- * BranchCategory is the model element for the branches category
- * for a particular repository in the repositories view. Its children
- * are the array of all known branch tags, other than HEAD, for the
- * given repository.
- */
-public class BranchCategory extends TagCategory {
 
-	public BranchCategory(ICVSRepositoryLocation repository) {
+/**
+ * The DateTagCategory is the parent of all the date tags in the repositories view.
+ */
+public class DateTagCategory extends TagCategory {
+
+	public DateTagCategory(ICVSRepositoryLocation repository) {
 		super(repository);
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.model.TagCategory#getTags(org.eclipse.core.runtime.IProgressMonitor)
+	 */
 	protected CVSTag[] getTags(IProgressMonitor monitor) throws CVSException {
-		return CVSUIPlugin.getPlugin().getRepositoryManager().getKnownTags(repository, getWorkingSet(), CVSTag.BRANCH, monitor);
+		return CVSUIPlugin.getPlugin().getRepositoryManager().getRepositoryRootFor(repository).getDateTags();
 	}
 
-	/**
-	 * Returns an image descriptor to be used for displaying an object in the workbench.
-	 * Returns null if there is no appropriate image.
-	 *
-	 * @param object The object to get an image descriptor for.
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getImageDescriptor(java.lang.Object)
 	 */
 	public ImageDescriptor getImageDescriptor(Object object) {
-		return CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_BRANCHES_CATEGORY);
+		return CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_DATES_CATEGORY);
 	}
-	
-	/**
-	 * Returns the name of this element.  This will typically
-	 * be used to assign a label to this object when displayed
-	 * in the UI.  Returns an empty string if there is no appropriate
-	 * name for this object.
-	 *
-	 * @param object The object to get a label for.
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getLabel(java.lang.Object)
 	 */
 	public String getLabel(Object o) {
-		return Policy.bind("BranchCategory.Branches_1"); //$NON-NLS-1$
+		return "Dates";
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.model.TagCategory#getAdapter(java.lang.Class)
+	 */
+	public Object getAdapter(Class adapter) {
+		if (adapter.equals(ICVSRepositoryLocation.class)) {
+			return getRepository(null);
+		}
+		return super.getAdapter(adapter);
+	}
+
 }

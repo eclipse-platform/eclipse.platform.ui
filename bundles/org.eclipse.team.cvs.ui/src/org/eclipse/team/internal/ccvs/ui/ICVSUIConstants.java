@@ -32,9 +32,11 @@ public interface ICVSUIConstants {
 	public final String IMG_TAG = "obj16/tag.gif"; //$NON-NLS-1$
 	public final String IMG_BRANCHES_CATEGORY = "obj16/branches_rep.gif"; //$NON-NLS-1$
 	public final String IMG_VERSIONS_CATEGORY = "obj16/versions_rep.gif"; //$NON-NLS-1$
+	public final String IMG_DATES_CATEGORY = "obj16/dates.gif"; //
+	
 	public final String IMG_MODULE = "obj16/module_rep.gif"; //$NON-NLS-1$
 	public final String IMG_PROJECT_VERSION = "obj16/prjversions_rep.gif"; //$NON-NLS-1$
-	public final String IMG_DATE = "obj16/day_obj.gif"; //$NON-NLS-1$
+	public final String IMG_DATE = "obj16/date.gif"; //$NON-NLS-1$
 	
 	// toolbar
 	public final String IMG_REFRESH = "clcl16/refresh.gif"; //$NON-NLS-1$

@@ -11,9 +11,12 @@
 package org.eclipse.team.internal.ccvs.ui.merge;
 
 
+import java.util.Date;
+
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
+import org.eclipse.team.internal.ccvs.core.util.CVSDateFormatter;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.ui.model.IWorkbenchAdapter;
@@ -33,11 +36,19 @@ public class TagElement implements IWorkbenchAdapter, IAdaptable {
 	public ImageDescriptor getImageDescriptor(Object object) {
 		if (tag.getType() == CVSTag.BRANCH || tag == CVSTag.DEFAULT) {
 			return CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_TAG);
-		} else {
+		} else if (tag.getType() == CVSTag.DATE){
+			return CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_DATE);
+		}else {
 			return CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_PROJECT_VERSION);
 		}
 	}
 	public String getLabel(Object o) {
+		if(tag.getType() == CVSTag.DATE){
+			Date date = tag.asDate();
+			if (date != null){
+				return CVSDateFormatter.repoViewTimeStamp(date);
+			}
+		}
 		return tag.getName();
 	}
 	public Object getParent(Object o) {
