@@ -255,6 +255,7 @@ public class PartSite implements IWorkbenchPartSite {
 		if (keyBindingService == null) {
 			keyBindingService = new KeyBindingService(getId());
 			
+			// TODO why is this here? and it should be using HandlerSubmissions directly..			
 			if (this instanceof EditorSite) {
 				EditorActionBuilder.ExternalContributor contributor = (EditorActionBuilder.ExternalContributor) ((EditorSite) this).getExtensionActionBarContributor();
 			
@@ -275,8 +276,6 @@ public class PartSite implements IWorkbenchPartSite {
 					}
 				}				
 			}			
-			
-			// keyBindingService.setScopes(new String[] { getInitialScopeId() }); //$NON-NLS-1$
 		}
 
 		return keyBindingService;
