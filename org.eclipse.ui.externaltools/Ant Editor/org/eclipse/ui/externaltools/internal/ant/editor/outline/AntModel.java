@@ -11,7 +11,6 @@ Contributors:
 
 package org.eclipse.ui.externaltools.internal.ant.editor.outline;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 
@@ -149,13 +148,8 @@ public class AntModel {
 
 		// Create the handler
 		OutlinePreparingHandler tempHandler = null;
-		IPath location= fLocationProvider.getLocation();
-		File tempParentFile = null;
-		if(location != null) {
-			tempParentFile = location.toFile().getParentFile();
-		}
 
-		tempHandler = new OutlinePreparingHandler(tempParentFile);
+		tempHandler = new OutlinePreparingHandler(fLocationProvider);
 		tempHandler.setProblemRequestor(fProblemRequestor);
 		tempHandler.setDocument(input);
 		
@@ -169,6 +163,7 @@ public class AntModel {
 		try {
 			tempHandler.begin();
 			InputSource tempInputSource = new InputSource(new StringReader(tempWholeDocumentString));
+			IPath location= fLocationProvider.getLocation();
 			if (location != null) {
 				//needed for resolving relative external entities
 				tempInputSource.setSystemId(location.toOSString());

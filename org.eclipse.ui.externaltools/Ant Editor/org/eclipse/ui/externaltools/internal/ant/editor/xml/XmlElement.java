@@ -554,7 +554,9 @@ public class XmlElement implements IAdaptable {
 	 */
 	public Object getAdapter(Class adapter) {
 		if (adapter == IResource.class) {
-			return AntUtil.getFile(getFilePath());
+			if (getFilePath() != null) {
+				return AntUtil.getFile(getFilePath());
+			}
 		}
 		return null;
 	}
