@@ -10,7 +10,7 @@
       <description>%embeddedHelpView</description>
    </context>
 
-<!-- not used -->
+<!-- Used on Linux only -->
    <context  id="browser" >
       <description>%browser</description>
    </context>
@@ -50,7 +50,7 @@
       <description>%installOptions</description>
    </context>
 
-<!-- not used -->
+<!-- Used on Linux only -->
    <context  id="browserPath" >
       <description>%browserPath</description>
    </context>
