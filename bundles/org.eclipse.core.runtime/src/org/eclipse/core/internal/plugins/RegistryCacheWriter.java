@@ -608,8 +608,6 @@ public void writePluginRegistry(PluginRegistryModel registry, DataOutputStream o
 			writeLabel(RegistryCacheReader.REGISTRY_LAST_MOD_END, out);
 		}
 	
-		String outString = null;
-
 		writeLabel(RegistryCacheReader.REGISTRY_LABEL, out);
 
 		writeLabel(RegistryCacheReader.READONLY_LABEL, out);

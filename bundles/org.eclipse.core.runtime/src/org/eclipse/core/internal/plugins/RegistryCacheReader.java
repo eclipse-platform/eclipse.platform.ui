@@ -267,7 +267,6 @@ public ConfigurationElementModel readConfigurationElement(DataInputStream in, bo
 	// can't set it now or you won't be able to add anything more to this
 	// configuration element.
 	addToObjectTable(configurationElement);
-	boolean setReadOnlyFlag = false;
 	try {
 		byte inByte = 0;
 		boolean done = false;
@@ -280,9 +279,7 @@ public ConfigurationElementModel readConfigurationElement(DataInputStream in, bo
 			}
 			switch (inByte) {
 				case READONLY_LABEL :
-					if (in.readBoolean()) {
-						setReadOnlyFlag = true;
-					}
+					in.readBoolean();
 					break;
 				case NAME_LABEL :
 					configurationElement.setName(in.readUTF());
@@ -383,7 +380,6 @@ public ConfigurationPropertyModel readConfigurationProperty(DataInputStream in, 
 	// Use this flag to determine if the read-only flag should be set.  You
 	// can't set it now or you won't be able to add anything more to this
 	// configuration property.
-	boolean setReadOnlyFlag = false;
 	try {
 		byte inByte = 0;
 		boolean done = false;
@@ -398,9 +394,7 @@ public ConfigurationPropertyModel readConfigurationProperty(DataInputStream in, 
 				case CONFIGURATION_PROPERTY_LABEL:
 					break;
 				case READONLY_LABEL :
-					if (in.readBoolean()) {
-						setReadOnlyFlag = true;
-					}
+					in.readBoolean();
 					break;
 				case NAME_LABEL :
 					configurationProperty.setName(in.readUTF());
@@ -436,7 +430,6 @@ public ExtensionModel readExtension(DataInputStream in, boolean debugFlag) {
 	// Use this flag to determine if the read-only flag should be set.  You
 	// can't set it now or you won't be able to add anything more to this
 	// extension.
-	boolean setReadOnlyFlag = false;
 	try {
 		byte inByte = 0;
 		boolean done = false;
@@ -449,9 +442,7 @@ public ExtensionModel readExtension(DataInputStream in, boolean debugFlag) {
 			}
 			switch (inByte) {
 				case READONLY_LABEL :
-					if (in.readBoolean()) {
-						setReadOnlyFlag = true;
-					}
+					in.readBoolean();
 					break;
 				case NAME_LABEL :
 					extension.setName(in.readUTF());
@@ -586,7 +577,6 @@ public ExtensionPointModel readExtensionPoint(DataInputStream in, boolean debugF
 	// Use this flag to determine if the read-only flag should be set.  You
 	// can't set it now or you won't be able to add anything more to this
 	// extension point.
-	boolean setReadOnlyFlag = false;
 	int extensionLength = 0;
 	try {
 		byte inByte = 0;
@@ -600,9 +590,7 @@ public ExtensionPointModel readExtensionPoint(DataInputStream in, boolean debugF
 			}
 			switch (inByte) {
 				case READONLY_LABEL :
-					if (in.readBoolean()) {
-						setReadOnlyFlag = true;
-					}
+					in.readBoolean();
 					break;
 				case NAME_LABEL :
 					extPoint.setName(in.readUTF());
@@ -686,7 +674,6 @@ public LibraryModel readLibrary(DataInputStream in, boolean debugFlag) {
 	// Use this flag to determine if the read-only flag should be set.  You
 	// can't set it now or you won't be able to add anything more to this
 	// library.
-	boolean setReadOnlyFlag = false;
 	int exportsLength = 0;
 	try {
 		byte inByte = 0;
@@ -700,9 +687,7 @@ public LibraryModel readLibrary(DataInputStream in, boolean debugFlag) {
 			}
 			switch (inByte) {
 				case READONLY_LABEL :
-					if (in.readBoolean()) {
-						setReadOnlyFlag = true;
-					}
+					in.readBoolean();
 					break;
 				case NAME_LABEL :
 					library.setName(in.readUTF());
@@ -760,7 +745,6 @@ public PluginDescriptorModel readPluginDescriptor(DataInputStream in, boolean de
 	// Use this flag to determine if the read-only flag should be set.  You
 	// can't set it now or you won't be able to add anything more to this
 	// plugin.
-	boolean setReadOnlyFlag = false;
 	try {
 		byte inByte = 0;
 		boolean done = false;
@@ -773,9 +757,7 @@ public PluginDescriptorModel readPluginDescriptor(DataInputStream in, boolean de
 			}
 			switch (inByte) {
 				case READONLY_LABEL :
-					if (in.readBoolean()) {
-						setReadOnlyFlag = true;
-					}
+					in.readBoolean();
 					break;
 				case NAME_LABEL :
 					plugin.setName(in.readUTF());
@@ -1005,7 +987,6 @@ public PluginFragmentModel readPluginFragment(DataInputStream in, boolean debugF
 	// Use this flag to determine if the read-only flag should be set.  You
 	// can't set it now or you won't be able to add anything more to this
 	// plugin.
-	boolean setReadOnlyFlag = false;
 	try {
 		byte inByte = 0;
 		boolean done = false;
@@ -1018,9 +999,7 @@ public PluginFragmentModel readPluginFragment(DataInputStream in, boolean debugF
 			}
 			switch (inByte) {
 				case READONLY_LABEL :
-					if (in.readBoolean()) {
-						setReadOnlyFlag = true;
-					}
+					in.readBoolean();
 					break;
 				case NAME_LABEL :
 					fragment.setName(in.readUTF());
@@ -1207,7 +1186,6 @@ public PluginPrerequisiteModel readPluginPrerequisite(DataInputStream in, boolea
 	// Use this flag to determine if the read-only flag should be set.  You
 	// can't set it now or you won't be able to add anything more to this
 	// prerequisite.
-	boolean setReadOnlyFlag = false;
 	try {
 		byte inByte = 0;
 		boolean done = false;
@@ -1220,9 +1198,7 @@ public PluginPrerequisiteModel readPluginPrerequisite(DataInputStream in, boolea
 			}
 			switch (inByte) {
 				case READONLY_LABEL :
-					if (in.readBoolean()) {
-						setReadOnlyFlag = true;
-					}
+					in.readBoolean();
 					break;
 				case NAME_LABEL :
 					requires.setName(in.readUTF());
