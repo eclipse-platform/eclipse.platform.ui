@@ -873,6 +873,16 @@
          </action>
       </viewerContribution>
    </extension>
+   
+<!-- Perspective Extensions -->
+	<extension point="org.eclipse.ui.perspectiveExtensions">   
+		<perspectiveExtension
+			targetID="org.eclipse.debug.ui.DebugPerspective">
+			<showInPart id="org.eclipse.ui.views.ResourceNavigator"/>
+		</perspectiveExtension>
+	</extension>
+
+
    <extension
          id="instructionPointer"
          point="org.eclipse.core.resources.markers">
