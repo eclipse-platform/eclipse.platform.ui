@@ -25,7 +25,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.SWTUtil;
-import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
@@ -467,7 +467,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 						setWorkingCopy(configuration.getWorkingCopy());
 						displayInstanceTabs();
 					} else if (fInput instanceof ILaunchConfigurationType) {
-						ILaunchConfiguration configuration = getSharedTypeConfig((ILaunchConfigurationType)fInput);
+						ILaunchConfiguration configuration = LaunchConfigurationManager.getSharedTypeConfig((ILaunchConfigurationType)fInput);
 						setOriginal(configuration);
 						setWorkingCopy(configuration.getWorkingCopy());
 						displaySharedTabs();
@@ -1222,37 +1222,5 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			getTabFolder().setSelection(index);
 			handleTabSelected();
 		}
-	}
-	
-	/**
-	 * Returns the private launch configuration used as a placeholder to represent/store
-	 * the information associated with a launch configuration type.
-	 * 
-	 * @param type launch configuration type
-	 * @return launch configuration
-	 */
-	protected ILaunchConfiguration getSharedTypeConfig(ILaunchConfigurationType type) throws CoreException {
-		String id = type.getIdentifier();
-		String name = id + ".SHARED_INFO"; //$NON-NLS-1$
-		ILaunchConfiguration shared = null;
-		ILaunchConfiguration[] configurations = getLaunchManager().getLaunchConfigurations(type);
-		for (int i = 0; i < configurations.length; i++) {
-			ILaunchConfiguration configuration = configurations[i];
-			if (configuration.getName().equals(name)) {
-				shared = configuration;
-				break;
-			}
-		}
-		
-		if (shared == null) {
-			// create a new shared config
-			ILaunchConfigurationWorkingCopy workingCopy;
-			workingCopy = type.newInstance(null, name);
-			workingCopy.setAttribute(IDebugUIConstants.ATTR_PRIVATE, true);
-			// null entries indicate default settings
-			// save
-			shared = workingCopy.doSave();
-		}
-		return shared;
 	}
 }

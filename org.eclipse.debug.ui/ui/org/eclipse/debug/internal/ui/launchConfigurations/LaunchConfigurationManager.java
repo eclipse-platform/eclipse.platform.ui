@@ -39,6 +39,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
@@ -111,6 +112,19 @@ public class LaunchConfigurationManager implements ILaunchListener {
 	private static final String HISTORY_LAST_LAUNCH_NODE = "lastLaunch"; //$NON-NLS-1$
 	private static final String HISTORY_MEMENTO_ATT = "memento"; //$NON-NLS-1$
 	private static final String HISTORY_MODE_ATT = "mode"; //$NON-NLS-1$
+
+	/**
+	 * String attribute controlling whether the debugger switching to
+	 * the associated perspective when a launch configuration suspends.
+	 * Valid values are either "always", "never", or "prompt".
+	 * If "always" or "never", suspension will switch perspectives (or not) automatically.
+	 * If "prompt", the user will be prompted each time.
+	 * 
+	 * This attribute only applies to "shared type configs" (@see LaunchConfigurationManager#getSharedTypeConfig(ILaunchConfigurationType))
+	 * 
+	 * @since 3.0
+	 */
+	public static final String ATTR_SWITCH_PERSPECTIVE_ON_SUSPEND = IDebugUIConstants.PLUGIN_ID + ".switch_perspective_on_suspend"; //$NON-NLS-1$
 	
 	public void startup() {				
 		ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
@@ -666,6 +680,39 @@ public class LaunchConfigurationManager implements ILaunchListener {
 			DebugUIPlugin.log(e);
 		}
 		return null;
+	}
+
+	/**
+	 * Returns the private launch configuration used as a placeholder to represent/store
+	 * the information associated with a launch configuration type.
+	 * 
+	 * @param type launch configuration type
+	 * @return launch configuration
+	 * @since 3.0
+	 */
+	public static ILaunchConfiguration getSharedTypeConfig(ILaunchConfigurationType type) throws CoreException {
+		String id = type.getIdentifier();
+		String name = id + ".SHARED_INFO"; //$NON-NLS-1$
+		ILaunchConfiguration shared = null;
+		ILaunchConfiguration[] configurations = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurations(type);
+		for (int i = 0; i < configurations.length; i++) {
+			ILaunchConfiguration configuration = configurations[i];
+			if (configuration.getName().equals(name)) {
+				shared = configuration;
+				break;
+			}
+		}
+		
+		if (shared == null) {
+			// create a new shared config
+			ILaunchConfigurationWorkingCopy workingCopy;
+			workingCopy = type.newInstance(null, name);
+			workingCopy.setAttribute(IDebugUIConstants.ATTR_PRIVATE, true);
+			// null entries indicate default settings
+			// save
+			shared = workingCopy.doSave();
+		}
+		return shared;
 	}
 
 }

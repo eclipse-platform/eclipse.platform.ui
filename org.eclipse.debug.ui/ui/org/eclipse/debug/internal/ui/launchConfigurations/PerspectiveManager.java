@@ -30,16 +30,19 @@ import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.internal.ui.AlwaysNeverDialog;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
@@ -76,6 +79,8 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 	private static final String ATTR_TYPE_ID = "configurationType"; //$NON-NLS-1$
 	private static final String ATTR_MODE_ID = "mode"; //$NON-NLS-1$
 	private static final String ATTR_PERSPECTIVE_ID = "perspective";  //$NON-NLS-1$
+	
+	private boolean fSuspendOccurred= false;
 		
 	/**
 	 * Called by the debug ui plug-in on startup.
@@ -139,10 +144,20 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 			}
 		}
 		
+		final String id= perspectiveId;
 		// switch
-		if (perspectiveId != null) {
-			switchToPerspective(perspectiveId);
-		}
+		async(new Runnable() {
+			public void run() {
+				if (id != null && shouldSwitchPerspectiveForLaunch(id)) {
+					switchToPerspective(id);
+				}
+				if (fSuspendOccurred && DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_ACTIVATE_DEBUG_VIEW)) {
+					doShowDebugView();
+					fSuspendOccurred= false;
+				}
+			}
+		});
+		
 	}
 
 
@@ -151,22 +166,18 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 	 * 
 	 * @param id perspective identifier
 	 */
-	protected void switchToPerspective(final String id) {
-		async(new Runnable() {
-			public void run() {
-				IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
-				if (window != null) {
-					try {
-						window.getWorkbench().showPerspective(id, window);
-					} catch (WorkbenchException e) {
-						DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(),
-						LaunchConfigurationsMessages.getString("PerspectiveManager.Error_1"),  //$NON-NLS-1$
-						MessageFormat.format(LaunchConfigurationsMessages.getString("PerspectiveManager.Unable_to_switch_to_perspective__{0}_2"), new String[]{id}), //$NON-NLS-1$
-						e);
-					}
-				}
+	protected void switchToPerspective(String id) {
+		IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
+		if (window != null) {
+			try {
+				window.getWorkbench().showPerspective(id, window);
+			} catch (WorkbenchException e) {
+				DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(),
+				LaunchConfigurationsMessages.getString("PerspectiveManager.Error_1"),  //$NON-NLS-1$
+				MessageFormat.format(LaunchConfigurationsMessages.getString("PerspectiveManager.Unable_to_switch_to_perspective__{0}_2"), new String[]{id}), //$NON-NLS-1$
+				e);
 			}
-		});	
+		}
 	}
 	
 	/**
@@ -217,10 +228,8 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 		for (int i = 0; i < events.length; i++) {
 			DebugEvent event = events[i];
 			if (event.getKind() == DebugEvent.SUSPEND && (event.getDetail() == DebugEvent.BREAKPOINT || event.getDetail() == DebugEvent.STEP_END)) {
+				fSuspendOccurred= true; // Set flag to open debug view
 				doPerspectiveSwitch(event);
-				if (DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_ACTIVATE_DEBUG_VIEW)) {
-					doShowDebugView();
-				}
 			}
 		}
 	}
@@ -229,22 +238,17 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 	 * Makes the debug view visible.
 	 */
 	protected void doShowDebugView() {
-		Runnable runnable= new Runnable () {
-			public void run() {
-				IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-				if (window != null) {
-					IWorkbenchPage page = window.getActivePage();
-					if (page != null) {
-						try {
-							page.showView(IDebugUIConstants.ID_DEBUG_VIEW, null, IWorkbenchPage.VIEW_VISIBLE);
-						} catch (PartInitException e) {
-							DebugUIPlugin.log(e);
-						}
-					}
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if (window != null) {
+			IWorkbenchPage page = window.getActivePage();
+			if (page != null) {
+				try {
+					page.showView(IDebugUIConstants.ID_DEBUG_VIEW, null, IWorkbenchPage.VIEW_VISIBLE);
+				} catch (PartInitException e) {
+					DebugUIPlugin.log(e);
 				}
 			}
-		};
-		async(runnable);
+		}
 	}
 	
 	/**
@@ -255,16 +259,16 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 	 */
 	private void doPerspectiveSwitch(DebugEvent event) {
 		// apply event filters
-		ILaunch launch = null;
+		final ILaunch[] launch = new ILaunch[1];
 		Object source = event.getSource();
 		if (source instanceof IDebugElement) {
-			launch = ((IDebugElement)source).getLaunch();
+			launch[0] = ((IDebugElement)source).getLaunch();
 		} else if (source instanceof IProcess) {
-			launch = ((IProcess)source).getLaunch();
+			launch[0] = ((IProcess)source).getLaunch();
 		}
 		String perspectiveId = null;
 		try {
-			perspectiveId = getPerspectiveId(launch);
+			perspectiveId = getPerspectiveId(launch[0]);
 		} catch (CoreException e) {
 			DebugUIPlugin.log(e);
 		}
@@ -293,11 +297,124 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 					if (DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_ACTIVATE_WORKBENCH)) {
 						shell.forceActive();
 					}
-				}				
-				switchToPerspective(targetId);
+				}
+				if (shouldSwitchPerspectiveForSuspend(targetId, launch[0])) {
+					switchToPerspective(targetId);
+				}
+				if (fSuspendOccurred && DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_ACTIVATE_DEBUG_VIEW)) {
+					doShowDebugView();
+					fSuspendOccurred= false;
+				}
 			}
 		};
 		async(r);
+	}
+	
+	/**
+	 * Returns whether or not the user wishes to switch to the specified
+	 * perspective when the given launch suspends.
+	 * 
+	 * @param perspectiveName the name of the perspective that will be presented
+	 *  to the user for confirmation if they've asked to be prompted about
+	 *  perspective switching for suspension
+	 * @return whether or not the user wishes to switch to the specified perspective
+	 *  automatically when the given launch suspends
+	 */
+	protected boolean shouldSwitchPerspectiveForSuspend(String perspectiveId, ILaunch launch) {
+		if (isCurrentPerspective(perspectiveId)) {
+			return false;
+		}
+		boolean answer= false;
+		try {
+			ILaunchConfiguration configuration = LaunchConfigurationManager.getSharedTypeConfig(launch.getLaunchConfiguration().getType());
+			String switchString = configuration.getAttribute(LaunchConfigurationManager.ATTR_SWITCH_PERSPECTIVE_ON_SUSPEND, AlwaysNeverDialog.NEVER);
+			if (AlwaysNeverDialog.NEVER.equals(switchString)) {
+				answer= false;
+			} else if (AlwaysNeverDialog.ALWAYS.equals(switchString)) {
+				answer= true;
+			} else { // PROMPT
+				Shell shell= Display.getDefault().getActiveShell();
+				if (shell != null) {
+					String perspectiveName= getPerspectiveLabel(perspectiveId);
+					StringBuffer buffer= new StringBuffer();
+					answer= AlwaysNeverDialog.openQuestion(shell, LaunchConfigurationsMessages.getString("PerspectiveManager.12"), MessageFormat.format(LaunchConfigurationsMessages.getString("PerspectiveManager.13"), new String[] { perspectiveName }), buffer); //$NON-NLS-1$ //$NON-NLS-2$
+					String result= buffer.toString();
+					if (result.length() > 0 && !result.equals(switchString)) {
+						ILaunchConfigurationWorkingCopy workingCopy= configuration.getWorkingCopy();
+						workingCopy.setAttribute(LaunchConfigurationManager.ATTR_SWITCH_PERSPECTIVE_ON_SUSPEND, result);
+						workingCopy.doSave();
+					}
+				}
+			}
+		} catch (CoreException e) {
+			DebugUIPlugin.log(e.getStatus());
+		}
+		return answer;
+	}
+	
+	/**
+	 * Returns whether or not the user wishes to switch to the specified
+	 * perspective when a launch occurs.
+	 * 
+	 * @param perspectiveName the name of the perspective that will be presented
+	 *  to the user for confirmation if they've asked to be prompted about
+	 *  perspective switching
+	 * @return whether or not the user wishes to switch to the specified perspective
+	 *  automatically when a launch occurs
+	 */
+	protected boolean shouldSwitchPerspectiveForLaunch(String perspectiveId) {
+		if (isCurrentPerspective(perspectiveId)) {
+			return false;
+		}
+		String perspectiveName= getPerspectiveLabel(perspectiveId);
+		Shell shell= Display.getDefault().getActiveShell();
+		if (perspectiveName == null || shell == null) {
+			return false;
+		}
+		String switchPerspective = DebugUIPlugin.getDefault().getPreferenceStore().getString(IDebugUIConstants.PREF_SWITCH_TO_PERSPECTIVE);
+		if (AlwaysNeverDialog.ALWAYS.equals(switchPerspective)) {
+			return true;
+		} else if (AlwaysNeverDialog.NEVER.equals(switchPerspective)) {
+			return false;
+		}
+		return AlwaysNeverDialog.openQuestion(shell, LaunchConfigurationsMessages.getString("PerspectiveManager.12"), MessageFormat.format(LaunchConfigurationsMessages.getString("PerspectiveManager.15"), new String[] { perspectiveName }), IDebugUIConstants.PREF_SWITCH_TO_PERSPECTIVE, DebugUIPlugin.getDefault().getPreferenceStore()); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+	
+	/**
+	 * Returns whether the given perspective identifier matches the
+	 * identifier of the current perspective.
+	 * 
+	 * @param perspectiveId the identifier
+	 * @return whether the given perspective identifier matches the
+	 *  identifier of the current perspective
+	 */
+	protected boolean isCurrentPerspective(String perspectiveId) {
+		IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
+		boolean isCurrent= false;
+		if (window != null) {
+			isCurrent= perspectiveId.equals(window.getActivePage().getPerspective().getId());
+		}
+		return isCurrent;
+	}
+	
+	/**
+	 * Returns the label of the perspective with the given identifier or
+	 * <code>null</code> if no such perspective exists.
+	 * 
+	 * @param perspectiveId the identifier
+	 * @return the label of the perspective with the given identifier or
+	 *  <code>null</code> if no such perspective exists 
+	 */
+	protected String getPerspectiveLabel(String perspectiveId) {
+		IWorkbenchWindow window= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if (window == null) {
+			return null;
+		}
+		IPerspectiveDescriptor newPerspective = window.getWorkbench().getPerspectiveRegistry().findPerspectiveWithId(perspectiveId);
+		if (newPerspective == null) {
+			return null;
+		}
+		return newPerspective.getLabel();
 	}
 
 	/** 

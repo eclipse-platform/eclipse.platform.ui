@@ -62,6 +62,7 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 	protected void createFieldEditors() {
 		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_BUILD_BEFORE_LAUNCH, DebugPreferencesMessages.getString("DebugPreferencePage.auto_build_before_launch"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
 		createWaitForBuildEditor();
+		createSwitchPerspectiveEditor();
 		
 		createSpacer(getFieldEditorParent(), 2);
 		
@@ -111,11 +112,21 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 	private void createWaitForBuildEditor() {
 		addField(new RadioGroupFieldEditor(IDebugUIConstants.PREF_WAIT_FOR_BUILD, 
 						DebugPreferencesMessages.getString("DebugPreferencePage.12"), 3,  //$NON-NLS-1$
-						new String[][] {{DebugPreferencesMessages.getString("DebugPreferencePage.13"), AlwaysNeverDialog.NEVER}, //$NON-NLS-1$
-							{DebugPreferencesMessages.getString("DebugPreferencePage.14"), AlwaysNeverDialog.PROMPT}, //$NON-NLS-1$
-							{DebugPreferencesMessages.getString("DebugPreferencePage.15"), AlwaysNeverDialog.ALWAYS}}, //$NON-NLS-1$
+						new String[][] {{DebugPreferencesMessages.getString("DebugPreferencePage.15"), AlwaysNeverDialog.ALWAYS}, //$NON-NLS-1$
+							{DebugPreferencesMessages.getString("DebugPreferencePage.13"), AlwaysNeverDialog.NEVER}, //$NON-NLS-1$
+							{DebugPreferencesMessages.getString("DebugPreferencePage.14"), AlwaysNeverDialog.PROMPT}}, //$NON-NLS-1$
 						getFieldEditorParent(),
 						true));
+	}
+	
+	private void createSwitchPerspectiveEditor() {
+		addField(new RadioGroupFieldEditor(IDebugUIConstants.PREF_SWITCH_TO_PERSPECTIVE,
+				DebugPreferencesMessages.getString("DebugPreferencePage.17"), 3, //$NON-NLS-1$
+				new String[][] {{DebugPreferencesMessages.getString("DebugPreferencePage.18"), AlwaysNeverDialog.ALWAYS}, //$NON-NLS-1$
+								{DebugPreferencesMessages.getString("DebugPreferencePage.19"), AlwaysNeverDialog.NEVER}, //$NON-NLS-1$
+								{DebugPreferencesMessages.getString("DebugPreferencePage.20"), AlwaysNeverDialog.PROMPT}}, //$NON-NLS-1$
+				getFieldEditorParent(),
+				true));
 	}
 		
 	protected void createSpacer(Composite composite, int columnSpan) {
