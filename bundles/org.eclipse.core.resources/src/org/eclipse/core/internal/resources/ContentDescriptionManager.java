@@ -17,7 +17,6 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.*;
 import org.eclipse.core.runtime.content.IContentTypeManager.ContentTypeChangeEvent;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 
 /**
@@ -42,14 +41,53 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 			setRule(workspace.getRoot());
 		}
 
+		/* (non-Javadoc)
+		 * See Job#belongsTo(Object)
+		 */
 		public boolean belongsTo(Object family) {
 			return FAMILY_DESCRIPTION_CACHE_FLUSH.equals(family);
 		}
 
-		public IStatus runInWorkspace(IProgressMonitor monitor) {
+		/* (non-Javadoc)
+		 * See WorkspaceJob#runInWorkspace(IProgressMonitor)
+		 */
+		public IStatus runInWorkspace(final IProgressMonitor monitor) {
 			try {
-				setCacheState(FLUSHING_CACHE);
-				ContentDescriptionManager.this.flushCache(monitor);
+				if (monitor.isCanceled())
+					return Status.CANCEL_STATUS;
+				synchronized (ContentDescriptionManager.this) {
+					// nothing to be done if no information cached
+					if (getCacheState() == EMPTY_CACHE)
+						return Status.OK_STATUS;
+					setCacheState(FLUSHING_CACHE);
+					// flush the MRU cache
+					cache.discardAll();
+					// discard content type related flags for all files in the tree 
+					IElementContentVisitor visitor = new IElementContentVisitor() {
+						public boolean visitElement(ElementTree tree, IPathRequestor requestor, Object elementContents) {
+							if (monitor.isCanceled())
+								throw new OperationCanceledException();
+							if (elementContents == null)
+								return false;
+							ResourceInfo info = (ResourceInfo) elementContents;
+							if (info.getType() != IResource.FILE)
+								return true;
+							info = workspace.getResourceInfo(requestor.requestPath(), false, true);
+							if (info == null)
+								return false;
+							info.clear(ICoreConstants.M_CONTENT_CACHE);
+							return true;
+						}
+					};
+					try {
+						new ElementTreeIterator(workspace.getElementTree(), Path.ROOT).iterate(visitor);
+					} catch (WrappedRuntimeException e) {
+						throw (CoreException) e.getTargetException();
+					}
+					// done cleaning
+					setCacheState(EMPTY_CACHE);
+				}
+				monitor.worked(Policy.opWork);
 			} catch (CoreException e) {
 				return e.getStatus();
 			}
@@ -116,7 +154,7 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 	private static final String PT_CONTENTTYPES = "contentTypes"; //$NON-NLS-1$
 	public static final byte USED_CACHE = 2;
 
-	private Cache cache;
+	Cache cache;
 
 	private byte cacheState;
 
@@ -129,57 +167,6 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 	 */
 	public void contentTypeChanged(ContentTypeChangeEvent event) {
 		invalidateCache(true);
-	}
-
-	void flushCache(final IProgressMonitor monitor) throws CoreException {
-		if (monitor.isCanceled())
-			throw new OperationCanceledException();
-		// the workspace root  as our scheduling rule since we need to traverse all resources in the tree  
-		final ISchedulingRule rule = workspace.getRoot();
-		try {
-			workspace.prepareOperation(rule, monitor);
-			workspace.beginOperation(true);
-			// this lock must be acquired from inside the operation otherwise deadlocks may occur
-			synchronized (this) {
-				if (getCacheState() == EMPTY_CACHE) {
-					monitor.worked(Policy.opWork);
-					// nothing to be done, no information cached
-					return;
-				}
-				// flush the MRU cache
-				this.cache.discardAll();
-				// discard content type related flags for all files in the tree 
-				IElementContentVisitor visitor = new IElementContentVisitor() {
-					public boolean visitElement(ElementTree tree, IPathRequestor requestor, Object elementContents) {
-						if (monitor.isCanceled())
-							throw new OperationCanceledException();
-						if (elementContents == null)
-							return false;
-						ResourceInfo info = (ResourceInfo) elementContents;
-						if (info.getType() != IResource.FILE)
-							return true;
-						info = workspace.getResourceInfo(requestor.requestPath(), false, true);
-						if (info == null)
-							return false;
-						info.clear(ICoreConstants.M_CONTENT_CACHE);
-						return true;
-					}
-				};
-				try {
-					new ElementTreeIterator(workspace.getElementTree(), Path.ROOT).iterate(visitor);
-				} catch (WrappedRuntimeException e) {
-					throw (CoreException) e.getTargetException();
-				}
-				// done cleaning
-				setCacheState(EMPTY_CACHE);
-			}
-			monitor.worked(Policy.opWork);
-		} catch (OperationCanceledException e) {
-			workspace.getWorkManager().operationCanceled();
-			throw e;
-		} finally {
-			workspace.endOperation(rule, true, Policy.subMonitorFor(monitor, Policy.endOpWork));
-		}
 	}
 
 	Cache getCache() {
@@ -213,12 +200,13 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 	}
 
 	public IContentDescription getDescriptionFor(File file, ResourceInfo info) throws CoreException {
+		//TODO Why not check the EMPTY_CACHE state?
 		switch (getCacheState()) {
-			case INVALID_CACHE:
+			case INVALID_CACHE :
 				// the cache is not good, flush it
 				flushJob.schedule(1000);
-				//fall through and just read the file
-			case FLUSHING_CACHE:
+			//fall through and just read the file
+			case FLUSHING_CACHE :
 				// the cache is being flushed, but is still not good, just read the file
 				return readDescription(file);
 		}
@@ -241,6 +229,9 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 			// fix this and keep going			
 			info.clear(ICoreConstants.M_CONTENT_CACHE);
 		}
+		//TODO What if the cache has become invalid or a flush has started
+		//since we checked above?  Shouldn't the cache state checking above
+		//be moved into the sync block below?
 		synchronized (this) {
 			// tries to get a description from the cache	
 			Cache.Entry entry = cache.getEntry(file.getFullPath());
