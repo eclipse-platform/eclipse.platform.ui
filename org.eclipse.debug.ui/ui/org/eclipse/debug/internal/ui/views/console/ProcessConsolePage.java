@@ -201,6 +201,10 @@ public class ProcessConsolePage implements IPageBookViewPage, ISelectionListener
 		getSite().getPage().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
 		fViewer.getSelectionProvider().removeSelectionChangedListener(fTextListener);
 		fViewer.removeTextListener(this);
+
+		if (fKeyBindingFollowLinkAction != null) {
+			getConsoleView().getSite().getKeyBindingService().unregisterAction(fKeyBindingFollowLinkAction);
+		}
 		
 		if (fRemoveTerminated != null) {
 			fRemoveTerminated.dispose();
