@@ -29,6 +29,7 @@ import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.FeatureSelectionDialog;
 import org.eclipse.ui.internal.dialogs.WelcomeEditorInput;
+import org.eclipse.ui.internal.ide.IDEApplication;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IHelpContextIds;
@@ -71,9 +72,17 @@ public class QuickStartAction
 			// action has been disposed
 			return;
 		}
-		AboutInfo feature = promptForFeature();
-		if (feature != null) {
-			openWelcomePage(feature);
+		try {
+			AboutInfo feature = promptForFeature();
+			if (feature != null) {
+				openWelcomePage(feature);
+			}
+		} catch (WorkbenchException e) {
+			ErrorDialog.openError(
+				workbenchWindow.getShell(), 
+				IDEWorkbenchMessages.getString("QuickStartAction.errorDialogTitle"),  //$NON-NLS-1$
+				IDEWorkbenchMessages.getString("QuickStartAction.infoReadError"),  //$NON-NLS-1$
+				e.getStatus());
 		}
 	}
 	
@@ -82,10 +91,9 @@ public class QuickStartAction
 	 * 
 	 * @return the chosen feature, or <code>null</code> if none was chosen
 	 */
-	private AboutInfo promptForFeature() {
+	private AboutInfo promptForFeature() throws WorkbenchException {
 		// Ask the user to select a feature
-		// @issue access to AboutInfo
-		AboutInfo[] features = PlatformUI.getWorkbench().getConfigurationInfo().getFeaturesInfo();
+		AboutInfo[] features = IDEApplication.getFeatureInfos();
 		ArrayList welcomeFeatures = new ArrayList();
 		for (int i = 0; i < features.length; i++) {
 			if (features[i].getWelcomePageURL() != null)
@@ -104,8 +112,7 @@ public class QuickStartAction
 
 		features = new AboutInfo[welcomeFeatures.size()];
 		welcomeFeatures.toArray(features);
-		// @issue access to AboutInfo
-		AboutInfo primaryFeature = PlatformUI.getWorkbench().getConfigurationInfo().getAboutInfo();
+		AboutInfo primaryFeature = IDEApplication.getPrimaryInfo();
 
 		FeatureSelectionDialog d = new FeatureSelectionDialog(
 			shell,
@@ -125,7 +132,7 @@ public class QuickStartAction
 	 * @param feature the about info for the feature
 	 * @return <code>true</code> if successful, <code>false</code> otherwise
 	 */	
-	public boolean openWelcomePage(String featureId) {
+	public boolean openWelcomePage(String featureId) throws WorkbenchException {
 		AboutInfo feature = findFeature(featureId);
 		if (feature == null || feature.getWelcomePageURL() == null) {
 			return false;
@@ -140,9 +147,8 @@ public class QuickStartAction
 	 * @return the about info for the feature with the given id, or <code>null</code>
 	 *   if there is no such feature.
 	 */
-	private AboutInfo findFeature(String featureId) {
-		// @issue access to AboutInfo
-		AboutInfo[] features = PlatformUI.getWorkbench().getConfigurationInfo().getFeaturesInfo();
+	private AboutInfo findFeature(String featureId) throws WorkbenchException {
+		AboutInfo[] features = IDEApplication.getFeatureInfos();
 		for (int i = 0; i < features.length; i++) {
 			AboutInfo info = features[i];
 			if (info.getFeatureId().equals(featureId)) {
@@ -162,8 +168,7 @@ public class QuickStartAction
 		IWorkbenchPage page = null;
 
 		// See if the feature wants a specific perspective
-		// @issue access to welcome perspective for feature
-		String perspectiveId = feature.getWelcomePerspective();
+		String perspectiveId = feature.getWelcomePerspectiveId();
 
 		if (perspectiveId == null) {
 			// Just use the current perspective unless one is not open 
