@@ -850,7 +850,10 @@ public class EclipseWorkspaceTest extends TestCase {
 	protected byte[] readBytesInFileSystem(IFile file) {
 		String m = getClassName() + ".readBytesInFileSystem(IFile): ";
 		try {
-			java.io.File osFile = file.getLocation().toFile();
+			IPath location = file.getLocation();
+			if (location == null)
+				fail("0.1 - null location for file: " + file);
+			java.io.File osFile = location.toFile();
 			FileInputStream is = new FileInputStream(osFile);
 			ByteArrayOutputStream os = new ByteArrayOutputStream();
 			transferData(is, os);
