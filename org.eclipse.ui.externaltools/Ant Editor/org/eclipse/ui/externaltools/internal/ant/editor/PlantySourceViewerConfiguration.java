@@ -1,5 +1,8 @@
-//
-// PlantySourceViewerConfiguration.java
+/**********************************************************************
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 //
 // Copyright:
 // GEBIT Gesellschaft fuer EDV-Beratung
@@ -26,7 +29,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 
-import org.eclipse.ui.externaltools.internal.ant.editor.copied.HTMLTextPresenter;
+import org.eclipse.ui.externaltools.internal.ant.editor.derived.HTMLTextPresenter;
 import org.eclipse.ui.externaltools.internal.ant.editor.text.NonRuleBasedDamagerRepairer;
 import org.eclipse.ui.externaltools.internal.ant.editor.text.PlantyColorConstants;
 import org.eclipse.ui.externaltools.internal.ant.editor.text.PlantyPartitionScanner;
