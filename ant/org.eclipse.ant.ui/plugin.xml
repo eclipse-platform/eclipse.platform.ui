@@ -496,11 +496,6 @@ M4 = Platform-specific fourth key -->
    <extension
          point="org.eclipse.debug.ui.consoleLineTrackers">
       <consoleLineTracker
-            class="org.eclipse.ant.internal.ui.console.JavacLineTracker"
-            processType="org.eclipse.ant.ui.antProcess"
-            id="org.eclipse.ant.ui.javacLineTracker">
-      </consoleLineTracker>
-      <consoleLineTracker
             class="org.eclipse.ant.internal.ui.console.TaskLineTracker"
             processType="org.eclipse.ant.ui.antProcess"
             id="org.eclipse.ant.ui.taskLineTracker">
@@ -695,6 +690,33 @@ M4 = Platform-specific fourth key -->
          </action>
       </viewerContribution>
        </extension>
+   <extension
+         point="org.eclipse.ui.console.consolePatternMatchListeners">
+      <consolePatternMatchListener
+            class="org.eclipse.ant.internal.ui.console.EclipseJavacPatternMatcher"
+            id="org.eclipse.ant.ui.eclipseJavacPatternMatcher"
+            regex="\[javac.*\].*ERROR in.*">
+         <enablement>
+            <test property="org.eclipse.debug.ui.processTypeTest" value="org.eclipse.ant.ui.antProcess"/>
+         </enablement>
+      </consolePatternMatchListener>
+	  <consolePatternMatchListener
+            class="org.eclipse.ant.internal.ui.console.JavacPatternMatcher"
+            id="org.eclipse.ant.ui.JavacPatternMatcher"
+            regex="\[.*javac.*\] .*\.java:.*:.*">
+         <enablement>
+            <test property="org.eclipse.debug.ui.processTypeTest" value="org.eclipse.ant.ui.antProcess"/>
+         </enablement>
+      </consolePatternMatchListener>
+	  <consolePatternMatchListener
+            class="org.eclipse.ant.internal.ui.console.JikesJavacPatternMatcher"
+            id="org.eclipse.ant.ui.JikesJavacPatternMatcher"
+            regex="\[javac\].*\&quot;.*\&quot;:">
+         <enablement>
+            <test property="org.eclipse.debug.ui.processTypeTest" value="org.eclipse.ant.ui.antProcess"/>
+         </enablement>
+      </consolePatternMatchListener>      
+   </extension>
        
        
       <!-- bug 78752 <extension
