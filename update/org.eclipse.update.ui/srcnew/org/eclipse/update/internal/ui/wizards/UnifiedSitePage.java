@@ -493,16 +493,18 @@ public class UnifiedSitePage extends BannerPage2 implements ISearchProvider2 {
 
 	private void updateSearchObject() {
 		Object[] checked = treeViewer.getCheckedElements();
-		SiteBookmark[] bookmarks = new SiteBookmark[checked.length];
+		ArrayList barray = new ArrayList();
+		
 		for (int i = 0; i < checked.length; i++) {
 			if (checked[i] instanceof SiteCandidate) {
 				SiteCandidate cand = (SiteCandidate) checked[i];
-				bookmarks[i] = cand.getBookmark();
+				barray.add(cand.getBookmark());
 			}
 		}
+		SiteBookmark [] bookmarks = (SiteBookmark[])barray.toArray(new SiteBookmark[barray.size()]);
 		search.setSelectedBookmarks(bookmarks);
 		searchRunner.setNewSearchNeeded(true);
-		setPageComplete(checked.length > 0);
+		setPageComplete(bookmarks.length > 0);
 	}
 
 	/* (non-Javadoc)
