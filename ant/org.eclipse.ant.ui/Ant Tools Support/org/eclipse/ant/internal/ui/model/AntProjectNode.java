@@ -17,6 +17,7 @@ import java.util.Map;
 import org.apache.tools.ant.Project;
 import org.eclipse.ant.internal.ui.AntUIImages;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 
@@ -107,7 +108,10 @@ public class AntProjectNode extends AntElementNode {
 	public String getBuildFileName() {
 		LocationProvider locationProvider= getAntModel().getLocationProvider();
 		if (locationProvider != null) {
-			return locationProvider.getFile().getFullPath().toOSString();
+		    IFile file= locationProvider.getFile();
+		    if (file != null) {
+		        return file.getFullPath().toOSString();
+		    }
 		}
 		return null;
 	}
