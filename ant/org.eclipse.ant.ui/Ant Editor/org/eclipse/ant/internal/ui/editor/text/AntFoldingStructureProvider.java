@@ -82,8 +82,10 @@ public class AntFoldingStructureProvider {
 			if (node == null) {
 				return;
 			}
-			List root= new ArrayList(1);
+			List root= new ArrayList(2);
 			root.add(node);
+			List nodes= antModel.getNonStructuralNodes();
+			root.addAll(nodes);
 			addFoldingRegions(currentRegions, root);
 			updateFoldingRegions(model, currentRegions);
 		} catch (BadLocationException be) {

@@ -162,6 +162,24 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		}
 	}
 	
+	private class NonStructuralElementsFilter extends ViewerFilter {
+		
+		/**
+		 * Returns whether the given {@link AntElementNode} is imported from
+		 * another file.
+		 */
+		public boolean select(Viewer viewer, Object parentElement, Object element) {
+			if (element instanceof AntElementNode) {
+			    AntElementNode node = (AntElementNode) element; 			    
+				if (node.isStructuralNode()) {
+					return true;
+				}
+				return false;
+			} 
+			return true;
+		}
+	}
+	
 	private class AntOutlineSorter extends ViewerSorter {
 		/**
 		 * @see org.eclipse.jface.viewers.ViewerSorter#compare(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
@@ -199,8 +217,8 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		 */
 		public Object[] getChildren(Object parentNode) {
 			AntElementNode parentElement = (AntElementNode)parentNode;
-			if (parentElement.hasOutlineChildren()) {
-				List children= parentElement.getOutlineNodes();
+			if (parentElement.hasChildren()) {
+				List children= parentElement.getChildNodes();
 				return children.toArray();
 			} 
 			return EMPTY_ARRAY;
@@ -218,7 +236,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(Object)
 		 */
 		public boolean hasChildren(Object aNode) {
-			return ((AntElementNode)aNode).hasOutlineChildren();
+			return ((AntElementNode)aNode).hasChildren();
 		}
 
 		/* (non-Javadoc)
@@ -290,7 +308,9 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		} else {
 			getTreeViewer().removeFilter(viewerFilter);
 		}
-		AntUIPlugin.getDefault().getPreferenceStore().setValue(name, filter);
+		if (name != null) {
+			AntUIPlugin.getDefault().getPreferenceStore().setValue(name, filter);
+		}
 		getTreeViewer().refresh();
 	}
 
@@ -498,6 +518,8 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		setFilterImportedElements(fFilterImportedElements);
 		setFilterProperties(fFilterProperties);
 		setFilterTopLevel(fFilterTopLevel);
+		
+		setFilter(true, new NonStructuralElementsFilter(), null);
 	}
 	
 	private void setViewerInput(Object newInput) {

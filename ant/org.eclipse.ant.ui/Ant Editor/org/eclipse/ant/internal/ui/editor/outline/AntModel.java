@@ -100,6 +100,8 @@ public class AntModel {
 	private AntEditorMarkerUpdater fMarkerUpdater= null;
 	private Set fNamesOfOldDefiningNodes;
 	
+	private List fNonStructuralNodes= new ArrayList(1);
+	
 	private Preferences.IPropertyChangeListener fCorePropertyChangeListener= new Preferences.IPropertyChangeListener() {
 		public void propertyChange(Preferences.PropertyChangeEvent event) {
 			if (event.getProperty().equals(IAntCoreConstants.PREFERENCE_CLASSPATH_CHANGED)) {
@@ -235,6 +237,7 @@ public class AntModel {
 			fTaskNodes= new ArrayList();
 			fNodeBeingResolved= null;
 			fLastNode= null;
+			fNonStructuralNodes= new ArrayList();
 		}
 	}
 
@@ -626,6 +629,19 @@ public class AntModel {
 		fStillOpenElements.push(fProjectNode);
 		computeOffset(fProjectNode, line, column);
 	}
+	
+//	public void addDTD(String name, int line, int column) {
+//		AntDTDNode node= new AntDTDNode(name);
+//		fStillOpenElements.push(node);
+//		//computeOffset(node, line, column);
+//		int offset= -1;
+//		try {
+//			offset= getOffset(line, column);
+//			node.setOffset(offset + 1);
+//		} catch (BadLocationException e) {
+//		}
+//		fNonStructuralNodes.add(node);
+//	}
 
 	public void addTask(Task newTask, Task parentTask, Attributes attributes, int line, int column) {
 		AntTaskNode taskNode= null;
@@ -1285,7 +1301,7 @@ public class AntModel {
 		}
 	}
 
-	public void addComment(int lineNumber, int columnNumber, int length, Task parentTask) {
+	public void addComment(int lineNumber, int columnNumber, int length) {
 		AntCommentNode commentNode= new AntCommentNode();
 		int offset= -1;
 		try {
@@ -1301,14 +1317,15 @@ public class AntModel {
 		}
 		commentNode.setOffset(offset - length);
 		commentNode.setLength(length);
-		if (parentTask == null) {
-			if (fCurrentTargetNode == null) {
-				fProjectNode.addChildNode(commentNode);
-			} else {
-				fCurrentTargetNode.addChildNode(commentNode);
-			}
-		} else {
-			((AntTaskNode)fTaskToNode.get(parentTask)).addChildNode(commentNode);
-		}
+		fNonStructuralNodes.add(commentNode);
+	}
+
+	/**
+	 * Returns the nodes that are not part of the normal structural outline such
+	 * as DTD nodes or comment nodes
+	 * @return The nodes that are not part of the normal structural outline
+	 */
+	public List getNonStructuralNodes() {
+		return fNonStructuralNodes;
 	}
 }

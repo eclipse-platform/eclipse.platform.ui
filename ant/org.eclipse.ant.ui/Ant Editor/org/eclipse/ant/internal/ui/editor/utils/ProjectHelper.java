@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
+
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -33,7 +34,6 @@ import org.apache.tools.ant.helper.AntXMLContext;
 import org.apache.tools.ant.helper.ProjectHelper2;
 import org.apache.tools.ant.util.FileUtils;
 import org.apache.tools.ant.util.JAXPUtils;
-import org.eclipse.ant.internal.ui.editor.model.AntProjectNode;
 import org.eclipse.ant.internal.ui.editor.outline.AntModel;
 import org.eclipse.jface.text.BadLocationException;
 import org.xml.sax.Attributes;
@@ -72,6 +72,11 @@ public class ProjectHelper extends ProjectHelper2 {
 	 */
 	private static AntModel fgAntModel;
 
+	/**
+	 * The current Ant parsing context
+	 */
+	private static AntXMLContext fgAntContext;
+	
 	private static AntHandler elementHandler= new ElementHandler();
 	private static AntHandler projectHandler= new ProjectHandler();
 	private static AntHandler targetHandler= new TargetHandler();
@@ -411,6 +416,9 @@ public class ProjectHelper extends ProjectHelper2 {
 		 * @see org.xml.sax.ext.LexicalHandler#endDTD()
 		 */
 		public void endDTD() throws SAXException {
+//			AntXMLContext context= getContext();
+//			Locator locator= context.getLocator();
+//			getAntModel().setCurrentElementLength(locator.getLineNumber(), locator.getColumnNumber());
 		}
 
 		/* (non-Javadoc)
@@ -423,19 +431,9 @@ public class ProjectHelper extends ProjectHelper2 {
 		 * @see org.xml.sax.ext.LexicalHandler#comment(char[], int, int)
 		 */
 		public void comment(char[] ch, int start, int length) throws SAXException {
-			AntModel model= getAntModel();
-			AntProjectNode node= model.getProjectNode();
-			if (node != null) {
-				Project project= node.getProject();
-				AntXMLContext context= (AntXMLContext)project.getReference("ant.parsing.context"); //$NON-NLS-1$
-				Locator locator= context.getLocator();
-				RuntimeConfigurable wrapper= context.currentWrapper();
-				Task currentTask= null;
-				if (wrapper != null) {
-					currentTask= (Task)wrapper.getProxy();
-				}
-				model.addComment(locator.getLineNumber(), locator.getColumnNumber(), length, currentTask);
-			}
+			AntXMLContext context= getContext();
+			Locator locator= context.getLocator();
+			getAntModel().addComment(locator.getLineNumber(), locator.getColumnNumber(), length);
 		}
 
 		/* (non-Javadoc)
@@ -459,7 +457,10 @@ public class ProjectHelper extends ProjectHelper2 {
 		/* (non-Javadoc)
 		 * @see org.xml.sax.ext.LexicalHandler#startDTD(java.lang.String, java.lang.String, java.lang.String)
 		 */
-		public void startDTD(String name, String publicId, String systemId) throws SAXException {	
+		public void startDTD(String name, String publicId, String systemId) throws SAXException {
+//			AntXMLContext context= getContext();
+//			Locator locator= context.getLocator();
+//			getAntModel().addDTD(name, locator.getLineNumber(), locator.getColumnNumber());
 		}
 	 }
 	
@@ -567,6 +568,7 @@ public class ProjectHelper extends ProjectHelper2 {
             context = new AntXMLContext(project);
             project.addReference("ant.parsing.context", context); //$NON-NLS-1$
             project.addReference("ant.targets", context.getTargets()); //$NON-NLS-1$
+            fgAntContext= context;
         }
         getImportStack().addElement(source);
 		currentImportStackSize= getImportStack().size();
@@ -597,6 +599,10 @@ public class ProjectHelper extends ProjectHelper2 {
 
 	public static AntModel getAntModel() {
 		return fgAntModel;
+	}
+	
+	public static AntXMLContext getContext() {
+		return fgAntContext;
 	}
 	
 	private static FileUtils getFileUtils() {

@@ -75,11 +75,6 @@ public class AntElementNode implements IAdaptable {
      * The child nodes.
      */
     protected List childNodes= null;
-    
-    /**
-     * The child nodes not including comments
-     */
-    protected List outlineNodes= null;
 
     /**
      * The (tag-)name of the element.
@@ -170,14 +165,6 @@ public class AntElementNode implements IAdaptable {
     }
     
     /**
-     * Returns the child nodes that compose the outline tree under this node.
-     * Does not include comments
-     */
-    public List getOutlineNodes() {
-        return outlineNodes;
-    }
-    
-    /**
      * Returns all the descendents of this node
      */
     public List getDescendents() {
@@ -221,10 +208,9 @@ public class AntElementNode implements IAdaptable {
     
     
     /**
-     * Adds the specified element as child.
+     * Adds the specified element as a child.
      * <P>
      * The specified element will have this assigned as its parent.
-     * 
      */
     public void addChildNode(AntElementNode childElement) {
     	childElement.setParent(this);
@@ -232,12 +218,6 @@ public class AntElementNode implements IAdaptable {
         	childNodes= new ArrayList();
         }
         childNodes.add(childElement);
-        if (!childElement.isCommentNode()) {
-        	if (outlineNodes == null) {	
-        		outlineNodes= new ArrayList();
-        	}
-        	outlineNodes.add(childElement);
-        }
     }
     
 	protected void setParent(AntElementNode node) {
@@ -552,13 +532,6 @@ public class AntElementNode implements IAdaptable {
 		}
 		return !childNodes.isEmpty();
 	}
-	
-	public boolean hasOutlineChildren() {
-		if (outlineNodes == null) {
-			return false;
-		}
-		return !outlineNodes.isEmpty();
-	}
 
 	public void reset() {
 		childNodes= null;
@@ -604,7 +577,13 @@ public class AntElementNode implements IAdaptable {
 		return Platform.getAdapterManager().getAdapter(this, adapter);
 	}
 	
-	public boolean isCommentNode() {
-		return false;
+	/**
+	 * Returns whether this node is a structural node that should be shown in the buildfile outline.
+	 * For example, an AntCommentNode would return <code>false</code>
+	 * 
+	 * @return whether this node is a structural node that should be shown in the buildfile outline
+	 */
+	public boolean isStructuralNode() {
+		return true;
 	}
 }
