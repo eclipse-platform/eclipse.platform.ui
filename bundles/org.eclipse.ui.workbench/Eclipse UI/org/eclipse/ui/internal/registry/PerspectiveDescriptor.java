@@ -24,6 +24,8 @@ import org.eclipse.ui.commands.HandlerSubmission;
 import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.commands.Priority;
 import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
+import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
@@ -222,11 +224,16 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor,
      * @see org.eclipse.ui.IPerspectiveDescriptor#getImageDescriptor()
      */
     public ImageDescriptor getImageDescriptor() {
-    	if (image == null && configElement != null) {
-            String icon = configElement.getAttribute(ATT_ICON);
-            if (icon != null) {
-                image = AbstractUIPlugin.imageDescriptorFromPlugin(
-                        configElement.getNamespace(), icon);
+    	if (image == null) {
+            if (configElement != null) {
+                String icon = configElement.getAttribute(ATT_ICON);
+                if (icon != null) {
+                    image = AbstractUIPlugin.imageDescriptorFromPlugin(
+                            configElement.getNamespace(), icon);
+                }
+                if (image == null) {
+                    image = WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_DEF_PERSPECTIVE_HOVER);
+                }
             }
     	}
         return image;
