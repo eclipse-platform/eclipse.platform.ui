@@ -85,6 +85,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 	Stack objectStack = new Stack();
 
 	private int currentState;
+    private String location;
 	
 	private final static SAXParserFactory parserFactory =
 		SAXParserFactory.newInstance();
@@ -107,14 +108,24 @@ public class DefaultFeatureParser extends DefaultHandler {
 	}
 
 	public void init(FeatureModelFactory factory) {
-		// PERF: separate instance creation from parsing
-		this.factory = factory;
-		stateStack = new Stack();
-		objectStack = new Stack();
-		status = null;
-		URL_ALREADY_SEEN = false;
-		//parser.reset();
+		init(factory, null);
 	}
+    
+    /**
+     * @param factory
+     * @param location
+     * @since 3.1
+     */
+    public void init(FeatureModelFactory factory, String location) {
+        // PERF: separate instance creation from parsing
+        this.factory = factory;
+        stateStack = new Stack();
+        objectStack = new Stack();
+        status = null;
+        URL_ALREADY_SEEN = false;
+        this.location = location;
+        //parser.reset();
+    }
 
 	/**
 	 * Parses the specified input steam and constructs a feature model.
@@ -1134,6 +1145,8 @@ public class DefaultFeatureParser extends DefaultHandler {
 	}
 
 	private void internalError(String message) {
+        if (location != null)
+            message += " " + Policy.bind("DefaultFeatureParser.location", location); //$NON-NLS-1$ $NON-NLS-2$
 		error(new Status(IStatus.ERROR, PLUGIN_ID, Platform.PARSE_PROBLEM, message, null));
 	}
 

@@ -47,7 +47,7 @@ public class FeatureExecutableFactory extends BaseFeatureFactory {
 			URL resolvedURL = URLEncoder.encode(nonResolvedURL);
 			featureStream = UpdateCore.getPlugin().get(resolvedURL).getInputStream();
 
-			feature = (TargetFeature) this.parseFeature(featureStream);
+			feature = (TargetFeature) this.parseFeature(featureStream, resolvedURL.toExternalForm());
 			monitor.worked(1);
 			feature.setSite(site);
 

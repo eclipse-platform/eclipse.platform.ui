@@ -61,20 +61,38 @@ public class FeatureModelFactory {
 	 */
 	public FeatureModel parseFeature(InputStream stream)
 		throws CoreException, SAXException {
-		parser.init(this);
-		FeatureModel featureModel = null;
-		try {
-			featureModel = parser.parse(stream);
-			if (parser.getStatus()!=null) {
-				// some internalError were detected
-				IStatus status = parser.getStatus();
-				throw new CoreException(status);
-			}
-		} catch (IOException e) {
-			throw Utilities.newCoreException(Policy.bind("FeatureModelFactory.ErrorAccesingFeatureStream"), e); //$NON-NLS-1$
-		}
-		return featureModel;
+        return parseFeature(stream, null);
 	}
+    
+    /**
+     * Creates and populates a default feature from stream.
+     * The parser assumes the stream contains a default feature manifest
+     * (feature.xml) as documented by the platform.
+     * 
+     * @param stream feature stream
+     * @param location feature location
+     * @return populated feature model
+     * @exception CoreException
+     * @exception SAXException
+     * @since 3.1
+     */
+    public FeatureModel parseFeature(InputStream stream, String location)
+        throws CoreException, SAXException {
+        
+        parser.init(this, location);
+        FeatureModel featureModel = null;
+        try {
+            featureModel = parser.parse(stream);
+            if (parser.getStatus()!=null) {
+                // some internalError were detected
+                IStatus status = parser.getStatus();
+                throw new CoreException(status);
+            }
+        } catch (IOException e) {
+            throw Utilities.newCoreException(Policy.bind("FeatureModelFactory.ErrorAccesingFeatureStream"), e); //$NON-NLS-1$
+        }
+        return featureModel;
+    }
 
 	/**
 	 * Create a default feature model.
