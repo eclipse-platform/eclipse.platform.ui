@@ -729,7 +729,7 @@ public class InstallConfiguration
 
 	/*
 	 * returns the URL of the pluginEntry on the site
-	 * resolve the URL to use platform: URL if needed
+	 * Transform the URL to use platform: protocol if needed
 	 * return null if the URL to write is not valid
 	 */
 	private URL getRuntimeConfigurationURL(
@@ -742,25 +742,50 @@ public class InstallConfiguration
 		try {
 			ISiteContentProvider siteContentProvider =
 				cSite.getSite().getSiteContentProvider();
-			URL fullURL = siteContentProvider.getArchiveReference(pluginPathID);
-			URL rootURL = Platform.resolve(new URL(rootString));
-			String relativeString =
-				UpdateManagerUtils.getURLAsString(rootURL, fullURL);
+			URL pluginEntryfullURL = siteContentProvider.getArchiveReference(pluginPathID);
+			
+			// 
+			if (!rootString.startsWith("platform")){
+				// DEBUG:
+				if (UpdateManagerPlugin.DEBUG
+					&& UpdateManagerPlugin.DEBUG_SHOW_CONFIGURATION)
+					UpdateManagerPlugin.debug(
+						"getRuntimeConfiguration Plugin Entry Full URL:"
+							+ pluginEntryfullURL
+							+ " Platform String:"
+							+ rootString
+							+ " [NON PLATFORM URL].");
+				return pluginEntryfullURL;
+			}
+			
+			//URL pluginEntryRootURL = Platform.resolve(new URL(rootString));
+			// Do not resolve [16507], just use platform:base/ as a root
+			// rootString = platform:base
+			// pluginRoot = /home/a
+			// pluginFull = /home/a/c/boot.jar
+			// relative = platform:/base/c/boot.jar
+			URL pluginEntryRootURL = cSite.getSite().getURL();
+			String relativeString =	UpdateManagerUtils.getURLAsString(pluginEntryRootURL, pluginEntryfullURL);
 			URL result = new URL(new URL(rootString), relativeString);
+			
 			// DEBUG:
 			if (UpdateManagerPlugin.DEBUG
 				&& UpdateManagerPlugin.DEBUG_SHOW_CONFIGURATION)
 				UpdateManagerPlugin.debug(
-					"getRuntimeConfiguration Full URL:"
-						+ fullURL
+					"getRuntimeConfiguration plugin Entry Full URL:"
+						+ pluginEntryfullURL
+						+ " Platform String:"
+						+ rootString
+						+ " Site URL:"
+						+ pluginEntryRootURL
 						+ " Relative:"
 						+ relativeString);
 						
 			// verify we are about to write a valid file URL
 			// check with fullURL as it is not resolved to platform:base/
-			if (fullURL!=null){
-				if ("file".equals(fullURL.getProtocol())){
-					String fileString = fullURL.getFile();
+			if (pluginEntryfullURL!=null){
+				if ("file".equals(pluginEntryfullURL.getProtocol())){
+					String fileString = pluginEntryfullURL.getFile();
 					if (!new File(fileString).exists()){
 						UpdateManagerPlugin.log("The URL:"+result+" doesn't point to a valid platform plugin.The URL will not be written in the platform configuration",new Exception());
 						return null;
