@@ -7,10 +7,12 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Red Hat Incorporated - loadProjectDescription(InputStream)
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 import org.eclipse.core.internal.events.*;
 import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
@@ -26,6 +28,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.Bundle;
+import org.xml.sax.InputSource;
 
 public class Workspace extends PlatformObject implements IWorkspace, ICoreConstants {
 	// whether the resources plugin is in debug mode.
@@ -1399,6 +1402,23 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see IWorkspace#loadProjectDescription(InputStream)
+	 * @since 3.1
+	 */
+	public IProjectDescription loadProjectDescription(InputStream stream) throws CoreException {
+		IProjectDescription result = null;
+		IOException e = null;
+		result = new ProjectDescriptionReader().read(new InputSource(stream));
+		if (result == null || e != null) {
+			String message = NLS.bind(Messages.resources_errorReadProject, stream.toString());
+			IStatus status = new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_READ_METADATA, message, e);
+			throw new ResourceException(status);
+		}
+		return result;
+	}
+
+	
 	/* (non-Javadoc)
 	 * @see IWorkspace#move(IResource[], IPath, int, IProgressMonitor)
 	 */

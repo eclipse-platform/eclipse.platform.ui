@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,9 +7,11 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Red Hat Incorporated - loadProjectDescription(InputStream)
  *******************************************************************************/
 package org.eclipse.core.resources;
 
+import java.io.InputStream;
 import java.util.Map;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
@@ -690,6 +692,29 @@ public interface IWorkspace extends IAdaptable {
 	 * @since 2.0
 	 */
 	public IProjectDescription loadProjectDescription(IPath projectDescriptionFile) throws CoreException;
+
+	/**
+	 * Reads the project description file (".project") from the given InputStream.
+	 * This object will not attempt to set the location since the project may not
+	 * have a valid location on the local file system.
+	 * This object is useful for discovering the correct name for a project before 
+	 * importing it into the workspace.
+	 * <p>
+	 * The returned value is writeable.
+	 * </p>
+	 * 
+	 * @param projectDescriptionFile an InputStream pointing to an existing project
+	 * description file
+	 * @return a new project description
+	 * @exception CoreException if the operation failed, either because the
+	 * project description file does not exist, or cannot be opened, or cannot
+	 * be parsed as a legal project description file
+	 * @see #newProjectDescription(String)
+	 * @see IProject#getDescription()
+	 * @see IWorkspace#loadProjectDescription(IPath)
+	 * @since 3.1
+	 */
+	public IProjectDescription loadProjectDescription(InputStream projectDescriptionFile) throws CoreException;
 
 	/**
 	 * Moves the given sibling resources so that they are located as members of
