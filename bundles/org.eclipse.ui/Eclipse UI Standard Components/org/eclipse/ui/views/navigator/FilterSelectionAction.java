@@ -16,7 +16,7 @@ import java.io.StringWriter;
 /**
  * The FilterAction is the class that adds the filter views to a ResourceNavigator.
  */
-/* package */ class FilterSelectionAction extends ResourceNavigatorAction {
+public class FilterSelectionAction extends ResourceNavigatorAction {
 	private static final String FILTER_TOOL_TIP = ResourceNavigatorMessages.getString("FilterSelection.toolTip"); //$NON-NLS-1$
 	private static final String FILTER_SELECTION_MESSAGE = ResourceNavigatorMessages.getString("FilterSelection.message"); //$NON-NLS-1$
 	
@@ -27,12 +27,11 @@ import java.io.StringWriter;
  * @param navigator the resource navigator
  * @param label the label for the action
  */
-public FilterSelectionAction(Shell shell, IResourceNavigatorPart navigator, String label) {
+public FilterSelectionAction(IResourceNavigatorPart navigator, String label) {
 	super(navigator, label);
 	setToolTipText(FILTER_TOOL_TIP);
 	WorkbenchHelp.setHelp(this, new Object[] {INavigatorHelpContextIds.FILTER_SELECTION_ACTION});
 	setEnabled(true);
-	this.shell = shell;
 }
 /**
  * Implementation of method defined on <code>IAction</code>.
