@@ -568,6 +568,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		lineNumber--; // Document line numbers are 0-based. Debug line numbers are 1-based.
 		if (charStart > 0 && charEnd > charStart) {
 			editor.selectAndReveal(charStart, charEnd - charStart);
+			return;
 		}
 		int offset= -1;
 		int length= -1;
