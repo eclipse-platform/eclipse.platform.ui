@@ -11,7 +11,6 @@
 package org.eclipse.core.tests.internal.preferences;
 
 import org.eclipse.core.internal.preferences.EclipsePreferences;
-import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.*;
