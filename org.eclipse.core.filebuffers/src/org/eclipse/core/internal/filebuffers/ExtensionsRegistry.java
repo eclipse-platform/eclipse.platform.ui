@@ -62,7 +62,7 @@ public class ExtensionsRegistry {
 	 */
 	public ExtensionsRegistry() {
 		initialize("documentCreation", "contentTypeId", true,  fFactoryDescriptors); //$NON-NLS-1$ //$NON-NLS-2$
-		initialize("xdocumentCreation", "fileNames", fFactoryDescriptors); //$NON-NLS-1$ //$NON-NLS-2$
+		initialize("documentCreation", "fileNames", fFactoryDescriptors); //$NON-NLS-1$ //$NON-NLS-2$
 		initialize("documentCreation", "extensions",  fFactoryDescriptors); //$NON-NLS-1$ //$NON-NLS-2$
 		initialize("documentSetup", "contentTypeId", fSetupParticipantDescriptors); //$NON-NLS-1$ //$NON-NLS-2$
 		initialize("documentSetup", "fileNames", fSetupParticipantDescriptors); //$NON-NLS-1$ //$NON-NLS-2$
