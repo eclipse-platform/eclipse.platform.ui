@@ -11,6 +11,8 @@
 package org.eclipse.team.internal.ccvs.ui.subscriber;
 
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
@@ -44,5 +46,18 @@ public abstract class CVSParticipantAction extends SynchronizeModelAction {
 			return name;
 		}
 		return name.substring(lastDot + 1)  + "."; //$NON-NLS-1$
+	}
+	
+	protected boolean needsToSaveDirtyEditors() {
+		int option = CVSUIPlugin.getPlugin().getPreferenceStore().getInt(ICVSUIConstants.PREF_SAVE_DIRTY_EDITORS);
+		return option != ICVSUIConstants.OPTION_NEVER;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.SynchronizeModelAction#confirmSaveOfDirtyEditor()
+	 */
+	protected boolean confirmSaveOfDirtyEditor() {
+		int option = CVSUIPlugin.getPlugin().getPreferenceStore().getInt(ICVSUIConstants.PREF_SAVE_DIRTY_EDITORS);
+		return option == ICVSUIConstants.OPTION_PROMPT;
 	}
 }

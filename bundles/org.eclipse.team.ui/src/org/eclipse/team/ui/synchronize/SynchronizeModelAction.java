@@ -12,9 +12,15 @@ package org.eclipse.team.ui.synchronize;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -26,7 +32,12 @@ import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.BaseSelectionListenerAction;
+import org.eclipse.ui.internal.EditorManager;
 
 /**
  * This action provides utilities for performing operations on selections that
@@ -90,8 +101,11 @@ public abstract class SynchronizeModelAction extends BaseSelectionListenerAction
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
 	public void run() {
-		// TODO: We used to prompt for unsaved changes in any editor. We don't anymore. Would
-		// it be better to prompt for unsaved changes to editors affected by this action?
+		if(needsToSaveDirtyEditors()) {
+			if(!saveAllEditors(confirmSaveOfDirtyEditor())) {
+				return;
+			}
+		}
 		try {
 			getSubscriberOperation(configuration, getFilteredDiffElements()).run();
 		} catch (InvocationTargetException e) {
@@ -101,6 +115,24 @@ public abstract class SynchronizeModelAction extends BaseSelectionListenerAction
 		}
 	}
 
+	/**
+	 * Return whether dirty editor should be saved before this action is run.
+	 * Default is <code>true</code>.
+	 * @return whether dirty editor should be saved before this action is run
+	 */
+	protected boolean needsToSaveDirtyEditors() {
+		return true;
+	}
+
+	/**
+	 * Returns whether the user should be prompted to save dirty editors.
+	 * The default is <code>true</code>.
+	 * @return whether the user should be prompted to save dirty editors
+	 */
+	protected boolean confirmSaveOfDirtyEditor() {
+		return true;
+	}
+	
 	/**
 	 * Return the subscriber operation associated with this action. This operation
 	 * will be run when the action is run. Subclass may implement this method and provide 
@@ -188,5 +220,58 @@ public abstract class SynchronizeModelAction extends BaseSelectionListenerAction
 	 */
 	public ISynchronizePageConfiguration getConfiguration() {
 		return configuration;
+	}
+	
+	/**
+	 * Save all dirty editors in the workbench that are open on files that
+	 * may be affected by this operation. Opens a dialog to prompt the
+	 * user if <code>confirm</code> is true. Return true if successful.
+	 * Return false if the user has cancelled the command. Must be called
+	 * from the UI thread.
+	 * 
+	 * @param confirm
+	 *            prompt the user if true
+	 * @return boolean false if the operation was cancelled.
+	 */
+	public final boolean saveAllEditors(boolean confirm) {
+		final boolean finalConfirm = confirm;
+		final boolean[] result = new boolean[1];
+		result[0] = true;
+
+		Platform.run(new SafeRunnable("Error") {
+			public void run() {
+				IResource[] resources = Utils.getResources(getFilteredDiffElements());
+				if (resources.length == 0) return;
+				List dirtyEditors = getDirtyFileEditors(Arrays.asList(resources));
+				if (dirtyEditors.size() > 0) {
+					IWorkbenchWindow w = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+					if (w == null && PlatformUI.getWorkbench().getWorkbenchWindowCount() > 0)
+						w = PlatformUI.getWorkbench().getWorkbenchWindows()[0];
+					result[0] = EditorManager.saveAll(dirtyEditors, finalConfirm, w);
+				}
+			}
+		});
+		return result[0];
+	}
+	
+	/* private */ List getDirtyFileEditors(Collection resources) {
+	    ArrayList dirtyFileEditors = new ArrayList();
+	    IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
+	    for (int i = 0; i < windows.length; i++) {
+            IWorkbenchWindow window = windows[i];
+            IWorkbenchPage[] pages = window.getPages();
+            for (int j = 0; j < pages.length; j++) {
+                IWorkbenchPage page = pages[j];
+                IEditorPart[] dirtyEditors = page.getDirtyEditors();
+                for (int k = 0; k < dirtyEditors.length; k++) {
+                    IEditorPart part = dirtyEditors[k];
+                    IFile file = (IFile) part.getEditorInput().getAdapter(IFile.class);
+                    if (file != null && resources.contains(file)) {
+                    	dirtyFileEditors.add(part);
+                    }
+                }
+            }
+        }
+	    return dirtyFileEditors;
 	}
 }
