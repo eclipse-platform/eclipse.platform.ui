@@ -1,9 +1,8 @@
 /**********************************************************************
- * Copyright (c) 2000,2002 IBM Corporation and others.
- * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * Copyright (c) 2000, 2003 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Common Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors: 
  * IBM - Initial API and implementation
@@ -159,6 +158,40 @@ public final IResourceDelta getDelta(IProject project) {
 public final IProject getProject() {
 	return super.getProject();
 }
+/**
+ * Returns true if the given project preceeds this builder's project on the
+ * currently executing build order, and false otherwise.
+ * <p>
+ * When the entire workspace is being built, the projects are built in linear
+ * sequence.  This method can be used to determine if another project preceeds
+ * this builder's project in that build sequence.  If only a single project is
+ * being built, then there is no build order and this method will always return
+ * false.
+ * </p>
+ * @param project the project to check against in the current build order
+ * @return true if the given project preceeds this builder's project, and false
+ * otherwise.
+ * @see #needRebuild
+ * @since 2.1
+ */
+public final boolean isBeforeThisProject(IProject project) {
+	return super.isBeforeThisProject(project);
+}
+/**
+ * Indicates that this builder made changes that affect a project that preceeds
+ * this project in the currently executing build order, and thus a rebuild will
+ * be necessary.
+ * <p>
+ * This is an advanced feature that builders should use with caution.  This can
+ * cause workspace builds to iterate until no more builders require rebuilds.
+ * </p>
+ * @see #isBeforeThisProject
+ * @since 2.1
+ */
+public final void needRebuild() {
+	super.needRebuild();
+}
+
 /** 
  * Sets initialization data for this builder.
  * <p>

@@ -1,9 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * are made available under the terms of the Common Public License v1.0 which
+ * accompanies this distribution, and is available at 
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
  * IBM - Initial API and implementation
@@ -32,6 +32,11 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	protected ElementTree lastBuiltTree;
 	protected InternalBuilder currentBuilder;
 	protected DeltaDataTree currentDelta;
+	
+	//used for the build cycle looping mechanism
+	protected boolean rebuildRequested = false;
+	protected final ArrayList builtProjects = new ArrayList();
+	
 	/**
 	 * Cache used to optimize the common case of an autobuild against
 	 * a workspace where only a single project has changed (and hence
@@ -199,34 +204,53 @@ public void build(int trigger, IProgressMonitor monitor) throws CoreException {
 		try {
 			building = true;
 			IProject[] ordered = workspace.getBuildOrder();
-			IProject[] unordered = null;
-			HashSet leftover = new HashSet(5);
-			leftover.addAll(Arrays.asList(workspace.getRoot().getProjects()));
+			HashSet leftover = new HashSet(Arrays.asList(workspace.getRoot().getProjects()));
 			leftover.removeAll(Arrays.asList(ordered));
-			unordered = (IProject[]) leftover.toArray(new IProject[leftover.size()]);
-			int num = ordered.length + unordered.length;
+			IProject[] unordered = (IProject[]) leftover.toArray(new IProject[leftover.size()]);
+			int projectWork = ordered.length + unordered.length;
+			if (projectWork > 0)
+				projectWork = Policy.totalWork / projectWork;
 			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.BUILD_FAILED, ICoreConstants.MSG_EVENTS_ERRORS, null);
-			for (int i = 0; i < ordered.length; i++)
-				if (ordered[i].isAccessible())
-					basicBuild(ordered[i], trigger, status, Policy.subMonitorFor(monitor, Policy.totalWork / num));
-			for (int i = 0; i < unordered.length; i++)
-				if (unordered[i].isAccessible())
-					basicBuild(unordered[i], trigger, status, Policy.subMonitorFor(monitor, Policy.totalWork / num));
+
+			//loop the build until no more rebuilds are requested
+			int maxIterations = workspace.getDescription().getMaxBuildIterations();
+			if (maxIterations <= 0)
+				maxIterations = 1;
+			rebuildRequested = true;
+			for (int iter = 0; rebuildRequested && iter < maxIterations; iter++) {
+				rebuildRequested = false;
+				builtProjects.clear();
+				for (int i = 0; i < ordered.length; i++) {
+					if (ordered[i].isAccessible()) {
+						basicBuild(ordered[i], trigger, status, Policy.subMonitorFor(monitor, projectWork));
+						builtProjects.add(ordered[i]);
+					}
+				}
+				for (int i = 0; i < unordered.length; i++) {
+					if (unordered[i].isAccessible()) {
+						basicBuild(unordered[i], trigger, status, Policy.subMonitorFor(monitor, projectWork));
+						builtProjects.add(unordered[i]);
+					}
+				}
+			}
 			// if the status is not ok, throw an exception 
 			if (!status.isOK())
 				throw new ResourceException(status);
 		} finally {
 			building = false;
+			builtProjects.clear();
 			deltaCache.flush();
 		}
 	} finally {
 		monitor.done();
 	}
 }
+
+
 public void build(IProject project, int trigger, IProgressMonitor monitor) throws CoreException {
-	if (!canRun(trigger))
-		return;
 	try {
+		if (!canRun(trigger))
+			return;
 		building = true;
 		MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, ICoreConstants.MSG_EVENTS_ERRORS, null);
 		basicBuild(project, trigger, status, monitor);
@@ -260,6 +284,13 @@ public void build(IProject project, int kind, String builderName, Map args, IPro
 }
 protected boolean canRun(int trigger) {
 	return !building;
+}
+protected IProject[] computeUnorderedProjects(IProject[] ordered) {
+	IProject[] unordered;
+	HashSet leftover = new HashSet(Arrays.asList(workspace.getRoot().getProjects()));
+	leftover.removeAll(Arrays.asList(ordered));
+	unordered = (IProject[]) leftover.toArray(new IProject[leftover.size()]);
+	return unordered;
 }
 /**
  * Creates and returns a Map mapping String(builder name) -> BuilderPersistentInfo. 
@@ -414,6 +445,14 @@ public void handleEvent(LifecycleEvent event) {
 				setBuildersPersistentInfo(project, null);
 	}			
 }
+/**
+ * Returns true if the given project has been built during this build cycle, and
+ * false otherwise.
+ */
+public boolean hasBeenBuilt(IProject project) {
+	return builtProjects.contains(project);
+}
+
 /**
  * Hook for adding trace options and debug information at the start of a build.
  */
@@ -585,6 +624,13 @@ protected void removeBuilders(IProject project, String builderId) throws CoreExc
 	desc.setBuildSpec(newSpec);
 	project.setDescription(desc, IResource.NONE, null);
 }
+/**
+ * Hook for builders to request a rebuild.
+ */
+public void requestRebuild() {
+	rebuildRequested = true;
+}
+
 
 /**
  * Sets the builder map for the given project.  The builder map is
@@ -645,6 +691,4 @@ protected boolean validateNature(InternalBuilder builder, String builderId) thro
 	}
 	return project.isNatureEnabled(nature);
 }
-
-
 }

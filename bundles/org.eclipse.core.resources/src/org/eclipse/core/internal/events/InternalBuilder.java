@@ -1,9 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2002 IBM Corporation and others.
- * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * Copyright (c) 2000, 2003 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Common Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
  * IBM - Initial API and implementation
@@ -42,7 +41,7 @@ protected abstract IProject[] build(int kind, Map args, IProgressMonitor monitor
 /**
  * Clears the request to forget last built states.
  */
-void clearForgetLastBuiltState() {
+final void clearForgetLastBuiltState() {
 	forgetStateRequested = false;
 }
 /**
@@ -81,6 +80,18 @@ protected IResourceDelta getDelta(IProject project) {
 protected IProject getProject() {
 	return project;
 }
+/**
+ * @see IncrementalProjectBuilder#isBeforeThisProject
+ */
+protected boolean isBeforeThisProject(IProject project) {
+	return ((Workspace) project.getWorkspace()).getBuildManager().hasBeenBuilt(project);
+}
+/**
+ * @see IncrementalProjectBuilder#needRebuild
+ */
+protected void needRebuild() {
+	((Workspace) project.getWorkspace()).getBuildManager().requestRebuild();
+}
 /* package */ final void setInterestingProjects(IProject[] value) {
 	interestingProjects = value;
 }
@@ -110,7 +121,7 @@ protected abstract void startupOnInitialize();
  * Returns true if the builder requested that its last built state be forgetten,
  * and false otherwise.
  */
-boolean wasForgetStateRequested() {
+final boolean wasForgetStateRequested() {
 	return forgetStateRequested;
 }
 }
