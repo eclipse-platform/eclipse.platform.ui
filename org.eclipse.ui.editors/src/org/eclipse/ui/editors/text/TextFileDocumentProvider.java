@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.IFileBuffer;
@@ -109,6 +110,41 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 		public boolean fCachedReadOnlyState;
 	}
 	
+	static private class SingleElementIterator implements Iterator {
+
+		private Object fElement;
+		
+		public SingleElementIterator(Object element) {
+			fElement= element;
+		}
+		
+		/*
+		 * @see java.util.Iterator#hasNext()
+		 */
+		public boolean hasNext() {
+			return fElement != null;
+		}
+
+		/*
+		 * @see java.util.Iterator#next()
+		 */
+		public Object next() {
+			if (fElement != null) {
+				Object result= fElement;
+				fElement= null;
+				return result;
+			}
+			throw new NoSuchElementException();
+		}
+
+		/*
+		 * @see java.util.Iterator#remove()
+		 */
+		public void remove() {
+			throw new UnsupportedOperationException();
+		}
+	}
+	
 	protected class FileBufferListener implements IFileBufferListener  {
 		
 		public FileBufferListener()  {
@@ -122,7 +158,7 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 			Iterator e= list.iterator();
 			while (e.hasNext()) {
 				IElementStateListener l= (IElementStateListener) e.next();
-				Iterator i= getElements(file).iterator();
+				Iterator i= getElements(file);
 				while (i.hasNext())
 					l.elementContentAboutToBeReplaced(i.next());
 			}
@@ -136,7 +172,7 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 			Iterator e= list.iterator();
 			while (e.hasNext()) {
 				IElementStateListener l= (IElementStateListener) e.next();
-				Iterator i= getElements(file).iterator();
+				Iterator i= getElements(file);
 				while (i.hasNext())
 					l.elementContentReplaced(i.next());
 			}
@@ -146,7 +182,7 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 		 * @see org.eclipse.core.buffer.text.IBufferedFileListener#stateChanging(org.eclipse.core.buffer.text.IBufferedFile)
 		 */
 		public void stateChanging(IFileBuffer file) {
-			Iterator i= getElements(file).iterator();
+			Iterator i= getElements(file);
 			while (i.hasNext())
 				fireElementStateChanging(i.next());
 		}
@@ -159,7 +195,7 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 			Iterator e= list.iterator();
 			while (e.hasNext()) {
 				IElementStateListener l= (IElementStateListener) e.next();
-				Iterator i= getElements(file).iterator();
+				Iterator i= getElements(file);
 				while (i.hasNext())
 					l.elementDirtyStateChanged(i.next(), isDirty);
 			}
@@ -175,7 +211,7 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 				Object l= e.next();
 				if (l instanceof IElementStateListenerExtension) {
 					IElementStateListenerExtension x= (IElementStateListenerExtension) l;
-					Iterator i= getElements(file).iterator();
+					Iterator i= getElements(file);
 					while (i.hasNext())
 						x.elementStateValidationChanged(i.next(), isStateValidated);
 				}
@@ -193,7 +229,7 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 			Iterator e= list.iterator();
 			while (e.hasNext()) {
 				IElementStateListener l= (IElementStateListener) e.next();
-				Iterator i= getElements(file).iterator();
+				Iterator i= getElements(file);
 				while (i.hasNext())
 					l.elementMoved(i.next(), input);
 			}
@@ -207,7 +243,7 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 			Iterator e= list.iterator();
 			while (e.hasNext()) {
 				IElementStateListener l= (IElementStateListener) e.next();
-				Iterator i= getElements(file).iterator();
+				Iterator i= getElements(file);
 				while (i.hasNext())
 					l.elementDeleted(i.next());
 			}
@@ -217,7 +253,7 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 		 * @see org.eclipse.core.buffer.text.IBufferedFileListener#stateChangeFailed(org.eclipse.core.buffer.text.IBufferedFile)
 		 */
 		public void stateChangeFailed(IFileBuffer file) {
-			Iterator i= getElements(file).iterator();
+			Iterator i= getElements(file);
 			while (i.hasNext())
 				fireElementStateChangeFailed(i.next());
 		}
@@ -237,9 +273,6 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 		}
 	}
 
-	/** The empty list */
-	private static final List EMPTY_LIST= new ArrayList();
-	
 	/** The parent document provider */
 	private IDocumentProvider fParentProvider;
 	/** Element information of all connected elements */
@@ -317,12 +350,23 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 	 * @param info the element info
 	 */
 	private void storeFileBufferMapping(Object element, FileInfo info) {
-		List elements= (List) fFileBufferMap.get(info.fTextFileBuffer);
-		if (elements == null) {
-			elements= new ArrayList(2);
-			fFileBufferMap.put(info.fTextFileBuffer, elements);
+		Object value= fFileBufferMap.get(info.fTextFileBuffer);
+		
+		if (value instanceof List) {
+			List list= (List) value;
+			list.add(element);
+			return;
 		}
-		elements.add(element);
+		
+		if (value == null) {
+			value= element;
+		} else {
+			List list= new ArrayList(2);
+			list.add(value);
+			list.add(element);
+			value= list;
+		}
+		fFileBufferMap.put(info.fTextFileBuffer, value);
 	}
 
 	protected FileInfo createEmptyFileInfo()  {
@@ -402,12 +446,18 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 	 * @param info the given element info
 	 */
 	private void removeFileBufferMapping(Object element, FileInfo info) {
-		List elements= (List) fFileBufferMap.get(info.fTextFileBuffer);
-		if (elements == null)
+		Object value= fFileBufferMap.get(info.fTextFileBuffer);
+		if (value == null)
 			return;
-		elements.remove(element);
-		if (elements.isEmpty())
+		
+		if (value instanceof List) {
+			List list= (List) value;
+			list.remove(element);
+			if (list.size() == 1)
+				fFileBufferMap.put(info.fTextFileBuffer, list.get(0));
+		} else if (value == element) {
 			fFileBufferMap.remove(info.fTextFileBuffer);
+		}
 	}
 
 	protected void disposeFileInfo(Object element, FileInfo info) {
@@ -422,17 +472,16 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 	}
 	
 	/**
-	 * Returns a list of all elements that are connected with the given file buffer at
-	 * this moment in time.
+	 *Returns an iterator for all the elements that are connected to this file buffer.
 	 * 
 	 * @param file the file buffer
-	 * @return the list of all elements connected with the given file buffer
+	 * @return an iterator for all elements connected with the given file buffer
 	 */
-	protected List getElements(IFileBuffer file) {
-		List elements= (List) fFileBufferMap.get(file);
-		if (elements == null)
-			return EMPTY_LIST;
-		return new ArrayList(elements);
+	protected Iterator getElements(IFileBuffer file) {
+		Object value= fFileBufferMap.get(file);
+		if (value instanceof List)
+			return new ArrayList((List) value).iterator();
+		return new SingleElementIterator(value);
 	}
 
 	/*
