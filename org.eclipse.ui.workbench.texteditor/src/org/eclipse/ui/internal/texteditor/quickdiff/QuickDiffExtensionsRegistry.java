@@ -44,7 +44,7 @@ public class QuickDiffExtensionsRegistry {
 	 * 
 	 * @return the descriptor of the default reference provider.
 	 */
-	public ReferenceProviderDescriptor getDefaultProvider() {
+	public synchronized ReferenceProviderDescriptor getDefaultProvider() {
 		ensureRegistered();
 		return fDefaultDescriptor;
 	}
@@ -55,7 +55,7 @@ public class QuickDiffExtensionsRegistry {
 	 * 
 	 * @return the list of extensions to the <code>quickDiffReferenceProvider</code> extension point.
 	 */
-	public List getReferenceProviderDescriptors() {
+	public synchronized List getReferenceProviderDescriptors() {
 		ensureRegistered();
 		return fDescriptors;
 	}
@@ -75,7 +75,7 @@ public class QuickDiffExtensionsRegistry {
 	 * order to reload from a changed extension registry.
 	 * </p>
 	 */
-	public void reloadExtensions() {
+	public synchronized void reloadExtensions() {
 		fDefaultDescriptor= null;
 		IExtensionRegistry registry= Platform.getExtensionRegistry();
 		List list= new ArrayList();
@@ -90,5 +90,4 @@ public class QuickDiffExtensionsRegistry {
 		
 		fDescriptors= Collections.unmodifiableList(list);
 	}
-
 }
