@@ -9,7 +9,8 @@
  **********************************************************************/
 package org.eclipse.ui.internal.intro;
 
-import org.eclipse.core.runtime.NLS;
+import org.eclipse.osgi.util.NLS;
+
 
 /**
  * The IntroMessages are the messages used in the intro support.

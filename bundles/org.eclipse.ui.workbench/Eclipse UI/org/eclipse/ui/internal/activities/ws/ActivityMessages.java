@@ -9,7 +9,8 @@
  **********************************************************************/
 package org.eclipse.ui.internal.activities.ws;
 
-import org.eclipse.core.runtime.NLS;
+import org.eclipse.osgi.util.NLS;
+
 
 /**
  * The ActivtyMessages are the messages used by the activities

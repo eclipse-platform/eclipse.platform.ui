@@ -1,6 +1,8 @@
 package org.eclipse.ui.internal.keys;
 
-import org.eclipse.core.runtime.NLS;
+import org.eclipse.osgi.util.NLS;
+
+
 
 /**
  * The KeyAssistMessages class is the class that manages the messages
