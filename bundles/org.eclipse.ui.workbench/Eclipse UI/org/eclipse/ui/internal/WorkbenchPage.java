@@ -1658,6 +1658,14 @@ private void hideView(Perspective persp, IViewReference ref) {
 		firePartClosed(ref);
 		disposePart(ref);
 		activationList.remove(ref);		
+
+		/* Bug 42684.  A ViewPane instance has been disposed, but an attempt is
+		 * then made to remove focus from it.  This happens because the ViewPane 
+		 * is still viewed as the active part.  The activePart should always be  
+		 * modified when the view is changed.  activePart isn't really needed
+		 * anymore (see declaration).
+		 */
+		activePart = activationList.getActive();
 	}
 	
 	// Notify interested listeners

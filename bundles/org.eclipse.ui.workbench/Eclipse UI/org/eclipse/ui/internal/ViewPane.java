@@ -351,6 +351,15 @@ protected void createTitleBar() {
 }
 public void dispose() {
 	super.dispose();
+	
+	/* Bug 42684.  The ViewPane instance has been disposed, but an attempt is
+	 * then made to remove focus from it.  This happens because the ViewPane is
+	 * still viewed as the active part.  In general, when disposed, the control
+	 * containing the titleLabel will also disappear (disposing of the 
+	 * titleLabel).  As a result, the reference to titleLabel should be dropped. 
+	 */ 
+	titleLabel = null;
+	
 	if (isvMenuMgr != null)
 		isvMenuMgr.dispose();
 	if (isvToolBarMgr != null)
