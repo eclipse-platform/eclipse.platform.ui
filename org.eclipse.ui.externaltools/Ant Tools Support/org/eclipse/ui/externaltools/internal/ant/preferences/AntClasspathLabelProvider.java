@@ -1,5 +1,12 @@
 package org.eclipse.ui.externaltools.internal.ant.preferences;
 
+/**********************************************************************
+Copyright (c) 2002 IBM Corp. and others. All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
+
 import java.net.URL;
 
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -48,10 +55,11 @@ public class AntClasspathLabelProvider extends LabelProvider implements ITableLa
 	 */
 	public Image getColumnImage(Object element, int columnIndex) {
 		URL url = (URL) element;
-		if (url.getFile().endsWith("/")) //$NON-NLS-1$
+		if (url.getFile().endsWith("/")) { //$NON-NLS-1$
 			return getFolderImage();
-		else
+		} else {
 			return getJarImage();
+		}
 	}
 
 	/* (non-Javadoc)
@@ -62,8 +70,9 @@ public class AntClasspathLabelProvider extends LabelProvider implements ITableLa
 	}
 
 	private Image getFolderImage() {
-		if (folderImage == null)
+		if (folderImage == null) {
 			folderImage = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
+		}
 		return folderImage;
 	}
 
