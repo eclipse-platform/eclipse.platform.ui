@@ -372,6 +372,7 @@ public void createPartControl(Composite parent) {
 	// Add global action handlers.
 	editorActionHandler = new CellEditorActionHandler(getViewSite().getActionBars());
 	editorActionHandler.addCellEditor(descriptionEditor);
+	editorActionHandler.setCopyAction(copyTaskAction);
 	editorActionHandler.setDeleteAction(removeTaskAction);
 	editorActionHandler.setSelectAllAction(selectAllAction);
 	
