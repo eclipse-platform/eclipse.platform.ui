@@ -127,7 +127,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	public RemoteFile(RemoteFolder parent, int workspaceSyncState, String name, String revision, CVSTag tag) {
 		this(parent, workspaceSyncState, null);
 		MutableResourceSyncInfo newInfo = new MutableResourceSyncInfo(name, revision);		
-		newInfo.setKeywordMode(Command.KSUBST_TEXT);
+		newInfo.setKeywordMode(Command.KSUBST_TEXT_EXPAND);
 		newInfo.setTag(tag);
 		info = newInfo;
 	}
