@@ -35,6 +35,7 @@ import org.eclipse.jface.text.ProjectionDocumentManager;
  * This class is for internal use only.
  * 
  * @since 2.1
+ * @deprecated
  */
 public class ProjectionSourceViewer extends SourceViewer implements ISourceViewer, ITextViewerExtension3 {
 	

@@ -577,27 +577,21 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 		}
 	}
 	
-	/**
-	 * Modifies the position associated with the given annotation to the given
-	 * position. If the annotation is not yet managed by this annotation model,
-	 * the annotation is added. All annotation model change listeners will be
-	 * informed about the change.
-	 * 
-	 * @param annotation the annotation whose associated position should be
-	 *            modified
-	 * @param position the position to whose values the associated position
-	 *            should be changed
-	 * @since 3.0
+	/*
+	 * @see org.eclipse.jface.text.source.IAnnotationModelExtension#modifyAnnotationPosition(org.eclipse.jface.text.source.Annotation, org.eclipse.jface.text.Position)
 	 */
-	public void modifyAnnotation(Annotation annotation, Position position) {
-		modifyAnnotation(annotation, position, true);
+	public void modifyAnnotationPosition(Annotation annotation, Position position) {
+		modifyAnnotationPosition(annotation, position, true);
 	}
 	
 	/**
 	 * Modifies the associated position of the given annotation to the given
 	 * position. If the annotation is not yet managed by this annotation model,
-	 * the annotation is added. If requested, all annotation model change
-	 * listeners will be informed about the change.
+	 * the annotation is added. When the position is <code>null</code>, the
+	 * annotation is removed from the model.
+	 * <p>
+	 * If requested, all annotation model change listeners will be informed
+	 * about the change.
 	 * 
 	 * @param annotation the annotation whose associated position should be
 	 *            modified
@@ -606,7 +600,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	 * @param fireModelChanged indicates whether to notify all model listeners
 	 * @since 3.0
 	 */
-	protected void modifyAnnotation(Annotation annotation, Position position, boolean fireModelChanged) {
+	protected void modifyAnnotationPosition(Annotation annotation, Position position, boolean fireModelChanged) {
 		if (position == null) {
 			removeAnnotation(annotation, fireModelChanged);
 		} else {

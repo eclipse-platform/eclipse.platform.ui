@@ -27,4 +27,11 @@ public interface ISourceViewerExtension2 {
 	 * {@link ISourceViewer#configure(SourceViewerConfiguration)}.
 	 */
 	void unconfigure();
+	
+	/**
+	 * Returns the visual annotation model of this viewer.
+	 * 
+	 * @return the visual annotation model of this viewer
+	 */
+	IAnnotationModel getVisualAnnotationModel();
 }

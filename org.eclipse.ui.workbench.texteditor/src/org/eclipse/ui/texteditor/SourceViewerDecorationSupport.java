@@ -32,6 +32,7 @@ import org.eclipse.jface.text.IPainter;
 import org.eclipse.jface.text.ITextViewerExtension2;
 import org.eclipse.jface.text.ITextViewerExtension4;
 import org.eclipse.jface.text.MarginPainter;
+import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationPainter;
 import org.eclipse.jface.text.source.IAnnotationAccess;
 import org.eclipse.jface.text.source.ICharacterPairMatcher;
@@ -58,7 +59,7 @@ public class SourceViewerDecorationSupport {
 		/**
 		 * {@inheritdoc}
 		 */
-		public void draw(GC gc, StyledText textWidget, int offset, int length, Color color) {
+		public void draw(Annotation annotation, GC gc, StyledText textWidget, int offset, int length, Color color) {
 			if (gc != null) {
 				
 				Point left= textWidget.getLocationAtOffset(offset);
@@ -80,14 +81,16 @@ public class SourceViewerDecorationSupport {
 	 * @since 3.0
 	 */
 	private static final class BoxDrawingStrategy implements IDrawingStrategy {
-		/**
-		 * {@inheritdoc}
+		/*
+		 * @see org.eclipse.jface.text.source.AnnotationPainter.IDrawingStrategy#draw(org.eclipse.jface.text.source.Annotation, org.eclipse.swt.graphics.GC, org.eclipse.swt.custom.StyledText, int, int, org.eclipse.swt.graphics.Color)
 		 */
-		public void draw(GC gc, StyledText textWidget, int offset, int length, Color color) {
+		public void draw(Annotation annotation, GC gc, StyledText textWidget, int offset, int length, Color color) {
+			
 			if (length == 0) {
-				fgIBeamStrategy.draw(gc, textWidget, offset, length, color);
+				fgIBeamStrategy.draw(annotation, gc, textWidget, offset, length, color);
 				return;
 			}
+			
 			if (gc != null) {
 				
 				Point left= textWidget.getLocationAtOffset(offset);
@@ -115,7 +118,7 @@ public class SourceViewerDecorationSupport {
 		/**
 		 * {@inheritdoc}
 		 */
-		public void draw(GC gc, StyledText textWidget, int offset, int length, Color color) {
+		public void draw(Annotation annotation, GC gc, StyledText textWidget, int offset, int length, Color color) {
 			if (gc != null) {
 				
 				Point left= textWidget.getLocationAtOffset(offset);
@@ -238,7 +241,7 @@ public class SourceViewerDecorationSupport {
 	}
 	
 	/**
-	 * Installs this decoration support on th given preference store. It assumes
+	 * Installs this decoration support on the given preference store. It assumes
 	 * that this support has completely been configured.
 	 * 
 	 * @param store the preference store
@@ -260,7 +263,7 @@ public class SourceViewerDecorationSupport {
 	}
 
 	/**
-	 * Updates the text docorations for all configured annotation types.
+	 * Updates the text decorations for all configured annotation types.
 	 */
 	private void updateTextDecorations() {
 		
@@ -766,9 +769,8 @@ public class SourceViewerDecorationSupport {
 			fAnnotationPainter.setAnnotationTypeColor(annotationType, getAnnotationTypeColor(annotationType));
 			if (highlighting)
 				fAnnotationPainter.addHighlightAnnotationType(annotationType);
-			else {
+			else
 				fAnnotationPainter.addAnnotationType(annotationType, getAnnotationDecorationType(annotationType));
-			}
 			
 			if (updatePainter)
 				updateAnnotationPainter();

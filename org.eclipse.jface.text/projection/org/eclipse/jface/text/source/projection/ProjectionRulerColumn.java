@@ -8,12 +8,15 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jface.text.source;
+package org.eclipse.jface.text.source.projection;
 
 
 import java.util.Iterator;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseMoveListener;
+import org.eclipse.swt.events.MouseTrackAdapter;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -22,16 +25,23 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.source.AnnotationRulerColumn;
+import org.eclipse.jface.text.source.CompositeRuler;
+import org.eclipse.jface.text.source.IAnnotationAccess;
+import org.eclipse.jface.text.source.IAnnotationModel;
 
 
 /**
- * A ruler column for controlling the behavior of a <code>ProjectionSourceViewer</code>.
- * This class is for internal use only.
+ * A ruler column for controlling the behavior of a
+ * <code>ProjectionSourceViewer</code>.
+ * <p>
+ * Internal class. Do not use. Public for testing purposes only.
  * 
- * @since 2.1
- * @deprecated
+ * @since 3.0
  */
-public class OutlinerRulerColumn extends AnnotationRulerColumn {
+public class ProjectionRulerColumn extends AnnotationRulerColumn {
+	
+	private ProjectionAnnotation fCurrentAnnotation;
 
 	/**
 	 * Creates a new outliner ruler column.
@@ -39,10 +49,10 @@ public class OutlinerRulerColumn extends AnnotationRulerColumn {
 	 * @param model the column's annotation model
 	 * @param width the width in pixels
 	 */
-	public OutlinerRulerColumn(IAnnotationModel model, int width) {
-		super(model, width);
+	public ProjectionRulerColumn(IAnnotationModel model, int width, IAnnotationAccess annotationAccess) {
+		super(model, width, annotationAccess);
 	}
-
+	
 	/*
 	 * @see org.eclipse.jface.text.source.AnnotationRulerColumn#mouseDoubleClicked(int)
 	 */
@@ -96,11 +106,20 @@ public class OutlinerRulerColumn extends AnnotationRulerColumn {
 				return true;
 				
 			int endLine= document.getLineOfOffset(p.getOffset() + Math.max(p.getLength() -1, 0));
-			return  (startLine < line && line <= endLine)	;
+			return  (startLine < line && line <= endLine);
 		
 		} catch (BadLocationException x) {
 		}
 		
+		return false;
+	}
+	
+	protected boolean clearCurrentAnnotation() {
+		if (fCurrentAnnotation != null) {
+			fCurrentAnnotation.setRangeIndication(false);
+			fCurrentAnnotation= null;
+			return true;
+		}
 		return false;
 	}
 	
@@ -109,9 +128,36 @@ public class OutlinerRulerColumn extends AnnotationRulerColumn {
 	 */
 	public Control createControl(CompositeRuler parentRuler, Composite parentControl) {
 		Control control= super.createControl(parentRuler, parentControl);
+		// set background
 		Display display= parentControl.getDisplay();
 		Color background= display.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
 		control.setBackground(background);
+		// install hover listener
+		control.addMouseTrackListener(new MouseTrackAdapter() {
+			public void mouseHover(MouseEvent e) {
+				boolean redraw= clearCurrentAnnotation();
+				ProjectionAnnotation annotation= findAnnotation(toDocumentLineNumber(e.y));
+				if (annotation != null) {
+					annotation.setRangeIndication(true);
+					fCurrentAnnotation= annotation;
+					redraw= true;
+				}
+				if (redraw)
+					redraw();
+
+			}
+			public void mouseExit(MouseEvent e) {
+				if (clearCurrentAnnotation())
+					redraw();
+			}
+		});
+		// install mouse move listener
+		control.addMouseMoveListener(new MouseMoveListener() {
+			public void mouseMove(MouseEvent e) {
+				if (clearCurrentAnnotation())
+					redraw();
+			}
+		});
 		return control;
 	}
 }

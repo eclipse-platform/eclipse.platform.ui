@@ -324,12 +324,12 @@ public class TextViewer extends Viewer implements
 	}
 	
 	/**
-	 * The viewer's manager reponsible for registered verify key listeners.
+	 * The viewer's manager responsible for registered verify key listeners.
 	 * Uses batches rather than robust iterators because of performance issues.
 	 * <p>
 	 * The implementation is reentrant, i.e. installed listeners may trigger 
 	 * further <code>VerifyKeyEvent</code>s that may cause other listeners to be
-	 * installed, but not threadsafe.
+	 * installed, but not thread safe.
 	 * </p>
 	 * @since 2.0
 	 */
@@ -356,7 +356,7 @@ public class TextViewer extends Viewer implements
 			}
 		}
 		
-		/** List of registed verify key listeners. */
+		/** List of registered verify key listeners. */
 		private List fListeners= new ArrayList();
 		/** List of pending batches. */
 		private List fBatched= new ArrayList();
@@ -1004,7 +1004,7 @@ public class TextViewer extends Viewer implements
 	
 	/**
 	 * A position reflecting a viewer selection and the selection anchor.
-	 * The anchor is represnted by the caret.
+	 * The anchor is represented by the caret.
 	 * 
 	 * @since 2.1
 	 */
@@ -1043,7 +1043,7 @@ public class TextViewer extends Viewer implements
 		/**
 		 * Returns the selection reflecting its anchor.
 		 * 
-		 * @return the selection reflecting the selection achor.
+		 * @return the selection reflecting the selection anchor.
 		 */
 		public Point getSelection() {
 			return reverse ? new Point(offset - length, -length) : new Point(offset, length);
@@ -1157,7 +1157,7 @@ public class TextViewer extends Viewer implements
 	 * @since 2.0
 	 */
 	private TextViewerHoverManager fTextHoverManager;
-	/** The text viewer's viewport guard */
+	/** The text viewer's view port guard */
 	private ViewportGuard fViewportGuard;
 	/** Caches the graphical coordinate of the first visible line */ 
 	private int fTopInset= 0;
@@ -1219,7 +1219,7 @@ public class TextViewer extends Viewer implements
 	 */
 	private CursorListener fCursorListener;
 	/**
-	 * Last selection range sent to selection change liseners.
+	 * Last selection range sent to selection change listeners.
 	 * @since 3.0
 	 */
 	private IRegion fLastSentSelectionChange;
@@ -1265,7 +1265,7 @@ public class TextViewer extends Viewer implements
 	 * @since 2.0
 	 */
 	protected IInformationControlCreator fHoverControlCreator;
-	/** All registered viewport listeners> */
+	/** All registered view port listeners> */
 	protected List fViewportListeners;
 	/** The last visible vertical position of the top line */
 	protected int fLastTopPixel;
@@ -2281,7 +2281,7 @@ public class TextViewer extends Viewer implements
 	}
 	
 	/**
-	 * Informs all registered text input listeners about the sucessful input change,
+	 * Informs all registered text input listeners about the successful input change,
 	 * This method does not use a robust iterator.
 	 *
 	 * @param oldInput the old input document
@@ -2351,7 +2351,7 @@ public class TextViewer extends Viewer implements
 		
 		fReplaceTextPresentation= true;
 		fireInputDocumentAboutToBeChanged(fDocument, document);
-				
+		
 		IDocument oldDocument= fDocument;
 		fDocument= document;
 		
@@ -2419,10 +2419,10 @@ public class TextViewer extends Viewer implements
 	}
 	
 	
-	//---- Viewports	
+	//---- View ports	
 	
 	/**
-	 * Initializes all listeners and structures required to set up viewport listeners.
+	 * Initializes all listeners and structures required to set up view port listeners.
 	 */
 	private void initializeViewportUpdate() {
 
@@ -2444,7 +2444,7 @@ public class TextViewer extends Viewer implements
 	}
 	
 	/**
-	 * Removes all listeners and structures required to set up viewport listeners.
+	 * Removes all listeners and structures required to set up view port listeners.
 	 */
 	private void removeViewPortUpdate() {
 		
@@ -2485,7 +2485,7 @@ public class TextViewer extends Viewer implements
 	}
 		
 	/**
-	 * Checks whether the viewport changed and if so informs all registered 
+	 * Checks whether the view port changed and if so informs all registered 
 	 * listeners about the change.
 	 *
 	 * @param origin describes under which circumstances this method has been called.
@@ -2543,10 +2543,10 @@ public class TextViewer extends Viewer implements
 	}
 	
 	/**
-	 * Returns the viewport height in lines. The actual visible lines can be fewer if the
-	 * document is shorter than the viewport.
+	 * Returns the view port height in lines. The actual visible lines can be fewer if the
+	 * document is shorter than the view port.
 	 *
-	 * @return the viewport height in lines
+	 * @return the view port height in lines
 	 */
 	protected int getVisibleLinesInViewport() {
 		if (fTextWidget != null) {
@@ -2755,9 +2755,9 @@ public class TextViewer extends Viewer implements
 	}
 	
 	/**
-	 * Returns the width of the text when being drawed into this viewer's widget.
+	 * Returns the width of the text when being drawn into this viewer's widget.
 	 * 
-	 * @param the string to messure
+	 * @param the string to measure
 	 * @return the width of the presentation of the given string
 	 * @deprecated use <code>getWidthInPixels(int, int)</code> instead
 	 */
@@ -2774,9 +2774,9 @@ public class TextViewer extends Viewer implements
 	 * The result is relative to the upper left corner of the widget
 	 * client area.
 	 *
-	 * @param start offset relative to the start of this viewer's viewport
+	 * @param start offset relative to the start of this viewer's view port
 	 * 	0 <= offset <= getCharCount()
- 	 * @param end offset relative to the start of this viewer's viewport
+ 	 * @param end offset relative to the start of this viewer's view port
 	 * 	0 <= offset <= getCharCount()
 	 * @return the region covered by start and end offset
 	 */
@@ -2934,6 +2934,18 @@ public class TextViewer extends Viewer implements
 	}
 	
 	/**
+	 * Frees the given document if it is a slave document.
+	 * 
+	 * @param slave the potential slave document
+	 * @since 3.0
+	 */
+	protected void freeSlaveDocument(IDocument slave) {
+		ISlaveDocumentManager manager= getSlaveDocumentManager();
+		if (manager != null && manager.isSlaveDocument(slave))
+			manager.freeSlaveDocument(slave);
+	}
+	
+	/**
 	 * Sets this viewer's visible document. The visible document represents the 
 	 * visible region of the viewer's input document.
 	 *
@@ -2941,8 +2953,11 @@ public class TextViewer extends Viewer implements
 	 */
 	protected void setVisibleDocument(IDocument document) {
 		
-		if (fVisibleDocument != null && fDocumentListener != null)
-			fVisibleDocument.removeDocumentListener(fDocumentListener);
+		if (fVisibleDocument != null) {
+			if (fDocumentListener != null)
+				fVisibleDocument.removeDocumentListener(fDocumentListener);
+			freeSlaveDocument(fVisibleDocument);
+		}
 		
 		fVisibleDocument= document;
 		initializeDocumentInformationMapping(fVisibleDocument);
@@ -3079,8 +3094,8 @@ public class TextViewer extends Viewer implements
 	 * the content type of the partition in which the given offset is located.
 	 *
 	 * @param plugins the map from which to choose
-	 * @param offset the offset for which to find the plugin
-	 * @return the plugin registered under the offset's content type 
+	 * @param offset the offset for which to find the plug-in
+	 * @return the plug-in registered under the offset's content type 
 	 */
 	protected Object selectContentTypePlugin(int offset, Map plugins) {
 		try {
@@ -3093,7 +3108,7 @@ public class TextViewer extends Viewer implements
 	}
 	
 	/**
-	 * Selects from the given <code>plugins</code> this one which is registered for
+	 * Selects from the given <code>plug-ins</code> this one which is registered for
 	 * the given content <code>type</code>.
 	 * 
 	 * @param type the type to be used as lookup key
@@ -3124,7 +3139,7 @@ public class TextViewer extends Viewer implements
 			return;
 
 		switch (strategies.size()) {
-		// optimizations
+		// optimization
 		case 0:
 			break;
 
@@ -3183,7 +3198,7 @@ public class TextViewer extends Viewer implements
 				if (fTextWidget != null) {
 					int documentCaret= fDocumentCommand.caretOffset;
 					if (documentCaret == -1) {
-						// old behaviour of document command
+						// old behavior of document command
 						documentCaret= fDocumentCommand.offset + (fDocumentCommand.text == null ? 0 : fDocumentCommand.text.length());
 					}
 					
@@ -3386,7 +3401,7 @@ public class TextViewer extends Viewer implements
 	public void enableOperation(int operation, boolean enable) {
 		/* 
 		 * No-op by default.
-		 * Will be changed to regularily disable the known operations.
+		 * Will be changed to regularly disable the known operations.
 		 */
 	}
 	
@@ -3536,7 +3551,7 @@ public class TextViewer extends Viewer implements
 
 	/**
 	 * Shifts a text block to the right or left using the specified set of prefix characters.
-	 * The prefixes must start at the beginnig of the line.
+	 * The prefixes must start at the beginning of the line.
 	 *
 	 * @param useDefaultPrefixes says whether the configured default or indent prefixes should be used
 	 * @param right says whether to shift to the right or the left
@@ -3554,7 +3569,7 @@ public class TextViewer extends Viewer implements
 	 *
 	 * @param useDefaultPrefixes says whether the configured default or indent prefixes should be used
 	 * @param right says whether to shift to the right or the left
-	 * @param ignoreWhitespace says whether whitepsace in front of prefixes is allowed
+	 * @param ignoreWhitespace says whether whitespace in front of prefixes is allowed
 	 * @since 2.0
 	 */
 	protected void shift(boolean useDefaultPrefixes, boolean right, boolean ignoreWhitespace) {

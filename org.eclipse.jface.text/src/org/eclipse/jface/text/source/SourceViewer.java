@@ -111,12 +111,18 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 		}
 	}
 	
+	/** The size of the gap between the vertical ruler and the text widget */
+	protected final static int GAP_SIZE= 2;
 	/**
 	 * Partial name of the position category to manage remembered selections.
 	 * @since 3.0
 	 */
 	protected final static String _SELECTION_POSITION_CATEGORY= "__selection_category"; //$NON-NLS-1$
-
+	/**
+	 * Key of the model annotation model inside the visual annotation model.
+	 * @since 3.0
+	 */
+	protected final static Object MODEL_ANNOTATION_MODEL= new Object();
 	
 	/** The viewer's content assistant */
 	protected IContentAssistant fContentAssistant;
@@ -166,7 +172,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 	/** The SWT widget used when supporting a vertical ruler */
 	private Composite fComposite;
 	/** The vertical ruler's annotation model */
-	private VisualAnnotationModel fVisualAnnotationModel;
+	private IAnnotationModel fVisualAnnotationModel;
 	/** The viewer's range indicator to be shown in the vertical ruler */
 	private Annotation fRangeIndicator;
 	/** The viewer's vertical ruler hovering controller */
@@ -187,10 +193,6 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 	 * @since 2.1
 	 */
 	private boolean fIsOverviewRulerVisible;
-	
-	
-	/** The size of the gap between the vertical ruler and the text widget */
-	protected final static int GAP_SIZE= 2;
 	
 	
 	/**
@@ -287,7 +289,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 			
 		setDocumentPartitioning(configuration.getConfiguredDocumentPartitioning(this));
 		
-		// install content type independent plugins
+		// install content type independent plug-ins
 		fPresentationReconciler= configuration.getPresentationReconciler(this);
 		if (fPresentationReconciler != null)
 			fPresentationReconciler.install(this);
@@ -317,7 +319,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 		
 		setHoverControlCreator(configuration.getInformationControlCreator(this));
 		
-		// install content type specific plugins
+		// install content type specific plug-ins
 		String[] types= configuration.getConfiguredContentTypes(this);
 		for (int i= 0; i < types.length; i++) {
 			
@@ -398,6 +400,19 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 		setDocument(document, annotationModel, -1, -1);		
 	}
 	
+	/**
+	 * Creates the visual annotation model on top of the given annotation model.
+	 * 
+	 * @param annotationModel the wrapped annotation model
+	 * @return the visual annotation model on top of the given annotation model
+	 * @since 3.0
+	 */
+	protected IAnnotationModel createVisualAnnotationModel(IAnnotationModel annotationModel) {
+		IAnnotationModelExtension model= new AnnotationModel();
+		model.addAnnotationModel(MODEL_ANNOTATION_MODEL, annotationModel);
+		return (IAnnotationModel) model;
+	}
+	
 	/*
 	 * @see ISourceViewer#setDocument(IDocument, IAnnotationModel, int, int)
 	 */
@@ -416,7 +431,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 				fVisualAnnotationModel.disconnect(getDocument());
 						
 			if (annotationModel != null && document != null) {
-				fVisualAnnotationModel= new VisualAnnotationModel(annotationModel);
+				fVisualAnnotationModel= createVisualAnnotationModel(annotationModel);
 				fVisualAnnotationModel.connect(document);
 			} else {
 				fVisualAnnotationModel= null;
@@ -434,18 +449,28 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 				fOverviewRuler.setModel(fVisualAnnotationModel);
 		}		
 	}
-	
+
 	/*
 	 * @see ISourceViewer#getAnnotationModel()
 	 */
 	public IAnnotationModel getAnnotationModel() {
-		if (fVisualAnnotationModel != null)
-			return fVisualAnnotationModel.getModelAnnotationModel();
+		if (fVisualAnnotationModel instanceof IAnnotationModelExtension) {
+			IAnnotationModelExtension extension= (IAnnotationModelExtension) fVisualAnnotationModel;
+			return extension.getAnnotationModel(MODEL_ANNOTATION_MODEL);
+		}
 		return null;
 	}
 	
-	/**
-	 * @inheritDoc
+	/*
+	 * @see org.eclipse.jface.text.source.ISourceViewerExtension2#getVisualAnnotationModel()
+	 * @since 3.0
+	 */
+	public IAnnotationModel getVisualAnnotationModel() {
+		return fVisualAnnotationModel;
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.source.ISourceViewerExtension2#unconfigure()
 	 * @since 3.0
 	 */
 	public void unconfigure() {
@@ -682,7 +707,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 								fContentFormatter.format(document, region);
 							
 						} catch (RuntimeException x) {
-							// firewall for https://bugs.eclipse.org/bugs/show_bug.cgi?id=47472
+							// fire wall for https://bugs.eclipse.org/bugs/show_bug.cgi?id=47472
 							// if something went wrong we undo the changes we just did
 							// TODO to be removed
 							document.set(rememberedContents);
@@ -748,8 +773,10 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 			revealRange(start, length);
 		}
 		
-		if (fRangeIndicator != null && fVisualAnnotationModel != null)
-			fVisualAnnotationModel.modifyAnnotation(fRangeIndicator, new Position(start, length));
+		if (fRangeIndicator != null && fVisualAnnotationModel instanceof IAnnotationModelExtension) {
+			IAnnotationModelExtension extension= (IAnnotationModelExtension) fVisualAnnotationModel;
+			extension.modifyAnnotationPosition(fRangeIndicator, new Position(start, length));
+		}
 	}
 	
 	/*
@@ -770,7 +797,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 	 */
 	public void removeRangeIndication() {
 		if (fRangeIndicator != null && fVisualAnnotationModel != null)
-			fVisualAnnotationModel.modifyAnnotation(fRangeIndicator, null);
+			fVisualAnnotationModel.removeAnnotation(fRangeIndicator);
 	}
 	
 	/*
@@ -789,6 +816,16 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 				fVerticalRulerHoveringController= null;
 			}
 		}
+	}
+	
+	/**
+	 * Returns the vertical ruler of this viewer.
+	 * 
+	 * @return the vertical ruler of this viewer
+	 * @since 3.0
+	 */
+	protected final IVerticalRuler getVerticalRuler() {
+		return fVerticalRuler;
 	}
 	
 	/*

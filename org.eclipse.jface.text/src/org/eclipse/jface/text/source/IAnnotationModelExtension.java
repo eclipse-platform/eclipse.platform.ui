@@ -13,18 +13,22 @@ package org.eclipse.jface.text.source;
 
 import java.util.Map;
 
+import org.eclipse.jface.text.Position;
+
 
 /**
- * Extends <code>IAnnotationModel</code> with the ability to attach additional annotation models to it.
+ * Extends <code>IAnnotationModel</code> with the ability to attach additional
+ * annotation models to it.
  * 
  * @since 3.0
  */
 public interface IAnnotationModelExtension {
 	
 	/**
-	 * Attaches <code>attachment</code> to the receiver. Connects <code>attachment</code> to
-	 * the currently connected document. If <code>attachment</code> is already attached (even)
-	 * under a different key), it is not attached again.
+	 * Attaches <code>attachment</code> to the receiver. Connects
+	 * <code>attachment</code> to the currently connected document. If
+	 * <code>attachment</code> is already attached (even) under a different
+	 * key), it is not attached again.
 	 * 
 	 * @param key the key through which the attachment is identified.
 	 * @param attachment the attached <code>IAnnotationModel</code>
@@ -32,36 +36,58 @@ public interface IAnnotationModelExtension {
 	void addAnnotationModel(Object key, IAnnotationModel attachment);
 	
 	/**
-	 * Returns the attached <code>IAnnotationModel</code> for <code>key</code>, or <code>null</code>
-	 * if none is attached for <code>key</code>.
+	 * Returns the attached <code>IAnnotationModel</code> for <code>key</code>,
+	 * or <code>null</code> if none is attached for <code>key</code>.
 	 * 
 	 * @param key the key through which the attachment is identified.
-	 * @return an <code>IAnnotationModel</code> attached under <code>key</code>, or <code>null</code>
+	 * @return an <code>IAnnotationModel</code> attached under
+	 *         <code>key</code>, or <code>null</code>
 	 */
 	IAnnotationModel getAnnotationModel(Object key);
 	
 	/**
-	 * Removes and returns the attached <code>IAnnotationModel</code> for <code>key</code>.
+	 * Removes and returns the attached <code>IAnnotationModel</code> for
+	 * <code>key</code>.
 	 * 
 	 * @param key the key through which the attachment is identified.
-	 * @return an <code>IAnnotationModel</code> attached under <code>key</code>, or <code>null</code>
+	 * @return an <code>IAnnotationModel</code> attached under
+	 *         <code>key</code>, or <code>null</code>
 	 */
 	IAnnotationModel removeAnnotationModel(Object key);
 
 	/**
-	 * Replaces annotations with new annotations for this annotation model. The new
-	 * annotations are map entries where the annotation is the key and the value is the
-	 * position for the annotation. Each position describes the range covered by the annotation. 
-	 * All registered annotation model listeners are informed about the change (if any).
-	 * If the model is connected to a document, the positions are automatically
-	 * updated on document changes. For each annotation which is already managed by
-	 * this annotation model or is not associated with a valid position in the connected
-	 * document nothing happens.
-	 *
-	 * @param annotationsToRemove the annotations to be removed, may be <code>null</code>
-	 * @param annotationsToAdd the annotations which will be added, may be <code>null</code>
-	 *			each map entry has an <code>Annotation</code> as key and a <code>Position</code> as value
-	 * @throws ClassCastException if one of the map key or values has a wrong type
+	 * Replaces annotations with new annotations for this annotation model. The
+	 * new annotations are map entries where the annotation is the key and the
+	 * value is the position for the annotation. Each position describes the
+	 * range covered by the annotation. All registered annotation model
+	 * listeners are informed about the change (if any). If the model is
+	 * connected to a document, the positions are automatically updated on
+	 * document changes. For each annotation which is already managed by this
+	 * annotation model or is not associated with a valid position in the
+	 * connected document nothing happens.
+	 * 
+	 * @param annotationsToRemove the annotations to be removed, may be
+	 *            <code>null</code>
+	 * @param annotationsToAdd the annotations which will be added, may be
+	 *            <code>null</code> each map entry has an
+	 *            <code>Annotation</code> as key and a <code>Position</code>
+	 *            as value
+	 * @throws ClassCastException if one of the map key or values has a wrong
+	 *             type
 	 */
 	void replaceAnnotations(Annotation[] annotationsToRemove, Map annotationsToAdd) throws ClassCastException;
+	
+	/**
+	 * Modifies the position associated with the given annotation to the given
+	 * position. If the annotation is not yet managed by this annotation model,
+	 * the annotation is added. If the given position is <code>null</code> the
+	 * annotation is removed from the model. All annotation model change
+	 * listeners will be informed about the change.
+	 * 
+	 * @param annotation the annotation whose associated position should be
+	 *            modified
+	 * @param position the position to whose values the associated position
+	 *            should be changed
+	 */
+	void modifyAnnotationPosition(Annotation annotation, Position position);
 }

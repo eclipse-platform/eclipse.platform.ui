@@ -64,13 +64,14 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		 * Draws a decoration of the given length start at the given offset in the
 		 * given color onto the specified gc.
 		 * 
+		 * @param annotation the annotation to be drawn
 		 * @param gc the grahical context
 		 * @param textWidget the text widget to draw on
 		 * @param offset the offset of the line
 		 * @param length the length of the line
 		 * @param color the color of the line
 		 */
-		void draw(GC gc, StyledText textWidget, int offset, int length, Color color);
+		void draw(Annotation annotation, GC gc, StyledText textWidget, int offset, int length, Color color);
 	}
 	
 	/**
@@ -82,7 +83,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		/**
 		 * {@inheritdoc}
 		 */
-		public void draw(GC gc, StyledText textWidget, int offset, int length, Color color) {
+		public void draw(Annotation annotation, GC gc, StyledText textWidget, int offset, int length, Color color) {
 			if (gc != null) {
 				
 				Point left= textWidget.getLocationAtOffset(offset);
@@ -157,7 +158,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		/**
 		 * {@inheritdoc}
 		 */
-		public void draw(GC gc, StyledText textWidget, int offset, int length, Color color) {
+		public void draw(Annotation annotation, GC gc, StyledText textWidget, int offset, int length, Color color) {
 			// do nothing
 		}
 	}
@@ -1070,7 +1071,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 								// otherwise inside a line delimiter
 								IRegion widgetRange= getWidgetRange(new Position(paintStart, paintEnd - paintStart));
 								if (widgetRange != null)
-									pp.fPainter.draw(gc, fTextWidget, widgetRange.getOffset(), widgetRange.getLength(), pp.fColor);
+									pp.fPainter.draw(a, gc, fTextWidget, widgetRange.getOffset(), widgetRange.getLength(), pp.fColor);
 							}
 						}
 						
@@ -1125,6 +1126,27 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		}
 	}
 	
+	/**
+	 * Returns whether the given reason causes a repaint.
+	 * 
+	 * @param reason the reason
+	 * @return <code>true</code> if repaint reason, <code>false</code> otherwise
+	 * @since 3.0
+	 */
+	protected boolean isRepaintReason(int reason) {
+		return CONFIGURATION == reason || INTERNAL == reason;
+	}
+	
+	/**
+     * Retrieves the annotation model from the given source viewer.
+	 * @since 3.0
+	 */
+	protected IAnnotationModel findAnnotationModel(ISourceViewer sourceViewer) {
+		if(sourceViewer != null)
+			return sourceViewer.getAnnotationModel();
+		return null;
+	}
+	
 	/*
 	 * @see IPainter#paint(int)
 	 */
@@ -1135,12 +1157,12 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		}
 		
 		if (!fIsActive) {
-			IAnnotationModel model= fSourceViewer.getAnnotationModel();
+			IAnnotationModel model= findAnnotationModel(fSourceViewer);
 			if (model != null) {
 				fIsActive= true;
-				setModel(fSourceViewer.getAnnotationModel());
+				setModel(model);
 			}
-		} else if (CONFIGURATION == reason || INTERNAL == reason)
+		} else if (isRepaintReason(reason))
 			updatePainting(null);
 	}
 

@@ -31,6 +31,7 @@ import org.eclipse.jface.text.Position;
  * This class if for internal use only.
  * 
  * @since 2.1
+ * @deprecated
  */
 public class ProjectionAnnotation extends Annotation implements IAnnotationPresentation {
 	
