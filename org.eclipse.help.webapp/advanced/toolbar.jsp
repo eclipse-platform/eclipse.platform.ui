@@ -96,7 +96,8 @@ if (data.isIE()) {
 </style>
 
 <%
-if (data.isMozilla() && "contents".equals(request.getParameter("view"))) { 
+// workaround for adding right border on mozilla (ugly..)
+if (data.isMozilla() && "content".equals(request.getParameter("toolbar"))) { 
 %>
 <style type="text/css">
 

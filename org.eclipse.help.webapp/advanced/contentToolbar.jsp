@@ -14,7 +14,7 @@
 %>
 <jsp:include page="toolbar.jsp">
 	<jsp:param name="script" value="contentActions.js"/>
-	<jsp:param name="view" value="contents"/>
+	<jsp:param name="toolbar" value="content"/>
 	
 	<jsp:param name="name"     value="back"/>
 	<jsp:param name="tooltip"  value='back_tip'/>
@@ -51,7 +51,7 @@
 	} else {
 %>
 <jsp:include page="toolbar.jsp">
-	<jsp:param name="view" value="contents"/>
+	<jsp:param name="toolbar" value="content"/>
 
 	<jsp:param name="name"     value="back"/>
 	<jsp:param name="tooltip"  value='back_tip'/>
