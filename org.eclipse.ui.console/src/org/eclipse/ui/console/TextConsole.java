@@ -117,7 +117,7 @@ public abstract class TextConsole extends AbstractConsole {
         fDocument.addPositionCategory(ConsoleHyperlinkPosition.HYPER_LINK_CATEGORY);
         fPatternMatcher = new ConsolePatternMatcher(this);
         fDocument.addDocumentListener(fPatternMatcher);
-        fFont = JFaceResources.getFont(JFaceResources.TEXT_FONT);
+        setFont(JFaceResources.getFont(JFaceResources.TEXT_FONT));
     }
 
     /* (non-Javadoc)
