@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.usecase;
 
-
 import java.util.*;
 
 import org.eclipse.core.resources.IProject;
@@ -19,40 +18,36 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 public class SignaledBuilder extends IncrementalProjectBuilder {
-	protected boolean wasExecuted;
 
-	/** associate instances and projects */
-	private static Vector instances = new Vector(5);
-	
 	/** contants */
 	public static final String BUILDER_ID = "org.eclipse.core.tests.resources.sigbuilder";
-public SignaledBuilder() {
-	super();
-	reset();
-	instances.add(this);
-}
-protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
-	try {
-		monitor.beginTask("Building.", 1);
-		wasExecuted = true;
-		getProject().touch(null);
-		return null;
-	} finally {
-		monitor.done();
+
+	/**
+	 * associate IProject->SignaledBuilder
+	 */
+	private static HashMap instances = new HashMap(10);
+	protected boolean wasExecuted;
+	public static SignaledBuilder getInstance(IProject project) {
+		return (SignaledBuilder)instances.get(project);
 	}
-}
-public static SignaledBuilder getInstance(IProject project) {
-	for (Enumeration enum = instances.elements(); enum.hasMoreElements();) {
-		SignaledBuilder builder = (SignaledBuilder) enum.nextElement();
-		if (builder.getProject().equals(project))
-			return builder;
+	public SignaledBuilder() {
+		reset();
 	}
-	return null;
-}
-public void reset() {
-	wasExecuted = false;
-}
-public boolean wasExecuted() {
-	return wasExecuted;
-}
+	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
+		instances.put(getProject(), this);
+		try {
+			monitor.beginTask("Building.", 1);
+			wasExecuted = true;
+			getProject().touch(null);
+			return null;
+		} finally {
+			monitor.done();
+		}
+	}
+	public void reset() {
+		wasExecuted = false;
+	}
+	public boolean wasExecuted() {
+		return wasExecuted;
+	}
 }
