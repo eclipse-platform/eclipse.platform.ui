@@ -14,16 +14,11 @@ package org.eclipse.ui.internal;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IStatus;
-
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.part.MultiEditor;
-
-import org.eclipse.ui.internal.dnd.CompatibilityDragTarget;
-import org.eclipse.ui.internal.dnd.DragUtil;
-import org.eclipse.ui.internal.dnd.IDragOverListener;
 
 /**
  * EditorPresentation is a wrapper for PartTabworkbook.
@@ -32,24 +27,13 @@ public class EditorPresentation {
 	private WorkbenchPage page;
 	private ArrayList editorTable = new ArrayList(4);
 	private EditorArea editorArea;
-	private IDragOverListener dragTarget;
 	/**
 	 * Creates a new EditorPresentation.
 	 */
 	public EditorPresentation(WorkbenchPage page) {
-		IPartDropListener partDropListener = new IPartDropListener() {
-			public void dragOver(PartDropEvent e) {
-				onPartDragOver(e);
-			};
-			public void drop(PartDropEvent e) {
-				onPartDrop(e);
-			};
-		};
 
 		this.page = page;
-		this.editorArea = new EditorArea(IPageLayout.ID_EDITOR_AREA, partDropListener, page);
-		dragTarget = new CompatibilityDragTarget(partDropListener, IWorkbenchDragDropPart.EDITOR, page.getWorkbenchWindow());
-		DragUtil.addDragTarget(null, dragTarget);
+		this.editorArea = new EditorArea(IPageLayout.ID_EDITOR_AREA, page);
 	}
 	/**
 	 * Closes all of the editors.
@@ -97,13 +81,13 @@ public class EditorPresentation {
 	 * Deref a given part.  Deconstruct its container as required.
 	 * Do not remove drag listeners.
 	 */
-	private void derefPart(LayoutPart part) {
+	public static void derefPart(LayoutPart part) {
 
 		// Get vital part stats before reparenting.
 		ILayoutContainer oldContainer = part.getContainer();
 
 		// Reparent the part back to the main window
-		part.reparent(editorArea.getParent());
+		//part.reparent(editorArea.getParent());
 		// Update container.
 		if (oldContainer == null)
 			return;
@@ -128,8 +112,6 @@ public class EditorPresentation {
 		if (editorArea != null) {
 			editorArea.dispose();
 		}
-		// TODO maybe move this to top of method?
-		DragUtil.removeDragTarget(null, dragTarget);
 	}
 	/**
 	 * @see IEditorPresentation
@@ -204,156 +186,6 @@ public class EditorPresentation {
 		//TODO commented this out during presentations works
 		//pane.getWorkbook().reorderTab(pane, position);
 	}
-	/**
-	 * Move a part from one position to another.
-	 * This implementation assumes the target is
-	 * an editor workbook. 
-	 */
-	private void movePart(
-		IWorkbenchDragSource dragSource,
-		int position,
-		IWorkbenchDropTarget relativePart) {
-		ILayoutContainer container = relativePart.getContainer();
-
-		PartSashContainer sashContainer;
-
-		if (container instanceof PartSashContainer)
-			sashContainer = (PartSashContainer) container;
-		else
-			return;
-
-		LayoutPart part = dragSource.getPart();
-
-		// Remove the part from the current container.
-		derefPart(part);
-		// Add the part.
-		int relativePosition = IPageLayout.LEFT;
-		if (position == DragCursors.RIGHT)
-			relativePosition = IPageLayout.RIGHT;
-		else if (position == DragCursors.TOP)
-			relativePosition = IPageLayout.TOP;
-		else if (position == DragCursors.BOTTOM)
-			relativePosition = IPageLayout.BOTTOM;
-		if (part instanceof EditorWorkbook) {
-			sashContainer.add(part, relativePosition, (float) 0.5, relativePart.getPart());
-			((EditorWorkbook) part).becomeActiveWorkbook(true);
-		} else {
-			EditorWorkbook newWorkbook = EditorWorkbook.newEditorWorkbook(editorArea, page);
-			sashContainer.add(newWorkbook, relativePosition, (float) 0.5, relativePart.getPart());
-			newWorkbook.add(part);
-			newWorkbook.becomeActiveWorkbook(true);
-		}
-	}
-	/**
-	 * Notification sent during drag and drop operation.
-	 * Only allow editors and editor workbooks to participate
-	 * in the drag. Only allow the drop on an editor workbook
-	 * within the same editor area.
-	 */
-	private void onPartDragOver(PartDropEvent e) {
-		
-		// Disable drag-and-drop when zoomed
-		if (page.isZoomed()) {
-			e.relativePosition = DragCursors.INVALID;
-			return;
-		}
-		
-		// If source and target are in different windows reject.
-		if (e.dragSource != null && e.dropTarget != null) {
-			if (e.dragSource.getWorkbenchWindow() != e.dropTarget.getWorkbenchWindow()) {
-				e.relativePosition = DragCursors.INVALID;
-				return;
-			}
-		}
-
-		// can't detach editor into its own window
-		if (/*!detachable &&*/
-			e.relativePosition == DragCursors.OFFSCREEN) {
-			e.relativePosition = DragCursors.INVALID;
-			return;
-		}
-		// can't drop unless over an editor workbook
-		if (!(e.dropTarget instanceof EditorWorkbook)) {
-			e.relativePosition = DragCursors.INVALID;
-			return;
-		}
-		// handle drag of an editor
-		if (e.dragSource instanceof EditorPane) {
-			EditorWorkbook sourceWorkbook = ((EditorPane) e.dragSource).getWorkbook();
-			// limitations when drop is over editor's own workbook
-			if (sourceWorkbook == e.dropTarget) {
-				// can't stack/detach/attach from same workbook when only one editor
-				if (sourceWorkbook.getItemCount() == 1) {
-					e.relativePosition = DragCursors.INVALID;
-					return;
-				}
-			}
-
-			// can't drop into another editor area
-			EditorWorkbook targetWorkbook = (EditorWorkbook) e.dropTarget;
-			if (sourceWorkbook.getEditorArea() != targetWorkbook.getEditorArea()) {
-				e.relativePosition = DragCursors.INVALID;
-				return;
-			}
-			// all seems well
-			return;
-		}
-		// handle drag of an editor workbook
-		if (e.dragSource instanceof EditorWorkbook) {
-			// can't attach nor stack in same workbook
-			if (e.dragSource == e.dropTarget) {
-				e.relativePosition = DragCursors.INVALID;
-				return;
-			}
-			// can't drop into another editor area
-			EditorWorkbook sourceWorkbook = (EditorWorkbook) e.dragSource;
-			EditorWorkbook targetWorkbook = (EditorWorkbook) e.dropTarget;
-			if (sourceWorkbook.getEditorArea() != targetWorkbook.getEditorArea()) {
-				e.relativePosition = DragCursors.INVALID;
-				return;
-			}
-
-			// all seems well
-			return;
-		}
-		// invalid case - do not allow a drop to happen
-		e.relativePosition = DragCursors.INVALID;
-	}
-
-/**
- * Notification sent when drop happens. Only editors
- * and editor workbooks were allowed to participate.
- * Only an editor workbook in the same editor area as
- * the drag started can accept the drop.
- */
-private void onPartDrop(PartDropEvent e) {
-	switch (e.relativePosition) {
-		case DragCursors.OFFSCREEN:
-			// This case is not supported and should never
-			// happen. See onPartDragOver
-			//detach(e.dragSource, e.x, e.y);
-			break;
-		case DragCursors.CENTER:
-			if (e.dragSource instanceof EditorPane) {
-				EditorWorkbook sourceWorkbook = ((EditorPane)e.dragSource).getWorkbook();
-				if (sourceWorkbook == e.dropTarget) {
-					//TODO commented this out during presentations works
-					// sourceWorkbook.reorderTab((EditorPane)e.dragSource, e.cursorX, e.cursorY);
-					break;
-				}
-			}
-			stack((LayoutPart)e.dragSource, (EditorWorkbook)e.dropTarget);
-			break;
-		case DragCursors.LEFT:
-		case DragCursors.RIGHT:
-		case DragCursors.TOP:
-		case DragCursors.BOTTOM:
-			if (page.isZoomed())
-				page.zoomOut();
-			movePart(e.dragSource, e.relativePosition, (EditorWorkbook)e.dropTarget);
-			break;
-	}
-}
 	/**
 	 * Opens an editor within the presentation.  
 	 * </p>
@@ -462,34 +294,7 @@ private void onPartDrop(PartDropEvent e) {
 		return false;
 	}
 
-private void stack(LayoutPart newPart, EditorWorkbook refPart) {
-	editorArea.getControl().setRedraw(false);
-	if (newPart instanceof EditorWorkbook) {
-		EditorPane visibleEditor = ((EditorWorkbook)newPart).getVisibleEditor();
-		LayoutPart[] children = ((EditorWorkbook)newPart).getChildren();
-		for (int i = 0; i < children.length; i++)
-			stackEditor((EditorPane)children[i], refPart);
-		if (visibleEditor != null) {
-			visibleEditor.setFocus();
-			refPart.becomeActiveWorkbook(true);
-			refPart.setVisibleEditor(visibleEditor);
-		}
-	}
-	else {
-		stackEditor((EditorPane)newPart, refPart);
-		newPart.setFocus();
-		refPart.becomeActiveWorkbook(true);
-		refPart.setVisibleEditor((EditorPane)newPart);
-	}
-	editorArea.getControl().setRedraw(true);
-}
-private void stackEditor(EditorPane newPart, EditorWorkbook refPart) {
-	// Remove the part from old container.
-	derefPart(newPart);
-	// Reparent part and add it to the workbook
-	newPart.reparent(refPart.getParent());
-	refPart.add(newPart);
-}
+
 /**
  * Method getWorkbooks.
  * @return ArrayList
