@@ -723,6 +723,13 @@
                tooltip="%ExpandAll.tooltip">
          </action>
          <action
+               label="%workingSets.label"
+               tooltip="%workingSets.tooltip"
+               class="org.eclipse.debug.internal.ui.actions.breakpointGroups.WorkingSetsAction"
+               style="push"
+               menubarPath="defaultBreakpointGroup"
+               id="org.eclipse.debug.ui.breakpointsView.toolbar.workingSets"/>
+         <action
                id="org.eclipse.debug.ui.breakpointsView.toolbar.clearDefaultBreakpointGroup"
                menubarPath="defaultBreakpointGroup"
                class="org.eclipse.debug.internal.ui.actions.breakpointGroups.ClearDefaultBreakpointGroupAction"
