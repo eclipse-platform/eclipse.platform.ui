@@ -26,6 +26,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
@@ -76,7 +77,7 @@ public class BasicStackList extends AbstractTableInformationControl {
     
     private class BasicStackListLabelProvider extends LabelProvider implements IFontProvider {
 
-    	private Font italicFont = null;
+    	private Font boldFont = null;
 
 		public BasicStackListLabelProvider() { 
 		    //no-op
@@ -101,24 +102,30 @@ public class BasicStackList extends AbstractTableInformationControl {
     	
 		public Font getFont(Object element) {
 			CTabItem tabItem = (CTabItem) element;
-			if (!tabItem.isShowing()) // not-visible
+			// check to determine if the user selected the single tab mode
+			CTabFolder tabFolder = tabItem.getParent();
+			boolean singleTab = tabFolder.getSingle();
+			
+			// if in single tab mode, do not use the bold font for non-visible tabs
+			// if in multiple tab mode, use the bold for non-visible tabs only
+			if (tabItem.isShowing() || singleTab)
 				return null;
 			
-			if (italicFont == null) {
+			if (boldFont == null) {
 				Font originalFont = tabItem.getFont();
 				FontData fontData[] = originalFont.getFontData();
 				// Adding the bold attribute
 				for (int i = 0; i < fontData.length; i++) 
-					fontData[i].setStyle(fontData[i].getStyle()|SWT.ITALIC);
-				italicFont = new Font(tabItem.getDisplay(), fontData);
+					fontData[i].setStyle(fontData[i].getStyle()|SWT.BOLD);
+				boldFont = new Font(tabItem.getDisplay(), fontData);
 			}
-			return italicFont;
+			return boldFont;
 		}
 		
 		public void dispose() {
 			super.dispose();
-			if (italicFont != null)
-				italicFont.dispose();
+			if (boldFont != null)
+				boldFont.dispose();
 		}
     }    
     
