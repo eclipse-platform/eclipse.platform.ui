@@ -62,9 +62,9 @@ public class EditorRegistryReader extends RegistryReader {
         if (!element.getName().equals(TAG_EDITOR))
             return false;
 
-        String id = element.getAttribute(EditorDescriptor.ATT_ID);
-        if (element.getAttribute(EditorDescriptor.ATT_ID) == null) {
-            logMissingAttribute(element, EditorDescriptor.ATT_ID);
+        String id = element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
+        if (id == null) {
+            logMissingAttribute(element, IWorkbenchRegistryConstants.ATT_ID);
             return true;
         }
         
@@ -75,21 +75,21 @@ public class EditorRegistryReader extends RegistryReader {
         boolean defaultEditor = false;
 
         // Get editor name (required field).
-        if (element.getAttribute(EditorDescriptor.ATT_NAME) == null) {
-            logMissingAttribute(element, EditorDescriptor.ATT_NAME);
+        if (element.getAttribute(IWorkbenchRegistryConstants.ATT_NAME) == null) {
+            logMissingAttribute(element, IWorkbenchRegistryConstants.ATT_NAME);
             return true;
         }
 
         // Get editor icon (required field for internal editors)
-        if (element.getAttribute(EditorDescriptor.ATT_ICON) == null) {
-            if (getClassValue(element, EditorDescriptor.ATT_CLASS) != null) {
-                logMissingAttribute(element, EditorDescriptor.ATT_ICON);
+        if (element.getAttribute(IWorkbenchRegistryConstants.ATT_ICON) == null) {
+            if (getClassValue(element, IWorkbenchRegistryConstants.ATT_CLASS) != null) {
+                logMissingAttribute(element, IWorkbenchRegistryConstants.ATT_ICON);
                 return true;
             }
         }
         
         // Get target extensions (optional field)
-        String extensionsString = element.getAttribute(EditorDescriptor.ATT_EXTENSIONS);
+        String extensionsString = element.getAttribute(IWorkbenchRegistryConstants.ATT_EXTENSIONS);
         if (extensionsString != null) {
             StringTokenizer tokenizer = new StringTokenizer(extensionsString,
                     ",");//$NON-NLS-1$
@@ -97,7 +97,7 @@ public class EditorRegistryReader extends RegistryReader {
                 extensionsVector.add(tokenizer.nextToken().trim());
             }
         }
-        String filenamesString = element.getAttribute(EditorDescriptor.ATT_FILENAMES);
+        String filenamesString = element.getAttribute(IWorkbenchRegistryConstants.ATT_FILENAMES);
         if (filenamesString != null) {
             StringTokenizer tokenizer = new StringTokenizer(filenamesString,
                     ",");//$NON-NLS-1$
@@ -107,7 +107,7 @@ public class EditorRegistryReader extends RegistryReader {
         }
         
         // Is this the default editor?
-        String def = element.getAttribute(EditorDescriptor.ATT_DEFAULT);
+        String def = element.getAttribute(IWorkbenchRegistryConstants.ATT_DEFAULT);
         if (def != null)
             defaultEditor = Boolean.valueOf(def).booleanValue();
 

@@ -44,13 +44,20 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
      */
     private static final long serialVersionUID = 3905241225668998961L;
 
-    private static final String ATT_EDITOR_CONTRIBUTOR = "contributorClass"; //$NON-NLS-1$
-
     // @issue the following constants need not be public; see bug 47600
+    /**
+     * Open internal constant.  Value <code>0x01</code>.
+     */
     public static final int OPEN_INTERNAL = 0x01;
 
+    /**
+     * Open in place constant.  Value <code>0x02</code>.
+     */
     public static final int OPEN_INPLACE = 0x02;
 
+    /**
+     * Open external constant.  Value <code>0x04</code>.
+     */
     public static final int OPEN_EXTERNAL = 0x04;
 
     private String editorName;
@@ -100,26 +107,8 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
         }
     };
 
-    
-	public static final String ATT_CLASS = "class";//$NON-NLS-1$
-
-	public static final String ATT_NAME = "name";//$NON-NLS-1$
-
-	public static final String ATT_COMMAND = "command";//$NON-NLS-1$
-
-	public static final String ATT_LAUNCHER = "launcher";//$NON-NLS-1$
-
-	public static final String ATT_DEFAULT = "default";//$NON-NLS-1$
-
-	public static final String ATT_ID = "id";//$NON-NLS-1$
-
-	public static final String ATT_ICON = "icon";//$NON-NLS-1$
-
-	public static final String ATT_EXTENSIONS = "extensions";//$NON-NLS-1$
-
-	public static final String ATT_FILENAMES = "filenames";//$NON-NLS-1$
-
-    /**
+   
+	/**
      * Create a new instance of an editor descriptor. Limited
      * to internal framework calls.
      * @param element
@@ -196,7 +185,9 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
     }
 
     /**
-     * Creates the action contributor for this editor.
+     * Create the editor action bar contributor for editors of this type.
+     * 
+     * @return the action bar contributor, or <code>null</code>
      */
     public IEditorActionBarContributor createActionBarContributor() {
         // Handle case for predefined editor descriptors, like the
@@ -208,7 +199,7 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
 
         // Get the contributor class name.
         String className = configurationElement
-                .getAttribute(ATT_EDITOR_CONTRIBUTOR);
+                .getAttribute(IWorkbenchRegistryConstants.ATT_EDITOR_CONTRIBUTOR);
         if (className == null)
             return null;
 
@@ -217,7 +208,7 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
         try {
             contributor = (IEditorActionBarContributor) WorkbenchPlugin
                     .createExtension(configurationElement,
-                            ATT_EDITOR_CONTRIBUTOR);
+                            IWorkbenchRegistryConstants.ATT_EDITOR_CONTRIBUTOR);
         } catch (CoreException e) {
             WorkbenchPlugin.log("Unable to create editor contributor: " + //$NON-NLS-1$
                     id, e.getStatus());
@@ -226,75 +217,92 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
     }
 
     /**
-     * @see IResourceEditorDescriptor
+     * Return the editor class name.
+     * 
+     * @return the class name
      */
     public String getClassName() {
     	if (configurationElement == null) {
     		return className;
     	}
-    	return configurationElement.getAttribute(ATT_CLASS);
+    	return RegistryReader.getClassValue(configurationElement,
+                IWorkbenchRegistryConstants.ATT_CLASS);
     }
 
     /**
-     * @see IResourceEditorDescriptor
+     * Return the configuration element used to define this editor, or <code>null</code>.
+     * 
+     * @return the element or null
      */
     public IConfigurationElement getConfigurationElement() {
         return configurationElement;
     }
     
+    /**
+     * Create an editor part based on this descriptor.
+     * 
+     * @return the editor part
+     * @throws CoreException thrown if there is an issue creating the editor
+     */
     public IEditorPart createEditor() throws CoreException {
         Class editorClass = loadClass();
         
         if (IEditorPart.class.isAssignableFrom(editorClass)) {
-            return (IEditorPart)WorkbenchPlugin.createExtension(getConfigurationElement(), ATT_CLASS);
+            return (IEditorPart)WorkbenchPlugin.createExtension(getConfigurationElement(), IWorkbenchRegistryConstants.ATT_CLASS);
         } 
-        else {
-            NewEditorToOldWrapper adapter = new NewEditorToOldWrapper(getPartDescriptor());
-            return adapter;
-        }
+        
+        NewEditorToOldWrapper adapter = new NewEditorToOldWrapper(getPartDescriptor());
+        return adapter;        
     }
 
 
 
     /**
-     * @since 3.1 
+     * Pre-load the editor class.
      *
-     * @return
-     * @throws CoreException
+     * @return the class
+     * @throws CoreException thrown if there is an issue creating the class
+     * @since 3.1 
      */
     public Class loadClass() throws CoreException {
-        return getConfigurationElement().loadExtensionClass(ATT_CLASS);
+        return getConfigurationElement().loadExtensionClass(IWorkbenchRegistryConstants.ATT_CLASS);
     }
 
     /**
-     * @see IResourceEditorDescriptor
+     * Return the file name of the command to execute for this editor.
+     * 
+     * @return the file name to execute
      */
     public String getFileName() {
         if (program == null) {
         	if (configurationElement == null) {
         		return fileName;
         	}
-        	return configurationElement.getAttribute(ATT_COMMAND);
+        	return configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_COMMAND);
     	}
         return program.getName();
     }
 
     /**
-     * @see IResourceEditorDescriptor
+     * Return the id for this editor.
+     * 
+     * @return the id
      */
     public String getId() {
         if (program == null) {
         	if (configurationElement == null) {
         		return id;
         	}
-        	return configurationElement.getAttribute(ATT_ID);
+        	return configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
         	
         }
         return program.getName();
     }
 
     /**
-     * @see IResourceEditorDescriptor
+     * Return the image descriptor describing this editor.
+     * 
+     * @return the image descriptor
      */
     public ImageDescriptor getImageDescriptor() {
     	if (testImage) {
@@ -339,39 +347,47 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
 		}
 	}
 
-	/**
-     * @see IResourceEditorDescriptor
+    /**
+     * The name of the image describing this editor.
+     * 
+     * @return the image file name
      */
     public String getImageFilename() {
     	if (configurationElement == null)
     		return imageFilename;
-    	return configurationElement.getAttribute(ATT_ICON);
+    	return configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_ICON);
     }
 
     /**
-     * @see IResourceEditorDescriptor
+     * Return the user printable label for this editor.
+     * 
+     * @return the label
      */
     public String getLabel() {
         if (program == null) {
         	if (configurationElement == null) {
         		return editorName;        		
         	}
-        	return configurationElement.getAttribute(ATT_NAME);
+        	return configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_NAME);
         }
         return program.getName();
     }
 
     /**
      * Returns the class name of the launcher.
+     * 
+     * @return the launcher class name
      */
     public String getLauncher() {
     	if (configurationElement == null)
     		return launcherName;
-    	return configurationElement.getAttribute(EditorDescriptor.ATT_LAUNCHER);
+    	return configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_LAUNCHER);
     }
 
     /**
-     * @see IResourceEditorDescriptor
+     * Return the contributing plugin id.
+     * 
+     * @return the contributing plugin id
      */
     public String getPluginID() {
     	if (configurationElement != null)
@@ -621,9 +637,10 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
     }
 
     /**
+     * Return the part descriptor.
+     * 
+     * @return the part descriptor
      * @since 3.1 
-     *
-     * @return
      */
     public IPartDescriptor getPartDescriptor() {
         return partInfo;
