@@ -49,7 +49,7 @@ import org.eclipse.ui.part.WorkbenchPart;
  * and editor panes.
  */
 public abstract class PartPane extends LayoutPart
-	implements Listener
+	implements Listener, IWorkbenchDragSource
 {
 	private boolean isZoomed = false;
 	private MenuManager paneMenuManager;
@@ -402,12 +402,7 @@ public void setZoomed(boolean isZoomed) {
  * Indicate focus in part.
  */
 public abstract void showFocus(boolean inFocus);
-/**
- * @see IPartDropTarget::targetPartFor
- */
-public LayoutPart targetPartFor(LayoutPart dragSource) {
-	return this;
-}
+
 
 /**
  * Show a title label menu for this pane.
@@ -521,4 +516,6 @@ protected void doDock() {
 public IJobChangeListener getJobChangeListener(){
 	return null;
 }
+
+
 }

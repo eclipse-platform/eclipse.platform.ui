@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-public interface ILayoutContainer {
+public interface ILayoutContainer extends IWorkbenchDropTarget {
 /**
  * Add a child to the container.
  */

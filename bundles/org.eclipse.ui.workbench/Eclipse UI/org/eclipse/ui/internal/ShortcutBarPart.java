@@ -22,7 +22,9 @@ import org.eclipse.ui.IWorkbenchPart;
  * A ShortcutBarPart acts as a target for drag and drop events in
  * a PerspectivePresentation.  It is not intended to act as a real part.
  */
-public class ShortcutBarPart extends LayoutPart {
+public class ShortcutBarPart
+	extends LayoutPart
+	implements IWorkbenchDragSource {
 	private ToolBar toolbar;
 
 	/**
@@ -99,7 +101,9 @@ public class ShortcutBarPart extends LayoutPart {
 				if (oldTarget != null) {
 					// mouse moved from contribution item to somewhere else
 					hoverStart = System.currentTimeMillis();
-				} else if (lastFastView != null && (System.currentTimeMillis() - hoverStart) > hoverThreshold) {
+				} else if (
+					lastFastView != null
+						&& (System.currentTimeMillis() - hoverStart) > hoverThreshold) {
 					hideView();
 				}
 			} else {
@@ -125,7 +129,7 @@ public class ShortcutBarPart extends LayoutPart {
 				if (deactivatedPart == null && page != null) {
 					deactivatedPart = page.getActivePart();
 				}
-				lastFastView = (IViewPart)ref.getPart(true);
+				lastFastView = (IViewPart) ref.getPart(true);
 				if (page != null) {
 					page.activate(lastFastView);
 				}
@@ -155,7 +159,9 @@ public class ShortcutBarPart extends LayoutPart {
 		 * 	false otherwise
 		 */
 		private boolean validateTarget() {
-			return (currentDropTarget != null && currentDropTarget.getData() instanceof ShowFastViewContribution);
+			return (
+				currentDropTarget != null
+					&& currentDropTarget.getData() instanceof ShowFastViewContribution);
 		}
 	}
 	/**
@@ -165,7 +171,7 @@ public class ShortcutBarPart extends LayoutPart {
 	public ShortcutBarPart(ToolBarManager tbm) {
 		super("ShortcutBarPart"); //$NON-NLS-1$
 		this.toolbar = tbm.getControl();
-		toolbar.setData((IPartDropTarget) this);
+		toolbar.setData(this);
 		initDragAndDrop();
 	}
 	/**
@@ -187,10 +193,26 @@ public class ShortcutBarPart extends LayoutPart {
 		DropTarget dropTarget = new DropTarget(toolbar, DND.DROP_COPY | DND.DROP_MOVE);
 		dropTarget.addDropListener(new ShortcutBarDropAdapter(toolbar));
 	}
-	/**
-	 * @see IPartDropTarget::targetPartFor
+	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.IWorkbenchDragSource#getType()
 	 */
-	public LayoutPart targetPartFor(LayoutPart dragSource) {
+	public int getType() {
+		return VIEW;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.IWorkbenchDragSource#isDragAllowed(org.eclipse.swt.graphics.Point)
+	 */
+	public boolean isDragAllowed(Point point) {
+		return true;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.LayoutPart#targetPartFor(org.eclipse.ui.internal.IWorkbenchDragSource)
+	 */
+	public LayoutPart targetPartFor(IWorkbenchDragSource dragSource) {
 		return this;
 	}
 }

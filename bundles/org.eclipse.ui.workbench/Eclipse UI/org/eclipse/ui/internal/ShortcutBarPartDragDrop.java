@@ -19,7 +19,7 @@ public class ShortcutBarPartDragDrop extends PartDragDrop {
 	// The item that is being dragged by this PartDragDrop.
 	private ToolItem draggedItem;
 
-	public ShortcutBarPartDragDrop(LayoutPart itemPart, Control shortcutBar) {
+	public ShortcutBarPartDragDrop(IWorkbenchDragSource itemPart, Control shortcutBar) {
 		super(itemPart, shortcutBar);
 	}
 	/**

@@ -347,4 +347,11 @@ public void updateTabList() {
 	/* package */ DropTarget getDropTarget() {
 		return dropTarget;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.IWorkbenchDropTarget#getType()
+	 */
+	public int getType() {
+		return EDITOR;
+	}
 }

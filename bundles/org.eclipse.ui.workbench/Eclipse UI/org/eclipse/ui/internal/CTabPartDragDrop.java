@@ -21,45 +21,59 @@ import org.eclipse.swt.graphics.*;
  */
 public class CTabPartDragDrop extends PartDragDrop {
 	private CTabItem2 tab;
-public CTabPartDragDrop(LayoutPart dragPart, CTabFolder2 tabFolder, CTabItem2 tabItem) {
-	super(dragPart, tabFolder);
-	this.tab = tabItem;
-}
-protected CTabFolder2 getCTabFolder2() {
-	return (CTabFolder2) getDragControl();
-}
-/**
- * Returns the source's bounds
- */
-protected Rectangle getSourceBounds() {
-	return PartTabFolder.calculatePageBounds(getCTabFolder2());
-}
-/**
- * Verifies that the tab under the mouse pointer is the same 
- * as for this drag operation
- * 
- * @see org.eclipse.ui.internal.PartDragDrop#isDragAllowed(Point)
- */
-protected void isDragAllowed(Point position) {
-	CTabFolder2 tabFolder = getCTabFolder2();
-	CTabItem2 tabUnderPointer = tabFolder.getItem(position);
-	if (tabUnderPointer != tab)
-		return;
-	if(tabUnderPointer == null) {
-		//Avoid drag from the borders.
-		Rectangle clientArea = tabFolder.getClientArea();
-		if((tabFolder.getStyle() & SWT.TOP) != 0) {
-			if(position.y > clientArea.y)
-				return;
-		} else {
-			if(position.y < clientArea.y + clientArea.height)
-				return;
-		}
+	
+	/**
+	 * Create a new instance of the receiver.
+	 * @param dragPart
+	 * @param tabFolder
+	 * @param tabItem
+	 */
+	public CTabPartDragDrop(
+		IWorkbenchDragSource dragPart,
+		CTabFolder2 tabFolder,
+		CTabItem2 tabItem) {
+		super(dragPart, tabFolder);
+		this.tab = tabItem;
 	}
+	/**
+	 * Get the tab folder.
+	 * @return CTabFolder2
+	 */
+	protected CTabFolder2 getCTabFolder2() {
+		return (CTabFolder2) getDragControl();
+	}
+	/**
+	 * Returns the source's bounds
+	 */
+	protected Rectangle getSourceBounds() {
+		return PartTabFolder.calculatePageBounds(getCTabFolder2());
+	}
+	/**
+	 * Verifies that the tab under the mouse pointer is the same 
+	 * as for this drag operation
+	 * 
+	 * @see org.eclipse.ui.internal.PartDragDrop#isDragAllowed(Point)
+	 */
+	protected void isDragAllowed(Point position) {
+		CTabFolder2 tabFolder = getCTabFolder2();
+		CTabItem2 tabUnderPointer = tabFolder.getItem(position);
+		if (tabUnderPointer != tab)
+			return;
+		if (tabUnderPointer == null) {
+			//Avoid drag from the borders.
+			Rectangle clientArea = tabFolder.getClientArea();
+			if ((tabFolder.getStyle() & SWT.TOP) != 0) {
+				if (position.y > clientArea.y)
+					return;
+			} else {
+				if (position.y < clientArea.y + clientArea.height)
+					return;
+			}
+		}
 
-	super.isDragAllowed(position);
-}
-public void setTab(CTabItem2 newTab) {
-	tab = newTab;
-}
+		super.isDragAllowed(position);
+	}
+	public void setTab(CTabItem2 newTab) {
+		tab = newTab;
+	}
 }
