@@ -595,8 +595,8 @@ protected void internalCopy(IProjectDescription destDesc, boolean force, IProgre
 			for (int i = 0; i < children.length; i++)
 				children[i].copy(destProject.getFullPath().append(children[i].getName()), force, Policy.subMonitorFor(monitor, Policy.opWork * 50 / 100 / children.length));
 
-			// fix the builders for the new project (they currently point to the source)
-			workspace.getBuildManager().fixBuildersFor(destProject);
+			// clear the builders for the destination project
+			((ProjectInfo) destProject.getResourceInfo(false, true)).setBuilders(null);
 
 			// refresh local
 			monitor.subTask(Policy.bind("resources.syncTree"));
@@ -695,6 +695,9 @@ protected void internalMove(IProjectDescription destDesc, boolean force, IProgre
 			workspace.flushBuildOrder();
 			getLocalManager().refresh(this, DEPTH_INFINITE, Policy.subMonitorFor(monitor, Policy.opWork * 20 / 100));
 
+			// let people know that we are deleting the project
+			workspace.deleting(this);
+
 			// close the property store
 			getPropertyManager().closePropertyStore(this);
 
@@ -733,8 +736,8 @@ protected void internalMove(IProjectDescription destDesc, boolean force, IProgre
 			for (int i = 0; i < children.length; i++)
 				children[i].move(destProject.getFullPath().append(children[i].getName()), force, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
 
-			// fix up the builders for the project (they currently point to the source)
-			workspace.getBuildManager().fixBuildersFor(destProject);
+			// clear the builders for the destination project
+			info.setBuilders(null);
 
 			// delete the source
 			delete(true, force, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
@@ -1092,6 +1095,9 @@ protected void internalChangeCase(IProjectDescription destDesc, boolean force, I
 			// flush the build order early in case there is a problem
 			workspace.flushBuildOrder();
 
+			// let people know that we are deleting the project
+			workspace.deleting(this);
+
 			// set the description
 			workspace.copyTree(this, destPath, IResource.DEPTH_INFINITE, false);
 			destProject.internalSetDescription(destDesc, false);
@@ -1113,8 +1119,8 @@ protected void internalChangeCase(IProjectDescription destDesc, boolean force, I
 			if (sourceDesc.getLocation() == null && destDesc.getLocation() == null)
 				getLocation().toFile().renameTo(destProject.getLocation().toFile());
 
-			// fix up the builders for the project (they currently point to the source)
-			workspace.getBuildManager().fixBuildersFor(destProject);
+			// clear the builders for the destination project
+			info.setBuilders(null);
 
 			// delete source handle
 			workspace.deleteResource(this);

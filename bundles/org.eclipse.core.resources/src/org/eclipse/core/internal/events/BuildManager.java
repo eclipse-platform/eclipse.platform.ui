@@ -338,20 +338,6 @@ protected IncrementalProjectBuilder instantiateBuilder(String builderName, IProj
 public void opening(IProject project) {
 }
 /**
- * The given project is the destination of a copy or a move so the build manager
- * must fix the project reference inside each of its builders since they still
- * point to the source project.
- */
-public void fixBuildersFor(IProject project) {
-	ProjectInfo info = (ProjectInfo) workspace.getResourceInfo(project.getFullPath(), false, true);
-	Hashtable builders = info.getBuilders();
-	for (Enumeration e = builders.keys(); e.hasMoreElements(); ) {
-		Object key = e.nextElement();
-		InternalBuilder builder = (InternalBuilder) builders.get(key);
-		builder.setProject(project);
-	}
-}
-/**
  * Sets the builder map for the given project.  The builder map is
  * a Map mapping String(builder name) -> BuilderPersistentInfo.
  * The map includes entries for all builders that are
