@@ -284,6 +284,13 @@ The following attribute formats are supported:
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="actionID" type="string">
+            <annotation>
+               <documentation>
+                  Internal tag for use by the text editors. Should not be used by plug-in developers.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
