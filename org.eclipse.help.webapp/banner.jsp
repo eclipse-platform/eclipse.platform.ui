@@ -143,7 +143,7 @@ function doSearch()
 					<table cellspacing="0" cellpadding="0" border="0">
 						<tr>
 							<td>
-								<input type="text" id="searchWord" name="searchWord" value="<%= request.getParameter("searchWord")!=null?request.getParameter("searchWord"):""%>" size="20" maxlength="256" alt='<%=WebappResources.getString("SearchExpression", request)%>'>
+								<input type="text" id="searchWord" name="searchWord" value="<%= UrlUtil.getRequestParameter(request, "searchWord")!=null?UrlUtil.getRequestParameter(request, "searchWord"):""%>" size="20" maxlength="256" alt='<%=WebappResources.getString("SearchExpression", request)%>'>
 							</td>
 							<td align="right">
 								<input type="submit" value='<%=WebappResources.getString("Go", request)%>' id="go" alt='<%=WebappResources.getString("Go", request)%>'>
