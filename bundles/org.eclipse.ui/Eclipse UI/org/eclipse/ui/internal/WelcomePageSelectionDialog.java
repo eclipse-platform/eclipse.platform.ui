@@ -65,6 +65,8 @@ public class WelcomePageSelectionDialog extends SelectionDialog {
 		setMessage(WorkbenchMessages.getString("WelcomePageSelectionDialog.message")); //$NON-NLS-1$
 		if (initialSelection >= 0 && initialSelection < features.length)
 			setInitialSelections(new Object[]{features[initialSelection]});
+		else 
+			setInitialSelections(new Object[0]);
 	}
 	
 	/* (non-Javadoc)
@@ -96,7 +98,7 @@ public class WelcomePageSelectionDialog extends SelectionDialog {
 				return element == null ? "" : ((AboutInfo)element).getFeatureLabel(); //$NON-NLS-1$
 			}
 		});
-
+	
 		// Set the content provider
 		SimpleListContentProvider cp = new SimpleListContentProvider();
 		cp.setElements(features);
@@ -104,7 +106,8 @@ public class WelcomePageSelectionDialog extends SelectionDialog {
 		listViewer.setInput(new Object()); // it is ignored but must be non-null
 		
 		// Set the initial selection
-		listViewer.setSelection(new StructuredSelection(getInitialSelections()), true);	
+		if (getInitialSelections() != null)
+			listViewer.setSelection(new StructuredSelection(getInitialSelections()), true);	
 		
 		// Add a selection change listener
 		listViewer.addSelectionChangedListener(new ISelectionChangedListener() {
