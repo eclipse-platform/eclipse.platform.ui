@@ -21,6 +21,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
@@ -30,8 +31,13 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProvider;
+import org.eclipse.team.internal.ccvs.core.client.Command;
+import org.eclipse.team.internal.ccvs.core.client.Import;
 import org.eclipse.team.internal.ccvs.core.client.Session;
+import org.eclipse.team.internal.ccvs.core.client.Command.GlobalOption;
+import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.internal.ccvs.core.resources.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
@@ -39,7 +45,6 @@ import org.eclipse.team.internal.ccvs.core.resources.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.LocalFile;
 import org.eclipse.team.internal.ccvs.core.resources.LocalResource;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
-import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
 import org.eclipse.team.internal.ccvs.core.resources.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.resources.Synchronizer;
 
@@ -219,7 +224,7 @@ public class EclipseTest extends EclipseWorkspaceTest {
 	protected IProject createProject(String prefix, String[] resources) throws CoreException, TeamException {
 		IProject project = getUniqueTestProject(prefix);
 		IResource[] result = buildResources(project, resources, true);
-		importAndCheckout(project);
+		shareProject(project);
 		assertValidCheckout(project);
 		return project;
 	}
@@ -448,15 +453,37 @@ public class EclipseTest extends EclipseWorkspaceTest {
 		return CVSTestSetup.repository;
 	}
 	protected void importProject(IProject project) throws TeamException {
-		((CVSProvider)CVSProviderPlugin.getProvider()).importProject(getRepository(), project, new Properties(), DEFAULT_MONITOR);
+		
+		// Create the root folder for the import operation
+		ICVSFolder root = (ICVSFolder)Session.getManagedResource(project);
+
+		// Perform the import
+		IStatus status;
+		Session s = new Session(getRepository(), root);
+		s.open(DEFAULT_MONITOR);
+		try {
+			status = Command.IMPORT.execute(s,
+				Command.NO_GLOBAL_OPTIONS,
+				new LocalOption[] {Import.makeMessageOption("Initial Import")},
+				new String[] { project.getName(), getRepository().getUsername(), "start" },
+				null,
+				DEFAULT_MONITOR);
+		} finally {
+			s.close();
+		}
+
+		if (status.getCode() == CVSException.SERVER_ERROR) {
+			throw new CVSServerException(status);
+		}
 	}
 	
-	protected void importAndCheckout(IProject project) throws TeamException {
-		((CVSProvider)CVSProviderPlugin.getProvider()).importProject(getRepository(), project, new Properties(), DEFAULT_MONITOR);
+	protected void shareProject(IProject project) throws TeamException {
+		importProject(project);
 		((CVSProvider)CVSProviderPlugin.getProvider()).checkout(getRepository(), project, null, null, DEFAULT_MONITOR);
 		// We need to checking because of the .vcm_meta file
 		getProvider(project).add(new IResource[] {project.getFile(".vcm_meta")}, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
 		getProvider(project).checkin(new IResource[] {project}, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
+
 	}
 }
 

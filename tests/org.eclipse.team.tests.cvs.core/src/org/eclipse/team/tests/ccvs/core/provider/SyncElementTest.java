@@ -734,4 +734,23 @@ public class SyncElementTest extends EclipseTest {
 						 			  IRemoteSyncElement.CONFLICTING | IRemoteSyncElement.CHANGE,
 						 			  IRemoteSyncElement.OUTGOING | IRemoteSyncElement.CHANGE });				 			  					 			  
 	 }
+	 
+	 public void testSyncOnBranch() throws TeamException, CoreException, IOException {
+	 	
+	 	// Create a test project and a branch
+		IProject project = createProject("testSyncOnBranch", new String[] { "file1.txt", "file2.txt", "file3.txt", "folder1/", "folder1/a.txt", "folder1/b.txt"});
+		CVSTag branch = new CVSTag("branch1", CVSTag.BRANCH);
+		getProvider(project).tag(new IResource[] {project}, IResource.DEPTH_INFINITE, branch, DEFAULT_MONITOR);
+		getProvider(project).update(new IResource[] {project}, IResource.DEPTH_INFINITE, branch, false, DEFAULT_MONITOR);
+
+		// Checkout and modify a copy
+		IProject copy = checkoutCopy(project, branch);
+		addResources(copy, new String[] {"addition.txt", "folderAddition/", "folderAddition/new.txt"}, true);
+		deleteResources(copy, new String[] {"folder1/b.txt"}, true);
+		changeResources(copy, new String[] {"file1.txt", "file2.txt"}, true);
+		
+		// Sync on the original and assert the result equals the copy
+		IRemoteSyncElement tree = getProvider(project).getRemoteSyncTree(project, null, DEFAULT_MONITOR);
+		assertEquals("Remote does not match local", (ICVSResource)tree.getRemote(), Session.getManagedResource(copy), false, false);
+	 }
 }
