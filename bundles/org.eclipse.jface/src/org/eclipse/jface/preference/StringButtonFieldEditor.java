@@ -139,4 +139,14 @@ public void setChangeButtonText(String text) {
 	if (changeButton != null)
 		changeButton.setText(text);
 }
+/* (non-Javadoc)
+ * @see org.eclipse.jface.preference.FieldEditor#setEnabled(boolean, org.eclipse.swt.widgets.Composite)
+ */
+public void setEnabled(boolean enabled, Composite parent) {
+	super.setEnabled(enabled, parent);
+	if (changeButton != null) {
+        changeButton.setEnabled(enabled);
+	}
+}
+
 }
