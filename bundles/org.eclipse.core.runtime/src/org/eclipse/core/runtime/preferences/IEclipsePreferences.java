@@ -275,6 +275,10 @@ public interface IEclipsePreferences extends Preferences {
 	 * Implementors must send the appropriate {@link NodeChangeEvent}
 	 * to listeners who are registered on this node's parent.
 	 * </p>
+	 * <p>
+	 * When this node is removed, its associated preference and node change 
+	 * listeners should be removed as well.
+	 * </p>
 	 * @throws BackingStoreException if there was a problem removing this node
 	 * @see org.osgi.service.prefs.Preferences#removeNode()
 	 * @see NodeChangeEvent
