@@ -80,6 +80,7 @@ public interface IWorkbenchConstants {
 
 	// Persistance tags.
 	public static final String TAG_ID = "id"; //$NON-NLS-1$
+	public static final String TAG_SECONDARY_ID = "secondaryId"; //$NON-NLS-1$
 	public static final String TAG_FOCUS = "focus"; //$NON-NLS-1$
 	public static final String TAG_EDITOR = "editor"; //$NON-NLS-1$
 	public static final String TAG_DELETED_EDITOR = "deletedEditor"; //$NON-NLS-1$

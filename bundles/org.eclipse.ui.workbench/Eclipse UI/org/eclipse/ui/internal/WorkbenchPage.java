@@ -1204,7 +1204,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 			IViewReference ref = refs[i];
 
 			//If the part is no longer reference then dispose it.
-			boolean exists = viewFactory.hasView(ref.getId());
+			boolean exists = viewFactory.hasView(ref.getId(), ref.getSecondaryId());
 			if (!exists) {
 				firePartClosed(ref);
 				activationList.remove(ref);
@@ -1768,7 +1768,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 		persp.hideView(ref);
 
 		// If the part is no longer reference then dispose it.
-		boolean exists = viewFactory.hasView(ref.getId());
+		boolean exists = viewFactory.hasView(ref.getId(), ref.getSecondaryId());
 		if (!exists) {
 			firePartClosed(ref);
 			disposePart(ref);
@@ -2760,7 +2760,13 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 			PerspectivePresentation pres = newPersp.getPresentation();
 			for (Iterator iter = set.iterator(); iter.hasNext();) {
 				PartPane pane = (PartPane) iter.next();
-				boolean isVisible = pres.isPartVisible(pane.getID());
+				String secondaryId = null;
+				if (pane instanceof ViewPane) {
+					ViewPane vp = (ViewPane) pane;
+					IViewReference ref = (IViewReference)vp.getPartReference();
+					secondaryId = ref.getSecondaryId();
+				}
+				boolean isVisible = pres.isPartVisible(pane.getID(), secondaryId);
 				pane.setVisible(isVisible);
 			}
 		} else {

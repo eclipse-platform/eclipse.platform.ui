@@ -53,12 +53,15 @@ public class FolderLayout implements IFolderLayout {
 			return;
 
 		// Get the view's label.
-		IViewRegistry reg = WorkbenchPlugin.getDefault().getViewRegistry();
-		IViewDescriptor desc = reg.find(viewId);
-		if (desc == null) {
-			// cannot safely open the dialog so log the problem
-			WorkbenchPlugin.log("Unable to find view label: " + viewId); //$NON-NLS-1$
-			return;
+		// @issue: why do we need to ask the registry for the view??
+		if (viewId.indexOf(PartPlaceholder.WILD_CARD) == -1) { //$NON-NLS-1$
+			IViewRegistry reg = WorkbenchPlugin.getDefault().getViewRegistry();
+			IViewDescriptor desc = reg.find(viewId);
+			if (desc == null) {
+				// cannot safely open the dialog so log the problem
+				WorkbenchPlugin.log("Unable to find view label: " + viewId); //$NON-NLS-1$
+				return;
+			}
 		}
 
 		// Create the placeholder.

@@ -305,4 +305,14 @@ abstract public class LayoutPart {
 protected ListenerList getPropertyListeners() {
 	return propertyListeners;
 }
+
+/**
+ * Returns an id representing this part, suitable for use in a placeholder.
+ * 
+ * @since 3.0
+ */
+public String getPlaceHolderId() {
+    return getID();
+}
+
 }

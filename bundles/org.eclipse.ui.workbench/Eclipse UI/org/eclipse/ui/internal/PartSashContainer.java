@@ -58,7 +58,20 @@ public abstract class PartSashContainer extends LayoutPart implements ILayoutCon
 		protected LayoutPart part;
 		protected LayoutPart relative;
 		protected int relationship;
-		protected float ratio;
+
+		/**
+		 * Preferred size for the left child (this would be the size, in pixels of the child
+		 * at the time the sash was last moved)
+		 */
+		protected int left;
+	
+		/**
+		 * Preferred size for the right child (this would be the size, in pixels of the child
+		 * at the time the sash was last moved)
+		 */
+		protected int right;
+		
+		protected float ratio;		
 	}
 	
 public PartSashContainer(String id,final WorkbenchPage page) {
@@ -200,6 +213,40 @@ private void addChild(RelationshipInfo info) {
 
 }
 /**
+ * Adds the child using ratio and position attributes
+ * from the specified placeholder without replacing
+ * the placeholder
+ * 
+ * FIXME: I believe there is a bug in computeRelation()
+ * when a part is positioned relative to the editorarea.
+ * We end up with a null relative and 0.0 for a ratio.
+ */
+void addChildForPlaceholder(LayoutPart child, LayoutPart placeholder) {
+	RelationshipInfo newRelationshipInfo = new RelationshipInfo();
+	newRelationshipInfo.part = child;
+	if(root != null) {
+		newRelationshipInfo.relationship = IPageLayout.RIGHT;
+		newRelationshipInfo.relative = root.findBottomRight();
+		newRelationshipInfo.left = 200;
+		newRelationshipInfo.right = 200;
+	}
+	
+	// find the relationship info for the placeholder
+	RelationshipInfo[] relationships = computeRelation();
+	for (int i = 0; i < relationships.length; i ++) {
+		RelationshipInfo info = relationships[i];
+		if (info.part == placeholder) {
+			newRelationshipInfo.left = info.left;
+			newRelationshipInfo.right = info.right;
+			newRelationshipInfo.relationship = info.relationship;
+			newRelationshipInfo.relative = info.relative;
+		}
+	}
+	
+	addChild(newRelationshipInfo);	
+	root.updateSashes(parent);
+	resizeSashes(parent.getClientArea());
+}/**
  * See ILayoutContainer#allowBorder
  */
 public boolean allowsBorder() {
