@@ -218,13 +218,17 @@ public class BasicStackList extends AbstractTableInformationControl {
     protected void gotoSelectedElement() {
         Object selectedElement = getSelectedElement();
 
+        DefaultPartPresentation basicStackPresentation = null;
         if (selectedElement != null) {
-        	DefaultPartPresentation basicStackPresentation = (DefaultPartPresentation) getTableViewer()
-                    .getInput();
-            basicStackPresentation.setSelection((CTabItem) selectedElement);
+        	basicStackPresentation = (DefaultPartPresentation) getTableViewer()
+                    .getInput();            
         }
-        
+        //close the shell
         dispose();
+
+        //open the part, if one was selected
+        if (basicStackPresentation != null)
+            basicStackPresentation.setSelection((CTabItem) selectedElement);
     }
     
     protected boolean deleteSelectedElements() {
