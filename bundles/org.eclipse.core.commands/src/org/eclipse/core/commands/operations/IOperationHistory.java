@@ -143,10 +143,6 @@ public interface IOperationHistory {
 	 * This method has no effect if the caller has not previously called
 	 * {@link #openOperation}.
 	 * </p>
-	 * <p>
-	 * EXPERIMENTAL - this protocol is experimental and may change signficantly
-	 * or be removed before the final release.
-	 * </p>
 	 * 
 	 * @param operationOK -
 	 *            <code>true</code> if the operation successfully completed.
