@@ -477,29 +477,40 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	private void collapse(int offset, int length, boolean fireRedraw) throws BadLocationException {
 		ProjectionDocument projection= null;
 		
-		IDocument visibleDocument= getVisibleDocument();
-		if (visibleDocument instanceof ProjectionDocument)
-			projection= (ProjectionDocument) visibleDocument;
-		else {
-			IDocument master= getDocument();
-			IDocument slave= createSlaveDocument(getDocument());
-			if (slave instanceof ProjectionDocument) {
-				projection= (ProjectionDocument) slave;
-				addMasterDocumentRange(projection, 0, master.getLength());
-				replaceVisibleDocument(projection);
+		StyledText textWidget= getTextWidget();
+		try {
+			
+			if (textWidget != null && !textWidget.isDisposed())
+				textWidget.setRedraw(false);
+			
+			IDocument visibleDocument= getVisibleDocument();
+			if (visibleDocument instanceof ProjectionDocument)
+				projection= (ProjectionDocument) visibleDocument;
+			else {
+				IDocument master= getDocument();
+				IDocument slave= createSlaveDocument(getDocument());
+				if (slave instanceof ProjectionDocument) {
+					projection= (ProjectionDocument) slave;
+					addMasterDocumentRange(projection, 0, master.getLength());
+					replaceVisibleDocument(projection);
+				}
 			}
+			
+			if (projection != null)
+				removeMasterDocumentRange(projection, offset, length);
+				
+		} finally {
+			if (textWidget != null && !textWidget.isDisposed())
+				textWidget.setRedraw(true);
 		}
 		
-		if (projection != null) {
-			removeMasterDocumentRange(projection, offset, length);
-			if (fireRedraw) {
-				// repaint line above
-				IDocument document= getDocument();
-				int line= document.getLineOfOffset(offset);
-				if (line > 0) {
-					IRegion info= document.getLineInformation(line - 1);
-					invalidateTextPresentation(info.getOffset(), info.getLength());
-				}
+		if (projection != null && fireRedraw) {
+			// repaint line above
+			IDocument document= getDocument();
+			int line= document.getLineOfOffset(offset);
+			if (line > 0) {
+				IRegion info= document.getLineInformation(line - 1);
+				invalidateTextPresentation(info.getOffset(), info.getLength());
 			}
 		}
 	}
