@@ -8,6 +8,7 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.*;
@@ -23,6 +24,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.ResourceTreeAndListGroup;
 import org.eclipse.ui.internal.dialogs.TypeFilteringDialog;
 import org.eclipse.ui.model.*;
+
 import java.util.*;
 
 /**
@@ -269,6 +271,19 @@ protected IPath getResourcePath() {
 protected java.util.List getSelectedResources() {
 	return this.selectionGroup.getAllCheckedListItems();
 }
+
+/**
+ * Returns this page's list of currently-specified resources to be 
+ * imported. Return null if the monitor is cancelled.
+ *
+ * @return a list of resources currently selected 
+ * for export (element type: <code>IResource</code>)
+ * or null if the monitor is cancelled.
+ */
+protected java.util.List getSelectedResources(IProgressMonitor monitor) {
+	return this.selectionGroup.getAllCheckedListItems(monitor);
+}
+
 /**
  * Returns the container resource specified in the container name entry field,
  * or <code>null</code> if such a container does not exist in the workbench.
