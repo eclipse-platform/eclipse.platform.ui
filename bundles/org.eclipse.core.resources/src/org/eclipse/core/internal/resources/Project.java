@@ -28,11 +28,6 @@ public void basicDelete(MultiStatus status) throws CoreException {
 	// project from the tree.
 	IPath path = getLocation();
 	deleteResource(false, status);
-	// Delete the contents directory for the project. Note that this is a garbage
-	// collection action only, and the directory will not get deleted if it still
-	// contains files.
-	if (path != null)
-		path.toFile().delete();
 	workspace.getMetaArea().delete(this);
 	clearHistory(null);
 }
