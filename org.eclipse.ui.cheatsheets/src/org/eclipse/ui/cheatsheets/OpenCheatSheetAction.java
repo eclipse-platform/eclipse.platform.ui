@@ -21,8 +21,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin;
 import org.eclipse.ui.internal.cheatsheets.ICheatSheetResource;
-import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetElement;
-import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetRegistryReader;
 import org.eclipse.ui.internal.cheatsheets.views.CheatSheetView;
 
 /**
@@ -35,8 +33,9 @@ import org.eclipse.ui.internal.cheatsheets.views.CheatSheetView;
  * @since 3.0
  */
 public final class OpenCheatSheetAction extends Action {
-	CheatSheetElement element;
-	URL csURL;
+	private String id;
+	private String name;
+	private URL url;
 
 	/**
 	 * Creates an action that opens the cheat sheet with the given id.
@@ -52,36 +51,35 @@ public final class OpenCheatSheetAction extends Action {
 		if (id == null) {
 			throw new IllegalArgumentException();
 		}
-		this.element = CheatSheetRegistryReader.getInstance().findCheatSheet(id);
+		this.id = id;
 	}
 	
 	/**
 	 * Creates an action that opens the cheat sheet with the 
 	 * given cheat sheet content file.
 	 * 
-	 * @param url URL of the cheat sheet content file
-	 * @param name the name to give this cheat sheet; 
-	 * <code>null</code> is equivalent to the empty string
 	 * @param id the id to give this cheat sheet;
 	 * <code>null</code> is equivalent to the empty string
+	 * @param name the name to give this cheat sheet; 
+	 * <code>null</code> is equivalent to the empty string
+	 * @param url URL of the cheat sheet content file
 	 * @exception IllegalArgumentException if <code>url</code>
 	 * is <code>null</code>
 	 */
-	public OpenCheatSheetAction(URL url, String name, String id){
+	public OpenCheatSheetAction(String id, String name, URL url) {
 		if (url == null) {
 			throw new IllegalArgumentException();
 		}
-		this.csURL = url;
 		if (name == null) {
 			name = ""; //$NON-NLS-1$
 		}
-		element = new CheatSheetElement(name);
 		if (id == null) {
 			id = ""; //$NON-NLS-1$
 		}
-		element.setID(id);
-		
-		element.setContentFile(url.toString());
+
+		this.id = id;
+		this.name = name;
+		this.url = url;
 	}
 
 	/* (non-javadoc)
@@ -96,7 +94,7 @@ public final class OpenCheatSheetAction extends Action {
 		/* TODO (lorne) - action fails silently when id does not correspond to a known cheatsheet
 		 * it would better to report some kind of error in this case.
 		 */
-		if (element == null) {
+		if (id == null) {
 			return;
 		}
 
@@ -107,7 +105,11 @@ public final class OpenCheatSheetAction extends Action {
 		CheatSheetView newview = (CheatSheetView) page.findView(ICheatSheetResource.CHEAT_SHEET_VIEW_ID);
 		if (newview != null) {
 			// TODO (lorne) - won't setContent clobber a cheat sheet execution already in progress?
-			newview.setContent(element);
+			if(url == null) {
+				newview.setInput(id);
+			} else {
+				newview.setInput(id, name, url);
+			}
 			page.bringToTop(newview);
 		} else {
 			try {
@@ -119,7 +121,11 @@ public final class OpenCheatSheetAction extends Action {
 //				realpage.addFastView(viewref);
 				CheatSheetView view = (CheatSheetView)page.showView(ICheatSheetResource.CHEAT_SHEET_VIEW_ID);
 				page.activate(view);
-				view.setContent(element);
+				if(url == null) {
+					view.setInput(id);
+				} else {
+					view.setInput(id, name, url);
+				}
 			} catch (PartInitException pie) {
 				String message = CheatSheetPlugin.getResourceString(ICheatSheetResource.LAUNCH_SHEET_ERROR);
 				IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, pie);
@@ -128,8 +134,5 @@ public final class OpenCheatSheetAction extends Action {
 				return;
 			}
 		}
-
-		// Update most recently used cheat sheets list.
-		CheatSheetPlugin.getPlugin().getCheatSheetHistory().add(element);
 	}
 }
