@@ -19,9 +19,7 @@
       <import plugin="org.eclipse.compare"/>
    </requires>
 
-
    <extension-point id="configurationWizards" name="%configurationWizards" schema="schema/configurationWizards.exsd"/>
-   <extension-point id="subscriberMenus" name="%subscriberMenus"/>
    <extension-point id="synchronizeParticipants" name="%synchronizeParticipants" schema="schema/synchronizeParticipants.exsd"/>
 
 <!-- **************** PREFERENCES ******************* -->
@@ -187,7 +185,7 @@
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension
-            targetID="org.eclipse.team.internal.ui.sync.views.TeamSynchronizingPerspective">
+            targetID="org.eclipse.team.ui.TeamSynchronizingPerspective">
          <showInPart
                id="org.eclipse.ui.views.ResourceNavigator">
          </showInPart>
