@@ -262,10 +262,17 @@ public class SyncFileWriter {
 	 */
 	private static IFolder createCVSSubdirectory(IContainer folder) throws CVSException {
 		try {
-			IFolder cvsSubDir = getCVSSubdirectory(folder);
+			final IFolder cvsSubDir = getCVSSubdirectory(folder);
 			if (! cvsSubDir.exists()) {
-				cvsSubDir.create(false /*don't force*/, true /*make local*/, null);
-				cvsSubDir.setTeamPrivateMember(true);
+				// important to have both the folder creation and setting of team-private in the
+				// same runnable so that the team-private flag is set before other delta listeners 
+				// sees the CVS folder creation.
+				ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
+					public void run(IProgressMonitor monitor) throws CoreException {
+						cvsSubDir.create(false /*don't force*/, true /*make local*/, null);
+						cvsSubDir.setTeamPrivateMember(true);
+					} 
+				}, null);
 			}
 			return cvsSubDir;
 		} catch (CoreException e) {
