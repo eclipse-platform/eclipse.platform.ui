@@ -8,6 +8,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.jface.action.*;
@@ -341,27 +342,55 @@ protected Control getToolBarControl() {
 /* (non-Javadoc)
  * Method declared on IRunnableContext.
  */
-public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
-	StatusLineManager mgr = getStatusLineManager();
+public void run(final boolean fork, boolean cancelable, final IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
+	final StatusLineManager mgr = getStatusLineManager();
 	if (mgr == null) {
 		runnable.run(new NullProgressMonitor());
+		return;
 	}
-	Control contents = getContents();
+	final Control contents = getContents();
+	final Display display = contents.getDisplay();
 	boolean contentsWasEnabled = contents.isEnabled();
 	Menu menuBar = getMenuBarManager().getMenu();
 	boolean menuBarWasEnabled = menuBar.isEnabled();
 	boolean cancelWasEnabled = mgr.isCancelEnabled();
+	Control toolbarControl = getToolBarControl();
+	boolean toolbarWasEnabled = false;
+	if (toolbarControl != null) toolbarWasEnabled = toolbarControl.isEnabled();
+	Control currentFocus = display.getFocusControl();
 	try {
 		contents.setEnabled(false);
 		menuBar.setEnabled(false);
+		if (toolbarControl != null) toolbarControl.setEnabled(false);
 		mgr.setCancelEnabled(cancelable);
-		ModalContext.run(runnable, fork, mgr.getProgressMonitor(), contents.getDisplay());
+		final Exception[] holder = new Exception[1];
+		BusyIndicator.showWhile(display, new Runnable() {
+			public void run() {
+				try {
+					ModalContext.run(runnable, fork, mgr.getProgressMonitor(), display);
+				} catch (InvocationTargetException ite) {
+					holder[0] = ite;
+				} catch (InterruptedException ie) {
+					holder[0] = ie;
+				}
+			}});
+
+		if (holder[0] != null) {
+			if (holder[0] instanceof InvocationTargetException) {
+				throw (InvocationTargetException) holder[0];
+			} else if (holder[0] instanceof InterruptedException) {
+				throw (InterruptedException) holder[0];
+			}
+		}
 	} finally {
 		if (!contents.isDisposed())
 			contents.setEnabled(contentsWasEnabled);
 		if (!menuBar.isDisposed())
 			menuBar.setEnabled(menuBarWasEnabled);
+		if (toolbarControl != null && !toolbarControl.isDisposed())
+			toolbarControl.setEnabled(toolbarWasEnabled);
 		mgr.setCancelEnabled(cancelWasEnabled);
+		if (currentFocus != null) currentFocus.setFocus();
 	}
 }
 /**

@@ -21,6 +21,7 @@ import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.actions.OpenNewWindowMenu;
 import org.eclipse.ui.actions.OpenNewPageMenu;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.dialogs.*;
@@ -31,6 +32,7 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.events.*;
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.List;
 
@@ -1048,6 +1050,19 @@ public void restoreState(IMemento memento) {
 	if (newActivePage == null)
 		newActivePage = (IWorkbenchPage)pageList.getNextActive();
 	setActivePage(newActivePage);
+}
+/* (non-Javadoc)
+ * Method declared on IRunnableContext.
+ */
+public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
+	Control shortcutBarControl = shortcutBar.getControl();
+	boolean shortcutbarWasEnabled = shortcutBarControl.isEnabled();
+	try {
+		shortcutBarControl.setEnabled(false);
+		super.run(fork, cancelable, runnable);
+	} finally {
+		shortcutBarControl.setEnabled(shortcutbarWasEnabled);
+	}
 }
 /**
  * Save all of the pages.  Returns true if the operation succeeded.

@@ -10,10 +10,12 @@ import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.SafeRunnable;
+import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.program.Program;
@@ -833,10 +835,23 @@ public class EditorManager {
 	 * Runs a progress monitor operation.
 	 * Returns true if success, false if cancelled.
 	 */
-	private static boolean runProgressMonitorOperation(String opName, IRunnableWithProgress progressOp,IWorkbenchWindow window) {
-		ProgressMonitorDialog dlg = new ProgressMonitorDialog(window.getShell());
+	private static boolean runProgressMonitorOperation(String opName, final IRunnableWithProgress progressOp,IWorkbenchWindow window) {
+		IRunnableContext ctx;
+		if (window instanceof ApplicationWindow) {
+			ctx = window;
+		} else {
+			ctx = new ProgressMonitorDialog(window.getShell());
+		}
+		final boolean[] wasCanceled = new boolean[1];
+		IRunnableWithProgress runnable = new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+				progressOp.run(monitor);
+				wasCanceled[0] = monitor.isCanceled();
+			}
+		};
+
 		try {
-			dlg.run(false, true, progressOp);
+			ctx.run(false, true, runnable);
 		} catch (InvocationTargetException e) {
 			String title = WorkbenchMessages.format("EditorManager.operationFailed", new Object[] { opName }); //$NON-NLS-1$
 			Throwable targetExc = e.getTargetException();
@@ -846,7 +861,7 @@ public class EditorManager {
 		} catch (InterruptedException e) {
 			// Ignore.  The user pressed cancel.
 		}
-		return !dlg.getProgressMonitor().isCanceled();
+		return !wasCanceled[0];
 	}
 	/**
 	 * Save all of the editors in the workbench.  
