@@ -1,7 +1,6 @@
 package org.eclipse.ui.internal.progress;
 
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -51,6 +50,8 @@ import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.internal.misc.Assert;
 
 public class NewProgressViewer extends ProgressTreeViewer implements FinishedJobs.KeptJobsListener {
+	
+	static final boolean DEBUG= false;
     
 	static final String PROPERTY_PREFIX= "org.eclipse.ui.workbench.progress"; //$NON-NLS-1$
 
@@ -769,12 +770,10 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 		normalCursor= new Cursor(display, SWT.CURSOR_ARROW);
 
 		boolean carbon= "carbon".equals(SWT.getPlatform()); //$NON-NLS-1$
+		int shift= carbon ? -25 : -10; // Mac has different Gamma value
 		lightColor= display.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
-		if (carbon)
-			darkColor= new Color(display, 230, 230, 230);
-		else
-			darkColor= new Color(display, 245, 245, 245);
-		taskColor= new Color(display, 120, 120, 120);
+		darkColor= new Color(display, lightColor.getRed()+shift, lightColor.getGreen()+shift, lightColor.getBlue()+shift);
+		taskColor= display.getSystemColor(SWT.COLOR_LIST_FOREGROUND);
 		selectedColor= display.getSystemColor(SWT.COLOR_LIST_SELECTION);
 		linkColor= display.getSystemColor(SWT.COLOR_DARK_BLUE);
 		linkColor2= display.getSystemColor(SWT.COLOR_BLUE);
@@ -803,14 +802,12 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
         FinishedJobs.getInstance().removeListener(this);
     }
  
-    // need to implement
-    
     public Control getControl() {
         return scroller;
     }
 
  	public void add(Object parentElement, Object[] elements) {
-	    //System.err.println("add");
+	    if (DEBUG) System.err.println("add");
  	    if (list.isDisposed())
  	        return;
  	    JobTreeItem lastAdded= null;
@@ -824,7 +821,7 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 	public void remove(Object[] elements) {
  	    if (list.isDisposed())
  	        return;
-	    //System.err.println("remove");
+ 	   if (DEBUG) System.err.println("NewProgressViewr.remove");
 		boolean changed= false;
 		for (int i= 0; i < elements.length; i++) {
 			JobTreeItem ji= findJobItem(elements[i], false);
@@ -846,9 +843,9 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 	public void refresh(boolean updateLabels) {
 	    if (list.isDisposed())
 	        return;
-	    //System.err.println("refreshAll");
+	    if (DEBUG) System.err.println("refreshAll");
 		boolean changed= false;
-		boolean added= false;
+		boolean countChanged= false;
 		JobTreeItem lastAdded= null;
 		
 		Object[] roots= contentProviderGetRoots(getInput());
@@ -860,10 +857,12 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 		Control[] children= list.getChildren();
 		for (int i= 0; i < children.length; i++) {
 			JobItem ji= (JobItem)children[i];
-			if (modelJobs.contains(ji.jobTreeElement))
+			if (modelJobs.contains(ji.jobTreeElement)) {
+				if (DEBUG) System.err.println("  refresh");
 				changed |= ji.refresh();
-			else {
-				added= true;
+			} else {
+				if (DEBUG) System.err.println("  remove");
+				countChanged= true;
 				changed |= ji.remove();
 			}
 		}
@@ -872,12 +871,23 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 		for (int i= 0; i < roots.length; i++) {
 			Object element= roots[i];
 			if (findJobItem(element, false) == null) {
+				if (DEBUG) System.err.println("  added");
 			    lastAdded= createItem(element);
-				changed= added= true;
+				changed= countChanged= true;
 			}
 		}
+	    // now add kept finished jobs
+		JobInfo[] infos= FinishedJobs.getInstance().getJobInfos();
+		for (int i= 0; i < infos.length; i++) {
+			Object element= infos[i];
+			if (findJobItem(element, false) == null) {
+				if (DEBUG) System.err.println("  added2");
+			    lastAdded= createItem(element);
+				changed= countChanged= true;
+			}			
+		}
 		
-		relayout(changed, added);
+		relayout(changed, countChanged);
 		if (lastAdded != null)
 			reveal(lastAdded);
 	}
@@ -995,23 +1005,17 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 	}
 
 	Object[] contentProviderGetRoots(Object parent) {
-	    HashSet roots= new HashSet();
 		IContentProvider provider = getContentProvider();
-		if (provider instanceof ITreeContentProvider) {
-			Object[] r= ((ITreeContentProvider)provider).getElements(parent);
-			for (int i= 0; i < r.length; i++)
-			    roots.add(r[i]);
-		}
-		JobInfo[] infos= FinishedJobs.getInstance().getJobInfos();
-		for (int i= 0; i < infos.length; i++)
-		    roots.add(infos[i]);
-		return roots.toArray();
+		if (provider instanceof ITreeContentProvider)
+			return ((ITreeContentProvider)provider).getElements(parent);
+		return new Object[0];
 	}
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.progress.NewKeptJobs.KeptJobsListener#added(org.eclipse.ui.internal.progress.JobInfo)
      */
     public void added(JobInfo info) {
+    	// we should not have to do anything here
     }
 
     /* (non-Javadoc)
@@ -1023,6 +1027,13 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 			ji.kill(true, false);
     }
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.progress.FinishedJobs.KeptJobsListener#infoVisited()
+	 */
+	public void infoVisited() {
+    	// we should not have to do anything here
+	}
+	
 	////// SelectionProvider
 
     public ISelection getSelection() {
@@ -1110,5 +1121,4 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 	
 	protected void internalRefresh(Object element, boolean updateLabels) {
 	}
-
 }

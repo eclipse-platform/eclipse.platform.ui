@@ -11,6 +11,7 @@ class FinishedJobs {
     static interface KeptJobsListener {
         void added(JobInfo info);
         void removed(JobInfo info);
+        void infoVisited();
     }
 
     private static FinishedJobs theInstance;
@@ -74,7 +75,7 @@ class FinishedJobs {
     void add(JobInfo info) {
         if (!keptjobinfos.contains(info)) {
             keptjobinfos.add(info);
-            System.err.println("FinishedJobs: added job");
+            if (NewProgressViewer.DEBUG) System.err.println("FinishedJobs: added job");
             Object l[]= listeners.getListeners();
 			for (int i= 0; i < l.length; i++) {
 			    KeptJobsListener jv= (KeptJobsListener) l[i];
@@ -85,7 +86,7 @@ class FinishedJobs {
 
     void remove(KeptJobsListener sender, JobInfo info) {
         if (keptjobinfos.remove(info)) {
-            System.err.println("FinishedJobs: sucessfully removed job");
+        	if (NewProgressViewer.DEBUG) System.err.println("FinishedJobs: sucessfully removed job");
             Object l[]= listeners.getListeners();
 			for (int i= 0; i < l.length; i++) {
 			    KeptJobsListener jv= (KeptJobsListener) l[i];
@@ -95,6 +96,15 @@ class FinishedJobs {
         }
     }
     
+    void refresh() {
+    	if (NewProgressViewer.DEBUG) System.err.println("FinishedJobs: refresh");
+        Object l[]= listeners.getListeners();
+		for (int i= 0; i < l.length; i++) {
+		    KeptJobsListener jv= (KeptJobsListener) l[i];
+		    jv.infoVisited();
+		}
+    }
+
     JobInfo[] getJobInfos() {
         return (JobInfo[]) keptjobinfos.toArray(new JobInfo[keptjobinfos.size()]);
     }

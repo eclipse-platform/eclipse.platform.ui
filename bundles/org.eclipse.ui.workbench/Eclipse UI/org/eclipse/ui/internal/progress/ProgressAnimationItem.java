@@ -155,7 +155,7 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 	}
 
     public void removed(JobInfo info) {
-        // nothing to do here
+    	infoVisited();
     }
     
     public void added(JobInfo info) {
@@ -179,5 +179,14 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 	        else
 	            toolButton.setImage(okImage);
 	    }
+	}
+
+	public void infoVisited() {
+	    final Display display= Display.getDefault();
+	    display.asyncExec(new Runnable() {
+	        public void run() {
+	        	toolButton.setImage(noneImage);
+	        }
+	    });
 	}
 }
