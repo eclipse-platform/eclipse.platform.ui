@@ -10,14 +10,40 @@
  *******************************************************************************/
 package org.eclipse.jface.dialogs;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
-import javax.xml.parsers.*;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.FactoryConfigurationError;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
-import org.apache.xerces.dom.DocumentImpl;
-import org.apache.xml.serialize.*;
-import org.w3c.dom.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -81,8 +107,8 @@ public DialogSettings(String sectionName) {
 /* (non-Javadoc)
  * Method declared on IDialogSettings.
  */
-public IDialogSettings addNewSection(String name) {
-	DialogSettings section = new DialogSettings(name);
+public IDialogSettings addNewSection(String sectionName) {
+	DialogSettings section = new DialogSettings(sectionName);
 	addSection(section);
 	return section;
 }
@@ -183,8 +209,7 @@ public IDialogSettings[] getSections() {
 public void load(Reader r) {
 	Document document = null;
 	try {
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder parser = factory.newDocumentBuilder();
+		DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 //		parser.setProcessNamespace(true);
 		document = parser.parse(new InputSource(r));
 		
@@ -297,12 +322,27 @@ public void put(String key,boolean value) {
 /* (non-Javadoc)
  * Method declared on IDialogSettings.
  */
-public void save(Writer writer) throws IOException {
-	Document document = new DocumentImpl();
-	save(document, (Node) document);
-	OutputFormat format = new OutputFormat();
-	Serializer serializer = SerializerFactory.getSerializerFactory("xml").makeSerializer(writer, format);//$NON-NLS-1$
-	serializer.asDOMSerializer().serialize(document);
+public void save(Writer writer) throws IOException {    
+    try {
+        Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+        save(document, document);
+        Result result = new StreamResult(writer);        
+        Source source = new DOMSource(document);
+
+        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$            
+        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8"); //$NON-NLS-1$
+        transformer.transform(source, result);            
+    }
+    catch (TransformerConfigurationException e) {
+        throw (IOException) (new IOException().initCause(e));
+    }
+    catch (TransformerException e) {
+        throw (IOException) (new IOException().initCause(e));
+    }        
+    catch (ParserConfigurationException e) {
+        throw (IOException) (new IOException().initCause(e));
+    }
 }
 /* (non-Javadoc)
  * Method declared on IDialogSettings.
