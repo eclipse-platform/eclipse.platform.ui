@@ -112,7 +112,10 @@ the other representing an installed feature type.
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         &lt;br&gt;&lt;br&gt;&lt;a href="hglegal.htm"&gt;&lt;img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. and others 2000, 2002.  All Rights Reserved." BORDER=0&gt;&lt;/a&gt;
+         &lt;br&gt;
+&lt;br&gt;&lt;a href="hglegal.htm"&gt;&lt;img SRC="ngibmcpy.gif" 
+ALT="Copyright IBM Corp. and others 2000, 2002.  All Rights Reserved." 
+BORDER=0&gt;&lt;/a&gt;
       </documentation>
    </annotation>
 

@@ -9,7 +9,7 @@
 org.eclipse.update.core.installHandlers<H2>Description</H2>
 Extension point for registering global install handlers. Global
 install handlers can be referenced by features 
-(using the <code>&ltfeature&gt; &lt;install-handler&gt;</code>
+(using the <code>&lt;feature&gt; &lt;install-handler&gt;</code>
 tags) without having to include a copy of the handler code as
 part of the downloadable feature.<H2>Markup</H2>
 <p><samp>&nbsp;&nbsp; &lt;!ELEMENT extension (install-handler+)&gt;</samp>
@@ -44,6 +44,8 @@ The following is an example of new global install handler registration.
 Registered install handler classes must implement 
 <code><b>org.eclipse.update.core.IInstallHandler</b></code> interface.
 Implementers should extend base class <code><b>org.eclipse.update.core.BaseInstallHandler</b></code>.<H2>Supplied Implementation</H2>
-The platform supplies a simple install handler that is registered as <code><b>org.eclipse.update.core.DefaultInstallHandler</b></code>. If used, it will copy any non-plug-in data entries provided with the feature into the feature installation directory.<br><br><a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright
-IBM Corp. and others 2000, 2002.  All Rights Reserved." BORDER=0></a></BODY>
+The platform supplies a simple install handler that is registered as <code><b>org.eclipse.update.core.DefaultInstallHandler</b></code>. If used, it will copy any non-plug-in data entries provided with the feature into the feature installation directory.<br>
+<br><a href="hglegal.htm"><img SRC="ngibmcpy.gif" 
+ALT="Copyright IBM Corp. and others 2000, 2002.  All Rights Reserved."
+BORDER=0></a></BODY>
 </HTML>
