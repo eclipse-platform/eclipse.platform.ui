@@ -196,7 +196,7 @@ public final class ResourcesPlugin extends Plugin {
 	 * auto-refresh.
 	 * @since 3.0
 	 */
-	public static final String PREF_REFRESH_POLLING_DELAY = "refresh.delay";	
+	public static final String PREF_REFRESH_POLLING_DELAY = "refresh.delay";	 //$NON-NLS-1$
 
 	/**
 	 * The single instance of this plug-in runtime class.
