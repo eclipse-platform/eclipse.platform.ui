@@ -30,6 +30,7 @@ import org.eclipse.ant.internal.ui.editor.outline.XMLCore;
 import org.eclipse.ant.internal.ui.launchConfigurations.IAntLaunchConfigurationConstants;
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.ant.tests.ui.editor.support.TestLocationProvider;
+import org.eclipse.ant.tests.ui.editor.support.TestProblemRequestor;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -130,7 +131,7 @@ public abstract class AbstractAntUITest extends TestCase {
 		
 	protected AntModel getAntModel(String fileName) {
 		currentDocument= getDocument(fileName);
-		AntModel model= new AntModel(XMLCore.getDefault(), currentDocument, null, new TestLocationProvider(getBuildFile(fileName)));
+		AntModel model= new AntModel(XMLCore.getDefault(), currentDocument, new TestProblemRequestor(), new TestLocationProvider(getBuildFile(fileName)));
 		model.reconcile(null);
 		return model;
 	}
