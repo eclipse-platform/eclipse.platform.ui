@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?> 
 <welcomePage 
-	title="Eclipse Platform">
+	title="Eclipse Platform"
+	format="nowrap">
 	<intro>This page will help familiarize you with the Eclipse Workbench.
 To get started, read the sections below and click on the related links. </intro>
 
