@@ -11,8 +11,10 @@
 package org.eclipse.debug.core.sourcelookup.containers;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
+import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 
 /**
  * Archive source container for an archive in the workspace. Returns instances
@@ -23,9 +25,12 @@ import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
  * </p>
  * @since 3.0
  */
-public class ArchiveSourceContainer extends ExternalArchiveSourceContainer {
+public class ArchiveSourceContainer extends AbstractSourceContainer {
 	
 	private IFile fFile;
+	private boolean fDetectRoot; 
+	private ExternalArchiveSourceContainer fDelegateContainer;
+	
 	/**
 	 * Unique identifier for the archive source container type
 	 * (value <code>org.eclipse.debug.core.containerType.archive</code>).
@@ -48,8 +53,11 @@ public class ArchiveSourceContainer extends ExternalArchiveSourceContainer {
 	 *   matching file names as suffixes to the entries in the archive. 
 	 */
 	public ArchiveSourceContainer(IFile archive, boolean detectRootPath) {
-		super(archive.getLocation().toOSString(), detectRootPath);
 		fFile = archive;
+		fDetectRoot = detectRootPath;
+		if (archive.exists() && archive.getLocation() != null) {
+		    fDelegateContainer = new ExternalArchiveSourceContainer(archive.getLocation().toOSString(), detectRootPath);
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -89,4 +97,55 @@ public class ArchiveSourceContainer extends ExternalArchiveSourceContainer {
 	public int hashCode() {
 		return getName().hashCode();
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#findSourceElements(java.lang.String)
+     */
+    public Object[] findSourceElements(String name) throws CoreException {
+        ExternalArchiveSourceContainer container = getDelegateContainer();
+        if (container != null) {
+            return container.findSourceElements(name);
+        }
+        return EMPTY;
+    }
+    
+    /**
+     * Returns the underlying external archive source container.
+     * 
+     * @return underlying external archive source container
+     * @since 3.0.1.1
+     */
+    private ExternalArchiveSourceContainer getDelegateContainer() {
+        return fDelegateContainer;
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#init(org.eclipse.debug.core.sourcelookup.ISourceLookupDirector)
+     */
+    public void init(ISourceLookupDirector director) {
+        super.init(director);
+        if (fDelegateContainer != null) {
+            fDelegateContainer.init(director);
+        }
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#dispose()
+     */
+    public void dispose() {
+        super.dispose();
+        if (fDelegateContainer != null) {
+            fDelegateContainer.dispose();
+        }
+    }
+    
+	/**
+	 * Returns whether root paths are automatically detected in this
+	 * archive source container.
+	 *  
+	 * @return whether root paths are automatically detected in this
+	 * archive source container
+	 * @since 3.0.1.1
+	 */
+	public boolean isDetectRoot() {
+		return fDetectRoot;
+	}    
 }
