@@ -90,17 +90,18 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 //	private static final int LIST_HEIGHT = 200;
 
 	// labels
-	private static final String NEW_PROJECT_PERSPECTIVE_TITLE = WorkbenchMessages.getString("WorkbenchPreference.projectOptionsTitle"); //$NON-NLS-1$
+	private final String PROJECT_SWITCH_PERSP_MODE_TITLE = WorkbenchMessages.getString("ProjectSwitchPerspectiveMode.optionsTitle"); //$NON-NLS-1$
+	private final String PSPM_ALWAYS_TEXT = WorkbenchMessages.getString("ProjectSwitchPerspectiveMode.always"); //$NON-NLS-1$
+	private final String PSPM_NEVER_TEXT = WorkbenchMessages.getString("ProjectSwitchPerspectiveMode.never"); //$NON-NLS-1$
+	private final String PSPM_PROMPT_TEXT = WorkbenchMessages.getString("ProjectSwitchPerspectiveMode.prompt"); //$NON-NLS-1$
 
-	private static final String SWITCH_PERSPECTIVES_LABEL = WorkbenchMessages.getString("WorkbenchPreference.switch"); //$NON-NLS-1$
+	private final String OVM_TITLE = WorkbenchMessages.getString("OpenViewMode.title"); //$NON-NLS-1$
+	private final String OVM_EMBED = WorkbenchMessages.getString("OpenViewMode.embed"); //$NON-NLS-1$
+	private final String OVM_FAST = WorkbenchMessages.getString("OpenViewMode.fast"); //$NON-NLS-1$
 
-	private static final String OVM_TITLE = WorkbenchMessages.getString("OpenViewMode.title"); //$NON-NLS-1$
-	private static final String OVM_EMBED = WorkbenchMessages.getString("OpenViewMode.embed"); //$NON-NLS-1$
-	private static final String OVM_FAST = WorkbenchMessages.getString("OpenViewMode.fast"); //$NON-NLS-1$
-
-	private static final String OPM_TITLE = WorkbenchMessages.getString("OpenPerspectiveMode.optionsTitle"); //$NON-NLS-1$
-	private static final String OPM_SAME_WINDOW = WorkbenchMessages.getString("OpenPerspectiveMode.sameWindow"); //$NON-NLS-1$
-	private static final String OPM_NEW_WINDOW = WorkbenchMessages.getString("OpenPerspectiveMode.newWindow"); //$NON-NLS-1$
+	private final String OPM_TITLE = WorkbenchMessages.getString("OpenPerspectiveMode.optionsTitle"); //$NON-NLS-1$
+	private final String OPM_SAME_WINDOW = WorkbenchMessages.getString("OpenPerspectiveMode.sameWindow"); //$NON-NLS-1$
+	private final String OPM_NEW_WINDOW = WorkbenchMessages.getString("OpenPerspectiveMode.newWindow"); //$NON-NLS-1$
 
 	/**
 	 * Creates the page's UI content.
@@ -250,14 +251,14 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 		projectComposite.setFont(composite.getFont()); 
 		
 		String[][] namesAndValues = {
-			{"Always switch", IPreferenceConstants.PSPM_ALWAYS},
-			{"Never switch", IPreferenceConstants.PSPM_NEVER},
-			{"Prompt", IPreferenceConstants.PSPM_PROMPT}
+			{PSPM_ALWAYS_TEXT, IPreferenceConstants.PSPM_ALWAYS},
+			{PSPM_NEVER_TEXT, IPreferenceConstants.PSPM_NEVER},
+			{PSPM_PROMPT_TEXT, IPreferenceConstants.PSPM_PROMPT}
 		};
 		projectSwitchField =
 			new RadioGroupFieldEditor(
 				IPreferenceConstants.PROJECT_SWITCH_PERSP_MODE,
-				"Switch to associated perspective when creating a new project",
+				PROJECT_SWITCH_PERSP_MODE_TITLE,
 				namesAndValues.length,
 				namesAndValues,
 				projectComposite,
