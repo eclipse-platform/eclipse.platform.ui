@@ -4,24 +4,25 @@ package org.eclipse.ui.internal.dialogs;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.help.*;
-import org.eclipse.ui.internal.*;
-import org.eclipse.ui.dialogs.*;
-import org.eclipse.jface.*;
-import org.eclipse.jface.preference.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.widgets.*;
+import java.io.File;
+import java.text.*;
+import java.util.Date;
+import java.util.Locale;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import java.io.*;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.text.MessageFormat;
-import java.util.Date;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.dialogs.PropertyPage;
+import org.eclipse.ui.help.DialogPageContextComputer;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
  * This is a dummy page that is added to the property dialog
@@ -197,7 +198,8 @@ private String getDateStringValue(IResource resource) {
 		return NOT_LOCAL_TEXT;
 	else {
 		File localFile = resource.getLocation().toFile();
-		DateFormat format = new SimpleDateFormat();
+		SimpleDateFormat format = new SimpleDateFormat();
+		format.setDateFormatSymbols(new DateFormatSymbols(Locale.getDefault()));
 		return format.format(new Date(localFile.lastModified()));
 	}
 }
