@@ -244,4 +244,14 @@ public final class ActionHandler extends AbstractHandler {
             detachListener();
         }
     }
+	
+	public final String toString() {
+		final StringBuffer buffer = new StringBuffer();
+
+		buffer.append("ActionHandler(action="); //$NON-NLS-1$
+		buffer.append(action);
+		buffer.append(')');
+
+		return buffer.toString();
+	}
 }
