@@ -222,4 +222,10 @@ public class BookmarksPart extends HyperlinkTreePart implements IHelpPart,
 	protected boolean canAddBookmarks() {
 		return false;
 	}
+
+	public void toggleRoleFilter() {
+	}
+
+	public void refilter() {
+	}
 }

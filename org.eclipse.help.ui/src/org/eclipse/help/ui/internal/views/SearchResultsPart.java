@@ -335,4 +335,12 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 	}
 	public void stop() {
 	}
+
+	public void toggleRoleFilter() {
+		updateResultSections();
+	}
+
+	public void refilter() {
+		updateResultSections();
+	}
 }

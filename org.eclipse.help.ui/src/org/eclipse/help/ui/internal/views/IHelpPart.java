@@ -24,4 +24,6 @@ public interface IHelpPart extends IFormPart {
 	boolean fillContextMenu(IMenuManager manager);
 	IAction getGlobalAction(String id);
 	void stop();
+	void toggleRoleFilter();
+	void refilter();
 }

@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.IHelpResource;
-import org.eclipse.help.internal.base.BaseHelpSystem;
+import org.eclipse.help.internal.base.*;
 import org.eclipse.help.search.ISearchEngineResult;
 import org.eclipse.help.ui.internal.*;
 import org.eclipse.swt.SWT;
@@ -94,7 +94,7 @@ public class EngineResultSection {
 				.setColor(
 						"summary", parent.getDisplay().getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW)); //$NON-NLS-1$
 		section.setClient(container);
-		updateSectionTitle();
+		updateSectionTitle(0);
 		section.addExpansionListener(new IExpansionListener() {
 			public void expansionStateChanging(ExpansionEvent e) {
 				if (needsUpdating)
@@ -139,8 +139,8 @@ public class EngineResultSection {
 					part.doOpenLink(e.getHref());
 				} else if (HREF_PROGRESS.equals(href)) {
 					showProgressView();
-				} else if (((String)href).startsWith("bmk:")) { //$NON-NLS-1$
-					doBookmark(e.getLabel(), (String)href);
+				} else if (((String) href).startsWith("bmk:")) { //$NON-NLS-1$
+					doBookmark(e.getLabel(), (String) href);
 				} else
 					part.doOpenLink(e.getHref());
 			}
@@ -255,18 +255,35 @@ public class EngineResultSection {
 			section.getDisplay().asyncExec(runnable);
 	}
 
-	void updateResults(boolean reflow) {
-		updateSectionTitle();
-		ISearchEngineResult[] results = (ISearchEngineResult[]) hits
-				.toArray(new ISearchEngineResult[hits.size()]);
+	private ISearchEngineResult[] getResults() {
+		ArrayList list = hits;
+		if (desc.getEngineTypeId().equals("org.eclipse.help.ui.localSearch")) { //$NON-NLS-1$
+			if (part.parent.isFilteredByRoles()) {
+				list = new ArrayList();
+				for (int i = 0; i < hits.size(); i++) {
+					ISearchEngineResult hit = (ISearchEngineResult) hits.get(i);
+					if (HelpBasePlugin.getActivitySupport().isEnabled(
+							hit.getHref()))
+						list.add(hit);
+				}
+			}
+		}
+		ISearchEngineResult[] results = (ISearchEngineResult[]) list
+				.toArray(new ISearchEngineResult[list.size()]);
 		if (part.getShowCategories())
 			sorter.sort(null, results);
+		return results;
+	}
+
+	void updateResults(boolean reflow) {
+		ISearchEngineResult[] results = getResults();
+		updateSectionTitle(results.length);
 		StringBuffer buff = new StringBuffer();
 		buff.append("<form>"); //$NON-NLS-1$
 		IHelpResource oldCat = null;
 		boolean earlyExit = false;
 
-		for (int i = resultOffset; i < hits.size(); i++) {
+		for (int i = resultOffset; i < results.length; i++) {
 			if (i - resultOffset == HITS_PER_PAGE) {
 				break;
 			}
@@ -347,7 +364,7 @@ public class EngineResultSection {
 		}
 		if (errorStatus != null)
 			updateErrorStatus(buff);
-		updateNavigation();
+		updateNavigation(results.length);
 		buff.append("</form>"); //$NON-NLS-1$
 		searchResults.setText(buff.toString(), true, false);
 		section.layout();
@@ -365,7 +382,7 @@ public class EngineResultSection {
 		buff.append(IHelpUIConstants.IMAGE_ADD_BOOKMARK);
 		buff.append("\" alt=\""); //$NON-NLS-1$
 		buff.append(HelpUIResources.getString("SearchResultsPart.bmktooltip"));//$NON-NLS-1$
-		buff.append("\" text=\"");  //$NON-NLS-1$
+		buff.append("\" text=\""); //$NON-NLS-1$
 		buff.append(hit.getLabel());
 		buff.append("\""); //$NON-NLS-1$ 
 		buff.append("/>"); //$NON-NLS-1$ 
@@ -387,8 +404,8 @@ public class EngineResultSection {
 		buff.append("</li>"); //$NON-NLS-1$
 	}
 
-	private void updateNavigation() {
-		if (hits.size() > HITS_PER_PAGE) {
+	private void updateNavigation(int size) {
+		if (size > HITS_PER_PAGE) {
 			if (prevLink == null) {
 				FormToolkit toolkit = part.getToolkit();
 				Composite navContainer = toolkit.createComposite(container);
@@ -463,7 +480,7 @@ public class EngineResultSection {
 		return null;
 	}
 
-	private void updateSectionTitle() {
+	private void updateSectionTitle(int size) {
 		if (errorStatus != null) {
 			Label label = part.getToolkit().createLabel(section, null);
 			label.setImage(PlatformUI.getWorkbench().getSharedImages()
@@ -474,24 +491,24 @@ public class EngineResultSection {
 		} else {
 			section.setTextClient(null);
 		}
-		if (hits.size() == 1)
+		if (size == 1)
 			section.setText(HelpUIResources.getString(
 					"EngineResultSection.sectionTitle.hit", desc.getLabel(), "" //$NON-NLS-1$ //$NON-NLS-2$
 							+ hits.size()));
-		else if (hits.size() <= HITS_PER_PAGE)
+		else if (size <= HITS_PER_PAGE)
 			section.setText(HelpUIResources.getString(
 					"EngineResultSection.sectionTitle.hits", desc.getLabel(), //$NON-NLS-1$
 					"" + hits.size())); //$NON-NLS-1$
 		else {
 			int from = (resultOffset + 1);
 			int to = (resultOffset + HITS_PER_PAGE);
-			to = Math.min(to, hits.size());
+			to = Math.min(to, size);
 			section.setText(HelpUIResources.getString(
 					"EngineResultSection.sectionTitle.hitsRange", desc //$NON-NLS-1$
-							.getLabel(), "" + from, "" + to, "" + hits.size())); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+							.getLabel(), "" + from, "" + to, "" + size)); //$NON-NLS-1$
 		}
 	}
-	
+
 	private void doBookmark(final String label, String href) {
 		final String fhref = href.substring(4);
 		BusyIndicator.showWhile(container.getDisplay(), new Runnable() {

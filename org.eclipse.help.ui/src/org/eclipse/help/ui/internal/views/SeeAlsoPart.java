@@ -190,5 +190,11 @@ public class SeeAlsoPart extends AbstractFormPart implements IHelpPart {
 		if (text!=null && parent.getCurrentPageId()!=null)
 			loadText();
 		super.refresh();
+	}
+
+	public void toggleRoleFilter() {
+	}
+
+	public void refilter() {
 	}	
 }

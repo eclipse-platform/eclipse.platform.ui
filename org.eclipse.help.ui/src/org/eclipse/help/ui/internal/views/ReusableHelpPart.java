@@ -19,11 +19,13 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.help.*;
 import org.eclipse.help.internal.appserver.WebappManager;
-import org.eclipse.help.internal.base.BaseHelpSystem;
+import org.eclipse.help.internal.base.*;
 import org.eclipse.help.internal.search.federated.IndexerJob;
 import org.eclipse.help.ui.internal.*;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -31,11 +33,12 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.activities.*;
 import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.*;
 
-public class ReusableHelpPart implements IHelpUIConstants {
+public class ReusableHelpPart implements IHelpUIConstants, IActivityManagerListener {
 	public static final int ALL_TOPICS = 1 << 1;
 
 	public static final int CONTEXT_HELP = 1 << 2;
@@ -45,6 +48,10 @@ public class ReusableHelpPart implements IHelpUIConstants {
 	public static final int BOOKMARKS = 1 << 4;
 	
 	public static final Collator SHARED_COLLATOR = Collator.getInstance();
+
+	private static final String PROMPT_KEY = "askShowAll";
+
+	private RoleFilter roleFilter; 
 
 	private ManagedForm mform;
 
@@ -69,6 +76,8 @@ public class ReusableHelpPart implements IHelpUIConstants {
 	private OpenHrefAction openInHelpAction;
 
 	private OpenHrefAction bookmarkAction;
+	
+	private Action showAllAction;
 
 	private ReusableHelpPartHistory history;
 
@@ -281,6 +290,22 @@ public class ReusableHelpPart implements IHelpUIConstants {
 				rec.part.stop();
 			}
 		}
+		
+		public void toggleRoleFilter() {
+			for (int i = 0; i < partRecs.size(); i++) {
+				PartRec rec = (PartRec) partRecs.get(i);
+				if (rec.part!=null)
+					rec.part.toggleRoleFilter();
+			}
+		}
+		
+		public void refilter() {
+			for (int i = 0; i < partRecs.size(); i++) {
+				PartRec rec = (PartRec) partRecs.get(i);
+				if (rec.part!=null)
+					rec.part.refilter();
+			}
+		}
 
 		public void setVisible(boolean visible) {
 			if (bars != null)
@@ -467,6 +492,17 @@ public class ReusableHelpPart implements IHelpUIConstants {
 		}
 	}
 
+	class RoleFilter extends ViewerFilter {
+		public boolean select(Viewer viewer, Object parentElement,
+				Object element) {
+			IHelpResource res = (IHelpResource) element;
+			String href = res.getHref();
+			if (href == null)
+				return true;
+			return HelpBasePlugin.getActivitySupport().isEnabled(href);
+		}
+	}
+	
 	public ReusableHelpPart(IRunnableContext runnableContext) {
 		this(runnableContext, CONTEXT_HELP | SEARCH | ALL_TOPICS | BOOKMARKS);
 	}
@@ -476,6 +512,8 @@ public class ReusableHelpPart implements IHelpUIConstants {
 		history = new ReusableHelpPartHistory();
 		this.style = style;
 		ensureHelpIndexed();
+		PlatformUI.getWorkbench().getActivitySupport().getActivityManager()
+		.addActivityManagerListener(this);
 	}
 
 	private void ensureHelpIndexed() {
@@ -621,6 +659,41 @@ public class ReusableHelpPart implements IHelpUIConstants {
 		bookmarkAction.setImageDescriptor(HelpUIResources.getImageDescriptor(IHelpUIConstants.IMAGE_ADD_BOOKMARK));
 		if (actionBars != null && actionBars.getMenuManager() != null)
 			contributeToDropDownMenu(actionBars.getMenuManager());
+		roleFilter = new RoleFilter();
+		if (HelpBasePlugin.getActivitySupport().isUserCanToggleFiltering()) {
+			showAllAction = new Action() {
+				public void run() {
+					BusyIndicator.showWhile(getControl().getDisplay(),
+							new Runnable() {
+								public void run() {
+									toggleShowAll(showAllAction.isChecked());
+								}
+							});
+				}
+			};
+			showAllAction.setImageDescriptor(HelpUIResources
+						.getImageDescriptor(IHelpUIConstants.IMAGE_SHOW_ALL));
+			showAllAction.setToolTipText(HelpUIResources
+						.getString("AllTopicsPart.showAll.tooltip")); //$NON-NLS-1$
+			toolBarManager.insertBefore("back", showAllAction); //$NON-NLS-1$
+			showAllAction.setChecked(!HelpBasePlugin.getActivitySupport()
+						.isFilteringEnabled());
+		}
+	}
+
+	ViewerFilter getRoleFilter() {
+		return roleFilter;
+	}
+	
+	public void activityManagerChanged(ActivityManagerEvent activityManagerEvent) {
+		for (int i=0; i<pages.size(); i++) {
+			HelpPartPage page = (HelpPartPage)pages.get(i);
+			page.refilter();
+		}		
+	}	
+
+	boolean isFilteredByRoles() {
+		return HelpBasePlugin.getActivitySupport().isFilteringEnabled();
 	}
 
 	private void doBack() {
@@ -774,6 +847,8 @@ public class ReusableHelpPart implements IHelpUIConstants {
 			mform.dispose();
 			mform = null;
 		}
+		PlatformUI.getWorkbench().getActivitySupport().getActivityManager()
+		.removeActivityManagerListener(this);
 	}
 
 	/*
@@ -1249,5 +1324,29 @@ public class ReusableHelpPart implements IHelpUIConstants {
 			}
 		}
 		return buf.toString();
+	}
+	
+	private void toggleShowAll(boolean checked) {
+		if (checked) {
+			IPreferenceStore store = HelpUIPlugin.getDefault().getPreferenceStore();
+			String value = store.getString(PROMPT_KEY);
+			if (value.length()==0) {
+				MessageDialogWithToggle dialog = MessageDialogWithToggle.openOkCancelConfirm(
+						null,
+						HelpUIResources.getString("AskShowAll.dialogTitle"), //$NON-NLS-1$
+						HelpUIResources.getString("AskShowAll.message"), //$NON-NLS-1$
+						HelpUIResources.getString("AskShowAll.toggleMessage"), //$NON-NLS-1$
+						false, store, PROMPT_KEY);
+				if (dialog.getReturnCode()!=MessageDialogWithToggle.OK) {
+					showAllAction.setChecked(false);
+					return;
+				}
+			}
+		}
+		HelpBasePlugin.getActivitySupport().setFilteringEnabled(!checked);
+		for (int i=0; i<pages.size(); i++) {
+			HelpPartPage page = (HelpPartPage)pages.get(i);
+			page.toggleRoleFilter();
+		}
 	}
 }

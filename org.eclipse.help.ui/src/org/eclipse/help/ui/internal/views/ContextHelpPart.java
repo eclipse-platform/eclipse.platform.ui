@@ -423,4 +423,10 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 
 	public void stop() {
 	}
+
+	public void toggleRoleFilter() {
+	}
+
+	public void refilter() {
+	}
 }

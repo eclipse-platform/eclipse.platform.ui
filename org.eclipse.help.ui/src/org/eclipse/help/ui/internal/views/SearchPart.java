@@ -557,4 +557,10 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 		results.canceling();
 		Platform.getJobManager().cancel(FederatedSearchJob.FAMILY);
 	}
+
+	public void toggleRoleFilter() {
+	}
+
+	public void refilter() {
+	}
 }

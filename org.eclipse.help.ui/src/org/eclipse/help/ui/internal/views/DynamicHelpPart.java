@@ -13,6 +13,7 @@ package org.eclipse.help.ui.internal.views;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.help.*;
+import org.eclipse.help.internal.base.*;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.search.*;
 import org.eclipse.help.internal.search.federated.IndexerJob;
@@ -88,8 +89,7 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 			}
 			public void expansionStateChanged(ExpansionEvent e) {
 				if (e.getState()) {
-					if (phrase!=null && phrase.length() > 0)
-						startInPlaceSearch(phrase, context);
+					refilter();
 				}
 			}
 		});
@@ -338,6 +338,10 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 		for (int i=0; i<excludedTopics.length; i++) {
 			if (href.startsWith(excludedTopics[i].getHref()))
 				return true;
+			if (parent.isFilteredByRoles()) {
+				if (!HelpBasePlugin.getActivitySupport().isEnabled(href))
+					return true;
+			}
 		}
 		return false;
 	}
@@ -377,5 +381,14 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 		if (id.equals(ActionFactory.COPY.getId()))
 			return parent.getCopyAction();
 		return null;
+	}
+
+	public void toggleRoleFilter() {
+		refilter();
+	}
+
+	public void refilter() {
+		if (phrase!=null && phrase.length() > 0)
+			startInPlaceSearch(phrase, context);		
 	}
 }

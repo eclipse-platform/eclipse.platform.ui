@@ -245,4 +245,10 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 			return printAction;
 		return null;
 	}
+
+	public void toggleRoleFilter() {
+	}
+
+	public void refilter() {
+	}
 }

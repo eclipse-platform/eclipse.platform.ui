@@ -11,29 +11,20 @@
 package org.eclipse.help.ui.internal.views;
 
 import org.eclipse.help.*;
-import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.ui.internal.*;
 import org.eclipse.help.ui.internal.util.OverlayIcon;
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.dialogs.MessageDialogWithToggle;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.activities.*;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
-public class AllTopicsPart extends HyperlinkTreePart implements IHelpPart,
-		IActivityManagerListener {
-	private static final String PROMPT_KEY = "askShowAll";
+public class AllTopicsPart extends HyperlinkTreePart implements IHelpPart {
+
 	private Image containerWithTopicImage;
 
 	private Action showAllAction;
-
-	private RoleFilter roleFilter;
 
 	class TopicsProvider implements ITreeContentProvider {
 		public Object[] getChildren(Object parentElement) {
@@ -120,17 +111,6 @@ public class AllTopicsPart extends HyperlinkTreePart implements IHelpPart,
 		}
 	}
 
-	class RoleFilter extends ViewerFilter {
-		public boolean select(Viewer viewer, Object parentElement,
-				Object element) {
-			IHelpResource res = (IHelpResource) element;
-			String href = res.getHref();
-			if (href == null)
-				return true;
-			return HelpBasePlugin.getActivitySupport().isEnabled(href);
-		}
-	}
-
 	/**
 	 * @param parent
 	 * @param toolkit
@@ -161,35 +141,12 @@ public class AllTopicsPart extends HyperlinkTreePart implements IHelpPart,
 				}
 			}
 		});
-		PlatformUI.getWorkbench().getActivitySupport().getActivityManager()
-				.addActivityManagerListener(this);
 	}
-
-	protected void contributeToToolBar(IToolBarManager tbm) {
-		roleFilter = new RoleFilter();
-		if (HelpBasePlugin.getActivitySupport().isFilteringEnabled()) {
-			treeViewer.addFilter(roleFilter);
-		}
-		if (HelpBasePlugin.getActivitySupport().isUserCanToggleFiltering()) {
-			showAllAction = new Action() {
-				public void run() {
-					BusyIndicator.showWhile(getControl().getDisplay(),
-							new Runnable() {
-								public void run() {
-									toggleShowAll(showAllAction.isChecked());
-								}
-							});
-				}
-			};
-			showAllAction.setImageDescriptor(HelpUIResources
-					.getImageDescriptor(IHelpUIConstants.IMAGE_SHOW_ALL));
-			showAllAction.setToolTipText(HelpUIResources
-					.getString("AllTopicsPart.showAll.tooltip")); //$NON-NLS-1$
-			tbm.insertBefore("back", showAllAction); //$NON-NLS-1$
-			showAllAction.setChecked(!HelpBasePlugin.getActivitySupport()
-					.isFilteringEnabled());
-		}
-		super.contributeToToolBar(tbm);
+	
+	public void init(ReusableHelpPart parent, String id) {
+		super.init(parent, id);
+		if (parent.isFilteredByRoles())
+			treeViewer.addFilter(parent.getRoleFilter());
 	}
 
 	private void initializeImages() {
@@ -203,8 +160,6 @@ public class AllTopicsPart extends HyperlinkTreePart implements IHelpPart,
 	}
 
 	public void dispose() {
-		PlatformUI.getWorkbench().getActivitySupport().getActivityManager()
-				.removeActivityManagerListener(this);
 		containerWithTopicImage.dispose();
 		super.dispose();
 	}
@@ -232,29 +187,13 @@ public class AllTopicsPart extends HyperlinkTreePart implements IHelpPart,
 		return true;
 	}
 
-	public void activityManagerChanged(ActivityManagerEvent activityManagerEvent) {
-		treeViewer.refresh();
-	}
-
-	private void toggleShowAll(boolean checked) {
-		if (checked) {
-			IPreferenceStore store = HelpUIPlugin.getDefault().getPreferenceStore();
-			String value = store.getString(PROMPT_KEY);
-			if (value.length()==0) {
-				MessageDialogWithToggle dialog = MessageDialogWithToggle.openOkCancelConfirm(
-						null,
-						HelpUIResources.getString("AskShowAll.dialogTitle"), //$NON-NLS-1$
-						HelpUIResources.getString("AskShowAll.message"), //$NON-NLS-1$
-						HelpUIResources.getString("AskShowAll.toggleMessage"), //$NON-NLS-1$
-						false, store, PROMPT_KEY);
-				if (dialog.getReturnCode()!=MessageDialogWithToggle.OK) {
-					showAllAction.setChecked(false);
-					return;
-				}
-			}
-			treeViewer.removeFilter(roleFilter);
-		}
+	public void toggleRoleFilter() {
+		if (parent.isFilteredByRoles())
+			treeViewer.addFilter(parent.getRoleFilter());
 		else
-			treeViewer.addFilter(roleFilter);
+			treeViewer.removeFilter(parent.getRoleFilter());
+	}
+	public void refilter() {
+		treeViewer.refresh();
 	}
 }
