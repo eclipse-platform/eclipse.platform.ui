@@ -38,7 +38,7 @@ import org.eclipse.jface.text.TypedRegion;
  * It uses a partition token scanner to scan the document and to determine
  * the document's partitioning. The tokens returned by the
  * scanner are supposed to return the partition type
- * as their data. The partitoner remembers the document's partitions
+ * as their data. The partitioner remembers the document's partitions
  * in the document itself rather than maintaining its own data structure.
  *
  * @see IPartitionTokenScanner
@@ -48,7 +48,7 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 	
 	/** 
 	 * The position category this partitioner uses to store the document's partitioning information.
-	 * @deprecated use <code>getManagingPositionCategories()</code>.
+	 * @deprecated As of 3.0, use <code>getManagingPositionCategories()</code> instead.
 	 */
 	public final static String CONTENT_TYPES_CATEGORY= "__content_types_category"; //$NON-NLS-1$
 
@@ -59,7 +59,7 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 	protected String[] fLegalContentTypes;
 	/** The partitioner's document */
 	protected IDocument fDocument;
-	/** The document length before a document change occured */
+	/** The document length before a document change occurred */
 	protected int fPreviousDocumentLength;
 	/** The position updater used to for the default updating of partitions */
 	protected DefaultPositionUpdater fPositionUpdater;
@@ -173,7 +173,7 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 	}
 		
 	/**
-	 * Helper method for tracking the minimal region containg all partition changes.
+	 * Helper method for tracking the minimal region containing all partition changes.
 	 * If <code>offset</code> is smaller than the remembered offset, <code>offset</code>
 	 * will from now on be remembered. If <code>offset  + length</code> is greater than
 	 * the remembered end offset, it will be remembered from now on.
@@ -494,7 +494,7 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
     /* zero-length partition support */
     
 	/*
-	 * @see org.eclipse.jface.text.IDocumentPartitionerExtension2#getZeroLengthContentType(int)
+	 * @see org.eclipse.jface.text.IDocumentPartitionerExtension2#getContentType(int)
 	 * @since 3.0
 	 */
 	public String getContentType(int offset, boolean preferOpenPartitions) {
@@ -502,7 +502,7 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.IDocumentPartitionerExtension2#getZeroLengthPartition(int)
+	 * @see org.eclipse.jface.text.IDocumentPartitionerExtension2#getPartition(int)
 	 * @since 3.0
 	 */
 	public ITypedRegion getPartition(int offset, boolean preferOpenPartitions) {
@@ -585,6 +585,15 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 		return result;
 	}
 
+	/**
+	 * Returns <code>true</code> if the given ranges overlap with or touch each other.
+	 * 
+	 * @param gap the first range
+	 * @param offset the offset of the second range
+	 * @param length the length of the second range
+	 * @return <code>true</code> if the given ranges overlap with or touch each other
+	 * @since 3.0
+	 */
 	private boolean overlapsOrTouches(Position gap, int offset, int length) {
 		return gap.getOffset() <= offset + length && offset <= gap.getOffset() + gap.getLength();
 	}

@@ -15,7 +15,7 @@ import org.eclipse.jface.text.Assert;
 
 
 /**
- * An implementation of <code>IRule</code> capable of detecting a numerical value.
+ * An implementation of <code>IRule</code> detecting a numerical value.
  */
 public class NumberRule implements IRule {
 	

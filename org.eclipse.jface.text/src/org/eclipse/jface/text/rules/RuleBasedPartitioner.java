@@ -50,7 +50,7 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 	
 	/** 
 	 * The position category this partitioner uses to store the document's partitioning information 
-	 * @deprecated use <code>getManagingPositionCategories()</code>.
+	 * @deprecated As of 3.0, use <code>getManagingPositionCategories()</code>.
 	 */
 	public final static String CONTENT_TYPES_CATEGORY= "__content_types_category"; //$NON-NLS-1$
 
@@ -61,7 +61,7 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 	protected String[] fLegalContentTypes;
 	/** The partitioner's document */
 	protected IDocument fDocument;
-	/** The document length before a document change occured */
+	/** The document length before a document change occurred */
 	protected int fPreviousDocumentLength;
 	/** The position updater used to for the default updating of partitions */
 	protected DefaultPositionUpdater fPositionUpdater;
@@ -72,7 +72,7 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 	/**The offset at which a partition has been deleted */
 	protected int fDeleteOffset;
 	/**
-	 * The position category for managing partitoning information.
+	 * The position category for managing partitioning information.
 	 * @since 3.0
 	 */
 	private String fPositionCategory;
@@ -176,7 +176,7 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 	}
 		
 	/**
-	 * Helper method for tracking the minimal region containg all partition changes.
+	 * Helper method for tracking the minimal region containing all partition changes.
 	 * If <code>offset</code> is smaller than the remembered offset, <code>offset</code>
 	 * will from now on be remembered. If <code>offset  + length</code> is greater than
 	 * the remembered end offset, it will be remembered from now on.
@@ -500,7 +500,7 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
     /* zero-length partition support */
     
 	/*
-	 * @see org.eclipse.jface.text.IDocumentPartitionerExtension2#getZeroLengthContentType(int)
+	 * @see org.eclipse.jface.text.IDocumentPartitionerExtension2#getContentType(int)
 	 * @since 3.0
 	 */
 	public String getContentType(int offset, boolean preferOpenPartitions) {
@@ -508,7 +508,7 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.IDocumentPartitionerExtension2#getZeroLengthPartition(int)
+	 * @see org.eclipse.jface.text.IDocumentPartitionerExtension2#getPartition(int)
 	 * @since 3.0
 	 */
 	public ITypedRegion getPartition(int offset, boolean preferOpenPartitions) {
@@ -527,7 +527,7 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.IDocumentPartitionerExtension2#computeZeroLengthPartitioning(int, int)
+	 * @see org.eclipse.jface.text.IDocumentPartitionerExtension2#computePartitioning(int, int)
 	 * @since 3.0
 	 */
 	public ITypedRegion[] computePartitioning(int offset, int length, boolean includeZeroLengthPartitions) {

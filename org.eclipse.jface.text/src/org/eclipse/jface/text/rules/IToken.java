@@ -45,7 +45,7 @@ public interface IToken {
 	boolean isOther();
 	
 	/**
-	 * Return a data attacted to this token. The semantics of this data kept undefined by this interface.
+	 * Return a data attached to this token. The semantics of this data kept undefined by this interface.
 	 *
 	 * @return the data attached to this token.
 	 */
