@@ -8,6 +8,8 @@ package org.eclipse.search.internal.ui;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
@@ -153,8 +155,15 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 
 			for (int i= 0; i < numPages; i++) {			
 				SearchPageDescriptor descriptor= (SearchPageDescriptor)fDescriptors.get(i);
-				TabItem item= new TabItem(folder, SWT.NONE);
+				final TabItem item= new TabItem(folder, SWT.NONE);
 				item.setText(descriptor.getLabel());
+				item.addDisposeListener(new DisposeListener() {
+					public void widgetDisposed(DisposeEvent e) {
+						item.setData(null);
+						if (item.getImage() != null)
+							item.getImage().dispose();
+					}
+				});
 				ImageDescriptor imageDesc= descriptor.getImage();
 				if (imageDesc != null)
 					item.setImage(imageDesc.createImage());
@@ -176,7 +185,7 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 			return border;
 		}	
 	}
-	
+
 	protected boolean performAction() {
 		if (fCurrentPage == null)
 			return true;
