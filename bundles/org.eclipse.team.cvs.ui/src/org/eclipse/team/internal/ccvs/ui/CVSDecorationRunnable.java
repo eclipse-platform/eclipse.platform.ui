@@ -238,7 +238,7 @@ public class CVSDecorationRunnable implements Runnable {
 
 					try {
 						if (!cvsResource.isManaged()) {
-							if (cvsResource.isIgnored() || cvsResource.getParent().isIgnored()) {
+							if (cvsResource.isIgnored()) {
 								return false;
 							} else {
 								// new resource, show as dirty
