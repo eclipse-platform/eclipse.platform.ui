@@ -110,13 +110,13 @@ public class JobManager implements IJobManager {
 		jobListeners.add(listener);
 	}
 	public void beginRule(ISchedulingRule rule, IProgressMonitor monitor) {
-		implicitJobs.begin(rule, Policy.monitorFor(monitor));
+		implicitJobs.begin(rule, monitorFor(monitor));
 	}
 	/**
 	 * @deprecated
 	 */
 	public void beginRule(ISchedulingRule rule) {
-		implicitJobs.begin(rule, Policy.monitorFor(null));
+		implicitJobs.begin(rule, monitorFor(null));
 	}
 	/**
 	 * Cancels a job
@@ -391,7 +391,7 @@ public class JobManager implements IJobManager {
 	 * @see IJobManager#join(String, IProgressMonitor)
 	 */
 	public void join(Object family, IProgressMonitor monitor) throws InterruptedException, OperationCanceledException {
-		monitor = Policy.monitorFor(monitor);
+		monitor = monitorFor(monitor);
 		IJobChangeListener listener = null;
 		final List jobs;
 		final int jobCount;
@@ -432,6 +432,19 @@ public class JobManager implements IJobManager {
 			removeJobChangeListener(listener);
 		}
 	}
+	/**
+	 * Returns a non-null progress monitor instance.  If the monitor is null,
+	 * returns the default monitor supplied by the progress provider, or a 
+	 * NullProgressMonitor if no default monitor is available.
+	 */
+	private IProgressMonitor monitorFor(IProgressMonitor monitor) {
+//		if (monitor != null)
+//			return monitor;
+//		if (progressProvider != null)
+//			monitor = progressProvider.getDefaultMonitor();
+		return Policy.monitorFor(monitor);
+	}
+
 	/* (non-Javadoc)
 	 * @see IJobManager#newLock(java.lang.String)
 	 */
