@@ -301,11 +301,13 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
 		    // when the model was rebuilt.
 		    refreshModelRoot();
 		} else {
-			Utils.asyncExec(new Runnable() {
-				public void run() {
-					refreshModelRoot();
-				}
-			}, getViewer());
+		    if (!updateHandler.isPerformingBackgroundUpdate()) {
+				Utils.asyncExec(new Runnable() {
+					public void run() {
+						refreshModelRoot();
+					}
+				}, getViewer());
+		    }
 		}
 	}
 	
