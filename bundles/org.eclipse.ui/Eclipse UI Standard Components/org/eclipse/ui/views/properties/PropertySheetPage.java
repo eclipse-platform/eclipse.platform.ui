@@ -97,6 +97,16 @@ public void createControl(Composite parent) {
 	WorkbenchHelp.setHelp(viewer.getControl(), new PropertySheetPageContextComputer(viewer, HELP_CONTEXT_PROPERTY_SHEET_PAGE));
 }
 /**
+ * The <code>PropertySheetPage</code> implementation of this <code>IPage</code> method 
+ * disposes of this page's entries.
+ */
+public void dispose() {
+	super.dispose();
+	if (rootEntry != null)
+		rootEntry.dispose();
+}
+
+/**
  * Returns the cell editor activation listener for this page
  */
 private ICellEditorActivationListener getCellEditorActivationListener() {
