@@ -8,10 +8,9 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.console;
+package org.eclipse.ui.console;
 
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.ui.console.MessageConsole;
 
 /**
  * Used to write messages to a message console. A message console may have more

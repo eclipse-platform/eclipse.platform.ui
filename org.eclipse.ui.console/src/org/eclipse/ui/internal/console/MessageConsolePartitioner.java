@@ -26,6 +26,7 @@ import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.Region;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.console.ConsolePlugin;
+import org.eclipse.ui.console.MessageConsoleStream;
 
 /**
  * A console that displays text messages.

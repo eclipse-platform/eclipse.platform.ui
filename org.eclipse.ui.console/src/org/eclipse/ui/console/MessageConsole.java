@@ -16,7 +16,6 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.ui.internal.console.MessageConsolePage;
 import org.eclipse.ui.internal.console.MessageConsolePartitioner;
-import org.eclipse.ui.internal.console.MessageConsoleStream;
 import org.eclipse.ui.part.IPageBookViewPage;
 
 /**

@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.console;
 
 import org.eclipse.jface.text.TypedRegion;
 import org.eclipse.ui.console.ConsolePlugin;
+import org.eclipse.ui.console.MessageConsoleStream;
 
 /**
  * A partition from a message stream connected to a message console. 
