@@ -100,8 +100,10 @@ public class PluginStopper implements IShutdownHook {
 						System.out.println("Stopping: " + orderedBundles[i].getGlobalName() + " (#" + orderedBundles[i].getBundleId() + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					orderedBundles[i].stop();
 				}
-			} catch (Exception be) {
-				be.printStackTrace();//TODO Need to log the error
+			} catch (Exception e) {
+				String message = Policy.bind("activator.errorStoppingPlugin",orderedBundles[i].toString());  //$NON-NLS-1$
+				IStatus status = new Status(IStatus.ERROR, IPlatform.PI_RUNTIME_COMPATIBILITY, 1, message, e);
+				InternalPlatform.getDefault().log(status);
 			}
 		}
 	}
