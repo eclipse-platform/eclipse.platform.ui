@@ -13,7 +13,6 @@ package org.eclipse.core.internal.registry;
 import java.lang.reflect.Array;
 import java.util.*;
 
-import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.*;
