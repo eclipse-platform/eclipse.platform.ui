@@ -184,14 +184,29 @@ public class VariablesViewContentProvider implements ITreeContentProvider {
 		}
 		return partitionSize;
 	}
+    
+    /**
+     * Returns any logical value for the raw value.
+     * 
+     * @param value
+     * @return
+     */
+    private IValue getLogicalValue(IValue value) {
+        return getLogicalValue(value, new ArrayList());
+    }
 
 	/**
-	 * Returns any logical value for the raw value.
+	 * Returns any logical value for the raw value. This method will recurse
+     * over the returned value until the same structure is encountered again
+     * (to avoid infinite recursion).
 	 * 
 	 * @param value
+     * @param previousStructureIds the list of logical structures that have already
+     *  been applied to the returned value during the recursion of this method. Callers
+     *  should always pass in a new, empty list.
 	 * @return
 	 */
-	private IValue getLogicalValue(IValue value) {
+	private IValue getLogicalValue(IValue value, List previousStructureIds) {
 		if (isShowLogicalStructure()) {
 			ILogicalStructureType[] types = DebugPlugin.getLogicalStructureTypes(value);
 			if (types.length > 0) {
@@ -217,9 +232,11 @@ public class VariablesViewContentProvider implements ITreeContentProvider {
 					// choose first by default
 					store.setValue(VariablesView.LOGICAL_STRUCTURE_TYPE_PREFIX + type.getId(), 1);
 				}
-				if (type != null) {
+				if (type != null && !previousStructureIds.contains(type.getId())) {
 					try {
-						return type.getLogicalStructure(value);
+						value= type.getLogicalStructure(value);
+                        previousStructureIds.add(type.getId());
+                        return getLogicalValue(value, previousStructureIds);
 					} catch (CoreException e) {
 						// unable to display logical structure
 					}
