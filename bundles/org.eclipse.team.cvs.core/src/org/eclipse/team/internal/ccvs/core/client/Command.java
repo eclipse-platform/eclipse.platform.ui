@@ -577,7 +577,7 @@ public abstract class Command {
 		 */
 		public String toString() {
 			if (argument != null && argument.length() != 0) {
-				return option + " " + argument;
+				return option + " " + argument; //$NON-NLS-1$
 			} else {
 				return option;
 			}
@@ -628,8 +628,8 @@ public abstract class Command {
 		private String longDisplayText;
 		
 		private KSubstOption(String option) {
-			this(option, Policy.bind("KSubstOption." + option + ".short"),
-				Policy.bind("KSubstOption." + option + ".long"));
+			this(option, Policy.bind("KSubstOption." + option + ".short"), //$NON-NLS-1$ //$NON-NLS-2$
+				Policy.bind("KSubstOption." + option + ".long")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		private KSubstOption(String option, String shortDisplayText, String longDisplayText) {
 			super(option);
@@ -644,12 +644,12 @@ public abstract class Command {
 		 * @return an instance for that mode
 		 */
 		public static KSubstOption fromMode(String mode) {
-			if (mode.length() == 0) mode = "-kkv"; // use default
+			if (mode.length() == 0) mode = "-kkv"; // use default //$NON-NLS-1$
 			KSubstOption option = (KSubstOption) ksubstOptionMap.get(mode);
 			if (option == null) {
 				option = new KSubstOption(mode,
-					Policy.bind("KSubstOption.unknown.short", mode),
-					Policy.bind("KSubstOption.unknown.long", mode));
+					Policy.bind("KSubstOption.unknown.short", mode), //$NON-NLS-1$
+					Policy.bind("KSubstOption.unknown.long", mode)); //$NON-NLS-1$
 				ksubstOptionMap.put(mode, option);
 			}
 			return option;
@@ -674,7 +674,7 @@ public abstract class Command {
 		 * Returns the entry line mode string for this instance.
 		 */
 		public String toMode() {
-			if (KSUBST_TEXT_EXPAND.equals(this)) return "";
+			if (KSUBST_TEXT_EXPAND.equals(this)) return ""; //$NON-NLS-1$
 			return getOption();
 		}
 		/**

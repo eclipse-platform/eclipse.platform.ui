@@ -36,7 +36,7 @@ import org.eclipse.team.internal.ccvs.core.util.EntryFileDateFormat;
  */
 class EclipseFile extends EclipseResource implements ICVSFile {
 
-	private static final String TEMP_FILE_EXTENSION = ".tmp";
+	private static final String TEMP_FILE_EXTENSION = ".tmp"; //$NON-NLS-1$
 	
 	/**
 	 * Create a handle based on the given local resource.

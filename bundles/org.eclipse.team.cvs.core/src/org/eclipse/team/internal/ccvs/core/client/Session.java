@@ -779,7 +779,7 @@ public class Session {
 	 */
 	String getSendFileTitleKey() {
 		if (sendFileTitleKey == null)
-			return "Session.sending";
+			return "Session.sending"; //$NON-NLS-1$
 		return sendFileTitleKey;
 	}
 

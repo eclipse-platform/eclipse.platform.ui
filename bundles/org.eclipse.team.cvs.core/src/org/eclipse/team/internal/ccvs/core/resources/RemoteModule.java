@@ -211,7 +211,7 @@ public class RemoteModule extends RemoteFolder {
 //						referencedFolders.addAll(Arrays.asList(child.getChildren()));
 					} else {
 						// XXX not expandable if child has local directory option (-d)
-						if (Command.findOption(child.getLocalOptions(), "-d") != null) {
+						if (Command.findOption(child.getLocalOptions(), "-d") != null) { //$NON-NLS-1$
 							expandable = false;
 						} else {
 							referencedFolders.add(child);

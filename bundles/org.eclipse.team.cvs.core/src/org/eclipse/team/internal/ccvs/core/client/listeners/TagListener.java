@@ -38,7 +38,7 @@ public class TagListener implements ICommandOutputListener {
 		IProgressMonitor monitor) {
 			
 		// Ignore the lines: Tagging folder1/folder2
-		if( line.startsWith("cvs server: Tagging") ) {
+		if( line.startsWith("cvs server: Tagging") ) { //$NON-NLS-1$
 			return OK;
 		}
 			

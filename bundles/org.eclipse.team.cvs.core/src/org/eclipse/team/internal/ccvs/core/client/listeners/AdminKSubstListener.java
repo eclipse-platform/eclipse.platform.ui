@@ -36,11 +36,11 @@ public class AdminKSubstListener implements ICommandOutputListener {
 	
 	public IStatus messageLine(String line, ICVSFolder commandRoot,
 		IProgressMonitor monitor) {
-		if (line.startsWith("RCS file:")) { // $NON-NLS-1$
+		if (line.startsWith("RCS file:")) { //$NON-NLS-1$
 			String rcsFile = line.substring(10).trim();
-			if (! rcsFile.endsWith(",v")) {
+			if (! rcsFile.endsWith(",v")) { //$NON-NLS-1$
 				return new CVSStatus(CVSStatus.ERROR,
-					Policy.bind("AdminKSubstListener.expectedRCSFile", rcsFile));
+					Policy.bind("AdminKSubstListener.expectedRCSFile", rcsFile)); //$NON-NLS-1$
 			}
 			String remoteRootLocation = null;
 			try {
@@ -51,13 +51,13 @@ public class AdminKSubstListener implements ICommandOutputListener {
 			}
 			if (remoteRootLocation == null) {
 				return new CVSStatus(CVSStatus.ERROR,
-					Policy.bind("AdminKSubstListener.commandRootNotManaged"));
+					Policy.bind("AdminKSubstListener.commandRootNotManaged")); //$NON-NLS-1$
 			}
 			IPath rcsFilePath = new Path(rcsFile.substring(0, rcsFile.length() - 2));
 			IPath remoteRootPath = new Path(remoteRootLocation);
 			if (! remoteRootPath.isPrefixOf(rcsFilePath)) {
 				return new CVSStatus(CVSStatus.ERROR,
-					Policy.bind("AdminKSubstListener.expectedChildOfCommandRoot",
+					Policy.bind("AdminKSubstListener.expectedChildOfCommandRoot", //$NON-NLS-1$
 						rcsFilePath.toString(), remoteRootPath.toString()));
 			}
 			rcsFilePath = rcsFilePath.removeFirstSegments(remoteRootPath.segmentCount());
@@ -73,7 +73,7 @@ public class AdminKSubstListener implements ICommandOutputListener {
 				}
 			} catch (CVSException e) {
 				return new CVSStatus(CVSStatus.ERROR,
-					Policy.bind("AdminKSubstListener.couldNotSetResourceSyncInfo",
+					Policy.bind("AdminKSubstListener.couldNotSetResourceSyncInfo", //$NON-NLS-1$
 						rcsFilePath.toString(), e.toString()));
 			}
 		}

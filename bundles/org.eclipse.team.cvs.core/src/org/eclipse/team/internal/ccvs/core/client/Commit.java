@@ -19,7 +19,7 @@ public class Commit extends Command {
 	//       unless it is dirty.  The primary use is to resend a file that may
 	//       or may not be changed (e.g. could depend on CR/LF translations, etc...)
 	//       and force the server to create a new revision and reply Checked-in.
-	public static final LocalOption FORCE = new LocalOption("-f");
+	public static final LocalOption FORCE = new LocalOption("-f"); //$NON-NLS-1$
 
 	protected Commit() { }
 	protected String getCommandId() {

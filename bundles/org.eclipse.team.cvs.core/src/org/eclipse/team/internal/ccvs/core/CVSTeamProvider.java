@@ -92,7 +92,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 	private static final int CR_BYTE = 0x0D;
 	private static final int LF_BYTE = 0x0A;
 	private static final boolean IS_CRLF_PLATFORM = Arrays.equals(
-		System.getProperty("line.separator").getBytes(),
+		System.getProperty("line.separator").getBytes(), //$NON-NLS-1$
 		new byte[] { CR_BYTE, LF_BYTE });
 
 	private CVSWorkspaceRoot workspaceRoot;
@@ -466,7 +466,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 			
 			subProgress.beginTask(null, 512);
 			for (int i = 0; i < resources.length; i++) {
-				subProgress.subTask(Policy.bind("CVSTeamProvider.scrubbingResource", resources[i].getFullPath().toString()));
+				subProgress.subTask(Policy.bind("CVSTeamProvider.scrubbingResource", resources[i].getFullPath().toString())); //$NON-NLS-1$
 				IResource resource = resources[i];
 				workspaceRoot.getLocalRoot().getChild(resource.getProjectRelativePath().toString()).accept(visitor);
 			}
@@ -1005,7 +1005,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 				final Collection /* of ICVSFile */ filesToCommitAsText = new HashSet(); // need fast lookup
 		
 				final IProgressMonitor progress = Policy.monitorFor(monitor);
-				progress.beginTask(Policy.bind("CVSTeamProvider.preparingToSetKSubst"), 100);
+				progress.beginTask(Policy.bind("CVSTeamProvider.preparingToSetKSubst"), 100); //$NON-NLS-1$
 				try {
 					/*** get all possibly affected files (ensure no duplicates) ***/
 					final Set /* of IFile */ files = new HashSet();
@@ -1080,7 +1080,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 						Session s = new Session(workspaceRoot.getRemoteLocation(),
 							workspaceRoot.getLocalRoot(), false);
 						IProgressMonitor sessionProgress = Policy.subMonitorFor(progress, 90);
-						sessionProgress.beginTask(Policy.bind("CVSTeamProvider.settingKSubst"), 5 +
+						sessionProgress.beginTask(Policy.bind("CVSTeamProvider.settingKSubst"), 5 + //$NON-NLS-1$
 							filesToAdmin.size() + filesToCommit.size());
 						try {
 							s.open(Policy.subMonitorFor(sessionProgress, 5));
@@ -1179,9 +1179,9 @@ public class CVSTeamProvider extends RepositoryProvider {
 				makeDirty(file);
 			}
 		} catch (CoreException e) {
-			throw CVSException.wrapException(file, Policy.bind("CVSTeamProvider.cleanLineDelimitersException"), e);
+			throw CVSException.wrapException(file, Policy.bind("CVSTeamProvider.cleanLineDelimitersException"), e); //$NON-NLS-1$
 		} catch (IOException e) {
-			throw CVSException.wrapException(file, Policy.bind("CVSTeamProvider.cleanLineDelimitersException"), e);
+			throw CVSException.wrapException(file, Policy.bind("CVSTeamProvider.cleanLineDelimitersException"), e); //$NON-NLS-1$
 		}
 	}
 	

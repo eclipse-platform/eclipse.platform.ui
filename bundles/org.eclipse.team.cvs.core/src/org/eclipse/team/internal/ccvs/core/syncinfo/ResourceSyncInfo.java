@@ -143,7 +143,7 @@ public class ResourceSyncInfo {
 	 */
 	public boolean isNeedsMerge(String fileTimestamp) {
 		if(timeStamp.indexOf(RESULT_OF_MERGE_CONFLICT) != -1) {
-			String t = timeStamp.substring(timeStamp.indexOf("+") + 1);
+			String t = timeStamp.substring(timeStamp.indexOf("+") + 1); //$NON-NLS-1$
 			return t.equals(fileTimestamp);
 		} else {
 			return false;

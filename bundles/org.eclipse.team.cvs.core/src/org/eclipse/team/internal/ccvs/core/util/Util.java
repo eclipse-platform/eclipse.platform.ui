@@ -42,7 +42,7 @@ public class Util {
 		
 		// Remove leading slash if there is one
 		String result = resourceName.substring(rootName.length()).replace('\\', '/');
-		if (result.startsWith("/")) {
+		if (result.startsWith("/")) { //$NON-NLS-1$
 			result = result.substring(1);
 		}
 		return result;
@@ -78,7 +78,7 @@ public class Util {
 			int segments = path.segmentCount();
 			if(segments>split) {				
 				IPath last = path.removeFirstSegments(segments - split);
-				return "..." + path.SEPARATOR + last.toString();
+				return "..." + path.SEPARATOR + last.toString(); //$NON-NLS-1$
 			}
 			return path.toString();
 		} catch(CVSException e) {

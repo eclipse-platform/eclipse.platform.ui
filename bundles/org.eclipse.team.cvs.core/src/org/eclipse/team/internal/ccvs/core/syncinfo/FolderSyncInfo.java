@@ -163,6 +163,6 @@ public class FolderSyncInfo {
 	 * @see Object#toString()
 	 */
 	public String toString() {
-		return getRoot() + "/" + getRepository() + "/" + getTag();
+		return getRoot() + "/" + getRepository() + "/" + getTag(); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }

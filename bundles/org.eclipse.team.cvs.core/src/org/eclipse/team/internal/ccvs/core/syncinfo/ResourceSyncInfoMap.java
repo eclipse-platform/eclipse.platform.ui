@@ -45,7 +45,7 @@ class ResourceSyncInfoMap {
 	}
 
 	public ResourceSyncInfo get(IResource resource) {
-		int element = Arrays.binarySearch(elements, new ResourceSyncInfo(resource.getName(), "","","",null,null));
+		int element = Arrays.binarySearch(elements, new ResourceSyncInfo(resource.getName(), "","","",null,null));//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 		if (element < 0)
 			return null;
 		// found element, return it
