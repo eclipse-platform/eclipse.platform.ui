@@ -70,10 +70,11 @@ public abstract class SyncCompareInput extends CompareEditorInput {
 	/**
 	 * Creates a new catchup or release operation.
 	 */
-	public SyncCompareInput(IRemoteSyncElement[] trees) {
+	public SyncCompareInput() {
 		super(new CompareConfiguration());
-		this.trees = trees;
 	}
+	
+	protected abstract IRemoteSyncElement[] createSyncElements(IProgressMonitor monitor) throws TeamException;
 	
 	/*
 	 * @see CompareEditorInput#createContents
@@ -193,6 +194,7 @@ public abstract class SyncCompareInput extends CompareEditorInput {
 		}
 	
 		try {
+			this.trees = createSyncElements(pm);
 			setMessage(null);
 			if (trees.length == 0) {
 				return null;
@@ -224,6 +226,8 @@ public abstract class SyncCompareInput extends CompareEditorInput {
 				
 			return diffRoot;
 		} catch (CoreException e) {
+			throw new InvocationTargetException(e);
+		} catch (TeamException e) {
 			throw new InvocationTargetException(e);
 		}
 	}

@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
@@ -33,11 +34,13 @@ import org.eclipse.team.ui.sync.UnchangedTeamContainer;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 public class CVSSyncCompareInput extends SyncCompareInput {
+	IResource[] resources;
 	/**
 	 * Creates a new catchup or release operation.
 	 */
-	public CVSSyncCompareInput(IRemoteSyncElement[] trees) {
-		super(trees);
+	public CVSSyncCompareInput(IResource[] resources) {
+		super();
+		this.resources = resources;
 	}
 	/**
 	 * Overridden to create a custom DiffTreeViewer in the top left pane of the CompareProvider.
@@ -49,6 +52,15 @@ public class CVSSyncCompareInput extends SyncCompareInput {
 		CatchupReleaseViewer catchupReleaseViewer = new CVSCatchupReleaseViewer(parent, this);
 		setViewer(catchupReleaseViewer);
 		return catchupReleaseViewer;
+	}
+
+	protected IRemoteSyncElement[] createSyncElements(IProgressMonitor monitor) throws TeamException {
+		IRemoteSyncElement[] trees = new IRemoteSyncElement[resources.length];
+		for (int i = 0; i < trees.length; i++) {
+			CVSTeamProvider provider = (CVSTeamProvider)TeamPlugin.getManager().getProvider(resources[i].getProject());
+			trees[i] = provider.getRemoteSyncTree(resources[i], null, monitor);
+		}
+		return trees;
 	}
 
 	protected void updateView() {

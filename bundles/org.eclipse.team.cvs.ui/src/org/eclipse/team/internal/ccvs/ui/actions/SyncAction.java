@@ -76,28 +76,19 @@ public class SyncAction implements IObjectActionDelegate {
 	 */
 	public void run(IAction action) {
 		String title = Policy.bind("SyncAction.sync");
-		try {
-			IResource[] resources = getResources(selection);
-			SyncView view = (SyncView)CVSUIPlugin.getActivePage().findView(SyncView.VIEW_ID);
-			if (view == null) {
-				view = SyncView.findInActivePerspective();
+		IResource[] resources = getResources(selection);
+		SyncView view = (SyncView)CVSUIPlugin.getActivePage().findView(SyncView.VIEW_ID);
+		if (view == null) {
+			view = SyncView.findInActivePerspective();
+		}
+		if (view != null) {
+			try {
+				CVSUIPlugin.getActivePage().showView(SyncView.VIEW_ID);
+			} catch (PartInitException e) {
+				CVSUIPlugin.log(e.getStatus());
 			}
-			if (view != null) {
-				try {
-					CVSUIPlugin.getActivePage().showView(SyncView.VIEW_ID);
-				} catch (PartInitException e) {
-					CVSUIPlugin.log(e.getStatus());
-				}
-				// What happens when resources from the same project are selected?
-				IRemoteSyncElement[] trees = new IRemoteSyncElement[resources.length];
-				for (int i = 0; i < trees.length; i++) {
-					CVSTeamProvider provider = (CVSTeamProvider)TeamPlugin.getManager().getProvider(resources[i].getProject());
-					trees[i] = provider.getRemoteSyncTree(resources[i], null, new NullProgressMonitor());
-				}
-				view.showSync(new CVSSyncCompareInput(trees));
-			}
-		} catch (TeamException e) {
-			ErrorDialog.openError(getShell(), title, e.getMessage(), e.getStatus());
+			// What happens when resources from the same project are selected?
+			view.showSync(new CVSSyncCompareInput(resources));
 		}
 	}
 	
