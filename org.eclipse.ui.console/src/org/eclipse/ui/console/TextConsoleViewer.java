@@ -10,7 +10,6 @@
 package org.eclipse.ui.console;
 
 import org.eclipse.jface.resource.JFaceColors;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentAdapter;
 import org.eclipse.jface.text.IRegion;
@@ -72,7 +71,7 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
         styledText.addLineStyleListener(this);
         styledText.addLineBackgroundListener(this);
         styledText.setEditable(true);
-        styledText.setFont(JFaceResources.getFont(JFaceResources.TEXT_FONT));
+        styledText.setFont(console.getFont());
         styledText.addMouseTrackListener(this);
         styledText.addPaintListener(this);
     }

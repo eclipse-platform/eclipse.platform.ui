@@ -15,6 +15,7 @@ import java.util.HashMap;
 
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.IDocument;
@@ -116,6 +117,7 @@ public abstract class TextConsole extends AbstractConsole {
         fDocument.addPositionCategory(ConsoleHyperlinkPosition.HYPER_LINK_CATEGORY);
         fPatternMatcher = new ConsolePatternMatcher(this);
         fDocument.addDocumentListener(fPatternMatcher);
+        fFont = JFaceResources.getFont(JFaceResources.TEXT_FONT);
     }
 
     /* (non-Javadoc)

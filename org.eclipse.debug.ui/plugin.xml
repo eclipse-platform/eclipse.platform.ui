@@ -2125,6 +2125,16 @@ M4 = Platform-specific fourth key
             %MemoryViewTableFontDefinition.description
          </description>
       </fontDefinition>
+      <fontDefinition
+            defaultsTo="org.eclipse.jface.textfont"
+            isEditable="true"
+            label="%ConsoleFont.label"
+            categoryId="org.eclipse.debug.ui.presentation"
+            id="org.eclipse.debug.ui.consoleFont">
+         <description>
+            %ConsoleFont.description
+         </description>
+      </fontDefinition>
    </extension>
 <!-- raw hex rendering for Memory View -->
    <extension

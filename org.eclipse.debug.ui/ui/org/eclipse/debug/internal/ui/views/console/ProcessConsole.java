@@ -43,6 +43,7 @@ import org.eclipse.debug.ui.console.IConsoleHyperlink;
 import org.eclipse.debug.ui.console.IConsoleLineTracker;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -214,6 +215,8 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
             if (stream != null) {
                 stream.setColor(fColorProvider.getColor(IDebugUIConstants.ID_STANDARD_INPUT_STREAM));
             }
+        } else if (property.equals(IDebugPreferenceConstants.CONSOLE_FONT)) {
+            setFont(JFaceResources.getFont(IDebugPreferenceConstants.CONSOLE_FONT));
         }
     }
     
@@ -250,6 +253,7 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 		closeStreams();
 		DebugPlugin.getDefault().removeDebugEventListener(this);
 		DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
+		JFaceResources.getFontRegistry().removeListener(this);
 	}
 	
 	private void closeStreams() {
@@ -281,6 +285,8 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 		}
 		IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
         store.addPropertyChangeListener(this);
+        setFont(JFaceResources.getFont(IDebugPreferenceConstants.CONSOLE_FONT));
+        JFaceResources.getFontRegistry().addListener(this);
         if (store.getBoolean(IDebugPreferenceConstants.CONSOLE_WRAP)) {
             setConsoleWidth(store.getInt(IDebugPreferenceConstants.CONSOLE_WIDTH));
         }

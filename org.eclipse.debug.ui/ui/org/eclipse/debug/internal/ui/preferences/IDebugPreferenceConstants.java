@@ -73,6 +73,13 @@ public interface IDebugPreferenceConstants {
 	public static final String CONSOLE_TAB_WIDTH= "Console.console_tab_width"; //$NON-NLS-1$
 	
 	/**
+	 * Font preference setting for the process console.
+	 * 
+	 * @since 3.1
+	 */
+	public static final String CONSOLE_FONT= "org.eclipse.debug.ui.consoleFont"; //$NON-NLS-1$
+	
+	/**
 	 * The orientation of the detail view in the VariablesView
 	 */
 	public static final String VARIABLES_DETAIL_PANE_ORIENTATION = "Variables.detail.orientation"; //$NON-NLS-1$
