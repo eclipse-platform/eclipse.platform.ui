@@ -124,6 +124,9 @@ public final class BaseHelpSystem {
 		if (HelpBasePlugin.DEBUG) {
 			System.out.println("Base Help System is shutting down.");
 		}
+		// close any browsers created
+		BrowserManager.getInstance().closeAll();
+
 		if (getInstance().searchManager != null) {
 			getInstance().searchManager.close();
 		}
@@ -131,9 +134,6 @@ public final class BaseHelpSystem {
 		WebappManager.stop("help");
 		if (getMode() != MODE_WORKBENCH)
 			WebappManager.stop("helpControl");
-
-		// close any browsers created
-		BrowserManager.getInstance().closeAll();
 
 		if (HelpBasePlugin.DEBUG) {
 			System.out.println("Help System is shut down.");
