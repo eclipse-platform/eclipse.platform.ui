@@ -152,10 +152,10 @@ public class ProgressViewer extends StructuredViewer {
 				int itemCount = Math.min(displayedItems.length,numShowItems);
 				
 				int yOffset = 0;
-				if(itemCount == 1){//If there is a single item try to center it
+				if(numShowItems == 1){//If there is a single item try to center it
 					Rectangle clientArea = canvas.getParent().getClientArea();
 					int size = clientArea.height;
-					yOffset = size - (fontMetrics.getHeight() * itemCount);
+					yOffset = size - (fontMetrics.getHeight());
 					yOffset = yOffset / 2;
 				}
 				
