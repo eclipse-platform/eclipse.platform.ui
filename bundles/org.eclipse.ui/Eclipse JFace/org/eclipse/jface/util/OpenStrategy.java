@@ -314,6 +314,8 @@ public class OpenStrategy {
 											}
 										}
 									});
+								} else {
+									firePostSelectionEvent(new SelectionEvent(e));
 								}
 							}
 						});
@@ -322,7 +324,6 @@ public class OpenStrategy {
 			}
 
 			void mouseSelectItem(SelectionEvent e) {
-				firePostSelectionEvent(e);
 				if((CURRENT_METHOD & SINGLE_CLICK) != 0)
 					fireOpenEvent(e);
 				mouseUpEvent = null;
