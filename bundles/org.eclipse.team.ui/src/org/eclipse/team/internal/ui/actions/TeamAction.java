@@ -22,11 +22,14 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
@@ -41,7 +44,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionDelegate;
 
 /**
@@ -88,7 +90,7 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
 			}
 		}
 		if (result != null && !result.isEmpty()) {
-			return (Object[])result.toArray((Object[])Array.newInstance(c, result.size()));
+			return result.toArray((Object[])Array.newInstance(c, result.size()));
 		}
 		return (Object[])Array.newInstance(c, 0);
 	}
@@ -180,20 +182,34 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
 	 * @param progressKind  one of PROGRESS_BUSYCURSOR or PROGRESS_DIALOG
 	 */
 	final protected void run(final IRunnableWithProgress runnable, final String problemMessage, int progressKind) {
-		try {
-			switch (progressKind) {
-				case PROGRESS_BUSYCURSOR :
-					PlatformUI.getWorkbench().getProgressService().run(false, false, runnable);
-					break;
-				default :
-				case PROGRESS_DIALOG :
+		final Exception[] exceptions = new Exception[] {null};
+		switch (progressKind) {
+			case PROGRESS_BUSYCURSOR :
+				BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
+					public void run() {
+						try {
+							runnable.run(new NullProgressMonitor());
+						} catch (InvocationTargetException e) {
+							exceptions[0] = e;
+						} catch (InterruptedException e) {
+							exceptions[0] = null;
+						}
+					}
+				});
+				break;
+			default :
+			case PROGRESS_DIALOG :
+				try {
 					new ProgressMonitorDialog(getShell()).run(true, true, runnable);
-					break;
-			}
-		} catch (InvocationTargetException e) {
-			handle(e, null, problemMessage);
-		} catch (InterruptedException e) {
-			// Ignore
+				} catch (InvocationTargetException e) {
+					exceptions[0] = e;
+				} catch (InterruptedException e) {
+					exceptions[0] = null;
+				}
+				break;
+		}
+		if (exceptions[0] != null) {
+			handle(exceptions[0], null, problemMessage);
 		}
 	}
 	
