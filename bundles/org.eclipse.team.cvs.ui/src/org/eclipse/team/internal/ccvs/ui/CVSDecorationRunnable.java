@@ -52,10 +52,17 @@ public class CVSDecorationRunnable implements Runnable {
 	List decorations = new ArrayList();
 	private final static int NUM_TO_BATCH = 50;
 
+	static {
+		dirty = new CachedImageDescriptor(TeamUIPlugin.getPlugin().getImageDescriptor(ISharedImages.IMG_DIRTY_OVR));
+		checkedIn = new CachedImageDescriptor(TeamUIPlugin.getPlugin().getImageDescriptor(ISharedImages.IMG_CHECKEDIN_OVR));
+		checkedOut = new CachedImageDescriptor(TeamUIPlugin.getPlugin().getImageDescriptor(ISharedImages.IMG_CHECKEDOUT_OVR));
+		merged = new CachedImageDescriptor(CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_MERGED));
+	}
+
 	/*
 	 * Define a cached image descriptor which only creates the image data once
 	 */
-	public class CachedImageDescriptor extends ImageDescriptor {
+	public static class CachedImageDescriptor extends ImageDescriptor {
 		ImageDescriptor descriptor;
 		ImageData data;
 		public CachedImageDescriptor(ImageDescriptor descriptor) {
@@ -71,10 +78,6 @@ public class CVSDecorationRunnable implements Runnable {
 
 	/* package */
 	CVSDecorationRunnable(IDecorationNotifier notifier) {
-		dirty = new CachedImageDescriptor(TeamUIPlugin.getPlugin().getImageDescriptor(ISharedImages.IMG_DIRTY_OVR));
-		checkedIn = new CachedImageDescriptor(TeamUIPlugin.getPlugin().getImageDescriptor(ISharedImages.IMG_CHECKEDIN_OVR));
-		checkedOut = new CachedImageDescriptor(TeamUIPlugin.getPlugin().getImageDescriptor(ISharedImages.IMG_CHECKEDOUT_OVR));
-		merged = new CachedImageDescriptor(CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_MERGED));
 		this.notifier = notifier;
 	}
 
