@@ -126,20 +126,24 @@ public class CVSWorkspaceRoot {
 	 * Sync the given unshared project against the given repository and module.
 	 */
 	public static IRemoteSyncElement getRemoteSyncTree(IProject project, ICVSRepositoryLocation location, String moduleName, CVSTag tag, IProgressMonitor progress) throws TeamException {
-		progress.beginTask(null, 100);
-		RemoteFolder folder = new RemoteFolder(null, location, new Path(moduleName), tag);
-		RemoteFolderTree remote = RemoteFolderTreeBuilder.buildRemoteTree((CVSRepositoryLocation)folder.getRepository(), folder, folder.getTag(), Policy.subMonitorFor(progress, 80));
-		CVSRemoteSyncElement tree = new CVSRemoteSyncElement(true /*three way*/, project, null, remote);
-		tree.makeFoldersInSync(Policy.subMonitorFor(progress, 10));
-		try {
-			if (!project.getDescription().hasNature(CVSProviderPlugin.getTypeId())) {
-				Team.addNatureToProject(project, CVSProviderPlugin.getTypeId(), Policy.subMonitorFor(progress, 10));
+		if (CVSWorkspaceRoot.getCVSFolderFor(project).isCVSFolder()) {
+			return getRemoteSyncTree(project, tag, progress);
+		} else {
+			progress.beginTask(null, 100);
+			RemoteFolder folder = new RemoteFolder(null, location, new Path(moduleName), tag);
+			RemoteFolderTree remote = RemoteFolderTreeBuilder.buildRemoteTree((CVSRepositoryLocation)folder.getRepository(), folder, folder.getTag(), Policy.subMonitorFor(progress, 80));
+			CVSRemoteSyncElement tree = new CVSRemoteSyncElement(true /*three way*/, project, null, remote);
+			tree.makeFoldersInSync(Policy.subMonitorFor(progress, 10));
+			try {
+				if (!project.getDescription().hasNature(CVSProviderPlugin.getTypeId())) {
+					Team.addNatureToProject(project, CVSProviderPlugin.getTypeId(), Policy.subMonitorFor(progress, 10));
+				}
+			} catch (CoreException e) {
+				throw CVSException.wrapException(e);
 			}
-		} catch (CoreException e) {
-			throw CVSException.wrapException(e);
+			progress.done();
+			return tree;
 		}
-		progress.done();
-		return tree;
 	}
 	
 	public static ICVSRemoteResource getRemoteTree(IResource resource, CVSTag tag, IProgressMonitor progress) throws TeamException {
