@@ -11,8 +11,7 @@
 package org.eclipse.core.tests.internal.preferences;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Random;
+import java.util.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.runtime.*;
@@ -48,11 +47,16 @@ public class PreferencesServiceTest extends RuntimeTest {
 		IEclipsePreferences test = new TestScope().getNode(qualifier);
 		String key = getRandomString() + 'k';
 		String value = getRandomString() + 'v';
+		String key1 = "http://eclipse.org:24";
+		String value1 = getRandomString() + "v1";
 		String actual = test.get(key, null);
 		assertNull("1.0", actual);
 		test.put(key, value);
+		test.put(key1, value1);
 		actual = test.get(key, null);
 		assertEquals("1.1", value, actual);
+		actual = test.get(key1, null);
+		assertEquals("1.2", value1, actual);
 
 		// export it
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -100,11 +104,13 @@ public class PreferencesServiceTest extends RuntimeTest {
 		test = new TestScope().getNode(qualifier);
 		actual = test.get(key, null);
 		assertEquals("5.0", value, actual);
+		actual = test.get(key1, null);
+		assertEquals("5.1", value1, actual);
 		actual = test.get(newKey, null);
-		assertNull("5.1", actual);
+		assertNull("5.2", actual);
 		// ensure that the node isn't dirty (has been saved after the import)
-		assertTrue("5.2", test instanceof TestScope);
-		assertTrue("5.3", !((TestScope) test).isDirty());
+		assertTrue("5.3", test instanceof TestScope);
+		assertTrue("5.4", !((TestScope) test).isDirty());
 
 		// clear all
 		try {
@@ -114,8 +120,10 @@ public class PreferencesServiceTest extends RuntimeTest {
 		}
 		actual = test.get(key, null);
 		assertNull("6.1", actual);
-		actual = test.get(newKey, null);
+		actual = test.get(key1, null);
 		assertNull("6.2", actual);
+		actual = test.get(newKey, null);
+		assertNull("6.3", actual);
 
 		// import
 		input = new ByteArrayInputStream(bytes);
@@ -135,12 +143,10 @@ public class PreferencesServiceTest extends RuntimeTest {
 		test = new TestScope().getNode(qualifier);
 		actual = test.get(key, null);
 		assertEquals("8.0", value, actual);
+		actual = test.get(key1, null);
+		assertEquals("8.1", value1, actual);
 		actual = test.get(newKey, null);
-		assertNull("8.1", actual);
-	}
-
-	public void testImportExportExcludes() {
-		// TODO
+		assertNull("8.2", actual);
 	}
 
 	private void assertEquals(String message, String[] one, String[] two) {
@@ -442,5 +448,79 @@ public class PreferencesServiceTest extends RuntimeTest {
 		searchPath = "///a";
 		node.put("/a", searchPath);
 		assertEquals("10.0", searchPath, service.getString(qualifier, searchPath, null, null));
+	}
+
+	public void testImportLegacy() {
+		IPreferencesService service = Platform.getPreferencesService();
+		String[] qualifiers = new String[] {getRandomString() + 1, getRandomString() + 2};
+		String[] oldKeys = new String[] {getRandomString() + 3, getRandomString() + 4};
+		String[] newKeys = new String[] {getRandomString() + 5, getRandomString() + 6};
+		Preferences node = service.getRootNode().node(Plugin.PLUGIN_PREFERENCE_SCOPE);
+		String actual;
+
+		// nodes shouldn't exist
+		for (int i = 0; i < qualifiers.length; i++) {
+			try {
+				assertTrue("1.0", !node.nodeExists(qualifiers[i]));
+			} catch (BackingStoreException e) {
+				fail("1.99", e);
+			}
+		}
+
+		// store some values
+		for (int i = 0; i < qualifiers.length; i++) {
+			Preferences current = node.node(qualifiers[i]);
+			for (int j = 0; j < oldKeys.length; j++) {
+				current.put(oldKeys[j], getRandomString());
+				actual = current.get(oldKeys[j], null);
+				assertNotNull("2.0." + current.absolutePath() + IPath.SEPARATOR + oldKeys[j], actual);
+			}
+			for (int j = 0; j < newKeys.length; j++) {
+				actual = current.get(newKeys[j], null);
+				assertNull("2.1." + current.absolutePath() + IPath.SEPARATOR + newKeys[j], actual);
+			}
+		}
+
+		// import a legacy file
+		try {
+			service.importPreferences(getLegacyExportFile(qualifiers, newKeys));
+		} catch (CoreException e) {
+			fail("3.0", e);
+		}
+
+		// old values shouldn't exist anymore
+		for (int i = 0; i < qualifiers.length; i++) {
+			Preferences current = node.node(qualifiers[i]);
+			for (int j = 0; j < oldKeys.length; j++)
+				assertNull("4.0." + current.absolutePath() + IPath.SEPARATOR + oldKeys[j], current.get(oldKeys[j], null));
+			for (int j = 0; j < newKeys.length; j++) {
+				actual = current.get(newKeys[j], null);
+				assertNotNull("4.1." + current.absolutePath() + IPath.SEPARATOR + newKeys[j], actual);
+			}
+		}
+	}
+
+	private InputStream getLegacyExportFile(String[] qualifiers, String[] keys) {
+		Properties properties = new Properties();
+		for (int i = 0; i < qualifiers.length; i++) {
+			// version id
+			properties.put(qualifiers[i], "2.1.3");
+			for (int j = 0; j < keys.length; j++)
+				properties.put(qualifiers[i] + IPath.SEPARATOR + keys[j], getRandomString());
+		}
+		ByteArrayOutputStream output = new ByteArrayOutputStream();
+		try {
+			properties.store(output, null);
+		} catch (IOException e) {
+			fail("#getLegacyExportFile", e);
+		} finally {
+			try {
+				output.close();
+			} catch (IOException e) {
+				// ignore
+			}
+		}
+		InputStream input = new ByteArrayInputStream(output.toByteArray());
+		return input;
 	}
 }

@@ -38,21 +38,32 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 	private static final String ATTRIBUTE_NAME = "name"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_CLASS = "class"; //$NON-NLS-1$
 	private static final String ELEMENT_SCOPE = "scope"; //$NON-NLS-1$
-	private static final String DOUBLE_SLASH = "//"; //$NON-NLS-1$
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
 	private static IPreferencesService instance;
 	static final RootPreferences root = new RootPreferences();
 	private static final Map defaultsRegistry = Collections.synchronizedMap(new HashMap());
 	private static final Map scopeRegistry = Collections.synchronizedMap(new HashMap());
 
+	/*
+	 * Create and return an IStatus object with ERROR severity and the
+	 * given message and exception.
+	 */
 	private static IStatus createStatusError(String message, Exception e) {
 		return new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, message, e);
 	}
 
+	/*
+	 * Create and return an IStatus object with WARNING severity and the
+	 * given message and exception.
+	 */
 	private static IStatus createStatusWarning(String message, Exception e) {
 		return new Status(IStatus.WARNING, Platform.PI_RUNTIME, IStatus.WARNING, message, e);
 	}
 
+	/*
+	 * Return the instance.
+	 */
 	public static IPreferencesService getDefault() {
 		if (instance == null)
 			instance = new PreferencesService();
@@ -197,16 +208,19 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 	 */
 	private Properties convertFromLegacy(Properties properties) {
 		Properties result = new Properties();
-		IPath prefix = new Path(Plugin.PLUGIN_PREFERENCE_SCOPE).makeAbsolute();
+		String prefix = IPath.SEPARATOR + Plugin.PLUGIN_PREFERENCE_SCOPE + IPath.SEPARATOR;
 		for (Iterator i = properties.keySet().iterator(); i.hasNext();) {
 			String key = (String) i.next();
 			String value = properties.getProperty(key);
 			if (value != null) {
-				IPath path = new Path(key);
-				if (path.segmentCount() == 1)
-					result.put(EXPORT_ROOT_PREFIX + prefix.append(key).toString(), ""); //$NON-NLS-1$
-				else
-					result.put(prefix.append(path).toString(), value);
+				int index = key.indexOf(IPath.SEPARATOR);
+				if (index == -1)
+					result.put(EXPORT_ROOT_PREFIX + prefix + key, EMPTY_STRING);
+				else {
+					String path = key.substring(0, index);
+					key = key.substring(index + 1);
+					result.put(EclipsePreferences.encodePath(prefix + path, key), value);
+				}
 			}
 		}
 		return result;
@@ -217,24 +231,37 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 	 * importing.
 	 */
 	private IExportedPreferences convertFromProperties(Properties properties) {
-		IExportedPreferences result = new ExportedPreferences(null, ""); //$NON-NLS-1$
+		IExportedPreferences result = new ExportedPreferences(null, EMPTY_STRING);
 		for (Iterator i = properties.keySet().iterator(); i.hasNext();) {
-			String pathString = (String) i.next();
-			if (pathString.charAt(0) == EXPORT_ROOT_PREFIX) {
-				pathString = pathString.substring(1, pathString.length());
-				ExportedPreferences current = (ExportedPreferences) result.node(pathString);
+			String path = (String) i.next();
+			String value = properties.getProperty(path);
+			if (path.charAt(0) == EXPORT_ROOT_PREFIX) {
+				path = path.substring(1, path.length());
+				ExportedPreferences current = (ExportedPreferences) result.node(path);
 				current.setExportRoot();
 			} else {
-				IPath path = new Path(pathString);
-				IExportedPreferences current = (IExportedPreferences) result.node(path.removeLastSegments(1).toString());
-				String key = path.lastSegment();
-				String value = properties.getProperty(pathString);
+				String[] decoded = EclipsePreferences.decodePath(path);
+				path = decoded[0];
+				String key = decoded[1];
+				Preferences current = result.node(path);
 				current.put(key, value);
 			}
 		}
 		if (InternalPlatform.DEBUG_PREFERENCES)
 			Policy.debug("Converted preferences file to IExportedPreferences tree: " + ((ExportedPreferences) result).toDeepDebugString()); //$NON-NLS-1$
 		return result;
+	}
+
+	String getScope(String path) {
+		if (path == null || path.length() == 0)
+			return EMPTY_STRING;
+		int startIndex = path.indexOf(IPath.SEPARATOR);
+		if (startIndex == -1)
+			return path;
+		int endIndex = path.indexOf(IPath.SEPARATOR, startIndex);
+		if (endIndex == -1)
+			endIndex = path.length();
+		return path.substring(startIndex, endIndex);
 	}
 
 	/*
@@ -247,20 +274,20 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 		IPreferenceNodeVisitor visitor = new IPreferenceNodeVisitor() {
 			public boolean visit(IEclipsePreferences node) throws BackingStoreException {
 				// don't store defaults
-				String pathString = node.absolutePath();
-				IPath path = new Path(pathString);
-				if (path.segmentCount() > 0 && DefaultScope.SCOPE.equals(path.segment(0)))
+				String path = node.absolutePath();
+				String scope = getScope(path);
+				if (DefaultScope.SCOPE.equals(scope))
 					return false;
 				// check the excludes list to see if this node should be considered
 				for (int i = 0; i < excludesList.length; i++) {
-					if (pathString.startsWith(excludesList[i]))
+					if (path.startsWith(excludesList[i]))
 						return false;
 				}
 				// check the excludes list for each preference
 				String[] keys = node.keys();
 				for (int i = 0; i < keys.length; i++) {
 					String key = keys[i];
-					String fullKeyPath = path.append(key).toString();
+					String fullKeyPath = EclipsePreferences.encodePath(path, key);
 					boolean ignore = false;
 					for (int j = 0; !ignore && j < excludesList.length; j++)
 						if (fullKeyPath.startsWith(excludesList[j]))
@@ -314,7 +341,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 		try {
 			properties = convertToProperties(node, excludesList);
 			properties.put(VERSION_KEY, Float.toString(EXPORT_VERSION));
-			properties.put(EXPORT_ROOT_PREFIX + node.absolutePath(), ""); //$NON-NLS-1$
+			properties.put(EXPORT_ROOT_PREFIX + node.absolutePath(), EMPTY_STRING);
 		} catch (BackingStoreException e) {
 			throw new CoreException(createStatusError(e.getMessage(), e));
 		}
@@ -348,7 +375,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 	 * @see org.eclipse.core.runtime.preferences.IPreferencesService#getBoolean(java.lang.String, java.lang.String, boolean, org.eclipse.core.runtime.preferences.IScope[])
 	 */
 	public boolean getBoolean(String qualifier, String key, boolean defaultValue, IScopeContext[] scopes) {
-		String result = get(splitPath(key)[1], null, getNodes(qualifier, key, scopes));
+		String result = get(EclipsePreferences.decodePath(key)[1], null, getNodes(qualifier, key, scopes));
 		return result == null ? defaultValue : Boolean.valueOf(result).booleanValue();
 	}
 
@@ -371,7 +398,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 	 * @see org.eclipse.core.runtime.preferences.IPreferencesService#getByteArray(java.lang.String, java.lang.String, byte[], org.eclipse.core.runtime.preferences.IScope[])
 	 */
 	public byte[] getByteArray(String qualifier, String key, byte[] defaultValue, IScopeContext[] scopes) {
-		String result = get(splitPath(key)[1], null, getNodes(qualifier, key, scopes));
+		String result = get(EclipsePreferences.decodePath(key)[1], null, getNodes(qualifier, key, scopes));
 		return result == null ? defaultValue : result.getBytes();
 	}
 
@@ -387,7 +414,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 	 * @see org.eclipse.core.runtime.preferences.IPreferencesService#getDouble(java.lang.String, java.lang.String, double, org.eclipse.core.runtime.preferences.IScope[])
 	 */
 	public double getDouble(String qualifier, String key, double defaultValue, IScopeContext[] scopes) {
-		String value = get(splitPath(key)[1], null, getNodes(qualifier, key, scopes));
+		String value = get(EclipsePreferences.decodePath(key)[1], null, getNodes(qualifier, key, scopes));
 		if (value == null)
 			return defaultValue;
 		try {
@@ -401,7 +428,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 	 * @see org.eclipse.core.runtime.preferences.IPreferencesService#getFloat(java.lang.String, java.lang.String, float, org.eclipse.core.runtime.preferences.IScope[])
 	 */
 	public float getFloat(String qualifier, String key, float defaultValue, IScopeContext[] scopes) {
-		String value = get(splitPath(key)[1], null, getNodes(qualifier, key, scopes));
+		String value = get(EclipsePreferences.decodePath(key)[1], null, getNodes(qualifier, key, scopes));
 		if (value == null)
 			return defaultValue;
 		try {
@@ -415,7 +442,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 	 * @see org.eclipse.core.runtime.preferences.IPreferencesService#getInt(java.lang.String, java.lang.String, int, org.eclipse.core.runtime.preferences.IScope[])
 	 */
 	public int getInt(String qualifier, String key, int defaultValue, IScopeContext[] scopes) {
-		String value = get(splitPath(key)[1], null, getNodes(qualifier, key, scopes));
+		String value = get(EclipsePreferences.decodePath(key)[1], null, getNodes(qualifier, key, scopes));
 		if (value == null)
 			return defaultValue;
 		try {
@@ -429,7 +456,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 	 * @see org.eclipse.core.runtime.preferences.IPreferencesService#getLong(java.lang.String, java.lang.String, long, org.eclipse.core.runtime.preferences.IScope[])
 	 */
 	public long getLong(String qualifier, String key, long defaultValue, IScopeContext[] scopes) {
-		String value = get(splitPath(key)[1], null, getNodes(qualifier, key, scopes));
+		String value = get(EclipsePreferences.decodePath(key)[1], null, getNodes(qualifier, key, scopes));
 		if (value == null)
 			return defaultValue;
 		try {
@@ -455,7 +482,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 
 	private Preferences[] getNodes(String qualifier, String key, IScopeContext[] contexts) {
 		String[] order = getLookupOrder(qualifier, key);
-		String childPath = splitPath(key)[0];
+		String childPath = EclipsePreferences.makeRelative(EclipsePreferences.decodePath(key)[0]);
 		ArrayList result = new ArrayList();
 		for (int i = 0; i < order.length; i++) {
 			String scopeString = order[i];
@@ -483,39 +510,6 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 		return (Preferences[]) result.toArray(new Preferences[result.size()]);
 	}
 
-	private String[] splitPath(String fullPath) {
-		String key = null;
-		String path = null;
-
-		// check to see if we have an indicator which tells us where the path ends
-		int index = fullPath.indexOf(DOUBLE_SLASH);
-		if (index == -1) {
-			// we don't have a double-slash telling us where the path ends 
-			// so the path is up to the last slash character
-			int lastIndex = fullPath.lastIndexOf(IPath.SEPARATOR);
-			if (lastIndex == -1) {
-				key = fullPath;
-			} else {
-				path = fullPath.substring(0, lastIndex);
-				key = fullPath.substring(lastIndex + 1);
-			}
-		} else {
-			// the child path is up to the double-slash and the key
-			// is the string after it
-			path = fullPath.substring(0, index);
-			key = fullPath.substring(index + 2);
-		}
-
-		// adjust if we have an absolute path
-		if (path != null)
-			if (path.length() == 0)
-				path = null;
-			else if (path.charAt(0) == IPath.SEPARATOR)
-				path = path.substring(1);
-
-		return new String[] {path, key};
-	}
-
 	/*
 	 * Convert the given qualifier and key into a key to use in the look-up registry.
 	 */
@@ -539,7 +533,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 	 * @see org.eclipse.core.runtime.preferences.IPreferencesService#getString(java.lang.String, java.lang.String, java.lang.String, org.eclipse.core.runtime.preferences.IScope[])
 	 */
 	public String getString(String qualifier, String key, String defaultValue, IScopeContext[] scopes) {
-		return get(splitPath(key)[1], defaultValue, getNodes(qualifier, key, scopes));
+		return get(EclipsePreferences.decodePath(key)[1], defaultValue, getNodes(qualifier, key, scopes));
 	}
 
 	/*

@@ -17,7 +17,6 @@ import junit.framework.TestSuite;
 import org.eclipse.core.internal.preferences.EclipsePreferences;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.utils.UniversalUniqueIdentifier;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.*;
 import org.eclipse.core.tests.runtime.RuntimeTest;
@@ -94,9 +93,9 @@ public class EclipsePreferencesTest extends RuntimeTest {
 	public static Test suite() {
 		// all test methods are named "test..."
 		return new TestSuite(EclipsePreferencesTest.class);
-		//				TestSuite suite = new TestSuite();
-		//				suite.addTest(new EclipsePreferencesTest("test_55410"));
-		//				return suite;
+		//		TestSuite suite = new TestSuite();
+		//		suite.addTest(new EclipsePreferencesTest("testFileFormat"));
+		//		return suite;
 	}
 
 	private String getUniqueString() {
@@ -1071,27 +1070,56 @@ public class EclipsePreferencesTest extends RuntimeTest {
 		}
 	}
 
-	public void testPersistence() {
-		//TODO
-		if (true)
-			return;
-		Preferences node = new InstanceScope().getNode(ResourcesPlugin.PI_RESOURCES);
-		String[] keys = new String[] {};
-		String[] values = new String[] {};
-		for (int i = 0; i < keys.length; i++) {
-			String key = keys[i];
-			String value = values[i];
-			node.put(key, value);
-		}
-		try {
-			node.flush();
-		} catch (BackingStoreException e) {
-			fail("0.0", e);
+	public void testFileFormat() {
+		class Info {
+
+			String path;
+			String key;
+			String encoded;
+
+			Info(String path, String key, String encoded) {
+				this.path = path;
+				this.key = key;
+				this.encoded = encoded;
+			}
 		}
 
-		// verify what the preferences look like in the file
-		IPath location = null;
-		Properties properties = loadProperties(location);
+		ArrayList list = new ArrayList();
+		list.add(new Info("", "a", "a"));
+		list.add(new Info("", "/a", "///a"));
+		list.add(new Info("a", "b", "a/b"));
+		list.add(new Info("a/b", "c/d", "a/b//c/d"));
+		list.add(new Info("", "a//b", "//a//b"));
+		list.add(new Info("a/b", "c", "a/b/c"));
+		list.add(new Info("a/b", "c//d", "a/b//c//d"));
+
+		Preferences node = new TestScope().getNode(getUniqueString());
+		for (int i = 0; i < list.size(); i++) {
+			Info info = (Info) list.get(i);
+			node.node(info.path).put(info.key, Integer.toString(i));
+		}
+
+		if (!(node instanceof TestScope))
+			return;
+
+		Properties properties = null;
+		try {
+			properties = ((TestScope) node).toProperties();
+		} catch (BackingStoreException e) {
+			fail("1.0", e);
+		}
+
+		for (Iterator i = properties.keySet().iterator(); i.hasNext();) {
+			String key = (String) i.next();
+			String value = properties.getProperty(key);
+			try {
+				Info info = (Info) list.get(Integer.parseInt(value));
+				assertNotNull("2.0", info);
+				assertEquals("2.1." + key, info.encoded, key);
+			} catch (NumberFormatException e) {
+				fail("2.99." + value, e);
+			}
+		}
 	}
 
 	private Properties loadProperties(IPath location) {
@@ -1113,5 +1141,35 @@ public class EclipsePreferencesTest extends RuntimeTest {
 				}
 		}
 		return result;
+	}
+
+	public void testEncodePath() {
+		class Item {
+			String path, key, expected;
+
+			Item(String path, String key, String expected) {
+				super();
+				this.path = path;
+				this.key = key;
+				this.expected = expected;
+			}
+		}
+
+		ArrayList list = new ArrayList();
+		list.add(new Item(null, "a", "a"));
+		list.add(new Item(null, "/a", "///a"));
+		list.add(new Item("a", "b", "a/b"));
+		list.add(new Item("a/b", "c/d", "a/b//c/d"));
+		list.add(new Item("a", "b//c", "a//b//c"));
+		list.add(new Item("repositories", "cvs://dev.eclipse.org:25/cvsroot", "repositories//cvs://dev.eclipse.org:25/cvsroot"));
+		list.add(new Item("repositories:cvs", "dev.eclipse.org:25", "repositories:cvs/dev.eclipse.org:25"));
+
+		for (Iterator i = list.iterator(); i.hasNext();) {
+			Item item = (Item) i.next();
+			assertEquals("a" + i + item.expected, item.expected, EclipsePreferences.encodePath(item.path, item.key));
+			String[] result = EclipsePreferences.decodePath(item.expected);
+			assertEquals("b" + i + item.path, item.path, result[0]);
+			assertEquals("c" + i + item.key, item.key, result[1]);
+		}
 	}
 }

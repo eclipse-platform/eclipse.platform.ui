@@ -43,6 +43,8 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	protected static final String VERSION_KEY = "eclipse.preferences.version"; //$NON-NLS-1$
 	protected static final String VERSION_VALUE = "1"; //$NON-NLS-1$
 	protected static final String PATH_SEPARATOR = Character.toString(IPath.SEPARATOR);
+	protected static final String DOUBLE_SLASH = "//"; //$NON-NLS-1$
+	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
 	private String cachedPath;
 	protected Map children;
@@ -210,25 +212,20 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		}
 		table.remove(VERSION_KEY);
 		for (Iterator i = table.keySet().iterator(); i.hasNext();) {
-			String key = (String) i.next();
-			String value = table.getProperty(key);
+			String fullKey = (String) i.next();
+			String value = table.getProperty(fullKey);
 			if (value != null) {
-				boolean isAbsolute = key.length() > 0 && key.charAt(0) == IPath.SEPARATOR;
-				if (!isAbsolute) {
-					int index = key.lastIndexOf(IPath.SEPARATOR);
-					String preferenceKey = index == -1 ? key : key.substring(index + 1);
-					String child = index == -1 ? "" : key.substring(0, index); //$NON-NLS-1$
-					//use internal methods to avoid notifying listeners
-					EclipsePreferences childNode = (EclipsePreferences) internalNode(child, false, null);
-					if (InternalPlatform.DEBUG_PREFERENCES)
-						Policy.debug("Setting preference: " + childNode.absolutePath() + '/' + preferenceKey + '=' + value); //$NON-NLS-1$
-					String oldValue = childNode.internalPut(preferenceKey, value);
-					if (!value.equals(oldValue))
-						childNode.makeDirty();
-				} else {
-					if (InternalPlatform.DEBUG_PREFERENCES)
-						Policy.debug("Ignoring value: " + value + " for key: " + key + " for node: " + absolutePath()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				}
+				String[] splitPath = decodePath(fullKey);
+				String path = splitPath[0];
+				path = makeRelative(path);
+				String key = splitPath[1];
+				//use internal methods to avoid notifying listeners
+				EclipsePreferences childNode = (EclipsePreferences) internalNode(path, false, null);
+				if (InternalPlatform.DEBUG_PREFERENCES)
+					Policy.debug("Setting preference: " + childNode.absolutePath() + '/' + key + '=' + value); //$NON-NLS-1$
+				String oldValue = childNode.internalPut(key, value);
+				if (!value.equals(oldValue))
+					childNode.makeDirty();
 			}
 		}
 	}
@@ -246,10 +243,8 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 				String[] keys = (String[]) temp.keySet().toArray(EMPTY_STRING_ARRAY);
 				for (int i = 0; i < keys.length; i++) {
 					String value = temp.getProperty(keys[i], null);
-					if (value != null) {
-						String fullPath = addSeparator ? prefix + PATH_SEPARATOR + keys[i] : keys[i];
-						result.put(fullPath, value);
-					}
+					if (value != null)
+						result.put(encodePath(prefix, keys[i]), value);
 				}
 			}
 		}
@@ -296,7 +291,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 			result.flush();
 		} catch (BackingStoreException e) {
 			IPath location = result.getLocation();
-			String message = Policy.bind("preferences.loadException", location == null ? "" : location.toString()); //$NON-NLS-1$ //$NON-NLS-2$
+			String message = Policy.bind("preferences.loadException", location == null ? EMPTY_STRING : location.toString()); //$NON-NLS-1$
 			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, message, e);
 			InternalPlatform.getDefault().log(status);
 		} finally {
@@ -526,7 +521,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		// notify listeners if a child was added
 		if (added && notify)
 			nodeAdded(child);
-		return (IEclipsePreferences) child.node(index == -1 ? "" : path.substring(index + 1)); //$NON-NLS-1$
+		return (IEclipsePreferences) child.node(index == -1 ? EMPTY_STRING : path.substring(index + 1));
 	}
 
 	/**
@@ -694,7 +689,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		IEclipsePreferences child = getChild(childName, null);
 		if (child == null)
 			return false;
-		return child.nodeExists(index == -1 ? "" : path.substring(index + 1)); //$NON-NLS-1$
+		return child.nodeExists(index == -1 ? EMPTY_STRING : path.substring(index + 1));
 	}
 
 	protected void nodeRemoved(IEclipsePreferences child) {
@@ -1031,7 +1026,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		}
 		if (InternalPlatform.DEBUG_PREFERENCES)
 			Policy.debug("Saving preferences to file: " + location); //$NON-NLS-1$
-		Properties table = convertToProperties(new Properties(), ""); //$NON-NLS-1$
+		Properties table = convertToProperties(new Properties(), EMPTY_STRING);
 		if (table.isEmpty()) {
 			// nothing to save. delete existing file if one exists.
 			if (location.toFile().exists() && !location.toFile().delete()) {
@@ -1063,6 +1058,81 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 					// ignore
 				}
 		}
+	}
+
+	/*
+	 * Encode the given path and key combo to a form which is suitable for
+	 * persisting or using when searching. If the key contains a slash character
+	 * then we must use a double-slash to indicate the end of the 
+	 * path/the beginning of the key.
+	 */
+	public static String encodePath(String path, String key) {
+		String result;
+		int pathLength = path == null ? 0 : path.length();
+		if (key.indexOf(IPath.SEPARATOR) == -1) {
+			if (pathLength == 0)
+				result = key;
+			else
+				result = path + IPath.SEPARATOR + key;
+		} else {
+			if (pathLength == 0)
+				result = DOUBLE_SLASH + key;
+			else
+				result = path + DOUBLE_SLASH + key;
+		}
+		return result;
+	}
+
+	/*
+	 * Return a relative path
+	 */
+	public static String makeRelative(String path) {
+		String result = path;
+		if (path == null)
+			return EMPTY_STRING;
+		if (path.length() > 0 && path.charAt(0) == IPath.SEPARATOR)
+			result = path.length() == 0 ? EMPTY_STRING : path.substring(1);
+		return result;
+	}
+
+	/*
+	 * Return a 2 element String array.
+	 * 	element 0 - the path
+	 * 	element 1 - the key
+	 * The path may be null.
+	 * The key is never null.
+	 */
+	public static String[] decodePath(String fullPath) {
+		String key = null;
+		String path = null;
+
+		// check to see if we have an indicator which tells us where the path ends
+		int index = fullPath.indexOf(DOUBLE_SLASH);
+		if (index == -1) {
+			// we don't have a double-slash telling us where the path ends 
+			// so the path is up to the last slash character
+			int lastIndex = fullPath.lastIndexOf(IPath.SEPARATOR);
+			if (lastIndex == -1) {
+				key = fullPath;
+			} else {
+				path = fullPath.substring(0, lastIndex);
+				key = fullPath.substring(lastIndex + 1);
+			}
+		} else {
+			// the child path is up to the double-slash and the key
+			// is the string after it
+			path = fullPath.substring(0, index);
+			key = fullPath.substring(index + 2);
+		}
+
+		// adjust if we have an absolute path
+		if (path != null)
+			if (path.length() == 0)
+				path = null;
+			else if (path.charAt(0) == IPath.SEPARATOR)
+				path = path.substring(1);
+
+		return new String[] {path, key};
 	}
 
 	/*
