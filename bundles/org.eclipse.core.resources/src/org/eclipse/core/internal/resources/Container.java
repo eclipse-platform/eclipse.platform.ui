@@ -85,7 +85,7 @@ public abstract class Container extends Resource implements IContainer {
 		return getChildren(parent.getFullPath(), phantom);
 	}
 
-protected IResource[] getChildren(IPath parentPath, boolean phantom) {
+	protected IResource[] getChildren(IPath parentPath, boolean phantom) {
 		IPath[] children = null;
 		try {
 			children = workspace.tree.getChildren(parentPath);
@@ -102,12 +102,14 @@ protected IResource[] getChildren(IPath parentPath, boolean phantom) {
 			if (info != null)
 				result[j++] = workspace.newResource(children[i], info.getType());
 		}
-		if (j == result.length) 
+		if (j == result.length)
 			return result;
 		Resource[] trimmedResult = new Resource[j];
 		System.arraycopy(result, 0, trimmedResult, 0, j);
 		return trimmedResult;
-	}	public IFile getFile(String name) {
+	}
+
+	public IFile getFile(String name) {
 		return (IFile) workspace.newResource(getFullPath().append(name), FILE);
 	}
 
@@ -184,14 +186,14 @@ protected IResource[] getChildren(IPath parentPath, boolean phantom) {
 			}
 		}
 		// common case: nothing to exclude
-		if (teamPrivateMemberCount == 0) 
+		if (teamPrivateMemberCount == 0)
 			return allMembers;
 		// make a second pass to copy the ones we want
 		IResource[] reducedMembers = new IResource[allMembers.length - teamPrivateMemberCount];
 		int nextPosition = 0;
 		for (int i = 0; i < allMembers.length; i++) {
 			Resource child = (Resource) allMembers[i];
-			if (child != null) 
+			if (child != null)
 				reducedMembers[nextPosition++] = child;
 		}
 		return reducedMembers;
