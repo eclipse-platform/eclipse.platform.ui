@@ -117,8 +117,8 @@ public class ConvertLineDelimitersAction extends TextEditorAction {
 			if (fEditor instanceof ITextEditorExtension)
 				((ITextEditorExtension) fEditor).beginCompoundChange();
 				
-//			if (fDocument instanceof IDocumentExtension)
-//				((IDocumentExtension) fDocument).startSequentialRewrite();
+			if (fDocument instanceof IDocumentExtension)
+				((IDocumentExtension) fDocument).startSequentialRewrite();
 			
 			try {
 				for (int i= 0; i < lineCount; i++) {
@@ -138,8 +138,8 @@ public class ConvertLineDelimitersAction extends TextEditorAction {
 				throw new InvocationTargetException(e);
 
 			} finally {
-//				if (fDocument instanceof IDocumentExtension)
-//					((IDocumentExtension) fDocument).stopSequentialRewrite();	
+				if (fDocument instanceof IDocumentExtension)
+					((IDocumentExtension) fDocument).stopSequentialRewrite();	
 				
 				if (fEditor instanceof ITextEditorExtension)
 					((ITextEditorExtension) fEditor).endCompoundChange();
