@@ -105,7 +105,18 @@ public class DefaultLabelProvider implements ILabelProvider {
 					return IDebugUIConstants.IMG_OBJS_OS_PROCESS;
 				}
 			} else if (element instanceof ILaunch) {
+				// determine the image from the launch config type
 				ILaunch launch= (ILaunch)element;
+				ILaunchConfiguration configuration = launch.getLaunchConfiguration();
+				if (configuration != null) {
+					try {
+						return configuration.getType().getIdentifier();
+					} catch (CoreException e) {
+						DebugUIPlugin.log(e);
+						return null;
+					}
+				}
+				// if no config, use the old "mode" way
 				if (launch.getLaunchMode().equals(ILaunchManager.DEBUG_MODE)) {
 					return IDebugUIConstants.IMG_OBJS_LAUNCH_DEBUG;
 				} else if (launch.isTerminated()) {
@@ -119,6 +130,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 				try {
 					return ((ILaunchConfiguration)element).getType().getIdentifier();
 				} catch (CoreException e) {
+					DebugUIPlugin.log(e);
 					return null;
 				}
 			} 
