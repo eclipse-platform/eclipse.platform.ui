@@ -31,6 +31,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IPath;
 
 import org.eclipse.search.ui.IContextMenuContributor;
 import org.eclipse.search.ui.ISearchResultViewEntry;
@@ -99,11 +100,14 @@ class SearchResultViewer extends TableViewer {
 					fShowPreviousResultAction.setEnabled(hasSelection || hasElements);
 					fGotoMarkerAction.setEnabled(hasSelection);
 					fMarkerToShow= -1;
+					String location= "";
 					if (hasSelection) {
 						ISearchResultViewEntry entry= (ISearchResultViewEntry)getTable().getItem(getTable().getSelectionIndex()).getData();
-						setStatusLineMessage(((IResource)entry.getResource()).getLocation().toString());
-					} else
-						setStatusLineMessage("");
+						IPath path= entry.getResource().getFullPath();
+						if (path != null)
+							location= path.toString();
+					}
+					setStatusLineMessage(location);
 				}
 			}
 		);
