@@ -230,7 +230,7 @@ public abstract class WorkbenchWindow extends ApplicationWindow implements IWork
 		addToolBar(SWT.FLAT);
 
 		addStatusLine();
-		addShortcutBar(SWT.FLAT | SWT.WRAP | SWT.VERTICAL);
+		addShortcutBar(shortCutBarStyle());
 
 		actionPresentation = new ActionPresentation(this);
 		
@@ -253,6 +253,14 @@ public abstract class WorkbenchWindow extends ApplicationWindow implements IWork
 		getAdviser().preWindowOpen(getWindowConfigurer());
 		// Fill the action bars	
 		getAdviser().fillActionBars(this, getWindowConfigurer().getActionBarConfigurer(), FILL_ALL_ACTION_BARS);
+	}
+
+	/**
+	 * Return the style bits for the shortcut bar.
+	 * @return int
+	 */
+	protected int shortCutBarStyle() {
+		return SWT.FLAT | SWT.WRAP | SWT.VERTICAL;
 	}
 
 	private SortedMap actionsForActionSets = new TreeMap();

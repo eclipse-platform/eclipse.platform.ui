@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Shell;
  * current Eclipse IDE.
  */
 public class IDEWorkbenchWindow extends WorkbenchWindow {
-	
+
 	PerspectiveControl perspectiveControl;
 
 	/**
@@ -59,42 +59,45 @@ public class IDEWorkbenchWindow extends WorkbenchWindow {
 	 *  
 	 */
 	private void setLayoutDataForContents() {
-		
+
 		FormData perspectiveData = new FormData();
-		
+
 		perspectiveData.top = new FormAttachment(0);
-		perspectiveData.left = new FormAttachment(0);
-		perspectiveData.right = new FormAttachment(20);
-		perspectiveData.bottom = new FormAttachment(getToolBarControl(),0,SWT.BOTTOM);
-		
+		perspectiveData.left = new FormAttachment(80);
+		perspectiveData.right = new FormAttachment(100);
+		perspectiveData.bottom =
+			new FormAttachment(getShortcutBar().getControl(), 0, SWT.BOTTOM);
+
 		perspectiveControl.getControl().setLayoutData(perspectiveData);
 
 		FormData toolBarData = new FormData();
 		toolBarData.top = new FormAttachment(0);
-		toolBarData.left = new FormAttachment(perspectiveControl.getControl(),0);
-		toolBarData.right = new FormAttachment(100);
+		toolBarData.left = new FormAttachment(0);
+		toolBarData.right =
+			new FormAttachment(perspectiveControl.getControl(), 0);
 
 		getToolBarControl().setLayoutData(toolBarData);
-		
-		FormData progressData = new FormData();
-		progressData.left = new FormAttachment(0);
-		progressData.right = new FormAttachment(getShortcutBar().getControl(),0,SWT.RIGHT);
-		progressData.bottom = new FormAttachment(100); 
-		progressData.top = new FormAttachment(getStatusLineManager().getControl(),0,SWT.TOP);
-		
-		animationItem.getControl().setLayoutData(progressData);
 
 		FormData fastViewData = new FormData();
 
 		fastViewData.top = new FormAttachment(getToolBarControl(), 0);
 
 		fastViewData.left = new FormAttachment(0);
-		fastViewData.bottom = new FormAttachment(animationItem.getControl(),0);
+		fastViewData.right =
+			new FormAttachment(getToolBarControl(), 0, SWT.RIGHT);
 
 		getShortcutBar().getControl().setLayoutData(fastViewData);
 
+		FormData progressData = new FormData();
+		progressData.left = new FormAttachment(0);
+		progressData.right = new FormAttachment(10);
+		progressData.bottom = new FormAttachment(100);
+		progressData.top =
+			new FormAttachment(getStatusLineManager().getControl(), 0, SWT.TOP);
+
+		animationItem.getControl().setLayoutData(progressData);
+
 		FormData statusLineData = new FormData();
-		
 
 		statusLineData.left = new FormAttachment(animationItem.getControl());
 		statusLineData.right = new FormAttachment(100);
@@ -103,10 +106,10 @@ public class IDEWorkbenchWindow extends WorkbenchWindow {
 		getStatusLineManager().getControl().setLayoutData(statusLineData);
 		FormData clientAreaData = new FormData();
 
-		clientAreaData.top = new FormAttachment(getToolBarControl(),0);
-
-		clientAreaData.left =
+		clientAreaData.top =
 			new FormAttachment(getShortcutBar().getControl(), 0);
+
+		clientAreaData.left = new FormAttachment(0);
 
 		clientAreaData.bottom =
 			new FormAttachment(getStatusLineManager().getControl(), 0);
@@ -117,20 +120,30 @@ public class IDEWorkbenchWindow extends WorkbenchWindow {
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.WorkbenchWindow#createTrimWidgets(org.eclipse.swt.widgets.Shell)
 	 */
 	protected void createTrimWidgets(Shell shell) {
 		super.createTrimWidgets(shell);
 		createPerspectiveControl(shell);
 	}
-	
-	private void createPerspectiveControl(Shell shell){
+
+	private void createPerspectiveControl(Shell shell) {
 		perspectiveControl = new PerspectiveControl(this);
-		
+
 		perspectiveControl.createControl(shell);
-		
-		
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.internal.WorkbenchWindow#shortCutBarStyle()
+	 */
+	protected int shortCutBarStyle() {
+		return SWT.FLAT | SWT.WRAP | SWT.HORIZONTAL;
 	}
 
 }
