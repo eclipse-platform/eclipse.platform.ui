@@ -10,7 +10,6 @@
 		<project>org.eclipse.team.core</project>
 		<project>org.eclipse.team.ui</project>
 		<project>org.eclipse.ui</project>
-		<project>org.eclipse.webdav</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
