@@ -149,7 +149,7 @@ class SystemSummaryDocumentProvider extends AbstractDocumentProvider {
 		writer.println();
 		writer.println("*** Features:"); //$NON-NLS-1$
 
-		AboutInfo[] featuresArray = ((Workbench)PlatformUI.getWorkbench()).getConfigurationInfo().getFeaturesInfo();
+		AboutInfo[] featuresArray = ((Workbench)PlatformUI.getWorkbench()).getFeaturesInfo();
 		SortedSet set= new TreeSet(new Comparator() {
 			public int compare(Object o1, Object o2) {
 				String s1= ((AboutInfo)o1).getFeatureId();
