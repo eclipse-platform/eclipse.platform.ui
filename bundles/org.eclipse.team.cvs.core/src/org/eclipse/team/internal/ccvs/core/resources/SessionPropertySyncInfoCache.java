@@ -34,7 +34,7 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 	private static final Object RESOURCE_SYNC_CACHED = new Object();
 	
 	/*package*/ static final FileNameMatcher NULL_IGNORES = new FileNameMatcher();
-	private static final FolderSyncInfo NULL_FOLDER_SYNC_INFO = new FolderSyncInfo("", "", null, false); //$NON-NLS-1$ //$NON-NLS-2$
+	private static final FolderSyncInfo NULL_FOLDER_SYNC_INFO = new FolderSyncInfo("dummy-repo", "dummy-root", null, false); //$NON-NLS-1$ //$NON-NLS-2$
 	
 	private QualifiedName FOLDER_DIRTY_STATE_KEY = new QualifiedName(CVSProviderPlugin.ID, "folder-dirty-state-cached"); //$NON-NLS-1$
 	
