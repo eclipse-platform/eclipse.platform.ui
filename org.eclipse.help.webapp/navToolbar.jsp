@@ -31,42 +31,51 @@ HTML {
  }
  
 BODY {
-	font: icon;
 	background:ActiveBorder;
-	border-bottom:1px black solid;
-	border-right:1px black solid;
-	/* need to set this for Mozilla */
-	height:23px;
-}
-
-SPAN {
-	margin:0px;
-	border:0px;
-	padding:0px;
 }
 
 #titleText {
-	position:absolute; 
-	bottom:2px; 
-	text-indent:4px; 
-	z-order:20; 
-	font-weight:bold; 
-	width:80%; 
-	overflow:hidden; 
-	white-space:nowrap;
+	font-weight:bold;
 }
  
 </style>
 
 </head>
 
-<body leftmargin="0" topmargin="0" marginheight="0" marginwidth="0">
-
-	<div id="titleText">&nbsp;<%=WebappResources.getString("Content", request)%></div>
-		
-	<div style="right:5px; top:4px; bottom:3px;position:absolute;">
-	<a  href="#" onclick="parent.showBookshelf(this); this.blur();" ><img  src="images/home_nav.gif" alt='<%=WebappResources.getString("Bookshelf", request)%>' border="0"></a>
+<body>
+	<div id="textLayer" style="position:absolute; z-index:1; left:0; top:0; height:100%; width:3000;">
+		<table width="100%" border="0" cellspacing="0" cellpadding="0" height="100%" style="padding-left:5;">
+			<tr>
+				<td style="font: icon;">
+					<div id="titleText">
+						<%=WebappResources.getString("Content", request)%>
+					</div>
+				</td>
+			</tr>
+		</table>
 	</div>
-	
+	<div id="borderLayer" style="position:absolute; z-index:2; left:0; top:0; height:100%; width:100%; ">
+		<table width="100%" border="0" cellspacing="0" cellpadding="0" height="100% ">
+			<tr>
+				<td style="border:1px black solid;">
+					&nbsp;
+				</td>
+			</tr>
+		</table>
+	</div>	
+	<div id="iconLayer" style="position:absolute; z-index:3; left:0; top:0; height:100%; width:100%;">
+		<table width="100%" border="0" cellspacing="0" cellpadding="0" height="100%" style="padding-top:4; padding-right:3;">
+			<tr>
+				<td>
+					&nbsp;
+				</td>
+				<td align="middle" width="20">
+					<a  href="#" onclick="parent.showBookshelf(this); this.blur();" >
+						<img  src="images/home_nav.gif" alt='<%=WebappResources.getString("Bookshelf", request)%>' border="0">
+					</a>
+				</td>
+			</tr>
+		</table>
+	</div>	
 </body>
 </html>
