@@ -1216,6 +1216,10 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 				for (int i = 0; i < contributionMems.length; i++) {
 					IMemento contributionMem = contributionMems[i];
 					String type = contributionMem.getString(IWorkbenchConstants.TAG_ITEM_TYPE);
+					if (type == null) {
+						// Do not recognize that type
+						continue;
+					}
 					String id = contributionMem.getString(IWorkbenchConstants.TAG_ID);
 					IContributionItem newItem = null;
 					if (type.equals(IWorkbenchConstants.TAG_TYPE_SEPARATOR)) {
@@ -1224,9 +1228,9 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 						} else {
 							newItem = new Separator();
 						}
-					} else if (type.equals(IWorkbenchConstants.TAG_TYPE_GROUPMARKER)) {
+					} else if ((id != null) && (type.equals(IWorkbenchConstants.TAG_TYPE_GROUPMARKER))) {
 						newItem = new GroupMarker(id);
-					} else if (type.equals(IWorkbenchConstants.TAG_TYPE_TOOLBARCONTRIBUTION)) {
+					} else if ((id != null) && (type.equals(IWorkbenchConstants.TAG_TYPE_TOOLBARCONTRIBUTION))) {
 
 						// Get Width and height
 						Integer width = contributionMem.getInteger(IWorkbenchConstants.TAG_ITEM_X);
@@ -1268,6 +1272,13 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 				}
 				// Set the cool bar layout to the given layout.
 				coolBarMgr.setLayout(layout);
+			}else {
+				// For older workbenchs
+				coolBarMem = memento.getChild(IWorkbenchConstants.TAG_TOOLBAR_LAYOUT);
+				if (coolBarMem != null) {
+					// Restore an older layout
+					restoreOldCoolBar(coolBarMem);
+				}
 			}
 		}
 
@@ -1353,7 +1364,170 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 
 		return result;
 	}
+	
+	/**
+	 * Restores cool item order from an old workbench.
+	 */
+	private boolean restoreOldCoolBar(IMemento coolbarMem) {
+		// Make sure the tag exist
+		if (coolbarMem == null) {
+			return false;
+		}
+		CoolBarManager coolBarMgr = getCoolBarManager();
+		// Check to see if layout is locked
+		Integer locked = coolbarMem.getInteger(IWorkbenchConstants.TAG_LOCKED);
+		boolean state = (locked != null) && (locked.intValue() == 1);
+		coolBarMgr.setLockLayout(state);
+		
+		// Get the visual layout
+		IMemento visibleLayout = coolbarMem.getChild(IWorkbenchConstants.TAG_TOOLBAR_LAYOUT);
+		ArrayList visibleWrapIndicies = new ArrayList();
+		ArrayList visibleItems = new ArrayList();
+		if (visibleLayout != null) {
+			if (readLayout(visibleLayout,visibleItems,visibleWrapIndicies) == false ) {
+				return false;
+			}	
+		}
+		// Get the remembered layout
+		IMemento rememberedLayout = coolbarMem.getChild(IWorkbenchConstants.TAG_LAYOUT);
+		ArrayList rememberedWrapIndicies = new ArrayList();
+		ArrayList rememberedItems = new ArrayList();
+		if (rememberedLayout != null) {
+			if (readLayout(rememberedLayout,rememberedItems,rememberedWrapIndicies) == false ) {
+				return false;
+			}	
+		}
 
+		// Create the objects
+		if (visibleItems != null) {
+			// Merge remembered layout into visible layout
+			if (rememberedItems != null) {		
+				// Traverse through all the remembered items
+				int currentIndex = 0;
+				for (Iterator i = rememberedItems.iterator(); i.hasNext();currentIndex++) {
+					String id = (String)i.next();
+					int index = -1;
+					for(Iterator iter=visibleItems.iterator();iter.hasNext();) {
+						String visibleId = (String)iter.next();
+						if (visibleId.equals(id)) {
+							index = visibleItems.indexOf(visibleId);
+							break;
+						}
+					}
+					// The item is not in the visible list
+					if (index == -1) {
+						int insertAt = Math.max(0,Math.min(currentIndex,visibleItems.size()));
+						boolean separateLine = false;
+						// Check whether this item is on a separate line
+						for(Iterator iter=rememberedWrapIndicies.iterator();iter.hasNext();) {
+							Integer wrapIndex = (Integer)iter.next();
+							if (wrapIndex.intValue() <= insertAt) {
+								insertAt = visibleItems.size();
+								// Add new wrap index for this Item
+								visibleWrapIndicies.add(new Integer(insertAt));
+								separateLine = true;
+							}
+						}
+						// Add item to array list
+						visibleItems.add(insertAt,id);
+						// If the item was not on a separate line then adjust the visible wrap indicies
+						if (!separateLine) {
+							// Adjust visible wrap indicies
+							for(int j=0; j < visibleWrapIndicies.size();j++) {
+								Integer index2 = (Integer)visibleWrapIndicies.get(j);
+								if (index2.intValue() >= insertAt) {
+									visibleWrapIndicies.set(j, new Integer(index2.intValue() + 1));				
+								}
+							}
+						}
+					}
+				}
+			}
+			// The new layout of the cool bar manager
+			ArrayList layout = new ArrayList(visibleItems.size());
+			// Add all visible items to the layout object
+			for (Iterator i = visibleItems.iterator(); i.hasNext();) {
+				String id = (String)i.next();
+				// Look for the object in the current cool bar manager
+				IContributionItem oldItem = null;
+				IContributionItem newItem = null;
+				if (id != null) {
+					oldItem = coolBarMgr.find(id);
+				}
+				// If a tool bar contribution item already exists for this id then use the old object
+				if (oldItem instanceof ToolBarContributionItem) {
+					newItem = (ToolBarContributionItem) oldItem;
+				} else {
+					newItem =
+						new ToolBarContributionItem(
+								new ToolBarManager(coolBarMgr.getStyle()),
+								id);
+					// make it invisible by default
+					newItem.setVisible(false);
+					// Need to add the item to the cool bar manager so that its canonical order can be preserved
+					IContributionItem refItem =
+						findAlphabeticalOrder(
+								IWorkbenchActionConstants.MB_ADDITIONS,
+								id,
+								coolBarMgr);
+					coolBarMgr.insertAfter(refItem.getId(), newItem);
+				}
+				// Add new item into cool bar manager
+				if (newItem != null) {
+					layout.add(newItem);
+					newItem.setParent(coolBarMgr);
+					coolBarMgr.markDirty();
+				}
+			}
+			
+			// Add separators to the displayed Items data structure
+			int offset = 0;
+			for(int i=1; i < visibleWrapIndicies.size(); i++) {
+				int insertAt = ((Integer)visibleWrapIndicies.get(i)).intValue() + offset;
+				layout.add(insertAt,new Separator(CoolBarManager.USER_SEPARATOR));
+				offset++;
+			}
+			
+			// Add any group markers in their appropriate places
+			IContributionItem[] items = coolBarMgr.getItems();
+			for (int i=0; i < items.length; i++) {
+				IContributionItem item = items[i];
+				if (item.isGroupMarker()) {
+					layout.add(Math.max(Math.min(i,layout.size()), 0),item);
+				}
+			}
+			
+			coolBarMgr.setLayout(layout);
+		}
+		return true;
+	}
+	
+	/**
+	 * Helper method used for restoring an old cool bar layout. This method reads the memento
+	 * and populatates the item id's and wrap indicies.
+	 */
+	private boolean readLayout(IMemento memento, ArrayList itemIds, ArrayList wrapIndicies) {
+		// Get the Wrap indicies
+		IMemento [] wraps = memento.getChildren(IWorkbenchConstants.TAG_ITEM_WRAP_INDEX);
+		if (wraps == null) return false;
+		for (int i = 0; i < wraps.length; i++) {
+			IMemento wrapMem = wraps[i];
+			Integer index = wrapMem.getInteger(IWorkbenchConstants.TAG_INDEX);
+			if (index == null) return false;
+			wrapIndicies.add(index);
+		}
+		// Get the Item ids
+		IMemento [] savedItems = memento.getChildren(IWorkbenchConstants.TAG_ITEM);
+		if (savedItems == null) return false;
+		for (int i = 0; i < savedItems.length; i++) {
+			IMemento savedMem = savedItems[i];
+			String id = savedMem.getString(IWorkbenchConstants.TAG_ID);
+			if (id == null) return false;
+			itemIds.add(id);
+		}
+		return true;
+	}
+	
 	/**
 	 * Returns the contribution item that the given contribution item should be inserted after.
 	 * 

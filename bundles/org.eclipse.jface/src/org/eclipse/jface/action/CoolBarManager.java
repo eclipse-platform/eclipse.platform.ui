@@ -46,7 +46,7 @@ public class CoolBarManager extends ContributionManager implements ICoolBarManag
 	/**
 	 * A separator created by the end user.
 	 */
-	private final static String USER_SEPARATOR = "UserSeparator"; //$NON-NLS-1$
+	public final static String USER_SEPARATOR = "UserSeparator"; //$NON-NLS-1$
 	
 	/** 
 	 * The cool bar control; <code>null</code> before creation
