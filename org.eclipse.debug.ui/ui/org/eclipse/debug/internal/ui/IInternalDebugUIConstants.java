@@ -53,4 +53,12 @@ public interface IInternalDebugUIConstants {
 	 */ 
  	public static final String CONSOLE_FONT= "org.eclipse.debug.ui.ConsoleFont"; //$NON-NLS-1$
 	
+	/**
+	 * The name of the font to use for detail panes. This font is managed via
+	 * the workbench font preference page.
+	 * 
+	 * @since 2.1
+	 */ 
+	public static final String DETAIL_PANE_FONT= "org.eclipse.debug.ui.DetailPaneFont"; //$NON-NLS-1$
+	
 }

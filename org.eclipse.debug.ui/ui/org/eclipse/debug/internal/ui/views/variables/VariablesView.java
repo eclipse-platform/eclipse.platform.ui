@@ -24,6 +24,7 @@ import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.LazyModelPresentation;
 import org.eclipse.debug.internal.ui.VariablesViewModelPresentation;
 import org.eclipse.debug.internal.ui.actions.ChangeVariableValueAction;
@@ -46,6 +47,7 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.DocumentEvent;
@@ -246,6 +248,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	public void dispose() {
 		getSite().getPage().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
 		DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
+		JFaceResources.getFontRegistry().removeListener(this);
 		Viewer viewer = getViewer();
 		if (viewer != null) {
 			getDetailDocument().removeDocumentListener(getDetailDocumentListener());
@@ -400,7 +403,9 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		} else if (propertyName.equals(IDebugPreferenceConstants.CHANGED_VARIABLE_RGB)) {
 			getEventHandler().refresh();
 		} else if (propertyName.equals(IDebugUIConstants.PREF_DETAIL_PANE_WORD_WRAP)) {
-			toggleDetailPaneWrodWrap(DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_DETAIL_PANE_WORD_WRAP));
+			toggleDetailPaneWordWrap(DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_DETAIL_PANE_WORD_WRAP));
+		} else if (propertyName.equals(IInternalDebugUIConstants.DETAIL_PANE_FONT)) {
+			getDetailViewer().getTextWidget().setFont(JFaceResources.getFont(IInternalDebugUIConstants.DETAIL_PANE_FONT));			
 		}
 	}
 	
@@ -411,6 +416,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		
 		fModelPresentation = new VariablesViewModelPresentation();
 		DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
+		JFaceResources.getFontRegistry().addListener(this);
 		// create the sash form that will contain the tree viewer & text viewer
 		fSashForm = new SashForm(parent, SWT.NONE);
 		IPreferenceStore prefStore = DebugUIPlugin.getDefault().getPreferenceStore();
@@ -442,10 +448,11 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		SourceViewer detailsViewer= new SourceViewer(getSashForm(), null, SWT.V_SCROLL | SWT.H_SCROLL);
 		setDetailViewer(detailsViewer);
 		detailsViewer.setDocument(getDetailDocument());
+		detailsViewer.getTextWidget().setFont(JFaceResources.getFont(IInternalDebugUIConstants.DETAIL_PANE_FONT));
 		getDetailDocument().addDocumentListener(getDetailDocumentListener());
 		detailsViewer.setEditable(false);
 		getSashForm().setMaximizedControl(variablesViewer.getControl());
-		toggleDetailPaneWrodWrap(DebugUIPlugin.getDefault().getPluginPreferences().getBoolean(IDebugUIConstants.PREF_DETAIL_PANE_WORD_WRAP));
+		toggleDetailPaneWordWrap(DebugUIPlugin.getDefault().getPluginPreferences().getBoolean(IDebugUIConstants.PREF_DETAIL_PANE_WORD_WRAP));
 		
 		detailsViewer.getSelectionProvider().addSelectionChangedListener(getDetailSelectionChangedListener());
 
@@ -552,7 +559,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	/**
 	 * Set on or off the word wrap flag for the detail pane.
 	 */
-	public void toggleDetailPaneWrodWrap(boolean on) {
+	public void toggleDetailPaneWordWrap(boolean on) {
 		fDetailViewer.getTextWidget().setWordWrap(on);
 	}
 	

@@ -809,6 +809,14 @@
 			%ConsoleFontDefinition.description
 		</description>
 	</fontDefinition> 
+   <fontDefinition 
+		label="%DetailPaneFontDefinition.label" 
+		id="org.eclipse.debug.ui.DetailPaneFont" 
+		defaultsTo="org.eclipse.jface.textfont">
+        <description>
+			%DetailPaneFontDefinition.description
+		</description>
+	</fontDefinition> 
 </extension>
 
 <extension point="org.eclipse.ui.actionDefinitions">
