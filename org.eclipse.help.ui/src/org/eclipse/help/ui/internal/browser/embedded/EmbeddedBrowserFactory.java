@@ -27,9 +27,6 @@ public class EmbeddedBrowserFactory implements IBrowserFactory {
 	 * @see IBrowserFactory#isAvailable()
 	 */
 	public boolean isAvailable() {
-		// TODO enable browser once launching it correctly under OSGi is fixed
-		if (!HelpUIPlugin.DEBUG_EMBEDDED_BROWSER_IN_PROCESS)
-			return false;
 		if (!System.getProperty("os.name").startsWith("Win")
 			&& !System.getProperty("os.name").startsWith("Linux")) {
 			return false;

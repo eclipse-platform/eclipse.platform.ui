@@ -70,7 +70,7 @@
    </extension>
 <!-- Web Browsers -->
    <extension
-         point="org.eclipse.help.base.browser">
+         point="org.eclipse.help.base.browserDISABLED">
       <browser
             factoryclass="org.eclipse.help.ui.internal.browser.embedded.EmbeddedBrowserFactory"
             name="%embedded_browser"

@@ -24,8 +24,6 @@ public class HelpUIPlugin extends AbstractUIPlugin {
 	public final static String PLUGIN_ID = "org.eclipse.help.ui";
 	// debug options
 	public static boolean DEBUG = false;
-	public static boolean DEBUG_EMBEDDED_BROWSER = false;
-	public static boolean DEBUG_EMBEDDED_BROWSER_IN_PROCESS = false;
 	public static boolean DEBUG_INFOPOP = false;
 
 	private static HelpUIPlugin plugin;
@@ -92,8 +90,6 @@ public class HelpUIPlugin extends AbstractUIPlugin {
 		// Setup debugging options
 		DEBUG = isDebugging();
 		if (DEBUG) {
-			DEBUG_EMBEDDED_BROWSER = "true".equalsIgnoreCase(Platform.getDebugOption(PLUGIN_ID + "/debug/embeddedBrowser")); //$NON-NLS-1$
-			DEBUG_EMBEDDED_BROWSER_IN_PROCESS = "true".equalsIgnoreCase(Platform.getDebugOption(PLUGIN_ID + "/debug/embeddedBrowser/inprocess")); //$NON-NLS-1$
 			DEBUG_INFOPOP = "true".equalsIgnoreCase(Platform.getDebugOption(PLUGIN_ID + "/debug/infopop")); //$NON-NLS-1$
 		}
 
