@@ -118,7 +118,7 @@ public class ExternalToolsOptionTab extends AbstractLaunchConfigurationTab {
 		variableButton.setText("Variables...");
 		variableButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				VariableSelectionDialog dialog= new VariableSelectionDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
+				VariableSelectionDialog dialog= new VariableSelectionDialog(getShell());
 				if (dialog.open() == SelectionDialog.OK) {
 					argumentField.append(dialog.getForm().getSelectedVariable());
 				}
@@ -440,7 +440,7 @@ public class ExternalToolsOptionTab extends AbstractLaunchConfigurationTab {
 			// Create the dialog area
 			Composite composite= (Composite)super.createDialogArea(parent);
 			ExternalToolVariable[] variables= ExternalToolsPlugin.getDefault().getArgumentVariableRegistry().getArgumentVariables();
-			form= new ExternalToolVariableForm("Choose a variable", variables);
+			form= new ExternalToolVariableForm("Choose a variable:", variables);
 			form.createContents(composite, new IGroupDialogPage() {
 				public GridData setButtonGridData(Button button) {
 					GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);

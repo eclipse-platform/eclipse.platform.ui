@@ -15,7 +15,6 @@ import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -85,6 +84,7 @@ public class ExternalToolsRefreshTab extends AbstractLaunchConfigurationTab impl
 		refreshField.setLayoutData(data);
 		refreshField.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
+				updateEnabledState();
 				updateLaunchConfigurationDialog();
 			}
 		});
@@ -165,13 +165,6 @@ public class ExternalToolsRefreshTab extends AbstractLaunchConfigurationTab impl
 			ExternalToolsPlugin.getDefault().log("Exception reading launch configuration", ce);
 		}
 		refreshField.setSelection(scope != null);
-		refreshField.addSelectionListener(new SelectionListener() {
-			public void widgetSelected(SelectionEvent e) {
-				updateEnabledState();
-			}
-			public void widgetDefaultSelected(SelectionEvent e) {
-			}
-		});
 		updateEnabledState();		
 	}
 
