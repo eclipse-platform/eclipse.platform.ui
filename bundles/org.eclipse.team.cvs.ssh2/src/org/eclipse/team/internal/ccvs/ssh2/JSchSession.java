@@ -178,7 +178,8 @@ class JSchSession {
 				if(_password!=null){
 					password=_password;
 					// Cache the password with the repository location on the memory.
-					((CVSRepositoryLocation)location).setPassword(password);
+					if(location!=null)
+						((CVSRepositoryLocation)location).setPassword(password);
 				}
 				return _password!=null;
 			}
