@@ -11,11 +11,13 @@ import org.eclipse.help.internal.base.*;
 import org.eclipse.swt.widgets.*;
 public class HelpUIEventLoop {
 	private static boolean running = false;
+	private static Display display;
 	/**
 	 * Called by base in stand-alone help since it cannot run event loop
 	 */
 	public static void run() {
-		Display display = Display.getCurrent();
+		if (display == null)
+			display = Display.getCurrent();
 		if (display == null)
 			display = new Display();
 		try {
@@ -30,10 +32,18 @@ public class HelpUIEventLoop {
 				}
 			}
 			display.dispose();
+			display = null;
 		} finally {
 			running = false;
 		}
-
+	}
+	public static void wakeup() {
+		Display d = display;
+		if (d != null)
+			try {
+				d.wake();
+			} catch (Exception e) {
+			}
 	}
 	/**
 	 * @return Returns if loop is running.

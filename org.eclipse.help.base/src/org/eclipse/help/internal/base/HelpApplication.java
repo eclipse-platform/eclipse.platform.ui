@@ -40,6 +40,10 @@ public class HelpApplication
 	 */
 	public static void stop() {
 		status = STATUS_EXITTING;
+		if (BaseHelpSystem.MODE_STANDALONE == BaseHelpSystem.getMode()) {
+			// UI loop may be sleeping if no SWT browser is up
+			wakeupUI();
+		}
 	}
 	/**
 	 * Causes help service to exit and start again
@@ -99,6 +103,19 @@ public class HelpApplication
 			Class c = bundle.loadClass("org.eclipse.help.ui.internal.HelpUIEventLoop");
 			Object o = c.newInstance();
 			Method m=c.getMethod("run", new Class[]{} );
+			m.invoke(null, new Object[]{});
+		} catch (Exception e) {
+		}
+	}
+	private static void wakeupUI(){
+		try {
+			Bundle bundle = Platform.getBundle("org.eclipse.help.ui");
+			if(bundle == null){
+				return;
+			}
+			Class c = bundle.loadClass("org.eclipse.help.ui.internal.HelpUIEventLoop");
+			Object o = c.newInstance();
+			Method m=c.getMethod("wakeup", new Class[]{} );
 			m.invoke(null, new Object[]{});
 		} catch (Exception e) {
 		}
