@@ -121,6 +121,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 * Flag denoting flat list layout.
 	 */
 	public static final int FLAG_LAYOUT_TREE = 2;
+	private boolean fIsUpdatePosted;
 	/**
 	 * This constructor must be passed a combination of layout flags combined
 	 * with bitwise or. At least one flag musst be passed in (i.e. 0 is not a
@@ -718,7 +719,8 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		for (int i = 0; i < matches.length; i++) {
 			fBatchedUpdates.add(matches[i].getElement());
 		}
-		if (fBatchedUpdates.size() == 1) {
+		if (!fIsUpdatePosted) {
+			fIsUpdatePosted= true;
 			asyncExec(new Runnable() {
 				public void run() {
 					runBatchedUpdates();
@@ -731,6 +733,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 			elementsChanged(fBatchedUpdates.toArray());
 			fBatchedUpdates.clear();
 			updateBusyLabel();
+			fIsUpdatePosted= false;
 		}
 	}
 	private void postClear() {
