@@ -75,6 +75,13 @@ public class AntCorePlugin extends Plugin {
 	 * of a tag that appears in Ant extensions.
 	 */
 	public static final String LIBRARY = "library"; //$NON-NLS-1$
+	
+	/**
+	 * Simple identifier constant (value <code>"headless"</code>) of a tag
+	 * that appears in Ant extensions.
+	 * @since 2.1
+	 */
+	public static final String HEADLESS = "headless"; //$NON-NLS-1$
 
 	/**
 	 * Key to access the <code>IProgressMonitor</code> reference. When a

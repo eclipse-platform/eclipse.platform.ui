@@ -51,6 +51,15 @@ JAR is also added to the classpath.
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="headless" type="string" use="optional">
+            <annotation>
+               <documentation>
+                  indicates whether this extra classpath entry is suitable for use in a "headless" Ant environment. If running headless and the attribute is "false", 
+                  this entry will not be added to the Ant classpath. As well, the plugin class loader will not be added as a parent classloader to the Ant classloader.
+                  The implied value is true, when not specified.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -76,7 +85,7 @@ JAR is also added to the classpath.
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         The platform itself supplies an ant support jar.
+         The platform itself supplies an Ant support jar.
       </documentation>
    </annotation>
 

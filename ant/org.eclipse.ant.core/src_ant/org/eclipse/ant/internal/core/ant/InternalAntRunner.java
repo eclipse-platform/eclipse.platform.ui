@@ -131,8 +131,7 @@ public class InternalAntRunner {
 	protected List propertyFiles= new ArrayList();
 	
 	/**
-     * The Ant InputHandler class.  There may be only one input
-     * handler.
+     * The Ant InputHandler class. There may be only one input handler.
      */
     private String inputHandlerClassname = null;
     
@@ -446,12 +445,14 @@ public class InternalAntRunner {
 
 	/**
 	 * Invokes the building of a project object and executes a build using either a given
-	 * target or the default target.
-	 *
+	 * target or the default target. This method is called if running in
+	 * headless mode.
+	 * @see org.eclipse.ant.core.AntRunner.run(Object)
 	 * @param argArray the command line arguments
 	 * @exception execution exceptions
 	 */
 	public void run(Object argArray) throws Exception {
+		AntCorePlugin.getPlugin().getPreferences().setRunningHeadless(true);
 		run(getArrayList((String[]) argArray));
 	}
 

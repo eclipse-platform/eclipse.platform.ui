@@ -82,6 +82,15 @@ for the library containing the task.
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="headless" type="string" use="optional">
+            <annotation>
+               <documentation>
+                  indicates whether this task is suitable for use in a "headless" Ant environment. If running headless and the attribute is "false", 
+                  the task will not be loaded or defined. As well, the plugin class loader will not be added as a parent classloader to the Ant classloader.
+                  The implied value is true, when not specified.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

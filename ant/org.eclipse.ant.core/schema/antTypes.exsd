@@ -83,6 +83,15 @@ for the library containing the type.
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="headless" type="string" use="optional">
+            <annotation>
+               <documentation>
+                  indicates whether this type is suitable for use in a "headless" Ant environment. If running headless and the attribute is "false", 
+                  the type will not be loaded or defined. As well, the plugin class loader will not be added as a parent classloader to the Ant classloader.
+                  The implied value is true, when not specified.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
