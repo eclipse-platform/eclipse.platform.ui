@@ -20,6 +20,8 @@ import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -29,8 +31,8 @@ import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.variables.LaunchVariableUtil;
 import org.eclipse.debug.ui.CommonTab;
-import org.eclipse.debug.ui.launchVariables.RefreshTab;
 import org.eclipse.debug.ui.launchVariables.LaunchVariableContextManager;
+import org.eclipse.debug.ui.launchVariables.RefreshTab;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -165,6 +167,11 @@ public class ProgramLaunchDelegate implements ILaunchConfigurationDelegate {
 		if (p != null) {
 			monitor.beginTask(MessageFormat.format(ExternalToolsProgramMessages.getString("ProgramLaunchDelegate.3"), new String[] {configuration.getName()}), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
 			process = DebugPlugin.newProcess(launch, p, location.toOSString(), processAttributes);
+			if (process == null) {
+				p.destroy();
+				throw new CoreException(new Status(IStatus.ERROR, IExternalToolConstants.PLUGIN_ID, IExternalToolConstants.ERR_INTERNAL_ERROR, "An IProcess could not be created for the launch", null));
+			}
+			
 		}
 		process.setAttribute(IProcess.ATTR_CMDLINE, generateCommandLine(cmdLine));
 		
