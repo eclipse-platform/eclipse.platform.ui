@@ -175,6 +175,9 @@ public abstract void setFocus();
  * and internal state variable (accessible via <code>getConfigElement</code>).
  * It also loads the title image, if one is specified in the configuration element.
  * Subclasses may extend.
+ * 
+ * Should not be called by clients. It is called by the core plugin when creating
+ * this executable extension.
  */
 public void setInitializationData(IConfigurationElement cfig, String propertyName, Object data) {
 
