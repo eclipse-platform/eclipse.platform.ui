@@ -75,7 +75,7 @@ public class CVSProviderPlugin extends Plugin {
 	// file transfer compression level (0 - 9)
 	public static final int DEFAULT_COMPRESSION_LEVEL = 0;
 	// default text keyword substitution mode
-	public static final KSubstOption DEFAULT_TEXT_KSUBST_OPTION = Command.KSUBST_TEXT;
+	public static final KSubstOption DEFAULT_TEXT_KSUBST_OPTION = Command.KSUBST_TEXT_EXPAND;
 
 	// cvs plugin extension points and ids
 	public static final String ID = "org.eclipse.team.cvs.core"; //$NON-NLS-1$
