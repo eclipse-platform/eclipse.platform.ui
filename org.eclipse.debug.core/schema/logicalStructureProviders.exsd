@@ -6,9 +6,8 @@
          <meta.schema plugin="org.eclipse.debug.core" id="logicalStructureTypeProviders" name="%logicalStructureTypeProvidersExtensionPointName"/>
       </appInfo>
       <documentation>
-         This extension point allows debuggers to provide logical structure type for a value.
-This is an extension of the logical structure support provided by the extension point org.eclipse.debug.core.logicalStructureTypes.
-This extension point allows the contributor to programmatically to provide logical structure types for a value.
+         This extension point allows contributors to provide multiple logical structure types for a value.
+This is an extension of the logical structure support provided by the extension point &lt;code&gt;org.eclipse.debug.core.logicalStructureTypes&lt;/code&gt;, which allows one logical structure type per value.
       </documentation>
    </annotation>
 
