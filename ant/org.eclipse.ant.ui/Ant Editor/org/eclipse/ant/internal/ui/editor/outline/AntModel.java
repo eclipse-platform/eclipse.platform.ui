@@ -26,6 +26,7 @@ import java.util.Stack;
 import org.apache.tools.ant.AntTypeDefinition;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.ComponentHelper;
+import org.apache.tools.ant.IntrospectionHelper;
 import org.apache.tools.ant.Location;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Target;
@@ -172,8 +173,8 @@ public class AntModel {
 			fgClassLoader= null;
 		}
 		if (getProjectNode() != null) {
-			//cleanup the introspection helpers that may have been
-			//generated
+			//cleanup the introspection helpers that may have been generated
+			IntrospectionHelper.getHelper(getProjectNode().getProject(), AntModel.class);
 			getProjectNode().getProject().fireBuildFinished(null);
 		}
 	}
