@@ -50,6 +50,8 @@ import org.eclipse.search.ui.text.ISearchElementPresentation;
 import org.eclipse.search.ui.text.ITextSearchResult;
 import org.eclipse.search.ui.text.Match;
 
+import org.eclipse.search.internal.ui.CopyToClipboardAction;
+
 import org.eclipse.search2.internal.ui.SearchMessages;
 import org.eclipse.search2.internal.ui.InternalSearchUI;
 import org.eclipse.search2.internal.ui.text.AnnotationManager;
@@ -63,6 +65,7 @@ public class DefaultSearchViewPage extends Page implements ISearchResultPage {
 	private MenuManager fMenu;
 	
 	// Actions
+	private Action fCopyToClipboardAction;
 	private Action fRemoveResultsAction;
 	private Action fRemoveAllResultsAction;
 	private SortDropDownActon fSortDropDownAction;
@@ -167,6 +170,7 @@ public class DefaultSearchViewPage extends Page implements ISearchResultPage {
 				group.setContext(new ActionContext(fViewer.getSelection()));
 				group.fillContextMenu(mgr);
 				group.setContext(null);
+				mgr.appendToGroup(IContextMenuConstants.GROUP_ADDITIONS, fCopyToClipboardAction);
 				mgr.appendToGroup(IContextMenuConstants.GROUP_SHOW, fShowNextAction);
 				mgr.appendToGroup(IContextMenuConstants.GROUP_SHOW, fShowPreviousAction);
 				mgr.appendToGroup(IContextMenuConstants.GROUP_REMOVE_MATCHES, fRemoveResultsAction);
@@ -265,6 +269,7 @@ public class DefaultSearchViewPage extends Page implements ISearchResultPage {
 	}
 	
 	private void connectViewer(ISearchResult search) {
+		fCopyToClipboardAction= new CopyToClipboardAction(fViewer);
 		createModel(search);
 		fViewer.setInput(fModel);
 		setSortOrder();

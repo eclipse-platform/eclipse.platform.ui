@@ -26,12 +26,13 @@ import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredViewer;
 
 public class CopyToClipboardAction extends Action {
 
-	private SearchResultViewer fViewer;
+	private StructuredViewer fViewer;
 	
-	public CopyToClipboardAction(SearchResultViewer viewer) {
+	public CopyToClipboardAction(StructuredViewer viewer) {
 		Assert.isNotNull(viewer);
 		fViewer= viewer;
 		setText(SearchMessages.getString("CopyToClipboardAction.label")); //$NON-NLS-1$
