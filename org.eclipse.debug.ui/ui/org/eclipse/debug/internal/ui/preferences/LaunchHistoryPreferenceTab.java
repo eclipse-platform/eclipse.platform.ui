@@ -259,8 +259,8 @@ public abstract class LaunchHistoryPreferenceTab {
 		}
 		
 		fRemoveFavoritesButton.setEnabled(notEmpty);
-		fMoveUpButton.setEnabled(notEmpty && !first && (first != last));
-		fMoveDownButton.setEnabled(notEmpty && !last && (first != last));
+		fMoveUpButton.setEnabled(notEmpty && !first);
+		fMoveDownButton.setEnabled(notEmpty && !last);
 	}
 	
 	/**
