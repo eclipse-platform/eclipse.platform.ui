@@ -827,9 +827,9 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	 * @return an array of all dirty editor parts.
 	 */
 	public static IEditorPart[] getDirtyEditors() {
-		Set inputs= new HashSet(7);
-		ArrayList result= new ArrayList(0);
-		IWorkbench workbench= CompareUIPlugin.getDefault().getWorkbench();
+		Set inputs= new HashSet();
+		List result= new ArrayList(0);
+		IWorkbench workbench= getDefault().getWorkbench();
 		IWorkbenchWindow[] windows= workbench.getWorkbenchWindows();
 		for (int i= 0; i < windows.length; i++) {
 			IWorkbenchPage[] pages= windows[i].getPages();
@@ -837,14 +837,17 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 				IEditorPart[] editors= pages[x].getDirtyEditors();
 				for (int z= 0; z < editors.length; z++) {
 					IEditorPart ep= editors[z];
-					if (!result.contains(ep))
+					IEditorInput input= ep.getEditorInput();
+					if (!inputs.contains(input)) {
+						inputs.add(input);
 						result.add(ep);
+					}
 				}
 			}
 		}
 		return (IEditorPart[])result.toArray(new IEditorPart[result.size()]);
 	}
-	
+		
 	public static void log(Throwable e) {
 		log(new Status(IStatus.ERROR, getPluginId(), INTERNAL_ERROR, CompareMessages.getString("ComparePlugin.internal_error"), e)); //$NON-NLS-1$
 	}
