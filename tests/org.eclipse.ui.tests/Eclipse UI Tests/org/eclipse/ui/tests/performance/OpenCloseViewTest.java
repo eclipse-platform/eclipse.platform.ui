@@ -32,7 +32,7 @@ public class OpenCloseViewTest extends BasicPerformanceTest {
 
     protected void runTest() throws Throwable {
     	IWorkbenchWindow window = openTestWindow(UIPerformanceTestSetup.PERSPECTIVE2);
-        IWorkbenchPage page = fWorkbench.getActiveWorkbenchWindow().getActivePage();
+        IWorkbenchPage page = window.getActivePage();
         
         // prime it
         IViewPart view = page.showView(viewId);
