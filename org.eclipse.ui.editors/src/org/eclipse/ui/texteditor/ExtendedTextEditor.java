@@ -1012,6 +1012,8 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 	public Object getAdapter(Class adapter) {
 		if (IGotoMarker.class.equals(adapter))
 			return fGotoMarkerAdapter;
+		if (IAnnotationAccess.class.equals(adapter))
+			return getAnnotationAccess();
 		return super.getAdapter(adapter);
 	}
 	
