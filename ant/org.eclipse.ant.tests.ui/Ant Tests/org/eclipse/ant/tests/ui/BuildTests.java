@@ -44,15 +44,25 @@ public class BuildTests extends AbstractAntUIBuildTest {
   }
   
   /**
+   * This build will fail. With verbose on you should be presented with a full 
+   * stack trace. Bug 82833
+   */
+  public void testVerboseStackTrace() throws CoreException {      
+      launch("failingTarget", "-k -verbose");
+      assertTrue("Incorrect message:"  + ConsoleLineTracker.getMessage(16), "BUILD FAILED".equals(ConsoleLineTracker.getMessage(16)));
+      assertTrue("Incorrect message:"  + ConsoleLineTracker.getMessage(19), ConsoleLineTracker.getMessage(19).startsWith("\tat org.apache.tools.ant.taskdefs.Zip"));
+  }
+  
+  /**
 	 * Tests launching Ant and getting the build failed message
 	 * logged to the console with associated link.
 	 * Bug 42333 and 44565
 	 */
 	public void testBuildFailedMessage() throws CoreException {
 		launch("bad");
-		assertTrue("Incorrect number of messages logged for build. Should be 7. Was " + ConsoleLineTracker.getNumberOfMessages(), ConsoleLineTracker.getNumberOfMessages() == 7);
-		String message= ConsoleLineTracker.getMessage(4);
-		assertTrue("Incorrect last message. Should start with Build Failed:. Message: " + message, message.startsWith("BUILD FAILED:"));
+		assertTrue("Incorrect number of messages logged for build. Should be 10. Was " + ConsoleLineTracker.getNumberOfMessages(), ConsoleLineTracker.getNumberOfMessages() == 10);
+		String message= ConsoleLineTracker.getMessage(5);
+		assertTrue("Incorrect last message. Should start with BUILD FAILED. Message: " + message, message.startsWith("BUILD FAILED"));
 		int offset= -1;
 		try {
 			offset= ConsoleLineTracker.getDocument().getLineOffset(4) + 30; //link to buildfile that failed

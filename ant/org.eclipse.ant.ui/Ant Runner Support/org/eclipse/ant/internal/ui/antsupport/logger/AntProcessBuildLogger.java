@@ -16,12 +16,10 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
-import java.text.MessageFormat;
 
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.Location;
 import org.apache.tools.ant.Project;
-import org.eclipse.ant.core.AntSecurityException;
 import org.eclipse.ant.internal.ui.AntUtil;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.ant.internal.ui.antsupport.AntSupportMessages;
@@ -29,7 +27,6 @@ import org.eclipse.ant.internal.ui.launchConfigurations.AntProcess;
 import org.eclipse.ant.internal.ui.launchConfigurations.AntStreamMonitor;
 import org.eclipse.ant.internal.ui.launchConfigurations.AntStreamsProxy;
 import org.eclipse.ant.internal.ui.launchConfigurations.TaskLinkManager;
-import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.jface.text.IRegion;
@@ -215,7 +212,10 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 	 * @see org.apache.tools.ant.BuildListener#buildFinished(org.apache.tools.ant.BuildEvent)
 	 */
 	public void buildFinished(BuildEvent event) {
-		handleException(event);
+        String message= handleException(event);
+        if (message != null) {
+            logMessage(message, event, Project.MSG_ERR);
+        }
 		fHandledException= null;
 		fBuildFileParent= null;
 		logMessage(getTimeString(System.currentTimeMillis() - fStartTime), event, fMessageOutputLevel);
@@ -268,18 +268,6 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 		if (event.getMessage() != null && event.getMessage().length() > 0) {
 			logMessage(event.getMessage(), event, -1);
 		}
-	}
-	
-	protected void handleException(BuildEvent event) {
-		Throwable exception = event.getException();
-		if (exception == null || exception == fHandledException
-		|| exception instanceof OperationCanceledException
-		|| exception instanceof AntSecurityException) {
-			return;
-		}
-		fHandledException= exception;
-		logMessage(MessageFormat.format(AntSupportMessages.getString("AntProcessBuildLogger.BUILD_FAILED__{0}_1"), new String[] { exception.toString()}), //$NON-NLS-1$
-					event, Project.MSG_ERR);	
 	}
 
 	/* (non-Javadoc)

@@ -17,18 +17,19 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.net.Socket;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import org.apache.tools.ant.BuildEvent;
+import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Location;
 import org.apache.tools.ant.Project;
+import org.apache.tools.ant.util.StringUtils;
 import org.eclipse.ant.internal.ui.antsupport.AntSecurityException;
-import org.eclipse.ant.internal.ui.antsupport.RemoteAntMessages;
 import org.eclipse.ant.internal.ui.antsupport.InternalAntRunner;
+import org.eclipse.ant.internal.ui.antsupport.RemoteAntMessages;
 
 /**
  * Parts adapted from org.eclipse.jdt.internal.junit.runner.RemoteTestRunner
@@ -143,8 +144,22 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 		if (exception == null || exception instanceof AntSecurityException) {
 			return;
 		}
-		printMessage(MessageFormat.format(RemoteAntMessages.getString("RemoteAntBuildLogger.BUILD_FAILED__{0}_1"), new String[] { exception.toString()}), //$NON-NLS-1$
-					out, Project.MSG_ERR);	
+        
+         StringBuffer message= new StringBuffer();
+         message.append(StringUtils.LINE_SEP);
+         message.append(RemoteAntMessages.getString("RemoteAntBuildLogger.1")); //$NON-NLS-1$
+         message.append(StringUtils.LINE_SEP);
+         if (Project.MSG_VERBOSE <= this.msgOutputLevel || !(exception instanceof BuildException)) {
+             message.append(StringUtils.getStackTrace(exception));
+         } else {
+             if (exception instanceof BuildException) {
+                 message.append(exception.toString()).append(StringUtils.LINE_SEP);
+             } else {
+                 message.append(exception.getMessage()).append(StringUtils.LINE_SEP);
+             }
+         }
+        message.append(StringUtils.LINE_SEP);
+		printMessage(message.toString(), out, Project.MSG_ERR);	
 	}
 	
 	private String getTimeString(long milliseconds) {

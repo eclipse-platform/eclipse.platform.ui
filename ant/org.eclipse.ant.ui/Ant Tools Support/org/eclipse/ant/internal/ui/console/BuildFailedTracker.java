@@ -39,7 +39,7 @@ public class BuildFailedTracker implements IConsoleLineTracker {
 	public void init(IConsole console) {
 		fConsole = console;
 		//BUILD FAILED: file:c:/1115/test/buildFiles/23638.xml:12:
-        fErrorPattern = Pattern.compile(".*BUILD FAILED:.*\\.xml.*"); //$NON-NLS-1$
+        fErrorPattern = Pattern.compile(".*BUILD FAILED"); //$NON-NLS-1$
         fErrorPattern2 = Pattern.compile(".*\\.xml.*"); //$NON-NLS-1$
 	}
 
@@ -60,17 +60,7 @@ public class BuildFailedTracker implements IConsoleLineTracker {
             Matcher errorMatcher2 = fErrorPattern2.matcher(text);
 			if (errorMatcher.find()) {
 				fBuildFailed= true;
-				index = text.indexOf("file:"); //$NON-NLS-1$
-				if (index > 0) {
-					fileStart = index + 5;
-				} else {
-					fileStart = text.indexOf("BUILD FAILED:") + 14; //$NON-NLS-1$
-					index= fileStart;
-				}
 			} else if (fBuildFailed && errorMatcher2.find()) {
-				//output resulting from failures which occurred in nested build from using the ant task:
-				//BUILD FAILED: C:\Darins\Debugger\20021213\eclipse\runtime-workspace\Mine\build.xml:4: Following error occured while executing this line
-				//C:\Darins\Debugger\20021213\eclipse\runtime-workspace\Mine\subbuild.xml:4: srcdir attribute must be set!
 				index= 0;
 				fileStart= 0;
 			}

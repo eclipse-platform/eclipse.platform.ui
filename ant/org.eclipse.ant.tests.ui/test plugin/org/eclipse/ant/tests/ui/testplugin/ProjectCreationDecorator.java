@@ -53,6 +53,7 @@ public class ProjectCreationDecorator extends AbstractAntUITest {
 			
 			createLaunchConfigurationForBoth("echoing");
 			createLaunchConfigurationForBoth("74840");
+            createLaunchConfigurationForBoth("failingTarget");
 			createLaunchConfiguration("build");
 			createLaunchConfiguration("bad");
 			createLaunchConfiguration("importRequiringUserProp");
