@@ -144,19 +144,13 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		group.setLayout(layout);
 		group.setLayoutData(gridData);
 		
-		Composite composite = new Composite(group, SWT.NONE);
-		layout = new GridLayout();
-		layout.numColumns=1;
-		composite.setLayout(layout);
-		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
-		locationField = new Text(composite, SWT.BORDER);
+		locationField = new Text(group, SWT.BORDER);
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
 		gridData.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		locationField.setLayoutData(gridData);
 		locationField.addModifyListener(fListener);
 		
-		Composite buttonComposite = new Composite(composite, SWT.NONE);
+		Composite buttonComposite = new Composite(group, SWT.NONE);
 		layout = new GridLayout();
 		layout.numColumns = 3;
 		gridData = new GridData(GridData.HORIZONTAL_ALIGN_END);
@@ -196,19 +190,13 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		group.setLayout(layout);
 		group.setLayoutData(gridData);
 		
-		Composite composite = new Composite(group, SWT.NONE);
-		layout = new GridLayout();
-		layout.numColumns = 1;
-		composite.setLayout(layout);
-		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
-		workDirectoryField = new Text(composite, SWT.BORDER);
+		workDirectoryField = new Text(group, SWT.BORDER);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		workDirectoryField.setLayoutData(data);
 		workDirectoryField.addModifyListener(fListener);
 		
-		Composite buttonComposite = new Composite(composite, SWT.NONE);
+		Composite buttonComposite = new Composite(group, SWT.NONE);
 		layout = new GridLayout();
 		layout.numColumns = 3;
 		gridData = new GridData(GridData.HORIZONTAL_ALIGN_END);
@@ -249,27 +237,19 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		group.setLayout(layout);
 		group.setLayoutData(gridData);
 		
-		Composite composite = new Composite(group, SWT.NONE);
-		layout = new GridLayout();
-		layout.numColumns = 1;
-		gridData = new GridData(GridData.FILL_BOTH);
-		gridData.horizontalSpan = 2;
-		composite.setLayout(layout);
-		composite.setLayoutData(gridData);
-		
-		argumentField = new Text(composite, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
+		argumentField = new Text(group, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
 		gridData = new GridData(GridData.FILL_BOTH);
 		gridData.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		gridData.heightHint = 30;
 		argumentField.setLayoutData(gridData);
 		argumentField.addModifyListener(fListener);
 		
-		argumentVariablesButton= createPushButton(composite, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Varia&bles..._2"), null); //$NON-NLS-1$
+		argumentVariablesButton= createPushButton(group, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Varia&bles..._2"), null); //$NON-NLS-1$
 		gridData = new GridData(GridData.HORIZONTAL_ALIGN_END);
 		argumentVariablesButton.setLayoutData(gridData);
 		argumentVariablesButton.addSelectionListener(fListener);
 
-		Label instruction = new Label(composite, SWT.NONE);
+		Label instruction = new Label(group, SWT.NONE);
 		instruction.setText(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.3")); //$NON-NLS-1$
 		gridData = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gridData.horizontalSpan = 2;
