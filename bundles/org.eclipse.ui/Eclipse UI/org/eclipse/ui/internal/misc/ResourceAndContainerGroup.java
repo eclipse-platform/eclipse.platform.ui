@@ -123,7 +123,7 @@ protected void createContents(Composite parent,String resourceLabelString) {
 
 	// resource name entry field
 	resourceNameField = new Text(nameGroup,SWT.BORDER);
-	resourceNameField.addListener(SWT.KeyDown,this);
+	resourceNameField.addListener(SWT.Modify,this);
 	data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 	data.widthHint = SIZING_TEXT_FIELD_WIDTH;
 	resourceNameField.setLayoutData(data);
