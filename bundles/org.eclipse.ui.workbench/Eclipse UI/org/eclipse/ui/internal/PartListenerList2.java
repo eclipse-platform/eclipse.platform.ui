@@ -178,6 +178,31 @@ public void firePartVisible(final IWorkbenchPartReference ref) {
 	}
 }
 /**
+ * Notifies the listener that a part has been opened.
+ */
+public void firePartInputChanged(final IWorkbenchPartReference ref) {
+	Object [] array = listeners.getListeners();
+	for (int i = 0; i < array.length; i ++) {
+		final IPartListener2 l;
+		if(array[i] instanceof IPartListener2)
+			l = (IPartListener2)array[i];
+		else
+			continue;
+			
+		Platform.run(new SafeRunnable() {
+			public void run() {
+//				l.partInputChanged(ref);
+			}
+			public void handleException(Throwable e) {
+				super.handleException(e);
+				//If and unexpected exception happens, remove it
+				//to make sure the workbench keeps running.
+				removePartListener(l);
+			}
+		});
+	}
+}
+/**
  * Removes an IPartListener from the part service.
  */
 public void removePartListener(IPartListener2 l) {

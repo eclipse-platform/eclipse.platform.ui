@@ -83,4 +83,13 @@ public void partHidden(IWorkbenchPartReference ref);
  * @param part the part that is visible
  */
 public void partVisible(IWorkbenchPartReference ref);
+
+/**
+ * Notifies this listener that the given part input was changed.
+ *
+ * @param part the part that is visible
+ */
+/* Commented out sender in PartListenerList2 as well.
+ * public void partInputChanged(IWorkbenchPartReference ref);
+*/
 }

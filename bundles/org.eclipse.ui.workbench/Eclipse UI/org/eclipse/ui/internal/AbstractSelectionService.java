@@ -283,7 +283,13 @@ public void partDeactivated(IWorkbenchPart part) {
 public void partOpened(IWorkbenchPart part) {
 	// Wait for activation.
 }
-
+/**
+ * Notifies the listener that a part has been opened.
+ */
+public void partInputChanged(IWorkbenchPart part) {
+	reset();
+	partActivated(part);
+}
 /**
  * Resets the service.  The active part and selection provider are
  * dereferenced.

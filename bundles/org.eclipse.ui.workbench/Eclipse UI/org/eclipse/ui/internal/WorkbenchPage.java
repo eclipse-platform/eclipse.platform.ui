@@ -1134,6 +1134,13 @@ public void firePartOpened(IWorkbenchPart part) {
 	selectionService.partOpened(part);
 }
 /**
+ * Fire part input changed out.
+ */
+private void firePartInputChanged(IWorkbenchPart part) {
+	partListeners2.firePartInputChanged(getReference(part));
+	selectionService.partInputChanged(part);
+}
+/**
  * Notify property change listeners about a property change.
  * 
  * @param changeId the change id
@@ -1673,6 +1680,13 @@ protected void onDeactivate() {
 		Perspective perspective = (Perspective) enum.next();
 		window.removePerspectiveShortcut(perspective.getDesc(), this);
 	}
+}
+/**
+ * See IWorkbenchPage.
+ */
+public void reuseEditor(IReusableEditor editor,IEditorInput input) {
+	editor.setInput(input);
+	firePartInputChanged(editor);
 }
 /**
  * See IWorkbenchPage.

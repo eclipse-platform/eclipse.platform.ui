@@ -329,6 +329,13 @@ public boolean isPartVisible(IWorkbenchPart part);
  */
 public boolean isEditorAreaVisible();
 /**
+ * Reuses the specified editor by setting its new input.
+ * 
+ * @param editor the editor to be reused
+ * @param input the new input for the reusable editor
+ */
+public void reuseEditor(IReusableEditor editor,IEditorInput input);
+/**
  * Opens an editor on the given file resource. 
  * <p>
  * If this page already has an editor open on the target object that editor is 

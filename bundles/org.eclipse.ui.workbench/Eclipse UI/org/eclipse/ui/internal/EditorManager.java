@@ -598,7 +598,7 @@ public class EditorManager {
 				Workbench wb = (Workbench) window.getWorkbench();
 				editorPresentation.moveEditor(reusableEditor, -1);
 				wb.getEditorHistory().add(reusableEditor.getEditorInput(), site.getEditorDescriptor());
-				((IReusableEditor) reusableEditor).setInput(input);
+				page.reuseEditor((IReusableEditor) reusableEditor,input);
 				return reusableEditorRef;
 			} else {
 				//findReusableEditor(...) checks pinned and saves editor if necessary

@@ -62,6 +62,9 @@ public class WWinPartService implements IPartService {
 		public void partVisible(IWorkbenchPartReference ref) {
 			listeners2.firePartVisible(ref);	
 		}
+		public void partInputChanged(IWorkbenchPartReference ref) {
+			listeners2.firePartInputChanged(ref);	
+		}
 	};
 	
 /**

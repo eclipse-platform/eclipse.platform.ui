@@ -132,6 +132,8 @@ public class EditorList {
 		public void partHidden(IWorkbenchPartReference ref) {
 		}
 		public void partVisible(IWorkbenchPartReference ref) {
+		}
+		public void partInputChanged(IWorkbenchPartReference ref) {
 		}				
 	};
 
