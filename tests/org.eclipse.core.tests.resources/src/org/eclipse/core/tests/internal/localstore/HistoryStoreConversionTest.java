@@ -83,6 +83,7 @@ public class HistoryStoreConversionTest extends ResourceTest {
 			// reopen history store for comparison
 			original = new HistoryStore((Workspace) getWorkspace(), baseLocation, 0x100);
 			compare("1", original, destination);
+			original.shutdown(getMonitor());
 		} finally {
 			ensureDoesNotExistInFileSystem(baseLocation.toFile());
 		}
