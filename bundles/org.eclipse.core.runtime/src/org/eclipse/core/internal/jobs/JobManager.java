@@ -171,20 +171,24 @@ public class JobManager implements IJobManager {
 	 * Cancels a job
 	 */
 	protected boolean cancel(InternalJob job) {
+		IProgressMonitor monitor = null;
 		synchronized (lock) {
 			switch (job.getState()) {
 				case Job.NONE :
 					return true;
 				case Job.RUNNING :
 					//cannot cancel a job that has already started (as opposed to ABOUT_TO_RUN)
-					if (job.internalGetState() == Job.RUNNING) {
-						IProgressMonitor monitor = job.getProgressMonitor();
-						if (monitor != null)
-							monitor.setCanceled(true);
-						return false;
-					}
+					if (job.internalGetState() == Job.RUNNING)
+						monitor = job.getProgressMonitor();
+					break;
+				default:
+					changeState(job, Job.NONE);
 			}
-			changeState(job, Job.NONE);
+		}
+		//call monitor outside sync block
+		if (monitor != null) {
+			monitor.setCanceled(true);
+			return false;
 		}
 		//only notify listeners if the job was waiting or sleeping
 		jobListeners.done((Job) job, Status.CANCEL_STATUS);
@@ -756,7 +760,7 @@ public class JobManager implements IJobManager {
 				return false;
 			changeState(job, Job.RUNNING);
 			job.setProgressMonitor(new NullProgressMonitor());
-			job.run(job.getProgressMonitor());
+			job.run(null);
 		}
 		return true;
 	}
