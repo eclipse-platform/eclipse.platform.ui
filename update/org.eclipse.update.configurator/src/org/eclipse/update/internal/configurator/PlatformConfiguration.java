@@ -340,9 +340,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		return 0;
 	}
 
-	/*
-	 * @see IPlatformConfiguration#getApplicationIdentifier()
-	 */
+
 	public String getApplicationIdentifier() {
 		String feature = config.getDefaultFeature();
 
