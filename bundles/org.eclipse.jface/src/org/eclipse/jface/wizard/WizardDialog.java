@@ -13,11 +13,11 @@ package org.eclipse.jface.wizard;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
-import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.progress.UIJob;
+import org.eclipse.jface.operation.ModalContext;
+import org.eclipse.jface.progress.*;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
@@ -47,7 +47,9 @@ import org.eclipse.swt.widgets.*;
  * is rarely required.
  * </p>
  */
-public class WizardDialog extends TitleAreaDialog implements IWizardContainer {
+public class WizardDialog
+	extends TitleAreaDialog
+	implements IWizardContainer, IBackgroundRunnableContext {
 
 	/**
 	 * Image registry key for error message image (value <code>"dialog_title_error_image"</code>).
@@ -585,15 +587,9 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer {
 	 * Creates and return a new wizard closing dialog without openiong it.
 	 */
 	private MessageDialog createWizardClosingDialog() {
-		MessageDialog result =
-			new MessageDialog(
-				getShell(),
-				JFaceResources.getString("WizardClosingDialog.title"), //$NON-NLS-1$
-				null,
-				JFaceResources.getString("WizardClosingDialog.message"), //$NON-NLS-1$
-				MessageDialog.QUESTION,
-				new String[] { IDialogConstants.OK_LABEL },
-				0);
+			MessageDialog result = new MessageDialog(getShell(), JFaceResources.getString("WizardClosingDialog.title"), //$NON-NLS-1$
+		null, JFaceResources.getString("WizardClosingDialog.message"), //$NON-NLS-1$
+	MessageDialog.QUESTION, new String[] { IDialogConstants.OK_LABEL }, 0);
 		return result;
 	}
 	/**
@@ -750,28 +746,53 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer {
 		throws InvocationTargetException, InterruptedException {
 		// The operation can only be canceled if it is executed in a separate thread.
 		// Otherwise the UI is blocked anyway.
-		UIJob job = new UIJob() {
-			public IStatus runInUIThread(IProgressMonitor monitor) {
+		Object state = null;
+		if (activeRunningOperations == 0)
+			state = aboutToStart(fork && cancelable);
 
-				try {
-					runnable.run(monitor);
-					return Status.OK_STATUS;
-				} catch (InvocationTargetException e) {
-					Throwable targetExc = e.getTargetException();
-					return new Status(
-						Status.WARNING,
-						"org.eclipse.jface",
-						0,
-						"Internal Error:",
-						targetExc);
-				} catch (InterruptedException e) {
-					return Status.CANCEL_STATUS;
-				}
-
+		activeRunningOperations++;
+		try {
+			ModalContext.run(
+				runnable,
+				fork,
+				getProgressMonitor(),
+				getShell().getDisplay());
+		} finally {
+			activeRunningOperations--;
+			//Stop if this is the last one
+			if (state != null)
+				stopped(state);
+		}
+	}
+	/**
+		 * A long running operation triggered through the wizard
+		 * was stopped either by user input or by normal end.
+		 * Hides the progress monitor and restores the enable state
+		 * wizard's buttons and controls.
+		 *
+		 * @param savedState the saved UI state as returned by <code>aboutToStart</code>
+		 * @see #aboutToStart
+		 */
+	private void stopped(Object savedState) {
+		if (getShell() != null) {
+			if (wizard.needsProgressMonitor()) {
+				progressMonitorPart.setVisible(false);
+				progressMonitorPart.removeFromCancelComponent(cancelButton);
 			}
-		};
-		job.setDisplay(getShell().getDisplay());
-		job.schedule();		
+			Map state = (Map) savedState;
+			restoreUIState(state);
+			cancelButton.addSelectionListener(cancelListener);
+
+			setDisplayCursor(null);
+			cancelButton.setCursor(null);
+			waitCursor.dispose();
+			waitCursor = null;
+			arrowCursor.dispose();
+			arrowCursor = null;
+			Control focusControl = (Control) state.get(FOCUS_CONTROL);
+			if (focusControl != null)
+				focusControl.setFocus();
+		}
 	}
 	/**
 	 * Saves the enabled/disabled state of the given control in the
@@ -1152,4 +1173,38 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer {
 
 		getShell().setText(title);
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.progress.IBackgroundRunnableContext#run(org.eclipse.jface.operation.IRunnableWithProgress, org.eclipse.jface.progress.IJobCompletionListener)
+	 */
+	public void run(
+		final IRunnableWithProgress runnable,
+		IJobCompletionListener completionListener) {
+		UIJob job = new UIJob() {
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+
+				try {
+					runnable.run(monitor);
+					return Status.OK_STATUS;
+				} catch (InvocationTargetException e) {
+					Throwable targetExc = e.getTargetException();
+					return new Status(
+						Status.WARNING,
+						"org.eclipse.jface",
+						0,
+						"Internal Error:",
+						targetExc);
+				} catch (InterruptedException e) {
+					return Status.CANCEL_STATUS;
+				}
+
+			}
+		};
+
+		job.addCompletionListener(completionListener);
+		job.setDisplay(getShell().getDisplay());
+		job.schedule();
+
+	}
+
 }
