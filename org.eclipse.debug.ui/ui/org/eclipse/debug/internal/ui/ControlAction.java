@@ -40,7 +40,6 @@ public class ControlAction extends SelectionProviderAction {
 	 * The actual work is deferred to the delegate.
 	 */
 	public void run() {
-		fDelegate.selectionChanged(this, getStructuredSelection());
 		fDelegate.run();
 	}	
 
@@ -49,8 +48,7 @@ public class ControlAction extends SelectionProviderAction {
 	 * Updates the enable state based on what and how much is selected.
 	 */
 	public void selectionChanged(IStructuredSelection sel) {
-		setEnabled(fDelegate.getEnableStateForSelection(sel));		
+		fDelegate.selectionChanged(this, sel);
 	}
-
 }
 

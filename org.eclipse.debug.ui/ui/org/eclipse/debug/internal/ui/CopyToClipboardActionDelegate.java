@@ -23,6 +23,7 @@ public class CopyToClipboardActionDelegate extends ControlActionDelegate {
 	public void initializeForOwner(ControlAction controlAction) {		
 		controlAction.setEnabled(!controlAction.getStructuredSelection().isEmpty());
 		fViewer = (ContentViewer)controlAction.getSelectionProvider();		
+		super.initializeForOwner(controlAction);
 	}
 	
 	/**

@@ -339,7 +339,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChanged
 	}
 	
 	/**
-	 * Returns a <code>true</code> if the specified window contains a debugger part for the
+	 * Returns a launches view if the specified window contains the debugger part for the
 	 * specified debug mode.
 	 */
 	protected LaunchesView findDebugPart(IWorkbenchWindow window, String mode) {

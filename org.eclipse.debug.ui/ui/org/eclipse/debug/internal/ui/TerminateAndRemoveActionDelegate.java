@@ -18,6 +18,7 @@ public class TerminateAndRemoveActionDelegate extends ControlActionDelegate {
 	 * @see ControlActionDelegate
 	 */
 	public void initializeForOwner(ControlAction controlAction) {		
+		super.initializeForOwner(controlAction);
 		controlAction.setEnabled(!controlAction.getStructuredSelection().isEmpty());
 	}
 	

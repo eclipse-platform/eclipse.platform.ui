@@ -5,14 +5,14 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
-import java.util.Iterator;import org.eclipse.core.runtime.MultiStatus;import org.eclipse.debug.core.DebugException;import org.eclipse.debug.core.IDebugStatusConstants;import org.eclipse.jface.action.IAction;import org.eclipse.jface.viewers.ISelection;import org.eclipse.jface.viewers.IStructuredSelection;import org.eclipse.swt.custom.BusyIndicator;import org.eclipse.swt.widgets.Display;import org.eclipse.ui.IWorkbenchWindow;import org.eclipse.ui.IWorkbenchWindowActionDelegate;
+import java.util.Iterator;import org.eclipse.core.runtime.MultiStatus;import org.eclipse.debug.core.*;import org.eclipse.jface.action.IAction;import org.eclipse.jface.viewers.*;import org.eclipse.swt.custom.BusyIndicator;import org.eclipse.swt.widgets.Display;import org.eclipse.ui.IWorkbenchWindow;import org.eclipse.ui.IWorkbenchWindowActionDelegate;import org.eclipse.ui.actions.SelectionProviderAction;
 
 public abstract class ControlActionDelegate implements IWorkbenchWindowActionDelegate {
 
 	protected static final String ERROR= "error.";
 	protected static final String STATUS= "status";
-
-	protected IStructuredSelection fStructuredSelection;
+	
+	protected String fMode= ILaunchManager.DEBUG_MODE;
 
 	/**
 	 * It's crucial that delegate actions have a zero-arg constructor so that
@@ -28,14 +28,26 @@ public abstract class ControlActionDelegate implements IWorkbenchWindowActionDel
 	 * that do have a ControlAction owner, this is the place to do any
 	 * action specific initialization.
 	 */
-	public void initializeForOwner(ControlAction controlAction) {		
+	public void initializeForOwner(ControlAction controlAction) {
+		LaunchesViewer provider= (LaunchesViewer)controlAction.getSelectionProvider();
+		IContentProvider contentProvider= provider.getContentProvider();
+		fMode= ILaunchManager.DEBUG_MODE;
+		if (contentProvider instanceof ProcessesContentProvider) {
+			fMode= ILaunchManager.RUN_MODE;
+		}	
 	}
 	
 	/**
 	 * Do the specific action using the current selection.
 	 */
 	public void run() {
-		final Iterator enum= fStructuredSelection.iterator();
+		LaunchesView view= getLaunchesView(fMode);
+		if (view == null) {
+			return;
+		}
+		IStructuredSelection selection= (IStructuredSelection)view.getSite().getSelectionProvider().getSelection();
+		
+		final Iterator enum= selection.iterator();
 		String pluginId= DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier();
 		final MultiStatus ms= 
 			new MultiStatus(pluginId, IDebugStatusConstants.REQUEST_FAILED, DebugUIUtils.getResourceString(getPrefix() + STATUS), null); 
@@ -78,13 +90,16 @@ public abstract class ControlActionDelegate implements IWorkbenchWindowActionDel
 	}
 
 	/**
+	 * Only interested in selection changes in the launches view
 	 * @see IActionDelegate
 	 */
-	public void selectionChanged(IAction action, ISelection selection){
-		if (selection instanceof IStructuredSelection) {
-			fStructuredSelection= (IStructuredSelection)selection;
-			action.setEnabled(getEnableStateForSelection(fStructuredSelection));
+	public void selectionChanged(IAction action, ISelection s) {
+		LaunchesView view= getLaunchesView(fMode);
+		if (view == null) {
+			return;
 		}
+		IStructuredSelection selection= (IStructuredSelection)view.getSite().getSelectionProvider().getSelection();
+		action.setEnabled(getEnableStateForSelection(selection));
 	}
 	
 	/**
@@ -115,6 +130,13 @@ public abstract class ControlActionDelegate implements IWorkbenchWindowActionDel
 	 */
 	protected boolean enableForMultiSelection() {
 		return true;
+	}
+	
+	protected LaunchesView getLaunchesView(String mode) {
+		IWorkbenchWindow window= DebugUIPlugin.getActiveWorkbenchWindow();
+		return
+			DebugUIPlugin.getDefault().findDebugPart(window, mode);
+		
 	}
 
 	/**
