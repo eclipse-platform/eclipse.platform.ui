@@ -613,6 +613,80 @@ public final class WorkbenchActionBuilder {
 			ResourcesPlugin.getPlugin().getPluginPreferences().removePropertyChangeListener(
 				prefListener);
 		}
+		closeAction.dispose();
+		closeAllAction.dispose();
+		closeAllSavedAction.dispose();
+		saveAction.dispose();
+		saveAllAction.dispose();
+		aboutAction.dispose();
+		openPreferencesAction.dispose();
+		saveAsAction.dispose();
+		hideShowEditorAction.dispose();
+		savePerspectiveAction.dispose();
+		resetPerspectiveAction.dispose();
+		editActionSetAction.dispose();
+		closePerspAction.dispose();
+		lockToolBarAction.dispose();
+		closeAllPerspsAction.dispose();
+		showViewMenuAction.dispose();
+		showPartPaneMenuAction.dispose();
+		nextPartAction.dispose();
+		prevPartAction.dispose();
+		nextEditorAction.dispose();
+		prevEditorAction.dispose();
+		nextPerspectiveAction.dispose();
+		prevPerspectiveAction.dispose();
+		activateEditorAction.dispose();
+		maximizePartAction.dispose();
+		workbenchEditorsAction.dispose();
+		backwardHistoryAction.dispose();
+		forwardHistoryAction.dispose();
+		undoAction.dispose();
+		redoAction.dispose();
+		cutAction.dispose();
+		copyAction.dispose();
+		pasteAction.dispose();
+		deleteAction.dispose();
+		selectAllAction.dispose();
+		findAction.dispose();
+		printAction.dispose();
+		revertAction.dispose();
+		refreshAction.dispose();
+		propertiesAction.dispose();
+		quitAction.dispose();
+		moveAction.dispose();
+		renameAction.dispose();
+		goIntoAction.dispose();
+		backAction.dispose();
+		forwardAction.dispose();
+		upAction.dispose();
+		nextAction.dispose();
+		previousAction.dispose();
+		if (categoryAction != null) {
+			categoryAction.dispose();
+		}
+
+		// editorsDropDownAction is not currently an IWorkbenchAction		
+		// editorsDropDownAction.dispose();
+		projectPropertyDialogAction.dispose();
+		newWizardAction.dispose();
+		newWizardDropDownAction.dispose();
+		importResourcesAction.dispose();
+		exportResourcesAction.dispose();
+		rebuildAllAction.dispose();
+		buildAllAction.dispose();
+		if (quickStartAction != null) {
+			quickStartAction.dispose();
+		}
+		if (tipsAndTricksAction != null) {
+			tipsAndTricksAction.dispose();
+		}
+		addBookmarkAction.dispose();
+		addTaskAction.dispose();
+		buildProjectAction.dispose();
+		rebuildProjectAction.dispose();
+		openProjectAction.dispose();
+		closeProjectAction.dispose();
 	}
 
 	void updateModeLine(final String text) {
