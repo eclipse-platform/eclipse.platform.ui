@@ -6,16 +6,13 @@ package org.eclipse.core.internal.resources;
  */
 
 import java.io.*;
-import java.io.InputStream;
 
 import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
+import org.eclipse.core.internal.localstore.FileSystemResourceManager;
 import org.eclipse.core.internal.utils.Assert;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.resources.IFileState;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 
 public class File extends Resource implements IFile {
 
@@ -216,6 +213,7 @@ protected void internalSetContents(InputStream content, IPath location, boolean 
 	ResourceInfo info = getResourceInfo(false, true);
 	info.incrementContentId();
 	workspace.updateModificationStamp(info);
+	updateProjectDescription();
 }
 
 /*
@@ -257,6 +255,17 @@ public void setContents(InputStream content, int updateFlags, IProgressMonitor m
 		monitor.done();
 		ensureClosed(content);
 	}
+}
+/**
+ * If this file represents a project description file (.project), then force
+ * an update on the project's description.
+ * 
+ * This method is called whenever it is discovered that a file has
+ * been modified (added, removed, or changed).
+ */
+public void updateProjectDescription() throws CoreException {
+	if (path.segmentCount() == 2 && path.segment(1).equals(FileSystemResourceManager.F_PROJECT))
+		((Project)getProject()).updateDescription();
 }
 
 /**

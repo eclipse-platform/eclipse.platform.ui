@@ -1259,13 +1259,15 @@ public IStatus open(IProgressMonitor monitor) throws CoreException {
 		//restart the notification manager so it is initialized with the right tree
 		notificationManager.startup(null);
 		openFlag = true;
-		if (crashed || refreshRequested())
-			getRoot().refreshLocal(IResource.DEPTH_INFINITE, null);
-		//add the project description change listener
-		addResourceChangeListener(
-			new ProjectDescriptionChangeListener(this), 
-			IResourceChangeEvent.PRE_AUTO_BUILD);
-		return null;
+		if (crashed || refreshRequested()) {
+			try {
+				getRoot().refreshLocal(IResource.DEPTH_INFINITE, null);
+			} catch (CoreException e) {
+				//don't fail entire open if refresh failed, just report as minor warning
+				return e.getStatus();
+			}
+		}
+		return ResourceStatus.OK_STATUS;
 	} finally {
 		description.setAutoBuilding(oldBuildFlag);
 	}

@@ -512,15 +512,15 @@ protected void restoreMetaInfo(Project project, IProgressMonitor monitor) throws
 	// from disk, close the project and give it a default description. If the project
 	// was already closed then just set a default description.
 	if (description == null) {
-		if (project.isOpen()) {
-			project.basicClose();
-		}
 		description = new ProjectDescription();
 		description.setName(project.getName());
 	}
 	project.internalSetDescription(description, false);
-	if (failure != null)
+	if (failure != null) {
+		//close the project
+		project.internalClose();
 		throw failure;
+	}
 }
 /**
  * Restores the state of this workspace by opening the projects
@@ -535,8 +535,6 @@ protected void restoreMetaInfo(Workspace workspace, IProgressMonitor monitor) th
 			restoreMetaInfo((Project) roots[i], monitor);
 		} catch (CoreException e) {
 			ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
-			//close the project
-			((Project)roots[i]).internalClose();
 		}
 	}
 }
@@ -708,7 +706,7 @@ protected IStatus saveMetaInfo(Project project, IProgressMonitor monitor) throws
 	//if there is nothing on disk, write the description
 	if (!workspace.getFileSystemManager().hasSavedProject(project)) {
 		workspace.getFileSystemManager().writeSilently(project);
-		String msg = Policy.bind("resources.missingProjectMeta", project.getName());
+		String msg = Policy.bind("resources.missingProjectMetaRepaired", project.getName());
 		//FIXME: Should just return an INFO status here.
 		return new ResourceStatus(IResourceStatus.FAILED_WRITE_METADATA, project.getFullPath(), msg);
 	}
@@ -1121,7 +1119,9 @@ public IStatus save(int kind, Project project, IProgressMonitor monitor) throws 
 						visitAndSave(project);
 						// reset the snapshot file
 						resetSnapshots(project);
-						saveMetaInfo(project, null);
+						IStatus result = saveMetaInfo(project, null);
+						if (!result.isOK())
+							warnings.merge(result);
 						monitor.worked(1);
 						break;
 				}

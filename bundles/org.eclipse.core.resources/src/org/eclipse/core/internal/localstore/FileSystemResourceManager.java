@@ -81,9 +81,9 @@ public void delete(IResource target, boolean force, boolean convertToPhantom, bo
 		if (!force) {
 			IProgressMonitor sub = Policy.subMonitorFor(monitor, totalWork / 2);
 			sub.beginTask("", 10000);
-			RefreshLocalWithStatusVisitor refreshVisitor = new RefreshLocalWithStatusVisitor(Policy.bind("localstore.deleteProblem"), sub);
+			CollectSyncStatusVisitor refreshVisitor = new CollectSyncStatusVisitor(Policy.bind("localstore.deleteProblem"), sub);
 			tree.accept(refreshVisitor, IResource.DEPTH_INFINITE);
-			status.merge(refreshVisitor.getStatus());
+			status.merge(refreshVisitor.getSyncStatus());
 			skipList = refreshVisitor.getAffectedResources();
 		}
 		DeleteVisitor deleteVisitor = new DeleteVisitor(skipList, force, convertToPhantom, keepHistory, Policy.subMonitorFor(monitor, force ? totalWork : (totalWork / 2)));
@@ -127,6 +127,46 @@ protected Workspace getWorkspace() {
 }
 public boolean hasSavedProject(IProject project) {
 	return getDescriptionLocationFor(project).toFile().exists();
+}
+/**
+ * The target must exist in the workspace.  This method must only ever
+ * be called from Project.writeDescription(), because that method ensures
+ * that the description isn't then immediately discovered as a new change.
+ */
+public void internalWrite(IProject target, int updateFlags) throws CoreException {
+	IPath location = locationFor(target);
+	getStore().writeFolder(location.toFile());
+	//can't do anything if there's no description
+	IProjectDescription desc = ((Project)target).internalGetDescription();
+	if (desc == null)
+		return;
+	//write the project location to the meta-data area
+	getWorkspace().getMetaArea().writeLocation(target);
+
+	//write the model to a byte array
+	ByteArrayOutputStream out = new ByteArrayOutputStream();
+	try {
+		new ModelObjectWriter().write(desc, out);
+	} catch (IOException e) {
+		String msg = Policy.bind("resources.writeMeta", target.getFullPath().toString());
+		throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, target.getFullPath(), msg, e);
+	}
+	ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
+
+	//write the contents to the IFile that represents the description
+	IFile descriptionFile = target.getFile(F_PROJECT);
+	if (!descriptionFile.exists())
+		workspace.createResource(descriptionFile, false);
+	descriptionFile.setContents(in, updateFlags, null);
+
+	//update the timestamp on the project as well so we know when it has
+	//been changed from the outside
+	long lastModified = ((Resource)descriptionFile).getResourceInfo(false, false).getLocalSyncInfo();
+	ResourceInfo info = ((Resource) target).getResourceInfo(false, true);
+	updateLocalSync(info, lastModified, true);
+
+	//for backwards compatibility, ensure the old .prj file is deleted
+	getWorkspace().getMetaArea().clearOldDescription(target);
 }
 /**
  * Returns true if the given project's description is synchronized with
@@ -234,13 +274,18 @@ public InputStream read(IFile target, boolean force, IProgressMonitor monitor) t
  */
 public ProjectDescription read(IProject target, boolean creation) throws CoreException {
 	//read the project location if this project is being created
-	IPath projectLocation;
+	IPath projectLocation = null;
 	if (creation) {
 		projectLocation = getWorkspace().getMetaArea().readLocation(target);
-		if (projectLocation == null)
-			projectLocation = getProjectDefaultLocation(target);
 	} else {
-		projectLocation = locationFor(target);
+		IProjectDescription description = ((Project)target).internalGetDescription();
+		if (description != null && description.getLocation() != null) {
+			projectLocation = description.getLocation();
+		}
+	}
+	final boolean isDefaultLocation = projectLocation == null;
+	if (isDefaultLocation) {
+		projectLocation = getProjectDefaultLocation(target);
 	}
 	IPath descriptionPath = projectLocation.append(F_PROJECT);
 	ProjectDescription description = null;
@@ -254,17 +299,20 @@ public ProjectDescription read(IProject target, boolean creation) throws CoreExc
 		}
 		return description;
 	}
+	//hold onto any exceptions until after sync info is updated, then throw it
+	ResourceException error = null;
 	try {
 		description = (ProjectDescription)new ModelObjectReader().read(descriptionPath);
 	} catch (IOException e) {
 		String msg = Policy.bind("resources.readProjectMeta", target.getName());
-		throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, target.getFullPath(), msg, e);
+		error = new ResourceException(IResourceStatus.FAILED_READ_METADATA, target.getFullPath(), msg, e);
 	}
-	if (description == null) {
+	if (error == null && description == null) {
 		String msg = Policy.bind("resources.readProjectMeta", target.getName());
-		throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, target.getFullPath(), msg, null);
+		error = new ResourceException(IResourceStatus.FAILED_READ_METADATA, target.getFullPath(), msg, null);
 	}
-	description.setLocation(projectLocation);
+	if (description != null && !isDefaultLocation)
+		description.setLocation(projectLocation);
 	long lastModified = CoreFileSystemLibrary.getLastModified(descriptionPath.toOSString());
 	IFile descriptionFile = target.getFile(F_PROJECT);
 	//don't get a mutable copy because we might be in restore which isn't an operation
@@ -281,35 +329,23 @@ public ProjectDescription read(IProject target, boolean creation) throws CoreExc
 	info = ((Resource) target).getResourceInfo(false, true);
 	updateLocalSync(info, lastModified, true);
 
+	if (error != null)
+		throw error;
 	return description;
 }
 public boolean refresh(IResource target, int depth, IProgressMonitor monitor) throws CoreException {
 	switch (target.getType()) {
-		case IResource.PROJECT :
-			return refreshProject((IProject) target, depth, monitor);
 		case IResource.ROOT :
 			return refreshRoot((IWorkspaceRoot) target, depth, monitor);
+		case IResource.PROJECT :
+			if (!target.isAccessible())
+				return false;
+			//fall through
 		case IResource.FOLDER :
 		case IResource.FILE :
 			return refreshResource(target, depth, monitor);
 	}
 	return false;
-}
-protected boolean refreshProject(IProject project, int depth, IProgressMonitor monitor) throws CoreException {
-	monitor = Policy.monitorFor(monitor);
-	int totalWork = RefreshLocalVisitor.TOTAL_WORK;
-	String title = Policy.bind("localstore.refreshing", project.getFullPath().toString());
-	try {
-		monitor.beginTask(title, totalWork);
-		if (!project.isAccessible())
-			return false;
-		RefreshLocalVisitor visitor = new RefreshLocalVisitor(monitor);
-		UnifiedTree tree = new UnifiedTree(project);
-		tree.accept(visitor, depth);
-		return visitor.resourcesChanged();
-	} finally {
-		monitor.done();
-	}
 }
 protected boolean refreshResource(IResource target, int depth, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
@@ -320,6 +356,9 @@ protected boolean refreshResource(IResource target, int depth, IProgressMonitor 
 		RefreshLocalVisitor visitor = new RefreshLocalVisitor(monitor);
 		UnifiedTree tree = new UnifiedTree(target);
 		tree.accept(visitor, depth);
+		IStatus result = visitor.getErrorStatus();
+		if (!result.isOK())
+			throw new ResourceException(result);
 		return visitor.resourcesChanged();
 	} finally {
 		monitor.done();
@@ -346,7 +385,7 @@ protected boolean refreshRoot(IWorkspaceRoot target, int depth, IProgressMonitor
 		// drop the depth by one level since processing the root counts as one level.
 		depth = depth == IResource.DEPTH_ONE ? IResource.DEPTH_ZERO : depth;
 		for (int i = 0; i < projects.length; i++)
-			changed |= refreshProject(projects[i], depth, Policy.subMonitorFor(monitor, 1));
+			changed |= refresh(projects[i], depth, Policy.subMonitorFor(monitor, 1));
 		return changed;
 	} finally {
 		monitor.done();
@@ -489,44 +528,7 @@ public void write(IFolder target, boolean force, IProgressMonitor monitor) throw
 	ResourceInfo info = ((Resource) target).getResourceInfo(false, true);
 	updateLocalSync(info, lastModified, false);
 }
-/**
- * The target must exist in the workspace.
- */
-public void write(IProject target, int updateFlags) throws CoreException {
-	IPath location = locationFor(target);
-	getStore().writeFolder(location.toFile());
-	//can't do anything if there's no description
-	IProjectDescription desc = ((Project)target).internalGetDescription();
-	if (desc == null)
-		return;
-	//write the project location to the meta-data area
-	getWorkspace().getMetaArea().writeLocation(target);
 
-	//write the model to a byte array
-	ByteArrayOutputStream out = new ByteArrayOutputStream();
-	try {
-		new ModelObjectWriter().write(desc, out);
-	} catch (IOException e) {
-		String msg = Policy.bind("resources.writeMeta", target.getFullPath().toString());
-		throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, target.getFullPath(), msg, e);
-	}
-	ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
-
-	//write the contents to the IFile that represents the description
-	IFile descriptionFile = target.getFile(F_PROJECT);
-	if (!descriptionFile.exists())
-		workspace.createResource(descriptionFile, false);
-	descriptionFile.setContents(in, updateFlags, null);
-
-	//update the timestamp on the project as well so we know when it has
-	//been changed from the outside
-	long lastModified = ((Resource)descriptionFile).getResourceInfo(false, false).getLocalSyncInfo();
-	ResourceInfo info = ((Resource) target).getResourceInfo(false, true);
-	updateLocalSync(info, lastModified, true);
-
-	//for backwards compatibility, ensure the old .prj file is deleted
-	getWorkspace().getMetaArea().clearOldDescription(target);
-}
 /**
  * Write the .project file without modifying the resource tree.  This is called
  * during save when it is discovered that the .project file is missing.  The tree

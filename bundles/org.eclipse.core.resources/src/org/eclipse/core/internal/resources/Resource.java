@@ -927,13 +927,13 @@ protected void moveInFileSystem(IPath destination, boolean force, boolean keepHi
 		String message = Policy.bind("resources.moving", getFullPath().toString());
 		monitor.beginTask(message, 100);
 		message = Policy.bind("resources.moveProblem");
-		RefreshLocalWithStatusVisitor visitor = new RefreshLocalWithStatusVisitor(message, monitor);
+		CollectSyncStatusVisitor visitor = new CollectSyncStatusVisitor(message, monitor);
 		UnifiedTree tree = new UnifiedTree(this);
 		tree.accept(visitor, DEPTH_INFINITE);
 		/* if force is false and resources were not in sync, throw an exception */
 		if (!force)
-			if (!visitor.getStatus().isOK())
-				throw new ResourceException(visitor.getStatus());
+			if (!visitor.getSyncStatus().isOK())
+				throw new ResourceException(visitor.getSyncStatus());
 		getLocalManager().move(this, destination, keepHistory, Policy.subMonitorFor(monitor, 70));
 	} finally {
 		monitor.done();

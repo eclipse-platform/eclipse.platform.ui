@@ -16,6 +16,11 @@ import java.io.*;
 import java.util.*;
 
 public class Project extends Container implements IProject {
+	/**
+	 * Used to ensure we don't read the description immediately after writing it.
+	 */
+	private boolean isWritingDescription = false;
+	
 protected Project(IPath path, Workspace container) {
 	super(path, container);
 }
@@ -151,19 +156,22 @@ public void close(boolean save, IProgressMonitor monitor) throws CoreException {
 			workspace.beginOperation(true);
 			// flush the build order early in case there is a problem
 			workspace.flushBuildOrder();
+			IStatus saveStatus = null;
 			if (save) {
 				IProgressMonitor sub = Policy.subMonitorFor(monitor, Policy.opWork / 2, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL);
-				workspace.getSaveManager().save(ISaveContext.PROJECT_SAVE, this, sub);
+				saveStatus = workspace.getSaveManager().save(ISaveContext.PROJECT_SAVE, this, sub);
 			}
-			getMarkerManager().removeMarkers(this, IResource.DEPTH_INFINITE);
 			// If the project has never been saved at this point, delete the 
 			// project but leave its contents.
+			//FIXME: revisit this behaviour of deleting if not saved
 			if (!hasBeenSaved()) {
 				delete(false, true, Policy.subMonitorFor(monitor, Policy.opWork / 2, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 				return;
 			}
-			basicClose();
+			internalClose();
 			monitor.worked(Policy.opWork / 2);
+			if (saveStatus != null && !saveStatus.isOK())
+				throw new ResourceException(saveStatus);
 		} catch (OperationCanceledException e) {
 			workspace.getWorkManager().operationCanceled();
 			throw e;
@@ -173,22 +181,6 @@ public void close(boolean save, IProgressMonitor monitor) throws CoreException {
 	} finally {
 		monitor.done();
 	}
-}
-
-protected void basicClose() throws CoreException {
-	// remove each member from the resource tree. 
-	// DO NOT use resource.delete() as this will delete it from disk as well.
-	IResource[] members = members(IContainer.INCLUDE_PHANTOMS | IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
-	for (int i = 0; i < members.length; i++) {
-		Resource member = (Resource) members[i];
-		workspace.deleteResource(member);
-	}
-	// finally mark the project as closed.
-	ResourceInfo info = getResourceInfo(false, true);
-	info.clear(M_OPEN);
-	info.setModificationStamp(IResource.NULL_STAMP);
-	info.clearSessionProperties();
-	info.setSyncInfo(null);
 }
 /**
  * @see IProject#copy
@@ -248,7 +240,6 @@ public void create(IProjectDescription description, IProgressMonitor monitor) th
 			if (description == null) {
 				desc = new ProjectDescription();
 			} else {
-				//FIXME: Ensure cloning is the right thing here
 				desc = (ProjectDescription)((ProjectDescription)description).clone();
 			}
 			desc.setName(getName());
@@ -257,10 +248,11 @@ public void create(IProjectDescription description, IProgressMonitor monitor) th
 			try {
 				if (getLocalManager().hasSavedProject(this)) {
 					updateDescription();
+					//make sure the .location file is written
 					workspace.getMetaArea().writeLocation(this);
 				} else {
 					//write out the project
-					getLocalManager().write(this, IResource.FORCE);
+					writeDescription(IResource.FORCE);
 				}
 			} catch (CoreException e) {
 				workspace.deleteResource(this);
@@ -445,7 +437,7 @@ protected void internalCopy(IProjectDescription destDesc, boolean force, IProgre
 			// write out the new project description to the meta area. This will ovewrite 
 			//the .project file that was copied during the recursive copy in the previous step
 			try {
-				getLocalManager().write(destProject, IResource.FORCE);
+				writeDescription(IResource.FORCE);
 			} catch (CoreException e) {
 				try {
 					destProject.delete(force, null);
@@ -622,14 +614,7 @@ public void open(IProgressMonitor monitor) throws CoreException {
 			// the M_USED flag is used to indicate the difference between opening a project
 			// for the first time and opening it from a previous close (restoring it from disk)
 			if (info.isSet(M_USED)) {
-				try {
-					workspace.getSaveManager().restore(this, Policy.subMonitorFor(monitor, Policy.opWork * 30 / 100));
-				} catch (CoreException e) {
-					//if we failed to restore the project, leave it closed
-					//need to get the info again because the node is replaced by restore
-					getResourceInfo(false, true).clear(M_OPEN);
-					throw e;
-				}
+				workspace.getSaveManager().restore(this, Policy.subMonitorFor(monitor, Policy.opWork * 30 / 100));
 			} else {
 				info.set(M_USED);
 				workspace.updateModificationStamp(info);
@@ -647,22 +632,6 @@ public void open(IProgressMonitor monitor) throws CoreException {
 		monitor.done();
 	}
 }
-// used in delete
-
-// In this particular case, the project is closed but 
-// we do want to delete its contents. The force flag
-// is false what means that we should only delete
-// resources that are in sync with the filesystem.
-// So, we have to have the tree loaded.
-
-public void pseudoOpen() throws CoreException {
-	getResourceInfo(false, true).set(M_OPEN);
-	workspace.getSaveManager().restore(this, null);
-}
-
-/*
- * @see IProject
- */
 /**
  * @see IProject
  */
@@ -690,12 +659,12 @@ public void setDescription(IProjectDescription description, int updateFlags, IPr
 			workspace.beginOperation(true);
 			workspace.changing(this);
 			MultiStatus status = basicSetDescription((ProjectDescription) description);
-			getLocalManager().write(this, updateFlags);
+			writeDescription(updateFlags);
 			info = getResourceInfo(false, true);
 			info.incrementContentId();
 			workspace.updateModificationStamp(info);
 			if (!hadSavedDescription) {
-				String msg = Policy.bind("resources.missingProjectMeta", getName());
+				String msg = Policy.bind("resources.missingProjectMetaRepaired", getName());
 				status.merge(new ResourceStatus(IResourceStatus.FAILED_READ_METADATA, getFullPath(), msg));
 			}
 			if (!status.isOK())
@@ -707,7 +676,6 @@ public void setDescription(IProjectDescription description, int updateFlags, IPr
 		monitor.done();
 	}
 }
-
 /**
  * @see IProject
  */
@@ -715,7 +683,6 @@ public void setDescription(IProjectDescription description, IProgressMonitor mon
 	// funnel all operations to central method
 	setDescription(description, IResource.KEEP_HISTORY, monitor);
 }
-
 /**
  * Restore the non-persisted state for the project.  For example, read and set 
  * the description from the local meta area.  Also, open the property store etc.
@@ -757,6 +724,8 @@ public void touch(IProgressMonitor monitor) throws CoreException {
  * description file contents.
  */
 protected void updateDescription() throws CoreException {
+	if (isWritingDescription)
+		return;
 	FileSystemResourceManager manager = getLocalManager();
 	workspace.changing(this);
 	//if changed, read description from disk and update in memory
@@ -765,6 +734,20 @@ protected void updateDescription() throws CoreException {
 	ProjectDescription description = manager.read(this, false);
 	//set the description in memory
 	internalSetDescription(description, true);
+}
+/**
+ * Writes the project description file to disk.  This is the only method
+ * that should ever be writing the description, because it ensures that
+ * the description isn't then immediately discovered as an incoming
+ * change and read back from disk.
+ */
+public void writeDescription(int updateFlags) throws CoreException {
+	isWritingDescription = true;
+	try {
+		getLocalManager().internalWrite(this, updateFlags);
+	} finally {
+		isWritingDescription = false;
+	}
 }
 protected void renameMetaArea(IProject source, IProject destination, IProgressMonitor monitor) throws CoreException {
 	java.io.File oldMetaArea = workspace.getMetaArea().locationFor(source).toFile();
@@ -790,6 +773,7 @@ protected void internalClose() throws CoreException {
 	ResourceInfo info = getResourceInfo(false, true);
 	info.clear(M_OPEN);
 	info.clearSessionProperties();
+	info.setModificationStamp(IResource.NULL_STAMP);
 	info.setSyncInfo(null);
 }
 }

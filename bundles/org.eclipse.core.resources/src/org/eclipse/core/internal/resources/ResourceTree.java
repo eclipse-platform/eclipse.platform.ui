@@ -262,7 +262,7 @@ public void movedProjectSubtree(IProject project, IProjectDescription destDescri
 	// Set the new project description on the destination project.
 	try {
 		destination.internalSetDescription(destDescription, false);
-		destination.getLocalManager().write(destination, IResource.FORCE);
+		destination.writeDescription(IResource.FORCE);
 	} catch (CoreException e) {
 		String message = Policy.bind("resources.projectDesc");
 		IStatus status = new ResourceStatus(IStatus.ERROR, destination.getFullPath(), message, e);
@@ -456,11 +456,10 @@ public boolean isSynchronized(IResource resource, int depth) {
 	// FIXME: this visitor does too much work because it collects statuses for all
 	// children who are out of sync. We could optimize by returning early when discovering
 	// the first out of sync child.
-	RefreshLocalWithStatusVisitor visitor = new RefreshLocalWithStatusVisitor(message, new NullProgressMonitor());
+	CollectSyncStatusVisitor visitor = new CollectSyncStatusVisitor(message, new NullProgressMonitor());
 	try {
 		tree.accept(visitor, depth);
 	} catch (CoreException e) {
-		message = Policy.bind("resources.errorRefresh", resource.getFullPath().toString());
 		IStatus status = new ResourceStatus(IResourceStatus.FAILED_READ_LOCAL, resource.getFullPath(), message, e);
 		failed(status);
 	}

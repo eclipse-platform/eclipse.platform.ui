@@ -9,10 +9,17 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.utils.Policy;
 //
+/**
+ * Visits a unified tree, and synchronizes the file system with the
+ * resource tree.  After the visit is complete, the file system will
+ * be synchronized with the workspace tree with respect to
+ * resource existence, gender, and timestamp.
+ */
 public class RefreshLocalVisitor implements IUnifiedTreeVisitor, ILocalStoreConstants {
 	protected IProgressMonitor monitor;
 	protected Workspace workspace;
 	protected boolean resourceChanged;
+	protected MultiStatus errors;
 	
 	/*
 	 * Fields for progress monitoring algorithm.
@@ -37,6 +44,8 @@ public RefreshLocalVisitor(IProgressMonitor monitor) {
 	this.monitor = monitor;
 	workspace = (Workspace) ResourcesPlugin.getWorkspace();
 	resourceChanged = false;
+	String msg = Policy.bind("resources.errorMultiRefresh");
+	errors = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_READ_LOCAL, msg, null);
 }
 /**
  * This method has the same implementation as resourceChanged but as they are different
@@ -57,8 +66,7 @@ protected void createResource(UnifiedTreeNode node, Resource target) throws Core
 			 ((Folder) target.getParent()).ensureExists(monitor);
 	}
 	/* Use the basic file creation protocol since we don't want to create any content on disk. */
-	workspace.createResource(target, false);
-	info = target.getResourceInfo(false, true);
+	info = workspace.createResource(target, false);
 	target.getLocalManager().updateLocalSync(info, node.getLastModified(), target.getType() == IResource.FILE);
 }
 protected void deleteResource(UnifiedTreeNode node, Resource target) throws CoreException {
@@ -100,6 +108,14 @@ protected void folderToFile(UnifiedTreeNode node, Resource target) throws CoreEx
 	node.setResource(target);
 	info = target.getResourceInfo(false, true);
 	target.getLocalManager().updateLocalSync(info, node.getLastModified(), true);
+}
+/**
+ * Returns the status of the nodes visited so far.  This will be a multi-status
+ * that describes all problems that have occurred, or an OK status if everything
+ * went smoothly.  
+ */
+public IStatus getErrorStatus() {
+	return errors;
 }
 protected void resourceChanged(Resource target, long lastModified) throws CoreException {
 	ResourceInfo info = target.getResourceInfo(false, true);
@@ -153,7 +169,7 @@ protected int synchronizeExistence(UnifiedTreeNode node, Resource target, int le
 	return RL_UNKNOWN;
 }
 /**
- * gender change -- Returns true if gender was not in sync.
+ * gender change -- Returns true if gender was in sync.
  */
 protected boolean synchronizeGender(UnifiedTreeNode node, Resource target) throws CoreException {
 	if (target.getType() == IResource.FILE) {
@@ -185,11 +201,12 @@ public boolean visit(UnifiedTreeNode node) throws CoreException {
 	Policy.checkCanceled(monitor);
 	try {
 		Resource target = (Resource) node.getResource();
-		if (target.getType() == IResource.PROJECT)
+		int targetType = target.getType();
+		if (targetType == IResource.PROJECT)
 			return true;
 		if (node.existsInWorkspace() && node.existsInFileSystem()) {
 			/* we don't care about folder last modified */
-			if (node.isFolder() && target.getType() == IResource.FOLDER)
+			if (node.isFolder() && targetType == IResource.FOLDER)
 				return true;
 			/* compare file last modified */
 			long lastModifed = target.getResourceInfo(false, false).getLocalSyncInfo();
@@ -197,12 +214,26 @@ public boolean visit(UnifiedTreeNode node) throws CoreException {
 				return true;
 		} else {
 			int state = synchronizeExistence(node, target, node.getLevel());
-			if (state == RL_IN_SYNC || state == RL_NOT_IN_SYNC)
+			if (state == RL_IN_SYNC || state == RL_NOT_IN_SYNC) {
+				if (targetType == IResource.FILE) {
+					try {
+						((File)target).updateProjectDescription();
+					} catch (CoreException e) {
+						errors.merge(e.getStatus());
+					}
+				}
 				return true;
+			}
 		}
-		if (!synchronizeGender(node, target))
-			return true;
-		synchronizeLastModified(node, target);
+		if (synchronizeGender(node, target))
+			synchronizeLastModified(node, target);
+		if (targetType == IResource.FILE) {
+			try {
+				((File)target).updateProjectDescription();
+			} catch (CoreException e) {
+				errors.merge(e.getStatus());
+			}
+		}
 		return true;
 	} finally {
 		if (--nextProgress <= 0) {
