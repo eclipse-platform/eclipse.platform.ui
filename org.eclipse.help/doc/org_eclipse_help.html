@@ -33,6 +33,14 @@ the default home is /org.eclipse.help/doc/help_home.html.</li>
 the related links view. Note: this option has no effect in the infocenter.</li>
   <li><b>bookmarksView</b>: set to true or false to control the visibility
 of the bookmarks view. Note: this option has no effect in the infocenter.</li>
+  <li><b>loadBookAtOnceLimit</b>: the maximum number of topics
+a book can have, for the navigation to be loaded by the browser as one document.
+Navigation for larger books is loaded dynamically, few levels at a time.
+More topics are downloaded as necessary, when branches are expanded.  Default is 1000</li>
+  <li><b>dynamicLoadDepthsHint</b>: suggested number of levels in topic navigation
+downloaded to the browser for large books. The value needs to be greater than 0.
+The actual number of levels can differ for wide tree if suggested number of levels
+contains large number of topics.  Default is 3.</li>
   <li><b>baseTOCS</b>: ordered list of help TOC's (books) as they would appear
 on the bookshelf. All the other TOCS will be follow these books. Non-present
 TOC's on this list will be ignored. Use the location of each TOC as <i>/pluginId/path/to/toc.xml</i>.</li>

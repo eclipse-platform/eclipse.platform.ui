@@ -82,4 +82,16 @@ public class WebappPreferences {
 		return prefs.getString("advanced.viewFont");
 	}
 
+	public int getBookAtOnceLimit() {
+		return prefs.getInt("loadBookAtOnceLimit");
+	}
+
+	public int getLoadDepth() {
+		int value = prefs.getInt("dynamicLoadDepthsHint");
+		if (value < 1) {
+			return 1;
+		}
+		return value;
+	}
+
 }
