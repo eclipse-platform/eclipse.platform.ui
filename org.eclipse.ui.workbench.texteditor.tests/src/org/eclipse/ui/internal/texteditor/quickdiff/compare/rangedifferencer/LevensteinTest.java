@@ -13,8 +13,9 @@ package org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer;
 
 import java.util.Arrays;
 
-import junit.framework.Assert;
 import junit.framework.TestCase;
+
+import org.eclipse.jface.text.Assert;
 
 import org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer.LinkedRangeFactory.LowMemoryException;
 
@@ -271,12 +272,12 @@ public class LevensteinTest extends TestCase {
 
 	private void assertEditDistance(int expected, String s1, String s2) {
 		int dist= computeDistance(new SequenceComparator(s1), new SequenceComparator(s2));
-		Assert.assertEquals(expected, dist);
+		assertEquals(expected, dist);
 	}
 
 	private void assertEditDistanceHirschberg(int expected, String s1, String s2) {
 		int dist= computeDistanceHirschberg(new SequenceComparator(s1), new SequenceComparator(s2));
-		Assert.assertEquals(expected, dist);
+		assertEquals(expected, dist);
 	}
 
 	private int computeDistance(SequenceComparator comp1, SequenceComparator comp2) {
@@ -303,7 +304,7 @@ class SequenceComparator implements IRangeComparator {
 	
 	
 	public SequenceComparator(CharSequence string) {
-		org.eclipse.jface.text.Assert.isNotNull(string);
+		Assert.isNotNull(string);
 		fSequence= string;
 	}
 

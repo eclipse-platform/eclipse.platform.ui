@@ -327,11 +327,9 @@ public final class Levenstein {
 	 * @return
 	 */
 	public RangeDifference[] editScriptHirschberg() {
-		if (fLeft == null || fRight == null)
-			throw new IllegalStateException("must set ranges first"); //$NON-NLS-1$
-		
 		try {
 			fCellComputer= fStandardCC;
+		
 			initRows();
 			fResultRow= new int[fCurrentRow.length];
 			fOptimalSplitColumn= new int[fRight.getRangeCount() + 1];
@@ -355,15 +353,11 @@ public final class Levenstein {
 	}
 
 	public int editDistanceHirschberg() {
-		if (fLeft == null || fRight == null)
-			throw new IllegalStateException("must set ranges first"); //$NON-NLS-1$
-		
 		try {
 			fCellComputer= fStandardCC;
 
 			initRows();
 			fResultRow= new int[fLeft.getRangeCount() + 1];
-			
 			fOptimalSplitColumn= new int[fRight.getRangeCount() + 1];
 			fOptimalSplitValues= new boolean[fRight.getRangeCount() + 1];
 			

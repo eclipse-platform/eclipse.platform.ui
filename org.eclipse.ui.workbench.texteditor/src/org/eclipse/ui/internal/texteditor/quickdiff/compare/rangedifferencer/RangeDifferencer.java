@@ -108,6 +108,7 @@ public final class RangeDifferencer {
 		int diagLen= 2 * Math.max(rightSize, leftSize); // bound on the size of edit script
 		int maxDiagonal= diagLen;
 		int lastDiagonal[]= new int[diagLen + 1]; // the row containing the last d
+		Arrays.fill(lastDiagonal, -1);
 		// on diagonal k (lastDiagonal[k] = row)
 		int origin= diagLen / 2; // origin of diagonal 0
 
