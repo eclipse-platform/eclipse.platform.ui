@@ -20,7 +20,7 @@ import org
 	.ui
 	.launchConfigurations
 	.LaunchConfigurationManager;
-import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.actions.*;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
@@ -191,7 +191,7 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 		int total = 0;
 		for (int i = 0; i < favoriteList.length; i++) {
 			ILaunchConfiguration launch= favoriteList[i];
-			RelaunchHistoryLaunchAction newAction= new RelaunchHistoryLaunchAction(launch, getMode());
+			LaunchAction newAction= new LaunchAction(launch, getMode());
 			createMenuForAction(menu, newAction, total + 1);
 			total++;
 		}		
@@ -208,7 +208,7 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 		// Add history launches next
 		for (int i = 0; i < historyList.length; i++) {
 			ILaunchConfiguration launch= historyList[i];
-			RelaunchHistoryLaunchAction newAction= new RelaunchHistoryLaunchAction(launch, getMode());
+			LaunchAction newAction= new LaunchAction(launch, getMode());
 			createMenuForAction(menu, newAction, total+1);
 			total++;
 		}

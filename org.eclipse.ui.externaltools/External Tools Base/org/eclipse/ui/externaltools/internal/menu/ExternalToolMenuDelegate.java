@@ -10,6 +10,7 @@ Contributors:
 **********************************************************************/
 
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.actions.AbstractLaunchHistoryAction;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.viewers.ISelection;
@@ -26,7 +27,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.actions.ActionDelegate;
 import org.eclipse.ui.externaltools.action.RunExternalToolAction;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.ToolMessages;
@@ -40,7 +40,7 @@ import org.eclipse.ui.externaltools.model.IExternalToolConstants;
  * external tools view. Default action is to run the last tool
  * if one exist.
  */
-public class ExternalToolMenuDelegate extends ActionDelegate implements IWorkbenchWindowPulldownDelegate2, IMenuCreator {
+public class ExternalToolMenuDelegate extends AbstractLaunchHistoryAction implements IWorkbenchWindowPulldownDelegate2, IMenuCreator {
 	private IWorkbenchWindow window;
 	private IAction realAction;
 	
@@ -48,24 +48,32 @@ public class ExternalToolMenuDelegate extends ActionDelegate implements IWorkben
 	 * Creates the action delegate
 	 */
 	public ExternalToolMenuDelegate() {
-		super();
+		super(IExternalToolConstants.ID_EXTERNAL_TOOLS_LAUNCH_GROUP);
 	}
 	
 	/* (non-Javadoc)
 	 * Method declared on IActionDelegate.
 	 */
 	public void run(IAction action) {
-		if (action.isEnabled())
-			runLastTool();
+		if (ExternalToolsPlugin.isLaunchConfigurationMode()) {
+			super.run(action);
+		} else {
+			if (action.isEnabled())
+				runLastTool();
+		}
 	}
 
 	/* (non-Javadoc)
 	 * Method declared on IActionDelegate.
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
-		if (realAction == null) {
-			realAction = action;
-			realAction.setMenuCreator(this);
+		if (ExternalToolsPlugin.isLaunchConfigurationMode()) {
+			super.selectionChanged(action, selection);
+		} else {
+			if (realAction == null) {
+				realAction = action;
+				realAction.setMenuCreator(this);
+			}
 		}
 	}
 
@@ -73,22 +81,31 @@ public class ExternalToolMenuDelegate extends ActionDelegate implements IWorkben
 	 * Method declared on IWorkbenchWindowPulldownDelegate.
 	 */
 	public Menu getMenu(Control parent) {
-		Menu menu= new Menu(parent);
-		return createMenu(menu, false);
+		if (ExternalToolsPlugin.isLaunchConfigurationMode()) {
+			return super.getMenu(parent);
+		} else {
+			Menu menu= new Menu(parent);
+			return createMenu(menu, false);
+		}
 	}
 
 	/* (non-Javadoc)
 	 * Method declared on IWorkbenchWindowPulldownDelegate2.
 	 */
 	public Menu getMenu(Menu parent) {
-		Menu menu= new Menu(parent);
-		return createMenu(menu, true);
+		if (ExternalToolsPlugin.isLaunchConfigurationMode()) {
+			return super.getMenu(parent);
+		} else {
+			Menu menu= new Menu(parent);
+			return createMenu(menu, true);
+		}
 	}
 
 	/* (non-Javadoc)
 	 * Method declared on IWorkbenchWindowActionDelegate.
 	 */
 	public void dispose() {
+		super.dispose();
 	}
 
 	/* (non-Javadoc)
@@ -96,6 +113,7 @@ public class ExternalToolMenuDelegate extends ActionDelegate implements IWorkben
 	 */
 	public void init(IWorkbenchWindow window) {
 		this.window = window;
+		super.init(window);
 	}
 	
 	/**

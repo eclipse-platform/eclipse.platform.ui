@@ -1,4 +1,4 @@
-package org.eclipse.debug.internal.ui.actions;
+package org.eclipse.debug.ui.actions;
 
 /**********************************************************************
 Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
@@ -11,27 +11,39 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
- * Re-launches a previous launch.
+ * Launches a launch configuration in a specific mode.
+ * <p>
+ * Clients are not intended to subclass this class; clients may instantiate this
+ * class.
+ * </p>
+ * @since 2.1
  */
-public class RelaunchHistoryLaunchAction extends Action {
+public class LaunchAction extends Action {
 
+	/**
+	 * The configuration to launch.
+	 */
 	private ILaunchConfiguration fConfiguration;
+	/**
+	 * The mode to lanuch in
+	 */
 	private String fMode;
 	
-	public RelaunchHistoryLaunchAction(ILaunchConfiguration configuration, String mode) {
-		super();
+	/**
+	 * Constucts an action that launches the specified launch configuration
+	 * in the specified mode.
+	 * 
+	 * @param configuration launch configuration	 * @param mode launch mode - one of <code>ILaunchManager.RUN_MODE</code> or
+	 * <code>ILaunchManager.DEBUG_MODE</code>
+	 */
+	public LaunchAction(ILaunchConfiguration configuration, String mode) {
 		fConfiguration = configuration;
 		fMode = mode;
 		setText(configuration.getName());
-		ImageDescriptor descriptor= null;
-		descriptor = DebugUITools.getDefaultImageDescriptor(configuration);
-		if (descriptor != null) {
-			setImageDescriptor(descriptor);
-		}
+		setImageDescriptor(DebugUITools.getDefaultImageDescriptor(configuration));
 		WorkbenchHelp.setHelp(
 			this,
 			IDebugHelpContextIds.RELAUNCH_HISTORY_ACTION);
