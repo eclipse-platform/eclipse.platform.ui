@@ -1,26 +1,25 @@
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 package org.eclipse.help.internal.toc;
-import java.net.URLEncoder;
 import java.util.*;
-import org.eclipse.help.internal.util.Resources;
-import org.eclipse.help.internal.util.TString;
-import org.xml.sax.*;
 import org.eclipse.help.*;
+import org.xml.sax.Attributes;
 /** 
  * Root of navigation TocFile
  * Can be linked with other Toc objects.
  */
 public class Toc extends TocNode implements IToc {
-
 	private String link_to;
 	private String href;
 	private String label;
 	private TocFile tocFile;
 	private ITopic[] topicArray;
-
+	/**
+	 * Map of all topics in a TOC for fast lookup by href
+	 */
+	private Map topicMap;
 	/**
 	 * Constructor.  Used when parsing help contributions.
 	 */
@@ -33,7 +32,6 @@ public class Toc extends TocNode implements IToc {
 		this.link_to = HrefUtil.normalizeHref(tocFile.getPluginID(), link_to);
 		this.href = HrefUtil.normalizeHref(tocFile.getPluginID(), tocFile.getHref());
 	}
-
 	/**
 	 * Implements abstract method.
 	 */
@@ -47,7 +45,6 @@ public class Toc extends TocNode implements IToc {
 	public TocFile getTocFile() {
 		return tocFile;
 	}
-
 	/**
 	 * Gets the link_to
 	 * @return Returns a String
@@ -62,11 +59,9 @@ public class Toc extends TocNode implements IToc {
 	public String getHref() {
 		return href;
 	}
-
 	public String getLabel() {
 		return label;
 	}
-
 	/**
 	 * Returns a topic with the specified href.
 	 * <br> It is possible that multiple tocs have 
@@ -75,28 +70,28 @@ public class Toc extends TocNode implements IToc {
 	 * @param href The topic's href value.
 	 */
 	public ITopic getTopic(String href) {
-		// At some point we may want to cache the topics
-		// by href, but for now let's just traverse the
-		// tree and find the topic.
-		Stack stack = new Stack();
-		ITopic[] topics = getTopics();
-		for (int i = 0; i < topics.length; i++)
-			stack.push(topics[i]);
-
-		while (!stack.isEmpty()) {
-			ITopic topic = (ITopic) stack.pop();
-			if (topic != null && topic.getHref() != null && topic.getHref().equals(href))
-				return topic;
-			else
-			{
-				ITopic[] subtopics = topic.getSubtopics();
-				for (int i = 0; i < subtopics.length; i++)
-					stack.push(subtopics[i]);
+		if (topicMap == null) {
+			// traverse TOC and fill in the topicMap
+			topicMap = new HashMap();
+			Stack stack = new Stack();
+			ITopic[] topics = getTopics();
+			for (int i = 0; i < topics.length; i++)
+				stack.push(topics[i]);
+			while (!stack.isEmpty()) {
+				ITopic topic = (ITopic) stack.pop();
+				if (topic != null) {
+					String topicHref = topic.getHref();
+					if (topicHref != null) {
+						topicMap.put(topicHref, topic);
+					}
+					ITopic[] subtopics = topic.getSubtopics();
+					for (int i = 0; i < subtopics.length; i++)
+						stack.push(subtopics[i]);
+				}
 			}
 		}
-		return null;
+		return (ITopic) topicMap.get(href);
 	}
-
 	/**
 	 * Note: assumes the toc has been built....
 	 * @return ITopic list
@@ -109,12 +104,10 @@ public class Toc extends TocNode implements IToc {
 		}
 		return topicArray;
 	}
-
 	/**
 	 * Used by debugger
 	 */
 	public String toString() {
 		return href != null ? href : super.toString();
 	}
-
 }
