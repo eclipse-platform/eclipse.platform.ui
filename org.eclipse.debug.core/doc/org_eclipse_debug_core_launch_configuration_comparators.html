@@ -18,7 +18,7 @@ launch configuration attributes can be compared for equality via the default
 implementation of <code>java.lang.Object.equals(Object)</code>. However, attributes
 that require special handling should implement this extension point. For example,
 when an attribute is stored as XML, it is possible that two strings representing 
-an equivalent attribute have different whitespace formating.</p>
+an equivalent attribute have different whitespace formatting.</p>
 
 <p><b><i>Configuration Markup:</i></b> </p>
 
@@ -47,7 +47,7 @@ an equivalent attribute have different whitespace formating.</p>
    &lt;launchConfigurationComparator 
       id="com.example.ExampleIdentifier"
       attribute="com.example.ExampleAttributeName"
-      class="com.example.ComapartorImplementation"
+      class="com.example.ComapartorImplementation"&gt;
    &lt;/launchConfigurationComparator&gt;
 &lt;/extension&gt;
 </pre>
