@@ -25,6 +25,7 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.TreeEvent;
 import org.eclipse.swt.events.TreeListener;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Widget;
@@ -99,46 +100,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 	 */
 	protected AbstractTreeViewer() {
 	}
-	/**
-		 * Return the current children of the parent element with the
-		 * newChildren added in. This method
-		 * does not invoke the content provider but rather asks the
-		 * widget.
-		 * @param parentElement
-		 * @param newChildren Object[]. The children to be added to the
-		 *  view.
-		 * @return Collection
-		 */
-	private Object[] getMergedChildren(
-		Widget parentElement,
-		Object[] newChildren) {
-		Item[] items = getChildren(parentElement);
-		Object[] result = new Object[items.length + newChildren.length];
-		for (int i = 0; i < items.length; i++) {
-			result[i] = items[i].getData();
-		}
 
-		System.arraycopy(
-			newChildren,
-			0,
-			result,
-			items.length,
-			newChildren.length);
-		return result;
-	}
-
-	/**
-	 * Return the index of element in the array elements.
-	 * @param element
-	 * @param elements
-	 */
-	private int indexOf(Object element, Object[] elements) {
-		for (int i = 0; i < elements.length; i++) {
-			if (elements[i].equals(element))
-				return i;
-		}
-		return -1;
-	}
 	/**
 	 * Adds the given child elements to this viewer as children of the given parent element.
 	 * If this viewer does not have a sorter, the elements are added at the end of the 
@@ -158,36 +120,52 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 		Assert.isNotNull(childElements);
 		Widget widget = findItem(parentElement);
 		// If parent hasn't been realized yet, just ignore the add.
-		if (widget == null)
+		if (widget == null || !(widget instanceof TreeItem))
 			return;
 
-		Object[] newElements;
-		//If it is not an item we have no children to worry about
-		if (widget instanceof Item)
-			newElements =
-				filter(getMergedChildren((Item) widget, childElements));
-		else
-			newElements = childElements;
-
-		getSorter().sort(this, newElements);
-
-		Item[] ch = getChildren(widget);
-		
-		/**
-		 * Go through the new elements as we need to 
-		 * create them in order to avoid ArrayIndexOutOfBounds
-		 * exceptions.
-		 */
-		for (int i = 0; i < newElements.length; i++) {
-
-			//Check if this is a new one if not continue
-			if(indexOf(newElements[i],childElements) < 0)
-				continue;		
-
-			createTreeItem(widget, newElements[i], i);
-			continue;
+		Object[] filtered = filter(childElements);
+		for (int i = 0; i < filtered.length; i++) {
+			Object element = filtered[i];
+			int index = indexForElement((TreeItem) widget, element);
+			createTreeItem(widget, filtered[i], index);
 		}
+
+	} /*
+		* Returns the index where the item should be inserted.
+	   */
+	protected int indexForElement(TreeItem parent, Object element) {
+		ViewerSorter sorter = getSorter();
+		if (sorter == null)
+			return parent.getItemCount();
+		int count = parent.getItemCount();
+		int min = 0, max = count - 1;
+		
+		TreeItem [] items = parent.getItems();
+		
+		while (min <= max) {
+			int mid = (min + max) / 2;
+			Object data = items[mid].getData();
+			int compare = sorter.compare(this, data, element);
+			if (compare == 0) {
+				// find first item > element
+				while (compare == 0) {
+					++mid;
+					if (mid >= count) {
+						break;
+					}
+					data = items[mid].getData();
+					compare = sorter.compare(this, data, element);
+				}
+				return mid;
+			}
+			if (compare < 0)
+				min = mid + 1;
+			else
+				max = mid - 1;
+		}
+		return min;
 	}
+
 	/**
 	 * Adds the given child element to this viewer as a child of the given parent element.
 	 * If this viewer does not have a sorter, the element is added at the end of the 
