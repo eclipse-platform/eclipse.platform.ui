@@ -175,6 +175,12 @@
             class="org.eclipse.ui.internal.editors.text.AnnotationsPreferencePage"
             id="org.eclipse.ui.editors.preferencePages.Annotations">
       </page>
+      <page
+            name="%PreferencePages.QuickDiff"
+            category="org.eclipse.ui.preferencePages.Editors"
+            class="org.eclipse.ui.internal.editors.text.QuickDiffPreferencePage"
+            id="org.eclipse.ui.editors.preferencePages.QuickDiff">
+      </page>
    </extension>
    <extension
          point="org.eclipse.ui.editors.documentProviders">

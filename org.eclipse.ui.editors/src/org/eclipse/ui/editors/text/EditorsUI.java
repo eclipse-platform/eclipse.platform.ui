@@ -12,11 +12,11 @@ package org.eclipse.ui.editors.text;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 
+import org.eclipse.ui.internal.editors.text.EditorsPlugin;
+import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.AnnotationPreferenceLookup;
 import org.eclipse.ui.texteditor.AnnotationTypeLookup;
 import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
-
-import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 
 /**
  * The central class for access to this plug-in. 
@@ -88,13 +88,39 @@ public final class EditorsUI {
 	 * 
 	 * @param store the preference store to mark
 	 */
-	public static void useSharedPreferences(IPreferenceStore store) {
+	public static void useAnnotationsPreferencePage(IPreferenceStore store) {
+		MarkerAnnotationPreferences.useAnnotationsPreferencePage(store);
+	}
+	
+	/**
+	 * Removes all preference which are handled by this plug-in's
+	 * Quick Diff preference page from the given store and prevents
+	 * setting the default values in the future.
+	 * <p>
+	 * To access the
+	 * general preference from another plug-in use a
+	 * {@link org.eclipse.ui.texteditor.ChainedPreferenceStore}:
+	 * <pre>
+	 *		List stores= new ArrayList(3);
+	 *		stores.add(YourPlugin.getDefault().getPreferenceStore());
+	 *		stores.add(EditorsUI.getPreferenceStore());
+	 *		combinedStore= new ChainedPreferenceStore((IPreferenceStore[]) stores.toArray(new IPreferenceStore[stores.size()]));
+	 *
+	 * </pre>
+	 * </p>
+	 * <p>
+	 * Note: In order to work this method must be called before
+	 * the store's default values are set.
+	 * </p>
+	 * 
+	 * @param store the preference store to mark
+	 */
+	public static void useQuickDiffPreferencePage(IPreferenceStore store) {
+		MarkerAnnotationPreferences.useQuickDiffPreferencePage(store);
 		
-		// Annotations preference page
-		MarkerAnnotationPreferences.ignoreValuesIncludedOnPreferencePage(store, true);
-		
-		// Quick Diff preference page
-		// TODO
+		store.setToDefault(AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_ALWAYS_ON);
+		store.setToDefault(AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_CHARACTER_MODE);
+		store.setToDefault(AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_DEFAULT_PROVIDER);
 	}
 	
 	private EditorsUI() {

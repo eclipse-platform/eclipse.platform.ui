@@ -113,12 +113,6 @@ public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbe
 	 */
 	private ArrayList fMasterSlaveListeners= new ArrayList();
 
-	/**
-	 * Quick diff configuration.
-	 * 
-	 * @since 3.0
-	 */
-	private QuickDiffConfigurationBlock fQuickDiffBlock;
 	
 	public TextEditorPreferencePage2() {
 		setDescription(TextEditorMessages.getString("TextEditorPreferencePage.description")); //$NON-NLS-1$
@@ -322,8 +316,6 @@ public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbe
 		
 		initializeDefaultColors();
 
-		fQuickDiffBlock= new QuickDiffConfigurationBlock(fOverlayStore);
-
 		fOverlayStore.load();
 		fOverlayStore.start();
 		
@@ -334,10 +326,6 @@ public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbe
 		TabItem item= new TabItem(folder, SWT.NONE);
 		item.setText(TextEditorMessages.getString("TextEditorPreferencePage.general")); //$NON-NLS-1$
 		item.setControl(createAppearancePage(folder));
-		
-		item= new TabItem(folder, SWT.NONE);
-		item.setText(TextEditorMessages.getString("QuickDiffConfigurationBlock.title")); //$NON-NLS-1$
-		item.setControl(fQuickDiffBlock.createControl(folder));
 
 		initialize();
 		Dialog.applyDialogFont(folder);
@@ -358,8 +346,6 @@ public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbe
 				}
 			}
 		});
-		
-		fQuickDiffBlock.initialize();
 	}
 	
 	private void initializeFields() {
@@ -406,7 +392,6 @@ public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbe
 	 * @see PreferencePage#performOk()
 	 */
 	public boolean performOk() {
-		fQuickDiffBlock.performOk();
 		fOverlayStore.propagate();
 		EditorsPlugin.getDefault().savePluginPreferences();
 		return true;
@@ -418,8 +403,7 @@ public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbe
 	protected void performDefaults() {
 
 		fOverlayStore.loadDefaults();
-		fQuickDiffBlock.performDefaults();
-
+		
 		initializeFields();
 
 		handleAppearanceColorListSelection();

@@ -25,6 +25,7 @@ import org.eclipse.jface.preference.PreferenceConverter;
  */
 public class AbstractDecoratedTextEditorPreferenceConstants {
 	
+	
 	/**
 	 * Prevent initialization.
 	 */
@@ -163,6 +164,24 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	public final static String EDITOR_LINE_NUMBER_RULER_COLOR= "lineNumberColor"; //$NON-NLS-1$
 	
 	/**
+	 * A named preference that controls whether this plug-in's
+	 * Annotations preference page is used to configure annotations.
+	 * <p>
+	 * Value is of type <code>boolean</code>.
+	 * @since 3.0
+	 */
+	public static final String USE_ANNOTATIONS_PREFERENCE_PAGE= "useAnnotationsPrefPage"; //$NON-NLS-1$
+	
+	/**
+	 * A named preference that controls whether this plug-in's
+	 * Quick Diff preference page is used to configure Quick Diff.
+	 * <p>
+	 * Value is of type <code>boolean</code>.
+	 * @since 3.0
+	 */
+	public static final String USE_QUICK_DIFF_PREFERENCE_PAGE= "useQuickDiffPrefPage"; //$NON-NLS-1$
+
+	/**
 	 * A named preference that controls whether quick diff colors are shown on the line number bar.
 	 * <p>
 	 * Value is of type <code>boolean</code>.
@@ -266,6 +285,9 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
   	*/
 	public static void initializeDefaultValues(IPreferenceStore store) {
 
+		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.USE_ANNOTATIONS_PREFERENCE_PAGE, false);
+		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.USE_QUICK_DIFF_PREFERENCE_PAGE, false);
+		
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE, true);
 		PreferenceConverter.setDefault(store, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR, new RGB(225, 235, 224));
 
@@ -277,9 +299,12 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER, false);
 		PreferenceConverter.setDefault(store, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR, new RGB(0, 0, 0));
-		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_ALWAYS_ON, true);
-		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_CHARACTER_MODE, false);
-		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_DEFAULT_PROVIDER, "org.eclipse.ui.internal.editors.quickdiff.LastSaveReferenceProvider"); //$NON-NLS-1$
+		
+		if (!store.getBoolean(USE_QUICK_DIFF_PREFERENCE_PAGE)) {
+			store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_ALWAYS_ON, true);
+			store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_CHARACTER_MODE, false);
+			store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_DEFAULT_PROVIDER, "org.eclipse.ui.internal.editors.quickdiff.LastSaveReferenceProvider"); //$NON-NLS-1$
+		}
 
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_OVERVIEW_RULER, true);
 		
