@@ -29,7 +29,7 @@ public class ProgressContentProvider implements ITreeContentProvider {
 	private Map jobs = Collections.synchronizedMap(new HashMap());
 	IJobChangeListener listener;
 	private TreeViewer viewer;
-	private List updates = Collections.synchronizedList(new ArrayList());
+	private Collection updates = Collections.synchronizedSet(new HashSet());
 	private boolean updateAll = false;
 	private Job updateJob;
 
