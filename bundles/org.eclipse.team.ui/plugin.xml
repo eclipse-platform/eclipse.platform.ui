@@ -92,7 +92,7 @@
          id="org.eclipse.team.ui.targetResourceContributionsActions"
          objectClass="org.eclipse.core.resources.IResource" adaptable="true">
 		<filter
-               name="persistentProperty"
+               name="projectPersistentProperty"
                value="org.eclipse.team.target=basic">
          </filter>      
          <action      
