@@ -34,10 +34,13 @@ public class WorkspaceTest extends ResourceTest {
 		super(name);
 	}
 
-	public void cleanup() throws Throwable {
-		IProject target = getWorkspace().getRoot().getProject("foo");
-		target.delete(true, true, null);
-		//don't close the workspace because other tests running later will need it.
+	/**
+	 * All of the WorkspaceTests build on each other. This test must
+	 * be run last of all to clean up from all previous tests in this class.
+	 * @throws Exception
+	 */
+	public void cleanup() throws Exception {
+		super.tearDown();
 	}
 
 	/**
