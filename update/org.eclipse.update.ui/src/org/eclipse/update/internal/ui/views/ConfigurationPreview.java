@@ -55,9 +55,6 @@ public class ConfigurationPreview implements IUpdateModelChangedListener {
 	public void createControl(Composite parent) {
 		toolkit = new FormToolkit(parent.getDisplay());
 		form = toolkit.createScrolledForm(parent);
-		if (toolkit.getColors().isWhiteBackground())
-			form.setBackgroundImage(UpdateUIImages
-					.get(UpdateUIImages.IMG_FORM_BANNER_SHORT));
 		TableWrapLayout layout = new TableWrapLayout();
 		form.getBody().setLayout(layout);
 		layout.leftMargin = 10;

@@ -13,7 +13,6 @@ package org.eclipse.update.internal.ui.parts;
 import java.net.*;
 import java.util.*;
 
-import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.*;

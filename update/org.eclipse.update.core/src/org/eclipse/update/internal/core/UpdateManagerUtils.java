@@ -912,10 +912,10 @@ public static class Writer {
 	 * @param id the id of the plugin to get fragments for
 	 * @param version the plugin version, or null if higher version selected
 	 */
-	public static FragmentEntry[] getFragments(IPluginDescriptor desc) {
+	public static FragmentEntry[] getFragments(Bundle bundle) {
 		
 		PackageAdmin pkgAdmin = UpdateCore.getPlugin().getPackageAdmin();
-		Bundle[] bundles = pkgAdmin.getBundles(desc.getUniqueIdentifier(), desc.getVersionIdentifier().toString(), Constants.VERSION_MATCH_QUALIFIER);
+		Bundle[] bundles = pkgAdmin.getBundles(bundle.getSymbolicName(), (String) bundle.getHeaders().get(Constants.BUNDLE_VERSION), Constants.VERSION_MATCH_QUALIFIER);
 		if (bundles == null || bundles.length == 0)
 			return noFragments;
 

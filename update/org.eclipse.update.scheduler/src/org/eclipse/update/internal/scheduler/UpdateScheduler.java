@@ -110,21 +110,6 @@ public class UpdateScheduler extends AbstractUIPlugin implements IStartup {
 		Platform.getJobManager().addJobChangeListener(jobListener);
 	}
 
-//	/**
-//	 * The constructor.
-//	 */
-//	public UpdateScheduler(IPluginDescriptor descriptor) {
-//		super(descriptor);
-//		plugin = this;
-//		try {
-//			resourceBundle = ResourceBundle.getBundle("org.eclipse.update.internal.scheduler.UpdateSchedulerResources"); //$NON-NLS-1$
-//		} catch (MissingResourceException x) {
-//			resourceBundle = null;
-//		}
-//
-//		jobListener = new UpdateJobChangeAdapter();
-//		Platform.getJobManager().addJobChangeListener(jobListener);
-//	}
 
 	public ResourceBundle getResourceBundle() {
 		return resourceBundle;

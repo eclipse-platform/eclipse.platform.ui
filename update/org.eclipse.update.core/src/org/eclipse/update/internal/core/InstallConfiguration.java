@@ -23,6 +23,7 @@ import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.configurator.*;
 import org.eclipse.update.internal.model.*;
 import org.eclipse.update.internal.operations.*;
+import org.osgi.framework.*;
 
 /**
  * Manages ConfiguredSites
@@ -698,11 +699,10 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		VersionedIdentifier vid = entry.getVersionedIdentifier();
 
 		// get the plugin descriptor from the registry
-		IPluginRegistry reg = Platform.getPluginRegistry();
-		IPluginDescriptor desc = reg.getPluginDescriptor(vid.getIdentifier());
+		Bundle bundle = Platform.getBundle(vid.getIdentifier());
 		ArrayList list = new ArrayList();
-		if (desc != null) {
-			FragmentEntry[] fragments = UpdateManagerUtils.getFragments(desc);
+		if (bundle != null && bundle.getState() != Bundle.UNINSTALLED && bundle.getState() != Bundle.INSTALLED) {
+			FragmentEntry[] fragments = UpdateManagerUtils.getFragments(bundle);
 			for (int i = 0; fragments != null && i < fragments.length; i++) {
 				String location = fragments[i].getLocation();
 				try {
