@@ -27,6 +27,7 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.part.*;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.views.internal.framelist.FrameList;
+import org.eclipse.ui.views.internal.navigator.*;
 
 /**
  * Implements the Resource Navigator view.
@@ -263,6 +264,7 @@ public class ResourceNavigator
 	 * Add file / resource actions to the context sensitive menu.
 	 * @param menu the context sensitive menu
 	 * @param selection the current selection in the project explorer
+	 * @since 2.0
 	 */
 	protected void fillFileMenu(
 		IMenuManager menu,
@@ -330,12 +332,14 @@ public class ResourceNavigator
 	}
 	/**
 	 * Returns the current sorter.
+	 * @since 2.0
 	 */
 	protected ResourceSorter getResourceSorter() {
 		return (ResourceSorter) getResourceViewer().getSorter();
 	}
 	/**
 	 * Returns the tree viewer which shows the resource hierarchy.
+	 * @since 2.0
 	 */
 	public TreeViewer getResourceViewer() {
 		return viewer;
@@ -670,6 +674,7 @@ public class ResourceNavigator
 	}
 	/**
 	 * Set the current sorter.
+	 * @since 2.0
 	 */
 	public void setResourceSorter(ResourceSorter sorter) {
 		TreeViewer viewer = getResourceViewer();
