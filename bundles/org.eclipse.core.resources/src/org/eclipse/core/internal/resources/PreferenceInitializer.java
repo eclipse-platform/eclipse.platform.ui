@@ -35,22 +35,22 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		node.putBoolean(ResourcesPlugin.PREF_DISABLE_LINKING, false);
 
 		// build manager defaults
-//		node.putBoolean(ResourcesPlugin.PREF_AUTO_BUILDING, true);
-//		node.put(ResourcesPlugin.PREF_BUILD_ORDER, ""); //$NON-NLS-1$
-//		node.put(ResourcesPlugin.PREF_MAX_BUILD_ITERATIONS, ""); //$NON-NLS-1$
-//		node.put(ResourcesPlugin.PREF_DEFAULT_BUILD_ORDER, ""); //$NON-NLS-1$
+		//		node.putBoolean(ResourcesPlugin.PREF_AUTO_BUILDING, true);
+		//		node.put(ResourcesPlugin.PREF_BUILD_ORDER, ""); //$NON-NLS-1$
+		//		node.put(ResourcesPlugin.PREF_MAX_BUILD_ITERATIONS, ""); //$NON-NLS-1$
+		//		node.put(ResourcesPlugin.PREF_DEFAULT_BUILD_ORDER, ""); //$NON-NLS-1$
 
 		// history store defaults
-//		node.putLong(ResourcesPlugin.PREF_FILE_STATE_LONGEVITY, 7 * 24 * 3600 * 1000l); // 7 days
-//		node.putLong(ResourcesPlugin.PREF_MAX_FILE_STATE_SIZE, 1024 * 1024l); // 1 MB
-//		node.putInt(ResourcesPlugin.PREF_MAX_FILE_STATES, 50);
+		//		node.putLong(ResourcesPlugin.PREF_FILE_STATE_LONGEVITY, 7 * 24 * 3600 * 1000l); // 7 days
+		//		node.putLong(ResourcesPlugin.PREF_MAX_FILE_STATE_SIZE, 1024 * 1024l); // 1 MB
+		//		node.putInt(ResourcesPlugin.PREF_MAX_FILE_STATES, 50);
 
 		// save manager defaults
-//		node.put(ResourcesPlugin.PREF_ENCODING, ""); //$NON-NLS-1$
-//		node.putLong(ResourcesPlugin.PREF_MAX_NOTIFICATION_DELAY, 10000l); // 10 seconds
+		//		node.putLong(ResourcesPlugin.PREF_SNAPSHOT_INTERVAL, 5 * 60 * 1000l); // 5 min
+		//		node.putLong(ResourcesPlugin.PREF_MAX_NOTIFICATION_DELAY, 10000l); // 10 seconds
 
 		// encoding defaults
-//		node.putLong(ResourcesPlugin.PREF_SNAPSHOT_INTERVAL, 5 * 60 * 1000l); // 5 min
+		node.put(ResourcesPlugin.PREF_ENCODING, ""); //$NON-NLS-1$
 	}
 
 }
