@@ -174,15 +174,15 @@ public final class BindingManagerTest extends UITestCase {
 	}
 
 	/**
-	 * Tests that <code>getActiveBindings()</code> first returns
-	 * <code>null</code>. The rest of the functionality is tested in
+	 * Tests that <code>getActiveBindings()</code> first returns an empty map.
+	 * The rest of the functionality is tested in
 	 * <code>BindingInteractionsTest</code>.
 	 * 
 	 * @see BindingInteractionsTest
 	 */
 	public final void testGetActiveBindings() {
-		assertNull("The active bindings should be null to start",
-				bindingManager.getActiveBindings());
+		assertTrue("The active bindings should be empty to start",
+				bindingManager.getActiveBindings().isEmpty());
 	}
 
 	/**
