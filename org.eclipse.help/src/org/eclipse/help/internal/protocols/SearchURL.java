@@ -10,6 +10,7 @@ import java.util.*;
 import org.apache.lucene.search.Hits;
 import org.apache.xerces.dom.DocumentImpl;
 import org.apache.xml.serialize.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.help.*;
 import org.eclipse.help.internal.HelpSystem;
@@ -101,7 +102,12 @@ public class SearchURL extends HelpURL {
 								public void addHits(Hits h, String s) {
 								}
 							}, (IProgressMonitor) progressMonitors.get(getLocale()));
+						} catch (OperationCanceledException oce){
+							// operation cancelled
+							// throw out the progress monitor
+							progressMonitors.remove(getLocale());
 						} catch (Exception e) {
+							progressMonitors.remove(getLocale());
 							e.printStackTrace();
 							Logger.logError(Resources.getString("search_index_update_error"), null);
 						}
@@ -116,6 +122,9 @@ public class SearchURL extends HelpURL {
 						Thread.currentThread().sleep(50);
 					} catch (InterruptedException ie) {
 					}
+					if(progressMonitors.get(getLocale())==null)
+						// operation got canceled
+						break;
 				}
 
 			}

@@ -16,7 +16,6 @@ public class ProgressDistributor implements IProgressMonitor {
 	private int totalWork = -1;
 	private int worked = 0;
 	private boolean done = false;
-	private boolean canceled = false;
 	String taskName;
 	String subTaskName;
 	/**
@@ -29,6 +28,8 @@ public class ProgressDistributor implements IProgressMonitor {
 	 */
 	public synchronized void beginTask(String name, int totalWork) {
 		this.totalWork = totalWork;
+		this.worked=0;
+		this.done=false;
 		for (Iterator it = monitors.iterator(); it.hasNext();) {
 			IProgressMonitor m = (IProgressMonitor) it.next();
 			m.beginTask(name, totalWork);
@@ -55,19 +56,20 @@ public class ProgressDistributor implements IProgressMonitor {
 	/**
 	 * @see IProgressMonitor#isCanceled()
 	 */
-	public boolean isCanceled() {
-		return canceled;
+	public synchronized boolean isCanceled() {
+		for (Iterator it = monitors.iterator(); it.hasNext();) {
+			IProgressMonitor m = (IProgressMonitor) it.next();
+			if(m.isCanceled()){
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
 	 * @see IProgressMonitor#setCanceled(boolean)
 	 */
-	public synchronized void setCanceled(boolean value) {
-		canceled = value;
-		for (Iterator it = monitors.iterator(); it.hasNext();) {
-			IProgressMonitor m = (IProgressMonitor) it.next();
-			m.setCanceled(value);
-		}
+	public void setCanceled(boolean value) {
 	}
 
 	/**
@@ -109,12 +111,16 @@ public class ProgressDistributor implements IProgressMonitor {
 			m.subTask(subTaskName);
 		if (worked > 0)
 			m.worked(worked);
-		m.setCanceled(canceled);
 		if (done)
 			m.done();
 		monitors.add(m);
 	}
 	public synchronized void removeMonitor(IProgressMonitor m) {
 		monitors.remove(m);
+	}
+	public synchronized void operationCanceled(){
+		totalWork = -1;
+		worked = 0;
+		done = false;
 	}
 }

@@ -23,7 +23,7 @@ public class SearchManager {
 	private Map analyzerDescriptors = new HashMap();
 	/** Progress Distributors indexed by index */
 	private Map progressDistibutors = new HashMap();
-	
+
 	/**
 	 * Constructs a Search manager.
 	 */
@@ -61,13 +61,13 @@ public class SearchManager {
 			(AnalyzerDescriptor) analyzerDescriptors.get(locale);
 		if (analyzerDesc != null)
 			return analyzerDesc;
-			
+
 		// obtain configured analyzer for this locale
 		analyzerDesc = new AnalyzerDescriptor(locale);
 		// save analyzer in the cache
 		analyzerDescriptors.put(locale, analyzerDesc);
 		String lang = analyzerDesc.getLang();
-		if (locale!=null && !locale.equals(lang)) 
+		if (locale != null && !locale.equals(lang))
 			analyzerDescriptors.put(lang, analyzerDesc);
 
 		return analyzerDesc;
@@ -163,31 +163,41 @@ public class SearchManager {
 		throws OperationCanceledException, IndexingOperation.IndexingException {
 		ProgressDistributor progressDistrib = getProgressDistributor(index);
 		progressDistrib.addMonitor(pm);
-		synchronized (this) {
-			if (!isIndexingNeeded(index)) {
-				pm.beginTask("", 1);
-				pm.worked(1);
-				pm.done();
-				return;
-			}
-			if (Logger.DEBUG)
-				Logger.logDebugMessage("Search Manager", "indexing " + index.getLocale());
-			// Perform indexing
-			try {
-				PluginVersionInfo versions = index.getDocPlugins();
-				if (versions == null)
+		try {
+			synchronized (this) {
+				if (!isIndexingNeeded(index)) {
+					pm.beginTask("", 1);
+					pm.worked(1);
+					pm.done();
+					progressDistrib.removeMonitor(pm);
 					return;
-				Collection removedDocs = getRemovedDocuments(index);
-				Collection addedDocs = getAddedDocuments(index);
-				IndexingOperation indexer =
-					new IndexingOperation(index, removedDocs, addedDocs);
-				indexer.execute(progressDistrib);
-			} catch (OperationCanceledException oce) {
-				Logger.logWarning(Resources.getString("Search_cancelled"));
-				throw oce;
+				}
+				if (Logger.DEBUG)
+					Logger.logDebugMessage("Search Manager", "indexing " + index.getLocale());
+				// Perform indexing
+				try {
+					PluginVersionInfo versions = index.getDocPlugins();
+					if (versions == null){
+						pm.beginTask("", 1);
+						pm.worked(1);
+						pm.done();
+						progressDistrib.removeMonitor(pm);
+						return;
+					}
+					Collection removedDocs = getRemovedDocuments(index);
+					Collection addedDocs = getAddedDocuments(index);
+					IndexingOperation indexer =
+						new IndexingOperation(index, removedDocs, addedDocs);
+					indexer.execute(progressDistrib);
+				} catch (OperationCanceledException oce) {
+					progressDistrib.operationCanceled();
+					Logger.logWarning(Resources.getString("Search_cancelled"));
+					throw oce;
+				}
 			}
+		} finally{
+			progressDistrib.removeMonitor(pm);
 		}
-		progressDistrib.removeMonitor(pm);
 	}
 	private boolean isIndexable(String url) {
 		String fileName = url.toLowerCase();
