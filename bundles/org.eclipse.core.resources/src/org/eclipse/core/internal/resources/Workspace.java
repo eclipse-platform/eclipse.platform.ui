@@ -281,6 +281,10 @@ protected void closing(IProject project) throws CoreException {
 	propertyManager.closing(project);
 	markerManager.closing(project);
 }
+
+/*
+ * TODO: Delete this method once computePrerequisiteOrder0 is deleted
+ */
 private static HashMap computeCounts(String[][] mappings) {
 	HashMap counts = new HashMap(5);
 	for (int i = 0; i < mappings.length; i++) {
@@ -298,6 +302,10 @@ private static HashMap computeCounts(String[][] mappings) {
 	}
 	return counts;
 }
+
+/*
+ * TODO: Delete this method once computePrerequisiteOrder0 is deleted
+ */
 public static String[][] computeNodeOrder(String[][] specs) {
 	HashMap counts = computeCounts(specs);
 	List nodes = new ArrayList(counts.size());
@@ -315,10 +323,25 @@ public static String[][] computeNodeOrder(String[][] specs) {
 	result[1] = (String[]) counts.keySet().toArray(new String[counts.size()]);
 	return result;
 }
+
 /**
- * Method declared on IWorkspace
+ * Implementation of API method declared on IWorkspace.
+ * 
+ * @deprecated Replaced by <code>IWorkspace.computeProjectOrder</code>, which
+ * produces a more usable result when there are cycles in project reference
+ * graph.
  */
 public IProject[][] computePrerequisiteOrder(IProject[] targets) {
+	return computePrerequisiteOrder1(targets);
+}
+
+/*
+ * TODO: Delete this method once it is captured in version history
+ * 
+ * Original (pre 2.1) implementation of IWorkspace.computePrerequisiteOrder
+ * @since 2.1
+ */
+private IProject[][] computePrerequisiteOrder0(IProject[] targets) {
 	List prereqs = new ArrayList(6);
 	IProject[] projects = getRoot().getProjects();
 	for (int i = 0; i < projects.length; i++) {
@@ -355,6 +378,180 @@ public IProject[][] computePrerequisiteOrder(IProject[] targets) {
 	}
 	result[1] = (IProject[])list.toArray(new IProject[list.size()]);
 	return result;
+}
+
+/*
+ * Compatible reimplementation of 
+ * <code>IWorkspace.computePrerequisiteOrder</code> using 
+ * <code>IWorkspace.computeProjectOrder</code>.
+ * 
+ * @since 2.1
+ */
+private IProject[][] computePrerequisiteOrder1(IProject[] projects) {
+	IWorkspace.ProjectOrder r = computeProjectOrder(projects);
+	if (!r.hasCycles) {
+		return new IProject[][] {r.projects, new IProject[0]};
+	}
+	// when there are cycles, we need to remove all knotted projects from
+	// r.projects to form result[0] and merge all knots to form result[1]
+	// Set<IProject> bad
+	Set bad = new HashSet();
+	// Set<IProject> bad
+	Set keepers = new HashSet(Arrays.asList(r.projects));
+	for (int i = 0; i < r.knots.length; i++) {
+		IProject[] knot = r.knots[i];
+		for (int j = 0; j < knot.length; j++) {
+			IProject project = knot[j];
+			// keep only selected projects in knot
+			if (keepers.contains(project)) {
+				bad.add(project);
+			}
+		}
+	}
+	IProject[] result2 = new IProject[bad.size()];
+	bad.toArray(result2);
+	// List<IProject> p
+	List p = new LinkedList();
+	p.addAll(Arrays.asList(r.projects));
+	for (Iterator it = p.listIterator(); it.hasNext(); ) {
+		IProject project = (IProject) it.next();
+		if (bad.contains(project)) {
+			// remove knotted projects from the main answer
+			it.remove();
+		}
+	}
+	IProject[] result1 = new IProject[p.size()];
+	p.toArray(result1);
+	return new IProject[][] {result1, result2};
+}
+
+/**
+ * Implementation of API method declared on IWorkspace.
+ * 
+ * @since 2.1
+ */
+public ProjectOrder computeProjectOrder(IProject[] projects) {
+	
+	// compute the full project order for all accessible projects
+	ProjectOrder fullProjectOrder = computeFullProjectOrder();
+
+	// "fullProjectOrder.projects" contains no inaccessible projects
+	// but might contain accessible projects omitted from "projects"
+	// optimize common case where "projects" includes everything
+	int accessibleCount = 0;
+	for (int i = 0; i < projects.length; i++) {
+		if (projects[i].isAccessible()) {
+			accessibleCount++;
+		}
+	}
+	// no filtering required if the subset accounts for the full list
+	if (accessibleCount == fullProjectOrder.projects.length) {
+		return fullProjectOrder;
+	}
+
+	// otherwise we need to eliminate mention of other projects...
+	// ... from "fullProjectOrder.projects"...		
+	// Set<IProject> keepers
+	Set keepers = new HashSet(Arrays.asList(projects));
+	// List<IProject> p
+	List reducedProjects = new ArrayList(fullProjectOrder.projects.length);
+	for (int i = 0; i < fullProjectOrder.projects.length; i++) {
+		IProject project = fullProjectOrder.projects[i];
+		if (keepers.contains(project)) {
+			// remove projects not in the initial subset
+			reducedProjects.add(project);
+		}
+	}
+	IProject[] p1 = new IProject[reducedProjects.size()];
+	reducedProjects.toArray(p1);
+	
+	// ... and from "fullProjectOrder.knots"		
+	// List<IProject[]> k
+	List reducedKnots = new ArrayList(fullProjectOrder.knots.length);
+	for (int i = 0; i < fullProjectOrder.knots.length; i++) {
+		IProject[] knot = fullProjectOrder.knots[i];
+		List x = new ArrayList(knot.length);
+		for (int j = 0; j < knot.length; j++) {
+			IProject project = knot[j];
+			if (keepers.contains(project)) {
+				x.add(project);
+			}
+		}
+		// keep knots containing 2 or more projects in the specified subset
+		if (x.size() > 1) {
+			reducedKnots.add(x.toArray(new IProject[x.size()]));
+		}
+	}
+	IProject[][] k1 = new IProject[reducedKnots.size()][];
+	// okay to use toArray here because reducedKnots elements are IProject[]
+	reducedKnots.toArray(k1);
+	return new ProjectOrder(p1, (k1.length > 0), k1);
+}
+
+/**
+ * Computes the global total ordering of all open projects in the
+ * workspace based on project references. If an existing and open project P
+ * references another existing and open project Q also included in the list,
+ * then Q should come before P in the resulting ordering. Closed and non-
+ * existent projects are ignored, and will not appear in the result. References
+ * to non-existent or closed projects are also ignored, as are any self-
+ * references.
+ * <p>
+ * When there are choices, the choice is made in a reasonably stable way. For
+ * example, given an arbitrary choice between two projects, the one with the
+ * lower collating project name is usually selected.
+ * </p>
+ * <p>
+ * When the project reference graph contains cyclic references, it is
+ * impossible to honor all of the relationships. In this case, the result
+ * ignores as few relationships as possible.  For example, if P2 references P1,
+ * P4 references P3, and P2 and P3 reference each other, then exactly one of the
+ * relationships between P2 and P3 will have to be ignored. The outcome will be
+ * either [P1, P2, P3, P4] or [P1, P3, P2, P4]. The result also contains
+ * complete details of any cycles present.
+ * </p>
+ *
+ * @return result describing the global project order
+ * @since 2.1
+ */
+private ProjectOrder computeFullProjectOrder() {
+	
+	// determine the full set of accessible projects in the workspace
+	// order the set in descending alphabetical order of project name
+	SortedSet allAccessibleProjects = new TreeSet(new Comparator() {
+		public int compare(Object x, Object y) {
+			IProject px = (IProject) x;
+			IProject py = (IProject) y;
+			return py.getName().compareTo(px.getName());
+		}});
+	IProject[] allProjects = getRoot().getProjects();
+	// List<IProject[]> edges
+	List edges = new ArrayList(allProjects.length);
+	for (int i = 0; i < allProjects.length; i++) {
+		IProject project = allProjects[i];
+		// ignore projects that are not accessible
+		if (project.isAccessible()) {
+			allAccessibleProjects.add(project);
+			IProject[] refs= null;
+			try {
+				refs = project.getReferencedProjects();
+			} catch (CoreException e) {
+				// can't happen - project is accessible
+			}
+			for (int j = 0; j < refs.length; j++) {
+				IProject ref = refs[j];
+				// ignore self references and references to projects that are
+				// not accessible
+				if (ref.isAccessible() && !ref.equals(project)) {
+					edges.add(new IProject[] {project, ref});
+				}
+			}
+		}
+	}
+	
+	ProjectOrder fullProjectOrder =
+		ComputeProjectOrder.computeProjectOrder(allAccessibleProjects, edges);
+	return fullProjectOrder;
 }
 
 /*
@@ -777,6 +974,10 @@ public void endOperation(boolean build, IProgressMonitor monitor) throws CoreExc
 		workManager.checkOut();
 	}
 }
+
+/*
+ * TODO: Delete this method once computePrerequisiteOrder0 is deleted
+ */
 private static List findRootNodes(HashMap counts) {
 	List result = new ArrayList(5);
 	for (Iterator i = counts.keySet().iterator(); i.hasNext();) {
@@ -809,22 +1010,54 @@ public void forgetSavedTree(String pluginId) {
 public BuildManager getBuildManager() {
 	return buildManager;
 }
+
 /**
- * Returns this workspace's build order
+ * Returns the order in which open projects in this workspace will be built.
+ * <p>
+ * The project build order is based on information specified in the workspace
+ * description. The projects are built in the order specified by
+ * <code>IWorkspaceDescription.getBuildOrder</code>; closed or non-existent
+ * projects are ignored and not included in the result. If
+ * <code>IWorkspaceDescription.getBuildOrder</code> is non-null, the default
+ * build order is used; again, only open projects are included in the result.
+ * </p>
+ * <p>
+ * The returned value is cached in the <code>buildOrder</code> field.
+ * </p>
+ * 
+ * @return the list of currently open projects in the workspace in the order in
+ * which they would be built by <code>IWorkspace.build</code>.
+ * @see IWorkspace#build
+ * @see IWorkspaceDescription#getBuildOrder
+ * @since 2.1
  */
 public IProject[] getBuildOrder() {
-	if (buildOrder != null)
+	if (buildOrder != null) {
+		// return previously-computed and cached project build order
 		return buildOrder;
+	}
+	// see if a particular build order is specified
 	String[] order = description.getBuildOrder(false);
-	if (order == null)
-		buildOrder = computePrerequisiteOrder(getRoot().getProjects())[0];
-	else {
-		buildOrder = new IProject[order.length];
-		for (int i = 0; i < order.length; i++)
-			buildOrder[i] = getRoot().getProject(order[i]);
+	if (order != null) {
+		// convert from project names to project handles
+		// and eliminate non-existent and closed projects
+		List projectList = new ArrayList(order.length);
+		for (int i = 0; i < order.length; i++) {
+			IProject project = getRoot().getProject(order[i]);
+			if (project.isAccessible()) {
+				projectList.add(project);
+			}
+		}
+		buildOrder = new IProject[projectList.size()];
+		projectList.toArray(buildOrder);
+	} else {
+		// use default project build order
+		// computed for all accessible projects in workspace
+		buildOrder = computeFullProjectOrder().projects;
 	}
 	return buildOrder;
 }
+
 /**
  * @see IWorkspace#getDanglingReferences
  */
@@ -943,7 +1176,8 @@ public ISynchronizer getSynchronizer() {
 	return synchronizer;
 }
 /**
- * Returns the installed team hook.  Never returns null. */
+ * Returns the installed team hook.  Never returns null.
+ */
 protected TeamHook getTeamHook() {
 	if (teamHook == null)
 		initializeTeamHook();
@@ -1091,7 +1325,8 @@ public boolean isOpen() {
 /**
  * Returns true if the given file system locations overlap (they are the same,
  * or one is a proper prefix of the other), and false otherwise.  
- * Does the right thing with respect to case insensitive platforms. */
+ * Does the right thing with respect to case insensitive platforms.
+ */
 protected boolean isOverlapping(IPath location1, IPath location2) {
 	IPath one = location1;
 	IPath two = location2;
@@ -1398,6 +1633,10 @@ protected boolean refreshRequested() {
 			return true;
 	return false;
 }
+
+/*
+ * TODO: Delete this method once computePrerequisiteOrder0 is deleted
+ */
 private static void removeArcs(String[][] mappings, List roots, HashMap counts) {
 	for (Iterator j = roots.iterator(); j.hasNext();) {
 		String root = (String) j.next();
