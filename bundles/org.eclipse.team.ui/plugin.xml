@@ -59,7 +59,7 @@
    <extension
          point="org.eclipse.ui.popupMenus">
       <objectContribution
-            objectClass="org.eclipse.core.resources.IResource"
+            objectClass="org.eclipse.core.resources.mapping.ResourceMapping"
             adaptable="true"
             id="org.eclipse.team.ui.ResourceContributions">
          <menu
