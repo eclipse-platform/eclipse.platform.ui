@@ -218,13 +218,18 @@ abstract public class AbstractReconciler implements IReconciler {
 		 */
 		public void documentChanged(DocumentEvent e) {
 			
+			if (!fThread.fIsDirty)
+				aboutToBeReconciled();
+			
 			if (fProgressMonitor != null && fThread.isActive())
 				fProgressMonitor.setCanceled(true);
 				
 			if (fIsIncrementalReconciler)
 				createDirtyRegion(e);
 				
+			
 			fThread.reset();
+			
 		}
 				
 		/*
@@ -264,6 +269,9 @@ abstract public class AbstractReconciler implements IReconciler {
 				
 			fDocument.addDocumentListener(this);
 			
+			if (!fThread.fIsDirty)
+				aboutToBeReconciled();
+
 			if (fIsIncrementalReconciler) {
 				DocumentEvent e= new DocumentEvent(fDocument, 0, 0, fDocument.get());
 				createDirtyRegion(e);
@@ -451,6 +459,18 @@ abstract public class AbstractReconciler implements IReconciler {
 		}
 	}
 	
+	/**
+	 * Hook for subclasses which want to perform some
+	 * action as soon as reconciliation is needed.
+	 * <p>
+	 * Default implementation is to do nothing.
+	 * </p>
+	 * 
+	 * @since 3.0
+	 */
+	protected void aboutToBeReconciled() {
+	}
+
 	/**
 	 * This method is called on startup of the background activity. It is called only
 	 * once during the life time of the reconciler. Clients may reimplement this method.
