@@ -49,6 +49,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.ViewForm;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -469,17 +471,36 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 		
 		targetViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
-				ISelection s= event.getSelection();
-				if (!(s instanceof IStructuredSelection)) {
-					return;
-				}
-				Object selection= ((IStructuredSelection)s).getFirstElement();
-				if (selection instanceof TargetNode) {
-					runTargetAction.run((TargetNode)selection);
-				}
+				handleTargetViewerDoubleClick(event);
 			}
 		});
+		
+		targetViewer.getControl().addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent event) {
+				handleTargetViewerKeyPress(event);
+			}
+		});
+		
 		createContextMenu(targetViewer);
+	}
+	
+	private void handleTargetViewerKeyPress(KeyEvent event) {
+		if (event.character == SWT.DEL && event.stateMask == 0) {
+			if (deactivateTargetAction.isEnabled()) {
+				deactivateTargetAction.run();
+			}
+		}
+	}
+				
+	private void handleTargetViewerDoubleClick(DoubleClickEvent event) {
+		ISelection s= event.getSelection();
+		if (!(s instanceof IStructuredSelection)) {
+			return;
+		}
+		Object selection= ((IStructuredSelection)s).getFirstElement();
+		if (selection instanceof TargetNode) {
+			runTargetAction.run((TargetNode)selection);
+		}
 	}
 
 	/**
@@ -517,73 +538,96 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 				return e1.toString().compareToIgnoreCase(e2.toString());
 			}
 		});
+		
 		projectViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
-				updateActions();
-				Iterator selectionIter = ((IStructuredSelection) event.getSelection()).iterator();
-				Object selection = null;
-				if (selectionIter.hasNext()) {
-					selection = selectionIter.next();
-				}
-				String messageString= null;
-				if (!selectionIter.hasNext()) { 
-					if (selection instanceof ProjectNode) {
-						ProjectNode project = (ProjectNode) selection;
-						StringBuffer message= new StringBuffer(project.getBuildFileName());
-						String description= project.getDescription();
-						if (description != null) {
-							message.append(": "); //$NON-NLS-1$
-							message.append(description);
-						}
-						messageString= message.toString();
-					} else if (selection instanceof TargetNode){
-						TargetNode target = (TargetNode) selection;
-						StringBuffer message= new StringBuffer(target.getName());
-						message.append(": "); //$NON-NLS-1$
-						String description= target.getDescription();
-						if (description == null) {
-							description= AntViewMessages.getString("AntView.(no_description)_9"); //$NON-NLS-1$
-						}
-						message.append(description);
-						messageString= message.toString();
-					}
-				} 
-				
-				AntView.this.getViewSite().getActionBars().getStatusLineManager().setMessage(messageString);
+				handleProjectViewerSelectionChanged(event);
 			}
 		});
 		
 		projectViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
-				ISelection s= event.getSelection();
-				if (!(s instanceof IStructuredSelection)) {
-					return;
-				}
-				Object selection= ((IStructuredSelection)s).getFirstElement();
-				if (selection instanceof ProjectNode) {
-					ProjectNode project = (ProjectNode) selection;
-					IEditorRegistry registry= PlatformUI.getWorkbench().getEditorRegistry();
-					IFile file= AntUtil.getFile(project.getBuildFileName());
-					IEditorDescriptor editor = registry.getDefaultEditor(file);
-					if (editor == null) {
-						editor= registry.getDefaultEditor();
-					}
-					try {
-						if (editor == null) {
-							getViewSite().getPage().openSystemEditor(file);
-						} else {
-							getViewSite().getPage().openEditor(file, editor.getId());
-						}
-					} catch (PartInitException e) {
-						ExternalToolsPlugin.getDefault().log(e);
-					}
-				} else if (selection instanceof TargetNode){
-					runTargetAction.run();
-				}
+				handleProjectViewerDoubleClick(event);
+			}
+		});
+		
+		projectViewer.getControl().addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent event) {
+				handleProjectViewerKeyPress(event);
 			}
 		});
 		
 		createContextMenu(projectViewer);
+	}
+	
+	private void handleProjectViewerKeyPress(KeyEvent event) {
+		if (event.character == SWT.DEL && event.stateMask == 0) {
+			if (removeProjectAction.isEnabled()) {
+				removeProjectAction.run();
+			}
+		}
+	}
+	
+	private void handleProjectViewerDoubleClick(DoubleClickEvent event) {
+		ISelection s= event.getSelection();
+		if (!(s instanceof IStructuredSelection)) {
+			return;
+		}
+		Object selection= ((IStructuredSelection)s).getFirstElement();
+		if (selection instanceof ProjectNode) {
+			ProjectNode project = (ProjectNode) selection;
+			IEditorRegistry registry= PlatformUI.getWorkbench().getEditorRegistry();
+			IFile file= AntUtil.getFile(project.getBuildFileName());
+			IEditorDescriptor editor = registry.getDefaultEditor(file);
+			if (editor == null) {
+				editor= registry.getDefaultEditor();
+			}
+			try {
+				if (editor == null) {
+					getViewSite().getPage().openSystemEditor(file);
+				} else {
+					getViewSite().getPage().openEditor(file, editor.getId());
+				}
+			} catch (PartInitException e) {
+				ExternalToolsPlugin.getDefault().log(e);
+			}
+		} else if (selection instanceof TargetNode){
+			runTargetAction.run();
+		}
+	}
+	
+	private void handleProjectViewerSelectionChanged(SelectionChangedEvent event) {
+		updateActions();
+		Iterator selectionIter = ((IStructuredSelection) event.getSelection()).iterator();
+		Object selection = null;
+		if (selectionIter.hasNext()) {
+			selection = selectionIter.next();
+		}
+		String messageString= null;
+		if (!selectionIter.hasNext()) { 
+			if (selection instanceof ProjectNode) {
+				ProjectNode project = (ProjectNode) selection;
+				StringBuffer message= new StringBuffer(project.getBuildFileName());
+				String description= project.getDescription();
+				if (description != null) {
+					message.append(": "); //$NON-NLS-1$
+					message.append(description);
+				}
+				messageString= message.toString();
+			} else if (selection instanceof TargetNode){
+				TargetNode target = (TargetNode) selection;
+				StringBuffer message= new StringBuffer(target.getName());
+				message.append(": "); //$NON-NLS-1$
+				String description= target.getDescription();
+				if (description == null) {
+					description= AntViewMessages.getString("AntView.(no_description)_9"); //$NON-NLS-1$
+				}
+				message.append(description);
+				messageString= message.toString();
+			}
+		} 
+	
+		AntView.this.getViewSite().getActionBars().getStatusLineManager().setMessage(messageString);
 	}
 
 	/**
