@@ -231,7 +231,7 @@ public boolean movedProjectSubtree(IProject project, IProjectDescription destDes
 	
 	// Set the new project description on the destination project.
 	try {
-		destination.internalSetDescription(destDescription, false);
+		destination.internalSetDescription(destDescription, true);
 		destination.writeDescription(IResource.FORCE);
 	} catch (CoreException e) {
 		String message = Policy.bind("resources.projectDesc"); //$NON-NLS-1$
