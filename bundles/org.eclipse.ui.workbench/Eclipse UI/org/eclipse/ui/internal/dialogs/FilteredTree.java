@@ -142,7 +142,7 @@ public class FilteredTree extends Composite {
 
         filterToolBar.update(false);
         // initially there is no text to clear
-        filterToolBar.getControl().setEnabled(false);
+        filterToolBar.getControl().setVisible(false);
 
         treeViewer = new TreeViewer(this, treeStyle);
         data = new GridData(GridData.FILL_BOTH);
@@ -200,11 +200,11 @@ public class FilteredTree extends Composite {
             treeViewer.expandAll();
             // enabled toolbar is a hint that there is text to clear
             // and the list is currently being filtered
-            filterToolBar.getControl().setEnabled(true);
+            filterToolBar.getControl().setVisible(true);
         } else {
             // disabled toolbar is a hint that there is no text to clear
             // and the list is currently not filtered
-            filterToolBar.getControl().setEnabled(false);
+            filterToolBar.getControl().setVisible(false);
         }
     }
 
