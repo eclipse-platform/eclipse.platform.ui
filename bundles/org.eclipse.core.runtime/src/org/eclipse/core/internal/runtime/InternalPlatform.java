@@ -317,15 +317,7 @@ public final class InternalPlatform implements IPlatform {
 			return metaArea;
 		
 		metaArea = new DataArea();
-//		try {
-//			metaArea.createLockFile();
-//		} catch (CoreException e) {
-//			throw new IllegalStateException(e.getStatus().getMessage());
-//		} catch (IllegalStateException e) {
-//			// do nothing.  This happens when there is no instance area
-//			// or it has not been defined yet.
-//		}
-		metaArea.setKeyringFile(keyringFile);
+		metaArea.setKeyringFile(keyringFile);	//TODO Aren't those files suppose to be located into the config? Why does it need to happen here?
 		metaArea.setPassword(password);			
 		return metaArea;
 	}
@@ -383,14 +375,14 @@ public final class InternalPlatform implements IPlatform {
 	public void start(BundleContext context) {
 		this.context = context;
 		initializeLocationTrackers();
-		endOfInitializationHandler = getSplashHandler();
+		endOfInitializationHandler = getSplashHandler();	//TODO the call to getSplashHandler could be done into endSplash(). Then we could remove the variable
 		processCommandLine(infoService.getNonFrameworkArgs());
 		debugTracker = new ServiceTracker(context, DebugOptions.class.getName(), null);
 		debugTracker.open();
 		options = (DebugOptions) debugTracker.getService(); 
 		initializeDebugFlags();
 		initialized = true;
-		getMetaArea();
+		getMetaArea();	//TODO Why does this need to happen here?
 		platformLog = new PlatformLogWriter();
 		addLogListener(platformLog);
 		platformRegistration = context.registerService(IPlatform.class.getName(), this, null);
@@ -472,7 +464,7 @@ public final class InternalPlatform implements IPlatform {
 		if (args == null)
 			return args;
 		allArgs = args;
-		int[] configArgs = new int[100];
+		int[] configArgs = new int[100];	//TODO Does this need to be this big, can't it be set to args.length (later it is only set to i or i-1)
 		//need to initialize the first element to something that could not be an index.
 		configArgs[0] = -1;
 		int configArgIndex = 0;
@@ -982,7 +974,7 @@ public final class InternalPlatform implements IPlatform {
 		return ContentTypeManager.getInstance();
 	}
 	
-	private void initializeLocationTrackers() {
+	private void initializeLocationTrackers() {	//TODO What about having a constant for the prefix of the filter
 		Filter filter = null;
 		try {
 			filter = context.createFilter("(&(objectClass=org.eclipse.osgi.service.datalocation.Location)(type=" + PROP_CONFIG_AREA + "))");

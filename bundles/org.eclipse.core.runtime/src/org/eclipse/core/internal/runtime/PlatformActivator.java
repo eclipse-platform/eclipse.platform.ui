@@ -19,6 +19,7 @@ import org.eclipse.core.internal.boot.PlatformURLBaseConnection;
 import org.eclipse.core.internal.boot.PlatformURLHandler;
 import org.eclipse.core.internal.registry.*;
 import org.eclipse.core.runtime.*;
+
 import org.eclipse.osgi.framework.log.FrameworkLog;
 import org.eclipse.osgi.service.environment.EnvironmentInfo;
 import org.eclipse.osgi.service.runnable.ParameterizedRunnable;
@@ -125,7 +126,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 		InternalPlatform.getDefault().setExtensionRegistry(registry);
 	}
 	private long computeRegistryStamp() {
-		if (!"true".equalsIgnoreCase(System.getProperty("osgi.checkConfiguration"))) //$NON-NLS-1$
+		if (!"true".equalsIgnoreCase(System.getProperty("osgi.checkConfiguration"))) //$NON-NLS-1$  TODO In the config.ini this variable shoudl be set to false
 			return 0;
 		Bundle[] allBundles = context.getBundles();
 		long result = 0;

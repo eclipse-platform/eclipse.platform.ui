@@ -19,7 +19,7 @@ import org.osgi.util.tracker.ServiceTracker;
 
 public class PluginActivator implements BundleActivator {
 
-	private static final String PI_APPLICATION_RUNNER = "org.eclipse.core.applicationrunner"; //$NON-NLS-1$
+	private static final String PI_APPLICATION_RUNNER = "org.eclipse.core.applicationrunner"; //$NON-NLS-1$ //TODO To remove
 	private BundleContext context;
 	private Plugin plugin;
 	
