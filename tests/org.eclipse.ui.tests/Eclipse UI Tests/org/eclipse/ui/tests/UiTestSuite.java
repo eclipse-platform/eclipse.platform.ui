@@ -12,14 +12,13 @@ package org.eclipse.ui.tests;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
 import org.eclipse.ui.tests.activities.ActivitiesTestSuite;
 import org.eclipse.ui.tests.adaptable.AdaptableTestSuite;
 import org.eclipse.ui.tests.api.ApiTestSuite;
 import org.eclipse.ui.tests.commands.CommandsTestSuite;
+import org.eclipse.ui.tests.concurrency.ConcurrencyTestSuite;
 import org.eclipse.ui.tests.contexts.ContextsTestSuite;
 import org.eclipse.ui.tests.datatransfer.DataTransferTestSuite;
-import org.eclipse.ui.tests.deadlock.NestedSyncExecDeadlockTest;
 import org.eclipse.ui.tests.decorators.DecoratorsTestSuite;
 import org.eclipse.ui.tests.dialogs.UIAutomatedSuite;
 import org.eclipse.ui.tests.dnd.DragTestSuite;
@@ -54,8 +53,7 @@ public class UiTestSuite extends TestSuite {
      * Construct the test suite.
      */
     public UiTestSuite() {
-    	addTest(new UIAutomatedSuite());
-    	addTest(new TestSuite(NestedSyncExecDeadlockTest.class));
+        addTest(new UIAutomatedSuite());
         addTest(new ApiTestSuite());
         addTest(new PropertySheetTestSuite());
         addTest(new InternalTestSuite());
@@ -78,5 +76,6 @@ public class UiTestSuite extends TestSuite {
         addTest(new EncodingTestSuite());
         addTest(new PresentationsTestSuite());
         addTest(new TestSuite(LeakTests.class));
+        addTest(new ConcurrencyTestSuite());
     }
 }
