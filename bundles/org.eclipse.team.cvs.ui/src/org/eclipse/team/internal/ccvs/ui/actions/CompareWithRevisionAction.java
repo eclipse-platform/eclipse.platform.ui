@@ -47,21 +47,41 @@ public class CompareWithRevisionAction extends TeamAction {
 	 * @see IActionDelegate#run(IAction)
 	 */
 	public void run(IAction action) {
+		
+		// Setup holders
+		final ICVSRemoteFile[] file = new ICVSRemoteFile[] { null };
+		final ILogEntry[][] entries = new ILogEntry[][] { null };
+		
+		// Get the selected file
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
-				ICVSRemoteFile file = getSelectedRemoteFile();
-				if (file == null) {
-					// No revisions for selected file
-					MessageDialog.openWarning(getShell(), Policy.bind("CompareWithRevisionAction.noRevisions"), Policy.bind("CompareWithRevisionAction.noRevisionsLong"));
-					return;
-				}
-				ILogEntry[] entries = null;
+				file[0] = getSelectedRemoteFile();
+			}
+		}, Policy.bind("CompareWithRevisionAction.compare"), this.PROGRESS_BUSYCURSOR);
+		
+		if (file[0] == null) {
+			// No revisions for selected file
+			MessageDialog.openWarning(getShell(), Policy.bind("CompareWithRevisionAction.noRevisions"), Policy.bind("CompareWithRevisionAction.noRevisionsLong"));
+			return;
+		}
+		
+		// Fetch the log entries
+		run(new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				try {
-					entries = file.getLogEntries(new NullProgressMonitor());
+					entries[0] = file[0].getLogEntries(monitor);
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);
 				}
-				CompareUI.openCompareEditor(new CVSCompareRevisionsInput((IFile)getSelectedResources()[0], entries));
+			}
+		}, Policy.bind("CompareWithRevisionAction.compare"), this.PROGRESS_DIALOG);
+		
+		if (entries[0] == null) return;
+		
+		// Show the compare viewer
+		run(new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException {
+				CompareUI.openCompareEditor(new CVSCompareRevisionsInput((IFile)getSelectedResources()[0], entries[0]));
 			}
 		}, Policy.bind("CompareWithRevisionAction.compare"), this.PROGRESS_BUSYCURSOR);
 	}
