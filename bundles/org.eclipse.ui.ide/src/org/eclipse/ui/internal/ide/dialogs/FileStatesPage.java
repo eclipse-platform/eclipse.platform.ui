@@ -129,7 +129,6 @@ public class FileStatesPage
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		composite.setLayout(layout);
-		composite.setFont(parent.getFont());
 
 		IWorkspaceDescription description = getWorkspaceDescription();
 
@@ -172,6 +171,8 @@ public class FileStatesPage
 		GridData noteData = new GridData();
 		noteData.horizontalSpan = 2;
 		noteComposite.setLayoutData(noteData);
+		
+		applyDialogFont(composite);
 
 		return composite;
 	}
