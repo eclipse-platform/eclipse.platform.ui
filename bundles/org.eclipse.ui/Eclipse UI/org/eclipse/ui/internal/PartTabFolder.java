@@ -718,15 +718,17 @@ public void saveState(IMemento memento)
 
 	if(mapTabToPart.size() == 0) {
 		// Loop through the invisible children.
-		for (int i = 0; i < invisibleChildren.length; i ++) {
-			// Save the info.
-			// Fields in TabInfo ..
-			//		private String tabText;
-			//		private LayoutPart part;
-			TabInfo info = invisibleChildren[i];
-			IMemento childMem = memento.createChild(IWorkbenchConstants.TAG_PAGE);
-			childMem.putString(IWorkbenchConstants.TAG_LABEL, info.tabText);
-			childMem.putString(IWorkbenchConstants.TAG_CONTENT, info.part.getID());
+		if(invisibleChildren != null) {
+			for (int i = 0; i < invisibleChildren.length; i ++) {
+				// Save the info.
+				// Fields in TabInfo ..
+				//		private String tabText;
+				//		private LayoutPart part;
+				TabInfo info = invisibleChildren[i];
+				IMemento childMem = memento.createChild(IWorkbenchConstants.TAG_PAGE);
+				childMem.putString(IWorkbenchConstants.TAG_LABEL, info.tabText);
+				childMem.putString(IWorkbenchConstants.TAG_CONTENT, info.part.getID());
+			}
 		}
 	} else {
 		LayoutPart [] children = getChildren();
