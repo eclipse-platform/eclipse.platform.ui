@@ -597,7 +597,7 @@ private void loadPredefinedPersp(
 	}
 
 	// Create layout factory.
-	RootLayoutContainer container = new RootLayoutContainer(page.getMouseDownListener());
+	RootLayoutContainer container = new RootLayoutContainer(page);
 	PageLayout layout = new PageLayout(container, getViewFactory(), editorArea);
 
 	// Run layout engine.
@@ -807,7 +807,7 @@ public IStatus restoreState() {
 	}
 	
 	// Create an empty presentation..
-	RootLayoutContainer mainLayout = new RootLayoutContainer(page.getMouseDownListener());
+	RootLayoutContainer mainLayout = new RootLayoutContainer(page);
 	PerspectivePresentation pres = new PerspectivePresentation(page, mainLayout);
 
 	// Read the layout.

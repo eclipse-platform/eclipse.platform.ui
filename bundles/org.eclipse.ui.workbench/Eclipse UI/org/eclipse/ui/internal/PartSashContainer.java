@@ -30,9 +30,9 @@ public abstract class PartSashContainer extends LayoutPart implements ILayoutCon
  
 	protected Composite parent;
 	protected ControlListener resizeListener;
-	protected Listener mouseDownListener;
 	protected LayoutTree root;
 	protected LayoutTree unzoomRoot;
+	protected Listener mouseDownListener;
 	boolean active = false;
 	
 	/* Array of LayoutPart */
@@ -44,13 +44,22 @@ public abstract class PartSashContainer extends LayoutPart implements ILayoutCon
 		protected int relationship;
 		protected float ratio;
 	}
-public PartSashContainer(String id) {
+	
+public PartSashContainer(String id,final WorkbenchPage page) {
 	super(id);
 	resizeListener = new ControlAdapter() {
 		public void controlResized(ControlEvent e) {
 			resizeSashes(parent.getClientArea());
 		}
 	};
+	// Mouse down listener to hide fast view when
+	// user clicks on empty editor area or sashes.
+	mouseDownListener = new Listener() {
+		public void handleEvent(Event event) {
+			if (event.type == SWT.MouseDown)
+				page.toggleFastView(null);
+		}
+	};	
 }
 /**
  * Find the sashs around the specified part.

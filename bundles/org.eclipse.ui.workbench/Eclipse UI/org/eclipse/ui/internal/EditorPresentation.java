@@ -14,7 +14,6 @@ package org.eclipse.ui.internal;
 import java.util.*;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.*;
 import org.eclipse.ui.part.MultiEditor;
 
@@ -29,7 +28,7 @@ public class EditorPresentation {
 /**
  * Creates a new EditorPresentation.
  */
-public EditorPresentation(WorkbenchPage workbenchPage, Listener mouseDownListener) {
+public EditorPresentation(WorkbenchPage page) {
 	IPartDropListener partDropListener = new IPartDropListener() {
 		public void dragOver(PartDropEvent e) {
 			onPartDragOver(e);
@@ -39,10 +38,8 @@ public EditorPresentation(WorkbenchPage workbenchPage, Listener mouseDownListene
 		};
 	};
 	
-	this.page = workbenchPage;
-	
-	this.editorArea = new EditorArea(IPageLayout.ID_EDITOR_AREA, partDropListener, 
-		mouseDownListener, page);
+	this.page = page;
+	this.editorArea = new EditorArea(IPageLayout.ID_EDITOR_AREA, partDropListener, page);
 }
 /**
  * Closes all of the editors.

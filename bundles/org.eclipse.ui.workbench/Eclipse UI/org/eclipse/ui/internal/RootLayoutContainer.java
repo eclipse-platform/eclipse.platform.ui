@@ -14,9 +14,8 @@ import java.util.*;
  * Represents the top level container.
  */
 public class RootLayoutContainer extends PartSashContainer {
-public RootLayoutContainer(Listener mouseDownListener) {
-	super("root layout container");//$NON-NLS-1$
-	this.mouseDownListener = mouseDownListener;
+public RootLayoutContainer(WorkbenchPage page) {
+	super("root layout container",page);//$NON-NLS-1$
 }
 /**
  * Notification that a child layout part has been
