@@ -19,10 +19,14 @@ import org.eclipse.core.runtime.content.*;
 import org.eclipse.core.tests.runtime.DynamicPluginTest;
 import org.eclipse.core.tests.runtime.RuntimeTest;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleException;
 
 public class IContentTypeManagerTest extends DynamicPluginTest {
 	private final static String MINIMAL_XML = "<?xml version=\"1.0\"?><org.eclipse.core.runtime.tests.root/>";
 	private final static String XML_UTF_8 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><org.eclipse.core.runtime.tests.root/>";
+	private final static String XML_UTF_16 = "<?xml version=\"1.0\" encoding=\"UTF-16\"?><org.eclipse.core.runtime.tests.root/>";
+	private final static String XML_UTF_16BE = "<?xml version=\"1.0\" encoding=\"UTF-16BE\"?><org.eclipse.core.runtime.tests.root/>";
+	private final static String XML_UTF_16LE = "<?xml version=\"1.0\" encoding=\"UTF-16LE\"?><org.eclipse.core.runtime.tests.root/>";
 	private final static String XML_ISO_8859_1 = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><org.eclipse.core.runtime.tests.root/>";
 	private final static String XML_ROOT_ELEMENT_ISO_8859_1 = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><org.eclipse.core.runtime.tests.root-element/>";
 	private final static String XML_DTD_US_ASCII = "<?xml version=\"1.0\" encoding=\"US-ASCII\"?><org.eclipse.core.runtime.tests.root/>";
@@ -121,17 +125,31 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 		assertEquals("2.1", xmlType, description.getContentType());
 		// the default charset should have been filled by the content type manager
 		assertEquals("2.2", "UTF-8", description.getProperty(IContentDescription.CHARSET));
-		description = contentTypeManager.getDescriptionFor(getInputStream(XML_ISO_8859_1, "UTF-8"), "foo.xml", new QualifiedName[] {IContentDescription.CHARSET});
-		assertNotNull("3.0", description);
-		assertEquals("3.1", xmlType, description.getContentType());
-		assertEquals("3.2", "ISO-8859-1", description.getProperty(IContentDescription.CHARSET));
+		description = contentTypeManager.getDescriptionFor(getInputStream(XML_ISO_8859_1, "ISO-8859-1"), "foo.xml", new QualifiedName[] {IContentDescription.CHARSET});
+		assertNotNull("2.3a", description);
+		assertEquals("2.3b", xmlType, description.getContentType());
+		assertEquals("2.3c", "ISO-8859-1", description.getProperty(IContentDescription.CHARSET));
+		description = contentTypeManager.getDescriptionFor(getInputStream(XML_UTF_16, "UTF-8"), "foo.xml", new QualifiedName[] {IContentDescription.CHARSET});
+		assertNotNull("2.4a", description);
+		assertEquals("2.4b", xmlType, description.getContentType());
+		assertEquals("2.4c", "UTF-16", description.getProperty(IContentDescription.CHARSET));
+		description = contentTypeManager.getDescriptionFor(getInputStream(XML_UTF_16BE, "UTF-8"), "foo.xml", new QualifiedName[] {IContentDescription.CHARSET});
+		assertNotNull("2.5a", description);
+		assertEquals("2.5b", xmlType, description.getContentType());
+		assertEquals("2.5c", "UTF-16BE", description.getProperty(IContentDescription.CHARSET));
+		description = contentTypeManager.getDescriptionFor(getInputStream(XML_UTF_16LE, "UTF-8"), "foo.xml", new QualifiedName[] {IContentDescription.CHARSET});
+		assertNotNull("2.6a", description);
+		assertEquals("2.6b", xmlType, description.getContentType());
+		// the default charset should have been filled by the content type manager
+		assertEquals("2.6c", "UTF-16LE", description.getProperty(IContentDescription.CHARSET));
+
 		description = contentTypeManager.getDescriptionFor(getInputStream(MINIMAL_XML, "UTF-8"), "foo.xml", IContentDescription.ALL);
 		assertNotNull("4.0", description);
 		assertEquals("4.1", xmlType, description.getContentType());
 		assertEquals("4.2", "UTF-8", description.getProperty(IContentDescription.CHARSET));
 		IContentType mytext = contentTypeManager.getContentType(PI_RUNTIME_TESTS + '.' + "mytext");
 		assertNotNull("5.0", mytext);
-		assertEquals("5.0b", "BAR", mytext.getDefaultCharset());		
+		assertEquals("5.0b", "BAR", mytext.getDefaultCharset());
 		description = contentTypeManager.getDescriptionFor(getInputStream("some contents"), "abc.tzt", IContentDescription.ALL);
 		assertNotNull("5.1", description);
 		assertEquals("5.2", mytext, description.getContentType());
@@ -150,9 +168,9 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 		IContentType mytext1 = contentTypeManager.getContentType(PI_RUNTIME_TESTS + '.' + "mytext1");
 		assertNotNull("6.0", mytext1);
 		assertEquals("6.1", "BAR", mytext1.getDefaultCharset());
-		IContentType mytext2 = contentTypeManager.getContentType(PI_RUNTIME_TESTS + '.' + "mytext2");		
+		IContentType mytext2 = contentTypeManager.getContentType(PI_RUNTIME_TESTS + '.' + "mytext2");
 		assertNotNull("6.2", mytext2);
-		assertEquals("6.3", null, mytext2.getDefaultCharset());		
+		assertEquals("6.3", null, mytext2.getDefaultCharset());
 	}
 
 	public void testBinaryTypes() throws IOException {
@@ -214,7 +232,7 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 		assertTrue("5.0", !binaryContentType.isKindOf(textContentType));
 	}
 
-	public void testFindContentType() throws Exception {
+	public void testFindContentType() throws UnsupportedEncodingException, IOException {
 		IContentTypeManager contentTypeManager = LocalContentTypeManager.getLocalContentTypeManager();
 		IContentType textContentType = contentTypeManager.getContentType(Platform.PI_RUNTIME + '.' + "text");
 		IContentType single = contentTypeManager.findContentTypeFor(getInputStream("Just a test"), "file.txt");
@@ -264,7 +282,7 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 	 * This test shows how we deal with orphan file associations (associations
 	 * whose content types are missing).
 	 */
-	public void testOrphanContentType() throws Exception {
+	public void testOrphanContentType() throws IOException, BundleException {
 		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
 		IContentType orphan = contentTypeManager.getContentType(PI_RUNTIME_TESTS + ".orphan");
 		assertNull("0.8", orphan);
@@ -318,7 +336,7 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 		assertNull("3.0", contentTypeManager.getContentType(PI_RUNTIME_TESTS + '.' + "invalid-missing-name"));
 	}
 
-	public void testByteOrderMark() throws Exception {
+	public void testByteOrderMark() throws UnsupportedEncodingException, IOException {
 		IContentType text = Platform.getContentTypeManager().getContentType(IContentTypeManager.CT_TEXT);
 		QualifiedName[] options = new QualifiedName[] {IContentDescription.BYTE_ORDER_MARK};
 		IContentDescription description;
@@ -340,6 +358,19 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 		// test with no BOM
 		description = text.getDescriptionFor(new ByteArrayInputStream(MINIMAL_XML.getBytes("ISO-8859-1")), options);
 		assertNull("4.0", description.getProperty(IContentDescription.BYTE_ORDER_MARK));
+	}
+
+	public void _testFileSpecConflicts() throws IOException {
+		IContentTypeManager manager = Platform.getContentTypeManager();
+		IContentType preferredConflict1 = manager.findContentTypeFor("test.conflict1");
+		assertNotNull("1.0", preferredConflict1);
+		assertEquals("1.1", PI_RUNTIME_TESTS + ".conflict1", preferredConflict1.getId());
+		IContentType preferredConflict2 = manager.findContentTypeFor("test.conflict2");
+		assertNotNull("2.0", preferredConflict2);
+		assertEquals("2.1", PI_RUNTIME_TESTS + ".conflict2", preferredConflict2.getId());
+		IContentType preferredConflict3 = manager.findContentTypeFor("test.conflict3");
+		assertNotNull("3.0", preferredConflict3);
+		assertEquals("3.1", PI_RUNTIME_TESTS + ".conflict3", preferredConflict3.getId());
 	}
 
 	private boolean isText(IContentTypeManager manager, IContentType candidate) {

@@ -35,17 +35,17 @@ public class XMLContentDescriber extends TextContentDescriber implements ITextCo
 		byte[] bom = getByteOrderMark(input);
 		String xmlDeclEncoding = "UTF-8"; //$NON-NLS-1$
 		input.reset();
-		if (bom != null) {			
+		if (bom != null) {
 			if (bom == IContentDescription.BOM_UTF_16BE)
-				xmlDeclEncoding = "UTF-16BE";
+				xmlDeclEncoding = "UTF-16BE"; //$NON-NLS-1$
 			else if (bom == IContentDescription.BOM_UTF_16LE)
-				xmlDeclEncoding = "UTF-16LE";				
+				xmlDeclEncoding = "UTF-16LE"; //$NON-NLS-1$
 			// skip BOM to make comparison simpler
 			input.skip(bom.length);
 			// set the BOM in the description if requested
 			if (description != null && description.isRequested(IContentDescription.BYTE_ORDER_MARK))
 				description.setProperty(IContentDescription.BYTE_ORDER_MARK, bom);
-		}		
+		}
 		byte[] xmlPrefixBytes = XML_PREFIX.getBytes(xmlDeclEncoding);
 		byte[] prefix = new byte[xmlPrefixBytes.length];
 		if (input.read(prefix) < prefix.length)
@@ -96,11 +96,11 @@ public class XMLContentDescriber extends TextContentDescriber implements ITextCo
 		if (encodingPos == -1)
 			return null;
 		char quoteChar = '"';
-		int firstQuote = firstLine.indexOf(quoteChar, encodingPos);		
-		if (firstQuote== -1) {
+		int firstQuote = firstLine.indexOf(quoteChar, encodingPos);
+		if (firstQuote == -1) {
 			quoteChar = '\'';
 			firstQuote = firstLine.indexOf(quoteChar, encodingPos);
-		}			
+		}
 		if (firstQuote == -1 || firstLine.length() == firstQuote - 1)
 			return null;
 		int secondQuote = firstLine.indexOf(quoteChar, firstQuote + 1);
