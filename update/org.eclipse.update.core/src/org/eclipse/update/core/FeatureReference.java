@@ -26,10 +26,10 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 
 	private List categories;
 	private VersionedIdentifier versionId;
-	
+
 	//PERF: new instance variable
 	private IFeature exactFeature;
- 
+
 	/**
 	 * Feature reference default constructor
 	 */
@@ -62,19 +62,18 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 			UpdateManagerPlugin.warn("", e);
 		}
 	}
-	
+
 	/**
 	 * Returns the feature this reference points to 
 	 *  @return the feature on the Site
 	 */
 	public IFeature getFeature() throws CoreException {
-		
-		if (exactFeature!=null)	
+
+		if (exactFeature != null)
 			return exactFeature;
 		exactFeature = getFeature(this);
 		return exactFeature;
 	}
-
 
 	/**
 	 * Returns the feature the reference points to 
@@ -84,13 +83,23 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 	protected IFeature getFeature(IFeatureReference ref) throws CoreException {
 
 		IFeature feature = null;
-		String type = getType();
-		if (type == null || type.equals("")) { //$NON-NLS-1$
-			// ask the Site for the default type
-			type = getSite().getDefaultPackagedFeatureType();
-		}
-		feature = getSite().createFeature(type, ref.getURL());
+		feature = createFeature(ref.getURL());
 		return feature;
+	}
+
+	/*
+	 * create an instance of a concrete feature corresponding to this reference
+	 */
+	private IFeature createFeature(URL url) throws CoreException {
+		String type = getType();
+		ISite site = getSite();
+		// if the site exists, use the site factory
+		if (site != null) {
+			return site.createFeature(type, url);
+		}
+		
+		IFeatureFactory factory = FeatureTypeFactory.getInstance().getFactory(type);
+		return factory.createFeature(url, site);
 	}
 
 	/**
@@ -102,7 +111,7 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 	public ISite getSite() {
 		return (ISite) getSiteModel();
 	}
-	
+
 	/** 
 	 * Sets the feature reference URL.
 	 * This is typically performed as part of the feature reference creation
@@ -158,24 +167,24 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 		}
 
 		// we need the exact match or we may have an infinite loop
-		versionId = new VersionedIdentifier(getURL().toExternalForm(),null);
+		versionId = new VersionedIdentifier(getURL().toExternalForm(), null);
 		try {
 			versionId = getFeature().getVersionedIdentifier();
-		} catch (CoreException e){
-			UpdateManagerPlugin.warn("",e);
+		} catch (CoreException e) {
+			UpdateManagerPlugin.warn("", e);
 		}
 		return versionId;
 	}
-	
-	
+
 	/**
 	 * @see org.eclipse.update.core.IFeatureReference#getName()
 	 */
 	public String getName() {
-		if (super.getLabel()!=null) return super.getLabel();
+		if (super.getLabel() != null)
+			return super.getLabel();
 		try {
 			return getFeature().getLabel();
-		} catch (CoreException e){
+		} catch (CoreException e) {
 			return getVersionedIdentifier().toString();
 		}
 	}
@@ -188,15 +197,14 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 	 * @since 2.1
 	 */
 	public String getOS() {
-		if (super.getOS()==null) try {
-			return getFeature().getOS();
-		} catch (CoreException e) {
-			return null;
-		}
+		if (super.getOS() == null)
+			try {
+				return getFeature().getOS();
+			} catch (CoreException e) {
+				return null;
+			}
 		return super.getOS();
 	}
-
-
 
 	/**
 	 * Get optional windowing system specification as a comma-separated string.
@@ -206,15 +214,14 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 	 * @since 2.1
 	 */
 	public String getWS() {
-		if (super.getWS()==null) try {
-			return getFeature().getWS();
-		} catch (CoreException e) {
-			return null;
-		}
+		if (super.getWS() == null)
+			try {
+				return getFeature().getWS();
+			} catch (CoreException e) {
+				return null;
+			}
 		return super.getWS();
 	}
-
-
 
 	/**
 	 * Get optional system architecture specification as a comma-separated string.
@@ -224,15 +231,14 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 	 * @since 2.1
 	 */
 	public String getOSArch() {
-		if (super.getOSArch()==null) try {
-			return getFeature().getOSArch();
-		} catch (CoreException e) {
-			return null;
-		}
+		if (super.getOSArch() == null)
+			try {
+				return getFeature().getOSArch();
+			} catch (CoreException e) {
+				return null;
+			}
 		return super.getOSArch();
 	}
-
-
 
 	/**
 	 * Get optional locale specification as a comma-separated string.
@@ -241,12 +247,13 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 	 * @since 2.1
 	 */
 	public String getNL() {
-		if(super.getNL()==null) try {
-			return getFeature().getNL();
-		} catch (CoreException e) {
-			return null;
-		}
-		return super.getNL(); 
+		if (super.getNL() == null)
+			try {
+				return getFeature().getNL();
+			} catch (CoreException e) {
+				return null;
+			}
+		return super.getNL();
 	}
 
 	/**
@@ -255,14 +262,13 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 	 * @return boolean
 	 */
 	public boolean isPatch() {
-		if (super.getPatch()==null) try {
-			return getFeature().isPatch();
-		} catch (CoreException e) {
-			return false;
-		}
+		if (super.getPatch() == null)
+			try {
+				return getFeature().isPatch();
+			} catch (CoreException e) {
+				return false;
+			}
 		return "true".equalsIgnoreCase(super.getPatch());
 	}
-
-
 
 }
