@@ -122,6 +122,7 @@ public class SyncAllAction extends SyncAction implements IWorkbenchWindowActionD
 	 * @return boolean
 	 */
 	private boolean isSharedWithCVS(IResource resource) throws CVSException {
+		if (!resource.isAccessible()) return false;
 		ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
 		if (cvsResource.isManaged()) return true;
 		if (cvsResource.isFolder() && ((ICVSFolder) cvsResource).isCVSFolder()) return true;
