@@ -35,6 +35,8 @@ public class ReadmeEditorActionBarContributor extends BasicTextEditorActionContr
 	private LabelRetargetAction action3;
 	private EditorAction handler2;
 	private EditorAction handler3;
+	private EditorAction handler4;
+	private EditorAction handler5;
 	private DirtyStateContribution dirtyStateContribution;
 	
 	class EditorAction extends Action {
@@ -88,6 +90,10 @@ public ReadmeEditorActionBarContributor() {
 	handler3.setToolTipText(MessageUtil.getString("Readme_Editor_Action3")); //$NON-NLS-1$
 	WorkbenchHelp.setHelp(action3, IReadmeConstants.EDITOR_ACTION3_CONTEXT);
 
+	handler4 = new EditorAction(MessageUtil.getString("Editor_Action4")); //$NON-NLS-1$
+	handler5 = new EditorAction(MessageUtil.getString("Editor_Action5")); //$NON-NLS-1$
+	handler5.setToolTipText(MessageUtil.getString("Readme_Editor_Action5")); //$NON-NLS-1$
+
 	dirtyStateContribution = new DirtyStateContribution();
 }
 /** (non-Javadoc)
@@ -139,6 +145,8 @@ public void init(IActionBars bars) {
 	super.init(bars);
 	bars.setGlobalActionHandler(IReadmeConstants.RETARGET2, handler2);
 	bars.setGlobalActionHandler(IReadmeConstants.LABELRETARGET3, handler3);
+	bars.setGlobalActionHandler(IReadmeConstants.ACTION_SET_RETARGET4, handler4);
+	bars.setGlobalActionHandler(IReadmeConstants.ACTION_SET_LABELRETARGET5, handler5);
 }
 
 /** (non-Javadoc)
@@ -157,6 +165,8 @@ public void setActiveEditor(IEditorPart editor) {
 	action1.setActiveEditor(editor);
 	handler2.setActiveEditor(editor);
 	handler3.setActiveEditor(editor);
+	handler4.setActiveEditor(editor);
+	handler5.setActiveEditor(editor);
 	dirtyStateContribution.editorChanged(editor);
 }
 }

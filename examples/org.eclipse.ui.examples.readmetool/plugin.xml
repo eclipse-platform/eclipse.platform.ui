@@ -63,6 +63,25 @@
 					name="*.readme">
 			   </selection>
 		   </action>
+		   <action id="org_eclipse_ui_examples_readmetool_readmeRetargetAction"
+			   menubarPath="window/org_eclipse_ui_examples_readmetool/slot1"
+			   toolbarPath="readme"
+			   label="%ReadmeRetargetAction.label"
+			   tooltip="%ReadmeRetargetAction.tooltip"
+			   helpContextId="org.eclipse.ui.examples.readmetool.open_browser_action_context"
+			   icon="icons/basic/ctool16/openbrwsr.gif"
+			   retarget="true">
+		   </action>
+		   <action id="org_eclipse_ui_examples_readmetool_readmeRelabelRetargetAction"
+			   menubarPath="window/org_eclipse_ui_examples_readmetool/slot1"
+			   toolbarPath="readme"
+			   label="%ReadmeRelabelRetargetAction.label"
+			   tooltip="%ReadmeRelabelRetargetAction.tooltip"
+			   helpContextId="org.eclipse.ui.examples.readmetool.open_browser_action_context"
+			   icon="icons/basic/ctool16/openbrwsr.gif"
+			   retarget="true"	
+			   allowLabelUpdate="true">
+		   </action>
 	   </actionSet>
    </extension>
 

@@ -10,6 +10,8 @@ import org.eclipse.jface.action.*;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.ui.model.*;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -33,6 +35,11 @@ public class ReadmeContentOutlinePage extends ContentOutlinePage {
 		private Shell shell;
 		public OutlineAction(String label) {
 			super(label);
+			getTreeViewer().addSelectionChangedListener(new ISelectionChangedListener() {
+				public void selectionChanged(SelectionChangedEvent event) {
+					setEnabled(!event.getSelection().isEmpty());
+				}
+			});
 		}
 		public void setShell(Shell shell) {
 			this.shell = shell;
@@ -84,6 +91,15 @@ public void createControl(Composite parent) {
 	action.setToolTipText(MessageUtil.getString("Readme_Outline_Action3")); //$NON-NLS-1$
 	getSite().getActionBars().setGlobalActionHandler(
 		IReadmeConstants.LABELRETARGET3, 
+		action);  
+	action = new OutlineAction(MessageUtil.getString("Outline_Action4")); //$NON-NLS-1$
+	getSite().getActionBars().setGlobalActionHandler(
+		IReadmeConstants.ACTION_SET_RETARGET4, 
+		action);  
+	action = new OutlineAction(MessageUtil.getString("Outline_Action5")); //$NON-NLS-1$
+	action.setToolTipText(MessageUtil.getString("Readme_Outline_Action5")); //$NON-NLS-1$
+	getSite().getActionBars().setGlobalActionHandler(
+		IReadmeConstants.ACTION_SET_LABELRETARGET5, 
 		action);  
 }
 /**
