@@ -17,8 +17,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.regex.PatternSyntaxException;
 
-import org.eclipse.core.runtime.Platform;
-
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Shell;
 
@@ -33,9 +31,8 @@ import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 import org.eclipse.ui.part.EditorActionBarContributor;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 
 /**
@@ -319,8 +316,7 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 	 * @return the dialog settings to be used
 	 */
 	private IDialogSettings getDialogSettings() {
-		AbstractUIPlugin plugin= (AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
-		IDialogSettings settings= plugin.getDialogSettings();
+		IDialogSettings settings= TextEditorPlugin.getDefault().getDialogSettings();
 		fDialogSettings= settings.getSection(FindReplaceDialog.class.getName());
 		if (fDialogSettings == null)
 			fDialogSettings= settings.addNewSection(FindReplaceDialog.class.getName());

@@ -18,8 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.PatternSyntaxException;
 
-import org.eclipse.core.runtime.Platform;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.ModifyEvent;
@@ -68,7 +66,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.contentassist.ContentAssistHandler;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 
 
@@ -1652,8 +1649,7 @@ class FindReplaceDialog extends Dialog {
 	 * @return the dialog settings to be used
 	 */
 	private IDialogSettings getDialogSettings() {
-		AbstractUIPlugin plugin= (AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
-		IDialogSettings settings= plugin.getDialogSettings();
+		IDialogSettings settings= TextEditorPlugin.getDefault().getDialogSettings();
 		fDialogSettings= settings.getSection(getClass().getName());
 		if (fDialogSettings == null)
 			fDialogSettings= settings.addNewSection(getClass().getName());
