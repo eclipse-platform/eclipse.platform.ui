@@ -40,17 +40,11 @@ import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
 import org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.IConsole;
 
 /**
@@ -174,41 +168,16 @@ public class DebugUITools {
 	 * Returns the currently selected element in the 
 	 * debug view of the current workbench page,
 	 * or <code>null</code> if there is no current
-	 * debug context, or if not called from the UI
-	 * thread.
-	 * 
+	 * debug context.
+	 * <p>
+	 * This method used to return <code>null</code> when called from a non-UI thread,
+	 * but since 3.1, this methods also works when called from a non-UI thread.
+	 * </p>
 	 * @return the currently selected debug context, or <code>null</code>
 	 * @since 2.0
 	 */
 	public static IAdaptable getDebugContext() {
-		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow() ;
-		if (window != null) {
-			IWorkbenchPage page = window.getActivePage();
-			if (page != null) {
-				IWorkbenchPart part = page.findView(IDebugUIConstants.ID_DEBUG_VIEW);
-				if (part != null) {
-					IDebugView view = (IDebugView)part.getAdapter(IDebugView.class);
-					if (view != null) {
-						Viewer viewer = view.getViewer();
-						if (viewer != null) {
-							ISelection s = viewer.getSelection();
-							if (s != null) {
-								if (s instanceof IStructuredSelection) {
-									IStructuredSelection ss = (IStructuredSelection)s;
-									if (ss.size() == 1) {
-										Object element = ss.getFirstElement();
-										if (element instanceof IAdaptable) {
-											return (IAdaptable)element;
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-		return null;
+	    return SelectedResourceManager.getDefault().getDebugContext();
 	}
 
 	/**
