@@ -26,13 +26,13 @@
 <!-- Extension-point for contributing a configuration to a Customizable Intro Part.  -->
 <!--                                                                                 -->
 <!-- =============================================================================== -->
-   <extension-point id="config" name="%config" schema="schema/org.eclipse.ui.intro.config.exsd"/>
+   <extension-point id="config" name="%config" schema="schema/config.exsd"/>
 <!-- ================================================================================= -->
 <!-- Extension point: org.eclipse.ui.intro.configExtension                             -->
 <!-- Extension-point for contributing an extension to an existing intro configuration  -->
 <!--                                                                                   -->
 <!-- ================================================================================= -->
-   <extension-point id="configExtension" name="%configExtension" schema="schema/org.eclipse.ui.intro.configExtension.exsd"/>
+   <extension-point id="configExtension" name="%configExtension" schema="schema/configExtension.exsd"/>
    
    <extension
          point="org.eclipse.ui.intro.configExtension">
