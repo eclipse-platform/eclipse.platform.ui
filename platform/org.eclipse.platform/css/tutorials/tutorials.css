@@ -5,46 +5,64 @@ body {
 }
 
 /* show the "selected" image for this page */
-#navigation-links a#tutorials img { background-image : url(../graphics/obj_32/seltutorials_obj.gif); }
+#navigation-links a#tutorials img, #navigation-links a#tutorials:hover img { background-image : url(../graphics/obj_32/seltutorials_obj.gif); }
 
 /* 
  * Set up the content of the tutorials page into two
  * columns that are centered in the page
  */
-p #group-description {
-	padding-bottom : 10px;
+
+
+/* a group of tutorial links */
+.tutorials-group {
+	/* To center in Moz (have to use text-align for IE) */
+	margin-left : auto;
+	margin-right : auto;
+	width : 750px;
+	margin-bottom : 30px;
+	float : none;
+	clear : both;
+	text-align : left;
 }
 
-a { 
-	height : 80px;
-	width : 425px;
+.tutorials-link { 
+	width : 360px;
+	height : 5em;
 	text-align : left; 
-	margin-left : 10px;
+	margin-left : 5px;
+	margin-right : 5px;
+	margin-top : 10px;
+	margin-bottom : 10px;
 	float : left;
 }
 
-/* cancel out the indent for the navigation links from above */
-#navigation-links a { margin-left : 0; }
+.tutorials-link img  {
+	height : 57px;
+	width : 57px;
+	vertical-align : middle;
+}
 
-a .link-label {
+.tutorials-group h4 {
+	float : none;
+	clear : both;
+}
+
+p #group-description {
+	padding-bottom : 10px;
+	float : none;
+	clear : both;
+}
+
+.tutorials-link .link-label {
 	position : relative;
 	top : -10px;
 }
 
-/* cancel out the top positioning for the navigation links from above */
-#navigation-links a .link-label { top : 0; }
 
-a p .text {
+.tutorials-link p .text {
 	display : block;
-	margin-left : 50px;
+	margin-left : 53px;
 	margin-top : -20px;
 }
 
-a img {
-	height : 56px;
-	width : 56px;
-	vertical-align : middle;
-}
-
-a:hover { border-right : 5px; }
-
+.tutorials-link:hover { border-right : 0px; }

@@ -7,7 +7,7 @@ body {
 	font-family : Arial;
 }
 
-h1 {
+.intro-header H1 {
 	font-size : 13pt;
 	color : #656A72;
 }
@@ -18,14 +18,18 @@ h2 {
 	color : #7B8694;
 }
 
-p #page-title {
+.page-title {
 	font-size : 12pt;
 	font-weight : bold;
 	color : #8C96A2;
+	float : none;
+	clear : both;
 }
 
-p #page-description { 
+.page-description { 
 	font-size : 10pt;
+	float : none;
+	clear : both;
 }
 
 
@@ -44,7 +48,7 @@ a .text {
 	font-weight : normal;
 }
 
-p #group-description {
+p .group-description {
 	font-size : 10pt;
 	font-weight : normal;
 }
@@ -65,13 +69,18 @@ a {
  */
 html, body, div, h1, h4, p, a { margin : 0px; padding : 0px; }
 
+/*
+ * to get scrollbars working in both IE and Mozilla
+ */
+html,body { overflow: auto; }
+html>body { overflow: visible; }
+
 body {
-	overflow : auto;
 	background-repeat : no-repeat;
 	background-position : bottom right;
 }
 
-h1 { padding-top : 5px; }
+.intro-header p { padding-top : 5px; margin-left : 10px; }
 
 H4 .div-label {
 	padding : 10px;
@@ -83,33 +92,21 @@ a img {
 	background-repeat : no-repeat;
 }
 
-h1 #presentation-title { margin-left : 10px; }
-
-div { overflow : visible; }
-.page-content { overflow : visible; }
 
 /*
- * Set up the body and decorative background for the content pages.
- * Note: the root page must override these settings for its own
- * background and navigation
+ * Set up the body, decorative background, and navigation for the content 
+ * pages. 
+ * Note: the root page handles its own background and navigation; these
+ * settins apply to the content pages
  */
-body {
-	min-width : 850px;
+body, .page, .intro-header, .page-content {
+	min-width : 775px;
 	/* since IE doesn't support min-width, try expression */
-	width:expression(document.body.clientWidth < 850? "850px": "auto" );	
+	width:expression(document.body.clientWidth < 775? "775px": "auto" );	
 }
 
-#presentation-header {
+.intro-header {
 	background-color : #BCCEE4;
-	min-width : 850px;
-	/* since IE doesn't support min-width, try expression */
-	width:expression(document.body.clientWidth < 850? "850px": "auto" );
-}
-
-.page-content {
-	min-width : 850px;
-	/* since IE doesn't support min-width, try expression */
-	width:expression(document.body.clientWidth < 850? "850px": "auto" );
 }
 
 #background-image {
@@ -118,7 +115,7 @@ body {
 	width : 100%;
 	background-image : url(graphics/background/content_background.jpg);
 	background-repeat : repeat-x;
-	text-align : left;
+	text-align : center;
 }
 
 #curve-image {
@@ -126,14 +123,12 @@ body {
 	width : 600px;
 	background-image : url(graphics/background/content_curve.gif);
 	background-repeat : no-repeat;
-	position : relative;
-	left : 50%;
-	margin-left : -300px;
+	margin : 0px auto;
 }
 
 /* 
  * Lay out the navigation links 
- * (Root page overrides many of these settings)
+ * (Root page does something similar for its navigation)
  */
 #navigation-links {
 	position : relative;
@@ -144,14 +139,13 @@ body {
 }
 
 #navigation-links a {
-	width : 70px;
-	height : 60px;
-	position : absolute;
-	top : 0;
+	padding-left : 5px;
+	padding-right : 5px;
+	float : left;
 	text-align : center;
 }
 
-#navigation-links a img, a#workbench a img {
+#navigation-links a img {
 	height : 40px;
 	width : 40px;
 	vertical-align : middle;
@@ -163,49 +157,59 @@ body {
 
 #navigation-links a#workbench .link-label {display : inline; }
 
-#navigation-links a:hover { border-right : 5px; }
+#navigation-links a:hover { border-right : 0px; }
 
 /* properties for each of the navigation-links  */
-a#overview img { background-image : url(graphics/obj_32/overview_obj.gif); }
-a#overview:hover img { background-image : url(graphics/obj_32/hovoverview_obj.gif); }
+#navigation-links a#overview img { background-image : url(graphics/obj_32/overview_obj.gif); }
+#navigation-links a#overview:hover img { background-image : url(graphics/obj_32/hovoverview_obj.gif); }
 
-a#tutorials { left : 55px; }  
-a#tutorials img { background-image : url(graphics/obj_32/tutorials_obj.gif); }
-a#tutorials:hover img { background-image : url(graphics/obj_32/hovtutorials_obj.gif); }
+#navigation-links a#tutorials img { background-image : url(graphics/obj_32/tutorials_obj.gif); }
+#navigation-links a#tutorials:hover img { background-image : url(graphics/obj_32/hovtutorials_obj.gif); }
 
-a#samples { left : 110px; }
-a#samples img { background-image : url(graphics/obj_32/examples_obj.gif); }
-a#samples:hover img { background-image : url(graphics/obj_32/hovexamples_obj.gif); }
+#navigation-links a#samples img { background-image : url(graphics/obj_32/examples_obj.gif); }
+#navigation-links a#samples:hover img { background-image : url(graphics/obj_32/hovexamples_obj.gif); }
 
-a#news { left : 170px; }
-a#news img { background-image : url(graphics/obj_32/whatsnew_obj.gif); }
-a#news:hover img { background-image : url(graphics/obj_32/hovwhatsnew_obj.gif); }
+#navigation-links a#news img { background-image : url(graphics/obj_32/whatsnew_obj.gif); }
+#navigation-links a#news:hover img { background-image : url(graphics/obj_32/hovwhatsnew_obj.gif); }
 
-a#workbench { width : 200px; right : 0px; text-align : left;}
-a#workbench span { display : inline; }
-a#workbench img { background-image : url(graphics/obj_32/workbench_obj.gif); }
-a#workbench:hover img { background-image : url(graphics/obj_32/hovworkbench_obj.gif); }
+#navigation-links a#workbench { position : absolute;  right : 0px; text-align : left;}
+#navigation-links a#workbench span { display : inline; }
+#navigation-links a#workbench .text { display : none; }
+#navigation-links a#workbench img { background-image : url(graphics/obj_32/workbench_obj.gif); width : 40px; height : 41px;}
+#navigation-links a#workbench:hover img { background-image : url(graphics/obj_32/hovworkbench_obj.gif); }
 
 /* 
  * Lay out the page title and description 
  */
-p { margin-left : 10px; } /* required in mozilla so the page description is properly indented */
+h1, p { margin-left : 10px; } /* required in mozilla so the page description is properly indented */
 
-/* don't display the page header, it is generated
- * into the wrong position.  use page-title instead */
-#page-header { display : none; }
-
-p #page-title {
-	position : relative;
-	top : -95px;
-	margin-right : 10px;
+/* position the page content so that the page title overlays the bottom
+ * of the background image, but make sure the content is always on top 
+ * (using z-index) */
+#background-image { z-index : -1; }
+#page-content {
+	float : none;
+	clear : both;
+	text-align : center;
+	margin-top : -95px;
+	z-index : 1;
+}
+/* Fix positioning on Moz 1.4 */
+.page > #page-content {
+	margin-top : -40px;
 }
 
-p #page-description { 
-	margin-right : 10px;
-	position : relative;
-	top : -80px;
-	width : 100%;
+#page-content p { 
+	padding-bottom : 15px; 
+	text-align : left; 
+	float : none;
+	clear : both;
 }
 
+.page-title, .page-description {
+	text-align : left;
+	margin-right : 10px;
+	float : none;
+	clear : both;
+}
 
