@@ -28,6 +28,7 @@ public class CRLFDetectInputStream extends FilterInputStream {
 
 	private boolean previousCR;
 	private String filename;
+	private boolean reported = false;
 
 	protected CRLFDetectInputStream(InputStream in, ICVSFile file) {
 		super(in);
@@ -86,8 +87,10 @@ public class CRLFDetectInputStream extends FilterInputStream {
 	 * Test the byte to see if a CRLF sequence was read
 	 */
 	private void testForCRLF(byte next) {
+		if (reported) return;
 		if (previousCR && next == '\n') {
 			CVSProviderPlugin.log(IStatus.WARNING, Policy.bind("CRLFDetectInputStream.0", filename), null); //$NON-NLS-1$
+			reported = true;
 		}
 		previousCR = (next == '\r');
 	}
