@@ -128,6 +128,14 @@ public abstract class DialogArea {
 		return button;
 	}
 
+	protected Button createRadioButton(Composite parent, String label, int span) {
+		Button button = new Button(parent, SWT.RADIO);
+		button.setText(label);
+		GridData data = new GridData();
+		data.horizontalSpan = span;
+		button.setLayoutData(data);
+		return button;
+	}
 	protected Label createWrappingLabel(Composite parent, String text, int horizontalSpan) {
 		Label label = new Label(parent, SWT.LEFT | SWT.WRAP);
 		label.setText(text);

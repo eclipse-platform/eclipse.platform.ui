@@ -39,10 +39,14 @@ import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
  */
 public class WorkingSetSelectionArea extends DialogArea {
 
+	private Button noWorkingSetButton;
 	private Button workingSetButton;
 	private Combo mruList;
 	private Button selectButton;
 	private IWorkingSet workingSet, oldWorkingSet;
+	
+	private String noWorkingSetText;
+	private String workingSetText;
 	
 	private static final String USE_WORKING_SET = "UseWorkingSet"; //$NON-NLS-1$
 	public static final String SELECTED_WORKING_SET = "SelectedWorkingSet"; //$NON-NLS-1$
@@ -81,9 +85,11 @@ public class WorkingSetSelectionArea extends DialogArea {
 	public WorkingSetSelectionArea(Dialog parentDialog) {
 		super(parentDialog, null);
 	}
-	
-	public WorkingSetSelectionArea(Dialog parentDialog, IDialogSettings settings) {
+		
+	public WorkingSetSelectionArea(Dialog parentDialog, String noWorkingSetText, String workingSetText, IDialogSettings settings) {
 		super(parentDialog, settings);
+		this.noWorkingSetText = noWorkingSetText;
+		this.workingSetText = workingSetText;
 	}
 	
 	/**
@@ -102,18 +108,25 @@ public class WorkingSetSelectionArea extends DialogArea {
 		composite.setLayout(layout);
 
 		// Create the checkbox to enable/disable working set use
-		workingSetButton = createCheckbox(composite, Policy.bind("WorkingSetSelectionArea.workingSet"), 2); //$NON-NLS-1$
+		noWorkingSetButton = createRadioButton(composite, noWorkingSetText, 2);
+		workingSetButton = createRadioButton(composite, workingSetText, 2);
 		workingSetButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				handleWorkingSetButtonSelection();
 			}
 		});
-		if (settings != null)
-			workingSetButton.setSelection(settings.getBoolean(USE_WORKING_SET));
+		
+		boolean useWorkingSet = false;
+		if (settings != null) {
+			useWorkingSet = settings.getBoolean(USE_WORKING_SET);
+		}
+		noWorkingSetButton.setSelection(!useWorkingSet);
+		workingSetButton.setSelection(useWorkingSet);
 
 		// Create the combo/button which allows working set selection
 		mruList = new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY);
 		data = new GridData(GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL | GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_CENTER);
+		data.horizontalIndent=15;
 		mruList.setLayoutData(data);
 		mruList.setFont(composite.getFont());
 		mruList.addSelectionListener(new SelectionAdapter() {

@@ -114,7 +114,7 @@ public class RefreshRemoteProjectSelectionPage extends CVSWizardPage {
 		});
 		listArea.getViewer().setSorter(new RepositorySorter());
 		
-		workingSetArea = new WorkingSetSelectionArea(parentDialog, settings);
+		workingSetArea = new WorkingSetSelectionArea(parentDialog, Policy.bind("RefreshRemoteProjectSelectionPage.noWorkingSet"), Policy.bind("RefreshRemoteProjectSelectionPage.workingSet"), settings); //$NON-NLS-1$ //$NON-NLS-2$
 		setWorkingSet(workingSet);
 		workingSetArea.addPropertyChangeListener(new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {

@@ -75,6 +75,15 @@ public class SynchronizeProjectsDialog extends Dialog {
 		composite.setFont(font);
 		
 		createLabel(composite, Policy.bind("SynchronizeProjectsDialog.description")); //$NON-NLS-1$
+			
+		workingSetArea = new WorkingSetSelectionArea(this, Policy.bind("SynchronizeProjectsDialog.allSharedProjects"), Policy.bind("SynchronizeProjectsDialog.sharedWorkingSetProjects"), settings); //$NON-NLS-1$ //$NON-NLS-2$
+		setWorkingSet(workingSet);
+		workingSetArea.addPropertyChangeListener(new IPropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent event) {
+				workingSet = (IWorkingSet)event.getNewValue();
+			}
+		});
+		workingSetArea.createArea(composite);
 		
 		// Create the checkbox to enable/disable working set use
 		outgoingChangesButton = createCheckbox(composite, Policy.bind("SynchronizeProjectsDialog.syncOutgoingChanges")); //$NON-NLS-1$
@@ -87,15 +96,6 @@ public class SynchronizeProjectsDialog extends Dialog {
 			syncOutgoingChanges = settings.getBoolean(SYNC_OUTGOING_CHANGES);
 			outgoingChangesButton.setSelection(syncOutgoingChanges);
 		}
-			
-		workingSetArea = new WorkingSetSelectionArea(this, settings);
-		setWorkingSet(workingSet);
-		workingSetArea.addPropertyChangeListener(new IPropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent event) {
-				workingSet = (IWorkingSet)event.getNewValue();
-			}
-		});
-		workingSetArea.createArea(composite);
 		
 		// F1 Help
 		WorkbenchHelp.setHelp(composite, IHelpContextIds.SYNCHRONIZE_PROJECTS_DIALOG);
