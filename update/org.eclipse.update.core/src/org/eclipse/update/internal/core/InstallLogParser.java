@@ -13,6 +13,8 @@ package org.eclipse.update.internal.core;
 
 import java.io.*;
 import java.net.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
@@ -201,7 +203,13 @@ public class InstallLogParser {
 			long activityTime = Long.parseLong(time);
 			a.setDate(new Date(activityTime));
 		} catch (NumberFormatException e) {
-			a.setDate(new Date(date));
+			//PAL foundation
+			//a.setDate(new Date(date));
+			try {
+				a.setDate(new SimpleDateFormat().parse(date));
+			} catch (ParseException e1) {
+				//ignore
+			}
 		}
 		a.setStatus(SUCCESS.equals(status) ? IActivity.STATUS_OK : IActivity.STATUS_NOK);
 		a.setLabel(target);

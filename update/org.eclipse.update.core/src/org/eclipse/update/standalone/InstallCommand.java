@@ -16,6 +16,7 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.internal.configurator.UpdateURLDecoder;
 import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.internal.search.*;
@@ -55,7 +56,8 @@ public class InstallCommand extends ScriptedCommand {
 			this.featureId = featureId;
 			this.version = version;
 
-			this.remoteSiteURL = new URL(URLDecoder.decode(fromSite, "UTF-8")); //$NON-NLS-1$
+			//PAL foundation
+			this.remoteSiteURL = new URL(UpdateURLDecoder.decode(fromSite, "UTF-8")); //$NON-NLS-1$
 
 			// Get site to install to
 			IConfiguredSite[] sites = getConfiguration().getConfiguredSites();

@@ -14,6 +14,7 @@ import java.net.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.internal.configurator.UpdateURLDecoder;
 import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.search.*;
 import org.eclipse.update.search.*;
@@ -36,7 +37,8 @@ public class SearchCommand extends ScriptedCommand {
 
 	public SearchCommand(String fromSite) {
 		try {
-			this.remoteSiteURL = new URL(URLDecoder.decode(fromSite, "UTF-8")); //$NON-NLS-1$
+			//PAL foundation
+			this.remoteSiteURL = new URL(UpdateURLDecoder.decode(fromSite, "UTF-8")); //$NON-NLS-1$
 			UpdateSearchScope searchScope = new UpdateSearchScope();
 			searchScope.addSearchSite(
 				"remoteSite", //$NON-NLS-1$

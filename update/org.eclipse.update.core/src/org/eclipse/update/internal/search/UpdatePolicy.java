@@ -18,6 +18,7 @@ import javax.xml.parsers.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.internal.configurator.UpdateURLDecoder;
 import org.eclipse.update.internal.core.*;
 import org.eclipse.update.search.*;
 import org.w3c.dom.*;
@@ -246,7 +247,8 @@ public class UpdatePolicy {
 		}
 
 		try {
-			String decodedValue = URLDecoder.decode(urlName, "UTF-8"); //$NON-NLS-1$
+			//PAL foundation
+			String decodedValue = UpdateURLDecoder.decode(urlName, "UTF-8"); //$NON-NLS-1$
 			URL url = new URL(decodedValue);
 			addUpdateEntry(pattern, url, type);
 		} catch (MalformedURLException e) {

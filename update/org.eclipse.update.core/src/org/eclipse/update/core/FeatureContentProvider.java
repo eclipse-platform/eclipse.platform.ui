@@ -227,7 +227,9 @@ public abstract class FeatureContentProvider
 						// get output stream to append to file fragment
 						os =
 							new BufferedOutputStream(
-								new FileOutputStream(localFile, true));
+								// PAL foundation
+								//new FileOutputStream(localFile, true));
+								new FileOutputStream(localFile.getPath(), true));
 					} catch (IOException e) {
 						try {
 							if (is != null)

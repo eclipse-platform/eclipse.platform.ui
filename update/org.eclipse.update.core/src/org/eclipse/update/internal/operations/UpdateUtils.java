@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
+import org.eclipse.update.internal.configurator.UpdateURLDecoder;
 import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.search.*;
 import org.eclipse.update.operations.*;
@@ -508,7 +509,8 @@ public class UpdateUtils {
 		String mapFile = pref.getString(UpdateUtils.P_UPDATE_POLICY_URL);
 		if (mapFile!=null && mapFile.length()>0) {
 			try {
-				String decodedFile = URLDecoder.decode(mapFile, "UTF-8"); //$NON-NLS-1$
+				//PAL foundation
+				String decodedFile = UpdateURLDecoder.decode(mapFile, "UTF-8"); //$NON-NLS-1$
 				return new URL(decodedFile);
 			}
 			catch (MalformedURLException e) {
