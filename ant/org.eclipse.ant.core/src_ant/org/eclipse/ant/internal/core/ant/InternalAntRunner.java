@@ -923,7 +923,7 @@ public class InternalAntRunner {
 		String[] args= getArgument(commands, "-propertyfile"); //$NON-NLS-1$
 		while(args != null) {
 			if (args.length == 0) {
-				String message= InternalAntMessages.getString(InternalAntMessages.getString("InternalAntRunner.You_must_specify_a_property_filename_when_using_the_-propertyfile_argument_3")); //$NON-NLS-1$
+				String message= InternalAntMessages.getString("InternalAntRunner.You_must_specify_a_property_filename_when_using_the_-propertyfile_argument_3"); //$NON-NLS-1$
 				logMessage(currentProject, message, Project.MSG_ERR); 
 				throw new BuildException(message);
 			} 
