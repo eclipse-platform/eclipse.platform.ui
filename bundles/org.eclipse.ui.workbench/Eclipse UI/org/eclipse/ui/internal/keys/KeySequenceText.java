@@ -35,6 +35,7 @@ import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.KeyStroke;
 import org.eclipse.ui.keys.NaturalKey;
 import org.eclipse.ui.keys.ParseException;
+import org.eclipse.ui.keys.SpecialKey;
 
 /**
  * A wrapper around the SWT text widget that traps literal key presses and
@@ -226,6 +227,13 @@ public final class KeySequenceText {
 			// Compute the key stroke to insert.
 			int key = KeySupport.convertEventToUnmodifiedAccelerator(event);
 			KeyStroke stroke = KeySupport.convertAcceleratorToKeyStroke(key);
+			
+			/* Only insert the stroke if it is *not* NumLock.  Let's not get 
+			 * silly
+			 */
+			if (SpecialKey.NUM_LOCK.equals(stroke.getNaturalKey())) {
+				return;
+			}
 
 			if (insertionIndex != -1) {
 				// There is a previous replacement still going on.

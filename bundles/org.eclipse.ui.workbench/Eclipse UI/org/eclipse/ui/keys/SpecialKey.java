@@ -142,6 +142,96 @@ public final class SpecialKey extends NaturalKey {
 	 * The name of the 'Insert' key.
 	 */
 	private final static String INSERT_NAME = "INSERT"; //$NON-NLS-1$
+	
+	/**
+	 * The name of the 'NumLock' key.
+	 */
+	private final static String NUM_LOCK_NAME = "NUM_LOCK"; //$NON-NLS-1$
+
+	/**
+	 * The name of the '0' key on the numpad.
+	 */
+	private final static String NUMPAD_0_NAME = "NUMPAD_0"; //$NON-NLS-1$
+
+	/**
+	 * The name of the '1' key on the numpad.
+	 */
+	private final static String NUMPAD_1_NAME = "NUMPAD_1"; //$NON-NLS-1$
+
+	/**
+	 * The name of the '2' key on the numpad.
+	 */
+	private final static String NUMPAD_2_NAME = "NUMPAD_2"; //$NON-NLS-1$
+
+	/**
+	 * The name of the '3' key on the numpad.
+	 */
+	private final static String NUMPAD_3_NAME = "NUMPAD_3"; //$NON-NLS-1$
+
+	/**
+	 * The name of the '4' key on the numpad.
+	 */
+	private final static String NUMPAD_4_NAME = "NUMPAD_4"; //$NON-NLS-1$
+
+	/**
+	 * The name of the '5' key on the numpad.
+	 */
+	private final static String NUMPAD_5_NAME = "NUMPAD_5"; //$NON-NLS-1$
+
+	/**
+	 * The name of the '6' key on the numpad.
+	 */
+	private final static String NUMPAD_6_NAME = "NUMPAD_6"; //$NON-NLS-1$
+
+	/**
+	 * The name of the '7' key on the numpad.
+	 */
+	private final static String NUMPAD_7_NAME = "NUMPAD_7"; //$NON-NLS-1$
+
+	/**
+	 * The name of the '8' key on the numpad.
+	 */
+	private final static String NUMPAD_8_NAME = "NUMPAD_8"; //$NON-NLS-1$
+
+	/**
+	 * The name of the '9' key on the numpad.
+	 */
+	private final static String NUMPAD_9_NAME = "NUMPAD_9"; //$NON-NLS-1$
+
+	/**
+	 * The name of the 'Add' key on the numpad.
+	 */
+	private final static String NUMPAD_ADD_NAME = "NUMPAD_ADD"; //$NON-NLS-1$
+
+	/**
+	 * The name of the 'Decimal' key on the numpad.
+	 */
+	private final static String NUMPAD_DECIMAL_NAME = "NUMPAD_DECIMAL"; //$NON-NLS-1$
+
+	/**
+	 * The name of the 'Divide' key on the numpad.
+	 */
+	private final static String NUMPAD_DIVIDE_NAME = "NUMPAD_DIVIDE"; //$NON-NLS-1$
+
+	/**
+	 * The name of the 'Enter' key on the numpad.
+	 */
+	private final static String NUMPAD_ENTER_NAME = "NUMPAD_ENTER"; //$NON-NLS-1$
+
+	/**
+	 * The name of the '=' key on the numpad.
+	 */
+	private final static String NUMPAD_EQUAL_NAME = "NUMPAD_EQUAL"; //$NON-NLS-1$
+
+	/**
+	 * The name of the 'Multiply' key on the numpad.
+	 */
+	private final static String NUMPAD_MULTIPLY_NAME = "NUMPAD_MULTIPLY"; //$NON-NLS-1$
+
+	/**
+	 * The name of the 'Subtract' key on the numpad.
+	 */
+	private final static String NUMPAD_SUBTRACT_NAME = "NUMPAD_SUBTRACT"; //$NON-NLS-1$
 
 	/**
 	 * The name of the 'Page Down' key.
@@ -288,6 +378,119 @@ public final class SpecialKey extends NaturalKey {
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
+	 * the 'NumLock' key.
+	 */
+	public final static SpecialKey NUM_LOCK = new SpecialKey(NUM_LOCK_NAME);
+
+	/**
+	 * The single static instance of <code>SpecialKey</code> which represents
+	 * the '0' key on the numpad.
+	 */
+	public final static SpecialKey NUMPAD_0 = new SpecialKey(NUMPAD_0_NAME);
+
+	/**
+	 * The single static instance of <code>SpecialKey</code> which represents
+	 * the '1' key on the numpad.
+	 */
+	public final static SpecialKey NUMPAD_1 = new SpecialKey(NUMPAD_1_NAME);
+
+	/**
+	 * The single static instance of <code>SpecialKey</code> which represents
+	 * the '2' key on the numpad.
+	 */
+	public final static SpecialKey NUMPAD_2 = new SpecialKey(NUMPAD_2_NAME);
+
+	/**
+	 * The single static instance of <code>SpecialKey</code> which represents
+	 * the '3' key on the numpad.
+	 */
+	public final static SpecialKey NUMPAD_3 = new SpecialKey(NUMPAD_3_NAME);
+
+	/**
+	 * The single static instance of <code>SpecialKey</code> which represents
+	 * the '4' key on the numpad.
+	 */
+	public final static SpecialKey NUMPAD_4 = new SpecialKey(NUMPAD_4_NAME);
+
+	/**
+	 * The single static instance of <code>SpecialKey</code> which represents
+	 * the '5' key on the numpad.
+	 */
+	public final static SpecialKey NUMPAD_5 = new SpecialKey(NUMPAD_5_NAME);
+
+	/**
+	 * The single static instance of <code>SpecialKey</code> which represents
+	 * the '6' key on the numpad.
+	 */
+	public final static SpecialKey NUMPAD_6 = new SpecialKey(NUMPAD_6_NAME);
+
+	/**
+	 * The single static instance of <code>SpecialKey</code> which represents
+	 * the '7' key on the numpad.
+	 */
+	public final static SpecialKey NUMPAD_7 = new SpecialKey(NUMPAD_7_NAME);
+
+	/**
+	 * The single static instance of <code>SpecialKey</code> which represents
+	 * the '8' key on the numpad.
+	 */
+	public final static SpecialKey NUMPAD_8 = new SpecialKey(NUMPAD_8_NAME);
+
+	/**
+	 * The single static instance of <code>SpecialKey</code> which represents
+	 * the '9' key on the numpad.
+	 */
+	public final static SpecialKey NUMPAD_9 = new SpecialKey(NUMPAD_9_NAME);
+
+	/**
+	 * The single static instance of <code>SpecialKey</code> which represents
+	 * the 'Add' key on the numpad.
+	 */
+	public final static SpecialKey NUMPAD_ADD = new SpecialKey(NUMPAD_ADD_NAME);
+
+	/**
+	 * The single static instance of <code>SpecialKey</code> which represents
+	 * the 'Decimal' key on the numpad.
+	 */
+	public final static SpecialKey NUMPAD_DECIMAL =
+		new SpecialKey(NUMPAD_DECIMAL_NAME);
+
+	/**
+	 * The single static instance of <code>SpecialKey</code> which represents
+	 * the 'Divide' key on the numpad.
+	 */
+	public final static SpecialKey NUMPAD_DIVIDE =
+		new SpecialKey(NUMPAD_DIVIDE_NAME);
+
+	/**
+	 * The single static instance of <code>SpecialKey</code> which represents
+	 * the 'Enter' key on the numpad.
+	 */
+	public final static SpecialKey NUMPAD_ENTER =
+		new SpecialKey(NUMPAD_ENTER_NAME);
+	/**
+	 * The single static instance of <code>SpecialKey</code> which represents
+	 * the '=' key on the numpad.
+	 */
+	public final static SpecialKey NUMPAD_EQUAL =
+	new SpecialKey(NUMPAD_EQUAL_NAME);
+
+	/**
+	 * The single static instance of <code>SpecialKey</code> which represents
+	 * the 'Multiply' key on the numpad.
+	 */
+	public final static SpecialKey NUMPAD_MULTIPLY =
+		new SpecialKey(NUMPAD_MULTIPLY_NAME);
+
+	/**
+	 * The single static instance of <code>SpecialKey</code> which represents
+	 * the 'Subtract' key on the numpad.
+	 */
+	public final static SpecialKey NUMPAD_SUBTRACT =
+		new SpecialKey(NUMPAD_SUBTRACT_NAME);
+
+	/**
+	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'Page Down' key.
 	 */
 	public final static SpecialKey PAGE_DOWN = new SpecialKey(PAGE_DOWN_NAME);
@@ -315,6 +518,11 @@ public final class SpecialKey extends NaturalKey {
 		super(name);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.keys.Key#format()
+	 */
 	public String format() {
 		// TODO consider platform-specific resource bundles.
 		if ("carbon".equals(SWT.getPlatform())) { //$NON-NLS-1$    	
