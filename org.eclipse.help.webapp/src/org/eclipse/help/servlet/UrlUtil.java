@@ -60,6 +60,9 @@ public class UrlUtil {
 		}
 		return os.toByteArray();
 	}
+	/**
+	 * Decodes strings encoded with Javascript 1.3 escape
+	 */
 	private static String unescape(String encodedURL) {
 		int len = encodedURL.length();
 		StringBuffer buf = new StringBuffer();
@@ -121,16 +124,45 @@ public class UrlUtil {
 	 * request.getParameter() returns incorrect string
 	 * for non ASCII queries encoded from UTF-8 bytes
 	 */
-	public static String getRequestParameter(HttpServletRequest request, String parameterName){
-		String query=request.getQueryString();
-		if(query==null)
+	public static String getRequestParameter(
+		HttpServletRequest request,
+		String parameterName) {
+		String query = request.getQueryString();
+		if (query == null)
 			return null;
-		int start=query.indexOf(parameterName+"=")+parameterName.length()+1;
-		if(start<0)
+		int start = query.indexOf(parameterName + "=") + parameterName.length() + 1;
+		if (start < 0)
 			return null;
-		int end=query.indexOf("&", start);
-		if(end<=0)
-			end=query.length();
+		int end = query.indexOf("&", start);
+		if (end <= 0)
+			end = query.length();
 		return UrlUtil.decode(query.substring(start, end));
 	}
+	/**
+	 * Encodes string for embedding in JavaScript source
+	 */
+	public static String JavaScriptEncode(String str) {
+		char[] wordChars = new char[str.length()];
+		str.getChars(0, str.length(), wordChars, 0);
+		StringBuffer jsEncoded = new StringBuffer();
+		for (int j = 0; j < wordChars.length; j++) {
+			String charInHex = Integer.toString((int) wordChars[j], 16).toUpperCase();
+			switch (charInHex.length()) {
+				case 1 :
+					jsEncoded.append("\\u000").append(charInHex);
+					break;
+				case 2 :
+					jsEncoded.append("\\u00").append(charInHex);
+					break;
+				case 3 :
+					jsEncoded.append("\\u0").append(charInHex);
+					break;
+				default :
+					jsEncoded.append("\\u").append(charInHex);
+					break;
+			}
+		}
+		return jsEncoded.toString();
+	}
+
 }
