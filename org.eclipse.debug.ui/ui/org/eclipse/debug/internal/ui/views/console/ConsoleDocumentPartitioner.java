@@ -774,7 +774,7 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 	}
 	
 	/**
-	 * System out or System error has had text append to it.
+	 * The stream with the given identifier has had text append to it.
 	 * Adds a new entry to the queue.
 	 */
 	protected void streamAppended(String text, String streamIdentifier) {
@@ -782,7 +782,7 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 	}
 	
 	/**
-	 * System out or System error has been closed.
+	 * The stream with the given identifier has been closed.
 	 * Adds a new "stream closed" entry to the queue.
 	 */
 	protected void streamClosed(String streamIdentifier) {
