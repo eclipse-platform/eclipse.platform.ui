@@ -185,11 +185,11 @@
     </extension>
 	
 	<extension point="org.eclipse.debug.ui.consoleColorProviders">
-		<consoleContentProvider 
+		<consoleColorProvider 
 			id="org.eclipse.ant.consoleColorProvider" 
 			class="org.eclipse.ant.ui.internal.launchConfigurations.AntConsoleColorProvider"
 			processType="org.eclipse.ant.ui.antProcess">
-		</consoleContentProvider>
+		</consoleColorProvider>
 	</extension>
 	
 	<extension point="org.eclipse.debug.core.launchConfigurationTypes">
