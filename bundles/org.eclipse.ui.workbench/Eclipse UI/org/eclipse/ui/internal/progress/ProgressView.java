@@ -4,6 +4,7 @@ import java.util.Iterator;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -11,10 +12,14 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.internal.progress.ProgressMessages;
 
 public class ProgressView extends ViewPart implements IViewPart {
 
 	ProgressTreeViewer viewer;
+	private Action cancelAction;
+	private Action deleteAction;
+	private Action showErrorAction;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
@@ -26,6 +31,7 @@ public class ProgressView extends ViewPart implements IViewPart {
 				SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setUseHashlookup(true);
 		viewer.setSorter(getViewerSorter());
+
 		initContentProvider();
 		initLabelProvider();
 		initContextMenu();
@@ -36,7 +42,6 @@ public class ProgressView extends ViewPart implements IViewPart {
 	 * @see org.eclipse.ui.IWorkbenchPart#setFocus()
 	 */
 	public void setFocus() {
-		// XXX Auto-generated method stub
 
 	}
 	/**
@@ -65,59 +70,31 @@ public class ProgressView extends ViewPart implements IViewPart {
 
 		Menu menu = menuMgr.createContextMenu(viewer.getTree());
 
-		menuMgr.add(new Action(ProgressMessages.getString("ProgressView.CancelAction")) { //$NON-NLS-1$
-			/* (non-Javadoc)
-			 * @see org.eclipse.jface.action.Action#run()
-			 */
-			public void run() {
-				IStructuredSelection selection = getSelection();
-				Iterator items = selection.iterator();
-				while (items.hasNext()) {
-					JobTreeElement element = (JobTreeElement) items.next();
-					if (element.isJobInfo()) {
-						JobInfo info = (JobInfo) element;
-						int code = info.getStatus().getCode();
-						if (code == JobInfo.PENDING_STATUS
-							|| code == JobInfo.RUNNING_STATUS)
-							info.getJob().cancel();
-					}
+		createCancelAction();
+		createDeleteAction();
+		createShowErrorAction();
+		menuMgr.add(cancelAction);
+		menuMgr.add(deleteAction);
+		menuMgr.add(showErrorAction);
+
+		menuMgr.addMenuListener(new IMenuListener() {
+			public void menuAboutToShow(IMenuManager manager) {
+				cancelAction.setEnabled(false);
+				deleteAction.setEnabled(false);
+				showErrorAction.setEnabled(false);
+				JobInfo info = getSelectedInfo();
+				if (info == null) {
+					return;
 				}
-			}
-
-			/* (non-Javadoc)
-			 * @see org.eclipse.jface.action.Action#isEnabled()
-			 */
-			public boolean isEnabled() {
-				return isJobInfoOfType(JobInfo.PENDING_STATUS);
-			}
-		});
-
-		menuMgr.add(new Action(ProgressMessages.getString("ProgressView.DeleteAction")) { //$NON-NLS-1$
-			/* (non-Javadoc)
-			 * @see org.eclipse.jface.action.Action#run()
-			 */
-			public void run() {
-				IStructuredSelection selection = getSelection();
-				Iterator items = selection.iterator();
-				while (items.hasNext()) {
-					JobTreeElement element = (JobTreeElement) items.next();
-					if (element.isJobInfo()) {
-						JobInfo info = (JobInfo) element;
-						if (info.getStatus().getCode() == IStatus.ERROR)
-							(
-								(ProgressContentProvider) viewer
-									.getContentProvider())
-									.clearJob(
-								info.getJob());
-					}
+				int code = info.getStatus().getCode();
+				if (code == JobInfo.PENDING_STATUS
+					|| code == JobInfo.RUNNING_STATUS)
+					cancelAction.setEnabled(true);
+				else if (code == IStatus.ERROR) {
+					deleteAction.setEnabled(true);
+					showErrorAction.setEnabled(true);
 				}
-			}
 
-			/* (non-Javadoc)
-			 * @see org.eclipse.jface.action.Action#isEnabled()
-			 */
-			public boolean isEnabled() {
-				return isJobInfoOfType(IStatus.ERROR);
 			}
 		});
 
@@ -146,21 +123,20 @@ public class ProgressView extends ViewPart implements IViewPart {
 	}
 
 	/**
-	 * Return whether or not the current selection is a single JobInfo
-	 * whose status has a code equal to type.
-	 * @param code
+	 * Get the currently selected job info. Only return 
+	 * it if it is the only item selected and it is a
+	 * JobInfo.
 	 * @return
 	 */
-	private boolean isJobInfoOfType(int code) {
-
+	private JobInfo getSelectedInfo() {
 		IStructuredSelection selection = getSelection();
 		if (selection != null && selection.size() == 1) {
 			JobTreeElement element =
 				(JobTreeElement) selection.getFirstElement();
 			if (element.isJobInfo())
-				return ((JobInfo) element).getStatus().getCode() == code;
+				return (JobInfo) element;
 		}
-		return false;
+		return null;
 
 	}
 
@@ -174,20 +150,67 @@ public class ProgressView extends ViewPart implements IViewPart {
 			 * @see org.eclipse.jface.viewers.ViewerSorter#compare(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 			 */
 			public int compare(Viewer viewer, Object e1, Object e2) {
-				JobTreeElement element1 = (JobTreeElement) e1;
-				JobTreeElement element2 = (JobTreeElement) e2;
+				return ((JobTreeElement) e1).compareTo((JobTreeElement) e2);
+			}
+		};
+	}
 
-				if (element1.isJobInfo() && element2.isJobInfo()) {
-					IStatus status1 = ((JobInfo) element1).getStatus();
-					IStatus status2 = ((JobInfo) element1).getStatus();
-					int difference = status1.getCode() - status2.getCode();
-					if (difference != 0)
-						return difference;
-				}
-				return element1.getDisplayString().compareTo(
-					element2.getDisplayString());
+	/**
+	 * Create the cancel action for the receiver.
+	 * @return Action
+	 */
+	private void createCancelAction() {
+			cancelAction = new Action(ProgressMessages.getString("ProgressView.CancelAction")) {//$NON-NLS-1$
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.Action#run()
+	 */
+			public void run() {
+				JobInfo element = getSelectedInfo();
+				element.getJob().cancel();
 
 			}
+
+		};
+	}
+
+	/**
+	 * Create the delete action for the receiver.
+	 * @return Action
+	 */
+	private void createDeleteAction() {
+			deleteAction = new Action(ProgressMessages.getString("ProgressView.DeleteAction")) {//$NON-NLS-1$
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.Action#run()
+	 */
+			public void run() {
+				JobInfo element = getSelectedInfo();
+				(
+					(ProgressContentProvider) viewer
+						.getContentProvider())
+						.clearJob(
+					element.getJob());
+			}
+		};
+	}
+
+	/**
+	 * Create the show error action for the receiver.
+	 * @return Action
+	 */
+	private void createShowErrorAction() {
+			showErrorAction = new Action(ProgressMessages.getString("ProgressView.ShowErrorAction")) {//$NON-NLS-1$
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.Action#run()
+	 */
+			public void run() {
+				JobInfo element = getSelectedInfo();
+				ErrorDialog.openError(
+					viewer.getControl().getShell(),
+					element.getDisplayString(),
+					element.getStatus().getMessage(),
+					element.getStatus());
+			}
+
 		};
 	}
 }

@@ -37,14 +37,14 @@ class SubTaskInfo extends JobTreeElement {
 	Object[] getChildren() {
 		return new Object[0];
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.progress.JobTreeElement#getDisplayString()
 	 */
 	String getDisplayString() {
 		return taskName;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.progress.JobTreeElement#hasChildren()
 	 */
@@ -59,14 +59,14 @@ class SubTaskInfo extends JobTreeElement {
 	void setTaskName(String name) {
 		this.taskName = name;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.progress.JobTreeElement#getParent()
 	 */
 	Object getParent() {
 		return job;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.progress.JobTreeElement#isJobInfo()
 	 */
@@ -74,4 +74,10 @@ class SubTaskInfo extends JobTreeElement {
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
+	public int compareTo(Object arg0) {
+		return taskName.compareTo(((SubTaskInfo) arg0).taskName);
+	}
 }

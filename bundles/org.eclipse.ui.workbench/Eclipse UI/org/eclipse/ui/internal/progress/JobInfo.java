@@ -31,13 +31,13 @@ class JobInfo extends JobTreeElement {
 	static int PENDING_STATUS = 1;
 	static int DONE_STATUS = 2;
 	//	IStatus.ERROR = 4 so we keep our constants lower for sorting
-	
+
 	/**
 	 * Create a new status for the supplied job with the
 	 * code.
 	 * @param code. One of RUNNING_STATUS, PENDING_STATUS,
 	 *  DONE_STATUS or IStatus.ERROR.
- 	 * @param Job
+		 * @param Job
 	 */
 	private static IStatus createStatus(int code, Job job) {
 		return new Status(
@@ -184,5 +184,16 @@ class JobInfo extends JobTreeElement {
 	 */
 	boolean isJobInfo() {
 		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
+	public int compareTo(Object arg0) {
+		JobInfo element = (JobInfo) arg0;
+		if (element.getStatus() == getStatus())
+			return getJob().getName().compareTo(getJob().getName());
+		else //Lower codes are shown higher (@see static fields)
+			return getStatus().getCode() - element.getStatus().getCode();
 	}
 }

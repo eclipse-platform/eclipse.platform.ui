@@ -14,7 +14,7 @@ package org.eclipse.ui.internal.progress;
  * The JobTreeElement is the abstract superclass of items
  * displayed in the tree.
  */
-abstract class JobTreeElement {
+abstract class JobTreeElement implements Comparable{
 
 	/**
 	 * Return the parent of this object.
