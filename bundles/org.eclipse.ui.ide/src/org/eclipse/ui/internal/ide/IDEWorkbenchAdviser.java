@@ -673,7 +673,7 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.application.WorkbenchAdviser
 	 */
-	public String getInitialWindowPerspectiveId(IWorkbenchWindowConfigurer configurer) {
+	public String getInitialWindowPerspectiveId() {
 		int index = PlatformUI.getWorkbench().getWorkbenchWindowCount() - 1;
 		
 		String perspectiveId = null;
