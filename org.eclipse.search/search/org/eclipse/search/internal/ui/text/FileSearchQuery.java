@@ -107,7 +107,7 @@ public class FileSearchQuery implements ISearchQuery {
 			String[] args= new String[] { fSearchString, String.valueOf(nMatches), fScope.getDescription() }; //$NON-NLS-1$
 			return SearchMessages.getFormattedString("FileSearchQuery.pluralPattern", args); //$NON-NLS-1$;
 		}
-		String[] args= new String[] { fScope.getExtensionsLabel(), String.valueOf(nMatches), fScope.getDescription() }; //$NON-NLS-1$
+		Object[] args= { fScope.getExtensionsLabel(), new Integer(nMatches), fScope.getDescription() }; //$NON-NLS-1$
 		return SearchMessages.getFormattedString("FileSearchQuery.pluralPattern.fileNameSearch", args); //$NON-NLS-1$;
 	}
 
