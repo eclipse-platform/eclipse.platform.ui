@@ -471,6 +471,8 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
      * presentation.
      */
 	private void lookupEditorInput() {
+		setEditorId(null);
+		setEditorInput(null);
 		Object sourceElement= null;
 		IStackFrame stackFrame= getStackFrame();
 		ILaunch launch = stackFrame.getLaunch();
