@@ -25,6 +25,7 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.*;
+import org.osgi.framework.Bundle;
 
 public class PluginDependencyView extends SpyView implements ISelectionListener {
 
@@ -93,10 +94,10 @@ public class PluginDependencyView extends SpyView implements ISelectionListener 
 	private void buildDependencyGraph() {
 		// Build up the dependency graph (see PluginDependencyGraphNode) so
 		// we have the information readily available for any plug-in.
-		IPluginDescriptor[] plugins = Platform.getPluginRegistry().getPluginDescriptors();
+		Bundle[] plugins = CoreToolsPlugin.getDefault().getContext().getBundles();
 		dependencyGraph = new HashMap();
 		for (int i = 0; i < plugins.length; i++) {
-			IPluginDescriptor descriptor = plugins[i];
+			Bundle descriptor = plugins[i];
 			PluginDependencyGraphNode node = (PluginDependencyGraphNode) dependencyGraph.get(descriptor);
 			if (node == null) {
 				node = new PluginDependencyGraphNode(descriptor);
@@ -104,26 +105,27 @@ public class PluginDependencyView extends SpyView implements ISelectionListener 
 			}
 
 			// Cycle through the prerequisites
-			IPluginPrerequisite[] requires = descriptor.getPluginPrerequisites();
-			for (int j = 0; j < requires.length; j++) {
-				String childId = requires[j].getUniqueIdentifier();
-				IPluginDescriptor childDesc = Platform.getPluginRegistry().getPluginDescriptor(childId);
-				// if the child doesn't exist in the plug-in registry then move to the next child
-				if (childDesc == null)
-					continue;
-
-				// if the child entry is not in the table yet then add it
-				PluginDependencyGraphNode childNode = (PluginDependencyGraphNode) dependencyGraph.get(childDesc);
-				if (childNode == null) {
-					childNode = new PluginDependencyGraphNode(childDesc);
-					dependencyGraph.put(childDesc, childNode);
-				}
-
-				// Add the child to this node's children and set this node as an ancestor
-				// of the child node
-				node.addChild(childNode);
-				childNode.addAncestor(node);
-			}
+// TODO get the state here and use it to build the graph
+//			IPluginPrerequisite[] requires = descriptor.getPluginPrerequisites();
+//			for (int j = 0; j < requires.length; j++) {
+//				String childId = requires[j].getUniqueIdentifier();
+//				IPluginDescriptor childDesc = Platform.getPluginRegistry().getPluginDescriptor(childId);
+//				// if the child doesn't exist in the plug-in registry then move to the next child
+//				if (childDesc == null)
+//					continue;
+//
+//				// if the child entry is not in the table yet then add it
+//				PluginDependencyGraphNode childNode = (PluginDependencyGraphNode) dependencyGraph.get(childDesc);
+//				if (childNode == null) {
+//					childNode = new PluginDependencyGraphNode(childDesc);
+//					dependencyGraph.put(childDesc, childNode);
+//				}
+//
+//				// Add the child to this node's children and set this node as an ancestor
+//				// of the child node
+//				node.addChild(childNode);
+//				childNode.addAncestor(node);
+//			}
 		}
 	}
 

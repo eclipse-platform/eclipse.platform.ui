@@ -17,10 +17,12 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.osgi.framework.stats.ClassloaderStats;
 import org.eclipse.osgi.framework.stats.StatsManager;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.osgi.framework.BundleContext;
 
 public class CoreToolsPlugin extends AbstractUIPlugin {
 	private static CoreToolsPlugin instance;
 	public static String PLUGIN_ID = "org.eclipse.core.tools"; //$NON-NLS-1$
+	private BundleContext context;
 
 	static {
 		if (StatsManager.MONITOR_ACTIVATION)
@@ -58,5 +60,14 @@ public class CoreToolsPlugin extends AbstractUIPlugin {
 	public CoreToolsPlugin() {
 		super();
 		instance = this;
+	}
+	
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
+		this.context = context;
+	}
+
+	public BundleContext getContext() {
+		return context;
 	}
 }

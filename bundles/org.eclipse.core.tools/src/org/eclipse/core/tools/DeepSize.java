@@ -61,18 +61,18 @@ public class DeepSize {
 	static final HashSet ignoreSet = new HashSet();
 	final Map sizes = new HashMap();
 	final Map counts = new HashMap();
-	int size;
+	int byteSize;
 
 	void setIgnoreTypeNames(Set ignore) {
 		ignoreTypeNames = ignore;
 	}
 
 	public void deepSize(Object o) {
-		size += sizeOf(o);
+		byteSize += sizeOf(o);
 	}
 
 	public int getSize() {
-		return size;
+		return byteSize;
 	}
 
 	public Map getSizes() {
@@ -88,12 +88,12 @@ public class DeepSize {
 	}
 
 	Set getDefaultIgnoreTypeNames() {
-		Set ignoreTypeNames = new HashSet();
+		Set ignored = new HashSet();
 		String[] ignore = {"org.eclipse.core.runtime.Plugin", "java.lang.ClassLoader", "org.eclipse.team.internal.ccvs.core.CVSTeamProvider", "org.eclipse.core.internal.events.BuilderPersistentInfo", "org.eclipse.core.internal.resources.Workspace", "org.eclipse.core.internal.events.EventStats"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-6$
 		for (int i = 0; i < ignore.length; i++) {
-			ignoreTypeNames.add(ignore[i]);
+			ignored.add(ignore[i]);
 		}
-		return ignoreTypeNames;
+		return ignored;
 	}
 
 	private void count(Class c, int size) {

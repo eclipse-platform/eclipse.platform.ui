@@ -11,7 +11,6 @@
 package org.eclipse.core.tools.runtime;
 
 import java.util.*;
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.tools.IFlattable;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -72,11 +71,11 @@ public class LoadedClassesViewContentProvider implements ITreeContentProvider, I
 			return null;
 		if (inputElement instanceof Object[]) {
 			Object[] elements = (Object[]) inputElement;
-			if (elements.length == 0 || !(elements[0] instanceof IPluginDescriptor))
+			if (elements.length == 0 || !(elements[0] instanceof BundleStats))
 				return null;
 			Set result = new HashSet(51);
 			for (int i = 0; i < elements.length; i++) {
-				ClassStats[] classes = getClasses(((IPluginDescriptor) elements[i]).getUniqueIdentifier());
+				ClassStats[] classes = getClasses(((BundleStats) elements[i]).getId());
 				result.addAll(Arrays.asList(classes));
 			}
 			return result.toArray(new Object[result.size()]);
@@ -115,7 +114,7 @@ public class LoadedClassesViewContentProvider implements ITreeContentProvider, I
 		Object[] list = (Object[]) newInput;
 		inputNames = new String[list.length];
 		for (int i = 0; i < list.length; i++)
-			inputNames[i] = ((IPluginDescriptor) list[i]).getUniqueIdentifier();
+			inputNames[i] = ((BundleStats) list[i]).getId();
 	}
 
 }

@@ -11,12 +11,10 @@
 package org.eclipse.core.tools.runtime;
 
 import java.text.Collator;
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.tools.ISorter;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.osgi.framework.stats.BundleStats;
-import org.eclipse.osgi.framework.stats.StatsManager;
 
 /**
  * Sorter used in the ActivePluginsView
@@ -42,8 +40,8 @@ public class ActivePluginsViewSorter extends ViewerSorter implements ISorter {
 	 * then by subsequent columns, depending on the column sort order.
 	 */
 	public int compare(Viewer viewer, Object o1, Object o2) {
-		BundleStats plugin1 = StatsManager.getDefault().getPlugin(((IPluginDescriptor) o1).getUniqueIdentifier());
-		BundleStats plugin2 = StatsManager.getDefault().getPlugin(((IPluginDescriptor) o2).getUniqueIdentifier());
+		BundleStats plugin1 = (BundleStats) o1;
+		BundleStats plugin2 = (BundleStats) o2;
 		int[] columnSortOrder = SORT_ORDERS_BY_COLUMN[columnNumber];
 		int result = 0;
 		for (int i = 0; i < columnSortOrder.length; ++i) {
@@ -57,12 +55,12 @@ public class ActivePluginsViewSorter extends ViewerSorter implements ISorter {
 	/**
 	 * Compares two markers, based only on the value of the specified column.
 	 */
-	int compareColumnValue(int columnNumber, BundleStats plugin1, BundleStats plugin2) {
-		VMClassloaderInfo pluginInfo1 = VMClassloaderInfo.getClassloader(plugin1.getPluginId());
-		VMClassloaderInfo pluginInfo2 = VMClassloaderInfo.getClassloader(plugin2.getPluginId());
-		switch (columnNumber) {
+	int compareColumnValue(int column, BundleStats plugin1, BundleStats plugin2) {
+		VMClassloaderInfo pluginInfo1 = VMClassloaderInfo.getClassloader(plugin1.getId());
+		VMClassloaderInfo pluginInfo2 = VMClassloaderInfo.getClassloader(plugin2.getId());
+		switch (column) {
 			case 0 : /* Plugin ID */
-				return collator.compare(plugin1.getPluginId(), plugin2.getPluginId());
+				return collator.compare(plugin1.getId(), plugin2.getId());
 			case 1 : /*Number Of classes loaded */
 				return plugin1.getClassLoadCount() - plugin2.getClassLoadCount();
 			case 2 : /* Total Mem Alloc */

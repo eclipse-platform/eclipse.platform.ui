@@ -11,8 +11,8 @@
 package org.eclipse.core.tools.runtime;
 
 import java.util.*;
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.tools.Policy;
+import org.osgi.framework.Bundle;
 
 /**
  *  This class is used to build up a dependency graph.  The full dependency
@@ -24,7 +24,7 @@ import org.eclipse.core.tools.Policy;
  */
 public class PluginDependencyGraphNode {
 
-	private IPluginDescriptor descriptor = null;
+	private Bundle descriptor = null;
 	private Set children = new HashSet();
 	private Set ancestors = new HashSet();
 
@@ -32,7 +32,7 @@ public class PluginDependencyGraphNode {
 	 * Constructor for this class. Each node is associated with a plug-in so 
 	 * we accept the plug-in descriptor here and keep it around for later use.
 	 */
-	public PluginDependencyGraphNode(IPluginDescriptor descriptor) {
+	public PluginDependencyGraphNode(Bundle descriptor) {
 		this.descriptor = descriptor;
 	}
 
@@ -57,7 +57,7 @@ public class PluginDependencyGraphNode {
 	 * @return the plug-in id
 	 */
 	public String getId() {
-		return descriptor.getUniqueIdentifier();
+		return descriptor.getSymbolicName();
 	}
 
 	/**
@@ -68,7 +68,7 @@ public class PluginDependencyGraphNode {
 		StringBuffer buffer = new StringBuffer();
 
 		// write ID
-		writeln(buffer, 0, Policy.bind("stats.pluginid", descriptor.getUniqueIdentifier())); //$NON-NLS-1$
+		writeln(buffer, 0, Policy.bind("stats.pluginid", descriptor.getSymbolicName())); //$NON-NLS-1$
 
 		// write ancestors
 		if (ancestors.size() == 0) {
@@ -130,7 +130,7 @@ public class PluginDependencyGraphNode {
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("PluginDependencyGraphNode("); //$NON-NLS-1$
-		buffer.append(descriptor.getUniqueIdentifier());
+		buffer.append(descriptor.getSymbolicName());
 		buffer.append(')');
 		return buffer.toString();
 	}

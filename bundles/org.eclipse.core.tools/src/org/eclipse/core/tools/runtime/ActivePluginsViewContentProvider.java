@@ -11,7 +11,6 @@
 package org.eclipse.core.tools.runtime;
 
 import java.util.ArrayList;
-import org.eclipse.core.runtime.*;
 import org.eclipse.core.tools.IFlattable;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -37,47 +36,39 @@ public class ActivePluginsViewContentProvider implements ITreeContentProvider, I
 	}
 
 	public Object[] getChildren(Object element) {
-		if (flat || !(element instanceof IPluginDescriptor))
+		if (flat || !(element instanceof BundleStats))
 			return new Object[0];
-		BundleStats plugin = StatsManager.getDefault().getPlugin(((IPluginDescriptor) element).getUniqueIdentifier());
-		if (plugin == null)
+		if (element == null)
 			return null;
-		ArrayList stats = plugin.getPluginsActivated();
-		Object[] result = new Object[stats.size()];
-		IPluginRegistry registry = Platform.getPluginRegistry();
-		for (int i = 0; i < stats.size(); i++)
-			result[i] = registry.getPluginDescriptor(((BundleStats) stats.get(i)).getPluginId());
-		return result;
+		ArrayList stats = ((BundleStats) element).getBundlesActivated();
+		return stats.toArray(new Object[stats.size()]);
 	}
 
 	public Object getParent(Object element) {
-		if (flat || !(element instanceof IPluginDescriptor))
+		if (flat || !(element instanceof BundleStats))
 			return null;
-		BundleStats plugin = StatsManager.getDefault().getPlugin(((IPluginDescriptor) element).getUniqueIdentifier());
-		if (plugin == null)
+		if (element == null)
 			return null;
-		return Platform.getPluginRegistry().getPluginDescriptor(plugin.getActivatedBy().getPluginId());
+		return ((BundleStats) element).getActivatedBy().getId();
 	}
 
 	public boolean hasChildren(Object element) {
-		if (flat || !(element instanceof IPluginDescriptor))
+		if (flat || !(element instanceof BundleStats))
 			return false;
-		BundleStats plugin = StatsManager.getDefault().getPlugin(((IPluginDescriptor) element).getUniqueIdentifier());
-		return plugin == null ? false : plugin.getPluginsActivated().size() > 0;
+		return element == null ? false : ((BundleStats) element).getBundlesActivated().size() > 0;
 	}
 
 	public Object[] getElements(Object inputElement) {
 		if (!StatsManager.MONITOR_ACTIVATION || inputElement != BundleStats.class)
 			return null;
 
-		BundleStats[] activePlugins = StatsManager.getDefault().getPlugins();
-		IPluginRegistry registry = Platform.getPluginRegistry();
+		BundleStats[] activePlugins = StatsManager.getDefault().getBundles();
 		ArrayList result = new ArrayList(activePlugins.length);
 		for (int i = 0; i < activePlugins.length; i++) {
 			if (flat || activePlugins[i].getActivatedBy() == null)
-				result.add(registry.getPluginDescriptor(activePlugins[i].getPluginId()));
+				result.add(activePlugins[i]);
 		}
-		return result.toArray(new IPluginDescriptor[result.size()]);
+		return result.toArray(new BundleStats[result.size()]);
 	}
 
 }

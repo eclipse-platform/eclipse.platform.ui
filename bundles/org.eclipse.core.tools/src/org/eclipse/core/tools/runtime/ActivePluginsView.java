@@ -12,7 +12,6 @@ package org.eclipse.core.tools.runtime;
 
 import java.util.Arrays;
 import java.util.Iterator;
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.tools.CoreToolsPlugin;
 import org.eclipse.core.tools.TableWithTotalView;
 import org.eclipse.jface.action.*;
@@ -98,9 +97,9 @@ public class ActivePluginsView extends TableWithTotalView {
 			iterator = Arrays.asList(elements).iterator();
 		}
 		for (; iterator.hasNext();) {
-			BundleStats element = StatsManager.getDefault().getPlugin(((IPluginDescriptor) iterator.next()).getUniqueIdentifier());
+			BundleStats element = (BundleStats) iterator.next();
 			if (element != null) {
-				VMClassloaderInfo vmInfo = VMClassloaderInfo.getClassloader(element.getPluginId());
+				VMClassloaderInfo vmInfo = VMClassloaderInfo.getClassloader(element.getId());
 				sumOfClasses += element.getClassLoadCount();
 				sumOfMemoryUsed += (vmInfo.getUsedRAM() + vmInfo.getUsedROM());
 				sumOfMemoryAlloc += (vmInfo.getAllocRAM() + vmInfo.getAllocROM());
@@ -174,8 +173,7 @@ public class ActivePluginsView extends TableWithTotalView {
 			public void run() {
 				try {
 					StackTraceView view = (StackTraceView) getSite().getPage().showView(StackTraceView.VIEW_ID);
-					IPluginDescriptor descriptor = (IPluginDescriptor) ((IStructuredSelection) getViewer().getSelection()).getFirstElement();
-					BundleStats plugin = StatsManager.getDefault().getPlugin(descriptor.getUniqueIdentifier());
+					BundleStats plugin = (BundleStats) ((IStructuredSelection) getViewer().getSelection()).getFirstElement();
 					if (plugin == null)
 						return;
 					view.setInput(StatsManager.TRACE_FILENAME, plugin.getTraceStart(), plugin.getTraceEnd());

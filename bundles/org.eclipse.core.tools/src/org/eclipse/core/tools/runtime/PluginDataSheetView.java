@@ -14,13 +14,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import org.eclipse.core.internal.registry.Extension;
 import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.tools.BaseTextView;
 import org.eclipse.core.tools.DeepSize;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.osgi.framework.stats.ClassloaderStats;
-import org.eclipse.osgi.framework.stats.ResourceBundleStats;
+import org.eclipse.osgi.framework.stats.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
@@ -46,19 +45,19 @@ public class PluginDataSheetView extends BaseTextView implements ISelectionListe
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 		if (selection instanceof IStructuredSelection) {
 			Object first = ((IStructuredSelection) selection).getFirstElement();
-			if (first != null && first instanceof IPluginDescriptor) {
-				viewer.getDocument().set(printStats((IPluginDescriptor) first));
+			if (first != null && first instanceof BundleStats) {
+				viewer.getDocument().set(printStats((BundleStats) first));
 				viewer.refresh();
 			}
 		}
 	}
 
-	private String printStats(IPluginDescriptor descriptor) {
+	private String printStats(BundleStats descriptor) {
 		StringBuffer result = new StringBuffer(200);
-		ClassloaderStats classloader = ClassloaderStats.getLoader(descriptor.getUniqueIdentifier());
+		ClassloaderStats classloader = ClassloaderStats.getLoader(descriptor.getId());
 		printResourceBundleStats(result, classloader == null ? null : classloader.getBundles(), descriptor);
 		result.append('\n');
-		printExtensionLoadingStats(result, descriptor.getExtensions());
+		printExtensionLoadingStats(result, Platform.getExtensionRegistry().getExtensions(descriptor.getId()));
 		return result.toString();
 	}
 
@@ -80,29 +79,30 @@ public class PluginDataSheetView extends BaseTextView implements ISelectionListe
 		}
 	}
 
-	private void printResourceBundleStats(StringBuffer result, ArrayList bundles, IPluginDescriptor descriptor) {
+	private void printResourceBundleStats(StringBuffer result, ArrayList bundles, BundleStats bundle) {
 		if (bundles == null || bundles.size() == 0) {
 			result.append("No resources loaded by this plug-in\n"); //$NON-NLS-1$
 			return;
 		}
 		result.append("Resource bundles stats:\n"); //$NON-NLS-1$
 		for (Iterator iterator = bundles.iterator(); iterator.hasNext();) {
-			ResourceBundleStats bundle = (ResourceBundleStats) iterator.next();
+			ResourceBundleStats resource = (ResourceBundleStats) iterator.next();
 			result.append('\t');
-			result.append(bundle.getFileName());
-			result.append("\tElements: #" + bundle.getKeyCount()); //$NON-NLS-1$
+			result.append(resource.getFileName());
+			result.append("\tElements: #" + resource.getKeyCount()); //$NON-NLS-1$
 			long totalSize;
 			// if hashsize == 0, we should compute the total size using DeepSize
-			if (bundle.getHashSize() == 0) {
+			if (resource.getHashSize() == 0) {
 				DeepSize.reset();
 				DeepSize calculator = new DeepSize();
-				calculator.deepSize(descriptor.getResourceBundle());
+// TODO get the resource translator for this bundle
+//				calculator.deepSize(bundle.getResourceBundle());
 				totalSize = calculator.getSize();
 			} else
-				totalSize = bundle.getTotalSize();
+				totalSize = resource.getTotalSize();
 			result.append(" \ttotal: " + totalSize); //$NON-NLS-1$
-			result.append("b \tkeys: " + bundle.getKeySize()); //$NON-NLS-1$
-			result.append("b \tvalues: " + bundle.getValueSize() + "b\n"); //$NON-NLS-1$ //$NON-NLS-2$
+			result.append("b \tkeys: " + resource.getKeySize()); //$NON-NLS-1$
+			result.append("b \tvalues: " + resource.getValueSize() + "b\n"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 

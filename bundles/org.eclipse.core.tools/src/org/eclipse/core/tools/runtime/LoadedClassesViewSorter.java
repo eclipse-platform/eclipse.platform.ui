@@ -61,12 +61,12 @@ public class LoadedClassesViewSorter extends ViewerSorter implements ISorter {
 	/**
 	 * Compares two markers, based only on the value of the specified column.
 	 */
-	private int compareColumnValue(int columnNumber, ClassStats class1, ClassStats class2) {
+	private int compareColumnValue(int column, ClassStats class1, ClassStats class2) {
 		VMClassloaderInfo loader = VMClassloaderInfo.getClassloader(class1.getClassloader().getId());
 		VMClassInfo classInfo1 = loader.getClass(class1.getClassName());
 		loader = VMClassloaderInfo.getClassloader(class2.getClassloader().getId());
 		VMClassInfo classInfo2 = loader.getClass(class2.getClassName());
-		switch (columnNumber) {
+		switch (column) {
 			case 0 :
 				{ /* class name */
 					String package1 = getPackageName(class1.getClassName());

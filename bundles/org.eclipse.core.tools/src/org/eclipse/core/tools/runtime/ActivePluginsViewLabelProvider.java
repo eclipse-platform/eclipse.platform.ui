@@ -10,10 +10,8 @@
  **********************************************************************/
 package org.eclipse.core.tools.runtime;
 
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.osgi.framework.stats.BundleStats;
-import org.eclipse.osgi.framework.stats.StatsManager;
 import org.eclipse.swt.graphics.Image;
 
 /**
@@ -43,15 +41,15 @@ public class ActivePluginsViewLabelProvider extends LabelProvider implements ITa
 	}
 
 	public String getColumnText(Object element, int columnIndex) {
-		if (!(element instanceof IPluginDescriptor))
+		if (!(element instanceof BundleStats))
 			return "not a plug-in"; //$NON-NLS-1$
-		BundleStats plugin = StatsManager.getDefault().getPlugin(((IPluginDescriptor) element).getUniqueIdentifier());
+		BundleStats plugin = (BundleStats) element;
 		if (plugin == null)
 			return "no info for plug-in"; //$NON-NLS-1$
-		VMClassloaderInfo pluginInfo = VMClassloaderInfo.getClassloader(plugin.getPluginId());
+		VMClassloaderInfo pluginInfo = VMClassloaderInfo.getClassloader(plugin.getId());
 		switch (columnIndex) {
 			case 0 : /* plugin id */
-				return plugin.getPluginId() + (plugin.isStartupPlugin() ? "*" : ""); //$NON-NLS-1$ //$NON-NLS-2$
+				return plugin.getId() + (plugin.isStartupBundle() ? "*" : ""); //$NON-NLS-1$ //$NON-NLS-2$
 			case 1 : /* class load count */
 				return "" + plugin.getClassLoadCount(); //$NON-NLS-1$
 			case 2 : /* Total Mem Alloc */
