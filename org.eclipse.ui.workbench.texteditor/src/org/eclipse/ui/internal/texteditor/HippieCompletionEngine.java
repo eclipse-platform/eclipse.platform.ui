@@ -125,6 +125,9 @@ public final class HippieCompletionEngine {
 	 */
 	public List getCompletionsForward(IDocument document, CharSequence prefix, int firstPosition) throws BadLocationException {
 		ArrayList res= new ArrayList();
+        if (firstPosition == document.getLength()) {
+            return res;
+        }
 		
 		FindReplaceDocumentAdapter searcher= new FindReplaceDocumentAdapter(document);
 		
@@ -156,11 +159,19 @@ public final class HippieCompletionEngine {
 	 * @param prefix the completion prefix
 	 * @param firstPosition the caret position
 	 * @return a {@link List} of possible completions ({@link String}s)
-	 *         from the caret position to the beginning of the document.
+	 *         from the caret position to the beginning of the document. 
+     *         The empty suggestion is not included in the results.
 	 * @throws BadLocationException if any error occurs
 	 */
 	public List getCompletionsBackwards(IDocument document, CharSequence prefix, int firstPosition) throws BadLocationException {
 		ArrayList res= new ArrayList();
+        
+        // FindReplaceDocumentAdapter expects the start offset to be before the 
+        // actual caret position, probably for compatibility with forward search.
+        if (firstPosition == 0) {
+            return res;
+        }
+        firstPosition--;
 		
 		FindReplaceDocumentAdapter searcher= new FindReplaceDocumentAdapter(document);
 		

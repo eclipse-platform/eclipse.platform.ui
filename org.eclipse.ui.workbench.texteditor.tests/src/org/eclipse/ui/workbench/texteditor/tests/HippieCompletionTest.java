@@ -57,7 +57,7 @@ public class HippieCompletionTest extends TestCase {
 				"    }\n" + 
 				"}");
 		documents[1] = new Document("This is a simple text file\n" + 
-				"that is also used in the completion engine tests");
+				"with some testssome test that is also used in the completion engine tests");
 		
 		documents[2] = new Document("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + 
 				"<plugin\n" + 
@@ -117,7 +117,7 @@ public class HippieCompletionTest extends TestCase {
 			assertEquals(list.get(1), "nt");
 			
 			list = fEngine.getCompletionsBackwards(documents[0], 
-					"pri", documents[0].getLength() - 1);
+					"pri", documents[0].getLength());
 			assertEquals(list.size(), 3);
 			assertEquals(list.get(0), "nting");
 			assertEquals(list.get(1), "ntln");
@@ -136,14 +136,14 @@ public class HippieCompletionTest extends TestCase {
 	public void testSearchBackwards2() {
 		try {
 			List list = fEngine.getCompletionsBackwards(documents[2], 
-					"plugi", documents[2].getLength() - 1);
+					"plugi", documents[2].getLength());
 			assertEquals(8, list.size());
 			list = fEngine.makeUnique(list);
 			assertEquals(1, list.size());
 			assertEquals("n", list.get(0));
 			
 			list = fEngine.getCompletionsBackwards(documents[2], 
-					"plugin", documents[2].getLength() - 1);
+					"plugin", documents[2].getLength());
 			assertEquals(0, list.size()); // empty completions discarded
 			
 		} catch (BadLocationException e) {
@@ -151,14 +151,30 @@ public class HippieCompletionTest extends TestCase {
 		}
 	}
 	
+    public void testSearchBackwards3() {
+        try {
+            List list = fEngine.getCompletionsBackwards(documents[1], 
+                    "test", documents[1].getLength());
+            assertEquals("Number of backwards suggestions does not match", 2, list.size());
+            list = fEngine.getCompletionsBackwards(documents[1], 
+                    "tests", documents[1].getLength());
+            assertEquals("Number of backwards suggestions does not match", 1, list.size());
+
+            list = fEngine.getCompletionsBackwards(documents[1], 
+                    "test", documents[1].getLength() - 1);
+            assertEquals("Number of backwards suggestions does not match", 2, list.size());
+        } catch (BadLocationException e) {
+            assertTrue("Got out of document bounds", false);
+        }
+    }
 	
 	
 	public void testSearch() {
 		ArrayList docsList = new ArrayList(Arrays.asList(this.documents));
 		List result = createSuggestions("te", docsList);
-		assertEquals("Number of completions does not match", 12, result.size());
+		assertEquals("Number of completions does not match", 14, result.size());
 		result = fEngine.makeUnique(result);
-		assertEquals("Number of completions does not match", 6, result.size());
+		assertEquals("Number of completions does not match", 7, result.size());
 		
 		result = createSuggestions("Plug", docsList);
 		assertEquals("Number of completions does not match", 2, result.size());
@@ -185,7 +201,7 @@ public class HippieCompletionTest extends TestCase {
 		assertEquals("Number of completions does not match", 0, result.size());
 		
 		result = createSuggestions("s", docsList);
-		assertEquals("Number of completions does not match", 6, result.size());
+		assertEquals("Number of completions does not match", 7, result.size());
 	}
 	
 	public static Test suite() {
