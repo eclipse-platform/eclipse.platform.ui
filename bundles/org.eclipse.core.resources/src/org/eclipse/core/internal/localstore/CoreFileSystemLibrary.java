@@ -48,7 +48,7 @@ public abstract class CoreFileSystemLibrary {
 	/** instance of this library */
 	// The name convention is to get the plugin version at the time
 	// the library is changed.  
-	private static final String LIBRARY_NAME = "core_2_1_0"; //$NON-NLS-1$
+	private static final String LIBRARY_NAME = "core_2_1_0a"; //$NON-NLS-1$
 	private static boolean hasNatives = false;
 	private static boolean isUnicode = false;
 

@@ -35,7 +35,7 @@ jbyte* getByteArray(JNIEnv *env, jbyteArray target) {
 	temp = (*env)->GetByteArrayElements(env, target, 0);
 	n = (*env)->GetArrayLength(env, target);
 	result = malloc((n+1) * sizeof(jbyte));
-	memcpy(result, temp, n);
+	memcpy(result, temp, n * sizeof(jbyte));
 	result[n] = '\0';
 	(*env)->ReleaseByteArrayElements(env, target, temp, 0);
 	return result;
@@ -72,7 +72,7 @@ jchar* getCharArray(JNIEnv *env, jcharArray target) {
 	temp = (*env)->GetCharArrayElements(env, target, 0);
 	n = (*env)->GetArrayLength(env, target);
 	result = malloc((n+1) * sizeof(jchar));
-	memcpy(result, temp, n * 2);
+	memcpy(result, temp, n * sizeof(jchar));
 	result[n] = 0;
 	(*env)->ReleaseCharArrayElements(env, target, temp, 0);
 	return result;

@@ -3,7 +3,7 @@
 CORE.C = core.c
 CORE.O = core.o
 LIB_NAME = libcore.so
-LIB_NAME_FULL = libcore_2_1_0.so
+LIB_NAME_FULL = libcore_2_1_0a.so
 
 core :
 	gcc -fPIC -g -c -I$(JDK_INCLUDE) $(CORE.C) -o $(CORE.O)
