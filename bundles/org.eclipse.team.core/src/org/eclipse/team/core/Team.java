@@ -365,8 +365,11 @@ public final class Team {
 		if (f.exists()) {
 			try {
 				DataInputStream dis = new DataInputStream(new FileInputStream(f));
-				readTextState(dis);
-				dis.close();
+				try {
+					readTextState(dis);
+				} finally {
+					dis.close();
+				}
 			} catch (IOException ex) {
 				TeamPlugin.log(Status.ERROR, ex.getMessage(), ex);
 			}
@@ -386,8 +389,11 @@ public final class Team {
 		File stateFile = pluginStateLocation.append(STATE_FILE).toFile();
 		try {
 			DataOutputStream dos = new DataOutputStream(new FileOutputStream(tempFile));
-			writeTextState(dos);
-			dos.close();
+			try {
+				writeTextState(dos);
+			} finally {
+				dos.close();
+			}
 			if (stateFile.exists() && !stateFile.delete()) {
 				TeamPlugin.log(Status.ERROR, Policy.bind("Team.Could_not_delete_state_file_1"), null); //$NON-NLS-1$
 				return;
@@ -443,15 +449,17 @@ public final class Team {
 		File stateFile = pluginStateLocation.append(GLOBALIGNORE_FILE).toFile();
 		try {
 			DataOutputStream dos = new DataOutputStream(new FileOutputStream(tempFile));
-			writeIgnoreState(dos);
-			dos.close();
-			if (stateFile.exists())
-				stateFile.delete();
-			boolean renamed = tempFile.renameTo(stateFile);
-			if (!renamed)
-				throw new TeamException(new Status(IStatus.ERROR, TeamPlugin.ID, 0, Policy.bind("TeamPlugin_renaming_21"), null)); //$NON-NLS-1$
+			try {
+				writeIgnoreState(dos);
+			} finally {
+				dos.close();
+			}
+			if (stateFile.exists() & !stateFile.delete())
+				throw new TeamException(new Status(IStatus.ERROR, TeamPlugin.ID, 0, Policy.bind("Team.couldNotDelete", stateFile.getAbsolutePath()), null)); //$NON-NLS-1$
+			if (!tempFile.renameTo(stateFile))
+				throw new TeamException(new Status(IStatus.ERROR, TeamPlugin.ID, 0, Policy.bind("Team.couldNotRename", tempFile.getAbsolutePath(), stateFile.getAbsolutePath()), null)); //$NON-NLS-1$
 		} catch (IOException ex) {
-			throw new TeamException(new Status(IStatus.ERROR, TeamPlugin.ID, 0, Policy.bind("TeamPlugin_closing_stream_22"), ex)); //$NON-NLS-1$
+			throw new TeamException(new Status(IStatus.ERROR, TeamPlugin.ID, 0, Policy.bind("Team.writeError", stateFile.getAbsolutePath()), ex)); //$NON-NLS-1$
 		}
 	}
 	
@@ -485,24 +493,28 @@ public final class Team {
 		if(f.exists()) {
 			try {
 				DataInputStream dis = new DataInputStream(new FileInputStream(f));
-				globalIgnore = new Hashtable(11);
-				int ignoreCount = 0;
 				try {
-					ignoreCount = dis.readInt();
-				} catch (EOFException e) {
-					// Ignore the exception, it will occur if there are no ignore
-					// patterns stored in the provider state file.
-					return;
-				}
-				for (int i = 0; i < ignoreCount; i++) {
-					String pattern = dis.readUTF();
-					boolean enabled = dis.readBoolean();
-					globalIgnore.put(pattern, new Boolean(enabled));
+					globalIgnore = new Hashtable(11);
+					int ignoreCount = 0;
+					try {
+						ignoreCount = dis.readInt();
+					} catch (EOFException e) {
+						// Ignore the exception, it will occur if there are no ignore
+						// patterns stored in the provider state file.
+						return;
+					}
+					for (int i = 0; i < ignoreCount; i++) {
+						String pattern = dis.readUTF();
+						boolean enabled = dis.readBoolean();
+						globalIgnore.put(pattern, new Boolean(enabled));
+					}
+				} finally {
+					dis.close();
 				}
 			} catch (FileNotFoundException e) {
 				// not a fatal error, there just happens not to be any state to read
 			} catch (IOException ex) {
-				throw new TeamException(new Status(IStatus.ERROR, TeamPlugin.ID, 0, Policy.bind("TeamPlugin_closing_stream_23"), ex));			 //$NON-NLS-1$
+				throw new TeamException(new Status(IStatus.ERROR, TeamPlugin.ID, 0, Policy.bind("Team.readError"), ex));			 //$NON-NLS-1$
 			}
 		}
 	}
