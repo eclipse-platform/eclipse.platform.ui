@@ -11,6 +11,7 @@
 package org.eclipse.ui.actions;
 
 import org.eclipse.ui.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.dialogs.*;
 import org.eclipse.jface.action.*;
@@ -102,6 +103,7 @@ public abstract class PerspectiveMenu extends ContributionItem {
 				run(desc, e);
 			}
 		});
+		WorkbenchHelp.setHelp(mi, IHelpContextIds.OPEN_PERSPECTIVE_ACTION);
 	}
 	
 	/* (non-Javadoc)
@@ -116,6 +118,7 @@ public abstract class PerspectiveMenu extends ContributionItem {
 				runOther(e);
 			}
 		});
+		WorkbenchHelp.setHelp(mi, IHelpContextIds.OPEN_PERSPECTIVE_OTHER_ACTION);
 	}
 	
 	/* (non-Javadoc)

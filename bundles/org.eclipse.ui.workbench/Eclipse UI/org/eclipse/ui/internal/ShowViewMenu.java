@@ -19,6 +19,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.dialogs.ShowViewDialog;
 import org.eclipse.ui.internal.registry.*;
 
@@ -70,6 +71,7 @@ public class ShowViewMenu extends ContributionItem {
 	 */
 	public ShowViewMenu(IWorkbenchWindow window) {
 		this.window = window;
+		WorkbenchHelp.setHelp(showDlgAction, IHelpContextIds.SHOW_VIEW_OTHER_ACTION);
 	}
 	
 	public boolean isDirty() {
