@@ -171,14 +171,15 @@ public class SourceViewerDecorationSupport {
 		while (e.hasNext()) {
 			Object type= e.next();
 			if (areAnnotationsShown(type))
-				showAnnotations(type, false);
+				showAnnotations(type, false, false);
 			else
-				hideAnnotations(type, false);
+				hideAnnotations(type, false, false);
 			if (areAnnotationsHighlighted(type))
-				showAnnotations(type, true);
+				showAnnotations(type, true, false);
 			else
-				hideAnnotations(type, true);
+				hideAnnotations(type, true, false);
 		}
+		updateAnnotationPainter();
 	}
 	
 	/**
@@ -393,17 +394,17 @@ public class SourceViewerDecorationSupport {
 			
 			if (info.getTextPreferenceKey().equals(p)) {
 				if (areAnnotationsShown(info.getAnnotationType()))
-					showAnnotations(info.getAnnotationType(), false);
+					showAnnotations(info.getAnnotationType(), false, true);
 				else
-					hideAnnotations(info.getAnnotationType(), false);
+					hideAnnotations(info.getAnnotationType(), false, true);
 				return;
 			}
 			
 			if (info.getHighlightPreferenceKey() != null && info.getHighlightPreferenceKey().equals(p)) {
 				if (areAnnotationsHighlighted(info.getAnnotationType()))
-					showAnnotations(info.getAnnotationType(), true);
+					showAnnotations(info.getAnnotationType(), true, true);
 				else
-					hideAnnotations(info.getAnnotationType(), true);
+					hideAnnotations(info.getAnnotationType(), true, true);
 				return;
 			}
 			
@@ -603,8 +604,9 @@ public class SourceViewerDecorationSupport {
 	 * 
 	 * @param annotationType the annotation type
 	 * @param highlighting <code>true</code> if highlighting <code>false</code> if painting squiggles
+	 * @param updatePainter if <code>true</code> update the annotation painter
 	 */
-	private void showAnnotations(Object annotationType, boolean highlighting) {
+	private void showAnnotations(Object annotationType, boolean highlighting, boolean updatePainter) {
 		if (fSourceViewer instanceof ITextViewerExtension2) {
 			if (fAnnotationPainter == null) {
 				fAnnotationPainter= new AnnotationPainter(fSourceViewer, fAnnotationAccess);
@@ -618,14 +620,20 @@ public class SourceViewerDecorationSupport {
 				fAnnotationPainter.addHighlightAnnotationType(annotationType);
 			else
 				fAnnotationPainter.addAnnotationType(annotationType);
-			fAnnotationPainter.paint(IPainter.CONFIGURATION);
+			
+			if (updatePainter)
+				updateAnnotationPainter();
 		}
 	}
 	
 	/**
-	 * Shuts down the annotation painter.
+	 * Updates the annotation painter.
 	 */
-	private void shutdownAnnotationPainter() {
+	private void updateAnnotationPainter() {
+		if (fAnnotationPainter == null)
+			return;
+		
+		fAnnotationPainter.paint(IPainter.CONFIGURATION);
 		if (!fAnnotationPainter.isPaintingAnnotations()) {
 			if (fSourceViewer instanceof ITextViewerExtension2) {
 				ITextViewerExtension2 extension= (ITextViewerExtension2) fSourceViewer;
@@ -637,8 +645,6 @@ public class SourceViewerDecorationSupport {
 			fAnnotationPainter.deactivate(true);
 			fAnnotationPainter.dispose();
 			fAnnotationPainter= null;
-		} else {
-			fAnnotationPainter.paint(IPainter.CONFIGURATION);
 		}
 	}
 
@@ -647,16 +653,19 @@ public class SourceViewerDecorationSupport {
 	 * 
 	 * @param annotationType the annotation type
 	 * @param highlighting <code>true</code> if highlighting <code>false</code> if painting squiggles
+	 * @param updatePainter if <code>true</code> update the annotation painter
 	 * @since 3.0
 	 */
-	private void hideAnnotations(Object annotationType, boolean highlighting) {
+	private void hideAnnotations(Object annotationType, boolean highlighting, boolean updatePainter) {
 		if (fAnnotationPainter != null) {
 			if (highlighting)
 				fAnnotationPainter.removeHighlightAnnotationType(annotationType);
 			else
 				fAnnotationPainter.removeAnnotationType(annotationType);
-			fAnnotationPainter.paint(IPainter.CONFIGURATION);
-			shutdownAnnotationPainter();
+			
+			if (updatePainter) {
+				updateAnnotationPainter();
+			}
 		}
 	}
 	
