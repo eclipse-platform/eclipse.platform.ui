@@ -5,6 +5,7 @@ package org.eclipse.team.internal.ccvs.ui;
  * All Rights Reserved.
  */
 
+import java.text.DateFormat;
 import java.util.Date;
 
 import org.eclipse.core.resources.IFile;
@@ -62,7 +63,7 @@ public class CVSFilePropertiesPage extends PropertyPage {
 				Date baseTime = syncInfo.getTimeStamp();
 				if (baseTime != null) {
 					createLabel(composite, Policy.bind("CVSFilePropertiesPage.baseTimestamp")); //$NON-NLS-1$
-					createLabel(composite, CVSDateFormatter.dateToEntryLine(syncInfo.getTimeStamp()));
+					createLabel(composite, DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL).format(syncInfo.getTimeStamp()));
 				}
 				
 				// Modified
