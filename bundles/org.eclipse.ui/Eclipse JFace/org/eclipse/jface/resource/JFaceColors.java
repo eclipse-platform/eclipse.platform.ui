@@ -50,7 +50,22 @@ public class JFaceColors {
 		else
 			return new Color(
 				display,
-				PreferenceConverter.getColor(store, JFacePreferences.ERROR_COLOUR));
+				PreferenceConverter.getColor(store, JFacePreferences.ERROR_COLOR));
+	}
+	
+	/**
+	 * Get the defualt color to use for displaying hyperlinks.
+	 */
+	public static Color getHyperlinkText(Display display) {
+
+		IPreferenceStore store = JFacePreferences.getPreferenceStore();
+		if (store == null)
+			//Blue is the default
+			return display.getSystemColor(SWT.COLOR_BLUE);
+		else
+			return new Color(
+				display,
+				PreferenceConverter.getColor(store, JFacePreferences.HYPERLINK_COLOR));
 	}
 
 }
