@@ -5,8 +5,8 @@ package org.eclipse.team.ccvs.core;
  * All Rights Reserved.
  */
  
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteResource;
 
 /**
@@ -33,7 +33,7 @@ public interface ICVSRemoteResource extends IRemoteResource {
 	 * Does the remote resource represented by this handle exist on the server. This
 	 * method may contact the server and be long running.
 	 */
-	public boolean exists();
+	public boolean exists(IProgressMonitor monitor) throws TeamException;
 	
 	/**
 	 * Answers the repository relative path of this remote folder.

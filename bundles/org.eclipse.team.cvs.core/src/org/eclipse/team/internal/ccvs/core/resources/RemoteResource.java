@@ -11,6 +11,7 @@ import org.eclipse.team.ccvs.core.ICVSFolder;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.ccvs.core.ICVSResource;
+import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.Update;
@@ -73,16 +74,18 @@ public abstract class RemoteResource extends PlatformObject implements ICVSRemot
 	 * @see ICVSResource#exists()
 	 * 
 	 * This method is used by the Command framework so it must return true so that 
-	 * the proper information gets sent to the server.
+	 * the proper information gets sent to the server. (i.e. it is used to fake that 
+	 * the file exists locally so cvs commands can be used to retrieve information about
+	 * the remote resource from the server)
 	 */
 	public boolean exists() {
 		return true;
 	}
 	
 	/*
-	 * Non-API method that checks for existance remotely
+	 * @see ICVSRemoteResource#exists(IProgressMonitor)
 	 */
-	public boolean exists(IProgressMonitor monitor) throws CVSException {
+	public boolean exists(IProgressMonitor monitor) throws TeamException {
 		return parent.exists(this, monitor);
 	}
 

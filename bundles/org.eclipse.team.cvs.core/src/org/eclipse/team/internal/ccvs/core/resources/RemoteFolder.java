@@ -131,14 +131,30 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 		visitor.visitFolder(this);
 	}
 
-	/**
+	/*
+	 * @see ICVSRemoteResource#exists(IProgressMonitor)
+	 */
+	public boolean exists(IProgressMonitor monitor) throws TeamException {
+		try {
+			members(monitor);
+			return true;
+		} catch (CVSException e) {
+			if (e.getStatus().getCode() == CVSStatus.DOES_NOT_EXISTS) {
+				return false;
+			} else {
+				throw e;
+			}
+		}
+	}
+
+	/*
 	 * Check whether the given resource is a child of the receiver remotely
 	 */
 	protected boolean exists(ICVSRemoteResource child, IProgressMonitor monitor) throws CVSException {
 		return exists(child, getTag(), monitor);
 	}
 	
-	/**
+	/*
 	 * Check whether the child exists for the given tag. This additional method is required because
 	 * CVS will signal an error if a folder only contains subfolders when a tag is used. If we get this
 	 * error and we're looking for a folder, we need to reissue the command without a tag.
@@ -222,6 +238,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 		// Create the listener for remote files and folders
 		final List newRemoteDirectories = new ArrayList();
 		final List newRemoteFiles = new ArrayList();
+		final boolean[] exists = new boolean[] {true};
 		IUpdateMessageListener listener = new IUpdateMessageListener() {
 			public void directoryInformation(IPath path, boolean newDirectory) {
 				if (newDirectory && path.segmentCount() == 1) {
@@ -231,6 +248,10 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 				}
 			}
 			public void directoryDoesNotExist(IPath path) {
+				if (path.isEmpty()) {
+					// the remote folder doesn't exist
+					exists[0] = false;
+				}
 			}
 			public void fileInformation(int type, String filename) {
 				IPath filePath = new Path(filename);	
@@ -267,7 +288,10 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 			if (progress.isCanceled()) {
 				throw new OperationCanceledException();
 			}
-
+			if (! exists[0]) {
+				throw new CVSException(new CVSStatus(CVSStatus.ERROR, CVSStatus.DOES_NOT_EXISTS, Policy.bind("RemoteFolder.doesNotExist", getRepositoryRelativePath())));
+			}
+			
 			// Convert the file and folder names to IManagedResources
 			List result = new ArrayList();
 			for (int i=0;i<newRemoteFiles.size();i++) {

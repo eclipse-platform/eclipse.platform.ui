@@ -197,18 +197,12 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 								location.validateConnection(monitor);
 								String moduleName = getModuleName();
 								ICVSRemoteFolder folder = location.getRemoteFolder(moduleName, null);
-								try {
-									// Hack until exists() works properly.
-									IRemoteResource[] members = folder.members(new SubProgressMonitor(monitor, 50));
-									if (members.length > 0) {
-										// We didn't get an exception, so the folder must already exist.
-										MessageDialog.openInformation(getShell(), Policy.bind("SharingWizard.couldNotImport"), Policy.bind("SharingWizard.couldNotImportLong"));
-										result[0] = false;
-										doSync[0] = false;
-										return;
-									}
-								} catch (TeamException e) {
-									// Good, we got an exception. The folder doesn't exist.
+								if (folder.exists(new SubProgressMonitor(monitor, 50))) {
+									// We didn't get an exception, so the folder must already exist.
+									MessageDialog.openInformation(getShell(), Policy.bind("SharingWizard.couldNotImport"), Policy.bind("SharingWizard.couldNotImportLong"));
+									result[0] = false;
+									doSync[0] = false;
+									return;
 								}
 							} catch (TeamException e) {
 								ErrorDialog.openError(getShell(), null, null, e.getStatus());
