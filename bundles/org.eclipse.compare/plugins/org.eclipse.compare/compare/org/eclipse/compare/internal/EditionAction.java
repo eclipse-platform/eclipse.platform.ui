@@ -222,23 +222,14 @@ public class EditionAction implements IActionDelegate {
 			if (wps != null) {
 				for (int j= 0; j < wps.length; j++) {
 					IWorkbenchPage wp= wps[j];
-					IEditorPart[] eps= wp.getEditors();
-					if (eps != null) {
-						for (int k= 0; k < eps.length; k++) {
-							IEditorPart ep= eps[k];
-							IEditorInput ei= ep.getEditorInput();
-							if (test.equals(ei)) {
-								if (ep instanceof ITextEditor) {
-									ITextEditor te= (ITextEditor) ep;
-									IDocumentProvider dp= te.getDocumentProvider();
-									if (dp != null) {
-										IDocument doc= dp.getDocument(ei);
-										if (doc != null)
-											return doc;
-									}
-									
-								}
-							}
+					IEditorPart ep= wp.findEditor(test);
+					if (ep instanceof ITextEditor) {
+						ITextEditor te= (ITextEditor) ep;
+						IDocumentProvider dp= te.getDocumentProvider();
+						if (dp != null) {
+							IDocument doc= dp.getDocument(ep);
+							if (doc != null)
+								return doc;
 						}
 					}
 				}
