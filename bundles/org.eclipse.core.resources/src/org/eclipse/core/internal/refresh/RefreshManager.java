@@ -45,6 +45,9 @@ public class RefreshManager implements IRefreshResult, IManager, Preferences.IPr
 	 * Starts or stops auto-refresh depending on the auto-refresh preference.
 	 */
 	protected void manageAutoRefresh(boolean enabled) {
+		//do nothing if we have already shutdown
+		if (refreshJob == null)
+			return;
 		if (enabled) {
 			refreshJob.start();
 			monitors.start();
@@ -54,7 +57,11 @@ public class RefreshManager implements IRefreshResult, IManager, Preferences.IPr
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.resources.refresh.IRefreshResult#monitorFailed(org.eclipse.core.resources.refresh.IRefreshMonitor, org.eclipse.core.resources.IResource)
+	 */
 	public void monitorFailed(IRefreshMonitor monitor, IResource resource) {
+		//should install polling monitor in this case
 	}
 
 	/**
@@ -71,10 +78,12 @@ public class RefreshManager implements IRefreshResult, IManager, Preferences.IPr
 	}
 
 	/* (non-Javadoc)
-	 * @see IRefreshResult#refresh
+	 * @see org.eclipse.core.resources.refresh.IRefreshResult#refresh(org.eclipse.core.resources.IResource)
 	 */
 	public void refresh(IResource resources) {
-		refreshJob.refresh(resources);
+		//do nothing if we have already shutdown
+		if (refreshJob != null)
+			refreshJob.refresh(resources);
 	}
 
 	/**
