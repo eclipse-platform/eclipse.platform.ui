@@ -13,8 +13,10 @@
 package org.eclipse.ui.texteditor;
 
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.HelpListener;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Event;
 
 import org.eclipse.jface.action.IAction;
@@ -49,6 +51,11 @@ public class TextNavigationAction implements IAction {
 		fAction= action;
 	}
 
+	/**
+	 * Returns the text widget this actions is bound to.
+	 * 
+	 * @return returns the text widget this actions is bound to
+	 */
 	protected StyledText getTextWidget() {
 		return fTextWidget;
 	}
@@ -57,7 +64,39 @@ public class TextNavigationAction implements IAction {
 	 * @see IAction#run()
 	 */
 	public void run() {
+		Point selection= fTextWidget.getSelectionRange();
 		fTextWidget.invokeAction(fAction);
+		fireSelectionChanged(selection);
+	}
+
+	private void doFireSelectionChanged(Point selection) {
+		Event event= new Event();
+		event.x= selection.x;
+		event.y= selection.y;
+		fTextWidget.notifyListeners(SWT.Selection, event);
+	}
+	
+	/**
+	 * Sends a selection event with the current selection to all
+	 * selection listeners of the action's text widget
+	 * 
+	 * @since 3.0
+	 */
+	protected void fireSelectionChanged() {
+		fireSelectionChanged(fTextWidget.getSelection());
+	}
+	
+	/**
+	 * Fires a selection event to all selection listener of the action's
+	 * text widget if the current selection differs from the given selection.
+	 * 
+	 * @param oldSelection the old selection
+	 * @since 3.0
+	 */
+	protected void fireSelectionChanged(Point oldSelection) {
+		Point selection= fTextWidget.getSelectionRange();
+		if (oldSelection == null || !selection.equals(oldSelection))
+			doFireSelectionChanged(selection);
 	}
 
 	/*

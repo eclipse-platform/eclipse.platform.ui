@@ -62,7 +62,6 @@ import org.eclipse.swt.widgets.Caret;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 
@@ -985,11 +984,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			} else
 				st.setSelection(newCaretOffset);
 
-			// send selection changed event
-			Event event= new Event();
-			event.x= st.getSelection().x;
-			event.y= st.getSelection().y;
-			st.notifyListeners(SWT.Selection, event);
+			fireSelectionChanged(oldSelection);
 		}
 	}
 
@@ -1105,11 +1100,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			} else
 				st.setSelection(newCaretOffset);
 
-			// send selection changed event
-			Event event= new Event();
-			event.x= st.getSelection().x;
-			event.y= st.getSelection().y;
-			st.notifyListeners(SWT.Selection, event);
+			fireSelectionChanged(oldSelection);
 		}
 
 	}
