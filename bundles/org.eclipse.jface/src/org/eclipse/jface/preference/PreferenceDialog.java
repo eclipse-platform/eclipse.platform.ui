@@ -16,7 +16,6 @@ import java.util.List;
 
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.DialogMessageArea;
@@ -1449,7 +1448,7 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
         Object[] listeners = pageChangedListeners.getListeners();
         for (int i = 0; i < listeners.length; i++) {
             final IPageChangedListener l = (IPageChangedListener) listeners[i];
-            Platform.run(new SafeRunnable() {
+            SafeRunnable.run(new SafeRunnable() {
                 public void run() {
                     l.pageChanged(event);
                 }

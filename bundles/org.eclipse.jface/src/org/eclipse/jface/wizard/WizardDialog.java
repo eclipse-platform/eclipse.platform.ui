@@ -15,20 +15,22 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.ControlEnableState;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.jface.dialogs.IPageChangeProvider;
+import org.eclipse.jface.dialogs.IPageChangedListener;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.PageChangedEvent;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.util.*;
 import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.util.ListenerList;
+import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.HelpEvent;
@@ -1293,7 +1295,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
         Object[] listeners = pageChangedListeners.getListeners();
         for (int i = 0; i < listeners.length; ++i) {
             final IPageChangedListener l = (IPageChangedListener) listeners[i];
-            Platform.run(new SafeRunnable() {
+            SafeRunnable.run(new SafeRunnable() {
                 public void run() {
                     l.pageChanged(event);
                 }
