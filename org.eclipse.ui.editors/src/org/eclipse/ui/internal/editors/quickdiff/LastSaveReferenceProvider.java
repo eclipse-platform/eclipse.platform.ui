@@ -143,6 +143,8 @@ public class LastSaveReferenceProvider implements IQuickDiffProviderImplementati
 				return;
 			
 			String encoding= getEncoding(input, provider);
+			if (encoding == null)
+				return;
 			
 			try {
 				setDocumentContent(doc, stream, encoding);
