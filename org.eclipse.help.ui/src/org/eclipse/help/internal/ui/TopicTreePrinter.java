@@ -86,7 +86,7 @@ public class TopicTreePrinter
 			try {
 				pMonDialog.run(true, true, this);
 			} catch (Exception e) {
-				Logger.logError(WorkbenchResources.getString("WE007"),e);
+				Logger.logError(WorkbenchResources.getString("WE020"),e);
 			}
 		} else {
 			endPrinting();
