@@ -678,10 +678,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	}
 	
     public void start(BundleContext context) throws Exception {
-        super.start(context);
-        // Workaround for bug 58975 - New preference mechanism does not properly initialize defaults
-        // Ensure that the UI plugin has started too.
-        Platform.getBundle(PlatformUI.PLUGIN_ID).start();
+    	super.start(context);
     }
     
 	/**
