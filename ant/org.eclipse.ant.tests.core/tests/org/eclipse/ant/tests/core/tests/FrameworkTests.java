@@ -121,9 +121,9 @@ public class FrameworkTests extends AbstractAntTest {
 		restorePreferenceDefaults();
 	}
 	
-	public void testNoDefaultTarget() {
+	public void testMissingDefaultTarget() {
 		try {
-			run("NoDefault.xml", new String[]{"test"}, false);
+			run("MissingDefault.xml", new String[]{"test"}, false);
 		} catch (CoreException e) {
 			String msg= e.getMessage();
 			assertTrue("Message incorrect: " + msg, msg.equals("Default target 'build' does not exist in this project"));
@@ -131,6 +131,11 @@ public class FrameworkTests extends AbstractAntTest {
 		}
 		assertTrue("Build files with no default targets should not be accepted", false);
 	}
+    
+    public void testNoDefaultTarget() throws CoreException {
+        run("NoDefault.xml");
+        assertSuccessful();
+    }
 	
 	/**
 	 * Ensures that tasks like javac work when includeAntRuntime is specified

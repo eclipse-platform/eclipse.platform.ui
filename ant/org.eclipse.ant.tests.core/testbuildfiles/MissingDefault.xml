@@ -1,4 +1,5 @@
-<project name= "Testing">
+<project name= "Testing" default="build">
+
 	<target name= "test">
 		<echo message="testing"/>
 	</target>
