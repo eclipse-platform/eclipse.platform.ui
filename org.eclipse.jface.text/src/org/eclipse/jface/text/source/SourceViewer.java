@@ -288,14 +288,20 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 		setDocumentPartitioning(configuration.getConfiguredDocumentPartitioning(this));
 		
 		// install content type independent plugins
+		if (fPresentationReconciler != null)
+			fPresentationReconciler.uninstall();
 		fPresentationReconciler= configuration.getPresentationReconciler(this);
 		if (fPresentationReconciler != null)
 			fPresentationReconciler.install(this);
 								
+		if (fReconciler != null)
+			fReconciler.uninstall();
 		fReconciler= configuration.getReconciler(this);
 		if (fReconciler != null)
 			fReconciler.install(this);
 			
+		if (fContentAssistant != null)
+			fContentAssistant.uninstall();
 		fContentAssistant= configuration.getContentAssistant(this);
 		if (fContentAssistant != null) {
 			fContentAssistant.install(this);
@@ -304,6 +310,8 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 			
 		fContentFormatter= configuration.getContentFormatter(this);
 		
+		if (fInformationPresenter != null)
+			fInformationPresenter.uninstall();
 		fInformationPresenter= configuration.getInformationPresenter(this);
 		if (fInformationPresenter != null)
 			fInformationPresenter.install(this);
@@ -318,6 +326,11 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 		setHoverControlCreator(configuration.getInformationControlCreator(this));
 		
 		// install content type specific plugins
+		fAutoIndentStrategies= null;
+		fDoubleClickStrategies= null;
+		fTextHovers= null;
+		fIndentChars= null;
+		fDefaultPrefixChars= null;
 		String[] types= configuration.getConfiguredContentTypes(this);
 		for (int i= 0; i < types.length; i++) {
 			
@@ -345,6 +358,15 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 				setDefaultPrefixes(prefixes, t);
 		}
 		
+		if (fVerticalRulerHoveringController != null) {
+			fVerticalRulerHoveringController.dispose();
+			fVerticalRulerHoveringController= null;
+		}
+		
+		if (fOverviewRulerHoveringController != null) {
+			fOverviewRulerHoveringController.dispose();
+			fOverviewRulerHoveringController= null;
+		}
 		activatePlugins();
 	}
 	

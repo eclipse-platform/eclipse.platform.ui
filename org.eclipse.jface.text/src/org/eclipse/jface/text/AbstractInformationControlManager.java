@@ -355,6 +355,7 @@ abstract public class AbstractInformationControlManager {
 			fInformationControlCloser.setSubjectControl(subjectControl);
 		
 		setEnabled(true);
+		fDisposed= false;
 	}
 	
 	/**
