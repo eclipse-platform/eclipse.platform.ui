@@ -143,9 +143,8 @@ public class BreakpointsViewContentProvider implements ITreeContentProvider {
 	        IBreakpointContainer[] containers = container.getContainers();
 	        if (containers.length > 0) {
 	            return containers;
-	        } else {
-	            return container.getBreakpoints();
-	        }
+	        } 
+	        return container.getBreakpoints();
 	    }
 	    return new Object[0];
 	}
