@@ -292,7 +292,7 @@ public class SyncSet {
 		}
 	}
 
-	protected SyncInfo getSyncInfo(IResource resource) {
+	public SyncInfo getSyncInfo(IResource resource) {
 		return (SyncInfo)resources.get(resource.getFullPath());
 	}
 
