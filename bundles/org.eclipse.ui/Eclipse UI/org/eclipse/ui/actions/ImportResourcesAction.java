@@ -37,7 +37,6 @@ public class ImportResourcesAction extends SelectionListenerAction {
 	private static final int SIZING_WIZARD_WIDTH = 470;
 	private static final int SIZING_WIZARD_HEIGHT = 550;
 	private IWorkbench workbench;
-	private IStructuredSelection selection;
 /**
  *	Create a new instance of this class
  */
@@ -95,7 +94,7 @@ protected boolean updateSelection(IStructuredSelection selection) {
  */
 public void run() {
 	ImportWizard wizard = new ImportWizard();
-	IStructuredSelection selectionToPass = selection;
+	IStructuredSelection selectionToPass = getStructuredSelection();
 	if (selectionToPass == null) {
 		// get the current workbench selection
 		ISelection workbenchSelection = 
@@ -119,5 +118,15 @@ public void run() {
 	dialog.getShell().setSize( Math.max(SIZING_WIZARD_WIDTH, dialog.getShell().getSize().x), SIZING_WIZARD_HEIGHT );
 	WorkbenchHelp.setHelp(dialog.getShell(), IHelpContextIds.IMPORT_WIZARD);
 	dialog.open();
+}
+
+/**
+ * Sets the current selection. 
+ * In for backwards compatability. Use selectionChanged() instead.
+ * @param selection the new selection
+ * @deprecated
+ */
+public void setSelection(IStructuredSelection selection) {
+	selectionChanged(selection);
 }
 }
