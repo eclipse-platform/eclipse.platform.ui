@@ -55,13 +55,13 @@ public class CustomizePerspectiveDialog extends Dialog {
 	private CheckboxTableViewer actionSetsViewer;
 	private IndentedTableViewer actionSetMenuViewer;	
 	private IndentedTableViewer actionSetToolbarViewer;	
-	private ListViewer menusViewer;
+	private Combo menusCombo;
 	private CheckboxTreeViewer menuCategoriesViewer;
 	private CheckboxTableViewer menuItemsViewer;
 	private CustomizeActionBars customizeWorkbenchActionBars;
 
 	private static int lastSelectedTab = -1;
-	private static String lastSelectedMenuId = null;
+	private static int lastSelectedMenuIndex = 0;
 	private static String lastSelectedActionSetId = null;
 	private static int cursorSize = 15;
 	
@@ -394,6 +394,13 @@ public class CustomizePerspectiveDialog extends Dialog {
 			}
 			return ids;
 		}
+		private ShortcutMenu getChild(String id) {
+			for (int i=0; i<children.size(); i++) {
+				ShortcutMenu child = (ShortcutMenu)children.get(i);
+				if (child.id.equals(id)) return child;
+			}
+			return null;
+		}
 		private ArrayList getChildren() {
 			return children;
 		}
@@ -586,10 +593,18 @@ private void addListeners() {
 		}
 		public void keyReleased(KeyEvent e) {}
 	});
-	menusViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-		public void selectionChanged(SelectionChangedEvent event) {
-			handleMenuSelected(event);
+	menusCombo.addSelectionListener(new SelectionListener() {
+		public void widgetDefaultSelected(SelectionEvent e) {
+			// do nothing
+		}		
+		public void widgetSelected(SelectionEvent e) {
+			handleMenuSelected(e);
 		}
+	});
+	menusCombo.addModifyListener(new ModifyListener() {
+		public void modifyText(ModifyEvent e) {
+			handleMenuModified(e);
+		}		
 	});
 	menuCategoriesViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 		public void selectionChanged(SelectionChangedEvent event) {
@@ -640,11 +655,9 @@ private void checkInitialMenuCategorySelections(ShortcutMenu menu) {
 	}
 }
 public boolean close() {
+	lastSelectedMenuIndex = menusCombo.getSelectionIndex();
 	lastSelectedTab = tabFolder.getSelectionIndex();
-	StructuredSelection selection = (StructuredSelection)menusViewer.getSelection();
-	if (selection.isEmpty()) lastSelectedMenuId = null;
-	else lastSelectedMenuId = ((ShortcutMenu)selection.getFirstElement()).id;;
-	selection = (StructuredSelection)actionSetsViewer.getSelection();
+	StructuredSelection selection = (StructuredSelection)actionSetsViewer.getSelection();
 	if (selection.isEmpty()) lastSelectedActionSetId = null;
 	else lastSelectedActionSetId = ((ActionSetDescriptor)selection.getFirstElement()).getId();
 	((CoolBarManager)customizeWorkbenchActionBars.getToolBarManager()).dispose();
@@ -692,6 +705,10 @@ private Composite createActionSetsPage(Composite parent) {
 	data = new GridData(GridData.FILL_BOTH);
 	data.widthHint = TABLES_WIDTH;
 	label.setLayoutData(data);
+
+	Label sep = new Label(actionSetsComposite, SWT.HORIZONTAL | SWT.SEPARATOR);
+	data = new GridData(GridData.FILL_HORIZONTAL);
+	sep.setLayoutData(data);
 
 	SashForm sashComposite= new SashForm(actionSetsComposite, SWT.HORIZONTAL);
 	data = new GridData(GridData.FILL_BOTH);
@@ -793,7 +810,12 @@ protected Control createDialogArea(Composite parent) {
 	addListeners();
 	actionSetsViewer.setInput(actionSets);
 	checkInitialActionSetSelections();
-	menusViewer.setInput(rootMenu.getChildren());
+	ArrayList children = rootMenu.getChildren();
+	String[] itemNames = new String[children.size()];
+	for (int i=0; i<children.size(); i++) {
+		itemNames[i]=((ShortcutMenu)children.get(i)).label;
+	}
+	menusCombo.setItems(itemNames);
 	setInitialSelections();
 
 	return composite;
@@ -816,6 +838,10 @@ private Composite createMenusPage(Composite parent) {
 	data.widthHint = TABLES_WIDTH;
 	label.setLayoutData(data);
 
+	Label sep = new Label(menusComposite, SWT.HORIZONTAL | SWT.SEPARATOR);
+	data = new GridData(GridData.FILL_HORIZONTAL);
+	sep.setLayoutData(data);
+
 	SashForm sashComposite= new SashForm(menusComposite, SWT.HORIZONTAL);
 	data = new GridData(GridData.FILL_BOTH);
 	data.heightHint = TABLE_HEIGHT;
@@ -836,12 +862,10 @@ private Composite createMenusPage(Composite parent) {
 	label.setText(WorkbenchMessages.getString("ActionSetSelection.availableMenus")); //$NON-NLS-1$
 	label.setFont(font);
 
-	menusViewer = new ListViewer(menusGroup);
-	data = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
-	data.heightHint = 50;
-	menusViewer.getControl().setLayoutData(data);
-	menusViewer.setLabelProvider(new LabelProvider());
-	menusViewer.setContentProvider(new ListContentProvider());
+	menusCombo = new Combo(menusGroup, SWT.READ_ONLY);
+	menusCombo.setFont(font);
+	GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
+	menusCombo.setLayoutData(gridData);
 
 	// Categories Tree
 	label = new Label(menusGroup,SWT.NONE);
@@ -1031,15 +1055,32 @@ private void handleMenuItemChecked(CheckStateChangedEvent event) {
 	}
 	updateMenuCategoryCheckedState(selectedMenu);
 }
-private void handleMenuSelected(SelectionChangedEvent event) {
-	IStructuredSelection sel = (IStructuredSelection)event.getSelection();
-	ShortcutMenu element = (ShortcutMenu)sel.getFirstElement();
+private void handleMenuModified(ModifyEvent event) {
+	String text = menusCombo.getText();
+	String[] items = menusCombo.getItems();
+	int itemIndex = -1;
+	for (int i=0; i<items.length; i++) {
+		if (items[i].equals(text)) {
+			itemIndex = i;
+			break;
+		}
+	}
+	if (itemIndex == -1) return;
+	ShortcutMenu element = (ShortcutMenu)rootMenu.children.get(itemIndex);
+	handleMenuSelected(element);
+}
+private void handleMenuSelected(SelectionEvent event) {
+	int i = menusCombo.getSelectionIndex();
+	ShortcutMenu element = (ShortcutMenu)rootMenu.children.get(i);
+	handleMenuSelected(element);
+}
+private void handleMenuSelected(ShortcutMenu element) {
 	if (element != menuCategoriesViewer.getInput()) {
 		menuCategoriesViewer.setInput(element);
 		menuCategoriesViewer.expandAll();
 		if (element != null) {
 			if (element.getChildren().size() > 0) {
-				sel = new StructuredSelection(element.getChildren().get(0));
+				StructuredSelection sel = new StructuredSelection(element.getChildren().get(0));
 				menuCategoriesViewer.setSelection(sel, true);
 			} else {
 				menuItemsViewer.setInput(element);
@@ -1240,27 +1281,13 @@ private void setInitialSelections() {
 	StructuredSelection sel = new StructuredSelection(item);
 	actionSetsViewer.setSelection(sel, true);
 	
-	item = null;
-	if (lastSelectedMenuId == null) {
-		item = menusViewer.getElementAt(0);
-	} else {
-		ArrayList children = rootMenu.getChildren();
-		for (int i=0; i<children.size(); i++) {
-			ShortcutMenu menu = (ShortcutMenu)children.get(i);
-			if (menu.id.equals(lastSelectedMenuId)) {
-				item = menu;
-				break;
-			}
-		}
-	}
-	sel = new StructuredSelection(item);
-	menusViewer.setSelection(sel, true);
+	menusCombo.select(lastSelectedMenuIndex);
 
 	if (lastSelectedTab != -1) {
 		tabFolder.setSelection(lastSelectedTab);
 	}
 	if (tabFolder.getSelectionIndex() == 0) {
-		menusViewer.getControl().setFocus();
+		menusCombo.setFocus();
 	} else {
 		actionSetsViewer.getControl().setFocus();
 	}
