@@ -139,8 +139,14 @@ public interface IDebugUIConstants {
 	 * perspective, a debug perspective of the appropriate kind is created (or switched
 	 * to if already created).
 	 */
-	public static final String PREF_AUTO_SHOW_PROCESS_VIEW= PLUGIN_ID + ".auto_show_process_view";
-	
+	public static final String PREF_AUTO_SHOW_PROCESS_VIEW= PLUGIN_ID + ".auto_show_process_view";	
+
+	/**
+	 * Boolean preference controlling automatic build before
+	 * launching a program.
+	 */
+	public static final String PREF_AUTO_BUILD_BEFORE_LAUNCH= PLUGIN_ID + ".auto_build_before_launch";
+		
 	// Debug views
 	
 	/**

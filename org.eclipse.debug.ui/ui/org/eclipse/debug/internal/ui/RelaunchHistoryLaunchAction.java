@@ -37,7 +37,7 @@ public class RelaunchHistoryLaunchAction extends Action {
 	 * @see IAction
 	 */
 	public void run() {
-		if (!DebugUIPlugin.saveAllPages(true)) {
+		if (!DebugUIPlugin.saveAndBuild()) {
 			return;
 		}
 		BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {

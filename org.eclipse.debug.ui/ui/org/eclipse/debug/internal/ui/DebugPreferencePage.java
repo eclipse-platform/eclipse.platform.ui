@@ -39,6 +39,7 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 	 * @see FieldEditorPreferencePage#createFieldEditors
 	 */
 	protected void createFieldEditors() {
+		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_AUTO_BUILD_BEFORE_LAUNCH, DebugUIMessages.getString("DebugPreferencePage.auto_build_before_launch"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
 		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_AUTO_SHOW_DEBUG_VIEW, DebugUIMessages.getString("DebugPreferencePage.Show_Debug_Perspective_when_a_program_is_launched_in_de&bug_mode_1"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
 		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_AUTO_SHOW_PROCESS_VIEW, DebugUIMessages.getString("DebugPreferencePage.Show_Debug_Perspective_when_a_program_is_launched_in_&run_mode_2"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
 		addField(new BooleanFieldEditor(CONSOLE_OPEN, DebugUIMessages.getString("DebugPreferencePage.Show_&Console_View_when_there_is_program_output_3"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
@@ -59,6 +60,7 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 	}
 	
 	public static void initDefaults(IPreferenceStore store) {
+		store.setDefault(IDebugUIConstants.PREF_AUTO_BUILD_BEFORE_LAUNCH, true);
 		store.setDefault(IDebugUIConstants.PREF_AUTO_SHOW_DEBUG_VIEW, true);
 		store.setDefault(IDebugUIConstants.PREF_AUTO_SHOW_PROCESS_VIEW, true);
 		store.setDefault(IDebugPreferenceConstants.CONSOLE_OPEN, true);

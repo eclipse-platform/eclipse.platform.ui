@@ -10,6 +10,7 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -31,12 +32,15 @@ import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -57,6 +61,8 @@ import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IDebugUIEventFilter;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.text.DocumentEvent;
@@ -685,6 +691,10 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChanged
 	}
 	public static IWorkbenchWindow getActiveWorkbenchWindow() {
 		return getDefault().getWorkbench().getActiveWorkbenchWindow();
+	}
+	
+	public static Shell getShell() {
+		return getActiveWorkbenchWindow().getShell();
 	}
 
 /**
@@ -1541,6 +1551,7 @@ public static Object createExtension(final IConfigurationElement element, final 
 	 * Returns whether the operation succeeded.
 	 * 
 	 * @param confirm whether to prompt for saving
+	 * @return whether all saving was completed
 	 */
 	protected static boolean saveAllPages(boolean confirm) {
 		IWorkbench wb = getActiveWorkbenchWindow().getWorkbench();
@@ -1555,5 +1566,59 @@ public static Object createExtension(final IConfigurationElement element, final 
 		}
 		return true;
 	}	
+	
+	/**
+	 * If the "build before launch" preference is on, save
+	 * and build. This prompts the user to save any editors
+	 * with unsaved changes. Returns whether the operation
+	 * succeeded.
+	 * 
+	 * @return whether saving and building was completed
+	 */
+	protected static boolean saveAndBuild() {
+		if (!getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_AUTO_BUILD_BEFORE_LAUNCH)) {
+			return true;
+		}
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		if (workspace.isAutoBuilding()) {
+			// if auto-building, saving will trigger a build for us
+			return saveAllPages(true);
+		}
+		
+		// prompt for save and then do build if required
+		if (saveAllPages(true)) {
+			return doBuild();
+		}
+		return false;	
+	}
+	
+	private static boolean doBuild() {
+		ProgressMonitorDialog dialog= new ProgressMonitorDialog(getShell());
+		try {
+			dialog.run(true, true, new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor) throws InvocationTargetException {
+					try {
+						ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
+					} catch (CoreException e) {
+						throw new InvocationTargetException(e);
+					}
+				}
+			});
+		} catch (InterruptedException e) {
+			// cancelled by user
+			return false;
+		} catch (InvocationTargetException e) {
+			String title= "Run/Debug";
+			String message= "Build error. Check log for details.";
+			Throwable t = e.getTargetException();
+			IStatus status = null;
+			if (t instanceof CoreException) {
+				status = ((CoreException)t).getStatus();
+			}
+			errorDialog(getShell(), title, message, status);
+			return false;
+		}
+		return true;
+	}		
 }
 

@@ -46,7 +46,7 @@ public abstract class ExecutionAction extends Action {
 	 */
 	public void run() {
 		
-		if (!DebugUIPlugin.saveAllPages(true)) {
+		if (!DebugUIPlugin.saveAndBuild()) {
 			return;
 		}
 
