@@ -1,10 +1,15 @@
-package org.eclipse.ui.views.navigator;
+package org.eclipse.ui.internal;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.internal.*;
+import org.eclipse.ui.views.navigator.LabelDecoratorAction;
+import org.eclipse.ui.views.navigator.ResourceNavigatorMessages;
 
-public class DecoratorActionFactory extends ActionFactory {
+/**
+ * The DecoratorActionFactory builds the actions for the 
+ * decorator functions.
+ */
+
+public class DecoratorActionFactory {
 
 	LabelDecoratorAction[] actions;
 	/*
@@ -23,10 +28,10 @@ public class DecoratorActionFactory extends ActionFactory {
 		
 	}
 	
-	/*
-	 * @see ActionFactor.fillActionBarMenu(IMenuManager,IStructuredSelection)
+	/**
+	 * Fill the supplied menu with entries for the decorators.
 	 */
-	public void fillActionBarMenu(IMenuManager menu, IStructuredSelection selection) {
+	public void fillMenu(IMenuManager menu) {
 		
 		IMenuManager submenu =
 			new MenuManager(ResourceNavigatorMessages.getString("DecoratorMenu.title"));

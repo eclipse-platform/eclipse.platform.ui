@@ -11,7 +11,6 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.views.internal.framelist.FrameList;
-import org.eclipse.ui.views.navigator.IResourceNavigatorPart;
 
 public class ResourceNavigatorActionFactory extends ActionFactory {
 
@@ -21,7 +20,6 @@ public class ResourceNavigatorActionFactory extends ActionFactory {
 	protected RefactorActionFactory refactorFactory;
 	protected WorkbenchStateActionFactory workbenchFactory;
 	protected SortAndFilterActionFactory sortAndFilterMenuFactory;
-	protected DecoratorActionFactory decoratorFactory;
 
 	protected IResourceNavigatorPart part;
 
@@ -44,7 +42,6 @@ public class ResourceNavigatorActionFactory extends ActionFactory {
 			new WorkbenchStateActionFactory(
 				navigatorPart.getResourceViewer().getControl());
 		sortAndFilterMenuFactory = new SortAndFilterActionFactory(navigatorPart);
-		decoratorFactory = new DecoratorActionFactory();
 		this.part = navigatorPart;
 
 	}
@@ -60,7 +57,6 @@ public class ResourceNavigatorActionFactory extends ActionFactory {
 		refactorFactory.addGlobalActions(part.getViewSite().getActionBars());
 		workbenchFactory.makeActions();
 		sortAndFilterMenuFactory.makeActions();
-		decoratorFactory.makeActions();
 	}
 
 	/**
@@ -92,7 +88,6 @@ public class ResourceNavigatorActionFactory extends ActionFactory {
 		gotoFactory.fillToolBar(toolBar);
 		actionBars.updateActionBars();
 		sortAndFilterMenuFactory.fillActionBarMenu(actionBars.getMenuManager(), selection);
-		decoratorFactory.fillActionBarMenu(actionBars.getMenuManager(), selection);
 	}
 
 	/*

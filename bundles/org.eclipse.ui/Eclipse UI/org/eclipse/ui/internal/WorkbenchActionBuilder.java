@@ -4,23 +4,16 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.core.resources.*;
-import org.eclipse.ui.internal.*;
-import org.eclipse.ui.internal.dialogs.*;
-import org.eclipse.ui.internal.misc.*;
-import org.eclipse.ui.internal.dialogs.*;
-import org.eclipse.ui.internal.dialogs.*;
-import org.eclipse.ui.internal.registry.*;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.*;
-import org.eclipse.ui.actions.NewWizardAction;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.preference.*;
-import org.eclipse.jface.util.*;
-import java.util.*;
-import java.net.*;
 
 
 /**
@@ -76,6 +69,9 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private RetargetAction findAction;
 	private RetargetAction addBookmarkAction;
 	private RetargetAction printAction;
+	
+	//decorator factory
+	DecoratorActionFactory decoratorFactory;
 /**
  * WorkbenchActionBuilder constructor comment.
  */
@@ -265,17 +261,20 @@ private void createMenuBar() {
 	launchWindowMenu.add(new GroupMarker(IWorkbenchActionConstants.LAUNCH_EXT));
 	popup.add(launchWindowMenu);
 	
-	{
-		MenuManager subMenu = new MenuManager(WorkbenchMessages.getString("Workbench.navigation")); //$NON-NLS-1$
-		popup.add(subMenu);
-		subMenu.add(activateEditorAction);
-		subMenu.add(showViewMenuAction);
-		subMenu.add(showPartPaneMenuAction);
-		subMenu.add(nextEditorAction);
-		subMenu.add(prevEditorAction);
-		subMenu.add(nextPartAction);
-		subMenu.add(prevPartAction);
-	}
+	//Navigation menu
+	MenuManager subMenu = new MenuManager(WorkbenchMessages.getString("Workbench.navigation")); //$NON-NLS-1$
+	popup.add(subMenu);
+	subMenu.add(activateEditorAction);
+	subMenu.add(showViewMenuAction);
+	subMenu.add(showPartPaneMenuAction);
+	subMenu.add(nextEditorAction);
+	subMenu.add(prevEditorAction);
+	subMenu.add(nextPartAction);
+	subMenu.add(prevPartAction);
+	
+	//Decorators menu
+	decoratorFactory.fillMenu(popup);
+	
 	
 	popup.add(new Separator(IWorkbenchActionConstants.WINDOW_EXT));
 	popup.add(workbenchEditorsAction = new WorkbenchEditorsAction(window));
@@ -514,6 +513,9 @@ private void makeActions() {
 	nextPartAction = new CyclePartAction(window, true);
 	prevPartAction = new CyclePartAction(window, false);
 	activateEditorAction = new ActivateEditorAction(window);
+	
+	decoratorFactory = new DecoratorActionFactory();
+	decoratorFactory.makeActions();
 }
 /**
  * Update the menubar and toolbar when
