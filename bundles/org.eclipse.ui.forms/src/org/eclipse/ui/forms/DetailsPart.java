@@ -143,8 +143,8 @@ public final class DetailsPart implements IFormPart, IPartSelectionListener {
 	 * @see org.eclipse.ui.forms.IFormPart#dispose()
 	 */
 	public void dispose() {
-		for (Enumeration enum = pages.elements(); enum.hasMoreElements();) {
-			PageBag pageBag = (PageBag) enum.nextElement();
+		for (Enumeration enm = pages.elements(); enm.hasMoreElements();) {
+			PageBag pageBag = (PageBag) enm.nextElement();
 			pageBag.dispose();
 		}
 	}
@@ -288,8 +288,8 @@ public final class DetailsPart implements IFormPart, IPartSelectionListener {
 		// overflow
 		int currentTicket = PageBag.getCurrentTicket();
 		int cutoffTicket = currentTicket - getPageLimit();
-		for (Enumeration enum=pages.keys(); enum.hasMoreElements();) {
-			Object key = enum.nextElement();
+		for (Enumeration enm=pages.keys(); enm.hasMoreElements();) {
+			Object key = enm.nextElement();
 			PageBag pageBag = (PageBag)pages.get(key);
 			if (pageBag.getTicket()<=cutoffTicket) {
 				// candidate - see if it is active and not fixed
