@@ -50,7 +50,7 @@ protected void deleteResource(UnifiedTreeNode node, Resource target) throws Core
 	ResourceInfo info = target.getResourceInfo(false, false);
 	int flags = target.getFlags(info);
 	if (target.exists(flags, false))
-		target.delete(true, null);
+		target.deleteResource(true, null);
 	node.setExistsWorkspace(false);
 }
 protected void fileToFolder(UnifiedTreeNode node, Resource target) throws CoreException {
