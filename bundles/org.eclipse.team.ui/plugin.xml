@@ -232,16 +232,23 @@
             visible="true"
             id="org.eclipse.team.ui.actionSet">
          <action
-               label="%Command.syncAll.name"
-               style="pulldown"
-               definitionId="org.eclipse.team.ui.synchronizeAll"
                allowLabelUpdate="true"
-               icon="icons/full/elcl16/synch_participants.gif"
-               class="org.eclipse.team.internal.ui.synchronize.actions.GlobalRefreshAction"
                toolbarPath="Normal/Team"
+               label="%Command.syncAll.name"
                tooltip="%Command.syncAll.name"
+               class="org.eclipse.team.internal.ui.synchronize.actions.GlobalRefreshAction"
+               icon="icons/full/elcl16/synch_participants.gif"
+               definitionId="org.eclipse.team.ui.synchronizeAll"
+               style="pulldown"
                id="org.eclipse.team.ui.synchronizeAll">
          </action>
+         <action
+               allowLabelUpdate="true"
+               label="%ConfigureProject.label"
+               tooltip="%ConfigureProject.tooltip"
+               class="org.eclipse.team.internal.ui.actions.ConfigureProjectAction"
+               menubarPath="project/open.ext"
+               id="org.eclipse.team.ui.ConfigureProject"/>
       </actionSet>
    </extension>
 

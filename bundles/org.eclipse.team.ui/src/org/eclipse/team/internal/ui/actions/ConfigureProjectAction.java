@@ -24,13 +24,15 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.wizards.ConfigureProjectWizard;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
 /**
  * Action for configuring a project. Configuring involves associating
  * the project with a Team provider and performing any provider-specific
  * configuration that is necessary.
  */
-public class ConfigureProjectAction extends TeamAction {
+public class ConfigureProjectAction extends TeamAction implements IWorkbenchWindowActionDelegate {
 	private static class ResizeWizardDialog extends WizardDialog {
 		public ResizeWizardDialog(Shell parentShell, IWizard newWizard) {
 			super(parentShell, newWizard);
@@ -66,5 +68,11 @@ public class ConfigureProjectAction extends TeamAction {
 		if (!selectedProjects[0].isAccessible()) return false;
 		if (!RepositoryProvider.isShared(selectedProjects[0])) return true;
 		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
+	 */
+	public void init(IWorkbenchWindow window) {
 	}
 }
