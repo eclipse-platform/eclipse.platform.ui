@@ -1,4 +1,4 @@
-package org.eclipse.ant.internal.ui;/* * (c) Copyright IBM Corp. 2000, 2001. * All Rights Reserved. */import java.lang.reflect.InvocationTargetException;import java.util.*;import org.apache.tools.ant.Target;import org.eclipse.ant.core.*;import org.eclipse.core.resources.IFile;import org.eclipse.core.runtime.CoreException;import org.eclipse.core.runtime.IProgressMonitor;import org.eclipse.core.runtime.IStatus;import org.eclipse.core.runtime.QualifiedName;import org.eclipse.core.runtime.Status;import org.eclipse.jface.operation.IRunnableWithProgress;import org.eclipse.jface.wizard.Wizard;
+package org.eclipse.ant.internal.ui;/* * (c) Copyright IBM Corp. 2000, 2001. * All Rights Reserved. */import java.lang.reflect.InvocationTargetException;import java.util.*;import org.apache.tools.ant.Target;import org.eclipse.ant.core.*;import org.eclipse.core.resources.IFile;import org.eclipse.core.runtime.*;import org.eclipse.jface.operation.IRunnableWithProgress;import org.eclipse.jface.wizard.Wizard;
 
 public class AntLaunchWizard extends Wizard {
 	
@@ -46,12 +46,10 @@ public class AntLaunchWizard extends Wizard {
 			
 	
 			
-	public boolean performFinish() {
-		Vector targetVect = page1.getSelectedTargets();
-
-		// and then ask the project to execute them -- SEEMS TO CRASH
-		// project.executeTargets(targetVect);				// get the command line arguments		String commandArgs = page1.getArgumentsFromField();		// and tokenize them		StringTokenizer tokenizer = new StringTokenizer(commandArgs," ");		String args[] = new String[tokenizer.countTokens()+targetVect.size()+2];		int index = 0;		while (tokenizer.hasMoreTokens())			args[index++] = tokenizer.nextToken();		args[index++] = "-buildfile";		args[index++] = antFile.getLocation().toOSString();		Iterator argsIterator = targetVect.iterator();		while (argsIterator.hasNext())			args[index++] = ((Target) argsIterator.next()).getName();				//monitor.beginTask("Running Ant", IProgressMonitor.UNKNOWN);		try {			//TBD: should remove the build listener somehow			new AntRunner().run(args/*, new UIBuildListener(monitor, antFile)*/);		} 		catch (BuildCanceledException e) {			// build was canceled don't propagate exception			return false;		}		catch (Exception e) {			// should do something here			return false;		}					
-/*		
+	public boolean performFinish() {				Vector targetVect = page1.getSelectedTargets();
+		
+		// DON'T NEED IT ANYMORE
+		// project.executeTargets(targetVect);				//monitor.beginTask("Running Ant", IProgressMonitor.UNKNOWN);				String[] args = createArgumentsArray(targetVect);		try {			//TBD: should remove the build listener somehow						new AntRunner().run(args/*, new UIBuildListener(monitor, antFile)*/);		} 		catch (BuildCanceledException e) {			// build was canceled don't propagate exception			return false;		}		catch (Exception e) {			// should do something here			return false;		}	/*		
 		this.getContainer().run(true,true,new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
 				String buildFileName= null;
@@ -81,7 +79,7 @@ public class AntLaunchWizard extends Wizard {
 		// asuming that all went well...
 		storeTargetsOnFile(targetVect);
 		return true;
-	}
+	}		/**	 * Creates an array that contains all the arguments needed to run AntRunner: 	 * 	- the name of the file to build	 *  - the arguments such as "-verbose", ...	 *  - target names	 * 	 * @param targetVector the vector that contains the targets built during the parsing	 * @param String the arguments from the field of the wizard	 * @return String[] the tokenized arguments	 */	private String[] createArgumentsArray(Vector targets) {			Vector argsVector = new Vector();		Vector targetVect = targets;		String argString = page1.getArgumentsFromField().trim();				// if there are arguments, then we have to tokenize them		if (argString.length() != 0) {			int indexOfToken;						// Checks if the string starts with a bracket or not so that we know where the composed arguments start			if (argString.charAt(0)=='"') 				indexOfToken = 1;			else				indexOfToken=0;					// First tokenize the command line with the separator bracket			StringTokenizer tokenizer1 = new StringTokenizer(argString,"\"");					while (tokenizer1.hasMoreTokens()) {				if (indexOfToken%2 == 0) {					// this is a string that needs to be tokenized with the separator space					StringTokenizer tokenizer2 = new StringTokenizer(tokenizer1.nextToken()," ");					while (tokenizer2.hasMoreTokens())						argsVector.add(tokenizer2.nextToken());				} else {					argsVector.add(tokenizer1.nextToken());				}				indexOfToken++;			}				}						// Finally create the array of String for AntRunner		String args[] = new String[argsVector.size()+targetVect.size()+2];		int index = 0;		args[index++] = "-buildfile";		args[index++] = antFile.getLocation().toOSString();				Iterator argsIterator = argsVector.iterator();		while (argsIterator.hasNext())			args[index++] = (String) argsIterator.next();		argsIterator = targetVect.iterator();		while (argsIterator.hasNext())			args[index++] = ((Target) argsIterator.next()).getName();					/*//TEST			int i = args.length;		for (int y=0; y<i; y++)			System.out.println("- "+args[y]);*/						return args;			}
 
 	protected void storeTargetsOnFile(Vector targets) {
 		StringBuffer targetString = new StringBuffer();
