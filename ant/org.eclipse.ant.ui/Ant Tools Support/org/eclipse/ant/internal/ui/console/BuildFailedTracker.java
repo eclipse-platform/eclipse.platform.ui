@@ -56,16 +56,16 @@ public class BuildFailedTracker implements IConsoleLineTracker {
 				} else {
 					fileStart = text.indexOf("BUILD FAILED:") + 14; //$NON-NLS-1$
 				}
-					index = text.indexOf(' ', index); //$NON-NLS-1$
-					if (index > 0) {
-						int numberEnd= index - 1;
-						int numberStart = text.lastIndexOf(':', numberEnd - 1) + 1;
-						int fileEnd = text.lastIndexOf(':', numberStart);
-						if (numberStart > 0 && fileEnd > 0) {
-							fileName = text.substring(fileStart, fileEnd).trim();
-							lineNumber = text.substring(numberStart, numberEnd).trim();
-						}
+				index = text.indexOf(' ', index); //$NON-NLS-1$
+				if (index > 0) {
+					int numberEnd= index - 1;
+					int numberStart = text.lastIndexOf(':', numberEnd - 1) + 1;
+					int fileEnd = text.lastIndexOf(':', numberStart);
+					if (numberStart > 0 && fileEnd > 0) {
+						fileName = text.substring(fileStart, fileEnd).trim();
+						lineNumber = text.substring(numberStart, numberEnd).trim();
 					}
+				}
 			} 
 			if (fileName != null) {
 				int num = -1;
