@@ -73,7 +73,7 @@ public final class FileBuffers {
 		
 		for (int i= 0, length= projects.length; i < length; i++) {
 			IPath path= projects[i].getLocation();
-			if (path.isPrefixOf(location)) {
+			if (path != null && path.isPrefixOf(location)) {
 				IPath filePath= location.removeFirstSegments(path.segmentCount());
 				filePath= projects[i].getFullPath().append(filePath);
 				return filePath.makeAbsolute();
