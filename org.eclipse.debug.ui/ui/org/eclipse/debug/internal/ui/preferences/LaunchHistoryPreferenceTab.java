@@ -63,6 +63,7 @@ public class LaunchHistoryPreferenceTab {
 	private Button fRemoveFavoritesButton;
 	private Button fMoveUpButton;
 	private Button fMoveDownButton;
+	private Button fMakeRecentButton;
 	
 	/**
 	 * Recent Buttons
@@ -108,7 +109,7 @@ public class LaunchHistoryPreferenceTab {
 		topComp.setLayoutData(gd);
 	
 		Label favoritesLabel = new Label(topComp, SWT.LEFT);
-		favoritesLabel.setText("Fa&vorites:");
+		favoritesLabel.setText(DebugPreferencesMessages.getString("LaunchHistoryPreferenceTab.Fa&vorites__1")); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		favoritesLabel.setLayoutData(gd);
@@ -173,12 +174,26 @@ public class LaunchHistoryPreferenceTab {
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL);
 		fMoveDownButton.setLayoutData(gd);
 		SWTUtil.setButtonDimensionHint(fMoveDownButton);
-		fMoveDownButton.setEnabled(false);					
+		fMoveDownButton.setEnabled(false);
+		
+		fMakeRecentButton = SWTUtil.createPushButton(buttonComp, DebugPreferencesMessages.getString("LaunchHistoryPreferenceTab.Ma&ke_Recent_2"), null);					 //$NON-NLS-1$
+		fMakeRecentButton.addSelectionListener(new SelectionAdapter() {
+			/**
+			 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+			 */
+			public void widgetSelected(SelectionEvent e) {
+				handleMakeRecentButtonSelected();
+			}
+		});
+		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL);
+		fMakeRecentButton.setLayoutData(gd);
+		SWTUtil.setButtonDimensionHint(fMakeRecentButton);
+		fMakeRecentButton.setEnabled(false);
 	
 		createSpacer(topComp, 1);
 	
 		Label recent = new Label(topComp, SWT.LEFT);
-		recent.setText("&Launch History:");
+		recent.setText(DebugPreferencesMessages.getString("LaunchHistoryPreferenceTab.&Launch_History__3")); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		recent.setLayoutData(gd);
@@ -280,6 +295,7 @@ public class LaunchHistoryPreferenceTab {
 		}
 		
 		fRemoveFavoritesButton.setEnabled(notEmpty);
+		fMakeRecentButton.setEnabled(notEmpty);
 		fMoveUpButton.setEnabled(notEmpty && !first);
 		fMoveDownButton.setEnabled(notEmpty && !last);
 	}
@@ -408,8 +424,22 @@ public class LaunchHistoryPreferenceTab {
 			getRecents().remove(config);
 		}
 		updateStatus();
-	}		
-
+	}	
+	
+	/**
+	 * The 'add favorite to recents' button has been pressed
+	 */
+	protected void handleMakeRecentButtonSelected() {
+		IStructuredSelection sel = (IStructuredSelection)getFavoritesTable().getSelection();
+		Iterator iter = sel.iterator();
+		while (iter.hasNext()) {
+			Object config = iter.next();
+			getRecents().add(config);
+			getFavorites().remove(config);
+		}
+		updateStatus();
+	}
+	
 	/**
 	 * Returns the mode of this page - run or debug.
 	 */
