@@ -79,7 +79,8 @@ public class SearchOperation extends WorkspaceModifyOperation {
 			sView
 				.searchStarted(
 					SearchUIConstants.RESULTS_PAGE_ID,
-					queryData.getExpression(),
+					WorkbenchResources.getString("singleSearchResult", queryData.getExpression()),
+					WorkbenchResources.getString("multipleSearchResult", queryData.getExpression(),"{0}"),
 					IMAGE_DSCR_SEARCH,
 					null,
 					new LabelProvider() {
