@@ -24,14 +24,11 @@ import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
 
 /**
- * Utility methods for the UI portion of the source lookup solution. * 
- * @see SourceLookupUtils
+ * Utility methods for the UI portion of the source lookup solution.
  * 
  * @since 3.0
  */
 public class SourceLookupUIUtils {
-	
-	
 	/**
 	 * Constant for the container presentation extension id.
 	 * @since 3.0
