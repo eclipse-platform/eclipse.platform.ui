@@ -56,7 +56,7 @@ public class StatusLineContributionItem extends ContributionItem implements ISta
 	private static final int INDENT= 3;
 	/** 
 	 * Default number of characters that should fit into the item.
-	 * @since 2.1
+	 * @since 3.0
 	 */
 	static final int DEFAULT_WIDTH_IN_CHARS= 14;
 	/**

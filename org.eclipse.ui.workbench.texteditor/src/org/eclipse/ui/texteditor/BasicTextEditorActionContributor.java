@@ -85,7 +85,7 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 	
 	/** 
 	 * The status fields to be set to the editor
-	 * @since 2.0
+	 * @since 3.0
 	 */
 	private final static StatusFieldDef[] STATUS_FIELD_DEFS= {
 		new StatusFieldDef(ITextEditorActionConstants.STATUS_CATEGORY_FIND_FIELD, null, false, EditorMessages.getString("Editor.FindIncremental.reverse.name").length() + 15), //$NON-NLS-1$

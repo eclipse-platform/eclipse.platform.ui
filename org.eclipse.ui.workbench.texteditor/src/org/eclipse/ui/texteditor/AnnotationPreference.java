@@ -84,62 +84,137 @@ public class AnnotationPreference {
 	
 	/* IDs for presentation preference attributes */
 	
-	/** The image to be used for drawing in the vertical ruler. */ 
+	/**
+	 * The image to be used for drawing in the vertical ruler. 
+	 * @since 3.0
+	 */ 
 	protected final static Object IMAGE_DESCRIPTOR= new Object();
-	/** The preference label */
+	/**
+	 * The preference label.
+	 * @since 3.0
+	 */
 	protected final static Object PREFERENCE_LABEL= new Object();
-	/** The presentation layer */
+	/**
+	 * The presentation layer.
+	 * @since 3.0
+	 */
 	protected final static Object PRESENTATION_LAYER= new Object();
-	/** The symbolic name of the image to be drawn in the vertical ruler. */
+	/**
+	 * The symbolic name of the image to be drawn in the vertical ruler.
+	 * @since 3.0
+	 */
 	protected final static Object SYMBOLIC_IMAGE_NAME= new Object();
-	/** Indicates whether the annotation type contributed to the overview ruler's header */
+	/** 
+	 * Indicates whether the annotation type contributed to the overview ruler's header.
+	 * @since 3.0
+	 */
 	protected final static Object HEADER_VALUE= new Object();
-	/** The annotation image provider. */
+	/**
+	 * The annotation image provider.
+	 * @since 3.0
+	 */
 	protected final static Object IMAGE_PROVIDER= new Object();
-	/** The value for the includeOnPreferencePage property. */
+	/**
+	 * The value for the includeOnPreferencePage property.
+	 * @since 3.0
+	 */
 	protected final static Object INCLUDE_ON_PREFERENCE_PAGE= new Object();
 
 	/* IDs for preference store access and initialization */
 	
-	/** The preference key for the visibility inside text */
+	/**
+	 * The preference key for the visibility inside text.
+	 * @since 3.0
+	 */
 	protected final static Object TEXT_PREFERENCE_KEY= new Object();
-	/** The visibility inside text */
+	/**
+	 * The visibility inside text.
+	 * @since 3.0
+	 */
 	protected final static Object TEXT_PREFERENCE_VALUE= new Object();
-	/** The preference key for the presentation color */
+	/**
+	 * The preference key for the presentation color.
+	 * @since 3.0
+	 */
 	protected final static Object COLOR_PREFERENCE_KEY= new Object();
-	/** The presentation color */
+	/** The presentation color.
+	 * @since 3.0
+	 */
 	protected final static Object COLOR_PREFERENCE_VALUE= new Object();
-	/** The preference key for highlighting inside text. */
+	/**
+	 * The preference key for highlighting inside text.
+	 * @since 3.0
+	 */
 	protected final static Object HIGHLIGHT_PREFERENCE_KEY= new Object();
-	/** The value for highlighting inside text. */
+	/**
+	 * The value for highlighting inside text.
+	 * @since 3.0
+	 */
 	protected final static Object HIGHLIGHT_PREFERENCE_VALUE= new Object();
-	/** The preference key for go to next navigation enablement. */
+	/**
+	 * The preference key for go to next navigation enablement.
+	 * @since 3.0
+	 */
 	protected final static Object IS_GO_TO_NEXT_TARGET_KEY= new Object();
-	/** The value for go to next navigation enablement. */
+	/**
+	 * The value for go to next navigation enablement.
+	 * @since 3.0
+	 */
 	protected final static Object IS_GO_TO_NEXT_TARGET_VALUE= new Object();
-	/** The preference key for go to previous navigation enablement. */
+	/**
+	 * The preference key for go to previous navigation enablement.
+	 * @since 3.0
+	 */
 	protected final static Object IS_GO_TO_PREVIOUS_TARGET_KEY= new Object();
-	/** The value for go to previous navigation enablement. */
+	/**
+	 * The value for go to previous navigation enablement.
+	 * @since 3.0
+	 */
 	protected final static Object IS_GO_TO_PREVIOUS_TARGET_VALUE= new Object();
-	/** The preference key for the visibility in the vertical ruler. */
+	/**
+	 * The preference key for the visibility in the vertical ruler.
+	 * @since 3.0
+	 */
 	protected final static Object VERTICAL_RULER_PREFERENCE_KEY= new Object();
-	/** The visibility in the vertical ruler. */
+	/**
+	 * The visibility in the vertical ruler.
+	 * @since 3.0
+	 */
 	protected final static Object VERTICAL_RULER_PREFERENCE_VALUE= new Object();
-	/** The preference key for the visibility in the overview ruler */
+	/**
+	 * The preference key for the visibility in the overview ruler.
+	 * @since 3.0
+	 */
 	protected final static Object OVERVIEW_RULER_PREFERENCE_KEY= new Object();
-	/** The visibility in the overview ruler */
+	/**
+	 * The visibility in the overview ruler.
+	 * @since 3.0
+	 */
 	protected final static Object OVERVIEW_RULER_PREFERENCE_VALUE= new Object();
-	/** The preference key for the visibility in the next/previous drop down toolbar action. */
+	/**
+	 * The preference key for the visibility in the next/previous drop down toolbar action. 
+	 * @since 3.0
+	 */
 	protected final static Object SHOW_IN_NAVIGATION_DROPDOWN_KEY= new Object();
-	/** The value for the visibility in the next/previous drop down toolbar action. */
+	/**
+	 * The value for the visibility in the next/previous drop down toolbar action.
+	 * @since 3.0
+	 */
 	protected final static Object SHOW_IN_NAVIGATION_DROPDOWN_VALUE= new Object();
-	/** The preference key for the decoration style. */
+	/**
+	 * The preference key for the decoration style.
+	 * @since 3.0
+	 */
 	protected final static Object TEXT_STYLE_PREFERENCE_KEY= new Object();
-	/** The value for the text decoration style. */
+	/**
+	 * The value for the text decoration style.
+	 * @since 3.0
+	 */
 	protected final static Object TEXT_STYLE_PREFERENCE_VALUE= new Object();
 	
 	/**
 	 * Array of all supported attributes.
+	 * @since 3.0
 	 */
 	protected final static Object[] ATTRIBUTES= new Object[] {
 			IMAGE_DESCRIPTOR, 
@@ -783,6 +858,7 @@ public class AnnotationPreference {
 	 * Returns the preference key for the decoration style used when the annotation is shown in text.
 	 * 
 	 * @return the preference key for the decoration style or <code>null</code> if the key is undefined
+	 * @since 3.0
 	 */
 	public String getTextStylePreferenceKey() {
 		return getStringValue(TEXT_STYLE_PREFERENCE_KEY);

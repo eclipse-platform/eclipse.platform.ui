@@ -155,6 +155,8 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 	
 	/**
 	 * Sets the "no matches found" error message to the status line.
+	 *
+	 * @since 3.0
 	 */
 	private void statusNotFound() {
 		fWorkbenchPart.getSite().getShell().getDisplay().beep();
@@ -217,6 +219,7 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 
 	/*
 	 * @see FindReplaceDialog#findIndex(String, int, boolean, boolean, boolean, boolean)
+	 * @since 3.0
 	 */
 	private int findIndex(String findString, int startPosition, boolean forwardSearch, boolean caseSensitive, boolean wrapSearch, boolean wholeWord, boolean regExSearch) {
 

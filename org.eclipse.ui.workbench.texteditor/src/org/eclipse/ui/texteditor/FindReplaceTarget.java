@@ -81,6 +81,7 @@ class FindReplaceTarget implements IFindReplaceTarget, IFindReplaceTargetExtensi
 
 	/*
 	 * @see org.eclipse.jface.text.IFindReplaceTargetExtension3#findAndSelect(int, String, boolean, boolean, boolean, boolean)
+	 * @since 3.0
 	 */
 	public int findAndSelect(int offset, String findString, boolean searchForward, boolean caseSensitive, boolean wholeWord, boolean regExSearch) {
 		if (getTarget() instanceof IFindReplaceTargetExtension3)
@@ -131,8 +132,9 @@ class FindReplaceTarget implements IFindReplaceTarget, IFindReplaceTargetExtensi
 			getTarget().replaceSelection(text);
 	}
 
-	/**
+	/*
 	 * @see org.eclipse.jface.text.IFindReplaceTargetExtension3#replaceSelection(String, boolean)
+	 * @since 3.0
 	 */
 	public void replaceSelection(String text, boolean regExReplace) {
 		if (getTarget() instanceof IFindReplaceTargetExtension3) {

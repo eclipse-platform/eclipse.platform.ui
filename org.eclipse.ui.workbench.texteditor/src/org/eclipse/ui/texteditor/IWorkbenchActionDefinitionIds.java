@@ -134,7 +134,6 @@ public interface IWorkbenchActionDefinitionIds {
 	 * The command identifier for the "move" action that typically appears in
 	 * the file menu.  
 	 * Value: <code>"org.eclipse.ui.edit.move"</code>
-	 * 
 	 * @since 3.0
 	 */
 	public static final String MOVE = "org.eclipse.ui.edit.move"; //$NON-NLS-1$
@@ -142,7 +141,6 @@ public interface IWorkbenchActionDefinitionIds {
 	 * The command identifier for the "rename" action that typically appears in
 	 * the file menu.  
 	 * Value: <code>"org.eclipse.ui.edit.rename"</code>
-	 * 
 	 * @since 3.0
 	 */
 	public static final String RENAME = "org.eclipse.ui.edit.rename"; //$NON-NLS-1$

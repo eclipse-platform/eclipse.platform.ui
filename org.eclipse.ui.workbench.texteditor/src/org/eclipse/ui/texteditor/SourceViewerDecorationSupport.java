@@ -758,6 +758,7 @@ public class SourceViewerDecorationSupport {
 	 * @param annotationType the annotation type
 	 * @param highlighting <code>true</code> if highlighting <code>false</code> if painting squiggles
 	 * @param updatePainter if <code>true</code> update the annotation painter
+	 * @since 3.0
 	 */
 	private void showAnnotations(Object annotationType, boolean highlighting, boolean updatePainter) {
 		if (fSourceViewer instanceof ITextViewerExtension2) {
@@ -799,6 +800,7 @@ public class SourceViewerDecorationSupport {
 
 	/**
 	 * Updates the annotation painter.
+	 * @since 3.0
 	 */
 	private void updateAnnotationPainter() {
 		if (fAnnotationPainter == null)

@@ -77,7 +77,6 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	/** 
 	 * Name of the action for shifting text blocks to the right, triggered by the TAB key. 
 	 * Value: <code>"ShiftRightTab"</code>
-	 * 
 	 * @since 3.0
 	 */
 	static final String SHIFT_RIGHT_TAB= "ShiftRightTab"; //$NON-NLS-1$
@@ -320,7 +319,6 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	/**
 	 * Name of standard Copy global action in the Edit menu.
 	 * Value <code>"copy"</code>
-	 * 
 	 * @since 3.0
 	 * @see org.eclipse.ui.actions.ActionFactory#COPY#getId()
 	 */
@@ -329,7 +327,6 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	/**
 	 * Name of standard Cut global action in the Edit menu.
 	 * Value <code>"cut"</code>
-	 * 
 	 * @since 3.0
 	 * @see org.eclipse.ui.actions.ActionFactory#CUT#getId()
 	 */
@@ -338,7 +335,6 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	/**
 	 * Name of standard Delete global action in the Edit menu.
 	 * Value <code>"delete"</code>
-	 * 
 	 * @since 3.0
 	 * @see org.eclipse.ui.actions.ActionFactory#DELETE#getId()
 	 */
@@ -347,7 +343,6 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	/**
 	 * Name of standard Find global action in the Edit menu.
 	 * Value <code>"find"</code>
-	 * 
 	 * @since 3.0
 	 * @see org.eclipse.ui.actions.ActionFactory#FIND#getId()
 	 */
@@ -356,7 +351,6 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	/**
 	 * Name of standard Paste global action in the Edit menu.
 	 * Value <code>"paste"</code>
-	 * 
 	 * @since 3.0
 	 * @see org.eclipse.ui.actions.ActionFactory#PASTE#getId()
 	 */
@@ -365,7 +359,6 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	/**
 	 * Name of standard Print global action in the File menu.
 	 * Value <code>"print"</code>
-	 * 
 	 * @since 3.0
 	 * @see org.eclipse.ui.actions.ActionFactory#PRINT#getId()
 	 */
@@ -374,7 +367,6 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	/**
 	 * Name of standard Redo global action in the Edit menu.
 	 * Value <code>"redo"</code>
-	 * 
 	 * @since 3.0
 	 * @see org.eclipse.ui.actions.ActionFactory#REDO#getId()
 	 */
@@ -383,7 +375,6 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	/**
 	 * Name of standard Undo global action in the Edit menu.
 	 * Value <code>"undo"</code>
-	 * 
 	 * @since 3.0
 	 * @see org.eclipse.ui.actions.ActionFactory#UNDO#getId()
 	 */
@@ -392,7 +383,6 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	/**
 	 * Name of standard Save global action in the File menu.
 	 * Value <code>"save"</code>
-	 * 
 	 * @since 3.0
 	 * @see org.eclipse.ui.actions.ActionFactory#SAVE#getId()
 	 */
@@ -401,7 +391,6 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	/**
 	 * Name of standard Select All global action in the Edit menu.
 	 * Value <code>"selectAll"</code>
-	 * 
 	 * @since 3.0
 	 * @see org.eclipse.ui.actions.ActionFactory#SELECT_ALL#getId()
 	 */
@@ -410,7 +399,6 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	/**
 	 * Name of standard Revert global action in the File menu.
 	 * Value <code>"revert"</code>
-	 * 
 	 * @since 3.0
 	 * @see org.eclipse.ui.actions.ActionFactory#REVERT#getId()
 	 */
@@ -426,7 +414,6 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	/** 
 	 * Name of the action for toggling the smart insert mode. 
 	 * Value: <code>"ToggleInsertMode"</code>
-	 * 
 	 * @since 3.0
 	 */
 	static final String TOGGLE_INSERT_MODE= "TOGGLE_INSERT_MODE"; //$NON-NLS-1$

@@ -176,7 +176,6 @@ class FindReplaceDialog extends Dialog {
 	/**
 	 * Tells whether an initial find operation is needed
 	 * before the replace operation.
-	 * 
 	 * @since 3.0 
 	 */
 	private boolean fNeedsInitialFindBeforeReplace;
@@ -216,49 +215,41 @@ class FindReplaceDialog extends Dialog {
 	/**
 	 * Tells whether the target supports regular expressions.
 	 * <code>true</code> if the target supports regular expressions
-	 * 
 	 * @since 3.0
 	 */
 	private boolean fIsTargetSupportingRegEx;
 	/**
 	 * Tells whether fUseSelectedLines radio is checked.
-	 * 
 	 * @since 3.0
 	 */
 	private boolean fUseSelectedLines;
 	/**
 	 * The content assistant subject adapter for the find combo.
-	 *
 	 * @since 3.0
 	 */
 	private ComboContentAssistSubjectAdapter fFindFieldContentAssistAdapter;
 	/**
 	 * The content assistant subject adapter for the replace combo.
-	 *
 	 * @since 3.0
 	 */
 	private ComboContentAssistSubjectAdapter fReplaceFieldContentAssistAdapter;
 	/**
 	 * The content assistant for the find combo.
-	 *
 	 * @since 3.0
 	 */
 	private ContentAssistant fFindFieldContentAssistant;
 	/**
 	 * The content assistant for the replace combo.
-	 *
 	 * @since 3.0
 	 */
 	private ContentAssistant fReplaceFieldContentAssistant;
 	/**
 	 * Content assist's proposal popup background color.
-	 *
 	 * @since 3.0
 	 */
 	private Color fProposalPopupBackgroundColor;
 	/**
 	 * Content assist's proposal popup foreground color.
-	 *
 	 * @since 3.0
 	 */
 	private Color fProposalPopupForegroundColor;
@@ -824,6 +815,7 @@ class FindReplaceDialog extends Dialog {
 	 * @param wholeWord does the search string represent a complete word
 	 * @param regExSearch if <code>true</code> findString represents a regular expression
 	 * @return the occurrence of the find string following the options or <code>-1</code> if nothing found
+	 * @since 3.0
 	 */
 	private int findIndex(String findString, int startPosition, boolean forwardSearch, boolean caseSensitive, boolean wrapSearch, boolean wholeWord, boolean regExSearch) {
 
@@ -1379,6 +1371,7 @@ class FindReplaceDialog extends Dialog {
 	 * Locates the user's findString in the text of the target.
 	 * 
 	 * @param mustInitIncrementalBaseLocation <code>true</code> if base location must be initialized
+	 * @since 3.0
 	 */
 	private void performSearch(boolean mustInitIncrementalBaseLocation) {
 
@@ -1498,6 +1491,7 @@ class FindReplaceDialog extends Dialog {
 	 * Updates the enabled state of the buttons.
 	 * 
 	 * @param disableReplace <code>true</code> if replace button must be disabled
+	 * @since 3.0
 	 */
 	private void updateButtonState(boolean disableReplace) {
 		if (okToUse(getShell()) && okToUse(fFindNextButton)) {

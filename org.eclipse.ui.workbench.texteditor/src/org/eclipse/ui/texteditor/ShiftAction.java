@@ -108,6 +108,8 @@ public class ShiftAction extends TextEditorAction implements IReadOnlyDependent 
 	
 	/**
 	 * Enablement when tab key is pressed - the current selection has to be cover multiple lines.
+	 *
+	 * @since 3.0
 	 */
 	protected void updateForTab() {
 		super.update();
