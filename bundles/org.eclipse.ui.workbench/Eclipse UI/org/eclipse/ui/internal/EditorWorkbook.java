@@ -197,7 +197,7 @@ public void createControl(Composite parent) {
 //	}
 
 	// Enable drop target data
-//	enableDrop(this);
+	enableDrop(this);
 
 	// Create tabs.
 	Iterator enum = editors.iterator();
@@ -238,6 +238,7 @@ public void showPaneMenu() {
 protected boolean overImage(EditorPane pane,int x) {
 	Rectangle imageBounds = header.getLabelImage().getBounds();
 	return x < (pane.getBounds().x + imageBounds.x + imageBounds.width);
+	//infw where used, what about over image of favourites?
 }		
 /**
  * Create a page and tab for an editor.

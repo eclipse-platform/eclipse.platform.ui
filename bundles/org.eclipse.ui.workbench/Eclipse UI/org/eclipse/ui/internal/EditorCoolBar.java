@@ -15,26 +15,21 @@ public class EditorCoolBar {
 	private CoolBar coolBar;
 	private Composite dropDownComposite;
 	private CoolItem dropDownItem;
-//	private Label dropDownImage;
 	private CLabel dropDownLabel;
 	private Button dropDownButton;
 	
 	private CoolItem bookMarkItem;
 	private ToolBar bookMarkToolBar;
-//	private List bookMarkList = new ArrayList();
 	private ToolItem bookMarkToolItem;
 	private MenuManager chevronMenuManager;
 	private MenuManager bookMarkMenuManager = new MenuManager();
-//	private ToolItem selectedBookMark;
-	
-	
+
 	private EditorList editorList;
 	private IWorkbenchWindow window;
 	private EditorWorkbook workbook;
 	private int style;
 	private boolean onBottom;
 	private boolean firstResize = true; // infw cheezy workaround
-//	private static int OFFSCREEN = -200;
 	private boolean mouseDownListenerAdded = false;
 	private boolean editorListIsOpen = false;
 
@@ -61,23 +56,15 @@ public class EditorCoolBar {
 	
 		// Update the tab image
 		if (image == null) {
-//			dropDownImage.setImage(null);
-//		} else if (!image.equals(dropDownImage.getImage())) {
-//			dropDownImage.setImage(image);
 			dropDownLabel.setImage(null);
 		} else if (!image.equals(dropDownLabel.getImage())) {
 			dropDownLabel.setImage(image);
 		}
-//		Point p1 = dropDownImage.getSize();
 		Point p2 = dropDownButton.getSize();
 		Point p3 = dropDownComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-//		Point p4 = dropDownItem.computeSize(p1.x + p2.x + 5, p3.y);
 		Point p4 = dropDownItem.computeSize(p2.x + 5, p3.y);
 		dropDownItem.setMinimumSize(p4);
 		dropDownItem.setPreferredSize(p4);
-		
-		dropDownComposite.layout();
-//		dropDownImage.getParent().layout();
 	}	
 	
 	/**
@@ -129,17 +116,12 @@ public class EditorCoolBar {
 
 			}				
 		});
-		
-//		bookMarkList.add(bookMarkLabel);	
+			
 		Point p1 = bookMarkToolBar.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		Point p2 = bookMarkItem.computeSize(p1.x, p1.y);
-//		int p3 = ((ToolItem)bookMarkList.get(0)).getWidth();
 		int p3 = bookMarkToolBar.getItem(0).getWidth();
 		bookMarkItem.setMinimumSize(p3, p2.y);
 		bookMarkItem.setPreferredSize(p2);
-		
-//		bookMarkComposite.layout();
-//		coolBar.getParent().layout();
 	}	
 	
 	public void updateEmptyEditorLabel() {
@@ -149,7 +131,6 @@ public class EditorCoolBar {
 	}
 
 	public Image getLabelImage() {
-//		return dropDownImage.getImage();
 		return dropDownLabel.getImage();
 	}
 	
@@ -184,14 +165,12 @@ public class EditorCoolBar {
 		Rectangle shellBounds = shell.getBounds();
 		Point pullDownSize = dropDownItem.getSize();
 	
-//		shellBounds.y = Math.max(Math.min(position.y + pullDownSize.y, displayBounds.height - shellBounds.height),0);
 		shellBounds.x = position.x;
 		if (position.y + pullDownSize.y + shellBounds.height >  displayBounds.height) {
 			shellBounds.y = position.y - shellBounds.height;
 		} else {
 			shellBounds.y = position.y + pullDownSize.y;
 		}
-//		shellBounds.y = Math.max(Math.min(position.y + pullDownSize.y, position.y - shellBounds.height),0);
 		shellBounds.height = Math.min(shellBounds.height, maxItems*((Table) editorListControl).getItemHeight());
 		shellBounds.width = dropDownItem.getSize().x;
 		shell.setBounds(shellBounds);
@@ -204,11 +183,7 @@ public class EditorCoolBar {
 		Shell parent = workbook.getEditorArea().getWorkbenchWindow().getShell();
 		Display display = parent.getDisplay();
 		final Shell shell = new Shell (parent, SWT.ON_TOP);
-
-		shell.setLayout(new FillLayout());
-//		Point p = dropDownComposite.getSize();
-//		shell.setPreferredSize(p);
-		
+		shell.setLayout(new FillLayout());	
 		editorList.createControl(shell);
 		shell.pack();
 		
@@ -225,12 +200,6 @@ public class EditorCoolBar {
 			}
 		}); 
 		
-//		if dropDown from the label, position under mouse, else under button
-//		if ((point.x == OFFSCREEN) && (point.y == OFFSCREEN)) {
-//			point = dropDownButton.getParent().toDisplay(dropDownButton.getLocation());		
-//		}else {
-//			point = dropDownButton.getParent().toDisplay(point);
-//		}
 		Point point = coolBar.getParent().toDisplay (coolBar.getLocation ());
 		setShellBounds(shell, point);
 		
@@ -244,8 +213,9 @@ public class EditorCoolBar {
 			}
 		} finally {
 			editorListIsOpen = false;
+			// Should never happen
 			if(!shell.isDisposed()) {
-				shell.close();
+				shell.dispose();
 			}
 		}	
 	}
@@ -264,9 +234,6 @@ public class EditorCoolBar {
 		gridLayout.marginWidth = 0;
 		gridLayout.numColumns = 3;
 		dropDownComposite.setLayout(gridLayout);
-		
-//		dropDownImage = new Label(dropDownComposite, SWT.NONE);
-//		dropDownImage.setToolTipText(WorkbenchMessages.getString("Menu")); //$NON-NLS-1$
 
 		dropDownLabel = new CLabel(dropDownComposite, SWT.NONE);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);	
@@ -283,17 +250,18 @@ public class EditorCoolBar {
 	
  		dropDownLabel.addMouseListener(new MouseAdapter() {
 			private boolean isActivating;
- 			public void mouseDown(final MouseEvent e) {
- 				isActivating = true;
+ 			public void mouseUp(final MouseEvent e) {
+				isActivating = true;
  				(new Thread() {
 					public void run() {
 						try { Thread.sleep(dropDownLabel.getDisplay().getDoubleClickTime()); 
 						} catch (Exception e){
 						}
-						if(isActivating) {
+//						if(isActivating) {
 							Display.getDefault().asyncExec(new Runnable() {
 								public void run() {
-									isActivating = false;
+									if (isActivating) {
+//									isActivating = false;
 					 				EditorPane visibleEditor = workbook.getVisibleEditor();
 									if (e.button == 3) {
 										visibleEditor.showPaneMenu(dropDownLabel, new Point(e.x, e.y));
@@ -304,9 +272,10 @@ public class EditorCoolBar {
 						 					displayEditorList();
 										}
 									}
+									}
 								}
 							});
-						}
+//						}
 					}
 				}).start();
  			}
@@ -328,10 +297,6 @@ public class EditorCoolBar {
 		
  		dropDownButton.addMouseListener(new MouseAdapter() {
  			public void mouseDown(MouseEvent e) {
-// 				if (selectedBookMark != null) {
-// 					selectedBookMark.setSelection(false);
-// 				} 				
-// 				displayEditorList(new Point(OFFSCREEN, OFFSCREEN));
  				displayEditorList();
  			}
  		});
@@ -339,27 +304,6 @@ public class EditorCoolBar {
 		bookMarkItem = new CoolItem(coolBar, SWT.DROP_DOWN);
 //		bookMarkItem.setText("Links");
 		bookMarkToolBar = new ToolBar(coolBar, SWT.RIGHT|SWT.FLAT);
-//		RowLayout rowLayout = new RowLayout();
-//		rowLayout.marginTop = 0;
-//		rowLayout.marginBottom = 2;
-//		rowLayout.marginLeft = 0;
-//		rowLayout.marginRight = 0;
-//		bookMarkComposite.setLayout(rowLayout);
-//		if (bookMarkMenuManager != null) {
-//			bookMarkMenuManager.dispose();
-//		}
-//		bookMarkMenuManager = new MenuManager();
-//		for (int i = visibleItemCount; i < toolCount; i++) {
-//			IEditorReference data = (IEditorReference) tools[i].getData();
-////			BookMarkAction contribution = new BookMarkAction(data);
-//			BookMarkAction contribution = new BookMarkAction(tools[i]);
-//			bookMarkMenuManager.add(contribution);
-//		}
-//		Menu popup = bookMarkMenuManager.createContextMenu(bookMarkToolBar);
-//		popup.setLocation(chevronPosition.x, chevronPosition.y);
-//		popup.setVisible(true);
-//		MenuManager bookMarkToolBar.  infw
-////		
 		bookMarkItem.setControl(bookMarkToolBar);
 		bookMarkItem.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
@@ -368,29 +312,20 @@ public class EditorCoolBar {
 				}
 			}
 		});	
-		
-//		p1 = bookMarkComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-//		p = bookMarkItem.computeSize(p1.x, p1.y);
-//		bookMarkItem.setSize(p);
-		
+			
 		coolBar.addListener(SWT.Resize, new Listener() {
 			public void handleEvent(Event event) {
 				Rectangle r = coolBar.getParent().getClientArea();
 				// infw: Need a good way to detect first real resize.
-				if (r.width > 3 && firstResize) {
+				if (r.width > 7 && firstResize) {
 					dropDownItem.setSize(r.width / 4, dropDownItem.getSize().y);
 					
 					firstResize = false;
 				}
-//				coolBar.getShell().layout(true);
-//				coolBar.getParent().setSize(coolBar.getSize());
 				coolBar.getParent().layout();
-//				coolBar.setSize(coolBar.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 			}
 		});
 		
-		bookMarkMenuManager.add(new SaveAction());
-		bookMarkMenuManager.add(new CloseEditorAction());
 		bookMarkToolBar.addMouseListener(new MouseAdapter() {
 			public void mouseDown(MouseEvent e) {
 				popupCoolBarMenu(e);
@@ -405,23 +340,24 @@ public class EditorCoolBar {
 	/**
 	 * Sets the parent for this part.
 	 */
-	public void setContainer(ILayoutContainer container) {
-//		super.setContainer(container);
+	public void setContainer(ILayoutContainer container) {;
 		if (!mouseDownListenerAdded && workbook.getEditorArea() != null) {
 			dropDownLabel.addListener(SWT.MouseDown, workbook.getEditorArea().getMouseDownListener());
 			mouseDownListenerAdded = true;
 		}
 	}	
-//	public int getEditorCount() {
-//		return editorList.getItemCount();
-//	}
 
 	/*
 	 * Return true if <code>x</code> is over the label image.
 	 */
 	private boolean overImage(EditorPane pane,int x) {
-		Rectangle imageBounds = getLabelImage().getBounds();
-		return x < (pane.getBounds().x + imageBounds.x + imageBounds.width);
+		Image image = getLabelImage();
+		if (image == null) {
+			return false;
+		} else {
+			Rectangle imageBounds = getLabelImage().getBounds();
+			return x < (pane.getBounds().x + imageBounds.x + imageBounds.width);
+		}
 	}
 	
 	/**
@@ -433,7 +369,7 @@ public class EditorCoolBar {
 
 		Point chevronPosition = coolBar.toDisplay(new Point(event.x, event.y));
 		ToolBar toolBar = (ToolBar) control;
-		// just use the arraylist
+
 		ToolItem[] tools = toolBar.getItems();
 		int toolCount = tools.length;
 		int visibleItemCount = 0;
@@ -469,9 +405,29 @@ public class EditorCoolBar {
 		if ((e.button != 3) || (bookMarkToolBar.getItemCount() == 0)){
 			return;
 		}
+		
 		Point pt = new Point(e.x, e.y);
-		pt = ((Control) e.widget).toDisplay(pt);
+		ToolItem[] items = bookMarkToolBar.getItems();
+		int index = -1;
+		for (int i = 0; i < items.length; i++) {
+			if (items[i].getBounds().contains(pt)) {
+				index = i;
+				break;
+			}
+		}
+		
+		if (index == -1) {
+			return;
+		}
+		
+		bookMarkMenuManager.dispose(); // infw is this part necessary?
+		bookMarkMenuManager.removeAll();
+		
+		bookMarkMenuManager.add(new OpenBookMarkAction(new ToolItem[] {items[index]}));
+		bookMarkMenuManager.add(new RenameBookMarkAction(new ToolItem[] {items[index]}));
+		bookMarkMenuManager.add(new DeleteBookMarkAction(new ToolItem[] {items[index]}));
 		Menu popUp = bookMarkMenuManager.createContextMenu(bookMarkToolBar);
+		pt = ((Control) e.widget).toDisplay(pt);
 		popUp.setLocation(pt.x, pt.y);
 		popUp.setVisible(true);
 	}	
@@ -479,65 +435,104 @@ public class EditorCoolBar {
 	private class BookMarkAction extends Action {
 		private ToolItem toolItem;
 		private BookMarkAction(ToolItem toolItem)  {
-//		private BookMarkAction(IEditorReference ref) {
-			EditorShortcut shortcut = (EditorShortcut) toolItem.getData();
-			setText(shortcut.getTitle());
-			setToolTipText(shortcut.getTitleToolTip());
-			this.toolItem = toolItem;
+		EditorShortcut shortcut = (EditorShortcut) toolItem.getData();
+		setText(shortcut.getTitle());
+		setToolTipText(shortcut.getTitleToolTip());
+		this.toolItem = toolItem;
 		}
 		
 		public void run() {
 			EditorShortcut shortcut = (EditorShortcut) toolItem.getData();
 			if (shortcut != null) {
-//				if (!toolItem.getSelection()) {
-//					if (selectedBookMark != null) {
-//						selectedBookMark.setSelection(false);
-//					}
-//					selectedBookMark = toolItem;
-//					selectedBookMark.setSelection(true);
-//				}
-				if(shortcut.getInput() != null)
+				if(shortcut.getInput() != null) {
 					try {
 						window.getActivePage().openEditor(shortcut.getInput(),shortcut.getId());
 					} catch (PartInitException e) {
 					}
+				}
 			}
 		}
 	}
-	private class SaveAction extends Action {
-		/**
-		 *	Create an instance of this class
-		 */
-		private SaveAction() {
-			setText(WorkbenchMessages.getString("EditorList.saveSelected.text")); //$NON-NLS-1$
-			setToolTipText(WorkbenchMessages.getString("EditorList.saveSelected.toolTip")); //$NON-NLS-1$
-			WorkbenchHelp.setHelp(this, IHelpContextIds.SAVE_ACTION);
-		}
-		/** 
-		 * Performs the save.
-		 */
-		public void run() {
-			System.out.println("SaveAction");
-		}
-	}
-
+	
 	/**
-	 * Closes the selected editor.
+	 * Open the selected bookmark.
 	 */
-	private class CloseEditorAction extends Action {
+	private class OpenBookMarkAction extends Action {
+		private ToolItem[] toolItems;
 		/**
 		 *	Create an instance of this class
 		 */
-		private CloseEditorAction() {
-			setText(WorkbenchMessages.getString("EditorList.closeSelected.text")); //$NON-NLS-1$
-			setToolTipText(WorkbenchMessages.getString("EditorList.closeSelected.toolTip")); //$NON-NLS-1$
+		private OpenBookMarkAction(ToolItem[] toolItems) {
+			this.toolItems = toolItems;
+			setText(WorkbenchMessages.getString("EditorCoolBar.OpenAction.text")); //$NON-NLS-1$
+			setToolTipText(WorkbenchMessages.getString("EditorCoolBar.OpenAction.toolTip")); //$NON-NLS-1$
 			WorkbenchHelp.setHelp(this, IHelpContextIds.CLOSE_PART_ACTION);
 		}
 		/**
 		 * Close the selected editor.
 		 */
 		public void run() {
-			System.out.println("CloseAction");
+			for (int i = 0; i < toolItems.length; i++) {
+				EditorShortcut shortcut = (EditorShortcut) toolItems[i].getData();
+				if (shortcut != null) {
+					if(shortcut.getInput() != null) {
+						try {
+							window.getActivePage().openEditor(shortcut.getInput(),shortcut.getId());
+						} catch (PartInitException e) {
+						}
+					}
+				}
+			}
 		}
-	}	
+	}
+	
+	/**
+	 * Delete the selected bookmark.
+	 */	
+	private class DeleteBookMarkAction extends Action {
+		private ToolItem[] toolItems;
+		/**
+		 *	Create an instance of this class
+		 */
+		private DeleteBookMarkAction(ToolItem[] toolItems) {
+			this.toolItems = toolItems;
+			setText(WorkbenchMessages.getString("EditorCoolBar.DeleteAction.text")); //$NON-NLS-1$
+			setToolTipText(WorkbenchMessages.getString("EditorCoolBar.DeleteAction.toolTip")); //$NON-NLS-1$
+//			WorkbenchHelp.setHelp(this, IHelpContextIds.SAVE_ACTION);
+		}
+		/** 
+		 * Performs the save.
+		 */
+		public void run() {
+			for (int i = 0; i < toolItems.length; i++) {
+				toolItems[i].dispose();		
+			}
+		}
+	}
+		
+	/**
+	 * Rename the selected bookmark.
+	 */	
+	private class RenameBookMarkAction extends Action {
+		private ToolItem[] toolItems;
+		/**
+		 *	Create an instance of this class
+		 */
+		private RenameBookMarkAction(ToolItem[] toolItems) {
+			this.toolItems = toolItems;
+			setText(WorkbenchMessages.getString("EditorCoolBar.RenameAction.text")); //$NON-NLS-1$
+			setToolTipText(WorkbenchMessages.getString("EditorCoolBar.RenameAction.toolTipt")); //$NON-NLS-1$
+			WorkbenchHelp.setHelp(this, IHelpContextIds.SAVE_ACTION);
+		}
+		/** 
+		 * Performs the save.
+		 */
+		public void run() {
+			for (int i = 0; i < toolItems.length; i++) {			
+				// how get the new name?
+				toolItems[i].setText("NewName");
+			}
+		}
+	}
+		
 }

@@ -32,7 +32,7 @@ public class EditorList {
 	private FullNameAction fullNameAction;
 	private SortAction nameSortAction;
 	private SortAction MRUSortAction;
-	private SortAction tabOrderSortAction;
+//	private SortAction tabOrderSortAction;
 	private SetScopeAction windowScopeAction;
 	private SetScopeAction pageScopeAction;
 	private SetScopeAction tabGroupScopeAction;
@@ -46,7 +46,7 @@ public class EditorList {
 
 	private static final int NAME_SORT = 0;
 	private static final int MRU_SORT = 1;
-	private static final int TAB_ORDER_SORT = 2;
+//	private static final int TAB_ORDER_SORT = 2;
 	private static int sortOrder = NAME_SORT;
 	
 	private static final int SET_WINDOW_SCOPE = 0;
@@ -68,7 +68,7 @@ public class EditorList {
 	  	tabGroupScopeAction = new SetScopeAction(SET_TAB_GROUP_SCOPE);
 		nameSortAction = new SortAction(NAME_SORT);
 	 	MRUSortAction = new SortAction(MRU_SORT);
-	  	tabOrderSortAction = new SortAction(TAB_ORDER_SORT);
+//	  	tabOrderSortAction = new SortAction(TAB_ORDER_SORT);
 	  	bookMarkAction = new BookMarkAction();
 	}
 	
@@ -120,9 +120,9 @@ public class EditorList {
 		case MRU_SORT:
 			// The elements are already in MRU order
 			break;
-		case TAB_ORDER_SORT:
-			// The elements are already in tab order
-			break;
+//		case TAB_ORDER_SORT:
+//			// The elements are already in tab order
+//			break;
 		}
 	}
 	/**
@@ -170,7 +170,7 @@ public class EditorList {
 		MenuManager sortMenuMgr = new MenuManager(WorkbenchMessages.getString("EditorList.SortBy.text")); //$NON-NLS-1$
 		sortMenuMgr.add(nameSortAction);
 		sortMenuMgr.add(MRUSortAction);
-		sortMenuMgr.add(tabOrderSortAction);
+//		sortMenuMgr.add(tabOrderSortAction);
 
 		// Apply to SubMenu
 //		MenuManager applyToMenuMgr = new MenuManager(WorkbenchMessages.getString("EditorList.ApplyTo.text")); //$NON-NLS-1$
@@ -213,7 +213,7 @@ public class EditorList {
 		MenuManager sortMenuMgr = new MenuManager(WorkbenchMessages.getString("EditorList.SortBy.text")); //$NON-NLS-1$
 		sortMenuMgr.add(nameSortAction);
 		sortMenuMgr.add(MRUSortAction);
-		sortMenuMgr.add(tabOrderSortAction);
+//		sortMenuMgr.add(tabOrderSortAction);
 
 		// Apply to SubMenu
 //		MenuManager applyToMenuMgr = new MenuManager(WorkbenchMessages.getString("EditorList.ApplyTo.text")); //$NON-NLS-1$
@@ -487,11 +487,11 @@ public class EditorList {
 				setText(WorkbenchMessages.getString("EditorList.SortByMostRecentlyUsed.text")); //$NON-NLS-1$
 				setToolTipText(WorkbenchMessages.getString("EditorList.SortByMostRecentlyUsed.toolTip")); //$NON-NLS-1$
 				break;
-			case TAB_ORDER_SORT:
-				setChecked(EditorList.sortOrder==TAB_ORDER_SORT);
-				setText(WorkbenchMessages.getString("EditorList.SortByTabOrder.text")); //$NON-NLS-1$
-				setToolTipText(WorkbenchMessages.getString("EditorList.SortByTabOrder.toolTip")); //$NON-NLS-1$
-				break;
+//			case TAB_ORDER_SORT:
+//				setChecked(EditorList.sortOrder==TAB_ORDER_SORT);
+//				setText(WorkbenchMessages.getString("EditorList.SortByTabOrder.text")); //$NON-NLS-1$
+//				setToolTipText(WorkbenchMessages.getString("EditorList.SortByTabOrder.toolTip")); //$NON-NLS-1$
+//				break;
 			default:
 				break;
 			}
@@ -505,7 +505,7 @@ public class EditorList {
 			EditorList.sortOrder = this.sortOrder;
 			nameSortAction.setChecked(EditorList.sortOrder==NAME_SORT);
 			MRUSortAction.setChecked(EditorList.sortOrder==MRU_SORT);
-			tabOrderSortAction.setChecked(EditorList.sortOrder==TAB_ORDER_SORT);
+//			tabOrderSortAction.setChecked(EditorList.sortOrder==TAB_ORDER_SORT);
 			TableItem[] items = editorsTable.getItems();
 			if(items.length == 0) {
 				return;
