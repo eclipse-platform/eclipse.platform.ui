@@ -15,14 +15,16 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Shell;
 
 /**
  * The IDEWorkbenchWindow is the class that is used for the window in the
  * current Eclipse IDE.
  */
 public class IDEWorkbenchWindow extends WorkbenchWindow {
+	
+	PerspectiveControl perspectiveControl;
 
 	/**
 	 * Create a new instance of the receiver.
@@ -58,10 +60,19 @@ public class IDEWorkbenchWindow extends WorkbenchWindow {
 	 *  
 	 */
 	private void setLayoutDataForContents() {
+		
+		FormData perspectiveData = new FormData();
+		
+		perspectiveData.top = new FormAttachment(0);
+		perspectiveData.left = new FormAttachment(0);
+		perspectiveData.right = new FormAttachment(20);
+		perspectiveData.bottom = new FormAttachment(getToolBarControl(),0,SWT.BOTTOM);
+		
+		perspectiveControl.getControl().setLayoutData(perspectiveData);
 
 		FormData toolBarData = new FormData();
 		toolBarData.top = new FormAttachment(0);
-		toolBarData.left = new FormAttachment(0);
+		toolBarData.left = new FormAttachment(perspectiveControl.getControl(),0);
 		toolBarData.right = new FormAttachment(100);
 
 		getToolBarControl().setLayoutData(toolBarData);
@@ -93,7 +104,7 @@ public class IDEWorkbenchWindow extends WorkbenchWindow {
 		getStatusLineManager().getControl().setLayoutData(statusLineData);
 		FormData clientAreaData = new FormData();
 
-		clientAreaData.top = new FormAttachment(getToolBarControl(), 0);
+		clientAreaData.top = new FormAttachment(getToolBarControl(),0);
 
 		clientAreaData.left =
 			new FormAttachment(getShortcutBar().getControl(), 0);
@@ -105,6 +116,22 @@ public class IDEWorkbenchWindow extends WorkbenchWindow {
 
 		getClientComposite().setLayoutData(clientAreaData);
 
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.WorkbenchWindow#createTrimWidgets(org.eclipse.swt.widgets.Shell)
+	 */
+	protected void createTrimWidgets(Shell shell) {
+		super.createTrimWidgets(shell);
+		createPerspectiveControl(shell);
+	}
+	
+	private void createPerspectiveControl(Shell shell){
+		perspectiveControl = new PerspectiveControl(this);
+		
+		perspectiveControl.createControl(shell);
+		
+		
 	}
 
 }
