@@ -9,6 +9,7 @@ http://www.eclipse.org/legal/cpl-v10.html
 Contributors:
 **********************************************************************/
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IPath;
@@ -121,7 +122,7 @@ public final class ToolUtil {
 			registry = ExternalToolsPlugin.getDefault().getArgumentVariableRegistry();
 			ArgumentVariable variable = registry.getArgumentVariable(varDef.name);
 			if (variable == null) {
-				String msg = ToolMessages.format("ToolUtil.argumentVarMissing", new Object[] {varDef.name}); //$NON-NLS-1$
+				String msg = MessageFormat.format(ToolMessages.getString("ToolUtil.argumentVarMissing"), new Object[] {varDef.name}); //$NON-NLS-1$
 				status.merge(ExternalToolsPlugin.newErrorStatus(msg, null));
 				return null;
 			}
@@ -129,7 +130,7 @@ public final class ToolUtil {
 			// Expand the variable as text if possible
 			String text = variable.getExpander().getText(varDef.name, varDef.argument, context);
 			if (text == null) {
-				String msg = ToolMessages.format("ToolUtil.argumentVarExpandFailed", new Object[] {varDef.name}); //$NON-NLS-1$
+				String msg = MessageFormat.format(ToolMessages.getString("ToolUtil.argumentVarExpandFailed"), new Object[] {varDef.name}); //$NON-NLS-1$
 				status.merge(ExternalToolsPlugin.newErrorStatus(msg, null));
 				return null;
 			}
@@ -200,7 +201,7 @@ public final class ToolUtil {
 		registry = ExternalToolsPlugin.getDefault().getDirectoryLocationVariableRegistry();
 		PathLocationVariable variable = registry.getPathLocationVariable(varDef.name);
 		if (variable == null) {
-			String msg = ToolMessages.format("ToolUtil.dirLocVarMissing", new Object[] {varDef.name}); //$NON-NLS-1$
+			String msg = MessageFormat.format(ToolMessages.getString("ToolUtil.dirLocVarMissing"), new Object[] {varDef.name}); //$NON-NLS-1$
 			status.merge(ExternalToolsPlugin.newErrorStatus(msg, null));
 			return null;
 		}
@@ -208,7 +209,7 @@ public final class ToolUtil {
 		// Expand the variable into a IPath if possible
 		IPath path = variable.getExpander().getPath(varDef.name, varDef.argument, context);
 		if (path == null) {
-			String msg = ToolMessages.format("ToolUtil.dirLocVarExpandFailed", new Object[] {varDef.name}); //$NON-NLS-1$
+			String msg = MessageFormat.format(ToolMessages.getString("ToolUtil.dirLocVarExpandFailed"), new Object[] {varDef.name}); //$NON-NLS-1$
 			status.merge(ExternalToolsPlugin.newErrorStatus(msg, null));
 			return null;
 		}
@@ -255,7 +256,7 @@ public final class ToolUtil {
 		registry = ExternalToolsPlugin.getDefault().getFileLocationVariableRegistry();
 		PathLocationVariable variable = registry.getPathLocationVariable(varDef.name);
 		if (variable == null) {
-			String msg = ToolMessages.format("ToolUtil.fileLocVarMissing", new Object[] {varDef.name}); //$NON-NLS-1$
+			String msg = MessageFormat.format(ToolMessages.getString("ToolUtil.fileLocVarMissing"), new Object[] {varDef.name}); //$NON-NLS-1$
 			status.merge(ExternalToolsPlugin.newErrorStatus(msg, null));
 			return null;
 		}
@@ -263,7 +264,7 @@ public final class ToolUtil {
 		// Expand the variable into a IPath if possible
 		IPath path = variable.getExpander().getPath(varDef.name, varDef.argument, context);
 		if (path == null) {
-			String msg = ToolMessages.format("The variable {0} with argument {1} could not be expanded to a valid path.", new Object[] {varDef.name, varDef.argument});
+			String msg = MessageFormat.format("The variable {0} with argument {1} could not be expanded to a valid path.", new Object[] {varDef.name, varDef.argument});
 			status.merge(ExternalToolsPlugin.newErrorStatus(msg, null));
 			return null;
 		}

@@ -96,14 +96,14 @@ public class ExternalToolsUtil {
 			String expandedLocation = ToolUtil.expandFileLocation(location, context, status);
 			if (status.isOK()) {
 				if (expandedLocation == null || expandedLocation.length() == 0) {
-					String msg = ToolMessages.format("DefaultRunnerContext.invalidLocation", new Object[] { configuration.getName()}); //$NON-NLS-1$
+					String msg = MessageFormat.format(ToolMessages.getString("DefaultRunnerContext.invalidLocation"), new Object[] { configuration.getName()}); //$NON-NLS-1$
 					abort(msg, null, 0);
 				} else {
 					File file = new File(expandedLocation);
 					if (file.isFile()) {
 						return new Path(expandedLocation);
 					} else {
-						String msg = ToolMessages.format("DefaultRunnerContext.invalidLocation", new Object[] { configuration.getName()}); //$NON-NLS-1$
+						String msg = MessageFormat.format(ToolMessages.getString("DefaultRunnerContext.invalidLocation"), new Object[] { configuration.getName()}); //$NON-NLS-1$
 						abort(msg, null, 0);
 					}
 				}
@@ -142,7 +142,7 @@ public class ExternalToolsUtil {
 					if (path.isDirectory()) {
 						return new Path(expandedLocation);
 					} else {
-						String msg = ToolMessages.format("DefaultRunnerContext.invalidDirectory", new Object[] { configuration.getName()}); //$NON-NLS-1$
+						String msg = MessageFormat.format(ToolMessages.getString("DefaultRunnerContext.invalidDirectory"), new Object[] { configuration.getName()}); //$NON-NLS-1$
 						abort(msg, null, 0);
 					}
 				}
@@ -218,14 +218,14 @@ public class ExternalToolsUtil {
 
 		ToolUtil.VariableDefinition varDef = ToolUtil.extractVariableTag(scope, 0);
 		if (varDef.start == -1 || varDef.end == -1 || varDef.name == null) {
-			String msg = ToolMessages.format("DefaultRunnerContext.invalidRefreshVarFormat", new Object[] { configuration.getName()}); //$NON-NLS-1$
+			String msg = MessageFormat.format(ToolMessages.getString("DefaultRunnerContext.invalidRefreshVarFormat"), new Object[] { configuration.getName()}); //$NON-NLS-1$
 			abort(msg, null, 0);
 		}
 
 		RefreshScopeVariableRegistry registry = ExternalToolsPlugin.getDefault().getRefreshVariableRegistry();
 		RefreshScopeVariable variable = registry.getRefreshVariable(varDef.name);
 		if (variable == null) {
-			String msg = ToolMessages.format("DefaultRunnerContext.noRefreshVarNamed", new Object[] { configuration.getName(), varDef.name }); //$NON-NLS-1$
+			String msg = MessageFormat.format(ToolMessages.getString("DefaultRunnerContext.noRefreshVarNamed"), new Object[] { configuration.getName(), varDef.name }); //$NON-NLS-1$
 			abort(msg, null, 0);
 		}
 

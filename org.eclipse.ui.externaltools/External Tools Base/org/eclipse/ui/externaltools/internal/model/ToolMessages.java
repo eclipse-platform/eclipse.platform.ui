@@ -9,7 +9,6 @@ http://www.eclipse.org/legal/cpl-v10.html
 Contributors:
 **********************************************************************/
 
-import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
@@ -22,18 +21,6 @@ public final class ToolMessages {
 	
 	private ToolMessages(){
 		// prevent instantiation of class
-	}
-	
-	/**
-	 * Returns the formatted message for the given key in
-	 * the resource bundle. 
-	 *
-	 * @param key the message name
-	 * @param args the message arguments
-	 * @return the formatted message
-	 */	
-	public static String format(String key, Object[] args) {
-		return MessageFormat.format(getString(key), args);
 	}
 	
 	/**
