@@ -9,7 +9,10 @@ http://www.eclipse.org/legal/cpl-v10.html
 
 import java.io.File;
 
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -19,12 +22,18 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.dialogs.ContainerSelectionDialog;
+import org.eclipse.ui.dialogs.ResourceSelectionDialog;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.model.ToolUtil;
@@ -105,7 +114,17 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 		locationField.setLayoutData(data);
 		
 		workspaceLocationButton= createPushButton(parent, "Browse Workspace...", null);
+		workspaceLocationButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent evt) {
+				handleWorkspaceLocationButtonSelected();
+			}
+		});
 		fileLocationButton= createPushButton(parent, "Browse File System...", null);
+		fileLocationButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent evt) {
+				handleLocationButtonSelected();
+			}
+		});
 	}
 	
 	/**
@@ -128,8 +147,17 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 		workDirectoryField.setLayoutData(data);
 		
 		workspaceWorkingDirectoryButton= createPushButton(parent, "Browse Workspace...", null);
+		workspaceWorkingDirectoryButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent evt) {
+				handleWorkspaceWorkingDirectoryButtonSelected();
+			}
+		});
 		fileWorkingDirectoryButton= createPushButton(parent, "Browse File System...", null);
-
+		fileWorkingDirectoryButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent evt) {
+				handleFileWorkingDirectoryButtonSelected();
+			}
+		});
 		createSpacer(parent);
 	}
 	
@@ -295,5 +323,64 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 			}
 		}
 		return true;
+	}
+	
+	private void handleLocationButtonSelected() {
+		FileDialog fileDialog = new FileDialog(getShell(), SWT.NONE);
+		fileDialog.setFileName(locationField.getText());
+		String text= fileDialog.open();
+		if (text != null) {
+			locationField.setText(text);
+		}
+	}
+	
+	/**
+	 * Prompts the user for a workspace location and returns the location
+	 * as a String containing the workspace_loc variable or <code>null</code>
+	 * if no location was obtained from the user.
+	 */
+	private void handleWorkspaceLocationButtonSelected() {
+		ResourceSelectionDialog dialog;
+		dialog = new ResourceSelectionDialog(getShell(), ResourcesPlugin.getWorkspace().getRoot(), "Select a resource");
+		dialog.open();
+		Object[] results = dialog.getResult();
+		if (results == null || results.length < 1) {
+			return;
+		}
+		IResource resource = (IResource)results[0];
+		StringBuffer buf = new StringBuffer();
+		ToolUtil.buildVariableTag(IExternalToolConstants.VAR_WORKSPACE_LOC, resource.getFullPath().toString(), buf);
+		String text= buf.toString();
+		if (text != null) {
+			locationField.setText(text);
+		}
+	}
+	
+	private void handleWorkspaceWorkingDirectoryButtonSelected() {
+		ContainerSelectionDialog containerDialog;
+		containerDialog = new ContainerSelectionDialog(
+			getShell(), 
+			ResourcesPlugin.getWorkspace().getRoot(),
+			false,
+			"Select a directory");
+		containerDialog.open();
+		Object[] resource = containerDialog.getResult();
+		String text= null;
+		if (resource != null && resource.length > 0) {
+			text= ToolUtil.buildVariableTag(IExternalToolConstants.VAR_RESOURCE_LOC, ((IPath)resource[0]).toString());
+		}
+		if (text != null) {
+			workDirectoryField.setText(text);
+		}
+	}
+	
+	private void handleFileWorkingDirectoryButtonSelected() {
+		DirectoryDialog dialog = new DirectoryDialog(getShell(), SWT.SAVE);
+		dialog.setMessage("Select a directory");
+		dialog.setFilterPath(workDirectoryField.getText());
+		String text= dialog.open();
+		if (text != null) {
+			workDirectoryField.setText(text);
+		}
 	}
 }

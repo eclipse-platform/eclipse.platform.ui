@@ -116,7 +116,7 @@ public class ExternalToolsOptionTab extends AbstractLaunchConfigurationTab {
 		});
 
 		Label instruction = new Label(comp, SWT.NONE);
-		instruction.setText("Note: Enclose an argument containing spaces using double-quotes (\". Not applicable for variables.");
+		instruction.setText("Note: Enclose an argument containing spaces using double-quotes (\"). Not applicable for variables.");
 		data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		data.horizontalSpan = 2;
 		instruction.setLayoutData(data);
