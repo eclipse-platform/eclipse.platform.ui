@@ -213,8 +213,18 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	final void setPrevious(InternalJob entry) {
 		this.previous = entry;
 	}
-	protected void setPriority(int NewPriority) {
-		manager.setPriority(this, NewPriority);
+	protected void setPriority(int newPriority) {
+		switch (newPriority) {
+			case Job.INTERACTIVE:
+			case Job.SHORT:
+			case Job.LONG:
+			case Job.BUILD:
+			case Job.DECORATE:
+				manager.setPriority(this, newPriority);
+				break;
+			default:
+				throw new IllegalArgumentException(String.valueOf(newPriority));
+		}
 	}
 	final void setResult(IStatus result) {
 		this.result = result;
