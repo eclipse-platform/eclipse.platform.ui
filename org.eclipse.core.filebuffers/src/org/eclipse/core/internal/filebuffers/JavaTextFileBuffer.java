@@ -501,11 +501,12 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 			IStatus s= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, msg, x);
 			throw new CoreException(s);
 		} finally {
-			if (in != null) {
-				try {
+			try {
+				if (in != null)
 					in.close();
-				} catch (IOException x) {
-				}
+				else
+					contentStream.close();
+			} catch (IOException x) {
 			}
 		}	
 	}

@@ -42,7 +42,7 @@ import org.eclipse.jface.text.source.IAnnotationModel;
  * @since 3.0
  */
 public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextFileBuffer {
-	
+	 
 	
 	private class DocumentListener implements IDocumentListener {
 
@@ -458,11 +458,12 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 			IStatus s= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, message, x);
 			throw new CoreException(s);
 		} finally {
-			if (in != null) {
-				try {
+			try {
+				if (in != null)
 					in.close();
-				} catch (IOException x) {
-				}
+				else
+					contentStream.close();
+			} catch (IOException x) {
 			}
 		}	
 	}

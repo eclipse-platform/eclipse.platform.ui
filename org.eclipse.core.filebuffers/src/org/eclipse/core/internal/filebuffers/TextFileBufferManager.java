@@ -139,17 +139,25 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		File externalFile= FileBuffers.getSystemFileAtLocation(location);
 		if (externalFile != null) {
 			if (externalFile.exists()) {
-				
+				FileInputStream is= null;
 				try {
-					
-					IContentDescription description= manager.getDescriptionFor(new FileInputStream(externalFile), externalFile.getName(), IContentDescription.ALL);
+					is= new FileInputStream(externalFile);
+					IContentDescription description= manager.getDescriptionFor(is, externalFile.getName(), IContentDescription.ALL);
 					if (description != null) {
 						IContentType type= description.getContentType();
 						if (type != null)
 							return type.isKindOf(text);
 					}
-					
-				} catch (IOException x) {
+				} catch (IOException ex) {
+					// ignore: API specification tells return true if content type can't be determined
+				} finally {
+					if (is != null ) {
+						try {
+							is.close();
+						} catch (IOException e) {
+							// ignore: API specification tells to return true if content type can't be determined
+						}
+					}
 				}
 				
 				return true;
