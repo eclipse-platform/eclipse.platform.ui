@@ -271,7 +271,7 @@ public static String getDebugOption(String option) {
 }
 /**
  * Returns the location of the platform working directory.  This 
- * corresponds to the <i>-platform</i> command line argument if
+ * corresponds to the <i>-data</i> command line argument if
  * present or, if not, the current working directory when the platform
  * was started.
  *
