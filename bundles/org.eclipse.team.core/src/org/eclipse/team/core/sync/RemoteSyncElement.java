@@ -365,9 +365,12 @@ public abstract class RemoteSyncElement extends LocalSyncElement implements IRem
 	 * @see Object#toString()
 	 */
 	public String toString() {
+		return getName() + kindToString(getSyncKind(GRANULARITY_TIMESTAMP, null));
+	}
+	
+	static public String kindToString(int kind) {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append(getName() + "["); //$NON-NLS-1$
-		int kind = getSyncKind(GRANULARITY_TIMESTAMP, null);
+		buffer.append("["); //$NON-NLS-1$
 		if(kind==IN_SYNC) {
 			buffer.append("in-sync"); //$NON-NLS-1$
 		} else {
@@ -376,7 +379,7 @@ public abstract class RemoteSyncElement extends LocalSyncElement implements IRem
 				case OUTGOING: buffer.append("outgoing"); break; //$NON-NLS-1$
 				case INCOMING: buffer.append("incoming"); break; //$NON-NLS-1$
 			}		
-			switch(kind & DIRECTION_MASK) {
+			switch(kind & CHANGE_MASK) {
 				case CHANGE: buffer.append("change"); break; //$NON-NLS-1$
 				case ADDITION: buffer.append("addition"); break; //$NON-NLS-1$
 				case DELETION: buffer.append("deletion"); break; //$NON-NLS-1$
