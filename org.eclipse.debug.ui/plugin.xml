@@ -142,35 +142,45 @@
 		   label="%StepReturnAction.label"
 		   tooltip="%StepReturnAction.tooltip"
 		   icon="icons/full/clcl16/stepreturn_co.gif"
-		   class="org.eclipse.debug.internal.ui.StepReturnActionDelegate">
+		   class="org.eclipse.debug.internal.ui.StepReturnActionDelegate"
+		   enablesFor="1">
+		   <selection class="org.eclipse.debug.core.model.IStep"/>
 	   </action>
 	   <action id="org.eclipse.debug.internal.ui.StepOverActionDelegate"	       
 		   menubarPath="org.eclipse.debug.ui.DebugMenu/stepGroup"
 		   label="%StepOverAction.label"
 		   tooltip="%StepOverAction.tooltip"
 		   icon="icons/full/clcl16/stepover_co.gif"
-		   class="org.eclipse.debug.internal.ui.StepOverActionDelegate">
+		   class="org.eclipse.debug.internal.ui.StepOverActionDelegate"
+		   enablesFor="1">
+		   <selection class="org.eclipse.debug.core.model.IStep"/>
 	   </action>
 	   <action id="org.eclipse.debug.internal.ui.StepIntoActionDelegate"	       
 		   menubarPath="org.eclipse.debug.ui.DebugMenu/stepGroup"
 		   label="%StepIntoAction.label"
 		   tooltip="%StepIntoAction.tooltip"
 		   icon="icons/full/clcl16/stepinto_co.gif"
-		   class="org.eclipse.debug.internal.ui.StepIntoActionDelegate">
+		   class="org.eclipse.debug.internal.ui.StepIntoActionDelegate"
+		   enablesFor="1">
+		   <selection class="org.eclipse.debug.core.model.IStep"/>
 	   </action>
 	   <action id="org.eclipse.debug.internal.ui.SuspendActionDelegate"	       
 		   menubarPath="org.eclipse.debug.ui.DebugMenu/stepGroup"
 		   label="%SuspendAction.label"
 		   tooltip="%SuspendAction.tooltip"
 		   icon="icons/full/clcl16/suspend_co.gif"
-		   class="org.eclipse.debug.internal.ui.SuspendActionDelegate">
+		   class="org.eclipse.debug.internal.ui.SuspendActionDelegate"
+		   enablesFor="+">
+		   <selection class="org.eclipse.debug.core.model.ISuspendResume"/>
 	   </action>
 	   <action id="org.eclipse.debug.internal.ui.ResumeActionDelegate"	       
 		   menubarPath="org.eclipse.debug.ui.DebugMenu/stepGroup"
 		   label="%ResumeAction.label"
 		   tooltip="%ResumeAction.tooltip"
 		   icon="icons/full/clcl16/resume_co.gif"
-		   class="org.eclipse.debug.internal.ui.ResumeActionDelegate">
+		   class="org.eclipse.debug.internal.ui.ResumeActionDelegate"
+		   enablesFor="+">
+		   <selection class="org.eclipse.debug.core.model.ISuspendResume"/>
 	   </action>
 	   <action id="org.eclipse.debug.internal.ui.RelaunchLastAction"	       
 		   menubarPath="org.eclipse.debug.ui.DebugMenu/relaunchGroup"

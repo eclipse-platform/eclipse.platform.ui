@@ -94,6 +94,7 @@ public abstract class ControlActionDelegate implements IWorkbenchWindowActionDel
 	public void selectionChanged(IAction action, ISelection selection){
 		if (selection instanceof IStructuredSelection) {
 			fStructuredSelection= (IStructuredSelection)selection;
+			action.setEnabled(getEnableStateForSelection(fStructuredSelection));
 		}
 	}
 	
