@@ -198,7 +198,7 @@ protected ITreeContentProvider getFolderProvider() {
  *	Answer the string to display as the label for the source specification field
  */
 protected String getSourceLabel() {
-	return DataTransferMessages.getString("ZipExport.destinationLabel"); //$NON-NLS-1$
+	return DataTransferMessages.getString("ZipImport.fromFile"); //$NON-NLS-1$
 }
 /**
  *	Answer a handle to the zip file currently specified as being the source.
@@ -292,6 +292,7 @@ protected void initializeOperation(ImportOperation op) {
 protected String queryZipFileToImport() {
 	FileDialog dialog = new FileDialog(sourceNameField.getShell(),SWT.OPEN);
 	dialog.setFilterExtensions(new String[] {FILE_IMPORT_MASK});
+	dialog.setText(DataTransferMessages.getString("ZipImportSource.title"));
 	
 	String currentSourceString = sourceNameField.getText();
 	int lastSeparatorIndex = currentSourceString.lastIndexOf(File.separator);

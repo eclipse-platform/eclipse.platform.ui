@@ -74,6 +74,8 @@ class WizardFileSystemResourceImportPage1
 	private static final String SELECT_TYPES_TITLE = DataTransferMessages.getString("DataTransfer.selectTypes"); //$NON-NLS-1$
 	private static final String SELECT_ALL_TITLE = DataTransferMessages.getString("DataTransfer.selectAll"); //$NON-NLS-1$
 	private static final String DESELECT_ALL_TITLE = DataTransferMessages.getString("DataTransfer.deselectAll"); //$NON-NLS-1$
+	private static final String SELECT_SOURCE_TITLE =
+			DataTransferMessages.getString("FileImport.selectSourceTitle"); //$NON-NLS-1$
 	private static final String SELECT_SOURCE_MESSAGE =
 		DataTransferMessages.getString("FileImport.selectSource"); //$NON-NLS-1$
 	protected static final String SOURCE_EMPTY_MESSAGE = DataTransferMessages.getString("FileImport.sourceEmpty"); //$NON-NLS-1$
@@ -544,7 +546,7 @@ private String getSourceDirectoryName(String sourceName) {
  *	Answer the string to display as the label for the source specification field
  */
 protected String getSourceLabel() {
-	return DataTransferMessages.getString("DataTransfer.directory"); //$NON-NLS-1$
+	return DataTransferMessages.getString("FileImport.fromDirectory"); //$NON-NLS-1$
 }
 /**
  *	Handle all events and enablements for widgets in this dialog
@@ -566,6 +568,7 @@ protected void handleSourceBrowseButtonPressed() {
 	String currentSource = this.sourceNameField.getText();
 	DirectoryDialog dialog =
 		new DirectoryDialog(sourceNameField.getShell(), SWT.SAVE);
+	dialog.setText(SELECT_SOURCE_TITLE);
 	dialog.setMessage(SELECT_SOURCE_MESSAGE);
 	dialog.setFilterPath(getSourceDirectoryName(currentSource));
 

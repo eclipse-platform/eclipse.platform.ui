@@ -147,7 +147,7 @@ protected final void createDestinationGroup(Composite parent) {
 
 	// container label
 	Label resourcesLabel = new Label(containerGroup,SWT.NONE);
-	resourcesLabel.setText(WorkbenchMessages.getString("WizardExportPage.folder")); //$NON-NLS-1$
+	resourcesLabel.setText(WorkbenchMessages.getString("WizardImportPage.folder")); //$NON-NLS-1$
 	resourcesLabel.setFont(parent.getFont());
 
 	// container name entry field
@@ -312,7 +312,10 @@ protected java.util.List getTypesToImport() {
 protected void handleContainerBrowseButtonPressed() {
 	// see if the user wishes to modify this container selection
 	IPath containerPath =
-		queryForContainer(getSpecifiedContainer(), WorkbenchMessages.getString("WizardImportPage.selectFolderLabel")); //$NON-NLS-1$
+		queryForContainer(
+			getSpecifiedContainer(), 
+			WorkbenchMessages.getString("WizardImportPage.selectFolderLabel"), //$NON-NLS-1$
+			WorkbenchMessages.getString("WizardImportPage.selectFolderTitle")); //$NON-NLS-1$
 
 	// if a container was selected then put its name in the container name field
 	if (containerPath != null) { // null means user cancelled

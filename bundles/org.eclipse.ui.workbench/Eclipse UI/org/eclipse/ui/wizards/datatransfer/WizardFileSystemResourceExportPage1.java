@@ -268,7 +268,7 @@ public boolean finish() {
  *	@return java.lang.String
  */
 protected String getDestinationLabel() {
-	return DataTransferMessages.getString("DataTransfer.directory"); //$NON-NLS-1$
+	return DataTransferMessages.getString("FileExport.toDirectory"); //$NON-NLS-1$
 }
 /**
  *	Answer the contents of self's destination specification widget
