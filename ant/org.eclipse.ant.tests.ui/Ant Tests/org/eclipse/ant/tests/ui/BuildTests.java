@@ -38,6 +38,18 @@ public class BuildTests extends AbstractAntUIBuildTest {
   }
   
   /**
+	 * Tests launching Ant and getting the build failed message
+	 * logged to the console.
+	 * Bug 42333.
+	 */
+	public void testBuildFailedMessage() throws CoreException {
+		launch("bad");
+		assertTrue("Incorrect number of messages logged for build. Should be 6. Was " + ConsoleLineTracker.getNumberOfMessages(), ConsoleLineTracker.getNumberOfMessages() == 6);
+		String message= ConsoleLineTracker.getMessage(4);
+		assertTrue("Incorrect last message. Should start with Build Failed:. Message: " + message, message.startsWith("BUILD FAILED:"));
+	}
+  
+  /**
 	 * Tests launching Ant and that the
 	 * correct links are in the console doc
 	 */
