@@ -20,7 +20,6 @@
       <import plugin="org.eclipse.team.cvs.core"/>
       <import plugin="org.eclipse.team.ui"/>
       <import plugin="org.eclipse.team.cvs.ui"/>
-      <import plugin="org.eclipse.team.ftp"/>
       <import plugin="org.eclipse.compare"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.junit"/>
