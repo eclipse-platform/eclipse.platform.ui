@@ -260,6 +260,7 @@ protected Control createDialogArea(Composite parent) {
 	GridData gd;
 	Composite composite = (Composite)super.createDialogArea(parent);
 	((GridLayout) composite.getLayout()).numColumns = 2;
+	((GridLayout) composite.getLayout()).horizontalSpacing = 10;
 	
 	// Build the tree an put it into the composite.
 	createTree(composite);
