@@ -96,8 +96,6 @@ public class ImportResourcesAction extends BaseSelectionListenerAction
 
         setImageDescriptor(WorkbenchImages
                 .getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_IMPORT_WIZ));
-        setDisabledImageDescriptor(WorkbenchImages
-                .getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_IMPORT_WIZ_DISABLED));
     }
 
     /**

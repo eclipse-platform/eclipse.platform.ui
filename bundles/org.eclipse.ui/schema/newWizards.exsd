@@ -119,6 +119,9 @@ Wizards may optionally specify a description subelement whose body should contai
                   a relative path of an icon that will be used together with the name to represent the wizard 
 as one of the choices in the creation dialog box.
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="category" type="string">

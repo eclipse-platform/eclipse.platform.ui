@@ -64,6 +64,9 @@ org.eclipse.ui/debug/showSystemJobs=false
 #Report if a stale job was found
 org.eclipse.ui/debug/job.stale=false
 
+#Report if an image cannot be resolved when it is declared
+org.eclipse.ui/debug/declaredImages=false
+
 # Restrict the verbose information to a particular command
 org.eclipse.ui/trace/handlers.verbose.commandId=
 

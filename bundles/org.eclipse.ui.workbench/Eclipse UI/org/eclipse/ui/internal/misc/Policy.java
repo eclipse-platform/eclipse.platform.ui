@@ -100,6 +100,12 @@ public class Policy {
      */
     public static boolean DEBUG_SHOW_SYSTEM_JOBS = DEFAULT;
     
+    /**
+     * Whether or not to resolve images as they are declared.
+     * 
+     * @since 3.1
+     */
+    public static boolean DEBUG_DECLARED_IMAGES = DEFAULT;
 
     /**
      * Which command identifier to print handler information for.  This
@@ -136,6 +142,7 @@ public class Policy {
                     .getDebugOption(PlatformUI.PLUGIN_ID
                             + "/trace/handlers.verbose.commandId"); //$NON-NLS-1$
             DEBUG_INCLUDE_TIMINGS = getDebugOption("/debug/include.timings"); //$NON-NLS-1$
+            DEBUG_DECLARED_IMAGES = getDebugOption("/debug/declaredImages"); //$NON-NLS-1$
         }
     }
 

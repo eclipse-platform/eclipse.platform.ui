@@ -232,7 +232,7 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor,
                             configElement.getNamespace(), icon);
                 }
                 if (image == null) {
-                    image = WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_DEF_PERSPECTIVE_HOVER);
+                    image = WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_DEF_PERSPECTIVE);
                 }
             }
     	}

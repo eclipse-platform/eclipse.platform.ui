@@ -102,7 +102,7 @@ public class WorkbenchPreview implements IThemePreview {
         ToolItem toolItem = new ToolItem(toolBar, SWT.PUSH);
 
         Image hoverImage = WorkbenchImages
-                .getImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU_HOVER);
+                .getImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU);
         toolItem.setImage(hoverImage);
 
         viewForm.setTopRight(toolBar);

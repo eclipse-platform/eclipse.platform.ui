@@ -61,7 +61,6 @@ import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
 import org.eclipse.ui.IPerspectiveRegistry;
-import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -908,22 +907,6 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
         final String PATH_WIZBAN = ICONS_PATH + "wizban/"; //Wizard icons//$NON-NLS-1$
 
         Bundle ideBundle = Platform.getBundle(IDEWorkbenchPlugin.IDE_WORKBENCH);
-        declareWorkbenchImage(ideBundle, ISharedImages.IMG_TOOL_NEW_WIZARD,
-                PATH_ETOOL + "new_wiz.gif", true); //$NON-NLS-1$
-        declareWorkbenchImage(ideBundle,
-                ISharedImages.IMG_TOOL_NEW_WIZARD_HOVER, PATH_ETOOL
-                        + "new_wiz.gif", true); //$NON-NLS-1$
-        declareWorkbenchImage(ideBundle,
-                ISharedImages.IMG_TOOL_NEW_WIZARD_DISABLED, PATH_DTOOL
-                        + "new_wiz.gif", true); //$NON-NLS-1$
-
-        declareWorkbenchImage(ideBundle,
-                IWorkbenchGraphicConstants.IMG_ETOOL_IMPORT_WIZ, PATH_ETOOL
-                        + "import_wiz.gif", false); //$NON-NLS-1$
-
-        declareWorkbenchImage(ideBundle,
-                IWorkbenchGraphicConstants.IMG_ETOOL_EXPORT_WIZ, PATH_ETOOL
-                        + "export_wiz.gif", false); //$NON-NLS-1$
 
         declareWorkbenchImage(ideBundle,
                 IDEInternalWorkbenchImages.IMG_ETOOL_BUILD_EXEC, PATH_ETOOL
@@ -954,9 +937,6 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
                         + "prev_nav.gif", false); //$NON-NLS-1$
 
         declareWorkbenchImage(ideBundle,
-                IWorkbenchGraphicConstants.IMG_WIZBAN_NEW_WIZ, PATH_WIZBAN
-                        + "new_wiz.gif", false); //$NON-NLS-1$
-        declareWorkbenchImage(ideBundle,
                 IDEInternalWorkbenchImages.IMG_WIZBAN_NEWPRJ_WIZ, PATH_WIZBAN
                         + "newprj_wiz.gif", false); //$NON-NLS-1$
         declareWorkbenchImage(ideBundle,
@@ -967,18 +947,12 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
                         + "newfile_wiz.gif", false); //$NON-NLS-1$
 
         declareWorkbenchImage(ideBundle,
-                IWorkbenchGraphicConstants.IMG_WIZBAN_IMPORT_WIZ, PATH_WIZBAN
-                        + "import_wiz.gif", false); //$NON-NLS-1$
-        declareWorkbenchImage(ideBundle,
                 IDEInternalWorkbenchImages.IMG_WIZBAN_IMPORTDIR_WIZ,
                 PATH_WIZBAN + "importdir_wiz.gif", false); //$NON-NLS-1$
         declareWorkbenchImage(ideBundle,
                 IDEInternalWorkbenchImages.IMG_WIZBAN_IMPORTZIP_WIZ,
                 PATH_WIZBAN + "importzip_wiz.gif", false); //$NON-NLS-1$
 
-        declareWorkbenchImage(ideBundle,
-                IWorkbenchGraphicConstants.IMG_WIZBAN_EXPORT_WIZ, PATH_WIZBAN
-                        + "export_wiz.gif", false); //$NON-NLS-1$
         declareWorkbenchImage(ideBundle,
                 IDEInternalWorkbenchImages.IMG_WIZBAN_EXPORTDIR_WIZ,
                 PATH_WIZBAN + "exportdir_wiz.gif", false); //$NON-NLS-1$
@@ -1140,10 +1114,10 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout(2, false));
 		Display display = composite.getDisplay();
-		Color bgCol = display.getSystemColor(SWT.COLOR_DARK_GRAY);
+		Color bgCol = display.getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND);
 		composite.setBackground(bgCol);
         Label label = new Label(composite, SWT.WRAP);
-        label.setForeground(display.getSystemColor(SWT.COLOR_WHITE));
+        label.setForeground(display.getSystemColor(SWT.COLOR_TITLE_INACTIVE_FOREGROUND));
         label.setBackground(bgCol);
         label.setFont(JFaceResources.getFontRegistry().getBold(JFaceResources.DEFAULT_FONT));
         String msg = IDEWorkbenchMessages.getString("IDEWorkbenchAdvisor.noPerspective"); //$NON-NLS-1$

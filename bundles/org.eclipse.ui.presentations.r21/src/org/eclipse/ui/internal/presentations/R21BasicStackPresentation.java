@@ -263,7 +263,7 @@ public class R21BasicStackPresentation extends StackPresentation {
         pullDownButton = new ToolItem(viewToolBar, SWT.PUSH);
         //				Image img = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU);
         Image hoverImage = WorkbenchImages
-                .getImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU_HOVER);
+                .getImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU);
         pullDownButton.setDisabledImage(null); // TODO: comment this out?
         // PR#1GE56QT - Avoid creation of unnecessary image.
         pullDownButton.setImage(hoverImage);
@@ -716,7 +716,7 @@ public class R21BasicStackPresentation extends StackPresentation {
         closeButton = new ToolItem(viewToolBar, SWT.PUSH);
         closeButton.setDisabledImage(null);
         closeButton.setImage(WorkbenchImages
-                .getImage(IWorkbenchGraphicConstants.IMG_LCL_CLOSE_VIEW_HOVER));
+                .getImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU));
         closeButton.setToolTipText(R21PresentationMessages
                 .getString("BasicStackPresentation.close")); //$NON-NLS-1$
         closeButton.addSelectionListener(new SelectionAdapter() {

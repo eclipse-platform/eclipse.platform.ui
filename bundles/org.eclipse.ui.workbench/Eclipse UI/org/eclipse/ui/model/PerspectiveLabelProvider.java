@@ -75,7 +75,7 @@ public final class PerspectiveLabelProvider extends LabelProvider implements
             ImageDescriptor imageDescriptor = desc.getImageDescriptor();
             if (imageDescriptor == null) {
                 imageDescriptor = WorkbenchImages
-                        .getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_DEF_PERSPECTIVE_HOVER);
+                        .getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_DEF_PERSPECTIVE);
             }
             Image image = (Image) imageCache.get(imageDescriptor);
             if (image == null) {

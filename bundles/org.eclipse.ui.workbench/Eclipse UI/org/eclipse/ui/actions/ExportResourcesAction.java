@@ -104,8 +104,6 @@ public class ExportResourcesAction extends BaseSelectionListenerAction
                 .getString("ExportResourcesAction.fileMenuText")); //$NON-NLS-1$
         setImageDescriptor(WorkbenchImages
                 .getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_EXPORT_WIZ));
-        setDisabledImageDescriptor(WorkbenchImages
-                .getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_EXPORT_WIZ_DISABLED));
     }
 
     /**

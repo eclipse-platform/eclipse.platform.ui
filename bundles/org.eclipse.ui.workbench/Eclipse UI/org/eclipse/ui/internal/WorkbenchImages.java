@@ -20,6 +20,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.misc.Assert;
+import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.misc.ProgramImageDescriptor;
 import org.eclipse.ui.internal.util.BundleUtility;
 
@@ -137,21 +138,15 @@ public/*final*/class WorkbenchImages {
 
         declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_SAVE_EDIT, PATH_ETOOL
                 + "save_edit.gif", false); //$NON-NLS-1$
-        declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_SAVE_EDIT_HOVER,
-                PATH_ETOOL + "save_edit.gif", false); //$NON-NLS-1$
         declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_SAVE_EDIT_DISABLED,
                 PATH_DTOOL + "save_edit.gif", false); //$NON-NLS-1$
-
+        
         declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_SAVEAS_EDIT,
-                PATH_ETOOL + "saveas_edit.gif", false); //$NON-NLS-1$
-        declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_SAVEAS_EDIT_HOVER,
                 PATH_ETOOL + "saveas_edit.gif", false); //$NON-NLS-1$
         declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_SAVEAS_EDIT_DISABLED,
                 PATH_DTOOL + "saveas_edit.gif", false); //$NON-NLS-1$
-
+        
         declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_SAVEALL_EDIT,
-                PATH_ETOOL + "saveall_edit.gif", false); //$NON-NLS-1$
-        declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_SAVEALL_EDIT_HOVER,
                 PATH_ETOOL + "saveall_edit.gif", false); //$NON-NLS-1$
         declareImage(
                 IWorkbenchGraphicConstants.IMG_ETOOL_SAVEALL_EDIT_DISABLED,
@@ -198,10 +193,14 @@ public/*final*/class WorkbenchImages {
                 + "delete_edit.gif", true); //$NON-NLS-1$
         declareImage(ISharedImages.IMG_TOOL_DELETE_DISABLED, PATH_DTOOL
                 + "delete_edit.gif", true); //$NON-NLS-1$
+        declareImage(ISharedImages.IMG_TOOL_NEW_WIZARD,
+                PATH_ETOOL + "new_wiz.gif", true); //$NON-NLS-1$
+        declareImage(ISharedImages.IMG_TOOL_NEW_WIZARD_HOVER, PATH_ETOOL
+                        + "new_wiz.gif", true); //$NON-NLS-1$
+        declareImage(ISharedImages.IMG_TOOL_NEW_WIZARD_DISABLED, PATH_DTOOL
+                        + "new_wiz.gif", true); //$NON-NLS-1$
 
         declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_PRINT_EDIT,
-                PATH_ETOOL + "print_edit.gif", false); //$NON-NLS-1$
-        declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_PRINT_EDIT_HOVER,
                 PATH_ETOOL + "print_edit.gif", false); //$NON-NLS-1$
         declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_PRINT_EDIT_DISABLED,
                 PATH_DTOOL + "print_edit.gif", false); //$NON-NLS-1$
@@ -232,17 +231,23 @@ public/*final*/class WorkbenchImages {
 
         declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_NEW_PAGE, PATH_EVIEW
                 + "new_persp.gif", false); //$NON-NLS-1$
-        declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_NEW_PAGE_HOVER,
-                PATH_EVIEW + "new_persp.gif", false); //$NON-NLS-1$
 
         declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_HOME_NAV,
                 PATH_ELOCALTOOL + "home_nav.gif", false); //$NON-NLS-1$
 
         declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_DEF_PERSPECTIVE,
                 PATH_EVIEW + "default_persp.gif", false); //$NON-NLS-1$
-        declareImage(
-                IWorkbenchGraphicConstants.IMG_ETOOL_DEF_PERSPECTIVE_HOVER,
-                PATH_EVIEW + "default_persp.gif", false); //$NON-NLS-1$
+
+        declareImage(IWorkbenchGraphicConstants.IMG_WIZBAN_NEW_WIZ, PATH_WIZBAN
+                        + "new_wiz.gif", false); //$NON-NLS-1$
+        declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_IMPORT_WIZ, PATH_ETOOL
+                        + "import_wiz.gif", false); //$NON-NLS-1$
+        declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_EXPORT_WIZ, PATH_ETOOL
+                        + "export_wiz.gif", false); //$NON-NLS-1$
+        declareImage(IWorkbenchGraphicConstants.IMG_WIZBAN_IMPORT_WIZ, PATH_WIZBAN
+                        + "import_wiz.gif", false); //$NON-NLS-1$
+        declareImage(IWorkbenchGraphicConstants.IMG_WIZBAN_EXPORT_WIZ, PATH_WIZBAN
+                        + "export_wiz.gif", false); //$NON-NLS-1$
 
         declareImage(IWorkbenchGraphicConstants.IMG_WIZBAN_WORKINGSET_WIZ,
                 PATH_WIZBAN + "workset_wiz.gif", false); //$NON-NLS-1$
@@ -273,19 +278,11 @@ public/*final*/class WorkbenchImages {
 
         declareImage(IWorkbenchGraphicConstants.IMG_LCL_CLOSE_VIEW,
                 PATH_ELOCALTOOL + "close_view.gif", true); //$NON-NLS-1$
-        declareImage(IWorkbenchGraphicConstants.IMG_LCL_CLOSE_VIEW_HOVER,
-                PATH_ELOCALTOOL + "close_view.gif", true); //$NON-NLS-1$
         declareImage(IWorkbenchGraphicConstants.IMG_LCL_PIN_VIEW,
-                PATH_ELOCALTOOL + "pin_view.gif", true); //$NON-NLS-1$
-        declareImage(IWorkbenchGraphicConstants.IMG_LCL_PIN_VIEW_HOVER,
                 PATH_ELOCALTOOL + "pin_view.gif", true); //$NON-NLS-1$
         declareImage(IWorkbenchGraphicConstants.IMG_LCL_MIN_VIEW,
                 PATH_ELOCALTOOL + "min_view.gif", true); //$NON-NLS-1$
-        declareImage(IWorkbenchGraphicConstants.IMG_LCL_MIN_VIEW_HOVER,
-                PATH_ELOCALTOOL + "min_view.gif", true); //$NON-NLS-1$
         declareImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU,
-                PATH_ELOCALTOOL + "view_menu.gif", true); //$NON-NLS-1$
-        declareImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU_HOVER,
                 PATH_ELOCALTOOL + "view_menu.gif", true); //$NON-NLS-1$
         declareImage(IWorkbenchGraphicConstants.IMG_LCL_LINKTO_HELP,
                 PATH_ELOCALTOOL + "linkto_help.gif", true); //$NON-NLS-1$
@@ -375,6 +372,15 @@ public/*final*/class WorkbenchImages {
      */
     public static void declareImage(String symbolicName,
             ImageDescriptor descriptor, boolean shared) {
+        if (Policy.DEBUG_DECLARED_IMAGES) {
+            Image image = descriptor.createImage(false);
+            if (image == null) {
+                WorkbenchPlugin.log("Image not found in WorkbenchImages.declaredImage().  symbolicName=" + symbolicName + " descriptor=" + descriptor, new Exception("stack dump"));   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+            }
+            else {
+                image.dispose();
+            }
+        }
         descriptors.put(symbolicName, descriptor);
         if (shared) {
             imageRegistry.put(symbolicName, descriptor);
