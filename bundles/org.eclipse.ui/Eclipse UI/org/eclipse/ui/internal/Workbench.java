@@ -55,6 +55,7 @@ public class Workbench implements IWorkbench,
 	private ProductInfo productInfo;
 	private PlatformInfo platformInfo;
 	private String[] commandLineArgs;
+	private Window.IExceptionHandler handler;
 /**
  * Workbench constructor comment.
  */
@@ -800,13 +801,13 @@ public Object run(Object arg) {
 	//Workaround for 1GEZ9UR and 1GF07HN
 	display.setWarnings(false);
 	try {
-		Window.IExceptionHandler handler = new ExceptionHandler(this);
+		handler = new ExceptionHandler(this);
 		Window.setExceptionHandler(handler);
 		boolean initOK = init(commandLineArgs);
 		Platform.endSplash();
 		checkInstallErrors();
 		if (initOK) {
-			runEventLoop(handler);
+			runEventLoop();
 		}
 		shutdown();
 	} finally {
@@ -818,7 +819,7 @@ public Object run(Object arg) {
 /**
  * run an event loop for the workbench.
  */
-protected void runEventLoop(Window.IExceptionHandler handler) {
+protected void runEventLoop() {
 	Display display = Display.getCurrent();
 	runEventLoop = true;
 	while (runEventLoop) {
