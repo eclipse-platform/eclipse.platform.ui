@@ -713,19 +713,28 @@ public class CopyFilesAndFoldersOperation {
 		if (!isAccessible(destination)) {
 			return WorkbenchMessages.getString("CopyFilesAndFoldersOperation.destinationAccessError"); //$NON-NLS-1$
 		}
+		// work around bug 16202. revert when fixed.
 		IWorkspaceRoot workspaceRoot = destination.getWorkspace().getRoot();
-		IPath destinationPath = destination.getFullPath();
+		File destinationFile = destination.getLocation().toFile();
+		IPath destinationPath = destination.getLocation();
 		for (int i = 0; i < sourceNames.length; i++) {
 			IPath sourcePath = new Path(sourceNames[i]);
-			IResource sourceResource = workspaceRoot.getContainerForLocation(sourcePath);
-			if (sourceResource != null) {
-				sourcePath = sourceResource.getFullPath();
-				if (sourceResource.equals(destination) || destination.equals(sourceResource.getParent())) {
+			File sourceFile = sourcePath.toFile();
+			File sourceParentFile = sourcePath.removeLastSegments(1).toFile();			
+			if (sourceFile != null) {
+				if (destinationFile.compareTo(sourceFile) == 0 || 
+					(sourceParentFile != null && destinationFile.compareTo(sourceParentFile) == 0)) {
 					return WorkbenchMessages.format("CopyFilesAndFoldersOperation.importSameSourceAndDest", //$NON-NLS-1$
-					new Object[] { sourceResource.getName()});
+					new Object[] {sourceFile.getName()});
 				}
-				if (sourcePath.isPrefixOf(destinationPath)) {
-					return WorkbenchMessages.getString("CopyFilesAndFoldersOperation.destinationDescendentError"); //$NON-NLS-1$
+				// work around bug 16202. replacement for sourcePath.isPrefixOf(destinationPath)
+				IPath destinationParent = destinationPath.removeLastSegments(1);
+				while (destinationParent.isEmpty() == false && destinationParent.isRoot() == false) {
+					destinationFile = destinationParent.toFile();
+					if (sourceFile.compareTo(destinationFile) == 0) {
+						return WorkbenchMessages.getString("CopyFilesAndFoldersOperation.destinationDescendentError"); //$NON-NLS-1$
+					}
+					destinationParent = destinationParent.removeLastSegments(1);
 				}
 			}
 		}
