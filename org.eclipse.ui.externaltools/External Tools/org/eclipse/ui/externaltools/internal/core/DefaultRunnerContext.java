@@ -163,7 +163,7 @@ public final class DefaultRunnerContext implements IRunnerContext {
 			if (varDef.argument != null && varDef.argument.length() > 0)
 				location = ToolUtil.getLocationFromFullPath(varDef.argument);
 			else
-				location = Platform.getLocation().toString();
+				location = Platform.getLocation().toOSString();
 			if (location != null)
 				buf.append(location);
 			return;
@@ -180,7 +180,7 @@ public final class DefaultRunnerContext implements IRunnerContext {
 					location = currentProject.getLocation();
 			}
 			if (location != null)
-				buf.append(location.toString());
+				buf.append(location.toOSString());
 			return;
 		}
 		
@@ -190,7 +190,7 @@ public final class DefaultRunnerContext implements IRunnerContext {
 				location = ToolUtil.getLocationFromFullPath(varDef.argument);
 			} else {
 				if (selectedResource != null)
-					location = selectedResource.getLocation().toString();
+					location = selectedResource.getLocation().toOSString();
 			}
 			if (location != null)
 				buf.append(location);
@@ -202,10 +202,10 @@ public final class DefaultRunnerContext implements IRunnerContext {
 			if (varDef.argument != null && varDef.argument.length() > 0) {
 				IResource member = ResourcesPlugin.getWorkspace().getRoot().findMember(varDef.argument);
 				if (member != null)
-					location = member.getParent().getLocation().toString();
+					location = member.getParent().getLocation().toOSString();
 			} else {
 				if (selectedResource != null)
-					location = selectedResource.getParent().getLocation().toString();
+					location = selectedResource.getParent().getLocation().toOSString();
 			}
 			if (location != null)
 				buf.append(location);

@@ -189,7 +189,7 @@ public final class ToolUtil {
 			if (varDef.argument != null && varDef.argument.length() > 0) {
 				return getLocationFromFullPath(varDef.argument);			
 			} else {
-				return Platform.getLocation().toString() + contents.substring(varDef.end);
+				return Platform.getLocation().toOSString() + contents.substring(varDef.end);
 			}
 		else
 			return contents;
