@@ -171,7 +171,7 @@ public class ContentTypeManager implements IContentTypeManager {
 	public IContentType findContentTypeFor(String fileName) {
 		// basic implementation just gets all content types		
 		IContentType[] associated = findContentTypesFor(fileName);
-		return associated.length == 0 ? null : associated[1];
+		return associated.length == 0 ? null : associated[0];
 	}
 
 	/*
