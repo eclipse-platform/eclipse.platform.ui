@@ -246,9 +246,11 @@ public Control getControl() {
  *   index is out of range
  */
 public Object getElementAt(int index) {
-	TableItem i = table.getItem(index);
-	if(i != null)
-	    return i.getData();
+	if (index >= 0 && index < table.getItemCount()) {
+		TableItem i = table.getItem(index);
+		if(i != null)
+		    return i.getData();
+	}
 	return null;
 }
 /**
