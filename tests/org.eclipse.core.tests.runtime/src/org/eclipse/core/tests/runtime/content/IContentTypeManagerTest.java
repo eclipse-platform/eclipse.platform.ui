@@ -137,41 +137,107 @@ public class IContentTypeManagerTest extends RuntimeTest {
 		Platform.getJobManager().join(CharsetDeltaJob.FAMILY_CHARSET_DELTA, getMonitor());
 	}
 
-	public void testAssociations() throws CoreException {
-		IContentType text = Platform.getContentTypeManager().getContentType((Platform.PI_RUNTIME + ".text"));
+	public void testAssociationInheritance() throws CoreException {
+		IContentTypeManager manager = (LocalContentTypeManager) LocalContentTypeManager.getLocalContentTypeManager();
+		IContentType text = manager.getContentType(Platform.PI_RUNTIME + ".text");
+		IContentType assoc1 = manager.getContentType(PI_RUNTIME_TESTS + ".assoc1");
+		IContentType assoc2 = manager.getContentType(PI_RUNTIME_TESTS + ".assoc2");
+
 		// associate a user-defined file spec
-		text.addFileSpec("ini", IContentType.FILE_EXTENSION_SPEC);
+		text.addFileSpec("txt_useradded", IContentType.FILE_EXTENSION_SPEC);
+		assoc1.addFileSpec("txt_assoc1useradded", IContentType.FILE_EXTENSION_SPEC);
+		assoc2.addFileSpec("txt_assoc2useradded", IContentType.FILE_EXTENSION_SPEC);
+
+		// test associations
+		assertTrue("1.1", assoc1.isAssociatedWith(changeCase("text.txt")));
+		assertTrue("1.2", assoc1.isAssociatedWith(changeCase("text.txt_useradded")));
+		assertTrue("1.3", assoc1.isAssociatedWith(changeCase("text.txt_pluginadded")));
+		assertTrue("1.4", assoc1.isAssociatedWith(changeCase("text.txt_assoc1pluginadded")));
+		assertTrue("1.5", assoc1.isAssociatedWith(changeCase("text.txt_assoc1useradded")));
+
+		assertTrue("2.1", !assoc2.isAssociatedWith(changeCase("text.txt")));
+		assertTrue("2.2", !assoc2.isAssociatedWith(changeCase("text.txt_useradded")));
+		assertTrue("2.3", !assoc2.isAssociatedWith(changeCase("text.txt_pluginadded")));
+		assertTrue("2.4", assoc2.isAssociatedWith(changeCase("text.txt_assoc2pluginadded")));
+		assertTrue("2.5", assoc2.isAssociatedWith(changeCase("text.txt_assoc2builtin")));
+		assertTrue("2.6", assoc2.isAssociatedWith(changeCase("text.txt_assoc2useradded")));
+
+		IContentType[] selected;
+		// text built-in associations
+		selected = manager.findContentTypesFor(changeCase("text.txt"));
+		assertEquals("3.0", 2, selected.length);
+		assertEquals("3.1", assoc1, selected[1]);
+		assertEquals("3.2", text, selected[0]);
+
+		// text user-added associations
+		selected = manager.findContentTypesFor(changeCase("text.txt_useradded"));
+		assertEquals("4.0", 2, selected.length);
+		assertEquals("4.1", assoc1, selected[1]);
+		assertEquals("4.2", text, selected[0]);
+
+		// text provider-added associations
+		selected = manager.findContentTypesFor(changeCase("text.txt_pluginadded"));
+		assertEquals("5.0", 2, selected.length);
+		assertEquals("5.1", assoc1, selected[1]);
+		assertEquals("5.2", text, selected[0]);
+
+		selected = manager.findContentTypesFor(changeCase("text.txt_assoc1pluginadded"));
+		assertEquals("6.0", 1, selected.length);
+		assertEquals("6.1", assoc1, selected[0]);
+
+		selected = manager.findContentTypesFor(changeCase("text.txt_assoc1useradded"));
+		assertEquals("7.0", 1, selected.length);
+		assertEquals("7.1", assoc1, selected[0]);
+
+		selected = manager.findContentTypesFor(changeCase("text.txt_assoc2pluginadded"));
+		assertEquals("8.0", 1, selected.length);
+		assertEquals("8.1", assoc2, selected[0]);
+
+		selected = manager.findContentTypesFor(changeCase("text.txt_assoc2useradded"));
+		assertEquals("9.0", 1, selected.length);
+		assertEquals("9.1", assoc2, selected[0]);
+
+		selected = manager.findContentTypesFor(changeCase("text.txt_assoc2builtin"));
+		assertEquals("10.0", 1, selected.length);
+		assertEquals("10.1", assoc2, selected[0]);
+	}
+
+	public void testAssociations() throws CoreException {
+		IContentType text = Platform.getContentTypeManager().getContentType(Platform.PI_RUNTIME + ".text");
+
+		// associate a user-defined file spec
+		text.addFileSpec("txt_useradded", IContentType.FILE_EXTENSION_SPEC);
 
 		// test associations
 		assertTrue("0.1", text.isAssociatedWith(changeCase("text.txt")));
-		assertTrue("0.2", text.isAssociatedWith(changeCase("text.ini")));
-		assertTrue("0.3", text.isAssociatedWith(changeCase("text.tkst")));
+		assertTrue("0.2", text.isAssociatedWith(changeCase("text.txt_useradded")));
+		assertTrue("0.3", text.isAssociatedWith(changeCase("text.txt_pluginadded")));
 
 		// check provider defined settings
 		String[] providerDefinedExtensions = text.getFileSpecs(IContentType.FILE_EXTENSION_SPEC | IContentType.IGNORE_USER_DEFINED);
 		assertTrue("1.0", contains(providerDefinedExtensions, "txt"));
-		assertTrue("1.1", !contains(providerDefinedExtensions, "ini"));
-		assertTrue("1.2", contains(providerDefinedExtensions, "tkst"));
+		assertTrue("1.1", !contains(providerDefinedExtensions, "txt_useradded"));
+		assertTrue("1.2", contains(providerDefinedExtensions, "txt_pluginadded"));
 
 		// check user defined settings
 		String[] textUserDefinedExtensions = text.getFileSpecs(IContentType.FILE_EXTENSION_SPEC | IContentType.IGNORE_PRE_DEFINED);
 		assertTrue("2.0", !contains(textUserDefinedExtensions, "txt"));
-		assertTrue("2.1", contains(textUserDefinedExtensions, "ini"));
-		assertTrue("2.2", !contains(textUserDefinedExtensions, "tkst"));
+		assertTrue("2.1", contains(textUserDefinedExtensions, "txt_useradded"));
+		assertTrue("2.2", !contains(textUserDefinedExtensions, "txt_pluginadded"));
 
 		// removing pre-defined file specs should not do anything
 		text.removeFileSpec("txt", IContentType.FILE_EXTENSION_SPEC);
 		assertTrue("3.0", contains(text.getFileSpecs(IContentType.FILE_EXTENSION_SPEC | IContentType.IGNORE_USER_DEFINED), "txt"));
 		assertTrue("3.1", text.isAssociatedWith(changeCase("text.txt")));
-		assertTrue("3.2", text.isAssociatedWith(changeCase("text.ini")));
-		assertTrue("3.3", text.isAssociatedWith(changeCase("text.tkst")));
+		assertTrue("3.2", text.isAssociatedWith(changeCase("text.txt_useradded")));
+		assertTrue("3.3", text.isAssociatedWith(changeCase("text.txt_pluginadded")));
 
 		// removing user file specs is the normal case and has to work as expected
-		text.removeFileSpec("ini", IContentType.FILE_EXTENSION_SPEC);
+		text.removeFileSpec("txt_useradded", IContentType.FILE_EXTENSION_SPEC);
 		assertTrue("4.0", !contains(text.getFileSpecs(IContentType.FILE_EXTENSION_SPEC | IContentType.IGNORE_PRE_DEFINED), "ini"));
 		assertTrue("4.1", text.isAssociatedWith(changeCase("text.txt")));
-		assertTrue("4.2", !text.isAssociatedWith(changeCase("text.ini")));
-		assertTrue("4.3", text.isAssociatedWith(changeCase("text.tkst")));
+		assertTrue("4.2", !text.isAssociatedWith(changeCase("text.txt_useradded")));
+		assertTrue("4.3", text.isAssociatedWith(changeCase("text.txt_pluginadded")));
 	}
 
 	public void testBinaryTypes() throws IOException {
@@ -338,6 +404,52 @@ public class IContentTypeManagerTest extends RuntimeTest {
 		assertTrue("4.1", appropriateSpecific1 == selected[0] || appropriateSpecific1 == selected[1]);
 		assertTrue("4.2", appropriateSpecific2 == selected[0] || appropriateSpecific2 == selected[1]);
 		assertTrue("4.3", appropriate == selected[2]);
+	}
+
+	public void testDefaultProperties() throws IOException /* never actually thrown */{
+		IContentTypeManager contentTypeManager = (LocalContentTypeManager) LocalContentTypeManager.getLocalContentTypeManager();
+		IContentType mytext = contentTypeManager.getContentType(PI_RUNTIME_TESTS + '.' + "mytext");
+		IContentType mytext1 = contentTypeManager.getContentType(PI_RUNTIME_TESTS + '.' + "mytext1");
+		IContentType mytext2 = contentTypeManager.getContentType(PI_RUNTIME_TESTS + '.' + "mytext2");
+		assertNotNull("0.1", mytext);
+		assertNotNull("0.2", mytext1);
+		assertNotNull("0.3", mytext2);
+
+		QualifiedName charset = IContentDescription.CHARSET;
+		QualifiedName localCharset = new QualifiedName(PI_RUNTIME_TESTS, "charset");
+		QualifiedName property1 = new QualifiedName(PI_RUNTIME_TESTS, "property1");
+		QualifiedName property2 = new QualifiedName(PI_RUNTIME_TESTS, "property2");
+		QualifiedName property3 = new QualifiedName(PI_RUNTIME_TESTS, "property3");
+		QualifiedName property4 = new QualifiedName(PI_RUNTIME_TESTS, "property4");
+
+		IContentDescription description;
+
+		description = getDescriptionFor(contentTypeManager, "some contents", null, "abc.tzt", IContentDescription.ALL, true);
+		assertNotNull("1.0", description);
+		assertSame("1.1", mytext, description.getContentType());
+		assertEquals("1.2", "value1", description.getProperty(property1));
+		assertNull("1.3", description.getProperty(property2));
+		assertEquals("1.4", "value3", description.getProperty(property3));
+		assertEquals("1.5", "BAR", description.getProperty(charset));
+
+		description = getDescriptionFor(contentTypeManager, "some contents", null, "abc.tzt1", IContentDescription.ALL, true);
+		assertNotNull("2.0", description);
+		assertSame("2.1", mytext1, description.getContentType());
+		assertEquals("2.2", "value1", description.getProperty(property1));
+		assertEquals("2.3", "value2", description.getProperty(property2));
+		assertNull("2.4", description.getProperty(property3));
+		assertEquals("2.5", "value4", description.getProperty(property4));
+		assertEquals("2.6", "BAR", description.getProperty(charset));
+
+		description = getDescriptionFor(contentTypeManager, "some contents", null, "abc.tzt2", IContentDescription.ALL, true);
+		assertNotNull("3.0", description);
+		assertSame("3.1", mytext2, description.getContentType());
+		assertNull("3.2", description.getProperty(property1));
+		assertNull("3.3", description.getProperty(property2));
+		assertNull("3.4", description.getProperty(property3));
+		assertNull("3.5", description.getProperty(property4));
+		assertNull("3.6", description.getProperty(charset));
+		assertEquals("3.7", "mytext2", description.getProperty(localCharset));
 	}
 
 	/**
@@ -911,51 +1023,5 @@ public class IContentTypeManagerTest extends RuntimeTest {
 		}
 		IContentType result = manager.findContentTypeFor("test.mytext");
 		assertNull("3.0", result);
-	}
-
-	public void testDefaultProperties() throws IOException /* never actually thrown */{
-		IContentTypeManager contentTypeManager = (LocalContentTypeManager) LocalContentTypeManager.getLocalContentTypeManager();
-		IContentType mytext = contentTypeManager.getContentType(PI_RUNTIME_TESTS + '.' + "mytext");
-		IContentType mytext1 = contentTypeManager.getContentType(PI_RUNTIME_TESTS + '.' + "mytext1");
-		IContentType mytext2 = contentTypeManager.getContentType(PI_RUNTIME_TESTS + '.' + "mytext2");
-		assertNotNull("0.1", mytext);
-		assertNotNull("0.2", mytext1);
-		assertNotNull("0.3", mytext2);
-
-		QualifiedName charset = IContentDescription.CHARSET;
-		QualifiedName localCharset = new QualifiedName(PI_RUNTIME_TESTS, "charset");
-		QualifiedName property1 = new QualifiedName(PI_RUNTIME_TESTS, "property1");
-		QualifiedName property2 = new QualifiedName(PI_RUNTIME_TESTS, "property2");
-		QualifiedName property3 = new QualifiedName(PI_RUNTIME_TESTS, "property3");
-		QualifiedName property4 = new QualifiedName(PI_RUNTIME_TESTS, "property4");
-
-		IContentDescription description;
-
-		description = getDescriptionFor(contentTypeManager, "some contents", null, "abc.tzt", IContentDescription.ALL, true);
-		assertNotNull("1.0", description);
-		assertSame("1.1", mytext, description.getContentType());
-		assertEquals("1.2", "value1", description.getProperty(property1));
-		assertNull("1.3", description.getProperty(property2));
-		assertEquals("1.4", "value3", description.getProperty(property3));
-		assertEquals("1.5", "BAR", description.getProperty(charset));
-
-		description = getDescriptionFor(contentTypeManager, "some contents", null, "abc.tzt1", IContentDescription.ALL, true);
-		assertNotNull("2.0", description);
-		assertSame("2.1", mytext1, description.getContentType());
-		assertEquals("2.2", "value1", description.getProperty(property1));
-		assertEquals("2.3", "value2", description.getProperty(property2));
-		assertNull("2.4", description.getProperty(property3));
-		assertEquals("2.5", "value4", description.getProperty(property4));
-		assertEquals("2.6", "BAR", description.getProperty(charset));
-
-		description = getDescriptionFor(contentTypeManager, "some contents", null, "abc.tzt2", IContentDescription.ALL, true);
-		assertNotNull("3.0", description);
-		assertSame("3.1", mytext2, description.getContentType());
-		assertNull("3.2", description.getProperty(property1));
-		assertNull("3.3", description.getProperty(property2));
-		assertNull("3.4", description.getProperty(property3));
-		assertNull("3.5", description.getProperty(property4));
-		assertNull("3.6", description.getProperty(charset));
-		assertEquals("3.7", "mytext2", description.getProperty(localCharset));
 	}
 }

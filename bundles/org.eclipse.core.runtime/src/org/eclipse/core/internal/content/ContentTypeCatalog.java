@@ -217,24 +217,34 @@ public class ContentTypeCatalog {
 		return result;
 	}
 
+	/**
+	 * Processes all content types in source, adding those matching the given file spec to the
+	 * destination collection.
+	 */
 	private void collectMatchingByName(Collection source, final Collection destination, final String fileSpecText, final int fileSpecType) {
 		if (source == null || source.isEmpty())
 			return;
+		// process all content types in the given collection
 		for (Iterator i = source.iterator(); i.hasNext();) {
-			ContentType associated = (ContentType) i.next();
+			final ContentType root = (ContentType) i.next();
+			// From a given content type, check if it matches, and 
+			// include any children that match as well.
 			internalAccept(new ContentTypeVisitor() {
 				public int visit(ContentType type) {
-					if (type.hasAnyFileSpec())
-						// this content type has its own file specs
-						if (!type.hasFileSpec(fileSpecText, fileSpecType))
-							// but it does not match the file name - do not look into its children
-							return RETURN;
-					// we have got a candidate, make sure we don't add it twice (e.g. for file name and file extension)
+					if (type != root && type.hasBuiltInAssociations())
+						// this content type has built-in associations - visit it later as root						
+						return RETURN;
+					if (type == root && !type.hasFileSpec(fileSpecText, fileSpecType))
+						// it is the root and does not match the file name - do not add it nor look into its children						
+						return RETURN;
+					// either the content type is the root and matches the file name or 
+					// is a sub content type and does not have built-in files specs
 					if (!destination.contains(type))
+						// make sure we don't add it twice						
 						destination.add(type);
 					return CONTINUE;
 				}
-			}, associated);
+			}, root);
 		}
 	}
 

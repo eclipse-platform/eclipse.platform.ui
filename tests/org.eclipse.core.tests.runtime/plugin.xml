@@ -163,15 +163,40 @@
          </describer>
       </content-type>            
       
+      <!-- content types for association tests -->
+	  <content-type
+            id="assoc1" 
+            name="Association Test 1"
+            base-type="org.eclipse.core.runtime.text"
+            describer="org.eclipse.core.tests.runtime.content.NaySayerContentDescriber"/>
+	  <content-type
+            id="assoc2" 
+            name="Association Test 2"
+            base-type="org.eclipse.core.runtime.text"
+            file-extensions="txt_assoc2builtin"            
+            describer="org.eclipse.core.tests.runtime.content.NaySayerContentDescriber"/>
       <file-association
-            file-extensions="tkst"
-            content-type="org.eclipse.core.runtime.text"/>
+            file-extensions="txt_assoc1pluginadded"
+            content-type="org.eclipse.core.tests.runtime.assoc1"/>
+      <file-association
+            file-extensions="txt_assoc2pluginadded"
+            content-type="org.eclipse.core.tests.runtime.assoc2"/>
+      <file-association
+            file-extensions="txt_pluginadded"
+            content-type="org.eclipse.core.runtime.text"/>            
+            
+      <!-- content types for orphan tests -->            
       <content-type
             file-names="foo.orphan"
             file-extensions="orphan"
             base-type="org.eclipse.bundle01.missing"
             name="Orphan Type"
             id="orphan"/>
+      <file-association
+            file-extensions="orphan2"
+            content-type="org.eclipse.bundle01.missing"/>            
+            
+      <!-- content types for content describer tests -->
       <content-type
             base-type="org.eclipse.core.runtime.xml"
             name="Root Element"
@@ -186,9 +211,10 @@
             <parameter name="dtd" value="org.eclipse.core.runtime.tests.some.dtd"/>
          </describer>
       </content-type>      
-      <file-association
-            file-extensions="orphan2"
-            content-type="org.eclipse.bundle01.missing"/>            
+      <!-- this content type is used by the content description tests -->
+      <content-type
+            name="Void content type"
+            id="void"/>      
       <!-- this content type has an invalid describer, it should never be picked on content-based content type lookup -->
       <content-type
             name="Invalid Describer"
@@ -200,10 +226,6 @@
       <content-type
             name="Invalid (Missing identifier)"
             file-names="invalid.missing.identifier"/>            
-      <!-- this content type is used by the content description tests -->
-      <content-type
-            name="Void content type"
-            id="void"/>
    </extension>
    <extension
          point="org.eclipse.core.runtime.adapters">

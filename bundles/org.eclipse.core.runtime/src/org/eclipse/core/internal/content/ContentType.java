@@ -69,6 +69,7 @@ public final class ContentType implements IContentType {
 	private String simpleId;
 	private byte validation = STATUS_UNKNOWN;
 	private Map defaultProperties;
+	private boolean builtInAssociations = false;
 
 	public static ContentType createContentType(ContentTypeCatalog catalog, String namespace, String simpleId, String name, byte priority, String[] fileExtensions, String[] fileNames, String baseTypeId, String aliasTargetId, Map defaultProperties, IConfigurationElement contentTypeElement) {
 		ContentType contentType = new ContentType(catalog.getManager());
@@ -78,6 +79,7 @@ public final class ContentType implements IContentType {
 		contentType.name = name;
 		contentType.priority = priority;
 		if ((fileExtensions != null && fileExtensions.length > 0) || (fileNames != null && fileNames.length > 0)) {
+			contentType.builtInAssociations = true;
 			contentType.fileSpecs = new ArrayList(fileExtensions.length + fileNames.length);
 			for (int i = 0; i < fileNames.length; i++)
 				contentType.internalAddFileSpec(catalog, fileNames[i], FILE_NAME_SPEC | SPEC_PRE_DEFINED);
@@ -506,8 +508,8 @@ public final class ContentType implements IContentType {
 		String fileExtension = ContentTypeManager.getFileExtension(fileName);
 		if (hasFileSpec(fileExtension, FILE_EXTENSION_SPEC))
 			return ASSOCIATED_BY_EXTENSION;
-		// if does not have *built-in* file specs, delegate to parent (if any)
-		if (!hasAnyFileSpec(SPEC_PRE_DEFINED)) {
+		// if does not have built-in file specs, delegate to parent (if any)
+		if (!hasBuiltInAssociations()) {
 			IContentType baseType = getBaseType(catalog);
 			if (baseType != null)
 				return ((ContentType) baseType).internalIsAssociatedWith(catalog, fileName);
@@ -519,15 +521,8 @@ public final class ContentType implements IContentType {
 		return fileSpecs != null && !fileSpecs.isEmpty();
 	}
 
-	boolean hasAnyFileSpec(int typeMask) {
-		if (!hasAnyFileSpec())
-			return false;
-		for (Iterator i = fileSpecs.iterator(); i.hasNext();) {
-			FileSpec spec = (FileSpec) i.next();
-			if ((spec.getType() & typeMask) == typeMask)
-				return true;
-		}
-		return false;
+	boolean hasBuiltInAssociations() {
+		return builtInAssociations;
 	}
 
 	boolean internalRemoveFileSpec(ContentTypeCatalog catalog, String fileSpec, int typeMask) {
