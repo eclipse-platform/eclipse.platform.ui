@@ -73,6 +73,13 @@ public final class ResourcesPlugin extends Plugin {
 	public static final String PT_TEAM_HOOK = "teamHook"; //$NON-NLS-1$
 
 	/**
+	 * Constant identifying the job family identifier for the background autobuild job.
+	 * @see IJobManager#join(Object, IProgressMonitor)
+	 * @since 3.0
+	 */
+	public static final Object FAMILY_AUTO_BUILD = new Object();
+
+	/**
 	 * Name of a preference indicating the encoding to use when reading text 
 	 * files in the workspace.  The value is a string, and may 
 	 * be the default empty string, indicating that the file system encoding should
