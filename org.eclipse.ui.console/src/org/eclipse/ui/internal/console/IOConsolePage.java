@@ -71,38 +71,51 @@ public class IOConsolePage implements IPageBookViewPage, IPropertyChangeListener
     private ClearOutputAction clearOutputAction;
     private ScrollLockAction scrollLockAction;
     private Menu menu;
+    private boolean readOnly;
     
-	// text selection listener
+	// text selection listener, used to update selection dependant actions on selection changes
 	private ISelectionChangedListener selectionChangedListener =  new ISelectionChangedListener() {
 		public void selectionChanged(SelectionChangedEvent event) {
 			updateSelectionDependentActions();
 		}
 	};
-	
+
+	// updates the find replace action if the document length is > 0
 	private ITextListener textListener = new ITextListener() {
 	    public void textChanged(TextEvent event) {
-			// update the find replace action if the document length is > 0
 			IUpdate findReplace = (IUpdate)globalActions.get(ActionFactory.FIND.getId());
 			if (findReplace != null) {
 				findReplace.update();
 			}
 		}
 	};
-    private boolean readOnly;
+    
     
     public IOConsolePage(IOConsole console, IConsoleView view) {
         this.console = console;
         this.consoleView = view;
     } 
 
+    /*
+     *  (non-Javadoc)
+     * @see org.eclipse.ui.part.IPageBookViewPage#getSite()
+     */
     public IPageSite getSite() {
         return site;
     }
 
+    /*
+     *  (non-Javadoc)
+     * @see org.eclipse.ui.part.IPageBookViewPage#init(org.eclipse.ui.part.IPageSite)
+     */
     public void init(IPageSite site) throws PartInitException {
         this.site = site;
     }
 
+    /*
+     *  (non-Javadoc)
+     * @see org.eclipse.ui.part.IPage#createControl(org.eclipse.swt.widgets.Composite)
+     */
     public void createControl(Composite parent) {
 		viewer = new IOConsoleViewer(parent, console.getDocument());
 		viewer.setConsoleWidth(console.getConsoleWidth());
@@ -128,6 +141,10 @@ public class IOConsolePage implements IPageBookViewPage, IPropertyChangeListener
 		}
     }
     
+    /*
+     *  (non-Javadoc)
+     * @see org.eclipse.ui.part.IPage#dispose()
+     */
     public void dispose() {
         if (menu != null && !menu.isDisposed()) {
             menu.dispose();
@@ -143,6 +160,10 @@ public class IOConsolePage implements IPageBookViewPage, IPropertyChangeListener
         viewer.removeTextListener(textListener);
     }
 
+    /*
+     *  (non-Javadoc)
+     * @see org.eclipse.ui.part.IPage#getControl()
+     */
     public Control getControl() {
         return viewer != null ? viewer.getControl() : null;
     }
@@ -163,7 +184,11 @@ public class IOConsolePage implements IPageBookViewPage, IPropertyChangeListener
 	protected void setFont(Font font) {
 		viewer.getTextWidget().setFont(font);
 	}
-	
+
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
+	 */
     public void propertyChange(PropertyChangeEvent event) {
 		Object source = event.getSource();
 		String property = event.getProperty();
@@ -283,7 +308,7 @@ public class IOConsolePage implements IPageBookViewPage, IPropertyChangeListener
     }
 
     /**
-     * 
+     * inform the viewer that it's text widget should not be editable.
      */
     public void setReadOnly() {
         readOnly = true;

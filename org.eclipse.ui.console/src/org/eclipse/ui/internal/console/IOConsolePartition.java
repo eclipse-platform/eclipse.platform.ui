@@ -15,14 +15,28 @@ import org.eclipse.ui.console.IOConsoleOutputStream;
 public class IOConsolePartition implements ITypedRegion {
 	public static final String OUTPUT_PARTITION_TYPE = ConsolePlugin.getUniqueIdentifier() + ".io_console_output_partition_type"; //$NON-NLS-1$
 	public static final String INPUT_PARTITION_TYPE = ConsolePlugin.getUniqueIdentifier() + ".io_console_input_partition_type"; //$NON-NLS-1$
-	
+
+	/**
+	 * The data contained by this partition.
+	 */
 	private StringBuffer buffer;
     private String type;
     private int offset;
+    /**
+     * Output partitions are all read only.
+     * Input partitions are read only once they have been appended to the console's input stream.
+     */
     private boolean readOnly;
+    
+    /**
+     * Only one of inputStream or outputStream will be null depending on the partitions type.
+     */
     private IOConsoleOutputStream outputStream;
     private IOConsoleInputStream inputStream;
     
+    /**
+     * Creates a new partition to contain output to console.
+     */
     public IOConsolePartition(IOConsoleOutputStream outputStream, String text) {
         this.outputStream = outputStream;
         buffer = new StringBuffer(text);
@@ -30,6 +44,9 @@ public class IOConsolePartition implements ITypedRegion {
         this.readOnly = true;
     }
     
+    /**
+     * Creates a new partition to contain input from a console
+     */
     public IOConsolePartition(IOConsoleInputStream inputStream, String text) {
         this.inputStream = inputStream;
         buffer = new StringBuffer(text);
@@ -37,34 +54,67 @@ public class IOConsolePartition implements ITypedRegion {
         this.readOnly = false;
     }
     
+    /**
+     * appends a string to this partition
+     * @param s
+     */
     public void append(String s) {
         buffer.append(s);
     }
       
+    /**
+     * deletes data from this partition.
+     * @param offset
+     * @param length
+     */
     public void delete(int offset, int length) {
         buffer.delete(offset, offset+length);
     }
     
+    /*
+     *  (non-Javadoc)
+     * @see org.eclipse.jface.text.ITypedRegion#getType()
+     */
     public String getType() {
         return type;
     }
 
+    /*
+     *  (non-Javadoc)
+     * @see org.eclipse.jface.text.IRegion#getLength()
+     */
     public int getLength() {
         return buffer.length();
     }
 
+    /*
+     *  (non-Javadoc)
+     * @see org.eclipse.jface.text.IRegion#getOffset()
+     */
     public int getOffset() {
         return offset;
     }
     
+    /**
+     * Sets this partitions offset in the document.
+     * @param offset This partitions offset in the document.
+     */
     public void setOffset(int offset) {
         this.offset = offset;
     }
     
+    /**
+     * Returns the data contained in this partition.
+     * @return The data contained in this partition.
+     */
     public String getString() {
         return buffer.toString();
     }
     
+    /**
+     * Returns a StyleRange object which may be used for setting the style
+     * of this partition in a viewer.
+     */
     public StyleRange getStyleRange(int rangeOffset, int rangeLength) {
         return new StyleRange(rangeOffset, rangeLength, getColor(), null, getFontStyle());
     }
@@ -90,6 +140,4 @@ public class IOConsolePartition implements ITypedRegion {
     public void setReadOnly() {
         readOnly = true;
     }
-
-
 }

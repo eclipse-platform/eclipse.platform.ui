@@ -43,17 +43,45 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 	
 	private IDocument document;
 	private ArrayList partitions;
+	/**
+	 * Blocks of data that have not yet been appended to the document.
+	 */
 	private ArrayList pendingPartitions;
+	/**
+	 * A list of PendingPartitions to be appended by the updateJob
+	 */
+	private ArrayList updatePartitions;
+	/**
+	 * The last partition appended to the document
+	 */
 	private IOConsolePartition lastPartition;
+	/**
+	 * Job that appends pending partitions to the document.
+	 */
 	private DocumentUpdaterJob updateJob;
+	/**
+	 * The input stream attached to this document.
+	 */
 	private IOConsoleInputStream inputStream;
+	/**
+	 * Flag to indicate that the updateJob is updating the document.
+	 */
 	private boolean updateInProgress;
+	/**
+	 * A list of partitions containing input from the console, that have
+	 * not been appended to the input stream yet.
+	 */
 	private ArrayList inputPartitions;
+	/**
+	 * offset used by updateJob
+	 */
+	private int firstOffset;
+	/**
+	 * An array of legal line delimiters
+	 */
 	private String[] lld;
 	private int highWaterMark = -1;
 	private int lowWaterMark = -1;
-	private ArrayList updatePartitions;
-    private int firstOffset;
     private boolean connected = false;
 	
 	public IOConsolePartitioner(IOConsoleInputStream inputStream) {
@@ -68,7 +96,6 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 	 *  (non-Javadoc)
 	 * @see org.eclipse.jface.text.IDocumentPartitioner#connect(org.eclipse.jface.text.IDocument)
 	 */
-	
 	public void connect(IDocument document) {
 		this.document = document;
 		document.setDocumentPartitioner(this);
@@ -191,6 +218,9 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 		return lastPartition;
 	}
 	
+	/**
+	 * Returns the region occupied by the hyperlink
+	 */
 	public IRegion getRegion(IConsoleHyperlink link) {
 		try {
 			Position[] positions = getDocument().getPositions(IOConsoleHyperlinkPosition.HYPER_LINK_CATEGORY);
@@ -205,6 +235,12 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 		return null;
 	}
 	
+	/**
+	 * Enforces the buffer size.
+	 * When the number of lines in the document exceeds the high water mark, the 
+	 * beginning of the document is trimmed until the number of lines equals the 
+	 * low water mark.
+	 */
 	private void checkBufferSize() {
 		if (lastPartition == null || highWaterMark == -1) {
 			return;
@@ -346,6 +382,14 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 		updateInProgress = b;
 	}
 		
+	/**
+	 * A stream has been appended, add to pendingPartions list and schedule updateJob.
+	 * updateJob is scheduled with a slight delay, this allows the console to run the job
+	 * less frequently and update the document with a greater amount of data each time 
+	 * the job is run
+	 * @param stream The stream that was written to.
+	 * @param s The string that should be appended to the document.
+	 */
 	public void streamAppended(IOConsoleOutputStream stream, String s) {
 		synchronized(pendingPartitions) {
 			PendingPartition last = (PendingPartition) (pendingPartitions.size() > 0 ? pendingPartitions.get(pendingPartitions.size()-1) : null);
@@ -358,6 +402,9 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 		}
 	}
 	
+	/**
+	 * Holds data until updateJob can be run and the document can be updated.
+	 */
 	private class PendingPartition {
 		String text;
 		IOConsoleOutputStream stream;
@@ -372,6 +419,10 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 		}
 	}
 	
+	/**
+	 * Updates the document. Will append everything that is available before 
+	 * finishing.
+	 */
 	private class DocumentUpdaterJob extends Job {
 
         DocumentUpdaterJob() {

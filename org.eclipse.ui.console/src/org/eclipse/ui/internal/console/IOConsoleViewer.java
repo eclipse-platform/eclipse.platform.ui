@@ -47,11 +47,17 @@ import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.console.IConsoleHyperlink;
 
 /**
+ * Viewer used to display an IOConsole
  * @since 3.1
  */
 public class IOConsoleViewer extends TextViewer implements LineStyleListener, LineBackgroundListener, MouseTrackListener, MouseMoveListener, MouseListener, PaintListener {
-
+    /**
+     * will always scroll with output if value is true.
+     */
     private boolean autoScroll = true;
+    /**
+     * Adapts document to the text widget.
+     */
     private IOConsoleDocumentAdapter documentAdapter;
     private IConsoleHyperlink hyperlink;
     private Cursor handCursor;
@@ -164,15 +170,6 @@ public class IOConsoleViewer extends TextViewer implements LineStyleListener, Li
      */
     public void lineGetBackground(LineBackgroundEvent event) {
         event.lineBackground = null;
-    }
-
-    public void setWordWrap(final boolean wordWrap) {
-        ConsolePlugin.getStandardDisplay().asyncExec(new Runnable() {
-            public void run() {
-                getTextWidget().setWordWrap(wordWrap);
-                getTextWidget().redraw();       
-            }
-        });
     }
  
 	/**
@@ -395,7 +392,7 @@ public class IOConsoleViewer extends TextViewer implements LineStyleListener, Li
     }
 
     /**
-     * 
+     * makes the associated text widget uneditable.
      */
     public void setReadOnly() {
         getTextWidget().setEditable(false);
