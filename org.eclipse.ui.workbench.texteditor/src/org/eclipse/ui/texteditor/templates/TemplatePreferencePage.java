@@ -542,7 +542,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		Template template= new Template();
 		Iterator it= fContextTypeRegistry.contextTypes();
 		if (it.hasNext()) {
-			template.setContext(((ContextType) it.next()).getId());
+			template.setContextTypeId(((ContextType) it.next()).getId());
 			
 			EditTemplateDialog dialog= createTemplateEditDialog(template, false, true);
 			if (dialog.open() == Window.OK) {

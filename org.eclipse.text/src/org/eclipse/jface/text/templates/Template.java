@@ -55,7 +55,7 @@ public class Template {
 	public Template(String name, String description, String contextTypeId, String pattern) {
 		setDescription(description);
 		setName(name);
-		setContext(contextTypeId);
+		setContextTypeId(contextTypeId);
 		setPattern(pattern);
 	}
 	
@@ -90,7 +90,7 @@ public class Template {
 	 * 
 	 * @param contextTypeId the new context type name
 	 */
-	public void setContext(String contextTypeId) {
+	public void setContextTypeId(String contextTypeId) {
 		Assert.isNotNull(contextTypeId);
 		fContextTypeId= contextTypeId;
 	}
