@@ -96,13 +96,13 @@ public interface IWorkbenchPart extends IAdaptable {
 	 * The property id for <code>getTitle</code>, <code>getTitleImage</code>
 	 * and <code>getTitleToolTip</code>.
 	 */
-	public static final int PROP_TITLE = WorkbenchPartConstants.PROP_TITLE;
+	public static final int PROP_TITLE = IWorkbenchPartConstants.PROP_TITLE;
 	
 /**
  * Adds a listener for changes to properties of this workbench part.
  * Has no effect if an identical listener is already registered.
  * <p>
- * The properties ids are defined in the class <link>WorkbenchPartConstants</link>
+ * The property ids are defined in {@link IWorkbenchPartConstants}.
  * </p>
  *
  * @param listener a property listener

@@ -11,16 +11,40 @@
 package org.eclipse.ui;
 
 /**
- * Represents the layout info for a view in an {@link IPageLayout}.
+ * Represents the layout info for a view or placeholder in an {@link IPageLayout}.
  * 
  * @since 3.0
  */
 public interface IViewLayout {
     
+    /**
+     * Returns whether the view is closeable.
+     * The default is <code>true</code>.
+     * 
+     * @return <code>true</code> if the view is closeable, <code>false</code> if not
+     */
     public boolean isCloseable();
+    
+    /**
+     * Sets whether the view is closeable.
+     * 
+     * @param closeable <code>true</code> if the view is closeable, <code>false</code> if not
+     */
     public void setCloseable(boolean closeable);
     
+    /**
+     * Returns whether the view is moveable.
+     * The default is <code>true</code>.
+     * 
+     * @return <code>true</code> if the view is moveable, <code>false</code> if not
+     */
     public boolean isMoveable();
+    
+    /**
+     * Sets whether the view is moveable.
+     * 
+     * @param moveable <code>true</code> if the view is moveable, <code>false</code> if not
+     */
     public void setMoveable(boolean moveable);
     
     /**

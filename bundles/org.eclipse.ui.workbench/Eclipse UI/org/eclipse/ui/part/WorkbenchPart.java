@@ -24,7 +24,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPart2;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.WorkbenchPartConstants;
+import org.eclipse.ui.IWorkbenchPartConstants;
 import org.eclipse.ui.internal.ReferenceCounter;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.misc.Assert;
@@ -318,7 +318,7 @@ protected void setPartName(String partName) {
 	if(Util.equals(this.partName, partName))
 		return;
 	this.partName = partName;
-	firePropertyChange(WorkbenchPartConstants.PROP_PART_NAME);
+	firePropertyChange(IWorkbenchPartConstants.PROP_PART_NAME);
 }
 
 /* (non-Javadoc)
@@ -347,7 +347,7 @@ protected void setContentDescription(String statusText) {
 	if(Util.equals(this.statusText, statusText))
 		return;
 	this.statusText = statusText;
-	firePropertyChange(WorkbenchPartConstants.PROP_CONTENT_DESCRIPTION);
+	firePropertyChange(IWorkbenchPartConstants.PROP_CONTENT_DESCRIPTION);
 }
 
 }

@@ -53,12 +53,12 @@ public interface IEditorPart extends IWorkbenchPart, ISaveablePart {
 	/**
 	 * The property id for <code>isDirty</code>.
 	 */
-	public static final int PROP_DIRTY = WorkbenchPartConstants.PROP_DIRTY;
+	public static final int PROP_DIRTY = IWorkbenchPartConstants.PROP_DIRTY;
 
 	/**
 	 * The property id for <code>getEditorInput</code>.
 	 */
-	public static final int PROP_INPUT = WorkbenchPartConstants.PROP_INPUT;
+	public static final int PROP_INPUT = IWorkbenchPartConstants.PROP_INPUT;
 
 	/**
 	 * Returns the input for this editor.  If this value changes the part must 
