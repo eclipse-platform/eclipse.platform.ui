@@ -2000,15 +2000,6 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 		
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ISynchronizedMemoryBlockView#scrollBarSelectionChanged(int)
-	 */
-	public void scrollBarSelectionChanged(int newSelection)
-	{
-		 
-		
-	}
-
 	/**
 	 * Handle selected address change event from synchronizer
 	 * @param address
