@@ -384,6 +384,11 @@ public class IntroPartPresentation extends AbstractIntroElement {
             implementation.setFocus();
     }
 
+    public void standbyStateChanged(boolean standby) {
+        if (implementation != null)
+            implementation.standbyStateChanged(standby);
+    }
+
     /**
      * Called when the IntroPart is disposed. Forwards the call to the
      * implementation class.
@@ -393,13 +398,6 @@ public class IntroPartPresentation extends AbstractIntroElement {
             implementation.dispose();
     }
 
-    /**
-     * Forwards the call to the implementation class.
-     */
-    public void updateHistory(String pageId) {
-        if (implementation != null)
-            implementation.updateHistory(pageId);
-    }
 
     /**
      * @return Returns the homePageId.

@@ -32,5 +32,13 @@ public class TextIntroPartImplementation extends
         addToolBarActions();
     }
 
+    protected void updateNavigationActionsState() {
+    }
+
+
+    public void setFocus() {
+
+    }
+
 
 }

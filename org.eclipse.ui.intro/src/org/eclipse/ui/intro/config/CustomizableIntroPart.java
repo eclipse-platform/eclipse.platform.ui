@@ -162,6 +162,9 @@ public final class CustomizableIntroPart extends IntroPart implements
             handleSetFocus(standby);
             setTopControl(standby ? getStandbyControl()
                     : getPresentationControl());
+            // triger state change in presentation to enable/disable toobar
+            // actions.
+            presentation.standbyStateChanged(standby);
         }
         // Util.highlightFocusControl();
     }

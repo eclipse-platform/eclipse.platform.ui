@@ -46,6 +46,62 @@ public class FormIntroPartImplementation extends
         ImageUtil.registerImage(ImageUtil.DEFAULT_LINK, "welcome_item.gif"); //$NON-NLS-1$
     }
 
+
+    // Global actions
+    private Action backAction = new Action() {
+
+        {
+            setToolTipText(IntroPlugin
+                    .getString("Browser.backwardButton_tooltip")); //$NON-NLS-1$
+            setImageDescriptor(ImageUtil
+                    .createImageDescriptor("backward_nav.gif")); //$NON-NLS-1$
+        }
+
+        public void run() {
+            // dynamic case. Uses navigation history.
+            if (getModelRoot().isDynamic()) {
+                if (canNavigateBackward()) {
+                    navigateBackward();
+                    if (isURL(getCurrentLocation()))
+                        Util.openBrowser(getCurrentLocation());
+                    else
+                        // Set current page, and this will triger regen.
+                        getModelRoot().setCurrentPageId(getCurrentLocation());
+                }
+            }
+
+            updateNavigationActionsState();
+        }
+    };
+
+    private Action forwardAction = new Action() {
+
+        {
+            setToolTipText(IntroPlugin
+                    .getString("Browser.forwardButton_tooltip")); //$NON-NLS-1$
+            setImageDescriptor(ImageUtil
+                    .createImageDescriptor("forward_nav.gif")); //$NON-NLS-1$
+        }
+
+        public void run() {
+            // dynamic case. Uses navigation history.
+            if (getModelRoot().isDynamic()) {
+                if (canNavigateForward()) {
+                    navigateForward();
+                    if (isURL(getCurrentLocation()))
+                        Util.openBrowser(getCurrentLocation());
+                    else
+                        // Set current page, and this will triger regen.
+                        getModelRoot().setCurrentPageId(getCurrentLocation());
+
+                }
+            }
+
+            updateNavigationActionsState();
+        }
+    };
+
+
     private Action homeAction = new Action() {
 
         {
@@ -55,10 +111,22 @@ public class FormIntroPartImplementation extends
 
         public void run() {
             IntroHomePage rootPage = getModelRoot().getHomePage();
-            if (getModelRoot().isDynamic())
+            if (getModelRoot().isDynamic()) {
                 getModelRoot().setCurrentPageId(rootPage.getId());
+                updateHistory(rootPage.getId());
+            }
         }
     };
+
+
+    protected void updateNavigationActionsState() {
+        if (getModelRoot().isDynamic()) {
+            forwardAction.setEnabled(canNavigateForward());
+            backAction.setEnabled(canNavigateBackward());
+            return;
+        }
+    }
+
 
     public FormIntroPartImplementation() {
         // Shared style manager
@@ -213,9 +281,22 @@ public class FormIntroPartImplementation extends
         IActionBars actionBars = getIntroPart().getIntroSite().getActionBars();
         IToolBarManager toolBarManager = actionBars.getToolBarManager();
         toolBarManager.add(homeAction);
+        toolBarManager.add(backAction);
+        toolBarManager.add(forwardAction);
         toolBarManager.update(true);
         actionBars.updateActionBars();
-        //super.addToolBarActions();
+        updateNavigationActionsState();
+    }
+
+    protected void standbyStateChanged(boolean standby) {
+        if (standby) {
+            homeAction.setEnabled(false);
+            forwardAction.setEnabled(false);
+            backAction.setEnabled(false);
+        } else {
+            homeAction.setEnabled(true);
+            updateNavigationActionsState();
+        }
     }
 
     public void setFocus() {
@@ -224,5 +305,7 @@ public class FormIntroPartImplementation extends
                 mainPageBook.getCurrentPage().setFocus();
         }
     }
+
+
 
 }

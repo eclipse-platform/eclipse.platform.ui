@@ -43,8 +43,8 @@ public abstract class AbstractIntroPartImplementation {
 
     private int navigationLocation = 0;
 
-    // REVISIT: revisit this whole history stuff.
-    // state flag.
+    // state flag indicating if we got here due to a navigation event (ie: an
+    // event triggered from the toolbar actions.
     private boolean navigation = false;
 
     private Action viewIntroModelAction = new Action() {
@@ -124,6 +124,7 @@ public abstract class AbstractIntroPartImplementation {
             return;
 
         doUpdateHistory(location);
+        updateNavigationActionsState();
     }
 
     private void doUpdateHistory(String location) {
@@ -198,6 +199,69 @@ public abstract class AbstractIntroPartImplementation {
     }
 
     /**
+     * Subclasses must implement to set the state of the navigation actions in
+     * the toolbar.
+     *  
+     */
+    public abstract void setFocus();
+
+
+    /**
+     * Subclasses must implement to set the focus to the correct control.
+     *  
+     */
+    protected abstract void updateNavigationActionsState();
+
+    /**
+     * Called when the IntroPart is disposed. Subclasses should override to
+     * dispose of resources. By default, this implementation does nothing.
+     */
+    public void dispose() {
+
+    }
+
+
+    /**
+     * Returns true if the current location in the navigation history represents
+     * a URL. False if the location is an Intro Page id.
+     * 
+     * @return Returns the locationIsURL.
+     */
+    public String getCurrentLocation() {
+        return (String) history.elementAt(navigationLocation);
+    }
+
+    public boolean canNavigateForward() {
+        return navigationLocation != getHistoryEndPosition() ? true : false;
+    }
+
+    public boolean canNavigateBackward() {
+        return navigationLocation == 0 ? false : true;
+    }
+
+    /*
+     * Add the Intro Model Viewer as an action to all implementations.
+     */
+    protected void addToolBarActions() {
+        // Handle menus:
+        IActionBars actionBars = getIntroPart().getIntroSite().getActionBars();
+        IToolBarManager toolBarManager = actionBars.getToolBarManager();
+        toolBarManager.add(viewIntroModelAction);
+        toolBarManager.update(true);
+        actionBars.updateActionBars();
+    }
+
+    /**
+     * Called when the Intro changes state. By default, this method does
+     * nothing. Subclasses may override.
+     * 
+     * @param standby
+     */
+    protected void standbyStateChanged(boolean standby) {
+        // do nothing.
+    }
+
+    /**
      * Save the current state of the intro. Currently, we only store information
      * about the most recently visited intro page. In static case, the last HTML
      * page is remembered. In dynamic case, the last UI page or HTML page is
@@ -253,57 +317,6 @@ public abstract class AbstractIntroPartImplementation {
         if (parser.hasProtocol())
             return true;
         return false;
-    }
-
-    public void setFocus() {
-    }
-
-    /**
-     * Called when the IntroPart is disposed. Subclasses should override to
-     * dispose of resources. By default, this implementation does nothing.
-     */
-    public void dispose() {
-
-    }
-
-    /**
-     * Returns true if the current location in the navigation history represents
-     * a URL. False if the location is an Intro Page id.
-     * 
-     * @return Returns the locationIsURL.
-     */
-    protected boolean locationIsURL() {
-        return getCurrentLocation().startsWith("http") ? true : false; //$NON-NLS-1$
-    }
-
-    /**
-     * Returns true if the current location in the navigation history represents
-     * a URL. False if the location is an Intro Page id.
-     * 
-     * @return Returns the locationIsURL.
-     */
-    public String getCurrentLocation() {
-        return (String) history.elementAt(navigationLocation);
-    }
-
-    public boolean canNavigateForward() {
-        return navigationLocation != getHistoryEndPosition() ? true : false;
-    }
-
-    public boolean canNavigateBackward() {
-        return navigationLocation == 0 ? false : true;
-    }
-
-    /*
-     * Add the Intro Model Viewer as an action to all implementations.
-     */
-    protected void addToolBarActions() {
-        // Handle menus:
-        IActionBars actionBars = getIntroPart().getIntroSite().getActionBars();
-        IToolBarManager toolBarManager = actionBars.getToolBarManager();
-        toolBarManager.add(viewIntroModelAction);
-        toolBarManager.update(true);
-        actionBars.updateActionBars();
     }
 
     /**

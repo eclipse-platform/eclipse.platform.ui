@@ -61,8 +61,8 @@ public class BrowserIntroPartLocationListener implements LocationListener {
             introURL.execute();
             // if action is a show page, update UI history.
             if (introURL.getAction().equals(IntroURL.SHOW_PAGE))
-                implementation.getModelRoot().getPresentation().updateHistory(
-                        introURL.getParameter(IntroURL.KEY_ID));
+                implementation.updateHistory(introURL
+                        .getParameter(IntroURL.KEY_ID));
             return;
         }
 
@@ -72,8 +72,7 @@ public class BrowserIntroPartLocationListener implements LocationListener {
             // update. Note that if we have multiple embedded URL navigations
             // due to frames, the redundantNavigation flag filters them out.
             if (redundantNavigation == 0)
-                implementation.getModelRoot().getPresentation().updateHistory(
-                        url);
+                implementation.updateHistory(url);
         }
         redundantNavigation++;
         return;

@@ -328,7 +328,7 @@ public class ContextHelpStandbyPart implements IStandbyContentPart {
      * @see org.eclipse.ui.internal.intro.impl.parts.IStandbyContentPart#setFocus()
      */
     public void setFocus() {
-        // REVISIT Auto-generated method stub
+        phraseText.setFocus();
     }
 
     /*

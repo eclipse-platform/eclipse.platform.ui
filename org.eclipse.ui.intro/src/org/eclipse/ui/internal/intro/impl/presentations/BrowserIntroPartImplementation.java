@@ -47,7 +47,7 @@ public class BrowserIntroPartImplementation extends
             if (getModelRoot().isDynamic()) {
                 if (canNavigateBackward()) {
                     navigateBackward();
-                    if (locationIsURL()) {
+                    if (isURL(getCurrentLocation())) {
                         // indicate navigation.
                         setNavigationState(true);
                         browser.setUrl(getCurrentLocation());
@@ -56,11 +56,11 @@ public class BrowserIntroPartImplementation extends
                         // will triger regen.
                         getModelRoot().setCurrentPageId(getCurrentLocation());
                 }
-                return;
-            }
+            } else
+                // static HTML case. use browser real Back.
+                browser.back();
 
-            // static HTML case. use browser real Back.
-            browser.back();
+            updateNavigationActionsState();
         }
     };
 
@@ -78,7 +78,7 @@ public class BrowserIntroPartImplementation extends
             if (getModelRoot().isDynamic()) {
                 if (canNavigateForward()) {
                     navigateForward();
-                    if (locationIsURL()) {
+                    if (isURL(getCurrentLocation())) {
                         // Note: browser.forward() will not work here.
                         // indicate navigation.
                         setNavigationState(true);
@@ -87,12 +87,13 @@ public class BrowserIntroPartImplementation extends
                         // we need to regen HTML. Set current page, and this
                         // will triger regen.
                         getModelRoot().setCurrentPageId(getCurrentLocation());
-                }
-                return;
-            }
 
-            // static HTML case. use browser real Forward.
-            browser.forward();
+                }
+            } else
+                // static HTML case. use browser real Forward.
+                browser.forward();
+
+            updateNavigationActionsState();
         }
     };
 
@@ -107,12 +108,30 @@ public class BrowserIntroPartImplementation extends
             // Home is URL of root page in static case, and root page in
             // dynamic.
             IntroHomePage rootPage = getModelRoot().getHomePage();
-            if (getModelRoot().isDynamic())
-                getModelRoot().setCurrentPageId(rootPage.getId());
-            else
-                browser.setUrl(rootPage.getUrl());
+            String location = null;
+            if (getModelRoot().isDynamic()) {
+                location = rootPage.getId();
+                getModelRoot().setCurrentPageId(location);
+            } else {
+                location = rootPage.getUrl();
+                browser.setUrl(location);
+            }
+            updateHistory(location);
         }
     };
+
+    protected void updateNavigationActionsState() {
+        if (getModelRoot().isDynamic()) {
+            forwardAction.setEnabled(canNavigateForward());
+            backAction.setEnabled(canNavigateBackward());
+            return;
+        }
+
+        // in static html intro, use browser history.
+        forwardAction.setEnabled(browser.isForwardEnabled());
+        backAction.setEnabled(browser.isBackEnabled());
+    }
+
 
     /**
      * create the browser and set it's contents
@@ -125,6 +144,18 @@ public class BrowserIntroPartImplementation extends
         // LocationEvents. Responsible for intercepting URLs and updating UI
         // with history.
         browser.addLocationListener(urlListener);
+
+        browser.addProgressListener(new ProgressListener() {
+
+            public void changed(ProgressEvent event) {
+                browser.setData("navigation", "true");
+            }
+
+            public void completed(ProgressEvent event) {
+                browser.setData("navigation", null);
+            }
+        });
+
 
         // Enable IE pop-up menu only in debug mode.
         browser.addListener(SWT.MenuDetect, new Listener() {
@@ -164,9 +195,8 @@ public class BrowserIntroPartImplementation extends
                 // set the URL the browser should display
                 boolean success = browser.setUrl(cachedPage);
                 if (!success) {
-                    Log
-                            .error(
-                                    "Unable to set the following ULR in browser: " + cachedPage, null); //$NON-NLS-1$
+                    Log.error("Unable to set the following ULR in browser: "
+                            + cachedPage, null);
                     return;
                 }
             } else {
@@ -175,11 +205,13 @@ public class BrowserIntroPartImplementation extends
                 getModelRoot().setCurrentPageId(cachedPage);
                 generateDynamicContentForPage(getModelRoot().getCurrentPage());
             }
+            updateHistory(cachedPage);
 
         } else {
             // No cacched page. Generate HTML for the home page, and set it
             // on the browser.
             generateDynamicContentForPage(homePage);
+            updateHistory(homePage.getId());
         }
 
         // Add this presentation as a listener to model
@@ -189,7 +221,7 @@ public class BrowserIntroPartImplementation extends
         // REVISIT: update the history here. The design of the history
         // navigation is that it has to be updated independant of the
         // property fired model events.
-        updateHistory(homePage.getId());
+
 
     }
 
@@ -271,6 +303,18 @@ public class BrowserIntroPartImplementation extends
         toolBarManager.add(forwardAction);
         toolBarManager.update(true);
         actionBars.updateActionBars();
+        updateNavigationActionsState();
+    }
+
+    protected void standbyStateChanged(boolean standby) {
+        if (standby) {
+            homeAction.setEnabled(false);
+            forwardAction.setEnabled(false);
+            backAction.setEnabled(false);
+        } else {
+            homeAction.setEnabled(true);
+            updateNavigationActionsState();
+        }
     }
 
     /**
