@@ -22,6 +22,14 @@ public class EditorActionBuilder extends PluginActionBuilder {
 			this.cache = cache;
 		}
 		public void dispose() {
+			for (int i = 0; i < cache.size(); i++) {
+				Object obj = cache.get(i);
+				if (obj instanceof ActionDescriptor) {
+					PluginAction proxy = ((ActionDescriptor)obj).getAction();
+					if (proxy.getDelegate() instanceof IActionDelegate2)
+						((IActionDelegate2)proxy.getDelegate()).dispose();
+				}
+			}
 		};
 		public ActionDescriptor[] getExtendedActions() {
 			if(cache == null)

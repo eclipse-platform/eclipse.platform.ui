@@ -1,20 +1,41 @@
+/************************************************************************
+Copyright (c) 2000, 2002 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+	IBM - Initial implementation
+************************************************************************/
+
 package org.eclipse.ui.internal;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.internal.plugins.ConfigurationElement;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IActionDelegate;
+import org.eclipse.ui.IActionDelegate2;
+import org.eclipse.ui.IActionDelegateWithEvent;
+import org.eclipse.ui.INullSelectionListener;
+import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.WorkbenchException;
 
 /**
  * A PluginAction is a proxy for an action extension.
@@ -31,9 +52,8 @@ import org.eclipse.ui.*;
  * will be instantiated.
  */
 
-public abstract class PluginAction extends Action
-	implements ISelectionListener, ISelectionChangedListener,
-		INullSelectionListener
+public abstract class PluginAction extends Action 
+	implements ISelectionListener, ISelectionChangedListener, INullSelectionListener 
 {
 	private IActionDelegate delegate;
 	private SelectionEnabler enabler;
@@ -50,7 +70,7 @@ public abstract class PluginAction extends Action
 	/**
 	 * PluginAction constructor.
 	 */
-	public PluginAction(IConfigurationElement actionElement, String runAttribute,String definitionId) {
+	public PluginAction(IConfigurationElement actionElement, String runAttribute, String definitionId) {
 		super();
 
 		// Create unique action id.
@@ -58,17 +78,16 @@ public abstract class PluginAction extends Action
 		++actionCount;
 		setActionDefinitionId(definitionId);
 				
-		// Store arguments.
 		this.configElement = actionElement;
 		this.runAttribute = runAttribute;
 		
 		// Read enablement declaration.
-		if (configElement.getAttribute(PluginActionBuilder.ATT_ENABLES_FOR) != null)
-			this.enabler = new SelectionEnabler(configElement);
-		else {
-			IConfigurationElement [] kids = configElement.getChildren(PluginActionBuilder.TAG_ENABLEMENT);
+		if (configElement.getAttribute(PluginActionBuilder.ATT_ENABLES_FOR) != null) {
+			enabler = new SelectionEnabler(configElement);
+		} else {
+			IConfigurationElement[] kids = configElement.getChildren(PluginActionBuilder.TAG_ENABLEMENT);
 			if (kids.length > 0)
-				this.enabler = new SelectionEnabler(configElement);
+				enabler = new SelectionEnabler(configElement);
 		}
 
 		// Give enabler or delegate a chance to adjust enable state
@@ -80,29 +99,43 @@ public abstract class PluginAction extends Action
 	 */
 	protected final void createDelegate() {
 		if (delegate == null) {
-			Object obj = null;
 			try {
-				obj = WorkbenchPlugin.createExtension(configElement, runAttribute);
-				delegate = initDelegate(obj);
+				Object obj = WorkbenchPlugin.createExtension(configElement, runAttribute);
+				delegate = validateDelegate(obj);
+				initDelegate();
 				refreshEnablement();
 			} catch (CoreException e) {
-				WorkbenchPlugin.log("Could not create action.", e.getStatus()); //$NON-NLS-1$
+				WorkbenchPlugin.log("Could not create action delegate.", e.getStatus()); //$NON-NLS-1$
 				return;
 			}
 		}
 	}
-	
-	/** 
-	 * Initialize an action delegate.
-	 * Subclasses may override this.
+
+	/**
+	 * Validates the object is a delegate of the expected type. Subclasses can
+	 * override to check for specific delegate types.
+	 * <p>
+	 * <b>Note:</b> Calls to the object are not allowed during this method.
+	 * </p>
+	 *
+	 * @param obj a possible action delegate implementation
+	 * @return the <code>IActionDelegate</code> implementation for the object
+	 * @throws a <code>WorkbenchException</code> if not expect delegate type
 	 */
-	protected IActionDelegate initDelegate(Object obj) 
-		throws WorkbenchException
-	{
+	protected IActionDelegate validateDelegate(Object obj) throws WorkbenchException {
 		if (obj instanceof IActionDelegate)
 			return (IActionDelegate)obj;
 		else
 			throw new WorkbenchException("Action must implement IActionDelegate"); //$NON-NLS-1$
+	}
+
+	/** 
+	 * Initialize the action delegate by calling its lifecycle method.
+	 * Subclasses may override but must call this implementation first.
+	 */
+	protected void initDelegate() {
+		if (delegate instanceof IActionDelegate2)
+			((IActionDelegate2)delegate).init(this);
 	}
 	
 	/**
@@ -172,44 +205,49 @@ public abstract class PluginAction extends Action
 		}
 	}
 	
-	/**
-	 * Runs the action.
+	/* (non-Javadoc)
+	 * Method declared on IAction.
 	 */
 	public void run() {
 		runWithEvent(null);
 	}
 	
 	/* (non-Javadoc)
-	 * Method declared on IActionDelegate2.
+	 * Method declared on IAction.
 	 */
 	public void runWithEvent(Event event) {
 		// this message dialog is problematic.
 		if (delegate == null) {
-			// High noon to load the delegate.
 			createDelegate();
 			if (delegate == null) {
-				MessageDialog
-					.openInformation(
-						Display.getDefault().getActiveShell(),
-						WorkbenchMessages.getString("Information"), //$NON-NLS-1$
-				WorkbenchMessages.getString("PluginAction.operationNotAvailableMessage")); //$NON-NLS-1$
+				MessageDialog.openInformation(
+					Display.getDefault().getActiveShell(),
+					WorkbenchMessages.getString("Information"), //$NON-NLS-1$
+					WorkbenchMessages.getString("PluginAction.operationNotAvailableMessage")); //$NON-NLS-1$
 				return;
 			}
 			if (!isEnabled()) {
-				MessageDialog
-					.openInformation(
-						Display.getDefault().getActiveShell(),
-						WorkbenchMessages.getString("Information"), //$NON-NLS-1$
-				WorkbenchMessages.getString("PluginAction.disabledMessage")); //$NON-NLS-1$
+				MessageDialog.openInformation(
+					Display.getDefault().getActiveShell(),
+					WorkbenchMessages.getString("Information"), //$NON-NLS-1$
+					WorkbenchMessages.getString("PluginAction.disabledMessage")); //$NON-NLS-1$
 				return;
 			}
 		}
-		if (event != null && delegate instanceof IActionDelegateWithEvent) {
-			((IActionDelegateWithEvent) delegate).runWithEvent(this, event);
+
+		if (event != null) {
+			if (delegate instanceof IActionDelegate2) {
+				((IActionDelegate2)delegate).runWithEvent(this, event);
+				return;
+			}
+			// Keep for backward compatibility with R2.0
+			if (delegate instanceof IActionDelegateWithEvent) {
+				((IActionDelegateWithEvent) delegate).runWithEvent(this, event);
+				return;
+			}
 		}
-		else {
-			delegate.run(this);
-		}
+
+		delegate.run(this);
 	}
 	
 	/**
@@ -243,6 +281,7 @@ public abstract class PluginAction extends Action
 		ISelection sel = event.getSelection();
 		selectionChanged(sel);
 	}
+
 	/**
 	 * The <code>SelectionChangedEventAction</code> implementation of this 
 	 * <code>ISelectionListener</code> method calls 
@@ -253,13 +292,6 @@ public abstract class PluginAction extends Action
 		selectionChanged(sel);
 	}
 	
-	/**
-	 * Set the delegate action or null if not created yet
-	 */
-	protected void setDelegate(IActionDelegate actionDelegate) {
-		this.delegate = actionDelegate;
-	}
-
 	/**
 	 * Get a new selection with the resource adaptable version 
 	 * of this selection
@@ -281,5 +313,4 @@ public abstract class PluginAction extends Action
 			return sel;
 		}
 	}
-
 }

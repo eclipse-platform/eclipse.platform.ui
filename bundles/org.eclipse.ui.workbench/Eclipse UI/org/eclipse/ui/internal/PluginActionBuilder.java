@@ -261,18 +261,14 @@ protected String getTargetID(IConfigurationElement element) {
  * Inserts an action after another named contribution item.
  * Subclasses may override.
  */
-protected void insertAfter(IContributionManager mgr, String refId, 
-	IAction action) 
-{
-	insertAfter(mgr, refId, new ActionContributionItem(action));
+protected void insertAfter(IContributionManager mgr, String refId, PluginAction action) {
+	insertAfter(mgr, refId, new PluginActionContributionItem(action));
 }
 /**
  * Inserts a contribution item after another named contribution item.
  * Subclasses may override.
  */
-protected void insertAfter(IContributionManager mgr, String refId, 
-	IContributionItem item) 
-{
+protected void insertAfter(IContributionManager mgr, String refId, IContributionItem item) {
 	mgr.insertAfter(refId, item);
 }
 /**

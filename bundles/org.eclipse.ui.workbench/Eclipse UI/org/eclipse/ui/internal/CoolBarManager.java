@@ -357,6 +357,7 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 			for (int i=0; i<cbItems.length; i++) {
 				CoolBarContributionItem cbItem = (CoolBarContributionItem)cbItems[i];
 				dispose(cbItem);
+				cbItem.dispose();
 			}
 			coolBar.dispose();
 			coolBar = null;

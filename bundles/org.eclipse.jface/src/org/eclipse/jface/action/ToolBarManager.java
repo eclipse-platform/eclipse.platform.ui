@@ -75,14 +75,19 @@ public ToolBar createControl(Composite parent) {
 }
 /**
  * Disposes of this tool bar manager and frees all allocated SWT resources.
- * Note that this method does not clean up references between this tool bar 
- * manager and its associated contribution items.
- * Use <code>removeAll</code> for that purpose.
+ * Notifies all contribution items of the dispose. Note that this method does
+ * not clean up references between this tool bar manager and its associated
+ * contribution items. Use <code>removeAll</code> for that purpose.
  */
 public void dispose() {
 	if (toolBarExist())
 		toolBar.dispose();
 	toolBar = null;
+	
+	IContributionItem[] items = getItems();
+	for (int i = 0; i < items.length; i++) {
+		items[i].dispose();
+	}
 }
 /**
  * Returns the tool bar control for this manager.

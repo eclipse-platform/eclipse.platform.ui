@@ -140,9 +140,9 @@ public Menu createMenuBar(Shell parent) {
 }
 /**
  * Disposes of this menu manager and frees all allocated SWT resources.
- * Note that this method does not clean up references between this menu
- * manager and its associated contribution items.
- * Use <code>removeAll</code> for that purpose.
+ * Notifies all contribution items of the dispose. Note that this method does
+ * not clean up references between this menu manager and its associated
+ * contribution items. Use <code>removeAll</code> for that purpose.
  */
 public void dispose() {
 	if (menuExist())
@@ -152,6 +152,11 @@ public void dispose() {
 	if (menuItem != null) {
 		menuItem.dispose();
 		menuItem = null;
+	}
+	
+	IContributionItem[] items = getItems();
+	for (int i = 0; i < items.length; i++) {
+		items[i].dispose();
 	}
 }
 /* (non-Javadoc)

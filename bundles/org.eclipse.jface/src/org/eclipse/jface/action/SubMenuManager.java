@@ -42,6 +42,12 @@ public SubMenuManager(IMenuManager mgr) {
 	super(mgr);
 	parentMgr = mgr;
 }
+/**
+ * The default implementation of this <code>IContributionItem</code>
+ * method does nothing. Subclasses may override.
+ */
+public void dispose() {
+}
 /* (non-Javadoc)
  * Method declared on IMenuManager.
  */

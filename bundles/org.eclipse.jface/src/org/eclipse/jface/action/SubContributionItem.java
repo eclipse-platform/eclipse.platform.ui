@@ -30,6 +30,13 @@ public class SubContributionItem implements IContributionItem {
 public SubContributionItem(IContributionItem item) {
 	innerItem = item;
 }
+/**
+ * The default implementation of this <code>IContributionItem</code>
+ * delegates to the inner item. Subclasses may override.
+ */
+public void dispose() {
+	innerItem.dispose();
+}
 /* (non-Javadoc)
  * Method declared on IContributionItem.
  */

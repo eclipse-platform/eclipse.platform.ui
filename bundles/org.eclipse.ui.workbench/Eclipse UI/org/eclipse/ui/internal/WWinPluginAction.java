@@ -1,20 +1,32 @@
+/************************************************************************
+Copyright (c) 2000, 2002 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+	IBM - Initial implementation
+************************************************************************/
+
 package org.eclipse.ui.internal;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.events.HelpEvent;
 import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IActionDelegate;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.IWorkbenchWindowActionDelegate;
+import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.actions.LabelRetargetAction;
 import org.eclipse.ui.actions.RetargetAction;
 
@@ -26,28 +38,24 @@ import org.eclipse.ui.actions.RetargetAction;
  * whose purpose is to initialize the delegate with
  * the window in which the action is intended to run.
  */
-public class WWinPluginAction extends PluginAction
-	implements IActionSetContributionItem 
-{
+public class WWinPluginAction extends PluginAction implements IActionSetContributionItem {
 	/**
 	 * The help listener assigned to this action, or <code>null</code> if none.
 	 */
 	private HelpListener localHelpListener;
-	
+
 	private IWorkbenchWindow window;
 	private String actionSetId;
 	private RetargetAction retargetAction;
 	private static String TRUE_VALUE = "true"; //$NON-NLS-1$
-	
+
 	private static ArrayList staticActionList = new ArrayList(50);
 
 	/**
 	 * Constructs a new WWinPluginAction object..
 	 */
-	public WWinPluginAction(IConfigurationElement actionElement,
-		String runAttribute, IWorkbenchWindow window,String definitionId) 
-	{
-		super(actionElement, runAttribute,definitionId);
+	public WWinPluginAction(IConfigurationElement actionElement, String runAttribute, IWorkbenchWindow window, String definitionId) {
+		super(actionElement, runAttribute, definitionId);
 		this.window = window;
 
 		// If config specifies a retarget action, create it now
@@ -57,8 +65,8 @@ public class WWinPluginAction extends PluginAction
 			String allowLabelUpdate = actionElement.getAttribute(ActionDescriptor.ATT_ALLOW_LABEL_UPDATE);
 			String id = actionElement.getAttribute(ActionDescriptor.ATT_ID);
 			String label = actionElement.getAttribute(ActionDescriptor.ATT_LABEL);
-			
-			if (allowLabelUpdate != null && allowLabelUpdate.equals(TRUE_VALUE)) 
+
+			if (allowLabelUpdate != null && allowLabelUpdate.equals(TRUE_VALUE))
 				retargetAction = new LabelRetargetAction(id, label);
 			else
 				retargetAction = new RetargetAction(id, label);
@@ -88,17 +96,17 @@ public class WWinPluginAction extends PluginAction
 			IWorkbenchPart activePart = window.getPartService().getActivePart();
 			if (activePart != null)
 				retargetAction.partActivated(activePart);
-		} else {		
+		} else {
 			// if we retarget the handler will look after selection changes
 			window.getSelectionService().addSelectionListener(this);
 			refreshSelection();
 		}
 		addToActionList(this);
-		
+
 		super.setHelpListener(new HelpListener() {
 			public void helpRequested(HelpEvent e) {
 				HelpListener listener = null;
-				if (retargetAction != null) 
+				if (retargetAction != null)
 					listener = retargetAction.getHelpListener();
 				if (listener == null)
 					// use our own help listener
@@ -116,42 +124,44 @@ public class WWinPluginAction extends PluginAction
 	private static void addToActionList(WWinPluginAction action) {
 		staticActionList.add(action);
 	}
-	
+
 	/**
 	 * Removes an item from the action list.
 	 */
 	private static void removeFromActionList(WWinPluginAction action) {
 		staticActionList.remove(action);
 	}
-	
+
 	/**
 	 * Creates any actions which belong to an activated plugin.
 	 */
 	public static void refreshActionList() {
 		Iterator iter = staticActionList.iterator();
 		while (iter.hasNext()) {
-			WWinPluginAction action = (WWinPluginAction)iter.next();
+			WWinPluginAction action = (WWinPluginAction) iter.next();
 			if ((action.getDelegate() == null) && action.isOkToCreateDelegate()) {
 				action.createDelegate();
 				// creating the delegate also refreshes its enablement
 			}
 		}
-	} 
-	
-	/** 
-	 * Initialize an action delegate.
-	 * Subclasses may override this.
+	}
+
+	/* (non-Javadoc)
+	 * Method declared on PluginAction.
 	 */
-	protected IActionDelegate initDelegate(Object obj) 
-		throws WorkbenchException
-	{
-		if (obj instanceof IWorkbenchWindowActionDelegate) {
-			IWorkbenchWindowActionDelegate winDelegate =
-				(IWorkbenchWindowActionDelegate) obj;
-			winDelegate.init(window);
-			return winDelegate;
-		} else
+	protected IActionDelegate validateDelegate(Object obj) throws WorkbenchException {
+		if (obj instanceof IWorkbenchWindowActionDelegate)
+			return (IWorkbenchWindowActionDelegate)obj;
+		else
 			throw new WorkbenchException("Action must implement IWorkbenchWindowActionDelegate"); //$NON-NLS-1$
+	}
+
+	/* (non-Javadoc)
+	 * Method declared on PluginAction.
+	 */
+	protected void initDelegate() {
+		super.initDelegate();
+		((IWorkbenchWindowActionDelegate)getDelegate()).init(window);
 	}
 
 	/**
@@ -166,8 +176,7 @@ public class WWinPluginAction extends PluginAction
 		}
 		window.getSelectionService().removeSelectionListener(this);
 		if (getDelegate() instanceof IWorkbenchWindowActionDelegate) {
-			IWorkbenchWindowActionDelegate winDelegate =
-				(IWorkbenchWindowActionDelegate) getDelegate();
+			IWorkbenchWindowActionDelegate winDelegate = (IWorkbenchWindowActionDelegate) getDelegate();
 			winDelegate.dispose();
 		}
 	}
@@ -186,7 +195,7 @@ public class WWinPluginAction extends PluginAction
 	public boolean isOkToCreateDelegate() {
 		return super.isOkToCreateDelegate() && window != null && retargetAction == null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * Method declared on IActionDelegate2.
 	 */
@@ -195,20 +204,20 @@ public class WWinPluginAction extends PluginAction
 			super.runWithEvent(event);
 			return;
 		}
-	
+
 		if (event != null)
 			retargetAction.runWithEvent(event);
 		else
 			retargetAction.run();
 	}
-	
+
 	/**
 	 * Sets the action set id.
 	 */
 	public void setActionSetId(String newActionSetId) {
 		actionSetId = newActionSetId;
 	}
-	
+
 	/** 
 	 * The <code>WWinPluginAction</code> implementation of this method
 	 * declared on <code>IAction</code> stores the help listener in
@@ -218,7 +227,7 @@ public class WWinPluginAction extends PluginAction
 	public void setHelpListener(HelpListener listener) {
 		localHelpListener = listener;
 	}
-	
+
 	/**
 	 * Refresh the selection for the action.
 	 */

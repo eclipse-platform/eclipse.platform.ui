@@ -98,6 +98,8 @@ public class EditorActionBars extends SubActionBars {
 		super.dispose();
 		if (editorContributor != null)
 			editorContributor.dispose();
+		if (extensionContributor != null)
+			extensionContributor.dispose();
 		if (coolItemToolBarMgr != null)
 			coolItemToolBarMgr.removeAll();
 	}

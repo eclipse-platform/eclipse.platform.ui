@@ -318,6 +318,15 @@ protected void createTitleBar() {
 	});
 	isvToolBarMgr = new PaneToolBarManager(isvToolBar);
 }
+public void dispose() {
+	super.dispose();
+	if (isvMenuMgr != null)
+		isvMenuMgr.dispose();
+	if (isvToolBarMgr != null)
+		isvToolBarMgr.dispose();
+	if (viewToolBarMgr != null)
+		viewToolBarMgr.dispose();
+}
 /**
  * @see PartPane#doHide
  */
