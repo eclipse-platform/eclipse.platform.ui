@@ -335,8 +335,8 @@ public class RepositoryManager {
 			String projectName = project.getName();
 			set = new HashSet();
 			table.put(projectName, set);
-			set.add(".project");
-			set.add(".vcm_meta");
+			set.add(".project"); //$NON-NLS-1$
+			set.add(".vcm_meta"); //$NON-NLS-1$
 		}
 	}
 	

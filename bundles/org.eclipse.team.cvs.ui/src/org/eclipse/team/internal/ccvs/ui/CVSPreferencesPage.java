@@ -178,7 +178,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		showMarkers = createCheckBox(composite, Policy.bind("CVSPreferencePage.showAddRemoveMarkers")); //$NON-NLS-1$		
 		replaceUnmanaged = createCheckBox(composite, Policy.bind("CVSPreferencePage.replaceUnmanaged")); //$NON-NLS-1$
 				
-		createLabel(composite, ""); createLabel(composite, "");
+		createLabel(composite, ""); createLabel(composite, ""); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		createLabel(composite, Policy.bind("CVSPreferencePage.timeoutValue")); //$NON-NLS-1$
 		timeoutValue = createTextField(composite);
@@ -211,7 +211,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		}
 		ksubstCombo = createCombo(composite, chars);
 		
-		createLabel(composite, ""); createLabel(composite, "");
+		createLabel(composite, ""); createLabel(composite, ""); //$NON-NLS-1$ //$NON-NLS-2$
 				
 		createSaveCombo(composite);
 				

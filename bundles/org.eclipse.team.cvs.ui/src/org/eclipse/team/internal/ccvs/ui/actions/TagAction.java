@@ -175,11 +175,11 @@ public class TagAction extends CVSAction {
 	}
 	
 	protected String getErrorTitle() {
-		return Policy.bind("TagAction.tagErrorTitle");
+		return Policy.bind("TagAction.tagErrorTitle"); //$NON-NLS-1$
 	}
 	
 	protected String getWarningTitle() {
-		return Policy.bind("TagAction.tagWarningTitle");
+		return Policy.bind("TagAction.tagWarningTitle"); //$NON-NLS-1$
 	}
 }
 
