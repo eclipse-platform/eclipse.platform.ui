@@ -35,7 +35,6 @@ public class RemoveMemoryRenderingAction extends AbstractMemoryAction
 		setText(DebugUIMessages.getString("RemoveMemoryRenderingAction.Remove_rendering")); //$NON-NLS-1$
 
 		setToolTipText(DebugUIMessages.getString("RemoveMemoryRenderingAction.Remove_rendering")); //$NON-NLS-1$
-		setToolTipText(DebugUIMessages.getString("RemoveMemoryRenderingAction.Remove_rendering"));  //$NON-NLS-1$
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_REMOVE_MEMORY));	
 		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_LCL_REMOVE_MEMORY));
 		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_REMOVE_MEMORY));

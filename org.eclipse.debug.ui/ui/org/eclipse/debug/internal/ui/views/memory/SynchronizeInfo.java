@@ -204,6 +204,9 @@ public class SynchronizeInfo
 	 */
 	public void firePropertyChanged(final String propertyId)
 	{
+		if (!DebugUIPlugin.getDefault().getMemoryBlockViewSynchronizer().isEnabled())
+			return;
+		
 		// Make sure the synchronizer does not swallow any events
 		// Values of the properties are updated in the syncrhonizer immediately.
 		// Change events are queued up on the UI Thread.

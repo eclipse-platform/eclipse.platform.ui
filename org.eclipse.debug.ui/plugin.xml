@@ -63,7 +63,7 @@
          </actionSet>
 		 <actionSet
                id="org.eclipse.debug.ui.breakpointActionSet">
-         </actionSet>         
+         </actionSet>
       </perspectiveExtension>
    </extension>
    <extension
@@ -813,6 +813,40 @@
                id="org.eclipse.debug.ui.variableViewActions.toolbar.detailPaneWordWrap">
          </action>
       </viewContribution>
+      <viewContribution
+            targetID="org.eclipse.debug.ui.MemoryView"
+            id="org.eclipse.debug.ui.memoryView.toolbar">
+         <action
+               disabledIcon="icons/full/dlcl16/var_cntnt_prvdr.gif"
+               hoverIcon="icons/full/elcl16/var_cntnt_prvdr.gif"
+               toolbarPath="MemoryMonitorsGroup"
+               label="%ToggleMemoryMonitorsPaneAction.name"
+               tooltip="%ToggleMemoryMonitorsPaneAction.name"
+               class="org.eclipse.debug.internal.ui.views.memory.ToggleMemoryMonitorsAction"
+               icon="icons/full/elcl16/var_cntnt_prvdr.gif"
+               style="toggle"
+               id="org.eclipse.debug.ui.togglemonitors"/>
+         <action
+               disabledIcon="icons/full/dlcl16/synced.gif"
+               hoverIcon="icons/full/elcl16/synced.gif"
+               toolbarPath="RenderingPanesGroup"
+               label="%LinkRenderingPanesAction.name"
+               tooltip="%LinkRenderingPanesAction.name"
+               icon="icons/full/elcl16/synced.gif"
+               class="org.eclipse.debug.internal.ui.views.memory.LinkRenderingPanesAction"
+               style="toggle"
+               id="org.eclipse.debug.ui.linkrenderingpanes"/>
+         <action
+               disabledIcon="icons/full/dlcl16/det_pane_right.gif"
+               hoverIcon="icons/full/elcl16/det_pane_right.gif"
+               toolbarPath="RenderingPanesGroup"
+               label="%ToggleSplitPaneAction.name"
+               tooltip="%ToggleSplitPaneAction.name"
+               icon="icons/full/elcl16/toggledetailpane_co.gif"
+               class="org.eclipse.debug.internal.ui.views.memory.ToggleSplitPaneAction"
+               style="toggle"
+               id="org.eclipse.debug.ui.togglesplitpane"/>
+      </viewContribution>
    </extension>
    <extension
          point="org.eclipse.ui.popupMenus">
@@ -1312,20 +1346,67 @@
             </separator>
          </menu>            
          <action
+               helpContextId="BigEndianAction_context"
+               enablesFor="1"
                label="%BigEndianActionName"
                class="org.eclipse.debug.internal.ui.views.memory.BigEndianAction"
-               enablesFor="1"
                menubarPath="org.eclipse.debug.ui.memory.rendering.setendianess/setEndianessGroup"
                id="org.eclipse.debug.ui.memory.rendering.BigEndianAction"> 
          </action>
           <action
-               label="%LittleEndianActionName"
-               class="org.eclipse.debug.internal.ui.views.memory.LittleEndianAction"
-               enablesFor="1"
-               menubarPath="org.eclipse.debug.ui.memory.rendering.setendianess/setEndianessGroup"
-               id="org.eclipse.debug.ui.memory.rendering.LittleEndianAction"> 
+                helpContextId="LittleEndianAction_context"
+                enablesFor="1"
+                label="%LittleEndianActionName"
+                class="org.eclipse.debug.internal.ui.views.memory.LittleEndianAction"
+                menubarPath="org.eclipse.debug.ui.memory.rendering.setendianess/setEndianessGroup"
+                id="org.eclipse.debug.ui.memory.rendering.LittleEndianAction"> 
          </action>
-      </objectContribution>   
+      </objectContribution>
+      <viewerContribution
+            targetID="org.eclipse.debug.ui.MemoryView.RenderingViewPane.1"
+            id="org.eclipse.debug.ui.memory.renderingviewpane.1">
+         <menu
+               label="%AddRemoveRenderingMenu.name"
+               path="popUpBegin"
+               id="org.eclipse.debug.ui.memory.renderingviewpane.1.addremove">
+         </menu>
+         <action
+               helpContextId="RemoveRenderingContextAction_context"
+               label="%RemoveRenderingAction.name"
+               class="org.eclipse.debug.internal.ui.views.memory.RemoveRenderingContextAction"
+               icon="icons/full/elcl16/removememory_tsk.gif"
+               menubarPath="org.eclipse.debug.ui.memory.renderingviewpane.1.addremove"
+               id="org.eclipse.debug.ui.MemoryView.RenderingViewPane.1.remove"/>
+         <action
+               helpContextId="AddRenderingContextAction_context"
+               label="%AddRenderingAction.name"
+               class="org.eclipse.debug.internal.ui.views.memory.AddMemoryRenderingContextAction"
+               icon="icons/full/elcl16/monitorexpression_tsk.gif"
+               menubarPath="org.eclipse.debug.ui.memory.renderingviewpane.1.addremove"
+               id="org.eclipse.debug.ui.MemoryView.RenderingViewPane.1.add"/>
+      </viewerContribution>
+      <viewerContribution
+            targetID="org.eclipse.debug.ui.MemoryView.RenderingViewPane.2"
+            id="org.eclipse.debug.ui.memory.renderingviewpane.2">
+         <menu
+               label="%AddRemoveRenderingMenu.name"
+               path="popUpBegin"
+               id="org.eclipse.debug.ui.memory.renderingviewpane.2.addremove"/>
+         <action
+               helpContextId="RemoveRenderingContextAction_context"
+               label="%RemoveRenderingAction.name"
+               class="org.eclipse.debug.internal.ui.views.memory.RemoveRenderingContextAction"
+               icon="icons/full/elcl16/removememory_tsk.gif"
+               menubarPath="org.eclipse.debug.ui.memory.renderingviewpane.2.addremove"
+               id="org.eclipse.debug.ui.MemoryView.RenderingViewPane.2.remove"/>
+         <action
+               helpContextId="AddRenderingContextAction_context"
+               label="%AddRenderingAction.name"
+               class="org.eclipse.debug.internal.ui.views.memory.AddMemoryRenderingContextAction"
+               icon="icons/full/elcl16/monitorexpression_tsk.gif"
+               menubarPath="org.eclipse.debug.ui.memory.renderingviewpane.2.addremove"
+               id="org.eclipse.debug.ui.MemoryView.RenderingViewPane.2.add"/>
+      </viewerContribution>   
    </extension>   
    <extension
          point="org.eclipse.ui.elementFactories">

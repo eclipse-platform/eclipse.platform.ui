@@ -42,6 +42,31 @@ public interface IMemoryBlockViewSynchronizer
 	public void removeView(ISynchronizedMemoryBlockView view);
 	
 	/**
+	 * Add listener to the synchronizer.  Listener will be notified
+	 * when the enablement of the synchronizer has changed.
+	 * @param listener
+	 */
+	public void addSynchronizerListener(ISynchronizerListener listener);
+	
+	/**
+	 * Remove listener from synchronizer.
+	 * @param listener
+	 */
+	public void removeSynchronizerListener(ISynchronizerListener listener);
+	
+	/**
+	 * Enable/disable the synchronizer.  Synchronizer does not fire
+	 * property change events if it is disabled.
+	 * @param enabled 
+	 */
+	public void setEnabled(boolean enabled);
+	
+	/**
+	 * @return if the synchronizer is currently enabled
+	 */
+	public boolean isEnabled();
+	
+	/**
 	 * Sets a property to the synchronizer to be synchronized.
 	 * A change event will be fired if the value provided is different from the
 	 * value stored in the synchronizer.  Otherwise, no change event will be

@@ -55,23 +55,27 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 	private static final String VIEW_TAB_FACTORY = "viewTabFactory"; //$NON-NLS-1$
 	private static final String RENDERER = "renderer"; //$NON-NLS-1$
 	
+	public static final String BEGINNING_POPUP = "popUpBegin"; //$NON-NLS-1$
+	
 	protected Composite fViewPaneCanvas;
 	protected StackLayout fStackLayout;
 	protected ViewTabEnablementManager fViewTabEnablementManager;
 	protected TabFolder fEmptyTabFolder;
-	protected Hashtable fTabFolderForDebugView; 
-	protected Hashtable fMenuMgr;
+	protected Hashtable fTabFolderForDebugView = new Hashtable(); 
+	protected Hashtable fMenuMgr = new Hashtable();
 	protected boolean fVisible;
 	protected Hashtable fRenderingInfoTable;
 	protected IMemoryBlockRetrieval fKey;  // store the key for current tab folder
 	protected ViewPaneSelectionProvider fSelectionProvider;
 	protected IViewPart fParent;
 	protected String fPaneId;
+	private Composite fCanvas;
 	
 	public AbstractMemoryViewPane(IViewPart parent)
 	{
 		super();
 		fParent = parent;
+		fSelectionProvider = new ViewPaneSelectionProvider();
 	}
 	
 	/**
@@ -82,10 +86,8 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 	public Control createViewPane(Composite parent, String paneId)
 	{	
 		WorkbenchHelp.setHelp(parent, IDebugUIConstants.PLUGIN_ID + ".MemoryView_context"); //$NON-NLS-1$
-		fSelectionProvider = new ViewPaneSelectionProvider();
 		fPaneId = paneId;
-		// view pane overall canvas
-		Composite canvas = new Composite(parent, SWT.NONE);
+		fCanvas = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.makeColumnsEqualWidth = false;
 		layout.numColumns = 1;
@@ -96,11 +98,11 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 		data.grabExcessVerticalSpace = true;
 		data.verticalAlignment = SWT.BEGINNING;
 		data.horizontalAlignment = SWT.BEGINNING;
-		canvas.setLayout(layout);
-		canvas.setLayoutData(data);
+		fCanvas.setLayout(layout);
+		fCanvas.setLayoutData(data);
 
 		// memory view area
-		Composite memoryViewAreaParent = canvas;
+		Composite memoryViewAreaParent = fCanvas;
 		Composite subCanvas = new Composite(memoryViewAreaParent, SWT.NONE);	
 		fViewPaneCanvas = subCanvas;
 		fStackLayout = new StackLayout();
@@ -116,9 +118,6 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 		
 		fEmptyTabFolder = new TabFolder(fViewPaneCanvas, SWT.NULL);
 		setTabFolder(fEmptyTabFolder);
-
-		fTabFolderForDebugView = new Hashtable(3);
-		fMenuMgr = new Hashtable();
 		
 		addListeners();
 		
@@ -132,7 +131,7 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 		
 		fVisible = true;
 		
-		return canvas;
+		return fCanvas;
 	}
 	
 	protected void addListeners()
@@ -258,7 +257,7 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager manager) {
-				
+				manager.add(new Separator(BEGINNING_POPUP));
 				IMemoryViewTab top = getTopMemoryTab();
 				
 				if (top != null)
@@ -394,11 +393,17 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 	
 	public void addSelectionListener(ISelectionChangedListener listener)
 	{
+		if (fSelectionProvider == null)
+			fSelectionProvider = new ViewPaneSelectionProvider();
+		
 		fSelectionProvider.addSelectionChangedListener(listener);
 	}
 	
 	public void removeSelctionListener(ISelectionChangedListener listener)
 	{
+		if (fSelectionProvider == null)
+			return;
+		
 		fSelectionProvider.removeSelectionChangedListener(listener);
 	}
 	
@@ -475,6 +480,19 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 		return fPaneId;
 	}
 	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.views.memory.IMemoryViewPane#getControl()
+	 */
+	public Control getControl() {
+		return fCanvas;
+	}
+	
+	public boolean isVisible()
+	{
+		return fVisible;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.memory.IMemoryBlockListener#MemoryBlockAdded(org.eclipse.debug.core.model.IMemoryBlock)
 	 */
@@ -505,4 +523,5 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 	 * @return actions to be contributed to the view pane's toolbar
 	 */
 	abstract public IAction[] getActions();
+
 }

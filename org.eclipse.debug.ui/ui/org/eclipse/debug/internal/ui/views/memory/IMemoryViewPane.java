@@ -74,5 +74,21 @@ public interface IMemoryViewPane {
 	 * @return the selection provider of the view pane
 	 */
 	public ISelectionProvider getSelectionProvider();
+	
+	/**
+	 * @return the control for ths memory view pane
+	 */
+	public Control getControl();
+	
+	/**
+	 * Called when the view pane becomes visible or hidden
+	 * @param visible visibility state of teh view pane
+	 */
+	public void setVisible(boolean visible);
+	
+	/**
+	 * @return if the view pane is currently visible
+	 */
+	public boolean isVisible();
 
 }

@@ -382,12 +382,12 @@ public class AddMemoryBlockAction extends Action implements ISelectionListener, 
 		for (int i=0; i<renderingTypes.length; i++)
 		{
 			try {
-				// make sure the default supports the rendering view
+				// make sure the defaut supports the rendering view
 				String[] viewIds = renderingTypes[i].getSupportedViewIds();
 				boolean viewSupported = false;
 				for (int j=0; j<viewIds.length; j++)
 				{
-					if (viewIds[j].startsWith(IInternalDebugUIConstants.ID_RENDERING_VIEW_PANE))
+					if (viewIds[j].indexOf(IInternalDebugUIConstants.ID_RENDERING_VIEW_PANE) != -1)
 					{
 						viewSupported = true;
 						break;
@@ -396,7 +396,7 @@ public class AddMemoryBlockAction extends Action implements ISelectionListener, 
 				
 				if (viewSupported)
 				{
-					String paneId = null;
+					String paneId = IInternalDebugUIConstants.ID_RENDERING_VIEW_PANE_1;
 					IDebugModelPresentation modelPresentation = DebugUIPlugin.getModelPresentation();
 					if (modelPresentation instanceof IMemoryBlockModelPresentation)
 					{
@@ -404,7 +404,7 @@ public class AddMemoryBlockAction extends Action implements ISelectionListener, 
 					}
 					
 					if (paneId == null)
-						paneId = IInternalDebugUIConstants.ID_RENDERING_VIEW_PANE; 
+						paneId = IInternalDebugUIConstants.ID_RENDERING_VIEW_PANE_1;
 					
 					IMemoryRendering rendering = MemoryRenderingManager.getMemoryRenderingManager().createRendering(memoryBlock, renderingTypes[i].getRenderingId());
 					
@@ -438,8 +438,8 @@ public class AddMemoryBlockAction extends Action implements ISelectionListener, 
 		
 		if (view != null && view instanceof IMultipaneMemoryView)
 		{
-			IMemoryViewPane viewPane = ((IMultipaneMemoryView)view).getViewPane(paneId);
-			
+			IMultipaneMemoryView memoryView = ((IMultipaneMemoryView)view);
+			IMemoryViewPane viewPane = memoryView.getViewPane(paneId);
 			return viewPane;
 		}
 		

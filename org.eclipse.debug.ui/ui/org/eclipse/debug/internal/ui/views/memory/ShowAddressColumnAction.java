@@ -11,7 +11,9 @@
 package org.eclipse.debug.internal.ui.views.memory;
 
 import org.eclipse.debug.internal.ui.DebugUIMessages;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.Action;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Action for showing or hiding address column in memory view tab
@@ -23,6 +25,7 @@ public class ShowAddressColumnAction extends Action {
 	public ShowAddressColumnAction(MemoryViewTab viewTab)
 	{
 		super();
+		WorkbenchHelp.setHelp(this, IDebugUIConstants.PLUGIN_ID + ".ShowAddressColumnAction_context"); //$NON-NLS-1$
 		fViewTab = viewTab;
 		updateActionLabel();
 	}

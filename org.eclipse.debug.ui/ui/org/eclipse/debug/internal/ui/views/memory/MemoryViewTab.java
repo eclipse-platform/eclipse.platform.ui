@@ -64,7 +64,7 @@ import org.eclipse.swt.widgets.Text;
 /**
  * @since 3.0
  */
-public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionListener, ControlListener, KeyListener, ITableMemoryViewTab, ISynchronizedMemoryBlockView{	
+public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionListener, ControlListener, KeyListener, ITableMemoryViewTab, ISynchronizedMemoryBlockView, ISynchronizerListener{	
 	
 	private static final String PREFIX = "MemoryViewTab."; //$NON-NLS-1$
 	private static final String ADDRESS = PREFIX + "Address"; //$NON-NLS-1$
@@ -202,7 +202,6 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 
 	public MemoryViewTab(IMemoryBlock newMemory, TabItem newTab, MenuManager menuMgr, IMemoryRendering rendering, AbstractMemoryRenderer renderer) {
 		super(newMemory, newTab, menuMgr, rendering);
-			
 		setTabName(newMemory, true);
 		
 		fTabItem.setControl(createFolderPage(renderer));
@@ -222,6 +221,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 		}
 		
 		addViewTabToSynchronizer();
+		DebugUIPlugin.getDefault().getMemoryBlockViewSynchronizer().addSynchronizerListener(this);
 		
 		// otherwise, this is a totally new synchronize info
 
@@ -368,6 +368,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 	 * Create actions for the view tab
 	 */
 	protected void createActions() {
+		
 		fCopyToClipboardAction = new CopyViewTabToClipboardContextAction(this);
 		fGoToAddressAction = new GoToAddressAction(this);
 		fResetMemoryBlockAction = new ResetMemoryBlockContextAction(this);
@@ -856,6 +857,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 			
 			// remove the view tab from the synchronizer
 			getMemoryBlockViewSynchronizer().removeView(this);
+			DebugUIPlugin.getDefault().getMemoryBlockViewSynchronizer().removeSynchronizerListener(this);
 			
 			super.dispose();
 
@@ -2160,6 +2162,11 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 	 */
 	private void synchronize()
 	{
+		IMemoryBlockViewSynchronizer synchronizer = DebugUIPlugin.getDefault().getMemoryBlockViewSynchronizer();
+		
+		if (!synchronizer.isEnabled())
+			return;
+		
 		Integer columnSize = (Integer) getSynchronizedProperty(IMemoryViewConstants.PROPERTY_COL_SIZE);
 		BigInteger selectedAddress = (BigInteger)getSynchronizedProperty(IMemoryViewConstants.PROPERTY_SELECTED_ADDRESS);
 		BigInteger topAddress = (BigInteger)getSynchronizedProperty(IMemoryViewConstants.PROPERTY_TOP_ADDRESS);
@@ -2378,6 +2385,17 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 	public boolean isShowAddressColumn()
 	{
 		return fShowAddressColumn;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.views.memory.ISynchronizerListener#synchronizerEnablementChanged(boolean)
+	 */
+	public void synchronizerEnablementChanged(boolean enabled) {
+		
+		// only synchronize if the view tab is not displaying 
+		// an error and if it's enabled
+		if (!isDisplayingError() && enabled && fEnabled)
+			synchronize();
 	}
 }	
 

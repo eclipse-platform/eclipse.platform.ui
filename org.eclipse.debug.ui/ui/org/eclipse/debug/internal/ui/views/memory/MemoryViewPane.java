@@ -16,7 +16,6 @@ import java.util.Enumeration;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IMemoryBlock;
-import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -133,7 +132,7 @@ public class MemoryViewPane extends AbstractMemoryViewPane {
 					folder.setSelection(i);
 					fSelectionProvider.setSelection(
 						new StructuredSelection(memoryBlock));
-					getTopMemoryTab().setEnabled(isEnabled);
+					getTopMemoryTab().setEnabled(isEnabled && fVisible);
 					break;
 				}
 			}
@@ -223,7 +222,7 @@ public class MemoryViewPane extends AbstractMemoryViewPane {
 				// if the view tab is visible, enable it
 				if (fVisible)
 				{
-					newViewTab.setEnabled(true);
+					newViewTab.setEnabled(fVisible);
 					fSelectionProvider.setSelection(new StructuredSelection(newViewTab.getMemoryBlock()));
 				}					
 			}
@@ -236,16 +235,6 @@ public class MemoryViewPane extends AbstractMemoryViewPane {
 	private void restoreViewTabs(IMemoryBlock[] memoryBlocks)
 	{
 		memoryBlocksAdded(memoryBlocks);
-
-		// enable memory block
-		IMemoryViewTab viewTab = getTopMemoryTab();
-		if (viewTab != null)
-		{
-			if (viewTab.getMemoryBlock() instanceof IMemoryBlockExtension)
-			{
-				((IMemoryBlockExtension)viewTab.getMemoryBlock()).connect(viewTab);
-			}
-		}		
 	}
 	public void memoryBlocksRemoved(final IMemoryBlock[] memoryBlocks) {
 			
@@ -480,7 +469,7 @@ public class MemoryViewPane extends AbstractMemoryViewPane {
 				folder.setSelection(i);
 				fSelectionProvider.setSelection(
 						new StructuredSelection(getTopMemoryTab().getMemoryBlock()));
-				getTopMemoryTab().setEnabled(isEnabled);
+				getTopMemoryTab().setEnabled(isEnabled && fVisible);
 				break;
 			}
 		}
@@ -531,9 +520,9 @@ public class MemoryViewPane extends AbstractMemoryViewPane {
 		
 			if (top != null)
 			{
-				if (!top.isEnabled())
+				if (!top.isEnabled() && fVisible)
 				{
-					top.setEnabled(true);
+					top.setEnabled(fVisible);
 				}
 			}
 		}

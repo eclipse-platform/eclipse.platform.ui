@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui;
 
+import org.eclipse.debug.internal.ui.views.memory.MemoryBlocksTreeViewPane;
 import org.eclipse.debug.internal.ui.views.memory.MemoryViewPane;
 import org.eclipse.debug.internal.ui.views.memory.RenderingViewPane;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -220,6 +221,26 @@ public interface IInternalDebugUIConstants {
 	 * @since 3.1
 	 */
 	public static String ID_RENDERING_VIEW_PANE = RenderingViewPane.RENDERING_VIEW_PANE_ID;
+	
+	/**
+	 * Memory view's rendering view pane identifier for the rendering view pane
+	 * on the left. (value <code>"org.eclipse.debug.ui.MemoryView.RenderingViewPane.1"</code>).
+	 * @since 3.1
+	 */
+	public static String ID_RENDERING_VIEW_PANE_1 = ID_RENDERING_VIEW_PANE + ".1"; //$NON-NLS-1$
+	
+	/**
+	 * Memory view's rendering view pane identifier for the rendering view pane
+	 * on the right. (value <code>"org.eclipse.debug.ui.MemoryView.RenderingViewPane.2"</code>).
+	 * @since 3.1
+	 */
+	public static String ID_RENDERING_VIEW_PANE_2 = ID_RENDERING_VIEW_PANE + ".2"; //$NON-NLS-1$
+	
+	/**
+	 * Memory view's memory block tree viewer's identifier. (value <code>"org.eclipse.debug.ui.MemoryView.MemoryBlocksTreeViewPane"</code>).
+	 * @since 3.1
+	 */
+	public static String ID_MEMORY_BLOCK_TREE_VIEWER = MemoryBlocksTreeViewPane.PANE_ID;
 
 	/** 
 	 * Memory view image identifier

@@ -23,4 +23,17 @@ public interface IMultipaneMemoryView {
 	 * @return all view panes from the memory view
 	 */
 	public IMemoryViewPane[] getViewPanes();
+	
+	/**
+	 * Show or hide the specified view pane
+	 * @param show
+	 * @param paneId
+	 */
+	public void showViewPane(boolean show, String paneId);
+	
+	/**
+	 * @param paneId
+	 * @return if the specified is currently visible in the memory view
+	 */
+	public boolean isViewPaneVisible(String paneId);
 }
