@@ -109,7 +109,11 @@ public final class InternalBootLoader {
 	// be removed once the startup support is fully transitioned to the R2.0 configuration
 	// mechanism
 	private static final String R2_0_STARTUP = "-r2.0";
-	private static boolean r2_0 = false;
+	private static boolean r2_0 = true;
+	static {		
+		LaunchInfo.r2_0 = true;
+		PlatformConfiguration.r2_0 = true;
+	}
 
 	// Development mode constants
 	private static final String PLUGIN_JARS = "plugin.jars";
