@@ -47,6 +47,12 @@ TABLE {
 	background-color: <%=prefs.getViewBackground()%>;
 	padding:2px;
 }
+
+.sectiontitle {
+	background-color: <%=prefs.getToolbarBackground()%>;
+	font-weight:bold;
+	margin-top:7px;
+}
      
 .active { 
 	background:Highlight;

@@ -84,8 +84,13 @@ setTimeout('refresh()', 2000);
 <table id='list'  cellspacing='0' >
 
 <%
-	for (int topic = 0; topic < data.getResultsCount(); topic++) 
+	boolean disabledSearchResults = false;
+	for (int topic = 0; topic < data.getResultsCount(); topic++)
 	{
+		if(!data.isEnabled(topic)){
+			disabledSearchResults = true;
+			continue;
+		}
 %>
 
 <tr class='list' id='r<%=topic%>'>
@@ -101,6 +106,36 @@ setTimeout('refresh()', 2000);
 </tr>
 
 <%
+	}
+%>
+</table>
+<%
+	if(disabledSearchResults){
+%>
+	<div class="sectiontitle"><%=ServletResources.getLabel("disabledResults", request)%></div>
+
+<table id='list2'  cellspacing='0' >
+<%		for (int topic = 0; topic < data.getResultsCount(); topic++) 
+		{
+			if(data.isEnabled(topic)){
+				continue;
+			}
+%>
+
+<tr class='list' id='r<%=topic%>'>
+	<td class='score' align='right'><%=data.getTopicScore(topic)%></td>
+	<td align='left' class='label' nowrap>
+		<a id='a<%=topic%>' 
+		   href='<%=data.getTopicHref(topic)%>' 
+		   onmouseover="showStatus(event);return true;"
+		   onmouseout="clearStatus();return true;"
+		   onclick='parent.parent.parent.setContentToolbarTitle(this.title)' 
+		   title="<%=data.getTopicTocLabel(topic)%>"><%=data.getTopicLabel(topic)%></a>
+	</td>
+</tr>
+
+<%
+		}
 	}
 %>
 
