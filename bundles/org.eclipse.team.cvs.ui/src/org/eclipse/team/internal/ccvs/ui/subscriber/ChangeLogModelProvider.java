@@ -564,7 +564,7 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 	 * @see org.eclipse.team.ui.synchronize.viewers.SynchronizeModelProvider#getViewerSorter()
 	 */
 	public ViewerSorter getViewerSorter() {
-		int commentSort = ChangeLogModelSorter.USER;
+		int commentSort = ChangeLogModelSorter.DATE;
 		int resourceSort = ChangeLogModelSorter.PATH;
 		try {
 			IDialogSettings pageSettings = getConfiguration().getSite().getPageSettings();
