@@ -389,6 +389,8 @@ public class UpdateManagerUtils {
 
 		if (url1 == null || url2 == null)
 			return false;
+		if (url1 == url2)
+			return true;
 		if (url1.equals(url2))
 			return true;
 

@@ -108,13 +108,19 @@ public class ReviewPage
 				if (candidate.equals(job))
 					continue;
 				IFeature feature = candidate.getFeature();
-				if (includes(feature, vid))
+				if (includes(feature, vid,null))
 					return true;
 			}
 			return false;
 		}
-		private boolean includes(IFeature feature, VersionedIdentifier vid) {
+		private boolean includes(IFeature feature, VersionedIdentifier vid, ArrayList cycleCandidates) {
 			try {
+				if (cycleCandidates == null)
+					cycleCandidates = new ArrayList();
+				if (cycleCandidates.contains(feature))
+					throw Utilities.newCoreException("Cycle starting at " + feature.getVersionedIdentifier(), null);
+				else
+					cycleCandidates.add(feature);
 				IFeatureReference[] irefs =
 					feature.getIncludedFeatureReferences();
 				for (int i = 0; i < irefs.length; i++) {
@@ -124,12 +130,16 @@ public class ReviewPage
 						ifeature.getVersionedIdentifier();
 					if (ivid.equals(vid))
 						return true;
-					if (includes(ifeature, vid))
+					if (includes(ifeature, vid, cycleCandidates))
 						return true;
 				}
+				return false;
 			} catch (CoreException e) {
+				return false;
+			} finally {
+				// after this feature has been DFS-ed, it is no longer a cycle candidate
+				cycleCandidates.remove(feature);
 			}
-			return false;
 		}
 	}
 
