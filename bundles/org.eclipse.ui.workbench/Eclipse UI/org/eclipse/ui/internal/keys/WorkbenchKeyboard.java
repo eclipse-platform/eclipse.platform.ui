@@ -97,12 +97,6 @@ public final class WorkbenchKeyboard {
      */
     private static final boolean DEBUG_VERBOSE = Policy.DEBUG_KEY_BINDINGS_VERBOSE;
 
-    /**
-     * The properties key for the key strokes that should be processed out of
-     * order.
-     */
-    static final String OUT_OF_ORDER_KEYS = "OutOfOrderKeys"; //$NON-NLS-1$
-
     /** The collection of keys that are to be processed out-of-order. */
     static KeySequence outOfOrderKeys;
 
@@ -113,7 +107,15 @@ public final class WorkbenchKeyboard {
             .getBundle(WorkbenchKeyboard.class.getName());
 
     static {
-        initializeOutOfOrderKeys();
+
+        try {
+            outOfOrderKeys = KeySequence.getInstance("ESC DEL"); //$NON-NLS-1$
+        } catch (ParseException e) {
+            outOfOrderKeys = KeySequence.getInstance();
+            String message = "Could not parse out-of-order keys definition: 'ESC DEL'.  Continuing with no out-of-order keys."; //$NON-NLS-1$
+            WorkbenchPlugin.log(message, new Status(IStatus.ERROR,
+                    WorkbenchPlugin.PI_WORKBENCH, 0, message, e));
+        }
     }
 
     /**
@@ -165,26 +167,6 @@ public final class WorkbenchKeyboard {
         }
 
         return keyStrokes;
-    }
-
-    /**
-     * Initializes the <code>outOfOrderKeys</code> member variable using the
-     * keys defined in the properties file.
-     */
-    private static void initializeOutOfOrderKeys() {
-        // Get the key strokes which should be out of order.
-        String keysText = Util.translateString(RESOURCE_BUNDLE,
-                OUT_OF_ORDER_KEYS);
-        outOfOrderKeys = KeySequence.getInstance();
-
-        try {
-            outOfOrderKeys = KeySequence.getInstance(keysText);
-        } catch (ParseException e) {
-            String message = "Could not parse out-of-order keys definition: '" //$NON-NLS-1$
-                    + keysText + "'.  Continuing with no out-of-order keys."; //$NON-NLS-1$
-            WorkbenchPlugin.log(message, new Status(IStatus.ERROR,
-                    WorkbenchPlugin.PI_WORKBENCH, 0, message, e));
-        }
     }
 
     /**
