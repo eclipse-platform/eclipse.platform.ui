@@ -13,7 +13,6 @@ package org.eclipse.ui.actions;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -55,12 +54,12 @@ public class DeleteResourceAction extends SelectionListenerAction {
 
 	static class DeleteProjectDialog extends MessageDialog {
 
-		private List projects;
+		private IResource[] projects;
 		private boolean deleteContent = false;
 		private Button radio1;
 		private Button radio2;
 		
-		DeleteProjectDialog(Shell parentShell, List projects) {
+		DeleteProjectDialog(Shell parentShell, IResource[] projects) {
 			super(
 				parentShell, 
 				getTitle(projects), 
@@ -72,20 +71,20 @@ public class DeleteResourceAction extends SelectionListenerAction {
 			this.projects = projects;
 		}
 		
-		static String getTitle(List projects) {
-			if (projects.size() == 1)
+		static String getTitle(IResource[] projects) {
+			if (projects.length == 1)
 				return IDEWorkbenchMessages.getString("DeleteResourceAction.titleProject1");  //$NON-NLS-1$
 			else
 				return IDEWorkbenchMessages.getString("DeleteResourceAction.titleProjectN");  //$NON-NLS-1$
 		}
 		
-		static String getMessage(List projects) {
-			if (projects.size() == 1) {
-				IProject project = (IProject) projects.get(0);
+		static String getMessage(IResource[] projects) {
+			if (projects.length == 1) {
+				IProject project = (IProject) projects[0];
 				return IDEWorkbenchMessages.format("DeleteResourceAction.confirmProject1", new Object[] { project.getName() });  //$NON-NLS-1$
 			}
 			else {
-				return IDEWorkbenchMessages.format("DeleteResourceAction.confirmProjectN", new Object[] { new Integer(projects.size()) });  //$NON-NLS-1$
+				return IDEWorkbenchMessages.format("DeleteResourceAction.confirmProjectN", new Object[] { new Integer(projects.length) });  //$NON-NLS-1$
 			}
 		}
 
@@ -103,8 +102,8 @@ public class DeleteResourceAction extends SelectionListenerAction {
 			radio1 = new Button(composite, SWT.RADIO);
 			radio1.addSelectionListener(selectionListener);
 			String text1;
-			if (projects.size() == 1) {
-				IProject project = (IProject) projects.get(0);
+			if (projects.length == 1) {
+				IProject project = (IProject) projects[0];
 				if(project == null || project.getLocation() == null)
 					text1 = IDEWorkbenchMessages.getString("DeleteResourceAction.deleteContentsN");  //$NON-NLS-1$
 				else
@@ -179,23 +178,23 @@ public DeleteResourceAction(Shell shell) {
 /**
  * Returns whether delete can be performed on the current selection.
  *
+ * @param resources the selected resources
  * @return <code>true</code> if the resources can be deleted, and 
  *  <code>false</code> if the selection contains non-resources or phantom
  *  resources
  */
-boolean canDelete() {
+private boolean canDelete(IResource[] resources) {
 	// allow only projects or only non-projects to be selected; 
 	// note that the selection may contain multiple types of resource
-	if (!(containsOnlyProjects() || containsOnlyNonProjects())) {
+	if (!(containsOnlyProjects(resources) || containsOnlyNonProjects(resources))) {
 		return false;
 	}
 	
-	List resources = getSelectedResources();
-	if (resources.size() == 0) return false;	
+	if (resources.length == 0) return false;	
 	// Return true if everything in the selection exists.
-	for (Iterator e = resources.iterator(); e.hasNext();) {
-		IResource next = (IResource)e.next();
-		if (next.isPhantom()) {
+	for (int i = 0; i < resources.length; i++) {
+	    IResource resource = resources[i];
+		if (resource.isPhantom()) {
 			return false;
 		}
 	}
@@ -204,13 +203,13 @@ boolean canDelete() {
 /**
  * Returns whether the selection contains linked resources.
  *
+ * @param resources the selected resources
  * @return <code>true</code> if the resources contain linked   
  *  resources, and <code>false</code> otherwise
  */
-boolean containsLinkedResource() {
-	Iterator iterator = getSelectedResources().iterator();
-	while (iterator.hasNext()) {
-		IResource resource = (IResource) iterator.next();
+private boolean containsLinkedResource(IResource[] resources) {
+    for (int i = 0; i < resources.length; i++) {
+        IResource resource = resources[i];
 		if (resource.isLinked()) return true;
 	}
 	return false;
@@ -218,12 +217,12 @@ boolean containsLinkedResource() {
 /**
  * Returns whether the selection contains only non-projects.
  *
+ * @param resources the selected resources
  * @return <code>true</code> if the resources contains only non-projects, and 
  *  <code>false</code> otherwise
  */
-boolean containsOnlyNonProjects() {
-	if (getSelectedNonResources().size() > 0) return false;
-	int types = getSelectedResourceTypes();
+private boolean containsOnlyNonProjects(IResource[] resources) {
+	int types = getSelectedResourceTypes(resources);
 	// check for empty selection
 	if (types == 0) return false;
 	// note that the selection may contain multiple types of resource
@@ -231,13 +230,13 @@ boolean containsOnlyNonProjects() {
 }
 /**
  * Returns whether the selection contains only projects.
- *
+ * 
+ * @param resources the selected resources
  * @return <code>true</code> if the resources contains only projects, and 
  *  <code>false</code> otherwise
  */
-boolean containsOnlyProjects() {
-	if (getSelectedNonResources().size() > 0) return false;
-	int types = getSelectedResourceTypes();
+private boolean containsOnlyProjects(IResource[] resources) {
+	int types = getSelectedResourceTypes(resources);
 	// note that the selection may contain multiple types of resource
 	return types == IResource.PROJECT;
 }
@@ -245,31 +244,32 @@ boolean containsOnlyProjects() {
 /**
  * Asks the user to confirm a delete operation.
  *
+ * @param resources the selected resources
  * @return <code>true</code> if the user says to go ahead, and <code>false</code>
  *  if the deletion should be abandoned
  */
-boolean confirmDelete() {
-	if (containsOnlyProjects()) {
-		return confirmDeleteProjects();
+private boolean confirmDelete(IResource[] resources) {
+	if (containsOnlyProjects(resources)) {
+		return confirmDeleteProjects(resources);
 	}
 	else {
-		return confirmDeleteNonProjects();
+		return confirmDeleteNonProjects(resources);
 	}
 }
 /**
  * Asks the user to confirm a delete operation,
  * where the selection contains no projects.
  *
+ * @param resources the selected resources
  * @return <code>true</code> if the user says to go ahead, and <code>false</code>
  *  if the deletion should be abandoned
  */
-boolean confirmDeleteNonProjects() {
-	List resources = getSelectedResources();
+private boolean confirmDeleteNonProjects(IResource[] resources) {
 	String title;
 	String msg;
-	if (resources.size() == 1) {
+	if (resources.length == 1) {
 		title = IDEWorkbenchMessages.getString("DeleteResourceAction.title1");  //$NON-NLS-1$
- 		IResource resource = (IResource) resources.get(0);
+ 		IResource resource = resources[0];
  		if (resource.isLinked())
  			msg = IDEWorkbenchMessages.format("DeleteResourceAction.confirmLinkedResource1", new Object[] { resource.getName() });  //$NON-NLS-1$
  		else
@@ -277,10 +277,10 @@ boolean confirmDeleteNonProjects() {
 	}
 	else {
 		title = IDEWorkbenchMessages.getString("DeleteResourceAction.titleN");  //$NON-NLS-1$
-		if (containsLinkedResource())
-			msg = IDEWorkbenchMessages.format("DeleteResourceAction.confirmLinkedResourceN", new Object[] { new Integer(resources.size()) });  //$NON-NLS-1$
+		if (containsLinkedResource(resources))
+			msg = IDEWorkbenchMessages.format("DeleteResourceAction.confirmLinkedResourceN", new Object[] { new Integer(resources.length) });  //$NON-NLS-1$
 		else
-			msg = IDEWorkbenchMessages.format("DeleteResourceAction.confirmN", new Object[] { new Integer(resources.size()) });  //$NON-NLS-1$
+			msg = IDEWorkbenchMessages.format("DeleteResourceAction.confirmN", new Object[] { new Integer(resources.length) });  //$NON-NLS-1$
 	}
 	return MessageDialog.openQuestion(shell, title, msg);
 }
@@ -289,11 +289,11 @@ boolean confirmDeleteNonProjects() {
  * where the selection contains only projects.
  * Also remembers whether project content should be deleted.
  *
+ * @param resources the selected resources
  * @return <code>true</code> if the user says to go ahead, and <code>false</code>
  *  if the deletion should be abandoned
  */
-boolean confirmDeleteProjects() {
-	List resources = getSelectedResources();
+private boolean confirmDeleteProjects(IResource[] resources) {
 	DeleteProjectDialog dialog = new DeleteProjectDialog(shell, resources);
 	int code = dialog.open();
 	deleteContent = dialog.getDeleteContent();
@@ -302,7 +302,7 @@ boolean confirmDeleteProjects() {
 /**
  * Deletes the given resources.
  */
-void delete(IResource[] resourcesToDelete, IProgressMonitor monitor) throws CoreException {
+private void delete(IResource[] resourcesToDelete, IProgressMonitor monitor) throws CoreException {
     final List exceptions = new ArrayList();
 	forceOutOfSyncDelete = false;
 	monitor.beginTask("", resourcesToDelete.length); //$NON-NLS-1$
@@ -336,8 +336,8 @@ void delete(IResource[] resourcesToDelete, IProgressMonitor monitor) throws Core
 }
 /**
  * Deletes the given resource.
- 	*/
-void delete(IResource resourceToDelete, IProgressMonitor monitor) throws CoreException {
+ */
+private void delete(IResource resourceToDelete, IProgressMonitor monitor) throws CoreException {
 	boolean force = false; // don't force deletion of out-of-sync resources
 	try {
 		if (resourceToDelete.getType() == IResource.PROJECT) {
@@ -386,26 +386,25 @@ void delete(IResource resourceToDelete, IProgressMonitor monitor) throws CoreExc
 	}
 }
 /**
- *	Return an array of the currently selected resources.
+ * Return an array of the currently selected resources.
  *
- * @return the list of selected resources
+ * @return the selected resources
  */
-IResource[] getSelectedResourcesArray() {
+private IResource[] getSelectedResourcesArray() {
 	List selection = getSelectedResources();
 	IResource[] resources = new IResource[selection.size()];
-	int i = 0;
-	for (Iterator e = selection.iterator(); e.hasNext();)
-		resources[i++] = (IResource) e.next();
+	selection.toArray(resources);
 	return resources;
 }
 /**
  * Returns a bit-mask containing the types of resources in the selection.
+ * 
+ * @param resources the selected resources
  */
-int getSelectedResourceTypes() {
+private int getSelectedResourceTypes(IResource[] resources) {
 	int types = 0;
-	for (Iterator i = getSelectedResources().iterator(); i.hasNext();) {
-		IResource r = (IResource) i.next();
-		types |= r.getType();
+	for (int i = 0; i < resources.length; i++) {
+		types |= resources[i].getType();
 	}
 	return types;
 }
@@ -413,9 +412,14 @@ int getSelectedResourceTypes() {
  * Method declared on IAction.
  */
 public void run() {
-	if (!confirmDelete())
+	IResource[] resources = getSelectedResourcesArray();
+	// WARNING: do not query the selected resources more than once
+	// since the selection may change during the run, 
+	// e.g. due to window activation when the prompt dialog is dismissed.
+	// For more details, see Bug 60606 [Navigator] (data loss) Navigator deletes/moves the wrong file
+	if (!confirmDelete(resources))
 		return;
-	final IResource[] resourcesToDelete = getResourcesToDelete();
+	final IResource[] resourcesToDelete = getResourcesToDelete(resources);
 	
 	if (resourcesToDelete.length == 0)
 		return;
@@ -470,14 +474,14 @@ public void run() {
 /**
  * Returns the resources to delete based on the selection and their read-only status.
  * 
+ * @param resources the selected resources
  * @return the resources to delete
  */
-IResource[] getResourcesToDelete() {
-	IResource[] selectedResources = getSelectedResourcesArray();
+private IResource[] getResourcesToDelete(IResource[] resources) {
 
-	if (containsOnlyProjects()  && !deleteContent) {
+	if (containsOnlyProjects(resources)  && !deleteContent) {
 		// We can just return the selection
-		return selectedResources;
+		return resources;
 	} 
 
 	ReadOnlyStateChecker checker =
@@ -486,7 +490,7 @@ IResource[] getResourcesToDelete() {
 			IDEWorkbenchMessages.getString("DeleteResourceAction.title1"), //$NON-NLS-1$
 			IDEWorkbenchMessages.getString("DeleteResourceAction.readOnlyQuestion")); //$NON-NLS-1$
 	
-	return checker.checkReadOnlyResources(selectedResources);
+	return checker.checkReadOnlyResources(resources);
 }
 /**
  * The <code>DeleteResourceAction</code> implementation of this
@@ -494,7 +498,7 @@ IResource[] getResourcesToDelete() {
  * if the selection contains phantom resources or non-resources
  */
 protected boolean updateSelection(IStructuredSelection selection) {
-	return super.updateSelection(selection) && canDelete();
+	return super.updateSelection(selection) && canDelete(getSelectedResourcesArray());
 }
 	
 /**
