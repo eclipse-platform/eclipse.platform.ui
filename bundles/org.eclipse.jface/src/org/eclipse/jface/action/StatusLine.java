@@ -1,9 +1,16 @@
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+	IBM - Initial implementation
+************************************************************************/
+
 package org.eclipse.jface.action;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ProgressIndicator;
 import org.eclipse.jface.resource.*;
@@ -57,9 +64,10 @@ import org.eclipse.swt.widgets.*;
 	}
 	
 	/**
-	 * @private
+	 * Layout the contribution item controls on the status line.
 	 */
 	public class StatusLineLayout extends Layout {
+		private final StatusLineLayoutData DEFAULT_DATA = new StatusLineLayoutData();
 	
 		public Point computeSize(Composite composite, int wHint, int hHint, boolean changed) {
 				
@@ -77,7 +85,10 @@ import org.eclipse.swt.widgets.*;
 					useWidth= false;
 				else if (w == fToolBar && !fCancelButtonIsVisible)
 					useWidth= false;
-				Point e= w.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed);
+				StatusLineLayoutData data = (StatusLineLayoutData)w.getLayoutData();
+				if (data == null)
+					data = DEFAULT_DATA;
+				Point e= w.computeSize(data.widthHint, data.heightHint, changed);
 				if (useWidth) {
 					totalWidth+= e.x;
 					totalCnt++;
@@ -111,6 +122,7 @@ import org.eclipse.swt.widgets.*;
 	
 			int ws[]= new int[count];
 			
+			int h= rect.height;
 			int totalWidth= -GAP;
 			for (int i= 0; i < count; i++) {
 				Control w= children[i];
@@ -118,7 +130,10 @@ import org.eclipse.swt.widgets.*;
 					continue;
 				if (w == fToolBar && !fCancelButtonIsVisible)
 					continue;
-				int width= w.computeSize(SWT.DEFAULT, SWT.DEFAULT, flushCache).x;
+				StatusLineLayoutData data = (StatusLineLayoutData)w.getLayoutData();
+				if (data == null)
+					data = DEFAULT_DATA;
+				int width= w.computeSize(data.widthHint, h, flushCache).x;
 				ws[i]= width;
 				totalWidth+= width + GAP;
 			}
@@ -144,7 +159,6 @@ import org.eclipse.swt.widgets.*;
 			
 			int x= rect.x;
 			int y= rect.y;
-			int h= rect.height;
 			for (int i= 0; i < count; i++) {
 				Control w= children[i];
 				/*
@@ -286,23 +300,23 @@ import org.eclipse.swt.widgets.*;
 		fStopButtonCursor.dispose();
 		fStopButtonCursor= null;
 	}
-/**
- * Hides the Cancel button and ProgressIndicator.
- * @private
- */
-protected void hideProgress() {
-
-	if (fProgressIsVisible && !isDisposed()) {
-		fProgressIsVisible = false;
-		fCancelEnabled = false;
-		fCancelButtonIsVisible = false;
-		if (fToolBar != null && !fToolBar.isDisposed())
-			fToolBar.setVisible(false);
-		if (fProgressBar != null && !fProgressBar.isDisposed())
-			fProgressBar.setVisible(false);
-		layout();
+	/**
+	 * Hides the Cancel button and ProgressIndicator.
+	 * @private
+	 */
+	protected void hideProgress() {
+	
+		if (fProgressIsVisible && !isDisposed()) {
+			fProgressIsVisible = false;
+			fCancelEnabled = false;
+			fCancelButtonIsVisible = false;
+			if (fToolBar != null && !fToolBar.isDisposed())
+				fToolBar.setVisible(false);
+			if (fProgressBar != null && !fProgressBar.isDisposed())
+				fProgressBar.setVisible(false);
+			layout();
+		}
 	}
-}
 	/**
 	 * @see IProgressMonitor#internalWorked(double)
 	 */
@@ -355,26 +369,26 @@ protected void hideProgress() {
 		if (fCancelButton != null && !fCancelButton.isDisposed())
 			fCancelButton.setEnabled(enabled);
 	}
-/**
- * Sets the error message text to be displayed on the status line.
- * The image on the status line is cleared.
- * 
- * @param message the error message, or <code>null</code> for no error message
- */
-public void setErrorMessage(String message) {
-	setErrorMessage(null, message);
-}
-/**
- * Sets an image and error message text to be displayed on the status line.
- * 
- * @param image the image to use, or <code>null</code> for no image
- * @param message the error message, or <code>null</code> for no error message
- */
-public void setErrorMessage(Image image, String message) {
-	fErrorText = trim(message);
-	fErrorImage = image;
-	updateMessageLabel();
-}
+	/**
+	 * Sets the error message text to be displayed on the status line.
+	 * The image on the status line is cleared.
+	 * 
+	 * @param message the error message, or <code>null</code> for no error message
+	 */
+	public void setErrorMessage(String message) {
+		setErrorMessage(null, message);
+	}
+	/**
+	 * Sets an image and error message text to be displayed on the status line.
+	 * 
+	 * @param image the image to use, or <code>null</code> for no image
+	 * @param message the error message, or <code>null</code> for no error message
+	 */
+	public void setErrorMessage(Image image, String message) {
+		fErrorText = trim(message);
+		fErrorImage = image;
+		updateMessageLabel();
+	}
 	/**
 	 * Applies the given font to this status line.
 	 */
@@ -385,26 +399,26 @@ public void setErrorMessage(Image image, String message) {
 			children[i].setFont(font);
 		}
 	}
-/**
- * Sets the message text to be displayed on the status line.
- * The image on the status line is cleared.
- * 
- * @param message the error message, or <code>null</code> for no error message
- */
-public void setMessage(String message) {
-	setMessage(null, message);
-}
-/**
- * Sets an image and a message text to be displayed on the status line.
- * 
- * @param image the image to use, or <code>null</code> for no image
- * @param message the message, or <code>null</code> for no message
- */
-public void setMessage(Image image, String message) {
-	fMessageText = trim(message);
-	fMessageImage = image;
-	updateMessageLabel();
-}
+	/**
+	 * Sets the message text to be displayed on the status line.
+	 * The image on the status line is cleared.
+	 * 
+	 * @param message the error message, or <code>null</code> for no error message
+	 */
+	public void setMessage(String message) {
+		setMessage(null, message);
+	}
+	/**
+	 * Sets an image and a message text to be displayed on the status line.
+	 * 
+	 * @param image the image to use, or <code>null</code> for no image
+	 * @param message the message, or <code>null</code> for no message
+	 */
+	public void setMessage(Image image, String message) {
+		fMessageText = trim(message);
+		fMessageImage = image;
+		updateMessageLabel();
+	}
 	/**
 	 * @see IProgressMonitor#setTaskName(java.lang.String)
 	 */
@@ -491,24 +505,24 @@ public void setMessage(Image image, String message) {
 		return message.substring(0, len);
 	}
 	
-/**
- * Updates the message label widget.
- */
-protected void updateMessageLabel() {
-	if (fMessageLabel != null && !fMessageLabel.isDisposed()) {
-		Display display = fMessageLabel.getDisplay();
-		if ((fErrorText != null && fErrorText.length() > 0) || fErrorImage != null) {
-			fMessageLabel.setForeground(JFaceColors.getErrorText(display));
-			fMessageLabel.setText(fErrorText);
-			fMessageLabel.setImage(fErrorImage);
-		}
-		else {
-			fMessageLabel.setForeground(display.getSystemColor(SWT.COLOR_WIDGET_FOREGROUND));
-			fMessageLabel.setText(fMessageText == null ? "" : fMessageText); //$NON-NLS-1$
-			fMessageLabel.setImage(fMessageImage);
+	/**
+	 * Updates the message label widget.
+	 */
+	protected void updateMessageLabel() {
+		if (fMessageLabel != null && !fMessageLabel.isDisposed()) {
+			Display display = fMessageLabel.getDisplay();
+			if ((fErrorText != null && fErrorText.length() > 0) || fErrorImage != null) {
+				fMessageLabel.setForeground(JFaceColors.getErrorText(display));
+				fMessageLabel.setText(fErrorText);
+				fMessageLabel.setImage(fErrorImage);
+			}
+			else {
+				fMessageLabel.setForeground(display.getSystemColor(SWT.COLOR_WIDGET_FOREGROUND));
+				fMessageLabel.setText(fMessageText == null ? "" : fMessageText); //$NON-NLS-1$
+				fMessageLabel.setImage(fMessageImage);
+			}
 		}
 	}
-}
 	/**
 	 * @see IProgressMonitor#worked(int)
 	 */
