@@ -1111,10 +1111,8 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			ILaunchConfigurationTab tab = tabs[fCurrentTabIndex];
 			ILaunchConfigurationWorkingCopy wc = getWorkingCopy();
 			if (wc != null) {
-				setInitializingTabs(true);
 				tab.deactivated(wc);
 				getActiveTab().activated(wc);
-				setInitializingTabs(false);
 			}
 		}
 		fCurrentTabIndex = getTabFolder().getSelectionIndex();
