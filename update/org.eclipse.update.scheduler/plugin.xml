@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
 <plugin
    id="org.eclipse.update.scheduler"
    name="%pluginName"
@@ -13,6 +14,11 @@
       </library>
    </runtime>
    <requires>
+      <import plugin="org.eclipse.ui.ide" optional="true"/>
+      <import plugin="org.eclipse.ui.views" optional="true"/>
+      <import plugin="org.eclipse.jface.text" optional="true"/>
+      <import plugin="org.eclipse.ui.workbench.texteditor" optional="true"/>
+      <import plugin="org.eclipse.ui.editors" optional="true"/>
       <import plugin="org.eclipse.update.core"/>
       <import plugin="org.eclipse.update.ui"/>
       <import plugin="org.eclipse.ui"/>
