@@ -22,7 +22,7 @@ class SelectAllAction extends Action implements ISelectionChangedListener {
 	 */
 	SelectAllAction(SearchResultViewer viewer) {
 		super("selectAll"); //$NON-NLS-1$
-		setText(SearchMessages.getString("SelectAllAction.text")); //$NON-NLS-1$
+		setText(SearchMessages.getString("SelectAllAction.label")); //$NON-NLS-1$
 		setToolTipText(SearchMessages.getString("SelectAllAction.tooltip")); //$NON-NLS-1$
 		updateEnablement();
 		WorkbenchHelp.setHelp(this, ISearchHelpContextIds.SELECT_ALL_ACTION);
