@@ -106,6 +106,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard, ICVSW
 			createLocationPage = new ConfigurationWizardMainPage("createLocationPage", Policy.bind("SharingWizard.enterInformation"), sharingImage); //$NON-NLS-1$ //$NON-NLS-2$
 			createLocationPage.setDescription(Policy.bind("SharingWizard.enterInformationDescription")); //$NON-NLS-1$
 			createLocationPage.setCVSWizard(this);
+			createLocationPage.setDialogSettings(NewLocationWizard.getLocationDialogSettings());
 			addPage(createLocationPage);
 			createLocationPage.setDialogSettings(getDialogSettings());
 			modulePage = new ModuleSelectionPage("modulePage", Policy.bind("SharingWizard.enterModuleName"), sharingImage); //$NON-NLS-1$ //$NON-NLS-2$

@@ -65,7 +65,7 @@ public class CheckoutWizard extends Wizard implements ICVSWizard, INewWizard {
 		createLocationPage = new ConfigurationWizardMainPage("createLocationPage", Policy.bind("SharingWizard.enterInformation"), substImage); //$NON-NLS-1$ //$NON-NLS-2$
 		createLocationPage.setDescription(Policy.bind("SharingWizard.enterInformationDescription")); //$NON-NLS-1$
 		addPage(createLocationPage);
-		createLocationPage.setDialogSettings(getDialogSettings());
+		createLocationPage.setDialogSettings(NewLocationWizard.getLocationDialogSettings());
 		
 		modulePage = new ModuleSelectionPage("moduleSelection", Policy.bind("CheckoutWizard.10"), substImage); //$NON-NLS-1$ //$NON-NLS-2$
 		modulePage.setDescription(Policy.bind("CheckoutWizard.11")); //$NON-NLS-1$

@@ -30,16 +30,25 @@ public class NewLocationWizard extends Wizard {
 
 	private Properties properties = null;
 	
-	public NewLocationWizard() {
+	/**
+	 * Return the settings used for all location pages
+	 */
+	public static IDialogSettings getLocationDialogSettings() {
 		IDialogSettings workbenchSettings = CVSUIPlugin.getPlugin().getDialogSettings();
 		IDialogSettings section = workbenchSettings.getSection("NewLocationWizard");//$NON-NLS-1$
 		if (section == null) {
 			section = workbenchSettings.addNewSection("NewLocationWizard");//$NON-NLS-1$
 		}
+		return section;
+	}
+	
+	public NewLocationWizard() {
+		IDialogSettings section = getLocationDialogSettings();
 		setDialogSettings(section);
 		setWindowTitle(Policy.bind("NewLocationWizard.title")); //$NON-NLS-1$
 	}
 	
+
 	public NewLocationWizard(Properties initialProperties) {
 		this();
 		this.properties = initialProperties;
