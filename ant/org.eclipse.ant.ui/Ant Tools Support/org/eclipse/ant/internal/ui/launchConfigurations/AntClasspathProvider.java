@@ -11,14 +11,9 @@
 
 package org.eclipse.ant.internal.ui.launchConfigurations;
 
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.ant.core.AntCorePlugin;
-import org.eclipse.ant.core.AntCorePreferences;
-import org.eclipse.ant.internal.ui.model.AntUtil;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -35,44 +30,19 @@ public class AntClasspathProvider extends StandardClasspathProvider {
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathProvider#computeUnresolvedClasspath(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public IRuntimeClasspathEntry[] computeUnresolvedClasspath(ILaunchConfiguration configuration) throws CoreException {
-		boolean separateVM= (null != configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String)null));
-		URL[] antURLs= AntUtil.getCustomClasspath(configuration);
-		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
-		if (antURLs == null) {
-			if (separateVM) {
-				antURLs= prefs.getRemoteAntURLs();
-			} else {
-				antURLs = prefs.getURLs();
-			}
-		} else {
-			if (separateVM) {
-				List fullClasspath= new ArrayList(40);
-				fullClasspath.addAll(Arrays.asList(antURLs));
-				fullClasspath.addAll(Arrays.asList(prefs.getRemoteExtraClasspathURLs()));
-				antURLs= (URL[])fullClasspath.toArray(new URL[fullClasspath.size()]);
-			} else {
-				List fullClasspath= new ArrayList(50);
-				fullClasspath.addAll(Arrays.asList(antURLs));
-				fullClasspath.addAll(Arrays.asList(prefs.getExtraClasspathURLs()));
-				antURLs= (URL[])fullClasspath.toArray(new URL[fullClasspath.size()]);
-			}
+		boolean useDefault = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, true);
+		if (useDefault) {
+			List rtes = new ArrayList(10);
+			IVMInstall vm = JavaRuntime.computeVMInstall(configuration);
+			IPath containerPath = new Path(JavaRuntime.JRE_CONTAINER);
+			containerPath = containerPath.append(new Path(vm.getVMInstallType().getId()));
+			containerPath = containerPath.append(new Path(vm.getName()));
+			
+			rtes.add(JavaRuntime.newRuntimeContainerClasspathEntry(containerPath, IRuntimeClasspathEntry.STANDARD_CLASSES));
+			rtes.add(new AntHomeClasspathEntry());
+			rtes.add(new ContributedClasspathEntriesEntry());
+			return (IRuntimeClasspathEntry[]) rtes.toArray(new IRuntimeClasspathEntry[rtes.size()]);
 		}
-		
-		IVMInstall vm = JavaRuntime.computeVMInstall(configuration);
-		IRuntimeClasspathEntry[] rtes = new IRuntimeClasspathEntry[antURLs.length + 1];
-		IPath containerPath = new Path(JavaRuntime.JRE_CONTAINER);
-		containerPath = containerPath.append(new Path(vm.getVMInstallType().getId()));
-		containerPath = containerPath.append(new Path(vm.getName()));
-		
-		rtes[0] = JavaRuntime.newRuntimeContainerClasspathEntry(containerPath, IRuntimeClasspathEntry.STANDARD_CLASSES);
-		
-		for (int j = 0; j < antURLs.length; j++) {
-			URL url = antURLs[j];
-			IPath path= new Path(url.getPath());
-			IRuntimeClasspathEntry antEntry= JavaRuntime.newArchiveRuntimeClasspathEntry(path);
-			antEntry.setClasspathProperty(IRuntimeClasspathEntry.USER_CLASSES);
-			rtes[j+1]= antEntry;
-		}
-		return rtes;		
+		return super.computeUnresolvedClasspath(configuration);
 	}
 }

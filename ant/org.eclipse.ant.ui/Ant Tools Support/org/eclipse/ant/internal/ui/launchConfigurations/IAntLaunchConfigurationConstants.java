@@ -51,6 +51,7 @@ public interface IAntLaunchConfigurationConstants {
 	 * String attribute indicating the custom Ant home to use for an Ant build.
 	 * Default value is <code>null</code> which indicates that no Ant home is to
 	 * be set 
+	 * @deprecated - no longer supported
 	 */
 	public static final String ATTR_ANT_HOME = IExternalToolConstants.PLUGIN_ID + ".ATTR_ANT_HOME"; //$NON-NLS-1$
 	/**

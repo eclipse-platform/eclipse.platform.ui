@@ -12,11 +12,11 @@ package org.eclipse.ant.internal.ui.model;
 
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -26,9 +26,9 @@ import org.apache.tools.ant.util.FileUtils;
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.core.AntRunner;
-import org.eclipse.ant.core.IAntClasspathEntry;
 import org.eclipse.ant.core.TargetInfo;
 import org.eclipse.ant.internal.core.AntClasspathEntry;
+import org.eclipse.ant.internal.ui.launchConfigurations.AntHomeClasspathEntry;
 import org.eclipse.ant.internal.ui.launchConfigurations.IAntLaunchConfigurationConstants;
 import org.eclipse.ant.internal.ui.views.AntView;
 import org.eclipse.core.resources.IFile;
@@ -42,6 +42,10 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.ui.console.FileLink;
+import org.eclipse.jdt.internal.launching.IRuntimeClasspathEntry2;
+import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
+import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
@@ -124,7 +128,17 @@ public final class AntUtil {
 	 * @throws CoreException if unable to access the associated attribute
 	 */
 	public static String getAntHome(ILaunchConfiguration configuration) throws CoreException {
-		return configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_HOME, (String) null);
+		IRuntimeClasspathEntry[] entries = JavaRuntime.computeUnresolvedRuntimeClasspath(configuration);
+		for (int i = 0; i < entries.length; i++) {
+			IRuntimeClasspathEntry entry = entries[i];
+			if (entry.getType() == IRuntimeClasspathEntry.OTHER) {
+				IRuntimeClasspathEntry2 entry2 = (IRuntimeClasspathEntry2)entry;
+				if (entry2.getTypeId().equals(AntHomeClasspathEntry.TYPE_ID)) {
+					return ((AntHomeClasspathEntry)entry2).getAntHome();
+				}
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -210,32 +224,30 @@ public final class AntUtil {
 	 * @throws CoreException if file does not exist, IO problems, or invalid format.
 	 */
 	public static URL[] getCustomClasspath(ILaunchConfiguration config) throws CoreException {
-		String classpathString= config.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_CUSTOM_CLASSPATH, (String)null);
-		if (classpathString == null) {
+		boolean useDefault = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, true);
+		if (useDefault) {
 			return null;
 		}
-		
-		List antEntries= new ArrayList();
-		List additionalEntries= new ArrayList();
-		if (classpathString.equals(ANT_GLOBAL_USER_CLASSPATH_PLACEHOLDER + AntUtil.ATTRIBUTE_SEPARATOR + ANT_HOME_CLASSPATH_PLACEHOLDER )) {
-			//really the default classpath ..just ordered differently
-			antEntries.addAll(Arrays.asList(AntCorePlugin.getPlugin().getPreferences().getAdditionalClasspathEntries()));
-			antEntries.addAll(Arrays.asList(AntCorePlugin.getPlugin().getPreferences().getAntHomeClasspathEntries()));
-		} else {
-			getCustomClasspaths(config, antEntries, additionalEntries);
-			antEntries.addAll(additionalEntries);
+		IRuntimeClasspathEntry[] unresolved = JavaRuntime.computeUnresolvedRuntimeClasspath(config);
+		// don't consider bootpath entries
+		List userEntries = new ArrayList(unresolved.length);
+		for (int i = 0; i < unresolved.length; i++) {
+			IRuntimeClasspathEntry entry = unresolved[i];
+			if (entry.getClasspathProperty() == IRuntimeClasspathEntry.USER_CLASSES) {
+				userEntries.add(entry);
+			}
 		}
-		
-		Iterator iter= antEntries.iterator();
-		URL[] urls= new URL[antEntries.size()];
-		int i= 0;
-		while (iter.hasNext()) {
-			IAntClasspathEntry entry = (IAntClasspathEntry) iter.next();
-			urls[i]= entry.getEntryURL();
-			i++;
+		IRuntimeClasspathEntry[] entries = JavaRuntime.resolveRuntimeClasspath((IRuntimeClasspathEntry[])userEntries.toArray(new IRuntimeClasspathEntry[userEntries.size()]), config);
+		URL[] urls = new URL[entries.length];
+		for (int i = 0; i < entries.length; i++) {
+			IRuntimeClasspathEntry entry = entries[i];
+			try {
+				urls[i] = new URL("file:"+entry.getLocation()); //$NON-NLS-1$
+			} catch (MalformedURLException e) {
+				throw new CoreException(new Status(IStatus.ERROR, AntUIPlugin.getUniqueIdentifier(), AntUIPlugin.INTERNAL_ERROR, AntUIModelMessages.getString("AntUtil.7"), e)); //$NON-NLS-1$
+			}
 		}
-		return urls;
-		
+		return urls;		
 	}
 	
 	/**
@@ -245,7 +257,8 @@ public final class AntUtil {
 	 * @param config launch configuration
 	 * @param antHomeEntries list to add the Ant home entries to
 	 * @param additionalEntries list to add the additional entries to
-	 *
+	 * @deprecated this method is no longer supported (should be deleted with
+	 *  old classpath tab support)
 	 */
 	public static void getCustomClasspaths(ILaunchConfiguration config, List antHomeEntries, List additionalEntries) {
 		String classpathString= null;

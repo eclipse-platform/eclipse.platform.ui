@@ -36,7 +36,7 @@ public class AntTabGroup extends AbstractLaunchConfigurationTabGroup {
 			new AntMainTab(),
 			new RefreshTab(),
 			new AntTargetsTab(),
-			new AntClasspathTab(),
+			new AntClasspathTab2(),
 			new AntPropertiesTab(),
 			new AntJRETab(),
 			new CommonTab()
@@ -67,6 +67,7 @@ public class AntTabGroup extends AbstractLaunchConfigurationTabGroup {
 						VariablesPlugin.getDefault().getStringVariableManager().generateVariableExpression("workspace_loc", file.getFullPath().toString())); //$NON-NLS-1$
 			}		
 		}
+		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH_PROVIDER, "org.eclipse.ant.ui.AntClasspathProvider"); //$NON-NLS-1$
 		super.setDefaults(configuration);
 	}	
 }

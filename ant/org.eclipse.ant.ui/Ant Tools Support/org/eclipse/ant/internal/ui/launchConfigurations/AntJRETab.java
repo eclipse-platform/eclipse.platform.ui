@@ -27,9 +27,7 @@ import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.ant.internal.ui.model.AntUtil;
 import org.eclipse.ant.internal.ui.model.IAntUIConstants;
 import org.eclipse.ant.internal.ui.model.IAntUIHelpContextIds;
-import org.eclipse.ant.internal.ui.model.IAntUIPreferenceConstants;
 import org.eclipse.ant.internal.ui.preferences.ClasspathModel;
-import org.eclipse.ant.internal.ui.preferences.MessageDialogWithToggle;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ILibrary;
 import org.eclipse.core.runtime.IPath;
@@ -48,14 +46,10 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 public class AntJRETab extends JavaJRETab {
@@ -65,11 +59,9 @@ public class AntJRETab extends JavaJRETab {
 	private static final String XERCES_PARSER_API= "xmlParserAPIs.jar"; //$NON-NLS-1$
 	private static final String MAIN_TYPE_NAME= "org.eclipse.ant.internal.ui.antsupport.InternalAntRunner"; //$NON-NLS-1$
 	
-	private Button updateClasspathButton;
 	private IVMInstall previousJRE;
 	protected VMArgumentsBlock fVMArgumentsBlock=  new VMArgumentsBlock();
 	protected AntWorkingDirectoryBlock fWorkingDirectoryBlock= new AntWorkingDirectoryBlock();
-	private boolean warningShown= false;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
@@ -93,21 +85,6 @@ public class AntJRETab extends JavaJRETab {
 		gd.horizontalSpan= 3;
 		lowerComp.setLayoutData(gd);
 		lowerComp.setFont(font);
-		
-		Label label= new Label(lowerComp, SWT.NULL);
-		label.setText(AntLaunchConfigurationMessages.getString("AntJRETab.9")); //$NON-NLS-1$
-		label.setFont(font);
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		label.setLayoutData(gd);
-		
-		updateClasspathButton= createPushButton(lowerComp, AntLaunchConfigurationMessages.getString("AntJRETab.10"), null); //$NON-NLS-1$
-		updateClasspathButton.addSelectionListener(new SelectionAdapter(){
-			public void widgetSelected(SelectionEvent e) {
-				updateClasspath(getLaunchConfigurationWorkingCopy());
-			}
-		});
-		gd= (GridData)updateClasspathButton.getLayoutData();
-		gd.horizontalAlignment= GridData.HORIZONTAL_ALIGN_BEGINNING;
 		
 		createVerticalSpacer(lowerComp, 2);
 		
@@ -151,7 +128,6 @@ public class AntJRETab extends JavaJRETab {
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_NAME, (String)null);
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String)null);
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, (String)null);
-			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH_PROVIDER, (String)null);
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, (String)null);			
 		} else {
 			super.performApply(configuration);
@@ -164,7 +140,6 @@ public class AntJRETab extends JavaJRETab {
 	
 	private void applySeparateVMAttributes(ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, MAIN_TYPE_NAME);
-		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH_PROVIDER, "org.eclipse.ant.ui.AntClasspathProvider"); //$NON-NLS-1$
 		configuration.setAttribute(DebugPlugin.ATTR_PROCESS_FACTORY_ID, IAntUIConstants.REMOTE_ANT_PROCESS_FACTORY_ID);
 	}
 
@@ -389,34 +364,12 @@ public class AntJRETab extends JavaJRETab {
 		}
 		return m;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.JavaJRETab#handleSelectedJREChanged()
-	 */
-	protected void handleSelectedJREChanged() {
-		if (fIsInitializing) {
-			super.handleSelectedJREChanged();
-			return;
-		}
-		boolean check= AntUIPlugin.getDefault().getPreferenceStore().getBoolean(IAntUIPreferenceConstants.ANT_CLASSPATH_WARNING);
-		if (check && !warningShown) {
-			warningShown= true;
-			MessageDialogWithToggle.openWarning(AntUIPlugin.getActiveWorkbenchWindow().getShell(),
-				AntLaunchConfigurationMessages.getString("AntJRETab.11"), //$NON-NLS-1$
-				AntLaunchConfigurationMessages.getString("AntJRETab.12"), //$NON-NLS-1$
-				IAntUIPreferenceConstants.ANT_CLASSPATH_WARNING,
-				AntLaunchConfigurationMessages.getString("AntJRETab.13"), //$NON-NLS-1$
-				AntUIPlugin.getDefault().getPreferenceStore());	
-		}
-		super.handleSelectedJREChanged();
-	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
 		setLaunchConfigurationWorkingCopy(workingCopy);
-		warningShown= false;
 	}
 
 	/* (non-Javadoc)

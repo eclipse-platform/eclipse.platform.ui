@@ -12,6 +12,7 @@
 package org.eclipse.ant.core;
 
 import java.io.File;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
@@ -1447,5 +1448,17 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		}
 		
 		return (URL[]) result.toArray(new URL[result.size()]);
+	}
+	
+	/**
+	 * Returns all contributed classpath entries via the 
+	 * <code>extraClasspathEntries</code> extension point.
+	 * 
+	 * @return all contributed classpath entries via the 
+	 * <code>extraClasspathEntries</code> extension point
+	 * @since 3.0
+	 */
+	public IAntClasspathEntry[]getContributedClasspathEntries() {
+		return (IAntClasspathEntry[]) extraClasspathURLs.toArray(new IAntClasspathEntry[extraClasspathURLs.size()]);
 	}
 }

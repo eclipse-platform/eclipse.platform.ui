@@ -70,6 +70,16 @@
             id="org.eclipse.ant.ui.AntClasspathProvider">
       </classpathProvider>
    </extension>
+   <extension point="org.eclipse.jdt.launching.runtimeClasspathEntries">
+   		<runtimeClasspathEntry
+   			id="org.eclipse.ant.ui.classpathentry.antHome"
+   			class="org.eclipse.ant.internal.ui.launchConfigurations.AntHomeClasspathEntry">
+   		</runtimeClasspathEntry>
+		<runtimeClasspathEntry
+   			id="org.eclipse.ant.ui.classpathentry.extraClasspathEntries"
+   			class="org.eclipse.ant.internal.ui.launchConfigurations.ContributedClasspathEntriesEntry">
+   		</runtimeClasspathEntry>   		
+   </extension>
    <extension
          point="org.eclipse.ui.views">
       <category
