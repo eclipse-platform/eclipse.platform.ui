@@ -31,40 +31,53 @@ public class ContentDescriptionManager implements IManager {
 	}
 
 	public IContentDescription getDescriptionFor(File file) throws CoreException {
-		//open the resource info
-		ResourceInfo info = file.getResourceInfo(false, true);
+		//first look for cached description information to avoid looking in the cache
+		// don't need to copy the info because the modified bits are not in the deltas
+		ResourceInfo info = file.getResourceInfo(false, false);
+		int flags = info.getFlags();
+		if ((flags & ICoreConstants.M_NO_CONTENT_DESCRIPTION) != 0)
+			return null;
+		if ((flags & ICoreConstants.M_DEFAULT_CONTENT_DESCRIPTION) != 0) {
+			IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
+			IContentType type = contentTypeManager.findContentTypeFor(file.getName());
+			if (type != null)
+				return ((ContentType) type).getDefaultDescription();
+		}
 		//make sure no cached information is set on the info
 		info.clear(ICoreConstants.M_CONTENT_CACHE);
-		// tries to get a description from the cache		
-		Cache.Entry entry = cache.getEntry(file.getFullPath());
-		if (entry != null && entry.getTimestamp() == info.getContentId())
-			// there was a description in the cache, and it was up to date
-			return (IContentDescription) entry.getCached();
-		// either we didn't find a description in the cache, or it was not up-to-date - has to be read again
-		IContentDescription newDescription = readDescription(file);
-		if (newDescription == null) {
-			// no content type exists for this file name/contents
-			info.set(ICoreConstants.M_NO_CONTENT_DESCRIPTION);
-			return null;
-		}
-		// if it is a default description for the default type, we don't have to cache 
-		if (((ContentType) newDescription.getContentType()).getDefaultDescription() == newDescription) {
-			IContentType defaultForName = Platform.getContentTypeManager().findContentTypeFor(file.getName());
-			if (newDescription.getContentType() == defaultForName) {
-				// the default content description is enough for this file
-				info.set(ICoreConstants.M_DEFAULT_CONTENT_DESCRIPTION);
-				return newDescription;
+		// tries to get a description from the cache	
+		// synchronized to prevent concurrent modification in the cache 
+		synchronized (this) {
+			Cache.Entry entry = cache.getEntry(file.getFullPath());
+			if (entry != null && entry.getTimestamp() == info.getContentId())
+				// there was a description in the cache, and it was up to date
+				return (IContentDescription) entry.getCached();
+			// either we didn't find a description in the cache, or it was not up-to-date - has to be read again
+			IContentDescription newDescription = readDescription(file);
+			if (newDescription == null) {
+				// no content type exists for this file name/contents
+				info.set(ICoreConstants.M_NO_CONTENT_DESCRIPTION);
+				return null;
 			}
+			// if it is a default description for the default type, we don't have to cache 
+			if (((ContentType) newDescription.getContentType()).getDefaultDescription() == newDescription) {
+				IContentType defaultForName = Platform.getContentTypeManager().findContentTypeFor(file.getName());
+				if (newDescription.getContentType() == defaultForName) {
+					// the default content description is enough for this file
+					info.set(ICoreConstants.M_DEFAULT_CONTENT_DESCRIPTION);
+					return newDescription;
+				}
+			}
+			// we actually got a description filled by a describer (or a default description for a non-obvious type)
+			if (entry == null)
+				// there was none - creates one
+				entry = cache.addEntry(file.getFullPath(), newDescription, info.getContentId());
+			else {
+				entry.setTimestamp(info.getContentId());
+				entry.setCached(newDescription);
+			}
+			return newDescription;
 		}
-		// we actually got a description filled by a describer (or a default description for a non-obvious type)
-		if (entry == null)
-			// there was none - creates one
-			entry = cache.addEntry(file.getFullPath(), newDescription, info.getContentId());
-		else {
-			entry.setTimestamp(info.getContentId());
-			entry.setCached(newDescription);
-		}
-		return newDescription;
 	}
 
 	/**

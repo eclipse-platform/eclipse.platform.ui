@@ -238,26 +238,7 @@ public class File extends Resource implements IFile {
 	 * @see org.eclipse.core.resources.IFile#getContentDescription()
 	 */
 	public IContentDescription getContentDescription() throws CoreException {
-		//first look for cached description information to avoid locking overhead
-		ResourceInfo info = getResourceInfo(false, false);
-		int flags = info.getFlags();
-		if ((flags & ICoreConstants.M_NO_CONTENT_DESCRIPTION) != 0)
-			return null;
-		if ((flags & ICoreConstants.M_DEFAULT_CONTENT_DESCRIPTION) != 0) {
-			IContentTypeManager contentTypeManager = org.eclipse.core.runtime.Platform.getContentTypeManager();
-			IContentType type = contentTypeManager.findContentTypeFor(getName());
-			if (type != null)
-				return ((ContentType) type).getDefaultDescription();
-		}
-		//no cached information, so compute the content type
-		try {
-			workspace.prepareOperation(null, null);
-			checkAccessible(getFlags(info));			
-			workspace.beginOperation(true);			
-			return workspace.getContentDescriptionManager().getDescriptionFor(this);
-		} finally {
-			workspace.endOperation(null, false, null);
-		}
+		return workspace.getContentDescriptionManager().getDescriptionFor(this);
 	}
 
 	/* (non-Javadoc)
