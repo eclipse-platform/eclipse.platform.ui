@@ -124,6 +124,8 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 		 */
 		public void mouseDoubleClick(MouseEvent event) {
 			fParentRuler.setLocationOfLastMouseButtonActivity(event.x, event.y);
+			stopSelecting();
+			stopAutoScroll();
 		}
 		
 		/*
