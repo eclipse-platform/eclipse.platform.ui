@@ -85,10 +85,8 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.w3c.dom.Element;
@@ -601,35 +599,15 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDebugEventListen
 		IWorkbenchWindow window= switchContext.getWindow();
 		if (page == null) {
 			try {
-				IContainer root= ResourcesPlugin.getWorkspace().getRoot();
-				// adhere to the workbench preference when openning the debugger
-				AbstractUIPlugin plugin = (AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
-				String perspectiveSetting = plugin.getPreferenceStore().getString(IWorkbenchPreferenceConstants.OPEN_NEW_PERSPECTIVE);
-				
+				IContainer root= ResourcesPlugin.getWorkspace().getRoot();	
 				IWorkbench wb = window.getWorkbench();
-				if (perspectiveSetting.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_WINDOW)) {
-					// in new window
-					window= wb.openWorkbenchWindow(layoutId, root);
-					page= window.getActivePage();
-				} else if (perspectiveSetting.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_PAGE)) {
-					// in new page
-					page= window.openPage(layoutId, root);
-				} else if (perspectiveSetting.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE)) {
-					// replace current
-					page= window.getActivePage();
-					if (page == null) {
-						// no pages - open a new one
-						page = window.openPage(layoutId, root);
-					} else {
-						page.setPerspective(wb.getPerspectiveRegistry().findPerspectiveWithId(layoutId));
-					}
-				}
-				switchContext.setPageCreated(true);
+				page= wb.openPage(layoutId, root, 0);
 			} catch (WorkbenchException e) {
 				IStatus status= new Status(IStatus.ERROR, getDescriptor().getUniqueIdentifier(), DebugException.INTERNAL_ERROR, e.getMessage(), e);
 				errorDialog(window.getShell(), DebugUIMessages.getString("DebugUIPlugin.Problem_Switching_to_the_Debug_Perspective_3"), DebugUIMessages.getString("DebugUIPlugin.Exceptions_occurred_switching_to_the_specified_debug_layout._4"), status); //$NON-NLS-1$ //$NON-NLS-2$
 				return;
 			}
+			switchContext.setPageCreated(true);
 			switchContext.setPage(page);
 			switchContext.setWindow(window);
 		} else {
@@ -740,7 +718,10 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDebugEventListen
 	 */
 	public void shutdown() throws CoreException {
 		super.shutdown();
-		getActiveWorkbenchWindow().getSelectionService().removeSelectionListener(this);
+		IWorkbenchWindow window= getActiveWorkbenchWindow();
+		if (window != null) {
+			window.getSelectionService().removeSelectionListener(this);
+		}
 		DebugPlugin.getDefault().removeDebugEventListener(this);
 		ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
 		launchManager.removeLaunchListener(this);
@@ -758,6 +739,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDebugEventListen
 		} catch (IOException e) {
 			logError(e);
 		}
+		
 	}
 
 	/**
