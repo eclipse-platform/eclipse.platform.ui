@@ -40,8 +40,8 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	private static final String[] EMPTY_STRING_ARRAY = new String[0];
 	private static final String FALSE = "false"; //$NON-NLS-1$
 	private static final String TRUE = "true"; //$NON-NLS-1$
-	private static final String VERSION_KEY = "eclipse.preferences.version"; //$NON-NLS-1$
-	private static final String VERSION_VALUE = "1"; //$NON-NLS-1$
+	protected static final String VERSION_KEY = "eclipse.preferences.version"; //$NON-NLS-1$
+	protected static final String VERSION_VALUE = "1"; //$NON-NLS-1$
 
 	private String cachedPath;
 	protected Map children;
@@ -187,7 +187,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		return root == null ? null : root.append(DEFAULT_PREFERENCES_DIRNAME).append(qualifier).addFileExtension(PREFS_FILE_EXTENSION);
 	}
 
-	private void convertFromProperties(Properties table) {
+	protected void convertFromProperties(Properties table) {
 		if (!VERSION_VALUE.equals(table.get(VERSION_KEY))) {
 			legacyConvertFromProperties(table);
 			return;
@@ -219,7 +219,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 * Helper method to convert this node to a Properties file suitable
 	 * for persistence.
 	 */
-	private Properties convertToProperties(Properties result, IPath prefix) throws BackingStoreException {
+	protected Properties convertToProperties(Properties result, IPath prefix) throws BackingStoreException {
 		// add the key/value pairs from this node
 		Properties temp = properties;
 		if (temp != null) {
@@ -314,7 +314,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		//changes during save mark the store as dirty
 		dirty = false;
 		try {
-			save(getLocation());
+			save();
 		} catch (BackingStoreException e) {
 			//mark it dirty again because the save failed
 			dirty = true;
@@ -1032,6 +1032,10 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 			Policy.debug("Removed preference property change listener: " + listener + " from: " + absolutePath()); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
+	protected void save() throws BackingStoreException {
+		save(getLocation());
+	}
+
 	protected void save(IPath location) throws BackingStoreException {
 		if (location == null) {
 			if (InternalPlatform.DEBUG_PREFERENCES)
@@ -1081,13 +1085,6 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	public void sync() throws BackingStoreException {
 		// illegal state if this node has been removed
 		checkRemoved();
-		IPath location = getLocation();
-		// do nothing...subclasses to provide implementation
-		if (location == null) {
-			if (InternalPlatform.DEBUG_PREFERENCES)
-				Policy.debug("Unable to determine location of preference file for node: " + absolutePath()); //$NON-NLS-1$
-			return;
-		}
 		IEclipsePreferences node = getLoadLevel();
 		if (node == null) {
 			if (InternalPlatform.DEBUG_PREFERENCES)
@@ -1095,7 +1092,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 			return;
 		}
 		if (node instanceof EclipsePreferences) {
-			((EclipsePreferences) node).load(location);
+			((EclipsePreferences) node).load();
 			node.flush();
 		}
 	}
