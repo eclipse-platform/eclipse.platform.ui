@@ -11,6 +11,7 @@
 package org.eclipse.core.resources;
 
 import org.eclipse.core.internal.resources.*;
+import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.Job;
@@ -304,9 +305,11 @@ public final class ResourcesPlugin extends Plugin {
 	 * plug-in has shutdown.
 	 *
 	 * @return the workspace that was created by the single instance of this
-	 *   plug-in class, or <code>null</code> if this plug-in has been shut down.
+	 *   plug-in class.
 	 */
 	public static IWorkspace getWorkspace() {
+		if (workspace == null)
+			throw new IllegalStateException(Policy.bind("resources.workspaceClosed")); //$NON-NLS-1$
 		return workspace;
 	}
 
