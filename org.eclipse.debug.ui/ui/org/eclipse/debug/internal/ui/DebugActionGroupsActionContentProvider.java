@@ -22,15 +22,15 @@ public class DebugActionGroupsActionContentProvider implements IStructuredConten
 		List actionContributionItems= null;
 		if (element instanceof DebugActionGroup) {
 			DebugActionGroup actionSet= (DebugActionGroup)element;
-			List actions= actionSet.getActionIds();
-			Iterator actionIds= actions.iterator();
-			actionContributionItems= new ArrayList(actions.size());
+			List allActionIds= actionSet.getActionIds();
+			Iterator actionIds= allActionIds.iterator();
+			actionContributionItems= new ArrayList(allActionIds.size());
 			while (actionIds.hasNext()) {
 				String actionId= (String)actionIds.next();
-				Map items= DebugActionGroupsManager.getDefault().fDebugActionGroupActions;
-				Object item= items.get(actionId);
-				if (item != null) {
-					actionContributionItems.add(item);
+				Map idsToActions= DebugActionGroupsManager.getDefault().fDebugActionGroupActions;
+				List actions= (List)idsToActions.get(actionId);
+				if (actions != null) {
+					actionContributionItems.addAll(actions);
 				}
 			}
 		}

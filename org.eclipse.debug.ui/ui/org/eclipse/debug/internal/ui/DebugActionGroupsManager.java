@@ -38,6 +38,7 @@ import org.eclipse.ui.IViewPart;
 public class DebugActionGroupsManager implements IMenuListener {
 	
 	protected List fDebugViews= new ArrayList(6);
+	protected Map fDebugViewsWithMenu= new HashMap(6);
 	protected Map fDebugActionGroups;
 	protected Map fDebugActionGroupActionIds;
 	protected Map fDebugActionGroupActions = new HashMap();
@@ -45,6 +46,7 @@ public class DebugActionGroupsManager implements IMenuListener {
 	protected static DebugActionGroupsManager fgManager;
 
 	private DebugActionGroupsManager() {
+		//@see getDefault()
 	}
 	
 	/**
@@ -69,8 +71,11 @@ public class DebugActionGroupsManager implements IMenuListener {
 	 */
 	public void shutdown() {
 		for (Iterator iterator = fDebugActionGroupActions.values().iterator(); iterator.hasNext();) {
-			DebugActionGroupAction action = (DebugActionGroupAction) iterator.next();
-			action.dispose();
+			List actions= (List)iterator.next();
+			for (Iterator itr = actions.iterator(); itr.hasNext();) {
+				DebugActionGroupAction action = (DebugActionGroupAction) itr.next();
+				action.dispose();
+			}
 		}
 	}
 
@@ -135,7 +140,7 @@ public class DebugActionGroupsManager implements IMenuListener {
 					String actionId = actionElement.getAttribute("id");
 					if (actionId != null) {
 						viewActionSet.add(actionId);
-						fDebugActionGroupActionIds.put(actionId, viewActionSet.fId);
+						fDebugActionGroupActionIds.put(actionId, viewActionSet.getId());
 					}
 				}
 
@@ -147,7 +152,6 @@ public class DebugActionGroupsManager implements IMenuListener {
 				}
 				DebugUIPlugin.logErrorMessage("Improperly specified debug action group" + errorId);
 			}
-
 		}
 	}
 	
@@ -158,7 +162,6 @@ public class DebugActionGroupsManager implements IMenuListener {
 		for (Iterator iterator = fDebugViews.iterator(); iterator.hasNext();) {
 			IDebugView view = (IDebugView) iterator.next();
 			updateDebugActionGroups(view);
-			
 		}
 	}
 
@@ -171,6 +174,7 @@ public class DebugActionGroupsManager implements IMenuListener {
 		IActionBars actionBars = viewPart.getViewSite().getActionBars();
 		IToolBarManager toolBarManager = actionBars.getToolBarManager();
 		if (processContributionItems(toolBarManager.getItems(), viewPart.getTitle(), viewPart.getSite().getId(),true)) {
+			toolBarManager.markDirty();
 			actionBars.updateActionBars();
 		}
 	}
@@ -188,10 +192,17 @@ public class DebugActionGroupsManager implements IMenuListener {
 				String viewActionSetId = (String) fDebugActionGroupActionIds.get(id);
 				if (viewActionSetId != null) {
 					DebugActionGroup actionSet = (DebugActionGroup) fDebugActionGroups.get(viewActionSetId);
-					iContributionItem.setVisible(actionSet.fVisible);
+					iContributionItem.setVisible(actionSet.isVisible());
 					visibilityChanged = true;
 					DebugActionGroupAction action= new DebugActionGroupAction(id, item.getAction().getText(), viewName, viewId, item.getAction().getImageDescriptor(), toolbarAction);
-					fDebugActionGroupActions.put(id, action);
+					List actions= (List)fDebugActionGroupActions.get(id);
+					if (actions == null) {
+						actions= new ArrayList(1);
+						actions.add(action);
+						fDebugActionGroupActions.put(id, actions);
+					} else if (!actions.contains(action)) {
+						actions.add(action);
+					}
 				}
 			}
 		}
@@ -220,6 +231,7 @@ public class DebugActionGroupsManager implements IMenuListener {
 						updateDebugActionGroups(view);
 						fDebugViews.add(view);
 						if (menu != null) {
+							fDebugViewsWithMenu.put(menu, view);
 							//fake a showing of the context menu to get a 
 							//look at all of the items in the menu
 							Menu swtMenu= ((MenuManager)menu).getMenu();
@@ -241,13 +253,21 @@ public class DebugActionGroupsManager implements IMenuListener {
 	 */
 	public void deregisterView(IDebugView view) {
 		if (fDebugViews.remove(view)) {
-			Collection actions= fDebugActionGroupActions.values();
+			IMenuManager manager= view.getContextMenuManager();
+			if (manager != null) {
+				manager.removeMenuListener(this);
+				fDebugViewsWithMenu.remove(manager);
+			}
+			Collection actionCollections= fDebugActionGroupActions.values();
 			List removed= new ArrayList();
-			for (Iterator itr = actions.iterator(); itr.hasNext();) {
-				DebugActionGroupAction action = (DebugActionGroupAction) itr.next();
-				if (action.getViewId().equals(view.getSite().getId())) {
-					removed.add(action.getId());
-					action.dispose();
+			for (Iterator iterator = actionCollections.iterator(); iterator.hasNext();) {
+				List actions= (List)iterator.next();
+				for (Iterator itr = actions.iterator(); itr.hasNext();) {	
+					DebugActionGroupAction action = (DebugActionGroupAction) itr.next();
+					if (action.getViewId().equals(view.getSite().getId())) {
+						removed.add(action.getId());
+						action.dispose();
+					}
 				}
 			}
 			
@@ -263,23 +283,16 @@ public class DebugActionGroupsManager implements IMenuListener {
 	 * @see IMenuListener#menuAboutToShow(IMenuManager)
 	 */
 	public void menuAboutToShow(IMenuManager manager) {
-		String viewName= "UNKNOWN";
-		String viewId= "";
-		for (Iterator views = fDebugViews.iterator(); views.hasNext();) {
-			IDebugView view = (IDebugView) views.next();
-			Menu menu= view.getViewer().getControl().getMenu();
-			if (((MenuManager)manager).getMenu().equals(menu)) {
-				viewName= view.getTitle();
-				viewId= view.getSite().getId();
-				break;
-			}
-			
+		IDebugView view= (IDebugView)fDebugViewsWithMenu.get(manager);
+		if (view != null) {
+			String viewName= view.getTitle();
+			String viewId= view.getSite().getId();
+			processContributionItems(manager.getItems(), viewName, viewId, false);
 		}
-		processContributionItems(manager.getItems(), viewName, viewId, false);
 	}
 	
 	/**
-	 * Debug view action set extensions
+	 * Debug view action group extensions
 	 */
 	protected class DebugActionGroup {
 
@@ -363,7 +376,11 @@ public class DebugActionGroupsManager implements IMenuListener {
 		 * @see Object#hashCode()
 		 */
 		public int hashCode() {
-			return fId.hashCode();
+			if (fToolbarAction) {
+				return fId.hashCode() | fViewId.hashCode() | 1;
+			} else {
+				return fId.hashCode() | fViewId.hashCode();	
+			}
 		}
 
 		/**
@@ -372,7 +389,7 @@ public class DebugActionGroupsManager implements IMenuListener {
 		public boolean equals(Object obj) {
 			if (obj instanceof DebugActionGroupAction) {
 				DebugActionGroupAction s = (DebugActionGroupAction) obj;
-				return fId == s.fId;
+				return getId() == s.getId() && getViewId() == s.getViewId() && fToolbarAction == s.fToolbarAction;
 			}
 			return false;
 		}
