@@ -244,12 +244,12 @@ private String getTypeString(IResource resource) {
 	return UNKNOWN_LABEL;
 }
 /**
- * Reset the editableBox to the read only value of the resource.
+ * Reset the editableBox to the false.
  */
 protected void performDefaults() {
 
 	IResource resource = (IResource) getElement();
-	this.readOnlyValue = resource.isReadOnly();
+	this.readOnlyValue = false;
 	this.editableBox.setSelection(this.readOnlyValue);
 }
 /** 
