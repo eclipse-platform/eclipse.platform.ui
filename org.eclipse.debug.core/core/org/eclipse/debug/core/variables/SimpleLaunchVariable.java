@@ -63,6 +63,9 @@ public class SimpleLaunchVariable implements ISimpleLaunchVariable {
 		return fName;
 	}
 	
+	/**
+	 * @see ILaunchVariable#getDescription()
+	 */
 	public String getDescription() {
 		return fDescription != null ? fDescription : ""; //$NON-NLS-1$
 	}
