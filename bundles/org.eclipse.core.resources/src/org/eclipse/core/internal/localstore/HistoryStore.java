@@ -238,6 +238,7 @@ public class HistoryStore {
 	 * Clean this store applying the current policies.
 	 */
 	public void clean() {
+		long start = System.currentTimeMillis();
 		IWorkspaceDescription description = workspace.internalGetDescription();
 		long minimumTimestamp = System.currentTimeMillis() - description.getFileStateLongevity();
 		int max = description.getMaxFileStates();
@@ -266,6 +267,8 @@ public class HistoryStore {
 			removeOldestEntries(result, max);
 			cursor.close();
 			store.commit();
+			if (Policy.DEBUG_HISTORY)
+				Policy.debug("Time to apply history store policies: " + (System.currentTimeMillis() - start) + "ms."); //$NON-NLS-1$ //$NON-NLS-2$
 			removeGarbage(blobs);
 		} catch (Exception e) {
 			String message = Policy.bind("history.problemsCleaning"); //$NON-NLS-1$
@@ -542,7 +545,10 @@ public class HistoryStore {
 	 * Remove all blobs but the ones in the parameter.
 	 */
 	protected void removeGarbage(Set blobsToPreserv) {
+		long start = System.currentTimeMillis();
 		blobStore.deleteAllExcept(blobsToPreserv);
+		if (Policy.DEBUG_HISTORY)
+			Policy.debug("Time to remove history store garbage (saving " + blobsToPreserv.size() + " blobs): " + (System.currentTimeMillis() - start) + "ms."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 	protected void removeOldestEntries(List entries, int maxEntries) throws IndexedStoreException {
