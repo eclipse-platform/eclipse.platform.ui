@@ -878,10 +878,7 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
         CoolItem[] items = coolBar.getItems();
 		Point[] itemSizes = new Point[coolBar.getItemCount()];
 		for (int i=0; i < coolBar.getItemCount(); i++) {
-			CoolItem item = items[i];
-			Point minSize = item.getMinimumSize();
-			Point coolSize = item.computeSize (minSize.x, minSize.y);
-			itemSizes[i]=coolSize;
+			itemSizes[i]=items[i].getMinimumSize();
 		}
 		coolBar.setItemLayout(coolBar.getItemOrder(), coolBar.getWrapIndices(), itemSizes);
 	}
