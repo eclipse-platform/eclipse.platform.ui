@@ -3,29 +3,24 @@ package org.eclipse.help.internal.ui.win32;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-
-
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.ole.win32.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.help.internal.util.Logger;
-import org.eclipse.help.internal.ui.util.*;
-import org.eclipse.help.internal.ui.*;
 import java.util.*;
+import org.eclipse.help.internal.util.Logger;
+import org.eclipse.help.internal.ui.*;
+import org.eclipse.help.internal.ui.util.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.ole.win32.*;
+import org.eclipse.swt.widgets.*;
 
 /**
  * ActiveX based web browser control.
  */
 public class WebBrowser implements OleListener, IBrowser {
 	// Generated from typelib filename: shdocvw.dll
-
 	// Constants for WebBrowser CommandStateChange
-
 	public static final short CSC_UPDATECOMMANDS = -1;
 	public static final short CSC_NAVIGATEFORWARD = 1;
 	public static final short CSC_NAVIGATEBACK = 2;
-
 	// Web Browser Control Events 
 	public static final int BeforeNavigate = 100;
 	// Fired when a new hyperlink is being navigated to.
@@ -61,25 +56,20 @@ public class WebBrowser implements OleListener, IBrowser {
 	// Fired when a new window should be created.
 	public static final int DocumentComplete = 259;
 	// Fired when the document being navigated to reaches ReadyState_Complete.
-
 	// Web Browser properties
 	public static final int DISPID_READYSTATE = -525;
-
 	// Web Browser state
 	public static final int READYSTATE_UNINITIALIZED = 0;
 	public static final int READYSTATE_LOADING = 1;
 	public static final int READYSTATE_LOADED = 2;
 	public static final int READYSTATE_INTERACTIVE = 3;
 	public static final int READYSTATE_COMPLETE = 4;
-
 	// Keep track of the whether it is possible to navigate in the forward and backward directions
 	private boolean backwardEnabled;
 	private boolean forwardEnabled;
-
 	// The automation object and Control associated with the main OLE control
 	private OleAutomation oleObject;
 	private HelpControlSite controlSite;
-
 	// The OLE frame (there should only be one)
 	private OleFrame controlFrame;
 	// DocumentComplete listeners
@@ -87,10 +77,8 @@ public class WebBrowser implements OleListener, IBrowser {
 	/**
 	 */
 	public WebBrowser(Composite parent) throws HelpWorkbenchException {
-
 		// Create the OLE frame. 
 		controlFrame = createOleFrame(parent);
-
 		// Creates the IE5 OLE Control
 		// The constructor also registers all the necessary OLE listeners.
 		// for now, only catch the execption if creating and activating the 
@@ -99,21 +87,16 @@ public class WebBrowser implements OleListener, IBrowser {
 		try {
 			controlSite = new HelpControlSite(controlFrame, SWT.NONE, "Shell.Explorer");
 			oleObject = new OleAutomation(controlSite);
-
 			backwardEnabled = false;
 			forwardEnabled = false;
-
 			// initialize DocumentComplete listeners;
-			documentCompleteListeners=new ArrayList();
-
+			documentCompleteListeners = new ArrayList();
 			// Listen for changes to the Command States
 			controlSite.addEventListener(CommandStateChange, this);
 			// Listen for DocumentComplete events
 			controlSite.addEventListener(DocumentComplete, this);
-		
 			// initialize control
 			controlSite.doVerb(OLE.OLEIVERB_SHOW);
-
 		} catch (Exception e) {
 			// Display and log error, then delegate to parent UI class. 
 			// The actual translated message goes all the way back to the calling
@@ -122,39 +105,32 @@ public class WebBrowser implements OleListener, IBrowser {
 			ErrorUtil.displayErrorDialog(msg, e);
 			throw new HelpWorkbenchException(msg);
 		}
-
 	}
 	/**
 	 * Adds listener for DocumentComplete events
 	 */
-	public void addDocumentCompleteListener(IDocumentCompleteListener listener){
+	public void addDocumentCompleteListener(IDocumentCompleteListener listener) {
 		documentCompleteListeners.add(listener);
 	}
 	/**
 	 * Adds listener for DocumentComplete events
 	 */
-	public void removeDocumentCompleteListener(IDocumentCompleteListener listener){
+	public void removeDocumentCompleteListener(IDocumentCompleteListener listener) {
 		documentCompleteListeners.remove(listener);
 	}
 	/**
 	 */
 	public int back() {
-
 		if (!backwardEnabled)
 			return OLE.S_FALSE;
 		forwardEnabled = true;
-
 		// dispid=100, type=METHOD, name="GoBack"
-
 		// You can hard code the DISPID if you know it before hand - this is of course the fastest way
 		//int dispIdMember = 100;
-
 		// Alternatively, you can look up the DISPID dynamically
 		int[] rgdispid = oleObject.getIDsOfNames(new String[] { "GoBack" });
 		int dispIdMember = rgdispid[0];
-
 		Variant pVarResult = oleObject.invoke(dispIdMember);
-
 		if (pVarResult == null)
 			return 0;
 		return pVarResult.getInt();
@@ -180,7 +156,6 @@ public class WebBrowser implements OleListener, IBrowser {
 						| GridData.VERTICAL_ALIGN_FILL));
 		}
 		return controlFrame;
-
 	}
 	/**
 	 * clean up
@@ -190,15 +165,12 @@ public class WebBrowser implements OleListener, IBrowser {
 		if (oleObject != null)
 			oleObject.dispose();
 		oleObject = null;
-
 		if (controlSite != null)
 			controlSite.dispose();
 		controlSite = null;
-
 		if (controlFrame != null)
 			controlFrame.dispose();
 		controlFrame = null;
-
 	}
 	/**
 	 */
@@ -207,14 +179,11 @@ public class WebBrowser implements OleListener, IBrowser {
 			return OLE.S_FALSE;
 		backwardEnabled = true;
 		// dispid=101, type=METHOD, name="GoForward"
-
 		// You can hard code the DISPID if you know it before hand - this is of course the fastest way
 		//int dispIdMember = 101;
-
 		// Alternatively, you can look up the DISPID dynamically
 		int[] rgdispid = oleObject.getIDsOfNames(new String[] { "GoForward" });
 		int dispIdMember = rgdispid[0];
-
 		Variant pVarResult = oleObject.invoke(dispIdMember);
 		if (pVarResult == null)
 			return 0;
@@ -227,10 +196,8 @@ public class WebBrowser implements OleListener, IBrowser {
 	 */
 	public String getLocationName() {
 		// dispid=210, type=PROPGET, name="LocationName"
-
 		// You can hard code the DISPID if you know it before hand - this is of course the fastest way
 		//int dispIdMember = 210;
-
 		// Alternatively, you can look up the DISPID dynamically
 		int[] rgdispid = oleObject.getIDsOfNames(new String[] { "LocationName" });
 		int dispIdMember = rgdispid[0];
@@ -245,11 +212,9 @@ public class WebBrowser implements OleListener, IBrowser {
 		// dispid=211, type=PROPGET, name="LocationURL"
 		// You can hard code the DISPID if you know it before hand - this is of course the fastest way
 		//int dispIdMember = 211;
-
 		// Alternatively, you can look up the DISPID dynamically
 		int[] rgdispid = oleObject.getIDsOfNames(new String[] { "LocationURL" });
 		int dispIdMember = rgdispid[0];
-
 		Variant pVarResult = oleObject.getProperty(dispIdMember);
 		if (pVarResult == null)
 			return null;
@@ -257,7 +222,6 @@ public class WebBrowser implements OleListener, IBrowser {
 	}
 	protected OleFrame getOleFrame() {
 		return controlFrame;
-
 	}
 	/**
 	 */
@@ -268,14 +232,11 @@ public class WebBrowser implements OleListener, IBrowser {
 		// READYSTATE_LOADED = 2;
 		// READYSTATE_INTERACTIVE = 3;
 		// READYSTATE_COMPLETE = 4;
-
 		// You can hard code the DISPID if you know it before hand - this is of course the fastest way
 		//int dispIdMember = -525;
-
 		// Alternatively, you can look up the DISPID dynamically
 		int[] rgdispid = oleObject.getIDsOfNames(new String[] { "ReadyState" });
 		int dispIdMember = rgdispid[0];
-
 		Variant pVarResult = oleObject.getProperty(dispIdMember);
 		if (pVarResult == null)
 			return -1;
@@ -288,31 +249,27 @@ public class WebBrowser implements OleListener, IBrowser {
 			case (CommandStateChange) :
 				int command = 0;
 				boolean enabled = false;
-
 				Variant varResult = event.arguments[0];
 				if (varResult != null) {
 					command = varResult.getInt();
 				}
-
 				varResult = event.arguments[1];
 				if (varResult != null) {
 					enabled = varResult.getBoolean();
 				}
-
 				if (command == CSC_NAVIGATEBACK)
 					backwardEnabled = enabled;
 				if (command == CSC_NAVIGATEFORWARD)
 					forwardEnabled = enabled;
-
 				return;
-
 			case (DocumentComplete) :
-				varResult = event.arguments[0];
-				Collection currentListeners=new ArrayList(documentCompleteListeners.size());
+				varResult = event.arguments[1];
+				String url = varResult.getString();
+				Collection currentListeners = new ArrayList(documentCompleteListeners.size());
 				currentListeners.addAll(documentCompleteListeners);
-				for(Iterator it=currentListeners.iterator();it.hasNext();){
-					IDocumentCompleteListener listener=(IDocumentCompleteListener)it.next();
-					listener.documentComplete();
+				for (Iterator it = currentListeners.iterator(); it.hasNext();) {
+					IDocumentCompleteListener listener = (IDocumentCompleteListener) it.next();
+					listener.documentComplete(url);
 				}
 				return;
 		}
@@ -322,14 +279,11 @@ public class WebBrowser implements OleListener, IBrowser {
 	 */
 	public int home() {
 		// dispid=102, type=METHOD, name="GoHome"
-
 		// You can hard code the DISPID if you know it before hand - this is of course the fastest way
 		//int dispIdMember = 102;
-
 		// Alternatively, you can look up the DISPID dynamically
 		int[] rgdispid = oleObject.getIDsOfNames(new String[] { "GoHome" });
 		int dispIdMember = rgdispid[0];
-
 		Variant pVarResult = oleObject.invoke(dispIdMember);
 		if (pVarResult == null)
 			return 0;
@@ -346,16 +300,13 @@ public class WebBrowser implements OleListener, IBrowser {
 		if (Logger.DEBUG)
 			Logger.logDebugMessage("WebBrowser", "navigate to: " + url);
 		// dispid=104, type=METHOD, name="Navigate"
-
 		// You can hard code the DISPID if you know it before hand - this is of course the fastest way
 		//int dispIdMember = 104;
-
 		// Alternatively, you can look up the DISPID dynamically
 		// Here we are looking up the id of the argument as well
 		int[] rgdispid =
 			aOleAutomation.getIDsOfNames(new String[] { "Navigate", "URL" });
 		int dispIdMember = rgdispid[0];
-
 		Variant[] rgvarg = new Variant[1];
 		rgvarg[0] = new Variant(url);
 		int[] rgdispidNamedArgs = new int[1];
@@ -365,7 +316,6 @@ public class WebBrowser implements OleListener, IBrowser {
 		if (pVarResult == null)
 			return 0;
 		return pVarResult.getInt();
-
 	}
 	/**
 	 * @param showPrintDialog
@@ -376,12 +326,8 @@ public class WebBrowser implements OleListener, IBrowser {
 	}
 	/**
 	 */
-	protected int print(
-		HelpControlSite aControlSite,
-		boolean promptuser) {
-
+	protected int print(HelpControlSite aControlSite, boolean promptuser) {
 		int result = aControlSite.queryStatus(OLE.OLECMDID_PRINT);
-		
 		if ((result & OLE.OLECMDF_ENABLED) == OLE.OLECMDF_ENABLED) {
 			if (promptuser)
 				result =
@@ -394,39 +340,33 @@ public class WebBrowser implements OleListener, IBrowser {
 						null,
 						null);
 		}
-		
 		if (Logger.DEBUG)
-			Logger.logDebugMessage("WebBrowser", "exec returns: " + Integer.toString(result));
+			Logger.logDebugMessage(
+				"WebBrowser",
+				"exec returns: " + Integer.toString(result));
 		return result;
 	}
 	/**
 	 * Refresh the currently viewed page.
 	 */
 	public void refresh() {
-
 		// dispid= 4294966746, type=METHOD, name="Refresh"
-
 		// You can hard code the DISPID if you know it before hand - this is of course the fastest way
 		//int dispIdMember =  4294966746;
-
 		// Alternatively, you can look up the DISPID dynamically
 		int[] rgdispid = oleObject.getIDsOfNames(new String[] { "Refresh" });
 		int dispIdMember = rgdispid[0];
-
 		oleObject.invokeNoReply(dispIdMember);
 	}
 	/**
 	 */
 	public int search() {
 		// dispid=103, type=METHOD, name="GoSearch"
-
 		// You can hard code the DISPID if you know it before hand - this is of course the fastest way
 		//int dispIdMember = 103;
-
 		// Alternatively, you can look up the DISPID dynamically
 		int[] rgdispid = oleObject.getIDsOfNames(new String[] { "GoSearch" });
 		int dispIdMember = rgdispid[0];
-
 		Variant pVarResult = oleObject.invoke(dispIdMember);
 		if (pVarResult == null)
 			return 0;
@@ -436,14 +376,11 @@ public class WebBrowser implements OleListener, IBrowser {
 	 */
 	public void stop() {
 		// dispid=106, type=METHOD, name="Stop"
-
 		// You can hard code the DISPID if you know it before hand - this is of course the fastest way
 		//int dispIdMember = 106;
-
 		// Alternatively, you can look up the DISPID dynamically
 		int[] rgdispid = oleObject.getIDsOfNames(new String[] { "Stop" });
 		int dispIdMember = rgdispid[0];
-
 		Variant pVarResult = oleObject.invoke(dispIdMember);
 	}
 }

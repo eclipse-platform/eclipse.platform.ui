@@ -4,15 +4,12 @@ package org.eclipse.help.internal.ui.motif;
  * All Rights Reserved.
  */
 import java.io.IOException;
-
-import org.eclipse.help.topics.ITopic;
 import org.eclipse.help.internal.HelpSystem;
-import org.eclipse.help.internal.ui.IBrowser;
+import org.eclipse.help.internal.ui.*;
 import org.eclipse.help.internal.ui.util.StreamConsumer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.help.internal.ui.*;
 /**
  * Netscape based browser.
  */
@@ -109,7 +106,7 @@ class WebBrowser implements IBrowser {
 		browserPath = HelpSystem.getBrowserPath();
 		if (browserPath == null || "".equals(browserPath))
 			browserPath = "netscape";
-		if(lastBrowserThread!=null)
+		if (lastBrowserThread != null)
 			lastBrowserThread.exitRequested = true;
 		lastBrowserThread = new BrowserThread(url);
 		lastBrowserThread.start();
@@ -122,11 +119,17 @@ class WebBrowser implements IBrowser {
 	/**
 	 * Adds listener for DocumentComplete events
 	 */
-	public void addDocumentCompleteListener(IDocumentCompleteListener listener){
+	public void addDocumentCompleteListener(IDocumentCompleteListener listener) {
 	}
 	/**
 	 * Adds listener for DocumentComplete events
 	 */
-	public void removeDocumentCompleteListener(IDocumentCompleteListener listener){
+	public void removeDocumentCompleteListener(IDocumentCompleteListener listener) {
 	}
+	/**
+	 * Disposes of control
+	 */
+	public void dispose(){
+	}
+
 }

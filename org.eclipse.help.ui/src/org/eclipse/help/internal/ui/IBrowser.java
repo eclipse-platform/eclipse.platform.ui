@@ -34,4 +34,8 @@ public interface IBrowser {
 	 * Adds listener for DocumentComplete events
 	 */
 	public void removeDocumentCompleteListener(IDocumentCompleteListener listener);
+	/**
+	 * Disposes of control
+	 */
+	public void dispose();
 }
