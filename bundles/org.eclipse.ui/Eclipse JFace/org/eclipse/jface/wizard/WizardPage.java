@@ -73,19 +73,21 @@ public abstract class WizardPage extends DialogPage implements IWizardPage {
 	 * <code>null</code> if none.
 	 */
 	private IWizardPage previousPage = null;
-	
+
 	/**
 	 * Message type constant used to display an info icon with the message.
 	 * @since 2.0
+	 * @deprecated
 	 */
 	public static final String INFO_MESSAGE = TitleAreaDialog.INFO_MESSAGE;
 
 	/**
 	 * Message type constant used to display a warning icon with the message.
 	 * @since 2.0
+	 * @deprecated
 	 */
 	public static final String WARNING_MESSAGE = TitleAreaDialog.WARNING_MESSAGE;
-
+	
 /**
  * Creates a new wizard page with the given name, and
  * with no title or image.
@@ -227,10 +229,9 @@ public void setDescription(String description) {
 		getContainer().updateTitleBar();
 }
 /**
- * Sets or clears the error message for this page.
- *
- * @param newMessage the message, or <code>null</code> to clear
- *   the error message
+ * The <code>WizardPage</code> implementation of this method 
+ * declared on <code>DialogPage</code> updates the container
+ * if this is the current page.
  */
 public void setErrorMessage(String newMessage) {
 	super.setErrorMessage(newMessage);
@@ -238,9 +239,10 @@ public void setErrorMessage(String newMessage) {
 		getContainer().updateMessage();
 	}
 }
-/* (non-Javadoc)
- * Method declared on IDialogPage.
- * If this page is currently visible then the UI is updated immediately.
+/**
+ * The <code>WizardPage</code> implementation of this method 
+ * declared on <code>DialogPage</code> updates the container
+ * if this page is the current page.
  */
 public void setImageDescriptor(ImageDescriptor image) {
 	super.setImageDescriptor(image);
@@ -248,30 +250,12 @@ public void setImageDescriptor(ImageDescriptor image) {
 		getContainer().updateTitleBar();
 }
 /**
- * Sets or clears the message for this page.
- *
- * @param newMessage the message, or <code>null</code> to clear
- *   the message
+ * The <code>WizardPage</code> implementation of this method 
+ * declared on <code>DialogPage</code> updates the container
+ * if this is the current page.
  */
-public void setMessage(String newMessage) {
-	setMessage(newMessage, null);
-}
-/**
- * Sets or clears the message for this page.
- *
- * @param newMessage the message, or <code>null</code> to clear
- *   the message
- * @param messageType the type of message, one of INFO_MESSAGE or 
- * 	WARNING_MESSAGE or <code>null</code>. 
- * @since 2.0
- * @deprecated use <code>DialogPage.setMessage(String, int)</code>
- */
-public void setMessage(String newMessage, String messageType) {
-	if (newMessage == null || messageType == null) 
-		super.setMessage(newMessage);
-	else
-		super.setMessage(messageType + newMessage);
-
+public void setMessage(String newMessage, int newType) {
+	super.setMessage(newMessage, newType);
 	if (isCurrentPage()) 
 		getContainer().updateMessage();
 }

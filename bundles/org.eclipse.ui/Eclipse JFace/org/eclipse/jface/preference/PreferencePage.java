@@ -410,10 +410,8 @@ public void setContainer(IPreferencePageContainer container) {
 	this.container = container;
 }
 /**
- * Sets or clears the error message for this page.
- *
- * @param newMessage the message, or <code>null</code> to clear
- *   the error message
+ * The <code>PreferencePage</code> implementation of this method 
+ * declared on <code>DialogPage</code> updates the container.
  */
 public void setErrorMessage(String newMessage) {
 	super.setErrorMessage(newMessage);
@@ -422,12 +420,10 @@ public void setErrorMessage(String newMessage) {
 	}
 }
 /**
- * Sets or clears the message for this page.
- *
- * @param newMessage the message, or <code>null</code> to clear
- *   the message
+ * The <code>PreferencePage</code> implementation of this method 
+ * declared on <code>DialogPage</code> updates the container.
  */
-public void setMessage(String newMessage) {
+public void setMessage(String newMessage, int newType) {
 	super.setMessage(newMessage);
 	if (getContainer() != null) {
 		getContainer().updateMessage();
