@@ -420,7 +420,10 @@ public class SyncFileWriter {
 				// sees the CVS folder creation.
 				ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
 					public void run(IProgressMonitor monitor) throws CoreException {
-						cvsSubDir.create(false /*don't force*/, true /*make local*/, null);
+						// Recheck existance in case this method was called without a resource rule
+						if (! cvsSubDir.exists()) {
+							cvsSubDir.create(false /*don't force*/, true /*make local*/, null);
+						}
 						cvsSubDir.setTeamPrivateMember(true);
 					} 
 				}, folder, 0, null);
