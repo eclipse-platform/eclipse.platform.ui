@@ -18,6 +18,8 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.*;
+import org.eclipse.ui.intro.IIntroManager;
+import org.eclipse.ui.intro.IIntroPart;
 
 /**
  * This class is an implementation of the Help UI. In is registered into the
@@ -62,6 +64,11 @@ public class DefaultHelpUI extends AbstractHelpUI {
 	public void search(final String expression) {
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		if (window != null && isActiveShell(window)) {
+			IIntroManager introMng = PlatformUI.getWorkbench().getIntroManager();
+			IIntroPart intro = introMng.getIntro();
+			if (intro!=null && !introMng.isIntroStandby(intro))
+				introMng.setIntroStandby(intro, true);
+			
 			IWorkbenchPage page = window.getActivePage();
 			if (page != null) {
 				try {

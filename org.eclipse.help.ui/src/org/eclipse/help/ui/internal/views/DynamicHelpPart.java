@@ -317,10 +317,13 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 				buff.append("</a></p>"); //$NON-NLS-1$
 			}
 			buff.append("</form>"); //$NON-NLS-1$
-			searchResults.setText(buff.toString(), true, false);
+			if (!searchResults.isDisposed())
+				searchResults.setText(buff.toString(), true, false);
 		} else
-			searchResults.setText("", false, false); //$NON-NLS-1$
-		parent.reflow();
+			if (!searchResults.isDisposed())
+				searchResults.setText("", false, false); //$NON-NLS-1$
+		if (!searchResults.isDisposed())
+			parent.reflow();
 	}
 	
 	private boolean isExcluded(String href, IHelpResource [] excludedTopics) {
