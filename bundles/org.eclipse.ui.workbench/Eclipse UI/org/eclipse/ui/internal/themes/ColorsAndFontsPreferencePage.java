@@ -63,7 +63,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FontDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.IThemePreview;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
@@ -73,6 +72,7 @@ import org.eclipse.ui.internal.dialogs.FilteredTree;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.themes.ITheme;
 import org.eclipse.ui.themes.IThemeManager;
+import org.eclipse.ui.themes.IThemePreview;
 
 /**
  * Preference page for management of system colors, gradients and fonts.
@@ -331,8 +331,8 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
     	        return font;
     	    }
 
-            updateColumn(getText(element), tree.getViewer().getControl().getFont());
-            return null;
+            updateColumn(getText(element), tree.getViewer().getControl().getParent().getFont());
+            return tree.getViewer().getControl().getParent().getFont();
         }
     	
     	/**

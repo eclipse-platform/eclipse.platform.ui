@@ -23,7 +23,7 @@ public interface IThemeManager {
     /**
 	 * The default theme id.
 	 */
-	public static final String DEFAULT_THEME = null;
+	public static final String DEFAULT_THEME = "org.eclipse.ui.defaultTheme"; //$NON-NLS-1$ 
 	
 	/**
 	 * Indicates that the provided theme has changed in some way.

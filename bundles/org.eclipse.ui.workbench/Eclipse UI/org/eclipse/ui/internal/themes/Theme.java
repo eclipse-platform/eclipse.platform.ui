@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.themes;
 
+import java.util.ResourceBundle;
 import java.util.Set;
 
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -17,7 +18,6 @@ import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.DataFormatException;
 import org.eclipse.jface.resource.FontRegistry;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.ListenerList;
@@ -26,6 +26,7 @@ import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.themes.ITheme;
 import org.eclipse.ui.themes.IThemeManager;
@@ -34,6 +35,12 @@ import org.eclipse.ui.themes.IThemeManager;
  * @since 3.0
  */
 public class Theme implements ITheme {
+    
+    /**
+	 * The translation bundle in which to look up internationalized text.
+	 */
+	private final static ResourceBundle RESOURCE_BUNDLE =
+		ResourceBundle.getBundle(Theme.class.getName());
 
     private CascadingColorRegistry themeColorRegistry;
     private CascadingFontRegistry themeFontRegistry;
@@ -91,18 +98,22 @@ public class Theme implements ITheme {
                  * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
                  */
                 public void propertyChange(PropertyChangeEvent event) {                    
-                    String key = ThemeElementHelper.splitPreferenceKey(Theme.this, event.getProperty());
+                    String [] split = ThemeElementHelper.splitPropertyName(Theme.this, event.getProperty());
+                    String key = split[1];
+                    String theme = split[0];
+                    if (key.equals(IPreferenceConstants.CURRENT_THEME_ID))
+                    	return;
                     try { 
 	                    if (themeColorRegistry != null) { // we're using cascading registries
-	                        if (((CascadingColorRegistry)getColorRegistry()).hasOverrideFor(key)) {
+	                        if (((CascadingColorRegistry)getColorRegistry()).hasOverrideFor(key) && theme != null && theme.equals(getId())) {
 		                        RGB rgb = StringConverter.asRGB((String) event.getNewValue());
 		                        getColorRegistry().put(key, rgb);
 		                        processDefaultsTo(key, rgb);
 		                        return;
-		                    }
+		                    }	                       
 	                    }
 	                    else {
-	                        if (getColorRegistry().hasValueFor(key)) {
+	                        if (getColorRegistry().hasValueFor(key) && theme == null) {
 		                        RGB rgb = StringConverter.asRGB((String) event.getNewValue());
 		                        getColorRegistry().put(key, rgb);
 		                        processDefaultsTo(key, rgb);
@@ -111,15 +122,15 @@ public class Theme implements ITheme {
 	                    }	 
 	                    
 	                    if (themeFontRegistry != null) {
-	                        if (((CascadingFontRegistry)getFontRegistry()).hasOverrideFor(key)) {
+	                        if (((CascadingFontRegistry)getFontRegistry()).hasOverrideFor(key)  && theme != null && theme.equals(getId())) {
 		                        FontData [] data = PreferenceConverter.basicGetFontData((String) event.getNewValue());
 		                        getFontRegistry().put(key, data);
 		                        processDefaultsTo(key, data);
 		                        return;
-		                    }
+		                    }	                        
 	                    }
 	                    else {
-	                        if (getFontRegistry().hasValueFor(key)) {
+	                        if (getFontRegistry().hasValueFor(key) && theme == null) {
 		                        FontData [] data = PreferenceConverter.basicGetFontData((String) event.getNewValue());
 		                        getFontRegistry().put(key, data);
 		                        processDefaultsTo(key, data);
@@ -129,7 +140,7 @@ public class Theme implements ITheme {
                     }
                     catch (DataFormatException e) {
                         //no-op
-                    }                                                                    
+                    } 
                 }  
                 
                 /**
@@ -200,14 +211,14 @@ public class Theme implements ITheme {
         if (themeColorRegistry != null) 
             return themeColorRegistry;
         else 
-            return JFaceResources.getColorRegistry();
+            return WorkbenchThemeManager.getInstance().getDefaultThemeColorRegistry();
     }
     
     public FontRegistry getFontRegistry() {
         if (themeFontRegistry != null) 
             return themeFontRegistry;
         else 
-            return JFaceResources.getFontRegistry();
+            return WorkbenchThemeManager.getInstance().getDefaultThemeFontRegistry();
     }
     
     public void dispose() {
@@ -229,7 +240,7 @@ public class Theme implements ITheme {
      * @see org.eclipse.ui.internal.themes.ITheme#getId()
      */
     public String getId() {       
-        return descriptor == null ? null : descriptor.getId();
+        return descriptor == null ? IThemeManager.DEFAULT_THEME : descriptor.getId();
     }
     
     /* (non-Javadoc)
@@ -257,7 +268,7 @@ public class Theme implements ITheme {
      * @see org.eclipse.ui.internal.themes.ITheme#getLabel()
      */
     public String getLabel() {
-        return descriptor == null ? null : descriptor.getLabel();
+        return descriptor == null ? RESOURCE_BUNDLE.getString("DefaultTheme.label") : descriptor.getLabel(); //$NON-NLS-1$ 
     }
 
     /* (non-Javadoc)

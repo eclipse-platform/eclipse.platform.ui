@@ -24,16 +24,12 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.JFacePreferences;
-import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.preference.PreferenceManager;
-import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.graphics.FontData;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IPerspectiveRegistry;
@@ -510,21 +506,9 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		//Temporary preference to use new progress view
 		store.setDefault( "USE_NEW_PROGRESS",false);//$NON-NLS-1$
 		
-		// @issue get rid of PreferenceConverter - defer setting default fonts until Display created.
-		FontRegistry registry = JFaceResources.getFontRegistry();
-		initializeFont(JFaceResources.DIALOG_FONT, registry, store);
-		initializeFont(JFaceResources.BANNER_FONT, registry, store);
-		initializeFont(JFaceResources.HEADER_FONT, registry, store);
-		initializeFont(JFaceResources.TEXT_FONT, registry, store);
-		
 		store.addPropertyChangeListener(new PlatformUIPreferenceListener());
 	}
 
-	private void initializeFont(String fontKey, FontRegistry registry, IPreferenceStore store) {
-
-		FontData[] fontData = registry.getFontData(fontKey);
-		PreferenceConverter.setDefault(store, fontKey, fontData);
-	}
 	/**
 	 * Log the given status to the ISV log.
 	 *

@@ -11,6 +11,8 @@
 package org.eclipse.ui.internal.themes;
 
 import java.util.Arrays;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -19,7 +21,9 @@ import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.themes.ITheme;
+import org.eclipse.ui.themes.IThemeManager;
 
 
 /**
@@ -30,7 +34,12 @@ public final class ThemeElementHelper {
     public static void populateRegistry(ITheme theme, FontDefinition [] definitions, IPreferenceStore store) {
 		// sort the definitions by dependant ordering so that we process 
 		// ancestors before children.		
-		FontDefinition [] copyOfDefinitions = new FontDefinition[definitions.length];
+		FontDefinition [] copyOfDefinitions = null;
+		if (!theme.getId().equals(IThemeManager.DEFAULT_THEME)) {
+		    definitions = addDefaulted(definitions);
+		}    
+				
+		copyOfDefinitions = new FontDefinition[definitions.length];
 		System.arraycopy(definitions, 0, copyOfDefinitions, 0, definitions.length);
 		Arrays.sort(copyOfDefinitions, new IThemeRegistry.HierarchyComparator(definitions));
 
@@ -41,6 +50,19 @@ public final class ThemeElementHelper {
     }
     
     
+    /**
+     * @param definitions
+     * @return
+     */
+    private static FontDefinition[] addDefaulted(FontDefinition[] definitions) {
+        IThemeRegistry registry = WorkbenchPlugin.getDefault().getThemeRegistry();
+        FontDefinition[] allDefs = registry.getFonts();
+
+        SortedSet set = addDefaulted(definitions, allDefs);
+        return (FontDefinition []) set.toArray(new FontDefinition[set.size()]);
+    }
+
+
     /**
      * @param definition
      * @param registry
@@ -83,9 +105,14 @@ public final class ThemeElementHelper {
 		// sort the definitions by dependant ordering so that we process 
 		// ancestors before children.		
         
-		ColorDefinition [] copyOfDefinitions = new ColorDefinition[definitions.length];
+		ColorDefinition [] copyOfDefinitions = null;
+		if (!theme.getId().equals(IThemeManager.DEFAULT_THEME)) {
+		    definitions = addDefaulted(definitions);
+		}    
+		
+	    copyOfDefinitions = new ColorDefinition[definitions.length];
 		System.arraycopy(definitions, 0, copyOfDefinitions, 0, definitions.length);
-		Arrays.sort(copyOfDefinitions, new IThemeRegistry.HierarchyComparator(definitions));
+		Arrays.sort(copyOfDefinitions, new IThemeRegistry.HierarchyComparator(definitions));		    		
 
 		for (int i = 0; i < copyOfDefinitions.length; i++) {
 			ColorDefinition definition = copyOfDefinitions[i];
@@ -94,6 +121,39 @@ public final class ThemeElementHelper {
     }
     
 	/**
+     * @param definitions
+     * @return
+     */
+    private static ColorDefinition[] addDefaulted(ColorDefinition[] definitions) {        
+        IThemeRegistry registry = WorkbenchPlugin.getDefault().getThemeRegistry();
+        ColorDefinition[] allDefs = registry.getColors();
+
+        SortedSet set = addDefaulted(definitions, allDefs);
+        return (ColorDefinition []) set.toArray(new ColorDefinition [set.size()]);
+    }
+
+
+    /**
+     * @param definitions
+     * @param allDefs
+     * @return
+     */
+    private static SortedSet addDefaulted(IHierarchalThemeElementDefinition[] definitions, IHierarchalThemeElementDefinition[] allDefs) {
+        SortedSet set = new TreeSet(IThemeRegistry.ID_COMPARATOR);
+        set.addAll(Arrays.asList(definitions));
+        Arrays.sort(allDefs, new IThemeRegistry.HierarchyComparator(allDefs));
+        for (int i = 0; i < allDefs.length; i++) {
+            IHierarchalThemeElementDefinition def = allDefs[i];
+            if (def.getDefaultsTo() != null) {
+                if (set.contains(def.getDefaultsTo()))
+                    set.add(def);
+            }
+        }
+        return set;
+    }
+
+
+    /**
 	 * Installs the given color in the color registry.
 	 * 
 	 * @param definition
@@ -144,7 +204,7 @@ public final class ThemeElementHelper {
      */
     public static String createPreferenceKey(ITheme theme, String id) {        
         String themeId = theme.getId();
-        if (themeId == null)
+        if (themeId.equals(IThemeManager.DEFAULT_THEME))
             return id;
         
         return themeId + '.' + id;
@@ -155,15 +215,15 @@ public final class ThemeElementHelper {
      * @param property
      * @return
      */
-    public static String splitPreferenceKey(Theme theme, String property) {
+    public static String [] splitPropertyName(Theme theme, String property) {
         String themeId = theme.getId();
-        if (themeId == null)
-            return property;
+        if (themeId.equals(IThemeManager.DEFAULT_THEME))
+            return new String [] {null, property};
         
         if (property.startsWith(themeId + '.')) {
-            return property.substring(themeId.length() + 1);            
+            return new String [] {property.substring(0, themeId.length()), property.substring(themeId.length() + 1)};            
         }
-        return property;
+        return new String [] {null, property};
     }
     
     /**

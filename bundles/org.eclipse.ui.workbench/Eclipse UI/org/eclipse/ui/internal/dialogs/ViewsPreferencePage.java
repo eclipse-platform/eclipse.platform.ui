@@ -284,8 +284,8 @@ public class ViewsPreferencePage
 		
 		IThemeDescriptor [] descs = WorkbenchPlugin.getDefault().getThemeRegistry().getThemes();
 		int selection = 0;
-		String themeString = WorkbenchMessages.getString("ViewsPreference.defaultTheme"); //$NON-NLS-1$
-		if (currentTheme.getId() == null) {
+		String themeString = PlatformUI.getWorkbench().getThemeManager().getTheme(IThemeManager.DEFAULT_THEME).getLabel();
+		if (currentTheme.getId().equals(IThemeManager.DEFAULT_THEME)) {
 		    themeString = MessageFormat.format(WorkbenchMessages.getString("ViewsPreference.currentThemeFormat"), new Object [] {themeString}); //$NON-NLS-1$
 		}
 		themeCombo.add(themeString);

@@ -17,6 +17,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.ui.themes.IThemeManager;
+
 
 /**
  * The central manager for Theme descriptors.
@@ -120,7 +122,7 @@ public class ThemeRegistry implements IThemeRegistry {
      */
     public ColorDefinition[] getColorsFor(String themeId) {
         ColorDefinition [] defs = getColors();
-        if (themeId == null) 
+        if (themeId.equals(IThemeManager.DEFAULT_THEME)) 
             return defs;
         
         IThemeDescriptor desc = findTheme(themeId);
@@ -133,7 +135,7 @@ public class ThemeRegistry implements IThemeRegistry {
      */
     public FontDefinition[] getFontsFor(String themeId) {
         FontDefinition [] defs = getFonts();
-        if (themeId == null) 
+        if (themeId.equals(IThemeManager.DEFAULT_THEME)) 
             return defs;
         
         IThemeDescriptor desc = findTheme(themeId);

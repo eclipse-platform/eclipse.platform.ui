@@ -13,8 +13,8 @@ package org.eclipse.ui.internal.themes;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.ui.IPluginContribution;
-import org.eclipse.ui.IThemePreview;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.themes.IThemePreview;
 
 
 /**

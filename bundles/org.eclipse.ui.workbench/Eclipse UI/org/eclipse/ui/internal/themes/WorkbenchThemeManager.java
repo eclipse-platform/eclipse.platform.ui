@@ -14,9 +14,14 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.jface.resource.ColorRegistry;
+import org.eclipse.jface.resource.FontRegistry;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -34,11 +39,23 @@ public class WorkbenchThemeManager implements IThemeManager {
 	private IThemeRegistry themeRegistry;
 	private static WorkbenchThemeManager instance;
 	
+	private ColorRegistry defaultThemeColorRegistry;
+	private FontRegistry defaultThemeFontRegistry;
+	
 	/*
 	 * Call dispose when we close
 	 */
 	private WorkbenchThemeManager () {
-		//no-op
+	    defaultThemeColorRegistry = new ColorRegistry(PlatformUI.getWorkbench().getDisplay());
+	    
+	    defaultThemeFontRegistry = new FontRegistry(PlatformUI.getWorkbench().getDisplay());
+
+	    //copy the font values from preferences.
+	    FontRegistry jfaceFonts = JFaceResources.getFontRegistry();
+	    for (Iterator i = jfaceFonts.getKeySet().iterator(); i.hasNext(); ) {
+	        String key = (String) i.next();
+	        defaultThemeFontRegistry.put(key, jfaceFonts.getFontData(key));
+	    }
 	}
 	
 	/**
@@ -75,16 +92,20 @@ public class WorkbenchThemeManager implements IThemeManager {
 	}
 	
 	// kims prototype
-	public ITheme getTheme(String id) {
-	    IThemeDescriptor td = id == null ? null : getThemeRegistry().findTheme(id);
-	    return getTheme(td);
+	public ITheme getTheme(String id) {		
+		if (id.equals(IThemeManager.DEFAULT_THEME))
+			return getTheme((IThemeDescriptor)null);
+		
+		IThemeDescriptor td = getThemeRegistry().findTheme(id);
+		if (td == null)
+			return null;
+		return getTheme(td);
 	}
 
     private ITheme getTheme(IThemeDescriptor td) {        
         ITheme theme = (ITheme) themes.get(td);
         if (theme == null) {
             theme = new Theme(td);
-            //theme.addPropertyChangeListener(myListener);
             themes.put(td, theme);
         }
         return theme;
@@ -93,7 +114,13 @@ public class WorkbenchThemeManager implements IThemeManager {
     private IPropertyChangeListener currentThemeListener = new IPropertyChangeListener() {
 
         public void propertyChange(PropertyChangeEvent event) {
-            firePropertyChange(event);            
+            firePropertyChange(event); 
+            if (event.getSource() instanceof FontRegistry) {
+                JFaceResources.getFontRegistry().put(event.getProperty(), (FontData[]) event.getNewValue());                
+            }
+            else if (event.getSource() instanceof ColorRegistry) {
+                JFaceResources.getColorRegistry().put(event.getProperty(), (RGB) event.getNewValue());
+            }
         }
     };        
     
@@ -123,13 +150,31 @@ public class WorkbenchThemeManager implements IThemeManager {
 		    
 			WorkbenchPlugin.getDefault().getPreferenceStore().setValue(IPreferenceConstants.CURRENT_THEME_ID, id == null ? "" : id); //$NON-NLS-1$
 			WorkbenchPlugin.getDefault().savePluginPreferences();
+			
+			//update the jface registries
+			{
+				ColorRegistry jfaceColors = JFaceResources.getColorRegistry();			
+				ColorRegistry themeColors = currentTheme.getColorRegistry();
+	            for (Iterator i = themeColors.getKeySet().iterator(); i.hasNext(); ) {
+				    String key = (String) i.next();
+				    jfaceColors.put(key, themeColors.getRGB(key));
+				}
+			}
+            {
+				FontRegistry jfaceFonts = JFaceResources.getFontRegistry();			
+				FontRegistry themeFonts = currentTheme.getFontRegistry();
+	            for (Iterator i = themeFonts.getKeySet().iterator(); i.hasNext(); ) {
+				    String key = (String) i.next();
+				    jfaceFonts.put(key, themeFonts.getFontData(key));
+				}
+            }
 	    }	    
     }
     
     private boolean doSetCurrentTheme(String id) {
         ITheme oldTheme = currentTheme;
         ITheme newTheme = getTheme(id); 
-        if (oldTheme != newTheme) {
+        if (oldTheme != newTheme && newTheme != null) {
 	        currentTheme = newTheme;
             return true;
         }       
@@ -167,4 +212,12 @@ public class WorkbenchThemeManager implements IThemeManager {
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
 	    propertyChangeListeners.remove(listener);        
 	}
+
+    public ColorRegistry getDefaultThemeColorRegistry() {
+        return defaultThemeColorRegistry;
+    }
+
+    public FontRegistry getDefaultThemeFontRegistry() {
+        return defaultThemeFontRegistry;
+    }
 }

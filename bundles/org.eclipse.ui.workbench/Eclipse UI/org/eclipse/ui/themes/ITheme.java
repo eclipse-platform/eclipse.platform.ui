@@ -43,14 +43,14 @@ public interface ITheme {
 	/**
 	 * Returns the id of this theme.
 	 * 
-	 * @return the id of this theme.
+	 * @return the id of this theme.  Guarenteed not to be <code>null</code>.
 	 */
     String getId();
     
 	/**
 	 * Returns the label of this theme.
 	 * 
-	 * @return the label of this theme.
+	 * @return the label of this theme.  Guarenteed not be <code>null</code>.
 	 */    
     String getLabel();
     

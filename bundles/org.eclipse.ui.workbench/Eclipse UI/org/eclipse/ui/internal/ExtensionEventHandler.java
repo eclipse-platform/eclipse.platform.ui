@@ -269,7 +269,7 @@ class ExtensionEventHandler implements IRegistryChangeListener {
         ThemeElementHelper.populateRegistry(theme, colorDefs, workbench.getPreferenceStore());
 		
 		Collection fonts = reader.getFontDefinitions();
-		FontDefinition [] fontDefs = (FontDefinition []) fonts.toArray(new ColorDefinition [fonts.size()]);
+		FontDefinition [] fontDefs = (FontDefinition []) fonts.toArray(new FontDefinition [fonts.size()]);
 		ThemeElementHelper.populateRegistry(theme, fontDefs, workbench.getPreferenceStore());		
 
 		Map data = reader.getData();

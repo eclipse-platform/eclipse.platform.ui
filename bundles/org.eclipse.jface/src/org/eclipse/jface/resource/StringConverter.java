@@ -495,18 +495,27 @@ public class StringConverter {
 			throw new DataFormatException("Null doesn't represent a valid RGB"); //$NON-NLS-1$
 		StringTokenizer stok = new StringTokenizer(value, ","); //$NON-NLS-1$
 
-		String red = stok.nextToken();
-		String green = stok.nextToken();
-		String blue = stok.nextToken();
-		int rval = 0, gval = 0, bval = 0;
 		try {
-			rval = Integer.parseInt(red);
-			gval = Integer.parseInt(green);
-			bval = Integer.parseInt(blue);
-		} catch (NumberFormatException e) {
-			throw new DataFormatException(e.getMessage());
+			String red = stok.nextToken();
+			String green = stok.nextToken();
+			String blue = stok.nextToken();
+			int rval = 0, gval = 0, bval = 0;
+			try {
+				rval = Integer.parseInt(red);
+				gval = Integer.parseInt(green);
+				bval = Integer.parseInt(blue);
+			} catch (NumberFormatException e) {
+				DataFormatException dfe = new DataFormatException(e.getMessage());
+				dfe.initCause(e);
+				throw dfe;
+			}
+			return new RGB(rval, gval, bval);
 		}
-		return new RGB(rval, gval, bval);
+		catch (NoSuchElementException e) {
+		    DataFormatException dfe = new DataFormatException(e.getMessage());
+		    dfe.initCause(e);
+		    throw dfe;
+		}
 	}
 	/**
 	 * Converts the given value into an SWT RGB color value.

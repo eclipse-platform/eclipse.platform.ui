@@ -8,26 +8,25 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui;
+package org.eclipse.ui.tests.themes;
 
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.themes.ITheme;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.ui.themes.IColorFactory;
 
 
 /**
- * <em>EXPERIMENTAL</em>
  * @since 3.0
  */
-public interface IThemePreview {
-    
-    /** 
-     * @param parent the Composite in which to create the example
-     * @param theme the theme to preview
+public class TestColorFactory implements IColorFactory {
+
+    public static final RGB RGB = new RGB(91,92,93);
+
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.themes.IColorFactory#createColor()
      */
-    void createControl(Composite parent, ITheme currentTheme);
-    
-    /**
-     * Dispose of resources used by this previewer.
-     */
-    void dispose();
+    public RGB createColor() {
+        return RGB;
+    }
+
 }

@@ -103,7 +103,7 @@
          <attribute name="class" type="string">
             <annotation>
                <documentation>
-                  a class that implements &lt;code&gt;org.eclipse.ui.IThemePreview&lt;/code&gt;
+                  a class that implements &lt;code&gt;org.eclipse.ui.themes.IThemePreview&lt;/code&gt;
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.ui.IPresentationPreview"/>
@@ -139,7 +139,7 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="label" type="string">
+         <attribute name="label" type="string" use="required">
             <annotation>
                <documentation>
                   a translatable name of the color to be presented to the user.
