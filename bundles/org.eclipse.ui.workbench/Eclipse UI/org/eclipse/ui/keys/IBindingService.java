@@ -19,15 +19,32 @@ import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.ui.IService;
 
 /**
+ * <p>
+ * Provides services related to the binding (e.g., keyboard shortcuts) within
+ * the workbench. This service can be used to access the currently active
+ * bindings, as well as the current state of the binding architecture.
+ * </p>
+ * <p>
+ * <em>EXPERIMENTAL</em>. The commands architecture is currently under
+ * development for Eclipse 3.1. This class -- its existence, its name and its
+ * methods -- are in flux. Do not use this class yet.
+ * </p>
+ * 
  * @since 3.1
  */
 public interface IBindingService extends IService {
 
 	/**
 	 * Gets the active bindings for a given command identifier.
+	 * 
+	 * @param commandId
+	 *            The identifier of the command for which the active bindings
+	 *            should be found; must not be <code>null</code>.
+	 * @return The collection of all active bindings for the given command. This
+	 *         collection may be empty, but it is never <code>null</code>.
 	 */
 	public Collection getActiveBindingsFor(String commandId);
-	
+
 	/**
 	 * Returns the currently active scheme.
 	 * 
