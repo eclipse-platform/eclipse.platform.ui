@@ -14,7 +14,10 @@ import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
@@ -39,6 +42,8 @@ public class AntClasspathPage extends AntPage {
 	private Button upButton;
 	private Button downButton;
 	
+	private IDialogSettings fDialogSettings;
+	
 	private final AntClasspathLabelProvider labelProvider = new AntClasspathLabelProvider();
 
 	/**
@@ -46,6 +51,7 @@ public class AntClasspathPage extends AntPage {
 	 */
 	public AntClasspathPage(AntPreferencePage preferencePage) {
 		super(preferencePage);
+		fDialogSettings= ExternalToolsPlugin.getDefault().getDialogSettings();
 	}
 	
 	/* (non-Javadoc)
@@ -78,19 +84,34 @@ public class AntClasspathPage extends AntPage {
 	}
 	
 	/**
-	 * Allows the user to enter a JAR as a classpath.
+	 * Allows the user to enter add JARs to the classpath.
 	 */
 	private void addJarButtonPressed() {
-		FileDialog dialog = new FileDialog(getShell());
+		String lastUsedPath;
+		lastUsedPath= fDialogSettings.get(IUIConstants.DIALOGSTORE_LASTEXTJAR);
+		if (lastUsedPath == null) {
+			lastUsedPath= ""; //$NON-NLS-1$
+		}
+		FileDialog dialog = new FileDialog(getShell(), SWT.MULTI);
 		dialog.setFilterExtensions(new String[] { "*.jar" }); //$NON-NLS-1$;
+		dialog.setFilterPath(lastUsedPath);
 		String result = dialog.open();
-		if (result != null) {
+		if (result == null) {
+			return;
+		}
+		IPath filterPath= new Path(dialog.getFilterPath());
+		String[] results= dialog.getFileNames();
+		for (int i = 0; i < results.length; i++) {
+			String jarName = results[i];
 			try {
-				URL url = new URL("file:" + result); //$NON-NLS-1$;
+				IPath path= filterPath.append(jarName).makeAbsolute();	
+				URL url = new URL("file:" + path.toOSString()); //$NON-NLS-1$;
 				addContent(url);
 			} catch (MalformedURLException e) {
 			}
 		}
+		
+		fDialogSettings.put(IUIConstants.DIALOGSTORE_LASTEXTJAR, filterPath.toOSString());
 	}
 	
 	/* (non-Javadoc)
