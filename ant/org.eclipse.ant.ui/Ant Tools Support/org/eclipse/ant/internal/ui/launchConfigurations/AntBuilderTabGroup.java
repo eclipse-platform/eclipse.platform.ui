@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,7 @@ import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsB
 
 public class AntBuilderTabGroup extends AbstractLaunchConfigurationTabGroup {
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTabGroup#createTabs(org.eclipse.debug.ui.ILaunchConfigurationDialog, java.lang.String)
 	 */
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
@@ -27,9 +27,9 @@ public class AntBuilderTabGroup extends AbstractLaunchConfigurationTabGroup {
 			new RefreshTab(),
 			new AntTargetsTab(),
 			new AntPropertiesTab(),
+			new AntJRETab(),
 			new ExternalToolsBuilderTab(),
 		};
 		setTabs(tabs);
 	}
-
 }
