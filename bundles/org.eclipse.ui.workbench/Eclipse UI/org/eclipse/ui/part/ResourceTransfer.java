@@ -4,13 +4,13 @@ package org.eclipse.ui.part;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.io.*;
+
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.dnd.ByteArrayTransfer;
 import org.eclipse.swt.dnd.TransferData;
-import java.io.*;
 
 /**
  * The <code>ResourceTransfer</code> class is used to transfer an

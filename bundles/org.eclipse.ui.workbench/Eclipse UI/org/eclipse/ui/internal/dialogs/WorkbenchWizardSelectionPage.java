@@ -4,16 +4,13 @@ package org.eclipse.ui.internal.dialogs;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.ui.*;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.wizard.IWizardNode;
+import org.eclipse.jface.wizard.WizardSelectionPage;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.model.AdaptableList;
-import org.eclipse.jface.wizard.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import java.util.*;
 
 /**
  * Page for selecting a wizard from a group of available wizards.

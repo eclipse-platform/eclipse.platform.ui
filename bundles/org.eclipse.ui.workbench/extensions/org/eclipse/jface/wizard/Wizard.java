@@ -4,18 +4,17 @@ package org.eclipse.jface.wizard;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.operation.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Assert;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
-import java.util.List; // disambiguate from SWT List
-
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Shell;
 /**
  * An abstract base implementation of a wizard. A typical client subclasses 
  * both <code>Wizard</code> to implement a particular wizard.

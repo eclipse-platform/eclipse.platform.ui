@@ -5,11 +5,10 @@ package org.eclipse.ui.wizards.datatransfer;
  * All Rights Reserved.
  */
  
-import org.eclipse.core.runtime.*;
-import org.eclipse.ui.dialogs.FileSystemElement;
-import org.eclipse.jface.operation.*;
-import java.io.*;
 import java.util.*;
+
+import org.eclipse.jface.operation.ModalContext;
+import org.eclipse.ui.dialogs.FileSystemElement;
 
 /**
  * The PopulateFilesOperation is an operation used to populate a FileSystemElement one

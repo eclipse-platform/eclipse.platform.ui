@@ -5,7 +5,6 @@ package org.eclipse.ui.model;
  * All Rights Reserved.
  */
 import org.eclipse.jface.resource.ImageDescriptor;
-import java.util.Iterator;
 
 /**
  * This adapter interface provides visual presentation and hierarchical structure

@@ -4,9 +4,9 @@ package org.eclipse.ui.internal.dialogs;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.ui.*;
-import org.eclipse.jface.viewers.*;
-import java.util.*;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.ui.IPerspectiveRegistry;
 
 public class PerspContentProvider implements IStructuredContentProvider {
 /**

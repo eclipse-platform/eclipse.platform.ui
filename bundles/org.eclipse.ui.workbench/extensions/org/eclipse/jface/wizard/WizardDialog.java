@@ -4,25 +4,21 @@ package org.eclipse.jface.wizard;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.dialogs.Dialog;  // disambiguate from SWT Dialog
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
-import java.util.List; // disabiguate from SWT List
-
 /**
  * A dialog to show a wizard to the end user. 
  * <p>

@@ -4,15 +4,13 @@ package org.eclipse.ui.part;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.ui.*;
+import java.util.*;
+import java.util.List;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.*;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ArrayList;
 
 /**
  * Abstract superclass of all multi-page workbench editors.

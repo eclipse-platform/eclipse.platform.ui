@@ -4,8 +4,7 @@ package org.eclipse.ui.internal.misc;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.swt.*;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 
 public abstract class WorkbookPage {

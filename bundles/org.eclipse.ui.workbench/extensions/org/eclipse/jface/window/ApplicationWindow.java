@@ -4,19 +4,16 @@ package org.eclipse.jface.window;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.core.runtime.IProgressMonitor;
+import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.operation.*;
-import org.eclipse.jface.resource.*;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import java.lang.reflect.InvocationTargetException;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.widgets.*;
 
 /**
  * An application window is a high-level "main window", with built-in

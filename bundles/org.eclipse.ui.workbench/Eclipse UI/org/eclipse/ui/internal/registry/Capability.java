@@ -13,18 +13,10 @@ import java.util.ArrayList;
 
 import org.eclipse.core.resources.IProjectNatureDescriptor;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.wizard.IWizard;
-import org.eclipse.ui.ICapabilityInstallWizard;
-import org.eclipse.ui.ICapabilityUninstallWizard;
-import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.internal.WorkbenchImages;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.*;
+import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.model.WorkbenchAdapter;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 

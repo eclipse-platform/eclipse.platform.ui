@@ -5,15 +5,16 @@ package org.eclipse.ui.internal.dialogs;
  * All Rights Reserved.
  */
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.ui.*;
-import org.eclipse.ui.help.*;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.wizard.IWizardNode;
+import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchWizard;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.model.AdaptableList;
-import org.eclipse.ui.internal.registry.*;
-import org.eclipse.ui.dialogs.*;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.wizard.*;
-import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.internal.registry.WizardsRegistryReader;
 
 /**
  * The export wizard allows the user to choose which nested export wizard to run.

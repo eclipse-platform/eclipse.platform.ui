@@ -4,13 +4,11 @@ package org.eclipse.ui.internal.registry;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.core.runtime.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.model.IWorkbenchAdapter;
+import java.util.*;
+
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.model.WorkbenchAdapter;
-import java.util.*;
 
 /**
  * The registry of action set extensions.

@@ -11,8 +11,6 @@ import java.text.Collator;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Set;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.*;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.StringConverter;
@@ -32,7 +30,6 @@ import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.Sorter;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 public class FontPreferencePage
 	extends PreferencePage

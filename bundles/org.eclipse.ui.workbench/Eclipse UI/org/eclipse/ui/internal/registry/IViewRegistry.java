@@ -4,7 +4,6 @@ package org.eclipse.ui.internal.registry;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.util.*;
 
 /**
  * The view registry maintains a list of views explicitly registered

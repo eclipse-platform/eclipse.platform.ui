@@ -7,16 +7,9 @@ package org.eclipse.ui.part;
  * http://www.eclipse.org/legal/cpl-v10.html
  */
 
-import org.eclipse.core.runtime.IAdaptable;
-
 import org.eclipse.jface.resource.ImageDescriptor;
-
-import org.eclipse.ui.*;
-import org.eclipse.ui.IEditorDescriptor;
-import org.eclipse.ui.IEditorRegistry;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IPersistableElement;
 
 /**
  * Implements a input for a MultiEditor

@@ -4,19 +4,13 @@ package org.eclipse.ui.part;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.ui.internal.*;
-import org.eclipse.ui.IPropertyListener;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.resource.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import java.util.*;
+import java.util.Arrays;
 import java.util.List;
+
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.ui.internal.*;
 
 /**
  * Implements a simple web style navigation metaphor for a <code>TreeViewer</code>.  

@@ -4,9 +4,8 @@ package org.eclipse.jface.wizard;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.swt.widgets.Shell;
 
 /**
  * Interface for containers that can host a wizard. It displays

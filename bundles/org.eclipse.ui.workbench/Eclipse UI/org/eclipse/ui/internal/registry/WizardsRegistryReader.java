@@ -6,12 +6,10 @@ package org.eclipse.ui.internal.registry;
  */
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.internal.dialogs.WizardCollectionElement;
+import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
 import org.eclipse.ui.internal.model.AdaptableList;
-import org.eclipse.ui.internal.misc.*;
-import org.eclipse.ui.part.*;
-import org.eclipse.ui.internal.dialogs.*;
-import java.util.*;
 
 /**
  *  Instances access the registry that is provided at creation time

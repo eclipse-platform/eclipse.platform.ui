@@ -4,12 +4,12 @@ package org.eclipse.ui.internal.registry;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.io.*;
+
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.resource.*;
-import java.io.*;
-import java.util.Properties;
 
 /**
  * PerspectiveDescriptor.

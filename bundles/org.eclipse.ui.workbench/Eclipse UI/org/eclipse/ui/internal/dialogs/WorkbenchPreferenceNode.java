@@ -6,16 +6,14 @@ package org.eclipse.ui.internal.dialogs;
  */
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.ui.*;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.preference.PreferenceNode;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.jface.*;
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.preference.*;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.graphics.Image;
-import java.util.*;
 
 /**
  * A proxy for a preference page to avoid creation of preference page

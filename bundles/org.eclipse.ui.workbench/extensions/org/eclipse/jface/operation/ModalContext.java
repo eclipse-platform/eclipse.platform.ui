@@ -4,14 +4,11 @@ package org.eclipse.jface.operation;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.ProgressMonitorWrapper;
-import org.eclipse.jface.util.Assert;
-import org.eclipse.swt.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
 import java.lang.reflect.InvocationTargetException;
+
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.util.Assert;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * Utility class for supporting modal operations.

@@ -4,11 +4,8 @@ package org.eclipse.ui.internal.registry;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.ui.internal.PluginActionSet;
 import org.eclipse.core.runtime.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.PluginActionSetReader;
+import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.model.WorkbenchAdapter;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 

@@ -5,7 +5,6 @@ package org.eclipse.jface.action;
  * All Rights Reserved.
  */
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Image;
 
 /**

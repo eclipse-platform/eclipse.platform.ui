@@ -4,11 +4,12 @@ package org.eclipse.ui.wizards.datatransfer;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.core.runtime.*;
-import org.eclipse.ui.dialogs.FileSystemElement;
-import org.eclipse.jface.operation.*;
-import java.io.*;
 import java.util.*;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.operation.ModalContext;
+import org.eclipse.ui.dialogs.FileSystemElement;
 
 /**
  *	Operation responsible for traversing a specified file system position

@@ -4,11 +4,11 @@ package org.eclipse.ui.internal.misc;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.program.Program;
-import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.ISharedImages;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.ui.internal.WorkbenchImages;
 
 /**
  * The external program image descriptor is the descriptor used to

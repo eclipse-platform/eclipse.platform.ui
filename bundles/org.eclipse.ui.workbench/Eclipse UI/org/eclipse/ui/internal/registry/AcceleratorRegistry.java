@@ -8,13 +8,9 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 */
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.ui.internal.IWorkbenchConstants;
 
 public final class AcceleratorRegistry {
 	

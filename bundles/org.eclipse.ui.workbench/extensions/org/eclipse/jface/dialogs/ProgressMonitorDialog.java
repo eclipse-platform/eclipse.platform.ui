@@ -4,16 +4,16 @@ package org.eclipse.jface.dialogs;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.operation.*;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.events.*;
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * A modal dialog that displays progress during a long running operation.

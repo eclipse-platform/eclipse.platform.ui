@@ -6,12 +6,11 @@ package org.eclipse.ui.internal.dialogs;
  */
 import java.util.StringTokenizer;
 
-import org.eclipse.ui.*;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.internal.*;
-import org.eclipse.ui.internal.registry.*;
-import org.eclipse.ui.internal.misc.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.wizard.*;
+import org.eclipse.ui.internal.registry.NewWizardsRegistryReader;
 
 /**
  * The new wizard is responsible for allowing the user to choose which

@@ -4,13 +4,14 @@ package org.eclipse.ui.internal.misc;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.swt.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
 import java.util.*;
 import java.util.List;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.widgets.*;
 
 /**
  * A Label which supports aligned text and/or an image and different border styles.

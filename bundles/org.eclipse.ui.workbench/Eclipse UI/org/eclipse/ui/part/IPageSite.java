@@ -7,11 +7,8 @@ package org.eclipse.ui.part;
 
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchSite;
-import org.eclipse.ui.IWorkbenchWindow;
 
 /**
  * The primary interface between a page and the outside world.

@@ -4,16 +4,16 @@ package org.eclipse.ui.internal.misc;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.internal.plugins.*;
-import org.eclipse.ui.internal.registry.EditorDescriptor;
+import org.eclipse.swt.program.Program;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.*;
-import org.eclipse.swt.program.Program;
-import java.net.*;
-import java.io.*;
+import org.eclipse.ui.internal.registry.EditorDescriptor;
 
 public class ExternalEditor {
 	private IFile file;

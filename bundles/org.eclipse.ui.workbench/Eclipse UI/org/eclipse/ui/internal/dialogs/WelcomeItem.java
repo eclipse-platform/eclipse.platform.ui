@@ -4,12 +4,13 @@ package org.eclipse.ui.internal.dialogs;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.ui.internal.*;
-import org.eclipse.help.*;
-import org.eclipse.ui.help.*;
-import org.eclipse.jface.action.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.help.IHelp;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 /**
  * Holds the information for an item appearing in the welcome editor
  */

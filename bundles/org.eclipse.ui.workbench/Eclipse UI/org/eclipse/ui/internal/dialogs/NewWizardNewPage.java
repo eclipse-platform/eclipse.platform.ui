@@ -4,25 +4,20 @@ package org.eclipse.ui.internal.dialogs;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.util.*;
+import java.util.List;
+
 import org.eclipse.core.runtime.*;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.misc.Workbook;
-import org.eclipse.ui.internal.misc.WorkbookPage;
-import org.eclipse.ui.internal.model.WorkbenchAdapter;
-import org.eclipse.ui.*;
-import org.eclipse.ui.dialogs.*;
-import org.eclipse.ui.model.*;
-import org.eclipse.ui.part.*;
-import org.eclipse.jface.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.wizard.*;
-import org.eclipse.swt.*;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import java.util.*;
-import java.util.List;
+import org.eclipse.ui.*;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.model.WorkbenchAdapter;
+import org.eclipse.ui.model.*;
 
 /**
  *New wizard selection tab that allows the user to select a registered

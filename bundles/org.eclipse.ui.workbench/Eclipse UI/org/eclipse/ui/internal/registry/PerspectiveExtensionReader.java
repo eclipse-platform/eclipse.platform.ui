@@ -11,10 +11,11 @@ Contributors:
   Dan Rubel <dan_rubel@instantiations.com> 
     - Fix for bug 11490 - define hidden view (placeholder for view) in plugin.xml 
 **********************************************************************/
-import org.eclipse.core.runtime.*;
-import org.eclipse.ui.*;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.ui.IPageLayout;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.*;
-import org.eclipse.ui.internal.misc.*;
 
 /**
  * A strategy to read perspective extension from the registry.

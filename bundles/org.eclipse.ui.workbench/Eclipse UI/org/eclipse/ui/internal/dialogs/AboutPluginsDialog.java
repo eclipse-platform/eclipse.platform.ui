@@ -5,22 +5,18 @@ package org.eclipse.ui.internal.dialogs;
  * All Rights Reserved.
  */
 
-import java.io.IOException;
 import java.net.URL;
 import java.text.Collator;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
-
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.program.Program;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.*;

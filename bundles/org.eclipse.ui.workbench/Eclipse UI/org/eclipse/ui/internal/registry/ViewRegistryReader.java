@@ -5,9 +5,9 @@ package org.eclipse.ui.internal.registry;
  * All Rights Reserved.
  */
 import org.eclipse.core.runtime.*;
-import org.eclipse.ui.internal.misc.*;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * A strategy to read view extensions from the registry.

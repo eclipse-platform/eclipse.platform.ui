@@ -4,7 +4,6 @@ package org.eclipse.jface.wizard;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.jface.util.Assert;
 import java.util.ArrayList;
 import java.util.List;
 

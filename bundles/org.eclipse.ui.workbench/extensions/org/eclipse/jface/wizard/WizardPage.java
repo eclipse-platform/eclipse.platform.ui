@@ -4,15 +4,12 @@ package org.eclipse.jface.wizard;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.jface.dialogs.*; 
 import org.eclipse.jface.dialogs.DialogPage;
-import org.eclipse.jface.dialogs.TitleAreaDialog;
-import org.eclipse.jface.resource.*;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Assert;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Shell;
 
 /**
  * An abstract base implementation of a wizard page.

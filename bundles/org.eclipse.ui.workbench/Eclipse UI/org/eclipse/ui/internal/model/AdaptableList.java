@@ -4,16 +4,10 @@ package org.eclipse.ui.internal.model;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.PlatformObject;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.model.IWorkbenchAdapter;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Shell;
 import java.util.*;
+
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
  * A list of adaptable objects.  This is a generic list that can

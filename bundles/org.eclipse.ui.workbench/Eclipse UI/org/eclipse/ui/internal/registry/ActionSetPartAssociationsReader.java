@@ -4,12 +4,11 @@ package org.eclipse.ui.internal.registry;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.util.ArrayList;
-
-import org.eclipse.core.runtime.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.*;
-import org.eclipse.ui.internal.misc.*;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IPluginRegistry;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * A strategy to read action set part association extension from the registry.

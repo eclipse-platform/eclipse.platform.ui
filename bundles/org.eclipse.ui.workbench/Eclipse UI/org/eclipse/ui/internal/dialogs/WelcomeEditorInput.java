@@ -4,12 +4,11 @@ package org.eclipse.ui.internal.dialogs;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.net.URL;
-
-import org.eclipse.ui.internal.*;
-import org.eclipse.ui.internal.misc.Assert;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.*;
-import org.eclipse.jface.resource.*;
+import org.eclipse.ui.internal.AboutInfo;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.misc.Assert;
 /**
  * A simple editor input for the welcome editor
  */	

@@ -4,16 +4,17 @@ package org.eclipse.ui.wizards.newresource;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.*;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.ui.*;
-import org.eclipse.ui.part.ISetSelectionTarget;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.swt.widgets.Display;
-import java.net.*;
-import java.util.*;
+import org.eclipse.ui.*;
+import org.eclipse.ui.part.ISetSelectionTarget;
 
 /**
  * Abstract base implementation of the standard workbench wizards

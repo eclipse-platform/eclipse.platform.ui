@@ -4,23 +4,17 @@ package org.eclipse.ui.part;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.SubActionBars;
-import org.eclipse.ui.part.PageSite;
-import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.jface.action.*;
+import java.util.*;
+
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.util.*;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.events.FocusListener;
-import org.eclipse.swt.events.FocusEvent;
-import java.util.*;
+import org.eclipse.ui.*;
+import org.eclipse.ui.internal.SubActionBars;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * Abstract superclass of all multi-page workbench views.

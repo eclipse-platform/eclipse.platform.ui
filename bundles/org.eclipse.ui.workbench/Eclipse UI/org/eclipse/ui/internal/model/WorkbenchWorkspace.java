@@ -5,11 +5,8 @@ package org.eclipse.ui.internal.model;
  * All Rights Reserved.
  */
 import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.jface.resource.ImageDescriptor;
-import java.util.*;
+import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
  * IWorkbenchAdapter adapter for the IWorkspace object.

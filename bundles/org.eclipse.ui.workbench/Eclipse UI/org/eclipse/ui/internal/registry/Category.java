@@ -9,14 +9,14 @@ http://www.eclipse.org/legal/cpl-v05.html
  
 Contributors:
 **********************************************************************/
-import org.eclipse.ui.*;
-import org.eclipse.core.runtime.*;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
+
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.resource.ImageDescriptor;
-
-import java.util.*;
-
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.WorkbenchImages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.model.WorkbenchAdapter;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 

@@ -4,17 +4,19 @@ package org.eclipse.ui.internal.dialogs;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.swt.events.*;
-import org.eclipse.ui.IPerspectiveDescriptor;
-import org.eclipse.ui.help.*;
-import org.eclipse.ui.internal.registry.*;
-import org.eclipse.ui.internal.*;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.layout.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import java.util.*;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.registry.PerspectiveRegistry;
 
 /**
  * The SavePerspectiveDialog can be used to get the name of a new

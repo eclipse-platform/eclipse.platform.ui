@@ -4,11 +4,7 @@ package org.eclipse.ui.part;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.jface.action.*;
-import org.eclipse.ui.*;
-import org.eclipse.swt.events.FocusListener;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.PartInitException;
 
 /**
  * Interface for a page in a pagebook view.

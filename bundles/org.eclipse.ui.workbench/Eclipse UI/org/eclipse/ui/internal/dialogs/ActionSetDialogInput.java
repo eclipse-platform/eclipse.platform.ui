@@ -4,14 +4,14 @@ package org.eclipse.ui.internal.dialogs;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.jface.resource.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.model.*;
-import org.eclipse.ui.internal.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IPerspectiveRegistry;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.*;
-import org.eclipse.ui.internal.model.AdaptableList;
-import java.util.*;
 
 /**
  * This class collates the input for an action set dialog.  There

@@ -4,34 +4,22 @@ package org.eclipse.ui.internal.dialogs;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.text.*;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Hashtable;
-
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.preference.*;
+import org.eclipse.jface.util.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
- 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
-
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.preference.*;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.OpenStrategy;
-import org.eclipse.jface.util.PropertyChangeEvent;
-
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.GlobalBuildAction;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.*;
-import org.eclipse.ui.internal.registry.*;
 
 public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	private IWorkbench workbench;

@@ -9,19 +9,14 @@ http://www.eclipse.org/legal/cpl-v05.html
  
 Contributors:
 **********************************************************************/
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.misc.ProjectCapabilitySelectionGroup;
-import org.eclipse.ui.internal.registry.Capability;
-import org.eclipse.ui.internal.registry.CapabilityRegistry;
-import org.eclipse.ui.internal.registry.ICategory;
+import org.eclipse.ui.internal.registry.*;
 
 /**
  * Second page for the new project creation wizard. This page

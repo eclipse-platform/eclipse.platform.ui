@@ -4,16 +4,17 @@ package org.eclipse.jface.dialogs;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.util.Arrays;
+import java.util.Iterator;
+
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.swt.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.widgets.List; // disambiguate between swt and java util
-import org.eclipse.swt.events.*;
-import java.util.*;
 
 /**
  * A dialog to display one or more errors to the user, as contained in an
