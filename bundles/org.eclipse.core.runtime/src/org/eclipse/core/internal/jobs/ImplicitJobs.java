@@ -43,15 +43,25 @@ class ImplicitJobs {
 		 */
 		synchronized void joinRun() {
 			running = false;
-			schedule();
-			while (!running) {
-				manager.getLockManager().aboutToWait(null);
-				try {
-					wait();
-				} catch (InterruptedException e) {
+			//check if there is a blocking thread before trying to schedule
+			InternalJob blockingJob = manager.findBlockingJob(this);
+			Thread blocker = blockingJob == null ? null : blockingJob.getThread();
+			//lock listener decided to grant immediate access
+			if (!manager.getLockManager().aboutToWait(blocker)) {
+				schedule();
+				while (!running) {
+					blocker = manager.getBlockingThread(this);
+					if (!manager.getLockManager().aboutToWait(blocker)) {
+						try {
+							wait(200);
+						} catch (InterruptedException e) {
+						}
+					}
 				}
 			}
 			manager.getLockManager().aboutToRelease();
+			running = true;
+			setThread(Thread.currentThread());
 		}
 		/**
 		 * Pops a rule.  Returns true if it was the last rule for this thread job, and false

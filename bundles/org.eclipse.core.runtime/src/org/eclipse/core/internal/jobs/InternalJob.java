@@ -21,18 +21,19 @@ import org.eclipse.core.runtime.jobs.*;
  * Internal implementation class for jobs.
  */
 public abstract class InternalJob extends PlatformObject implements Comparable {
-	private static final JobManager manager = JobManager.getInstance();
-	private static int nextJobNumber = 0;
 
 	/** 
 	 * Job state code (value 8) indicating that a job is blocked by another currently
 	 * running job.  From an API point of view, this is the same as WAITING.
 	 */
 	public static final int BLOCKED = 0x08;
-	
+
 	//flag mask bits
 	private static final int M_STATE = 0xFF;
 	private static final int M_SYSTEM = 0x0100;
+	private static final JobManager manager = JobManager.getInstance();
+	private static int nextJobNumber = 0;
+	private volatile int flags = Job.NONE;
 
 	private final int jobNumber = nextJobNumber++;
 	private List listeners;
@@ -54,9 +55,12 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	 * this job is sleeping, this represents the time the job should wake up.
 	 */
 	private long startTime;
-	private volatile int flags = Job.NONE;
-	
-	protected InternalJob(String name)  {
+	/*
+	 * The thread that is currently running this job
+	 */
+	private Thread thread = null;
+
+	protected InternalJob(String name) {
 		Assert.isNotNull(name);
 		this.name = name;
 	}
@@ -74,6 +78,7 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	final void addLast(InternalJob entry) {
 		if (previous == null) {
 			previous = entry;
+			entry.next = this;
 			entry.previous = null;
 		} else
 			previous.addLast(entry);
@@ -88,7 +93,7 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 		return (int) (((InternalJob) otherJob).startTime - startTime);
 	}
 	protected void done(IStatus result) {
-		manager.endJob((Job)this, result);
+		manager.endJob((Job) this, result);
 	}
 	/**
 	 * Returns the job listeners that are only listening to this job.  Returns null
@@ -100,7 +105,7 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	final IProgressMonitor getMonitor() {
 		return monitor;
 	}
-	protected String getName()  {
+	protected String getName() {
 		return name;
 	}
 	protected int getPriority() {
@@ -120,6 +125,12 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 		int state = flags & M_STATE;
 		//blocked state is equivalent to waiting state for clients
 		return state == BLOCKED ? Job.WAITING : state;
+	}
+	/* (non-javadoc)
+	 * @see Job.getThread
+	 */
+	protected Thread getThread() {
+		return thread;
 	}
 	final int internalGetState() {
 		return flags & M_STATE;
@@ -149,10 +160,10 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 		else
 			return otherRule.isConflicting(schedulingRule);
 	}
-	protected boolean isSystem()  {
+	protected boolean isSystem() {
 		return (flags & M_SYSTEM) != 0;
 	}
-	protected void join() throws InterruptedException  {
+	protected void join() throws InterruptedException {
 		manager.join(this);
 	}
 	/**
@@ -171,12 +182,11 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	 * Removes this entry from any list it belongs to.  Returns the receiver.
 	 */
 	final InternalJob remove() {
-		Assert.isNotNull(next);
-		Assert.isNotNull(previous);
-		next.setPrevious(previous);
-		previous.setNext(next);
-		next = null;
-		previous = null;
+		if (next != null)
+			next.setPrevious(previous);
+		if (previous != null)
+			previous.setNext(next);
+		next = previous = null;
 		return this;
 	}
 	/* (non-Javadoc)
@@ -215,10 +225,16 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	protected void setSystem(boolean value) {
 		flags = value ? flags | M_SYSTEM : flags & ~M_SYSTEM;
 	}
+	/* (non-javadoc)
+	 * @see Job.setThread
+	 */
+	protected void setThread(Thread thread) {
+		this.thread = thread;
+	}
 	/* (Non-javadoc)
 	 * @see Job#shouldSchedule
 	 */
-	protected boolean shouldSchedule()  {
+	protected boolean shouldSchedule() {
 		return true;
 	}
 	protected boolean sleep() {

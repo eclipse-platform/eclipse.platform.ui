@@ -150,7 +150,10 @@ public class JobManager implements IJobManager {
 			int oldState = job.internalGetState();
 			switch (oldState) {
 				case Job.NONE :
+					break;
 				case InternalJob.BLOCKED :
+					//remove this job from the linked list of blocked jobs
+					job.remove();
 					break;
 				case Job.WAITING :
 					try {
@@ -278,8 +281,11 @@ public class JobManager implements IJobManager {
 		//add any blocked jobs back to the wait queue
 		while (blocked != null) {
 			InternalJob previous = blocked.previous();
-			changeState(blocked, Job.WAITING);
-			pool.jobQueued(blocked);
+			//blocked job may have been canceled
+			if (blocked.internalGetState() == InternalJob.BLOCKED) {
+				changeState(blocked, Job.WAITING);
+				pool.jobQueued(blocked);
+			}
 			blocked = previous;
 		}
 		//notify listeners outside sync block
@@ -298,7 +304,7 @@ public class JobManager implements IJobManager {
 	 * conflicting jobs.  A job can only run if there are no running jobs and no blocked
 	 * jobs whose scheduling rule conflicts with its rule.
 	 */
-	private InternalJob findBlockingJob(InternalJob waiting) {
+	protected InternalJob findBlockingJob(InternalJob waiting) {
 		if (waiting.getRule() == null)
 			return null;
 		for (Iterator it = running.iterator(); it.hasNext();) {
@@ -628,4 +634,20 @@ public class JobManager implements IJobManager {
 			wakeUp((InternalJob) it.next());
 		}
 	}
+	/**
+	 * Returns the thread that owns the rule that is blocking this job from running, or 
+	 * null if there is none.
+	 */
+	public Thread getBlockingThread(InternalJob job) {
+		synchronized (lock) {
+			if (job.internalGetState() != InternalJob.BLOCKED)
+				return null;
+			//if this job is blocked, then the head of the queue is the job that is blocking it
+			InternalJob next = job.next();
+			while (next.next() != null)
+				next = next.next();
+			return next == null ? null : next.getThread();
+		}
+	}
+
 }

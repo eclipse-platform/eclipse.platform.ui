@@ -55,6 +55,7 @@ public class Worker extends Thread {
 				//if job is null we've been shutdown
 				if (currentJob == null)
 					return;
+				currentJob.setThread(this);
 				IStatus result = Status.OK_STATUS;
 				try {
 					result = currentJob.run(((InternalJob) currentJob).getMonitor());
@@ -65,6 +66,7 @@ public class Worker extends Thread {
 				} catch (LinkageError e) {
 					result = handleException(currentJob, e);
 				} finally {
+					currentJob.setThread(null);
 					//clear interrupted state for this thread
 					Thread.interrupted();
 					if ((result.getSeverity() & (IStatus.ERROR | IStatus.WARNING)) != 0)

@@ -247,6 +247,14 @@ public abstract class Job extends InternalJob implements IAdaptable {
 		return super.getState();
 	}
 	/**
+	 * Returns the thread that this job is currently running in.
+	 * @return the thread this job is running in, or <code>null</code>
+	 * if this job is not running or the thread is unknown.
+	 */
+	public final Thread getThread() {
+		return super.getThread();
+	}
+	/**
 	 * Returns whether this job is a system job.  System jobs are typically not 
 	 * revealed to users in any UI presentation of jobs.  Other than their UI presentation,
 	 * system jobs act exactly like other jobs.  If this value is not explicitly set, jobs
@@ -364,6 +372,22 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	public final void setSystem(boolean value)  {
 		super.setSystem(value);
 	}
+	/**
+	 * Sets the thread that this job is currently running in, or <code>null</code>
+	 * if this job is not running or the thread is unknown.
+	 * <p>
+	 * Jobs that use the <code>Job.ASYNC_FINISH</code> return code should tell 
+	 * the job what thread it is running in.  This is used to prevent deadlocks
+	 * 
+	 * @param thread the thread that this job is running in.
+	 * 
+	 * @see #ASYNC_FINISH
+	 * @see #run
+	 */
+	public void setThread(Thread thread) {
+		super.setThread(thread);
+	}
+
 	/**
 	 * Returns whether this job should be run.
 	 * If <code>false</code> is returned, this job will be discarded by the job manager
