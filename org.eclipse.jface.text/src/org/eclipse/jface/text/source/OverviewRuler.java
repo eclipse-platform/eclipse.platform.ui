@@ -22,6 +22,7 @@ import java.util.Set;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseAdapter;
@@ -161,6 +162,31 @@ public class OverviewRuler implements IOverviewRuler {
 		}
 	};
 	
+	class HeaderPainter implements PaintListener {
+		
+		private Color fIndicatorColor;
+		private Color fSeparatorColor;
+		
+		public HeaderPainter() {
+			fSeparatorColor= fSharedTextColors.getColor(ViewForm.borderInsideRGB);
+		}
+		
+		public void setColor(Color color) {
+			fIndicatorColor= color;
+		}
+		
+		public void paintControl(PaintEvent e) {
+			Point s= fHeader.getSize();
+			if (fIndicatorColor != null) {
+				e.gc.setBackground(fIndicatorColor);
+				e.gc.fillRectangle(INSET, (s.y - (2*ANNOTATION_HEIGHT)) / 2, s.x - (2*INSET), 2*ANNOTATION_HEIGHT);
+			}
+			e.gc.setForeground(fSeparatorColor);
+			e.gc.setLineWidth(1);
+			e.gc.drawLine(0, s.y -1, s.x -1, s.y -1);
+		}
+	};
+		
 	private static final int INSET= 2;
 	private static final int ANNOTATION_HEIGHT= 4;
 	private static boolean ANNOTATION_HEIGHT_SCALABLE= false;
@@ -192,6 +218,8 @@ public class OverviewRuler implements IOverviewRuler {
 	private int fAnnotationHeight= -1;
 	/** The annotation access */
 	private IAnnotationAccess fAnnotationAccess;
+	/** The header painter */
+	private HeaderPainter fHeaderPainter;
 	
 	private Set fAnnotationTypes= new HashSet();
 	private Set fHeaderAnnotationTypes= new HashSet();
@@ -852,6 +880,18 @@ public class OverviewRuler implements IOverviewRuler {
 		Color color= null;
 		if (colorType != null) 
 			color= (Color) fAnnotationTypes2Colors.get(colorType);
-		fHeader.setBackground(color);
+			
+		if (color == null) {
+			if (fHeaderPainter != null)
+				fHeaderPainter.setColor(null);
+		}	else {
+			if (fHeaderPainter == null) {
+				fHeaderPainter= new HeaderPainter();
+				fHeader.addPaintListener(fHeaderPainter);
+			}
+			fHeaderPainter.setColor(color);
+		}
+			
+		fHeader.redraw();
 	}
 }
