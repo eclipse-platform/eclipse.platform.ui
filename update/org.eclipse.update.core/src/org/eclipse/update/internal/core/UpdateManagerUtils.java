@@ -25,11 +25,11 @@ public class UpdateManagerUtils {
 		// if no URL , provide Default
 		if (urlString == null || urlString.trim().equals("")) {
 
-		// no URL, no default, return right now...
-		if (defaultURL == null || defaultURL.trim().equals(""))
-			return null;
-		else
-			urlString = defaultURL;
+			// no URL, no default, return right now...
+			if (defaultURL == null || defaultURL.trim().equals(""))
+				return null;
+			else
+				urlString = defaultURL;
 		}
 
 		// URL can be relative or absolute	
@@ -40,11 +40,7 @@ public class UpdateManagerUtils {
 		} catch (MalformedURLException e) {
 			// the url is not an absolute URL
 			// try relative
-			url =
-				new URL(
-					rootURL.getProtocol(),
-					rootURL.getHost(),
-					rootURL.getPath() + (rootURL.getPath().endsWith("/")?"":"/")+urlString);
+			url = new URL(rootURL.getProtocol(), rootURL.getHost(), rootURL.getPath() + (rootURL.getPath().endsWith("/") ? "" : "/") + urlString);
 		}
 		return url;
 	}
@@ -55,32 +51,26 @@ public class UpdateManagerUtils {
 	public static String getResourceString(String infoURL, ResourceBundle bundle) {
 		String result = null;
 		if (infoURL != null) {
-			result =
-				UpdateManagerPlugin.getPlugin().getDescriptor().getResourceString(
-					infoURL,
-					bundle);
+			result = UpdateManagerPlugin.getPlugin().getDescriptor().getResourceString(infoURL, bundle);
 		}
 		return result;
 	};
 
-/**
-	 * Resolve a URL as a local file URL
-	 * if the URL is not a file URL, transfer the stream to teh temp directory 
-	 * and return the new URL
-	 */
-	public static URL resolveAsLocal(URL remoteURL)
-	throws MalformedURLException, IOException, CoreException {
-		return resolveAsLocal(remoteURL,null);
+	/**
+		 * Resolve a URL as a local file URL
+		 * if the URL is not a file URL, transfer the stream to teh temp directory 
+		 * and return the new URL
+		 */
+	public static URL resolveAsLocal(URL remoteURL) throws MalformedURLException, IOException, CoreException {
+		return resolveAsLocal(remoteURL, null);
 	}
-
 
 	/**
 	 * Resolve a URL as a local file URL
 	 * if the URL is not a file URL, transfer the stream to teh temp directory 
 	 * and return the new URL
 	 */
-	public static URL resolveAsLocal(URL remoteURL, String localName)
-		throws MalformedURLException, IOException, CoreException {
+	public static URL resolveAsLocal(URL remoteURL, String localName) throws MalformedURLException, IOException, CoreException {
 		URL result = remoteURL;
 
 		if (!(remoteURL == null || remoteURL.getProtocol().equals("file"))) {
@@ -100,25 +90,19 @@ public class UpdateManagerUtils {
 			} else {
 				throw new IOException("Couldn\'t find the file: " + remoteURL.toExternalForm());
 			}
+			
+			// DEBUG:
+			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_INSTALL) {
+				UpdateManagerPlugin.getPlugin().debug("Transfered URL:" + remoteURL.toExternalForm() + " to:" + result.toExternalForm());
+			}
 		}
-
-		// DEBUG:
-		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_INSTALL) {
-			System.out.println(
-				"Transfered URL:"
-					+ remoteURL.toExternalForm()
-					+ " to:"
-					+ result.toExternalForm());
-		}
-
 		return result;
 	}
 
 	/**
 	 * 
 	 */
-	public static URL copyToLocal(InputStream sourceContentReferenceStream,String localName)
-		throws MalformedURLException, IOException {
+	public static URL copyToLocal(InputStream sourceContentReferenceStream, String localName) throws MalformedURLException, IOException {
 		URL result = null;
 
 		// create the Dir is they do not exist
@@ -126,13 +110,14 @@ public class UpdateManagerUtils {
 		// do not use the String as it may contain URL like separator
 		File localFile = new File(localName);
 		int index = localFile.getPath().lastIndexOf(File.separator);
-		if (index!=-1){
-			File dir = new File(localFile.getPath().substring(0,index));
-			if (!dir.exists()) dir.mkdirs();
+		if (index != -1) {
+			File dir = new File(localFile.getPath().substring(0, index));
+			if (!dir.exists())
+				dir.mkdirs();
 		}
 
 		// transfer teh content of the File
-		if (!localFile.isDirectory()){		
+		if (!localFile.isDirectory()) {
 			FileOutputStream localContentReferenceStream = new FileOutputStream(localFile);
 			transferStreams(sourceContentReferenceStream, localContentReferenceStream);
 		}
@@ -151,11 +136,8 @@ public class UpdateManagerUtils {
 		// if there is a separator after the dot
 		// do not consider it as an extension
 		// FIXME: LINUX ???
-		String ext = (dotIndex != -1 && fileIndex<dotIndex) ? "." + remotePath.substring(dotIndex) : "";
-		String name =
-			(fileIndex != -1 && fileIndex < dotIndex)
-				? remotePath.substring(fileIndex, dotIndex)
-				: "Eclipse_Update_TMP_";
+		String ext = (dotIndex != -1 && fileIndex < dotIndex) ? "." + remotePath.substring(dotIndex) : "";
+		String name = (fileIndex != -1 && fileIndex < dotIndex) ? remotePath.substring(fileIndex, dotIndex) : "Eclipse_Update_TMP_";
 
 		Date date = new Date();
 		String result = name + date.getTime() + ext;
@@ -167,10 +149,7 @@ public class UpdateManagerUtils {
 	 * This method also closes both streams.
 	 * Taken from FileSystemStore
 	 */
-	private static void transferStreams(
-		InputStream source,
-		OutputStream destination)
-		throws IOException {
+	private static void transferStreams(InputStream source, OutputStream destination) throws IOException {
 
 		Assert.isNotNull(source);
 		Assert.isNotNull(destination);
@@ -186,12 +165,30 @@ public class UpdateManagerUtils {
 		} finally {
 			try {
 				source.close();
-			} catch (IOException e) {
-			}
+			} catch (IOException e) {}
 			try {
 				destination.close();
-			} catch (IOException e) {
-			}
+			} catch (IOException e) {}
+		}
+	}
+
+	/**
+	 * remove a file or directory from the file system.
+	 * used to clean up install
+	 */
+	public static void removeFromFileSystem(File file) {
+		if (!file.exists())
+			return;
+		if (file.isDirectory()) {
+			String[] files = file.list();
+			if (files != null) // be careful since file.list() can return null
+				for (int i = 0; i < files.length; ++i)
+					removeFromFileSystem(new File(file, files[i]));
+		}
+		if (!file.delete()) {
+			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+			IStatus status = new Status(IStatus.WARNING,id,IStatus.OK,"cannot remove: " + file.getPath()+" from the filesystem",new Exception());
+			UpdateManagerPlugin.getPlugin().getLog().log(status);
 		}
 	}
 

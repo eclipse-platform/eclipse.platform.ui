@@ -22,7 +22,7 @@ public class TestSiteParse extends UpdateManagerTestCase {
 	
 		try {		
 			URL remoteUrl = new URL(SOURCE_FILE_SITE+"xmls/site1/");
-			ISite remoteSite = new URLSite(remoteUrl);
+			ISite remoteSite = SiteManager.getSite(remoteUrl);
 			
 			IFeature[] feature = remoteSite.getFeatures();
 			ICategory[] categories = remoteSite.getCategories();
@@ -33,6 +33,22 @@ public class TestSiteParse extends UpdateManagerTestCase {
 			fail(e.toString());
 			e.printStackTrace();
 		}
+	}
+	
+	public void testNumberOfFeatures (){
+
+		try {		
+			URL remoteURL = new URL("http",bundle.getString("HTTP_HOST_1"),bundle.getString("HTTP_PATH_2"));			
+			ISite remoteSite = SiteManager.getSite(remoteURL);
+			
+			IFeature[] feature = remoteSite.getFeatures();
+			assertEquals(feature.length,2);
+			
+		} catch (Exception e){
+			fail(e.toString());
+			e.printStackTrace();
+		}
+		
 	}
 }
 

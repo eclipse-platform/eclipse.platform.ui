@@ -23,6 +23,7 @@ import org.eclipse.update.core.ISite;
 public class InternalSiteManager {
 
 	private static ISite TEMP_SITE;
+	public static final String TEMP_NAME="update_tmp";
 
 	private Map sites;
 	private Map sitesTypes;
@@ -56,10 +57,13 @@ public class InternalSiteManager {
 			URL installURL = UpdateManagerPlugin.getPlugin().getDescriptor().getInstallURL();
 			URL resolvedURL = Platform.resolve(installURL);
 			String externalForm = resolvedURL.getPath();
+			
+			// teh result is <path>/<plugin path>/<aplugin>/
+			// transform in <apth>/ <plugin Path>/
 			int index = externalForm.lastIndexOf("/");
 			if (externalForm.endsWith("/")){
 				 externalForm = externalForm.substring(0,index);
-				 index = externalForm.lastIndexOf("/");
+				 index = externalForm.lastIndexOf("/")+1;
 			}
 			URL newURL = null;
 			newURL = new URL(resolvedURL.getProtocol(), resolvedURL.getHost(),resolvedURL.getPath().substring(0,index));
@@ -116,7 +120,7 @@ public class InternalSiteManager {
 			try {
 				String tempDir = System.getProperty("java.io.tmpdir");
 				if (!tempDir.endsWith(File.separator)) tempDir += File.separator;
-				TEMP_SITE =	new FileSite(new URL("file",null,tempDir));
+				TEMP_SITE =	new FileSite(new URL("file",null,tempDir+TEMP_NAME+File.separator));
 			} catch (MalformedURLException e) {
 				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 				IStatus status = new Status(IStatus.ERROR,id,IStatus.OK,"Cannot create TEmporary Site",e);

@@ -27,20 +27,28 @@ public class URLSite extends AbstractSite {
 	}
 
 	/**
-	 * @see AbstractSite#getInputStream(IFeature, String)
+	 * @see AbstractSite#getURL(IFeature, String)
 	 * In this default implementation we can deduct the URL of the 
 	 * archive based on teh name of teh ID
 	 * In other implementations, we may have to use the site.xml archive tag, that maps
 	 * an id and a URL
 	 */
-	public URL getURL(IFeature sourceFeature, String archiveId) throws CoreException {
+	public URL getURL(String archiveId) throws CoreException {
 		URL contentURL = null;
 		try {
 			contentURL = getArchiveURLfor(archiveId);
-			if (contentURL==null) contentURL = new URL(getURL(),DEFAULT_PLUGIN_PATH+archiveId);
+			
+			// if there is no mapping in the site.xml
+			// for this archiveId, use the default one
+			if (contentURL==null) {
+				String protocol = getURL().getProtocol();
+				String host = getURL().getHost();
+				String path = getURL().getPath()+DEFAULT_PLUGIN_PATH;
+				contentURL = new URL(protocol,host,path+archiveId);
+			}
 		} catch (MalformedURLException e){
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.ERROR,id,IStatus.OK,"Error creating",e);
+			IStatus status = new Status(IStatus.ERROR,id,IStatus.OK,"Error creating URL",e);
 			throw new CoreException(status);	
 		}		
 		return contentURL;
@@ -111,7 +119,7 @@ public class URLSite extends AbstractSite {
 		//FIXME: should not be called should it ?
 	}
 
-	/*
+	/**
 	 * @see AbstractSite#getDefaultFeature(URL)
 	 */
 	public IFeature getDefaultFeature(URL featureURL) {

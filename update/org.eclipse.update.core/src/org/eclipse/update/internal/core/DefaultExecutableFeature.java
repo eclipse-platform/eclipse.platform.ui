@@ -87,9 +87,7 @@ public class DefaultExecutableFeature extends AbstractFeature {
 			List files = getFileNames(pluginDir);
 			result = new String[files.size()];
 			files.toArray(result);
-
-			//FIXME: check validity of algorithm and create testcase
-
+			
 		} catch (Exception e) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Error retrieving archive names for:" + pluginEntry.getIdentifier().toString(), e);
@@ -104,16 +102,10 @@ public class DefaultExecutableFeature extends AbstractFeature {
 	private String getPath(IPluginEntry pluginEntry) throws Exception {
 		URL siteURL = getSite().getURL();
 		String result = null;
-		String archiveId = getArchiveID(pluginEntry);
-		
+				
  		// get the URL of the Archive file that contains the plugin entry
-		URL fileURL = ((AbstractSite) getSite()).getArchiveURLfor(archiveId);
-		// if doesn't exist, get default path			
-		if (fileURL != null) {
-			result=fileURL.getPath();
-		} else {
-			result = siteURL.getPath() + AbstractSite.DEFAULT_PLUGIN_PATH + archiveId;
-		}
+		URL fileURL = ((AbstractSite) getSite()).getURL(getArchiveID(pluginEntry));
+		result = fileURL.getPath();
 
 		// return the list of all subdirectories
 		if (!result.endsWith(File.separator)) result += File.separator;		

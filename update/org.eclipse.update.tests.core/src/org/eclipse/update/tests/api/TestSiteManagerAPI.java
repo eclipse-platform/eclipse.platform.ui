@@ -10,12 +10,12 @@ import org.eclipse.update.core.ISite;
 import org.eclipse.update.core.SiteManager;
 import org.eclipse.update.tests.UpdateManagerTestCase;
 
-public class CopyOfTestSiteManagerAPI extends UpdateManagerTestCase {
+public class TestSiteManagerAPI extends UpdateManagerTestCase {
 	
 	/**
 	 * Test the getFeatures()
 	 */
-	public CopyOfTestSiteManagerAPI(String arg0) {
+	public TestSiteManagerAPI(String arg0) {
 		super(arg0);
 	}
 	

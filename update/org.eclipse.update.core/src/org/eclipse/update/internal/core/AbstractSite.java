@@ -55,7 +55,6 @@ public abstract class AbstractSite implements ISite {
 	 * Initializes the site by reading the site.xml file
 	 */
 	private void initializeSite() throws CoreException {
-		InputStream inStream = null;
 		isManageable = false;		
 		
 		try {
@@ -72,10 +71,7 @@ public abstract class AbstractSite implements ISite {
 			IStatus status = new Status(IStatus.ERROR,id,IStatus.OK,"Error during parsing of the site XML",e);
 			throw new CoreException(status);
 		} finally {
-			try {
-			 inStream.close();
-			 isInitialized = true;
-			} catch (Exception e){}
+    		 isInitialized = true;
 		}
 	}
 	
@@ -147,9 +143,9 @@ public abstract class AbstractSite implements ISite {
 	protected abstract void storeFeatureInfo(VersionedIdentifier featureIdentifier,String contentKey,InputStream inStream) throws CoreException ;
 
 	/**
-	 * return the URL of the streamKey inside the feature
+	 * return the URL of the archive ID
 	 */
-	public abstract URL getURL  (	IFeature sourceFeature,	String streamKey) throws CoreException;
+	public abstract URL getURL  (String archiveID) throws CoreException;
 	/**
 	 * returns the default prefered feature for this site
 	 */
@@ -230,10 +226,11 @@ public abstract class AbstractSite implements ISite {
 	 */
 	public URL getArchiveURLfor(String archiveId){
 		URL result = null;
+		boolean found = false;		
+		
 		if (!(archiveId==null || archiveId.equals("") || archives==null || archives.isEmpty())){
 			Iterator iter = archives.iterator();
 			IInfo info;
-			boolean found = false;
 			while (iter.hasNext() && !found){
 				info = (IInfo)iter.next();
 				if (archiveId.trim().equalsIgnoreCase(info.getText())){
@@ -242,6 +239,18 @@ public abstract class AbstractSite implements ISite {
 				}
 			}
 		}
+		
+		//DEBUG:
+		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_INSTALL){
+			String debugString = "Searching archive ID:"+archiveId+" in Site:"+getURL().toExternalForm()+"...";
+			if (found) {
+				debugString+="found , pointing to:"+result.toExternalForm();
+			} else {
+				debugString+="NOT FOUND";
+			}
+			UpdateManagerPlugin.getPlugin().debug(debugString);
+		}
+		
 		return result;
 	}
 
@@ -301,7 +310,6 @@ public abstract class AbstractSite implements ISite {
 		ICategory[] result = new ICategory[0];
 		if (isManageable) {
 			if (categories==null && !isInitialized)	logNotInitialized();
-			//FIXME: I do not like this pattern.. List or Array ???
 			if (!categories.isEmpty()) {
 				result = new ICategory[categories.size()];
 				categories.toArray(result);

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site url="Info.html">
+  <feature url="features/feature1"/>
+  <archive id="org.eclipse.update.plugin1" url="plugins/plugin1"/>
+  <archive id="org.eclipse.update.archive2" url="plugins/plugin2"/>
+</site>

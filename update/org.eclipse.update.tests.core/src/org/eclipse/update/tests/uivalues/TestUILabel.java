@@ -19,6 +19,10 @@ public class TestUILabel extends UpdateManagerTestCase {
 	}
 	
 	
+	/**
+	 * Method testHTTPSite.
+	 * @throws Exception
+	 */
 	public void testHTTPSite() throws Exception{ 
 		
 		ISite remoteSite = new URLSite(new URL("http",bundle.getString("HTTP_HOST_1"),bundle.getString("HTTP_PATH_2")));
@@ -38,6 +42,11 @@ public class TestUILabel extends UpdateManagerTestCase {
 	}
 	
 	
+	/**
+	 * Method print.
+	 * @param info
+	 * @param text
+	 */
 	private void print(IInfo info, String text){
 		System.out.print("->"+text+":");
 		if (info.getURL()!=null) 

@@ -3,6 +3,7 @@ package org.eclipse.update.internal.core;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -530,25 +531,33 @@ public abstract class AbstractFeature implements IFeature {
 			// copy *blobs/content references/archives/bundles* in TEMP space
 			if (((AbstractSite) getSite()).optimize()) {
 				if (archiveIDToInstall != null) {
+					URL sourceURL;
+					String newFile;
+					URL newURL;
 					for (int i = 0; i < archiveIDToInstall.length; i++) {
-						// the name of teh file in teh temp directory
-						// should be the regular plugins/id_ver as the Temp site is OUR site
-						URL sourceURL = ((AbstractSite) getSite()).getURL(this, archiveIDToInstall[i]);
-						String newFile = AbstractSite.DEFAULT_PLUGIN_PATH + archiveIDToInstall[i];
-						UpdateManagerUtils.resolveAsLocal(sourceURL, newFile);
+							
+						// transform the id by asking the site to map them to real URL inside the SITE	
+						sourceURL  = ((AbstractSite) getSite()).getURL(archiveIDToInstall[i]);						
+						// the name of the file in the temp directory
+						// should be the regular plugins/pluginID_ver as the Temp site is OUR site
+						newFile = AbstractSite.DEFAULT_PLUGIN_PATH + archiveIDToInstall[i];
+						newURL = UpdateManagerUtils.resolveAsLocal(sourceURL, newFile);
+		
+						// transfer the possible mapping to the temp site						
+						tempSite.addArchive(new Info(archiveIDToInstall[i],newURL));
 					}
 				}
 
 				// the site of this feature now becomes the TEMP directory
-				// FIXME: make sure there is no osther issue
+				// FIXME: make sure there is no other issue
 				// like asking for stuff that hasn't been copied
 				// or reusing this feature
 				// of having an un-manageable temp site
 
-				// transfer the possible mapping to the temp site
-				tempSite.setArchives(getSite().getArchives());
 				this.setSite(tempSite);
 			}
+			
+			
 			// obtain the list of *Streamable Storage Unit*
 			// from the archive
 			if (pluginsToInstall != null) {
@@ -574,6 +583,9 @@ public abstract class AbstractFeature implements IFeature {
 				}
 			}
 
+		//Everything went fine, clean up TEMP drive
+		UpdateManagerUtils.removeFromFileSystem(new File(tempSite.getURL().getPath()));
+
 		} catch (IOException e) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Error during Install", e);
@@ -588,7 +600,8 @@ public abstract class AbstractFeature implements IFeature {
 		try {
 			new DefaultFeatureParser(getFeatureInputStream(), this);
 		} catch (IOException e) {
-			//FIXME: is not finding the feature an error or a warning
+			//FIXME: if we cannot find the feature and or the feature.xml
+			// is it an error or a warning ???
 			// I do not believe we should stop the execution for that...
 			// but we must Log it all the time, not only when debugging...
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();

@@ -43,8 +43,7 @@ public class DefaultSiteParser extends DefaultHandler {
 	/**
 	 * Constructor for DefaultSiteParser
 	 */
-	public DefaultSiteParser(InputStream siteStream, ISite site)
-		throws IOException, SAXException {
+	public DefaultSiteParser(InputStream siteStream, ISite site) throws IOException, SAXException {
 		super();
 		parser = new SAXParser();
 		parser.setContentHandler(this);
@@ -55,8 +54,7 @@ public class DefaultSiteParser extends DefaultHandler {
 
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
-			UpdateManagerPlugin.getPlugin().debug(
-				"Start parsing:" + site.getURL().toExternalForm());
+			UpdateManagerPlugin.getPlugin().debug("Start parsing site:" + site.getURL().toExternalForm());
 		}
 
 		try {
@@ -66,8 +64,7 @@ public class DefaultSiteParser extends DefaultHandler {
 			//ok, there is no bundle, keep it as null
 			//DEBUG:
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
-				UpdateManagerPlugin.getPlugin().debug(
-					e.getLocalizedMessage() + ":" + site.getURL().toExternalForm());
+				UpdateManagerPlugin.getPlugin().debug(e.getLocalizedMessage() + ":" + site.getURL().toExternalForm());
 			}
 		}
 		parser.parse(new InputSource(this.siteStream));
@@ -76,48 +73,42 @@ public class DefaultSiteParser extends DefaultHandler {
 	/**
 	 * @see DefaultHandler#startElement(String, String, String, Attributes)
 	 */
-	public void startElement(
-		String uri,
-		String localName,
-		String qName,
-		Attributes attributes)
-		throws SAXException {
+	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
-			UpdateManagerPlugin.getPlugin().debug(
-				"Start Element: uri:" + uri + " local Name:" + localName + " qName:" + qName);
+			UpdateManagerPlugin.getPlugin().debug("Start Element: uri:" + uri + " local Name:" + localName + " qName:" + qName);
 		}
 		try {
-			
-		String tag = localName.trim();
 
-		if (tag.equalsIgnoreCase(SITE)) {
-			processSite(attributes);
-			return;
-		}
+			String tag = localName.trim();
 
-		if (tag.equalsIgnoreCase(FEATURE)) {
-			processFeature(attributes);
-			return;
-		}
+			if (tag.equalsIgnoreCase(SITE)) {
+				processSite(attributes);
+				return;
+			}
 
-		if (tag.equalsIgnoreCase(ARCHIVE)) {
-			processArchive(attributes);
-			return;
-		}
+			if (tag.equalsIgnoreCase(FEATURE)) {
+				processFeature(attributes);
+				return;
+			}
 
-		if (tag.equalsIgnoreCase(CATEGORY_DEF)) {
-			processCategoryDef(attributes);
-			return;
-		}
+			if (tag.equalsIgnoreCase(ARCHIVE)) {
+				processArchive(attributes);
+				return;
+			}
 
-		if (tag.equalsIgnoreCase(CATEGORY)) {
-			processCategory(attributes);
-			return;
-		}
-		} catch (MalformedURLException e){
-			throw new SAXException("error processing URL. Check the validity of the URLs",e);
+			if (tag.equalsIgnoreCase(CATEGORY_DEF)) {
+				processCategoryDef(attributes);
+				return;
+			}
+
+			if (tag.equalsIgnoreCase(CATEGORY)) {
+				processCategory(attributes);
+				return;
+			}
+		} catch (MalformedURLException e) {
+			throw new SAXException("error processing URL. Check the validity of the URLs", e);
 		}
 
 	}
@@ -125,7 +116,7 @@ public class DefaultSiteParser extends DefaultHandler {
 	/** 
 	 * process the Site info
 	 */
-	private void processSite(Attributes attributes)  throws MalformedURLException {
+	private void processSite(Attributes attributes) throws MalformedURLException {
 		//
 		String infoURL = attributes.getValue("url");
 		infoURL = UpdateManagerUtils.getResourceString(infoURL, bundle);
@@ -138,8 +129,7 @@ public class DefaultSiteParser extends DefaultHandler {
 
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
-			UpdateManagerPlugin.getPlugin().debug(
-				"End process Site tag: infoURL:" + infoURL);
+			UpdateManagerPlugin.getPlugin().debug("End process Site tag: infoURL:" + infoURL);
 		}
 
 	}
@@ -150,19 +140,16 @@ public class DefaultSiteParser extends DefaultHandler {
 	private void processFeature(Attributes attributes) throws MalformedURLException {
 
 		// url
-		URL url =
-			UpdateManagerUtils.getURL(site.getURL(), attributes.getValue("url"), null);
+		URL url = UpdateManagerUtils.getURL(site.getURL(), attributes.getValue("url"), null);
 
 		if (url != null) {
 			// the type of the feature
 			String type = attributes.getValue("type");
 			if (type == null || type.equals("")) {
-				// ask the Site for teh default type 
-				feature = (AbstractFeature) ((AbstractSite)site).getDefaultFeature(url);
+				// ask the Site for the default type 
+				feature = (AbstractFeature) ((AbstractSite) site).getDefaultFeature(url);
 			} else {
-				Assert.isTrue(
-					false,
-					"Not implemented Yet... do not use 'type' in the feature tag of site.xml");
+				Assert.isTrue(false, "Not implemented Yet... do not use 'type' in the feature tag of site.xml");
 				//FIXME: manages creation of feature...
 			}
 
@@ -171,18 +158,11 @@ public class DefaultSiteParser extends DefaultHandler {
 
 			// DEBUG:		
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
-				UpdateManagerPlugin.getPlugin().debug(
-					"End Processing Feature Tag: url:" + url.toExternalForm() + " type" + type);
+				UpdateManagerPlugin.getPlugin().debug("End Processing Feature Tag: url:" + url.toExternalForm() + "  ->type:" + type+" Class name:"+feature.getClass().toString());
 			}
 
 		} else {
-			IStatus status =
-				new Status(
-					IStatus.WARNING,
-					UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier(),
-					IStatus.OK,
-					"Feature doesn\'t have a URL",
-					null);
+			IStatus status = new Status(IStatus.WARNING, UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier(), IStatus.OK, "Feature doesn\'t have a URL", null);
 			UpdateManagerPlugin.getPlugin().getLog().log(status);
 		}
 
@@ -199,8 +179,7 @@ public class DefaultSiteParser extends DefaultHandler {
 
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
-			UpdateManagerPlugin.getPlugin().debug(
-				"End processing Archive: id:" + id + " ver:" + urlString);
+			UpdateManagerPlugin.getPlugin().debug("End processing Archive: id:" + id + " ver:" + urlString);
 		}
 
 	}
@@ -215,8 +194,7 @@ public class DefaultSiteParser extends DefaultHandler {
 
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
-			UpdateManagerPlugin.getPlugin().debug(
-				"End processing Category: name:" + category);
+			UpdateManagerPlugin.getPlugin().debug("End processing Category: name:" + category);
 		}
 	}
 
@@ -232,8 +210,7 @@ public class DefaultSiteParser extends DefaultHandler {
 
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
-			UpdateManagerPlugin.getPlugin().debug(
-				"End processing CategoryDef: name:" + name + " label:" + label);
+			UpdateManagerPlugin.getPlugin().debug("End processing CategoryDef: name:" + name + " label:" + label);
 		}
 
 	}
@@ -248,13 +225,11 @@ public class DefaultSiteParser extends DefaultHandler {
 	/**
 	 * @see DefaultHandler#endElement(String, String, String)
 	 */
-	public void endElement(String uri, String localName, String qName)
-		throws SAXException {
+	public void endElement(String uri, String localName, String qName) throws SAXException {
 
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
-			UpdateManagerPlugin.getPlugin().debug(
-				"End Element:" + uri + ":" + localName + ":" + qName);
+			UpdateManagerPlugin.getPlugin().debug("End Element:" + uri + ":" + localName + ":" + qName);
 		}
 
 	}

@@ -15,6 +15,7 @@ import java.util.*;
 import junit.framework.TestCase;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.update.internal.core.UpdateManagerUtils;
 /**
  * All Help System Test cases must subclass this base Testcase.
  * See SampleTestCase.java for a template.
@@ -68,9 +69,9 @@ public abstract class UpdateManagerTestCase extends TestCase {
 			e.printStackTrace();
 		}
 
-		//cleanup target
+		//cleanup target 
 		File target = new File(homePath + "/target/");
-		removeFromFileSystem(target);
+		UpdateManagerUtils.removeFromFileSystem(target);
 
 	}
 
@@ -109,25 +110,6 @@ public abstract class UpdateManagerTestCase extends TestCase {
 	 */
 	protected void umTearDown() throws Exception {
 		// do nothing.
-	}
-
-	/**
-	 * remove a file or directory from the file system.
-	 * used to clean up install
-	 */
-	protected void removeFromFileSystem(File file) {
-		if (!file.exists())
-			return;
-		if (file.isDirectory()) {
-			String[] files = file.list();
-			if (files != null) // be careful since file.list() can return null
-				for (int i = 0; i < files.length; ++i)
-					removeFromFileSystem(new File(file, files[i]));
-		}
-		if (!file.delete()) {
-			System.out.println(
-				"WARNING: removeFromFileSystem(File) could not delete: " + file.getPath());
-		}
 	}
 
 }

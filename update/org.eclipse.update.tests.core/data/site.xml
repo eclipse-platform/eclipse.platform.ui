@@ -1,21 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site url="/info/siteInfo.html">
-  <feature id="org.isv.feature3" url="http://www.eclipse.org/feature3" version="3.4.5">
+  <feature url="install/features/feature3">
     <category name="eclipse/UML"/>
   </feature>
-  <feature id="org.eclipse.update.core.tests.feature2" url="http://www.eclipse.org/feature2" version="3.4.6">
+  <feature url="http://www.eclipse.org/feature2">
     <category name="eclipse/J2EE"/>
   </feature>
-  <feature id="org.eclipse.update.core.tests.fature1" url="http://www.eclipse.org/feature1" version="2.3.5">
+  <feature url="http://www.eclipse.org/feature1">
     <category name="eclipse/J2EE"/>
   </feature>
-  <archive id="org.eclipse.update.plugin1" url="www.eclipse.org/pluign1"/>
-  <archive id="org.eclipse.update.archive2" url="www.eclipse.org/plugin2"/>
+  <archive id="org.eclipse.update.plugin1" url="plugin1"/>
+  <archive id="org.eclipse.update.archive2" url="plugin2"/>
   <archive id="org.eclipse.update.plugin3" url="www.eclipse.org/plugin3"/>
   <archive id="org.eclipse.unknown.plugin" url="www.eclipse.org/plugins/plugin4"/>
   <archive id="org.eclipse.update.core.tests.feature1.foo1" url="www.eclipse.org/plugin1"/>
   <category-def label="J2EE tools" name="eclipse/J2EE"/>
   <category-def label="EJB Tools" name="eclipse/J2EE/EJB"/>
   <category-def label="UML tools" name="eclipse/UML"/>
-  <category-def label="Messaging Tools" name="eclipse/B2B"/>
+  <category-def label="Messaging Tools" name="B2B"/>
+  <category-def label="Eclipse Tools" name="eclipse"/>
 </site>
