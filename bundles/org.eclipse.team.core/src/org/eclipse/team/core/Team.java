@@ -141,6 +141,23 @@ public final class Team {
 	}
 
 	/**
+	 * Returns whether the given file should be ignored.
+	 * @deprecated use isIgnoredHint instead
+	 */
+	public static boolean isIgnored(IFile file) {
+		IIgnoreInfo[] ignorePatterns = getAllIgnores();
+		StringMatcher matcher;
+		for (int i = 0; i < ignorePatterns.length; i++) {
+			IIgnoreInfo info = ignorePatterns[i];
+			if (info.getEnabled()) {
+				matcher = new StringMatcher(info.getPattern(), true, false);
+				if (matcher.match(file.getName())) return true;
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * Return all known file types.
 	 * 
 	 * @return all known file types
