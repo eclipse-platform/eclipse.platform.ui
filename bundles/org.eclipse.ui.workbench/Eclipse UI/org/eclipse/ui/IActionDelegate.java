@@ -39,7 +39,7 @@ import org.eclipse.jface.viewers.ISelection;
  * the action delegate's plug-in is loaded.
  * </p><p>
  * Clients can choose to subclass the provided abstract implementation
- * <code>org. eclipse. ui. actions. ActionDelegate</code> or implement the
+ * <code>org.eclipse.ui.actions.ActionDelegate</code> or implement the
  * interface directly.
  * </p>
  * 
