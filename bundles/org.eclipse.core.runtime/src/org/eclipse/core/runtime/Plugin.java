@@ -356,18 +356,39 @@ public abstract class Plugin implements BundleActivator {
 	 * settings supplied from outside the plug-in (product configuration or
 	 * platform start up).
 	 * </p>
-	 * TODO @deprecated TODO see DJ for details
 	 * @since 2.0
+	 * @deprecated
+	 * This method has been refactored in the new preference mechanism 
+	 * to handle the case where the runtime compatibility layer does not exist. The 
+	 * contents of this method should be moved to the method named 
+	 * <code>initializeDefaultPreferences</code> in a separate subclass of 
+	 * {@link org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer}. 
+	 * This class should be contributed via the
+	 * <code>org.eclipse.core.runtime.preferences</code> extension point.
+	 * <pre>
+	 * 	&lt;extension point=&quo;org.eclipse.core.runtime.preferences&quo;&gt;
+	 *			&lt;initializer class=&quo;com.example.MyPreferenceInitializer&quo;/&gt;
+	 *		&lt;/extension&gt;
+	 *		...
+	 *		package com.example;
+	 *		public class MyPreferenceInitializer extends AbstractPreferenceInitializer {
+	 *			public MyPreferenceInitializer() {
+	 *				super();
+	 *			}
+	 *			public void initializeDefaultPreferences() {
+	 *				MyPlugin.getPlugin().getPluginPreferences().setDefault(key, value);
+	 *			}
+	 *		}
+	 * </pre>
 	 */
 	protected void initializeDefaultPluginPreferences() {
 		// default implementation of this method - spec'd to do nothing
 	}
 
 	/**
-	 * This method has been added as a hook for the Platform into the 
-	 * preferences mechanism to allow for the initialization of default 
-	 * preference values. It cannot be over-ridden by subclasses and 
-	 * should not be called by clients.
+	 * Internal method. This method is a hook for
+	 * initialization of default preference values. 
+	 * It should not be called by clients.
 	 * 
 	 * @since 3.0
 	 */
