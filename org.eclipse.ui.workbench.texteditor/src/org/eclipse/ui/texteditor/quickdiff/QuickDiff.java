@@ -16,16 +16,15 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IPluginRegistry;
+import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.source.IAnnotationModel;
 
-import org.eclipse.ui.texteditor.ITextEditor;
-
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 import org.eclipse.ui.internal.texteditor.quickdiff.DocumentLineDiffer;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * Access class for the quick diff reference provider extension point.
@@ -145,7 +144,7 @@ public class QuickDiff {
 
 	/** Reads all extensions. */
 	private void registerExtensions() {
-		IPluginRegistry registry= Platform.getPluginRegistry();
+		IExtensionRegistry registry= Platform.getExtensionRegistry();
 		List list= new ArrayList();
 
 		IConfigurationElement[] elements= registry.getConfigurationElementsFor(TextEditorPlugin.PLUGIN_ID, REFERENCE_PROVIDER_EXTENSION_POINT);
