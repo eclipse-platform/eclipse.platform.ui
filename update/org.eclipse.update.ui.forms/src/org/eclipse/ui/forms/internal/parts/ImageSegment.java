@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.update.ui.forms.internal.richtext;
+package org.eclipse.ui.forms.internal.parts;
 
 import java.util.Hashtable;
 

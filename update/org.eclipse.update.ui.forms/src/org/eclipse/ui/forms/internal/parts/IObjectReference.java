@@ -8,17 +8,12 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.update.ui.forms.internal.richtext;
-
-import java.util.Hashtable;
-
-import org.eclipse.swt.graphics.GC;
+package org.eclipse.ui.forms.internal.parts;
 
 /**
  * @version 	1.0
  * @author
  */
-public abstract class ParagraphSegment {
-	public abstract void advanceLocator(GC gc, int wHint, Locator loc, Hashtable objectTable);
-	public abstract void paint(GC gc, int width, Locator loc, Hashtable objectTable, boolean selected);
+public interface IObjectReference {
+	public String getObjectId();
 }

@@ -19,7 +19,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.ui.actions.*;
 import org.eclipse.update.ui.forms.internal.engine.FormEngine;
-import org.eclipse.update.ui.forms.richtext.RichText;
+import org.eclipse.ui.forms.parts.RichText;
 
 public class FormWidgetFactory {
 	public static final String KEY_DRAW_BORDER = "FormWidgetFactory.drawBorder";

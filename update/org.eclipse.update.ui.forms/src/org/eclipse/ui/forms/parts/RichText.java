@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.update.ui.forms.richtext;
+package org.eclipse.ui.forms.parts;
 
 import java.io.InputStream;
 import java.util.Hashtable;
@@ -23,7 +23,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.ui.forms.internal.*;
-import org.eclipse.update.ui.forms.internal.richtext.*;
+import org.eclipse.ui.forms.internal.parts.*;
 
 public class RichText extends Canvas {
 	/**

@@ -8,13 +8,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.update.ui.forms.internal.richtext;
+package org.eclipse.ui.forms.internal.parts;
 
 import java.util.Hashtable;
 
 import org.eclipse.swt.graphics.*;
 import org.eclipse.update.ui.forms.internal.HyperlinkSettings;
-import org.eclipse.update.ui.forms.richtext.*;
+import org.eclipse.ui.forms.parts.*;
 
 /**
  * @version 	1.0
