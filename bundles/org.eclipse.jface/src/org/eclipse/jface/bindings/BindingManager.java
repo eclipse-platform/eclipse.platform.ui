@@ -46,6 +46,11 @@ import org.eclipse.swt.SWT;
  * though it might get faster. Where possible, we have also tried to be memory
  * efficient.
  * </p>
+ * <p>
+ * <em>EXPERIMENTAL</em>. The commands architecture is currently under
+ * development for Eclipse 3.1. This class -- its existence, its name and its
+ * methods -- are in flux. Do not use this class yet.
+ * </p>
  * 
  * @since 3.1
  */
@@ -1294,7 +1299,7 @@ public final class BindingManager implements IContextManagerListener,
 			equals &= Util.equals(contextId, binding.getContextId());
 			equals &= Util.equals(locale, binding.getLocale());
 			equals &= Util.equals(platform, binding.getPlatform());
-			equals &= Util.equals(type, binding.getType());
+			equals &= (type == binding.getType());
 			if (equals) {
 				bindingItr.remove();
 				bindingsChanged = true;

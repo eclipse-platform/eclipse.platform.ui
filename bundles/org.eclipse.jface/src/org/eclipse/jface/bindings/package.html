@@ -11,9 +11,28 @@
 (e.g., keyboard shortcuts).</p>
 
 <h2>Package Specification</h2>
-<p>The <code>BindingManager</code> co-ordinates all interactions between the
-various classes, and is required to make sure that duplicate instances do not
-get created.  All instances in this package should be created through the
-manager.</p>
+<p>
+This package provides the common classes and abstract classes required to
+provide binding support.
+</p>
+<p>
+All the real work in this package is carried out by the
+<code>BindingManager</code>, and most work with bindings can be carried out
+directly with it.  The binding manager manages a collection of bindings, and
+decides which bindings are active at any point in time.  By changes the various
+properties of the manager, the active bindings will change.  The binding
+manager implements a caching scheme that is optimized for an infreqeuntly
+changing set of bindings, but frequently changing properties.
+</p>
+<p>
+The binding manager also manages schemes.  A scheme is a grouping of bindings.
+To create a scheme, use <code>BindingManager.getScheme(String)</code>.  The
+scheme must then be defined before it can be used.
+</p>
+<p>
+If you wish to implement your own type of binding, then you must subclass
+<code>Trigger</code> and <code>TriggerSequence</code>.  Then, simply use these
+subclasses with the <code>BindingManager</code>.
+</p>
 </body>
 </html>

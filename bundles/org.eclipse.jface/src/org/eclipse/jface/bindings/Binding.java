@@ -50,21 +50,16 @@ import org.eclipse.jface.util.Util;
  * decide we need to change it.
  * </p>
  * <code><pre>
- * 
- *  
- *   
- *    
- *     
  *      KeyBinding(null,scheme,context,&quot;Ctrl+Shift+F&quot;,gtk)
- *      KeyBinding(command,scheme,context,&quot;Esc Ctrl+F&quot;,gtk) 
- *      
- *     
- *    
- *   
- *  
+ *      KeyBinding(command,scheme,context,&quot;Esc Ctrl+F&quot;,gtk)
  * </pre></code>
  * <p>
  * Bindings are intended to be immutable objects.
+ * </p>
+ * <p>
+ * <em>EXPERIMENTAL</em>. The commands architecture is currently under
+ * development for Eclipse 3.1. This class -- its existence, its name and its
+ * methods -- are in flux. Do not use this class yet.
  * </p>
  * 
  * @since 3.1
@@ -232,7 +227,7 @@ public abstract class Binding {
 		if (getPlatform() != null) {
 			deletes &= !Util.equals(getPlatform(), binding.getPlatform());
 		}
-		deletes &= Util.equals(binding.getType(), SYSTEM);
+		deletes &= (binding.getType() == SYSTEM);
 		deletes &= Util.equals(getCommandId(), null);
 
 		return deletes;
@@ -261,7 +256,7 @@ public abstract class Binding {
 		equals &= Util.equals(getLocale(), binding.getLocale());
 		equals &= Util.equals(getPlatform(), binding.getPlatform());
 		equals &= Util.equals(getSchemeId(), binding.getSchemeId());
-		equals &= Util.equals(getType(), binding.getType());
+		equals &= (getType() == binding.getType());
 
 		return equals;
 	}

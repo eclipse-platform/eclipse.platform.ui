@@ -17,11 +17,16 @@ package org.eclipse.jface.bindings;
  * <p>
  * This class is not intended to be extended by clients.
  * </p>
+ * <p>
+ * <em>EXPERIMENTAL</em>. The commands architecture is currently under
+ * development for Eclipse 3.1. This class -- its existence, its name and its
+ * methods -- are in flux. Do not use this class yet.
+ * </p>
  * 
  * @since 3.1
  * @see ISchemeListener#schemeChanged(SchemeEvent)
  */
-public class SchemeEvent {
+public final class SchemeEvent {
     /**
      * Whether the scheme has become defined or undefined.
      */

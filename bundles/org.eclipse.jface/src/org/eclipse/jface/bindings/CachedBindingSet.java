@@ -15,10 +15,17 @@ import java.util.Map;
 import org.eclipse.jface.util.Util;
 
 /**
+ * <p>
  * A resolution of bindings for a given state. To see if we already have a
  * cached binding set, just create one of these binding sets and then look it up
  * in a map. If it is not already there, then add it and set the cached binding
  * resolution.
+ * </p>
+ * <p>
+ * <em>EXPERIMENTAL</em>. The commands architecture is currently under
+ * development for Eclipse 3.1. This class -- its existence, its name and its
+ * methods -- are in flux. Do not use this class yet.
+ * </p>
  * 
  * @since 3.1
  */

@@ -41,6 +41,11 @@ import org.eclipse.jface.util.Util;
  * <p>
  * This interface is not intended to be extended or implemented by clients.
  * </p>
+ * <p>
+ * <em>EXPERIMENTAL</em>. The commands architecture is currently under
+ * development for Eclipse 3.1. This class -- its existence, its name and its
+ * methods -- are in flux. Do not use this class yet.
+ * </p>
  * 
  * @since 3.1
  * @see ISchemeListener
@@ -176,7 +181,7 @@ public final class Scheme extends NamedHandleObject implements Comparable {
 
         final Scheme castedObject = (Scheme) object;
         boolean equals = true;
-        equals &= Util.equals(defined, castedObject.defined);
+        equals &= (defined == castedObject.defined);
         equals &= Util.equals(description, castedObject.description);
         equals &= Util.equals(id, castedObject.id);
         equals &= Util.equals(name, castedObject.name);
