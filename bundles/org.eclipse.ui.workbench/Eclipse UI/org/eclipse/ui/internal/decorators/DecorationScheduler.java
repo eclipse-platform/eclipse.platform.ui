@@ -13,13 +13,11 @@ package org.eclipse.ui.internal.decorators;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.IJobChangeEvent;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.runtime.jobs.JobChangeAdapter;
+import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.progress.UIJob;
 
 /**
  * The DecorationScheduler is the class that handles the
@@ -43,6 +41,7 @@ public class DecorationScheduler {
 	DecoratorManager decoratorManager;
 
 	boolean shutdown = false;
+	boolean updateWaiting = false;
 
 	Job decorationJob;
 	UIJob updateJob;
@@ -149,7 +148,7 @@ public class DecorationScheduler {
 	 * @param resources
 	 * @param decorationResults
 	 */
-	public void decorated() {
+	synchronized void decorated() {
 
 		//Don't bother if we are shutdown now
 		if (shutdown)
@@ -159,6 +158,9 @@ public class DecorationScheduler {
 		if (updateJob == null) {
 			updateJob = getUpdateJob();
 			updateJob.setPriority(Job.DECORATE);
+		}
+		synchronized(resultLock){
+			updateWaiting = true;
 		}
 		updateJob.schedule();
 	}
@@ -321,6 +323,7 @@ public class DecorationScheduler {
 						pendingUpdate.toArray(new Object[pendingUpdate.size()]);
 					monitor.beginTask(WorkbenchMessages.getString("DecorationScheduler.UpdatingTask"), elements.length + 20); //$NON-NLS-1$
 					pendingUpdate.clear();
+					updateWaiting = false;
 					monitor.worked(15);
 					decoratorManager.fireListeners(
 						new LabelProviderChangedEvent(
@@ -343,8 +346,8 @@ public class DecorationScheduler {
 			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
 			 */
 			public void done(IJobChangeEvent event) {
-				//Reschedule in case something got added when we dropped the lock
-				if(!pendingUpdate.isEmpty())
+				//Reschedule if another update came in while we were working
+				if(updateWaiting)
 					decorated();
 			}
 		});
