@@ -1605,11 +1605,25 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	}
 
 	/**
-     * XXX: temporary API in support of Dirk's explorations
-     * into grouping by working sets, which requires viewers
-     * to support multiple equal elements.
+     * Updates the given element's presentation when one or more of its
+     * properties changes. Only the given element is updated.
+     * <p>
+     * EXPERIMENTAL.  Not to be used except by JDT.
+     * This method was added to support JDT's explorations
+     * into grouping by working sets, which requires viewers to support multiple 
+     * equal elements.  See bug 76482 for more details.  This support will
+     * likely be removed in Eclipse 3.2 in favour of proper support for
+     * multiple equal elements. 
+     * </p>
+     * @param widget
+     *            the widget for the element
+     * @param element
+     *            the element
+     * @param properties
+     *            the properties that have changed, or <code>null</code> to
+     *            indicate unknown
      */
-	protected void internalUpdate(Widget item, Object element, String[] properties) {
+	protected void internalUpdate(Widget widget, Object element, String[] properties) {
 		boolean needsRefilter = false;
 		if (properties != null) {
 			for (int i = 0; i < properties.length; ++i) {
@@ -1636,7 +1650,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 			}
 		}
 		if (needsUpdate) {
-			updateItem(item, element);
+			updateItem(widget, element);
 		}
 	}
 

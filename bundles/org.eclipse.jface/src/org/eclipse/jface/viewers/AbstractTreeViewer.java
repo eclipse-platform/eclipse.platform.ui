@@ -125,10 +125,23 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
     }
 
 	/**
-     * XXX: temporary API in support of Dirk's explorations
-     * into grouping by working sets, which requires viewers
-     * to support multiple equal elements.
+     * Adds the given child elements to this viewer as children of the given
+     * parent element.
+     * <p>
+     * EXPERIMENTAL.  Not to be used except by JDT.
+     * This method was added to support JDT's explorations
+     * into grouping by working sets, which requires viewers to support multiple 
+     * equal elements.  See bug 76482 for more details.  This support will
+     * likely be removed in Eclipse 3.2 in favour of proper support for
+     * multiple equal elements. 
+     * </p>
      *
+     * @param widget 
+     *           the widget for the parent element
+     * @param parentElement
+     *           the parent element
+     * @param childElements
+     *           the child elements to add
      * @since 3.1
      */
     protected void internalAdd(Widget widget, Object parentElement, Object[] childElements) {
@@ -1087,10 +1100,14 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 
     /**
      * Refreshes the tree starting at the given widget.
-     *
-     * XXX: temporary API in support of Dirk's explorations
-     * into grouping by working sets, which requires viewers
-     * to support multiple equal elements.
+     * <p>
+     * EXPERIMENTAL.  Not to be used except by JDT.
+     * This method was added to support JDT's explorations
+     * into grouping by working sets, which requires viewers to support multiple 
+     * equal elements.  See bug 76482 for more details.  This support will
+     * likely be removed in Eclipse 3.2 in favour of proper support for
+     * multiple equal elements. 
+     * </p>
      * 
      * @param widget
      *           the widget
@@ -1104,6 +1121,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
      *           <code>true</code> to update labels for existing elements,
      *           <code>false</code> to only update labels as needed, assuming
      *           that labels for existing elements are unchanged.
+     * @since 3.1
      */
     protected void internalRefresh(Widget widget, Object element,
             boolean doStruct, boolean updateLabels) {
