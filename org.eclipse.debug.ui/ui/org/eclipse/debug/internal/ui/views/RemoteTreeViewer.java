@@ -360,14 +360,16 @@ public class RemoteTreeViewer extends TreeViewer {
         if (widget != null) {
             final Item[] currentChildren = getChildren(widget);
             if (offset < currentChildren.length) {
-		        preservingSelection(new Runnable() {
-		            public void run() {
-		        	    for (int i = offset; i < currentChildren.length; i++) {
-		        	        disassociate(currentChildren[i]);
-		        	        currentChildren[i].dispose();
-		        	    }
-		            }
-		        });
+                preservingSelection(new Runnable() {
+                    public void run() {
+                        for (int i = offset; i < currentChildren.length; i++) {
+                            if (currentChildren[i].getData() != null) {
+                                disassociate(currentChildren[i]);
+                            } 
+                            currentChildren[i].dispose();
+                        }
+                    }
+                });
             }
         }
     }
