@@ -138,12 +138,12 @@ public interface IDialogConstants {
 	public int DESELECT_ALL_ID = 19;
 	
 	/**
-	 * Button id for a "Select types" button (value 19).
+	 * Button id for a "Select types" button (value 20).
 	 */
 	public int SELECT_TYPES_ID = 20;
 	
 	/**
-	 * Button id for a "No to All" button (value 4).
+	 * Button id for a "No to All" button (value 21).
 	 */
 	public int NO_TO_ALL_ID = 21;
 	
