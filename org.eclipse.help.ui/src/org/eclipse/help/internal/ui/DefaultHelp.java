@@ -64,18 +64,17 @@ public class DefaultHelp implements IHelp
 		}
 		if (!AppServer.isRunning())
 			return; // may want to display an error message
-		String base = "http://" + AppServer.getHost() + ":" + AppServer.getPort();
+
 		String query = "";
 		if (toc != null) {
 			query = "?toc=" + toc;
 			if (topic != null)
-				query = query + "&topic=" + URLEncoder.encode(createTopicURL(topic));
+				query = query + "&topic=" + URLEncoder.encode(getTopicURL(topic));
 		} else {
 			if (topic != null)
-				query = "?topic=" + URLEncoder.encode(createTopicURL(topic));
+				query = "?topic=" + URLEncoder.encode(getTopicURL(topic));
 		}
-		String url =
-			"http://" + AppServer.getHost() + ":" + AppServer.getPort() + "/help" + query;
+		String url = getBaseURL() + "/help" + query;
 		WorkbenchHelpPlugin.getDefault().getHelpBrowser().displayURL(url);
 	}	
 	/**
@@ -116,15 +115,11 @@ public class DefaultHelp implements IHelp
 		String contextID = getContextID(context);
 		if (!AppServer.isRunning())
 			return; // may want to display an error message
-		String url =
-			"http://"
-				+ AppServer.getHost()
-				+ ":"
-				+ AppServer.getPort()
+		String url = getBaseURL()
 				+ "/help?tab=links&contextId="
 				+ URLEncoder.encode(contextID)
 				+ "&topic="
-				+ URLEncoder.encode(createTopicURL(topic.getHref()));
+				+ URLEncoder.encode(getTopicURL(topic.getHref()));
 		WorkbenchHelpPlugin.getDefault().getHelpBrowser().displayURL(url);
 	}
 	/**
@@ -138,15 +133,11 @@ public class DefaultHelp implements IHelp
 			return;
 		if (!AppServer.isRunning())
 			return; // may want to display an error message
-		String url =
-			"http://"
-				+ AppServer.getHost()
-				+ ":"
-				+ AppServer.getPort()
+		String url = getBaseURL()
 				+ "/help?tab=search&"
 				+ searchQuery
 				+ "&topic="
-				+ URLEncoder.encode(createTopicURL(topic));
+				+ URLEncoder.encode(getTopicURL(topic));
 		WorkbenchHelpPlugin.getDefault().getHelpBrowser().displayURL(url);
 	}	/**
 	 * Computes context information for a given context ID.
@@ -176,16 +167,23 @@ public class DefaultHelp implements IHelp
 		return id;
 	}
 	
-	private String createTopicURL(String topic) {
+	private String getBaseURL()
+	{
+		return "http://" + AppServer.getHost() + ":" + AppServer.getPort();
+	}
+	
+	private String getTopicURL(String topic) {
 		if (topic == null)
 			return null;
 		if (topic.startsWith("../"))
 			topic = topic.substring(2);
+			/*
 		if (topic.startsWith("/")) {
 			String base = "http://" + AppServer.getHost() + ":" + AppServer.getPort();
 			base += "/help/content/help:";
 			topic = base + topic;
 		}
+		*/
 		return topic;
 	}
 }
