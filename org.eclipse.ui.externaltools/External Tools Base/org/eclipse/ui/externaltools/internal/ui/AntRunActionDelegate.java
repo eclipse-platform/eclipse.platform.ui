@@ -19,7 +19,6 @@ import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.actions.ActionDelegate;
 import org.eclipse.ui.externaltools.internal.ant.launchConfigurations.AntLaunchShortcut;
-import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 
 /**
  * Action delegate to launch Ant on a build file.
@@ -33,12 +32,8 @@ public class AntRunActionDelegate extends ActionDelegate implements IObjectActio
 	 */
 	public void run(IAction action) {
 		if (part != null && selectedFile != null) {
-			if (ExternalToolsPlugin.isLaunchConfigurationMode()) {
-				AntLaunchShortcut shortcut = new AntLaunchShortcut();
-				shortcut.launch(new StructuredSelection(selectedFile), ILaunchManager.RUN_MODE);
-			} else {
-				new AntAction(selectedFile, part.getSite().getWorkbenchWindow()).run();
-			}
+			AntLaunchShortcut shortcut = new AntLaunchShortcut();
+			shortcut.launch(new StructuredSelection(selectedFile), ILaunchManager.RUN_MODE);
 		}
 	}
 	
