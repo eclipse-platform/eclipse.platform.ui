@@ -44,7 +44,7 @@ public class MatchLocator {
 			pattern= asRegEx(pattern);
 		
 		if (!isCaseSensitive)
-			regExPattern= Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
+			regExPattern= Pattern.compile(pattern, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
 		else
 			regExPattern= Pattern.compile(pattern);
 

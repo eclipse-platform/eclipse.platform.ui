@@ -99,7 +99,7 @@ public class TextSearchScope extends SearchScope {
 	 * Adds an extension to the scope.
 	 */
 	public void addExtension(String extension) {
-		Pattern pattern= Pattern.compile(asRegEx(extension), Pattern.CASE_INSENSITIVE);
+		Pattern pattern= Pattern.compile(asRegEx(extension), Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
 		fExtensions.add(pattern.matcher("")); //$NON-NLS-1$
 	}
 

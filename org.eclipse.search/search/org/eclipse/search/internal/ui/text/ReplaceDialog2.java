@@ -459,7 +459,7 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 	private Pattern createReplacePattern() {
 		FileSearchQuery query= (FileSearchQuery)fPage.getInput().getQuery();
 		if (!query.isCaseSensitive())
-			return Pattern.compile(query.getSearchString(), Pattern.CASE_INSENSITIVE);
+			return Pattern.compile(query.getSearchString(), Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
 		else
 			return Pattern.compile(query.getSearchString());
 	}
