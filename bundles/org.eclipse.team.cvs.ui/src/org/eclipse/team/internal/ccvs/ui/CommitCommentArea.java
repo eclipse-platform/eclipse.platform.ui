@@ -184,7 +184,12 @@ public class CommitCommentArea extends DialogArea {
 	private void finished() {
 		// strip template from the comment entered
 		try {
-			comment = comment.replaceAll(getCommitTemplate(), ""); //$NON-NLS-1$
+			String commitTemplate = getCommitTemplate();
+			if (comment.startsWith(commitTemplate)) {
+				comment = comment.substring(commitTemplate.length());
+			} else if (comment.endsWith(commitTemplate)) {
+				comment = comment.substring(0, comment.length() - commitTemplate.length());
+			}
 		} catch (CVSException e) {
 			// we couldn't get the commit template. Log the error and continue
 			CVSUIPlugin.log(e);
