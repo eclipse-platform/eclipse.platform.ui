@@ -3353,7 +3353,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @see org.eclipse.ui.INavigationLocationProvider#createNavigationLocation()
 	 * 2.1 - WORK_IN_PROGRESS do not use.
 	 */
-	public INavigationLocation createLocation() {
+	public INavigationLocation createEmptyNavigationLocation() {
 		return new TextSelectionNavigationLocation(this, false);
 	}
 	
@@ -3361,7 +3361,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @see org.eclipse.ui.INavigationLocationProvider#createNavigationLocation()
 	 * 2.1 - WORK_IN_PROGRESS do not use.
 	 */
-	public INavigationLocation createCurrentLocation() {
+	public INavigationLocation createNavigationLocation() {
 		return new TextSelectionNavigationLocation(this, true);
 	}
 	
@@ -3371,7 +3371,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	protected void markInNavigationHistory() {
 		IWorkbenchPage page= getEditorSite().getPage();
-		page.getNavigationHistory().markLocation();
+		page.getNavigationHistory().markLocation(this);
 	}
 	
 	/**
