@@ -6,10 +6,11 @@ package org.eclipse.team.internal.ccvs.core.client;
  */
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.team.ccvs.core.ICVSFile;
 import org.eclipse.team.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.util.Assert;
+import org.eclipse.team.internal.ccvs.core.Policy;
 
 /**
  * Handles a "Removed" response from the CVS server.
@@ -34,8 +35,8 @@ class RemovedHandler extends ResponseHandler {
 		return "Removed"; //$NON-NLS-1$
 	}
 
-	public void handle(Session session, String localDir,
-		IProgressMonitor monitor) throws CVSException {
+	public void handle(Session session, String localDir, IProgressMonitor monitor) throws CVSException {
+		
 		// read additional data for the response
 		String repositoryFile = session.readLine();
 
@@ -43,8 +44,10 @@ class RemovedHandler extends ResponseHandler {
 		String fileName = repositoryFile.substring(repositoryFile.lastIndexOf("/") + 1); //$NON-NLS-1$
 		ICVSFolder mParent = session.getLocalRoot().getFolder(localDir);
 		ICVSFile mFile = mParent.getFile(fileName);
-
-		Assert.isTrue(mFile.exists() && mFile.isManaged());
+		
+		if ( ! mFile.isManaged()) {
+			throw new CVSException(Policy.bind("RemovedHandler.invalid", new Path(localDir).append(fileName).toString())); //$NON-NLS-1$
+		}
 		
 		// delete then unmanage the file
 		mFile.delete();
