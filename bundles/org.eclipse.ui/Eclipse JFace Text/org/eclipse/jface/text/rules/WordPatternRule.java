@@ -89,13 +89,13 @@ public class WordPatternRule extends SingleLineRule {
 	/**
 	 * Returns the characters in the buffer to the scanner.
 	 * Note that the rule must also return the characters
-	 * read in as part of the start sequence.
+	 * read in as part of the start sequence expect the first one.
 	 *
 	 * @param scanner the scanner to be used
 	 */
 	protected void unreadBuffer(ICharacterScanner scanner) {
 		fBuffer.insert(0, fStartSequence);
-		for (int i= fBuffer.length() - 1; i >= 0; i--)
+		for (int i= fBuffer.length() - 1; i > 0; i--)
 			scanner.unread();
 	}
 }
