@@ -21,7 +21,7 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.variables.ILaunchVariableConstants;
-import org.eclipse.debug.core.variables.VariableUtil;
+import org.eclipse.debug.core.variables.LaunchVariableUtil;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 
 /**
@@ -123,8 +123,8 @@ public final class ExternalToolMigration {
 		config.setAttribute(IExternalToolConstants.ATTR_SHOW_CONSOLE, TRUE.equals((String) commandArgs.get(TAG_SHOW_CONSOLE)));
 		config.setAttribute(IExternalToolConstants.ATTR_RUN_IN_BACKGROUND, TRUE.equals((String) commandArgs.get(TAG_RUN_BKGRND)));
 		config.setAttribute(IExternalToolConstants.ATTR_PROMPT_FOR_ARGUMENTS, TRUE.equals((String) commandArgs.get(TAG_PROMPT_ARGS)));
-		config.setAttribute(VariableUtil.ATTR_REFRESH_SCOPE, (String) commandArgs.get(TAG_REFRESH_SCOPE));
-		config.setAttribute(VariableUtil.ATTR_REFRESH_RECURSIVE, TRUE.equals((String) commandArgs.get(TAG_REFRESH_RECURSIVE)));
+		config.setAttribute(LaunchVariableUtil.ATTR_REFRESH_SCOPE, (String) commandArgs.get(TAG_REFRESH_SCOPE));
+		config.setAttribute(LaunchVariableUtil.ATTR_REFRESH_RECURSIVE, TRUE.equals((String) commandArgs.get(TAG_REFRESH_RECURSIVE)));
 
 		config.setAttribute(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, (String) commandArgs.get(TAG_RUN_BUILD_KINDS));
 		
@@ -172,9 +172,9 @@ public final class ExternalToolMigration {
 		// Update the location...
 		String location = (String) args.get(TAG_TOOL_LOCATION);
 		if (location != null) {
-			VariableUtil.VariableDefinition varDef = VariableUtil.extractVariableDefinition(location, 0);
+			LaunchVariableUtil.VariableDefinition varDef = LaunchVariableUtil.extractVariableDefinition(location, 0);
 			if (ILaunchVariableConstants.VAR_WORKSPACE_LOC.equals(varDef.name)) {
-				location = VariableUtil.buildVariableTag(ILaunchVariableConstants.VAR_RESOURCE_LOC, varDef.argument);
+				location = LaunchVariableUtil.buildVariableTag(ILaunchVariableConstants.VAR_RESOURCE_LOC, varDef.argument);
 			}
 			config.setAttribute(IExternalToolConstants.ATTR_LOCATION, location);
 		}
@@ -182,11 +182,11 @@ public final class ExternalToolMigration {
 		// Update the refresh scope...
 		String refresh = (String) args.get(TAG_TOOL_REFRESH);
 		if (refresh != null) {
-			VariableUtil.VariableDefinition varDef = VariableUtil.extractVariableDefinition(refresh, 0);
+			LaunchVariableUtil.VariableDefinition varDef = LaunchVariableUtil.extractVariableDefinition(refresh, 0);
 			if ("none".equals(varDef.name)) { //$NON-NLS-1$
 				refresh = null;
 			}
-			config.setAttribute(VariableUtil.ATTR_REFRESH_SCOPE, refresh);
+			config.setAttribute(LaunchVariableUtil.ATTR_REFRESH_SCOPE, refresh);
 		}
 
 		// Update the arguments
@@ -196,7 +196,7 @@ public final class ExternalToolMigration {
 			int start = 0;
 			ArrayList targets = new ArrayList();
 			StringBuffer buffer = new StringBuffer();
-			VariableUtil.VariableDefinition varDef = VariableUtil.extractVariableDefinition(arguments, start);
+			LaunchVariableUtil.VariableDefinition varDef = LaunchVariableUtil.extractVariableDefinition(arguments, start);
 			while (varDef.end != -1) {
 				if ("ant_target".equals(varDef.name) && varDef.argument != null) { //$NON-NLS-1$
 					targets.add(varDef.argument);
@@ -205,7 +205,7 @@ public final class ExternalToolMigration {
 					buffer.append(arguments.substring(start, varDef.end));
 				}
 				start = varDef.end;
-				varDef = VariableUtil.extractVariableDefinition(arguments, start);
+				varDef = LaunchVariableUtil.extractVariableDefinition(arguments, start);
 			}
 			buffer.append(arguments.substring(start, arguments.length()));
 			arguments = buffer.toString();

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.core;
+package org.eclipse.debug.internal.core.variables;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -32,6 +32,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.variables.ILaunchVariableInitializer;
 import org.eclipse.debug.core.variables.ISimpleLaunchVariable;
 import org.eclipse.debug.core.variables.SimpleLaunchVariable;
+import org.eclipse.debug.internal.core.LaunchManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -41,7 +42,7 @@ import org.w3c.dom.NodeList;
  * A registry of simple variables, used for retrieving launch configuration
  * variable objects based on their names.
  */
-public class SimpleVariableRegistry {
+public class SimpleLaunchVariableRegistry {
 	
 	private static final String PREF_SIMPLE_VARIABLES="simpleVariables"; //$NON-NLS-1$
 	// Variable extension point constants
@@ -58,7 +59,7 @@ public class SimpleVariableRegistry {
 
 	private Map fVariables= new HashMap(); 
 	
-	public SimpleVariableRegistry() {
+	public SimpleLaunchVariableRegistry() {
 		loadExtensions();
 		loadVariables();
 	}

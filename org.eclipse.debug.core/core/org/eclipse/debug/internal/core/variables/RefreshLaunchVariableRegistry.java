@@ -15,12 +15,12 @@ import org.eclipse.debug.core.DebugPlugin;
 /**
  * Registry of all available refresh scope variables.
  */
-public class RefreshScopeVariableRegistry extends ContextLaunchVariableRegistry {
+public class RefreshLaunchVariableRegistry extends ContextLaunchVariableRegistry {
 
 	/**
 	 * Creates the registry and loads the variables.
 	 */
-	public RefreshScopeVariableRegistry() {
+	public RefreshLaunchVariableRegistry() {
 		super(DebugPlugin.EXTENSION_POINT_REFRESH_LAUNCH_VARIABLES);
 	}
 	

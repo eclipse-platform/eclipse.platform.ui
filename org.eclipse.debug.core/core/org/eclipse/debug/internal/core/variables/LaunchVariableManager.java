@@ -13,13 +13,12 @@ package org.eclipse.debug.internal.core.variables;
 import org.eclipse.debug.core.variables.IContextLaunchVariable;
 import org.eclipse.debug.core.variables.ILaunchVariableManager;
 import org.eclipse.debug.core.variables.ISimpleLaunchVariable;
-import org.eclipse.debug.internal.core.SimpleVariableRegistry;
 
 public class LaunchVariableManager implements ILaunchVariableManager {
 	
-	private static SimpleVariableRegistry fgSimpleVariableRegistry;
+	private static SimpleLaunchVariableRegistry fgSimpleVariableRegistry;
 	private static ContextLaunchVariableRegistry fgContextVariableRegistry;
-	private static RefreshScopeVariableRegistry fgRefreshVariableRegistry;
+	private static RefreshLaunchVariableRegistry fgRefreshVariableRegistry;
 
 	public IContextLaunchVariable getContextVariable(String name) {
 		return fgContextVariableRegistry.getVariable(name);
