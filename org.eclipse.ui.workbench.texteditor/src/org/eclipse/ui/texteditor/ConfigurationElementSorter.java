@@ -151,7 +151,7 @@ public abstract class ConfigurationElementSorter {
                 try {
                     manifestElements = ManifestElement.parseHeader(Constants.REQUIRE_BUNDLE, requires);
                 } catch (BundleException e) {
-                	String message= "ConfigurationElementSorter: getting required plug-ins for " + bundle.getSymbolicName() + "failed"; //$NON-NLS-1$ //$NON-NLS-2$
+                	String message= "ConfigurationElementSorter: getting required plug-ins for '" + bundle.getSymbolicName() + "' failed"; //$NON-NLS-1$ //$NON-NLS-2$
     				Status status= new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.OK, message, e);
     				TextEditorPlugin.getDefault().getLog().log(status);
                     continue;
