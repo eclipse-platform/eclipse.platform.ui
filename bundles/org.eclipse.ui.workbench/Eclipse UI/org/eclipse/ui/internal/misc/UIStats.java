@@ -55,20 +55,20 @@ public class UIStats {
 		startStrings[INIT_PART] = "Initializing part: "; //$NON-NLS-1$
 		endStrings[INIT_PART] = " ms to init part: "; //$NON-NLS-1$	
 		startStrings[CREATE_PERSPECTIVE] = "Creating perspective: "; //$NON-NLS-1$
-		endStrings[CREATE_PERSPECTIVE] = " ms to create perspective:"; //$NON-NLS-1$
+		endStrings[CREATE_PERSPECTIVE] = " ms to create perspective: "; //$NON-NLS-1$
 		startStrings[RESTORE_WORKBENCH] = "Restoring: "; //$NON-NLS-1$
-		endStrings[RESTORE_WORKBENCH] = " ms to restore:"; //$NON-NLS-1$
-		startStrings[START_WORKBENCH] = "Starting:"; //$NON-NLS-1$
-		endStrings[START_WORKBENCH] = " ms to start:"; //$NON-NLS-1$
+		endStrings[RESTORE_WORKBENCH] = " ms to restore: "; //$NON-NLS-1$
+		startStrings[START_WORKBENCH] = "Starting: "; //$NON-NLS-1$
+		endStrings[START_WORKBENCH] = " ms to start: "; //$NON-NLS-1$
 		
-		startStrings[ACTIVATE_PART] = "Activation part:"; //$NON-NLS-1$
-		endStrings[ACTIVATE_PART] = " ms to activate:"; //$NON-NLS-1$
-		startStrings[BRING_PART_TO_TOP] = "Bringing part to top:"; //$NON-NLS-1$
-		endStrings[BRING_PART_TO_TOP] = " ms to bring part to top:"; //$NON-NLS-1$
-		startStrings[NOTIFY_PART_LISTENERS] = "Notifying part listeners:"; //$NON-NLS-1$
-		endStrings[NOTIFY_PART_LISTENERS] = " ms to notify listeners:"; //$NON-NLS-1$
-		startStrings[SWITCH_PERSPECTIVE] = "Swtich perspective:"; //$NON-NLS-1$
-		endStrings[SWITCH_PERSPECTIVE] = " ms to switch perspective:"; //$NON-NLS-1$
+		startStrings[ACTIVATE_PART] = "Activation part: "; //$NON-NLS-1$
+		endStrings[ACTIVATE_PART] = " ms to activate: "; //$NON-NLS-1$
+		startStrings[BRING_PART_TO_TOP] = "Bringing part to top: "; //$NON-NLS-1$
+		endStrings[BRING_PART_TO_TOP] = " ms to bring part to top: "; //$NON-NLS-1$
+		startStrings[NOTIFY_PART_LISTENERS] = "Notifying part listeners: "; //$NON-NLS-1$
+		endStrings[NOTIFY_PART_LISTENERS] = " ms to notify listeners: "; //$NON-NLS-1$
+		startStrings[SWITCH_PERSPECTIVE] = "Swtich perspective: "; //$NON-NLS-1$
+		endStrings[SWITCH_PERSPECTIVE] = " ms to switch perspective: "; //$NON-NLS-1$
 	}
 	
 	public static void start(int operation,String label) {
