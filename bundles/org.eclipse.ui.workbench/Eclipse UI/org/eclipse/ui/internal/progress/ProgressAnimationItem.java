@@ -32,6 +32,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.util.ImageSupport;
 import org.eclipse.ui.progress.IProgressConstants;
 
@@ -119,6 +120,10 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 	}
 
 	private void refresh() {
+		
+		//Abort the refresh if we are in the process of shutting down
+		if(!PlatformUI.isWorkbenchRunning())
+			return;
 		
 		if (toolbar == null && toolbar.isDisposed())
 			return;
