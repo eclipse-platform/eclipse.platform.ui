@@ -632,8 +632,10 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper {
 	final static int PROPOSAL_SELECTOR= 1;
 	final static int CONTEXT_INFO_POPUP= 2;
 	
+	private static final int DEFAULT_AUTO_ACTIVATION_DELAY= 500;
+	
 	private IInformationControlCreator fInformationControlCreator;
-	private int fAutoActivationDelay= 500;
+	private int fAutoActivationDelay= DEFAULT_AUTO_ACTIVATION_DELAY;
 	private boolean fIsAutoActivated= false;
 	private boolean fIsAutoInserting= false;
 	private int fProposalPopupOrientation= PROPOSAL_OVERLAY;
@@ -964,9 +966,13 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper {
 		fInternalListener= new InternalListener();
 		
 		AdditionalInfoController controller= null;
-		if (fInformationControlCreator != null)
-			controller= new AdditionalInfoController(fInformationControlCreator, Math.round(fAutoActivationDelay * 1.5f));
-		
+		if (fInformationControlCreator != null) {
+			int delay= fAutoActivationDelay;
+			if (delay == 0)
+				delay= DEFAULT_AUTO_ACTIVATION_DELAY;
+			delay= Math.round(delay * 1.5f);
+			controller= new AdditionalInfoController(fInformationControlCreator, delay);
+		}
 		fContextInfoPopup= new ContextInformationPopup(this, fViewer);
 		fProposalPopup= new CompletionProposalPopup(this, fViewer, controller);
 		
