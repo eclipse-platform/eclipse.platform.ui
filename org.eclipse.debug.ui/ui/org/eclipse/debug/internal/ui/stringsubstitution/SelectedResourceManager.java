@@ -65,7 +65,6 @@ public class SelectedResourceManager implements IWindowListener, ISelectionListe
 	 * @see org.eclipse.ui.IWindowListener#windowActivated(org.eclipse.ui.IWorkbenchWindow)
 	 */
 	public void windowActivated(IWorkbenchWindow window) {
-		fSelectedResource = null;
 		ISelectionService service = window.getSelectionService(); 
 		service.addSelectionListener(this);
 		IWorkbenchPage page = window.getActivePage();
