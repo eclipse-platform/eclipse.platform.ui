@@ -330,6 +330,9 @@ public class AntCorePreferences {
 		if (defaultURLs != null) {
 			result.addAll(defaultURLs);
 		}
+		if (antURLs != null) {
+			result.addAll(Arrays.asList(antURLs));
+		}
 		if (customURLs != null) {
 			result.addAll(Arrays.asList(customURLs));
 		}
