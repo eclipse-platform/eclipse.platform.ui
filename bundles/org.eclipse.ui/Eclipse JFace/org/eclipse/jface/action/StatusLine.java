@@ -100,6 +100,7 @@ import org.eclipse.swt.widgets.*;
 			// Make sure cancel button and progress bar are at the end.
 			fProgressBar.moveBelow(null);
 			fToolBar.moveAbove(fProgressBar);
+			fMessageLabel.moveAbove(null);
 			
 			Rectangle rect= composite.getClientArea();
 			Control[] children= composite.getChildren();
