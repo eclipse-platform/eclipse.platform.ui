@@ -40,8 +40,11 @@ public class EditorShortcut {
 		return null;
 	}
 	public static EditorShortcut create(IMemento memento) {
-		return new EditorShortcut(memento);
+		EditorShortcut e =  new EditorShortcut(memento);
+		e.initImage();
+		return e;
 	}
+	
 	private EditorShortcut(IMemento mem) {
 		id = mem.getString(IWorkbenchConstants.TAG_ID);
 		title = mem.getString(IWorkbenchConstants.TAG_TITLE);

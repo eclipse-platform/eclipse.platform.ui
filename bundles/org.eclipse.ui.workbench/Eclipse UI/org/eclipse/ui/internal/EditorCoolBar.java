@@ -76,8 +76,12 @@ public class EditorCoolBar {
 	 */
 	public void updateBookMarks(IEditorReference ref) {
 		EditorShortcut shortcut = EditorShortcut.create(ref);
+		updateBookMarks(shortcut);
+	}
+	
+	public void updateBookMarks(EditorShortcut shortcut) {
 		if(shortcut == null)
-			return; //Should should the user that could not add a short cut for this ref.
+			return; //Should tell the user that could not add a short cut for this ref.
 		ToolItem[] items = bookMarkToolBar.getItems();
 		for (int i = 0; i < items.length; i++) {
 			if (shortcut.equals(items[i].getData())) {
@@ -87,6 +91,7 @@ public class EditorCoolBar {
 				return;
 			}
 		}
+		((Workbench) window.getWorkbench()).getEditorShortcutManager().add(shortcut);
 		String title = shortcut.getTitle(); 
 		Image image = shortcut.getTitleImage();
 		String toolTip = shortcut.getTitleToolTip();	
@@ -340,7 +345,13 @@ public class EditorCoolBar {
 				}
 			}
 		});	
-			
+		
+		// Add existing entries
+		EditorShortcut[] items = ((Workbench) window.getWorkbench()).getEditorShortcutManager().getItems();
+		for (int i = 0; i < items.length; i++) {
+			updateBookMarks(items[i]);
+		}
+
 		coolBar.addListener(SWT.Resize, new Listener() {
 			public void handleEvent(Event event) {
 				Rectangle r = coolBar.getParent().getClientArea();
@@ -533,7 +544,12 @@ public class EditorCoolBar {
 		 */
 		public void run() {
 			for (int i = 0; i < toolItems.length; i++) {
-				toolItems[i].dispose();		
+				EditorShortcut shortcut = (EditorShortcut) toolItems[i].getData();
+				if (shortcut != null) {
+					((Workbench) window.getWorkbench()).getEditorShortcutManager().remove(shortcut);
+					shortcut.dispose();
+				}
+				toolItems[i].dispose();
 			}
 		}
 	}

@@ -275,6 +275,7 @@ public class EditorList {
 				e.close();
 			}
 			updateItems();
+			editorsTable.getShell().close();
 		}
 	}
 
@@ -303,6 +304,7 @@ public class EditorList {
 				e.close();
 			}
 			updateItems();
+			editorsTable.getShell().close();
 		}
 	}
 	
@@ -534,6 +536,7 @@ public class EditorList {
 				Adapter e = (Adapter)items[i].getData();
 				workbook.addBookMark(e.editorRef);
 			}
+			editorsTable.getShell().close();
 		}
 	}
 	/**

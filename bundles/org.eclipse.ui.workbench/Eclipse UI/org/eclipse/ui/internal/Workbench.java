@@ -119,6 +119,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 
 	private WindowManager windowManager;
 	private EditorHistory editorHistory;
+	private EditorShortcutManager editorShortcutManager;
 	private PerspectiveHistory perspHistory;
 	private boolean runEventLoop;
 	private boolean isStarting = false;
@@ -457,6 +458,16 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		}
 		return editorHistory;
 	}
+	/**
+	 * Returns the editor shortcuts.
+	 */
+	public EditorShortcutManager getEditorShortcutManager() {
+		if (editorShortcutManager == null) {
+			editorShortcutManager = new EditorShortcutManager();
+		}
+		return editorShortcutManager;
+	}
+	
 	/**
 	 * Returns the perspective history.
 	 */
@@ -1273,6 +1284,11 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		if (mruMemento != null) {
 			result.add(getEditorHistory().restoreState(mruMemento));
 		}
+		
+		IMemento editorShortcutMemento = memento.getChild(IWorkbenchConstants.TAG_EDITOR_SHORTCUT); //$NON-NLS-1$
+		if (editorShortcutMemento != null) {
+			result.add(getEditorShortcutManager().restoreState(editorShortcutMemento));
+		}
 
 		// Get the child windows.
 		IMemento[] children = memento.getChildren(IWorkbenchConstants.TAG_WINDOW);
@@ -1453,6 +1469,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			result.merge(window.saveState(childMem));
 		}
 		result.add(getEditorHistory().saveState(memento.createChild(IWorkbenchConstants.TAG_MRU_LIST))); //$NON-NLS-1$
+		result.add(getEditorShortcutManager().saveState(memento.createChild(IWorkbenchConstants.TAG_EDITOR_SHORTCUT))); //$NON-NLS-1$
 		// Save perspective history.
 		result.add(getPerspectiveHistory().saveState(memento.createChild(IWorkbenchConstants.TAG_PERSPECTIVE_HISTORY))); //$NON-NLS-1$
 		return result;
