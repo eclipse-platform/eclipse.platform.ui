@@ -390,6 +390,9 @@ public class FormTextModel {
 			Node alt = child.getAttributes().getNamedItem("alt");
 			if (alt!=null)
 				segment.setTooltipText(alt.getNodeValue());
+			Node text = child.getAttributes().getNamedItem("text");
+			if (text!=null)
+				segment.setText(text.getNodeValue());
 			processObjectSegment(segment, child, "i.");
 			return segment;
 		}  else if (status instanceof String) {

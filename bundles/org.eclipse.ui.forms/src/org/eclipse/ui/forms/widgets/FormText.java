@@ -954,6 +954,20 @@ public final class FormText extends Canvas {
 		return link!=null?link.getHref():null;
 	}
 	
+	/**
+	 * Returns the text of the hyperlink that currently has keyboard focus,
+	 * or <code>null</code> if there are no hyperlinks in the receiver or no
+	 * hyperlink has focus at the moment.
+	 * 
+	 * @return text of the selected hyperlink or <code>null</code> if none
+	 *         selected.
+	 * @since 3.1
+	 */
+	public String getSelectedLinkText() {
+		IHyperlinkSegment link = getSelectedLink();
+		return link!=null?link.getText():null;
+	}
+	
 	private IHyperlinkSegment getSelectedLink() {
 		IFocusSelectable segment = model.getSelectedSegment();
 		if (segment != null && segment instanceof IHyperlinkSegment)

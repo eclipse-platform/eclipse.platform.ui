@@ -17,6 +17,7 @@ import org.eclipse.swt.graphics.*;
 public class ImageHyperlinkSegment extends ImageSegment implements
 		IHyperlinkSegment {
 	private String href;
+	private String text;
 
 	private String tooltipText;
 
@@ -81,7 +82,11 @@ public class ImageHyperlinkSegment extends ImageSegment implements
 	 * @see org.eclipse.ui.internal.forms.widgets.IHyperlinkSegment#getText()
 	 */
 	public String getText() {
-		return "";
+		return text!=null?text:"";
+	}
+	
+	public void setText(String text) {
+		this.text = text;
 	}
 
 	/**
