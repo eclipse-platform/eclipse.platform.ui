@@ -11,7 +11,6 @@
 package org.eclipse.team.tests.ui.synchronize;
 
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.core.synchronize.SyncInfoTree;
 import org.eclipse.team.internal.ui.synchronize.*;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
@@ -34,7 +33,7 @@ public class TestTreeViewerAdvisor extends TreeViewerAdvisor {
 				return new ISynchronizeModelProviderDescriptor[] {
 						new HierarchicalModelProvider.HierarchicalModelProviderDescriptor()};
 			}
-			protected SyncInfoSet getSyncInfoSet() {
+			private SyncInfoTree getSyncInfoSet() {
 				return (SyncInfoTree)getConfiguration().getProperty(ISynchronizePageConfiguration.P_SYNC_INFO_SET);
 			}
 		};
