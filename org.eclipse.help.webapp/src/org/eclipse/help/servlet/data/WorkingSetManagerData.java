@@ -10,7 +10,7 @@ import javax.servlet.http.*;
 
 import org.eclipse.help.*;
 import org.eclipse.help.internal.*;
-import org.eclipse.help.internal.filter.*;
+import org.eclipse.help.internal.workingset.*;
 import org.eclipse.help.internal.toc.*;
 import org.eclipse.help.servlet.*;
 
@@ -50,16 +50,16 @@ public class WorkingSetManagerData extends RequestData {
 		String name = request.getParameter("workingSet");
 		if (name != null && name.length() > 0) {
 
-			WorkingSet ws = wsmgr.createWorkingSet(name, new IHelpResource[0]);
-
 			String[] books = request.getParameterValues("books");
 			if (books == null)
 				books = new String[0];
-
+			
+			IToc[] tocs = new IToc[books.length];
 			TocManager tocmgr = HelpSystem.getTocManager();
 			for (int i = 0; i < books.length; i++)
-				ws.addElement(tocmgr.getToc(books[i], getLocale()));
+				tocs[i] = tocmgr.getToc(books[i], getLocale());
 
+			WorkingSet ws = wsmgr.createWorkingSet(name,tocs);
 			wsmgr.addWorkingSet(ws);
 		}
 	}
@@ -91,8 +91,13 @@ public class WorkingSetManagerData extends RequestData {
 				for (int i = 0; i < elements.length; i++)
 					ws.removeElement(elements[i]);
 				TocManager tocmgr = HelpSystem.getTocManager();
+				IToc[] tocs = new IToc[books.length];
 				for (int i = 0; i < books.length; i++)
-					ws.addElement(tocmgr.getToc(books[i], getLocale()));
+					tocs[i] = tocmgr.getToc(books[i], getLocale());
+				ws.setElements(tocs);
+				
+				// should also change the name....
+				
 				wsmgr.workingSetChanged(ws);
 			}
 		}
