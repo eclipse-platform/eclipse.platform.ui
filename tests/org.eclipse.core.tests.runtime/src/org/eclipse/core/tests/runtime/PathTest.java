@@ -729,5 +729,12 @@ public class PathTest extends RuntimeTest {
 		assertEquals("2.2", new Path("/first/second/"), anyPath.uptoSegment(2));
 		assertEquals("2.3", new Path("/first/second/third/"), anyPath.uptoSegment(3));
 		assertEquals("2.4", new Path("/first/second/third/"), anyPath.uptoSegment(4));
+
+		// bug 58835 - upToSegment(0) needs to preserve device
+		anyPath = new Path("c:/first/second/third");
+		assertEquals("3.0", new Path("c:"), anyPath.uptoSegment(0));
+
+		anyPath = new Path("c:/first/second/third/");
+		assertEquals("3.1", new Path("c:"), anyPath.uptoSegment(0));
 	}
 }
