@@ -365,7 +365,15 @@ public class ConfiguredSite
 		IFeatureReference[] childrenRef =
 			feature.getIncludedFeatureReferences();
 		for (int i = 0; i < childrenRef.length; i++) {
-			configPolicy.configure(childrenRef[i], callInstallHandler);
+			try {
+				IFeature child = childrenRef[i].getFeature();
+				configure(child, callInstallHandler);
+			} catch(CoreException e) {
+				// will skip any bad children
+				UpdateManagerPlugin.warn(
+					"Unable to configure child feature: "
+					+ childrenRef[i] + " " + e);
+			}
 		}
 
 		// configure root feature 	
@@ -416,7 +424,15 @@ public class ConfiguredSite
 			IFeatureReference[] childrenRef =
 				feature.getIncludedFeatureReferences();
 			for (int i = 0; i < childrenRef.length; i++) {
-				configPolicy.unconfigure(childrenRef[i]);
+				try {
+					IFeature child = childrenRef[i].getFeature();
+					unconfigure(child);
+				} catch(CoreException e) {
+					// skip any bad children
+					UpdateManagerPlugin.warn(
+						"Unable to unconfigure child feature: "
+						+ childrenRef[i] + " " + e);
+				}
 			}
 
 			// notify listeners
