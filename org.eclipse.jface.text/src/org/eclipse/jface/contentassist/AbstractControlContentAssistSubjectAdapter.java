@@ -629,8 +629,10 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 			 * @see org.eclipse.swt.events.FocusListener#focusLost(org.eclipse.swt.events.FocusEvent)
 			 */
 			public void focusLost(FocusEvent e) {
-				if (DEBUG)
-					System.out.println("Focus Lost: " + e.widget); //$NON-NLS-1$
+				if (DEBUG) {
+					System.out.println("Focus Lost: " + e.widget + ", at:"); //$NON-NLS-1$
+					Thread.dumpStack();
+				}
 
 				if (fHoverHandler != null)
 					fControl.removeMouseTrackListener(fHoverHandler);
@@ -640,10 +642,13 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 					if (DEBUG)
 						System.out.println("uninstall CueHandler: " + c.toString()); //$NON-NLS-1$
 					CueHandler cueHandler= (CueHandler) c.getData(ANNOTATION_HANDLER);
-					c.setData(ANNOTATION_HANDLER, null);
-					c.removePaintListener(cueHandler);
-					c.removeMouseTrackListener(cueHandler);
-					c.redraw();
+					//workaround for bug 64052:
+					if (cueHandler != null) {
+						c.setData(ANNOTATION_HANDLER, null);
+						c.removePaintListener(cueHandler);
+						c.removeMouseTrackListener(cueHandler);
+						c.redraw();
+					}
 					if (c instanceof Shell)
 						break;
 					else
