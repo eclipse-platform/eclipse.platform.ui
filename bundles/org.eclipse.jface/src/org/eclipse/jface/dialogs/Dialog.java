@@ -14,9 +14,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.Policy;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -321,6 +323,12 @@ public abstract class Dialog extends Window {
 		super(parentShell);
 		setShellStyle(SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
 		setBlockOnOpen(true);
+		if(parentShell == null && Policy.DEBUG_DIALOG_NO_PARENT)
+			Policy.getLog().log(new Status(IStatus.INFO,
+					Policy.JFACE,
+					IStatus.INFO,
+					this.getClass() + " created with no shell",//$NON-NLS-1$
+					null));
 	}
 
 	/**
