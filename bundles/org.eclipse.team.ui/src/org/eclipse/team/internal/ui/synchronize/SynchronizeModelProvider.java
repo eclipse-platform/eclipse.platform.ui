@@ -449,7 +449,7 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 	 */
 	private void propagateProblemMarkers(ISynchronizeModelElement element, boolean clear) {
 		IResource resource = element.getResource();
-		if(resource != null) {
+		if(resource != null && resource.exists()) {
 			try {
 				String property = null;
 				if(! clear) {
@@ -480,7 +480,9 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 					}
 				}
 			} catch (CoreException e) {
-				TeamUIPlugin.log(e);
+				if(! (e.getStatus().getCode() == IResourceStatus.RESOURCE_NOT_FOUND)) {
+					TeamUIPlugin.log(e);
+				}
 			}
 		}
 	}
