@@ -494,7 +494,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 			for (int j = 0; j < pages.length; j++) {
 				if (!pages[j].saveAllEditors(confirm)) {
 					return false;
-				};
+				}
 			}
 		}
 		return true;

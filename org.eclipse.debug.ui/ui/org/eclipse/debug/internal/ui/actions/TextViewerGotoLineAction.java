@@ -44,7 +44,7 @@ public class TextViewerGotoLineAction extends TextViewerAction {
 
 			return null;
 		}
-	};
+	}
 
 	protected int fLastLine;
 	protected ITextViewer fTextViewer;

@@ -462,7 +462,7 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 		if (xml != null && xml.length() > 0) {
 			try {
 				Element root = null;
-				DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();;
+				DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 				StringReader reader = new StringReader(xml);
 				InputSource source = new InputSource(reader);
 				root = parser.parse(source).getDocumentElement();

@@ -50,7 +50,7 @@ public class VariablesViewModelPresentation extends DelegatingModelPresentation 
 						break;
 					default:
 						string.append(token);
-				};
+				}
 			}
 		}
 		return string.toString();
