@@ -52,9 +52,9 @@ public class DebugEventWaiter implements IDebugEventSetListener {
 	protected DebugEvent[] fEventSet;
 
 	/**
-	 * The default timeout value if none is given (20000).
+	 * The default timeout value if none is given (5000).
 	 */
-	public static final long DEFAULT_TIMEOUT= 15000;
+	public static final long DEFAULT_TIMEOUT= 5000;
 
 	/**
 	 * Creates a new <code>DebugEventWaiter</code> which
