@@ -37,12 +37,10 @@ public class ClearOutputAction extends Action {
 		setHoverImageDescriptor(ConsolePluginImages.getImageDescriptor(IConsoleConstants.IMG_LCL_CLEAR));		
 		setDisabledImageDescriptor(ConsolePluginImages.getImageDescriptor(IInternalConsoleConstants.IMG_DLCL_CLEAR));
 		setImageDescriptor(ConsolePluginImages.getImageDescriptor(IInternalConsoleConstants.IMG_ELCL_CLEAR));
-		WorkbenchHelp.setHelp(
-			this,
-			IConsoleHelpContextIds.CLEAR_CONSOLE_ACTION);
+		WorkbenchHelp.setHelp(this, IConsoleHelpContextIds.CLEAR_CONSOLE_ACTION);
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	public void run() {
@@ -57,4 +55,3 @@ public class ClearOutputAction extends Action {
 		});
 	}
 }
-
