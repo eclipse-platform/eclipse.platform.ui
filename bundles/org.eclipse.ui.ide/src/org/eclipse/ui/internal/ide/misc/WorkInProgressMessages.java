@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.misc;
+package org.eclipse.ui.internal.ide.misc;
 
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
@@ -18,7 +18,7 @@ import java.util.ResourceBundle;
  */
 public class WorkInProgressMessages {
 
-    private static final String BUNDLE_NAME = "org.eclipse.ui.internal.misc.WorkInProgress"; //$NON-NLS-1$
+    private static final String BUNDLE_NAME = "org.eclipse.ui.internal.ide.misc.WorkInProgress"; //$NON-NLS-1$
 
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
 
