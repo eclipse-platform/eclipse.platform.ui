@@ -25,6 +25,7 @@ import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.ui.WorkbenchEncoding;
 import org.eclipse.ui.internal.console.IOConsoleDocument;
 import org.eclipse.ui.internal.console.IOConsoleHyperlinkPosition;
 import org.eclipse.ui.internal.console.IOConsolePage;
@@ -133,7 +134,13 @@ public class IOConsole extends AbstractConsole {
     private List openStreams;
 
     /**
-     * Constructs a console with the given name, type, image, and lifecycle.
+     * The encoding used to for displaying console output.
+     */
+    private String fEncoding = WorkbenchEncoding.getWorkbenchDefaultEncoding();
+    
+    /**
+     * Constructs a console with the given name, type, image, and the workbench's
+     * default encoding.
      * 
      * @param name name to display for this console
      * @param consoleType console type identifier or <code>null</code>
@@ -142,7 +149,23 @@ public class IOConsole extends AbstractConsole {
      *  when this console is added/removed from the console manager
      */
     public IOConsole(String name, String consoleType, ImageDescriptor imageDescriptor, boolean autoLifecycle) {
+        this(name, consoleType, imageDescriptor, null, autoLifecycle);
+    }
+
+    /**
+     * Constructs a console with the given name, type, image, encoding and lifecycle.
+     * 
+     * @param name name to display for this console
+     * @param consoleType console type identifier or <code>null</code>
+     * @param imageDescriptor image to display for this console or <code>null</code>
+     * @param autoLifecycle whether lifecycle methods should be called automatically
+     *  when this console is added/removed from the console manager
+     */
+    public IOConsole(String name, String consoleType, ImageDescriptor imageDescriptor, String encoding, boolean autoLifecycle) {
         super(name, imageDescriptor, autoLifecycle);
+        if (encoding != null) {
+            fEncoding = encoding;
+        }
         setType(consoleType);
         openStreams = new ArrayList();
         inputStream = new IOConsoleInputStream(this);
@@ -227,7 +250,10 @@ public class IOConsole extends AbstractConsole {
      */
     public IOConsoleOutputStream newOutputStream() {
         IOConsoleOutputStream outputStream = new IOConsoleOutputStream(this);
-        openStreams.add(outputStream);
+        outputStream.setEncoding(fEncoding);
+        synchronized(openStreams) {
+            openStreams.add(outputStream);
+        }
         return outputStream;
     }
     
@@ -364,6 +390,7 @@ public class IOConsole extends AbstractConsole {
             firePropertyChange(this, IOConsole.P_FONT, old, font);
         }
     }
+    
     
     /**
      * Check if all streams connected to this console are closed. If so,
@@ -580,5 +607,4 @@ public class IOConsole extends AbstractConsole {
 		}
 		return null;
 	}
-    
 }

@@ -52,6 +52,8 @@ public class IOConsoleOutputStream extends OutputStream {
      * The font style used to decorate data written to this stream.
      */
     private int fontStyle;
+
+    private String fEncoding;
     
 
     IOConsoleOutputStream(IOConsole console) {
@@ -159,21 +161,21 @@ public class IOConsoleOutputStream extends OutputStream {
      * @see java.io.OutputStream#write(byte[], int, int)
      */
     public void write(byte[] b, int off, int len) throws IOException {
-        write(new String(b, off, len));
+        encodedWrite(new String(b, off, len, fEncoding));
     }
     /*
      *  (non-Javadoc)
      * @see java.io.OutputStream#write(byte[])
      */
     public void write(byte[] b) throws IOException {
-        write(new String(b));
+        write(b, 0, b.length);
     }
     /*
      *  (non-Javadoc)
      * @see java.io.OutputStream#write(int)
      */
     public void write(int b) throws IOException {
-        write(new String(new byte[] {(byte)b}));
+        write(new byte[] {(byte)b}, 0, 1);
     }    
     
     /**
@@ -182,12 +184,25 @@ public class IOConsoleOutputStream extends OutputStream {
      * @throws IOException if the stream is closed.
      */
     public synchronized void write(String str) throws IOException {
+        byte[] defaultBytes = str.getBytes();
+        String encoded = new String(defaultBytes, fEncoding);
+        encodedWrite(encoded);
+    }
+    
+    private void encodedWrite(String encodedString) throws IOException {
         if(closed) {
             throw new IOException("Output Stream is closed"); //$NON-NLS-1$
         }
-        partitioner.streamAppended(this, str);
+        partitioner.streamAppended(this, encodedString);
         if (activateOnWrite) {
             console.activate();
         }
+    }
+
+    /**
+     * @param encoding
+     */
+    public void setEncoding(String encoding) {
+        fEncoding = encoding;
     }
 }

@@ -550,6 +550,7 @@ public interface IDebugUIConstants {
 	 * Debug action set identifier (value <code>"org.eclipse.debug.ui.debugActionSet"</code>).
 	 */
 	public static final String DEBUG_ACTION_SET= PLUGIN_ID + ".debugActionSet"; //$NON-NLS-1$
+
 	
 	/**
 	 * Launch action set identifier (value <code>"org.eclipse.debug.ui.launchActionSet"</code>).
@@ -848,6 +849,13 @@ public interface IDebugUIConstants {
 	 * @since 3.1 
 	 */
 	public static final String ATTR_CONSOLE_PROCESS = PLUGIN_ID + ".ATTR_CONSOLE_PROCESS"; //$NON-NLS-1$
+	
+	/**
+	 * ProcessConsole attribute - references the encoding that the console should use.
+	 * 
+	 * @since 3.1
+	 */
+	public static final String ATTR_CONSOLE_ENCODING = PLUGIN_ID + ".ATTR_CONSOLE_ENCODING"; //$NON-NLS-1$
 	
 	// Extension points
 	

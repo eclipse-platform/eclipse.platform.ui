@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -32,6 +33,7 @@ import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationMan
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsMessages;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchHistory;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -45,18 +47,21 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.WorkbenchEncoding;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.ide.IDEEncoding;
 
 /**
  * Launch configuration tab used to specify the location a launch configuration
@@ -93,21 +98,21 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 			}
 	};
 	
+    private Button fDefaultEncodingButton;
+    private Button fAltEncodingButton;
+    private Combo fEncodingCombo;
+	
 	/**
 	 * @see ILaunchConfigurationTab#createControl(Composite)
 	 */
-	public void createControl(Composite parent) {
-		Font font = parent.getFont();
-		
+	public void createControl(Composite parent) {		
 		Composite comp = new Composite(parent, SWT.NONE);
 		setControl(comp);
 		WorkbenchHelp.setHelp(getControl(), IDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_COMMON_TAB);
 		GridLayout topLayout = new GridLayout();
 		comp.setLayout(topLayout);
-		comp.setFont(font);
 		
 		Group group = new Group(comp, SWT.NONE);
-		group.setFont(font);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 3;
 		group.setLayout(layout);
@@ -117,13 +122,11 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 				
 		setLocalRadioButton(new Button(group, SWT.RADIO));
 		getLocalRadioButton().setText(LaunchConfigurationsMessages.getString("CommonTab.L&ocal_3")); //$NON-NLS-1$
-		getLocalRadioButton().setFont(font);
 		gd = new GridData();
 		gd.horizontalSpan = 3;
 		getLocalRadioButton().setLayoutData(gd);
 		setSharedRadioButton(new Button(group, SWT.RADIO));
 		getSharedRadioButton().setText(LaunchConfigurationsMessages.getString("CommonTab.S&hared_4")); //$NON-NLS-1$
-		getSharedRadioButton().setFont(font);
 		getSharedRadioButton().addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleSharedRadioButtonSelected();
@@ -135,7 +138,6 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		setSharedLocationText(new Text(group, SWT.SINGLE | SWT.BORDER));
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		getSharedLocationText().setLayoutData(gd);
-		getSharedLocationText().setFont(font);
 		getSharedLocationText().addModifyListener(fBasicModifyListener);
 		
 		setSharedLocationButton(createPushButton(group, LaunchConfigurationsMessages.getString("CommonTab.&Browse_6"), null));	 //$NON-NLS-1$
@@ -159,21 +161,19 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		favLayout.numColumns = 2;
 		favLayout.makeColumnsEqualWidth = true;
 		favComp.setLayout(favLayout);
-		favComp.setFont(font);
 		
 		Label favLabel = new Label(favComp, SWT.HORIZONTAL | SWT.LEFT);
 		favLabel.setText(LaunchConfigurationsMessages.getString("CommonTab.Display_in_favorites_menu__10")); //$NON-NLS-1$
 		gd = new GridData(GridData.BEGINNING);
 		gd.horizontalSpan = 2;
 		favLabel.setLayoutData(gd);
-		favLabel.setFont(font);
 		
 		fFavoritesTable = CheckboxTableViewer.newCheckList(favComp, SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
 		Control table = fFavoritesTable.getControl();
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalSpan = 1;
 		table.setLayoutData(gd);
-		table.setFont(font);
+		
 		fFavoritesTable.setContentProvider(new FavoritesContentProvider());
 		fFavoritesTable.setLabelProvider(new FavoritesLabelProvider());
 		fFavoritesTable.addCheckStateListener(
@@ -187,7 +187,46 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 			});
 		
 		createVerticalSpacer(comp, 1);
+		addEncodingBlock(comp);
+		
+		createVerticalSpacer(comp, 1);
 		createLaunchInBackgroundComponent(comp);
+		
+		Dialog.applyDialogFont(parent);
+	}
+	
+	private void addEncodingBlock(Composite parent) {
+	    List allEncodings = IDEEncoding.getIDEEncodings();
+	    String defaultEncoding = WorkbenchEncoding.getWorkbenchDefaultEncoding();
+	    
+	    Group group = new Group(parent, SWT.NONE);
+	    group.setText(LaunchConfigurationsMessages.getString("CommonTab.1"));  //$NON-NLS-1$
+	    GridData gd = new GridData(SWT.BEGINNING, SWT.NORMAL, true, false);
+	    gd.horizontalSpan = 2;
+	    group.setLayoutData(gd);
+	    group.setLayout(new GridLayout(2, false));
+	    
+	    fDefaultEncodingButton = createRadioButton(group, LaunchConfigurationsMessages.getString("CommonTab.2") + defaultEncoding + LaunchConfigurationsMessages.getString("CommonTab.3"));  //$NON-NLS-1$ //$NON-NLS-2$
+	    gd = new GridData(SWT.BEGINNING, SWT.NORMAL, true, false);
+	    gd.horizontalSpan = 2;
+	    fDefaultEncodingButton.setLayoutData(gd);
+	    
+	    fAltEncodingButton = createRadioButton(group, LaunchConfigurationsMessages.getString("CommonTab.4"));  //$NON-NLS-1$
+	    fAltEncodingButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
+	    
+	    fEncodingCombo = new Combo(group, SWT.READ_ONLY);
+	    fEncodingCombo.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
+	    fEncodingCombo.setItems((String[]) allEncodings.toArray(new String[0]));
+	    
+	    SelectionListener listener = new SelectionAdapter() {
+	        public void widgetSelected(SelectionEvent e) {
+	            updateLaunchConfigurationDialog();
+	            fEncodingCombo.setEnabled(fAltEncodingButton.getSelection() == true);
+	        }
+	    };
+	    fAltEncodingButton.addSelectionListener(listener);
+	    fDefaultEncodingButton.addSelectionListener(listener);
+	    fEncodingCombo.addSelectionListener(listener);
 	}
 
 	/**
@@ -292,10 +331,28 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		updateSharedLocationFromConfig(configuration);
 		updateFavoritesFromConfig(configuration);
 		updateLaunchInBackground(configuration);
+		updateEncoding(configuration);
 	}
 	
 	protected void updateLaunchInBackground(ILaunchConfiguration configuration) { 
 		fLaunchInBackgroundButton.setSelection(isLaunchInBackground(configuration));
+	}
+	
+	protected void updateEncoding(ILaunchConfiguration configuration) {
+	    String encoding = null;
+	    try {
+	        encoding = configuration.getAttribute(IDebugUIConstants.ATTR_CONSOLE_ENCODING, (String)null);
+        } catch (CoreException e) {
+        }
+        
+        if (encoding != null) {
+            fAltEncodingButton.setSelection(true);
+            fDefaultEncodingButton.setSelection(false);
+            fEncodingCombo.setText(encoding);
+        } else {
+            fDefaultEncodingButton.setSelection(true);
+            fAltEncodingButton.setSelection(false);
+        }
 	}
 	
 	/**
@@ -476,6 +533,12 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		updateConfigFromLocalShared(configuration);
 		updateConfigFromFavorites(configuration);
 		setAttribute(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, configuration, fLaunchInBackgroundButton.getSelection(), true);
+		String encoding = null;
+		if(fAltEncodingButton.getSelection()) {
+		    encoding = fEncodingCombo.getText();
+		}
+		configuration.setAttribute(IDebugUIConstants.ATTR_CONSOLE_ENCODING, encoding);
+		
 	}
 
 	/**

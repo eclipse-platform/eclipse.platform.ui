@@ -73,7 +73,11 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 	 * Proxy to a console document
 	 */
 	public ProcessConsole(IProcess process, IConsoleColorProvider colorProvider) {
-		super("", IDebugUIConstants.ID_PROCESS_CONSOLE_TYPE, null); //$NON-NLS-1$
+	    this(process, colorProvider, null);
+	}
+	
+	public ProcessConsole(IProcess process, IConsoleColorProvider colorProvider, String encoding) {
+	    super("", IDebugUIConstants.ID_PROCESS_CONSOLE_TYPE, null, encoding, true); //$NON-NLS-1$
 		fProcess = process;
 		
 		fColorProvider = colorProvider;
