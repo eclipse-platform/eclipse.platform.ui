@@ -113,6 +113,20 @@ public class MoveDeleteHook implements IMoveDeleteHook {
 						break;
 					}		
 				}
+				// if there is still no file, look for phantom folders that may hold file deletions
+				if ( ! fileFound) {
+					ICVSResource[] folders = folder.members(ICVSFolder.FOLDER_MEMBERS | ICVSFolder.MANAGED_MEMBERS);
+					for (int i = 0; i < folders.length; i++) {
+						ICVSFolder cvsFolder = (ICVSFolder)folders[i];
+						if ( ! cvsFolder.exists() && cvsFolder.isCVSFolder()) {
+							// The only time we should have a non-existant CVS folder 
+							// is when it holds outgoing file deletions
+							fileFound = true;
+							break;
+						}		
+					}
+				}
+				
 				// If there is still no file, we can delete the folder without any special handling
 				if ( ! fileFound) {
 					tree.standardDeleteFolder(source, updateFlags, monitor);
