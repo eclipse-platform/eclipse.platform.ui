@@ -20,7 +20,7 @@ import org.eclipse.ui.IFileEditorMapping;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.internal.WorkbenchImages;
 
-/* (non-Javadoc)
+/**
  * Implementation of IFileEditorMapping.
  */
 public class FileEditorMapping extends Object implements IFileEditorMapping,
@@ -39,7 +39,6 @@ public class FileEditorMapping extends Object implements IFileEditorMapping,
      *  Create an instance of this class.
      *
      *  @param extension java.lang.String
-     *  @param mimeType java.lang.String
      */
     public FileEditorMapping(String extension) {
         this("*", extension); //$NON-NLS-1$
@@ -65,6 +64,8 @@ public class FileEditorMapping extends Object implements IFileEditorMapping,
 
     /**
      * Add the given editor to the list of editors registered.
+     * 
+     * @param editor the editor to add
      */
     public void addEditor(EditorDescriptor editor) {
         editors.add(editor);
@@ -83,9 +84,9 @@ public class FileEditorMapping extends Object implements IFileEditorMapping,
             return null;
         }
     }
-
-    /**
-     * @see java.lang.Object.equals(Object obj)
+	
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
      */
     public boolean equals(Object obj) {
         if (this == obj)
@@ -129,8 +130,8 @@ public class FileEditorMapping extends Object implements IFileEditorMapping,
 
         if (editors.size() == 0)
             return null;
-        else
-            return (IEditorDescriptor) editors.get(0);
+        
+        return (IEditorDescriptor) editors.get(0);
     }
 
     /* (non-Javadoc)
@@ -165,9 +166,8 @@ public class FileEditorMapping extends Object implements IFileEditorMapping,
         if (editor == null) {
             return WorkbenchImages
                     .getImageDescriptor(ISharedImages.IMG_OBJ_FILE);
-        } else {
-            return editor.getImageDescriptor();
-        }
+        } 
+        return editor.getImageDescriptor();   
     }
 
     /* (non-Javadoc)
@@ -186,6 +186,8 @@ public class FileEditorMapping extends Object implements IFileEditorMapping,
 
     /**
      * Remove the given editor from the set of editors registered.
+     * 
+     * @param editor the editor to remove
      */
     public void removeEditor(EditorDescriptor editor) {
         editors.remove(editor);
@@ -195,6 +197,8 @@ public class FileEditorMapping extends Object implements IFileEditorMapping,
     /**
      * Set the default editor registered for file type
      * described by this mapping.
+     * 
+     * @param editor the editor to be set as default
      */
     public void setDefaultEditor(EditorDescriptor editor) {
         editors.remove(editor);
@@ -208,6 +212,8 @@ public class FileEditorMapping extends Object implements IFileEditorMapping,
      * the user modifying the associations in the preference pages.
      * This modifies the internal list to share the passed list.
      * (hence the clear indication of list in the method name)
+     * 
+     * @param newEditors the new list of associated editors
      */
     public void setEditorsList(List newEditors) {
         editors = newEditors;
@@ -219,6 +225,8 @@ public class FileEditorMapping extends Object implements IFileEditorMapping,
      * which have been deleted by the user.
      * This modifies the internal list to share the passed list.
      * (hence the clear indication of list in the method name)
+     * 
+     * @param newDeletedEditors the new list of associated (but deleted) editors
      */
     public void setDeletedEditorsList(List newDeletedEditors) {
         deletedEditors = newDeletedEditors;
@@ -226,6 +234,8 @@ public class FileEditorMapping extends Object implements IFileEditorMapping,
 
     /**
      * Set the file's extension.
+     * 
+     * @param extension the file extension for this mapping
      */
     public void setExtension(String extension) {
         this.extension = extension;
@@ -233,6 +243,8 @@ public class FileEditorMapping extends Object implements IFileEditorMapping,
 
     /**
      * Set the file's name.
+     * 
+     * @param name the file name for this mapping
      */
     public void setName(String name) {
         this.name = name;
