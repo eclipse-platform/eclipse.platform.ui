@@ -1,9 +1,11 @@
 package org.eclipse.debug.ui;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
  
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -96,12 +98,12 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	/**
 	 * Constant for the name of the drop-down choice 'None' for perspectives.
 	 */
-	private static final String PERSPECTIVE_NONE_NAME = "None";	 //$NON-NLS-1$
+	private static final String PERSPECTIVE_NONE_NAME = LaunchConfigurationsMessages.getString("CommonTab.None"); //$NON-NLS-1$
 	
 	/**
 	 * Constant for the name of the drop-down choice 'Default' for perspectives.
 	 */
-	private static final String PERSPECTIVE_DEFAULT_NAME = "Default";	 //$NON-NLS-1$
+	private static final String PERSPECTIVE_DEFAULT_NAME = LaunchConfigurationsMessages.getString("CommonTab.Default"); //$NON-NLS-1$
 	
 	/**
 	 * Modify listener that simply updates the owning launch configuration dialog.

@@ -1,12 +1,15 @@
 package org.eclipse.debug.internal.ui.preferences;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsMessages;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
@@ -30,7 +33,7 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 
 	private RadioGroupFieldEditor fSaveRadioFieldEditor;
 	
-	private static final String PERSPECTIVE_NONE_NAME = "None"; //$NON-NLS-1$
+	private static final String PERSPECTIVE_NONE_NAME = LaunchConfigurationsMessages.getString("CommonTab.None");; //$NON-NLS-1$
 	
 	public DebugPreferencePage() {
 		super(GRID);
