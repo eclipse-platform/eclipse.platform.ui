@@ -175,6 +175,9 @@ public class UpdateModel implements IAdaptable {
 		IURLEntry info = feature.getLicense();
 		if (info == null)
 			return false;
-		return info.getAnnotation() != null && info.getAnnotation().length() > 0;
+		String licenseTxt = info.getAnnotation();
+		if (licenseTxt == null)
+			return false;
+		return licenseTxt.trim().length() > 0;
 	}
 }
