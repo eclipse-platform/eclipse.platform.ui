@@ -6,7 +6,6 @@ package org.eclipse.team.internal.ccvs.ui.wizards;
  */
 
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 
@@ -15,17 +14,6 @@ import org.eclipse.team.internal.ccvs.ui.Policy;
  * to the repositories view
  */
 public class LocationWizard extends ConnectionWizard {
-	/**
-	 * LocationWizard constructor
-	 */
-	public LocationWizard() {
-		IDialogSettings workbenchSettings = CVSUIPlugin.getPlugin().getDialogSettings();
-		IDialogSettings section = workbenchSettings.getSection("CVSWizard");//$NON-NLS-1$
-		if (section == null) {
-			section = workbenchSettings.addNewSection("CVSWizard");//$NON-NLS-1$
-		}
-		setDialogSettings(section);
-	}
 	protected String getMainPageDescription() {
 		return Policy.bind("LocationWizard.description");
 	}

@@ -11,7 +11,6 @@ import java.util.Properties;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.core.TeamException;
@@ -31,17 +30,6 @@ public class ConfigurationWizard extends ConnectionWizard implements IConfigurat
 	// The project to configure
 	private IProject project;
 	
-	/**
-	 * ConfigurationWizard constructor
-	 */
-	public ConfigurationWizard() {
-		IDialogSettings workbenchSettings = CVSUIPlugin.getPlugin().getDialogSettings();
-		IDialogSettings section = workbenchSettings.getSection("CVSWizard");//$NON-NLS-1$
-		if (section == null) {
-			section = workbenchSettings.addNewSection("CVSWizard");//$NON-NLS-1$
-		}
-		setDialogSettings(section);
-	}
 	protected String getMainPageDescription() {
 		return Policy.bind("ConfigurationWizard.description");
 	}

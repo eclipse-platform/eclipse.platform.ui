@@ -6,7 +6,6 @@ package org.eclipse.team.internal.ccvs.ui.wizards;
  */
 
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 
@@ -15,17 +14,6 @@ import org.eclipse.team.internal.ccvs.ui.Policy;
  * to the workspace.
  */
 public class AddWizard extends ConnectionWizard {
-	/**
-	 * AddWizard constructor
-	 */
-	public AddWizard() {
-		IDialogSettings workbenchSettings = CVSUIPlugin.getPlugin().getDialogSettings();
-		IDialogSettings section = workbenchSettings.getSection("CVSWizard");//$NON-NLS-1$
-		if (section == null) {
-			section = workbenchSettings.addNewSection("CVSWizard");//$NON-NLS-1$
-		}
-		setDialogSettings(section);
-	}
 	protected String getMainPageDescription() {
 		return Policy.bind("AddWizard.description");
 	}

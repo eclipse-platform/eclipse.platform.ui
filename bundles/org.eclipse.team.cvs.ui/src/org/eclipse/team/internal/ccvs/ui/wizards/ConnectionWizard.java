@@ -6,8 +6,9 @@ package org.eclipse.team.internal.ccvs.ui.wizards;
  */
 
 import java.util.Properties;
-import org.eclipse.team.internal.ccvs.ui.wizards.*;
-import org.eclipse.team.internal.ccvs.ui.*;
+
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 
 /**
  * Abstract wizard which displays a configuration wizard main page
@@ -19,6 +20,15 @@ public abstract class ConnectionWizard extends CVSWizard {
 
 	private Properties properties;
 	
+	public ConnectionWizard() {
+		IDialogSettings workbenchSettings = CVSUIPlugin.getPlugin().getDialogSettings();
+		IDialogSettings section = workbenchSettings.getSection("CVSWizard");//$NON-NLS-1$
+		if (section == null) {
+			section = workbenchSettings.addNewSection("CVSWizard");//$NON-NLS-1$
+		}
+		setDialogSettings(section);
+	}
+
 	/**
 	 * Creates the wizard pages
 	 */

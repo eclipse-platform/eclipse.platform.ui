@@ -12,7 +12,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.core.TeamException;
@@ -28,17 +27,6 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
  */
 public class CheckoutWizard extends ConnectionWizard {
 
-	/**
-	 * CheckoutWizard constructor
-	 */
-	public CheckoutWizard() {
-		IDialogSettings workbenchSettings = CVSUIPlugin.getPlugin().getDialogSettings();
-		IDialogSettings section = workbenchSettings.getSection("CVSWizard");//$NON-NLS-1$
-		if (section == null) {
-			section = workbenchSettings.addNewSection("CVSWizard");//$NON-NLS-1$
-		}
-		setDialogSettings(section);
-	}
 	protected String getMainPageDescription() {
 		return Policy.bind("CheckoutWizard.description");
 	}
