@@ -33,7 +33,7 @@ import org.eclipse.ui.internal.util.Util;
 public final class KeySequence implements Comparable {
 
 	private final static char KEY_STROKE_DELIMITER = ' '; //$NON-NLS-1$
-	private final static String KEY_STROKE_DELIMITERS = KEY_STROKE_DELIMITER + "\b\t\r\u001b\u007F"; //$NON-NLS-1$
+	private final static String KEY_STROKE_DELIMITERS = KEY_STROKE_DELIMITER + "\b\t\n\f\r\u001b\u007F"; //$NON-NLS-1$
 
 	/**
 	 * JAVADOC

@@ -59,10 +59,12 @@ public final class KeyStroke implements Comparable {
 	public final static String F7 = "F7"; //$NON-NLS-1$
 	public final static String F8 = "F8"; //$NON-NLS-1$
 	public final static String F9 = "F9"; //$NON-NLS-1$
+	public final static String FF = "FF"; //$NON-NLS-1$
 	public final static String HOME = "HOME"; //$NON-NLS-1$
 	public final static String INSERT = "INSERT"; //$NON-NLS-1$
 	public final static char KEY_DELIMITER = '+'; //$NON-NLS-1$
 	public final static String KEY_DELIMITERS = KEY_DELIMITER + ""; //$NON-NLS-1$
+	public final static String LF = "LF"; //$NON-NLS-1$
 	public final static String PAGE_DOWN = "PAGE_DOWN"; //$NON-NLS-1$
 	public final static String PAGE_UP = "PAGE_UP"; //$NON-NLS-1$
 	public final static String PLUS = "PLUS"; //$NON-NLS-1$
@@ -82,6 +84,8 @@ public final class KeyStroke implements Comparable {
 		escapeKeyLookup.put(CR, CharacterKey.getInstance('\r'));
 		escapeKeyLookup.put(DEL, CharacterKey.getInstance('\u007F'));
 		escapeKeyLookup.put(ESC, CharacterKey.getInstance('\u001b'));
+		escapeKeyLookup.put(FF, CharacterKey.getInstance('\f'));
+		escapeKeyLookup.put(LF, CharacterKey.getInstance('\n'));
 		escapeKeyLookup.put(PLUS, CharacterKey.getInstance('+'));
 		escapeKeyLookup.put(SPACE, CharacterKey.getInstance(' '));
 		escapeKeyLookup.put(TAB, CharacterKey.getInstance('\t'));
@@ -278,6 +282,10 @@ public final class KeyStroke implements Comparable {
 			stringBuffer.append(BS);
 		else if ("\t".equals(name)) //$NON-NLS-1$
 			stringBuffer.append(TAB);
+		else if ("\n".equals(name)) //$NON-NLS-1$
+			stringBuffer.append(LF);
+		else if ("\f".equals(name)) //$NON-NLS-1$
+			stringBuffer.append(FF);
 		else if ("\r".equals(name)) //$NON-NLS-1$	
 			stringBuffer.append(CR);
 		else if ("\u001b".equals(name)) //$NON-NLS-1$	
