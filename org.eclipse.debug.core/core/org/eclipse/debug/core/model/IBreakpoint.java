@@ -14,7 +14,7 @@ import org.eclipse.debug.core.DebugPlugin;
  * A breakpoint is capable of suspending the execution of a
  * program at a specific location when a program is running
  * in debug mode. Each breakpoint has an associated marker which
- * stores and persists all attributes associated with each breakpoint.
+ * stores and persists all attributes associated with a breakpoint.
  * <p>
  * A breakpoint is defined in two parts:
  * <ol>
@@ -23,7 +23,7 @@ import org.eclipse.debug.core.DebugPlugin;
  * </ol>
  * <p>
  * For example, following is a definition of corresponding breakpoint
- * and breakpoint marker definitions. Note that the <ocde>markerType</code>
+ * and breakpoint marker definitions. Note that the <code>markerType</code>
  * attribute defined by the breakpoint extension corresponds to the 
  * type of the marker definition.
  * <pre>
@@ -48,7 +48,7 @@ import org.eclipse.debug.core.DebugPlugin;
  * <code>"org.eclipse.debug.core.breakpointMarker"</code>, and 
  * instantiating the class defined by the <code>class</code> attribute
  * on the associated breakpoint extension. The method <code>setMarker</code>
- * is then called to associated a marker with the breakpoint.
+ * is then called to associate a marker with the breakpoint.
  */
 
 public interface IBreakpoint extends IAdaptable {
@@ -107,8 +107,7 @@ public interface IBreakpoint extends IAdaptable {
 	public IMarker getMarker();
 	/**
 	 * Sets the marker associated with this breakpoint. This method is
-	 * only called at breakpoint creation, when restoring a persisted
-	 * marker.
+	 * called once at breakpoint creation.
 	 * 
 	 * @param marker the marker to associate with this breakpoint
 	 * @exception CoreException if an error occurs accessing the marker
@@ -125,9 +124,9 @@ public interface IBreakpoint extends IAdaptable {
 	/**
 	 * Returns whether this breakpoint is enabled
 	 * 
+	 * @return whether this breakpoint is enabled
 	 * @exception CoreException if a <code>CoreException</code> is 
 	 * 	thrown when retrieving the enabled attribute from the underlying marker
-	 * @return whether this breakpoint is enabled
 	 */
 	public boolean isEnabled() throws CoreException;
 	/**
