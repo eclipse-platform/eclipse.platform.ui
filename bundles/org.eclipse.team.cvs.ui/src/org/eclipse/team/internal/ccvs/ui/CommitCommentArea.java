@@ -221,7 +221,8 @@ public class CommitCommentArea extends DialogArea {
 
     public boolean hasCommitTemplate() {
         try {
-            return getCommitTemplate() != null;
+             String commitTemplate = getCommitTemplate();
+            return commitTemplate != null && commitTemplate.length() > 0;
         } catch (CVSException e) {
             CVSUIPlugin.log(e);
             return false;

@@ -135,8 +135,8 @@ public class CommitSetDialog extends Dialog {
         nameText.setText(initialText);
         
         if (useTitleButton != null) {
-            useTitleButton.setEnabled(!set.hasComment());
-            enterCommentButton.setEnabled(set.hasComment());
+            useTitleButton.setSelection(!set.hasComment());
+            enterCommentButton.setSelection(set.hasComment());
         }
     }
     
