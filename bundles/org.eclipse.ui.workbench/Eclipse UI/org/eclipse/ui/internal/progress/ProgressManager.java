@@ -333,9 +333,14 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 	public void scheduled(IJobChangeEvent event) {
 		if (isNeverDisplayedJob(event.getJob()))
 			return;
-		JobInfo info = new JobInfo(event.getJob());
-		jobs.put(event.getJob(), info);
-		add(info);
+		
+		if(jobs.containsKey(event.getJob()))
+			refresh(getJobInfo(event.getJob()));
+		else{
+			JobInfo info = new JobInfo(event.getJob());
+			jobs.put(event.getJob(), info);
+			add(info);
+		}
 	}
 
 	/*
@@ -380,6 +385,10 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 			jobs.remove(event.getJob());
 			//Only refresh if we are showing it
 			remove(info);
+			
+			//If there are no more left then refresh all
+			if(!hasJobInfos())
+				refreshAll();
 		}
 	}
 
