@@ -21,8 +21,9 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.subscribers.*;
-import org.eclipse.team.core.synchronize.*;
+import org.eclipse.team.core.subscribers.Subscriber;
+import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
@@ -393,6 +394,53 @@ public class CVSMergeSubscriberTest extends CVSSyncSubscriberTest {
 						SyncInfo.IN_SYNC, 
 								SyncInfo.INCOMING | SyncInfo.ADDITION,
 								SyncInfo.IN_SYNC, SyncInfo.IN_SYNC, SyncInfo.IN_SYNC});		
+	}
+	
+	/*Bug 53129  
+	   Outgoing deletions in deleted folders are lost 
+	 */
+	public void testBug53129Outgoingdeletionsindeletedfoldersarelost() throws TeamException, CoreException, InvocationTargetException, InterruptedException {		
+		/*IProject project = createProject("testBug53129", new String[]{"file1.txt", "folder1/", "folder1/a.txt", "folder1/b.txt"});
+		setContentsAndEnsureModified(project.getFile("file1.txt"), "some text\nwith several lines\n");
+		commitProject(project);
+		
+		// Checkout and branch a copy
+		CVSTag root = new CVSTag("root_branch1", CVSTag.VERSION);
+		CVSTag branch = new CVSTag("branch1", CVSTag.BRANCH);
+		IProject branchedProject = branchProject(project, root, branch);
+		
+		// modify the branch
+		deleteResources(branchedProject, new String[] {"folder1/a.txt", "folder1/b.txt"}, true);
+		
+		// create a merge subscriber
+		CVSMergeSubscriber subscriber = getSyncInfoSource().createMergeSubscriber(project, root, branch);
+		
+		assertSyncEquals("testBug53129 - 1", subscriber, project, 
+				new String[]{"file1.txt", "folder1/", "folder1/a.txt", "folder1/b.txt"}, true, 
+				new int[]{
+						SyncInfo.IN_SYNC, SyncInfo.IN_SYNC,
+						SyncInfo.INCOMING | SyncInfo.DELETION,
+						SyncInfo.INCOMING | SyncInfo.DELETION});
+		
+		mergeResources(subscriber, project, new String[]{"folder1/a.txt", "folder1/b.txt"}, true);
+		
+		assertSyncEquals("testBug53129 - 2", getWorkspaceSubscriber(), project, 
+				new String[]{"file1.txt", "folder1", "folder1/a.txt", "folder1/b.txt"}, true, 
+				new int[]{
+						SyncInfo.IN_SYNC, SyncInfo.IN_SYNC, 
+						SyncInfo.OUTGOING | SyncInfo.DELETION,
+						SyncInfo.OUTGOING | SyncInfo.DELETION});
+		
+		IFolder f = project.getFolder("folder1");
+		f.delete(true, null);
+		
+		assertSyncEquals("testBug53129 - 3", getWorkspaceSubscriber(), project, 
+				new String[]{"file1.txt", "folder1", "folder1/a.txt", "folder1/b.txt"}, true, 
+				new int[]{
+						SyncInfo.IN_SYNC, 
+						SyncInfo.OUTGOING | SyncInfo.DELETION,
+						SyncInfo.OUTGOING | SyncInfo.DELETION,
+						SyncInfo.OUTGOING | SyncInfo.DELETION});*/
 	}
 	
 	public void testDisconnectingProject() throws CoreException, IOException, TeamException, InterruptedException {
