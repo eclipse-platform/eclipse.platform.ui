@@ -10,8 +10,6 @@ import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.boot.IPlatformRunnable;
 import org.eclipse.core.internal.boot.*;
 import org.eclipse.core.runtime.model.*;
-import org.eclipse.core.internal.boot.PlatformURLHandlerFactory;
-import org.eclipse.core.internal.boot.InternalBootLoader;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.internal.plugins.*;
