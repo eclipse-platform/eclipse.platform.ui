@@ -331,6 +331,9 @@ public class DebugPlugin extends Plugin {
 	 * @see ILaunchManager
 	 */
 	public ILaunchManager getLaunchManager() {
+		if (fLaunchManager == null) {
+			fLaunchManager = new LaunchManager();
+		}
 		return fLaunchManager;
 	}
 	
@@ -371,6 +374,9 @@ public class DebugPlugin extends Plugin {
 	 * @since 2.0
 	 */
 	public IExpressionManager getExpressionManager() {
+		if (fExpressionManager == null) {
+			fExpressionManager = new ExpressionManager();
+		}
 		return fExpressionManager;
 	}	
 	
@@ -404,32 +410,15 @@ public class DebugPlugin extends Plugin {
 				fAsynchRunner.notifyAll();
 			}
 		}
-		fLaunchManager.shutdown();
+		if (fLaunchManager != null) {
+			fLaunchManager.shutdown();
+		}
 		if (fBreakpointManager != null) {
 			fBreakpointManager.shutdown();
 		}
 		fEventListeners.removeAll();
 		setDefault(null);
 		ResourcesPlugin.getWorkspace().removeSaveParticipant(this);
-	}
-
-	/**
-	 * Starts up the debug plug-in. This involves creating the launch and
-	 * breakpoint managers, creating proxies to all launcher extensions,
-	 * and restoring all persisted breakpoints.
-	 * <p>
- 	 * This method is automatically invoked by the platform 
-	 * the first time any code in this plug-in is executed.
-	 * </p>
-	 * <b>Clients must never explicitly call this method.</b>
-	 *
-	 * @see Plugin#startup
-	 * @exception CoreException if this plug-in fails to start up
-	 */
-	public void startup() throws CoreException {
-		fLaunchManager= new LaunchManager();
-		fExpressionManager = new ExpressionManager();
-		fExpressionManager.startup();
 	}
 	
 	/**

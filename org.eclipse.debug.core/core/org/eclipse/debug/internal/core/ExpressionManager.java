@@ -34,17 +34,17 @@ public class ExpressionManager implements IExpressionManager, IDebugEventSetList
 	/**
 	 * Collection of registered expressions.
 	 */
-	private Vector fExpressions = new Vector(10);
+	private Vector fExpressions = null;
 	
 	/**
 	 * List of expression listeners
 	 */
-	private ListenerList fListeners = new ListenerList(2);
+	private ListenerList fListeners = null;
 	
 	/**
 	 * List of (multi) expressions listeners
 	 */
-	private ListenerList fExpressionsListeners = new ListenerList(2);	
+	private ListenerList fExpressionsListeners = null;	
 	
 	// Constants for add/remove/change notification
 	private static final int ADDED = 1;
@@ -62,13 +62,20 @@ public class ExpressionManager implements IExpressionManager, IDebugEventSetList
 	 * @see IExpressionManager#addExpressions(IExpression[])
 	 */
 	public void addExpressions(IExpression[] expressions) {
+		if (fExpressions == null) {
+			fExpressions = new Vector(expressions.length);
+		}
+		boolean wasEmpty = fExpressions.isEmpty();
 		List added = new ArrayList(expressions.length);
 		for (int i = 0; i < expressions.length; i++) {
 			IExpression expression = expressions[i];
-			if (getExpressions0().indexOf(expression) == -1) {
+			if (fExpressions.indexOf(expression) == -1) {
 				added.add(expression);
-				getExpressions0().add(expression);
+				fExpressions.add(expression);
 			}				
+		}
+		if (wasEmpty) {
+			DebugPlugin.getDefault().addDebugEventListener(this);	
 		}
 		if (!added.isEmpty()) {
 			fireUpdate((IExpression[])added.toArray(new IExpression[added.size()]), ADDED);
@@ -79,9 +86,11 @@ public class ExpressionManager implements IExpressionManager, IDebugEventSetList
 	 * @see IExpressionManager#getExpressions()
 	 */
 	public IExpression[] getExpressions() {
-		Vector expressions = getExpressions0();
-		IExpression[] temp= new IExpression[expressions.size()];
-		expressions.copyInto(temp);
+		if (fExpressions == null) {
+			return new IExpression[0];
+		}
+		IExpression[] temp= new IExpression[fExpressions.size()];
+		fExpressions.copyInto(temp);
 		return temp;
 	}
 
@@ -89,9 +98,11 @@ public class ExpressionManager implements IExpressionManager, IDebugEventSetList
 	 * @see IExpressionManager#getExpressions(String)
 	 */
 	public IExpression[] getExpressions(String modelIdentifier) {
-		Vector expressions = getExpressions0();
-		ArrayList temp= new ArrayList(expressions.size());
-		Iterator iter= expressions.iterator();
+		if (fExpressions == null) {
+			return new IExpression[0];
+		}
+		ArrayList temp= new ArrayList(fExpressions.size());
+		Iterator iter= fExpressions.iterator();
 		while (iter.hasNext()) {
 			IExpression expression= (IExpression) iter.next();
 			String id= expression.getModelIdentifier();
@@ -113,12 +124,18 @@ public class ExpressionManager implements IExpressionManager, IDebugEventSetList
 	 * @see IExpressionManager#removeExpressions(IExpression[])
 	 */
 	public void removeExpressions(IExpression[] expressions) {
+		if (fExpressions == null) {
+			return;
+		}
 		List removed = new ArrayList(expressions.length);
 		for (int i = 0; i < expressions.length; i++) {
 			IExpression expression = expressions[i];
-			if (getExpressions0().remove(expression)) {
+			if (fExpressions.remove(expression)) {
 				removed.add(expression);
 			}				
+		}
+		if (fExpressions.isEmpty()) {
+			DebugPlugin.getDefault().removeDebugEventListener(this);
 		}
 		if (!removed.isEmpty()) {
 			fireUpdate((IExpression[])removed.toArray(new IExpression[removed.size()]), REMOVED);
@@ -129,6 +146,9 @@ public class ExpressionManager implements IExpressionManager, IDebugEventSetList
 	 * @see IExpressionManager#addExpressionListener(IExpressionListener)
 	 */
 	public void addExpressionListener(IExpressionListener listener) {
+		if (fListeners == null) {
+			fListeners = new ListenerList(2);
+		}
 		fListeners.add(listener);
 	}
 
@@ -136,31 +156,10 @@ public class ExpressionManager implements IExpressionManager, IDebugEventSetList
 	 * @see IExpressionManager#removeExpressionListener(IExpressionListener)
 	 */
 	public void removeExpressionListener(IExpressionListener listener) {
+		if (fListeners == null) {
+			return;
+		}
 		fListeners.remove(listener);
-	}
-	
-	/**
-	 * Called be the debug plug-in when starting up.
-	 */
-	public void startup() {
-		DebugPlugin.getDefault().addDebugEventListener(this);
-	}
-	
-	/**
-	 * Called by the debug plug-in when shutting down.
-	 */
-	public void shutdown() {
-		DebugPlugin.getDefault().removeDebugEventListener(this);
-	}
-
-	/**
-	 * Returns the list of registered expressions as
-	 * a vector.
-	 * 
-	 * @return vector of registered expressions
-	 */
-	protected Vector getExpressions0() {
-		return fExpressions;
 	}
 	
 	/**
@@ -198,54 +197,61 @@ public class ExpressionManager implements IExpressionManager, IDebugEventSetList
 	 */
 	private void fireUpdate(IExpression[] expressions, int update) {
 		// single listeners
-		Object[] copiedListeners= fListeners.getListeners();
-		for (int i= 0; i < copiedListeners.length; i++) {
-			IExpressionListener listener = (IExpressionListener)copiedListeners[i];
-			for (int j = 0; j < expressions.length; j++) {
-				IExpression expression = expressions[j];
-				switch (update) {
-					case ADDED:
-						listener.expressionAdded(expression);
-						break;
-					case REMOVED:
-						listener.expressionRemoved(expression);
-						break;
-					case CHANGED:
-						listener.expressionChanged(expression);		
-						break;
-				}				
+		if (fListeners != null) {
+			Object[] copiedListeners= fListeners.getListeners();
+			for (int i= 0; i < copiedListeners.length; i++) {
+				IExpressionListener listener = (IExpressionListener)copiedListeners[i];
+				for (int j = 0; j < expressions.length; j++) {
+					IExpression expression = expressions[j];
+					switch (update) {
+						case ADDED:
+							listener.expressionAdded(expression);
+							break;
+						case REMOVED:
+							listener.expressionRemoved(expression);
+							break;
+						case CHANGED:
+							listener.expressionChanged(expression);		
+							break;
+					}				
+				}
 			}
 		}
 		
 		// multi listeners
-		copiedListeners = fExpressionsListeners.getListeners();
-		for (int i= 0; i < copiedListeners.length; i++) {
-			IExpressionsListener listener = (IExpressionsListener)copiedListeners[i];
-			switch (update) {
-				case ADDED:
-					listener.expressionsAdded(expressions);
-					break;
-				case REMOVED:
-					listener.expressionsRemoved(expressions);
-					break;
-				case CHANGED:
-					listener.expressionsChanged(expressions);		
-					break;
-			}
-		}		
+		if (fExpressionsListeners != null) {
+			Object[] copiedListeners = fExpressionsListeners.getListeners();
+			for (int i= 0; i < copiedListeners.length; i++) {
+				IExpressionsListener listener = (IExpressionsListener)copiedListeners[i];
+				switch (update) {
+					case ADDED:
+						listener.expressionsAdded(expressions);
+						break;
+					case REMOVED:
+						listener.expressionsRemoved(expressions);
+						break;
+					case CHANGED:
+						listener.expressionsChanged(expressions);		
+						break;
+				}
+			}		
+		}
 	}	
 
 	/**
 	 * @see IExpressionManager#hasExpressions()
 	 */
 	public boolean hasExpressions() {
-		return !getExpressions0().isEmpty();
+		return fExpressions != null;
 	}
 
 	/**
 	 * @see org.eclipse.debug.core.IExpressionManager#addExpressionListener(org.eclipse.debug.core.IExpressionsListener)
 	 */
 	public void addExpressionListener(IExpressionsListener listener) {
+		if (fExpressionsListeners == null) {
+			fExpressionsListeners = new ListenerList(2);
+		}
 		fExpressionsListeners.add(listener);
 	}
 
@@ -253,6 +259,9 @@ public class ExpressionManager implements IExpressionManager, IDebugEventSetList
 	 * @see org.eclipse.debug.core.IExpressionManager#removeExpressionListener(org.eclipse.debug.core.IExpressionsListener)
 	 */
 	public void removeExpressionListener(IExpressionsListener listener) {
+		if (fExpressionsListeners == null) {
+			return;
+		}
 		fExpressionsListeners.remove(listener);
 	}
 
