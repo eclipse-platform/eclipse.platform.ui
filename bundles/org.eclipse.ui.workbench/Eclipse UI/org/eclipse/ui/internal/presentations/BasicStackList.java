@@ -76,7 +76,7 @@ public class BasicStackList extends AbstractTableInformationControl {
     
     private class BasicStackListLabelProvider extends LabelProvider implements IFontProvider {
 
-    	private Font boldFont = null;
+    	private Font italicFont = null;
 
 		public BasicStackListLabelProvider() { 
 		    //no-op
@@ -101,24 +101,24 @@ public class BasicStackList extends AbstractTableInformationControl {
     	
 		public Font getFont(Object element) {
 			CTabItem tabItem = (CTabItem) element;
-			if (tabItem.isShowing()) // visible
+			if (!tabItem.isShowing()) // not-visible
 				return null;
 			
-			if (boldFont == null) {
+			if (italicFont == null) {
 				Font originalFont = tabItem.getFont();
 				FontData fontData[] = originalFont.getFontData();
 				// Adding the bold attribute
 				for (int i = 0; i < fontData.length; i++) 
-					fontData[i].setStyle(fontData[i].getStyle()|SWT.BOLD);
-				boldFont = new Font(tabItem.getDisplay(), fontData);
+					fontData[i].setStyle(fontData[i].getStyle()|SWT.ITALIC);
+				italicFont = new Font(tabItem.getDisplay(), fontData);
 			}
-			return boldFont;
+			return italicFont;
 		}
 		
 		public void dispose() {
 			super.dispose();
-			if (boldFont != null)
-				boldFont.dispose();
+			if (italicFont != null)
+				italicFont.dispose();
 		}
     }    
     
