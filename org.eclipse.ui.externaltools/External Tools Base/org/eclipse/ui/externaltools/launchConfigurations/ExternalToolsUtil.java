@@ -14,22 +14,16 @@ import java.text.MessageFormat;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
+import org.eclipse.ui.externaltools.internal.model.ResourceSelectionManager;
 import org.eclipse.ui.externaltools.internal.model.ToolMessages;
 import org.eclipse.ui.externaltools.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.model.ToolUtil;
@@ -88,30 +82,7 @@ public class ExternalToolsUtil {
 	 * @return returns the resource associated with the selection or active editor in
 	 * the active workbench window, or <code>null</code> if none	 */
 	public static IResource getActiveResource() {
-		IWorkbenchWindow window = ExternalToolsPlugin.getActiveWorkbenchWindow();
-		IResource selectedResource = null;
-		if (window != null) {
-			ISelection selection = window.getSelectionService().getSelection();
-			if (selection instanceof IStructuredSelection) {
-				Object result = ((IStructuredSelection)selection).getFirstElement();
-				if (result instanceof IResource) {
-					selectedResource = (IResource) result;
-				} else if (result instanceof IAdaptable) {
-					selectedResource = (IResource)((IAdaptable) result).getAdapter(IResource.class);
-				}
-			}
-			
-			if (selectedResource == null) {
-				IWorkbenchPart activePart = window.getPartService().getActivePart();
-				// If the active part is an editor, get the file resource used as input.
-				if (activePart instanceof IEditorPart) {
-					IEditorPart editorPart = (IEditorPart) activePart;
-					IEditorInput input = editorPart.getEditorInput();
-					selectedResource = (IResource) input.getAdapter(IResource.class);
-				} 
-			}
-		}
-		return selectedResource;
+		return ResourceSelectionManager.getDefault().getActiveResource();
 	}	
 
 	/**

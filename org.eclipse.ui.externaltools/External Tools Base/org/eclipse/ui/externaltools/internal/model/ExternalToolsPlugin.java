@@ -248,4 +248,12 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin {
 		return ExternalToolsImages.initializeImageRegistry();
 	}
 
+	/**
+	 * @see org.eclipse.core.runtime.Plugin#startup()
+	 */
+	public void startup() throws CoreException {
+		super.startup();
+		ResourceSelectionManager.getDefault();
+	}
+
 }
