@@ -80,6 +80,10 @@ public class ProgressTableContentProvider
 	 * @return
 	 */
 	private Object[] getRoots(Object[] elements, boolean subWithParent){
+		
+		if(elements.length == 0)
+			return elements;
+			
 		HashSet roots = new HashSet();
 		for (int i = 0; i < elements.length; i++) {
 			JobTreeElement element = (JobTreeElement) elements[i];

@@ -172,6 +172,9 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
 	void removeJobInfo(final JobInfo job) {
 		synchronized (lock) {
 			infos.remove(job);
+			if(infos.isEmpty()){
+				done();
+			}
 		}
 	}
 

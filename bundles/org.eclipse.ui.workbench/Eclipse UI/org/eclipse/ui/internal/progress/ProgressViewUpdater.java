@@ -235,9 +235,12 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 					for (int v = 0; v < collectors.length; v++) {
 						IProgressUpdateCollector collector = collectors[v];
 
-						collector.refresh(updateItems);
-						collector.add(additionItems);
-						collector.remove(deletionItems);
+						if(updateItems.length >0)
+							collector.refresh(updateItems);
+						if(additionItems.length >0)
+							collector.add(additionItems);
+						if(deletionItems.length >0)
+							collector.remove(deletionItems);
 					}
 				}
 
