@@ -33,7 +33,7 @@ public interface IPreferencesService {
 
 	/**
 	 * Lookup the given key in the specified preference nodes in the given order.
-	 * Return the set value from the first node the key is found in. If the key is not
+	 * Return the value from the first node the key is found in. If the key is not
 	 * defined in any of the given nodes, then return the specified default value.
 	 * <p>
 	 * Immediately returns the default value if the node list is <code>null</code>.
@@ -59,6 +59,23 @@ public interface IPreferencesService {
 	 * method. The order of the nodes is calculated by consulting the default 
 	 * scope lookup order as set by {@link #setDefaultLookupOrder(String, String, String[])}.
 	 * </p><p>
+	 * The specified key may either refer to a simple key or be the concatenation of the 
+	 * path of a child node and key. If the key contains a slash ("/") character, then a 
+	 * double-slash must be used to denote the end of they child path and the beginning 
+	 * of the key. Otherwise it is assumed that the key is the last segment of the path.
+	 * The following are some examples of keys and their meanings:
+	 * <ul>
+	 * <li>"a" - look for a value for the property "a"
+	 * <li>"//a" - look for a value for the property "a"
+	 * <li>"//a//b" - look for a value for the property "a//b"
+	 * <li>"a/b/c" - look in the child node "a/b" for property "a"
+	 * <li>"/a/b/c" - look in the child node "a/b" for property "a"
+	 * <li>"/a/b//c" - look in the child node "a/b" for the property "c"
+	 * <li>"a/b//c/d" - look in the child node "a/b" for the property "c/d"
+	 * <li>"/a/b//c/d" - look in the child node "a/b" for the property "c/d"
+	 * <li>"/a/b//c//d" - look in the child node "a/b" for the property "c//d"
+	 * </ul>
+	 * </p><p>
 	 * Callers may specify an array of scope context objects to aid in the 
 	 * determination of the correct nodes. For each entry in the lookup 
 	 * order, the array of contexts is consulted and if one matching the 
@@ -69,7 +86,7 @@ public interface IPreferencesService {
 	 * plug-in identifier. (e.g. "org.eclipse.core.resources" for "description.autobuild")
 	 * </p>
 	 * @param qualifier a namespace qualifier for the preference
-	 * @param key the name of the preference
+	 * @param key the name of the preference (optionally including its path)
 	 * @param defaultValue the value to use if the preference is not defined
 	 * @param contexts optional context objects to help scopes determine which nodes to search, or <code>null</code>
 	 * @return the value of the preference or the given default value
@@ -86,10 +103,27 @@ public interface IPreferencesService {
 	 * Use the canonical scope lookup order for finding the preference value. 
 	 * <p>
 	 * The semantics of this method are to calculate the appropriate 
-	 * <code>Preference</code> nodes in the preference hierarchy to use
-	 * and then call the <code>get(String, String, Preferences[])</code> 
+	 * {@link Preferences} nodes in the preference hierarchy to use
+	 * and then call the {@link #get(String, String, Preferences[])} 
 	 * method. The order of the nodes is calculated by consulting the default 
-	 * scope lookup order as set by <code>setDefaultLookupOrder(String, String)</code>.
+	 * scope lookup order as set by {@link #setDefaultLookupOrder(String, String, String[])}.
+	 * </p><p>
+	 * The specified key may either refer to a simple key or be the concatenation of the 
+	 * path of a child node and key. If the key contains a slash ("/") character, then a 
+	 * double-slash must be used to denote the end of they child path and the beginning 
+	 * of the key. Otherwise it is assumed that the key is the last segment of the path.
+	 * The following are some examples of keys and their meanings:
+	 * <ul>
+	 * <li>"a" - look for a value for the property "a"
+	 * <li>"//a" - look for a value for the property "a"
+	 * <li>"//a//b" - look for a value for the property "a//b"
+	 * <li>"a/b/c" - look in the child node "a/b" for property "a"
+	 * <li>"/a/b/c" - look in the child node "a/b" for property "a"
+	 * <li>"/a/b//c" - look in the child node "a/b" for the property "c"
+	 * <li>"a/b//c/d" - look in the child node "a/b" for the property "c/d"
+	 * <li>"/a/b//c/d" - look in the child node "a/b" for the property "c/d"
+	 * <li>"/a/b//c//d" - look in the child node "a/b" for the property "c//d"
+	 * </ul>
 	 * </p><p>
 	 * Callers may specify an array of scope context objects to aid in the 
 	 * determination of the correct nodes. For each entry in the lookup 
@@ -101,7 +135,7 @@ public interface IPreferencesService {
 	 * plug-in identifier. (e.g. "org.eclipse.core.resources" for "description.autobuild")
 	 * </p>
 	 * @param qualifier a namespace qualifier for the preference
-	 * @param key the name of the preference
+	 * @param key the name of the preference (optionally including its path)
 	 * @param defaultValue the value to use if the preference is not defined
 	 * @param contexts optional context objects to help scopes determine which nodes to search, or <code>null</code>
 	 * @return the value of the preference or the given default value
@@ -118,10 +152,27 @@ public interface IPreferencesService {
 	 * Use the canonical scope lookup order for finding the preference value. 
 	 * <p>
 	 * The semantics of this method are to calculate the appropriate 
-	 * <code>Preference</code> nodes in the preference hierarchy to use
-	 * and then call the <code>get(String, String, Preferences[])</code> 
+	 * {@link Preferences} nodes in the preference hierarchy to use
+	 * and then call the {@link #get(String, String, Preferences[])} 
 	 * method. The order of the nodes is calculated by consulting the default 
-	 * scope lookup order as set by <code>setDefaultLookupOrder(String, String)</code>.
+	 * scope lookup order as set by {@link #setDefaultLookupOrder(String, String, String[])}.
+	 * </p><p>
+	 * The specified key may either refer to a simple key or be the concatenation of the 
+	 * path of a child node and key. If the key contains a slash ("/") character, then a 
+	 * double-slash must be used to denote the end of they child path and the beginning 
+	 * of the key. Otherwise it is assumed that the key is the last segment of the path.
+	 * The following are some examples of keys and their meanings:
+	 * <ul>
+	 * <li>"a" - look for a value for the property "a"
+	 * <li>"//a" - look for a value for the property "a"
+	 * <li>"//a//b" - look for a value for the property "a//b"
+	 * <li>"a/b/c" - look in the child node "a/b" for property "a"
+	 * <li>"/a/b/c" - look in the child node "a/b" for property "a"
+	 * <li>"/a/b//c" - look in the child node "a/b" for the property "c"
+	 * <li>"a/b//c/d" - look in the child node "a/b" for the property "c/d"
+	 * <li>"/a/b//c/d" - look in the child node "a/b" for the property "c/d"
+	 * <li>"/a/b//c//d" - look in the child node "a/b" for the property "c//d"
+	 * </ul>
 	 * </p><p>
 	 * Callers may specify an array of scope context objects to aid in the 
 	 * determination of the correct nodes. For each entry in the lookup 
@@ -133,7 +184,7 @@ public interface IPreferencesService {
 	 * plug-in identifier. (e.g. "org.eclipse.core.resources" for "description.autobuild")
 	 * </p>
 	 * @param qualifier a namespace qualifier for the preference
-	 * @param key the name of the preference
+	 * @param key the name of the preference (optionally including its path)
 	 * @param defaultValue the value to use if the preference is not defined
 	 * @param contexts optional context objects to help scopes determine which nodes to search, or <code>null</code>
 	 * @return the value of the preference or the given default value
@@ -150,10 +201,27 @@ public interface IPreferencesService {
 	 * Use the canonical scope lookup order for finding the preference value. 
 	 * <p>
 	 * The semantics of this method are to calculate the appropriate 
-	 * <code>Preference</code> nodes in the preference hierarchy to use
-	 * and then call the <code>get(String, String, Preferences[])</code> 
+	 * {@link Preferences} nodes in the preference hierarchy to use
+	 * and then call the {@link #get(String, String, Preferences[])} 
 	 * method. The order of the nodes is calculated by consulting the default 
-	 * scope lookup order as set by <code>setDefaultLookupOrder(String, String)</code>.
+	 * scope lookup order as set by {@link #setDefaultLookupOrder(String, String, String[])}.
+	 * </p><p>
+	 * The specified key may either refer to a simple key or be the concatenation of the 
+	 * path of a child node and key. If the key contains a slash ("/") character, then a 
+	 * double-slash must be used to denote the end of they child path and the beginning 
+	 * of the key. Otherwise it is assumed that the key is the last segment of the path.
+	 * The following are some examples of keys and their meanings:
+	 * <ul>
+	 * <li>"a" - look for a value for the property "a"
+	 * <li>"//a" - look for a value for the property "a"
+	 * <li>"//a//b" - look for a value for the property "a//b"
+	 * <li>"a/b/c" - look in the child node "a/b" for property "a"
+	 * <li>"/a/b/c" - look in the child node "a/b" for property "a"
+	 * <li>"/a/b//c" - look in the child node "a/b" for the property "c"
+	 * <li>"a/b//c/d" - look in the child node "a/b" for the property "c/d"
+	 * <li>"/a/b//c/d" - look in the child node "a/b" for the property "c/d"
+	 * <li>"/a/b//c//d" - look in the child node "a/b" for the property "c//d"
+	 * </ul>
 	 * </p><p>
 	 * Callers may specify an array of scope context objects to aid in the 
 	 * determination of the correct nodes. For each entry in the lookup 
@@ -165,7 +233,7 @@ public interface IPreferencesService {
 	 * plug-in identifier. (e.g. "org.eclipse.core.resources" for "description.autobuild")
 	 * </p>
 	 * @param qualifier a namespace qualifier for the preference
-	 * @param key the name of the preference
+	 * @param key the name of the preference (optionally including its path)
 	 * @param defaultValue the value to use if the preference is not defined
 	 * @param contexts optional context objects to help scopes determine which nodes to search, or <code>null</code>
 	 * @return the value of the preference or the given default value
@@ -182,10 +250,27 @@ public interface IPreferencesService {
 	 * Use the canonical scope lookup order for finding the preference value. 
 	 * <p>
 	 * The semantics of this method are to calculate the appropriate 
-	 * <code>Preference</code> nodes in the preference hierarchy to use
-	 * and then call the <code>get(String, String, Preferences[])</code> 
+	 * {@link Preferences} nodes in the preference hierarchy to use
+	 * and then call the {@link #get(String, String, Preferences[])} 
 	 * method. The order of the nodes is calculated by consulting the default 
-	 * scope lookup order as set by <code>setDefaultLookupOrder(String, String)</code>.
+	 * scope lookup order as set by {@link #setDefaultLookupOrder(String, String, String[])}.
+	 * </p><p>
+	 * The specified key may either refer to a simple key or be the concatenation of the 
+	 * path of a child node and key. If the key contains a slash ("/") character, then a 
+	 * double-slash must be used to denote the end of they child path and the beginning 
+	 * of the key. Otherwise it is assumed that the key is the last segment of the path.
+	 * The following are some examples of keys and their meanings:
+	 * <ul>
+	 * <li>"a" - look for a value for the property "a"
+	 * <li>"//a" - look for a value for the property "a"
+	 * <li>"//a//b" - look for a value for the property "a//b"
+	 * <li>"a/b/c" - look in the child node "a/b" for property "a"
+	 * <li>"/a/b/c" - look in the child node "a/b" for property "a"
+	 * <li>"/a/b//c" - look in the child node "a/b" for the property "c"
+	 * <li>"a/b//c/d" - look in the child node "a/b" for the property "c/d"
+	 * <li>"/a/b//c/d" - look in the child node "a/b" for the property "c/d"
+	 * <li>"/a/b//c//d" - look in the child node "a/b" for the property "c//d"
+	 * </ul>
 	 * </p><p>
 	 * Callers may specify an array of scope context objects to aid in the 
 	 * determination of the correct nodes. For each entry in the lookup 
@@ -197,7 +282,7 @@ public interface IPreferencesService {
 	 * plug-in identifier. (e.g. "org.eclipse.core.resources" for "description.autobuild")
 	 * </p>
 	 * @param qualifier a namespace qualifier for the preference
-	 * @param key the name of the preference
+	 * @param key the name of the preference (optionally including its path)
 	 * @param defaultValue the value to use if the preference is not defined
 	 * @param contexts optional context objects to help scopes determine which nodes to search, or <code>null</code>
 	 * @return the value of the preference or the given default value
@@ -214,10 +299,27 @@ public interface IPreferencesService {
 	 * Use the canonical scope lookup order for finding the preference value. 
 	 * <p>
 	 * The semantics of this method are to calculate the appropriate 
-	 * <code>Preference</code> nodes in the preference hierarchy to use
-	 * and then call the <code>get(String, String, Preferences[])</code> 
+	 * {@link Preferences} nodes in the preference hierarchy to use
+	 * and then call the {@link #get(String, String, Preferences[])} 
 	 * method. The order of the nodes is calculated by consulting the default 
-	 * scope lookup order as set by <code>setDefaultLookupOrder(String, String)</code>.
+	 * scope lookup order as set by {@link #setDefaultLookupOrder(String, String, String[])}.
+	 * </p><p>
+	 * The specified key may either refer to a simple key or be the concatenation of the 
+	 * path of a child node and key. If the key contains a slash ("/") character, then a 
+	 * double-slash must be used to denote the end of they child path and the beginning 
+	 * of the key. Otherwise it is assumed that the key is the last segment of the path.
+	 * The following are some examples of keys and their meanings:
+	 * <ul>
+	 * <li>"a" - look for a value for the property "a"
+	 * <li>"//a" - look for a value for the property "a"
+	 * <li>"//a//b" - look for a value for the property "a//b"
+	 * <li>"a/b/c" - look in the child node "a/b" for property "a"
+	 * <li>"/a/b/c" - look in the child node "a/b" for property "a"
+	 * <li>"/a/b//c" - look in the child node "a/b" for the property "c"
+	 * <li>"a/b//c/d" - look in the child node "a/b" for the property "c/d"
+	 * <li>"/a/b//c/d" - look in the child node "a/b" for the property "c/d"
+	 * <li>"/a/b//c//d" - look in the child node "a/b" for the property "c//d"
+	 * </ul>
 	 * </p><p>
 	 * Callers may specify an array of scope context objects to aid in the 
 	 * determination of the correct nodes. For each entry in the lookup 
@@ -229,7 +331,7 @@ public interface IPreferencesService {
 	 * plug-in identifier. (e.g. "org.eclipse.core.resources" for "description.autobuild")
 	 * </p>
 	 * @param qualifier a namespace qualifier for the preference
-	 * @param key the name of the preference
+	 * @param key the name of the preference (optionally including its path)
 	 * @param defaultValue the value to use if the preference is not defined
 	 * @param contexts optional context objects to help scopes determine which nodes to search, or <code>null</code>
 	 * @return the value of the preference or the given default value
@@ -246,10 +348,27 @@ public interface IPreferencesService {
 	 * Use the canonical scope lookup order for finding the preference value. 
 	 * <p>
 	 * The semantics of this method are to calculate the appropriate 
-	 * <code>Preference</code> nodes in the preference hierarchy to use
-	 * and then call the <code>get(String, String, Preferences[])</code> 
+	 * {@link Preferences} nodes in the preference hierarchy to use
+	 * and then call the {@link #get(String, String, Preferences[])} 
 	 * method. The order of the nodes is calculated by consulting the default 
-	 * scope lookup order as set by <code>setDefaultLookupOrder(String, String)</code>.
+	 * scope lookup order as set by {@link #setDefaultLookupOrder(String, String, String[])}.
+	 * </p><p>
+	 * The specified key may either refer to a simple key or be the concatenation of the 
+	 * path of a child node and key. If the key contains a slash ("/") character, then a 
+	 * double-slash must be used to denote the end of they child path and the beginning 
+	 * of the key. Otherwise it is assumed that the key is the last segment of the path.
+	 * The following are some examples of keys and their meanings:
+	 * <ul>
+	 * <li>"a" - look for a value for the property "a"
+	 * <li>"//a" - look for a value for the property "a"
+	 * <li>"//a//b" - look for a value for the property "a//b"
+	 * <li>"a/b/c" - look in the child node "a/b" for property "a"
+	 * <li>"/a/b/c" - look in the child node "a/b" for property "a"
+	 * <li>"/a/b//c" - look in the child node "a/b" for the property "c"
+	 * <li>"a/b//c/d" - look in the child node "a/b" for the property "c/d"
+	 * <li>"/a/b//c/d" - look in the child node "a/b" for the property "c/d"
+	 * <li>"/a/b//c//d" - look in the child node "a/b" for the property "c//d"
+	 * </ul>
 	 * </p><p>
 	 * Callers may specify an array of scope context objects to aid in the 
 	 * determination of the correct nodes. For each entry in the lookup 
@@ -261,7 +380,7 @@ public interface IPreferencesService {
 	 * plug-in identifier. (e.g. "org.eclipse.core.resources" for "description.autobuild")
 	 * </p>
 	 * @param qualifier a namespace qualifier for the preference
-	 * @param key the name of the preference
+	 * @param key the name of the preference (optionally including its path)
 	 * @param defaultValue the value to use if the preference is not defined
 	 * @param contexts optional context objects to help scopes determine which nodes to search, or <code>null</code>
 	 * @return the value of the preference or the given default value
@@ -287,7 +406,7 @@ public interface IPreferencesService {
 	 * </p>
 	 * <p>
 	 * The values stored in the resulting stream are suitable for later being read by the
-	 * by <code>#importPreferences</code> or <code>#readPreferences</code> methods.
+	 * by {@link #importPreferences(InputStream)} or {@link #readPreferences(InputStream)} methods.
 	 * </p>
 	 * @param node the node to treat as the root of the export
 	 * @param output the stream to write to
@@ -305,7 +424,8 @@ public interface IPreferencesService {
 	 * Existing values are over-ridden by those from the stream. The stream must not be
 	 * <code>null</code> and is closed upon return from this method.
 	 * <p>
-	 * This file must have been written by the <code>exportPreferences</code> 
+	 * This file must have been written by the 
+	 * {@link #exportPreferences(IEclipsePreferences, OutputStream, String[])} 
 	 * method.
 	 * </p>
 	 * <p>
@@ -337,10 +457,10 @@ public interface IPreferencesService {
 	 * Read from the given input stream and create a node hierarchy
 	 * representing the preferences and their values. The given input stream
 	 * must not be <code>null</code>. The result of this function is suitable
-	 * for passing as an argument to <code>#applyPreferences</code>.
+	 * for passing as an argument to {@link #applyPreferences(IExportedPreferences)}.
 	 * <p>
 	 * It is assumed the contents of the input stream have been written by
-	 * <code>#exportPreferences</code>.
+	 * {@link #exportPreferences(IEclipsePreferences, OutputStream, String[])}.
 	 * </p>
 	 * @param input the input stream to read from
 	 * @return the node hierarchy representing the stream contents
@@ -359,7 +479,7 @@ public interface IPreferencesService {
 	 * and simple name. For instance, if the given key is non-<code>null</code> and
 	 * no default lookup order is found, the default lookup order for the qualifier (and a
 	 * <code>null</code> key) is <em>NOT</em> returned. Clients should call
-	 * <code>#getLookupOrder</code> if they desire this behavior.
+	 * {@link #getLookupOrder(String, String)} if they desire this behavior.
 	 * </p>
 	 * @param qualifier the namespace qualifier for the preference
 	 * @param key the preference name or <code>null</code>

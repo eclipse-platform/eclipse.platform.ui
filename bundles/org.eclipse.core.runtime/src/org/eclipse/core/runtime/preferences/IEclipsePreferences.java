@@ -253,7 +253,7 @@ public interface IEclipsePreferences extends Preferences {
 	 * Remove this node from the preference hierarchy. If this node is the scope
 	 * root, then do not remove this node, only remove this node's children.
 	 * <p>
-	 * Functionally equivalent to calling "{@link Preferences#removeNode()};". 
+	 * Functionally equivalent to calling {@link Preferences#removeNode()}. 
 	 * See the spec of {@link Preferences#removeNode()} for more details. 
 	 * </p>
 	 * <p>
