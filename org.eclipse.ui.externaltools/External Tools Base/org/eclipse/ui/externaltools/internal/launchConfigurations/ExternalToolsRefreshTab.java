@@ -252,7 +252,9 @@ public class ExternalToolsRefreshTab extends AbstractLaunchConfigurationTab impl
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
 	 */
 	public void dispose() {
-		variableForm.dispose();
+		if (variableForm != null) {
+			variableForm.dispose();
+		}
 		super.dispose();
 	}
 }
