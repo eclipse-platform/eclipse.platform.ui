@@ -45,6 +45,8 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
+import org.eclipse.team.internal.ccvs.core.client.Command;
+import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.ui.model.BranchTag;
 
 /**
@@ -432,7 +434,7 @@ public class RepositoryManager {
 			provider.setComment(previousComment);
 			List list = (List)table.get(provider);
 			IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
-			provider.update(providerResources, IResource.DEPTH_ZERO, null, false, subMonitor);
+			provider.update(providerResources, new Command.LocalOption[] {Command.DO_NOT_RECURSE}, null, null, subMonitor);
 		}		
 	}
 	/**
@@ -511,7 +513,7 @@ public class RepositoryManager {
 			CVSTeamProvider provider = (CVSTeamProvider)iterator.next();
 			List list = (List)table.get(provider);
 			IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
-			provider.update(providerResources, IResource.DEPTH_INFINITE, null, true, subMonitor);
+			provider.update(providerResources, new Command.LocalOption[] {Update.IGNORE_LOCAL_CHANGES}, null, null, subMonitor);
 		}
 	}
 

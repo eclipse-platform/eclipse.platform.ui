@@ -21,6 +21,7 @@ import org.eclipse.team.core.ITeamManager;
 import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
+import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.ui.actions.TeamAction;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
@@ -50,7 +51,7 @@ public class UpdateAction extends TeamAction {
 						CVSTeamProvider provider = (CVSTeamProvider)iterator.next();
 						List list = (List)table.get(provider);
 						IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
-						provider.update(providerResources, IResource.DEPTH_INFINITE, null, false, subMonitor);
+						provider.update(providerResources, Command.NO_LOCAL_OPTIONS, null, null, subMonitor);
 					}
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);

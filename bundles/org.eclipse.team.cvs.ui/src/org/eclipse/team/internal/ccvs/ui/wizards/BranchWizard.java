@@ -28,6 +28,7 @@ import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.Policy;
@@ -84,7 +85,7 @@ public class BranchWizard extends Wizard {
 								}
 								provider.tag(providerResources, IResource.DEPTH_INFINITE, tag, subMonitor);
 								if (update) {
-									provider.update(providerResources, IResource.DEPTH_INFINITE, tag, true, subMonitor);
+									provider.update(providerResources, Command.NO_LOCAL_OPTIONS, tag, null, subMonitor);
 									manager.addBranchTags(root, new BranchTag[] { new BranchTag(tag, root) });
 								}
 							} catch (TeamException e) {
