@@ -3,11 +3,11 @@
     <classpathentry kind="src" path="Eclipse Search"/>
     <classpathentry kind="src" path="/org.eclipse.ui"/>
     <classpathentry kind="lib" path="/org.apache.xerces/xerces.jar"/>
-    <classpathentry kind="lib" path="/org.eclipse.core.runtime/runtime.jar"/>
+    <classpathentry kind="lib"
+        path="/org.eclipse.core.runtime/runtime.jar" rootpath="" sourcepath="/org.eclipse.core.runtime/runtimesrc.zip"/>
     <classpathentry kind="lib"
         path="/org.eclipse.core.resources/resources.jar" sourcepath="/org.eclipse.core.resources/resourcessrc.zip"/>
     <classpathentry kind="lib" path="/org.eclipse.help/help.jar"/>
-    <classpathentry kind="lib" path="/org.eclipse.ui/workbench.jar"/>
     <classpathentry kind="var" path="JRE_LIB" rootpath="src" sourcepath="JRE_SRC"/>
     <classpathentry kind="lib" path="/org.eclipse.swt/swt.jar"/>
     <classpathentry kind="output" path="bin"/>
