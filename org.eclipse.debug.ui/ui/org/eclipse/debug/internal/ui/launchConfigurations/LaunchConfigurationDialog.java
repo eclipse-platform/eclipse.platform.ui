@@ -179,6 +179,11 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 */
 	private ILaunchConfigurationType fTabType;
 	
+	/** 
+	 * The index of the currently selected tab
+	 */
+	private int fCurrentTabIndex;
+	
 	private ProgressMonitorPart fProgressMonitorPart;
 	private Cursor waitCursor;
 	private Cursor arrowCursor;
@@ -1638,6 +1643,17 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * Notification that a tab has been selected
 	 */
 	protected void handleTabSelected() {
+		if (fCurrentTabIndex == getTabFolder().getSelectionIndex()) {
+			return;
+		}
+		if (fCurrentTabIndex != -1) {
+			ILaunchConfigurationTab tab = getTabs()[fCurrentTabIndex];
+			if (!tab.isValid()) {
+				getTabFolder().setSelection(fCurrentTabIndex);
+				return;
+			}
+		}
+		fCurrentTabIndex = getTabFolder().getSelectionIndex();
 		refreshStatus();
 	}	
 	
