@@ -35,6 +35,7 @@
 	<import plugin="org.eclipse.core.resources"/>
 	<import plugin="org.eclipse.team.core"/>
 	<import plugin="org.eclipse.team.ui"/>
+	<import plugin="org.eclipse.compare"/>
 	<import plugin="org.eclipse.ui"/>
 </requires>
 
