@@ -338,4 +338,12 @@ public interface IWorkbenchPreferenceConstants {
 	 * @since 3.1
 	 */
 	public static String CURRENT_THEME_ID = "CURRENT_THEME_ID"; //$NON-NLS-1$
+
+    /**
+     * A preference value indicating whether editors should be closed before saving 
+     * the workbench state when exiting.  The default is <code>false</code>.
+     * 
+     * @since 3.1
+     */
+    public static final String CLOSE_EDITORS_ON_EXIT = "CLOSE_EDITORS_ON_EXIT"; //$NON-NLS-1$
 }

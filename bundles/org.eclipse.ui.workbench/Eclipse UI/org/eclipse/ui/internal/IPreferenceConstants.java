@@ -81,12 +81,6 @@ public interface IPreferenceConstants {
     //Boolean: true = keep cycle part dialog open when keys released
     public static final String STICKY_CYCLE = "STICKY_CYCLE"; //$NON-NLS-1$
 
-    //Boolean: true = close all editors before saving the workbench state when
-    // exiting
-    //Eclipse. Will improve startup time for editors that have a long open
-    // time.
-    public static final String CLOSE_EDITORS_ON_EXIT = "CLOSE_EDITORS_ON_EXIT"; //$NON-NLS-1$
-
     //List of plugins but that extends "startup" extension point but are
     // overriden by the user.
     //String of plugin unique ids separated by ";"
