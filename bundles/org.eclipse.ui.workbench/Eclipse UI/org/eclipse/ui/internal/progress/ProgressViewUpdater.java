@@ -144,9 +144,10 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 	 * @return
 	 */
 	private ProgressViewUpdater() {
+		createUpdateJob();
 		contentProviders = new ProgressContentProvider[0];
 		ProgressManager.getInstance().addListener(this);
-		createUpdateJob();
+		
 	}
 
 	/**
