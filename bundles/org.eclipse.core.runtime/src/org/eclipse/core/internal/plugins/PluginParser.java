@@ -19,6 +19,20 @@ public class PluginParser extends DefaultHandler implements IModel {
 	// concrete object factory
 	Factory factory;
 
+	// Current State Information
+	Stack stateStack = new Stack();
+
+	// Current object stack (used to hold the current object we are
+	// populating in this plugin descriptor
+	Stack objectStack = new Stack();
+
+	// model parser
+	private static SAXParser parser;
+	
+	static {
+		initializeParser();
+	}
+
 	// Valid States
 	private final int IGNORED_ELEMENT_STATE = 0;
 	private final int INITIAL_STATE = 1;
@@ -37,13 +51,6 @@ public class PluginParser extends DefaultHandler implements IModel {
 	private final int DESCRIPTION_STATE = 14;
 	private final int URL_STATE = 15;
 
-	// Current State Information
-	Stack stateStack = new Stack();
-
-	// Current object stack (used to hold the current object we are
-	// populating in this plugin descriptor
-	Stack objectStack = new Stack();
-
 	// Keep a group of vectors as a temporary scratch space.  These
 	// vectors will be used to populate arrays in the plugin descriptor
 	// once processing of the XML file is complete.
@@ -56,21 +63,27 @@ public class PluginParser extends DefaultHandler implements IModel {
 	private final int LAST_INDEX = 5;
 	Vector scratchVectors[] = new Vector[LAST_INDEX + 1];
 
-	// model parser
-	private SAXParser parser;
-
 	public static final String[] from = { "&", "<", ">" };
 	public static final String[] to = { "&amp;", "&lt;", "&gt;" };
 	
 public PluginParser(Factory factory) {
 	super();
 	this.factory = factory;
-	parser = new SAXParser();
+//	parser = new SAXParser();
 	parser.setContentHandler(this);
 	parser.setDTDHandler(this);
 	parser.setEntityResolver(this);
 	parser.setErrorHandler(this);
 }
+
+private static void initializeParser() {
+	parser = new SAXParser();
+	try {
+	 	((SAXParser)parser).setFeature("http://xml.org/sax/features/string-interning", true);
+	} catch (SAXException e) {
+	}
+}
+
 public void characters(char[] ch, int start, int length) {
 	int state = ((Integer) stateStack.peek()).intValue();
 	if (state == CONFIGURATION_ELEMENT_STATE) {
@@ -515,12 +528,12 @@ private void logStatus(SAXParseException ex) {
 		msg = Policy.bind("parse.errorNameLineColumn", new String[] { name, Integer.toString(ex.getLineNumber()), Integer.toString(ex.getColumnNumber()), ex.getMessage()});
 	factory.error(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, msg, ex));
 }
-public InstallModel parseInstall(InputSource in) throws Exception {
+synchronized public InstallModel parseInstall(InputSource in) throws Exception {
 	parser.parse(in);
 	return (InstallModel) objectStack.pop();
 }
 
-public PluginModel parsePlugin(InputSource in) throws Exception {
+synchronized public PluginModel parsePlugin(InputSource in) throws Exception {
 	parser.parse(in);
 	return (PluginModel) objectStack.pop();
 }
