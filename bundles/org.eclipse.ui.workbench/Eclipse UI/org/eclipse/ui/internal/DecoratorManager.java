@@ -6,12 +6,8 @@ package org.eclipse.ui.internal;
  */
 import java.util.*;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.viewers.ILabelDecorator;
-import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IContributorResourceAdapter;
 import org.eclipse.ui.IDecoratorManager;
@@ -27,7 +23,7 @@ public class DecoratorManager
 
 	//Hold onto the list of listeners to be told if a change has occured
 	private HashSet listeners = new HashSet();
-	
+
 	private OverlayCache overlayCache = new OverlayCache();
 
 	//The cachedDecorators are a 1-many mapping of type to full decorator.
@@ -132,8 +128,10 @@ public class DecoratorManager
 	 */
 	public String decorateText(String text, Object element) {
 
+		//Get any adaptions to IResource
+		Object adapted = getResourceAdapter(element);
+		String result = decorateWithText(text, element, adapted);
 		FullDecoratorDefinition[] decorators = getFullDecoratorsFor(element);
-		String result = text;
 		for (int i = 0; i < decorators.length; i++) {
 			if (decorators[i].getEnablement().isEnabledFor(element)) {
 				String newResult = decorators[i].decorateText(result, element);
@@ -142,8 +140,6 @@ public class DecoratorManager
 			}
 		}
 
-		//Get any adaptions to IResource
-		Object adapted = getResourceAdapter(element);
 		if (adapted != null) {
 			decorators = getFullDecoratorsFor(adapted);
 			for (int i = 0; i < decorators.length; i++) {
@@ -170,8 +166,10 @@ public class DecoratorManager
 	 */
 	public Image decorateImage(Image image, Object element) {
 
+		Object adapted = getResourceAdapter(element);
+		Image result = decorateWithOverlays(image, element, adapted);
 		FullDecoratorDefinition[] decorators = getFullDecoratorsFor(element);
-		Image result = image;
+
 		for (int i = 0; i < decorators.length; i++) {
 			if (decorators[i].getEnablement().isEnabledFor(element)) {
 				Image newResult = decorators[i].decorateImage(result, element);
@@ -181,7 +179,7 @@ public class DecoratorManager
 		}
 
 		//Get any adaptions to IResource
-		Object adapted = getResourceAdapter(element);
+
 		if (adapted != null) {
 			decorators = getFullDecoratorsFor(adapted);
 			for (int i = 0; i < decorators.length; i++) {
@@ -195,7 +193,7 @@ public class DecoratorManager
 			}
 		}
 
-		return decorateWithOverlays(result,element,adapted);
+		return result;
 	}
 
 	/**
@@ -698,19 +696,95 @@ public class DecoratorManager
 		return decorators;
 
 	}
-	
+
 	/**
-	 * Decorate the Image supplied with the overlays for any 
-	 * Lightweight 	 */
-	private Image decorateWithOverlays(Image image, Object element, Object adapted){
-		
-		LightweightDecoratorDefinition [] decorators = getLightweightDecoratorsFor(element);
-		LightweightDecoratorDefinition [] adaptedDecorators;
-		if(adapted == null)
-			return overlayCache.getImageFor(image,element,decorators);
-		else{
+	 * Decorate the Image supplied with the overlays for any of
+	 * the enabled lightweight decorators. 
+	 */
+	private Image decorateWithOverlays(
+		Image image,
+		Object element,
+		Object adapted) {
+
+		LightweightDecoratorDefinition[] decorators =
+			getLightweightDecoratorsFor(element);
+		LightweightDecoratorDefinition[] adaptedDecorators;
+		if (adapted == null)
+			return overlayCache.getImageFor(image, element, decorators);
+		else {
 			adaptedDecorators = getLightweightDecoratorsFor(adapted);
-			return overlayCache.getImageFor(image,element,decorators,adapted,adaptedDecorators);
+			return overlayCache.getImageFor(
+				image,
+				element,
+				decorators,
+				adapted,
+				adaptedDecorators);
 		}
-		}		
+	}
+
+	/**
+	 * Decorate the String supplied with the prefixes and suffixes
+	 * for the enabled lightweight decorators.
+	 *  
+	 */
+	private String decorateWithText(
+		String text,
+		Object element,
+		Object adapted) {
+
+		LinkedList appliedDecorators = new LinkedList();
+		LinkedList appliedAdaptedDecorators = new LinkedList();
+		StringBuffer result = new StringBuffer();
+
+		LightweightDecoratorDefinition[] decorators =
+			getLightweightDecoratorsFor(element);
+
+		for (int i = 0; i < decorators.length; i++) {
+			if (decorators[i].getEnablement().isEnabledFor(element)) {
+				//Add in reverse order for symmetry of suffixes
+				appliedDecorators.addFirst(decorators[i]);
+				result.append(decorators[i].getPrefix(element));
+			}
+		}
+
+		if (adapted != null) {
+			LightweightDecoratorDefinition[] adaptedDecorators =
+				getLightweightDecoratorsFor(adapted);
+			for (int i = 0; i < adaptedDecorators.length; i++) {
+				if (adaptedDecorators[i]
+					.getEnablement()
+					.isEnabledFor(adapted)) {
+					//Add in reverse order for symmetry of suffixes
+					appliedAdaptedDecorators.addFirst(adaptedDecorators[i]);
+					result.append(adaptedDecorators[i].getPrefix(adapted));
+				}
+			}
+		}
+
+		result.append(text);
+
+		if (adapted != null) {
+			Iterator appliedIterator = appliedAdaptedDecorators.iterator();
+			while (appliedIterator.hasNext()) {
+				result.append(
+					(
+						(LightweightDecoratorDefinition) appliedIterator
+							.next())
+							.getSuffix(
+						element));
+			}
+		}
+
+		Iterator appliedIterator = appliedDecorators.iterator();
+		while (appliedIterator.hasNext()) {
+			result.append(
+				(
+					(LightweightDecoratorDefinition) appliedIterator
+						.next())
+						.getSuffix(
+					element));
+		}
+		return result.toString();
+
+	}
 }
