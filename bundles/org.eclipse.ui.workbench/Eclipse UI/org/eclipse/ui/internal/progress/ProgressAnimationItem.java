@@ -81,11 +81,16 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 	    	    
 	    if (okImage == null) {
 	        Display display= parent.getDisplay();
-	        String t= "_2";
-	        noneImage= ImageDescriptor.createFromFile(getClass(), "newprogress_none_2.gif").createImage(display); //$NON-NLS-1$
-	        okImage= ImageDescriptor.createFromFile(getClass(), "newprogress_ok_2a.gif").createImage(display); //$NON-NLS-1$
-	        errorImage= ImageDescriptor.createFromFile(getClass(), "newprogress_error_2.gif").createImage(display); //$NON-NLS-1$
-	   	}
+	        if (true) {
+	        	noneImage= ImageDescriptor.createFromFile(getClass(), "newprogress_none_2.gif").createImage(display); //$NON-NLS-1$
+	        	okImage= ImageDescriptor.createFromFile(getClass(), "newprogress_ok_2a.gif").createImage(display); //$NON-NLS-1$
+	        	errorImage= ImageDescriptor.createFromFile(getClass(), "newprogress_error_2.gif").createImage(display); //$NON-NLS-1$
+	        } else {
+	        	noneImage= ImageDescriptor.createFromFile(getClass(), "newprogress_none_3.gif").createImage(display); //$NON-NLS-1$
+	        	okImage= ImageDescriptor.createFromFile(getClass(), "newprogress_ok_3.gif").createImage(display); //$NON-NLS-1$
+	        	errorImage= ImageDescriptor.createFromFile(getClass(), "newprogress_error_3.gif").createImage(display); //$NON-NLS-1$
+	        }
+	    }
 		
 		top = new Composite(parent, SWT.NULL);
 		top.addDisposeListener(new DisposeListener() {
