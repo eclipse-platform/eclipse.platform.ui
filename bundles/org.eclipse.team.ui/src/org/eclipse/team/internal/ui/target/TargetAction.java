@@ -38,7 +38,8 @@ public abstract class TargetAction extends TeamAction {
 					try {
 						remote = ((SiteElement)next).getSite().getRemoteResource();
 					} catch (TeamException e) {
-						TeamUIPlugin.log(e.getStatus());
+						TeamUIPlugin.handle(e);
+						return new IRemoteTargetResource[0];
 					}
 				}
 				if(remote != null && remote.isContainer()) {

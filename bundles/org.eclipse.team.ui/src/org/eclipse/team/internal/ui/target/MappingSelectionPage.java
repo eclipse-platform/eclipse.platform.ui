@@ -89,8 +89,12 @@ public class MappingSelectionPage extends TargetWizardPage {
 					IStructuredSelection selection = (IStructuredSelection)viewer.getSelection();
 					Object currentSelection = selection.getFirstElement();
 					final IRemoteTargetResource selectedFolder = getSelectedRemoteFolder(selection);					
-					IRemoteTargetResource newFolder = CreateNewFolderAction.createDir(getShell(), selectedFolder);
-					if (newFolder == null) return;
+					String defaultName = ((ConfigureTargetWizard) getWizard()).project.getName();
+
+					IRemoteTargetResource newFolder = CreateNewFolderAction.createDir(getShell(), selectedFolder, defaultName);
+					if (newFolder == null)
+						return;
+
 					viewer.refresh(currentSelection);
 					viewer.setExpandedState(currentSelection, true);
 					viewer.setSelection(new StructuredSelection(currentSelection));

@@ -44,7 +44,7 @@ public class CreateNewFolderAction extends TargetAction {
 				public void run(IProgressMonitor monitor)
 					throws InvocationTargetException, InterruptedException {
 						try {
-							createDir(getShell(), getSelectedRemoteFolders()[0]);
+							createDir(getShell(), getSelectedRemoteFolders()[0], new String());
 						} catch (TeamException e) {
 							throw new InvocationTargetException(e);
 						}
@@ -60,7 +60,7 @@ public class CreateNewFolderAction extends TargetAction {
 	 * Throws a TeamException if one occured.
 	 * Returns null if the operation was cancelled or an exception occured
 	 */
-	public static IRemoteTargetResource createDir(final Shell shell, final IRemoteTargetResource parent) throws TeamException {
+	public static IRemoteTargetResource createDir(final Shell shell, final IRemoteTargetResource parent, final String defaultName) throws TeamException {
 		final IRemoteTargetResource[] newFolder = new IRemoteTargetResource[] {null};
 		try {				
 			TeamUIPlugin.runWithProgressDialog(shell, true, new IRunnableWithProgress() {
@@ -68,7 +68,7 @@ public class CreateNewFolderAction extends TargetAction {
 					try {
 						monitor.beginTask(Policy.bind("CreateNewFolderAction.creatingFolder"), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
 						final String[] folderName = new String[] {null};
-						final String suggestedName = getSuggestedFolderName(parent, Policy.subMonitorFor(monitor, 0));
+						final String suggestedName = getSuggestedFolderName(parent, Policy.subMonitorFor(monitor, 0), defaultName);
 						shell.getDisplay().syncExec(new Runnable() {
 							public void run() {
 								InputDialog dialog = new InputDialog(shell, 
@@ -103,19 +103,19 @@ public class CreateNewFolderAction extends TargetAction {
 		return newFolder[0];
 	}
 	
-	protected static String getSuggestedFolderName(IRemoteTargetResource parent, IProgressMonitor monitor) throws TeamException {		
-		String suggestedFolderName = Policy.bind("CreateNewFolderAction.newFolderName"); //$NON-NLS-1$
+	protected static String getSuggestedFolderName(IRemoteTargetResource parent, IProgressMonitor monitor, String defaultName) throws TeamException {		
+		String suggestedFolderName = defaultName;
 		IRemoteResource[] members;
-		monitor.subTask(Policy.bind("CreateNewFolderAction.suggestedNameProgress"));
+		monitor.subTask(Policy.bind("CreateNewFolderAction.suggestedNameProgress")); //$NON-NLS-1$
 		members = parent.members(monitor);
 		int numNewFolders = 0;
 		for (int i = 0; i < members.length; i++) {
-			if(members[i].getName().equals(Policy.bind("CreateNewFolderAction.newFolderName"))) { //$NON-NLS-1$
+			if(members[i].getName().equals(defaultName)) {
 				numNewFolders++;
 			}							
 		}
 		if(numNewFolders != 0) {
-			suggestedFolderName +=  " " + numNewFolders; //$NON-NLS-1$
+			suggestedFolderName = Policy.bind("CreateNewFolderAction.suggestedNameConcat", defaultName, String.valueOf(numNewFolders)); //$NON-NLS-1$
 		}
 		return suggestedFolderName;
 	}
