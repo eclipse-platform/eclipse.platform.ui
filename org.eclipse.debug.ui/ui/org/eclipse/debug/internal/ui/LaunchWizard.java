@@ -5,7 +5,15 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
-import java.util.Iterator;import org.eclipse.core.resources.IProject;import org.eclipse.core.resources.IResource;import org.eclipse.core.runtime.CoreException;import org.eclipse.core.runtime.IAdaptable;import org.eclipse.debug.core.*;import org.eclipse.debug.ui.IDebugUIConstants;import org.eclipse.jface.viewers.IStructuredSelection;import org.eclipse.jface.wizard.*;import org.eclipse.swt.widgets.Composite;import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.*;
+import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.wizard.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * This wizard is used when the debug or run button is pressed, and
@@ -107,7 +115,11 @@ public class LaunchWizard extends Wizard {
 	}
 	
 	public IStructuredSelection getSelection() {
-		return fSelection;
+		if (fSelection == null) {
+			return new StructuredSelection(getProject());
+		} else {
+			return fSelection;
+		}
 	}
 
 	/**

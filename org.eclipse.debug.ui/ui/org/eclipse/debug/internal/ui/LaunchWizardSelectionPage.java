@@ -61,6 +61,11 @@ public class LaunchWizardSelectionPage extends WizardSelectionPage {
 	 * The selected launcher or <code>null</code> if none.
 	 */
 	protected ILauncher fLauncher;
+	
+	/**
+	 * The current project context
+	 */
+	protected IProject fProject= null;
 
 	/**
 	 * A content provider for the elements list
@@ -157,8 +162,6 @@ public class LaunchWizardSelectionPage extends WizardSelectionPage {
 			fLaunchersList.setSelection(new StructuredSelection(fLauncher));
 		}
 		fSetAsDefaultLauncher= new Button(root, SWT.CHECK);
-		updateDefaultProject();
-		fLaunchablesUpdateNeeded= false;
 	}
 
 	/**
@@ -255,8 +258,11 @@ public class LaunchWizardSelectionPage extends WizardSelectionPage {
 		IProject project= ((LaunchWizard)getWizard()).getProject();
 		String projectName= "";
 		if (project != null) {
+			if (!project.equals(fProject)) {
+				fLaunchablesUpdateNeeded= true;
+				fProject= project;
+			}
 			projectName= project.getName();
-			fLaunchablesUpdateNeeded= true;
 		} else {
 			projectName= DebugUIUtils.getResourceString(UNKNOWN);
 		}
@@ -267,8 +273,8 @@ public class LaunchWizardSelectionPage extends WizardSelectionPage {
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		if (visible) {
-			initializeSettings();
 			updateDefaultProject();
+			initializeSettings();
 		} else {
 			fLaunchablesUpdateNeeded= false;
 		}
