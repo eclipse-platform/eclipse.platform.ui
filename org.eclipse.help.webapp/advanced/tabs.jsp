@@ -60,6 +60,8 @@ if (data.isIE()){
 }else{
 %>
 	background-color:<%=prefs.getViewBackground()%>;
+	-moz-border-radius-bottomleft:5px;
+	-moz-border-radius-bottomright:5px;
 <%
 }
 %>
