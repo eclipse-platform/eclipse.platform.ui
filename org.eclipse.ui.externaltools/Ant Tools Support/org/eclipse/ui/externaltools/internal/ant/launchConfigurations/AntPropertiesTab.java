@@ -417,6 +417,7 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab {
 		}
 		
 		populatePropertyViewer(properties);
+		
 		String[] files= AntUtil.parseString(propertyFiles, ",");
 		fileTableViewer.setInput(files);
 		
