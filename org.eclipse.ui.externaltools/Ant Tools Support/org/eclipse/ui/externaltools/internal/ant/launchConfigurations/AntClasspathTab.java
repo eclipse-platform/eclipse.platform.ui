@@ -100,6 +100,7 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab implements I
 		if (urlStrings == null) {
 			useDefaultButton.setSelection(true);
 			antClasspathBlock.setTablesEnabled(false);
+			antClasspathBlock.initializeAntHome(null);
 		} else {
 			String antHomeString= null;
 			try {

@@ -380,10 +380,14 @@ public class AntClasspathBlock {
 				if (initializing) {
 					return;
 				}
-				File rootDir = validateAntHome(antHome.getText());
-				if (rootDir != null) {
-					setAntHome(rootDir);
+				String path= antHome.getText();
+				if (path.length() > 0) {
+					File rootDir = new File(path, "lib"); //$NON-NLS-1$
+					if (rootDir.exists()) {
+						setAntHome(rootDir);
+					}
 				}
+				container.update();
 			}
 		});
 
