@@ -452,8 +452,8 @@ public class JobManager implements IJobManager {
 	 * conflicting jobs.  A job can only run if there are no running jobs and no blocked
 	 * jobs whose scheduling rule conflicts with its rule.
 	 */
-	protected InternalJob findBlockingJob(InternalJob waiting) {
-		if (waiting.getRule() == null)
+	protected InternalJob findBlockingJob(InternalJob waitingJob) {
+		if (waitingJob.getRule() == null)
 			return null;
 		synchronized (lock) {
 			if (running.isEmpty())
@@ -462,7 +462,7 @@ public class JobManager implements IJobManager {
 			boolean hasBlockedJobs = false;
 			for (Iterator it = running.iterator(); it.hasNext();) {
 				InternalJob job = (InternalJob) it.next();
-				if (waiting.isConflicting(job))
+				if (waitingJob.isConflicting(job))
 					return job;
 				if (!hasBlockedJobs)
 					hasBlockedJobs = job.previous() != null;
@@ -477,7 +477,7 @@ public class JobManager implements IJobManager {
 					job = job.previous();
 					if (job == null)
 						break;
-					if (waiting.isConflicting(job))
+					if (waitingJob.isConflicting(job))
 						return job;
 				}
 			}
@@ -543,13 +543,13 @@ public class JobManager implements IJobManager {
 	 * Returns true if the given job is blocking the execution of a non-system
 	 * job.
 	 */
-	protected boolean isBlocking(InternalJob running) {
+	protected boolean isBlocking(InternalJob runningJob) {
 		synchronized (lock) {
 			//if this job isn't running, it can't be blocking anyone
-			if (running.getState() != Job.RUNNING)
+			if (runningJob.getState() != Job.RUNNING)
 				return false;
 			//if any job is queued behind this one, it is blocked by it
-			InternalJob previous = running.previous();
+			InternalJob previous = runningJob.previous();
 			while (previous != null) {
 				if (!previous.isSystem())
 					return true;
@@ -1007,6 +1007,7 @@ public class JobManager implements IJobManager {
 	 * @see Job#wakeUp(long)
 	 */
 	protected void wakeUp(InternalJob job, long delay) {
+		Assert.isLegal(delay >= 0, "Scheduling delay is negative"); //$NON-NLS-1$
 		synchronized (lock) {
 			//cannot wake up if it is not sleeping
 			if (job.getState() != Job.SLEEPING)
