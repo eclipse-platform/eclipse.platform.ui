@@ -68,9 +68,12 @@ You specify the name of an attribute that you will put into the cheat sheet item
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  The fully qualified class name of the class that subclasses &lt;code&gt;org.eclipse.ui.cheatsheet.AbstractItemExtensionElement&lt;/code&gt; to handle unknown attributes in the cheat sheet content file and extend the steps in the cheat sheet. The class must be public, and have a public 1-argument constructor that accepts the attribute name
+                  The fully qualified class name of the class that subclasses &lt;code&gt;org.eclipse.ui.cheatsheets.AbstractItemExtensionElement&lt;/code&gt; to handle unknown attributes in the cheat sheet content file and extend the steps in the cheat sheet. The class must be public, and have a public 1-argument constructor that accepts the attribute name
 (a &lt;code&gt;String&lt;/code&gt;).
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.cheatsheets.AbstractItemExtensionElement"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -104,7 +107,7 @@ You specify the name of an attribute that you will put into the cheat sheet item
 And here is the item attribute for that extension:
 &lt;p&gt;
 &lt;pre&gt;
-&lt;item title=&quot;XYZ Title&quot; xyzButton=&quot;/icon/button.gif&quot;&gt;
+&lt;item title=&quot;XYZ Title&quot; xyzButton=&quot;/icon/button.gif&quot;/&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
 Note that the value of the attribute in the item tag can be ANYTHING. It can be anything because

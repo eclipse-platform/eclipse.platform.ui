@@ -127,6 +127,9 @@ added to the &quot;Other&quot; category.
                   the path of a cheat sheet content file. The content file is an XML file that contains the specifics of the cheat sheet (&lt;a href=&quot;cheatSheetContentFileSpec.html&quot;&gt;cheat sheet content file format specification)&lt;/a&gt;.
 The content file is parsed at run time by the cheat sheet framework. Based on the settings in this file, a certain number of steps, actions, descriptions, and help links are shown to the user when the cheat sheet is opened. The path is interpreted as relative to the plug-in that declares the extension; the path may include special variables. In particular, use &quot;$nl$&quot; as the first segment of the path to indicate that there are locale-specific translations of the content file in subdirectories below &quot;nl/&quot;. For more detail about the special variables, you can read the Java API document for &lt;a href=&quot;../api/org/eclipse/core/runtime/Platform.html#find&quot;&gt;Platform.find&lt;/a&gt;.
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="listener" type="string">
