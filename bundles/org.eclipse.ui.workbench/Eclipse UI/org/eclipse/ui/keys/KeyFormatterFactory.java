@@ -11,6 +11,11 @@
 
 package org.eclipse.ui.keys;
 
+import org.eclipse.ui.internal.keys.CompactKeyFormatter;
+import org.eclipse.ui.internal.keys.EmacsKeyFormatter;
+import org.eclipse.ui.internal.keys.FormalKeyFormatter;
+import org.eclipse.ui.internal.keys.NativeKeyFormatter;
+
 /**
  * A cache for formatters. It keeps a bunch of formatters around for use within
  * the application.
@@ -22,22 +27,26 @@ public final class KeyFormatterFactory {
 	/**
 	 * A compact formatter instance.
 	 */
-	private static final IKeyFormatter COMPACT_FORMATTER = new CompactKeyFormatter();
+	private static final IKeyFormatter COMPACT_FORMATTER =
+		new CompactKeyFormatter();
 
 	/**
 	 * A formal formatter instance.
 	 */
-	private static final IKeyFormatter FORMAL_FORMATTER = new FormalKeyFormatter();
+	private static final IKeyFormatter FORMAL_FORMATTER =
+		new FormalKeyFormatter();
 
 	/**
 	 * A native formatter instance.
 	 */
-	private static final IKeyFormatter NATIVE_FORMATTER = new NativeKeyFormatter();
+	private static final IKeyFormatter NATIVE_FORMATTER =
+		new NativeKeyFormatter();
 
 	/**
 	 * An Emacs natural formatter instance.
 	 */
-	private static final IKeyFormatter XEMACS_FORMATTER = new XemacsKeyFormatter();
+	private static final IKeyFormatter EMACS_FORMATTER =
+		new EmacsKeyFormatter();
 
 	/**
 	 * The default formatter instance.
@@ -63,6 +72,15 @@ public final class KeyFormatterFactory {
 	}
 
 	/**
+	 * Provides an instance of <code>XemacsKeyFormatter</code>.
+	 * 
+	 * @return The Xemacs formatter; never <code>null</code>.
+	 */
+	public static IKeyFormatter getEmacsKeyFormatter() {
+		return EMACS_FORMATTER;
+	}
+
+	/**
 	 * Provides an instance of <code>FormalKeyFormatter</code>.
 	 * 
 	 * @return The formal formatter; never <code>null</code>.
@@ -78,15 +96,6 @@ public final class KeyFormatterFactory {
 	 */
 	public static IKeyFormatter getNativeKeyFormatter() {
 		return NATIVE_FORMATTER;
-	}
-
-	/**
-	 * Provides an instance of <code>XemacsKeyFormatter</code>.
-	 * 
-	 * @return The Xemacs formatter; never <code>null</code>.
-	 */
-	public static IKeyFormatter getXemacsKeyFormatter() {
-		return XEMACS_FORMATTER;
 	}
 
 	/**

@@ -9,9 +9,12 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.keys;
+package org.eclipse.ui.internal.keys;
 
 import java.util.Comparator;
+
+import org.eclipse.ui.keys.IKeyFormatter;
+import org.eclipse.ui.keys.Key;
 
 /**
  * Formats the keys in the internal key sequence grammar. This is used for
@@ -33,7 +36,7 @@ public class FormalKeyFormatter extends AbstractKeyFormatter {
 	 * @see org.eclipse.ui.keys.KeyFormatter#format(org.eclipse.ui.keys.KeySequence)
 	 */
 	public String format(Key key) {
-		return key.name;
+		return key.toString();
 	}
 	
 	/*

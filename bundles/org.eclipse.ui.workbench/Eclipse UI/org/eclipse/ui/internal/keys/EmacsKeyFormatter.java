@@ -9,12 +9,14 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.keys;
+package org.eclipse.ui.internal.keys;
 
 import java.util.Comparator;
 import java.util.ResourceBundle;
 
 import org.eclipse.ui.internal.util.Util;
+import org.eclipse.ui.keys.Key;
+import org.eclipse.ui.keys.ModifierKey;
 
 /**
  * A key formatter providing the Emacs-style accelerators using single letters
@@ -22,7 +24,7 @@ import org.eclipse.ui.internal.util.Util;
  * 
  * @since 3.0
  */
-public class XemacsKeyFormatter extends AbstractKeyFormatter {
+public class EmacsKeyFormatter extends AbstractKeyFormatter {
 
 	/**
 	 * A comparator that guarantees that modifier keys will be sorted the same
@@ -36,7 +38,7 @@ public class XemacsKeyFormatter extends AbstractKeyFormatter {
 	 * string representations by locale.
 	 */
 	private final static ResourceBundle RESOURCE_BUNDLE =
-		ResourceBundle.getBundle(XemacsKeyFormatter.class.getName());
+		ResourceBundle.getBundle(EmacsKeyFormatter.class.getName());
 
 	/**
 	 * Formats an individual key into a human readable format. This converts
@@ -49,7 +51,7 @@ public class XemacsKeyFormatter extends AbstractKeyFormatter {
 	public String format(Key key) {
 		if (key instanceof ModifierKey) {
 			String formattedName =
-				Util.translateString(RESOURCE_BUNDLE, key.name, null, false, false);
+				Util.translateString(RESOURCE_BUNDLE, key.toString(), null, false, false);
 			if (formattedName != null) {
 				return formattedName;
 			}

@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.keys;
+package org.eclipse.ui.internal.keys;
 
 import java.util.Comparator;
 import java.util.Iterator;
@@ -18,6 +18,12 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.eclipse.ui.internal.util.Util;
+import org.eclipse.ui.keys.IKeyFormatter;
+import org.eclipse.ui.keys.Key;
+import org.eclipse.ui.keys.KeySequence;
+import org.eclipse.ui.keys.KeyStroke;
+import org.eclipse.ui.keys.ModifierKey;
+import org.eclipse.ui.keys.NaturalKey;
 
 /**
  * An abstract implementation of a key formatter that provides a lot of common
@@ -55,7 +61,7 @@ public abstract class AbstractKeyFormatter implements IKeyFormatter {
 	 * @see org.eclipse.ui.keys.KeyFormatter#format(org.eclipse.ui.keys.KeySequence)
 	 */
 	public String format(Key key) {
-		String name = key.name;
+		String name = key.toString();
 		return Util.translateString(RESOURCE_BUNDLE, name, name, false, false);
 	}
 

@@ -9,11 +9,12 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.keys;
+package org.eclipse.ui.internal.keys;
 
 import java.util.Comparator;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.ui.keys.ModifierKey;
 
 /**
  * A comparator that sorts the modifier keys based on the native environment.

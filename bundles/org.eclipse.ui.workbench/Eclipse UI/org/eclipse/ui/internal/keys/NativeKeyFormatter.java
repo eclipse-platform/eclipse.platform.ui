@@ -7,15 +7,18 @@
  * Contributors: IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.keys;
+package org.eclipse.ui.internal.keys;
 
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 
 import org.eclipse.swt.SWT;
-
 import org.eclipse.ui.internal.util.Util;
+import org.eclipse.ui.keys.CharacterKey;
+import org.eclipse.ui.keys.Key;
+import org.eclipse.ui.keys.ModifierKey;
+import org.eclipse.ui.keys.SpecialKey;
 
 /**
  * Formats the key sequences and key strokes into the native human-readable
@@ -87,7 +90,7 @@ public class NativeKeyFormatter extends AbstractKeyFormatter {
 	 * @return The key formatted as a string; should not be <code>null</code>.
 	 */
 	public String format(Key key) {
-		String name = key.name;
+		String name = key.toString();
 
 		// TODO consider platform-specific resource bundles
 		if ("carbon".equals(SWT.getPlatform())) { //$NON-NLS-1$    	
