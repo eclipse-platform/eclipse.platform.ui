@@ -291,14 +291,6 @@
             </separator>
          </menu>
          <action
-               definitionId="org.eclipse.debug.ui.commands.OpenProfileConfigurations"
-               label="%OpenRunConfigurations.label"
-               helpContextId="open_run_configurations_action_context"
-               class="org.eclipse.debug.internal.ui.actions.OpenRunConfigurations"
-               menubarPath="org.eclipse.ui.run/runGroup"
-               id="org.eclipse.debug.ui.actions.OpenRunConfigurations">
-         </action>
-         <action
                label="%RunWithConfigurationAction.label"
                pulldown="true"
                helpContextId="run_with_configuration_action_context"
@@ -346,14 +338,6 @@
                helpContextId="run_action_context"
                label="%RunDropDownAction.label"
                pulldown="true">
-         </action>
-         <action
-               definitionId="org.eclipse.debug.ui.commands.OpenProfileConfigurations"
-               label="%OpenDebugConfigurations.label"
-               helpContextId="open_debug_configurations_action_context"
-               class="org.eclipse.debug.internal.ui.actions.OpenDebugConfigurations"
-               menubarPath="org.eclipse.ui.run/debugGroup"
-               id="org.eclipse.debug.ui.actions.OpenDebugConfigurations">
          </action>
          <action
                label="%DebugWithConfigurationAction.label"
@@ -473,14 +457,6 @@
                helpContextId="profile_action_context"
                label="%ProfileDropDownAction.label"
                pulldown="true">
-         </action>
-         <action
-               definitionId="org.eclipse.debug.ui.commands.OpenProfileConfigurations"
-               label="%OpenProfileConfigurations.label"
-               helpContextId="open_profile_configurations_action_context"
-               class="org.eclipse.debug.internal.ui.actions.OpenProfileConfigurations"
-               menubarPath="org.eclipse.ui.run/profileGroup"
-               id="org.eclipse.debug.ui.actions.OpenProfileConfigurations">
          </action>
          <action
                label="%ProfileWithConfigurationAction.label"
@@ -1373,24 +1349,24 @@ M4 = Platform-specific fourth key
             name="%ActionDefinition.openRun.name"
             category="org.eclipse.debug.ui.category.run"
             description="%ActionDefinition.openRun.description"
-            id="org.eclipse.debug.ui.commands.OpenProfileConfigurations">
+            id="org.eclipse.debug.ui.commands.OpenRunConfigurations">
       </command>
       <keyBinding
             keySequence=""
             scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.debug.ui.commands.OpenProfileConfigurations"
+            command="org.eclipse.debug.ui.commands.OpenRunConfigurations"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command
             name="%ActionDefinition.openDebug.name"
             category="org.eclipse.debug.ui.category.run"
             description="%ActionDefinition.openDebug.description"
-            id="org.eclipse.debug.ui.commands.OpenProfileConfigurations">
+            id="org.eclipse.debug.ui.commands.OpenDebugConfigurations">
       </command>
       <keyBinding
             keySequence=""
             scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.debug.ui.commands.OpenProfileConfigurations"
+            command="org.eclipse.debug.ui.commands.OpenDebugConfigurations"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command

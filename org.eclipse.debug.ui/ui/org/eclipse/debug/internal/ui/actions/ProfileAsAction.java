@@ -12,12 +12,12 @@ package org.eclipse.debug.internal.ui.actions;
 
 
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.actions.LaunchAsAction;
+import org.eclipse.debug.ui.actions.LaunchShortcutsAction;
 
 /**
  * "Profile As" action in the top level "Run" menu.
  */
-public class ProfileAsAction extends LaunchAsAction {
+public class ProfileAsAction extends LaunchShortcutsAction {
 
 	public ProfileAsAction() {
 		super(IDebugUIConstants.ID_PROFILE_LAUNCH_GROUP);

@@ -12,12 +12,12 @@ package org.eclipse.debug.internal.ui.actions;
 
 
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.actions.LaunchAsAction;
+import org.eclipse.debug.ui.actions.LaunchShortcutsAction;
 
 /**
  * "Run As" action in the top level "Run" menu.
  */
-public class RunAsAction extends LaunchAsAction {
+public class RunAsAction extends LaunchShortcutsAction {
 
 	public RunAsAction() {
 		super(IDebugUIConstants.ID_RUN_LAUNCH_GROUP);
