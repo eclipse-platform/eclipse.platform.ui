@@ -29,6 +29,8 @@ import org.eclipse.swt.custom.TextChangingEvent;
  * 
  * By using this adapter, the offset of any character is the same in both the widget and the
  * document.
+ * 
+ * @since 3.1
  */
 public class IOConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListener {
     private static final String DELIMITER = System.getProperty("line.separator"); //$NON-NLS-1$;
