@@ -56,7 +56,8 @@
 	<perspective
 		id="org.eclipse.ui.resourcePerspective"
 		name="%Perspective.resourcePerspective"
-		class="org.eclipse.ui.internal.ResourcePerspective">
+		class="org.eclipse.ui.internal.ResourcePerspective"
+		icon="icons/basic/eview16/resource_persp.gif">
 	</perspective>
 </extension>
 
