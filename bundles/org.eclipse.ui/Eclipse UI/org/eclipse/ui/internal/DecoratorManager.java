@@ -144,6 +144,9 @@ public class DecoratorManager
 		//Get any adaptions to IResource
 		if (element instanceof IAdaptable) {
 			IAdaptable adaptable = (IAdaptable) element;
+			//Avoid applying the same decorators twice
+			if(adaptable == element)
+				return null;
 			Object resourceAdapter =
 				adaptable.getAdapter(IContributorResourceAdapter.class);
 			if (resourceAdapter == null)
