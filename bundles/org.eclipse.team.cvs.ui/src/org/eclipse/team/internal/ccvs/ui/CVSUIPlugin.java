@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -28,6 +27,7 @@ import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -126,7 +126,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	 * @exception InterruptedException when the progress monitor is cancelled
 	 */
 	public static void runWithProgress(Shell parent, boolean cancelable,
-		IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
+		final IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
 		boolean createdShell = false;
 		try {
 			if (parent == null || parent.isDisposed()) {
@@ -144,7 +144,26 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 				}
 			}
 			// pop up progress dialog after a short delay
-			new TimeoutProgressMonitorDialog(parent, TIMEOUT).run(true /*fork*/, cancelable, runnable);
+			final Exception[] holder = new Exception[1];
+			BusyIndicator.showWhile(parent.getDisplay(), new Runnable() {
+				public void run() {
+					try {
+						runnable.run(new NullProgressMonitor());
+					} catch (InvocationTargetException e) {
+						holder[0] = e;
+					} catch (InterruptedException e) {
+						holder[0] = e;
+					}
+				}
+			});
+			if (holder[0] != null) {
+				if (holder[0] instanceof InvocationTargetException) {
+					throw (InvocationTargetException) holder[0];
+				} else {
+					throw (InterruptedException) holder[0];
+				}
+			}
+			//new TimeoutProgressMonitorDialog(parent, TIMEOUT).run(true /*fork*/, cancelable, runnable);
 		} finally {
 			if (createdShell) parent.dispose();
 		}
