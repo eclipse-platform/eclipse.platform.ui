@@ -10,17 +10,36 @@ import java.util.Iterator;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.IDebugViewAdapter;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
-public abstract class ControlActionDelegate implements IWorkbenchWindowActionDelegate {
+public abstract class ControlActionDelegate implements IWorkbenchWindowActionDelegate, IViewActionDelegate {
+	
+	/**
+	 * This action's view part, or <code>null</code>
+	 * if not installed in a view.
+	 */
+	private IViewPart fViewPart;
+	
+	/**
+	 * Cache of the most recent seletion
+	 */
+	private IStructuredSelection fSelection;
+	
+	/**
+	 * Whether this delegate has been initialized
+	 */
+	private boolean fInitialized = false;
 
 	/**
 	 * It's crucial that delegate actions have a zero-arg constructor so that
@@ -44,11 +63,7 @@ public abstract class ControlActionDelegate implements IWorkbenchWindowActionDel
 	 * Do the specific action using the current selection.
 	 */
 	public void run() {
-		IViewPart view= getDebugView();
-		if (view == null) {
-			return;
-		}
-		IStructuredSelection selection= (IStructuredSelection)view.getSite().getSelectionProvider().getSelection();
+		IStructuredSelection selection= getSelection();
 		
 		final Iterator enum= selection.iterator();
 		String pluginId= DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier();
@@ -58,12 +73,10 @@ public abstract class ControlActionDelegate implements IWorkbenchWindowActionDel
 			public void run() {
 				while (enum.hasNext()) {
 					Object element= enum.next();
-					if (isEnabledFor(element)) {
-						try {
-							doAction(element);
-						} catch (DebugException e) {
-							ms.merge(e.getStatus());
-						}
+					try {
+						doAction(element);
+					} catch (DebugException e) {
+						ms.merge(e.getStatus());
 					}
 				}
 			}
@@ -101,16 +114,32 @@ public abstract class ControlActionDelegate implements IWorkbenchWindowActionDel
 	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection s) {
-		if (action == null) {
-			return;
+		initialize(action);		
+		boolean enabled = false;
+			
+		if (getView() == null) {
+			// global action - update with debug view selection
+			IDebugViewAdapter view= getDebugView();
+			if (view != null) {
+				ISelection sel = view.getViewer().getSelection();
+				update(action, sel);
+			}
+		} else {
+			// view specific action - use the view's selection
+			update(action, s);
 		}
-		IViewPart view= getDebugView();
-		if (view == null) {
+	}
+	
+	
+	protected void update(IAction action, ISelection s) {
+		if (s instanceof IStructuredSelection) {
+			IStructuredSelection ss = (IStructuredSelection)s;
+			action.setEnabled(getEnableStateForSelection(ss));
+			setSelection(ss);
+		} else {
 			action.setEnabled(false);
-			return;
+			setSelection(null);
 		}
-		IStructuredSelection selection= (IStructuredSelection)view.getSite().getSelectionProvider().getSelection();
-		action.setEnabled(getEnableStateForSelection(selection));
 	}
 	
 	/**
@@ -146,12 +175,13 @@ public abstract class ControlActionDelegate implements IWorkbenchWindowActionDel
 	/**
 	 * Returns the debug view, or <code>null</code> if none.
 	 */
-	protected IViewPart getDebugView() {		
+	protected IDebugViewAdapter getDebugView() {		
 		IWorkbenchWindow window= DebugUIPlugin.getActiveWorkbenchWindow();
 		if (window != null) {
 			IWorkbenchPage page = window.getActivePage();
 			if (page != null) {
-				return page.findView(IDebugUIConstants.ID_DEBUG_VIEW);
+				IViewPart part = page.findView(IDebugUIConstants.ID_DEBUG_VIEW);
+				return (IDebugViewAdapter)part.getAdapter(IDebugViewAdapter.class);
 			}
 		}
 		return null;
@@ -204,4 +234,52 @@ public abstract class ControlActionDelegate implements IWorkbenchWindowActionDel
 	 * Returns the tool tip text for this action.
 	 */
 	protected abstract String getToolTipText();
+	
+	/**
+	 * @see IViewActionDelegate#init(IViewPart)
+	 */
+	public void init(IViewPart view) {
+		fViewPart = view;
+	}
+	
+	/**
+	 * Returns this action's view part, or <code>null</code>
+	 * if not installed in a view.
+	 * 
+	 * @return view part or <code>null</code>
+	 */
+	protected IViewPart getView() {
+		return fViewPart;
+	}
+
+	/**
+	 * Initialize this delegate, updating this delegate's
+	 * presentation.
+	 * 
+	 * @param action the presentation for this action
+	 */
+	protected void initialize(IAction action) {
+		if (!fInitialized) {
+			setActionImages(action);
+			fInitialized = true;
+		}
+	}
+
+	/**
+	 * Returns the most recent selection
+	 * 
+	 * @return structured selection, or <code>null</code>
+	 */	
+	protected IStructuredSelection getSelection() {
+		return fSelection;
+	}
+	
+	/**
+	 * Sets the most recent selection
+	 * 
+	 * @parm selection structured selection, or <code>null</code>
+	 */	
+	private void setSelection(IStructuredSelection selection) {
+		fSelection = selection;
+	}	
 }

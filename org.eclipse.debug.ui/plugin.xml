@@ -265,6 +265,156 @@
       </action>
    </actionSet>
 </extension>
+
+<!-- Contributions to Debug View Toolbar -->
+
+<extension point = "org.eclipse.ui.viewActions">
+	<viewContribution
+		id = "org.eclipse.debug.ui.debugview.toolbar"
+		targetID = "org.eclipse.debug.ui.DebugView">
+
+<!-- Thread Group -->
+		<action
+			id = "org.eclipse.debug.ui.debugview.toolbar.disconnect"
+			toolbarPath = "threadGroup"
+			icon = "icons/full/clcl16/disconnect_co.gif"
+			helpContextId = "disconnect_action_context"
+			class = "org.eclipse.debug.internal.ui.DisconnectActionDelegate"
+			tooltip="%DisconnectAction.tooltip"
+			label="%DisconnectAction.label">
+		</action>
+		<action
+			id = "org.eclipse.debug.ui.debugview.toolbar.terminate"
+			toolbarPath = "threadGroup"
+			icon = "icons/full/clcl16/terminate_co.gif"
+			helpContextId = "terminate_action_context"
+			class = "org.eclipse.debug.internal.ui.TerminateActionDelegate"
+			tooltip="%TerminateAction.tooltip"
+			label="%TerminateAction.label">
+		</action>
+		<action
+			id = "org.eclipse.debug.ui.debugview.toolbar.suspend"
+			toolbarPath = "threadGroup"
+			icon = "icons/full/clcl16/suspend_co.gif"
+			helpContextId = "suspend_action_context"
+			class = "org.eclipse.debug.internal.ui.SuspendActionDelegate"
+			tooltip="%SuspendAction.tooltip"
+			label="%SuspendAction.label">
+		</action>
+		<action
+			id = "org.eclipse.debug.ui.debugview.toolbar.resume"
+			toolbarPath = "threadGroup"
+			icon = "icons/full/clcl16/resume_co.gif"
+			helpContextId = "resume_action_context"
+			class = "org.eclipse.debug.internal.ui.ResumeActionDelegate"
+			tooltip="%ResumeAction.tooltip"
+			label="%ResumeAction.label">
+		</action>
+<!-- Step Group -->
+		<action
+			id = "org.eclipse.debug.ui.debugview.toolbar.stepReturn"
+			toolbarPath = "stepGroup"
+			icon = "icons/full/clcl16/stepreturn_co.gif"
+			helpContextId = "step_return_action_context"
+			class = "org.eclipse.debug.internal.ui.StepReturnActionDelegate"
+			tooltip="%StepReturnAction.tooltip"
+			label="%StepReturnAction.label">
+		</action>		
+		<action
+			id = "org.eclipse.debug.ui.debugview.toolbar.stepOver"
+			toolbarPath = "stepGroup"
+			icon = "icons/full/clcl16/stepover_co.gif"
+			helpContextId = "step_over_action_context"
+			class = "org.eclipse.debug.internal.ui.StepOverActionDelegate"
+			tooltip="%StepOverAction.tooltip"
+			label="%StepOverAction.label">
+		</action>			
+		<action
+			id = "org.eclipse.debug.ui.debugview.toolbar.stepInto"
+			toolbarPath = "stepGroup"
+			icon = "icons/full/clcl16/stepinto_co.gif"
+			helpContextId = "step_into_action_context"
+			class = "org.eclipse.debug.internal.ui.StepIntoActionDelegate"
+			tooltip="%StepIntoAction.tooltip"
+			label="%StepIntoAction.label">
+		</action>		
+	</viewContribution>
+</extension>
+
+<!-- Contributions to Debug View Popup Menu -->
+
+<extension point = "org.eclipse.ui.popupMenus">
+	<viewerContribution
+		id = "org.eclipse.debug.ui.debugview.popupMenu"
+		targetID = "org.eclipse.debug.ui.DebugView">
+<!-- Thread Group -->
+		<action
+			id = "org.eclipse.debug.ui.debugview.toolbar.disconnect"
+			menubarPath = "threadGroup"
+			icon = "icons/full/clcl16/disconnect_co.gif"
+			helpContextId = "disconnect_action_context"
+			class = "org.eclipse.debug.internal.ui.DisconnectActionDelegate"
+			tooltip="%DisconnectAction.tooltip"
+			label="%DisconnectAction.label">
+		</action>
+		<action
+			id = "org.eclipse.debug.ui.debugview.toolbar.terminate"
+			menubarPath = "threadGroup"
+			icon = "icons/full/clcl16/terminate_co.gif"
+			helpContextId = "terminate_action_context"
+			class = "org.eclipse.debug.internal.ui.TerminateActionDelegate"
+			tooltip="%TerminateAction.tooltip"
+			label="%TerminateAction.label">
+		</action>
+		<action
+			id = "org.eclipse.debug.ui.debugview.toolbar.suspend"
+			menubarPath = "threadGroup"
+			icon = "icons/full/clcl16/suspend_co.gif"
+			helpContextId = "suspend_action_context"
+			class = "org.eclipse.debug.internal.ui.SuspendActionDelegate"
+			tooltip="%SuspendAction.tooltip"
+			label="%SuspendAction.label">
+		</action>
+		<action
+			id = "org.eclipse.debug.ui.debugview.toolbar.resume"
+			menubarPath = "threadGroup"
+			icon = "icons/full/clcl16/resume_co.gif"
+			helpContextId = "resume_action_context"
+			class = "org.eclipse.debug.internal.ui.ResumeActionDelegate"
+			tooltip="%ResumeAction.tooltip"
+			label="%ResumeAction.label">
+		</action>		
+<!-- Step Group -->		
+		<action
+			id = "org.eclipse.debug.ui.debugview.popupMenu.stepReturn"
+			menubarPath = "stepGroup"
+			icon = "icons/full/clcl16/stepreturn_co.gif"
+			helpContextId = "step_return_action_context"
+			class = "org.eclipse.debug.internal.ui.StepReturnActionDelegate"
+			tooltip="%StepReturnAction.tooltip"
+			label="%StepReturnAction.label">
+		</action>		
+		<action
+			id = "org.eclipse.debug.ui.debugview.popupMenu.stepOver"
+			menubarPath = "stepGroup"
+			icon = "icons/full/clcl16/stepover_co.gif"
+			helpContextId = "step_over_action_context"
+			class = "org.eclipse.debug.internal.ui.StepOverActionDelegate"
+			tooltip="%StepOverAction.tooltip"
+			label="%StepOverAction.label">
+		</action>			
+		<action
+			id = "org.eclipse.debug.ui.debugview.popupMenu.stepInto"
+			menubarPath = "stepGroup"
+			icon = "icons/full/clcl16/stepinto_co.gif"
+			helpContextId = "step_into_action_context"
+			class = "org.eclipse.debug.internal.ui.StepIntoActionDelegate"
+			tooltip="%StepIntoAction.tooltip"
+			label="%StepIntoAction.label">
+		</action>		
+	</viewerContribution>
+</extension>
+
 <extension
       id="instructionPointer"
       point="org.eclipse.core.resources.markers">

@@ -119,14 +119,6 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 		
 		IAction action;
 		
-		action = new ControlAction(viewer, new TerminateActionDelegate());
-		action.setEnabled(false);
-		setAction("Terminate", action);
-
-		action = new ControlAction(viewer, new DisconnectActionDelegate());
-		action.setEnabled(false);
-		setAction("Disconnect", action);
-
 		action = new RemoveTerminatedAction(this);
 		action.setEnabled(false);
 		setAction("RemoveAll", action);
@@ -139,31 +131,6 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 		setAction("TerminateAll", new TerminateAllAction());
 		setAction("Properties", new PropertyDialogAction(getSite().getWorkbenchWindow().getShell(), getSite().getSelectionProvider()));
 		
-		ControlAction cAction = new ControlAction(viewer, new ResumeActionDelegate());
-		viewer.addSelectionChangedListener(cAction);
-		cAction.setEnabled(false);
-		setAction("Resume", cAction);
-
-		cAction = new ControlAction(viewer, new SuspendActionDelegate());
-		viewer.addSelectionChangedListener(cAction);
-		cAction.setEnabled(false);
-		setAction("Suspend", cAction);
-
-		cAction = new ControlAction(viewer, new StepIntoActionDelegate());
-		viewer.addSelectionChangedListener(cAction);
-		cAction.setEnabled(false);
-		setAction("StepInto", cAction);
-
-		cAction = new ControlAction(viewer, new StepOverActionDelegate());
-		viewer.addSelectionChangedListener(cAction);
-		cAction.setEnabled(false);
-		setAction("StepOver", cAction);
-
-		cAction = new ControlAction(viewer, new StepReturnActionDelegate());
-		viewer.addSelectionChangedListener(cAction);
-		cAction.setEnabled(false);
-		setAction("StepReturn", cAction);
-
 		setAction("CopyToClipboard", new ControlAction(viewer, new CopyToClipboardActionDelegate()));
 
 		IAction qAction = new ShowQualifiedAction(viewer);
@@ -255,16 +222,10 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	 * @see AbstractDebugView#configureToolBar(IToolBarManager)
 	 */
 	protected void configureToolBar(IToolBarManager tbm) {
-		tbm.add(getAction("Resume"));
-		tbm.add(getAction("Suspend"));
-		tbm.add(getAction("Terminate"));
-		tbm.add(getAction("Disconnect"));
+		tbm.add(new Separator(IDebugUIConstants.THREAD_GROUP));
 		tbm.add(getAction("RemoveAll"));
-		tbm.add(new Separator("#StepGroup")); //$NON-NLS-1$
-		tbm.add(getAction("StepInto"));
-		tbm.add(getAction("StepOver"));
-		tbm.add(getAction("StepReturn"));
-		tbm.add(new Separator("#RenderGroup")); //$NON-NLS-1$
+		tbm.add(new Separator(IDebugUIConstants.STEP_GROUP));
+		tbm.add(new Separator(IDebugUIConstants.RENDER_GROUP));
 		tbm.add(getAction("ShowQualifiedNames"));
 	}	
 
@@ -592,23 +553,14 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	/**
 	 * @see AbstractDebugView#fillContextMenu(IMenuManager)
 	 */
-	protected void fillContextMenu(IMenuManager menu) {
-		updateActions();
-		
+	protected void fillContextMenu(IMenuManager menu) {		
 		menu.add(new Separator(IDebugUIConstants.EMPTY_EDIT_GROUP));
 		menu.add(new Separator(IDebugUIConstants.EDIT_GROUP));
 		menu.add(getAction("CopyToClipboard"));
 		menu.add(new Separator(IDebugUIConstants.EMPTY_STEP_GROUP));
 		menu.add(new Separator(IDebugUIConstants.STEP_GROUP));
-		menu.add(getAction("StepInto"));
-		menu.add(getAction("StepOver"));
-		menu.add(getAction("StepReturn"));
 		menu.add(new Separator(IDebugUIConstants.EMPTY_THREAD_GROUP));
 		menu.add(new Separator(IDebugUIConstants.THREAD_GROUP));
-		menu.add(getAction("Resume"));
-		menu.add(getAction("Suspend"));
-		menu.add(getAction("Terminate"));
-		menu.add(getAction("Disconnect"));
 		menu.add(new Separator(IDebugUIConstants.EMPTY_LAUNCH_GROUP));
 		menu.add(new Separator(IDebugUIConstants.LAUNCH_GROUP));
 		menu.add(getAction(REMOVE_ACTION));
