@@ -234,7 +234,15 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 					size.x = minX;
 				if (size.y < minY)
 					size.y = minY;
-				info.setSize(size.x, size.y);
+				info.setSize(size.x, size.y);				
+				Rectangle bounds = Display.getCurrent().getBounds();			
+				
+				if (x + size.x > bounds.width)
+				    x = bounds.width - size.x;
+				
+				if (y + size.y > bounds.height)
+				    y = bounds.height - size.y;
+				
 				info.setLocation(new Point(x, y));
 				info.setVisible(true);
 				info.setFocus();
