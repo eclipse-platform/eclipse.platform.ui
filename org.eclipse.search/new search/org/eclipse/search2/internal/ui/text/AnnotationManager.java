@@ -41,7 +41,7 @@ public class AnnotationManager implements ISearchResultListener, IPartListener {
 	private AbstractTextSearchResult fResult;
 	private Map fMatchesToAnnotations;
 	private AnnotationTypeLookup fAnnotationTypeLookup= EditorsUI.getAnnotationTypeLookup();
-	private ITextEditor fEditor;
+	private IEditorPart fEditor;
 	private IWorkbenchWindow fWindow;
 	private static HashMap fSearchResultMap;
 	private static AnnotationManager fgManager;
@@ -113,10 +113,11 @@ public class AnnotationManager implements ISearchResultListener, IPartListener {
 	}
 
 	public synchronized void partActivated(IWorkbenchPart part) {
-		if (part instanceof ITextEditor && part != fEditor) {
+		
+		if (part instanceof IEditorPart && part != fEditor) {
 			if (fResult != null)
 				removeAnnotations();
-			fEditor= (ITextEditor) part;
+			fEditor= (IEditorPart) part;
 			addAnnotations();
 		}
 	}
@@ -131,7 +132,7 @@ public class AnnotationManager implements ISearchResultListener, IPartListener {
 	}
 
 	private void removeAnnotations() {
-		ITextEditor editor= fEditor;
+		IEditorPart editor= fEditor;
 		if (editor == null)
 			return;
 		Set matchSet= fMatchesToAnnotations.keySet();
@@ -155,7 +156,9 @@ public class AnnotationManager implements ISearchResultListener, IPartListener {
 			fWindow.getPartService().removePartListener(AnnotationManager.this);
 		fWindow= window;
 		fWindow.getPartService().addPartListener(this);
-		partActivated(window.getActivePage().getActiveEditor());
+		IEditorPart editor= window.getActivePage().getActiveEditor();
+		if (editor != null)
+			partActivated(editor);
 	}
 
 	public void partDeactivated(IWorkbenchPart part) {
@@ -195,14 +198,8 @@ public class AnnotationManager implements ISearchResultListener, IPartListener {
 	 * @param annotions A set containing the annotations to be removed.
 	 * 			 @see Annotation
 	 */
-	private void removeAnnotations(IEditorPart editor, Set annotations) {
-		if (!(editor instanceof ITextEditor))
-			return;
-		ITextEditor textEditor= (ITextEditor) editor;
-		IDocumentProvider dp= textEditor.getDocumentProvider();
-		if (dp == null)
-			return;
-		IAnnotationModel model= dp.getAnnotationModel(textEditor.getEditorInput());
+	private void removeAnnotations(IWorkbenchPart editor, Set annotations) {
+		IAnnotationModel model= getAnnotationModel(editor);
 		if (model == null)
 			return;
 		if (model instanceof IAnnotationModelExtension) {
@@ -226,11 +223,8 @@ public class AnnotationManager implements ISearchResultListener, IPartListener {
 	 * 			 @see Annotation
 	 * 			 @see Position
 	 */
-	private void addAnnotations(IEditorPart editor, Map annotationToPositionMap) {
-		if (!(editor instanceof ITextEditor))
-			return;
-		ITextEditor textEditor= (ITextEditor) editor;
-		IAnnotationModel model= textEditor.getDocumentProvider().getAnnotationModel(textEditor.getEditorInput());
+	private void addAnnotations(IWorkbenchPart editor, Map annotationToPositionMap) {
+		IAnnotationModel model= getAnnotationModel(editor);
 		if (model == null) {
 			return;
 		}
@@ -244,6 +238,23 @@ public class AnnotationManager implements ISearchResultListener, IPartListener {
 				model.addAnnotation(element, p);
 			}
 		}
+	}
+
+	private IAnnotationModel getAnnotationModel(IWorkbenchPart part) {
+		IAnnotationModel model= null;
+		model= (IAnnotationModel) part.getAdapter(IAnnotationModel.class); 
+		if (model == null) {
+			ITextEditor textEditor= null;
+			if (part instanceof ITextEditor) {
+				textEditor= (ITextEditor) part; 
+			}
+			if (textEditor != null) {
+				IDocumentProvider dp= textEditor.getDocumentProvider();
+				if (dp != null)
+					model= dp.getAnnotationModel(textEditor.getEditorInput());
+			}
+		}
+		return model;
 	}
 
 }
