@@ -18,6 +18,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.PageBook;
+import org.eclipse.update.core.Utilities;
 import org.eclipse.update.internal.ui.UpdateUIPlugin;
 import org.eclipse.update.internal.ui.model.UpdateModel;
 import org.eclipse.update.internal.ui.pages.UpdateFormPage;
@@ -110,7 +111,7 @@ public class SearchForm extends UpdateWebForm {
 			Date date = new Date();
 			String pattern = UpdateUIPlugin.getResourceString(KEY_LAST_SEARCH);
 			String text =
-				UpdateUIPlugin.getFormattedMessage(pattern, date.toString());
+				UpdateUIPlugin.getFormattedMessage(pattern, Utilities.format(date));
 			infoLabel.setText(text);
 			infoLabel.getParent().layout();
 			reflow(true);
