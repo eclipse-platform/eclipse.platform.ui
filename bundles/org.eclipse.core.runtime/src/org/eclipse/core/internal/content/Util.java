@@ -20,34 +20,36 @@ public class Util {
 	public static String[] parseItems(String string, String separator) {
 		if (string == null)
 			return new String[0];
-		StringTokenizer tokenizer = new StringTokenizer(string, separator); //$NON-NLS-1$
+		StringTokenizer tokenizer = new StringTokenizer(string, separator, true); //$NON-NLS-1$
 		if (!tokenizer.hasMoreTokens())
-			return new String[0];
+			return new String[] {string.trim()};
 		String first = tokenizer.nextToken().trim();
+		boolean wasSeparator = false;
+		if (first.equals(separator)) {
+			// leading separator
+			first = ""; //$NON-NLS-1$
+			wasSeparator = true;
+		}
+		// simple cases, do not create temporary list
 		if (!tokenizer.hasMoreTokens())
-			return new String[] {first};
+			return wasSeparator ? /* two empty strings */new String[] {first, first} : /*single non-empty element  */new String[] {first};
 		ArrayList items = new ArrayList();
 		items.add(first);
+		String current;
 		do {
-			items.add(tokenizer.nextToken().trim());
+			current = tokenizer.nextToken().trim();
+			boolean isSeparator = current.equals(separator);
+			if (isSeparator) {
+				if (wasSeparator)
+					items.add(""); //$NON-NLS-1$
+			} else
+				items.add(current);
+			wasSeparator = isSeparator;
 		} while (tokenizer.hasMoreTokens());
+		if (wasSeparator)
+			// trailing separator
+			items.add(""); //$NON-NLS-1$
 		return (String[]) items.toArray(new String[items.size()]);
-	}
-
-	public static String toListString(List list) {
-		return toListString(list, ","); //$NON-NLS-1$
-	}
-
-	public static String toListString(List list, String separator) {
-		if (list.isEmpty())
-			return ""; //$NON-NLS-1$
-		StringBuffer result = new StringBuffer();
-		for (Iterator i = list.iterator(); i.hasNext();) {
-			result.append(i.next());
-			result.append(separator);
-		}
-		// ignore last comma
-		return result.substring(0, result.length() - 1);
 	}
 
 	public static String toListString(Object[] list) {
@@ -55,8 +57,8 @@ public class Util {
 	}
 
 	public static String toListString(Object[] list, String separator) {
-		if (list.length == 0)
-			return ""; //$NON-NLS-1$
+		if (list == null || list.length == 0)
+			return null; //$NON-NLS-1$
 		StringBuffer result = new StringBuffer();
 		for (int i = 0; i < list.length; i++) {
 			result.append(list[i]);
@@ -65,5 +67,4 @@ public class Util {
 		// ignore last comma
 		return result.substring(0, result.length() - 1);
 	}
-
 }

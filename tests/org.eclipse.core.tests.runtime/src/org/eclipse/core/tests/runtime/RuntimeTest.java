@@ -11,6 +11,7 @@
 package org.eclipse.core.tests.runtime;
 
 import org.eclipse.core.tests.harness.CoreTest;
+import org.osgi.framework.BundleContext;
 
 /**
  * Common superclass for all runtime tests.
@@ -30,6 +31,10 @@ public abstract class RuntimeTest extends CoreTest {
 	 */
 	public RuntimeTest() {
 		super();
+	}
+	
+	public BundleContext getContext() {
+		return RuntimeTestsPlugin.getContext();
 	}
 
 }

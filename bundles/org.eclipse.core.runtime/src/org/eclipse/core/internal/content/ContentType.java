@@ -149,7 +149,10 @@ public final class ContentType implements IContentType {
 		}
 		// persist using preferences		
 		Preferences contentTypeNode = manager.getPreferences().node(getId());
-		contentTypeNode.put(getPreferenceKey(type), Util.toListString(userSet));
+		String newValue = Util.toListString(userSet);
+		// we are adding stuff, newValue must be non-null
+		Assert.isNotNull(newValue);
+		contentTypeNode.put(getPreferenceKey(type), newValue);
 		try {
 			contentTypeNode.flush();
 		} catch (BackingStoreException bse) {
@@ -609,10 +612,12 @@ public final class ContentType implements IContentType {
 		Preferences contentTypeNode = manager.getPreferences().node(getId());
 		//TODO: shouldn't this call take a catalog?
 		final String[] userSet = internalGetFileSpecs(type | IGNORE_PRE_DEFINED);
-		if (userSet.length == 0)
-			contentTypeNode.remove(getPreferenceKey(type));
+		String preferenceKey = getPreferenceKey(type);
+		String newValue = Util.toListString(userSet);
+		if (newValue == null)
+			contentTypeNode.remove(preferenceKey);
 		else
-			contentTypeNode.put(getPreferenceKey(type), Util.toListString(userSet));
+			contentTypeNode.put(preferenceKey, newValue);
 		try {
 			contentTypeNode.flush();
 		} catch (BackingStoreException bse) {

@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
+import org.eclipse.core.tests.harness.*;
 import org.eclipse.core.tests.harness.BundleTestingHelper;
 import org.eclipse.core.tests.harness.PerformanceTestRunner;
 import org.eclipse.core.tests.runtime.*;
@@ -54,14 +55,16 @@ public class ContentTypePerformanceTest extends RuntimeTest {
 			result.append(baseTypeId);
 			result.append("\" ");
 		}
-		if (fileNames != null && fileNames.length > 0) {
+		String fileNameList = Util.toListString(fileNames);
+		if (fileNameList != null) {
 			result.append("file-names=\"");
-			result.append(Util.toListString(fileNames));
+			result.append(fileNameList);
 			result.append("\" ");
 		}
+		String fileExtensionsList = Util.toListString(fileExtensions);
 		if (fileExtensions != null && fileExtensions.length > 0) {
 			result.append("file-extensions=\"");
-			result.append(Util.toListString(fileExtensions));
+			result.append(fileExtensionsList);
 			result.append("\" ");
 		}
 		result.append("describer=\"");
@@ -130,18 +133,18 @@ public class ContentTypePerformanceTest extends RuntimeTest {
 
 	private Bundle installContentTypes(String tag, int numberOfLevels, int minimumPerLevel, int maximumPerLevel) {
 		TestRegistryChangeListener listener = new TestRegistryChangeListener(Platform.PI_RUNTIME, ContentTypeBuilder.PT_CONTENTTYPES, null, null);
-		listener.register();
-		IPath pluginLocation = getRandomLocation();
-		pluginLocation.toFile().mkdirs();
-		URL installURL = null;
-		try {
-			installURL = pluginLocation.toFile().toURL();
-		} catch (MalformedURLException e) {
-			fail(tag + ".0.5", e);
-		}
-		Writer writer = null;
 		Bundle installed = null;
+		listener.register();
 		try {
+			IPath pluginLocation = getRandomLocation();
+			pluginLocation.toFile().mkdirs();
+			URL installURL = null;
+			try {
+				installURL = pluginLocation.toFile().toURL();
+			} catch (MalformedURLException e) {
+				fail(tag + ".0.5", e);
+			}
+			Writer writer = null;
 			try {
 				writer = new BufferedWriter(new FileWriter(pluginLocation.append("plugin.xml").toFile()), 0x10000);
 				writer.write("<plugin id=\"" + TEST_DATA_ID + "\" name=\"Content Type Performance Test Data\" version=\"1\">");

@@ -79,7 +79,7 @@ public class ContentTypeManager implements IContentTypeManager, IRegistryChangeL
 	 */
 	static String getFileExtension(String fileName) {
 		int dotPosition = fileName.lastIndexOf('.');
-		return (dotPosition == -1 || dotPosition == fileName.length() - 1) ? null : fileName.substring(dotPosition + 1);
+		return (dotPosition == -1 || dotPosition == fileName.length() - 1) ? "" : fileName.substring(dotPosition + 1); //$NON-NLS-1$
 	}
 
 	protected static LazyInputStream readBuffer(InputStream contents) {
