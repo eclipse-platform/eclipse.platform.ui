@@ -15,8 +15,11 @@ import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.ShellAdapter;
+import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ScrollBar;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 
 
@@ -26,7 +29,7 @@ import org.eclipse.swt.widgets.Table;
  * a content assistant should be terminated and all
  * associated windows be closed.
  */
-class PopupCloser2 implements FocusListener, SelectionListener {
+class PopupCloser2 extends ShellAdapter implements FocusListener, SelectionListener {
 	
 	/** The content assistant to be monitored */
 	private ContentAssistant2 fContentAssistant;
@@ -34,8 +37,11 @@ class PopupCloser2 implements FocusListener, SelectionListener {
 	private Table fTable;
 	/** The scrollbar of the table for the selector popup */
 	private ScrollBar fScrollbar;
-	/** Indicates whether the scrollbar thumb has been grabed */
+	/** Indicates whether the scrollbar thumb has been grabbed. */
 	private boolean fScrollbarClicked= false;
+	/** The shell on which some listeners are registered. */
+	private Shell fShell;
+
 	
 	/**
 	 * Installs this closer on the given table opened by the given content assistant.
@@ -47,6 +53,11 @@ class PopupCloser2 implements FocusListener, SelectionListener {
 		fContentAssistant= contentAssistant;
 		fTable= table;
 		if (Helper2.okToUse(fTable)) {
+			Shell shell= fTable.getShell();
+			if (Helper2.okToUse(shell)) {
+				fShell= shell;
+				fShell.addShellListener(this);
+			}
 			fTable.addFocusListener(this);
 			fScrollbar= fTable.getVerticalBar();
 			if (fScrollbar != null)
@@ -58,6 +69,10 @@ class PopupCloser2 implements FocusListener, SelectionListener {
 	 * Uninstalls this closer if previously installed.
 	 */
 	public void uninstall() {
+		fContentAssistant= null;
+		if (Helper2.okToUse(fShell))
+			fShell.removeShellListener(this);
+		fShell= null;
 		if (Helper2.okToUse(fScrollbar))
 			fScrollbar.removeSelectionListener(this);
 		if (Helper2.okToUse(fTable))
@@ -92,9 +107,28 @@ class PopupCloser2 implements FocusListener, SelectionListener {
 		Display d= fTable.getDisplay();
 		d.asyncExec(new Runnable() {
 			public void run() {
-				if (Helper2.okToUse(fTable) && !fTable.isFocusControl() && !fScrollbarClicked)
+				if (Helper2.okToUse(fTable) && !fTable.isFocusControl() && !fScrollbarClicked && fContentAssistant != null)
 					fContentAssistant.popupFocusLost(e);
 			}
 		});
+	}
+	
+	/*
+	 * @see org.eclipse.swt.events.ShellAdapter#shellDeactivated(org.eclipse.swt.events.ShellEvent)
+	 * @since 3.1
+	 */
+	public void shellDeactivated(ShellEvent e) {
+		if (fContentAssistant != null)
+			fContentAssistant.hide();
+	}
+	
+	
+	/*
+	 * @see org.eclipse.swt.events.ShellAdapter#shellClosed(org.eclipse.swt.events.ShellEvent)
+	 * @since 3.1
+	 */
+	public void shellClosed(ShellEvent e) {
+		if (fContentAssistant != null)
+			fContentAssistant.hide();
 	}
 }

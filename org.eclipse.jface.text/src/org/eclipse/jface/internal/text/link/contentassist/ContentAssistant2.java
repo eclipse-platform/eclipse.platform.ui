@@ -67,7 +67,7 @@ import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 
 /**
  * A custom implementation of the <code>IContentAssistant</code> interface.
- * This implementation is used by the linked mode ui. This is internal and subject
+ * This implementation is used by the linked mode UI. This is internal and subject
  * to change without notice.
  */
 public class ContentAssistant2 implements IContentAssistant, IContentAssistantExtension, IWidgetTokenKeeper, IWidgetTokenKeeperExtension {
@@ -206,14 +206,6 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 		public void viewportChanged(int topIndex) {
 			hide();
 		}
-		
-		/**
-		 * Hides any open popups.
-		 */
-		protected void hide() {
-			fProposalPopup.hide();
-			fContextInfoPopup.hide();
-		}
 	}
 	
 	/**
@@ -335,7 +327,7 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 	}
 	
 	/**
-	 * The laypout manager layouts the various
+	 * The layout manager layouts the various
 	 * windows associated with the content assistant based on the
 	 * settings of the content assistant.
 	 */
@@ -491,7 +483,7 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 						break;
 	
 					case PROPOSAL_OVERLAY:
-						// The proposal selector has been overlayed by the tip selector.
+						// The proposal selector has been overlaid by the tip selector.
 						break;
 	
 					case PROPOSAL_STACKED: {
@@ -659,7 +651,7 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 	final static int CONTEXT_INFO_POPUP= 2;
 
 	/** 
-	 * The popup priority: &gt; infopops, &lt; standard content assist.
+	 * The popup priority: &gt; info pop-ups, &lt; standard content assist.
 	 * Default value: <code>10</code>.
 	 * 
 	 * @since 3.0
@@ -822,7 +814,7 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 	}
 	
 	/**
-	 * Installs and uninstall the listeners needed for autoactivation.
+	 * Installs and uninstall the listeners needed for auto-activation.
 	 * @param start <code>true</code> if listeners must be installed,
 	 * 	<code>false</code> if they must be removed
 	 * @since 2.0
@@ -868,7 +860,7 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 	}
 	
 	/**
-	 * Sets the proposal popups' orientation.
+	 * Sets the proposal pop-ups' orientation.
 	 * The following values may be used:
 	 * <ul>
 	 *   <li>PROPOSAL_OVERLAY<p>
@@ -1312,6 +1304,16 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 	}
 	
 	/**
+	 * Hides any open pop-ups.
+	 */
+	protected void hide() {
+		if (fProposalPopup != null)
+			fProposalPopup.hide();
+		if (fContextInfoPopup != null)
+			fContextInfoPopup.hide();
+	}
+	
+	/**
 	 * Callback to signal this content assistant that the presentation of the possible completions has been stopped.
 	 * @since 2.1 
 	 */
@@ -1375,7 +1377,7 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 	 * the specified document position. The position is used to 
 	 * determine the appropriate content assist processor to invoke.
 	 *
-	 * @param viewer the viewer for which to compute the prosposals
+	 * @param viewer the viewer for which to compute the proposals
 	 * @param position a document position
 	 * @return an array of completion proposals
 	 *
