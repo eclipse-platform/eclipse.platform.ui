@@ -12,42 +12,17 @@ package org.eclipse.core.internal.runtime;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Map;
-import org.eclipse.core.internal.boot.PlatformURLHandler;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.osgi.framework.Bundle;
 
-//TODO Add a comment
-//TODO Remove the deadcode (WS_JAR_VARIANTS / OS / JAR and the methods)
+// This class provides implements the find* methods exposed on Platform.
+// It does the lookup in bundles and fragments and does the variable replacement.
 public class FindSupport {
-
-	private static String[] WS_JAR_VARIANTS = buildWSVariants();
-	private static String[] OS_JAR_VARIANTS = buildOSVariants();
 	private static String[] NL_JAR_VARIANTS = buildNLVariants(InternalPlatform.getDefault().getNL());
-	private static String[] JAR_VARIANTS = buildVanillaVariants();
-
-	private static String[] buildWSVariants() {
-		ArrayList result = new ArrayList();
-		result.add("ws/" + InternalPlatform.getDefault().getWS()); //$NON-NLS-1$
-		result.add(""); //$NON-NLS-1$
-		return (String[]) result.toArray(new String[result.size()]);
-	}
-
-	private static String[] buildVanillaVariants() {
-		return new String[] {""}; //$NON-NLS-1$
-	}
-
-	private static String[] buildOSVariants() {
-		ArrayList result = new ArrayList();
-		result.add("os/" + InternalPlatform.getDefault().getOS() + "/" + InternalPlatform.getDefault().getOSArch()); //$NON-NLS-1$ //$NON-NLS-2$
-		result.add("os/" + InternalPlatform.getDefault().getOS()); //$NON-NLS-1$
-		result.add(""); //$NON-NLS-1$
-		return (String[]) result.toArray(new String[result.size()]);
-	}
 
 	private static String[] buildNLVariants(String nl) {
 		ArrayList result = new ArrayList();
@@ -66,43 +41,14 @@ public class FindSupport {
 	}
 
 	/**
-	 * Returns a URL for the given path.  Returns <code>null</code> if the URL
-	 * could not be computed or created.
-	 * 
-	 * TODO fix these comments
-	 * @param path file path relative to plug-in installation location
-	 * @param override map of override substitution arguments to be used for
-	 * any $arg$ path elements. The map keys correspond to the substitution
-	 * arguments (eg. "$nl$" or "$os$"). The resulting
-	 * values must be of type java.lang.String. If the map is <code>null</code>,
-	 * or does not contain the required substitution argument, the default
-	 * is used.
-	 * @return a URL for the given path or <code>null</code>
-	 *
+	 * See doc on @link Platform#find(Bundle, IPath) Platform#find(Bundle, IPath) 
 	 */
-	private String getFileFromURL(URL target) {
-		String protocol = target.getProtocol();
-		if (protocol.equals(PlatformURLHandler.FILE))
-			return target.getFile();
-		if (protocol.equals(PlatformURLHandler.JAR)) {
-			// strip off the jar separator at the end of the url then do a recursive call
-			// to interpret the sub URL.
-			String file = target.getFile();
-			file = file.substring(0, file.length() - PlatformURLHandler.JAR_SEPARATOR.length());
-			try {
-				return getFileFromURL(new URL(file));
-			} catch (MalformedURLException e) {
-			}
-		}
-		return null;
-	}
-
 	public static URL find(Bundle bundle, IPath path) {
 		return find(bundle, path, null);
 	}
 
 	/**
-	 * See doc on @link Platform#find(Bundle, IPath) Platform#find(Bundle, IPath) 
+	 * See doc on @link Platform#find(Bundle, IPath, Map) Platform#find(Bundle, IPath, Map) 
 	 */
 	public static URL find(Bundle b, IPath path, Map override) {
 		if (path == null)
@@ -275,23 +221,7 @@ public class FindSupport {
 	}
 
 	/**
-	 * Returns an input stream for the specified file. The file path
-	 * must be specified relative to this plug-in's installation location.
-	 * Optionally, the platform searches for the correct localized version
-	 * of the specified file using the users current locale, and Java
-	 * naming convention for localized resource files (locale suffix appended 
-	 * to the specified file extension).
-	 * <p>
-	 * The caller must close the returned stream when done.
-	 * </p>
-	 *
-	 * @param bundle the bundle to search
-	 * @param file path relative to plug-in installation location
-	 * @param localized <code>true</code> for the localized version
-	 *   of the file, and <code>false</code> for the file exactly
-	 *   as specified
-	 * @return an input stream
-	 * @exception IOException if the given path cannot be found in the given bundle
+	 * See doc on @link Platform#openStream(Bundle, IPath, boolean) Platform#Platform#openStream(Bundle, IPath, boolean) 
 	 */
 	public static final InputStream openStream(Bundle bundle, IPath file, boolean localized) throws IOException {
 		URL url = null;
