@@ -16,6 +16,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ResourceBundle;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Shell;
@@ -132,20 +133,6 @@ public class ConvertLineDelimitersAction extends TextEditorAction {
 		}
 		
 		/*
-		 * XXX: should be replaced with NullProgressMonitor (see bug 35478)
-		 */
-		private static class DummyMonitor implements IProgressMonitor {		
-			public void beginTask(String name, int totalWork) {}
-			public void done() {}
-			public void internalWorked(double work) {}
-			public boolean isCanceled() {return false;}
-			public void setCanceled(boolean value) {}
-			public void setTaskName(String name) {}
-			public void subTask(String name) {}
-			public void worked(int work) {}
-		}
-		
-		/*
 		 * @see IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
 		 */
 		public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
@@ -205,10 +192,10 @@ public class ConvertLineDelimitersAction extends TextEditorAction {
 		 */
 		public void run() {
 			try {
-				run(new DummyMonitor());
+				run(new NullProgressMonitor());
 
 			} catch (InterruptedException e) {
-				// cancelled, can't happen with dummy monitor
+				// should not happen
 				
 			} catch (InvocationTargetException e) {
 				// should not happen				
