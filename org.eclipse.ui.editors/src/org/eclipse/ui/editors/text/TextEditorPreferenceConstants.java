@@ -11,14 +11,11 @@
 package org.eclipse.ui.editors.text;
 
 
-import java.util.Iterator;
-
 import org.eclipse.swt.graphics.RGB;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 
-import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 
 
@@ -324,19 +321,6 @@ public class TextEditorPreferenceConstants {
 		store.setDefault(TextEditorPreferenceConstants.EDITOR_UNKNOWN_INDICATION_IN_OVERVIEW_RULER, false);
 		PreferenceConverter.setDefault(store, TextEditorPreferenceConstants.EDITOR_UNKNOWN_INDICATION_COLOR, new RGB(0, 0, 0));
 		
-		MarkerAnnotationPreferences preferences= new MarkerAnnotationPreferences();
-		Iterator e= preferences.getAnnotationPreferences().iterator();
-		while (e.hasNext()) {
-			AnnotationPreference info= (AnnotationPreference) e.next();
-			store.setDefault(info.getTextPreferenceKey(), info.getTextPreferenceValue());
-			store.setDefault(info.getOverviewRulerPreferenceKey(), info.getOverviewRulerPreferenceValue());
-			PreferenceConverter.setDefault(store, info.getColorPreferenceKey(), info.getColorPreferenceValue());
-			if (info.getShowInNextPrevDropdownToolbarActionKey() != null)
-				store.setDefault(info.getShowInNextPrevDropdownToolbarActionKey(), info.isShowInNextPrevDropdownToolbarAction());
-			if (info.getIsGoToNextNavigationTargetKey() != null)
-				store.setDefault(info.getIsGoToNextNavigationTargetKey(), info.isGoToNextNavigationTarget());
-			if (info.getIsGoToPreviousNavigationTargetKey() != null)
-				store.setDefault(info.getIsGoToPreviousNavigationTargetKey(), info.isGoToPreviousNavigationTarget());			
-		}
+		MarkerAnnotationPreferences.initializeDefaultValues(store);
 	}
 }

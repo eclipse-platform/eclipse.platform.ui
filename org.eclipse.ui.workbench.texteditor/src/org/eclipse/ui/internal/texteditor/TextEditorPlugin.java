@@ -17,12 +17,10 @@ import java.util.Set;
 import org.eclipse.core.runtime.IPluginDescriptor;
 
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.preference.IPreferenceStore;
 
 import org.eclipse.jface.text.Assert;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 
 /**
@@ -77,19 +75,7 @@ public final class TextEditorPlugin extends AbstractUIPlugin {
 	 * @see AbstractUIPlugin#initializeDefaultPluginPreferences()
 	 */
 	protected void initializeDefaultPluginPreferences() {
-		// Initialize next/prev annotation preferences
-		IPreferenceStore store= getPreferenceStore();
-		MarkerAnnotationPreferences preferences= new MarkerAnnotationPreferences();
-		Iterator e= preferences.getAnnotationPreferences().iterator();
-		while (e.hasNext()) {
-			AnnotationPreference info= (AnnotationPreference) e.next();
-			if (info.getShowInNextPrevDropdownToolbarActionKey() != null)
-				store.setDefault(info.getShowInNextPrevDropdownToolbarActionKey(), info.isShowInNextPrevDropdownToolbarAction());
-			if (info.getIsGoToNextNavigationTargetKey() != null)
-				store.setDefault(info.getIsGoToNextNavigationTargetKey(), info.isGoToNextNavigationTarget());
-			if (info.getIsGoToPreviousNavigationTargetKey() != null)
-				store.setDefault(info.getIsGoToPreviousNavigationTargetKey(), info.isGoToPreviousNavigationTarget());			
-		}
+		MarkerAnnotationPreferences.initializeDefaultValues(getPreferenceStore());
 	}
 
 	/**
