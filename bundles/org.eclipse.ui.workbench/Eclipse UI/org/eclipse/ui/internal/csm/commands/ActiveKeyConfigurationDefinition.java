@@ -13,7 +13,7 @@ package org.eclipse.ui.internal.csm.commands;
 
 import org.eclipse.ui.internal.util.Util;
 
-final class ActiveKeyConfigurationDefinition implements IActiveKeyConfigurationDefinition {
+public final class ActiveKeyConfigurationDefinition implements IActiveKeyConfigurationDefinition {
 
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL = ActiveKeyConfigurationDefinition.class.getName().hashCode();
@@ -25,7 +25,7 @@ final class ActiveKeyConfigurationDefinition implements IActiveKeyConfigurationD
 	private transient boolean hashCodeComputed;
 	private transient String string;
 
-	ActiveKeyConfigurationDefinition(String keyConfigurationId, String pluginId) {
+	public ActiveKeyConfigurationDefinition(String keyConfigurationId, String pluginId) {
 		this.keyConfigurationId = keyConfigurationId;
 		this.pluginId = pluginId;
 	}

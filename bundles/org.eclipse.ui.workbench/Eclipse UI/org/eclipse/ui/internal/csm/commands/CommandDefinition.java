@@ -19,12 +19,12 @@ import java.util.Map;
 
 import org.eclipse.ui.internal.util.Util;
 
-final class CommandDefinition implements Comparable, ICommandDefinition {
+public final class CommandDefinition implements Comparable, ICommandDefinition {
 
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL = CommandDefinition.class.getName().hashCode();
 
-	static Map commandDefinitionsById(Collection commandDefinitions, boolean allowNullIds) {
+	public static Map commandDefinitionsById(Collection commandDefinitions, boolean allowNullIds) {
 		if (commandDefinitions == null)
 			throw new NullPointerException();
 
@@ -44,7 +44,7 @@ final class CommandDefinition implements Comparable, ICommandDefinition {
 		return map;
 	}
 
-	static Map commandDefinitionsByName(Collection commandDefinitions, boolean allowNullNames) {
+	public static Map commandDefinitionsByName(Collection commandDefinitions, boolean allowNullNames) {
 		if (commandDefinitions == null)
 			throw new NullPointerException();
 
@@ -82,7 +82,7 @@ final class CommandDefinition implements Comparable, ICommandDefinition {
 	private transient boolean hashCodeComputed;
 	private transient String string;
 	
-	CommandDefinition(String categoryId, String description, String id, String name, String pluginId) {
+	public CommandDefinition(String categoryId, String description, String id, String name, String pluginId) {
 		this.categoryId = categoryId;
 		this.description = description;
 		this.id = id;

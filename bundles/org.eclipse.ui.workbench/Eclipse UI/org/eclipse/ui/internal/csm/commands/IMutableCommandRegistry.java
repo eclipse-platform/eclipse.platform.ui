@@ -9,11 +9,9 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands;
+package org.eclipse.ui.internal.csm.commands;
 
 import java.util.List;
-
-import org.eclipse.ui.internal.csm.commands.ICommandRegistry;
 
 public interface IMutableCommandRegistry extends ICommandRegistry {
 
@@ -26,8 +24,8 @@ public interface IMutableCommandRegistry extends ICommandRegistry {
 	void setContextBindingDefinitions(List contextBindingDefinitions);
 
 	void setImageBindingDefinitions(List imageBindingDefinitions);
-
-	void setKeyBindingDefinitions(List keyBindingDefinitions);
 	
 	void setKeyConfigurationDefinitions(List keyConfigurationDefinitions);
+
+	void setKeySequenceBindingDefinitions(List keySequenceBindingDefinitions);
 }

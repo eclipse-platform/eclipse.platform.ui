@@ -59,6 +59,9 @@ import org.eclipse.ui.activities.IActivity;
 import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.csm.commands.ActiveKeyConfigurationDefinition;
+import org.eclipse.ui.internal.csm.commands.CategoryDefinition;
+import org.eclipse.ui.internal.csm.commands.CommandDefinition;
 import org.eclipse.ui.internal.csm.commands.IActiveKeyConfigurationDefinition;
 import org.eclipse.ui.internal.csm.commands.ICategoryDefinition;
 import org.eclipse.ui.internal.csm.commands.ICommandDefinition;
@@ -67,6 +70,8 @@ import org.eclipse.ui.internal.csm.commands.IContextBindingDefinition;
 import org.eclipse.ui.internal.csm.commands.IImageBindingDefinition;
 import org.eclipse.ui.internal.csm.commands.IKeyConfigurationDefinition;
 import org.eclipse.ui.internal.csm.commands.IKeySequenceBindingDefinition;
+import org.eclipse.ui.internal.csm.commands.KeyConfigurationDefinition;
+import org.eclipse.ui.internal.csm.commands.PreferenceCommandRegistry;
 import org.eclipse.ui.internal.keys.KeySequenceText;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
@@ -212,7 +217,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		preferenceCommandRegistry.setActiveKeyConfigurationDefinitions(preferenceActiveKeyConfigurationDefinitions);
 		List preferenceKeyBindingDefinitions = new ArrayList();
 		KeyBindingNode.getKeyBindingDefinitions(tree, KeySequence.getInstance(), 0, preferenceKeyBindingDefinitions);		
-		preferenceCommandRegistry.setKeyBindingDefinitions(preferenceKeyBindingDefinitions);
+		preferenceCommandRegistry.setKeySequenceBindingDefinitions(preferenceKeyBindingDefinitions);
 		
 		try {
 			preferenceCommandRegistry.save();
@@ -230,10 +235,10 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 
 	public void setVisible(boolean visible) {
 		if (visible == true) {
-			ICommandRegistry pluginCommandRegistry = commandManager.getPluginCommandRegistry();				
+			ICommandRegistry extensionCommandRegistry = commandManager.getExtensionCommandRegistry();				
 			ICommandRegistry preferenceCommandRegistry = commandManager.getPreferenceCommandRegistry();
 			List categoryDefinitions = new ArrayList();
-			categoryDefinitions.addAll(pluginCommandRegistry.getCategoryDefinitions());
+			categoryDefinitions.addAll(extensionCommandRegistry.getCategoryDefinitions());
 			categoryDefinitions.addAll(preferenceCommandRegistry.getCategoryDefinitions());
 			categoryDefinitionsById = CategoryDefinition.categoryDefinitionsById(categoryDefinitions, false);			
 			
@@ -246,7 +251,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 			}			
 			
 			List commandDefinitions = new ArrayList();
-			commandDefinitions.addAll(pluginCommandRegistry.getCommandDefinitions());
+			commandDefinitions.addAll(extensionCommandRegistry.getCommandDefinitions());
 			commandDefinitions.addAll(preferenceCommandRegistry.getCommandDefinitions());
 			commandDefinitionsById = CommandDefinition.commandDefinitionsById(commandDefinitions, false);
 			commandIdsByCategoryId = new HashMap();
@@ -275,7 +280,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 			
 			categoryDefinitionsById.keySet().retainAll(categoryIdsReferencedByCommandDefinitions);			
 			List keyConfigurationDefinitions = new ArrayList();
-			keyConfigurationDefinitions.addAll(pluginCommandRegistry.getKeyConfigurationDefinitions());
+			keyConfigurationDefinitions.addAll(extensionCommandRegistry.getKeyConfigurationDefinitions());
 			keyConfigurationDefinitions.addAll(preferenceCommandRegistry.getKeyConfigurationDefinitions());			
 			keyConfigurationDefinitionsById = KeyConfigurationDefinition.keyConfigurationDefinitionsById(keyConfigurationDefinitions, false);
 
@@ -292,7 +297,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 					iterator.remove();
 
 			List activeKeyConfigurationDefinitions = new ArrayList();
-			activeKeyConfigurationDefinitions.addAll(pluginCommandRegistry.getActiveKeyConfigurationDefinitions());
+			activeKeyConfigurationDefinitions.addAll(extensionCommandRegistry.getActiveKeyConfigurationDefinitions());
 			activeKeyConfigurationDefinitions.addAll(preferenceCommandRegistry.getActiveKeyConfigurationDefinitions());
 			String activeKeyConfigurationId = null;
 			
@@ -305,7 +310,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 			}
 			
 			List contextBindingDefinitions = new ArrayList();
-			contextBindingDefinitions.addAll(pluginCommandRegistry.getContextBindingDefinitions());
+			contextBindingDefinitions.addAll(extensionCommandRegistry.getContextBindingDefinitions());
 			contextBindingDefinitions.addAll(preferenceCommandRegistry.getContextBindingDefinitions());
 			activityIdsByCommandId = new HashMap();
 			
@@ -331,7 +336,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 			}
 
 			List imageBindingDefinitions = new ArrayList();
-			imageBindingDefinitions.addAll(pluginCommandRegistry.getImageBindingDefinitions());
+			imageBindingDefinitions.addAll(extensionCommandRegistry.getImageBindingDefinitions());
 			imageBindingDefinitions.addAll(preferenceCommandRegistry.getImageBindingDefinitions());
 
 			for (Iterator iterator = imageBindingDefinitions.iterator(); iterator.hasNext();) {
@@ -343,7 +348,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 					iterator.remove();
 			}
 
-			List pluginKeyBindingDefinitions = new ArrayList(pluginCommandRegistry.getKeySequenceBindingDefinitions());
+			List pluginKeyBindingDefinitions = new ArrayList(extensionCommandRegistry.getKeySequenceBindingDefinitions());
 
 			for (Iterator iterator = pluginKeyBindingDefinitions.iterator(); iterator.hasNext();) {
 				IKeySequenceBindingDefinition keyBindingDefinition = (IKeySequenceBindingDefinition) iterator.next();				

@@ -13,7 +13,7 @@ package org.eclipse.ui.internal.csm.commands;
 
 import org.eclipse.ui.internal.util.Util;
 
-final class ImageBindingDefinition implements IImageBindingDefinition {
+public final class ImageBindingDefinition implements IImageBindingDefinition {
 
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL = ImageBindingDefinition.class.getName().hashCode();
@@ -29,7 +29,7 @@ final class ImageBindingDefinition implements IImageBindingDefinition {
 	private transient boolean hashCodeComputed;
 	private transient String string;
 
-	ImageBindingDefinition(String commandId, String imageStyle, String imageUri, String locale, String platform, String pluginId) {	
+	public ImageBindingDefinition(String commandId, String imageStyle, String imageUri, String locale, String platform, String pluginId) {	
 		this.commandId = commandId;
 		this.imageStyle = imageStyle;
 		this.imageUri = imageUri;

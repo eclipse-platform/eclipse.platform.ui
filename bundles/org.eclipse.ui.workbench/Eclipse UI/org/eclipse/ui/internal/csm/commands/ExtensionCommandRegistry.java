@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.registry.IRegistryChangeEvent;
 import org.eclipse.core.runtime.registry.IRegistryChangeListener;
 import org.eclipse.ui.internal.util.ConfigurationElementMemento;
 
-final class ExtensionCommandRegistry extends AbstractCommandRegistry {
+public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
 
 	protected List activeKeyConfigurationDefinitions;
 	protected List categoryDefinitions; 
@@ -35,7 +35,7 @@ final class ExtensionCommandRegistry extends AbstractCommandRegistry {
 	protected List keyConfigurationDefinitions;	
 	protected List keySequenceBindingDefinitions;
 	
-	ExtensionCommandRegistry(IExtensionRegistry extensionRegistry) {
+	public ExtensionCommandRegistry(IExtensionRegistry extensionRegistry) {
 		if (extensionRegistry == null)
 			throw new NullPointerException();
 		

@@ -20,12 +20,12 @@ import java.util.Set;
 
 import org.eclipse.ui.internal.util.Util;
 
-final class KeyConfigurationDefinition implements IKeyConfigurationDefinition {
+public final class KeyConfigurationDefinition implements IKeyConfigurationDefinition {
 
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL = KeyConfigurationDefinition.class.getName().hashCode();
 
-	static Map keyConfigurationDefinitionsById(Collection keyConfigurationDefinitions, boolean allowNullIds) {
+	public static Map keyConfigurationDefinitionsById(Collection keyConfigurationDefinitions, boolean allowNullIds) {
 		if (keyConfigurationDefinitions == null)
 			throw new NullPointerException();
 
@@ -45,7 +45,7 @@ final class KeyConfigurationDefinition implements IKeyConfigurationDefinition {
 		return map;
 	}
 
-	static Map keyConfigurationDefinitionsByName(Collection keyConfigurationDefinitions, boolean allowNullNames) {
+	public static Map keyConfigurationDefinitionsByName(Collection keyConfigurationDefinitions, boolean allowNullNames) {
 		if (keyConfigurationDefinitions == null)
 			throw new NullPointerException();
 
@@ -83,7 +83,7 @@ final class KeyConfigurationDefinition implements IKeyConfigurationDefinition {
 	private transient boolean hashCodeComputed;
 	private transient String string;	
 	
-	KeyConfigurationDefinition(String description, String id, String name, String parentId, String pluginId) {
+	public KeyConfigurationDefinition(String description, String id, String name, String parentId, String pluginId) {
 		this.description = description;
 		this.id = id;
 		this.name = name;

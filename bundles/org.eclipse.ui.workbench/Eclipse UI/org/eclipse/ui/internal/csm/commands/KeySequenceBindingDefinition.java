@@ -20,7 +20,7 @@ import java.util.Map;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
 
-final class KeySequenceBindingDefinition implements IKeySequenceBindingDefinition {
+public final class KeySequenceBindingDefinition implements IKeySequenceBindingDefinition {
 
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL = KeySequenceBindingDefinition.class.getName().hashCode();
@@ -65,7 +65,7 @@ final class KeySequenceBindingDefinition implements IKeySequenceBindingDefinitio
 	private transient boolean hashCodeComputed;
 	private transient String string;
 
-	KeySequenceBindingDefinition(String activityId, String commandId, String keyConfigurationId, KeySequence keySequence, String locale, String platform, String pluginId) {	
+	public KeySequenceBindingDefinition(String activityId, String commandId, String keyConfigurationId, KeySequence keySequence, String locale, String platform, String pluginId) {	
 		this.activityId = activityId;
 		this.commandId = commandId;
 		this.keyConfigurationId = keyConfigurationId;

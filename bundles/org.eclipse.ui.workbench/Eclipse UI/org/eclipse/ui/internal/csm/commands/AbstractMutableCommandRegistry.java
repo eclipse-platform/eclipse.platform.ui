@@ -9,20 +9,14 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands;
+package org.eclipse.ui.internal.csm.commands;
 
 import java.util.List;
 
-import org.eclipse.ui.internal.csm.commands.IActiveKeyConfigurationDefinition;
-import org.eclipse.ui.internal.csm.commands.ICategoryDefinition;
-import org.eclipse.ui.internal.csm.commands.ICommandDefinition;
-import org.eclipse.ui.internal.csm.commands.IContextBindingDefinition;
-import org.eclipse.ui.internal.csm.commands.IImageBindingDefinition;
-import org.eclipse.ui.internal.csm.commands.IKeyConfigurationDefinition;
-import org.eclipse.ui.internal.csm.commands.IKeySequenceBindingDefinition;
 import org.eclipse.ui.internal.util.Util;
 
-abstract class AbstractMutableCommandRegistry extends AbstractCommandRegistry implements IMutableCommandRegistry {
+// TODO default..
+public abstract class AbstractMutableCommandRegistry extends AbstractCommandRegistry implements IMutableCommandRegistry {
 
 	protected AbstractMutableCommandRegistry() {
 	}
@@ -72,15 +66,6 @@ abstract class AbstractMutableCommandRegistry extends AbstractCommandRegistry im
 		}	
 	}
 	
-	public void setKeyBindingDefinitions(List keyBindingDefinitions) {
-		keyBindingDefinitions = Util.safeCopy(keyBindingDefinitions, IKeySequenceBindingDefinition.class);	
-		
-		if (!keyBindingDefinitions.equals(this.keyBindingDefinitions)) {
-			this.keyBindingDefinitions = keyBindingDefinitions;			
-			fireCommandRegistryChanged();
-		}
-	}
-	
 	public void setKeyConfigurationDefinitions(List keyConfigurationDefinitions) {
 		commandDefinitions = Util.safeCopy(keyConfigurationDefinitions, IKeyConfigurationDefinition.class);	
 		
@@ -88,5 +73,14 @@ abstract class AbstractMutableCommandRegistry extends AbstractCommandRegistry im
 			this.keyConfigurationDefinitions = keyConfigurationDefinitions;			
 			fireCommandRegistryChanged();
 		}	
+	}
+	
+	public void setKeySequenceBindingDefinitions(List keySequenceBindingDefinitions) {
+		keySequenceBindingDefinitions = Util.safeCopy(keySequenceBindingDefinitions, IKeySequenceBindingDefinition.class);	
+		
+		if (!keySequenceBindingDefinitions.equals(this.keySequenceBindingDefinitions)) {
+			this.keySequenceBindingDefinitions = keySequenceBindingDefinitions;			
+			fireCommandRegistryChanged();
+		}
 	}
 }

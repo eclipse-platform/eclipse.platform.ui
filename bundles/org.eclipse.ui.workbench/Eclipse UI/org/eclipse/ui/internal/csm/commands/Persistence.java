@@ -42,8 +42,8 @@ final class Persistence {
 	final static String TAG_IMAGE_BINDING = "imageBinding"; //$NON-NLS-1$	
 	final static String TAG_IMAGE_STYLE = "imageStyle"; //$NON-NLS-1$	
 	final static String TAG_IMAGE_URI = "imageUri"; //$NON-NLS-1$
-	// TODO keySequenceBinding -> keySequenceBinding
-	final static String TAG_KEY_SEQUENCE_BINDING = "keySequenceBinding"; //$NON-NLS-1$
+	// TODO keyBinding -> keySequenceBinding
+	final static String TAG_KEY_SEQUENCE_BINDING = "keyBinding"; //$NON-NLS-1$
 	final static String TAG_KEY_CONFIGURATION = "keyConfiguration"; //$NON-NLS-1$	
 	final static String TAG_KEY_CONFIGURATION_ID = "keyConfigurationId"; //$NON-NLS-1$	
 	final static String TAG_KEY_SEQUENCE = "keySequence"; //$NON-NLS-1$	

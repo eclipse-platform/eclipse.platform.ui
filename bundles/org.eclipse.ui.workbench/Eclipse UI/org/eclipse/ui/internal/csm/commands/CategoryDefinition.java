@@ -20,12 +20,12 @@ import java.util.Set;
 
 import org.eclipse.ui.internal.util.Util;
 
-final class CategoryDefinition implements ICategoryDefinition {
+public final class CategoryDefinition implements ICategoryDefinition {
 
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL = CategoryDefinition.class.getName().hashCode();
 
-	static Map categoryDefinitionsById(Collection categoryDefinitions, boolean allowNullIds) {
+	public static Map categoryDefinitionsById(Collection categoryDefinitions, boolean allowNullIds) {
 		if (categoryDefinitions == null)
 			throw new NullPointerException();
 
@@ -45,7 +45,7 @@ final class CategoryDefinition implements ICategoryDefinition {
 		return map;
 	}
 
-	static Map categoryDefinitionsByName(Collection categoryDefinitions, boolean allowNullNames) {
+	public static Map categoryDefinitionsByName(Collection categoryDefinitions, boolean allowNullNames) {
 		if (categoryDefinitions == null)
 			throw new NullPointerException();
 
@@ -82,7 +82,7 @@ final class CategoryDefinition implements ICategoryDefinition {
 	private transient boolean hashCodeComputed;
 	private transient String string;
 	
-	CategoryDefinition(String description, String id, String name, String pluginId) {
+	public CategoryDefinition(String description, String id, String name, String pluginId) {
 		this.description = description;
 		this.id = id;
 		this.name = name;

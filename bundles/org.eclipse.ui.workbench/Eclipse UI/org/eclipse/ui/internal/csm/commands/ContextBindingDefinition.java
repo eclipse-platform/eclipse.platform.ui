@@ -13,7 +13,7 @@ package org.eclipse.ui.internal.csm.commands;
 
 import org.eclipse.ui.internal.util.Util;
 
-final class ContextBindingDefinition implements IContextBindingDefinition {
+public final class ContextBindingDefinition implements IContextBindingDefinition {
 
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL = ContextBindingDefinition.class.getName().hashCode();
@@ -26,7 +26,7 @@ final class ContextBindingDefinition implements IContextBindingDefinition {
 	private transient boolean hashCodeComputed;
 	private transient String string;
 
-	ContextBindingDefinition(String commandId, String contextId, String pluginId) {
+	public ContextBindingDefinition(String commandId, String contextId, String pluginId) {
 		this.commandId = commandId;
 		this.contextId = contextId;
 		this.pluginId = pluginId;

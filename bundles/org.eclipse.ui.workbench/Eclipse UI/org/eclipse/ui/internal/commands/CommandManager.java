@@ -39,6 +39,9 @@ import org.eclipse.ui.commands.ICommandManagerListener;
 import org.eclipse.ui.commands.IKeyBinding;
 import org.eclipse.ui.commands.IKeyConfiguration;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.csm.commands.CategoryDefinition;
+import org.eclipse.ui.internal.csm.commands.CommandDefinition;
+import org.eclipse.ui.internal.csm.commands.ExtensionCommandRegistry;
 import org.eclipse.ui.internal.csm.commands.IActiveKeyConfigurationDefinition;
 import org.eclipse.ui.internal.csm.commands.ICategoryDefinition;
 import org.eclipse.ui.internal.csm.commands.ICommandDefinition;
@@ -49,6 +52,8 @@ import org.eclipse.ui.internal.csm.commands.IContextBindingDefinition;
 import org.eclipse.ui.internal.csm.commands.IImageBindingDefinition;
 import org.eclipse.ui.internal.csm.commands.IKeyConfigurationDefinition;
 import org.eclipse.ui.internal.csm.commands.IKeySequenceBindingDefinition;
+import org.eclipse.ui.internal.csm.commands.KeyConfigurationDefinition;
+import org.eclipse.ui.internal.csm.commands.PreferenceCommandRegistry;
 import org.eclipse.ui.internal.keys.KeySupport;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.CharacterKey;
@@ -158,8 +163,8 @@ public final class CommandManager implements ICommandManager {
 	private KeyBindingMachine keyBindingMachine = new KeyBindingMachine();
 	private SortedMap keyConfigurationDefinitionsById = new TreeMap();
 	private SortedMap keyConfigurationsById = new TreeMap();	
-	private PluginCommandRegistry pluginCommandRegistry;
-	private SortedSet pluginContextBindingDefinitions = Util.EMPTY_SORTED_SET;
+	private ExtensionCommandRegistry extensionCommandRegistry;
+	private SortedSet extensionContextBindingDefinitions = Util.EMPTY_SORTED_SET;
 	private SortedSet pluginImageBindingDefinitions = Util.EMPTY_SORTED_SET;
 	private SortedSet pluginKeyBindingDefinitions = Util.EMPTY_SORTED_SET;
 	private PreferenceCommandRegistry preferenceCommandRegistry;
@@ -173,12 +178,10 @@ public final class CommandManager implements ICommandManager {
 		String systemPlatform = SWT.getPlatform();
 		activePlatform = systemPlatform != null ? systemPlatform : Util.ZERO_LENGTH_STRING;		
 		
-		if (pluginCommandRegistry == null)
-			pluginCommandRegistry = new PluginCommandRegistry(Platform.getPluginRegistry());
-			
-		loadPluginCommandRegistry();		
+		if (extensionCommandRegistry == null)
+			extensionCommandRegistry = new ExtensionCommandRegistry(Platform.getExtensionRegistry());			
 
-		pluginCommandRegistry.addCommandRegistryListener(new ICommandRegistryListener() {
+		extensionCommandRegistry.addCommandRegistryListener(new ICommandRegistryListener() {
 			public void commandRegistryChanged(ICommandRegistryEvent commandRegistryEvent) {
 				readRegistry();
 			}
@@ -373,11 +376,6 @@ public final class CommandManager implements ICommandManager {
 		return acceleratorText;
 	}
 	
-	public void reset() {
-		loadPluginCommandRegistry();
-		loadPreferenceCommandRegistry();
-	}
-
 	// TODO remove end
 
 	public void removeCommandManagerListener(ICommandManagerListener commandManagerListener) {
@@ -478,7 +476,7 @@ public final class CommandManager implements ICommandManager {
 
 	private void calculateContextBindings() {
 		List contextBindingDefinitions = new ArrayList();		
-		contextBindingDefinitions.addAll(pluginContextBindingDefinitions);
+		contextBindingDefinitions.addAll(extensionContextBindingDefinitions);
 		contextBindingDefinitions.addAll(preferenceContextBindingDefinitions);
 		contextBindingsByCommandId.clear();
 		Iterator iterator = contextBindingDefinitions.iterator();
@@ -600,8 +598,8 @@ public final class CommandManager implements ICommandManager {
 	}
 
 	// TODO private
-	public ICommandRegistry getPluginCommandRegistry() {
-		return pluginCommandRegistry;
+	public ICommandRegistry getExtensionCommandRegistry() {
+		return extensionCommandRegistry;
 	}
 
 	// TODO private
@@ -623,14 +621,6 @@ public final class CommandManager implements ICommandManager {
 		}
 		
 		return false;
-	}
-
-	private void loadPluginCommandRegistry() {
-		try {
-			pluginCommandRegistry.load();
-		} catch (IOException eIO) {
-			eIO.printStackTrace();
-		}
 	}
 
 	private void loadPreferenceCommandRegistry() {
@@ -679,7 +669,7 @@ public final class CommandManager implements ICommandManager {
 
 	private void readRegistry() {		
 		List categoryDefinitions = new ArrayList();
-		categoryDefinitions.addAll(pluginCommandRegistry.getCategoryDefinitions());
+		categoryDefinitions.addAll(extensionCommandRegistry.getCategoryDefinitions());
 		categoryDefinitions.addAll(preferenceCommandRegistry.getCategoryDefinitions());
 		SortedMap categoryDefinitionsById = new TreeMap(CategoryDefinition.categoryDefinitionsById(categoryDefinitions, false));			
 		
@@ -692,7 +682,7 @@ public final class CommandManager implements ICommandManager {
 		}			
 		
 		List commandDefinitions = new ArrayList();
-		commandDefinitions.addAll(pluginCommandRegistry.getCommandDefinitions());
+		commandDefinitions.addAll(extensionCommandRegistry.getCommandDefinitions());
 		commandDefinitions.addAll(preferenceCommandRegistry.getCommandDefinitions());
 		SortedMap commandDefinitionsById = new TreeMap(CommandDefinition.commandDefinitionsById(commandDefinitions, false));
 		Map commandIdsByCategoryId = new HashMap();
@@ -721,7 +711,7 @@ public final class CommandManager implements ICommandManager {
 		
 		categoryDefinitionsById.keySet().retainAll(categoryIdsReferencedByCommandDefinitions);			
 		List keyConfigurationDefinitions = new ArrayList();
-		keyConfigurationDefinitions.addAll(pluginCommandRegistry.getKeyConfigurationDefinitions());
+		keyConfigurationDefinitions.addAll(extensionCommandRegistry.getKeyConfigurationDefinitions());
 		keyConfigurationDefinitions.addAll(preferenceCommandRegistry.getKeyConfigurationDefinitions());			
 		SortedMap keyConfigurationDefinitionsById = new TreeMap(KeyConfigurationDefinition.keyConfigurationDefinitionsById(keyConfigurationDefinitions, false));
 
@@ -738,7 +728,7 @@ public final class CommandManager implements ICommandManager {
 				iterator.remove();
 
 		List activeKeyConfigurationDefinitions = new ArrayList();
-		activeKeyConfigurationDefinitions.addAll(pluginCommandRegistry.getActiveKeyConfigurationDefinitions());
+		activeKeyConfigurationDefinitions.addAll(extensionCommandRegistry.getActiveKeyConfigurationDefinitions());
 		activeKeyConfigurationDefinitions.addAll(preferenceCommandRegistry.getActiveKeyConfigurationDefinitions());
 		String activeKeyConfigurationId = null;
 		
@@ -778,15 +768,15 @@ public final class CommandManager implements ICommandManager {
 		this.categoryDefinitionsById = categoryDefinitionsById;	
 		this.commandDefinitionsById = commandDefinitionsById;
 		this.keyConfigurationDefinitionsById = keyConfigurationDefinitionsById;
-		pluginContextBindingDefinitions = new TreeSet(pluginCommandRegistry.getContextBindingDefinitions());
-		validateContextBindingDefinitions(pluginContextBindingDefinitions);
+		extensionContextBindingDefinitions = new TreeSet(extensionCommandRegistry.getContextBindingDefinitions());
+		validateContextBindingDefinitions(extensionContextBindingDefinitions);
 		preferenceContextBindingDefinitions = new TreeSet(preferenceCommandRegistry.getContextBindingDefinitions());
 		validateContextBindingDefinitions(preferenceContextBindingDefinitions);
-		pluginImageBindingDefinitions = new TreeSet(pluginCommandRegistry.getImageBindingDefinitions());
+		pluginImageBindingDefinitions = new TreeSet(extensionCommandRegistry.getImageBindingDefinitions());
 		validateImageBindingDefinitions(pluginImageBindingDefinitions);
 		preferenceImageBindingDefinitions = new TreeSet(preferenceCommandRegistry.getImageBindingDefinitions());
 		validateImageBindingDefinitions(preferenceImageBindingDefinitions);
-		pluginKeyBindingDefinitions = new TreeSet(pluginCommandRegistry.getKeySequenceBindingDefinitions());
+		pluginKeyBindingDefinitions = new TreeSet(extensionCommandRegistry.getKeySequenceBindingDefinitions());
 		validateKeyBindingDefinitions(pluginKeyBindingDefinitions);
 		preferenceKeyBindingDefinitions = new TreeSet(preferenceCommandRegistry.getKeySequenceBindingDefinitions());
 		validateKeyBindingDefinitions(preferenceKeyBindingDefinitions);

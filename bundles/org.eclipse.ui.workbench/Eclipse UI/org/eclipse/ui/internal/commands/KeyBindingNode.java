@@ -21,6 +21,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.eclipse.ui.internal.csm.commands.KeySequenceBindingDefinition;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.KeyStroke;
@@ -230,7 +231,7 @@ final class KeyBindingNode {
 								
 								while (iterator6.hasNext()) {
 									String commandId = (String) iterator6.next();
-									keyBindingDefinitions.add(new KeyBindingDefinition(contextId, commandId, keyConfigurationId, keySequence, locale, platform, null));	
+									keyBindingDefinitions.add(new KeySequenceBindingDefinition(contextId, commandId, keyConfigurationId, keySequence, locale, platform, null));	
 								}								
 							}
 						}
