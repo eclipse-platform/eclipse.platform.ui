@@ -23,9 +23,21 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.tests.harness.*;
 
 /**
- * Tests the following API methods 
- * 	IFile#createLink
- * 	IFile#createLink
+ * Tests the following API methods:
+ *  IFile#createLink  			
+ * 	IFolder#createLink
+ * 
+ * This test supports both variable-based and non-variable-based locations.
+ * Although the method used for creating random locations
+ * <code>EclipseWorkspaceTest#getRandomLocation()</code> never returns variable-
+ * based paths, this method is overriden in the derived class
+ * <code>LinkedResourceWithPathVariable</code> to always return variable-based
+ * paths.
+ * 
+ * To support variable-based paths wherever a file system location is used, it
+ * is mandatory first to resolve it and only then using it, except in calls to
+ * <code>IFile#createLink</code> and <code>IFolder#createLink</code> and when
+ * the location is obtained using <code>IResource#getLocation()</code>.
  */
 public class LinkedResourceTest extends EclipseWorkspaceTest {
 	protected IProject existingProject;
@@ -101,19 +113,26 @@ protected void doCleanup() throws Exception {
 		nonExistingFileInExistingProject, 
 		nonExistingFileInOtherExistingProject,
 		nonExistingFileInExistingFolder});
-	ensureDoesNotExistInFileSystem(nonExistingLocation.toFile());
-	existingLocation.toFile().mkdirs();
-	createFileInFileSystem(localFile, getRandomContents());
+	ensureDoesNotExistInFileSystem(resolvePath(nonExistingLocation).toFile());
+	resolvePath(existingLocation).toFile().mkdirs();
+	createFileInFileSystem(resolvePath(localFile), getRandomContents());
+}
+/**
+ * Maybe overridden in subclasses that use path variables.
+ */
+protected IPath resolvePath(IPath path) {
+	return path;
 }
 protected void tearDown() throws Exception {
 	super.tearDown();
-	Workspace.clear(existingLocation.toFile());
-	Workspace.clear(nonExistingLocation.toFile());
+	Workspace.clear(resolvePath(existingLocation).toFile());
+	Workspace.clear(resolvePath(nonExistingLocation).toFile());
 }
 /**
  * Tests creation of a linked resource whose corresponding file system
  * path does not exist. This should suceed but no operations will be
- * available on the resulting resource. */
+ * available on the resulting resource.
+ */
 public void testAllowMissingLocal() {
 	//get a non-existing location
 	IPath location = getRandomLocation();
@@ -133,8 +152,8 @@ public void testAllowMissingLocal() {
 	} catch (CoreException e) {
 		fail("1.1", e);
 	}
-	assertEquals("1.2", location, folder.getLocation());
-	assertTrue("1.3", !location.toFile().exists());
+	assertEquals("1.2", resolvePath(location), folder.getLocation());
+	assertTrue("1.3", !resolvePath(location).toFile().exists());
 	//getting children should suceed (and be empty)
 	try {
 		assertEquals("1.4", 0, folder.members().length);
@@ -200,7 +219,7 @@ public void testBlockedFolder() {
 	assertTrue("1.2", !blockedFile.exists());
 	assertTrue("1.3", nonExistingFolderInExistingProject.exists());
 	assertTrue("1.4", nonExistingFolderInExistingProject.getFile(childName).exists());
-	assertEquals("1.5", nonExistingFolderInExistingProject.getLocation(), existingLocation);
+	assertEquals("1.5", nonExistingFolderInExistingProject.getLocation(), resolvePath(existingLocation));
 	
 	//now delete the link
 	try {
@@ -396,7 +415,7 @@ public void testMoveFolder() {
 				return false;
 			if (!destination.isLinked())
 				return false;
-			if (!existingLocation.equals(destination.getLocation()))
+			if (!resolvePath(existingLocation).equals(destination.getLocation()))
 				return false;
 			return true;
 		}
@@ -427,8 +446,9 @@ public void testLinkFile() {
 			//This resource already exists in the workspace
 			if (resource.exists())
 				return true;
+			IPath resolvedLocation = resolvePath(location);
 			//The corresponding location in the local file system does not exist.
-			if (!location.toFile().exists())
+			if (!resolvedLocation.toFile().exists())
 				return true;
 			//The workspace contains a resource of a different type at the same path as this resource
 			if (getWorkspace().getRoot().findMember(resource.getFullPath()) != null)
@@ -443,7 +463,7 @@ public void testLinkFile() {
 			if (!getWorkspace().validateName(resource.getName(), IResource.FOLDER).isOK())
 				return true;
 			//The corresponding location in the local file system is occupied by a directory (as opposed to a file)
-			if (location.toFile().isDirectory())
+			if (resolvedLocation.toFile().isDirectory())
 				return true;
 			//passed all failure case so it should suceed
 			return false;
@@ -468,9 +488,12 @@ public void testLinkFile() {
 				return true;
 			IFile resource = (IFile) args[0];
 			IPath location = (IPath)args[1];
-			if (!resource.exists() || !location.toFile().exists())
+			IPath resolvedLocation = resolvePath(location);
+			if (!resource.exists() || !resolvedLocation.toFile().exists())
 				return false;
-			if (!resource.getLocation().equals(location))
+			if (!resource.getLocation().equals(resolvedLocation))
+				return false;
+			if (!resource.isSynchronized(IResource.DEPTH_INFINITE))
 				return false;
 			return true;
 		}
@@ -502,7 +525,7 @@ public void testLinkFolder() {
 			if (resource.exists())
 				return true;
 			//The corresponding location in the local file system does not exist.
-			if (!location.toFile().exists())
+			if (!resolvePath(location).toFile().exists())
 				return true;
 			//The workspace contains a resource of a different type at the same path as this resource
 			if (getWorkspace().getRoot().findMember(resource.getFullPath()) != null)
@@ -517,7 +540,7 @@ public void testLinkFolder() {
 			if (!getWorkspace().validateName(resource.getName(), IResource.FOLDER).isOK())
 				return true;
 			//The corresponding location in the local file system is occupied by a file (as opposed to a directory)
-			if (location.toFile().isFile())
+			if (resolvePath(location).toFile().isFile())
 				return true;
 			//passed all failure case so it should suceed
 			return false;
@@ -542,9 +565,10 @@ public void testLinkFolder() {
 				return true;
 			IFolder resource = (IFolder) args[0];
 			IPath location = (IPath)args[1];
-			if (!resource.exists() || !location.toFile().exists())
+			IPath resolvedLocation = resolvePath(location);
+			if (!resource.exists() || !resolvedLocation.toFile().exists())
 				return false;
-			if (!resource.getLocation().equals(location))
+			if (!resource.getLocation().equals(resolvedLocation))
 				return false;
 			//ensure child exists
 			if (!resource.getFile(childName).exists())
@@ -606,7 +630,7 @@ public void testMoveFile() {
 				return false;
 			if (!destination.isLinked())
 				return false;
-			if (!localFile.equals(destination.getLocation()))
+			if (!resolvePath(localFile).equals(destination.getLocation()))
 				return false;
 			return true;
 		}

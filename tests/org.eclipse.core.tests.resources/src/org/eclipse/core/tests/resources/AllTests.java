@@ -48,6 +48,7 @@ public AllTests(String name) {
 		suite.addTest(TeamPrivateMemberTest.suite());
 		suite.addTest(WorkspaceTest.suite());
 		suite.addTest(LinkedResourceTest.suite());
+		suite.addTest(LinkedResourceWithPathVariableTest.suite());
 		return suite;
 	}
 }

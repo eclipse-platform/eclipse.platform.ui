@@ -75,6 +75,9 @@
     <test id="resources.LinkedResourceTest">
       <run class="org.eclipse.core.tests.resources.LinkedResourceTest"/>
     </test>
+    <test id="resources.LinkedResourceWithPathVariableTest">
+      <run class="org.eclipse.core.tests.resources.LinkedResourceWithPathVariableTest"/>
+    </test>    
     <test id="resources.NatureTest">
       <run class="org.eclipse.core.tests.resources.NatureTest"/>
     </test>
