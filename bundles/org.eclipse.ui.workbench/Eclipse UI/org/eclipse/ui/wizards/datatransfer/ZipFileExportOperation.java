@@ -143,14 +143,14 @@ class ZipFileExportOperation implements IRunnableWithProgress {
 	 *  @param depth - the number of resource levels to be included in
 	 *   				the path including the resourse itself.
 	 */
-	protected void exportResource(IResource resource, int leadupDepth)
+	protected void exportResource(IResource exportResource, int leadupDepth)
 		throws InterruptedException {
-		if (!resource.isAccessible())
+		if (!exportResource.isAccessible())
 			return;
 
-		if (resource.getType() == IResource.FILE) {
+		if (exportResource.getType() == IResource.FILE) {
 			String destinationName;
-			IPath fullPath = resource.getFullPath();
+			IPath fullPath = exportResource.getFullPath();
 			if (createLeadupStructure)
 				destinationName = fullPath.makeRelative().toString();
 			else
@@ -162,17 +162,17 @@ class ZipFileExportOperation implements IRunnableWithProgress {
 			monitor.subTask(destinationName);
 
 			try {
-				exporter.write((IFile) resource, destinationName);
+				exporter.write((IFile) exportResource, destinationName);
 			} catch (IOException e) {
 				addError(DataTransferMessages.format("DataTransfer.errorExporting", //$NON-NLS-1$
 				new Object[] {
-					resource.getFullPath().makeRelative(),
+					exportResource.getFullPath().makeRelative(),
 					e.getMessage()}),
 					e);
 			} catch (CoreException e) {
 				addError(DataTransferMessages.format("DataTransfer.errorExporting", //$NON-NLS-1$
 				new Object[] {
-					resource.getFullPath().makeRelative(),
+					exportResource.getFullPath().makeRelative(),
 					e.getMessage()}),
 					e);
 			}
@@ -183,10 +183,10 @@ class ZipFileExportOperation implements IRunnableWithProgress {
 			IResource[] children = null;
 
 			try {
-				children = ((IContainer) resource).members();
+				children = ((IContainer) exportResource).members();
 			} catch (CoreException e) {
 				// this should never happen because an #isAccessible check is done before #members is invoked
-				addError(DataTransferMessages.format("DataTransfer.errorExporting", new Object[] { resource.getFullPath()}), e); //$NON-NLS-1$
+				addError(DataTransferMessages.format("DataTransfer.errorExporting", new Object[] { exportResource.getFullPath()}), e); //$NON-NLS-1$
 			}
 
 			for (int i = 0; i < children.length; i++)
@@ -263,9 +263,9 @@ class ZipFileExportOperation implements IRunnableWithProgress {
 	 *	Export the resources that were previously specified for export
 	 *	(or if a single resource was specified then export it recursively)
 	 */
-	public void run(IProgressMonitor monitor)
+	public void run(IProgressMonitor progressMonitor)
 		throws InvocationTargetException, InterruptedException {
-		this.monitor = monitor;
+		this.monitor = progressMonitor;
 
 		try {
 			initialize();
