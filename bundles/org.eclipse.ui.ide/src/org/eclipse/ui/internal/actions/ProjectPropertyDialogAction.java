@@ -58,6 +58,7 @@ public ProjectPropertyDialogAction(IWorkbenchWindow window) {
 	WorkbenchHelp.setHelp(this, IHelpContextIds.PROJECT_PROPERTY_DIALOG_ACTION);
 	workbenchWindow.getSelectionService().addSelectionListener(this);
 	workbenchWindow.getPartService().addPartListener(this);
+	setActionDefinitionId("org.eclipse.ui.project.properties"); //$NON-NLS-1$
 }
 /**
  * Returns the label for the specified adaptable.

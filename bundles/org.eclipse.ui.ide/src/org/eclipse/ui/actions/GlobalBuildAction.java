@@ -31,6 +31,8 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
+import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IHelpContextIds;
@@ -114,12 +116,23 @@ private void setBuildType(int type) {
 			setToolTipText(IDEWorkbenchMessages.getString("GlobalBuildAction.toolTip")); //$NON-NLS-1$
 			setId(IWorkbenchActionConstants.BUILD);
 			WorkbenchHelp.setHelp(this, IHelpContextIds.GLOBAL_INCREMENTAL_BUILD_ACTION);
+			setImageDescriptor(
+				WorkbenchImages.getImageDescriptor(
+					IWorkbenchGraphicConstants.IMG_CTOOL_BUILD_EXEC));
+			setHoverImageDescriptor(
+				WorkbenchImages.getImageDescriptor(
+					IWorkbenchGraphicConstants.IMG_CTOOL_BUILD_EXEC_HOVER));
+			setDisabledImageDescriptor(
+				WorkbenchImages.getImageDescriptor(
+					IWorkbenchGraphicConstants.IMG_CTOOL_BUILD_EXEC_DISABLED));
+			setActionDefinitionId("org.eclipse.ui.project.buildAll"); //$NON-NLS-1$
 			break;
 		case IncrementalProjectBuilder.FULL_BUILD:
 			setText(IDEWorkbenchMessages.getString("GlobalBuildAction.rebuildText")); //$NON-NLS-1$
 			setToolTipText(IDEWorkbenchMessages.getString("GlobalBuildAction.rebuildToolTip")); //$NON-NLS-1$
 			setId(IWorkbenchActionConstants.REBUILD_ALL);
 			WorkbenchHelp.setHelp(this, IHelpContextIds.GLOBAL_FULL_BUILD_ACTION);
+			setActionDefinitionId("org.eclipse.ui.project.rebuildAll"); //$NON-NLS-1$
 			break;
 		default:
 			throw new IllegalArgumentException("Invalid build type"); //$NON-NLS-1$

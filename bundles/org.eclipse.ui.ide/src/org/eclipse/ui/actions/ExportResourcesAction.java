@@ -24,6 +24,8 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
+import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.dialogs.ExportWizard;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
@@ -94,6 +96,17 @@ public class ExportResourcesAction
 		WorkbenchHelp.setHelp(this, IHelpContextIds.EXPORT_ACTION);
 		// self-register selection listener (new for 3.0)
 		workbenchWindow.getSelectionService().addSelectionListener(selectionListener);
+
+		setText(IDEWorkbenchMessages.getString("ExportResourcesAction.fileMenuText")); //$NON-NLS-1$
+		setImageDescriptor(
+			WorkbenchImages.getImageDescriptor(
+				IWorkbenchGraphicConstants.IMG_CTOOL_EXPORT_WIZ));
+		setHoverImageDescriptor(
+			WorkbenchImages.getImageDescriptor(
+				IWorkbenchGraphicConstants.IMG_CTOOL_EXPORT_WIZ_HOVER));
+		setDisabledImageDescriptor(
+			WorkbenchImages.getImageDescriptor(
+				IWorkbenchGraphicConstants.IMG_CTOOL_EXPORT_WIZ_DISABLED));
 	}
 
 	/**

@@ -20,8 +20,10 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.NewWizardMenu;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
@@ -56,7 +58,16 @@ public class NewWizardDropDownAction
 		this.workbenchWindow = window;
 		this.newWizardAction = newWizardAction;
 		setToolTipText(newWizardAction.getToolTipText());
-		setImageDescriptor(newWizardAction.getImageDescriptor());
+
+		// @issues should be IDE-specific images
+		ISharedImages sharedImages = PlatformUI.getWorkbench().getSharedImages();
+		setImageDescriptor(
+			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD));
+		setHoverImageDescriptor(
+			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD_HOVER));
+		setDisabledImageDescriptor(
+			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD_DISABLED));
+
 		setMenuCreator(this);
 	}
 	/**

@@ -23,7 +23,6 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.AboutInfo;
 import org.eclipse.ui.IPageListener;
-import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
 import org.eclipse.ui.ISharedImages;
@@ -611,192 +610,66 @@ public final class WorkbenchActionBuilder {
 		// The actions in jface do not have menu vs. enable, vs. disable vs. color
 		// There are actions in here being passed the workbench - problem 
 
-		// Get services for notification.
-		IPartService partService = getWindow().getPartService();
-
-		// Many actions need the workbench.
 		IWorkbench workbench = getWindow().getWorkbench();
+		ISharedImages sharedImages = workbench.getSharedImages();
 
 		newWizardAction = IDEActionFactory.NEW.create(getWindow());
-		// images for this action are set in its constructor
 		registerGlobalAction(newWizardAction);
 
-		ISharedImages sharedImages = workbench.getSharedImages();
 		newWizardDropDownAction = IDEActionFactory.NEW_WIZARD_DROP_DOWN.create(getWindow());
-		newWizardDropDownAction.setImageDescriptor(
-			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD));
-		newWizardDropDownAction.setHoverImageDescriptor(
-			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD_HOVER));
-		newWizardDropDownAction.setDisabledImageDescriptor(
-			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD_DISABLED));
 
 		importResourcesAction = IDEActionFactory.IMPORT.create(getWindow());
-		importResourcesAction.setImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_IMPORT_WIZ));
-		importResourcesAction.setHoverImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_IMPORT_WIZ_HOVER));
-		importResourcesAction.setDisabledImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_IMPORT_WIZ_DISABLED));
 
 		exportResourcesAction = IDEActionFactory.EXPORT.create(getWindow());
-		exportResourcesAction.setText(IDEWorkbenchMessages.getString("ExportResourcesAction.fileMenuText")); //$NON-NLS-1$
-		exportResourcesAction.setImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_EXPORT_WIZ));
-		exportResourcesAction.setHoverImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_EXPORT_WIZ_HOVER));
-		exportResourcesAction.setDisabledImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_EXPORT_WIZ_DISABLED));
 
 		rebuildAllAction = IDEActionFactory.FULL_BUILD.create(getWindow());
-		rebuildAllAction.setActionDefinitionId(rebuildAllActionDefId);
 		registerGlobalAction(rebuildAllAction);
 
 		buildAllAction = IDEActionFactory.INCREMENTAL_BUILD.create(getWindow());
-		buildAllAction.setImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_BUILD_EXEC));
-		buildAllAction.setHoverImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_BUILD_EXEC_HOVER));
-		buildAllAction.setDisabledImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_BUILD_EXEC_DISABLED));
-		buildAllAction.setActionDefinitionId(buildAllActionDefId);
 		registerGlobalAction(buildAllAction);
 
 		saveAction = ActionFactory.SAVE_EDITOR.create(getWindow());
-		saveAction.setImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_SAVE_EDIT));
-		saveAction.setHoverImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_SAVE_EDIT_HOVER));
-		saveAction.setDisabledImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_SAVE_EDIT_DISABLED));
-		saveAction.setActionDefinitionId(saveActionDefId);
 		registerGlobalAction(saveAction);
 
 		saveAsAction = ActionFactory.SAVE_EDITOR_AS.create(getWindow());
-		saveAsAction.setImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_SAVEAS_EDIT));
-		saveAsAction.setHoverImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_SAVEAS_EDIT_HOVER));
-		saveAsAction.setDisabledImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_SAVEAS_EDIT_DISABLED));
 
-		saveAllAction = ActionFactory.SAVE_EDITOR_AS.create(getWindow());
-		saveAllAction.setImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_SAVEALL_EDIT));
-		saveAllAction.setHoverImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_SAVEALL_EDIT_HOVER));
-		saveAllAction.setDisabledImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_SAVEALL_EDIT_DISABLED));
-		saveAllAction.setActionDefinitionId(saveAllActionDefId);
+		saveAllAction = ActionFactory.SAVE_ALL_EDITORS.create(getWindow());
 		registerGlobalAction(saveAllAction);
 		
 		undoAction = ActionFactory.UNDO.create(getWindow());
-		undoAction.setImageDescriptor(
-			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_UNDO));
-		undoAction.setHoverImageDescriptor(
-			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_UNDO_HOVER));
-		undoAction.setDisabledImageDescriptor(
-			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_UNDO_DISABLED));
 		registerGlobalAction(undoAction);
 
 		redoAction = ActionFactory.REDO.create(getWindow());
-		redoAction.setImageDescriptor(
-			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_REDO));
-		redoAction.setHoverImageDescriptor(
-			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_REDO_HOVER));
-		redoAction.setDisabledImageDescriptor(
-			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_REDO_DISABLED));
 		registerGlobalAction(redoAction);
 
 		cutAction = ActionFactory.CUT.create(getWindow());
-		cutAction.setImageDescriptor(
-			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_CUT));
-		cutAction.setHoverImageDescriptor(
-			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_CUT_HOVER));
-		cutAction.setDisabledImageDescriptor(
-			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_CUT_DISABLED));
 		registerGlobalAction(cutAction);
 
 		copyAction = ActionFactory.COPY.create(getWindow());
-		copyAction.setImageDescriptor(
-			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
-		copyAction.setHoverImageDescriptor(
-			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_COPY_HOVER));
-		copyAction.setDisabledImageDescriptor(
-			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_COPY_DISABLED));
 		registerGlobalAction(redoAction);
 
 		pasteAction = ActionFactory.PASTE.create(getWindow());
-		pasteAction.setImageDescriptor(
-			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE));
-		pasteAction.setHoverImageDescriptor(
-			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE_HOVER));
-		pasteAction.setDisabledImageDescriptor(
-			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE_DISABLED));
 		registerGlobalAction(pasteAction);
 
 		printAction = ActionFactory.PRINT.create(getWindow());
-		printAction.setImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_PRINT_EDIT));
-		printAction.setHoverImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_PRINT_EDIT_HOVER));
-		printAction.setDisabledImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_PRINT_EDIT_DISABLED));
 		registerGlobalAction(printAction);
 
 		selectAllAction = ActionFactory.SELECT_ALL.create(getWindow());
 		registerGlobalAction(selectAllAction);
 		
 		findAction = ActionFactory.FIND.create(getWindow());
-		// Find's images are commented out due to a conflict with Search.
-		// See bug 16412.
-		//		findAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_SEARCH_SRC));
-		//		findAction.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_SEARCH_SRC_HOVER));
-		//		findAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_SEARCH_SRC_DISABLED));
 		registerGlobalAction(findAction);
 
 		closeAction = ActionFactory.CLOSE_EDITOR.create(getWindow());
-		closeAction.setActionDefinitionId(closeActionDefId);
 		registerGlobalAction(closeAction);
 
 		closeAllAction = ActionFactory.CLOSE_ALL_EDITORS.create(getWindow());
-		closeAllAction.setActionDefinitionId(closeAllActionDefId);
 		registerGlobalAction(closeAllAction);
 
 		closeAllSavedAction = ActionFactory.CLOSE_ALL_CLEAN_EDITORS.create(getWindow());
-		closeAllSavedAction.setActionDefinitionId(closeAllSavedActionDefId);
 		registerGlobalAction(closeAllSavedAction);
 
 		pinEditorAction = ActionFactory.PIN_EDITOR.create(getWindow());
-		pinEditorAction.setImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_PIN_EDITOR));
-		pinEditorAction.setHoverImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_PIN_EDITOR_HOVER));
-		pinEditorAction.setDisabledImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_PIN_EDITOR_DISABLED));
 
 		try {
 			aboutAction = ActionFactory.ABOUT.create(getWindow());
@@ -824,12 +697,6 @@ public final class WorkbenchActionBuilder {
 		registerGlobalAction(addTaskAction);
 
 		deleteAction = ActionFactory.DELETE.create(getWindow());
-		deleteAction.setImageDescriptor(
-			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE));
-		deleteAction.setHoverImageDescriptor(
-			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_HOVER));
-		deleteAction.setDisabledImageDescriptor(
-			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_DISABLED));
 		// don't register the delete action with the key binding service.
 		// doing so would break cell editors that listen for keyPressed SWT 
 		// events.
@@ -860,51 +727,36 @@ public final class WorkbenchActionBuilder {
 
 		// Actions for invisible accelerators
 		showViewMenuAction = ActionFactory.SHOW_VIEW_MENU.create(getWindow());
-		showViewMenuAction.setActionDefinitionId(showViewMenuActionDefId);
 		registerGlobalAction(showViewMenuAction);
 
 		showPartPaneMenuAction = ActionFactory.SHOW_PART_PANE_MENU.create(getWindow());
-		showPartPaneMenuAction.setActionDefinitionId(
-			showPartPaneMenuActionDefId);
 		registerGlobalAction(showPartPaneMenuAction);
 
 		nextEditorAction = ActionFactory.NEXT_EDITOR.create(getWindow());
-		nextEditorAction.setActionDefinitionId(nextEditorActionDefId);
-		registerGlobalAction(nextEditorAction);
-
 		prevEditorAction = ActionFactory.PREVIOUS_EDITOR.create(getWindow());
-		prevEditorAction.setActionDefinitionId(prevEditorActionDefId);
-		registerGlobalAction(prevEditorAction);
 		ActionFactory.linkCycleActionPair(nextEditorAction, prevEditorAction);
+		registerGlobalAction(nextEditorAction);
+		registerGlobalAction(prevEditorAction);
 
 		nextPartAction = ActionFactory.NEXT_PART.create(getWindow());
-		nextPartAction.setActionDefinitionId(nextPartActionDefId);
-		registerGlobalAction(nextPartAction);
-
 		prevPartAction = ActionFactory.PREVIOUS_PART.create(getWindow());
-		prevPartAction.setActionDefinitionId(prevPartActionDefId);
-		registerGlobalAction(prevPartAction);
 		ActionFactory.linkCycleActionPair(nextPartAction, prevPartAction);
+		registerGlobalAction(nextPartAction);
+		registerGlobalAction(prevPartAction);
 
 		nextPerspectiveAction = ActionFactory.NEXT_PERSPECTIVE.create(getWindow());
-		nextPerspectiveAction.setActionDefinitionId(nextPerspectiveActionDefId);
-		registerGlobalAction(nextPerspectiveAction);
-
-		prevPerspectiveAction = ActionFactory.NEXT_PERSPECTIVE.create(getWindow());
-		prevPerspectiveAction.setActionDefinitionId(prevPerspectiveActionDefId);
-		registerGlobalAction(prevPerspectiveAction);
+		prevPerspectiveAction = ActionFactory.PREVIOUS_PERSPECTIVE.create(getWindow());
 		ActionFactory.linkCycleActionPair(nextPerspectiveAction, prevPerspectiveAction);
+		registerGlobalAction(nextPerspectiveAction);
+		registerGlobalAction(prevPerspectiveAction);
 
 		activateEditorAction = ActionFactory.ACTIVATE_EDITOR.create(getWindow());
-		activateEditorAction.setActionDefinitionId(activateEditorActionDefId);
 		registerGlobalAction(activateEditorAction);
 
 		maximizePartAction = ActionFactory.MAXIMIZE_PART.create(getWindow());
-		maximizePartAction.setActionDefinitionId(maximizePartActionDefId);
 		registerGlobalAction(maximizePartAction);
 		
 		workbenchEditorsAction = ActionFactory.SHOW_OPEN_EDITORS.create(getWindow());
-		workbenchEditorsAction.setActionDefinitionId(workbenchEditorsActionDefId);
 		registerGlobalAction(workbenchEditorsAction);
 
 		hideShowEditorAction = ActionFactory.SHOW_EDITOR.create(getWindow());
@@ -915,25 +767,11 @@ public final class WorkbenchActionBuilder {
 		closePerspAction = ActionFactory.CLOSE_PERSPECTIVE.create(getWindow());
 		closeAllPerspsAction = ActionFactory.CLOSE_ALL_PERSPECTIVES.create(getWindow());
 
-		backwardHistoryAction = ActionFactory.BACKWARD_HISTORY.create(getWindow());
-		backwardHistoryAction.setImageDescriptor(
-			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_BACK));
-		backwardHistoryAction.setHoverImageDescriptor(
-			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_BACK_HOVER));
-		backwardHistoryAction.setDisabledImageDescriptor(
-			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_BACK_DISABLED));
-		backwardHistoryAction.setActionDefinitionId(backwardHistoryActionDefId);
-		registerGlobalAction(backwardHistoryAction);
-
 		forwardHistoryAction = ActionFactory.FORWARD_HISTORY.create(getWindow());
-		forwardHistoryAction.setImageDescriptor(
-			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD));
-		forwardHistoryAction.setHoverImageDescriptor(
-			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD_HOVER));
-		forwardHistoryAction.setDisabledImageDescriptor(
-			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD_DISABLED));
-		forwardHistoryAction.setActionDefinitionId(forwardHistoryActionDefId);
 		registerGlobalAction(forwardHistoryAction);
+
+		backwardHistoryAction = ActionFactory.BACKWARD_HISTORY.create(getWindow());
+		registerGlobalAction(backwardHistoryAction);
 
 		revertAction = ActionFactory.REVERT.create(getWindow());
 		registerGlobalAction(revertAction);
@@ -988,7 +826,6 @@ public final class WorkbenchActionBuilder {
 		registerGlobalAction(closeProjectAction);
 		
 		projectPropertyDialogAction = IDEActionFactory.OPEN_PROJECT_PROPERTIES.create(getWindow());
-		projectPropertyDialogAction.setActionDefinitionId(projectPropertiesActionDefId);
 		registerGlobalAction(projectPropertyDialogAction);
 	}
 
