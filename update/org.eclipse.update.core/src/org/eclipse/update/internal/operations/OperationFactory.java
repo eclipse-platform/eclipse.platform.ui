@@ -53,6 +53,13 @@ public class OperationFactory implements IOperationFactory {
 		return new UnconfigOperation(config, targetSite, feature);
 	}
 
+	public IConfigFeatureOperation createReplaceFeatureVersionOperation(
+		IFeature feature,
+		IFeature anotherFeature) {
+	
+		return new ReplaceFeatureVersionOperation(feature, anotherFeature);		
+	}
+		
 	public IUninstallFeatureOperation createUninstallOperation(
 		IInstallConfiguration config,
 		IConfiguredSite targetSite,

@@ -113,6 +113,22 @@ public class OperationValidator implements IOperationValidator{
 		return createReportStatus(beforeStatus, status);
 	}
 
+	/**
+	 * Called before performing operation.
+	 */
+	public IStatus validatePendingReplaceVersion(IFeature feature, IFeature anotherFeature) {
+		// check initial state
+		ArrayList beforeStatus = new ArrayList();
+		validateInitialState(beforeStatus);
+
+		// check proposed change
+		ArrayList status = new ArrayList();
+		validateReplaceVersion(feature, anotherFeature, status);
+
+		// report status
+		return createReportStatus(beforeStatus, status);
+	}
+	
 	/*
 	 * Called by UI before processing a delta
 	 */
@@ -256,6 +272,23 @@ public class OperationValidator implements IOperationValidator{
 			status.add(e.getStatus());
 		}
 	}
+	
+	/*
+	 * handle replace version
+	 */
+	private static void validateReplaceVersion(
+		IFeature feature,
+		IFeature anotherFeature,
+		ArrayList status) {
+		try {
+			ArrayList features = computeFeatures();
+			features = computeFeaturesAfterOperation(features, anotherFeature, feature);
+			checkConstraints(features, status);
+		} catch (CoreException e) {
+			status.add(e.getStatus());
+		}
+	}
+
 
 	/*
 	 * handle install and update

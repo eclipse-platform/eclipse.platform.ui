@@ -11,8 +11,8 @@
 package org.eclipse.update.operations;
 
 /**
- * Operation that enable a feature in a configuration.
+ * Operation that reverts a feature to another version.
  * @since 3.0
  */
-public interface IConfigFeatureOperation extends IFeatureOperation {
+public interface IReplaceFeatureVersionOperation extends IFeatureOperation {
 }

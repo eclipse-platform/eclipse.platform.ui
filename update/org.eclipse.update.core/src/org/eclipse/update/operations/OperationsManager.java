@@ -17,6 +17,7 @@ import org.eclipse.update.internal.operations.*;
 
 /**
  * Entry point for update manager operations.
+ * @since 3.0
  */
 public class OperationsManager {
 	private static IOperationValidator validator;

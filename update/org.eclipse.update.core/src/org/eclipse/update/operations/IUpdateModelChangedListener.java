@@ -16,6 +16,7 @@ package org.eclipse.update.operations;
  * a GUI may need to update its state, so it will have to register
  * with the OperationsManager for update events.
  * IUpdateModelChangedListener
+ * @since 3.0
  */
 public interface IUpdateModelChangedListener {
 	/**

@@ -12,16 +12,19 @@ package org.eclipse.update.internal.ui.views;
 
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.IFeature;
 import org.eclipse.update.internal.ui.UpdateUI;
-import org.eclipse.update.internal.ui.wizards.SwapFeatureWizard;
+import org.eclipse.update.internal.ui.wizards.ReplaceFeatureVersionWizard;
 
-public class SwapVersionAction extends Action {
+public class ReplaceVersionAction extends Action {
 	
 	private IFeature currentFeature;
 	private IFeature[] features;
+	private IInstallConfiguration config;
+	private IConfiguredSite targetSite;
 	
-	public SwapVersionAction(String text) {
+	public ReplaceVersionAction(String text) {
 		super(text);
 	}
 	
@@ -32,11 +35,12 @@ public class SwapVersionAction extends Action {
 	public void setFeatures(IFeature[] features) {
 		this.features = features;
 	}
+
 	
 	public void run() {
 		if (currentFeature == null || features == null || features.length < 2)
 			return;
-		SwapFeatureWizard wizard = new SwapFeatureWizard(currentFeature, features);
+		ReplaceFeatureVersionWizard wizard = new ReplaceFeatureVersionWizard(currentFeature, features);
 		WizardDialog dialog = new WizardDialog(UpdateUI.getActiveWorkbenchShell(), wizard);
 		dialog.create();
 		dialog.getShell().setText(UpdateUI.getActiveWorkbenchShell().getText());

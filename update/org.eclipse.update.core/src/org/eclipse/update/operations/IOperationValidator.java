@@ -16,6 +16,7 @@ import org.eclipse.update.core.*;
 
 /**
  * Operation validator
+ * @since 3.0
  */
 public interface IOperationValidator {
 
@@ -36,6 +37,12 @@ public interface IOperationValidator {
 	 * Returns null when status cannot be reported.
 	 */
 	public IStatus validatePendingUnconfig(IFeature feature);
+	
+	/**
+	 * Called before performing operation.
+	 * Returns null when status cannot be reported.
+	 */
+	public IStatus validatePendingReplaceVersion(IFeature feature, IFeature anotherFeature);
 	
 	/**
 	 * Called before processing a delta.

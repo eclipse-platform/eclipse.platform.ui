@@ -16,6 +16,7 @@ import org.eclipse.update.core.*;
 
 /**
  * An operation that applies to a feature, such as install, uninstall, etc.
+ * @since 3.0
  */
 public interface IFeatureOperation extends IOperation {
 	/**

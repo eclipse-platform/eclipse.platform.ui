@@ -1,39 +1,33 @@
 package org.eclipse.update.internal.ui.wizards;
 
-import org.eclipse.core.runtime.PluginVersionIdentifier;
+import java.lang.reflect.*;
+
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.jface.viewers.ViewerSorter;
-import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.update.core.IFeature;
-import org.eclipse.update.internal.ui.UpdateLabelProvider;
-import org.eclipse.update.internal.ui.UpdateUI;
-import org.eclipse.update.internal.ui.UpdateUIImages;
+import org.eclipse.jface.operation.*;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.wizard.*;
+import org.eclipse.swt.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.update.core.*;
+import org.eclipse.update.core.model.*;
+import org.eclipse.update.internal.ui.*;
+import org.eclipse.update.operations.*;
 
 
-public class SwapFeatureWizardPage extends WizardPage {
+public class ReplaceFeatureVersionWizardPage extends WizardPage {
 	
 	private IFeature currentFeature;
 	private IFeature[] features;
 	private TableViewer tableViewer;
 
-	public SwapFeatureWizardPage(IFeature currentFeature, IFeature[] features) {
+	public ReplaceFeatureVersionWizardPage(IFeature currentFeature, IFeature[] features) {
 		super("SwapFeature"); //$NON-NLS-1$
-		setTitle(UpdateUI.getString("SwapFeatureWizardPage.title")); //$NON-NLS-1$
-		setDescription(UpdateUI.getString("SwapFeatureWizardPage.desc")); //$NON-NLS-1$
+		setTitle(UpdateUI.getString("ReplaceFeatureVersionWizardPage.title")); //$NON-NLS-1$
+		setDescription(UpdateUI.getString("ReplaceFeatureVersionWizardPage.desc")); //$NON-NLS-1$
 		this.currentFeature = currentFeature;
 		this.features = features;
 	}
@@ -45,7 +39,7 @@ public class SwapFeatureWizardPage extends WizardPage {
 		tableContainer.setLayout(layout);
 
 		Label label = new Label(tableContainer, SWT.NONE);
-		label.setText(UpdateUI.getString("SwapFeatureWizardPage.label")); //$NON-NLS-1$
+		label.setText(UpdateUI.getString("ReplaceFeatureVersionWizardPage.label")); //$NON-NLS-1$
 
 		Table table = new Table(tableContainer, SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL);
 		table.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -104,11 +98,56 @@ public class SwapFeatureWizardPage extends WizardPage {
 	}
 
 	public boolean performFinish() {
-		//TODO Dejan to implement the actual swap
-		//IStructuredSelection ssel = (IStructuredSelection)tableViewer.getSelection();
-		//IFeature chosenFeature = (IFeature)ssel.getFirstElement();
-		//swap(currentFeature, chosenFeature);
-		return true;
+		IStructuredSelection ssel = (IStructuredSelection)tableViewer.getSelection();
+		IFeature chosenFeature = (IFeature)ssel.getFirstElement();
+		
+		return swap(currentFeature, chosenFeature);
+	}
+	
+	private boolean swap(final IFeature currentFeature, final IFeature anotherFeature) {
+		IStatus status =
+			OperationsManager.getValidator().validatePendingReplaceVersion(currentFeature, anotherFeature);
+		if (status != null) {
+			ErrorDialog.openError(
+				UpdateUI.getActiveWorkbenchShell(),
+				null,
+				null,
+				status);
+			return false;
+		}
+
+		IRunnableWithProgress operation = new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor)
+				throws InvocationTargetException {
+				IOperation revertOperation =
+					OperationsManager
+						.getOperationFactory()
+						.createReplaceFeatureVersionOperation(currentFeature, anotherFeature);
+				try {
+					boolean restartNeeded = revertOperation.execute(monitor, null);
+					if (restartNeeded)
+						UpdateUI.requestRestart();
+				} catch (CoreException e) {
+					throw new InvocationTargetException(e);
+				} finally {
+					monitor.done();
+				}
+			}
+		};
+		try {
+			getContainer().run(false, true, operation);
+			return true;
+		} catch (InvocationTargetException e) {
+			Throwable targetException = e.getTargetException();
+			if (targetException instanceof InstallAbortedException) {
+				return true;
+			} else {
+				UpdateUI.logException(e);
+			}
+			return false;
+		} catch (InterruptedException e) {
+			return false;
+		}
 	}
 
 }

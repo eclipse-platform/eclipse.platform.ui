@@ -12,6 +12,7 @@ package org.eclipse.update.operations;
 
 /**
  * Listener for operation lifecycle.
+ * @since 3.0
  */
 public interface IOperationListener {
 	/**

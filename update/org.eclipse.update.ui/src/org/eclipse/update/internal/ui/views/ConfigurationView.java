@@ -56,7 +56,7 @@ public class ConfigurationView
 
 	private Action showSitesAction;
 	private Action showNestedFeaturesAction;
-	private SwapVersionAction swapVersionAction;
+	private ReplaceVersionAction swapVersionAction;
 	private FeatureStateAction featureStateAction;
 	private UninstallFeatureAction uninstallFeatureAction;
 	private InstallOptionalFeatureAction installOptFeatureAction;
@@ -497,7 +497,7 @@ public class ConfigurationView
 				getControl().getShell(),
 				UpdateUI.getString("ConfigurationView.install")); //$NON-NLS-1$
 
-		swapVersionAction = new SwapVersionAction(UpdateUI.getString("ConfigurationView.anotherVersion")); //$NON-NLS-1$
+		swapVersionAction = new ReplaceVersionAction(UpdateUI.getString("ConfigurationView.anotherVersion")); //$NON-NLS-1$
 
 		findUpdatesAction =
 			new FindUpdatesAction(getControl().getShell(), UpdateUI.getString("ConfigurationView.findUpdates")); //$NON-NLS-1$

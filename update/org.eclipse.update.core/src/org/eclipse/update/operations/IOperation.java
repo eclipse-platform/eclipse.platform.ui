@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.*;
 
 /**
  * Base update manager operation.
+ * @since 3.0
  */
 public interface IOperation {
 	/**

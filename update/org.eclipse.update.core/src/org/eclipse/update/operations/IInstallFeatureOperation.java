@@ -14,6 +14,7 @@ import org.eclipse.update.core.*;
 
 /**
  * An installation operation.
+ * @since 3.0
  */
 public interface IInstallFeatureOperation extends IFeatureOperation {
 	/**

@@ -16,6 +16,7 @@ import org.eclipse.update.core.*;
 
 /**
  * A factory interface for creating operations.
+ * @since 3.0
  */
 public interface IOperationFactory {
 	/**
@@ -71,6 +72,18 @@ public interface IOperationFactory {
 		IInstallConfiguration config,
 		IConfiguredSite targetSite,
 		IFeature feature);
+		
+	/**
+	 * Creates a "revert feature version" operation.
+	 * @param config
+	 * @param targetSite
+	 * @param feature current feature
+	 * @param anotherFeature the new feature to be swapped in
+	 * @return
+	 */
+	public IConfigFeatureOperation createReplaceFeatureVersionOperation(
+		IFeature feature,
+		IFeature anotherFeature);
 		
 	/**
 	 * Creates a "batch install" operation.
