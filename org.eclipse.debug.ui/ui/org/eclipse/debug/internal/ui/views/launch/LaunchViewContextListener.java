@@ -238,6 +238,9 @@ public class LaunchViewContextListener implements IContextListener, IPartListene
 			boolean activate= true;
 			IViewPart view = (IViewPart) listIterator.next();
 			IViewPart[] stackedViews = page.getViewStack(view);
+			if (stackedViews == null) {
+				continue;
+			}
 			for (int i = 0; i < stackedViews.length; i++) {
 				IViewPart stackedView= stackedViews[i];
 				if (view != stackedView && viewsToActivate.contains(stackedView) && page.isPartVisible(stackedView)) {
