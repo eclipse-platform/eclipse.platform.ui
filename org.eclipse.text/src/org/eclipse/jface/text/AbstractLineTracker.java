@@ -79,10 +79,10 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 	private int fTextLength;
 	
 	/**
-	 * The list of active rewrite sessions.
+	 * The active rewrite session.
 	 * @since 3.1
 	 */
-	private List fActiveRewriteSessions;
+	private DocumentRewriteSession fActiveRewriteSession;
 	/**
 	 * The list of pending requests.
 	 * @since 3.1
@@ -173,8 +173,7 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 	 */
 	public int getLineLength(int line) throws BadLocationException {
 		
-		if (hasActiveRewriteSession())
-			flushRewriteSessions();
+		checkRewriteSession();
 		
 		int lines= fLines.size();
 		
@@ -187,14 +186,13 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 		Line l= (Line) fLines.get(line);
 		return l.length;
 	}
-		
+	
 	/*
 	 * @see org.eclipse.jface.text.ILineTracker#getLineNumberOfOffset(int)
 	 */
 	public int getLineNumberOfOffset(int position) throws BadLocationException {
 		
-		if (hasActiveRewriteSession())
-			flushRewriteSessions();
+		checkRewriteSession();
 				
 		if (position > fTextLength)
 			throw new BadLocationException();
@@ -217,8 +215,7 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 	 */
 	public IRegion getLineInformationOfOffset(int position) throws BadLocationException {		
 		
-		if (hasActiveRewriteSession())
-			flushRewriteSessions();
+		checkRewriteSession();
 		
 		if (position > fTextLength)
 			throw new BadLocationException();
@@ -239,8 +236,7 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 	 */
 	public IRegion getLineInformation(int line) throws BadLocationException {
 		
-		if (hasActiveRewriteSession())
-			flushRewriteSessions();
+		checkRewriteSession();
 		
 		int lines= fLines.size();
 		
@@ -264,8 +260,7 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 	 */
 	public int getLineOffset(int line) throws BadLocationException {
 		
-		if (hasActiveRewriteSession())
-			flushRewriteSessions();
+		checkRewriteSession();
 		
 		int lines= fLines.size();
 		
@@ -279,8 +274,7 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 			Line l= (Line) fLines.get(line - 1);
 			if (l.delimiter != null)
 				return l.offset + l.length;
-			else
-				throw new BadLocationException();
+			throw new BadLocationException();
 		}
 		
 		Line l= (Line) fLines.get(line);
@@ -294,7 +288,7 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 		
 		if (hasActiveRewriteSession()) {
 			try {
-				flushRewriteSessions();
+				flushRewriteSession();
 			} catch (BadLocationException x) {
 				// TODO needs to be communicated
 			}
@@ -343,8 +337,7 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 	 */
 	public String getLineDelimiter(int line) throws BadLocationException {
 		
-		if (hasActiveRewriteSession())
-			flushRewriteSessions();
+		checkRewriteSession();
 		
 		int lines= fLines.size();
 		
@@ -457,7 +450,7 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 		// as there is a line break, split line but do so only if rest of line is not of length 0
 		int restLength= line.offset + line.length - offset;
 		if (restLength > 0) {
-			// determine start and end of the second half of the splitted line
+			// determine start and end of the second half of the split line
 			Line lineRest= new Line(offset, restLength);
 			lineRest.delimiter= line.delimiter;
 			// shift it by the inserted text
@@ -466,7 +459,7 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 			fLines.add(lineNumber + 1, lineRest);
 		}
 		
-		// adapt the beginning of the splitted line
+		// adapt the beginning of the split line
 		line.delimiter= delimiterInfo.delimiter;
 		int nextStart= offset + delimiterInfo.delimiterIndex + delimiterInfo.delimiterLength;
 		line.length= nextStart - line.offset;
@@ -634,41 +627,38 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 	
 	
 	/*
-	 * @see org.eclipse.jface.text.ILineTrackerExtension#startRewriteSession(java.lang.Object)
+	 * @see org.eclipse.jface.text.ILineTrackerExtension#startRewriteSession(org.eclipse.jface.text.DocumentRewriteSession)
+	 * @since 3.1
 	 */
-	public final void startRewriteSession(Object sessionId) {
-		if (fActiveRewriteSessions == null) {
-			fActiveRewriteSessions= new ArrayList(2);
-			fActiveRewriteSessions.add(sessionId);
-			fPendingRequests= new ArrayList(20);
-		} else if (!fActiveRewriteSessions.contains(sessionId)) {
-			fActiveRewriteSessions.add(sessionId);
-		}
+	public final void startRewriteSession(DocumentRewriteSession session) {
+		if (fActiveRewriteSession != null)
+			throw new IllegalStateException();
+		
+		fActiveRewriteSession= session;
+		fPendingRequests= new ArrayList(20);
 	}
 	
 	/*
-	 * @see org.eclipse.jface.text.ILineTrackerExtension#stopRewriteSession(java.lang.Object, java.lang.String)
+	 * @see org.eclipse.jface.text.ILineTrackerExtension#stopRewriteSession(org.eclipse.jface.text.DocumentRewriteSession, java.lang.String)
+	 * @since 3.1
 	 */
-	public final void stopRewriteSession(Object sessionId, String text) {
-		if (fActiveRewriteSessions != null) {
-			fActiveRewriteSessions.remove(sessionId);
-			if (fActiveRewriteSessions.isEmpty()) {
-				fActiveRewriteSessions= null;
-				fPendingRequests= null;
-				set(text);
-			}
+	public final void stopRewriteSession(DocumentRewriteSession session, String text) {
+		if (fActiveRewriteSession == session) {
+			fActiveRewriteSession= null;
+			fPendingRequests= null;
+			set(text);
 		}
 	}
 	
 	/**
 	 * Not yet for public use. API under construction.
 	 * 
-	 * @return <code>true</code> if there are active rewrite session,
+	 * @return <code>true</code> if there is an active rewrite session,
 	 *         <code>false</code> otherwise
 	 * @since 3.1
 	 */
 	protected final boolean hasActiveRewriteSession() {
-		return fActiveRewriteSessions != null;
+		return fActiveRewriteSession != null;
 	}
 	
 	/**
@@ -678,7 +668,7 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 	 *             processed correctly
 	 * @since 3.1
 	 */
-	protected final void flushRewriteSessions() throws BadLocationException {
+	protected final void flushRewriteSession() throws BadLocationException {
 		if (!hasActiveRewriteSession())
 			return;
 		
@@ -692,7 +682,20 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 			}
 		} finally {
 			fPendingRequests= null;
-			fActiveRewriteSessions= null;
+			fActiveRewriteSession= null;
 		}
+	}
+	
+	/**
+	 * Checks the presence of a rewrite session and flushes it.
+	 * <p>
+	 * Not yet for public use. API under construction.
+	 * @throws BadLocationException in case flushing does not succeed
+	 * 
+	 * @since 3.1
+	 */
+	protected final void checkRewriteSession() throws BadLocationException {
+		if (hasActiveRewriteSession())
+			flushRewriteSession();
 	}
 }
