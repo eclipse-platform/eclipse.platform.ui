@@ -151,8 +151,6 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 			try {
 				int offset= e.getOffset() + e.getLength();
 				ITypedRegion region= getPartition(e.getDocument(), offset);
-				if (region == null)
-					region= e.getDocument().getPartition(offset); // never null
 				fRememberedPosition= new TypedPosition(region);
 				e.getDocument().addPosition(fPositionCategory, fRememberedPosition);
 			} catch (BadLocationException x) {
@@ -449,8 +447,6 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 		try {
 			
 			ITypedRegion partition= getPartition(e.getDocument(), e.getOffset());
-			if (partition == null)
-				return null;
 			IPresentationDamager damager= getDamager(partition.getType());
 			if (damager == null)
 				return null;
@@ -500,8 +496,6 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 		}
 		
 		ITypedRegion partition= getPartition(d, e.getOffset() + length);
-		if (partition == null)
-			return -1;
 		int endOffset= partition.getOffset() + partition.getLength();		
 		if (endOffset == e.getOffset())
 			return -1;
