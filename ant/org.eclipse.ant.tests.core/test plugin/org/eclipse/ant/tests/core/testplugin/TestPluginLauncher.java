@@ -14,7 +14,7 @@ import java.net.URL;
  */
 public class TestPluginLauncher {
 	
-	public static final String APP_NAME= "org.eclipse.ant.core.tests.app";
+	public static final String APP_NAME= "org.eclipse.ant.tests.core.app";
 	
 	public static void run(String location, Class testCase, String[] args) {
 		run(APP_NAME, location, testCase, args);
@@ -50,7 +50,7 @@ public class TestPluginLauncher {
 	public static String getBootLocation() {
 		URL url= TestPluginLauncher.class.getResource("TestPluginLauncher.class");
 		String s= url.toString();
-		int index= s.indexOf("/org.eclipse.ant.core.tests");
+		int index= s.indexOf("/org.eclipse.ant.tests.core");
 		if (index == -1)
 			throw new IllegalArgumentException();
 		s= s.substring(0, index);
