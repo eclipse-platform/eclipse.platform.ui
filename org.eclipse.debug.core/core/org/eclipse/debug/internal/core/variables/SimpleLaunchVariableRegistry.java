@@ -185,7 +185,7 @@ public class SimpleLaunchVariableRegistry {
 	 * Saves the variables in this registry in the
 	 * preference store. 
 	 */
-	private void storeVariables() {
+	protected void storeVariables() {
 		Preferences prefs= DebugPlugin.getDefault().getPluginPreferences();
 		String variableString= ""; //$NON-NLS-1$
 		if (!fVariables.isEmpty()) {

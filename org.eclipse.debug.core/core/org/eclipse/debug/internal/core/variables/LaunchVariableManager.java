@@ -71,6 +71,10 @@ public class LaunchVariableManager implements ILaunchVariableManager {
 	 * @see ILaunchVariableManager#getSimpleVariable(String)
 	 */
 	public ISimpleLaunchVariable getSimpleVariable(String name) {
+		if (fgSimpleVariableRegistry == null) {
+			// happens when registry is being initialized
+			return null;
+		}
 		return fgSimpleVariableRegistry.getVariable(name);
 	}
 
@@ -86,6 +90,19 @@ public class LaunchVariableManager implements ILaunchVariableManager {
 	 */
 	public ISimpleLaunchVariable newSimpleVariable(String name, String value, String description) {
 		return new SimpleLaunchVariable(name, value, description, null);
+	}
+	
+	/**
+	 * The value of a simple launch variable has changed - persist its value if
+	 * registered.
+	 * 
+	 * @param variable changed variable
+	 */
+	protected void simpleLaunchVariableChanged(ISimpleLaunchVariable variable) {
+		ISimpleLaunchVariable simpleLaunchVariable = getSimpleVariable(variable.getName());
+		if (simpleLaunchVariable != null) {
+			fgSimpleVariableRegistry.storeVariables();
+		}
 	}
 
 }

@@ -20,9 +20,7 @@ import org.eclipse.debug.core.variables.ISimpleLaunchVariable;
 
 /**
  * Implementation of a simple launch variable.
- * <p>
- * Clients may instantiate this class. This class is not intended to be subclassed.
- * </p>
+ * 
  * @since 3.0
  */
 
@@ -121,6 +119,9 @@ public class SimpleLaunchVariable implements ISimpleLaunchVariable {
 	 */
 	public void setValue(String value) {
 		fValue= value;
+		LaunchVariableManager manager = (LaunchVariableManager)DebugPlugin.getDefault().getLaunchVariableManager();
+		manager.simpleLaunchVariableChanged(this);
+		
 	}
 
 	/**
