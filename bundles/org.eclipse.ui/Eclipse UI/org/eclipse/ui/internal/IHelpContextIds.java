@@ -45,6 +45,7 @@ public interface IHelpContextIds {
 	public static final String SAVE_ALL_ACTION = PREFIX + "save_all_action_context"; //$NON-NLS-1$
 	public static final String SAVE_ACTION = PREFIX + "save_action_context"; //$NON-NLS-1$
 	public static final String ABOUT_ACTION = PREFIX + "about_action_context"; //$NON-NLS-1$
+	public static final String ABOUT_PLUGINS_ACTION = PREFIX + "about_plugins_action_context"; //$NON-NLS-1$
 	public static final String CLOSE_ALL_ACTION = PREFIX + "close_all_action_context"; //$NON-NLS-1$
 	public static final String CLOSE_PAGE_ACTION = PREFIX + "close_page_action_context"; //$NON-NLS-1$
 	public static final String CLOSE_PART_ACTION = PREFIX + "close_part_action_context"; //$NON-NLS-1$
@@ -69,6 +70,7 @@ public interface IHelpContextIds {
 	
 	// Dialogs
 	public static final String ABOUT_DIALOG = PREFIX + "about_dialog_context"; //$NON-NLS-1$
+		public static final String ABOUT_PLUGINS_DIALOG = PREFIX + "about_plugins_dialog_context"; //$NON-NLS-1$
 	public static final String ACTION_SET_SELECTION_DIALOG = PREFIX + "action_set_selection_dialog_context"; //$NON-NLS-1$
 	public static final String EDITOR_SELECTION_DIALOG = PREFIX + "editor_selection_dialog_context"; //$NON-NLS-1$
 	public static final String FILE_EXTENSION_DIALOG = PREFIX + "file_extension_dialog_context"; //$NON-NLS-1$

@@ -41,6 +41,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private SaveAction saveAction;
 	private SaveAllAction saveAllAction;
 	private AboutAction aboutAction;
+	private AboutPluginsAction aboutPluginsAction;
 	private OpenPreferencesAction openPreferencesAction;
 	private QuickStartAction quickStartAction;
 	private SaveAsAction saveAsAction;
@@ -61,9 +62,10 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private RetargetAction copyAction;
 	private RetargetAction pasteAction;
 	private RetargetAction deleteAction;
-	private RetargetAction	 selectAllAction;
+	private RetargetAction selectAllAction;
 	private RetargetAction findAction;
 	private RetargetAction addBookmarkAction;
+	private RetargetAction printAction;
 /**
  * WorkbenchActionBuilder constructor comment.
  */
@@ -163,6 +165,8 @@ private void createMenuBar() {
 	popup.add(saveAsAction);
 	popup.add(saveAllAction);
 	popup.add(new GroupMarker(IWorkbenchActionConstants.SAVE_EXT));
+	popup.add(new Separator());
+	popup.add(printAction);
 	popup.add(new Separator());
 	popup.add(importResourcesAction);
 	popup.add(exportResourcesAction);
@@ -266,6 +270,7 @@ private void createMenuBar() {
 	popup.add(new GroupMarker(IWorkbenchActionConstants.HELP_END));
 	popup.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
 	// about should always be at the bottom
+	popup.add(aboutPluginsAction);
 	popup.add(aboutAction);
 }
 /**
@@ -290,6 +295,7 @@ private void createToolBar() {
 	toolbar.add(saveAction);
 	toolbar.add(saveAsAction);
 	toolbar.add(new GroupMarker(IWorkbenchActionConstants.SAVE_EXT));
+	toolbar.add(printAction);
 	// Only add the manual incremental build if auto build off
 	if (!ResourcesPlugin.getWorkspace().isAutoBuilding()) {
 		toolbar.add(new Separator());
@@ -415,6 +421,13 @@ private void makeActions() {
 	pasteAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_PASTE_EDIT_DISABLED));
 	partService.addPartListener(pasteAction);
 
+	printAction = new RetargetAction(IWorkbenchActionConstants.PRINT,WorkbenchMessages.getString("Workbench.print")); //$NON-NLS-1$
+	printAction.setToolTipText(WorkbenchMessages.getString("Workbench.printToolTip")); //$NON-NLS-1$
+	printAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_PRINT_EDIT));
+	printAction.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_PRINT_EDIT_HOVER));
+	printAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_PRINT_EDIT_DISABLED));
+	partService.addPartListener(printAction);
+	
 	selectAllAction = new RetargetAction(IWorkbenchActionConstants.SELECT_ALL, WorkbenchMessages.getString("Workbench.selectAll")); //$NON-NLS-1$
 	selectAllAction.setToolTipText(WorkbenchMessages.getString("Workbench.selectAllToolTip")); //$NON-NLS-1$
 	partService.addPartListener(selectAllAction);
@@ -431,6 +444,8 @@ private void makeActions() {
 
 	closeAllAction = new CloseAllAction(window);
 	partService.addPartListener(closeAllAction);
+
+	aboutPluginsAction = new AboutPluginsAction(window);
 
 	aboutAction = new AboutAction(window);
 	aboutAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_OBJS_DEFAULT_PROD));

@@ -37,6 +37,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ScrollBar;
+import org.eclipse.swt.printing.PrintDialog;
+import org.eclipse.swt.printing.PrinterData;
+import org.eclipse.swt.printing.Printer;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ISelection;
@@ -578,6 +583,8 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 				return isEditable();
 			case SELECT_ALL:
 				return true;
+			case PRINT:
+				return isPrintable();
 			case SHIFT_RIGHT:
 			case SHIFT_LEFT:
 				return isEditable() && fIndentChars != null && isBlockSelected();
@@ -783,6 +790,9 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 				 */
 				setSelectedRange(getVisibleRegionOffset(), getVisibleDocument().getLength());
 				break;
+			case PRINT:
+				print();
+				break;
 			case SHIFT_RIGHT:
 				shift(false, true);
 				break;
@@ -797,6 +807,40 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 				break;
 		}
 	}
+	
+	/**
+	 * This implementation brings up a print dialog, then 
+	 * calls printContents(Printer), which performs the actual print.
+	 *
+	 * Subclasses may override.
+	 */
+	protected void print() {
+		final Shell shell = new Shell(new Display());
+		final PrintDialog dialog = new PrintDialog(shell, SWT.NULL);
+		final PrinterData data = dialog.open();
+		if (data == null) return;
+		final Printer printer = new Printer(data);
+
+		Thread printingThread = new Thread("Printing") {
+			public void run() {
+				printContents(printer);
+			}
+		};
+		printingThread.start();
+    }
+
+	/**
+	 * Print the contents of the editor.
+	 *
+	 * Subclasses may override.
+	 * 
+	 * @param printer a printer to which the data will be sent and printed
+	 */
+	protected void printContents(Printer printer){
+		fTextWidget.print(printer);
+		printer.dispose();
+	}
+	
 	/**
 	 * @see IFindReplaceTarget#findAndSelect(int, String, boolean, boolean, boolean)
 	 */
@@ -1364,6 +1408,18 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 		
 		return false;
 	}
+
+	/**
+	 * Returns whether the shown text can be printed.
+	 *
+	 * @return the viewer's printable mode
+	 */
+	public boolean isPrintable() {
+		if (fTextWidget == null)
+			return false;
+		return true;
+	}
+	
 	/*
 	 * @see ITextViewer#isEditable
 	 */
