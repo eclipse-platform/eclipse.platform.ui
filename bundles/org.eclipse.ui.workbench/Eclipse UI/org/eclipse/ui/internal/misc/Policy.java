@@ -20,7 +20,9 @@ public class Policy {
 	public static boolean DEBUG_SWT_GRAPHICS = DEFAULT;
 
 	public static boolean DEBUG_PART_CREATE = DEFAULT;
-	public static boolean DEBUG_PERSPECTIVE_CREATE = DEFAULT;
+	public static boolean DEBUG_PART_ACTIVATE = DEFAULT;
+	public static boolean DEBUG_PART_LISTENERS = DEFAULT;
+	public static boolean DEBUG_PERSPECTIVE = DEFAULT;
 	public static boolean DEBUG_RESTORE_WORKBENCH = DEFAULT;
 	public static boolean DEBUG_START_WORKBENCH = DEFAULT;
 
@@ -29,9 +31,11 @@ public class Policy {
 			DEBUG_OPEN_ERROR_DIALOG = getDebugOption("/debug/internalerror/openDialog"); //$NON-NLS-1$
 			DEBUG_SWT_GRAPHICS = getDebugOption("/trace/graphics"); //$NON-NLS-1$
 			DEBUG_PART_CREATE = getDebugOption("/trace/part.create"); //$NON-NLS-1$
-			DEBUG_PERSPECTIVE_CREATE = getDebugOption("/trace/perspective.create"); //$NON-NLS-1$
+			DEBUG_PERSPECTIVE = getDebugOption("/trace/perspective"); //$NON-NLS-1$
 			DEBUG_RESTORE_WORKBENCH = getDebugOption("/trace/workbench.restore"); //$NON-NLS-1$
 			DEBUG_START_WORKBENCH = getDebugOption("/trace/workbench.start"); //$NON-NLS-1$
+			DEBUG_PART_ACTIVATE = getDebugOption("/trace/part.activate"); //$NON-NLS-1$
+			DEBUG_PART_LISTENERS = getDebugOption("/trace/part.listeners"); //$NON-NLS-1$
 		}
 	}
 	

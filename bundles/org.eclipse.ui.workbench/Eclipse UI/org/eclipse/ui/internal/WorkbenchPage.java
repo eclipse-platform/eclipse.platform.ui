@@ -77,10 +77,23 @@ public class WorkbenchPage implements IWorkbenchPage {
 				ref.getPart(Boolean.TRUE.equals(event.getNewValue()));
 				if(ref == null)
 					return;
-				if(Boolean.TRUE.equals(event.getNewValue()))
-					partListeners2.firePartVisible(ref);
-				else
-					partListeners2.firePartHidden(ref);
+				if(Boolean.TRUE.equals(event.getNewValue())) {
+					String label = "visible::" + ref.getTitle();
+					try {
+						UIStats.start(UIStats.NOTIFY_PART_LISTENERS,label);
+						partListeners2.firePartVisible(ref);
+					} finally {
+						UIStats.end(UIStats.NOTIFY_PART_LISTENERS,label);
+					}
+				} else {
+					String label = "hidden::" + ref.getTitle();
+					try {
+						UIStats.start(UIStats.NOTIFY_PART_LISTENERS,label);
+						partListeners2.firePartHidden(ref);
+					} finally {
+						UIStats.end(UIStats.NOTIFY_PART_LISTENERS,label);
+					}
+				}			
 			}
 		}
 	};
@@ -464,22 +477,29 @@ public void bringToTop(IWorkbenchPart part) {
 	// If zoomed then ignore.
 	if (isZoomed() && partChangeAffectsZoom(getReference(part)))
 		return;
-
-	// Move part.
+	
+	String label = part != null ? part.getTitle() : "none";
 	boolean broughtToTop = false;
-	if (part instanceof IEditorPart) {
-		IEditorReference ref = (IEditorReference)getReference(part);
-		broughtToTop = getEditorManager().setVisibleEditor(ref, false);
-		actionSwitcher.updateTopEditor((IEditorPart)part);
-		if (broughtToTop) {
-			lastActiveEditor = null;
+	try {
+		UIStats.start(UIStats.BRING_PART_TO_TOP,label);
+		// Move part.
+		if (part instanceof IEditorPart) {
+			IEditorReference ref = (IEditorReference)getReference(part);
+			broughtToTop = getEditorManager().setVisibleEditor(ref, false);
+			actionSwitcher.updateTopEditor((IEditorPart)part);
+			if (broughtToTop) {
+				lastActiveEditor = null;
+			}
+		} else if (part instanceof IViewPart) {
+			IViewReference ref = (IViewReference)getReference(part);
+			broughtToTop = persp.bringToTop(ref);
 		}
-	} else if (part instanceof IViewPart) {
-		IViewReference ref = (IViewReference)getReference(part);
-		broughtToTop = persp.bringToTop(ref);
-	}
-	if (broughtToTop) {
-		firePartBroughtToTop(part);
+
+		if (broughtToTop) {
+			firePartBroughtToTop(part);
+		}
+	} finally {
+		UIStats.end(UIStats.BRING_PART_TO_TOP,label);
 	}
 }
 /**
@@ -541,17 +561,23 @@ private void busyResetPerspective() {
  */
 private void busySetPerspective(IPerspectiveDescriptor desc) {
 	// Create new layout.
-	PerspectiveDescriptor realDesc = (PerspectiveDescriptor)desc;
-	Perspective newPersp = findPerspective(realDesc);
-	if (newPersp == null) {
-		newPersp = createPerspective(realDesc);
-		if (newPersp == null)
-			return;
-		window.addPerspectiveShortcut(realDesc, this);			
+	String label = desc.getId();
+	try {
+		UIStats.start(UIStats.SWITCH_PERSPECTIVE,label);
+		PerspectiveDescriptor realDesc = (PerspectiveDescriptor)desc;
+		Perspective newPersp = findPerspective(realDesc);
+		if (newPersp == null) {
+			newPersp = createPerspective(realDesc);
+			if (newPersp == null)
+				return;
+			window.addPerspectiveShortcut(realDesc, this);			
+		}
+	
+		// Change layout.
+		setPerspective(newPersp);
+	} finally {
+		UIStats.end(UIStats.SWITCH_PERSPECTIVE,label);		
 	}
-
-	// Change layout.
-	setPerspective(newPersp);
 }
 /**
  * Opens a view.
@@ -875,7 +901,9 @@ private void createClientComposite() {
  * Creates a new view set.  Return null on failure.
  */
 private Perspective createPerspective(PerspectiveDescriptor desc) {
+	String label = desc.getId();
 	try {
+		UIStats.start(UIStats.CREATE_PERSPECTIVE,label);
 		Perspective persp = new Perspective(desc, this);
 		perspList.add(persp);
 		window.firePerspectiveOpened(this, desc);
@@ -894,6 +922,8 @@ private Perspective createPerspective(PerspectiveDescriptor desc) {
 				WorkbenchMessages.format("Workbench.showPerspectiveError",new String[]{desc.getId()}));
 		}
 		return null;
+	} finally {
+		UIStats.end(UIStats.CREATE_PERSPECTIVE,label);
 	}
 }
 /**
@@ -1095,51 +1125,87 @@ public IViewPart findView(String id) {
  * Fire part activation out.
  */
 private void firePartActivated(IWorkbenchPart part) {
-	partListeners.firePartActivated(part);
-	partListeners2.firePartActivated(getReference(part));
-	selectionService.partActivated(part);
+	String label = "activate::" + (part != null ? part.getTitle() : "none");
+	try {
+		UIStats.start(UIStats.NOTIFY_PART_LISTENERS,label);
+		partListeners.firePartActivated(part);
+		partListeners2.firePartActivated(getReference(part));
+		selectionService.partActivated(part);
+	} finally {
+		UIStats.end(UIStats.NOTIFY_PART_LISTENERS,label);
+	}
 }
 /**
  * Fire part brought to top out.
  */
 private void firePartBroughtToTop(IWorkbenchPart part) {
-	partListeners.firePartBroughtToTop(part);
-	partListeners2.firePartBroughtToTop(getReference(part));
-	selectionService.partBroughtToTop(part);
+	String label = "bringToTop::" + (part != null ? part.getTitle() : "none");
+	try {
+		UIStats.start(UIStats.NOTIFY_PART_LISTENERS,label);
+		partListeners.firePartBroughtToTop(part);
+		partListeners2.firePartBroughtToTop(getReference(part));
+		selectionService.partBroughtToTop(part);
+	} finally {
+		UIStats.end(UIStats.NOTIFY_PART_LISTENERS,label);
+	}		
 }
 /**
  * Fire part close out.
  */
 private void firePartClosed(IWorkbenchPartReference ref) {
-	IWorkbenchPart part = ref.getPart(false);
-	if(part != null) {
-		partListeners.firePartClosed(part);
-		selectionService.partClosed(part);
-	}
-	partListeners2.firePartClosed(ref);
+	String label = "close" + ref.getTitle();
+	try {
+		UIStats.start(UIStats.NOTIFY_PART_LISTENERS,label);		
+		IWorkbenchPart part = ref.getPart(false);
+		if(part != null) {
+			partListeners.firePartClosed(part);
+			selectionService.partClosed(part);
+		}
+		partListeners2.firePartClosed(ref);
+	} finally {
+		UIStats.end(UIStats.NOTIFY_PART_LISTENERS,label);
+	}		
 }
 /**
  * Fire part deactivation out.
  */
 private void firePartDeactivated(IWorkbenchPart part) {
-	partListeners.firePartDeactivated(part);
-	partListeners2.firePartDeactivated(getReference(part));
-	selectionService.partDeactivated(part);
+	String label = "deactivate" + (part != null ? part.getTitle() : "none");
+	try {
+		UIStats.start(UIStats.NOTIFY_PART_LISTENERS,label);		
+		partListeners.firePartDeactivated(part);
+		partListeners2.firePartDeactivated(getReference(part));
+		selectionService.partDeactivated(part);
+	} finally {
+		UIStats.end(UIStats.NOTIFY_PART_LISTENERS,label);
+	}		
 }
 /**
  * Fire part open out.
  */
 public void firePartOpened(IWorkbenchPart part) {
-	partListeners.firePartOpened(part);
-	partListeners2.firePartOpened(getReference(part));
-	selectionService.partOpened(part);
+	String label = "deactivate" + (part != null ? part.getTitle() : "none");
+	try {
+		UIStats.start(UIStats.NOTIFY_PART_LISTENERS,label);		
+		partListeners.firePartOpened(part);
+		partListeners2.firePartOpened(getReference(part));
+		selectionService.partOpened(part);
+	} finally {
+		UIStats.end(UIStats.NOTIFY_PART_LISTENERS,label);
+	}		
 }
 /**
  * Fire part input changed out.
  */
 private void firePartInputChanged(IWorkbenchPart part) {
-	partListeners2.firePartInputChanged(getReference(part));
-	selectionService.partInputChanged(part);
+	String label = "inputChanged" + (part != null ? part.getTitle() : "none");
+	try {
+		UIStats.start(UIStats.NOTIFY_PART_LISTENERS,label);			
+		partListeners2.firePartInputChanged(getReference(part));
+		selectionService.partInputChanged(part);
+	} finally {
+		UIStats.end(UIStats.NOTIFY_PART_LISTENERS,label);
+	}		
 }
 /**
  * Notify property change listeners about a property change.
@@ -2259,44 +2325,49 @@ private void setActivePart(IWorkbenchPart newPart) {
 
 	//No need to change the history if the active editor is becoming the active part
 	boolean markLocation = newPart != lastActiveEditor;
+	String label = newPart != null ? newPart.getTitle() : "none";
+	try {
+		UIStats.start(UIStats.ACTIVATE_PART,label);
+		// Notify perspective.  It may deactivate fast view.
+		Perspective persp = getActivePerspective();
+		if (persp != null)
+			persp.partActivated(newPart);
 		
-	// Notify perspective.  It may deactivate fast view.
-	Perspective persp = getActivePerspective();
-	if (persp != null)
-		persp.partActivated(newPart);
-	
-	// Deactivate old part
-	IWorkbenchPart oldPart = activePart;
-	if (oldPart != null) {
-		deactivatePart(oldPart);
-	}
-
-			
-	// Set active part.
-	activePart = newPart;
-	if (newPart != null) {	
-		activationList.setActive(newPart);
-		if (newPart instanceof IEditorPart) {
-			lastActiveEditor = (IEditorPart)newPart;
-			IEditorReference ref = (IEditorReference)getReference(lastActiveEditor);
-			editorMgr.setVisibleEditor(ref,true);
+		// Deactivate old part
+		IWorkbenchPart oldPart = activePart;
+		if (oldPart != null) {
+			deactivatePart(oldPart);
 		}
-	}
-	activatePart(activePart);
 	
-	if(markLocation && activePart != null && activePart instanceof IEditorPart)
-		navigationHistory.markEditor(getActiveEditor());
-
-	// Fire notifications
-	if (oldPart != null)
-		firePartDeactivated(oldPart);
-
-	// Update actions now so old actions have heard part deactivated and 
-	// new actions can hear part activated.
-	actionSwitcher.updateActivePart(newPart);	
-
-	if (newPart != null)
-		firePartActivated(newPart);
+				
+		// Set active part.
+		activePart = newPart;
+		if (newPart != null) {	
+			activationList.setActive(newPart);
+			if (newPart instanceof IEditorPart) {
+				lastActiveEditor = (IEditorPart)newPart;
+				IEditorReference ref = (IEditorReference)getReference(lastActiveEditor);
+				editorMgr.setVisibleEditor(ref,true);
+			}
+		}
+		activatePart(activePart);
+		
+		if(markLocation && activePart != null && activePart instanceof IEditorPart)
+			navigationHistory.markEditor(getActiveEditor());
+	
+		// Fire notifications
+		if (oldPart != null)
+			firePartDeactivated(oldPart);
+	
+		// Update actions now so old actions have heard part deactivated and 
+		// new actions can hear part activated.
+		actionSwitcher.updateActivePart(newPart);	
+	
+		if (newPart != null)
+			firePartActivated(newPart);
+	} finally {
+		UIStats.end(UIStats.ACTIVATE_PART,label);
+	}
 }
 /**
  * See IWorkbenchPage.

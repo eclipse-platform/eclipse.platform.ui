@@ -12,11 +12,17 @@ org.eclipse.ui/trace/graphics=false
 # Reports the time to create a part.
 org.eclipse.ui/trace/part.create=false
 
-# Reports the time to create a perspective.
-org.eclipse.ui/trace/perspective.create=false
+# Reports the time to create a switch perspectives.
+org.eclipse.ui/trace/perspective=false
 
 # Reports the time to restore the workbench.
 org.eclipse.ui/trace/workbench.restore=false
 
 # Reports the time to start up the workbench.
 org.eclipse.ui/trace/workbench.start=false
+
+# Reports the time to activate parts.
+org.eclipse.ui/trace/part.activate
+
+# Reports the time to noticy part listeners.
+org.eclipse.ui/trace/part.listeners
