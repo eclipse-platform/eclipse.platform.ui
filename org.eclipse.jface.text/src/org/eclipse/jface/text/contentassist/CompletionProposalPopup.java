@@ -107,37 +107,44 @@ class CompletionProposalPopup implements IContentAssistListener {
 		IDocument document= fViewer.getDocument();
 		if (document != null)
 			document.addDocumentListener(fDocumentListener);		
-		
-		final StyledText styledText= fViewer.getTextWidget();
-
-		if (fKeyListener == null && styledText != null && !styledText.isDisposed()) {
+			
+		if (fKeyListener == null) {
 			fKeyListener= new KeyListener() {
 				public void keyPressed(KeyEvent e) {
 					if (!Helper.okToUse(fProposalShell))
 						return;
 					
-					if (e.character == 0 && e.keyCode == SWT.MOD1)
-						selectProposal(fProposalTable.getSelectionIndex(), true);									
+					if (e.character == 0 && e.keyCode == SWT.MOD1) {
+						// http://dev.eclipse.org/bugs/show_bug.cgi?id=34754
+						int index= fProposalTable.getSelectionIndex();
+						if (index >= 0)
+							selectProposal(index, true);
+					}									
 				}
 
 				public void keyReleased(KeyEvent e) {
 					if (!Helper.okToUse(fProposalShell))
 						return;
 
-					if (e.character == 0 && e.keyCode == SWT.MOD1)
-						selectProposal(fProposalTable.getSelectionIndex(), false);				
+					if (e.character == 0 && e.keyCode == SWT.MOD1) {
+						// http://dev.eclipse.org/bugs/show_bug.cgi?id=34754
+						int index= fProposalTable.getSelectionIndex();
+						if (index >= 0)
+							selectProposal(index, false);
+					}
 				}
 			};
 		}
-		styledText.addKeyListener(fKeyListener);
+
+		final StyledText styledText= fViewer.getTextWidget();
+		if (styledText != null && !styledText.isDisposed())
+			styledText.addKeyListener(fKeyListener);
 
 		BusyIndicator.showWhile(styledText.getDisplay(), new Runnable() {
 			public void run() {
 				
-				
 				fInvocationOffset= fViewer.getSelectedRange().x;
 				fComputedProposals= computeProposals(fInvocationOffset);
-				
 				
 				int count= (fComputedProposals == null ? 0 : fComputedProposals.length);
 				if (count == 0) {
@@ -246,6 +253,8 @@ class CompletionProposalPopup implements IContentAssistListener {
 				selectProposalWithMask(e.stateMask);
 			}
 		});
+//		if (fKeyListener != null)
+//			fProposalTable.addKeyListener(fKeyListener);
 
 		fPopupCloser.install(fContentAssistant, fProposalTable);
 		
@@ -374,6 +383,8 @@ class CompletionProposalPopup implements IContentAssistListener {
 				ICompletionProposalExtension2 extension= (ICompletionProposalExtension2) proposal;
 				extension.unselected(fViewer);
 			}
+//			if (fKeyListener != null)
+//				fProposalTable.removeKeyListener(fKeyListener);
 		}
 
 		if (Helper.okToUse(fProposalShell)) {
