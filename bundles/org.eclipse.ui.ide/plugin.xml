@@ -2,9 +2,9 @@
 <?eclipse version="3.0"?>
 <plugin
    id="org.eclipse.ui.ide"
-   name="Ide Plug-in"
+   name="%Plugin.name"
    version="3.0.0"
-   provider-name=""
+   provider-name="%Plugin.providerName"
    class="org.eclipse.ui.internal.ide.IDEWorkbenchPlugin">
 
    <runtime>
