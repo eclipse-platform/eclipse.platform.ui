@@ -4,7 +4,6 @@
  */
 package org.eclipse.help.internal.context;
 import org.eclipse.help.IHelpResource;
-import org.eclipse.help.internal.util.ContextResources;
 import org.xml.sax.Attributes;
 /**
  * Default implementation for a topic contribution
@@ -12,8 +11,6 @@ import org.xml.sax.Attributes;
 public class RelatedTopic extends ContextsNode implements IHelpResource {
 	protected String href;
 	protected String label;
-	protected String translatedLabel;
-	protected String plugin;
 	public RelatedTopic(Attributes attrs) {
 		super(attrs);
 		if (attrs == null)
@@ -30,22 +27,10 @@ public class RelatedTopic extends ContextsNode implements IHelpResource {
 		this.href = href;
 	}
 	/**
-	 * Returns the translated label
+	 * Returns the label
 	 */
 	public String getLabel() {
-		if (translatedLabel == null) {
-			translatedLabel = label;
-			if (translatedLabel.indexOf('%') == 0 && translatedLabel.length() >= 2) {
-				translatedLabel =
-					ContextResources.getPluginString(plugin, translatedLabel.substring(1));
-			}
-		}
-		return translatedLabel;
-	}
-	/**
-	 */
-	public void setPlugin(String id) {
-		this.plugin = id;
+		return label;
 	}
 	/**
 	 * @see IContextContributionNode#build(ContextBuilder)

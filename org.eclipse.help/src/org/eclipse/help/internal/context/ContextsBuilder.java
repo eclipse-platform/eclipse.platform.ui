@@ -5,7 +5,6 @@
 package org.eclipse.help.internal.context;
 import java.util.*;
 import org.eclipse.help.IHelpResource;
-import org.eclipse.help.internal.util.ContextResources;
 public class ContextsBuilder {
 	/**
 	 * Map of contexts indexed by short ID
@@ -20,7 +19,6 @@ public class ContextsBuilder {
 		this.contexts = new HashMap();
 	}
 	public void build(RelatedTopic relatedTopic) {
-		relatedTopic.setPlugin(definingPluginID);
 		// set the href on the related topic   
 		String href = relatedTopic.getHref();
 		if (href == null)
@@ -36,7 +34,6 @@ public class ContextsBuilder {
 	}
 	public void build(Context context) {
 		context.setPluginID(pluginID);
-		context.setText(getNLText(definingPluginID, context.getText()));
 		// if context with same Id exists, merge them
 		Context existingContext = (Context) contexts.get(context.getShortId());
 		if (existingContext != null) {
@@ -124,17 +121,5 @@ public class ContextsBuilder {
 	private boolean equalTopics(IHelpResource topic1, IHelpResource topic2) {
 		return topic1.getHref().equals(topic2.getHref())
 			&& topic1.getLabel().equals(topic2.getLabel());
-	}
-	private String getNLText(String pluginID, String text) {
-		if (text == null)
-			return text;
-		// if description starts with %, need to translate.
-		if (text.indexOf('%') == 0) {
-			// strip off the leading %
-			text = text.substring(1);
-			// now translate
-			text = ContextResources.getPluginString(pluginID, text);
-		}
-		return text;
 	}
 }
