@@ -1487,6 +1487,7 @@
       <editor
             name="%SystemSummary"
             class="org.eclipse.ui.internal.SystemSummaryEditor"
+            contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
             icon="icons/diag.gif"
             id="org.eclipse.ui.SystemSummaryEditor">
       </editor>
