@@ -25,6 +25,8 @@ public static Test suite() {
 	suite.addTest(PlatformTest.suite());
 	suite.addTest(org.eclipse.core.tests.internal.runtime.AllTests.suite());
 	suite.addTest(ConfigurationElementModelTest.suite());
+	suite.addTest(org.eclipse.core.tests.internal.plugins.AllTests.suite());
+	suite.addTest(org.eclipse.core.tests.internal.registrycache.AllTests.suite());
 	return suite;
 }
 }
