@@ -166,7 +166,7 @@ public class ExternalToolsOptionTab extends AbstractLaunchConfigurationTab {
 		openPerspButton.setLayoutData(data);
 		openPerspButton.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
-				//updateOpenPerspNameField();
+				openPerspNameField.setEnabled(openPerspButton.getSelection());
 			}
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
@@ -356,12 +356,11 @@ public class ExternalToolsOptionTab extends AbstractLaunchConfigurationTab {
 		}
 		
 		openPerspButton.setSelection(perspective != null);
-		
+		openPerspNameField.setEnabled(perspective != null);
 		int index = getPerspectiveIndex(perspective);
 		if (index != -1) {
 			openPerspNameField.select(index);
 		}
-		//updateOpenPerspNameField();
 	}
 	
 	/**
@@ -432,7 +431,7 @@ public class ExternalToolsOptionTab extends AbstractLaunchConfigurationTab {
 		configuration.setAttribute(IExternalToolConstants.ATTR_SHOW_IN_EXTERNAL_TOOLS_MENU, showInMenuButton.getSelection());
 		
 		if (openPerspButton.getSelection()) {
-			configuration.setAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, openPerspNameField.getText());
+			configuration.setAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, getPerspectiveId(openPerspNameField.getSelectionIndex()));
 		} else {
 			configuration.setAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, (String)null);
 		}
@@ -444,6 +443,18 @@ public class ExternalToolsOptionTab extends AbstractLaunchConfigurationTab {
 			configuration.setAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, arguments);
 		}
 		
+	}
+	
+	/**
+	 * Returns the ID for the perspective in the combo box
+	 * at the specified index, or <code>null</code> if
+	 * none.
+	 */
+	protected final String getPerspectiveId(int index) {
+		if (index < 0 || index > getPerspectives().length) {
+			return null;
+		}
+		return getPerspectives()[index].getId();
 	}
 
 	/**
