@@ -618,8 +618,10 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 		String leftType= guessType(input.getLeft());
 		String rightType= guessType(input.getRight());
 			
-		if (leftType != null && rightType != null) {
-			if (ITypedElement.TEXT_TYPE.equals(leftType) && ITypedElement.TEXT_TYPE.equals(rightType))
+		if (leftType != null || rightType != null) {
+			boolean right_text= rightType != null && ITypedElement.TEXT_TYPE.equals(rightType);
+			boolean left_text= leftType != null && ITypedElement.TEXT_TYPE.equals(leftType);
+			if ((leftType == null && right_text) || (left_text && rightType == null) || (left_text && right_text))
 				type= ITypedElement.TEXT_TYPE;
 			else
 				type= "binary";
@@ -689,9 +691,13 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 				InputStream is= sca.getContents();
 				if (is == null)
 					return null;
-				for (int i= 0; i < 1000; i++)
-					if (is.read() >= 128)
+				for (int i= 0; i < 1000; i++) {
+					int c= is.read();
+					if (c == -1)	// EOF
+						break;
+					if (c >= 128)
 						return ITypedElement.UNKNOWN_TYPE;
+				}
 				return ITypedElement.TEXT_TYPE;
 			} catch (CoreException ex) {
 				// be silent and return UNKNOWN_TYPE

@@ -156,8 +156,9 @@ public class EditionSelectionDialog extends Dialog {
 	 *	todayFormat MessageFormat format string if date is todays date; arg 0 is date
 	 *	yesterdayFormat MessageFormat format string if date is yesterdays date; arg 0 is date
 	 *	dayFormat   MessageFormat format string if date is any other date; arg 0 is date
-	 *	editionLabel String        label for editions side of compare viewer; arg 0 is the date
-	 *	targetLabel  String        label for target side of compare viewer; arg 0 is 
+	 *	editionLabel String       label for editions side of compare viewer; arg 0 is the date
+	 *	targetLabel  String       label for target side of compare viewer 
+	 *  buttonLabel  String       label for OK button; default is IDialogConstants.OK_LABEL
 	 * </pre>
 	 *
 	 * @param parent if not <code>null</code> the new dialog stays on top of this parent shell
@@ -492,7 +493,7 @@ public class EditionSelectionDialog extends Dialog {
 	 * Method declared on Dialog.
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
-		String buttonLabel= Utilities.getString(fBundle, "buttonLabel", "buttonLabel");
+		String buttonLabel= Utilities.getString(fBundle, "buttonLabel", IDialogConstants.OK_LABEL);
 		fCommitButton= createButton(parent, IDialogConstants.OK_ID, buttonLabel, true);
 		fCommitButton.setEnabled(false);
 		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
