@@ -17,7 +17,7 @@ import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 
 /**
- * 
+ * Action which fully expands the tree in the breakpoints view.
  */
 public class BreakpointsExpandAllAction implements IViewActionDelegate {
 	
