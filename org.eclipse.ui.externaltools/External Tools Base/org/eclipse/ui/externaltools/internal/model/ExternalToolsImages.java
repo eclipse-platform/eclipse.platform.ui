@@ -16,6 +16,7 @@ import java.util.HashMap;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.externaltools.internal.ui.IExternalToolsUIConstants;
 import org.eclipse.ui.externaltools.model.IExternalToolConstants;
 
 /**
@@ -63,6 +64,16 @@ public class ExternalToolsImages {
 	 * Declare all images
 	 */
 	private static void declareImages() {
+		// Ant View Actions
+		declareRegistryImage(IExternalToolsUIConstants.IMG_REMOVE, LOCALTOOL + "remove_co.gif"); //$NON-NLS-1$
+		declareRegistryImage(IExternalToolsUIConstants.IMG_ADD, LOCALTOOL + "add_co.gif"); //$NON-NLS-1$
+		// Ant View Labels
+		declareRegistryImage(IExternalToolsUIConstants.IMG_ANT_PROJECT, LOCALTOOL + "ant_project.gif"); //$NON-NLS-1$
+		declareRegistryImage(IExternalToolsUIConstants.IMG_ANT_PROJECT_ERROR, LOCALTOOL + "ant_project_err.gif"); //$NON-NLS-1$
+		declareRegistryImage(IExternalToolsUIConstants.IMG_ANT_TARGET, LOCALTOOL + "ant_tsk_arrow.gif"); //$NON-NLS-1$
+		declareRegistryImage(IExternalToolsUIConstants.IMG_ANT_TARGET_ERROR, LOCALTOOL + "error.gif"); //$NON-NLS-1$
+		declareRegistryImage(IExternalToolsUIConstants.IMG_ANT_TARGET_ELEMENTS, LOCALTOOL + "elements.gif"); //$NON-NLS-1$
+		declareRegistryImage(IExternalToolsUIConstants.IMG_ANT_TARGET_ELEMENT, LOCALTOOL + "element.gif"); //$NON-NLS-1$
 		// Wizards
 		declareRegistryImage(IExternalToolConstants.IMG_WIZBAN_EXTERNAL_TOOLS, WIZBAN + "ext_tools_wiz.gif"); //$NON-NLS-1$
 		
