@@ -7,19 +7,15 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Leon J. Breedt: Added multiple folder creation support
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
-import java.util.StringTokenizer;
 
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
-import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -200,10 +196,6 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
             // Create the folder resource in the workspace
             // Update: Recursive to create any folders which do not exist already
             if (!folderHandle.exists()) {
-                IContainer parent = folderHandle.getParent();
-                if (parent instanceof IFolder && (!((IFolder) parent).exists())) {
-                    createFolder((IFolder) parent, monitor);
-                }
                 if (linkTargetPath != null)
                     folderHandle.createLink(linkTargetPath,
                             IResource.ALLOW_MISSING_LOCAL, monitor);
@@ -460,31 +452,6 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
      */
     protected boolean validatePage() {
         boolean valid = true;
-
-        IWorkspace workspace = IDEWorkbenchPlugin.getPluginWorkspace();
-        IStatus nameStatus = null;
-        String folderName = resourceGroup.getResource();
-        if (folderName.indexOf(IPath.SEPARATOR) != -1) {
-            StringTokenizer tok = new StringTokenizer(folderName, String
-                    .valueOf(IPath.SEPARATOR));
-            while (tok.hasMoreTokens()) {
-                String pathFragment = tok.nextToken();
-                nameStatus = workspace.validateName(pathFragment,
-                        IResource.FOLDER);
-                if (!nameStatus.isOK()) {
-                    break;
-                }
-            }
-        }
-
-        //If the name status was not set validate using the name
-        if (nameStatus == null && folderName.length() > 0)
-            nameStatus = workspace.validateName(folderName, IResource.FOLDER);
-
-        if (nameStatus != null && !nameStatus.isOK()) {
-            setErrorMessage(nameStatus.getMessage());
-            return false;
-        }
 
         if (!resourceGroup.areAllValuesValid()) {
             // if blank name then fail silently

@@ -7,7 +7,6 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Leon J. Breedt: Added multiple folder creation support
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.misc;
 
@@ -411,7 +410,6 @@ public class ResourceAndContainerGroup implements Listener {
                             "ResourceGroup.invalidFilename", new String[] { resourceName }); //$NON-NLS-1$
             return false;
         }
-
         return true;
     }
 
