@@ -15,6 +15,7 @@ import org.eclipse.debug.core.IExpressionManager;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.jface.viewers.ITreeContentProvider;
  
 /**
  * Provides contents for the expression view

@@ -80,7 +80,7 @@ public class VariablesViewContentProvider implements ITreeContentProvider {
 	}
 	
 	/**
-	 * @see ITreeContentProvider
+	 * @see ITreeContentProvider#getParent(Object)
 	 */
 	public Object getParent(Object item) {
 		return fParentCache.get(item);
@@ -92,7 +92,7 @@ public class VariablesViewContentProvider implements ITreeContentProvider {
 	 * this object can be garbage-collected.
 	 */
 	public void dispose() {
-		fParentCache=null;
+		fParentCache= null;
 	}
 	
 	protected void clearCache() {
@@ -110,8 +110,8 @@ public class VariablesViewContentProvider implements ITreeContentProvider {
 		if (fParentCache == null) {
 			return;
 		}
-		for (int i= 0; i < children.length; i++) {
-			fParentCache.remove(children[i]);
+		for (int i = 0; i < children.length; i++) {
+			fParentCache.remove(children[i]);	
 		}
 	}
 	
@@ -128,6 +128,5 @@ public class VariablesViewContentProvider implements ITreeContentProvider {
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		clearCache();
 	}
-
 }
 
