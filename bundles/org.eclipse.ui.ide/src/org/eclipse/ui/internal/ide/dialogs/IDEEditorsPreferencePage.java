@@ -46,9 +46,9 @@ public class IDEEditorsPreferencePage extends EditorsPreferencePage {
 
 	protected Control createContents(Composite parent) {
 		Composite composite = createComposite(parent);
-
+        
 		PreferenceLinkArea area = new PreferenceLinkArea(composite, SWT.BORDER,
-				"org.eclipse.ui.preferencePages.FileEditors");//$NON-NLS-1$
+				"org.eclipse.ui.preferencePages.FileEditors", IDEWorkbenchMessages.getString("IDEEditorsPreferencePage.WorkbenchPreference.relatedLink"));//$NON-NLS-1$ //$NON-NLS-2$
 
 		GridData data = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
 		data.heightHint = 25;

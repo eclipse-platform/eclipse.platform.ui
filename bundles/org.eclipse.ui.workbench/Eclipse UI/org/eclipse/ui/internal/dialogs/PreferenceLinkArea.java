@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.dialogs;
 
 import java.security.InvalidParameterException;
+import java.text.MessageFormat;
 import java.util.Iterator;
 
 import org.eclipse.swt.widgets.Composite;
@@ -28,15 +29,16 @@ import org.eclipse.ui.PlatformUI;
  */
 public class PreferenceLinkArea extends LinkArea {
 
-	public PreferenceLinkArea(Composite parent, int style, String pageId) {
+	public PreferenceLinkArea(Composite parent, int style, String pageId, String message) {
 		super(parent, style);
 		IPreferenceNode node = getPreferenceNode(pageId);
 		if (node == null) {
 			throw new InvalidParameterException("Node not found");//$NON-NLS-1$
 		}
 		setRunnable(getRunnable(node));
-		setText(node.getLabelText());
-
+        MessageFormat format = new MessageFormat(message);
+        String result = MessageFormat.format(message, new String[] {node.getLabelText()});
+		setText(result);
 	}
 
 	/**
