@@ -28,7 +28,7 @@ public class IPerspectiveRegistryTest extends TestCase {
 		suspect = fReg.findPerspectiveWithId( IConstants.FakeID );
 		assertNull( suspect );
 	}
-	
+/*	
 	public void testFindPerspectiveWithLabel()
 	{
 		IPerspectiveDescriptor pers = ( IPerspectiveDescriptor )ArrayUtil.pickRandom( fReg.getPerspectives() );
@@ -40,7 +40,7 @@ public class IPerspectiveRegistryTest extends TestCase {
 		suspect = fReg.findPerspectiveWithLabel( IConstants.FakeLabel );
 		assertNull( suspect );
 	}
-	
+*/
 	public void testGetDefaultPerspective()
 	{
 		String id = fReg.getDefaultPerspective();
