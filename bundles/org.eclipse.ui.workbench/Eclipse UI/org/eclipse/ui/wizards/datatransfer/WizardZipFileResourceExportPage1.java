@@ -12,6 +12,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 
@@ -75,13 +76,14 @@ class WizardZipFileResourceExportPage1
 	 */
 	protected void createOptionsGroupButtons(Group optionsGroup) {
 
+		Font font = optionsGroup.getFont();
 		// compress... checkbox
 		compressContentsCheckbox =
 			new Button(optionsGroup, SWT.CHECK | SWT.LEFT);
 		compressContentsCheckbox.setText(DataTransferMessages.getString("ZipExport.compressContents")); //$NON-NLS-1$
-		compressContentsCheckbox.setFont(optionsGroup.getFont());
+		compressContentsCheckbox.setFont(font);
 
-		super.createOptionsGroupButtons(optionsGroup);
+		createDirectoryStructureOptions(optionsGroup, font);
 
 		// initial setup
 		createDirectoryStructureButton.setSelection(true);
@@ -113,8 +115,7 @@ class WizardZipFileResourceExportPage1
 		}
 
 		if (targetFile.exists()) {
-			if (!overwriteExistingFilesCheckbox.getSelection()
-				&& targetFile.canWrite()) {
+			if (targetFile.canWrite()) {
 				if (!queryYesNoQuestion(DataTransferMessages.getString("ZipExport.alreadyExists"))) //$NON-NLS-1$
 					return false;
 			}
@@ -271,11 +272,6 @@ class WizardZipFileResourceExportPage1
 				addToHistory(directoryNames, getDestinationValue());
 			settings.put(STORE_DESTINATION_NAMES_ID, directoryNames);
 
-			// options
-			settings.put(
-				STORE_OVERWRITE_EXISTING_FILE_ID,
-				overwriteExistingFilesCheckbox.getSelection());
-
 			settings.put(
 				STORE_CREATE_STRUCTURE_ID,
 				createDirectoryStructureButton.getSelection());
@@ -301,10 +297,6 @@ class WizardZipFileResourceExportPage1
 			setDestinationValue(directoryNames[0]);
 			for (int i = 0; i < directoryNames.length; i++)
 				addDestinationItem(directoryNames[i]);
-
-			// options
-			overwriteExistingFilesCheckbox.setSelection(
-				settings.getBoolean(STORE_OVERWRITE_EXISTING_FILE_ID));
 
 			boolean setStructure =
 				settings.getBoolean(STORE_CREATE_STRUCTURE_ID);
