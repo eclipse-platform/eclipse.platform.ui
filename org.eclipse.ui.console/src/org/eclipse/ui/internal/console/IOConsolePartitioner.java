@@ -439,7 +439,10 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 	 * @param stream The stream that was written to.
 	 * @param s The string that should be appended to the document.
 	 */
-	public void streamAppended(IOConsoleOutputStream stream, String s) {
+	public void streamAppended(IOConsoleOutputStream stream, String s) throws IOException {
+        if (document == null) {
+            throw new IOException("Document is closed"); //$NON-NLS-1$
+        }
 		synchronized(pendingPartitions) {
 			PendingPartition last = (PendingPartition) (pendingPartitions.size() > 0 ? pendingPartitions.get(pendingPartitions.size()-1) : null);
 			if (last != null && last.stream == stream) {

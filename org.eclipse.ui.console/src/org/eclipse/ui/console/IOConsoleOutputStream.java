@@ -138,6 +138,14 @@ public class IOConsoleOutputStream extends OutputStream {
 	    return color;
 	}
 	
+    /**
+     * Returns true if the stream has been closed
+     * @return true is the stream has been closed, false otherwise.
+     */
+    public synchronized boolean isClosed() {
+        return closed;
+    }
+    
 	/*
 	 *  (non-Javadoc)
 	 * @see java.io.OutputStream#close()
@@ -205,11 +213,19 @@ public class IOConsoleOutputStream extends OutputStream {
         if(closed) {
             throw new IOException("Output Stream is closed"); //$NON-NLS-1$
         }
-        partitioner.streamAppended(this, encodedString);
-        if (activateOnWrite) {
-        	console.activate();
-        } else {
-        	ConsolePlugin.getDefault().getConsoleManager().warnOfContentChange(console);
+        try {
+            partitioner.streamAppended(this, encodedString);
+
+            if (activateOnWrite) {
+            	console.activate();
+            } else {
+            	ConsolePlugin.getDefault().getConsoleManager().warnOfContentChange(console);
+            }
+        } catch (IOException e) {
+            if (!closed) {
+                close();
+            }
+            throw e;
         }
     }
 

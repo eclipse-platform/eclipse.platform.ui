@@ -56,6 +56,9 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
      * DocumentEvent, to the end of the Document.
      */
     private void repairLines(int eventOffset) {
+        if (document == null) {
+            return;
+        }
         try {
             int docLine = document.getLineOfOffset(eventOffset);
             int docLineStart = document.getLineOffset(docLine);
