@@ -122,8 +122,12 @@ public class TextSelection implements ITextSelection {
 	 */
 	public int getEndLine() {
 		try {
-			if (fDocument != null)
-				return fDocument.getLineOfOffset(fOffset + fLength - 1);
+			if (fDocument != null) {
+				int endOffset= fOffset + fLength;
+				if (fLength != 0)
+					endOffset--;
+				return fDocument.getLineOfOffset(endOffset);
+			}
 		} catch (BadLocationException x) {
 		}
 		
