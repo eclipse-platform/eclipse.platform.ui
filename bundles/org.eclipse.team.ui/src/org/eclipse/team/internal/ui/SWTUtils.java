@@ -20,6 +20,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
@@ -52,6 +53,68 @@ public class SWTUtils {
         gd.horizontalSpan= span;
         return gd;
     }
+
+    public static Composite createHFillComposite(Composite parent, int margins) {
+        return createHFillComposite(parent, margins, 1);
+    }
+    
+    public static Composite createHFillComposite(Composite parent, int margins, int rows) {
+        final Composite composite= new Composite(parent, SWT.NONE);
+        composite.setFont(parent.getFont());
+        composite.setLayoutData(createHFillGridData());
+        composite.setLayout(createGridLayout(rows, new PixelConverter(parent), margins));
+        return composite;
+    }
+    
+    public static Composite createHVFillComposite(Composite parent, int margins) {
+        return createHVFillComposite(parent, margins, 1);
+    }
+    
+    public static Composite createHVFillComposite(Composite parent, int margins, int rows) {
+        final Composite composite= new Composite(parent, SWT.NONE);
+        composite.setFont(parent.getFont());
+        composite.setLayoutData(createHVFillGridData());
+        composite.setLayout(createGridLayout(rows, new PixelConverter(parent), margins));
+        return composite;
+    }
+
+    
+    /**
+     * Groups
+     */
+    
+    public static Group createHFillGroup(Composite parent, String text, int margins) {
+        return createHFillGroup(parent, text, margins, 1);
+    }
+    
+    public static Group createHFillGroup(Composite parent, String text, int margins, int rows) {
+        final Group group= new Group(parent, SWT.NONE);
+        group.setFont(parent.getFont());
+        group.setLayoutData(createHFillGridData());
+        if (text != null)
+            group.setText(text);
+        group.setLayout(createGridLayout(rows, new PixelConverter(parent), margins));
+        return group;
+    }
+    
+    public static Group createHVFillGroup(Composite parent, String text, int margins) {
+        return createHVFillGroup(parent, text, margins, 1);
+    }
+    
+    public static Group createHVFillGroup(Composite parent, String text, int margins, int rows) {
+        final Group group= new Group(parent, SWT.NONE);
+        group.setFont(parent.getFont());
+        group.setLayoutData(createHVFillGridData());
+        if (text != null)
+            group.setText(text);
+        group.setLayout(createGridLayout(rows, new PixelConverter(parent), margins));
+        return group;
+    }
+    
+
+    /**
+     * Grid data
+     */
     
     public static GridData createHVFillGridData() {
         return createHVFillGridData(1);
@@ -86,16 +149,18 @@ public class SWTUtils {
         
         switch (margins) {
         case MARGINS_NONE:
-            layout.marginWidth= 0;
-            layout.marginHeight= 0;
+            layout.marginLeft= layout.marginRight= 0;
+            layout.marginTop= layout.marginBottom= 0;
             break;
         case MARGINS_DIALOG:
-            layout.marginWidth= converter.convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
-            layout.marginHeight= converter.convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
+            layout.marginLeft= layout.marginRight= converter.convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
+            layout.marginTop= layout.marginBottom= converter.convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
             break;
         case MARGINS_DEFAULT:
-        	// nop
+            layout.marginLeft= layout.marginRight= layout.marginWidth;
+            layout.marginTop= layout.marginBottom= layout.marginHeight;
         }
+        layout.marginWidth= layout.marginHeight= 0;
         return layout;
     }
     
@@ -106,7 +171,8 @@ public class SWTUtils {
 
     public static Label createLabel(Composite parent, String message, int span) {
         final Label label= new Label(parent, SWT.WRAP);
-        label.setText(message);
+        if (message != null)
+        	label.setText(message);
         label.setLayoutData(createHFillGridData(span));
         return label;
     }
@@ -145,19 +211,19 @@ public class SWTUtils {
     }
     
 
-    public static Control createPlaceholder(Composite parent, PixelConverter converter, int heightInChars, int span) {
+    public static Control createPlaceholder(Composite parent, int heightInChars, int span) {
         Assert.isTrue(heightInChars > 0);
         final Control placeHolder= new Composite(parent, SWT.NONE);
         final GridData gd= new GridData(SWT.BEGINNING, SWT.TOP, false, false);
-        gd.heightHint= converter.convertHeightInCharsToPixels(heightInChars);
+        gd.heightHint= new PixelConverter(parent).convertHeightInCharsToPixels(heightInChars);
         gd.horizontalSpan= span;
         placeHolder.setLayoutData(gd);
         return placeHolder;
     }
 
     
-    public static Control createPlaceholder(Composite parent, PixelConverter converter, int heightInChars) {
-        return createPlaceholder(parent, converter, heightInChars, 1);
+    public static Control createPlaceholder(Composite parent, int heightInChars) {
+        return createPlaceholder(parent, heightInChars, 1);
     }
     
     public static PixelConverter createDialogPixelConverter(Control control) {

@@ -110,7 +110,7 @@ public class SharingWizardSyncPage extends CVSWizardPage implements ISyncInfoSet
 		errorPage = createErrorPage(pageBook);
 		errorPage.setLayoutData(SWTUtils.createHVFillGridData());
 		
-		SWTUtils.createPlaceholder(composite, converter, 1);
+		SWTUtils.createPlaceholder(composite, 1);
 		
 		fCheckbox= new Button(composite, SWT.CHECK);
 		fCheckbox.setLayoutData(SWTUtils.createHFillGridData());

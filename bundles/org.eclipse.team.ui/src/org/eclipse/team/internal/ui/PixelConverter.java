@@ -21,9 +21,12 @@ public class PixelConverter {
 	
 	public PixelConverter(Control control) {
 		GC gc = new GC(control);
-		gc.setFont(control.getFont());
-		fFontMetrics= gc.getFontMetrics();
-		gc.dispose();
+        try {
+            gc.setFont(control.getFont());
+            fFontMetrics= gc.getFontMetrics();
+        } finally {
+            gc.dispose();
+        }
 	}
 	
 	/**

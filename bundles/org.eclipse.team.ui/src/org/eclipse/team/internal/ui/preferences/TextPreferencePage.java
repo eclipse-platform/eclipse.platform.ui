@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferencePage;
@@ -49,7 +50,29 @@ import org.eclipse.ui.help.WorkbenchHelp;
  * remove entries from this table, and change their values from Text to Binary.
  */
 public class TextPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
-    
+	
+	private static final class ExtensionValidator implements IInputValidator {
+		public String isValid(String newText) {
+			if (newText.trim().length() == 0)
+				return ""; //$NON-NLS-1$
+			if (newText.indexOf('*') >= 0)
+				return Policy.bind("TextPreferencePage.2"); //$NON-NLS-1$
+			if (newText.indexOf('.') >= 0)
+				return Policy.bind("TextPreferencePage.3"); //$NON-NLS-1$
+			return null;
+		}
+	}
+	
+	private static final class FilenameValidator implements IInputValidator {
+		public String isValid(String newText) {
+			if (newText.trim().length() == 0)
+				return ""; //$NON-NLS-1$
+			if (newText.indexOf('*') >= 0)
+				return Policy.bind("TextPreferencePage.5"); //$NON-NLS-1$
+			return null;
+		}
+	}
+	
 	// The input for the table viewer
 	private final List fItems;
 	
@@ -103,8 +126,8 @@ public class TextPreferencePage extends PreferencePage implements IWorkbenchPref
 		initializeDialogUnits(parent);	
 		
 		final PixelConverter converter= SWTUtils.createDialogPixelConverter(parent);
-		final Composite composite= new Composite(parent, SWT.NONE);
-		composite.setLayout(SWTUtils.createGridLayout(2, converter, SWTUtils.MARGINS_NONE));
+		
+		final Composite composite= SWTUtils.createHVFillComposite(parent, SWTUtils.MARGINS_NONE, 2);
 		
 		fTable= new FileTypeTable(composite, fItems, false);
 
@@ -233,13 +256,11 @@ public class TextPreferencePage extends PreferencePage implements IWorkbenchPref
 	 * Add a new item to the table with the default type of Text.
 	 */
 	void addExtension() {
-		final InputDialog dialog = new InputDialog(getShell(), Policy.bind("TextPreferencePage.enterExtensionShort"), Policy.bind("TextPreferencePage.enterExtensionLong"), null, null); //$NON-NLS-1$ //$NON-NLS-2$
-		dialog.open();
-		if (dialog.getReturnCode() != Window.OK) return;
+		final InputDialog dialog = new InputDialog(getShell(), Policy.bind("TextPreferencePage.enterExtensionShort"), Policy.bind("TextPreferencePage.enterExtensionLong"), null, new ExtensionValidator()); //$NON-NLS-1$ //$NON-NLS-2$
+		if (dialog.open() != Window.OK) 
+			return;
 		
-		final String extension = dialog.getValue().trim().replaceAll("\\*\\.", "");  //$NON-NLS-1$ //$NON-NLS-2$
-		if (extension.equals(""))  //$NON-NLS-1$
-		    return;
+		final String extension = dialog.getValue().trim();
 		
 		// Check if the item already exists
 		final Iterator it = fItems.iterator();
@@ -259,13 +280,11 @@ public class TextPreferencePage extends PreferencePage implements IWorkbenchPref
 	 * Add a new item to the table with the default type of Text.
 	 */
 	void addName() {
-		final InputDialog dialog = new InputDialog(getShell(), "New File Type", "Enter a file name:", null, null); //$NON-NLS-1$ //$NON-NLS-2$
-		dialog.open();
-		if (dialog.getReturnCode() != Window.OK) return;
+		final InputDialog dialog = new InputDialog(getShell(), Policy.bind("TextPreferencePage.6"), Policy.bind("TextPreferencePage.7"), null, new FilenameValidator()); //$NON-NLS-1$ //$NON-NLS-2$
+		if (dialog.open() != Window.OK) 
+			return;
 		
 		final String name = dialog.getValue();
-		if (name.length() == 0 || name.indexOf(" ") >= 0)  //$NON-NLS-1$
-		    return; //$NON-NLS-1$
 		
 		// Check if the item already exists
 		final Iterator it = fItems.iterator();

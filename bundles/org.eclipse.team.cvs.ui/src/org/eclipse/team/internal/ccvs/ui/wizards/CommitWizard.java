@@ -13,13 +13,11 @@ package org.eclipse.team.internal.ccvs.ui.wizards;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
-
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.IFileContentManager;
@@ -112,7 +110,7 @@ public class CommitWizard extends ResizableWizard {
     
     public CommitWizard(final IResource [] resources) throws CVSException {
         
-        super("CommitWizard", CVSUIPlugin.getPlugin().getDialogSettings());
+        super(Policy.bind("CommitWizard.3"), CVSUIPlugin.getPlugin().getDialogSettings()); //$NON-NLS-1$
         
         setWindowTitle(Policy.bind("CommitWizard.2")); //$NON-NLS-1$
         setDefaultPageImageDescriptor(CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_NEW_LOCATION));
@@ -120,17 +118,17 @@ public class CommitWizard extends ResizableWizard {
         fResources= resources;
         fParticipant= new CommitWizardParticipant(new ResourceScope(fResources), this);
         
-        SyncInfoSet infos = getAllOutOfSync(resources);
+        SyncInfoSet infos = getAllOutOfSync();
         fOutOfSyncInfos= new SyncInfoSet(infos.getNodes(new FastSyncInfoFilter.SyncInfoDirectionFilter(new int [] { SyncInfo.OUTGOING, SyncInfo.CONFLICTING })));
         fUnaddedInfos= getUnaddedInfos(fOutOfSyncInfos);
     }
 
-	private SyncInfoSet getAllOutOfSync(final IResource[] resources) throws CVSException {
+	private SyncInfoSet getAllOutOfSync() throws CVSException {
 		final SubscriberSyncInfoCollector syncInfoCollector = fParticipant.getSubscriberSyncInfoCollector();
             try {
 				Workbench.getInstance().getProgressService().run(true, true, new IRunnableWithProgress() {
 				    public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				    	monitor.beginTask("Collecting outgoing changes", IProgressMonitor.UNKNOWN);
+				    	monitor.beginTask(Policy.bind("CommitWizard.4"), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
 				    	syncInfoCollector.waitForCollector(monitor);
 				    	monitor.done();
 				    }
@@ -168,7 +166,7 @@ public class CommitWizard extends ResizableWizard {
 
     public boolean performFinish() {
         
-        final String comment= getComment();
+        final String comment= fCommitPage.getComment(getShell());
         if (comment == null)
             return false;
         
@@ -256,32 +254,6 @@ public class CommitWizard extends ResizableWizard {
 
     private IWorkbenchPart getPart() {
         return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getPartService().getActivePart();
-    }
-    
-    private String getComment() {
-        final String comment= fCommitPage.getComment();
-        if (comment.length() == 0) {
-            
-            final IPreferenceStore store= CVSUIPlugin.getPlugin().getPreferenceStore();
-            final String value= store.getString(ICVSUIConstants.PREF_ALLOW_EMPTY_COMMIT_COMMENTS);
-            
-            if (MessageDialogWithToggle.NEVER.equals(value))
-                return null;
-            
-            if (MessageDialogWithToggle.PROMPT.equals(value)) {
-                
-                final String title= Policy.bind("CommitWizard.3"); //$NON-NLS-1$
-                final String message= Policy.bind("CommitWizard.4"); //$NON-NLS-1$
-                final String toggleMessage= Policy.bind("CommitWizard.5"); //$NON-NLS-1$
-                
-                final MessageDialogWithToggle dialog= MessageDialogWithToggle.openYesNoQuestion(getShell(), title, message, toggleMessage, false, store, ICVSUIConstants.PREF_ALLOW_EMPTY_COMMIT_COMMENTS);
-                if (dialog.getReturnCode() == IDialogConstants.NO_ID) {
-                    fCommitPage.setFocus();
-                    return null;
-                }
-            }
-        }
-        return comment;
     }
     
     private static void run(Shell shell, CommitWizard wizard) {

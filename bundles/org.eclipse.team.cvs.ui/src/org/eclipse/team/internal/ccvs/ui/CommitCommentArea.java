@@ -16,6 +16,9 @@ import java.util.Observer;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.*;
@@ -219,6 +222,32 @@ public class CommitCommentArea extends DialogArea {
 
         return stripped;
     }
+    
+    public String getCommentWithPrompt(Shell shell) {
+        final String comment= getComment(false);
+        if (comment.length() == 0) {
+            final IPreferenceStore store= CVSUIPlugin.getPlugin().getPreferenceStore();
+            final String value= store.getString(ICVSUIConstants.PREF_ALLOW_EMPTY_COMMIT_COMMENTS);
+            
+            if (MessageDialogWithToggle.NEVER.equals(value))
+                return null;
+            
+            if (MessageDialogWithToggle.PROMPT.equals(value)) {
+                
+                final String title= Policy.bind("CommitWizard.3"); //$NON-NLS-1$
+                final String message= Policy.bind("CommitWizard.4"); //$NON-NLS-1$
+                final String toggleMessage= Policy.bind("CommitWizard.5"); //$NON-NLS-1$
+                
+                final MessageDialogWithToggle dialog= MessageDialogWithToggle.openYesNoQuestion(shell, title, message, toggleMessage, false, store, ICVSUIConstants.PREF_ALLOW_EMPTY_COMMIT_COMMENTS);
+                if (dialog.getReturnCode() == IDialogConstants.NO_ID) {
+                    fTextBox.setFocus();
+                    return null;
+                }
+            }
+        }
+        return getComment(true);
+    }
+
     
     public void setProject(IProject iProject) {
         this.fMainProject = iProject;
