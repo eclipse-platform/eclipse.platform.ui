@@ -1034,14 +1034,19 @@ public final class InternalPlatform implements IPlatform {
 	public BundleContext getBundleContext() {
 		return context;
 	}
-	public Bundle getBundle(String id) {
-		return packageAdmin.getResolvedBundle(id,null,null);
+
+	public Bundle getBundle(String symbolicName) {
+		return packageAdmin.getResolvedBundle(symbolicName,null,null);
 	}
 	public boolean isFragment(Bundle bundle) {
 		return packageAdmin.isFragment(bundle);
-	}	public Bundle[] getHosts(Bundle bundle) {
+	}
+	
+	public Bundle[] getHosts(Bundle bundle) {
 		return packageAdmin.getHosts(bundle);
-	}	public Bundle[] getFragments(Bundle bundle) {
+	}
+	
+	public Bundle[] getFragments(Bundle bundle) {
 		return packageAdmin.getFragments(bundle);
 	}
 	public URL getInstallURL() {

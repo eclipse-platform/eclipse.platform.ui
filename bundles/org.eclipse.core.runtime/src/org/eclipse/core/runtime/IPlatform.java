@@ -649,5 +649,48 @@ public interface IPlatform {
 	 * @since 3.0
 	 */
 	public void setKeyringLocation(String keyringFile) throws IllegalStateException;
+
+    /**
+     * Returns the resolved bundle with the specified symbolic name that has the
+     * highest version.  If no resolved bundles are installed that have the 
+     * specified symbolic name then null is returned.
+     * 
+     * @param symbolicName the symbolic name of the bundle to be returned.
+     * @return the bundle that has the specified symbolic name with the 
+     * highest version, or <tt>null</tt> if no bundle is found.
+     * @since 3.0
+     */
+	public Bundle getBundle(String symbolicName);
+
+	/**
+	 * Checks if the specified bundle is a fragment bundle.
+	 * @return true if the specified bundle is a fragment bundle; otherwise false is returned.
+	 * @since 3.0
+	 */
+	public boolean isFragment(Bundle bundle);
+
+	/**
+	 * Returns an array of host bundles that the specified fragment bundle is 
+	 * attached to or <tt>null</tt> if the specified bundle is not attached to a host.  
+	 * If the bundle is not a fragment bundle then <tt>null</tt> is returned.
+	 * 
+	 * @param bundle the bundle to get the host bundles for.
+	 * @return an array of host bundles or null if the bundle does not have any
+	 * host bundles.
+	 * @since 3.0
+	 */
+	public Bundle[] getHosts(Bundle bundle);
+
+	/**
+	 * Returns an array of attached fragment bundles for the specified bundle.  If the 
+	 * specified bundle is a fragment then <tt>null</tt> is returned.  If no fragments are 
+	 * attached to the specified bundle then <tt>null</tt> is returned.
+	 * 
+	 * @param bundle the bundle to get the attached fragment bundles for.
+	 * @return an array of fragment bundles or <tt>null</tt> if the bundle does not 
+	 * have any attached fragment bundles. 
+	 * @since 3.0
+	 */
+	public Bundle[] getFragments(Bundle bundle);
 }
 
