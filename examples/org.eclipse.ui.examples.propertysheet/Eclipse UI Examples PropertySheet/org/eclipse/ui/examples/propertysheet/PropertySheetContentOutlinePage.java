@@ -29,30 +29,25 @@ public class PropertySheetContentOutlinePage extends ContentOutlinePage {
 public PropertySheetContentOutlinePage(IAdaptable adaptable) {
 	this.model = adaptable;
 }
-/* (non-Javadoc)
- * Method declared on Page
+/** 
+ * Creates the control and registers the popup menu for this page
+ * Menu id "org.eclipse.ui.examples.propertysheet.outline"
  */
 public void createControl(Composite parent) {
 	super.createControl(parent);
-	getTreeViewer().setContentProvider(new WorkbenchContentProvider());
-	getTreeViewer().setLabelProvider(new WorkbenchLabelProvider());
-	getTreeViewer().setInput(this.model); 
-	return;
-}
-/**
- * Creates and registers the popup menu for this page
- */
-public void init(IPageSite pageSite) {
-	super.init(pageSite);
+	TreeViewer viewer = getTreeViewer();
+	viewer.setContentProvider(new WorkbenchContentProvider());
+	viewer.setLabelProvider(new WorkbenchLabelProvider());
+	viewer.setInput(this.model); 
+	
 	// Configure the context menu.
 	MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
 	menuMgr.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));	
 	menuMgr.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS+"-end"));	 //$NON-NLS-1$
 
-	TreeViewer viewer = getTreeViewer();
 	Menu menu = menuMgr.createContextMenu(viewer.getTree());
 	viewer.getTree().setMenu(menu);
 	// Be sure to register it so that other plug-ins can add actions.
 	getSite().registerContextMenu("org.eclipse.ui.examples.propertysheet.outline", menuMgr, viewer); //$NON-NLS-1$
-}	
+}
 }

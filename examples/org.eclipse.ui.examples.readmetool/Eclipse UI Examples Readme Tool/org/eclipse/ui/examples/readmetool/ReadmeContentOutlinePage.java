@@ -32,8 +32,9 @@ public ReadmeContentOutlinePage(IFile input) {
 	super();
 	this.input = input;
 }
-/* (non-Javadoc)
- * Method declared on ContentOutlinePage
+/**  
+ * Creates the control and registers the popup menu for this page
+ * Menu id "org.eclipse.ui.examples.readmetool.outline"
  */
 public void createControl(Composite parent) {
 	super.createControl(parent);
@@ -45,6 +46,16 @@ public void createControl(Composite parent) {
 	viewer.setLabelProvider(new WorkbenchLabelProvider());
 	viewer.setInput(getContentOutline(input));
 	initDragAndDrop();
+	
+	// Configure the context menu.
+	MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
+	menuMgr.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));	
+	menuMgr.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS+"-end"));	 //$NON-NLS-1$
+
+	Menu menu = menuMgr.createContextMenu(viewer.getTree());
+	viewer.getTree().setMenu(menu);
+	// Be sure to register it so that other plug-ins can add actions.
+	getSite().registerContextMenu("org.eclipse.ui.examples.readmetool.outline", menuMgr, viewer);  //$NON-NLS-1$
 }
 /**
  * Gets the content outline for a given input element.
@@ -54,23 +65,6 @@ public void createControl(Composite parent) {
 private IAdaptable getContentOutline(IAdaptable input) {
 	return ReadmeModelFactory.getInstance().getContentOutline(input);
 }
-/**
- * Creates and registers the popup menu for this page
- * Menu id "org.eclipse.ui.examples.readmetool.outline"
- */
-public void init(IPageSite pageSite) {
-	super.init(pageSite);
-	// Configure the context menu.
-	MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
-	menuMgr.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));	
-	menuMgr.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS+"-end"));	 //$NON-NLS-1$
-
-	TreeViewer viewer = getTreeViewer();
-	Menu menu = menuMgr.createContextMenu(viewer.getTree());
-	viewer.getTree().setMenu(menu);
-	// Be sure to register it so that other plug-ins can add actions.
-	getSite().registerContextMenu("org.eclipse.ui.examples.readmetool.outline", menuMgr, viewer);  //$NON-NLS-1$
-}	
 /**
  * Initializes drag and drop for this content outline page.
  */
