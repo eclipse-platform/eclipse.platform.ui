@@ -1085,7 +1085,6 @@ public final class Workbench implements IWorkbench {
 			ErrorDialog.openError(newWindow.getShell(), WorkbenchMessages.getString("Problems_Opening_Page"), //$NON-NLS-1$
 			e.getMessage(), e.getStatus());
 		}
-		newWindow.open();
 	}
 
 	/*
@@ -1268,7 +1267,6 @@ public final class Workbench implements IWorkbench {
 			} catch (WorkbenchException e) {
 				result.add(e.getStatus());
 			}
-			newWindow.open();
 		}
 		return result;
 	}
@@ -1404,6 +1402,11 @@ public final class Workbench implements IWorkbench {
 			// let the advisor run its start up code
 			if (initOK) {
 				advisor.postStartup(); // may trigger a close/restart
+			}
+
+			IWorkbenchWindow [] windows = getWorkbenchWindows();
+			for (int i = 0; i < windows.length; i++) {	
+				((WorkbenchWindow)windows[i]).open();
 			}
 
 			if (initOK && runEventLoop) {

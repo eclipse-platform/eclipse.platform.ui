@@ -1028,11 +1028,13 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 			}
 			
 			if (window != null) {
-				configurer.getWorkbench().showIntro(window);
-				IDEWorkbenchPlugin.getDefault().getPreferenceStore().setValue(IDEInternalPreferences.INTRO, false);
+				if (configurer.getWorkbench().showIntro(window) != null) {
+					IDEWorkbenchPlugin.getDefault().getPreferenceStore().setValue(IDEInternalPreferences.INTRO, false);
+					return true;
+				}
 			}	
 		}
-	return configurer.getWorkbench().getIntroRegistry().getIntroCount() > 0;
+		return false;
 	}	
 	
 	public void fillActionBars(IWorkbenchWindow window, IActionBarConfigurer actionConfigurer, int flags) {
