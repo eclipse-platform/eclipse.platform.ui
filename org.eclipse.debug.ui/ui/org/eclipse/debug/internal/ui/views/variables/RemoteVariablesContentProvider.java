@@ -15,11 +15,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugElement;
-import org.eclipse.debug.core.model.IStackFrame;
-import org.eclipse.debug.core.model.IValue;
-import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.views.IDebugExceptionHandler;
 import org.eclipse.debug.internal.ui.views.RemoteTreeViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -141,23 +137,7 @@ public class RemoteVariablesContentProvider extends BaseWorkbenchContentProvider
 	 * @see ITreeContentProvider#hasChildren(Object)
 	 */
 	public boolean hasChildren(Object element) {
-		try {
-			if (element instanceof IVariable) {
-				if (element instanceof IndexedVariablePartition) {
-					return true;
-				}
-				element = ((IVariable)element).getValue();
-			}
-			if (element instanceof IValue) {
-				return ((IValue)element).hasVariables();
-			}
-			if (element instanceof IStackFrame) {
-				return ((IStackFrame)element).hasVariables();
-			}
-		} catch (DebugException de) {
-			return false;
-		}
-		return false;
+        return fManager.mayHaveChildren(element);
 	}
 		
 	/**
