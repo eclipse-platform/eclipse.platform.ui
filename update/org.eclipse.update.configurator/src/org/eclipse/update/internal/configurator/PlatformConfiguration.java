@@ -54,6 +54,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	private static boolean cmdUpdate = false;
 	private static boolean cmdNoUpdate = false;
 	private static boolean cmdDev = false;
+	private static boolean cmdNoLinkedConfig = true;
 
 	private static final String ECLIPSE = "eclipse"; //$NON-NLS-1$
 	private static final String CONFIG_DIR = ".config"; //$NON-NLS-1$
@@ -117,6 +118,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	private static final String CMD_NO_UPDATE = "-noupdate"; //$NON-NLS-1$
 	private static final String CMD_NEW_UPDATES = "-newUpdates"; //$NON-NLS-1$
 	private static final String CMD_DEV = "-dev"; // triggers -noupdate //$NON-NLS-1$
+	private static final String CMD_NO_LINKED_CONFIG = "-no_linked_config";
 
 	public static final String RECONCILER_APP = "org.eclipse.update.core.reconciler"; //$NON-NLS-1$
 
@@ -702,7 +704,13 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 					// pre-initialized config loaded OK ... copy any remaining update metadata
 					// Only copy if the default config location is not the install location
 					if (!sharedConfigDirURL.equals(configDirURL)) {
-						copyInitializedState(sharedConfigDirURL, configPath);
+//						if (cmdNoLinkedConfig)
+//							// need to link config info instead of using a copy
+//							linkInitializedState(sharedConfigDirURL, configPath);
+//						else
+							// copy config info
+							copyInitializedState(sharedConfigDirURL, configPath);
+						
 						Utils.debug("Configuration initialized from    " + sharedConfigDirURL.toString()); //$NON-NLS-1$
 					}
 					return;
@@ -959,6 +967,31 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			}
 		}
 	}
+	
+	private void linkInitializedState(URL source, String target) {
+		try {
+			if (!source.getProtocol().equals("file")) //$NON-NLS-1$
+				return; // need to be able to do "dir"
+
+			copy(new File(source.getFile()), new File(target));
+			// modify config.ini and platform.cfg to only link original files
+			File configIni = new File(target, CONFIG_INI);
+			Properties props = new Properties();
+			props.put("link", new URL(source, CONFIG_DIR+"/"+CONFIG_INI));
+			props.store(new FileOutputStream(configIni), "Linked configuration");
+			
+			File platformCfg = new File(target, CONFIG_NAME);
+			props = new Properties();
+			props.put(CFG_VERSION, VERSION);
+			props.put("link", new URL(source, CONFIG_DIR+"/"+CONFIG_NAME));
+			props.store(new FileOutputStream(platformCfg), "Linked configuration");
+
+		} catch (IOException e) {
+			// this is an optimistic copy. If we fail, the state will be reconciled
+			// when the update manager is triggered.
+			System.out.println(e);
+		}
+	}
 
 	private void copyInitializedState(URL source, String target) {
 		try {
@@ -1124,6 +1157,8 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		InputStream is = null;
 		try {
 			is = url.openStream();
+			if (is == null)
+				throw new IOException();
 			props.load(is);
 			// check to see if we have complete config file
 			if (!EOF.equals(props.getProperty(EOF))) {
@@ -1551,6 +1586,12 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 				found = true;
 			}
 
+			// look for the no-linked-config flag
+			if (args[i].equalsIgnoreCase(CMD_NO_LINKED_CONFIG)) {
+				cmdNoLinkedConfig = true;
+				found = true;
+			}
+			
 			// look for the initialization flag
 			if (args[i].equalsIgnoreCase(CMD_INITIALIZE)) {
 				cmdInitialize = true;
