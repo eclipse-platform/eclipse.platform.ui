@@ -27,12 +27,10 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.resources.CVSEntryLineTag;
@@ -194,7 +192,6 @@ public class SyncFileWriter {
 		if (!cvsSubDir.isTeamPrivateMember()) {
 			try {
 				cvsSubDir.setTeamPrivateMember(true);
-				CVSProviderPlugin.log(new CVSStatus(IStatus.WARNING, Policy.bind("SyncFileWriter.cvsFolderNotHidden", cvsSubDir.getFullPath().toString()))); //$NON-NLS-1$
 			} catch (CoreException e) {
 				CVSProviderPlugin.log(e.getStatus());
 			}
