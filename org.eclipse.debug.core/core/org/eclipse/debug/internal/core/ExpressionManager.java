@@ -51,8 +51,6 @@ import org.w3c.dom.NodeList;
  * The expression manager manages all registered expressions
  * for the debug plugin. It is instantiated by the debug plugin
  * at startup.
- * 
- * [XXX: expression persistence not yet implemented]
  *
  * @see IExpressionManager
  */
@@ -130,6 +128,9 @@ public class ExpressionManager implements IExpressionManager, IDebugEventSetList
 
 	/**
 	 * Loads any persisted watch expresions from the preferences.
+	 * NOTE: It's important that no setter methods are called on
+	 * 		the watchpoints which will fire change events as this
+	 * 		will cause an infinite loop (see Bug 27281).
 	 */
 	private void loadPersistedExpressions() {
 		String expressionsString= DebugPlugin.getDefault().getPluginPreferences().getString(PREF_WATCH_EXPRESSIONS);
@@ -161,8 +162,7 @@ public class ExpressionManager implements IExpressionManager, IDebugEventSetList
 				String expressionText= element.getAttribute(TEXT_TAG);
 				if (expressionText.length() > 0) {
 					boolean enabled= TRUE_VALUE.equals(element.getAttribute(ENABLED_TAG));
-					IWatchExpression expression= newWatchExpression(expressionText);
-					expression.setEnabled(enabled);
+					IWatchExpression expression= newWatchExpression(expressionText, enabled);
 					if (fExpressions == null) {
 						fExpressions= new Vector(list.getLength());
 					}
@@ -174,6 +174,21 @@ public class ExpressionManager implements IExpressionManager, IDebugEventSetList
 		}
 	}
 	
+	/**
+	 * Creates a new watch expression with the given expression
+	 * and the given enablement;
+	 * 
+	 * @param expressionText the text of the expression to be evaluated
+	 * @param enabled whether or not the new expression should be enabled
+	 * @return the new watch expression
+	 */
+	private IWatchExpression newWatchExpression(String expressionText, boolean enabled) {
+		return new WatchExpression(expressionText, enabled);
+	}
+
+	/**
+	 * @see IExpressionManager#newWatchExpression(String)
+	 */
 	public IWatchExpression newWatchExpression(String expressionText) {
 		return new WatchExpression(expressionText);
 	}

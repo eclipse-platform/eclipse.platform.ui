@@ -48,6 +48,18 @@ public class WatchExpression implements IWatchExpression {
 	}
 
 	/**
+	 * Creates a new watch expression with the given expression
+	 * and the given enablement;
+	 * 
+	 * @param expressionText the text of the expression to be evaluated
+	 * @param enabled whether or not the new expression should be enabled
+	 */
+	public WatchExpression(String expressionText, boolean enabled) {
+		this(expressionText);
+		fEnabled= enabled;
+	}
+
+	/**
 	 * @see org.eclipse.debug.core.model.IWatchExpression#setExpressionContext(java.lang.Object)
 	 */
 	public void setExpressionContext(IDebugElement context) {
