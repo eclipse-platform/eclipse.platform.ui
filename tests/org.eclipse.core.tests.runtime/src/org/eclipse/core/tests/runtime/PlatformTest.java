@@ -1,21 +1,22 @@
-/*******************************************************************************
+/**********************************************************************
  * Copyright (c) 2002 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors:
+ * Contributors: 
  * IBM - Initial API and implementation
- ******************************************************************************/
+ **********************************************************************/
 package org.eclipse.core.tests.runtime;
 
-import java.net.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.model.*;import org.eclipse.core.tests.harness.*;
-import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.*;
-import junit.framework.*;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.eclipse.core.runtime.*;
 
 /**
  * Test cases for the Platform API

@@ -1,13 +1,13 @@
-/*******************************************************************************
+/**********************************************************************
  * Copyright (c) 2002 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors:
+ * Contributors: 
  * IBM - Initial API and implementation
- ******************************************************************************/
+ **********************************************************************/
 package org.eclipse.core.tests.runtime;
 
 import org.eclipse.core.runtime.*;
@@ -47,25 +47,25 @@ public static Test suite() {
 public void testQualifiers() {
 	
 	try {
-		QualifiedName qN1 = new QualifiedName("foo","bar");
+		new QualifiedName("foo","bar");
 	} catch (Exception e) {
 		fail("1.0");
 	}
 	
 	try {
-		QualifiedName qN3 = new QualifiedName(null,"bar");
+		new QualifiedName(null,"bar");
 	} catch (Exception e) {
 		fail("1.1");
 	}
 
 	try {
-		QualifiedName qN2 = new QualifiedName(" ","bar");
+		new QualifiedName(" ","bar");
 	} catch (Exception e) {
 		fail("1.2");
 	}
 	
 	try {
-		QualifiedName qN2 = new QualifiedName("","bar");
+		new QualifiedName("","bar");
 	} catch (Exception e) {
 		fail("1.3");
 	}
@@ -75,25 +75,25 @@ public void testQualifiers() {
 public void testLocalNames() {
 	
 	try {
-		QualifiedName qN1 = new QualifiedName("foo", null);
+		new QualifiedName("foo", null);
 		fail("2.0");
 	} catch (Exception e) {
 	}
 	
 	try {
-		QualifiedName qN2 = new QualifiedName("foo","");
+		new QualifiedName("foo","");
 		fail("2.1");
 	} catch (Exception e) {
 	}
 	
 	try {
-		QualifiedName qN3 = new QualifiedName("foo"," ");
+		new QualifiedName("foo"," ");
 	} catch (Exception e) {
 		fail("2.2");
 	}
 	
 	try {
-		QualifiedName qN3 = new QualifiedName("foo"," port ");
+		new QualifiedName("foo"," port ");
 	} catch (Exception e) {
 		fail("2.3");
 	}	

@@ -1,13 +1,13 @@
-/*******************************************************************************
- * Copyright (c) 2002 International Business Machines Corp. and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v0.5 
+/**********************************************************************
+ * Copyright (c) 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors:
- *     IBM Corporation - initial test suite
- ******************************************************************************/
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.core.tests.runtime;
 
 import java.io.*;
@@ -58,7 +58,6 @@ public class PreferencesTest extends RuntimeTest {
 		
 		Preferences ps = new Preferences();
 		final String k1 = "key1";
-		final String k2 = "key2";
 		final String v1 = "1";
 		final String v2 = "2";
 		final String v3 = "3";
@@ -302,10 +301,6 @@ public class PreferencesTest extends RuntimeTest {
 	public void testContains() {
 
 		Preferences ps = new Preferences();
-		String k1 = "missing";
-		String k2 = "a";
-		String k3 = "b";
-		String k4 = "c";
 		
 		// there are no properties initially
 		assertEquals("1.0", false, ps.contains("a"));
