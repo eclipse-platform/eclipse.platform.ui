@@ -985,6 +985,10 @@ public boolean isLocal(int depth) {
 	ResourceInfo info = getResourceInfo(false, false);
 	return isLocal(getFlags(info), depth);
 }
+/**
+ * Note the depth parameter is intentionally ignored because 
+ * this method is over-ridden by Container.isLocal().
+ */
 public boolean isLocal(int flags, int depth) {
 	if (getType() == PROJECT)
 		return flags != NULL_FLAG; // exists
