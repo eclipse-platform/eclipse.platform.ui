@@ -67,6 +67,7 @@ public class UnifiedSearchCategory extends SearchCategory {
 						monitor.subTask(feature.getLabel());
 					}
 				} catch (CoreException e) {
+					System.out.println(e);
 				} finally {
 					monitor.worked(1);
 				}
