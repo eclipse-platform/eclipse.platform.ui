@@ -262,12 +262,6 @@ public interface IExternalToolConstants {
 	public static final String ATTR_RUN_IN_BACKGROUND = PLUGIN_ID + ".ATTR_RUN_IN_BACKGROUND"; //$NON-NLS-1$
 	
 	/**
-	 * Boolean attribute indicating if output should be captured from an
-	 * external tool when run. Default value is <code>true</code>.
-	 */
-	public static final String ATTR_CAPTURE_OUTPUT = PLUGIN_ID + ".ATTR_CAPTURE_OUTPUT"; //$NON-NLS-1$
-	
-	/**
 	 * Boolean attribute indicating whether an external tool should be placed
 	 * in the external tools menu. . Default value is <code>false</code>.
 	 */
