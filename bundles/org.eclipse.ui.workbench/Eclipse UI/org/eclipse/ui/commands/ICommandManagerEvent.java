@@ -55,12 +55,12 @@ public interface ICommandManagerEvent {
 	/**
 	 * TODO javadoc
 	 */	
-	boolean haveActiveActivityIdsChanged();
+	boolean hasModeChanged();	
 	
 	/**
 	 * TODO javadoc
 	 */	
-	boolean haveActiveCommandIdsChanged();
+	boolean haveActiveActivityIdsChanged();
 
 	/**
 	 * TODO javadoc
@@ -76,9 +76,4 @@ public interface ICommandManagerEvent {
 	 * TODO javadoc
 	 */		
 	boolean haveDefinedKeyConfigurationIdsChanged();	
-	
-	/**
-	 * TODO javadoc
-	 */	
-	boolean haveEnabledCommandIdsChanged();	
 }

@@ -538,13 +538,8 @@ private void handleWidgetSelection(Event e, boolean selection) {
 			long ms = System.currentTimeMillis();
 			if(trace)
 				System.out.println("Running action: " + action.getText()); //$NON-NLS-1$
-			
-			/* TODO this may be necessary. check after M4.
-			CommandResolver.ICallback callback = CommandResolver.getInstance().getCommandResolver();
-						
-			if (callback == null || callback.isKeyFilterEnabled())
-			*/
-				action.runWithEvent(e);
+
+			action.runWithEvent(e);
 			
 			if(trace)
 				System.out.println((System.currentTimeMillis() - ms) + " ms to run action: "  + action.getText()); //$NON-NLS-1$
