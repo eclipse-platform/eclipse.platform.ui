@@ -5,10 +5,16 @@ package org.eclipse.team.internal.ccvs.ui.merge;
  * All Rights Reserved.
  */
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ccvs.core.resources.CVSRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
+import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
 import org.eclipse.team.internal.ccvs.ui.sync.CVSSyncCompareInput;
 import org.eclipse.team.internal.ui.sync.ITeamNode;
 import org.eclipse.team.internal.ui.sync.SyncSet;
@@ -36,4 +42,20 @@ public class OverrideUpdateMergeAction extends UpdateMergeAction {
 		return IHelpContextIds.MERGE_FORCED_UPDATE_ACTION;
 	}
 
+	/**
+	 * This method is the same as the inherited methd but it does not unmanage
+	 * because merging should leave the files as outgoing deletions
+	 * 
+	 * @see org.eclipse.team.internal.ccvs.ui.sync.UpdateSyncAction#runLocalDeletions(ITeamNode[], RepositoryManager, IProgressMonitor)
+	 */
+	protected void runLocalDeletions(ITeamNode[] nodes, RepositoryManager manager, IProgressMonitor monitor) throws TeamException, CoreException {
+		monitor.beginTask(null, nodes.length * 100);
+		for (int i = 0; i < nodes.length; i++) {
+			ITeamNode node = nodes[i];
+			CVSRemoteSyncElement element = CVSSyncCompareInput.getSyncElementFrom(node);
+			deleteAndKeepHistory(element.getLocal(), Policy.subMonitorFor(monitor, 100));
+		}
+		monitor.done();
+	}
+	
 }

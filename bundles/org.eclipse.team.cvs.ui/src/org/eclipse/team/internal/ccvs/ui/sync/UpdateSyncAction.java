@@ -252,7 +252,7 @@ public class UpdateSyncAction extends MergeAction {
 		}
 		try {
 			// Calculate the total amount of work needed
-			int work = (makeIncoming.size() + (deletions.size() * 2) + updateDeletions.size() + updateShallow.size() + updateIgnoreLocalShallow.size() + updateDeep.size()) * 100;
+			int work = (makeIncoming.size() + deletions.size() + updateDeletions.size() + updateShallow.size() + updateIgnoreLocalShallow.size() + updateDeep.size()) * 100;
 			monitor.beginTask(null, work);
 
 			RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
@@ -296,13 +296,10 @@ public class UpdateSyncAction extends MergeAction {
 				CVSRemoteSyncElement element = CVSSyncCompareInput.getSyncElementFrom(node);
 				element.makeIncoming(Policy.subMonitorFor(monitor, 100));
 			}
-			// Outgoing additions must be unmanaged (if necessary) and locally deleted.
-			it = deletions.iterator();
-			while (it.hasNext()) {
-				ITeamNode node = (ITeamNode)it.next();
-				CVSRemoteSyncElement element = CVSSyncCompareInput.getSyncElementFrom(node);
-				element.makeIncoming(Policy.subMonitorFor(monitor, 100));
-				deleteAndKeepHistory(element.getLocal(), Policy.subMonitorFor(monitor, 100));
+			
+			// Outgoing additions or conflicts with incoming deletions must be unmanaged and locally deleted.
+			if (deletions.size() > 0) {
+				runLocalDeletions((ITeamNode[])deletions.toArray(new ITeamNode[deletions.size()]), manager, Policy.subMonitorFor(monitor, deletions.size() * 100));
 			}
 			
 			if (updateDeletions.size() > 0) {
@@ -334,16 +331,27 @@ public class UpdateSyncAction extends MergeAction {
 	 * @param iResource
 	 * @param iProgressMonitor
 	 */
-	private void deleteAndKeepHistory(IResource resource, IProgressMonitor monitor) throws CoreException {
+	protected void deleteAndKeepHistory(IResource resource, IProgressMonitor monitor) throws CoreException {
 		if (resource.getType() == IResource.FILE)
 			((IFile)resource).delete(false /* force */, true /* keep history */, monitor);
 		else
 			resource.delete(false /* force */, monitor);
 	}
 
-	 protected void runUpdateDeletions(ITeamNode[] nodes, RepositoryManager manager, IProgressMonitor monitor) throws TeamException {
-	 		 manager.update(getIResourcesFrom(nodes), new Command.LocalOption[] { Command.DO_NOT_RECURSE }, false, monitor);
-	 }
+	protected void runLocalDeletions(ITeamNode[] nodes, RepositoryManager manager, IProgressMonitor monitor) throws TeamException, CoreException {
+		monitor.beginTask(null, nodes.length * 100);
+		for (int i = 0; i < nodes.length; i++) {
+			ITeamNode node = nodes[i];
+			CVSRemoteSyncElement element = CVSSyncCompareInput.getSyncElementFrom(node);
+			element.makeIncoming(Policy.subMonitorFor(monitor, 50));
+			deleteAndKeepHistory(element.getLocal(), Policy.subMonitorFor(monitor, 50));
+		}
+		monitor.done();
+	}
+	
+	protected void runUpdateDeletions(ITeamNode[] nodes, RepositoryManager manager, IProgressMonitor monitor) throws TeamException {
+		manager.update(getIResourcesFrom(nodes), new Command.LocalOption[] { Command.DO_NOT_RECURSE }, false, monitor);
+	}
 	
 	protected void runUpdateDeep(ITeamNode[] nodes, RepositoryManager manager, IProgressMonitor monitor) throws TeamException {
 		manager.update(getIResourcesFrom(nodes), Command.NO_LOCAL_OPTIONS, false, monitor);
