@@ -27,6 +27,11 @@ org.eclipse.ui/trace/part.activate=false
 # Reports the time to noticy part listeners.
 org.eclipse.ui/trace/part.listeners=false
 
+# Reports the time to noticy page listeners.
+org.eclipse.ui/trace/page.listeners=false
+
+# Reports the time to noticy perspective listeners.
+org.eclipse.ui/trace/perspective.listeners=false
 
 # Reports events received and dispatched by the key binding architecture
 org.eclipse.ui/trace/keyBindings=false
@@ -55,3 +60,6 @@ org.eclipse.ui/debug/job.stale=false
 
 # Restrict the verbose information to a particular command
 org.eclipse.ui/trace/handlers.verbose.commandId=
+
+# Include timing information with other debug messages
+org.eclipse.ui/trace/include.timings=true
