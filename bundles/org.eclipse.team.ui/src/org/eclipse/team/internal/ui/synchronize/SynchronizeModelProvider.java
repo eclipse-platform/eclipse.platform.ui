@@ -13,7 +13,6 @@ package org.eclipse.team.internal.ui.synchronize;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
-
 import org.eclipse.compare.structuremergeviewer.IDiffContainer;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.*;
@@ -296,7 +295,7 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 	 * @param event
 	 *            the event containing the changed resourcses.
 	 */
-	protected void handleChanges(ISyncInfoTreeChangeEvent event) {
+	protected final void handleChanges(ISyncInfoTreeChangeEvent event) {
 		StructuredViewer viewer = getViewer();
 		try {			
 			viewer.getControl().setRedraw(false);
@@ -550,7 +549,7 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 	 * are accumulated and updated in a single call.
 	 * @param diffNode the diff node to be updated
 	 */
-	protected void updateLabel(ISynchronizeModelElement diffNode) {
+	protected void queueForLabelUpdate(ISynchronizeModelElement diffNode) {
 		pendingLabelUpdates.add(diffNode);
 	}
 	
@@ -573,12 +572,16 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 	 */
 	protected void firePendingLabelUpdates() {
 		try {
-			if (canUpdateViewer()) {
-				StructuredViewer tree = getViewer();
-				tree.update(pendingLabelUpdates.toArray(new Object[pendingLabelUpdates.size()]), null);
-			}
+			startLabelUpdateJob((ISynchronizeModelElement[])pendingLabelUpdates.toArray(new ISynchronizeModelElement[pendingLabelUpdates.size()]));
 		} finally {
 			pendingLabelUpdates.clear();
+		}
+	}
+	
+	private void updateLabels(Object[] elements) {
+		if (canUpdateViewer()) {
+			StructuredViewer tree = getViewer();	
+			tree.update(elements, null);
 		}
 	}
 
@@ -685,10 +688,10 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 	}
 
 	private void updateParentLabels(ISynchronizeModelElement diffNode) {
-		updateLabel(diffNode);
+		queueForLabelUpdate(diffNode);
 		while (diffNode.getParent() != null) {
 			diffNode = (ISynchronizeModelElement)diffNode.getParent();
-			updateLabel(diffNode);
+			queueForLabelUpdate(diffNode);
 		}
 	}
 	
@@ -719,37 +722,39 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 				}
 			
 			if (!changes.isEmpty()) {
-				processMarkerChanges(changes);
+				startLabelUpdateJob((ISynchronizeModelElement[]) changes.values().toArray(new ISynchronizeModelElement[changes.size()]));
 		}
 	}
 	
 	/**
 	 * Calculate the properties for affected resources in our model and fire
-	 * label changes for changed elements.
+	 * label changes for changed elements. This will happen in a background
+	 * job.
 	 * 
-	 * @param changes the model elements that have changed.
+	 * @param changes the model elements that have changed and need
+	 * their labels updated. Note that this will update the annotations on the
+	 * label because the element will already have the correct image and text.
 	 */
-	private void processMarkerChanges(final Map changes) {
-		Job job = new Job("Synchronize View: Processing marker changes") { //$NON-NLS-1$
+	private void startLabelUpdateJob(final ISynchronizeModelElement[] changes) {
+		Job job = new Job("Synchronize View: Processing label changes") { //$NON-NLS-1$
 			protected IStatus run(IProgressMonitor monitor) {
 				long start = System.currentTimeMillis();
 				synchronized (this) {
-					// Changes contains all resources with marker changes
-					for (Iterator it = changes.values().iterator(); it.hasNext();) {
-						ISynchronizeModelElement element = (ISynchronizeModelElement) it.next();
-						calculateProperties(element, false);
+					// Changes contains all elements that need their labels updated
+					for (int i = 0; i < changes.length; i++) {
+						calculateProperties(changes[i], false);
 					}
 				}
 				if (DEBUG) {
 					long time = System.currentTimeMillis() - start;
 					DateFormat TIME_FORMAT = new SimpleDateFormat("m:ss.SSS"); //$NON-NLS-1$
 					String took = TIME_FORMAT.format(new Date(time));
-					System.out.println(took + " for " + changes.size() + " files"); //$NON-NLS-1$//$NON-NLS-2$
+					System.out.println(took + " for " + changes.length + " files"); //$NON-NLS-1$//$NON-NLS-2$
 				}
 				// Fire label changed
 				asyncExec(new Runnable() {
 					public void run() {
-						firePendingLabelUpdates();
+						updateLabels(changes);
 					}
 				});
 				return Status.OK_STATUS;
@@ -779,17 +784,17 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 	}
 	
 	private void asyncExec(final Runnable r) {
-		if (canUpdateViewer()) {
-			final Control ctrl = getViewer().getControl();
-			if (ctrl != null && !ctrl.isDisposed()) {
-				ctrl.getDisplay().asyncExec(new Runnable() {
-					public void run() {
-						if (!ctrl.isDisposed()) {
-							BusyIndicator.showWhile(ctrl.getDisplay(), r);
-							}
-						}
-					});
-			}
+		StructuredViewer v = getViewer();
+		if(v == null) return;
+		final Control ctrl = v.getControl();
+		if (ctrl != null && !ctrl.isDisposed()) {
+			ctrl.getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					if (!ctrl.isDisposed()) {
+						BusyIndicator.showWhile(ctrl.getDisplay(), r);
+					}
+				}
+			});
 		}
 	}
 }
