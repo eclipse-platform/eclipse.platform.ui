@@ -28,10 +28,14 @@ public interface IFlushableStreamMonitor extends IStreamMonitor {
 	public void flushContents();
 	
 	/**
-	 * Sets whether the contents of this monitor's underlying stream is
-	 * buffered.
+	 * Sets whether the contents of this monitor's underlying stream should be
+	 * buffered. When <code>false</code>, contents appended to this stream monitor
+	 * are not stored in a buffer, and are thus not available from
+	 * <code>getContents()</code>. Registered listeners are notified of appended
+	 * text, and must buffer the contents if desired.
 	 * 
-	 * @param buffer
+	 * @param buffer whether the contents of this monitor's underlying stream
+	 * should be buffered
 	 */
 	public void setBuffered(boolean buffer);
 	

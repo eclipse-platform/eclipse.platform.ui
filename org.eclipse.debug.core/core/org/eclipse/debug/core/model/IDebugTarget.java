@@ -85,12 +85,9 @@ public interface IDebugTarget extends IDebugElement, ITerminate, ISuspendResume,
 	public String getName() throws DebugException;
 	
 	/**
-	 * Returns whether the given breakpoint is supported by this
-	 * target - i.e. whether the given breakpoint could be installed
-	 * in this target. 
+	 * Returns whether this target can install the given breakpoint. 
 	 * 
-	 * @return whether the given breakpoint is supported by this
-	 * target
+	 * @return whether this target can install the given breakpoint
 	 */
 	public boolean supportsBreakpoint(IBreakpoint breakpoint);
 }

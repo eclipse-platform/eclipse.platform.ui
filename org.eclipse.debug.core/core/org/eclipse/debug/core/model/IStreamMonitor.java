@@ -22,7 +22,8 @@ import org.eclipse.debug.core.IStreamListener;
  * provides an implementation of the <code>IStreamsProxy</code>
  * interface must also provide an implementation of this interface.
  * </p>
- * @see IStreamsProxy
+ * @see org.eclipse.debug.core.model.IStreamsProxy
+ * @see org.eclipse.debug.core.model.IFlushableStreamMonitor
  */
 public interface IStreamMonitor {
 	/**
