@@ -72,7 +72,9 @@ public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbe
 				slave.setEnabled(master.getSelection());
 			}
 
-			public void widgetDefaultSelected(SelectionEvent e) {}
+			public void widgetDefaultSelected(SelectionEvent e) {
+				slave.setEnabled(master.getSelection());
+			}
 		});		
 	}
 		
@@ -84,6 +86,11 @@ public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbe
 		{TextEditorMessages.getString("TextEditorPreferencePage.addedLineColor"), TextEditorPreferenceConstants.LINE_NUMBER_ADDED_COLOR}, //$NON-NLS-1$
 		{TextEditorMessages.getString("TextEditorPreferencePage.deletedLineColor"), TextEditorPreferenceConstants.LINE_NUMBER_DELETED_COLOR}, //$NON-NLS-1$
 	};
+	
+	/** Button controlling the display of the line number ruler. */
+	private Button fLineNumberRulerButton;
+	/** Button controlling the display of quick diff information on line number ruler. */
+	private Button fQuickDiffRulerButton;
 	
 	private final String[][] fAnnotationColorListModel;
 
@@ -237,11 +244,11 @@ public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbe
 		addCheckBox(appearanceComposite, label, TextEditorPreferenceConstants.EDITOR_OVERVIEW_RULER, 0);
 				
 		label= TextEditorMessages.getString("TextEditorPreferencePage.showLineNumbers"); //$NON-NLS-1$
-		Button lineNumberBarButton= addCheckBox(appearanceComposite, label, TextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER, 0);
+		fLineNumberRulerButton= addCheckBox(appearanceComposite, label, TextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER, 0);
 
 		label= TextEditorMessages.getString("TextEditorPreferencePage.enableQuickDiff"); //$NON-NLS-1$
-		Button quickDiffButton= addCheckBox(appearanceComposite, label, TextEditorPreferenceConstants.LINE_NUMBER_BAR_QUICK_DIFF, 0);
-		createDependency(lineNumberBarButton, quickDiffButton);
+		fQuickDiffRulerButton= addCheckBox(appearanceComposite, label, TextEditorPreferenceConstants.LINE_NUMBER_BAR_QUICK_DIFF, 0);
+		createDependency(fLineNumberRulerButton, fQuickDiffRulerButton);
 
 		label= TextEditorMessages.getString("TextEditorPreferencePage.highlightCurrentLine"); //$NON-NLS-1$
 		addCheckBox(appearanceComposite, label, TextEditorPreferenceConstants.EDITOR_CURRENT_LINE, 0);
@@ -490,6 +497,9 @@ public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbe
 			String key= (String) fCheckBoxes.get(b);
 			b.setSelection(fOverlayStore.getBoolean(key));
 		}
+		
+		// initalize dependencies separately
+		fQuickDiffRulerButton.setEnabled(fLineNumberRulerButton.getSelection());
 		
 		e= fTextFields.keySet().iterator();
 		while (e.hasNext()) {

@@ -11,8 +11,6 @@
 package org.eclipse.ui.internal.editors.text;
 
 import java.util.ArrayList;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
