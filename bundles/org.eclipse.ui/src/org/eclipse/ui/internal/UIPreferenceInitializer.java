@@ -95,11 +95,6 @@ public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
 						IWorkbenchPreferenceConstants.EDITOR_MINIMUM_CHARACTERS,
 						-1);
 
-		//Set the workspace selection dialog to open by default
-		node.putBoolean(
-				IWorkbenchPreferenceConstants.SHOW_WORKSPACE_SELECTION_DIALOG,
-				true);
-
 		IEclipsePreferences rootNode = (IEclipsePreferences) Platform
 				.getPreferencesService().getRootNode()
 				.node(InstanceScope.SCOPE);

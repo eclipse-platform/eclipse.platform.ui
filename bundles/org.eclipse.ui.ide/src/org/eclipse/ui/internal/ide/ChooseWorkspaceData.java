@@ -23,10 +23,10 @@ import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
@@ -189,11 +189,11 @@ public class ChooseWorkspaceData {
 
 		// 2. get value for showDialog
 		node.putBoolean(
-				IWorkbenchPreferenceConstants.SHOW_WORKSPACE_SELECTION_DIALOG,
+				IDE.Preferences.SHOW_WORKSPACE_SELECTION_DIALOG,
 				showDialog);
 
 		// 3. use value of numRecent to create proper length array
-		node.putInt(IWorkbenchPreferenceConstants.MAX_RECENT_WORKSPACES,
+		node.putInt(IDE.Preferences.MAX_RECENT_WORKSPACES,
 				recentWorkspaces.length);
 
 		// move the new selection to the front of the list
@@ -211,11 +211,11 @@ public class ChooseWorkspaceData {
 
 		// 4. store values of recent workspaces into array
 		String encodedRecentWorkspaces = encodeStoredWorkspacePaths(recentWorkspaces);
-		node.put(IWorkbenchPreferenceConstants.RECENT_WORKSPACES,
+		node.put(IDE.Preferences.RECENT_WORKSPACES,
 				encodedRecentWorkspaces);
 
 		// 5. store the protocol version used to encode the list
-		node.putInt(IWorkbenchPreferenceConstants.RECENT_WORKSPACES_PROTOCOL,
+		node.putInt(IDE.Preferences.RECENT_WORKSPACES_PROTOCOL,
 				PERS_ENCODING_VERSION_CONFIG_PREFS);
 
 		// 6. store the node
@@ -364,23 +364,23 @@ public class ChooseWorkspaceData {
 		// none of the preferences were set, revert to the file method.
 
 		int protocol = store
-				.getInt(IWorkbenchPreferenceConstants.RECENT_WORKSPACES_PROTOCOL);
+				.getInt(IDE.Preferences.RECENT_WORKSPACES_PROTOCOL);
 		if (protocol == IPreferenceStore.INT_DEFAULT_DEFAULT
 				&& readPersistedData_file())
 			return true;
 
 		// 2. get value for showDialog
 		showDialog = store
-				.getBoolean(IWorkbenchPreferenceConstants.SHOW_WORKSPACE_SELECTION_DIALOG);
+				.getBoolean(IDE.Preferences.SHOW_WORKSPACE_SELECTION_DIALOG);
 
 		// 3. use value of numRecent to create proper length array
 		int max = store
-				.getInt(IWorkbenchPreferenceConstants.MAX_RECENT_WORKSPACES);
+				.getInt(IDE.Preferences.MAX_RECENT_WORKSPACES);
 		max = Math.max(max, RECENT_MAX_LENGTH);
 
 		// 4. load values of recent workspaces into array
 		String workspacePathPref = store
-				.getString(IWorkbenchPreferenceConstants.RECENT_WORKSPACES);
+				.getString(IDE.Preferences.RECENT_WORKSPACES);
 		recentWorkspaces = decodeStoredWorkspacePaths(max, workspacePathPref);
 
 		return true;

@@ -145,6 +145,7 @@ public final class IDE {
      * </p>
      */
     public interface Preferences {
+        
         /**
          * A named preference for how a new perspective should be opened
          * when a new project is created.
@@ -160,6 +161,47 @@ public final class IDE {
          * @see org.eclipse.ui.IWorkbenchPreferenceConstants#NO_NEW_PERSPECTIVE
          */
         public static final String PROJECT_OPEN_NEW_PERSPECTIVE = "PROJECT_OPEN_NEW_PERSPECTIVE"; //$NON-NLS-1$
+        
+        /**
+         * <p>
+         * Specifies whether or not the workspace selection dialog should be shown on startup.
+         * </p>
+         * <p>
+         * The default value for this preference is <code>true</code>.
+         * </p>
+         * 
+         * @since 3.1
+         */
+        public static final String SHOW_WORKSPACE_SELECTION_DIALOG = "SHOW_WORKSPACE_SELECTION_DIALOG"; //$NON-NLS-1$
+
+        /**
+         * <p>
+         * Stores the maximum number of workspaces that should be displayed in the
+         * ChooseWorkspaceDialog.
+         * </p>
+         * 
+         * @since 3.1
+         */
+        public static final String MAX_RECENT_WORKSPACES = "MAX_RECENT_WORKSPACES"; //$NON-NLS-1$
+
+        /**
+         * <p>
+         * Stores a comma separated list of the recently used workspace paths.
+         * </p>
+         * 
+         * @since 3.1
+         */
+        public static final String RECENT_WORKSPACES = "RECENT_WORKSPACES"; //$NON-NLS-1$
+
+        /**
+         * <p>
+         * Stores the version of the protocol used to decode/encode the list of recent workspaces.
+         * </p>
+         * 
+         * @since 3.1
+         */
+        public static final String RECENT_WORKSPACES_PROTOCOL = "RECENT_WORKSPACES_PROTOCOL"; //$NON-NLS-1$
+        
     }
 
     /**

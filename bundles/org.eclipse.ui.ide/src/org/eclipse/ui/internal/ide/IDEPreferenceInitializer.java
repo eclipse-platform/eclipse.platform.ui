@@ -28,6 +28,18 @@ public class IDEPreferenceInitializer extends AbstractPreferenceInitializer {
 	public void initializeDefaultPreferences() {
 		
 		IEclipsePreferences node = new DefaultScope().getNode(IDEWorkbenchPlugin.getDefault().getBundle().getSymbolicName());
+
+        // API preferences
+
+        node.put(IDE.Preferences.PROJECT_OPEN_NEW_PERSPECTIVE,
+                IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE);
+    
+        // Set the workspace selection dialog to open by default
+        node.putBoolean(
+                IDE.Preferences.SHOW_WORKSPACE_SELECTION_DIALOG, true);
+
+        // Internal preferences
+        
 		node.putBoolean(IDEInternalPreferences.SAVE_ALL_BEFORE_BUILD, false);
 		node.putInt(IDEInternalPreferences.SAVE_INTERVAL, 5); //5 minutes
 		node.putBoolean(IDEInternalPreferences.WELCOME_DIALOG, true);
@@ -37,9 +49,6 @@ public class IDEPreferenceInitializer extends AbstractPreferenceInitializer {
                 IDEInternalPreferences.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW, true);
 		node.put(IDEInternalPreferences.PROJECT_SWITCH_PERSP_MODE,
                 IDEInternalPreferences.PSPM_PROMPT);
-		node.put(IDE.Preferences.PROJECT_OPEN_NEW_PERSPECTIVE,
-                IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE);
-    
 
 	}
 }
