@@ -731,7 +731,7 @@ public class TextViewer extends Viewer implements
 			Point s= TextViewer.this.getSelectedRange();
 			if (s.x > -1 && s.y > -1) {
 				try {
-					IRegion matchRegion= TextViewer.this.getFindRepalceDocumentAdapter().replace(text, regExReplace);
+					IRegion matchRegion= TextViewer.this.getFindReplaceDocumentAdapter().replace(text, regExReplace);
 					int length= -1;
 					if (matchRegion != null)
 						length= matchRegion.getLength();
@@ -3880,7 +3880,7 @@ public class TextViewer extends Viewer implements
 		try {
 			
 			int widgetOffset= (startPosition == -1 ? startPosition : modelOffset2WidgetOffset(startPosition));
-			IRegion matchRegion= getFindRepalceDocumentAdapter().find(widgetOffset, findString, forwardSearch, caseSensitive, wholeWord, regExSearch);
+			IRegion matchRegion= getFindReplaceDocumentAdapter().find(widgetOffset, findString, forwardSearch, caseSensitive, wholeWord, regExSearch);
 			if (matchRegion != null) {
 				int widgetPos= matchRegion.getOffset();
 				int length= matchRegion.getLength();
@@ -3926,7 +3926,7 @@ public class TextViewer extends Viewer implements
 			if (widgetOffset == -1)
 				return -1;
 
-			IRegion matchRegion= getFindRepalceDocumentAdapter().find(widgetOffset, findString, forwardSearch, caseSensitive, wholeWord, regExSearch);
+			IRegion matchRegion= getFindReplaceDocumentAdapter().find(widgetOffset, findString, forwardSearch, caseSensitive, wholeWord, regExSearch);
 			int widgetPos= -1;
 			int length= 0;
 			if (matchRegion != null) {
@@ -4138,7 +4138,7 @@ public class TextViewer extends Viewer implements
 	 * @return the find/replace document adapter.
 	 * @since 3.0
 	 */
-	private FindReplaceDocumentAdapter getFindRepalceDocumentAdapter() {
+	private FindReplaceDocumentAdapter getFindReplaceDocumentAdapter() {
 		if (fFindReplaceDocumentAdapter == null)
 			fFindReplaceDocumentAdapter= new FindReplaceDocumentAdapter(getVisibleDocument());
 		return fFindReplaceDocumentAdapter;
