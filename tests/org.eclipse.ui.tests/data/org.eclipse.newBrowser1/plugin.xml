@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin
+   id="newBrowser1"
+   name="newBrowser1 Plug-in"
+   version="1.0.0">
+
+   <runtime>
+      <library name="browser.jar">
+         <export name="*"/>
+      </library>
+   </runtime>
+   <requires>
+      <import plugin="org.eclipse.ui"/>
+   </requires>
+   <extension
+         id="testDynamicBrowserAddition"
+         point="org.eclipse.ui.browserSupport">
+      <support
+            class="org.eclipse.ui.dynamic.DynamicBrowserSupport"
+            default="true"/>
+   </extension>
+ 
+
+</plugin>

@@ -42,6 +42,8 @@ public class WorkbenchBrowserSupport extends AbstractWorkbenchBrowserSupport {
 	private IWorkbenchBrowserSupport activeSupport;
 
 	private boolean initialized;
+    
+    private String desiredBrowserSupportId;
 
 	private IExtensionChangeHandler handler = new IExtensionChangeHandler() {
         
@@ -58,8 +60,7 @@ public class WorkbenchBrowserSupport extends AbstractWorkbenchBrowserSupport {
         public void removeExtension(IExtension source, Object[] objects) {
 			for (int i = 0; i < objects.length; i++) {
 				if (objects[i] == activeSupport) {
-					activeSupport = null;
-					initialized = false;
+					dispose();
 					// remove ourselves - we'll be added again in initalize if
 					// needed
 					PlatformUI.getWorkbench().getExtensionTracker()
@@ -106,6 +107,15 @@ public class WorkbenchBrowserSupport extends AbstractWorkbenchBrowserSupport {
 			activeSupport = new DefaultWorkbenchBrowserSupport();
 		return activeSupport;
 	}
+    
+    /**
+     * Answers whether the system has a non-default browser installed.
+     * 
+     * @return whether the system has a non-default browser installed
+     */
+    public boolean hasNonDefaultBrowser() {
+        return !(getActiveSupport() instanceof DefaultWorkbenchBrowserSupport);
+    }
 
 	private void loadActiveSupport() {
 		BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
@@ -115,34 +125,44 @@ public class WorkbenchBrowserSupport extends AbstractWorkbenchBrowserSupport {
 			 * @see java.lang.Runnable#run()
 			 */
 			public void run() {
-				// get the help UI extension from the registry
-				IExtensionPoint point = Platform.getExtensionRegistry()
-						.getExtensionPoint(PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_BROWSER_SUPPORT);
-				if (point == null) {
-					// our extension point is missing (!) - act like there was
-					// no browser support
-					return;
-				}
-				IExtension[] extensions = point.getExtensions();
-				if (extensions.length == 0) {
-					// no browser support present
-					return;
-				}
-
+                IConfigurationElement[] elements = Platform
+                        .getExtensionRegistry().getConfigurationElementsFor(
+                                PlatformUI.PLUGIN_ID,
+                                IWorkbenchConstants.PL_BROWSER_SUPPORT);
 				IConfigurationElement elementToUse = null;
-				elementToUse = getElementToUse(extensions);
+                
+                if (desiredBrowserSupportId != null)
+                    elementToUse = findDesiredElement(elements);
+                else 
+                    elementToUse = getElementToUse(elements);
 				if (elementToUse != null)
 					initialized = initializePluggableBrowserSupport(elementToUse);
 			}
 
+            /**
+             * Search for the element whose extension has ID equal to that of
+             * the field desiredBrowserSupport.
+             * 
+             * @param elements
+             *            the elements to search
+             * @return the element or <code>null</code>
+             */
+            private IConfigurationElement findDesiredElement(IConfigurationElement [] elements) {
+                for (int i = 0; i < elements.length; i++) {
+                    if (desiredBrowserSupportId.equals(elements[i].getDeclaringExtension().getUniqueIdentifier()))
+                        return elements[i];
+                }
+                return null;
+            }
+
+            private IExtensionPoint getExtensionPoint() {
+                return Platform.getExtensionRegistry()
+						.getExtensionPoint(PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_BROWSER_SUPPORT);
+            }
+
 			private IConfigurationElement getElementToUse(
-					IExtension[] extensions) {
-				IConfigurationElement[] elements = extensions[0]
-						.getConfigurationElements();
+					IConfigurationElement[] elements) {
 				if (elements.length == 0) {
-					// help UI present but mangled - act like there was no
-					// help
-					// UI
 					return null;
 				}
 				IConfigurationElement defaultElement = null;
@@ -154,7 +174,7 @@ public class WorkbenchBrowserSupport extends AbstractWorkbenchBrowserSupport {
 					IConfigurationElement element = elements[i];
 					if (element.getName().equals(IWorkbenchRegistryConstants.TAG_SUPPORT)) {
 						String def = element.getAttribute(IWorkbenchRegistryConstants.ATT_DEFAULT);
-						if (def != null && def.equalsIgnoreCase("true")) { //$NON-NLS-1$
+						if (def != null && Boolean.valueOf(def).booleanValue()) { 
 							if (defaultElement == null)
 								defaultElement = element;
 						} else {
@@ -176,11 +196,12 @@ public class WorkbenchBrowserSupport extends AbstractWorkbenchBrowserSupport {
 					activeSupport = (AbstractWorkbenchBrowserSupport) WorkbenchPlugin
 							.createExtension(element, IWorkbenchRegistryConstants.ATT_CLASS);
 					// start listening for removals
-					PlatformUI.getWorkbench().getExtensionTracker()
-							.registerHandler(handler, null);
+					IExtensionTracker extensionTracker = PlatformUI.getWorkbench().getExtensionTracker();
+                    extensionTracker.registerHandler(handler, extensionTracker
+                            .createExtensionPointFilter(getExtensionPoint()));
 					// register the new browser support for removal
 					// notification
-					PlatformUI.getWorkbench().getExtensionTracker()
+					extensionTracker
 							.registerObject(element.getDeclaringExtension(),
 									activeSupport, IExtensionTracker.REF_WEAK);
 					return true;
@@ -193,4 +214,22 @@ public class WorkbenchBrowserSupport extends AbstractWorkbenchBrowserSupport {
 
 		});
 	}
+    
+    /**
+     * For debug purposes only.
+     * 
+     * @param desiredBrowserSupportId the desired browser system id
+     */
+    public void setDesiredBrowserSupportId(String desiredBrowserSupportId) {
+        dispose(); // prep for a new help system
+        this.desiredBrowserSupportId = desiredBrowserSupportId;
+    }
+
+    /**
+     * Dispose of the active support.
+     */
+    protected void dispose() {
+        activeSupport = null;
+        initialized = false;
+    }
 }
