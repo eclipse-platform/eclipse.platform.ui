@@ -1837,10 +1837,16 @@ public class EclipseSynchronizer implements IFlushOperation {
 
 				// set the sync info using what was cached in the phantom
 				setFolderSync(folder, folderInfo);
-				// if there are members, indicate that 1 is changed so the Entries file is written
+				// purge the dirty cache so any old persisted dirty state is purged
+				sessionPropertyCache.purgeDirtyCache(folder);
+				// if there are managed members, indicate that 1 is changed so the Entries file is written
 				IResource[] members = members(folder);
-				if (members.length > 0) {
-					resourceChanged(members[0]);
+				for (int i = 0; i < members.length; i++) {
+					IResource resource = members[i];
+					if (getSyncBytes(resource) != null) {
+						resourceChanged(resource);
+						break;
+					}
 				}
 			}
 		} finally {
