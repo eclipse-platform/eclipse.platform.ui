@@ -523,7 +523,7 @@ public class IWorkbenchPageTest extends UITestCase {
 
 		proj = FileUtil.createProject("testOpenEditor");
 		final IFile file = FileUtil.createFile("aaa.mock1", proj);
-		IEditorPart editor = IDE.openEditor(fActivePage, file, true);
+		IEditorPart editor = IDE.openEditor(page, file, true);
 		CallHistory callTrace = ((MockEditorPart) editor).getCallHistory();
 		callTrace.clear();
 
