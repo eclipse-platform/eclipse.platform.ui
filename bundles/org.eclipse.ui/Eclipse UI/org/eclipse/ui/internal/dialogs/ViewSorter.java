@@ -11,7 +11,7 @@ import org.eclipse.jface.viewers.*;
  * This is used to sort views in a ShowViewDialog.
  */
 public class ViewSorter extends ViewerSorter {
-	ViewRegistry viewReg;
+	private ViewRegistry viewReg;
 /**
  * ViewSorter constructor comment.
  */
@@ -26,27 +26,18 @@ public ViewSorter(ViewRegistry reg) {
  */
 public int compare(Viewer viewer, Object e1, Object e2) {
 	if (e1 instanceof IViewDescriptor) {
-		String str1 = removeAccel(((IViewDescriptor)e1).getLabel());
-		String str2 = removeAccel(((IViewDescriptor)e2).getLabel());
-		return str1.compareTo(str2);
+		String str1 = DialogUtil.removeAccel(((IViewDescriptor)e1).getLabel());
+		String str2 = DialogUtil.removeAccel(((IViewDescriptor)e2).getLabel());
+		return collator.compare(str1, str2);
 	} else if (e1 instanceof ICategory) {
 		if (e1 == viewReg.getMiscCategory())
 			return 1;
 		if (e2 == viewReg.getMiscCategory())
 			return -1;
-		String str1 = removeAccel(((ICategory)e1).getLabel());
-		String str2 = removeAccel(((ICategory)e2).getLabel());
-		return str1.compareTo(str2);
+		String str1 = DialogUtil.removeAccel(((ICategory)e1).getLabel());
+		String str2 = DialogUtil.removeAccel(((ICategory)e2).getLabel());
+		return collator.compare(str1, str2);
 	}
 	return 0;
-}
-/**
- * Removes the accelerator from a menu label.
- */
-private String removeAccel(String label) {
-	int aruga = label.indexOf('&');
-	if (aruga >= 0)
-		label = label.substring(aruga + 1);
-	return label;
 }
 }

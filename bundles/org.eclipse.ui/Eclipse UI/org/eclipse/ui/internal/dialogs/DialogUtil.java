@@ -13,12 +13,13 @@ import org.eclipse.swt.widgets.Shell;
  * Utility class to help with dialogs.
  */
 public class DialogUtil {
+	
 /**
- * DialogUtil constructor comment.
+ * Prevent instantiation.
  */
-public DialogUtil() {
-	super();
+private DialogUtil() {
 }
+
 /**
  * Open an error style dialog for PartInitException by
  * including any extra information from the nested
@@ -49,4 +50,15 @@ public static void openError(Shell parent, String title, String message, PartIni
 			message);
 	}
 }
+
+/**
+ * Removes the '&' accelerator indicator from a label, if any.
+ */
+public static String removeAccel(String label) {
+	int i = label.indexOf('&');
+	if (i >= 0)
+		label = label.substring(0, i) + label.substring(i+1);
+	return label;
+}
+
 }
