@@ -207,7 +207,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 * @see AbstractDebugView#createViewer(Composite)
 	 */
 	protected Viewer createViewer(Composite parent) {
-		LaunchViewer lv = new LaunchViewer(parent, this);
+		LaunchViewer lv = new LaunchViewer(parent);
 		lv.addSelectionChangedListener(this);
 		lv.getControl().addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent event) {
@@ -217,7 +217,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 			}
 		});
 		lv.setContentProvider(createContentProvider());
-		DelegatingModelPresentation presentation = new LaunchViewerPresentation(lv);
+		DelegatingModelPresentation presentation = new DelegatingModelPresentation();
 		lv.setLabelProvider(presentation);
 		fEditorPresentation = presentation;
 		// add my viewer as a selection provider, so selective re-launch works
@@ -1272,4 +1272,5 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	public String[] getShowInTargetIds() {
 		return new String[] { IPageLayout.ID_RES_NAV };
 	}
+
 }

@@ -31,8 +31,6 @@ import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.ui.IDebugEditorPresentation;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.ILazyDebugModelPresentation;
-import org.eclipse.debug.ui.ILazyLabelListener;
 import org.eclipse.debug.ui.IValueDetailListener;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
@@ -47,7 +45,7 @@ import org.eclipse.ui.IEditorPart;
  * asked to render an object from a debug model, this presentation delegates
  * to the extension registered for that debug model. 
  */
-public class DelegatingModelPresentation implements ILazyDebugModelPresentation, IDebugEditorPresentation {
+public class DelegatingModelPresentation implements IDebugModelPresentation, IDebugEditorPresentation {
 	
 	/**
 	 * A mapping of attribute ids to their values
@@ -161,10 +159,6 @@ public class DelegatingModelPresentation implements ILazyDebugModelPresentation,
 	 * @see IDebugModelPresentation#getImage(Object)
 	 */
 	public Image getImage(Object item) {
-		return internalGetImage(item);
-	}
-	
-	private Image internalGetImage(Object item) {
 		// Attempt to delegate
 		IDebugModelPresentation lp= getConfiguredPresentation(item);
 		if (lp != null) {
@@ -181,10 +175,6 @@ public class DelegatingModelPresentation implements ILazyDebugModelPresentation,
 	 * @see IDebugModelPresentation#getText(Object)
 	 */
 	public String getText(Object item) {
-		return internalGetText(item);
-	}
-	
-	private String internalGetText(Object item) {
 		// Attempt to delegate
 		IDebugModelPresentation lp= getConfiguredPresentation(item);
 		if (lp != null) {
@@ -358,28 +348,5 @@ public class DelegatingModelPresentation implements ILazyDebugModelPresentation,
 	protected void setLabelProviders(HashMap labelProviders) {
 		fLabelProviders = labelProviders;
 	}
-
-	/*
-	 * @see org.eclipse.debug.ui.ILazyDebugModelPresentation#getLazyImage(java.lang.Object, org.eclipse.debug.ui.ILazyLabelListener)
-	 */
-	public Image getLazyImage(Object element, ILazyLabelListener listener) {
-		IDebugModelPresentation lp= getConfiguredPresentation(element);
-		if (lp instanceof ILazyDebugModelPresentation) {
-			return ((ILazyDebugModelPresentation)lp).getLazyImage(element, listener);
-		}
-		return internalGetImage(element);
-	}
-
-	/*
-	 * @see org.eclipse.debug.ui.ILazyDebugModelPresentation#getLazyText(java.lang.Object, org.eclipse.debug.ui.ILazyLabelListener)
-	 */
-	public String getLazyText(Object element, ILazyLabelListener listener) {
-		IDebugModelPresentation lp= getConfiguredPresentation(element);
-		if (lp instanceof ILazyDebugModelPresentation) {
-			return ((ILazyDebugModelPresentation)lp).getLazyText(element, listener);
-		}
-		return internalGetText(element);
-	}
-
 }
 

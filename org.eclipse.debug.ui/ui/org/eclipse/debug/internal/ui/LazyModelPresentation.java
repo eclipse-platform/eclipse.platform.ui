@@ -21,8 +21,6 @@ import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.ui.IDebugEditorPresentation;
 import org.eclipse.debug.ui.IDebugModelPresentation;
-import org.eclipse.debug.ui.ILazyDebugModelPresentation;
-import org.eclipse.debug.ui.ILazyLabelListener;
 import org.eclipse.debug.ui.IValueDetailListener;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.util.ListenerList;
@@ -36,7 +34,7 @@ import org.eclipse.ui.IEditorPart;
  * when it is needed.
  */
 
-public class LazyModelPresentation implements ILazyDebugModelPresentation, IDebugEditorPresentation {
+public class LazyModelPresentation implements IDebugModelPresentation, IDebugEditorPresentation {
 	
 	/**
 	 * A temporary mapping of attribute ids to their values
@@ -247,28 +245,6 @@ public class LazyModelPresentation implements ILazyDebugModelPresentation, IDebu
 			return (SourceViewerConfiguration)fConfig.createExecutableExtension("detailsViewerConfiguration"); //$NON-NLS-1$
 		}
 		return null;
-	}
-
-	/*
-	 * @see org.eclipse.debug.ui.ILazyDebugModelPresentation#getLazyImage(java.lang.Object, org.eclipse.debug.ui.ILazyLabelListener)
-	 */
-	public Image getLazyImage(Object element, ILazyLabelListener listener) {
-		IDebugModelPresentation presentation= getPresentation();
-		if (presentation instanceof ILazyDebugModelPresentation) {
-			return ((ILazyDebugModelPresentation)presentation).getLazyImage(element, listener);
-		}
-		return presentation.getImage(element);
-	}
-
-	/*
-	 * @see org.eclipse.debug.ui.ILazyDebugModelPresentation#getLazyText(java.lang.Object, org.eclipse.debug.ui.ILazyLabelListener)
-	 */
-	public String getLazyText(Object element, ILazyLabelListener listener) {
-		IDebugModelPresentation presentation= getPresentation();
-		if (presentation instanceof ILazyDebugModelPresentation) {
-			return ((ILazyDebugModelPresentation)presentation).getLazyText(element, listener);
-		}
-		return presentation.getText(element);
 	}
 	
 	
