@@ -239,7 +239,7 @@ private void createMenuBar() {
 	popup.add(new OpenPagesMenu(window, false));
 
 	// Workbench menu
-	popup = new MenuManager(WorkbenchMessages.getString("Workbench.project"), IWorkbenchActionConstants.M_WORKBENCH); //$NON-NLS-1$
+	popup = new MenuManager(WorkbenchMessages.getString("Workbench.workbench"), IWorkbenchActionConstants.M_WORKBENCH); //$NON-NLS-1$
 	menubar.add(popup);
 	popup.add(new GroupMarker(IWorkbenchActionConstants.WB_START));
 	// Only add the manual incremental build if auto build off
@@ -247,6 +247,8 @@ private void createMenuBar() {
 		popup.add(buildAction);
 	popup.add(rebuildAllAction);
 	popup.add(new GroupMarker(IWorkbenchActionConstants.WB_END));
+	popup.add(new Separator());
+	popup.add(openPreferencesAction);
 	popup.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
 
 	// Define section for additions.
@@ -279,8 +281,6 @@ private void createMenuBar() {
 	popup.add(new Separator(IWorkbenchActionConstants.WINDOW_EXT));
 	popup.add(workbenchEditorsAction = new WorkbenchEditorsAction(window));
 	popup.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
-	popup.add(new Separator());
-	popup.add(openPreferencesAction);
 	popup.add(new SwitchToWindowMenu(window, true));
 
 	// Help menu.

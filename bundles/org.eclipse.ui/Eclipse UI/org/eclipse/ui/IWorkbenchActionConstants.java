@@ -16,8 +16,8 @@ package org.eclipse.ui;
  * <ul>
  *   <li>File menu (<code>M_FILE</code>)</li>
  *   <li>Edit menu (<code>M_EDIT</code>)</li>
- *   <li>Workbench menu (<code>M_WORKBENCH</code>)</li>
  *   <li>View menu (<code>M_VIEW</code>)</li>
+ *   <li>Workbench menu (<code>M_WORKBENCH</code>)</li>
  *   <li>Window menu (<code>M_WINDOW</code>)</li>
  *   <li>Help menu (<code>M_HELP</code>)</li>
  * </ul>
@@ -71,6 +71,10 @@ package org.eclipse.ui;
  *   <li>Select All global action (<code>SELECT_ALL</code>)</li>
  *   <li>Bookmark global action (<code>BOOKMARK</code>)</li>
  * </ul>
+ * <h3>Standard Perspective menu actions</h3>
+ * <ul>
+ *   <li>Extra Perspective-like action group (<code>VIEW_EXT</code>)</li>
+ * </ul>
  * <h3>Standard Workbench menu actions</h3>
  * <ul>
  *   <li>Start group (<code>WB_START</code>)</li>
@@ -78,10 +82,6 @@ package org.eclipse.ui;
  *   <li>Extra Build-like action group (<code>BUILD_EXT</code>)</li>
  *   <li>Build action (<code>BUILD</code>)</li>
  *   <li>Rebuild All action (<code>REBUILD_ALL</code>)</li>
- * </ul>
- * <h3>Standard View menu actions</h3>
- * <ul>
- *   <li>Extra View-like action group (<code>VIEW_EXT</code>)</li>
  * </ul>
  * <h3>Standard Window menu actions</h3>
  * <ul>
@@ -132,14 +132,14 @@ public interface IWorkbenchActionConstants {
 	public static final String M_EDIT = MENU_PREFIX+"edit"; //$NON-NLS-1$
 
 	/**
+	 * Name of standard Perspective menu (value <code>"view"</code>).
+	 */
+	public static final String M_VIEW = MENU_PREFIX+"view"; //$NON-NLS-1$
+
+	/**
 	 * Name of standard Workbench menu (value <code>"workbench"</code>).
 	 */
 	public static final String M_WORKBENCH = MENU_PREFIX+"workbench"; //$NON-NLS-1$
-
-	/**
-	 * Name of standard View menu (value <code>"view"</code>).
-	 */
-	public static final String M_VIEW = MENU_PREFIX+"view"; //$NON-NLS-1$
 
 	/**
 	 * Name of standard Window menu (value <code>"window"</code>).
