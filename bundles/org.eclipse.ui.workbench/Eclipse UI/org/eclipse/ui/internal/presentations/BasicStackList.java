@@ -26,7 +26,6 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
@@ -188,7 +187,6 @@ public class BasicStackList extends AbstractTableInformationControl {
     
     public BasicStackList(Shell parent, int shellStyle, int treeStyle) {
         super(parent, shellStyle, treeStyle);
-        setBackgroundColor(new Color(parent.getDisplay(), 255, 255, 255));
     }
 
     protected TableViewer createTableViewer(Composite parent, int style) {
