@@ -309,6 +309,27 @@ public class IEditorRegistryTest extends TestCase {
 		assertNotNull(descriptor);
 		assertEquals("org.eclipse.ui.tests.contentType1Editor-fallback", descriptor.getId());
 	}
+    
+    /**
+     * Assert that IEditorRegistry.getEditors() does not return null children
+     * when the default editor has been set to null.
+     */
+    public void testNoDefaultEditors() {
+        IEditorDescriptor desc = fReg.getDefaultEditor("bogusfile.txt");
+        
+        try {
+            fReg.setDefaultEditor("*.txt", null);
+            IEditorDescriptor [] descriptors = fReg.getEditors("bogusfile.txt");
+            for (int i = 0; i < descriptors.length; i++) {
+                assertNotNull(descriptors[i]);
+            }
+        }
+        finally {
+            if (desc != null)
+                fReg.setDefaultEditor("*.txt", desc.getId());
+        }
+        
+    }
 
 
 }

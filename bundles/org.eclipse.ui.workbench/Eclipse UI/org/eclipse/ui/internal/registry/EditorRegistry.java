@@ -1296,7 +1296,7 @@ public class EditorRegistry implements IEditorRegistry, IExtensionChangeHandler 
         ArrayList filtered = new ArrayList();
         for (Iterator i = list.iterator(); i.hasNext();) {
             Object next = i.next();
-            if (WorkbenchActivityHelper.filterItem(next))
+            if (next == null || WorkbenchActivityHelper.filterItem(next))
                 continue;
             filtered.add(next);
         }
