@@ -462,6 +462,9 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 						stream = new FileInputStream(file);
 					} else {
 						IFile file = ((LaunchConfiguration) config).getFile();
+						if (file == null) {
+							throw createDebugException(MessageFormat.format(DebugCoreMessages.getString("LaunchManager.30"), new String[] {config.getName()}), null); //$NON-NLS-1$
+						}
 						stream = file.getContents();
 					}
 					info = createInfoFromXML(stream);
