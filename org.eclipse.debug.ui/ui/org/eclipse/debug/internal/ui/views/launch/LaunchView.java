@@ -700,11 +700,18 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 			if (fEditorPresentation.addAnnotations(editor, stackFrame)) {
 				Decoration decoration = new StandardDecoration(fEditorPresentation, editor, stackFrame.getThread());
 				DecorationManager.addDecoration(decoration);				
-			} else if (editor instanceof ITextEditor) {
+			} else {
 				// perform standard positioning and annotations
-				ITextEditor textEditor = (ITextEditor)editor;
-				positionEditor(textEditor, stackFrame);
-				InstructionPointerManager.getDefault().addAnnotation(textEditor, stackFrame);
+				ITextEditor textEditor = null;
+				if (editor instanceof ITextEditor) {					
+					textEditor = (ITextEditor)editor;
+				} else {
+					textEditor = (ITextEditor) editor.getAdapter(ITextEditor.class);
+				}
+				if (textEditor != null) {
+					positionEditor(textEditor, stackFrame);
+					InstructionPointerManager.getDefault().addAnnotation(textEditor, stackFrame);
+				}
 			}
 		} finally {
 			fShowingEditor= false;
