@@ -1006,12 +1006,18 @@ public class CopyFilesAndFoldersOperation {
 		if (destinationMessage != null) {
 			return destinationMessage;
 		}
-		
+		IContainer firstParent = null;
 		IPath destinationLocation = destination.getLocation();
 		for (int i = 0; i < sourceResources.length; i++) {
 			IResource sourceResource = sourceResources[i];
+			if (firstParent == null) {
+				firstParent = sourceResource.getParent();
+			} else if (firstParent.equals(sourceResource.getParent()) == false) {
+				// Resources must have common parent. Fixes bug 33398.
+				return WorkbenchMessages.getString("CopyFilesAndFoldersOperation.parentNotEqual");	//$NON-NLS-1$					
+			}
+			
 			IPath sourceLocation = sourceResource.getLocation();
-
 			if (sourceLocation == null) {
 				if (sourceResource.isLinked()) {
 					// Don't allow copying linked resources with undefined path 
@@ -1019,8 +1025,7 @@ public class CopyFilesAndFoldersOperation {
 					return WorkbenchMessages.format(
 						"CopyFilesAndFoldersOperation.missingPathVariable",		//$NON-NLS-1$
 						new Object[] {sourceResource.getName()});				
-				}
-				else {
+				} else {
 					return WorkbenchMessages.format(
 						"CopyFilesAndFoldersOperation.resourceDeleted",		//$NON-NLS-1$
 						new Object[] {sourceResource.getName()});				
