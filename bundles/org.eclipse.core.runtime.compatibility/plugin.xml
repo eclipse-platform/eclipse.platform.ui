@@ -2,9 +2,9 @@
 <?eclipse version="3.0"?>
 <plugin
    id="org.eclipse.core.runtime.compatibility"
-   name="runtime compatibility"
+   name="%pluginName"
    version="3.0.0"
-   provider-name="Eclipse.org">
+   provider-name="%providerName">
 
    <runtime>
       <library name="compatibility.jar">
