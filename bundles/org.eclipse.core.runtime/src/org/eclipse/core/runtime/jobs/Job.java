@@ -104,7 +104,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 */
 	public static final int DECORATE = 50;
 	/** 
-	 * Job state code (value -1) indicating that a job is not 
+	 * Job state code (value 0) indicating that a job is not 
 	 * currently sleeping, waiting, or running (i.e., the job manager doesn't know 
 	 * anything about the job). 
 	 * 
