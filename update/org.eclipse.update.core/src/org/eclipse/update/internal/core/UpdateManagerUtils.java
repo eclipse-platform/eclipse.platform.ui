@@ -193,11 +193,13 @@ public class UpdateManagerUtils {
 		if (filePath != null
 			&& BootLoader.OS_HPUX.equals(BootLoader.getOS())
 			&& filePath.endsWith(".sl")) {
-			// chmod 555 *.sl
+			// add execute permission on shared libraries 20305
+			// do not remove write permission 20896
+			// chmod a+x *.sl
 			try {
 				Process pr =
 					Runtime.getRuntime().exec(
-						new String[] { "chmod", "555", filePath });
+						new String[] { "chmod", "a+x", filePath });
 				Thread chmodOutput = new StreamConsumer(pr.getInputStream());
 				chmodOutput.setName("chmod output reader");
 				chmodOutput.start();
