@@ -17,12 +17,18 @@ import org.eclipse.help.internal.util.*;
  */
 class IndexingOperation {
 	private Collection addedDocs = null;
+	private int numAdded;
 	private Collection removedDocs = null;
+	private int numRemoved;
 	private SearchIndex index = null;
-	// Constants for calculating progress
-	private final static int WORK_PREPARE = 50;
-	private final static int WORK_INDEXDOC = 10;
-	private final static int WORK_SAVEINDEX = 200;
+	// Constants for alocating progress among subtasks.
+	// The goal is to have a ratio among them
+	// that results in work accumulating at a constant rate.
+	private final static int WORK_PREPARE = 1; // * all documents
+	private final static int WORK_DELETEDOC = 5; // * removed documents
+	private final static int WORK_INDEXDOC = 50; // * added documents
+	private final static int WORK_SAVEINDEX = 2; // * all documents
+	private int workTotal;
 	/**
 	 * Construct indexing operation.
 	 * @param ix ISearchIndex already opened
@@ -36,21 +42,20 @@ class IndexingOperation {
 		this.index = ix;
 		this.removedDocs = removedDocs;
 		this.addedDocs = addedDocs;
+		numRemoved = this.removedDocs.size();
+		numAdded = this.addedDocs.size();
+		workTotal =
+			(numRemoved + numAdded) * WORK_PREPARE
+				+ numAdded * WORK_INDEXDOC
+				+ (numRemoved + numAdded) * WORK_SAVEINDEX;
+
+		if (numRemoved > 0) {
+			workTotal += (numRemoved + numAdded) * WORK_PREPARE
+				+ numRemoved * WORK_DELETEDOC
+				+ (numRemoved + numAdded) * WORK_SAVEINDEX;
+		}
 	}
-	/**
-	 * Adds document  to the index.
-	 * @param doc URL
-	 */
-	private void add(URL doc) {
-		index.addDocument(getName(doc), doc);
-	}
-	/**
-	 * Removes document from index.
-	 * @param doc URL
-	 */
-	private void remove(URL doc) {
-		index.removeDocument(getName(doc));
-	}
+
 	private void checkCancelled(IProgressMonitor pm)
 		throws OperationCanceledException {
 		if (pm.isCanceled())
@@ -65,56 +70,36 @@ class IndexingOperation {
 	 */
 	protected void execute(IProgressMonitor pm)
 		throws OperationCanceledException, IndexingException {
+
 		// if collection is empty, we may return right away
 		// need to check if we have to do anything to the progress monitor
-		int numDocs = removedDocs.size() + addedDocs.size();
-		if (numDocs <= 0) {
+		if (numRemoved + numAdded <= 0) {
 			pm.done();
 			return;
 		}
-		int workTotal = WORK_PREPARE + numDocs * WORK_INDEXDOC + WORK_SAVEINDEX;
-		pm.beginTask("" /*Resources.getString("Index_needs_updated")*/
-		, workTotal);
-		pm.subTask(Resources.getString("Preparing_for_indexing"));
-		checkCancelled(pm);
-		// first delete all the removed documents
-		if (removedDocs.size() > 0) {
-			if (!index.beginDeleteBatch())
-				throw new IndexingException();
-			try {
-				checkCancelled(pm);
-				pm.worked(WORK_PREPARE);
-				for (Iterator it = removedDocs.iterator(); it.hasNext();) {
-					URL doc = (URL) it.next();
-					pm.subTask(Resources.getString("Removing") + getName(doc));
-					remove(doc);
-					checkCancelled(pm);
-					pm.worked(WORK_INDEXDOC);
-				}
-			} catch (OperationCanceledException oce) {
-				// Need to perform rollback on the index
-				pm.subTask(Resources.getString("Undoing_document_deletions"));
-				pm.worked(workTotal);
-				//			if (!index.abortUpdate())
-				//				throw new Exception();
-				throw oce;
-			}
-			if (!index.endDeleteBatch())
-				throw new IndexingException();
-		}
+
+		LazyProgressMonitor monitor = new LazyProgressMonitor(pm);
+		monitor.beginTask("", workTotal);
+		removeDocuments(monitor);
+		addDocuments(monitor);
+		monitor.done();
+	}
+
+	private void addDocuments(IProgressMonitor pm) throws IndexingException {
 		// Do not check here if (addedDocs.size() > 0), always perform add batch
 		// to ensure that index is created and saved even if no new documents exist
+
 		// now add all the new documents
 		if (!index.beginAddBatch()) {
 			throw new IndexingException();
 		}
 		try {
 			checkCancelled(pm);
-			pm.worked(WORK_PREPARE);
+			pm.worked((numRemoved + numAdded) * WORK_PREPARE);
+			pm.subTask(Resources.getString("UpdatingIndex"));
 			for (Iterator it = addedDocs.iterator(); it.hasNext();) {
 				URL doc = (URL) it.next();
-				pm.subTask(Resources.getString("Indexing") + getName(doc));
-				add(doc);
+				index.addDocument(getName(doc), doc);
 				checkCancelled(pm);
 				pm.worked(WORK_INDEXDOC);
 			}
@@ -129,7 +114,40 @@ class IndexingOperation {
 		pm.subTask(Resources.getString("Writing_index"));
 		if (!index.endAddBatch())
 			throw new IndexingException();
-		pm.done();
+	}
+
+	private void removeDocuments(IProgressMonitor pm)
+		throws IndexingException {
+
+		pm.subTask(Resources.getString("Preparing_for_indexing"));
+		checkCancelled(pm);
+
+		if (numRemoved > 0) {
+			if (!index.beginDeleteBatch())
+				throw new IndexingException();
+			try {
+				checkCancelled(pm);
+				pm.worked((numRemoved + numAdded) * WORK_PREPARE);
+				pm.subTask(Resources.getString("UpdatingIndex"));
+				for (Iterator it = removedDocs.iterator(); it.hasNext();) {
+					URL doc = (URL) it.next();
+					index.removeDocument(getName(doc));
+					checkCancelled(pm);
+					pm.worked(WORK_DELETEDOC);
+				}
+			} catch (OperationCanceledException oce) {
+				// Need to perform rollback on the index
+				pm.subTask(Resources.getString("Undoing_document_deletions"));
+				pm.worked(workTotal);
+				//			if (!index.abortUpdate())
+				//				throw new Exception();
+				throw oce;
+			}
+			if (!index.endDeleteBatch()) {
+				throw new IndexingException();
+			}
+			pm.worked((numRemoved + numAdded) * WORK_SAVEINDEX);
+		}
 	}
 	/**
 	 * Returns the document identifier. Currently we use the 
