@@ -24,9 +24,7 @@ import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
-import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationRulerColumn;
 import org.eclipse.jface.text.source.CompositeRuler;
 import org.eclipse.jface.text.source.IAnnotationAccess;
@@ -72,7 +70,7 @@ class ProjectionRulerColumn extends AnnotationRulerColumn {
 	 */
 	protected void mouseClicked(int line) {
 		clearCurrentAnnotation();
-		ProjectionAnnotation annotation= findAnnotation(line);
+		ProjectionAnnotation annotation= findAnnotation(line, true);
 		if (annotation != null) {
 			ProjectionAnnotationModel model= (ProjectionAnnotationModel) getModel();
 			model.toggleExpansionState(annotation);
@@ -86,7 +84,7 @@ class ProjectionRulerColumn extends AnnotationRulerColumn {
 	 * @param line the line
 	 * @return the projection annotation containing the given line
 	 */
-	private ProjectionAnnotation findAnnotation(int line) {
+	private ProjectionAnnotation findAnnotation(int line, boolean exact) {
 		
 		ProjectionAnnotation previousAnnotation= null;
 		
@@ -109,13 +107,16 @@ class ProjectionRulerColumn extends AnnotationRulerColumn {
 					if (distance == -1)
 						continue;
 					
-					if (distance < previousDistance) {
+					if (!exact) {
+						if (distance < previousDistance) {
+							previousAnnotation= annotation;
+							previousDistance= distance;
+						}
+					} else if (distance == 0) {
 						previousAnnotation= annotation;
-						previousDistance= distance;
 					}
 				}
 			}
-			
 		}
 		
 		return previousAnnotation;
@@ -175,7 +176,7 @@ class ProjectionRulerColumn extends AnnotationRulerColumn {
 		control.addMouseMoveListener(new MouseMoveListener() {
 			public void mouseMove(MouseEvent e) {
 				boolean redraw= false;
-				ProjectionAnnotation annotation= findAnnotation(toDocumentLineNumber(e.y));
+				ProjectionAnnotation annotation= findAnnotation(toDocumentLineNumber(e.y), false);
 				if (annotation != fCurrentAnnotation) {
 					if (fCurrentAnnotation != null) {
 						fCurrentAnnotation.setRangeIndication(false);
@@ -218,33 +219,6 @@ class ProjectionRulerColumn extends AnnotationRulerColumn {
 	 * @since 3.0
 	 */
 	protected boolean hasAnnotation(int lineNumber) {
-		
-		IRegion line;
-		try {
-			IDocument d= getCachedTextViewer().getDocument();
-			line= d.getLineInformation(lineNumber);
-		}  catch (BadLocationException ex) {
-			return false;
-		}
-
-		int lineStart= line.getOffset();
-		int lineLength= line.getLength();
-		
-		Iterator e= getModel().getAnnotationIterator();
-		while (e.hasNext()) {
-			Annotation a= (Annotation) e.next();
-			
-			if (a.isMarkedDeleted())
-				continue;
-			
-			Position p= getModel().getPosition(a);
-			if (p == null || p.isDeleted())
-				continue;
-			
-			if (p.overlapsWith(lineStart, lineLength))
-				return true;
-		}
-		
-		return false;
+		return findAnnotation(lineNumber, true) != null;
 	}
 }

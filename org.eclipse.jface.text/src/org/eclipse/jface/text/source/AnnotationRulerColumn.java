@@ -287,7 +287,8 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 				} else
 					lineNumber= fParentRuler.toDocumentLineNumber(event.y);
 				
-				mouseClicked(lineNumber);				
+				if (1 == event.button)
+					mouseClicked(lineNumber);
 			}
 			
 			public void mouseDown(MouseEvent event) {
@@ -303,7 +304,8 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 				} else
 					lineNumber= fParentRuler.toDocumentLineNumber(event.y);
 				
-				mouseDoubleClicked(lineNumber);
+				if (1 == event.button)
+					mouseDoubleClicked(lineNumber);
 			}
 		};
 		fCanvas.addMouseListener(fMouseListener);
