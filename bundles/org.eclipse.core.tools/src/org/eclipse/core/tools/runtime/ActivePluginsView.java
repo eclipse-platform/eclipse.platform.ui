@@ -99,7 +99,7 @@ public class ActivePluginsView extends TableWithTotalView {
 		for (; iterator.hasNext();) {
 			BundleStats element = (BundleStats) iterator.next();
 			if (element != null) {
-				VMClassloaderInfo vmInfo = VMClassloaderInfo.getClassloader(element.getId());
+				VMClassloaderInfo vmInfo = VMClassloaderInfo.getClassloader(element.getSymbolicName());
 				sumOfClasses += element.getClassLoadCount();
 				sumOfMemoryUsed += (vmInfo.getUsedRAM() + vmInfo.getUsedROM());
 				sumOfMemoryAlloc += (vmInfo.getAllocRAM() + vmInfo.getAllocROM());
@@ -173,10 +173,10 @@ public class ActivePluginsView extends TableWithTotalView {
 			public void run() {
 				try {
 					StackTraceView view = (StackTraceView) getSite().getPage().showView(StackTraceView.VIEW_ID);
-					BundleStats plugin = (BundleStats) ((IStructuredSelection) getViewer().getSelection()).getFirstElement();
-					if (plugin == null)
+					BundleStats info = (BundleStats) ((IStructuredSelection) getViewer().getSelection()).getFirstElement();
+					if (info == null)
 						return;
-					view.setInput(StatsManager.TRACE_FILENAME, plugin.getTraceStart(), plugin.getTraceEnd());
+					view.setInput(StatsManager.TRACE_FILENAME, info.getTraceStart(), info.getTraceEnd());
 				} catch (PartInitException e) {
 					e.printStackTrace();
 				}
@@ -210,7 +210,7 @@ public class ActivePluginsView extends TableWithTotalView {
 	}
 
 	public void dispose() {
-		// if there is no viewer then we were not monitoring plugins so there
+		// if there is no viewer then we were not monitoring so there
 		// is nothing to dispose.
 		if (viewer == null)
 			return;

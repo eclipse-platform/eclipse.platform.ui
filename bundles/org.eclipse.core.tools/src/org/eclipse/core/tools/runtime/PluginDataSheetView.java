@@ -23,6 +23,7 @@ import org.eclipse.osgi.framework.stats.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
+import org.osgi.framework.Bundle;
 
 /**
  * View displaying information about the resources for a given plugin
@@ -54,10 +55,10 @@ public class PluginDataSheetView extends BaseTextView implements ISelectionListe
 
 	private String printStats(BundleStats descriptor) {
 		StringBuffer result = new StringBuffer(200);
-		ClassloaderStats classloader = ClassloaderStats.getLoader(descriptor.getId());
+		ClassloaderStats classloader = ClassloaderStats.getLoader(descriptor.getSymbolicName());
 		printResourceBundleStats(result, classloader == null ? null : classloader.getBundles(), descriptor);
 		result.append('\n');
-		printExtensionLoadingStats(result, Platform.getExtensionRegistry().getExtensions(descriptor.getId()));
+		printExtensionLoadingStats(result, Platform.getExtensionRegistry().getExtensions(descriptor.getSymbolicName()));
 		return result.toString();
 	}
 
@@ -79,7 +80,7 @@ public class PluginDataSheetView extends BaseTextView implements ISelectionListe
 		}
 	}
 
-	private void printResourceBundleStats(StringBuffer result, ArrayList bundles, BundleStats bundle) {
+	private void printResourceBundleStats(StringBuffer result, ArrayList bundles, BundleStats info) {
 		if (bundles == null || bundles.size() == 0) {
 			result.append("No resources loaded by this plug-in\n"); //$NON-NLS-1$
 			return;
@@ -95,8 +96,9 @@ public class PluginDataSheetView extends BaseTextView implements ISelectionListe
 			if (resource.getHashSize() == 0) {
 				DeepSize.reset();
 				DeepSize calculator = new DeepSize();
-// TODO get the resource translator for this bundle
-//				calculator.deepSize(bundle.getResourceBundle());
+				Bundle bundle = Platform.getBundle(info.getSymbolicName());
+				if (bundle != null)
+					calculator.deepSize(Platform.getResourceBundle(bundle));
 				totalSize = calculator.getSize();
 			} else
 				totalSize = resource.getTotalSize();

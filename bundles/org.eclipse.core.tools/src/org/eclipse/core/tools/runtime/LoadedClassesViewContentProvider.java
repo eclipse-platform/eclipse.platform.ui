@@ -75,7 +75,7 @@ public class LoadedClassesViewContentProvider implements ITreeContentProvider, I
 				return null;
 			Set result = new HashSet(51);
 			for (int i = 0; i < elements.length; i++) {
-				ClassStats[] classes = getClasses(((BundleStats) elements[i]).getId());
+				ClassStats[] classes = getClasses(((BundleStats) elements[i]).getSymbolicName());
 				result.addAll(Arrays.asList(classes));
 			}
 			return result.toArray(new Object[result.size()]);
@@ -83,8 +83,8 @@ public class LoadedClassesViewContentProvider implements ITreeContentProvider, I
 		return null;
 	}
 
-	private ClassStats[] getClasses(String pluginId) {
-		ClassloaderStats loader = ClassloaderStats.getLoader(pluginId);
+	private ClassStats[] getClasses(String id) {
+		ClassloaderStats loader = ClassloaderStats.getLoader(id);
 		if (loader == null)
 			return new ClassStats[0];
 		ClassStats[] classes = loader.getClasses();
@@ -114,7 +114,7 @@ public class LoadedClassesViewContentProvider implements ITreeContentProvider, I
 		Object[] list = (Object[]) newInput;
 		inputNames = new String[list.length];
 		for (int i = 0; i < list.length; i++)
-			inputNames[i] = ((BundleStats) list[i]).getId();
+			inputNames[i] = ((BundleStats) list[i]).getSymbolicName();
 	}
 
 }

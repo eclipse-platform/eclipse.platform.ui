@@ -49,7 +49,7 @@ public class ActivePluginsViewContentProvider implements ITreeContentProvider, I
 			return null;
 		if (element == null)
 			return null;
-		return ((BundleStats) element).getActivatedBy().getId();
+		return ((BundleStats) element).getActivatedBy().getSymbolicName();
 	}
 
 	public boolean hasChildren(Object element) {
@@ -62,11 +62,11 @@ public class ActivePluginsViewContentProvider implements ITreeContentProvider, I
 		if (!StatsManager.MONITOR_ACTIVATION || inputElement != BundleStats.class)
 			return null;
 
-		BundleStats[] activePlugins = StatsManager.getDefault().getBundles();
-		ArrayList result = new ArrayList(activePlugins.length);
-		for (int i = 0; i < activePlugins.length; i++) {
-			if (flat || activePlugins[i].getActivatedBy() == null)
-				result.add(activePlugins[i]);
+		BundleStats[] active = StatsManager.getDefault().getBundles();
+		ArrayList result = new ArrayList(active.length);
+		for (int i = 0; i < active.length; i++) {
+			if (flat || active[i].getActivatedBy() == null)
+				result.add(active[i]);
 		}
 		return result.toArray(new BundleStats[result.size()]);
 	}

@@ -12,20 +12,21 @@ package org.eclipse.core.tools.runtime;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.tools.*;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.osgi.framework.stats.BundleStats;
+import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.*;
-import org.osgi.framework.Bundle;
 
 public class PluginDependencyView extends SpyView implements ISelectionListener {
 
@@ -73,8 +74,6 @@ public class PluginDependencyView extends SpyView implements ISelectionListener 
 		Menu menu = menuMgr.createContextMenu(viewer.getControl());
 		viewer.getControl().setMenu(menu);
 
-		// build up the dependency graph
-		buildDependencyGraph();
 		getViewSite().getPage().addSelectionListener(this);
 	}
 
@@ -82,6 +81,7 @@ public class PluginDependencyView extends SpyView implements ISelectionListener 
 	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
 	 */
 	public void dispose() {
+		getViewSite().getPage().removeSelectionListener(this);
 		super.dispose();
 		dependencyGraph = null;
 	}
@@ -91,42 +91,44 @@ public class PluginDependencyView extends SpyView implements ISelectionListener 
 	 * plug-in registry and the cycle through the list of pre-requisites and create the
 	 * parent/child relationships in the nodes.
 	 */
-	private void buildDependencyGraph() {
+	private Map getDependencyGraph() {
+		if (dependencyGraph != null)
+			return dependencyGraph;
 		// Build up the dependency graph (see PluginDependencyGraphNode) so
 		// we have the information readily available for any plug-in.
-		Bundle[] plugins = CoreToolsPlugin.getDefault().getContext().getBundles();
+		State state = Platform.getPlatformAdmin().getState(false);
+		BundleDescription[] plugins = state.getBundles();
 		dependencyGraph = new HashMap();
 		for (int i = 0; i < plugins.length; i++) {
-			Bundle descriptor = plugins[i];
-			PluginDependencyGraphNode node = (PluginDependencyGraphNode) dependencyGraph.get(descriptor);
+			BundleDescription descriptor = plugins[i];
+			PluginDependencyGraphNode node = (PluginDependencyGraphNode) dependencyGraph.get(new Long(descriptor.getBundleId()));
 			if (node == null) {
 				node = new PluginDependencyGraphNode(descriptor);
-				dependencyGraph.put(descriptor, node);
+				dependencyGraph.put(new Long(descriptor.getBundleId()), node);
 			}
 
 			// Cycle through the prerequisites
-// TODO get the state here and use it to build the graph
-//			IPluginPrerequisite[] requires = descriptor.getPluginPrerequisites();
-//			for (int j = 0; j < requires.length; j++) {
-//				String childId = requires[j].getUniqueIdentifier();
-//				IPluginDescriptor childDesc = Platform.getPluginRegistry().getPluginDescriptor(childId);
-//				// if the child doesn't exist in the plug-in registry then move to the next child
-//				if (childDesc == null)
-//					continue;
-//
-//				// if the child entry is not in the table yet then add it
-//				PluginDependencyGraphNode childNode = (PluginDependencyGraphNode) dependencyGraph.get(childDesc);
-//				if (childNode == null) {
-//					childNode = new PluginDependencyGraphNode(childDesc);
-//					dependencyGraph.put(childDesc, childNode);
-//				}
-//
-//				// Add the child to this node's children and set this node as an ancestor
-//				// of the child node
-//				node.addChild(childNode);
-//				childNode.addAncestor(node);
-//			}
+			BundleSpecification[] requires = descriptor.getRequiredBundles();
+			for (int j = 0; j < requires.length; j++) {
+				BundleDescription childDesc = requires[j].getSupplier();
+				// if the child doesn't exist then move to the next child
+				if (childDesc == null)
+					continue;
+
+				// if the child entry is not in the table yet then add it
+				PluginDependencyGraphNode childNode = (PluginDependencyGraphNode) dependencyGraph.get(new Long(childDesc.getBundleId()));
+				if (childNode == null) {
+					childNode = new PluginDependencyGraphNode(childDesc);
+					dependencyGraph.put(new Long(childDesc.getBundleId()), childNode);
+				}
+
+				// Add the child to this node's children and set this node as an ancestor
+				// of the child node
+				node.addChild(childNode);
+				childNode.addAncestor(node);
+			}
 		}
+		return dependencyGraph;
 	}
 
 	/**
@@ -136,11 +138,20 @@ public class PluginDependencyView extends SpyView implements ISelectionListener 
 		if (!(selection instanceof IStructuredSelection))
 			return;
 		Object element = ((IStructuredSelection) selection).getFirstElement();
-		if (!(element instanceof IPluginDescriptor))
+		long id = -1;
+		String name = null;
+		if (element instanceof BundleDescription) {
+			id = ((BundleDescription) element).getBundleId();
+			name = ((BundleDescription) element).getSymbolicName();
+		}
+		if (element instanceof BundleStats) {
+			id = ((BundleStats) element).getId();
+			name = ((BundleStats) element).getSymbolicName();
+		}
+		if (id == -1)
 			return;
-		IPluginDescriptor descriptor = (IPluginDescriptor) element;
-		PluginDependencyGraphNode node = (PluginDependencyGraphNode) dependencyGraph.get(descriptor);
-		String text = node == null ? Policy.bind("depend.noInformation", descriptor.getUniqueIdentifier()) : node.toDeepString(); //$NON-NLS-1$
+		PluginDependencyGraphNode node = (PluginDependencyGraphNode) getDependencyGraph().get(new Long(id));
+		String text = node == null ? Policy.bind("depend.noInformation", name) : node.toDeepString(); //$NON-NLS-1$
 		viewer.getDocument().set(text);
 		viewer.refresh();
 	}

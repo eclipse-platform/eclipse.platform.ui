@@ -43,37 +43,37 @@ public class ActivePluginsViewLabelProvider extends LabelProvider implements ITa
 	public String getColumnText(Object element, int columnIndex) {
 		if (!(element instanceof BundleStats))
 			return "not a plug-in"; //$NON-NLS-1$
-		BundleStats plugin = (BundleStats) element;
-		if (plugin == null)
+		BundleStats info = (BundleStats) element;
+		if (info == null)
 			return "no info for plug-in"; //$NON-NLS-1$
-		VMClassloaderInfo pluginInfo = VMClassloaderInfo.getClassloader(plugin.getId());
+		VMClassloaderInfo loaderInfo = VMClassloaderInfo.getClassloader(info.getSymbolicName());
 		switch (columnIndex) {
-			case 0 : /* plugin id */
-				return plugin.getId() + (plugin.isStartupBundle() ? "*" : ""); //$NON-NLS-1$ //$NON-NLS-2$
+			case 0 : /* id */
+				return info.getSymbolicName() + (info.isStartupBundle() ? "*" : ""); //$NON-NLS-1$ //$NON-NLS-2$
 			case 1 : /* class load count */
-				return "" + plugin.getClassLoadCount(); //$NON-NLS-1$
+				return "" + info.getClassLoadCount(); //$NON-NLS-1$
 			case 2 : /* Total Mem Alloc */
-				return "" + (pluginInfo.getAllocRAM() + pluginInfo.getAllocROM()); //$NON-NLS-1$
+				return "" + (loaderInfo.getAllocRAM() + loaderInfo.getAllocROM()); //$NON-NLS-1$
 			case 3 : /* Total Mem Used */
-				return "" + (pluginInfo.getUsedRAM() + pluginInfo.getUsedROM()); //$NON-NLS-1$
+				return "" + (loaderInfo.getUsedRAM() + loaderInfo.getUsedROM()); //$NON-NLS-1$
 			case 4 : /* startup time */
-				return "" + (plugin.getStartupTime()); //$NON-NLS-1$
+				return "" + (info.getStartupTime()); //$NON-NLS-1$
 			case 5 : /* activation order */
-				return "" + plugin.getActivationOrder(); //$NON-NLS-1$
+				return "" + info.getActivationOrder(); //$NON-NLS-1$
 			case 6 : /* activation time */
-				return "" + (int) (plugin.getTimestamp()); //$NON-NLS-1$
+				return "" + (int) (info.getTimestamp()); //$NON-NLS-1$
 			case 7 : /* class load time*/
-				return "" + (int) (plugin.getClassLoadTime()); //$NON-NLS-1$
+				return "" + (int) (info.getClassLoadTime()); //$NON-NLS-1$
 			case 8 : /* startup method time */
-				return "" + (int) (plugin.getStartupMethodTime()); //$NON-NLS-1$
+				return "" + (int) (info.getStartupMethodTime()); //$NON-NLS-1$
 			case 9 : /* RAM alloc */
-				return "" + pluginInfo.getAllocRAM(); //$NON-NLS-1$
+				return "" + loaderInfo.getAllocRAM(); //$NON-NLS-1$
 			case 10 : /* RAM used */
-				return "" + pluginInfo.getUsedRAM(); //$NON-NLS-1$
+				return "" + loaderInfo.getUsedRAM(); //$NON-NLS-1$
 			case 11 : /* ROM alloc */
-				return "" + pluginInfo.getAllocROM(); //$NON-NLS-1$
+				return "" + loaderInfo.getAllocROM(); //$NON-NLS-1$
 			case 12 : /* ROM used */
-				return "" + pluginInfo.getUsedROM(); //$NON-NLS-1$
+				return "" + loaderInfo.getUsedROM(); //$NON-NLS-1$
 		}
 		return null;
 	}

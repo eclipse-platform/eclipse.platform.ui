@@ -12,7 +12,7 @@ package org.eclipse.core.tools.runtime;
 
 import java.util.*;
 import org.eclipse.core.tools.Policy;
-import org.osgi.framework.Bundle;
+import org.eclipse.osgi.service.resolver.BundleDescription;
 
 /**
  *  This class is used to build up a dependency graph.  The full dependency
@@ -24,7 +24,7 @@ import org.osgi.framework.Bundle;
  */
 public class PluginDependencyGraphNode {
 
-	private Bundle descriptor = null;
+	private BundleDescription descriptor = null;
 	private Set children = new HashSet();
 	private Set ancestors = new HashSet();
 
@@ -32,7 +32,7 @@ public class PluginDependencyGraphNode {
 	 * Constructor for this class. Each node is associated with a plug-in so 
 	 * we accept the plug-in descriptor here and keep it around for later use.
 	 */
-	public PluginDependencyGraphNode(Bundle descriptor) {
+	public PluginDependencyGraphNode(BundleDescription descriptor) {
 		this.descriptor = descriptor;
 	}
 
