@@ -76,6 +76,13 @@ public class ContentFormatter implements IContentFormatter {
 		/** The original category of the referenced position */
 		protected String fCategory;
 		
+		/**
+		 * Creates a new position reference.
+		 * 
+		 * @param position the position to be referenced
+		 * @param refersToOffset <code>true</code> if position offset should be referenced
+		 * @param category the categpry the given position belongs to
+		 */
 		protected PositionReference(Position position, boolean refersToOffset, String category) {
 			fPosition= position;
 			fRefersToOffset= refersToOffset;
@@ -84,6 +91,8 @@ public class ContentFormatter implements IContentFormatter {
 		
 		/**
 		 * Returns the offset of the referenced position.
+		 * 
+		 * @return the offset of the referenced position
 		 */
 		protected int getOffset() {
 			return fPosition.getOffset();
@@ -91,6 +100,8 @@ public class ContentFormatter implements IContentFormatter {
 		
 		/**
 		 * Manipulates the offset of the referenced position.
+		 * 
+		 * @param offset the new offset of the referenced position
 		 */
 		protected void setOffset(int offset) {
 			fPosition.setOffset(offset);
@@ -98,6 +109,8 @@ public class ContentFormatter implements IContentFormatter {
 		
 		/**
 		 * Returns the length of the referenced position.
+		 * 
+		 * @return the length of the referenced position
 		 */
 		protected int getLength() {
 			return fPosition.getLength();
@@ -105,6 +118,8 @@ public class ContentFormatter implements IContentFormatter {
 		
 		/**
 		 * Manipulates the length of the referenced position.
+		 * 
+		 * @param the new length of the referenced position
 		 */
 		protected void setLength(int length) {
 			fPosition.setLength(length);
@@ -113,6 +128,8 @@ public class ContentFormatter implements IContentFormatter {
 		/**
 		 * Returns whether this reference points to the offset or endoffset
 		 * of the references position.
+		 * 
+		 * @return <code>true</code> if the offset of the position is referenced, <code>false</code> otherwise
 		 */
 		protected boolean refersToOffset() {
 			return fRefersToOffset;
@@ -120,6 +137,8 @@ public class ContentFormatter implements IContentFormatter {
 		
 		/**
 		 * Returns the category of the referenced position.
+		 * 
+		 * @return the category of the referenced position
 		 */
 		protected String getCategory() {
 			return fCategory;
@@ -127,6 +146,8 @@ public class ContentFormatter implements IContentFormatter {
 		
 		/**
 		 * Returns the referenced position.
+		 * 
+		 * @return the referenced position
 		 */
 		protected Position getPosition() {
 			return fPosition;
@@ -134,6 +155,8 @@ public class ContentFormatter implements IContentFormatter {
 		
 		/**
 		 * Returns the referenced character position
+		 * 
+		 * @return the referenced character position
 		 */
 		protected int getCharacterPosition() {
 			if (fRefersToOffset)
@@ -141,7 +164,7 @@ public class ContentFormatter implements IContentFormatter {
 			return getOffset() + getLength();
 		}
 		
-		/**
+		/*
 		 * @see Comparable#compareTo(Object)
 		 */
 		public int compareTo(Object obj) {
@@ -156,14 +179,18 @@ public class ContentFormatter implements IContentFormatter {
 	};
 	
 	/**
-	 * The position updater used to adapt all to update the 
-	 * remembered partitions.
+	 * The position updater used to update the remembered partitions.
 	 *
 	 * @see IPositionUpdater
 	 * @see DefaultPositionUpdater
 	 */
 	class NonDeletingPositionUpdater extends DefaultPositionUpdater {
 		
+		/**
+		 * Creates a new updater for the given category.
+		 * 
+		 * @param category the category
+		 */
 		protected NonDeletingPositionUpdater(String category) {
 			super(category);
 		}
@@ -201,15 +228,23 @@ public class ContentFormatter implements IContentFormatter {
 	 */
 	class UpdateAffectedPositions implements IPositionUpdater {
 		
+		/** The affected positions */
 		private int[] fPositions;
+		/** The offset */
 		private int fOffset;
 		
+		/**
+		 * Creates a new updater.
+		 * 
+		 * @param positions the affected positions
+		 * @param offset the offset
+		 */
 		public UpdateAffectedPositions(int[] positions, int offset) {
 			fPositions= positions;
 			fOffset= offset;
 		}
 		
-		/**
+		/*
 		 * @see IPositionUpdater#update(DocumentEvent)
 		 */
 		public void update(DocumentEvent event) {
@@ -285,7 +320,7 @@ public class ContentFormatter implements IContentFormatter {
 	}
 	
 	/*
-	 * @see IContentFormatter#getFormattingStrategy
+	 * @see IContentFormatter#getFormattingStrategy(String)
 	 */
 	public IFormattingStrategy getFormattingStrategy(String contentType) {
 		
@@ -298,7 +333,7 @@ public class ContentFormatter implements IContentFormatter {
 	}
 	
 	/*
-	 * @see IContentFormatter#format
+	 * @see IContentFormatter#format(IDocument, IRegion)
 	 */
 	public void format(IDocument document, IRegion region) {
 		if (fIsPartitionAware)
@@ -309,8 +344,11 @@ public class ContentFormatter implements IContentFormatter {
 		
 	/**
 	 * Determines the partitioning of the given region of the document.
-	 * Informs for each partition about the start, the process, and the
-	 * termination of the formatting session.
+	 * Informs the formatting strategies of each partition about the start,
+	 * the process, and the termination of the formatting session.
+	 * 
+	 * @param document the document to be formatted
+	 * @param region the document region to be formatted
 	 */
 	private void formatPartitions(IDocument document, IRegion region) {
 		
@@ -332,8 +370,12 @@ public class ContentFormatter implements IContentFormatter {
 	}
 	
 	/**
-	 * Informs for the given region about the start, the process, and
+	 * Formats the given region with the strategy registered for the default
+	 * content type. The strategy is informed about the start, the process, and
 	 * the termination of the formatting session.
+	 * 
+	 * @param document the document to be formatted
+	 * @param region the region to be formatted
 	 */
 	private void formatRegion(IDocument document, IRegion region) {
 		

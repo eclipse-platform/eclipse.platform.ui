@@ -264,8 +264,10 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 	}
 	
 	/**
-	 * Sets a offset to override selection. Setting the value to -1 will disable
+	 * Sets a offset to override the selection. Setting the value to <code>-1</code> will disable
 	 * overriding.
+	 * 
+	 * @param offset the offset to override selection or <code>-1</code>
 	 */
 	public void setOffset(int offset) {
 		fOffset= offset;
@@ -347,9 +349,12 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 	}
 	
 	/**
-	 * Method modelRange2WidgetRange.
-	 * @param region
-	 * @return IRegion
+	 * Translated the given range in the viewer's document into the corresponding
+	 * range of the viewer's widget.
+	 * 
+	 * @param region the range in the viewer's document
+	 * @return the corresponding widget range
+	 * @since 2.1
 	 */
 	private IRegion modelRange2WidgetRange(IRegion region) {
 		if (fTextViewer instanceof ITextViewerExtension3) {
