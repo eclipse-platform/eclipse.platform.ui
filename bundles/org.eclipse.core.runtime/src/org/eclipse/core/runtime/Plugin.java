@@ -359,13 +359,17 @@ public abstract class Plugin implements BundleActivator {
 	 * settings supplied from outside the plug-in (product configuration or
 	 * platform start up).
 	 * </p>
-	 * 
+	 * TODO @deprecated
 	 * @since 2.0
 	 */
 	protected void initializeDefaultPluginPreferences() {
 		// default implementation of this method - spec'd to do nothing
 	}
 
+	/**
+	 * TODO @deprecated
+	 * @since 3.0
+	 */
 	public void legacyInitializeDefaultPluginPreferences() {
 		initializeDefaultPluginPreferences();
 	}
