@@ -1191,6 +1191,12 @@
             class="org.eclipse.debug.internal.ui.sourcelookup.ResolveDuplicatesHandler"
             id="org.eclipse.debug.ui.statusHandler.selectSourceDialog">
       </statusHandler>      
+      <statusHandler
+            plugin="org.eclipse.debug.core"
+            code="201"
+            class="org.eclipse.debug.internal.ui.launchConfigurations.DebugModePromptStatusHandler"
+            id="org.eclipse.debug.ui.statusHandler.debugModePromptStatusHandler">
+      </statusHandler>      
    </extension>
    <extension
          point="org.eclipse.debug.ui.launchGroups">
@@ -1686,6 +1692,18 @@
             icon="icons/full/obj16/prj_obj.gif"
             id="org.eclipse.debug.ui.containerPresentation.workspace">
       </sourceContainerPresentation>
+<!--      <sourceContainerPresentation
+            browserClass="org.eclipse.debug.internal.ui.sourcelookup.browsers.ArchiveSourceContainerBrowser"
+            containerTypeID="org.eclipse.debug.core.containerType.archive"
+            icon="icons/full/obj16/jar_obj.gif"
+            id="org.eclipse.debug.ui.containerPresentation.archive">
+      </sourceContainerPresentation>      -->
+      <sourceContainerPresentation
+            browserClass="org.eclipse.debug.internal.ui.sourcelookup.browsers.ExternalArchiveSourceContainerBrowser"
+            containerTypeID="org.eclipse.debug.core.containerType.externalArchive"
+            icon="icons/full/obj16/jar_obj.gif"
+            id="org.eclipse.debug.ui.containerPresentation.externalArchive">
+      </sourceContainerPresentation>      
       <sourceContainerPresentation           
             containerTypeID="org.eclipse.debug.core.containerType.default"
             icon="icons/full/obj16/prj_obj.gif"

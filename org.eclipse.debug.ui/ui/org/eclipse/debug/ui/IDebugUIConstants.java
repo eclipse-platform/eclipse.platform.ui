@@ -168,6 +168,12 @@ public interface IDebugUIConstants {
 	 * @since 2.0
 	 */
 	public static final String PREF_AUTO_REMOVE_OLD_LAUNCHES= PLUGIN_ID + ".auto_remove_old_launches"; //$NON-NLS-1$
+
+	/**
+	 * Preference specifiying that all launches should be DEBUG_MODE if breakpoints exist in the workspace
+	 * @since 3.0
+	 */
+	public static final String PREF_RELAUNCH_IN_DEBUG_MODE = PLUGIN_ID + ".relaunch_in_debug_mode"; //$NON-NLS-1$
 		
 	/**
 	 * Boolean preference controlling whether the debugger re-uses non-dirty editors

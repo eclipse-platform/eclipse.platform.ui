@@ -345,6 +345,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		prefs.setDefault(IDebugUIConstants.PREF_WAIT_FOR_BUILD, AlwaysNeverDialog.PROMPT);
 		prefs.setDefault(IDebugUIConstants.PREF_REUSE_EDITOR, true);
 		prefs.setDefault(IDebugUIConstants.PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE, false);
+		prefs.setDefault(IDebugUIConstants.PREF_RELAUNCH_IN_DEBUG_MODE, AlwaysNeverDialog.PROMPT);
 		
 		//ConsolePreferencePage
 		prefs.setDefault(IDebugPreferenceConstants.CONSOLE_WRAP, false);
