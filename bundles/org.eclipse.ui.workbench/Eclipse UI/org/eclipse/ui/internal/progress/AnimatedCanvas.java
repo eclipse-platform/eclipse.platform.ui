@@ -1,6 +1,6 @@
 package org.eclipse.ui.internal.progress;
 
-import org.eclipse.core.internal.runtime.jobs.JobManager;
+import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.SWT;

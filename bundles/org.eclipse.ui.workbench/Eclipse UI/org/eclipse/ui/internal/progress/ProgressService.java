@@ -2,7 +2,7 @@ package org.eclipse.ui.internal.progress;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.internal.runtime.jobs.JobManager;
+import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.IJobListener;
 import org.eclipse.core.runtime.jobs.IProgressListener;
@@ -149,6 +149,14 @@ public class ProgressService implements IJobListener,IProgressListener,IProgress
 	
 	public Object[] getInfos(){
 		return progressItem.getStatuses();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.jobs.IJobListener#paused(org.eclipse.core.runtime.jobs.Job)
+	 */
+	public void paused(Job job) {
+		// XXX Auto-generated method stub
+
 	}
 
 }
