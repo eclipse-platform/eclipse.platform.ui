@@ -2221,6 +2221,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			close();
 		} else {
 			getShell().setFocus();
+			updateButtons();
 		}
 	}
 	
