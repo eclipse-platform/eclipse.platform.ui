@@ -28,6 +28,7 @@ import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.commands.HandlerSubmission;
@@ -139,6 +140,13 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
         }
     };
 
+    /**
+     * The identifier for the currently active part. This value may be
+     * <code>null</code> if this is no active part, or it the identifier for
+     * the active part is <code>null</code>.
+     */
+    private String activePartId;
+    
     /**
      * The currently active shell. This value is never <code>null</code>.
      */
@@ -367,7 +375,8 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
             return;
         }
 
-        IWorkbenchSite newWorkbenchSite = null;
+        IWorkbenchPartSite newActiveWorkbenchSite = null;
+        String newActivePartId = null;
         IWorkbenchWindow newWorkbenchWindow = workbench
                 .getActiveWorkbenchWindow();
         boolean update = false;
@@ -406,17 +415,36 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
             if (activeWorkbenchPage != null) {
                 IWorkbenchPart activeWorkbenchPart = activeWorkbenchPage
                         .getActivePart();
+                System.out.println("activePart = " + activeWorkbenchPart); //$NON-NLS-1$
 
                 if (activeWorkbenchPart != null) {
-                    newWorkbenchSite = activeWorkbenchPart.getSite();
+                    newActiveWorkbenchSite = activeWorkbenchPart.getSite();
+                    newActivePartId = newActiveWorkbenchSite.getId();
+                    if ((activeWorkbenchSite != newActiveWorkbenchSite)
+                            || (!activePartId.equals(newActivePartId))) {
+                        activeWorkbenchSite = newActiveWorkbenchSite;
+                        activePartId = newActivePartId;
+                        update = true;
+                    }
+                } else if ((activeWorkbenchSite != null)
+                        || (activePartId != null)) {
+                    activeWorkbenchSite = null;
+                    activePartId = null;
+                    update = true;
                 }
+            } else if ((activeWorkbenchSite != null) || (activePartId != null)) {
+                activeWorkbenchSite = null;
+                activePartId = null;
+                update = true;
             }
-        } else {
-            newWorkbenchSite = null;
+
+        } else if ((activeWorkbenchSite != null) || (activePartId != null)) {
+            activeWorkbenchSite = null;
+            activePartId = null;
+            update = true;
         }
 
-        if (force || update || (activeWorkbenchSite != newWorkbenchSite)) {
-            activeWorkbenchSite = newWorkbenchSite;
+        if (force || update) {
             Map handlersByCommandId = new HashMap();
             final WorkbenchContextSupport contextSupport = (WorkbenchContextSupport) workbench
                     .getContextSupport();
@@ -436,16 +464,26 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
                 boolean conflict = false;
 
                 while (submissionItr.hasNext()) {
-                    HandlerSubmission handlerSubmission = (HandlerSubmission) submissionItr
+                    final HandlerSubmission handlerSubmission = (HandlerSubmission) submissionItr
                             .next();
-                    IWorkbenchSite activeWorkbenchSite2 = handlerSubmission
+                    
+                    // Check if the site matches or is a wildcard.
+                    final IWorkbenchSite siteToMatch = handlerSubmission
                             .getActiveWorkbenchPartSite();
-
-                    if (activeWorkbenchSite2 != null
-                            && activeWorkbenchSite2 != newWorkbenchSite)
+                    if (siteToMatch != null
+                            && siteToMatch != newActiveWorkbenchSite)
                         continue;
 
-                    final Shell activeShell2 = handlerSubmission
+                    // Check if the part matches or is a wildcard.
+                    final String partIdToMatch = handlerSubmission
+                            .getActivePartId();
+                    if ((partIdToMatch != null)
+                            && (!partIdToMatch.equals(activePartId))) {
+                        continue;
+                    }
+
+                    // Check if the shell matches or is a wilcard.
+                    final Shell shellToMatch = handlerSubmission
                             .getActiveShell();
                     final Shell wbWinShell;
                     if (activeWorkbenchWindow == null) {
@@ -453,18 +491,17 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
                     } else {
                         wbWinShell = activeWorkbenchWindow.getShell();
                     }
-
-                    if ((activeShell2 != null) && (activeShell2 != activeShell)
-                            && ((activeShell2 != wbWinShell) || dialogOpen))
+                    if ((shellToMatch != null) && (shellToMatch != activeShell)
+                            && ((shellToMatch != wbWinShell) || dialogOpen))
                         continue;
 
                     if (bestHandlerSubmission == null) {
                         bestHandlerSubmission = handlerSubmission;
                     } else {
                         int compareTo = Util.compareIdentity(
-                                activeWorkbenchSite2, bestHandlerSubmission
+                                siteToMatch, bestHandlerSubmission
                                         .getActiveWorkbenchPartSite());
-                        final int currentMatch = compareWindows(activeShell2,
+                        final int currentMatch = compareWindows(shellToMatch,
                                 activeShell);
                         final Shell bestMatchingShell = bestHandlerSubmission
                                 .getActiveShell();

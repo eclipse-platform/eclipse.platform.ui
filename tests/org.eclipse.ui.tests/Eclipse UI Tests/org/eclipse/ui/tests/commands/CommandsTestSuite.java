@@ -31,5 +31,6 @@ public final class CommandsTestSuite extends TestSuite {
     public CommandsTestSuite() {
         addTest(new TestSuite(Bug66182Test.class));
         addTest(new TestSuite(Bug70503Test.class));
+        addTest(new TestSuite(Bug74990Test.class));
     }
 }
