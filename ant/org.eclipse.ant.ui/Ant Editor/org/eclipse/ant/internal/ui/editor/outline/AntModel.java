@@ -623,7 +623,7 @@ public class AntModel {
 	private AntTaskNode newTaskNode(Task newTask, Attributes attributes) {
 		AntTaskNode newNode= null;
 		String taskName= newTask.getTaskName();
-		if (taskName.equalsIgnoreCase("property")) { //$NON-NLS-1$
+		if (isPropertySettingTask(taskName)) { //$NON-NLS-1$
 			newNode= new AntPropertyNode(newTask, attributes);
 		} else if (taskName.equalsIgnoreCase("import")) { //$NON-NLS-1$
 			newNode= new AntImportNode(newTask, attributes);
@@ -693,6 +693,22 @@ public class AntModel {
 		return newNode;
 	}
             
+	/**
+	 * @param taskName the name of the task to check
+	 * @return whether or not a task with this name sets properties
+	 */
+	public static boolean isPropertySettingTask(String taskName) {
+		return taskName.equalsIgnoreCase("property") //$NON-NLS-1$
+			|| taskName.equalsIgnoreCase("available") //$NON-NLS-1$
+			|| taskName.equalsIgnoreCase("basename") //$NON-NLS-1$
+			|| taskName.equalsIgnoreCase("condition") //$NON-NLS-1$
+			|| taskName.equalsIgnoreCase("dirname") //$NON-NLS-1$
+			|| taskName.equalsIgnoreCase("loadfile") //$NON-NLS-1$
+			|| taskName.equalsIgnoreCase("pathconvert") //$NON-NLS-1$
+			|| taskName.equalsIgnoreCase("uptodate") //$NON-NLS-1$
+			|| taskName.equalsIgnoreCase("xmlproperty"); //$NON-NLS-1$
+	}
+
 	private boolean isTaskExternal(String taskFileName) {
 		File taskFile= new File(taskFileName);
 		return !taskFile.equals(getEditedFile());

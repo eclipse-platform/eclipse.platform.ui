@@ -29,6 +29,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.ComponentHelper;
 import org.apache.tools.ant.IntrospectionHelper;
@@ -36,15 +37,8 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Target;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.UnknownElement;
-import org.apache.tools.ant.taskdefs.Available;
 import org.apache.tools.ant.taskdefs.MacroDef;
 import org.apache.tools.ant.taskdefs.MacroInstance;
-import org.apache.tools.ant.taskdefs.Parallel;
-import org.apache.tools.ant.taskdefs.PathConvert;
-import org.apache.tools.ant.taskdefs.Property;
-import org.apache.tools.ant.taskdefs.Sequential;
-import org.apache.tools.ant.taskdefs.UpToDate;
-import org.apache.tools.ant.taskdefs.condition.Condition;
 import org.apache.tools.ant.types.EnumeratedAttribute;
 import org.apache.tools.ant.types.Reference;
 import org.eclipse.ant.internal.ui.dtd.IAttribute;
@@ -1326,10 +1320,9 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
         do {
             curtarget = (Target) sortedTargets.get(curidx++);
 			Task[] tasks = curtarget.getTasks();
-			
+			Task task;
 			for (int i = 0; i < tasks.length; i++) {
-				Task task = tasks[i];                
-
+				task= tasks[i];                
 				if (task instanceof UnknownElement) {
 					try {
 						task.maybeConfigure();
@@ -1339,59 +1332,12 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 					task= ((UnknownElement)task).getTask();
 				}
 				
-				// sequential
-				if(task instanceof Sequential) {
-					// (T)
-				}
-				
-				// parallel
-				if(task instanceof Parallel) {
-					// (T)
-				}
-				
-				// waitfor (@since Ant 1.5)
-	//			if(tempTask instanceof WaitFor) { 
-	//				// (T)
-	//			}
-				
-				if(task instanceof Property 
-					|| task instanceof PathConvert
-					|| task instanceof Available
-					|| task instanceof UpToDate
-					|| task instanceof Condition) {
+				if(AntModel.isPropertySettingTask(task.getTaskName())) { 
 					try {
 						task.perform();
 					} catch (BuildException be) {
-						
 					}
 				}
-			
-			
-				// Ant 1.5
-//				if(tempTask instanceof LoadFile) {
-//				
-//				}
-			
-				// Ant 1.5
-//				if(tempTask instanceof XmlProperty) {
-//				
-//				}
-			
-				// Ant 1.5
-//				if(tempTask instanceof Basename) {
-//				
-//				}
-			
-				
-				// Ant 1.5
-//				if(tempTask instanceof Dirname) {
-//				
-//				}
-			
-				// Ant 1.5
-//				if(tempTask instanceof LoadProperties) {
-//				
-//				}
             }
         } while (!curtarget.getName().equals(targetName));
 
