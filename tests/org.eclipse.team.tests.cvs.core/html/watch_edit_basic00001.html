@@ -4,7 +4,7 @@
 <meta NAME="since" content="">
 </head><body><h2>Basic scenarios</h2>
 <p>Since: <br>
-Last Modified: $Date: 2004/06/01 15:23:56 $</p>
+Last Modified: $Date: 2004/06/01 20:28:37 $</p>
 
 <p>To setup, goto the CVS preference page and enable watch edit for all projects checked out from CVS. And then set the prompt option to always prompt.</p>
 <ol>
@@ -15,6 +15,29 @@ Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 <li>Open a file and edit it. Say yes to the prompt. Replace the file from the repository and edit again. You should be prompted to edit again.
 <li>Open a file and edit it. Un-plug your network connection. Say yes to the prompt to send a notification. There should be a pause, then the file should be editable.
 <li>Checkout another copy of the project. Edit a file, then try to edit the same file in the another project copy. You should be notified that the file is currently being edited by someone else.
+</ol>
+
+<p>Saving files - setup is the same as previous</p>
+<ol>
+<li>Check out a project from CVS and verify that the files are marked as read-only.
+<li>Open a file and edit it. You should be prompted to edit it. Say yes. There should be a brief pause, then you can edit the file.
+<li>Edit the file but don't save it. 
+<li>Edit the file in a system editor outside of Eclipse, then in the resource navigator, commit the file. The resource's decorator will change. Ignore all the prompts
+about saving the un-saved file.
+<li>Return to the unsaved editor and try typing. You should be prompted to call validate edit again.
+</ol>
+
+<p>validateEdit fails</p>
+<ol>
+<li>Check out a project from CVS and verify that the files are marked as read-only.
+<li>Disconnect from network so that the validateEdit would fail.
+<li>Open a file and edit it. You should be prompted to edit it. Say yes. There should be a pause then the error should be reported in the
+editor pane showing the exception that occured.
+</ol>
+
+<p>Refactoring</p>
+<ol>
+<li>Check out a project from CVS and verify that the files are marked as read-only.
 </ol>
 
 </body></html>
