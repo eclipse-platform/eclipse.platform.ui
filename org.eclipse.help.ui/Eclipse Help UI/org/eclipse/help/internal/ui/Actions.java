@@ -177,8 +177,11 @@ public class Actions {
 	 */
 	public static class SynchronizeAction extends WebAction {
 		ISelectionProvider selectionProvider;
-		public SynchronizeAction(IBrowser web, ISelectionProvider selectionProvider) {
+		ShowHideAction showHideAction;
+		
+		public SynchronizeAction(IBrowser web, ISelectionProvider selectionProvider, ShowHideAction showHideAction) {
 			super(web, WorkbenchResources.getString("synchronize"));
+			this.showHideAction = showHideAction;
 			setText("&Synchronize@Ctrl+S");
 			setImageDescriptor(synchronize);
 			setToolTipText(WorkbenchResources.getString("Synchronize_with_TOC"));
@@ -194,7 +197,10 @@ public class Actions {
 			if (currentURL == null)
 				return;
 			if (this.selectionProvider != null)
+			{
 				selectionProvider.setSelection(new StructuredSelection(currentURL));
+				showHideAction.showNavigation();
+			}
 		}
 	}
 
@@ -202,6 +208,7 @@ public class Actions {
 	 * Action that shows/hides the TOC   */
 	public static class ShowHideAction extends WebAction {
 		EmbeddedHelpView view;
+		
 		public ShowHideAction(EmbeddedHelpView view) {
 			super(null, WorkbenchResources.getString("toggle"));
 			setText("&Hide navigation@Ctrl+H");
@@ -218,12 +225,23 @@ public class Actions {
 			boolean hidden = view.toggleNavigation();
 			if (hidden) {
 				setText("&Show navigation@Ctrl+H");
-				setImageDescriptor(shownav);
+				//setImageDescriptor(shownav);
 				setToolTipText(WorkbenchResources.getString("Show_TOC"));
 			} else {
 				setText("&Hide navigation@Ctrl+H");
-				setImageDescriptor(hidenav);
+				//setImageDescriptor(hidenav);
 				setToolTipText(WorkbenchResources.getString("Hide_TOC"));
+			}
+		}
+		public void showNavigation()
+		{
+			if (isChecked()) // i.e. is navigation hidden
+			{
+				view.toggleNavigation();
+				setText("&Hide navigation@Ctrl+H");
+				//setImageDescriptor(hidenav);
+				setToolTipText(WorkbenchResources.getString("Hide_TOC"));
+				setChecked(false);
 			}
 		}
 	}
