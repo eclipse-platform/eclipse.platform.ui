@@ -111,7 +111,7 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 		 * the viewer).
 		 * added controls how many lines are added - added lines are 
 		 */
-		String text= new String();
+		String text= ""; //$NON-NLS-1$
 		int added= 0;
 		for (Iterator it= diffInfos.iterator(); it.hasNext();) {
 			ILineDiffInfo info= (ILineDiffInfo)it.next();
