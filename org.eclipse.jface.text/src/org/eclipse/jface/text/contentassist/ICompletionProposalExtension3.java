@@ -47,4 +47,17 @@ public interface ICompletionProposalExtension3 {
 	 * @return the offset at which the proposal would insert its proposal
 	 */
 	int getCompletionOffset();
+	
+	/**
+	 * Updates the replacement offset of a completion proposal. Implementations
+	 * may use the offset to detect whether a partial 
+	 * 
+	 * @param offset the new replacement offset, nee
+	 */
+	void updateReplacementOffset(int offset);
+
+	String getReplacementString();
+
+	void updateReplacementLength(int length);
+	
 }
