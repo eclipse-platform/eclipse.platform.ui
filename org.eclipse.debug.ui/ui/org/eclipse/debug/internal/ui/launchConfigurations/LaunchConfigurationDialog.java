@@ -980,7 +980,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  		// If selection is the same, don't bother
  		Object obj = getSelectedTreeObject();
  		if (singleSelection && obj != null && obj.equals(firstSelectedElement)) {
- 			getEditArea().setVisible(true);
+ 			getEditArea().setVisible(obj instanceof ILaunchConfiguration);
  			return;
  		}
  		
