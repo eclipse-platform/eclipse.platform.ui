@@ -886,6 +886,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 			fDocumentAdapter= null;
 		}
 		
+		fVisibleDocument= null;
 		fDocument= null;
 		fChildDocumentManager= null;
 		fScroller= null;
@@ -1858,7 +1859,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 	 */
 	private void setVisibleDocument(IDocument document) {
 		
-		if (fVisibleDocument != null)
+		if (fVisibleDocument != null && fDocumentListener != null)
 			fVisibleDocument.removeDocumentListener(fDocumentListener);
 		
 		fVisibleDocument= document;
@@ -1866,7 +1867,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 		initializeWidgetContents();
 		resetPlugins();
 		
-		if (fVisibleDocument != null)
+		if (fVisibleDocument != null && fDocumentListener != null)
 			fVisibleDocument.addDocumentListener(fDocumentListener);
 	}
 	

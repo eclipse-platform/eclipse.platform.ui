@@ -15,6 +15,7 @@ import java.util.List;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationModel;
 import org.eclipse.jface.util.Assert;
 
@@ -311,22 +312,26 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel {
 	protected void removeAnnotations(List annotations, boolean fireModelChanged, boolean modelInitiated) {
 		if (annotations != null && annotations.size() > 0) {
 
-			int n= annotations.size();
-			IMarker[] markers= new IMarker[n];
-			for (int i= 0; i < n; ++i) {
-				MarkerAnnotation a= (MarkerAnnotation) annotations.get(i);
-				markers[i]= a.getMarker();
+			List markers= new ArrayList();
+			for (Iterator e= annotations.iterator(); e.hasNext();) {
+				Annotation a= (Annotation) e.next();
+				if (a instanceof MarkerAnnotation) {
+					MarkerAnnotation ma= (MarkerAnnotation) a;
+					markers.add(ma.getMarker());
+				}
 
 				// remove annotations from annotation model
 				removeAnnotation(a, false);
 			}
 
 			// if model initiated also remove it from the marker manager
-			if (modelInitiated) {
+			if (modelInitiated && markers.size() > 0) {
 				
 				listenToMarkerChanges(false);
 				try {
-					deleteMarkers(markers);
+					IMarker[] m= new IMarker[markers.size()];
+					markers.toArray(m);
+					deleteMarkers(m);
 				} catch (CoreException x) {
 					handleCoreException(x, EditorMessages.getString("AbstractMarkerAnnotationModel.removeAnnotations")); //$NON-NLS-1$
 				}
