@@ -188,7 +188,7 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 		useCustomPort = createRadioButton(portGroup, Policy.bind("ConfigurationWizardMainPage.usePort"), 1); //$NON-NLS-1$
 		useCustomPort.addListener(SWT.Selection, listener);
 		portText = createTextField(portGroup);
-		portText.addListener(SWT.Selection, listener);
+		portText.addListener(SWT.Modify, listener);
 		
 		// create a composite to ensure the validate button is in its own tab group
 		if (showValidate) {
