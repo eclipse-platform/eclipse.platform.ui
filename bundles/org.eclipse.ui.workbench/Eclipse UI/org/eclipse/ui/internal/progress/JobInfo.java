@@ -55,23 +55,28 @@ class JobInfo {
 		currentChild = child;
 	}
 
-	//Add the new job info to the lowest level child you
-	//currently have. If there is a currentChild add it to them,
-	//if not add it to the receiver.
-	void addToLeafChild(JobInfo child) {
-		if (currentChild == null)
+	/**
+	 * Add the new job info to the lowest level child you
+	 * currently have. If there is a currentChild add it to them,
+	 * if not add it to the receiver.
+	 * @param JobInfo
+	 * @return JobInfo the job info this gets added to
+	 */
+	JobInfo addToLeafChild(JobInfo child) {
+		if (currentChild == null) {
 			addChild(child);
-		else
-			currentChild.addChild(child);
+			return this;
+		} else
+			return currentChild.addToLeafChild(child);
 	}
-	
+
 	/**
 	 * Add the amount of work to the job info.
 	 * @param workIncrement
 	 */
 	void addWork(double workIncrement) {
 		//No work on a simple label- pass it down
-		if(currentChild != null)
+		if (currentChild != null)
 			currentChild.addWork(workIncrement);
 	}
 

@@ -90,7 +90,7 @@ public class ProgressContentProvider
 		if (job instanceof AnimatedCanvas.AnimateJob)
 			return;
 		jobs.remove(job);
-		refreshViewer();
+		refreshViewer(null);
 
 	}
 
@@ -117,7 +117,7 @@ public class ProgressContentProvider
 		if (job instanceof AnimatedCanvas.AnimateJob)
 			return;
 		jobs.put(job, new JobInfoWithProgress(name, totalWork));
-		refreshViewer();
+		refreshViewer(null);
 	}
 
 	/* (non-Javadoc)
@@ -144,8 +144,9 @@ public class ProgressContentProvider
 			return;
 		if (name.length() == 0)
 			return;
-		getInfo(job).addToLeafChild(new JobInfo(name));
-		refreshViewer();
+		JobInfo info = getInfo(job);
+		info.addChild(new JobInfo(name));
+		refreshViewer(info);
 
 	}
 	private JobInfo getInfo(Job job) {
@@ -158,8 +159,9 @@ public class ProgressContentProvider
 	public void worked(Job job, double work) {
 		if (job instanceof AnimatedCanvas.AnimateJob)
 			return;
-		getInfo(job).addWork(work);
-		refreshViewer();
+		JobInfo info =getInfo(job);
+		info.addWork(work);
+		refreshViewer(info);
 	}
 
 	/* (non-Javadoc)
@@ -170,13 +172,16 @@ public class ProgressContentProvider
 
 	}
 
-	private void refreshViewer() {
+	private void refreshViewer(final JobInfo info) {
+		if(viewer.getControl().isDisposed())
+			return;
+			
 		viewer.getControl().getDisplay().asyncExec(new Runnable() {
 			/* (non-Javadoc)
 			 * @see java.lang.Runnable#run()
 			 */
 			public void run() {
-				viewer.refresh();
+				viewer.refresh(info);
 			}
 		});
 	}
