@@ -114,6 +114,7 @@ public class SubscriberRefreshSchedule {
 			Subscriber s = participant.getSubscriber();
 			job = new RefreshSubscriberJob(Policy.bind("RefreshSchedule.14", participant.getName(), getRefreshIntervalAsString()),s.roots(), s); //$NON-NLS-1$
 			job.setSubscriberCollector(participant.getSubscriberSyncInfoCollector());
+			job.setUser(false);
 		} else if(job.getState() != Job.NONE){
 			stopJob();
 		}

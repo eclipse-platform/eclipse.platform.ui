@@ -169,6 +169,7 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	private void internalRefresh(IResource[] resources, final IRefreshSubscriberListener listener, String taskName, IWorkbenchSite site) {
 		final Runnable[] gotoAction = new Runnable[] {null};
 		final RefreshSubscriberJob job = new RefreshSubscriberJob(taskName, resources, collector.getSubscriber());
+		job.setUser(true);
 		job.setSubscriberCollector(collector);
 		job.setProperty(new QualifiedName("org.eclipse.ui.workbench.progress", "icon"), getImageDescriptor());
 		job.setProperty(new QualifiedName("org.eclipse.ui.workbench.progress", "goto"), new Action() {

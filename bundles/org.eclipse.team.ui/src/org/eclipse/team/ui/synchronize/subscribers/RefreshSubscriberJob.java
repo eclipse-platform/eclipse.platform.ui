@@ -108,7 +108,6 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 		this.resources = resources;
 		this.subscriber = subscriber;
 		setPriority(Job.DECORATE);
-		setUser(true);
 		setRefreshInterval(3600 /* 1 hour */);
 		
 		// Handle restarting of job if it is configured as a scheduled refresh job.
