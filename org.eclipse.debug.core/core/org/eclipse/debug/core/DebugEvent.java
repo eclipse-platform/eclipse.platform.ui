@@ -202,14 +202,15 @@ public final class DebugEvent extends EventObject {
 	
 	/**
 	 * Evaluation detail. Indicates that a thread was resumed or
-	 * suspended to perform an expression evaluation that has no
-	 * update side effects. Clients may use this detail event
-	 * for efficiency when it is known that an evaluation has 
-	 * no side effects.
+	 * suspended to perform an implicit expression evaluation.
+	 * An implicit evaluation is an evaluation that is performed
+	 * as an indirect result of a user action.
+	 * Clients may use this detail event to decide whether or not
+	 * to alert the user that an evaluation is taking place..
 	 * 
 	 * @since 2.0
 	 */
-	public static final int EVALUATION_READ_ONLY = 0x0080;
+	public static final int EVALUATION_IMPLICIT = 0x0080;
 
 	/**
 	 * State change detail. Indicates the state of a single 
@@ -271,7 +272,7 @@ public final class DebugEvent extends EventObject {
 		super(eventSource);
 		if ((kind & (RESUME | SUSPEND | CREATE | TERMINATE | CHANGE)) == 0)
 			throw new IllegalArgumentException(DebugCoreMessages.getString("DebugEvent.illegal_kind")); //$NON-NLS-1$
-		if (detail != UNSPECIFIED && (detail & (STEP_END | STEP_INTO | STEP_OVER | STEP_RETURN | BREAKPOINT | CLIENT_REQUEST |EVALUATION | EVALUATION_READ_ONLY | STATE | CONTENT)) == 0)
+		if (detail != UNSPECIFIED && (detail & (STEP_END | STEP_INTO | STEP_OVER | STEP_RETURN | BREAKPOINT | CLIENT_REQUEST |EVALUATION | EVALUATION_IMPLICIT | STATE | CONTENT)) == 0)
 			throw new IllegalArgumentException(DebugCoreMessages.getString("DebugEvent.illegal_detail")); //$NON-NLS-1$
 		fKind= kind;
 		fDetail= detail;
@@ -320,7 +321,7 @@ public final class DebugEvent extends EventObject {
 	 * @since 2.0
 	 */
 	public boolean isEvaluation() {
-		return (getDetail() & (EVALUATION | EVALUATION_READ_ONLY)) > 0;
+		return (getDetail() & (EVALUATION | EVALUATION_IMPLICIT)) > 0;
 	}	
 	
 	/**
@@ -377,7 +378,7 @@ public final class DebugEvent extends EventObject {
 			case EVALUATION:
 				buf.append("EVALUATION"); //$NON-NLS-1$
 				break;
-			case EVALUATION_READ_ONLY:
+			case EVALUATION_IMPLICIT:
 				buf.append("EVALUATION_READ_ONLY"); //$NON-NLS-1$
 				break;								
 			case STATE:

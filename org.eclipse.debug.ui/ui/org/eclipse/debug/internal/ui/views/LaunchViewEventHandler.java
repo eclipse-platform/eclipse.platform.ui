@@ -6,10 +6,15 @@ package org.eclipse.debug.internal.ui.views;
  */
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
@@ -35,6 +40,11 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 	 * Stack frame counts keyed by thread.  Used to optimize thread refreshing.
 	 */
 	private HashMap fStackFrameCountByThread = new HashMap(5);
+	/**
+	 * The timer used to time step and evaluation events. The timer allows
+	 * the UI to not refresh during fast evaluations and steps.
+	 */
+	private ThreadTimer fThreadTimer= new ThreadTimer();
 	
 	/**
 	 * Constructs an event handler for the given launch view.
@@ -101,11 +111,16 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 	}
 		
 	protected void doHandleResumeEvent(DebugEvent event, Object element) {
-		if (event.isEvaluation()) {
-			// do nothing when an evaluation begins
+		if (event.isEvaluation() || event.isStepStart()) {
+			// Do not update for step starts and evaluation
+			// starts immediately. Instead, start the timer.
+			IThread thread= getThread(element);
+			if (thread != null) {
+				fThreadTimer.startTimer(thread);
+			}
 			return;
 		}
-		if (element instanceof ISuspendResume) {
+		if (element instanceof ISuspendResume && !event.isEvaluation()) {
 			if (((ISuspendResume)element).isSuspended()) {
 				IThread thread = getThread(element);
 				if (thread != null) {								
@@ -115,21 +130,25 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 			}
 		}		
 		clearSourceSelection(null);
-		if (event.isStepStart()) {
-			IThread thread = getThread(element);
-			if (thread != null) {								
-				getLaunchViewer().updateStackFrameIcons(thread);
-				resetStackFrameCount(thread);
-			}
-		} else {
-			refresh(element);
-			if (element instanceof IThread) {
-				selectAndReveal(element);
-				resetStackFrameCount((IThread)element);
-				return;
-			} 
-		}			
+		refresh(element);
+		if (element instanceof IThread) {
+			selectAndReveal(element);
+			resetStackFrameCount((IThread)element);
+			return;
+		}	
 		labelChanged(element);
+	}
+	
+	/**
+	 * Updates the stack frame icons for a running thread.
+	 * This is useful for the case where a thread is resumed
+	 * temporarily  but the view should keep the stack frame 
+	 * visible (for example, step start or evaluation start).
+	 */
+	protected void updateRunningThread(IThread thread) {
+		labelChanged(thread);
+		getLaunchViewer().updateStackFrameIcons(thread);
+		resetStackFrameCount(thread);
 	}
 	
 	protected void resetStackFrameCount(IThread thread) {
@@ -137,8 +156,21 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 	}
 
 	protected void doHandleSuspendEvent(Object element, DebugEvent event) {
-		if (event.isEvaluation()) {
-			return;
+		if (event.isEvaluation() || (event.getDetail() & DebugEvent.STEP_END) != 0) {
+			IThread thread= getThread(element);
+			if (thread != null) {
+				fThreadTimer.stopTimer((IThread)element);
+			}
+			if (event.isEvaluation() && ((event.getDetail() & DebugEvent.EVALUATION_IMPLICIT) != 0)) {
+				if (thread != null && fThreadTimer.getTimedOutThreads().remove(thread)) {
+					// Refresh the thread label when a timed out evaluation or 
+					// step finishes. This is necessary because the timeout updates
+					// the label when it occurs
+					refresh(thread);
+				}
+				// Don't refresh fully for evaluation completion.
+				return;
+			}
 		}
 		if (element instanceof IThread) {
 			doHandleSuspendThreadEvent((IThread)element);
@@ -352,5 +384,126 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 		}
 		return thread;
 	}
+	
+	class ThreadTimer implements IDebugEventSetListener {
+		
+		private Thread fThread;
+		/**
+		 * The time allotted before a thread will be updated
+		 */
+		private long TIMEOUT= 500;
+		private boolean fStopped= false;
+		private Object fLock= new Object();
+		
+		/**
+		 * Maps threads that are currently performing being timed
+		 * to the allowed time by which they must finish. If this
+		 * limit expires before the timer is stopped, the thread will
+		 * be refreshed.
+		 */
+		HashMap fStopTimes= new HashMap();
+		/**
+		 * Collection of threads whose timers have expired.
+		 */
+		HashSet fTimedOutThreads= new HashSet();
+		
+		public Set getTimedOutThreads() {
+			return fTimedOutThreads;
+		}
+		
+		public void handleDebugEvents(DebugEvent[] events) {
+			DebugEvent event;
+			for (int i= 0, numEvents= events.length; i < numEvents; i++) {
+				event= events[i];
+				if (event.getKind() == DebugEvent.TERMINATE && event.getSource() instanceof IDebugTarget) {
+					ILaunch[] launches= DebugPlugin.getDefault().getLaunchManager().getLaunches();
+					IDebugTarget target;
+					// If there are no more active DebugTargets, stop the thread.
+					for (int j= 0; j < launches.length; j++) {
+						target= launches[j].getDebugTarget();
+						if (!target.isDisconnected() && !target.isTerminated()) {
+							return;
+						}
+					}
+					// To get here, there must be no running DebugTargets
+					stop();
+					return;
+				}
+			}
+		}
+			
+		public void startTimer(IThread thread) {
+			synchronized (fLock) {
+				fStopTimes.put(thread, new Long(System.currentTimeMillis() + TIMEOUT));
+				if (fThread == null) {
+					startThread();
+				}
+			}
+		}
+		
+		public void stop() {
+			synchronized (fLock) {
+				fStopped= true;
+				fThread= null;
+				DebugPlugin.getDefault().removeDebugEventListener(this);
+				fStopTimes.clear();
+			}
+		}
+		
+		public void stopTimer(IThread thread) {
+			synchronized (fLock) {
+				fStopTimes.remove(thread);
+			}
+		}
+		
+		private void startThread() {
+			fThread= new Thread(new Runnable() {
+				public void run() {
+					fStopped= false;
+					while (!fStopped) {
+						checkTimers();
+					}
+					
+				}
+			}, "Thread timer"); // $NON-NLS-1$
+			fThread.start();
+			DebugPlugin.getDefault().addDebugEventListener(this);
+		}
+		
+		private void checkTimers() {
+			long timeToWait= TIMEOUT;
+			Map.Entry[] entries;
+			synchronized (fLock) {
+				entries= (Map.Entry[])fStopTimes.entrySet().toArray(new Map.Entry[0]);
+			}
+			long stopTime, currentTime= System.currentTimeMillis();
+			Long entryValue;
+			Map.Entry entry= null;
+			for (int i= 0, numEntries= entries.length; i < numEntries; i++) {
+				entry= entries[i];
+				entryValue= (Long)entry.getValue();
+				if (entryValue == null) {
+					continue;
+				}
+				stopTime= ((Long)entryValue).longValue();
+				if (stopTime <= currentTime) {
+					// The timer has expired for this thread.
+					// Refresh the UI to show that the thread
+					// is performing a long evaluation
+					final IThread thread= (IThread)entry.getKey();
+					fStopTimes.remove(thread);	
+					getView().asyncExec(new Runnable() {
+						public void run() {
+							fTimedOutThreads.add(thread);
+							updateRunningThread(thread);
+						}
+					});
+				} else {
+					timeToWait= Math.min(timeToWait, stopTime - currentTime);
+				}
+			}
+		}
+	}
+	
 }
 
