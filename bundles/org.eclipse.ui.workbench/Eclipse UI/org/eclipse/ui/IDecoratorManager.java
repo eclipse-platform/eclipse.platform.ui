@@ -9,6 +9,7 @@ package org.eclipse.ui;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ILabelDecorator;
+import org.eclipse.jface.viewers.ILightweightLabelDecorator;
 
 /**
  * Manages the decorators contributed via the decorators extension point.
@@ -30,13 +31,28 @@ public interface IDecoratorManager {
 	ILabelDecorator getLabelDecorator();
 
 	/**
-	 * Returns the label decorator for the specified decorator if it
-	 * is enabled. Otherwise returns <code>null</code>.
+	 * Returns the heavyweight label decorator instance for the specified 
+	 * decorator id if it is enabled. Otherwise returns <code>null</code>.
+	 * Returns <code>null</code> for lightweight decorators.
+	 * Use <code>getLightweightLabelDecorator</code> instead for lightweight 
+	 * decorators.
 	 * 
 	 * @param decoratorId the decorator id
 	 * @return the label decorator
 	 */
 	ILabelDecorator getLabelDecorator(String decoratorId);
+
+	/**
+	 * Returns the lightweight label decorator instance for the specified 
+	 * decorator id if it is enabled. Otherwise returns <code>null</code>.
+	 * Returns <code>null</code> for heavyweight decorators.
+	 * Use <code>getLabelDecorator</code> instead for heavyweight 
+	 * decorators.
+	 * 
+	 * @param decoratorId the decorator id
+	 * @return the lightweight label decorator
+	 */
+	ILightweightLabelDecorator getLightweightLabelDecorator(String decoratorId);
 
 	/**
 	 * Returns whether the specified decorator is enabled.
