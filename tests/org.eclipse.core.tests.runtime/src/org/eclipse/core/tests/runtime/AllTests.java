@@ -11,6 +11,7 @@
 package org.eclipse.core.tests.runtime;
 
 import junit.framework.*;
+import org.eclipse.core.tests.runtime.compatibility.PluginCompatibilityTests;
 import org.eclipse.core.tests.runtime.content.IContentTypeManagerTest;
 
 public class AllTests extends TestCase {
@@ -46,6 +47,7 @@ public class AllTests extends TestCase {
 		suite.addTest(PreferenceForwarderTest.suite());
 		suite.addTest(org.eclipse.core.tests.internal.osgi.AllTests.suite());
 		suite.addTest(IContentTypeManagerTest.suite());
+		suite.addTest(PluginCompatibilityTests.suite());
 		return suite;
 	}
 }
