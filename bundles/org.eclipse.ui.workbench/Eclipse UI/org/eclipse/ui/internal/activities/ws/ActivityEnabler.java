@@ -44,7 +44,7 @@ import org.eclipse.ui.activities.ActivitiesPreferencePage;
 import org.eclipse.ui.activities.IActivity;
 import org.eclipse.ui.activities.ICategory;
 import org.eclipse.ui.activities.ICategoryActivityBinding;
-import org.eclipse.ui.activities.IWorkbenchActivitySupport;
+import org.eclipse.ui.activities.IMutableActivityManager;
 import org.eclipse.ui.activities.NotDefinedException;
 
 /**
@@ -60,8 +60,6 @@ public class ActivityEnabler {
 	private static final int NONE = 0;
 
 	private static final int SOME = 1;
-
-	protected IWorkbenchActivitySupport activitySupport;
 
 	private ISelectionChangedListener selectionListener = new ISelectionChangedListener() {
 
@@ -256,18 +254,19 @@ public class ActivityEnabler {
 
 	private Properties strings;
 
+    private IMutableActivityManager activitySupport;
+
 	/**
 	 * Create a new instance.
 	 * 
 	 * @param activitySupport
-	 *            the <code>IWorkbenchActivitySupport</code> from which to
-	 *            draw the <code>IActivityManager</code>.
+	 *            the <code>IMutableActivityMananger</code> to use.
 	 * @param strings
 	 *            map of strings to use. See the constants on
 	 *            {@link org.eclipse.ui.activities.ActivitiesPreferencePage} for
 	 *            details.
 	 */
-	public ActivityEnabler(IWorkbenchActivitySupport activitySupport, Properties strings) {
+	public ActivityEnabler(IMutableActivityManager activitySupport, Properties strings) {
 		this.activitySupport = activitySupport;
 		this.strings = strings;
 	}
@@ -307,7 +306,7 @@ public class ActivityEnabler {
 		dualViewer.setSorter(new ViewerSorter());
 		dualViewer.setLabelProvider(new ActivityCategoryLabelProvider());
 		dualViewer.setContentProvider(provider);
-		dualViewer.setInput(activitySupport.getActivityManager());
+		dualViewer.setInput(activitySupport);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		GC gc = new GC(dualViewer.getControl());
 		gc.setFont(parent.getFont());
@@ -397,7 +396,7 @@ public class ActivityEnabler {
 	 *         category.
 	 */
 	private Collection getCategoryActivityIds(String categoryId) {
-		ICategory category = activitySupport.getActivityManager().getCategory(
+		ICategory category = activitySupport.getCategory(
 				categoryId);
 		Set activityBindings = category.getCategoryActivityBindings();
 		List categoryActivities = new ArrayList(activityBindings.size());
@@ -415,18 +414,18 @@ public class ActivityEnabler {
 	 * activity enablement.
 	 */
 	private void setInitialStates() {
-		Set enabledActivities = activitySupport.getActivityManager()
+		Set enabledActivities = activitySupport
 				.getEnabledActivityIds();
 		setEnabledStates(enabledActivities);
 	}
 
 	private void setEnabledStates(Set enabledActivities) {
-		Set categories = activitySupport.getActivityManager()
+		Set categories = activitySupport
 				.getDefinedCategoryIds();
 		List checked = new ArrayList(10), grayed = new ArrayList(10);
 		for (Iterator i = categories.iterator(); i.hasNext();) {
 			String categoryId = (String) i.next();
-			ICategory category = activitySupport.getActivityManager()
+			ICategory category = activitySupport
 					.getCategory(categoryId);
 
 			int state = NONE;
@@ -436,7 +435,7 @@ public class ActivityEnabler {
 				String activityId = (String) j.next();
 				managedActivities.add(activityId);
 				if (enabledActivities.contains(activityId)) {
-					IActivity activity = activitySupport.getActivityManager()
+					IActivity activity = activitySupport
 							.getActivity(activityId);
 					checked.add(new CategorizedActivity(category, activity));
 					//add activity proxy
@@ -470,7 +469,7 @@ public class ActivityEnabler {
 	 */
 	public void updateActivityStates() {
 		Set enabledActivities = new HashSet(activitySupport
-				.getActivityManager().getEnabledActivityIds());
+                .getEnabledActivityIds());
 
 		// remove all but the unmanaged activities (if any).
 		enabledActivities.removeAll(managedActivities);
@@ -492,10 +491,10 @@ public class ActivityEnabler {
 	 */
 	public void restoreDefaults() {
 	    Set defaultEnabled = new HashSet();
-	    Set activityIds = activitySupport.getActivityManager().getDefinedActivityIds();
+	    Set activityIds = activitySupport.getDefinedActivityIds();
 	    for (Iterator i = activityIds.iterator(); i.hasNext();) {
             String activityId = (String) i.next();
-            IActivity activity = activitySupport.getActivityManager().getActivity(activityId);
+            IActivity activity = activitySupport.getActivity(activityId);
             try {
                 if (activity.isDefaultEnabled()) {
                     defaultEnabled.add(activityId);
@@ -515,8 +514,7 @@ public class ActivityEnabler {
 	 *            whether the tree should be enabled
 	 */
 	protected void toggleTreeEnablement(boolean enabled) {
-		Object[] elements = provider.getElements(activitySupport
-				.getActivityManager());
+		Object[] elements = provider.getElements(activitySupport);
 		
 		//reset grey state to null
 		dualViewer.setGrayedElements(new Object[0]);

@@ -66,6 +66,8 @@ public class ActivitiesPreferencePage extends PreferencePage implements
     private ActivityEnabler enabler;
     
     private Properties strings = new Properties();
+
+    private IMutableActivityManager workingCopy;
     
     /**
      * Create the prompt for activity enablement.
@@ -105,7 +107,8 @@ public class ActivitiesPreferencePage extends PreferencePage implements
         activityPromptButton.setLayoutData(data);
 
         data = new GridData(GridData.FILL_BOTH);
-        enabler = new ActivityEnabler(workbench.getActivitySupport(), strings);
+        workingCopy = workbench.getActivitySupport().createWorkingCopy();
+        enabler = new ActivityEnabler(workingCopy, strings);
         enabler.createControl(composite).setLayoutData(data);
 
         return composite;
@@ -124,7 +127,8 @@ public class ActivitiesPreferencePage extends PreferencePage implements
      */
     public boolean performOk() {
         enabler.updateActivityStates();
-
+        workbench.getActivitySupport().setEnabledActivityIds(workingCopy.getEnabledActivityIds());
+        
         getPreferenceStore().setValue(
                 IPreferenceConstants.SHOULD_PROMPT_FOR_ENABLEMENT,
                 activityPromptButton.getSelection());

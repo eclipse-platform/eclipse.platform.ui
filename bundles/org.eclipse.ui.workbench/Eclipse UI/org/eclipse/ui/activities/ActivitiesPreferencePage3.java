@@ -12,11 +12,14 @@ package org.eclipse.ui.activities;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Properties;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.DeviceResourceException;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -46,6 +49,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
@@ -55,6 +59,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.OverlayIcon;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.activities.ws.ActivityEnabler;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -64,6 +69,45 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 public class ActivitiesPreferencePage3 extends PreferencePage implements
         IWorkbenchPreferencePage, IExecutableExtension {
 
+    private class AdvancedDialog extends Dialog {
+
+        ActivityEnabler enabler;
+        /**
+         * @param parentShell
+         */
+        protected AdvancedDialog(Shell parentShell) {
+            super(parentShell);
+            setShellStyle(getShellStyle() | SWT.RESIZE);
+        }
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
+         */
+        protected void configureShell(Shell newShell) {
+            super.configureShell(newShell);
+            newShell.setText("Advanced"); //$NON-NLS-1$
+            newShell.setSize(new Point(400, 500));
+        }
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
+         */
+        protected Control createDialogArea(Composite parent) {
+            Composite composite = (Composite) super.createDialogArea(parent);
+            enabler = new ActivityEnabler(workingCopy, new Properties());
+            Control enablerControl = enabler.createControl(composite);
+            enablerControl.setLayoutData(new GridData(GridData.FILL_BOTH));
+            return composite;
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.jface.dialogs.Dialog#okPressed()
+         */
+        protected void okPressed() {
+            enabler.updateActivityStates();            
+            super.okPressed();
+        }
+    }
     private class CategoryLabelProvider extends LabelProvider implements
             ITableLabelProvider, IActivityManagerListener {
 
@@ -153,8 +197,10 @@ public class ActivitiesPreferencePage3 extends PreferencePage implements
          */
         public void activityManagerChanged(
                 ActivityManagerEvent activityManagerEvent) {
-            if (activityManagerEvent.haveEnabledActivityIdsChanged())
+            if (activityManagerEvent.haveEnabledActivityIdsChanged()) {
+                categoryViewer.setCheckedElements(getEnabledCategories());
                 fireLabelProviderChanged(new LabelProviderChangedEvent(this));
+            }
         }
     }
 
@@ -221,6 +267,10 @@ public class ActivitiesPreferencePage3 extends PreferencePage implements
 
     private Button activityPromptButton;
 
+    private boolean allowAdvanced = false;
+
+    private Button advancedButton;;
+
     /*
      * (non-Javadoc)
      * 
@@ -254,7 +304,7 @@ public class ActivitiesPreferencePage3 extends PreferencePage implements
      */
     private void createPromptButton(Composite composite) {
         activityPromptButton = new Button(composite, SWT.CHECK);
-        activityPromptButton.setText("&Prompt when enabling capabilities"); //$NON-NLS-1$
+        activityPromptButton.setText("&Prompt when enabling"); //$NON-NLS-1$
         GridData data = new GridData();
         data.horizontalSpan = 2;
         activityPromptButton.setLayoutData(data);
@@ -283,7 +333,6 @@ public class ActivitiesPreferencePage3 extends PreferencePage implements
             public void widgetSelected(SelectionEvent e) {
                 workingCopy.setEnabledActivityIds(workingCopy
                         .getDefinedActivityIds());
-                categoryViewer.setCheckedElements(getEnabledCategories());
             }
         });
         enableAll.setText("&Enable All"); //$NON-NLS-1$
@@ -298,11 +347,29 @@ public class ActivitiesPreferencePage3 extends PreferencePage implements
              */
             public void widgetSelected(SelectionEvent e) {
                 workingCopy.setEnabledActivityIds(Collections.EMPTY_SET);
-                categoryViewer.setCheckedElements(getEnabledCategories());
             }
         });
         disableAll.setText("D&isable All"); //$NON-NLS-1$
         setButtonLayoutData(disableAll);
+        
+        if (allowAdvanced) {
+            advancedButton = new Button(composite, SWT.PUSH);
+            advancedButton.addSelectionListener(new SelectionAdapter() {
+
+                /*
+                 * (non-Javadoc)
+                 * 
+                 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+                 */
+                public void widgetSelected(SelectionEvent e) {
+                    Shell parent = e.display.getActiveShell();
+                    AdvancedDialog dialog = new AdvancedDialog(parent);
+                    dialog.open(); // logic for updating the working copy is in the dialog class.                    
+                }
+            });
+            advancedButton.setText("Ad&vanced"); //$NON-NLS-1$
+            setButtonLayoutData(advancedButton);
+        }
     }
 
     /**
@@ -380,7 +447,6 @@ public class ActivitiesPreferencePage3 extends PreferencePage implements
                     }
 
                     workingCopy.setEnabledActivityIds(activitySet);
-                    categoryViewer.setCheckedElements(getEnabledCategories());
                 }
             }
         });
@@ -513,7 +579,6 @@ public class ActivitiesPreferencePage3 extends PreferencePage implements
         }
         
         workingCopy.setEnabledActivityIds(defaultEnabled);
-        categoryViewer.setCheckedElements(getEnabledCategories());
     }
     
     /*
@@ -524,6 +589,9 @@ public class ActivitiesPreferencePage3 extends PreferencePage implements
      */
     public void setInitializationData(IConfigurationElement config,
             String propertyName, Object data) {
-
+        if (data instanceof Hashtable) {
+            Hashtable table = (Hashtable)data;
+            allowAdvanced  = Boolean.valueOf((String) table.get("advanced")).booleanValue(); //$NON-NLS-1$
+        }
     }
 }
