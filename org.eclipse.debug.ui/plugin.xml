@@ -2077,11 +2077,16 @@ M4 = Platform-specific fourth key
             adaptableType="org.eclipse.debug.core.sourcelookup.containers.ExternalArchiveSourceContainer">
             <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
          </factory>
-         <factory 
+         <factory
             class="org.eclipse.debug.internal.ui.sourcelookup.SourceContainerAdapterFactory"
             adaptableType="org.eclipse.debug.core.sourcelookup.containers.ArchiveSourceContainer">
             <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
-         </factory>                            
+         </factory>
+         <factory 
+            class="" 
+            adaptableType="org.eclipse.ui.part.FileEditorInput">
+            <adapter type="org.eclipse.debug.ui.actions.ILaunchable"/>
+         </factory>                   
     </extension>
 <!-- ========================================= -->
 <!-- Contextual Launch                         -->
