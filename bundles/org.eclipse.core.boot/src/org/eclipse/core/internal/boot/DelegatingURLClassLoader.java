@@ -123,7 +123,14 @@ public abstract class DelegatingURLClassLoader extends URLClassLoader {
 	}
 
 public DelegatingURLClassLoader(URL[] codePath, URLContentFilter[] codeFilters, URL[] resourcePath, URLContentFilter[] resourceFilters, ClassLoader parent) {
-	super(codePath, parent);
+
+//	Instead of constructing the loader with supplied classpath, create loader
+//	with empty path, "fix up" jar entries and then explicitly add the classpath
+//	to the newly constructed loader
+
+	super(mungeJarURLs (codePath), parent);
+	resourcePath = mungeJarURLs(resourcePath);
+
 	if (resourcePath != null && resourcePath.length > 0)
 		resourceLoader = new ResourceLoader(resourcePath);
 
@@ -145,6 +152,34 @@ public DelegatingURLClassLoader(URL[] codePath, URLContentFilter[] codeFilters, 
 		}
 	}
 }
+
+/**
+ * strip-off jar: protocol
+ */ 
+private static URL mungeJarURL(URL url) {
+	if (url.getProtocol().equals("jar")) {
+		String file = url.getFile();
+		if (file.startsWith("file:") || file.startsWith("valoader:")) {
+			int ix = file.indexOf("!/");
+			if (ix != -1) file = file.substring(0,ix);
+			try {
+				url = new URL(file);
+			} catch (MalformedURLException e) {
+				// just use the original if we cannot create a new one
+			}
+		}
+	}
+	return url;
+}
+
+private static URL[] mungeJarURLs(URL[] urls) {
+	if (urls == null) 
+		return null;
+	for (int i = 0; i < urls.length; i++) 
+		urls[i] = mungeJarURL(urls[i]);
+	return urls;
+}
+
 /**
  * Returns the absolute path name of a native library. The VM
  * invokes this method to locate the native libraries that belong
@@ -576,6 +611,8 @@ boolean isResourceVisible(String name, URL resource, DelegatingURLClassLoader re
 	}
 
 	URLContentFilter filter = (URLContentFilter) filterTable.get(lib);
+	// retry with non-jar URL if necessary
+	if (filter == null) filter = (URLContentFilter) filterTable.get(mungeJarURL(lib));
 	if (filter == null) {
 		if (DEBUG)
 			debug("Unable to find library filter for " + name + " from " + lib);
