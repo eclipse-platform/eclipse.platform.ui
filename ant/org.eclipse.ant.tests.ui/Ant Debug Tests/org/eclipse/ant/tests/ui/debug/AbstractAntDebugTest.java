@@ -23,6 +23,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugEvent;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.ILaunch;
@@ -321,8 +322,9 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 	 * @param buildFileName the buildfile to execute
 	 * @param bp the breakpoint that should cause a suspend event
 	 * @return thread in which the first suspend event occurred
+	 * @throws CoreException 
 	 */
-	protected AntThread launchToLineBreakpoint(String buildFileName, ILineBreakpoint bp) throws Exception {
+	protected AntThread launchToLineBreakpoint(String buildFileName, ILineBreakpoint bp) throws CoreException {
 		ILaunchConfiguration config = getLaunchConfiguration(buildFileName);
 		assertNotNull("Could not locate launch configuration for " + buildFileName, config);
 		return launchToLineBreakpoint(config, bp);
@@ -336,8 +338,9 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 	 * @param config the configuration to launch
 	 * @param bp the breakpoint that should cause a suspend event
 	 * @return thread in which the first suspend event occurred
+	 * @throws CoreException 
 	 */	
-	protected AntThread launchToLineBreakpoint(ILaunchConfiguration config, ILineBreakpoint bp) throws Exception {
+	protected AntThread launchToLineBreakpoint(ILaunchConfiguration config, ILineBreakpoint bp) throws CoreException {
 		DebugEventWaiter waiter= new DebugElementKindEventDetailWaiter(DebugEvent.SUSPEND, AntThread.class, DebugEvent.BREAKPOINT);
 		waiter.setTimeout(DEFAULT_TIMEOUT);
 
@@ -393,8 +396,9 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 	 * 
 	 * @param thread thread to resume
 	 * @return thread in which the first suspend event occurs
+	 * @throws CoreException 
 	 */
-	protected AntThread resumeToLineBreakpoint(AntThread resumeThread, ILineBreakpoint bp) throws Exception {
+	protected AntThread resumeToLineBreakpoint(AntThread resumeThread, ILineBreakpoint bp) throws CoreException {
 		DebugEventWaiter waiter= new DebugElementKindEventDetailWaiter(DebugEvent.SUSPEND, AntThread.class, DebugEvent.BREAKPOINT);
 		waiter.setTimeout(DEFAULT_TIMEOUT);
 		
@@ -469,8 +473,9 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 	 * 
 	 * @param lineNumber line number
 	 * @param file the buildfile
+	 * @throws CoreException 
 	 */
-	protected AntLineBreakpoint createLineBreakpoint(int lineNumber, IFile file) throws Exception {
+	protected AntLineBreakpoint createLineBreakpoint(int lineNumber, IFile file) throws CoreException {
 		return new AntLineBreakpoint(file, lineNumber);
 	}
 	
@@ -480,7 +485,7 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 	 * @param lineNumber line number
 	 * @param file the buildfile
 	 */
-	protected AntLineBreakpoint createLineBreakpoint(int lineNumber, String buildFileName) throws Exception {
+	protected AntLineBreakpoint createLineBreakpoint(int lineNumber, String buildFileName) throws CoreException {
 		return new AntLineBreakpoint(getIFile(buildFileName), lineNumber);
 	}
 		
@@ -558,8 +563,9 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 	 * Performs a step over in the given stack frame and returns when complete.
 	 * 
 	 * @param frame stack frame to step in
+	 * @throws DebugException 
 	 */
-	protected AntThread stepOver(AntStackFrame frame) throws Exception {
+	protected AntThread stepOver(AntStackFrame frame) throws DebugException {
 		org.eclipse.ant.tests.ui.testplugin.DebugEventWaiter waiter= new DebugElementKindEventDetailWaiter(DebugEvent.SUSPEND, AntThread.class, DebugEvent.STEP_END);
 		waiter.setTimeout(DEFAULT_TIMEOUT);
 		
@@ -576,7 +582,7 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 	 * 
 	 * @param frame stack frame to step in
 	 */
-	protected AntThread stepInto(AntStackFrame frame) throws Exception {
+	protected AntThread stepInto(AntStackFrame frame) throws DebugException {
 		DebugEventWaiter waiter= new DebugElementKindEventDetailWaiter(DebugEvent.SUSPEND, AntThread.class, DebugEvent.STEP_END);
 		waiter.setTimeout(DEFAULT_TIMEOUT);
 		
@@ -593,7 +599,7 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 	 * 
 	 * @param frame stack frame to step return from
 	 */
-	protected AntThread stepReturn(AntStackFrame frame) throws Exception {
+	protected AntThread stepReturn(AntStackFrame frame) throws DebugException {
 		DebugEventWaiter waiter= new DebugElementKindEventDetailWaiter(DebugEvent.SUSPEND, AntThread.class, DebugEvent.STEP_END);
 		waiter.setTimeout(DEFAULT_TIMEOUT);
 		
@@ -611,7 +617,7 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 	 * 
 	 * @param frame stack frame to step in
 	 */
-	protected AntThread stepIntoWithFilters(AntStackFrame frame) throws Exception {
+	protected AntThread stepIntoWithFilters(AntStackFrame frame) throws DebugException {
 		DebugEventWaiter waiter= new DebugElementKindEventWaiter(DebugEvent.SUSPEND, AntThread.class);
 		waiter.setTimeout(DEFAULT_TIMEOUT);
 		
@@ -637,7 +643,7 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 	 * 
 	 * @param frame stack frame to step in
 	 */
-	protected AntThread stepReturnWithFilters(AntStackFrame frame) throws Exception {
+	protected AntThread stepReturnWithFilters(AntStackFrame frame) throws DebugException {
 		DebugEventWaiter waiter= new DebugElementKindEventWaiter(DebugEvent.SUSPEND, AntThread.class);
 		waiter.setTimeout(DEFAULT_TIMEOUT);
 		
@@ -663,7 +669,7 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 	 * 
 	 * @param frame stack frame to step in
 	 */
-	protected AntThread stepOverWithFilters(AntStackFrame frame) throws Exception {
+	protected AntThread stepOverWithFilters(AntStackFrame frame) throws DebugException {
 		DebugEventWaiter waiter= new DebugElementKindEventWaiter(DebugEvent.SUSPEND, AntThread.class);
 		waiter.setTimeout(DEFAULT_TIMEOUT);
 		
@@ -697,30 +703,7 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 		IResource r = p.getFolder(root);
 		return project.getPackageFragmentRoot(r).getPackageFragment(pkg).getCompilationUnit(name);
 	}
-    
-//	protected AntProperty findProperty(AntStackFrame frame, String name) throws DebugException {
-//        AntProperty variable = frame.findVariable(name);
-//        if (variable == null) {
-//            // dump visible variables
-//            IDebugModelPresentation presentation = DebugUIPlugin.getModelPresentation();
-//            System.out.println("Could not find variable '" + name + "' in frame: " + presentation.getText(frame));
-//            System.out.println("Visible variables are:");
-//            IVariable[] variables = frame.getVariables();
-//            for (int i = 0; i < variables.length; i++) {
-//                IVariable variable2 = variables[i];
-//                System.out.println("\t" + presentation.getText(variable2));
-//            }
-//            if (!frame.isStatic()) {
-//                variables = frame.getThis().getVariables();
-//                for (int i = 0; i < variables.length; i++) {
-//                    IVariable variable2 = variables[i];
-//                    System.out.println("\t" + presentation.getText(variable2));
-//                }
-//            }
-//        }
-//        return variable;
-//    }
-    
+        
     /* (non-Javadoc)
      * @see junit.framework.TestCase#setUp()
      */

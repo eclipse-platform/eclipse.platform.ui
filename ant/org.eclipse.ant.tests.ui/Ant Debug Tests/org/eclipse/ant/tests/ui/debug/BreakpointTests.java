@@ -25,11 +25,11 @@ import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.ILineBreakpoint;
 
 /**
- * Tests deferred Ant breakpoints.
+ * Tests Ant breakpoints.
  */
-public class DeferredBreakpointTests extends AbstractAntDebugTest {
+public class BreakpointTests extends AbstractAntDebugTest {
 	
-	public DeferredBreakpointTests(String name) {
+	public BreakpointTests(String name) {
 		super(name);
 	}
 
@@ -148,6 +148,32 @@ public class DeferredBreakpointTests extends AbstractAntDebugTest {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
 			getBreakpointManager().setEnabled(true);
+		}
+	}
+	
+	public void testBreakpoint() throws Exception {
+		breakpoints(false);
+	}
+	
+	public void testBreakpointSepVM() throws Exception {
+		breakpoints(true);
+	}
+	
+	private void breakpoints(boolean sepVM) throws CoreException {
+		String fileName = "breakpoints";
+		IFile file= getIFile(fileName + ".xml");
+		ILineBreakpoint bp = createLineBreakpoint(5, file);
+		AntThread thread = null;
+		try {
+			if (sepVM) {
+				fileName+= "SepVM";
+			}
+		    thread= launchToLineBreakpoint(fileName, bp);
+			bp= createLineBreakpoint(15, file);
+		    resumeToLineBreakpoint(thread, bp);
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
 		}
 	}
 }
