@@ -10,9 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.editors.text;
 
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
+import org.eclipse.ui.texteditor.ExtendedTextEditorPreferenceConstants;
 
 /**
  * SourceViewer configuration for the text editor.
@@ -21,6 +23,13 @@ import org.eclipse.jface.text.source.SourceViewerConfiguration;
  */
 public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 	
+	/**
+	 * Preference store used to initialize this configuration.
+	 * 
+	 * @since 3.0
+	 */
+	private IPreferenceStore fPreferenceStore;
+
 	/**
 	 * A noop implementation of <code>IAnnotationHover</code> that will trigger the text editor
 	 * to set up annotation hover support.
@@ -36,10 +45,52 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 		
 	}
 	
+	/**
+	 * Creates a text source viewer configuration.
+	 * 
+	 * @since 3.0
+	 */
+	public TextSourceViewerConfiguration() {
+	}
+	
+	/**
+	 * Creates a text source viewer configuration and
+	 * initializes it with the given preference store.
+	 * 
+	 * @param preferenceStore	the preference store used to initialize this configuration
+	 * 
+	 * @since 3.0
+	 */
+	public TextSourceViewerConfiguration(IPreferenceStore preferenceStore) {
+		fPreferenceStore= preferenceStore;
+	}
+	
 	/*
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getAnnotationHover(org.eclipse.jface.text.source.ISourceViewer)
 	 */
 	public IAnnotationHover getAnnotationHover(ISourceViewer sourceViewer) {
 		return new NullHover();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @since 3.0
+	 */
+	public int getTabWidth(ISourceViewer sourceViewer) {
+		if (getPreferenceStore() == null)
+			return super.getTabWidth(sourceViewer);
+		return getPreferenceStore().getInt(ExtendedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH);
+	}
+
+	/**
+	 * Returns the preference store used by this configuration to initialize
+	 * the individual bits and pieces.
+	 * 
+	 * @return the preference store used to initialize this configuration
+	 * 
+	 * @since 3.0
+	 */
+	protected IPreferenceStore getPreferenceStore() {
+		return fPreferenceStore;
 	}
 }

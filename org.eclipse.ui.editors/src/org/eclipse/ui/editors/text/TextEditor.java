@@ -71,7 +71,7 @@ public class TextEditor extends ExtendedTextEditor {
 	public TextEditor() {
 		super();
 		initializeKeyBindingScopes();
-		setSourceViewerConfiguration(new TextSourceViewerConfiguration());
+		setSourceViewerConfiguration(new TextSourceViewerConfiguration(getPreferenceStore()));
 		initializeEditor();
 	}
 	
