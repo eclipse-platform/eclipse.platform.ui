@@ -263,7 +263,7 @@ public class CVSChangeSetCollector extends SyncInfoSetChangeSetCollector impleme
 	 */
 	private void addSingleRevision(SyncInfo info, LogEntryCache logs, ICVSRemoteResource remoteResource) {
 		ILogEntry logEntry = logs.getLogEntry(remoteResource);
-	    if (remoteResource != null) {
+	    if (remoteResource != null && !remoteResource.isFolder()) {
 			// For incoming deletions grab the comment for the latest on the same branch
 			// which is now in the attic.
 			try {
