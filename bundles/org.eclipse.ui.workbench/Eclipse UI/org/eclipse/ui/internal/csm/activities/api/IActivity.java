@@ -40,7 +40,7 @@ public interface IActivity extends Comparable {
 	 * 
 	 * @return
 	 */	
-	Set getActivityBindings();
+	Set getActivityPatternBindings();
 
 	/**
 	 * JAVADOC
@@ -78,6 +78,13 @@ public interface IActivity extends Comparable {
 	 * @return
 	 */	
 	boolean isDefined();
+	
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	boolean isEnabled();	
 	
 	/**
 	 * Unregisters an IActivityListener instance with this activity.

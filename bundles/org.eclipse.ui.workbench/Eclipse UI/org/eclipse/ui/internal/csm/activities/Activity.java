@@ -33,6 +33,7 @@ final class Activity implements IActivity {
 	private List activityListeners;
 	private boolean defined;
 	private String description;
+	private boolean enabled;
 	private String id;
 	private String name;
 
@@ -67,12 +68,16 @@ final class Activity implements IActivity {
 			
 			if (compareTo == 0) {
 				compareTo = Util.compare(description, activity.description);
-			
-				if (compareTo == 0) {		
-					compareTo = id.compareTo(activity.id);			
-				
-					if (compareTo == 0)
-						compareTo = Util.compare(name, activity.name);
+
+				if (compareTo == 0) {
+					compareTo = enabled == false ? (activity.enabled == true ? -1 : 0) : 1;
+								
+					if (compareTo == 0) {		
+						compareTo = id.compareTo(activity.id);			
+					
+						if (compareTo == 0)
+							compareTo = Util.compare(name, activity.name);
+					}
 				}
 			}
 		}
@@ -89,12 +94,13 @@ final class Activity implements IActivity {
 		equals &= active == activity.active;
 		equals &= defined == activity.defined;
 		equals &= Util.equals(description, activity.description);
+		equals &= enabled == activity.enabled;
 		equals &= id.equals(activity.id);
 		equals &= Util.equals(name, activity.name);
 		return equals;
 	}
 
-	public Set getActivityBindings() {
+	public Set getActivityPatternBindings() {
 		// TODO 
 		return null;
 	}
@@ -125,6 +131,7 @@ final class Activity implements IActivity {
 			hashCode = hashCode * HASH_FACTOR + (active ? Boolean.TRUE.hashCode() : Boolean.FALSE.hashCode());			
 			hashCode = hashCode * HASH_FACTOR + (defined ? Boolean.TRUE.hashCode() : Boolean.FALSE.hashCode());			
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(description);
+			hashCode = hashCode * HASH_FACTOR + (enabled ? Boolean.TRUE.hashCode() : Boolean.FALSE.hashCode());
 			hashCode = hashCode * HASH_FACTOR + id.hashCode();
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(name);
 			hashCodeComputed = true;
@@ -139,6 +146,10 @@ final class Activity implements IActivity {
 	
 	public boolean isDefined() {
 		return defined;
+	}
+
+	public boolean isEnabled() {
+		return enabled;
 	}
 
 	public void removeActivityListener(IActivityListener activityListener) {
@@ -158,6 +169,8 @@ final class Activity implements IActivity {
 			stringBuffer.append(defined);
 			stringBuffer.append(',');
 			stringBuffer.append(description);
+			stringBuffer.append(',');
+			stringBuffer.append(enabled);
 			stringBuffer.append(',');
 			stringBuffer.append(id);
 			stringBuffer.append(',');
@@ -207,6 +220,18 @@ final class Activity implements IActivity {
 	boolean setDescription(String description) {
 		if (!Util.equals(description, this.description)) {
 			this.description = description;
+			hashCodeComputed = false;
+			hashCode = 0;
+			string = null;
+			return true;
+		}		
+
+		return false;
+	}
+
+	boolean setEnabled(boolean enabled) {
+		if (enabled != this.enabled) {
+			this.enabled = enabled;
 			hashCodeComputed = false;
 			hashCode = 0;
 			string = null;
