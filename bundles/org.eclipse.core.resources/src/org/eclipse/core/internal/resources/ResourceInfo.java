@@ -109,11 +109,20 @@ public int getMarkerGenerationCount() {
 	return markerGenerationCount;
 }
 /** 
- * Returns the collection of makers on this resource.
+ * Returns a copy of the collection of makers on this resource.
  * <code>null</code> is returned if there are none.
  */
 public MarkerSet getMarkers() {
-	return markers;
+	return getMarkers(true);
+}
+/** 
+ * Returns the collection of makers on this resource.
+ * <code>null</code> is returned if there are none.
+ */
+public MarkerSet getMarkers(boolean makeCopy) {
+	if (markers == null)
+		return null;
+	return makeCopy ? (MarkerSet)markers.clone() : markers;
 }
 public long getModificationStamp() {
 	return modificationStamp;

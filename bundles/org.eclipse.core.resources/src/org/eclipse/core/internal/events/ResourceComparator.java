@@ -92,7 +92,7 @@ private boolean compareMarkers(ResourceInfo oldElement, ResourceInfo newElement)
 	// If both sets of markers are null then prehaps we added some markers
 	// but then deleted them right away before notification. In that case
 	// don't signify a marker change in the delta.
-	boolean bothNull = oldElement.getMarkers() == null && newElement.getMarkers() == null;
+	boolean bothNull = oldElement.getMarkers(false) == null && newElement.getMarkers(false) == null;
 	return bothNull || oldElement.getMarkerGenerationCount() == newElement.getMarkerGenerationCount();
 }
 /**

@@ -58,7 +58,8 @@ public void add(IResource resource, MarkerInfo newMarker) throws CoreException {
 	// resource's markers have changed since the last snapshot
 	if (isPersistent(newMarker))
 		info.set(ICoreConstants.M_MARKERS_SNAP_DIRTY);
-	MarkerSet markers = info.getMarkers();
+	//Concurrency: copy the marker set on modify
+	MarkerSet markers = info.getMarkers(true);
 	if (markers == null)
 		markers = new MarkerSet(1);
 	basicAdd(resource, markers, newMarker);
@@ -117,7 +118,7 @@ protected MarkerInfo[] basicFindMatching(MarkerSet markers, String type, boolean
  * is called from an anonymous inner class).
  */
 protected void basicRemoveMarkers(ResourceInfo info, IPathRequestor requestor, String type, boolean includeSubtypes) {
-	MarkerSet markers = info.getMarkers();
+	MarkerSet markers = info.getMarkers(false);
 	if (markers == null)
 		return;
 	IMarkerSetElement[] matching;
@@ -137,12 +138,12 @@ protected void basicRemoveMarkers(ResourceInfo info, IPathRequestor requestor, S
 		//now we need to crack open the tree
 		path = requestor.requestPath();
 		info = workspace.getResourceInfo(path, false, true);
-		
+		//Concurrency: copy the marker set on modify
+		markers = info.getMarkers(true);
 		// remove all the matching markers and also the whole 
 		// set if there are no remaining markers
 		markers.removeAll(matching);
-		if (markers.size() == 0)
-			info.setMarkers(null);
+		info.setMarkers(markers.size() == 0 ? null : markers);
 	}
 	info.set(ICoreConstants.M_MARKERS_SNAP_DIRTY);
 	IMarkerSetElement[] changes = new IMarkerSetElement[matching.length];
@@ -199,7 +200,7 @@ public MarkerInfo findMarkerInfo(IResource resource, long id) {
 	ResourceInfo info = workspace.getResourceInfo(resource.getFullPath(), false, false);
 	if (info == null)
 		return null;
-	MarkerSet markers = info.getMarkers();
+	MarkerSet markers = info.getMarkers(false);
 	if (markers == null)
 		return null;
 	return (MarkerInfo) markers.get(id);
@@ -280,7 +281,7 @@ public void moved(final IResource source, final IResource destination, int depth
 		public boolean visit(IResource resource) throws CoreException {
 			Resource r = (Resource) resource;
 			ResourceInfo info = r.getResourceInfo(false, true);
-			MarkerSet markers = info.getMarkers();
+			MarkerSet markers = info.getMarkers(false);
 			if (markers == null)
 				return true;
 			info.set(ICoreConstants.M_MARKERS_SNAP_DIRTY);
@@ -313,7 +314,7 @@ private void recursiveFindMarkers(IPath path, ArrayList list, String type, boole
 	ResourceInfo info = workspace.getResourceInfo(path, false, false);
 	if (info == null)
 		return;
-	MarkerSet markers = info.getMarkers();
+	MarkerSet markers = info.getMarkers(false);
 	
 	//add the matching markers for this resource
 	if (markers != null) {
@@ -371,12 +372,12 @@ public void removeMarker(IResource resource, long id) {
 	if (markerInfo == null)
 		return;
 	ResourceInfo info = ((Workspace) resource.getWorkspace()).getResourceInfo(resource.getFullPath(), false, true);
-	MarkerSet markers = info.getMarkers();
+	//Concurrency: copy the marker set on modify
+	MarkerSet markers = info.getMarkers(true);
 	int size = markers.size();
 	markers.remove(markerInfo);
 	// if that was the last marker remove the set to save space.
-	if (markers.size() == 0)
-		info.setMarkers(null);
+	info.setMarkers(markers.size() == 0 ? null : markers);
 	// if we actually did remove a marker, post a delta for the change.
 	if (markers.size() != size) {
 		if (isPersistent(markerInfo))
@@ -480,7 +481,7 @@ private void visitorFindMarkers(IPath path, final ArrayList list, final String t
 			ResourceInfo info = (ResourceInfo)elementContents;
 			if (info == null)
 				return false;
-			MarkerSet markers = info.getMarkers();
+			MarkerSet markers = info.getMarkers(false);
 
 			//add the matching markers for this resource
 			if (markers != null) {

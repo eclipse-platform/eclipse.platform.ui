@@ -83,7 +83,7 @@ public void save(ResourceInfo info, IPathRequestor requestor, DataOutputStream o
 	// phantom resources don't have markers
 	if (info.isSet(ICoreConstants.M_PHANTOM))
 		return;
-	MarkerSet markers = info.getMarkers();
+	MarkerSet markers = info.getMarkers(false);
 	if (markers == null)
 		return;
 	IMarkerSetElement[] elements = markers.elements();
@@ -132,7 +132,7 @@ public void snap(ResourceInfo info, IPathRequestor requestor, DataOutputStream o
 		return;
 	if (!info.isSet(ICoreConstants.M_MARKERS_SNAP_DIRTY))
 		return;
-	MarkerSet markers = info.getMarkers();
+	MarkerSet markers = info.getMarkers(false);
 	if (markers == null)
 		return;
 	IMarkerSetElement[] elements = markers.elements();

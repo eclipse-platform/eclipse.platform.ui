@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-public class MarkerSet {
+public class MarkerSet implements Cloneable {
 	protected static final int MINIMUM_SIZE = 5;
 	protected int elementCount = 0;
 	protected IMarkerSetElement[] elements;
@@ -57,6 +57,17 @@ public void add(IMarkerSetElement element) {
 public void addAll(IMarkerSetElement[] elements) {
 	for (int i = 0; i < elements.length; i++)
 		add(elements[i]);
+}
+protected Object clone() {
+	try {
+		MarkerSet copy = (MarkerSet)super.clone();
+		//copy the attribute array
+		copy.elements = (IMarkerSetElement[]) elements.clone();
+		return copy;
+	} catch (CloneNotSupportedException e) {
+		//cannot happen because this class implements Cloneable
+		return null;
+	}
 }
 public boolean contains(long id) {
 	return get(id) != null;
