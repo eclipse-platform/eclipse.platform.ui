@@ -84,8 +84,10 @@ class IndexingOperation {
 		// if collection is empty, we may return right away
 		// need to check if we have to do anything to the progress monitor
 		int numDocs = removedDocs.size() + addedDocs.size();
-		if (numDocs <= 0)
+		if (numDocs <= 0){
+			pm.done();
 			return;
+		}
 		int workTotal = WORK_PREPARE + numDocs * WORK_INDEXDOC + WORK_SAVEINDEX;
 		pm.beginTask("" /*Resources.getString("Index_needs_updated")*/
 		, workTotal);
