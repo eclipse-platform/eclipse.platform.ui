@@ -52,7 +52,7 @@ class WorkerPool {
 	protected synchronized void endWorker(Worker worker) {
 		threads.remove(worker);
 		if (JobManager.DEBUG)
-		JobManager.debug("worker removed from pool: " + worker); //$NON-NLS-1$
+			JobManager.debug("worker removed from pool: " + worker); //$NON-NLS-1$
 	}
 	/**
 	 * Notfication that a job has been added to the queue.  Wake a worker,
@@ -125,12 +125,11 @@ class WorkerPool {
 		long idleStart = System.currentTimeMillis();
 		while (running && job == null) {
 			long hint = manager.sleepHint();
-			boolean idle = hint == JobManager.NEVER;
 			if (hint > 0)
 				sleep(Math.min(hint, BEST_BEFORE));
 			job = manager.startJob();
 			//if we were already idle, and there are still no new jobs, then the thread can expire
-			if (job == null && idle && (System.currentTimeMillis() - idleStart > BEST_BEFORE) && threads.size() > MIN_THREADS)
+			if (job == null && (System.currentTimeMillis() - idleStart > BEST_BEFORE) && threads.size() > MIN_THREADS)
 				break;
 		}
 		if (job != null)  {
