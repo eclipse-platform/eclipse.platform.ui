@@ -49,6 +49,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -63,6 +64,7 @@ import org.eclipse.ui.externaltools.internal.ant.view.actions.RemoveProjectActio
 import org.eclipse.ui.externaltools.internal.ant.view.actions.RunActiveTargetsAction;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.RunTargetAction;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.SearchForBuildFilesAction;
+import org.eclipse.ui.externaltools.internal.ant.view.actions.SwitchAntViewOrientation;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.TargetMoveDownAction;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.TargetMoveUpAction;
 import org.eclipse.ui.externaltools.internal.ant.view.elements.ProjectNode;
@@ -85,6 +87,10 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 	 * initialization
 	 */
 	private List restoredTargets = new ArrayList();
+	/**
+	 * The sash form alignment of the view as restored during initialization
+	 */
+	private int restoredOrientation = SWT.HORIZONTAL;
 	/**
 	 * XML tag used to identify an ant project in storage
 	 */
@@ -114,6 +120,14 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 	 * XML value for a boolean attribute whose value is <code>false</code>
 	 */
 	private String VALUE_FALSE = "false"; //$NON-NLS-1$
+	/**
+	 * XML tag used to identify the view's persisted alignment
+	 */
+	private String TAG_ORIENTATION = "orientation"; //$NON-NLS-1$
+	/**
+	 * XML key used to store the view's persisted alignment
+	 */
+	private String KEY_ALIGNMENT= "alignment"; //$NON-NLS-1$
 
 	/**
 	 * The sash form containing the project viewer and target viewer
@@ -142,6 +156,7 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 	// Ant View Actions
 	private AddBuildFileAction addBuildFileAction;
 	private SearchForBuildFilesAction searchForBuildFilesAction;
+	private SwitchAntViewOrientation switchOrientationAction;
 	// ProjectViewer actions
 	private RunTargetAction runTargetAction;
 	private RemoveProjectAction removeProjectAction;
@@ -283,6 +298,7 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 	public void createPartControl(Composite parent) {
 		initializeActions();
 		sashForm = new SashForm(parent, SWT.NONE);
+		sashForm.setOrientation(restoredOrientation);
 		createProjectViewer();
 		createTargetViewer();
 		createToolbarActions();
@@ -341,7 +357,10 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 	 * Adds the actions to the toolbar
 	 */
 	private void createToolbarActions() {
-		IToolBarManager toolBarMgr = getViewSite().getActionBars().getToolBarManager();
+		IActionBars actionBars= getViewSite().getActionBars();
+		IMenuManager menuManager= actionBars.getMenuManager();
+		menuManager.add(switchOrientationAction);
+		IToolBarManager toolBarMgr = actionBars.getToolBarManager();
 		toolBarMgr.add(addBuildFileAction);
 		toolBarMgr.add(searchForBuildFilesAction);
 
@@ -383,6 +402,7 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 		updateActions.add(moveDownAction);
 		goToBuildFileAction = new GoToBuildFileAction(this);
 		updateActions.add(goToBuildFileAction);
+		switchOrientationAction= new SwitchAntViewOrientation(this);
 	}
 	
 	/**
@@ -626,8 +646,29 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 	 */
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		init(site);
+		restoreOrientation(memento);
 		restoreRoot(memento);
 		restoreTargets(memento);
+	}
+	/**
+	 * Retrieves the stored orientation for the view's sash form.
+	 */
+	private void restoreOrientation(IMemento memento) {
+		if (memento == null) {
+			return;
+		}
+		IMemento orientation= memento.getChild(TAG_ORIENTATION);
+		if (orientation == null) {
+			return;
+		}
+		Integer value= orientation.getInteger(KEY_ALIGNMENT);
+		if (value == null) {
+			return;
+		}
+		int alignment= value.intValue();
+		if (alignment == SWT.HORIZONTAL || alignment == SWT.VERTICAL) {
+			restoredOrientation= alignment;
+		}
 	}
 
 	/**
@@ -703,6 +744,10 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 	 * @see org.eclipse.ui.IViewPart#saveState(IMemento)
 	 */
 	public void saveState(IMemento memento) {
+		// Save the orientation
+		IMemento orientation= memento.createChild(TAG_ORIENTATION);
+		orientation.putInteger(KEY_ALIGNMENT, sashForm.getOrientation());
+		// Save the projects
 		ProjectNode[] projects = projectContentProvider.getRootNode().getProjects();
 		ProjectNode project;
 		IMemento projectMemento;
@@ -717,6 +762,7 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 				projectMemento.putString(KEY_ERROR, VALUE_FALSE);
 			}
 		}
+		// Save the active targets
 		Iterator targets = targetContentProvider.getTargets().iterator();
 		IMemento targetMemento;
 		TargetNode target;
@@ -792,6 +838,17 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 				delta.accept(visitor);
 			} catch (CoreException e) {
 			}
+		}
+	}
+	/**
+	 * Toggles the orientation of the view's sash, between horizontal and
+	 * vertical alignment.
+	 */
+	public void switchViewOrientation() {
+		if (sashForm.getOrientation() == SWT.HORIZONTAL) {
+			sashForm.setOrientation(SWT.VERTICAL);
+		} else {
+			sashForm.setOrientation(SWT.HORIZONTAL);
 		}
 	}
 }
