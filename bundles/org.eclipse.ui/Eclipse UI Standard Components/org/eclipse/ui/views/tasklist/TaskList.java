@@ -61,6 +61,7 @@ public class TaskList extends ViewPart {
 
 	private CellEditorActionHandler editorActionHandler;
 	private TaskAction newTaskAction;
+	private TaskAction copyTaskAction;
 	private TaskAction removeTaskAction;
 	private TaskAction purgeCompletedAction;
 	private TaskAction gotoTaskAction;
@@ -422,6 +423,7 @@ void fillActionBars() {
  */
 void fillContextMenu(IMenuManager menu) {
 	menu.add(newTaskAction);
+	menu.add(copyTaskAction);
 	menu.add(removeTaskAction);
 	menu.add(gotoTaskAction);
 	menu.add(new Separator());
@@ -588,6 +590,12 @@ void makeActions() {
 	newTaskAction.setHoverImageDescriptor(MarkerUtil.getImageDescriptor("addtsk")); //$NON-NLS-1$
 	newTaskAction.setImageDescriptor(MarkerUtil.getImageDescriptor("addtsk_grey")); //$NON-NLS-1$
 	newTaskAction.setDisabledImageDescriptor(MarkerUtil.getImageDescriptor("addtsk_disabled")); //$NON-NLS-1$
+
+	// copy task
+	copyTaskAction = new CopyTaskAction(this, "copy"); //$NON-NLS-1$
+	copyTaskAction.setText(TaskListMessages.getString("CopyTask.text")); //$NON-NLS-1$
+	copyTaskAction.setToolTipText(TaskListMessages.getString("CopyTask.tooltip")); //$NON-NLS-1$
+	copyTaskAction.setEnabled(false);
 
 	// remove task
 	removeTaskAction = new RemoveTaskAction(this, "delete"); //$NON-NLS-1$
@@ -776,12 +784,16 @@ void selectionChanged(SelectionChangedEvent event) {
 	IStructuredSelection selection = (IStructuredSelection) event.getSelection();
 	updateStatusMessage(selection);
 		
-	// If selection is empty, then disable remove and goto.	
+	// If selection is empty, then disable copy, remove and goto.	
 	if (selection.isEmpty()) {
+		copyTaskAction.setEnabled(false);
 		removeTaskAction.setEnabled(false);
 		gotoTaskAction.setEnabled(false);
 		return;
 	};
+
+	// Can always copy
+	copyTaskAction.setEnabled(true);
 
 	// Determine if goto should be enabled
 	IMarker selectedMarker = (IMarker) selection.getFirstElement();

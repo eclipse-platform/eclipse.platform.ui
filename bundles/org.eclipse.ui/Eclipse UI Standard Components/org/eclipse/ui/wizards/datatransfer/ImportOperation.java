@@ -294,6 +294,23 @@ void importFile(Object fileObject, int policy) {
 	monitor.subTask(fileObjectPath);
 	IFile targetResource = containerResource.getFile(new Path(provider.getLabel(fileObject)));
 	monitor.worked(1);
+	
+	// ensure that the source and target are not the same
+	IPath targetPath = targetResource.getLocation();
+	// Use Files for comparison to avoid platform specific case issues
+	if (targetPath != null && 
+		(targetPath.toFile().equals(new File(fileObjectPath)))) {
+		errorTable.add(
+			new Status(
+				IStatus.ERROR,
+				PlatformUI.PLUGIN_ID,
+				0,
+				DataTransferMessages.format(
+					"ImportOperation.targetSameAsSourceError", //$NON-NLS-1$
+					new Object [] {fileObjectPath}), 
+				null));
+		return;		
+	}
 
 	if (!ensureTargetDoesNotExist(targetResource, policy)) {
 		// Do not add an error status because the user
@@ -301,7 +318,7 @@ void importFile(Object fileObject, int policy) {
 		// update the monitor as it was done in queryOverwrite.
 		return;
 	}
-
+	
 	InputStream contentStream = provider.getContents(fileObject);
 	if (contentStream == null) {
 		errorTable.add(
@@ -313,7 +330,7 @@ void importFile(Object fileObject, int policy) {
 				null));
 		return;
 	}
-
+	
 	try {
 		targetResource.create(
 			contentStream,

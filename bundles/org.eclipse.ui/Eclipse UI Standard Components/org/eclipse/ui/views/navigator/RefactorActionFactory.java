@@ -25,15 +25,14 @@ import org.eclipse.ui.internal.TextActionHandler;
  * It also handles referencing actions like the addBookmark
  * action.
  */
-
 public class RefactorActionFactory
 	extends ActionFactory {
 
-	protected CopyResourceAction copyResourceAction;
+	protected CopyAction copyAction;
+	protected PasteAction pasteAction;
 	protected DeleteResourceAction deleteResourceAction;
 	protected ResourceNavigatorRenameAction renameResourceAction;
 	protected ResourceNavigatorMoveAction moveResourceAction;
-	protected CopyProjectAction copyProjectAction;
 	protected MoveProjectAction moveProjectAction;
 	protected AddBookmarkAction addBookmarkAction;
 
@@ -60,10 +59,10 @@ public class RefactorActionFactory
 	public void makeActions() {
 
 		Shell shell = getShell();
+		copyAction = new CopyAction(shell);
+		pasteAction = new PasteAction(shell);
 		moveResourceAction = new ResourceNavigatorMoveAction(shell, treeViewer);
-		copyResourceAction = new CopyResourceAction(shell);
 		moveProjectAction = new MoveProjectAction(shell);
-		copyProjectAction = new CopyProjectAction(shell);
 		renameResourceAction = new ResourceNavigatorRenameAction(shell, treeViewer);
 		deleteResourceAction = new DeleteResourceAction(shell);
 		addBookmarkAction = new AddBookmarkAction(shell);
@@ -73,7 +72,8 @@ public class RefactorActionFactory
 			addBookmarkAction);
 		
 		textActionHandler = new TextActionHandler(viewSite.getActionBars());
-		textActionHandler.setCopyAction(copyResourceAction);
+		textActionHandler.setCopyAction(copyAction);
+		textActionHandler.setPasteAction(pasteAction);
 		textActionHandler.setDeleteAction(deleteResourceAction);
 		renameResourceAction.setTextActionHandler(textActionHandler);
 	}
@@ -95,11 +95,11 @@ public class RefactorActionFactory
 		
 		//Update the selections of those who need a refresh before filling
 		
-		copyResourceAction.selectionChanged(selection);
+		copyAction.selectionChanged(selection);
+		pasteAction.selectionChanged(selection);	
 		moveResourceAction.selectionChanged(selection);
-		renameResourceAction.selectionChanged(selection);
-		copyProjectAction.selectionChanged(selection);
 		moveProjectAction.selectionChanged(selection);
+		renameResourceAction.selectionChanged(selection);
 		
 		boolean anyResourceSelected =
 			!selection.isEmpty()
@@ -119,12 +119,14 @@ public class RefactorActionFactory
 				&& ResourceSelectionUtil.allResourcesAreOfType(selection, IResource.PROJECT);
 
 		if (onlyFoldersOrFilesSelected) {
-			menu.add(copyResourceAction);
 			menu.add(moveResourceAction);
 		} else if (onlyProjectsSelected) {
-			menu.add(copyProjectAction);
 			menu.add(moveProjectAction);
 		}
+
+		menu.add(copyAction);
+		menu.add(pasteAction);
+		
 		if (anyResourceSelected) {
 			menu.add(renameResourceAction);
 			menu.add(deleteResourceAction);
@@ -144,16 +146,8 @@ public class RefactorActionFactory
 	public void updateGlobalActions(IStructuredSelection selection, IActionBars actionBars) {
 		deleteResourceAction.selectionChanged(selection);
 		addBookmarkAction.selectionChanged(selection);
-
-		// Ensure Copy global action targets correct action,
-		// either copyProjectAction or copyResourceAction,
-		// depending on selection.
-		copyProjectAction.selectionChanged(selection);
-		copyResourceAction.selectionChanged(selection);
-		if (copyProjectAction.isEnabled())
-			textActionHandler.setCopyAction(copyProjectAction);
-		else
-			textActionHandler.setCopyAction(copyResourceAction);
+		copyAction.selectionChanged(selection);
+		pasteAction.selectionChanged(selection);		
 		renameResourceAction.selectionChanged(selection);
 	}
 	

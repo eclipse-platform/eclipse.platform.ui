@@ -1,0 +1,138 @@
+package org.eclipse.ui.views.navigator;
+
+/*
+ * (c) Copyright IBM Corp. 2000, 2002.
+ * All Rights Reserved.
+ */
+import java.util.Iterator;
+import java.util.List;
+
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.FileTransfer;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.SelectionListenerAction;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.part.ResourceTransfer;
+
+/**
+ * Standard action for copying the currently selected resources to the clipboard.
+ * <p>
+ * This class may be instantiated; it is not intended to be subclassed.
+ * </p>
+ * 
+ * @since 2.0
+ */
+/*package*/ class CopyAction extends SelectionListenerAction {
+
+	/**
+	 * The id of this action.
+	 */
+	public static final String ID = PlatformUI.PLUGIN_ID + ".CopyAction"; //$NON-NLS-1$
+	
+	/**
+	 * The shell in which to show any dialogs.
+	 */
+	private Shell shell;
+	
+	/**
+	 * System clipboard
+	 */
+	private Clipboard clipboard;
+
+
+/**
+ * Creates a new action.
+ *
+ * @param shell the shell for any dialogs
+ */
+public CopyAction(Shell shell) {
+	super(ResourceNavigatorMessages.getString("CopyAction.title")); //$NON-NLS-1$
+	Assert.isNotNull(shell);
+	this.shell = shell;
+	setToolTipText(ResourceNavigatorMessages.getString("CopyAction.toolTip")); //$NON-NLS-1$
+	setId(CopyAction.ID);
+	clipboard = new Clipboard(shell.getDisplay());
+	WorkbenchHelp.setHelp(this, new Object[] {INavigatorHelpContextIds.COPY_ACTION});
+}
+/**
+ * The <code>CopyAction</code> implementation of this method defined 
+ * on <code>IAction</code> copies the selected resources to the 
+ * clipboard.
+ */
+public void run(){	
+	List selectedResources = getSelectedResources();
+	IResource[] resources = (IResource[]) selectedResources.toArray(new IResource[selectedResources.size()]);
+	
+	// Get the file names and a string representation
+	int len = resources.length;
+	String[] fileNames = new String[len];
+	StringBuffer buf = new StringBuffer();
+	for (int i = 0, length = len; i < length; i++) {
+		fileNames[i] = resources[i].getLocation().toOSString();
+		if (i > 0)
+			buf.append("\n");
+		buf.append(resources[i].getName());
+	}	
+	
+	// set the clipboard contents
+	clipboard.setContents(
+		new Object[]{
+			resources, 
+			fileNames, 
+			buf.toString()}, 
+		new Transfer[]{
+			ResourceTransfer.getInstance(), 
+			FileTransfer.getInstance(), 
+			TextTransfer.getInstance()});
+}
+
+/**
+ * The <code>CopyAction</code> implementation of this
+ * <code>SelectionListenerAction</code> method enables this action if 
+ * one or more resources of compatible types are selected.
+ */
+protected boolean updateSelection(IStructuredSelection selection) {
+	if (!super.updateSelection(selection))
+		return false;
+	
+	if (getSelectedNonResources().size() > 0) 
+		return false;
+
+	List selectedResources = getSelectedResources();
+	if (selectedResources.size() == 0)
+		return false;
+	
+	boolean projSelected = selectionIsOfType(IResource.PROJECT);
+	boolean fileFoldersSelected = selectionIsOfType(IResource.FILE | IResource.FOLDER);
+	if (!projSelected && !fileFoldersSelected)
+		return false;
+
+	// selection must be homogeneous
+	if (projSelected && fileFoldersSelected)
+		return false;
+	
+	// must have a common parent	
+	IContainer firstParent = ((IResource) selectedResources.get(0)).getParent();
+	if (firstParent == null) 
+		return false;
+
+	Iterator resourcesEnum = selectedResources.iterator();
+	while (resourcesEnum.hasNext()) {
+		IResource currentResource = (IResource) resourcesEnum.next();
+		if (!currentResource.getParent().equals(firstParent)) {
+			return false;
+		}
+	}
+	
+	return true;
+}
+
+}
+

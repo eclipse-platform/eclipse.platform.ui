@@ -15,14 +15,22 @@ import java.io.*;
 /**
  * The <code>ResourceTransfer</code> class is used to transfer an
  * array of <code>IResources</code>s from one part to another in a 
- * drag and drop operation.
+ * drag and drop operation or a cut, copy, paste action.
  * <p>
  * In every drag and drop operation there is a <code>DragSource</code> and 
  * a <code>DropTarget</code>.  When a drag occurs a <code>Transfer</code> is 
  * used to marshall the drag data from the source into a byte array.  If a drop 
  * occurs another <code>Transfer</code> is used to marshall the byte array into
- * drop data for the target.
- * </p><p>
+ * drop data for the target.  
+ * </p>
+ * <p>
+ * When a <code>CutAction</code> or a <code>CopyAction</code> is performed, 
+ * this transfer is used to place references to the selected resources 
+ * on the <code>Clipboard</code>.  When a <code>PasteAction</code> is performed, the 
+ * references on the clipboard are used to move or copy the resources
+ * to the selected destination.
+ * </p>
+ * <p>
  * This class can be used for a <code>Viewer<code> or an SWT component directly.
  * A singleton is provided which may be serially reused (see <code>getInstance</code>).  
  * It is not intended to be subclassed.
@@ -31,6 +39,8 @@ import java.io.*;
  * @see StructuredViewer
  * @see DropTarget
  * @see DragSource
+ * @see CopyAction
+ * @see PasteAction
  */
 public class ResourceTransfer extends ByteArrayTransfer {
 
@@ -88,16 +98,10 @@ protected void javaToNative(Object data, TransferData transferData) {
 	 * Then, the following for each resource:
 	 *  (int) resource type
 	 *  (String) path of resource
-	 * Projects are ignored.
 	 */
 
-	//count how many non-project resources there are
-	int resourceCount = 0;
-	for (int i = 0; i < resources.length; i++) {
-		if (resources[i].getType() != IResource.PROJECT) {
-			resourceCount++;
-		}
-	}
+	int resourceCount = resources.length;
+
 	try {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		DataOutputStream dataOut = new DataOutputStream(out);
@@ -105,11 +109,9 @@ protected void javaToNative(Object data, TransferData transferData) {
 		//write the number of resources
 		dataOut.writeInt(resourceCount);
 
-		//write each non-project resource
+		//write each resource
 		for (int i = 0; i < resources.length; i++) {
-			if (resources[i].getType() != IResource.PROJECT) {
-				writeResource(dataOut, resources[i]);
-			}
+			writeResource(dataOut, resources[i]);
 		}
 
 		//cleanup
@@ -131,7 +133,6 @@ protected Object nativeToJava(TransferData transferData) {
 	 * Then, the following for each resource:
 	 *  (int) resource type
 	 *  (String) path of resource
-	 * Projects are ignored.
 	 */
 
 	byte[] bytes = (byte[]) super.nativeToJava(transferData);
@@ -164,6 +165,8 @@ private IResource readResource(DataInputStream dataIn) throws IOException {
 			return workspace.getRoot().getFolder(new Path(path));
 		case IResource.FILE :
 			return workspace.getRoot().getFile(new Path(path));
+		case IResource.PROJECT :
+			return workspace.getRoot().getProject(path);
 	}
 	Assert.isTrue(false, "Unknown resource type in ResourceTransfer.readResource");//$NON-NLS-1$
 	return null;
