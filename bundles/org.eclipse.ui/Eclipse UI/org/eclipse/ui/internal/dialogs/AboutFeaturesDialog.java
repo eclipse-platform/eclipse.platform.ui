@@ -279,8 +279,6 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 		data.horizontalAlignment = GridData.FILL;
 		data.verticalAlignment = GridData.BEGINNING;
 		data.grabExcessHorizontalSpace = true;
-		data.widthHint = convertWidthInCharsToPixels(ABOUT_TEXT_WIDTH);
-		data.heightHint = convertHeightInCharsToPixels(ABOUT_TEXT_HEIGHT);
 		text.setLayoutData(data);
 		text.setCursor(null);
 		text.setBackground(infoArea.getBackground());

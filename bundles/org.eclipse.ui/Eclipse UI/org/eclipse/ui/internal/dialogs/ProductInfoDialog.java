@@ -40,8 +40,6 @@ public abstract class ProductInfoDialog extends Dialog{
 	private static final String ATT_HTTP = "http://"; //$NON-NLS-1$
 	private AboutItem item;
 	private 	boolean webBrowserOpened;
-	protected    int ABOUT_TEXT_WIDTH = 70; // chars
-	protected    int ABOUT_TEXT_HEIGHT = 15; // chars
 	private 	Cursor handCursor;
 	private 	Cursor busyCursor;
 	

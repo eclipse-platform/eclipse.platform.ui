@@ -211,8 +211,6 @@ protected Control createDialogArea(Composite parent) {
 		data.horizontalAlignment = GridData.FILL;
 		data.verticalAlignment = GridData.BEGINNING;
 		data.grabExcessHorizontalSpace = true;
-		data.widthHint = convertWidthInCharsToPixels(ABOUT_TEXT_WIDTH);
-		data.heightHint = convertHeightInCharsToPixels(ABOUT_TEXT_HEIGHT);
 		text.setText(getItem().getText());
 		text.setLayoutData(data);
 		text.setCursor(null);
