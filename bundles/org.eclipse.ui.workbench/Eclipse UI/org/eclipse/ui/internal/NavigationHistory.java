@@ -470,7 +470,8 @@ private static class HistoryEntry {
 		IMemento childMem = mem.getChild(IWorkbenchConstants.TAG_INDEX);
 		if(childMem != null) {
 			Integer index = childMem.getInteger(IWorkbenchConstants.TAG_INDEX);
-			mementoEntry = (HistoryEntry)entries.get(index.intValue());
+			if(index.intValue() >= 0)
+				mementoEntry = (HistoryEntry)entries.get(index.intValue());
 			memento = null;
 		}
 	}
