@@ -12,12 +12,13 @@ package org.eclipse.search.tests.filesearch;
 
 import java.util.HashSet;
 import java.util.Iterator;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
@@ -32,7 +33,6 @@ import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.Match;
 import org.eclipse.search2.internal.ui.InternalSearchUI;
 import org.eclipse.search2.internal.ui.text.AnnotationManager;
-import org.eclipse.search2.internal.ui.text.PositionTracker;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.texteditor.AnnotationTypeLookup;
@@ -109,11 +109,6 @@ public class AnnotationManagerTest extends TestCase {
 		}
 	}
 	
-	private Position computeDocumentPositionFromLineMatch(IDocument document, Match match) throws BadLocationException {
-		Position p= new Position(match.getOffset(), match.getLength());
-		return PositionTracker.convertToCharacterPosition(p, document);
-	}
-
 	public void testBogusAnnotation() throws Exception {
 		NewSearchUI.activateSearchResultView();
 		NewSearchUI.runQueryInForeground(null, fQuery1);

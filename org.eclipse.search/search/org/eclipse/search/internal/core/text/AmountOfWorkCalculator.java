@@ -18,7 +18,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceProxy;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.MultiStatus;
-
 import org.eclipse.search.internal.core.ISearchScope;
 
 /**
@@ -27,17 +26,28 @@ import org.eclipse.search.internal.core.ISearchScope;
 public class AmountOfWorkCalculator extends TypedResourceVisitor {
 	private ISearchScope fScope;
 	private int fResult;
+	private boolean fVisitDerived;
 
-	AmountOfWorkCalculator(MultiStatus status) {
+	AmountOfWorkCalculator(MultiStatus status, boolean visitDerived) {
 		super(status);
+		fVisitDerived= visitDerived;
 	}
 		
 	protected boolean visitFile(IResourceProxy proxy) throws CoreException {
-		if (fScope.encloses(proxy) && !proxy.isDerived())
+		if (shouldVisit(proxy))
 			fResult++;
 		return true;	
 	}
 	
+	
+	private boolean shouldVisit(IResourceProxy proxy) {
+		if (!fScope.encloses(proxy))
+			return false;
+		if (fVisitDerived)
+			return true;
+		return !proxy.isDerived();
+	}
+
 	public int process(Collection projects, ISearchScope scope) {
 		fResult= 0;
 		fScope= scope;

@@ -32,7 +32,7 @@ public class TextSearchEngine {
 	/**
 	 * Search for the given pattern.
 	 */
-	public IStatus search(IWorkspace workspace, ISearchScope scope, ITextSearchResultCollector collector, MatchLocator matchLocator) {
+	public IStatus search(IWorkspace workspace, ISearchScope scope, boolean visitDerived, ITextSearchResultCollector collector, MatchLocator matchLocator) {
 		Assert.isNotNull(workspace);
 		Assert.isNotNull(scope);
 		Assert.isNotNull(collector);
@@ -49,7 +49,7 @@ public class TextSearchEngine {
 		String message= SearchMessages.getString("TextSearchEngine.statusMessage"); //$NON-NLS-1$
 		MultiStatus status= new MultiStatus(SearchUI.PLUGIN_ID, IStatus.OK, message, null);
 		if (!openProjects.isEmpty()) {
-			int amountOfWork= (new AmountOfWorkCalculator(status)).process(openProjects, scope);		
+			int amountOfWork= (new AmountOfWorkCalculator(status, visitDerived)).process(openProjects, scope);		
 			try {
 				monitor.beginTask("", amountOfWork); //$NON-NLS-1$
 				if (amountOfWork > 0) {
@@ -57,7 +57,7 @@ public class TextSearchEngine {
 					monitor.setTaskName(SearchMessages.getFormattedString("TextSearchEngine.scanning", args)); //$NON-NLS-1$
 				}				
 				collector.aboutToStart();
-				TextSearchVisitor visitor= new TextSearchVisitor(matchLocator, scope, collector, status, amountOfWork);
+				TextSearchVisitor visitor= new TextSearchVisitor(matchLocator, scope, visitDerived, collector, status, amountOfWork);
 				visitor.process(openProjects);	
 			} catch (CoreException ex) {
 				status.add(ex.getStatus());

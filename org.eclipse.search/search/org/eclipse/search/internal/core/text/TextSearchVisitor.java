@@ -67,9 +67,10 @@ public class TextSearchVisitor extends TypedResourceVisitor {
 
 	private int fNumberOfScannedFiles;
 	private int fNumberOfFilesToScan;
-	private long fLastUpdateTime;	
+	private long fLastUpdateTime;
+	private boolean fVisitDerived;	
 	
-	public TextSearchVisitor(MatchLocator locator, ISearchScope scope, ITextSearchResultCollector collector, MultiStatus status, int fileCount) {
+	public TextSearchVisitor(MatchLocator locator, ISearchScope scope, boolean visitDerived, ITextSearchResultCollector collector, MultiStatus status, int fileCount) {
 		super(status);
 		fScope= scope;
 		fCollector= collector;
@@ -81,6 +82,7 @@ public class TextSearchVisitor extends TypedResourceVisitor {
 		fNumberOfScannedFiles= 0;
 		fNumberOfFilesToScan= fileCount;
 		fMessageFormatArgs= new Integer[] { new Integer(0), new Integer(fileCount) };
+		fVisitDerived= visitDerived;
 	}
 	
 	public void process(Collection projects) {
@@ -126,12 +128,16 @@ public class TextSearchVisitor extends TypedResourceVisitor {
 	}
 
 	
-	protected boolean visitFile(IResourceProxy proxy) throws CoreException {
-		if (! fScope.encloses(proxy))
+	private boolean shouldVisit(IResourceProxy proxy) {
+		if (!fScope.encloses(proxy))
 			return false;
+		if (fVisitDerived)
+			return true;
+		return !proxy.isDerived();
+	}
 
-		// Exclude to derived resources
-		if (proxy.isDerived())
+	protected boolean visitFile(IResourceProxy proxy) throws CoreException {
+		if (!shouldVisit(proxy))
 			return false;
 
 		if (fLocator.isEmtpy()) {

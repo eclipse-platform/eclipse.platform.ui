@@ -35,14 +35,19 @@ public class FileSearchQuery implements ISearchQuery {
 	private String fSearchOptions;
 	private TextSearchScope fScope;
 	private FileSearchResult fResult;
+	private boolean fVisitDerived;
 
-	public FileSearchQuery(TextSearchScope scope, String options, String searchString) {
-		
+	public FileSearchQuery(TextSearchScope scope, String options, String searchString, boolean visitDerived) {
+		fVisitDerived= visitDerived;
 		fScope= scope;
 		fSearchOptions= options;
 		fSearchString= searchString;
 	}
 
+	public FileSearchQuery(TextSearchScope scope, String options, String searchString) {
+		this(scope, options, searchString, false);
+	}
+	
 	public boolean canRunInBackground() {
 		return true;
 	}
@@ -54,11 +59,11 @@ public class FileSearchQuery implements ISearchQuery {
 			public IProgressMonitor getProgressMonitor() {
 				return pm;
 			}
-
+	
 			public void aboutToStart() {
 				// do nothing
 			}
-
+	
 			public void accept(IResourceProxy proxy, String line, int start, int length, int lineNumber) {
 				IResource resource= proxy.requestResource();
 				if (start < 0)
@@ -67,12 +72,12 @@ public class FileSearchQuery implements ISearchQuery {
 					length= 0;
 				textResult.addMatch(createMatch((IFile)resource, start, length, lineNumber));
 			}
-
+	
 			public void done() {
 				// do nothing
 			}
 		};
-		return new TextSearchEngine().search(SearchPlugin.getWorkspace(), fScope, collector, new MatchLocator(fSearchString, isCaseSensitive(), isRegexSearch()));
+		return new TextSearchEngine().search(SearchPlugin.getWorkspace(), fScope, fVisitDerived, collector, new MatchLocator(fSearchString, isCaseSensitive(), isRegexSearch()));
 	}
 
 	public String getLabel() {
@@ -132,7 +137,7 @@ public class FileSearchQuery implements ISearchQuery {
 			}
 		};
 		SearchScope scope= new SearchScope("", new IResource[] { file }); //$NON-NLS-1$
-		new TextSearchEngine().search(SearchPlugin.getWorkspace(), scope, collector, new MatchLocator(fSearchString, isCaseSensitive(), isRegexSearch()));
+		new TextSearchEngine().search(SearchPlugin.getWorkspace(), scope, fVisitDerived, collector, new MatchLocator(fSearchString, isCaseSensitive(), isRegexSearch()));
 		return Status.OK_STATUS; //$NON-NLS-1$
 	}
 	

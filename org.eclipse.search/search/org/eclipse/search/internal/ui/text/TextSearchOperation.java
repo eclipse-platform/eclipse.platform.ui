@@ -61,7 +61,7 @@ public class TextSearchOperation extends WorkspaceModifyOperation {
 	protected void execute(IProgressMonitor monitor) {
 		fCollector.setProgressMonitor(monitor);		
 		TextSearchEngine engine= new TextSearchEngine();
-		fStatus= engine.search(fWorkspace, fScope, fCollector, fMatchLocator);
+		fStatus= engine.search(fWorkspace, fScope, false, fCollector, fMatchLocator);
 	}	
 	
 	void searchInFile(IFile file, ITextSearchResultCollector collector) {
@@ -69,7 +69,7 @@ public class TextSearchOperation extends WorkspaceModifyOperation {
 		TextSearchScope scope= new TextSearchScope(""); //$NON-NLS-1$
 		scope.add(file);
 		scope.addExtension("*"); //$NON-NLS-1$
-		fStatus= engine.search(fWorkspace, scope, collector, fMatchLocator);
+		fStatus= engine.search(fWorkspace, scope, false, collector, fMatchLocator);
 	}
 
 	String getSingularLabel() {
