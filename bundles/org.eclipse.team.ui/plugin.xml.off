@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- File written by PDE 1.0 -->
+<plugin
+   id="org.eclipse.team.ui"
+   name="%pluginName"
+   version="2.0.0"
+   provider-name="Object Technology International, Inc."
+   class="org.eclipse.team.ui.TeamUIPlugin">
+<requires>
+   <import plugin="org.eclipse.core.resources"/>
+   <import plugin="org.eclipse.team.core"/>
+   <import plugin="org.eclipse.ui"/>
+   <import plugin="org.eclipse.compare"/>
+</requires>
+
+<runtime>
+   <library name="teamui.jar">
+      <export name="*"/>
+   </library>
+</runtime>
+
+<extension-point id="configurationWizards" name="Configuration Wizards"/>
+<extension-point id="decorators" name="Provider Decorators"/>
+
+<!-- Define some example ASCII extensions. This will be done
+     by other plugins later. -->
+     
+<extension point="org.eclipse.team.core.fileTypes">
+  <fileTypes extension="txt" key="isAscii" value="true"/>
+  <fileTypes extension="java" key="isAscii" value="true"/>
+  <fileTypes extension="properties" key="isAscii" value="true"/>
+  <fileTypes extension="xml" key="isAscii" value="true"/>
+</extension>
+
+<!-- **************** PREFERENCES ******************* -->
+   <extension
+      point = "org.eclipse.ui.preferencePages">
+       <page id="org.eclipse.team.ui.ASCIIPreferences"
+       	  class="org.eclipse.team.internal.ui.ASCIIPreferencePage"
+       	    name="%ASCIIPreferencePage.name">
+       </page>
+   </extension>
+
+<!-- ****************** POPUP ACTIONS *************** -->
+
+<extension
+     point="org.eclipse.ui.popupMenus">
+	<objectContribution
+	   id="org.eclipse.team.ui.ProjectContributions"
+	   objectClass="org.eclipse.core.resources.IProject" adaptable="true">
+		<menu
+			id="team.main"
+			path="additions"
+			label="%TeamGroupMenu.label">
+			<separator name="checkinGroup"/>
+			<separator name="manageGroup"/>
+			<separator name="advancedGroup"/>
+			<separator name="projectGroup"/>
+		</menu>		
+		<action 
+			id="org.eclipse.team.ui.DeconfigureProject"
+			label="%DeconfigureProject.label"
+			tooltip="%DeconfigureProject.tooltip"
+			menubarPath="team.main/projectGroup"
+			enablesFor="1"
+			class="org.eclipse.team.ui.actions.DeconfigureProjectAction">
+		</action>
+		<action 
+			id="org.eclipse.team.ui.ConfigureProject"
+			label="%ConfigureProject.label"
+			tooltip="%ConfigureProject.tooltip"
+			menubarPath="team.main/projectGroup"
+			enablesFor="1"
+			class="org.eclipse.team.ui.actions.ConfigureProjectAction">
+		</action>
+	</objectContribution>	
+
+	<objectContribution
+       	   id="org.eclipse.team.ui.ResourceContributions"
+           objectClass="org.eclipse.core.resources.IResource" adaptable="true">
+		<menu
+			id="team.main"
+			path="additions"
+			label="%TeamGroupMenu.label">
+			<separator name="checkinGroup"/>
+			<separator name="manageGroup"/>
+			<separator name="advancedGroup"/>
+			<separator name="projectGroup"/>
+		</menu>
+	</objectContribution>
+</extension>
+
+	<!-- ************** Views ********************** -->
+	<extension point="org.eclipse.ui.views">
+		<category 
+			id="org.eclipse.team.ui"
+			name="Team">
+		</category>
+		<view
+			id="org.eclipse.team.ui.sync.SyncView"
+			icon="icons/full/cview16/synch_synch.gif"
+			name="Synchronize"
+			category="org.eclipse.team.ui"
+			class="org.eclipse.team.ui.sync.SyncView">
+		</view>
+	</extension>
+	
+	<!-- ************** Decorators ********************** -->
+	<extension point="org.eclipse.ui.decorators"> 
+        <decorator 
+             id="org.eclipse.team.ui.decorator" 
+             label="%Team.decorator" 
+             state="false" 
+	         class="org.eclipse.team.internal.ui.TeamResourceDecorator" 
+             objectClass="org.eclipse.core.resources.IResource"> 
+         </decorator> 
+	</extension> 
+</plugin>
