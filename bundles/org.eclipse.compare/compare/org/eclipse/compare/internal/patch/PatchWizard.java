@@ -15,6 +15,7 @@ import org.eclipse.jface.wizard.Wizard;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
@@ -136,7 +137,11 @@ import org.eclipse.compare.structuremergeviewer.Differencer;
 			try {
 				WorkspaceModifyOperation op= new WorkspaceModifyOperation() {
 					protected void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-						fPatcher.applyAll(getTarget(), monitor);
+						try {
+							fPatcher.applyAll(getTarget(), monitor);
+						} catch (CoreException e) {
+							throw new InvocationTargetException(e);
+						}
 					}
 				};
 				getContainer().run(true, false, op);

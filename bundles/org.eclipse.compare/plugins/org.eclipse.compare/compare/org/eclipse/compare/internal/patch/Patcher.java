@@ -738,7 +738,7 @@ public class Patcher {
 		return hunk.fNewLength - hunk.fOldLength;
 	}
 
-	public void applyAll(IResource target, IProgressMonitor pm) {
+	public void applyAll(IResource target, IProgressMonitor pm) throws CoreException {
 		
 		final int WORK_UNIT= 10;
 				
@@ -783,7 +783,7 @@ public class Patcher {
 					workTicks-= WORK_UNIT;
 					break;
 				case Differencer.DELETION:
-					deleteFile(file, new SubProgressMonitor(pm, workTicks));
+					file.delete(true, true, new SubProgressMonitor(pm, workTicks));
 					workTicks-= WORK_UNIT;
 					break;
 				case Differencer.CHANGE:
@@ -821,20 +821,6 @@ public class Patcher {
 					pm.worked(workTicks);
 			}
 		}
-		
-		/*
-		if (pm != null)
-			pm.subTask("Refreshing");
-		try {
-			target.refreshLocal(IResource.DEPTH_INFINITE, pm);
-		} catch (CoreException ex) {
-			ExceptionHandler.handle(ex,
-				PatchMessages.getString("Patcher.ErrorDialog.title"),	//$NON-NLS-1$
-				PatchMessages.getString("Patcher.RefreshError.message"));	//$NON-NLS-1$
-		}
-		*/
-		
-		// IWorkspace.validateEdit(IFile[], Object context);
 	}
 	
 	/**
@@ -873,22 +859,9 @@ public class Patcher {
 	}
 	
 	/**
-	 * Deletes the given file.
-	 */
-	private void deleteFile(IFile file, IProgressMonitor pm) {
-		try {
-			file.delete(true, true, pm);
-		} catch (CoreException ex) {
-			ExceptionHandler.handle(ex,
-				PatchMessages.getString("Patcher.ErrorDialog.title"),	//$NON-NLS-1$
-				PatchMessages.getString("Patcher.DeleteError.message"));	//$NON-NLS-1$
-		}
-	}
-	
-	/**
 	 * Converts the string into bytes and stores them in the given file.
 	 */
-	private void store(String contents, IFile file, IProgressMonitor pm) {
+	private void store(String contents, IFile file, IProgressMonitor pm) throws CoreException {
 		
 		// and save it
 		InputStream is= new ByteArrayInputStream(contents.getBytes());
@@ -898,10 +871,6 @@ public class Patcher {
 			} else {
 				file.create(is, false, pm);
 			}
-		} catch (CoreException ex) {
-			ExceptionHandler.handle(ex,
-				PatchMessages.getString("Patcher.ErrorDialog.title"),	//$NON-NLS-1$
-				PatchMessages.getString("Patcher.UpdateError.message"));  //$NON-NLS-1$
 		} finally {
 			if (is != null)
 				try {
@@ -956,9 +925,11 @@ public class Patcher {
 	 * Ensures that a file with the given path exists in
 	 * the given container. Folder are created as necessary.
 	 */
-	private IFile createPath(IContainer container, IPath path) {
+	private IFile createPath(IContainer container, IPath path) throws CoreException {
 		if (path.segmentCount() > 1) {
 			IFolder f= container.getFolder(path.uptoSegment(1));
+			if (!f.exists())
+				f.create(false, true, null);
 			return createPath(f, path.removeFirstSegments(1));
 		}
 		// a leaf
