@@ -6,6 +6,6 @@
     <classpathentry kind="lib" path="C:/eclipse/plugins/org.eclipse.core.runtime/runtime.jar"/>
     <classpathentry kind="lib" path="C:/eclipse/plugins/org.eclipse.ui/workbench.jar"/>
     <classpathentry kind="lib" path="C:/eclipse/plugins/org.eclipse.webdav/webdav.jar"/>
-    <classpathentry kind="lib" path="C:/eclipse/plugins/org.eclipse.swt/swt0108.jar"/>
+    <classpathentry kind="lib" path="C:/eclipse/plugins/org.eclipse.swt/swt.jar"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>
