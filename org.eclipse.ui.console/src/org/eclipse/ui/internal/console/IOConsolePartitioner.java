@@ -586,7 +586,7 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
          * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
          */
         public IStatus runInUIThread(IProgressMonitor monitor) {
-        	if (lastPartition == null || document == null) {
+        	if (document == null) {
         		return Status.OK_STATUS;
         	}
         	
