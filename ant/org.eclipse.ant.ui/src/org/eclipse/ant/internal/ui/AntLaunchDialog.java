@@ -1,6 +1,6 @@
 package org.eclipse.ant.internal.ui;import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.viewers.*;import org.eclipse.swt.widgets.Listener;
-import org.eclipse.core.resources.IFile;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;import org.eclipse.jface.viewers.*;import org.eclipse.swt.widgets.Listener;
+import java.util.*;import org.apache.tools.ant.Target;import org.eclipse.ant.core.EclipseProject;import org.eclipse.core.resources.IFile;
 import org.eclipse.swt.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
@@ -8,7 +8,8 @@ import org.eclipse.swt.widgets.*;
 public class AntLaunchDialog extends Dialog {
 	private IFile antFile;
 	private IStructuredSelection selectedTargets;
-	private ListViewer listViewer;
+	private CheckboxTableViewer listViewer;
+	private EclipseProject project;
 	
 	private final static int SIZING_SELECTION_WIDGET_HEIGHT = 100;
 	private final static int SIZING_SELECTION_WIDGET_WIDTH = 500;
@@ -26,13 +27,13 @@ public class AntLaunchDialog extends Dialog {
 		
 		new Label(composite,SWT.NONE).setText("Available Targets:");
 		
-		listViewer = new ListViewer(composite,SWT.BORDER | SWT.CHECK);
+		listViewer = new CheckboxTableViewer(composite,SWT.BORDER | SWT.CHECK | SWT.MULTI);
 		GridData data = new GridData(GridData.FILL_BOTH);
 		data.heightHint = SIZING_SELECTION_WIDGET_HEIGHT;
 		data.widthHint = SIZING_SELECTION_WIDGET_WIDTH;
-		listViewer.getList().setLayoutData(data);
+		listViewer.getTable().setLayoutData(data);
 		listViewer.setLabelProvider(AntLaunchDialogLabelProvider.getInstance());
-		listViewer.setContentProvider(AntLaunchDialogContentProvider.getInstance());
+		listViewer.setContentProvider(AntLaunchDialogContentProvider.getInstance(this));
 		listViewer.setInput(antFile);
 		
 		new Label(composite,SWT.NONE).setText("Arguments:");
@@ -50,7 +51,24 @@ public class AntLaunchDialog extends Dialog {
 	}
 	
 	protected void okPressed() {
-		selectedTargets = (IStructuredSelection)listViewer.getSelection();
+		Target targets[] = (Target [])listViewer.getCheckedElements();
+
+		// build a vector containing the name of the selected target so that we can run them
+		Vector targetVect  = new Vector(targets.length);
+		for (int i = 0; i < targets.length; i++)
+			targetVect.add(targets[i].getName());
+		
+		// Build Listener - TEST
+		//project.addBuildListener(new UIBuildListener(new ProgressMonitorDialog(AntUIPlugin.getPlugin().getWorkbench().getActiveWorkbenchWindow().getShell()).getProgressMonitor(), antFile));
+		
+		// and then ask the project to execute them
+		project.executeTargets(targetVect);
+		
 		close();
 	}
+	
+	protected void setProject(EclipseProject newProject) {
+		project = newProject;
+	}
+	
 }

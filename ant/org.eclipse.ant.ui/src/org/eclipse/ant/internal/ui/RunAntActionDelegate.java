@@ -70,7 +70,7 @@ public class RunAntActionDelegate implements IWorkbenchWindowActionDelegate, IRu
 		Shell shell = getShell();
 		new AntLaunchDialog(shell,selection).open();
 		
-		System.out.println("HIT");
+		System.out.println("HIT!!!!!");
 		
 /*		try {
 			ProgressMonitorDialog dialog= new ProgressMonitorDialog(shell);

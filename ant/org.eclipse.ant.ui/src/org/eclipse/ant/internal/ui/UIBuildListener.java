@@ -78,6 +78,7 @@ public class UIBuildListener implements BuildListener {
 		checkCanceled();
         if (event.getPriority() <= Project.MSG_INFO) 
 			System.out.println("> "+event.getMessage());
+			
 	}
 
 
