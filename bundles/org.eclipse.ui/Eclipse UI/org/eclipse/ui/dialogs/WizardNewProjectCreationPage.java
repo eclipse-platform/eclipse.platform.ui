@@ -210,7 +210,7 @@ public IPath getLocationPath() {
 	if (useDefaults)
 		return initialLocationFieldValue;
 		
-	return new Path(locationPathField.getText());
+	return new Path(getProjectLocationFieldValue());
 }
 /**
  * Creates a project resource handle for the current project name field value.
@@ -235,7 +235,31 @@ public String getProjectName() {
 	if (projectNameField == null)
 		return initialProjectFieldValue;
 		
-	return projectNameField.getText();
+	return getProjectNameFieldValue();
+}
+/**
+ * Returns the value of the project name field
+ * with leading and trailing spaces removed.
+ * 
+ * @return the project name in the field
+ */
+private String getProjectNameFieldValue() {
+	if (projectNameField == null)
+		return "";
+	else
+		return projectNameField.getText().trim();
+}
+/**
+ * Returns the value of the project location field
+ * with leading and trailing spaces removed.
+ * 
+ * @return the project location directory in the field
+ */
+private String getProjectLocationFieldValue() {
+	if (locationPathField == null)
+		return "";
+	else
+		return locationPathField.getText().trim();
 }
 /**
  *	Open an appropriate directory browser
@@ -244,7 +268,7 @@ private void handleLocationBrowseButtonPressed() {
 	DirectoryDialog dialog = new DirectoryDialog(locationPathField.getShell());
 	dialog.setMessage(WorkbenchMessages.getString("WizardNewProjectCreationPage.directoryLabel")); //$NON-NLS-1$
 	
-	String dirName = locationPathField.getText();
+	String dirName = getProjectLocationFieldValue();
 	if (!dirName.equals("")) {//$NON-NLS-1$
 		File path = new File(dirName);
 		if (path.exists())
@@ -258,19 +282,23 @@ private void handleLocationBrowseButtonPressed() {
 /**
  * Sets the initial project name that this page will use when
  * created. The name is ignored if the createControl(Composite)
- * method has already been called.
+ * method has already been called. Leading and trailing spaces
+ * in the name are ignored.
  * 
  * @param name initial project name for this page
  */
 public void setInitialProjectName(String name) {
-	this.initialProjectFieldValue = name;
+	if (name == null)
+		initialProjectFieldValue = null;
+	else
+		initialProjectFieldValue = name.trim();
 }
 /**
  * Set the location to the default location if we are set to useDefaults.
  */
 private void setLocationForSelection() {
 	if (useDefaults) {
-		IPath defaultPath = Platform.getLocation().append(projectNameField.getText());
+		IPath defaultPath = Platform.getLocation().append(getProjectNameFieldValue());
 		locationPathField.setText(defaultPath.toOSString());
 	}
 }
@@ -284,7 +312,7 @@ private void setLocationForSelection() {
 private boolean validatePage() {
 	IWorkspace workspace = WorkbenchPlugin.getPluginWorkspace();
 
-	String projectFieldContents = projectNameField.getText();
+	String projectFieldContents = getProjectNameFieldValue();
 	if (projectFieldContents.equals("")) { //$NON-NLS-1$
 		setErrorMessage(null);
 		setMessage(WorkbenchMessages.getString("WizardNewProjectCreationPage.projectNameEmpty")); //$NON-NLS-1$
@@ -298,7 +326,7 @@ private boolean validatePage() {
 		return false;
 	}
 
-	String locationFieldContents = locationPathField.getText();
+	String locationFieldContents = getProjectLocationFieldValue();
 	
 	if (!locationFieldContents.equals("")) {//$NON-NLS-1$
 		IPath path = new Path("");//$NON-NLS-1$
