@@ -178,7 +178,7 @@ public class BrowserView extends ViewPart {
 			}
 		});
 		location.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetDefaultSelected(SelectionEvent e) {
 				browser.setUrl(location.getText());
 			}
 		});
