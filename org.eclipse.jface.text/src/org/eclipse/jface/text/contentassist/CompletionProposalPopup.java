@@ -95,11 +95,17 @@ class CompletionProposalPopup implements IContentAssistListener {
 		if (fKeyListener == null && styledText != null && !styledText.isDisposed()) {
 			fKeyListener= new KeyListener() {
 				public void keyPressed(KeyEvent e) {
+					if (!Helper.okToUse(fProposalShell))
+						return;
+					
 					if (e.character == 0 && e.keyCode == SWT.CTRL)
 						selectProposal(fProposalTable.getSelectionIndex(), true);									
 				}
 
 				public void keyReleased(KeyEvent e) {
+					if (!Helper.okToUse(fProposalShell))
+						return;
+
 					if (e.character == 0 && e.keyCode == SWT.CTRL)
 						selectProposal(fProposalTable.getSelectionIndex(), false);				
 				}
