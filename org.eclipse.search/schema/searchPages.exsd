@@ -68,7 +68,7 @@ page tab
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  a name of the class. We recommend subclassing 
+                  a name of the class which implements &lt;samp&gt;org.eclipse.search.ui.ISearchPage&lt;/samp&gt;. We recommend subclassing 
 &lt;samp&gt;org.eclipse.jface.dialogs.DialogPage&lt;/samp&gt;.
                </documentation>
                <appInfo>
