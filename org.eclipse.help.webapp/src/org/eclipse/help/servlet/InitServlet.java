@@ -79,7 +79,9 @@ public class InitServlet extends HttpServlet {
 	}
 
 	/**
-	 * Returns true if running in infocentre mode
+	 * Returns true if running in infocentre mode.
+	 * Assumptions:
+	 * - in eclipse we run with catalina.home set to the tomcat plugin.
 	 */
 	private boolean isInfocentre() {
 		ServletContext context = getServletContext();
