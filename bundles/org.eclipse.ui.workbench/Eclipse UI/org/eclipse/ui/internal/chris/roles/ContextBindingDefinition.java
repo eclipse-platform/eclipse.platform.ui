@@ -11,7 +11,7 @@
 
 package org.eclipse.ui.internal.chris.roles;
 
-import org.eclipse.ui.internal.roles.api.IContextBindingDefinition;
+import org.eclipse.ui.internal.roles.api.secondstage.IContextBindingDefinition;
 import org.eclipse.ui.internal.util.Util;
 
 final class ContextBindingDefinition implements IContextBindingDefinition {

@@ -157,7 +157,7 @@ import org.eclipse.update.core.SiteManager;
  * responsability is the management of workbench windows and other ISV windows.
  */
 public class Workbench
-	implements CommandResolver.ICallback, IWorkbench, IPlatformRunnable, IExecutableExtension {
+	implements IWorkbench, IPlatformRunnable, IExecutableExtension {
 
 	private WindowManager windowManager;
 	private WorkbenchWindow activatedWindow;
@@ -425,32 +425,6 @@ public class Workbench
 		}
 
 		return name;
-	}
-
-	public String guessCommandIdFromActionId(String actionId) {
-		// TODO bad cast
-		return ((CommandManager) getCommandManager()).guessCommandIdFromActionId(actionId);		
-	}
-
-	public Integer getAccelerator(String commandId) {
-		// TODO bad cast
-		return ((CommandManager) getCommandManager()).getAccelerator(commandId);		
-	}
-	
-	public String getAcceleratorText(String commandId) {
-		// TODO bad cast
-		return ((CommandManager) getCommandManager()).getAcceleratorText(commandId);		
-	}
-	
-	public final boolean inContext(final String commandId) {
-		if (commandId != null) {
-			final ICommand command = commandManager.getCommand(commandId);
-
-			if (command != null)
-				return command.isDefined() && command.isActive();
-		}
-
-		return true;
 	}
 
 	/**
@@ -778,7 +752,34 @@ public class Workbench
 	}
 
 	private void initializeCommandsAndContexts(final Display display) {
-		CommandResolver.getInstance().setCommandResolver(this);
+		CommandResolver.getInstance().setCommandResolver(new CommandResolver.ICallback() {
+			public String guessCommandIdFromActionId(String actionId) {
+				// TODO bad cast
+				return ((CommandManager) getCommandManager()).guessCommandIdFromActionId(actionId);		
+			}
+
+			public Integer getAccelerator(String commandId) {
+				// TODO bad cast
+				return ((CommandManager) getCommandManager()).getAccelerator(commandId);		
+			}
+	
+			public String getAcceleratorText(String commandId) {
+				// TODO bad cast
+				return ((CommandManager) getCommandManager()).getAcceleratorText(commandId);		
+			}	
+
+			public final boolean inContext(final String commandId) {
+				if (commandId != null) {
+					final ICommand command = commandManager.getCommand(commandId);
+
+					if (command != null)
+						return command.isDefined() && command.isActive();
+				}
+
+				return true;
+			}
+		});
+		
 		commandManager = CommandManager.getInstance();
 		contextManager = ContextManager.getInstance();
 		commandManager.addCommandManagerListener(commandManagerListener);

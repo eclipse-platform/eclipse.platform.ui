@@ -9,7 +9,9 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.roles.api;
+package org.eclipse.ui.internal.roles.api.secondstage;
+
+import java.util.List;
 
 /**
  * <p>
@@ -24,40 +26,26 @@ package org.eclipse.ui.internal.roles.api;
  * 
  * @since 3.0
  */
-public interface IRoleDefinition extends Comparable {
+public interface IRoleRegistry {
+
+	/**
+	 * Registers an IRoleRegistryListener instance with this role registry.
+	 *
+	 * @param roleRegistryListener the IRoleRegistryListener instance to register.
+	 */
+	void addRoleRegistryListener(IRoleRegistryListener roleRegistryListener);
 
 	/**
 	 * JAVADOC
-	 * 
+	 *
 	 * @return
-	 */	
-	String getDescription();
-		
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getId();
-	
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getName();
+	 */
+	List getRoleDefinitions();
 
 	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getParentId();
-	
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getPluginId();
+	 * Unregisters an IRoleRegistryListener instance with this role registry.
+	 *
+	 * @param roleRegistryListener the IRoleRegistryListener instance to unregister.
+	 */
+	void removeRoleRegistryListener(IRoleRegistryListener roleRegistryListener);
 }

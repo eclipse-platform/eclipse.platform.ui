@@ -16,8 +16,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.internal.roles.api.IContextBindingDefinition;
-import org.eclipse.ui.internal.roles.api.IRoleDefinition;
+import org.eclipse.ui.internal.roles.api.secondstage.IContextBindingDefinition;
+import org.eclipse.ui.internal.roles.api.secondstage.IRoleDefinition;
 import org.eclipse.ui.internal.util.Util;
 
 final class Persistence {

@@ -27,10 +27,10 @@ import java.util.TreeSet;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.roles.api.IRoleDefinition;
-import org.eclipse.ui.internal.roles.api.IRoleRegistry;
-import org.eclipse.ui.internal.roles.api.IRoleRegistryEvent;
-import org.eclipse.ui.internal.roles.api.IRoleRegistryListener;
+import org.eclipse.ui.internal.roles.api.secondstage.IRoleDefinition;
+import org.eclipse.ui.internal.roles.api.secondstage.IRoleRegistry;
+import org.eclipse.ui.internal.roles.api.secondstage.IRoleRegistryEvent;
+import org.eclipse.ui.internal.roles.api.secondstage.IRoleRegistryListener;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.roles.IRole;
 import org.eclipse.ui.roles.IRoleManager;

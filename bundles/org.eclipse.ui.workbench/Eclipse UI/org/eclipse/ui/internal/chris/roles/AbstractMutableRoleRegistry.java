@@ -13,8 +13,8 @@ package org.eclipse.ui.internal.chris.roles;
 
 import java.util.List;
 
-import org.eclipse.ui.internal.roles.api.IMutableRoleRegistry;
-import org.eclipse.ui.internal.roles.api.IRoleDefinition;
+import org.eclipse.ui.internal.roles.api.secondstage.IMutableRoleRegistry;
+import org.eclipse.ui.internal.roles.api.secondstage.IRoleDefinition;
 import org.eclipse.ui.internal.util.Util;
 
 abstract class AbstractMutableRoleRegistry extends AbstractRoleRegistry implements IMutableRoleRegistry {
