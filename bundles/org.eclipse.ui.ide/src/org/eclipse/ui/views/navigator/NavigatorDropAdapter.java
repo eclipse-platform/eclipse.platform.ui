@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ui.views.navigator;
 
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
@@ -59,6 +61,8 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements
 
     /**
      * Constructs a new drop adapter.
+     * 
+     * @param viewer the navigator's viewer
      */
     public NavigatorDropAdapter(StructuredViewer viewer) {
         super(viewer);
@@ -126,16 +130,27 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements
      * @return the resource selection from the LocalSelectionTransfer
      */
     private IResource[] getSelectedResources() {
-        IResource[] selectedResources = null;
+        ArrayList selectedResources = new ArrayList();
 
         ISelection selection = LocalSelectionTransfer.getInstance()
                 .getSelection();
         if (selection instanceof IStructuredSelection) {
-            List selectionList = ((IStructuredSelection) selection).toList();
-            selectedResources = (IResource[]) selectionList
-                    .toArray(new IResource[selectionList.size()]);
+            IStructuredSelection ssel = (IStructuredSelection) selection;
+            for (Iterator i = ssel.iterator(); i.hasNext();) {
+                Object o = i.next();
+                if (o instanceof IResource) {
+                    selectedResources.add(o);
+                }
+                else if (o instanceof IAdaptable) {
+                    IAdaptable a = (IAdaptable) o;
+                    IResource r = (IResource) a.getAdapter(IResource.class);
+                    if (r != null) {
+                        selectedResources.add(r);
+                    }
+                }
+            }
         }
-        return selectedResources;
+        return (IResource[]) selectedResources.toArray(new IResource[selectedResources.size()]);
     }
 
     /**
@@ -167,7 +182,7 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements
      * Returns an status indicating success.
      */
     private IStatus ok() {
-        return new Status(Status.OK, PlatformUI.PLUGIN_ID, 0,
+        return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, 0,
                 ResourceNavigatorMessages.getString("DropAdapter.ok"), null); //$NON-NLS-1$
     }
 
@@ -226,7 +241,7 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements
         } else {
             result = NavigatorDropAdapter.super.performDrop(data);
         }
-        if (resources != null) {
+        if (resources != null && resources.length > 0) {
             if (getCurrentOperation() == DND.DROP_COPY)
                 status = performResourceCopy(getShell(), resources);
             else
@@ -378,7 +393,7 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements
         if (LocalSelectionTransfer.getInstance().isSupportedType(transferType)) {
             IResource[] selectedResources = getSelectedResources();
 
-            if (selectedResources == null)
+            if (selectedResources.length == 0)
                 message = ResourceNavigatorMessages
                         .getString("DropAdapter.dropOperationErrorOther"); //$NON-NLS-1$
             else {
