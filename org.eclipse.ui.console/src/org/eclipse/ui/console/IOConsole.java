@@ -25,6 +25,7 @@ import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.ui.internal.console.IOConsoleDocument;
 import org.eclipse.ui.internal.console.IOConsoleHyperlinkPosition;
 import org.eclipse.ui.internal.console.IOConsolePage;
 import org.eclipse.ui.internal.console.IOConsolePartitioner;
@@ -147,7 +148,7 @@ public class IOConsole extends AbstractConsole {
         inputStream = new IOConsoleInputStream(this);
         openStreams.add(inputStream);
         partitioner = new IOConsolePartitioner(inputStream, this);
-        Document document = new Document();
+        Document document = new IOConsoleDocument();
         document.addPositionCategory(IOConsoleHyperlinkPosition.HYPER_LINK_CATEGORY);
         partitioner.connect(document);
     }
