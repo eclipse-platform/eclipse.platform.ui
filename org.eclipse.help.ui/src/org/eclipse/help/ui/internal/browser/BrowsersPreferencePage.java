@@ -53,21 +53,21 @@ public class BrowsersPreferencePage extends PreferencePage
 		layout.marginWidth = 0;
 		mainComposite.setLayout(layout);
 		Label description = new Label(mainComposite, SWT.NULL);
-		description.setText(HelpUIResources.getString("select_browser"));
+		description.setText(HelpUIResources.getString("select_browser")); //$NON-NLS-1$
 		createSpacer(mainComposite);
 		if (BrowserManager.getInstance().isEmbeddedBrowserPresent()) {
 			alwaysExternal = new Button(mainComposite, SWT.CHECK);
 			alwaysExternal
 					.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL));
 			alwaysExternal.setText(HelpUIResources
-					.getString("use_only_external_browser"));
+					.getString("use_only_external_browser")); //$NON-NLS-1$
 			alwaysExternal.setSelection(HelpBasePlugin.getDefault()
 					.getPluginPreferences().getBoolean(
 							BrowserManager.ALWAYS_EXTERNAL_BROWSER_KEY));
 			createSpacer(mainComposite);
 		}
 		Label tableDescription = new Label(mainComposite, SWT.NULL);
-		tableDescription.setText(HelpUIResources.getString("current_browser"));
+		tableDescription.setText(HelpUIResources.getString("current_browser")); //$NON-NLS-1$
 		//data = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		//description.setLayoutData(data);
 		Color bgColor = parent.getDisplay().getSystemColor(
@@ -170,7 +170,7 @@ public class BrowsersPreferencePage extends PreferencePage
 						.getString("CustomBrowserPreferencePage.Details")); //$NON-NLS-1$
 				String file = d.open();
 				if (file != null) {
-					customBrowserPath.setText("\"" + file + "\" %1");
+					customBrowserPath.setText("\"" + file + "\" %1"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 		});
