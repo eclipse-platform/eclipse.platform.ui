@@ -166,6 +166,10 @@ public class AutomaticUpdatesJob
 	}
 
 	private void openInstallWizard() {
+		if (InstallWizard.isRunning())
+			// job ends and a new one is rescheduled
+			return;
+			
 		InstallWizard wizard = new InstallWizard(searchRequest, updates);
 		WizardDialog dialog =
 			new ResizableWizardDialog(

@@ -40,12 +40,14 @@ public class InstallWizard
 	private SearchRunner searchRunner;
 	private UpdateSearchRequest searchRequest;
 	private ArrayList jobs;
+	private static boolean isRunning;
 
 	public InstallWizard() {
-		this((UpdateSearchRequest)null);
+		this((UpdateSearchRequest) null);
 	}
-	
+
 	public InstallWizard(UpdateSearchRequest searchRequest) {
+		isRunning = true;
 		this.searchRequest = searchRequest;
 		setDialogSettings(UpdateUI.getDefault().getDialogSettings());
 		setDefaultPageImageDescriptor(UpdateUIImages.DESC_INSTALL_WIZ);
@@ -53,62 +55,69 @@ public class InstallWizard
 		setNeedsProgressMonitor(true);
 		setWindowTitle(UpdateUI.getString("InstallWizard.wtitle")); //$NON-NLS-1$
 	}
-	
+
 	public InstallWizard(UpdateSearchRequest searchRequest, ArrayList jobs) {
 		this(searchRequest);
 		this.jobs = jobs;
 	}
-	
+
 	public boolean isSuccessfulInstall() {
 		return installCount > 0; // or == selectedJobs.length
 	}
 
+	public boolean performCancel() {
+		isRunning = false;
+		return super.performCancel();
+	}
 	/**
 	 * @see Wizard#performFinish()
 	 */
 	public boolean performFinish() {
-		final IInstallFeatureOperation[] selectedJobs = reviewPage.getSelectedJobs();
-		installCount = 0;
+		try {
+			final IInstallFeatureOperation[] selectedJobs =
+				reviewPage.getSelectedJobs();
+			installCount = 0;
 
-		saveSettings();
+			saveSettings();
 
-		// Check for duplication conflicts
-		ArrayList conflicts =
-			DuplicateConflictsValidator.computeDuplicateConflicts(
-				targetPage.getTargetSites(),
-				config);
-		if (conflicts != null) {
-			DuplicateConflictsDialog dialog =
-				new DuplicateConflictsDialog(getShell(), conflicts);
-			if (dialog.open() != 0)
-				return false;
-		}
-		
-		// ok to continue		
-		IRunnableWithProgress operation = new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor)
-				throws InvocationTargetException {
-					// setup jobs with the correct environment
-		IInstallFeatureOperation[] operations =
-		new IInstallFeatureOperation[selectedJobs.length];
-				for (int i = 0; i < selectedJobs.length; i++) {
-					IInstallFeatureOperation job = selectedJobs[i];
-					IFeature[] unconfiguredOptionalFeatures = null;
-					IFeatureReference[] optionalFeatures = null;
-					if (optionalFeaturesPage != null) {
-						optionalFeatures =
-							optionalFeaturesPage.getCheckedOptionalFeatures(
-								job);
-						unconfiguredOptionalFeatures =
-							optionalFeaturesPage
-								.getUnconfiguredOptionalFeatures(
-								job,
-								targetPage.getTargetSite(job));
-					}
-					IInstallFeatureOperation op =
-						OperationsManager
-							.getOperationFactory()
-							.createInstallOperation(
+			// Check for duplication conflicts
+			ArrayList conflicts =
+				DuplicateConflictsValidator.computeDuplicateConflicts(
+					targetPage.getTargetSites(),
+					config);
+			if (conflicts != null) {
+				DuplicateConflictsDialog dialog =
+					new DuplicateConflictsDialog(getShell(), conflicts);
+				if (dialog.open() != 0)
+					return false;
+			}
+
+			// ok to continue		
+			IRunnableWithProgress operation = new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor)
+					throws InvocationTargetException {
+						// setup jobs with the correct environment
+					IInstallFeatureOperation[] operations =
+					new IInstallFeatureOperation[selectedJobs.length];
+					for (int i = 0; i < selectedJobs.length; i++) {
+						IInstallFeatureOperation job = selectedJobs[i];
+						IFeature[] unconfiguredOptionalFeatures = null;
+						IFeatureReference[] optionalFeatures = null;
+						if (optionalFeaturesPage != null) {
+							optionalFeatures =
+								optionalFeaturesPage
+									.getCheckedOptionalFeatures(
+									job);
+							unconfiguredOptionalFeatures =
+								optionalFeaturesPage
+									.getUnconfiguredOptionalFeatures(
+									job,
+									targetPage.getTargetSite(job));
+						}
+						IInstallFeatureOperation op =
+							OperationsManager
+								.getOperationFactory()
+								.createInstallOperation(
 								config,
 								targetPage.getTargetSite(job),
 								job.getFeature(),
@@ -116,52 +125,53 @@ public class InstallWizard
 								unconfiguredOptionalFeatures,
 								new JarVerificationService(
 									InstallWizard.this.getShell()));
-					operations[i] = op;
+						operations[i] = op;
+					}
+					IOperation installOperation =
+						OperationsManager
+							.getOperationFactory()
+							.createBatchInstallOperation(
+							operations);
+					try {
+						installOperation.execute(monitor, InstallWizard.this);
+					} catch (CoreException e) {
+						throw new InvocationTargetException(e);
+					} finally {
+						monitor.done();
+					}
 				}
-				IOperation installOperation =
-					OperationsManager
-						.getOperationFactory()
-						.createBatchInstallOperation(
-						operations);
-				try {
-					installOperation.execute(
-						monitor,
-						InstallWizard.this);
-				} catch (CoreException e) {
-					throw new InvocationTargetException(e);
-				} finally {
-					monitor.done();
+			};
+			try {
+				getContainer().run(true, true, operation);
+			} catch (InvocationTargetException e) {
+				Throwable targetException = e.getTargetException();
+				if (targetException instanceof InstallAbortedException) {
+					return true;
+				} else {
+					UpdateUI.logException(e);
 				}
+				return false;
+			} catch (InterruptedException e) {
+				return false;
 			}
-		};
-		try {
-			getContainer().run(true, true, operation);
-		} catch (InvocationTargetException e) {
-			Throwable targetException = e.getTargetException();
-			if (targetException instanceof InstallAbortedException) {
-				return true;
-			} else {
-				UpdateUI.logException(e);
-			}
-			return false;
-		} catch (InterruptedException e) {
-			return false;
+			return true;
+		} finally {
+			isRunning = false;
 		}
-		return true;
 	}
 
 	public void addPages() {
 		searchRunner = new SearchRunner(getShell(), getContainer());
-		
-		if (searchRequest==null && jobs == null) {
+
+		if (searchRequest == null && jobs == null) {
 			modePage = new ModeSelectionPage(searchRunner);
 			addPage(modePage);
 			sitePage = new SitePage(searchRunner);
 			addPage(sitePage);
-		}
-		else {
+		} else {
 			searchRunner.setSearchProvider(this);
-			if (jobs!=null) searchRunner.setNewSearchNeeded(false);
+			if (jobs != null)
+				searchRunner.setNewSearchNeeded(false);
 		}
 		reviewPage = new ReviewPage(searchRunner, jobs);
 		searchRunner.setResultCollector(reviewPage);
@@ -182,7 +192,8 @@ public class InstallWizard
 	}
 
 	private void saveSettings() {
-		if (modePage!=null) modePage.saveSettings();
+		if (modePage != null)
+			modePage.saveSettings();
 	}
 
 	private boolean isPageRequired(IWizardPage page) {
@@ -205,14 +216,14 @@ public class InstallWizard
 		boolean start = false;
 		IWizardPage nextPage = null;
 
-		if (modePage!=null && page.equals(modePage)) {
+		if (modePage != null && page.equals(modePage)) {
 			boolean update = modePage.isUpdateMode();
 			if (update)
 				return reviewPage;
 			else
 				return sitePage;
 		}
-		if (sitePage!=null && page.equals(sitePage))
+		if (sitePage != null && page.equals(sitePage))
 			return reviewPage;
 
 		if (page.equals(reviewPage)) {
@@ -246,7 +257,8 @@ public class InstallWizard
 			optionalFeaturesPage.setJobs(optionalJobs);
 		}
 		if (targetPage != null) {
-			IInstallFeatureOperation[] installJobs = reviewPage.getSelectedJobs();
+			IInstallFeatureOperation[] installJobs =
+				reviewPage.getSelectedJobs();
 			targetPage.setJobs(installJobs);
 		}
 	}
@@ -324,15 +336,15 @@ public class InstallWizard
 	 * @see org.eclipse.update.operations.IOperationListener#beforeExecute(org.eclipse.update.operations.IOperation)
 	 */
 	public boolean beforeExecute(IOperation operation, Object data) {
-//		if (operation instanceof IBatchOperation
-//			&& data != null
-//			&& data instanceof ArrayList) {
-//
-//			DuplicateConflictsDialog2 dialog =
-//				new DuplicateConflictsDialog2(getShell(), (ArrayList) data);
-//			if (dialog.open() != 0)
-//				return false;
-//		}
+		//		if (operation instanceof IBatchOperation
+		//			&& data != null
+		//			&& data instanceof ArrayList) {
+		//
+		//			DuplicateConflictsDialog2 dialog =
+		//				new DuplicateConflictsDialog2(getShell(), (ArrayList) data);
+		//			if (dialog.open() != 0)
+		//				return false;
+		//		}
 		return true;
 	}
 	/* (non-Javadoc)
@@ -342,4 +354,7 @@ public class InstallWizard
 		return searchRequest;
 	}
 
+	public static synchronized boolean isRunning() {
+		return isRunning;
+	}
 }
