@@ -36,7 +36,7 @@ public class ServletFacade implements IPlatformRunnable {
 			if (url != null && url.length() != 0) {
 				if (url.startsWith("/search")) {
 					if (url.length() > "/search".length() + 1) {
-						URL searchURL = new URL(url.substring("/search".length() + 1));
+						URL searchURL = new URL("search:"+url.substring("/search".length() + 1));
 						InputStream stream = searchURL.openStream();
 						byte[] buf = new byte[8192];
 						int n = stream.read(buf);
