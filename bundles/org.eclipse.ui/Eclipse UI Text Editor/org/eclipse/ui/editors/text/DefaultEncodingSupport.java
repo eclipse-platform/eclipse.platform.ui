@@ -83,6 +83,10 @@ public class DefaultEncodingSupport implements IEncodingSupport {
 	 */
 	protected void setEncoding(String encoding, boolean overwrite) {
 		
+		// http://dev.eclipse.org/bugs/show_bug.cgi?id=19206
+		if (fTextEditor.isDirty())
+			return;
+			
 		String internal= encoding == null ? "" : encoding; //$NON-NLS-1$
 		
 		IDocumentProvider p= fTextEditor.getDocumentProvider();
