@@ -22,6 +22,7 @@ public class DecoratorDefinition {
 
 	private String name;
 	private String objectClass;
+	private String description;
 	private IBaseLabelProvider decorator;
 	private boolean enabled = false;
 	private boolean adaptable;
@@ -36,14 +37,16 @@ public class DecoratorDefinition {
 	DecoratorDefinition(
 		String identifier,
 		String label,
+		String decoratorDescription,
 		String className,
 		boolean isAdaptable,
 		IConfigurationElement configElement) {
-		id = identifier;
-		name = label;
-		objectClass = className;
-		adaptable = isAdaptable;
-		element = configElement;
+		this.id = identifier;
+		this.name = label;
+		this.objectClass = className;
+		this.adaptable = isAdaptable;
+		this.element = configElement;
+		this.description = decoratorDescription;
 	}
 
 	/**
@@ -60,6 +63,22 @@ public class DecoratorDefinition {
 	 */
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	/**
+	 * Returns the description.
+	 * @return String
+	 */
+	public String getDescription(){
+		return this.description;
+	}
+	
+	/**
+	 * Sets the description.
+	 * @param String
+	 */
+	public void setDescription(String newDescription){
+		this.description = newDescription;
 	}
 
 	/**

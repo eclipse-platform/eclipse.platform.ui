@@ -1,5 +1,10 @@
 package org.eclipse.ui.internal;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -24,6 +29,7 @@ class DecoratorRegistryReader extends RegistryReader {
 	private static String ATT_LABEL = "label";
 	private static String ATT_ADAPTABLE = "adaptable";
 	private static String ATT_ID = "id";
+	private static String ATT_DESCRIPTION = "description";
 	private static String P_TRUE = "true";
 
 	/**
@@ -43,11 +49,15 @@ class DecoratorRegistryReader extends RegistryReader {
 		String name = element.getAttribute(ATT_LABEL);
 
 		String id = element.getAttribute(ATT_ID);
+		
+		String description = element.getAttribute(ATT_DESCRIPTION);
+		if(description == null)
+			description = "";
 
 		boolean adaptable = P_TRUE.equals(element.getAttribute(ATT_ADAPTABLE));
 
 		values.add(
-			new DecoratorDefinition(id, name, className, adaptable, element));
+			new DecoratorDefinition(id, name, description, className, adaptable, element));
 
 		return true;
 

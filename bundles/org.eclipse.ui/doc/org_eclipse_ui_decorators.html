@@ -14,9 +14,6 @@ CDATA #REQUIRED</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; label&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 CDATA
 #REQUIRED</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; state&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-(true | false)
-#IMPLIED</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 CDATA
 #REQUIRED</tt>
@@ -35,11 +32,6 @@ CDATA
 menu to represent this decorator.</li>
 
 <li>
-<b>state</b> - an optional attribute indicating whether the decorator should be
-initially enabled. The enabled state can be toggled using the
-Window-&gt;Decorators menu.</li>
-
-<li>
 <b>class</b> - a fully qualified name of a class which implements <tt>org.eclipse.jface.viewers.ILabelDecorator</tt></li>
 
 <li>
@@ -48,7 +40,9 @@ decorator will be applied to</li>
 
 <li>
 <b>description</b> - an optional subelement whose body should contain text
-providing short description of the decorator</li>
+providing short description of the decorator. This will be shown in the Decorators 
+preference page so it is recommended that this is included. Default value is an
+empty String.</li>
 
 <li>
 <b>adaptable</b> - a flag that indicates if types that adapt to IResource should

@@ -973,6 +973,12 @@
             class="org.eclipse.ui.internal.dialogs.FontPreferencePage"
             id="org.eclipse.ui.preferencePages.Fonts">
       </page>
+      <page
+            name="%PreferencePages.Decorators"
+            category="org.eclipse.ui.preferencePages.Workbench"
+            class="org.eclipse.ui.internal.dialogs.DecoratorsPreferencePage"
+            id="org.eclipse.ui.preferencePages.Decorators">
+      </page>
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">

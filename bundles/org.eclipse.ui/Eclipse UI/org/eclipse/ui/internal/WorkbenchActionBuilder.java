@@ -87,6 +87,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private CycleEditorAction prevEditorAction;
 	private ActivateEditorAction activateEditorAction;
 	private WorkbenchEditorsAction workbenchEditorsAction;
+	
 
 	// retarget actions.
 	private RetargetAction undoAction;
@@ -100,9 +101,6 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private RetargetAction addBookmarkAction;
 	private RetargetAction printAction;
 
-	// decorator factory
-	private DecoratorActionFactory decoratorFactory;
-	
 	/**
 	 * WorkbenchActionBuilder constructor comment.
 	 */
@@ -369,8 +367,6 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		subMenu.add(nextPartAction);
 		subMenu.add(prevPartAction);
 
-		//Decorators submenu
-		decoratorFactory.fillMenu(menu);
 
 		menu.add(new Separator(IWorkbenchActionConstants.WINDOW_EXT));
 		menu.add(workbenchEditorsAction);
@@ -685,9 +681,6 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		workbenchEditorsAction = new WorkbenchEditorsAction(window);
 		workbenchEditorsAction.setActionDefinitionId(workbenchEditorsActionDefId);
 		keyBindingService.registerGlobalAction(workbenchEditorsAction);
-
-		decoratorFactory = new DecoratorActionFactory();
-		decoratorFactory.makeActions();
 	}
 	/**
 	 * Update the menubar and toolbar when
