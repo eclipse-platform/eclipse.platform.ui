@@ -27,9 +27,9 @@ class ImplicitJobs {
 	 * Captures the implicit job state for a given thread. */
 	class ThreadJob extends Job {
 		private RuntimeException lastPush = null;
+		protected boolean queued = false;
 		private ISchedulingRule[] ruleStack;
 		protected boolean running = false;
-		protected boolean queued = false;
 		private int top;
 		ThreadJob(ISchedulingRule rule) {
 			super("Implicit job"); //$NON-NLS-1$
@@ -38,6 +38,46 @@ class ImplicitJobs {
 			setRule(rule);
 			ruleStack = new ISchedulingRule[2];
 			top = -1;
+		}
+		private void illegalPop(ISchedulingRule rule) {
+			StringBuffer buf = new StringBuffer("Attempted to endRule: "); //$NON-NLS-1$
+			buf.append(rule);
+			if (top >= 0 && top < ruleStack.length) {
+				buf.append(", does not match most recent begin: "); //$NON-NLS-1$
+				buf.append(ruleStack[top]);
+			} else {
+				if (top < 0)
+					buf.append(", but there was no matching beginRule"); //$NON-NLS-1$
+				else
+					buf.append(", but the rule stack was out of bounds: " + top); //$NON-NLS-1$
+			}
+			buf.append(".  See log for trace information if rule tracing is enabled."); //$NON-NLS-1$
+			String msg = buf.toString();
+			if (JobManager.DEBUG) {
+				System.out.println(msg);
+				Throwable t = lastPush == null ? new IllegalArgumentException() : lastPush;
+				IStatus error = new Status(IStatus.ERROR, Platform.PI_RUNTIME, 1, msg, t);
+				InternalPlatform.log(error);
+			}
+			Assert.isLegal(false, msg);
+		}
+		/**
+		 * Client has attempted to begin a rule that is not contained within
+		 * the outer rule.
+		 */
+		private void illegalPush(ISchedulingRule pushRule, ISchedulingRule baseRule) {
+			StringBuffer buf = new StringBuffer("Attempted to beginRule: "); //$NON-NLS-1$
+			buf.append(pushRule);
+			buf.append(", does not match outer scope rule: "); //$NON-NLS-1$
+			buf.append(baseRule);
+			String msg = buf.toString();
+			if (JobManager.DEBUG) {
+				System.out.println(msg);
+				IStatus error = new Status(IStatus.ERROR, Platform.PI_RUNTIME, 1, msg, new IllegalArgumentException());
+				InternalPlatform.log(error);
+			}
+			Assert.isLegal(false, msg);
+			
 		}
 		/**
 		 * Schedule the job and block the calling thread until the job starts running
@@ -77,20 +117,6 @@ class ImplicitJobs {
 			running = true;
 			setThread(Thread.currentThread());
 		}
-		private void reportUnblocked(IProgressMonitor monitor) {
-			if (!(monitor instanceof IProgressMonitorWithBlocking))
-				return;
-			((IProgressMonitorWithBlocking)monitor).clearBlocked();
-		}
-		private void reportBlocked(IProgressMonitor monitor, InternalJob blockingJob) {
-			if (!(monitor instanceof IProgressMonitorWithBlocking))
-				return;
-			String msg = (blockingJob == null || blockingJob instanceof ThreadJob)
-				? Policy.bind("jobs.blocked0")  //$NON-NLS-1$
-				: Policy.bind("jobs.blocked1", blockingJob.getName());  //$NON-NLS-1$
-			IStatus reason = new Status(IStatus.INFO, Platform.PI_RUNTIME, 1, msg, null);
-			((IProgressMonitorWithBlocking)monitor).setBlocked(reason);
-		}
 		/**
 		 * Pops a rule. Returns true if it was the last rule for this thread
 		 * job, and false otherwise.
@@ -101,28 +127,10 @@ class ImplicitJobs {
 			ruleStack[top--] = null;
 			return top < 0;
 		}
-		private void illegalPop(ISchedulingRule rule) {
-			StringBuffer buf = new StringBuffer("Attempted to endRule: "); //$NON-NLS-1$
-			buf.append(rule);
-			if (top >= 0 && top < ruleStack.length) {
-				buf.append(", does not match most recent begin: "); //$NON-NLS-1$
-				buf.append(ruleStack[top]);
-			} else {
-				if (top < 0)
-					buf.append(", but there was no matching beginRule"); //$NON-NLS-1$
-				else
-					buf.append(", but the rule stack was out of bounds: " + top); //$NON-NLS-1$
-			}
-			buf.append(".  See log for trace information if rule tracing is enabled."); //$NON-NLS-1$
-			String msg = buf.toString();
-			if (JobManager.DEBUG) {
-				System.out.println(msg);
-				IStatus error = new Status(IStatus.ERROR, Platform.PI_RUNTIME, 1, msg, lastPush);
-				InternalPlatform.log(error);
-			}
-			Assert.isLegal(false, msg);
-		}
 		void push(ISchedulingRule rule) {
+			ISchedulingRule baseRule = getRule();
+			if (baseRule != null && !baseRule.contains(rule))
+				illegalPush(rule, baseRule);
 			if (++top >= ruleStack.length) {
 				ISchedulingRule[] newStack = new ISchedulingRule[ruleStack.length * 2];
 				System.arraycopy(ruleStack, 0, newStack, 0, ruleStack.length);
@@ -143,6 +151,20 @@ class ImplicitJobs {
 				ruleStack[0] = ruleStack[1] = null;
 			top = -1;
 		}
+		private void reportBlocked(IProgressMonitor monitor, InternalJob blockingJob) {
+			if (!(monitor instanceof IProgressMonitorWithBlocking))
+				return;
+			String msg = (blockingJob == null || blockingJob instanceof ThreadJob)
+				? Policy.bind("jobs.blocked0")  //$NON-NLS-1$
+				: Policy.bind("jobs.blocked1", blockingJob.getName());  //$NON-NLS-1$
+			IStatus reason = new Status(IStatus.INFO, Platform.PI_RUNTIME, 1, msg, null);
+			((IProgressMonitorWithBlocking)monitor).setBlocked(reason);
+		}
+		private void reportUnblocked(IProgressMonitor monitor) {
+			if (!(monitor instanceof IProgressMonitorWithBlocking))
+				return;
+			((IProgressMonitorWithBlocking)monitor).clearBlocked();
+		}
 		public IStatus run(IProgressMonitor monitor) {
 			synchronized (this) {
 				running = true;
@@ -152,14 +174,15 @@ class ImplicitJobs {
 		}
 	}
 	/**
+	 * Cached of unused instance that can be reused 
+	 */
+	private ThreadJob jobCache = null;
+	protected JobManager manager;
+	/**
 	 * Maps (Thread->ThreadJob), threads to the currently running job for that
 	 * thread.
 	 */
 	private final Map threadJobs = new HashMap(20);
-	/**
-	 * Cached of unused instance that can be reused */
-	private ThreadJob jobCache = null;
-	protected JobManager manager;
 	ImplicitJobs(JobManager manager) {
 		this.manager = manager;
 	}
