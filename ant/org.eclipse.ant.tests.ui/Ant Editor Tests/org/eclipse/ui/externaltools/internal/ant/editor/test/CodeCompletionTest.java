@@ -460,6 +460,13 @@ public class CodeCompletionTest extends TestCase {
         // cursor after ${ja.
         tempPrefix = tempProcessor.getPrefixFromDocument("<project><target name=\"${ja.\"", 28);
         assertEquals("ja.", tempPrefix);
+        
+        // cursor after <
+		tempPrefix = tempProcessor.getPrefixFromDocument("<project><", 10);
+		assertEquals("", tempPrefix);
+		
+		tempPrefix = tempProcessor.getPrefixFromDocument("<project name= \"test\"><tar", 26);
+		assertEquals("tar", tempPrefix);
     }    
 
 
@@ -552,17 +559,6 @@ public class CodeCompletionTest extends TestCase {
 
 
     public static Test suite() {
-        TestSuite suite = new TestSuite("CodeCompletionTest");
-        
-        suite.addTest(new CodeCompletionTest("testPropertyProposalDefinedInDependendTargets"));
-        suite.addTest(new CodeCompletionTest("testTaskProposals"));
-        suite.addTest(new CodeCompletionTest("testDeterminingProposalMode"));
-        suite.addTest(new CodeCompletionTest("testDeterminingPrefix"));
-        suite.addTest(new CodeCompletionTest("testPropertyProposals1"));
-        suite.addTest(new CodeCompletionTest("testBuildWithProperties"));
-        suite.addTest(new CodeCompletionTest("testXMLParsingWithPlantyDefaultHandler"));
-        suite.addTest(new CodeCompletionTest("testAttributeProposals"));
-        suite.addTest(new CodeCompletionTest("testFindChildElement"));
-        return suite;
+        return new TestSuite(CodeCompletionTest.class);
     }
 }
