@@ -47,7 +47,7 @@ public class BrowserManager {
 				setDefaultBrowserID("org.eclipse.help.netscapeAIX");
 			} else if (
 				System.getProperty("os.name").toLowerCase().startsWith("hp")) {
-				setDefaultBrowserID("org.eclipse.help.netscapeAIX");
+				setDefaultBrowserID("org.eclipse.help.netscapeHPUX");
 			} else {
 				setDefaultBrowserID("org.eclipse.help.mozillaLinux");
 			}
