@@ -117,7 +117,7 @@ public class WidgetMethodHandler extends AbstractHandler implements
 	}
 
 	public final boolean isEnabled() {
-		return getMethodToExecute() == null;
+		return getMethodToExecute() != null;
 	}
 
 	/**

@@ -402,419 +402,334 @@
       <category
             name="%category.file.name"
             description="%category.file.description"
-            id="org.eclipse.ui.category.file">
-      </category>
+            id="org.eclipse.ui.category.file" />
       <category
             name="%category.edit.name"
             description="%category.edit.description"
-            id="org.eclipse.ui.category.edit">
-      </category>
+            id="org.eclipse.ui.category.edit" />
       <category
             name="%category.navigate.name"
             description="%category.navigate.description"
-            id="org.eclipse.ui.category.navigate">
-      </category>
+            id="org.eclipse.ui.category.navigate" />
       <category
             name="%category.window.name"
             description="%category.window.description"
-            id="org.eclipse.ui.category.window">
-      </category>
+            id="org.eclipse.ui.category.window" />
       <category
             name="%category.help.name"
             description="%category.help.description"
-            id="org.eclipse.ui.category.help">
-      </category>
+            id="org.eclipse.ui.category.help" />
       <command
             name="%command.helpContents.name"
             description="%command.helpContents.description"
             categoryId="org.eclipse.ui.category.help"
-            id="org.eclipse.ui.help.helpContents">
-      </command>
+            id="org.eclipse.ui.help.helpContents" />
       <command
             name="%command.helpSearch.name"
             description="%command.helpSearch.description"
             categoryId="org.eclipse.ui.category.help"
-            id="org.eclipse.ui.help.helpSearch">
-      </command>
+            id="org.eclipse.ui.help.helpSearch" />
       <command
             name="%command.dynamicHelp.name"
             description="%command.dynamicHelp.description"
             categoryId="org.eclipse.ui.category.help"
-            id="org.eclipse.ui.help.dynamicHelp">
-      </command>      
+            id="org.eclipse.ui.help.dynamicHelp" />
       <command
             name="%command.quickStart.name"
             description="%command.quickStart.description"
             categoryId="org.eclipse.ui.category.help"
-            id="org.eclipse.ui.help.quickStartAction">
-      </command>
+            id="org.eclipse.ui.help.quickStartAction" />
       <command
             name="%command.tipsAndTricks.name"
             description="%command.tipsAndTricks.description"
             categoryId="org.eclipse.ui.category.help"
-            id="org.eclipse.ui.help.tipsAndTricksAction">
-      </command>
+            id="org.eclipse.ui.help.tipsAndTricksAction" />
       <command
             name="%command.aboutAction.name"
             description="%command.aboutAction.description"
             categoryId="org.eclipse.ui.category.help"
-            id="org.eclipse.ui.help.aboutAction">
-      </command>
+            id="org.eclipse.ui.help.aboutAction" />
       <command
             name="%command.newWizard.name"
             description="%command.newWizard.description"
             categoryId="org.eclipse.ui.category.file"
-            id="org.eclipse.ui.newWizard">
-      </command>
+            id="org.eclipse.ui.newWizard" />
       <command
             name="%command.close.name"
             description="%command.close.description"
             categoryId="org.eclipse.ui.category.file"
-            id="org.eclipse.ui.file.close">
-      </command>
+            id="org.eclipse.ui.file.close" />
       <command
             name="%command.closeAll.name"
             description="%command.closeAll.description"
             categoryId="org.eclipse.ui.category.file"
-            id="org.eclipse.ui.file.closeAll">
-      </command>
+            id="org.eclipse.ui.file.closeAll" />
       <command
             name="%command.import.name"
             description="%command.import.description"
             categoryId="org.eclipse.ui.category.file"
-            id="org.eclipse.ui.file.import">
-      </command>
+            id="org.eclipse.ui.file.import" />
       <command
             name="%command.export.name"
             description="%command.export.description"
             categoryId="org.eclipse.ui.category.file"
-            id="org.eclipse.ui.file.export">
-      </command>
+            id="org.eclipse.ui.file.export" />
       <command
             name="%command.save.name"
             description="%command.save.description"
             categoryId="org.eclipse.ui.category.file"
-            id="org.eclipse.ui.file.save">
-      </command>
+            id="org.eclipse.ui.file.save" />
       <command
             name="%command.saveAs.name"
             description="%command.saveAs.description"
             categoryId="org.eclipse.ui.category.file"
-            id="org.eclipse.ui.file.saveAs">
-      </command>
+            id="org.eclipse.ui.file.saveAs" />
       <command
             name="%command.saveAll.name"
             description="%command.saveAll.description"
             categoryId="org.eclipse.ui.category.file"
-            id="org.eclipse.ui.file.saveAll">
-      </command>
+            id="org.eclipse.ui.file.saveAll" />
       <command
             name="%command.print.name"
             description="%command.print.description"
             categoryId="org.eclipse.ui.category.file"
-            id="org.eclipse.ui.file.print">
-      </command>
+            id="org.eclipse.ui.file.print" />
       <command
             name="%command.revert.name"
             description="%command.revert.description"
             categoryId="org.eclipse.ui.category.file"
-            id="org.eclipse.ui.file.revert">
-      </command>
+            id="org.eclipse.ui.file.revert" />
       <command
             name="%command.refresh.name"
             description="%command.refresh.description"
             categoryId="org.eclipse.ui.category.file"
-            id="org.eclipse.ui.file.refresh">
-      </command>
+            id="org.eclipse.ui.file.refresh" />
       <command
             name="%command.properties.name"
             description="%command.properties.description"
             categoryId="org.eclipse.ui.category.file"
-            id="org.eclipse.ui.file.properties">
-      </command>
+            id="org.eclipse.ui.file.properties" />
       <command
             name="%command.exit.name"
             description="%command.exit.description"
             categoryId="org.eclipse.ui.category.file"
-            id="org.eclipse.ui.file.exit">
-      </command>
+            id="org.eclipse.ui.file.exit" />
       <command
             name="%command.undo.name"
             description="%command.undo.description"
             categoryId="org.eclipse.ui.category.edit"
-            id="org.eclipse.ui.edit.undo">
-      </command>
+            id="org.eclipse.ui.edit.undo" />
       <command
             name="%command.redo.name"
             description="%command.redo.description"
             categoryId="org.eclipse.ui.category.edit"
-            id="org.eclipse.ui.edit.redo">
-      </command>
+            id="org.eclipse.ui.edit.redo" />
       <command
             name="%command.cut.name"
             description="%command.cut.description"
             categoryId="org.eclipse.ui.category.edit"
-            id="org.eclipse.ui.edit.cut">
-      </command>
+            id="org.eclipse.ui.edit.cut"
+            defaultHandler="org.eclipse.ui.internal.handlers.WidgetMethodHandler:cut" />
       <command
             name="%command.copy.name"
             description="%command.copy.description"
             categoryId="org.eclipse.ui.category.edit"
-            id="org.eclipse.ui.edit.copy">
-      </command>
+            id="org.eclipse.ui.edit.copy"
+            defaultHandler="org.eclipse.ui.internal.handlers.WidgetMethodHandler:copy" />
       <command
             name="%command.paste.name"
             description="%command.paste.description"
             categoryId="org.eclipse.ui.category.edit"
-            id="org.eclipse.ui.edit.paste">
-      </command>
+            id="org.eclipse.ui.edit.paste"
+            defaultHandler="org.eclipse.ui.internal.handlers.WidgetMethodHandler:paste" />
       <command
             name="%command.delete.name"
             description="%command.delete.description"
             categoryId="org.eclipse.ui.category.edit"
-            id="org.eclipse.ui.edit.delete">
-      </command>
+            id="org.eclipse.ui.edit.delete" />
       <command
             name="%command.move.name"
             description="%command.move.description"
             categoryId="org.eclipse.ui.category.file"
-            id="org.eclipse.ui.edit.move">
-      </command>
+            id="org.eclipse.ui.edit.move" />
       <command
             name="%command.rename.name"
             description="%command.rename.description"
             categoryId="org.eclipse.ui.category.file"
-            id="org.eclipse.ui.edit.rename">
-      </command>
+            id="org.eclipse.ui.edit.rename" />
       <command
             name="%command.selectAll.name"
             description="%command.selectAll.description"
             categoryId="org.eclipse.ui.category.edit"
-            id="org.eclipse.ui.edit.selectAll">
-      </command>
+            id="org.eclipse.ui.edit.selectAll" />
       <command
             name="%command.findReplace.name"
             description="%command.findReplace.description"
             categoryId="org.eclipse.ui.category.edit"
-            id="org.eclipse.ui.edit.findReplace">
-      </command>
+            id="org.eclipse.ui.edit.findReplace" />
       <command
             name="%command.addBookmark.name"
             description="%command.addBookmark.description"
             categoryId="org.eclipse.ui.category.edit"
-            id="org.eclipse.ui.edit.addBookmark">
-      </command>
+            id="org.eclipse.ui.edit.addBookmark" />
       <command
             name="%command.goInto.name"
             description="%command.goInto.description"
             categoryId="org.eclipse.ui.category.navigate"
-            id="org.eclipse.ui.navigate.goInto">
-      </command>
+            id="org.eclipse.ui.navigate.goInto" />
       <command
             name="%command.back.name"
             description="%command.back.description"
             categoryId="org.eclipse.ui.category.navigate"
-            id="org.eclipse.ui.navigate.back">
-      </command>
+            id="org.eclipse.ui.navigate.back" />
       <command
             name="%command.forward.name"
             description="%command.forward.description"
             categoryId="org.eclipse.ui.category.navigate"
-            id="org.eclipse.ui.navigate.forward">
-      </command>
+            id="org.eclipse.ui.navigate.forward" />
       <command
             name="%command.up.name"
             description="%command.up.description"
             categoryId="org.eclipse.ui.category.navigate"
-            id="org.eclipse.ui.navigate.up">
-      </command>
+            id="org.eclipse.ui.navigate.up" />
       <command
             name="%command.next.name"
             description="%command.next.description"
             categoryId="org.eclipse.ui.category.navigate"
-            id="org.eclipse.ui.navigate.next">
-      </command>
+            id="org.eclipse.ui.navigate.next" />
       <command
             name="%command.backwardHistory.name"
             description="%command.backwardHistory.description"
             categoryId="org.eclipse.ui.category.navigate"
-            id="org.eclipse.ui.navigate.backwardHistory">
-      </command>
+            id="org.eclipse.ui.navigate.backwardHistory" />
       <command
             name="%command.forwardHistory.name"
             description="%command.forwardHistory.description"
             categoryId="org.eclipse.ui.category.navigate"
-            id="org.eclipse.ui.navigate.forwardHistory">
-      </command>
+            id="org.eclipse.ui.navigate.forwardHistory" />
       <command
             name="%command.previous.name"
             description="%command.previous.description"
             categoryId="org.eclipse.ui.category.navigate"
-            id="org.eclipse.ui.navigate.previous">
-      </command>
+            id="org.eclipse.ui.navigate.previous" />
       <command
             name="%command.openEditorDropDown.name"
             description="%command.openEditorDropDown.description"
             categoryId="org.eclipse.ui.category.window"
-            id="org.eclipse.ui.window.openEditorDropDown">
-      </command>
+            id="org.eclipse.ui.window.openEditorDropDown" />
       <command
             name="%command.switchToEditor.name"
             description="%command.switchToEditor.description"
             categoryId="org.eclipse.ui.category.window"
-            id="org.eclipse.ui.window.switchToEditor">
-      </command>
+            id="org.eclipse.ui.window.switchToEditor" />
       <command
             name="%command.showSystemMenu.name"
             description="%command.showSystemMenu.description"
             categoryId="org.eclipse.ui.category.window"
-            id="org.eclipse.ui.window.showSystemMenu">
-      </command>
+            id="org.eclipse.ui.window.showSystemMenu" />
       <command
             name="%command.showViewMenu.name"
             description="%command.showViewMenu.description"
             categoryId="org.eclipse.ui.category.window"
-            id="org.eclipse.ui.window.showViewMenu">
-      </command>
+            id="org.eclipse.ui.window.showViewMenu" />
       <command
             name="%command.activateEditor.name"
             description="%command.activateEditor.description"
             categoryId="org.eclipse.ui.category.window"
-            id="org.eclipse.ui.window.activateEditor">
-      </command>
+            id="org.eclipse.ui.window.activateEditor" />
       <command
             name="%command.maximizePart.name"
             description="%command.maximizePart.description"
             categoryId="org.eclipse.ui.category.window"
-            id="org.eclipse.ui.window.maximizePart">
-      </command>
+            id="org.eclipse.ui.window.maximizePart" />
       <command
             name="%command.minimizePart.name"
             description="%command.minimizePart.description"
             categoryId="org.eclipse.ui.category.window"
-            id="org.eclipse.ui.window.minimizePart">
-      </command>  
+            id="org.eclipse.ui.window.minimizePart" />
       <command
             name="%command.nextEditor.name"
             description="%command.nextEditor.description"
             categoryId="org.eclipse.ui.category.window"
-            id="org.eclipse.ui.window.nextEditor">
-      </command>
+            id="org.eclipse.ui.window.nextEditor" />
       <command
             name="%command.previousEditor.name"
             description="%command.previousEditor.description"
             categoryId="org.eclipse.ui.category.window"
-            id="org.eclipse.ui.window.previousEditor">
-      </command>
+            id="org.eclipse.ui.window.previousEditor" />
       <command
             name="%command.nextView.name"
             description="%command.nextView.description"
             categoryId="org.eclipse.ui.category.window"
-            id="org.eclipse.ui.window.nextView">
-      </command>
+            id="org.eclipse.ui.window.nextView" />
       <command
             name="%command.previousView.name"
             description="%command.previousView.description"
             categoryId="org.eclipse.ui.category.window"
-            id="org.eclipse.ui.window.previousView">
-      </command>
+            id="org.eclipse.ui.window.previousView" />
       <command
             name="%command.nextPerspective.name"
             description="%command.nextPerspective.description"
             categoryId="org.eclipse.ui.category.window"
-            id="org.eclipse.ui.window.nextPerspective">
-      </command>
+            id="org.eclipse.ui.window.nextPerspective" />
       <command
             name="%command.previousPerspective.name"
             description="%command.previousPerspective.description"
             categoryId="org.eclipse.ui.category.window"
-            id="org.eclipse.ui.window.previousPerspective">
-      </command>
+            id="org.eclipse.ui.window.previousPerspective" />
       <command
             name="%command.closeAllPerspectives.name"
             description="%command.closeAllPerspectives.description"
             categoryId="org.eclipse.ui.category.window"
-            id="org.eclipse.ui.window.closeAllPerspectives">
-      </command>
+            id="org.eclipse.ui.window.closeAllPerspectives" />
       <command
             name="%command.closePerspective.name"
             description="%command.closePerspective.description"
             categoryId="org.eclipse.ui.category.window"
-            id="org.eclipse.ui.window.closePerspective">
-      </command>
+            id="org.eclipse.ui.window.closePerspective" />
       <command
             name="%command.customizePerspective.name"
             description="%command.customizePerspective.description"
             categoryId="org.eclipse.ui.category.window"
-            id="org.eclipse.ui.window.customizePerspective">
-      </command>
+            id="org.eclipse.ui.window.customizePerspective" />
       <command
             name="%command.hideShowEditors.name"
             description="%command.hideShowEditors.description"
             categoryId="org.eclipse.ui.category.window"
-            id="org.eclipse.ui.window.hideShowEditors">
-      </command>
+            id="org.eclipse.ui.window.hideShowEditors" />
       <command
             name="%command.lockToolBar.name"
             description="%command.lockToolBar.description"
             categoryId="org.eclipse.ui.category.window"
-            id="org.eclipse.ui.window.lockToolBar">
-      </command>
+            id="org.eclipse.ui.window.lockToolBar" />
       <command
             name="%command.pinEditor.name"
             description="%command.pinEditor.description"
             categoryId="org.eclipse.ui.category.window"
-            id="org.eclipse.ui.window.pinEditor">
-      </command>
+            id="org.eclipse.ui.window.pinEditor" />
       <command
             name="%command.preferences.name"
             description="%command.preferences.description"
             categoryId="org.eclipse.ui.category.window"
-            id="org.eclipse.ui.window.preferences">
-      </command>
+            id="org.eclipse.ui.window.preferences" />
       <command
             name="%command.resetPerspective.name"
             description="%command.resetPerspective.description"
             categoryId="org.eclipse.ui.category.window"
-            id="org.eclipse.ui.window.resetPerspective">
-      </command>
+            id="org.eclipse.ui.window.resetPerspective" />
       <command
             name="%command.savePerspective.name"
             description="%command.savePerspective.description"
             categoryId="org.eclipse.ui.category.window"
-            id="org.eclipse.ui.window.savePerspective">
-      </command>
+            id="org.eclipse.ui.window.savePerspective" />
       <command
       		name="%command.showKeyAssist.name"
       		description="%command.showKeyAssist.description"
       		categoryId="org.eclipse.ui.category.window"
-      		id="org.eclipse.ui.window.showKeyAssist">
-      </command>
+      		id="org.eclipse.ui.window.showKeyAssist"
+      		defaultHandler="org.eclipse.ui.internal.handlers.ShowKeyAssistHandler" />
    </extension>
-   <extension
-         point="org.eclipse.ui.handlers">
-      <handler
-            commandId="org.eclipse.ui.edit.copy"
-            class="org.eclipse.ui.internal.handlers.WidgetMethodHandler:copy" />
-      <handler
-            commandId="org.eclipse.ui.edit.cut"
-            class="org.eclipse.ui.internal.handlers.WidgetMethodHandler:cut" />
-      <handler
-            commandId="org.eclipse.ui.edit.paste"
-            class="org.eclipse.ui.internal.handlers.WidgetMethodHandler:paste" />
-      <handler
-            commandId="org.eclipse.ui.edit.selectAll"
-            class="org.eclipse.ui.internal.handlers.SelectAllHandler" />
-      <handler
-      		commandId="org.eclipse.ui.window.showKeyAssist"
-      		class="org.eclipse.ui.internal.handlers.ShowKeyAssistHandler" />
-      <handler
-            commandId="org.eclipse.ui.views.showView"
-            class="org.eclipse.ui.internal.handlers.ShowViewHandler" />
-      <handler
-            commandId="org.eclipse.ui.perspectives.showPerspective"
-            class="org.eclipse.ui.internal.handlers.ShowPerspectiveHandler" />
-   </extension>
+   
    <extension
          point="org.eclipse.ui.views">
       <category
