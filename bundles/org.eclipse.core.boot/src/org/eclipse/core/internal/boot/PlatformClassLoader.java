@@ -67,7 +67,7 @@ protected Class findClassParentsSelf(final String name, boolean resolve, Delegat
 			// because the class was actually loaded.
 			if (result == null)
 				return null;
-			enableJ9HotSwap(this, result);
+			enableHotSwap(this, result);
 			return checkClassVisibility(result, requestor, false);
 		} catch (ClassNotFoundException e) {
 			return null;

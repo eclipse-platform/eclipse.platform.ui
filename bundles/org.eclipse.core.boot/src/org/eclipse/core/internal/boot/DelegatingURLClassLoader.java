@@ -140,7 +140,7 @@ public DelegatingURLClassLoader(URL[] codePath, URLContentFilter[] codeFilters, 
 	if (codePath != null) {
 		if (codeFilters == null || codeFilters.length != codePath.length)
 			throw new DelegatingLoaderException();
-		setJ9HotSwapPath(this, codePath);
+		setHotSwapPath(this, codePath);
 		for (int i = 0; i < codePath.length; i++) {
 			if (codeFilters[i] != null)
 				filterTable.put(codePath[i], codeFilters[i]);
@@ -627,7 +627,7 @@ protected Class loadClass(String name, boolean resolve) throws ClassNotFoundExce
 	}
 	return result;
 }
-protected void enableJ9HotSwap(ClassLoader cl, Class clazz) {
+protected void enableHotSwap(ClassLoader cl, Class clazz) {
 	if (isHotSwapEnabled)
 		VM.enableClassHotSwap(clazz);
 }
@@ -662,7 +662,7 @@ private Class loadClass(String name, boolean resolve, DelegatingURLClassLoader r
 	return result;
 }
 
-private void setJ9HotSwapPath(ClassLoader cl, URL[] urls) {
+private void setHotSwapPath(ClassLoader cl, URL[] urls) {
 	if (!isHotSwapEnabled)
 		return;
 	StringBuffer path = new StringBuffer();
@@ -678,21 +678,17 @@ private void setJ9HotSwapPath(ClassLoader cl, URL[] urls) {
 			path.append(file);
 		}
 	}
-	if (path.length() > 0) {
+	if (path.length() > 0)
 		VM.setClassPathImpl(cl, path.toString());
-	}
 }
 
 protected String getFileFromURL(URL target) {
-	if (target.getProtocol().equals(PlatformURLHandler.FILE))
-		return target.getFile();
 	try {
-		URLConnection conn= target.openConnection();
-		if (conn instanceof PlatformURLConnection) {
-			target = ((PlatformURLConnection)conn).getURLAsLocal();
-			if (target.getProtocol().equals(PlatformURLHandler.FILE)) 
-				return target.getFile();
-		}
+		URL url = InternalBootLoader.resolve(target);
+		String protocol = url.getProtocol();
+		// check only for the file protocol here.  Not interested in Jar files.
+		if (protocol.equals(PlatformURLHandler.FILE))
+			return url.getFile();
 	} catch (IOException e) {
 	}
 	return null;

@@ -9,8 +9,7 @@ import org.eclipse.core.boot.*;
 import org.eclipse.core.internal.boot.*;
 import java.io.*;
 import java.lang.reflect.*;
-import java.net.URL;
-import java.net.MalformedURLException;
+import java.net.*;
 import java.util.zip.ZipFile;
 import java.util.*;
 
@@ -804,6 +803,16 @@ private static URL[] readPluginPath(InputStream input) {
 		}
 	}
 	return (URL[]) result.toArray(new URL[result.size()]);
+}
+
+public static URL resolve(URL url) throws IOException {
+	if (!url.getProtocol().equals(PlatformURLHandler.PROTOCOL))
+		return url;
+	URLConnection connection = url.openConnection();
+	if (connection instanceof PlatformURLConnection)
+		return ((PlatformURLConnection) connection).getResolvedURL();
+	else
+		return url;
 }
 /**
  * @see BootLoader
