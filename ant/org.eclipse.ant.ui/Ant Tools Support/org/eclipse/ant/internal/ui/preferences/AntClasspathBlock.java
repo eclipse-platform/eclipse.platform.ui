@@ -753,31 +753,39 @@ public class AntClasspathBlock {
 		return true;
 	}
 
-	public boolean validateXerces() {
+	public boolean validateXerces(boolean sameVM) {
 		boolean valid= true;
 		validated++;
 		boolean check= AntUIPlugin.getDefault().getPreferenceStore().getBoolean(IAntUIPreferenceConstants.ANT_XERCES_JARS_WARNING);
 		if (check) {
 			List antURLs= getAntURLs();
-			String suffix= JARPresent(antURLs, XERCES);
-			if (suffix == null) {
+			List suffixes= JARPresent(antURLs, XERCES);
+			if (suffixes.isEmpty()) {
 				List userURLs= getUserURLs();
-				suffix= JARPresent(userURLs, XERCES);
+				suffixes= JARPresent(userURLs, XERCES);
 			}
-			if (suffix != null) {
-				valid= MessageDialogWithToggle.openQuestion(antTableViewer.getControl().getShell(), AntPreferencesMessages.getString("AntClasspathBlock.35"), MessageFormat.format(AntPreferencesMessages.getString("AntClasspathBlock.36"), new String[]{suffix}), IAntUIPreferenceConstants.ANT_XERCES_JARS_WARNING, AntPreferencesMessages.getString("AntClasspathBlock.33"), AntUIPlugin.getDefault().getPreferenceStore()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			if (sameVM && !suffixes.isEmpty()) {
+				valid= MessageDialogWithToggle.openQuestion(antTableViewer.getControl().getShell(), AntPreferencesMessages.getString("AntClasspathBlock.35"), MessageFormat.format(AntPreferencesMessages.getString("AntClasspathBlock.36"), new Object[]{suffixes.get(0)}), IAntUIPreferenceConstants.ANT_XERCES_JARS_WARNING, AntPreferencesMessages.getString("AntClasspathBlock.33"), AntUIPlugin.getDefault().getPreferenceStore()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			} else if (!sameVM && suffixes.size() < 2) {
+				valid= MessageDialogWithToggle.openQuestion(antTableViewer.getControl().getShell(), AntPreferencesMessages.getString("AntClasspathBlock.35"), AntPreferencesMessages.getString("AntClasspathBlock.52"), IAntUIPreferenceConstants.ANT_XERCES_JARS_WARNING, AntPreferencesMessages.getString("AntClasspathBlock.33"), AntUIPlugin.getDefault().getPreferenceStore()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			} else {
 				valid= true;
 			}
 			if (!valid) {
-				container.setErrorMessage(MessageFormat.format(AntPreferencesMessages.getString("AntClasspathBlock.38"), new String[]{suffix})); //$NON-NLS-1$
+				String message;
+				if (sameVM) {
+					message= MessageFormat.format(AntPreferencesMessages.getString("AntClasspathBlock.38"), new Object[]{suffixes.get(0)}); //$NON-NLS-1$
+				} else {
+					message= AntPreferencesMessages.getString("AntClasspathBlock.53"); //$NON-NLS-1$
+				}
+				container.setErrorMessage(message);
 			}
 		}
 		return valid;
 	}
 	
-	private String JARPresent(List URLs, String[] suffixes) {
-		
+	private List JARPresent(List URLs, String[] suffixes) {
+		List found= new ArrayList(2);
 		for (Iterator iter = URLs.iterator(); iter.hasNext();) {
 			String file;
 			Object entry = iter.next();
@@ -789,11 +797,11 @@ public class AntClasspathBlock {
 			for (int i = 0; i < suffixes.length; i++) {
 				String suffix = suffixes[i];
 				if (file.endsWith(suffix)) {
-					return suffix;
+					found.add(suffix);
 				}
 			}
 		}
-		return null;
+		return found;
 	}
 	
 	public boolean isValidated() {

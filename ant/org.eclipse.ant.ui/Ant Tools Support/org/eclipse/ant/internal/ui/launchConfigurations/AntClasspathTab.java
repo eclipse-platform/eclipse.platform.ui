@@ -220,12 +220,8 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab implements I
 				vmTypeID = launchConfig.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String)null);
 			} catch (CoreException ce) {		
 			}
-			if (vmTypeID == null) {
-				//running in the same VM
-				valid= antClasspathBlock.validateXerces();
-			} else {
-				antClasspathBlock.setValidated();
-			}
+			
+			valid= antClasspathBlock.validateXerces(vmTypeID == null);
 		}
 
 		if (valid) {

@@ -26,6 +26,8 @@ import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.ant.internal.ui.model.AntUtil;
 import org.eclipse.ant.internal.ui.model.IAntUIConstants;
 import org.eclipse.ant.internal.ui.model.IAntUIHelpContextIds;
+import org.eclipse.ant.internal.ui.model.IAntUIPreferenceConstants;
+import org.eclipse.ant.internal.ui.preferences.MessageDialogWithToggle;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ILibrary;
 import org.eclipse.core.runtime.IPath;
@@ -382,4 +384,23 @@ public class AntJRETab extends JavaJRETab {
 		}
 		return m;
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.JavaJRETab#handleSelectedJREChanged()
+	 */
+	protected void handleSelectedJREChanged() {
+		if (fIsInitializing) {
+			return;
+		}
+		boolean check= AntUIPlugin.getDefault().getPreferenceStore().getBoolean(IAntUIPreferenceConstants.ANT_CLASSPATH_WARNING);
+		if (check) {
+			MessageDialogWithToggle.openWarning(AntUIPlugin.getActiveWorkbenchWindow().getShell(),
+				AntLaunchConfigurationMessages.getString("AntJRETab.11"), //$NON-NLS-1$
+				AntLaunchConfigurationMessages.getString("AntJRETab.12"), //$NON-NLS-1$
+				IAntUIPreferenceConstants.ANT_CLASSPATH_WARNING,
+				AntLaunchConfigurationMessages.getString("AntJRETab.13"), //$NON-NLS-1$
+				AntUIPlugin.getDefault().getPreferenceStore());	
+		}
+		super.handleSelectedJREChanged();
+	}
+
 }
