@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -41,7 +42,10 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.dnd.AbstractDropTarget;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.dnd.IDragOverListener;
@@ -122,268 +126,275 @@ public class PerspectiveSwitcher {
         }
     };
 
-    private Listener  dragListener;
-    private IDragOverListener dragTarget;
-    
-    private DisposeListener toolBarListener;
+	private Listener dragListener;
 
-    public PerspectiveSwitcher(WorkbenchWindow window, CBanner topBar, int style) {
-        this.window = window;
-        this.topBar = topBar;
-        this.style = style;
-        setPropertyChangeListener();
-        // this listener will only be run when the Shell is being disposed
-        // and each WorkbenchWindow has its own PerspectiveSwitcher
-        toolBarListener = new DisposeListener() {
-            public void widgetDisposed(DisposeEvent e) {
-                dispose();
-            }
-        };
-    }
+	private IDragOverListener dragTarget;
 
-    private static int convertLocation(String preference) {
-        if (IWorkbenchPreferenceConstants.TOP_RIGHT.equals(preference))
-            return TOP_RIGHT;
-        if (IWorkbenchPreferenceConstants.TOP_LEFT.equals(preference))
-            return TOP_LEFT;
-        if (IWorkbenchPreferenceConstants.LEFT.equals(preference))
-            return LEFT;
+	private IDragOverListener externalDragTarget;
 
-        // TODO log the unknown preference
-        return TOP_RIGHT;
-    }
+	private DisposeListener toolBarListener;
 
-    public void createControl(Composite parent) {
-        Assert.isTrue(this.parent == null);
-        this.parent = parent;
-        // set the initial location read from the preference
-        setPerspectiveBarLocation(PrefUtil.getAPIPreferenceStore().getString(
-                IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR));
-    }
+	public PerspectiveSwitcher(WorkbenchWindow window, CBanner topBar, int style) {
+		this.window = window;
+		this.topBar = topBar;
+		this.style = style;
+		setPropertyChangeListener();
+		// this listener will only be run when the Shell is being disposed
+		// and each WorkbenchWindow has its own PerspectiveSwitcher
+		toolBarListener = new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				dispose();
+			}
+		};
+	}
 
-    public void addPerspectiveShortcut(IPerspectiveDescriptor perspective,
-            WorkbenchPage workbenchPage) {
-        if (perspectiveBar == null)
-            return;
+	private static int convertLocation(String preference) {
+		if (IWorkbenchPreferenceConstants.TOP_RIGHT.equals(preference))
+			return TOP_RIGHT;
+		if (IWorkbenchPreferenceConstants.TOP_LEFT.equals(preference))
+			return TOP_LEFT;
+		if (IWorkbenchPreferenceConstants.LEFT.equals(preference))
+			return LEFT;
 
-        PerspectiveBarContributionItem item = new PerspectiveBarContributionItem(
-                perspective, workbenchPage);
-        perspectiveBar.addItem(item);
-        setCoolItemSize(coolItem);
-        // This is need to update the vertical size of the tool bar on GTK+ when using large fonts.
-        if (perspectiveBar != null)
-            perspectiveBar.update(true);
-    }
+		// TODO log the unknown preference
+		return TOP_RIGHT;
+	}
 
-    public IContributionItem findPerspectiveShortcut(
-            IPerspectiveDescriptor perspective, WorkbenchPage page) {
-        if (perspectiveBar == null)
-            return null;
+	public void createControl(Composite parent) {
+		Assert.isTrue(this.parent == null);
+		this.parent = parent;
+		// set the initial location read from the preference
+		setPerspectiveBarLocation(PrefUtil.getAPIPreferenceStore().getString(
+				IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR));
+	}
 
-        IContributionItem[] items = perspectiveBar.getItems();
-        int length = items.length;
-        for (int i = 0; i < length; i++) {
-            IContributionItem item = items[i];
-            if (item instanceof PerspectiveBarContributionItem
-                    && ((PerspectiveBarContributionItem) item).handles(
-                            perspective, page))
-                return item;
-        }
-        return null;
-    }
+	public void addPerspectiveShortcut(IPerspectiveDescriptor perspective,
+			WorkbenchPage workbenchPage) {
+		if (perspectiveBar == null)
+			return;
 
-    public void removePerspectiveShortcut(IPerspectiveDescriptor perspective,
-            WorkbenchPage page) {
-        if (perspectiveBar == null)
-            return;
+		PerspectiveBarContributionItem item = new PerspectiveBarContributionItem(
+				perspective, workbenchPage);
+		perspectiveBar.addItem(item);
+		setCoolItemSize(coolItem);
+		// This is need to update the vertical size of the tool bar on GTK+ when
+		// using large fonts.
+		if (perspectiveBar != null)
+			perspectiveBar.update(true);
+	}
 
-        IContributionItem item = findPerspectiveShortcut(perspective, page);
-        if (item != null) {
-            if (item instanceof PerspectiveBarContributionItem)
-                perspectiveBar
-                        .removeItem((PerspectiveBarContributionItem) item);
-            item.dispose();
-            perspectiveBar.update(false);
-            setCoolItemSize(coolItem);
-        }
-    }
+	public IContributionItem findPerspectiveShortcut(
+			IPerspectiveDescriptor perspective, WorkbenchPage page) {
+		if (perspectiveBar == null)
+			return null;
 
-    public void setPerspectiveBarLocation(String preference) {
-        // return if the control has not been created.  createControl(...) will
-        // handle updating the state in that case
-        if (parent == null)
-            return;
-        int newLocation = convertLocation(preference);
-        if (newLocation == currentLocation)
-            return;
-        createControlForLocation(newLocation);
-        currentLocation = newLocation;
-        showPerspectiveBar();
-        if (newLocation == TOP_LEFT || newLocation == TOP_RIGHT) {
-            updatePerspectiveBar();
-            updateBarParent();
-        }
-    }
+		IContributionItem[] items = perspectiveBar.getItems();
+		int length = items.length;
+		for (int i = 0; i < length; i++) {
+			IContributionItem item = items[i];
+			if (item instanceof PerspectiveBarContributionItem
+					&& ((PerspectiveBarContributionItem) item).handles(
+							perspective, page))
+				return item;
+		}
+		return null;
+	}
 
-    /**
-     * Make the perspective bar visible in its current location.  This method should not
-     * be used unless the control has been successfully created. 
-     */
-    private void showPerspectiveBar() {
-        switch (currentLocation) {
-        case TOP_LEFT:
-            topBar.setRight(null);
-            topBar.setBottom(perspectiveCoolBarWrapper.getControl());
-            break;
-        case TOP_RIGHT:
-            topBar.setBottom(null);
-            topBar.setRight(perspectiveCoolBarWrapper.getControl());
-            topBar.setRightWidth(DEFAULT_RIGHT_X);
-            break;
-        case LEFT:
-            topBar.setBottom(null);
-            topBar.setRight(null);
-            LayoutUtil.resize(topBar);
-            window.addPerspectiveBarToTrim(trimControl, SWT.LEFT);
-            break;
-        default:
-            return;
-        }
+	public void removePerspectiveShortcut(IPerspectiveDescriptor perspective,
+			WorkbenchPage page) {
+		if (perspectiveBar == null)
+			return;
 
-        LayoutUtil.resize(perspectiveBar.getControl());
-    }
+		IContributionItem item = findPerspectiveShortcut(perspective, page);
+		if (item != null) {
+			if (item instanceof PerspectiveBarContributionItem)
+				perspectiveBar
+						.removeItem((PerspectiveBarContributionItem) item);
+			item.dispose();
+			perspectiveBar.update(false);
+			setCoolItemSize(coolItem);
+		}
+	}
 
-    public void update(boolean force) {
-        if (perspectiveBar == null)
-            return;
+	public void setPerspectiveBarLocation(String preference) {
+		// return if the control has not been created. createControl(...) will
+		// handle updating the state in that case
+		if (parent == null)
+			return;
+		int newLocation = convertLocation(preference);
+		if (newLocation == currentLocation)
+			return;
+		createControlForLocation(newLocation);
+		currentLocation = newLocation;
+		showPerspectiveBar();
+		if (newLocation == TOP_LEFT || newLocation == TOP_RIGHT) {
+			updatePerspectiveBar();
+			updateBarParent();
+		}
+	}
 
-        perspectiveBar.update(force);
+	/**
+	 * Make the perspective bar visible in its current location. This method
+	 * should not be used unless the control has been successfully created.
+	 */
+	private void showPerspectiveBar() {
+		switch (currentLocation) {
+		case TOP_LEFT:
+			topBar.setRight(null);
+			topBar.setBottom(perspectiveCoolBarWrapper.getControl());
+			break;
+		case TOP_RIGHT:
+			topBar.setBottom(null);
+			topBar.setRight(perspectiveCoolBarWrapper.getControl());
+			topBar.setRightWidth(DEFAULT_RIGHT_X);
+			break;
+		case LEFT:
+			topBar.setBottom(null);
+			topBar.setRight(null);
+			LayoutUtil.resize(topBar);
+			window.addPerspectiveBarToTrim(trimControl, SWT.LEFT);
+			break;
+		default:
+			return;
+		}
 
-        if (currentLocation == LEFT) {
-            ToolItem[] items = perspectiveBar.getControl().getItems();
-            boolean shouldExpand = items.length > 0;
-            if (shouldExpand != trimVisible) {
-                perspectiveBar.getControl().setVisible(true);
-                trimVisible = shouldExpand;
-            }
+		LayoutUtil.resize(perspectiveBar.getControl());
+	}
 
-            if (items.length != trimOldLength) {
-                LayoutUtil.resize(trimControl);
-                trimOldLength = items.length;
-            }
-        }
-    }
+	public void update(boolean force) {
+		if (perspectiveBar == null)
+			return;
 
-    public void selectPerspectiveShortcut(IPerspectiveDescriptor perspective,
-            WorkbenchPage page, boolean selected) {
-        IContributionItem item = findPerspectiveShortcut(perspective, page);
-        if (item != null && (item instanceof PerspectiveBarContributionItem)) {
-            if (selected) {
-                // check if not visible and ensure visible
-                PerspectiveBarContributionItem contribItem = (PerspectiveBarContributionItem) item;
-                perspectiveBar.select(contribItem);
-            }
-            // select or de-select
-            ((PerspectiveBarContributionItem) item).setSelection(selected);
-        }
-    }
+		perspectiveBar.update(force);
 
-    public void updatePerspectiveShortcut(IPerspectiveDescriptor oldDesc,
-            IPerspectiveDescriptor newDesc, WorkbenchPage page) {
-        IContributionItem item = findPerspectiveShortcut(oldDesc, page);
-        if (item != null && (item instanceof PerspectiveBarContributionItem))
-            ((PerspectiveBarContributionItem) item).update(newDesc);
-    }
+		if (currentLocation == LEFT) {
+			ToolItem[] items = perspectiveBar.getControl().getItems();
+			boolean shouldExpand = items.length > 0;
+			if (shouldExpand != trimVisible) {
+				perspectiveBar.getControl().setVisible(true);
+				trimVisible = shouldExpand;
+			}
 
-    public PerspectiveBarManager getPerspectiveBar() {
-        return perspectiveBar;
-    }
+			if (items.length != trimOldLength) {
+				LayoutUtil.resize(trimControl);
+				trimOldLength = items.length;
+			}
+		}
+	}
 
-    public void dispose() {
-        if (propertyChangeListener != null) {
-            apiPreferenceStore
-                    .removePropertyChangeListener(propertyChangeListener);
-            propertyChangeListener = null;
-        }
-        unhookDragSupport();
-        toolBarListener = null;
-    }
+	public void selectPerspectiveShortcut(IPerspectiveDescriptor perspective,
+			WorkbenchPage page, boolean selected) {
+		IContributionItem item = findPerspectiveShortcut(perspective, page);
+		if (item != null && (item instanceof PerspectiveBarContributionItem)) {
+			if (selected) {
+				// check if not visible and ensure visible
+				PerspectiveBarContributionItem contribItem = (PerspectiveBarContributionItem) item;
+				perspectiveBar.select(contribItem);
+			}
+			// select or de-select
+			((PerspectiveBarContributionItem) item).setSelection(selected);
+		}
+	}
 
-    private void disposeChildControls() {
+	public void updatePerspectiveShortcut(IPerspectiveDescriptor oldDesc,
+			IPerspectiveDescriptor newDesc, WorkbenchPage page) {
+		IContributionItem item = findPerspectiveShortcut(oldDesc, page);
+		if (item != null && (item instanceof PerspectiveBarContributionItem))
+			((PerspectiveBarContributionItem) item).update(newDesc);
+	}
 
-        if (trimControl != null) {
-            trimControl.dispose();
-            trimControl = null;
-        }
+	public PerspectiveBarManager getPerspectiveBar() {
+		return perspectiveBar;
+	}
 
-        if (trimSeparator != null) {
-            trimSeparator.dispose();
-            trimSeparator = null;
-        }
+	public void dispose() {
+		if (propertyChangeListener != null) {
+			apiPreferenceStore
+					.removePropertyChangeListener(propertyChangeListener);
+			propertyChangeListener = null;
+		}
+		unhookDragSupport();
+		toolBarListener = null;
+	}
 
-        if (perspectiveCoolBar != null) {
-            perspectiveCoolBar.dispose();
-            perspectiveCoolBar = null;
-        }
+	private void disposeChildControls() {
 
-        if (toolbarWrapper != null) {
-            toolbarWrapper.dispose();
-            toolbarWrapper = null;
-        }
+		if (trimControl != null) {
+			trimControl.dispose();
+			trimControl = null;
+		}
 
-        if (perspectiveBar != null) {
-            perspectiveBar.dispose();
-            perspectiveBar = null;
-        }
+		if (trimSeparator != null) {
+			trimSeparator.dispose();
+			trimSeparator = null;
+		}
 
-        perspectiveCoolBarWrapper = null;
-    }
+		if (perspectiveCoolBar != null) {
+			perspectiveCoolBar.dispose();
+			perspectiveCoolBar = null;
+		}
 
-    /**
-     * Ensures the control has been set for the argument location.  If the control
-     * already exists and can be used the argument location, nothing happens.  Updates
-     * the location attribute.
-     * @param newLocation
-     */
-    private void createControlForLocation(int newLocation) {
-        // if there is a control, then perhaps it can be reused
-        if (perspectiveBar != null && perspectiveBar.getControl() != null
-                && !perspectiveBar.getControl().isDisposed()) {
-            if (newLocation == LEFT && currentLocation == LEFT)
-                return;
-            if ((newLocation == TOP_LEFT || newLocation == TOP_RIGHT)
-                    && (currentLocation == TOP_LEFT || currentLocation == TOP_RIGHT))
-                return;
-        }
+		if (toolbarWrapper != null) {
+			toolbarWrapper.dispose();
+			toolbarWrapper = null;
+		}
 
-        if (perspectiveBar != null) {
-            perspectiveBar.getControl().removeDisposeListener(toolBarListener);
-            unhookDragSupport();
-        }
-        // otherwise dispose the current controls and make new ones
-        disposeChildControls();
-        if (newLocation == LEFT)
-            createControlForLeft();
-        else
-            createControlForTop();
-        hookDragSupport();
-        
-        perspectiveBar.getControl().addDisposeListener(toolBarListener);
-    }
+		if (perspectiveBar != null) {
+			perspectiveBar.dispose();
+			perspectiveBar = null;
+		}
 
-    /**
-	 * Remove any drag and drop support and associated listeners hooked for 
-	 * the perspective switcher.
+		perspectiveCoolBarWrapper = null;
+	}
+
+	/**
+	 * Ensures the control has been set for the argument location. If the
+	 * control already exists and can be used the argument location, nothing
+	 * happens. Updates the location attribute.
+	 * 
+	 * @param newLocation
+	 */
+	private void createControlForLocation(int newLocation) {
+		// if there is a control, then perhaps it can be reused
+		if (perspectiveBar != null && perspectiveBar.getControl() != null
+				&& !perspectiveBar.getControl().isDisposed()) {
+			if (newLocation == LEFT && currentLocation == LEFT)
+				return;
+			if ((newLocation == TOP_LEFT || newLocation == TOP_RIGHT)
+					&& (currentLocation == TOP_LEFT || currentLocation == TOP_RIGHT))
+				return;
+		}
+
+		if (perspectiveBar != null) {
+			perspectiveBar.getControl().removeDisposeListener(toolBarListener);
+			unhookDragSupport();
+		}
+		// otherwise dispose the current controls and make new ones
+		disposeChildControls();
+		if (newLocation == LEFT)
+			createControlForLeft();
+		else
+			createControlForTop();
+		hookDragSupport();
+
+		perspectiveBar.getControl().addDisposeListener(toolBarListener);
+	}
+
+	/**
+	 * Remove any drag and drop support and associated listeners hooked for the
+	 * perspective switcher.
 	 */
 	private void unhookDragSupport() {
 		ToolBar bar = perspectiveBar.getControl();
-		
+
 		if (bar != null || !bar.isDisposed() || dragListener == null)
 			return;
-        PresentationUtil.removeDragListener(bar, dragListener);
+		PresentationUtil.removeDragListener(bar, dragListener);
 		DragUtil.removeDragTarget(perspectiveBar.getControl(), dragTarget);
+		DragUtil.removeDragTarget(null, externalDragTarget);
 		dragListener = null;
 		dragTarget = null;
+		externalDragTarget = null;
 	}
 
     /**
@@ -415,23 +426,24 @@ public class PerspectiveSwitcher {
 			private void startDragging(Object widget, Rectangle bounds) {
 				boolean success = DragUtil.performDrag(widget, bounds, new Point(bounds.x, bounds.y), true);
 		    }
-			
         };
 
-        dragTarget = new IDragOverListener() {
-        	protected PerspectiveDropTarget perspectiveDropTarget;
-        	
-            class PerspectiveDropTarget extends AbstractDropTarget {
-                
-            	private PerspectiveBarContributionItem perspective;
-                private Point location;
-                
-                /**
+		dragTarget = new IDragOverListener() {
+			protected PerspectiveDropTarget perspectiveDropTarget;
+
+			class PerspectiveDropTarget extends AbstractDropTarget {
+
+				private PerspectiveBarContributionItem perspective;
+
+				private Point location;
+
+				/**
 				 * @param location
 				 * @param draggedObject
 				 * @param dragRectangle
 				 */
-				public PerspectiveDropTarget(Object draggedObject, Point location,  Rectangle dragRectangle) {
+				public PerspectiveDropTarget(Object draggedObject,
+						Point location, Rectangle dragRectangle) {
 					update(draggedObject, location, dragRectangle);
 				}
 
@@ -441,75 +453,199 @@ public class PerspectiveSwitcher {
 				 * @param location
 				 * @param dragRectangle
 				 */
-				private void update(Object draggedObject, Point location,  Rectangle dragRectangle) {
+				private void update(Object draggedObject, Point location,
+						Rectangle dragRectangle) {
 					this.location = location;
-					this.perspective = (PerspectiveBarContributionItem)draggedObject;
+					this.perspective = (PerspectiveBarContributionItem) draggedObject;
 				}
 
-				/* (non-Javadoc)
-                 * @see org.eclipse.ui.internal.dnd.IDropTarget#drop()
-                 */
-                public void drop() {
-                	ToolBar toolBar = perspectiveBar.getControl();
-                	ToolItem item = toolBar.getItem(toolBar.getDisplay().map(null, toolBar, location));
-                	if (toolBar.getItem(0) == item)
-                		return;
-                	ToolItem[] items = toolBar.getItems();
-                	ToolItem oldItem = null;
-                	int index = -1;
-                	for (int i = 0; i< items.length; i++) {
-                		if (item == items[i])
+				/*
+				 * (non-Javadoc)
+				 * 
+				 * @see org.eclipse.ui.internal.dnd.IDropTarget#drop()
+				 */
+				public void drop() {
+					ToolBar toolBar = perspectiveBar.getControl();
+					ToolItem item = toolBar.getItem(toolBar.getDisplay().map(
+							null, toolBar, location));
+					if (toolBar.getItem(0) == item)
+						return;
+					ToolItem[] items = toolBar.getItems();
+					ToolItem oldItem = null;
+					int index = -1;
+					for (int i = 0; i < items.length; i++) {
+						if (item == items[i])
 							index = i;
-                		if (items[i].getData() == perspective)
-                			oldItem = items[i];
-                	}
-                	if (index != -1 && oldItem != null && (oldItem != item)) {
-                		perspectiveBar.relocate((PerspectiveBarContributionItem)oldItem.getData(), index);
-                	}
-                }
+						if (items[i].getData() == perspective)
+							oldItem = items[i];
+					}
+					if (index != -1 && oldItem != null && (oldItem != item)) {
+						perspectiveBar.relocate(
+								(PerspectiveBarContributionItem) oldItem
+										.getData(), index);
+					}
+				}
 
-                /* (non-Javadoc)
-                 * @see org.eclipse.ui.internal.dnd.IDropTarget#getCursor()
-                 */
-                public Cursor getCursor() {
-                    return DragCursors.getCursor(DragCursors.CENTER);
-                }
+				/*
+				 * (non-Javadoc)
+				 * 
+				 * @see org.eclipse.ui.internal.dnd.IDropTarget#getCursor()
+				 */
+				public Cursor getCursor() {
+					return DragCursors.getCursor(DragCursors.CENTER);
+				}
 
-                public Rectangle getSnapRectangle() {
-                	ToolBar toolBar = perspectiveBar.getControl();
-                	ToolItem item = toolBar.getItem(toolBar.getDisplay().map(null, toolBar, location));
-                	Rectangle bounds;
-                	if (item != null && item != toolBar.getItem(0)) {
-                		bounds = item.getBounds();
-                	} else {
-                		// it should not be possible to start a drag with item 0
-                		return null;
-                	}
-                	return toolBar.getDisplay().map(toolBar, null, bounds);
-                }
-            }
+				boolean sameShell() {
+					return perspective.getToolItem().getParent().getShell().equals(perspectiveBar.getControl().getShell());
+				}
+				
+				public Rectangle getSnapRectangle() {
+					ToolBar toolBar = perspectiveBar.getControl();
+					ToolItem item = toolBar.getItem(toolBar.getDisplay().map(
+							null, toolBar, location));
+					Rectangle bounds;
+					if (item != null && item != toolBar.getItem(0)) {
+						bounds = item.getBounds();
+					} else {
+						// it should not be possible to start a drag with item 0
+						return null;
+					}
+					return toolBar.getDisplay().map(toolBar, null, bounds);
+				}
+			}
 
-            public IDropTarget drag(Control currentControl,
-                    Object draggedObject, Point position,
-                    Rectangle dragRectangle) {
-                if (draggedObject instanceof PerspectiveBarContributionItem) {
-                	if (perspectiveDropTarget == null) {
-                		perspectiveDropTarget = new PerspectiveDropTarget(draggedObject, position, dragRectangle);
-                	} else {
-                		perspectiveDropTarget.update(draggedObject, position, dragRectangle);
-                	}
-                	return (IDropTarget)perspectiveDropTarget;
-                }// else if (draggedObject instanceof IPerspectiveBar) {
-                //	return new PerspectiveBarDropTarget();
-                //}
-             
-                return null;
-            }
+			public IDropTarget drag(Control currentControl,
+					Object draggedObject, Point position,
+					Rectangle dragRectangle) {
+				if (draggedObject instanceof PerspectiveBarContributionItem) {
+					if (perspectiveDropTarget == null) {
+						perspectiveDropTarget = new PerspectiveDropTarget(
+								draggedObject, position, dragRectangle);
+					} else {
+						perspectiveDropTarget.update(draggedObject, position,
+								dragRectangle);
+					}
+					// do not support drag to perspective bars between shells.
+					if (!perspectiveDropTarget.sameShell())
+							return null;
+					
+					return (IDropTarget) perspectiveDropTarget;
+				}// else if (draggedObject instanceof IPerspectiveBar) {
+				//	return new PerspectiveBarDropTarget();
+				//}
 
-        };
+				return null;
+			}
 
-        PresentationUtil.addDragListener(perspectiveBar.getControl(), dragListener);
-        DragUtil.addDragTarget(perspectiveBar.getControl(), dragTarget);
+		};
+
+		externalDragTarget = new IDragOverListener() {
+			protected ExternalPerspectiveDropTarget externalPerspectiveDropTarget;
+
+			class ExternalPerspectiveDropTarget extends AbstractDropTarget {
+
+				private PerspectiveBarContributionItem perspective;
+				private Rectangle rect; 
+				private Point location;
+
+				/**
+				 * @param location
+				 * @param draggedObject
+				 * @param dragRectangle
+				 */
+				public ExternalPerspectiveDropTarget(Object draggedObject,
+						Point location, Rectangle dragRectangle) {
+					update(draggedObject, location, dragRectangle);
+				}
+
+				/**
+				 * 
+				 * @param draggedObject
+				 * @param location
+				 * @param dragRectangle
+				 */
+				private void update(Object draggedObject, Point location,
+						Rectangle dragRectangle) {
+					this.location = location;
+					this.perspective = (PerspectiveBarContributionItem) draggedObject;
+				}
+
+				/*
+				 * (non-Javadoc)
+				 * 
+				 * @see org.eclipse.ui.internal.dnd.IDropTarget#drop()
+				 */
+				public void drop() {
+					IWorkbenchWindow workbenchWindow = Workbench.getInstance()
+							.getActiveWorkbenchWindow();
+					IWorkbenchPage page = workbenchWindow.getActivePage();
+					
+			        // Open the page.
+			        try {
+			        	workbenchWindow.getWorkbench().openWorkbenchWindow(perspective.getId(),
+								page.getInput());
+			        } catch (WorkbenchException e) {
+			            MessageDialog.openError(workbenchWindow.getShell(), WorkbenchMessages
+			                    .getString("OpenNewWindowMenu.dialogTitle"), //$NON-NLS-1$
+			                    e.getMessage());
+			            return;
+			        }
+				}
+
+				/*
+				 * (non-Javadoc)
+				 * 
+				 * @see org.eclipse.ui.internal.dnd.IDropTarget#getCursor()
+				 */
+				public Cursor getCursor() {
+					return DragCursors.getCursor(DragCursors.OFFSCREEN);
+				}
+
+				public Rectangle getSnapRectangle() {
+					/*
+					 * ToolBar toolBar = perspectiveBar.getControl(); ToolItem
+					 * item = toolBar.getItem(toolBar.getDisplay().map(null,
+					 * toolBar, location)); Rectangle bounds; if (item != null &&
+					 * item != toolBar.getItem(0)) { bounds = item.getBounds(); }
+					 * else { // it should not be possible to start a drag with
+					 * item 0 return null; }
+					 */
+					if (rect == null) {
+						IWorkbenchWindow workbenchWindow = Workbench.getInstance()
+						.getActiveWorkbenchWindow();
+						rect = workbenchWindow.getShell().getBounds();
+					}
+					rect.x = location.x;
+					rect.y = location.y;					
+					return rect;
+				}
+			}
+
+			public IDropTarget drag(Control currentControl,
+					Object draggedObject, Point position,
+					Rectangle dragRectangle) {
+				if (draggedObject instanceof PerspectiveBarContributionItem) {
+					if (externalPerspectiveDropTarget == null) {
+						externalPerspectiveDropTarget = new ExternalPerspectiveDropTarget(
+								draggedObject, position, dragRectangle);
+					} else {
+						externalPerspectiveDropTarget.update(draggedObject,
+								position, dragRectangle);
+					}
+					return (IDropTarget) externalPerspectiveDropTarget;
+				}// else if (draggedObject instanceof IPerspectiveBar) {
+				//	return new PerspectiveBarDropTarget();
+				//}
+
+				return null;
+			}
+
+		};
+
+		PresentationUtil.addDragListener(perspectiveBar.getControl(),
+				dragListener);
+		DragUtil.addDragTarget(perspectiveBar.getControl(), dragTarget);
+		DragUtil.addDragTarget(null, externalDragTarget);
 	}
 
 	private void setPropertyChangeListener() {
