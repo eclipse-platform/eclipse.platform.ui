@@ -184,7 +184,7 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.IPersistableSourceLocator2#dispose()
 	 */
-	public void dispose() {
+	public synchronized void dispose() {
 		ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
 		launchManager.removeLaunchConfigurationListener(this);
 		launchManager.removeLaunchListener(this);
@@ -704,7 +704,7 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceLookupDirector#getSourceElement(java.lang.Object)
 	 */
-	public Object getSourceElement(Object element) {
+	public synchronized Object getSourceElement(Object element) {
 		List sources = doSourceLookup(element);
 		if(sources.size() == 1) {
 			return sources.get(0);
