@@ -470,6 +470,19 @@
     </objectContribution> 
 </extension> 
 
+<!-- ***************** DECORATORS *********************-->
+
+<extension 
+	point="org.eclipse.ui.decorators">
+	<decorator 
+        id="org.eclipse.ui.actioncontributiontest.decorator" 
+        label="Test Decorator" 
+        state="false"
+        tooltip="No tip" 
+        class="org.eclipse.ui.tests.navigator.TestDecoratorContributor"
+        objectClass="org.eclipse.core.resources.IResource">
+    </decorator > 
+</extension>
 
 
 </plugin>
