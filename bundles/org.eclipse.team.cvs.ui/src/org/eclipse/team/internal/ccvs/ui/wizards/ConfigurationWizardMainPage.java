@@ -16,7 +16,6 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
@@ -27,10 +26,7 @@ import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 
 /**
- * Wizard page for configuring a project with a CVS repository location.
- * 
- * This is a multi-purpose wizard page. Its contents are determined by a
- * bitmask of capabilities set with setStyle().
+ * Wizard page for entering information about a CVS repository location.
  */
 public class ConfigurationWizardMainPage extends CVSWizardPage {
 	// Widgets
