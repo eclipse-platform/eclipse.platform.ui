@@ -154,17 +154,22 @@ public class ModuleSelectionPage extends CVSWizardPage {
 	 * @return the selected exisiting remote module
 	 */
 	public ICVSRemoteFolder getSelectedModule() {
-		ICVSRemoteFolder folder = internalGetSelectedModule();
-		if (folder == null) {
-			if (moduleName != null) {
-				folder = internalCreateModule(moduleName);
-			} else {
-				if (project != null) {
-					folder = internalCreateModule(project.getName());
+		final ICVSRemoteFolder[] folder = new ICVSRemoteFolder[] { null };
+		Display.getDefault().syncExec(new Runnable() {
+			public void run() {
+				folder[0] = internalGetSelectedModule();
+				if (folder[0] == null) {
+					if (moduleName != null) {
+						folder[0] = internalCreateModule(moduleName);
+					} else {
+						if (project != null) {
+							folder[0] = internalCreateModule(project.getName());
+						}
+					}
 				}
 			}
-		}
-		return folder;
+		});
+		return folder[0];
 	}
 	
 	public boolean isSelectedModuleExists() {
