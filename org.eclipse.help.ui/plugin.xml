@@ -82,7 +82,7 @@
    <!-- Context Help contribution for this plugin  --> 
    <!-- ========================================== -->
    <extension point="org.eclipse.help.contexts"> 
-      <contexts name="HelpContexts.xml"/> 
+      <contexts name="contexts.xml"/> 
    </extension>
   
    <!-- Define the help menu action set -->

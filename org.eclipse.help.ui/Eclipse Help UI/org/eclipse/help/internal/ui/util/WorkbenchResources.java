@@ -23,7 +23,7 @@ public class WorkbenchResources {
 	private static URL imageURL;
 
 	static {
-		resBundle = ResourceBundle.getBundle("HelpWorkbench", Locale.getDefault());
+		resBundle = ResourceBundle.getBundle("helpworkbench", Locale.getDefault());
 		try {
 			imageURL =
 				new URL(WorkbenchHelpPlugin.getDefault().getDescriptor().getInstallURL(), "icons/");
