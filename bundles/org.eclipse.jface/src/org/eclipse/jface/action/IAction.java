@@ -454,7 +454,8 @@ public void setToolTipText(String text);
  * required for key bindings. If you set an accelerator using this method, then
  * it will not work in the workbench if it conflicts any existing key binding,
  * or if there is a different key binding defined for this action's definition
- * id.
+ * id. The definition id should be used instead -- referring to the command in
+ * the workbench from which the key binding should be retrieved.
  * </p>
  * 
  * @param keycode
