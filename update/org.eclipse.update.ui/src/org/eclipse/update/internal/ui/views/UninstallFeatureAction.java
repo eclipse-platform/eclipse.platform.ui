@@ -15,6 +15,7 @@ import java.lang.reflect.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.*;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.internal.ui.*;
@@ -23,9 +24,11 @@ import org.eclipse.update.operations.*;
 
 public class UninstallFeatureAction extends Action {
 	private ConfiguredFeatureAdapter adapter;
+    private Shell shell;
 
-	public UninstallFeatureAction(String text) {
+	public UninstallFeatureAction(Shell shell, String text) {
 		super(text);
+        this.shell = shell;
 	}
 
 	public void run() {
@@ -53,11 +56,7 @@ public class UninstallFeatureAction extends Action {
 			UpdateUI.requestRestart(restartNeeded);
 
 		} catch (CoreException e) {
-			ErrorDialog.openError(
-				UpdateUI.getActiveWorkbenchShell(),
-				null,
-				null,
-				e.getStatus());
+			ErrorDialog.openError(shell, null, null, e.getStatus());
 		} catch (InvocationTargetException e) {
 			// This should not happen
 			UpdateUtils.logException(e.getTargetException());
@@ -66,7 +65,7 @@ public class UninstallFeatureAction extends Action {
 
 	private boolean confirm(String message) {
 		return MessageDialog.openConfirm(
-			UpdateUI.getActiveWorkbenchShell(),
+			shell,
 			UpdateUI.getString("FeatureUninstallAction.dialogTitle"), //$NON-NLS-1$
 			message);
 	}

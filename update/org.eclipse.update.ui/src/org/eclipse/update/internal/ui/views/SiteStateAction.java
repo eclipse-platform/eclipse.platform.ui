@@ -15,6 +15,7 @@ import java.lang.reflect.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.*;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.operations.*;
@@ -25,8 +26,10 @@ import org.eclipse.update.operations.*;
 
 public class SiteStateAction extends Action {
 	private IConfiguredSite site;
+    private Shell shell;
 
-	public SiteStateAction() {
+	public SiteStateAction(Shell shell) {
+        this.shell = shell;
 	}
 
 	public void setSite(IConfiguredSite site) {
@@ -42,11 +45,7 @@ public class SiteStateAction extends Action {
 			
 			IStatus status = OperationsManager.getValidator().validatePlatformConfigValid();
 			if (status != null) {
-				ErrorDialog.openError(
-						UpdateUI.getActiveWorkbenchShell(),
-						null,
-						null,
-						status);
+				ErrorDialog.openError(shell, null, null, status);
 				return;
 			}
 			
@@ -60,11 +59,7 @@ public class SiteStateAction extends Action {
 			UpdateUI.requestRestart(restartNeeded);
 
 		} catch (CoreException e) {
-			ErrorDialog.openError(
-				UpdateUI.getActiveWorkbenchShell(),
-				null,
-				null,
-				e.getStatus());
+            ErrorDialog.openError(shell, null, null, e.getStatus());
 		} catch (InvocationTargetException e) {
 			UpdateUI.logException(e);
 		}
@@ -76,6 +71,6 @@ public class SiteStateAction extends Action {
 		String disableMessage = UpdateUI.getFormattedMessage("SiteStateAction.disableMessage", name); //$NON-NLS-1$ //$NON-NLS-2$
 
 		String message = newState ? enableMessage : disableMessage;
-		return MessageDialog.openConfirm(UpdateUI.getActiveWorkbenchShell(), UpdateUI.getString("SiteStateAction.dialogTitle"), message); //$NON-NLS-1$
+		return MessageDialog.openConfirm(shell, UpdateUI.getString("SiteStateAction.dialogTitle"), message); //$NON-NLS-1$
 	}
 }

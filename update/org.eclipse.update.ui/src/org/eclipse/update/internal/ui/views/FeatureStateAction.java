@@ -22,7 +22,12 @@ import org.eclipse.update.operations.*;
 
 public class FeatureStateAction extends Action {
 	private ConfiguredFeatureAdapter adapter;
+    private ConfigurationView parent;
 
+    public FeatureStateAction(ConfigurationView parent) {
+        this.parent = parent;
+    }
+    
 	public void setFeature(ConfiguredFeatureAdapter adapter) {
 		this.adapter = adapter;
 		if (adapter.isConfigured()) {
@@ -73,11 +78,8 @@ public class FeatureStateAction extends Action {
 			UpdateUI.requestRestart(restartNeeded);
 
 		} catch (CoreException e) {
-			ErrorDialog.openError(
-				UpdateUI.getActiveWorkbenchShell(),
-				null,
-				null,
-				e.getStatus());
+			ErrorDialog.openError(parent.getConfigurationWindow().getShell(),
+                    null, null, e.getStatus());
 		} catch (InvocationTargetException e) {
 			// This should not happen
 			UpdateUtils.logException(e.getTargetException());
@@ -86,7 +88,7 @@ public class FeatureStateAction extends Action {
 
 	private boolean confirm(String message) {
 		return MessageDialog.openConfirm(
-			UpdateUI.getActiveWorkbenchShell(),
+            parent.getConfigurationWindow().getShell(),
 			UpdateUI.getString("FeatureStateAction.dialogTitle"), //$NON-NLS-1$
 			message);
 	}

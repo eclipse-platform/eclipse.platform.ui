@@ -24,25 +24,23 @@ import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.operations.*;
 
 public class NewExtensionLocationAction extends Action {
-
-	public NewExtensionLocationAction(String text, ImageDescriptor desc) {
+    private Shell shell;
+    
+	public NewExtensionLocationAction(Shell shell, String text, ImageDescriptor desc) {
 		super(text, desc);
+        this.shell = shell;
 	}
 
 	public void run() {
 		
 		IStatus status = OperationsManager.getValidator().validatePlatformConfigValid();
 		if (status != null) {
-			ErrorDialog.openError(
-					UpdateUI.getActiveWorkbenchShell(),
-					null,
-					null,
-					status);
+			ErrorDialog.openError(shell, null, null, status);
 			return;
 		}
 		
 		DirectoryDialog dialog =
-			new DirectoryDialog(UpdateUI.getActiveWorkbenchShell(), SWT.APPLICATION_MODAL);
+			new DirectoryDialog(shell, SWT.APPLICATION_MODAL);
 		dialog.setMessage(UpdateUI.getString("NewExtensionLocationAction.selectExtLocation")); //$NON-NLS-1$
 
 		String dir = dialog.open();
@@ -58,7 +56,7 @@ public class NewExtensionLocationAction extends Action {
 				}	
 			} else {
 				MessageDialog.openInformation(
-					UpdateUI.getActiveWorkbenchShell(),
+					shell,
 					UpdateUI.getString(
 						"NewExtensionLocationAction.extInfoTitle"), //$NON-NLS-1$
 					UpdateUI.getString(
@@ -106,7 +104,7 @@ public class NewExtensionLocationAction extends Action {
 			return true;
 		} catch (CoreException e) {
 			String title = UpdateUI.getString("InstallWizard.TargetPage.location.error.title"); //$NON-NLS-1$
-			ErrorDialog.openError(UpdateUI.getActiveWorkbenchShell(), title, null, e.getStatus());
+			ErrorDialog.openError(shell, title, null, e.getStatus());
 			UpdateUI.logException(e,false);
 			return false;
 		}

@@ -15,7 +15,6 @@ import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.parts.*;
 import org.eclipse.update.operations.*;
 
@@ -50,7 +49,7 @@ public class ResizableInstallWizardDialog extends WizardDialog {
 		IStatus status = OperationsManager.getValidator().validatePlatformConfigValid();
 		if (status != null) {
 			ErrorDialog.openError(
-					UpdateUI.getActiveWorkbenchShell(),
+					getShell(),
 					null,
 					null,
 					status);

@@ -869,7 +869,7 @@ public class ReviewPage
 	class StatusDialog extends ErrorDialog {
 //		Button detailsButton;
 		public StatusDialog() {
-			super(UpdateUI.getActiveWorkbenchShell(), UpdateUI
+			super(getContainer().getShell(), UpdateUI
 					.getString("InstallWizard.ReviewPage.invalid.short"), null, //$NON-NLS-1$
 					validationStatus, IStatus.OK | IStatus.INFO
 							| IStatus.WARNING | IStatus.ERROR);

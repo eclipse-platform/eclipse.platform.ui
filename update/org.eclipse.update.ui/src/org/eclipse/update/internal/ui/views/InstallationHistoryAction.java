@@ -17,11 +17,12 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.resource.*;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.update.configurator.*;
 import org.eclipse.update.internal.ui.*;
 
 public class InstallationHistoryAction extends Action {
-
+    private Shell shell;
 	private BufferedReader buffRead;
 	private PrintWriter htmlLog;
 	private File tempFile;
@@ -33,8 +34,9 @@ public class InstallationHistoryAction extends Action {
 //	private static final String CONFIGURATION = "CONFIGURATION"; //$NON-NLS-1$
 	private static final String ACTIVITY = "ACTIVITY"; //$NON-NLS-1$
 
-	public InstallationHistoryAction(String text, ImageDescriptor desc) {
+	public InstallationHistoryAction(Shell shell, String text, ImageDescriptor desc) {
 		super(text, desc);
+        this.shell = shell;
 		String location =
 			ConfiguratorUtils
 				.getCurrentPlatformConfiguration()

@@ -14,8 +14,8 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.update.core.IFeature;
-import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.internal.ui.wizards.ReplaceFeatureVersionWizard;
 import org.eclipse.update.operations.*;
 
@@ -23,9 +23,11 @@ public class ReplaceVersionAction extends Action {
 	
 	private IFeature currentFeature;
 	private IFeature[] features;
-	
-	public ReplaceVersionAction(String text) {
+	private Shell shell;
+    
+	public ReplaceVersionAction(Shell shell, String text) {
 		super(text);
+        this.shell = shell;
 	}
 	
 	public void setCurrentFeature(IFeature feature) {
@@ -42,18 +44,14 @@ public class ReplaceVersionAction extends Action {
 			
 		IStatus status = OperationsManager.getValidator().validatePlatformConfigValid();
 		if (status != null) {
-			ErrorDialog.openError(
-					UpdateUI.getActiveWorkbenchShell(),
-					null,
-					null,
-					status);
+			ErrorDialog.openError(shell, null, null, status);
 			return;
 		}
 		
 		ReplaceFeatureVersionWizard wizard = new ReplaceFeatureVersionWizard(currentFeature, features);
-		WizardDialog dialog = new WizardDialog(UpdateUI.getActiveWorkbenchShell(), wizard);
+		WizardDialog dialog = new WizardDialog(shell, wizard);
 		dialog.create();
-		dialog.getShell().setText(UpdateUI.getActiveWorkbenchShell().getText());
+		dialog.getShell().setText(shell.getText());
 		dialog.getShell().setSize(400,400);
 		dialog.open();
 	}

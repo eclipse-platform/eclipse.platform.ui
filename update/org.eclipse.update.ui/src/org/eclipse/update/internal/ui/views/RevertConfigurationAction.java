@@ -14,30 +14,29 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.wizard.*;
-import org.eclipse.update.internal.ui.*;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.update.internal.ui.wizards.*;
 import org.eclipse.update.operations.*;
 
 public class RevertConfigurationAction extends Action {
-	public RevertConfigurationAction(String text) {
+    private Shell shell;
+    
+	public RevertConfigurationAction(Shell shell, String text) {
 		super(text);
+        this.shell = shell;
 	}
 	
 	public void run() {
 		IStatus status = OperationsManager.getValidator().validatePlatformConfigValid();
 		if (status != null) {
-			ErrorDialog.openError(
-					UpdateUI.getActiveWorkbenchShell(),
-					null,
-					null,
-					status);
+			ErrorDialog.openError(shell, null, null, status);
 			return;
 		}
 		
 		RevertConfigurationWizard wizard = new RevertConfigurationWizard();
-		WizardDialog dialog = new WizardDialog(UpdateUI.getActiveWorkbenchShell(), wizard);
+		WizardDialog dialog = new WizardDialog(shell, wizard);
 		dialog.create();
-		dialog.getShell().setText(UpdateUI.getActiveWorkbenchShell().getText());
+		dialog.getShell().setText(shell.getText());
 		dialog.getShell().setSize(600,500);
 		dialog.open();
 	}

@@ -48,11 +48,7 @@ public class InstallOptionalFeatureAction extends Action {
 		
 		IStatus status = OperationsManager.getValidator().validatePlatformConfigValid();
 		if (status != null) {
-			ErrorDialog.openError(
-					UpdateUI.getActiveWorkbenchShell(),
-					null,
-					null,
-					status);
+			ErrorDialog.openError(shell, null, null, status);
 			return;
 		}
 		
@@ -92,7 +88,7 @@ public class InstallOptionalFeatureAction extends Action {
 	
 	private boolean confirm(String message) {
 		return MessageDialog.openConfirm(
-			UpdateUI.getActiveWorkbenchShell(),
+			shell,
 			UpdateUI.getString("FeatureStateAction.dialogTitle"), //$NON-NLS-1$
 			message);
 	}

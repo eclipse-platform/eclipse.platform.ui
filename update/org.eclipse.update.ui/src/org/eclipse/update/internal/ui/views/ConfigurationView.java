@@ -486,23 +486,23 @@ public class ConfigurationView
 
 		drillDownAdapter = new DrillDownAdapter(treeViewer);
 
-		featureStateAction = new FeatureStateAction();
+		featureStateAction = new FeatureStateAction(this);
 
-		siteStateAction = new SiteStateAction();
+		siteStateAction = new SiteStateAction(getConfigurationWindow().getShell());
 
-		revertAction = new RevertConfigurationAction(UpdateUI.getString("ConfigurationView.revertLabel")); //$NON-NLS-1$
+		revertAction = new RevertConfigurationAction(getConfigurationWindow().getShell(),UpdateUI.getString("ConfigurationView.revertLabel")); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(
 			revertAction,
 			"org.eclipse.update.ui.CofigurationView_revertAction"); //$NON-NLS-1$
 
 		installationHistoryAction =
-			new InstallationHistoryAction(
+			new InstallationHistoryAction(getConfigurationWindow().getShell(),
 				UpdateUI.getString("ConfigurationView.installHistory"), //$NON-NLS-1$
 				UpdateUIImages.DESC_HISTORY_OBJ);
 		installationHistoryAction.setToolTipText(installationHistoryAction.getText());
 		
 		newExtensionLocationAction =
-			new NewExtensionLocationAction(
+			new NewExtensionLocationAction(getConfigurationWindow().getShell(),
 				UpdateUI.getString("ConfigurationView.extLocation"), //$NON-NLS-1$
 				UpdateUIImages.DESC_ESITE_OBJ);
 		
@@ -514,14 +514,14 @@ public class ConfigurationView
 			propertiesAction,
 			"org.eclipse.update.ui.CofigurationView_propertiesAction"); //$NON-NLS-1$
 
-		uninstallFeatureAction = new UninstallFeatureAction(UpdateUI.getString("ConfigurationView.uninstall")); //$NON-NLS-1$
+		uninstallFeatureAction = new UninstallFeatureAction(getConfigurationWindow().getShell(), UpdateUI.getString("ConfigurationView.uninstall")); //$NON-NLS-1$
 
 		installOptFeatureAction =
 			new InstallOptionalFeatureAction(
 				getControl().getShell(),
 				UpdateUI.getString("ConfigurationView.install")); //$NON-NLS-1$
 
-		swapVersionAction = new ReplaceVersionAction(UpdateUI.getString("ConfigurationView.anotherVersion")); //$NON-NLS-1$
+		swapVersionAction = new ReplaceVersionAction(getConfigurationWindow().getShell(), UpdateUI.getString("ConfigurationView.anotherVersion")); //$NON-NLS-1$
 
 		findUpdatesAction =
 			new FindUpdatesAction(getControl().getShell(), UpdateUI.getString("ConfigurationView.findUpdates")); //$NON-NLS-1$
