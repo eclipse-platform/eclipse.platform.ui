@@ -13,6 +13,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
@@ -64,6 +65,11 @@ public class ExternalToolsRefreshTab extends AbstractLaunchConfigurationTab impl
 		recursiveField.setText("Recursively include sub-folders");
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		recursiveField.setLayoutData(data);
+		recursiveField.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				updateLaunchConfigurationDialog();
+			}
+		});
 	}
 	
 	/**
@@ -77,6 +83,11 @@ public class ExternalToolsRefreshTab extends AbstractLaunchConfigurationTab impl
 		refreshField.setText("Refresh resources after running tool"); //$NON-NLS-1$
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		refreshField.setLayoutData(data);
+		refreshField.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				updateLaunchConfigurationDialog();
+			}
+		});
 	}
 	
 	/**
