@@ -1,14 +1,19 @@
+/************************************************************************
+Copyright (c) 2002, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+	IBM - Initial implementation
+************************************************************************/
 package org.eclipse.ui.internal.registry;
-/*
- * (c) Copyright IBM Corp. 2002.
- * All Rights Reserved.
- */
-import java.net.MalformedURLException;
-import java.net.URL;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.dialogs.IWorkingSetPage;
+import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
@@ -86,15 +91,10 @@ public class WorkingSetDescriptor {
 	public ImageDescriptor getIcon() {
 		if (icon == null)
 			return null;
-		URL url;
-		try {
-			URL pluginInstallUrl = configElement.getDeclaringExtension().getDeclaringPluginDescriptor().getInstallURL();			
-			url= new URL(pluginInstallUrl, icon);
-		} catch (MalformedURLException exception) {
-			WorkbenchPlugin.log("Unable to load working set icon"); //$NON-NLS-1$
-			return null;
-		}
-		return ImageDescriptor.createFromURL(url);
+
+		return WorkbenchImages.getImageDescriptorFromExtension(
+			configElement.getDeclaringExtension(), 
+			icon); 
 	}
 	/**
 	 * Returns the working set page id.
