@@ -4,17 +4,15 @@ import java.util.*;
 import org.eclipse.compare.CompareUI;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.actions.ActionFactory;
 
 /**
  * This class manages the notification and setup that occurs after a refresh is completed.
- * 
- * 
  */
 public class RefreshUserNotificationPolicy implements IRefreshSubscriberListener {
 
@@ -90,9 +88,11 @@ public class RefreshUserNotificationPolicy implements IRefreshSubscriberListener
 	private void notifyIfNeededModal(final IRefreshEvent event) {
 		TeamUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
 			public void run() {
-				RefreshCompleteDialog d = new RefreshCompleteDialog(new Shell(TeamUIPlugin.getStandardDisplay()), event, participant);
-				d.setBlockOnOpen(false);
-				d.open();
+				String title = (event.getRefreshType() == IRefreshEvent.SCHEDULED_REFRESH ?
+						Policy.bind("RefreshCompleteDialog.4a", participant.getName()) : //$NON-NLS-1$
+							Policy.bind("RefreshCompleteDialog.4", participant.getName()) //$NON-NLS-1$
+							);
+				MessageDialog.openInformation(Utils.getShell(null), title, event.getStatus().getMessage());
 			}
 		});
 	}

@@ -3,7 +3,6 @@ package org.eclipse.team.internal.ui.synchronize;
 import java.text.DateFormat;
 import java.util.Date;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.internal.ui.Policy;
@@ -112,16 +111,15 @@ public class SubscriberRefreshSchedule {
 			return;
 		}
 		if(job == null) {
-			Subscriber s = participant.getSubscriber();
-			job = new RefreshSubscriberJob(Policy.bind("RefreshSchedule.14", participant.getName(), getRefreshIntervalAsString()),s.roots(), s); //$NON-NLS-1$
-			job.setSubscriberCollector(participant.getSubscriberSyncInfoCollector());
+			SubscriberParticipant participant = getParticipant();
+			job = new RefreshSubscriberJob(participant, Policy.bind("RefreshSchedule.14", participant.getName(), getRefreshIntervalAsString()), participant.getResources(), new RefreshUserNotificationPolicy(getParticipant())); //$NON-NLS-1$
 			job.setUser(false);
 		} else if(job.getState() != Job.NONE){
 			stopJob();
 		}
 		job.setRestartOnCancel(true);
 		job.setReschedule(true);
-		job.schedule(getRefreshInterval());				
+		job.schedule(getRefreshInterval());			
 	}
 	
 	protected void stopJob() {

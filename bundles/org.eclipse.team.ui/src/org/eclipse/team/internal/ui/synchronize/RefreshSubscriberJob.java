@@ -16,6 +16,9 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.synchronize.*;
@@ -25,7 +28,11 @@ import org.eclipse.team.internal.core.subscribers.SubscriberSyncInfoCollector;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.ui.synchronize.ISynchronizeManager;
+import org.eclipse.team.ui.synchronize.SubscriberParticipant;
+import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
 import org.eclipse.ui.internal.progress.ProgressManager;
+import org.eclipse.ui.progress.UIJob;
 
 /**
  * Job to refresh a {@link Subscriber} in the background. The job can be configured
@@ -59,7 +66,8 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 	 * The subscribers and resources to refresh.
 	 */
 	private IResource[] resources;
-	private Subscriber subscriber;
+
+	private SubscriberParticipant participant;
 	
 	/**
 	 * Refresh started/completed listener for every refresh
@@ -67,8 +75,6 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 	private static List listeners = new ArrayList(1);
 	private static final int STARTED = 1;
 	private static final int DONE = 2;
-
-	private SubscriberSyncInfoCollector collector;
 	
 	/**
 	 * Notification for safely notifying listeners of refresh lifecycle.
@@ -98,12 +104,13 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 	 * @param resources
 	 * @param subscriber
 	 */
-	public RefreshSubscriberJob(String name, IResource[] resources, Subscriber subscriber) {
+	public RefreshSubscriberJob(SubscriberParticipant participant, String name, IResource[] resources, IRefreshSubscriberListener listener) {
 		super(name);
 		Assert.isNotNull(resources);
-		Assert.isNotNull(subscriber);
+		Assert.isNotNull(participant);
+		Assert.isNotNull(resources);
 		this.resources = resources;
-		this.subscriber = subscriber;
+		this.participant = participant;
 		setPriority(Job.DECORATE);
 		setRefreshInterval(3600 /* 1 hour */);
 		
@@ -119,10 +126,8 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 				}
 			}
 		});		
-	}
-	
-	public void setSubscriberCollector(SubscriberSyncInfoCollector collector) {
-		this.collector = collector;
+		
+		initialize(listener);
 	}
 	
 	/**
@@ -165,7 +170,7 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 			if(subscriber == null || roots == null) {
 				return Status.OK_STATUS;
 			}
-			
+			SubscriberSyncInfoCollector collector = getCollector();
 			RefreshEvent event = new RefreshEvent(reschedule ? IRefreshEvent.SCHEDULED_REFRESH : IRefreshEvent.USER_REFRESH, roots, collector.getSubscriber());
 			RefreshChangeListener changeListener = new RefreshChangeListener(collector);
 			try {
@@ -194,10 +199,8 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 				monitor.done();
 			}
 			
-			Boolean modelProperty = (Boolean)getProperty(ProgressManager.PROPERTY_IN_DIALOG);
-			boolean isModal = modelProperty == null ? true : false;
-			setProperty(new QualifiedName("org.eclipse.ui.workbench.progress", "keep"), Boolean.valueOf(! isModal));
-			setProperty(new QualifiedName("org.eclipse.ui.workbench.progress", "keepone"), Boolean.valueOf(! isModal));
+			setProperty(new QualifiedName("org.eclipse.ui.workbench.progress", "keep"), Boolean.valueOf(! isJobModal()));
+			setProperty(new QualifiedName("org.eclipse.ui.workbench.progress", "keepone"), Boolean.valueOf(! isJobModal()));
 			
 			// Post-Notify
 			event.setChanges(changeListener.getChanges());
@@ -214,6 +217,7 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 		int code = IStatus.OK;
 		SyncInfo[] changes = event.getChanges();
 		IResource[] resources = event.getResources();
+		SubscriberSyncInfoCollector collector = getCollector();
 		if (collector != null) {
 			SyncInfoSet set = collector.getSyncInfoSet();
 			int numChanges = refreshedResourcesContainChanges(event);
@@ -225,7 +229,7 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 				if (changes.length > 0) {
 				// New changes found
 					String numNewChanges = Integer.toString(event.getChanges().length);
-					text.append(Policy.bind("RefreshCompleteDialog.5a", new Object[]{numNewChanges, subscriber.getName(), outgoing, incoming, conflicting})); //$NON-NLS-1$
+					text.append(Policy.bind("RefreshCompleteDialog.5a", new Object[]{numNewChanges, participant.getName(), outgoing, incoming, conflicting})); //$NON-NLS-1$
 				} else {
 				// Refreshed resources contain changes
 					text.append(Policy.bind("RefreshCompleteDialog.5", new Object[]{new Integer(numChanges), outgoing, incoming, conflicting})); //$NON-NLS-1$
@@ -242,6 +246,7 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 	
 	private int refreshedResourcesContainChanges(IRefreshEvent event) {
 		int numChanges = 0;
+		SubscriberSyncInfoCollector collector = getCollector();
 		if (collector != null) {
 			SyncInfoTree set = collector.getSyncInfoSet();
 			IResource[] resources = event.getResources();
@@ -256,16 +261,94 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 		return numChanges;
 	}
 	
+	private void initialize(final IRefreshSubscriberListener listener) {
+		final IWorkbenchAction[] gotoAction = new IWorkbenchAction[] {null};
+		IProgressMonitor group = Platform.getJobManager().createProgressGroup();
+		group.beginTask(participant.getName(), 100);
+		setProgressGroup(group, 80);
+		getCollector().setProgressGroup(group, 20);
+		setProperty(new QualifiedName("org.eclipse.ui.workbench.progress", "icon"), participant.getImageDescriptor());
+		setProperty(new QualifiedName("org.eclipse.ui.workbench.progress", "goto"), new WorkbenchAction() {
+			public void run() {
+				if(gotoAction[0] != null) {
+					gotoAction[0].run();
+				}
+			}
+			public boolean isEnabled() {
+				if(gotoAction[0] != null) {
+					return gotoAction[0].isEnabled();
+				}
+				return false;
+			}
+			
+			public void dispose() {
+				super.dispose();
+				if(gotoAction[0] != null) {
+					gotoAction[0].dispose();
+				}
+			}
+		});
+		// Listener delagate
+		IRefreshSubscriberListener autoListener = new IRefreshSubscriberListener() {
+			public void refreshStarted(IRefreshEvent event) {
+				if(listener != null) {
+					listener.refreshStarted(event);
+				}
+			}
+			public ActionFactory.IWorkbenchAction refreshDone(IRefreshEvent event) {
+				if(listener != null) {
+					boolean isModal = isJobModal();
+					ActionFactory.IWorkbenchAction runnable = listener.refreshDone(event);
+					if(runnable != null) {
+					// If the job is being run modally then simply prompt the user immediatly
+					if(isModal) {
+						if(runnable != null) {
+							final IAction[] r = new IAction[] {runnable};
+							Job update = new UIJob("") {
+								public IStatus runInUIThread(IProgressMonitor monitor) {
+									r[0].run();
+									return Status.OK_STATUS;
+								}
+							};
+							update.setSystem(true);
+							update.schedule();
+						}
+					// If the job is being run in the background, don't interrupt the user and simply update the goto action
+					// to perform the results.
+					} else {
+						gotoAction[0] = runnable;
+						gotoAction[0].setEnabled(runnable.isEnabled());
+						runnable.addPropertyChangeListener(new IPropertyChangeListener() {
+							public void propertyChange(PropertyChangeEvent event) {
+								if(event.getProperty().equals(IAction.ENABLED)) {
+									Boolean bool = (Boolean) event.getNewValue();
+									gotoAction[0].setEnabled(bool.booleanValue());
+								}
+							}
+						});
+					}
+					}
+					RefreshSubscriberJob.removeRefreshListener(this);
+				}
+				return null;
+			}
+		};
+		
+		if (listener != null) {
+			RefreshSubscriberJob.addRefreshListener(autoListener);
+		}	
+	}
+	
 	protected IResource[] getResources() {
 		return resources;
 	}
 	
 	protected Subscriber getSubscriber() {
-		return subscriber;
+		return participant.getSubscriber();
 	}
 	
 	protected SubscriberSyncInfoCollector getCollector() {
-		return collector;
+		return participant.getSubscriberSyncInfoCollector();
 	}
 	
 	public long getScheduleDelay() {
@@ -275,7 +358,6 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 	protected void start() {
 		if(getState() == Job.NONE) {
 			if(shouldReschedule()) {
-				setUser(collector != null);
 				schedule(getScheduleDelay());
 			}
 		}
@@ -356,5 +438,11 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 			};
 			notification.run(listener);
 		}
+	}
+	
+	private boolean isJobModal() {
+		Boolean isModal = (Boolean)getProperty(ProgressManager.PROPERTY_IN_DIALOG);
+		if(isModal == null) return false;
+		return isModal.booleanValue();
 	}
 }
