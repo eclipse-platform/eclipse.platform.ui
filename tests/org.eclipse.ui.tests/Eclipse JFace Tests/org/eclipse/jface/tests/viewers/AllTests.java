@@ -13,6 +13,7 @@ package org.eclipse.jface.tests.viewers;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.jface.tests.images.ImageCacheTest;
 import org.eclipse.jface.tests.images.ImageRegistryTest;
 
 public class AllTests {
@@ -33,6 +34,7 @@ public class AllTests {
         suite.addTest(new TestSuite(CheckboxTreeViewerTest.class));
         suite.addTest(new TestSuite(ComboViewerTest.class));
         suite.addTest(new TestSuite(ImageRegistryTest.class));
+        suite.addTest(new TestSuite(ImageCacheTest.class));
         return suite;
     }
 }
