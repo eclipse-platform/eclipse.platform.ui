@@ -99,6 +99,7 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 					status.merge(e.getStatus());
 				}
 			}
+		    fElements = null;
 			return status;
         }
         
