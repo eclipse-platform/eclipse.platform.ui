@@ -306,25 +306,19 @@
  	<!-- ********************************** -->
  	
  	<context  id="console_view_context" >
-      <description>This view shows the output of CVS operations.
-      </description>
+      <description>This view shows the output of CVS operations.</description>
    	</context>
    	<context  id="repositories_view_context" >
-      <description>This view allows the browsing of a remote CVS repository.
-      </description>
+      <description>This view allows the browsing of the contents of known CVS repositories and the checkout of modules into the local workspace as projects.</description>
    	</context>
    	<context  id="resource_history_view_context" >
-      <description>This view shows the revision history of a resource under CVS control.
-      </description>
+      <description>This view shows the revision history of a resource under CVS control.</description>
    	</context>
    	<context  id="catchup_release_viewer_context" >
-      <description>This view shows the incoming, outgoing and conflicting changes.
-      </description>
+      <description>This view shows the incoming, outgoing and conflicting changes.</description>
    	</context>
-   	   <context  id="compare_revisions_view_context" >
-      <description>This view allows the comparision of the local copy of a file with the revisions from the respoitory.
-      Actions availabel of a revision are "Get Contents" and "Get Revision". Although both replace the local file with the contents of the remote rvision, "Get Revision" will make the local file "sticky". This means that changes to the file cannot be committed back to the repository.
-      </description>
+   	<context  id="compare_revisions_view_context" >
+      <description>This view allows the comparision of the local copy of a file with the revisions from the respoitory. Actions available for a revision are "Get Contents" and "Get Revision". Although both replace the local file with the contents of the remote rvision, "Get Revision" will make the local file "sticky". This means that changes to the file cannot be committed back to the repository.</description>
    	</context>
    	
    	<!-- ********************************** -->
@@ -332,12 +326,10 @@
  	<!-- ********************************** -->
  	
  	<context  id="get_file_revision_action_context" >
-      <description>Load the revision of the file into the workspace. The file will be "sticky" and the user will be unable to commit changes to the repository.
-      </description>
+      <description>Load the revision of the file into the workspace. The file will be "sticky" and the user will be unable to commit changes to the repository.</description>
    	</context>
  	<context  id="get_file_contents_action_context" >
-      <description>Load the contents of the file into the workspace. The base revision of the local file will not change and the file will become dirty. Perform this action if you wich to revert to the contents of an older revision of the file.
-      </description>
+      <description>Load the contents of the file into the workspace. The base revision of the local file will not change and the file will become dirty. Perform this action if you wich to revert to the contents of an older revision of the file.</description>
    	</context>
    		
    	<!-- ********************************** -->
