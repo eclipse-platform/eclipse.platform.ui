@@ -83,6 +83,9 @@
 	<test id = "org.eclipse.core.tests.resources.session.TestMasterTableCleanup">
 		<run class="org.eclipse.core.tests.resources.session.TestMasterTableCleanup"/>
 	</test>
+	<test id = "org.eclipse.core.tests.resources.usecase.SnapshotTest">
+		<run class="org.eclipse.core.tests.resources.usecase.SnapshotTest"/>
+	</test>
 </extension>
 
   <extension id="transientmarker" point="org.eclipse.core.resources.markers">
