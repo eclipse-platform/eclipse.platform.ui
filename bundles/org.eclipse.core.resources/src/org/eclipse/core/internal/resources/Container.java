@@ -76,8 +76,14 @@ protected IResource[] getChildren(Container parent, boolean phantom) {
 	return getChildren(parent.getFullPath(), phantom);
 }
 protected IResource[] getChildren(IPath parentPath, boolean phantom) {
-	IPath[] children = workspace.tree.getChildren(parentPath);
-	if (children.length == 0)
+	IPath[] children = null;
+	try {
+		children = workspace.tree.getChildren(parentPath);
+	} catch (IllegalArgumentException e) {
+		//concurrency problem: the container has been deleted by another 
+		//thread during this call.  Just return empty children set
+	}
+	if (children == null || children.length == 0)
 		return ICoreConstants.EMPTY_RESOURCE_ARRAY;
 	Resource[] result = new Resource[children.length];
 	int j = 0;
