@@ -526,6 +526,9 @@ final class Persistence {
 		// TODO deprecated start
 		if (commandId == null)
 			commandId = memento.getString("command"); //$NON-NLS-1$ 
+
+		if (commandId == null)
+			commandId = memento.getString("id"); //$NON-NLS-1$ 
 		// TODO deprecated end
 
 		String keyConfigurationId = memento.getString(TAG_KEY_CONFIGURATION_ID);

@@ -116,8 +116,6 @@ final class WorkbenchWindowCommandHandlerService
 
 		if (!this.handlersByCommandId.equals(handlersByCommandId)) {
 			this.handlersByCommandId = handlersByCommandId;
-			System.out.println(
-				getClass().getName() + ": " + this.handlersByCommandId);
 			fireCommandHandlerServiceChanged(
 				new CommandHandlerServiceEvent(this, true));
 		}

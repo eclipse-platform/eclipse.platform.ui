@@ -23,6 +23,10 @@
 
 
 <!-- Workbench extension points -->
+   <extension-point id="acceleratorConfigurations" name="%ExtPoint.acceleratorConfigurations" schema="schema/acceleratorConfigurations.exsd"/>
+   <extension-point id="acceleratorScopes" name="%ExtPoint.acceleratorScopes" schema="schema/acceleratorScopes.exsd"/>
+   <extension-point id="acceleratorSets" name="%ExtPoint.acceleratorSets" schema="schema/acceleratorSets.exsd"/>
+   <extension-point id="actionDefinitions" name="%ExtPoint.actionDefinitions" schema="schema/actionDefinitions.exsd"/>
    <extension-point id="activities" name="%ExtPoint.activities" schema="schema/activities.exsd"/>
    <extension-point id="actionSetPartAssociations" name="%ExtPoint.actionSetPartAssociations" schema="schema/actionSetPartAssociations.exsd"/>
    <extension-point id="actionSets" name="%ExtPoint.actionSets" schema="schema/actionSets.exsd"/>
@@ -1094,6 +1098,12 @@
             parentId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyConfiguration>
 <!-- New 3.0 key binding work -->
+<!-- Backspace -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.deletePrevious"
+            keySequence="BS"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
 <!-- Delete -->
       <keyBinding
             commandId="org.eclipse.ui.edit.delete"
