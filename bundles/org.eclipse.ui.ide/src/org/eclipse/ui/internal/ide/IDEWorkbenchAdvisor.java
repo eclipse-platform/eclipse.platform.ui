@@ -35,6 +35,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -42,7 +43,6 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
@@ -267,7 +267,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
             }
 
             MessageDialogWithToggle dlg = MessageDialogWithToggle
-                    .openYesNoQuestion(
+                    .openOkCancelConfirm(
                             windowConfigurer.getWindow().getShell(),
                             IDEWorkbenchMessages
                                     .getString("PromptOnExitDialog.shellTitle"), //$NON-NLS-1$,
@@ -275,10 +275,15 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
                             IDEWorkbenchMessages
                                     .getString("PromptOnExitDialog.choice"), //$NON-NLS-1$,
                             false,
-                            store,
-                            IDEInternalPreferences.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW);
-
-            return (dlg.getReturnCode() == Window.OK);
+                            null,
+                            null);
+            if (dlg.getReturnCode() == IDialogConstants.CANCEL_ID) {
+                return false;
+            }
+            if (dlg.getToggleState()) {
+                store.setValue(IDEInternalPreferences.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW, false);
+                IDEWorkbenchPlugin.getDefault().savePluginPreferences();
+            }
         }
 
         return true;
