@@ -14,7 +14,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.ui.internal.ActionDescriptor;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.dialogs.DialogUtil;
-import org.eclipse.ui.internal.model.WorkbenchAdapter;
 import org.eclipse.ui.model.*;
 import org.eclipse.jface.resource.*;
 
@@ -26,9 +25,9 @@ import org.eclipse.jface.resource.*;
  *		and should be reviewed to determine if code
  *		reuse if possible.]
  */
-public class LightweightActionDescriptor extends WorkbenchAdapter
-	implements IAdaptable
-{
+public class LightweightActionDescriptor implements IAdaptable, IWorkbenchAdapter {
+	private static final Object[] NO_CHILDREN = new Object[0];
+
 	private String id;
 	private String label;
 	private String description;
@@ -79,7 +78,7 @@ public ImageDescriptor getImageDescriptor() {
 public ImageDescriptor getImageDescriptor(Object o) {
 	if (o == this)
 		return getImageDescriptor();
-	return super.getImageDescriptor(o);
+	return null;
 }
 /**
  * Returns the action's label.
@@ -98,6 +97,18 @@ public String getLabel(Object o) {
 			text = text.substring(0, end);
 		return DialogUtil.removeAccel(text);		
 	}
-	return super.getLabel(o);
+	return o == null ? "" : o.toString();//$NON-NLS-1$
+}
+/* (non-Javadoc)
+ * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(java.lang.Object)
+ */
+public Object[] getChildren(Object o) {
+	return NO_CHILDREN;
+}
+/* (non-Javadoc)
+ * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)
+ */
+public Object getParent(Object o) {
+	return null;
 }
 }
