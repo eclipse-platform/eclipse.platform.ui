@@ -26,10 +26,10 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.ide.WorkbenchResourceContentProvider;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IHelpContextIds;
 import org.eclipse.ui.model.AdaptableList;
-import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchPartLabelProvider;
 
 /**
@@ -113,7 +113,7 @@ public class CloseResourceAction extends WorkspaceAction implements IResourceCha
 		}
 		AdaptableList input = new AdaptableList(saveEditors);
 		ListSelectionDialog dlg =
-			new ListSelectionDialog(getShell(), input, new WorkbenchContentProvider(), new WorkbenchPartLabelProvider(), IDEWorkbenchMessages.getString("EditorManager.saveResourcesMessage")); //$NON-NLS-1$
+			new ListSelectionDialog(getShell(), input, new WorkbenchResourceContentProvider(), new WorkbenchPartLabelProvider(), IDEWorkbenchMessages.getString("EditorManager.saveResourcesMessage")); //$NON-NLS-1$
 
 		dlg.setInitialSelections(saveEditors.toArray(new Object[saveEditors.size()]));
 		dlg.setTitle(IDEWorkbenchMessages.getString("EditorManager.saveResourcesTitle")); //$NON-NLS-1$

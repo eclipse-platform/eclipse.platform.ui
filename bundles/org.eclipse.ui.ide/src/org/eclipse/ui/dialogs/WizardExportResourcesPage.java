@@ -26,11 +26,11 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.ide.WorkbenchResourceContentProvider;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.DialogUtil;
 import org.eclipse.ui.internal.dialogs.ResourceTreeAndListGroup;
-import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
@@ -326,7 +326,7 @@ public abstract class WizardExportResourcesPage
 	 * only children of the given resource type.
 	 */
 	private ITreeContentProvider getResourceProvider(final int resourceType) {
-		return new WorkbenchContentProvider() {
+		return new WorkbenchResourceContentProvider() {
 			public Object[] getChildren(Object o) {
 				if (o instanceof IContainer) {
 					IResource[] members = null;

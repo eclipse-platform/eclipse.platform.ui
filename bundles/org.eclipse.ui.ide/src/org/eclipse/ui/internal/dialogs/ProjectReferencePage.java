@@ -28,11 +28,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.ide.WorkbenchResourceContentProvider;
 import org.eclipse.ui.internal.ide.DialogUtil;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IHelpContextIds;
-import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
@@ -115,7 +115,7 @@ public class ProjectReferencePage extends PropertyPage {
 	 * workspace.
 	 */
 	protected IStructuredContentProvider getContentProvider(final IProject project) {
-		return new WorkbenchContentProvider() {
+		return new WorkbenchResourceContentProvider() {
 			public Object[] getChildren(Object o) {
 				if (!(o instanceof IWorkspace)) {
 					return new Object[0];

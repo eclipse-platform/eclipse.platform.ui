@@ -21,9 +21,9 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.ide.WorkbenchResourceContentProvider;
 import org.eclipse.ui.internal.ide.IHelpContextIds;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
-import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
@@ -98,7 +98,7 @@ public void createControl(Composite parent) {
  * @return the content provider
  */
 protected IStructuredContentProvider getContentProvider() {
-	return new WorkbenchContentProvider() {
+	return new WorkbenchResourceContentProvider() {
 		public Object[] getChildren(Object element) {
 			if (!(element instanceof IWorkspace))
 				return new Object[0];
