@@ -29,6 +29,7 @@ public class DynamicPluginsTestSuite extends TestSuite {
      * Construct the test suite.
      */
     public DynamicPluginsTestSuite() {
+    	addTest(new TestSuite(EncodingTests.class));
     	addTest(new TestSuite(DecoratorTests.class));
     	addTest(new TestSuite(StartupTests.class));
     	addTest(new TestSuite(EditorTests.class));

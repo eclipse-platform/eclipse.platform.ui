@@ -19,7 +19,6 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
-
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -33,20 +32,19 @@ import org.eclipse.ui.internal.registry.RegistryReader;
  */
 public class WorkbenchEncoding {
 
-	/**
-	 * The list of encodings read from the extension registry
-	 */
-	static List definedEncodings;
-
 	private static class EncodingsRegistryReader extends RegistryReader {
 
 		private static final String ATT_NAME = "name"; //$NON-NLS-1$
-
+		
+		private List encodings;
+		
 		/**
 		 * Create a new instance of the receiver.
+		 * @param definedEncodings 
 		 */
-		public EncodingsRegistryReader() {
+		public EncodingsRegistryReader(List definedEncodings) {
 			super();
+			encodings = definedEncodings;
 		}
 
 		/*
@@ -57,7 +55,7 @@ public class WorkbenchEncoding {
 		protected boolean readElement(IConfigurationElement element) {
 			String name = element.getAttribute(ATT_NAME);
 			if (name != null)
-				definedEncodings.add(name);
+				encodings.add(name);
 			return true;
 		}
 	}
@@ -126,20 +124,8 @@ public class WorkbenchEncoding {
 	 * @return List of String
 	 */
 	public static List getDefinedEncodings() {
-
-		if (definedEncodings == null)
-			readEncodings();
-		return definedEncodings;
-
-	}
-
-	/**
-	 * Read the encodings from the extension registry.
-	 */
-	private static void readEncodings() {
-
-		definedEncodings = Collections.synchronizedList(new ArrayList());
-		EncodingsRegistryReader reader = new EncodingsRegistryReader();
+		List definedEncodings = Collections.synchronizedList(new ArrayList());
+		EncodingsRegistryReader reader = new EncodingsRegistryReader(definedEncodings);
 
 		reader.readRegistry(Platform.getExtensionRegistry(), PlatformUI.PLUGIN_ID,
 				IWorkbenchConstants.PL_ENCODINGS);
@@ -170,6 +156,6 @@ public class WorkbenchEncoding {
 
 		}
 
+		return definedEncodings;
 	}
-
 }
