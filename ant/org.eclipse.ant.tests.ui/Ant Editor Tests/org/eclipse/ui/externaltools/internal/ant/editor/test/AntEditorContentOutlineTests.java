@@ -218,14 +218,29 @@ public class AntEditorContentOutlineTests extends TestCase {
 
 	
 	/**
-	 * Tests whether the outline can handle empty files.
+	 * Tests whether the outline can handle a build file with only the <project></project> tags.
 	 */
-	public void testWithEmptyBuildFile() {
-		AntModel model= getAntModel("emptyfile.xml");
+	public void testWithProjectOnlyBuildFile() {
+		AntModel model= getAntModel("projectOnly.xml");
 		XmlElement[] roots = model.getRootElements();
 		assertNotNull(roots);
 		XmlElement root= roots[0];
 		assertNotNull(root);
+	}
+	
+	/**
+	 * Tests whether the outline can handle an emtpy build file.
+	 */
+	public void testWithEmptyBuildFile() {
+		AntModel model= getAntModel("empty.xml");
+		XmlElement[] roots = model.getRootElements();
+		assertNotNull(roots);
+		XmlElement root= roots[0];
+		assertNotNull(root);
+		assertTrue(root.isErrorNode());
+		XmlElement errorNode= (XmlElement)root.getChildNodes().get(0);
+		assertTrue(errorNode.isErrorNode());
+		assertTrue(errorNode.getDisplayName().equals("Document root element is missing. line: 1"));
 	}		
 
 	

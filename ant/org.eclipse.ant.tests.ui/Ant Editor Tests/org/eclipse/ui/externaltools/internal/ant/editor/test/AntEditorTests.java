@@ -28,10 +28,10 @@ public class AntEditorTests extends TestSuite {
 
         TestSuite suite= new AntEditorTests();
         suite.setName("Ant Editor Unit Tests");
-        suite.addTest(CodeCompletionTest.suite());
-        suite.addTest(TaskDescriptionProviderTest.suite());
-        suite.addTest(AntEditorContentOutlineTests.suite());
-        suite.addTest(EnclosingTargetSearchingHandlerTest.suite());
+        suite.addTest(new TestSuite(CodeCompletionTest.class));
+        suite.addTest(new TestSuite(TaskDescriptionProviderTest.class));
+        suite.addTest(new TestSuite(AntEditorContentOutlineTests.class));
+        suite.addTest(new TestSuite(EnclosingTargetSearchingHandlerTest.class));
         return suite;
     }
 }

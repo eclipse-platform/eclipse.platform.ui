@@ -151,10 +151,10 @@ public class EnclosingTargetSearchingHandlerTest extends TestCase {
      */
     public void testParsingOfEmptyBuildFile() throws SAXException, ParserConfigurationException, IOException {
         SAXParser tempParser = SAXParserFactory.newInstance().newSAXParser();
-		URL url= getClass().getResource("emptyfile.xml");
+		URL url= getClass().getResource("projectOnly.xml");
 		File file= new File(url.getFile());
         EnclosingTargetSearchingHandler tempHandler = new EnclosingTargetSearchingHandler(file.getParentFile(), 0, 0);
-        InputStream tempStream = getClass().getResourceAsStream("emptyfile.xml");
+        InputStream tempStream = getClass().getResourceAsStream("projectOnly.xml");
         try {
             tempParser.parse(tempStream, tempHandler);
         } catch(SAXParseException e) {
