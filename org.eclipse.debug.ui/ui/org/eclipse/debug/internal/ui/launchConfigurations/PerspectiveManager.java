@@ -364,6 +364,9 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 	 * @since 3.0
 	 */
 	private void internalSetLaunchPerspective(String type, String mode, String perspective) {
+		if (fPreferenceMap == null) {
+			initPerspectives();
+		}		
 		Map modeMap = (Map)fPreferenceMap.get(type);
 		if (modeMap == null) {
 			modeMap = new HashMap();
