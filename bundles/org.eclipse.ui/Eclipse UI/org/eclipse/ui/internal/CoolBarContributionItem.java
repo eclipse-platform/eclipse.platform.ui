@@ -39,7 +39,10 @@ public class CoolBarContributionItem extends ContributionItem implements IContri
 	 */
 	public CoolBarContributionItem(CoolBarManager parent, String id) {
 		// have the item take on the style of its parent
-		toolBarManager = new ToolBarManager(parent.getStyle());
+		this(parent, new ToolBarManager(parent.getStyle()), id);
+	}
+	public CoolBarContributionItem(CoolBarManager parent, ToolBarManager tBarMgr, String id) {
+		this.toolBarManager = tBarMgr;
 		this.parentManager = parent;
 		this.id = id;
 		CoolBar parentControl = parent.getControl();
@@ -64,6 +67,12 @@ public class CoolBarContributionItem extends ContributionItem implements IContri
 		}
 		return false;
 	}
+	public void dispose() {
+		if (toolBarManager != null) {
+			toolBarManager.removeAll();
+		}
+	}
+		
 	/**
 	 * Sets the visibility of the manager.  If the visibility is <code>true</code>
 	 * then each item within the manager appears within the parent manager.
