@@ -128,12 +128,15 @@ public class SynchronizeManager implements ISynchronizeManager {
 					participant = (ISynchronizeParticipant) TeamUIPlugin.createExtension(descriptor.getConfigurationElement(), SynchronizeParticipantDescriptor.ATT_CLASS);
 					participant.setInitializationData(descriptor.getConfigurationElement(), null, null);
 					participant.init(savedState);
-				} catch (PartInitException e2) {
+				} catch (PartInitException e) {
 					participant = null;					
-					throw new TeamException(Policy.bind("SynchronizeManager.11"), e2);  //$NON-NLS-1$
+					throw new TeamException(Policy.bind("SynchronizeManager.11", descriptor.getName()), e);  //$NON-NLS-1$
 				} catch (CoreException e) {
 					participant = null;
 					throw TeamException.asTeamException(e);
+				} catch(Exception e) {
+					participant = null;
+					throw new TeamException(Policy.bind("SynchronizeManager.11", descriptor.getName()), e);  //$NON-NLS-1$
 				}
 			}
 			return participant;
