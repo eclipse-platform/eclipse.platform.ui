@@ -7,6 +7,8 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * 	   Chris Tilt (chris@tilts.net) - Bug 38547 - [Preferences] Changing preferences 
+ * 			ignored after "Restore defaults" pressed.
  *******************************************************************************/
 package org.eclipse.jface.preference;
 
