@@ -34,106 +34,108 @@ import org.eclipse.ui.PlatformUI;
  * 
  * @since 2.0
  */
-public abstract class AbstractElementListSelectionDialog extends SelectionStatusDialog {
-	
+public abstract class AbstractElementListSelectionDialog
+	extends SelectionStatusDialog {
+
 	private ILabelProvider fRenderer;
-	private boolean fIgnoreCase= true;
-	private boolean fIsMultipleSelection= false;
-	private boolean fMatchEmptyString= true;
-	private boolean fAllowDuplicates= true;
-	
+	private boolean fIgnoreCase = true;
+	private boolean fIsMultipleSelection = false;
+	private boolean fMatchEmptyString = true;
+	private boolean fAllowDuplicates = true;
+
 	private Label fMessage;
 
 	protected FilteredList fFilteredList;
 	private Text fFilterText;
-	
-	private ISelectionStatusValidator fValidator;	
-	private String fFilter= null;
-	
-	private String fEmptyListMessage= ""; //$NON-NLS-1$
-	private String fEmptySelectionMessage= ""; //$NON-NLS-1$
-		
-	private int fWidth= 60;
-	private int fHeight= 18;
-	
-	private Object[] fSelection= new Object[0];
-	
+
+	private ISelectionStatusValidator fValidator;
+	private String fFilter = null;
+
+	private String fEmptyListMessage = ""; //$NON-NLS-1$
+	private String fEmptySelectionMessage = ""; //$NON-NLS-1$
+
+	private int fWidth = 60;
+	private int fHeight = 18;
+
+	private Object[] fSelection = new Object[0];
+
 	/**
 	 * Constructs a list selection dialog.
 	 * @param renderer The label renderer used
 	 * @param ignoreCase Decides if the match string ignores lower/upppr case
 	 * @param multipleSelection Allow multiple selection	 
 	 */
-	protected AbstractElementListSelectionDialog(Shell parent, ILabelProvider renderer)
-	{
-		super(parent);		
-		fRenderer= renderer;
-		
-		int shellStyle= getShellStyle();
+	protected AbstractElementListSelectionDialog(
+		Shell parent,
+		ILabelProvider renderer) {
+		super(parent);
+		fRenderer = renderer;
+
+		int shellStyle = getShellStyle();
 		setShellStyle(shellStyle | SWT.MAX | SWT.RESIZE);
 	}
 
 	/**
 	 * Handles default selection (double click).
 	 * By default, the OK button is pressed.
-	 */	
+	 */
 	protected void handleDefaultSelected() {
 		if (validateCurrentSelection())
 			buttonPressed(IDialogConstants.OK_ID);
 	}
-	
+
 	/**
 	 * Specifies if sorting, filtering and folding is case sensitive.
 	 */
 	public void setIgnoreCase(boolean ignoreCase) {
-		fIgnoreCase= ignoreCase;
+		fIgnoreCase = ignoreCase;
 	}
-	
+
 	/**
 	 * Returns if sorting, filtering and folding is case sensitive.
 	 */
 	public boolean isCaseIgnored() {
 		return fIgnoreCase;
 	}
-	
+
 	/**
 	 * Specifies whether everything or nothing should be filtered on
 	 * empty filter string.
 	 */
 	public void setMatchEmptyString(boolean matchEmptyString) {
-		fMatchEmptyString= matchEmptyString;
+		fMatchEmptyString = matchEmptyString;
 	}
-	
+
 	/**
 	 * Specifies if multiple selection is allowed.
 	 */
 	public void setMultipleSelection(boolean multipleSelection) {
-		fIsMultipleSelection= multipleSelection;
+		fIsMultipleSelection = multipleSelection;
 	}
 
 	/**
 	 * Specifies whether duplicate entries are displayed or not.
 	 */
 	public void setAllowDuplicates(boolean allowDuplicates) {
-		fAllowDuplicates= allowDuplicates;
+		fAllowDuplicates = allowDuplicates;
 	}
-	
+
 	/**
 	 * Sets the list size in unit of characters.
 	 * @param width  the width of the list.
 	 * @param height the height of the list.
 	 */
 	public void setSize(int width, int height) {
-		fWidth= width;
-		fHeight= height;
+		fWidth = width;
+		fHeight = height;
 	}
-	
+
 	/**
 	 * Sets the message to be displayed if the list is empty.
 	 * @param message the message to be displayed.
 	 */
 	public void setEmptyListMessage(String message) {
-		fEmptyListMessage= message;
+		fEmptyListMessage = message;
 	}
 
 	/**
@@ -141,18 +143,18 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
 	 * @param message the message to be displayed.
 	 */
 	public void setEmptySelectionMessage(String message) {
-		fEmptySelectionMessage= message;
+		fEmptySelectionMessage = message;
 	}
-	
+
 	/**
 	 * Sets an optional validator to check if the selection is valid.
 	 * The validator is invoked whenever the selection changes.
 	 * @param validator the validator to validate the selection.
 	 */
 	public void setValidator(ISelectionStatusValidator validator) {
-		fValidator= validator;
-	}	
-	
+		fValidator = validator;
+	}
+
 	/**
 	 * Sets the elements of the list (widget).
 	 * To be called within open().
@@ -169,11 +171,11 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
 	 */
 	public void setFilter(String filter) {
 		if (fFilterText == null)
-			fFilter= filter;
+			fFilter = filter;
 		else
 			fFilterText.setText(filter);
-	} 
-	
+	}
+
 	/**
 	 * Returns the current filter pattern.
 	 * @return returns the current filter pattern or <code>null<code> if filter was not set.
@@ -204,7 +206,7 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
 		Assert.isNotNull(fFilteredList);
 		return fFilteredList.getSelectionIndex();
 	}
-	
+
 	/**
 	 * Sets the selection referenced by an array of elements.
 	 * Empty or null array removes selection.
@@ -215,12 +217,12 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
 		Assert.isNotNull(fFilteredList);
 		fFilteredList.setSelection(selection);
 	}
- 	
+
 	/**
 	 * Returns an array of the currently selected elements.
 	 * To be called within or after open().
 	 * @return returns an array of the currently selected elements.
-	 */	
+	 */
 	protected Object[] getSelectedElements() {
 		Assert.isNotNull(fFilteredList);
 		return fFilteredList.getSelection();
@@ -235,25 +237,25 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
 		Assert.isNotNull(fFilteredList);
 		return fFilteredList.getFoldedElements(index);
 	}
-		 
+
 	/**
 	 * Creates the message text widget and sets layout data.
 	 * @param composite the parent composite of the message area.
 	 */
 	protected Label createMessageArea(Composite composite) {
-		Label label= super.createMessageArea(composite);
+		Label label = super.createMessageArea(composite);
 
-		GridData data= new GridData();
-		data.grabExcessVerticalSpace= false;
-		data.grabExcessHorizontalSpace= true;
-		data.horizontalAlignment= GridData.FILL;
-		data.verticalAlignment= GridData.BEGINNING;
+		GridData data = new GridData();
+		data.grabExcessVerticalSpace = false;
+		data.grabExcessHorizontalSpace = true;
+		data.horizontalAlignment = GridData.FILL;
+		data.verticalAlignment = GridData.BEGINNING;
 		label.setLayoutData(data);
-		
-		fMessage= label;
-		
+
+		fMessage = label;
+
 		return label;
-	}	
+	}
 
 	/**
 	 * Handles a selection changed event.
@@ -262,7 +264,7 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
 	protected void handleSelectionChanged() {
 		validateCurrentSelection();
 	}
-	
+
 	/**
 	 * Validates the current selection and updates the status line
 	 * accordingly.
@@ -271,24 +273,42 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
 		Assert.isNotNull(fFilteredList);
 
 		IStatus status;
-		Object[] elements= getSelectedElements();
+		Object[] elements = getSelectedElements();
 
 		if (elements.length > 0) {
 			if (fValidator != null) {
-				status= fValidator.validate(elements);
+				status = fValidator.validate(elements);
 			} else {
-				status= new Status(IStatus.OK, PlatformUI.PLUGIN_ID, IStatus.OK, "", null);
+				status =
+					new Status(
+						IStatus.OK,
+						PlatformUI.PLUGIN_ID,
+						IStatus.OK,
+						"",
+						null);
 			}
-		} else {			
+		} else {
 			if (fFilteredList.isEmpty()) {
-				status= new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.ERROR, fEmptyListMessage, null);
+				status =
+					new Status(
+						IStatus.ERROR,
+						PlatformUI.PLUGIN_ID,
+						IStatus.ERROR,
+						fEmptyListMessage,
+						null);
 			} else {
-				status= new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.ERROR, fEmptySelectionMessage, null);
+				status =
+					new Status(
+						IStatus.ERROR,
+						PlatformUI.PLUGIN_ID,
+						IStatus.ERROR,
+						fEmptySelectionMessage,
+						null);
 			}
 		}
 
 		updateStatus(status);
-		
+
 		return status.isOK();
 	}
 
@@ -298,7 +318,7 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
 	protected void cancelPressed() {
 		setResult(null);
 		super.cancelPressed();
-	}	
+	}
 
 	/**
 	 * Creates a filtered list.
@@ -306,19 +326,28 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
 	 * @return returns the filtered list widget.
 	 */
 	protected FilteredList createFilteredList(Composite parent) {
-		int flags= SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL |
-			(fIsMultipleSelection ? SWT.MULTI : SWT.SINGLE);
-			
-		FilteredList list= new FilteredList(parent, flags, fRenderer,
-			fIgnoreCase, fAllowDuplicates, fMatchEmptyString);
+		int flags =
+			SWT.BORDER
+				| SWT.V_SCROLL
+				| SWT.H_SCROLL
+				| (fIsMultipleSelection ? SWT.MULTI : SWT.SINGLE);
 
-		GridData data= new GridData();
-		data.widthHint= convertWidthInCharsToPixels(fWidth);
-		data.heightHint= convertHeightInCharsToPixels(fHeight);
-		data.grabExcessVerticalSpace= true;
-		data.grabExcessHorizontalSpace= true;
-		data.horizontalAlignment= GridData.FILL;
-		data.verticalAlignment= GridData.FILL;
+		FilteredList list =
+			new FilteredList(
+				parent,
+				flags,
+				fRenderer,
+				fIgnoreCase,
+				fAllowDuplicates,
+				fMatchEmptyString);
+
+		GridData data = new GridData();
+		data.widthHint = convertWidthInCharsToPixels(fWidth);
+		data.heightHint = convertHeightInCharsToPixels(fHeight);
+		data.grabExcessVerticalSpace = true;
+		data.grabExcessHorizontalSpace = true;
+		data.horizontalAlignment = GridData.FILL;
+		data.verticalAlignment = GridData.FILL;
 		list.setLayoutData(data);
 		list.setFont(parent.getFont());
 		list.setFilter((fFilter == null ? "" : fFilter)); //$NON-NLS-1$		
@@ -332,47 +361,47 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
 			}
 		});
 
-		fFilteredList= list;		
+		fFilteredList = list;
 
-		return list;		
+		return list;
 	}
 
 	// 3515	
 	private void handleWidgetSelected() {
-		Object[] newSelection= fFilteredList.getSelection();
-		
+		Object[] newSelection = fFilteredList.getSelection();
+
 		if (newSelection.length != fSelection.length) {
-			fSelection= newSelection;
+			fSelection = newSelection;
 			handleSelectionChanged();
 		} else {
-			for (int i= 0; i != newSelection.length; i++) {
+			for (int i = 0; i != newSelection.length; i++) {
 				if (!newSelection[i].equals(fSelection[i])) {
-					fSelection= newSelection;
+					fSelection = newSelection;
 					handleSelectionChanged();
 					break;
 				}
 			}
-		}		
+		}
 	}
 
 	protected Text createFilterText(Composite parent) {
-		Text text= new Text(parent, SWT.BORDER);
+		Text text = new Text(parent, SWT.BORDER);
 
-		GridData data= new GridData();
-		data.grabExcessVerticalSpace= false;
-		data.grabExcessHorizontalSpace= true;
-		data.horizontalAlignment= GridData.FILL;
-		data.verticalAlignment= GridData.BEGINNING;
+		GridData data = new GridData();
+		data.grabExcessVerticalSpace = false;
+		data.grabExcessHorizontalSpace = true;
+		data.horizontalAlignment = GridData.FILL;
+		data.verticalAlignment = GridData.BEGINNING;
 		text.setLayoutData(data);
 		text.setFont(parent.getFont());
 
 		text.setText((fFilter == null ? "" : fFilter)); //$NON-NLS-1$
-		
-		Listener listener= new Listener() {
+
+		Listener listener = new Listener() {
 			public void handleEvent(Event e) {
 				fFilteredList.setFilter(fFilterText.getText());
 			}
-		};		
+		};
 		text.addListener(SWT.Modify, listener);
 
 		text.addKeyListener(new KeyListener() {
@@ -380,12 +409,13 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
 				if (e.keyCode == SWT.ARROW_DOWN)
 					fFilteredList.setFocus();
 			}
-			
-			public void keyReleased(KeyEvent e) {}
+
+			public void keyReleased(KeyEvent e) {
+			}
 		});
 
-		fFilterText= text;
-				
+		fFilterText = text;
+
 		return text;
 	}
 
@@ -400,11 +430,11 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
 		});
 		return getReturnCode();
 	}
-	
+
 	private void access$superOpen() {
 		super.open();
-	} 
-	
+	}
+
 	/*
 	 * @see Window#create(Shell)
 	 */
@@ -413,22 +443,22 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
 
 		Assert.isNotNull(fFilteredList);
 
-    	if (fFilteredList.isEmpty()) {
-    		handleEmptyList();
-     	} else {
-	     	validateCurrentSelection();
+		if (fFilteredList.isEmpty()) {
+			handleEmptyList();
+		} else {
+			validateCurrentSelection();
 			fFilterText.selectAll();
 			fFilterText.setFocus();
-     	}
+		}
 	}
-	
+
 	/**
 	 * Handles empty list by disabling widgets.
 	 */
 	protected void handleEmptyList() {
-     	fMessage.setEnabled(false);
-     	fFilterText.setEnabled(false);
-     	fFilteredList.setEnabled(false);		
+		fMessage.setEnabled(false);
+		fFilterText.setEnabled(false);
+		fFilteredList.setEnabled(false);
 	}
-	
+
 }
