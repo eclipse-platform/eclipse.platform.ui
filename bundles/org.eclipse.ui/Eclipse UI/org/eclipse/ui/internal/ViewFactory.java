@@ -22,34 +22,6 @@ public class ViewFactory
 	private IViewRegistry viewReg;
 	private ReferenceCounter counter;
 
-	/**
-	 * Capture the information about a view.
-	 */
-	public class ViewRec {
-		public ViewRec(IViewDescriptor desc, IViewPart view) {
-			this.desc = desc;
-			this.view = view;
-			addRef();
-		}
-		public IViewDescriptor getDesc() { 
-			return desc;
-		}
-		public IViewPart getView() { 
-			return view;
-		}
-		public void addRef() { 
-			++ refCount;	
-		}
-		public void removeRef() { 
-			-- refCount; 
-		}
-		public boolean isNotReferenced() { 
-			return (refCount <= 0); 
-		}
-		public IViewDescriptor desc;
-		public IViewPart view;
-		private int refCount; 
-	}
 /**
  * ViewManager constructor comment.
  */

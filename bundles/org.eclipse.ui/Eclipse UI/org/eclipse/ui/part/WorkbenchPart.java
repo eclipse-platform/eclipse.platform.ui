@@ -27,12 +27,14 @@ import java.net.*;
  */
 public abstract class WorkbenchPart implements IWorkbenchPart, IExecutableExtension {
 	private String title;
-	private Image descriptorImage;
+	private ImageDescriptor imageDescriptor;
 	private Image titleImage;
 	private String toolTip;
 	private IConfigurationElement configElement;
 	private IWorkbenchPartSite partSite;
 	private ListenerList propChangeListeners = new ListenerList(2);
+	
+	private static ReferenceCounter imageCache = new ReferenceCounter();
 /**
  * Creates a new workbench part.
  */
@@ -62,9 +64,11 @@ public abstract void createPartControl(Composite parent);
  * loaded by <code>setInitializationData</code>. Subclasses may extend.
  */
 public void dispose() {
-	if (descriptorImage != null) {
-		descriptorImage.dispose();
-		descriptorImage = null;
+	Image image = (Image)imageCache.get(imageDescriptor);
+	if (image != null) {
+		int count = imageCache.removeRef(imageDescriptor);
+		if(count <= 0)
+			image.dispose();
 	}
 	
 	// Clear out the property change listeners as we
@@ -190,11 +194,18 @@ public void setInitializationData(IConfigurationElement cfig, String propertyNam
 			IPluginDescriptor pd = cfig.getDeclaringExtension()
 				.getDeclaringPluginDescriptor();
 			URL fullPathString = new URL(pd.getInstallURL(), strIcon);
-			ImageDescriptor imageDesc = ImageDescriptor.createFromURL(fullPathString);
-			// remember the image in a separate field than titleImage,
-			// since it must be disposed even if the titleImage is changed to something else
-			descriptorImage = imageDesc.createImage();
-			titleImage = descriptorImage;
+			imageDescriptor = ImageDescriptor.createFromURL(fullPathString);
+			/* remember the image in a separatly from titleImage,
+			 * since it must be disposed even if the titleImage is changed
+			 * to something else*/
+			Image image = (Image)imageCache.get(imageDescriptor);
+			if(image != null) {
+				imageCache.addRef(imageDescriptor);
+			} else {
+				image = imageDescriptor.createImage();
+				imageCache.put(imageDescriptor,image);
+			}
+			titleImage = image;
 		} catch (MalformedURLException e) {
 		}
 	}
@@ -237,4 +248,5 @@ protected void setTitleToolTip(String text) {
 	this.toolTip = text;
 	firePropertyChange(IWorkbenchPart.PROP_TITLE);
 }
+
 }

@@ -53,6 +53,9 @@ public class WorkbenchWindow extends ApplicationWindow
 	private Label separator3;
 	private ToolBarManager shortcutBar;
 	private WorkbenchActionBuilder builder;
+	private boolean updateDisabled = true;
+	private boolean closing = false;
+	
 	final private String TAG_INPUT = "input";//$NON-NLS-1$
 	final private String TAG_LAYOUT = "layout";//$NON-NLS-1$
 	final private String TAG_FOCUS = "focus";//$NON-NLS-1$
@@ -249,6 +252,8 @@ protected void addShortcutBar(int style) {
 private boolean busyClose() {
 	// Only do the check if it is OK to close if we are not closing via the
 	// workbench as the workbench will call this itself
+	closing = true;
+	updateDisabled = true;
 	int count = workbench.getWorkbenchWindowCount();
 	if (count <= 1 && !workbench.isClosing())
 		return workbench.close();
@@ -291,6 +296,11 @@ public boolean close() {
 	});
 	return ret[0];
 }
+
+private boolean isClosing() {
+	return closing || workbench.isClosing();
+}
+
 /**
  * Close all of the pages.
  */
@@ -585,6 +595,8 @@ public IWorkbench getWorkbench() {
  * Unconditionally close this window.
  */
 public boolean hardClose() {
+	closing = true;
+	updateDisabled = true;
 	closeAllPages();
 	builder.dispose();
 	return super.close();
@@ -898,6 +910,11 @@ public void setActivePage(final IWorkbenchPage in) {
 				}
 			}
 
+			if(isClosing())
+				return;
+				
+			updateDisabled = false;
+					
 			// Update action bars ( implicitly calls updateActionBars() )
 			updateTitle();
 			updateActionSets();
@@ -957,6 +974,8 @@ private void showShortcutBarPopup(MouseEvent e) {
  * update the action bars.
  */
 public void updateActionBars() {
+	if (updateDisabled)
+		return;
 	// updateAll required in order to enable accelerators on pull-down menus
 	getMenuBarManager().updateAll(false);
 	getToolBarManager().update(false);
@@ -968,6 +987,9 @@ public void updateActionBars() {
  * within the prespective.  
  */
 public void updateActionSets() {
+	if (updateDisabled)
+		return;
+		
 	if (activePage == null)
 		actionPresentation.clearActionSets();
 	else
@@ -986,6 +1008,9 @@ public void updateActionSets() {
  * Updates the content and layout for a tab.
  */
 public void updateShortcut(IWorkbenchPage page) {
+	if(updateDisabled)
+		return;
+		
 	IContributionItem item = findShortcut(page);
 	if (page != null) {
 		SetPageAction action = (SetPageAction)((ActionContributionItem)item).getAction();
@@ -998,6 +1023,9 @@ public void updateShortcut(IWorkbenchPage page) {
  * Updates the window title.
  */
 public void updateTitle() {
+	if(updateDisabled)
+		return;
+		
 	String title = workbench.getProductInfo().getName();
 	if (activePage != null) {
 		IPerspectiveDescriptor persp = activePage.getPerspective();
