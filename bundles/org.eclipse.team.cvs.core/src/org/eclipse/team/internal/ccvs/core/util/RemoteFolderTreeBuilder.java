@@ -96,6 +96,13 @@ public class RemoteFolderTreeBuilder {
 		updateLocalOptions = (LocalOption[])localOptions.toArray(new LocalOption[localOptions.size()]);
 	}
 	
+	private LocalOption[] getOptionsWithoutTag() {
+		// Build the local options
+		List localOptions = new ArrayList();
+		localOptions.add(Update.RETRIEVE_ABSENT_DIRECTORIES);
+		return (LocalOption[])localOptions.toArray(new LocalOption[localOptions.size()]);
+	}
+	
 	public static RemoteFolderTree buildBaseTree(CVSRepositoryLocation repository, ICVSFolder root, CVSTag tag, IProgressMonitor monitor) throws CVSException {
 		RemoteFolderTreeBuilder builder = new RemoteFolderTreeBuilder(repository, root, tag);
  		return builder.buildBaseTree(null, root, monitor);
@@ -418,7 +425,7 @@ public class RemoteFolderTreeBuilder {
 			Policy.checkCanceled(monitor);
 			status = Command.UPDATE.execute(session,
 				new GlobalOption[] { Command.DO_NOT_CHANGE },
-				updateLocalOptions,
+				getOptionsWithoutTag(),
 				new String[] { localPath.toString() },
 				new UpdateListener(listener),
 				monitor);
