@@ -229,7 +229,7 @@ class FakeFeature implements IFeature {
 				return description;
 			}
 			public URL getURL() {
-				return null;
+				return infoURL;
 			}
 		};
 	}

@@ -214,7 +214,7 @@ private void inputChanged(IFeature feature) {
 	if (imageLabel.getImage()==null ||
 		!imageLabel.getImage().equals(providerImage))
 	imageLabel.setImage(providerImage);
-	infoLinkURL = feature.getInfoURL();
+	infoLinkURL = feature.getDescription().getURL();
 	infoLinkLabel.setVisible(infoLinkURL!=null);
 	if (feature.getSite() instanceof ILocalSite) {
 		doButton.setText("Uninstall");
