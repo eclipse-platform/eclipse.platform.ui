@@ -5,6 +5,7 @@ package org.eclipse.update.internal.core;
  */
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -13,7 +14,6 @@ import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.InvalidSiteTypeException;
 import org.eclipse.update.core.model.SiteModelFactory;
 import org.xml.sax.SAXException;
-import org.eclipse.update.internal.core.Policy;
 
 public class SiteURLFactory extends BaseSiteFactory {
 
@@ -45,7 +45,9 @@ public class SiteURLFactory extends BaseSiteFactory {
 			SiteURLContentProvider contentProvider = new SiteURLContentProvider(url);
 
 			URL resolvedURL = URLEncoder.encode(url);
-			siteStream = resolvedURL.openStream();
+			URLConnection connection = resolvedURL.openConnection();
+			UpdateManagerUtils.checkConnectionResult(connection);
+			siteStream = connection.getInputStream();
 
 			SiteModelFactory factory = (SiteModelFactory) this;
 			site = (Site) factory.parseSite(siteStream);

@@ -4,6 +4,7 @@ package org.eclipse.update.internal.core;
  * All Rights Reserved.
  */
 import java.io.*;
+import java.net.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
@@ -442,5 +443,32 @@ public class UpdateManagerUtils {
 	 		return new IFeatureReference[0];
 	 		 	
 	 	return getParentFeatures(childFeature,possiblesParent);	
-	 }	 
+	 }	
+	 
+	/*
+	 * If the return code of the HTTP connection is not 200 (OK)
+	 * thow an IO exception
+	 * 
+	 */
+	 public static void checkConnectionResult(URLConnection connection)throws IOException {
+		// did the server return an error code ?
+		if (connection instanceof HttpURLConnection) {
+			int result = HttpURLConnection.HTTP_OK;
+			HttpURLConnection httpConnection = null;
+			URL url = null;
+			try {
+				httpConnection = (HttpURLConnection) connection;
+				url = httpConnection.getURL();
+				result = httpConnection.getResponseCode();
+			} catch (IOException e){
+				// if an error occured, try again
+				result = httpConnection.getResponseCode();
+			}		
+			if (result != HttpURLConnection.HTTP_OK){
+				String serverMsg = httpConnection.getResponseMessage();
+				throw new IOException(Policy.bind("ContentReference.HttpNok", new Object[] {new Integer(result), serverMsg,url})); //$NON-NLS-1$						
+			}
+		}	 	
+	 }
+	  
 }
