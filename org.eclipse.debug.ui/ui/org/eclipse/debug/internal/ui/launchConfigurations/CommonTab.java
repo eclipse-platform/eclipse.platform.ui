@@ -176,6 +176,11 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		
 		setRunPerspectiveButton(new Button(perspComp, SWT.CHECK));
 		getRunPerspectiveButton().setText("R&un Mode:");
+		getRunPerspectiveButton().addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent evt) {
+				handleRunPerspectiveSelected();
+			}
+		});
 				
 		setRunPerspectiveCombo(new Combo(perspComp, SWT.DROP_DOWN | SWT.READ_ONLY));
 		gd = new GridData(GridData.GRAB_HORIZONTAL);
@@ -184,6 +189,11 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		
 		setDebugPerspectiveButton(new Button(perspComp, SWT.CHECK));
 		getDebugPerspectiveButton().setText("&Debug Mode:");
+		getDebugPerspectiveButton().addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent evt) {
+				handleDebugPerspectiveSelected();
+			}
+		});
 		
 		setDebugPerspectiveCombo(new Combo(perspComp, SWT.DROP_DOWN |SWT.READ_ONLY));
 		gd = new GridData(GridData.GRAB_HORIZONTAL);
@@ -368,6 +378,14 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		return getSharedRadioButton().getSelection();
 	}
 	
+	protected void handleRunPerspectiveSelected() {
+		fRunPerspectiveCombo.setEnabled(fRunPerspectiveButton.getSelection());
+	}
+	
+	protected void handleDebugPerspectiveSelected() {
+		fDebugPerspectiveCombo.setEnabled(fDebugPerspectiveButton.getSelection());
+	}
+	
 	protected void handleSharedLocationButtonSelected() {
 		ContainerSelectionDialog dialog = new ContainerSelectionDialog(getShell(),
 																	   getWorkspaceRoot(),
@@ -441,6 +459,8 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		updateRunPerspectiveFromConfig(configuration);
 		updateDebugPerspectiveFromConfig(configuration);
 		updateFavoritesFromConfig(configuration);
+		handleDebugPerspectiveSelected();
+		handleRunPerspectiveSelected();
 	}
 	
 	protected void updateLocalSharedFromConfig(ILaunchConfiguration config) {
