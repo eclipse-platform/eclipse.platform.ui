@@ -36,16 +36,12 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ControlAdapter;
-import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -119,8 +115,7 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 		composite.setFont(font);
 		
 		createTable(composite);
-		Composite buttonComposite= createButtons(composite);
-		configureTableResizing(composite, buttonComposite, variableTable.getTable());
+		createButtons(composite);
 		return composite;
 	}
 	
@@ -138,7 +133,7 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 		layout.numColumns = 1;
 		GridData gridData = new GridData(GridData.FILL_BOTH);
 		gridData.heightHint = 150;
-		gridData.widthHint = 300;
+		gridData.widthHint = 400;
 		tableComposite.setLayout(layout);
 		tableComposite.setLayoutData(gridData);
 		tableComposite.setFont(font);
@@ -186,9 +181,8 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 	/**
 	 * Creates the new/edit/remove buttons for the variable table
 	 * @param parent the composite in which the buttons should be created
-	 * @return the button composite that is created
 	 */
-	private Composite createButtons(Composite parent) {
+	private void createButtons(Composite parent) {
 		// Create button composite
 		Composite buttonComposite = new Composite(parent, SWT.NONE);
 		GridLayout glayout = new GridLayout();
@@ -229,8 +223,6 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 			}
 		});
 		envRemoveButton.setEnabled(false);
-		
-		return buttonComposite;
 	}
 	
 	private void handleAddButtonPressed() {
@@ -427,42 +419,5 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 			}
 			return null;
 		}
-	}
-	
-	/**
-	 * Correctly resizes the table so no phantom columns appear
-	 */
-	private void configureTableResizing(final Composite parent, final Composite buttons, final Table table) {
-		parent.addControlListener(new ControlAdapter() {
-			public void controlResized(ControlEvent e) {
-				Rectangle area = parent.getClientArea();
-				Point preferredSize = table.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-				int width = area.width - 2 * table.getBorderWidth();
-				if (preferredSize.y > area.height) {
-					// Subtract the scrollbar width from the total column width
-					// if a vertical scrollbar will be required
-					Point vBarSize = table.getVerticalBar().getSize();
-					width -= vBarSize.x;
-				}
-				width-= buttons.getSize().x;
-				Point oldSize = table.getSize();
-				
-				if (oldSize.x > width) {
-					// table is getting smaller so make the columns
-					// smaller first and then resize the table to
-					// match the client area width
-					table.getColumn(0).setWidth(width/2);
-					table.getColumn(1).setWidth(width/2);
-					table.setSize(width, area.height);
-				} else {
-					// table is getting bigger so make the table
-					// bigger first and then make the columns wider
-					// to match the client area width
-					table.setSize(width, area.height);
-					table.getColumn(0).setWidth(width/2);
-					table.getColumn(1).setWidth(width/2);
-				 }
-			}
-		});
 	}
 }
