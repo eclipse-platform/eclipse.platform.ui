@@ -477,7 +477,7 @@ public class RegistryObjectManager implements IObjectManager {
 		for (int i = 0; i < exts.length; i++) {
 			Extension tmp = (Extension) basicGetObject(exts[i], RegistryObjectManager.EXTENSION);
 			actualObjects.put(new Integer(exts[i]), tmp);
-			collectChildren(tmp, actualObjects);
+			collectChildren(tmp, 0, actualObjects);
 		}
 		for (int i = 0; i < xpts.length; i++) {
 			ExtensionPoint xpt = (ExtensionPoint) basicGetObject(xpts[i], RegistryObjectManager.EXTENSION_POINT);
@@ -502,11 +502,11 @@ public class RegistryObjectManager implements IObjectManager {
 		return new TemporaryObjectManager(object, this);
 	}
 
-	private void collectChildren(RegistryObject ce, Map collector) {
-		ConfigurationElement[] children = (ConfigurationElement[]) getObjects(ce.getRawChildren(), ce.extraDataOffset == -1 ? RegistryObjectManager.CONFIGURATION_ELEMENT : RegistryObjectManager.THIRDLEVEL_CONFIGURATION_ELEMENT);
+	private void collectChildren(RegistryObject ce, int level, Map collector) {
+		ConfigurationElement[] children = (ConfigurationElement[]) getObjects(ce.getRawChildren(), level == 0 || ce.extraDataOffset == -1 ? RegistryObjectManager.CONFIGURATION_ELEMENT : RegistryObjectManager.THIRDLEVEL_CONFIGURATION_ELEMENT);
 		for (int j = 0; j < children.length; j++) {
 			collector.put(new Integer(children[j].getObjectId()), children[j]);
-			collectChildren(children[j], collector);
+			collectChildren(children[j], level+1, collector);
 		}
 	}
 
