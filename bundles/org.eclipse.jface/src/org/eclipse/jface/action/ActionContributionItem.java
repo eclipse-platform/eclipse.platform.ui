@@ -14,7 +14,6 @@ package org.eclipse.jface.action;
 import java.util.*;
 
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.instrumentation.JFaceInstrumentationManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -481,18 +480,6 @@ private void handleWidgetDispose(Event e) {
  * Handles a widget selection event.
  */
 private void handleWidgetSelection(Event e, boolean selection) {
-	
-	//	instrumentation listener stuff
- 	IContributionManager icm = this.getParent();
-	if (icm instanceof ContributionManager) {
-	 ContributionManager cm = (ContributionManager) icm;
-	  if (widget instanceof MenuItem) {
-		  MenuItem mi = (MenuItem) widget;
-		  if(cm != null) {
-			  JFaceInstrumentationManager.fireAction(action.getDescription(), belongsToContextMenu(mi));
-		  }
-	  }
-	}
 	  
 	Widget item= e.widget;
 	if (item != null) {

@@ -13,7 +13,7 @@ package org.eclipse.jface.action;
 import java.util.*;
 import java.util.List;
 
-import org.eclipse.jface.instrumentation.JFaceInstrumentationManager;
+
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MenuAdapter;
@@ -254,13 +254,7 @@ public IContributionItem findUsingPath(String path) {
  *
  * @see IMenuListener#menuAboutToShow
  */
-private void fireAboutToShow(IMenuManager manager) {
-	
-	if (menu.getParentItem() != null)
-		JFaceInstrumentationManager.menuShown(menu.getParentItem().getText());	
-	else
-		JFaceInstrumentationManager.menuShown("ContextMenu");
-			
+private void fireAboutToShow(IMenuManager manager) {	
 	Object[] listeners = this.listeners.getListeners();
 	for (int i = 0; i < listeners.length; ++i) {
 		((IMenuListener) listeners[i]).menuAboutToShow(manager);
