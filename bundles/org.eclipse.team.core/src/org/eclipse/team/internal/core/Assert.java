@@ -14,7 +14,9 @@ package org.eclipse.team.internal.core;
 
 public final class Assert {
 	public static class AssertionFailedException extends RuntimeException {
-		public AssertionFailedException() {
+	    // Field required to avoid compiler warning
+		private static final long serialVersionUID = -3361573629971779153L;
+        public AssertionFailedException() {
 		}
 		public AssertionFailedException(String detail) {
 			super(Policy.bind("Assert.assertionFailed", detail)); //$NON-NLS-1$

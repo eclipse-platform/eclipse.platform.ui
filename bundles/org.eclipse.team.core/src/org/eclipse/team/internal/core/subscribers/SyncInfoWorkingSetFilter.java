@@ -40,7 +40,6 @@ public class SyncInfoWorkingSetFilter extends FastSyncInfoFilter {
 	private boolean isIncluded(IResource resource) {
 		// otherwise, if their is a parent of the resource in the set,
 		// it is included
-		List result = new ArrayList();
 		for (int i = 0; i < resources.length; i++) {
 			IResource setResource = resources[i];
 			if (isParent(setResource, resource)) {

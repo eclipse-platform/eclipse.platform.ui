@@ -100,7 +100,7 @@ public class SyncInfoStatistics {
 		Iterator it = stats.keySet().iterator();
 		while (it.hasNext()) {
 			Integer kind = (Integer) it.next();
-			out.append(SyncInfo.kindToString(kind.intValue()) + ": " + ((Long)stats.get(kind)) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
+			out.append(SyncInfo.kindToString(kind.intValue()) + ": " + stats.get(kind) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return out.toString();
 	}

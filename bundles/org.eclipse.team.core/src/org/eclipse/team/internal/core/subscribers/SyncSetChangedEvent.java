@@ -31,8 +31,6 @@ public class SyncSetChangedEvent implements ISyncInfoSetChangeEvent {
 	
 	private boolean reset = false;
 
-	private boolean errorAdded;
-
 	private List errors = new ArrayList();
 
 	public SyncSetChangedEvent(SyncInfoSet set) {

@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.team.internal.core.DefaultProjectSetCapability;
 import org.eclipse.team.internal.core.Policy;
 import org.eclipse.team.internal.core.TeamPlugin;
@@ -93,41 +94,38 @@ public abstract class RepositoryProviderType {
 	}
 	
 	private static RepositoryProviderType newProviderType(String id) {
-		TeamPlugin plugin = TeamPlugin.getPlugin();
-		if (plugin != null) {
-			IExtensionPoint extension = plugin.getDescriptor().getExtensionPoint(TeamPlugin.REPOSITORY_EXTENSION);
-			if (extension != null) {
-				IExtension[] extensions =  extension.getExtensions();
-				for (int i = 0; i < extensions.length; i++) {
-					IConfigurationElement [] configElements = extensions[i].getConfigurationElements();
-					for (int j = 0; j < configElements.length; j++) {
-						String extensionId = configElements[j].getAttribute("id"); //$NON-NLS-1$
-						
-						if (extensionId != null && extensionId.equals(id)) {
-							try {
-								RepositoryProviderType providerType;
-								//Its ok not to have a typeClass extension.  In this case, a default instance will be created.
-								if(configElements[j].getAttribute("typeClass") == null) { //$NON-NLS-1$
-									providerType = new DefaultRepositoryProviderType();
-								} else {
-									providerType = (RepositoryProviderType) configElements[j].createExecutableExtension("typeClass"); //$NON-NLS-1$
-								}
-								
-								providerType.setID(id);
-								allProviderTypes.put(id, providerType);
-								return providerType;
-							} catch (CoreException e) {
-								TeamPlugin.log(e);
-							} catch (ClassCastException e) {
-								String className = configElements[j].getAttribute("typeClass"); //$NON-NLS-1$
-								TeamPlugin.log(IStatus.ERROR, Policy.bind("RepositoryProviderType.invalidClass", id, className), e); //$NON-NLS-1$
+		IExtensionPoint extension = Platform.getExtensionRegistry().getExtensionPoint(TeamPlugin.ID, TeamPlugin.REPOSITORY_EXTENSION);
+		if (extension != null) {
+			IExtension[] extensions =  extension.getExtensions();
+			for (int i = 0; i < extensions.length; i++) {
+				IConfigurationElement [] configElements = extensions[i].getConfigurationElements();
+				for (int j = 0; j < configElements.length; j++) {
+					String extensionId = configElements[j].getAttribute("id"); //$NON-NLS-1$
+					
+					if (extensionId != null && extensionId.equals(id)) {
+						try {
+							RepositoryProviderType providerType;
+							//Its ok not to have a typeClass extension.  In this case, a default instance will be created.
+							if(configElements[j].getAttribute("typeClass") == null) { //$NON-NLS-1$
+								providerType = new DefaultRepositoryProviderType();
+							} else {
+								providerType = (RepositoryProviderType) configElements[j].createExecutableExtension("typeClass"); //$NON-NLS-1$
 							}
-							return null;
+							
+							providerType.setID(id);
+							allProviderTypes.put(id, providerType);
+							return providerType;
+						} catch (CoreException e) {
+							TeamPlugin.log(e);
+						} catch (ClassCastException e) {
+							String className = configElements[j].getAttribute("typeClass"); //$NON-NLS-1$
+							TeamPlugin.log(IStatus.ERROR, Policy.bind("RepositoryProviderType.invalidClass", id, className), e); //$NON-NLS-1$
 						}
+						return null;
 					}
 				}
-			}		
-		}
+			}
+		}		
 		return null;
 	}	
 	

@@ -30,7 +30,6 @@ public class ResourceVariantCacheEntry {
 	private String id;
 	private String filePath;
 	private ResourceVariantCache cache;
-	private byte[] syncBytes;
 	private int state = UNINITIALIZED;
 	private long lastAccess;
 	private CachedResourceVariant resourceVariant;

@@ -77,7 +77,6 @@ public abstract class SyncSetInput {
 
 	protected void remove(IResource resource)  {
 		SyncInfo oldInfo = syncSet.getSyncInfo(resource);
-		boolean wasOutOfSync = oldInfo != null;
 		if (oldInfo != null) {
 			syncSet.remove(resource);
 		}
