@@ -1131,6 +1131,25 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 						copyToClipboard(selection.x, selection.y, false, textWidget);
 				}
 				break;
+				
+			case DELETE:
+				
+				if (redraws()) {
+					try {
+						selection= getSelectedRange();
+						if (selection.y == 0)
+							deleteMarkedRegion();
+						else
+							deleteTextRange(selection.x, selection.y, textWidget);
+						
+						selection= textWidget.getSelectionRange();
+						fireSelectionChanged(selection.x, selection.y);
+					} catch (BadLocationException x) {
+						// ignore
+					}
+				}
+				break;
+				
 			
 			case EXPAND_ALL:
 				if (redraws())
@@ -1178,30 +1197,33 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		boolean isSegmented= visible != null && !visible.equals(new Region(0, length));
 		return isSegmented;
 	}
+	
+	private IRegion getMarkedRegion() {
+		if (getTextWidget() == null)
+			return null;
+		
+		if (fMarkPosition == null || fMarkPosition.isDeleted())
+			return null;
+		
+		int start= fMarkPosition.getOffset();
+		int end= getSelectedRange().x;
+		
+		return start > end ? new Region (end, start - end) : new Region(start, end - start);
+	}
 
 	/*
 	 * @see org.eclipse.jface.text.TextViewer#copyMarkedRegion(boolean)
 	 */
 	protected void copyMarkedRegion(boolean delete) {
-		
-		StyledText textWidget= getTextWidget();
-		
-		if (textWidget == null)
-			return;
-		
-		if (fMarkPosition == null || fMarkPosition.isDeleted())
-			return;
-		
-		int start= fMarkPosition.getOffset();
-		int end= getSelectedRange().x;
-		
-		if (start > end) {
-			start= start + end;
-			end= start - end;
-			start= start - end;
-		}
-		
-		copyToClipboard(start, end - start, delete, textWidget);		
+		IRegion markedRegion= getMarkedRegion();
+		if (markedRegion != null)
+			copyToClipboard(markedRegion.getOffset(), markedRegion.getLength(), delete, getTextWidget());		
+	}
+	
+	private void deleteMarkedRegion() throws BadLocationException {
+		IRegion markedRegion= getMarkedRegion();
+		if (markedRegion != null)
+			deleteTextRange(markedRegion.getOffset(), markedRegion.getLength(), getTextWidget());
 	}
 	
 	private void copyToClipboard(int offset, int length, boolean delete, StyledText textWidget) {
@@ -1215,16 +1237,19 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			Object[] data= new Object[] { document.get(offset, length) };
 			clipboard.setContents(data, dataTypes);
 				
-			if (delete) {
-				int widgetCaret= modelOffset2WidgetOffset(offset);
-				textWidget.setSelection(widgetCaret);
-				document.replace(offset, length, null);	
-			}
+			if (delete)
+				deleteTextRange(offset, length, textWidget);
 			
 		} catch (BadLocationException x) {
 		} finally {
 			clipboard.dispose();			
 		}
+	}
+	
+	private void deleteTextRange(int offset, int length, StyledText textWidget) throws BadLocationException {
+		int widgetCaret= modelOffset2WidgetOffset(offset);
+		textWidget.setSelection(widgetCaret);
+		getDocument().replace(offset, length, null);
 	}
 	
 	/**
