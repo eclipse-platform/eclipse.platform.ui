@@ -36,12 +36,6 @@ public void addListener(IResourceChangeListener listener, int eventMask) {
 	}
 	ResourceStats.listenerAdded(listener);
 }
-private void broadcastChanges(ResourceChangeListenerList.ListenerEntry[] resourceListeners, int type, IResourceDelta delta, boolean lockTree) {
-	// if the delta is empty the root's change is undefined, there is nothing to do
-	if (delta == null || delta.getKind() == 0)
-		return;
-	notify(resourceListeners, new ResourceChangeEvent(workspace, type, delta), lockTree);
-}
 
 /**
  * Helper method for the save participant lifecycle computation.  
@@ -49,7 +43,7 @@ private void broadcastChanges(ResourceChangeListenerList.ListenerEntry[] resourc
 public void broadcastChanges(IResourceChangeListener listener, int type, IResourceDelta delta, boolean lockTree) {
 	ResourceChangeListenerList.ListenerEntry[] listeners;
 	listeners = new ResourceChangeListenerList.ListenerEntry[] { new ResourceChangeListenerList.ListenerEntry(listener, type)};
-	broadcastChanges(listeners, type, delta, lockTree);
+	notify(listeners, new ResourceChangeEvent(workspace, type, delta), lockTree);
 }
 
 /**
@@ -61,7 +55,11 @@ public void broadcastChanges(ElementTree lastState, int type, boolean lockTree, 
 		// Be sure to do all of this inside the try/finally as the finally will update the state 
 		// if requested.  This needs to happen regardless of whether people are listening.
 		if (listeners.hasListenerFor(type)) {
-			broadcastChanges(getListeners(), type, getDelta(lastState), lockTree);
+			IResourceDelta delta = getDelta(lastState);
+			// if the delta is empty the root's change is undefined, there is nothing to do
+			if (delta == null || delta.getKind() == 0)
+				return;
+			notify(getListeners(), new ResourceChangeEvent(workspace, type, delta), lockTree);
 		}
 	} finally {
 		// Remember the current state as the last notified state if requested.
