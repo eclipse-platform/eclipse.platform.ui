@@ -138,10 +138,10 @@ public class AltAssistedWizardDialog extends WizardDialog {
 			helpShell.open();
 			helpShell.addControlListener(new ControlListener() {
 				public void controlMoved(ControlEvent e) {
-					syncParentShell();
+					//syncParentShell();
 				}
 				public void controlResized(ControlEvent e) {
-					syncParentShell();
+					//syncParentShell();
 				}
 			});
 			helpWindow = contextHelpWindow;
