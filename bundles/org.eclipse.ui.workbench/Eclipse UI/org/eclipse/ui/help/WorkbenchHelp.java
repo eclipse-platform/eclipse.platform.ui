@@ -31,6 +31,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
@@ -274,6 +275,32 @@ public class WorkbenchHelp {
 	private static Point computePopUpLocation(Display display) {
 		Point point = display.getCursorLocation();
 		return new Point(point.x + 15, point.y);
+	}
+
+
+	/**
+	 * Creates a new help listener for the given command. This retrieves the
+	 * help context ID from the command, and creates an appropriate listener
+	 * based on this.
+	 * 
+	 * @param command
+	 *            The command for which the listener should be created; must
+	 *            not be <code>null</code>.
+	 * @return A help listener; never <code>null</code>.
+	 */
+	public static HelpListener createHelpListener(ICommand command) {
+		// TODO Need a help ID from the context
+		//final String contextId = command.getHelpId();
+		final String contextId = "";
+		return new HelpListener() {
+			public void helpRequested(HelpEvent event) {
+				if (getHelpUI() != null) {
+					IContext context = HelpSystem.getContext(contextId);
+					Point point = computePopUpLocation(event.widget.getDisplay());
+					displayContext(context, point.x, point.y);
+				}
+			}
+		};
 	}
 	
 	/**
