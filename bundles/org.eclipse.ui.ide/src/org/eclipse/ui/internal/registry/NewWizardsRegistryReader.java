@@ -47,7 +47,6 @@ public class NewWizardsRegistryReader extends WizardsRegistryReader {
 	private final static String STR_TRUE = "true";//$NON-NLS-1$
 
 	private class CategoryNode {
-		// @issue new own Category
 		private Category category;
 		private String path;
 		public CategoryNode(Category cat) {
