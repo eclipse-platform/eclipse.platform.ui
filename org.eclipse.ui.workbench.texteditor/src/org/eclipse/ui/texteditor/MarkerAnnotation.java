@@ -43,10 +43,11 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  * @see org.eclipse.core.resources.IMarker
  */
 public class MarkerAnnotation extends Annotation implements IAnnotationExtension {
-	
+
 	/** 
 	 * The layer in which markers representing problem are located.
 	 * @since 2.0
+	 * XXX to be deprecated as of 3.0 use {@link DefaultAnnotation#ERROR_LAYER}
 	 */
 	public final static int PROBLEM_LAYER= 5;
 	
@@ -163,10 +164,10 @@ public class MarkerAnnotation extends Annotation implements IAnnotationExtension
 		
 		if (MarkerUtilities.isMarkerType(fMarker, IMarker.TASK)) {
 			name= ISharedImages.IMG_OBJS_TASK_TSK;
-			layer= 1;
+			layer= DefaultAnnotation.TASK_LAYER;
 		} else if (MarkerUtilities.isMarkerType(fMarker, IMarker.BOOKMARK)) {
 			name= ISharedImages.IMG_OBJS_BKMRK_TSK;
-			layer= 2;
+			layer= DefaultAnnotation.BOOKMARK_LAYER;
 		} else if (MarkerUtilities.isMarkerType(fMarker, IMarker.PROBLEM)) {
 			switch (fMarker.getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO)) {
 				case IMarker.SEVERITY_INFO:
@@ -175,11 +176,11 @@ public class MarkerAnnotation extends Annotation implements IAnnotationExtension
 					break;
 				case IMarker.SEVERITY_WARNING:
 					name= ISharedImages.IMG_OBJS_WARN_TSK;
-					layer= 3;
+					layer= DefaultAnnotation.WARNING_LAYER;
 					break;
 				case IMarker.SEVERITY_ERROR:
 					name= ISharedImages.IMG_OBJS_ERROR_TSK;
-					layer= PROBLEM_LAYER;
+					layer= DefaultAnnotation.ERROR_LAYER;
 					break;
 			}
 		}

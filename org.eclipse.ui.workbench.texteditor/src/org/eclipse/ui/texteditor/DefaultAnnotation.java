@@ -49,9 +49,29 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 public class DefaultAnnotation extends Annotation implements IAnnotationExtension {
 
 	/** 
-	 * The layer in which markers representing problem are located.
+	 * The layer in which task annotations are located.
 	 */
-	public final static int PROBLEM_LAYER= 5;
+	public final static int TASK_LAYER= 1;
+	
+	/** 
+	 * The layer in which bookmarks annotatons are located.
+	 */
+	public final static int BOOKMARK_LAYER= 2;
+
+	/** 
+	 * The layer in which info annotations are located.
+	 */
+	public final static int INFO_LAYER= 3;
+	
+	/** 
+	 * The layer in which warning annotations representing are located.
+	 */
+	public final static int WARNING_LAYER= 4;
+
+	/** 
+	 * The layer in which error annotations representing are located.
+	 */
+	public final static int ERROR_LAYER= 5;
 	
 	/** Internal image registry */
 	private static Map fgImageRegistry;
@@ -142,7 +162,6 @@ public class DefaultAnnotation extends Annotation implements IAnnotationExtensio
 		fSeverity= severity;
 		fIsTemporary= isTemporary;
 		fMessage= message;
-		setLayer(PROBLEM_LAYER + 1);
 		fAnnotationType= annotationType;
 	}
 	
@@ -157,23 +176,23 @@ public class DefaultAnnotation extends Annotation implements IAnnotationExtensio
 		
 		if (isAnnotationType(fAnnotationType, IMarker.TASK)) {
 			name= ISharedImages.IMG_OBJS_TASK_TSK;
-			layer= 1;
+			layer= TASK_LAYER;
 		} else if (isAnnotationType(fAnnotationType, IMarker.BOOKMARK)) {
 			name= ISharedImages.IMG_OBJS_BKMRK_TSK;
-			layer= 2;
+			layer= BOOKMARK_LAYER;
 		} else if (isAnnotationType(fAnnotationType, IMarker.PROBLEM)) {
 			switch (fSeverity) {
 				case IMarker.SEVERITY_INFO:
 					name= ISharedImages.IMG_OBJS_INFO_TSK;
-					layer= 3;
+					layer= INFO_LAYER;
 					break;
 				case IMarker.SEVERITY_WARNING:
 					name= ISharedImages.IMG_OBJS_WARN_TSK;
-					layer= 3;
+					layer= WARNING_LAYER;
 					break;
 				case IMarker.SEVERITY_ERROR:
 					name= ISharedImages.IMG_OBJS_ERROR_TSK;
-					layer= PROBLEM_LAYER;
+					layer= ERROR_LAYER;
 					break;
 			}
 		}
