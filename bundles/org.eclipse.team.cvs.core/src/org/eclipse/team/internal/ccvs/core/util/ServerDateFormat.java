@@ -22,7 +22,7 @@ public class ServerDateFormat extends SimpleDateFormat {
 	public static final String FORMAT = "dd MMM yyyy HH:mm:ss";
 	
 	public ServerDateFormat() {
-		super(FORMAT,new Locale("en","US"));
+		super(FORMAT);
 	}
 
 	/**

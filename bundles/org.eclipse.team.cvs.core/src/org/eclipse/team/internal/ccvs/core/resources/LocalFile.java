@@ -15,6 +15,7 @@ import java.io.OutputStream;
 import java.text.ParseException;
 import java.util.Calendar;
 
+import java.util.TimeZone;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Policy;
@@ -143,7 +144,7 @@ public class LocalFile extends LocalResource implements ICVSFile {
 		
 		if (date==null) {
 			// get the current time
-			calendar = Calendar.getInstance();
+			calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
 			millSec = calendar.getTime().getTime();
 		} else {
 			try {
