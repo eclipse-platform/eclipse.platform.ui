@@ -450,4 +450,15 @@ public interface IWorkbench {
      * @since 3.1
      */
     public IWorkbenchHelpSystem getHelpSystem();
+    
+    /**
+     * Returns a boolean indicating whether the workbench is in the process
+     * of closing.
+     * 
+     * @return <code>true</code> if the workbench is in the process of
+     *         closing, <code>false</code> otherwise
+     * @since 3.1
+     */
+    public boolean isClosing();
+    
 }

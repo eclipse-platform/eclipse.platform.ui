@@ -1099,10 +1099,8 @@ public final class Workbench implements IWorkbench {
         WorkbenchColors.startup();
     }
 
-    /**
-     * Returns <code>true</code> if the workbench is in the process of
-     * closing.
-     * @return boolean
+    /*
+     * (non-Javadoc) Method declared on IWorkbench.
      */
     public boolean isClosing() {
         return isClosing;
