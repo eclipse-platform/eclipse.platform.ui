@@ -90,6 +90,7 @@ class FastViewBar implements IWindowTrim {
 	
 	// Map of string view IDs onto Booleans (true iff horizontally aligned)
 	private Map viewOrientation = new HashMap();
+	private static final int MINIMUM_BOTTOM_WIDTH = 20;
 	
 	/**
 	 * Constructs a new fast view bar for the given workbench window.
@@ -98,7 +99,6 @@ class FastViewBar implements IWindowTrim {
 	 */
 	public FastViewBar(WorkbenchWindow theWindow) {
 		window = theWindow;
-		
 	}
 	
 	/**
@@ -163,11 +163,17 @@ class FastViewBar implements IWindowTrim {
 		// bar if there's nothing in it.
 		if (newSide == SWT.BOTTOM) {
 			controlLayout.numColumns = 2;
-			fastViewLabel = new Label(control, SWT.NONE);
-			fastViewLabel.setImage(WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU));
+			fastViewLabel = new Label(control, SWT.SEPARATOR | SWT.VERTICAL);
+			//fastViewLabel.setImage(WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU));
 			fastViewLabel.addListener(SWT.MenuDetect, listener);
 			moveCursor = new Cursor(control.getDisplay(), SWT.CURSOR_SIZEALL);
 			fastViewLabel.setCursor(moveCursor);
+			GridData data = new GridData(GridData.FILL_VERTICAL);
+			data.heightHint = 10;
+			data.widthHint = 10;
+			data.verticalAlignment = GridData.CENTER;
+			data.horizontalAlignment = GridData.CENTER;
+			fastViewLabel.setLayoutData(data);
 		}
 		fastViewBar.createControl(control);
 		getToolBar().addListener(SWT.MenuDetect, listener);
@@ -465,26 +471,6 @@ class FastViewBar implements IWindowTrim {
 	}
 	
 	/**
-	 * Sets the "expanded" state of the fast view bar. This can be called with
-	 * "false" when the fast view bar is empty to conserve space. 
-	 *  
-	 * @param shouldExpand
-	 */
-	private void expand(boolean shouldExpand) {	
-		if (shouldExpand != visible) {
-			
-			getToolBar().setVisible(true);
-			if (!shouldExpand) {
-				toolBarData.widthHint = HIDDEN_WIDTH;
-			} else {
-				toolBarData.widthHint = SWT.DEFAULT;
-			}
-			
-			visible = shouldExpand;
-		}
-	}
-	
-	/**
 	 * Refreshes the contents to match the fast views in the window's
 	 * current perspective. 
 	 * 
@@ -493,7 +479,29 @@ class FastViewBar implements IWindowTrim {
 	public void update(boolean force) {
 		fastViewBar.update(force);
 		ToolItem[] items = fastViewBar.getControl().getItems();
-		expand(items.length > 0);
+		
+		if (getSide() == SWT.BOTTOM) {
+			toolBarData.widthHint = SWT.DEFAULT;
+			int sz = fastViewBar.getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
+			
+			if (sz < MINIMUM_BOTTOM_WIDTH) {
+				toolBarData.widthHint = MINIMUM_BOTTOM_WIDTH;
+			}
+		} else {
+			boolean shouldExpand = items.length > 0;
+			if (shouldExpand != visible) {
+				
+				getToolBar().setVisible(true);
+				if (!shouldExpand) {
+					toolBarData.widthHint = HIDDEN_WIDTH;
+				} else {
+					toolBarData.widthHint = SWT.DEFAULT;
+				}
+				
+				visible = shouldExpand;
+			}
+		}
+		
 		if (items.length != oldLength) {
 			control.getParent().layout();
 			oldLength = items.length;
