@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
@@ -812,6 +813,52 @@ public abstract class AbstractUIPlugin extends Plugin {
 		savePluginPreferences();
 	}
 
+	/**
+	 * The <code>AbstractUIPlugin</code> implementation of this <code>Plugin</code>
+	 * method refreshes the plug-in actions.  Subclasses may extend this method,
+	 * but must send super first.
+	 * <p>
+	 * WARNING: Plug-ins may not be started in the UI thread.
+	 * The <code>startup()</code> method should not assume that its code runs in
+	 * the UI thread, otherwise SWT thread exceptions may occur on startup.'
+	 * TODO @deprecated 
+	 * In Eclipse 3.0, <code>startup</code> has been replaced by {@link Plugin#start(BundleContext context)}.
+	 * Implementations of <code>startup</code> should be changed to extend
+	 * <code>start(BundleContext context)</code> and call <code>super.start(context)</code>
+	 * instead of <code>super.startup()</code>. Like <code>super.startup()</code>,
+	 * <code>super.stop(context)</code> must be called as the very first thing.
+	 * The <code>startup</code> method is called only for plug-ins which explicitly require the 
+	 * org.eclipse.core.runtime.compatibility plug-in; in contrast,
+	 * the <code>start</code> method is always called.
+	 */
+	public void startup() throws CoreException {
+		// this method no longer does anything
+		// the code that used to be here in 2.1 has moved to start(BundleContext)
+		super.startup();
+	}
+	
+	/**
+	 * The <code>AbstractUIPlugin</code> implementation of this <code>Plugin</code>
+	 * method saves this plug-in's preference and dialog stores and shuts down 
+	 * its image registry (if they are in use). Subclasses may extend this method,
+	 * but must send super first.
+	 * TODO @deprecated 
+	 * In Eclipse 3.0 <code>shutdown</code> has been replaced by {@link Plugin#stop(BundleContext context)}.
+	 * Implementations of <code>shutdown</code> should be changed to extend 
+	 * <code>stop(BundleContext context)</code> and call <code>super.stop(context)</code> 
+	 * instead of <code>super.shutdown()</code>. Unlike <code>super.shutdown()</code>, 
+	 * <code>super.stop(context)</code> must be called as the very <b>last</b> thing rather
+	 * than as the very first thing. A try-finally statement should be used where necessary
+	 * to ensure that <code>super.shutdown()</code> is always done.
+	 * The <code>shutdown</code> method is called only for plug-ins which explicitly require the 
+	 * org.eclipse.core.runtime.compatibility plug-in; 
+	 * in contrast, the <code>stop</code> method is always called.
+	 */
+	public void shutdown() throws CoreException {
+		// this method no longer does anything interesting
+		// the code that used to be here in 2.1 has moved to stop(BundleContext)
+		super.shutdown();
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.Plugin#start(org.osgi.framework.BundleContext)
