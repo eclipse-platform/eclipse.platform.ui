@@ -71,9 +71,11 @@ public class HelpApplication
 		writeHostAndPort();
 		obtainLock();
 		
-		//try running UI loop if possible
-		runUI();
-		// otherwise run a headless loop;
+		if (BaseHelpSystem.MODE_STANDALONE == BaseHelpSystem.getMode()) {
+			//try running UI loop if possible
+			runUI();
+		}
+		//run a headless loop;
 		while (status == STATUS_RUNNING) {
 			try {
 				Thread.sleep(100);
