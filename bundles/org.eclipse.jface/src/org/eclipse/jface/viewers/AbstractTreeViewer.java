@@ -909,7 +909,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
         if (element == null)
             return null;
 
-        Widget w = findItem(element);
+        Widget w = internalGetWidgetToSelect(element);
         if (w == null) {
             if (equals(element, getRoot())) { // stop at root
                 return null;
@@ -937,6 +937,18 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
         }
         return w;
     }
+
+    /**
+     * Returns the widget to be selected for the given element.
+     * 
+     * @param element the element to select
+     * @return the widget to be selected, or <code>null</code> if not found
+     * 
+     * @since 3.1
+     */
+	protected Widget internalGetWidgetToSelect(Object element) {
+		return findItem(element);
+	}
 
     /**
      * Recursively expands the subtree rooted at the given widget to the given

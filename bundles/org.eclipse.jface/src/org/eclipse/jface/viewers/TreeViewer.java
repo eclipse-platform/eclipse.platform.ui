@@ -265,7 +265,7 @@ public class TreeViewer extends AbstractTreeViewer {
         Item[] current = getSelection(getTree());
 
         //Don't bother resetting the same selection
-        if (haveSameData(items, current))
+        if (isSameSelection(items, current))
             return;
 
         TreeItem[] newItems = new TreeItem[items.size()];
@@ -281,7 +281,7 @@ public class TreeViewer extends AbstractTreeViewer {
      * @param current the array of items
      * @return <code>true</code> if the refer to the same elements, <code>false</code> otherwise
      */
-    private boolean haveSameData(List items, Item[] current) {
+    protected boolean isSameSelection(List items, Item[] current) {
         //If they are not the same size then they are not equivalent
         int n = items.size();
         if (n != current.length)
