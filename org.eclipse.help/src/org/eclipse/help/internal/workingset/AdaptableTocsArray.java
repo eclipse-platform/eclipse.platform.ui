@@ -13,7 +13,7 @@ import org.eclipse.help.*;
 /**
  * Makes help resources adaptable and persistable
  */
-public class AdaptableTocs implements IAdaptable {
+public class AdaptableTocsArray implements IAdaptable {
 
 	IToc[] element;
 	AdaptableToc[] children;
@@ -21,7 +21,7 @@ public class AdaptableTocs implements IAdaptable {
 	/**
 	 * This constructor will be called when wrapping help resources.
 	 */
-	AdaptableTocs(IToc[] tocs) {
+	AdaptableTocsArray(IToc[] tocs) {
 		this.element = tocs;
 	}
 
@@ -63,11 +63,11 @@ public class AdaptableTocs implements IAdaptable {
 		if (this == object) {
 			return true;
 		}
-		if (!(object instanceof AdaptableTocs)) {
+		if (!(object instanceof AdaptableTocsArray)) {
 			return false;
 		}
 
-		AdaptableTocs res = (AdaptableTocs) object;
+		AdaptableTocsArray res = (AdaptableTocsArray) object;
 		return (Arrays.equals(asArray(), res.asArray()));
 
 	}

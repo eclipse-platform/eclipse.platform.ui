@@ -69,7 +69,7 @@ public class WorkingSetManager {
 	private SortedSet workingSets = new TreeSet(new WorkingSetComparator());
 	private String locale;
 	private PropertyChange.ListenerList propertyChangeListeners = new PropertyChange.ListenerList();
-	private AdaptableTocs root;
+	private AdaptableTocsArray root;
 	
 	/**
 	 * Constructor
@@ -79,11 +79,11 @@ public class WorkingSetManager {
 		if (locale == null)
 			locale = BootLoader.getNL();
 		this.locale = locale;
-		root = new AdaptableTocs(HelpSystem.getTocManager().getTocs(locale));
+		root = new AdaptableTocsArray(HelpSystem.getTocManager().getTocs(locale));
 		restoreState();
 	}
 
-	public AdaptableTocs getRoot() {
+	public AdaptableTocsArray getRoot() {
 		return root;
 	}
 	
@@ -262,7 +262,7 @@ public class WorkingSetManager {
 			WorkingSet workingSet =
 				restoreWorkingSet((Element) workingSets.item(i));
 			if (workingSet != null) {
-				addWorkingSet(workingSet);
+				this.workingSets.add(workingSet);
 			}
 		}
 	}
@@ -327,7 +327,7 @@ public class WorkingSetManager {
 	/**
 	 * Saves the working sets in the persistence store
 	 */
-	private boolean saveState() {
+	public boolean saveState() {
 		Document doc = new DocumentImpl();
 		Element root = doc.createElement("workingSets");
 		doc.appendChild(root);

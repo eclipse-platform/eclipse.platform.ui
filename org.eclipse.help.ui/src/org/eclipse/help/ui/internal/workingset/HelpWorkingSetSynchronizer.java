@@ -79,14 +79,14 @@ public class HelpWorkingSetSynchronizer
 			.getProperty()
 			.equals(IWorkingSetManager.CHANGE_WORKING_SET_ADD)) {
 			// add the eclipse working set to the help working sets
-			IWorkingSet ws = (IWorkingSet) event.getNewValue();
-			if (helpWSM.getWorkingSet(ws.getName()) == null) {
-				WorkingSet w = createHelpWorkingSet(ws);
-				if (w != null) {
-					mapping.addMapping(w, ws);
-					helpWSM.addWorkingSet(w);
-				}
-			}
+//			IWorkingSet ws = (IWorkingSet) event.getNewValue();
+//			if (helpWSM.getWorkingSet(ws.getName()) == null) {
+//				WorkingSet w = createHelpWorkingSet(ws);
+//				if (w != null) {
+//					mapping.addMapping(w, ws);
+//					helpWSM.addWorkingSet(w);
+//				}
+//			}
 		} else if (event.getProperty().equals(IWorkingSetManager.CHANGE_WORKING_SET_REMOVE)) {
 			// remove the help working set
 			IWorkingSet ws = (IWorkingSet) event.getOldValue();
@@ -97,21 +97,21 @@ public class HelpWorkingSetSynchronizer
 			}
 		} else if (event.getProperty().equals(IWorkingSetManager.CHANGE_WORKING_SET_CONTENT_CHANGE)) {
 			// change the content of the help working set
-			IWorkingSet ws = (IWorkingSet) event.getNewValue();
-			WorkingSet w = mapping.findMapping(ws);
-			if (w == null)
-				System.out.println("error");
-			else
-				w.setElements(getElements(ws));
+//			IWorkingSet ws = (IWorkingSet) event.getNewValue();
+//			WorkingSet w = mapping.findMapping(ws);
+//			if (w == null)
+//				System.out.println("error");
+//			else
+//				w.setElements(getElements(ws));
 
 		} else if (event.getProperty().equals(IWorkingSetManager.CHANGE_WORKING_SET_NAME_CHANGE)) {
 			// change the name of the help working set
-			IWorkingSet ws = (IWorkingSet) event.getNewValue();
-			WorkingSet w = mapping.findMapping(ws);
-			if (w == null)
-				System.out.println("error");
-			else
-				w.setName(ws.getName());
+//			IWorkingSet ws = (IWorkingSet) event.getNewValue();
+//			WorkingSet w = mapping.findMapping(ws);
+//			if (w == null)
+//				System.out.println("error");
+//			else
+//				w.setName(ws.getName());
 		}
 	}
 

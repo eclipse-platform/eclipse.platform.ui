@@ -34,35 +34,42 @@ public class HelpResourceFactory implements IElementFactory {
 	 */
 	public IAdaptable createElement(IMemento memento) {
 
-		// Get the href
-		String href = memento.getString("toc");
-		if (href == null)
+		String name = memento.getString("workingSet");
+		WorkingSet ws = HelpSystem.getWorkingSetManager().getWorkingSet(name);
+		if (ws == null)
 			return null;
-
-		String child_pos = memento.getString("topic");
-		int pos = -1;
-		if (child_pos != null) {
-			try {
-				pos = Integer.parseInt(child_pos);
-			} catch (Exception e) {
-			}
-		}
-
-		AdaptableHelpResource toc = HelpSystem.getWorkingSetManager().getAdaptableToc(href);
-
-		if (toc == null)
-			return null;
+		else
+			return new HelpWorkingSet(ws);
 			
-		if (pos == -1) {
-			// Create the adaptable toc.
-			return toc;
-		} else {
-			// Create the adaptable topic
-			AdaptableTopic[] topics = (AdaptableTopic[])toc.getChildren();
-			if (pos <0 || topics.length <= pos)
-				return null;
-			else
-				return topics[pos]; 
-		}
+//		// Get the href
+//		String href = memento.getString("toc");
+//		if (href == null)
+//			return null;
+//
+//		String child_pos = memento.getString("topic");
+//		int pos = -1;
+//		if (child_pos != null) {
+//			try {
+//				pos = Integer.parseInt(child_pos);
+//			} catch (Exception e) {
+//			}
+//		}
+//
+//		AdaptableHelpResource toc = HelpSystem.getWorkingSetManager().getAdaptableToc(href);
+//
+//		if (toc == null)
+//			return null;
+//			
+//		if (pos == -1) {
+//			// Create the adaptable toc.
+//			return toc;
+//		} else {
+//			// Create the adaptable topic
+//			AdaptableTopic[] topics = (AdaptableTopic[])toc.getChildren();
+//			if (pos <0 || topics.length <= pos)
+//				return null;
+//			else
+//				return topics[pos]; 
+//		}
 	}
 }

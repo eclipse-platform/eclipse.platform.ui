@@ -6,6 +6,7 @@ package org.eclipse.help.internal.workingset;
 
 import java.util.*;
 
+import org.eclipse.help.internal.HelpSystem;
 import org.w3c.dom.*;
 
 public class WorkingSet {
@@ -49,8 +50,7 @@ public class WorkingSet {
 			return;
 		name = newName;
 		
-		// The working set does not inform the manager, to avoid loops 
-		//HelpSystem.getWorkingSetManager().workingSetChanged(this, WorkingSetManager.CHANGE_WORKING_SET_NAME_CHANGE);
+		HelpSystem.getWorkingSetManager().workingSetChanged(this);
 	}
 	
 	public AdaptableHelpResource[] getElements() {
@@ -63,9 +63,8 @@ public class WorkingSet {
 		this.elements = new ArrayList(elements.length);
 		for (int i=0; i<elements.length; i++)
 			this.elements.add(elements[i]);
-			
-		// The working set does not inform the manager, to avoid loops 	
-		//HelpSystem.getWorkingSetManager().workingSetChanged(this, WorkingSetManager.CHANGE_WORKING_SET_CONTENT_CHANGE);
+	
+		HelpSystem.getWorkingSetManager().workingSetChanged(this);
 	}
 	
 	public void saveState(Element parent) {

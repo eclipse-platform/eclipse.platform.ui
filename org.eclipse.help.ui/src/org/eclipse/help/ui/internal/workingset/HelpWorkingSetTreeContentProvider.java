@@ -23,8 +23,8 @@ public class HelpWorkingSetTreeContentProvider
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 	 */
 	public Object[] getChildren(Object parentElement) {
-		if (parentElement instanceof AdaptableTocs)
-			return ((AdaptableTocs)parentElement).getChildren();
+		if (parentElement instanceof AdaptableTocsArray)
+			return ((AdaptableTocsArray)parentElement).getChildren();
 		else if (parentElement instanceof AdaptableToc)
 			return ((AdaptableToc) parentElement).getChildren();
 		else
@@ -45,7 +45,7 @@ public class HelpWorkingSetTreeContentProvider
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 	 */
 	public boolean hasChildren(Object element) {
-		return (element instanceof AdaptableToc || element instanceof AdaptableTocs);
+		return (element instanceof AdaptableToc || element instanceof AdaptableTocsArray);
 	}
 
 	/**

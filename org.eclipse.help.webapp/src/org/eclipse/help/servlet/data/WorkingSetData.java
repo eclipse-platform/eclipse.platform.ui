@@ -27,7 +27,7 @@ public class WorkingSetData extends RequestData {
 
 	public WorkingSetData(ServletContext context, HttpServletRequest request) {
 		super(context, request);
-		AdaptableTocs adaptableTocs = HelpSystem.getWorkingSetManager(getLocale()).getRoot();
+		AdaptableTocsArray adaptableTocs = HelpSystem.getWorkingSetManager(getLocale()).getRoot();
 		tocs = (AdaptableToc[])adaptableTocs.getChildren();
 		isEditMode = "edit".equals(getOperation());
 	}
