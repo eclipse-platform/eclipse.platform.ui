@@ -22,6 +22,7 @@
       <import plugin="org.eclipse.ui.views"/>
       <import plugin="org.eclipse.text"/>
       <import plugin="org.eclipse.jface.text"/>
+      <import plugin="org.eclipse.test.performance"/>
    </requires>
 
 
@@ -1545,5 +1546,39 @@
          	description="A test for the deprecated command scope support"
          	parent="org.eclipse.ui.tests.commands.scope1" />
    </extension>
+   
+   <!-- Performance related components -->
+	<extension point="org.eclipse.ui.editors">
+		<editor 
+			icon="icons/anything.gif" 
+			class="org.eclipse.ui.tests.performance.parts.PerformanceEditorPart" 
+			default="true" 
+			name="Basic Performance Editor" 
+			id="org.eclipse.ui.tests.perf_basic" 
+			extensions="perf_basic"/>
+		<editor 
+			icon="icons/anything.gif" 
+			class="org.eclipse.ui.tests.performance.parts.PerformanceEditorPart:outline" 
+			default="true" 
+			name="Editor w/Outline" 
+			id="org.eclipse.ui.tests.perf_outline" 
+			extensions="perf_outline"/>
+	</extension>
 
+	<extension point="org.eclipse.ui.perspectives">
+		<perspective 
+			class="org.eclipse.ui.tests.performance.PerformancePerspective1" 
+			name="org.eclipse.ui.tests.PerformancePerspective1" 
+			id="org.eclipse.ui.tests.performancePerspective1"/>
+		<perspective 
+			class="org.eclipse.ui.tests.performance.PerformancePerspective2" 
+			name="org.eclipse.ui.tests.PerformancePerspective2" 
+			id="org.eclipse.ui.tests.performancePerspective2"/>
+	</extension>
+	<extension point="org.eclipse.ui.views">
+		<view icon="icons/anything.gif" 
+			class="org.eclipse.ui.tests.performance.parts.PerformanceViewPart" 
+			name="Basic Performance View" 
+			id="org.eclipse.ui.tests.perf_basic"/>
+	</extension>
 </plugin>

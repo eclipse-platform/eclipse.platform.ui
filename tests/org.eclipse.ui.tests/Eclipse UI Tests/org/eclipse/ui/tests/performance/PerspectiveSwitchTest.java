@@ -10,105 +10,90 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.performance;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.net.URL;
-
-import org.eclipse.core.internal.events.BuildCommand;
-import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.test.performance.Dimension;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
-import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.tests.TestPlugin;
-import org.eclipse.ui.tests.util.UITestCase;
 
 /**
  * Test perspective switching.
  */
-public class PerspectiveSwitchTest extends UITestCase {
+public class PerspectiveSwitchTest extends BasicPerformanceTest {
+
+    private String id1;
+    private String id2;
+    private String activeEditor;
 
     /**
      * Constructor.
      * 
-     * @param testName
-     *            Test's name.
+     * @param id
      */
-    public PerspectiveSwitchTest(String testName) {
-        super(testName);
+    public PerspectiveSwitchTest(String [] ids, int tagging) {
+        super("testPerspectiveSwitch:" + ids[0] + "," + ids[1] + ",editor " + ids[2], tagging);
+        this.id1 = ids[0];
+        this.id2 = ids[1];
+        this.activeEditor = ids[2];
     }
-
+	
     /**
-     * Test perspective switching performance. This test always fails.
+     * Test perspective switching performance. 
      */
-    public void testPerspectiveSwitching() throws CoreException, IOException,
-            WorkbenchException {
+    protected void runTest() throws CoreException, WorkbenchException {
         // Get the two perspectives to switch between.
         final IPerspectiveRegistry registry = WorkbenchPlugin.getDefault()
                 .getPerspectiveRegistry();
-        final IPerspectiveDescriptor javaPerspective = registry
-                .findPerspectiveWithId("org.eclipse.jdt.ui.JavaPerspective");
-        final IPerspectiveDescriptor resourcePerspective = registry
-                .findPerspectiveWithId("org.eclipse.ui.resourcePerspective");
+        final IPerspectiveDescriptor perspective1 = registry
+                .findPerspectiveWithId(id1);
+        final IPerspectiveDescriptor perspective2 = registry
+                .findPerspectiveWithId(id2);
 
-        /*
-         * Open a workbench window on the first perspective. Make it the Java
-         * perspective to force plug-in loading.
-         */
-        final Display display = fWorkbench.getDisplay();
-        final IWorkbenchWindow window = fWorkbench.openWorkbenchWindow(
-                javaPerspective.getId(), null);
-
-        // Create a java project.
-        IWorkspace workspace = ResourcesPlugin.getWorkspace();
-        IProject testProject = workspace.getRoot().getProject(
-                "PerspectiveSwitchTest Project");
-        testProject.create(null);
-        testProject.open(null);
-        IProjectDescription projectDescription = testProject.getDescription();
-        String[] natureIds = { "org.eclipse.jdt.core.javanature" };
-        projectDescription.setNatureIds(natureIds);
-        ICommand buildCommand = new BuildCommand();
-        buildCommand.setBuilderName("org.eclipse.jdt.core.javabuilder");
-        projectDescription.setBuildSpec(new ICommand[] { buildCommand });
-        testProject.setDescription(projectDescription, null);
-
-        // Create a test java file.
-        TestPlugin plugin = TestPlugin.getDefault();
-        URL fullPathString = plugin.getDescriptor().find(
-                new Path("data/PerspectiveSwitchSourceCode.txt"));
-        IPath path = new Path(fullPathString.getPath());
-        File file = path.toFile();
-        FileInputStream inputStream = new FileInputStream(file);
-        IFile javaFile = testProject.getFile("Util.java");
-        javaFile.create(inputStream, true, null);
-
-        // Open the file.
-        IDE.openEditor(window.getActivePage(), javaFile, true);
-
-        // Switch between the two perspectives one hundred times.
-        long elapsedTime = -System.currentTimeMillis();
-        for (int i = 0; i < 100; i++) {
-            window.getActivePage().setPerspective(resourcePerspective);
-            while (display.readAndDispatch())
-                ; // allow repaints
-            window.getActivePage().setPerspective(javaPerspective);
-            while (display.readAndDispatch())
-                ; // allow repaints
+        // Don't fail if we reference an unknown perspective ID. This can be
+        // a normal occurrance since the test suites reference JDT perspectives, which
+        // might not exist. Just skip the test.
+        if (perspective1 == null) {
+            System.out.println("Unknown perspective ID: " + id1);
+            return;
         }
-        elapsedTime += System.currentTimeMillis();
-        fail("Elapsed Time: " + elapsedTime);
+
+        if (perspective2 == null) {
+            System.out.println("Unknown perspective ID: " + id2);
+            return;
+        }
+        
+        // Open a file.
+        IWorkbenchPage activePage = fWorkbench.getActiveWorkbenchWindow().getActivePage();
+        //IFile aFile = getProject().getFile("1." + EditorPerformanceSuite.EDITOR_FILE_EXTENSIONS[0]);
+        IFile aFile = getProject().getFile(activeEditor);
+        assertTrue(aFile.exists());
+
+        IDE.openEditor(activePage, aFile, true);
+
+        // Open both perspective outside the loop so as not to include
+        // the initial time to open, just switching.        
+        activePage.setPerspective(perspective1);
+        activePage.resetPerspective();
+        activePage.setPerspective(perspective2);
+        activePage.resetPerspective();
+
+       	tagIfNecessary("Perspective Switch", Dimension.CPU_TIME);
+        
+        for (int i = 0; i < 20; i++) {
+            processEvents();
+            
+            startMeasuring();
+            activePage.setPerspective(perspective1);
+            processEvents();
+            activePage.setPerspective(perspective2);
+            processEvents();
+            stopMeasuring();
+        }
+        commitMeasurements();
+        assertPerformance();
     }
 }
