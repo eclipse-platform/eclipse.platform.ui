@@ -79,15 +79,15 @@ public class NfmNode implements FactoryObject {
 	
 	// Below here is factory stuff
 	
-	/**
-	 * @see com.objfac.util.FactoryObject#next()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.dtd.util.FactoryObject#next()
 	 */
 	public FactoryObject next() {
 		return next;
 	}
 
-	/**
-	 * @see com.objfac.util.FactoryObject#next(FactoryObject)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.dtd.util.FactoryObject#next(org.eclipse.ant.internal.ui.dtd.util.FactoryObject)
 	 */
 	public void next(FactoryObject obj) {
 		next = (NfmNode) obj;

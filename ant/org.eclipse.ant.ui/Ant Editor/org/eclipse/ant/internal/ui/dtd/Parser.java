@@ -175,8 +175,8 @@ public class Parser {
 			fDelegate.close();
 		}
 
-		/**
-		 * @see java.io.Reader#read(char, int, int)
+		/* (non-Javadoc)
+		 * @see java.io.Reader#read(char[], int, int)
 		 */
 		public int read(char[] cbuf, int off, int len) throws IOException {
 			return fDelegate.read(cbuf, off, len);

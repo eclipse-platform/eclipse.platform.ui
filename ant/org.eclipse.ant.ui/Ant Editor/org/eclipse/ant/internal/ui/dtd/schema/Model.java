@@ -170,8 +170,8 @@ public class Model implements IModel {
 		return fOps[fKind];
 	}
 
-	/**
-	 * @see org.eclipse.ant.internal.ui.dtd.schema.IModel#stringRep()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.dtd.IModel#stringRep()
 	 */
 	public String stringRep() {
 		StringBuffer buf = new StringBuffer();
