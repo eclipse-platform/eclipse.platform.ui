@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
@@ -87,7 +88,7 @@ public class FileExtensionDialog extends TitleAreaDialog {
         Label label = new Label(contents, SWT.LEFT);
         label.setText(WorkbenchMessages
                 .getString("FileExtension.fileTypeLabel")); //$NON-NLS-1$
-        //$NON-NLS-1$
+
         GridData data = new GridData();
         data.horizontalAlignment = GridData.FILL;
         label.setLayoutData(data);
@@ -108,6 +109,8 @@ public class FileExtensionDialog extends TitleAreaDialog {
         filenameField.setLayoutData(data);
         filenameField.setFocus();
 
+        Dialog.applyDialogFont(parentComposite);
+        
         return contents;
     }
 
