@@ -77,7 +77,6 @@ public class ContextHelpPart implements IStandbyContentPart {
          * @see org.eclipse.ui.IPartListener2#partDeactivated(org.eclipse.ui.IWorkbenchPartReference)
          */
         public void partDeactivated(IWorkbenchPartReference ref) {
-            handlePartActivation(ref, false);
         }
 
         /*
@@ -127,11 +126,13 @@ public class ContextHelpPart implements IStandbyContentPart {
     }
 
     public void createPartControl(Composite parent, FormToolkit toolkit) {
+        // parent form
         form = toolkit.createScrolledForm(parent);
         TableWrapLayout layout = new TableWrapLayout();
         form.getBody().setLayout(layout);
         Util.highlight(form.getBody(), SWT.COLOR_YELLOW);
 
+        // help container. Has three colums (search, text, go)
         Composite helpContainer = toolkit.createComposite(form.getBody());
         GridLayout glayout = new GridLayout();
         glayout.numColumns = 3;
@@ -213,8 +214,7 @@ public class ContextHelpPart implements IStandbyContentPart {
             boolean activated) {
         if (text.isDisposed())
             return;
-        if (!activated)
-            return;
+
         IWorkbenchPart part = ref.getPart(false);
 
         String partId = part.getSite().getId();
@@ -224,7 +224,7 @@ public class ContextHelpPart implements IStandbyContentPart {
         if (activated) {
             title.setText(IntroPlugin
                     .getString("ContextHelpPart.whatIsArea.Title")
-                    + "\"" + part.getSite().getRegisteredName() + " \"?");
+                    + " \"" + part.getSite().getRegisteredName() + "\"?");
             String helpText = createContextHelp(ref);
             text.setText(helpText != null ? helpText : "", helpText != null,
                     false);
