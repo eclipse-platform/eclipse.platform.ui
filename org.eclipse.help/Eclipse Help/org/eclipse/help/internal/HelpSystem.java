@@ -8,7 +8,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.contributors.*;
 import org.eclipse.help.internal.contributors.xml.*;
 import org.eclipse.help.internal.navigation.HelpNavigationManager;
-import org.eclipse.help.internal.search.ISearchEngine;
 import org.eclipse.help.internal.server.HelpServer;
 import org.eclipse.help.internal.util.*;
 /**
@@ -19,7 +18,6 @@ public final class HelpSystem {
 	protected ContributionManager contributionManager;
 	protected HelpNavigationManager navigationManager;
 	protected ContextManager contextManager;
-	protected ISearchEngine searchManager;
 	int debug_level;
 	private String browserPath;
 	// constants
@@ -145,9 +143,6 @@ public final class HelpSystem {
 			// need new navigation manager
 			if (getInstance().navigationManager != null)
 				getInstance().navigationManager = null;
-			// need new search manager
-			if (getInstance().searchManager != null)
-				getInstance().searchManager = null;
 		}
 	}
 	public static void setLocalServerInfo(String addr, String port) {
@@ -176,9 +171,6 @@ public final class HelpSystem {
 				// need new navigation manager
 				if (getInstance().navigationManager != null)
 					getInstance().navigationManager = null;
-				// need new search manager
-				if (getInstance().searchManager != null)
-					getInstance().searchManager = null;
 			}
 		}
 	}

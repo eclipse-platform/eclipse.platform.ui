@@ -75,17 +75,6 @@
    <!-- ========================================================================== -->
    <extension-point id="contexts" name="%contexts_extention_point_name"/>
 
-   
-   <!-- ========================================================================== -->
-   <!-- Extension point: org.eclipse.help.searchEngine                         -->
-   <!-- Purpose: Extension point for registering search engine                     -->
-   <!-- Extension Implementation:                                                  -->
-   <!--         must implement org.eclipse.help.internal.search.ISearchEngine  -->
-   <!-- Note: this extension point is for internal use only, and might be removed. -->
-   <!-- ========================================================================== -->
-   <extension-point id="searchEngine" name="%searchengine_extention_point_name"/>
-
-
 	<extension point="org.eclipse.core.runtime.urlHandlers"> 
 		<handler protocol="help" class="org.eclipse.help.internal.protocols.help.Handler"/> 
 	</extension> 
