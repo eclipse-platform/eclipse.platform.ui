@@ -98,20 +98,20 @@ public class TokenComparator implements ITokenComparator {
 	 * @param length number of tokens
 	 * @return the contents of the specified token range as a String
 	 */
-	public String extract(int start, int length) {
-		int startPos= fStarts[start];
-		int endPos= 0;
-		if (length > 0) {
-			int e= start + length-1;
-			endPos= fStarts[e] + fLengths[e];
-		} else {
-			endPos= fStarts[start];
-		}
-		//int endPos= getTokenStart(start + length);
-		if (endPos >= fText.length())
-			return fText.substring(startPos);
-		return fText.substring(startPos, endPos);
-	}
+//	public String extract(int start, int length) {
+//		int startPos= fStarts[start];
+//		int endPos= 0;
+//		if (length > 0) {
+//			int e= start + length-1;
+//			endPos= fStarts[e] + fLengths[e];
+//		} else {
+//			endPos= fStarts[start];
+//		}
+//		//int endPos= getTokenStart(start + length);
+//		if (endPos >= fText.length())
+//			return fText.substring(startPos);
+//		return fText.substring(startPos, endPos);
+//	}
 
 	/**
 	 * Returns <code>true</code> if a token given by the first index

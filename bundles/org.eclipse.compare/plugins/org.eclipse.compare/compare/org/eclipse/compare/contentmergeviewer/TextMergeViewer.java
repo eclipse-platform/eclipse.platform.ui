@@ -2017,7 +2017,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			Position p= diff.getPosition(tp);
 			if (p != null) {
 				int startOffset= p.getOffset();
-				if (end < startOffset)
+				if (end <= startOffset)
 					return diff;
 				if (deep && diff.fDiffs != null) {
 					Diff d= null;
