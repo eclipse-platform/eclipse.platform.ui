@@ -21,12 +21,8 @@
 		/>
 		<copy file="plugin.xml" todir="${dest}"/>
 		<copy file="plugin.properties" todir="${dest}"/>
-		<copy todir="${dest}/icons">
-			<fileset dir="icons" />
-		</copy>
 		<zip zipfile="${dest}/workbenchsrc.zip">
 		    <fileset dir="Eclipse UI" />
-		    <fileset dir="extensions" />
 		    <fileset dir="Eclipse UI Editor Support" />
   		</zip>				
 	</target>
