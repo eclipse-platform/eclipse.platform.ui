@@ -8,7 +8,8 @@ import java.util.*;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.*;
 /**
- * Represents a phrase (quoted) token in user search query words
+ * Represents a phrase (not quoted) token in user search query words
+ * It consists of several words created by an analyzer
  */
 public class QueryWordsPhrase extends QueryWordsToken {
 	private List words;

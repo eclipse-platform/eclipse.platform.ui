@@ -14,28 +14,32 @@ import org.apache.lucene.search.*;
  */
 public class QueryBuilder {
 
+	// Descriptor of Analyzer to process the query words
+	private AnalyzerDescriptor analyzerDesc;
 	// Analyzer to process the query words
 	private Analyzer analyzer;
 
 	// List of QueryWordsToken
 	private List analyzedTokens;
-	
+
 	// List of words to highlight
 	private List highlightWords = new ArrayList();
-	
+
 	private Locale locale;
-	
+
 	/**
 	 * Creates a query builder for the search word. The search word is processed
 	 * by a lexical analyzer.
 	 */
 	public QueryBuilder(String searchWords, AnalyzerDescriptor analyzerDesc) {
-		String language=analyzerDesc.getLang();
+		String language = analyzerDesc.getLang();
 		if (language.length() >= 5) {
-			this.locale=new Locale(language.substring(0,2),language.substring(3,5));
-		}else{
-			this.locale=new Locale(language.substring(0,2), "");
+			this.locale =
+				new Locale(language.substring(0, 2), language.substring(3, 5));
+		} else {
+			this.locale = new Locale(language.substring(0, 2), "");
 		}
+		this.analyzerDesc = analyzerDesc;
 		this.analyzer = analyzerDesc.getAnalyzer();
 		// split search query into tokens
 		List userTokens = tokenizeUserQuery(searchWords);
@@ -55,7 +59,7 @@ public class QueryBuilder {
 			String curToken = qTokenizer.nextToken();
 			if (curToken.equals("\"")) {
 				if (withinQuotation) {
-					tokenList.add(QueryWordsToken.phrase(quotedString));
+					tokenList.add(QueryWordsToken.exactPhrase(quotedString));
 				} else {
 					quotedString = "";
 				}
@@ -94,26 +98,54 @@ public class QueryBuilder {
 			if (token.type == QueryWordsToken.WORD) {
 				if (token.value.indexOf('?') >= 0
 					|| token.value.indexOf('*') >= 0) {
-					newTokens.add(QueryWordsToken.word(token.value.toLowerCase(locale)));
-					
+					newTokens.add(
+						QueryWordsToken.word(token.value.toLowerCase(locale)));
+
 					// add word to the list of words to highlight
 					if (!highlightWords.contains(token.value))
 						highlightWords.add(token.value);
 				} else {
-					List wordList = analyzeText(analyzer, "contents", token.value);
-					
-					// add original word to the list of words to highlight
-					if (wordList.size() > 0 && !highlightWords.contains(token.value))
-						highlightWords.add(token.value);
-							
-					for (Iterator it = wordList.iterator(); it.hasNext();) {
-						String word = (String) it.next();
-						newTokens.add(QueryWordsToken.word(word));
+					List wordList =
+						analyzeText(analyzer, "contents", token.value);
 
-						// add analyzed word to the list of words to highlight
-						if (!highlightWords.contains(word))
-							highlightWords.add(word);
+					if (wordList.size() > 0) {
+						if (!highlightWords.contains(token.value)) {
+							// add original word to the list of words to highlight
+							highlightWords.add(token.value);
+						}
+
+						if (wordList.size() == 1) {
+							String word = (String) wordList.get(0);
+							newTokens.add(QueryWordsToken.word(word));
+
+							// add analyzed word to the list of words to highlight
+							// this is required to highlight stemmed words
+							if (!highlightWords.contains(word)) {
+								highlightWords.add(word);
+							}
+						} else {
+							QueryWordsPhrase phrase = QueryWordsToken.phrase();
+							for (Iterator it = wordList.iterator();
+								it.hasNext();
+								) {
+								String word = (String) it.next();
+								phrase.addWord(word);
+
+								// add each analyzed word to the list of words to highlight
+								// this is only required to highlight stemmed words.
+								// Adding words should not be done when DefaultAnalyzer is used,
+								// because it does not perform stemming and common words removal
+								// which would result in common characters highlighted all over (bug 30263)
+								if (!analyzerDesc.getLang().startsWith("org.eclipse.help#")) {
+									if (!highlightWords.contains(word)) {
+										highlightWords.add(word);
+									}
+								}
+							}
+							newTokens.add(phrase);
+						}
 					}
+
 				}
 			} else if (// forget ANDs
 			/*token.type == SearchQueryToken.AND
@@ -121,18 +153,22 @@ public class QueryBuilder {
 				token.type == QueryWordsToken.OR
 					|| token.type == QueryWordsToken.NOT)
 				newTokens.add(token);
-			else if (token.type == QueryWordsToken.PHRASE) {
-				QueryWordsPhrase phrase = QueryWordsToken.phrase();
-				List wordList = analyzeText(analyzer, "exact_contents", token.value);
+			else if (token.type == QueryWordsToken.EXACT_PHRASE) {
+				List wordList =
+					analyzeText(analyzer, "exact_contents", token.value);
 
-				// add original word to the list of words to highlight
-				if (wordList.size() > 0 && !highlightWords.contains(token.value))
-					highlightWords.add(token.value);
-						
+				if (wordList.size() > 0) {
+					if (!highlightWords.contains(token.value)) {
+						// add original word to the list of words to highlight
+						highlightWords.add(token.value);
+					}
+				}
+
+				QueryWordsExactPhrase phrase = QueryWordsToken.exactPhrase();
 				for (Iterator it = wordList.iterator(); it.hasNext();) {
 					String word = (String) it.next();
 					phrase.addWord(word);
-					
+
 					// add analyzed word to the list of words to highlight
 					// if (!highlightWords.contains(word))
 					//	highlightWords.add(word);
@@ -149,7 +185,10 @@ public class QueryBuilder {
 	 * Get a list of tokens corresponding to a search word or phrase
 	 * @return List of String
 	 */
-	private List analyzeText(Analyzer analyzer, String fieldName, String text) {
+	private List analyzeText(
+		Analyzer analyzer,
+		String fieldName,
+		String text) {
 		List words = new ArrayList(1);
 		Reader reader = new StringReader(text);
 		TokenStream tStream = analyzer.tokenStream(fieldName, reader);
@@ -258,7 +297,7 @@ public class QueryBuilder {
 			}
 		}
 		if (!requiredTermExist) {
-			return null; // cannot search for prohited only 
+			return null; // cannot search for prohibited only 
 		}
 		return retQuery;
 	}

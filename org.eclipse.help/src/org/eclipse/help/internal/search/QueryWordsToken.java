@@ -12,8 +12,9 @@ public class QueryWordsToken {
 	public static final int AND = 0;
 	public static final int OR = 1;
 	public static final int NOT = 2;
-	public static final int PHRASE = 3;
-	public static final int WORD = 4;
+	public static final int EXACT_PHRASE = 3;
+	public static final int PHRASE = 4;
+	public static final int WORD = 5;
 	private static final QueryWordsToken fAND = new QueryWordsToken(AND, "AND");
 	private static final QueryWordsToken fOR = new QueryWordsToken(OR, "OR");
 	private static final QueryWordsToken fNOT = new QueryWordsToken(NOT, "NOT");
@@ -55,8 +56,11 @@ public class QueryWordsToken {
 	public static QueryWordsPhrase phrase() {
 		return new QueryWordsPhrase();
 	}
-	public static QueryWordsPhrase phrase(String word) {
-		QueryWordsPhrase token = new QueryWordsPhrase();
+	public static QueryWordsExactPhrase exactPhrase() {
+		return new QueryWordsExactPhrase();
+	}
+	public static QueryWordsExactPhrase exactPhrase(String word) {
+		QueryWordsExactPhrase token = new QueryWordsExactPhrase();
 		token.addWord(word);
 		return token;
 	}
