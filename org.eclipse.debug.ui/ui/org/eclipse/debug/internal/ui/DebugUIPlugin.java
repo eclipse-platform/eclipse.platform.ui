@@ -53,6 +53,7 @@ import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.core.model.IRegister;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IVariable;
@@ -435,7 +436,8 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		manager.registerAdapters(factory, IThread.class);
 		manager.registerAdapters(factory, IStackFrame.class);
 		manager.registerAdapters(factory, IVariable.class);
-        manager.registerAdapters(factory, IExpression.class);
+		manager.registerAdapters(factory, IExpression.class);
+		manager.registerAdapters(factory, IRegister.class);
 		DebugUIAdapterFactory uiFactory = new DebugUIAdapterFactory();
 		manager.registerAdapters(uiFactory, ILaunchConfiguration.class);
 		manager.registerAdapters(uiFactory, ILaunchConfigurationType.class);

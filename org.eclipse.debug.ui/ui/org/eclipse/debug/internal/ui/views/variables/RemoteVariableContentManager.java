@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.variables;
 
+import org.eclipse.debug.core.model.IRegisterGroup;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.views.RemoteTreeContentManager;
 import org.eclipse.debug.internal.ui.views.RemoteTreeViewer;
@@ -37,9 +38,11 @@ public class RemoteVariableContentManager extends RemoteTreeContentManager {
      * @see org.eclipse.ui.progress.DeferredTreeContentManager#getAdapter(java.lang.Object)
      */
     protected IDeferredWorkbenchAdapter getAdapter(Object element) {
-        // TODO: expressions & registers?
         if (element instanceof IVariable && fView !=null && fView.isShowLogicalStructure()) {
             return new DeferredLogicalStructure();
+        }
+        if (element instanceof IRegisterGroup) {
+            return new DeferredRegisterGroup();
         }
         return super.getAdapter(element);
     }
