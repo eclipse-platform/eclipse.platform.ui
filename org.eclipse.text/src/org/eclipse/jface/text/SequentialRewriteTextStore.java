@@ -74,7 +74,9 @@ public class SequentialRewriteTextStore implements ITextStore {
 	/*
 	 * @see org.eclipse.jface.text.ITextStore#replace(int, int, java.lang.String)
 	 */
-	public void replace(int offset, int length, String text) {		
+	public void replace(int offset, int length, String text) {
+		if (text == null)
+			text= new String();
 
 		if (fReplaceList.size() == 0) {
 			fReplaceList.add(new Replace(offset, offset, length, text));
