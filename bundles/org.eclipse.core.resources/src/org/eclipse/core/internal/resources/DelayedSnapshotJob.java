@@ -38,7 +38,7 @@ public class DelayedSnapshotJob extends Job {
 			return Status.CANCEL_STATUS;
 		if (ResourcesPlugin.getWorkspace() == null)
 			return Status.OK_STATUS;
-		IStatus result = null;
+		IStatus result = Status.OK_STATUS;
 		try {
 			EventStats.startSnapshot();
 			result = saveManager.save(ISaveContext.SNAPSHOT, null, Policy.monitorFor(null));
