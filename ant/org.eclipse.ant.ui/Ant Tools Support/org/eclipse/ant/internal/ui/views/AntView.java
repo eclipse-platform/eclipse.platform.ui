@@ -104,14 +104,6 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	 * XML key used to store an ant project's default target name
 	 */
 	private static final String KEY_DEFAULT = "default"; //$NON-NLS-1$
-	/**
-	 * XML value for a boolean attribute whose value is <code>true</code>
-	 */
-	private static final String VALUE_TRUE = "true"; //$NON-NLS-1$
-	/**
-	 * XML value for a boolean attribute whose value is <code>false</code>
-	 */
-	private static final String VALUE_FALSE = "false"; //$NON-NLS-1$
 
 	/**
 	 * The tree viewer that displays the users ant projects
@@ -533,7 +525,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 				nameString = ""; //$NON-NLS-1$
 			}
 			project = new ProjectNode(nameString, pathString);
-			if (errorString != null && errorString.equals(VALUE_TRUE)) {
+			if (errorString != null && Boolean.valueOf(errorString).booleanValue()) {
 				project.setIsErrorNode(true);
 			}
 			if (defaultTarget != null) {
@@ -561,12 +553,12 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 			projectMemento.putString(KEY_NAME, project.getName());
 			String defaultTarget= project.getDefaultTargetName();
 			if (project.isErrorNode()) {
-				projectMemento.putString(KEY_ERROR, VALUE_TRUE);
+				projectMemento.putString(KEY_ERROR, String.valueOf(true));
 			} else {
 				if (defaultTarget != null) {
 					projectMemento.putString(KEY_DEFAULT, defaultTarget);
 				}
-				projectMemento.putString(KEY_ERROR, VALUE_FALSE);
+				projectMemento.putString(KEY_ERROR, String.valueOf(false));
 			}
 		}
 	}
