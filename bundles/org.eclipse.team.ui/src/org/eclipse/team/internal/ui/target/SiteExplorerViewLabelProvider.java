@@ -25,31 +25,27 @@ public class SiteExplorerViewLabelProvider extends WorkbenchLabelProvider implem
 		return null;
 	}
 	public String getColumnText(Object element, int columnIndex) {		
-		try {
-			switch (columnIndex) {
-				case 0 :
-					return super.getText(element);
-				case 1 :
-					if(element instanceof RemoteResourceElement) {
-						int size = ((RemoteResourceElement)element).getRemoteResource().getSize(null);
-						int sizeKb = size / 1000;
-						if(sizeKb == 0 && size % 1000 > 0) {
-							sizeKb = 1;
-						}
-         				return Policy.bind("SiteExplorerViewLabelProvider.fileSize", new Integer(sizeKb).toString());						 //$NON-NLS-1$
+		switch (columnIndex) {
+			case 0 :
+				return super.getText(element);
+			case 1 :
+				if(element instanceof RemoteResourceElement) {
+					int size = ((RemoteResourceElement)element).getSize();
+					int sizeKb = size / 1000;
+					if(sizeKb == 0 && size % 1000 > 0) {
+						sizeKb = 1;
 					}
-				case 2 :
-					if(element instanceof RemoteResourceElement) {
-						return ((RemoteResourceElement)element).getRemoteResource().getLastModified(null);
-					}
-				case 3 :
-					if(element instanceof RemoteResourceElement) {
-						return ((RemoteResourceElement)element).getRemoteResource().getURL().toExternalForm();
-					}
-			}
-			return ""; //$NON-NLS-1$
-		} catch(TeamException e) {
-			return ""; //$NON-NLS-1$
+     				return Policy.bind("SiteExplorerViewLabelProvider.fileSize", new Integer(sizeKb).toString());						 //$NON-NLS-1$
+				}
+			case 2 :
+				if(element instanceof RemoteResourceElement) {
+					return ((RemoteResourceElement)element).getLastModified();
+				}
+			case 3 :
+				if(element instanceof RemoteResourceElement) {
+					return ((RemoteResourceElement)element).getRemoteResource().getURL().toExternalForm();
+				}
 		}
+		return ""; //$NON-NLS-1$
 	}
 }

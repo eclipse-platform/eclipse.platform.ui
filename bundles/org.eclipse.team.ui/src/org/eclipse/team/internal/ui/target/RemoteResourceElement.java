@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.core.target.IRemoteTargetResource;
+import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
@@ -39,20 +40,15 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  * remote servers.</p>
  */
 public class RemoteResourceElement implements IWorkbenchAdapter, IAdaptable {
-	// mask constants that control the children elements.
-	final public static int SHOW_FILES = 1;
-	final public static int SHOW_FOLDERS = 2;
 	
 	// remote resource this element represents
 	private IRemoteTargetResource remote;
 	
-	// cached remote children, if not null then these are the
-	// elements returned from getChildre().
-	private IRemoteResource[] children;
+	// cache for the remote values
+	private IRemoteResource[] children = null;
+	private int size = 0;
+	private String lastModified = null;
 
-	// mask for this elements	
-	private int showMask = SHOW_FILES | SHOW_FOLDERS;
-	
 	// embeded progress monitoring support
 	private Shell shell;
 	private IProgressMonitor monitor;
@@ -61,11 +57,6 @@ public class RemoteResourceElement implements IWorkbenchAdapter, IAdaptable {
 		this.remote = remote;
 	}
 	
-	public RemoteResourceElement(IRemoteTargetResource remote, int showMask) {
-		this.remote = remote;
-		this.showMask = showMask;
-	}
-
 	public IRemoteTargetResource getRemoteResource() {
 		return remote;
 	}
@@ -81,23 +72,24 @@ public class RemoteResourceElement implements IWorkbenchAdapter, IAdaptable {
 			IRunnableWithProgress runnable = new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					try {
-						monitor.beginTask("Connecting...", IProgressMonitor.UNKNOWN);
+						monitor.beginTask(null, 100);
 						if(children == null) {
-							setCachedChildren(remote.members(monitor));
+							setCachedChildren(remote.members(Policy.subMonitorFor(monitor, 50)));
 						}
 						List remoteElements = new ArrayList();
 						for (int i = 0; i < children.length; i++) {
-						IRemoteTargetResource child = (IRemoteTargetResource)children[i];
-						RemoteResourceElement element = new RemoteResourceElement(child, showMask);
-						element.setShell(shell);
-						element.setProgressMonitor(monitor);
-						if(child.isContainer()) {
-							if((showMask & SHOW_FOLDERS) != 0) {
-								remoteElements.add(element);
-								}
-							} else if((showMask & SHOW_FILES) != 0) {
-								remoteElements.add(element);
-							}
+							IRemoteTargetResource child = (IRemoteTargetResource)children[i];
+							RemoteResourceElement element = new RemoteResourceElement(child);
+							
+							// setup progress monitors
+							element.setShell(shell);
+							element.setProgressMonitor(monitor);
+							
+							// decide which children to return based on filter settings
+							element.setLastModified(child.getLastModified(Policy.subMonitorFor(monitor, 25)));
+							// cache size and last modified
+							element.setSize(child.getSize(Policy.subMonitorFor(monitor, 25)));								
+							remoteElements.add(element);
 						}
 						result[0] = (RemoteResourceElement[])remoteElements.toArray(new RemoteResourceElement[remoteElements.size()]);							
 					} catch (TeamException e) {
@@ -177,5 +169,25 @@ public class RemoteResourceElement implements IWorkbenchAdapter, IAdaptable {
 
 	public IProgressMonitor getProgressMonitor() {
 		return monitor;
+	}
+	
+	public String getLastModified() {
+		return lastModified;
+	}
+
+	public int getSize() {
+		return size;
+	}
+
+	public void setLastModified(String lastModified) {
+		this.lastModified = lastModified;
+	}
+
+	public void setSize(int size) {
+		this.size = size;
+	}
+	
+	public String getName() {
+		return remote.getName();
 	}
 }

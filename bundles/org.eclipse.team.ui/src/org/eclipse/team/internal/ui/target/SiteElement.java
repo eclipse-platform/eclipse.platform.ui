@@ -40,11 +40,6 @@ public class SiteElement extends RemoteResourceElement {
 		this.site = site;
 	}
 	
-	public SiteElement(Site site, int showMask) {
-		super(null, showMask);
-		this.site = site;
-	}
-
 	public Site getSite() {
 		return site;
 	}

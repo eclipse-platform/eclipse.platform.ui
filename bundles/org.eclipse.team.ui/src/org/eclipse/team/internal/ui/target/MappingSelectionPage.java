@@ -10,23 +10,21 @@
  ******************************************************************************/
 package org.eclipse.team.internal.ui.target;
 
-import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
@@ -79,6 +77,17 @@ public class MappingSelectionPage extends TargetWizardPage {
 				updateTextPath();
 			}
 		});
+		
+		// include only folders in view
+		viewer.addFilter(new ViewerFilter() {
+			public boolean select(Viewer viewer, Object parentElement, Object element) {
+				if(element instanceof RemoteResourceElement) {
+					return ((RemoteResourceElement)element).getRemoteResource().isContainer();
+				}
+				return false;
+			}
+		});
+		
 		Button newFolderButton = new Button(composite, SWT.PUSH);
 		newFolderButton.setText(Policy.bind("MappingSelectionPage.newFolderLabel")); //$NON-NLS-1$
 		newFolderButton.addListener(SWT.Selection, new Listener() {
@@ -97,7 +106,8 @@ public class MappingSelectionPage extends TargetWizardPage {
 
 					RemoteResourceElement newFolderUIElement = new RemoteResourceElement(newFolder);
 
-					setViewerInput();
+					((RemoteResourceElement)currentSelection).setCachedChildren(null);
+					viewer.refresh(currentSelection);
 					viewer.setExpandedState(currentSelection, true);
 					viewer.setSelection(new StructuredSelection(newFolderUIElement));
 				} catch (TeamException e) {
@@ -165,7 +175,7 @@ public class MappingSelectionPage extends TargetWizardPage {
 	private void setViewerInput() {
 		if(this.site == null || viewer == null)
 			return;
-		viewer.setInput(new SiteRootsElement(new Site[] {site}, RemoteResourceElement.SHOW_FOLDERS));
+		viewer.setInput(new SiteRootsElement(new Site[] {site}));		
 	}
 
 	/**

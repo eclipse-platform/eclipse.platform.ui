@@ -23,13 +23,13 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  */
 public class SiteRootsElement implements IWorkbenchAdapter, IAdaptable {
 	private Site[] sites = null;
-	private int showMask = RemoteResourceElement.SHOW_FILES | RemoteResourceElement.SHOW_FOLDERS;
+
+	// progress monitoring support
 	private IProgressMonitor monitor;
 	private Shell shell;
 
-	public SiteRootsElement(Site[] sites, int showMask) {
+	public SiteRootsElement(Site[] sites) {
 		this.sites = sites;
-		this.showMask = showMask;
 	}
 	
 	public SiteRootsElement() {
@@ -49,7 +49,7 @@ public class SiteRootsElement implements IWorkbenchAdapter, IAdaptable {
 		}
 		SiteElement[] siteElements = new SiteElement[childSites.length];
 		for (int i = 0; i < childSites.length; i++) {
-			siteElements[i] = new SiteElement(childSites[i], showMask);
+			siteElements[i] = new SiteElement(childSites[i]);
 			siteElements[i].setShell(shell);
 			siteElements[i].setProgressMonitor(monitor);
 		}

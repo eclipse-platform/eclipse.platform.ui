@@ -21,7 +21,6 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -33,8 +32,8 @@ import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.viewers.ViewerSorter;
-import org.eclipse.jface.wizard.ProgressMonitorPart;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
@@ -45,7 +44,6 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
@@ -148,17 +146,9 @@ public class SiteExplorerView extends ViewPart implements ISiteListener {
 						return 1;
 					return compareNames(r1, r2);
 				case SIZE:
-					try {
-						return new Integer(r1.getSize(null)).compareTo(new Integer(r2.getSize(null)));
-					} catch (TeamException e) {
-						return 0;
-					}
+					return new Integer(e1.getSize()).compareTo(new Integer(e2.getSize()));
 				case MODIFIED:
-					try {
-						return getCollator().compare(r1.getLastModified(null), r2.getLastModified(null));
-					} catch (TeamException e) {
-						return 0;
-					}
+					return getCollator().compare(e1.getLastModified(), e2.getLastModified());
 				default:
 					return 0;
 			}
@@ -262,6 +252,16 @@ public class SiteExplorerView extends ViewPart implements ISiteListener {
 				}
 				
 				return getCollator().compare(name1, name2);
+			}
+		});
+		
+		// show only folders in tree
+		folderTree.addFilter(new ViewerFilter() {
+			public boolean select(Viewer viewer, Object parentElement, Object element) {
+				if(element instanceof RemoteResourceElement) {
+					return ((RemoteResourceElement)element).getRemoteResource().isContainer();
+				}
+				return false;
 			}
 		});
 		
@@ -370,13 +370,7 @@ public class SiteExplorerView extends ViewPart implements ISiteListener {
 	 */
 	private void updateFileTable(RemoteResourceElement remoteFolder) {
 		if(remoteFolder != null && !remoteFolder.equals(folderContentsTable.getInput())) {
-			RemoteResourceElement tableFolder = new RemoteResourceElement(
-					remoteFolder.getRemoteResource(),
-					remoteFolder.SHOW_FILES | remoteFolder.SHOW_FOLDERS);
-			tableFolder.setCachedChildren(remoteFolder.getCachedChildren());
-			tableFolder.setShell(remoteFolder.getShell());
-			tableFolder.setProgressMonitor(remoteFolder.getProgressMonitor());
-			folderContentsTable.setInput(tableFolder);
+			folderContentsTable.setInput(remoteFolder);
 		}
 	}
 
@@ -404,8 +398,13 @@ public class SiteExplorerView extends ViewPart implements ISiteListener {
 					IStructuredSelection selection = (IStructuredSelection)folderTree.getSelection();
 					Object currentSelection = selection.getFirstElement();
 					
-					final RemoteResourceElement selectedFolder = getSelectedRemoteFolder(selection)[0];
-					
+					RemoteResourceElement selectedFolder;
+					if(selection.isEmpty()) {
+						selectedFolder = getSelectedRemoteFolder(selection)[0];
+					} else {
+						selectedFolder = (RemoteResourceElement)folderContentsTable.getInput();
+					}
+										
 					IRemoteTargetResource newFolder = CreateNewFolderAction.createDir(shell, selectedFolder.getRemoteResource(), Policy.bind("CreateNewFolderAction.newFolderName"));
 					if (newFolder == null)
 						return;
@@ -421,8 +420,8 @@ public class SiteExplorerView extends ViewPart implements ISiteListener {
 				}
 			}
 			public boolean isEnabled() {
-				return getSelectedRemoteFolder((IStructuredSelection)folderTree.getSelection()).length == 1 ||
-		 				  getSelectedRemoteFolder((IStructuredSelection)folderContentsTable.getSelection()).length == 1;
+				return folderContentsTable.getInput() != null ||
+		 				getSelectedRemoteFolder((IStructuredSelection)folderTree.getSelection()).length == 1;
 			}				
 		};
 
@@ -484,7 +483,7 @@ public class SiteExplorerView extends ViewPart implements ISiteListener {
 	}
 
 	private void initializeTreeInput() {
-		root = new SiteRootsElement(TargetManager.getSites(), RemoteResourceElement.SHOW_FOLDERS);
+		root = new SiteRootsElement(TargetManager.getSites());
 		folderTree.setInput(root);
 	}
 	
