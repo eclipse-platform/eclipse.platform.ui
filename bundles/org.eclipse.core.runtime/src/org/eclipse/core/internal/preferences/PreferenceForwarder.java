@@ -165,12 +165,7 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	 *  value is known for the named property, and <code>false</code>otherwise
 	 */
 	public boolean contains(String name) {
-		String[] names = new String[0];
-		try {
-			names = getPluginPreferences().keys();
-		} catch (BackingStoreException e) {
-			logError(e.getMessage(), e);
-		}
+		String[] names = getPluginPreferences().keys();
 		for (int i = 0; i < names.length; i++)
 			if (names[i].equals(name))
 				return true;
@@ -649,13 +644,7 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	 * is unknown to this object)
 	 */
 	public boolean isDefault(String name) {
-		String[] keys = null;
-		try {
-			keys = getPluginPreferences().keys();
-		} catch (BackingStoreException e) {
-			logError(e.getMessage(), e);
-			return true;
-		}
+		String[] keys = getPluginPreferences().keys();
 		for (int i = 0; i < keys.length; i++)
 			if (keys[i].equals(name))
 				return false;
@@ -695,12 +684,7 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	 * @return an array of property names 
 	 */
 	public String[] propertyNames() {
-		try {
-			return getPluginPreferences().keys();
-		} catch (BackingStoreException e) {
-			logError(e.getMessage(), e);
-			return new String[0];
-		}
+		return getPluginPreferences().keys();
 	}
 
 	/**

@@ -81,11 +81,11 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 			toVisit[i].accept(visitor);
 	}
 
-	protected synchronized void addChild(String name, IEclipsePreferences child) {
+	protected synchronized void addChild(String childName, IEclipsePreferences child) {
 		//Thread safety: synchronize method to protect modification of children field
 		if (children == null)
 			children = Collections.synchronizedMap(new HashMap());
-		children.put(name, child == null ? (Object) name : child);
+		children.put(childName, child == null ? (Object) childName : child);
 	}
 
 	/*
@@ -145,7 +145,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	/*
 	 * @see org.osgi.service.prefs.Preferences#clear()
 	 */
-	public void clear() throws BackingStoreException {
+	public void clear() {
 		// illegal state if this node has been removed
 		checkRemoved();
 		Properties temp = properties;
@@ -475,18 +475,18 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	}
 
 	private void internalRemove(String key, Object oldValue) {
-		boolean removed = false;
+		boolean wasRemoved = false;
 		//Thread safety: synchronize when modifying the properties field
 		synchronized (this) {
 			if (properties == null)
 				return;
-			removed = properties.remove(key) != null;
+			wasRemoved = properties.remove(key) != null;
 			if (properties.size() == 0)
 				properties = null;
-			if (removed)
+			if (wasRemoved)
 				makeDirty();
 		}
-		if (removed)
+		if (wasRemoved)
 			preferenceChanged(key, oldValue, null);
 	}
 
@@ -507,7 +507,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	/*
 	 * @see org.osgi.service.prefs.Preferences#keys()
 	 */
-	public String[] keys() throws BackingStoreException {
+	public String[] keys() {
 		// illegal state if this node has been removed
 		checkRemoved();
 		Properties temp = properties;
@@ -903,17 +903,17 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 * was actually removed.
 	 */
 	protected void removeNode(IEclipsePreferences child) {
-		boolean removed = false;
+		boolean wasRemoved = false;
 		synchronized (this) {
 			if (children != null) {
-				removed = children.remove(child.name()) != null;
-				if (removed)
+				wasRemoved = children.remove(child.name()) != null;
+				if (wasRemoved)
 					makeDirty();
 				if (children.isEmpty())
 					children = null;
 			}
 		}
-		if (removed)
+		if (wasRemoved)
 			nodeRemoved(child);
 	}
 
