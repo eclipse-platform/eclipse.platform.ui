@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.help;
 
+import java.net.URL;
+
 import org.eclipse.help.IContext;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.widgets.Control;
@@ -24,6 +26,7 @@ import org.eclipse.swt.widgets.MenuItem;
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
+ * 
  * @since 3.1
  */
 public interface IWorkbenchHelpSystem {
@@ -34,7 +37,7 @@ public interface IWorkbenchHelpSystem {
 	 * @return whether there is a UI help system installed
 	 */
 	boolean hasHelpUI();
-	
+
 	/**
 	 * Displays the entire help bookshelf.
 	 * <p>
@@ -42,7 +45,7 @@ public interface IWorkbenchHelpSystem {
 	 * </p>
 	 */
 	void displayHelp();
-	
+
 	/**
 	 * Displays the help search system.
 	 * <p>
@@ -50,10 +53,9 @@ public interface IWorkbenchHelpSystem {
 	 * </p>
 	 */
 	void displaySearch();
-	
+
 	/**
-	 * Displays the dynamic help for the 
-	 * current UI context. 
+	 * Displays the dynamic help for the current UI context.
 	 * <p>
 	 * Ignored if no help UI is available.
 	 * </p>
@@ -65,8 +67,10 @@ public interface IWorkbenchHelpSystem {
 	 * <p>
 	 * Ignored if no help UI is available.
 	 * </p>
-	 * @param expression the search expression
-	 */	
+	 * 
+	 * @param expression
+	 *            the search expression
+	 */
 	void search(String expression);
 
 	/**
@@ -185,4 +189,34 @@ public interface IWorkbenchHelpSystem {
 	 *            the context id to use when F1 help is invoked
 	 */
 	void setHelp(MenuItem item, String contextId);
+
+	/**
+	 * Resolves the help resource href by converting it into a legitimate URL
+	 * according to the implementation of the help system. Help resources that
+	 * already have a protocol will be unchanged.
+	 * 
+	 * @param href
+	 * @param documentOnly if <code>true</code>, the resulting URL must point
+	 * at the document referenced by href. Otherwise, it can be a URL that
+	 * contains additional elements like navigation that the help system
+	 * adds to the document.
+	 * @return the resolved URL or <code>null</code> if no help UI is
+	 *         available.
+	 */
+	URL resolve(String href, boolean documentOnly);
+
+	/**
+	 * Ensures a roundtrip by restoring the original href previously resolved
+	 * into a URL in the <code>resolve</code> method. The method can also
+	 * unresolve other legitimate URLs but successful resolution is only
+	 * guaranteed with the URLs created by the <code>resolve</code> method.
+	 * <p>
+	 * If the source url does not start with an expected prefix, it will be
+	 * returned unchanged.
+	 * 
+	 * @param url
+	 *            the URL that needs to be unresolved into an href.
+	 * @return the unresolved href or the source url if no help UI is available.
+	 */
+	String unresolve(URL url);
 }

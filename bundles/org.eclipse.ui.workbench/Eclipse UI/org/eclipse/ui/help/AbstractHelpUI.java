@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.help;
 
+import java.net.URL;
+
 import org.eclipse.help.IContext;
 
 /**
@@ -69,6 +71,39 @@ public abstract class AbstractHelpUI {
     public void search(String expression) {
         // do nothing
     }
+	/**
+	 * Resolves the help resource href according to the
+	 * help system implementation. 
+	 * For backward compatibility, the default implementation
+	 * returns <code>null</code>. Implementors are expected
+	 * to provide a non-trivial implementation.
+	 * 
+	 * @param href the help resource
+	 * @param documentOnly if <code>true</code>, the resulting URL must point
+	 * at the document referenced by href. Otherwise, it can be a URL that
+	 * contains additional elements like navigation that the help system
+	 * adds to the document.
+	 * @return <code>null</code>
+	 * @since 3.1
+	 */
+	public URL resolve(String href, boolean documentOnly) {
+		return null;
+	}
+	/**
+	 * Restores the original help resource previously resolved
+	 * using the <code>resolve</code> method.
+	 * For backward compatibility, the default implementation
+	 * returns the source url. Implementors are expected
+	 * to provide a non-trivial implementation.
+	 * 
+	 * @param url the url to unresolve
+	 * @return the unchanged source url
+	 * 
+	 * @since 3.1
+	 */
+	public String unresolve(URL url) {
+		return url.toString();
+	}
 
     /**
      * Displays context-sensitive help for the given context.

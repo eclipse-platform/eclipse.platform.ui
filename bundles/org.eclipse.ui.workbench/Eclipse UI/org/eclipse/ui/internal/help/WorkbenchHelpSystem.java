@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.help;
 
+import java.net.URL;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -808,6 +810,28 @@ public final class WorkbenchHelpSystem implements IWorkbenchHelpSystem {
 		if (helpUI != null) {
 			helpUI.search(expression);
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.help.IWorkbenchHelpSystem#resolve(java.lang.String, boolean)
+	 */
+	public URL resolve(String href, boolean documentOnly) {
+		AbstractHelpUI helpUI = getHelpUI();
+		if (helpUI != null) {
+			return helpUI.resolve(href, documentOnly);
+		}
+		return null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.help.IWorkbenchHelpSystem#unresolve(java.net.URL)
+	 */
+	public String unresolve(URL url) {
+		AbstractHelpUI helpUI = getHelpUI();
+		if (helpUI != null) {
+			return helpUI.unresolve(url);
+		}
+		return url.toString();
 	}
 
 	/*
