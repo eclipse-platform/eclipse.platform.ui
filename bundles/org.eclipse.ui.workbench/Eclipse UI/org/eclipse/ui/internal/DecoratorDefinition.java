@@ -19,20 +19,16 @@ import org.eclipse.ui.internal.registry.WizardsRegistryReader;
  * class a decorator definition applies to,
  */
 
-public class DecoratorDefinition {
+public abstract class DecoratorDefinition {
 
 	private String name;
-	private String objectClass;
 	private String description;
-	private ILabelDecorator decorator;
+	protected ILabelDecorator decorator;
+	private ActionExpression enablement;
 	private boolean adaptable;
 	private boolean enabled;
 	private boolean defaultEnabled;
-
-	//A flag that is set if there is an error creating the decorator
-	private boolean decoratorCreationFailed = false;
 	private String id;
-	private IConfigurationElement element;
 
 	/**
 	 * Create a new instance of the receiver with the
@@ -43,15 +39,14 @@ public class DecoratorDefinition {
 		String identifier,
 		String label,
 		String decoratorDescription,
-		String className,
+		ActionExpression expression,
 		boolean isAdaptable,
-		boolean initEnabled,
-		IConfigurationElement configElement) {
+		boolean initEnabled) {
+			
 		this.id = identifier;
 		this.name = label;
-		this.objectClass = className;
+		this.enablement = expression;
 		this.adaptable = isAdaptable;
-		this.element = configElement;
 		this.description = decoratorDescription;
 		this.enabled = initEnabled;
 		this.defaultEnabled = initEnabled;
@@ -69,16 +64,8 @@ public class DecoratorDefinition {
 	 * Returns the description.
 	 * @return String
 	 */
-	public String getDescription(){
+	public String getDescription() {
 		return this.description;
-	}
-
-	/**
-	 * Gets the objectClass.
-	 * @return Returns a String
-	 */
-	public String getObjectClass() {
-		return objectClass;
 	}
 
 	/**
@@ -89,37 +76,7 @@ public class DecoratorDefinition {
 	 * enabled to be true is done first.
 	 * @return Returns a ILabelDecorator
 	 */
-	private ILabelDecorator internalGetDecorator() throws CoreException {
-		if (decoratorCreationFailed)
-			return null;
-
-		final CoreException[] exceptions = new CoreException[1];
-
-		if (decorator == null) {
-			Platform.run(new SafeRunnable(WorkbenchMessages.format("DecoratorManager.ErrorActivatingDecorator", new String[] { getName()})) { //$NON-NLS-1$
-				public void run() {
-					try {
-						decorator =
-							(ILabelDecorator) WorkbenchPlugin.createExtension(
-								element,
-								WizardsRegistryReader.ATT_CLASS);
-					} catch (CoreException exception) {
-						exceptions[0] = exception;
-					}
-				}
-			});
-		}
-
-		if (decorator == null) {
-			this.decoratorCreationFailed = true;
-			this.enabled = false;
-		}
-
-		if (exceptions[0] != null)
-			throw exceptions[0];
-
-		return decorator;
-	}
+	protected abstract ILabelDecorator internalGetDecorator() throws CoreException;
 
 	/**
 	 * Gets the enabled.
@@ -210,11 +167,8 @@ public class DecoratorDefinition {
 	private void handleCoreException(CoreException exception) {
 
 		//If there is an error then reset the enabling to false
-		ErrorDialog.openError(
-			null,
-			WorkbenchMessages.getString("Internal_error"), //$NON-NLS-1$
-			exception.getLocalizedMessage(),
-			exception.getStatus());
+		ErrorDialog.openError(null, WorkbenchMessages.getString("Internal_error"), //$NON-NLS-1$
+		exception.getLocalizedMessage(), exception.getStatus());
 		this.enabled = false;
 	}
 
@@ -294,7 +248,7 @@ public class DecoratorDefinition {
 	 * Return the default value for this type - this value
 	 * is the value read from the element description.
 	 */
-	public boolean getDefaultValue(){
+	public boolean getDefaultValue() {
 		return defaultEnabled;
 	}
 
@@ -304,8 +258,16 @@ public class DecoratorDefinition {
 	 * @throws CoreException. This will be removed and is only
 	 * here for backwards compatability.
 	 */
-	public ILabelDecorator getDecorator() throws CoreException{
+	public ILabelDecorator getDecorator() throws CoreException {
 		return decorator;
+	}
+
+	/**
+	 * Returns the enablement.
+	 * @return ActionExpression
+	 */
+	public ActionExpression getEnablement() {
+		return enablement;
 	}
 
 }
