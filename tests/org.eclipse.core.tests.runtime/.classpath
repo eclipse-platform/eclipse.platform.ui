@@ -7,7 +7,6 @@
     <classpathentry kind="src" path="/org.eclipse.core.runtime"/>
     <classpathentry kind="src" path="/org.eclipse.core.tests.harness"/>
     <classpathentry kind="src" path="/org.eclipse.core.resources"/>
-    <classpathentry kind="src" path="/org.eclipse.core.tests.harness.launcher"/>
     <classpathentry kind="src" path="src"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>
