@@ -159,18 +159,18 @@ public final IProject getProject() {
 	return super.getProject();
 }
 /**
- * Returns true if the given project has already been built during this build
- * iteration, and false otherwise.
+ * Returns whether the given project has already been built during this build
+ * iteration.
  * <p>
  * When the entire workspace is being built, the projects are built in linear
  * sequence.  This method can be used to determine if another project preceeds
  * this builder's project in that build sequence.  If only a single project is
  * being built, then there is no build order and this method will always return
- * false.
+ * <code>false</code>.
  * </p>
  * @param project the project to check against in the current build order
- * @return true if the given project has been built in this iteration, and false
- * otherwise.
+ * @return <code>true</code> if the given project has been built in this
+ * iteration, and <code>false</code> otherwise.
  * @see #needRebuild
  * @since 2.1
  */
