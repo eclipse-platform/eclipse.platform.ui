@@ -114,17 +114,6 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		fMarkersToBreakpoints= new HashMap(10);	
 		fBreakpointExtensions = new HashMap(15);	
 	}
-
-	/**
-	 * Registers this manager as a resource change listener and
-	 * initializes the collection of defined breakpoint extensions.
-	 * 
-	 * This method should only be called on initial startup of 
-	 * the debug plugin.
-	 */
-	public void startup() throws CoreException {
-		getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_AUTO_BUILD);
-	}
 	
 	/**
 	 * Loads all the breakpoints on the given resource.
@@ -268,12 +257,13 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 
 	/**
 	 * Loads the list of breakpoints from the breakpoint markers in the
-	 * workspace.
+	 * workspace. Start listening to resource deltas.
 	 */
 	private void initializeBreakpoints() {
 		setBreakpoints(new Vector(10));
 		try {
-			loadBreakpoints(getWorkspace().getRoot());	
+			loadBreakpoints(getWorkspace().getRoot());
+			getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_AUTO_BUILD);
 		} catch (CoreException ce) {
 			DebugPlugin.log(ce);
 			setBreakpoints(new Vector(0));
@@ -453,15 +443,6 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 * A resource has changed. Traverses the delta for breakpoint changes.
 	 */
 	public void resourceChanged(IResourceChangeEvent event) {
-		if (!isRestored()) {
-			// if breakpoints have not been restored, deltas
-			// should not be processed (we are unable to restore
-			// breakpoints in a resource callback, as that might
-			// cause the resource tree to be modififed, which is
-			// not allowed during notification).
-			// @see bug 9327
-			return;
-		}
 		IResourceDelta delta= event.getDelta();
 		if (delta != null) {
 			try {
@@ -474,17 +455,6 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 				DebugPlugin.log(ce);
 			}
 		}
-	}
-	
-	/**
-	 * Returns whether breakpoints have been restored
-	 * since the workbench was started.
-	 * 
-	 * @return whether breakpoints have been restored
-	 * since the workbench was started
-	 */
-	protected boolean isRestored() {
-		return fBreakpoints != null;
 	}
 
 	/**

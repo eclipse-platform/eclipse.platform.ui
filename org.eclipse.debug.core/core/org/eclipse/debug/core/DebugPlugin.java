@@ -318,6 +318,9 @@ public class DebugPlugin extends Plugin {
 	 * @see IBreakpointManager
 	 */
 	public IBreakpointManager getBreakpointManager() {
+		if (fBreakpointManager == null) {
+			fBreakpointManager = new BreakpointManager();
+		}
 		return fBreakpointManager;
 	}
 	
@@ -402,7 +405,9 @@ public class DebugPlugin extends Plugin {
 			}
 		}
 		fLaunchManager.shutdown();
-		fBreakpointManager.shutdown();
+		if (fBreakpointManager != null) {
+			fBreakpointManager.shutdown();
+		}
 		fEventListeners.removeAll();
 		setDefault(null);
 		ResourcesPlugin.getWorkspace().removeSaveParticipant(this);
@@ -423,8 +428,6 @@ public class DebugPlugin extends Plugin {
 	 */
 	public void startup() throws CoreException {
 		fLaunchManager= new LaunchManager();
-		fBreakpointManager= new BreakpointManager();
-		fBreakpointManager.startup();
 		fExpressionManager = new ExpressionManager();
 		fExpressionManager.startup();
 	}
