@@ -18,13 +18,22 @@ import java.util.ArrayList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
-import org.apache.xerces.dom.DocumentImpl;
-import org.apache.xml.serialize.OutputFormat;
-import org.apache.xml.serialize.Serializer;
-import org.apache.xml.serialize.SerializerFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -121,10 +130,19 @@ public final class XMLMemento implements IMemento {
 	 * @return the root memento for writing a document
 	 */
 	public static XMLMemento createWriteRoot(String type) {
-		Document document = new DocumentImpl();
-		Element element = document.createElement(type);
-		document.appendChild(element);
-		return new XMLMemento(document, element);
+        Document document;
+        try {
+            document = DocumentBuilderFactory
+                            .newInstance()
+                            .newDocumentBuilder()
+                            .newDocument();
+            Element element = document.createElement(type);
+            document.appendChild(element);
+            return new XMLMemento(document, element);            
+        }
+        catch (ParserConfigurationException e) {
+            throw new Error(e);
+        }
 	}
 	
 	/**
@@ -385,11 +403,28 @@ public final class XMLMemento implements IMemento {
 	 * specified writer. 
 	 * 
 	 * @param writer the writer used to save the memento's document
+     * @throws IOException if there is a problem serializing the document to the stream.
 	 */
 	public void save(Writer writer) throws IOException {
-		OutputFormat format = new OutputFormat();
-		format.setPreserveSpace(true);
-		Serializer serializer = SerializerFactory.getSerializerFactory("xml").makeSerializer(writer, format); //$NON-NLS-1$
-		serializer.asDOMSerializer().serialize(factory);
+        Result result = new StreamResult(writer);
+        Source source = new DOMSource(factory);
+        try {
+            Transformer transformer = TransformerFactory.newInstance().newTransformer();
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
+            transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
+            transformer.transform(source, result);            
+        }
+        catch (TransformerConfigurationException e) {
+            throw (IOException) (new IOException().initCause(e));
+        }
+        catch (TransformerFactoryConfigurationError e) {
+            throw (IOException) (new IOException().initCause(e));
+        }
+        catch (TransformerException e) {
+            throw (IOException) (new IOException().initCause(e));
+        }        
+        catch (FactoryConfigurationError e) {
+            throw (IOException) (new IOException().initCause(e));
+        }
 	}
 }
