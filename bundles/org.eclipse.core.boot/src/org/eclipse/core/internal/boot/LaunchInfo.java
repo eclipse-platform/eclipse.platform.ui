@@ -667,7 +667,7 @@ public String getRuntime() {
 	return platform;	
 }
 public Status[] getStatus() {
-	if (status != null && status.size() == 0)
+	if (!hasStatus())
 		return null;
 	else {
 		Status[] result = new Status[status.size()];

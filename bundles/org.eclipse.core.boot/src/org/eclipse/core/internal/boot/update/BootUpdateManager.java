@@ -15,15 +15,25 @@ public class BootUpdateManager {
  */
 private static String createErrorString(IManifestDescriptor manifest, IManifestDescriptor[] manifestsConflicting) {
 
-   StringBuffer strbMessage = new StringBuffer();
+	StringBuffer strbMessage = new StringBuffer();
 	
-	strbMessage.append(Policy.bind("update.conflicts",manifest.getUniqueIdentifier(),manifest.getVersionIdentifier().toString()));
-	strbMessage.append("\n");
-	
-	for (int j = 0; j < manifestsConflicting.length; ++j) {
-		strbMessage.append(Policy.bind("update.conflictsWith",manifestsConflicting[j].getUniqueIdentifier(),manifestsConflicting[j].getVersionIdentifier().toString()));
-		strbMessage.append("\n");
-	}
+	// at present we are limited to 1 line message
+	if (manifestsConflicting.length==0)
+		strbMessage.append(Policy.bind("update.conflicts",manifest.getUniqueIdentifier(),manifest.getVersionIdentifier().toString()));
+	else
+		strbMessage.append(Policy.bind("update.conflictsWith",
+										new String[] {
+											manifest.getUniqueIdentifier(),
+											manifest.getVersionIdentifier().toString(),
+											manifestsConflicting[0].getUniqueIdentifier(),
+											manifestsConflicting[0].getVersionIdentifier().toString()
+										} ));
+		
+//	strbMessage.append("\n");	
+//	for (int j = 0; j < manifestsConflicting.length; ++j) {
+//		strbMessage.append(Policy.bind("update.conflictsId",manifestsConflicting[j].getUniqueIdentifier(),manifestsConflicting[j].getVersionIdentifier().toString()));
+//		strbMessage.append("\n");
+//	}
 	
 	return strbMessage.toString();
 }
