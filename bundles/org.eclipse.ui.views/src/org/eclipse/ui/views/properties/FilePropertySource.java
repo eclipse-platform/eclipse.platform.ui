@@ -21,8 +21,15 @@ import org.eclipse.core.runtime.IPath;
  */
 public class FilePropertySource extends ResourcePropertySource {
 
-	// last modified state
-	private static IPropertyDescriptor[] fileDescriptors;
+	private static PropertyDescriptor fileDescriptor;
+	{
+		fileDescriptor =
+			new PropertyDescriptor(
+				IResourcePropertyConstants.P_SIZE_RES,
+				IResourcePropertyConstants.P_DISPLAY_SIZE);
+		fileDescriptor.setAlwaysIncompatible(true);
+		fileDescriptor.setCategory(IResourcePropertyConstants.P_FILE_SYSTEM_CATEGORY);
+	}	
 /**
  * Creates an property source for a file resource.
  * @param file the file resource
@@ -35,21 +42,18 @@ public FilePropertySource(IFile file) {
  * @return the PropertyDescriptor
  */
 private static PropertyDescriptor getInitialPropertyDescriptor() {
-	PropertyDescriptor descriptor =
-		new PropertyDescriptor(
-			IResourcePropertyConstants.P_SIZE_RES,
-			IResourcePropertyConstants.P_DISPLAY_SIZE);
-	descriptor.setAlwaysIncompatible(true);
-	descriptor.setCategory(IResourcePropertyConstants.P_FILE_SYSTEM_CATEGORY);
-	return descriptor;
-
+	return fileDescriptor;
 }
 /* (non-Javadoc)
  * Method declared on IPropertySource.
  */
 public IPropertyDescriptor[] getPropertyDescriptors() {
-	if (fileDescriptors == null)
-		initializeFileDescriptors();
+	IPropertyDescriptor[] superDescriptors = super.getPropertyDescriptors();
+	int superLength = superDescriptors.length;
+	IPropertyDescriptor[] fileDescriptors = new IPropertyDescriptor[superLength + 1];
+	System.arraycopy(superDescriptors, 0, fileDescriptors, 0, superLength);
+	fileDescriptors[superLength] = getInitialPropertyDescriptor();
+	
 	return fileDescriptors;
 }
 /* (non-Javadoc)
@@ -92,16 +96,4 @@ private String getSizeString(IFile file) {
 	}	
 }
 
-/**
- * Return the Property Descriptors for the file type.
- */
-private void initializeFileDescriptors() {
-	
-	IPropertyDescriptor[] superDescriptors = super.getPropertyDescriptors();
-	int superLength = superDescriptors.length;
-	fileDescriptors = new IPropertyDescriptor[superLength + 1];
-	System.arraycopy(superDescriptors, 0, fileDescriptors, 0, superLength);
-	fileDescriptors[superLength] = getInitialPropertyDescriptor();
-	
-}
 }

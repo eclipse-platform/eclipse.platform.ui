@@ -1,9 +1,14 @@
-package org.eclipse.ui.views.properties;
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+Contributors:
+	IBM - Initial implementation
+************************************************************************/
+package org.eclipse.ui.views.properties;
 
 /**
  * This interface documents the property constants used by the resource
@@ -34,6 +39,46 @@ public interface IResourcePropertyConstants {
 	 * The <code>IResource</code> property key for display read-only.
 	 */
 	public static final String  P_DISPLAYEDITABLE_RES = PropertiesMessages.getString("IResourcePropertyConstants.editable"); //$NON-NLS-1$
+
+	/** 
+	 * The <code>IResource</code> property key for read-only.
+	 */
+	public static final String P_DERIVED_RES = "org.eclipse.ui.derived"; //$NON-NLS-1$
+
+	/** 
+	 * The <code>IResource</code> property key for display read-only.
+	 */
+	public static final String P_DISPLAYDERIVED_RES = PropertiesMessages.getString("IResourcePropertyConstants.derived"); //$NON-NLS-1$
+
+	/** 
+	 * The <code>IResource</code> property key for location.
+	 */
+	public static final String P_LOCATION_RES = "org.eclipse.ui.location"; //$NON-NLS-1$
+	
+	/** 
+	 * The <code>IResource</code> property key for display location.
+	 */
+	public static final String P_DISPLAYLOCATION_RES = PropertiesMessages.getString("IResourcePropertyConstants.location"); //$NON-NLS-1$
+
+	/** 
+	 * The <code>IResource</code> property key for resolved location.
+	 */
+	public static final String P_RESOLVED_LOCATION_RES = "org.eclipse.ui.resolvedLocation"; //$NON-NLS-1$,
+	
+	/** 
+	 * The <code>IResource</code> property key for display resolved location.
+	 */
+	public static final String P_DISPLAYRESOLVED_LOCATION_RES = PropertiesMessages.getString("IResourcePropertyConstants.resolvedLocation"); //$NON-NLS-1$
+
+	/** 
+	 * The <code>IResource</code> property key for linked.
+	 */
+	public static final String P_LINKED_RES = "org.eclipse.ui.linked"; //$NON-NLS-1$,
+	
+	/** 
+	 * The <code>IResource</code> property key for display linked.
+	 */
+	public static final String P_DISPLAYLINKED_RES = PropertiesMessages.getString("IResourcePropertyConstants.linked"); //$NON-NLS-1$
 
 	/**
 	 * The <code>IResource</code> category for the base values
