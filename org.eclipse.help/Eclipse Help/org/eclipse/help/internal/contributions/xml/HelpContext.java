@@ -29,13 +29,6 @@ public class HelpContext
 	 * Overriden to handle <description>
 	 */
 	public Contribution addChild(Contribution child) {
-		/*
-		if (child instanceof Topic)
-			return super.addChild(child);
-		else
-			description = "some description. Change the <description> specs and parsing.";
-		return null;
-		*/
 		return super.addChild(child);
 	}
 	public Context getContext(String id) {
@@ -63,55 +56,6 @@ public class HelpContext
 	}
 	public String getText() {
 		return getDescription();
-	}
-	/**
-	 * Merges the current context with info from an XML
-	 * definition of the context.
-	 * Contexts are nested and maintained as trees;
-	 */
-	void merge(HelpContext context) {
-		/*
-		for (Iterator it=context.getChildren(); it.hasNext(); )
-		{
-			HelpContext child = (Context)it.next();
-			if (child.getNodeType() != Node.ELEMENT_NODE) continue;
-			Element childElement = (Element)child;
-		
-			if (childElement.getTagName().equals(ContextContributor.DESC_ELEM))
-			{
-				Node text = childElement.getFirstChild();
-				if (text != null)
-					description = text.getNodeValue();
-		
-				continue;
-			}
-		
-			if (childElement.getTagName().equals(ContextContributor.RELATED_ELEM))
-			{
-				if (relatedTopics == null) relatedTopics = new Vector();
-				relatedTopics.add(childElement.getAttribute(ContextContributor.RELATED_ATTR));
-				continue;
-			}
-		
-			if (!childElement.getTagName().equals(ContextContributor.CONTEXT_ELEM))
-			{
-				System.out.println("error: unexpected " + childElement.getTagName());
-				continue;
-			}
-				
-			String id = childElement.getAttribute(ContextContributor.ID_ATTR);
-			HelpContext oldChildContext = (HelpContext)getContext(id);
-			if (oldChildContext == null)
-			{
-				Context newChildContext = new HelpContext(childElement);
-				addChild(newChildContext);
-			}
-			else
-			{
-				oldChildContext.merge(childElement);
-			}
-		}
-		*/
 	}
 	public void setDescription(String s) {
 		description = s;

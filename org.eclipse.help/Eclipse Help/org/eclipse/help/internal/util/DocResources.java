@@ -29,7 +29,7 @@ public class DocResources {
 	/**
 	 * Returns a string from a property file.
 	 * It uses 'name' as a the key to retrieve from a doc.properties file.
-	 * this is used for translation of all manifest files (including F1)
+	 * this is used for translation of all manifest files (excluding F1)
 	 */
 	public static String getPluginString(String pluginID, String name) {
 	
@@ -40,14 +40,16 @@ public class DocResources {
 		// check cache
 		Properties properties = (Properties) propertiesTable.get(pluginID);
 	
+		// load doc.properties
 		if (properties == null) {
-			// load local properties
 			PluginURL propertiesURL = null;
 			try {
 				propertiesURL =
 					new PluginURL(pluginID + "/doc.properties", "lang=" + Locale.getDefault().toString());
 				Properties localProp = new Properties();
+						
 				localProp.load(propertiesURL.openStream()); //throws
+				
 				properties = localProp;
 				propertiesTable.put(pluginID, properties);
 			} catch (Throwable ex) {

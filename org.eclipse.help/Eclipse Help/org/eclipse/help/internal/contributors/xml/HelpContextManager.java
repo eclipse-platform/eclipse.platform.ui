@@ -127,7 +127,7 @@ public class HelpContextManager implements ContextManager {
 			// strip off the leading %
 			description = description.substring(1);
 			// now translate
-			description = DocResources.getPluginString(pluginID, description);
+			description = ContextResources.getPluginString(pluginID, description);
 		}
 
 		return description;
@@ -140,13 +140,6 @@ public class HelpContextManager implements ContextManager {
 	public IHelpTopic[] getRelatedTopics(Object[] contexts) {
 		if (contexts == null)
 			return null;
-
-		// Scan the list and return the related topics from the first context containing data
-		/*for (int i = 0; i < contexts.length; i++) {
-			IHelpTopic[] topics = getRelatedTopics(contexts[i]);
-			if (topics != null)
-				return topics;
-		}*/
 
 		// return the related topics from the first context
 		if(contexts.length>=1){

@@ -11,7 +11,6 @@ import java.util.zip.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.util.Logger;
 import java.net.*;
-
 import org.eclipse.help.internal.HelpSystem;
 
 /**
@@ -110,7 +109,10 @@ public class PluginURL extends HelpURL {
 				return null;
 			}
 		}
+		return openStreamLocally();
+	}
 
+	public InputStream openStreamLocally(){
 		IPluginDescriptor plugin = getPlugin();
 		if (plugin == null)
 			return null;
@@ -125,7 +127,7 @@ public class PluginURL extends HelpURL {
 		Locale locale = Locale.getDefault();
 		String clientLocale = getValue(lang);
 
-		// The clientLocale takes precedent over the Help Server locale.
+		// The clientLocale takes precedence over the Help Server locale.
 		if (clientLocale != null) {
 			if (clientLocale.indexOf("_") != -1) {
 				locale = new Locale(clientLocale.substring(0, 2), clientLocale.substring(3, 5));
