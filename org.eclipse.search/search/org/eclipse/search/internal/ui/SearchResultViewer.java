@@ -184,6 +184,8 @@ class SearchResultViewer extends TableViewer {
 		fMarkerToShow= -1;
 		updateTitle(true);
 		enableActions();
+		if (getItemCount() > 0)
+			selectResult(getTable(), 0);
 	}
 
 	protected int getSelectedEntriesCount() {
