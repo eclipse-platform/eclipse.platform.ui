@@ -136,6 +136,15 @@ public class EclipseSynchronizer implements IFlushOperation {
 		Assert.isNotNull(info); // enforce the use of deleteFolderSync
 		// ignore folder sync on the root (i.e. CVSROOT/config/TopLevelAdmin=yes but we just ignore it)
 		if (folder.getType() == IResource.ROOT) return;
+		if (!isValid(folder)) {
+			// This means that the folder doesn't exist and is not a phantom
+			// Allow the set if the parent is a CVS folder since
+			// this can occur when creating phatom folders
+			if (getFolderSync(folder.getParent()) == null) {
+				throw new CVSException(IStatus.ERROR, CVSException.UNABLE,
+					Policy.bind("EclipseSynchronizer.ErrorSettingFolderSync", folder.getFullPath().toString())); //$NON-NLS-1$
+			}
+		}
 		ISchedulingRule rule = null;
 		try {
 			rule = beginBatching(folder, null);
