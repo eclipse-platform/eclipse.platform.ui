@@ -17,3 +17,4 @@ org.eclipse.core.runtime/url/debug/connect=false
 org.eclipse.core.runtime/url/debug/cachelookup=false
 org.eclipse.core.runtime/url/debug/cachecopy=false
 org.eclipse.core.runtime/update/debug=false
+org.eclipse.core.runtime/config/debug=false
