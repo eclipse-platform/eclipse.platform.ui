@@ -85,7 +85,7 @@
 	</objectContribution>	
 
 	<!-- ****************** Target Management Popup Actions *************** -->
-	
+	<!--
    	<objectContribution
          id="org.eclipse.team.ui.targetResourceContributions"
          objectClass="org.eclipse.core.resources.IResource" adaptable="true">
@@ -122,8 +122,8 @@
 			class="org.eclipse.team.internal.ui.target.TargetProjectAction">
 		</action>
    </objectContribution>
+   -->
 </extension>
-
 
 <!-- ************** Views ********************** -->
 <extension point="org.eclipse.ui.views">
@@ -139,7 +139,7 @@
 		category="org.eclipse.team.ui"
 		class="org.eclipse.team.internal.ui.sync.SyncView">
 	</view>
-	
+	<!--
 	<category 
 		id="org.eclipse.team.ui.target"
 		name="Deployment">
@@ -152,6 +152,7 @@
             class="org.eclipse.team.internal.ui.target.SiteExplorerView"
             id="org.eclipse.team.ui.target.SiteExplorerView">
       </view>
+      -->
 </extension>	
 
 <!-- ****************** Import Wizards ********************* -->
