@@ -54,68 +54,68 @@ public class CVSSyncCompareInput extends SyncCompareInput {
 	public Viewer createDiffViewer(Composite parent) {
 		CatchupReleaseViewer catchupReleaseViewer = new CVSCatchupReleaseViewer(parent, this);
 		setViewer(catchupReleaseViewer);
-		catchupReleaseViewer.getTree().addMouseMoveListener(new MouseMoveListener() {
-			/**
-			 * @see MouseMoveListener#mouseMove(MouseEvent)
-			 */
-			public void mouseMove(MouseEvent e) {
-				final Tree tree = (Tree)e.widget;
-				TreeItem item = tree.getItem(new Point(e.x, e.y));
-				final TeamFile file;
-				if (item != null) {
-					// Hack: this is the only way to get an item from the tree viewer
-					Object o = item.getData();
-					if (o instanceof TeamFile) {
-						file = (TeamFile)o;
-					} else file = null;
-				} else file = null;
-
-				// avoid redundant updates -- identity test is good enough here
- 				if (file == previousTeamFile) return;
-				previousTeamFile = file;
-				getShell().getDisplay().asyncExec(new Runnable() {
-					public void run() {
-						updateToolTip(tree, file);
-					}
-				});
-			}
-		});
+//		catchupReleaseViewer.getTree().addMouseMoveListener(new MouseMoveListener() {
+//			/**
+//			 * @see MouseMoveListener#mouseMove(MouseEvent)
+//			 */
+//			public void mouseMove(MouseEvent e) {
+//				final Tree tree = (Tree)e.widget;
+//				TreeItem item = tree.getItem(new Point(e.x, e.y));
+//				final TeamFile file;
+//				if (item != null) {
+//					// Hack: this is the only way to get an item from the tree viewer
+//					Object o = item.getData();
+//					if (o instanceof TeamFile) {
+//						file = (TeamFile)o;
+//					} else file = null;
+//				} else file = null;
+//
+//				// avoid redundant updates -- identity test is good enough here
+// 				if (file == previousTeamFile) return;
+//				previousTeamFile = file;
+//				getShell().getDisplay().asyncExec(new Runnable() {
+//					public void run() {
+//						updateToolTip(tree, file);
+//					}
+//				});
+//			}
+//		});
 		return catchupReleaseViewer;
 	}
 	
-	protected void updateToolTip(Tree tree, TeamFile file) {
-		String newText = null;
-		if (file != null && file.getChangeDirection() != ITeamNode.OUTGOING) {
-			IRemoteSyncElement element = file.getMergeResource().getSyncElement();
-			final ICVSRemoteFile remoteFile = (ICVSRemoteFile)element.getRemote();
-			final ILogEntry[] logEntry = new ILogEntry[1];
-			if (remoteFile != null) {
-				try {
-					CVSUIPlugin.runWithProgress(getViewer().getTree().getShell(), true /*cancelable*/,
-						new IRunnableWithProgress() {
-						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-							try {
-								logEntry[0] = remoteFile.getLogEntry(monitor);
-							} catch (TeamException ex) {
-								throw new InvocationTargetException(ex);
-							}
-						}
-					});
-				} catch (InterruptedException ex) {
-					// ignore cancellation
-				} catch (InvocationTargetException ex) {
-					// ignore the exception
-				}
-			}
-			if (logEntry[0] != null) {
-				newText = logEntry[0].getComment();
-			}
-		}
-		if (tree.isDisposed()) return;
-		String oldText = tree.getToolTipText();
-		if (newText == oldText || newText != null && newText.equals(oldText)) return;
-		tree.setToolTipText(newText);
-	}
+//	protected void updateToolTip(Tree tree, TeamFile file) {
+//		String newText = null;
+//		if (file != null && file.getChangeDirection() != ITeamNode.OUTGOING) {
+//			IRemoteSyncElement element = file.getMergeResource().getSyncElement();
+//			final ICVSRemoteFile remoteFile = (ICVSRemoteFile)element.getRemote();
+//			final ILogEntry[] logEntry = new ILogEntry[1];
+//			if (remoteFile != null) {
+//				try {
+//					CVSUIPlugin.runWithProgress(getViewer().getTree().getShell(), true /*cancelable*/,
+//						new IRunnableWithProgress() {
+//						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+//							try {
+//								logEntry[0] = remoteFile.getLogEntry(monitor);
+//							} catch (TeamException ex) {
+//								throw new InvocationTargetException(ex);
+//							}
+//						}
+//					});
+//				} catch (InterruptedException ex) {
+//					// ignore cancellation
+//				} catch (InvocationTargetException ex) {
+//					// ignore the exception
+//				}
+//			}
+//			if (logEntry[0] != null) {
+//				newText = logEntry[0].getComment();
+//			}
+//		}
+//		if (tree.isDisposed()) return;
+//		String oldText = tree.getToolTipText();
+//		if (newText == oldText || newText != null && newText.equals(oldText)) return;
+//		tree.setToolTipText(newText);
+//	}
 	
 	protected IRemoteSyncElement[] createSyncElements(IProgressMonitor monitor) throws TeamException {
 		IRemoteSyncElement[] trees = new IRemoteSyncElement[resources.length];
