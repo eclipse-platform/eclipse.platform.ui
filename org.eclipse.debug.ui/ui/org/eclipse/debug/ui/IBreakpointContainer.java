@@ -20,6 +20,8 @@ import org.eclipse.swt.graphics.Image;
  * child containers is a "leaf node."
  * A container with no parent container is a root node. The root
  * containers divide up the breakpoints from the breakpoint manager.
+ * 
+ * @since 3.1
  */
 public interface IBreakpointContainer {
 	
