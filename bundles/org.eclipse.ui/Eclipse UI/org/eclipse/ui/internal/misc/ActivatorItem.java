@@ -220,7 +220,7 @@ public void mouseUp(org.eclipse.swt.events.MouseEvent e) {}
 
 		// Draw background.
 		if (fPressed) {
-			gc.setBackground(getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+			gc.setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
 			gc.fillRectangle(r);
 		} else
 			ActivatorBar.paintGradient(getDisplay(), gc, r);
