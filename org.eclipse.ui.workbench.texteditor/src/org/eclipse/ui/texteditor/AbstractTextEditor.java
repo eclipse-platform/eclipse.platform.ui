@@ -36,32 +36,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.ST;
-import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.custom.VerifyKeyListener;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.events.ShellAdapter;
-import org.eclipse.swt.events.ShellEvent;
-import org.eclipse.swt.events.VerifyEvent;
-import org.eclipse.swt.events.VerifyListener;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -106,7 +80,30 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ST;
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.custom.VerifyKeyListener;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.ShellAdapter;
+import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.events.VerifyEvent;
+import org.eclipse.swt.events.VerifyListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorDescriptor;
@@ -127,11 +124,13 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ActionDescriptor;
 import org.eclipse.ui.internal.EditorPluginAction;
+import org.eclipse.ui.internal.KeyBindingService;
+import org.eclipse.ui.internal.actions.gestures.Capture;
+import org.eclipse.ui.internal.actions.gestures.CaptureListener;
+import org.eclipse.ui.internal.actions.gestures.Gesture;
+import org.eclipse.ui.internal.actions.gestures.Util;
 import org.eclipse.ui.part.EditorActionBarContributor;
 import org.eclipse.ui.part.EditorPart;
-
-
-
 
 /**
  * Abstract base implementation of a text editor.
@@ -1583,7 +1582,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 						if (action.isEnabled())
 							action.run();
 					}
-				}
+				}				
 				
 				public void mouseUp(MouseEvent e) {
 					setFocus();
@@ -1725,8 +1724,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * <code>IWorkbenchPart</code> method creates the vertical ruler and
 	 * source viewer. Subclasses may extend.
 	 */
-	public void createPartControl(Composite parent) {
-		
+	public void createPartControl(Composite parent) {	
 		fVerticalRuler= createVerticalRuler();
 		
 		int styles= SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION;
@@ -1747,6 +1745,50 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		initializeFindScopeColor(fSourceViewer);
 		
 		StyledText styledText= fSourceViewer.getTextWidget();
+
+		final Map gestureMap = new HashMap();
+		
+		gestureMap.put("E", "org.eclipse.ui.navigate.forwardHistory");
+		gestureMap.put("N", "org.eclipse.ui.file.save");
+		gestureMap.put("NW", "org.eclipse.ui.file.saveAll");
+		gestureMap.put("S", "org.eclipse.ui.file.close");
+		gestureMap.put("SW", "org.eclipse.ui.file.closeAll");
+		gestureMap.put("W", "org.eclipse.ui.navigate.backwardHistory");
+		gestureMap.put("EN", "org.eclipse.ui.edit.copy");
+		gestureMap.put("ES", "org.eclipse.ui.edit.paste");
+		gestureMap.put("EW", "org.eclipse.ui.edit.cut");
+
+		Capture capture = Capture.create();
+		capture.setControl(styledText);
+		
+		capture.addCaptureListener(new CaptureListener() { 
+			public void gesture(Gesture gesture) {
+				if (gesture.getPen() == 3) {
+					String actionId = (String) gestureMap.get(Util.recognize(gesture.getPoints(), 20));
+		
+					if (actionId != null) {					
+						IKeyBindingService keyBindingService = getEditorSite().getKeyBindingService();
+
+						if (keyBindingService instanceof KeyBindingService) {
+							IAction action = ((KeyBindingService) keyBindingService).getAction(actionId);
+							
+							if (action != null) {
+								if (action instanceof IUpdate)
+									((IUpdate) action).update();
+								
+								if (action.isEnabled())
+									action.run();
+							}
+						}
+
+						return;
+					}
+
+					fTextContextMenu.setVisible(true);
+				}
+			};
+		});
+
 		styledText.addMouseListener(getCursorListener());
 		styledText.addKeyListener(getCursorListener());
 		
@@ -1760,7 +1802,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		manager.setRemoveAllWhenShown(true);
 		manager.addMenuListener(getContextMenuListener());
 		fTextContextMenu= manager.createContextMenu(styledText);
-		styledText.setMenu(fTextContextMenu);
+		//styledText.setMenu(fTextContextMenu);
 		
 		if (fEditorContextMenuId != null)
 			getSite().registerContextMenu(fEditorContextMenuId, manager, getSelectionProvider());
