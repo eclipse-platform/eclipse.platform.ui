@@ -95,7 +95,7 @@ public final class InternalPlatform {
 	public static boolean DEBUG_PLUGINS = false;
 	public static boolean DEBUG_STARTUP = false;
 	public static boolean DEBUG_SHUTDOWN = false;
-	public static String DEBUG_PLUGINS_DUMP = ""; //$NON-NLS-1$
+	public static String DEBUG_PLUGINS_DUMP = null;
 	public static boolean DEBUG_PREFERENCES = false;
 	
 	private static final String KEY_PREFIX = "%"; //$NON-NLS-1$
@@ -327,7 +327,7 @@ public static Map getAuthorizationInfo(URL serverUrl, String realm, String authS
 	return info == null ? null : new HashMap(info);
 }
 public static boolean getBooleanOption(String option, boolean defaultValue) {
-	String optionValue = options.getProperty(option);
+	String optionValue = getDebugOption(option);
 	return (optionValue != null && optionValue.equalsIgnoreCase("true"))  || defaultValue; //$NON-NLS-1$
 }
 /**
@@ -511,7 +511,7 @@ public static void loaderShutdown() {
 	assertInitialized();
 	registry.shutdown(null);
 	clearLockFile();
-	if (DEBUG_PLUGINS && DEBUG_PLUGINS_DUMP.length() != 0) {
+	if (DEBUG_PLUGINS && DEBUG_PLUGINS_DUMP != null) {
 		// We are debugging so output the registry in XML
 		// format.
 		registry.debugRegistry(DEBUG_PLUGINS_DUMP);
