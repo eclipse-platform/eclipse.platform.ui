@@ -11,6 +11,7 @@
 package org.eclipse.ant.ui.internal.preferences;
 
 
+import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
@@ -26,6 +27,7 @@ import org.eclipse.debug.core.variables.ILaunchVariableManager;
 import org.eclipse.debug.core.variables.LaunchVariableUtil;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -288,7 +290,7 @@ public class AntPropertiesBlock {
 	}
 	
 	/**
-	 * Allows the user to enter a global user property
+	 * Allows the user to enter a user property
 	 */
 	private void addProperty() {
 		String title = AntPreferencesMessages.getString("AntPropertiesBlock.Add_Property_2");  //$NON-NLS-1$
@@ -296,10 +298,14 @@ public class AntPropertiesBlock {
 		if (dialog.open() == Window.CANCEL) {
 			return;
 		}
-
-		Property prop = new Property();
+		
 		String[] pair= dialog.getNameValuePair();
-		prop.setName(pair[0]);
+		String name= pair[0];
+		if (!overwrite(name)) {
+			return;
+		}
+		Property prop = new Property();
+		prop.setName(name);
 		prop.setValue(pair[1]);
 		((ExternalToolsContentProvider)propertyTableViewer.getContentProvider()).add(prop);
 		container.update();
@@ -308,6 +314,7 @@ public class AntPropertiesBlock {
 	private void edit() {
 		IStructuredSelection selection= (IStructuredSelection) propertyTableViewer.getSelection();
 		Property prop = (Property) selection.getFirstElement();
+		String originalName= prop.getName();
 		if (prop == null) {
 			return;
 		}
@@ -319,11 +326,34 @@ public class AntPropertiesBlock {
 		}
 
 		String[] pair= dialog.getNameValuePair();
-		prop.setName(pair[0]);
+		String name= pair[0];
+		if (!name.equals(originalName)) {
+			if (!overwrite(name)){
+				return;
+			}
+		}
+		prop.setName(name);
 		prop.setValue(pair[1]);
 		//trigger a resort
 		propertyTableViewer.refresh();
 		container.update();
+	}
+	
+	private boolean overwrite(String name) {
+		Object[] properties= getProperties();
+		for (int i = 0; i < properties.length; i++) {
+			Property property = (Property)properties[i];
+			String propertyName = property.getName();
+			if (propertyName.equals(name)) {
+				boolean overWrite= MessageDialog.openQuestion(propertyTableViewer.getControl().getShell(), AntPreferencesMessages.getString("AntPropertiesBlock.15"), MessageFormat.format(AntPreferencesMessages.getString("AntPropertiesBlock.16"), new String[] {name}));  //$NON-NLS-1$ //$NON-NLS-2$
+				if (!overWrite) {
+					return false;
+				}
+				((ExternalToolsContentProvider)propertyTableViewer.getContentProvider()).remove(property);
+				break;
+			}					
+		}
+		return true;
 	}
 	
 	/**
