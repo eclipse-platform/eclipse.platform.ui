@@ -16,23 +16,120 @@ package org.eclipse.ui.internal.cheatsheets.data;
  */
 public interface IParserTags {
 	public static final String copyright = "Licensed Material - Property of IBM <<PART NUMBER - 5724-D15>> (C) Copyright IBM Corp. 2003 - All Rights Reserved. US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.".intern(); //$NON-NLS-1$
+
+	/*
+	 * <!ELEMENT cheatsheet (intro, item+)>
+	 * <!ATTLIST cheatsheet
+	 *   title               CDATA #REQUIRED
+	 * >
+	 */
+	public static final String CHEATSHEET = "cheatsheet"; //$NON-NLS-1$
 	public static final String TITLE = "title"; //$NON-NLS-1$
+
+	/*
+	 * <!ELEMENT intro (description)>
+	 * <!ATTLIST intro
+	 *   contextId           CDATA #IMPLIED
+	 *   href                CDATA #IMPLIED
+	 * >
+	 */
 	public static final String INTRO = "intro"; //$NON-NLS-1$
+	public static final String CONTEXTID = "contextId"; //$NON-NLS-1$
 	public static final String HREF = "href"; //$NON-NLS-1$
+	
+	/*
+	 * <!ELEMENT description ()>
+	 * <!ATTLIST description
+	 * >
+	 */
+	public static final String DESCRIPTION = "description"; //$NON-NLS-1$
+	public static final String BOLD = "b"; //$NON-NLS-1$
+	public static final String BREAK = "br"; //$NON-NLS-1$
+	public static final String BOLD_START_TAG = "<b>"; //$NON-NLS-1$
+	public static final String BOLD_END_TAG = "</b>"; //$NON-NLS-1$
+	public static final String BREAK_TAG = "<br/>"; //$NON-NLS-1$
+	public static final String FORM_START_TAG = "<form><p>"; //$NON-NLS-1$
+	public static final String FORM_END_TAG = "</p></form>"; //$NON-NLS-1$
+	
+	
+	/*
+	 * <!ELEMENT item (description [action|perform-when] | (subitem|repeated-subitem|conditional-subitem)*)>
+	 * <!ATTLIST item
+	 *   title               CDATA #REQUIRED
+	 *   skip                ("true" | "false") "false"
+	 *   contextId           CDATA #IMPLIED
+	 *   href                CDATA #IMPLIED
+	 * >
+	 */
 	public static final String ITEM = "item"; //$NON-NLS-1$
-	public static final String SUBITEM = "subitem"; //$NON-NLS-1$
-	public static final String SUPERITEM = "superitem"; //$NON-NLS-1$
-	public static final String LABEL = "label"; //$NON-NLS-1$
-	public static final String PLUGINID = "pluginId"; //$NON-NLS-1$
-	public static final String CHEATSHEETID = "cheatsheetID"; //$NON-NLS-1$
-	public static final String CHEATSHEET = "Cheatsheet"; //$NON-NLS-1$
-	public static final String CLASS = "class"; //$NON-NLS-1$
-	public static final String KIND = "kind"; //$NON-NLS-1$
 	public static final String SKIP = "skip"; //$NON-NLS-1$
-	public static final String ACTIONPARAM = "actionparam"; //$NON-NLS-1$
+
+	/*
+	 * <!ELEMENT subitem ( [action|perform-when] )>
+	 * <!ATTLIST subitem
+	 *   label               CDATA #REQUIRED
+	 *   skip                ("true" | "false") "false"
+	 *   when                CDATA #IMPLIED
+	 * >
+	 */
+	public static final String SUBITEM = "subitem"; //$NON-NLS-1$
+	public static final String LABEL = "label"; //$NON-NLS-1$
+	public static final String WHEN = "when"; //$NON-NLS-1$
+
+	/*
+	 * <!ELEMENT conditional-subitem (subitem+)>
+	 * <!ATTLIST conditional-subitem
+	 *   condition               CDATA #REQUIRED
+	 * >
+	 */
+	public static final String CONDITIONALSUBITEM = "conditional-subitem"; //$NON-NLS-1$
+	public static final String CONDITION = "condition"; //$NON-NLS-1$
+	
+	/*
+	 * <!ELEMENT repeated-subitem (subitem)>
+	 * <!ATTLIST repeated-subitem
+	 *   values               CDATA #REQUIRED
+	 * >
+	 */
+	public static final String REPEATEDSUBITM = "repeated-subitem"; //$NON-NLS-1$
+	public static final String VALUES = "values"; //$NON-NLS-1$
+
+	/*
+	 * <!ELEMENT action EMPTY>
+	 * <!ATTLIST action
+	 *   class               CDATA #REQUIRED
+	 *   pluginId            CDATA #REQUIRED
+	 *   param1              CDATA #IMPLIED
+	 *   ...
+	 *   param9              CDATA #IMPLIED
+	 *   confirm             ("true" | "false") "false"
+	 *   when                CDATA #IMPLIED
+	 * >
+	 */
 	public static final String ACTION = "action"; //$NON-NLS-1$
+	public static final String CLASS = "class"; //$NON-NLS-1$
+	public static final String PLUGINID = "pluginId"; //$NON-NLS-1$
+	public static final String PARAM = "param"; //$NON-NLS-1$
+	public static final String CONFIRM = "confirm"; //$NON-NLS-1$
+
+	/*
+	 * <!ELEMENT perform-when (action)>
+	 * <!ATTLIST perform-when
+	 *   condition               CDATA #REQUIRED
+	 * >
+	 */
+	public static final String PERFORMWHEN = "perform-when"; //$NON-NLS-1$
+
+	
+	
+	
+	public static final String CHEATSHEETID = "cheatsheetID"; //$NON-NLS-1$
+	public static final String KIND = "kind"; //$NON-NLS-1$
 	public static final String VERSION = "version";//$NON-NLS-1$
 	public static final String ID = "id";//$NON-NLS-1$
+
+
+
 
 //	public static final String DYNAMIC = "dynamic";//$NON-NLS-1$
 	public static final String CHEATSHEETMANAGER = "CheatsheetManager";//$NON-NLS-1$

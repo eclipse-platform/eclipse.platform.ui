@@ -12,63 +12,66 @@ package org.eclipse.ui.internal.cheatsheets.data;
 
 import java.util.ArrayList;
 
-public class Item extends ActionItem implements IContainsContent {
-	private Content content;
+public class Item extends Intro implements IActionItem, IPerformWhenItem, ISubItemItem {
+	private String title;
+	private boolean skip;
+	private ArrayList itemExtensions;
+	
+	private Action action;
+	private PerformWhen performWhen;
+	
+	private ArrayList subItems;
+	private ArrayList conditionalSubItems;
+	private ArrayList repeatedSubItems; 
+	
 
 	/**
-	 * Constructor for ContentItem.
+	 * Constructor for Item.
 	 */
 	public Item() {
 		super();
-		content = new Content();
 	}
 	
-	public Item(String title, String description, String href){
-		super();
-		content = new Content();
-		content.setText(description);
-		content.setTitle(title);
-		content.setHref(href);
+	public Item(String title, String description, String href, String contextId, boolean skip) {
+		super(description, href, contextId);
+		this.title = title;
+		this.skip = skip;
 	}
 	
-	/**
-	 * Returns the helpLink.
-	 * @return String
-	 */
-	public String getHref() {
-		return content.getHref();
-	}
-
-	/**
-	 * Returns the text.
-	 * @return String
-	 */
-	public String getText() {
-		return content.getText();
-	}
-
 	/**
 	 * Returns the title.
 	 * @return String
 	 */
 	public String getTitle() {
-		return content.getTitle();
+		return this.title;
 	}
 
 	/**
-	 * Sets the helpLink.
-	 * @param helpLink The helpLink to set
+	 * Returns the skip.
+	 * @return boolean
 	 */
-	public void setHref(String helpLink) {
-		content.setHref(helpLink);
+	public boolean isDynamic() {
+//		this.conditionalSubItems;
+//		this.repeatedSubItems;
+//		this.subItems;
+//		this.performWhen;
+
+		return false;
 	}
 
 	/**
-	 * Sets the text.
-	 * @param text The text to set
+	 * Returns the skip.
+	 * @return boolean
 	 */
-	public void setText(String text) {
-		content.setText(text);
+	public boolean isSkip() {
+		return this.skip;
+	}
+
+	/**
+	 * @param skip The skip to set.
+	 */
+	public void setSkip(boolean skip) {
+		this.skip = skip;
 	}
 
 	/**
@@ -76,37 +79,101 @@ public class Item extends ActionItem implements IContainsContent {
 	 * @param title The title to set
 	 */
 	public void setTitle(String title) {
-		content.setTitle(title);
+		this.title = title;
 	}
 
-	public boolean isDynamic() {
-		return content.isDynamic();
-	}
-
-	public void setIsDynamic(boolean b) {
-		content.setDynamic(b);
-	}
-	
-	public void setContent(Content c){
-		this.content = c;	
-	}
-	
-	public Content getContent(){
-		return this.content;	
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.cheatsheets.data.IContainsContent#getItemExtensions()
+	/**
+	 * Sets the item extensions for this item.
+	 * @param exts the extensions to set
 	 */
-	public ArrayList getItemExtensions() {
-		return content.getItemExtensions();
+	public void setItemExtensions(ArrayList exts){
+		this.itemExtensions = exts;	
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.cheatsheets.data.IContainsContent#setItemExtensions(java.util.ArrayList)
+	
+	/**
+	 * Returns the item extensions, if any, for this item,.
+	 * @return list of the extensions or <code>null</code>
 	 */
-	public void setItemExtensions(ArrayList itemExtensions) {
-		content.setItemExtensions(itemExtensions); 
+	public ArrayList getItemExtensions(){
+		return itemExtensions;
 	}
 
+	/**
+	 * @return Returns the action.
+	 */
+	public Action getAction() {
+		return action;
+	}
+	
+	/**
+	 * @param action The action to set.
+	 */
+	public void setAction(Action action) {
+		this.action = action;
+	}
+	
+	/**
+	 * @return Returns the performWhen.
+	 */
+	public PerformWhen getPerformWhen() {
+		return performWhen;
+	}
+	
+	/**
+	 * @param performWhen The performWhen to set.
+	 */
+	public void setPerformWhen(PerformWhen performWhen) {
+		this.performWhen = performWhen;
+	}
+	
+	/**
+	 * @param conditionalSubItem the conditionalSubItem to add.
+	 */
+	public void addConditionalSubItem(ConditionalSubItem conditionalSubItem) {
+		if(conditionalSubItems == null) {
+			conditionalSubItems = new ArrayList();
+		}
+		conditionalSubItems.add(conditionalSubItem);
+	}
+	
+	/**
+	 * @return Returns the conditionalSubItems.
+	 */
+	public ArrayList getConditionalSubItems() {
+		return conditionalSubItems;
+	}
+	
+	/**
+	 * @param repeatedSubItem the RepeatedSubItem to add.
+	 */
+	public void addRepeatedSubItem(RepeatedSubItem repeatedSubItem) {
+		if(repeatedSubItems == null) {
+			repeatedSubItems = new ArrayList();
+		}
+		repeatedSubItems.add(repeatedSubItem);
+	}
+
+	/**
+	 * @return Returns the repeatedSubItems.
+	 */
+	public ArrayList getRepeatedSubItems() {
+		return repeatedSubItems;
+	}
+	
+	/**
+	 * @param subItem the SubItem to add.
+	 */
+	public void addSubItem(SubItem subItem) {
+		if(subItems == null) {
+			subItems = new ArrayList();
+		}
+		subItems.add(subItem);
+	}
+
+	/**
+	 * @return Returns the subItems.
+	 */
+	public ArrayList getSubItems() {
+		return subItems;
+	}
 }

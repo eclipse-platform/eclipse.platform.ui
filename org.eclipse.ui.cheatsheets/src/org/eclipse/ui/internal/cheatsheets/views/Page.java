@@ -22,8 +22,6 @@ import org.eclipse.ui.forms.widgets.*;
 
 public abstract class Page {
 	protected Composite cheatSheetComposite;
-	protected ScrolledComposite scrolledComposite;
-	protected Composite infoArea;
 
 	protected final static int HORZ_SCROLL_INCREMENT = 20;
 	protected final static int VERT_SCROLL_INCREMENT = 20;
@@ -120,12 +118,6 @@ public abstract class Page {
 			if (colorArray[i] != null)
 				colorArray[i].dispose();
 		}
-
-		if (infoArea != null)
-			infoArea.dispose();
-
-		if (scrolledComposite != null)
-			scrolledComposite.dispose();
 
 		if (cheatSheetComposite != null)
 			cheatSheetComposite.dispose();

@@ -25,13 +25,13 @@ public class CheatSheetPage extends Page {
 	private final RGB darkGreyRGB = new RGB(160, 192, 208);
 	private final RGB HIGHLIGHT_RGB = new RGB(230, 230, 230);
 
-	private CheatSheetDomParser parser;
+	private CheatSheet cheatSheet;
 	private ArrayList viewItemList;
 	private CheatSheetViewer viewer;
 
-	public CheatSheetPage(CheatSheetDomParser parser, ArrayList viewItemList, CheatSheetViewer cheatSheetViewer) {
+	public CheatSheetPage(CheatSheet cheatSheet, ArrayList viewItemList, CheatSheetViewer cheatSheetViewer) {
 		super();
-		this.parser = parser;
+		this.cheatSheet = cheatSheet;
 		this.viewItemList = viewItemList;
 		this.viewer = cheatSheetViewer;
 	}
@@ -53,18 +53,18 @@ public class CheatSheetPage extends Page {
 	protected void createInfoArea(Composite parent) {
 		super.createInfoArea(parent);
 	
-		IntroItem myintro = new IntroItem(toolkit, form, parser.getIntroItem(), darkGrey, viewer);
+		IntroItem myintro = new IntroItem(toolkit, form, cheatSheet.getIntroItem(), darkGrey, viewer);
 	
 		myintro.setItemColor(myintro.lightGrey);
 		myintro.setBold(true);
 		viewItemList.add(myintro);
 			
 		//Get the content info from the parser.  This makes up all items except the intro item.
-		ArrayList items = parser.getItems();
+		ArrayList items = cheatSheet.getItems();
 		for (int i = 0; i < items.size(); i++) {
 			Color color = (i%2) == 0 ? backgroundColor : lightGrey;
 
-			CoreItem coreItem = new CoreItem(toolkit, form, (IContainsContent)items.get(i), color, viewer);
+			CoreItem coreItem = new CoreItem(toolkit, form, (org.eclipse.ui.internal.cheatsheets.data.Item)items.get(i), color, viewer);
 			viewItemList.add(coreItem);
 		}
 	}
@@ -76,8 +76,8 @@ public class CheatSheetPage extends Page {
 	 * @param parent the SWT parent for the title area composite
 	 */
 	protected String getTitle() {
-		if(parser != null & parser.getTitle() != null)
-			return parser.getTitle();
+		if(cheatSheet != null & cheatSheet.getTitle() != null)
+			return cheatSheet.getTitle();
 		else
 			return ""; //$NON-NLS-1$
 	}

@@ -35,7 +35,7 @@ public abstract class ViewItem {
 	public final static byte VIEWITEM_DONOT_ADVANCE = 1;
 	private Composite bodyComp;
 
-	protected Label bodyText;
+	protected FormText bodyText;
 	private Composite bodyWrapperComposite;
 	protected Composite buttonComposite;
 
@@ -45,7 +45,7 @@ public abstract class ViewItem {
 	private boolean completed = false;
 
 	private Image completeImage;
-	protected IContainsContent contentItem;
+	protected Item item;
 
 	protected Color darkGrey;
 	private final RGB darkGreyRGB = new RGB(160, 192, 208);
@@ -72,12 +72,12 @@ public abstract class ViewItem {
 	/**
 	 * Constructor for ViewItem.
 	 */
-	public ViewItem(FormToolkit toolkit, ScrolledForm form, IContainsContent contentItem, Color itemColor, CheatSheetViewer viewer) {
+	public ViewItem(FormToolkit toolkit, ScrolledForm form, Item item, Color itemColor, CheatSheetViewer viewer) {
 		super();
 		this.toolkit = toolkit;
 		this.form = form;
 		this.parent = form.getBody();
-		this.contentItem = contentItem;
+		this.item = item;
 		this.itemColor = itemColor;
 		this.viewer = viewer;
 		lightGrey = new Color(parent.getDisplay(), HIGHLIGHT_RGB);
@@ -121,7 +121,7 @@ public abstract class ViewItem {
 		mainItemComposite = toolkit.createExpandableComposite(parent, ExpandableComposite.TREE_NODE);
 		mainItemComposite.setBackground(itemColor);
 		mainItemComposite.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
-		String title = contentItem.getTitle();
+		String title = item.getTitle();
 		if (title != null) {
 			mainItemComposite.setText(title);
 		}
@@ -141,7 +141,7 @@ public abstract class ViewItem {
 		// handle item extensions here
 		// check number of extensions for this item and adjust layout accordingly
 		int number = 0;
-		ArrayList itemExts = contentItem.getItemExtensions();
+		ArrayList itemExts = item.getItemExtensions();
 		if (itemExts != null) {
 			for (int g = 0; g < itemExts.size(); g++) {
 				AbstractItemExtensionElement[] eea = (AbstractItemExtensionElement[]) itemExts.get(g);
@@ -153,14 +153,14 @@ public abstract class ViewItem {
 		}
 
 		// don't add the help icon unless there is a help link
-		if (contentItem.getHref() != null) {
+		if (item.getHref() != null) {
 			// adjust the layout count
 			number++;
 			ImageHyperlink helpButton = createButton(titleComposite, helpImage, this, itemColor, CheatSheetPlugin.getResourceString(ICheatSheetResource.HELP_BUTTON_TOOLTIP));
 			toolkit.adapt(helpButton, true, true);
 			helpButton.addHyperlinkListener(new HyperlinkAdapter() {
 				public void linkActivated(HyperlinkEvent e) {
-					openHelpTopic(contentItem.getHref());
+					openHelpTopic(item.getHref());
 				}
 			});
 		}
@@ -184,7 +184,9 @@ public abstract class ViewItem {
 		bodyWrapperComposite.setLayout(wrapperLayout);
 		bodyWrapperComposite.setBackground(itemColor);
 
-		bodyText = toolkit.createLabel(bodyWrapperComposite, contentItem.getText(), SWT.WRAP);
+//		bodyText = toolkit.createLabel(bodyWrapperComposite, item.getDescription(), SWT.WRAP);
+		bodyText = toolkit.createFormText(bodyWrapperComposite, false);
+		bodyText.setText(item.getDescription(), item.getDescription().startsWith(IParserTags.FORM_START_TAG), false);
 
 		//Set up the body text portion here.		
 		bodyText.setBackground(itemColor);
@@ -195,11 +197,12 @@ public abstract class ViewItem {
 		//As it will be handled by the CoreItemWithSubs.
 		//If there is no sub steps, create a button composite and Pass it to CoreItem using the handleButtons.
 
-		if (contentItem.isDynamic()) {
-			((CoreItem) this).setBodyWrapperComposite(bodyWrapperComposite);
-		} else {
+//FIXME: What now? 
+//		if (contentItem.isDynamic()) {
+//			((CoreItem) this).setBodyWrapperComposite(bodyWrapperComposite);
+//		} else {
 			handleButtons(bodyWrapperComposite);
-		}
+//		}
 
 		setButtonsCollapsed();
 		setCollapsed();
@@ -259,7 +262,7 @@ public abstract class ViewItem {
 		if (regularFont != null)
 			regularFont.dispose();
 
-		ArrayList itemExts = contentItem.getItemExtensions();
+		ArrayList itemExts = item.getItemExtensions();
 		if (itemExts != null) {
 			for (int g = 0; g < itemExts.size(); g++) {
 				AbstractItemExtensionElement[] eea = (AbstractItemExtensionElement[]) itemExts.get(g);
@@ -281,8 +284,8 @@ public abstract class ViewItem {
 	/**
 	 * @return
 	 */
-	public IContainsContent getContentItem() {
-		return contentItem;
+	public Item getItem() {
+		return item;
 	}
 
 	/**
@@ -343,8 +346,12 @@ public abstract class ViewItem {
 
 	/*package*/
 	byte runAction(CheatSheetManager csm) {
-		Item item = (Item)contentItem;
-		return runAction(item.getActionPluginID(), item.getActionClass(), item.getActionParams(), csm);
+		Action action = item.getAction();
+		if(action == null) {
+			return VIEWITEM_ADVANCE;
+		} else {
+			return runAction(action.getPluginID(), action.getActionClass(), action.getParams(), csm);
+		}
 	}
 
 	/**

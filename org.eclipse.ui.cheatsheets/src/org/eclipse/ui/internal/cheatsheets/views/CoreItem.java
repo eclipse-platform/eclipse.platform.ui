@@ -43,8 +43,8 @@ public class CoreItem extends ViewItem {
 	 * @param parent
 	 * @param contentItem
 	 */
-	public CoreItem(FormToolkit toolkit, ScrolledForm form, IContainsContent contentItem, Color itemColor, CheatSheetViewer viewer) {
-		super(toolkit, form, contentItem, itemColor, viewer);
+	public CoreItem(FormToolkit toolkit, ScrolledForm form, Item item, Color itemColor, CheatSheetViewer viewer) {
+		super(toolkit, form, item, itemColor, viewer);
 	}
 
 	/**
@@ -71,7 +71,7 @@ public class CoreItem extends ViewItem {
 	 * @see org.eclipse.ui.internal.cheatsheets.data.ViewItem#handleButtons(Composite)
 	 */
 	/*package*/ void handleButtons(Composite bodyWrapperComposite) {
-		if (contentItem instanceof ItemWithSubItems) {
+		if (item.getSubItems() != null && item.getSubItems().size() > 0) {
 			try{
 				handleSubButtons(bodyWrapperComposite);
 			}catch(Exception e){
@@ -104,7 +104,7 @@ public class CoreItem extends ViewItem {
 		spacerData.widthHint = 16;
 		spacer.setLayoutData(spacerData);
 
-		if (((Item)contentItem).isPerform()) {
+		if (item.getAction() != null ) {
 			startButton = createButton(buttonComposite, startImage, this, itemColor, CheatSheetPlugin.getResourceString(ICheatSheetResource.PERFORM_TASK_TOOLTIP));
 			toolkit.adapt(startButton, true, true);
 			startButton.addHyperlinkListener(new HyperlinkAdapter() {
@@ -113,7 +113,7 @@ public class CoreItem extends ViewItem {
 				}
 			});
 		}
-		if (((Item)contentItem).isSkip()) {
+		if (item.isSkip()) {
 			skipButton = createButton(buttonComposite, skipImage, this, itemColor, CheatSheetPlugin.getResourceString(ICheatSheetResource.SKIP_TASK_TOOLTIP));
 			toolkit.adapt(skipButton, true, true);
 			skipButton.addHyperlinkListener(new HyperlinkAdapter() {
@@ -122,7 +122,7 @@ public class CoreItem extends ViewItem {
 				}
 			});
 		}
-		if (((Item)contentItem).isComplete()) {
+		if (item.getAction() == null || item.getAction().isConfirm()) {
 			completeButton = createButton(buttonComposite, completeImage, this, itemColor, CheatSheetPlugin.getResourceString(ICheatSheetResource.COMPLETE_TASK_TOOLTIP));
 			toolkit.adapt(completeButton, true, true);
 			completeButton.addHyperlinkListener(new HyperlinkAdapter() {
@@ -148,9 +148,9 @@ public class CoreItem extends ViewItem {
 		//Instantiate the list to store the sub item composites.
 		listOfSubItemCompositeHolders = new ArrayList(20);
 
-		SubItem[] sublist = ((ItemWithSubItems) contentItem).getSubItems();
+		ArrayList sublist = item.getSubItems();
 		
-		if(sublist.length<=1)
+		if(sublist == null || sublist.size()<=1)
 			throw new Exception(ICheatSheetResource.LESS_THAN_2_SUBITEMS);
 		
 		
@@ -169,10 +169,10 @@ public class CoreItem extends ViewItem {
 		buttonCompositeList.add(buttonComposite);
 		//loop throught the number of sub items, make a new composite for each sub item.
 		//Add the spacer, the label, then the buttons that are applicable for each sub item.
-		for (int i = 0; i < sublist.length; i++) {
+		for (int i = 0; i < sublist.size(); i++) {
 			int added = 0;
 			//Get the sub item to add.
-			SubItem sub = sublist[i];
+			SubItem sub = (SubItem)sublist.get(i);
 
 			//Spacer label added.
 			Label checkDoneLabel = toolkit.createLabel(buttonComposite, null);
@@ -189,7 +189,7 @@ public class CoreItem extends ViewItem {
 
 			final int fi = i;
 
-			if (sub.isPerform()) {
+			if (sub.getAction() != null) {
 				added++;
 				startButton = createButton(buttonComposite, startImage, this, itemColor, CheatSheetPlugin.getResourceString(ICheatSheetResource.PERFORM_TASK_TOOLTIP));
 				toolkit.adapt(startButton, true, true);
@@ -209,7 +209,7 @@ public class CoreItem extends ViewItem {
 					}
 				});
 			}
-			if (sub.isComplete()) {
+			if (sub.getAction() != null && sub.getAction().isConfirm()) {
 				added++;
 				completeButton = createButton(buttonComposite, completeImage, this, itemColor, CheatSheetPlugin.getResourceString(ICheatSheetResource.COMPLETE_TASK_TOOLTIP));
 				toolkit.adapt(completeButton, true, true);

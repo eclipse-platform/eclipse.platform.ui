@@ -129,7 +129,7 @@ public class CheatSheetXMLSaveHelper {
 //					p.put(IParserTags.ACTIONPHRASE, buttonCodes);
 					p.put(IParserTags.CLASS, aclass);
 					p.put(IParserTags.PLUGINID, actionpid);
-					p.put(IParserTags.ACTIONPARAM, actionParams.toArray(new String[actionParams.size()]));
+					p.put(IParserTags.PARAM, actionParams.toArray(new String[actionParams.size()]));
 					dynamicItemDataList.add(p);
 				}
 			}
@@ -157,7 +157,7 @@ public class CheatSheetXMLSaveHelper {
 					p.put(IParserTags.CLASS, aclass);
 					p.put(IParserTags.PLUGINID, actionpid);
 					p.put(IParserTags.SUBITEMLABEL, subItemLabel);
-					p.put(IParserTags.ACTIONPARAM, actionParams.toArray(new String[actionParams.size()]));
+					p.put(IParserTags.PARAM, actionParams.toArray(new String[actionParams.size()]));
 					dynamicSubItemDataList.add(p);
 				}
 			}
@@ -187,7 +187,7 @@ public class CheatSheetXMLSaveHelper {
 		try {
 			String param = "param"; //$NON-NLS-1$
 			for (int j = 0; param != null; j++) {
-				String actionparam = nnm.getNamedItem(IParserTags.ACTIONPARAM + j).getNodeValue();
+				String actionparam = nnm.getNamedItem(IParserTags.PARAM + j).getNodeValue();
 				param = actionparam;
 				if (param != null)
 					params.add(param);
@@ -355,49 +355,49 @@ public class CheatSheetXMLSaveHelper {
 					root.appendChild(csmDataTag);
 				}
 			}
-
-			//Store dynamic single step data here.
-			for (int i = 0; i < items.length; i++) {
-				ViewItem item = items[i];
-				IContainsContent c = item.getContentItem();
-				if (c.isDynamic()) {
-					if (c instanceof Item) {
-						Item ci = (Item) c;
-						Element dynamicTag = null; //TODO doc.createElement(IParserTags.DYNAMICDATA);
-						dynamicTag.setAttribute(IParserTags.ITEM, ci.getID());
-/* TODO: Remove this! */
-//						dynamicTag.setAttribute(IParserTags.ACTIONPHRASE, ci.getButtonCodes());
-						dynamicTag.setAttribute(IParserTags.CLASS, ci.getActionClass());
-						dynamicTag.setAttribute(IParserTags.PLUGINID, ci.getActionPluginID());
-						String[] params = ci.getActionParams();
-						for (int j = 0; j < params.length; j++)
-							dynamicTag.setAttribute(IParserTags.ACTIONPARAM + j, params[j]);
-						root.appendChild(dynamicTag);
-					} else if (c instanceof ItemWithSubItems) {
-						ItemWithSubItems ciws = (ItemWithSubItems) c;
-						String itemid = ciws.getID();
-						SubItem[] subs = ciws.getSubItems();
-						if (subs != null)
-							for (int j = 0; j < subs.length; j++) {
-								SubItem s = subs[j];
-								String subitemid = s.getID();
-								Element dynamicTag = null; //TODO doc.createElement(IParserTags.DYNAMICSUBITEMDATA);
-								dynamicTag.setAttribute(IParserTags.ITEM, itemid);
-								dynamicTag.setAttribute(IParserTags.SUBITEM, subitemid);
-/* TODO: Remove this! */
-//								dynamicTag.setAttribute(IParserTags.ACTIONPHRASE, s.getButtonCodes());
-								dynamicTag.setAttribute(IParserTags.CLASS, s.getActionClass());
-								dynamicTag.setAttribute(IParserTags.PLUGINID, s.getActionPluginID());
-								dynamicTag.setAttribute(IParserTags.SUBITEMLABEL, s.getLabel());
-								String[] params = s.getActionParams();
-								if(params != null)
-								for (int k = 0; k < params.length; k++)
-									dynamicTag.setAttribute(IParserTags.ACTIONPARAM + k, params[k]);
-								root.appendChild(dynamicTag);
-							}
-					}
-				}
-			}
+// TODO: fix this
+//			//Store dynamic single step data here.
+//			for (int i = 0; i < items.length; i++) {
+//				ViewItem item = items[i];
+//				IContainsContent c = item.getContentItem();
+//				if (c.isDynamic()) {
+//					if (c instanceof Item) {
+//						Item ci = (Item) c;
+//						Element dynamicTag = null; //TODO doc.createElement(IParserTags.DYNAMICDATA);
+//						dynamicTag.setAttribute(IParserTags.ITEM, ci.getID());
+///* TODO: Remove this! */
+////						dynamicTag.setAttribute(IParserTags.ACTIONPHRASE, ci.getButtonCodes());
+//						dynamicTag.setAttribute(IParserTags.CLASS, ci.getActionClass());
+//						dynamicTag.setAttribute(IParserTags.PLUGINID, ci.getActionPluginID());
+//						String[] params = ci.getActionParams();
+//						for (int j = 0; j < params.length; j++)
+//							dynamicTag.setAttribute(IParserTags.ACTIONPARAM + j, params[j]);
+//						root.appendChild(dynamicTag);
+//					} else if (c instanceof ItemWithSubItems) {
+//						ItemWithSubItems ciws = (ItemWithSubItems) c;
+//						String itemid = ciws.getID();
+//						SubItem[] subs = ciws.getSubItems();
+//						if (subs != null)
+//							for (int j = 0; j < subs.length; j++) {
+//								SubItem s = subs[j];
+//								String subitemid = s.getID();
+//								Element dynamicTag = null; //TODO doc.createElement(IParserTags.DYNAMICSUBITEMDATA);
+//								dynamicTag.setAttribute(IParserTags.ITEM, itemid);
+//								dynamicTag.setAttribute(IParserTags.SUBITEM, subitemid);
+///* TODO: Remove this! */
+////								dynamicTag.setAttribute(IParserTags.ACTIONPHRASE, s.getButtonCodes());
+//								dynamicTag.setAttribute(IParserTags.CLASS, s.getActionClass());
+//								dynamicTag.setAttribute(IParserTags.PLUGINID, s.getActionPluginID());
+//								dynamicTag.setAttribute(IParserTags.SUBITEMLABEL, s.getLabel());
+//								String[] params = s.getActionParams();
+//								if(params != null)
+//								for (int k = 0; k < params.length; k++)
+//									dynamicTag.setAttribute(IParserTags.ACTIONPARAM + k, params[k]);
+//								root.appendChild(dynamicTag);
+//							}
+//					}
+//				}
+//			}
 
 			StreamResult streamResult = new StreamResult(filePath.toFile());
 			

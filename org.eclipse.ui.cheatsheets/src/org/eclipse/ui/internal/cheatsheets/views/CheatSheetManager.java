@@ -42,66 +42,67 @@ public class CheatSheetManager implements ICheatSheetManager {
 		return cheatsheetID;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.cheatsheets.ICheatSheetManager#getItemWithID(java.lang.String)
-	 */
-	public AbstractItem getItem(String id) {
-		try {
-			//Check to see if that item with that id is dynamic.
-			//If it is not dynamic, return null for it cannot be modified.
-			ArrayList contentItems = csview.getListOfContentItems();
-			for (int i = 0; i < contentItems.size(); i++) {
-				AbstractItem contentItem = (AbstractItem) contentItems.get(i);
-				if (contentItem.getID().equals(id)) {
-					//return contentItem;
-					if (contentItem instanceof IContainsContent) {
-						IContainsContent cc = (IContainsContent) contentItem;
-						if (cc.isDynamic())
-							return contentItem;
-					}
-					return null;
-				}
-
-			}
-			return null;
-		} catch (Exception e) {
-			return null;
-		}
-	}
-
-	public ItemWithSubItems convertToIItemWithSubItems(AbstractItem ai) {
-		if (ai instanceof ItemWithSubItems)
-					return (ItemWithSubItems)ai;
-		if (!(ai instanceof ActionItem))
-			return null;
-		String id = ai.getID();
-		ArrayList contentItems = csview.getListOfContentItems();
-		for (int i = 0; i < contentItems.size(); i++) {
-			AbstractItem contentItem = (AbstractItem) contentItems.get(i);
-			if (contentItem.getID().equals(id)) {
-				ItemWithSubItems itemws = convertThisIItem((Item) contentItem);
-				//replace item in list with new item.
-				contentItems.set(i, itemws);
-				//replace coreItem's contentItem with our new one.
-				ViewItem[] va = csview.getViewItemArray();
-				for(int j=0; j<va.length; j++){
-					if(va[j].contentItem == contentItem)
-						va[j].contentItem = itemws;	
-				}			
-				
-				return itemws;
-			}
-		}
-		return null;
-	}
-
-	private ItemWithSubItems convertThisIItem(Item item) {
-		Item cc = (Item) item;
-		ItemWithSubItems itemws = new ItemWithSubItems();
-		itemws.setContent(cc.getContent());
-		itemws.setID(cc.getID());
-		return itemws;
-	}
+//FIXME: Are these methods required?
+//	/* (non-Javadoc)
+//	 * @see org.eclipse.ui.cheatsheets.ICheatSheetManager#getItemWithID(java.lang.String)
+//	 */
+//	public AbstractItem getItem(String id) {
+//		try {
+//			//Check to see if that item with that id is dynamic.
+//			//If it is not dynamic, return null for it cannot be modified.
+//			ArrayList contentItems = csview.getListOfContentItems();
+//			for (int i = 0; i < contentItems.size(); i++) {
+//				AbstractItem contentItem = (AbstractItem) contentItems.get(i);
+//				if (contentItem.getID().equals(id)) {
+//					//return contentItem;
+//					if (contentItem instanceof IContainsContent) {
+//						IContainsContent cc = (IContainsContent) contentItem;
+//						if (cc.isDynamic())
+//							return contentItem;
+//					}
+//					return null;
+//				}
+//
+//			}
+//			return null;
+//		} catch (Exception e) {
+//			return null;
+//		}
+//	}
+//
+//	public ItemWithSubItems convertToIItemWithSubItems(AbstractItem ai) {
+//		if (ai instanceof ItemWithSubItems)
+//					return (ItemWithSubItems)ai;
+//		if (!(ai instanceof ActionItem))
+//			return null;
+//		String id = ai.getID();
+//		ArrayList contentItems = csview.getListOfContentItems();
+//		for (int i = 0; i < contentItems.size(); i++) {
+//			AbstractItem contentItem = (AbstractItem) contentItems.get(i);
+//			if (contentItem.getID().equals(id)) {
+//				ItemWithSubItems itemws = convertThisIItem((Item) contentItem);
+//				//replace item in list with new item.
+//				contentItems.set(i, itemws);
+//				//replace coreItem's contentItem with our new one.
+//				ViewItem[] va = csview.getViewItemArray();
+//				for(int j=0; j<va.length; j++){
+//					if(va[j].contentItem == contentItem)
+//						va[j].contentItem = itemws;	
+//				}			
+//				
+//				return itemws;
+//			}
+//		}
+//		return null;
+//	}
+//
+//	private ItemWithSubItems convertThisIItem(Item item) {
+//		Item cc = (Item) item;
+//		ItemWithSubItems itemws = new ItemWithSubItems();
+//		itemws.setContent(cc.getContent());
+//		itemws.setID(cc.getID());
+//		return itemws;
+//	}
 
 	//Package protected:  We don't want anyone else firing events but the view.
 	//this method will be called by the c.s. view when events occur.

@@ -10,22 +10,14 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.cheatsheets.data;
 
-/**
- *  <p>An ISubItem represents a sub step of a step in the cheat sheet that has sub steps.  
- *  A step in the cheat sheet that contains sub steps is represented by an IItemWithSubItems.
- *  By calling getItem on ICheatSheetManager and passing the id of a step in the cheat sheet 
- *  with sub steps, you get an IAbstractItem that may be casted to an IItemWithSubItems.  </p>
- *
- * <p>This IItemWithSubItems can be used to  access info about the sub steps for that step in the cheat sheet.
- * ISubItem can be implemented to add sub steps to a step in the cheat sheet.</p>
- * 
- * <p>Each sub step in the cheat sheet has a label, as well as the same buttons and actions that a retular
- * step in the cheat sheet (represented by IItem) has.</p>
- *  
-  */
-public class SubItem extends ActionItem {
+public class SubItem implements IActionItem, IPerformWhenItem {
 	
 	private String label;
+	private boolean skip;
+	private String when;
+
+	private Action action;
+	private PerformWhen performWhen;
 
 	public SubItem() {
 		super();
@@ -47,4 +39,63 @@ public class SubItem extends ActionItem {
 		label = string;
 	}
 
+	/**
+	 * This method returns the skip state for the sub item.
+	 * @return the label
+	 */
+	public boolean isSkip() {
+		return skip;
+	}
+
+	/**
+	 * This method sets whether the sub item can be skipped.
+	 * @param value the new value for skip
+	 */
+	public void setSkip(boolean value) {
+		skip = value;
+	}
+
+	/**
+	 * This method returns the when expression for the sub item.
+	 * @return the label
+	 */
+	public String getWhen() {
+		return when;
+	}
+
+	/**
+	 * This method sets the when expression for the sub item.
+	 * @param string the when expression to set
+	 */
+	public void setWhen(String string) {
+		when = string;
+	}
+
+	/**
+	 * @return Returns the action.
+	 */
+	public Action getAction() {
+		return action;
+	}
+	
+	/**
+	 * @param action The action to set.
+	 */
+	public void setAction(Action action) {
+		this.action = action;
+	}
+	
+	/**
+	 * @return Returns the performWhen.
+	 */
+	public PerformWhen getPerformWhen() {
+		return performWhen;
+	}
+	
+	/**
+	 * @param performWhen The performWhen to set.
+	 */
+	public void setPerformWhen(PerformWhen performWhen) {
+		this.performWhen = performWhen;
+	}
 }

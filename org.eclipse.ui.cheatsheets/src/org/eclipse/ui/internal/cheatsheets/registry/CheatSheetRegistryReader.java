@@ -61,7 +61,7 @@ public class CheatSheetRegistryReader extends RegistryReader {
 	private final static String ATT_ITEM_ATTRIBUTE = "itemAttribute"; //$NON-NLS-1$
 	private static CheatSheetRegistryReader instance;
 	private final static String TAG_CATEGORY = "category"; //$NON-NLS-1$
-	protected final static String TAG_CHEATSHEET = "cheatSheet"; //$NON-NLS-1$
+	protected final static String TAG_CHEATSHEET = "cheatsheet"; //$NON-NLS-1$
 	protected final static String TAG_ITEM_EXTENSION = "itemExtension"; //$NON-NLS-1$
 	protected final static String trueString = "TRUE"; //$NON-NLS-1$
 	private final static String UNCATEGORIZED_CHEATSHEET_CATEGORY = "org.eclipse.ui.Other"; //$NON-NLS-1$
