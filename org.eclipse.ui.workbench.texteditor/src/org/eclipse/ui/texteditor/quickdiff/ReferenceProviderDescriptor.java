@@ -95,6 +95,7 @@ public class ReferenceProviderDescriptor {
 		} catch (CoreException e) {
 			return null;
 		} catch (NoClassDefFoundError e) {
+			// XXX remove / adapt once https://bugs.eclipse.org/bugs/show_bug.cgi?id=59094 is fixed/closed
 			return null;
 		}
 	}
