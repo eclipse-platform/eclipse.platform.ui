@@ -20,6 +20,7 @@ import java.io.Reader;
 
 import org.osgi.framework.Bundle;
 
+import org.eclipse.core.resources.IEncodedStorage;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -402,7 +403,16 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 	 * @since 2.1
 	 */
 	protected String getPersistedEncoding(Object element) {
-		// Default is to do use return the default encoding
+		if (element instanceof IStorageEditorInput) {
+			IStorage storage;
+			try {
+				storage= ((IStorageEditorInput)element).getStorage();
+				if (storage instanceof IEncodedStorage)
+					return ((IEncodedStorage)storage).getCharset();
+			} catch (CoreException e) {
+				return null;
+			}
+		}
 		return null;
 	}
 
