@@ -62,7 +62,8 @@ public class InstallCommand extends ScriptedCommand {
 			// Get site to install to
 			targetSite = getTargetSite(toSite);
 			// if no site, try selecting the site that already has the old feature
-			targetSite = UpdateUtils.getSiteWithFeature(getConfiguration(), featureId);
+			if (targetSite == null)
+				targetSite = UpdateUtils.getSiteWithFeature(getConfiguration(), featureId);
 			// if still no site, pick the product site, if writeable
 			if (targetSite == null) {
 				IConfiguredSite[] sites = getConfiguration().getConfiguredSites();
