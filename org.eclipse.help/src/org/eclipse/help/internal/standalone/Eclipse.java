@@ -120,6 +120,7 @@ public class Eclipse extends Thread {
 		public StreamConsumer(InputStream inputStream) {
 			super();
 			this.setName("Eclipse out/err consumer");
+			this.setDaemon(true);
 			bReader = new BufferedReader(new InputStreamReader(inputStream));
 		}
 		public void run() {
