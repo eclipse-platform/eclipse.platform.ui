@@ -1,28 +1,25 @@
 package org.eclipse.update.core.model;
-
 /*
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
- */ 
- 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.ResourceBundle;
-
-/**
- * An object which represents the feature in the
- * packaging manifest.
- * <p>
- * This class may be instantiated, or further subclassed.
- * </p>
- * @since 2.0
  */
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.*;
+
+/**
+ * Feature model object.
+ * <p>
+ * This class may be instantiated or subclassed by clients. However, in most 
+ * cases clients should instead instantiate or subclass the provided 
+ * concrete implementation of this model.
+ * </p>
+ * @see org.eclipse.update.core.Feature
+ * @since 2.0
+ */
 public class FeatureModel extends ModelObject {
-	
+
 	private String featureId;
 	private String featureVersion;
 	private String label;
@@ -42,45 +39,71 @@ public class FeatureModel extends ModelObject {
 	private URLEntryModel copyright;
 	private URLEntryModel license;
 	private URLEntryModel updateSiteInfo;
-	private List /*of InfoModel*/ discoverySiteInfo;
-	private List /*of ImportModel*/ imports;
-	private List /*of PluginEntryModel*/ pluginEntries;
-	private List /*of NonPluginEntryModel*/ nonPluginEntries;
-	private List /*of ContentGroupModel*/ groupEntries;
+	private List /*of InfoModel*/
+	discoverySiteInfo;
+	private List /*of ImportModel*/
+	imports;
+	private List /*of PluginEntryModel*/
+	pluginEntries;
+	private List /*of NonPluginEntryModel*/
+	nonPluginEntries;
+	private List /*of ContentGroupModel*/
+	groupEntries;
 
 	/**
-	 * Creates an uninitialized model object.
+	 * Creates an uninitialized feature object.
 	 * 
 	 * @since 2.0
-	 */	
+	 */
 	public FeatureModel() {
 		super();
 	}
 
+	/**
+	 * Compares 2 feature models for equality
+	 *  
+	 * @param obj feature model to compare with
+	 * @return <code>true</code> if the two models are equal, 
+	 * <code>false</code> otherwise
+	 * @since 2.0
+	 */
 	public boolean equals(Object obj) {
-	if (!(obj instanceof FeatureModel))
-		return false;	
-	FeatureModel model = (FeatureModel)obj;
-	
-	return (featureId.toLowerCase().equals(model.getFeatureIdentifier()) 
-		&& featureVersion.toLowerCase().equals(model.getFeatureVersion()));
+		if (!(obj instanceof FeatureModel))
+			return false;
+		FeatureModel model = (FeatureModel) obj;
+
+		return (
+			featureId.toLowerCase().equals(model.getFeatureIdentifier())
+				&& featureVersion.toLowerCase().equals(model.getFeatureVersion()));
 	}
 
 	/**
+	 * Returns the feature identifier as a string
+	 * 
+	 * @see org.eclipse.update.core.IFeature#getVersionedIdentifier()
+	 * @return feature identifier
 	 * @since 2.0
-	 */	
+	 */
 	public String getFeatureIdentifier() {
 		return featureId;
 	}
 
 	/**
+	 * Returns the feature version as a string
+	 * 
+	 * @see org.eclipse.update.core.IFeature#getVersionedIdentifier()
+	 * @return feature version 
 	 * @since 2.0
-	 */	
+	 */
 	public String getFeatureVersion() {
 		return featureVersion;
 	}
 
 	/**
+	 * Retrieve the displayable label for the feature. If the model
+	 * object has been resolved, the label is localized.
+	 * 
+	 * @return displayable label, or <code>null</code>.
 	 * @since 2.0
 	 */
 	public String getLabel() {
@@ -91,6 +114,9 @@ public class FeatureModel extends ModelObject {
 	}
 
 	/**
+	 * Retrieve the non-localized displayable label for the feature.
+	 * 
+	 * @return non-localized displayable label, or <code>null</code>.
 	 * @since 2.0
 	 */
 	public String getLabelNonLocalized() {
@@ -98,6 +124,10 @@ public class FeatureModel extends ModelObject {
 	}
 
 	/**
+	 * Retrieve the displayable label for the feature provider. If the model
+	 * object has been resolved, the label is localized.
+	 * 
+	 * @return displayable label, or <code>null</code>.
 	 * @since 2.0
 	 */
 	public String getProvider() {
@@ -108,6 +138,9 @@ public class FeatureModel extends ModelObject {
 	}
 
 	/**
+	 * Retrieve the non-localized displayable label for the feature provider.
+	 * 
+	 * @return non-localized displayable label, or <code>null</code>.
 	 * @since 2.0
 	 */
 	public String getProviderNonLocalized() {
@@ -115,12 +148,15 @@ public class FeatureModel extends ModelObject {
 	}
 
 	/**
+	 * Returns the unresolved URL string for the feature image.
+	 *
+	 * @return url string, or <code>null</code>
 	 * @since 2.0
 	 */
 	public String getImageURLString() {
 		return imageURLString;
 	}
-	
+
 	/**
 	 * Returns the resolved URL for the image.
 	 * 
@@ -132,6 +168,10 @@ public class FeatureModel extends ModelObject {
 	}
 
 	/**
+	 * Get optional operating system specification as a comma-separated string.
+	 * 
+	 * @see org.eclipse.core.boot.BootLoader 
+	 * @return the operating system specification string, or <code>null</code>.
 	 * @since 2.0
 	 */
 	public String getOS() {
@@ -139,6 +179,10 @@ public class FeatureModel extends ModelObject {
 	}
 
 	/**
+	 * Get optional windowing system specification as a comma-separated string.
+	 * 
+	 * @see org.eclipse.core.boot.BootLoader 
+	 * @return the windowing system specification string, or <code>null</code>.
 	 * @since 2.0
 	 */
 	public String getWS() {
@@ -146,14 +190,20 @@ public class FeatureModel extends ModelObject {
 	}
 
 	/**
-	 * Gets the arch.
-	 * @return Returns a String
+	 * Get optional system architecture specification as a comma-separated string.
+	 * 
+	 * @see org.eclipse.core.boot.BootLoader 
+	 * @return the system architecture specification string, or <code>null</code>.
+	 * @since 2.0
 	 */
 	public String getArch() {
 		return arch;
 	}
 
 	/**
+	 * Get optional locale specification as a comma-separated string.
+	 * 
+	 * @return the locale specification string, or <code>null</code>.
 	 * @since 2.0
 	 */
 	public String getNL() {
@@ -161,6 +211,10 @@ public class FeatureModel extends ModelObject {
 	}
 
 	/**
+	 * Indicates whether the feature can be used as a primary feature.
+	 * 
+	 * @return <code>true</code> if this is a primary feature, 
+	 * otherwise <code>false</code>
 	 * @since 2.0
 	 */
 	public boolean isPrimary() {
@@ -168,6 +222,9 @@ public class FeatureModel extends ModelObject {
 	}
 
 	/**
+	 * Returns an optional identifier for the feature application
+	 * 
+	 * @return application identifier, or <code>null</code>.
 	 * @since 2.0
 	 */
 	public String getApplication() {
@@ -175,13 +232,20 @@ public class FeatureModel extends ModelObject {
 	}
 
 	/**
+	 * Returns and optional custom install handler entry.
+	 * 
+	 * @return install handler entry, or <code>null</code> if
+	 * none was specified
 	 * @since 2.0
-	 */	
+	 */
 	public InstallHandlerEntryModel getInstallHandlerModel() {
 		return installHandler;
 	}
 
 	/**
+	 * Returns the feature description.
+	 * 
+	 * @return feature rescription, or <code>null</code>.
 	 * @since 2.0
 	 */
 	public URLEntryModel getDescriptionModel() {
@@ -189,13 +253,19 @@ public class FeatureModel extends ModelObject {
 	}
 
 	/**
+	 * Returns the copyright information for the feature.
+	 * 
+	 * @return copyright information, or <code>null</code>.
 	 * @since 2.0
-	 */	
+	 */
 	public URLEntryModel getCopyrightModel() {
 		return copyright;
 	}
 
 	/**
+	 * Returns the license information for the feature.
+	 * 
+	 * @return feature license, or <code>null</code>.
 	 * @since 2.0
 	 */
 	public URLEntryModel getLicenseModel() {
@@ -203,6 +273,10 @@ public class FeatureModel extends ModelObject {
 	}
 
 	/**
+	 * Returns an information entry referencing the location of the
+	 * feature update site.
+	 * 
+	 * @return update site entry, or <code>null</code>.
 	 * @since 2.0
 	 */
 	public URLEntryModel getUpdateSiteEntryModel() {
@@ -210,49 +284,64 @@ public class FeatureModel extends ModelObject {
 	}
 
 	/**
+	 * Return an array of information entries referencing locations of other
+	 * update sites. 
+	 * 
+	 * @return an array of site entries, or an empty array.
+	 * @since 2.0 
 	 * @since 2.0
 	 */
 	public URLEntryModel[] getDiscoverySiteEntryModels() {
 		if (discoverySiteInfo == null)
 			return new URLEntryModel[0];
-			
-		return (URLEntryModel[]) discoverySiteInfo.toArray(arrayTypeFor(discoverySiteInfo));
+
+		return (URLEntryModel[]) discoverySiteInfo.toArray(
+			arrayTypeFor(discoverySiteInfo));
 	}
 
 	/**
+	 * Return a list of plug-in dependencies for this feature.
+	 * 
+	 * @return the list of required plug-in dependencies, or an empty array.
 	 * @since 2.0
 	 */
 	public ImportModel[] getImportModels() {
 		if (imports == null)
 			return new ImportModel[0];
-			
+
 		return (ImportModel[]) imports.toArray(arrayTypeFor(imports));
 	}
 
 	/**
+	 * Returns an array of plug-in entries referenced by this feature
+	 * 
+	 * @return an erray of plug-in entries, or an empty array.
 	 * @since 2.0
 	 */
 	public PluginEntryModel[] getPluginEntryModels() {
 		if (pluginEntries == null)
 			return new PluginEntryModel[0];
-			
+
 		return (PluginEntryModel[]) pluginEntries.toArray(arrayTypeFor(pluginEntries));
 	}
 
 	/**
+	 * Returns an array of non-plug-in entries referenced by this feature
+	 * 
+	 * @return an erray of non-plug-in entries, or an empty array.
 	 * @since 2.0
 	 */
 	public NonPluginEntryModel[] getNonPluginEntryModels() {
 		if (nonPluginEntries == null)
 			return new NonPluginEntryModel[0];
-			
-		return (NonPluginEntryModel[]) nonPluginEntries.toArray(arrayTypeFor(nonPluginEntries));
+
+		return (NonPluginEntryModel[]) nonPluginEntries.toArray(
+			arrayTypeFor(nonPluginEntries));
 	}
 
-	
 	/**
 	 * @since 2.0
-	 */	
+	 */
 	public void setFeatureIdentifier(String featureId) {
 		assertIsWriteable();
 		this.featureId = featureId;
@@ -260,7 +349,7 @@ public class FeatureModel extends ModelObject {
 
 	/**
 	 * @since 2.0
-	 */	
+	 */
 	public void setFeatureVersion(String featureVersion) {
 		assertIsWriteable();
 		this.featureVersion = featureVersion;
@@ -317,13 +406,12 @@ public class FeatureModel extends ModelObject {
 		this.nl = nl;
 	}
 
-
 	/**
 	 * Sets the arch.
 	 * @param arch The arch to set
 	 */
 	public void setArch(String arch) {
-		assertIsWriteable();		
+		assertIsWriteable();
 		this.arch = arch;
 	}
 
@@ -345,7 +433,7 @@ public class FeatureModel extends ModelObject {
 
 	/**
 	 * @since 2.0
-	 */	
+	 */
 	public void setInstallHandlerModel(InstallHandlerEntryModel installHandler) {
 		assertIsWriteable();
 		this.installHandler = installHandler;
@@ -361,7 +449,7 @@ public class FeatureModel extends ModelObject {
 
 	/**
 	 * @since 2.0
-	 */	
+	 */
 	public void setCopyrightModel(URLEntryModel copyright) {
 		assertIsWriteable();
 		this.copyright = copyright;
@@ -427,7 +515,6 @@ public class FeatureModel extends ModelObject {
 			this.nonPluginEntries = new ArrayList(Arrays.asList(nonPluginEntries));
 	}
 
-	
 	/**
 	 * @since 2.0
 	 */
@@ -472,7 +559,6 @@ public class FeatureModel extends ModelObject {
 			this.nonPluginEntries.add(nonPluginEntry);
 	}
 
-	
 	/**
 	 * @since 2.0
 	 */
@@ -509,12 +595,11 @@ public class FeatureModel extends ModelObject {
 			this.nonPluginEntries.remove(nonPluginEntry);
 	}
 
-		
 	/**
 	 * @since 2.0
 	 */
 	public void markReadOnly() {
-		super.markReadOnly();		
+		super.markReadOnly();
 		markReferenceReadOnly(getDescriptionModel());
 		markReferenceReadOnly(getCopyrightModel());
 		markReferenceReadOnly(getLicenseModel());
@@ -524,15 +609,16 @@ public class FeatureModel extends ModelObject {
 		markListReferenceReadOnly(getPluginEntryModels());
 		markListReferenceReadOnly(getNonPluginEntryModels());
 	}
-	
+
 	/**
 	 * @since 2.0
 	 */
-	public void resolve(URL base, ResourceBundle bundle) throws MalformedURLException {
+	public void resolve(URL base, ResourceBundle bundle)
+		throws MalformedURLException {
 		// resolve local elements
 		localizedLabel = resolveNLString(bundle, label);
-		localizedProvider = resolveNLString(bundle,provider);
-		imageURL = resolveURL(base, bundle,imageURLString);
+		localizedProvider = resolveNLString(bundle, provider);
+		imageURL = resolveURL(base, bundle, imageURLString);
 
 		// delegate to references		
 		resolveReference(getDescriptionModel(), base, bundle);
@@ -545,7 +631,4 @@ public class FeatureModel extends ModelObject {
 		resolveListReference(getNonPluginEntryModels(), base, bundle);
 	}
 
-
-	
-	
 }

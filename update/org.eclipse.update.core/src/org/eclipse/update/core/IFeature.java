@@ -50,7 +50,7 @@ public interface IFeature {
 	/**
 	 * Returns the displayable label of the feature.
 	 * 
-	 * @return feature label
+	 * @return feature label, or <code>null</code>.
 	 * @since 2.0 
 	 */
 	String getLabel();
@@ -71,7 +71,7 @@ public interface IFeature {
 	 * feature update site. The update site can be accessed to obtain
 	 * feature updates for this feature.
 	 * 
-	 * @return update site entry
+	 * @return update site entry, or <code>null</code>.
 	 * @since 2.0 
 	 */
 	IURLEntry getUpdateSiteEntry();
@@ -89,7 +89,7 @@ public interface IFeature {
 	/**
 	 * Returns a displayable label identifying the provider of this feature
 	 * 
-	 * @return provider label
+	 * @return provider label, or <code>null</code>.
 	 * @since 2.0 
 	 */
 	String getProvider();
@@ -106,7 +106,7 @@ public interface IFeature {
 	/**
 	 * Returns the feature description.
 	 * 
-	 * @return feature rescription
+	 * @return feature rescription, or <code>null</code>.
 	 * @since 2.0 
 	 */
 	IURLEntry getDescription();
@@ -114,7 +114,7 @@ public interface IFeature {
 	/**
 	 * Returns the copyright information for the feature.
 	 * 
-	 * @return copyright information
+	 * @return copyright information, or <code>null</code>.
 	 * @since 2.0 
 	 */
 	IURLEntry getCopyright();
@@ -122,7 +122,7 @@ public interface IFeature {
 	/**
 	 * Returns the license information for the feature.
 	 * 
-	 * @return feature license
+	 * @return feature license, or <code>null</code>.
 	 * @since 2.0 
 	 */
 	IURLEntry getLicense();

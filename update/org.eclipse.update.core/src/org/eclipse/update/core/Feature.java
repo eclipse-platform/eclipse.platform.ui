@@ -47,7 +47,8 @@ public class Feature extends FeatureModel implements IFeature {
 	/**
 	 * Compares two features for equality
 	 * 
-	 * @return <code>true</code> if the two features are equel, 
+	 * @param object feature object to compare with
+	 * @return <code>true</code> if the two features are equal, 
 	 * <code>false</code> otherwise
 	 * @since 2.0
 	 */
