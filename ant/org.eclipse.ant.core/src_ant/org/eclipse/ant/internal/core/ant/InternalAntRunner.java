@@ -764,6 +764,12 @@ public class InternalAntRunner {
 
 		processProperties(commands);
 
+		if (!commands.isEmpty()) {
+			//unrecognized args
+			logMessage(getCurrentProject(), MessageFormat.format("Unknown argument: {0}", new Object[]{commands.get(0)}), Project.MSG_ERR);
+			printUsage();
+			return false;
+		}
 		return true;
 	}
 
