@@ -74,8 +74,6 @@ class SegmentUpdater extends DefaultPositionUpdater {
 				if (notDeleted())
 					adaptToReplace();
 				
-				if (fPosition.getLength() == 0)
-					fPosition.isDeleted= true;
 			}
 			
 		} catch (BadPositionCategoryException x) {

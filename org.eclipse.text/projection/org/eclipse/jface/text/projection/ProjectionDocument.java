@@ -648,15 +648,17 @@ public class ProjectionDocument extends AbstractDocument {
 		
 		} else if (fMapping.getImageLength() == 0 && masterEvent.getLength() == 0) {
 			
-			// there is no segment in this projection document, thus one must be created
-			// need to bypass the usual infrastructure as the new segment/fragment would be of length 0 and thus the segmentation be not well formed
-			
-			try {
-				Fragment fragment= new Fragment(0, 0);
-				fMasterDocument.addPosition(fFragmentsCategory, fragment);
-				createSegmentFor(fragment, 0);
-			} catch (BadPositionCategoryException x) {
-				internalError();
+			Position[] fragments= getFragments();
+			if (fragments.length == 0) {
+				// there is no segment in this projection document, thus one must be created
+				// need to bypass the usual infrastructure as the new segment/fragment would be of length 0 and thus the segmentation be not well formed
+				try {
+					Fragment fragment= new Fragment(0, 0);
+					fMasterDocument.addPosition(fFragmentsCategory, fragment);
+					createSegmentFor(fragment, 0);
+				} catch (BadPositionCategoryException x) {
+					internalError();
+				}
 			}
 		}
 		
@@ -704,7 +706,7 @@ public class ProjectionDocument extends AbstractDocument {
 				} catch (BadLocationException e) {
 					internalError();
 				}
-			} else if (ensureWellFormedSegmentation())
+			} else if (ensureWellFormedSegmentation(masterEvent.getOffset()))
 				fMapping.projectionChanged();
 		}
 	}
@@ -739,16 +741,28 @@ public class ProjectionDocument extends AbstractDocument {
 	 */
 	protected void updateDocumentStructures(DocumentEvent event) {
 		super.updateDocumentStructures(event);
-		ensureWellFormedSegmentation();
+		ensureWellFormedSegmentation(computeAnchor(event));
 		fMapping.projectionChanged();
 	}
 	
-	private boolean ensureWellFormedSegmentation() {
+	private int computeAnchor(DocumentEvent event) {
+		if (event instanceof ProjectionDocumentEvent) {
+			ProjectionDocumentEvent slave= (ProjectionDocumentEvent) event;
+			if (ProjectionDocumentEvent.CONTENT_CHANGE == slave.getChangeType()) {
+				DocumentEvent master= slave.getMasterEvent();
+				if (master != null)
+					return master.getOffset();
+			}
+		}
+		return -1;
+	}
+	
+	private boolean ensureWellFormedSegmentation(int anchorOffset) {
 		boolean changed= false;
 		Position[] segments= getSegments();
 		for (int i= 0; i < segments.length; i++) {
 			Segment segment= (Segment) segments[i];
-			if (segment.isDeleted()) {
+			if (segment.isDeleted() || segment.getLength() == 0) {
 				try {
 					removePosition(fSegmentsCategory, segment); 
 					fMasterDocument.removePosition(fFragmentsCategory, segment.fragment);
@@ -758,7 +772,7 @@ public class ProjectionDocument extends AbstractDocument {
 				}
 			} else if (i < segments.length - 1) {
 				Segment next= (Segment) segments[i + 1];
-				if (next.isDeleted())
+				if (next.isDeleted() || next.getLength() == 0)
 					continue;
 				Fragment fragment= segment.fragment;
 				if (fragment.getOffset() + fragment.getLength() == next.fragment.getOffset()) {
@@ -769,6 +783,22 @@ public class ProjectionDocument extends AbstractDocument {
 				}
 			}
 		}
+		
+		if (changed && anchorOffset != -1) {
+			Position[] changedSegments= getSegments();
+			if (changedSegments == null || changedSegments.length == 0) {
+				Fragment fragment= new Fragment(anchorOffset, 0);
+				try {
+					fMasterDocument.addPosition(fFragmentsCategory, fragment);
+					createSegmentFor(fragment, 0);
+				} catch (BadLocationException e) {
+					internalError();
+				} catch (BadPositionCategoryException e) {
+					internalError();
+				}
+			}
+		}
+		
 		return changed;
 	}
 

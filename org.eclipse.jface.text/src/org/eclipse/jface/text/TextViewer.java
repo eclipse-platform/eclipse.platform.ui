@@ -1876,7 +1876,9 @@ public class TextViewer extends Viewer implements
 		
 		if (fTextWidget != null) {
 			Point p= fTextWidget.getSelectionRange();
-			return widgetSelection2ModelSelection(p);
+			p= widgetSelection2ModelSelection(p);
+			if (p != null)
+				return p;
 		}
 		
 		return new Point(-1, -1);

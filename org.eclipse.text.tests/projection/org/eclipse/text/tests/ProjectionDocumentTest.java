@@ -202,7 +202,7 @@ public class ProjectionDocumentTest extends TestCase {
 
 		Position previous= null;
 		for (int i= 0; i < segmentation.length; i++) {
-			assertFalse(segmentation[i].getLength() == 0);
+			assertFalse(segmentation.length > 1 && segmentation[i].getLength() == 0);
 			if (previous != null)
 				assertTrue(previous.getOffset() + previous.getLength() == segmentation[i].getOffset());
 			previous= segmentation[i];
@@ -223,7 +223,7 @@ public class ProjectionDocumentTest extends TestCase {
 			Fragment fragment= (Fragment) fragmention[i];
 			assertTrue(fragment == segment.fragment);
 			assertTrue(segment == fragment.segment);
-			assertFalse(fragment.getLength() == 0);
+			assertFalse(segmentation.length > 1 && fragment.getLength() == 0);
 			assertTrue(fragment.length == segment.length);
 			if (previous != null)
 				assertFalse(previous.getOffset() + previous.getLength() == fragment.getOffset());
@@ -1843,5 +1843,52 @@ public class ProjectionDocumentTest extends TestCase {
 			new Position(0, fMasterDocument.getLength())
 		};
 		assertFragmentation(expected);
+	}
+		
+	public void test28_a() {
+		// delete slave content and check fragmentation, need to keep a single fragment as anchor
+		createProjectionB();
+		try {
+			fSlaveDocument.replace(0, fSlaveDocument.getLength(), null);
+		} catch (BadLocationException e) {
+			assertTrue(false);
+		}
+		assertSlaveContents("");
+		StringBuffer buffer= new StringBuffer(getOriginalMasterContents());
+		buffer.delete(20, 160);
+		assertMasterContents(buffer.toString());
+		
+		Position[] expected= new Position[] {
+			new Position(20, 0)
+		};
+		assertFragmentation(expected);
+	}
+	
+	public void test28_b() {
+		// test step wise version of the complete replace
+		// delete whole content of slave, followed by inserting text
+		
+		createProjectionB();
+		try {
+			fSlaveDocument.replace(0, fSlaveDocument.getLength(), null);
+		} catch (BadLocationException e) {
+			assertTrue(false);
+		}
+		
+		try {
+			fSlaveDocument.replace(0, 0, "~~~~~");
+		} catch (BadLocationException e) {
+			assertTrue(false);
+		}
+		
+		Position[] expected= new Position[] {
+			new Position(20, 5)
+		};
+		assertFragmentation(expected);
+		
+		assertSlaveContents("~~~~~");
+		StringBuffer buffer= new StringBuffer(getOriginalMasterContents());
+		buffer.replace(20, 160, "~~~~~");
+		assertMasterContents(buffer.toString());		
 	}
 }
