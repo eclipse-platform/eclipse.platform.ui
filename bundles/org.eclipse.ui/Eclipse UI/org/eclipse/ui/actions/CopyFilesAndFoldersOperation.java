@@ -175,8 +175,8 @@ public class CopyFilesAndFoldersOperation {
 
 		WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor monitor) {
-					// Checks only required if this is an exisiting container path.
-	boolean copyWithAutoRename = false;
+				// Checks only required if this is an exisiting container path.
+				boolean copyWithAutoRename = false;
 				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 				if (root.exists(destinationPath)) {
 					IContainer container = (IContainer) root.findMember(destinationPath);
@@ -335,7 +335,7 @@ public class CopyFilesAndFoldersOperation {
 	 * Copy the resources to the given destination.  This method is called recursively to
 	 * deal with merging of folders during folder copy.
 	 */
-	private boolean copy(IResource[] resources, IPath destination, IProgressMonitor subMonitor) throws CoreException {
+	private void copy(IResource[] resources, IPath destination, IProgressMonitor subMonitor) throws CoreException {
 		for (int i = 0; i < resources.length; i++) {
 			IResource source = resources[i];
 			IPath destinationPath = destination.append(source.getName());
@@ -347,24 +347,18 @@ public class CopyFilesAndFoldersOperation {
 				IResource[] children = ((IContainer) source).members();
 				copy(children, destinationPath, subMonitor);
 			} else {
-				try {
-					// if we're merging folders, we could be overwriting an existing file
-					IResource existing = workspaceRoot.findMember(destinationPath);
-					if (existing != null) {
-						delete(existing, subMonitor);
-					}
-					source.copy(destinationPath, false, new SubProgressMonitor(subMonitor, 0));
-				} catch (CoreException e) {
-					recordError(e); // log error
-					return false;
+				// if we're merging folders, we could be overwriting an existing file
+				IResource existing = workspaceRoot.findMember(destinationPath);
+				if (existing != null) {
+					delete(existing, subMonitor);
 				}
+				source.copy(destinationPath, false, new SubProgressMonitor(subMonitor, 0));
 				subMonitor.worked(1);
 				if (subMonitor.isCanceled()) {
 					throw new OperationCanceledException();
 				}
 			}
 		}
-		return true;
 	}
 
 	/**
@@ -576,9 +570,7 @@ public class CopyFilesAndFoldersOperation {
 			ContainerGenerator generator = new ContainerGenerator(destination);
 			generator.generateContainer(new SubProgressMonitor(monitor, 10));
 			IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 75);
-			boolean status = copy(resources, destination, subMonitor);
-			if (status == false)
-				return false;
+			copy(resources, destination, subMonitor);
 		} catch (CoreException e) {
 			recordError(e); // log error
 			return false;

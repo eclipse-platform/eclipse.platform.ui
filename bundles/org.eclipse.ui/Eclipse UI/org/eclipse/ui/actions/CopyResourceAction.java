@@ -120,7 +120,7 @@ public class CopyResourceAction extends SelectionListenerAction implements ISele
 	 * Copy the resources to the given destination.  This method is called recursively to
 	 * deal with merging of folders during folder copy.
 	 */
-	private boolean copy(IResource[] resources, IPath destination, IProgressMonitor subMonitor) throws CoreException {
+	private void copy(IResource[] resources, IPath destination, IProgressMonitor subMonitor) throws CoreException {
 		for (int i = 0; i < resources.length; i++) {
 			IResource source = resources[i];
 			IPath destinationPath = destination.append(source.getName());
@@ -132,24 +132,18 @@ public class CopyResourceAction extends SelectionListenerAction implements ISele
 				IResource[] children = ((IContainer) source).members();
 				copy(children, destinationPath, subMonitor);
 			} else {
-				try {
-					// if we're merging folders, we could be overwriting an existing file
-					IResource existing = workspaceRoot.findMember(destinationPath);
-					if (existing != null) {
-						delete(existing, subMonitor);
-					}
-					source.copy(destinationPath, false, new SubProgressMonitor(subMonitor, 0));
-				} catch (CoreException e) {
-					recordError(e); // log error
-					return false;
+				// if we're merging folders, we could be overwriting an existing file
+				IResource existing = workspaceRoot.findMember(destinationPath);
+				if (existing != null) {
+					delete(existing, subMonitor);
 				}
+				source.copy(destinationPath, false, new SubProgressMonitor(subMonitor, 0));
 				subMonitor.worked(1);
 				if (subMonitor.isCanceled()) {
 					throw new OperationCanceledException();
 				}
 			}
 		}
-		return true;
 	}
 	/**
 	 * Copies the given resource to the given destination.
@@ -392,9 +386,7 @@ public class CopyResourceAction extends SelectionListenerAction implements ISele
 			ContainerGenerator generator = new ContainerGenerator(destination);
 			generator.generateContainer(new SubProgressMonitor(monitor, 500));
 			IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 75);
-			boolean status = copy(resources, destination, subMonitor);
-			if (status == false)
-				return false;
+			copy(resources, destination, subMonitor);
 		} catch (CoreException e) {
 			recordError(e); // log error
 			return false;
