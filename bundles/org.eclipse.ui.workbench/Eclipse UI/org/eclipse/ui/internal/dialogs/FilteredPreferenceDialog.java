@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
-import java.util.Iterator;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.HelpEvent;
 import org.eclipse.swt.events.HelpListener;
@@ -47,7 +45,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 
 	private GenericListViewer genericListViewer;
 
-	private PreferencesPageContainer newPageContainer;
+	private PreferencePagesArea newPageContainer;
 
 	//A boolean to indicate if the new look tab was selected
 	private boolean newLookSelected = false;
@@ -81,7 +79,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 		TabFolder tabFolder = new TabFolder(composite, SWT.NONE);
 
 		// TODO Remove this before 3.1 ships
-		
+	
 
 		TabItem classicItem = new TabItem(tabFolder, SWT.NONE);
 		classicItem.setText("Classic");//$NON-NLS-1$
@@ -89,13 +87,14 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 		classicItem.setControl(classicParent);
 		classicParent.setLayout(new GridLayout());
 		super.createDialogArea(classicParent);
-
+		
 		final TabItem newItem = new TabItem(tabFolder, SWT.NONE);
 		newItem.setText("New Look");//$NON-NLS-1$
 		Composite newParent = new Composite(tabFolder, SWT.NONE);
 		newItem.setControl(newParent);
 		newParent.setLayout(new GridLayout());
 		createNewPreferencesArea(newParent);
+	
 		
 		GridData folderData = new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL
 				| GridData.GRAB_VERTICAL);
@@ -114,11 +113,11 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 			public void widgetSelected(SelectionEvent e) {
 				
 				newLookSelected = (e.item == newItem);
-				Iterator elements = getPreferenceManager().getElements(PreferenceManager.PRE_ORDER).iterator();
+//				Iterator elements = getPreferenceManager().getElements(PreferenceManager.PRE_ORDER).iterator();
 				
-				while(elements.hasNext()){
-					clear((IPreferenceNode) elements.next());
-				}
+//				while(elements.hasNext()){
+//					clear((IPreferenceNode) elements.next());
+//				}
 				
 			}
 			/**
@@ -142,9 +141,8 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 		genericListViewer = createListViewer(composite);
 		createSash(composite, genericListViewer.getControl());
 		// Build the Page container
-		newPageContainer = 	new PreferencesPageContainer();
+		newPageContainer = 	new PreferencePagesArea(this);
 		newPageContainer.createContents(composite, SWT.NULL);
-		newPageContainer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 	}
 
 	/**
@@ -160,7 +158,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 			 */
 			public GenericListItem createListItem(Object element, Color color,
 					GenericListViewer viewer) {
-				PreferencesCategoryItem item =  new PreferencesCategoryItem(element);
+				PreferencesTreeItem item =  new PreferencesTreeItem(element);
 				item.createControl(viewer.getComposite(),color);
 				return item;
 			}
@@ -170,11 +168,10 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 			 */
 			protected void itemSelected(GenericListItem item) {
 				showPage((IPreferenceNode) item.getElement());
-
+				item.highlightForSelection();
 			}
 		};
 		
-		viewer.getControl().setBackground(composite.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 		
 		//Register help listener on the tree to use context sensitive help
 		viewer.getControl().addHelpListener(new HelpListener() {
@@ -189,9 +186,15 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 		viewer.setContentProvider(new FilteredPreferenceContentProvider());
 		
 		viewer.setInput(getPreferenceManager());
+		
+		viewer.createContents();
+		
+		viewer.getControl().setBackground(composite.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+		
 		GridData gd = new GridData(GridData.FILL_VERTICAL);
 		gd.widthHint = getLastRightWidth();
 		gd.verticalSpan = 1;
+		
 		viewer.getControl().setLayoutData(gd);
 		
 		return viewer;
@@ -226,6 +229,8 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 	 * @see org.eclipse.jface.preference.PreferenceDialog#showPage(org.eclipse.jface.preference.IPreferenceNode)
 	 */
 	protected boolean showPage(IPreferenceNode node) {
+		if(newLookSelected)
+			return newPageContainer.show(node);
 		return super.showPage(node);
 	}
 	

@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.jface.viewers;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -29,7 +33,7 @@ import org.eclipse.swt.widgets.Control;
 public abstract class GenericListViewer extends ContentViewer {
 
 	//The items being displayed
-	private GenericListItem[] items = new GenericListItem[0];
+	private Collection items = new HashSet();
 
 	//The control the receiver creates the list items in.
 	private Composite control;
@@ -44,9 +48,11 @@ public abstract class GenericListViewer extends ContentViewer {
 		control = new Composite(parent, style);
 		control.setLayoutData(new GridData(GridData.FILL_BOTH));
 		GridLayout layout = new GridLayout();
-		layout.marginHeight = 1;
-		layout.marginWidth = 1;
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		layout.verticalSpacing = 1;
 		control.setLayout(layout);
+		control.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_BLUE));
 
 	}
 
@@ -83,10 +89,7 @@ public abstract class GenericListViewer extends ContentViewer {
 	public abstract GenericListItem createListItem(Object element, Color color,
 			GenericListViewer viewer);
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.Viewer#refresh()
-	 */
-	public void refresh() {
+	public void createContents(){
 
 		if (getContentProvider() == null)
 			return;
@@ -96,33 +99,51 @@ public abstract class GenericListViewer extends ContentViewer {
 
 		getControl().setRedraw(false);
 
-		for (int i = 0; i < items.length; i++) {
-			items[i].dispose();
+		Iterator itemsIterator = items.iterator();
+		while (itemsIterator.hasNext()) {
+			((GenericListItem) itemsIterator.next()).dispose();
 		}
 
+		items = new HashSet();
 		Object[] elements = ((IStructuredContentProvider) getContentProvider())
 				.getElements(getInput());
-		items = new GenericListItem[elements.length];
 
-		Color[] colors = new Color[] {
-				getControl().getDisplay().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW),
-				getControl().getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW) };
+		createItems(elements,null,0);
+		getControl().setRedraw(true);
+	
+	}
 
+	/**
+	 * Create items from the supplied elements.
+	 * @param elements
+	 */
+	private void createItems(Object[] elements, GenericListItem parent, int indent) {
 		for (int i = 0; i < elements.length; i++) {
-			Color color = colors[ i % 2];
-			items[i] = createListItem(elements[i],color, this);
-			items[i].getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			final GenericListItem finalItem = items[i];
-			items[i].addMouseListener(new MouseAdapter(){
+			Color color = getControl().getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION);
+			final GenericListItem newItem = createListItem(elements[i], color, this);
+			final Object element = elements[i];
+			
+			GridData layoutData = new GridData(GridData.FILL_HORIZONTAL);
+			layoutData.horizontalIndent = indent * 20;
+			newItem.getControl().setLayoutData(layoutData);
+			if(parent != null)
+				newItem.getControl().moveBelow(parent.getControl());
+			final int newIndent = indent + 1;
+			newItem.addMouseListener(new MouseAdapter() {
 				/* (non-Javadoc)
 				 * @see org.eclipse.swt.events.MouseAdapter#mouseDown(org.eclipse.swt.events.MouseEvent)
 				 */
 				public void mouseDown(MouseEvent e) {
-					itemSelected(finalItem);
+					itemSelected(newItem);
+					Object[] children = ((ITreeContentProvider) getContentProvider())
+					.getChildren(element);
+					createItems(children,newItem,newIndent);
+					control.pack();
 				}
 			});
+			
+			items.add(newItem);
 		}
-		getControl().setRedraw(true);
 	}
 
 	/**
@@ -130,7 +151,6 @@ public abstract class GenericListViewer extends ContentViewer {
 	 * @param item
 	 */
 	protected abstract void itemSelected(GenericListItem item);
-
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.Viewer#getSelection()
@@ -144,6 +164,14 @@ public abstract class GenericListViewer extends ContentViewer {
 	 * @see org.eclipse.jface.viewers.Viewer#setSelection(org.eclipse.jface.viewers.ISelection, boolean)
 	 */
 	public void setSelection(ISelection selection, boolean reveal) {
+		// TODO Auto-generated method stub
+
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.Viewer#refresh()
+	 */
+	public void refresh() {
 		// TODO Auto-generated method stub
 
 	}

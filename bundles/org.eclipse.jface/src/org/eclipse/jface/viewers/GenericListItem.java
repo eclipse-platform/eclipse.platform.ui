@@ -70,4 +70,15 @@ public abstract class GenericListItem {
 	 * @param listener
 	 */
 	public abstract void addMouseListener(MouseListener listener);
+
+	/**
+	 * The receiver has been highlighted due to selection.
+	 */
+	public abstract void highlightForSelection();
+	
+	/**
+	 * Clear the highlight for the receiver.
+	 *
+	 */
+	public abstract void clearHighlight();
 }

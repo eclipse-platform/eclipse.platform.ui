@@ -97,4 +97,12 @@ public class WorkbenchPreferenceNode extends PreferenceNode implements
     public String getPluginId() {
         return configurationElement.getDeclaringExtension().getNamespace();
     }
+    
+    /**
+     * Return the image descriptor for the receiver.
+     * @return ImageDescriptor
+     */
+    public ImageDescriptor getDescriptor(){
+    	return getImageDescriptor();
+    }
 }
