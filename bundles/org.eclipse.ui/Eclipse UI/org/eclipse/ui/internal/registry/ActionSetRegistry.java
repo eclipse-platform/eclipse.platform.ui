@@ -12,15 +12,16 @@ import org.eclipse.ui.internal.model.WorkbenchAdapter;
 import java.util.*;
 
 /**
- * ActionSetRegistry
+ * The registry of action set extensions.
  */
 public class ActionSetRegistry extends Object
 {
 	public static final String OTHER_CATEGORY = "org.eclipse.ui.actionSetCategory";//$NON-NLS-1$
-	private ArrayList children = new ArrayList(10);
-	private ArrayList categories = new ArrayList();
+	private ArrayList children = new ArrayList();
+	private ArrayList categories = new ArrayList(1);
+
 /**
- * ActionSetRegistry constructor comment.
+ * Creates the action set registry.
  */
 public ActionSetRegistry() {
 	super();
@@ -104,7 +105,7 @@ public void mapActionSetsToCategories() {
 	}
 }
 /**
- * Read the registry.
+ * Reads the registry.
  */
 public void readFromRegistry() {
 	ActionSetRegistryReader reader = new ActionSetRegistryReader();

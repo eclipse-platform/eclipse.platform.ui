@@ -33,8 +33,8 @@ public class ActionSetSelectionDialog extends Dialog {
 	private TableViewer actionViewer;
 	
 	// sizing constants
-	private final static int SIZING_SELECTION_WIDGET_HEIGHT = 240;
-	private final static int SIZING_SELECTION_WIDGET_WIDTH = 200;
+	private final static int SIZING_SELECTION_WIDGET_HEIGHT = 300;
+	private final static int SIZING_SELECTION_WIDGET_WIDTH = 300;
 /**
  * Creates an action set selection dialog.
  */
@@ -151,11 +151,6 @@ protected Control createDialogArea(Composite parent) {
 				if (sel.getFirstElement() instanceof IActionSetDescriptor)
 					actionSet = (IActionSetDescriptor)sel.getFirstElement();
 				if (actionSet != actionViewer.getInput()) {
-					if (actionSet == null)
-						actionLabel.setText("");//$NON-NLS-1$
-					else
-						actionLabel.setText(WorkbenchMessages.format("ActionSetSelection.actionLabel", new Object[] {actionSet.getLabel()})); //$NON-NLS-1$
-					actionLabel.getParent().layout();
 					actionViewer.setInput(actionSet);
 				}
 			}
@@ -178,7 +173,7 @@ protected Control createDialogArea(Composite parent) {
 	
 	// ...second the label
 	actionLabel = new Label(actionGroup, SWT.NONE);
-	actionLabel.setText("");//$NON-NLS-1$
+	actionLabel.setText(WorkbenchMessages.getString("ActionSetSelection.details")); //$NON-NLS-1$
 
 	// ...third the list of actions
 	actionViewer = new TableViewer(actionGroup, SWT.BORDER);
@@ -203,9 +198,9 @@ protected Control createDialogArea(Composite parent) {
 private void handleActionSetChecked(CheckStateChangedEvent event) {
 	// On action set category check/uncheck. Category can be
 	// in three states:
-	//		1) all children uncheck -> category uncheck
-	//		2) some children check  -> category check & gray
-	//		3) all children check   -> category check 
+	//		1) all children unchecked -> category unchecked
+	//		2) some children checked  -> category checked & grayed
+	//		3) all children checked   -> category checked 
 	if (event.getElement() instanceof ActionSetCategory) {
 		// On check, check all its children also
 		if (event.getChecked()) {
