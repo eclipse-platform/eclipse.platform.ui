@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.intro.internal.model;
 
+import java.io.*;
 import java.net.*;
 import java.util.*;
 
@@ -304,8 +305,14 @@ public class IntroURL {
         // model package.
         if (message == null)
             message = "";
-        else
-            message = URLDecoder.decode(message);
+        else {
+            try {
+                message = URLDecoder.decode(message, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                message = "Failed to decode message";
+            }
+        }
+
         DialogUtil.displayInfoMessage(null, message);
     }
 

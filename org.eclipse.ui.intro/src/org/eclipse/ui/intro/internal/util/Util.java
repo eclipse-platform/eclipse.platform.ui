@@ -204,55 +204,67 @@ public class Util {
         } else {
             Thread launcher = new Thread("Intro browser Launcher") {//$NON-NLS-1$
 
-                boolean webBrowserOpened = false;
-                String webBrowser = null;
-
                 public void run() {
                     try {
-                        if (webBrowserOpened) {
-                            Runtime.getRuntime().exec(
-                                    webBrowser + " -remote openURL("
-                                            + localHref + ")"); //$NON-NLS-1$ //$NON-NLS-2$
-                        } else {
-                            Process p = doOpenBrowser(localHref);
-                            webBrowserOpened = true;
-                            try {
-                                if (p != null)
-                                    p.waitFor();
-                            } catch (InterruptedException e) {
-                                openBrowserError(display, e);
-                            } finally {
-                                webBrowserOpened = false;
-                            }
+                        Process p = doOpenBrowser(localHref, true);
+                        if (p == null) {
+                            // no browser already opened. Launch new one.
+                            p = doOpenBrowser(localHref, true);
+                            if (p == null)
+                                // failed to launch new browser.
+                                throw new Exception();
                         }
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         openBrowserError(display, e);
                     }
                 }
 
-                private Process doOpenBrowser(String href) throws IOException {
+                private Process doOpenBrowser(String href, boolean remote)
+                        throws Exception {
                     Process p = null;
-                    if (webBrowser == null) {
-                        try {
-                            webBrowser = "netscape"; //$NON-NLS-1$
-                            p = Runtime.getRuntime().exec(
-                                    webBrowser + "  " + href); //$NON-NLS-1$;
-                        } catch (IOException e) {
-                            p = null;
-                            webBrowser = "mozilla"; //$NON-NLS-1$
-                        }
+                    String webBrowser;
+                    // try netscape first.
+                    webBrowser = "netscape"; //$NON-NLS-1$
+                    String cmd = createCommand(webBrowser, href, remote);
+                    p = Runtime.getRuntime().exec(cmd);
+                    if (p != null) {
+                        int exitCode = p.waitFor();
+                        if (exitCode == 0)
+                            return p;
                     }
 
-                    if (p == null) {
-                        try {
-                            p = Runtime.getRuntime().exec(
-                                    webBrowser + " " + href); //$NON-NLS-1$;
-                        } catch (IOException e) {
-                            p = null;
-                            throw e;
-                        }
+                    // netscape failed. Try mozilla.
+                    webBrowser = "mozilla"; //$NON-NLS-1$
+                    cmd = createCommand(webBrowser, href, remote);
+                    p = Runtime.getRuntime().exec(cmd);
+                    if (p != null) {
+                        int exitCode = p.waitFor();
+                        if (exitCode == 0)
+                            return p;
                     }
-                    return p;
+
+                    // all failed. return null
+                    return null;
+                }
+
+
+                /**
+                 * Create a command to launch the given browser, with/without
+                 * remote control.
+                 *  
+                 */
+                private String createCommand(String browser, String href,
+                        boolean remote) {
+                    StringBuffer cmd = new StringBuffer(browser);
+                    if (remote) {
+                        cmd.append(" -remote \"openURL(");
+                        cmd.append(href);
+                        cmd.append(")\"");
+                    } else {
+                        cmd.append(" ");
+                        cmd.append(href);
+                    }
+                    return cmd.toString();
                 }
             };
             launcher.start();
