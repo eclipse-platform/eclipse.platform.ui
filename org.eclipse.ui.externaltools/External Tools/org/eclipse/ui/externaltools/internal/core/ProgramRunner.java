@@ -47,8 +47,17 @@ public class ProgramRunner extends ExternalToolsRunner {
 				p = Runtime.getRuntime().exec(commandLine);		
 			new Thread(getRunnable(p.getInputStream(), LogConsoleDocument.getInstance(), LogConsoleDocument.MSG_INFO, finished)).start();
 			new Thread(getRunnable(p.getErrorStream(), LogConsoleDocument.getInstance(), LogConsoleDocument.MSG_ERR, finished)).start();
-
+	
 			p.waitFor();
+				
+			// Sleep to allow the two new threads to begin reading
+			// the program-running process's input and error streams
+			// before finished[0] is set to true. This is especially
+			// necessary with short programs that execute quickly. If
+			// finished[0] is set to true before the threads run,
+			// nothing will be read from the input and error streams.
+			Thread.currentThread().sleep(200);
+				
 			finished[0] = true;
 		} catch (Exception e) {
 			handleException(e);
