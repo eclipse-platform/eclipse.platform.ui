@@ -202,15 +202,11 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizer implemen
      * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#canRemove(org.eclipse.debug.core.model.IBreakpoint, org.eclipse.core.runtime.IAdaptable)
      */
     public boolean canRemove(IBreakpoint breakpoint, IAdaptable category) {
-        IAdaptable[] categories = getCategories(breakpoint);
-        if (categories != null && categories.length > 0) {
-            for (int i = 0; i < categories.length; i++) {
-                if (categories[i].equals(category)) {
-                    return true;
-                }
-            }
+        if (category instanceof WorkingSetCategory) {
+            WorkingSetCategory wsc = (WorkingSetCategory) category;
+            return IInternalDebugUIConstants.ID_BREAKPOINT_WORKINGSET.equals(wsc.getWorkingSet().getId());
         }
-        return false;
+        return super.canRemove(breakpoint, category);
     }
     
     
@@ -218,15 +214,11 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizer implemen
      * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#canAdd(org.eclipse.debug.core.model.IBreakpoint, org.eclipse.core.runtime.IAdaptable)
      */
     public boolean canAdd(IBreakpoint breakpoint, IAdaptable category) {
-        IAdaptable[] categories = getCategories(breakpoint);
-        if (categories != null && categories.length > 0) {
-            for (int i = 0; i < categories.length; i++) {
-                if (categories[i].equals(category)) {
-                    return false;
-                }
-            }
+        if (category instanceof WorkingSetCategory) {
+            WorkingSetCategory wsc = (WorkingSetCategory) category;
+            return IInternalDebugUIConstants.ID_BREAKPOINT_WORKINGSET.equals(wsc.getWorkingSet().getId());
         }
-        return true;
+        return super.canAdd(breakpoint, category);
     }
     
     /* (non-Javadoc)

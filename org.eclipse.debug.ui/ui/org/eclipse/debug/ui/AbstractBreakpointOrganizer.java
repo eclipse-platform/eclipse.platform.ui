@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.views.breakpoints.OtherBreakpointCategory;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -46,17 +47,25 @@ public abstract class AbstractBreakpointOrganizer implements IBreakpointOrganize
     }
     
     /* (non-Javadoc)
+     * 
+     * Subclasses that override should return super.canAdd(...) when they are not able to add
+     * the breakpoint.
+     * 
      * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#canAdd(org.eclipse.debug.core.model.IBreakpoint, org.eclipse.core.runtime.IAdaptable)
      */
     public boolean canAdd(IBreakpoint breakpoint, IAdaptable category) {
-        return false;
+        return category instanceof OtherBreakpointCategory;
     }
     
     /* (non-Javadoc)
+     * 
+     * Subclasses that override should return super.canRemove(...) when they are not able to remove
+     * the breakpoint.
+     * 
      * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#canRemove(org.eclipse.debug.core.model.IBreakpoint, org.eclipse.core.runtime.IAdaptable)
      */
     public boolean canRemove(IBreakpoint breakpoint, IAdaptable category) {
-        return false;
+        return category instanceof OtherBreakpointCategory;
     }
     
     /* (non-Javadoc)

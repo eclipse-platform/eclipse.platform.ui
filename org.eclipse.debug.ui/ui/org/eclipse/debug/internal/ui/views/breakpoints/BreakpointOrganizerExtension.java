@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.debug.ui.IBreakpointOrganizerDelegate;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -38,6 +39,7 @@ public class BreakpointOrganizerExtension implements IBreakpointOrganizer {
 	public static final String ATTR_CLASS = "class"; //$NON-NLS-1$
 	public static final String ATTR_ID = "id"; //$NON-NLS-1$
 	public static final String ATTR_ICON = "icon"; //$NON-NLS-1$
+    public static final String ATTR_OTHERS_LABEL = "othersLabel"; //$NON-NLS-1$
 	
 	public BreakpointOrganizerExtension(IConfigurationElement element) {
 		fElement = element;
@@ -154,6 +156,17 @@ public class BreakpointOrganizerExtension implements IBreakpointOrganizer {
      */
     public void dispose() {
         getOrganizer().dispose();
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointOrganizer#getOthersLabel()
+     */
+    public String getOthersLabel() {
+        String attribute = fElement.getAttribute(ATTR_OTHERS_LABEL);
+        if (attribute == null) {
+            return DebugUIViewsMessages.getString("OtherBreakpointOrganizer.0"); //$NON-NLS-1$
+        }
+        return attribute;
     }
 
 }

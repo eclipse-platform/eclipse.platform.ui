@@ -58,8 +58,7 @@ public class BreakpointContainer extends PlatformObject    {
             IBreakpointOrganizer organizer = fNesting[0];
             IAdaptable[] categories = organizer.getCategories(breakpoint);
             if (categories== null || categories.length == 0) {
-            	categories = OtherBreakpointOrganizer.getCategories();
-            	organizer = OtherBreakpointOrganizer.getOrganizer();
+            	categories = OtherBreakpointCategory.getCategories(organizer);
             }
             for (int i = 0; i < categories.length; i++) {
                 IAdaptable category = categories[i];

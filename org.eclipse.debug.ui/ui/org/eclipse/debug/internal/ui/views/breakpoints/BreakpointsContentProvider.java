@@ -220,8 +220,7 @@ public class BreakpointsContentProvider implements ITreeContentProvider, IProper
                 organizer = fOrganizers[0];
                 IAdaptable[] categories = organizer.getCategories(breakpoint);
                 if (categories == null || categories.length == 0) {
-                	categories = OtherBreakpointOrganizer.getCategories();
-                	organizer = OtherBreakpointOrganizer.getOrganizer();
+                	categories = OtherBreakpointCategory.getCategories(organizer);
                 }
                 for (int j = 0; j < categories.length; j++) {
                     IAdaptable category = categories[j];
@@ -266,7 +265,7 @@ public class BreakpointsContentProvider implements ITreeContentProvider, IProper
         if (isShowingGroups()) {
             IAdaptable[] categories = fOrganizers[0].getCategories(breakpoint);
             if (categories == null || categories.length == 0) {
-                categories = OtherBreakpointOrganizer.getCategories();
+                categories = OtherBreakpointCategory.getCategories(fOrganizers[0]);
             }
             BreakpointContainer[] containers = new BreakpointContainer[categories.length];
             int index = 0;

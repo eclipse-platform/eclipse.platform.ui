@@ -52,6 +52,7 @@ import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationMan
 import org.eclipse.debug.internal.ui.launchConfigurations.PerspectiveManager;
 import org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceManager;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointOrganizerManager;
+import org.eclipse.debug.internal.ui.views.breakpoints.OtherBreakpointCategory;
 import org.eclipse.debug.internal.ui.views.console.ProcessConsoleManager;
 import org.eclipse.debug.internal.ui.views.launch.DebugElementAdapterFactory;
 import org.eclipse.debug.internal.ui.views.launch.DebugElementHelper;
@@ -366,6 +367,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		manager.registerAdapters(propertiesFactory, IProcess.class);
 		manager.registerAdapters(propertiesFactory, ILaunch.class);
 		manager.registerAdapters(propertiesFactory, ILaunchManager.class);
+        manager.registerAdapters(propertiesFactory, OtherBreakpointCategory.class);
 		DeferredContentAdapterFactory factory = new DeferredContentAdapterFactory();
 		manager.registerAdapters(factory, IDebugTarget.class);
 		manager.registerAdapters(factory, IThread.class);

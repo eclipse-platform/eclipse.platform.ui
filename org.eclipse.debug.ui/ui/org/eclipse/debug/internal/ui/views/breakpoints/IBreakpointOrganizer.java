@@ -45,5 +45,14 @@ public interface IBreakpointOrganizer extends IBreakpointOrganizerDelegate {
      * @return a unique identifier for this breakpoint organizer
      */
     public String getIdentifier();
+    
+    /**
+     * Returns the label for breakpoints that do not fall into a category
+     * for this organizer.
+     * 
+     * @return label for breakpoints that do not fall into a category
+     * for this organizer
+     */
+    public String getOthersLabel();
 
 }
