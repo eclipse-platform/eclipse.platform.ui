@@ -166,7 +166,7 @@ public class SimpleLaunchVariableRegistry {
 				}
 				String name= element.getAttribute(NAME_TAG);
 				if (name.length() > 0) {
-					ISimpleLaunchVariable variable= getVariable(name);;
+					ISimpleLaunchVariable variable= getVariable(name);
 					if (variable == null) {
 						variable= new SimpleLaunchVariable(name);
 					}

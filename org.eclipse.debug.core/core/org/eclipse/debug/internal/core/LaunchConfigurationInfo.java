@@ -23,6 +23,7 @@ import java.util.Set;
 
 import org.apache.xerces.dom.DocumentImpl;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -113,7 +114,7 @@ public class LaunchConfigurationInfo {
 			} else {
 				throw new DebugException(
 					new Status(
-					 Status.ERROR, DebugPlugin.getUniqueIdentifier(),
+					 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
 					 DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.getString("LaunchConfigurationInfo.Attribute_{0}_is_not_of_type_java.lang.String._1"), new String[] {key}), null //$NON-NLS-1$
 					)
 				);
@@ -139,7 +140,7 @@ public class LaunchConfigurationInfo {
 			} else {
 				throw new DebugException(
 					new Status(
-					 Status.ERROR, DebugPlugin.getUniqueIdentifier(),
+					 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
 					 DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.getString("LaunchConfigurationInfo.Attribute_{0}_is_not_of_type_int._2"), new String[] {key}), null //$NON-NLS-1$
 					)
 				);
@@ -165,7 +166,7 @@ public class LaunchConfigurationInfo {
 			} else {
 				throw new DebugException(
 					new Status(
-					 Status.ERROR, DebugPlugin.getUniqueIdentifier(),
+					 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
 					 DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.getString("LaunchConfigurationInfo.Attribute_{0}_is_not_of_type_boolean._3"), new String[] {key}), null //$NON-NLS-1$
 					)
 				);
@@ -191,7 +192,7 @@ public class LaunchConfigurationInfo {
 			} else {
 				throw new DebugException(
 					new Status(
-					 Status.ERROR, DebugPlugin.getUniqueIdentifier(),
+					 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
 					 DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.getString("LaunchConfigurationInfo.Attribute_{0}_is_not_of_type_java.util.List._1"), new String[] {key}), null //$NON-NLS-1$
 					)
 				);
@@ -217,7 +218,7 @@ public class LaunchConfigurationInfo {
 			} else {
 				throw new DebugException(
 					new Status(
-					 Status.ERROR, DebugPlugin.getUniqueIdentifier(),
+					 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
 					 DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.getString("LaunchConfigurationInfo.Attribute_{0}_is_not_of_type_java.util.Map._1"), new String[] {key}), null //$NON-NLS-1$
 					)
 				);
@@ -378,7 +379,7 @@ public class LaunchConfigurationInfo {
 				String message= MessageFormat.format(DebugCoreMessages.getString("LaunchConfigurationInfo.missing_type"), new Object[]{id}); //$NON-NLS-1$
 				throw new DebugException(
 						new Status(
-						 Status.ERROR, DebugPlugin.getUniqueIdentifier(),
+						 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
 						 DebugException.MISSING_LAUNCH_CONFIGURATION_TYPE, message, null)
 					);
 			}
@@ -490,7 +491,7 @@ public class LaunchConfigurationInfo {
 		return 
 			new DebugException(
 				new Status(
-				 Status.ERROR, DebugPlugin.getUniqueIdentifier(),
+				 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
 				 DebugException.REQUEST_FAILED, DebugCoreMessages.getString("LaunchConfigurationInfo.Invalid_launch_configuration_XML._10"), null //$NON-NLS-1$
 				)
 			);

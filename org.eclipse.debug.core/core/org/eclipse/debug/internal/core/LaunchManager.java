@@ -506,7 +506,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	protected DebugException createDebugException(String message, Throwable throwable) {
 		return new DebugException(
 					new Status(
-					 Status.ERROR, DebugPlugin.getUniqueIdentifier(),
+					 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
 					 DebugException.REQUEST_FAILED, message, throwable 
 					)
 				);
@@ -913,7 +913,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		DebugException invalidFormat = 
 			new DebugException(
 				new Status(
-				 Status.ERROR, DebugPlugin.getUniqueIdentifier(),
+				 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
 				 DebugException.REQUEST_FAILED, DebugCoreMessages.getString("LaunchManager.Invalid_launch_configuration_index._18"), null //$NON-NLS-1$
 				)
 			);		

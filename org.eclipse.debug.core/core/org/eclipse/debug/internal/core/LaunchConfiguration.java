@@ -317,7 +317,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 			if (isLocal()) {
 				if (!(getLocation().toFile().delete())) {
 					throw new DebugException(
-						new Status(Status.ERROR, DebugPlugin.getUniqueIdentifier(),
+						new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
 						 DebugException.REQUEST_FAILED, DebugCoreMessages.getString("LaunchConfiguration.Failed_to_delete_launch_configuration._1"), null) //$NON-NLS-1$
 					);
 				}
