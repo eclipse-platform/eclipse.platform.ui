@@ -17,7 +17,6 @@ import java.io.UnsupportedEncodingException;
 
 import org.eclipse.swt.widgets.Display;
 
-import org.eclipse.core.internal.filebuffers.ContainerGenerator;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -42,6 +41,8 @@ import org.eclipse.core.resources.IResourceRuleFactory;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
+
+import org.eclipse.core.filebuffers.manipulation.ContainerCreator;
 
 import org.eclipse.jface.operation.IRunnableContext;
 
@@ -586,8 +587,8 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 				} else {
 					try {
 						monitor.beginTask(TextEditorMessages.getString("FileDocumentProvider.task.saving"), 2000); //$NON-NLS-1$
-						ContainerGenerator generator = new ContainerGenerator(file.getWorkspace(), file.getParent().getFullPath());
-						generator.generateContainer(new SubProgressMonitor(monitor, 1000));
+						ContainerCreator creator = new ContainerCreator(file.getWorkspace(), file.getParent().getFullPath());
+						creator.createContainer(new SubProgressMonitor(monitor, 1000));
 						file.create(stream, false, new SubProgressMonitor(monitor, 1000));
 					}
 					finally {

@@ -26,7 +26,6 @@ import java.util.NoSuchElementException;
 
 import org.osgi.framework.Bundle;
 
-import org.eclipse.core.internal.filebuffers.ContainerGenerator;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -55,6 +54,7 @@ import org.eclipse.core.filebuffers.IFileBufferListener;
 import org.eclipse.core.filebuffers.IFileBufferManager;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
+import org.eclipse.core.filebuffers.manipulation.ContainerCreator;
 
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -785,8 +785,8 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		try {
 			monitor.beginTask(TextEditorMessages.getString("TextFileDocumentProvider.beginTask.saving"), 2000); //$NON-NLS-1$
 			InputStream stream= new ByteArrayInputStream(document.get().getBytes(encoding));
-			ContainerGenerator generator = new ContainerGenerator(file.getWorkspace(), file.getParent().getFullPath());
-			generator.generateContainer(new SubProgressMonitor(monitor, 1000));
+			ContainerCreator creator = new ContainerCreator(file.getWorkspace(), file.getParent().getFullPath());
+			creator.createContainer(new SubProgressMonitor(monitor, 1000));
 			file.create(stream, false, new SubProgressMonitor(monitor, 1000));
 		} catch (UnsupportedEncodingException x) {
 			String message= TextEditorMessages.getFormattedString("Editor.error.unsupported_encoding.message_arg", encoding); //$NON-NLS-1$
@@ -822,7 +822,8 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 			// continue with next strategy
 		} finally {
 			try {
-				stream.close();
+				if (stream != null)
+					stream.close();
 			} catch (IOException x) {
 			}
 		}

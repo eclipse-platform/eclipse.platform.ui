@@ -34,6 +34,7 @@ import org.eclipse.core.resources.IResourceStatus;
 
 import org.eclipse.core.filebuffers.IPersistableAnnotationModel;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
+import org.eclipse.core.filebuffers.manipulation.ContainerCreator;
 
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
@@ -324,9 +325,9 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 				monitor= Progress.getMonitor(monitor);
 				try {
 					monitor.beginTask("Saving", 2); //$NON-NLS-1$
-					ContainerGenerator generator = new ContainerGenerator(fFile.getWorkspace(), fFile.getParent().getFullPath());
+					ContainerCreator creator = new ContainerCreator(fFile.getWorkspace(), fFile.getParent().getFullPath());
 					IProgressMonitor subMonitor= new SubProgressMonitor(monitor, 1);
-					generator.generateContainer(subMonitor);
+					creator.createContainer(subMonitor);
 					subMonitor.done();
 					
 					subMonitor= new SubProgressMonitor(monitor, 1);
