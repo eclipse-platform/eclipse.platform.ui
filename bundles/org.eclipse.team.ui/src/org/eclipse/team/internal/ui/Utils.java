@@ -290,14 +290,20 @@ public class Utils {
 	}
 
 	public static Shell findShell() {
-		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		if(window != null) {
-			return window.getShell();
-		}
+	    // First find the active shell of the display and use it.
+	    // We need to do this since the active shell may be model
+	    // in which case we nned to parent off that or risk deadlock
 		Display display= Display.getCurrent();
 		if (display == null) {
 			display= Display.getDefault();
+		}
+		if (display != null) {
 			return display.getActiveShell();
+		}
+		// Try to use the active window (although I suspect this will fail if the bove failed)
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if(window != null) {
+			return window.getShell();
 		}
 		// worst case, just create our own.
 		return new Shell(TeamUIPlugin.getStandardDisplay());	
