@@ -11,6 +11,8 @@
 
 package org.eclipse.jface.text.source;
 
+import java.util.Map;
+
 
 /**
  * Extends <code>IAnnotationModel</code> with the ability to attach additional annotation models to it.
@@ -45,4 +47,21 @@ public interface IAnnotationModelExtension {
 	 * @return an <code>IAnnotationModel</code> attached under <code>key</code>, or <code>null</code>
 	 */
 	IAnnotationModel removeAnnotationModel(Object key);
+
+	/**
+	 * Replaces annotations with new annotations for this annotation model. The new
+	 * annotations are map entries where the annotation is the key and the value is the
+	 * position for the annotation. Each position describes the range covered by the annotation. 
+	 * All registered annotation model listeners are informed about the change (if any).
+	 * If the model is connected to a document, the positions are automatically
+	 * updated on document changes. For each annotation which is already managed by
+	 * this annotation model or is not associated with a valid position in the connected
+	 * document nothing happens.
+	 *
+	 * @param annotationsToRemove the annotations to be removed, may be <code>null</code>
+	 * @param annotationsToAdd the annotations which will be added, may be <code>null</code>
+	 *			each map entry has an <code>Annotation</code> as key and a <code>Position</code> as value
+	 * @throws ClassCastException if one of the map key or values has a wrong type
+	 */
+	void replaceAnnotations(Annotation[] annotationsToRemove, Map annotationsToAdd) throws ClassCastException;
 }

@@ -92,6 +92,53 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 		}
 	}
 
+	/*
+	 * @see IAnnotationModelExtension#replaceAnnotations(Annotation[], Map)
+	 * @since 3.0
+	 */
+	public void replaceAnnotations(Annotation[] annotationsToRemove, Map annotationsToAdd) {
+		
+		boolean modelChanged= true;
+		
+		if (annotationsToRemove != null) {
+			for (int i= 0, length= annotationsToRemove.length; i < length; i++) {
+				Annotation annotation= annotationsToRemove[i];
+				if (fAnnotations.containsKey(annotation)) {
+				
+					if (fDocument != null) {
+						Position p= (Position) fAnnotations.get(annotation);
+						fDocument.removePosition(p);
+					}
+					
+					fAnnotations.remove(annotation);
+					
+					modelChanged= true;
+				}
+			}
+		}
+		
+		if (annotationsToAdd != null) {
+			Iterator iter= annotationsToAdd.entrySet().iterator();
+			while (iter.hasNext()) {
+				try {
+					Map.Entry mapEntry= (Map.Entry)iter.next();
+					Annotation annotation= (Annotation)mapEntry.getKey();
+					if (!fAnnotations.containsKey(annotation)) {
+						Position position= (Position)mapEntry.getValue();
+						addPosition(fDocument, position);
+						fAnnotations.put(annotation, position);
+						modelChanged= true;
+					}
+				} catch (BadLocationException e) {
+					// ignore invalid position
+				}
+			}
+		}
+		
+		if (modelChanged)
+			fireModelChanged();
+	}
+	
 	/**
 	 * Adds the given annotation to this model. Associates the 
 	 * annotation with the given position. If requested, all annotation
