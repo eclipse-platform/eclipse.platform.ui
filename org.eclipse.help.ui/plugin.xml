@@ -114,7 +114,7 @@
 
           <action id="org.eclipse.help.internal.ui.HelpAction"
                   menubarPath="help/helpEnd"
-                  label="Help Contents Version 1"
+                  label="Help Contents (Help Perspective)"
                   class="org.eclipse.help.internal.ui.HelpContentsAction1"
                   icon="icons/view.gif"
                   tooltip="%openhelpcontents"/>
