@@ -23,8 +23,9 @@ import java.util.Vector;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 
-import org.apache.xerces.dom.DocumentImpl;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -214,6 +215,10 @@ public class ExpressionManager implements IExpressionManager, IDebugEventSetList
 			expressionString= getWatchExpressionsAsXML();
 		} catch (IOException e) {
 			DebugPlugin.log(e);
+		} catch (ParserConfigurationException e) {
+			DebugPlugin.log(e);
+		} catch (TransformerException e) {
+			DebugPlugin.log(e);
 		}
 		prefs.setValue(PREF_WATCH_EXPRESSIONS, expressionString);
 		DebugPlugin.getDefault().savePluginPreferences();
@@ -225,9 +230,9 @@ public class ExpressionManager implements IExpressionManager, IDebugEventSetList
 	 * @throws IOException if an exception occurs while creating
 	 * 		the XML document.
 	 */
-	private String getWatchExpressionsAsXML() throws IOException {
+	private String getWatchExpressionsAsXML() throws IOException, ParserConfigurationException, TransformerException {
 		Iterator iter= fExpressions.iterator();
-		Document document= new DocumentImpl();
+		Document document= LaunchManager.getDocument();
 		Element rootElement= document.createElement(WATCH_EXPRESSIONS_TAG);
 		document.appendChild(rootElement);
 		while (iter.hasNext()) {
