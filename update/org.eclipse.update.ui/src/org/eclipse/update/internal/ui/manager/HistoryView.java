@@ -28,7 +28,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * Insert the type's description here.
  * @see ViewPart
  */
-public class HistoryView extends BaseTreeView implements ISiteLocalChangedListener{
+public class HistoryView extends BaseTreeView implements ILocalSiteChangedListener{
 private Image configImage;
 private Image featureImage;
 private Image siteImage;

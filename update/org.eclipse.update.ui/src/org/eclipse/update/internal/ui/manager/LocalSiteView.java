@@ -44,7 +44,6 @@ private Image siteImage;
 private boolean initialized;
 private UpdateModelChangedListener modelListener;
 
-
 class UpdateModelChangedListener implements IUpdateModelChangedListener {
 	/**
 	 * @see IUpdateModelChangedListener#objectAdded(Object, Object)
