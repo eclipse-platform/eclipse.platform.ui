@@ -149,7 +149,7 @@ public class AntModel {
 	}
 	
 	public void reconcile(DirtyRegion region) {
-		//TODO turn off incremental as it is a work in progress
+		//TODO turn off incremental as it is deferred to post 3.0
 		region= null; 
 		fDirtyRegion= region;
 		synchronized (fDirtyLock) {
