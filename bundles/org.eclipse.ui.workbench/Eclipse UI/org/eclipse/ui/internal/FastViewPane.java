@@ -57,7 +57,7 @@ public class FastViewPane {
 	private ViewPane currentPane;
 	private Composite clientComposite;
 	private static final int SASH_SIZE = 3;
-	private static final int MIN_FASTVIEW_SIZE = 10;
+	private int minSize = 10;
 	private int size;
 	private Sash sash;
 	
@@ -248,9 +248,6 @@ public class FastViewPane {
 				Rectangle bounds = clientComposite.getClientArea();
 				Point location = new Point(e.x, e.y);
 				int distanceFromEdge = Geometry.getDistanceFromEdge(bounds, location, side);
-				if (distanceFromEdge < MIN_FASTVIEW_SIZE) {
-					distanceFromEdge = MIN_FASTVIEW_SIZE;
-				}
 				
 				if (!(side == SWT.TOP || side == SWT.LEFT)) {
 					distanceFromEdge -= SASH_SIZE;
@@ -270,7 +267,11 @@ public class FastViewPane {
 		}
 	};
 
-	private void setSize(int size) {		
+	private void setSize(int size) {
+		
+		if (size < minSize) {
+			size = minSize;
+		}
 		this.size = size; 
 		
 		// Do the rest of this method inside an asyncExec. This allows the method 
@@ -375,6 +376,9 @@ public class FastViewPane {
 		presentation.setActive(StackPresentation.AS_ACTIVE_FOCUS);
 		presentation.setVisible(true);
 
+		Point minimumPresentationSize = presentation.computeMinimumSize();
+		minSize = Geometry.isHorizontal(side) ? minimumPresentationSize.y : minimumPresentationSize.x;
+		
 		// Show pane fast.
 		ctrl.setEnabled(true); // Add focus support.
 		Composite parent = ctrl.getParent();
@@ -441,7 +445,7 @@ public class FastViewPane {
 		boolean isVertical = !Geometry.isHorizontal(side);
 		int clientSize = Geometry.getDimension(clientArea, isVertical);
 		int viewSize = Math.min(Geometry.getDimension(getBounds(), isVertical),
-				clientSize - MIN_FASTVIEW_SIZE);
+				clientSize - minSize);
 		
 		return Geometry.getExtrudedEdge(clientArea, viewSize, side);
 	}

@@ -80,6 +80,7 @@ public class DefaultPartPresentation extends StackPresentation {
 	private MenuManager systemMenuManager = new MenuManager();
 	private Label titleLabel;
 	private Listener dragListener;
+	private Point minimumSize = new Point(0,0);
 	
 	/**
 	 * While we are dragging a tab from this folder, this holdes index of the tab
@@ -337,6 +338,9 @@ public class DefaultPartPresentation extends StackPresentation {
 	public void init() {
 		updateGradient();
 		setTitleAttributes();
+		
+		// Recompute the minimum size now that everything's ready to go
+		minimumSize = tabFolder.computeMinimumSize();
 	}
 	
     /**
@@ -798,7 +802,7 @@ public class DefaultPartPresentation extends StackPresentation {
 	 * @see org.eclipse.ui.internal.skins.Presentation#computeMinimumSize()
 	 */
 	public Point computeMinimumSize() {
-		return Geometry.getSize(tabFolder.computeTrim(0,0,0,0));
+		return minimumSize;		
 	}
 	
 	/* (non-Javadoc)

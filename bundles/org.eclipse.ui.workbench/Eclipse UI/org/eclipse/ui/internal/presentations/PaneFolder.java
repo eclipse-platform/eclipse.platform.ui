@@ -455,6 +455,15 @@ public final class PaneFolder {
 		return new CTabItem(tabFolder, style, index);
 	}
 	
+	public Point computeMinimumSize() {
+		Point result = Geometry.getSize(tabFolder.computeTrim(0,0,0,0));
+
+		// Add some space for the minimize and maximize buttons plus a tab.
+		// Right now this isn't exposed from SWT as API, so we just add 50 pixels.
+		result.x += 60;
+		return result;
+	}
+	
 	
 	// The remainder of the methods in this class redirect directly to CTabFolder methods
 	
@@ -565,7 +574,7 @@ public final class PaneFolder {
 	public void setUnselectedImageVisible(boolean b) {
 		tabFolder.setUnselectedImageVisible(b);
 	}
-
+	
 	/**
 	 * @param b
 	 */
