@@ -45,7 +45,7 @@ class ExceptionHandler implements Window.IExceptionHandler {
 	private static String MSG_VirtualMachineError = WorkbenchMessages.getString("FatalError_VirtualMachineError"); //$NON-NLS-1$
 	private static String MSG_SWTError = WorkbenchMessages.getString("FatalError_SWTError"); //$NON-NLS-1$
 	private static String MSG_FATAL_ERROR = WorkbenchMessages.getString("FatalError"); //$NON-NLS-1$
-	private static String MSG_FATAL_ERROR_Recursive = WorkbenchMessages.getString("FatalError_RecurciveError"); //$NON-NLS-1$
+	private static String MSG_FATAL_ERROR_Recursive = WorkbenchMessages.getString("FatalError_RecursiveError"); //$NON-NLS-1$
 	private static String MSG_FATAL_ERROR_RecursiveTitle = WorkbenchMessages.getString("Internal_error"); //$NON-NLS-1$
 
 
@@ -62,7 +62,7 @@ public void handleException(Throwable t) {
 	try {
 		exceptionCount++;
 		if(exceptionCount > 2) {
-			//Avoid recurcive error.
+			//Avoid recursive error.
 			if(t instanceof RuntimeException)
 				throw (RuntimeException)t;
 			else
