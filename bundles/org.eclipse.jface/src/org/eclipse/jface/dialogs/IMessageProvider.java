@@ -1,6 +1,5 @@
 package org.eclipse.jface.dialogs;
 
-import org.eclipse.swt.SWT;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2002.

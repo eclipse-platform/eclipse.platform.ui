@@ -4,9 +4,10 @@ package org.eclipse.jface.viewers;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.resource.JFaceResources;
 import java.util.*;
+
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.Assert;
 
 /**
  * A concrete implementation of the <code>IStructuredSelection</code> interface,

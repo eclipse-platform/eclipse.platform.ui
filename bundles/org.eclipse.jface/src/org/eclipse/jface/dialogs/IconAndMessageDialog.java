@@ -1,13 +1,10 @@
 package org.eclipse.jface.dialogs;
 
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.widgets.Shell;
 
 /**
  * The IconAndMessageDialog is the abstract superclass of dialogs that

@@ -7,7 +7,6 @@ package org.eclipse.jface.viewers;
 import org.eclipse.jface.util.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import java.util.*;
 import java.util.List; // Otherwise ambiguous

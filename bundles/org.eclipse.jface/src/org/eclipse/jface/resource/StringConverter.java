@@ -4,10 +4,11 @@ package org.eclipse.jface.resource;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.util.*; 
+import java.util.*;
+
+import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.jface.util.Assert;
 
 /**
  * Helper class for converting various data types to and from

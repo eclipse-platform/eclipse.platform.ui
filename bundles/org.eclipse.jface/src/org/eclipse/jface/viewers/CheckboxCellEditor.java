@@ -6,7 +6,8 @@ package org.eclipse.jface.viewers;
  */
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 
 /**
  * A cell editor that manages a checkbox.

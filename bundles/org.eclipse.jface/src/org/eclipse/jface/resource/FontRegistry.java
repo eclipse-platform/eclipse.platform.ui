@@ -4,15 +4,14 @@ package org.eclipse.jface.resource;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.io.*;
 import java.util.*;
-import java.util.List;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 
 /**
  * A font registry maintains a mapping between symbolic font names 

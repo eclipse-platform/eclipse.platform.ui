@@ -4,13 +4,13 @@ package org.eclipse.jface.preference;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.swt.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.jface.resource.*;
-
 import java.util.Arrays;
 import java.util.StringTokenizer;
+
+import org.eclipse.jface.resource.*;
+import org.eclipse.swt.SWTException;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.widgets.Shell;
 
 /**
  * A utility class for dealing with preferences whose values are

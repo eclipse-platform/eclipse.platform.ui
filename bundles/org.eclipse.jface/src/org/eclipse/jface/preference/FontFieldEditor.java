@@ -5,14 +5,15 @@ package org.eclipse.jface.preference;
  * All Rights Reserved.
  */
  
-import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.resource.*;
-import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.swt.*;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.resource.StringConverter;
+import org.eclipse.jface.util.Assert;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 
 /**

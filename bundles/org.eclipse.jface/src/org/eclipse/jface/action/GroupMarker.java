@@ -4,7 +4,6 @@ package org.eclipse.jface.action;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.jface.util.Assert;
 
 /**
  * A group marker is a special kind of contribution item denoting

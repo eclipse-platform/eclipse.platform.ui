@@ -5,7 +5,6 @@ package org.eclipse.jface.viewers;
  * All Rights Reserved.
  */
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
  * A label decorator decorates the label text and image for some element.

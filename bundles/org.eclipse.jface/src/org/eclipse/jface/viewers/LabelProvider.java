@@ -6,7 +6,6 @@ package org.eclipse.jface.viewers;
  */
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.swt.graphics.Image;
-import java.util.*;
 
 /**
  * A label provider implementation which, by default, uses an element's 

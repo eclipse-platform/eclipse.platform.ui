@@ -4,7 +4,6 @@ package org.eclipse.jface.viewers;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.util.Iterator;
 
 /**
  * An interface to content providers for tree-structure-oriented

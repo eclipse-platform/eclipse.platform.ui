@@ -5,15 +5,13 @@ package org.eclipse.jface.window;
  * All Rights Reserved.
  */
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.util.*;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.*;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.SWTError;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.*;
 
 /**
  * A JFace window is an object that has no visual representation (no widgets)

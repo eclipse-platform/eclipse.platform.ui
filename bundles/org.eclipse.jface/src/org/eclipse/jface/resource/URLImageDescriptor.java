@@ -4,10 +4,11 @@ package org.eclipse.jface.resource;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.swt.graphics.ImageData;
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+
+import org.eclipse.swt.graphics.ImageData;
 /**
  * An ImageDescriptor that gets its information from a URL.
  * This class is not public API.  Use ImageDescriptor#createFromURL

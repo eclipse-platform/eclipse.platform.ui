@@ -4,9 +4,7 @@ package org.eclipse.jface.viewers;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.util.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
 import org.eclipse.swt.custom.TableTree;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;

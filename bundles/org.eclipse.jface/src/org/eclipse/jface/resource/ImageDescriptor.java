@@ -4,10 +4,11 @@ package org.eclipse.jface.resource;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.net.URL;
+
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Display;
-import java.net.URL;
 
 /**
  * An image descriptor is an object that knows how to create

@@ -4,10 +4,11 @@ package org.eclipse.jface.resource;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.jface.util.Assert;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.graphics.Image;
 import java.util.*;
+
+import org.eclipse.jface.util.Assert;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * An image registry maintains a mapping between symbolic image names 

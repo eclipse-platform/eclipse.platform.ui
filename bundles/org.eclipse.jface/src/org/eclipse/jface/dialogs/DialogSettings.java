@@ -6,11 +6,14 @@ package org.eclipse.jface.dialogs;
  */
 import java.io.*;
 import java.util.*;
+
 import javax.xml.parsers.*;
-import org.w3c.dom.*;
-import org.xml.sax.*;
+
 import org.apache.xerces.dom.DocumentImpl;
 import org.apache.xml.serialize.*;
+import org.w3c.dom.*;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 
 /**

@@ -4,14 +4,13 @@ package org.eclipse.jface.viewers;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.*;
-import java.util.*;
-import java.util.List; // disambiguate from SWT List
-
 /**
  * A layout for a table.
  * Call <code>addColumnData</code> to add columns.

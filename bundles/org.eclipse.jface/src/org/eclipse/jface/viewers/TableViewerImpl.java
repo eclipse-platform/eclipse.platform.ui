@@ -5,12 +5,9 @@ package org.eclipse.jface.viewers;
  * All Rights Reserved.
  */
  
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.custom.TableEditor;
-import java.util.*;
 
 /**
  * Internal table viewer implementation.

@@ -4,10 +4,12 @@ package org.eclipse.jface.preference;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.jface.util.Assert;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.graphics.Image;
-import java.util.*;
 
 /**
  * A concrete implementation of a node in a preference dialog tree.

@@ -4,13 +4,13 @@ package org.eclipse.jface.resource;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.text.MessageFormat;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
+
 import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
-import java.io.*;
-import java.util.*;
-import java.text.MessageFormat;
 
 /**
  * Utility methods to access JFace-specific resources.

@@ -5,13 +5,12 @@ package org.eclipse.jface.viewers;
  * All Rights Reserved.
  */
 
-import org.eclipse.jface.util.Assert;
-import org.eclipse.swt.*;
-import org.eclipse.swt.custom.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
 import java.text.MessageFormat;
+
+import org.eclipse.jface.util.Assert;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.widgets.*;
 
 /**
  * A cell editor that manages a text entry field.

@@ -6,7 +6,8 @@ package org.eclipse.jface.action;
  */
 import java.util.*;
 
-import org.eclipse.jface.resource.*;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.HelpListener;

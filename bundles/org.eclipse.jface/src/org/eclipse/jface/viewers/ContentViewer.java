@@ -5,11 +5,9 @@ package org.eclipse.jface.viewers;
  * All Rights Reserved.
  */
 import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.util.ListenerList;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Item;
-import java.util.*;
 
 /**
  * A content viewer is a model-based adapter on a widget which accesses its

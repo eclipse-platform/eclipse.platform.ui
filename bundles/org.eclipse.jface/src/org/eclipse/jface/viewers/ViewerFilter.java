@@ -4,9 +4,7 @@ package org.eclipse.jface.viewers;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.util.*;
-import java.util.List; // disambiguate from SWT List
-
+import java.util.ArrayList;
 /**
  * A viewer filter is used by a structured viewer to
  * extract a subset of elements provided by its content provider.

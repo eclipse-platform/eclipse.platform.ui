@@ -4,9 +4,9 @@ package org.eclipse.jface.viewers;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.ListenerList;
+import org.eclipse.swt.graphics.Image;
 
 /**
  * A decorating label provider is a label provider which combines 

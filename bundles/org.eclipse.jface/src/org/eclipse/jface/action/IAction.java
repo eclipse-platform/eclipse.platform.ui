@@ -6,7 +6,7 @@ package org.eclipse.jface.action;
  */
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.widgets.Event;
 
 /**

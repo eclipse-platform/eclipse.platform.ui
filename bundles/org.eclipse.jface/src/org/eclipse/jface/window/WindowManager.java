@@ -5,8 +5,7 @@ package org.eclipse.jface.window;
  * All Rights Reserved.
  */
 import java.util.*;
-import java.util.List; // to make unambiguous
-import org.eclipse.swt.widgets.*;
+
 import org.eclipse.jface.util.Assert;
 
 /**
