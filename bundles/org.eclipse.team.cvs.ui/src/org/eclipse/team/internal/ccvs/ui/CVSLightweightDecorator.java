@@ -101,7 +101,7 @@ public class CVSLightweightDecorator
 						isDirty[0] = cvsFile.isModified();
 					}
 				}
-			}, ICVSFolder.READ_ONLY, null);
+			}, null);
 			return isDirty[0];
 		} catch (CVSException e) {
 			//if we get an error report it to the log but assume dirty

@@ -331,20 +331,6 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 			throw error[0];
 		}
 	}
-	
-	/**
-	 * Running with a flag of READ_ONLY will still ensure that only one thread
-	 * is accessing the sync info but will not run inside a workspace runnable
-	 * in order to avoid doing a build.
-	 * 
-	 * @see org.eclipse.team.internal.ccvs.core.ICVSFolder#run(ICVSRunnable, int, IProgressMonitor)
-	 */
-	public void run(final ICVSRunnable job, int flags, IProgressMonitor monitor) throws CVSException {
-		if (flags == READ_ONLY)
-			EclipseSynchronizer.getInstance().run(job, monitor);
-		else
-			run(job, monitor);
-	}
 		
 	/**
 	 * @see ICVSFolder#fetchChildren(IProgressMonitor)
