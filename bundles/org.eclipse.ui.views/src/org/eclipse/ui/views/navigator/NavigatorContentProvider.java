@@ -42,8 +42,7 @@ public class NavigatorContentProvider implements ITreeContentProvider, IResource
 	private Navigator navigator;
 	private NavigatorRegistry registry = WorkbenchPlugin.getDefault().getNavigatorRegistry();
 	private String partId;
-	private ITreeContentProvider delegateContentProvider;
-	
+		
 public NavigatorContentProvider(Navigator navigator) {
 	partId = navigator.getSite().getId();
 	this.navigator = navigator;
@@ -105,26 +104,22 @@ ITreeContentProvider getContentProvider(IProject project) {
 	}
 	catch (CoreException exception) {
 		//project is closed
-		return delegateContentProvider;
+		return null;
 	}
-	delegateContentProvider = registry.getContentProvider(partId, natures);
-	return delegateContentProvider;
+	return registry.getContentProvider(partId, natures);
 }
 ITreeContentProvider getContentProvider(Object element) {
-	IProject project = null;
+	IResource resource = getResource(element);
+	IProject project;
 	
-	if (element instanceof IProject)
-		project = (IProject) element;
-	else
-	if (element instanceof IAdaptable)
-		project = (IProject) ((IAdaptable) element).getAdapter(IProject.class);
+	if (resource == null)
+		return null;
 
-	if (project != null) {
-		delegateContentProvider = getContentProvider(project);
-	}
-	if (delegateContentProvider == null)
-		delegateContentProvider = new WorkbenchContentProvider();
-	return delegateContentProvider;	
+	project = resource.getProject();
+	if (project == null)
+		return null;
+
+	return getContentProvider(project);
 }
 private IProject getProject(Object element) {
 	IProject project = null;
@@ -154,7 +149,6 @@ private IResource getResource(Object element) {
 public Object[] getElements(Object element) {
 	NavigatorDescriptor[] descriptors = registry.getDescriptors(partId);
 	Object[] elements = new Object[0];
-//	Collection elements = new ArrayList();
 	
 	for (int i = 0; i < descriptors.length; i++) {
 		NavigatorDescriptor descriptor = descriptors[i];

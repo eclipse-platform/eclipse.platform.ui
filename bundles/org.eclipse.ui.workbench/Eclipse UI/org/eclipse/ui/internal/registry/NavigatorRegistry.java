@@ -29,7 +29,7 @@ public class NavigatorRegistry {
 			NavigatorDescriptor descriptor0 = (NavigatorDescriptor) arg0;
 			NavigatorDescriptor descriptor1 = (NavigatorDescriptor) arg1;
 			
-			return descriptor0.getNatures().length - descriptor1.getNatures().length; 
+			return descriptor1.getNatures().length - descriptor0.getNatures().length; 
 		}
 	}
 		
@@ -107,22 +107,6 @@ private ContentDescriptor findBestContent(List contentDescriptors, String[] natu
 	}
 	return bestDescriptor;
 }
-public ITreeContentProvider[] getContentProviders(String targetId) {
-	Collection descriptors = find(targetId);	//TODO: handle null descriptor (no extension for targeted view)
-	Iterator iterator = descriptors.iterator();
-	List contentProviders = new ArrayList();
-	
-	while (iterator.hasNext())  {
-		NavigatorDescriptor descriptor = (NavigatorDescriptor) iterator.next();
-		Iterator contentIterator = descriptor.getContentDescriptors().iterator();
-			
-		while (contentIterator.hasNext()) {
-			ContentDescriptor contentDescriptor = (ContentDescriptor) contentIterator.next();
-			contentProviders.add(contentDescriptor.createContentProvider());
-		}		
-	}
-	return (ITreeContentProvider[]) contentProviders.toArray(new ITreeContentProvider[contentProviders.size()]);
-}
 public ITreeContentProvider getContentProvider(String targetId, String[] natureIds) {
 	Collection descriptors = find(targetId);	//TODO: handle null descriptor
 	Iterator iterator = descriptors.iterator();
@@ -157,22 +141,6 @@ public NavigatorDescriptor[] getDescriptors(String partId) {
 	Collection descriptors = find(partId);
 	
 	return (NavigatorDescriptor[]) descriptors.toArray(new NavigatorDescriptor[descriptors.size()]); //TODO: handle null descriptor (no extension for targeted view)
-} 
-public String[] getNatures(String targetId) {
-	Collection descriptors = find(targetId);//TODO: handle null descriptor (no extension for targeted view)
-	Iterator iterator = descriptors.iterator();
-	List natures = new ArrayList();
-	
-	while (iterator.hasNext())  {
-		NavigatorDescriptor descriptor = (NavigatorDescriptor) iterator.next();
-		Iterator contentIterator = descriptor.getContentDescriptors().iterator();
-			
-		while (contentIterator.hasNext()) {
-			ContentDescriptor contentDescriptor = (ContentDescriptor) contentIterator.next();
-			natures.add(contentDescriptor.getNatures());
-		}		
-	}
-	return (String[]) natures.toArray(new String[natures.size()]);
 }
 
 /*

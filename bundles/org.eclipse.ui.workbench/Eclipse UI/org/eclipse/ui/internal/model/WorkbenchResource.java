@@ -39,20 +39,7 @@ public ImageDescriptor getImageDescriptor(Object o) {
  */
 public String getLabel(Object o) {
 	IResource resource = getResource(o);
-
-	if (resource == null)
-		return null;
-	
-	String contentProvider = null;
-	try {
-		contentProvider = (String) resource.getSessionProperty(new QualifiedName(null, "contentProvider"));
-	}
-	catch (CoreException e) {
-	}
-	if (contentProvider == null)
-		return resource.getName();
-		
-	return resource.getName() + "-" + contentProvider; 
+	return resource == null ? null : resource.getName();
 }
 /**
  * Returns the parent of the given object.  Returns null if the

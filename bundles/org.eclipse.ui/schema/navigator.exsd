@@ -3,10 +3,10 @@
 <schema targetNamespace="org.eclipse.ui">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.ui" id="navigator" name="navigator"/>
+         <meta.schema plugin="org.eclipse.ui" id="navigator" name="General Purpose Navigator"/>
       </appInfo>
       <documentation>
-         [Enter description of this extension point.]
+         This extension point is used to add contents, presentation, filters, sorters and actions to the General Purpose Navigator view.
       </documentation>
    </annotation>
 
@@ -40,6 +40,11 @@
    </element>
 
    <element name="view">
+      <annotation>
+         <documentation>
+            Navgiator view targeted by this extension.
+         </documentation>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="content"/>
@@ -47,14 +52,15 @@
          <attribute name="targetId" type="string" use="required">
             <annotation>
                <documentation>
-                  Id of the targeted view part
+                  Part id of the targeted Navigator view part. E.g., org.eclipse.ui.views.Navigator
                </documentation>
             </annotation>
          </attribute>
          <attribute name="input" type="string">
             <annotation>
                <documentation>
-                  The input element provider. Used to set the initial root and when changing frames.
+                  The input element provider. Used to query root elements from the content provider defined in the &lt;code&gt;content&lt;/code&gt; tag. 
+To query root elements the Navigator will pass the workspace root (&lt;code&gt;IWorkspaceRoot&lt;/code&gt;) to the input provider declared here and use the result to get the root elements from the content provider.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.ui.IInputProvider"/>
@@ -65,6 +71,11 @@
    </element>
 
    <element name="content">
+      <annotation>
+         <documentation>
+            Specifies the content provider for the navigator view. If one or more natures are specified the content provider must supply only projects with exactly these natures. If no natures are specified the content provider supplies elements that are not of type &lt;code&gt;IProject&lt;/code&gt; or that do not adapt to it.
+         </documentation>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="nature" minOccurs="0" maxOccurs="unbounded"/>
@@ -72,21 +83,21 @@
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  Id of the content provider
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  
+                  Displayable name of the content provider
                </documentation>
             </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  Content provider class implementing &lt;code&gt;org.eclipse.jface.viewers.ITreeContentProvider&lt;/code&gt;
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.jface.viewers.ITreeContentProvider"/>
@@ -97,11 +108,16 @@
    </element>
 
    <element name="nature">
+      <annotation>
+         <documentation>
+            A nature that the content provider supplies projects for.
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  Nature id of the supplied projects.
                </documentation>
             </annotation>
          </attribute>
@@ -113,7 +129,7 @@
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         [Enter the first release in which this extension point appears.]
+         3.0
       </documentation>
    </annotation>
 
