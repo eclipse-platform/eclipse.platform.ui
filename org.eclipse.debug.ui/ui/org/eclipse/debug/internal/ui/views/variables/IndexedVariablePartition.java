@@ -63,14 +63,14 @@ public class IndexedVariablePartition implements IVariable {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IVariable#getValue()
 	 */
-	public IValue getValue() throws DebugException {
+	public IValue getValue() {
 		return fValuePartition;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IVariable#getName()
 	 */
-	public String getName() throws DebugException {
+	public String getName() {
 		if (fName == null) {
 			StringBuffer buf = new StringBuffer();
 			buf.append("["); //$NON-NLS-1$
@@ -97,7 +97,7 @@ public class IndexedVariablePartition implements IVariable {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IVariable#hasValueChanged()
 	 */
-	public boolean hasValueChanged() throws DebugException {
+	public boolean hasValueChanged() {
 		return false;
 	}
 
@@ -146,14 +146,14 @@ public class IndexedVariablePartition implements IVariable {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValueModification#verifyValue(java.lang.String)
 	 */
-	public boolean verifyValue(String expression) throws DebugException {
+	public boolean verifyValue(String expression) {
 		return false;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValueModification#verifyValue(org.eclipse.debug.core.model.IValue)
 	 */
-	public boolean verifyValue(IValue value) throws DebugException {
+	public boolean verifyValue(IValue value) {
 		return false;
 	}
 

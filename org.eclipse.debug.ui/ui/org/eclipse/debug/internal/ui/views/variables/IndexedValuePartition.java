@@ -46,7 +46,7 @@ public class IndexedValuePartition implements IIndexedValue {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IIndexedValue#getSize()
 	 */
-	public int getSize() throws DebugException {
+	public int getSize() {
 		return fLength;
 	}
 
@@ -67,7 +67,7 @@ public class IndexedValuePartition implements IIndexedValue {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValue#getValueString()
 	 */
-	public String getValueString() throws DebugException {
+	public String getValueString() {
 		return ""; //$NON-NLS-1$
 	}
 
@@ -85,7 +85,7 @@ public class IndexedValuePartition implements IIndexedValue {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValue#hasVariables()
 	 */
-	public boolean hasVariables() throws DebugException {
+	public boolean hasVariables() {
 		return fLength > 0;
 	}
 

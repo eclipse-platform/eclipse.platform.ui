@@ -154,7 +154,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 				if (element instanceof IStackFrame) {
 					label.append(((IStackFrame)element).getName());
 				} else if (element instanceof IndexedVariablePartition) {
-					label.append(getPartitionText((IndexedVariablePartition)element));
+					label.append(((IndexedVariablePartition)element).getName());
 				} else if (element instanceof IVariable) {
 					label.append(getVariableText((IVariable)element));
 				} else if (element instanceof IThread) {
@@ -290,16 +290,6 @@ public class DefaultLabelProvider implements ILabelProvider {
 		}
 		return buffer.toString();
 	}
-	
-	protected String getPartitionText(IndexedVariablePartition variable) {
-		StringBuffer buffer= new StringBuffer();
-		try {
-			buffer.append(variable.getName());
-		} catch (DebugException de) {
-			DebugUIPlugin.log(de);
-		}
-		return buffer.toString();
-	}	
 	
 	protected String getMarkerText(IMarker marker) {
 		try {
