@@ -22,7 +22,8 @@ import org.eclipse.ui.internal.registry.MarkerHelpRegistryReader;
 public final class IDE {
 
 	/**
-	 * Marker help registry; lazily initialized on fist access.
+	 * Marker help registry mapping markers to help context ids and resolutions;
+	 * lazily initialized on fist access.
 	 */
 	private static MarkerHelpRegistry markerHelpRegistry = null;
 
