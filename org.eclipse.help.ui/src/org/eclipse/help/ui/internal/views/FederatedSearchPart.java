@@ -10,16 +10,24 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.views;
 
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.help.ui.internal.*;
 import org.eclipse.help.ui.internal.HelpUIResources;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.AbstractFormPart;
 import org.eclipse.ui.forms.widgets.*;
 
 public class FederatedSearchPart extends AbstractFormPart implements IHelpPart {
+	private static final String ENGINE_EXP_ID = "org.eclipse.help.ui.searchEngine";
+	private static final String ATT_LABEL ="label"; //$NON-NLS-1$
+	private static final String ATT_ICON = "icon";//$NON-NLS-1$
+	private static final String EL_DESC = "description"; //$NON-NLS-1$
 	private ReusableHelpPart parent;
 	protected static java.util.List previousSearchQueryData = new java.util.ArrayList(
 			20);
@@ -108,12 +116,51 @@ public class FederatedSearchPart extends AbstractFormPart implements IHelpPart {
 		filteringComposite.setLayoutData(td);
 		Composite filteringGroup = toolkit.createComposite(filteringComposite);
 		filteringComposite.setClient(filteringGroup);
-		GridLayout glayout = new GridLayout();
-		filteringGroup.setLayout(layout);
+		TableWrapLayout flayout = new TableWrapLayout();
+		flayout.numColumns = 2;
 		filteringComposite.setText(HelpUIResources.getString("limit_to")); //$NON-NLS-1$
-		glayout.numColumns = 3;
-		filteringGroup.setLayout(glayout);
+		filteringGroup.setLayout(flayout);
+
 		toolkit.paintBordersFor(filteringGroup);
+		loadEngines(filteringGroup, toolkit);
+		Hyperlink advanced = toolkit.createHyperlink(filteringGroup, "Advanced Settings", SWT.NULL);
+		td = new TableWrapData();
+		td.colspan = 2;
+		advanced.setLayoutData(td);
+	}
+	
+	private void loadEngines(Composite container, FormToolkit toolkit) {
+		IConfigurationElement [] elements = Platform.getExtensionRegistry().getConfigurationElementsFor(ENGINE_EXP_ID);
+		for (int i=0; i<elements.length; i++) {
+			IConfigurationElement element = elements[i];
+			if (element.getName().equals("engine")) {
+				loadEngine(element, container, toolkit);
+			}
+		}
+	}
+	
+	private void loadEngine(IConfigurationElement element, Composite container, FormToolkit toolkit) {
+		String name = element.getAttribute(ATT_LABEL);
+		String desc = null;
+		IConfigurationElement [] children = element.getChildren(EL_DESC);
+		if (children.length==1) 
+			desc = children[0].getValue();
+		String icon = element.getAttribute(ATT_ICON);
+		Image image = null;
+		
+		if (icon!=null)
+			image = HelpUIResources.getImage(icon);
+		else
+			image = HelpUIResources.getImage(IHelpUIConstants.IMAGE_HELP_SEARCH);
+		Label ilabel = toolkit.createLabel(container, null);
+		ilabel.setImage(image);
+		Button master = toolkit.createButton(container, name, SWT.CHECK);
+		if (desc!=null) {
+			toolkit.createLabel(container, null);
+			Label dlabel = toolkit.createLabel(container, desc, SWT.WRAP);
+			dlabel.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
+			dlabel.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
+		}
 	}
 	
 	private void doSearch(String text) {

@@ -99,7 +99,18 @@ public class SearchManager implements ITocsChangedListener {
 		}
 		index.search(searchQuery, collector);
 	}
-
+	
+	/**
+	 * Performs the federated search.
+	 */
+	
+	public void search(String expression, FederatedSearchEntry [] entries, ISearchEngineResultCollector collector) {
+		for (int i=0; i<entries.length; i++) {
+			FederatedSearchJob job = new FederatedSearchJob(expression, entries[i], collector);
+			job.schedule();
+		}
+	}
+	
 	/**
 	 * Updates index. Checks if all contributions were indexed. If not, it
 	 * indexes them.
