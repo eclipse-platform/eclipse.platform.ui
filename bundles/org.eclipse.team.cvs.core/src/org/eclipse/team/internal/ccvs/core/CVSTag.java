@@ -26,6 +26,16 @@ public class CVSTag {
 		this.type = type;
 	}
 	
+	public boolean equals(Object other) {
+		if(other == this) return true;
+		if (!(other instanceof CVSTag)) return false;
+			
+		CVSTag tag = ((CVSTag)other);
+		if (getType() != tag.getType()) return false;
+		if (!getName().equals(tag.getName())) return false;
+		return true;
+	}
+	
 	public String getName() {
 		return name;
 	}

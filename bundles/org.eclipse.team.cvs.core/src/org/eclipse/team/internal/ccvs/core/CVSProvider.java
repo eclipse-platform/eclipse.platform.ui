@@ -140,7 +140,7 @@ public class CVSProvider implements ICVSProvider {
 				module = sourceModule;
 			}
 			// Add the options related to the CVSTag
-			if (tag == null)
+			if ((tag == null) || (tag.getType() == tag.HEAD))
 				// Prune empty directories (since not implied as with -D or -r)
 				localOptions.add(Client.PRUNE_OPTION);
 			else {
@@ -178,7 +178,9 @@ public class CVSProvider implements ICVSProvider {
 			ProjectDescriptionManager.updateProjectIfNecessary(project, monitor);
 			
 			// Register the project with Team
-			TeamPlugin.getManager().setProvider(project, CVSProviderPlugin.NATURE_ID, null, monitor);
+			// (unless the project already has the proper nature from the project meta-information)
+			if (!project.getDescription().hasNature(CVSProviderPlugin.NATURE_ID))
+				TeamPlugin.getManager().setProvider(project, CVSProviderPlugin.NATURE_ID, null, monitor);
 			
 		} catch (CoreException e) {
 			throw wrapException(e);
@@ -431,6 +433,15 @@ public class CVSProvider implements ICVSProvider {
 	
 	private boolean isCached(ICVSRepositoryLocation repository) {
 		return repositories.containsKey(repository.getLocation());
+	}
+	
+	public static boolean isText(String filename) {
+		IFileTypeRegistry registry = TeamPlugin.getFileTypeRegistry();
+		int lastDot = filename.lastIndexOf('.');
+		// Assume files with no extension are binary
+		if (lastDot == -1) return false;
+		String extension = filename.substring(lastDot + 1);
+		return ((extension != null) && ("true".equals(registry.getValue(extension, "isAscii"))));
 	}
 	
 	private void removeFromCache(ICVSRepositoryLocation repository) {

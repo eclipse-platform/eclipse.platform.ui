@@ -156,8 +156,8 @@ public class RemoteFolderTreeBuilder {
 					ResourceSyncInfo info = file.getSyncInfo();
 					// if there is no sync info then there isn't a remote file for this local file on the
 					// server.
-					if(info!=null) {
-						children.put(file.getName(), new RemoteFile(remote, file.getName(), info.getRevision(), tag));
+					if ((info!=null) && (!info.getRevision().equals("0"))) {
+						children.put(file.getName(), new RemoteFile(remote, info));
 					}
 				}
 			}
@@ -233,18 +233,15 @@ public class RemoteFolderTreeBuilder {
 				// Record removed directory with parent so it can be removed when building the parent
 				recordDelta(path, DELETED);
 			}
-			public void fileInformation(char type, String filename) {	
+			public void fileInformation(char type, String filename) {
+				// Cases that do not require action are:
+				// 	case 'A' :  = A locally added file that does not exists remotely
+				//	case '?' :  = A local file that has not been added and does not exists remotely
+				//  case 'M' :  = A locally modified file that has not been modified remotely
 				switch(type) {
-					case 'A' :
-								changedFiles.add(filename);
-								recordDelta(new Path(filename), ADDED);
-								break;
-					case 'R' :
-								changedFiles.add(filename);
-								recordDelta(new Path(filename), UNKNOWN);
-								break;
-					case 'U' : // fall through
-					case 'C' : 
+					case 'R' : // We have a locally removed file that still exists remotely
+					case 'U' : // We have an remote change to an unmodified local file
+					case 'C' : // We have an remote change to a modified local file
 								changedFiles.add(filename);
 								recordDelta(new Path(filename), UNKNOWN);
 								break;

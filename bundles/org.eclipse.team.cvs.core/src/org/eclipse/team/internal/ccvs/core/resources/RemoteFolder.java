@@ -449,7 +449,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 	 * @see ICVSFolder#getFolderInfo()
 	 */
 	public FolderSyncInfo getFolderSyncInfo() throws CVSException {
-		return new FolderSyncInfo(getRepository().getLocation(), getRemotePath(), getTag(), false);
+		return new FolderSyncInfo(getRemotePath(), getRepository().getLocation(), getTag(), false);
 	}
 
 	/**

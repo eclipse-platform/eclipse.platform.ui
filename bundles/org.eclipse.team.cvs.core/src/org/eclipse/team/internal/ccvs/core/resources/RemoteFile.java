@@ -22,11 +22,12 @@ import org.eclipse.team.ccvs.core.ILogEntry;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSProvider;
 import org.eclipse.team.internal.ccvs.core.Client;
-import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.response.IResponseHandler;
 import org.eclipse.team.internal.ccvs.core.response.custom.LogHandler;
+import org.eclipse.team.internal.ccvs.core.util.Assert;
 
 /**
  * This class provides the implementation of ICVSRemoteFile and IManagedFile for
@@ -42,8 +43,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 	 * This should only be used when one is only interested in the file alone.
 	 */
 	public static RemoteFile createFile(RemoteFolder parent, ICVSFile managed) throws CVSException {
-		ResourceSyncInfo info = managed.getSyncInfo();
-		RemoteFile file = new RemoteFile(parent, managed.getName(), info.getRevision(), info.getTag());
+		RemoteFile file = new RemoteFile(parent, managed.getSyncInfo());
 		parent.setChildren(new ICVSRemoteResource[] {file});
 		return file;
 	}
@@ -55,10 +55,17 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 	}
 	
 	public RemoteFile(RemoteFolder parent, String name, String revision, CVSTag tag) {
+		this(parent, new ResourceSyncInfo(name, revision, "dummy", CVSProvider.isText(name)?"":"-kb", tag, "u=rw,g=rw,o=rw"));
 		// XXX the keyword type of this remote file must be set correctly or else the 
 		// getContents may mangle the file.
+		// XXX Will leaving the keyword mode blank result in the proper behavior when getting the contents
+		// of a binary file?
+	}
+	
+	public RemoteFile(RemoteFolder parent, ResourceSyncInfo info) {
 		this.parent = parent;
-		info = new ResourceSyncInfo(name, revision, "dummy", "-kb", tag, "u=rw,g=rw,o=rw");
+		this.info = info;
+		Assert.isTrue(!info.isDirectory());
 	}
 
 	/**
@@ -183,7 +190,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 	}
 
 	public void setRevision(String revision) {
-		new ResourceSyncInfo(info.getName(), revision, info.getTimeStamp(), info.getKeywordMode(), info.getTag(), info.getPermissions());
+		info = new ResourceSyncInfo(info.getName(), revision, info.getTimeStamp(), info.getKeywordMode(), info.getTag(), info.getPermissions());
 	}
 		
 	/**
@@ -232,7 +239,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 	 * @see IManagedFile#getTimeStamp()
 	 */
 	public String getTimeStamp() throws CVSFileNotFoundException {
-		return null;
+		return info.getTimeStamp();
 	}
 
 	/**

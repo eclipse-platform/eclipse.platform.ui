@@ -63,6 +63,25 @@ public class FolderSyncInfo {
 		this(repo, root, entryLineTag!=null ? new CVSEntryLineTag(entryLineTag) : null, isStatic);
 	}		
 	
+	public boolean equals(Object other) {
+		if(other == this) return true;
+		if (!(other instanceof FolderSyncInfo)) return false;
+			
+		FolderSyncInfo syncInfo = ((FolderSyncInfo)other);
+		if (!getRoot().equals(syncInfo.getRoot())) return false;
+		if (!getRepository().equals(syncInfo.getRepository())) return false;
+		if (getIsStatic() != syncInfo.getIsStatic()) return false;
+		if ((getTag() == null) || (syncInfo.getTag() == null)) {
+			if ((getTag() == null) && (syncInfo.getTag() != null) && (syncInfo.getTag().getType() != CVSTag.HEAD)) {
+				return false;
+			} else if ((syncInfo.getTag() == null) && (getTag() != null) && (getTag().getType() != CVSTag.HEAD)) {
+				return false;
+			}
+		} else if (!getTag().equals(syncInfo.getTag())) {
+			return false;
+		}
+		return true;
+	}
 	/**
 	 * Gets the root, cannot be <code>null.
 	 * 
