@@ -778,7 +778,7 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	/**
 	 * Layout out the coolbar items so that each one is sized to its preferred size.
 	 */
-	/* package */ void redoLayout() {
+	private void redoLayout() {
 		// Reset the wrap indices and the cool item sizes.  The coolbar will automatically
 		// wrap the items to the next row that do not fit.
 		coolBar.setWrapIndices(new int[0]);		
@@ -854,6 +854,7 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	void setLayoutFor(Perspective perspective) {
 		rememberedPositions = new ArrayList();
 		setLayout(perspective.getToolBarLayout());
+		updateTabOrder();
 		rememberPositions = true;
 	}
 	/**
@@ -1121,6 +1122,7 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 					} 				
 				}
 				
+				updateTabOrder();
 				setDirty(false);
 
 				// workaround for 14330
@@ -1137,5 +1139,17 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	/* package */ void updateSizeFor(CoolBarContributionItem cbItem) {
 		CoolItem coolItem = findCoolItem(cbItem);
 		if (coolItem != null) setSizeFor(coolItem);
+	}
+	/**
+	 * Sets the tab order of the coolbar to the visual order of its items.
+	 */
+	/* package */ void updateTabOrder() {
+        CoolItem[] items = coolBar.getItems();
+        Control[] children = new Control[items.length];
+        for (int i = 0; i < children.length; i++) {
+        	CoolItem item = items[i];
+			children[i] = items[i].getControl();
+		}
+		coolBar.setTabList(children);
 	}
 }

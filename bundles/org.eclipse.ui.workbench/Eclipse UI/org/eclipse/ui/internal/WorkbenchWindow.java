@@ -1047,17 +1047,6 @@ public void removePerspectiveListener(org.eclipse.ui.IPerspectiveListener l) {
 		shortcutBar.update(false);
 	}
 }
-/**
- * Relayout the CoolBar for the workbench so that all items
- * are visible, wrapping items when necessary.
- */
-protected void resetToolBar() {
-	IToolBarManager toolsMgr = getToolsManager();
-	if (toolsMgr instanceof CoolBarManager) {
-		CoolBarManager coolBarMgr = (CoolBarManager)toolsMgr;
-		coolBarMgr.redoLayout();
-	}
-}
 private IStatus unableToRestorePage(IMemento pageMem) {
 	String pageName = pageMem.getString(IWorkbenchConstants.TAG_LABEL);
 	if(pageName == null)
