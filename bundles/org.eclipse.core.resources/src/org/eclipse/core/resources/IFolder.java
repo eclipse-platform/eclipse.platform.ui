@@ -185,7 +185,7 @@ public void create(int updateFlags, boolean local, IProgressMonitor monitor) thr
  *       linked resources.</li>
  * <li>This folder's project contains a nature which does not permit linked resources.</li>
  * </ul>
- * @see IResource#isLink
+ * @see IResource#isLinked
  * @see IResource.ALLOW_MISSING_LOCAL
  * @since 2.1
  */
