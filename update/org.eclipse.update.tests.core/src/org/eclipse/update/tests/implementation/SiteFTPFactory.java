@@ -5,8 +5,10 @@ package org.eclipse.update.tests.implementation;
  */
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.core.SiteURLContentProvider;
@@ -19,28 +21,30 @@ public class SiteFTPFactory extends SiteModelFactory implements ISiteFactory {
 	/*
 	 * @see ISiteFactory#createSite(URL, boolean)
 	 */
-	public ISite createSite(URL url) throws IOException, ParsingException, InvalidSiteTypeException {
+	public ISite createSite(URL url)
+		throws CoreException, InvalidSiteTypeException {
 		ISite site = null;
 		InputStream siteStream = null;
-		
-		try {		
-		
+
+		try {
 			URL resolvedURL = URLEncoder.encode(url);
 			siteStream = resolvedURL.openStream();
-			
+
 			SiteModelFactory factory = (SiteModelFactory) this;
 			factory.parseSite(siteStream);
-	
 
+			site = new SiteFTP(new URL("http://eclipse.org/" + FILE));
+			
+		} catch (MalformedURLException e) {
+			throw Utilities.newCoreException("Unable to create URL", e);
+		} catch (IOException e) {
+			throw Utilities.newCoreException("Unable to access URL", e);
 		} finally {
 			try {
 				siteStream.close();
 			} catch (Exception e) {
 			}
 		}
-		
-
-		site = new SiteFTP(new URL("http://eclipse.org/"+FILE));
 		return site;
 	}
 

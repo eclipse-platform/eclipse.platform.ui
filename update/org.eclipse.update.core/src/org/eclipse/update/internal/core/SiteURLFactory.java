@@ -37,8 +37,7 @@ public class SiteURLFactory extends BaseSiteFactory {
 	 * 
 	 * 3 open the stream	 
 	 */
-	public ISite createSite(URL url) throws IOException,  InvalidSiteTypeException, ParsingException {
-
+	public ISite createSite(URL url) throws CoreException, InvalidSiteTypeException {
 		Site site = null;
 		InputStream siteStream = null;
 		
@@ -55,7 +54,10 @@ public class SiteURLFactory extends BaseSiteFactory {
 			contentProvider.setSite(site);			
 			site.resolve(url, getResourceBundle(url));
 			site.markReadOnly();			
-
+		} catch (MalformedURLException e){
+			throw Utilities.newCoreException("Unable to create URL",e);
+		} catch (IOException e){
+			throw Utilities.newCoreException("Unable to access URL",e);
 		} finally {
 			try {
 				siteStream.close();

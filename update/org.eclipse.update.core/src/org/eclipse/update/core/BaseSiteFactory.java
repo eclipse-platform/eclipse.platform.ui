@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.net.*;
 import java.util.*;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.core.URLEncoder;
@@ -35,7 +36,7 @@ public abstract class BaseSiteFactory extends SiteModelFactory implements ISiteF
 	 * @see ISiteFactory#createSite(URL)
 	 * @since 2.0
 	 */
-	public abstract ISite createSite(URL url) throws IOException, InvalidSiteTypeException, ParsingException;
+	public abstract ISite createSite(URL url) throws CoreException, InvalidSiteTypeException;
 
 	/**
 	 * Helper method to access resouce bundle for site. The default 

@@ -11,7 +11,7 @@ import org.eclipse.update.core.Category;
 import org.eclipse.update.core.model.CategoryModel;
 import org.eclipse.update.core.model.SiteModel;
 import org.eclipse.update.core.model.*;
-import org.eclipse.update.internal.core.FeatureReference;
+import org.eclipse.update.core.FeatureReference;
 import org.eclipse.update.tests.UpdateManagerTestCase;
 
 public class TestLocalSiteAPI extends UpdateManagerTestCase {

@@ -7,7 +7,10 @@ package org.eclipse.update.core.model;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.update.core.Utilities;
+import org.eclipse.update.internal.core.UpdateManagerPlugin;
 import org.xml.sax.SAXException;
 
 /**
@@ -57,19 +60,15 @@ public class SiteModelFactory {
 	 * @since 2.0
 	 */
 	public SiteModel parseSite(InputStream stream)
-		throws ParsingException, IOException, InvalidSiteTypeException {
+		throws CoreException, InvalidSiteTypeException {
 		SiteModel result = null;
 		try {
 			DefaultSiteParser parser = new DefaultSiteParser(this);
 			result = parser.parse(stream);
 			if (parser.getStatus().getChildren().length > 0) {
 				// some internalError were detected
-				IStatus[] children = parser.getStatus().getChildren();
-				String error = ""; //$NON-NLS-1$
-				for (int i = 0; i < children.length; i++) {
-					error = error + "\r\n" + children[i].getMessage(); //$NON-NLS-1$
-				}
-				throw new ParsingException(new Exception(error));
+				IStatus status = parser.getStatus();
+				throw new CoreException(status);
 			}
 		} catch (SAXException e) {
 			if (e instanceof SAXException) {
@@ -78,15 +77,11 @@ public class SiteModelFactory {
 				if (exception.getException() instanceof InvalidSiteTypeException) {
 					throw (InvalidSiteTypeException) exception.getException();
 				}
-
-				// invalid XML file (i.e we are parsing a directory stream)
-				if (exception.getException() instanceof ParsingException) {
-					throw (ParsingException) exception.getException();
-				}
-
 			}
 
-			throw new ParsingException(e);
+			throw Utilities.newCoreException("Parsing Error",e);
+		} catch (IOException e){
+			throw Utilities.newCoreException("Access Error",e);
 		}
 		return result;
 	}

@@ -17,6 +17,7 @@ import java.util.zip.ZipFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.update.core.*;
 import org.eclipse.update.core.BaseSiteFactory;
 import org.eclipse.update.core.ISite;
 import org.eclipse.update.core.Site;
@@ -30,7 +31,7 @@ public class BuildZipSiteFactory extends BaseSiteFactory {
 	/*
 	 * @see ISiteFactory#createSite(URL)
 	 */
-	public ISite createSite(URL url) throws IOException, ParsingException, InvalidSiteTypeException {
+	public ISite createSite(URL url) throws CoreException,InvalidSiteTypeException {
 
 		Site site = null;
 
@@ -76,7 +77,11 @@ public class BuildZipSiteFactory extends BaseSiteFactory {
 			ref.setCategoryNames(new String[] { "eclipse-builds" });
 			site.addFeatureReferenceModel(ref);
 		}
-		site.resolve(url, null); // resolve any URLs relative to the site
+		try {
+			site.resolve(url, null); // resolve any URLs relative to the site
+		} catch (MalformedURLException e){
+			throw Utilities.newCoreException("",e);
+		}
 
 		return site;
 	}

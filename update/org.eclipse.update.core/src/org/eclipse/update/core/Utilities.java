@@ -164,6 +164,14 @@ public class Utilities {
 		return new CoreException(new Status(IStatus.ERROR,id,0,s,e)); //$NON-NLS-1$
 	}
 	
+	public static CoreException newCoreException(String s,String first, String second, Throwable e, Throwable e1) {
+		String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();		
+		MultiStatus multi = new MultiStatus(id,IStatus.ERROR,s,null);
+		multi.add(new Status(IStatus.ERROR,id,0,first,e));
+		multi.add(new Status(IStatus.ERROR,id,0,second,e1));		
+		return new CoreException(multi); //$NON-NLS-1$
+	}
+		
 	public static void logException(String s, Throwable e) {
 		String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();		
 		IStatus status = new Status(IStatus.ERROR,id,0,s,e);

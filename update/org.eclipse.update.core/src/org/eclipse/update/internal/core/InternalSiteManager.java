@@ -48,8 +48,7 @@ public class InternalSiteManager {
 	 * If the Site has a different Type/Site Handler not known up to now,
 	 * it will be discovered when parsing the site.xml file.
 	 */
-	public static ISite getSite(URL siteURL)
-		throws CoreException {
+	public static ISite getSite(URL siteURL) throws CoreException {
 		ISite site = null;
 
 		if (siteURL == null)
@@ -89,9 +88,7 @@ public class InternalSiteManager {
 	 * if the site guessed is not the type found,
 	 * attempt to create a type with the type found in the site.xml
 	 */
-	private static ISite attemptCreateSite(
-		String guessedTypeSite,
-		URL siteURL)
+	private static ISite attemptCreateSite(String guessedTypeSite, URL siteURL)
 		throws CoreException {
 		ISite site = null;
 
@@ -152,9 +149,7 @@ public class InternalSiteManager {
 	 * 
 	 * 4 open the stream	
 	 */
-	private static ISite createSite(
-		String siteType,
-		URL url)
+	private static ISite createSite(String siteType, URL url)
 		throws CoreException, InvalidSiteTypeException {
 		ISite site = null;
 		ISiteFactory factory = SiteTypeFactory.getInstance().getFactory(siteType);
@@ -163,7 +158,7 @@ public class InternalSiteManager {
 
 			site = factory.createSite(url);
 
-		} catch (IOException e) {
+		} catch (CoreException e) {
 			// if the URL is pointing to either a file 
 			// or a directory, without reference			
 			if (url.getRef() != null) {
@@ -177,8 +172,9 @@ public class InternalSiteManager {
 				//$NON-NLS-1$
 			} else if (url.getFile().endsWith("/")) { //$NON-NLS-1$
 				// 1 try to add site.xml
+				URL urlRetry;
 				try {
-					url = new URL(url, Site.SITE_XML);
+					urlRetry = new URL(url, Site.SITE_XML);
 				} catch (MalformedURLException e1) {
 					throw Utilities.newCoreException(
 						Policy.bind(
@@ -188,21 +184,16 @@ public class InternalSiteManager {
 					//$NON-NLS-1$ //$NON-NLS-2$
 				}
 				try {
-					site = factory.createSite(url);
-				} catch (ParsingException e1) {
-					throw Utilities.newCoreException(
-						Policy.bind(
-							"InternalSiteManager.UnableToParseURL",
-							url.toExternalForm(),
-							e.getMessage()),
-						e1);
-					//$NON-NLS-1$
-				} catch (IOException e1) {
+					site = factory.createSite(urlRetry);
+				} catch (CoreException e1) {
 					throw Utilities.newCoreException(
 						Policy.bind(
 							"InternalSiteManager.UnableToAccessURL",
 							url.toExternalForm(),
 							e.getMessage()),
+						url.toExternalForm(),
+						urlRetry.toExternalForm(),
+						e,
 						e1);
 					//$NON-NLS-1$
 				}
@@ -217,8 +208,9 @@ public class InternalSiteManager {
 				//$NON-NLS-1$
 			} else {
 				// 2 try to add /site.xml 
+				URL urlRetry;
 				try {
-					url =
+					urlRetry =
 						new URL(
 							url.getProtocol(),
 							url.getHost(),
@@ -235,129 +227,21 @@ public class InternalSiteManager {
 				}
 
 				try {
-					site = factory.createSite(url);
-				} catch (ParsingException e1) {
-					throw Utilities.newCoreException(
-						Policy.bind(
-							"InternalSiteManager.UnableToParseURL",
-							url.toExternalForm(),
-							e.getMessage()),
-						e1);
-					//$NON-NLS-1$
-				} catch (IOException e1) {
+					site = factory.createSite(urlRetry);
+				} catch (CoreException e1) {
 					throw Utilities.newCoreException(
 						Policy.bind(
 							"InternalSiteManager.UnableToAccessURL",
 							url.toExternalForm(),
 							e.getMessage()),
+						url.toExternalForm(),
+						urlRetry.toExternalForm(),
+						e,
 						e1);
 					//$NON-NLS-1$
 				}
 			}
 
-		} catch (ParsingException e) {
-
-			// if the URL is pointing to either a file 
-			// or a directory, without reference	
-
-			// we either have an error in a valid XML file or the user didn't enter the real path
-			// if we have a valid error we should return it.
-			// a parsing error is returned with an enclosing InvalidSiteException
-			//if (e.getException() instanceof InvalidSiteTypeException) {
-			if (url.getRef() != null) {
-				// 4 nothing we can do
-				throw Utilities.newCoreException(
-					Policy.bind(
-						"InternalSiteManager.UnableToParseURL",
-						url.toExternalForm(),
-						e.getMessage()),
-					e);
-				//$NON-NLS-1$
-			} else if (url.getFile().endsWith("/")) { //$NON-NLS-1$
-				// 1 try to add site.xml
-				try {
-					url = new URL(url, Site.SITE_XML);
-				} catch (MalformedURLException e1) {
-					throw Utilities.newCoreException(
-						Policy.bind(
-							"InternalSiteManager.UnableToCreateURL",
-							url.toExternalForm() + "+" + Site.SITE_XML),
-						e1);
-					//$NON-NLS-1$ //$NON-NLS-2$
-				}
-				try {
-					site = factory.createSite(url);
-				} catch (ParsingException e1) {
-					throw Utilities.newCoreException(
-						Policy.bind(
-							"InternalSiteManager.UnableToParseURL",
-							url.toExternalForm(),
-							e.getMessage()),
-						e1);
-					//$NON-NLS-1$
-				} catch (IOException e1) {
-					throw Utilities.newCoreException(
-						Policy.bind(
-							"InternalSiteManager.UnableToAccessURL",
-							url.toExternalForm(),
-							e.getMessage()),
-						e1);
-					//$NON-NLS-1$
-				}
-
-			} else if (url.getFile().endsWith(Site.SITE_XML)) {
-				// 3 nothing we can do
-				throw Utilities.newCoreException(
-					Policy.bind(
-						"InternalSiteManager.UnableToParseURL",
-						url.toExternalForm(),
-						e.getMessage()),
-					e);
-				//$NON-NLS-1$
-			} else {
-				// 2 try to add /site.xml
-
-				try {
-					url =
-						new URL(
-							url.getProtocol(),
-							url.getHost(),
-							url.getPort(),
-							url.getFile() + "/" + Site.SITE_XML);
-					//$NON-NLS-1$
-				} catch (MalformedURLException e1) {
-					throw Utilities.newCoreException(
-						Policy.bind(
-							"InternalSiteManager.UnableToCreateURL",
-							url.toExternalForm() + "+" + Site.SITE_XML),
-						e1);
-					//$NON-NLS-1$ //$NON-NLS-2$
-				}
-				try {
-					site = factory.createSite(url);
-				} catch (ParsingException e1) {
-					throw Utilities.newCoreException(
-						Policy.bind(
-							"InternalSiteManager.UnableToParseURL",
-							url.toExternalForm(),
-							e.getMessage()),
-						e1);
-					//$NON-NLS-1$
-				} catch (IOException e1) {
-					throw Utilities.newCoreException(
-						Policy.bind(
-							"InternalSiteManager.UnableToAccessURL",
-							url.toExternalForm(),
-							e.getMessage()),
-						e1);
-					//$NON-NLS-1$
-				}
-
-			}
-			//} else {
-			// no need to retry, we actually parsed a valid XML file, we need to rethrow the Parsing Exception
-			//	throw newCoreException(e.toString(), e);
-			//}
 		}
 
 		return site;

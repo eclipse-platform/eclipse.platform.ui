@@ -6,7 +6,7 @@ package org.eclipse.update.tests.parser;
 import java.net.URL;
 
 import org.eclipse.update.core.*;
-import org.eclipse.update.internal.core.FeatureReference;
+import org.eclipse.update.core.FeatureReference;
 import org.eclipse.update.tests.UpdateManagerTestCase;
 
 public class TestCategories extends UpdateManagerTestCase {

@@ -10,7 +10,7 @@ import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.DefaultFeatureParser;
 import org.eclipse.update.core.model.FeatureModel;
 import org.eclipse.update.internal.core.*;
-import org.eclipse.update.internal.core.FeatureReference;
+import org.eclipse.update.core.FeatureReference;
 import org.eclipse.update.internal.core.UpdateManagerUtils;
 import org.eclipse.update.tests.UpdateManagerTestCase;
 import org.xml.sax.SAXException;

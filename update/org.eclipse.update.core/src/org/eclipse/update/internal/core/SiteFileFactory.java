@@ -56,7 +56,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 	 * @see ISiteFactory#createSite(URL,boolean)
 	 */
 	public ISite createSite(URL url)
-		throws IOException, ParsingException, InvalidSiteTypeException {
+		throws CoreException, InvalidSiteTypeException {
 
 		Site site = null;
 		InputStream siteStream = null;
@@ -101,7 +101,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 						}
 
 						if (parentDirectory == null || !parentDirectory.isDirectory())
-							throw new ParsingException(new Exception(Policy.bind("SiteFileFactory.UnableToObtainParentDirectory") + file)); //$NON-NLS-1$
+							throw Utilities.newCoreException(Policy.bind("SiteFileFactory.UnableToObtainParentDirectory", file.getAbsolutePath()),null); //$NON-NLS-1$
 
 						site = parseSite(parentDirectory);
 
@@ -115,7 +115,10 @@ public class SiteFileFactory extends BaseSiteFactory {
 
 			// Do not set read only as may install in it
 			//site.markReadOnly();
-
+		} catch (MalformedURLException e){
+			throw Utilities.newCoreException("Unable to create URL",e);
+		} catch (IOException e){
+			throw Utilities.newCoreException("Unable to access Site",e);
 		} finally {
 			try {
 				if (siteStream != null)
@@ -128,19 +131,15 @@ public class SiteFileFactory extends BaseSiteFactory {
 	/**
 	 * Method parseSite.
 	 */
-	public Site parseSite(File directory) throws ParsingException {
+	public Site parseSite(File directory) throws CoreException {
 
 		this.site = (SiteFile) createSiteMapModel();
 
 		if (!directory.exists())
-			throw new ParsingException(
-				new Exception(
-					Policy.bind("SiteFileFactory.FileDoesNotExist", directory.getAbsolutePath())));
-		//$NON-NLS-1$
+			throw Utilities.newCoreException(Policy.bind("SiteFileFactory.FileDoesNotExist", directory.getAbsolutePath()),null);		//$NON-NLS-1$
 
 		File pluginPath = new File(directory, Site.DEFAULT_PLUGIN_PATH);
 
-		try {
 			//PACKAGED
 			parsePackagedFeature(directory); // in case it contains JAR files
 
@@ -151,9 +150,6 @@ public class SiteFileFactory extends BaseSiteFactory {
 
 			parseInstalledPlugin(pluginPath);
 
-		} catch (CoreException e) {
-			throw new ParsingException(e.getStatus().getException());
-		}
 
 		return (Site) site;
 
@@ -371,7 +367,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 	 * 
 	 */
 	private IFeature createFeature(URL url, String type) throws CoreException {
-		InternalFeatureReference ref = new InternalFeatureReference();
+		FeatureReference ref = new InternalFeatureReference();
 		ref.setSite(site);
 		ref.setURL(url);
 		ref.setType(type);

@@ -4,11 +4,10 @@ package org.eclipse.update.core;
  * All Rights Reserved.
  */
 
-import java.io.IOException;
 import java.net.URL;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.update.core.model.InvalidSiteTypeException;
-import org.eclipse.update.core.model.ParsingException;
 
 /**
  * Site factory interface.
@@ -43,12 +42,7 @@ public interface ISiteFactory {
 	 * @since 2.0 
 	 */
 
-	// FIXME: why is this call throwing IOException and ParsingException
-	//        when the corresponding feature factory call throws
-	//        CoreException. We need to be consistent (would like to throw
-	//        CoreException. I understand the need for InvalidSiteTypeException.
-
 	ISite createSite(URL url)
-		throws IOException, ParsingException, InvalidSiteTypeException;
+		throws CoreException, InvalidSiteTypeException;
 
 }
