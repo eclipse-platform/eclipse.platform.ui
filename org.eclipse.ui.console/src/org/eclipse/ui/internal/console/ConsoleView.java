@@ -23,7 +23,9 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleConstants;
@@ -44,7 +46,7 @@ import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
  * 
  * @since 3.0
  */
-public class ConsoleView extends PageBookView implements IConsoleView, IConsoleListener, IPropertyChangeListener, IMenuListener {
+public class ConsoleView extends PageBookView implements IConsoleView, IConsoleListener, IPropertyChangeListener, IMenuListener, IPartListener2 {
 	
 	/**
 	 * Whether this console is pinned.
@@ -75,6 +77,11 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	 * Map of parts to consoles
 	 */
 	private Map fPartToConsole;
+	
+	/**
+	 * Whether this view is active
+	 */
+	private boolean fActive = false;
 	
 	// actions
 	private PinConsoleAction fPinAction = null; 
@@ -128,8 +135,18 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 		if (!isPinned()) {
 			super.showPageRec(pageRec);
 			fActiveConsole = (IConsole)fPartToConsole.get(pageRec.part);
-			fStack.remove(fActiveConsole);
-			fStack.add(0,fActiveConsole);
+			IConsole tos = null;
+			if (!fStack.isEmpty()) {
+				tos = (IConsole) fStack.get(0);
+			}
+			if (tos != null && !tos.equals(fActiveConsole)) {
+				deactivateParticipants(tos);
+			}
+			if (fActiveConsole != null && !fActiveConsole.equals(tos)) {
+				fStack.remove(fActiveConsole);
+				fStack.add(0,fActiveConsole);
+				activateParticipants(fActiveConsole);
+			}
 			updateTitle();		
 			// update console actions
 			if (fPinAction != null) {
@@ -138,6 +155,24 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 		}
 	}
 	
+	/**
+	 * Activates the participants fot the given console, if any.
+	 * 
+	 * @param console
+	 */
+	private void activateParticipants(IConsole console) {
+		// activate
+		if (console != null && fActive) {
+			IConsolePageParticipant[] participants = getParticipants(console);
+			if (participants != null) {
+			    for (int i = 0; i < participants.length; i++) {
+			        // TODO: safe runnable
+			        participants[i].activated();
+			    }
+			}
+		}
+	}
+
 	/**
 	 * Returns a stack of consoles in the view in MRU order.
 	 * 
@@ -185,6 +220,16 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 		// update console actions
 		fPinAction.update();		
 	}
+	
+	/**
+	 * Returns the page participants registered for the given console, or <code>null</code>
+	 * 
+	 * @param console
+	 * @return registered page participants or <code>null</code>
+	 */
+	private IConsolePageParticipant[] getParticipants(IConsole console) {
+	    return (IConsolePageParticipant[]) fConsoleToPageParticipants.get(console);
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.PageBookView#doCreatePage(org.eclipse.ui.IWorkbenchPart)
@@ -222,6 +267,7 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	 */
 	public void dispose() {
 		super.dispose();
+		getViewSite().getPage().removePartListener((IPartListener2)this);
 		getConsoleManager().removeConsoleListener(this);
 	}
 
@@ -412,6 +458,7 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 		updateForExistingConsoles();
 		getViewSite().getActionBars().updateActionBars();
 		WorkbenchHelp.setHelp(parent, IConsoleHelpContextIds.CONSOLE_VIEW);
+		getViewSite().getPage().addPartListener((IPartListener2)this);
 	}
 	
 	/**
@@ -479,5 +526,79 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
         }
         
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPartListener2#partActivated(org.eclipse.ui.IWorkbenchPartReference)
+	 */
+	public void partActivated(IWorkbenchPartReference partRef) {
+		if (partRef.getId().equals(getViewSite().getId())) {
+			fActive = true;
+			activateParticipants(fActiveConsole); 
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPartListener2#partBroughtToTop(org.eclipse.ui.IWorkbenchPartReference)
+	 */
+	public void partBroughtToTop(IWorkbenchPartReference partRef) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPartListener2#partClosed(org.eclipse.ui.IWorkbenchPartReference)
+	 */
+	public void partClosed(IWorkbenchPartReference partRef) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPartListener2#partDeactivated(org.eclipse.ui.IWorkbenchPartReference)
+	 */
+	public void partDeactivated(IWorkbenchPartReference partRef) {
+		if (partRef.getId().equals(getViewSite().getId())) {
+			fActive = false;
+			deactivateParticipants(fActiveConsole);
+		}
+	}
+
+	/**
+	 * Deactivates participants for the given console, if any.
+	 * 
+	 * @param console console to deactivate
+	 */
+	private void deactivateParticipants(IConsole console) {
+		// deactivate
+	    if (console != null) {
+			IConsolePageParticipant[] participants = getParticipants(console);
+			if (participants != null) {
+			    for (int i = 0; i < participants.length; i++) {
+			        // TODO: safe runnable
+                    participants[i].deactivated();
+                }
+			}
+	    }
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPartListener2#partOpened(org.eclipse.ui.IWorkbenchPartReference)
+	 */
+	public void partOpened(IWorkbenchPartReference partRef) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPartListener2#partHidden(org.eclipse.ui.IWorkbenchPartReference)
+	 */
+	public void partHidden(IWorkbenchPartReference partRef) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPartListener2#partVisible(org.eclipse.ui.IWorkbenchPartReference)
+	 */
+	public void partVisible(IWorkbenchPartReference partRef) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPartListener2#partInputChanged(org.eclipse.ui.IWorkbenchPartReference)
+	 */
+	public void partInputChanged(IWorkbenchPartReference partRef) {		
+	}
     
 }

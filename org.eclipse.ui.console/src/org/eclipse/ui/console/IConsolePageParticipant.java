@@ -54,4 +54,14 @@ public interface IConsolePageParticipant extends IAdaptable {
      */
     public void dispose();
     
+    /**
+     * Notification this participant's page has been activated.
+     */
+    public void activated();
+    
+    /**
+     * Notification this participant's page has been deactivated.
+     */
+    public void deactivated();
+    
 }

@@ -11,6 +11,7 @@
 package org.eclipse.debug.internal.ui.views.console;
 
 import java.io.IOException;
+import java.util.Map;
 
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
@@ -28,17 +29,22 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.AbstractHandler;
+import org.eclipse.ui.commands.ExecutionException;
+import org.eclipse.ui.commands.HandlerSubmission;
+import org.eclipse.ui.commands.IWorkbenchCommandSupport;
+import org.eclipse.ui.commands.Priority;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.console.IConsolePageParticipant;
 import org.eclipse.ui.console.IConsoleView;
+import org.eclipse.ui.contexts.EnabledSubmission;
+import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.part.IPageBookViewPage;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.IShowInTargetList;
@@ -64,32 +70,30 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
 
     private IConsoleView fView;
     
-    private class EOFListener implements KeyListener {
-
-        /* (non-Javadoc)
-         * @see org.eclipse.swt.events.KeyListener#keyPressed(org.eclipse.swt.events.KeyEvent)
-         */
-        public void keyPressed(KeyEvent e) {
-            if (e.stateMask == SWT.CTRL && e.keyCode == 122) {
-                IStreamsProxy proxy = getProcess().getStreamsProxy();
-                if (proxy instanceof IStreamsProxy2) {
-                    IStreamsProxy2 proxy2 = (IStreamsProxy2) proxy;
-                    try {
-                        proxy2.closeInputStream();
-                    } catch (IOException e1) {
-                    }
+    private EOFHandler fEOFHandler;
+    private EnabledSubmission fEnabledSubmission;
+    private HandlerSubmission fHandlerSubmission;
+	/**
+	 * Handler to send EOF
+	 */	
+	private class EOFHandler extends AbstractHandler {
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.commands.IHandler#execute(java.lang.Object)
+		 */
+		public Object execute(Map parameter) throws ExecutionException {
+            IStreamsProxy proxy = getProcess().getStreamsProxy();
+            if (proxy instanceof IStreamsProxy2) {
+                IStreamsProxy2 proxy2 = (IStreamsProxy2) proxy;
+                try {
+                    proxy2.closeInputStream();
+                } catch (IOException e1) {
                 }
             }
-        }
-
-        /* (non-Javadoc)
-         * @see org.eclipse.swt.events.KeyListener#keyReleased(org.eclipse.swt.events.KeyEvent)
-         */
-        public void keyReleased(KeyEvent e) {
-        }
-        
-    }
+			return null;
+		}
 		
+	}    
+    		
     /* (non-Javadoc)
      * @see org.eclipse.ui.console.IConsolePageParticipant#init(IPageBookViewPage, IConsole)
      */
@@ -110,16 +114,17 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
         IActionBars actionBars = fPage.getSite().getActionBars();
         configureToolBar(actionBars.getToolBarManager());
         
-        // add key listener for EOF
-        // TODO: should be a command with key-binding 
-        ((StyledText)page.getControl()).addKeyListener(new EOFListener());
-        
+        // create handler and submissions for EOF
+        fEOFHandler = new EOFHandler();
+        fEnabledSubmission = new EnabledSubmission(IConsoleConstants.ID_CONSOLE_VIEW, page.getSite().getShell(), null, "org.eclipse.debug.ui.console"); //$NON-NLS-1$
+        fHandlerSubmission = new HandlerSubmission(IConsoleConstants.ID_CONSOLE_VIEW, page.getSite().getShell(), null, "org.eclipse.debug.ui.commands.eof", fEOFHandler, Priority.MEDIUM); //$NON-NLS-1$
     }
     
     /* (non-Javadoc)
      * @see org.eclipse.ui.console.IConsolePageParticipant#dispose()
      */
-    public void dispose() {                
+    public void dispose() {
+        deactivated();
         fPage.getSite().getPage().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
 		DebugPlugin.getDefault().removeDebugEventListener(this);
 		if (fRemoveTerminated != null) {
@@ -218,5 +223,29 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
     public void menuAboutToShow(IMenuManager manager) {
         manager.add(fTerminate);
         manager.add(fRemoveTerminated);
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.console.IConsolePageParticipant#activated()
+     */
+    public void activated() {
+        // add EOF submissions
+		IWorkbench workbench = PlatformUI.getWorkbench();
+		IWorkbenchCommandSupport commandSupport = workbench.getCommandSupport();
+		IWorkbenchContextSupport contextSupport = workbench.getContextSupport();
+		contextSupport.addEnabledSubmission(fEnabledSubmission);
+		commandSupport.addHandlerSubmission(fHandlerSubmission);
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.console.IConsolePageParticipant#deactivated()
+     */
+    public void deactivated() {
+        // remove EOF submissions
+		IWorkbench workbench = PlatformUI.getWorkbench();
+		IWorkbenchCommandSupport commandSupport = workbench.getCommandSupport();
+		IWorkbenchContextSupport contextSupport = workbench.getContextSupport();
+		commandSupport.removeHandlerSubmission(fHandlerSubmission);
+		contextSupport.removeEnabledSubmission(fEnabledSubmission);
     }
 }

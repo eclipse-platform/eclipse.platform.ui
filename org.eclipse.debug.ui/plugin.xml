@@ -1632,7 +1632,20 @@ M4 = Platform-specific fourth key
             scope="org.eclipse.ui.globalScope"
             command="org.eclipse.debug.ui.commands.ToggleMethodBreakpoint"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>      
+      </keyBinding>
+<!-- console -->      
+      <command
+            name="%ActionDefinition.eof.name"
+            category="org.eclipse.debug.ui.category.run"
+            description="%ActionDefinition.eof.description"
+            id="org.eclipse.debug.ui.commands.eof">
+      </command>
+      <keyBinding
+            keySequence="M1+Z"
+            scope="org.eclipse.debug.ui.console"
+            command="org.eclipse.debug.ui.commands.eof"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
 <!-- views -->
       <command
             name="%ViewCommand.debugView.name"
@@ -2061,6 +2074,12 @@ M4 = Platform-specific fourth key
            id="org.eclipse.debug.ui.debugging"
            parentId="org.eclipse.ui.contexts.window">
      </context>
+     <context
+           name="%Context.console.name"
+           description="%Context.console.description"
+           id="org.eclipse.debug.ui.console"
+           parentId="org.eclipse.ui.contexts.window">
+     </context>     
   </extension>
   <extension
         point="org.eclipse.debug.ui.contextViewBindings">
