@@ -164,6 +164,12 @@
 	<test id = "org.eclipse.core.tests.resources.session.TestBuilderDeltaSerialization">
 		<run class="org.eclipse.core.tests.resources.session.TestBuilderDeltaSerialization"/>
 	</test>
+	<test id = "org.eclipse.core.tests.resources.session.Test1GALH44">
+		<run class="org.eclipse.core.tests.resources.session.Test1GALH44"/>
+	</test>
+	<test id = "org.eclipse.core.tests.resources.session.Test1GALH44">
+		<run class="org.eclipse.core.tests.resources.session.Test1GALH44"/>
+	</test>
   
     <test id="usecase.AllTests">
       <run class="org.eclipse.core.tests.resources.usecase.AllTests"/>
@@ -192,21 +198,9 @@
     <test id="usecase.IWorkspaceRunnableUseCaseTest">
       <run class="org.eclipse.core.tests.resources.usecase.IWorkspaceRunnableUseCaseTest"/>
     </test>
-    <test id="usecase.Snapshot1Test">
-      <run class="org.eclipse.core.tests.resources.usecase.Snapshot1Test"/>
-    </test>
-    <test id="usecase.Snapshot2Test">
-      <run class="org.eclipse.core.tests.resources.usecase.Snapshot2Test"/>
-    </test>
-    <test id="usecase.Snapshot3Test">
-      <run class="org.eclipse.core.tests.resources.usecase.Snapshot3Test"/>
-    </test>
-    <test id="usecase.Snapshot4Test">
-      <run class="org.eclipse.core.tests.resources.usecase.Snapshot4Test"/>
-    </test>
-    <test id="usecase.Snapshot5Test">
-      <run class="org.eclipse.core.tests.resources.usecase.Snapshot5Test"/>
-    </test>
+	<test id = "org.eclipse.core.tests.resources.usecase.SnapshotTest">
+		<run class="org.eclipse.core.tests.resources.usecase.SnapshotTest"/>
+	</test>
 
     <test id="builders.AllTests">
       <run class="org.eclipse.core.tests.internal.builders.AllTests"/>

@@ -22,21 +22,9 @@
   </runtime>
 
   <extension point="org.eclipse.core.tests.harness.tests">
-    <test id="saveparticipant.SaveManager1Test">
-      <run class="org.eclipse.core.tests.resources.saveparticipant.SaveManager1Test"/>
+    <test id="org.eclipse.core.tests.resources.saveparticipant.SaveManagerTest">
+      <run class="org.eclipse.core.tests.resources.saveparticipant.SaveManagerTest"/>
     </test>
-    <test id="saveparticipant.SaveManager2Test">
-      <run class="org.eclipse.core.tests.resources.saveparticipant.SaveManager2Test"/>
-    </test>
-    <test id="saveparticipant.SaveManager3Test">
-      <run class="org.eclipse.core.tests.resources.saveparticipant.SaveManager3Test"/>
-    </test>
-  </extension>
-
-  <extension point="org.eclipse.core.resources.builders" id="simple" name="Simple Builder">
-    <builder>
-      <run class="org.eclipse.core.tests.resources.saveparticipant.SimpleBuilder"/>
-    </builder>
   </extension>
 
 </plugin>
