@@ -1,9 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
+ * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
@@ -54,13 +54,13 @@ public class UndoManager2 implements IUndoManager {
 				case OperationHistoryEvent.OPERATION_NOT_OK:					
 					fireChangePerformed(change);
 					break;
-				// TODO would be better to have different events for this
 				case OperationHistoryEvent.OPERATION_ADDED:
+					// would be better to have different events for this
 					fireUndoStackChanged();
 					fireRedoStackChanged();
 					break;
-					// TODO would be better to have different events for this
 				case OperationHistoryEvent.OPERATION_REMOVED:
+					// would be better to have different events for this
 					fireUndoStackChanged();
 					fireRedoStackChanged();
 					break;
@@ -129,20 +129,20 @@ public class UndoManager2 implements IUndoManager {
 	}
 
 	public void changePerformed(Change change) {
-        // We should only get this message when we have an open composite.
-    	// We are also relying on the fact that PerformChangeOperation will call
-    	// flush() if there is no undo change after a change has been executed.
-        // Otherwise we would have a composite dangling open.
-        Assert.isNotNull(fActiveOperation);
-        fOperationHistroy.closeOperation();
-        fIsOpen= false;
+		if (fIsOpen && fActiveOperation != null) {
+			fOperationHistroy.closeOperation();
+	        fIsOpen= false;
+		}
 	}
 
 	public void addUndo(String name, Change change) {
 		if (fActiveOperation != null) {
 			fActiveOperation.setUndoChange(change);
-			fOperationHistroy.add(fActiveOperation);
+			// No need to add the operation to the undo history. It already
+			// got added via closing the operation.
 			fActiveOperation= null;
+			// But we have to fire an undo stack changed here
+			fireUndoStackChanged();
 		}
 	}
 
@@ -164,7 +164,6 @@ public class UndoManager2 implements IUndoManager {
 				IStatus.ERROR, "Top most undoable operation doesn't represent a refactoring change", null));
 		if (query == null)
 			query= new NullQuery();
-		UndoableOperation2ChangeAdapter changeOperation= (UndoableOperation2ChangeAdapter)op;
 		fOperationHistroy.undoOperation(op, pm, new QueryAdapter(query));
 	}
 
@@ -186,7 +185,6 @@ public class UndoManager2 implements IUndoManager {
 				IStatus.ERROR, "Top most redoable operation doesn't represent a refactoring change", null));
 		if (query == null)
 			query= new NullQuery();
-		UndoableOperation2ChangeAdapter changeOperation= (UndoableOperation2ChangeAdapter)op;
 		fOperationHistroy.redoOperation(op, pm, new QueryAdapter(query));
 	}
 
@@ -194,8 +192,9 @@ public class UndoManager2 implements IUndoManager {
 		if (fIsOpen && fActiveOperation != null) {
 			fOperationHistroy.closeOperation();
 		}
-		fOperationHistroy.dispose(RefactoringCorePlugin.getUndoContext(), true, true);
 		fActiveOperation= null;
+		fIsOpen= false;
+		fOperationHistroy.dispose(RefactoringCorePlugin.getUndoContext(), true, true);
 	}
 
 	public void shutdown() {
@@ -243,7 +242,15 @@ public class UndoManager2 implements IUndoManager {
 			return;
 		Object[] listeners= fListeners.getListeners();
 		for (int i= 0; i < listeners.length; i++) {
-			((IUndoManagerListener)listeners[i]).undoStackChanged(this);
+			final IUndoManagerListener listener= (IUndoManagerListener)listeners[i];
+			Platform.run(new ISafeRunnable() {
+				public void run() throws Exception {
+					listener.undoStackChanged(UndoManager2.this);
+				}
+				public void handleException(Throwable exception) {
+					RefactoringCorePlugin.log(exception);
+				}
+			});
 		}
 	}
 
@@ -252,7 +259,15 @@ public class UndoManager2 implements IUndoManager {
 			return;
 		Object[] listeners= fListeners.getListeners();
 		for (int i= 0; i < listeners.length; i++) {
-			((IUndoManagerListener)listeners[i]).redoStackChanged(this);
+			final IUndoManagerListener listener= (IUndoManagerListener)listeners[i];
+			Platform.run(new ISafeRunnable() {
+				public void run() throws Exception {
+					listener.redoStackChanged(UndoManager2.this);
+				}
+				public void handleException(Throwable exception) {
+					RefactoringCorePlugin.log(exception);
+				}
+			});
 		}
 	}
 }
