@@ -28,6 +28,7 @@ import org.eclipse.ui.views.navigator.ResourceNavigatorMessages;
 public class OpenWithActionGroup extends SyncViewerActionGroup {
 
 	private OpenFileAction openFileAction;
+	private OpenInCompareAction openInCompareAction;
 
 	public OpenWithActionGroup(SynchronizeView viewer) {
 		super(viewer);
@@ -35,7 +36,8 @@ public class OpenWithActionGroup extends SyncViewerActionGroup {
 	}
 
 	protected void makeActions() {
-		openFileAction = new OpenFileAction(getSyncView().getSite().getPage());		
+		openFileAction = new OpenFileAction(getSyncView().getSite().getPage());
+		openInCompareAction = new OpenInCompareAction(getSyncView());		
 	}
 
 	public void fillContextMenu(IMenuManager menu) {
@@ -67,6 +69,8 @@ public class OpenWithActionGroup extends SyncViewerActionGroup {
 			return;
 		}
 		
+		menu.add(openInCompareAction);
+		
 		openFileAction.selectionChanged(selection);
 		menu.add(openFileAction);
 		
@@ -89,5 +93,9 @@ public class OpenWithActionGroup extends SyncViewerActionGroup {
 	
 	private IResource getResource(Object obj) {
 		return (IResource)TeamAction.getAdapter(obj, IResource.class);
+	}
+
+	public void openInCompareEditor() {
+		openInCompareAction.run();		
 	}
 }

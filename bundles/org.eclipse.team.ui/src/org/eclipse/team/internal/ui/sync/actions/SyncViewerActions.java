@@ -53,7 +53,6 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 	private Action collapseAll;
 	private Action refreshSelectionAction;
 	private Action toggleViewerType;
-	private Action open;
 	private Action refreshViewContents;
 	private ExpandAllAction expandAll;
 	private SelectAllAction selectAllAction;
@@ -140,7 +139,6 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 		
 		
 		toggleViewerType = new ToggleViewAction(getSyncView(), getSyncView().getCurrentViewType());
-		open = new OpenInCompareAction(syncView);
 				
 		IPropertyChangeListener workingSetUpdater = new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
@@ -189,9 +187,7 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 	 * @see org.eclipse.ui.actions.ActionGroup#fillContextMenu(org.eclipse.jface.action.IMenuManager)
 	 */
 	public void fillContextMenu(IMenuManager manager) {
-		super.fillContextMenu(manager);
-		
-		manager.add(open);
+		super.fillContextMenu(manager);		
 		openWithActionGroup.fillContextMenu(manager);		
 		manager.add(new Separator());
 		manager.add(expandAll);
@@ -218,7 +214,7 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 	}
 	
 	public void open() {
-		open.run();
+		openWithActionGroup.openInCompareEditor();
 	}
 
 	/* (non-Javadoc)
