@@ -190,7 +190,10 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	public void addAnnotationModelListener(IAnnotationModelListener listener) {
 		if (!fAnnotationModelListeners.contains(listener)) {
 			fAnnotationModelListeners.add(listener);
-			listener.modelChanged(this);
+			if (listener instanceof IAnnotationModelListenerExtension)
+			    ((IAnnotationModelListenerExtension)listener).modelChanged(new AnnotationModelEvent(this));
+			else
+			    listener.modelChanged(this);
 		}
 	}
 
