@@ -193,6 +193,16 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		}
 		return fLaunchConfigurationIndex;
 	}
+	
+	/**
+	 * Clears all launch configurations (if any have been accessed)
+	 */
+	private void clearAllLaunchConfigurations() {
+		fLaunchConfigurationTypes.clear();
+		if (fLaunchConfigurationIndex != null) {
+			fLaunchConfigurationIndex.clear();
+		}
+	}
 		
 	/**
 	 * @see ILaunchManager#removeLaunch(ILaunch)
@@ -425,8 +435,8 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		IPath path = DebugPlugin.getDefault().getStateLocation().append(".defaultlaunchconfigs"); //$NON-NLS-1$
 		persistDefaultConfigTypeMap(path);
 		
-		fLaunchConfigurationTypes.clear();
-		getAllLaunchConfigurations().clear();
+		clearAllLaunchConfigurations();
+
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 	}
 	
