@@ -176,5 +176,14 @@ public class LaunchHistoryPreferencePage
 		}
 		return v;
 	}
+	
+	/**
+	 * @see PreferencePage#performDefaults()
+	 */
+	protected void performDefaults() {
+		getDebugTab().performDefaults();
+		getRunTab().performDefaults();
+		super.performDefaults();
+	}
 
 }

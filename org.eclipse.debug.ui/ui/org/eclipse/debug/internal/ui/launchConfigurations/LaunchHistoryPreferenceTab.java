@@ -6,10 +6,14 @@ package org.eclipse.debug.internal.ui.launchConfigurations;
  */
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -28,6 +32,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.dialogs.ListSelectionDialog;
+import org.eclipse.ui.model.WorkbenchViewerSorter;
+import sun.security.action.GetLongAction;
 
 /**
  * Tab for favorite and recent history lists
@@ -107,7 +114,7 @@ public abstract class LaunchHistoryPreferenceTab {
 		});
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL);
 		addFav.setLayoutData(gd);
-		addFav.setEnabled(true);		
+		addFav.setEnabled(DebugUIPlugin.getDefault().usingConfigurationStyleLaunching());		
 		
 		fRemoveFavoritesButton = new Button(buttonComp, SWT.PUSH);
 		fRemoveFavoritesButton.setText("Re&move");
@@ -275,6 +282,20 @@ public abstract class LaunchHistoryPreferenceTab {
 	 * The 'add favorites' button has been pressed
 	 */
 	protected void handleAddFavoriteButtonSelected() {
+		
+		
+		ListSelectionDialog dialog = new ListSelectionDialog(fFavoritesTable.getControl().getShell(),
+		 getMode(), new LaunchConfigurationContentProvider(), DebugUITools.newDebugModelPresentation(),
+		 "Select Launch Configurations");
+		dialog.open();
+		Object[] selection = dialog.getResult();
+		if (selection != null) {
+			for (int i = 0; i < selection.length; i++) {
+				getFavorites().add(selection[i]);
+				getRecents().remove(selection[i]);
+			}
+		}
+		updateStatus();
 	}	
 	
 	/**
@@ -343,12 +364,17 @@ public abstract class LaunchHistoryPreferenceTab {
 		getFavoritesTable().refresh();
 		getRecentTable().refresh();
 	}		
+
+	/**
+	 * Returns the mode of this page - run or debug.
+	 */
+	protected abstract String getMode();
 		
 	/**
 	 * Returns the label for the favorites table.
 	 */
 	protected abstract String getFavoritesLabel();
-	
+		
 	/**
 	 * Returns the initial content for the favorites list
 	 */
@@ -405,6 +431,35 @@ public abstract class LaunchHistoryPreferenceTab {
 	}	
 	
 	/**
+	 * Content provider for recent table
+	 */	
+	protected class LaunchConfigurationContentProvider extends FavoritesContentProvider {
+		
+		/**
+		 * @see IStructuredContentProvider#getElements(Object)
+		 */
+		public Object[] getElements(Object inputElement) {
+			ILaunchConfiguration[] all = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurations();
+			List list = new ArrayList(all.length);
+			String mode = (String)inputElement;
+			for (int i = 0; i < all.length; i++) {
+				try {
+					if (all[i].getType().supportsMode(mode)) {
+						list.add(all[i]);
+					}
+				} catch (CoreException e) {
+					// ignore
+				}
+			}
+			list.removeAll(getFavorites());
+			Object[] objs = list.toArray();
+			new WorkbenchViewerSorter().sort(getFavoritesTable(), objs);
+			return objs;
+		}
+
+	}	
+	
+	/**
 	 * Returns the current list of favorites.
 	 */
 	protected List getFavorites() {
@@ -435,5 +490,24 @@ public abstract class LaunchHistoryPreferenceTab {
 		for (int i = 0; i < array.length; i++) {
 			list.add(array[i]);
 		}
+	}
+	
+	/**
+	 * Restores defaults
+	 */
+	protected void performDefaults() {
+		fFavorites = null;
+		fRecents = null;
+		updateStatus();
+	}
+	
+	/**
+	 * Refresh all tables and buttons
+	 */
+	protected void updateStatus() {
+		getFavoritesTable().refresh();
+		getRecentTable().refresh();
+		handleFavoriteSelectionChanged();
+		handleRecentSelectionChanged();				
 	}
 }

@@ -1,6 +1,7 @@
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -58,4 +59,10 @@ public class DebugHistoryPreferenceTab extends LaunchHistoryPreferenceTab {
 		return configs;
 	}
 
+	/**
+	 * @see LaunchHistoryPreferenceTab#getMode()
+	 */
+	protected String getMode() {
+		return ILaunchManager.DEBUG_MODE;
+	}
 }

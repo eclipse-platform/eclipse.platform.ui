@@ -803,7 +803,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 	/**
 	 * Return whether the preference is currently set to use configuration-style launching.
 	 */
-	private boolean usingConfigurationStyleLaunching() {
+	public boolean usingConfigurationStyleLaunching() {
 		String launchingStyle = getPreferenceStore().getString(IDebugPreferenceConstants.LAUNCHING_STYLE);
 		if (IDebugPreferenceConstants.LAUNCHING_STYLE_CONFIGURATIONS.equals(launchingStyle)) {
 			return true;
