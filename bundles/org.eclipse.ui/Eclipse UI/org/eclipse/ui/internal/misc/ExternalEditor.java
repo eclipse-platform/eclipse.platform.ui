@@ -67,7 +67,9 @@ public void openWithUserDefinedProgram() throws CoreException {
 			URL commandURL = new URL(installURL, descriptor.getFileName());
 			URL localName = Platform.asLocalURL(commandURL); // this will bring the file local if the plugin is on a server
 			File file = new File(localName.getFile());
-			programFileName = file.getAbsolutePath();
+			//Check that it exists before we assert it is valid
+			if(file.exists())
+				programFileName = file.getAbsolutePath();
 		} catch (IOException e) {
 			// Program file is not in the plugin directory
 		}
