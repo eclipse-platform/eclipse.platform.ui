@@ -184,6 +184,14 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
 			try {
+				if (!isSupervised(resource)) {
+					return;
+				}
+			} catch (TeamException e) {
+				// fallthrough and try to collect sync info
+				CVSProviderPlugin.log(e);
+			}
+			try {
 				resource.accept(new IResourceVisitor() {
 					public boolean visit(IResource innerResource) throws CoreException {
 						try {
