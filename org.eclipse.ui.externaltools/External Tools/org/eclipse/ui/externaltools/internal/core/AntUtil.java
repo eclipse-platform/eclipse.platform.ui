@@ -27,8 +27,6 @@ public final class AntUtil {
 	private static final String ATT_DEFAULT = "default"; //NON-NLS-1$
 	private static final String ATT_NAME = "name"; //NON-NLS-1$
 	private static final String TAG_TARGET = "target"; //NON-NLS-1$
-	// Holds the current monitor that the Ant build logger can access
-	private static IProgressMonitor monitor;
 	
 	/**
 	 * No instances allowed
@@ -113,21 +111,5 @@ public final class AntUtil {
 			return null;
 		else
 			return targets;
-	}
-	
-	/**
-	 * Returns the last known progress monitor that the
-	 * Ant build logger can use
-	 */
-	public static IProgressMonitor getCurrentProgressMonitor() {
-		return AntUtil.monitor;
-	}
-	
-	/**
-	 * Sets the last known progress monitor that the
-	 * Ant build logger can use
-	 */
-	public static void setCurrentProgressMonitor(IProgressMonitor monitor) {
-		AntUtil.monitor = monitor;
 	}
 }

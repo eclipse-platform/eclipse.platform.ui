@@ -20,29 +20,22 @@ import org.eclipse.ui.externaltools.internal.ui.*;
 public class AntBuildLogger implements BuildLogger {
 
 	protected int priorityFilter = LogConsoleDocument.MSG_INFO;
-	protected IProgressMonitor monitor;
 	private int logLength = 0;
 	private int lastTargetEndIndex = 0;
 
 	public AntBuildLogger() {
-		monitor = AntUtil.getCurrentProgressMonitor();
-		if (monitor == null)
-			monitor = new NullProgressMonitor();
 	}
 
 	/**
 	 * @see BuildListener#buildStarted(BuildEvent)
 	 */
 	public void buildStarted(BuildEvent event) {
-		checkCanceled();
 	}
 
 	/**
 	 * @see BuildListener#buildFinished(BuildEvent)
 	 */
 	public void buildFinished(BuildEvent event) {
-		checkCanceled();
-		monitor.done();
 		handleException(event);
 	}
 
@@ -61,7 +54,6 @@ public class AntBuildLogger implements BuildLogger {
 	 * @see BuildListener#targetStarted(BuildEvent)
 	 */
 	public void targetStarted(BuildEvent event) {
-		checkCanceled();
 		createNewOutputStructureElement(event.getTarget().getName(), logLength);
 	}
 
@@ -93,8 +85,6 @@ public class AntBuildLogger implements BuildLogger {
 	 * @see BuildListener#targetFinished(BuildEvent)
 	 */
 	public void targetFinished(BuildEvent event) {
-		checkCanceled();
-		monitor.worked(1);
 		handleException(event);
 		finishCurrentOutputStructureElement();
 		// store the end index of this target's log (so that we can use it later)
@@ -106,7 +96,6 @@ public class AntBuildLogger implements BuildLogger {
 	 * @see BuildListener#taskStarted(BuildEvent)
 	 */
 	public void taskStarted(BuildEvent event) {
-		checkCanceled();
 		createNewOutputStructureElement(event.getTask().getTaskName());
 	}
 
@@ -114,7 +103,6 @@ public class AntBuildLogger implements BuildLogger {
 	 * @see BuildListener#taskFinished(BuildEvent)
 	 */
 	public void taskFinished(BuildEvent event) {
-		checkCanceled();
 		handleException(event);
 		finishCurrentOutputStructureElement();
 		refreshConsoleTrees();
@@ -124,7 +112,6 @@ public class AntBuildLogger implements BuildLogger {
 	 * @see BuildListener#messageLogged(BuildEvent)
 	 */
 	public void messageLogged(BuildEvent event) {
-		checkCanceled();
 		logMessage(event.getMessage(), toConsolePriority(event.getPriority()));
 	}
 	
@@ -165,13 +152,6 @@ public class AntBuildLogger implements BuildLogger {
 		output.setEndIndex(logLength);
 		// and sets the current element to the parent of the element
 		doc.setCurrentOutputStructureElement(output.getParent());
-	}
-
-	protected void checkCanceled() {
-		if (monitor == null)
-			return;
-		if (monitor.isCanceled())
-			throw new BuildCanceledException();
 	}
 
 	protected void createNewOutputStructureElement(String name) {

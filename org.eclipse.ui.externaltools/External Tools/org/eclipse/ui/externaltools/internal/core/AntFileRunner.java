@@ -9,7 +9,6 @@ http://www.eclipse.org/legal/cpl-v05.html
  
 Contributors:
 **********************************************************************/
-import org.apache.tools.ant.BuildListener;
 import org.eclipse.ant.core.AntRunner;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -35,7 +34,6 @@ public class AntFileRunner extends ExternalToolsRunner {
 		try {
 			String[] targets = runnerContext.getAntTargets();
 			startMonitor(monitor, runnerContext, targets.length);
-			AntUtil.setCurrentProgressMonitor(monitor);
 			AntRunner runner = new AntRunner();
 			String args = runnerContext.getExpandedArguments();
 			String baseDir = runnerContext.getExpandedWorkingDirectory();
@@ -50,12 +48,11 @@ public class AntFileRunner extends ExternalToolsRunner {
 				runner.setExecutionTargets(targets);
 			if (runnerContext.getShowLog())
 				runner.addBuildLogger(LOGGER_CLASS);
-			runner.run();
+			runner.run(monitor);
 		} catch (Exception e) {
 			handleException(e);
 		} finally {
 			monitor.done();
-			AntUtil.setCurrentProgressMonitor(null);
 		}
 	}
 }
