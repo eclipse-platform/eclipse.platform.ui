@@ -158,10 +158,13 @@ public class BookmarkUtil {
 	}
 
 	public static void store(String fileName, Vector bookmarks) {
+		FileOutputStream fos = null;
+		OutputStreamWriter osw = null;
+		PrintWriter writer = null;
 		try {
-			FileOutputStream fos = new FileOutputStream(fileName);
-			OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF8"); //$NON-NLS-1$
-			PrintWriter writer = new PrintWriter(osw);
+			fos = new FileOutputStream(fileName);
+			osw = new OutputStreamWriter(fos, "UTF8"); //$NON-NLS-1$
+			writer = new PrintWriter(osw);
 			writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
 			writer.println("<bookmarks>"); //$NON-NLS-1$
 			for (int i = 0; i < bookmarks.size(); i++) {
@@ -171,9 +174,18 @@ public class BookmarkUtil {
 			writer.println("</bookmarks>"); //$NON-NLS-1$
 			writer.flush();
 			writer.close();
-			osw.close();
-			fos.close();
 		} catch (IOException e) {
+		} finally {
+			try {
+				if (osw != null)
+					osw.close();
+			} catch (IOException e1) {
+			}
+			try {
+				if (fos != null)
+					fos.close();
+			} catch (IOException e2) {
+			}
 		}
 	}
 	private static void writeObject(

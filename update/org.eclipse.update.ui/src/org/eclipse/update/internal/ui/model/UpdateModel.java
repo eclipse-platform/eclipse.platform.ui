@@ -10,9 +10,12 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.model;
 
+import java.io.*;
+import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.update.configurator.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.operations.*;
 
@@ -32,9 +35,16 @@ public class UpdateModel implements IAdaptable {
 	}
 	
 	private String getBookmarksFileName() {
-		IPath path = UpdateUI.getDefault().getStateLocation();
-		path = path.append(BOOKMARK_FILE);
-		return path.toOSString();
+		URL platformXML = ConfiguratorUtils.getCurrentPlatformConfiguration().getConfigurationLocation();
+		if (!"file".equals(platformXML.getProtocol())) {
+			IPath path = UpdateUI.getDefault().getStateLocation();
+			path = path.append(BOOKMARK_FILE);
+			return path.toOSString();
+		} else {
+			File f = new File(platformXML.getFile());
+			f = new File(f.getParentFile(), BOOKMARK_FILE);
+			return f.getAbsolutePath();
+		}
 	}
 	
 	public void shutdown() {
