@@ -41,6 +41,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.registry.MarkerHelpRegistry;
 import org.eclipse.ui.internal.ide.registry.MarkerHelpRegistryReader;
+import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.part.FileEditorInput;
 
 /**
@@ -905,17 +906,20 @@ public final class IDE {
 	 * Return the content type for the given file.
 	 * 
 	 * @param file the file to test
-	 * @return the content type, or null if it cannot be determined.
+	 * @return the content type, or <code>null</code> if it cannot be determined.
 	 * @since 3.1
 	 */
 	public static IContentType getContentType(IFile file) {
 		try {
+			UIStats.start(UIStats.CONTENT_TYPE_LOOKUP, file.getName());
 			IContentDescription contentDescription = file.getContentDescription();
 			if (contentDescription == null)
 				return null;
 			return contentDescription.getContentType();
 		} catch (CoreException e) {
 			return null;		
+		} finally {
+			UIStats.end(UIStats.CONTENT_TYPE_LOOKUP, file, file.getName());
 		}
 	}
 }

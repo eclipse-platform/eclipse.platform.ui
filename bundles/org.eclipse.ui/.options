@@ -65,6 +65,9 @@ org.eclipse.ui/perf/perspective.switch=800
 # Reports the time to run UI jobs
 org.eclipse.ui/perf/uijob=200
 
+# Reports the time to determine the content type of a file
+org.eclipse.ui/perf/contentTypes=200
+
 # Reports events received and dispatched by the key binding architecture
 org.eclipse.ui/trace/keyBindings=false
 

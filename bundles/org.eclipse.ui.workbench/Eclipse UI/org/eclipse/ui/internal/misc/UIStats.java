@@ -54,11 +54,13 @@ public class UIStats {
     public static final int NOTIFY_PERSPECTIVE_LISTENERS = 12;
 
     public static final int UI_JOB = 13;
+	
+	public static final int CONTENT_TYPE_LOOKUP = 14;
 
     /**
      * Change this value when you add a new event constant.
      */
-    public static final int LAST_VALUE = UI_JOB;
+    public static final int LAST_VALUE = CONTENT_TYPE_LOOKUP;
 
     private static boolean debug[] = new boolean[LAST_VALUE+1];
 
@@ -79,6 +81,7 @@ public class UIStats {
         events[NOTIFY_PAGE_LISTENERS] = PlatformUI.PLUGIN_ID + "/perf/page.listeners"; //$NON-NLS-1$
         events[NOTIFY_PERSPECTIVE_LISTENERS] = PlatformUI.PLUGIN_ID + "/perf/perspective.listeners"; //$NON-NLS-1$
         events[UI_JOB] = PlatformUI.PLUGIN_ID + "/perf/uijob"; //$NON-NLS-1$
+		events[CONTENT_TYPE_LOOKUP] = PlatformUI.PLUGIN_ID + "/perf/contentTypes"; //$NON-NLS-1$
 
         for (int i = 0; i <= LAST_VALUE; i++) {
         	//don't log any performance events if the general performance stats is disabled
