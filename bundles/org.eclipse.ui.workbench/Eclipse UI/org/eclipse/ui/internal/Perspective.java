@@ -1232,14 +1232,23 @@ public IViewReference getActiveFastView() {
 		
 	if (activeFastView != null) {
 		ViewPane pane = getPane(activeFastView);
-		if (pane.isZoomed()) {
-			presentation.zoomOut();
+		if (pane != null) {
+			if (pane.isZoomed()) {
+				presentation.zoomOut();
+			}
+			hideFastView(activeFastView, steps);
 		}
-		hideFastView(activeFastView, steps);
 	}
 	activeFastView = ref;
-	if (activeFastView != null) {
-		showFastView(activeFastView);
+	try {
+		if (activeFastView != null) {
+			if (!showFastView(activeFastView)) {
+			    activeFastView = null;
+			}
+		}
+	}
+	catch (RuntimeException e) {
+	    activeFastView = null;
 	}
 }
 /**
@@ -1345,13 +1354,16 @@ private void setEditorAreaVisible(boolean visible) {
 }
 /**
  * Shows a fast view.
+ * @return whether the view was successfully shown
  */
-void showFastView(IViewReference ref) {
+boolean showFastView(IViewReference ref) {
 	// Make sure the part is restored.
 	if(ref.getPart(true) == null)
-		return;
+		return false;
 	
 	ViewPane pane = getPane(ref);	
+	if (pane == null)
+		return false;
 
 	saveFastViewWidthRatio();
 	
@@ -1360,6 +1372,8 @@ void showFastView(IViewReference ref) {
 	fastViewPane.showView(getClientComposite(), pane, side, getFastViewWidthRatio(ref.getId()));	
 	
 	setFastViewIconSelection(ref, true);
+	
+	return true;
 }
 
 private void saveFastViewWidthRatio() {
