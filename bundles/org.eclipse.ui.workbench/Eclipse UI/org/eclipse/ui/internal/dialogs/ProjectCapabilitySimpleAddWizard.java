@@ -20,7 +20,6 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 
 public class ProjectCapabilitySimpleAddWizard extends Wizard {
 	private ProjectCapabilitySimpleSelectionPage mainPage;
