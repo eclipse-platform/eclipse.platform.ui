@@ -14,8 +14,6 @@ package org.eclipse.ui.internal;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.boot.BootLoader;
-import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -122,10 +120,11 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	private SharedImages sharedImages;
 	
 	/**
-	 * About info for the primary feature; lazily initialized.
+	 * Information describing the product (formerly called "primary plugin"); lazily
+	 * initialized.
 	 * @since 3.0
 	 */
-	private AboutInfo aboutInfo = null;
+	private ProductInfo productInfo = null;
 	private IntroRegistry introRegistry;
 	
 	/**
@@ -160,7 +159,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		actionSetRegistry = null;
 		sharedImages = null;
 
-		aboutInfo = null;
+		productInfo = null;
 		introRegistry = null;
 
 		DEBUG = false;
@@ -609,51 +608,6 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	}
 
 	/**
-	 * Initializes product-specific information that comes from the
-	 * about.ini file of the primary feature.
-	 * <p>
-	 * Note that there be dragons here in these parts. In order to
-	 * find out whcih feature is the primary feature we need to consult
-	 * BootLoader.
-	 * 
-	 * @since 3.0
-	 */
-	private void initializeProductInfo() {
-		// TODO finish removing compatibility dependency by changing
-		//      this to use new IProduct, etc. constants, something like:
-		// 	    - get the registry
-		// 	    - get the IProduct extension pt
-		// 	    - find the extension with a given productName (id)
-		// 	    - derive the data structure from the infos
-		// NE: Can't we just use Platform.getProduct() rather than
-		//  groveling over the product providers ourselves?
-
-		// extract app name and window image from primary feature
-		IPlatformConfiguration conf = BootLoader.getCurrentPlatformConfiguration();
-		String featureId = conf.getPrimaryFeatureIdentifier();
-		IPlatformConfiguration.IFeatureEntry feature = null;
-		if (featureId != null) {
-			feature = conf.findConfiguredFeatureEntry(featureId);
-		}
-		String versionId = null;
-		String pluginId = null;
-		if (feature != null) {
-			versionId = feature.getFeatureVersion();
-			pluginId = feature.getFeaturePluginIdentifier();
-		}
-		AboutInfo newAboutInfo = null;
-		if (versionId != null && pluginId != null) {
-			newAboutInfo = AboutInfo.readFeatureInfo(featureId, versionId, pluginId);
-		}
-		if (newAboutInfo == null) {
-			// create a minimal object that answers null when probed
-			newAboutInfo = new AboutInfo(featureId);
-		}
-		this.aboutInfo = newAboutInfo;
-		
-	}
-
-	/**
 	 * Returns the application name.
 	 * <p>
 	 * Note this is never shown to the user.
@@ -667,10 +621,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	 * @since 3.0
 	 */
 	public String getAppName() {
-		if (aboutInfo == null) {
-			initializeProductInfo();
-		}
-		return aboutInfo.getAppName();
+		return getProductInfo().getAppName();
 	}
 	
 	/**
@@ -680,10 +631,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	 * @since 3.0
 	 */
 	public String getProductName() {
-		if (aboutInfo == null) {
-			initializeProductInfo();
-		}
-		return aboutInfo.getProductName();
+		return getProductInfo().getProductName();
 	}
 
 	/**
@@ -694,8 +642,16 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	 * @since 3.0
 	 */
 	public ImageDescriptor[] getWindowImages() {
-		if (aboutInfo == null)
-			initializeProductInfo();
-		return aboutInfo.getWindowImages();
+		return getProductInfo().getWindowImages();
 	}
+
+	/**
+	 * Returns an instance that describes this plugin's product (formerly "primary
+	 * plugin").
+	 */
+	private ProductInfo getProductInfo() {
+		if(productInfo == null)
+			productInfo = new ProductInfo(Platform.getProduct());
+		return productInfo;
+ 	}
 }
