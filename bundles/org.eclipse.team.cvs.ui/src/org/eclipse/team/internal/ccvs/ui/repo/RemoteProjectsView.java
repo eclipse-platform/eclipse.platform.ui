@@ -12,7 +12,6 @@ package org.eclipse.team.internal.ccvs.ui.repo;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
-import org.eclipse.team.internal.ccvs.ui.actions.CVSAction;
 import org.eclipse.team.internal.ccvs.ui.model.CVSTagElement;
 import org.eclipse.team.internal.ccvs.ui.model.RemoteProjectsElement;
 import org.eclipse.team.internal.ui.actions.TeamAction;

@@ -74,7 +74,7 @@ public class RestoreFromRepositoryAction extends CVSAction {
 					ICVSFolder commandRoot,
 					IProgressMonitor monitor) {
 			
-			// Find all RCS file names tat contain "Attic"
+			// Find all RCS file names that contain "Attic"
 			int index = line.indexOf(ATTIC);
 			if (index == -1) return OK;
 			// Extract the file name and path from the RCS path
