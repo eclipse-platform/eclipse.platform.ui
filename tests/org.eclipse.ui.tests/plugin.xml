@@ -96,6 +96,11 @@
 	   name="Selection Provider Test View 2"
        icon="icons\view.gif"
 	   class="org.eclipse.ui.tests.SelectionProviderView"/>
+	<view
+		id="org.eclipse.ui.tests.adaptable.adaptedHierarchy"
+		name="Adapted Resource Navigator"
+		icon="icons\view.gif"
+		class="org.eclipse.ui.tests.adaptable.AdaptedResourceNavigator"/>
 </extension>
 
 <extension
@@ -208,6 +213,19 @@
         <filter name="flag" value="true"/> 
         <action id="oc5" label="redTrueAction_v1"
         	class="org.eclipse.ui.tests.api.MockActionDelegate"/>
+    </objectContribution>
+    
+    <!-- Adaptable test-->
+    <objectContribution
+         objectClass="org.eclipse.core.resources.IResource"
+         id="org.eclipse.ui.tests.adaptable.ResourceContributions"
+         adaptable = "true">
+      <action
+            label="Resource Action"
+            class="org.eclipse.ui.tests.adaptable.ResourceAction"
+            menubarPath="org.eclipse.ui.OpenFileAction"
+            id="resource action">
+      </action>
     </objectContribution>
 </extension> 
 
@@ -482,19 +500,28 @@
     </objectContribution> 
 </extension> 
 
-<!-- ***************** DECORATORS *********************-->
+
+<!-- Decorator tests -->
 
 <extension 
 	point="org.eclipse.ui.decorators">
 	<decorator 
-        id="org.eclipse.ui.actioncontributiontest.decorator" 
+        id="org.eclipse.ui.tests.adaptable.decorator" 
         label="Test Decorator" 
-        state="false"
+        state="true"
         tooltip="No tip" 
         class="org.eclipse.ui.tests.navigator.TestDecoratorContributor"
         objectClass="org.eclipse.core.resources.IResource">
-    </decorator > 
+    </decorator> 
+    <decorator 
+        id="org.eclipse.ui.tests.adaptable.nulldecorator" 
+        label="Null Decorator" 
+        state="true"
+        tooltip="No tip" 
+        adaptable="true"
+        class="org.eclipse.ui.tests.adaptable.NullLabelDecorator"
+        objectClass="org.eclipse.core.resources.IResource">
+    </decorator> 
 </extension>
-
 
 </plugin>

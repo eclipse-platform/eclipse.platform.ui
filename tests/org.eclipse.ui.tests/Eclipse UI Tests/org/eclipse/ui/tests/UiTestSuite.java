@@ -29,6 +29,7 @@ public class UiTestSuite extends TestSuite {
 		}
 		addTest(new org.eclipse.ui.tests.propertysheet.PropertySheetTestSuite());		
 		addTest(new org.eclipse.ui.tests.internal.InternalTestSuite());
-		addTest(new org.eclipse.ui.tests.navigator.NavigatorTestSuite());		
+		addTest(new org.eclipse.ui.tests.navigator.NavigatorTestSuite());
+		addTest(new org.eclipse.ui.tests.adaptable.AdaptableTestSuite());			
 	}
 }
