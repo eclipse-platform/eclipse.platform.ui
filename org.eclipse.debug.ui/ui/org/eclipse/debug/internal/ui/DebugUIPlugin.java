@@ -106,8 +106,8 @@ import org.w3c.dom.Document;
  *
  */
 public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
-	
-	/**
+
+    /**
 	 * Unique identifier constant (value <code>"org.eclipse.debug.ui"</code>)
 	 * for the Debug UI plug-in.
 	 */
@@ -179,6 +179,30 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
      */
     private ServiceTracker fServiceTracker;
     private PackageAdmin fPackageAdminService;
+	
+    /**
+     * Dummy launch node representing a launch that is waiting
+     * for a build to finish before proceeding. This node exists
+     * to provide immediate feedback to the user in the Debug view and
+     * allows termination, which equates to cancellation of the launch.
+     */
+	public static class PendingLaunch extends Launch {
+        private Job fJob;
+        public PendingLaunch(ILaunchConfiguration launchConfiguration, String mode, Job job) {
+            super(launchConfiguration, mode, null);
+            fJob= job;
+        }
+
+        // Allow the user to terminate the dummy launch as a means of
+        // cancelling the launch while waiting for a build to finish.
+        public boolean canTerminate() {
+            return true;
+        }
+
+        public void terminate() throws DebugException {
+            fJob.cancel();
+        }
+    }
 	
 	/**
 	 * Returns whether the debug UI plug-in is in trace
@@ -967,16 +991,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 						buffer.append(DebugUIMessages.getString("DebugUIPlugin.0")); //$NON-NLS-1$
 						ILaunchConfigurationWorkingCopy workingCopy= configuration.copy(buffer.toString());
 						workingCopy.setAttribute(ATTR_LAUNCHING_CONFIG_HANDLE, configuration.getMemento());
-						final ILaunch pendingLaunch= new Launch(workingCopy, mode, null) {
-                            // Allow the user to terminate the dummy launch as a means of
-                            // cancelling the launch while waiting for a build to finish.
-                            public boolean canTerminate() {
-                                return true;
-                            }
-                            public void terminate() throws DebugException {
-                                cancel();
-                            }
-                        };
+						final ILaunch pendingLaunch= new PendingLaunch(workingCopy, mode, this);
                         
 						DebugPlugin.getDefault().getLaunchManager().addLaunch(pendingLaunch);
                         IJobChangeListener listener= new IJobChangeListener() {

@@ -15,6 +15,7 @@ import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.internal.ui.views.DebugViewInterimLabelProvider;
 import org.eclipse.debug.internal.ui.views.RemoteTreeViewer;
 import org.eclipse.jface.viewers.IColorProvider;
+import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -97,6 +98,11 @@ public class LaunchViewer extends RemoteTreeViewer {
 			TreeItem treeItem = (TreeItem) item;
 			treeItem.setForeground(cp.getForeground(element));
 			treeItem.setBackground(cp.getBackground(element));
+		}
+		if (provider instanceof IFontProvider) {
+			IFontProvider fontProvider= (IFontProvider) provider;
+			TreeItem treeItem = (TreeItem) item;
+			treeItem.setFont(fontProvider.getFont(element));
 		}
         
 	}

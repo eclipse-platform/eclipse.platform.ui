@@ -71,12 +71,16 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IMemento;
@@ -203,6 +207,30 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		}
 		
 	}
+    
+	/**
+	 * Label provider for the launch view which renders pending launches
+	 * with italic font.
+	 */
+    private class LaunchViewLabelProvider extends DebugViewDecoratingLabelProvider {
+        public LaunchViewLabelProvider(StructuredViewer viewer, IDebugModelPresentation presentation) {
+            super(viewer, new DebugViewInterimLabelProvider(presentation), new DebugViewLabelDecorator(presentation));
+        }
+        
+        public Font getFont(Object element) {
+            if (element instanceof DebugUIPlugin.PendingLaunch) {
+                Control control = getViewer().getControl();
+                Font originalFont = control.getFont();
+                FontData fontData[] = originalFont.getFontData();
+                // Add the italic attribute
+                for (int i = 0; i < fontData.length; i++) {
+                    fontData[i].setStyle(fontData[i].getStyle() | SWT.ITALIC);
+                }
+                return new Font(control.getDisplay(), fontData);
+            }
+            return super.getFont(element);
+        }
+    }
 	
 	/**
 	 * Job used for source display.
@@ -262,8 +290,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		});
 		lv.setContentProvider(new DebugViewContentProvider(lv, getSite()));
 		final DelegatingModelPresentation presentation = new DelegatingModelPresentation();
-		DebugViewDecoratingLabelProvider labelProvider= new DebugViewDecoratingLabelProvider(lv, new DebugViewInterimLabelProvider(presentation), new DebugViewLabelDecorator(presentation));
-		lv.setLabelProvider(labelProvider);
+		lv.setLabelProvider(new LaunchViewLabelProvider(lv, presentation));
 		fEditorPresentation = presentation;
 		// add my viewer as a selection provider, so selective re-launch works
 		getSite().setSelectionProvider(lv);
