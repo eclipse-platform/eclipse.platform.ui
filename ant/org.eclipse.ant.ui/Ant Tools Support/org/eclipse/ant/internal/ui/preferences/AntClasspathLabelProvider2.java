@@ -22,8 +22,9 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
-/**
- * Label provider for classpath elements
+/** 
+ * This class is a work in progress
+ *
  */
 public class AntClasspathLabelProvider2 implements ILabelProvider, IColorProvider {
 

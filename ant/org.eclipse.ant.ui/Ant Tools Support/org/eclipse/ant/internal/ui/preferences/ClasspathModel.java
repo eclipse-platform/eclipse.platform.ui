@@ -6,7 +6,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-
+/** 
+ * This class is a work in progress
+ *
+ */
 public class ClasspathModel {
 	
 	public static final int GLOBAL= 0;

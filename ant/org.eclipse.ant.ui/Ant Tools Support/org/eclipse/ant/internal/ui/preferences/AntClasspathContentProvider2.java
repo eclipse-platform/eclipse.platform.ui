@@ -20,9 +20,9 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 
-/**
- * Content provider that maintains a hierarchical view of classpath URLs which are shown in a tree
- * viewer.
+/** 
+ * This class is a work in progress
+ *
  */
 public class AntClasspathContentProvider2 implements ITreeContentProvider {
 	protected TreeViewer treeViewer;
