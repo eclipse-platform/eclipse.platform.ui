@@ -472,7 +472,7 @@ public final class PaneFolder {
 	}
 	
 	public void setTabHeight(int height) {
-		tabFolder.setTabHeight(height + 1);
+		tabFolder.setTabHeight(height);
 	}
 
 	/**
