@@ -20,9 +20,8 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.resource.StringConverter;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
@@ -44,6 +43,9 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 	
 	private List fAppearanceColorList;
 	private ColorEditor fAppearanceColorEditor;
+	
+	private BooleanFieldEditor toolsWarningEditor= null;
+	private BooleanFieldEditor xercesWarningEditor= null;
 	
 	// Array containing the message to display, the preference key, and the 
 	// default value (initialized in storeInitialValues()) for each color preference
@@ -80,25 +82,23 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 		
 		fBuildFileNames = new StringFieldEditor(IAntUIPreferenceConstants.ANT_FIND_BUILD_FILE_NAMES, AntPreferencesMessages.getString("AntPreferencePage.&Names__3"), getFieldEditorParent()); //$NON-NLS-1$
 		addField(fBuildFileNames);
-		fBuildFileNames.getTextControl(getFieldEditorParent()).addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-
-			}
-		});
 		
 		new Label(getFieldEditorParent(), SWT.NONE);
 	
 		if (!AntUIPlugin.isMacOS()) {
 			//the mac does not have a tools.jar Bug 40778
-			addField(new BooleanFieldEditor(IAntUIPreferenceConstants.ANT_TOOLS_JAR_WARNING, AntPreferencesMessages.getString("AntPreferencePage.10"), getFieldEditorParent())); //$NON-NLS-1$
+			toolsWarningEditor= new BooleanFieldEditor(IAntUIPreferenceConstants.ANT_TOOLS_JAR_WARNING, AntPreferencesMessages.getString("AntPreferencePage.10"), getFieldEditorParent());  //$NON-NLS-1$
+			addField(toolsWarningEditor);
 		}
-		addField(new BooleanFieldEditor(IAntUIPreferenceConstants.ANT_XERCES_JARS_WARNING, AntPreferencesMessages.getString("AntPreferencePage.11"), getFieldEditorParent())); //$NON-NLS-1$
+		xercesWarningEditor= new BooleanFieldEditor(IAntUIPreferenceConstants.ANT_XERCES_JARS_WARNING, AntPreferencesMessages.getString("AntPreferencePage.11"), getFieldEditorParent()); //$NON-NLS-1$
+		addField(xercesWarningEditor);
 		addField(new BooleanFieldEditor(IAntUIPreferenceConstants.ANT_CLASSPATH_WARNING, AntPreferencesMessages.getString("AntPreferencePage.13"), getFieldEditorParent())); //$NON-NLS-1$
 		
 		addField(new BooleanFieldEditor(IAntUIPreferenceConstants.ANT_ERROR_DIALOG, AntPreferencesMessages.getString("AntPreferencePage.12"), getFieldEditorParent())); //$NON-NLS-1$
 		new Label(getFieldEditorParent(), SWT.NONE);
 				
 		createColorComposite();
+		getPreferenceStore().addPropertyChangeListener(this);
 	}
 	
 	/**
@@ -218,6 +218,7 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 	 */
 	public void init(IWorkbench workbench) {
 	}
+	
 	/**
 	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#initialize()
 	 */
@@ -246,5 +247,27 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 		handleAppearanceColorListSelection();
 		
 		super.performDefaults();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
+	 */
+	public void dispose() {
+		getPreferenceStore().removePropertyChangeListener(this);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
+	 */
+	public void propertyChange(PropertyChangeEvent event) {
+		if (event.getProperty().equals(IAntUIPreferenceConstants.ANT_TOOLS_JAR_WARNING)) {
+			if (toolsWarningEditor != null) {
+				toolsWarningEditor.load();
+			}
+		} else if (event.getProperty().equals(IAntUIPreferenceConstants.ANT_XERCES_JARS_WARNING)) {
+			xercesWarningEditor.load();
+		} else {
+			super.propertyChange(event);
+		}
 	}
 }
