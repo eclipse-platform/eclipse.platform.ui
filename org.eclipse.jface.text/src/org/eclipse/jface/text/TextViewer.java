@@ -77,10 +77,10 @@ import org.eclipse.jface.viewers.Viewer;
  * 
  * @see ITextViewer
  */  
-public class TextViewer extends Viewer implements 
-					ITextViewer, ITextViewerExtension, ITextViewerExtension2,
+public class TextViewer extends Viewer implements
+					ITextViewer, ITextViewerExtension, ITextViewerExtension2, ITextViewerExtension4,
 					ITextOperationTarget, ITextOperationTargetExtension,
-					IWidgetTokenOwner, IPostSelectionProvider {
+					IWidgetTokenOwner, IWidgetTokenOwnerExtension, IPostSelectionProvider {
 	
 	/** Internal flag to indicate the debug state. */
 	public static boolean TRACE_ERRORS= false;
@@ -1743,15 +1743,15 @@ public class TextViewer extends Viewer implements
 	 * @see IWidgetTokenOwner#requestWidgetToken(IWidgetTokenKeeper)
 	 * @since 2.0
 	 */
-	public boolean requestWidgetToken(IWidgetTokenKeeper requester) {
-		if (fTextWidget != null) {
-			if (fWidgetTokenKeeper != null) {
-				if (fWidgetTokenKeeper == requester)
-					return true;
-				if (fWidgetTokenKeeper.requestWidgetToken(this)) {
-					fWidgetTokenKeeper= requester;
-					return true;
-				}
+	 public boolean requestWidgetToken(IWidgetTokenKeeper requester) {
+		 if (fTextWidget != null) {
+			 if (fWidgetTokenKeeper != null) {
+				 if (fWidgetTokenKeeper == requester)
+					 return true;
+				 if (fWidgetTokenKeeper.requestWidgetToken(this)) {
+					 fWidgetTokenKeeper= requester;
+					 return true;
+				 }
 			} else {
 				fWidgetTokenKeeper= requester;
 				return true;
@@ -1760,6 +1760,38 @@ public class TextViewer extends Viewer implements
 		return false;
 	}
 	
+	/*
+	 * @see org.eclipse.jface.text.IWidgetTokenOwnerExtension#requestWidgetToken(org.eclipse.jface.text.IWidgetTokenKeeper, int)
+	 * @since 3.0
+	 */
+	public boolean requestWidgetToken(IWidgetTokenKeeper requester, int priority) {
+		if (fTextWidget != null) {
+			if (fWidgetTokenKeeper != null) {
+				
+				if (fWidgetTokenKeeper == requester)
+					return true;
+					
+				boolean accepted= false;
+				if (fWidgetTokenKeeper instanceof IWidgetTokenKeeperExtension)  {
+					IWidgetTokenKeeperExtension extension= (IWidgetTokenKeeperExtension) fWidgetTokenKeeper;
+					accepted= extension.requestWidgetToken(this, priority);
+				} else  {
+					fWidgetTokenKeeper.requestWidgetToken(this);
+				}
+				
+				if (accepted) {
+					fWidgetTokenKeeper= requester;
+					return true;
+				}
+				
+		   } else {
+			   fWidgetTokenKeeper= requester;
+			   return true;
+		   }
+	   }
+	   return false;
+   }
+   
 	/*
 	 * @see IWidgetTokenOwner#releaseWidgetToken(IWidgetTokenKeeper)
 	 * @since 2.0
@@ -4511,5 +4543,19 @@ public class TextViewer extends Viewer implements
 			}
 		}
 		return -1;
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.ITextViewerExtension4#moveFocusToWidgetToken()
+	 * @since 3.0
+	 */
+	public boolean moveFocusToWidgetToken() {
+		if (fWidgetTokenKeeper instanceof IWidgetTokenKeeperExtension) {
+			IWidgetTokenKeeperExtension extension= (IWidgetTokenKeeperExtension) fWidgetTokenKeeper;
+			extension.setFocus(this);
+			return true;
+		} else  {
+			return false;
+		}
 	}
 }

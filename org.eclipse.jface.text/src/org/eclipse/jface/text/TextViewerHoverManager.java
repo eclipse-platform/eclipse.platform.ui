@@ -28,7 +28,16 @@ import org.eclipse.swt.widgets.Display;
  * 
  * @since 2.0
  */
-class TextViewerHoverManager extends AbstractHoverInformationControlManager implements IWidgetTokenKeeper {
+class TextViewerHoverManager extends AbstractHoverInformationControlManager implements IWidgetTokenKeeper, IWidgetTokenKeeperExtension {
+	
+	
+	/** 
+	 * Priority of the hovers managed by this manager.
+	 * Default value: <code>0</code>;
+	 * @since 3.0
+	 */
+	public final static int WIDGET_PRIORITY= 0;
+	
 	
 	/** The text viewer */
 	private TextViewer fTextViewer;
@@ -275,7 +284,7 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 	 * @see AbstractInformationControlManager#showInformationControl(Rectangle)
 	 */
 	protected void showInformationControl(Rectangle subjectArea) {
-		if (fTextViewer != null && fTextViewer.requestWidgetToken(this))
+		if (fTextViewer != null && fTextViewer.requestWidgetToken(this, WIDGET_PRIORITY))
 			super.showInformationControl(subjectArea);
 	}
 
@@ -311,6 +320,26 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 		fTextHover= null;
 		super.hideInformationControl();		
 		return true;
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.IWidgetTokenKeeperExtension#requestWidgetToken(org.eclipse.jface.text.IWidgetTokenOwner, int)
+	 * @since 3.0
+	 */
+	public boolean requestWidgetToken(IWidgetTokenOwner owner, int priority) {
+		if (priority > WIDGET_PRIORITY) {
+			fTextHover= null;
+			super.hideInformationControl();		
+			return true;
+		}
+		return false;
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.IWidgetTokenKeeperExtension#setFocus(org.eclipse.jface.text.IWidgetTokenOwner)
+	 * @since 3.0
+	 */
+	public void setFocus(IWidgetTokenOwner owner) {
 	}
 	
 	/**

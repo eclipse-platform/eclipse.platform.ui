@@ -39,7 +39,9 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension3;
 import org.eclipse.jface.text.IViewportListener;
 import org.eclipse.jface.text.IWidgetTokenKeeper;
+import org.eclipse.jface.text.IWidgetTokenKeeperExtension;
 import org.eclipse.jface.text.IWidgetTokenOwner;
+import org.eclipse.jface.text.IWidgetTokenOwnerExtension;
 import org.eclipse.jface.text.Region;
 
 
@@ -55,7 +57,16 @@ import org.eclipse.jface.text.Region;
  * 
  * @since 2.0
  */
-public class InformationPresenter extends AbstractInformationControlManager implements IInformationPresenter, IWidgetTokenKeeper {
+public class InformationPresenter extends AbstractInformationControlManager implements IInformationPresenter, IWidgetTokenKeeper, IWidgetTokenKeeperExtension {
+	
+	
+	/** 
+	 * Priority of the info controls managed by this information presenter.
+	 * Default value: <code>0</code>;
+	 * @since 3.0
+	 */
+	public static final int WIDGET_PRIORITY= 0;
+	
 	
 	/**
 	 * Internal information control closer. Listens to several events issued by its subject control
@@ -395,6 +406,11 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 			IWidgetTokenOwner owner= (IWidgetTokenOwner) fTextViewer;
 			if (owner.requestWidgetToken(this))
 				super.showInformationControl(subjectArea);
+				
+		} else if (fTextViewer instanceof IWidgetTokenOwnerExtension) {
+			IWidgetTokenOwnerExtension extension= (IWidgetTokenOwnerExtension) fTextViewer;
+			if (extension.requestWidgetToken(this, WIDGET_PRIORITY))
+				super.showInformationControl(subjectArea);
 		}
 	}
 
@@ -431,6 +447,19 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 	 */
 	public boolean requestWidgetToken(IWidgetTokenOwner owner) {
 		return false;
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.IWidgetTokenKeeperExtension#requestWidgetToken(org.eclipse.jface.text.IWidgetTokenOwner, int)
+	 */
+	public boolean requestWidgetToken(IWidgetTokenOwner owner, int priority) {
+		return false;
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.IWidgetTokenKeeperExtension#setFocus(org.eclipse.jface.text.IWidgetTokenOwner)
+	 */
+	public void setFocus(IWidgetTokenOwner owner) {
 	}
 }
 

@@ -47,7 +47,9 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension;
 import org.eclipse.jface.text.IViewportListener;
 import org.eclipse.jface.text.IWidgetTokenKeeper;
+import org.eclipse.jface.text.IWidgetTokenKeeperExtension;
 import org.eclipse.jface.text.IWidgetTokenOwner;
+import org.eclipse.jface.text.IWidgetTokenOwnerExtension;
 
 
 
@@ -55,7 +57,7 @@ import org.eclipse.jface.text.IWidgetTokenOwner;
  * The standard implementation of the <code>IContentAssistant</code> interface.
  * Usually, clients instantiate this class and configure it before using it.
  */
-public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper {
+public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper, IWidgetTokenKeeperExtension {
 	
 	/**
 	 * A generic closer class used to monitor various 
@@ -185,14 +187,6 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper {
 		 */
 		public void viewportChanged(int topIndex) {
 			hide();
-		}
-		
-		/**
-		 * Hides any open popups.
-		 */
-		protected void hide() {
-			fProposalPopup.hide();
-			fContextInfoPopup.hide();
 		}
 	};
 	
@@ -632,6 +626,14 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper {
 	final static int PROPOSAL_SELECTOR= 1;
 	final static int CONTEXT_INFO_POPUP= 2;
 	
+	/** 
+	 * The popup priority: &gt; linked position proposals and hover popups.
+	 * Default value: <code>20</code>;
+	 *  
+	 * @since 3.0
+	 */
+	public static final int WIDGET_PRIORITY= 20;
+	
 	private static final int DEFAULT_AUTO_ACTIVATION_DELAY= 500;
 	
 	private IInformationControlCreator fInformationControlCreator;
@@ -983,13 +985,7 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper {
 	 * @see IContentAssist#uninstall
 	 */
 	public void uninstall() {
-		
-		if (fProposalPopup != null)
-			fProposalPopup.hide();
-			
-		if (fContextInfoPopup != null)
-			fContextInfoPopup.hide();
-			
+		hide();
 		manageAutoActivation(false);
 		
 		if (fCloser != null) {
@@ -1067,6 +1063,9 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper {
 				if (fViewer instanceof IWidgetTokenOwner) {
 					IWidgetTokenOwner owner= (IWidgetTokenOwner) fViewer;
 					return owner.requestWidgetToken(this);
+				} else if (fViewer instanceof IWidgetTokenOwnerExtension)  {
+					IWidgetTokenOwnerExtension extension= (IWidgetTokenOwnerExtension) fViewer;
+					return extension.requestWidgetToken(this, WIDGET_PRIORITY);
 				}
 				return false;
 		}	
@@ -1404,6 +1403,39 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper {
 	 */
 	public boolean requestWidgetToken(IWidgetTokenOwner owner) {
 		return false;
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.IWidgetTokenKeeperExtension#requestWidgetToken(org.eclipse.jface.text.IWidgetTokenOwner, int)
+	 * @since 3.0
+	 */
+	public boolean requestWidgetToken(IWidgetTokenOwner owner, int priority) {
+		if (priority > WIDGET_PRIORITY) {
+			hide();
+			return true;
+		} else  {
+			return false;
+		}
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.IWidgetTokenKeeperExtension#setFocus(org.eclipse.jface.text.IWidgetTokenOwner)
+	 * @since 3.0
+	 */
+	public void setFocus(IWidgetTokenOwner owner) {
+		if (fProposalPopup != null)
+			fProposalPopup.setFocus();
+	}
+	
+	/**
+	 * Hides any open popups.
+	 */
+	protected void hide() {
+		if (fProposalPopup != null)
+			fProposalPopup.hide();
+			
+		if (fContextInfoPopup != null)
+			fContextInfoPopup.hide();
 	}
 }
 
