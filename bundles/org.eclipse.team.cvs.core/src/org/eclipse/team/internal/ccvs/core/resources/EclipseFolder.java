@@ -322,10 +322,11 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 	 */
 	public void delete() throws CVSException {
 		if (!exists()) return;
-		if (isCVSFolder()) {
-			EclipseSynchronizer.getInstance().prepareForDeletion(getIResource());
+		try {
+			resource.delete(false /*force*/, null);
+		} catch(CoreException e) {
+			throw new CVSException(e.getStatus());
 		}
-		super.delete();
 	}
 	
 	/**
