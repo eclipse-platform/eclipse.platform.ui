@@ -160,6 +160,8 @@ public final class XMLRootHandler extends DefaultHandler implements LexicalHandl
 			if (factory == null)
 				return false;
 			final SAXParser parser = createParser(factory);
+			// to support external entities specified as relative URIs (see bug 63298) 
+			contents.setSystemId("/"); //$NON-NLS-1$
 			parser.parse(contents, this);
 		} catch (final StopParsingException e) {
 			// Abort the parsing normally.  Fall through...
