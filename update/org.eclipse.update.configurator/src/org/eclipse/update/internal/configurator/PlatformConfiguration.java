@@ -16,8 +16,6 @@ import java.util.*;
 import org.eclipse.core.internal.boot.PlatformURLConnection;
 import org.eclipse.core.internal.boot.PlatformURLHandler;
 import org.eclipse.update.configurator.*;
-import org.eclipse.update.configurator.IPlatformConfiguration.*;
-import org.eclipse.update.internal.configurator.*;
 
 public class PlatformConfiguration implements IPlatformConfiguration {
 
