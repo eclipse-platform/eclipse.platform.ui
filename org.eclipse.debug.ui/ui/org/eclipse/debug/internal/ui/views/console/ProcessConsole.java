@@ -706,6 +706,7 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
         public void matchFound(PatternMatchEvent event) {
             try {
                 addHyperlink(new ConsoleLogFileHyperlink(fFilePath), event.getOffset(), event.getLength());
+                removePatternMatchListener(this);
             } catch (BadLocationException e) {
             }
         }
