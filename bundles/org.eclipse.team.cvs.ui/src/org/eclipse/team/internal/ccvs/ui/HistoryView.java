@@ -662,8 +662,8 @@ public class HistoryView extends ViewPart {
 					showHistory(base);
 				}
 			}
-		} else if(input instanceof RemoteAnnotationEditorInput) {
-			ICVSRemoteFile remote = ((RemoteAnnotationEditorInput)input).getCVSRemoteFile();
+		} else if(input instanceof RemoteFileEditorInput) {
+			ICVSRemoteFile remote = ((RemoteFileEditorInput)input).getCVSRemoteFile();
 			if(remote != null) {
 				showHistory(remote);
 			}
