@@ -29,8 +29,7 @@ package org.eclipse.ant.internal.ui.editor.outline;
  */
 
 import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Hashtable;
 
 import org.apache.tools.ant.BuildListener;
 import org.apache.tools.ant.Project;
@@ -44,7 +43,7 @@ import org.apache.tools.ant.Project;
  */
 public class AntModelProject extends Project {
 	
-	private Map fCurrentProperties= new HashMap();
+	private Hashtable fCurrentProperties= new Hashtable();
 	
 	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.Project#setNewProperty(java.lang.String, java.lang.String)
@@ -78,6 +77,22 @@ public class AntModelProject extends Project {
 		setDefault(null);
 		setDescription(null);
 		setName(""); //$NON-NLS-1$
-		fCurrentProperties= new HashMap();
+		fCurrentProperties= new Hashtable();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.apache.tools.ant.Project#getProperty(java.lang.String)
+	 */
+	public String getProperty(String name) {
+		//override as we cannot remove properties from the Apache Ant project
+		return (String)fCurrentProperties.get(name);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.apache.tools.ant.Project#getProperties()
+	 */
+	public Hashtable getProperties() {
+		//override as we cannot remove properties from the Apache Ant project
+		return fCurrentProperties;
 	}
 }
