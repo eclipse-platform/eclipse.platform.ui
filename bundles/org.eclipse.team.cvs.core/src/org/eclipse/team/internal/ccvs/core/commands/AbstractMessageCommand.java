@@ -40,7 +40,7 @@ abstract class AbstractMessageCommand extends Command {
 		ICVSResource[] mWorkResources;
 
 		// Get the folders we want to work on
-		mWorkResources = getWorkResources();
+		mWorkResources = getResourceArguments();
 		
 		// Send all folders that are already managed to the server
 		sendFileStructure(mWorkResources,monitor,false,false);

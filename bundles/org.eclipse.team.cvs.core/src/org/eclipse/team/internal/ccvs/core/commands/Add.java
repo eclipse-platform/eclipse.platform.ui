@@ -50,7 +50,7 @@ class Add extends Command {
 		ICVSResource[] mWorkResources;		
 
 		try {
-			mWorkResources = getWorkResources();
+			mWorkResources = getResourceArguments();
 		
 			for (int i=0; i<mWorkResources.length; i++) {
 				Assert.isNotNull(mWorkResources[i].getRemoteLocation(getRoot()));
@@ -80,7 +80,7 @@ class Add extends Command {
 		// Get a vistor and use it on every resource we should
 		// work on
 		vistor = new AddStructureVisitor(requestSender,getRoot(),monitor);
-		mWorkResources = getWorkResources();		
+		mWorkResources = getResourceArguments();		
 		for (int i = 0; i < mWorkResources.length; i++) {
 			mWorkResources[i].accept(vistor);
 		}
@@ -97,7 +97,7 @@ class Add extends Command {
 		ICVSFolder mFolder;
 		ICVSResource[] mWorkResources;
 		
-		mWorkResources = getWorkResources();
+		mWorkResources = getResourceArguments();
 				
 		if (!succsess) {
 			return;

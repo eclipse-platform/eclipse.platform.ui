@@ -48,7 +48,7 @@ class Remove extends Command {
 		ICVSResource[] mWorkResources;
 		
 		// Get the folders we want to work on
-		mWorkResources = getWorkResources();
+		mWorkResources = getResourceArguments();
 		
 		// Send all changed files to the server	
 		sendFileStructure(mWorkResources,monitor,true,false);		

@@ -42,7 +42,7 @@ class Update extends Command {
 		ICVSResource[] mWorkResources;
 
 		// Get the folders we want to work on
-		mWorkResources = getWorkResources();
+		mWorkResources = getResourceArguments();
 		
 		// XXX other clients send this. Should we?
 		// requestSender.writeLine("UseUnchanged");
@@ -63,7 +63,7 @@ class Update extends Command {
 	protected void finished(boolean success) throws CVSException {
 		if (success && Util.isOption(getLocalOptions(), Client.PRUNE_OPTION)) {
 			// Get the folders we want to work on
-			ICVSResource[] mWorkResources = getWorkResources();
+			ICVSResource[] mWorkResources = getResourceArguments();
 			// Delete empty directories
 			ICVSResourceVisitor visitor = new PruneFolderVisitor();
 			for (int i=0; i<mWorkResources.length; i++) {

@@ -38,21 +38,26 @@ public class Tag extends Command {
 	}
 
 	/**
+	 * Convert all arguments except for first, to resource handles. The first argument is the
+	 * tag name.
+	 */
+	protected void convertArgumentsToResourceHandles() throws CVSException {
+		setResourceArguments(computeWorkResources(1));
+	}
+
+	/**
 	 * @see Command#sendRequestsToServer(IProgressMonitor)
 	 */
-	protected void sendRequestsToServer(IProgressMonitor monitor)
-		throws CVSException {
+	protected void sendRequestsToServer(IProgressMonitor monitor) throws CVSException {
 
 		// Either we got parameters or the folder we are in is an cvsFolder
-		Assert.isTrue(getArguments().length > 1  ||
-					  getRoot().isCVSFolder()); 
-		
+		Assert.isTrue(getArguments().length > 1 || getRoot().isCVSFolder());
+
 		// Get the folders we want to work on, ignoring the first argument
-		ICVSResource[] mWorkResources = getWorkResources(1);
-		
+		ICVSResource[] mWorkResources = getResourceArguments();
+
 		// Send all folders that are already managed to the server
-		sendFileStructure(mWorkResources,monitor,false,false);
+		sendFileStructure(mWorkResources, monitor, false, false);
 		sendHomeFolder();
 	}
 }
-

@@ -81,7 +81,7 @@ class Checkout extends Command {
 			ICVSResource[] resources;
 			if (dir == null)
 				// Get the folders we want to work on from the arguments
-				resources = getWorkResources();
+				resources = getResourceArguments();
 			else
 				// Create the folder we want to work on from the -d option
 				resources = new ICVSResource[] {getRoot().getFolder(dir)};

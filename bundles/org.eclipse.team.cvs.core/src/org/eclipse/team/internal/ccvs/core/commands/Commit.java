@@ -50,7 +50,7 @@ class Commit extends Command {
 		visitor = new FileStructureVisitor(requestSender,getRoot(),monitor,true,false);
 
 		// Get the folders we want to work on
-		mWorkResources = getWorkResources();
+		mWorkResources =getResourceArguments();
 		checkArgumentsManaged(mWorkResources);
 		
 		// Send all changed files to the server	
@@ -66,7 +66,6 @@ class Commit extends Command {
 		for (int i = 0; i < changedFiles.length; i++) {
 			requestSender.sendArgument(changedFiles[i].getRelativePath(getRoot()));
 		}
- 
 	}
 	
 	/**
@@ -76,7 +75,4 @@ class Commit extends Command {
 	protected void sendArguments() throws CVSException {
 		return;
 	}
-
-}
-
-	
+}	

@@ -31,17 +31,9 @@ class Diff extends AbstractMessageCommand {
 	 * an error, because it just does so when there is a difference between 
 	 * the cecked files.	
 	 */
-	public void execute (
-		String[] globalOptions, 
-		String[] localOptions, 
-		String[] arguments, 
-		ICVSFolder mRoot,
-		IProgressMonitor monitor, 
-		PrintStream messageOut) 
-			throws CVSException {
-
+	public void execute(String[] globalOptions, String[] localOptions, String[] arguments, ICVSFolder mRoot, IProgressMonitor monitor, PrintStream messageOut) throws CVSException {
 		try {	
-			super.execute(globalOptions,localOptions,arguments,mRoot,monitor,messageOut);
+			super.execute(globalOptions, localOptions, arguments, mRoot, monitor, messageOut);
 		} catch (CVSServerException e) {
 			throw new CVSDiffException();
 		}
@@ -60,6 +52,4 @@ class Diff extends AbstractMessageCommand {
 	public String getRequestName() {
 		return RequestSender.DIFF;
 	}
-
 }
-

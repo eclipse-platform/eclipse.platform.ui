@@ -4,7 +4,7 @@ package org.eclipse.team.internal.ccvs.core.commands;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
- 
+
 import java.io.PrintStream;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -28,16 +28,24 @@ import org.eclipse.team.internal.ccvs.core.util.Assert;
  * the current command are derived from this class.
  */
 abstract class Command implements ICommand {
-	
+
+	// cvs -n -Q update -r tagname folder1 folder2
+	//       ------            ------------ -----------------
+	//          |                     |                  |
+	//    globalOptions         |             arguments
+	//                         localOptions
 	private String[] globalOptions;
 	private String[] localOptions;
 	private String[] arguments;
-	
+
+	// arguments converted to CVS resource handles
+	private ICVSResource[] resourceArguments;
+
 	private ICVSFolder mRoot;
-	
+
 	protected final ResponseDispatcher responseDispatcher;
 	protected final RequestSender requestSender;
-	
+
 	/**
 	 * The CommandDispatcher, the ResponseDispatcher and
 	 * the RequestSender are the three major objects in
@@ -46,83 +54,40 @@ abstract class Command implements ICommand {
 	 * ResponseDispatcher is used to process the response form the server.
 	 * RequestSender is used to send requests to the server.
 	 */
-	public Command(ResponseDispatcher responseDispatcher,
-					RequestSender requestSender) {
-						
+	public Command(ResponseDispatcher responseDispatcher, RequestSender requestSender) {
 		this.responseDispatcher = responseDispatcher;
 		this.requestSender = requestSender;
 	}
-	
+
 	/**
 	 * Execute the given command. Do so by invoking the sendRequestsToServer method.
 	 * Does handle the work with the progress-monitor.
 	 * 
 	 * @see ICommand#execute(Connection, String[], String[], ICVSResource, OutputStream)
 	 */
-	public void execute (
-		String[] globalOptions, 
-		String[] localOptions, 
-		String[] arguments, 
-		ICVSFolder mRoot,
-		IProgressMonitor monitor, 
-		PrintStream messageOut) 
-			throws CVSException {
-		
-		// Record the arguments so subclass can access them using the get methods 
+	public void execute(String[] globalOptions, String[] localOptions, String[] arguments, ICVSFolder mRoot, IProgressMonitor monitor, PrintStream messageOut) throws CVSException {
+
+		// Remember the arguments such that subclasses can access them using the get methods 
 		this.mRoot = mRoot;
 		this.globalOptions = globalOptions;
 		this.localOptions = localOptions;
 		this.arguments = arguments;
-		
-		try {
-			
-			monitor = Policy.monitorFor(monitor);
-			monitor.beginTask(Policy.bind("Command.server"), 100);			
-			Policy.checkCanceled(monitor);
-			
-			// Ensure that the commands run with the latest contents of the
-			// CVS subdirectory sync files and not the cached values.
-			Synchronizer.getInstance().reload(mRoot, monitor);
-			
-			// Send the options to the server (the command itself has to care
-			// about the arguments)
-			// It is questionable if this is going to stay here, because
-			// NOTE: because why?
-			sendGlobalOptions();
-			sendLocalOptions();
-			
-			// Guess that set up contributes 20% of work.
-			sendRequestsToServer(Policy.subMonitorFor(monitor, 20));
-			Policy.checkCanceled(monitor);
-			
-			// Send all arguments to the server
-			sendArguments();
-			// Send the request name to the server
-			requestSender.writeLine(getRequestName());
-			
-			try {
-				// Processing responses contributes 70% of work.
-				responseDispatcher.manageResponse(Policy.subMonitorFor(monitor, 70), mRoot, messageOut);
 
-			} catch (CVSException e) {
-				finished(false);
-				throw e;
-			}
-			// Finished adds last 10% of work.
-			finished(true);
-								
-			monitor.worked(10);
-		} finally {
-			
-			// This will automatically persist any changes that were made to the
-			// sync info while running a command.
-			Synchronizer.getInstance().save(monitor);
-			
-			monitor.done();
-		}
-
+		// Subclasses should overide the conversion method if certain arguments should not be
+		// considered as a resource handle. For example, for the tag command the first argument
+		// is the tag name.
+		convertArgumentsToResourceHandles();
+		execute(monitor, messageOut);
 	}
-	
+
+	/**
+	 * By default, convert all arguments to resource handles. Subclasses can overide if certain
+	 * arguments should not be converted to handles.
+	 */
+	protected void convertArgumentsToResourceHandles() throws CVSException {
+		setResourceArguments(computeWorkResources(0));
+	}
+
 	/**
 	 * Abstract method to send the complete arguments of the command to the server.
 	 * The command itself is not sent here but in the execute method.
@@ -143,7 +108,7 @@ abstract class Command implements ICommand {
 		if (arguments == null) {
 			return;
 		}
-		for (int i= 0; i < arguments.length; i++) {
+		for (int i = 0; i < arguments.length; i++) {
 			requestSender.sendArgument(arguments[i]);
 		}
 	}
@@ -154,11 +119,11 @@ abstract class Command implements ICommand {
 	protected void sendLocalOptions() throws CVSException {
 		if (localOptions == null)
 			return;
-		for (int i= 0; i < localOptions.length; i++) {
+		for (int i = 0; i < localOptions.length; i++) {
 			requestSender.sendArgument(localOptions[i]);
 		}
 	}
-	
+
 	/**
 	 * Sends the global options to the server.
 	 * 
@@ -170,13 +135,13 @@ abstract class Command implements ICommand {
 		if (globalOptions == null) {
 			return;
 		}
-		for (int i= 0; i < globalOptions.length; i++) {
+		for (int i = 0; i < globalOptions.length; i++) {
 			if (globalOptions[i] != null) {
 				requestSender.sendGlobalOption(globalOptions[i]);
 			}
 		}
 	}
-	
+
 	/**
 	 * Send the homefolder as last thing before you send (eventually the
 	 * arguments and then) the command.
@@ -186,10 +151,10 @@ abstract class Command implements ICommand {
 	 */
 	protected void sendHomeFolder(boolean lookLocal) throws CVSException {
 		if (lookLocal && mRoot.isCVSFolder()) {
-			requestSender.sendDirectory(Client.CURRENT_LOCAL_FOLDER, mRoot.getRemoteLocation(mRoot));		
+			requestSender.sendDirectory(Client.CURRENT_LOCAL_FOLDER, mRoot.getRemoteLocation(mRoot));
 		} else {
 			requestSender.sendConstructedDirectory(Client.CURRENT_LOCAL_FOLDER, Client.CURRENT_REMOTE_FOLDER);
-		}		
+		}
 	}
 
 	/**
@@ -201,94 +166,6 @@ abstract class Command implements ICommand {
 	}
 
 	/**
-	 * Gets the getGlobalOptions
-	 * @return Returns a String[]
-	 */
-	protected String[] getGlobalOptions() {
-		return globalOptions;
-	}
-	
-	/**
-	 * Gets the arguments
-	 * @return Returns a String[]
-	 */
-	protected String[] getArguments() {
-		return arguments;
-	}
-
-	/**
-	 * Gets the localOptions
-	 * @return Returns a String[]
-	 */
-	protected String[] getLocalOptions() {
-		return localOptions;
-	}
-	
-	/**
-	 * getRoot returns the folder the client was called with. 
-	 * (Sometimes that is not the folder you want to work with)
-	 * 
-	 * @return Returns a ICVSResource
-	 */
-	protected ICVSFolder getRoot() throws CVSException {
-		
-		if (!mRoot.isFolder()) {
-			throw new CVSException(Policy.bind("Command.invalidRoot", new Object[] {mRoot.toString()}));
-		}
-		
-		return mRoot;
-	}
-	
-	/**
-	 * Takes all the arguments and gives them back as resources from the
-	 * root. This represents all the resources the client should work on.
-	 * 
-	 * If there are no arguments gives the root folder back only.
-	 */
-	protected ICVSResource[] getWorkResources() throws CVSException {
-		return getWorkResources(0);
-	}
-	
-	/**
-	 * Work like getWorkResources() but do not look at the first 
-	 * skip elements when creating the resources (this is useful when
-	 * the first skip arguments of a command are not files but something
-	 * else)
-	 * 
-	 * @see Command#getWorkResources()
-	 */
-	/**
-	 * Work like getWorkResources() but do not look at the first 
-	 * skip elements when creating the resources (this is useful when
-	 * the first skip arguments of a command are not files but something
-	 * else)
-	 * 
-	 * @see Command#getWorkResources()
-	 */
-	protected ICVSResource[] getWorkResources(int skip) throws CVSException {
-		
-		ICVSResource[] result;
-		
-		Assert.isTrue(arguments.length >= skip);
-		
-		if (arguments.length == skip) {
-			result = new ICVSResource[]{mRoot};
-		} else {
-			result = new ICVSResource[arguments.length - skip];
-			for (int i = skip; i<arguments.length; i++) {
-				try {
-					result[i - skip] = mRoot.getChild(arguments[i]);
-				} catch (CVSFileNotFoundException e) {
-					// XXX Temporary fix to allow non-managed resources to be used as arguments
-					result[i - skip] = mRoot.getFile(arguments[i]);
-				}
-			}
-		}
-				
-		return result;
-	}
-	
-	/**
 	 * If mResource is a folder:<br>
 	 * Send all Directory under mResource as arguments to the server<br>
 	 * If mResource is a file:<br>
@@ -298,39 +175,29 @@ abstract class Command implements ICommand {
 	 * 
 	 * @param modifiedOnly sends files that are modified only to the server
 	 * @param emptyFolders sends the folder-entrie even if there is no file 
-	 		  to send in it
+	 *  to send in it
 	 */
-	protected void sendFileStructure(ICVSResource mResource, 
-									IProgressMonitor monitor,
-									boolean modifiedOnly,
-									boolean emptyFolders) throws CVSException {
-		
+	protected void sendFileStructure(ICVSResource mResource, IProgressMonitor monitor, boolean modifiedOnly, boolean emptyFolders) throws CVSException {
+
 		FileStructureVisitor fsVisitor;
-		
-		fsVisitor = new FileStructureVisitor(requestSender,mRoot,monitor,modifiedOnly,emptyFolders);
-		
+
+		fsVisitor = new FileStructureVisitor(requestSender, mRoot, monitor, modifiedOnly, emptyFolders);
+
 		// FIXME: The accept should have an IProgressMonitor argment, not the above constructor
 		mResource.accept(fsVisitor);
 
 	}
-	
+
 	/**
 	 * Send an array of Resources.
 	 * 
 	 * @see Command#sendFileStructure(ICVSResource,IProgressMonitor,boolean,boolean,boolean)
 	 */
-	protected void sendFileStructure(ICVSResource[] mResources, 
-									IProgressMonitor monitor,
-									boolean modifiedOnly,
-									boolean emptyFolders) throws CVSException {
-		
+	protected void sendFileStructure(ICVSResource[] mResources, IProgressMonitor monitor, boolean modifiedOnly, boolean emptyFolders) throws CVSException {
 		checkArgumentsManaged(mResources);
-		
-		for (int i=0; i<mResources.length; i++) {
-			sendFileStructure(mResources[i],
-								monitor,
-								modifiedOnly,
-								emptyFolders);
+
+		for (int i = 0; i < mResources.length; i++) {
+			sendFileStructure(mResources[i], monitor, modifiedOnly, emptyFolders);
 		}
 	}
 
@@ -342,20 +209,160 @@ abstract class Command implements ICommand {
 	 * 
 	 * @throws CVSException if not all the arguments are
 	 *          managed
-	 */	
+	 */
 	protected void checkArgumentsManaged(ICVSResource[] mWorkResources) throws CVSException {
-	
-		for (int i=0; i<mWorkResources.length; i++) {
+
+		for (int i = 0; i < mWorkResources.length; i++) {
 			if (mWorkResources[i].isFolder()) {
 				if (!((ICVSFolder) mWorkResources[i]).isCVSFolder()) {
-					throw new CVSException("Argument " + mWorkResources[i].getName() + " is not managed");
+					throw new CVSException("Argument " + mWorkResources[i].getName() + "is not managed");
 				}
 			} else {
 				if (!mWorkResources[i].getParent().isCVSFolder()) {
-					throw new CVSException("Argument " + mWorkResources[i].getParent() + " is not managed");
-				}					
-			}	
-		}	
+					throw new CVSException("Argument " + mWorkResources[i].getParent() + "is not managed");
+				}
+			}
+		}
+	}
+
+	/**
+	 * Set the resource handles used for this command.
+	 */
+	final protected void setResourceArguments(ICVSResource[] resources) {
+		this.resourceArguments = resources;
+	}
+
+	/**
+	 * Answers <code>ICVSResource</code> handles for the command's arguments. The skip parameter can be
+	 * used to ignore the N first arguments in the argument list.
+	 */
+	final protected ICVSResource[] computeWorkResources(int skip) throws CVSException {
+
+		ICVSResource[] result;
+
+		Assert.isTrue(arguments.length >= skip);
+
+		if (arguments.length == skip) {
+			result = new ICVSResource[] { mRoot };
+		} else {
+			result = new ICVSResource[arguments.length - skip];
+			for (int i = skip; i < arguments.length; i++) {
+				try {
+					result[i - skip] = mRoot.getChild(arguments[i]);
+				} catch (CVSFileNotFoundException e) {
+					// XXX Temporary fix to allow non-managed resources to be used as arguments
+					result[i - skip] = mRoot.getFile(arguments[i]);
+				}
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * Gets the getGlobalOptions
+	 * @return Returns a String[]
+	 */
+	final protected String[] getGlobalOptions() {
+		return globalOptions;
+	}
+
+	/**
+	 * Gets the arguments
+	 * @return Returns a String[]
+	 */
+	final protected String[] getArguments() {
+		return arguments;
+	}
+
+	/**
+	 * Gets the localOptions
+	 * @return Returns a String[]
+	 */
+	final protected String[] getLocalOptions() {
+		return localOptions;
+	}
+
+	/**
+	 * getRoot returns the folder the client was called with. 
+	 * (Sometimes that is not the folder you want to work with)
+	 * 
+	 * @return Returns a ICVSResource
+	 */
+	final protected ICVSFolder getRoot() throws CVSException {
+		if (!mRoot.isFolder()) {
+			throw new CVSException(Policy.bind("Command.invalidRoot", new Object[] { mRoot.toString()}));
+		}
+		return mRoot;
+	}
+
+	/**
+	 * Returns the resource handles for this command.
+	 */
+	final protected ICVSResource[] getResourceArguments() {
+		return this.resourceArguments;
+	}
+
+	/**
+	 * Executes the given command given command.
+	 */
+	private void execute(IProgressMonitor monitor, PrintStream messageOut) throws CVSException {
+		try {
+			monitor = Policy.monitorFor(monitor);
+			monitor.beginTask(Policy.bind("Command.server"), 100);
+			Policy.checkCanceled(monitor);
+
+			// Ensure that the commands run with the latest contents of the CVS subdirectory sync files 
+			// and not the cached values. Allow 10% of work.
+			reloadSyncInfoForArguments(Policy.subMonitorFor(monitor, 10));
+			Policy.checkCanceled(monitor);
+
+			// Send the options to the server (the command itself has to care
+			// about the arguments)
+			sendGlobalOptions();
+			sendLocalOptions();
+
+			// Guess that set up contributes 10% of work.
+			sendRequestsToServer(Policy.subMonitorFor(monitor, 10));
+			Policy.checkCanceled(monitor);
+
+			// Send all arguments to the server
+			sendArguments();
+
+			// Send the request name to the server
+			requestSender.writeLine(getRequestName());
+
+			try {
+				// Processing responses contributes 70% of work.
+				responseDispatcher.manageResponse(Policy.subMonitorFor(monitor, 70), mRoot, messageOut);
+			} catch (CVSException e) {
+				finished(false);
+				throw e;
+			}
+			// Finished adds last 10% of work.
+			finished(true);
+
+			monitor.worked(10);
+		} finally {
+			// This will automatically persist any changes that were made to the
+			// sync info while running a command.
+			Synchronizer.getInstance().save(monitor);
+			monitor.done();
+		}
+	}
+	
+	/**
+	 * Reload the sync info for all arguments this command will be running on.
+	 */
+	private void reloadSyncInfoForArguments(IProgressMonitor monitor) throws CVSException {
+		try {
+			ICVSResource[] resources = getResourceArguments();
+			monitor = Policy.monitorFor(monitor);
+			monitor.beginTask("", 100 * resources.length);
+			for (int i = 0; i < resources.length; i++) {
+				Synchronizer.getInstance().reload(resourceArguments[i], Policy.subMonitorFor(monitor, 100));				
+			}
+		} finally {
+			monitor.done();
+		}
 	}
 }
-
