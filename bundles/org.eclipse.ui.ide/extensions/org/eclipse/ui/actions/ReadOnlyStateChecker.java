@@ -39,6 +39,8 @@ public class ReadOnlyStateChecker {
 
     private boolean cancelSelected = false;
 
+    private boolean ignoreLinkedResources = false;
+    
     private String READ_ONLY_EXCEPTION_MESSAGE = IDEWorkbenchMessages
             .getString("ReadOnlyCheck.problems"); //$NON-NLS-1$
 
@@ -65,6 +67,9 @@ public class ReadOnlyStateChecker {
 
         if (resourceToCheck.getType() == IResource.FILE)
             selectedChildren.add(resourceToCheck);
+        else if (getIgnoreLinkedResources() && resourceToCheck.isLinked()) {
+            selectedChildren.add(resourceToCheck);
+        }
         else {
             //Now check below
             int childCheck = checkReadOnlyResources(
@@ -135,7 +140,7 @@ public class ReadOnlyStateChecker {
 
         for (int i = 0; i < itemsToCheck.length; i++) {
             IResource resourceToCheck = itemsToCheck[i];
-            if (!yesToAllSelected && resourceToCheck.isReadOnly()) {
+            if (!yesToAllSelected && shouldCheck(resourceToCheck) && resourceToCheck.isReadOnly()) {
                 int action = queryYesToAllNoCancel(resourceToCheck);
                 if (action == IDialogConstants.YES_ID) {
                     boolean childResult = checkAcceptedResource(
@@ -174,6 +179,20 @@ public class ReadOnlyStateChecker {
     }
 
     /**
+	 * Returns whether the given resource should be checked for read-only state.
+	 * 
+	 * @param resourceToCheck the resource to check
+	 * @return <code>true</code> to check it, <code>false</code> to skip it
+	 */
+	private boolean shouldCheck(IResource resourceToCheck) {
+        if (ignoreLinkedResources) {
+        	if (resourceToCheck.isLinked())
+        		return false;
+        }
+        return true;
+    }
+
+	/**
      * Open a message dialog with Yes No, Yes To All and Cancel buttons. Return the
      * code that indicates the selection.
      * @return int 
@@ -208,5 +227,26 @@ public class ReadOnlyStateChecker {
         if (result == 2)
             return IDialogConstants.NO_ID;
         return IDialogConstants.CANCEL_ID;
+    }
+    
+    /**
+     * Returns whether to ignore linked resources.
+     * 
+     * @return <code>true</code> to ignore linked resources, <code>false</code> to consider them
+     * @since 3.1
+     */
+    public boolean getIgnoreLinkedResources() {
+    	return ignoreLinkedResources;
+    }
+
+    /**
+     * Sets whether to ignore linked resources.
+     * The default is <code>false</code>.
+     * 
+     * @param ignore <code>true</code> to ignore linked resources, <code>false</code> to consider them
+     * @since 3.1
+     */
+    public void setIgnoreLinkedResources(boolean ignore) {
+    	ignoreLinkedResources = ignore;
     }
 }

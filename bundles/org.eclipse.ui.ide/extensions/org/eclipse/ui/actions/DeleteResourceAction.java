@@ -553,7 +553,7 @@ public class DeleteResourceAction extends SelectionListenerAction {
                 IDEWorkbenchMessages.getString("DeleteResourceAction.title1"), //$NON-NLS-1$
                 IDEWorkbenchMessages
                         .getString("DeleteResourceAction.readOnlyQuestion")); //$NON-NLS-1$
-
+        checker.setIgnoreLinkedResources(true);
         return checker.checkReadOnlyResources(resources);
     }
 
