@@ -19,6 +19,7 @@ import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -80,7 +81,7 @@ public class AntMainTab extends ExternalToolsMainTab {
 		setControl(mainComposite);
 		WorkbenchHelp.setHelp(mainComposite, IAntUIHelpContextIds.ANT_MAIN_TAB);
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
+		layout.numColumns = 1;
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
 		mainComposite.setLayout(layout);
 		mainComposite.setLayoutData(gridData);
@@ -90,6 +91,7 @@ public class AntMainTab extends ExternalToolsMainTab {
 		createArgumentComponent(mainComposite);
 		createVerticalSpacer(mainComposite, 2);
 		createCaptureOutputComponent(mainComposite);
+		Dialog.applyDialogFont(parent);
 	}
 	
 	/**
