@@ -52,6 +52,7 @@ public class StructureDiffViewer extends DiffTreeViewer {
 	private ChangePropertyAction fSmartAction;
 	private IContentChangeListener fContentChangedListener;
 	private ICompareInputChangeListener fThreeWayInputChangedListener;
+	private CompareViewerSwitchingPane fParent;
 		
 	/**
 	 * Creates a new viewer for the given SWT tree control with the specified configuration.
@@ -61,6 +62,9 @@ public class StructureDiffViewer extends DiffTreeViewer {
 	 */
 	public StructureDiffViewer(Tree tree, CompareConfiguration configuration) {
 		super(tree, configuration);
+		Composite c= tree.getParent();
+		if (c instanceof CompareViewerSwitchingPane)
+			fParent= (CompareViewerSwitchingPane) c;
 		initialize();
 	}
 	
@@ -72,6 +76,8 @@ public class StructureDiffViewer extends DiffTreeViewer {
 	 */
 	public StructureDiffViewer(Composite parent, CompareConfiguration configuration) {
 		super(parent, configuration);
+		if (parent instanceof CompareViewerSwitchingPane)
+			fParent= (CompareViewerSwitchingPane) parent;
 		initialize();
 	}
 	
@@ -266,9 +272,12 @@ public class StructureDiffViewer extends DiffTreeViewer {
 		
 		preDiffHook(fAncestorStructure, fLeftStructure, fRightStructure);
 							
+		String message= null;
+		
 		if ((fThreeWay && fAncestorStructure == null) || fLeftStructure == null || fRightStructure == null) {
 			// could not get structure of one (or more) of the legs
 			fRoot= null;
+			message= CompareMessages.getString("StructureDiffViewer.StructureError");	//$NON-NLS-1$
 			
 		} else {	// calculate difference of the two (or three) structures
 
@@ -287,13 +296,21 @@ public class StructureDiffViewer extends DiffTreeViewer {
 			
 			fRoot= (IDiffContainer) fDifferencer.findDifferences(fThreeWay, null, null,
 					fAncestorStructure, fLeftStructure, fRightStructure);
-			
-			if (fStructureCreator.canRewriteTree()) {
-				boolean smart= Utilities.getBoolean(getCompareConfiguration(), SMART, false);
-				if (smart && fRoot != null)
-					fStructureCreator.rewriteTree(fDifferencer, fRoot);
+					
+			if (fRoot == null || fRoot.getChildren().length == 0) {
+				message= CompareMessages.getString("StructureDiffViewer.NoStructuralDifferences");	//$NON-NLS-1$
+			} else {
+				if (fStructureCreator.canRewriteTree()) {
+					boolean smart= Utilities.getBoolean(getCompareConfiguration(), SMART, false);
+					if (smart && fRoot != null)
+						fStructureCreator.rewriteTree(fDifferencer, fRoot);
+				}
 			}
-		}	
+			
+		}
+		if (fParent != null)
+			fParent.setTitleArgument(message);
+			
 		refresh(getRoot());
 	}
 	

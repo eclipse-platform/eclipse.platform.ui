@@ -37,6 +37,7 @@ public class Patcher {
 	private int fStripPrefixSegments;
 	private int fFuzz;
 	private boolean fIgnoreWhitespace;
+	private boolean fReverse= false;
 	
 	
 	Patcher() {
@@ -93,6 +94,17 @@ public class Patcher {
 		return false;
 	}
 	
+	/**
+	 * Returns <code>true</code> if new value differs from old.
+	 */
+	boolean setReversed(boolean reverse) {
+		if (fReverse != reverse) {
+			fReverse= reverse;
+			return true;
+		}
+		return false;
+	}
+		
 	/**
 	 * Returns <code>true</code> if new value differs from old.
 	 */
@@ -609,12 +621,13 @@ public class Patcher {
 			}
 			
 			if (found) {
-				//System.out.println("patched hunk at offset: " + (shift-oldShift));
+				System.out.println("patched hunk at offset: " + (shift-oldShift));
 				shift+= doPatch(hunk, lines, shift);
 			} else {
-				if (failedHunks != null)
+				if (failedHunks != null) {
+					System.out.println("failed hunk");
 					failedHunks.add(hunk);
-				// System.out.println("hunk ignored");
+				}
 			}
 		}
 		return shift;
@@ -628,8 +641,8 @@ public class Patcher {
 			String s= hunk.fLines[i];
 			Assert.isTrue(s.length() > 0);
 			String line= s.substring(1);
-			switch (s.charAt(0)) {
-			case ' ':	// context lines
+			char controlChar= s.charAt(0);
+			if (controlChar == ' ') {	// context lines
 				while (true) {
 					if (pos < 0 || pos >= lines.size())
 						return false;
@@ -642,8 +655,8 @@ public class Patcher {
 						return false;
 					pos++;
 				}
-				break;
-			case '-':	// deleted lines
+			} else if ((!fReverse && controlChar == '-') || (fReverse && controlChar == '+')) {
+				// deleted lines
 				while (true) {
 					if (pos < 0 || pos >= lines.size())
 						return false;
@@ -656,10 +669,11 @@ public class Patcher {
 						return false;
 					pos++;
 				}
-				break;
-			case '+':	// added lines
-				break;
-			}
+			} else if ((!fReverse && controlChar == '+') || (fReverse && controlChar == '-')) {
+				// added lines
+				// we don't have to do anything for a 'try'
+			} else
+				Assert.isTrue(false, "tryPatch: unknown control charcter: " + controlChar); //$NON-NLS-1$
 		}
 		return true;
 	}
@@ -670,33 +684,32 @@ public class Patcher {
 			String s= hunk.fLines[i];
 			Assert.isTrue(s.length() > 0);
 			String line= s.substring(1);
-			char type= s.charAt(0);
-			switch (type) {
-			case ' ':	// context lines
+			char controlChar= s.charAt(0);
+			if (controlChar == ' ') {	// context lines
 				while (true) {
-					Assert.isTrue(pos < lines.size(), "3"); //$NON-NLS-1$
+					Assert.isTrue(pos < lines.size(), "doPatch: inconsistency in context"); //$NON-NLS-1$
 					if (linesMatch(line, (String) lines.get(pos))) {
 						pos++;
 						break;
 					}
 					pos++;
 				}
-				break;
-			case '-':	// deleted lines
+			} else if ((!fReverse && controlChar == '-') || (fReverse && controlChar == '+')) {
+				// deleted lines				
 				while (true) {
-					Assert.isTrue(pos < lines.size(), "3"); //$NON-NLS-1$
+					Assert.isTrue(pos < lines.size(), "doPatch: inconsistency in deleted lines"); //$NON-NLS-1$
 					if (linesMatch(line, (String) lines.get(pos))) {
 						break;
 					}
 					pos++;
 				}
 				lines.remove(pos);
-				break;			
-			case '+':	// added lines
+			} else if ((!fReverse && controlChar == '+') || (fReverse && controlChar == '-')) {
+				// added lines
 				lines.add(pos,  line);
 				pos++;
-				break;
-			}
+			} else
+				Assert.isTrue(false, "doPatch: unknown control charcter: " + controlChar); //$NON-NLS-1$
 		}
 		return hunk.fNewLength - hunk.fOldLength;
 	}

@@ -62,6 +62,7 @@ import org.eclipse.compare.structuremergeviewer.*;
 	private Combo fStripPrefixSegments;
 	private CompareViewerSwitchingPane fHunkViewer;
 	private Button fIgnoreWhitespaceButton;
+	private Button fReversePatchButton;
 	private Text fFuzzField;
 	
 	private Image fNullImage;
@@ -188,11 +189,12 @@ import org.eclipse.compare.structuremergeviewer.*;
 		Group group= new Group(parent, SWT.NONE);
 		group.setText("Patch Options");
 		GridLayout layout= new GridLayout();
-		layout.numColumns= 7;
+		layout.numColumns= 5;
 		group.setLayout(layout);
 		group.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
 		//fPatchFileGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	
+		// 1st row
 		new Label(group, SWT.NONE).setText("Ignore leading path name segments:");
 
 		fStripPrefixSegments= new Combo(group, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.SIMPLE);
@@ -203,6 +205,12 @@ import org.eclipse.compare.structuremergeviewer.*;
 		
 		addSpacer(group);
 		
+		fReversePatchButton= new Button(group, SWT.CHECK);
+		fReversePatchButton.setText("Reverse Patch");
+		
+		addSpacer(group);
+		
+		// 2nd row
 		Label l= new Label(group, SWT.NONE);
 		l.setText("Maximum fuzz factor:");
 		l.setToolTipText("Allow context to shift this number of lines from the original place");
@@ -218,9 +226,8 @@ import org.eclipse.compare.structuremergeviewer.*;
 		fIgnoreWhitespaceButton.setText("Ignore Whitespace");
 		
 		addSpacer(group);
-		
+				
 		// register listeners
-		
 			
 		if (fStripPrefixSegments != null) 
 			fStripPrefixSegments.addSelectionListener(
@@ -231,6 +238,14 @@ import org.eclipse.compare.structuremergeviewer.*;
 					}
 				}
 			);
+		fReversePatchButton.addSelectionListener(
+			new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					if (patcher.setReversed(fReversePatchButton.getSelection()))
+						updateTree();
+				}
+			}
+		);
 		fIgnoreWhitespaceButton.addSelectionListener(
 			new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {

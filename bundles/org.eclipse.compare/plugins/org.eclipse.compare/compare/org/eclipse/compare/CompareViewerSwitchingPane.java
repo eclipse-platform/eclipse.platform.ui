@@ -4,6 +4,8 @@
  */
 package org.eclipse.compare;
 
+import java.text.MessageFormat;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
@@ -34,6 +36,8 @@ public abstract class CompareViewerSwitchingPane extends CompareViewerPane
 	private ListenerList fSelectionListeners= new ListenerList();
 	private ListenerList fOpenListeners= new ListenerList();
 	private boolean fControlVisibility= false;
+	private String fTitle;
+	private String fTitleArgument;
 
 
 	/**
@@ -245,7 +249,26 @@ public abstract class CompareViewerSwitchingPane extends CompareViewerPane
 			}	
 		}
 			
-		setText(title != null ? title : ""); //$NON-NLS-1$
+		fTitle= title;
+		updateTitle();
+	}
+	
+	public void setTitleArgument(String argument) {
+		fTitleArgument= argument;
+		updateTitle();
+	}
+
+	private void updateTitle() {
+		if (fTitle != null) {
+			if (fTitleArgument != null) {
+				String format= CompareMessages.getString("CompareViewerSwitchingPane.Titleformat");	//$NON-NLS-1$
+				String t= MessageFormat.format(format, new String[] { fTitle, fTitleArgument } );
+				setText(t);
+			} else
+				setText(fTitle);			
+		} else {
+			setText("");	//$NON-NLS-1$
+		}
 	}
 
 	public Object getInput() {
