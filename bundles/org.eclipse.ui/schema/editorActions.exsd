@@ -123,7 +123,7 @@ The active editor is passed to the delegate by invoking
          <attribute name="definitionId" type="string">
             <annotation>
                <documentation>
-                  the action definition unique identifier that this action is semantically similar to. Allows the key binding service to assign an accelerator key to this action. See the extension points &lt;a href=&quot;org_eclipse_ui_actionDefinitions.html&quot;&gt;org.eclipse.ui.actionDefinitions&lt;/a&gt; and &lt;a href=&quot;org_eclipse_ui_acceleratorSets.html&quot;&gt;org.eclipse.ui.acceleratorSets&lt;/a&gt; for more information.
+                  Specifies the command that this action will handle. By specifying and action, the key binding service can assign a key sequence to this action. See the extension point &lt;a href=&quot;org_eclipse_ui_commands.html&quot;&gt;org.eclipse.ui.commands&lt;/a&gt; for more information.
                </documentation>
             </annotation>
          </attribute>

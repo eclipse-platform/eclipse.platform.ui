@@ -6,19 +6,21 @@
          <meta.schema plugin="org.eclipse.ui" id="commands" name="Commands"/>
       </appInfo>
       <documentation>
-         
+         &lt;p&gt;
+The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to declare commands and command categories, using the &lt;code&gt;command&lt;/code&gt; and &lt;code&gt;category&lt;/code&gt; elements. Through this extension point, one can also assign key sequences to commands using the &lt;code&gt;keyBinding&lt;/code&gt; element. Key sequences are bound to commands based on key configurations and scopes, which are declared here as well, using the &lt;code&gt;keyConfiguration&lt;/code&gt; and &lt;code&gt;scope&lt;/code&gt; elements.
+&lt;/p&gt;
       </documentation>
    </annotation>
 
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="activeGestureConfiguration"/>
+<!--element ref="activeGestureConfiguration"/-->
             <element ref="activeKeyConfiguration"/>
             <element ref="category"/>
             <element ref="command"/>
-            <element ref="gestureBinding"/>
-            <element ref="gestureConfiguration"/>
+<!--element ref="gestureConfiguration"/-->
+<!--element ref="gestureBinding"/-->
             <element ref="keyBinding"/>
             <element ref="keyConfiguration"/>
             <element ref="scope"/>
@@ -47,7 +49,7 @@
       </complexType>
    </element>
 
-   <element name="activeGestureConfiguration">
+<!--element name="activeGestureConfiguration">
       <complexType>
          <attribute name="value" type="string">
             <annotation>
@@ -57,8 +59,7 @@
             </annotation>
          </attribute>
       </complexType>
-   </element>
-
+   </element-->
    <element name="activeKeyConfiguration">
       <complexType>
          <attribute name="value" type="string">
@@ -137,7 +138,39 @@
       </complexType>
    </element>
 
-   <element name="gestureBinding">
+<!--element name="gestureConfiguration">
+      <complexType>
+         <attribute name="description" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="parent" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element-->
+<!--element name="gestureBinding">
       <complexType>
          <sequence>
             <element ref="sequence" minOccurs="0" maxOccurs="1"/>
@@ -185,46 +218,12 @@
             </annotation>
          </attribute>
       </complexType>
-   </element>
-
-   <element name="gestureConfiguration">
-      <complexType>
-         <attribute name="description" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="id" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="name" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="parent" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
+   </element-->
    <element name="keyBinding">
       <complexType>
-         <sequence>
+<!--sequence>
             <element ref="sequence" minOccurs="0" maxOccurs="1"/>
-         </sequence>
+         </sequence-->
          <attribute name="configuration" type="string">
             <annotation>
                <documentation>
@@ -303,15 +302,7 @@
       </complexType>
    </element>
 
-   <element name="sequence">
-      <complexType>
-         <sequence>
-            <element ref="stroke" minOccurs="1" maxOccurs="unbounded"/>
-         </sequence>
-      </complexType>
-   </element>
-
-   <element name="stroke">
+<!--element name="stroke">
       <complexType>
          <attribute name="value" type="string">
             <annotation>
@@ -321,8 +312,14 @@
             </annotation>
          </attribute>
       </complexType>
-   </element>
-
+   </element-->
+<!--element name="sequence">
+      <complexType>
+         <sequence>
+            <element ref="stroke" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+      </complexType>
+   </element-->
    <element name="scope">
       <complexType>
          <attribute name="description" type="string">
@@ -361,7 +358,9 @@
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         
+         &lt;p&gt;
+2.1
+&lt;/p&gt;
       </documentation>
    </annotation>
 
@@ -379,7 +378,9 @@
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         
+         &lt;p&gt;
+This is no public API for declaring commands, categories, key bindings, key configurations, or scopes other than this extension point. Public API for querying and setting scopes, as well as registering actions to handle specific commands can be found in &lt;code&gt;org.eclipse.ui.IKeyBindingService&lt;/code&gt;.
+&lt;/p&gt;
       </documentation>
    </annotation>
 
