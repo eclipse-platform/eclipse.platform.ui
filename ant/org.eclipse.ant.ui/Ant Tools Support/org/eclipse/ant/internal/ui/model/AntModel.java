@@ -517,8 +517,12 @@ public class AntModel implements IAntModel {
 
     private void checkCircularDependencies(AntElementNode node) {
         Target target= ((AntTargetNode)node).getTarget();
+        String name= target.getName();
+        if (name == null) {
+            return;
+        }
         try {
-            target.getProject().topoSort(target.getName(), target.getProject().getTargets());
+            target.getProject().topoSort(name, target.getProject().getTargets());
         } catch (BuildException be) {
             //possible circular dependency
             String message = be.getMessage();
