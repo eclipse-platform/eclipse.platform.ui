@@ -593,7 +593,7 @@ public class Main {
 				spec = "file:" + file.getAbsolutePath();
 		}
 		try {
-			if (trailingSlash && !spec.endsWith("/"))
+			if (trailingSlash && !(spec.endsWith("/") || spec.endsWith(File.separator)))
 				spec += "/";
 			return new URL(spec);
 		} catch (MalformedURLException e) {
@@ -848,11 +848,8 @@ public class Main {
 			// Consume the arg here to ensure that the launcher and Eclipse get the 
 			// same value as each other.  
 			if (arguments[i - 1].equalsIgnoreCase(INSTALL)) {
+				System.getProperties().put(PROP_INSTALL_AREA, arg); 
 				found = true;
-				URL url = buildURL(arg, true);
-				if (url == null)
-					continue;
-				System.getProperties().put(PROP_INSTALL_AREA, url.toExternalForm()); 
 			}
 
 			// look for the configuration to use.  
@@ -1065,8 +1062,10 @@ public class Main {
 		// value is not set so compute the default and set the value
 		installLocation = System.getProperty(PROP_INSTALL_AREA);
 		if (installLocation != null) {
-			if (!installLocation.endsWith("/"))
-				installLocation += "/";
+			URL location = buildURL(installLocation, true);
+			if (location == null)
+				throw new IllegalStateException("Install location is invalid: " + installLocation);
+			installLocation = location.toExternalForm();
 			System.getProperties().put(PROP_INSTALL_AREA, installLocation); 
 			if (debug)
 				System.out.println("Install location:\n    " + installLocation);
