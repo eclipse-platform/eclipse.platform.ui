@@ -200,7 +200,6 @@ public abstract class Plugin implements BundleActivator {
 	 */
 	public static final String PREFERENCES_DEFAULT_OVERRIDE_BASE_NAME = "preferences"; //$NON-NLS-1$
 	public static final String PREFERENCES_DEFAULT_OVERRIDE_FILE_NAME = PREFERENCES_DEFAULT_OVERRIDE_BASE_NAME + ".ini"; //$NON-NLS-1$
-	private static final String PREFERENCES_DEFAULT_OVERRIDE_FILE_NAME_BACKUP = PREFERENCES_DEFAULT_OVERRIDE_FILE_NAME + ".bak";
 
 	/**
 	 * The preference object for this plug-in; initially <code>null</code>
@@ -624,10 +623,7 @@ public abstract class Plugin implements BundleActivator {
 			if (InternalPlatform.DEBUG_PREFERENCES) {
 				System.out.println("Plugin preference file " + PREFERENCES_DEFAULT_OVERRIDE_FILE_NAME + " not found."); //$NON-NLS-1$ //$NON-NLS-2$
 			}
-			baseURL = FindSupport.find(bundle, new Path(PREFERENCES_DEFAULT_OVERRIDE_FILE_NAME_BACKUP));
-			if (baseURL == null)
-				// No backup file has ben found, but we do not log 
-				return;
+			return;
 		}
 
 		if (InternalPlatform.DEBUG_PREFERENCES) {
