@@ -54,7 +54,8 @@ public static LaunchInfo.Status[] install(LaunchInfo.VersionedIdentifier[] vidCo
 	URL urlBase = UMEclipseTree.getBaseInstallURL();
 	String strUrlBase = urlBase.toExternalForm();
 	UMRegistryManager registryManagerInstalled = new UMRegistryManager(urlBase);
-	IUMRegistry registryInstalled = registryManagerInstalled.getCurrentRegistry();
+	IUMRegistry registryInstalled = registryManagerInstalled.getLocalRegistry();
+	IUMRegistry registryCurrent = registryManagerInstalled.getCurrentRegistry();
 
 	// Register configurations
 	//------------------------
@@ -63,23 +64,24 @@ public static LaunchInfo.Status[] install(LaunchInfo.VersionedIdentifier[] vidCo
 		for (int i = 0; i < vidConfigurations.length; i++) {			
 
 			IManifestDescriptor manifestDescriptor = registryInstalled.getProductDescriptor(vidConfigurations[i].getIdentifier(), vidConfigurations[i].getVersion());
+			if (manifestDescriptor!=null) {
 
-			// Verify existence
-			//-----------------
-			IManifestDescriptor[] manifestsConflicting = registryInstalled.getConflictingManifests(manifestDescriptor);
+				// Verify existence
+				//-----------------
+				IManifestDescriptor[] manifestsConflicting = registryCurrent.getConflictingManifests(manifestDescriptor);
 
-			// Add to launch info
-			//-------------------
-			if (manifestsConflicting.length == 0) {
-				launchInfo.setConfiguration(vidConfigurations[i]);
-			}
+				// Add to launch info
+				//-------------------
+				if (manifestsConflicting.length == 0) {
+					launchInfo.setConfiguration(vidConfigurations[i]);
+				}
 
-			// Create error message string
-			//----------------------------
-			else {
-				String strError = createErrorString(manifestDescriptor, manifestsConflicting);
-
-				vectorMessages.add(new LaunchInfo.Status(strError));
+				// Create error message string
+				//----------------------------
+				else {
+					String strError = createErrorString(manifestDescriptor, manifestsConflicting);
+					vectorMessages.add(new LaunchInfo.Status(strError));
+				}
 			}
 		}
 	}
@@ -91,52 +93,52 @@ public static LaunchInfo.Status[] install(LaunchInfo.VersionedIdentifier[] vidCo
 		for (int i = 0; i < vidComponents.length; i++) {
 
 			IComponentDescriptor componentDescriptor = registryInstalled.getComponentDescriptor(vidComponents[i].getIdentifier(), vidComponents[i].getVersion());
+			if (componentDescriptor!=null) {
 
-			// Validate existence
-			//-------------------
-			IManifestDescriptor[] manifestsConflicting = registryInstalled.getConflictingManifests(componentDescriptor);
+				// Validate existence
+				//-------------------
+				IManifestDescriptor[] manifestsConflicting = registryCurrent.getConflictingManifests(componentDescriptor);
 
-			// Add to launch info
-			//-------------------
-			if (manifestsConflicting.length == 0) {
-				launchInfo.setComponent(vidComponents[i]);
+				// Add to launch info
+				//-------------------
+				if (manifestsConflicting.length == 0) {
+					launchInfo.setComponent(vidComponents[i]);
 
-				// Register plugins
-				//-----------------
-				IPluginEntryDescriptor[] pluginDescriptors = componentDescriptor.getPluginEntries();
+					// Register plugins
+					//-----------------
+					IPluginEntryDescriptor[] pluginDescriptors = componentDescriptor.getPluginEntries();
 
-				for (int j = 0; j < pluginDescriptors.length; ++j) {
+					for (int j = 0; j < pluginDescriptors.length; ++j) {
+	
+						String strId = pluginDescriptors[j].getUniqueIdentifier();
+	
+						launchInfo.setPlugin(new LaunchInfo.VersionedIdentifier(strId,pluginDescriptors[j].getVersionStr()));
 
-					String strId = pluginDescriptors[j].getUniqueIdentifier();
-
-					launchInfo.setPlugin(new LaunchInfo.VersionedIdentifier(strId,pluginDescriptors[j].getVersionStr()));
-
-					// Register platform component's boot plugin
-					// This allows the platform to start with the plugin's boot.jar
-					//-------------------------------------------------------------
-					if (launchInfo.isPlatformComponent(vidComponents[i].getIdentifier())) {
-						if (launchInfo.isRuntimePlugin(strId)) {
-							launchInfo.setRuntime(new LaunchInfo.VersionedIdentifier(strId,pluginDescriptors[j].getVersionStr()));
+						// Register platform component's boot plugin
+						// This allows the platform to start with the plugin's boot.jar
+						//-------------------------------------------------------------
+						if (launchInfo.isPlatformComponent(vidComponents[i].getIdentifier())) {
+							if (launchInfo.isRuntimePlugin(strId)) {
+								launchInfo.setRuntime(new LaunchInfo.VersionedIdentifier(strId,pluginDescriptors[j].getVersionStr()));
+							}
 						}
 					}
-				}
 				
-				// Register fragments
-				//-------------------
-				IFragmentEntryDescriptor[] fragmentDescriptors = componentDescriptor.getFragmentEntries();
+					// Register fragments
+					//-------------------
+					IFragmentEntryDescriptor[] fragmentDescriptors = componentDescriptor.getFragmentEntries();
 
-				for (int j = 0; j < fragmentDescriptors.length; ++j) {
-
-					launchInfo.setFragment(new LaunchInfo.VersionedIdentifier(fragmentDescriptors[j].getUniqueIdentifier(),fragmentDescriptors[j].getVersionStr()));
+					for (int j = 0; j < fragmentDescriptors.length; ++j) {
+						launchInfo.setFragment(new LaunchInfo.VersionedIdentifier(fragmentDescriptors[j].getUniqueIdentifier(),fragmentDescriptors[j].getVersionStr()));
+					}
 				}
-			}
 
-			// Obtain error message string
-			//----------------------------
-			else {
-				String strError = createErrorString(componentDescriptor, manifestsConflicting);
-
-				vectorMessages.add(new LaunchInfo.Status(strError));
+				// Obtain error message string
+				//----------------------------
+				else {
+					String strError = createErrorString(componentDescriptor, manifestsConflicting);
+					vectorMessages.add(new LaunchInfo.Status(strError));
+				}
 			}
 		}
 	}

@@ -738,7 +738,7 @@ public void isDanglingComponent(VersionedIdentifier component, boolean isDanglin
 
 public boolean isDominantConfiguration(String config) {
 	if (config==null || config.trim().equals("")) return false;
-	if (this.appconfig==null) return false;
+	if (this.appconfig==null || this.appconfig.equals(DEFAULT_APP_CONFIG)) return false;
 	VersionedIdentifier argId = new VersionedIdentifier(config);
 	VersionedIdentifier appId = new VersionedIdentifier(this.appconfig);
 	return argId.getIdentifier().equals(appId.getIdentifier());
@@ -1280,7 +1280,7 @@ public void setComponent(VersionedIdentifier component) {
 
 public void setConfiguration(VersionedIdentifier config) {
 	set(config, configs, configsInact);
-	if (isDominantConfiguration(config.toString()) && configs.contains(config))
+	if (this.appconfig.equals(DEFAULT_APP_CONFIG) || isDominantConfiguration(config.toString()))
 		setDominantConfiguration(config.toString());
 }
 
