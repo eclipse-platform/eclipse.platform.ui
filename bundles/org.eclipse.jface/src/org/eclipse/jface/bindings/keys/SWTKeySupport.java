@@ -49,7 +49,7 @@ public final class SWTKeySupport {
 		final int modifierKeys = accelerator & SWT.MODIFIER_MASK;
 		final int naturalKey;
 		if (accelerator == modifierKeys) {
-			naturalKey = Integer.MIN_VALUE;
+			naturalKey = KeyStroke.NO_KEY;
 		} else {
 			naturalKey = accelerator - modifierKeys;
 		}
