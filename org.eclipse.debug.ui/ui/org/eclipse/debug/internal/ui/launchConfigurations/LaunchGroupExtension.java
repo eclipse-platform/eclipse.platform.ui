@@ -108,6 +108,28 @@ public class LaunchGroupExtension {
 	}	
 	
 	/**
+	 * Returns the label for this launch group with any acclerators
+	 * removed from the label.
+	 * 
+	 * @return label without accelerators
+	 */
+	public String getShellTitle() {
+		String title = getLabel();
+		if (title != null) {
+			// strip out any '&' (accelerators)
+			int index = title.indexOf('&');
+			if (index == 0) {
+				title = title.substring(1);
+			} else if (index > 0 && index < (title.length() - 1)){
+				String first = title.substring(0, index);
+				String last = title.substring(index + 1);
+				title = first + last;
+			}		
+		}
+		return title;
+	}
+	
+	/**
 	 * Returns the id for this launch group
 	 * 
 	 * @return the id for this launch group

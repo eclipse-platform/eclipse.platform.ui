@@ -685,19 +685,9 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	}
 	
 	protected String getShellTitle() {
-		String title = getLaunchGroup().getLabel();
+		String title = getLaunchGroup().getShellTitle();
 		if (title == null) {
 			title = LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Launch_Configurations_18"); //$NON-NLS-1$
-		} else {
-			// strip out any '&' (accelerators)
-			int index = title.indexOf('&');
-			if (index == 0) {
-				title = title.substring(1);
-			} else if (index > 0 && index < (title.length() - 1)){
-				String first = title.substring(0, index);
-				String last = title.substring(index + 1);
-				title = first + last;
-			}		
 		}
 		return title;
 	}

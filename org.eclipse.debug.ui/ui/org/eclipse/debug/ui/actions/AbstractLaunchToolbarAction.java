@@ -54,6 +54,8 @@ public class AbstractLaunchToolbarAction extends AbstractLaunchHistoryAction {
 
 		addToMenu(menu, new LaunchAsAction(getLaunchGroupIdentifier()), -1);
 		addToMenu(menu, new OpenLaunchDialogAction(getLaunchGroupIdentifier()), -1);
+		// TODO: work in progress - move favorites to the drop down menu
+		//addToMenu(menu, new OrganizeFavoritesAction(getLaunchGroupIdentifier()), -1);
 	}
 	
 	/**
