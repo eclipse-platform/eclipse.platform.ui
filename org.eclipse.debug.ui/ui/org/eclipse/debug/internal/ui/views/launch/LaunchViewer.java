@@ -12,10 +12,7 @@ package org.eclipse.debug.internal.ui.views.launch;
 
 
 import org.eclipse.debug.core.model.IThread;
-import org.eclipse.debug.internal.ui.views.DebugViewInterimLabelProvider;
 import org.eclipse.debug.internal.ui.views.RemoteTreeViewer;
-import org.eclipse.jface.viewers.IColorProvider;
-import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -74,37 +71,6 @@ public class LaunchViewer extends RemoteTreeViewer {
 		if (image != null) {
 			treeItem.setImage(image);
 		}			
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#doUpdateItem(org.eclipse.swt.widgets.Item, java.lang.Object)
-	 */
-	protected void doUpdateItem(Item item, Object element) {
-		// update icon and label
-		ILabelProvider provider= (ILabelProvider) getLabelProvider();
-		String text= provider.getText(element);
-		if ("".equals(item.getText()) || !DebugViewInterimLabelProvider.PENDING_LABEL.equals(text)) { //$NON-NLS-1$
-			// If an element already has a label, don't set the label to
-			// the pending label. This avoids labels flashing when they're
-			// updated.
-			item.setText(text);
-		}
-		Image image = provider.getImage(element);
-		if (item.getImage() != image) {
-			item.setImage(image);
-		}
-		if (provider instanceof IColorProvider) {
-			IColorProvider cp = (IColorProvider) provider;
-			TreeItem treeItem = (TreeItem) item;
-			treeItem.setForeground(cp.getForeground(element));
-			treeItem.setBackground(cp.getBackground(element));
-		}
-		if (provider instanceof IFontProvider) {
-			IFontProvider fontProvider= (IFontProvider) provider;
-			TreeItem treeItem = (TreeItem) item;
-			treeItem.setFont(fontProvider.getFont(element));
-		}
-        
 	}
 	
 	/* (non-Javadoc)
