@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ILabelDecorator;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.swt.graphics.Image;
@@ -36,6 +37,9 @@ import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.core.util.ResourceDeltaVisitor;
+import org.eclipse.ui.internal.DecoratorDefinition;
+import org.eclipse.ui.internal.DecoratorManager;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * Classes registered with the workbench decoration extension point. The <code>CVSDecorationRunnable</code> class
@@ -53,8 +57,6 @@ import org.eclipse.team.internal.ccvs.core.util.ResourceDeltaVisitor;
  * given to visible elements when decoration requests are made.]
  */
 public class CVSDecorator extends LabelProvider implements ILabelDecorator, IResourceStateChangeListener, IDecorationNotifier {
-
-	private static CVSDecorator theDecorator = null;
 	
 	// Resources that need an icon and text computed for display to the user
 	private List decoratorNeedsUpdating = new ArrayList();
@@ -228,7 +230,7 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 				// post a changed event but forget any cached information about this resource
 				noProviderResources.add(resource);
 			}
-			resources.addAll(computeParents(resource));
+			resources.addAll(computeParents(resource));  //todo: should only add parents if deep preference on: bug #11400
 		}
 		
 		addResourcesToBeDecorated((IResource[]) resources.toArray(new IResource[resources.size()]));
@@ -244,16 +246,41 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 		}
 	}
 
-	public static void refresh() {
-		try {
-			IResource[] resources = ResourcesPlugin.getWorkspace().getRoot().members();
-			for (int i = 0; i < resources.length; i++) {
-				if (getCVSProviderFor(resources[i]) != null) {
-					refresh(resources[i]);
+	/*
+	 * Return the ILabelDecorator for our CVS decorator, null if its not active.
+	 */
+	 
+	private static ILabelDecorator findCVSDecorator() {
+		DecoratorManager decoratorManager = WorkbenchPlugin.getDefault().getDecoratorManager();
+		DecoratorDefinition[] definitions = decoratorManager.getDecoratorDefinitions();
+		for (int i = 0; i < definitions.length; i++) {
+			DecoratorDefinition decoratorDefinition = definitions[i];
+			if(decoratorDefinition.getId().equals(CVSUIPlugin.DECORATOR_ID))
+				try {
+					return decoratorDefinition.getDecorator();
+				} catch (CoreException e) {
+					CVSUIPlugin.log(e.getStatus()); //todo: need to inform user too
+					return null;
 				}
-			}
-		} catch (CoreException e) {
 		}
+		return null;
+	}
+			
+	private void clearCache() {
+		cache.clear();
+	}
+	
+	/*
+	 * Blanket refresh the displaying of our decorator.
+	 */
+	 
+	public static void refresh() {
+		CVSDecorator cvsDecorator = (CVSDecorator) findCVSDecorator();
+		if(cvsDecorator == null)
+			return;	//nothing to do, our decorator isn't active
+		cvsDecorator.clearCache();  //clear the cache of previous decorations so we can compute them anew
+		
+		WorkbenchPlugin.getDefault().getDecoratorManager().reset();
 	}
 
 	public static void refresh(IResource resource) {
@@ -369,7 +396,7 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 		
 		// dispose of images created as overlays
 		decoratorNeedsUpdating.clear();
-		cache.clear();
+		clearCache();
 		Iterator it = imageCache.values().iterator();
 		while (it.hasNext()) {
 			Hashtable overlayTable = (Hashtable)it.next();
@@ -379,6 +406,5 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 			}
 		}
 		imageCache = new Hashtable();
-		theDecorator = null;
 	}
 }

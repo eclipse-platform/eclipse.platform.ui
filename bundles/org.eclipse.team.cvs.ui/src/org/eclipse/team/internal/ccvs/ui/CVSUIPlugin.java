@@ -43,6 +43,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	 * The id of the CVS plug-in
 	 */
 	public static final String ID = "org.eclipse.team.cvs.ui";
+	public static final String DECORATOR_ID = "org.eclipse.team.cvs.ui.decorator";
 	
 	private Hashtable imageDescriptors = new Hashtable(20);
 	
