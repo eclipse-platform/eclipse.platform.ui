@@ -103,37 +103,86 @@ public class ActivityEnabler {
 				// clicking on a category should enable/disable all activities
 				// within it
 				dualViewer.setSubtreeChecked(element, event.getChecked());
-				// the state of the category is alwas absolute after clicking on
-				// it. Never gray.
+				// the state of the category is always absolute after clicking
+				// on it. Never gray.
 				dualViewer.setGrayed(element, false);
+				Object categoryActivities[] = provider.getChildren(element);
+				// Update the category's activities for multiplicity in other
+				// categories
+				for (int index = 0; index < categoryActivities.length; index++) {
+					handleDuplicateActivities(event.getChecked(),
+							categoryActivities[index]);
+				}
+
 			} else {
-				// clicking on an activity can potential change the check/gray
-				// state of its category.
-				CategorizedActivity proxy = (CategorizedActivity) element;
-				Object[] children = provider.getChildren(proxy.getCategory());
-				int state = NONE;
-				int count = 0;
-				for (int i = 0; i < children.length; i++) {
-					if (checked.contains(children[i])) {
-						count++;
-					}
-				}
-
-				if (count == children.length) {
-					state = ALL;
-				} else if (count != 0) {
-					state = SOME;
-				}
-
-				if (state == NONE) {
-					checked.remove(proxy.getCategory());
-				} else {
-					checked.add(proxy.getCategory());
-				}
-
-				dualViewer.setGrayed(proxy.getCategory(), state == SOME);
-				dualViewer.setCheckedElements(checked.toArray());
+				// Activity checked
+				handleActivityCheck(checked, element);
+				handleDuplicateActivities(event.getChecked(), element);
 			}
+		}
+
+		/**
+		 * Handle duplicate activities.
+		 * 
+		 * @param checkedState
+		 *            Checked state of the element.
+		 * @param element
+		 *            The checked element.
+		 */
+		private void handleDuplicateActivities(boolean checkedState,
+				Object element) {
+			// Retrieve duplicate activities from the other categories
+			Object[] duplicateActivities = provider
+					.getDuplicateCategoryActivities((CategorizedActivity) element);
+			CategorizedActivity activity = null;
+			for (int index = 0; index < duplicateActivities.length; index++) {
+				activity = (CategorizedActivity) duplicateActivities[index];
+				// Update the duplicate activity with the same state as the
+				// original
+				dualViewer.setChecked(activity, checkedState);
+				// handle the activity check to potentially update its
+				// category's enablement
+				handleActivityCheck(new HashSet(Arrays.asList(dualViewer
+						.getCheckedElements())), activity);
+			}
+		}
+
+		/**
+		 * Handle the checking of an activity and update its category's checked
+		 * state.
+		 * 
+		 * @param checked
+		 *            The set of checked elements in the viewer.
+		 * @param element
+		 *            The checked element.
+		 */
+		private void handleActivityCheck(Set checked, Object element) {
+			// clicking on an activity can potentially change the check/gray
+			// state of its category.
+			CategorizedActivity proxy = (CategorizedActivity) element;
+			Object[] children = provider.getChildren(proxy.getCategory());
+			int state = NONE;
+			int count = 0;
+			for (int i = 0; i < children.length; i++) {
+				if (checked.contains(children[i])) {
+					count++;
+				}
+			}
+
+			if (count == children.length) {
+				state = ALL;
+			} else if (count != 0) {
+				state = SOME;
+			}
+
+			if (state == NONE) {
+				checked.remove(proxy.getCategory());
+			} else {
+				checked.add(proxy.getCategory());
+			}
+
+			dualViewer.setGrayed(proxy.getCategory(), state == SOME);
+			dualViewer.setCheckedElements(checked.toArray());
 		}
 	};
 
