@@ -21,6 +21,9 @@ import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveFactory;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.HandlerSubmission;
+import org.eclipse.ui.commands.IHandler;
+import org.eclipse.ui.commands.Priority;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -33,11 +36,13 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * <ol>
  * <li>It <code>isPredefined()</code>, in which case it was defined from an
  * extension point.</li>
- * <li>It <code>isPredefined()</code> and <code>hasCustomFile</code>, in which 
- * case the user has customized a predefined perspective.</li>
- * <li>It <code>hasCustomFile</code>, in which case the user created a
- * new perspective.</li>
+ * <li>It <code>isPredefined()</code> and <code>hasCustomFile</code>, in
+ * which case the user has customized a predefined perspective.</li>
+ * <li>It <code>hasCustomFile</code>, in which case the user created a new
+ * perspective.</li>
  * </ol>
+ * 
+ * @author Brock Janiczak (brockj_eclipse@ihug.com.au) - handler registration
  */
 public class PerspectiveDescriptor implements IPerspectiveDescriptor,
         IPluginContribution {
@@ -151,8 +156,25 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor,
             image = AbstractUIPlugin.imageDescriptorFromPlugin(
                     extendingPluginId, icon);
         }
+        registerOpenPerspectiveHandler();
     }
 
+    /**
+     * Registers a handler for opening this perspective with the command
+     * service. This method must be called exactly once per perspective
+     * descriptor. This handler must be removed when this perspective descriptor
+     * goes away.
+     * 
+     * @since 3.1
+     */
+    private void registerOpenPerspectiveHandler() {
+        IHandler openPerspectiveHandler = new OpenPerspectiveHandler(id);
+        HandlerSubmission openPerspectiveSubmission = new HandlerSubmission(
+                null, null, null, id, openPerspectiveHandler, Priority.MEDIUM);
+        PlatformUI.getWorkbench().getCommandSupport().addHandlerSubmission(
+                openPerspectiveSubmission);
+    }
+    
     /**
      * Creates a factory for a predefined perspective. If the perspective is not
      * predefined return null.

@@ -14,18 +14,23 @@ import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ContributionItem;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IPerspectiveDescriptor;
@@ -34,12 +39,9 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
-import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
-import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPage;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.SelectPerspectiveDialog;
 
 /**
@@ -83,7 +85,35 @@ public abstract class PerspectiveMenu extends ContributionItem {
         }
     };
 
-    private static Hashtable imageCache = new Hashtable(11);
+    /**
+     * The translatable message to show when there are no perspectives.
+     * 
+     * @since 3.1
+     */
+    private static final String NO_TARGETS_MSG = WorkbenchMessages
+            .getString("Workbench.showInNoPerspectives"); //$NON-NLS-1$
+
+    /**
+     * The map of perspective identifiers (String) to actions
+     * (OpenPerspectiveAction). This map may be empty, but it is never
+     * <code>null</code>.
+     * 
+     * @since 3.1
+     */
+    private Map actions = new HashMap();
+
+    /**
+     * The action for that allows the user to choose any perspective to open.
+     * 
+     * @since 3.1
+     */
+    private Action openOtherAction = new Action(WorkbenchMessages
+            .getString("PerspectiveMenu.otherItem")) {//$NON-NLS-1$
+        public final void runWithEvent(final Event event) {
+            runOther(new SelectionEvent(event));
+        }
+    };
+
 
     /**
      * Constructs a new instance of <code>PerspectiveMenu</code>.  
@@ -98,102 +128,103 @@ public abstract class PerspectiveMenu extends ContributionItem {
             reg = PlatformUI.getWorkbench().getPerspectiveRegistry();
     }
 
-    /* (non-Javadoc)
-     * Creates a menu item for a perspective.
-     */
-    /* package */
-    void createMenuItem(Menu menu, int index,
-            final IPerspectiveDescriptor desc, boolean bCheck) {
-
-        MenuItem mi = new MenuItem(menu, bCheck ? SWT.RADIO : SWT.PUSH, index);
-        mi.setText(desc.getLabel());
-        Image image = getImage(desc);
-        if (image != null) {
-            mi.setImage(image);
-        }
-        mi.setSelection(bCheck);
-        mi.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
-                run(desc, e);
-            }
-        });
-        WorkbenchHelp.setHelp(mi, IWorkbenchHelpContextIds.OPEN_PERSPECTIVE_ACTION);
-    }
-
-    /* (non-Javadoc)
-     * Creates a menu item for "Other...".
-     */
-    /* package */
-    void createOtherItem(Menu menu, int index) {
-        MenuItem mi = new MenuItem(menu, SWT.PUSH, index);
-        mi.setText(WorkbenchMessages.getString("PerspectiveMenu.otherItem")); //$NON-NLS-1$
-        mi.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
-                runOther(e);
-            }
-        });
-        WorkbenchHelp
-                .setHelp(mi, IWorkbenchHelpContextIds.OPEN_PERSPECTIVE_OTHER_ACTION);
-    }
-
-    /* (non-Javadoc)
-     * Fills the menu with perspective items.
+    /*
+     * (non-Javadoc) Fills the menu with perspective items.
      */
     public void fill(Menu menu, int index) {
-
         if (getParent() instanceof MenuManager)
             ((MenuManager) getParent()).addMenuListener(menuListener);
 
         if (!dirty)
             return;
 
-        String checkID = null;
-        if (showActive) {
-            IWorkbenchPage activePage = window.getActivePage();
-            if ((activePage != null) && (activePage.getPerspective() != null))
-                checkID = activePage.getPerspective().getId();
+        final MenuManager manager = new MenuManager();
+        fillMenu(manager);
+        final IContributionItem items[] = manager.getItems();
+        if (items.length == 0) {
+            MenuItem item = new MenuItem(menu, SWT.NONE, index++);
+            item.setText(NO_TARGETS_MSG);
+            item.setEnabled(false);
+        } else {
+            for (int i = 0; i < items.length; i++) {
+                items[i].fill(menu, index++);
+            }
         }
-
-        // Collect and sort perspective items.
-        ArrayList persps = getPerspectiveItems();
-        Collections.sort(persps, comparator);
-
-        // Add perspective shortcut
-        for (int i = 0; i < persps.size(); i++) {
-            IPerspectiveDescriptor desc = (IPerspectiveDescriptor) persps
-                    .get(i);
-            createMenuItem(menu, index++, desc, desc.getId().equals(checkID));
-        }
-
-        // Add others item..
-        if (persps.size() > 0) {
-            new MenuItem(menu, SWT.SEPARATOR, index++);
-        }
-        createOtherItem(menu, index);
         dirty = false;
     }
 
     /**
-     * Returns an image to show for the corresponding perspective descriptor.
-     *
-     * @param perspDesc the perspective descriptor
-     * @return the image or null
+     * Fills the given menu manager with all the open perspective actions
+     * appropriate for the currently active perspective. Filtering is applied to
+     * the actions based on the activities and capabilities mechanism.
+     * 
+     * @param manager
+     *            The menu manager that should receive the menu items; must not
+     *            be <code>null</code>.
+     * @since 3.1
      */
-    private Image getImage(IPerspectiveDescriptor perspDesc) {
-        ImageDescriptor imageDesc = perspDesc.getImageDescriptor();
-        if (imageDesc == null) {
-            imageDesc = WorkbenchImages
-                    .getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_DEF_PERSPECTIVE_HOVER);
+    private final void fillMenu(final MenuManager manager) {
+        // Clear out the manager so that we have a blank slate.
+        manager.removeAll();
+
+        // Collect and sort perspective descriptors.
+        final List persps = getPerspectiveItems();
+        Collections.sort(persps, comparator);
+
+        /*
+         * Convert the perspective descriptors to actions, and filter out
+         * actions using the activity/capability mechanism.
+         */
+        final List actions = new ArrayList(persps.size());
+        for (Iterator i = persps.iterator(); i.hasNext();) {
+            final IPerspectiveDescriptor descriptor = (IPerspectiveDescriptor) i
+                    .next();
+            final IAction action = getAction(descriptor.getId());
+            if (action != null) {
+                if (WorkbenchActivityHelper.filterItem(action))
+                    continue;
+                actions.add(action);
+            }
         }
-        if (imageDesc == null) {
-            return null;
+
+        // Go through and add each of the actions to the menu manager.
+        for (Iterator i = actions.iterator(); i.hasNext();) {
+            manager.add((IAction) i.next());
         }
-        Image image = (Image) imageCache.get(imageDesc);
-        if (image == null) {
-            image = imageDesc.createImage();
-            imageCache.put(imageDesc, image);
+
+        // Add a separator and then "Other..."
+        if (actions.size() > 0) {
+            manager.add(new Separator());
         }
-        return image;
+        manager.add(openOtherAction);
+    }
+
+    /**
+     * Returns the action for the given perspective id. This is a lazy cache. If
+     * the action does not already exist, then it is created. If there is no
+     * perspective with the given identifier, then the action is not created.
+     * 
+     * @param id
+     *            The identifier of the perspective for which the action should
+     *            be retrieved.
+     * @return The action for the given identifier; or <code>null</code> if
+     *         there is no perspective with the given identifier.
+     * @since 3.1
+     */
+    private final IAction getAction(final String id) {
+        IAction action = (IAction) actions.get(id);
+        if (action == null) {
+            final IPerspectiveRegistry registry = WorkbenchPlugin.getDefault()
+                    .getPerspectiveRegistry();
+            final IPerspectiveDescriptor descriptor = registry
+                    .findPerspectiveWithId(id);
+            if (descriptor != null) {
+                action = new OpenPerspectiveAction(window, descriptor, this);
+                action.setActionDefinitionId(id);
+                actions.put(id, action);
+            }
+        }
+        return action;
     }
 
     /* (non-Javadoc)
@@ -295,11 +326,15 @@ public abstract class PerspectiveMenu extends ContributionItem {
     protected abstract void run(IPerspectiveDescriptor desc);
 
     /**
-     * Runs an action for a particular perspective.  The behavior of the
-     * action is defined by the subclass.
-     *
-     * @param desc the selected perspective
-     * @param event SelectionEvent - the event send along with the selection callback
+     * Runs an action for a particular perspective. The behavior of the action
+     * is defined by the subclass. By default, this just calls
+     * <code>run(IPerspectiveDescriptor)</code>.
+     * 
+     * @param desc
+     *            the selected perspective
+     * @param event
+     *            SelectionEvent - the event send along with the selection
+     *            callback
      */
     protected void run(IPerspectiveDescriptor desc, SelectionEvent event) {
         //Do a run without the event by default
