@@ -222,7 +222,7 @@ public abstract class ViewItem {
 			for (int x = 0; x < itemExts.size(); x++) {
 				AbstractItemExtensionElement[] xe = (AbstractItemExtensionElement[]) itemExts.get(x);
 				for (int g = 0; g < xe.length; g++) {
-					xe[g].createControl(titleComposite, itemColor);
+					xe[g].createControl(titleComposite);
 				}
 			}
 

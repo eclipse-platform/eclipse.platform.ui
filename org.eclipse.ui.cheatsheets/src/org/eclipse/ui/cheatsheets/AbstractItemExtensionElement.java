@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.cheatsheets;
 
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
 import org.w3c.dom.Node;
 
@@ -30,7 +29,7 @@ import org.w3c.dom.Node;
  * are being created, the instance is given the opportunity to add extra controls.
  * </p>
  * 
- * @since 3.0 TODO (lorne) - replaced setAttributeName by constructor; made other methods abstract
+ * @since 3.0
  */
 public abstract class AbstractItemExtensionElement {
 	
@@ -59,7 +58,7 @@ public abstract class AbstractItemExtensionElement {
 	 * 
 	 * @return the name of the attribute that this item extension handles
 	 */
-	public String getAttributeName() {
+	public final String getAttributeName() {
 		return this.attributeName;
 	}
 	
@@ -75,14 +74,18 @@ public abstract class AbstractItemExtensionElement {
 	/**
 	 * Called by the cheat sheet framework when creating the visual
 	 * representation of a step. This method should add small controls (buttons,
-	 * images) to the given composite to decorate the step. The background of
-	 * the new controls should be set to the given color so that they are
-	 * visually integrated.
+	 * images) to the given composite to decorate the step.
+	 * <p>
+	 * Important note: In some presentations of the cheatsheet, the color of the
+	 * background is varied to emphasize the current step. Because of this, it is
+	 * important to always use the background color of the composite
+	 * (<code>composite.getBackground()</code>) as the background color for any
+	 * additional controls; otherwise the new controls will not match their
+	 * surrounding.
+	 * </p>
 	 * 
 	 * @param composite the composite to add extra controls to
-	 * @param color the suggested background color
-	 * TODO (lorne) - rather than pass in a color, could client not ask the composite for its bg color?
 	 */
-	public abstract void createControl(Composite composite, Color color);
+	public abstract void createControl(Composite composite);
 
 }
