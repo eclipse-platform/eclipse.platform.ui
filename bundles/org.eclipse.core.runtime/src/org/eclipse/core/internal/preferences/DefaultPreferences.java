@@ -224,7 +224,7 @@ public class DefaultPreferences extends EclipsePreferences {
 				Policy.debug("Product ID not available to apply product-level preference defaults."); //$NON-NLS-1$
 			return;
 		}
-		Bundle bundle = Platform.getBundle(id);
+		Bundle bundle = product.getDefiningBundle();
 		if (bundle == null) {
 			if (InternalPlatform.DEBUG_PREFERENCES)
 				Policy.debug("Bundle not available to apply product-level preference defaults for product id: " + id); //$NON-NLS-1$
