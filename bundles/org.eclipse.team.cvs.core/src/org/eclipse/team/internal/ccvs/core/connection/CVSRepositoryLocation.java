@@ -282,6 +282,14 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 		return getLocation();
 	}
 	
+	public boolean equals(Object o) {
+		if (!(o instanceof CVSRepositoryLocation)) return false;
+		return getLocation().equals(((CVSRepositoryLocation)o).getLocation());
+	}
+	public int hashCode() {
+		return getLocation().hashCode();
+	}
+	
 	/*
 	 * @see IUserInfo#setPassword(String)
 	 */
