@@ -206,12 +206,31 @@ protected IPath queryForContainer(IContainer initialSelection, String msg) {
  *   or <code>"CANCEL"</code>
  */
 public String queryOverwrite(String pathString) {
+	
+	Path path = new Path(pathString);
+	
+	String messageString;
+	//Break the message up if there is a file name and a directory
+	//and there are at least 2 segments.
+	if(path.getFileExtension() == null || path.segmentCount() < 2)
+		messageString =
+			WorkbenchMessages.format(
+				"WizardDataTransfer.existsQuestion", 
+				new String[] {pathString});
+	
+	else
+		messageString =
+			WorkbenchMessages.format(
+				"WizardDataTransfer.overwriteNameAndPathQuestion", 
+				new String[] {path.lastSegment(), path.removeLastSegments(1).toOSString()});
+	
+	
 	final MessageDialog dialog = 
 		new MessageDialog(
 			getContainer().getShell(),
 			WorkbenchMessages.getString("Question"),  //$NON-NLS-1$
 			null, 
-			WorkbenchMessages.format("WizardDataTransfer.existsQuestion", new Object[] {pathString}),  //$NON-NLS-1$
+			messageString,
 			MessageDialog.QUESTION, 
 			new String[] {
 				IDialogConstants.YES_LABEL, 
