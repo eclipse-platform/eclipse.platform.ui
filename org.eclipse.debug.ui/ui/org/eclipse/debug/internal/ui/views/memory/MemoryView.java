@@ -55,6 +55,7 @@ public class MemoryView extends ViewPart implements IMultipaneMemoryView {
 	private Hashtable fViewPanes = new Hashtable();
 	private Hashtable fViewPaneControls = new Hashtable();
 	private ArrayList fVisibleViewPanes = new ArrayList();
+	private boolean fVisible;
 	
 	private ArrayList fWeights = new ArrayList();
 	
@@ -371,8 +372,19 @@ public class MemoryView extends ViewPart implements IMultipaneMemoryView {
 		
 		for (int i=0; i<viewPanes.length; i++)
 		{
-			viewPanes[i].setVisible(visible && viewPanes[i].isVisible());
+			// if currently visible, take view pane's visibility into account
+			// else force view pane to be visible if it is listed in
+			// "visible view panes" array list.
+			if (fVisible)
+				viewPanes[i].setVisible(visible && viewPanes[i].isVisible());
+			else
+			{
+				if (isViewPaneVisible(viewPanes[i].getPaneId()))
+					viewPanes[i].setVisible(visible);
+			}	
 		}
+		
+		fVisible = visible;
 	}
 
 	/* (non-Javadoc)

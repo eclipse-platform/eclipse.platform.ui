@@ -1511,7 +1511,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 				{
 					switch (evt.detail)
 					{
-						case 0 : //  TODO:  replace with SWT.DRAG - the end of a drag, platform no longer gives us this event
+						case SWT.DRAG :
 						case SWT.END :
 						case SWT.PAGE_DOWN :
 						case SWT.ARROW_DOWN :
@@ -1567,6 +1567,10 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 	 */
 	public void setEnabled(boolean enable)
 	{	
+		// do not do anything if enablement state has not changed
+		if (fEnabled == enable)
+			return;
+		
 		super.setEnabled(enable);
 		
 		fEnabled = enable;
