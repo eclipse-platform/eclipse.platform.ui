@@ -68,11 +68,6 @@
          class="org.eclipse.core.resources.ant.RefreshLocalTask"
          library="lib/resources-ant.jar">
       </antTask>
-      <antTask
-         name="copy"
-         class="org.eclipse.core.resources.ant.EclipseCopy"
-         library="lib/resources-ant.jar">
-      </antTask>
    </extension>
 
    <!-- Extra Classpath -->
