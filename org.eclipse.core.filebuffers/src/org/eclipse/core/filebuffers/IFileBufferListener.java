@@ -20,6 +20,20 @@ import org.eclipse.core.resources.IFile;
 public interface IFileBufferListener {
 
 	/**
+	 * Informs the listener about the creation of the given buffer.
+	 * 
+	 * @param buffer the created file buffer
+	 */
+	void bufferCreated(IFileBuffer buffer);
+	
+	/**
+	 * Informs the listener about the disposal of the given buffer.
+	 * 
+	 * @param buffer
+	 */
+	void bufferDisposed(IFileBuffer buffer);
+
+	/**
 	 * Informs the listener about an upcoming replace of the contents of the given buffer.
 	 * 
 	 * @param buffer the effected file buffer

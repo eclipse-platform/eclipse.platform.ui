@@ -12,6 +12,7 @@ package org.eclipse.core.internal.filebuffers;
 
 import org.eclipse.core.filebuffers.IFileBuffer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
@@ -55,13 +56,12 @@ public abstract class FileBuffer implements IFileBuffer {
 			 * @see java.lang.Runnable#run()
 			 */
 			public void run() {
-					
-				if (isDisposed()) {
-					fManager.fireStateChangeFailed(FileBuffer.this);
+				
+				if (isDisposed())
 					return;
-				}
 					
 				try {
+					fManager.fireStateChanging(FileBuffer.this);
 					execute();
 				} catch (Exception x) {
 					FileBuffersPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, "Exception when synchronizing", x)); //$NON-NLS-1$
@@ -120,15 +120,15 @@ public abstract class FileBuffer implements IFileBuffer {
 								
 				if (delta != null && fFile.equals(delta.getResource())) {
 						
-					Runnable runnable= null;
+					SafeFileChange fileChange= null;
 						
 					switch (delta.getKind()) {
 						case IResourceDelta.CHANGED:
 							if ((IResourceDelta.CONTENT & delta.getFlags()) != 0) {
 								if (!isDisposed() && !fCanBeSaved && fFile.isSynchronized(IFile.DEPTH_ZERO)) {
-									runnable= new SafeFileChange() {
+									fileChange= new SafeFileChange() {
 										protected void execute() throws Exception {
-											if (fModificationStamp != fFile.getModificationStamp())
+											if (fSynchronizationStamp != fFile.getModificationStamp())
 												handleFileContentChanged();
 										}
 									};
@@ -138,14 +138,14 @@ public abstract class FileBuffer implements IFileBuffer {
 						case IResourceDelta.REMOVED:
 							if ((IResourceDelta.MOVED_TO & delta.getFlags()) != 0) {
 								final IPath path= delta.getMovedToPath();
-								runnable= new SafeFileChange() {
+								fileChange= new SafeFileChange() {
 									protected void execute() throws Exception {
 										handleFileMoved(path);
 									}
 								};
 							} else {
 								if (!isDisposed() && !fCanBeSaved) {
-									runnable= new SafeFileChange() {
+									fileChange= new SafeFileChange() {
 										protected void execute() throws Exception {
 											handleFileDeleted();
 										}
@@ -155,22 +155,11 @@ public abstract class FileBuffer implements IFileBuffer {
 							break;
 					}
 						
-					if (runnable != null)
-						update(runnable);
+					if (fileChange != null)
+						fManager.execute(fileChange, fSynchronizationContextCount > 0);
 				}
 					
 				return true; // because we are sitting on files anyway
-			}
-				
-			/**
-			 * Posts the update code "behind" the running operation.
-			 *
-			 * @param runnable the update code
-			 */
-			protected void update(Runnable runnable) {
-				if (runnable instanceof SafeFileChange)
-					fManager.fireStateChanging(FileBuffer.this);
-				runnable.run();			
 			}
 		}
 		
@@ -188,9 +177,10 @@ public abstract class FileBuffer implements IFileBuffer {
 	protected IStatus fStatus;
 	/** The file synchronizer. */
 	protected FileSynchronizer fFileSynchronizer;
-	/** The time stamp at which this provider changed the file. */
-	protected long fModificationStamp= IFile.NULL_STAMP;
-
+	/** The time stamp at which this buffer synchronized with the underlying file. */
+	protected long fSynchronizationStamp= IFile.NULL_STAMP;
+	/** How often the synchronization context has been requested */
+	protected int fSynchronizationContextCount;
 	/** The text file buffer manager */
 	protected TextFileBufferManager fManager;
 	
@@ -201,7 +191,7 @@ public abstract class FileBuffer implements IFileBuffer {
 		super();
 		fManager= manager;
 	}
-
+	
 	abstract protected void handleFileContentChanged();
 	
 	abstract protected void addFileBufferContentListeners();
@@ -216,10 +206,11 @@ public abstract class FileBuffer implements IFileBuffer {
 	public void create(IFile file, IProgressMonitor monitor) throws CoreException {
 		fFile= file;
 		fFileSynchronizer= new FileSynchronizer();
-		refreshFile(monitor);
-		fModificationStamp= fFile.getModificationStamp();
 		
+		refreshFile(monitor);
 		initializeFileBufferContent(monitor);
+		fSynchronizationStamp= fFile.getModificationStamp();
+		
 		addFileBufferContentListeners();
 	}
 	
@@ -238,10 +229,15 @@ public abstract class FileBuffer implements IFileBuffer {
 		}
 	}
 	
-	protected boolean isDisposed() {
+	/**
+	 * Returns whether this file buffer has already been disposed.
+	 * 
+	 * @return <code>true</code> if already disposed, <code>false</code> otherwise
+	 */
+	public boolean isDisposed() {
 		return fFileSynchronizer == null;
 	}
-
+	
 	/*
 	 * @see org.eclipse.core.filebuffers.IFileBuffer#getUnderlyingFile()
 	 */
@@ -340,9 +336,23 @@ public abstract class FileBuffer implements IFileBuffer {
 	}
 	
 	/*
-	 * @see IFileBuffer#hasUnderlyingFileChanged()
+	 * @see org.eclipse.core.filebuffers.IFileBuffer#isSynchronized()
 	 */
-	public boolean hasUnderlyingFileChanged() {
-		return fModificationStamp != fFile.getModificationStamp();
+	public boolean isSynchronized() {
+		return fSynchronizationStamp == fFile.getModificationStamp() && fFile.isSynchronized(IResource.DEPTH_ZERO);
+	}
+	
+	/**
+	 * Requests the file buffer manager's synchronization context for this file buffer.
+	 */
+	public void requestSynchronizationContext() {
+		++ fSynchronizationContextCount;
+	}
+	
+	/**
+	 * Releases the file buffer manager's synchronization context for this file buffer.
+	 */
+	public void releaseSynchronizationContext() {
+		-- fSynchronizationContextCount;
 	}
 }

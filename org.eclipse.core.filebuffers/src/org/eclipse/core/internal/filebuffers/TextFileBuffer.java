@@ -226,8 +226,8 @@ public class TextFileBuffer extends FileBuffer implements ITextFileBuffer {
 					// here the file synchronizer should actually be removed and afterwards added again. However,
 					// we are already inside an operation, so the delta is sent AFTER we have added the listener
 					fFile.setContents(stream, overwrite, true, monitor);
-					// set modification stamp to know whether the file synchronizer must become active
-					fModificationStamp= fFile.getModificationStamp();
+					// set synchronization stamp to know whether the file synchronizer must become active
+					fSynchronizationStamp= fFile.getModificationStamp();
 					
 				} catch (CoreException x) {
 					fManager.fireStateChangeFailed(this);
@@ -287,7 +287,7 @@ public class TextFileBuffer extends FileBuffer implements ITextFileBuffer {
 			removeFileBufferContentListeners();
 			fDocument.set(newContent);
 			fCanBeSaved= false;
-			fModificationStamp= fFile.getModificationStamp();
+			fSynchronizationStamp= fFile.getModificationStamp();
 			fStatus= status;
 			addFileBufferContentListeners();
 			
@@ -297,6 +297,7 @@ public class TextFileBuffer extends FileBuffer implements ITextFileBuffer {
 			
 			removeFileBufferContentListeners();
 			fCanBeSaved= false;
+			fSynchronizationStamp= fFile.getModificationStamp();
 			fStatus= status;
 			addFileBufferContentListeners();
 			

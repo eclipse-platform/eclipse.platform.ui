@@ -20,6 +20,7 @@ import org.eclipse.core.filebuffers.IDocumentFactory;
 import org.eclipse.core.filebuffers.IDocumentSetupParticipant;
 import org.eclipse.core.filebuffers.IFileBuffer;
 import org.eclipse.core.filebuffers.IFileBufferListener;
+import org.eclipse.core.filebuffers.ISynchronizationContext;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.resources.IFile;
@@ -41,6 +42,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	private Map fFilesBuffers= new HashMap();
 	private List fFileBufferListeners= new ArrayList();
 	private ExtensionsRegistry fRegistry;
+	private ISynchronizationContext fSynchronizationContext;
 
 
 	public TextFileBufferManager()  {
@@ -54,15 +56,20 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		Assert.isNotNull(file);
 		FileBuffer fileBuffer= (FileBuffer) fFilesBuffers.get(file);
 		if (fileBuffer == null)  {
+			
 			fileBuffer= createFileBuffer(file);
 			if (fileBuffer == null)
 				throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, 0, "Cannot create file buffer.", null));
+			
 			fileBuffer.create(file, monitor);
+			fileBuffer.connect();
 			fFilesBuffers.put(file, fileBuffer);
+			fireBufferCreated(fileBuffer);
+			
+		} else {
+			fileBuffer.connect();
 		}
-		fileBuffer.connect();
 	}
-	
 
 	/*
 	 * @see org.eclipse.core.filebuffers.IFileBufferManager#disconnect(org.eclipse.core.resources.IFile, org.eclipse.core.runtime.IProgressMonitor)
@@ -72,7 +79,10 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		FileBuffer fileBuffer= (FileBuffer) fFilesBuffers.get(file);
 		if (fileBuffer != null) {
 			fileBuffer.disconnect();
-			fFilesBuffers.remove(file);
+			if (fileBuffer.isDisposed()) {
+				fFilesBuffers.remove(file);
+				fireBufferDisposed(fileBuffer);
+			}
 		}
 	}
 	
@@ -134,7 +144,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	public void addFileBufferListener(IFileBufferListener listener) {
 		Assert.isNotNull(listener);
 		if (!fFileBufferListeners.contains(listener))
-		fFileBufferListeners.add(listener);
+			fFileBufferListeners.add(listener);
 	}
 	
 	/*
@@ -143,6 +153,47 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	public void removeFileBufferListener(IFileBufferListener listener) {
 		Assert.isNotNull(listener);
 		fFileBufferListeners.remove(listener);
+	}
+	
+	/*
+	 * @see org.eclipse.core.filebuffers.IFileBufferManager#setSynchronizationContext(org.eclipse.core.filebuffers.ISynchronizationContext)
+	 */
+	public void setSynchronizationContext(ISynchronizationContext context) {
+		fSynchronizationContext= context;
+	}
+
+	/*
+	 * @see org.eclipse.core.filebuffers.IFileBufferManager#requestSynchronizationContext(org.eclipse.core.resources.IFile)
+	 */
+	public void requestSynchronizationContext(IFile file) {
+		Assert.isNotNull(file);
+		FileBuffer fileBuffer= (FileBuffer) fFilesBuffers.get(file);
+		if (fileBuffer != null)
+			fileBuffer.requestSynchronizationContext();
+	}
+
+	/*
+	 * @see org.eclipse.core.filebuffers.IFileBufferManager#releaseSynchronizationContext(org.eclipse.core.resources.IFile)
+	 */
+	public void releaseSynchronizationContext(IFile file) {
+		Assert.isNotNull(file);
+		FileBuffer fileBuffer= (FileBuffer) fFilesBuffers.get(file);
+		if (fileBuffer != null)
+			fileBuffer.releaseSynchronizationContext();
+	}
+	
+	/**
+	 * Executes the given runnable in the synchronization context of this file buffer manager.
+	 * If there is no synchronization context connected with this manager, the runnable is
+	 * directly executed.
+	 * 
+	 * @param runnable the runnable to be executed
+	 */
+	public void execute(Runnable runnable, boolean requestSynchronizationContext) {
+		if (requestSynchronizationContext && fSynchronizationContext != null)
+			fSynchronizationContext.run(runnable);
+		else
+			runnable.run();
 	}
 	
 	protected void fireDirtyStateChanged(IFileBuffer buffer, boolean isDirty) {
@@ -206,6 +257,22 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		while (e.hasNext()) {
 			IFileBufferListener l= (IFileBufferListener) e.next();
 			l.stateChangeFailed(buffer);
+		}
+	}
+	
+	protected void fireBufferCreated(IFileBuffer buffer) {
+		Iterator e= new ArrayList(fFileBufferListeners).iterator();
+		while (e.hasNext()) {
+			IFileBufferListener l= (IFileBufferListener) e.next();
+			l.bufferCreated(buffer);
+		}
+	}
+	
+	protected void fireBufferDisposed(IFileBuffer buffer) {
+		Iterator e= new ArrayList(fFileBufferListeners).iterator();
+		while (e.hasNext()) {
+			IFileBufferListener l= (IFileBufferListener) e.next();
+			l.bufferDisposed(buffer);
 		}
 	}
 }

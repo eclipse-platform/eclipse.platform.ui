@@ -36,15 +36,18 @@ public interface IFileBuffer {
 	IFile getUnderlyingFile();
 
 	/**
-	 * Returns whether the underlying file of this file buffer has changed.
+	 * Returns whether this file buffer is synchronized with the file system. This is when
+	 * the file buffer's underlying file is in sync with the file system and the file buffer
+	 * has been initialized after the underlying files has been modified the last time.
 	 * 
-	 * @return <code>true</code> if the underlying file of this file buffer has changed
+	 * @return <code>true</code> if the file buffer is synchronized with the file system
 	 */
-	boolean hasUnderlyingFileChanged();
+	boolean isSynchronized();
 	
 	/**
 	 * Reverts the contents of this file buffer to the content of its underlying file. After 
-	 * that call successfully returned, <code>isDirty</code> returns <code>false</code>.
+	 * that call successfully returned, <code>isDirty</code> returns <code>false</code> and
+	 * <code>isSynchronized</code> returns <code>true</code>.
 	 * 
 	 * @param monitor the progress monitor
 	 * @throws CoreException  if reading or accessing the underlying file fails
@@ -54,10 +57,11 @@ public interface IFileBuffer {
 	/**
 	 * Commits this file buffer by changing the contents of th underlying file to
 	 * the contents of this file buffer. After that call, <code>isDirty</code> 
-	 * returns <code>false</code>.
+	 * returns <code>false</code> and <code>isSynchronized</code> returns
+	 * <code>true</code>.
 	 * 
 	 * @param monitor the progress monitor
-	 * @param overwrite indicates whether the underlying file should be overwritten if it is not uin synch with the file system
+	 * @param overwrite indicates whether the underlying file should be overwritten if it is not synchronized with the file system
 	 * @throws CoreException if writing or accessing the underlying file fails
 	 */
 	void commit(IProgressMonitor monitor, boolean overwrite) throws CoreException;

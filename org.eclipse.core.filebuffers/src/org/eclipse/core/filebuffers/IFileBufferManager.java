@@ -61,6 +61,31 @@ public interface IFileBufferManager {
 	IFileBuffer getFileBuffer(IFile file);
 	
 	/**
+	 * Sets the synchronization context for this file buffer manager, i.e., for all file
+	 * buffers this manager manages.
+	 * 
+	 * @param context the synchronization context managed by this file buffer manager
+	 */
+	void setSynchronizationContext(ISynchronizationContext context);
+
+	/**
+	 * Requests that the synchronization context is used to synchronize the given
+	 * file with its file buffer. This call as no effect if there is no file buffer managed 
+	 * for the given file.
+	 * 
+	 * @param file the file
+	 */
+	void requestSynchronizationContext(IFile file);
+	
+	/**
+	 * No longer requests the synchronization context for this file. This method has no
+	 * effect of there is no file buffer managed for this file.
+	 * 
+	 * @param file the file
+	 */
+	void releaseSynchronizationContext(IFile file);
+	
+	/**
 	 * Adds the given listener to the list of file buffer listeners. After that call the
 	 * listener is informated about changes related to this file buffer. If the
 	 * listener is already registered with the file buffer, this call has no effect.
