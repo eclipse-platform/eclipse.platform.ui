@@ -723,7 +723,7 @@ public IAdaptable getInput() {
 	return input;
 }
 /**
- * Returns the page label.  This is a permutation of the page number
+ * Returns the page label.  This is a combination of the page input
  * and active perspective.
  */
 public String getLabel() {

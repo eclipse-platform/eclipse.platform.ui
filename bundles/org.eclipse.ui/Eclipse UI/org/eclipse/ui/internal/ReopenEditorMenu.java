@@ -37,12 +37,20 @@ public ReopenEditorMenu(WorkbenchWindow window, EditorHistory history,
  * within the MAX_TEXT_LENGTH.
  */
 private String calcText(int index, EditorHistoryItem item) {
-	String prefix = "&" + Integer.toString(index + 1) + " ";//$NON-NLS-2$//$NON-NLS-1$
+	StringBuffer sb = new StringBuffer();
+	sb.append(index+1);
+	sb.insert(sb.length()-1, '&');  // make the last digit the mnemonic, not the first
+	sb.append(' ');
 	String suffix = item.input.getToolTipText();
-	if (suffix.length() > MAX_TEXT_LENGTH) {
-		suffix = "..." + suffix.substring(suffix.length() - MAX_TEXT_LENGTH);//$NON-NLS-1$
+	if (suffix.length() <= MAX_TEXT_LENGTH) {
+		sb.append(suffix);
 	}
-	return prefix + suffix;
+	else {
+		sb.append(suffix.substring(0, MAX_TEXT_LENGTH/2));
+		sb.append("..."); //$NON-NLS-1$
+		sb.append(suffix.substring(suffix.length() - MAX_TEXT_LENGTH/2));
+	}
+	return sb.toString();
 }
 /**
  * Fills the given menu with
