@@ -33,7 +33,6 @@ public class UpdateManager {
 		"org.eclipse.update.internal.operations.UpdateManagerResources";
 	private static ResourceBundle bundle;
 	private static UpdateManagerAuthenticator authenticator;
-	private static OperationsManager operationsManager;
 	private static IOperationValidator validator;
 
 	static {
@@ -412,7 +411,7 @@ public class UpdateManager {
 			String newLabel =
 				getFormattedMessage(KEY_SAVED_CONFIG, key);
 			savedConfig.setLabel(newLabel);
-			getOperationsManager().fireObjectChanged(savedConfig, null);
+			OperationsManager.fireObjectChanged(savedConfig, null);
 		}
 		localSite.addConfiguration(config);
 	}
@@ -530,12 +529,6 @@ public class UpdateManager {
 		return authenticator;
 	}
 
-	public static OperationsManager getOperationsManager() {
-		if (operationsManager == null)
-			operationsManager = new OperationsManager();
-		return operationsManager;
-	}
-	
 	public static IOperationValidator getValidator() {
 		if (validator == null)
 			// in the future this will be pluggable

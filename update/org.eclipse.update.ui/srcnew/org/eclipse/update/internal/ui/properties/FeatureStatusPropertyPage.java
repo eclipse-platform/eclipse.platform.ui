@@ -19,6 +19,7 @@ import org.eclipse.update.internal.operations.UpdateManager;
 import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.internal.ui.model.ConfiguredFeatureAdapter;
 import org.eclipse.update.internal.ui.model.MissingFeature;
+import org.eclipse.update.operations.*;
 
 /**
  * @see PropertyPage
@@ -57,7 +58,7 @@ public class FeatureStatusPropertyPage
 			ConfiguredFeatureAdapter adapter = (ConfiguredFeatureAdapter) getElement();
 			IFeature feature = adapter.getFeature(null);
 			
-			if (UpdateManager.getOperationsManager().findPendingOperation(feature) != null) {
+			if (OperationsManager.findPendingOperation(feature) != null) {
 				message.setText("The feature has pending changes.  Therefore, its status cannot be determined until you restart the workbench.");
 				return composite;
 			}

@@ -30,18 +30,20 @@ public class FeatureStateAction extends Action {
 			boolean isConfigured = adapter.isConfigured();
 			IOperation toggleOperation =
 				isConfigured
-					? UpdateManager
-						.getOperationsManager()
+					? OperationsManager
+						.getOperationFactory()
 						.createUnconfigOperation(
 						adapter.getInstallConfiguration(),
 						adapter.getConfiguredSite(),
 						adapter.getFeature(null))
-					: UpdateManager.getOperationsManager().createConfigOperation(
+					: OperationsManager
+						.getOperationFactory()
+						.createConfigOperation(
 						adapter.getInstallConfiguration(),
 						adapter.getConfiguredSite(),
 						adapter.getFeature(null));
 
-			boolean restartNeeded = toggleOperation.execute(null, null);			
+			boolean restartNeeded = toggleOperation.execute(null, null);
 			if (restartNeeded)
 				UpdateUI.informRestartNeeded();
 

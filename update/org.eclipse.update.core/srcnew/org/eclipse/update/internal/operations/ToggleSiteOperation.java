@@ -21,8 +21,7 @@ public class ToggleSiteOperation
 
 	private IConfiguredSite site;
 
-	public ToggleSiteOperation(
-		IConfiguredSite site) {
+	public ToggleSiteOperation(IConfiguredSite site) {
 		super();
 		this.site = site;
 	}
@@ -30,7 +29,9 @@ public class ToggleSiteOperation
 	/* (non-Javadoc)
 	 * @see org.eclipse.update.operations.IOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public boolean execute(IProgressMonitor monitor, IOperationListener listener)
+	public boolean execute(
+		IProgressMonitor monitor,
+		IOperationListener listener)
 		throws CoreException {
 		if (site == null)
 			return false;
@@ -44,9 +45,7 @@ public class ToggleSiteOperation
 		} else {
 			try {
 				SiteManager.getLocalSite().save();
-				UpdateManager.getOperationsManager().fireObjectChanged(
-					site,
-					"");
+				OperationsManager.fireObjectChanged(site, "");
 				return true; // will restart
 			} catch (CoreException e) {
 				//revert

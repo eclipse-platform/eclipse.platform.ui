@@ -13,12 +13,10 @@ package org.eclipse.update.internal.ui.views;
 import java.lang.reflect.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.update.configuration.IConfiguredSite;
-import org.eclipse.update.internal.operations.UpdateManager;
-import org.eclipse.update.internal.ui.UpdateUI;
+import org.eclipse.update.configuration.*;
+import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.operations.*;
 
 /**
@@ -50,7 +48,7 @@ public class SiteStateAction2 extends Action {
 			if (!confirm(!oldValue))
 				return;
 			
-			IOperation toggleSiteOperation = UpdateManager.getOperationsManager().createToggleSiteOperation(site);
+			IOperation toggleSiteOperation = OperationsManager.getOperationFactory().createToggleSiteOperation(site);
 			boolean restartNeeded = toggleSiteOperation.execute(null, null);
 					
 			if (restartNeeded)

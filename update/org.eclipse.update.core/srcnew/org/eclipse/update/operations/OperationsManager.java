@@ -8,77 +8,28 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.update.internal.operations;
+package org.eclipse.update.operations;
 
 import java.util.*;
 
-import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.operations.*;
+import org.eclipse.update.internal.operations.*;
 
-public class OperationsManager implements IOperationFactory {
+public class OperationsManager {
+	private static IOperationFactory operationFactory;
+	private static Vector listeners = new Vector();
+	private static Vector pendingOperations = new Vector();
 
-	private Vector listeners = new Vector();
-	private Vector pendingOperations = new Vector();
-
-	public OperationsManager() {
+	private OperationsManager() {
+	}
+	
+	public static IOperationFactory getOperationFactory() {
+		if (operationFactory == null)
+			operationFactory = new OperationFactory();
+		return operationFactory;
 	}
 
-	public IOperation createConfigOperation(
-		IInstallConfiguration config,
-		IConfiguredSite targetSite,
-		IFeature feature) {
-		return new ConfigOperation(config, targetSite, feature);
-	}
-
-	public IOperation createBatchInstallOperation(IInstallFeatureOperation[] operations) {
-		return new BatchInstallOperation(operations);
-	}
-
-	public IOperation createInstallOperation(
-		IInstallConfiguration config,
-		IConfiguredSite targetSite,
-		IFeature feature,
-		IFeatureReference[] optionalFeatures,
-		IFeature[] unconfiguredOptionalFeatures,
-		IVerificationListener verifier) {
-		return new InstallOperation(
-			config,
-			targetSite,
-			feature,
-			optionalFeatures,
-			unconfiguredOptionalFeatures,
-			verifier);
-	}
-
-	public IOperation createUnconfigOperation(
-		IInstallConfiguration config,
-		IConfiguredSite targetSite,
-		IFeature feature) {
-		return new UnconfigOperation(config, targetSite, feature);
-	}
-
-	public IOperation createUninstallOperation(
-		IInstallConfiguration config,
-		IConfiguredSite targetSite,
-		IFeature feature) {
-		return new UninstallOperation(config, targetSite, feature);
-	}
-
-	public IOperation createRevertConfigurationOperation(
-		IInstallConfiguration config,
-		IProblemHandler problemHandler) {
-		return new RevertConfigurationOperation(
-			config,
-			problemHandler);
-	}
-
-	public IOperation createToggleSiteOperation(
-		IConfiguredSite site) {
-		return new ToggleSiteOperation(site);
-	}
-
-	public IFeatureOperation findPendingOperation(IFeature feature) {
+	public static IFeatureOperation findPendingOperation(IFeature feature) {
 		for (int i = 0; i < pendingOperations.size(); i++) {
 			IFeatureOperation operation =
 				(IFeatureOperation) pendingOperations.elementAt(i);
@@ -88,33 +39,27 @@ public class OperationsManager implements IOperationFactory {
 		return null;
 	}
 
-	public void addPendingOperation(IOperation operation) {
+	public static void addPendingOperation(IOperation operation) {
 		pendingOperations.add(operation);
 		//fireObjectsAdded(this, new Object[] { change });
 	}
 
-	public void removePendingOperation(IOperation operation) {
+	public static void removePendingOperation(IOperation operation) {
 		pendingOperations.remove(operation);
 		//fireObjectsRemoved(this, new Object[] { change });
 	}
 
-	public void removePendingOperation(IFeature scheduledFeature) {
-		IOperation operation = findPendingOperation(scheduledFeature);
-		if (operation != null)
-			removePendingOperation(operation);
-	}
-
-	public void addUpdateModelChangedListener(IUpdateModelChangedListener listener) {
+	public static void addUpdateModelChangedListener(IUpdateModelChangedListener listener) {
 		if (!listeners.contains(listener))
 			listeners.add(listener);
 	}
 
-	public void removeUpdateModelChangedListener(IUpdateModelChangedListener listener) {
+	public static void removeUpdateModelChangedListener(IUpdateModelChangedListener listener) {
 		if (listeners.contains(listener))
 			listeners.remove(listener);
 	}
 
-	public void fireObjectsAdded(Object parent, Object[] children) {
+	public static void fireObjectsAdded(Object parent, Object[] children) {
 		for (Iterator iter = listeners.iterator(); iter.hasNext();) {
 			IUpdateModelChangedListener listener =
 				(IUpdateModelChangedListener) iter.next();
@@ -122,7 +67,7 @@ public class OperationsManager implements IOperationFactory {
 		}
 	}
 
-	public void fireObjectsRemoved(Object parent, Object[] children) {
+	public static void fireObjectsRemoved(Object parent, Object[] children) {
 		for (Iterator iter = listeners.iterator(); iter.hasNext();) {
 			IUpdateModelChangedListener listener =
 				(IUpdateModelChangedListener) iter.next();
@@ -130,7 +75,7 @@ public class OperationsManager implements IOperationFactory {
 		}
 	}
 
-	public void fireObjectChanged(Object object, String property) {
+	public static void fireObjectChanged(Object object, String property) {
 		for (Iterator iter = listeners.iterator(); iter.hasNext();) {
 			IUpdateModelChangedListener listener =
 				(IUpdateModelChangedListener) iter.next();

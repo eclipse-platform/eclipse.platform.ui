@@ -58,7 +58,7 @@ public class BatchInstallOperation
 						SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK);
 
 				boolean needsRestart = operations[i].execute(subMonitor, listener);
-				UpdateManager.getOperationsManager().addPendingOperation(operations[i]);
+				OperationsManager.addPendingOperation(operations[i]);
 
 				operations[i].markProcessed();
 				if (listener != null)

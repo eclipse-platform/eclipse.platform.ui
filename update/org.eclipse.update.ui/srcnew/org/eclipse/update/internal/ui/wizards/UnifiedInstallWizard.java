@@ -75,7 +75,8 @@ public class UnifiedInstallWizard
 			public void run(IProgressMonitor monitor)
 				throws InvocationTargetException {
 					// setup jobs with the correct environment
-				IInstallFeatureOperation[] operations = new IInstallFeatureOperation[selectedJobs.length];
+	IInstallFeatureOperation[] operations =
+		new IInstallFeatureOperation[selectedJobs.length];
 				for (int i = 0; i < selectedJobs.length; i++) {
 					PendingOperation job = selectedJobs[i];
 					IFeature[] unconfiguredOptionalFeatures = null;
@@ -91,25 +92,27 @@ public class UnifiedInstallWizard
 								targetPage.getTargetSite(job));
 					}
 					IInstallFeatureOperation op =
-						(IInstallFeatureOperation) UpdateManager
-							.getOperationsManager()
+						(IInstallFeatureOperation) OperationsManager
+							.getOperationFactory()
 							.createInstallOperation(
-							config,
-							targetPage.getTargetSite(job),
-							job.getFeature(),
-							optionalFeatures,
-							unconfiguredOptionalFeatures,
-							new JarVerificationService(
-								UnifiedInstallWizard.this.getShell()));
+								config,
+								targetPage.getTargetSite(job),
+								job.getFeature(),
+								optionalFeatures,
+								unconfiguredOptionalFeatures,
+								new JarVerificationService(
+									UnifiedInstallWizard.this.getShell()));
 					operations[i] = op;
 				}
 				IOperation installOperation =
-					UpdateManager
-						.getOperationsManager()
+					OperationsManager
+						.getOperationFactory()
 						.createBatchInstallOperation(
 						operations);
 				try {
-					installOperation.execute(monitor, UnifiedInstallWizard.this);
+					installOperation.execute(
+						monitor,
+						UnifiedInstallWizard.this);
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);
 				} finally {

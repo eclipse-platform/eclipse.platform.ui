@@ -19,15 +19,22 @@ import org.eclipse.update.operations.*;
  * Unconfigure a feature.
  * UnconfigOperation
  */
-public class UnconfigOperation extends FeatureOperation implements IUnconfigFeatureOperation {
-	
-	public UnconfigOperation(IInstallConfiguration config, IConfiguredSite site, IFeature feature) {
+public class UnconfigOperation
+	extends FeatureOperation
+	implements IUnconfigFeatureOperation {
+
+	public UnconfigOperation(
+		IInstallConfiguration config,
+		IConfiguredSite site,
+		IFeature feature) {
 		super(config, site, feature);
 	}
-	
-	public boolean execute(IProgressMonitor pm, IOperationListener listener) throws CoreException {
 
-		IStatus status = UpdateManager.getValidator().validatePendingUnconfig(feature);
+	public boolean execute(IProgressMonitor pm, IOperationListener listener)
+		throws CoreException {
+
+		IStatus status =
+			UpdateManager.getValidator().validatePendingUnconfig(feature);
 		if (status != null) {
 			throw new CoreException(status);
 		}
@@ -42,14 +49,13 @@ public class UnconfigOperation extends FeatureOperation implements IUnconfigFeat
 
 			// Check if this operation is cancelling one that's already pending
 			IOperation pendingOperation =
-				UpdateManager.getOperationsManager().findPendingOperation(feature);
+				OperationsManager.findPendingOperation(feature);
 
 			if (pendingOperation instanceof IConfigFeatureOperation) {
 				// no need to do either pending change
-				UpdateManager.getOperationsManager().removePendingOperation(
-					pendingOperation);
+				OperationsManager.removePendingOperation(pendingOperation);
 			} else {
-				UpdateManager.getOperationsManager().addPendingOperation(this);
+				OperationsManager.addPendingOperation(this);
 				restartNeeded = true;
 			}
 
@@ -60,8 +66,8 @@ public class UnconfigOperation extends FeatureOperation implements IUnconfigFeat
 			SiteManager.getLocalSite().save();
 
 			// notify the model
-			UpdateManager.getOperationsManager().fireObjectChanged(feature, null);
-			
+			OperationsManager.fireObjectChanged(feature, null);
+
 			return restartNeeded;
 		} catch (CoreException e) {
 			undo();
@@ -69,10 +75,9 @@ public class UnconfigOperation extends FeatureOperation implements IUnconfigFeat
 			throw e;
 		}
 	}
-	
-	
-	public void undo() throws CoreException{
+
+	public void undo() throws CoreException {
 		targetSite.configure(feature);
 	}
-	
+
 }

@@ -32,6 +32,7 @@ import org.eclipse.update.internal.operations.IUpdateModelChangedListener;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.parts.*;
+import org.eclipse.update.operations.*;
 
 /**
  * Insert the type's description here.
@@ -55,7 +56,7 @@ public class NewConfigurationView
 	private static final String STATE_SHOW_NESTED_FEATURES =
 		"ConfigurationView.showNestedFeatures";
 	//private static final String KEY_PRESERVE =
-		//"ConfigurationView.Popup.preserve";
+	//"ConfigurationView.Popup.preserve";
 	private static final String KEY_MISSING_FEATURE =
 		"ConfigurationView.missingFeature";
 
@@ -203,9 +204,7 @@ public class NewConfigurationView
 							.getVersion()
 							.toString();
 					String pending = "";
-					if (UpdateManager
-						.getOperationsManager()
-						.findPendingOperation(feature)
+					if (OperationsManager.findPendingOperation(feature)
 						!= null)
 						pending = " (pending changes)";
 					return feature.getLabel() + " " + version + pending;
@@ -266,10 +265,7 @@ public class NewConfigurationView
 				int flags = 0;
 				if (efix && !adapter.isConfigured())
 					flags |= UpdateLabelProvider.F_UNCONFIGURED;
-				if (UpdateManager
-					.getOperationsManager()
-					.findPendingOperation(feature)
-					== null) {
+				if (OperationsManager.findPendingOperation(feature) == null) {
 
 					int code =
 						getStatusCode(
@@ -296,7 +292,7 @@ public class NewConfigurationView
 			}
 		}
 	}
-	
+
 	class PreviewTask implements IPreviewTask {
 		private String name;
 		private String desc;
@@ -306,9 +302,10 @@ public class NewConfigurationView
 			this.desc = desc;
 			this.action = action;
 		}
-		
+
 		public String getName() {
-			if (name!=null) return name;
+			if (name != null)
+				return name;
 			return action.getText();
 		}
 		public String getDescription() {
@@ -361,14 +358,15 @@ public class NewConfigurationView
 					control.getDisplay().asyncExec(new Runnable() {
 						public void run() {
 							treeViewer.refresh();
-							handleSelectionChanged((IStructuredSelection)treeViewer.getSelection());
+							handleSelectionChanged(
+								(IStructuredSelection) treeViewer
+									.getSelection());
 						}
 					});
 				}
 			}
 		};
-		UpdateManager.getOperationsManager().addUpdateModelChangedListener(
-			modelListener);
+		OperationsManager.addUpdateModelChangedListener(modelListener);
 		WorkbenchHelp.setHelp(
 			getControl(),
 			"org.eclipse.update.ui.ConfigurationView");
@@ -425,8 +423,8 @@ public class NewConfigurationView
 			}
 			initialized = false;
 		}
-		UpdateManager.getOperationsManager().removeUpdateModelChangedListener(modelListener);
-		if (preview!=null)
+		OperationsManager.removeUpdateModelChangedListener(modelListener);
+		if (preview != null)
 			preview.dispose();
 		super.dispose();
 	}
@@ -452,7 +450,8 @@ public class NewConfigurationView
 			"org.eclipse.update.ui.CofigurationView_revertAction");
 
 		propertiesAction =
-			new PropertyDialogAction(UpdateUI.getActiveWorkbenchShell(),
+			new PropertyDialogAction(
+				UpdateUI.getActiveWorkbenchShell(),
 				getTreeViewer());
 		propertiesAction.setEnabled(false);
 		WorkbenchHelp.setHelp(
@@ -460,7 +459,7 @@ public class NewConfigurationView
 			"org.eclipse.update.ui.CofigurationView_propertiesAction");
 
 		uninstallFeatureAction = new UninstallFeatureAction("Uninstall");
-		
+
 		installOptFeatureAction = new InstallOptionalFeatureAction("Install");
 
 		swapVersionAction = new SwapVersionAction("&Another Version...");
@@ -469,7 +468,9 @@ public class NewConfigurationView
 		makeShowSitesAction();
 		makeShowNestedFeaturesAction();
 		makePreviewTasks();
-		getViewSite().getActionBars().setGlobalActionHandler(IWorkbenchActionConstants.PROPERTIES, propertiesAction);
+		getViewSite().getActionBars().setGlobalActionHandler(
+			IWorkbenchActionConstants.PROPERTIES,
+			propertiesAction);
 	}
 
 	private void makeShowNestedFeaturesAction() {
@@ -490,7 +491,7 @@ public class NewConfigurationView
 			UpdateUIImages.DESC_SHOW_HIERARCHY_H);
 		showNestedFeaturesAction.setDisabledImageDescriptor(
 			UpdateUIImages.DESC_SHOW_HIERARCHY_D);
-		
+
 		showNestedFeaturesAction.setChecked(
 			pref.getBoolean(STATE_SHOW_NESTED_FEATURES));
 		showNestedFeaturesAction.setToolTipText("Show Nested Features");
@@ -576,7 +577,8 @@ public class NewConfigurationView
 
 				manager.add(featureStateAction);
 
-				IFeature feature = ((ConfiguredFeatureAdapter) obj).getFeature(null);
+				IFeature feature =
+					((ConfiguredFeatureAdapter) obj).getFeature(null);
 				if (feature instanceof MissingFeature) {
 					manager.add(installOptFeatureAction);
 				} else {
@@ -762,12 +764,12 @@ public class NewConfigurationView
 	protected void handleDoubleClick(DoubleClickEvent e) {
 		if (e.getSelection() instanceof IStructuredSelection) {
 			IStructuredSelection ssel = (IStructuredSelection) e.getSelection();
-				Object obj = ssel.getFirstElement();
-				if (obj instanceof ILocalSite || obj instanceof IFeatureAdapter)
-					propertiesAction.run();
+			Object obj = ssel.getFirstElement();
+			if (obj instanceof ILocalSite || obj instanceof IFeatureAdapter)
+				propertiesAction.run();
 		}
 	}
-	
+
 	public void createPartControl(Composite parent) {
 		splitter = new SashForm(parent, SWT.HORIZONTAL);
 		Composite leftContainer = createLineContainer(splitter);
@@ -778,11 +780,12 @@ public class NewConfigurationView
 		createVerticalLine(rightContainer);
 		preview = new ConfigurationPreview(this);
 		preview.createControl(rightContainer);
-		preview.getScrollingControl().setLayoutData(new GridData(GridData.FILL_BOTH));
-		splitter.setWeights(new int [] {2, 3});
+		preview.getScrollingControl().setLayoutData(
+			new GridData(GridData.FILL_BOTH));
+		splitter.setWeights(new int[] { 2, 3 });
 		getTreeViewer().expandToLevel(2);
 	}
-	
+
 	private Composite createLineContainer(Composite parent) {
 		Composite container = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
@@ -792,14 +795,14 @@ public class NewConfigurationView
 		container.setLayout(layout);
 		return container;
 	}
-	
+
 	private void createVerticalLine(Composite parent) {
 		Label line = new Label(parent, SWT.SEPARATOR | SWT.VERTICAL);
 		GridData gd = new GridData(GridData.VERTICAL_ALIGN_FILL);
 		gd.widthHint = 1;
 		line.setLayoutData(gd);
 	}
-	
+
 	public Control getControl() {
 		return splitter;
 	}
@@ -830,14 +833,16 @@ public class NewConfigurationView
 		}
 		return code;
 	}
-	
+
 	protected void handleSelectionChanged(IStructuredSelection ssel) {
 		Object obj = ssel.getFirstElement();
 		if (obj instanceof IFeatureAdapter) {
 			try {
-				ConfiguredFeatureAdapter adapter = (ConfiguredFeatureAdapter) obj;
+				ConfiguredFeatureAdapter adapter =
+					(ConfiguredFeatureAdapter) obj;
 				IFeature feature = adapter.getFeature(null);
-				boolean enable = (adapter.isOptional() || !adapter.isIncluded());
+				boolean enable =
+					(adapter.isOptional() || !adapter.isIncluded());
 
 				swapVersionAction.setEnabled(enable);
 				featureStateAction.setFeature(adapter);
@@ -848,7 +853,8 @@ public class NewConfigurationView
 						mf.isOptional() && mf.getOriginatingSiteURL() != null);
 					uninstallFeatureAction.setEnabled(false);
 				} else {
-					uninstallFeatureAction.setEnabled(enable && !adapter.isConfigured());
+					uninstallFeatureAction.setEnabled(
+						enable && !adapter.isConfigured());
 					installOptFeatureAction.setEnabled(false);
 				}
 			} catch (CoreException ex) {
@@ -862,57 +868,90 @@ public class NewConfigurationView
 			propertiesAction.setEnabled(true);
 			//preserveAction.setConfiguration(((ILocalSite) obj).getCurrentConfiguration());
 			//preserveAction.setEnabled(true);
-		} else
-		if (obj instanceof IConfiguredSiteAdapter) {
-			siteStateAction.setSite(((IConfiguredSiteAdapter) obj).getConfiguredSite());
+		} else if (obj instanceof IConfiguredSiteAdapter) {
+			siteStateAction.setSite(
+				((IConfiguredSiteAdapter) obj).getConfiguredSite());
 			siteStateAction.setEnabled(true);
 		}
 		preview.setSelection(ssel);
 	}
-	
+
 	protected void handleSelectionChanged(SelectionChangedEvent e) {
-		handleSelectionChanged(((IStructuredSelection)e.getSelection()));
+		handleSelectionChanged(((IStructuredSelection) e.getSelection()));
 	}
 
-	
 	private void makePreviewTasks() {
 		previewTasks = new Hashtable();
 		Class key;
 		ArrayList array = new ArrayList();
 		// local site tasks
 		key = ILocalSite.class;
-		array.add(new PreviewTask("Revert to Previous", "You can revert to one of the previous configurations if you are having problems with the current one.", revertAction));
+		array.add(
+			new PreviewTask(
+				"Revert to Previous",
+				"You can revert to one of the previous configurations if you are having problems with the current one.",
+				revertAction));
 		//array.add(new PreviewTask("Save", "As new configurations are added, the old ones eventually get deleted. Use this task to save a good configuration you can always revert to.", preserveAction));
-		array.add(new PreviewTask("Show Activities", "This task allows you to view the activities that caused the creation of this configuration.", propertiesAction));
+		array.add(
+			new PreviewTask(
+				"Show Activities",
+				"This task allows you to view the activities that caused the creation of this configuration.",
+				propertiesAction));
 		previewTasks.put(key, array.toArray(new IPreviewTask[array.size()]));
 
 		// configured site tasks
 		array.clear();
 		key = IConfiguredSiteAdapter.class;
-		array.add(new PreviewTask(null, "You can enable or disable an entire install location. Disabling a location is equivalent to disabling every feature in it.", siteStateAction));
+		array.add(
+			new PreviewTask(
+				null,
+				"You can enable or disable an entire install location. Disabling a location is equivalent to disabling every feature in it.",
+				siteStateAction));
 		previewTasks.put(key, array.toArray(new IPreviewTask[array.size()]));
-		
+
 		// feature adapter tasks
 		array.clear();
 		key = IFeatureAdapter.class;
-		array.add(new PreviewTask("Replace With Another Version", "This tasks allows you to disable the current version of the feature and replace it with another version from the list of currently disabled features.", swapVersionAction));
-		array.add(new PreviewTask(null, "You can enable or disable a feature. Function provided by the feature will be removed but the feature itself will still be present to be enabled later.", featureStateAction));
-		array.add(new PreviewTask("Install from Originating Server", "This optional feature was not originally installed. You can install it now by connecting to the originating server of the parent.", installOptFeatureAction));
-		array.add(new PreviewTask("Uninstall", "This feature is currently not used and can be uninstalled from the product.", uninstallFeatureAction));  
-		array.add(new PreviewTask("Show Properties", "This task allows you to view properties of the feature such as version, provider name, license agreement etc.", propertiesAction));
+		array.add(
+			new PreviewTask(
+				"Replace With Another Version",
+				"This tasks allows you to disable the current version of the feature and replace it with another version from the list of currently disabled features.",
+				swapVersionAction));
+		array.add(
+			new PreviewTask(
+				null,
+				"You can enable or disable a feature. Function provided by the feature will be removed but the feature itself will still be present to be enabled later.",
+				featureStateAction));
+		array.add(
+			new PreviewTask(
+				"Install from Originating Server",
+				"This optional feature was not originally installed. You can install it now by connecting to the originating server of the parent.",
+				installOptFeatureAction));
+		array.add(
+			new PreviewTask(
+				"Uninstall",
+				"This feature is currently not used and can be uninstalled from the product.",
+				uninstallFeatureAction));
+		array.add(
+			new PreviewTask(
+				"Show Properties",
+				"This task allows you to view properties of the feature such as version, provider name, license agreement etc.",
+				propertiesAction));
 		previewTasks.put(key, array.toArray(new IPreviewTask[array.size()]));
 	}
 
-	public IPreviewTask [] getPreviewTasks(Object object) {
-		IPreviewTask [] tasks = null;
-		
+	public IPreviewTask[] getPreviewTasks(Object object) {
+		IPreviewTask[] tasks = null;
+
 		if (object instanceof IFeatureAdapter)
-			tasks = (IPreviewTask[])previewTasks.get(IFeatureAdapter.class);
+			tasks = (IPreviewTask[]) previewTasks.get(IFeatureAdapter.class);
 		if (object instanceof ILocalSite)
-			tasks = (IPreviewTask[])previewTasks.get(ILocalSite.class);
+			tasks = (IPreviewTask[]) previewTasks.get(ILocalSite.class);
 		if (object instanceof IConfiguredSiteAdapter)
-			tasks = (IPreviewTask[])previewTasks.get(IConfiguredSiteAdapter.class);
-		if (tasks!=null) return tasks;
+			tasks =
+				(IPreviewTask[]) previewTasks.get(IConfiguredSiteAdapter.class);
+		if (tasks != null)
+			return tasks;
 		return new IPreviewTask[0];
 	}
 }

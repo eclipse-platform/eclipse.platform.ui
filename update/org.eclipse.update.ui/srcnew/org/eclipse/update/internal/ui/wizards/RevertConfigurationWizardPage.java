@@ -52,10 +52,8 @@ import org.eclipse.update.operations.*;
 
 public class RevertConfigurationWizardPage extends WizardPage {
 
-
 	private TableViewer activitiesViewer;
 	private TableViewer configViewer;
-
 
 	public RevertConfigurationWizardPage() {
 		super("RevertConfiguration");
@@ -231,7 +229,10 @@ public class RevertConfigurationWizardPage extends WizardPage {
 		IRunnableWithProgress operation = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor)
 				throws InvocationTargetException {
-				IOperation revertOperation = UpdateManager.getOperationsManager().createRevertConfigurationOperation(
+				IOperation revertOperation =
+					OperationsManager
+						.getOperationFactory()
+						.createRevertConfigurationOperation(
 						target,
 						new UIProblemHandler());
 				try {

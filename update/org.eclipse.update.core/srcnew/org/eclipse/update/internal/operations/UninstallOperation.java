@@ -58,7 +58,7 @@ public class UninstallOperation extends FeatureOperation implements IUninstallFe
 
 
 		markProcessed();
-		UpdateManager.getOperationsManager().fireObjectChanged(this, null);
+		OperationsManager.fireObjectChanged(this, null);
 		
 		return true;
 	}

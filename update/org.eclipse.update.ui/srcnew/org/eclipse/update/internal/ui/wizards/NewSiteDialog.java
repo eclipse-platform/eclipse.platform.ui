@@ -6,27 +6,17 @@
  */
 package org.eclipse.update.internal.ui.wizards;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLDecoder;
+import java.net.*;
 
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.update.internal.operations.UpdateManager;
-import org.eclipse.update.internal.ui.UpdateUI;
-import org.eclipse.update.internal.ui.model.SiteBookmark;
-import org.eclipse.update.internal.ui.model.UpdateModel;
+import org.eclipse.swt.*;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.update.internal.ui.*;
+import org.eclipse.update.internal.ui.model.*;
+import org.eclipse.update.operations.*;
 
 /**
  * @author wassimm
@@ -110,7 +100,7 @@ public class NewSiteDialog extends Dialog {
 			SiteBookmark bookmark = new SiteBookmark(name.getText(), new URL(url.getText()), false);
 			model.addBookmark(bookmark);
 			//TODO Is the next line needed? 
-			UpdateManager.getOperationsManager().fireObjectsAdded(null, new Object[]{bookmark});
+			OperationsManager.fireObjectsAdded(null, new Object[]{bookmark});
 			model.saveBookmarks();
 		} catch (MalformedURLException e) {
 		}
