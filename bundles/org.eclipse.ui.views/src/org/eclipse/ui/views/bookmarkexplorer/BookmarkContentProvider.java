@@ -151,10 +151,6 @@ class BookmarkContentProvider implements IStructuredContentProvider, IResourceCh
 					if (ctrl == null || ctrl.isDisposed())
 						return;
 					
-					// Be conservative for now, and refresh once if there are any changes.
-					// Can improve once the following PRs are addressed:
-					//   1G8OUTD: ITPCORE:ALL - Marker deltas should be composed
-					//   1G8OU65: ITPCORE:ALL - IMarkerDelta.getType() doesn't allow subtype comparisons
 					viewer.refresh();
 				}
 			});

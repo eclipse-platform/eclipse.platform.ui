@@ -87,8 +87,8 @@ public class BookmarkSorter extends ViewerSorter {
 		
 		switch (priorities[depth]) {
 			case BookmarkConstants.COLUMN_DESCRIPTION: {
-				String desc1 = marker1.getAttribute(IMarker.MESSAGE, "");
-				String desc2 = marker2.getAttribute(IMarker.MESSAGE, "");
+				String desc1 = marker1.getAttribute(IMarker.MESSAGE, "");//$NON-NLS-1$
+				String desc2 = marker2.getAttribute(IMarker.MESSAGE, "");//$NON-NLS-1$
 				int result = collator.compare(desc1, desc2);
 				if (result == 0)
 					result = compare(marker1, marker2, depth + 1);
@@ -140,21 +140,26 @@ public class BookmarkSorter extends ViewerSorter {
 		if (settings == null)
 			return;
 			
-		settings.put("columnCount", priorities.length);
-		settings.put("reversed", direction);
+		settings.put("columnCount", priorities.length);//$NON-NLS-1$
+		settings.put("reversed", direction);//$NON-NLS-1$
 		for (int i = 0; i < priorities.length; i++) 
-			settings.put("priority" + i, priorities[i]);
+			settings.put("priority" + i, priorities[i]);//$NON-NLS-1$
 	}	
 	
 	public void restoreState(IDialogSettings settings) {
 		if (settings == null)
 			return;
 		
-		int columnCount = settings.getInt("columnCount");
-		if (priorities.length != columnCount)
-			priorities = new int[columnCount];
-		direction = settings.getInt("reversed");
-		for (int i = 0; i < priorities.length; i++)
-			priorities[i] = settings.getInt("priority" + i);
+		try {
+			int columnCount = settings.getInt("columnCount");//$NON-NLS-1$
+			if (priorities.length != columnCount)
+				priorities = new int[columnCount];
+			direction = settings.getInt("reversed");//$NON-NLS-1$
+			for (int i = 0; i < priorities.length; i++)
+				priorities[i] = settings.getInt("priority" + i);//$NON-NLS-1$
+		}
+		catch (NumberFormatException e) {
+			resetPriorities();
+		}
 	}
 }

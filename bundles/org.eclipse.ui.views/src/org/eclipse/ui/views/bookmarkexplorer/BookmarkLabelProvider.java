@@ -45,12 +45,12 @@ class BookmarkLabelProvider extends LabelProvider
 
 	public String getColumnText(Object element, int columnIndex) {
 		if (!(element instanceof IMarker))
-			return "";
+			return "";//$NON-NLS-1$
 		IMarker marker = (IMarker) element;
 		
 		switch (columnIndex) {
 		 	case BookmarkConstants.COLUMN_DESCRIPTION: 
-		 		return marker.getAttribute(IMarker.MESSAGE, "");
+		 		return marker.getAttribute(IMarker.MESSAGE, "");//$NON-NLS-1$
 		 	case BookmarkConstants.COLUMN_RESOURCE:
 		 		return marker.getResource().getName();
 		 	case BookmarkConstants.COLUMN_FOLDER:
@@ -58,11 +58,11 @@ class BookmarkLabelProvider extends LabelProvider
 		 	case BookmarkConstants.COLUMN_LOCATION: {
 		 		int line = marker.getAttribute(IMarker.LINE_NUMBER, -1);
 		 		if (line == -1)
-		 			return "";
-		 		return "line " + line;
+		 			return "";//$NON-NLS-1$
+		 		return BookmarkMessages.getString("LineIndicator.text") + ' ' + line;//$NON-NLS-1$
 		 	}
 		}
-		return ""; 
+		return "";//$NON-NLS-1$ 
 	}
 	
 	public Image getColumnImage(Object element, int index) {
@@ -78,7 +78,7 @@ class BookmarkLabelProvider extends LabelProvider
 		IPath path = marker.getResource().getFullPath();
 		int n = path.segmentCount() - 1; // n is the number of segments in container, not path
 		if (n <= 0)
-			return "";
+			return "";//$NON-NLS-1$
 		int len = 0;
 		for (int i = 0; i < n; ++i)
 			len += path.segment(i).length();
