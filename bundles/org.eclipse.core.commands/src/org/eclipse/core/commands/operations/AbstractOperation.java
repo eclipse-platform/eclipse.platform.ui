@@ -48,6 +48,11 @@ public abstract class AbstractOperation implements IUndoableOperation {
 		fLabel = label;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.core.commands.operations.IUndoableOperation#addContext(org.eclipse.core.commands.operations.IUndoContext)
+	 */
 	public void addContext(IUndoContext context) {
 		if (!fContexts.contains(context)) {
 			fContexts.add(context);
@@ -57,7 +62,7 @@ public abstract class AbstractOperation implements IUndoableOperation {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.runtime.operations.IOperation#canExecute()
+	 * @see org.eclipse.core.commands.operations.IUndoableOperation#canExecute()
 	 */
 	public boolean canExecute() {
 		return true;
@@ -66,7 +71,7 @@ public abstract class AbstractOperation implements IUndoableOperation {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.runtime.operations.IOperation#canRedo()
+	 * @see org.eclipse.core.commands.operations.IUndoableOperation#canRedo()
 	 */
 	public boolean canRedo() {
 		return true;
@@ -75,7 +80,7 @@ public abstract class AbstractOperation implements IUndoableOperation {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.runtime.operations.IOperation#canUndo()
+	 * @see org.eclipse.core.commands.operations.IUndoableOperation#canUndo()
 	 */
 	public boolean canUndo() {
 		return true;
@@ -84,7 +89,7 @@ public abstract class AbstractOperation implements IUndoableOperation {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.runtime.operations.IOperation#dispose()
+	 * @see org.eclipse.core.commands.operations.IUndoableOperation#dispose()
 	 */
 	public void dispose() {
 		// nothing to dispose.
@@ -93,7 +98,7 @@ public abstract class AbstractOperation implements IUndoableOperation {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.runtime.operations.IOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.core.commands.operations.IUndoableOperation#execute(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.core.runtime.IAdaptable)
 	 */
 	public abstract IStatus execute(IProgressMonitor monitor, IAdaptable info);
 
@@ -105,12 +110,17 @@ public abstract class AbstractOperation implements IUndoableOperation {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.runtime.operations.IOperation#getDescription()
+	 * @see org.eclipse.core.commands.operations.IUndoableOperation#getDescription()
 	 */
 	public String getDescription() {
 		return ""; //$NON-NLS-1$
 	}
-
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.core.commands.operations.IUndoableOperation#getLabel()
+	 */
 	public String getLabel() {
 		return fLabel;
 	}
@@ -125,6 +135,11 @@ public abstract class AbstractOperation implements IUndoableOperation {
 		fLabel = name;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.core.commands.operations.IUndoableOperation#hasContext(org.eclipse.core.commands.operations.IUndoContext)
+	 */
 	public boolean hasContext(IUndoContext context) {
 		Assert.isNotNull(context);
 		for (int i = 0; i< fContexts.size(); i++) {
@@ -140,7 +155,7 @@ public abstract class AbstractOperation implements IUndoableOperation {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.runtime.operations.IOperation#redo(org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.core.commands.operations.IUndoableOperation#redo(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.core.runtime.IAdaptable)
 	 */
 	public abstract IStatus redo(IProgressMonitor monitor, IAdaptable info);
 
@@ -151,7 +166,7 @@ public abstract class AbstractOperation implements IUndoableOperation {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.runtime.operations.IOperation#undo(org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.core.commands.operations.IUndoableOperation#undo(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.core.runtime.IAdaptable)
 	 */
 	public abstract IStatus undo(IProgressMonitor monitor, IAdaptable info);
 

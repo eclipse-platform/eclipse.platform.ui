@@ -34,30 +34,46 @@ import org.eclipse.core.runtime.Status;
 public abstract class LinearUndoViolationDetector implements
 		IContextOperationApprover {
 
+	/*
+	 * Return whether a linear redo violation is allowable.  A linear redo violation
+	 * is defined as a request to redo a particular operation even if it is not the most
+	 * recently added operation to the redo history.
+	 */
 	protected abstract IStatus allowLinearRedoViolation(IUndoableOperation operation,
 			IUndoContext context, IOperationHistory history, IAdaptable uiInfo);
 
+	/*
+	 * Return whether a linear undo violation is allowable.  A linear undo violation
+	 * is defined as a request to undo a particular operation even if it is not the most
+	 * recently added operation to the undo history.
+	 */
 	protected abstract IStatus allowLinearUndoViolation(IUndoableOperation operation,
 			IUndoContext context, IOperationHistory history, IAdaptable uiInfo);
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.core.operations.IOperationApprover#proceedRedoing(org.eclipse.core.operations.IOperation,
-	 *      org.eclipse.core.operations.IOperationHistory)
+	 * @see org.eclipse.core.commands.operations.IOperationApprover#proceedRedoing(org.eclipse.core.commands.operations.IUndoableOperation,
+	 *      org.eclipse.core.commands.operations.IUndoContext, org.eclipse.core.commands.operations.IOperationHistory, org.eclipse.core.runtime.IAdaptable)
 	 */
 	public IStatus proceedRedoing(IUndoableOperation operation,
-			IUndoContext context, IOperationHistory history, IAdaptable uiInfo) {
+			IUndoContext context, IOperationHistory history, IAdaptable info) {
 		if (history.getRedoOperation(context) != operation)
-			return allowLinearRedoViolation(operation, context, history, uiInfo);
+			return allowLinearRedoViolation(operation, context, history, info);
 
 		return Status.OK_STATUS;
 	}
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.core.commands.operations.IOperationApprover#proceedUndoing(org.eclipse.core.commands.operations.IUndoableOperation,
+	 *      org.eclipse.core.commands.operations.IUndoContext, org.eclipse.core.commands.operations.IOperationHistory, org.eclipse.core.runtime.IAdaptable)
+	 */
 
 	public IStatus proceedUndoing(IUndoableOperation operation,
-			IUndoContext context, IOperationHistory history, IAdaptable uiInfo) {
+			IUndoContext context, IOperationHistory history, IAdaptable info) {
 		if (history.getUndoOperation(context) != operation)
-			return allowLinearUndoViolation(operation, context, history, uiInfo);
+			return allowLinearUndoViolation(operation, context, history, info);
 
 		return Status.OK_STATUS;
 	}

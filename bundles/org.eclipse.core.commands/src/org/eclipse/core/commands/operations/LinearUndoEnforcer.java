@@ -33,11 +33,21 @@ import org.eclipse.core.runtime.Status;
  */
 public class LinearUndoEnforcer extends LinearUndoViolationDetector {
 
+	/*
+	 * Return whether a linear redo violation is allowable.  A linear redo violation
+	 * is defined as a request to redo a particular operation even if it is not the most
+	 * recently added operation to the redo history.
+	 */
 	protected IStatus allowLinearRedoViolation(IUndoableOperation operation,
 			IUndoContext context, IOperationHistory history, IAdaptable uiInfo) {
 		return Status.CANCEL_STATUS;
 	}
 
+	/*
+	 * Return whether a linear undo violation is allowable.  A linear undo violation
+	 * is defined as a request to undo a particular operation even if it is not the most
+	 * recently added operation to the undo history.
+	 */
 	protected IStatus allowLinearUndoViolation(IUndoableOperation operation,
 			IUndoContext context, IOperationHistory history, IAdaptable uiInfo) {
 		return Status.CANCEL_STATUS;

@@ -42,7 +42,10 @@ public class ObjectUndoContext extends UndoContext {
 		super();
 		fObject = object;
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.commands.operations.IUndoContext#getLabel()
+	 */
 	public String getLabel() {
 		return fObject.toString();
 	}
@@ -56,6 +59,9 @@ public class ObjectUndoContext extends UndoContext {
 		return fObject;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.commands.operations.IUndoContext#getOperationApprover()
+	 */
 	public IContextOperationApprover getOperationApprover() {
 		return fApprover;
 	}

@@ -12,9 +12,8 @@ package org.eclipse.core.commands.operations;
 
 /**
  * <p>
- * A simple, lightweight operation context that can be used to tag any
- * operation. It does not provided a specialized label or operation approval
- * sequence.
+ * An interface for an undo context that can be used to identify any operation as
+ * having a specific context.
  * </p>
  * <p>
  * Note: This class/interface is part of a new API under development. It has

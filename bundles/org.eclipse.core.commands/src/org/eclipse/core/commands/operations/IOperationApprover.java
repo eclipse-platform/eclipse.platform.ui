@@ -52,11 +52,12 @@ public interface IOperationApprover {
 	 *            the operation to be redone
 	 * @param history -
 	 *            the history redoing the operation
-	 * @param uiInfo -
-	 *            the IAdaptable (or <code>null</code>) that can be used to
-	 *            obtain additional UI information if any user prompting is
-	 *            necessary during the execution of the operation. If an
-	 *            IAdaptable is provided, it will provide an adapter for
+	 * @param info -
+	 *            the IAdaptable (or <code>null</code>) provided by the caller
+	 *            containing additional information.  When this API is called
+	 *            from the UI, callers can use this to provide additional info
+	 *            for prompting the user.   If an IAdaptable is provided, 
+	 *            callers are encourated to provide an adapter for the
 	 *            org.eclipse.swt.widgets.Shell.class.
 	 * @return the IStatus describing whether the operation is approved. The
 	 *         redo will not proceed if the status severity is no
@@ -65,7 +66,7 @@ public interface IOperationApprover {
 	 *         severities will not be interpreted by the history.
 	 */
 	IStatus proceedRedoing(IUndoableOperation operation,
-			IOperationHistory history, IAdaptable uiInfo);
+			IOperationHistory history, IAdaptable info);
 
 	/**
 	 * Return a status indicating whether the specified operation should be
@@ -78,13 +79,13 @@ public interface IOperationApprover {
 	 *            the operation to be undone
 	 * @param history -
 	 *            the history undoing the operation
-	 * @param uiInfo -
-	 *            the IAdaptable (or <code>null</code>) that can be used to
-	 *            obtain additional UI information if any user prompting is
-	 *            necessary during the execution of the operation. If an
-	 *            IAdaptable is provided, it will provide an adapter for
+	 * @param info -
+	 *            the IAdaptable (or <code>null</code>) provided by the caller
+	 *            containing additional information.  When this API is called
+	 *            from the UI, callers can use this to provide additional info
+	 *            for prompting the user.   If an IAdaptable is provided, 
+	 *            callers are encourated to provide an adapter for the
 	 *            org.eclipse.swt.widgets.Shell.class.
-	 * 
 	 * @return the IStatus describing whether the operation is approved. The
 	 *         undo will not proceed if the status severity is not
 	 *         <code>OK</code>, and the caller requesting the undo will be
@@ -92,6 +93,6 @@ public interface IOperationApprover {
 	 *         severities will not be interpreted by the history.
 	 */
 	IStatus proceedUndoing(IUndoableOperation operation,
-			IOperationHistory history, IAdaptable uiInfo);
+			IOperationHistory history, IAdaptable info);
 
 }

@@ -32,6 +32,11 @@ import org.eclipse.core.runtime.Status;
  */
 public class ContextConsultingOperationApprover implements IOperationApprover {
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.core.commands.operations.IOperationApprover#proceedRedoing(IUndoableOperation, IOperationHistory, org.eclipse.core.runtime.IAdaptable)
+	 */
 	public IStatus proceedRedoing(IUndoableOperation operation,
 			IOperationHistory history, IAdaptable uiInfo) {
 		IUndoContext[] contexts = operation.getContexts();
@@ -47,6 +52,11 @@ public class ContextConsultingOperationApprover implements IOperationApprover {
 		return Status.OK_STATUS;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.core.commands.operations.IOperationApprover#proceedUndoing(IUndoableOperation, IOperationHistory, org.eclipse.core.runtime.IAdaptable)
+	 */
 	public IStatus proceedUndoing(IUndoableOperation operation,
 			IOperationHistory history, IAdaptable uiInfo) {
 		IUndoContext[] contexts = operation.getContexts();
