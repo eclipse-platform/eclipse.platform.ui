@@ -321,13 +321,12 @@ public class Setup implements Cloneable {
 	}
 
 	public String toCommandLineString() {
-		List commandLine = new ArrayList();
-		fillCommandLine(commandLine);
+		String[] commandLine = getCommandLine();
 		StringBuffer result = new StringBuffer();
 		result.append("[\n");
-		for (Iterator i = commandLine.iterator(); i.hasNext();) {
+		for (int i = 0; i < commandLine.length; i++) {
 			result.append('\t');
-			result.append(i.next());
+			result.append(commandLine[i]);
 			result.append('\n');
 		}
 		result.append(']');
