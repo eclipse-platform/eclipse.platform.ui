@@ -466,7 +466,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
         String content = cfgElement.getAttribute(ATT_CONTENT);
         // Resolve.
         content = IntroModelRoot.getPluginLocation(content, cfgElement);
-        Document document = new IntroConfigParser(content).getDocument();
+        Document document = new IntroContentParser(content).getDocument();
         return document;
     }
 
@@ -540,7 +540,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
         URL localLocation = null;
         try {
             // we need to perform a 'resolve' on this URL.
-            localLocation = pluginDesc.find(new Path("$nl$").append(resource));
+            localLocation = pluginDesc.find(new Path(resource));
             if (localLocation == null)
                 // localLocation can be null if the passed resource could not
                 // be found relative to the plugin. return resource, as is;

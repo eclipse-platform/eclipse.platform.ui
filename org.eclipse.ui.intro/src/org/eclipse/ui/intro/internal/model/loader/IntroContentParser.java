@@ -23,7 +23,7 @@ import org.xml.sax.*;
 /**
  *  
  */
-public class IntroConfigParser {
+public class IntroContentParser {
 
     private static String TAG_INTRO_CONTENT = "introContent";
 
@@ -33,7 +33,7 @@ public class IntroConfigParser {
      * Creates a config parser assuming that the passed content represents a URL
      * to the content file.
      */
-    public IntroConfigParser(String content) {
+    public IntroContentParser(String content) {
         try {
             document = parse(content);
             if (document != null) {
