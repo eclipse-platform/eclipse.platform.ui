@@ -33,6 +33,7 @@ public class AnimatedCanvas {
 	private GC imageCanvasGC;
 	private ImageLoader loader = new ImageLoader();
 	private boolean animated = false;
+	private Job animateJob;
 	
 	/**
 	 * Create a new instance of the receiver.
@@ -206,13 +207,17 @@ public class AnimatedCanvas {
 		Image image = getImage();
 		ImageData[] imageDataArray = getImageData();
 		if (isAnimated() && image != null && imageDataArray.length > 1) {
-			Job animateJob = new AnimateJob() {
+			//Clear out the old job
+			if (animateJob != null)
+				animateJob.cancel();
+				
+			animateJob = new AnimateJob() {
 				/* (non-Javadoc)
 				 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 				 */
 				public IStatus run(IProgressMonitor monitor) {
 					try {
-						animateLoop();
+						animateLoop(monitor);
 						return Status.OK_STATUS;
 					} catch (final SWTException e) {
 						return new Status(
@@ -234,8 +239,9 @@ public class AnimatedCanvas {
 	/**
 	 * Loop through all of the images in a multi-image file
 	 * and display them one after another.
+	 * @param monitor The monitor supplied to the job
 	 */
-	private void animateLoop() {
+	private void animateLoop(IProgressMonitor monitor) {
 		// Create an off-screen image to draw on, and a GC to draw with.
 		// Both are disposed after the animation.
 
@@ -285,7 +291,7 @@ public class AnimatedCanvas {
 				imageData.height);
 
 			if (loader.repeatCount > 0) {
-				while (isAnimated()) {
+				while (isAnimated() && !monitor.isCanceled()) {
 
 					if (getControl().isDisposed())
 						return;
