@@ -943,19 +943,8 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 		} 			
 		history.add(0, item);
 		
-		// If adding the item made the list too large, trim off the last item.  If the
-		// removed last item was an 'autosaved' configuration that is no longer referenced
-		// in the other history list, delete it.  This prevents autosaved config files that are 
-		// no longer referenced from lying around forever.
 		if (history.size() > MAX_HISTORY_SIZE) {
-			LaunchConfigurationHistoryElement removedElement = (LaunchConfigurationHistoryElement) history.remove(history.size() - 1);
-			int otherIndex = findConfigInOtherHistoryList(mode, removedElement.getLaunchConfiguration());
-			if (otherIndex == -1) {
-				try {
-					removedElement.getLaunchConfiguration().delete();
-				} catch (CoreException ce) {
-				}
-			}
+			history.remove(history.size() - 1);
 		}	
 	}
 	
