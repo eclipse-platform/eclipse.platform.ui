@@ -20,6 +20,7 @@ public static Test suite() {
 	suite.addTest(BuildDeltaVerificationTest.suite());
 	suite.addTest(MultiProjectBuildTest.suite());
 	suite.addTest(BuilderNatureTest.suite());
+	suite.addTest(BuilderCycleTest.suite());
 	return suite;
 }
 }

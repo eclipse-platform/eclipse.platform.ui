@@ -276,6 +276,9 @@
     <test id="builders.BuilderTest">
       <run class="org.eclipse.core.tests.internal.builders.BuilderTest"/>
     </test>
+    <test id="builders.BuilderCycleTest">
+      <run class="org.eclipse.core.tests.internal.builders.BuilderCycleTest"/>
+    </test>
     <test id="builders.BuildDeltaVerificationTest">
       <run class="org.eclipse.core.tests.internal.builders.BuildDeltaVerificationTest"/>
     </test>
@@ -463,6 +466,11 @@
   <extension point="org.eclipse.core.resources.builders" id="snowbuilder" name="Snow Builder">
     <builder hasNature="true">
       <run class="org.eclipse.core.tests.internal.builders.SnowBuilder"/>
+    </builder>
+  </extension>
+  <extension point="org.eclipse.core.resources.builders" id="cyclebuilder" name="Cycle Builder">
+    <builder>
+      <run class="org.eclipse.core.tests.internal.builders.CycleBuilder"/>
     </builder>
   </extension>
   
