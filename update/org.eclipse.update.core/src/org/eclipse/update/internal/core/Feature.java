@@ -651,6 +651,18 @@ public abstract class Feature implements IFeature {
 		}
 	}
 
+
+	/**
+	 * remove myself...
+	 */
+	public void remove(IProgressMonitor monitor) throws CoreException {
+		// do not remove related plugins as some willbe removed soem won;t
+		// the computaion has been done in Site#remove
+		
+		//FIXME: remove the directory or teh JAR ? delegate to subclass
+		
+	}
+	
 	/** 
 	 * initialize teh feature by reading the feature.xml if it exists
 	 */
