@@ -337,6 +337,21 @@ public abstract class Breakpoint extends PlatformObject implements IBreakpoint {
 	        }
         }
         return rule;
+    }
+    
+    /**
+	 * Execute the given workspace runnable with the scheduling rule to use when running the operation.
+	 * 
+	 * @param rule the rule to use when running the operation
+     * @param wr the runnable operation
+     * @throws DebugException If a core exception occurs performing the operation
+	 * @since 3.1
+	 */
+    protected void run(ISchedulingRule rule, IWorkspaceRunnable wr) throws DebugException {
+    	try {
+    		ResourcesPlugin.getWorkspace().run(wr, rule, 0, null);
+    	} catch (CoreException e) {
+    		throw new DebugException(e.getStatus());
+    	}			
     }    
 }
-
