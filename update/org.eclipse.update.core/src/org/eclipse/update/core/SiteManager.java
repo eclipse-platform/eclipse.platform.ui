@@ -56,5 +56,14 @@ public class SiteManager {
 	public static ILocalSite getLocalSite() throws CoreException {
 		return InternalSiteManager.getLocalSite();
 	}
-
+	
+	/**
+	 * Prompt the user to configure or unconfigure
+	 * newly discoverd features.
+	 * @throws CoreException if an error occurs.
+	 * @since 2.0
+	 */
+	public static void handleNewChanges() throws CoreException{
+		//InternalSiteManager.handleNewChanges();
+	}
 }
