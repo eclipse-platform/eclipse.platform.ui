@@ -199,6 +199,13 @@ public IResource[] members(int memberFlags) throws CoreException {
 		return reducedMembers;
 	}		
 }
+/**
+ * @see IContainer#getDefaultCharset
+ */
+public String getDefaultCharset() throws CoreException {
+	String charset = workspace.getCharsetManager().getCharsetFor(getFullPath());
+	return charset == null ? getParent().getDefaultCharset() : charset;
+}
 
 /**
  * @see IContainer#findDeletedMembersWithHistory
@@ -231,4 +238,10 @@ public IFile[] findDeletedMembersWithHistory(int depth, IProgressMonitor monitor
 	return (IFile[]) deletedFiles.toArray(new IFile[deletedFiles.size()]);
 }
 
+/**
+ * @see IContainer#setDefaultCharset
+ */
+public void setDefaultCharset(String charset) throws CoreException {
+	workspace.getCharsetManager().setCharsetFor(getFullPath(), charset);
+}
 }

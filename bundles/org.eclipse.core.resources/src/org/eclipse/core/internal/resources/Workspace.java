@@ -50,6 +50,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 */
 	protected WorkManager _workManager;
 	protected AliasManager aliasManager;
+	protected CharsetManager charsetManager;
 	protected RefreshManager refreshManager;
 	
 	protected long nextNodeId = 1;
@@ -890,6 +891,9 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	public AliasManager getAliasManager() {
 		return aliasManager;
 	}
+	public CharsetManager getCharsetManager() {
+		return charsetManager;
+	}
 	/**
 	 * Returns this workspace's build manager
 	 */
@@ -1585,7 +1589,6 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	public void run(IWorkspaceRunnable action, IProgressMonitor monitor) throws CoreException {
 		run(action, defaultRoot, IWorkspace.AVOID_UPDATE, monitor);
 	}
-
 	
 	/** 
 	 * @see IWorkspace
@@ -1645,7 +1648,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	protected void shutdown(IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
-			IManager[] managers = { buildManager, propertyManager, pathVariableManager, fileSystemManager, markerManager, saveManager, _workManager, aliasManager, refreshManager };
+			IManager[] managers = { buildManager, propertyManager, pathVariableManager, charsetManager, fileSystemManager, markerManager, saveManager, _workManager, aliasManager, refreshManager };
 			monitor.beginTask(null, managers.length);
 			String message = Policy.bind("resources.shutdownProblems"); //$NON-NLS-1$
 			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, null);
@@ -1712,6 +1715,8 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		aliasManager.startup(null);
 		refreshManager = new RefreshManager(this);
 		refreshManager.startup(null);
+		charsetManager = new CharsetManager(this);
+		charsetManager.startup(null);
 		treeLocked = null; // unlock the tree.
 	}
 

@@ -169,6 +169,28 @@ public IResource findMember(IPath path);
  */
 public IResource findMember(IPath path, boolean includePhantoms);
 /**
+ * Returns the default charset for resources in this container.
+ * <p>
+ * The charset returned is:
+ * <ol>
+ * <li>the one explicitly set by calling #setDefaultCharset 
+ * (with a non-null argument) on this container, if any, or</li>  
+ * <li>the parent's default charset, if this container has a parent (is not the 
+ * workspace root), or</li>
+ * <li>the charset returned by ResourcesPlugin#getEncoding.</li> 
+ * </ol> 
+ * </p>
+ *  <p>
+ * <b>Note</b>: This method is part of early access API that may well 
+ * change in incompatible ways until it reaches its finished form. 
+ * </p>
+ * @return the name of the default charset encoding for this container 
+ * @throws CoreException if this method fails
+ * @see IFile#getCharset
+ * @since 3.0
+ */
+public String getDefaultCharset() throws CoreException;
+/**
  * Returns a handle to the file identified by the given path in this
  * container.
  * <p> 
@@ -342,4 +364,17 @@ public IResource[] members(int memberFlags) throws CoreException;
  */
 public IFile[] findDeletedMembersWithHistory(int depth, IProgressMonitor monitor) throws CoreException;
 
+/**
+ * Sets the default charset for this container.
+ * <p>
+ * <b>Note</b>: This method is part of early access API that may well 
+ * change in incompatible ways until it reaches its finished form. 
+ * </p>
+ *
+ * @param charset a charset string, or <code>null</code>
+ * @throws CoreException if this method fails
+ * @see IContainer#getDefaultCharset
+ * @since 3.0
+ */
+public void setDefaultCharset(String charset) throws CoreException;
 }

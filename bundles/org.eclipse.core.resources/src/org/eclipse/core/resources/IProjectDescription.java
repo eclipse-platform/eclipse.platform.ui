@@ -53,6 +53,7 @@ public String getComment();
  * 
  * @return the name of the default charset for the described project, or <code>null</code>
  * @since 3.0 
+ * @deprecated Use IProject#getDefaultCharset instead
  */
 public String getDefaultCharset();
 /**
@@ -144,6 +145,7 @@ public void setComment(String comment);
  * @see IProject#setDescription
  * @see #getDefaultCharset 
  * @since 3.0
+ * @deprecated Use IProject#setDefaultCharset instead
  */
 public void setDefaultCharset(String charset);
 /**

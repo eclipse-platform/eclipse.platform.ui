@@ -71,6 +71,12 @@ public IContainer getContainerForLocation(IPath location) {
 	return getLocalManager().containerForLocation(location);
 }
 /**
+ * @see IContainer#getDefaultCharset
+ */
+public String getDefaultCharset() {
+	return ResourcesPlugin.getEncoding();
+}
+/**
  * @see IWorkspaceRoot
  */
 public IFile getFileForLocation(IPath location) {
@@ -180,6 +186,17 @@ public boolean isLocal(int flags, int depth) {
  */
 public boolean isPhantom() {
 	return false;
+}
+/**
+ * @see IContainer#setDefaultCharset
+ */
+public void setDefaultCharset(String charset) throws CoreException {
+	// directly change the Resource plugin's preference for encoding
+	Preferences resourcesPreferences = ResourcesPlugin.getPlugin().getPluginPreferences();		 
+	if (charset != null)
+		resourcesPreferences.setValue(ResourcesPlugin.PREF_ENCODING, charset);
+	else 
+	resourcesPreferences.setToDefault(ResourcesPlugin.PREF_ENCODING);
 }
 /**
  * @see IResource

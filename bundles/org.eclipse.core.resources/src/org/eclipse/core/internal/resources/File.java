@@ -200,14 +200,9 @@ protected void ensureClosed(InputStream stream) {
 /**
  * @see IEncodedStorage#getCharset
  */
-public String getCharset() throws CoreException {
-	IProjectDescription projectDescription =  ((Project) getProject()).internalGetDescription();
-	if (projectDescription == null)
-		return ResourcesPlugin.getEncoding();
-	String projectDefaultCharset = projectDescription.getDefaultCharset();
-	if (projectDefaultCharset == null)
-		return ResourcesPlugin.getEncoding();
-	return projectDefaultCharset;
+public String getCharset() throws CoreException {		 		  
+	String charset = workspace.getCharsetManager().getCharsetFor(getFullPath());
+	return charset == null ? getParent().getDefaultCharset() : charset;
 }
 /**
  * @see IFile#getContents
@@ -327,7 +322,9 @@ public void updateProjectDescription() throws CoreException {
 	if (path.segmentCount() == 2 && path.segment(1).equals(IProjectDescription.DESCRIPTION_FILE_NAME))
 		((Project)getProject()).updateDescription();
 }
-
+public void setCharset(String newCharset) throws CoreException {
+		 		  workspace.getCharsetManager().setCharsetFor(getFullPath(), newCharset);		 		  
+}
 /**
  * @see IFile
  */
@@ -347,8 +344,4 @@ public void setContents(IFileState source, boolean force, boolean keepHistory, I
 	updateFlags |= keepHistory ? IResource.KEEP_HISTORY : IResource.NONE;
 	setContents(source.getContents(), updateFlags, monitor);
 }
-
-
-
-
 }

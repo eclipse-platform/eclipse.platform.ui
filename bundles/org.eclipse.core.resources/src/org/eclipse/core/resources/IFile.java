@@ -405,20 +405,26 @@ public void createLink(IPath localLocation, int updateFlags, IProgressMonitor mo
 public void delete(boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException;
 /**
  * Returns the name of a charset to be used when decoding the contents of this 
- * file into characters. If this file's encoding cannot be determined based on 
- * its contents, this refinement of the corresponding 
- * <code>IEncodingStorage</code> method returns the default charset for this 
- * file's project description, if one is defined, or the default encoding for 
- * the workspace (which may be <code>null</code>).
+ * file into characters. 
+ * <p>
+ * This refinement of the corresponding <code>IEncodingStorage</code> method
+ * uses the following algorithm to determine the charset to be returned:
+ * <ol>
+ * <li>the charset defined by calling #setCharset, if any, or</li>
+ * <li>the charset automatically discovered based on this file's contents,
+ * if one can be determined , or</li>
+ * <li>the default encoding for this file's parent (as defined by 
+ * IContainer#getDefaultCharset).</li>
+ * </ol>
+ * </p> 
  * <p>
  * <b>Note</b>: This method is part of early access API that may well 
  * change in incompatible ways until it reaches its finished form. 
  * </p>
- * 
+ *  
  * @return the name of a charset, or <code>null</code>
  * @see IEncodedStorage#getCharset
- * @see IProjectDescription#getDefaultCharset
- * @see ResourcesPlugin#getEncoding
+ * @see IContainer#getDefaultCharset
  * @since 3.0
  */
 public String getCharset() throws CoreException;
@@ -576,7 +582,19 @@ public boolean isReadOnly();
  * @see IResourceRuleFactory#moveRule
  */
 public void move(IPath destination, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException;
-
+/**
+ * Sets the charset for this file.
+ * <p>
+ * <b>Note</b>: This method is part of early access API that may well 
+ * change in incompatible ways until it reaches its finished form. 
+ * </p> 
+ * 
+ * @param newCharset a charset name, or <code>null</code>
+ * @throws CoreException if this method fails
+ * @see #getCharset
+ * @since 3.0
+ */
+public void setCharset(String newCharset) throws CoreException;
 /**
  * Sets the contents of this file to the bytes in the given input stream.
  * <p>
