@@ -16,7 +16,7 @@ import java.util.Iterator;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IExpressionManager;
 import org.eclipse.debug.core.model.IExpression;
-import org.eclipse.debug.core.model.WatchExpression;
+import org.eclipse.debug.core.model.IWatchExpression;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
@@ -35,7 +35,7 @@ public class ConvertToWatchExpressionAction extends WatchExpressionAction {
 		for (Iterator iter= selection.iterator(); iter.hasNext();) {
 			IExpression expression= (IExpression) iter.next();
 			// create the new watch expression
-			WatchExpression watchExpression= new WatchExpression(expression.getExpressionText());
+			IWatchExpression watchExpression= expressionManager.newWatchExpression(expression.getExpressionText());
 			expressionManager.removeExpression(expression);
 			expressionManager.addExpression(watchExpression);
 			// refresh and re-evaluate

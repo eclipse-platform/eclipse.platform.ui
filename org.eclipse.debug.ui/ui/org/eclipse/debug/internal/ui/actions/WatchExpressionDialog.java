@@ -11,7 +11,8 @@
 package org.eclipse.debug.internal.ui.actions;
 
 
-import org.eclipse.debug.core.model.WatchExpression;
+import org.eclipse.debug.core.model.IWatchExpression;
+import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.DocumentEvent;
@@ -38,23 +39,23 @@ public class WatchExpressionDialog extends StatusDialog {
 	/**
 	 * The detail formatter to edit.
 	 */
-	private WatchExpression fWatchExpression;
+	private IWatchExpression fWatchExpression;
 
 	// widgets
 	private SourceViewer fSnippetViewer;
 	private Button fCheckBox;
 
-	public WatchExpressionDialog(Shell parent, WatchExpression watchExpression, boolean editDialog) {
+	public WatchExpressionDialog(Shell parent, IWatchExpression watchExpression, boolean editDialog) {
 		super(parent);
 		fWatchExpression= watchExpression;
 		setShellStyle(getShellStyle() | SWT.MAX | SWT.RESIZE);
 		String helpContextId = null;
 		if (editDialog) {
-			setTitle("Edit Watch Expression");
-			//helpContextId = IJavaDebugHelpContextIds.EDIT_WATCH_EXPRESSION_DIALOG;
+			setTitle(ActionMessages.getString("WatchExpressionDialog.0")); //$NON-NLS-1$
+			helpContextId = IDebugHelpContextIds.EDIT_WATCH_EXPRESSION_DIALOG;
 		} else {
-			setTitle("Add Watch Expression");
-			//helpContextId = IJavaDebugHelpContextIds.ADD_WATCH_EXPRESSION_DIALOG;
+			setTitle(ActionMessages.getString("WatchExpressionDialog.1")); //$NON-NLS-1$
+			helpContextId = IDebugHelpContextIds.ADD_WATCH_EXPRESSION_DIALOG;
 		}
 		WorkbenchHelp.setHelp(parent, helpContextId);
 	}
@@ -75,7 +76,7 @@ public class WatchExpressionDialog extends StatusDialog {
 
 		// snippet label
 		Label label= new Label(container, SWT.NONE);
-		label.setText("E&xpression:");
+		label.setText(ActionMessages.getString("WatchExpressionDialog.2")); //$NON-NLS-1$
 		gd= new GridData(GridData.BEGINNING);
 		label.setLayoutData(gd);
 		label.setFont(font);
@@ -110,7 +111,7 @@ public class WatchExpressionDialog extends StatusDialog {
 
 		// enable checkbox
 		fCheckBox= new Button(container, SWT.CHECK | SWT.LEFT);
-		fCheckBox.setText("&Enable");
+		fCheckBox.setText(ActionMessages.getString("WatchExpressionDialog.3")); //$NON-NLS-1$
 		fCheckBox.setSelection(fWatchExpression.isEnabled());
 		fCheckBox.setFont(font);
 
@@ -134,7 +135,7 @@ public class WatchExpressionDialog extends StatusDialog {
 	private void checkValues() {
 		StatusInfo status= new StatusInfo();
 		if (fSnippetViewer.getDocument().get().trim().length() == 0) {
-			status.setError("Expression must not be empty");
+			status.setError(ActionMessages.getString("WatchExpressionDialog.4")); //$NON-NLS-1$
 		}
 		updateStatus(status);
 	}

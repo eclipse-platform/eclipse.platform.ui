@@ -252,9 +252,9 @@ public class DefaultLabelProvider implements ILabelProvider {
 		StringBuffer result= new StringBuffer();
 		result.append('"').append(expression.getExpressionText()).append('"');
 		if (expression.isPending()) {
-			result.append(" (pending)");
+			result.append(DebugUIMessages.getString("DefaultLabelProvider.12")); //$NON-NLS-1$
 		} else if (expression.hasErrors()) {
-			result.append(" <error(s)_during_the_evaluation>");
+			result.append(DebugUIMessages.getString("DefaultLabelProvider.13")); //$NON-NLS-1$
 		} else {
 			IValue value= expression.getValue();
 			if (value != null) {	
@@ -265,10 +265,10 @@ public class DefaultLabelProvider implements ILabelProvider {
 			}
 		}
 		if (expression.isObsolete()) {
-			result.append(" (obsolete)");
+			result.append(DebugUIMessages.getString("DefaultLabelProvider.14")); //$NON-NLS-1$
 		}
 		if (!expression.isEnabled()) {
-			result.append(" (disabled)");
+			result.append(DebugUIMessages.getString("DefaultLabelProvider.15")); //$NON-NLS-1$
 		}
 		return result.toString();
 	}

@@ -40,6 +40,8 @@ public interface IDebugHelpContextIds {
 	public static final String FOLLOW_CONSOLE_HYPERLINK_ACTION = PREFIX + "follow_console_hyperlink_context"; //$NON-NLS-1$
 	public static final String EDIT_LAUNCH_CONFIGURATION_ACTION = PREFIX + "edit_launch_configuration_action_context"; //$NON-NLS-1$
 	public static final String OPEN_LAUNCH_CONFIGURATION_ACTION = PREFIX + "open_launch_configuration_action_context"; //$NON-NLS-1$
+	public static final String ADD_WATCH_EXPRESSION_DIALOG= PREFIX + "add_watch_expression_dialog_context"; //$NON-NLS-1$
+	public static final String EDIT_WATCH_EXPRESSION_DIALOG= PREFIX + "edit_watch_expression_dialog_context"; //$NON-NLS-1$
 		
 	// Views
 	public static final String DEBUG_VIEW = PREFIX + "debug_view_context"; //$NON-NLS-1$

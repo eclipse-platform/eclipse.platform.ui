@@ -18,7 +18,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IVariable;
-import org.eclipse.debug.core.model.WatchExpression;
+import org.eclipse.debug.core.model.IWatchExpression;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.action.IAction;
@@ -59,11 +59,11 @@ public class WatchAction implements IObjectActionDelegate {
 	}
 
 	private void createExpression(IVariable variable) {
-		WatchExpression expression;
+		IWatchExpression expression;
 		try {
-			expression = new WatchExpression(variable.getName());
+			expression = DebugPlugin.getDefault().getExpressionManager().newWatchExpression(variable.getName());
 		} catch (DebugException e) {
-			DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), "Error creating watch", "An exception occurred while attempting to create watch item.", e);
+			DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), ActionMessages.getString("WatchAction.0"), ActionMessages.getString("WatchAction.1"), e); //$NON-NLS-1$ //$NON-NLS-2$
 			return;
 		}
 		DebugPlugin.getDefault().getExpressionManager().addExpression(expression);

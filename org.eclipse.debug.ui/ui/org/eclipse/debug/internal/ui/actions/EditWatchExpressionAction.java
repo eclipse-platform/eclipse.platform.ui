@@ -11,10 +11,9 @@
 package org.eclipse.debug.internal.ui.actions;
 
 
-import org.eclipse.debug.core.model.WatchExpression;
+import org.eclipse.debug.core.model.IWatchExpression;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.window.Window;
 
 /**
  * Open the watch expression dialog for the select watch expression.
@@ -26,12 +25,9 @@ public class EditWatchExpressionAction extends WatchExpressionAction {
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
-		WatchExpression watchExpression= (WatchExpression)getCurrentSelection().getFirstElement();
+		IWatchExpression watchExpression= (IWatchExpression)getCurrentSelection().getFirstElement();
 		// display the watch expression dialog for the currently selected watch expression
-		if (new WatchExpressionDialog(DebugUIPlugin.getShell(), watchExpression, true).open() == Window.OK) {
-			// re-evaluate and refresh if necessary
-			watchExpression.setExpressionContext(getContext());
-		}
+		new WatchExpressionDialog(DebugUIPlugin.getShell(), watchExpression, true).open();
 	}
 
 }

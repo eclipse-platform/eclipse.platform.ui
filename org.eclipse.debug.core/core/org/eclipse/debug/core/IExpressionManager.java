@@ -12,6 +12,7 @@ package org.eclipse.debug.core;
 
 
 import org.eclipse.debug.core.model.IExpression;
+import org.eclipse.debug.core.model.IWatchExpression;
 import org.eclipse.debug.core.model.IWatchExpressionDelegate;
 
 /**
@@ -50,7 +51,16 @@ public interface IExpressionManager {
 	 * @param expressions the expressions to add
 	 * @since 2.1
 	 */
-	public void addExpressions(IExpression[] expressions);	
+	public void addExpressions(IExpression[] expressions);
+	
+	/**
+	 * Creates and returns a new watch expression with the
+	 * given text. The returned expression is <b>not</b> added to
+	 * this manager.
+	 * 
+	 * @param expressionText the text for the new expression
+	 */
+	public IWatchExpression newWatchExpression(String expressionText);
 		
 	/**
 	 * Returns a collection of all registered expressions, 

@@ -44,6 +44,12 @@ public interface IWatchExpression extends IExpression {
 	 */
 	public void setExpressionContext(IDebugElement context);
 	/**
+	 * Sets this watch expression's snippet of code.
+	 * 
+	 * @param expressionText the snippet which will be evaluated
+	 */
+	public void setExpressionText(String expressionText);
+	/**
 	 * Returns whether the result of this watch expression is pending.
 	 * An expression is pending if an evaluation has been requested, but
 	 * the value has not yet been returned.

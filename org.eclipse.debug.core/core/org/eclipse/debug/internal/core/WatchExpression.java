@@ -8,12 +8,19 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.core.model;
+package org.eclipse.debug.internal.core;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.model.IDebugElement;
+import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IValue;
+import org.eclipse.debug.core.model.IWatchExpression;
+import org.eclipse.debug.core.model.IWatchExpressionDelegate;
+import org.eclipse.debug.core.model.IWatchExpressionListener;
+import org.eclipse.debug.core.model.IWatchExpressionResult;
 
 /**
  * Base watch expression implementation.
@@ -52,7 +59,6 @@ public class WatchExpression implements IWatchExpression {
 		if (!isEnabled()) {
 			if (fResult != null) {
 				setObsolete(true);
-				refresh();
 			}
 			return;
 		}
@@ -66,11 +72,9 @@ public class WatchExpression implements IWatchExpression {
 			public void watchEvaluationFinished(IWatchExpressionResult result) {
 				fResult= result;
 				setPending(false);
-				refresh();
 			}
 		};
 		setPending(true);
-		refresh();
 		IWatchExpressionDelegate delegate= DebugPlugin.getDefault().getExpressionManager().getWatchExpressionDelegate(context.getModelIdentifier());
 		delegate.evaluateExpression(getExpressionText(), context, listener);
 	}
@@ -79,8 +83,9 @@ public class WatchExpression implements IWatchExpression {
 	 * Set a change debug event, with this as the source, to notified that the
 	 * status/content of the expression has changed.
 	 */
-	public void refresh() {
+	public void fireChanged() {
 		DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[] {new DebugEvent(this, DebugEvent.CHANGE)});
+		((ExpressionManager)DebugPlugin.getDefault().getExpressionManager()).watchExpressionChanged(this);
 	}
 
 	/**
@@ -139,6 +144,7 @@ public class WatchExpression implements IWatchExpression {
 	 */
 	public void setEnabled(boolean enabled) {
 		fEnabled= enabled;
+		fireChanged();
 	}
 
 	/**
@@ -146,6 +152,7 @@ public class WatchExpression implements IWatchExpression {
 	 */
 	public void setExpressionText(String expression) {
 		fExpressionText= expression;
+		fireChanged();
 	}
 
 	/**
@@ -172,6 +179,7 @@ public class WatchExpression implements IWatchExpression {
 	 */
 	protected void setPending(boolean pending) {
 		fPending= pending;
+		fireChanged();
 	}
 
 	/**
@@ -203,6 +211,7 @@ public class WatchExpression implements IWatchExpression {
 	 */
 	protected void setObsolete(boolean obsolete) {
 		fObsolete= obsolete;
+		fireChanged();
 	}
 
 }

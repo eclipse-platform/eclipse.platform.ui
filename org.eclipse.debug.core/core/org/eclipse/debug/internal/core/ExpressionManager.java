@@ -11,6 +11,9 @@
 package org.eclipse.debug.internal.core;
 
  
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -18,12 +21,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.apache.xerces.dom.DocumentImpl;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
@@ -32,7 +40,12 @@ import org.eclipse.debug.core.IExpressionListener;
 import org.eclipse.debug.core.IExpressionManager;
 import org.eclipse.debug.core.IExpressionsListener;
 import org.eclipse.debug.core.model.IExpression;
+import org.eclipse.debug.core.model.IWatchExpression;
 import org.eclipse.debug.core.model.IWatchExpressionDelegate;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * The expression manager manages all registered expressions
@@ -66,6 +79,17 @@ public class ExpressionManager implements IExpressionManager, IDebugEventSetList
 	private static final int ADDED = 1;
 	private static final int CHANGED = 2;
 	private static final int REMOVED = 3;
+
+	// Preference for persisted watch expressions
+	private static final String PREF_WATCH_EXPRESSIONS= "prefWatchExpressions"; //$NON-NLS-1$
+	// Persisted watch expression XML tags
+	private static final String WATCH_EXPRESSIONS_TAG= "watchExpressions"; //$NON-NLS-1$
+	private static final String EXPRESSION_TAG= "expression"; //$NON-NLS-1$
+	private static final String TEXT_TAG= "text"; //$NON-NLS-1$
+	private static final String ENABLED_TAG= "enabled"; //$NON-NLS-1$
+	// XML values
+	private static final String TRUE_VALUE= "true"; //$NON-NLS-1$
+	private static final String FALSE_VALUE= "false"; //$NON-NLS-1$
 	
 	public ExpressionManager() {
 		loadPersistedExpressions();
@@ -105,9 +129,93 @@ public class ExpressionManager implements IExpressionManager, IDebugEventSetList
 	}
 
 	/**
-	 * TODO: Implement watch expression persistance
+	 * Loads any persisted watch expresions from the preferences.
 	 */
 	private void loadPersistedExpressions() {
+		String expressionsString= DebugPlugin.getDefault().getPluginPreferences().getString(PREF_WATCH_EXPRESSIONS);
+		if (expressionsString.length() == 0) {
+			return;
+		}
+		Element root= null;
+		try {
+			ByteArrayInputStream stream= new ByteArrayInputStream(expressionsString.getBytes("UTF-8")); //$NON-NLS-1$
+			DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			root = parser.parse(stream).getDocumentElement();
+		} catch (Throwable throwable) {
+			DebugPlugin.logMessage("An exception occurred while loading watch expressions.", throwable); //$NON-NLS-1$
+			return;
+		}
+		if (!root.getNodeName().equals(WATCH_EXPRESSIONS_TAG)) {
+			DebugPlugin.logMessage("Invalid format encountered while loading watch expressions.", null); //$NON-NLS-1$
+			return;
+		}
+		NodeList list= root.getChildNodes();
+		for (int i= 0, numItems= list.getLength(); i < numItems; i++) {
+			Node node= list.item(i);
+			if (node.getNodeType() == Node.ELEMENT_NODE) {
+				Element element= (Element) node;
+				if (!element.getNodeName().equals(EXPRESSION_TAG)) {
+					DebugPlugin.logMessage(MessageFormat.format("Invalid XML element encountered while loading watch expressions: {0}", new String[] {node.getNodeName()}), null); //$NON-NLS-1$
+					continue;
+				}
+				String expressionText= element.getAttribute(TEXT_TAG);
+				if (expressionText.length() > 0) {
+					boolean enabled= TRUE_VALUE.equals(element.getAttribute(ENABLED_TAG));
+					IWatchExpression expression= newWatchExpression(expressionText);
+					expression.setEnabled(enabled);
+					if (fExpressions == null) {
+						fExpressions= new Vector(list.getLength());
+					}
+					fExpressions.add(expression);
+				} else {
+					DebugPlugin.logMessage("Invalid expression entry encountered while loading watch expressions. Expression text is empty.", null); //$NON-NLS-1$
+				}
+			}
+		}
+	}
+	
+	public IWatchExpression newWatchExpression(String expressionText) {
+		return new WatchExpression(expressionText);
+	}
+	
+	/**
+	 * Persists this manager's watch expressions as XML in the
+	 * preference store. 
+	 */
+	public void storeWatchExpressions() {
+		Preferences prefs= DebugPlugin.getDefault().getPluginPreferences();
+		String expressionString= ""; //$NON-NLS-1$
+		try {
+			expressionString= getWatchExpressionsAsXML();
+		} catch (IOException e) {
+			DebugPlugin.log(e);
+		}
+		prefs.setValue(PREF_WATCH_EXPRESSIONS, expressionString);
+		DebugPlugin.getDefault().savePluginPreferences();
+	}
+
+	/**
+	 * Returns this manager's watch expressions as XML.
+	 * @return this manager's watch expressions as XML
+	 * @throws IOException if an exception occurs while creating
+	 * 		the XML document.
+	 */
+	private String getWatchExpressionsAsXML() throws IOException {
+		Iterator iter= fExpressions.iterator();
+		Document document= new DocumentImpl();
+		Element rootElement= document.createElement(WATCH_EXPRESSIONS_TAG);
+		document.appendChild(rootElement);
+		while (iter.hasNext()) {
+			Object object= iter.next();
+			if (object instanceof IWatchExpression) {
+				IWatchExpression expression= (IWatchExpression) object;
+				Element element= document.createElement(EXPRESSION_TAG); 
+				element.setAttribute(TEXT_TAG, expression.getExpressionText());
+				element.setAttribute(ENABLED_TAG, expression.isEnabled() ? TRUE_VALUE : FALSE_VALUE);
+				rootElement.appendChild(element);
+			}
+		}
+		return LaunchManager.serializeDocument(document);
 	}
 
 	/**
@@ -124,6 +232,7 @@ public class ExpressionManager implements IExpressionManager, IDebugEventSetList
 		if (fExpressions == null) {
 			fExpressions = new Vector(expressions.length);
 		}
+		boolean addedWatchExpression= false;
 		boolean wasEmpty = fExpressions.isEmpty();
 		List added = new ArrayList(expressions.length);
 		for (int i = 0; i < expressions.length; i++) {
@@ -131,6 +240,9 @@ public class ExpressionManager implements IExpressionManager, IDebugEventSetList
 			if (fExpressions.indexOf(expression) == -1) {
 				added.add(expression);
 				fExpressions.add(expression);
+				if (expression instanceof IWatchExpression) {
+					addedWatchExpression= true;
+				}
 			}				
 		}
 		if (wasEmpty) {
@@ -138,6 +250,9 @@ public class ExpressionManager implements IExpressionManager, IDebugEventSetList
 		}
 		if (!added.isEmpty()) {
 			fireUpdate((IExpression[])added.toArray(new IExpression[added.size()]), ADDED);
+		}
+		if (addedWatchExpression) {
+			storeWatchExpressions();
 		}
 	}	
 
@@ -245,6 +360,12 @@ public class ExpressionManager implements IExpressionManager, IDebugEventSetList
 				IExpression[] array = (IExpression[])changed.toArray(new IExpression[changed.size()]);
 				fireUpdate(array, CHANGED);
 			}
+		}
+	}
+	
+	protected void watchExpressionChanged(IWatchExpression expression) {
+		if (fExpressions.contains(expression)) {
+			storeWatchExpressions();
 		}
 	}
 

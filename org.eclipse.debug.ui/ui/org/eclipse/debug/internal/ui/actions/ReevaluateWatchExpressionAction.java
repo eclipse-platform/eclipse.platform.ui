@@ -14,7 +14,7 @@ package org.eclipse.debug.internal.ui.actions;
 import java.util.Iterator;
 
 import org.eclipse.debug.core.model.IDebugElement;
-import org.eclipse.debug.core.model.WatchExpression;
+import org.eclipse.debug.core.model.IWatchExpression;
 import org.eclipse.jface.action.IAction;
 
 /**
@@ -29,7 +29,7 @@ public class ReevaluateWatchExpressionAction extends WatchExpressionAction {
 	public void run(IAction action) {
 		IDebugElement context = getContext();
 		for (Iterator iter= getCurrentSelection().iterator(); iter.hasNext();) {
-			((WatchExpression) iter.next()).setExpressionContext(context);
+			((IWatchExpression) iter.next()).setExpressionContext(context);
 		}
 	}
 
