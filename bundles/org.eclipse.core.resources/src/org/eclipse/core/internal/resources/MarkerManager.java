@@ -13,6 +13,9 @@ package org.eclipse.core.internal.resources;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.internal.utils.*;
+import org.eclipse.core.internal.watson.*;
+import org.eclipse.core.internal.watson.ElementTreeIterator;
+import org.eclipse.core.internal.watson.IElementContentVisitor;
 import org.eclipse.core.internal.localstore.*;
 import java.io.*;
 import java.util.*;
@@ -166,10 +169,10 @@ private ResourceInfo basicRemoveMarkers(IPath path, String type, boolean include
 /**
  * Adds the markers on the given target which match the specified type to the list.
  */
-private void buildMarkers(IMarkerSetElement[] markers, IPath path, ArrayList list) {
+private void buildMarkers(IMarkerSetElement[] markers, IPath path, int type, ArrayList list) {
 	if (markers.length == 0)
 		return;
-	IResource resource = workspace.getRoot().findMember(path);
+	IResource resource = workspace.newResource(path, type);
 	list.ensureCapacity(list.size() + markers.length);
 	for (int i = 0; i < markers.length; i++) {
 		list.add(new Marker(resource, ((MarkerInfo) markers[i]).getId()));
@@ -197,22 +200,6 @@ protected void changedMarkers(IResource resource, IMarkerDelta[] changes) {
 		info.incrementMarkerGenerationCount();
 }
 /**
- * Internal workspace lifecycle event
- */
-public void changing(IProject project) {
-}
-/**
- * Internal workspace lifecycle event
- */
-public void closing(IProject project) {
-}
-/**
- * Internal workspace lifecycle event
- */
-public void deleting(IProject project) {
-}
-
-/**
  * Returns the marker with the given id or <code>null</code> if none is found.
  */
 public IMarker findMarker(IResource resource, long id) {
@@ -239,7 +226,11 @@ public MarkerInfo findMarkerInfo(IResource resource, long id) {
   */
 public IMarker[] findMarkers(IResource target, final String type, final boolean includeSubtypes, int depth) throws CoreException {
 	ArrayList result = new ArrayList();
-	recursiveFindMarkers(target.getFullPath(), result, type, includeSubtypes, depth);
+	//optimize the deep searches with an element tree visitor
+	if (depth == IResource.DEPTH_INFINITE && target.getType() != IResource.FILE)
+		visitorFindMarkers(target.getFullPath(), result, type, includeSubtypes, depth);
+	else
+		recursiveFindMarkers(target.getFullPath(), result, type, includeSubtypes, depth);
 	if (result.size() == 0) {
 		return NO_MARKERS;
 	}
@@ -332,11 +323,6 @@ public void moved(final IResource source, final IResource destination, int depth
 	destination.accept(visitor, depth, false);
 }
 /**
- * Internal workspace lifecycle event
- */
-public void opening(IProject project) {
-}
-/**
  * Adds the markers for a subtree of resources to the list.
  */
 private void recursiveFindMarkers(IPath path, ArrayList list, String type, boolean includeSubtypes, int depth) {
@@ -352,7 +338,7 @@ private void recursiveFindMarkers(IPath path, ArrayList list, String type, boole
 			matching = markers.elements();
 		else
 			matching = basicFindMatching(markers, type, includeSubtypes);
-		buildMarkers(matching, path, list);
+		buildMarkers(matching, path, info.getType(), list);
 	}
 	
 	//recurse
@@ -364,6 +350,30 @@ private void recursiveFindMarkers(IPath path, ArrayList list, String type, boole
 	for (int i = 0; i < children.length; i++) {
 		recursiveFindMarkers(children[i], list, type, includeSubtypes, depth);
 	}	
+}/**
+ * Adds the markers for a subtree of resources to the list.
+ */
+private void visitorFindMarkers(IPath path, final ArrayList list, final String type, final boolean includeSubtypes, int depth) {
+	ElementTreeIterator iterator = new ElementTreeIterator();
+	IElementContentVisitor visitor = new IElementContentVisitor() {
+		public void visitElement(ElementTree tree, IPathRequestor requestor, Object elementContents) {
+			ResourceInfo info = (ResourceInfo)elementContents;
+			if (info == null)
+				return;
+			MarkerSet markers = info.getMarkers();
+
+			//add the matching markers for this resource
+			if (markers != null) {
+				IMarkerSetElement[] matching;
+				if (type == null)
+					matching = markers.elements();
+				else
+					matching = basicFindMatching(markers, type, includeSubtypes);
+				buildMarkers(matching, requestor.requestPath(), info.getType(), list);
+			}
+		}
+	};
+	iterator.iterate(workspace.getElementTree(), visitor, path);
 }
 /**
  * Adds the markers for a subtree of resources to the list.
