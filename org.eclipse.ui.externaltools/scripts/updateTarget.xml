@@ -12,7 +12,6 @@
 	<!-- Set the timestamp and important properties -->
 	<target name="init">
 		<tstamp/>
-		<property name="buildNumber" value="0924"/>
 		<property name="bootclasspath" value=""/>
 		<property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
 		<property name="destdir" value="../../plugin-export" />
@@ -21,7 +20,7 @@
 		<property name="destSrc"  value="${destdir}/org.eclipse.platform.source/src/org.eclipse.ui.externaltools_2.1.0" />
 		<property name="temp.folder" value="${destdir}/temp.folder"/>
 
-		<property name="currentBuild" value="../../Debugger/${buildNumber}Ant/eclipse"/>
+		<property name="currentBuild" value="../../Debugger/Ant/eclipse"/>
 		<property name="currentBuildPlugins" value="${currentBuild}/plugins/${pluginName}"/>
 	</target>
 
@@ -70,12 +69,4 @@
 		</copy>
 	</target>
 	
-	<!-- Does not work -->
-	<target name="execAntTarget" depends="init">
-		<exec 
-			dir="${currentBuild}"
-			executable= "Ant.exe"
-			vmlauncher= "false">
-		</exec>
-	</target>
 </project>
