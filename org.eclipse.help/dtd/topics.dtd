@@ -1,8 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
 
-<!ELEMENT topics (topic)* ) >
-<!ATTLIST topics id  ID #REQUIRED >
+<!ELEMENT topics (topic | anchor | link)* >
+<!ATTLIST topics link_to CDATA #IMPLIED >
+<!ATTLIST topics label CDATA #REQUIRED >
 
-<!ELEMENT topic (topic)* >
-<!ATTLIST topic id ID #IMPLIED >
+<!ELEMENT topic (topic | anchor | link )* >
 <!ATTLIST topic label CDATA #REQUIRED >
-<!ATTLIST topic href  CDATA #IMPLIED >
+<!ATTLIST topic href CDATA #IMPLIED >
+
+<!ELEMENT anchor EMPTY >
+<!ATTLIST anchor id CDATA  #REQUIRED >
+
+<!ELEMENT link EMPTY >
+<!ATTLIST link topics CDATA #REQUIRED >
