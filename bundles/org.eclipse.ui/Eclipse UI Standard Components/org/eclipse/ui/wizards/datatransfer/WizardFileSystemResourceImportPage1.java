@@ -295,7 +295,6 @@ private void updateFromSourceField(){
 	setSourceName(sourceNameField.getText());
 	//Update enablements when this is selected
 	updateWidgetEnablements();
-	selectionGroup.setFocus();
 }		
 	
 /**
