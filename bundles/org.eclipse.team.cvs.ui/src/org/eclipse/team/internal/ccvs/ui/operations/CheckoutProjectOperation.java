@@ -303,7 +303,8 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 			IProject project = projects[i];
 			Policy.checkCanceled(monitor);
 			if (needsPromptForOverwrite(project) && !promptToOverwrite(remoteFolder, project)) {
-				Policy.cancelOperation();
+				// User said no to this project but not no to all
+				return new CVSStatus(IStatus.INFO, CVSStatus.CANCEL, "Checkout of remote folder {0} cancelled by user" + remoteFolder.getRepositoryRelativePath());
 			}
 		}
 		// Create the projects and remove any previous content
