@@ -21,9 +21,9 @@ public class FeatureStateAction extends Action {
 
 	public void run() {
 		try {
-			if (adapter == null)
+			if (adapter == null || !confirm(adapter.isConfigured()))
 				return;
-
+				
 			boolean restartNeeded =
 				UpdateManager.getOperationsManager().toggleFeatureState(
 					adapter.getConfiguredSite(),
@@ -35,14 +35,18 @@ public class FeatureStateAction extends Action {
 				UpdateUI.informRestartNeeded();
 
 		} catch (CoreException e) {
-			UpdateUI.logException(e);
 			ErrorDialog.openError(
 				UpdateUI.getActiveWorkbenchShell(),
 				null,
 				null,
 				e.getStatus());
 		}
-
 	}
+	
+	private boolean confirm(boolean isConfigured) {
+		String message = isConfigured ? "Do you want to disable this feature?" : "Do you want to enable this feature?";
+		return MessageDialog.openConfirm(UpdateUI.getActiveWorkbenchShell(), "Update Manager", message); 
+	}
+
 
 }

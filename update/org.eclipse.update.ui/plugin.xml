@@ -184,6 +184,12 @@
             class="org.eclipse.update.internal.ui.properties.FeatureCopyrightPropertyPage"
             id="org.eclipse.update.ui.featureCopyrightPropertyPage">
       </page>
+      <page
+            objectClass="org.eclipse.update.internal.ui.model.ConfiguredFeatureAdapter"
+            name="%properties.status.label"
+            class="org.eclipse.update.internal.ui.properties.FeatureStatusPropertyPage"
+            id="org.eclipse.update.ui.featureStatusPropertyPage">
+      </page>
    </extension>
    <extension
          point="org.eclipse.update.ui.searchCategory">

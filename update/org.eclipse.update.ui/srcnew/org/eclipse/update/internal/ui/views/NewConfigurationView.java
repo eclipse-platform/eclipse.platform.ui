@@ -732,5 +732,11 @@ public class NewConfigurationView
 				propertiesAction.run();
 		}
 	}
+	
+	public void createPartControl(Composite parent) {
+		super.createPartControl(parent);
+		getTreeViewer().expandToLevel(2);
+	}
+
 
 }
